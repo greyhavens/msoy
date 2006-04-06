@@ -1,0 +1,176 @@
+<!-- build configuration -->
+<project name="msoy" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"         value="msoy"/>
+  <property name="doc.packages"     value="com.threerings.msoy.*"/>
+  <property name="copy.holder"      value="Three Rings Design, Inc."/>
+
+  <!-- read in our deployment properties -->
+  <property file="deployment.properties"/>
+  <property file="build.properties"/>
+
+  <!-- things you probably don't want to change -->
+  <property name="src.dir"      value="src/java"/>
+  <property name="deploy.dir"   value="dist"/>
+  <property name="javadoc.dir"  value="${deploy.dir}/docs"/>
+  <property name="savedoc.dir"  value="docs"/>
+  <property name="nartool.path"   value="projects/narya/bin"/>
+
+  <!-- declare our classpath -->
+  <path id="classpath">
+    <pathelement location="${deploy.dir}/classes"/>
+    <fileset dir="dist" includes="${app.name}-code.jar"/>
+    <fileset dir="lib" includes="**/*.jar"/>
+    <fileset dir="/export/tools/lib/java" includes="**/*.jar"/>
+  </path>
+
+  <!-- generates additional methods for distributed object classes -->
+  <target name="gendobj" depends="prepare">
+    <taskdef name="dobj"
+             classname="com.threerings.presents.tools.GenDObjectTask"
+             classpathref="classpath"/>
+    <!-- make sure the dobject class files are all compiled -->
+    <javac srcdir="src/java" destdir="${deploy.dir}/classes"
+           debug="on" optimize="${build.optimize}" deprecation="on">
+      <classpath refid="classpath"/>
+      <include name="**/*Object.java"/>
+    </javac>
+    <!-- now generate the associated files -->
+    <dobj classpathref="classpath">
+      <fileset dir="src/java" includes="**/*Object.java"/>
+    </dobj>
+  </target>
+
+  <!-- generates marshaller and dispatcher classes for all invocation -->
+  <!-- service declarations -->
+  <target name="genservice"> 
+    <taskdef name="service"
+             classname="com.threerings.presents.tools.GenServiceTask"
+             classpathref="classpath"/>
+    <!-- make sure the service class files are all compiled -->
+    <javac srcdir="src/java" destdir="${deploy.dir}/classes"
+           debug="on" optimize="${build.optimize}" deprecation="on">
+      <classpath refid="classpath"/>
+      <include name="**/*Service.java"/>
+    </javac>
+    <!-- now generate the associated files -->
+    <service header="lib/SOURCE_HEADER" classpathref="classpath">
+      <fileset dir="src/java" includes="**/*Service.java"/>
+    </service>
+  </target>
+
+  <!-- generates sender and decoder classes for all invocation -->
+  <!-- receiver declarations -->
+  <target name="genreceiver"> 
+    <taskdef name="receiver"
+             classname="com.threerings.presents.tools.GenReceiverTask"
+             classpathref="classpath"/>
+    <!-- make sure the receiver class files are all compiled -->
+    <javac srcdir="src/java" destdir="${deploy.dir}/classes"
+           debug="on" optimize="${build.optimize}" deprecation="on">
+      <classpath refid="classpath"/>
+      <include name="**/*Receiver.java"/>
+      <exclude name="**/InvocationReceiver.java"/>
+    </javac>
+    <!-- now generate the associated files -->
+    <receiver header="lib/SOURCE_HEADER" classpathref="classpath">
+      <fileset dir="src/java" includes="**/*Receiver.java"
+        excludes="**/InvocationReceiver.java"/>
+    </receiver>
+  </target>
+
+  <!-- prepares the application directories -->
+  <target name="prepare">
+    <mkdir dir="${deploy.dir}"/>
+    <mkdir dir="${deploy.dir}/classes"/>
+    <mkdir dir="${deploy.dir}/classes/rsrc"/>
+    <mkdir dir="${javadoc.dir}"/>
+    <copy todir="${deploy.dir}/classes/rsrc">
+      <fileset dir="rsrc">
+       <include name="**/*"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- creates the serialized color repository config -->
+  <target name="colorpos">
+    <taskdef name="confcomp" classpathref="classpath"
+      classname="com.threerings.tools.CompiledConfigTask"/>
+    <confcomp parser="com.threerings.media.image.tools.xml.ColorPositoryParser"
+      configdef="rsrc/config/media/colordefs.xml"/>
+  </target>
+
+  <!-- run the unit tests -->
+  <target name="tests" depends="compile" description="Runs unit tests.">
+    <taskdef name="unit" classpathref="classpath"
+      classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
+    <unit printsummary="no" haltonfailure="yes" fork="true">
+      <classpath refid="classpath"/>
+      <formatter type="brief" usefile="false"/>
+      <batchtest>
+        <fileset dir="${src.dir}" includes="**/*UnitTest.java"/>
+      </batchtest>
+    </unit>
+  </target>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete dir="${deploy.dir}/classes/com"/>
+  </target>
+
+  <!-- fully cleans out the installed application -->
+  <target name="distclean">
+    <delete dir="${deploy.dir}"/>
+    <delete><fileset dir="rsrc" includes="**/*.jar"/></delete>
+  </target>
+
+  <!-- build the java class files -->
+  <target name="compile" depends="prepare">
+    <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
+           debug="on" optimize="off" deprecation="on">
+      <classpath refid="classpath"/>
+      <compilerarg value="-Xlint:unchecked"/>
+    </javac>
+  </target>
+
+  <!-- build the javadoc documentation -->
+  <target name="javadoc" depends="prepare">
+    <javadoc sourcepath="${src.dir}"
+             packagenames="${doc.packages}"
+             windowtitle="${app.name} API"
+             doctitle="${app.name} API"
+             bottom="Copyright &#169; 2005 ${copy.holder}. All Rights Reserved."
+             destdir="${javadoc.dir}"
+             additionalparam="-breakiterator">
+      <classpath refid="classpath"/>
+      <link href="http://java.sun.com/j2se/1.5/docs/api/"/>
+    </javadoc>
+  </target>
+
+  <!-- builds the javadocs and stuffs them in a directory where they -->
+  <!-- won't be blown away when we do "clean" next time -->
+  <target name="savedoc" depends="javadoc">
+    <delete dir="${savedoc.dir}/api"/>
+    <copy todir="${savedoc.dir}/api">
+      <fileset dir="${javadoc.dir}" includes="**/*"/>
+    </copy>
+  </target>
+
+  <!-- a target for rebuilding everything -->
+  <target name="all" depends="clean,prepare,compile,javadoc,dist"/>
+
+  <!-- rebuild all the niggling bits -->
+  <target name="bits" depends="colorpos"/>
+
+  <!-- builds the distribution jar files -->
+  <target name="dist" depends="prepare,compile">
+    <!-- stick all our code in one jar file -->
+    <jar file="${deploy.dir}/${app.name}-code.jar"
+         basedir="${deploy.dir}/classes" includes="com/**"/>
+    <!-- and all of our configuration and media in another -->
+    <jar file="${deploy.dir}/${app.name}-media.jar"
+         basedir="${deploy.dir}/classes" includes="rsrc/**"/>
+  </target>
+
+</project>

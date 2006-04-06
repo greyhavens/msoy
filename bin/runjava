@@ -1,0 +1,84 @@
+#!/usr/bin/perl -w
+#
+# $Id$
+#
+# Used to invoke the JVM when running the server and other tools
+
+use Getopt::Long;
+
+my $usage = "Usage: $0 [--verbose] args\n";
+my $root = `dirname $0 | sed s:/bin\$::`; chomp($root);
+my $jhome = $ENV{"JAVA_HOME"};
+
+# parse our command line arguments
+my $verbose;
+GetOptions("verbose" => \$verbose);
+die $usage if (@ARGV == 0);
+
+# make sure JAVA_HOME is set
+if (!defined $jhome) {
+    warn "$0: Error: No JAVA_HOME specified!\n";
+    warn "\n";
+    warn "You must set your JAVA_HOME environment variable to the\n";
+    warn "the absolute path of your JDK installation. For example:\n";
+    warn "\n";
+    warn " % JAVA_HOME=/usr/local/jdk1.5\n";
+    warn " % export JAVA_HOME\n";
+    die "\n";
+}
+
+# make sure it's set to a valid directory
+if (! -d $jhome || ! -x "$jhome/bin/java") {
+    die "$0: Can't find a JVM at '$jhome/bin/java'.\n";
+}
+
+my $java = "$jhome/bin/java";
+my $jlib = "$jhome/lib/classes.zip";
+my $jargs = "";
+
+# determine our machine architecture
+my $ostype = `uname -s`;
+my $machtype = `uname -m`;
+chomp($ostype);
+chomp($machtype);
+my $arch = "$machtype-$ostype";
+
+# add our native libraries to the runtime library path
+my $libs = "$root/lib/$arch";
+my $libpath = $ENV{"LD_LIBRARY_PATH"};
+
+if (defined $libpath) {
+    $ENV{"LD_LIBRARY_PATH"} = "$libs:$libpath";
+} else {
+    $ENV{"LD_LIBRARY_PATH"} = $libs;
+}
+
+# the classpath needs to start with .
+my $classpath = "$root:$root/dist/classes";
+
+# if there's classpath environment variable, add that in here
+$classpath .= ":" . $ENV{"CLASSPATH"} if (defined $ENV{"CLASSPATH"});
+
+# add zip and jar files from our lib/ directory
+my @dirs = ( "/export/tools/lib/java", "$root/lib" );
+foreach $dir (@dirs) {
+    next unless (defined $dir);
+    if (opendir(DIR, $dir)) {
+        foreach $lib (grep { /.(zip|jar)/ && -f "$dir/$_" } readdir(DIR)) {
+            $classpath .= ":$dir/$lib";
+        }
+        closedir DIR;
+    }
+}
+
+# finally add the standard classes
+$classpath = "$classpath:$jlib";
+
+my $appargs = "\"" . join("\" \"", @ARGV) . "\"";
+my $cmd = "$java -mx128M -classpath $classpath $jargs $appargs";
+if ($verbose) {
+    print "JVM args: $java $jargs\n";
+    print "Classpath: " . join("\n           ", split(/:/, $classpath)) . "\n";
+    print "App args: $appargs\n";
+}
+exec($cmd);
