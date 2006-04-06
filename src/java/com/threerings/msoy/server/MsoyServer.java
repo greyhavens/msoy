@@ -1,25 +1,9 @@
 //
 // $Id$
-//
-// Narya library - tools for developing networked games
-// Copyright (C) 2002-2006 Three Rings Design, Inc., All Rights Reserved
-// http://www.threerings.net/code/narya/
-//
-// This library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU Lesser General Public License as published
-// by the Free Software Foundation; either version 2.1 of the License, or
-// (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 package com.threerings.msoy.server;
+
+import java.util.logging.Level;
 
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
@@ -27,8 +11,9 @@ import com.threerings.crowd.server.CrowdServer;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
-import com.threerings.msoy.Log;
 import com.threerings.msoy.data.SimpleChatConfig;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Msoy server class.
@@ -56,7 +41,7 @@ public class MsoyServer extends CrowdServer
                 }
             });
 
-        Log.info("Msoy server initialized.");
+        log.info("Msoy server initialized.");
     }
 
     public static void main (String[] args)
@@ -66,8 +51,7 @@ public class MsoyServer extends CrowdServer
             server.init();
             server.run();
         } catch (Exception e) {
-            Log.warning("Unable to initialize server.");
-            Log.logStackTrace(e);
+            log.log(Level.WARNING, "Unable to initialize server", e);
         }
     }
 }
