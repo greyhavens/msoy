@@ -1,0 +1,69 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Updates the various libraries from the version control repository and
+# rebuilds everything for the project.
+
+if [ "`whoami`" = "root" ]; then
+    echo "Don't run this script as root."
+    exit 255
+fi
+
+ROOT=`dirname $0`
+ROOT=`cd $ROOT ; cd .. ; pwd`
+LOCKFILE=/tmp/rebuild-msoy.lock
+export JAVA_HOME=/usr/local/jdk1.5
+
+# load up some handy shell functions
+. /export/tools/lib/sh/build_helper
+
+# make sure directories are created sanely
+umask 002
+
+# "parse" our arguments
+while [ ! -z "$1" ]; do
+    if [ $1 = "--update" ]; then
+        UPDATE=true
+    fi
+    shift
+done
+
+# make sure we only have one script running at a time
+lockfile -r 0 $LOCKFILE
+if [ $? != 0 ] ; then
+    echo "Refusing to run because lockfile ($LOCKFILE) exists."
+    echo "Ensure no stale script is running, delete the file and rerun."
+    exit 255
+fi
+
+# bookkeeping
+echo "*** Starting build in $ROOT at" `date`
+
+if [ ! -z "$UPDATE" ]; then
+    # update the whole enchilada
+    echo "Updating main tree..."
+    cd $ROOT
+    svn update -q
+    if [ $? != 0 ] ; then
+        echo >&2 "*** svn update failed in" `pwd`
+        rm -f $LOCKFILE
+        exit 255
+    fi
+fi
+
+# rebuild our libraries
+build_libraries samskivert narya threerings
+
+# build the main thang
+cd $ROOT
+ant distclean dist
+if [ $? != 0 ]; then
+    rm -f $LOCKFILE
+    exit 255
+fi
+
+# remove the lockfile
+rm -f $LOCKFILE
+
+echo "*** Finished build at" `date`

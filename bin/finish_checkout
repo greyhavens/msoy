@@ -1,0 +1,37 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Completes the checkout of a MetaSOY build directory
+
+ROOT=`dirname $0`
+ROOT=`cd $ROOT ; cd .. ; pwd`
+
+# sanity check
+if [ ! -d $ROOT/projects ]; then
+    echo "Could not locate $ROOT/projects. Funny business!"
+    exit 255
+fi
+
+# determine our subversion repository URL
+SVNROOT=`grep ' url' $ROOT/.svn/entries | awk -F\" '{ print $2 }' | \
+    sed 's:/msoy.*:/:'`
+
+# check out the various project directories
+cd $ROOT/projects
+for PROJECT in samskivert; do
+    if [ ! -d $PROJECT ]; then
+        svn checkout svn://samskivert.com/$PROJECT/trunk $PROJECT
+    fi
+done
+for PROJECT in narya; do
+    if [ ! -d $PROJECT ]; then
+        svn checkout $SVNROOT/$PROJECT/trunk $PROJECT
+    fi
+done
+if [ ! -d threerings ]; then
+    svn checkout $SVNROOT/threerings/trunk/projects/threerings threerings
+fi
+
+# now run all_rebuild to make sure everything works
+$ROOT/bin/all_rebuild
