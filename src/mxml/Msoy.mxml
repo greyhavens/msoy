@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.macromedia.com/2005/mxml" xmlns="*" layout="absolute">
+<mx:Script>
+	<![CDATA[
+		import com.threerings.msoy.client.MsoyClient;
+	]]>
+</mx:Script>
+<mx:Button x="40" y="285" label="connect" click="new MsoyClient(this);"/>
+</mx:Application>

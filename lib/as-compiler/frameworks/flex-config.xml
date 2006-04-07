@@ -1,0 +1,132 @@
+<flex-config>
+   <compiler>
+      <accessible>false</accessible>
+      <!-- compiler.actionscript-classpath: list of path elements that form the roots of ActionScript class hierarchies-->
+      <!-- var compiler.actionscript-classpath not set
+      <actionscript-classpath>
+         <path-element>string</path-element>
+         <path-element>string</path-element>
+      </actionscript-classpath>
+      -->
+      <!-- compiler.coach: Run the AS3 compiler in a mode that detects legal but potentially incorrect code-->
+      <show-coach-warnings>true</show-coach-warnings>
+      <debug>false</debug>
+      <!-- compiler.external-library-path: list of SWC files or directories to compile against but to omit from linking-->
+      <external-library-path>
+         <path-element>libs/playerglobal.swc</path-element>
+      </external-library-path>
+      <keep-generated-actionscript>false</keep-generated-actionscript>
+
+      <include-libraries>
+ 	    <library>locale/en_EN/framework_rb.swc</library>
+      </include-libraries>
+
+      <!-- compiler.library-path: list of SWC files or directories that contain SWC files-->
+      <library-path>
+         <path-element>libs</path-element>
+      </library-path>
+      <namespaces>
+         <!-- compiler.namespaces.namespace: Specify a URI to associate with a manifest of components for use as MXML elements-->
+         <namespace>
+            <uri>http://www.macromedia.com/2005/mxml</uri>
+            <manifest>mxml-manifest.xml</manifest>
+         </namespace>
+      </namespaces>
+      <!-- compiler.optimize: Enable post-link SWF optimization-->
+      <optimize>true</optimize>
+      <show-binding-warnings>true</show-binding-warnings>
+      <!-- compiler.show-dependency-warnings: Show warnings when dependencies cannot be determined at compile time-->
+      <show-dependency-warnings>false</show-dependency-warnings>
+      <show-deprecation-warnings>true</show-deprecation-warnings>
+      <!-- compiler.strict: Run the AS3 compiler in strict error checking mode-->
+      <strict>true</strict>
+      <!-- compiler.theme: list of CSS or SWC files to apply as a theme-->
+      <!-- var compiler.theme not set
+      <theme>
+         <filename>string</filename>
+         <filename>string</filename>
+      </theme>
+      -->
+      <verbose-stacktraces>false</verbose-stacktraces>
+
+      <!-- user-defined AS3 file encoding
+      <actionscript-file-encoding></actionscript-file-encoding>
+      -->
+
+	   <!-- Undeclared property reference.
+	        This can throw a 'ReferenceError' in AS3, rather than evaluating to undefined as it did in AS2-->
+	   <warn-undefined-reference>false</warn-undefined-reference>
+	   <!-- Undefined function.
+	        This can throw a 'ReferenceError' in AS3, rather than failing silently as it did in AS2-->
+	   <warn-undefined-function>true</warn-undefined-function>
+	   <!-- Incorrect number of arguments-->
+	   <warn-wrong-number-of-args>true</warn-wrong-number-of-args>
+	   <!-- Incorrect assignment to 'undefined'.  Only variables of type 'Object' can hold 'undefined' as a value-->
+	   <warn-assigning-undefined-to-non-object-type>true</warn-assigning-undefined-to-non-object-type>
+	   <!-- Missing type declaration-->
+	   <warn-no-type-decl>true</warn-no-type-decl>
+	   <!-- Incorrect comparision with 'undefined'.  In AS3, 'null' is the default value of non 'Object' typed variables-->
+	   <warn-bad-undefined-comparision>true</warn-bad-undefined-comparision>
+	   <!-- Incorrect argument type for function-->
+	   <warn-wrong-arg-type>true</warn-wrong-arg-type>
+	   <!-- Variable has the same name as a function-->
+	   <warn-var-hidden-by-function>true</warn-var-hidden-by-function>
+	   <!-- Multiple definitions for the same function-->
+	   <warn-duplicate-func-def>true</warn-duplicate-func-def>
+	   <!-- Function used in 'new' expression returns a value.
+	        Result will be what the function returns, rather than a new instance of that function-->
+	   <warn-constructor-returns-value>true</warn-constructor-returns-value>
+	   <!-- Unlikely type coercion-->
+	   <warn-bad-type-cast>true</warn-bad-type-cast>
+	   <!-- 'Boolean()' with no arguments returns false in AS3.  It returned 'undefined' in AS2-->
+	   <warn-boolean-constructor-with-no-args>true</warn-boolean-constructor-with-no-args>
+	   <!-- 'null' arguments to Math functions are converted to '0' in AS3.  In AS2 they were was converted to 'NaN',
+	        and the result of the operation was often 'NaN'-->
+	   <warn-math-expressions-treat-null-like-zero>true</warn-math-expressions-treat-null-like-zero>
+	   <!-- 'Array.toString()' handling of 'null' and 'undefined' elements has changed.  In FP7, it would print 'null'
+	        or 'undefined', it now prints '' for both cases-->
+	   <warn-array-tostring-changes>true</warn-array-tostring-changes>
+	   <!-- Unsupported AS2 property-->
+	   <warn-deprecated-property-error>true</warn-deprecated-property-error>
+	   <!-- Unsupported AS2 function-->
+	   <warn-deprecated-function-error>true</warn-deprecated-function-error>
+	   <!-- 'super' can only be used within methods of a Class-->
+	   <warn-super-only-works-for-class-objects>true</warn-super-only-works-for-class-objects>
+	   <!-- Class is 'sealed'.  It can not have members added to it dynamically-->
+	   <warn-class-is-sealed>true</warn-class-is-sealed>
+	   <!-- Change in scoping for 'this'.  Class methods extracted from an instance of a class will always resolve
+	        'this' back to that instance.  In AS2 'this' was looked up dynamically based on where the method is invoked from-->
+	   <warn-scoping-change-in-this>false</warn-scoping-change-in-this>
+	   <!-- Missing namespace declaration-->
+	   <warn-missing-namespace-decl>true</warn-missing-namespace-decl>
+
+	   <!-- only warning set to false by default -->
+	   <!-- The order in which properties of an object are iterated over within a '(for x in target)' statement is
+	        random in AS3.  If you experience odd ordering behavior, inspect these loops to determine
+	        if this change in ordering may affect your code-->
+	   <warn-for-var-in-changes>false</warn-for-var-in-changes>
+	   <!-- EventHandler was not added as a listener-->
+	   <warn-deprecated-event-handler-error>true</warn-deprecated-event-handler-error>
+	   <!-- Missing constructor.-->
+	   <warn-no-constructor>false</warn-no-constructor>
+	   <!-- Bad Void parameter-->
+	   <warn-function-parameter-declared-as-void>true</warn-function-parameter-declared-as-void>
+	   <!-- 'super()' was not called within constructor-->
+	   <warn-no-explicit-super-call-in-constructor>false</warn-no-explicit-super-call-in-constructor>
+
+   </compiler>
+   <!-- var runtime-shared-libraries not set
+   <runtime-shared-libraries>
+      <url>string</url>
+      <url>string</url>
+   </runtime-shared-libraries>
+   -->
+   <usenetwork>true</usenetwork>
+   <metadata>
+      <title>Adobe Flex 2.0b Application</title>
+      <description>http://www.macromedia.com/flex</description>
+      <publisher>unknown</publisher>
+      <creator>unknown</creator>
+      <language>EN</language>
+   </metadata>
+</flex-config>

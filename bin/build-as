@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Script to compile AS3 code.
+#
+
+ROOT=`dirname $0`
+ROOT=`cd $ROOT; cd ..; pwd`
+
+java -jar "$ROOT/lib/as-compiler/lib/mxmlc.jar" \
+    -load-config $ROOT/lib/as-compiler/frameworks/flex-config.xml \
+    -compiler.optimize \
+    -compiler.show-binding-warnings \
+    -compiler.show-coach-warnings \
+    -compiler.show-deprecation-warnings \
+    -compiler.strict \
+    -compiler.verbose-stacktraces \
+    -compiler.warn-bad-type-cast \
+    -compiler.warn-bad-undefined-comparision \
+    -compiler.warn-constructor-returns-value  \
+    -compiler.warn-no-type-decl \
+    -compiler.warn-var-hidden-by-function \
+    -compiler.warn-wrong-arg-type \
+    -compiler.warn-wrong-number-of-args \
+    -compiler.actionscript-classpath="/export/msoy/projects/narya/src/as/" \
+    -compiler.actionscript-classpath="/export/msoy/src/as/" \
+    $ROOT/src/mxml/Msoy.mxml
