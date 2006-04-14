@@ -53,7 +53,7 @@ public class TestFPS
         _timer.start();
         _timer.addEventListener(TimerEvent.TIMER, tick);
 
-        _lastTick = new Date().getTime();
+        _lastTick = flash.util.getTimer();
     }
 
     /**
@@ -104,7 +104,7 @@ public class TestFPS
             return;
         }
 
-        var curTime :Number = new Date().getTime();
+        var curTime :uint = flash.util.getTimer();
         _tickTimes.push(curTime - _lastTick);
         _lastTick = curTime;
 
@@ -113,7 +113,7 @@ public class TestFPS
         }
 
         var total :Number = 0;
-        for each (var ms :Number in _tickTimes) {
+        for each (var ms :uint in _tickTimes) {
             total += ms;
         }
 
@@ -128,11 +128,11 @@ public class TestFPS
     /* The container to which we add our glorious bits. */
     protected var _container :DisplayObjectContainer;
 
-    /** The ms mark of the last tick. */
-    protected var _lastTick :Number;
-
     /** Our timer that fires as often as possible. */
     protected var _timer :Timer;
+
+    /** The ms mark of the last tick. */
+    protected var _lastTick :uint;
 
     /** The set of media we're currently rotating. */
     protected var _media :Array = new Array();
@@ -149,7 +149,8 @@ public class TestFPS
         "http://www.puzzlepirates.com/images/index/screen2.png",
         "http://www.puzzlepirates.com/images/index/screen3.png",
         "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
-        "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf"
+        "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
+        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf"
     ];
 }
 }
