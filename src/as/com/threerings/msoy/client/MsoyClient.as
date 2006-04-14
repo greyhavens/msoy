@@ -20,7 +20,6 @@ import com.threerings.crowd.data.BodyMarshaller;
 import com.threerings.crowd.data.LocationMarshaller;
 import com.threerings.crowd.chat.data.ChatMarshaller;
 
-import com.threerings.msoy.Log;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.SimpleChatConfig;
 
