@@ -361,4 +361,47 @@ it can open a LocalConnection server to listen on a connection called
 _Avatar=Bob, or something. Then we can have the msoy app send a
 setLook("facingLeft") to the Bob avatar.
 
-I'm thinking.
+What we can do is specify to load the swf with ?oid=<foo> on the URL. Then
+the user swf can do:
+    var connName :String = this.root.loaderInfo.parameters["oid"];
+    var lc :LocalConnection = new LocalConnection();
+    lc.client = new Object();
+    lc.client.setStyle = funcRef;
+    lc.connect(connName); 
+
+    // and then the msoy app can send style changes on a localconnection
+    // by specifying the oid.
+
+    downsides:
+    - url parameter defeats caching
+    - there's no way to ensure a user .swf complies and doesn't listen on
+      other connection names or even send signals to other connection names.
+      Indeed, you could just write something to try every numeric oid,
+      constantly, and try to fuck up other avatar .swfs.
+
+==> So maybe we just go with different swfs for different "looks".
+
+
+- That of course brings up the issue of a malicious swf. There's nothing we
+can do to prevent a user from including "while (true) {}" somewhere in
+their code, and maybe only activating it in certain circumstances. The
+flash player is essentially single-threaded, and doing this seems to lock
+up the entire browser in my firefox, it's not even limited to the hosted tab.
+
+Normally, nobody would use a malicious swf, but maybe some vandal kid
+hacks his flash player to ignore his malicious code and then he sets his
+avatar as that .swf and wanders around, freezing up the browsers of
+all other clients every time he enters a room.
+
+Even excluding that case, there's nothing we can do to prevent a malicious .swf
+freezing shit up in the catalog viewer. More thinking is required.
+
+- Duh. When b3 comes out and msoy compiles again, I should set breakpoints
+  during the chatobj subscription process and see if I can narrow down
+  which code is causing Mr. Crashypoo.
+
+- Flex data services:
+  LOOK INTO: is it possible to create a RemoteObject that is defined on
+  the fly? (Without being specified in flex-enterprise-services.xml)
+  (Or some other way to accomplish the same thing)
+  Probably this is possible.
