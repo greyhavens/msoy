@@ -120,6 +120,8 @@ Notes
   I will play around with trying to just use a Timer with a 1ms interval,
   and see if the frequency is limited to the actual framerate.
 
+  ***Update: The ENTER_FRAME event behaves like what I expected from RENDER.
+
 - All methods must be marked with the 'override' keyword if they override
   a method in their parent, except for toString(), even though it's defined
   for Object. Apparently those methods are 'magic' and are not really in

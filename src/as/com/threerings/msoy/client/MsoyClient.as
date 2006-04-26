@@ -27,7 +27,7 @@ public class MsoyClient extends Client
 {
     public function MsoyClient (app :Application)
     {
-        super(new UsernamePasswordCreds(new Name("guest"), "guest"));
+        super(new UsernamePasswordCreds(new Name("guest"), "guest"), app.stage);
 
         _ctx = new MsoyContext(this, app);
 
