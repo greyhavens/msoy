@@ -407,3 +407,18 @@ freezing shit up in the catalog viewer. More thinking is required.
   the fly? (Without being specified in flex-enterprise-services.xml)
   (Or some other way to accomplish the same thing)
   Probably this is possible.
+
+- describeType(someObject) and see about setting accessors dynamically,
+  registerClass(), or other undocumented functions.
+
+- We can probably use APT (Java 5's Annotation Processing Tool) to generate
+.as files based on any annotations and other class information available
+via reflection. Processors can be plugged in to generate new files.
+
+http://java.sun.com/j2se/1.5.0/docs/guide/apt/GettingStarted.html
+
+If it doesn't work out we could also use XDoclet2, which already has a
+supported plugin for generating actionscript 3 classes from java classes.
+It might be a tiny bit more work to use APT, but it's a more standard tool
+and would require less setup for other developers, and I kinda figure
+XDoclet2 is a dead-end now that Java5 has annotations and APT.
