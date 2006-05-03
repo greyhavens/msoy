@@ -1,0 +1,20 @@
+- Write a processor to process java files, and create corresponding AS files.
+
+  Mike already wrote a processor for java class files, but APT would be more
+  standard since it's a part of the JDK. It also allows the one additional
+  feature of being able to examine compile-time annotations, which might
+  be useful for us: we could create specific annotations to disambiguate
+  things when converting to AS.
+
+  - process Streamable objects to make them into AS classes that have manual
+    streaming
+  - process DObject classes to generate AS equivalent.. same as Streamable?
+  - service client/data classes in AS? Maybe rewrite mike's stuff using APT.
+
+  We're going to wait on this until we see what's coming in beta3.
+
+
+- Work on client UI stuff: avatars, scene setup and rendering.
+  Have clickable elements always 'glow blue' or something standard when
+  hovered. Handle clicking in the scene to move locations- fake the comm
+  to the server: just report success.
