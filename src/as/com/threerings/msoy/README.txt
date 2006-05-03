@@ -422,3 +422,16 @@ supported plugin for generating actionscript 3 classes from java classes.
 It might be a tiny bit more work to use APT, but it's a more standard tool
 and would require less setup for other developers, and I kinda figure
 XDoclet2 is a dead-end now that Java5 has annotations and APT.
+
+- Any display object can be rendered into a bitmap using BitmapData.draw().
+http://kuwamoto.org/2006/05/02/how-to-make-a-flex-effect-explode-v-05/
+
+- Security.allowDomain() is used on a swf to allow other swfs to "script" it.
+We may need to have user-submitted swfs do this to allow advanced signalling
+to a swf. Or, if we serve all swfs from the same machine, we may need to look
+into doing some namespace business to prevent hackery (listening for passwords,
+or being able to arbitrarily examine variables, or pop up dialogs that look
+like msoy dialogs).
+
+- OpenLaszlo is something to consider, even if we don't end up using any of it,
+  it's a good resource for up-n-coming devkiddies.
