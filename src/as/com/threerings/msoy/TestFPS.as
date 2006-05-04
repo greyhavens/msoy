@@ -6,6 +6,7 @@ import flash.display.Loader;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.events.TimerEvent;
 
 import flash.net.URLRequest;
@@ -14,9 +15,19 @@ import flash.util.Timer;
 
 import mx.controls.HSlider;
 import mx.controls.Label;
+//import mx.controls.Loader;
+
+import mx.containers.Box;
 
 import mx.core.UIComponent;
 
+import mx.effects.Glow;
+import mx.effects.Move;
+import mx.effects.Rotate;
+import mx.effects.Sequence;
+import mx.effects.Zoom;
+
+import mx.events.EffectEvent;
 import mx.events.SliderEvent;
 
 public class TestFPS
@@ -24,6 +35,7 @@ public class TestFPS
     public function TestFPS (
         container :DisplayObjectContainer, fpsLabel :Label = null)
     {
+        //_container = container;
         var host :UIComponent = new UIComponent();
         host.width = 600;
         host.height = 400;
@@ -36,9 +48,9 @@ public class TestFPS
         _fpsLabel = fpsLabel;
 
         // set up the slider
-        var slider :HSlider = new HSlider();
+        var slider :HSlider = _slider = new HSlider();
         slider.minimum = 0;
-        slider.maximum = 200;
+        slider.maximum = 100;
         slider.snapInterval = 1;
         slider.liveDragging = true;
         slider.addEventListener(SliderEvent.CHANGE, sliderChanged);
@@ -49,9 +61,11 @@ public class TestFPS
 
         // set up the timer for every ms, which I believe will cause it
         // to fire at most once per frame
-        _timer = new Timer(1);
-        _timer.start();
-        _timer.addEventListener(TimerEvent.TIMER, tick);
+        //_timer = new Timer(1);
+        //_timer.start();
+        //_timer.addEventListener(TimerEvent.TIMER, tick);
+
+        container.stage.addEventListener(Event.ENTER_FRAME, tick);
 
         _lastTick = flash.util.getTimer();
     }
@@ -61,7 +75,7 @@ public class TestFPS
      */
     protected function sliderChanged (event :SliderEvent) :void
     {
-        var value :Number = event.value;
+        var value :Number = _slider.value; //event.value;
 
         // remove any display objects over the limit
         while (value < _media.length) {
@@ -71,17 +85,143 @@ public class TestFPS
 
         // add any new media necessary
         while (value > _media.length) {
-            var loader :Loader = new Loader();
+            //var loader :mx.controls.Loader = new mx.controls.Loader();
             //loader.cacheAsBitmap = true;
+            var loader :Loader = new Loader();
             var url :String =
                 (URLS[Math.floor(Math.random() * URLS.length)] as String);
+            //url += "?oid=" + Math.floor(Math.random() * int.MAX_VALUE);
             loader.load(new URLRequest(url));
-            loader.x = Math.random() * _container.width;
-            loader.y = Math.random() * _container.height;
-            loader.rotation = Math.random() * 360;
-            _container.addChildAt(loader, 0);
-            _media.push(loader);
+
+            var box :Box = new Box();
+            box.rawChildren.addChild(loader);
+            box.addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+            box.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+            box.x = Math.random() * _container.width;
+            box.y = Math.random() * _container.height;
+            box.rotation = Math.random() * 360;
+
+            flash.util.trace(flash.util.describeType(box));
+
+            _container.addChildAt(box, 0);
+            _media.push(box);
+
+            if (_media.length == 1) {
+                doNextMove();
+            }
         }
+    }
+
+    /**
+     * Callback when the mouse is over one of our media boxes.
+     */
+    protected function mouseOver (event :MouseEvent) :void
+    {
+        _inOuts++;
+        var comp :UIComponent = (event.target as UIComponent);
+
+        var glow :Glow = new Glow(comp);
+        glow.alphaFrom = 0;
+        glow.alphaTo = 1;
+        glow.blurXFrom = 0;
+        glow.blurXTo = 20;
+        glow.blurYFrom = 0;
+        glow.blurYTo = 20;
+        glow.color = 0x40e0e0;
+        glow.duration = 200;
+
+        glow.play()
+    }
+
+    /** Useful for debugging. */
+    protected function effectEnd (event :EffectEvent) :void
+    {
+        flash.util.trace("Effect ended: " + event.effectInstance + " : " +
+            event.target + " : " + event.currentTarget);
+    }
+
+    /** Useful for debugging. */
+    protected function effectStart (event :EffectEvent) :void
+    {
+        flash.util.trace("Effect start: " + event.effectInstance + " : " +
+            event.target + " : " + event.currentTarget);
+    }
+
+    /**
+     * Callback when the mouse leaves one of our media boxes.
+     */
+    protected function mouseOut (event :MouseEvent) :void
+    {
+        _inOuts--;
+        var comp :UIComponent = (event.target as UIComponent);
+
+        var glow :Glow = new Glow(comp);
+        glow.alphaFrom = 1;
+        glow.alphaTo = 0;
+        glow.blurXFrom = 20;
+        glow.blurXTo = 0;
+        glow.blurYFrom = 20;
+        glow.blurYTo = 0;
+        glow.color = 0x40e0e0;
+        glow.duration = 100;
+
+        glow.play()
+    }
+
+    /**
+     * Start the next media component randomly moving.
+     */
+    protected function doNextMove () :void
+    {
+        if (_media.length == 0) {
+            return;
+        }
+
+        // first pick a random UIComponent to move
+        var index :int = Math.floor(Math.random() * _media.length);
+        var comp :UIComponent = (_media[index] as UIComponent);
+
+        var move :Move = new Move(comp);
+        var theta :Number = Math.random() * Math.PI * 2;
+        move.xBy = 100 * Math.sin(theta);
+        move.yBy = 100 * Math.cos(theta);
+        move.duration = 1000;
+
+        move.addEventListener(EffectEvent.EFFECT_END, moveDidEnd);
+        move.play();
+
+
+        var rot :Rotate = new Rotate(comp);
+        rot.duration = 1000;
+        rot.angleFrom = comp.rotation;
+        rot.angleTo = comp.rotation + (90 * ((Math.random() < .5) ? 1 : -1));
+        rot.originX = comp.width / 2;
+        rot.originY = comp.height / 2;
+
+        rot.play();
+
+
+        var seq :Sequence = new Sequence(comp);
+        var zoomIn :Zoom = new Zoom(comp);
+        zoomIn.zoomHeightTo = 2;
+        zoomIn.zoomWidthTo = 2;
+        zoomIn.duration = 500;
+
+        var zoomOut :Zoom = new Zoom(comp);
+        zoomOut.zoomHeightTo = 1;
+        zoomOut.zoomWidthTo = 1;
+        zoomOut.duration = 500;
+
+        seq.addChild(zoomIn);
+        seq.addChild(zoomOut);
+
+        seq.play();
+
+    }
+
+    protected function moveDidEnd (event :EffectEvent) :void
+    {
+        doNextMove();
     }
 
     /**
@@ -89,15 +229,20 @@ public class TestFPS
      */
     protected function tick (event :Event) :void
     {
+        flash.util.trace("inOuts: " + _inOuts);
         for each (var disp :DisplayObject in _media) {
-            if (Math.random() > .25) {
-                continue;
-            }
-            var xdir :int = (Math.random() * 3) - 1;
-            var ydir :int = (Math.random() * 3) - 1;
-            disp.x += xdir;
-            disp.y += ydir;
+//            if (Math.random() > .25) {
+//                continue;
+//            }
+//            var xdir :int = (Math.random() * 3) - 1;
+//            var ydir :int = (Math.random() * 3) - 1;
+//            disp.x += xdir;
+//            disp.y += ydir;
             disp.rotation += 1;
+
+            if (!disp.hitTestPoint(disp.mouseX, disp.mouseY)) {
+                //(disp as UIComponent).endEffectsPlaying();
+            }
         }
 
         if (_fpsLabel == null) {
@@ -134,6 +279,8 @@ public class TestFPS
     /** The ms mark of the last tick. */
     protected var _lastTick :uint;
 
+    protected var _slider :HSlider;
+
     /** The set of media we're currently rotating. */
     protected var _media :Array = new Array();
 
@@ -142,6 +289,8 @@ public class TestFPS
 
     /** The time per tick for the last 24 ticks. */
     protected var _tickTimes :Array = new Array();
+
+    protected var _inOuts :int = 0;
 
     /** The content we'll swirl around. */
     protected const URLS :Array = [
