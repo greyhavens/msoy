@@ -435,3 +435,42 @@ like msoy dialogs).
 
 - OpenLaszlo is something to consider, even if we don't end up using any of it,
   it's a good resource for up-n-coming devkiddies.
+
+- For client .swfs, perhaps one bit of metadata is the msoy interfaces which
+it implements.
+
+For example, we may have an interface called Lens which means that the swf
+modifies graphically whatever's under it. Or we'll have one called Avatar
+that will support sending it different look commands.
+
+Probably it's possible for us to spawn a Java thread on the server and
+run the swf in it, poking at it to see which of our interfaces it implements.
+If it takes too long to run it can be rejected.
+
+- 117 design guidelines for flash usability
+  http://www.nngroup.com/reports/flash/
+
+  Surely we'll sensibly follow most of these, but there still may be a few
+  gems in there we should look at. $64 to download the pdf...
+
+- A discussion of standards complience with embedding flash on a web page.
+  http://www.alistapart.com/articles/flashsatay/
+
+- For a while I was thinking that we shouldn't use the flex components
+ (the widgets in the mx packages), but now I'm sure we should use them.
+ 1) They're pretty standard, even though they will be compiled in
+ 2) They can be styled with CSS, which is the only way to fly.
+ 3) The Effects that can be used are sweet, and almost certainly how we'll
+    want to do a lot of the animation, highlighting, etc.
+
+- Here's an important one: According to the documentation for EventDispatcher:
+      You should remove an event listener when it is no longer needed by
+      calling EventDispatcher.removeEventListener(). Failure to remove
+      unnecessary event listeners may have a negative impact on memory
+      usage. Any objects with registered event listeners are not removed
+      from memory because the garbage collector does not remove objects
+      that still have references.
+
+  I'd be extremely surprised if they could not collect objects that were
+  in an unconnected circular reference. Probably all event dispatchers and
+  listeners are referenced somewhere in the event system.
