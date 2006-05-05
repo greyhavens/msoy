@@ -7,6 +7,10 @@ import flash.display.LoaderInfo;
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
+import flash.system.SecurityDomain;
+
 import flash.net.URLRequest;
 
 import flash.util.trace;
@@ -33,6 +37,11 @@ public class ScreenMedia extends Box
         _desc = desc;
 
         var loader :Loader = new Loader();
+        var loadCtx :LoaderContext = new LoaderContext(
+                true,
+                ApplicationDomain.currentDomain,
+                SecurityDomain.currentDomain);
+        //loader.load(new URLRequest(desc.URL), loadCtx);
         loader.load(new URLRequest(desc.URL));
         loader.loadeeInfo.addEventListener(Event.COMPLETE, loadingComplete);
 
@@ -41,6 +50,11 @@ public class ScreenMedia extends Box
         if (desc.isInteractive()) {
             addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
             addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+        }
+
+        if (desc.width != -1 && desc.height != -1) {
+            width = desc.width;
+            height = desc.height;
         }
     }
 
@@ -66,6 +80,14 @@ public class ScreenMedia extends Box
 
         // stop listening (good practice)
         info.removeEventListener(Event.COMPLETE, loadingComplete);
+
+        // Try accessing the 'content' property and see if that generates
+        // a security error. If so, leave it where it is.
+        try {
+            info.content; // access
+        } catch (err :SecurityError) {
+            return;
+        }
 
         // remove all our "raw" children, which will remove the loader
         for (var ii :int = rawChildren.numChildren - 1; ii >= 0; ii--) {

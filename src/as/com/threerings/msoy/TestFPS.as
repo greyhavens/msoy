@@ -91,7 +91,8 @@ public class TestFPS
 
             var url :String =
                 (URLS[Math.floor(Math.random() * URLS.length)] as String);
-            var screenMedia :ScreenMedia = new ScreenMedia(new MediaData(url));
+            var desc :MediaData = new MediaData(url);
+            var screenMedia :ScreenMedia = new ScreenMedia(desc);
             screenMedia.x = Math.random() * _container.width;
             screenMedia.y = Math.random() * _container.height;
             screenMedia.rotation = Math.random() * 360;
@@ -243,7 +244,8 @@ public class TestFPS
         "http://www.puzzlepirates.com/images/index/screen3.png",
         "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
         "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf"
+        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
+        "http://www.youtube.com/v/SbY0Jh9_RJ8"
     ];
 }
 }

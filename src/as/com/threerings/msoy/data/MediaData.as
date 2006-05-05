@@ -6,9 +6,11 @@ package com.threerings.msoy.data {
 public class MediaData
 {
     /** Temporary constructor. */
-    public function MediaData (url :String)
+    public function MediaData (url :String, width :int = -1, height :int = -1)
     {
         _url = url;
+        _width = width;
+        _height = height;
     }
 
     /**
@@ -17,6 +19,19 @@ public class MediaData
     public function get URL () :String
     {
         return _url;
+    }
+
+    /**
+     * Return the width of the media, or -1 if unknown.
+     */
+    public function get width () :int
+    {
+        return _width;
+    }
+
+    public function get height () :int
+    {
+        return _height;
     }
 
     /**
@@ -29,6 +44,9 @@ public class MediaData
 
     /** temp */
     protected var _url :String;
+
+    /** Width and height, if known. */
+    protected var _width :int, _height :int;
 }
 
 }
