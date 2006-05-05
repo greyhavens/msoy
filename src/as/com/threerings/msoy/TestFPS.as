@@ -30,6 +30,9 @@ import mx.effects.Zoom;
 import mx.events.EffectEvent;
 import mx.events.SliderEvent;
 
+import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.ui.ScreenMedia;
+
 public class TestFPS
 {
     public function TestFPS (
@@ -85,52 +88,21 @@ public class TestFPS
 
         // add any new media necessary
         while (value > _media.length) {
-            //var loader :mx.controls.Loader = new mx.controls.Loader();
-            //loader.cacheAsBitmap = true;
-            var loader :Loader = new Loader();
+
             var url :String =
                 (URLS[Math.floor(Math.random() * URLS.length)] as String);
-            //url += "?oid=" + Math.floor(Math.random() * int.MAX_VALUE);
-            loader.load(new URLRequest(url));
+            var screenMedia :ScreenMedia = new ScreenMedia(new MediaData(url));
+            screenMedia.x = Math.random() * _container.width;
+            screenMedia.y = Math.random() * _container.height;
+            screenMedia.rotation = Math.random() * 360;
 
-            var box :Box = new Box();
-            box.rawChildren.addChild(loader);
-            box.addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
-            box.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-            box.x = Math.random() * _container.width;
-            box.y = Math.random() * _container.height;
-            box.rotation = Math.random() * 360;
-
-            flash.util.trace(flash.util.describeType(box));
-
-            _container.addChildAt(box, 0);
-            _media.push(box);
+            _container.addChildAt(screenMedia, 0);
+            _media.push(screenMedia);
 
             if (_media.length == 1) {
                 doNextMove();
             }
         }
-    }
-
-    /**
-     * Callback when the mouse is over one of our media boxes.
-     */
-    protected function mouseOver (event :MouseEvent) :void
-    {
-        _inOuts++;
-        var comp :UIComponent = (event.target as UIComponent);
-
-        var glow :Glow = new Glow(comp);
-        glow.alphaFrom = 0;
-        glow.alphaTo = 1;
-        glow.blurXFrom = 0;
-        glow.blurXTo = 20;
-        glow.blurYFrom = 0;
-        glow.blurYTo = 20;
-        glow.color = 0x40e0e0;
-        glow.duration = 200;
-
-        glow.play()
     }
 
     /** Useful for debugging. */
@@ -145,27 +117,6 @@ public class TestFPS
     {
         flash.util.trace("Effect start: " + event.effectInstance + " : " +
             event.target + " : " + event.currentTarget);
-    }
-
-    /**
-     * Callback when the mouse leaves one of our media boxes.
-     */
-    protected function mouseOut (event :MouseEvent) :void
-    {
-        _inOuts--;
-        var comp :UIComponent = (event.target as UIComponent);
-
-        var glow :Glow = new Glow(comp);
-        glow.alphaFrom = 1;
-        glow.alphaTo = 0;
-        glow.blurXFrom = 20;
-        glow.blurXTo = 0;
-        glow.blurYFrom = 20;
-        glow.blurYTo = 0;
-        glow.color = 0x40e0e0;
-        glow.duration = 100;
-
-        glow.play()
     }
 
     /**
@@ -229,7 +180,6 @@ public class TestFPS
      */
     protected function tick (event :Event) :void
     {
-        flash.util.trace("inOuts: " + _inOuts);
         for each (var disp :DisplayObject in _media) {
 //            if (Math.random() > .25) {
 //                continue;
@@ -239,10 +189,6 @@ public class TestFPS
 //            disp.x += xdir;
 //            disp.y += ydir;
             disp.rotation += 1;
-
-            if (!disp.hitTestPoint(disp.mouseX, disp.mouseY)) {
-                //(disp as UIComponent).endEffectsPlaying();
-            }
         }
 
         if (_fpsLabel == null) {
@@ -289,8 +235,6 @@ public class TestFPS
 
     /** The time per tick for the last 24 ticks. */
     protected var _tickTimes :Array = new Array();
-
-    protected var _inOuts :int = 0;
 
     /** The content we'll swirl around. */
     protected const URLS :Array = [
