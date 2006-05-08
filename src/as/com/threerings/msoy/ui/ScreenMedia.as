@@ -51,14 +51,10 @@ public class ScreenMedia extends Box
         }
 
         var loadCtx :LoaderContext = new LoaderContext(
-                true,
-                null, null);
-                /*
+                false,
                 ApplicationDomain.currentDomain,
                 SecurityDomain.currentDomain);
-                */
         loader.load(new URLRequest(desc.URL), loadCtx);
-        //loader.load(new URLRequest(desc.URL));
         loader.loadeeInfo.addEventListener(Event.COMPLETE, loadingComplete);
 
         rawChildren.addChild(loader);
@@ -68,6 +64,7 @@ public class ScreenMedia extends Box
             addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
         }
 
+        // I don't know if these lines are necessary: remove?
         if (desc.width != -1 && desc.height != -1) {
             width = desc.width;
             height = desc.height;
