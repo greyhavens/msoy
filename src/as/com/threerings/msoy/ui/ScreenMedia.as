@@ -3,6 +3,7 @@ package com.threerings.msoy.ui {
 import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
+import flash.display.Shape;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -35,14 +36,29 @@ public class ScreenMedia extends Box
     public function ScreenMedia (desc :MediaData)
     {
         _desc = desc;
-
         var loader :Loader = new Loader();
+
+        // if we know the size of the media, create a mask to prevent
+        // it from drawing outside those bounds
+        if (desc.width != -1 && desc.height != -1) {
+            var mask :Shape = new Shape();
+            mask.graphics.beginFill(0xFFFFFF);
+            mask.graphics.drawRect(0, 0, desc.width, desc.height);
+            mask.graphics.endFill();
+            // the mask must be added to the display list (which is wacky)
+            rawChildren.addChild(mask);
+            loader.mask = mask;
+        }
+
         var loadCtx :LoaderContext = new LoaderContext(
                 true,
+                null, null);
+                /*
                 ApplicationDomain.currentDomain,
                 SecurityDomain.currentDomain);
-        //loader.load(new URLRequest(desc.URL), loadCtx);
-        loader.load(new URLRequest(desc.URL));
+                */
+        loader.load(new URLRequest(desc.URL), loadCtx);
+        //loader.load(new URLRequest(desc.URL));
         loader.loadeeInfo.addEventListener(Event.COMPLETE, loadingComplete);
 
         rawChildren.addChild(loader);
@@ -64,11 +80,17 @@ public class ScreenMedia extends Box
     public function get media () :DisplayObject
     {
         // untested
-        var disp :DisplayObject = (rawChildren.getChildAt(0) as DisplayObject)
-        if (disp is Loader) {
-            return (disp as Loader).content;
+        // TODO: needed? remove?
+        for (var ii :int = rawChildren.numChildren - 1; ii >= 0; ii--) {
+            var disp :DisplayObject = rawChildren.getChildAt(ii);
+            if (disp is Loader) {
+                return (disp as Loader).content;
+
+            } else if (!(disp is Shape)) {
+                return disp;
+            }
         }
-        return disp;
+        return null; // never found!
     }
 
     /**
@@ -96,6 +118,12 @@ public class ScreenMedia extends Box
 
         // now add the content as our child, letting the Loader get gc'd.
         rawChildren.addChild(info.content);
+
+        // transfer the mask, if any
+        info.content.mask = info.loader.mask;
+        if (info.content.mask != null) {
+            rawChildren.addChild(info.content.mask);
+        }
     }
 
     /**
