@@ -6,6 +6,7 @@ import flash.display.LoaderInfo;
 import flash.display.Shape;
 
 import flash.events.Event;
+import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
 
 import flash.system.ApplicationDomain;
@@ -22,6 +23,8 @@ import mx.effects.Glow;
 
 import mx.events.EffectEvent;
 
+import com.threerings.media.image.ImageUtil;
+
 import com.threerings.msoy.data.MediaData;
 
 /**
@@ -36,7 +39,11 @@ public class ScreenMedia extends Box
     public function ScreenMedia (desc :MediaData)
     {
         _desc = desc;
+
+        // create our loader and set up some event listeners
         var loader :Loader = new Loader();
+        loader.loadeeInfo.addEventListener(Event.COMPLETE, loadingComplete);
+        loader.loadeeInfo.addEventListener(IOErrorEvent.IO_ERROR, loadError);
 
         // if we know the size of the media, create a mask to prevent
         // it from drawing outside those bounds
@@ -50,13 +57,12 @@ public class ScreenMedia extends Box
             loader.mask = mask;
         }
 
+        // start it loading, add it as a child
         var loadCtx :LoaderContext = new LoaderContext(
                 false,
                 ApplicationDomain.currentDomain,
                 SecurityDomain.currentDomain);
         loader.load(new URLRequest(desc.URL), loadCtx);
-        loader.loadeeInfo.addEventListener(Event.COMPLETE, loadingComplete);
-
         rawChildren.addChild(loader);
 
         if (desc.isInteractive()) {
@@ -91,14 +97,46 @@ public class ScreenMedia extends Box
     }
 
     /**
+     * Remove our listeners from the LoaderInfo object.
+     */
+    protected function removeListeners (info :LoaderInfo) :void
+    {
+        info.removeEventListener(Event.COMPLETE, loadingComplete);
+        info.removeEventListener(IOErrorEvent.IO_ERROR, loadError);
+    }
+
+    /**
+     * Callback function.
+     */
+    protected function loadError (event :IOErrorEvent) :void
+    {
+        var info :LoaderInfo = (event.target as LoaderInfo);
+        removeListeners(info);
+
+        // remove all children
+        for (var ii :int = rawChildren.numChildren - 1; ii >= 0; ii--) {
+            rawChildren.removeChildAt(ii);
+        }
+
+        // create a 'broken media' image and use that instead
+        var w :int = _desc.width;
+        var h :int = _desc.height;
+        if (w == -1) {
+            w = 100;
+        }
+        if (h == -1) {
+            h = 100;
+        }
+        rawChildren.addChild(ImageUtil.createErrorImage(w, h));
+    }
+
+    /**
      * Callback function.
      */
     protected function loadingComplete (event :Event) :void
     {
         var info :LoaderInfo = (event.target as LoaderInfo);
-
-        // stop listening (good practice)
-        info.removeEventListener(Event.COMPLETE, loadingComplete);
+        removeListeners(info);
 
         // Try accessing the 'content' property and see if that generates
         // a security error. If so, leave it where it is.
