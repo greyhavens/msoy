@@ -474,3 +474,36 @@ If it takes too long to run it can be rejected.
   I'd be extremely surprised if they could not collect objects that were
   in an unconnected circular reference. Probably all event dispatchers and
   listeners are referenced somewhere in the event system.
+
+- An easy hack for dynamic sound generation in flash:
+  http://blog.davr.org/2006/04/21/dynamic-sound-in-85/
+
+- LoaderInfo.sharedEvents can be used to communicate between another swf
+  that is running in a different security domain. That might be our ticket.
+
+- If we do embed javascript inside our web pages and want to cross-script
+  from inside our flash, we may want to serve up our swfs and client
+  swfs from different servers. Perhaps one address for our html and our swf,
+  and a seperate server address for the download server.
+
+  Use: ExternalInterface, AllowScriptAccess param in object/embed tags.
+
+- We may (by default) create up to 100k of data on a user's drive using
+  SharedObject. Users may restrict this to 0k, so we can't depend on it.
+
+  SharedObject appears to also be a (nth) method of doing client-server
+  communication, in this case something close to a dobj.
+
+- ActionScript is weird and fucked-up. For instance, the mask property of a
+  DisplayObject can be used to ensure that some DisplayObject does not
+  draw outside the bounds defined by the mask. This is useful when loading
+  content in an untrusted swf, for example. The weird bit is that the mask
+  must also be added to the display hierarchy ("display list" in the
+  flash parlance) so that it can properly scale and such when such a thing
+  is applied to the hierarchy. Somehow though, because it's set as the mask
+  on another object, it won't itself draw. Fucked up- why can't it just
+  know to scale when it's a mask rather than know not to draw when it's a mask?
+
+  Or for example, adding a DisplayObject underneath an mx container. It's not
+  permitted, unless you add the object to the "rawChildren" list. Why not
+  just let it happen the normal way and cope?

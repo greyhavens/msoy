@@ -15,6 +15,12 @@
 
 
 - Work on client UI stuff: avatars, scene setup and rendering.
-  Have clickable elements always 'glow blue' or something standard when
-  hovered. Handle clicking in the scene to move locations- fake the comm
-  to the server: just report success.
+  - Handle clicking in the scene to move locations- fake the comm
+    to the server: just report success.
+
+- Adding a youtube video to our client screws up the scale. Fix? We should
+  probably generate some "worst case" swfs that try to fuck the stage or
+  the VM as much as possible, and safeguard against things.
+
+- The error images are suddenly having their black bits go transparent
+  during the rotate/move effects. Strange!
