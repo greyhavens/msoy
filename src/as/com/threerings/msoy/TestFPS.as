@@ -11,6 +11,8 @@ import flash.events.TimerEvent;
 
 import flash.net.URLRequest;
 
+import flash.system.Security;
+
 import flash.util.Timer;
 
 import mx.controls.HSlider;
@@ -23,6 +25,7 @@ import mx.core.UIComponent;
 
 import mx.effects.Glow;
 import mx.effects.Move;
+import mx.effects.Parallel;
 import mx.effects.Rotate;
 import mx.effects.Sequence;
 import mx.effects.Zoom;
@@ -38,6 +41,8 @@ public class TestFPS
     public function TestFPS (
         container :DisplayObjectContainer, fpsLabel :Label = null)
     {
+        Security.allowDomain("*");
+
         //_container = container;
         var host :UIComponent = new UIComponent();
         host.width = 600;
@@ -92,6 +97,9 @@ public class TestFPS
             var url :String =
                 (URLS[Math.floor(Math.random() * URLS.length)] as String);
             var desc :MediaData = new MediaData(url);
+            //if (url.indexOf("tube") != -1) {
+            //    desc = new MediaData(url, 100, 100);
+            //}
             var screenMedia :ScreenMedia = new ScreenMedia(desc);
             screenMedia.x = Math.random() * _container.width;
             screenMedia.y = Math.random() * _container.height;
@@ -139,19 +147,12 @@ public class TestFPS
         move.yBy = 100 * Math.cos(theta);
         move.duration = 1000;
 
-        move.addEventListener(EffectEvent.EFFECT_END, moveDidEnd);
-        move.play();
-
-
         var rot :Rotate = new Rotate(comp);
         rot.duration = 1000;
         rot.angleFrom = comp.rotation;
         rot.angleTo = comp.rotation + (90 * ((Math.random() < .5) ? 1 : -1));
         rot.originX = comp.width / 2;
         rot.originY = comp.height / 2;
-
-        rot.play();
-
 
         var seq :Sequence = new Sequence(comp);
         var zoomIn :Zoom = new Zoom(comp);
@@ -167,8 +168,17 @@ public class TestFPS
         seq.addChild(zoomIn);
         seq.addChild(zoomOut);
 
-        seq.play();
+        var allMoves :Parallel = new Parallel(comp);
+        allMoves.addChild(move);
+        allMoves.addChild(rot);
+        //allMoves.addChild(seq);
 
+        /*
+        flash.util.trace(
+            "allMoves props: " + allMoves.getAffectedProperties());
+        */
+        allMoves.addEventListener(EffectEvent.EFFECT_END, moveDidEnd);
+        allMoves.play();
     }
 
     protected function moveDidEnd (event :EffectEvent) :void
@@ -239,13 +249,15 @@ public class TestFPS
 
     /** The content we'll swirl around. */
     protected const URLS :Array = [
-        "http://bogocorp.com/bogologo.gif",
+        //"http://bogocorp.com/blaaaah.gif",
+        "http://tasman.sea.earth.threerings.net/~ray/Joshua%20Tree.flv",
         "http://www.puzzlepirates.com/images/index/screen2.png",
-        "http://www.puzzlepirates.com/images/index/screen3.png",
-        "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
+//        "http://www.puzzlepirates.com/images/index/screen3.png",
+//        "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
         "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
-        "http://www.youtube.com/v/SbY0Jh9_RJ8"
+//        "http://www.youtube.com/v/SbY0Jh9_RJ8",
+//        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
+        "http://bogocorp.com/bogologo.gif"
     ];
 }
 }
