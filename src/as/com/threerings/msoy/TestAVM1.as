@@ -10,7 +10,7 @@ import flash.events.TimerEvent;
 
 import flash.net.URLRequest;
 
-import flash.util.Timer;
+import flash.utils.Timer;
 
 public class TestAVM1
 {
@@ -62,7 +62,7 @@ public class TestAVM1
             if (l.content != null) {
                 var doc :DisplayObjectContainer = l.parent;
                 doc.removeChild(_disp);
-                flash.util.trace("removed loader");
+                trace("removed loader");
 
                 _disp = l.content;
 
@@ -77,7 +77,7 @@ public class TestAVM1
         var n :Number = new Date().getTime();
         var diff :Number = n - _lastRender;
         _lastRender = n;
-        flash.util.trace("render: " + diff);
+        trace("render: " + diff);
     }
 
     protected static var _timer :Timer;

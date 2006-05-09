@@ -9,13 +9,16 @@ import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
 
+import flash.media.Video;
+
+import flash.net.NetConnection;
+import flash.net.NetStream;
+
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.system.SecurityDomain;
 
 import flash.net.URLRequest;
-
-import flash.util.trace;
 
 import mx.containers.Box;
 
@@ -39,11 +42,32 @@ public class ScreenMedia extends Box
     public function ScreenMedia (desc :MediaData)
     {
         _desc = desc;
+        var url :String = desc.URL;
+
+/** Experimental
+        if (url.toLowerCase().lastIndexOf(".flv") ==
+                url.length - ".flv".length) {
+            var nc :NetConnection = new NetConnection();
+            nc.connect(url);
+
+            var stream :NetStream = new NetStream(nc);
+
+            var video :Video = new Video();
+            video.attachNetStream(stream);
+
+            rawChildren.addChild(video);
+            stream.play();
+
+            return;
+        }
+**/
 
         // create our loader and set up some event listeners
         var loader :Loader = new Loader();
-        loader.loadeeInfo.addEventListener(Event.COMPLETE, loadingComplete);
-        loader.loadeeInfo.addEventListener(IOErrorEvent.IO_ERROR, loadError);
+        loader.contentLoaderInfo.addEventListener(
+            Event.COMPLETE, loadingComplete);
+        loader.contentLoaderInfo.addEventListener(
+            IOErrorEvent.IO_ERROR, loadError);
 
         // if we know the size of the media, create a mask to prevent
         // it from drawing outside those bounds
@@ -62,7 +86,7 @@ public class ScreenMedia extends Box
                 false,
                 ApplicationDomain.currentDomain,
                 SecurityDomain.currentDomain);
-        loader.load(new URLRequest(desc.URL), loadCtx);
+        loader.load(new URLRequest(url), loadCtx);
         rawChildren.addChild(loader);
 
         if (desc.isInteractive()) {

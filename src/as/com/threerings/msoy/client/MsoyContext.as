@@ -10,7 +10,6 @@ import com.threerings.util.MessageManager;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DObjectManager;
 
-import com.threerings.crowd.client.ChatDirector;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;

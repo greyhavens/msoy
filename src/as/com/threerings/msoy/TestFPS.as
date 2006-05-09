@@ -13,7 +13,7 @@ import flash.net.URLRequest;
 
 import flash.system.Security;
 
-import flash.util.Timer;
+import flash.utils.Timer;
 
 import mx.controls.HSlider;
 import mx.controls.Label;
@@ -75,7 +75,7 @@ public class TestFPS
 
         container.stage.addEventListener(Event.ENTER_FRAME, tick);
 
-        _lastTick = flash.util.getTimer();
+        _lastTick = flash.utils.getTimer();
     }
 
     /**
@@ -117,14 +117,14 @@ public class TestFPS
     /** Useful for debugging. */
     protected function effectEnd (event :EffectEvent) :void
     {
-        flash.util.trace("Effect ended: " + event.effectInstance + " : " +
+        trace("Effect ended: " + event.effectInstance + " : " +
             event.target + " : " + event.currentTarget);
     }
 
     /** Useful for debugging. */
     protected function effectStart (event :EffectEvent) :void
     {
-        flash.util.trace("Effect start: " + event.effectInstance + " : " +
+        trace("Effect start: " + event.effectInstance + " : " +
             event.target + " : " + event.currentTarget);
     }
 
@@ -174,7 +174,7 @@ public class TestFPS
         //allMoves.addChild(seq);
 
         /*
-        flash.util.trace(
+        trace(
             "allMoves props: " + allMoves.getAffectedProperties());
         */
         allMoves.addEventListener(EffectEvent.EFFECT_END, moveDidEnd);
@@ -206,7 +206,7 @@ public class TestFPS
             return;
         }
 
-        var curTime :uint = flash.util.getTimer();
+        var curTime :uint = flash.utils.getTimer();
         _tickTimes.push(curTime - _lastTick);
         _lastTick = curTime;
 
@@ -224,7 +224,7 @@ public class TestFPS
 
     protected function willRender (event :Event) :void
     {
-        flash.util.trace("willRender(" + event + ")");
+        trace("willRender(" + event + ")");
     }
 
     /* The container to which we add our glorious bits. */
@@ -250,12 +250,12 @@ public class TestFPS
     /** The content we'll swirl around. */
     protected const URLS :Array = [
         //"http://bogocorp.com/blaaaah.gif",
-        "http://tasman.sea.earth.threerings.net/~ray/Joshua%20Tree.flv",
+//        "http://tasman.sea.earth.threerings.net/~ray/Joshua%20Tree.flv",
         "http://www.puzzlepirates.com/images/index/screen2.png",
 //        "http://www.puzzlepirates.com/images/index/screen3.png",
 //        "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
         "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
-//        "http://www.youtube.com/v/SbY0Jh9_RJ8",
+        "http://www.youtube.com/v/SbY0Jh9_RJ8",
 //        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
         "http://bogocorp.com/bogologo.gif"
     ];
