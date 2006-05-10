@@ -10,19 +10,11 @@ ROOT=`cd $ROOT; cd ..; pwd`
 
 java -jar "$ROOT/lib/as-compiler/lib/mxmlc.jar" \
     -load-config $ROOT/lib/as-compiler/frameworks/flex-config.xml \
-    -compiler.optimize \
-    -compiler.show-binding-warnings \
-    -compiler.show-coach-warnings \
-    -compiler.show-deprecation-warnings \
-    -compiler.strict \
-    -compiler.verbose-stacktraces \
-    -compiler.warn-bad-type-cast \
-    -compiler.warn-bad-undefined-comparision \
-    -compiler.warn-constructor-returns-value  \
-    -compiler.warn-no-type-decl \
-    -compiler.warn-var-hidden-by-function \
-    -compiler.warn-wrong-arg-type \
-    -compiler.warn-wrong-number-of-args \
-    -compiler.actionscript-classpath="/export/msoy/projects/narya/src/as/" \
-    -compiler.actionscript-classpath="/export/msoy/src/as/" \
+    -compiler.warn-no-constructor=false \
+    -compiler.show-dependency-warnings=true \
+    -compiler.warn-undefined-reference=true \
+    -compiler.verbose-stacktraces=true \
+    -compiler.source-path="/export/msoy/projects/narya/src/as/" \
+    -compiler.source-path="/export/msoy/src/as/" \
     $ROOT/src/mxml/Msoy.mxml
+#    $ROOT/src/as/AvatarTest.as
