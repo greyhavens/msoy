@@ -7,6 +7,7 @@ import mx.controls.TextArea;
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.UserMessage;
 
 public class ChatTextArea extends TextArea
     implements ChatDisplay
@@ -31,8 +32,11 @@ public class ChatTextArea extends TextArea
     // documentation inherited from interface ChatDisplay
     public function displayMessage (msg :ChatMessage) :void
     {
-        this.htmlText += "<font color=\"red\">&lt;TODO&gt;</font> " +
-            msg.message;
+        if (msg is UserMessage) {
+            this.htmlText += "<font color=\"red\">&lt;" +
+                (msg as UserMessage).speaker + "&gt;</font> ";
+        }
+        this.htmlText += msg.message;
     }
 
     /**
