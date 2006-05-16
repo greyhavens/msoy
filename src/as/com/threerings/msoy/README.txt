@@ -24,19 +24,6 @@ Design decisions
 - We could use the setter methods on DObject properties to generate dobj
   events, but so far I haven't gone there.
 
-- We need a realistic HashMap implementation. Using Object properties
-  (a-la my SimpleMap) is not going to cut it because keys must always
-  be Strings.<strike>and there's no way to *really* remove a value from
-  an Object (you can set the property to null, but now the property is
-  forever defined: the key is not cleared)</strike>
-  ***Update: the 'delete' operator removes properties.
-
-  mx.utils.UIDUtil.getUID() can be used to generate a (huge) unique String
-  for any object for use as a key or something.
-
-  It might be worth waiting, I think it's very probable that Adobe will
-  add in a Hashtable class to the standard libraries...
-
 - Since we cannot do streaming via reflection like we do in Java, each
   Streamable class needs to define its own readObject/writeObject methods.
   At one point we thought that maybe we could just write the class
