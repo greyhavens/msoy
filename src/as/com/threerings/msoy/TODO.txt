@@ -24,3 +24,42 @@
 
 - The error images are suddenly having their black bits go transparent
   during the rotate/move effects. Strange!
+
+- Determine security settings for loading sub-swfs.
+
+  - Should they be able to access the network?
+    - I think "no", because they can soak bandwidth, security concerns.
+  - min/max sizes
+    - ???
+  - can they be invisible?
+    - hard to enforce if animating
+  - sound?
+    - enforceable?
+
+
+- Determine the method of communication with "avatar swfs",
+  - Direct calls to an API
+    - Issue: Security
+  - LocalConnection
+    - Issue: No correllation between DisplayObject and the connection.
+      Solution: append object id to URL so that the swf may examine it
+                and know which named connection to use.
+                However, this breaks browser caching.
+    - Issue: swfs may listen to invalid connection names or send messages
+             to other swf LocalConnections.
+      Solution: (partial) We place the media server is in a different domain
+               (I think that for security purposes a domain is the full
+                server name, so this may already be true) and client swfs
+                only allow the domain that serves the msoy client swf.
+  - Events passed down from the Loader.
+    - This kicks ass, and the events are passed through Security and
+      ApplicationDomains. It almost seems a loophole and I wonder if custom
+      event classes work...
+    - Issue: I'm not sure if there's an equivalent for older swfs.
+      Still researching.
+  - [There may be other ways to inter-communicate]
+
+  - I just talked a bit with Mike. What we're going to aim for is a hybrid
+    solution for now (assuming the event thing doesn't work with AVM1)
+    and use the event thing for newer swfs and the non-optimal LocalConnection
+    for older ones. The upgrade path is towards The Goodness.

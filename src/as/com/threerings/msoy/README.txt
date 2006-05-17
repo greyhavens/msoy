@@ -1,16 +1,6 @@
 This document contains a couple of notes about some design decisions
 and some notes about flash that you may find useful.
 
-TODO
-----
-- Write code that processes a dobj class in java and outputs the
-  corresponding class in actionscript. This is sorta fucked because
-  we want to exclude things not applicable to client code, not because
-  we're trying to save every byte in the class definition, but because
-  some of those methods involve whole classes we don't need on the as client.
-- Write code that generates actionscript service, listener and marshaller
-  classes from a java Service class definition.
-
 
 Design decisions
 ----------------
@@ -64,13 +54,11 @@ Notes
 
 
   To me, this makes it seem as if the helper class is now globally scoped,
-  which of course is the exact opposite of what is desired. This may
-  not be the case, I haven't played with it much yet.
+  but luckily it's not. Instead it is only visible to the class in whose file
+  it lives.
 
   What especially sucks is that any imports must be repeated down below
   for the helper class, including importing the class defined just above.
-  Again, it's unclear to me whether those imports are now globally scoped
-  and will spill over onto other files... What a giant pain.
 
   ***Update: it turns out that the primary class in a file may be declared
   with internal accessibility. So HelperClass could live in its own file
@@ -83,16 +71,9 @@ Notes
   we'll want to put it into a different domain so that nothing malicious
   can be done to our classes.
 
-- <strike>constructors do not defaultly call super()- be sure to do it explicitely.
-  Maybe we should get in the habit of doing it in Java for consistency and
-  explicitness.</strike>
-  CORRECTION: super() is called implicitely, just as in Java.
-
-- It's annoying how there can be only one constructor: if you have classA
-  that has a 1-arg constructor and it is extended by classB, then the implicit
-  super() is inserted, but this results in runtime error because the classA
-  constructor is not being passed an arg. You'd think this would be caught
-  at compile time...
+- A constructor implicitely calls super(), just as in Java, however
+  if the super constructor cannot take 0 args, an error will be thrown
+  at runtime.
 
 - The RENDER Event is dispatched prior to each rendering, it's
   basically like tick(): it gives anything that cares a chance to update    
@@ -225,7 +206,7 @@ ActionScript
 
 
 - AS3.0 allows for a bit of introspection, using the function
-  flash.util.describeType(). The only problem is that if you pass in a Class
+  flash.utils.describeType(). The only problem is that if you pass in a Class
   then it always says that it's final (I guess it's the class's Class). It
   will dump information identical to the information given about an instance
   except that the dynamic/final information is lost. This is preventing
@@ -239,19 +220,6 @@ ActionScript
   performance issues: accessing a simple property of a variable
   (like myArray.length) may actually be executing arbitrary code, possibly
   creating many objects, each time.
-
-- <strike>Classes without a constructor cannot be instantiated. This is a
-  runtime error (grraah!).</strike>
-  There is a compiler option "-compiler.warn-no-constructor"
-  but it generates a flotilla of warnings from standard classes in the flash
-  library, so it's slightly useless.
-  ***Update: What the heck. I noticed today that DSet has no constructor
-  and I've never had any trouble instantiating those. Why would not having
-  a constructor be an error for some classes and not others? Grraahh!
-  ***Update: The language spec says that a default (no arg) constructor
-  is created implicitely if one is not defined. Probably when I got
-  the error that a class had no constructor it was some sort of compiler
-  bug.
 
 - Static initializers can be emulated:
   public class A
@@ -333,7 +301,7 @@ public class Singleton
 }
 } // end: package
 
-public class SecretClass // inaccessible outside this file
+class SecretClass // inaccessible outside this file
 {
 }
 
@@ -494,3 +462,15 @@ If it takes too long to run it can be rejected.
   Or for example, adding a DisplayObject underneath an mx container. It's not
   permitted, unless you add the object to the "rawChildren" list. Why not
   just let it happen the normal way and cope?
+
+- I think it might be reasonable to load user swfs into a child of our
+  ApplicationDomain (see notes in LoaderContext docs). This way user
+  swfs can use our classes as loaded by the msoy client without
+  needing to include them. We'll surely want that for some of the advanced
+  API options. It might be keen for us to process user-submitted swfs and
+  strip out any linked-in classes that we define.
+
+- That becomes a possible bit of metadata for a swf: whether it is truly
+  standalone or depends on our classes being loaded. If we ever wanted to
+  display a non-standalone swf we could always wrap it in another swf
+  that loaded and defined our API classes.
