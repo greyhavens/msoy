@@ -9,10 +9,13 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
+import flash.events.SecurityErrorEvent;
+import flash.events.StatusEvent;
 import flash.events.TextEvent;
 
 import flash.media.Video;
 
+import flash.net.LocalConnection;
 import flash.net.NetConnection;
 import flash.net.NetStream;
 
@@ -46,7 +49,13 @@ public class ScreenMedia extends Box
     public function ScreenMedia (desc :MediaData)
     {
         _desc = desc;
+        _id = int(Math.random() * int.MAX_VALUE);
+
         var url :String = desc.URL;
+        if (desc.isAVM1) {
+            // TODO
+            url += "?oid=" + _id;
+        }
 
 /** Experimental
         if (url.toLowerCase().lastIndexOf(".flv") ==
@@ -131,13 +140,39 @@ public class ScreenMedia extends Box
 
     /**
      * Send a message to the client swf that we're representing.
-     * Returns true, unless the calling swf intercepts the event
-     * and calls preventDefault() on it.
      */
-    public function sendMessage (type :String, msg :String) :Boolean
+    public function sendMessage (type :String, msg :String) :void
     {
+        trace("sent [" + type + "=" + msg + "]");
         // simple post an event across the security boundary
-        return _dispatch.dispatchEvent(new TextEvent(type, false, false, msg));
+        _dispatch.dispatchEvent(new TextEvent(type, false, false, msg));
+
+        if (_desc.isAVM1) {
+            if (_oldDispatch == null) {
+                _oldDispatch = new LocalConnection();
+                _oldDispatch.allowDomain("*");
+                _oldDispatch.addEventListener(
+                    StatusEvent.STATUS, onLocalConnStatus);
+            }
+            trace("dispatching on \"_msoy" + _id + "\".");
+            try {
+                _oldDispatch.send("_msoy" + _id, type, msg);
+            } catch (e :Error) {
+                // nada
+            }
+        }
+    }
+
+    /**
+     * A callback called when there is a status event from using
+     * the local connection.
+     */
+    protected static function onLocalConnStatus (event :StatusEvent) :void
+    {
+        // This method exists because if we don't eat status-error messages
+        // then they end up bubbling up somewhere else.
+
+        //trace("statusEvent: " + event);
     }
 
     protected function getContext (url :String) :LoaderContext
@@ -281,6 +316,8 @@ public class ScreenMedia extends Box
     }
 */
 
+    protected var _id :int;
+
     /** Our Media descripter. */
     protected var _desc :MediaData;
 
@@ -289,6 +326,9 @@ public class ScreenMedia extends Box
 
     /** The glow effect used for mouse hovering. */
     protected var _glow :Glow;
+
+    /** A single LocalConnection used to communicate with all AVM1 media. */
+    protected static var _oldDispatch :LocalConnection;
 
     protected static var _loadCtx :HashMap = new HashMap();
 }

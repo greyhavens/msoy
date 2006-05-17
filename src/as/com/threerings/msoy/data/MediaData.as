@@ -5,6 +5,11 @@ package com.threerings.msoy.data {
  */
 public class MediaData
 {
+    public var isAVM1 :Boolean;
+
+    /** Temp: a universal id for this media. */
+    public var id :int;
+
     /** Temporary constructor. */
     public function MediaData (url :String, width :int = -1, height :int = -1)
     {

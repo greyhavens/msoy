@@ -17,7 +17,6 @@ import flash.utils.Timer;
 
 import mx.controls.HSlider;
 import mx.controls.Label;
-//import mx.controls.Loader;
 
 import mx.containers.Box;
 
@@ -41,9 +40,9 @@ public class TestFPS
     public function TestFPS (
         container :DisplayObjectContainer, fpsLabel :Label = null)
     {
-        Security.allowDomain("*");
+//        Security.allowDomain("*");
 
-        //_container = container;
+        ////_container = container;
         var host :UIComponent = new UIComponent();
         host.width = 600;
         host.height = 400;
@@ -94,12 +93,16 @@ public class TestFPS
         // add any new media necessary
         while (value > _media.length) {
 
-            var url :String =
-                (URLS[Math.floor(Math.random() * URLS.length)] as String);
+            var pick :int = int(Math.random() * URLS.length);
+            var url :String = (URLS[pick] as String);
             var desc :MediaData = new MediaData(url);
+            desc.id = pick;
             //if (url.indexOf("tube") != -1) {
             //    desc = new MediaData(url, 100, 100);
             //}
+            if (url.indexOf("swf") != -1) {
+                desc.isAVM1 = true;
+            }
             var screenMedia :ScreenMedia = new ScreenMedia(desc);
             screenMedia.x = Math.random() * _container.width;
             screenMedia.y = Math.random() * _container.height;
@@ -251,13 +254,14 @@ public class TestFPS
     protected const URLS :Array = [
         //"http://bogocorp.com/blaaaah.gif",
 //        "http://tasman.sea.earth.threerings.net/~ray/Joshua%20Tree.flv",
+        "http://tasman.sea.earth.threerings.net/~ray/bunny_walk.swf",
         "http://www.puzzlepirates.com/images/index/screen2.png",
 //        "http://www.puzzlepirates.com/images/index/screen3.png",
 //        "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
-        "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
-        "http://www.youtube.com/v/SbY0Jh9_RJ8",
-//        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
-        "http://bogocorp.com/bogologo.gif"
+//        "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
+//        "http://www.youtube.com/v/SbY0Jh9_RJ8",
+        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
+//        "http://bogocorp.com/bogologo.gif"
     ];
 }
 }

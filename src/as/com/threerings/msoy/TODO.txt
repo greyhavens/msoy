@@ -57,6 +57,9 @@
       event classes work...
     - Issue: I'm not sure if there's an equivalent for older swfs.
       Still researching.
+  - Using ExternalInterface to set up a fakey LocalConnection-type thing
+  - Using SharedObject to communicate
+    - Issue: can be disabled by the user
   - [There may be other ways to inter-communicate]
 
   - I just talked a bit with Mike. What we're going to aim for is a hybrid
