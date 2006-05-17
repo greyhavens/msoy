@@ -51,8 +51,7 @@ public class AvatarTest extends Sprite
         // remove the listeneer
         loaderInfo.removeEventListener(Event.INIT, loadedComplete);
 
-        var o :Object = loaderInfo.parameters;
-        var id :String = "_msoy" + o["oid"];
+        var id :String = "_msoy" + loaderInfo.parameters["oid"];
 
         // NOTE: an essential part of this is that a reference must be kept
         // to the LocalConnection, or it will auto-close.
@@ -64,8 +63,7 @@ public class AvatarTest extends Sprite
 
         try {
             c.connect(id);
-            trace("A) opened named connection \"" + id + "\" at domain \"" +
-                c.domain + "\".");
+            trace("opened named connection \"" + id + "\".");
 
         } catch (e :Error) {
             trace("couldn't connect msoy: " + e);
@@ -74,6 +72,14 @@ public class AvatarTest extends Sprite
         // this will lock up the entire browser
 //        while (true) { }
     }
+
+    /* Old actionscript example. */
+//    var dex = _root._url.indexOf("oid=");
+//    var id = _root._url.substring(dex + 4); // TODO, obv.
+//    var lc = new LocalConnection();
+//    lc.allowDomain = function (domain) { return true; };
+//    lc.setLook = function (look) { /** ** **/ };
+//    lc.connect("_msoy" + id);
 
     protected var _lc :LocalConnection;
 }
