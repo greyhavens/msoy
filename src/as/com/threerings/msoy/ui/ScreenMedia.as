@@ -6,8 +6,10 @@ import flash.display.LoaderInfo;
 import flash.display.Shape;
 
 import flash.events.Event;
+import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
+import flash.events.TextEvent;
 
 import flash.media.Video;
 
@@ -29,6 +31,8 @@ import mx.events.EffectEvent;
 import com.threerings.media.image.ImageUtil;
 
 import com.threerings.msoy.data.MediaData;
+
+import com.threerings.util.HashMap;
 
 /**
  * A wrapper class for all media that will be placed on the screen.
@@ -69,29 +73,31 @@ public class ScreenMedia extends Box
         loader.contentLoaderInfo.addEventListener(
             IOErrorEvent.IO_ERROR, loadError);
 
+        // grab hold of the EventDispatcher we'll use for comm
+        _dispatch = loader.contentLoaderInfo.sharedEvents;
+
         // if we know the size of the media, create a mask to prevent
         // it from drawing outside those bounds
         if (desc.width != -1 && desc.height != -1) {
             var mask :Shape = new Shape();
-            mask.graphics.beginFill(0xFFFFFF);
-            mask.graphics.drawRect(0, 0, desc.width, desc.height);
-            mask.graphics.endFill();
+            with (mask.graphics) {
+                beginFill(0xFFFFFF);
+                drawRect(0, 0, desc.width, desc.height);
+                endFill();
+            }
             // the mask must be added to the display list (which is wacky)
             rawChildren.addChild(mask);
             loader.mask = mask;
         }
 
         // start it loading, add it as a child
-        var loadCtx :LoaderContext = new LoaderContext(
-                false,
-                ApplicationDomain.currentDomain,
-                SecurityDomain.currentDomain);
-        loader.load(new URLRequest(url), loadCtx);
+        loader.load(new URLRequest(url), getContext(url));
         rawChildren.addChild(loader);
 
         if (desc.isInteractive()) {
             addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
             addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+            addEventListener(MouseEvent.CLICK, mouseClick);
         }
 
         // I don't know if these lines are necessary: remove?
@@ -99,11 +105,14 @@ public class ScreenMedia extends Box
             width = desc.width;
             height = desc.height;
         }
+
+        //addEventListener(Event.ENTER_FRAME, tick);
     }
 
     /**
      * Accessor: media property.
      */
+    // Probably this should be removed.
     public function get media () :DisplayObject
     {
         // untested
@@ -118,6 +127,32 @@ public class ScreenMedia extends Box
             }
         }
         return null; // never found!
+    }
+
+    /**
+     * Send a message to the client swf that we're representing.
+     * Returns true, unless the calling swf intercepts the event
+     * and calls preventDefault() on it.
+     */
+    public function sendMessage (type :String, msg :String) :Boolean
+    {
+        // simple post an event across the security boundary
+        return _dispatch.dispatchEvent(new TextEvent(type, false, false, msg));
+    }
+
+    protected function getContext (url :String) :LoaderContext
+    {
+        var loadCtx :LoaderContext = (_loadCtx.get(url) as LoaderContext);
+        if (loadCtx == null) {
+            trace("Creating new loadctx for " + url);
+            loadCtx = new LoaderContext(
+                false,
+                new ApplicationDomain(ApplicationDomain.currentDomain),
+                null
+                );
+            _loadCtx.put(url, loadCtx);
+        }
+        return loadCtx;
     }
 
     /**
@@ -221,11 +256,41 @@ public class ScreenMedia extends Box
         }
     }
 
+    /**
+     * Callback function.
+     */
+    protected function mouseClick (event :MouseEvent) :void
+    {
+        var look :String = (Math.random() < .5) ? "red" : "blue";
+        sendMessage("setLook", look);
+    }
+
+/*
+    protected function tick (event :Event) :void
+    {
+        if (!mouseEnabled) {
+            trace("mouse was disabled on media: " + _desc.URL);
+            mouseEnabled = true;
+        }
+        if (mouseChildren) {
+            trace("mousechildren enabled on " + _desc.URL);
+            // setting this to false makes swfs not capture mouse input
+            // so that mouse hover, etc, work.
+            mouseChildren = false;
+        }
+    }
+*/
+
     /** Our Media descripter. */
     protected var _desc :MediaData;
 
+    /** Used to dispatch events down to the swf we contain. */
+    protected var _dispatch :EventDispatcher;
+
     /** The glow effect used for mouse hovering. */
     protected var _glow :Glow;
+
+    protected static var _loadCtx :HashMap = new HashMap();
 }
 
 }
