@@ -154,8 +154,8 @@ public class TestFPS
         rot.duration = 1000;
         rot.angleFrom = comp.rotation;
         rot.angleTo = comp.rotation + (90 * ((Math.random() < .5) ? 1 : -1));
-        rot.originX = comp.width / 2;
-        rot.originY = comp.height / 2;
+        //rot.originX = comp.width / 2;
+        //rot.originY = comp.height / 2;
 
         var seq :Sequence = new Sequence(comp);
         var zoomIn :Zoom = new Zoom(comp);
@@ -174,7 +174,7 @@ public class TestFPS
         var allMoves :Parallel = new Parallel(comp);
         allMoves.addChild(move);
         allMoves.addChild(rot);
-        //allMoves.addChild(seq);
+        allMoves.addChild(seq);
 
         /*
         trace(

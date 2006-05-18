@@ -18,6 +18,18 @@ public class MediaData
         _height = height;
     }
 
+    // TODO
+    public function get originX () :Number
+    {
+        return 30;
+    }
+
+    // TODO
+    public function get originY () :Number
+    {
+        return 30;
+    }
+
     /**
      * Get the url at which the media may be loaded.
      */

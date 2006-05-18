@@ -118,6 +118,34 @@ public class ScreenMedia extends Box
         //addEventListener(Event.ENTER_FRAME, tick);
     }
 
+    // documentation inherited
+    public override function set x (newValue :Number) :void
+    {
+        // TODO: test
+        super.x = newValue - _desc.originX;
+    }
+
+    // documentation inherited
+    public override function get x () :Number
+    {
+        // TODO: test
+        return (super.x + _desc.originX);
+    }
+
+    // documentation inherited
+    public override function set y (newValue :Number) :void
+    {
+        // TODO: test
+        super.y = newValue - _desc.originY;
+    }
+
+    // documentation inherited
+    public override function get y () :Number
+    {
+        // TODO: test
+        return (super.y + _desc.originY);
+    }
+
     /**
      * Accessor: media property.
      */

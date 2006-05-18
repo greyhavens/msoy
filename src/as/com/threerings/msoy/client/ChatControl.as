@@ -7,6 +7,8 @@ import mx.containers.HBox;
 import mx.controls.Button;
 import mx.controls.TextInput;
 
+import com.threerings.crowd.chat.data.ChatCodes;
+
 public class ChatControl extends HBox
 {
     public function ChatControl (ctx :MsoyContext)
@@ -28,7 +30,11 @@ public class ChatControl extends HBox
     {
         var message :String = _txt.text;
         _txt.text = "";
-        _ctx.getChatDirector().requestChat(null, message, true);
+        var result :String = _ctx.getChatDirector().requestChat(
+            null, message, true);
+        if (result != ChatCodes.SUCCESS) {
+            _ctx.displayFeedback(null, result);
+        }
     }
 
     /** Our client-side context. */

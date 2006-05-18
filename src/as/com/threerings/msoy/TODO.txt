@@ -36,7 +36,6 @@
   - sound?
     - enforceable?
 
-
 - Determine the method of communication with "avatar swfs",
   - Direct calls to an API
     - Issue: Security
@@ -66,3 +65,7 @@
     solution for now (assuming the event thing doesn't work with AVM1)
     and use the event thing for newer swfs and the non-optimal LocalConnection
     for older ones. The upgrade path is towards The Goodness.
+
+- ResourceBundle isn't quite working, but there is a note in the known issues
+  for beta3 saying that it may or may not work. I will leave it for now
+  and return to it later.

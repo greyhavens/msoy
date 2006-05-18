@@ -17,6 +17,10 @@ public class ChatTextArea extends TextArea
         _ctx = ctx;
         this.editable = false;
 
+        // TODO
+        width = 600;
+        height = 400;
+
         // set up some events to manage how we'll be shown, etc.
         addEventListener("creationComplete", checkVis);
         addEventListener("show", checkVis);

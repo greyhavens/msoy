@@ -5,6 +5,8 @@ import flash.display.Stage;
 
 import mx.core.Application;
 
+import mx.managers.ISystemManager;
+
 import com.threerings.util.MessageManager;
 
 import com.threerings.presents.client.Client;
@@ -26,9 +28,25 @@ public class MsoyContext
         _app = app;
 
         // TODO: verify params to these constructors
-        _msgmgr = new MessageManager("rsrc");
+        _msgmgr = new MessageManager("rsrc", (app.root as ISystemManager));
         _locdir = new LocationDirector(this);
         _chatdir = new ChatDirector(this, _msgmgr, "general");
+    }
+
+    /**
+     * Convenience method.
+     */
+    public function displayFeedback (bundle :String, message :String) :void
+    {
+        _chatdir.displayFeedback(bundle, message);
+    }
+
+    /**
+     * Convenience method.
+     */
+    public function displayInfo (bundle :String, message :String) :void
+    {
+        _chatdir.displayInfo(bundle, message);
     }
 
     // documentation inherited from superinterface PresentsContext
