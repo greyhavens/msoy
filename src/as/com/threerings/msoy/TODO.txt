@@ -69,3 +69,5 @@
 - ResourceBundle isn't quite working, but there is a note in the known issues
   for beta3 saying that it may or may not work. I will leave it for now
   and return to it later. http://www.colettas.org/?p=23
+
+- Start translating whirled client/data classes to actionscript.

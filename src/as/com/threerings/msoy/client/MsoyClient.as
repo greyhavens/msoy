@@ -20,6 +20,8 @@ import com.threerings.crowd.data.BodyMarshaller;
 import com.threerings.crowd.data.LocationMarshaller;
 import com.threerings.crowd.chat.data.ChatMarshaller;
 
+import com.threerings.whirled.data.SceneMarshaller;
+
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.SimpleChatConfig;
 
@@ -34,17 +36,6 @@ public class MsoyClient extends Client
         setServer("tasman.sea.earth.threerings.net", DEFAULT_SERVER_PORT);
         logon();
     }
-
-//    // documetnation inherited
-//    public override function gotBootstrap (
-//            data :BootstrapData, omgr :DObjectManager) :void
-//    {
-//        super.gotBootstrap(data, omgr);
-//
-//        // let's kick things off by going directly to our global chat room
-//        // TEMP
-//        _ctx.getLocationDirector().moveTo((data as MsoyBootstrapData).chatOid);
-//    }
 
     // documetnation inherited
     public override function gotClientObject (clobj :ClientObject) :void
@@ -63,6 +54,8 @@ public class MsoyClient extends Client
         i = ChatMarshaller.AWAY;
 
         var c :Class = SimpleChatConfig;
+        c = RoomConfig;
+        c = SceneMarshaller;
     }
 
     protected var _ctx :MsoyContext;

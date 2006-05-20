@@ -9,6 +9,11 @@ import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
+/**
+ * IMPORTANT NOTE: this class was written for testing things and does not
+ * necessarily represent a valid starting point for writing the chat
+ * widget we'll eventually need.
+ */
 public class ChatTextArea extends TextArea
     implements ChatDisplay
 {

@@ -254,7 +254,7 @@ ActionScript
   list.addItem(foo);
 
   var funcy :Function = function (i :int) :void {
-     Log.debug("I can see " + list[0]);
+     log.debug("I can see " + list[0]);
   };
   _savedFunc = funcy;
 

@@ -9,6 +9,11 @@ import mx.controls.TextInput;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 
+/**
+ * IMPORTANT NOTE: this class was written for testing things and does not
+ * necessarily represent a valid starting point for writing the chat
+ * widget we'll eventually need.
+ */
 public class ChatControl extends HBox
 {
     public function ChatControl (ctx :MsoyContext)

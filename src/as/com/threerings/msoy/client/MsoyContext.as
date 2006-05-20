@@ -15,12 +15,14 @@ import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
-import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
+import com.threerings.whirled.client.SceneDirector;
+import com.threerings.whirled.util.WhirledContext;
+
 public class MsoyContext
-    implements CrowdContext
+    implements WhirledContext
 {
     public function MsoyContext (client :Client, app :Application)
     {
@@ -31,6 +33,7 @@ public class MsoyContext
         _msgmgr = new MessageManager("rsrc", (app.root as ISystemManager));
         _locdir = new LocationDirector(this);
         _chatdir = new ChatDirector(this, _msgmgr, "general");
+        _scenedir = new SceneDirector(this, _locdir, null, null); // TODO
     }
 
     /**
@@ -61,25 +64,31 @@ public class MsoyContext
         return _client.getDObjectManager();
     }
 
-    // documentation inherited from interface CrowdContext
+    // documentation inherited from superinterface CrowdContext
     public function getLocationDirector () :LocationDirector
     {
         return _locdir;
     }
 
-    // documentation inherited from interface CrowdContext
+    // documentation inherited from superinterface CrowdContext
     public function getOccupantDirector () :OccupantDirector
     {
         return null; // TODO
     }
 
-    // documentation inherited from interface CrowdContext
+    // documentation inherited from superinterface CrowdContext
     public function getChatDirector () :ChatDirector
     {
         return _chatdir;
     }
 
-    // documentation inherited from interface CrowdContext
+    // documentation inherited from superinterface WhirledContext
+    public function getSceneDirector () :SceneDirector
+    {
+        return _scenedir;
+    }
+
+    // documentation inherited from superinterface CrowdContext
     public function setPlaceView (view :PlaceView) :void
     {
         for (var ii :int = _app.numChildren - 1; ii >= 0; ii--) {
@@ -89,7 +98,7 @@ public class MsoyContext
         _app.addChild(view as DisplayObject);
     }
 
-    // documentation inherited from interface CrowdContext
+    // documentation inherited from superinterface CrowdContext
     public function clearPlaceView (view :PlaceView) :void
     {
         _app.removeChild(view as DisplayObject);
@@ -102,6 +111,8 @@ public class MsoyContext
     protected var _msgmgr :MessageManager;
 
     protected var _locdir :LocationDirector;
+
+    protected var _scenedir :SceneDirector;
 
     protected var _chatdir :ChatDirector;
 }
