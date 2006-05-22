@@ -18,6 +18,8 @@ import com.threerings.whirled.util.SceneFactory;
 import com.threerings.msoy.data.SimpleChatConfig;
 import com.threerings.msoy.data.RoomConfig;
 
+import com.threerings.msoy.server.persist.MsoySceneRepository;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -28,11 +30,17 @@ public class MsoyServer extends WhirledServer
     /** The oid of the global chat room. */
     public static int chatOid;
 
+    /** The Msoy scene repository. */
+    public static MsoySceneRepository sceneRep;
+
     // documentation inherited
     public void init ()
         throws Exception
     {
         super.init();
+
+        // initialize some repositories
+        sceneRep = new MsoySceneRepository(null);
 
         // set up the right client class
         clmgr.setClientClass(MsoyClient.class);
@@ -60,14 +68,14 @@ public class MsoyServer extends WhirledServer
     protected SceneFactory createSceneFactory ()
         throws Exception
     {
-        return null;
+        return _sceneFactory;
     }
 
     // documentation inherited
     protected SceneRegistry.ConfigFactory createConfigFactory ()
         throws Exception
     {
-        return null;
+        return _sceneFactory;
     }
 
     public static void main (String[] args)
@@ -80,4 +88,7 @@ public class MsoyServer extends WhirledServer
             log.log(Level.WARNING, "Unable to initialize server", e);
         }
     }
+
+    /** Our scene and config factory. */
+    protected MsoySceneFactory _sceneFactory = new MsoySceneFactory();
 }
