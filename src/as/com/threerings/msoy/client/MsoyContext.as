@@ -21,6 +21,8 @@ import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.util.WhirledContext;
 
+import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
+
 public class MsoyContext
     implements WhirledContext
 {
@@ -33,7 +35,8 @@ public class MsoyContext
         _msgmgr = new MessageManager("rsrc", (app.root as ISystemManager));
         _locdir = new LocationDirector(this);
         _chatdir = new ChatDirector(this, _msgmgr, "general");
-        _scenedir = new SceneDirector(this, _locdir, null, null); // TODO
+        _scenedir = new SceneDirector(this, _locdir,
+            new SharedObjectSceneRepository(), new MsoySceneFactory());
     }
 
     /**
