@@ -19,6 +19,7 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.chat.client.ChatDirector;
 
 import com.threerings.whirled.client.SceneDirector;
+import com.threerings.whirled.spot.client.SpotSceneDirector;
 import com.threerings.whirled.util.WhirledContext;
 
 import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
@@ -37,6 +38,7 @@ public class MsoyContext
         _chatdir = new ChatDirector(this, _msgmgr, "general");
         _scenedir = new SceneDirector(this, _locdir,
             new SharedObjectSceneRepository(), new MsoySceneFactory());
+        _spotdir = new SpotSceneDirector(this, _locdir, _scenedir);
     }
 
     /**
@@ -91,6 +93,14 @@ public class MsoyContext
         return _scenedir;
     }
 
+    /**
+     * Get the SpotSceneDirector.
+     */
+    public function getSpotSceneDirector () :SpotSceneDirector
+    {
+        return _spotdir;
+    }
+
     // documentation inherited from superinterface CrowdContext
     public function setPlaceView (view :PlaceView) :void
     {
@@ -118,5 +128,7 @@ public class MsoyContext
     protected var _scenedir :SceneDirector;
 
     protected var _chatdir :ChatDirector;
+
+    protected var _spotdir :SpotSceneDirector;
 }
 }

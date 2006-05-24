@@ -6,12 +6,14 @@ import com.threerings.io.Streamable;
 
 import com.threerings.util.Equalable;
 
+import com.threerings.whirled.spot.data.Location;
+
 /**
  * This class is equivalent to its Java class except that the Java superclass
  * has been incorporated.
  */
-public class Location
-    implements Equalable, Streamable
+public class MsoyLocation
+    implements Location
 {
     /** The body's x position (interpreted by the display system). */
     public var x :int;
@@ -22,7 +24,6 @@ public class Location
     /** The body's x position (interpreted by the display system). */
     public var z :int;
 
-    /** The body's orientation (defined by {@link DirectionCodes}). */
     public var orient :int;
 
     public function Location (
@@ -34,13 +35,22 @@ public class Location
         this.orient = orient;
     }
 
+    // documentation inherited from interface Location
+    public function getOpposite () :Location
+    {
+        var l :MsoyLocation = (clone() as MsoyLocation);
+        // and rotate it 180 degrees
+        l.orient += 180 * ((l.orient < 180) ? 1 : -1)
+        return l;
+    }
+
     // documentation inherited from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeInt(x);
         out.writeInt(y);
-        out.writeByte(orient);
         out.writeInt(z);
+        out.writeFloat(orient);
     }
 
     // documentation inherited from interface Streamable
@@ -48,19 +58,25 @@ public class Location
     {
         x = ins.readInt();
         y = ins.readInt();
-        orient = ins.readByte();
         z = ins.readInt();
+        orient = ins.readFloat();
     }
 
-    // documentation inherited from interface Equalable
+    // documentation inherited from interface Hashable
     public function equals (other :Object) :Boolean
     {
-        if (other is Location) {
-            var that :Location = (other as Location);
+        if (other is MsoyLocation) {
+            var that :MsoyLocation = (other as MsoyLocation);
             return (this.x == that.x) && (this.y == that.y) &&
                 (this.z == that.z);
         }
         return false;
+    }
+
+    // documentation inherited from interface Hashable
+    public function hashCode () :int
+    {
+        return x ^ y ^ z;
     }
 
     /**
@@ -69,7 +85,14 @@ public class Location
      */
     public function equivalent (oloc :Location) :Boolean
     {
-        return equals(oloc) && (orient == oloc.orient);
+        return equals(oloc) &&
+            (orient == (oloc as MsoyLocation).orient);
+    }
+
+    // documentation inherited from interface Location
+    public function clone () :Object
+    {
+        return new MsoyLocation(x, y, z, orient);
     }
 }
 }
