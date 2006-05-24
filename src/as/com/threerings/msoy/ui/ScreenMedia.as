@@ -41,6 +41,23 @@ import com.threerings.util.HashMap;
  * A wrapper class for all media that will be placed on the screen.
  * Subject to change.
  */
+/**
+ NOTES:
+ Any piece of media seen in msoy will likely have two interaction modes:
+ 1) Interaction based on the object it represents.
+    If the media represents a user avatar, other users can view user info,
+    send tells, etc. If the media represents furniture then clicking may
+    interact with that furniture (play a game, etc).
+ 2) Interaction with the media itself.
+   - tag it / edit tags
+   - jump to it in the catalog
+   - buy it without jumping to the catalog
+
+ Perhaps we standardize on something like straight-clicks are for mode 1,
+ right-clicking is for mode 2. Or we just have a standard popup menu
+ that contains all possible commands..
+
+ */
 public class ScreenMedia extends Box
 {
     /**
