@@ -474,3 +474,11 @@ If it takes too long to run it can be rejected.
   standalone or depends on our classes being loaded. If we ever wanted to
   display a non-standalone swf we could always wrap it in another swf
   that loaded and defined our API classes.
+
+- ColorTransform can do recoloring on display objects (sorta, it applies to
+  every color on the display object, not just ones that fall into some range).
+
+- Scene types
+  - normal: standard floor and back wall image?
+  - snowglobe: a warped lens effect on top of a normal room. All furniture
+    positions are ignored and all furniture flys around the room.

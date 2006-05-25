@@ -24,9 +24,10 @@ public class MsoyLocation
     /** The body's x position (interpreted by the display system). */
     public var z :int;
 
+    /** The body's orientation (interpreted by the display system). */
     public var orient :int;
 
-    public function Location (
+    public function MsoyLocation (
             x :int = 0, y :int = 0, z :int = 0, orient :int = 0)
     {
         this.x = x;
@@ -50,7 +51,7 @@ public class MsoyLocation
         out.writeInt(x);
         out.writeInt(y);
         out.writeInt(z);
-        out.writeFloat(orient);
+        out.writeShort(orient);
     }
 
     // documentation inherited from interface Streamable
@@ -59,7 +60,7 @@ public class MsoyLocation
         x = ins.readInt();
         y = ins.readInt();
         z = ins.readInt();
-        orient = ins.readFloat();
+        orient = ins.readShort();
     }
 
     // documentation inherited from interface Hashable

@@ -21,6 +21,7 @@ import com.threerings.crowd.data.LocationMarshaller;
 import com.threerings.crowd.chat.data.ChatMarshaller;
 
 import com.threerings.whirled.data.SceneMarshaller;
+import com.threerings.whirled.spot.data.SpotMarshaller;
 
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.SimpleChatConfig;
@@ -56,6 +57,7 @@ public class MsoyClient extends Client
         var c :Class = SimpleChatConfig;
         c = RoomConfig;
         c = SceneMarshaller;
+        c = SpotMarshaller;
     }
 
     protected var _ctx :MsoyContext;

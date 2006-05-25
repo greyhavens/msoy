@@ -1,9 +1,14 @@
 package com.threerings.msoy.data {
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+import com.threerings.io.Streamable;
+
 /**
  * A class containing metadata about a media object.
  */
 public class MediaData
+    implements Streamable
 {
     public var isAVM1 :Boolean;
 
@@ -57,6 +62,20 @@ public class MediaData
     public function isInteractive () :Boolean
     {
         return true;
+    }
+
+    // documentation inherited from interface Streamable
+    public function writeObject (out :ObjectOutputStream) :void
+    {
+        out.writeInt(id);
+        // TODO
+    }
+
+    // documentation inherited from interface Streamable
+    public function readObject (ins :ObjectInputStream) :void
+    {
+        id = ins.readInt();
+        // TODO
     }
 
     /** temp */
