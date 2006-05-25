@@ -1,5 +1,8 @@
 package com.threerings.msoy.world.data {
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+
 import com.threerings.whirled.data.SceneModel;
 
 public class MsoySceneModel extends SceneModel
