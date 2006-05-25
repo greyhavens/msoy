@@ -13,6 +13,8 @@ import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.WhirledServer;
 import com.threerings.whirled.server.persist.SceneRepository;
+import com.threerings.whirled.spot.server.SpotDispatcher;
+import com.threerings.whirled.spot.server.SpotProvider;
 import com.threerings.whirled.util.SceneFactory;
 
 import com.threerings.msoy.data.SimpleChatConfig;
@@ -33,17 +35,22 @@ public class MsoyServer extends WhirledServer
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRep;
 
+    /** Provides spot-related services. */
+    public static SpotProvider spotprov;
+
     // documentation inherited
     public void init ()
         throws Exception
     {
         super.init();
 
-        // initialize some repositories
-        sceneRep = new MsoySceneRepository(null);
-
         // set up the right client class
         clmgr.setClientClass(MsoyClient.class);
+
+        // intialize various services
+        spotprov = new SpotProvider(omgr, plreg, screg);
+        invmgr.registerDispatcher(new SpotDispatcher(spotprov), true);
+        sceneRep = (MsoySceneRepository) _screp;
 
         // create the global chat place
         plreg.createPlace(new RoomConfig(),
@@ -61,7 +68,7 @@ public class MsoyServer extends WhirledServer
     protected SceneRepository createSceneRepository ()
         throws Exception
     {
-        return null;
+        return new MsoySceneRepository(null);
     }
 
     // documentation inherited

@@ -1,0 +1,17 @@
+//
+// $Id$
+
+package com.threerings.msoy.data;
+
+import com.threerings.io.SimpleStreamableObject;
+
+/**
+ * Contains information about a piece of media in the catalog.
+ */
+public class MediaData extends SimpleStreamableObject
+{
+    /** The global id for the media. */
+    public int id;
+
+    // more to come
+}

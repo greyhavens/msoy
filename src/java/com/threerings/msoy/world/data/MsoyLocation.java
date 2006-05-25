@@ -24,14 +24,14 @@ public class MsoyLocation
     public short orient;
 
     /** Suitable for unserialization. */
-    public Location ()
+    public MsoyLocation ()
     {
     }
 
     /**
      * Constructs a fully-specified Location.
      */
-    public Location (int x, int y, int z, float orient)
+    public MsoyLocation (int x, int y, int z, short orient)
     {
         this.x = x;
         this.y = y;
