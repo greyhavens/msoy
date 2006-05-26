@@ -55,7 +55,7 @@ public class RoomView extends VBox
 
     protected function moveBody (bodyOid :int) :void
     {
-        var avatar :ScreenMedia = (_avatars.remove(bodyOid) as ScreenMedia);
+        var avatar :ScreenMedia = (_avatars.get(bodyOid) as ScreenMedia);
         var sloc :SceneLocation =
             (_sceneObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
