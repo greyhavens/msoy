@@ -70,4 +70,5 @@
   for beta3 saying that it may or may not work. I will leave it for now
   and return to it later. http://www.colettas.org/?p=23
 
-- Start translating whirled client/data classes to actionscript.
+- Make the IntegerStreamer also handle straight int objects. We might
+be able to just hide the funny business inside the streamer.

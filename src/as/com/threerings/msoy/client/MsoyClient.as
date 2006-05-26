@@ -22,9 +22,13 @@ import com.threerings.crowd.chat.data.ChatMarshaller;
 
 import com.threerings.whirled.data.SceneMarshaller;
 import com.threerings.whirled.spot.data.SpotMarshaller;
+import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.data.MsoyBootstrapData;
+import com.threerings.msoy.data.MsoyOccupantInfo;
+import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.SimpleChatConfig;
+import com.threerings.msoy.world.data.MsoyFurniSceneModel;
 
 public class MsoyClient extends Client
 {
@@ -43,8 +47,10 @@ public class MsoyClient extends Client
     {
         super.gotClientObject(clobj);
 
-        _ctx.getLocationDirector().moveTo(
-            (getBootstrapData() as MsoyBootstrapData).chatOid);
+        // TODO: for now, we start with scene 1
+        _ctx.getSceneDirector().moveTo(1);
+        //_ctx.getLocationDirector().moveTo(
+        //    (getBootstrapData() as MsoyBootstrapData).chatOid);
     }
 
     public function fuckingCompiler () :void
@@ -58,6 +64,11 @@ public class MsoyClient extends Client
         c = RoomConfig;
         c = SceneMarshaller;
         c = SpotMarshaller;
+        c = MsoyBootstrapData;
+        c = MsoyUserObject;
+        c = MsoyOccupantInfo;
+        c = SpotSceneObject;
+        c = MsoyFurniSceneModel;
     }
 
     protected var _ctx :MsoyContext;

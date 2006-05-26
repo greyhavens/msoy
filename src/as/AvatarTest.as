@@ -58,12 +58,13 @@ public class AvatarTest extends Sprite
         var c :LocalConnection = new LocalConnection();
         _lc = c;
         c.allowDomain("*");
+        //c.client = { "setLook" : setLook };
         c.client = new Object();
         c.client.setLook = setLook;
 
         try {
             c.connect(id);
-            trace("opened named connection \"" + id + "\".");
+            trace("]opened named connection \"" + id + "\".");
 
         } catch (e :Error) {
             trace("couldn't connect msoy: " + e);

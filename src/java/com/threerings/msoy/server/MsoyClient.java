@@ -3,16 +3,16 @@
 
 package com.threerings.msoy.server;
 
-import com.threerings.crowd.server.CrowdClient;
-
 import com.threerings.presents.net.BootstrapData;
+
+import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.data.MsoyBootstrapData;
 
 /**
  * Represents an attached Msoy client on the server-side.
  */
-public class MsoyClient extends CrowdClient
+public class MsoyClient extends WhirledClient
 {
     // documentation inherited
     protected BootstrapData createBootstrapData ()

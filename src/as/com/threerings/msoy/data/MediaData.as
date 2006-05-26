@@ -15,12 +15,15 @@ public class MediaData
     /** Temp: a universal id for this media. */
     public var id :int;
 
-    /** Temporary constructor. */
-    public function MediaData (url :String, width :int = -1, height :int = -1)
+    public static function getTestCount () :int
     {
-        _url = url;
-        _width = width;
-        _height = height;
+        return URLS.length;
+    }
+
+    /** Temporary constructor. */
+    public function MediaData (id :int = 0)
+    {
+        this.id = id;
     }
 
     // TODO
@@ -40,7 +43,7 @@ public class MediaData
      */
     public function get URL () :String
     {
-        return _url;
+        return (URLS[id] as String);
     }
 
     /**
@@ -83,6 +86,20 @@ public class MediaData
 
     /** Width and height, if known. */
     protected var _width :int, _height :int;
+
+    /* TEMP. */
+    protected static const URLS :Array = [
+        //"http://bogocorp.com/blaaaah.gif",
+//        "http://tasman.sea.earth.threerings.net/~ray/Joshua%20Tree.flv",
+        "http://tasman.sea.earth.threerings.net/~ray/bunny_walk.swf",
+        "http://www.puzzlepirates.com/images/index/screen2.png",
+//        "http://www.puzzlepirates.com/images/index/screen3.png",
+//        "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
+//        "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
+//        "http://www.youtube.com/v/SbY0Jh9_RJ8",
+        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
+//        "http://bogocorp.com/bogologo.gif"
+    ];
 }
 
 }

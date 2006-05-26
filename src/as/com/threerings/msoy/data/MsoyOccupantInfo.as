@@ -1,21 +1,24 @@
-package com.threerings.msoy.world.data {
+//
+// $Id$
+
+package com.threerings.msoy.data {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.whirled.data.SceneModel;
+import com.threerings.crowd.data.OccupantInfo;
 
-public class MsoySceneModel extends SceneModel
+public class MsoyOccupantInfo extends OccupantInfo
 {
-    /** The type of scene. */
-    public var type :String;
+    /** The media that represents our avatar. */
+    public var avatar :MediaData;
 
     // documentation inherited
     public override function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
-        out.writeField(type);
+        out.writeObject(avatar);
     }
 
     // documentation inherited
@@ -23,9 +26,7 @@ public class MsoySceneModel extends SceneModel
     {
         super.readObject(ins);
 
-        trace("reading type");
-        type = (ins.readField(String) as String);
-        trace("MsoySceneModel completely read. (typed=" + type + ")");
+        avatar = (ins.readObject() as MediaData);
     }
 }
 }

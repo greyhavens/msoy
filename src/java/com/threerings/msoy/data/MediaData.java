@@ -14,4 +14,14 @@ public class MediaData extends SimpleStreamableObject
     public int id;
 
     // more to come
+
+    /** Suitable for unserialization. */
+    public MediaData ()
+    {
+    }
+
+    public MediaData (int id)
+    {
+        this.id = id;
+    }
 }

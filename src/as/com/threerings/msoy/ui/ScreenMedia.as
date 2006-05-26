@@ -106,11 +106,9 @@ public class ScreenMedia extends Box
         // it from drawing outside those bounds
         if (desc.width != -1 && desc.height != -1) {
             var mask :Shape = new Shape();
-            with (mask.graphics) {
-                beginFill(0xFFFFFF);
-                drawRect(0, 0, desc.width, desc.height);
-                endFill();
-            }
+            mask.graphics.beginFill(0xFFFFFF);
+            mask.graphics.drawRect(0, 0, desc.width, desc.height);
+            mask.graphics.endFill();
             // the mask must be added to the display list (which is wacky)
             rawChildren.addChild(mask);
             loader.mask = mask;

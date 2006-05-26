@@ -12,6 +12,8 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.util.UpdateList;
 
+import com.threerings.msoy.world.data.MsoySceneModel;
+
 /**
  * Provides scene storage services for the msoy server.
  */
@@ -34,9 +36,9 @@ public class MsoySceneRepository
     public SceneModel loadSceneModel (int sceneId)
     {
         // TODO: real implementation
-        SceneModel model = new SceneModel();
+        MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
         model.sceneId = sceneId;
-        model.version = 0;
+        model.version = 1;
         model.name = "FakeScene" + sceneId;
         return model;
     }

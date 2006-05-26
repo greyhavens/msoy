@@ -46,6 +46,7 @@ public class MsoyServer extends WhirledServer
 
         // set up the right client class
         clmgr.setClientClass(MsoyClient.class);
+        clmgr.setClientResolverClass(MsoyClientResolver.class);
 
         // intialize various services
         spotprov = new SpotProvider(omgr, plreg, screg);
@@ -53,13 +54,13 @@ public class MsoyServer extends WhirledServer
         sceneRep = (MsoySceneRepository) _screp;
 
         // create the global chat place
-        plreg.createPlace(new RoomConfig(),
-            new PlaceRegistry.CreationObserver() {
-                public void placeCreated (PlaceObject place, PlaceManager plmgr)
-                {
-                    chatOid = place.getOid();
-                }
-            });
+//        plreg.createPlace(new RoomConfig(),
+//            new PlaceRegistry.CreationObserver() {
+//                public void placeCreated (PlaceObject place, PlaceManager plmgr)
+//                {
+//                    chatOid = place.getOid();
+//                }
+//            });
 
         log.info("Msoy server initialized.");
     }

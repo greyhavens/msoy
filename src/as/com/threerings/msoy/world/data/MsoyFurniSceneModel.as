@@ -1,5 +1,7 @@
 package com.threerings.msoy.world.data {
 
+import com.threerings.io.TypedArray;
+
 import com.threerings.whirled.data.AuxModel;
 import com.threerings.whirled.data.SceneModel;
 
@@ -15,14 +17,13 @@ public class MsoyFurniSceneModel
     // documentation inherited from interface AuxModel (Streamable)
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeField(furniData);
+        out.writeObject(furniData);
     }
 
     // documentation inherited from interface AuxModel (Streamable)
     public function readObject (ins :ObjectInputStream) :void
     {
-        furniData =
-            (ins.readField(TypedArray.getJavaType(FurniData)) as TypedArray);
+        furniData = (ins.readObject() as TypedArray);
     }
 
     // documentation inherited from interface AuxModel (Cloneable)

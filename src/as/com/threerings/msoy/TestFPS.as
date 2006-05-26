@@ -93,16 +93,11 @@ public class TestFPS
         // add any new media necessary
         while (value > _media.length) {
 
-            var pick :int = int(Math.random() * URLS.length);
-            var url :String = (URLS[pick] as String);
-            var desc :MediaData = new MediaData(url);
-            desc.id = pick;
+            var pick :int = int(Math.random() * MediaData.getTestCount());
+            var desc :MediaData = new MediaData(pick);
             //if (url.indexOf("tube") != -1) {
             //    desc = new MediaData(url, 100, 100);
             //}
-            if (url.indexOf("swf") != -1) {
-                desc.isAVM1 = true;
-            }
             var screenMedia :ScreenMedia = new ScreenMedia(desc);
             screenMedia.x = Math.random() * _container.width;
             screenMedia.y = Math.random() * _container.height;
@@ -249,19 +244,5 @@ public class TestFPS
 
     /** The time per tick for the last 24 ticks. */
     protected var _tickTimes :Array = new Array();
-
-    /** The content we'll swirl around. */
-    protected const URLS :Array = [
-        //"http://bogocorp.com/blaaaah.gif",
-//        "http://tasman.sea.earth.threerings.net/~ray/Joshua%20Tree.flv",
-        "http://tasman.sea.earth.threerings.net/~ray/bunny_walk.swf",
-        "http://www.puzzlepirates.com/images/index/screen2.png",
-//        "http://www.puzzlepirates.com/images/index/screen3.png",
-//        "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
-//        "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
-//        "http://www.youtube.com/v/SbY0Jh9_RJ8",
-        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
-//        "http://bogocorp.com/bogologo.gif"
-    ];
 }
 }
