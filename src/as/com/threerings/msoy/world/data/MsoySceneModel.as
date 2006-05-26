@@ -23,9 +23,7 @@ public class MsoySceneModel extends SceneModel
     {
         super.readObject(ins);
 
-        trace("reading type");
         type = (ins.readField(String) as String);
-        trace("MsoySceneModel completely read. (typed=" + type + ")");
     }
 }
 }

@@ -95,5 +95,11 @@ public class MsoyLocation
     {
         return new MsoyLocation(x, y, z, orient);
     }
+
+    public function toString () :String
+    {
+        return "[MsoyLocation(" + x + ", " + y + ", " + z + ") at " +
+            orient + " degrees]";
+    }
 }
 }

@@ -24,6 +24,7 @@ public class MediaData
     public function MediaData (id :int = 0)
     {
         this.id = id;
+        _width = _height = -1;
     }
 
     // TODO

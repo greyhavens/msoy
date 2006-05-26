@@ -48,8 +48,6 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
-        trace("mouse clicked at : " + event.localX + ", " + event.localY);
-
         var newLoc :MsoyLocation = new MsoyLocation(
             event.localX, event.localY, 0, 0);
         _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
