@@ -2,7 +2,10 @@ package com.threerings.msoy.ui {
 
 import flash.events.MouseEvent;
 
+import flash.geom.Point;
+
 import mx.effects.Move;
+import mx.effects.easing.Linear;
 
 import mx.events.EffectEvent;
 
@@ -20,6 +23,14 @@ public class Avatar extends ScreenMedia
 
     public function moveTo (loc :MsoyLocation) :void
     {
+        var xx :Number = x;
+        var yy :Number = y;
+
+        // if there's already a move, kill it
+        if (_move != null) {
+            _move.end();
+        }
+
         // set walking, and maybe change facing direction
         sendMessage("setAction", "walking");
         if (this.x < loc.x) {
@@ -28,13 +39,18 @@ public class Avatar extends ScreenMedia
             setFacing(true);
         }
 
-        var move :Move = new Move(this);
-        move.xTo = loc.x;
-        move.yTo = loc.y;
-        move.duration = 850;
-        move.addEventListener(EffectEvent.EFFECT_END, moveStopped);
+        _move = new Move(this);
+        _move.xFrom = xx;
+        _move.yFrom = yy;
+        _move.xTo = loc.x;
+        _move.yTo = loc.y;
+        _move.easingFunction = Linear.easeNone;
+        var dist :Number = Point.distance(
+            new Point(loc.x, loc.y), new Point(xx, yy));
+        _move.duration = dist * 10; // the magic
+        _move.addEventListener(EffectEvent.EFFECT_END, moveStopped);
 
-        move.play();
+        _move.play();
     }
 
     protected function setFacing (left :Boolean) :void
@@ -48,6 +64,7 @@ public class Avatar extends ScreenMedia
     protected function moveStopped (event :EffectEvent) :void
     {
         sendMessage("setAction", "standing");
+        _move = null;
     }
 
     protected override function mouseClick (event :MouseEvent) :void
@@ -56,5 +73,7 @@ public class Avatar extends ScreenMedia
     }
 
     protected var _left :Boolean;
+
+    protected var _move :Move;
 }
 }

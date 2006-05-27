@@ -24,7 +24,7 @@ public class ChatTextArea extends TextArea
 
         // TODO
         width = 400;
-        height = 200;
+        height = 150;
 
         // set up some events to manage how we'll be shown, etc.
         addEventListener("creationComplete", checkVis);
