@@ -48,9 +48,12 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
-        var newLoc :MsoyLocation = new MsoyLocation(
-            event.localX, event.localY, 0, 0);
-        _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
+        if (event.target == _roomView) {
+            // mouse events are propogated upwards to parent components
+            var newLoc :MsoyLocation = new MsoyLocation(
+                event.localX, event.localY, 0, 0);
+            _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
+        }
     }
 
     protected var _mctx :MsoyContext;

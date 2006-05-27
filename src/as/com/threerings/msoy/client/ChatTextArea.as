@@ -23,8 +23,8 @@ public class ChatTextArea extends TextArea
         this.editable = false;
 
         // TODO
-        width = 600;
-        height = 400;
+        width = 400;
+        height = 200;
 
         // set up some events to manage how we'll be shown, etc.
         addEventListener("creationComplete", checkVis);

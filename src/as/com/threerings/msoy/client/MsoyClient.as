@@ -34,7 +34,9 @@ public class MsoyClient extends Client
 {
     public function MsoyClient (app :Application)
     {
-        super(new UsernamePasswordCreds(new Name("guest"), "guest"), app.stage);
+        var guestId :int = int(Math.random() * int.MAX_VALUE);
+        var guestName :Name = new Name("guest" + guestId);
+        super(new UsernamePasswordCreds(guestName, "guest"), app.stage);
 
         _ctx = new MsoyContext(this, app);
 

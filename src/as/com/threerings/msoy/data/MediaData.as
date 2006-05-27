@@ -25,18 +25,19 @@ public class MediaData
     {
         this.id = id;
         _width = _height = -1;
+        isAVM1 = true;
     }
 
     // TODO
     public function get originX () :Number
     {
-        return 30;
+        return 0;
     }
 
     // TODO
     public function get originY () :Number
     {
-        return 30;
+        return 0;
     }
 
     /**
@@ -92,14 +93,16 @@ public class MediaData
     protected static const URLS :Array = [
         //"http://bogocorp.com/blaaaah.gif",
 //        "http://tasman.sea.earth.threerings.net/~ray/Joshua%20Tree.flv",
-        "http://tasman.sea.earth.threerings.net/~ray/bunny_walk.swf",
-        "http://www.puzzlepirates.com/images/index/screen2.png",
+//        "http://tasman.sea.earth.threerings.net/~ray/bunny_walk.swf",
+//        "http://www.puzzlepirates.com/images/index/screen2.png",
 //        "http://www.puzzlepirates.com/images/index/screen3.png",
 //        "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
 //        "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
 //        "http://www.youtube.com/v/SbY0Jh9_RJ8",
-        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
+//        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
 //        "http://bogocorp.com/bogologo.gif"
+        "http://tasman.sea.earth.threerings.net/~ray/socketbunny.swf",
+        "http://tasman.sea.earth.threerings.net/~ray/pedestrian.swf"
     ];
 }
 

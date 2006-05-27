@@ -184,7 +184,7 @@ public class ScreenMedia extends Box
     /**
      * Send a message to the client swf that we're representing.
      */
-    public function sendMessage (type :String, msg :String) :void
+    protected function sendMessage (type :String, msg :String) :void
     {
         trace("sent [" + type + "=" + msg + "]");
         // simple post an event across the security boundary

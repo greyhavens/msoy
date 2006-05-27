@@ -2,8 +2,6 @@ package com.threerings.msoy.client {
 
 import mx.containers.VBox;
 
-import mx.effects.Move;
-
 import com.threerings.util.HashMap;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -19,6 +17,8 @@ import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.data.MsoyOccupantInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
+
+import com.threerings.msoy.ui.Avatar;
 import com.threerings.msoy.ui.ScreenMedia;
 
 public class RoomView extends VBox
@@ -38,7 +38,7 @@ public class RoomView extends VBox
             (_sceneObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
-        var avatar :ScreenMedia = new ScreenMedia(occInfo.avatar);
+        var avatar :Avatar = new Avatar(occInfo.avatar);
         _avatars.put(bodyOid, avatar);
         avatar.x = loc.x;
         avatar.y = loc.y;
@@ -47,7 +47,7 @@ public class RoomView extends VBox
 
     protected function removeBody (bodyOid :int) :void
     {
-        var avatar :ScreenMedia = (_avatars.remove(bodyOid) as ScreenMedia);
+        var avatar :Avatar = (_avatars.remove(bodyOid) as Avatar);
         if (avatar != null) {
             removeChild(avatar);
         }
@@ -55,17 +55,12 @@ public class RoomView extends VBox
 
     protected function moveBody (bodyOid :int) :void
     {
-        var avatar :ScreenMedia = (_avatars.get(bodyOid) as ScreenMedia);
+        var avatar :Avatar = (_avatars.get(bodyOid) as Avatar);
         var sloc :SceneLocation =
             (_sceneObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
-        // set up a move
-        var move :Move = new Move(avatar);
-        move.xTo = loc.x;
-        move.yTo = loc.y;
-        move.duration = 850;
-        move.play();
+        avatar.moveTo(loc);
     }
 
     // documentation inherited from interface PlaceView
@@ -121,7 +116,7 @@ public class RoomView extends VBox
 
     protected var _sceneObj :SpotSceneObject;
 
-    /** A map of bodyOid -> ScreenMedia. */
+    /** A map of bodyOid -> Avatar. */
     protected var _avatars :HashMap = new HashMap();
 }
 }
