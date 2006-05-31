@@ -58,6 +58,7 @@ public class MsoySceneRepository
 
         SpotSceneModel spotty = SpotSceneModel.getSceneModel(model);
         spotty.addPortal(portal);
+        spotty.defaultEntranceId = 1;
 
         return model;
     }

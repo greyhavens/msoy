@@ -80,4 +80,10 @@ public class MsoyLocation
     {
         return x ^ y ^ z;
     }
+
+    public String toString ()
+    {
+        return "[MsoyLocation(" + x + ", " + y + ", " + z + ") at " +
+            orient + " degrees]";
+    }
 }

@@ -27,8 +27,13 @@ public class RoomManager extends SpotSceneManager
     protected SceneLocation computeEnteringLocation (
             BodyObject body, Portal entry)
     {
+        if (entry != null) {
+            return super.computeEnteringLocation(body, entry);
+        }
+
+        // fallback if there is no portal
         return new SceneLocation(
-            new MsoyLocation(0, 0, 0, (short)0), body.getOid());
+            new MsoyLocation(0, 0, 0, (short) 0), body.getOid());
     }
 
     protected Class getPlaceObjectClass ()
