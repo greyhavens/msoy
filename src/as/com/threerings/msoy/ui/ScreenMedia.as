@@ -186,9 +186,7 @@ public class ScreenMedia extends Box
      */
     protected function sendMessage (type :String, msg :String) :void
     {
-        trace("sent [" + type + "=" + msg + "]");
-        // simple post an event across the security boundary
-        _dispatch.dispatchEvent(new TextEvent(type, false, false, msg));
+        trace("sending [" + type + "=" + msg + "]");
 
         if (_desc.isAVM1) {
             if (_oldDispatch == null) {
@@ -203,6 +201,11 @@ public class ScreenMedia extends Box
             } catch (e :Error) {
                 // nada
             }
+
+        } else {
+            // the new way
+            // simply post an event across the security boundary
+            _dispatch.dispatchEvent(new TextEvent(type, false, false, msg));
         }
     }
 
@@ -215,20 +218,23 @@ public class ScreenMedia extends Box
         // This method exists because if we don't eat status-error messages
         // then they end up bubbling up somewhere else.
 
-        //trace("statusEvent: " + event);
+        if (event.level != "status") {
+            Log.getLog(ScreenMedia).debug("Unable to communicate with media " +
+                "[event=" + event + "].");
+        }
     }
 
     protected function getContext (url :String) :LoaderContext
     {
         var loadCtx :LoaderContext = (_loadCtx.get(url) as LoaderContext);
         if (loadCtx == null) {
-            trace("Creating new loadctx for " + url);
+//            trace("Creating new loadctx for " + url);
             loadCtx = new LoaderContext(
                 false,
                 new ApplicationDomain(ApplicationDomain.currentDomain),
                 null
                 );
-            _loadCtx.put(url, loadCtx);
+//            _loadCtx.put(url, loadCtx);
         }
         return loadCtx;
     }

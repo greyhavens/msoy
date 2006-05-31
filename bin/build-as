@@ -9,12 +9,21 @@ ROOT=`dirname $0`
 ROOT=`cd $ROOT; cd ..; pwd`
 
 java -jar "$ROOT/lib/as-compiler/lib/mxmlc.jar" \
+    -locale en_US \
     -load-config $ROOT/lib/as-compiler/frameworks/flex-config.xml \
+    -externs com.threerings.util.Map \
+    -externs com.threerings.util.HashMap \
+    -externs com.threerings.util.Hashtable \
+    -externs com.threerings.util.Hashable \
+    -externs com.threerings.util.Equalable \
+    -link-report /tmp/link-report.txt \
+    -resource-bundle-list "$ROOT/rsrc/bundles.list" \
     -compiler.warn-no-constructor=false \
     -compiler.show-dependency-warnings=true \
     -compiler.warn-undefined-reference=true \
     -compiler.verbose-stacktraces=true \
-    -compiler.source-path="/export/msoy/projects/narya/src/as/" \
-    -compiler.source-path="/export/msoy/src/as/" \
+    -compiler.source-path="$ROOT/projects/narya/src/as/" \
+    -compiler.source-path="$ROOT/src/as/" \
+    -compiler.source-path="$ROOT/rsrc/{locale}" \
     $ROOT/src/mxml/Msoy.mxml
-#    $ROOT/src/as/AvatarTest.as
+    #$ROOT/src/as/AvatarTest.as

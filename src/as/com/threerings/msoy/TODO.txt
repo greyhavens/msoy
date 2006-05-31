@@ -14,10 +14,6 @@
   We're going to wait on this until we see what's coming in beta3.
 
 
-- Work on client UI stuff: avatars, scene setup and rendering.
-  - Handle clicking in the scene to move locations- fake the comm
-    to the server: just report success.
-
 - Adding a youtube video to our client screws up the scale. Fix? We should
   probably generate some "worst case" swfs that try to fuck the stage or
   the VM as much as possible, and safeguard against things.
@@ -72,3 +68,6 @@
 
 - Make the IntegerStreamer also handle straight int objects. We might
 be able to just hide the funny business inside the streamer.
+
+  *** Can't: there's no way to determine if a number is a Number or an int.
+  A Number that refers to an integer value will look like an int. Fucked!

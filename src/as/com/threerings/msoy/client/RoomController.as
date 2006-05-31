@@ -9,6 +9,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.whirled.client.SceneController;
+import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -46,12 +47,25 @@ public class RoomController extends SceneController
         super.didLeavePlace(plobj);
     }
 
+    public override function handleAction (cmd :String, arg :Object) :Boolean
+    {
+        if (cmd == "portalClicked") {
+            var portal :Portal = (arg as Portal);
+            _mctx.getSpotSceneDirector().traversePortal(portal.portalId);
+            return true;
+        }
+
+        return super.handleAction(cmd, arg);
+    }
+
     protected function mouseClicked (event :MouseEvent) :void
     {
         if (event.target == _roomView) {
             // mouse events are propogated upwards to parent components
+            var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
             var newLoc :MsoyLocation = new MsoyLocation(
-                event.localX, event.localY, 0, 0);
+                event.localX, event.localY, 0,
+                curLoc.x > event.localX ? 180 : 0);
             _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
         }
     }

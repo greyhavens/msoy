@@ -2,6 +2,7 @@ package com.threerings.msoy.ui {
 
 import flash.events.MouseEvent;
 
+import flash.geom.Matrix;
 import flash.geom.Point;
 
 import mx.effects.Move;
@@ -14,15 +15,21 @@ import com.threerings.msoy.world.data.MsoyLocation;
 
 public class Avatar extends ScreenMedia
 {
-    public function Avatar (desc :MediaData)
+    public function Avatar (desc :MediaData, loc :MsoyLocation)
     {
         super(desc);
         sendMessage("setAction", "standing");
-        setFacing(true);
+        setOrientation(loc.orient);
+
+//        var matrix :Matrix = this.transform.matrix; // create a copy
+//        matrix.b = .5;
+//        //matrix.c = .5;
+//        this.transform.matrix = matrix;
     }
 
     public function moveTo (loc :MsoyLocation) :void
     {
+        _loc = loc;
         var xx :Number = x;
         var yy :Number = y;
 
@@ -33,10 +40,10 @@ public class Avatar extends ScreenMedia
 
         // set walking, and maybe change facing direction
         sendMessage("setAction", "walking");
-        if (this.x < loc.x) {
-            setFacing(false);
-        } else if (this.x > loc.x)  {
-            setFacing(true);
+        if (xx < loc.x) {
+            setOrientation(0);
+        } else if (xx > loc.x)  {
+            setOrientation(180);
         }
 
         _move = new Move(this);
@@ -53,26 +60,26 @@ public class Avatar extends ScreenMedia
         _move.play();
     }
 
-    protected function setFacing (left :Boolean) :void
+    protected function setOrientation (orient :int) :void
     {
-        if (_left != left) {
-            sendMessage("setFacing", left ? "left" : "right");
-            _left = left;
-        }
+        var left :Boolean = (orient >= 90 && orient < 270)
+        sendMessage("setFacing", left ? "left" : "right");
     }
 
     protected function moveStopped (event :EffectEvent) :void
     {
-        sendMessage("setAction", "standing");
         _move = null;
+        sendMessage("setAction", "standing");
+        setOrientation(_loc.orient);
     }
 
     protected override function mouseClick (event :MouseEvent) :void
     {
-        setFacing(!_left);
+        //setFacing(!_left);
     }
 
-    protected var _left :Boolean;
+    /** The location to which we're currently heading. */
+    protected var _loc :MsoyLocation;
 
     protected var _move :Move;
 }

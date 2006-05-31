@@ -94,15 +94,16 @@ public class MediaData
         //"http://bogocorp.com/blaaaah.gif",
 //        "http://tasman.sea.earth.threerings.net/~ray/Joshua%20Tree.flv",
 //        "http://tasman.sea.earth.threerings.net/~ray/bunny_walk.swf",
-//        "http://www.puzzlepirates.com/images/index/screen2.png",
 //        "http://www.puzzlepirates.com/images/index/screen3.png",
 //        "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
 //        "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
 //        "http://www.youtube.com/v/SbY0Jh9_RJ8",
 //        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
 //        "http://bogocorp.com/bogologo.gif"
-        "http://tasman.sea.earth.threerings.net/~ray/socketbunny.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/pedestrian.swf"
+        "http://tasman.sea.earth.threerings.net/~ray/hipsterzombie.swf",
+        //"http://tasman.sea.earth.threerings.net/~ray/socketbunny.swf",
+        "http://tasman.sea.earth.threerings.net/~ray/pedestrian.swf",
+        "http://www.puzzlepirates.com/images/index/screen2.png",
     ];
 }
 
