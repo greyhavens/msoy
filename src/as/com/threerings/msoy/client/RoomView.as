@@ -1,5 +1,7 @@
 package com.threerings.msoy.client {
 
+import flash.events.Event;
+
 import mx.containers.Canvas;
 
 import mx.core.ScrollPolicy;
@@ -39,6 +41,15 @@ public class RoomView extends Canvas
 
         width = 800;
         height = 600;
+
+        addEventListener(Event.ENTER_FRAME, tick);
+    }
+
+    protected function tick (event :Event) :void
+    {
+        // HERE we will be updating z ordering of all our children
+        // TODO
+        //trace("tick!");
     }
 
     /**
@@ -101,18 +112,26 @@ public class RoomView extends Canvas
         _sceneObj = (plobj as SpotSceneObject);
         _sceneObj.addListener(this);
 
-        // add all currently present occupants
-        for (var ii :int = _sceneObj.occupants.size() - 1; ii >= 0; ii--) {
-            addBody(_sceneObj.occupants.getAt(ii));
-        }
-
-        // set up any portals
+        // get the specifics on the current scene from the scene director
         var scene :MsoyScene =
             (_ctx.getSceneDirector().getScene() as MsoyScene);
+
+        // set up the background image
+        var bkg :ScreenMedia = new ScreenMedia(scene.getBackground());
+        bkg.x = 0;
+        bkg.y = 0;
+        addChild(bkg);
+
+        // set up any portals
         var itr :Iterator = scene.getPortals();
         while (itr.hasNext()) {
             var portal :Portal = (itr.next() as Portal);
             addPortal(portal);
+        }
+
+        // add all currently present occupants
+        for (var ii :int = _sceneObj.occupants.size() - 1; ii >= 0; ii--) {
+            addBody(_sceneObj.occupants.getAt(ii));
         }
     }
 

@@ -118,7 +118,7 @@ public class ScreenMedia extends Box
         loader.load(new URLRequest(url), getContext(url));
         rawChildren.addChild(loader);
 
-        if (desc.isInteractive()) {
+        if (desc.isInteractive() || isInteractive()) {
             addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
             addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
             addEventListener(MouseEvent.CLICK, mouseClick);
@@ -304,6 +304,16 @@ public class ScreenMedia extends Box
         }
     }
 
+    protected function isInteractive () :Boolean
+    {
+        return false;
+    }
+
+    protected function getHoverColor () :uint
+    {
+        return 0x40e0e0;
+    }
+
     /**
      * Callback function.
      */
@@ -317,7 +327,7 @@ public class ScreenMedia extends Box
             _glow.blurXTo = 20;
             _glow.blurYFrom = 0;
             _glow.blurYTo = 20;
-            _glow.color = 0x40e0e0;
+            _glow.color = getHoverColor();
             _glow.duration = 200;
         }
 

@@ -6,6 +6,7 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 
 import mx.effects.Move;
+import mx.effects.effectClasses.MoveInstance;
 import mx.effects.easing.Linear;
 
 import mx.events.EffectEvent;

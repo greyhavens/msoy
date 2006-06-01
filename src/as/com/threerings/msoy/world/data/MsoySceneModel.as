@@ -5,10 +5,15 @@ import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.whirled.data.SceneModel;
 
+import com.threerings.msoy.data.MediaData;
+
 public class MsoySceneModel extends SceneModel
 {
     /** The type of scene. */
     public var type :String;
+
+    /** The background image of the scene. */
+    public var background :MediaData;
 
     // documentation inherited
     public override function writeObject (out :ObjectOutputStream) :void
@@ -16,6 +21,7 @@ public class MsoySceneModel extends SceneModel
         super.writeObject(out);
 
         out.writeField(type);
+        out.writeObject(background);
     }
 
     // documentation inherited
@@ -24,6 +30,7 @@ public class MsoySceneModel extends SceneModel
         super.readObject(ins);
 
         type = (ins.readField(String) as String);
+        background = (ins.readObject() as MediaData);
     }
 }
 }

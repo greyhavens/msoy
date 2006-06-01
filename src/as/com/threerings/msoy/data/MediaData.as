@@ -66,7 +66,9 @@ public class MediaData
      */
     public function isInteractive () :Boolean
     {
-        return true;
+        // for now, true if we're a swf.
+        var url :String = URL;
+        return (url.indexOf("swf", url.length - 4) != -1);
     }
 
     // documentation inherited from interface Streamable
@@ -104,6 +106,8 @@ public class MediaData
         //"http://tasman.sea.earth.threerings.net/~ray/socketbunny.swf",
         "http://tasman.sea.earth.threerings.net/~ray/pedestrian.swf",
         "http://www.puzzlepirates.com/images/index/screen2.png",
+        "http://bogocorp.com/bogologo.gif",
+        "http://www.puzzlepirates.com/images/index/mainimage.png"
     ];
 }
 

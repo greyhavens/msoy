@@ -14,6 +14,8 @@ import com.threerings.whirled.spot.data.SpotSceneModel;
 import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.util.UpdateList;
 
+import com.threerings.msoy.data.MediaData;
+
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
@@ -51,9 +53,12 @@ public class MsoySceneRepository
         if (sceneId == 1) {
             portal.loc = new MsoyLocation(400, 200, 0, (short)0);
             portal.targetSceneId = 2;
+            model.background = new MediaData(4);
+
         } else {
             portal.loc = new MsoyLocation(20, 200, 0, (short)180);
             portal.targetSceneId = 1;
+            model.background = new MediaData(3);
         }
 
         SpotSceneModel spotty = SpotSceneModel.getSceneModel(model);
