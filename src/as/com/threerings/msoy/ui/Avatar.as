@@ -5,10 +5,6 @@ import flash.events.MouseEvent;
 import flash.geom.Matrix;
 import flash.geom.Point;
 
-import mx.effects.Move;
-import mx.effects.effectClasses.MoveInstance;
-import mx.effects.easing.Linear;
-
 import mx.events.EffectEvent;
 
 import com.threerings.msoy.data.MediaData;
@@ -47,15 +43,9 @@ public class Avatar extends ScreenMedia
             setOrientation(180);
         }
 
-        _move = new Move(this);
-        _move.xFrom = xx;
-        _move.yFrom = yy;
-        _move.xTo = loc.x;
-        _move.yTo = loc.y;
-        _move.easingFunction = Linear.easeNone;
-        var dist :Number = Point.distance(
-            new Point(loc.x, loc.y), new Point(xx, yy));
-        _move.duration = dist * 10; // the magic
+        _move = new SceneMove(this);
+        _move.src = new MsoyLocation(xx, yy, 0, 0);
+        _move.dest = loc;
         _move.addEventListener(EffectEvent.EFFECT_END, moveStopped);
 
         _move.play();
@@ -82,6 +72,6 @@ public class Avatar extends ScreenMedia
     /** The location to which we're currently heading. */
     protected var _loc :MsoyLocation;
 
-    protected var _move :Move;
+    protected var _move :SceneMove;
 }
 }

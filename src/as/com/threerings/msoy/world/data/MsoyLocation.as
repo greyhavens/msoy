@@ -36,6 +36,18 @@ public class MsoyLocation
         this.orient = orient;
     }
 
+    /**
+     * Get the distance between this location and the other.
+     */
+    public function distance (that :MsoyLocation) :Number
+    {
+        var dx :int = this.x - that.x;
+        var dy :int = this.y - that.y;
+        var dz :int = this.z - that.z;
+
+        return Math.sqrt(dx*dx + dy*dy + dz*dz);
+    }
+
     // documentation inherited from interface Location
     public function getOpposite () :Location
     {

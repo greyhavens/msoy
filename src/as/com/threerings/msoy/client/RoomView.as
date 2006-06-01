@@ -4,6 +4,8 @@ import flash.events.Event;
 
 import mx.containers.Canvas;
 
+import mx.core.IUIComponent;
+
 import mx.core.ScrollPolicy;
 
 import com.threerings.util.HashMap;
@@ -45,6 +47,35 @@ public class RoomView extends Canvas
         addEventListener(Event.ENTER_FRAME, tick);
     }
 
+    /**
+     * Place the specified component at the specified 3d position.
+     *
+     * @param loc either an MsoyLocation or an Array of [ x, y, z ].
+     */
+    public function setLocation (target :IUIComponent, loc :Object) :void
+    {
+        var lx :Number;
+        var ly :Number;
+        var lz :Number;
+
+        if (loc is MsoyLocation) {
+            var mloc :MsoyLocation = (loc as MsoyLocation);
+            lx = mloc.x;
+            ly = mloc.y;
+            lz = mloc.z;
+
+        } else {
+            var aloc :Array = (loc as Array);
+            lx = aloc[0];
+            ly = aloc[1];
+            lz = aloc[2];
+        }
+
+        // for now, it's simply x and y
+        target.x = lx;
+        target.y = ly;
+    }
+
     protected function tick (event :Event) :void
     {
         // HERE we will be updating z ordering of all our children
@@ -73,8 +104,7 @@ public class RoomView extends Canvas
 
         var avatar :Avatar = new Avatar(occInfo.avatar, loc);
         _avatars.put(bodyOid, avatar);
-        avatar.x = loc.x;
-        avatar.y = loc.y;
+        setLocation(avatar, loc);
         addChild(avatar);
     }
 
@@ -100,8 +130,7 @@ public class RoomView extends Canvas
     {
         var pm :PortalMedia = new PortalMedia(portal);
         var loc :MsoyLocation = (portal.loc as MsoyLocation);
-        pm.x = loc.x;
-        pm.y = loc.y;
+        setLocation(pm, loc);
         addChild(pm);
     }
 

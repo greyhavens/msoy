@@ -39,6 +39,18 @@ public class MsoyLocation
         this.orient = orient;
     }
 
+    /**
+     * Get the distance between this location and the other.
+     */
+    public double distance (MsoyLocation that)
+    {
+        int dx = this.x - that.x;
+        int dy = this.y - that.y;
+        int dz = this.z - that.z;
+
+        return Math.sqrt(dx*dx + dy*dy + dz*dz);
+    }
+
     // documentation inherited from interface Location
     public Location getOpposite ()
     {
