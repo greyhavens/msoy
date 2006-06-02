@@ -81,6 +81,9 @@ public class RoomView extends Canvas
      */
     public function pointToLocation (x :Number, y :Number) :MsoyLocation
     {
+        // flip y
+        y = height - y;
+
         var sheight :Number = (height * MIN_SCALE);
         var yoffset :Number = (height - sheight) / 2;
         if (y > yoffset) {
@@ -149,12 +152,14 @@ public class RoomView extends Canvas
         // x position depends on logical x and the scale
         var swidth :Number = (width * scale);
         var xoffset :Number = (width - swidth) / 2;
-        sm.x = xoffset + (loc.x / MAX_COORD) * swidth;
+        sm.x = (scale * sm.getContentWidth())/-2 + xoffset +
+            (loc.x / MAX_COORD) * swidth;
 
         // y position depends on logical y and the scale (z)
         var sheight :Number = (height * scale);
         var yoffset :Number = (height - sheight) / 2;
-        sm.y = yoffset + (loc.y / MAX_COORD) * sheight;
+        sm.y = height - yoffset - (scale * sm.getContentHeight());
+        // TODO: incorporate y coord
     }
 
     protected function getZOfChildAt (index :int) :int

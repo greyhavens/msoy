@@ -10,6 +10,7 @@ import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
+import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 import flash.events.StatusEvent;
 import flash.events.TextEvent;
@@ -104,6 +105,8 @@ public class ScreenMedia extends Box
             Event.COMPLETE, loadingComplete);
         loader.contentLoaderInfo.addEventListener(
             IOErrorEvent.IO_ERROR, loadError);
+        loader.contentLoaderInfo.addEventListener(
+            ProgressEvent.PROGRESS, loadProgress);
 
         // grab hold of the EventDispatcher we'll use for comm
         _dispatch = loader.contentLoaderInfo.sharedEvents;
@@ -124,7 +127,7 @@ public class ScreenMedia extends Box
         loader.load(new URLRequest(url), getContext(url));
         rawChildren.addChild(loader);
 
-        if (desc.isInteractive() || isInteractive()) {
+        if (isInteractive()) {
             addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
             addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
             addEventListener(MouseEvent.CLICK, mouseClick);
@@ -137,6 +140,16 @@ public class ScreenMedia extends Box
         }
 
         //addEventListener(Event.ENTER_FRAME, tick);
+    }
+
+    public function getContentWidth () :int
+    {
+        return _w;
+    }
+
+    public function getContentHeight () :int
+    {
+        return _h;
     }
 
     public function setLocation (newLoc :Object) :void
@@ -154,6 +167,16 @@ public class ScreenMedia extends Box
             loc.z = aloc[2];
         }
 
+        locationUpdated();
+    }
+
+    /**
+     * An internal convenience method to recompute our screen
+     * position when our size, location, or anything like that has
+     * been updated.
+     */
+    protected function locationUpdated () :void
+    {
         if (parent is RoomView) {
             (parent as RoomView).locationUpdated(this);
         }
@@ -300,6 +323,8 @@ public class ScreenMedia extends Box
     {
         info.removeEventListener(Event.COMPLETE, loadingComplete);
         info.removeEventListener(IOErrorEvent.IO_ERROR, loadError);
+        info.removeEventListener(ProgressEvent.PROGRESS, loadProgress);
+
     }
 
     /**
@@ -327,6 +352,19 @@ public class ScreenMedia extends Box
         rawChildren.addChild(ImageUtil.createErrorImage(w, h));
     }
 
+    protected function loadProgress (event :ProgressEvent) :void
+    {
+        var info :LoaderInfo = (event.target as LoaderInfo);
+        try {
+            _w = info.width;
+            _h = info.height;
+            locationUpdated();
+        } catch (err :Error) {
+            // an error is thrown trying to access these props before they're
+            // ready
+        }
+    }
+
     /**
      * Callback function.
      */
@@ -334,6 +372,10 @@ public class ScreenMedia extends Box
     {
         var info :LoaderInfo = (event.target as LoaderInfo);
         removeListeners(info);
+
+        _w = info.width;
+        _h = info.height;
+        locationUpdated();
 
         // Try accessing the 'content' property and see if that generates
         // a security error. If so, leave it where it is.
@@ -360,7 +402,7 @@ public class ScreenMedia extends Box
 
     protected function isInteractive () :Boolean
     {
-        return false;
+        return _desc.isInteractive();
     }
 
     protected function getHoverColor () :uint
@@ -409,8 +451,7 @@ public class ScreenMedia extends Box
      */
     protected function mouseClick (event :MouseEvent) :void
     {
-        var look :String = (Math.random() < .5) ? "red" : "blue";
-        sendMessage("setLook", look);
+        // nada
     }
 
 /*
@@ -430,6 +471,10 @@ public class ScreenMedia extends Box
 */
 
     protected var _id :int;
+
+    protected var _w :int;
+
+    protected var _h :int;
 
     /** Our Media descripter. */
     protected var _desc :MediaData;
