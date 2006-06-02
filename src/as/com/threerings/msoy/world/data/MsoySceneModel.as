@@ -32,5 +32,11 @@ public class MsoySceneModel extends SceneModel
         type = (ins.readField(String) as String);
         background = (ins.readObject() as MediaData);
     }
+
+    public function toString () :String
+    {
+        return "MsoySceneModel[\"" + name + "\" (" + sceneId + ")" +
+            ", version=" + version + ", type=" + type + "]";
+    }
 }
 }

@@ -73,3 +73,5 @@ be able to just hide the funny business inside the streamer.
   A Number that refers to an integer value will look like an int. Fucked!
 
   *** Look into this more, god it would just make lots of things better..
+
+- Create a chameleon avatar that manipulates the pixels behind it?

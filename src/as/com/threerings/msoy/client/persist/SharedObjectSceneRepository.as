@@ -2,6 +2,12 @@ package com.threerings.msoy.client.persist {
 
 import flash.net.SharedObject;
 
+import flash.utils.ByteArray;
+import flash.utils.Endian;
+
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
+
 import com.threerings.whirled.client.persist.SceneRepository;
 
 import com.threerings.whirled.data.SceneModel;
@@ -26,23 +32,43 @@ public class SharedObjectSceneRepository
     // documentation inherited from interface SceneRepository
     public function loadSceneModel (sceneId :int) :SceneModel
     {
+        // retrieve the shared object
         var so :SharedObject = getShared(sceneId);
         if (so == null) {
             throw new NoSuchSceneError(sceneId);
         }
-        return (so.data.model as SceneModel);
+
+        // if found, try to get the byte array
+        var ba :ByteArray = (so.data.model as ByteArray);
+        if (ba == null) {
+            return null;
+        }
+
+        // uncompress the bytes and read out the scene model
+        ba.endian = Endian.BIG_ENDIAN; // this should be saved, but...
+        ba.uncompress();
+        var ins :ObjectInputStream = new ObjectInputStream(ba);
+        return (ins.readObject() as SceneModel);
     }
 
     // documentation inherited from interface SceneRepository
     public function storeSceneModel (model :SceneModel) :void
     {
+        // retrieve the shared object
         var so :SharedObject = getShared(model.sceneId);
         if (so == null) {
             return; // fail silently
         }
 
-        // store the model directly in the shared object
-        so.data.model = model;
+        // stream the model to the array, compress
+        var ba :ByteArray = new ByteArray();
+        ba.endian = Endian.BIG_ENDIAN;
+        var out :ObjectOutputStream = new ObjectOutputStream(ba);
+        out.writeObject(model);
+        ba.compress();
+
+        // store the byte array
+        so.data.model = ba;
         so.flush(); // TODO: we could specify a min size..
     }
 
