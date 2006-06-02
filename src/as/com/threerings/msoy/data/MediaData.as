@@ -31,12 +31,18 @@ public class MediaData
     // TODO
     public function get originX () :Number
     {
+        if (id == 0) {
+            return 30;
+        }
         return 0;
     }
 
     // TODO
     public function get originY () :Number
     {
+        if (id == 0) {
+            return 200;
+        }
         return 0;
     }
 

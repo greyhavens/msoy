@@ -1,6 +1,7 @@
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Shape;
@@ -33,7 +34,9 @@ import mx.events.EffectEvent;
 
 import com.threerings.media.image.ImageUtil;
 
+import com.threerings.msoy.client.RoomView;
 import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.world.data.MsoyLocation;
 
 import com.threerings.util.HashMap;
 
@@ -60,6 +63,9 @@ import com.threerings.util.HashMap;
  */
 public class ScreenMedia extends Box
 {
+    /** The current logical coordinate of this media. */
+    public const loc :MsoyLocation = new MsoyLocation();
+
     /**
      * Constructor.
      */
@@ -133,11 +139,58 @@ public class ScreenMedia extends Box
         //addEventListener(Event.ENTER_FRAME, tick);
     }
 
+    public function setLocation (newLoc :Object) :void
+    {
+        if (newLoc is MsoyLocation) {
+            var mloc :MsoyLocation = (newLoc as MsoyLocation);
+            loc.x = mloc.x;
+            loc.y = mloc.y;
+            loc.z = mloc.z;
+
+        } else {
+            var aloc :Array = (newLoc as Array);
+            loc.x = aloc[0];
+            loc.y = aloc[1];
+            loc.z = aloc[2];
+        }
+
+        if (parent is RoomView) {
+            (parent as RoomView).locationUpdated(this);
+        }
+    }
+
+    /** A callback from the move. */
+    public function moveCompleted (orient :Number) :void
+    {
+        // nada
+    }
+
+/* Commented out: this doesn't fucking work, this method should be called
+ * parentWillChange. For now, just require folks to add the component first
+ * and then set hte location.
+
+    override public function parentChanged (p :DisplayObjectContainer) :void
+    {
+        super.parentChanged(p);
+        if (p is RoomView) {
+            (p as RoomView).locationUpdated(this);
+        }
+    }
+ */
+
+    public function get description () :MediaData
+    {
+        return _desc;
+    }
+
+/*
     // documentation inherited
     public override function set x (newValue :Number) :void
     {
         // TODO: test
+        trace("set x to " + newValue);
         super.x = newValue - _desc.originX;
+        trace("super.x is now " + super.x + " and x is just " + x);
     }
 
     // documentation inherited
@@ -160,6 +213,7 @@ public class ScreenMedia extends Box
         // TODO: test
         return (super.y + _desc.originY);
     }
+*/
 
     /**
      * Accessor: media property.
@@ -195,7 +249,7 @@ public class ScreenMedia extends Box
                 _oldDispatch.addEventListener(
                     StatusEvent.STATUS, onLocalConnStatus);
             }
-            trace("dispatching on \"_msoy" + _id + "\".");
+            //trace("dispatching on \"_msoy" + _id + "\".");
             try {
                 _oldDispatch.send("_msoy" + _id, type, msg);
             } catch (e :Error) {

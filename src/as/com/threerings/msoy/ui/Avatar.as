@@ -24,12 +24,8 @@ public class Avatar extends ScreenMedia
 //        this.transform.matrix = matrix;
     }
 
-    public function moveTo (loc :MsoyLocation) :void
+    public function moveTo (destLoc :MsoyLocation) :void
     {
-        _loc = loc;
-        var xx :Number = x;
-        var yy :Number = y;
-
         // if there's already a move, kill it
         if (_move != null) {
             _move.end();
@@ -37,15 +33,15 @@ public class Avatar extends ScreenMedia
 
         // set walking, and maybe change facing direction
         sendMessage("setAction", "walking");
-        if (xx < loc.x) {
+        if (destLoc.x > loc.x) {
             setOrientation(0);
-        } else if (xx > loc.x)  {
+        } else if (destLoc.x < loc.x)  {
             setOrientation(180);
         }
 
         _move = new SceneMove(this);
-        _move.src = new MsoyLocation(xx, yy, 0, 0);
-        _move.dest = loc;
+        _move.src = this.loc;
+        _move.dest = destLoc;
         _move.addEventListener(EffectEvent.EFFECT_END, moveStopped);
 
         _move.play();
@@ -61,16 +57,18 @@ public class Avatar extends ScreenMedia
     {
         _move = null;
         sendMessage("setAction", "standing");
-        setOrientation(_loc.orient);
+    }
+
+    override public function moveCompleted (orient :Number) :void
+    {
+        super.moveCompleted(orient);
+        setOrientation(int(orient));
     }
 
     protected override function mouseClick (event :MouseEvent) :void
     {
         //setFacing(!_left);
     }
-
-    /** The location to which we're currently heading. */
-    protected var _loc :MsoyLocation;
 
     protected var _move :SceneMove;
 }

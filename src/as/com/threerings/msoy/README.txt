@@ -246,6 +246,10 @@ ActionScript
   I'd feel better about it if there were some marker interface implemented
   by all classes that can be []'d.
 
+  ***Update: the classes that do this extend Proxy and override getProperty
+  and setProperty to do the magic.
+
+
 - Functions may be declared anywhere, and it seems that they have visibility
   to any variables around them at that point, as if they were an inner class
   and the variables were final:
@@ -353,16 +357,6 @@ all other clients every time he enters a room.
 Even excluding that case, there's nothing we can do to prevent a malicious .swf
 freezing shit up in the catalog viewer. More thinking is required.
 
-- Duh. When b3 comes out and msoy compiles again, I should set breakpoints
-  during the chatobj subscription process and see if I can narrow down
-  which code is causing Mr. Crashypoo.
-
-- Flex data services:
-  LOOK INTO: is it possible to create a RemoteObject that is defined on
-  the fly? (Without being specified in flex-enterprise-services.xml)
-  (Or some other way to accomplish the same thing)
-  Probably this is possible.
-
 - describeType(someObject) and see about setting accessors dynamically,
   registerClass(), or other undocumented functions.
 
@@ -433,9 +427,6 @@ If it takes too long to run it can be rejected.
 - An easy hack for dynamic sound generation in flash:
   http://blog.davr.org/2006/04/21/dynamic-sound-in-85/
 
-- LoaderInfo.sharedEvents can be used to communicate between another swf
-  that is running in a different security domain. That might be our ticket.
-
 - If we do embed javascript inside our web pages and want to cross-script
   from inside our flash, we may want to serve up our swfs and client
   swfs from different servers. Perhaps one address for our html and our swf,
@@ -482,3 +473,10 @@ If it takes too long to run it can be rejected.
   - normal: standard floor and back wall image?
   - snowglobe: a warped lens effect on top of a normal room. All furniture
     positions are ignored and all furniture flys around the room.
+
+- Multiple tag types for media
+  DESC tags: one-word, descriptive
+  META tags: copy-of, derived-from, maybe things like that with refs to another
+             piece of media..
+
+- UIComponent.parentChanged is misnamed, it should be called parentWillChange.

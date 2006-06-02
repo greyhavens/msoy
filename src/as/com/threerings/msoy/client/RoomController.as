@@ -63,10 +63,16 @@ public class RoomController extends SceneController
         if (event.target == _roomView) {
             // mouse events are propogated upwards to parent components
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
-            var newLoc :MsoyLocation = new MsoyLocation(
-                event.localX, event.localY, 0,
-                curLoc.x > event.localX ? 180 : 0);
-            _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
+
+            // calculate where the location is
+            var newLoc :MsoyLocation = _roomView.pointToLocation(
+                event.localX, event.localY);
+            trace("clicked: " + newLoc);
+            if (newLoc != null) {
+                // orient the location as appropriate
+                newLoc.orient = (curLoc.x > newLoc.x ? 180 : 0);
+                _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
+            }
         }
     }
 

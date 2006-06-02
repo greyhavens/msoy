@@ -31,11 +31,15 @@ public class SceneMoveInstance extends TweenEffectInstance
 
         EffectManager.mx_internal::startVectorEffect(IUIComponent(target));
 
-        tween = mx_internal::createTween(this, [ src.x, src.y, src.z ],
-            [ dest.x, dest.y, dest.z ], duration);
+        tween = mx_internal::createTween(
+            this,
+            [ src.x, src.y, src.z, src.orient ],
+            [ dest.x, dest.y, dest.z, dest.orient ],
+            duration);
 
         // TODO: clipping and edgemetrics stuff omitted?
 
+        // immediately update with the first coords
         onTweenUpdate(tween.mx_internal::getCurrentValue(0));
 
         // TODO: style stuff omitted?
@@ -47,9 +51,10 @@ public class SceneMoveInstance extends TweenEffectInstance
         // we don't use IUIComponent.move() on our target, so we
         // do not need to suspend EffectManager event handling.
 
-        var coords :Array = (value as Array);
-        var parent :RoomView = (target.parent as RoomView);
-        parent.setLocation(IUIComponent(target), coords);
+        ScreenMedia(target).setLocation(value);
+        //var coords :Array = (value as Array);
+        //var parent :RoomView = (target.parent as RoomView);
+        //parent.setLocation(IUIComponent(target), coords);
     }
 
     // documentation inherited
@@ -59,7 +64,10 @@ public class SceneMoveInstance extends TweenEffectInstance
 
         // TODO: style, clipping omitted?
 
+        // will update with current coords
         super.onTweenEnd(value);
+
+        ScreenMedia(target).moveCompleted(value[3]);
     }
 }
 }

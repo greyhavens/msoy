@@ -51,12 +51,12 @@ public class MsoySceneRepository
         portal.targetPortalId = 1;
 
         if (sceneId == 1) {
-            portal.loc = new MsoyLocation(400, 200, 0, (short)0);
+            portal.loc = new MsoyLocation(90, 0, 90, (short)0);
             portal.targetSceneId = 2;
             model.background = new MediaData(4);
 
         } else {
-            portal.loc = new MsoyLocation(20, 200, 0, (short)180);
+            portal.loc = new MsoyLocation(20, 0, 40, (short)180);
             portal.targetSceneId = 1;
             model.background = new MediaData(3);
         }
