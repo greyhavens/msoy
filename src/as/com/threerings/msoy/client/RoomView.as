@@ -45,7 +45,7 @@ public class RoomView extends Canvas
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
         width = 800;
-        height = 600;
+        height = width / PHI;
 
         // draw the box, slightly
         graphics.clear();
@@ -56,6 +56,7 @@ public class RoomView extends Canvas
         var xoffset :Number = (width - swidth) / 2;
         var yoffset :Number = (height - sheight) / 2;
 
+        // draw the lines defining the walls
         graphics.moveTo(0, 0);
         graphics.lineTo(xoffset, yoffset);
         graphics.lineTo(width - xoffset, yoffset);
@@ -101,6 +102,7 @@ public class RoomView extends Canvas
             return null;
         }
 
+        // solve for x
         var xx :Number = (x / swidth) * MAX_COORD;
 
         // solve for z
@@ -110,6 +112,10 @@ public class RoomView extends Canvas
         return new MsoyLocation(xx, 0, zz, 0);
     }
 
+    /**
+     * Called by ScreenMedia instances when they've had their location
+     * updated.
+     */
     public function locationUpdated (sm :ScreenMedia) :void
     {
         // first update the position and scale
@@ -140,6 +146,10 @@ public class RoomView extends Canvas
         }
     }
 
+    /**
+     * Calculate the scale and x/y position of the specified media
+     * according to its logical coordinates.
+     */
     protected function positionAndScale (
             sm :ScreenMedia, loc :MsoyLocation) :void
     {
@@ -162,6 +172,10 @@ public class RoomView extends Canvas
         // TODO: incorporate y coord
     }
 
+    /**
+     * Convenience method to get the logical z coordinate of the child
+     * at the specified index.
+     */
     protected function getZOfChildAt (index :int) :int
     {
         var disp :DisplayObject = getChildAt(index);
@@ -170,45 +184,6 @@ public class RoomView extends Canvas
         }
         return int.MAX_VALUE;
     }
-
-    /**
-     * Place the specified component at the specified 3d position.
-     *
-     * @param loc either an MsoyLocation or an Array of [ x, y, z ].
-     */
-/*
-    public function setLocation (target :IUIComponent, loc :Object) :void
-    {
-        var lx :Number;
-        var ly :Number;
-        var lz :Number;
-
-        if (loc is MsoyLocation) {
-            var mloc :MsoyLocation = (loc as MsoyLocation);
-            lx = mloc.x;
-            ly = mloc.y;
-            lz = mloc.z;
-
-        } else {
-            var aloc :Array = (loc as Array);
-            lx = aloc[0];
-            ly = aloc[1];
-            lz = aloc[2];
-        }
-
-        var tx :int = lx;
-        var ty :int = ly;
-        if (target is ScreenMedia) {
-            var md :MediaData = (target as ScreenMedia).description;
-            tx -= md.originX;
-            ty -= md.originY;
-        }
-
-        // for now, it's simply x and y
-        target.x = tx;
-        target.y = ty;
-    }
-*/
 
     /**
      * Return the current location of the avatar that represents our body.
@@ -272,7 +247,9 @@ public class RoomView extends Canvas
             (_ctx.getSceneDirector().getScene() as MsoyScene);
 
         // set up the background image
-//        var bkg :ScreenMedia = new ScreenMedia(scene.getBackground());
+        var bkg :ScreenMedia = new ScreenMedia(scene.getBackground());
+        addChild(bkg);
+        bkg.setLocation([50, 0, 100, 0]);
 //        bkg.x = 0;
 //        bkg.y = 0;
 //        addChild(bkg);
@@ -351,8 +328,9 @@ public class RoomView extends Canvas
     /** A map of bodyOid -> Avatar. */
     protected var _avatars :HashMap = new HashMap();
 
-    private static const MIN_SCALE :Number = 0.25;
+    private static const MIN_SCALE :Number = 0.45;
     private static const MAX_SCALE :Number = 1;
     private static const MAX_COORD :Number = 100;
+    private static const PHI :Number = (1 + Math.sqrt(5)) / 2;
 }
 }

@@ -51,7 +51,9 @@ public class SceneMoveInstance extends TweenEffectInstance
         // we don't use IUIComponent.move() on our target, so we
         // do not need to suspend EffectManager event handling.
 
-        ScreenMedia(target).setLocation(value);
+        if (SceneMove(effect).valid) {
+            ScreenMedia(target).setLocation(value);
+        }
         //var coords :Array = (value as Array);
         //var parent :RoomView = (target.parent as RoomView);
         //parent.setLocation(IUIComponent(target), coords);
@@ -67,7 +69,9 @@ public class SceneMoveInstance extends TweenEffectInstance
         // will update with current coords
         super.onTweenEnd(value);
 
-        ScreenMedia(target).moveCompleted(value[3]);
+        if (SceneMove(effect).valid) {
+            ScreenMedia(target).moveCompleted(value[3]);
+        }
     }
 }
 }

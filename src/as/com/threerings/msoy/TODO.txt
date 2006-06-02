@@ -71,3 +71,5 @@ be able to just hide the funny business inside the streamer.
 
   *** Can't: there's no way to determine if a number is a Number or an int.
   A Number that refers to an integer value will look like an int. Fucked!
+
+  *** Look into this more, god it would just make lots of things better..

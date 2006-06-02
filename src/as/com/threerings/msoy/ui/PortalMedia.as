@@ -12,7 +12,7 @@ public class PortalMedia extends ScreenMedia
 {
     public function PortalMedia (portal :Portal)
     {
-        super(new MediaData(2));
+        super(new MediaData(3));
         _portal = portal;
     }
 

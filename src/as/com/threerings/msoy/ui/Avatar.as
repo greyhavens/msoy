@@ -28,7 +28,7 @@ public class Avatar extends ScreenMedia
     {
         // if there's already a move, kill it
         if (_move != null) {
-            _move.end();
+            _move.cancel();
         }
 
         // set walking, and maybe change facing direction

@@ -14,6 +14,20 @@ public class SceneMove extends TweenEffect
     /** The properties affected by this effect. */
     private static const AFFECTED_PROPERTIES :Array = [ "x", "y", "zoom" ];
 
+    /** Our source location. */
+    public var src :MsoyLocation;
+
+    /** Our destination location. */
+    public var dest :MsoyLocation;
+
+    /**
+     * Accessor for valid property, used by our instances.
+     */
+    public function get valid () :Boolean
+    {
+        return _valid;
+    }
+
     /**
      * Class constructor
      */
@@ -26,11 +40,14 @@ public class SceneMove extends TweenEffect
         easingFunction = Linear.easeNone; // set up a linear easing
     }
 
-    /** Our source location. */
-    public var src :MsoyLocation;
-
-    /** Our destination location. */
-    public var dest :MsoyLocation;
+    /**
+     * Cancel the move, without jumping to the end.
+     */
+    public function cancel () :void
+    {
+        _valid = false;
+        end();
+    }
 
     // documentation inherited
     override public function getAffectedProperties () :Array
@@ -49,5 +66,8 @@ public class SceneMove extends TweenEffect
         i.src = src;
         i.dest = dest;
     }
+
+    /** Whether we've been cancelled or not. */
+    protected var _valid :Boolean = true;
 }
 }

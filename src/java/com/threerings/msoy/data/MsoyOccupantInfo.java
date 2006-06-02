@@ -25,6 +25,6 @@ public class MsoyOccupantInfo extends OccupantInfo
         super(user);
 
         // TODO
-        avatar = new MediaData(user.getOid() % 2); // consistent
+        avatar = new MediaData(user.getOid() % 3); // consistent
     }
 }
