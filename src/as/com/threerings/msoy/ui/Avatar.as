@@ -65,7 +65,7 @@ public class Avatar extends ScreenMedia
         setOrientation(int(orient));
     }
 
-    protected override function mouseClick (event :MouseEvent) :void
+    override protected function mouseClick (event :MouseEvent) :void
     {
         //setFacing(!_left);
     }

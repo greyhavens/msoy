@@ -16,7 +16,7 @@ public class MsoySceneModel extends SceneModel
     public var background :MediaData;
 
     // documentation inherited
-    public override function writeObject (out :ObjectOutputStream) :void
+    override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
@@ -25,7 +25,7 @@ public class MsoySceneModel extends SceneModel
     }
 
     // documentation inherited
-    public override function readObject (ins :ObjectInputStream) :void
+    override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 

@@ -11,7 +11,7 @@ public class MsoyBootstrapData extends BootstrapData
     public var chatOid :int;
 
     // documentation inherited
-    public override function readObject (ins :ObjectInputStream) :void
+    override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 

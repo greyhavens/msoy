@@ -146,6 +146,14 @@ public class RoomView extends Canvas
         }
     }
 
+    public function dimAvatars (setDim :Boolean) :void
+    {
+        var alpha :Number = setDim ? 0.4 : 1.0;
+        for each (var avatar :Avatar in _avatars.values()) {
+            avatar.alpha = alpha;
+        }
+    }
+
     /**
      * Calculate the scale and x/y position of the specified media
      * according to its logical coordinates.

@@ -41,11 +41,27 @@ public class ChatTextArea extends TextArea
     // documentation inherited from interface ChatDisplay
     public function displayMessage (msg :ChatMessage) :void
     {
+        if (!_scrollBot) {
+            _scrollBot = (verticalScrollPosition == maxVerticalScrollPosition);
+        }
+
+        // display the message
         if (msg is UserMessage) {
             this.htmlText += "<font color=\"red\">&lt;" +
                 (msg as UserMessage).speaker + "&gt;</font> ";
         }
         this.htmlText += msg.message;
+    }
+
+    // documentation inherited
+    override protected function updateDisplayList (uw :Number, uh :Number) :void
+    {
+        super.updateDisplayList(uw, uh);
+
+        if (_scrollBot) {
+            verticalScrollPosition = maxVerticalScrollPosition;
+            _scrollBot = false;
+        }
     }
 
     /**
@@ -64,5 +80,7 @@ public class ChatTextArea extends TextArea
 
     /** The giver of life. */
     protected var _ctx :MsoyContext;
+
+    protected var _scrollBot :Boolean;
 }
 }

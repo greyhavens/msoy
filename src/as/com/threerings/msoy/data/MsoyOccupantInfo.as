@@ -14,7 +14,7 @@ public class MsoyOccupantInfo extends OccupantInfo
     public var avatar :MediaData;
 
     // documentation inherited
-    public override function writeObject (out :ObjectOutputStream) :void
+    override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
@@ -22,7 +22,7 @@ public class MsoyOccupantInfo extends OccupantInfo
     }
 
     // documentation inherited
-    public override function readObject (ins :ObjectInputStream) :void
+    override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 

@@ -3,6 +3,7 @@ package com.threerings.msoy.client {
 import flash.display.Stage;
 
 import mx.core.Application;
+import mx.logging.Log;
 
 import com.threerings.util.Name;
 import com.threerings.presents.client.Client;
@@ -45,14 +46,22 @@ public class MsoyClient extends Client
     }
 
     // documetnation inherited
-    public override function gotClientObject (clobj :ClientObject) :void
+    override public function gotClientObject (clobj :ClientObject) :void
     {
         super.gotClientObject(clobj);
+
+        var userObj :MsoyUserObject = (clobj as MsoyUserObject);
+
+        if (userObj.getTokens().isAdmin()) {
+            var targ :ChatTarget = new ChatTarget(_ctx);
+            mx.logging.Log.addTarget(targ);
+        }
 
         // TODO: for now, we start with scene 1
         _ctx.getSceneDirector().moveTo(1);
         //_ctx.getLocationDirector().moveTo(
         //    (getBootstrapData() as MsoyBootstrapData).chatOid);
+
     }
 
     public function fuckingCompiler () :void
@@ -75,4 +84,36 @@ public class MsoyClient extends Client
 
     protected var _ctx :MsoyContext;
 }
+}
+
+import mx.logging.LogEventLevel;
+import mx.logging.targets.LineFormattedTarget;
+
+import mx.core.mx_internal;
+
+use namespace mx_internal;
+
+import com.threerings.util.MessageBundle;
+
+import com.threerings.msoy.client.MsoyContext;
+
+// TODO: stop listening at the end?
+class ChatTarget extends LineFormattedTarget
+{
+    public function ChatTarget (ctx :MsoyContext)
+    {
+        _ctx = ctx;
+        super();
+
+        includeCategory = includeTime = includeLevel = true;
+        filters = ["*"];
+        level = LogEventLevel.DEBUG;
+    }
+
+    override mx_internal function internalLog (msg :String) :void
+    {
+        _ctx.displayInfo(null, MessageBundle.taint(msg));
+    }
+
+    protected var _ctx :MsoyContext;
 }

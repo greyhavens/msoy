@@ -1,7 +1,9 @@
 package com.threerings.msoy.client {
 
 import flash.display.InteractiveObject;
+import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.ui.Keyboard;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
@@ -16,7 +18,7 @@ import com.threerings.msoy.world.data.MsoyLocation;
 public class RoomController extends SceneController
 {
     // documentation inherited
-    public override function init (ctx :CrowdContext, config :PlaceConfig) :void
+    override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
         super.init(ctx, config);
 
@@ -24,7 +26,7 @@ public class RoomController extends SceneController
     }
 
     // documentation inherited
-    protected override function createPlaceView (ctx :CrowdContext) :PlaceView
+    override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
         var rp :RoomPanel = new RoomPanel(ctx as MsoyContext);
         _roomView = rp.view;
@@ -32,22 +34,26 @@ public class RoomController extends SceneController
     }
 
     // documentation inherited
-    public override function willEnterPlace (plobj :PlaceObject) :void
+    override public function willEnterPlace (plobj :PlaceObject) :void
     {
         super.willEnterPlace(plobj);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+        _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
     }
 
     // documentation inherited
-    public override function didLeavePlace (plobj :PlaceObject) :void
+    override public function didLeavePlace (plobj :PlaceObject) :void
     {
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+        _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
         super.didLeavePlace(plobj);
     }
 
-    public override function handleAction (cmd :String, arg :Object) :Boolean
+    override public function handleAction (cmd :String, arg :Object) :Boolean
     {
         if (cmd == "portalClicked") {
             var portal :Portal = (arg as Portal);
@@ -73,6 +79,15 @@ public class RoomController extends SceneController
                 newLoc.orient = (curLoc.x > newLoc.x ? 180 : 0);
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
             }
+        }
+    }
+
+    protected function keyEvent (event :KeyboardEvent) :void
+    {
+        switch (event.keyCode) {
+        case Keyboard.SHIFT:
+            _roomView.dimAvatars(event.type == KeyboardEvent.KEY_DOWN);
+            break;
         }
     }
 

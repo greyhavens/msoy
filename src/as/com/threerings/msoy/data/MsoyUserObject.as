@@ -9,6 +9,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
@@ -24,6 +25,9 @@ public class MsoyUserObject extends BodyObject
 
     /** The field name of the <code>clusterOid</code> field. */
     public static const CLUSTER_OID :String = "clusterOid";
+
+    /** The field name of the <code>tokens</code> field. */
+    public static const TOKENS :String = "tokens";
     // AUTO-GENERATED: FIELDS END
 
     /** The scene id that the user is currently occupying. */
@@ -31,6 +35,9 @@ public class MsoyUserObject extends BodyObject
 
     /** The object ID of the user's cluster. */
     public var clusterOid :int;
+
+    /** The tokens defining the access controls for this user. */
+    public var tokens :TokenRing;
 
     // documentation inherited from superinterface ScenedBodyObject
     public function getSceneId () :int
@@ -48,6 +55,12 @@ public class MsoyUserObject extends BodyObject
     public function getClusterField () :String
     {
         return CLUSTER_OID;
+    }
+
+    // documentation inherited
+    override public function getTokens () :TokenRing
+    {
+        return tokens;
     }
 
     // AUTO-GENERATED: METHODS START
@@ -82,24 +95,34 @@ public class MsoyUserObject extends BodyObject
             CLUSTER_OID, new Integer(value), new Integer(ovalue));
         this.clusterOid = value;
     }
+
+    public function setTokens (value :TokenRing) :void
+    {
+        var ovalue :TokenRing = this.tokens;
+        requestAttributeChange(
+            TOKENS, value, ovalue);
+        this.tokens = value;
+    }
     // AUTO-GENERATED: METHODS END
 
     // documentation inherited
-    public override function writeObject (out :ObjectOutputStream) :void
+    override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
         out.writeInt(sceneId);
         out.writeInt(clusterOid);
+        out.writeObject(tokens);
     }
 
     // documentation inherited
-    public override function readObject (ins :ObjectInputStream) :void
+    override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
+        tokens = (ins.readObject() as TokenRing);
     }
 }
 }

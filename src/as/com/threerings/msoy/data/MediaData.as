@@ -110,9 +110,13 @@ public class MediaData
         "http://tasman.sea.earth.threerings.net/~ray/hipsterzombie.swf",
         "http://tasman.sea.earth.threerings.net/~ray/socketbunny.swf",
         "http://tasman.sea.earth.threerings.net/~ray/pedestrian.swf",
-        "http://www.puzzlepirates.com/images/index/screen2.png",
-//        "http://bogocorp.com/bogologo.gif",
-        "http://www.youtube.com/v/SbY0Jh9_RJ8",
+        "http://tasman.sea.earth.threerings.net/~ray/rainbowdoor.swf",
+        //"http://www.puzzlepirates.com/images/index/screen2.png",
+        //"http://bogocorp.com/bogologo.gif",
+        //"http://www.youtube.com/v/SbY0Jh9_RJ8",
+        //"http://www.youtube.com/v/N6GSpKCU-Dg",
+        "http://www.youtube.com/player2.swf?video_id=N6GSpKCU-Dg&l=129&t=OEgsToPDskIUSJn_8PjVjq9bhe9RC24Y",
+        //"http://tasman.sea.earth.threerings.net/~ray/Msoy.swf"
         "http://www.puzzlepirates.com/images/index/mainimage.png"
     ];
 }

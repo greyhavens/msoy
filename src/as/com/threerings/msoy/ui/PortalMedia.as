@@ -17,18 +17,18 @@ public class PortalMedia extends ScreenMedia
     }
 
     // documentation inherited
-    protected override function mouseClick (event :MouseEvent) :void
+    override protected function mouseClick (event :MouseEvent) :void
     {
         dispatchEvent(new ControllerEvent("portalClicked", _portal));
     }
 
-    protected override function isInteractive () :Boolean
+    override protected function isInteractive () :Boolean
     {
         // force all portals to be interactive
         return true;
     }
 
-    protected override function getHoverColor () :uint
+    override protected function getHoverColor () :uint
     {
         return 0xe04040; // red
     }

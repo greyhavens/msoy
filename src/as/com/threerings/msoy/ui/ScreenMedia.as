@@ -208,7 +208,7 @@ public class ScreenMedia extends Box
 
 /*
     // documentation inherited
-    public override function set x (newValue :Number) :void
+    override public function set x (newValue :Number) :void
     {
         // TODO: test
         trace("set x to " + newValue);
@@ -217,21 +217,21 @@ public class ScreenMedia extends Box
     }
 
     // documentation inherited
-    public override function get x () :Number
+    override public function get x () :Number
     {
         // TODO: test
         return (super.x + _desc.originX);
     }
 
     // documentation inherited
-    public override function set y (newValue :Number) :void
+    override public function set y (newValue :Number) :void
     {
         // TODO: test
         super.y = newValue - _desc.originY;
     }
 
     // documentation inherited
-    public override function get y () :Number
+    override public function get y () :Number
     {
         // TODO: test
         return (super.y + _desc.originY);
@@ -308,7 +308,8 @@ public class ScreenMedia extends Box
 //            trace("Creating new loadctx for " + url);
             loadCtx = new LoaderContext(
                 false,
-                new ApplicationDomain(ApplicationDomain.currentDomain),
+                //new ApplicationDomain(ApplicationDomain.currentDomain),
+                ApplicationDomain.currentDomain,
                 null
                 );
 //            _loadCtx.put(url, loadCtx);

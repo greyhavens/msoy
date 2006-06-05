@@ -7,7 +7,7 @@ import com.threerings.crowd.util.CrowdContext;
 public class SimpleChatController extends PlaceController
 {
     // documentation inherited
-    protected override function createPlaceView (ctx :CrowdContext) :PlaceView
+    override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
         return new SimpleChatPanel(ctx as MsoyContext);
     }
