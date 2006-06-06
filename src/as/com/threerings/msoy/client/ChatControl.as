@@ -51,6 +51,7 @@ public class ChatControl extends HBox
 
         // request focus
         // TODO: doesn't work, focusManager is null at this point.
+        trace("focus manager: " + _txt.focusManager);
         //_txt.focusManager.setFocus(_txt);
     }
 

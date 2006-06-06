@@ -5,7 +5,12 @@ import flash.events.MouseEvent;
 import flash.geom.Matrix;
 import flash.geom.Point;
 
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+
 import mx.events.EffectEvent;
+
+import com.threerings.crowd.chat.data.ChatMessage;
 
 import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -55,6 +60,14 @@ public class Avatar extends ScreenMedia
         _move.addEventListener(EffectEvent.EFFECT_END, moveStopped);
 
         _move.play();
+    }
+
+    /**
+     * Have this avatar speak.
+     */
+    public function speak (msg :ChatMessage) :void
+    {
+        rawChildren.addChild(new ChatBubble(this, msg));
     }
 
     protected function setOrientation (orient :int) :void

@@ -19,7 +19,12 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.crowd.chat.client.ChatDisplay;
+import com.threerings.crowd.chat.data.ChatMessage;
+import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
@@ -36,7 +41,7 @@ import com.threerings.msoy.ui.PortalMedia;
 import com.threerings.msoy.ui.ScreenMedia;
 
 public class RoomView extends Canvas
-    implements PlaceView, SetListener
+    implements PlaceView, SetListener, ChatDisplay
 {
     public function RoomView (ctx :MsoyContext)
     {
@@ -282,6 +287,8 @@ public class RoomView extends Canvas
     // documentation inherited from interface PlaceView
     public function willEnterPlace (plobj :PlaceObject) :void
     {
+        _ctx.getChatDirector().addChatDisplay(this);
+
         // listen to updates
         _sceneObj = (plobj as SpotSceneObject);
         _sceneObj.addListener(this);
@@ -311,11 +318,18 @@ public class RoomView extends Canvas
         for (var ii :int = _sceneObj.occupants.size() - 1; ii >= 0; ii--) {
             addBody(_sceneObj.occupants.getAt(ii));
         }
+
+        // and animate ourselves entering the room (everyone already in the
+        // (room will also have seen it)
+        portalTraversed(getMyCurrentLocation(), true);
+        trace("Set up all bodies");
     }
 
     // documentation inherited from interface PlaceView
     public function didLeavePlace (plobj :PlaceObject) :void
     {
+        _ctx.getChatDirector().removeChatDisplay(this);
+
         _sceneObj.removeListener(this);
         _sceneObj = null;
 
@@ -330,6 +344,7 @@ public class RoomView extends Canvas
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
+            trace("addBody");
             addBody((event.getEntry() as MsoyOccupantInfo).getBodyOid());
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
@@ -345,6 +360,7 @@ public class RoomView extends Canvas
         var name :String = event.getName();
 
         if (SpotSceneObject.OCCUPANT_LOCS == name) {
+            trace("locationUpdated");
             moveBody((event.getEntry() as SceneLocation).bodyOid);
         }
     }
@@ -355,6 +371,7 @@ public class RoomView extends Canvas
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
+            trace("removeBody");
             removeBody((event.getOldEntry() as MsoyOccupantInfo).getBodyOid());
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
@@ -379,6 +396,27 @@ public class RoomView extends Canvas
         }
     }
     */
+
+    // documentation inherited from interface ChatDisplay
+    public function clear () :void
+    {
+        // TODO
+    }
+
+    // documentation inherited from interface ChatDisplay
+    public function displayMessage (msg :ChatMessage) :void
+    {
+        if (!(msg is UserMessage)) {
+            return;
+        }
+
+        var umsg :UserMessage = (msg as UserMessage);
+        var occInfo :OccupantInfo = _sceneObj.getOccupantInfo(umsg.speaker);
+        if (occInfo != null) {
+            var avatar :Avatar = (_avatars.get(occInfo.bodyOid) as Avatar);
+            avatar.speak(umsg);
+        }
+    }
 
     protected var _ctx :MsoyContext;
 
