@@ -12,6 +12,9 @@ import com.threerings.msoy.data.MediaData;
  */
 public class FurniData extends SimpleStreamableObject
 {
+    /** The id of this piece of furni. */
+    public int id;
+
     /** Info about the media that represents this piece of furni. */
     public MediaData mediaData;
 

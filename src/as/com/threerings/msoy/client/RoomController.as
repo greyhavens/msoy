@@ -73,7 +73,6 @@ public class RoomController extends SceneController
             // calculate where the location is
             var newLoc :MsoyLocation = _roomView.pointToLocation(
                 event.localX, event.localY);
-            trace("clicked: " + newLoc);
             if (newLoc != null) {
                 // orient the location as appropriate
                 newLoc.orient = (curLoc.x > newLoc.x ? 180 : 0);
@@ -87,6 +86,10 @@ public class RoomController extends SceneController
         switch (event.keyCode) {
         case Keyboard.SHIFT:
             _roomView.dimAvatars(event.type == KeyboardEvent.KEY_DOWN);
+            break;
+
+        case Keyboard.CONTROL:
+            _roomView.dimPortals(event.type == KeyboardEvent.KEY_DOWN);
             break;
         }
     }

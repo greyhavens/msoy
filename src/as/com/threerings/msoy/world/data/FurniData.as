@@ -9,6 +9,9 @@ import com.threerings.msoy.data.MediaData;
 public class FurniData
     implements Streamable
 {
+    /** The id of this piece of furni. */
+    public var id :int;
+
     /** Info about the media that represents this piece of furni. */
     public var mediaData :MediaData;
 
@@ -18,15 +21,17 @@ public class FurniData
     // documentation inherited from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeField(mediaData);
-        out.writeField(loc);
+        out.writeInt(id);
+        out.writeObject(mediaData);
+        out.writeObject(loc);
     }
 
     // documentation inherited from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        mediaData = (ins.readField(MediaData) as MediaData);
-        loc = (ins.readField(MsoyLocation) as MsoyLocation);
+        id = ins.readInt();
+        mediaData = (ins.readObject() as MediaData);
+        loc = (ins.readObject() as MsoyLocation);
     }
 }
 }

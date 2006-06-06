@@ -8,6 +8,7 @@ import flash.display.Shape;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
+import flash.events.IEventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
@@ -26,6 +27,8 @@ import flash.system.LoaderContext;
 import flash.system.SecurityDomain;
 
 import flash.net.URLRequest;
+
+import flash.utils.Timer;
 
 import mx.containers.Box;
 
@@ -113,15 +116,15 @@ public class ScreenMedia extends Box
 
         // if we know the size of the media, create a mask to prevent
         // it from drawing outside those bounds
-        if (desc.width != -1 && desc.height != -1) {
+//        if (desc.width != -1 && desc.height != -1) {
             var mask :Shape = new Shape();
             mask.graphics.beginFill(0xFFFFFF);
-            mask.graphics.drawRect(0, 0, desc.width, desc.height);
+            mask.graphics.drawRect(0, 0, maxContentWidth, maxContentHeight);
             mask.graphics.endFill();
             // the mask must be added to the display list (which is wacky)
             rawChildren.addChild(mask);
             loader.mask = mask;
-        }
+//        }
 
         // start it loading, add it as a child
         loader.load(new URLRequest(url), getContext(url));
@@ -131,25 +134,40 @@ public class ScreenMedia extends Box
             addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
             addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
             addEventListener(MouseEvent.CLICK, mouseClick);
-        }
 
-        // I don't know if these lines are necessary: remove?
-        if (desc.width != -1 && desc.height != -1) {
-            width = desc.width;
-            height = desc.height;
+/*
+            loader.addEventListener(MouseEvent.CLICK, mouseClickCap, true);
+            loader.addEventListener(MouseEvent.CLICK, mouseClickCap);
+            addEventListener(MouseEvent.CLICK, mouseClickCap);
+            */
         }
-
-        //addEventListener(Event.ENTER_FRAME, tick);
     }
 
-    public function getContentWidth () :int
+    override public function hitTestPoint (
+            x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
-        return _w;
+        trace("hitTest(" + x + ", " + y + ")");
+        return super.hitTestPoint(x, y, shapeFlag);
     }
 
-    public function getContentHeight () :int
+    public function get contentWidth () :int
     {
-        return _h;
+        return Math.min(_w, maxContentWidth);
+    }
+
+    public function get contentHeight () :int
+    {
+        return Math.min(_h, maxContentHeight);
+    }
+
+    public function get maxContentWidth () :int
+    {
+        return 800;
+    }
+
+    public function get maxContentHeight () :int
+    {
+        return 600;
     }
 
     public function setLocation (newLoc :Object) :void
@@ -186,6 +204,13 @@ public class ScreenMedia extends Box
     public function moveCompleted (orient :Number) :void
     {
         // nada
+    }
+
+    public function setActive (active :Boolean) :void
+    {
+        alpha = active ? 1.0 : 0.4;
+        mouseEnabled = active;
+        mouseChildren = active;
     }
 
 /* Commented out: this doesn't fucking work, this method should be called
@@ -454,6 +479,42 @@ public class ScreenMedia extends Box
     {
         // nada
     }
+
+     /*
+    protected function mouseClickCap (event :MouseEvent) :void
+    {
+        if (!stopClicks) {
+            return;
+        }
+        trace("mouse clicked, will kibosh. target=" + event.target +
+            ", phase=" + event.eventPhase +
+            ", bubbles=" + event.bubbles);
+        event.stopImmediatePropagation();
+
+        var timer :Timer = new Timer(1000, 1);
+        timer.addEventListener(TimerEvent.TIMER, function (evt :Event) :void {
+            var mousey :MouseEvent = new MouseEvent(
+                MouseEvent.CLICK, event.bubbles, event.cancelable,
+                event.localX, event.localY, event.relatedObject);
+            trace("now dispatching alternate click");
+            var oldMouseChildren :Boolean = mouseChildren;
+            mouseChildren = true;
+            stopClicks = false;
+            (event.target as IEventDispatcher).dispatchEvent(mousey);
+            //_dispatch.dispatchEvent(mousey);
+            mousey = new MouseEvent(
+                MouseEvent.CLICK, true, false,
+                30, 30, _loader);
+            _loader.dispatchEvent(mousey);
+            //_loader.dispatchEvent(mousey);
+            stopClicks = true;
+            mouseChildren = oldMouseChildren;
+        });
+        timer.start();
+    }
+
+    var stopClicks :Boolean = true;
+    */
 
 /*
     protected function tick (event :Event) :void

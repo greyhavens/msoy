@@ -16,6 +16,11 @@ public class PortalMedia extends ScreenMedia
         _portal = portal;
     }
 
+    public function wasTraversed (entering :Boolean) :void
+    {
+        sendMessage("action", entering ? "bodyEntered" : "bodyLeft");
+    }
+
     // documentation inherited
     override protected function mouseClick (event :MouseEvent) :void
     {

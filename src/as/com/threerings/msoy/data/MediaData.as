@@ -108,9 +108,11 @@ public class MediaData
 //        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
 //        "http://bogocorp.com/bogologo.gif"
         "http://tasman.sea.earth.threerings.net/~ray/hipsterzombie.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/socketbunny.swf",
+        //"http://tasman.sea.earth.threerings.net/~ray/socketbunny.swf",
+        "http://tasman.sea.earth.threerings.net/~ray/bunnybutton.swf",
         "http://tasman.sea.earth.threerings.net/~ray/pedestrian.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/rainbowdoor.swf",
+        "http://tasman.sea.earth.threerings.net/~ray/alleydoor.swf",
+        //"http://tasman.sea.earth.threerings.net/~ray/rainbowdoor.swf",
         //"http://www.puzzlepirates.com/images/index/screen2.png",
         //"http://bogocorp.com/bogologo.gif",
         //"http://www.youtube.com/v/SbY0Jh9_RJ8",

@@ -21,6 +21,7 @@ import com.threerings.presents.dobj.SetListener;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
@@ -148,10 +149,17 @@ public class RoomView extends Canvas
 
     public function dimAvatars (setDim :Boolean) :void
     {
-        var alpha :Number = setDim ? 0.4 : 1.0;
-        for each (var avatar :Avatar in _avatars.values()) {
-            avatar.alpha = alpha;
-        }
+        setActive(_avatars, !setDim);
+    }
+
+    public function dimPortals (setDim :Boolean) :void
+    {
+        setActive(_portals, !setDim);
+    }
+
+    public function dimFurni (setDim :Boolean) :void
+    {
+        setActive(_furni, !setDim);
     }
 
     /**
@@ -170,13 +178,13 @@ public class RoomView extends Canvas
         // x position depends on logical x and the scale
         var swidth :Number = (width * scale);
         var xoffset :Number = (width - swidth) / 2;
-        sm.x = (scale * sm.getContentWidth())/-2 + xoffset +
+        sm.x = (scale * sm.contentWidth)/-2 + xoffset +
             (loc.x / MAX_COORD) * swidth;
 
         // y position depends on logical y and the scale (z)
         var sheight :Number = (height * scale);
         var yoffset :Number = (height - sheight) / 2;
-        sm.y = height - yoffset - (scale * sm.getContentHeight());
+        sm.y = height - yoffset - (scale * sm.contentHeight);
         // TODO: incorporate y coord
     }
 
@@ -191,6 +199,15 @@ public class RoomView extends Canvas
             return (disp as ScreenMedia).loc.z;
         }
         return int.MAX_VALUE;
+    }
+
+    /**
+     */
+    protected function setActive (map :HashMap, active :Boolean) :void
+    {
+        for each (var media :ScreenMedia in map.values()) {
+            media.setActive(active);
+        }
     }
 
     /**
@@ -241,6 +258,25 @@ public class RoomView extends Canvas
         var loc :MsoyLocation = (portal.loc as MsoyLocation);
         addChild(pm);
         pm.setLocation(loc);
+
+        _portals.put(portal.portalId, pm);
+    }
+
+    /**
+     * Called when we detect a body being added or removed.
+     */
+    protected function portalTraversed (loc :Location, entering :Boolean) :void
+    {
+        var itr :Iterator = _scene.getPortals();
+        while (itr.hasNext()) {
+            var portal :Portal = (itr.next() as Portal);
+            if (loc.equals(portal.loc)) {
+                var pm :PortalMedia =
+                    (_portals.get(portal.portalId) as PortalMedia);
+                pm.wasTraversed(entering);
+                return;
+            }
+        }
     }
 
     // documentation inherited from interface PlaceView
@@ -251,11 +287,10 @@ public class RoomView extends Canvas
         _sceneObj.addListener(this);
 
         // get the specifics on the current scene from the scene director
-        var scene :MsoyScene =
-            (_ctx.getSceneDirector().getScene() as MsoyScene);
+        _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
 
         // set up the background image
-        var bkg :ScreenMedia = new ScreenMedia(scene.getBackground());
+        var bkg :ScreenMedia = new ScreenMedia(_scene.getBackground());
         addChild(bkg);
         bkg.setLocation([50, 0, 100, 0]);
 //        bkg.x = 0;
@@ -263,11 +298,14 @@ public class RoomView extends Canvas
 //        addChild(bkg);
 
         // set up any portals
-        var itr :Iterator = scene.getPortals();
+        var itr :Iterator = _scene.getPortals();
         while (itr.hasNext()) {
             var portal :Portal = (itr.next() as Portal);
             addPortal(portal);
         }
+
+        // set up any furniture
+        // TODO
 
         // add all currently present occupants
         for (var ii :int = _sceneObj.occupants.size() - 1; ii >= 0; ii--) {
@@ -281,6 +319,8 @@ public class RoomView extends Canvas
         _sceneObj.removeListener(this);
         _sceneObj = null;
 
+        _scene = null;
+
         // TODO: clean up avatars, remove them, etc.
     }
 
@@ -291,6 +331,11 @@ public class RoomView extends Canvas
 
         if (PlaceObject.OCCUPANT_INFO == name) {
             addBody((event.getEntry() as MsoyOccupantInfo).getBodyOid());
+
+        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
+            var sceneLoc :SceneLocation = (event.getEntry() as SceneLocation);
+            trace("someone added at " + sceneLoc.loc);
+            portalTraversed(sceneLoc.loc, true);
         }
     }
 
@@ -311,6 +356,12 @@ public class RoomView extends Canvas
 
         if (PlaceObject.OCCUPANT_INFO == name) {
             removeBody((event.getOldEntry() as MsoyOccupantInfo).getBodyOid());
+
+        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
+            var sceneLoc :SceneLocation =
+                (event.getOldEntry() as SceneLocation);
+            trace("someone removed at " + sceneLoc.loc);
+            portalTraversed(sceneLoc.loc, false);
         }
     }
 
@@ -331,10 +382,20 @@ public class RoomView extends Canvas
 
     protected var _ctx :MsoyContext;
 
+    /** The model of the current scene. */
+    protected var _scene :MsoyScene;
+
+    /** The transitory properties of the current scene. */
     protected var _sceneObj :SpotSceneObject;
 
     /** A map of bodyOid -> Avatar. */
     protected var _avatars :HashMap = new HashMap();
+
+    /** A map of portalId -> Portal. */
+    protected var _portals :HashMap = new HashMap();
+
+    /** A map of id -> Furni. */
+    protected var _furni :HashMap = new HashMap();
 
     private static const MIN_SCALE :Number = 0.45;
     private static const MAX_SCALE :Number = 1;

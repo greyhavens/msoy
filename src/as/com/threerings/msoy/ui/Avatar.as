@@ -24,6 +24,16 @@ public class Avatar extends ScreenMedia
 //        this.transform.matrix = matrix;
     }
 
+    override public function get maxContentWidth () :int
+    {
+        return 250;
+    }
+
+    override public function get maxContentHeight () :int
+    {
+        return 400;
+    }
+
     public function moveTo (destLoc :MsoyLocation) :void
     {
         // if there's already a move, kill it
