@@ -75,6 +75,8 @@ public class ScreenMedia extends Box
      */
     public function ScreenMedia (desc :MediaData)
     {
+        blendMode = BlendMode.LAYER;
+
         _desc = desc;
         _id = int(Math.random() * int.MAX_VALUE);
 
