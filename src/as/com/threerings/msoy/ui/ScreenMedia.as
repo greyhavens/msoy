@@ -1,5 +1,6 @@
 package com.threerings.msoy.ui {
 
+import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
@@ -75,8 +76,6 @@ public class ScreenMedia extends Box
      */
     public function ScreenMedia (desc :MediaData)
     {
-        blendMode = BlendMode.LAYER;
-
         _desc = desc;
         _id = int(Math.random() * int.MAX_VALUE);
 
@@ -211,6 +210,7 @@ public class ScreenMedia extends Box
     public function setActive (active :Boolean) :void
     {
         alpha = active ? 1.0 : 0.4;
+        blendMode = active ? BlendMode.NORMAL : BlendMode.LAYER;
         mouseEnabled = active;
         mouseChildren = active;
     }
