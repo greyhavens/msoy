@@ -30,14 +30,14 @@ public class ChatControl extends HBox
         but.label = "Send"; // TODO: xlate
         addChild(but);
 
-        addEventListener(Event.ADDED, wasAdded);
-        addEventListener(Event.REMOVED, wasRemoved);
+        addEventListener(Event.ADDED, wasAdded, false, 0, true);
+        addEventListener(Event.REMOVED, wasRemoved, false, 0, true);
 
         //_txt.addEventListener(FlexEvent.ENTER, sendChat);
         //but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat);
-        _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
-        _txt.addEventListener("enter", sendChat);
-        but.addEventListener("buttonDown", sendChat);
+        _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent, false, 0, true);
+        _txt.addEventListener("enter", sendChat, false, 0, true);
+        but.addEventListener("buttonDown", sendChat, false, 0, true);
     }
 
     /**
@@ -50,9 +50,9 @@ public class ChatControl extends HBox
         _histIdx = -1;
 
         // request focus
-        // TODO: doesn't work, focusManager is null at this point.
-        trace("focus manager: " + _txt.focusManager);
-        //_txt.focusManager.setFocus(_txt);
+        if (_txt.focusManager != null) {
+            _txt.focusManager.setFocus(_txt);
+        }
     }
 
     /**

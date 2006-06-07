@@ -67,7 +67,7 @@ public class Avatar extends ScreenMedia
      */
     public function speak (msg :ChatMessage) :void
     {
-        rawChildren.addChild(new ChatBubble(this, msg));
+        addChild(new ChatBubble(this, msg));
     }
 
     protected function setOrientation (orient :int) :void
