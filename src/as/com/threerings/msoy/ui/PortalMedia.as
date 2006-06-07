@@ -8,11 +8,13 @@ import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.data.MediaData;
 
+import com.threerings.msoy.world.data.MsoyPortal;
+
 public class PortalMedia extends ScreenMedia
 {
-    public function PortalMedia (portal :Portal)
+    public function PortalMedia (portal :MsoyPortal)
     {
-        super(new MediaData(3));
+        super(portal.media);
         _portal = portal;
     }
 
@@ -38,7 +40,7 @@ public class PortalMedia extends ScreenMedia
         return 0xe04040; // red
     }
 
-    protected var _portal :Portal;
+    protected var _portal :MsoyPortal;
 }
 
 }

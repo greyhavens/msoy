@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" layout="absolute">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" layout="absolute" applicationComplete="new MsoyClient(this);">
+<mx:Style source="msoy.css"/>
 <mx:Script>
 	<![CDATA[
 		import com.threerings.msoy.client.MsoyClient;

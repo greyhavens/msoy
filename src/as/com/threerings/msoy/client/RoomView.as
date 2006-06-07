@@ -34,6 +34,7 @@ import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.data.MsoyOccupantInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 
 import com.threerings.msoy.ui.Avatar;
@@ -257,7 +258,7 @@ public class RoomView extends Canvas
         avatar.moveTo(loc);
     }
 
-    protected function addPortal (portal :Portal) :void
+    protected function addPortal (portal :MsoyPortal) :void
     {
         var pm :PortalMedia = new PortalMedia(portal);
         var loc :MsoyLocation = (portal.loc as MsoyLocation);
@@ -307,7 +308,7 @@ public class RoomView extends Canvas
         // set up any portals
         var itr :Iterator = _scene.getPortals();
         while (itr.hasNext()) {
-            var portal :Portal = (itr.next() as Portal);
+            var portal :MsoyPortal = (itr.next() as MsoyPortal);
             addPortal(portal);
         }
 
@@ -435,7 +436,7 @@ public class RoomView extends Canvas
     /** A map of id -> Furni. */
     protected var _furni :HashMap = new HashMap();
 
-    private static const MIN_SCALE :Number = 0.45;
+    private static const MIN_SCALE :Number = 0.55;
     private static const MAX_SCALE :Number = 1;
     private static const MAX_COORD :Number = 100;
     private static const PHI :Number = (1 + Math.sqrt(5)) / 2;
