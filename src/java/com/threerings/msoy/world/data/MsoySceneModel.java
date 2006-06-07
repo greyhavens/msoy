@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.world.data;
 
+import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.ListUtil;
+
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.spot.data.SpotSceneModel;
 
@@ -19,6 +22,28 @@ public class MsoySceneModel extends SceneModel
     /** The background image of the scene. */
     public MediaData background;
 
+    /** The furniture in the scene. */
+    public FurniData[] furnis = new FurniData[0];
+
+    /**
+     * Add a piece of furniture to this model.
+     */
+    public void addFurni (FurniData furni)
+    {
+        furnis = (FurniData[]) ArrayUtil.append(furnis, furni);
+    }
+
+    /**
+     * Remove a piece of furniture from this model.
+     */
+    public void removeFurni (FurniData furni)
+    {
+        int idx = ListUtil.indexOf(furnis, furni);
+        if (idx != -1) {
+            furnis = (FurniData[]) ArrayUtil.splice(furnis, idx, 1);
+        }
+    }
+
     /**
      * Create a blank scene.
      */
@@ -33,6 +58,5 @@ public class MsoySceneModel extends SceneModel
     {
         populateBlankSceneModel(model);
         model.addAuxModel(new SpotSceneModel());
-        model.addAuxModel(new MsoyFurniSceneModel());
     }
 }

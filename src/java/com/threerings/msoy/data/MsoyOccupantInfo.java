@@ -13,7 +13,7 @@ import com.threerings.crowd.data.OccupantInfo;
 public class MsoyOccupantInfo extends OccupantInfo
 {
     /** The media that represents our avatar. */
-    public MediaData avatar;
+    public MediaData media;
 
     /** Suitable for unserialization. */
     public MsoyOccupantInfo ()
@@ -25,6 +25,6 @@ public class MsoyOccupantInfo extends OccupantInfo
         super(user);
 
         // TODO
-        avatar = new MediaData(user.getOid() % 3); // consistent
+        media = new MediaData(user.getOid() % 3); // consistent
     }
 }

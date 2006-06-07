@@ -47,7 +47,7 @@ public class MsoyScene extends SceneImpl
      */
     public function addFurni (furn :FurniData) :void
     {
-        // TODO
+        _msoyModel.addFurni(furn);
     }
 
     /**
@@ -55,7 +55,12 @@ public class MsoyScene extends SceneImpl
      */
     public function removeFurni (furn :FurniData) :void
     {
-        // TODO
+        _msoyModel.removeFurni(furn);
+    }
+
+    public function getFurni () :Array
+    {
+        return _msoyModel.furnis;
     }
 
     // documentation inherited from interface SpotScene

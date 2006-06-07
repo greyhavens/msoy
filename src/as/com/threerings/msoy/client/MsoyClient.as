@@ -29,7 +29,6 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyOccupantInfo;
 import com.threerings.msoy.data.MsoyUserObject;
 import com.threerings.msoy.data.SimpleChatConfig;
-import com.threerings.msoy.world.data.MsoyFurniSceneModel;
 
 public class MsoyClient extends Client
 {
@@ -79,7 +78,6 @@ public class MsoyClient extends Client
         c = MsoyUserObject;
         c = MsoyOccupantInfo;
         c = SpotSceneObject;
-        c = MsoyFurniSceneModel;
     }
 
     protected var _ctx :MsoyContext;

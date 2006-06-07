@@ -39,12 +39,17 @@ public class MsoyScene extends SceneImpl
 
     public void addFurni (FurniData furn)
     {
-        // TODO
+        _model.addFurni(furn);
     }
 
     public void removeFuni (FurniData furn)
     {
-        // TODO
+        _model.removeFurni(furn);
+    }
+
+    public FurniData[] getFurni ()
+    {
+        return _model.furnis;
     }
 
     // documentation inherited from interface SpotScene

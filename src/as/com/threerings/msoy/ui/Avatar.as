@@ -20,7 +20,7 @@ public class Avatar extends ScreenMedia
 {
     public function Avatar (occInfo :MsoyOccupantInfo, loc :MsoyLocation)
     {
-        super(occInfo.avatar);
+        super(occInfo.media);
         sendMessage("setAction", "standing");
         setOrientation(loc.orient);
 

@@ -11,14 +11,14 @@ import com.threerings.crowd.data.OccupantInfo;
 public class MsoyOccupantInfo extends OccupantInfo
 {
     /** The media that represents our avatar. */
-    public var avatar :MediaData;
+    public var media :MediaData;
 
     // documentation inherited
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
-        out.writeObject(avatar);
+        out.writeObject(media);
     }
 
     // documentation inherited
@@ -26,7 +26,7 @@ public class MsoyOccupantInfo extends OccupantInfo
     {
         super.readObject(ins);
 
-        avatar = (ins.readObject() as MediaData);
+        media = (ins.readObject() as MediaData);
     }
 }
 }

@@ -33,11 +33,13 @@ import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.data.MsoyOccupantInfo;
+import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 
 import com.threerings.msoy.ui.Avatar;
+import com.threerings.msoy.ui.FurniMedia;
 import com.threerings.msoy.ui.PortalMedia;
 import com.threerings.msoy.ui.ScreenMedia;
 
@@ -268,6 +270,15 @@ public class RoomView extends Canvas
         _portals.put(portal.portalId, pm);
     }
 
+    protected function addFurni (furni :FurniData) :void
+    {
+        var fm :FurniMedia = new FurniMedia(furni);
+        addChild(fm);
+        fm.setLocation(furni.loc);
+
+        _furni.put(furni.id, fm);
+    }
+
     /**
      * Called when we detect a body being added or removed.
      */
@@ -313,7 +324,9 @@ public class RoomView extends Canvas
         }
 
         // set up any furniture
-        // TODO
+        for each (var furni :FurniData in _scene.getFurni()) {
+            addFurni(furni);
+        }
 
         // add all currently present occupants
         for (var ii :int = _sceneObj.occupants.size() - 1; ii >= 0; ii--) {

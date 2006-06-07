@@ -16,6 +16,7 @@ import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.data.MediaData;
 
+import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -44,7 +45,7 @@ public class MsoySceneRepository
         // TODO: real implementation
         MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
         model.sceneId = sceneId;
-        model.version = 2;
+        model.version = 5;
         model.name = "FakeScene" + sceneId;
 
         MsoyPortal portal = new MsoyPortal();
@@ -56,6 +57,12 @@ public class MsoySceneRepository
             portal.targetSceneId = 2;
             portal.media = new MediaData(6);
             model.background = new MediaData(5);
+
+            FurniData furn = new FurniData();
+            furn.media = new MediaData(0);
+            furn.loc = new MsoyLocation(5, 0, 5, (short) 0);
+
+            model.addFurni(furn);
 
         } else {
             portal.loc = new MsoyLocation(20, 0, 40, (short)180);
