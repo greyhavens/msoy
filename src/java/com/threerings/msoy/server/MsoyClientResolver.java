@@ -27,6 +27,6 @@ public class MsoyClientResolver extends CrowdClientResolver
         super.resolveClientData(clobj);
 
         MsoyUserObject userObj = (MsoyUserObject) clobj;
-        userObj.setTokens(new TokenRing(TokenRing.ADMIN));
+        userObj.setTokens(new TokenRing());
     }
 }
