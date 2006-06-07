@@ -30,14 +30,15 @@ public class Avatar extends ScreenMedia
 //        this.transform.matrix = matrix;
 
         var txt :TextField = new TextField();
+        _label = txt;
         txt.textColor = 0xFFFF00;
         txt.wordWrap = false;
         txt.multiline = false;
         txt.restrict = "";
         txt.autoSize = TextFieldAutoSize.CENTER;
         txt.text = occInfo.username.toString();
-        txt.x = 5;
-        txt.y = 5;
+        txt.x = 0;
+        txt.y = 0;
         rawChildren.addChild(txt);
     }
 
@@ -88,6 +89,12 @@ public class Avatar extends ScreenMedia
         sendMessage("setFacing", left ? "left" : "right");
     }
 
+    override protected function updateContentDimensions (ww :int, hh :int) :void
+    {
+        super.updateContentDimensions(ww, hh);
+        _label.width = ww;
+    }
+
     protected function moveStopped (event :EffectEvent) :void
     {
         _move = null;
@@ -106,5 +113,7 @@ public class Avatar extends ScreenMedia
     }
 
     protected var _move :SceneMove;
+
+    protected var _label :TextField;
 }
 }

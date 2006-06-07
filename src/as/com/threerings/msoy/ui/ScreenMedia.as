@@ -384,9 +384,7 @@ public class ScreenMedia extends Box
     {
         var info :LoaderInfo = (event.target as LoaderInfo);
         try {
-            _w = info.width;
-            _h = info.height;
-            locationUpdated();
+            updateContentDimensions(info.width, info.height);
         } catch (err :Error) {
             // an error is thrown trying to access these props before they're
             // ready
@@ -401,9 +399,7 @@ public class ScreenMedia extends Box
         var info :LoaderInfo = (event.target as LoaderInfo);
         removeListeners(info);
 
-        _w = info.width;
-        _h = info.height;
-        locationUpdated();
+        updateContentDimensions(info.width, info.height);
 
         // Try accessing the 'content' property and see if that generates
         // a security error. If so, leave it where it is.
@@ -419,6 +415,15 @@ public class ScreenMedia extends Box
 
         // transfer the mask, if any
         info.content.mask = info.loader.mask;
+    }
+
+    protected function updateContentDimensions (ww :int, hh :int) :void
+    {
+        if (_w != ww || _h != hh) {
+            _w = ww;
+            _h = hh;
+            locationUpdated();
+        }
     }
 
     protected function isInteractive () :Boolean
