@@ -112,6 +112,11 @@ public class Avatar extends ScreenMedia
         //setFacing(!_left);
     }
 
+    override protected function isInteractive () :Boolean
+    {
+        return true;
+    }
+
     protected var _move :SceneMove;
 
     protected var _label :TextField;

@@ -32,6 +32,9 @@ public class SharedObjectSceneRepository
     // documentation inherited from interface SceneRepository
     public function loadSceneModel (sceneId :int) :SceneModel
     {
+        // TEMP TODO
+        return null;
+
         // retrieve the shared object
         var so :SharedObject = getShared(sceneId);
         if (so == null) {

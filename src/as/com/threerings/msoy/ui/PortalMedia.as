@@ -10,12 +10,24 @@ import com.threerings.msoy.data.MediaData;
 
 import com.threerings.msoy.world.data.MsoyPortal;
 
+import flash.events.TimerEvent;
+import flash.utils.Timer;
+
 public class PortalMedia extends ScreenMedia
 {
     public function PortalMedia (portal :MsoyPortal)
     {
         super(portal.media);
         _portal = portal;
+        mouseChildren = false;
+
+        // TEMP: testing
+        var timer :Timer = new Timer(2000);
+        timer.addEventListener(TimerEvent.TIMER,
+            function (evt :TimerEvent) :void {
+                wasTraversed(Math.random() > .5);
+            });
+        timer.start();
     }
 
     public function wasTraversed (entering :Boolean) :void

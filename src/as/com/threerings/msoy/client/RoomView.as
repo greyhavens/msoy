@@ -6,7 +6,7 @@ import flash.events.Event;
 
 import mx.containers.Canvas;
 
-import mx.core.IUIComponent;
+import mx.core.UIComponent;
 
 import mx.core.ScrollPolicy;
 
@@ -132,10 +132,15 @@ public class RoomView extends Canvas
         positionAndScale(sm, loc);
 
         // then, possibly move the child up or down, depending on z order
+        if (!sm.includeInLayout) {
+            return;
+        }
         var dex :int = getChildIndex(sm);
         var newdex :int = dex;
+        var z :Number;
         while (newdex > 0) {
-            if (getZOfChildAt(newdex - 1) >= loc.z) {
+            z = getZOfChildAt(newdex - 1);
+            if (z == int.MIN_VALUE || z >= loc.z) {
                 break;
             }
             newdex--;
@@ -203,6 +208,9 @@ public class RoomView extends Canvas
     protected function getZOfChildAt (index :int) :int
     {
         var disp :DisplayObject = getChildAt(index);
+        if ((disp is UIComponent) && !(disp as UIComponent).includeInLayout) {
+            return int.MIN_VALUE; // TODO: NaN
+        }
         if (disp is ScreenMedia) {
             return (disp as ScreenMedia).loc.z;
         }
@@ -226,6 +234,16 @@ public class RoomView extends Canvas
         var oid :int = _ctx.getClient().getClientOid();
         var avatar :Avatar = (_avatars.get(oid) as Avatar);
         return avatar.loc;
+    }
+
+    /**
+     * @return true if the specified click target should trigger
+     * location movements.
+     */
+    public function isLocationTarget (clickTarget :DisplayObject) :Boolean
+    {
+        return (clickTarget == this) ||
+            (_bkg != null && _bkg.contains(clickTarget));
     }
 
     protected function addBody (bodyOid :int) :void
@@ -309,12 +327,22 @@ public class RoomView extends Canvas
         _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
 
         // set up the background image
-        var bkg :ScreenMedia = new ScreenMedia(_scene.getBackground());
-        addChild(bkg);
-        bkg.setLocation([50, 0, 100, 0]);
-//        bkg.x = 0;
-//        bkg.y = 0;
-//        addChild(bkg);
+        _bkg = new ScreenMedia(_scene.getBackground());
+        switch (_scene.getType()) {
+        case "image":
+            graphics.clear();
+            // by adding it to the raw children, it does not participate
+            // in Z order movements
+            _bkg.includeInLayout = false;
+            addChild(_bkg);
+            _bkg.setLocation([50, 0, 0, 0]);
+            break;
+
+        default:
+            addChild(_bkg);
+            _bkg.setLocation([50, 0, 100, 0]);
+            break;
+        }
 
         // set up any portals
         var itr :Iterator = _scene.getPortals();
@@ -439,6 +467,9 @@ public class RoomView extends Canvas
 
     /** The transitory properties of the current scene. */
     protected var _sceneObj :SpotSceneObject;
+
+    /** The background image. */
+    protected var _bkg :ScreenMedia;
 
     /** A map of bodyOid -> Avatar. */
     protected var _avatars :HashMap = new HashMap();

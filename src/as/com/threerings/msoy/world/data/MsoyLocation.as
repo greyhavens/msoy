@@ -16,13 +16,13 @@ public class MsoyLocation
     implements Location
 {
     /** The body's x position (interpreted by the display system). */
-    public var x :int;
+    public var x :Number;
 
     /** The body's x position (interpreted by the display system). */
-    public var y :int;
+    public var y :Number;
 
     /** The body's x position (interpreted by the display system). */
-    public var z :int;
+    public var z :Number;
 
     /** The body's orientation (interpreted by the display system). */
     public var orient :int;
@@ -41,9 +41,9 @@ public class MsoyLocation
      */
     public function distance (that :MsoyLocation) :Number
     {
-        var dx :int = this.x - that.x;
-        var dy :int = this.y - that.y;
-        var dz :int = this.z - that.z;
+        var dx :Number = this.x - that.x;
+        var dy :Number = this.y - that.y;
+        var dz :Number = this.z - that.z;
 
         return Math.sqrt(dx*dx + dy*dy + dz*dz);
     }

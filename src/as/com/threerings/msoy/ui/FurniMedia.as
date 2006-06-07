@@ -9,6 +9,22 @@ public class FurniMedia extends ScreenMedia
         super(furni.media);
     }
 
+    override public function get maxContentWidth () :int
+    {
+        return 2000;
+    }
+
+    override public function get maxContentHeight () :int
+    {
+        return 1000;
+    }
+
+    // documentation inherited
+    override protected function isInteractive () :Boolean
+    {
+        return _desc.isInteractive();
+    }
+
     // documentation inherited
     override protected function getHoverColor () :uint
     {

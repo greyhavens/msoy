@@ -108,8 +108,7 @@ public class MediaData
 //        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
 //        "http://bogocorp.com/bogologo.gif"
         "http://tasman.sea.earth.threerings.net/~ray/hipsterzombie.swf",
-        //"http://tasman.sea.earth.threerings.net/~ray/socketbunny.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/bunnybutton.swf",
+        "http://tasman.sea.earth.threerings.net/~ray/socketbunny.swf",
         "http://tasman.sea.earth.threerings.net/~ray/pedestrian.swf",
         "http://tasman.sea.earth.threerings.net/~ray/alleydoor.swf",
         //"http://www.puzzlepirates.com/images/index/screen2.png",
@@ -119,7 +118,13 @@ public class MediaData
         "http://www.youtube.com/player2.swf?video_id=N6GSpKCU-Dg&l=129&t=OEgsToPDskIUSJn_8PjVjq9bhe9RC24Y",
         //"http://tasman.sea.earth.threerings.net/~ray/Msoy.swf"
         "http://www.puzzlepirates.com/images/index/mainimage.png",
-        "http://tasman.sea.earth.threerings.net/~ray/rainbowdoor.swf"
+        "http://tasman.sea.earth.threerings.net/~ray/rainbowdoor.swf",
+        "http://tasman.sea.earth.threerings.net/~ray/fans.swf",
+        "http://tasman.sea.earth.threerings.net/~ray/fancyroom.png",
+        "http://tasman.sea.earth.threerings.net/~ray/pinball.swf",
+ /*10*/ "http://tasman.sea.earth.threerings.net/~ray/directorschair.swf",
+        "http://tasman.sea.earth.threerings.net/~ray/alley.png",
+        "http://tasman.sea.earth.threerings.net/~ray/curtain.swf"
     ];
 }
 

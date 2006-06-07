@@ -1,5 +1,6 @@
 package com.threerings.msoy.client {
 
+import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
@@ -66,7 +67,7 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
-        if (event.target == _roomView) {
+        if (_roomView.isLocationTarget(event.target as DisplayObject)) {
             // mouse events are propogated upwards to parent components
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
 

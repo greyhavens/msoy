@@ -212,7 +212,7 @@ public class ScreenMedia extends Box
         alpha = active ? 1.0 : 0.4;
         blendMode = active ? BlendMode.NORMAL : BlendMode.LAYER;
         mouseEnabled = active;
-        mouseChildren = active;
+        //mouseChildren = active;
     }
 
 /* Commented out: this doesn't fucking work, this method should be called
@@ -428,7 +428,7 @@ public class ScreenMedia extends Box
 
     protected function isInteractive () :Boolean
     {
-        return _desc.isInteractive();
+        return false;
     }
 
     protected function getHoverColor () :uint
