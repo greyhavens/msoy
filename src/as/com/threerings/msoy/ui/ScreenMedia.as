@@ -413,19 +413,12 @@ public class ScreenMedia extends Box
             return;
         }
 
-        // remove all our "raw" children, which will remove the loader
-        for (var ii :int = rawChildren.numChildren - 1; ii >= 0; ii--) {
-            rawChildren.removeChildAt(ii);
-        }
-
-        // now add the content as our child, letting the Loader get gc'd.
+        // remove the loader and add the content directly
+        rawChildren.removeChild(info.loader);
         rawChildren.addChild(info.content);
 
         // transfer the mask, if any
         info.content.mask = info.loader.mask;
-        if (info.content.mask != null) {
-            rawChildren.addChild(info.content.mask);
-        }
     }
 
     protected function isInteractive () :Boolean

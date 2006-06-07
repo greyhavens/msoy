@@ -13,13 +13,14 @@ import mx.events.EffectEvent;
 import com.threerings.crowd.chat.data.ChatMessage;
 
 import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MsoyOccupantInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 public class Avatar extends ScreenMedia
 {
-    public function Avatar (desc :MediaData, loc :MsoyLocation)
+    public function Avatar (occInfo :MsoyOccupantInfo, loc :MsoyLocation)
     {
-        super(desc);
+        super(occInfo.avatar);
         sendMessage("setAction", "standing");
         setOrientation(loc.orient);
 
@@ -27,6 +28,17 @@ public class Avatar extends ScreenMedia
 //        matrix.b = .5;
 //        //matrix.c = .5;
 //        this.transform.matrix = matrix;
+
+        var txt :TextField = new TextField();
+        txt.textColor = 0xFFFF00;
+        txt.wordWrap = false;
+        txt.multiline = false;
+        txt.restrict = "";
+        txt.autoSize = TextFieldAutoSize.CENTER;
+        txt.text = occInfo.username.toString();
+        txt.x = 5;
+        txt.y = 5;
+        rawChildren.addChild(txt);
     }
 
     override public function get maxContentWidth () :int

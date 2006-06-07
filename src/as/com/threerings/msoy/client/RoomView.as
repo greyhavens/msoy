@@ -233,7 +233,7 @@ public class RoomView extends Canvas
             (_sceneObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
-        var avatar :Avatar = new Avatar(occInfo.avatar, loc);
+        var avatar :Avatar = new Avatar(occInfo, loc);
         _avatars.put(bodyOid, avatar);
         addChild(avatar);
         avatar.setLocation(loc);
