@@ -1,0 +1,31 @@
+# -*- mode: sh -*-
+#
+# $Id$
+#
+# Local configuration for this MetaSOY installation.
+
+# Java configuration
+export JAVA_HOME=/usr/local/java
+
+# Database server configuration
+DBSERVER=localhost
+DBUSER=msoy
+DBPASSWD=PASSWORD
+
+# General configurations
+MSOY_USER=msoy
+LOG_EMAIL=msoy-logs@DOMAIN
+LOGLEVEL=info
+
+# The user as which we run Jetty
+JETTY_USER=msoy
+
+# These is passed to the various JVMs
+SERVER_MEMORY=384M
+TOOL_MEMORY=384M
+
+# Locate the mail program
+MAIL=/usr/bin/mail
+if [ ! -f $MAIL ]; then
+    MAIL=/bin/mail
+fi

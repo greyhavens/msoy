@@ -1,0 +1,103 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Startup script for the MetaSOY game server.
+
+MSOY_HOME=`dirname $0`/..
+MSOY_HOME=`cd $MSOY_HOME ; pwd`
+if [ ! -f $MSOY_HOME/server.conf ]; then
+    echo "Unable to infer MSOY_HOME. No server.conf file?"
+    exit 1
+fi
+
+# Read in our configuration
+. $MSOY_HOME/server.conf
+
+# # Make sure someone running things as root didn't booch the permissions on
+# # the bundles
+# BFILE=/tmp/booched.txt
+# find $MSOY_HOME/rsrc -user root > $BFILE
+# if [ -s "$BFILE" ]; then
+#     cat $BFILE | xargs chown -R $MSOY_USER
+# fi
+# rm $BFILE
+
+# Let's blow that file descriptor limit wide open baby!
+ulimit -n 4096
+
+# Bump our maximum data segment size to 1.5 gigs
+ulimit -d 1572864
+
+DAEMON=$MSOY_HOME/bin/msoyrespawn
+PIDFILE=/var/run/msoyrespawn.pid
+
+# See how we were called
+case "$1" in
+  start)
+        # Make sure msoyrespawn is not currently running
+	if [ -f $PIDFILE ]; then
+	    echo "msoyrespawn appears to be already running."
+            echo "Run '$0 stop' to stop it first."
+	    exit 1
+	fi
+        # Make sure there are no hung MetaSOY server processes
+        RPIDS=`ps auxww | grep MsoyServer | grep java | \
+            awk '{ print $2 }' | sort -n | head -1`
+        if [ ! -z "$RPIDS" ]; then
+            echo "WARNING: An MsoyServer process is currently running."
+            echo "If it has failed and you wish to forcibly restart it, please"
+            echo "execute the following commands:"
+            echo ""
+            echo "% kill -QUIT $RPIDS"
+            echo "% kill -KILL $RPIDS"
+            echo ""
+            echo "And then rerun this script."
+            exit -1
+        fi
+        # Go ahead and start things up
+        echo -n "Starting $DAEMON: "
+        touch $PIDFILE
+        chown $MSOY_USER $PIDFILE
+        su - $MSOY_USER -c "$DAEMON $PIDFILE" >/tmp/startmsoy.log \
+            2>&1 </dev/null &
+        echo "started."
+        ;;
+
+  stop)
+	if [ ! -f $PIDFILE ]; then
+	    echo "No $PIDFILE exists. Is msoyrespawn running?"
+	    exit 1
+	fi
+        echo -n "Shutting down msoy, "
+        $MSOY_HOME/bin/msoyrestart
+        echo -n "msoyrespawn: "
+        kill `cat $PIDFILE`
+        echo "stopped."
+        rm -f $PIDFILE
+        ;;
+
+  unspawn)
+	if [ ! -f $PIDFILE ]; then
+	    echo "No $PIDFILE exists. Is msoyrespawn running?"
+	    exit 1
+	fi
+        echo -n "Shutting down msoyrespawn: "
+        kill `cat $PIDFILE`
+        echo "stopped."
+        rm -f $PIDFILE
+        ;;
+
+  restart)
+        echo -n "Restarting msoy server: "
+        $MSOY_HOME/bin/msoyrestart
+        echo "restarted."
+        exit 1
+        ;;
+
+  *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit 0

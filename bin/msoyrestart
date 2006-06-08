@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Gracefully reboots all MetaSOY game servers running on this machine.
+
+PIDS=`ps auxww | grep MsoyServer | grep -v grep | awk '{ print $2 }' | sort -n`
+if [ ! -z "$PIDS" ]; then
+    echo $PIDS | xargs kill -INT
+fi

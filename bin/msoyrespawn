@@ -1,0 +1,55 @@
+#!/usr/bin/perl -w
+#
+# $Id$
+#
+# A script to respawn the MetaSOY server over and over again, assuming that
+# it exits cleanly each time.
+
+my $root = `dirname $0 | sed s:/bin\$::`; chomp($root);
+my $LOG;
+if (!open($LOG, ">/tmp/msoyrespawn.log")) {
+    warn "Unable to log to /tmp/msoyrespawn.log: $!\n";
+    $LOG = STDERR;
+}
+
+my $pidfile = shift;
+if (defined $pidfile) {
+    if (open(OUT, ">$pidfile")) {
+        print OUT "$$\n";
+        close(OUT);
+        print $LOG "Wrote pid ($$) to $pidfile.\n";
+    } else {
+        print $LOG "Unable to write PID to '$pidfile': $!\n";
+    }
+}
+
+while (1) {
+    # note the time
+    my $start = time();
+    my $now = localtime($start);
+
+    # actually run the server
+    print $LOG "$now Running msoy server\n";
+    my $rcode = system("$root/bin/runmsoy");
+
+    # note the time again
+    my $finish = time();
+    my $duration = $finish-$start;
+    my $fnow = localtime($finish);
+
+    # report and deal with the server's exit code
+    if ($rcode != 0) {
+        print $LOG "$fnow MetaSOY server failed (return code: $rcode) " .
+            "after $duration seconds.\n";
+    } else {
+	print $LOG "$fnow MetaSOY server exited healthily " .
+            "after $duration seconds.\n";
+    }
+
+    # don't spiral out of control
+    if ($duration < 60) {
+        print $LOG "$fnow MetaSOY server exited too quickly. Shutting down.\n";
+        warn "$fnow MetaSOY server exited too quickly. Shutting down.\n";
+        exit(-1);
+    }
+}
