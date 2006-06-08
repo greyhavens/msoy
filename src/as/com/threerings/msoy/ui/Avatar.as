@@ -112,7 +112,7 @@ public class Avatar extends ScreenMedia
         //setFacing(!_left);
     }
 
-    override protected function isInteractive () :Boolean
+    override public function isInteractive () :Boolean
     {
         return true;
     }

@@ -90,7 +90,7 @@ public class RoomController extends SceneController
             break;
 
         case Keyboard.CONTROL:
-            _roomView.dimPortals(event.type == KeyboardEvent.KEY_DOWN);
+            _roomView.dimFurni(event.type == KeyboardEvent.KEY_DOWN);
             break;
         }
     }

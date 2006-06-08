@@ -243,7 +243,22 @@ public class RoomView extends Canvas
     public function isLocationTarget (clickTarget :DisplayObject) :Boolean
     {
         return (clickTarget == this) ||
-            (_bkg != null && _bkg.contains(clickTarget));
+            (_bkg != null && _bkg.contains(clickTarget)) ||
+            // scan through the media and see if it was non-interactive
+            isNonInteractiveTarget(clickTarget, _furni) /*||
+            isNonInteractiveTarget(clickTarget, _portals) ||
+            isNonInteractiveTarget(clickTarget, _avatars)*/;
+    }
+
+    protected function isNonInteractiveTarget (
+            clickTarget :DisplayObject, map :HashMap) :Boolean
+    {
+        for each (var media :ScreenMedia in map.values()) {
+            if (!media.isInteractive() && media.contains(clickTarget)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected function addBody (bodyOid :int) :void

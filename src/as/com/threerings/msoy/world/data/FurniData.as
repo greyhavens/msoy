@@ -20,6 +20,9 @@ public class FurniData
     /** The location in the scene. */
     public var loc :MsoyLocation;
 
+    /** The action associated with this furniture. */
+    public var action :Object;
+
     // documentation inherited from superinterface Equalable
     public function equals (other :Object) :Boolean
     {
@@ -39,6 +42,7 @@ public class FurniData
         out.writeInt(id);
         out.writeObject(media);
         out.writeObject(loc);
+        out.writeObject(action);
     }
 
     // documentation inherited from interface Streamable
@@ -47,6 +51,7 @@ public class FurniData
         id = ins.readInt();
         media = (ins.readObject() as MediaData);
         loc = (ins.readObject() as MsoyLocation);
+        action = ins.readObject();
     }
 }
 }

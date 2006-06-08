@@ -72,6 +72,7 @@ public class MsoySceneRepository
             furn.id = 2;
             furn.media = new MediaData(9); // pinball
             furn.loc = new MsoyLocation(25, 0, 10, (short) 0);
+            furn.action = "http://www.pinballnews.com/";
             model.addFurni(furn);
 
             furn = new FurniData();
@@ -79,10 +80,6 @@ public class MsoySceneRepository
             furn.media = new MediaData(12); // curtain
             furn.loc = new MsoyLocation(20, 0, 100, (short) 0);
             model.addFurni(furn);
-
-            //furn = new FurniData();
-            //furn.id = 1;
-            //furn.media = new MediaData(
 
         } else {
             model.type = "image";

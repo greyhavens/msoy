@@ -1,5 +1,10 @@
 package com.threerings.msoy.ui {
 
+import flash.events.MouseEvent;
+
+import flash.net.URLRequest;
+import flash.net.navigateToURL;
+
 import com.threerings.msoy.world.data.FurniData;
 
 public class FurniMedia extends ScreenMedia
@@ -7,6 +12,12 @@ public class FurniMedia extends ScreenMedia
     public function FurniMedia (furni :FurniData)
     {
         super(furni.media);
+        _furni = furni;
+
+        // set our dest url as a tooltip..
+        if (_furni.action is String) {
+            toolTip = (_furni.action as String);
+        }
     }
 
     override public function get maxContentWidth () :int
@@ -20,7 +31,7 @@ public class FurniMedia extends ScreenMedia
     }
 
     // documentation inherited
-    override protected function isInteractive () :Boolean
+    override public function isInteractive () :Boolean
     {
         return _desc.isInteractive();
     }
@@ -30,5 +41,16 @@ public class FurniMedia extends ScreenMedia
     {
         return 0xe0e040; // yellow
     }
+
+    // documentation inherited
+    override protected function mouseClick (event :MouseEvent) :void
+    {
+        if (_furni.action is String) {
+            navigateToURL(new URLRequest(_furni.action as String));
+        }
+    }
+
+    /** The furniture data for this piece of furni. */
+    protected var _furni :FurniData;
 }
 }

@@ -426,7 +426,7 @@ public class ScreenMedia extends Box
         }
     }
 
-    protected function isInteractive () :Boolean
+    public function isInteractive () :Boolean
     {
         return false;
     }

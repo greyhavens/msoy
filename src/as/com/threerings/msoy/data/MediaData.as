@@ -17,7 +17,7 @@ public class MediaData
 
     public static function getTestCount () :int
     {
-        return URLS.length;
+        return DATA.length;
     }
 
     /** Temporary constructor. */
@@ -51,7 +51,7 @@ public class MediaData
      */
     public function get URL () :String
     {
-        return (URLS[id] as String);
+        return BASE_URL + DATA[id][0];
     }
 
     /**
@@ -72,9 +72,7 @@ public class MediaData
      */
     public function isInteractive () :Boolean
     {
-        // for now, true if we're a swf.
-        var url :String = URL;
-        return (url.indexOf("swf", url.length - 4) != -1);
+        return Boolean(DATA[id][1]);
     }
 
     // documentation inherited from interface Streamable
@@ -98,34 +96,25 @@ public class MediaData
     protected var _width :int, _height :int;
 
     /* TEMP. */
-    protected static const URLS :Array = [
-        //"http://bogocorp.com/blaaaah.gif",
-//        "http://tasman.sea.earth.threerings.net/~ray/Joshua%20Tree.flv",
-//        "http://tasman.sea.earth.threerings.net/~ray/bunny_walk.swf",
-//        "http://www.puzzlepirates.com/images/index/screen3.png",
-//        "http://www.puzzlepirates.com/images/puzzles/bilge/girl.swf",
-//        "http://www.puzzlepirates.com/images/puzzles/sword/girl.swf",
-//        "http://tasman.sea.earth.threerings.net/~ray/AvatarTest.swf",
-//        "http://bogocorp.com/bogologo.gif"
-        "http://tasman.sea.earth.threerings.net/~ray/hipsterzombie.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/socketbunny.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/pedestrian.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/alleydoor.swf",
-        //"http://www.puzzlepirates.com/images/index/screen2.png",
-        //"http://bogocorp.com/bogologo.gif",
-        //"http://www.youtube.com/v/SbY0Jh9_RJ8",
-        //"http://www.youtube.com/v/N6GSpKCU-Dg",
-        "http://www.youtube.com/player2.swf?video_id=N6GSpKCU-Dg&l=129&t=OEgsToPDskIUSJn_8PjVjq9bhe9RC24Y",
-        //"http://tasman.sea.earth.threerings.net/~ray/Msoy.swf"
-        "http://www.puzzlepirates.com/images/index/mainimage.png",
-        "http://tasman.sea.earth.threerings.net/~ray/rainbowdoor.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/fans.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/fancyroom.png",
-        "http://tasman.sea.earth.threerings.net/~ray/pinball.swf",
- /*10*/ "http://tasman.sea.earth.threerings.net/~ray/directorschair.swf",
-        "http://tasman.sea.earth.threerings.net/~ray/alley.png",
-        "http://tasman.sea.earth.threerings.net/~ray/curtain.swf"
+    protected static const DATA :Array = [
+        // [ mediaURI, isInteractive ]
+ /* 0*/ [ "hipsterzombie.swf", true ],
+        [ "socketbunny.swf", true ],
+        [ "pedestrian.swf", true ],
+        [ "alleydoor.swf", true ],
+        [ null, false ],
+        [ null, false ],
+        [ "rainbowdoor.swf", true ],
+        [ "fans.swf", false ],
+        [ "fancyroom.png", false ],
+        [ "pinball.swf", true ],
+ /*10*/ [ "directorschair.swf", false ],
+        [ "alley.png", false ],
+        [ "curtain.swf", false ]
     ];
+
+    protected static const BASE_URL :String =
+        "http://tasman.sea.earth.threerings.net/~ray/";
 }
 
 }

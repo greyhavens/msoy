@@ -22,12 +22,14 @@ public class PortalMedia extends ScreenMedia
         mouseChildren = false;
 
         // TEMP: testing
+        /*
         var timer :Timer = new Timer(2000);
         timer.addEventListener(TimerEvent.TIMER,
             function (evt :TimerEvent) :void {
                 wasTraversed(Math.random() > .5);
             });
         timer.start();
+        */
     }
 
     public function wasTraversed (entering :Boolean) :void
@@ -41,7 +43,7 @@ public class PortalMedia extends ScreenMedia
         dispatchEvent(new ControllerEvent("portalClicked", _portal));
     }
 
-    override protected function isInteractive () :Boolean
+    override public function isInteractive () :Boolean
     {
         // force all portals to be interactive
         return true;

@@ -21,6 +21,9 @@ public class FurniData extends SimpleStreamableObject
     /** The location in the scene. */
     public MsoyLocation loc;
 
+    /** The action associated with this furniture. */
+    public Object action;
+
     // documentation inherited
     public boolean equals (Object other)
     {
