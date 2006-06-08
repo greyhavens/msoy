@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Command line launcher for the Msoy development server
+
+ROOT=`dirname $0`/..
+CLASS=com.threerings.msoy.server.MsoyServer
+SARGS="-server -Djava.awt.headless=true"
+SARGS="$SARGS -Dmsoy.home=$ROOT"
+SARGS="$SARGS -Dresource_dir=$ROOT/rsrc -Dno_unpack_resources=true"
+$ROOT/bin/runjava -- $SARGS $CLASS
