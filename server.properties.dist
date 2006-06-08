@@ -1,0 +1,55 @@
+#
+# $Id$
+#
+# Configuration for a Bang! server installation
+
+#
+# Defines the name for this server installation.
+
+server_name = msoy
+
+#
+# The port on which the server listens for client connections.
+
+# server_ports = 47624, 443
+
+#
+# The directory from which the server is run. Used to put log files in the
+# proper location and things like that.
+
+server_root = /export/msoy
+
+#
+# Defines the directory into which any web applications will be installed. (And
+# where they will locate their site-data directory).
+
+webapp_dir = /export/threerings/webapps
+
+#
+# Defines the client authenticator used by the server.
+
+server_auth = com.threerings.msoy.server.ooo.OOOAuthenticator
+
+#
+# The default database mapping; all other definitions will inherit from
+# this and need only be specified in cases where they differ from the
+# defaults
+
+db.default.driver = com.mysql.jdbc.Driver
+db.default.url = jdbc:mysql://DBHOST:3306/bang
+db.default.username = USERNAME
+db.default.password = PASSWORD
+
+#
+# An example of an overridden database configuration
+
+# db.userdb.username = USERNAME
+# db.userdb.password = PASSWORD
+# db.userdb.url = jdbc:mysql://USERDBHOST:3306/USERDB
+# db.sitedb.url = jdbc:mysql://USERDBHOST:3306/USERDB
+
+#
+# Bits for the OOO authenticator
+
+oooauth.login_url = /register/register.wm?from=%R
+oooauth.access_denied_url = /register/access_denied.wm
