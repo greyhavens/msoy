@@ -86,6 +86,12 @@ public class MsoyServer extends WhirledServer
         return _sceneFactory;
     }
 
+    // documentation inherited
+    protected int[] getListenPorts ()
+    {
+        return ServerConfig.serverPorts;
+    }
+
     public static void main (String[] args)
     {
         MsoyServer server = new MsoyServer();
