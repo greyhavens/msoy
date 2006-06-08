@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Mirrors MetaSOY server runtime files to the appropriate server machines 
+
+MIRROR=/export/tools/bin/mirror
+ROOT=`dirname $0 | sed s:/bin$::`
+cd $ROOT
+
+# mirror the library files
+echo "** Mirroring libraries..."
+$MIRROR lib/*.jar lib/i?86-*/lib*.so
+
+# mirror the project jar files
+echo "** Mirroring project jars..."
+$MIRROR dist/*.jar projects/*/dist/*.jar
+
+# mirror the project jar files
+echo "** Mirroring resources..."
+$MIRROR `find rsrc -name '*.jar'`
+
+# mirror the configuration files
+echo "** Mirroring configuration files..."
+$MIRROR server.conf *.properties build.xml log/README \
+    rsrc/config/resource/manager.properties
+
+# mirror the server scripts
+echo "** Mirroring scripts..."
+$MIRROR `find bin -perm 0775 -a -type f`
