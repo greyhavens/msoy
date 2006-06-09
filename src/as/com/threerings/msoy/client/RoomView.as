@@ -9,8 +9,9 @@ import flash.geom.Point;
 import mx.containers.Canvas;
 
 import mx.core.UIComponent;
-
 import mx.core.ScrollPolicy;
+
+import mx.events.FlexEvent;
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
@@ -41,6 +42,7 @@ import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 
 import com.threerings.msoy.ui.Avatar;
+import com.threerings.msoy.ui.ChatPopper;
 import com.threerings.msoy.ui.FurniMedia;
 import com.threerings.msoy.ui.PortalMedia;
 import com.threerings.msoy.ui.ScreenMedia;
@@ -83,6 +85,14 @@ public class RoomView extends Canvas
         graphics.moveTo(0, height);
         graphics.lineTo(xoffset, height - yoffset);
         graphics.lineTo(xoffset, yoffset);
+
+        addEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
+    }
+
+    protected function updateComplete (evt :FlexEvent) :void
+    {
+        removeEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
+        ChatPopper.setChatView(this);
     }
     
     /**
@@ -389,6 +399,7 @@ public class RoomView extends Canvas
     public function didLeavePlace (plobj :PlaceObject) :void
     {
         _ctx.getChatDirector().removeChatDisplay(this);
+        ChatPopper.popAllDown();
 
         _sceneObj.removeListener(this);
         _sceneObj = null;
@@ -460,22 +471,22 @@ public class RoomView extends Canvas
     // documentation inherited from interface ChatDisplay
     public function clear () :void
     {
-        // TODO
+        ChatPopper.popAllDown();
     }
 
     // documentation inherited from interface ChatDisplay
     public function displayMessage (msg :ChatMessage) :void
     {
-        if (!(msg is UserMessage)) {
-            return;
+        var avatar :Avatar = null;
+        if (msg is UserMessage) {
+            var umsg :UserMessage = (msg as UserMessage);
+            var occInfo :OccupantInfo = _sceneObj.getOccupantInfo(umsg.speaker);
+            if (occInfo != null) {
+                avatar = (_avatars.get(occInfo.bodyOid) as Avatar);
+            }
         }
 
-        var umsg :UserMessage = (msg as UserMessage);
-        var occInfo :OccupantInfo = _sceneObj.getOccupantInfo(umsg.speaker);
-        if (occInfo != null) {
-            var avatar :Avatar = (_avatars.get(occInfo.bodyOid) as Avatar);
-            avatar.speak(umsg);
-        }
+        ChatPopper.popUp(msg, avatar);
     }
 
     protected var _ctx :MsoyContext;

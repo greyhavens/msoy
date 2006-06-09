@@ -75,14 +75,6 @@ public class Avatar extends ScreenMedia
         _move.play();
     }
 
-    /**
-     * Have this avatar speak.
-     */
-    public function speak (msg :ChatMessage) :void
-    {
-        addChild(new ChatBubble(this, msg));
-    }
-
     protected function setOrientation (orient :int) :void
     {
         var left :Boolean = (orient >= 90 && orient < 270)

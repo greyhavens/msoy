@@ -1,7 +1,6 @@
 package com.threerings.msoy.ui {
 
 import flash.events.Event;
-import flash.events.TimerEvent;
 
 import flash.geom.Point;
 
@@ -9,8 +8,6 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import flash.display.Sprite;
-
-import flash.utils.Timer;
 
 import mx.containers.Canvas;
 import mx.controls.Text;
@@ -26,15 +23,11 @@ import mx.effects.Zoom;
 
 import mx.events.FlexEvent;
 
-import mx.managers.PopUpManager;
-
-import mx.styles.StyleManager;
-
 import com.threerings.crowd.chat.data.ChatMessage;
 
 public class ChatBubble extends Canvas
 {
-    public function ChatBubble (avatar :Avatar, msg :ChatMessage)
+    public function ChatBubble (msg :ChatMessage)
     {
         var txt :Text = new Text();
         txt.styleName = "chatBubble";
@@ -56,23 +49,11 @@ public class ChatBubble extends Canvas
 
         txt.addEventListener(FlexEvent.UPDATE_COMPLETE, textWasMeasured);
         addChild(txt);
-
-        // TODO: proper positioning, right now we're depending
-        // on our parent being a Box
-//        var point :Point = avatar.localToGlobal(new Point(0, 0));
-//        x = point.x;
-//        y = point.y;
-
-//        PopUpManager.addPopUp(this, avatar);
-
-        var timer :Timer = new Timer(10000, 1);
-        timer.addEventListener(TimerEvent.TIMER, popDown);
-        timer.start();
     }
 
-    protected function popDown (evt :TimerEvent) :void
+/*
+    public function popDown () :void
     {
-//        PopUpManager.removePopUp(this);
         var fadeOut :Fade = new Fade(this);
         fadeOut.alphaFrom = 1.0;
         fadeOut.alphaTo = 0;
@@ -86,6 +67,7 @@ public class ChatBubble extends Canvas
 
         seq.play();
     }
+    */
 
     protected function textWasMeasured (evt :FlexEvent) :void
     {
