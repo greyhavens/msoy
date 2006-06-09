@@ -49,6 +49,23 @@ public class ChatBubble extends Canvas
 
         txt.addEventListener(FlexEvent.UPDATE_COMPLETE, textWasMeasured);
         addChild(txt);
+
+        // try laying out immediately
+        /*
+        invalidateSize();
+        invalidateDisplayList();
+        invalidateProperties();
+        validateNow();
+
+        txt.invalidateSize();
+        txt.invalidateDisplayList();
+        txt.invalidateProperties();
+        txt.validateNow();
+        */
+        //measure();
+        //txt.invalidateSize();
+        //txt.validateNow();
+        //txt.validateNow();
     }
 
 /*

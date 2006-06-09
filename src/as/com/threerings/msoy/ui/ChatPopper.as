@@ -30,6 +30,8 @@ public class ChatPopper
             msg :ChatMessage, speaker :Avatar = null) :void
     {
         var bubble :ChatBubble = new ChatBubble(msg);
+        PopUpManager.addPopUp(bubble, _view);
+        bubble.validateNow();
 
         var rect :Rectangle = new Rectangle();
         rect.width = bubble.width;
@@ -50,14 +52,14 @@ public class ChatPopper
         // now avoid all the other rectangles
         var avoid :Array = new Array();
         for each (var bub :ChatBubble in _bubbles) {
-            avoid.push(new Rectangle(bub.x, bub.y, bub.width, bub.height));
+            avoid.push(new Rectangle(bub.x - PAD, bub.y - PAD,
+                bub.width + PAD*2, bub.height + PAD*2));
         }
 
         // position it and pop it up
         DisplayUtil.positionRect(rect, _bounds, avoid);
         bubble.x = rect.x;
         bubble.y = rect.y;
-        PopUpManager.addPopUp(bubble, _view);
 
         // track it
         _bubbles.push(bubble);
@@ -91,5 +93,7 @@ public class ChatPopper
     protected static var _bubbles :Array = new Array();
 
     protected static var _bounds :Rectangle = new Rectangle();
+
+    protected static const PAD :int = 10;
 }
 }
