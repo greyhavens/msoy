@@ -4,6 +4,8 @@ import flash.display.DisplayObject;
 
 import flash.events.Event;
 
+import flash.geom.Point;
+
 import mx.containers.Canvas;
 
 import mx.core.UIComponent;
@@ -182,6 +184,7 @@ public class RoomView extends Canvas
     protected function positionAndScale (
             sm :ScreenMedia, loc :MsoyLocation) :void
     {
+        var hotSpot :Point = sm.hotSpot;
         // the scale of the object is determined by the z coordinate
         var scale :Number = MIN_SCALE +
             ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - MIN_SCALE);
@@ -191,14 +194,14 @@ public class RoomView extends Canvas
         // x position depends on logical x and the scale
         var swidth :Number = (width * scale);
         var xoffset :Number = (width - swidth) / 2;
-        sm.x = (scale * sm.contentWidth)/-2 + xoffset +
+        sm.x = xoffset - (scale * hotSpot.x) +
             (loc.x / MAX_COORD) * swidth;
 
         // y position depends on logical y and the scale (z)
         var sheight :Number = (height * scale);
         var yoffset :Number = (height - sheight) / 2;
-        sm.y = height - yoffset - (scale * sm.contentHeight);
-        // TODO: incorporate y coord
+        sm.y = height - yoffset - (scale * hotSpot.y) -
+            (loc.y / MAX_COORD) * sheight;
     }
 
     /**

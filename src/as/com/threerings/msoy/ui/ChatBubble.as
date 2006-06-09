@@ -3,6 +3,8 @@ package com.threerings.msoy.ui {
 import flash.events.Event;
 import flash.events.TimerEvent;
 
+import flash.geom.Point;
+
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
@@ -23,6 +25,8 @@ import mx.effects.Sequence;
 import mx.effects.Zoom;
 
 import mx.events.FlexEvent;
+
+import mx.managers.PopUpManager;
 
 import mx.styles.StyleManager;
 
@@ -55,6 +59,11 @@ public class ChatBubble extends Canvas
 
         // TODO: proper positioning, right now we're depending
         // on our parent being a Box
+//        var point :Point = avatar.localToGlobal(new Point(0, 0));
+//        x = point.x;
+//        y = point.y;
+
+//        PopUpManager.addPopUp(this, avatar);
 
         var timer :Timer = new Timer(10000, 1);
         timer.addEventListener(TimerEvent.TIMER, popDown);
@@ -63,6 +72,7 @@ public class ChatBubble extends Canvas
 
     protected function popDown (evt :TimerEvent) :void
     {
+//        PopUpManager.removePopUp(this);
         var fadeOut :Fade = new Fade(this);
         fadeOut.alphaFrom = 1.0;
         fadeOut.alphaTo = 0;

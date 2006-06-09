@@ -28,7 +28,7 @@ public class MsoyLocation
     public var orient :int;
 
     public function MsoyLocation (
-            x :int = 0, y :int = 0, z :int = 0, orient :int = 0)
+            x :Number = 0, y :Number = 0, z :Number = 0, orient :int = 0)
     {
         this.x = x;
         this.y = y;
@@ -60,18 +60,18 @@ public class MsoyLocation
     // documentation inherited from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeInt(x);
-        out.writeInt(y);
-        out.writeInt(z);
+        out.writeFloat(x);
+        out.writeFloat(y);
+        out.writeFloat(z);
         out.writeShort(orient);
     }
 
     // documentation inherited from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        x = ins.readInt();
-        y = ins.readInt();
-        z = ins.readInt();
+        x = ins.readFloat();
+        y = ins.readFloat();
+        z = ins.readFloat();
         orient = ins.readShort();
     }
 
@@ -89,7 +89,7 @@ public class MsoyLocation
     // documentation inherited from interface Hashable
     public function hashCode () :int
     {
-        return x ^ y ^ z;
+        return int(x) ^ int(y) ^ int(z);
     }
 
     /**

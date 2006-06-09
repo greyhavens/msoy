@@ -17,6 +17,8 @@ import flash.events.SecurityErrorEvent;
 import flash.events.StatusEvent;
 import flash.events.TextEvent;
 
+import flash.geom.Point;
+
 import flash.media.Video;
 
 import flash.net.LocalConnection;
@@ -115,17 +117,14 @@ public class ScreenMedia extends Box
         // grab hold of the EventDispatcher we'll use for comm
         _dispatch = loader.contentLoaderInfo.sharedEvents;
 
-        // if we know the size of the media, create a mask to prevent
-        // it from drawing outside those bounds
-//        if (desc.width != -1 && desc.height != -1) {
-            var mask :Shape = new Shape();
-            mask.graphics.beginFill(0xFFFFFF);
-            mask.graphics.drawRect(0, 0, maxContentWidth, maxContentHeight);
-            mask.graphics.endFill();
-            // the mask must be added to the display list (which is wacky)
-            rawChildren.addChild(mask);
-            loader.mask = mask;
-//        }
+        // create a mask to prevent the media from drawing out of bounds
+        var mask :Shape = new Shape();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, maxContentWidth, maxContentHeight);
+        mask.graphics.endFill();
+        // the mask must be added to the display list (which is wacky)
+        rawChildren.addChild(mask);
+        loader.mask = mask;
 
         // start it loading, add it as a child
         loader.load(new URLRequest(url), getContext(url));
@@ -151,6 +150,15 @@ public class ScreenMedia extends Box
         return super.hitTestPoint(x, y, shapeFlag);
     }
 
+    public function get hotSpot () :Point
+    {
+        var p :Point = _desc.hotSpot;
+        if (p == null) {
+            p = new Point(contentWidth/2, contentHeight);
+        }
+        return p;
+    }
+
     public function get contentWidth () :int
     {
         return Math.min(_w, maxContentWidth);
@@ -171,6 +179,11 @@ public class ScreenMedia extends Box
         return 600;
     }
 
+    /**
+     * Update the location (but not the orientation).
+     *
+     * @param newLoc may be an MsoyLocation or an Array
+     */
     public function setLocation (newLoc :Object) :void
     {
         if (newLoc is MsoyLocation) {
@@ -232,38 +245,6 @@ public class ScreenMedia extends Box
     {
         return _desc;
     }
-
-/*
-    // documentation inherited
-    override public function set x (newValue :Number) :void
-    {
-        // TODO: test
-        trace("set x to " + newValue);
-        super.x = newValue - _desc.originX;
-        trace("super.x is now " + super.x + " and x is just " + x);
-    }
-
-    // documentation inherited
-    override public function get x () :Number
-    {
-        // TODO: test
-        return (super.x + _desc.originX);
-    }
-
-    // documentation inherited
-    override public function set y (newValue :Number) :void
-    {
-        // TODO: test
-        super.y = newValue - _desc.originY;
-    }
-
-    // documentation inherited
-    override public function get y () :Number
-    {
-        // TODO: test
-        return (super.y + _desc.originY);
-    }
-*/
 
     /**
      * Accessor: media property.
@@ -352,7 +333,6 @@ public class ScreenMedia extends Box
         info.removeEventListener(Event.COMPLETE, loadingComplete);
         info.removeEventListener(IOErrorEvent.IO_ERROR, loadError);
         info.removeEventListener(ProgressEvent.PROGRESS, loadProgress);
-
     }
 
     /**
@@ -419,7 +399,9 @@ public class ScreenMedia extends Box
 
     protected function updateContentDimensions (ww :int, hh :int) :void
     {
-        if (_w != ww || _h != hh) {
+        // we only care about updating the location if we don't already
+        // know a hotspot for our media
+        if (_desc.hotSpot == null && (_w != ww || _h != hh)) {
             _w = ww;
             _h = hh;
             locationUpdated();

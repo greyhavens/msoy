@@ -12,13 +12,13 @@ public class MsoyLocation
     implements Location
 {
     /** The body's x position (interpreted by the display system). */
-    public int x;
+    public float x;
 
     /** The body's y position (interpreted by the display system). */
-    public int y;
+    public float y;
 
     /** The body's z position (interpreted by the display system). */
-    public int z;
+    public float z;
 
     /** The body's orientation (interpreted by the display system). */
     public short orient;
@@ -31,7 +31,7 @@ public class MsoyLocation
     /**
      * Constructs a fully-specified Location.
      */
-    public MsoyLocation (int x, int y, int z, short orient)
+    public MsoyLocation (float x, float y, float z, short orient)
     {
         this.x = x;
         this.y = y;
@@ -44,9 +44,9 @@ public class MsoyLocation
      */
     public double distance (MsoyLocation that)
     {
-        int dx = this.x - that.x;
-        int dy = this.y - that.y;
-        int dz = this.z - that.z;
+        float dx = this.x - that.x;
+        float dy = this.y - that.y;
+        float dz = this.z - that.z;
 
         return Math.sqrt(dx*dx + dy*dy + dz*dz);
     }
@@ -90,7 +90,7 @@ public class MsoyLocation
     // documentation inherited
     public int hashCode ()
     {
-        return x ^ y ^ z;
+        return ((int) x) ^ ((int) y) ^ ((int) z);
     }
 
     public String toString ()

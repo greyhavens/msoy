@@ -40,7 +40,8 @@ public class MsoyClient extends Client
 
         _ctx = new MsoyContext(this, app);
 
-        setServer("tasman.sea.earth.threerings.net", DEFAULT_SERVER_PORT);
+        setServer("tasman.sea.earth.threerings.net", DEFAULT_SERVER_PORTS);
+        //setServer("ice.puzzlepirates.com", [ 4010 ]);
         logon();
     }
 

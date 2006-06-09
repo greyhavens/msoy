@@ -1,6 +1,7 @@
 .chatBubble {
     color: #000000;
     font-size: 18;
+    /*font-family: "Arial";*/
     top: 7;
     left: 7;
     bottom: 7;

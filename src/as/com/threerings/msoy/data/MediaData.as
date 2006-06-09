@@ -1,5 +1,7 @@
 package com.threerings.msoy.data {
 
+import flash.geom.Point;
+
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
@@ -28,22 +30,12 @@ public class MediaData
         isAVM1 = true;
     }
 
-    // TODO
-    public function get originX () :Number
+    /**
+     * Get the hotspot for this media, or null if there is none.
+     */
+    public function get hotSpot () :Point
     {
-        if (id == 0) {
-            return 30;
-        }
-        return 0;
-    }
-
-    // TODO
-    public function get originY () :Number
-    {
-        if (id == 0) {
-            return 200;
-        }
-        return 0;
+        return (DATA[id][2] as Point);
     }
 
     /**
@@ -97,24 +89,25 @@ public class MediaData
 
     /* TEMP. */
     protected static const DATA :Array = [
-        // [ mediaURI, isInteractive ]
- /* 0*/ [ "hipsterzombie.swf", true ],
-        [ "socketbunny.swf", true ],
+        // [ mediaURI, isInteractive, hotspot ]
+ /* 0*/ [ "hipsterzombie.swf", true, new Point(126, 367) ],
+        [ "socketbunny.swf", true, new Point(155, 360) ],
         [ "pedestrian.swf", true ],
-        [ "alleydoor.swf", true ],
+        [ "alleydoor.swf", true, new Point(36, 355) ],
         [ null, false ],
         [ null, false ],
-        [ "rainbowdoor.swf", true ],
+        [ "rainbowdoor.swf", true, new Point(144, 367) ],
         [ "fans.swf", false ],
         [ "fancyroom.png", false ],
-        [ "pinball.swf", true ],
- /*10*/ [ "directorschair.swf", false ],
+        [ "pinball.swf", true, new Point(100, 252) ],
+ /*10*/ [ "directorschair.swf", false, new Point(54, 154) ],
         [ "alley.png", false ],
-        [ "curtain.swf", false ]
+        [ "curtain.swf", false, new Point(130, 530) ]
     ];
 
     protected static const BASE_URL :String =
         "http://tasman.sea.earth.threerings.net/~ray/";
+        //"http://ice.puzzlepirates.com/msoy/";
 }
 
 }

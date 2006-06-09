@@ -71,7 +71,7 @@ public class MsoySceneRepository
             furn = new FurniData();
             furn.id = 2;
             furn.media = new MediaData(9); // pinball
-            furn.loc = new MsoyLocation(25, 0, 10, (short) 0);
+            furn.loc = new MsoyLocation(20, 0, 20, (short) 0);
             furn.action = "http://www.pinballnews.com/";
             model.addFurni(furn);
 
@@ -85,8 +85,7 @@ public class MsoySceneRepository
             model.type = "image";
             model.background = new MediaData(11); // alley
 
-            //portal.loc = new MsoyLocation(5, 0, 56, (short)180);
-            portal.loc = new MsoyLocation(4, 0, 56, (short)180);
+            portal.loc = new MsoyLocation(0, 10, 53, (short)180);
             portal.targetSceneId = 1;
             portal.media = new MediaData(3); // alley door
 
@@ -94,7 +93,7 @@ public class MsoySceneRepository
             furn = new FurniData();
             furn.id = 0;
             furn.media = new MediaData(10); // director's chair
-            furn.loc = new MsoyLocation(46, 0, 5, (short) 0);
+            furn.loc = new MsoyLocation(46, 0, 15, (short) 0);
             model.addFurni(furn);
         }
 

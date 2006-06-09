@@ -6,5 +6,4 @@
 		import com.threerings.msoy.client.MsoyClient;
 	]]>
 </mx:Script>
-<mx:Button x="40" y="285" label="connect" click="new MsoyClient(this);"/>
 </mx:Application>
