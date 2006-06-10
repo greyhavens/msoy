@@ -14,12 +14,7 @@ import mx.controls.Text;
 
 import mx.core.Container;
 import mx.core.UIComponent;
-
-import mx.effects.Fade;
-import mx.effects.Parallel;
-import mx.effects.RemoveChildAction;
-import mx.effects.Sequence;
-import mx.effects.Zoom;
+import mx.core.UITextField;
 
 import mx.events.FlexEvent;
 
@@ -27,10 +22,28 @@ import com.threerings.crowd.chat.data.ChatMessage;
 
 public class ChatBubble extends Canvas
 {
-    public function ChatBubble (msg :ChatMessage)
+    public function ChatBubble ()
     {
-        var txt :Text = new Text();
-        txt.styleName = "chatBubble";
+        _txt.addEventListener(FlexEvent.UPDATE_COMPLETE, textWasMeasured);
+        addChild(_txt);
+    }
+
+    /**
+     * Set the message to be displayed.
+     */
+    public final function setMessage (msg :ChatMessage) :void
+    {
+        configureTextStyle();
+        _txt.text = msg.message;
+    }
+
+    /**
+     * Set up and configure the style and look and feel of the text
+     * widget that will hold the chat text.
+     */
+    protected function configureTextStyle () :void
+    {
+        _txt.styleName = "chatBubble";
 
         /*
         var txt :TextField = new TextField();
@@ -42,88 +55,32 @@ public class ChatBubble extends Canvas
         txt.multiline = true;
         txt.autoSize = TextFieldAutoSize.CENTER;
         */
-        txt.selectable = false;
-        txt.x = 0; 
-        txt.y = 0;
-        txt.text = msg.message;
+        _txt.selectable = false;
+        _txt.maxWidth = 400;
 
-        txt.addEventListener(FlexEvent.UPDATE_COMPLETE, textWasMeasured);
-        addChild(txt);
-
-        // try laying out immediately
-        /*
-        invalidateSize();
-        invalidateDisplayList();
-        invalidateProperties();
-        validateNow();
-
-        txt.invalidateSize();
-        txt.invalidateDisplayList();
-        txt.invalidateProperties();
-        txt.validateNow();
-        */
-        //measure();
-        //txt.invalidateSize();
-        //txt.validateNow();
-        //txt.validateNow();
+        //addChild(txt);
     }
 
-/*
-    public function popDown () :void
+    /**
+     * Configure the chat bubble decoration.
+     */
+    protected function configureDecoration (ww :Number, hh :Number) :void
     {
-        var fadeOut :Fade = new Fade(this);
-        fadeOut.alphaFrom = 1.0;
-        fadeOut.alphaTo = 0;
-        fadeOut.duration = 750;
-
-        var remove :RemoveChildAction = new RemoveChildAction(this);
-
-        var seq :Sequence = new Sequence(this);
-        seq.addChild(fadeOut);
-        seq.addChild(remove);
-
-        seq.play();
-    }
-    */
-
-    protected function textWasMeasured (evt :FlexEvent) :void
-    {
-        var txt :Text = (evt.currentTarget as Text);
-        var w :Number = txt.measuredWidth;
-        var h :Number = txt.measuredHeight;
-
-        txt.removeEventListener(FlexEvent.UPDATE_COMPLETE, textWasMeasured);
-
         // draw bubble stuff behind it
         graphics.clear();
         graphics.beginFill(0xFFFFFF);
-        graphics.drawRoundRect(0, 0, w + 20, h + 20, 10, 10);
+        graphics.drawRoundRect(0, 0, ww + 20, hh + 20, 10, 10);
         graphics.endFill();
         graphics.lineStyle(2, 0x000000);
-        graphics.drawRoundRect(0, 0, w + 20, h + 20, 10, 10);
-
-        var zoomIn :Zoom = new Zoom(this);
-        zoomIn.originX = w/2 + 5;
-        zoomIn.originY = h/2 + 5;
-        zoomIn.duration = 80;
-        zoomIn.zoomHeightFrom = 1;
-        zoomIn.zoomHeightTo = 1.1;
-        zoomIn.zoomWidthFrom = 1;
-        zoomIn.zoomWidthTo = 1.1;
-
-        var zoomOut :Zoom = new Zoom(this);
-        zoomOut.originX = w/2 + 5;
-        zoomOut.originY = h/2 + 5;
-        zoomOut.duration = 20;
-        zoomOut.zoomHeightFrom = 1.1;
-        zoomOut.zoomHeightTo = 1;
-        zoomOut.zoomWidthFrom = 1.1;
-        zoomOut.zoomWidthTo = 1;
-
-        var seq :Sequence = new Sequence(this);
-        seq.addChild(zoomIn);
-        seq.addChild(zoomOut);
-        seq.play();
+        graphics.drawRoundRect(0, 0, ww + 20, hh + 20, 10, 10);
     }
+
+    private function textWasMeasured (evt :FlexEvent) :void
+    {
+        _txt.removeEventListener(FlexEvent.UPDATE_COMPLETE, textWasMeasured);
+
+        configureDecoration(_txt.measuredWidth, _txt.measuredHeight);
+    }
+    protected var _txt :Text = new Text();
 }
 }

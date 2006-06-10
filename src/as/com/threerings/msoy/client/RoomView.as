@@ -152,7 +152,7 @@ public class RoomView extends Canvas
         var z :Number;
         while (newdex > 0) {
             z = getZOfChildAt(newdex - 1);
-            if (z == int.MIN_VALUE || z >= loc.z) {
+            if (isNaN(z) || z >= loc.z) {
                 break;
             }
             newdex--;
@@ -218,16 +218,16 @@ public class RoomView extends Canvas
      * Convenience method to get the logical z coordinate of the child
      * at the specified index.
      */
-    protected function getZOfChildAt (index :int) :int
+    protected function getZOfChildAt (index :int) :Number
     {
         var disp :DisplayObject = getChildAt(index);
         if ((disp is UIComponent) && !(disp as UIComponent).includeInLayout) {
-            return int.MIN_VALUE; // TODO: NaN
+            return NaN;
         }
         if (disp is ScreenMedia) {
             return (disp as ScreenMedia).loc.z;
         }
-        return int.MAX_VALUE;
+        return Number.MAX_VALUE;
     }
 
     /**

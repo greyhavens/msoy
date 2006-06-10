@@ -52,6 +52,15 @@ public class Avatar extends ScreenMedia
         return 400;
     }
 
+    /**
+     * Get a configured ChatBubble instance to use for rendering chat
+     * from this avatar. The bubble will initially be empty.
+     */
+    public function createChatBubble () :ChatBubble
+    {
+        return new ChatBubble(); // default
+    }
+
     public function moveTo (destLoc :MsoyLocation) :void
     {
         // if there's already a move, kill it
