@@ -21,6 +21,8 @@ public class Avatar extends ScreenMedia
     public function Avatar (occInfo :MsoyOccupantInfo, loc :MsoyLocation)
     {
         super(occInfo.media);
+        _occInfo = occInfo;
+
         sendMessage("setAction", "standing");
         setOrientation(loc.orient);
 
@@ -58,7 +60,12 @@ public class Avatar extends ScreenMedia
      */
     public function createChatBubble () :ChatBubble
     {
-        return new ChatBubble(); // default
+        return ChatBubble.createInstance(_occInfo.bubbleType);
+    }
+
+    public function getBubblePopStyle () :int
+    {
+        return _occInfo.bubblePopStyle;
     }
 
     public function moveTo (destLoc :MsoyLocation) :void
@@ -117,6 +124,8 @@ public class Avatar extends ScreenMedia
     {
         return true;
     }
+
+    protected var _occInfo :MsoyOccupantInfo;
 
     protected var _move :SceneMove;
 

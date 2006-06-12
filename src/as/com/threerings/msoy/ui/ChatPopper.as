@@ -46,11 +46,18 @@ public class ChatPopper
         } else {
             bubble = new ChatBubble();
         }
-        bubble.setMessage(msg);
+        bubble.setMessage(msg, function (viz :UIComponent) :void {
+            popUp2(viz, bubble, speaker);
+        });
 
         // add the bubble briefly so that we can measure/layout the text
         PopUpManager.addPopUp(bubble, _view);
         bubble.validateNow();
+    }
+
+    private static function popUp2 (
+            viz :UIComponent, bubble :ChatBubble, speaker :Avatar) :void
+    {
         PopUpManager.removePopUp(bubble);
 
         // now we know the size and can try positioning the bubble
@@ -93,23 +100,23 @@ public class ChatPopper
         var bubbleViz :Canvas = new Canvas();
         bubbleViz.rawChildren.addChild(bmp);
 
-        bubbleViz.x = rect.x;
-        bubbleViz.y = rect.y;
-        bubbleViz.width = rect.width;
-        bubbleViz.height = rect.height;
+        viz.x = rect.x;
+        viz.y = rect.y;
+        viz.width = rect.width;
+        viz.height = rect.height;
 
-        animateBubblePopup(bubbleViz, speaker);
+        animateBubblePopup(viz, speaker);
 
         // track it
-        _bubbles.push(bubbleViz);
+        _bubbles.push(viz);
         _rects.push(rect);
 
         var timer :Timer = new Timer(10000, 1);
         timer.addEventListener(TimerEvent.TIMER,
             function (evt :TimerEvent) :void
             {
-                if (bubbleViz.parent != null) {
-                    animateBubblePopdown(bubbleViz);
+                if (viz.parent != null) {
+                    animateBubblePopdown(viz);
                 }
             });
         timer.start();
@@ -129,38 +136,13 @@ public class ChatPopper
     protected static function animateBubblePopup (
             bubble :IFlexDisplayObject, speaker :Avatar) :void
     {
-        // TODO: this can be pulled into a utility class, and be
-        // configurable based on the speaker, etc
         PopUpManager.addPopUp(bubble, _view);
 
-        var w :Number = bubble.width;
-        var h :Number = bubble.height;
-
-        bubble.scaleX = .01;
-        bubble.scaleY = .01;
-
-        var zoomIn :Zoom = new Zoom(bubble);
-        zoomIn.originX = w/2 + 5;
-        zoomIn.originY = h/2 + 5;
-        zoomIn.duration = 180;
-        zoomIn.zoomHeightFrom = .01;
-        zoomIn.zoomHeightTo = 1.1;
-        zoomIn.zoomWidthFrom = .01;
-        zoomIn.zoomWidthTo = 1.1;
-
-        var zoomOut :Zoom = new Zoom(bubble);
-        zoomOut.originX = w/2 + 5;
-        zoomOut.originY = h/2 + 5;
-        zoomOut.duration = 20;
-        zoomOut.zoomHeightFrom = 1.1;
-        zoomOut.zoomHeightTo = 1;
-        zoomOut.zoomWidthFrom = 1.1;
-        zoomOut.zoomWidthTo = 1;
-
-        var seq :Sequence = new Sequence(bubble);
-        seq.addChild(zoomIn);
-        seq.addChild(zoomOut);
-        seq.play();
+        var style :int = 0;
+        if (speaker != null) {
+            style = speaker.getBubblePopStyle();
+        }
+        BubblePopStyle.animateBubble(bubble, style);
     }
 
     protected static function animateBubblePopdown (

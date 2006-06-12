@@ -13,12 +13,20 @@ public class MsoyOccupantInfo extends OccupantInfo
     /** The media that represents our avatar. */
     public var media :MediaData;
 
+    /** The type of chat bubble to use. */
+    public var bubbleType :int;
+
+    /** The style with which the chat bubble pops up. */
+    public var bubblePopStyle :int;
+
     // documentation inherited
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
         out.writeObject(media);
+        out.writeShort(bubbleType);
+        out.writeShort(bubblePopStyle);
     }
 
     // documentation inherited
@@ -27,6 +35,8 @@ public class MsoyOccupantInfo extends OccupantInfo
         super.readObject(ins);
 
         media = (ins.readObject() as MediaData);
+        bubbleType = ins.readShort();
+        bubblePopStyle = ins.readShort();
     }
 }
 }
