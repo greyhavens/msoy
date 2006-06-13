@@ -30,7 +30,8 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyOccupantInfo;
 import com.threerings.msoy.data.MsoyUserObject;
-import com.threerings.msoy.data.SimpleChatConfig;
+
+import com.threerings.msoy.world.data.RoomConfig;
 
 public class MsoyClient extends Client
 {
@@ -83,7 +84,7 @@ public class MsoyClient extends Client
         i = BodyMarshaller.SET_IDLE;
         i = ChatMarshaller.AWAY;
 
-        var c :Class = SimpleChatConfig;
+        var c :Class;
         c = RoomConfig;
         c = SceneMarshaller;
         c = SpotMarshaller;

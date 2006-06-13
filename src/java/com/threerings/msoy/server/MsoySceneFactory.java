@@ -10,8 +10,7 @@ import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.util.SceneFactory;
 
-import com.threerings.msoy.data.RoomConfig;
-
+import com.threerings.msoy.world.data.RoomConfig;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 

@@ -1,15 +1,24 @@
-package com.threerings.msoy.client {
+package com.threerings.msoy.world.client {
 
 import mx.containers.VBox;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
-public class SimpleChatPanel extends VBox
+import com.threerings.msoy.client.MsoyContext;
+
+import com.threerings.msoy.world.chat.client.ChatControl;
+import com.threerings.msoy.world.chat.client.ChatTextArea;
+
+public class RoomPanel extends VBox
     implements PlaceView
 {
-    public function SimpleChatPanel (ctx :MsoyContext)
+    /** The room view. */
+    public var view :RoomView;
+
+    public function RoomPanel (ctx :MsoyContext)
     {
+        addChild(view = new RoomView(ctx));
         addChild(new ChatTextArea(ctx));
         addChild(new ChatControl(ctx));
     }

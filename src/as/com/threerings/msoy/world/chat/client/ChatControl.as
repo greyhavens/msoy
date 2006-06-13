@@ -1,4 +1,4 @@
-package com.threerings.msoy.client {
+package com.threerings.msoy.world.chat.client {
 
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -13,6 +13,8 @@ import mx.controls.TextInput;
 import mx.utils.StringUtil;
 
 import com.threerings.crowd.chat.data.ChatCodes;
+
+import com.threerings.msoy.client.MsoyContext;
 
 /**
  * IMPORTANT NOTE: this class was written for testing things and does not

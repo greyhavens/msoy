@@ -1,4 +1,4 @@
-package com.threerings.msoy.client {
+package com.threerings.msoy.world.chat.client {
 
 import flash.events.Event;
 
@@ -8,6 +8,8 @@ import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
+
+import com.threerings.msoy.client.MsoyContext;
 
 /**
  * IMPORTANT NOTE: this class was written for testing things and does not

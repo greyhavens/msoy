@@ -13,8 +13,8 @@ public class MsoyOccupantInfo extends OccupantInfo
     /** The media that represents our avatar. */
     public var media :MediaData;
 
-    /** The type of chat bubble to use. */
-    public var bubbleType :int;
+    /** The style of chat bubble to use. */
+    public var bubbleStyle :int;
 
     /** The style with which the chat bubble pops up. */
     public var bubblePopStyle :int;
@@ -25,7 +25,7 @@ public class MsoyOccupantInfo extends OccupantInfo
         super.writeObject(out);
 
         out.writeObject(media);
-        out.writeShort(bubbleType);
+        out.writeShort(bubbleStyle);
         out.writeShort(bubblePopStyle);
     }
 
@@ -35,7 +35,7 @@ public class MsoyOccupantInfo extends OccupantInfo
         super.readObject(ins);
 
         media = (ins.readObject() as MediaData);
-        bubbleType = ins.readShort();
+        bubbleStyle = ins.readShort();
         bubblePopStyle = ins.readShort();
     }
 }

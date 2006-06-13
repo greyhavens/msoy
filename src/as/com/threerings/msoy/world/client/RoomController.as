@@ -1,4 +1,4 @@
-package com.threerings.msoy.client {
+package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
@@ -13,6 +13,8 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.spot.data.Portal;
+
+import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 

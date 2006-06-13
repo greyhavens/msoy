@@ -1,4 +1,4 @@
-package com.threerings.msoy.client {
+package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 
@@ -34,6 +34,7 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.data.MsoyOccupantInfo;
 import com.threerings.msoy.world.data.FurniData;
@@ -41,11 +42,7 @@ import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 
-import com.threerings.msoy.ui.Avatar;
-import com.threerings.msoy.ui.ChatPopper;
-import com.threerings.msoy.ui.FurniMedia;
-import com.threerings.msoy.ui.PortalMedia;
-import com.threerings.msoy.ui.ScreenMedia;
+import com.threerings.msoy.world.chat.client.ChatPopper;
 
 public class RoomView extends Canvas
     implements PlaceView, SetListener, ChatDisplay
@@ -134,20 +131,20 @@ public class RoomView extends Canvas
     }
 
     /**
-     * Called by ScreenMedia instances when they've had their location
+     * Called by MsoySprite instances when they've had their location
      * updated.
      */
-    public function locationUpdated (sm :ScreenMedia) :void
+    public function locationUpdated (sprite :MsoySprite) :void
     {
         // first update the position and scale
-        var loc :MsoyLocation = sm.loc;
-        positionAndScale(sm, loc);
+        var loc :MsoyLocation = sprite.loc;
+        positionAndScale(sprite, loc);
 
         // then, possibly move the child up or down, depending on z order
-        if (!sm.includeInLayout) {
+        if (!sprite.includeInLayout) {
             return;
         }
-        var dex :int = getChildIndex(sm);
+        var dex :int = getChildIndex(sprite);
         var newdex :int = dex;
         var z :Number;
         while (newdex > 0) {
@@ -168,7 +165,7 @@ public class RoomView extends Canvas
         }
 
         if (newdex != dex) {
-            setChildIndex(sm, newdex);
+            setChildIndex(sprite, newdex);
         }
     }
 
@@ -192,25 +189,25 @@ public class RoomView extends Canvas
      * according to its logical coordinates.
      */
     protected function positionAndScale (
-            sm :ScreenMedia, loc :MsoyLocation) :void
+            sprite :MsoySprite, loc :MsoyLocation) :void
     {
-        var hotSpot :Point = sm.hotSpot;
+        var hotSpot :Point = sprite.hotSpot;
         // the scale of the object is determined by the z coordinate
         var scale :Number = MIN_SCALE +
             ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - MIN_SCALE);
-        sm.scaleX = scale;
-        sm.scaleY = scale;
+        sprite.scaleX = scale;
+        sprite.scaleY = scale;
 
         // x position depends on logical x and the scale
         var swidth :Number = (width * scale);
         var xoffset :Number = (width - swidth) / 2;
-        sm.x = xoffset - (scale * hotSpot.x) +
+        sprite.x = xoffset - (scale * hotSpot.x) +
             (loc.x / MAX_COORD) * swidth;
 
         // y position depends on logical y and the scale (z)
         var sheight :Number = (height * scale);
         var yoffset :Number = (height - sheight) / 2;
-        sm.y = height - yoffset - (scale * hotSpot.y) -
+        sprite.y = height - yoffset - (scale * hotSpot.y) -
             (loc.y / MAX_COORD) * sheight;
     }
 
@@ -224,8 +221,8 @@ public class RoomView extends Canvas
         if ((disp is UIComponent) && !(disp as UIComponent).includeInLayout) {
             return NaN;
         }
-        if (disp is ScreenMedia) {
-            return (disp as ScreenMedia).loc.z;
+        if (disp is MsoySprite) {
+            return (disp as MsoySprite).loc.z;
         }
         return Number.MAX_VALUE;
     }
@@ -234,8 +231,8 @@ public class RoomView extends Canvas
      */
     protected function setActive (map :HashMap, active :Boolean) :void
     {
-        for each (var media :ScreenMedia in map.values()) {
-            media.setActive(active);
+        for each (var sprite :MsoySprite in map.values()) {
+            sprite.setActive(active);
         }
     }
 
@@ -245,7 +242,7 @@ public class RoomView extends Canvas
     public function getMyCurrentLocation () :MsoyLocation
     {
         var oid :int = _ctx.getClient().getClientOid();
-        var avatar :Avatar = (_avatars.get(oid) as Avatar);
+        var avatar :AvatarSprite = (_avatars.get(oid) as AvatarSprite);
         return avatar.loc;
     }
 
@@ -266,8 +263,8 @@ public class RoomView extends Canvas
     protected function isNonInteractiveTarget (
             clickTarget :DisplayObject, map :HashMap) :Boolean
     {
-        for each (var media :ScreenMedia in map.values()) {
-            if (!media.isInteractive() && media.contains(clickTarget)) {
+        for each (var spr :MsoySprite in map.values()) {
+            if (!spr.isInteractive() && spr.contains(clickTarget)) {
                 return true;
             }
         }
@@ -282,7 +279,7 @@ public class RoomView extends Canvas
             (_sceneObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
-        var avatar :Avatar = new Avatar(occInfo, loc);
+        var avatar :AvatarSprite = new AvatarSprite(occInfo, loc);
         _avatars.put(bodyOid, avatar);
         addChild(avatar);
         avatar.setLocation(loc);
@@ -290,7 +287,7 @@ public class RoomView extends Canvas
 
     protected function removeBody (bodyOid :int) :void
     {
-        var avatar :Avatar = (_avatars.remove(bodyOid) as Avatar);
+        var avatar :AvatarSprite = (_avatars.remove(bodyOid) as AvatarSprite);
         if (avatar != null) {
             removeChild(avatar);
         }
@@ -298,7 +295,7 @@ public class RoomView extends Canvas
 
     protected function moveBody (bodyOid :int) :void
     {
-        var avatar :Avatar = (_avatars.get(bodyOid) as Avatar);
+        var avatar :AvatarSprite = (_avatars.get(bodyOid) as AvatarSprite);
         var sloc :SceneLocation =
             (_sceneObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
@@ -308,7 +305,8 @@ public class RoomView extends Canvas
 
     protected function updateBody (occInfo :MsoyOccupantInfo) :void
     {
-        var avatar :Avatar = (_avatars.get(occInfo.getBodyOid()) as Avatar);
+        var avatar :AvatarSprite =
+            (_avatars.get(occInfo.getBodyOid()) as AvatarSprite);
         if (avatar == null) {
             Log.getLog(this).warning("No avatar for updated occupantInfo? " +
                 "[occInfo=" + occInfo + "].");
@@ -319,21 +317,21 @@ public class RoomView extends Canvas
 
     protected function addPortal (portal :MsoyPortal) :void
     {
-        var pm :PortalMedia = new PortalMedia(portal);
+        var sprite :PortalSprite = new PortalSprite(portal);
         var loc :MsoyLocation = (portal.loc as MsoyLocation);
-        addChild(pm);
-        pm.setLocation(loc);
+        addChild(sprite);
+        sprite.setLocation(loc);
 
-        _portals.put(portal.portalId, pm);
+        _portals.put(portal.portalId, sprite);
     }
 
     protected function addFurni (furni :FurniData) :void
     {
-        var fm :FurniMedia = new FurniMedia(furni);
-        addChild(fm);
-        fm.setLocation(furni.loc);
+        var sprite :FurniSprite = new FurniSprite(furni);
+        addChild(sprite);
+        sprite.setLocation(furni.loc);
 
-        _furni.put(furni.id, fm);
+        _furni.put(furni.id, sprite);
     }
 
     /**
@@ -345,9 +343,9 @@ public class RoomView extends Canvas
         while (itr.hasNext()) {
             var portal :Portal = (itr.next() as Portal);
             if (loc.equals(portal.loc)) {
-                var pm :PortalMedia =
-                    (_portals.get(portal.portalId) as PortalMedia);
-                pm.wasTraversed(entering);
+                var sprite :PortalSprite =
+                    (_portals.get(portal.portalId) as PortalSprite);
+                sprite.wasTraversed(entering);
                 return;
             }
         }
@@ -366,7 +364,7 @@ public class RoomView extends Canvas
         _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
 
         // set up the background image
-        _bkg = new ScreenMedia(_scene.getBackground());
+        _bkg = new MsoySprite(_scene.getBackground());
         switch (_scene.getType()) {
         case "image":
             graphics.clear();
@@ -470,12 +468,12 @@ public class RoomView extends Canvas
     // documentation inherited from interface ChatDisplay
     public function displayMessage (msg :ChatMessage) :void
     {
-        var avatar :Avatar = null;
+        var avatar :AvatarSprite = null;
         if (msg is UserMessage) {
             var umsg :UserMessage = (msg as UserMessage);
             var occInfo :OccupantInfo = _sceneObj.getOccupantInfo(umsg.speaker);
             if (occInfo != null) {
-                avatar = (_avatars.get(occInfo.bodyOid) as Avatar);
+                avatar = (_avatars.get(occInfo.bodyOid) as AvatarSprite);
             }
         }
 
@@ -491,9 +489,9 @@ public class RoomView extends Canvas
     protected var _sceneObj :SpotSceneObject;
 
     /** The background image. */
-    protected var _bkg :ScreenMedia;
+    protected var _bkg :MsoySprite;
 
-    /** A map of bodyOid -> Avatar. */
+    /** A map of bodyOid -> AvatarSprite. */
     protected var _avatars :HashMap = new HashMap();
 
     /** A map of portalId -> Portal. */

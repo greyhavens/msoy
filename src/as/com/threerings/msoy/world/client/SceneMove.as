@@ -1,4 +1,4 @@
-package com.threerings.msoy.ui {
+package com.threerings.msoy.world.client {
 
 import mx.effects.EffectInstance;
 import mx.effects.TweenEffect;

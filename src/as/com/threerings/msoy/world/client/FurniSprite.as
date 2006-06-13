@@ -1,4 +1,4 @@
-package com.threerings.msoy.ui {
+package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
@@ -7,9 +7,9 @@ import flash.net.navigateToURL;
 
 import com.threerings.msoy.world.data.FurniData;
 
-public class FurniMedia extends ScreenMedia
+public class FurniSprite extends MsoySprite
 {
-    public function FurniMedia (furni :FurniData)
+    public function FurniSprite (furni :FurniData)
     {
         super(furni.media);
         _furni = furni;

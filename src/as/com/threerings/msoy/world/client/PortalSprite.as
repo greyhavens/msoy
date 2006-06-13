@@ -1,4 +1,4 @@
-package com.threerings.msoy.ui {
+package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
@@ -13,9 +13,9 @@ import com.threerings.msoy.world.data.MsoyPortal;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
 
-public class PortalMedia extends ScreenMedia
+public class PortalSprite extends MsoySprite
 {
-    public function PortalMedia (portal :MsoyPortal)
+    public function PortalSprite (portal :MsoyPortal)
     {
         super(portal.media);
         _portal = portal;

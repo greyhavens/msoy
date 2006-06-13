@@ -1,4 +1,4 @@
-package com.threerings.msoy.ui {
+package com.threerings.msoy.world.chat.client {
 
 import flash.display.BitmapData;
 
@@ -27,10 +27,10 @@ public class ChatBubble extends Canvas
     /**
      * Factory method to create a ChatBubble of the specified type.
      */
-    public static function createInstance (bubType :int) :ChatBubble
+    public static function createInstance (bubStyle :int) :ChatBubble
     {
         var BUBBLE_TYPES :Array = [ ChatBubble, BloodChatBubble ];
-        var clazz :Class = (BUBBLE_TYPES[bubType] as Class);
+        var clazz :Class = (BUBBLE_TYPES[bubStyle] as Class);
         if (clazz == null) {
             clazz = ChatBubble;
         }

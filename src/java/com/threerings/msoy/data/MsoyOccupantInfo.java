@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.data;
 
-import com.threerings.util.RandomUtil;
+import com.samskivert.util.RandomUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -15,8 +15,8 @@ public class MsoyOccupantInfo extends OccupantInfo
     /** The media that represents our avatar. */
     public MediaData media;
 
-    /** The type of chat bubble to use. */
-    public short bubbleType;
+    /** The style of chat bubble to use. */
+    public short bubbleStyle;
 
     /** The style with which the chat bubble pops up. */
     public short bubblePopStyle;
@@ -33,7 +33,7 @@ public class MsoyOccupantInfo extends OccupantInfo
         // TODO
         media = new MediaData(user.getOid() % 3); // consistent
         if (media.id == 0) {
-            bubbleType = (short) 1;
+            bubbleStyle = (short) 1;
         }
         bubblePopStyle = (short) (user.getOid() % 2);
     }

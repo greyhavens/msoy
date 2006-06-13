@@ -33,7 +33,7 @@ import mx.events.EffectEvent;
 import mx.events.SliderEvent;
 
 import com.threerings.msoy.data.MediaData;
-import com.threerings.msoy.ui.ScreenMedia;
+import com.threerings.msoy.world.client.MsoySprite;
 
 public class TestFPS
 {
@@ -98,7 +98,7 @@ public class TestFPS
             //if (url.indexOf("tube") != -1) {
             //    desc = new MediaData(url, 100, 100);
             //}
-            var screenMedia :ScreenMedia = new ScreenMedia(desc);
+            var screenMedia :MsoySprite = new MsoySprite(desc);
             screenMedia.x = Math.random() * _container.width;
             screenMedia.y = Math.random() * _container.height;
             screenMedia.rotation = Math.random() * 360;

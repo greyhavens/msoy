@@ -1,4 +1,4 @@
-package com.threerings.msoy.ui {
+package com.threerings.msoy.world.client {
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
@@ -41,7 +41,7 @@ import mx.events.EffectEvent;
 
 import com.threerings.media.image.ImageUtil;
 
-import com.threerings.msoy.client.RoomView;
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -68,7 +68,7 @@ import com.threerings.util.HashMap;
  that contains all possible commands..
 
  */
-public class ScreenMedia extends Box
+public class MsoySprite extends Box
 {
     /** The current logical coordinate of this media. */
     public const loc :MsoyLocation = new MsoyLocation();
@@ -76,7 +76,7 @@ public class ScreenMedia extends Box
     /**
      * Constructor.
      */
-    public function ScreenMedia (desc :MediaData)
+    public function MsoySprite (desc :MediaData)
     {
         _desc = desc;
         _id = int(Math.random() * int.MAX_VALUE);
@@ -297,7 +297,7 @@ public class ScreenMedia extends Box
         // then they end up bubbling up somewhere else.
 
         if (event.level != "status") {
-            Log.getLog(ScreenMedia).debug("Unable to communicate with media " +
+            Log.getLog(MsoySprite).debug("Unable to communicate with media " +
                 "[event=" + event + "].");
         }
     }

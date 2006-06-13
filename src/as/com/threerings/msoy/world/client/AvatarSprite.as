@@ -1,4 +1,4 @@
-package com.threerings.msoy.ui {
+package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
@@ -17,9 +17,9 @@ import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.data.MsoyOccupantInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 
-public class Avatar extends ScreenMedia
+public class AvatarSprite extends MsoySprite
 {
-    public function Avatar (occInfo :MsoyOccupantInfo, loc :MsoyLocation)
+    public function AvatarSprite (occInfo :MsoyOccupantInfo, loc :MsoyLocation)
     {
         super(occInfo.media);
 
@@ -82,12 +82,11 @@ public class Avatar extends ScreenMedia
     }
 
     /**
-     * Get a configured ChatBubble instance to use for rendering chat
-     * from this avatar. The bubble will initially be empty.
+     * Get the style of chat bubble to use for this occupant.
      */
-    public function createChatBubble () :ChatBubble
+    public function getBubbleStyle () :int
     {
-        return ChatBubble.createInstance(_occInfo.bubbleType);
+        return _occInfo.bubbleStyle;
     }
 
     public function getBubblePopStyle () :int

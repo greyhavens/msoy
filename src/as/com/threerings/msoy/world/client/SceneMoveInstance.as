@@ -1,4 +1,4 @@
-package com.threerings.msoy.ui {
+package com.threerings.msoy.world.client {
 
 import flash.events.Event;
 
@@ -11,8 +11,6 @@ import mx.effects.effectClasses.TweenEffectInstance;
 import mx.events.MoveEvent;
 
 import com.threerings.msoy.world.data.MsoyLocation;
-
-import com.threerings.msoy.client.RoomView; // TODO: same package
 
 public class SceneMoveInstance extends TweenEffectInstance
 {
@@ -52,7 +50,7 @@ public class SceneMoveInstance extends TweenEffectInstance
         // do not need to suspend EffectManager event handling.
 
         if (SceneMove(effect).valid) {
-            ScreenMedia(target).setLocation(value);
+            MsoySprite(target).setLocation(value);
         }
         //var coords :Array = (value as Array);
         //var parent :RoomView = (target.parent as RoomView);
@@ -70,7 +68,7 @@ public class SceneMoveInstance extends TweenEffectInstance
         super.onTweenEnd(value);
 
         if (SceneMove(effect).valid) {
-            ScreenMedia(target).moveCompleted(value[3]);
+            MsoySprite(target).moveCompleted(value[3]);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.threerings.msoy.ui {
+package com.threerings.msoy.world.chat.client {
 
 import flash.display.BitmapData;
 

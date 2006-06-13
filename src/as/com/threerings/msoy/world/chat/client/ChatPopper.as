@@ -1,4 +1,4 @@
-package com.threerings.msoy.ui {
+package com.threerings.msoy.world.chat.client {
 
 import flash.display.BitmapData;
 
@@ -24,7 +24,11 @@ import mx.managers.PopUpManager;
 
 import com.threerings.util.DisplayUtil;
 
+import com.threerings.mx.effects.FunctionEffect;
+
 import com.threerings.crowd.chat.data.ChatMessage;
+
+import com.threerings.msoy.world.client.AvatarSprite;
 
 public class ChatPopper
 {
@@ -37,13 +41,14 @@ public class ChatPopper
     }
 
     public static function popUp (
-            msg :ChatMessage, speaker :Avatar = null) :void
+            msg :ChatMessage, speaker :AvatarSprite = null) :void
     {
         var bubble :ChatBubble;
         if (speaker != null) {
-            bubble = speaker.createChatBubble();
+            bubble = ChatBubble.createInstance(speaker.getBubbleStyle());
 
         } else {
+            // default style
             bubble = new ChatBubble();
         }
         bubble.setMessage(msg, function (viz :UIComponent) :void {
@@ -56,7 +61,7 @@ public class ChatPopper
     }
 
     private static function popUp2 (
-            viz :UIComponent, bubble :ChatBubble, speaker :Avatar) :void
+            viz :UIComponent, bubble :ChatBubble, speaker :AvatarSprite) :void
     {
         PopUpManager.removePopUp(bubble);
 
@@ -134,7 +139,7 @@ public class ChatPopper
     }
 
     protected static function animateBubblePopup (
-            bubble :IFlexDisplayObject, speaker :Avatar) :void
+            bubble :IFlexDisplayObject, speaker :AvatarSprite) :void
     {
         PopUpManager.addPopUp(bubble, _view);
 
