@@ -39,7 +39,6 @@ public class ChatBubble extends Canvas
 
     public function ChatBubble ()
     {
-        trace("Chatbubble const");
         _txt = new Text();
         _txt.addEventListener(FlexEvent.UPDATE_COMPLETE, textWasMeasured);
         addChild(_txt);

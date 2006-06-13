@@ -11,9 +11,11 @@ public class BloodChatBubble extends ChatBubble
     {
         // For every vertical run of N black pixels, fill nonblack pixels
         // below it with a run of red pixels up to length N.
-        var blackCount :int = 0;
-        var redCount :int = 0;
+        var blackCount :int;
+        var redCount :int;
         for (var xx :int = 0; xx < src.width; xx++) {
+            blackCount = 0;
+            redCount = 0;
             for (var yy :int = 0; yy < src.height; yy++) {
                 if (src.getPixel(xx, yy) == 0) {
                     blackCount++;

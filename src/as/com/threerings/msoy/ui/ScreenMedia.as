@@ -143,13 +143,6 @@ public class ScreenMedia extends Box
         }
     }
 
-    override public function hitTestPoint (
-            x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
-    {
-        trace("hitTest(" + x + ", " + y + ")");
-        return super.hitTestPoint(x, y, shapeFlag);
-    }
-
     public function get hotSpot () :Point
     {
         var p :Point = _desc.hotSpot;

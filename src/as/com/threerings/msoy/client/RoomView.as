@@ -306,6 +306,17 @@ public class RoomView extends Canvas
         avatar.moveTo(loc);
     }
 
+    protected function updateBody (occInfo :MsoyOccupantInfo) :void
+    {
+        var avatar :Avatar = (_avatars.get(occInfo.getBodyOid()) as Avatar);
+        if (avatar == null) {
+            Log.getLog(this).warning("No avatar for updated occupantInfo? " +
+                "[occInfo=" + occInfo + "].");
+            return;
+        }
+        avatar.setOccupantInfo(occInfo);
+    }
+
     protected function addPortal (portal :MsoyPortal) :void
     {
         var pm :PortalMedia = new PortalMedia(portal);
@@ -392,7 +403,6 @@ public class RoomView extends Canvas
         // and animate ourselves entering the room (everyone already in the
         // (room will also have seen it)
         portalTraversed(getMyCurrentLocation(), true);
-        trace("Set up all bodies");
     }
 
     // documentation inherited from interface PlaceView
@@ -415,12 +425,10 @@ public class RoomView extends Canvas
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            trace("addBody");
             addBody((event.getEntry() as MsoyOccupantInfo).getBodyOid());
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
             var sceneLoc :SceneLocation = (event.getEntry() as SceneLocation);
-            trace("someone added at " + sceneLoc.loc);
             portalTraversed(sceneLoc.loc, true);
         }
     }
@@ -430,8 +438,10 @@ public class RoomView extends Canvas
     {
         var name :String = event.getName();
 
-        if (SpotSceneObject.OCCUPANT_LOCS == name) {
-            trace("locationUpdated");
+        if (PlaceObject.OCCUPANT_INFO == name) {
+            updateBody(event.getEntry() as MsoyOccupantInfo);
+
+        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
             moveBody((event.getEntry() as SceneLocation).bodyOid);
         }
     }
@@ -442,31 +452,14 @@ public class RoomView extends Canvas
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            trace("removeBody");
             removeBody((event.getOldEntry() as MsoyOccupantInfo).getBodyOid());
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
             var sceneLoc :SceneLocation =
                 (event.getOldEntry() as SceneLocation);
-            trace("someone removed at " + sceneLoc.loc);
             portalTraversed(sceneLoc.loc, false);
         }
     }
-
-/*
-    override public function validateSize (recursive :Boolean = false) :void
-    {
-        super.validateSize(recursive);
-
-        trace("Rando z");
-
-        // sort our children by z order
-        for (var ii :int = numChildren; ii > 1; ii--) {
-            var dex :int = int(Math.random() * ii);
-            swapChildrenAt(ii - 1, dex);
-        }
-    }
-    */
 
     // documentation inherited from interface ChatDisplay
     public function clear () :void

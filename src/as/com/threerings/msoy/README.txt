@@ -480,3 +480,6 @@ If it takes too long to run it can be rejected.
              piece of media..
 
 - UIComponent.parentChanged is misnamed, it should be called parentWillChange.
+
+- Install Firebug (http://www.joehewitt.com) IMMEDIATELY. You need this to
+  debug msoy.

@@ -10,6 +10,7 @@ import flash.text.TextFieldAutoSize;
 
 import mx.events.EffectEvent;
 
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.data.ChatMessage;
 
 import com.threerings.msoy.data.MediaData;
@@ -21,7 +22,12 @@ public class Avatar extends ScreenMedia
     public function Avatar (occInfo :MsoyOccupantInfo, loc :MsoyLocation)
     {
         super(occInfo.media);
-        _occInfo = occInfo;
+
+        var txt :TextField = new TextField();
+        _label = txt;
+
+        // set up our occupant info
+        setOccupantInfo(occInfo);
 
         sendMessage("setAction", "standing");
         setOrientation(loc.orient);
@@ -31,9 +37,6 @@ public class Avatar extends ScreenMedia
 //        //matrix.c = .5;
 //        this.transform.matrix = matrix;
 
-        var txt :TextField = new TextField();
-        _label = txt;
-        txt.textColor = 0xFFFF00;
         txt.wordWrap = false;
         txt.multiline = false;
         txt.restrict = "";
@@ -42,6 +45,30 @@ public class Avatar extends ScreenMedia
         txt.x = 0;
         txt.y = 0;
         rawChildren.addChild(txt);
+    }
+
+    /**
+     * Update the occupant info.
+     */
+    public function setOccupantInfo (occInfo :MsoyOccupantInfo) :void
+    {
+        _occInfo = occInfo;
+
+        _label.textColor = getStatusColor(_occInfo.status);
+    }
+
+    protected function getStatusColor (status :int) :uint
+    {
+        switch (status) {
+        case OccupantInfo.IDLE:
+            return 0xFFFF00;
+
+        case OccupantInfo.DISCONNECTED:
+            return 0xFF0000;
+
+        default:
+            return 0x00FF00;
+        }
     }
 
     override public function get maxContentWidth () :int

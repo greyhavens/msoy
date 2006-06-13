@@ -2,6 +2,8 @@ package com.threerings.msoy.client {
 
 import flash.display.Stage;
 
+import flash.external.ExternalInterface;
+
 import mx.core.Application;
 import mx.logging.Log;
 
@@ -39,6 +41,16 @@ public class MsoyClient extends Client
         super(new UsernamePasswordCreds(guestName, "guest"), app.stage);
 
         _ctx = new MsoyContext(this, app);
+
+        // register our logoff function as being available from javascript
+        if (ExternalInterface.available) {
+            ExternalInterface.addCallback("msoyLogoff", function () :void {
+                logoff(false);
+            });
+
+        } else {
+            trace("Unable to communicate with javascript!");
+        }
 
         setServer("tasman.sea.earth.threerings.net", DEFAULT_SERVER_PORTS);
         //setServer("ice.puzzlepirates.com", [ 4010 ]);

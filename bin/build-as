@@ -24,6 +24,7 @@ java -jar "$ROOT/lib/as-compiler/lib/mxmlc.jar" \
     -compiler.verbose-stacktraces=true \
     -compiler.source-path="$ROOT/projects/narya/src/as/" \
     -compiler.source-path="$ROOT/src/as/" \
+    -compiler.source-path="$ROOT/src/css/" \
     -compiler.source-path="$ROOT/rsrc/{locale}" \
     $ROOT/src/mxml/Msoy.mxml
     #$ROOT/src/as/AvatarTest.as
