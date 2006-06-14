@@ -13,6 +13,9 @@ public class MsoySceneModel extends SceneModel
     /** The type of scene. */
     public var type :String;
 
+    /** The pixel width of the room. */
+    public var width :int;
+
     /** The background image of the scene. */
     public var background :MediaData;
 
@@ -46,6 +49,7 @@ public class MsoySceneModel extends SceneModel
         super.writeObject(out);
 
         out.writeField(type);
+        out.writeShort(width);
         out.writeObject(background);
         out.writeObject(furnis);
     }
@@ -56,6 +60,7 @@ public class MsoySceneModel extends SceneModel
         super.readObject(ins);
 
         type = (ins.readField(String) as String);
+        width = ins.readShort();
         background = (ins.readObject() as MediaData);
         furnis = (ins.readObject() as TypedArray);
     }

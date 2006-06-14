@@ -34,12 +34,15 @@ import flash.net.URLRequest;
 
 import flash.utils.Timer;
 
+import mx.core.Container;
+
 import mx.containers.Box;
 import mx.controls.VideoDisplay;
 
 import mx.effects.Glow;
 
 import mx.events.EffectEvent;
+import mx.events.VideoEvent;
 
 import com.threerings.media.image.ImageUtil;
 
@@ -88,45 +91,27 @@ public class MsoySprite extends Box
         if (url.toLowerCase().lastIndexOf(".flv") ==
                 url.length - ".flv".length) {
 
-/*
-            if (false) {
-            */
-                trace("flv method 1");
-                var nc :NetConnection = new NetConnection();
+            var vid :VideoDisplay = new VideoDisplay();
+            vid.scaleX = desc.scale;
+            vid.scaleY = desc.scale;
+            addChild(vid);
+            vid.addEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
+            vid.addEventListener(VideoEvent.READY, loadVideoReady);
 
-                nc.addEventListener(NetStatusEvent.NET_STATUS,
-                    function (evt :NetStatusEvent) :void {
-                        trace("+++ status: " + evt);
-                        if (evt.info.code == "NetConnection.Connect.Success") {
-                            finishVideoLoad(nc);
-                        }
-                    });
-                nc.addEventListener(SecurityErrorEvent.SECURITY_ERROR,
-                    function (evt :SecurityErrorEvent) :void {
-                        trace("+++ error: " + evt);
-                    });
-                nc.connect(null);
+            vid.source = url;
 
 /*
-            } else if (false) {
-                trace("flv method 2");
-                var nc :NetConnection = new NetConnection();
-                nc.connect(null);
-
-                var stream :NetStream = new NetStream(nc);
-                var video :Video = new Video();
-                video.attachNetStream(stream);
-
-                rawChildren.addChild(video);
-                stream.play(url);
-
-            } else {
-                trace("flv method 3");
-                var vid :VideoDisplay = new VideoDisplay();
-                vid.source = url;
-                addChild(vid);
-                vid.play();
-            }
+            var timer :Timer = new Timer(1000);
+            timer.addEventListener(TimerEvent.TIMER,
+                function (evt :Event) :void {
+                    trace("Video: (" + vid.bytesLoaded + " / " +
+                        vid.bytesTotal + " bytes) " + vid.playheadTime +
+                        ": " + vid.state + "  (" + width + ", " + height +
+                        ") (" + vid.width + ", " + vid.height + ")");
+                    updateContentDimensions(
+                        vid.videoWidth, vid.videoHeight);
+                });
+            timer.start();
             */
 
             return;
@@ -139,6 +124,8 @@ public class MsoySprite extends Box
 
         // create our loader and set up some event listeners
         var loader :Loader = new Loader();
+        loader.scaleX = desc.scale;
+        loader.scaleY = desc.scale;
         loader.contentLoaderInfo.addEventListener(
             Event.COMPLETE, loadingComplete);
         loader.contentLoaderInfo.addEventListener(
@@ -173,21 +160,6 @@ public class MsoySprite extends Box
             addEventListener(MouseEvent.CLICK, mouseClickCap);
             */
         }
-    }
-
-    protected function finishVideoLoad (nc :NetConnection) :void
-    {
-        trace("Finishing load of flv video [url=" + _desc.URL + "].");
-        var stream :NetStream = new NetStream(nc);
-        var o :Object = new Object();
-        o.onMetaData = function (... rest) :void {
-            trace("onmetadata: " + rest);
-        };
-        stream.client = o;
-        var video :Video = new Video();
-        video.attachNetStream(stream);
-        rawChildren.addChild(video);
-        stream.play(_desc.URL);
     }
 
     public function get hotSpot () :Point
@@ -270,7 +242,7 @@ public class MsoySprite extends Box
 
 /* Commented out: this doesn't fucking work, this method should be called
  * parentWillChange. For now, just require folks to add the component first
- * and then set hte location.
+ * and then set the location.
 
     override public function parentChanged (p :DisplayObjectContainer) :void
     {
@@ -411,6 +383,26 @@ public class MsoySprite extends Box
         }
     }
 
+    protected function loadVideoProgress (event :ProgressEvent) :void
+    {
+        var vid :VideoDisplay = (event.currentTarget as VideoDisplay);
+        updateContentDimensions(vid.videoWidth, vid.videoHeight);
+
+        var perc :Number = vid.bytesLoaded / vid.bytesTotal;
+        updateLoadingProgress(perc);
+    }
+
+    protected function loadVideoReady (event :VideoEvent) :void
+    {
+        var vid :VideoDisplay = (event.currentTarget as VideoDisplay);
+        updateContentDimensions(vid.videoWidth, vid.videoHeight);
+        updateLoadingProgress(1);
+
+        // remove the two listeners
+        vid.removeEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
+        vid.removeEventListener(VideoEvent.READY, loadVideoReady);
+    }
+
     /**
      * Callback function.
      */
@@ -439,13 +431,36 @@ public class MsoySprite extends Box
 
     protected function updateContentDimensions (ww :int, hh :int) :void
     {
-        // we only care about updating the location if we don't already
-        // know a hotspot for our media
-        if (_desc.hotSpot == null && (_w != ww || _h != hh)) {
+        ww *= _desc.scale;
+        hh *= _desc.scale;
+        if (_w != ww || _h != hh) {
             _w = ww;
             _h = hh;
-            locationUpdated();
+            // we only care about updating the location if we don't already
+            // know a hotspot for our media
+            if (_desc.hotSpot == null) {
+                locationUpdated();
+            }
         }
+    }
+
+    /**
+     * Update the graphics to indicate how much is loaded.
+     */
+    protected function updateLoadingProgress (prog :Number) :void
+    {
+        graphics.clear();
+        if (prog >= 1) {
+            (parent as Container).invalidateDisplayList();
+            return; // once we're 100% loaded, we display no progress biz
+        }
+
+        var radius :Number = .5 * Math.min(contentWidth, contentHeight);
+
+        graphics.beginFill(0x000000, .5);
+        graphics.drawCircle(radius, radius, radius);
+        graphics.beginFill(0xFFFFFF, .5);
+        graphics.drawCircle(radius, radius, radius * prog);
     }
 
     public function isInteractive () :Boolean

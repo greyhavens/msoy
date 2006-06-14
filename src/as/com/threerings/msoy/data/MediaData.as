@@ -59,6 +59,14 @@ public class MediaData
         return _height;
     }
 
+    public function get scale () :Number
+    {
+        if (id == 8 && URL.indexOf(".flv") != -1) {
+            return 2;
+        }
+        return 1;
+    }
+
     /**
      * @return true if the media is clickable.
      */
@@ -98,9 +106,9 @@ public class MediaData
         [ null, false ],
         [ "rainbowdoor.swf", true, new Point(144, 367) ],
         [ "fans.swf", false ],
-        [ "fancyroom.png", false ],
+        //[ "fancyroom.png", false ],
         //[ "flv/320x240.swf?url=JoshuaTree.flv", false ],
-        //[ "JoshuaTree.flv", false ],
+        [ "JoshuaTree.flv", false ],
         [ "pinball.swf", true, new Point(100, 252) ],
  /*10*/ [ "directorschair.swf", false, new Point(54, 154) ],
         [ "alley.png", false ],

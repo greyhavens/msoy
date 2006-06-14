@@ -8,6 +8,8 @@ import flash.geom.Point;
 
 import mx.containers.Canvas;
 
+import mx.controls.VideoDisplay;
+
 import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
 

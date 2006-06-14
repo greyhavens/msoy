@@ -19,6 +19,9 @@ public class MsoySceneModel extends SceneModel
     /** The type of scene that this is. Determines how it is rendered. */
     public String type;
 
+    /** The pixel width of the room. */
+    public short width;
+
     /** The background image of the scene. */
     public MediaData background;
 
@@ -50,6 +53,7 @@ public class MsoySceneModel extends SceneModel
     public static MsoySceneModel blankMsoySceneModel ()
     {
         MsoySceneModel model = new MsoySceneModel();
+        model.width = 800;
         populateBlankMsoySceneModel(model);
         return model;
     }
