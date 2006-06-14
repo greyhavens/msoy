@@ -31,12 +31,12 @@ public class MsoyLocation
     /**
      * Constructs a fully-specified Location.
      */
-    public MsoyLocation (float x, float y, float z, short orient)
+    public MsoyLocation (double x, double y, double z, int orient)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.orient = orient;
+        this.x = (float) x;
+        this.y = (float) y;
+        this.z = (float) z;
+        this.orient = (short) orient;
     }
 
     /**

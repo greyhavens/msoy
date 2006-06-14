@@ -372,12 +372,12 @@ public class RoomView extends Canvas
             // in Z order movements
             _bkg.includeInLayout = false;
             addChild(_bkg);
-            _bkg.setLocation([50, 0, 0, 0]);
+            _bkg.setLocation([.5, 0, 0, 0]);
             break;
 
         default:
             addChild(_bkg);
-            _bkg.setLocation([50, 0, 100, 0]);
+            _bkg.setLocation([.5, 0, 1, 0]);
             break;
         }
 
@@ -502,7 +502,7 @@ public class RoomView extends Canvas
 
     private static const MIN_SCALE :Number = 0.55;
     private static const MAX_SCALE :Number = 1;
-    private static const MAX_COORD :Number = 100;
+    private static const MAX_COORD :Number = 1;
     private static const PHI :Number = (1 + Math.sqrt(5)) / 2;
 }
 }

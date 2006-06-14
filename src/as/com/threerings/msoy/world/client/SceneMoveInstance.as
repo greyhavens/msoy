@@ -52,9 +52,6 @@ public class SceneMoveInstance extends TweenEffectInstance
         if (SceneMove(effect).valid) {
             MsoySprite(target).setLocation(value);
         }
-        //var coords :Array = (value as Array);
-        //var parent :RoomView = (target.parent as RoomView);
-        //parent.setLocation(IUIComponent(target), coords);
     }
 
     // documentation inherited

@@ -12,6 +12,7 @@ import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
 import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
+import flash.events.NetStatusEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 import flash.events.StatusEvent;
@@ -34,6 +35,7 @@ import flash.net.URLRequest;
 import flash.utils.Timer;
 
 import mx.containers.Box;
+import mx.controls.VideoDisplay;
 
 import mx.effects.Glow;
 
@@ -82,28 +84,58 @@ public class MsoySprite extends Box
         _id = int(Math.random() * int.MAX_VALUE);
 
         var url :String = desc.URL;
+
+        if (url.toLowerCase().lastIndexOf(".flv") ==
+                url.length - ".flv".length) {
+
+/*
+            if (false) {
+            */
+                trace("flv method 1");
+                var nc :NetConnection = new NetConnection();
+
+                nc.addEventListener(NetStatusEvent.NET_STATUS,
+                    function (evt :NetStatusEvent) :void {
+                        trace("+++ status: " + evt);
+                        if (evt.info.code == "NetConnection.Connect.Success") {
+                            finishVideoLoad(nc);
+                        }
+                    });
+                nc.addEventListener(SecurityErrorEvent.SECURITY_ERROR,
+                    function (evt :SecurityErrorEvent) :void {
+                        trace("+++ error: " + evt);
+                    });
+                nc.connect(null);
+
+/*
+            } else if (false) {
+                trace("flv method 2");
+                var nc :NetConnection = new NetConnection();
+                nc.connect(null);
+
+                var stream :NetStream = new NetStream(nc);
+                var video :Video = new Video();
+                video.attachNetStream(stream);
+
+                rawChildren.addChild(video);
+                stream.play(url);
+
+            } else {
+                trace("flv method 3");
+                var vid :VideoDisplay = new VideoDisplay();
+                vid.source = url;
+                addChild(vid);
+                vid.play();
+            }
+            */
+
+            return;
+        }
+
         if (desc.isAVM1) {
             // TODO
             url += "?oid=" + _id;
         }
-
-/** Experimental
-        if (url.toLowerCase().lastIndexOf(".flv") ==
-                url.length - ".flv".length) {
-            var nc :NetConnection = new NetConnection();
-            nc.connect(url);
-
-            var stream :NetStream = new NetStream(nc);
-
-            var video :Video = new Video();
-            video.attachNetStream(stream);
-
-            rawChildren.addChild(video);
-            stream.play();
-
-            return;
-        }
-**/
 
         // create our loader and set up some event listeners
         var loader :Loader = new Loader();
@@ -141,6 +173,21 @@ public class MsoySprite extends Box
             addEventListener(MouseEvent.CLICK, mouseClickCap);
             */
         }
+    }
+
+    protected function finishVideoLoad (nc :NetConnection) :void
+    {
+        trace("Finishing load of flv video [url=" + _desc.URL + "].");
+        var stream :NetStream = new NetStream(nc);
+        var o :Object = new Object();
+        o.onMetaData = function (... rest) :void {
+            trace("onmetadata: " + rest);
+        };
+        stream.client = o;
+        var video :Video = new Video();
+        video.attachNetStream(stream);
+        rawChildren.addChild(video);
+        stream.play(_desc.URL);
     }
 
     public function get hotSpot () :Point
