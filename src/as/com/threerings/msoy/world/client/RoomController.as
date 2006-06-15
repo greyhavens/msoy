@@ -4,6 +4,7 @@ import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.ui.Keyboard;
 
 import com.threerings.crowd.client.PlaceView;
@@ -70,12 +71,14 @@ public class RoomController extends SceneController
     protected function mouseClicked (event :MouseEvent) :void
     {
         if (_roomView.isLocationTarget(event.target as DisplayObject)) {
+            var p :Point = _roomView.globalToLocal(
+                new Point(event.stageX, event.stageY));
+
             // mouse events are propogated upwards to parent components
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
 
             // calculate where the location is
-            var newLoc :MsoyLocation = _roomView.pointToLocation(
-                event.localX, event.localY);
+            var newLoc :MsoyLocation = _roomView.pointToLocation(p.x, p.y);
             if (newLoc != null) {
                 // orient the location as appropriate
                 newLoc.orient = (curLoc.x > newLoc.x ? 180 : 0);

@@ -57,6 +57,14 @@ public class AvatarSprite extends MsoySprite
         _label.textColor = getStatusColor(_occInfo.status);
     }
 
+    /**
+     * Get the oid of the body that this represents.
+     */
+    public function getOid () :int
+    {
+        return _occInfo.bodyOid;
+    }
+
     protected function getStatusColor (status :int) :uint
     {
         switch (status) {
@@ -94,7 +102,7 @@ public class AvatarSprite extends MsoySprite
         return _occInfo.bubblePopStyle;
     }
 
-    public function moveTo (destLoc :MsoyLocation) :void
+    public function moveTo (destLoc :MsoyLocation, sceneWidth :int) :void
     {
         // if there's already a move, kill it
         if (_move != null) {
@@ -112,6 +120,7 @@ public class AvatarSprite extends MsoySprite
         _move = new SceneMove(this);
         _move.src = this.loc;
         _move.dest = destLoc;
+        _move.duration = destLoc.distance(this.loc) * sceneWidth * 6; // TODO
         _move.addEventListener(EffectEvent.EFFECT_END, moveStopped);
 
         _move.play();

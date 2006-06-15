@@ -53,7 +53,8 @@ public class MsoySceneRepository
         portal.targetPortalId = 1;
 
         if (sceneId == 1) {
-            model.type = "image";
+            //model.type = "image";
+            model.width = 1600;
             model.background = new MediaData(8); // fancy room
 
             portal.loc = new MsoyLocation(1, 0, .8, 0);

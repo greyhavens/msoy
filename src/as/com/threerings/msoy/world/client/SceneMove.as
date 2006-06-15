@@ -58,8 +58,6 @@ public class SceneMove extends TweenEffect
     // documentation inherited
     override protected function initInstance (instance :EffectInstance) :void
     {
-        duration = 6000 * src.distance(dest); // TODO
-
         super.initInstance(instance);
 
         var i :SceneMoveInstance = (instance as SceneMoveInstance);

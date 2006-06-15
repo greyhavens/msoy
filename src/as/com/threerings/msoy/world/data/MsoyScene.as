@@ -35,6 +35,14 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Returns the pixel width of the scene.
+     */
+    public function getWidth () :int
+    {
+        return _msoyModel.width;
+    }
+
+    /**
      * Get the background media.
      */
     public function getBackground () :MediaData

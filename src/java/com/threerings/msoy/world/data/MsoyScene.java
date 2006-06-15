@@ -37,6 +37,14 @@ public class MsoyScene extends SceneImpl
         return _model.type;
     }
 
+    /**
+     * Returns the pixel width of the scene.
+     */
+    public short getWidth ()
+    {
+        return _model.width;
+    }
+
     public void addFurni (FurniData furn)
     {
         _model.addFurni(furn);

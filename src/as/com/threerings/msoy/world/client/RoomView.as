@@ -1,10 +1,12 @@
 package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
+import flash.display.Graphics;
 
 import flash.events.Event;
 
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import mx.containers.Canvas;
 
@@ -52,38 +54,13 @@ public class RoomView extends Canvas
     public function RoomView (ctx :MsoyContext)
     {
         _ctx = ctx;
+        clipContent = false;
 
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
         width = 800;
         height = width / PHI;
-
-        // draw the box, slightly
-        graphics.clear();
-        graphics.lineStyle(2);
-
-        var swidth :Number = (width * MIN_SCALE);
-        var sheight :Number = (height * MIN_SCALE);
-        var xoffset :Number = (width - swidth) / 2;
-        var yoffset :Number = (height - sheight) / 2;
-
-        // draw the lines defining the walls
-        graphics.moveTo(0, 0);
-        graphics.lineTo(xoffset, yoffset);
-        graphics.lineTo(width - xoffset, yoffset);
-
-        graphics.moveTo(width, 0);
-        graphics.lineTo(width - xoffset, yoffset);
-        graphics.lineTo(width - xoffset, height - yoffset);
-
-        graphics.moveTo(width, height);
-        graphics.lineTo(width - xoffset, height - yoffset);
-        graphics.lineTo(xoffset, height - yoffset);
-
-        graphics.moveTo(0, height);
-        graphics.lineTo(xoffset, height - yoffset);
-        graphics.lineTo(xoffset, yoffset);
 
         addEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
     }
@@ -105,6 +82,8 @@ public class RoomView extends Canvas
         // flip y
         y = height - y;
 
+        var sceneWidth :Number = _scene.getWidth();
+
         var sheight :Number = (height * MIN_SCALE);
         var yoffset :Number = (height - sheight) / 2;
         if (y > yoffset) {
@@ -115,8 +94,8 @@ public class RoomView extends Canvas
         var scale :Number = 1 + (y * -2) / height;
 
         // see if x is legal
-        var swidth :Number = (width * scale);
-        var xoffset :Number = (width - swidth) / 2;
+        var swidth :Number = (sceneWidth * scale);
+        var xoffset :Number = (sceneWidth - swidth) / 2;
         x -= xoffset;
         if (x < 0 || x > swidth) {
             return null;
@@ -143,9 +122,83 @@ public class RoomView extends Canvas
         positionAndScale(sprite, loc);
 
         // then, possibly move the child up or down, depending on z order
-        if (!sprite.includeInLayout) {
+        if (sprite.includeInLayout) {
+            adjustZOrder(sprite, loc);
+        }
+
+        // if we moved our own sprite, possibly update the scroll position
+        if (sprite is AvatarSprite) {
+            var avatar :AvatarSprite = (sprite as AvatarSprite);
+            if (avatar.getOid() == _ctx.getClient().getClientOid()) {
+                scrollView(avatar);
+            }
+        }
+    }
+
+    public function dimAvatars (setDim :Boolean) :void
+    {
+        setActive(_avatars, !setDim);
+    }
+
+    public function dimPortals (setDim :Boolean) :void
+    {
+        setActive(_portals, !setDim);
+    }
+
+    public function dimFurni (setDim :Boolean) :void
+    {
+        setActive(_furni, !setDim);
+    }
+
+    protected function scrollView (center :AvatarSprite) :void
+    {
+        var rect :Rectangle = scrollRect;
+        if (rect == null) {
+            // return if there's nothing to scroll
             return;
         }
+
+        var curX :int = center.x + center.hotSpot.x;
+        rect.x = Math.min(_scene.getWidth() - rect.width,
+            Math.max(0, curX - rect.width/2));
+        scrollRect = rect;
+    }
+
+    /**
+     * Calculate the scale and x/y position of the specified media
+     * according to its logical coordinates.
+     */
+    protected function positionAndScale (
+            sprite :MsoySprite, loc :MsoyLocation) :void
+    {
+        var sceneWidth :Number = _scene.getWidth();
+        var hotSpot :Point = sprite.hotSpot;
+        // the scale of the object is determined by the z coordinate
+        var scale :Number = MIN_SCALE +
+            ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - MIN_SCALE);
+        sprite.scaleX = scale;
+        sprite.scaleY = scale;
+
+        // x position depends on logical x and the scale
+        var swidth :Number = (sceneWidth * scale);
+        var xoffset :Number = (sceneWidth - swidth) / 2;
+        sprite.x = xoffset - (scale * hotSpot.x) +
+            (loc.x / MAX_COORD) * swidth;
+
+        // y position depends on logical y and the scale (z)
+        var sheight :Number = (height * scale);
+        var yoffset :Number = (height - sheight) / 2;
+        sprite.y = height - yoffset - (scale * hotSpot.y) -
+            (loc.y / MAX_COORD) * sheight;
+    }
+
+    /**
+     * Adjust the z order of the specified sprite so that it is drawn
+     * according to its logical Z coordinate relative to other sprites.
+     */
+    protected function adjustZOrder (
+             sprite :MsoySprite, loc :MsoyLocation) :void
+    {
         var dex :int = getChildIndex(sprite);
         var newdex :int = dex;
         var z :Number;
@@ -169,48 +222,6 @@ public class RoomView extends Canvas
         if (newdex != dex) {
             setChildIndex(sprite, newdex);
         }
-    }
-
-    public function dimAvatars (setDim :Boolean) :void
-    {
-        setActive(_avatars, !setDim);
-    }
-
-    public function dimPortals (setDim :Boolean) :void
-    {
-        setActive(_portals, !setDim);
-    }
-
-    public function dimFurni (setDim :Boolean) :void
-    {
-        setActive(_furni, !setDim);
-    }
-
-    /**
-     * Calculate the scale and x/y position of the specified media
-     * according to its logical coordinates.
-     */
-    protected function positionAndScale (
-            sprite :MsoySprite, loc :MsoyLocation) :void
-    {
-        var hotSpot :Point = sprite.hotSpot;
-        // the scale of the object is determined by the z coordinate
-        var scale :Number = MIN_SCALE +
-            ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - MIN_SCALE);
-        sprite.scaleX = scale;
-        sprite.scaleY = scale;
-
-        // x position depends on logical x and the scale
-        var swidth :Number = (width * scale);
-        var xoffset :Number = (width - swidth) / 2;
-        sprite.x = xoffset - (scale * hotSpot.x) +
-            (loc.x / MAX_COORD) * swidth;
-
-        // y position depends on logical y and the scale (z)
-        var sheight :Number = (height * scale);
-        var yoffset :Number = (height - sheight) / 2;
-        sprite.y = height - yoffset - (scale * hotSpot.y) -
-            (loc.y / MAX_COORD) * sheight;
     }
 
     /**
@@ -254,7 +265,7 @@ public class RoomView extends Canvas
      */
     public function isLocationTarget (clickTarget :DisplayObject) :Boolean
     {
-        return (clickTarget == this) ||
+        return (clickTarget == this) || (clickTarget == _bkgGraphics) ||
             (_bkg != null && _bkg.contains(clickTarget)) ||
             // scan through the media and see if it was non-interactive
             isNonInteractiveTarget(clickTarget, _furni) /*||
@@ -302,7 +313,7 @@ public class RoomView extends Canvas
             (_sceneObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
-        avatar.moveTo(loc);
+        avatar.moveTo(loc, _scene.getWidth());
     }
 
     protected function updateBody (occInfo :MsoyOccupantInfo) :void
@@ -364,12 +375,16 @@ public class RoomView extends Canvas
 
         // get the specifics on the current scene from the scene director
         _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
+        if (_scene.getWidth() > width) {
+            scrollRect = new Rectangle(0, 0, width, height);
+        }
+
+        updateDrawnRoom();
 
         // set up the background image
         _bkg = new MsoySprite(_scene.getBackground());
         switch (_scene.getType()) {
         case "image":
-            graphics.clear();
             // by adding it to the raw children, it does not participate
             // in Z order movements
             _bkg.includeInLayout = false;
@@ -403,6 +418,59 @@ public class RoomView extends Canvas
         // and animate ourselves entering the room (everyone already in the
         // (room will also have seen it)
         portalTraversed(getMyCurrentLocation(), true);
+    }
+
+    protected function updateDrawnRoom () :void
+    {
+        if (_bkgGraphics != null) {
+            removeChild(_bkgGraphics);
+            _bkgGraphics = null;
+        }
+
+        if (_scene.getType() == "image") {
+            return; // nothing to draw
+        }
+
+        _bkgGraphics = new UIComponent();
+        _bkgGraphics.includeInLayout = false;
+        addChild(_bkgGraphics);
+
+        var g :Graphics = _bkgGraphics.graphics;
+
+        g.clear();
+        var sceneWidth :Number = _scene.getWidth();
+
+        var swidth :Number = (sceneWidth * MIN_SCALE);
+        var sheight :Number = (height * MIN_SCALE);
+        var xoffset :Number = (sceneWidth - swidth) / 2;
+        var yoffset :Number = (height - sheight) / 2;
+
+        // fill in the floor
+        g.beginFill(0x333333);
+        g.moveTo(0, height);
+        g.lineTo(xoffset, height - yoffset);
+        g.lineTo(sceneWidth - xoffset, height - yoffset);
+        g.lineTo(sceneWidth, height);
+        g.lineTo(0, height);
+        g.endFill();
+
+        // draw the lines defining the walls
+        g.lineStyle(2);
+        g.moveTo(0, 0);
+        g.lineTo(xoffset, yoffset);
+        g.lineTo(sceneWidth - xoffset, yoffset);
+
+        g.moveTo(sceneWidth, 0);
+        g.lineTo(sceneWidth - xoffset, yoffset);
+        g.lineTo(sceneWidth - xoffset, height - yoffset);
+
+        g.moveTo(sceneWidth, height);
+        g.lineTo(sceneWidth - xoffset, height - yoffset);
+        g.lineTo(xoffset, height - yoffset);
+
+        g.moveTo(0, height);
+        g.lineTo(xoffset, height - yoffset);
+        g.lineTo(xoffset, yoffset);
     }
 
     // documentation inherited from interface PlaceView
@@ -492,6 +560,8 @@ public class RoomView extends Canvas
 
     /** The background image. */
     protected var _bkg :MsoySprite;
+
+    protected var _bkgGraphics :UIComponent;
 
     /** A map of bodyOid -> AvatarSprite. */
     protected var _avatars :HashMap = new HashMap();
