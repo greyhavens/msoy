@@ -43,6 +43,7 @@ public class RoomController extends SceneController
         super.willEnterPlace(plobj);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheeled);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
     }
@@ -51,6 +52,8 @@ public class RoomController extends SceneController
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.stage.removeEventListener(MouseEvent.MOUSE_WHEEL,
+            mouseWheeled);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
@@ -85,6 +88,11 @@ public class RoomController extends SceneController
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
             }
         }
+    }
+
+    protected function mouseWheeled (event :MouseEvent) :void
+    {
+        _roomView.scrollViewBy(20 * event.delta); // TODO
     }
 
     protected function keyEvent (event :KeyboardEvent) :void

@@ -150,6 +150,18 @@ public class RoomView extends Canvas
         setActive(_furni, !setDim);
     }
 
+    public function scrollViewBy (xpixels :int) :void
+    {
+        var rect :Rectangle = scrollRect;
+        if (rect == null) {
+            return;
+        }
+
+        rect.x = Math.min(_scene.getWidth() - rect.width,
+            Math.max(0, rect.x + xpixels));
+        scrollRect = rect;
+    }
+
     protected function scrollView (center :AvatarSprite) :void
     {
         var rect :Rectangle = scrollRect;
