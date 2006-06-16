@@ -69,6 +69,7 @@ public class MsoyClient extends Client
             var targ :ChatTarget = new ChatTarget(_ctx);
             mx.logging.Log.addTarget(targ);
         }
+        mx.logging.Log.addTarget(new FireBugTarget());
 
         // TODO: for now, we start with scene 1
         _ctx.getSceneDirector().moveTo(1);
@@ -97,6 +98,8 @@ public class MsoyClient extends Client
     protected var _ctx :MsoyContext;
 }
 }
+
+import flash.external.ExternalInterface;
 
 import mx.logging.LogEventLevel;
 import mx.logging.targets.LineFormattedTarget;
@@ -128,4 +131,24 @@ class ChatTarget extends LineFormattedTarget
     }
 
     protected var _ctx :MsoyContext;
+}
+
+/**
+ * A logging target that goes to firebug's console.
+ */
+class FireBugTarget extends LineFormattedTarget
+{
+    public function FireBugTarget ()
+    {
+        super();
+
+        includeCategory = includeTime = includeLevel = true;
+        filters = ["*"];
+        level = LogEventLevel.DEBUG;
+    }
+
+    override mx_internal function internalLog (msg :String) :void
+    {
+        ExternalInterface.call("console.debug", msg);
+    }
 }
