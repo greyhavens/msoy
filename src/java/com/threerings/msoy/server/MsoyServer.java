@@ -88,7 +88,7 @@ public class MsoyServer extends WhirledServer
     // documentation inherited
     protected int[] getListenPorts ()
     {
-        return ServerConfig.serverPorts;
+        return new int[] { 4010 };
     }
 
     public static void main (String[] args)
