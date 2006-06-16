@@ -374,6 +374,7 @@ public class MsoySprite extends Box
 
     protected function loadProgress (event :ProgressEvent) :void
     {
+        updateLoadingProgress(event.bytesLoaded, event.bytesTotal);
         var info :LoaderInfo = (event.target as LoaderInfo);
         try {
             updateContentDimensions(info.width, info.height);
@@ -388,15 +389,14 @@ public class MsoySprite extends Box
         var vid :VideoDisplay = (event.currentTarget as VideoDisplay);
         updateContentDimensions(vid.videoWidth, vid.videoHeight);
 
-        var perc :Number = vid.bytesLoaded / vid.bytesTotal;
-        updateLoadingProgress(perc);
+        updateLoadingProgress(vid.bytesLoaded, vid.bytesTotal);
     }
 
     protected function loadVideoReady (event :VideoEvent) :void
     {
         var vid :VideoDisplay = (event.currentTarget as VideoDisplay);
         updateContentDimensions(vid.videoWidth, vid.videoHeight);
-        updateLoadingProgress(1);
+        updateLoadingProgress(1, 1);
 
         // remove the two listeners
         vid.removeEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
@@ -412,6 +412,7 @@ public class MsoySprite extends Box
         removeListeners(info);
 
         updateContentDimensions(info.width, info.height);
+        updateLoadingProgress(1, 1);
 
         // Try accessing the 'content' property and see if that generates
         // a security error. If so, leave it where it is.
@@ -447,8 +448,10 @@ public class MsoySprite extends Box
     /**
      * Update the graphics to indicate how much is loaded.
      */
-    protected function updateLoadingProgress (prog :Number) :void
+    protected function updateLoadingProgress (
+            soFar :Number, total :Number) :void
     {
+        var prog :Number = (total == 0) ? 0 : (soFar / total);
         graphics.clear();
         if (prog >= 1) {
             (parent as Container).invalidateDisplayList();

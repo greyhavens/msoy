@@ -5,7 +5,11 @@ import flash.display.InteractiveObject;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.ui.ContextMenu;
+import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
+
+import com.threerings.util.MenuUtil;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
@@ -18,9 +22,14 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.MsoyScene;
 
 public class RoomController extends SceneController
 {
+    public static const EDIT_SCENE :String = "edit_scene";
+    public static const SAVE_EDITS :String = "save_edits";
+    public static const DISCARD_EDITS :String = "discard_edits";
+
     // documentation inherited
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
@@ -34,6 +43,9 @@ public class RoomController extends SceneController
     {
         var rp :RoomPanel = new RoomPanel(ctx as MsoyContext);
         _roomView = rp.view;
+
+        _menu = new ContextMenu();
+        _roomView.contextMenu = _menu;
         return rp;
     }
 
@@ -41,6 +53,10 @@ public class RoomController extends SceneController
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         super.willEnterPlace(plobj);
+
+        // get a copy of the scene
+        _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
+        configureContextMenu();
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheeled);
@@ -57,6 +73,9 @@ public class RoomController extends SceneController
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
+        _scene = null;
+        configureContextMenu();
+
         super.didLeavePlace(plobj);
     }
 
@@ -65,10 +84,24 @@ public class RoomController extends SceneController
         if (cmd == "portalClicked") {
             var portal :Portal = (arg as Portal);
             _mctx.getSpotSceneDirector().traversePortal(portal.portalId);
-            return true;
+
+        } else if (cmd == EDIT_SCENE) {
+            _editing = true;
+            configureContextMenu();
+            // TODO
+
+        } else if ((cmd == SAVE_EDITS) || (cmd == DISCARD_EDITS)) {
+            _editing = false;
+            configureContextMenu();
+            if (cmd == SAVE_EDITS) {
+                // TODO
+            }
+
+        } else {
+            return super.handleAction(cmd, arg);
         }
 
-        return super.handleAction(cmd, arg);
+        return true;
     }
 
     protected function mouseClicked (event :MouseEvent) :void
@@ -108,8 +141,57 @@ public class RoomController extends SceneController
         }
     }
 
+    protected function configureContextMenu () :void
+    {
+        // first remove any custom actions that were already in there
+        _menu.customItems.length = 0; // clear
+
+        if (_scene == null) {
+            return;
+        }
+
+        if (_editing) {
+            addMenuItem(SAVE_EDITS);
+            addMenuItem(DISCARD_EDITS);
+
+        } else if (true) { // TODO: if canEditScene...
+            addMenuItem(EDIT_SCENE);
+        }
+    }
+
+    /**
+     * Add the specified command to the context menu for the current scene.
+     */
+    protected function addMenuItem (cmd :String) :void
+    {
+        _menu.customItems.push(
+            MenuUtil.createControllerMenuItem("m." + cmd, cmd));
+    }
+
+    /**
+     * Callback when an item is selected from the context menu.
+     */
+/*
+    protected function menuItemSelected (event :ContextMenuEvent) :void
+    {
+        var item :ContextMenuItem = (event.target as ContextMenuItem);
+        var cmd :String = item.caption
+    }
+*/
+
+    /** The life-force of the client. */
     protected var _mctx :MsoyContext;
 
+    /** The room view that we're controlling. */
     protected var _roomView :RoomView;
+
+    /** The current scene we're viewing. */
+    protected var _scene :MsoyScene;
+
+    /** Are we editing the current scene? */
+    protected var _editing :Boolean;
+
+    /** The context menu. */
+    protected var _menu :ContextMenu;
 }
 }

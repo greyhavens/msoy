@@ -8,6 +8,8 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import flash.utils.getTimer; // function import
+
 import mx.containers.Canvas;
 
 import mx.controls.VideoDisplay;
@@ -160,6 +162,7 @@ public class RoomView extends Canvas
         rect.x = Math.min(_scene.getWidth() - rect.width,
             Math.max(0, rect.x + xpixels));
         scrollRect = rect;
+        _jumpScroll = false;
     }
 
     protected function scrollView (center :AvatarSprite) :void
@@ -170,10 +173,40 @@ public class RoomView extends Canvas
             return;
         }
 
-        var curX :int = center.x + center.hotSpot.x;
-        rect.x = Math.min(_scene.getWidth() - rect.width,
-            Math.max(0, curX - rect.width/2));
+        var centerX :int = center.x + center.hotSpot.x;
+        var newX :Number = Math.min(_scene.getWidth() - rect.width,
+            Math.max(0, centerX - rect.width/2));
+        if (_jumpScroll) {
+            rect.x = newX;
+
+        } else if (Math.abs(rect.x - newX) > MAX_AUTO_SCROLL) {
+            if (newX > rect.x) {
+                rect.x += MAX_AUTO_SCROLL;
+            } else {
+                rect.x -= MAX_AUTO_SCROLL;
+            }
+            addEventListener(Event.ENTER_FRAME, tick);
+
+        } else {
+            rect.x = newX;
+            removeEventListener(Event.ENTER_FRAME, tick);
+            _jumpScroll = true;
+        }
+
+        // assign the new scrolling rectangle
         scrollRect = rect;
+        _suppressAutoScroll = true;
+    }
+
+    protected function tick (event :Event) :void
+    {
+        if (!_suppressAutoScroll) {
+            scrollView(getMyAvatar());
+        }
+
+        // and finally, we want ensure it can happen on the next frame if
+        // our avatar doesn't move
+        _suppressAutoScroll = false;
     }
 
     /**
@@ -261,14 +294,18 @@ public class RoomView extends Canvas
         }
     }
 
+    public function getMyAvatar () :AvatarSprite
+    {
+        var oid :int = _ctx.getClient().getClientOid();
+        return (_avatars.get(oid) as AvatarSprite);
+    }
+
     /**
      * Return the current location of the avatar that represents our body.
      */
     public function getMyCurrentLocation () :MsoyLocation
     {
-        var oid :int = _ctx.getClient().getClientOid();
-        var avatar :AvatarSprite = (_avatars.get(oid) as AvatarSprite);
-        return avatar.loc;
+        return getMyAvatar().loc;
     }
 
     /**
@@ -457,32 +494,60 @@ public class RoomView extends Canvas
         var xoffset :Number = (sceneWidth - swidth) / 2;
         var yoffset :Number = (height - sheight) / 2;
 
+        // calculate the coordinates of the back wall corners
+        var x1 :Number = xoffset;
+        var y1 :Number = yoffset;
+        var x2 :Number = sceneWidth - xoffset;
+        var y2 :Number = height - yoffset;
+
         // fill in the floor
         g.beginFill(0x333333);
         g.moveTo(0, height);
-        g.lineTo(xoffset, height - yoffset);
-        g.lineTo(sceneWidth - xoffset, height - yoffset);
+        g.lineTo(x1, y2);
+        g.lineTo(x2, y2);
         g.lineTo(sceneWidth, height);
         g.lineTo(0, height);
+        g.endFill();
+
+        // fill in the three walls
+        g.beginFill(0x666666);
+        g.moveTo(0, 0);
+        g.lineTo(x1, y1);
+        g.lineTo(x2, y1);
+        g.lineTo(sceneWidth, 0);
+        g.lineTo(sceneWidth, height);
+        g.lineTo(x2, y2);
+        g.lineTo(x1, y2);
+        g.lineTo(0, height);
+        g.lineTo(0, 0);
+        g.endFill();
+
+        // fill in the ceiling
+        g.beginFill(0x999999);
+        g.moveTo(0, 0);
+        g.lineTo(x1, y1);
+        g.lineTo(x2, y1);
+        g.lineTo(sceneWidth, 0);
+        g.lineTo(0, 0);
         g.endFill();
 
         // draw the lines defining the walls
         g.lineStyle(2);
         g.moveTo(0, 0);
-        g.lineTo(xoffset, yoffset);
-        g.lineTo(sceneWidth - xoffset, yoffset);
+        g.lineTo(x1, y1);
+        g.lineTo(x2, y1);
 
         g.moveTo(sceneWidth, 0);
-        g.lineTo(sceneWidth - xoffset, yoffset);
-        g.lineTo(sceneWidth - xoffset, height - yoffset);
+        g.lineTo(x2, y1);
+        g.lineTo(x2, y2);
 
         g.moveTo(sceneWidth, height);
-        g.lineTo(sceneWidth - xoffset, height - yoffset);
-        g.lineTo(xoffset, height - yoffset);
+        g.lineTo(x2, y2);
+        g.lineTo(x1, y2);
 
         g.moveTo(0, height);
-        g.lineTo(xoffset, height - yoffset);
-        g.lineTo(xoffset, yoffset);
+        g.lineTo(x1, y2);
+        g.lineTo(x1, y1);
     }
 
     // documentation inherited from interface PlaceView
@@ -562,6 +627,7 @@ public class RoomView extends Canvas
         ChatPopper.popUp(msg, avatar);
     }
 
+    /** The msoy context. */
     protected var _ctx :MsoyContext;
 
     /** The model of the current scene. */
@@ -573,6 +639,7 @@ public class RoomView extends Canvas
     /** The background image. */
     protected var _bkg :MsoySprite;
 
+    /** A hand-drawn background to look like a room. */
     protected var _bkgGraphics :UIComponent;
 
     /** A map of bodyOid -> AvatarSprite. */
@@ -583,6 +650,15 @@ public class RoomView extends Canvas
 
     /** A map of id -> Furni. */
     protected var _furni :HashMap = new HashMap();
+
+    /** If true, the scrolling should simply jump to the right position. */
+    protected var _jumpScroll :Boolean = true;
+
+    /** True if autoscroll should be supressed for the current frame. */
+    protected var _suppressAutoScroll :Boolean = false;
+
+    /** The maximum number of pixels to autoscroll per frame. */
+    protected static const MAX_AUTO_SCROLL :int = 15;
 
     private static const MIN_SCALE :Number = 0.55;
     private static const MAX_SCALE :Number = 1;
