@@ -163,6 +163,10 @@ public class RoomView extends Canvas
             Math.max(0, rect.x + xpixels));
         scrollRect = rect;
         _jumpScroll = false;
+
+        // remove any autoscrolling (if tick is not a registered listener
+        // this will safely noop)
+        removeEventListener(Event.ENTER_FRAME, tick);
     }
 
     protected function scrollView (center :AvatarSprite) :void

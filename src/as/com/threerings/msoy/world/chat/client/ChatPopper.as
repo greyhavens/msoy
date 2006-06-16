@@ -36,8 +36,10 @@ public class ChatPopper
     {
         _view = view;
         _bounds.topLeft = view.localToGlobal(new Point());
-        _bounds.width = view.width;
-        _bounds.height = view.height;
+        _bounds.x += PAD;
+        _bounds.y += PAD;
+        _bounds.width = view.width - PAD*2;
+        _bounds.height = view.height - PAD*2;
     }
 
     public static function popUp (

@@ -51,15 +51,7 @@ public class BubblePopStyle
 
     private static function overZoom (bubble :IFlexDisplayObject) :void
     {
-        var w :Number = bubble.width;
-        var h :Number = bubble.height;
-
-        bubble.scaleX = .01;
-        bubble.scaleY = .01;
-
         var zoomIn :Zoom = new Zoom(bubble);
-        zoomIn.originX = w/2;
-        zoomIn.originY = h/2;
         zoomIn.duration = 180;
         zoomIn.zoomHeightFrom = .01;
         zoomIn.zoomHeightTo = 1.1;
@@ -67,8 +59,6 @@ public class BubblePopStyle
         zoomIn.zoomWidthTo = 1.1;
 
         var zoomOut :Zoom = new Zoom(bubble);
-        zoomOut.originX = w/2;
-        zoomOut.originY = h/2;
         zoomOut.duration = 20;
         zoomOut.zoomHeightFrom = 1.1;
         zoomOut.zoomHeightTo = 1;
@@ -79,8 +69,11 @@ public class BubblePopStyle
         seq.addChild(zoomIn);
         seq.addChild(zoomOut);
         seq.play();
-    }
 
-    
+        // set the initial scale now, otherwise the object may appear
+        // for one frame at the full size.
+        bubble.scaleX = .01;
+        bubble.scaleY = .01;
+    }
 }
 }
