@@ -1,7 +1,5 @@
 package com.threerings.msoy.world.chat.client {
 
-import flash.display.BitmapData;
-
 import flash.events.TimerEvent;
 
 import flash.geom.Point;
@@ -99,13 +97,6 @@ public class ChatPopper
 
         // position it
         DisplayUtil.positionRect(rect, _bounds, avoid);
-
-        var src :BitmapData =
-            new BitmapData(bubble.width, bubble.height, true, 0xFF00FF);
-        src.draw(bubble);
-        var bmp :Bitmap = new Bitmap(src);
-        var bubbleViz :Canvas = new Canvas();
-        bubbleViz.rawChildren.addChild(bmp);
 
         viz.x = rect.x;
         viz.y = rect.y;
