@@ -113,7 +113,8 @@ public class MediaData
         [ "pinball.swf", true, new Point(100, 252) ],
  /*10*/ [ "directorschair.swf", false, new Point(54, 154) ],
         [ "alley.png", false ],
-        [ "curtain.swf", false, new Point(130, 530) ]
+        [ "curtain.swf", false, new Point(130, 530) ],
+        [ "BollWeevil.mp3", false ]
     ];
 
     protected static const BASE_URL :String =

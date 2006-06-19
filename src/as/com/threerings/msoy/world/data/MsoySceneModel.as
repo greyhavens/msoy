@@ -19,6 +19,9 @@ public class MsoySceneModel extends SceneModel
     /** The background image of the scene. */
     public var background :MediaData;
 
+    /** The music to play in the background. */
+    public var music :MediaData;
+
     /** The furniture in the scene. */
     public var furnis :TypedArray;
 
@@ -51,6 +54,7 @@ public class MsoySceneModel extends SceneModel
         out.writeField(type);
         out.writeShort(width);
         out.writeObject(background);
+        out.writeObject(music);
         out.writeObject(furnis);
     }
 
@@ -62,6 +66,7 @@ public class MsoySceneModel extends SceneModel
         type = (ins.readField(String) as String);
         width = ins.readShort();
         background = (ins.readObject() as MediaData);
+        music = (ins.readObject() as MediaData);
         furnis = (ins.readObject() as TypedArray);
     }
 

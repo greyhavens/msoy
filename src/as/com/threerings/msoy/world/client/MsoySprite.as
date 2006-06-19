@@ -7,6 +7,8 @@ import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Shape;
 
+import flash.errors.IOError;
+
 import flash.events.Event;
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
@@ -46,8 +48,10 @@ import mx.events.VideoEvent;
 
 import com.threerings.media.image.ImageUtil;
 
-import com.threerings.msoy.world.client.RoomView;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MediaData;
+
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 import com.threerings.util.HashMap;
@@ -92,6 +96,7 @@ public class MsoySprite extends Box
                 url.length - ".flv".length) {
 
             var vid :VideoDisplay = new VideoDisplay();
+            _media = vid;
             vid.scaleX = desc.scale;
             vid.scaleY = desc.scale;
             addChild(vid);
@@ -124,6 +129,7 @@ public class MsoySprite extends Box
 
         // create our loader and set up some event listeners
         var loader :Loader = new Loader();
+        _media = loader;
         loader.scaleX = desc.scale;
         loader.scaleY = desc.scale;
         loader.contentLoaderInfo.addEventListener(
@@ -160,6 +166,32 @@ public class MsoySprite extends Box
             addEventListener(MouseEvent.CLICK, mouseClickCap);
             */
         }
+    }
+
+    /**
+     * Stop displaying media, clean up any resources.
+     */
+    public function shutdown () :void
+    {
+        try {
+            if (_media is Loader) {
+                var loader :Loader = (_media as Loader);
+                loader.unload();
+                loader.close();
+
+            } else {
+                var vid :VideoDisplay = (_media as VideoDisplay);
+                Prefs.setMediaPosition(_desc.id, vid.playheadTime);
+                trace("saving media pos: " + vid.playheadTime);
+                vid.stop();
+                vid.close();
+            }
+        } catch (ioe :IOError) {
+            trace("error shutdown " + ioe);
+        }
+
+        // additional clearing: needed?
+        _media = null;
     }
 
     public function get hotSpot () :Point
@@ -261,7 +293,8 @@ public class MsoySprite extends Box
     /**
      * Accessor: media property.
      */
-    // Probably this should be removed.
+    // Probably this should be removed
+/*
     public function get media () :DisplayObject
     {
         // untested
@@ -277,6 +310,7 @@ public class MsoySprite extends Box
         }
         return null; // never found!
     }
+    */
 
     /**
      * Send a message to the client swf that we're representing.
@@ -398,6 +432,10 @@ public class MsoySprite extends Box
         updateContentDimensions(vid.videoWidth, vid.videoHeight);
         updateLoadingProgress(1, 1);
 
+        // TODO: this seems broken, check it
+        // set the position of the media to the specified timestamp
+        vid.playheadTime = Prefs.getMediaPosition(_desc.id);
+
         // remove the two listeners
         vid.removeEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
         vid.removeEventListener(VideoEvent.READY, loadVideoReady);
@@ -414,6 +452,9 @@ public class MsoySprite extends Box
         updateContentDimensions(info.width, info.height);
         updateLoadingProgress(1, 1);
 
+/*** TODO: decide whether to keep this. I'm not sure we gain anything 
+ by trying to remove the Loader.
+
         // Try accessing the 'content' property and see if that generates
         // a security error. If so, leave it where it is.
         try {
@@ -428,6 +469,8 @@ public class MsoySprite extends Box
 
         // transfer the mask, if any
         info.content.mask = info.loader.mask;
+
+END: TODO: maybe keep? **/
     }
 
     protected function updateContentDimensions (ww :int, hh :int) :void
@@ -580,6 +623,9 @@ public class MsoySprite extends Box
 
     /** Our Media descripter. */
     protected var _desc :MediaData;
+
+    /** Either a Loader or a VideoDisplay. */
+    protected var _media :Object;
 
     /** Used to dispatch events down to the swf we contain. */
     protected var _dispatch :EventDispatcher;

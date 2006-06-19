@@ -41,6 +41,7 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.data.MsoyOccupantInfo;
 import com.threerings.msoy.world.data.FurniData;
@@ -298,6 +299,16 @@ public class RoomView extends Canvas
         }
     }
 
+    /**
+     * Shutdown all the media in the specified map.
+     */
+    protected function shutdown (map :HashMap) :void
+    {
+        for each (var sprite :MsoySprite in map.values()) {
+            sprite.shutdown();
+        }
+    }
+
     public function getMyAvatar () :AvatarSprite
     {
         var oid :int = _ctx.getClient().getClientOid();
@@ -356,6 +367,7 @@ public class RoomView extends Canvas
         var avatar :AvatarSprite = (_avatars.remove(bodyOid) as AvatarSprite);
         if (avatar != null) {
             removeChild(avatar);
+            avatar.shutdown();
         }
     }
 
@@ -430,6 +442,12 @@ public class RoomView extends Canvas
         _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
         if (_scene.getWidth() > width) {
             scrollRect = new Rectangle(0, 0, width, height);
+        }
+        var music :MediaData = _scene.getMusic();
+        if (music != null) {
+            trace("Now looping background music");
+            _music = new SoundPlayer(music);
+            _music.loop(Prefs.getMediaPosition(music.id));
         }
 
         updateDrawnRoom();
@@ -563,6 +581,20 @@ public class RoomView extends Canvas
         _sceneObj.removeListener(this);
         _sceneObj = null;
 
+        if (_music != null) {
+            Prefs.setMediaPosition(_music.getMediaId(), _music.getPosition());
+            _music.stop();
+            _music = null;
+        }
+        if (_bkg != null) {
+            _bkg.shutdown();
+            _bkg = null;
+        }
+
+        shutdown(_avatars);
+        shutdown(_portals);
+        shutdown(_furni);
+
         _scene = null;
 
         // TODO: clean up avatars, remove them, etc.
@@ -642,6 +674,9 @@ public class RoomView extends Canvas
 
     /** The background image. */
     protected var _bkg :MsoySprite;
+
+    /** The background music in the scene. */
+    protected var _music :SoundPlayer;
 
     /** A hand-drawn background to look like a room. */
     protected var _bkgGraphics :UIComponent;

@@ -16,6 +16,8 @@ import com.threerings.whirled.spot.data.SpotScene;
 import com.threerings.whirled.spot.data.SpotSceneImpl;
 import com.threerings.whirled.spot.data.SpotSceneModel;
 
+import com.threerings.msoy.data.MediaData;
+
 /**
  * Implementation of the Msoy scene interface.
  */
@@ -43,6 +45,22 @@ public class MsoyScene extends SceneImpl
     public short getWidth ()
     {
         return _model.width;
+    }
+
+    /**
+     * Get the background image.
+     */
+    public MediaData getBackground ()
+    {
+        return _model.background;
+    }
+
+    /**
+     * Get the background music.
+     */
+    public MediaData getMusic ()
+    {
+        return _model.music;
     }
 
     public void addFurni (FurniData furn)

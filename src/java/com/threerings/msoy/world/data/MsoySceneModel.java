@@ -25,6 +25,9 @@ public class MsoySceneModel extends SceneModel
     /** The background image of the scene. */
     public MediaData background;
 
+    /** The background music for the scene. */
+    public MediaData music;
+
     /** The furniture in the scene. */
     public FurniData[] furnis = new FurniData[0];
 

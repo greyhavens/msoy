@@ -85,6 +85,7 @@ public class MsoySceneRepository
         } else {
             model.type = "image";
             model.background = new MediaData(11); // alley
+            model.music = new MediaData(13); // boll weevil
 
             portal.loc = new MsoyLocation(0, .1, .53, 180);
             portal.targetSceneId = 1;

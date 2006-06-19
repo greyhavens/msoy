@@ -53,7 +53,8 @@ public class MsoyClient extends Client
             trace("Unable to communicate with javascript!");
         }
 
-        setServer("tasman.sea.earth.threerings.net", DEFAULT_SERVER_PORTS);
+        //setServer("tasman.sea.earth.threerings.net", DEFAULT_SERVER_PORTS);
+        setServer("tasman.sea.earth.threerings.net", [ 4010 ]);
         //setServer("ice.puzzlepirates.com", [ 4010 ]);
         logon();
     }
