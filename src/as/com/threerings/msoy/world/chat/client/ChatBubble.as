@@ -1,5 +1,6 @@
 package com.threerings.msoy.world.chat.client {
 
+import flash.display.Bitmap;
 import flash.display.BitmapData;
 
 import flash.events.Event;

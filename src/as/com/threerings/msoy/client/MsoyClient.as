@@ -4,6 +4,8 @@ import flash.display.Stage;
 
 import flash.external.ExternalInterface;
 
+import flash.system.Security;
+
 import mx.core.Application;
 import mx.logging.Log;
 
@@ -40,6 +42,8 @@ public class MsoyClient extends Client
         var guestId :int = int(Math.random() * int.MAX_VALUE);
         var guestName :Name = new Name("guest" + guestId);
         super(new UsernamePasswordCreds(guestName, "guest"), app.stage);
+
+//        Security.allowDomain("*"); // TODO
 
         _ctx = new MsoyContext(this, app);
 

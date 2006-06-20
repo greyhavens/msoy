@@ -99,7 +99,8 @@ public class MediaData
     protected static const DATA :Array = [
         // [ mediaURI, isInteractive, hotspot ]
  /* 0*/ [ "hipsterzombie.swf", true, new Point(126, 367) ],
-        [ "socketbunny.swf", true, new Point(155, 360) ],
+        //[ "socketbunny.swf", true, new Point(155, 360) ],
+        [ "TestAvatar.swf", false ],
         [ "pedestrian.swf", true ],
         [ "alleydoor.swf", true, new Point(36, 355) ],
         [ null, false ],

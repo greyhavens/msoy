@@ -102,6 +102,7 @@ public class MsoySprite extends Box
             addChild(vid);
             vid.addEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
             vid.addEventListener(VideoEvent.READY, loadVideoReady);
+            vid.addEventListener(VideoEvent.REWIND, videoDidRewind);
 
             vid.source = url;
 
@@ -181,6 +182,8 @@ public class MsoySprite extends Box
 
             } else {
                 var vid :VideoDisplay = (_media as VideoDisplay);
+                vid.removeEventListener(VideoEvent.REWIND, videoDidRewind);
+                vid.pause();
                 Prefs.setMediaPosition(_desc.id, vid.playheadTime);
                 trace("saving media pos: " + vid.playheadTime);
                 vid.stop();
@@ -435,6 +438,7 @@ public class MsoySprite extends Box
         // TODO: this seems broken, check it
         // set the position of the media to the specified timestamp
         vid.playheadTime = Prefs.getMediaPosition(_desc.id);
+        trace("restored playhead time: " + Prefs.getMediaPosition(_desc.id));
 
         // remove the two listeners
         vid.removeEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
@@ -471,6 +475,14 @@ public class MsoySprite extends Box
         info.content.mask = info.loader.mask;
 
 END: TODO: maybe keep? **/
+    }
+
+    /**
+     * Called when the video auto-rewinds.
+     */
+    protected function videoDidRewind (event :VideoEvent) :void
+    {
+        (_media as VideoDisplay).play();
     }
 
     protected function updateContentDimensions (ww :int, hh :int) :void

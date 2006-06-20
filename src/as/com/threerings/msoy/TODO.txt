@@ -75,6 +75,3 @@ be able to just hide the funny business inside the streamer.
   *** Look into this more, god it would just make lots of things better..
 
 - Create a chameleon avatar that manipulates the pixels behind it?
-
-- Chat bubbles: non-scaling, positioned near speaker at the time they
-  chat.
