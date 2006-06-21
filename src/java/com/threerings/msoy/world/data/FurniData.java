@@ -21,6 +21,12 @@ public class FurniData extends SimpleStreamableObject
     /** The location in the scene. */
     public MsoyLocation loc;
 
+    /** A scale factor in the X direction. */
+    public float scaleX = 1f;
+
+    /** A scale factor in the Y direction. */
+    public float scaleY = 1f;
+
     /** The action associated with this furniture. */
     public Object action;
 

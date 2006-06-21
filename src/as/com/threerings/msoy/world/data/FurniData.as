@@ -20,6 +20,12 @@ public class FurniData
     /** The location in the scene. */
     public var loc :MsoyLocation;
 
+    /** A scale factor in the X direction. */
+    public var scaleX :Number = 1;
+
+    /** A scale factor in the Y direction. */
+    public var scaleY :Number = 1;
+
     /** The action associated with this furniture. */
     public var action :Object;
 
@@ -42,6 +48,8 @@ public class FurniData
         out.writeInt(id);
         out.writeObject(media);
         out.writeObject(loc);
+        out.writeFloat(scaleX);
+        out.writeFloat(scaleY);
         out.writeObject(action);
     }
 
@@ -51,6 +59,8 @@ public class FurniData
         id = ins.readInt();
         media = (ins.readObject() as MediaData);
         loc = (ins.readObject() as MsoyLocation);
+        scaleX = ins.readFloat();
+        scaleY = ins.readFloat();
         action = ins.readObject();
     }
 }

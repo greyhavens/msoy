@@ -65,6 +65,8 @@ public class MsoySceneRepository
 
             furn = new FurniData();
             furn.id = 1;
+            furn.scaleX = -2f;
+            furn.scaleY = 1f;
             furn.media = new MediaData(7); // fans
             furn.loc = new MsoyLocation(.5, 0, 0, 0);
             model.addFurni(furn);
@@ -80,6 +82,15 @@ public class MsoySceneRepository
             furn.id = 3;
             furn.media = new MediaData(12); // curtain
             furn.loc = new MsoyLocation(.2, 0, 1, 0);
+            model.addFurni(furn);
+
+            furn = new FurniData();
+            furn.id = 4;
+            furn.media = new MediaData(5); // Joshua Tree
+            furn.loc = new MsoyLocation(.5, 0, 1, 0);
+            furn.scaleX = 2;
+            furn.scaleY = 2;
+            furn.action = "http://bogocorp.com/";
             model.addFurni(furn);
 
         } else {

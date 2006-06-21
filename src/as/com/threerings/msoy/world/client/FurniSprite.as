@@ -11,13 +11,20 @@ public class FurniSprite extends MsoySprite
 {
     public function FurniSprite (furni :FurniData)
     {
-        super(furni.media);
         _furni = furni;
+        super(furni.media);
 
-        // set our dest url as a tooltip..
-        if (_furni.action is String) {
-            toolTip = (_furni.action as String);
-        }
+        configureAction();
+    }
+
+    override public function getMediaScaleX () :Number
+    {
+        return _furni.scaleX;
+    }
+
+    override public function getMediaScaleY () :Number
+    {
+        return _furni.scaleY;
     }
 
     override public function get maxContentWidth () :int
@@ -47,6 +54,26 @@ public class FurniSprite extends MsoySprite
     {
         if (_furni.action is String) {
             navigateToURL(new URLRequest(_furni.action as String), "_self");
+        }
+    }
+
+    /**
+     * Do any setup required for the furniture's action.
+     */
+    protected function configureAction () :void
+    {
+        var action :Object = _furni.action;
+        if (action == null) {
+            return;
+        }
+
+        // set our dest url as a tooltip..
+        if (action is String) {
+            toolTip = (action as String);
+
+        } else {
+            Log.getLog(this).warning("Don't understand furniture action " +
+                "[action=" + action + "].");
         }
     }
 

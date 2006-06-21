@@ -90,40 +90,69 @@ public class MsoySprite extends Box
         _desc = desc;
         _id = int(Math.random() * int.MAX_VALUE);
 
+        // configure the media
         var url :String = desc.URL;
-
         if (url.toLowerCase().lastIndexOf(".flv") ==
                 url.length - ".flv".length) {
+            setupVideo(url);
 
-            var vid :VideoDisplay = new VideoDisplay();
-            _media = vid;
-            vid.scaleX = desc.scale;
-            vid.scaleY = desc.scale;
-            addChild(vid);
-            vid.addEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
-            vid.addEventListener(VideoEvent.READY, loadVideoReady);
-            vid.addEventListener(VideoEvent.REWIND, videoDidRewind);
-
-            vid.source = url;
-
-/*
-            var timer :Timer = new Timer(1000);
-            timer.addEventListener(TimerEvent.TIMER,
-                function (evt :Event) :void {
-                    trace("Video: (" + vid.bytesLoaded + " / " +
-                        vid.bytesTotal + " bytes) " + vid.playheadTime +
-                        ": " + vid.state + "  (" + width + ", " + height +
-                        ") (" + vid.width + ", " + vid.height + ")");
-                    updateContentDimensions(
-                        vid.videoWidth, vid.videoHeight);
-                });
-            timer.start();
-            */
-
-            return;
+        } else {
+            setupOther(url);
         }
 
-        if (desc.isAVM1) {
+        // set up the scale
+        _media.scaleX = getMediaScaleX();
+        _media.scaleY = getMediaScaleY();
+
+        // set up mouse listeners
+        if (isInteractive()) {
+            addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+            addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+            addEventListener(MouseEvent.CLICK, mouseClick);
+/*
+            loader.addEventListener(MouseEvent.CLICK, mouseClickCap, true);
+            loader.addEventListener(MouseEvent.CLICK, mouseClickCap);
+            addEventListener(MouseEvent.CLICK, mouseClickCap);
+            */
+        }
+    }
+
+    /**
+     * Configure this sprite to show a video.
+     */
+    protected function setupVideo (url :String) :void
+    {
+        var vid :VideoDisplay = new VideoDisplay();
+        _media = vid;
+        addChild(vid);
+        vid.addEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
+        vid.addEventListener(VideoEvent.READY, loadVideoReady);
+        vid.addEventListener(VideoEvent.REWIND, videoDidRewind);
+
+        // start it loading
+        vid.source = url;
+
+        /*
+        var timer :Timer = new Timer(1000);
+        timer.addEventListener(TimerEvent.TIMER,
+            function (evt :Event) :void {
+                trace("Video: (" + vid.bytesLoaded + " / " +
+                    vid.bytesTotal + " bytes) " + vid.playheadTime +
+                    ": " + vid.state + "  (" + width + ", " + height +
+                    ") (" + vid.width + ", " + vid.height + ")");
+                updateContentDimensions(
+                    vid.videoWidth, vid.videoHeight);
+            });
+        timer.start();
+        */
+    }
+
+    /**
+     * Configure this sprite to show an image or flash movie.
+     */
+    protected function setupOther (url :String) :void
+    {
+        if (_desc.isAVM1) {
             // TODO
             url += "?oid=" + _id;
         }
@@ -131,8 +160,6 @@ public class MsoySprite extends Box
         // create our loader and set up some event listeners
         var loader :Loader = new Loader();
         _media = loader;
-        loader.scaleX = desc.scale;
-        loader.scaleY = desc.scale;
         loader.contentLoaderInfo.addEventListener(
             Event.COMPLETE, loadingComplete);
         loader.contentLoaderInfo.addEventListener(
@@ -155,18 +182,6 @@ public class MsoySprite extends Box
         // start it loading, add it as a child
         loader.load(new URLRequest(url), getContext(url));
         rawChildren.addChild(loader);
-
-        if (isInteractive()) {
-            addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
-            addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-            addEventListener(MouseEvent.CLICK, mouseClick);
-
-/*
-            loader.addEventListener(MouseEvent.CLICK, mouseClickCap, true);
-            loader.addEventListener(MouseEvent.CLICK, mouseClickCap);
-            addEventListener(MouseEvent.CLICK, mouseClickCap);
-            */
-        }
     }
 
     /**
@@ -202,6 +217,11 @@ public class MsoySprite extends Box
         var p :Point = _desc.hotSpot;
         if (p == null) {
             p = new Point(contentWidth/2, contentHeight);
+
+        } else {
+            // scale the hotspot associated with the media
+            p.x = Math.abs(p.x * getMediaScaleX());
+            p.y = Math.abs(p.y * getMediaScaleY());
         }
         return p;
     }
@@ -273,6 +293,24 @@ public class MsoySprite extends Box
         blendMode = active ? BlendMode.NORMAL : BlendMode.LAYER;
         mouseEnabled = active;
         //mouseChildren = active;
+    }
+
+    /**
+     * Get the X scaling factor to use on the actual media, independent
+     * of the scaling done to simulate depth.
+     */
+    public function getMediaScaleX () :Number
+    {
+        return 1;
+    }
+
+    /**
+     * Get the Y scaling factor to use on the actual media, independent
+     * of the scaling done to simulate depth.
+     */
+    public function getMediaScaleY () :Number
+    {
+        return 1;
     }
 
 /* Commented out: this doesn't fucking work, this method should be called
@@ -487,8 +525,20 @@ END: TODO: maybe keep? **/
 
     protected function updateContentDimensions (ww :int, hh :int) :void
     {
-        ww *= _desc.scale;
-        hh *= _desc.scale;
+        // see if the media is scaled
+        var xscale :Number = getMediaScaleX();
+        var yscale :Number = getMediaScaleY();
+
+        // adjust the content dimensions
+        ww = Math.abs(ww * xscale);
+        hh = Math.abs(hh * yscale);
+
+        // if scale is negative, the image is flipped and we need to move
+        // the origin
+        _media.x = (xscale >= 0) ? 0 : ww;
+        _media.y = (yscale >= 0) ? 0 : hh;
+
+        // update our saved size, and possibly notify our container
         if (_w != ww || _h != hh) {
             _w = ww;
             _h = hh;
@@ -637,7 +687,7 @@ END: TODO: maybe keep? **/
     protected var _desc :MediaData;
 
     /** Either a Loader or a VideoDisplay. */
-    protected var _media :Object;
+    protected var _media :DisplayObject;
 
     /** Used to dispatch events down to the swf we contain. */
     protected var _dispatch :EventDispatcher;
