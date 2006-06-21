@@ -65,8 +65,6 @@ public class RoomView extends Canvas
         width = 800;
         height = width / PHI;
 
-//        scaleX = scaleY = .5;
-
         addEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
     }
 
@@ -75,7 +73,16 @@ public class RoomView extends Canvas
         removeEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
         ChatPopper.setChatView(this);
 
-        // relayout everything
+        relayout();
+    }
+
+    /**
+     * Layout everything.
+     */
+    protected function relayout () :void
+    {
+        configureScrollRect();
+
         var sprite :MsoySprite;
         for each (sprite in _avatars.values()) {
             locationUpdated(sprite);
@@ -87,6 +94,19 @@ public class RoomView extends Canvas
             locationUpdated(sprite);
         }
     }
+
+    /**
+     * Configure the rectangle used to select a portion of the view
+     * that's showing.
+     */
+    protected function configureScrollRect () :void
+    {
+        if (_scene.getWidth() > unscaledWidth) {
+            scrollRect = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
+        } else {
+            scrollRect = null;
+        }
+    }
     
     /**
      * Turn the screen coordinate into a MsoyLocation, with the
@@ -96,7 +116,6 @@ public class RoomView extends Canvas
      */
     public function pointToLocation (x :Number, y :Number) :MsoyLocation
     {
-        var unscaledHeight :Number = height / this.scaleY;
         // flip y
         y = unscaledHeight - y;
 
@@ -249,8 +268,6 @@ public class RoomView extends Canvas
         var xoffset :Number = (sceneWidth - swidth) / 2;
         sprite.x = xoffset - (scale * hotSpot.x) +
             (loc.x / MAX_COORD) * swidth;
-
-        var unscaledHeight :Number = height / this.scaleY;
 
         // y position depends on logical y and the scale (z)
         var sheight :Number = (unscaledHeight * scale);
@@ -457,11 +474,7 @@ public class RoomView extends Canvas
 
         // get the specifics on the current scene from the scene director
         _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
-        if ((_scene.getWidth() * this.scaleX) > width) {
-            scrollRect = new Rectangle(0, 0, width, height);
-        } else {
-            scrollRect = null;
-        }
+        configureScrollRect();
         var music :MediaData = _scene.getMusic();
         if (music != null) {
             trace("Now looping background music");
