@@ -35,6 +35,15 @@ public class MsoyUserObject extends BodyObject
     /** The tokens defining the access controls for this user. */
     public TokenRing tokens;
 
+    /**
+     * Return true if this user is merely a guest.
+     */
+    public boolean isGuest ()
+    {
+        // TODO
+        return username.toString().startsWith("guest");
+    }
+
     // documentation inherited from superinterface ScenedBodyObject
     public int getSceneId ()
     {

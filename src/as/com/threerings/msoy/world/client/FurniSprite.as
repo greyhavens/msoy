@@ -46,7 +46,7 @@ public class FurniSprite extends MsoySprite
     override protected function mouseClick (event :MouseEvent) :void
     {
         if (_furni.action is String) {
-            navigateToURL(new URLRequest(_furni.action as String));
+            navigateToURL(new URLRequest(_furni.action as String), "_self");
         }
     }
 

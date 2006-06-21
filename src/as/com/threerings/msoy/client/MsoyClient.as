@@ -7,9 +7,10 @@ import flash.external.ExternalInterface;
 import flash.system.Security;
 
 import mx.core.Application;
-import mx.logging.Log;
 
 import com.threerings.util.Name;
+import com.threerings.util.ResultAdapter;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.data.ClientObject;
@@ -37,6 +38,8 @@ import com.threerings.msoy.world.data.RoomConfig;
 
 public class MsoyClient extends Client
 {
+    private static const log :Log = Log.getLog(MsoyClient);
+
     public function MsoyClient (app :Application)
     {
         var guestId :int = int(Math.random() * int.MAX_VALUE);
@@ -68,19 +71,23 @@ public class MsoyClient extends Client
     {
         super.gotClientObject(clobj);
 
-        var userObj :MsoyUserObject = (clobj as MsoyUserObject);
+        // set up our logging targets
+        LoggingTargets.configureLogging(_ctx);
 
-        if (userObj.getTokens().isAdmin()) {
-            var targ :ChatTarget = new ChatTarget(_ctx);
-            mx.logging.Log.addTarget(targ);
+        // possibly ensure our local storage capacity
+        var user :MsoyUserObject = (clobj as MsoyUserObject);
+        if (!user.isGuest()) {
+            Prefs.config.ensureCapacity(102400, new ResultAdapter(null,
+                function (cause :Error) :void {
+                    log.warning("User denied request to increase " +
+                        "local storage capacity.");
+                }));
         }
-        mx.logging.Log.addTarget(new FireBugTarget());
 
         // TODO: for now, we start with scene 1
         _ctx.getSceneDirector().moveTo(1);
         //_ctx.getLocationDirector().moveTo(
         //    (getBootstrapData() as MsoyBootstrapData).chatOid);
-
     }
 
     public function fuckingCompiler () :void
@@ -102,58 +109,4 @@ public class MsoyClient extends Client
 
     protected var _ctx :MsoyContext;
 }
-}
-
-import flash.external.ExternalInterface;
-
-import mx.logging.LogEventLevel;
-import mx.logging.targets.LineFormattedTarget;
-
-import mx.core.mx_internal;
-
-use namespace mx_internal;
-
-import com.threerings.util.MessageBundle;
-
-import com.threerings.msoy.client.MsoyContext;
-
-// TODO: stop listening at the end?
-class ChatTarget extends LineFormattedTarget
-{
-    public function ChatTarget (ctx :MsoyContext)
-    {
-        _ctx = ctx;
-        super();
-
-        includeCategory = includeTime = includeLevel = true;
-        filters = ["*"];
-        level = LogEventLevel.DEBUG;
-    }
-
-    override mx_internal function internalLog (msg :String) :void
-    {
-        _ctx.displayInfo(null, MessageBundle.taint(msg));
-    }
-
-    protected var _ctx :MsoyContext;
-}
-
-/**
- * A logging target that goes to firebug's console.
- */
-class FireBugTarget extends LineFormattedTarget
-{
-    public function FireBugTarget ()
-    {
-        super();
-
-        includeCategory = includeTime = includeLevel = true;
-        filters = ["*"];
-        level = LogEventLevel.DEBUG;
-    }
-
-    override mx_internal function internalLog (msg :String) :void
-    {
-        ExternalInterface.call("console.debug", msg);
-    }
 }

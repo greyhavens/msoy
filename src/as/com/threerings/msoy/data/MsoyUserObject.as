@@ -39,6 +39,14 @@ public class MsoyUserObject extends BodyObject
     /** The tokens defining the access controls for this user. */
     public var tokens :TokenRing;
 
+    /**
+     * Return true if this user is merely a guest.
+     */
+    public function isGuest () :Boolean
+    {
+        return username.toString().indexOf("guest") == 0;
+    }
+
     // documentation inherited from superinterface ScenedBodyObject
     public function getSceneId () :int
     {

@@ -19,7 +19,7 @@ public class RoomPanel extends VBox
     public function RoomPanel (ctx :MsoyContext)
     {
         addChild(view = new RoomView(ctx));
-        addChild(new ChatTextArea(ctx));
+//        addChild(new ChatTextArea(ctx));
         addChild(new ChatControl(ctx));
     }
 
