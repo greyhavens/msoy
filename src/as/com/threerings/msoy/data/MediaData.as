@@ -43,6 +43,9 @@ public class MediaData
      */
     public function get URL () :String
     {
+        if (DATA[id][3]) {
+            return String(DATA[id][0]);
+        }
         return BASE_URL + DATA[id][0];
     }
 
@@ -105,7 +108,11 @@ public class MediaData
  /*10*/ [ "directorschair.swf", false, new Point(54, 154) ],
         [ "alley.png", false ],
         [ "curtain.swf", false, new Point(130, 530) ],
-        [ "BollWeevil.mp3", false ]
+        [ "BollWeevil.mp3", false ],
+        [ "http://sd165.sivit.org/random_4432/files/420.swf",
+                false, null, true ],
+        [ "http://www.microgames.info/games/3d_logic/loader_3d_logic.swf",
+                false, null, true ]
     ];
 
     protected static const BASE_URL :String =

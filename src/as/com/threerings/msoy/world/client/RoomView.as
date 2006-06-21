@@ -57,13 +57,15 @@ public class RoomView extends Canvas
     public function RoomView (ctx :MsoyContext)
     {
         _ctx = ctx;
-        clipContent = false;
+        clipContent = false; // needed because we scroll
 
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
         width = 800;
         height = width / PHI;
+
+//        scaleX = scaleY = .5;
 
         addEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
     }
@@ -72,6 +74,18 @@ public class RoomView extends Canvas
     {
         removeEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
         ChatPopper.setChatView(this);
+
+        // relayout everything
+        var sprite :MsoySprite;
+        for each (sprite in _avatars.values()) {
+            locationUpdated(sprite);
+        }
+        for each (sprite in _portals.values()) {
+            locationUpdated(sprite);
+        }
+        for each (sprite in _furni.values()) {
+            locationUpdated(sprite);
+        }
     }
     
     /**
@@ -82,19 +96,20 @@ public class RoomView extends Canvas
      */
     public function pointToLocation (x :Number, y :Number) :MsoyLocation
     {
+        var unscaledHeight :Number = height / this.scaleY;
         // flip y
-        y = height - y;
+        y = unscaledHeight - y;
 
         var sceneWidth :Number = _scene.getWidth();
 
-        var sheight :Number = (height * MIN_SCALE);
-        var yoffset :Number = (height - sheight) / 2;
+        var sheight :Number = (unscaledHeight * MIN_SCALE);
+        var yoffset :Number = (unscaledHeight - sheight) / 2;
         if (y > yoffset) {
             return null;
         }
 
         // then, solve for scale given the current y
-        var scale :Number = 1 + (y * -2) / height;
+        var scale :Number = 1 + (y * -2) / unscaledHeight;
 
         // see if x is legal
         var swidth :Number = (sceneWidth * scale);
@@ -235,10 +250,12 @@ public class RoomView extends Canvas
         sprite.x = xoffset - (scale * hotSpot.x) +
             (loc.x / MAX_COORD) * swidth;
 
+        var unscaledHeight :Number = height / this.scaleY;
+
         // y position depends on logical y and the scale (z)
-        var sheight :Number = (height * scale);
-        var yoffset :Number = (height - sheight) / 2;
-        sprite.y = height - yoffset - (scale * hotSpot.y) -
+        var sheight :Number = (unscaledHeight * scale);
+        var yoffset :Number = (unscaledHeight - sheight) / 2;
+        sprite.y = unscaledHeight - yoffset - (scale * hotSpot.y) -
             (loc.y / MAX_COORD) * sheight;
     }
 
@@ -440,8 +457,10 @@ public class RoomView extends Canvas
 
         // get the specifics on the current scene from the scene director
         _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
-        if (_scene.getWidth() > width) {
+        if ((_scene.getWidth() * this.scaleX) > width) {
             scrollRect = new Rectangle(0, 0, width, height);
+        } else {
+            scrollRect = null;
         }
         var music :MediaData = _scene.getMusic();
         if (music != null) {
