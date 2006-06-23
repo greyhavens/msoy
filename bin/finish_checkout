@@ -24,7 +24,7 @@ for PROJECT in samskivert; do
         svn checkout svn://samskivert.com/$PROJECT/trunk $PROJECT
     fi
 done
-for PROJECT in narya; do
+for PROJECT in narya nenya vilya; do
     if [ ! -d $PROJECT ]; then
         svn checkout $SVNROOT/$PROJECT/trunk $PROJECT
     fi

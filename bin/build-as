@@ -23,8 +23,11 @@ java -jar "$ROOT/lib/as-compiler/lib/mxmlc.jar" \
     -compiler.warn-undefined-reference=true \
     -compiler.verbose-stacktraces=true \
     -compiler.source-path="$ROOT/projects/narya/src/as/" \
+    -compiler.source-path="$ROOT/projects/vilya/src/as/" \
     -compiler.source-path="$ROOT/src/as/" \
     -compiler.source-path="$ROOT/src/css/" \
     -compiler.source-path="$ROOT/rsrc/{locale}" \
     $ROOT/src/mxml/Msoy.mxml
+    #$ROOT/src/mxml/Test.mxml
+    #$ROOT/src/as/com/threerings/msoy/ui/TestAvatar.as
     #$ROOT/src/as/AvatarTest.as

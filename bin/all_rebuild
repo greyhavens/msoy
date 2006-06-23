@@ -53,7 +53,7 @@ if [ ! -z "$UPDATE" ]; then
 fi
 
 # rebuild our libraries
-build_libraries samskivert narya threerings
+build_libraries samskivert narya nenya vilya threerings
 
 # build the main thang
 cd $ROOT
