@@ -43,6 +43,16 @@ public class PortalSprite extends MsoySprite
         dispatchEvent(new ControllerEvent("portalClicked", _portal));
     }
 
+    override public function get maxContentWidth () :int
+    {
+        return 800;
+    }
+
+    override public function get maxContentHeight () :int
+    {
+        return 600;
+    }
+
     override public function isInteractive () :Boolean
     {
         // force all portals to be interactive

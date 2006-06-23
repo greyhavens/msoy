@@ -114,6 +114,9 @@ public class MsoySprite extends Box
             loader.addEventListener(MouseEvent.CLICK, mouseClickCap);
             addEventListener(MouseEvent.CLICK, mouseClickCap);
             */
+        } else {
+            mouseEnabled = false;
+            mouseChildren = false;
         }
     }
 
@@ -171,13 +174,16 @@ public class MsoySprite extends Box
         _dispatch = loader.contentLoaderInfo.sharedEvents;
 
         // create a mask to prevent the media from drawing out of bounds
-        var mask :Shape = new Shape();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, maxContentWidth, maxContentHeight);
-        mask.graphics.endFill();
-        // the mask must be added to the display list (which is wacky)
-        rawChildren.addChild(mask);
-        loader.mask = mask;
+        if (maxContentWidth < int.MAX_VALUE  &&
+                maxContentHeight < int.MAX_VALUE) {
+            var mask :Shape = new Shape();
+            mask.graphics.beginFill(0xFFFFFF);
+            mask.graphics.drawRect(0, 0, maxContentWidth, maxContentHeight);
+            mask.graphics.endFill();
+            // the mask must be added to the display list (which is wacky)
+            rawChildren.addChild(mask);
+            loader.mask = mask;
+        }
 
         // start it loading, add it as a child
         loader.load(new URLRequest(url), getContext(url));
@@ -236,14 +242,20 @@ public class MsoySprite extends Box
         return Math.min(_h, maxContentHeight);
     }
 
+    /**
+     * Get the maximum allowable width for our content.
+     */
     public function get maxContentWidth () :int
     {
-        return 800;
+        return int.MAX_VALUE;
     }
 
+    /**
+     * Get the maximum allowable height for our content.
+     */
     public function get maxContentHeight () :int
     {
-        return 600;
+        return int.MAX_VALUE;
     }
 
     /**

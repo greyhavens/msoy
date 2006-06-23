@@ -93,6 +93,9 @@ public class RoomView extends Canvas
         for each (sprite in _furni.values()) {
             locationUpdated(sprite);
         }
+        if (_bkg != null) {
+            locationUpdated(_bkg);
+        }
     }
 
     /**
@@ -240,7 +243,14 @@ public class RoomView extends Canvas
     protected function tick (event :Event) :void
     {
         if (!_suppressAutoScroll) {
-            scrollView(getMyAvatar());
+            var avatar :AvatarSprite = getMyAvatar();
+            if (avatar != null) {
+                scrollView(avatar);
+
+            } else {
+                // stop scrolling
+                removeEventListener(Event.ENTER_FRAME, tick);
+            }
         }
 
         // and finally, we want ensure it can happen on the next frame if

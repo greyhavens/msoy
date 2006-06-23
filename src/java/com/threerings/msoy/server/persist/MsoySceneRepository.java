@@ -47,12 +47,70 @@ public class MsoySceneRepository
         model.sceneId = sceneId;
         model.version = 14;
         model.name = "FakeScene" + sceneId;
+        SpotSceneModel spotty = SpotSceneModel.getSceneModel(model);
 
         MsoyPortal portal = new MsoyPortal();
         portal.portalId = 1;
         portal.targetPortalId = 1;
 
         if (sceneId == 1) {
+            model.type = "image";
+            model.width = 1600;
+            model.background = new MediaData(16); // comic room
+
+            portal.loc = new MsoyLocation(0, 0, .5, 0);
+            portal.targetSceneId = 2;
+            portal.media = new MediaData(18); // bendaydoor
+
+            MsoyPortal p2 = new MsoyPortal();
+            p2.portalId = 2;
+            p2.targetPortalId = 1;
+            p2.targetSceneId = 2;
+            p2.loc = new MsoyLocation(.84, 0, .3, 0);
+            p2.media = new MediaData(19); // bendaytransport
+            spotty.addPortal(p2);
+
+            p2 = new MsoyPortal();
+            p2.portalId = 3;
+            p2.targetPortalId = 1;
+            p2.targetSceneId = 2;
+            p2.loc = new MsoyLocation(.5, 0, .5, 0);
+            p2.media = new MediaData(6);
+            spotty.addPortal(p2);
+
+            FurniData furn;
+
+            furn = new FurniData();
+            furn.id = 1;
+            furn.media = new MediaData(17); // comic foreground
+            furn.loc = new MsoyLocation(.5, 0, 0, 0);
+            model.addFurni(furn);
+
+            /*
+            furn = new FurniData();
+            furn.id = 5;
+            furn.media = new MediaData(15); // 3d logic
+            furn.loc = new MsoyLocation(.5, 0, 1, 0);
+            model.addFurni(furn);
+            */
+
+        } else if (sceneId == 2) {
+            model.type = "image";
+            model.background = new MediaData(11); // alley
+            model.music = new MediaData(13); // boll weevil
+
+            portal.loc = new MsoyLocation(0, .1, .53, 180);
+            portal.targetSceneId = 1;
+            portal.media = new MediaData(3); // alley door
+
+            FurniData furn;
+            furn = new FurniData();
+            furn.id = 0;
+            furn.media = new MediaData(10); // director's chair
+            furn.loc = new MsoyLocation(.46, 0, .15, 0);
+            model.addFurni(furn);
+
+        } else if (sceneId == 3) {
             //model.type = "image";
             model.width = 1600;
             model.background = new MediaData(8); // fancy room
@@ -75,7 +133,8 @@ public class MsoySceneRepository
             furn.id = 2;
             furn.media = new MediaData(9); // pinball
             furn.loc = new MsoyLocation(.2, 0, .2, 0);
-            furn.action = "http://www.pinballnews.com/";
+            //furn.action = "http://www.pinballnews.com/";
+            furn.action = "http://www.t45ol.com/play/420/jungle-quest.html";
             model.addFurni(furn);
 
             furn = new FurniData();
@@ -84,6 +143,7 @@ public class MsoySceneRepository
             furn.loc = new MsoyLocation(.2, 0, 1, 0);
             model.addFurni(furn);
 
+            /*
             furn = new FurniData();
             furn.id = 4;
             furn.media = new MediaData(5); // Joshua Tree
@@ -92,25 +152,18 @@ public class MsoySceneRepository
             furn.scaleY = 2;
             furn.action = "http://bogocorp.com/";
             model.addFurni(furn);
+            */
+
+            furn = new FurniData();
+            furn.id = 5;
+            furn.media = new MediaData(15); // 3d logic
+            furn.loc = new MsoyLocation(.5, 0, 0, 0);
+            model.addFurni(furn);
 
         } else {
-            model.type = "image";
-            model.background = new MediaData(11); // alley
-            model.music = new MediaData(13); // boll weevil
-
-            portal.loc = new MsoyLocation(0, .1, .53, 180);
-            portal.targetSceneId = 1;
-            portal.media = new MediaData(3); // alley door
-
-            FurniData furn;
-            furn = new FurniData();
-            furn.id = 0;
-            furn.media = new MediaData(10); // director's chair
-            furn.loc = new MsoyLocation(.46, 0, .15, 0);
-            model.addFurni(furn);
+            System.err.println("Unknown scene: " + sceneId);
         }
 
-        SpotSceneModel spotty = SpotSceneModel.getSceneModel(model);
         spotty.addPortal(portal);
         spotty.defaultEntranceId = 1;
 

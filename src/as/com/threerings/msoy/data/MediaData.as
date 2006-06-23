@@ -112,7 +112,12 @@ public class MediaData
         [ "http://sd165.sivit.org/random_4432/files/420.swf",
                 false, null, true ],
         [ "http://www.microgames.info/games/3d_logic/loader_3d_logic.swf",
-                false, null, true ]
+                false, null, true ],
+        [ "comicroom.png", false ],
+        [ "comicroomforeground.png", false ],
+        [ "bendaydoor.swf", false ],
+        [ "bendaytransport.swf", false ],
+ /*20*/ [],
     ];
 
     protected static const BASE_URL :String =
