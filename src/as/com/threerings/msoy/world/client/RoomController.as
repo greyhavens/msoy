@@ -41,12 +41,11 @@ public class RoomController extends SceneController
     // documentation inherited
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        var rp :RoomPanel = new RoomPanel(ctx as MsoyContext);
-        _roomView = rp.view;
+        _roomView = new RoomView(ctx as MsoyContext);
 
         _menu = new ContextMenu();
         _roomView.contextMenu = _menu;
-        return rp;
+        return _roomView;
     }
 
     // documentation inherited

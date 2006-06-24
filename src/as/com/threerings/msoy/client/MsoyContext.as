@@ -39,6 +39,11 @@ public class MsoyContext
         _scenedir = new SceneDirector(this, _locdir,
             new SharedObjectSceneRepository(), new MsoySceneFactory());
         _spotdir = new SpotSceneDirector(this, _locdir, _scenedir);
+
+        // clean up the application, set up the top panel
+        _app.removeAllChildren();
+        _topPanel = new TopPanel(this);
+        _app.addChild(_topPanel);
     }
 
     /**
@@ -104,22 +109,20 @@ public class MsoyContext
     // documentation inherited from superinterface CrowdContext
     public function setPlaceView (view :PlaceView) :void
     {
-        for (var ii :int = _app.numChildren - 1; ii >= 0; ii--) {
-            _app.removeChildAt(ii);
-        }
-
-        _app.addChild(view as DisplayObject);
+        _topPanel.setPlaceView(view);
     }
 
     // documentation inherited from superinterface CrowdContext
     public function clearPlaceView (view :PlaceView) :void
     {
-        _app.removeChild(view as DisplayObject);
+        _topPanel.clearPlaceView(view);
     }
 
     protected var _client :Client;
 
     protected var _app :Application;
+
+    protected var _topPanel :TopPanel;
 
     protected var _msgmgr :MessageManager;
 

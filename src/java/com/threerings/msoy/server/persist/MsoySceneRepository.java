@@ -88,14 +88,6 @@ public class MsoySceneRepository
             furn.loc = new MsoyLocation(.5, 0, 0, 0);
             model.addFurni(furn);
 
-            /*
-            furn = new FurniData();
-            furn.id = 5;
-            furn.media = new MediaData(15); // 3d logic
-            furn.loc = new MsoyLocation(.5, 0, 1, 0);
-            model.addFurni(furn);
-            */
-
         } else if (sceneId == 2) { // alley
             model.type = "image";
             model.background = new MediaData(11); // alley
@@ -128,6 +120,12 @@ public class MsoySceneRepository
             furn.id = 1;
             furn.media = new MediaData(24); // cliff foreground
             furn.loc = new MsoyLocation(.5, 0, 0, 0);
+            model.addFurni(furn);
+
+            furn = new FurniData();
+            furn.id = 2;
+            furn.media = new MediaData(36); // cedric
+            furn.loc = new MsoyLocation(.15, 0, .35, 0);
             model.addFurni(furn);
 
         } else if (sceneId == 4) {
