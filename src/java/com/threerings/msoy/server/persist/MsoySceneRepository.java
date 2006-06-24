@@ -45,7 +45,7 @@ public class MsoySceneRepository
         // TODO: real implementation
         MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
         model.sceneId = sceneId;
-        model.version = 14;
+        model.version = 1;
         model.name = "FakeScene" + sceneId;
         SpotSceneModel spotty = SpotSceneModel.getSceneModel(model);
 
@@ -53,23 +53,24 @@ public class MsoySceneRepository
         portal.portalId = 1;
         portal.targetPortalId = 1;
 
-        if (sceneId == 1) {
+        if (sceneId == 1) { // comic
             model.type = "image";
             model.width = 1600;
             model.background = new MediaData(16); // comic room
 
             portal.loc = new MsoyLocation(0, 0, .5, 0);
-            portal.targetSceneId = 2;
+            portal.targetSceneId = 6;
             portal.media = new MediaData(18); // bendaydoor
 
             MsoyPortal p2 = new MsoyPortal();
             p2.portalId = 2;
             p2.targetPortalId = 1;
-            p2.targetSceneId = 2;
+            p2.targetSceneId = 3;
             p2.loc = new MsoyLocation(.84, 0, .3, 0);
             p2.media = new MediaData(19); // bendaytransport
             spotty.addPortal(p2);
 
+            /*
             p2 = new MsoyPortal();
             p2.portalId = 3;
             p2.targetPortalId = 1;
@@ -77,6 +78,7 @@ public class MsoySceneRepository
             p2.loc = new MsoyLocation(.5, 0, .5, 0);
             p2.media = new MediaData(6);
             spotty.addPortal(p2);
+            */
 
             FurniData furn;
 
@@ -94,7 +96,7 @@ public class MsoySceneRepository
             model.addFurni(furn);
             */
 
-        } else if (sceneId == 2) {
+        } else if (sceneId == 2) { // alley
             model.type = "image";
             model.background = new MediaData(11); // alley
             model.music = new MediaData(13); // boll weevil
@@ -110,7 +112,25 @@ public class MsoySceneRepository
             furn.loc = new MsoyLocation(.46, 0, .15, 0);
             model.addFurni(furn);
 
-        } else if (sceneId == 3) {
+        } else if (sceneId == 3) { // cliff
+            model.type = "image";
+            model.width = 800;
+            model.background = new MediaData(23); // cliff background
+
+            portal.loc = new MsoyLocation(.5, 0, .5, 0);
+            portal.targetSceneId = 1;
+            portal.targetPortalId = 2;
+            portal.media = new MediaData(19); // bendaydoor
+
+            FurniData furn;
+
+            furn = new FurniData();
+            furn.id = 1;
+            furn.media = new MediaData(24); // cliff foreground
+            furn.loc = new MsoyLocation(.5, 0, 0, 0);
+            model.addFurni(furn);
+
+        } else if (sceneId == 4) {
             //model.type = "image";
             model.width = 1600;
             model.background = new MediaData(8); // fancy room
@@ -158,6 +178,72 @@ public class MsoySceneRepository
             furn.id = 5;
             furn.media = new MediaData(15); // 3d logic
             furn.loc = new MsoyLocation(.5, 0, 0, 0);
+            model.addFurni(furn);
+
+        } else if (sceneId == 5) { // faucet
+            model.type = "image";
+            model.width = 1600;
+            model.background = new MediaData(26); // faucet forest
+
+            portal.loc = new MsoyLocation(.3125, .71, 0, 0);
+            portal.targetSceneId = 1;
+            portal.media = new MediaData(27); // pipe
+
+        } else if (sceneId == 6) { // crayon room
+            model.type = "image";
+            model.width = 1600;
+            model.background = new MediaData(28); // crayon room
+
+            portal.loc = new MsoyLocation(0, 0, .3, 0);
+            portal.targetSceneId = 1;
+            portal.targetPortalId = 1;
+            portal.scaleX = portal.scaleY = (float) (1 / .865f);
+            portal.media = new MediaData(34); // smile door
+
+            MsoyPortal p2 = new MsoyPortal();
+            p2.portalId = 2;
+            p2.targetPortalId = 1;
+            p2.targetSceneId = 1;
+            p2.loc = new MsoyLocation(.8, 0, 1, 0);
+            p2.scaleX = p2.scaleY = (float) (1 / .55);
+            p2.media = new MediaData(33); // aqua door
+            spotty.addPortal(p2);
+
+            p2 = new MsoyPortal();
+            p2.portalId = 3;
+            p2.targetPortalId = 1;
+            p2.targetSceneId = 1;
+            p2.loc = new MsoyLocation(1, 0, .3, 0);
+            p2.scaleX = p2.scaleY = (float) (1 / .865f);
+            p2.media = new MediaData(32); // red door
+            spotty.addPortal(p2);
+
+            p2 = new MsoyPortal();
+            p2.portalId = 4;
+            p2.targetPortalId = 1;
+            p2.targetSceneId = 1;
+            p2.loc = new MsoyLocation(.75, 1, .5, 0);
+            p2.media = new MediaData(31); // ladder
+            spotty.addPortal(p2);
+
+            FurniData furn;
+
+            furn = new FurniData();
+            furn.id = 1;
+            furn.media = new MediaData(35); // candles
+            furn.loc = new MsoyLocation(.45, 1, 0, 0);
+            model.addFurni(furn);
+
+            furn = new FurniData();
+            furn.id = 2;
+            furn.media = new MediaData(29); // cactus
+            furn.loc = new MsoyLocation(.6, -.1, 0, 0);
+            model.addFurni(furn);
+
+            furn = new FurniData();
+            furn.id = 3;
+            furn.media = new MediaData(30); // fishbowl
+            furn.loc = new MsoyLocation(.8, -.1, 0, 0);
             model.addFurni(furn);
 
         } else {

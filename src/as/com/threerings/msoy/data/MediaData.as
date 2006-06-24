@@ -100,7 +100,7 @@ public class MediaData
         [ "alleydoor.swf", true, new Point(36, 355) ],
         [ "bigvid.flv", false ],
         //[ "flv/320x240.swf?url=JoshuaTree.flv", false ],
-        [ "JoshuaTree.flv", false ],
+ /* 5*/ [ "JoshuaTree.flv", false ],
         [ "rainbowdoor.swf", true, new Point(144, 367) ],
         [ "fans.swf", false ],
         [ "fancyroom.png", false ],
@@ -111,17 +111,33 @@ public class MediaData
         [ "BollWeevil.mp3", false ],
         [ "http://sd165.sivit.org/random_4432/files/420.swf",
                 false, null, true ],
-        [ "http://www.microgames.info/games/3d_logic/loader_3d_logic.swf",
+ /*15*/ [ "http://www.microgames.info/games/3d_logic/loader_3d_logic.swf",
                 false, null, true ],
         [ "comicroom.png", false ],
         [ "comicroomforeground.png", false ],
         [ "bendaydoor.swf", false ],
         [ "bendaytransport.swf", false ],
- /*20*/ [],
+ /*20*/ [ "teenqueen.swf", true ],
+        [ "critter.swf", true ],
+        [ "wendle6.swf", true, new Point(116, 362) ],
+        //[ "cliff_background.png", false ],
+        [ "cliff_background_anim.swf", false ],
+        [ "cliff_foreground.png", false ],
+ /*25*/ [ "octocar_all.swf", false ],
+        [ "faucet_scene.png", false ],
+        [ "pipe_door.png", false, new Point(40, 215) ],
+        [ "crayon_room.png", false ],
+        [ "cactus.png", false ],
+ /*30*/ [ "fishbowl.png", false ],
+        [ "ladder.png", false, new Point(70, 36) ],
+        [ "red_door.png", false, new Point(90, 333) ],
+        [ "aqua_door.png", false ],
+        [ "smile_door.png", false, new Point(88, 327) ],
+ /*35*/ [ "candles.png", false, new Point(76, 0) ],
     ];
 
-    protected static const BASE_URL :String =
-        "http://tasman.sea.earth.threerings.net/~ray/";
+    public static const BASE_URL :String =
+        "http://tasman.sea.earth.threerings.net/~ray/msoy/";
         //"http://ice.puzzlepirates.com/msoy/";
 }
 

@@ -16,12 +16,18 @@ public class MsoyPortal extends Portal
     /** The media used to represent the portal. */
     public var media :MediaData;
 
+    public var scaleX :Number = 1;
+
+    public var scaleY :Number = 1;
+
     // documentation inherited
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
         out.writeObject(media);
+        out.writeFloat(scaleX);
+        out.writeFloat(scaleY);
     }
 
     // documentation inherited
@@ -30,6 +36,8 @@ public class MsoyPortal extends Portal
         super.readObject(ins);
 
         media = (ins.readObject() as MediaData);
+        scaleX = ins.readFloat();
+        scaleY = ins.readFloat();
     }
 
     // documentation inherited

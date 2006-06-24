@@ -16,11 +16,13 @@ public class RoomPanel extends VBox
     /** The room view. */
     public var view :RoomView;
 
+    public var chatControl :ChatControl;
+
     public function RoomPanel (ctx :MsoyContext)
     {
         addChild(view = new RoomView(ctx));
 //        addChild(new ChatTextArea(ctx));
-        addChild(new ChatControl(ctx));
+        addChild(chatControl = new ChatControl(ctx));
     }
 
     // documentation inherited from interface PlaceView
@@ -32,5 +34,21 @@ public class RoomPanel extends VBox
     public function didLeavePlace (plobj :PlaceObject) :void
     {
     }
+
+/*
+    override protected function updateDisplayList (
+            unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        Log.getLog(this).warning("Our unscaled width and height are " + unscaledWidth + ", " +
+            unscaledHeight);
+        var worldHeight :Number = unscaledHeight - chatControl.height;
+        var worldScale :Number = worldHeight / (view.height / view.scaleY);
+
+        view.scaleX = worldScale;
+        view.scaleY = worldScale;
+
+        super.updateDisplayList(unscaledWidth, unscaledHeight);
+    }
+    */
 }
 }

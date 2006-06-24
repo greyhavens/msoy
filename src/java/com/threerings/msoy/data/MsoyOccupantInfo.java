@@ -31,10 +31,13 @@ public class MsoyOccupantInfo extends OccupantInfo
         super(user);
 
         // TODO
-        media = new MediaData(user.getOid() % 3); // consistent
+        media = new MediaData(AVATARS[user.getOid() % AVATARS.length]);
         if (media.id == 0) {
             bubbleStyle = (short) 1;
         }
         bubblePopStyle = (short) (user.getOid() % 2);
     }
+
+    // TEMP: media ids for our standard avatars
+    public static final int[] AVATARS = { 0, 1, 2, 20, 21, 22, 25 };
 }

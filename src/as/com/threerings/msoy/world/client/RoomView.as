@@ -87,6 +87,9 @@ public class RoomView extends Canvas
         for each (sprite in _avatars.values()) {
             locationUpdated(sprite);
         }
+        for each (sprite in _pendingRemoveAvatars.values()) {
+            locationUpdated(sprite);
+        }
         for each (sprite in _portals.values()) {
             locationUpdated(sprite);
         }
@@ -175,9 +178,20 @@ public class RoomView extends Canvas
         }
     }
 
+    /**
+     * A callback from avatar sprites.
+     */
+    public function moveFinished (avatar :AvatarSprite) :void
+    {
+        if (null != _pendingRemoveAvatars.remove(avatar.getOid())) {
+            removeSprite(avatar);
+        }
+    }
+
     public function dimAvatars (setDim :Boolean) :void
     {
         setActive(_avatars, !setDim);
+        setActive(_pendingRemoveAvatars, !setDim);
     }
 
     public function dimPortals (setDim :Boolean) :void
@@ -356,7 +370,11 @@ public class RoomView extends Canvas
     public function getMyAvatar () :AvatarSprite
     {
         var oid :int = _ctx.getClient().getClientOid();
-        return (_avatars.get(oid) as AvatarSprite);
+        var avatar :AvatarSprite = (_avatars.get(oid) as AvatarSprite);
+        if (avatar == null) {
+            avatar = (_pendingRemoveAvatars.get(oid) as AvatarSprite);
+        }
+        return avatar;
     }
 
     /**
@@ -400,18 +418,36 @@ public class RoomView extends Canvas
             (_sceneObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
-        var avatar :AvatarSprite = new AvatarSprite(occInfo, loc);
-        _avatars.put(bodyOid, avatar);
-        addChild(avatar);
-        avatar.setLocation(loc);
+        // see if the avatar was already created, pending removal
+        var avatar :AvatarSprite =
+            (_pendingRemoveAvatars.remove(bodyOid) as AvatarSprite);
+
+        if (avatar == null) {
+            // create it if necessary
+            avatar = new AvatarSprite(occInfo, loc);
+            _avatars.put(bodyOid, avatar);
+            addChild(avatar);
+            avatar.setLocation(loc);
+
+        } else {
+            // move the sprite back to the set of active sprites
+            _avatars.put(bodyOid, avatar);
+            avatar.moveTo(loc, _scene.getWidth());
+        }
     }
 
     protected function removeBody (bodyOid :int) :void
     {
         var avatar :AvatarSprite = (_avatars.remove(bodyOid) as AvatarSprite);
+
         if (avatar != null) {
-            removeChild(avatar);
-            avatar.shutdown();
+            if (avatar.isMoving()) {
+                _pendingRemoveAvatars.put(bodyOid, avatar);
+
+            } else {
+                removeChild(avatar);
+                avatar.shutdown();
+            }
         }
     }
 
@@ -470,6 +506,17 @@ public class RoomView extends Canvas
                 sprite.wasTraversed(entering);
                 return;
             }
+        }
+    }
+
+    protected function removeSprite (sprite :MsoySprite) :void
+    {
+        removeChild(sprite);
+        sprite.shutdown();
+
+        if (sprite is AvatarSprite) {
+            var avatar :AvatarSprite = (sprite as AvatarSprite);
+            portalTraversed(avatar.loc, false);
         }
     }
 
@@ -634,6 +681,7 @@ public class RoomView extends Canvas
         }
 
         shutdown(_avatars);
+        shutdown(_pendingRemoveAvatars);
         shutdown(_portals);
         shutdown(_furni);
 
@@ -676,11 +724,6 @@ public class RoomView extends Canvas
 
         if (PlaceObject.OCCUPANT_INFO == name) {
             removeBody((event.getOldEntry() as MsoyOccupantInfo).getBodyOid());
-
-        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
-            var sceneLoc :SceneLocation =
-                (event.getOldEntry() as SceneLocation);
-            portalTraversed(sceneLoc.loc, false);
         }
     }
 
@@ -725,6 +768,10 @@ public class RoomView extends Canvas
 
     /** A map of bodyOid -> AvatarSprite. */
     protected var _avatars :HashMap = new HashMap();
+
+    /** A map of bodyOid -> AvatarSprite for those that we'll remove
+     * when they stop moving. */
+    protected var _pendingRemoveAvatars :HashMap = new HashMap();
 
     /** A map of portalId -> Portal. */
     protected var _portals :HashMap = new HashMap();

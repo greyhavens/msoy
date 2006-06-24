@@ -17,8 +17,8 @@ public class PortalSprite extends MsoySprite
 {
     public function PortalSprite (portal :MsoyPortal)
     {
-        super(portal.media);
         _portal = portal;
+        super(portal.media);
         mouseChildren = false;
 
         // TEMP: testing
@@ -41,6 +41,16 @@ public class PortalSprite extends MsoySprite
     override protected function mouseClick (event :MouseEvent) :void
     {
         dispatchEvent(new ControllerEvent("portalClicked", _portal));
+    }
+
+    override public function getMediaScaleX () :Number
+    {
+        return _portal.scaleX;
+    }
+
+    override public function getMediaScaleY () :Number
+    {
+        return _portal.scaleY;
     }
 
     override public function get maxContentWidth () :int
@@ -66,5 +76,4 @@ public class PortalSprite extends MsoySprite
 
     protected var _portal :MsoyPortal;
 }
-
 }

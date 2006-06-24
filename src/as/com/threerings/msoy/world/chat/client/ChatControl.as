@@ -6,8 +6,10 @@ import flash.events.KeyboardEvent;
 import flash.ui.Keyboard;
 
 import mx.containers.HBox;
+import mx.containers.VBox;
 
 import mx.controls.Button;
+import mx.controls.Spacer;
 import mx.controls.TextInput;
 
 import mx.utils.StringUtil;
@@ -15,22 +17,43 @@ import mx.utils.StringUtil;
 import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MediaData;
 
 /**
  * IMPORTANT NOTE: this class was written for testing things and does not
  * necessarily represent a valid starting point for writing the chat
  * widget we'll eventually need.
  */
-public class ChatControl extends HBox
+public class ChatControl extends VBox
 {
     public function ChatControl (ctx :MsoyContext)
     {
         _ctx = ctx;
 
-        addChild(_txt = new TextInput());
+        width = 800;
+        height = 59;
+
+        // TODO: this whole class becomes control panel
+        setStyle("backgroundImage", MediaData.BASE_URL + "uibar.png");
+
+        var spacer :Spacer = new Spacer();
+        spacer.width = 10;
+        spacer.height = 10;
+        addChild(spacer);
+
+        var hbox :HBox = new HBox();
+        addChild(hbox);
+
+        spacer = new Spacer();
+        spacer.width = 10;
+        spacer.height = 10;
+        hbox.addChild(spacer);
+
+        hbox.addChild(_txt = new TextInput());
+        _txt.styleName = "chatInput";
         var but :Button = new Button();
         but.label = "Send"; // TODO: xlate
-        addChild(but);
+        hbox.addChild(but);
 
         addEventListener(Event.ADDED, wasAdded, false, 0, true);
         addEventListener(Event.REMOVED, wasRemoved, false, 0, true);

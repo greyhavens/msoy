@@ -226,8 +226,8 @@ public class MsoySprite extends Box
 
         } else {
             // scale the hotspot associated with the media
-            p.x = Math.abs(p.x * getMediaScaleX());
-            p.y = Math.abs(p.y * getMediaScaleY());
+            p = new Point(Math.abs(p.x * getMediaScaleX()),
+                Math.abs(p.y * getMediaScaleY()));
         }
         return p;
     }
@@ -303,8 +303,8 @@ public class MsoySprite extends Box
     {
         alpha = active ? 1.0 : 0.4;
         blendMode = active ? BlendMode.NORMAL : BlendMode.LAYER;
-        mouseEnabled = active;
-        //mouseChildren = active;
+        mouseEnabled = active && isInteractive();
+        mouseChildren = active && isInteractive();
     }
 
     /**

@@ -81,7 +81,7 @@ public class AvatarSprite extends MsoySprite
 
     override public function get maxContentWidth () :int
     {
-        return 250;
+        return 300;
     }
 
     override public function get maxContentHeight () :int
@@ -126,6 +126,24 @@ public class AvatarSprite extends MsoySprite
         _move.play();
     }
 
+    /**
+     * @return true if we're moving.
+     */
+    public function isMoving () :Boolean
+    {
+        return (_move != null);
+    }
+
+    override public function shutdown () :void
+    {
+        if (_move != null) {
+            _move.cancel();
+            _move = null;
+        }
+
+        super.shutdown();
+    }
+
     protected function setOrientation (orient :int) :void
     {
         var left :Boolean = (orient >= 90 && orient < 270)
@@ -142,6 +160,10 @@ public class AvatarSprite extends MsoySprite
     {
         _move = null;
         sendMessage("setAction", "standing");
+
+        if (parent is RoomView) {
+            (parent as RoomView).moveFinished(this);
+        }
     }
 
     override public function moveCompleted (orient :Number) :void

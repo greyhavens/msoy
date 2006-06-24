@@ -14,4 +14,10 @@ public class MsoyPortal extends Portal
 {
     /** The media used to represent the portal. */
     public MediaData media;
+
+    /** The x scale factor for the media. */
+    public float scaleX = 1;
+
+    /** The y scale factor for the media. */
+    public float scaleY = 1;
 }
