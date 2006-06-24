@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data;
 
+import com.samskivert.util.IntListUtil;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.TokenRing;
@@ -24,6 +26,15 @@ public class MsoyUserObject extends BodyObject
 
     /** The field name of the <code>tokens</code> field. */
     public static final String TOKENS = "tokens";
+
+    /** The field name of the <code>avatar</code> field. */
+    public static final String AVATAR = "avatar";
+
+    /** The field name of the <code>chatStyle</code> field. */
+    public static final String CHAT_STYLE = "chatStyle";
+
+    /** The field name of the <code>chatPopStyle</code> field. */
+    public static final String CHAT_POP_STYLE = "chatPopStyle";
     // AUTO-GENERATED: FIELDS END
 
     /** The scene id that the user is currently occupying. */
@@ -34,6 +45,15 @@ public class MsoyUserObject extends BodyObject
 
     /** The tokens defining the access controls for this user. */
     public TokenRing tokens;
+
+    /** The avatar that the user has chosen. */
+    public MediaData avatar;
+
+    /** The style of our chat. */
+    public short chatStyle;
+
+    /** The pop style of our chat. */
+    public short chatPopStyle;
 
     /**
      * Return true if this user is merely a guest.
@@ -66,6 +86,34 @@ public class MsoyUserObject extends BodyObject
     public OccupantInfo createOccupantInfo ()
     {
         return new MsoyOccupantInfo(this);
+    }
+
+    @Override
+    public void setOid (int oid)
+    {
+        super.setOid(oid);
+
+        // configure some starter options
+        avatar = new MediaData(AVATARS[oid % AVATARS.length]);
+        if (avatar.id == 0) {
+            chatStyle = (short) 1;
+        }
+        chatPopStyle = (short) (oid % 2);
+    }
+
+    public void alter (String field)
+    {
+        if (AVATAR.equals(field)) {
+            int dex = IntListUtil.indexOf(AVATARS, avatar.id);
+            int newId = AVATARS[(dex + 1) % AVATARS.length];
+            setAvatar(new MediaData(newId));
+
+        } else if (CHAT_STYLE.equals(field)) {
+            setChatStyle((short) ((chatStyle + 1) % 2));
+
+        } else if (CHAT_POP_STYLE.equals(field)) {
+            setChatPopStyle((short) ((chatPopStyle + 1) % 2));
+        }
     }
 
     // AUTO-GENERATED: METHODS START
@@ -116,5 +164,56 @@ public class MsoyUserObject extends BodyObject
             TOKENS, value, ovalue);
         this.tokens = value;
     }
+
+    /**
+     * Requests that the <code>avatar</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setAvatar (MediaData value)
+    {
+        MediaData ovalue = this.avatar;
+        requestAttributeChange(
+            AVATAR, value, ovalue);
+        this.avatar = value;
+    }
+
+    /**
+     * Requests that the <code>chatStyle</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setChatStyle (short value)
+    {
+        short ovalue = this.chatStyle;
+        requestAttributeChange(
+            CHAT_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
+        this.chatStyle = value;
+    }
+
+    /**
+     * Requests that the <code>chatPopStyle</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setChatPopStyle (short value)
+    {
+        short ovalue = this.chatPopStyle;
+        requestAttributeChange(
+            CHAT_POP_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
+        this.chatPopStyle = value;
+    }
     // AUTO-GENERATED: METHODS END
+
+    // TEMP: media ids for our standard avatars
+    public static final int[] AVATARS = { 0, 1, 2, 20, 21, 22, 25 };
 }

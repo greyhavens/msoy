@@ -4,6 +4,7 @@
 package com.threerings.msoy.data {
 
 import com.threerings.util.Integer;
+import com.threerings.util.Short;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -28,6 +29,15 @@ public class MsoyUserObject extends BodyObject
 
     /** The field name of the <code>tokens</code> field. */
     public static const TOKENS :String = "tokens";
+
+    /** The field name of the <code>avatar</code> field. */
+    public static const AVATAR :String = "avatar";
+
+    /** The field name of the <code>chatStyle</code> field. */
+    public static const CHAT_STYLE :String = "chatStyle";
+
+    /** The field name of the <code>chatPopStyle</code> field. */
+    public static const CHAT_POP_STYLE :String = "chatPopStyle";
     // AUTO-GENERATED: FIELDS END
 
     /** The scene id that the user is currently occupying. */
@@ -38,6 +48,15 @@ public class MsoyUserObject extends BodyObject
 
     /** The tokens defining the access controls for this user. */
     public var tokens :TokenRing;
+
+    /** The avatar that the user has chosen. */
+    public var avatar :MediaData;
+
+    /** The style of our chat. */
+    public var chatStyle :int;
+
+    /** The pop style of our chat. */
+    public var chatPopStyle :int;
 
     /**
      * Return true if this user is merely a guest.
@@ -84,7 +103,7 @@ public class MsoyUserObject extends BodyObject
     {
         var ovalue :int = this.sceneId;
         requestAttributeChange(
-            SCENE_ID, new Integer(value), new Integer(ovalue));
+            SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.sceneId = value;
     }
 
@@ -100,7 +119,7 @@ public class MsoyUserObject extends BodyObject
     {
         var ovalue :int = this.clusterOid;
         requestAttributeChange(
-            CLUSTER_OID, new Integer(value), new Integer(ovalue));
+            CLUSTER_OID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.clusterOid = value;
     }
 
@@ -110,6 +129,54 @@ public class MsoyUserObject extends BodyObject
         requestAttributeChange(
             TOKENS, value, ovalue);
         this.tokens = value;
+    }
+
+    /**
+     * Requests that the <code>avatar</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public function setAvatar (value :MediaData) :void
+    {
+        var ovalue :MediaData = this.avatar;
+        requestAttributeChange(
+            AVATAR, value, ovalue);
+        this.avatar = value;
+    }
+
+    /**
+     * Requests that the <code>chatStyle</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public function setChatStyle (value :int) :void
+    {
+        var ovalue :int = this.chatStyle;
+        requestAttributeChange(
+            CHAT_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
+        this.chatStyle = value;
+    }
+
+    /**
+     * Requests that the <code>chatPopStyle</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public function setChatPopStyle (value :int) :void
+    {
+        var ovalue :int = this.chatPopStyle;
+        requestAttributeChange(
+            CHAT_POP_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
+        this.chatPopStyle = value;
     }
     // AUTO-GENERATED: METHODS END
 
@@ -121,6 +188,9 @@ public class MsoyUserObject extends BodyObject
         out.writeInt(sceneId);
         out.writeInt(clusterOid);
         out.writeObject(tokens);
+        out.writeObject(avatar);
+        out.writeShort(chatStyle);
+        out.writeShort(chatPopStyle);
     }
 
     // documentation inherited
@@ -131,6 +201,9 @@ public class MsoyUserObject extends BodyObject
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
         tokens = (ins.readObject() as TokenRing);
+        avatar = (ins.readObject() as MediaData);
+        chatStyle = ins.readShort();
+        chatPopStyle = ins.readShort();
     }
 }
 }

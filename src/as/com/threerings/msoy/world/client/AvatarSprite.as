@@ -24,27 +24,20 @@ public class AvatarSprite extends MsoySprite
         super(occInfo.media);
 
         var txt :TextField = new TextField();
+        txt.wordWrap = false;
+        txt.multiline = false;
+        txt.restrict = "";
+        txt.autoSize = TextFieldAutoSize.CENTER;
+        txt.x = 0;
+        txt.y = 0;
         _label = txt;
+        rawChildren.addChild(txt);
 
         // set up our occupant info
         setOccupantInfo(occInfo);
 
         sendMessage("setAction", "standing");
         setOrientation(loc.orient);
-
-//        var matrix :Matrix = this.transform.matrix; // create a copy
-//        matrix.b = .5;
-//        //matrix.c = .5;
-//        this.transform.matrix = matrix;
-
-        txt.wordWrap = false;
-        txt.multiline = false;
-        txt.restrict = "";
-        txt.autoSize = TextFieldAutoSize.CENTER;
-        txt.text = occInfo.username.toString();
-        txt.x = 0;
-        txt.y = 0;
-        rawChildren.addChild(txt);
     }
 
     /**
@@ -54,7 +47,12 @@ public class AvatarSprite extends MsoySprite
     {
         _occInfo = occInfo;
 
+        if (!_occInfo.media.equals(_desc)) {
+            setup(_occInfo.media);
+        }
+
         _label.textColor = getStatusColor(_occInfo.status);
+        _label.text = occInfo.username.toString();
     }
 
     /**
@@ -92,14 +90,14 @@ public class AvatarSprite extends MsoySprite
     /**
      * Get the style of chat bubble to use for this occupant.
      */
-    public function getBubbleStyle () :int
+    public function getChatStyle () :int
     {
-        return _occInfo.bubbleStyle;
+        return _occInfo.chatStyle;
     }
 
-    public function getBubblePopStyle () :int
+    public function getChatPopStyle () :int
     {
-        return _occInfo.bubblePopStyle;
+        return _occInfo.chatPopStyle;
     }
 
     public function moveTo (destLoc :MsoyLocation, sceneWidth :int) :void
@@ -134,14 +132,14 @@ public class AvatarSprite extends MsoySprite
         return (_move != null);
     }
 
-    override public function shutdown () :void
+    override public function shutdown (completely :Boolean = true) :void
     {
-        if (_move != null) {
+        if (completely && _move != null) {
             _move.cancel();
             _move = null;
         }
 
-        super.shutdown();
+        super.shutdown(completely);
     }
 
     protected function setOrientation (orient :int) :void

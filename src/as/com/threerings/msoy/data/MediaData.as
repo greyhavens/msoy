@@ -2,6 +2,8 @@ package com.threerings.msoy.data {
 
 import flash.geom.Point;
 
+import com.threerings.util.Hashable;
+
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
@@ -10,7 +12,7 @@ import com.threerings.io.Streamable;
  * A class containing metadata about a media object.
  */
 public class MediaData
-    implements Streamable
+    implements Hashable, Streamable
 {
     public var isAVM1 :Boolean;
 
@@ -68,6 +70,18 @@ public class MediaData
     public function isInteractive () :Boolean
     {
         return Boolean(DATA[id][1]);
+    }
+
+    // documentation inherited from Hashable
+    public function hashCode () :int
+    {
+        return id;
+    }
+
+    // documentation inherited from Hashable
+    public function equals (other :Object) :Boolean
+    {
+        return (other is MediaData) && (other as MediaData).id == id;
     }
 
     // documentation inherited from interface Streamable

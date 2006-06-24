@@ -87,11 +87,22 @@ public class MsoySprite extends Box
      */
     public function MsoySprite (desc :MediaData)
     {
+        setup(desc);
+    }
+
+    protected function setup (desc :MediaData) :void
+    {
+        // shutdown any previous media
+        if (_media != null) {
+            shutdown(false);
+        }
+
         _desc = desc;
         _id = int(Math.random() * int.MAX_VALUE);
 
         // configure the media
         var url :String = desc.URL;
+        Log.getLog(this).warning("Initiating load: " + url);
         if (url.toLowerCase().lastIndexOf(".flv") ==
                 url.length - ".flv".length) {
             setupVideo(url);
@@ -106,6 +117,9 @@ public class MsoySprite extends Box
 
         // set up mouse listeners
         if (isInteractive()) {
+            mouseEnabled = true;
+            mouseChildren = true;
+
             addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
             addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
             addEventListener(MouseEvent.CLICK, mouseClick);
@@ -163,15 +177,13 @@ public class MsoySprite extends Box
         // create our loader and set up some event listeners
         var loader :Loader = new Loader();
         _media = loader;
-        loader.contentLoaderInfo.addEventListener(
-            Event.COMPLETE, loadingComplete);
-        loader.contentLoaderInfo.addEventListener(
-            IOErrorEvent.IO_ERROR, loadError);
-        loader.contentLoaderInfo.addEventListener(
-            ProgressEvent.PROGRESS, loadProgress);
+        var info :LoaderInfo = loader.contentLoaderInfo;
+        info.addEventListener(Event.COMPLETE, loadingComplete);
+        info.addEventListener(IOErrorEvent.IO_ERROR, loadError);
+        info.addEventListener(ProgressEvent.PROGRESS, loadProgress);
 
         // grab hold of the EventDispatcher we'll use for comm
-        _dispatch = loader.contentLoaderInfo.sharedEvents;
+        _dispatch = info.sharedEvents;
 
         // create a mask to prevent the media from drawing out of bounds
         if (maxContentWidth < int.MAX_VALUE  &&
@@ -188,34 +200,63 @@ public class MsoySprite extends Box
         // start it loading, add it as a child
         loader.load(new URLRequest(url), getContext(url));
         rawChildren.addChild(loader);
+
+        try {
+            updateContentDimensions(info.width, info.height);
+        } catch (err :Error) {
+            // an error is thrown trying to access these props before they're
+            // ready
+        }
     }
 
     /**
      * Stop displaying media, clean up any resources.
      */
-    public function shutdown () :void
+    public function shutdown (completely :Boolean = true) :void
     {
         try {
             if (_media is Loader) {
                 var loader :Loader = (_media as Loader);
+                // remove any listeners
+                removeListeners(loader.contentLoaderInfo);
+
+                // dispose of media
                 loader.unload();
                 loader.close();
 
+                // remove from hierarchy
+                if (loader.mask != null) {
+                    rawChildren.removeChild(loader.mask);
+                }
+                rawChildren.removeChild(loader);
+
             } else {
                 var vid :VideoDisplay = (_media as VideoDisplay);
+                // remove any listeners
+                vid.removeEventListener(ProgressEvent.PROGRESS,
+                    loadVideoProgress);
+                vid.removeEventListener(VideoEvent.READY, loadVideoReady);
                 vid.removeEventListener(VideoEvent.REWIND, videoDidRewind);
+
+                // dispose of media
                 vid.pause();
                 Prefs.setMediaPosition(_desc.id, vid.playheadTime);
                 trace("saving media pos: " + vid.playheadTime);
                 vid.stop();
                 vid.close();
+
+                // remove from hierarchy
+                removeChild(vid);
             }
         } catch (ioe :IOError) {
             trace("error shutdown " + ioe);
         }
 
-        // additional clearing: needed?
+        // clean everything up
+        _w = 0;
+        _h = 0;
         _media = null;
+        _dispatch = null;
     }
 
     public function get hotSpot () :Point
@@ -469,6 +510,7 @@ public class MsoySprite extends Box
             // an error is thrown trying to access these props before they're
             // ready
         }
+        Log.getLog(this).warning("loading progress...");
     }
 
     protected function loadVideoProgress (event :ProgressEvent) :void
@@ -505,26 +547,8 @@ public class MsoySprite extends Box
 
         updateContentDimensions(info.width, info.height);
         updateLoadingProgress(1, 1);
-
-/*** TODO: decide whether to keep this. I'm not sure we gain anything 
- by trying to remove the Loader.
-
-        // Try accessing the 'content' property and see if that generates
-        // a security error. If so, leave it where it is.
-        try {
-            info.content; // access
-        } catch (err :SecurityError) {
-            return;
-        }
-
-        // remove the loader and add the content directly
-        rawChildren.removeChild(info.loader);
-        rawChildren.addChild(info.content);
-
-        // transfer the mask, if any
-        info.content.mask = info.loader.mask;
-
-END: TODO: maybe keep? **/
+        Log.getLog(this).warning("loading complete: " + info.width + ", "  +
+            info.height);
     }
 
     /**
@@ -554,11 +578,12 @@ END: TODO: maybe keep? **/
         if (_w != ww || _h != hh) {
             _w = ww;
             _h = hh;
-            // we only care about updating the location if we don't already
-            // know a hotspot for our media
-            if (_desc.hotSpot == null) {
-                locationUpdated();
-            }
+
+            // Normally, we'd only need to tell our parent that our location
+            // changed if we have no hotspot, but we could be loading
+            // up a brand new piece of media (with a different hotspot)
+            // and so we need to relayout.
+            locationUpdated();
         }
     }
 
@@ -712,5 +737,4 @@ END: TODO: maybe keep? **/
 
     protected static var _loadCtx :HashMap = new HashMap();
 }
-
 }

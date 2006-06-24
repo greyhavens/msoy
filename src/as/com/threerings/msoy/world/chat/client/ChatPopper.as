@@ -45,7 +45,7 @@ public class ChatPopper
     {
         var bubble :ChatBubble;
         if (speaker != null) {
-            bubble = ChatBubble.createInstance(speaker.getBubbleStyle());
+            bubble = ChatBubble.createInstance(speaker.getChatStyle());
 
         } else {
             // default style
@@ -84,12 +84,6 @@ public class ChatPopper
 
         // now avoid all the other rectangles (with padding)
         var avoid :Array = new Array();
-        /*
-        for each (var b :IFlexDisplayObject in _bubbles) {
-            avoid.push(new Rectangle(b.x - PAD, b.y - PAD,
-                b.width + PAD*2, b.height + PAD*2));
-        }
-        */
         for each (var arect :Rectangle in _rects) {
             avoid.push(new Rectangle(arect.x - PAD, arect.y - PAD,
                 arect.width + PAD*2, arect.height + PAD*2));
@@ -138,7 +132,7 @@ public class ChatPopper
 
         var style :int = 0;
         if (speaker != null) {
-            style = speaker.getBubblePopStyle();
+            style = speaker.getChatPopStyle();
         }
         BubblePopStyle.animateBubble(bubble, style);
     }

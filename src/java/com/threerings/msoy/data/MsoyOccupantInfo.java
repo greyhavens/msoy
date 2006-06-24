@@ -16,10 +16,10 @@ public class MsoyOccupantInfo extends OccupantInfo
     public MediaData media;
 
     /** The style of chat bubble to use. */
-    public short bubbleStyle;
+    public short chatStyle;
 
     /** The style with which the chat bubble pops up. */
-    public short bubblePopStyle;
+    public short chatPopStyle;
 
     /** Suitable for unserialization. */
     public MsoyOccupantInfo ()
@@ -30,14 +30,8 @@ public class MsoyOccupantInfo extends OccupantInfo
     {
         super(user);
 
-        // TODO
-        media = new MediaData(AVATARS[user.getOid() % AVATARS.length]);
-        if (media.id == 0) {
-            bubbleStyle = (short) 1;
-        }
-        bubblePopStyle = (short) (user.getOid() % 2);
+        media = user.avatar;
+        chatStyle = user.chatStyle;
+        chatPopStyle = user.chatPopStyle;
     }
-
-    // TEMP: media ids for our standard avatars
-    public static final int[] AVATARS = { 0, 1, 2, 20, 21, 22, 25 };
 }

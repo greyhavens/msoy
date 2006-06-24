@@ -20,6 +20,7 @@ import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MsoyUserObject;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -129,14 +130,37 @@ public class RoomController extends SceneController
 
     protected function keyEvent (event :KeyboardEvent) :void
     {
+        var keyDown :Boolean = event.type == KeyboardEvent.KEY_DOWN;
         switch (event.keyCode) {
         case Keyboard.SHIFT:
-            _roomView.dimAvatars(event.type == KeyboardEvent.KEY_DOWN);
-            break;
+            _roomView.dimAvatars(keyDown);
+            return;
 
         case Keyboard.CONTROL:
-            _roomView.dimFurni(event.type == KeyboardEvent.KEY_DOWN);
-            break;
+            _roomView.dimFurni(keyDown);
+            return;
+        }
+
+        if (keyDown) {
+            var frob :String = null;
+            switch (event.keyCode) {
+            case Keyboard.F1:
+                frob = MsoyUserObject.AVATAR;
+                break;
+
+            case Keyboard.F2:
+                frob = MsoyUserObject.CHAT_STYLE;
+                break;
+
+            case Keyboard.F3:
+                frob = MsoyUserObject.CHAT_POP_STYLE;
+                break;
+            }
+
+            if (frob != null) {
+                _mctx.getClient().getClientObject().postMessage(
+                    "alterTEMP", [ frob ]);
+            }
         }
     }
 
