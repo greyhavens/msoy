@@ -36,7 +36,7 @@ public class AvatarSprite extends MsoySprite
         // set up our occupant info
         setOccupantInfo(occInfo);
 
-        sendMessage("setAction", "standing");
+        sendMessage("setAction", (_move == null) ? "standing" : "walking");
         setOrientation(loc.orient);
     }
 

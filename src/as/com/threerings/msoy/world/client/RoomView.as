@@ -18,6 +18,7 @@ import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
 
 import mx.events.FlexEvent;
+import mx.events.ResizeEvent;
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
@@ -58,14 +59,16 @@ public class RoomView extends Canvas
     {
         _ctx = ctx;
         clipContent = false; // needed because we scroll
+        includeInLayout = false;
 
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
-        width = 800;
-        height = width / PHI;
+        width = TARGET_WIDTH;
+        height = TARGET_HEIGHT;
 
         addEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
+        addEventListener(ResizeEvent.RESIZE, didResize);
     }
 
     protected function updateComplete (evt :FlexEvent) :void
@@ -73,6 +76,22 @@ public class RoomView extends Canvas
         removeEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
         ChatPopper.setChatView(this);
 
+        relayout();
+    }
+
+    public function setViewSize (w :Number, h :Number) :void
+    {
+        // de-futz the scale value
+        var scale :Number = int(100 * h / TARGET_HEIGHT) / 100;
+
+        scaleX = scale;
+        scaleY = scale;
+        height = TARGET_HEIGHT;
+        width = (w / scale);
+    }
+
+    protected function didResize (event :ResizeEvent) :void
+    {
         relayout();
     }
 
@@ -107,7 +126,7 @@ public class RoomView extends Canvas
      */
     protected function configureScrollRect () :void
     {
-        if (_scene.getWidth() > unscaledWidth) {
+        if (_scene.getWidth() > width) {
             scrollRect = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
         } else {
             scrollRect = null;
@@ -792,5 +811,8 @@ public class RoomView extends Canvas
     private static const MAX_SCALE :Number = 1;
     private static const MAX_COORD :Number = 1;
     private static const PHI :Number = (1 + Math.sqrt(5)) / 2;
+
+    private static const TARGET_WIDTH :Number = 800;
+    private static const TARGET_HEIGHT :Number = TARGET_WIDTH / PHI;
 }
 }

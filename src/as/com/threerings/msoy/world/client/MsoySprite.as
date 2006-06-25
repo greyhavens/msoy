@@ -102,7 +102,6 @@ public class MsoySprite extends Box
 
         // configure the media
         var url :String = desc.URL;
-        Log.getLog(this).warning("Initiating load: " + url);
         if (url.toLowerCase().lastIndexOf(".flv") ==
                 url.length - ".flv".length) {
             setupVideo(url);
@@ -210,7 +209,10 @@ public class MsoySprite extends Box
     }
 
     /**
-     * Stop displaying media, clean up any resources.
+     * Unload the media we're displaying, clean up any resources.
+     *
+     * @param completely if true, we're going away and should stop
+     * everything. Otherwise, we're just loading up new media.
      */
     public function shutdown (completely :Boolean = true) :void
     {
@@ -510,7 +512,6 @@ public class MsoySprite extends Box
             // an error is thrown trying to access these props before they're
             // ready
         }
-        Log.getLog(this).warning("loading progress...");
     }
 
     protected function loadVideoProgress (event :ProgressEvent) :void
@@ -547,8 +548,6 @@ public class MsoySprite extends Box
 
         updateContentDimensions(info.width, info.height);
         updateLoadingProgress(1, 1);
-        Log.getLog(this).warning("loading complete: " + info.width + ", "  +
-            info.height);
     }
 
     /**

@@ -40,10 +40,8 @@ public class MsoyContext
             new SharedObjectSceneRepository(), new MsoySceneFactory());
         _spotdir = new SpotSceneDirector(this, _locdir, _scenedir);
 
-        // clean up the application, set up the top panel
-        _app.removeAllChildren();
-        _topPanel = new TopPanel(this);
-        _app.addChild(_topPanel);
+        // set up the top panel
+        _topPanel = new TopPanel(this, _app);
     }
 
     /**
