@@ -69,6 +69,12 @@ public class PortalSprite extends MsoySprite
         return true;
     }
 
+    override public function hasAction () :Boolean
+    {
+        // all portals have action
+        return true;
+    }
+
     override protected function getHoverColor () :uint
     {
         return 0xe04040; // red

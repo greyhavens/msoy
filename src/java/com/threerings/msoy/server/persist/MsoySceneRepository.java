@@ -52,6 +52,8 @@ public class MsoySceneRepository
         MsoyPortal portal = new MsoyPortal();
         portal.portalId = 1;
         portal.targetPortalId = 1;
+        MsoyPortal p2;
+        FurniData furn;
 
         if (sceneId == 1) {
             // crayon room
@@ -65,7 +67,7 @@ public class MsoySceneRepository
             portal.scaleX = portal.scaleY = (float) (1 / .865f);
             portal.media = new MediaData(34); // smile door
 
-            MsoyPortal p2 = new MsoyPortal();
+            p2 = new MsoyPortal();
             p2.portalId = 2;
             p2.targetPortalId = 1;
             p2.targetSceneId = 6;
@@ -91,7 +93,14 @@ public class MsoySceneRepository
             p2.media = new MediaData(31); // ladder
             spotty.addPortal(p2);
 
-            FurniData furn;
+            p2 = new MsoyPortal();
+            p2.portalId = 5;
+            p2.targetPortalId = 1;
+            p2.targetSceneId = 7;
+            p2.loc = new MsoyLocation(.95, 0, 1, 0);
+            p2.scaleX = p2.scaleY = .3f;
+            p2.media = new MediaData(33); // aqua door (made small)
+            spotty.addPortal(p2);
 
             furn = new FurniData();
             furn.id = 1;
@@ -136,7 +145,6 @@ public class MsoySceneRepository
             portal.targetSceneId = 1;
             portal.media = new MediaData(3); // alley door
 
-            FurniData furn;
             furn = new FurniData();
             furn.id = 0;
             furn.media = new MediaData(10); // director's chair
@@ -153,8 +161,6 @@ public class MsoySceneRepository
             portal.targetSceneId = 6;
             portal.targetPortalId = 2;
             portal.media = new MediaData(19); // bendaydoor
-
-            FurniData furn;
 
             furn = new FurniData();
             furn.id = 1;
@@ -179,8 +185,6 @@ public class MsoySceneRepository
             portal.targetPortalId = 3;
             portal.scaleX = -1;
             portal.media = new MediaData(6); // rainbow door
-
-            FurniData furn;
 
             furn = new FurniData();
             furn.id = 1;
@@ -246,7 +250,7 @@ public class MsoySceneRepository
             portal.targetPortalId = 2;
             portal.media = new MediaData(18); // bendaydoor
 
-            MsoyPortal p2 = new MsoyPortal();
+            p2 = new MsoyPortal();
             p2.portalId = 2;
             p2.targetSceneId = 3;
             p2.targetPortalId = 1;
@@ -264,13 +268,28 @@ public class MsoySceneRepository
             spotty.addPortal(p2);
             */
 
-            FurniData furn;
-
             furn = new FurniData();
             furn.id = 1;
             furn.media = new MediaData(17); // comic foreground
             furn.loc = new MsoyLocation(.5, 0, 0, 0);
             model.addFurni(furn);
+
+        } else if (sceneId == 7) {
+            // game room background
+            model.width = 800;
+
+            furn = new FurniData();
+            furn.id = 1;
+            furn.media = new MediaData(15); // 3d logic
+            furn.loc = new MsoyLocation(.5, 0, 1, 0);
+            furn.scaleX = 1.1f;
+            furn.scaleY = .9f;
+            model.addFurni(furn);
+
+            portal.loc = new MsoyLocation(.5, 0, .5, 0);
+            portal.targetSceneId = 1;
+            portal.targetPortalId = 5;
+            portal.media = new MediaData(19); // bendaytransport
 
         } else {
             System.err.println("Unknown scene: " + sceneId);

@@ -75,7 +75,7 @@ class FireBugTarget extends LineFormattedTarget
     {
         // TEMP: needed because of bug in ExternalInterface
         // (long lines are unterminated)
-        var max_length :int = 100;
+        var max_length :int = 79;
         while (msg.length > max_length) {
             ExternalInterface.call("console.debug",
                 msg.substring(0, max_length));

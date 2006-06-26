@@ -121,12 +121,12 @@ public class MediaData
         [ "pinball.swf", true, new Point(100, 252) ],
  /*10*/ [ "directorschair.swf", false, new Point(54, 154) ],
         [ "alley.png", false ],
-        [ "curtain.swf", false, new Point(130, 530) ],
+        [ "curtain.swf", true, new Point(130, 530) ],
         [ "BollWeevil.mp3", false ],
         [ "http://sd165.sivit.org/random_4432/files/420.swf",
                 false, null, true ],
  /*15*/ [ "http://www.microgames.info/games/3d_logic/loader_3d_logic.swf",
-                false, null, true ],
+                true, null, true ],
         [ "comicroom.png", false ],
         [ "comicroomforeground.png", false ],
         [ "bendaydoor.swf", false ],
@@ -153,8 +153,8 @@ public class MediaData
     ];
 
     public static const BASE_URL :String =
-        //"http://tasman.sea.earth.threerings.net/~ray/msoy/";
-        "http://ice.puzzlepirates.com/msoy/";
+        "http://tasman.sea.earth.threerings.net/~ray/msoy/";
+        //"http://ice.puzzlepirates.com/msoy/";
 }
 
 }

@@ -561,20 +561,23 @@ public class RoomView extends Canvas
         updateDrawnRoom();
 
         // set up the background image
-        _bkg = new MsoySprite(_scene.getBackground());
-        switch (_scene.getType()) {
-        case "image":
-            // by adding it to the raw children, it does not participate
-            // in Z order movements
-            _bkg.includeInLayout = false;
-            addChild(_bkg);
-            _bkg.setLocation([.5, 0, 0, 0]);
-            break;
+        var bkgMedia :MediaData = _scene.getBackground();
+        if (bkgMedia != null) {
+            _bkg = new MsoySprite(_scene.getBackground());
+            switch (_scene.getType()) {
+            case "image":
+                // by adding it to the raw children, it does not participate
+                // in Z order movements
+                _bkg.includeInLayout = false;
+                addChild(_bkg);
+                _bkg.setLocation([.5, 0, 0, 0]);
+                break;
 
-        default:
-            addChild(_bkg);
-            _bkg.setLocation([.5, 0, 1, 0]);
-            break;
+            default:
+                addChild(_bkg);
+                _bkg.setLocation([.5, 0, 1, 0]);
+                break;
+            }
         }
 
         // set up any portals

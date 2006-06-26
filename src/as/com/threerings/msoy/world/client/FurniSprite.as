@@ -38,6 +38,12 @@ public class FurniSprite extends MsoySprite
     }
 
     // documentation inherited
+    override public function hasAction () :Boolean
+    {
+        return (_furni.action != null);
+    }
+
+    // documentation inherited
     override public function isInteractive () :Boolean
     {
         return _desc.isInteractive();

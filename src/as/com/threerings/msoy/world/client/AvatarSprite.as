@@ -40,6 +40,15 @@ public class AvatarSprite extends MsoySprite
         setOrientation(loc.orient);
     }
 
+    override protected function setup (desc :MediaData) :void
+    {
+        super.setup(desc);
+
+        if (_label != null) {
+            rawChildren.setChildIndex(_label, rawChildren.numChildren - 1);
+        }
+    }
+
     /**
      * Update the occupant info.
      */
@@ -185,6 +194,13 @@ public class AvatarSprite extends MsoySprite
     override public function isInteractive () :Boolean
     {
         return true;
+    }
+
+    override protected function contentDimensionsUpdated () :void
+    {
+        super.contentDimensionsUpdated();
+        _label.width = _w;
+        _label.x = 0;
     }
 
     protected var _occInfo :MsoyOccupantInfo;

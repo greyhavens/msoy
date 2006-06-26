@@ -79,6 +79,9 @@ import com.threerings.util.HashMap;
  */
 public class MsoySprite extends Box
 {
+    /** A log instance that can be shared by sprites. */
+    protected static const log :Log = Log.getLog(MsoySprite);
+
     /** The current logical coordinate of this media. */
     public const loc :MsoyLocation = new MsoyLocation();
 
@@ -119,14 +122,12 @@ public class MsoySprite extends Box
             mouseEnabled = true;
             mouseChildren = true;
 
-            addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
-            addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-            addEventListener(MouseEvent.CLICK, mouseClick);
-/*
-            loader.addEventListener(MouseEvent.CLICK, mouseClickCap, true);
-            loader.addEventListener(MouseEvent.CLICK, mouseClickCap);
-            addEventListener(MouseEvent.CLICK, mouseClickCap);
-            */
+            if (hasAction()) {
+                addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+                addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+                addEventListener(MouseEvent.CLICK, mouseClick);
+            }
+
         } else {
             mouseEnabled = false;
             mouseChildren = false;
@@ -232,7 +233,7 @@ public class MsoySprite extends Box
                 }
                 rawChildren.removeChild(loader);
 
-            } else {
+            } else if (_media is VideoDisplay) {
                 var vid :VideoDisplay = (_media as VideoDisplay);
                 // remove any listeners
                 vid.removeEventListener(ProgressEvent.PROGRESS,
@@ -249,9 +250,12 @@ public class MsoySprite extends Box
 
                 // remove from hierarchy
                 removeChild(vid);
+
+            } else if (_media != null) {
+                log.warning("Missing shutdown for media type: " + _media);
             }
         } catch (ioe :IOError) {
-            trace("error shutdown " + ioe);
+            log.warning("Error shutting down media: " + ioe);
         }
 
         // clean everything up
@@ -580,13 +584,17 @@ public class MsoySprite extends Box
         if (_w != ww || _h != hh) {
             _w = ww;
             _h = hh;
-
-            // Normally, we'd only need to tell our parent that our location
-            // changed if we have no hotspot, but we could be loading
-            // up a brand new piece of media (with a different hotspot)
-            // and so we need to relayout.
-            locationUpdated();
+            contentDimensionsUpdated();
         }
+    }
+
+    protected function contentDimensionsUpdated () :void
+    {
+        // Normally, we'd only need to tell our parent that our location
+        // changed if we have no hotspot, but we could be loading
+        // up a brand new piece of media (with a different hotspot)
+        // and so we need to relayout.
+        locationUpdated();
     }
 
     /**
@@ -598,7 +606,9 @@ public class MsoySprite extends Box
         var prog :Number = (total == 0) ? 0 : (soFar / total);
         graphics.clear();
         if (prog >= 1) {
-            (parent as Container).invalidateDisplayList();
+            if (parent != null) {
+                (parent as Container).invalidateDisplayList();
+            }
             return; // once we're 100% loaded, we display no progress biz
         }
 
@@ -611,6 +621,11 @@ public class MsoySprite extends Box
     }
 
     public function isInteractive () :Boolean
+    {
+        return false;
+    }
+
+    public function hasAction () :Boolean
     {
         return false;
     }
