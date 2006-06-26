@@ -153,8 +153,8 @@ public class MediaData
     ];
 
     public static const BASE_URL :String =
-        "http://tasman.sea.earth.threerings.net/~ray/msoy/";
-        //"http://ice.puzzlepirates.com/msoy/";
+        //"http://tasman.sea.earth.threerings.net/~ray/msoy/";
+        "http://ice.puzzlepirates.com/msoy/";
 }
 
 }
