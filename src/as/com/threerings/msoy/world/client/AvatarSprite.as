@@ -45,6 +45,7 @@ public class AvatarSprite extends MsoySprite
         super.setup(desc);
 
         if (_label != null) {
+            // ensure the name label always stays on top
             rawChildren.setChildIndex(_label, rawChildren.numChildren - 1);
         }
     }
@@ -199,6 +200,8 @@ public class AvatarSprite extends MsoySprite
     override protected function contentDimensionsUpdated () :void
     {
         super.contentDimensionsUpdated();
+
+        // ensure the name label is centered and reasonably located
         _label.width = _w;
         _label.x = 0;
     }

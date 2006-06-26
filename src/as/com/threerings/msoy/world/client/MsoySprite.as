@@ -46,6 +46,8 @@ import mx.effects.Glow;
 import mx.events.EffectEvent;
 import mx.events.VideoEvent;
 
+import com.threerings.util.StringUtil;
+
 import com.threerings.media.image.ImageUtil;
 
 import com.threerings.msoy.client.Prefs;
@@ -105,8 +107,7 @@ public class MsoySprite extends Box
 
         // configure the media
         var url :String = desc.URL;
-        if (url.toLowerCase().lastIndexOf(".flv") ==
-                url.length - ".flv".length) {
+        if (StringUtil.endsWith(url.toLowerCase(), ".flv")) {
             setupVideo(url);
 
         } else {
@@ -140,6 +141,7 @@ public class MsoySprite extends Box
     protected function setupVideo (url :String) :void
     {
         var vid :VideoDisplay = new VideoDisplay();
+        vid.autoPlay = false;
         _media = vid;
         addChild(vid);
         vid.addEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
@@ -148,6 +150,7 @@ public class MsoySprite extends Box
 
         // start it loading
         vid.source = url;
+        vid.load();
 
         /*
         var timer :Timer = new Timer(1000);
@@ -217,6 +220,7 @@ public class MsoySprite extends Box
      */
     public function shutdown (completely :Boolean = true) :void
     {
+        trace("Shutting down old media : " + _media + ": " + _desc.URL);
         try {
             if (_media is Loader) {
                 var loader :Loader = (_media as Loader);
@@ -224,8 +228,12 @@ public class MsoySprite extends Box
                 removeListeners(loader.contentLoaderInfo);
 
                 // dispose of media
+                try {
+                    loader.close();
+                } catch (ioe :IOError) {
+                    // ignore
+                }
                 loader.unload();
-                loader.close();
 
                 // remove from hierarchy
                 if (loader.mask != null) {
@@ -245,8 +253,12 @@ public class MsoySprite extends Box
                 vid.pause();
                 Prefs.setMediaPosition(_desc.id, vid.playheadTime);
                 trace("saving media pos: " + vid.playheadTime);
+                try {
+                    vid.close();
+                } catch (ioe :IOError) {
+                    // ignore
+                }
                 vid.stop();
-                vid.close();
 
                 // remove from hierarchy
                 removeChild(vid);
@@ -256,6 +268,7 @@ public class MsoySprite extends Box
             }
         } catch (ioe :IOError) {
             log.warning("Error shutting down media: " + ioe);
+            log.logStackTrace(ioe);
         }
 
         // clean everything up
@@ -539,6 +552,7 @@ public class MsoySprite extends Box
         // set the position of the media to the specified timestamp
         vid.playheadTime = Prefs.getMediaPosition(_desc.id);
         trace("restored playhead time: " + Prefs.getMediaPosition(_desc.id));
+        vid.play();
 
         // remove the two listeners
         vid.removeEventListener(ProgressEvent.PROGRESS, loadVideoProgress);

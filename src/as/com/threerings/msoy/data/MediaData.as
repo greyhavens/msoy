@@ -150,6 +150,9 @@ public class MediaData
  /*35*/ [ "candles.png", false, new Point(76, 0) ],
         [ "cedric.swf", false, new Point(133, 376) ],
         [ "frame.png", false, new Point(151, 111) ],
+        [ "soy.swf", false ],
+        [ "mthomasbunny.swf", false, new Point(155, 360) ],
+ /*40*/ [ "mjohnsonbunny.swf", false, new Point(155, 360) ],
     ];
 
     public static const BASE_URL :String =
