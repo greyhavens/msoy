@@ -149,6 +149,7 @@ public class MediaData
         [ "smile_door.png", false, new Point(88, 327) ],
  /*35*/ [ "candles.png", false, new Point(76, 0) ],
         [ "cedric.swf", false, new Point(133, 376) ],
+        [ "frame.png", false, new Point(151, 111) ],
     ];
 
     public static const BASE_URL :String =

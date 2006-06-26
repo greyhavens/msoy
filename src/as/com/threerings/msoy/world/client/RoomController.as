@@ -112,6 +112,9 @@ public class RoomController extends SceneController
 
             // mouse events are propogated upwards to parent components
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
+            if (curLoc == null) {
+                return; // we've already left, ignore the click
+            }
 
             // calculate where the location is
             var newLoc :MsoyLocation = _roomView.pointToLocation(p.x, p.y);

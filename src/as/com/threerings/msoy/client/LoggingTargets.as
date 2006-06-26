@@ -73,6 +73,16 @@ class FireBugTarget extends LineFormattedTarget
 
     override mx_internal function internalLog (msg :String) :void
     {
+        // TEMP: needed because of bug in ExternalInterface
+        // (long lines are unterminated)
+        var max_length :int = 100;
+        while (msg.length > max_length) {
+            ExternalInterface.call("console.debug",
+                msg.substring(0, max_length));
+            msg = msg.substring(max_length);
+        }
+        // END: temp
+
         ExternalInterface.call("console.debug", msg);
     }
 }

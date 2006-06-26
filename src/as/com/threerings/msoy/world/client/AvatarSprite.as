@@ -118,7 +118,14 @@ public class AvatarSprite extends MsoySprite
         _move = new SceneMove(this);
         _move.src = this.loc;
         _move.dest = destLoc;
-        _move.duration = destLoc.distance(this.loc) * sceneWidth * 6; // TODO
+        //_move.duration = destLoc.distance(this.loc) * sceneWidth * 6; // TODO
+
+        var dx :Number = destLoc.x - loc.x;
+        var dy :Number = destLoc.y - loc.y;
+        var dz :Number = destLoc.z - loc.z;
+        _move.duration = Math.sqrt(36 * dx * dx * sceneWidth * sceneWidth +
+            dy * dy * 4 + dz * dz * 9);
+
         _move.addEventListener(EffectEvent.EFFECT_END, moveStopped);
 
         _move.play();

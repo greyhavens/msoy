@@ -453,6 +453,8 @@ public class MsoySprite extends Box
 
     protected function getContext (url :String) :LoaderContext
     {
+        return null;
+        /*
         var loadCtx :LoaderContext = (_loadCtx.get(url) as LoaderContext);
         if (loadCtx == null) {
 //            trace("Creating new loadctx for " + url);
@@ -465,6 +467,7 @@ public class MsoySprite extends Box
 //            _loadCtx.put(url, loadCtx);
         }
         return loadCtx;
+        */
     }
 
     /**
