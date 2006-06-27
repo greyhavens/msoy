@@ -153,6 +153,12 @@ public class MediaData
         [ "soy.swf", false ],
         [ "mthomasbunny.swf", false, new Point(155, 360) ],
  /*40*/ [ "mjohnsonbunny.swf", false, new Point(155, 360) ],
+        [ "npopovichbunny.swf", false, new Point(155, 360) ],
+        [ "rbeerbunny.swf", false, new Point(155, 360) ],
+        [ "akapolkabunny.swf", false, new Point(155, 360) ],
+        [ "mbaynebunny.swf", false, new Point(155, 360) ],
+ /*45*/ [ "jleplastrierbunny.swf", false, new Point(155, 360) ],
+        [ "jgramsebunny.swf", false, new Point(155, 360) ],
     ];
 
     public static const BASE_URL :String =

@@ -9,6 +9,8 @@ import flash.ui.ContextMenu;
 import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 
+import com.threerings.mx.managers.CursorManager;
+
 import com.threerings.util.MenuUtil;
 
 import com.threerings.crowd.client.PlaceView;
@@ -58,7 +60,11 @@ public class RoomController extends SceneController
         _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
         configureContextMenu();
 
+        _targetCursorId = CursorManager.addCursor(TargetCursor, 5, 5);
+
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+        _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
         _roomView.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheeled);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
@@ -68,6 +74,8 @@ public class RoomController extends SceneController
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.removeEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+        _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
         _roomView.stage.removeEventListener(MouseEvent.MOUSE_WHEEL,
             mouseWheeled);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
@@ -75,6 +83,8 @@ public class RoomController extends SceneController
 
         _scene = null;
         configureContextMenu();
+
+        CursorManager.removeCursor(_targetCursorId);
 
         super.didLeavePlace(plobj);
     }
@@ -102,6 +112,27 @@ public class RoomController extends SceneController
         }
 
         return true;
+    }
+
+    protected function mouseOut (event :MouseEvent) :void
+    {
+        CursorManager.setCursor(CursorManager.SYSTEM_CURSOR);
+    }
+
+    protected function mouseMove (event :MouseEvent) :void
+    {
+        var cursId :int = CursorManager.SYSTEM_CURSOR;
+
+        if (_roomView.isLocationTarget(event.target as DisplayObject)) {
+            var p :Point = _roomView.globalToLocal(
+                new Point(event.stageX, event.stageY));
+            var newLoc :MsoyLocation = _roomView.pointToLocation(p.x, p.y);
+            if (newLoc != null) {
+                cursId = _targetCursorId;
+            }
+        }
+
+        CursorManager.setCursor(cursId);
     }
 
     protected function mouseClicked (event :MouseEvent) :void
@@ -219,5 +250,8 @@ public class RoomController extends SceneController
 
     /** The context menu. */
     protected var _menu :ContextMenu;
+
+    /** The cursor id we use for our special target cursor. */
+    protected var _targetCursorId :int;
 }
 }

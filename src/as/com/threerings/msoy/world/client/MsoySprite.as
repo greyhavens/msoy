@@ -37,6 +37,7 @@ import flash.net.URLRequest;
 import flash.utils.Timer;
 
 import mx.core.Container;
+import mx.core.UIComponent;
 
 import mx.containers.Box;
 import mx.controls.VideoDisplay;
@@ -264,7 +265,11 @@ public class MsoySprite extends Box
                 removeChild(vid);
 
             } else if (_media != null) {
-                log.warning("Missing shutdown for media type: " + _media);
+                if (_media is UIComponent) {
+                    removeChild(_media);
+                } else {
+                    rawChildren.removeChild(_media);
+                }
             }
         } catch (ioe :IOError) {
             log.warning("Error shutting down media: " + ioe);
@@ -505,9 +510,10 @@ public class MsoySprite extends Box
         var info :LoaderInfo = (event.target as LoaderInfo);
         removeListeners(info);
 
-        // remove all children
-        for (var ii :int = rawChildren.numChildren - 1; ii >= 0; ii--) {
-            rawChildren.removeChildAt(ii);
+        var loader :Loader = (_media as Loader);
+        rawChildren.removeChild(loader);
+        if (loader.mask != null) {
+            rawChildren.removeChild(loader.mask);
         }
 
         // create a 'broken media' image and use that instead
@@ -519,7 +525,8 @@ public class MsoySprite extends Box
         if (h == -1) {
             h = 100;
         }
-        rawChildren.addChild(ImageUtil.createErrorImage(w, h));
+        _media = ImageUtil.createErrorImage(w, h);
+        rawChildren.addChild(_media);
     }
 
     protected function loadProgress (event :ProgressEvent) :void

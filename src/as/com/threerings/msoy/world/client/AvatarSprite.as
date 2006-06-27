@@ -26,6 +26,7 @@ public class AvatarSprite extends MsoySprite
         var txt :TextField = new TextField();
         txt.wordWrap = false;
         txt.multiline = false;
+        txt.selectable = false;
         txt.restrict = "";
         txt.autoSize = TextFieldAutoSize.CENTER;
         txt.x = 0;
