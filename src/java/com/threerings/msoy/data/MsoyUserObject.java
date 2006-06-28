@@ -215,6 +215,8 @@ public class MsoyUserObject extends BodyObject
     // AUTO-GENERATED: METHODS END
 
     // TEMP: media ids for our standard avatars
-    public static final int[] AVATARS =
-        { 0, 1, 2, 20, 21, 22, 25, 38, 39, 40, 41, 42, 43, 44, 45, 46 };
+    public static final int[] AVATARS = {
+        0, 1, 2, 20, 21, 22, 25, 38, 39,
+        40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50
+    };
 }
