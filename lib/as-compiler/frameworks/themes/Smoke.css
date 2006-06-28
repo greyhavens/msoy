@@ -67,6 +67,17 @@ ApplicationControlBar
 	shadowDistance: 5;
 }
 
+/*
+//------------------------------
+//  .comboDropDown
+//------------------------------
+*/
+
+.comboDropDown
+{
+	backgroundAlpha: 0.6;
+	color: #0B333C;
+}
 
 /*
 //------------------------------

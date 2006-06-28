@@ -118,9 +118,6 @@
     <component id="ZipCodeValidator" class="mx.validators.ZipCodeValidator"/>
     <component id="Zoom" class="mx.effects.Zoom"/>
 
-    <!-- automation -->
-    <component id="TEAPluginAdapter" class="mx.automation.TEAPluginAdapter"/>
-
     <!-- primitives -->
     <component id="Array" class="Array" lookupOnly="true"/>
     <component id="Boolean" class="Boolean" lookupOnly="true"/>

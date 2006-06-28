@@ -135,9 +135,12 @@ ComboBox
 
 	disabledSkin: Embed(source="AeonGraphical.swf", symbol="ComboBoxArrow_disabledSkin");
 	downSkin: Embed(source="AeonGraphical.swf", symbol="ComboBoxArrow_downSkin");
+	editableDisabledSkin: Embed(source="AeonGraphical.swf", symbol="ComboBoxArrow_editableDisabledSkin");
+	editableDownSkin: Embed(source="AeonGraphical.swf", symbol="ComboBoxArrow_editableDownSkin");
+	editableOverSkin: Embed(source="AeonGraphical.swf", symbol="ComboBoxArrow_editableOverSkin");
+	editableUpSkin: Embed(source="AeonGraphical.swf", symbol="ComboBoxArrow_editableUpSkin");
 	overSkin: Embed(source="AeonGraphical.swf", symbol="ComboBoxArrow_overSkin");
 	upSkin: Embed(source="AeonGraphical.swf", symbol="ComboBoxArrow_upSkin");
-
 }		
 
 

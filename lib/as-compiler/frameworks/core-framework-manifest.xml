@@ -121,6 +121,8 @@
     <component id="Boolean" class="Boolean" lookupOnly="true"/>
     <component id="Date" class="Date" lookupOnly="true"/>
     <component id="Number" class="Number" lookupOnly="true"/>
+    <component id="int" class="int" lookupOnly="true"/>
+    <component id="uint" class="uint" lookupOnly="true"/>
     <component id="String" class="String" lookupOnly="true"/>
 	<component id="Object" class="Object" lookupOnly="true"/>
     <component id="Class" class="Class" lookupOnly="true"/>
