@@ -29,7 +29,7 @@ public class SceneMoveInstance extends TweenEffectInstance
 
         EffectManager.mx_internal::startVectorEffect(IUIComponent(target));
 
-        tween = mx_internal::createTween(
+        tween = createTween(
             this,
             [ src.x, src.y, src.z, src.orient ],
             [ dest.x, dest.y, dest.z, dest.orient ],
