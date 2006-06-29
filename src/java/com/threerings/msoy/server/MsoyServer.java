@@ -5,6 +5,9 @@ package com.threerings.msoy.server;
 
 import java.util.logging.Level;
 
+import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.StaticConnectionProvider;
+
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
@@ -28,8 +31,8 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyServer extends WhirledServer
 {
-    /** The oid of the global chat room. */
-    public static int chatOid;
+    /** The connection provider used to access our JDBC databases. */
+    public static ConnectionProvider conprov;
 
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRep;
@@ -41,6 +44,8 @@ public class MsoyServer extends WhirledServer
     public void init ()
         throws Exception
     {
+        conprov = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
+
         super.init();
 
         // set up the right client class
@@ -52,15 +57,6 @@ public class MsoyServer extends WhirledServer
         invmgr.registerDispatcher(new SpotDispatcher(spotprov), true);
         sceneRep = (MsoySceneRepository) _screp;
 
-        // create the global chat place
-//        plreg.createPlace(new RoomConfig(),
-//            new PlaceRegistry.CreationObserver() {
-//                public void placeCreated (PlaceObject place, PlaceManager plmgr)
-//                {
-//                    chatOid = place.getOid();
-//                }
-//            });
-
         log.info("Msoy server initialized.");
     }
 
@@ -68,7 +64,7 @@ public class MsoyServer extends WhirledServer
     protected SceneRepository createSceneRepository ()
         throws Exception
     {
-        return new MsoySceneRepository(null);
+        return new MsoySceneRepository(conprov);
     }
 
     // documentation inherited

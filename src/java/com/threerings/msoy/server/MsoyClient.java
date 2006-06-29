@@ -41,7 +41,7 @@ public class MsoyClient extends WhirledClient
     {
         super.populateBootstrapData(data);
 
-        ((MsoyBootstrapData) data).chatOid = MsoyServer.chatOid;
+        //((MsoyBootstrapData) data).chatOid = MsoyServer.chatOid;
     }
 
     @Override

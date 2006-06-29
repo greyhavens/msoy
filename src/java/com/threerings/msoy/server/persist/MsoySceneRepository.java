@@ -3,15 +3,29 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+
+import java.util.ArrayList;
+
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.jdbc.JDBCUtil;
+import com.samskivert.jdbc.JORARepository;
+import com.samskivert.jdbc.SimpleRepository;
 
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneModel;
 import com.threerings.whirled.server.persist.SceneRepository;
+import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.data.MediaData;
@@ -24,13 +38,38 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 /**
  * Provides scene storage services for the msoy server.
  */
-public class MsoySceneRepository
+public class MsoySceneRepository extends SimpleRepository
     implements SceneRepository
 {
+    /**
+     * The database identifier used when establishing a connection.
+     */
+    public static final String SCENE_DB_IDENT = "scenedb";
+
+    /**
+     * Construct.
+     */
     public MsoySceneRepository (ConnectionProvider provider)
         throws PersistenceException
     {
-        // TODO
+        super(provider, SCENE_DB_IDENT);
+
+        maintenance("analyze", "SCENES");
+        maintenance("analyze", "PORTALS");
+        maintenance("analyze", "FURNI");
+    }
+
+    @Override
+    protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
+        throws SQLException, PersistenceException
+    {
+        // let's leave this in here even if we just call super, because
+        // migration code will come and go
+        super.migrateSchema(conn, liaison);
+
+        if (!JDBCUtil.tableExists(conn, "SCENES")) {
+            createAndPopulate(conn, liaison);
+        }
     }
 
     // documentation inherited from interface SceneRepository
@@ -40,13 +79,268 @@ public class MsoySceneRepository
     }
 
     // documentation inherited from interface SceneRepository
-    public SceneModel loadSceneModel (int sceneId)
+    public SceneModel loadSceneModel (final int sceneId)
+        throws PersistenceException, NoSuchSceneException
     {
-        // TODO: real implementation
+        final MsoySceneModel model = new MsoySceneModel();
+        final SpotSceneModel spotModel = new SpotSceneModel();
+        model.addAuxModel(spotModel);
+        model.sceneId = sceneId;
+
+        Boolean success = execute(new Operation<Boolean>() {
+            public Boolean invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                Statement stmt = conn.createStatement();
+                try {
+                    // Load: basic scene data
+                    ResultSet rs = stmt.executeQuery("select " +
+                        "VERSION, NAME, TYPE, DEF_PORTAL_ID, WIDTH, " +
+                        "BACKGROUND, MUSIC " +
+                        "from SCENES where SCENE_ID=" + sceneId);
+                    if (rs.next()) {
+                        model.version = rs.getInt(1);
+                        model.name = rs.getString(2);
+                        model.type = rs.getString(3);
+                        spotModel.defaultEntranceId = rs.getInt(4);
+                        model.width = rs.getShort(5);
+                        int bkgId = rs.getInt(6);
+                        if (!rs.wasNull()) {
+                            model.background = new MediaData(bkgId);
+                        }
+                        int musicId = rs.getInt(7);
+                        if (!rs.wasNull()) {
+                            model.music = new MediaData(musicId);
+                        }
+
+                    } else {
+                        return Boolean.FALSE; // no scene found
+                    }
+
+                    // Load: portals
+                    rs = stmt.executeQuery("select " +
+                        "PORTAL_ID, TARGET_PORTAL_ID, TARGET_SCENE_ID, " +
+                        "MEDIA, X, Y, Z, SCALE_X, SCALE_Y " +
+                        "from PORTALS where SCENE_ID=" + sceneId);
+                    ArrayList<MsoyPortal> plist = new ArrayList<MsoyPortal>();
+                    while (rs.next()) {
+                        MsoyPortal p = new MsoyPortal();
+                        p.portalId = rs.getShort(1);
+                        p.targetPortalId = rs.getShort(2);
+                        p.targetSceneId = rs.getInt(3);
+                        p.media = new MediaData(rs.getInt(4));
+                        p.loc = new MsoyLocation(
+                            rs.getFloat(5), rs.getFloat(6), rs.getFloat(7), 0);
+                        p.scaleX = rs.getFloat(8);
+                        p.scaleY = rs.getFloat(9);
+                        plist.add(p);
+                    }
+                    spotModel.portals = new Portal[plist.size()];
+                    plist.toArray(spotModel.portals);
+
+                    // Load: furni
+                    rs = stmt.executeQuery("select " +
+                        "FURNI_ID, MEDIA, X, Y, Z, SCALE_X, SCALE_Y, ACTION " +
+                        "from FURNI where SCENE_ID=" + sceneId);
+                    ArrayList<FurniData> flist = new ArrayList<FurniData>();
+                    while (rs.next()) {
+                        FurniData furni = new FurniData();
+                        furni.id = rs.getInt(1);
+                        furni.media = new MediaData(rs.getInt(2));
+                        furni.loc = new MsoyLocation(
+                            rs.getFloat(3), rs.getFloat(4), rs.getFloat(5), 0);
+                        furni.scaleX = rs.getFloat(6);
+                        furni.scaleY = rs.getFloat(7);
+                        furni.action = null; // TODO: decode blob
+                        flist.add(furni);
+                    }
+                    model.furnis = new FurniData[flist.size()];
+                    flist.toArray(model.furnis);
+                    return Boolean.TRUE; // success
+
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
+
+        if (!success.booleanValue()) {
+            throw new NoSuchSceneException(sceneId);
+        }
+
+        return model;
+    }
+
+    /**
+     * Insert a new scene and return the newly assigned scene id.
+     */
+    protected int insertScene (
+            Connection conn, DatabaseLiaison liaison, MsoySceneModel model)
+        throws SQLException, PersistenceException
+    {
+        SpotSceneModel spotModel = SpotSceneModel.getSceneModel(model);
+
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement("insert into SCENES " +
+                "(VERSION, NAME, TYPE, DEF_PORTAL_ID, WIDTH, " +
+                "BACKGROUND, MUSIC) values (?, ?, ?, ?, ?, ?, ?)");
+
+            stmt.setInt(1, model.version);
+            stmt.setString(2, model.name);
+            stmt.setString(3, model.type);
+            stmt.setInt(4, spotModel.defaultEntranceId);
+            stmt.setShort(5, model.width);
+            if (model.background != null) {
+                stmt.setInt(6, model.background.id);
+            } else {
+                stmt.setNull(6, Types.INTEGER);
+            }
+            if (model.music != null) {
+                stmt.setInt(7, model.music.id);
+            } else {
+                stmt.setNull(7, Types.INTEGER);
+            }
+            JDBCUtil.checkedUpdate(stmt, 1);
+            return liaison.lastInsertedId(conn);
+
+        } finally {
+            JDBCUtil.close(stmt);
+        }
+    }
+
+    /**
+     * Insert the specified portal into the database.
+     */
+    protected void insertPortal (
+            Connection conn, DatabaseLiaison liaison,
+            int sceneId, MsoyPortal p)
+        throws SQLException, PersistenceException
+    {
+        MsoyLocation loc = (MsoyLocation) p.loc;
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement("insert into PORTALS " +
+                "(SCENE_ID, PORTAL_ID, TARGET_PORTAL_ID, TARGET_SCENE_ID, " +
+                "MEDIA, X, Y, Z, SCALE_X, SCALE_Y) " +
+                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            stmt.setInt(1, sceneId);
+            stmt.setInt(2, p.portalId);
+            stmt.setInt(3, p.targetPortalId);
+            stmt.setInt(4, p.targetSceneId);
+            stmt.setInt(5, p.media.id);
+            stmt.setFloat(6, loc.x);
+            stmt.setFloat(7, loc.y);
+            stmt.setFloat(8, loc.z);
+            stmt.setFloat(9, p.scaleX);
+            stmt.setFloat(10, p.scaleY);
+            JDBCUtil.checkedUpdate(stmt, 1);
+
+        } finally {
+            JDBCUtil.close(stmt);
+        }
+    }
+
+    /**
+     * Insert the specified piece of furni into the database.
+     */
+    protected void insertFurni (
+            Connection conn, DatabaseLiaison liaison,
+            int sceneId, FurniData furni)
+        throws SQLException, PersistenceException
+    {
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement("insert into FURNI " +
+                "(SCENE_ID, FURNI_ID, MEDIA, X, Y, Z, " +
+                "SCALE_X, SCALE_Y, ACTION) " +
+                "values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            stmt.setInt(1, sceneId);
+            stmt.setInt(2, furni.id);
+            stmt.setInt(3, furni.media.id);
+            stmt.setFloat(4, furni.loc.x);
+            stmt.setFloat(5, furni.loc.y);
+            stmt.setFloat(6, furni.loc.z);
+            stmt.setFloat(7, furni.scaleX);
+            stmt.setFloat(8, furni.scaleY);
+            stmt.setBytes(9, null); // TODO: save action
+            JDBCUtil.checkedUpdate(stmt, 1);
+
+        } finally {
+            JDBCUtil.close(stmt);
+        }
+    }
+
+    /**
+     * Create the database tables and populate them with some starter scenes.
+     */
+    protected void createAndPopulate (Connection conn, DatabaseLiaison liaison)
+        throws SQLException, PersistenceException
+    {
+        JDBCUtil.createTableIfMissing(conn, "SCENES", new String[] {
+            "SCENE_ID integer not null auto_increment",
+            "VERSION integer not null",
+            "NAME varchar(255) not null",
+            "TYPE varchar(255)",
+            "DEF_PORTAL_ID integer not null",
+            "WIDTH integer not null",
+            "BACKGROUND integer",
+            "MUSIC integer",
+            "primary key (SCENE_ID)" }, "");
+
+        JDBCUtil.createTableIfMissing(conn, "PORTALS", new String[] {
+            "SCENE_ID integer not null",
+            "PORTAL_ID smallint not null",
+            "TARGET_PORTAL_ID smallint not null",
+            "TARGET_SCENE_ID integer not null",
+            "MEDIA integer not null",
+            "X float not null",
+            "Y float not null",
+            "Z float not null",
+            "SCALE_X float not null",
+            "SCALE_Y float not null",
+            "primary key (SCENE_ID, PORTAL_ID)" }, "");
+
+        JDBCUtil.createTableIfMissing(conn, "FURNI", new String[] {
+            "SCENE_ID integer not null",
+            "FURNI_ID integer not null",
+            "MEDIA integer not null",
+            "X float not null",
+            "Y float not null",
+            "Z float not null",
+            "SCALE_X float not null",
+            "SCALE_Y float not null",
+            "ACTION blob",
+            "primary key (SCENE_ID, FURNI_ID)" }, "");
+
+        for (int sceneId = 1; sceneId < 8; sceneId++) {
+            MsoySceneModel model = createSampleScene(sceneId);
+            SpotSceneModel spotModel = SpotSceneModel.getSceneModel(model);
+            int insertedId = insertScene(conn, liaison, model);
+            if (insertedId != sceneId) {
+                throw new RuntimeException("It's not quite right!");
+            }
+
+            for (int ii = 0; ii < spotModel.portals.length; ii++) {
+                MsoyPortal p = (MsoyPortal) spotModel.portals[ii];
+                insertPortal(conn, liaison, sceneId, p);
+            }
+
+            for (int ii = 0; ii < model.furnis.length; ii++) {
+                insertFurni(conn, liaison, sceneId, model.furnis[ii]);
+            }
+        }
+    }
+
+    /**
+     * Create a sample scene.
+     */
+    protected MsoySceneModel createSampleScene (int sceneId)
+    {
         MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
         model.sceneId = sceneId;
         model.version = 1;
-        model.name = "FakeScene" + sceneId;
+        model.name = "SampleScene" + sceneId;
         SpotSceneModel spotty = SpotSceneModel.getSceneModel(model);
 
         MsoyPortal portal = new MsoyPortal();
