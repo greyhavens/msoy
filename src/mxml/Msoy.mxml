@@ -5,8 +5,8 @@
     applicationComplete="new MsoyClient(this);">
 <mx:Style source="msoy.css"/>
 <mx:Script>
-	<![CDATA[
-		import com.threerings.msoy.client.MsoyClient;
-	]]>
+    <![CDATA[
+        import com.threerings.msoy.client.MsoyClient;
+    ]]>
 </mx:Script>
 </mx:Application>
