@@ -9,8 +9,6 @@ import flash.ui.ContextMenu;
 import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 
-import com.threerings.mx.managers.CursorManager;
-
 import com.threerings.util.MenuUtil;
 
 import com.threerings.crowd.client.PlaceView;
@@ -60,7 +58,8 @@ public class RoomController extends SceneController
         _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
         configureContextMenu();
 
-        _targetCursorId = CursorManager.addCursor(TargetCursor, 5, 5);
+        _walkTarget.visible = false;
+        _roomView.rawChildren.addChild(_walkTarget);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
@@ -81,10 +80,10 @@ public class RoomController extends SceneController
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
+        _roomView.rawChildren.removeChild(_walkTarget);
+
         _scene = null;
         configureContextMenu();
-
-        CursorManager.removeCursor(_targetCursorId);
 
         super.didLeavePlace(plobj);
     }
@@ -116,23 +115,27 @@ public class RoomController extends SceneController
 
     protected function mouseOut (event :MouseEvent) :void
     {
-        CursorManager.setCursor(CursorManager.SYSTEM_CURSOR);
+        trace("mouseOut");
+        _walkTarget.visible = false;
     }
 
     protected function mouseMove (event :MouseEvent) :void
     {
-        var cursId :int = CursorManager.SYSTEM_CURSOR;
-
         if (_roomView.isLocationTarget(event.target as DisplayObject)) {
             var p :Point = _roomView.globalToLocal(
                 new Point(event.stageX, event.stageY));
             var newLoc :MsoyLocation = _roomView.pointToLocation(p.x, p.y);
             if (newLoc != null) {
-                cursId = _targetCursorId;
+                _walkTarget.x = p.x;
+                _walkTarget.y = p.y;
+                _walkTarget.visible = true;
+                trace("moved: vis");
+                return;
             }
         }
 
-        CursorManager.setCursor(cursId);
+        trace("moved: invis");
+        _walkTarget.visible = false;
     }
 
     protected function mouseClicked (event :MouseEvent) :void
@@ -245,13 +248,13 @@ public class RoomController extends SceneController
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;
 
+    /** The "cursor" used to display that a location is walkable. */
+    protected var _walkTarget :DisplayObject = new TargetCursor();
+
     /** Are we editing the current scene? */
     protected var _editing :Boolean;
 
     /** The context menu. */
     protected var _menu :ContextMenu;
-
-    /** The cursor id we use for our special target cursor. */
-    protected var _targetCursorId :int;
 }
 }
