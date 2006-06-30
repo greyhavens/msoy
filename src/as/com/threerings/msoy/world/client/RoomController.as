@@ -115,7 +115,6 @@ public class RoomController extends SceneController
 
     protected function mouseOut (event :MouseEvent) :void
     {
-        trace("mouseOut");
         _walkTarget.visible = false;
     }
 
@@ -129,12 +128,10 @@ public class RoomController extends SceneController
                 _walkTarget.x = p.x;
                 _walkTarget.y = p.y;
                 _walkTarget.visible = true;
-                trace("moved: vis");
                 return;
             }
         }
 
-        trace("moved: invis");
         _walkTarget.visible = false;
     }
 
