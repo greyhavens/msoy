@@ -25,6 +25,7 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneModel;
 import com.threerings.whirled.server.persist.SceneRepository;
+import com.threerings.whirled.server.persist.SceneUpdateMarshaller;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
@@ -34,6 +35,9 @@ import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.ModifyFurniUpdate;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides scene storage services for the msoy server.
@@ -70,14 +74,99 @@ public class MsoySceneRepository extends SimpleRepository
         if (!JDBCUtil.tableExists(conn, "SCENES")) {
             createAndPopulate(conn, liaison);
         }
+
+        // and create the scene-update table
+        JDBCUtil.createTableIfMissing(conn, "SCENE_UPDATES", new String[] {
+            "SCENE_ID integer not null",
+            "SCENE_VERSION integer not null",
+            "UPDATE_TYPE integer not null",
+            "DATA blob not null",
+            "primary key (SCENE_ID, SCENE_VERSION)" }, "");
     }
 
     // documentation inherited from interface SceneRepository
     public void applyAndRecordUpdate (SceneModel model, SceneUpdate update)
+        throws PersistenceException
     {
         // ensure that the update has been applied
         if (model.version != update.getSceneVersion() + 1) {
+            log.warning("Refusing to apply update " + update +
+                ", wrong version " + model.version + ".");
+            return;
         }
+
+        MsoySceneModel mmodel = (MsoySceneModel) model;
+        if (update instanceof ModifyFurniUpdate) {
+            applyFurniUpdate(mmodel, (ModifyFurniUpdate) update);
+
+        } else {
+            log.warning("Requested to apply unknown update to scene repo " +
+                "[update=" + update + "].");
+        }
+
+        // finally, update the scene version (which will already be the
+        // new version because the update has been applied)
+        updateVersion(model.sceneId, model.version);
+        log.info("Updated verison of " + model.sceneId + " to " +
+            model.version + ".");
+
+        // record the update itself
+        insertSceneUpdate(update);
+    }
+
+    /**
+     * Updates the version of the specified scene in the database.
+     */
+    public void updateVersion (final int sceneId, final int version)
+        throws PersistenceException
+    {
+        executeUpdate(new Operation<Object>() {
+            public Object invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                String query = "update SCENES set VERSION = ? " +
+                    "where SCENE_ID = ?";
+                PreparedStatement stmt = null;
+                try {
+                    stmt = conn.prepareStatement(query);
+                    stmt.setInt(1, version);
+                    stmt.setInt(2, sceneId);
+                    JDBCUtil.checkedUpdate(stmt, 1);
+
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return null;
+            }
+        });
+    }
+
+    // documentation inherited from interface SceneRepository
+    public UpdateList loadUpdates (final int sceneId)
+        throws PersistenceException, NoSuchSceneException
+    {
+        return execute(new Operation<UpdateList>() {
+            public UpdateList invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                UpdateList list = new UpdateList();
+                Statement stmt = conn.createStatement();
+                try {
+                    ResultSet rs = stmt.executeQuery("select " +
+                        "SCENE_VERSION, UPDATE_TYPE, DATA from SCENE_UPDATES " +
+                        "where SCENE_ID = " + sceneId);
+                    while (rs.next()) {
+                        list.addUpdate(_updateMarshaller.decodeUpdate(
+                            sceneId, rs.getInt(1), rs.getInt(2),
+                            rs.getBytes(3)));
+                    }
+
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return list;
+            }
+        });
     }
 
     // documentation inherited from interface SceneRepository
@@ -171,6 +260,15 @@ public class MsoySceneRepository extends SimpleRepository
         }
 
         return model;
+    }
+
+    /**
+     * Apply a furniture changing update.
+     */
+    protected void applyFurniUpdate (
+            MsoySceneModel mmodel, ModifyFurniUpdate update)
+    {
+        // TODO
     }
 
     /**
@@ -274,6 +372,58 @@ public class MsoySceneRepository extends SimpleRepository
     }
 
     /**
+     * Records a scene update to the update table.
+     */
+    protected void insertSceneUpdate (final SceneUpdate update)
+        throws PersistenceException
+    {
+        // first determine the assigned update type
+        final int updateType = _updateMarshaller.getUpdateType(update);
+        if (updateType == -1) {
+            String errmsg = "Can't insert update of unknown type " +
+                "[update=" + update + ", updateClass=" + update.getClass() +
+                "]";
+            throw new PersistenceException(errmsg);
+        }
+
+        // then serialize the update
+        final byte[] updateData = _updateMarshaller.persistUpdate(update);
+
+        executeUpdate(new Operation<Object>() {
+            public Object invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                String query = "insert into SCENE_UPDATES (SCENE_ID, " +
+                    "SCENE_VERSION, UPDATE_TYPE, DATA) values " +
+                    "(?, ?, ?, ?)";
+                PreparedStatement stmt = null;
+                try {
+                    // first insert the new update
+                    stmt = conn.prepareStatement(query);
+                    stmt.setInt(1, update.getSceneId());
+                    stmt.setInt(2, update.getSceneVersion());
+                    stmt.setInt(3, updateType);
+                    stmt.setBytes(4, updateData);
+                    JDBCUtil.checkedUpdate(stmt, 1);
+                    JDBCUtil.close(stmt);
+
+                    // then delete any older updates
+                    stmt = conn.prepareStatement("delete from UPDATES where " +
+                        "SCENE_ID = ? and SCENE_VERSION <= ?");
+                    stmt.setInt(1, update.getSceneId());
+                    stmt.setInt(2, update.getSceneVersion() -
+                        MAX_UPDATES_PER_SCENE);
+                    stmt.executeUpdate();
+
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return null;
+            }
+        });
+    }
+
+    /**
      * Create the database tables and populate them with some starter scenes.
      */
     protected void createAndPopulate (Connection conn, DatabaseLiaison liaison)
@@ -315,6 +465,7 @@ public class MsoySceneRepository extends SimpleRepository
             "ACTION blob",
             "primary key (SCENE_ID, FURNI_ID)" }, "");
 
+        // populate some starting scenes
         for (int sceneId = 1; sceneId < 8; sceneId++) {
             MsoySceneModel model = createSampleScene(sceneId);
             SpotSceneModel spotModel = SpotSceneModel.getSceneModel(model);
@@ -597,10 +748,15 @@ public class MsoySceneRepository extends SimpleRepository
         return model;
     }
 
-    // documentation inherited from interface SceneRepository
-    public UpdateList loadUpdates (int sceneId)
-    {
-        // TODO: real implementation
-        return new UpdateList();
-    }
+    /** The marshaller that assists us in managing scene updates. */
+    protected SceneUpdateMarshaller _updateMarshaller =
+        new SceneUpdateMarshaller(new Class[] {
+            // register the update classes
+            // (DO NOT CHANGE ORDER! see note in SceneUpdateMarshaller const.)
+            ModifyFurniUpdate.class,
+            // end of update class registration (DO NOT CHANGE ORDER)
+        });
+
+    /** The maximum number of updates to store for each scene. */
+    protected static final int MAX_UPDATES_PER_SCENE = 16;
 }

@@ -7,21 +7,17 @@ import com.threerings.io.TypedArray;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
-public class MsoySceneUpdate extends SceneUpdate
+public class ModifyFurniUpdate extends SceneUpdate
 {
     public var furniRemoved :TypedArray;
 
     public var furniAdded :TypedArray;
 
-    public var newWidth :int;
-
     public function initialize (
-            targetId :int, targetVersion :int, removed :Array , added :Array,
-            newWidth :int) :void
+            targetId :int, targetVersion :int, removed :Array , added :Array)
+            :void
     {
         init(targetId, targetVersion);
-
-        this.newWidth = newWidth;
 
         var furni :FurniData;
         if (removed != null) {
@@ -46,11 +42,6 @@ public class MsoySceneUpdate extends SceneUpdate
         // cast it to our model type
         var mmodel :MsoySceneModel = (model as MsoySceneModel);
 
-        // set the new width
-        if (newWidth != 0) {
-            mmodel.width = newWidth;
-        }
-
         // remove old furni, add the new
         var furni :FurniData;
         if (furniRemoved != null) {
@@ -72,7 +63,6 @@ public class MsoySceneUpdate extends SceneUpdate
 
         out.writeObject(furniRemoved);
         out.writeObject(furniAdded);
-        out.writeShort(newWidth);
     }
 
     // documentation inherited
@@ -82,7 +72,6 @@ public class MsoySceneUpdate extends SceneUpdate
 
         furniRemoved = (ins.readObject() as TypedArray);
         furniAdded = (ins.readObject() as TypedArray);
-        newWidth = ins.readShort();
     }
 }
 }

@@ -9,7 +9,7 @@ import com.threerings.whirled.data.SceneUpdate;
 /**
  * A scene update for msoy.
  */
-public class MsoySceneUpdate extends SceneUpdate
+public class ModifyFurniUpdate extends SceneUpdate
 {
     /** The furniture removed from the scene (or null for none). */
     public FurniData[] furniRemoved;
@@ -17,21 +17,17 @@ public class MsoySceneUpdate extends SceneUpdate
     /** The furniture added to the scene (or null for none). */
     public FurniData[] furniAdded;
 
-    /** The new width of the scene (or 0 for no change). */
-    public short newWidth;
-
     /**
      * Initialize the update iwth all necessary data.
      */
     public void initialize (
             int targetId, int targetVersion,
-            FurniData[] removed, FurniData[] added, short newWidth)
+            FurniData[] removed, FurniData[] added)
     {
         init(targetId, targetVersion);
 
         furniRemoved = removed;
         furniAdded = added;
-        this.newWidth = newWidth;
     }
 
     @Override
@@ -41,11 +37,6 @@ public class MsoySceneUpdate extends SceneUpdate
 
         // cast it to our model type
         MsoySceneModel mmodel = (MsoySceneModel) model;
-
-        // set the new width
-        if (newWidth != 0) {
-            mmodel.width = newWidth;
-        }
 
         // remove old furni, add the new
         if (furniRemoved != null) {
