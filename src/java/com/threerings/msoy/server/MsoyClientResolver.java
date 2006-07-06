@@ -16,7 +16,7 @@ import com.threerings.crowd.server.CrowdClientResolver;
 public class MsoyClientResolver extends CrowdClientResolver
 {
     @Override // documentation inherited
-    public Class getClientObjectClass ()
+    public Class<? extends ClientObject> getClientObjectClass ()
     {
         return MsoyUserObject.class;
     }

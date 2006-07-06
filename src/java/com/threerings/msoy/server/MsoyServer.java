@@ -8,6 +8,14 @@ import java.util.logging.Level;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 
+import com.threerings.util.Name;
+
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.net.AuthRequest;
+import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.ClientFactory;
+import com.threerings.presents.server.ClientResolver;
+
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
@@ -48,9 +56,16 @@ public class MsoyServer extends WhirledServer
 
         super.init();
 
-        // set up the right client class
-        clmgr.setClientClass(MsoyClient.class);
-        clmgr.setClientResolverClass(MsoyClientResolver.class);
+        // set up the right client factory
+        clmgr.setClientFactory(new ClientFactory() {
+            public PresentsClient createClient (AuthRequest areq) {
+                return new MsoyClient();
+            }
+
+            public ClientResolver createClientResolver (Name username) {
+                return new MsoyClientResolver();
+            }
+        });
 
         // intialize various services
         spotprov = new SpotProvider(omgr, plreg, screg);

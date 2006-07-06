@@ -75,7 +75,9 @@ public class MsoySceneRepository extends SimpleRepository
     // documentation inherited from interface SceneRepository
     public void applyAndRecordUpdate (SceneModel model, SceneUpdate update)
     {
-        // TODO
+        // ensure that the update has been applied
+        if (model.version != update.getSceneVersion() + 1) {
+        }
     }
 
     // documentation inherited from interface SceneRepository

@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.server;
 
 import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.data.SpotSceneObject;
@@ -17,13 +18,7 @@ import com.threerings.msoy.world.data.MsoyLocation;
  */
 public class RoomManager extends SpotSceneManager
 {
-    // documentation inherited
-    protected long idleUnloadPeriod ()
-    {
-        return 0L; // don't ever unload this place
-    }
-
-    // documentation inherited
+    @Override // documentation inherited
     protected SceneLocation computeEnteringLocation (
             BodyObject body, Portal entry)
     {
@@ -36,7 +31,8 @@ public class RoomManager extends SpotSceneManager
             new MsoyLocation(0, 0, 0, (short) 0), body.getOid());
     }
 
-    protected Class getPlaceObjectClass ()
+    @Override
+    protected Class<? extends PlaceObject> getPlaceObjectClass ()
     {
         // TODO
         return SpotSceneObject.class;
