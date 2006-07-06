@@ -103,16 +103,17 @@ public class MsoyUserObject extends BodyObject
 
     public void alter (String field)
     {
-        if (AVATAR.equals(field)) {
-            int dex = IntListUtil.indexOf(AVATARS, avatar.id);
-            int newId = AVATARS[(dex + 1) % AVATARS.length];
-            setAvatar(new MediaData(newId));
-
-        } else if (CHAT_STYLE.equals(field)) {
+        if (CHAT_STYLE.equals(field)) {
             setChatStyle((short) ((chatStyle + 1) % 2));
 
         } else if (CHAT_POP_STYLE.equals(field)) {
             setChatPopStyle((short) ((chatPopStyle + 1) % 2));
+
+        } else {
+            int increment = AVATAR.equals(field) ? 1 : (AVATARS.length - 1);
+            int dex = IntListUtil.indexOf(AVATARS, avatar.id);
+            int newId = AVATARS[(dex + increment) % AVATARS.length];
+            setAvatar(new MediaData(newId));
         }
     }
 

@@ -17,6 +17,11 @@ public class FurniSprite extends MsoySprite
         configureAction();
     }
 
+    public function getFurniData () :FurniData
+    {
+        return _furni;
+    }
+
     override public function getMediaScaleX () :Number
     {
         return _furni.scaleX;

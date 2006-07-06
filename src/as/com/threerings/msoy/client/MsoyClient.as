@@ -6,6 +6,8 @@ import flash.external.ExternalInterface;
 
 import flash.system.Security;
 
+import flash.ui.ContextMenu;
+
 import mx.core.Application;
 
 import com.threerings.util.Name;
@@ -45,6 +47,11 @@ public class MsoyClient extends Client
         var guestId :int = int(Math.random() * int.MAX_VALUE);
         var guestName :Name = new Name("guest" + guestId);
         super(new UsernamePasswordCreds(guestName, "guest"), app.stage);
+
+        // set up a context menu that blocks funnybiz on the stage
+        var menu :ContextMenu = new ContextMenu();
+        menu.hideBuiltInItems();
+        app.contextMenu = menu;
 
 //        Security.allowDomain("*"); // TODO
 
