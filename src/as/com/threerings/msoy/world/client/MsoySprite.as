@@ -661,7 +661,59 @@ public class MsoySprite extends Box
      */
     protected function mouseOver (event :MouseEvent) :void
     {
-        if (_glow == null) {
+        setGlow(true);
+    }
+
+/**
+  The following is attempting to make us only glow when the mouse is
+  over a non-transparent pixel. However, there seems to be a bug in
+  hitTestPoint that is either considering transparent pixels 'hit', or 
+  the shapeFlag paramter is being ignored.
+  Either way, I'm going to operate on the assumption that mouseOver is doing
+  proper hit-test stuff (since it seems to for swfs) and that the bug with
+  mouseOver triggering over transparent pixels is the same bug that is
+  preventing the following workaround to work. I'll leave everything simple
+  and hope that it just works correctly in the future when this bug is fixed.
+
+    protected function mouseMoved (event :MouseEvent) :void
+    {
+        var disp :DisplayObject = _media;
+        if (disp is Loader) {
+            try {
+                disp = (disp as Loader).content;
+                trace("Got happy disp : " + disp);
+            } catch (err :Error) {
+                trace("couldn't access content");
+            }
+        }
+
+        var hit :Boolean = disp.hitTestPoint(event.stageX, event.stageY, true);
+        trace("No shit, point (" + event.localX + ", " + event.localY +
+            ") hits " + hit);
+        setGlow(hit);
+    }
+*/
+
+    /**
+     * Callback function.
+     */
+    protected function mouseOut (event :MouseEvent) :void
+    {
+        setGlow(false);
+    }
+
+    /**
+     * Turn on or off the glow surrounding this sprite.
+     */
+    protected function setGlow (doGlow :Boolean) :void
+    {
+        // if things are already in the proper state, do nothing
+        if (doGlow == (_glow != null)) {
+            return;
+        }
+
+        // otherwise, enable or disable the glow
+        if (doGlow) {
             _glow = new Glow(this);
             _glow.alphaFrom = 0;
             _glow.alphaTo = 1;
@@ -671,17 +723,9 @@ public class MsoySprite extends Box
             _glow.blurYTo = 20;
             _glow.color = getHoverColor();
             _glow.duration = 200;
-        }
+            _glow.play();
 
-        _glow.play();
-    }
-
-    /**
-     * Callback function.
-     */
-    protected function mouseOut (event :MouseEvent) :void
-    {
-        if (_glow != null) {
+        } else {
             _glow.end();
             _glow = null;
 
