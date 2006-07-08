@@ -63,21 +63,9 @@ public class ChatBubble extends Canvas
     protected function configureTextStyle () :void
     {
         _txt.styleName = "chatBubble";
-
-        /*
-        var txt :TextField = new TextField();
-        txt.background = true;
-        txt.backgroundColor = 0xFFFFFF;
-        txt.textColor = 0x000000;
-        txt.restrict = "";
-        txt.wordWrap = true;
-        txt.multiline = true;
-        txt.autoSize = TextFieldAutoSize.CENTER;
-        */
         _txt.selectable = false;
-        _txt.maxWidth = 400;
-
-        //addChild(txt);
+        _txt.width = 100;
+        //_txt.maxWidth = 100;
     }
 
     /**
@@ -88,8 +76,7 @@ public class ChatBubble extends Canvas
         drawBackground(ww, hh);
         validateNow();
 
-        var src :BitmapData =
-            new BitmapData(this.width, this.height, true, 0xFF00FF);
+        var src :BitmapData = new BitmapData(ww + 20, hh + 20, true, 0);
         src.draw(this);
         bitmapCreated(src);
         var bmp :Bitmap = new Bitmap(src);
@@ -103,10 +90,10 @@ public class ChatBubble extends Canvas
         // draw bubble stuff behind it
         graphics.clear();
         graphics.beginFill(0xFFFFFF);
-        graphics.drawRoundRect(0, 0, ww + 20, hh + 20, 10, 10);
+        graphics.drawRoundRect(0, 0, ww + 19, hh + 19, 10, 10);
         graphics.endFill();
         graphics.lineStyle(2, 0x000000);
-        graphics.drawRoundRect(0, 0, ww + 20, hh + 20, 10, 10);
+        graphics.drawRoundRect(0, 0, ww + 19, hh + 19, 10, 10);
     }
 
     protected function bitmapCreated (src :BitmapData) :void
