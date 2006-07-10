@@ -292,7 +292,7 @@ public class AbstractRoomView extends Canvas
 
     protected function addFurni (furni :FurniData) :void
     {
-        var sprite :FurniSprite = new FurniSprite(furni);
+        var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
         addChild(sprite);
         sprite.setLocation(furni.loc);
 
@@ -301,7 +301,7 @@ public class AbstractRoomView extends Canvas
 
     protected function addPortal (portal :MsoyPortal) :void
     {
-        var sprite :PortalSprite = new PortalSprite(portal);
+        var sprite :PortalSprite = _ctx.getMediaDirector().getPortal(portal);
         var loc :MsoyLocation = (portal.loc as MsoyLocation);
         addChild(sprite);
         sprite.setLocation(loc);
@@ -312,7 +312,7 @@ public class AbstractRoomView extends Canvas
     protected function removeSprite (sprite :MsoySprite) :void
     {
         removeChild(sprite);
-        sprite.shutdown();
+        _ctx.getMediaDirector().returnSprite(sprite);
     }
 
     // documentation inherited from interface PlaceView

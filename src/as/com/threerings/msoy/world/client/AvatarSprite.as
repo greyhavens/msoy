@@ -19,7 +19,7 @@ import com.threerings.msoy.world.data.MsoyLocation;
 
 public class AvatarSprite extends MsoySprite
 {
-    public function AvatarSprite (occInfo :MsoyOccupantInfo, loc :MsoyLocation)
+    public function AvatarSprite (occInfo :MsoyOccupantInfo)
     {
         super(occInfo.media);
 
@@ -38,7 +38,6 @@ public class AvatarSprite extends MsoySprite
         setOccupantInfo(occInfo);
 
         sendMessage("setAction", (_move == null) ? "standing" : "walking");
-        setOrientation(loc.orient);
     }
 
     override protected function setup (desc :MediaData) :void
@@ -150,17 +149,24 @@ public class AvatarSprite extends MsoySprite
         return (_move != null);
     }
 
-    override public function shutdown (completely :Boolean = true) :void
+    public function stopMove () :void
     {
-        if (completely && _move != null) {
+        if (_move != null) {
             _move.cancel();
             _move = null;
+        }
+    }
+
+    override public function shutdown (completely :Boolean = true) :void
+    {
+        if (completely) {
+            stopMove();
         }
 
         super.shutdown(completely);
     }
 
-    protected function setOrientation (orient :int) :void
+    public function setOrientation (orient :int) :void
     {
         var left :Boolean = (orient >= 90 && orient < 270)
         sendMessage("setFacing", left ? "left" : "right");

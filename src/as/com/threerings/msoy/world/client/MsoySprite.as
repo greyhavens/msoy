@@ -221,7 +221,6 @@ public class MsoySprite extends Box
      */
     public function shutdown (completely :Boolean = true) :void
     {
-        trace("Shutting down old media : " + _media + ": " + _desc.URL);
         try {
             if (_media is Loader) {
                 var loader :Loader = (_media as Loader);
@@ -444,7 +443,6 @@ public class MsoySprite extends Box
                 _oldDispatch.addEventListener(
                     StatusEvent.STATUS, onLocalConnStatus);
             }
-            //trace("dispatching on \"_msoy" + _id + "\".");
             try {
                 _oldDispatch.send("_msoy" + _id, type, msg);
             } catch (e :Error) {
@@ -468,8 +466,8 @@ public class MsoySprite extends Box
         // then they end up bubbling up somewhere else.
 
         if (event.level != "status") {
-            Log.getLog(MsoySprite).debug("Unable to communicate with media " +
-                "[event=" + event + "].");
+//            Log.getLog(MsoySprite).debug("Unable to communicate with media " +
+//                "[event=" + event + "].");
         }
     }
 
@@ -479,14 +477,14 @@ public class MsoySprite extends Box
         /*
         var loadCtx :LoaderContext = (_loadCtx.get(url) as LoaderContext);
         if (loadCtx == null) {
-//            trace("Creating new loadctx for " + url);
+            trace("Creating new loadctx for " + url);
             loadCtx = new LoaderContext(
                 false,
                 //new ApplicationDomain(ApplicationDomain.currentDomain),
                 ApplicationDomain.currentDomain,
                 null
                 );
-//            _loadCtx.put(url, loadCtx);
+            _loadCtx.put(url, loadCtx);
         }
         return loadCtx;
         */

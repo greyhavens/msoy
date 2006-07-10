@@ -39,6 +39,7 @@ public class MsoyContext
         _scenedir = new SceneDirector(this, _locdir,
             new SharedObjectSceneRepository(), new MsoySceneFactory());
         _spotdir = new SpotSceneDirector(this, _locdir, _scenedir);
+        _mediadir = new MediaDirector(this);
 
         // set up the top panel
         _topPanel = new TopPanel(this, _app);
@@ -104,6 +105,14 @@ public class MsoyContext
         return _spotdir;
     }
 
+    /**
+     * Get the media director.
+     */
+    public function getMediaDirector () :MediaDirector
+    {
+        return _mediadir;
+    }
+
     // documentation inherited from superinterface CrowdContext
     public function setPlaceView (view :PlaceView) :void
     {
@@ -131,5 +140,7 @@ public class MsoyContext
     protected var _chatdir :ChatDirector;
 
     protected var _spotdir :SpotSceneDirector;
+
+    protected var _mediadir :MediaDirector;
 }
 }

@@ -237,11 +237,11 @@ public class RoomView extends AbstractRoomView
             (_pendingRemoveAvatars.remove(bodyOid) as AvatarSprite);
 
         if (avatar == null) {
-            // create it if necessary
-            avatar = new AvatarSprite(occInfo, loc);
+            avatar = _ctx.getMediaDirector().getAvatar(occInfo);
             _avatars.put(bodyOid, avatar);
             addChild(avatar);
             avatar.setLocation(loc);
+            avatar.setOrientation(loc.orient);
 
         } else {
             // move the sprite back to the set of active sprites
