@@ -325,9 +325,10 @@ public class RoomView extends AbstractRoomView
         // maybe set up background music
         var music :MediaData = _scene.getMusic();
         if (music != null) {
-            trace("Now looping background music");
-            _music = new SoundPlayer(music);
-            _music.loop(Prefs.getMediaPosition(music.id));
+
+// TODO: playing music is causing freezing right now. Revisit.
+//            _music = new SoundPlayer(music);
+//            _music.loop(Prefs.getMediaPosition(music.id));
         }
 
         // add all currently present occupants
