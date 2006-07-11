@@ -97,29 +97,10 @@ public class RoomController extends SceneController
             _mctx.getSpotSceneDirector().traversePortal(portal.portalId);
 
         } else if (cmd == EDIT_SCENE) {
-            _editing = true;
-            _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
-            _roomView.removeEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-            _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-            _roomView.addEventListener(MouseEvent.CLICK, editMouseClicked);
-            _roomView.addEventListener(MouseEvent.MOUSE_MOVE, editMouseMoved);
-            _walkTarget.visible = false;
-            configureContextMenu();
-            // TODO
+            startEditing();
 
         } else if ((cmd == SAVE_EDITS) || (cmd == DISCARD_EDITS)) {
-            _editing = false;
-            _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-            _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-            _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-            _roomView.removeEventListener(MouseEvent.CLICK, editMouseClicked);
-            _roomView.removeEventListener(MouseEvent.MOUSE_MOVE,
-                editMouseMoved);
-            configureContextMenu();
-
-            if (cmd == SAVE_EDITS) {
-                // TODO
-            }
+            endEditing(cmd == SAVE_EDITS);
 
         } else {
             return super.handleAction(cmd, arg);
@@ -137,7 +118,7 @@ public class RoomController extends SceneController
             return;
         }
 
-        if (_editing) {
+        if (_editor != null) {
             addMenuItem(SAVE_EDITS);
             addMenuItem(DISCARD_EDITS);
 
@@ -155,6 +136,42 @@ public class RoomController extends SceneController
             MenuUtil.createControllerMenuItem("m." + cmd, cmd));
     }
 
+    /**
+     * Begin editing the scene.
+     */
+    protected function startEditing () :void
+    {
+        // set up editing
+        _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.removeEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
+        _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+        _walkTarget.visible = false;
+
+        _editor = new EditRoomHelper(_roomView);
+        configureContextMenu();
+        // TODO
+    }
+
+    /**
+     * Exit editing mode.
+     */
+    protected function endEditing (saveEdits :Boolean) :void
+    {
+        // possibly save the edits
+        if (saveEdits) {
+            // TODO
+        }
+
+        _editor.endEditing();
+        _editor = null;
+
+        // turn editing off
+        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
+        _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+        configureContextMenu();
+    }
+
     protected function mouseLeft (event :MouseEvent) :void
     {
         _walkTarget.visible = false;
@@ -163,12 +180,11 @@ public class RoomController extends SceneController
     protected function mouseMoved (event :MouseEvent) :void
     {
         if (_roomView.isLocationTarget(event.target as DisplayObject)) {
-            var p :Point = _roomView.globalToLocal(
-                new Point(event.stageX, event.stageY));
-            var newLoc :MsoyLocation = _roomView.pointToLocation(p.x, p.y);
+            var newLoc :MsoyLocation =
+                _roomView.pointToLocation(event.stageX, event.stageY);
             if (newLoc != null) {
-                _walkTarget.x = p.x;
-                _walkTarget.y = p.y;
+                _walkTarget.x = event.localX;
+                _walkTarget.y = event.localY;
                 _walkTarget.visible = true;
                 return;
             }
@@ -180,17 +196,14 @@ public class RoomController extends SceneController
     protected function mouseClicked (event :MouseEvent) :void
     {
         if (_roomView.isLocationTarget(event.target as DisplayObject)) {
-            var p :Point = _roomView.globalToLocal(
-                new Point(event.stageX, event.stageY));
-
-            // mouse events are propogated upwards to parent components
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
             if (curLoc == null) {
                 return; // we've already left, ignore the click
             }
 
             // calculate where the location is
-            var newLoc :MsoyLocation = _roomView.pointToLocation(p.x, p.y);
+            var newLoc :MsoyLocation = _roomView.pointToLocation(
+                event.stageX, event.stageY);
             if (newLoc != null) {
                 // orient the location as appropriate
                 newLoc.orient = (curLoc.x > newLoc.x ? 180 : 0);
@@ -245,39 +258,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * A callback used while editing the scene.
-     */
-    protected function editMouseClicked (event :MouseEvent) :void
-    {
-        if (_movingFurni != null) {
-            _movingFurni = null;
-
-        } else if (event.target is FurniSprite) {
-            var furni :FurniSprite = (event.target as FurniSprite);
-            _movingFurni = furni;
-        }
-    }
-
-    /**
-     * A callback used while editing the scene.
-     */
-    protected function editMouseMoved (event :MouseEvent) :void
-    {
-        if (_movingFurni == null) {
-            return;
-        }
-
-        var p :Point = _roomView.globalToLocal(
-            new Point(event.stageX, event.stageY));
-        var newLoc :MsoyLocation = _roomView.pointToLocation(p.x, p.y);
-        if (newLoc != null) {
-            // preserve y for now
-            newLoc.y = _movingFurni.loc.y;
-            _movingFurni.setLocation(newLoc);
-        }
-    }
-
-    /**
      * Callback when an item is selected from the context menu.
      */
 /*
@@ -301,15 +281,9 @@ public class RoomController extends SceneController
     protected var _walkTarget :DisplayObject = new TargetCursor();
 
     /** Are we editing the current scene? */
-    protected var _editing :Boolean;
+    protected var _editor :EditRoomHelper;
 
     /** The context menu. */
     protected var _menu :ContextMenu;
-
-    protected var _removedFurni :Array = new Array();
-
-    protected var _addedFurni :Array = new Array();
-
-    protected var _movingFurni :FurniSprite;
 }
 }

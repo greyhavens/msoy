@@ -96,6 +96,22 @@ public class AbstractRoomView extends Canvas
     }
 
     /**
+     * Called by MsoySprite instances when they've had their location
+     * updated.
+     */
+    public function locationUpdated (sprite :MsoySprite) :void
+    {
+        // first update the position and scale
+        var loc :MsoyLocation = sprite.loc;
+        positionAndScale(sprite, loc);
+
+        // then, possibly move the child up or down, depending on z order
+        if (sprite.includeInLayout) {
+            adjustZOrder(sprite, loc);
+        }
+    }
+
+    /**
      * Layout everything.
      */
     protected function relayout () :void
@@ -105,6 +121,25 @@ public class AbstractRoomView extends Canvas
         if (_bkg != null) {
             locationUpdated(_bkg);
         }
+
+        var sprite :MsoySprite;
+        for each (sprite in _portals.values()) {
+            locationUpdated(sprite);
+        }
+        for each (sprite in _furni.values()) {
+            locationUpdated(sprite);
+        }
+    }
+
+    /**
+     * Enable or disable editing. Called by the EditRoomHelper.
+     */
+    public function setEditing (
+            editing :Boolean, spriteVisitFn :Function) :void
+    {
+        _editing = editing;
+        _portals.forEach(spriteVisitFn);
+        _furni.forEach(spriteVisitFn);
     }
 
     /**
@@ -126,8 +161,13 @@ public class AbstractRoomView extends Canvas
      *
      * @return null if the coordinates could not be turned into a location.
      */
-    public function pointToLocation (x :Number, y :Number) :MsoyLocation
+    public function pointToLocation (
+            globalX :Number, globalY :Number) :MsoyLocation
     {
+        var p :Point = globalToLocal(new Point(globalX, globalY));
+        var x :Number = p.x;
+        var y :Number = p.y;
+
         // flip y
         y = unscaledHeight - y;
 
@@ -158,22 +198,6 @@ public class AbstractRoomView extends Canvas
             MAX_COORD * (1 - ((scale - MIN_SCALE) / (MAX_SCALE - MIN_SCALE)));
 
         return new MsoyLocation(xx, 0, zz, 0);
-    }
-
-    /**
-     * Called by MsoySprite instances when they've had their location
-     * updated.
-     */
-    public function locationUpdated (sprite :MsoySprite) :void
-    {
-        // first update the position and scale
-        var loc :MsoyLocation = sprite.loc;
-        positionAndScale(sprite, loc);
-
-        // then, possibly move the child up or down, depending on z order
-        if (sprite.includeInLayout) {
-            adjustZOrder(sprite, loc);
-        }
     }
 
     /**
@@ -476,6 +500,9 @@ public class AbstractRoomView extends Canvas
 
     /** A map of id -> Furni. */
     protected var _furni :HashMap = new HashMap();
+
+    /** Are we editing the scene? */
+    protected var _editing :Boolean = false;
 
     private static const MIN_SCALE :Number = 0.55;
     private static const MAX_SCALE :Number = 1;

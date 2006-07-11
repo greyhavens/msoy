@@ -71,11 +71,21 @@ public class RoomView extends AbstractRoomView
         for each (sprite in _pendingRemoveAvatars.values()) {
             locationUpdated(sprite);
         }
-        for each (sprite in _portals.values()) {
-            locationUpdated(sprite);
-        }
-        for each (sprite in _furni.values()) {
-            locationUpdated(sprite);
+    }
+
+    override public function setEditing (
+            editing :Boolean, spriteVisitFn :Function) :void
+    {
+        super.setEditing(editing, spriteVisitFn);
+
+        // we hide all avatars instead of visiting them.
+        if (editing) {
+            _sceneObj.removeListener(this);
+            removeAllOccupants();
+
+        } else {
+            _sceneObj.addListener(this)
+            addAllOccupants();
         }
     }
 
@@ -331,10 +341,7 @@ public class RoomView extends AbstractRoomView
 //            _music.loop(Prefs.getMediaPosition(music.id));
         }
 
-        // add all currently present occupants
-        for (var ii :int = _sceneObj.occupants.size() - 1; ii >= 0; ii--) {
-            addBody(_sceneObj.occupants.getAt(ii));
-        }
+        addAllOccupants();
 
         // and animate ourselves entering the room (everyone already in the
         // (room will also have seen it)
@@ -355,10 +362,23 @@ public class RoomView extends AbstractRoomView
             _music = null;
         }
 
-        removeAll(_avatars);
-        removeAll(_pendingRemoveAvatars);
+        removeAllOccupants();
 
         super.didLeavePlace(plobj);
+    }
+
+    protected function addAllOccupants () :void
+    {
+        // add all currently present occupants
+        for (var ii :int = _sceneObj.occupants.size() - 1; ii >= 0; ii--) {
+            addBody(_sceneObj.occupants.getAt(ii));
+        }
+    }
+
+    protected function removeAllOccupants () :void
+    {
+        removeAll(_avatars);
+        removeAll(_pendingRemoveAvatars);
     }
 
     // documentation inherited from interface SetListener

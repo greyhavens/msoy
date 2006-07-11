@@ -54,7 +54,6 @@ import com.threerings.media.image.ImageUtil;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MediaData;
 
-import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 import com.threerings.util.HashMap;
@@ -119,20 +118,36 @@ public class MsoySprite extends Box
         _media.scaleX = getMediaScaleX();
         _media.scaleY = getMediaScaleY();
 
-        // set up mouse listeners
-        if (isInteractive()) {
-            mouseEnabled = true;
-            mouseChildren = true;
+        setEditing(false);
+    }
 
-            if (hasAction()) {
-                addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
-                addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
-                addEventListener(MouseEvent.CLICK, mouseClick);
-            }
+    public function setEditing (editing :Boolean) :void
+    {
+        if (editing) {
+            mouseEnabled = true;
+            mouseChildren = false;
+
+            // unlisten to any current mouse handlers
+            removeEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+            removeEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+            removeEventListener(MouseEvent.CLICK, mouseClick);
 
         } else {
-            mouseEnabled = false;
-            mouseChildren = false;
+            // set up mouse listeners
+            if (isInteractive()) {
+                mouseEnabled = true;
+                mouseChildren = true;
+
+                if (hasAction()) {
+                    addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
+                    addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+                    addEventListener(MouseEvent.CLICK, mouseClick);
+                }
+
+            } else {
+                mouseEnabled = false;
+                mouseChildren = false;
+            }
         }
     }
 
@@ -352,8 +367,8 @@ public class MsoySprite extends Box
      */
     protected function locationUpdated () :void
     {
-        if (parent is RoomView) {
-            (parent as RoomView).locationUpdated(this);
+        if (parent is AbstractRoomView) {
+            (parent as AbstractRoomView).locationUpdated(this);
         }
     }
 
@@ -389,45 +404,10 @@ public class MsoySprite extends Box
         return 1;
     }
 
-/* Commented out: this doesn't fucking work, this method should be called
- * parentWillChange. For now, just require folks to add the component first
- * and then set the location.
-
-    override public function parentChanged (p :DisplayObjectContainer) :void
-    {
-        super.parentChanged(p);
-        if (p is RoomView) {
-            (p as RoomView).locationUpdated(this);
-        }
-    }
- */
-
     public function get description () :MediaData
     {
         return _desc;
     }
-
-    /**
-     * Accessor: media property.
-     */
-    // Probably this should be removed
-/*
-    public function get media () :DisplayObject
-    {
-        // untested
-        // TODO: needed? remove?
-        for (var ii :int = rawChildren.numChildren - 1; ii >= 0; ii--) {
-            var disp :DisplayObject = rawChildren.getChildAt(ii);
-            if (disp is Loader) {
-                return (disp as Loader).content;
-
-            } else if (!(disp is Shape)) {
-                return disp;
-            }
-        }
-        return null; // never found!
-    }
-    */
 
     /**
      * Send a message to the client swf that we're representing.
