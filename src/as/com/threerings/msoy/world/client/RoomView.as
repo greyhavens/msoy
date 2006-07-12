@@ -80,11 +80,11 @@ public class RoomView extends AbstractRoomView
 
         // we hide all avatars instead of visiting them.
         if (editing) {
-            _sceneObj.removeListener(this);
+            _roomObj.removeListener(this);
             removeAllOccupants();
 
         } else {
-            _sceneObj.addListener(this)
+            _roomObj.addListener(this)
             addAllOccupants();
         }
     }
@@ -237,9 +237,9 @@ public class RoomView extends AbstractRoomView
     protected function addBody (bodyOid :int) :void
     {
         var occInfo :MsoyOccupantInfo =
-            (_sceneObj.occupantInfo.get(bodyOid) as MsoyOccupantInfo);
+            (_roomObj.occupantInfo.get(bodyOid) as MsoyOccupantInfo);
         var sloc :SceneLocation =
-            (_sceneObj.occupantLocs.get(bodyOid) as SceneLocation);
+            (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
         // see if the avatar was already created, pending removal
@@ -278,7 +278,7 @@ public class RoomView extends AbstractRoomView
     {
         var avatar :AvatarSprite = (_avatars.get(bodyOid) as AvatarSprite);
         var sloc :SceneLocation =
-            (_sceneObj.occupantLocs.get(bodyOid) as SceneLocation);
+            (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
         avatar.moveTo(loc, _scene.getWidth());
@@ -328,7 +328,7 @@ public class RoomView extends AbstractRoomView
     {
         super.willEnterPlace(plobj);
 
-        _sceneObj.addListener(this);
+        _roomObj.addListener(this);
 
         _ctx.getChatDirector().addChatDisplay(this);
 
@@ -351,7 +351,7 @@ public class RoomView extends AbstractRoomView
     // documentation inherited from interface PlaceView
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
-        _sceneObj.removeListener(this);
+        _roomObj.removeListener(this);
 
         _ctx.getChatDirector().removeChatDisplay(this);
         ChatPopper.popAllDown();
@@ -370,8 +370,8 @@ public class RoomView extends AbstractRoomView
     protected function addAllOccupants () :void
     {
         // add all currently present occupants
-        for (var ii :int = _sceneObj.occupants.size() - 1; ii >= 0; ii--) {
-            addBody(_sceneObj.occupants.getAt(ii));
+        for (var ii :int = _roomObj.occupants.size() - 1; ii >= 0; ii--) {
+            addBody(_roomObj.occupants.getAt(ii));
         }
     }
 
@@ -430,7 +430,7 @@ public class RoomView extends AbstractRoomView
         var avatar :AvatarSprite = null;
         if (msg is UserMessage) {
             var umsg :UserMessage = (msg as UserMessage);
-            var occInfo :OccupantInfo = _sceneObj.getOccupantInfo(umsg.speaker);
+            var occInfo :OccupantInfo = _roomObj.getOccupantInfo(umsg.speaker);
             if (occInfo != null) {
                 avatar = (_avatars.get(occInfo.bodyOid) as AvatarSprite);
             }

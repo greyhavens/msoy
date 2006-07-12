@@ -1,9 +1,12 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.client;
+package com.threerings.msoy.world.client {
+
+import com.threerings.io.TypedArray;
 
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationListener;
 import com.threerings.presents.client.InvocationService;
 
 import com.threerings.whirled.data.SceneUpdate;
@@ -16,6 +19,8 @@ public interface RoomService extends InvocationService
     /**
      * Request to apply the specified scene updates to the room.
      */
-    public void updateRoom (
-            Client client, SceneUpdate[] updates, InvocationListener listener);
+    function updateRoom (
+            client :Client, updates :TypedArray, listener :InvocationListener)
+            :void;
+}
 }

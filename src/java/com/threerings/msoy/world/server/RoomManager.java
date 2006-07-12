@@ -3,21 +3,52 @@
 
 package com.threerings.msoy.world.server;
 
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.client.InvocationService.InvocationListener;
+import com.threerings.presents.server.InvocationException;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.whirled.spot.data.SceneLocation;
-import com.threerings.whirled.spot.data.SpotSceneObject;
+import com.threerings.whirled.data.SceneUpdate;
+
 import com.threerings.whirled.spot.data.Portal;
+import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
+import com.threerings.msoy.server.MsoyServer;
+
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.RoomMarshaller;
 
 /**
  * Manages a "Room".
  */
 public class RoomManager extends SpotSceneManager
+    implements RoomProvider
 {
+    @Override
+    protected void didStartup ()
+    {
+        super.didStartup();
+
+        _roomObj = (RoomObject) _plobj;
+
+        _roomObj.setRoomService(
+            (RoomMarshaller) MsoyServer.invmgr.registerDispatcher(
+            new RoomDispatcher(this), false));
+    }
+
+    @Override
+    protected void didShutdown ()
+    {
+        MsoyServer.invmgr.clearDispatcher(_roomObj.roomService);
+
+        super.didShutdown();
+    }
+
+
     @Override // documentation inherited
     protected SceneLocation computeEnteringLocation (
             BodyObject body, Portal entry)
@@ -34,7 +65,23 @@ public class RoomManager extends SpotSceneManager
     @Override
     protected Class<? extends PlaceObject> getPlaceObjectClass ()
     {
-        // TODO
-        return SpotSceneObject.class;
+        return RoomObject.class;
     }
+
+    // documentation inherited from RoomProvider
+    public void updateRoom (
+            ClientObject caller, SceneUpdate[] updates,
+            InvocationListener listener)
+        throws InvocationException
+    {
+        // TODO: validate that the client has permissions to edit this room
+
+        for (SceneUpdate update : updates) {
+            System.err.println("Got update: " + update);
+            recordUpdate(update);
+        }
+    }
+
+    /** The room object. */
+    protected RoomObject _roomObj;
 }

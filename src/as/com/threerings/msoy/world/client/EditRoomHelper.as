@@ -49,10 +49,13 @@ public class EditRoomHelper
         var scene :MsoyScene = (_ctx.getSceneDirector().getScene() as MsoyScene);
         var edits :TypedArray = TypedArray.create(SceneUpdate);
 
+        var sceneId :int = scene.getId();
+        var version :int = scene.getVersion();
+
         // configure any furniture updates
         if (_addedFurni.length > 0 || _removedFurni.length > 0) {
             var furniUpdate :ModifyFurniUpdate = new ModifyFurniUpdate();
-            furniUpdate.initialize(scene.getId(), scene.getVersion(),
+            furniUpdate.initialize(sceneId, version++,
                 _removedFurni, _addedFurni);
             edits.push(furniUpdate);
         }
@@ -255,7 +258,7 @@ public class EditRoomHelper
             if (ofurni == null) {
                 _addedFurni.push(furni);
 
-            } else if (!ofurni.equivalent(furni)) {
+            } else if (!furni.equivalent(ofurni)) {
                 _addedFurni.push(furni);
                 _removedFurni.push(ofurni);
             }
@@ -280,7 +283,7 @@ public class EditRoomHelper
             if (oportal == null) {
                 _addedPortals.push(portal);
 
-            } else if (!oportal.equivalent(portal)) {
+            } else if (!portal.equivalent(oportal)) {
                 _addedPortals.push(portal);
                 _removedPortals.push(oportal);
             }

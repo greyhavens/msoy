@@ -26,6 +26,9 @@ import com.threerings.msoy.data.MsoyUserObject;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.RoomObject;
+
+import com.threerings.msoy.world.chat.client.ReportingListener;
 
 public class RoomController extends SceneController
 {
@@ -58,6 +61,8 @@ public class RoomController extends SceneController
     {
         super.willEnterPlace(plobj);
 
+        _roomObj = (plobj as RoomObject);
+
         // get a copy of the scene
         _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
         configureContextMenu();
@@ -87,6 +92,7 @@ public class RoomController extends SceneController
         _roomView.rawChildren.removeChild(_walkTarget);
 
         _scene = null;
+        _roomObj = null;
         configureContextMenu();
 
         super.didLeavePlace(plobj);
@@ -169,7 +175,9 @@ public class RoomController extends SceneController
 
         // possibly save the edits
         if (edits != null) {
-            // TODO
+            trace("RoomService listener: " + _roomObj.roomService);
+            _roomObj.roomService.updateRoom(_mctx.getClient(), edits,
+                new ReportingListener(_mctx));
         }
     }
 
@@ -274,6 +282,8 @@ public class RoomController extends SceneController
 
     /** The room view that we're controlling. */
     protected var _roomView :RoomView;
+
+    protected var _roomObj :RoomObject;
 
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;

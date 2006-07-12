@@ -38,7 +38,6 @@ import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
-import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -49,6 +48,7 @@ import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.RoomObject;
 
 import com.threerings.msoy.world.chat.client.ChatPopper;
 
@@ -343,7 +343,7 @@ public class AbstractRoomView extends Canvas
     public function willEnterPlace (plobj :PlaceObject) :void
     {
         // save our scene object
-        _sceneObj = (plobj as SpotSceneObject);
+        _roomObj = (plobj as RoomObject);
 
         // get the specifics on the current scene from the scene director
         _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
@@ -395,7 +395,7 @@ public class AbstractRoomView extends Canvas
         removeAll(_portals);
         removeAll(_furni);
 
-        _sceneObj = null;
+        _roomObj = null;
         _scene = null;
     }
 
@@ -487,7 +487,7 @@ public class AbstractRoomView extends Canvas
     protected var _scene :MsoyScene;
 
     /** The transitory properties of the current scene. */
-    protected var _sceneObj :SpotSceneObject;
+    protected var _roomObj :RoomObject;
 
     /** The background image. */
     protected var _bkg :MsoySprite;
