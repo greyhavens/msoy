@@ -21,7 +21,7 @@
   <path id="classpath">
     <pathelement location="${deploy.dir}/classes"/>
     <fileset dir="dist" includes="${app.name}-code.jar"/>
-    <fileset dir="lib" includes="**/*.jar"/>
+    <fileset dir="lib" includes="*.jar"/>
     <fileset dir="/export/tools/lib/java" includes="**/*.jar"/>
   </path>
 
