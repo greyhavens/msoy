@@ -20,6 +20,17 @@ public class MsoyPortal extends Portal
 
     public var scaleY :Number = 1;
 
+    /**
+     * @return true if the other portal is identical.
+     */
+    public function equivalent (that :MsoyPortal) :Boolean
+    {
+        return (this.portalId == that.portalId) &&
+            this.loc.equals(that.loc) &&
+            (this.scaleX == that.scaleX) &&
+            (this.scaleY == that.scaleY)
+    }
+
     // documentation inherited
     override public function writeObject (out :ObjectOutputStream) :void
     {
@@ -45,6 +56,8 @@ public class MsoyPortal extends Portal
     {
         var p :MsoyPortal = (super.clone() as MsoyPortal);
         p.media = media;
+        p.scaleX = scaleX;
+        p.scaleY = scaleY;
         return p;
     }
 }

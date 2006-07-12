@@ -498,7 +498,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         MsoyPortal portal = new MsoyPortal();
         portal.portalId = 1;
-        portal.targetPortalId = 1;
+        portal.targetPortalId = -1;
         MsoyPortal p2;
         FurniData furn;
 
@@ -580,6 +580,13 @@ public class MsoySceneRepository extends SimpleRepository
             furn.loc = new MsoyLocation(.42, .22, 1, 0);
             furn.scaleX = 1.3f;
             furn.scaleY = 1.3f;
+            model.addFurni(furn);
+
+            furn = new FurniData();
+            furn.id = 6;
+            furn.media = new MediaData(53); // square100
+            furn.loc = new MsoyLocation(.2, 0, .2, 0);
+            furn.scaleX = .5f;
             model.addFurni(furn);
 
         } else if (sceneId == 2) {

@@ -32,6 +32,22 @@ public class FurniSprite extends MsoySprite
         return _furni.scaleY;
     }
 
+    override public function setMediaScaleX (scaleX :Number) :void
+    {
+        // clone the FurniData once we start modifying it
+        _furni = (_furni.clone() as FurniData);
+        _furni.scaleX = scaleX;
+        scaleUpdated();
+    }
+
+    override public function setMediaScaleY (scaleY :Number) :void
+    {
+        // clone the FurniData once we start modifying it
+        _furni = (_furni.clone() as FurniData);
+        _furni.scaleY = scaleY;
+        scaleUpdated();
+    }
+
     override public function get maxContentWidth () :int
     {
         return 2000;

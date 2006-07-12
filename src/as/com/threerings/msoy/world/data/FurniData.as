@@ -1,6 +1,9 @@
 package com.threerings.msoy.world.data {
 
+import com.threerings.util.ClassUtil;
+import com.threerings.util.Cloneable;
 import com.threerings.util.Hashable;
+import com.threerings.util.Util;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -9,7 +12,7 @@ import com.threerings.io.Streamable;
 import com.threerings.msoy.data.MediaData;
 
 public class FurniData
-    implements Hashable, Streamable
+    implements Cloneable, Hashable, Streamable
 {
     /** The id of this piece of furni. */
     public var id :int;
@@ -40,6 +43,33 @@ public class FurniData
     public function hashCode () :int
     {
         return id;
+    }
+
+    /**
+     * @return true if the other FurniData is identical.
+     */
+    public function equivalent (that :FurniData) :Boolean
+    {
+        return (this.id == that.id) &&
+            this.media.equals(that.media) &&
+            this.loc.equals(that.loc) &&
+            (this.scaleX == that.scaleX) &&
+            (this.scaleY == that.scaleY) &&
+            Util.equals(this.action, that.action);
+    }
+
+    // documentation inherited from interface Cloneable
+    public function clone () :Object
+    {
+        // just a shallow copy at present
+        var that :FurniData = (ClassUtil.newInstance(this) as FurniData);
+        that.id = this.id;
+        that.media = this.media;
+        that.loc = this.loc;
+        that.scaleX = this.scaleX;
+        that.scaleY = this.scaleY;
+        that.action = this.action;
+        return that;
     }
 
     // documentation inherited from interface Streamable

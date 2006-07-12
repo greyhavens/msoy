@@ -11,6 +11,8 @@ import flash.ui.Keyboard;
 
 import com.threerings.util.MenuUtil;
 
+import com.threerings.io.TypedArray;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
@@ -147,9 +149,8 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
         _walkTarget.visible = false;
 
-        _editor = new EditRoomHelper(_roomView);
+        _editor = new EditRoomHelper(_mctx, _roomView);
         configureContextMenu();
-        // TODO
     }
 
     /**
@@ -157,12 +158,7 @@ public class RoomController extends SceneController
      */
     protected function endEditing (saveEdits :Boolean) :void
     {
-        // possibly save the edits
-        if (saveEdits) {
-            // TODO
-        }
-
-        _editor.endEditing();
+        var edits :TypedArray = _editor.endEditing(saveEdits);
         _editor = null;
 
         // turn editing off
@@ -170,6 +166,11 @@ public class RoomController extends SceneController
         _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
         _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
         configureContextMenu();
+
+        // possibly save the edits
+        if (edits != null) {
+            // TODO
+        }
     }
 
     protected function mouseLeft (event :MouseEvent) :void

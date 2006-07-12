@@ -114,9 +114,7 @@ public class MsoySprite extends Box
             setupOther(url);
         }
 
-        // set up the scale
-        _media.scaleX = getMediaScaleX();
-        _media.scaleY = getMediaScaleY();
+        scaleUpdated();
 
         setEditing(false);
     }
@@ -313,12 +311,12 @@ public class MsoySprite extends Box
 
     public function get contentWidth () :int
     {
-        return Math.min(_w, maxContentWidth);
+        return Math.min(_w * getMediaScaleX(), maxContentWidth);
     }
 
     public function get contentHeight () :int
     {
-        return Math.min(_h, maxContentHeight);
+        return Math.min(_h * getMediaScaleY(), maxContentHeight);
     }
 
     /**
@@ -372,6 +370,24 @@ public class MsoySprite extends Box
         }
     }
 
+    protected function scaleUpdated () :void
+    {
+        var xscale :Number = getMediaScaleX();
+        var yscale :Number = getMediaScaleY();
+
+        // set up the scale
+        _media.scaleX = xscale;
+        _media.scaleY = yscale;
+
+        // if scale is negative, the image is flipped and we need to move
+        // the origin
+        _media.x = (xscale >= 0) ? 0 : Math.abs(_w * xscale);
+        _media.y = (yscale >= 0) ? 0 : Math.abs(_h * yscale);
+
+        // we may need to be repositioned
+        locationUpdated();
+    }
+
     /** A callback from the move. */
     public function moveCompleted (orient :Number) :void
     {
@@ -402,6 +418,22 @@ public class MsoySprite extends Box
     public function getMediaScaleY () :Number
     {
         return 1;
+    }
+
+    /**
+     * During editing, set the X scale of this sprite.
+     */
+    public function setMediaScaleX (scaleX :Number) :void
+    {
+        throw new Error("Cannot set scale of abstract MsoySprite");
+    }
+
+    /**
+     * During editing, set the Y scale of this sprite.
+     */
+    public function setMediaScaleY (scaleY :Number) :void
+    {
+        throw new Error("Cannot set scale of abstract MsoySprite");
     }
 
     public function get description () :MediaData
@@ -566,19 +598,6 @@ public class MsoySprite extends Box
 
     protected function updateContentDimensions (ww :int, hh :int) :void
     {
-        // see if the media is scaled
-        var xscale :Number = getMediaScaleX();
-        var yscale :Number = getMediaScaleY();
-
-        // adjust the content dimensions
-        ww = Math.abs(ww * xscale);
-        hh = Math.abs(hh * yscale);
-
-        // if scale is negative, the image is flipped and we need to move
-        // the origin
-        _media.x = (xscale >= 0) ? 0 : ww;
-        _media.y = (yscale >= 0) ? 0 : hh;
-
         // update our saved size, and possibly notify our container
         if (_w != ww || _h != hh) {
             _w = ww;
@@ -776,8 +795,10 @@ public class MsoySprite extends Box
 
     protected var _id :int;
 
+    /** The unscaled width of our content. */
     protected var _w :int;
 
+    /** The unscaled height of our content. */
     protected var _h :int;
 
     /** Our Media descripter. */

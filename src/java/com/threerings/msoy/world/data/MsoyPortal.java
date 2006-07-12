@@ -20,4 +20,15 @@ public class MsoyPortal extends Portal
 
     /** The y scale factor for the media. */
     public float scaleY = 1;
+
+    /**
+     * @return true if the other portal is identical.
+     */
+    public boolean equivalent (MsoyPortal that)
+    {
+        return (this.portalId == that.portalId) &&
+            this.loc.equals(that.loc) &&
+            (this.scaleX == that.scaleX) &&
+            (this.scaleY == that.scaleY);
+    }
 }

@@ -24,4 +24,15 @@ public class MediaData extends SimpleStreamableObject
     {
         this.id = id;
     }
+
+    public boolean equals (Object other)
+    {
+        return (other instanceof MediaData) && ((MediaData) other).id == id;
+    }
+
+    // documentation inherited
+    public int hashCode ()
+    {
+        return id;
+    }
 }

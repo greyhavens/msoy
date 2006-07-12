@@ -20,14 +20,14 @@ public class ModifyFurniUpdate extends SceneUpdate
         init(targetId, targetVersion);
 
         var furni :FurniData;
-        if (removed != null) {
-            furniRemoved = new TypedArray(TypedArray.getJavaType(FurniData));
+        if (removed != null && removed.length > 0) {
+            furniRemoved = TypedArray.create(FurniData);
             for each (furni in removed) {
                 furniRemoved.push(furni);
             }
         }
-        if (added != null) {
-            furniAdded = new TypedArray(TypedArray.getJavaType(FurniData));
+        if (added != null && added.length > 0) {
+            furniAdded = TypedArray.create(FurniData);
             for each (furni in added) {
                 furniAdded.push(furni);
             }
