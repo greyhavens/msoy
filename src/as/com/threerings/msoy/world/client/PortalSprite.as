@@ -33,6 +33,7 @@ public class PortalSprite extends MsoySprite
 
     public function update (portal :MsoyPortal) :void
     {
+        _portal = portal;
         setup(portal.media);
         scaleUpdated();
         setLocation(portal.loc);
@@ -50,7 +51,8 @@ public class PortalSprite extends MsoySprite
     // documentation inherited
     override protected function mouseClick (event :MouseEvent) :void
     {
-        dispatchEvent(new ControllerEvent("portalClicked", _portal));
+        dispatchEvent(new ControllerEvent(
+            RoomController.PORTAL_CLICKED, _portal));
     }
 
     override public function getMediaScaleX () :Number

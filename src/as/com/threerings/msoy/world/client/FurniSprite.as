@@ -24,9 +24,11 @@ public class FurniSprite extends MsoySprite
 
     public function update (furni :FurniData) :void
     {
+        _furni = furni;
         setup(furni.media);
         scaleUpdated();
         setLocation(furni.loc);
+        configureAction();
     }
 
     override public function setEditing (editing :Boolean) :void
