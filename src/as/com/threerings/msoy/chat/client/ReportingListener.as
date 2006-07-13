@@ -2,12 +2,12 @@ package com.threerings.msoy.chat.client {
 
 import com.threerings.util.MessageBundle;
 
-import com.threerings.presents.client.ConfirmListener;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 
 import com.threerings.msoy.client.MsoyContext;
 
 public class ReportingListener
-    implements ConfirmListener
+    implements InvocationService_ConfirmListener
 {
     public function ReportingListener (
             ctx :MsoyContext, msgBundle :String = null, errWrap :String = null,

@@ -8,7 +8,7 @@ import com.threerings.io.TypedArray;
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationListener;
+import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
@@ -30,7 +30,7 @@ public class RoomMarshaller extends InvocationMarshaller
     // documentation inherited from interface
     public function updateRoom (
             arg1 :Client, arg2 :TypedArray,
-            arg3 :InvocationListener) :void
+            arg3 :InvocationService_InvocationListener) :void
     {
         var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
         listener3.listener = arg3;
