@@ -7,6 +7,8 @@ import java.util.logging.Level;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
+import com.samskivert.util.LoggingLogProvider;
+import com.samskivert.util.OneLineLogFormatter;
 
 import com.threerings.util.Name;
 
@@ -104,6 +106,10 @@ public class MsoyServer extends WhirledServer
 
     public static void main (String[] args)
     {
+        // set up the proper logging services
+        com.samskivert.util.Log.setLogProvider(new LoggingLogProvider());
+        OneLineLogFormatter.configureDefaultHandler();
+
         MsoyServer server = new MsoyServer();
         try {
             server.init();

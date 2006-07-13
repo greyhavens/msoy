@@ -55,6 +55,13 @@ fi
 # rebuild our libraries
 build_libraries samskivert narya nenya vilya threerings
 
+# make sure our lib/ symlinks are up to date
+cd $ROOT/lib
+make_symlinks `cat LIBS`
+if [ -d ../projects/narya/dist/lib ]; then
+    ln -sf ../projects/narya/dist/lib/* .
+fi
+
 # build the main thang
 cd $ROOT
 ant distclean dist
