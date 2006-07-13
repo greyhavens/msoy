@@ -1,7 +1,7 @@
 #
 # $Id$
 #
-# Configuration for a Bang! server installation
+# Configuration for a MetaSOY! server installation
 
 #
 # Defines the name for this server installation.
@@ -36,7 +36,7 @@ server_auth = com.threerings.msoy.server.ooo.OOOAuthenticator
 # defaults
 
 db.default.driver = com.mysql.jdbc.Driver
-db.default.url = jdbc:mysql://DBHOST:3306/bang
+db.default.url = jdbc:mysql://DBHOST:3306/msoy
 db.default.username = USERNAME
 db.default.password = PASSWORD
 
