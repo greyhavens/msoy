@@ -42,6 +42,16 @@ public class PortalSprite extends MsoySprite
         return _portal;
     }
 
+    override public function setEditing (editing :Boolean) :void
+    {
+        if (editing) {
+            // clone the portal data so that we can safely modify it
+            _portal = (_portal.clone() as MsoyPortal);
+        }
+
+        super.setEditing(editing);
+    }
+
     // documentation inherited
     override protected function mouseClick (event :MouseEvent) :void
     {
@@ -60,15 +70,12 @@ public class PortalSprite extends MsoySprite
 
     override public function setMediaScaleX (scaleX :Number) :void
     {
-        // clone the portal once we start modifying it
-        _portal = (_portal.clone() as MsoyPortal);
         _portal.scaleX = scaleX;
         scaleUpdated();
     }
 
     override public function setMediaScaleY (scaleY :Number) :void
     {
-        _portal = (_portal.clone() as MsoyPortal);
         _portal.scaleY = scaleY;
         scaleUpdated();
     }

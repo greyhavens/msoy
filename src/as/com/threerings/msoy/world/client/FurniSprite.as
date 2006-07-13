@@ -22,6 +22,16 @@ public class FurniSprite extends MsoySprite
         return _furni;
     }
 
+    override public function setEditing (editing :Boolean) :void
+    {
+        if (editing) {
+            // clone the furni data so that we can safely modify it
+            _furni = (_furni.clone() as FurniData);
+        }
+
+        super.setEditing(editing);
+    }
+
     override public function getMediaScaleX () :Number
     {
         return _furni.scaleX;
@@ -34,16 +44,12 @@ public class FurniSprite extends MsoySprite
 
     override public function setMediaScaleX (scaleX :Number) :void
     {
-        // clone the FurniData once we start modifying it
-        _furni = (_furni.clone() as FurniData);
         _furni.scaleX = scaleX;
         scaleUpdated();
     }
 
     override public function setMediaScaleY (scaleY :Number) :void
     {
-        // clone the FurniData once we start modifying it
-        _furni = (_furni.clone() as FurniData);
         _furni.scaleY = scaleY;
         scaleUpdated();
     }

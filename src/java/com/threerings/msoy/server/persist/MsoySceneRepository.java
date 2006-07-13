@@ -267,8 +267,79 @@ public class MsoySceneRepository extends SimpleRepository
      */
     protected void applyFurniUpdate (
             MsoySceneModel mmodel, ModifyFurniUpdate update)
+        throws PersistenceException
     {
-        // TODO
+        if (update.furniRemoved != null) {
+            deleteFurni(mmodel, update.furniRemoved);
+        }
+        if (update.furniAdded != null) {
+            addFurni(mmodel, update.furniAdded);
+        }
+    }
+
+    protected void deleteFurni (
+            final MsoySceneModel mmodel, final FurniData[] removed)
+        throws PersistenceException
+    {
+        executeUpdate(new Operation<Object>() {
+            public Object invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                PreparedStatement stmt = conn.prepareStatement(
+                    "delete from FURNI where SCENE_ID = ? and FURNI_ID = ?");
+                try {
+                    stmt.setInt(1, mmodel.sceneId);
+
+                    for (FurniData furni : removed) {
+                        stmt.setInt(2, furni.id);
+                        if (stmt.executeUpdate() != 1) {
+                            log.info("Failed to delete " + furni +
+                                " from " + mmodel.sceneId + ".");
+                        }
+                    }
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return null;
+            }
+        });
+    }
+
+    protected void addFurni (
+            final MsoySceneModel mmodel, final FurniData[] added)
+        throws PersistenceException
+    {
+        executeUpdate(new Operation<Object>() {
+            public Object invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                PreparedStatement stmt = conn.prepareStatement(
+                    "insert into FURNI " +
+                    "(SCENE_ID, FURNI_ID, MEDIA, X, Y, Z, SCALE_X, SCALE_Y, " +
+                    "ACTION) values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                try {
+                    stmt.setInt(1, mmodel.sceneId);
+
+                    for (FurniData furni : added) {
+                        stmt.setInt(2, furni.id);
+                        stmt.setInt(3, furni.media.id);
+                        stmt.setFloat(4, furni.loc.x);
+                        stmt.setFloat(5, furni.loc.y);
+                        stmt.setFloat(6, furni.loc.z);
+                        stmt.setFloat(7, furni.scaleX);
+                        stmt.setFloat(8, furni.scaleY);
+                        stmt.setObject(9, null); // TODO
+                        if (stmt.executeUpdate() != 1) {
+                            log.info("Failed to insert " + furni +
+                                " info " + mmodel.sceneId + ".");
+                        }
+                    }
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return null;
+            }
+        });
     }
 
     /**
@@ -408,8 +479,8 @@ public class MsoySceneRepository extends SimpleRepository
                     JDBCUtil.close(stmt);
 
                     // then delete any older updates
-                    stmt = conn.prepareStatement("delete from UPDATES where " +
-                        "SCENE_ID = ? and SCENE_VERSION <= ?");
+                    stmt = conn.prepareStatement("delete from SCENE_UPDATES " +
+                        "where SCENE_ID = ? and SCENE_VERSION <= ?");
                     stmt.setInt(1, update.getSceneId());
                     stmt.setInt(2, update.getSceneVersion() -
                         MAX_UPDATES_PER_SCENE);

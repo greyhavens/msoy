@@ -236,12 +236,17 @@ public class EditRoomHelper
         _editSprite = null;
     }
 
+    /**
+     * Called on each sprite after we've manipulated in some way.
+     */
     protected function spriteUpdated (sprite :MsoySprite) :void
     {
         var scene :MsoyScene = (_ctx.getSceneDirector().getScene() as MsoyScene);
 
         if (sprite is FurniSprite) {
             var furni :FurniData = (sprite as FurniSprite).getFurniData();
+            // copy the edited location back into the descriptor
+            furni.loc = sprite.loc;
 
             // first remove any instances from our removed/added
             ArrayUtil.removeAll(_removedFurni, furni);
@@ -265,6 +270,8 @@ public class EditRoomHelper
 
         } else if (sprite is PortalSprite) {
             var portal :MsoyPortal = (sprite as PortalSprite).getPortal();
+            // copy the edited location back into the descriptor
+            portal.loc = sprite.loc;
 
             // first remove any instances from our removed/added
             ArrayUtil.removeAll(_removedPortals, portal);
