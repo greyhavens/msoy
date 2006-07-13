@@ -36,6 +36,7 @@ public class RoomController extends SceneController
     public static const EDIT_SCENE :String = "edit_scene";
     public static const SAVE_EDITS :String = "save_edits";
     public static const DISCARD_EDITS :String = "discard_edits";
+    public static const PORTAL_CLICKED :String = "portalClicked";
 
     // documentation inherited
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
@@ -101,7 +102,7 @@ public class RoomController extends SceneController
 
     override public function handleAction (cmd :String, arg :Object) :Boolean
     {
-        if (cmd == "portalClicked") {
+        if (cmd == PORTAL_CLICKED) {
             var portal :Portal = (arg as Portal);
             _mctx.getSpotSceneDirector().traversePortal(portal.portalId);
 

@@ -449,7 +449,7 @@ public class MsoySprite extends Box
      */
     protected function sendMessage (type :String, msg :String) :void
     {
-        trace("sending [" + type + "=" + msg + "]");
+//        trace("sending [" + type + "=" + msg + "]");
 
         if (_desc.isAVM1) {
             if (_oldDispatch == null) {
