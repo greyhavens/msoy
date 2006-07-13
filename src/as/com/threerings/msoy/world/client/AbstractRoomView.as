@@ -200,6 +200,14 @@ public class AbstractRoomView extends Canvas
         return new MsoyLocation(xx, 0, zz, 0);
     }
 
+    public function getYDistance (z :Number, pixels :int) :Number
+    {
+        var scale :Number = MIN_SCALE +
+            ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - MIN_SCALE);
+        var sheight :Number = (unscaledHeight * scale);
+        return (pixels / sheight);
+    }
+
     /**
      * Scroll the view by the specified number of pixels.
      *

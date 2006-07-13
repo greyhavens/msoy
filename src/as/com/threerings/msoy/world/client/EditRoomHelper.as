@@ -86,6 +86,12 @@ public class EditRoomHelper
         sprite.setEditing(false);
     }
 
+    protected function recordMouseAnchor () :void
+    {
+        _anchor = new Point(_roomView.stage.mouseX, _roomView.stage.mouseY);
+        _anchorY = _editSprite.loc.y;
+    }
+
     protected function addEditingListeners (sprite :MsoySprite) :void
     {
         sprite.addEventListener(MouseEvent.MOUSE_DOWN, spritePressed);
@@ -143,7 +149,18 @@ public class EditRoomHelper
 
             _roomView.addEventListener(MouseEvent.MOUSE_MOVE, spritePositioning);
             _roomView.addEventListener(MouseEvent.MOUSE_UP, spritePositioned);
-            drawPositioning(_editSprite);
+            _roomView.stage.addEventListener(KeyboardEvent.KEY_UP,
+                spritePositioningKey);
+            _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN,
+                spritePositioningKey);
+
+            if (event.shiftKey) {
+                recordMouseAnchor();
+                drawHeightPositioning(_editSprite);
+
+            } else {
+                drawPositioning(_editSprite);
+            }
         }
     }
 
@@ -176,11 +193,36 @@ public class EditRoomHelper
         // Ideally, we would solve for position and scale such that the
         // initally clicked spot is always under the mouse pointer, but
         // that's much harder to do.
-        var newLoc :MsoyLocation = _roomView.pointToLocation(
-            event.stageX, event.stageY);
-        if (newLoc != null) {
-            newLoc.y = _editSprite.loc.y;
-            _editSprite.setLocation(newLoc);
+
+        if (event.shiftKey) {
+            // figure the distance from the anchor
+            var ypixels :Number = _anchor.y - event.stageY;
+            var loc :MsoyLocation = _editSprite.loc;
+            loc.y = _anchorY + _roomView.getYDistance(loc.z, ypixels);
+            _editSprite.setLocation(loc);
+
+        } else {
+            var newLoc :MsoyLocation = _roomView.pointToLocation(
+                event.stageX, event.stageY);
+            if (newLoc != null) {
+                newLoc.y = _editSprite.loc.y;
+                _editSprite.setLocation(newLoc);
+            }
+        }
+    }
+
+    protected function spritePositioningKey (event :KeyboardEvent) :void
+    {
+        if (event.keyCode != Keyboard.SHIFT) {
+            return;
+        }
+
+        if (event.type == KeyboardEvent.KEY_DOWN) {
+            recordMouseAnchor();
+            drawHeightPositioning(_editSprite);
+
+        } else {
+            drawPositioning(_editSprite);
         }
     }
 
@@ -191,6 +233,10 @@ public class EditRoomHelper
     {
         _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, spritePositioning);
         _roomView.removeEventListener(MouseEvent.MOUSE_UP, spritePositioned);
+        _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP,
+            spritePositioningKey);
+        _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN,
+            spritePositioningKey);
 
         spriteUpdated(_editSprite);
 
@@ -324,6 +370,29 @@ public class EditRoomHelper
         }
     }
 
+    protected function drawHeightPositioning (sprite :MsoySprite) :void
+    {
+        var wo :Number = SCALE_TARGET_LENGTHS / sprite.scaleX;
+        var ho :Number = SCALE_TARGET_LENGTHS / sprite.scaleY;
+        var g :Graphics = sprite.graphics;
+        var hs :Point = sprite.hotSpot;
+
+        g.clear();
+        for (var ii :int = 0; ii < 2; ii++) {
+            if (ii == 0) {
+                g.lineStyle(3, 0xFFFFFF, 1, false, LineScaleMode.NONE);
+            } else {
+                g.lineStyle(1, 0x000000, 1, false, LineScaleMode.NONE);
+            }
+
+            g.moveTo(hs.x - wo/2, hs.y);
+            g.lineTo(hs.x + wo/2, hs.y);
+
+            g.moveTo(hs.x, hs.y - ho/2);
+            g.lineTo(hs.x, hs.y + ho/2);
+        }
+    }
+
     protected function drawScaling (sprite :MsoySprite) :void
     {
         var w :Number = sprite.contentWidth;
@@ -383,6 +452,10 @@ public class EditRoomHelper
     /** The offset from the clicked point to the object's hotspot. */
     protected var _xoffset :Number;
     protected var _yoffset :Number;
+
+    /** An anchor point used when positioning. */
+    protected var _anchor :Point;
+    protected var _anchorY :Number;
 
     /** Are we currently working on scaling the edit sprite? */
     protected var _scalingX :Boolean = false;
