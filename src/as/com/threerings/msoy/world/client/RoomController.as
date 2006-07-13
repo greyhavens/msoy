@@ -29,7 +29,7 @@ import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
 
-import com.threerings.msoy.world.chat.client.ReportingListener;
+import com.threerings.msoy.chat.client.ReportingListener;
 
 public class RoomController extends SceneController
 {

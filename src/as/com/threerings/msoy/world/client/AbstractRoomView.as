@@ -50,8 +50,6 @@ import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
 
-import com.threerings.msoy.world.chat.client.ChatPopper;
-
 public class AbstractRoomView extends Canvas
     implements PlaceView
 {
@@ -74,7 +72,6 @@ public class AbstractRoomView extends Canvas
     protected function updateComplete (evt :FlexEvent) :void
     {
         removeEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
-        ChatPopper.setChatView(this);
 
         relayout();
     }

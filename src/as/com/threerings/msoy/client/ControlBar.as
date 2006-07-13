@@ -4,7 +4,7 @@ import mx.core.ScrollPolicy;
 
 import mx.containers.Canvas;
 
-import com.threerings.msoy.world.chat.client.ChatControl;
+import com.threerings.msoy.chat.client.ChatControl;
 
 import com.threerings.msoy.data.MediaData;
 

@@ -1,4 +1,4 @@
-package com.threerings.msoy.world.chat.client {
+package com.threerings.msoy.chat.client {
 
 import flash.events.TimerEvent;
 

@@ -41,6 +41,7 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
+import com.threerings.msoy.chat.client.ChatPopper;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MediaData;
@@ -50,14 +51,18 @@ import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 
-import com.threerings.msoy.world.chat.client.ChatPopper;
-
 public class RoomView extends AbstractRoomView
     implements SetListener, ChatDisplay
 {
     public function RoomView (ctx :MsoyContext)
     {
         super(ctx);
+    }
+
+    override protected function updateComplete (evt :FlexEvent) :void
+    {
+        ChatPopper.setChatView(this);
+        super.updateComplete(evt);
     }
 
     override protected function relayout () :void
