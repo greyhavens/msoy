@@ -22,6 +22,7 @@ import com.samskivert.jdbc.SimpleRepository;
 
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.whirled.spot.data.ModifyPortalsUpdate;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneModel;
 import com.threerings.whirled.server.persist.SceneRepository;
@@ -99,6 +100,9 @@ public class MsoySceneRepository extends SimpleRepository
         if (update instanceof ModifyFurniUpdate) {
             applyFurniUpdate(mmodel, (ModifyFurniUpdate) update);
 
+        } else if (update instanceof ModifyPortalsUpdate) {
+            applyPortalsUpdate(mmodel, (ModifyPortalsUpdate) update);
+
         } else {
             log.warning("Requested to apply unknown update to scene repo " +
                 "[update=" + update + "].");
@@ -124,11 +128,9 @@ public class MsoySceneRepository extends SimpleRepository
             public Object invoke (Connection conn, DatabaseLiaison liaison)
                 throws SQLException, PersistenceException
             {
-                String query = "update SCENES set VERSION = ? " +
-                    "where SCENE_ID = ?";
-                PreparedStatement stmt = null;
+                PreparedStatement stmt = conn.prepareStatement(
+                    "update SCENES set VERSION = ? where SCENE_ID = ?");
                 try {
-                    stmt = conn.prepareStatement(query);
                     stmt.setInt(1, version);
                     stmt.setInt(2, sceneId);
                     JDBCUtil.checkedUpdate(stmt, 1);
@@ -266,76 +268,44 @@ public class MsoySceneRepository extends SimpleRepository
      * Apply a furniture changing update.
      */
     protected void applyFurniUpdate (
-            MsoySceneModel mmodel, ModifyFurniUpdate update)
-        throws PersistenceException
-    {
-        if (update.furniRemoved != null) {
-            deleteFurni(mmodel, update.furniRemoved);
-        }
-        if (update.furniAdded != null) {
-            addFurni(mmodel, update.furniAdded);
-        }
-    }
-
-    protected void deleteFurni (
-            final MsoySceneModel mmodel, final FurniData[] removed)
+            final MsoySceneModel mmodel, final ModifyFurniUpdate update)
         throws PersistenceException
     {
         executeUpdate(new Operation<Object>() {
             public Object invoke (Connection conn, DatabaseLiaison liaison)
                 throws SQLException, PersistenceException
             {
-                PreparedStatement stmt = conn.prepareStatement(
-                    "delete from FURNI where SCENE_ID = ? and FURNI_ID = ?");
-                try {
-                    stmt.setInt(1, mmodel.sceneId);
-
-                    for (FurniData furni : removed) {
-                        stmt.setInt(2, furni.id);
-                        if (stmt.executeUpdate() != 1) {
-                            log.info("Failed to delete " + furni +
-                                " from " + mmodel.sceneId + ".");
-                        }
-                    }
-                } finally {
-                    JDBCUtil.close(stmt);
+                if (update.furniRemoved != null) {
+                    deleteFurni(conn, liaison, mmodel.sceneId,
+                        update.furniRemoved);
+                }
+                if (update.furniAdded != null) {
+                    insertFurni(conn, liaison, mmodel.sceneId,
+                        update.furniAdded);
                 }
                 return null;
             }
         });
     }
 
-    protected void addFurni (
-            final MsoySceneModel mmodel, final FurniData[] added)
+    /**
+     * Apply a portal changing update.
+     */
+    protected void applyPortalsUpdate (
+            final MsoySceneModel mmodel, final ModifyPortalsUpdate update)
         throws PersistenceException
     {
         executeUpdate(new Operation<Object>() {
             public Object invoke (Connection conn, DatabaseLiaison liaison)
                 throws SQLException, PersistenceException
             {
-                PreparedStatement stmt = conn.prepareStatement(
-                    "insert into FURNI " +
-                    "(SCENE_ID, FURNI_ID, MEDIA, X, Y, Z, SCALE_X, SCALE_Y, " +
-                    "ACTION) values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                try {
-                    stmt.setInt(1, mmodel.sceneId);
-
-                    for (FurniData furni : added) {
-                        stmt.setInt(2, furni.id);
-                        stmt.setInt(3, furni.media.id);
-                        stmt.setFloat(4, furni.loc.x);
-                        stmt.setFloat(5, furni.loc.y);
-                        stmt.setFloat(6, furni.loc.z);
-                        stmt.setFloat(7, furni.scaleX);
-                        stmt.setFloat(8, furni.scaleY);
-                        stmt.setObject(9, null); // TODO
-                        if (stmt.executeUpdate() != 1) {
-                            log.info("Failed to insert " + furni +
-                                " info " + mmodel.sceneId + ".");
-                        }
-                    }
-                } finally {
-                    JDBCUtil.close(stmt);
+                if (update.portalsRemoved != null) {
+                    deletePortals(conn, liaison, mmodel.sceneId,
+                        update.portalsRemoved);
+                }
+                if (update.portalsAdded != null) {
+                    insertPortals(conn, liaison, mmodel.sceneId,
+                        update.portalsAdded);
                 }
                 return null;
             }
@@ -351,12 +321,10 @@ public class MsoySceneRepository extends SimpleRepository
     {
         SpotSceneModel spotModel = SpotSceneModel.getSceneModel(model);
 
-        PreparedStatement stmt = null;
+        PreparedStatement stmt = conn.prepareStatement("insert into SCENES " +
+            "(VERSION, NAME, TYPE, DEF_PORTAL_ID, WIDTH, " +
+            "BACKGROUND, MUSIC) values (?, ?, ?, ?, ?, ?, ?)");
         try {
-            stmt = conn.prepareStatement("insert into SCENES " +
-                "(VERSION, NAME, TYPE, DEF_PORTAL_ID, WIDTH, " +
-                "BACKGROUND, MUSIC) values (?, ?, ?, ?, ?, ?, ?)");
-
             stmt.setInt(1, model.version);
             stmt.setString(2, model.name);
             stmt.setString(3, model.type);
@@ -381,62 +349,107 @@ public class MsoySceneRepository extends SimpleRepository
     }
 
     /**
-     * Insert the specified portal into the database.
+     * Insert the specified portals into the database.
      */
-    protected void insertPortal (
+    protected void insertPortals (
             Connection conn, DatabaseLiaison liaison,
-            int sceneId, MsoyPortal p)
+            int sceneId, Portal[] portals)
         throws SQLException, PersistenceException
     {
-        MsoyLocation loc = (MsoyLocation) p.loc;
-        PreparedStatement stmt = null;
+        PreparedStatement stmt = conn.prepareStatement("insert into PORTALS " +
+            "(SCENE_ID, PORTAL_ID, TARGET_PORTAL_ID, TARGET_SCENE_ID, " +
+            "MEDIA, X, Y, Z, SCALE_X, SCALE_Y) " +
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
-            stmt = conn.prepareStatement("insert into PORTALS " +
-                "(SCENE_ID, PORTAL_ID, TARGET_PORTAL_ID, TARGET_SCENE_ID, " +
-                "MEDIA, X, Y, Z, SCALE_X, SCALE_Y) " +
-                "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             stmt.setInt(1, sceneId);
-            stmt.setInt(2, p.portalId);
-            stmt.setInt(3, p.targetPortalId);
-            stmt.setInt(4, p.targetSceneId);
-            stmt.setInt(5, p.media.id);
-            stmt.setFloat(6, loc.x);
-            stmt.setFloat(7, loc.y);
-            stmt.setFloat(8, loc.z);
-            stmt.setFloat(9, p.scaleX);
-            stmt.setFloat(10, p.scaleY);
-            JDBCUtil.checkedUpdate(stmt, 1);
-
+            for (Portal portal : portals) {
+                MsoyPortal p = (MsoyPortal) portal;
+                MsoyLocation loc = (MsoyLocation) p.loc;
+                stmt.setInt(2, p.portalId);
+                stmt.setInt(3, p.targetPortalId);
+                stmt.setInt(4, p.targetSceneId);
+                stmt.setInt(5, p.media.id);
+                stmt.setFloat(6, loc.x);
+                stmt.setFloat(7, loc.y);
+                stmt.setFloat(8, loc.z);
+                stmt.setFloat(9, p.scaleX);
+                stmt.setFloat(10, p.scaleY);
+                JDBCUtil.checkedUpdate(stmt, 1);
+            }
         } finally {
             JDBCUtil.close(stmt);
         }
     }
 
     /**
-     * Insert the specified piece of furni into the database.
+     * Delete the specified portals from the database.
+     */
+    protected void deletePortals (
+            Connection conn, DatabaseLiaison liaison,
+            int sceneId, Portal[] portals)
+        throws SQLException, PersistenceException
+    {
+        PreparedStatement stmt = conn.prepareStatement(
+            "delete from PORTALS where SCENE_ID = ? and PORTAL_ID = ?");
+        try {
+            stmt.setInt(1, sceneId);
+
+            for (Portal p : portals) {
+                stmt.setInt(2, p.portalId);
+                JDBCUtil.checkedUpdate(stmt, 1);
+            }
+        } finally {
+            JDBCUtil.close(stmt);
+        }
+    }
+
+    /**
+     * Insert the specified pieces of furni into the database.
      */
     protected void insertFurni (
             Connection conn, DatabaseLiaison liaison,
-            int sceneId, FurniData furni)
+            int sceneId, FurniData[] furni)
         throws SQLException, PersistenceException
     {
-        PreparedStatement stmt = null;
+        PreparedStatement stmt = conn.prepareStatement("insert into FURNI " +
+            "(SCENE_ID, FURNI_ID, MEDIA, X, Y, Z, SCALE_X, SCALE_Y, ACTION) " +
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
-            stmt = conn.prepareStatement("insert into FURNI " +
-                "(SCENE_ID, FURNI_ID, MEDIA, X, Y, Z, " +
-                "SCALE_X, SCALE_Y, ACTION) " +
-                "values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             stmt.setInt(1, sceneId);
-            stmt.setInt(2, furni.id);
-            stmt.setInt(3, furni.media.id);
-            stmt.setFloat(4, furni.loc.x);
-            stmt.setFloat(5, furni.loc.y);
-            stmt.setFloat(6, furni.loc.z);
-            stmt.setFloat(7, furni.scaleX);
-            stmt.setFloat(8, furni.scaleY);
-            stmt.setBytes(9, null); // TODO: save action
-            JDBCUtil.checkedUpdate(stmt, 1);
 
+            for (FurniData f : furni) {
+                stmt.setInt(2, f.id);
+                stmt.setInt(3, f.media.id);
+                stmt.setFloat(4, f.loc.x);
+                stmt.setFloat(5, f.loc.y);
+                stmt.setFloat(6, f.loc.z);
+                stmt.setFloat(7, f.scaleX);
+                stmt.setFloat(8, f.scaleY);
+                stmt.setBytes(9, null); // TODO: save action
+                JDBCUtil.checkedUpdate(stmt, 1);
+            }
+        } finally {
+            JDBCUtil.close(stmt);
+        }
+    }
+
+    /**
+     * Delete the specified pieces of furni from the database.
+     */
+    protected void deleteFurni (
+            Connection conn, DatabaseLiaison liaison,
+            int sceneId, FurniData[] furni)
+        throws SQLException, PersistenceException
+    {
+        PreparedStatement stmt = conn.prepareStatement(
+            "delete from FURNI where SCENE_ID = ? and FURNI_ID = ?");
+        try {
+            stmt.setInt(1, sceneId);
+
+            for (FurniData f : furni) {
+                stmt.setInt(2, f.id);
+                JDBCUtil.checkedUpdate(stmt, 1);
+            }
         } finally {
             JDBCUtil.close(stmt);
         }
@@ -464,13 +477,12 @@ public class MsoySceneRepository extends SimpleRepository
             public Object invoke (Connection conn, DatabaseLiaison liaison)
                 throws SQLException, PersistenceException
             {
-                String query = "insert into SCENE_UPDATES (SCENE_ID, " +
+                PreparedStatement stmt = conn.prepareStatement(
+                    "insert into SCENE_UPDATES (SCENE_ID, " +
                     "SCENE_VERSION, UPDATE_TYPE, DATA) values " +
-                    "(?, ?, ?, ?)";
-                PreparedStatement stmt = null;
+                    "(?, ?, ?, ?)");
                 try {
                     // first insert the new update
-                    stmt = conn.prepareStatement(query);
                     stmt.setInt(1, update.getSceneId());
                     stmt.setInt(2, update.getSceneVersion());
                     stmt.setInt(3, updateType);
@@ -545,14 +557,9 @@ public class MsoySceneRepository extends SimpleRepository
                 throw new RuntimeException("It's not quite right!");
             }
 
-            for (int ii = 0; ii < spotModel.portals.length; ii++) {
-                MsoyPortal p = (MsoyPortal) spotModel.portals[ii];
-                insertPortal(conn, liaison, sceneId, p);
-            }
-
-            for (int ii = 0; ii < model.furnis.length; ii++) {
-                insertFurni(conn, liaison, sceneId, model.furnis[ii]);
-            }
+            // add the portals and furni for the room
+            insertPortals(conn, liaison, sceneId, spotModel.portals);
+            insertFurni(conn, liaison, sceneId, model.furnis);
         }
     }
 
@@ -832,6 +839,7 @@ public class MsoySceneRepository extends SimpleRepository
             // register the update classes
             // (DO NOT CHANGE ORDER! see note in SceneUpdateMarshaller const.)
             ModifyFurniUpdate.class,
+            ModifyPortalsUpdate.class,
             // end of update class registration (DO NOT CHANGE ORDER)
         });
 

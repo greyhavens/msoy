@@ -14,24 +14,14 @@ public class ModifyFurniUpdate extends SceneUpdate
     public var furniAdded :TypedArray;
 
     public function initialize (
-            targetId :int, targetVersion :int, removed :Array , added :Array)
+            targetId :int, targetVersion :int, removed :TypedArray,
+            added :TypedArray)
             :void
     {
         init(targetId, targetVersion);
 
-        var furni :FurniData;
-        if (removed != null && removed.length > 0) {
-            furniRemoved = TypedArray.create(FurniData);
-            for each (furni in removed) {
-                furniRemoved.push(furni);
-            }
-        }
-        if (added != null && added.length > 0) {
-            furniAdded = TypedArray.create(FurniData);
-            for each (furni in added) {
-                furniAdded.push(furni);
-            }
-        }
+        furniRemoved = removed;
+        furniAdded = added;
     }
 
     // documentation inherited

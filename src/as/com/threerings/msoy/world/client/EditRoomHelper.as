@@ -16,6 +16,8 @@ import com.threerings.util.Iterator;
 import com.threerings.io.TypedArray;
 
 import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.whirled.spot.data.ModifyPortalsUpdate;
+import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MsoyContext;
 
@@ -56,6 +58,15 @@ public class EditRoomHelper
                 furniUpdate.initialize(sceneId, version++,
                     _removedFurni, _addedFurni);
                 edits.push(furniUpdate);
+            }
+
+            // configure any portal updates
+            if (_addedPortals.length > 0 || _removedPortals.length > 0) {
+                var portalUpdate :ModifyPortalsUpdate =
+                    new ModifyPortalsUpdate();
+                portalUpdate.initialize(sceneId, version++,
+                    _removedPortals, _addedPortals);
+                edits.push(portalUpdate);
             }
 
             // return something, or null
@@ -446,11 +457,11 @@ public class EditRoomHelper
     /** The room view. */
     protected var _roomView :RoomView;
 
-    protected var _removedFurni :Array = new Array();
-    protected var _addedFurni :Array = new Array();
+    protected var _removedFurni :TypedArray = TypedArray.create(FurniData);
+    protected var _addedFurni :TypedArray = TypedArray.create(FurniData);
 
-    protected var _removedPortals :Array = new Array();
-    protected var _addedPortals :Array = new Array();
+    protected var _removedPortals :TypedArray = TypedArray.create(Portal);
+    protected var _addedPortals :TypedArray = TypedArray.create(Portal);
 
     /** The offset from the clicked point to the object's hotspot. */
     protected var _xoffset :Number;
