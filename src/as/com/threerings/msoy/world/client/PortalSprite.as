@@ -19,17 +19,6 @@ public class PortalSprite extends MsoySprite
     {
         _portal = portal;
         super(portal.media);
-        mouseChildren = false;
-
-        // TEMP: testing
-        /*
-        var timer :Timer = new Timer(2000);
-        timer.addEventListener(TimerEvent.TIMER,
-            function (evt :TimerEvent) :void {
-                wasTraversed(Math.random() > .5);
-            });
-        timer.start();
-        */
     }
 
     public function wasTraversed (entering :Boolean) :void

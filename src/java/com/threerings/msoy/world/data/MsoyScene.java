@@ -63,70 +63,88 @@ public class MsoyScene extends SceneImpl
         return _model.music;
     }
 
+    /**
+     * Add the specified furniture to the scene.
+     */
     public void addFurni (FurniData furn)
     {
         _model.addFurni(furn);
     }
 
+    /**
+     * Remove the specified furniture from the scene.
+     */
     public void removeFuni (FurniData furn)
     {
         _model.removeFurni(furn);
     }
 
+    /**
+     * Get all the furniture currently in the scene.
+     */
     public FurniData[] getFurni ()
     {
         return _model.furnis;
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public void addPortal (Portal portal)
     {
         _sdelegate.addPortal(portal);
     }
     
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public Portal getDefaultEntrance ()
     {
         return _sdelegate.getDefaultEntrance();
     }
     
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public short getNextPortalId ()
     {
         return _sdelegate.getNextPortalId();
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public Portal getPortal (int portalId)
     {
         return _sdelegate.getPortal(portalId);
     }
     
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public int getPortalCount ()
     {
         return _sdelegate.getPortalCount();
     }
     
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public Iterator getPortals ()
     {
         return _sdelegate.getPortals();
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public void removePortal (Portal portal)
     {
         _sdelegate.removePortal(portal);
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public void setDefaultEntrance (Portal portal)
     {
         _sdelegate.setDefaultEntrance(portal);
     }
 
-    // documentation inherited from interface Cloneable
+    @Override
+    public void updateReceived (SceneUpdate update)
+    {
+        super.updateReceived(update);
+
+        // inform our spot delegate of possible changes
+        _sdelegate.updateReceived();
+    }
+
+    // from Cloneable
     public Object clone ()
         throws CloneNotSupportedException
     {

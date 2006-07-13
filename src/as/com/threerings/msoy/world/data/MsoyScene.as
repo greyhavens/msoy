@@ -74,60 +74,71 @@ public class MsoyScene extends SceneImpl
         _msoyModel.removeFurni(furn);
     }
 
+    /**
+     * Get all the furniture currently in the scene.
+     */
     public function getFurni () :Array
     {
         return _msoyModel.furnis;
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public function addPortal (portal :Portal) :void
     {
         _sdelegate.addPortal(portal);
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public function getDefaultEntrance () :Portal
     {
         return _sdelegate.getDefaultEntrance();
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public function getNextPortalId () :int
     {
         return _sdelegate.getNextPortalId();
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public function getPortal (portalId :int) :Portal
     {
         return _sdelegate.getPortal(portalId);
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public function getPortalCount () :int
     {
         return _sdelegate.getPortalCount();
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public function getPortals () :Iterator
     {
         return _sdelegate.getPortals();
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public function removePortal (portal :Portal) :void
     {
         _sdelegate.removePortal(portal);
     }
 
-    // documentation inherited from interface SpotScene
+    // from SpotScene
     public function setDefaultEntrance (portal :Portal) :void
     {
         _sdelegate.setDefaultEntrance(portal);
     }
 
-    // documentation inherited from interface Cloneable
+    override public function updateReceived (update :SceneUpdate) :void
+    {
+        super.updateReceived(update);
+
+        // inform our spot delegate of possible changes
+        _sdelegate.updateReceived();
+    }
+
+    // from Cloneable
     public function clone () :Object
     {
         return new MsoyScene(_msoyModel.clone() as MsoySceneModel, _config);

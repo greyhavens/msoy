@@ -56,7 +56,8 @@ public class EditRoomHelper
             if (_addedFurni.length > 0 || _removedFurni.length > 0) {
                 var furniUpdate :ModifyFurniUpdate = new ModifyFurniUpdate();
                 furniUpdate.initialize(sceneId, version++,
-                    _removedFurni, _addedFurni);
+                    (_removedFurni.length > 0) ? _removedFurni : null,
+                    (_addedFurni.length > 0) ? _addedFurni : null);
                 edits.push(furniUpdate);
             }
 
@@ -65,7 +66,8 @@ public class EditRoomHelper
                 var portalUpdate :ModifyPortalsUpdate =
                     new ModifyPortalsUpdate();
                 portalUpdate.initialize(sceneId, version++,
-                    _removedPortals, _addedPortals);
+                    (_removedPortals.length > 0) ? _removedPortals : null,
+                    (_addedPortals.length > 0) ? _addedPortals : null);
                 edits.push(portalUpdate);
             }
 
