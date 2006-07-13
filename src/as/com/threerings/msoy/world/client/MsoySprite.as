@@ -97,6 +97,9 @@ public class MsoySprite extends Box
 
     protected function setup (desc :MediaData) :void
     {
+        if (_desc != null && _desc.id == desc.id) {
+            return;
+        }
         // shutdown any previous media
         if (_media != null) {
             shutdown(false);

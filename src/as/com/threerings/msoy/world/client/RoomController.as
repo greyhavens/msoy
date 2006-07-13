@@ -19,6 +19,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.whirled.client.SceneController;
+import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -175,7 +176,6 @@ public class RoomController extends SceneController
 
         // possibly save the edits
         if (edits != null) {
-            trace("RoomService listener: " + _roomObj.roomService);
             _roomObj.roomService.updateRoom(_mctx.getClient(), edits,
                 new ReportingListener(_mctx));
         }
@@ -264,6 +264,14 @@ public class RoomController extends SceneController
                     "alterTEMP", [ frob ]);
             }
         }
+    }
+
+    override protected function sceneUpdated (update :SceneUpdate) :void
+    {
+        super.sceneUpdated(update);
+
+        // for now, this should take care of updating things
+        _roomView.updateAllFurniAndPortals();
     }
 
     /**

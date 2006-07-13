@@ -22,12 +22,17 @@ public class FurniSprite extends MsoySprite
         return _furni;
     }
 
+    public function update (furni :FurniData) :void
+    {
+        setup(furni.media);
+        scaleUpdated();
+        setLocation(furni.loc);
+    }
+
     override public function setEditing (editing :Boolean) :void
     {
-        if (editing) {
-            // clone the furni data so that we can safely modify it
-            _furni = (_furni.clone() as FurniData);
-        }
+        // clone the furni data so that we can safely modify it
+        _furni = (_furni.clone() as FurniData);
 
         super.setEditing(editing);
     }

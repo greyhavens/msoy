@@ -140,6 +140,10 @@ public class AbstractRoomView extends Canvas
         _editing = editing;
         _portals.forEach(spriteVisitFn);
         _furni.forEach(spriteVisitFn);
+
+        if (!editing) {
+            updateAllFurniAndPortals();
+        }
     }
 
     /**
@@ -200,6 +204,10 @@ public class AbstractRoomView extends Canvas
         return new MsoyLocation(xx, 0, zz, 0);
     }
 
+    /**
+     * Get the y distance represented by the specified number of pixels
+     * for the given z coordinate.
+     */
     public function getYDistance (z :Number, pixels :int) :Number
     {
         var scale :Number = MIN_SCALE +
@@ -331,6 +339,16 @@ public class AbstractRoomView extends Canvas
         _furni.put(furni.id, sprite);
     }
 
+    protected function updateFurni (furni :FurniData) :void
+    {
+        var sprite :FurniSprite = (_furni.get(furni.id) as FurniSprite);
+        if (sprite != null) {
+            sprite.update(furni);
+        } else {
+            addFurni(furni);
+        }
+    }
+
     protected function addPortal (portal :MsoyPortal) :void
     {
         var sprite :PortalSprite = _ctx.getMediaDirector().getPortal(portal);
@@ -339,6 +357,17 @@ public class AbstractRoomView extends Canvas
         sprite.setLocation(loc);
 
         _portals.put(portal.portalId, sprite);
+    }
+
+    protected function updatePortal (portal :MsoyPortal) :void
+    {
+        var sprite :PortalSprite =
+            (_portals.get(portal.portalId) as PortalSprite);
+        if (sprite != null) {
+            sprite.update(portal);
+        } else {
+            addPortal(portal);
+        }
     }
 
     protected function removeSprite (sprite :MsoySprite) :void
@@ -389,6 +418,20 @@ public class AbstractRoomView extends Canvas
         // set up any furniture
         for each (var furni :FurniData in _scene.getFurni()) {
             addFurni(furni);
+        }
+    }
+
+    public function updateAllFurniAndPortals () :void
+    {
+        var itr :Iterator = _scene.getPortals();
+        while (itr.hasNext()) {
+            var portal :MsoyPortal = (itr.next() as MsoyPortal);
+            updatePortal(portal);
+        }
+
+        // set up any furniture
+        for each (var furni :FurniData in _scene.getFurni()) {
+            updateFurni(furni);
         }
     }
 

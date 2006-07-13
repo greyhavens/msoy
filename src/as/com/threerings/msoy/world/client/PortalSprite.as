@@ -42,12 +42,18 @@ public class PortalSprite extends MsoySprite
         return _portal;
     }
 
+    public function update (portal :MsoyPortal) :void
+    {
+        setup(portal.media);
+        scaleUpdated();
+        setLocation(portal.loc);
+    }
+
     override public function setEditing (editing :Boolean) :void
     {
-        if (editing) {
-            // clone the portal data so that we can safely modify it
-            _portal = (_portal.clone() as MsoyPortal);
-        }
+        // clone the portal data so that we can safely modify it, both
+        // when editing and prior to resetting
+        _portal = (_portal.clone() as MsoyPortal);
 
         super.setEditing(editing);
     }

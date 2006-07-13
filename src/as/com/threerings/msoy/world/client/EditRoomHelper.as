@@ -40,30 +40,33 @@ public class EditRoomHelper
      */
     public function endEditing (saveEdits :Boolean) :TypedArray
     {
+        var edits :TypedArray = null;
+        
+        if (saveEdits) {
+            var scene :MsoyScene =
+                (_ctx.getSceneDirector().getScene() as MsoyScene);
+            var sceneId :int = scene.getId();
+            var version :int = scene.getVersion();
+
+            edits = TypedArray.create(SceneUpdate);
+
+            // configure any furniture updates
+            if (_addedFurni.length > 0 || _removedFurni.length > 0) {
+                var furniUpdate :ModifyFurniUpdate = new ModifyFurniUpdate();
+                furniUpdate.initialize(sceneId, version++,
+                    _removedFurni, _addedFurni);
+                edits.push(furniUpdate);
+            }
+
+            // return something, or null
+            if (edits.length == 0) {
+                edits = null;
+            }
+        }
+
+        // turn off editing in the room, which restores original positions
         _roomView.setEditing(false, disableEditingVisitor);
 
-        if (!saveEdits) {
-            return null;
-        }
-
-        var scene :MsoyScene = (_ctx.getSceneDirector().getScene() as MsoyScene);
-        var edits :TypedArray = TypedArray.create(SceneUpdate);
-
-        var sceneId :int = scene.getId();
-        var version :int = scene.getVersion();
-
-        // configure any furniture updates
-        if (_addedFurni.length > 0 || _removedFurni.length > 0) {
-            var furniUpdate :ModifyFurniUpdate = new ModifyFurniUpdate();
-            furniUpdate.initialize(sceneId, version++,
-                _removedFurni, _addedFurni);
-            edits.push(furniUpdate);
-        }
-
-        // return something, or null
-        if (edits.length == 0) {
-            edits = null;
-        }
         return edits;
     }
 
@@ -292,7 +295,7 @@ public class EditRoomHelper
         if (sprite is FurniSprite) {
             var furni :FurniData = (sprite as FurniSprite).getFurniData();
             // copy the edited location back into the descriptor
-            furni.loc = sprite.loc;
+            furni.loc = (sprite.loc.clone() as MsoyLocation);
 
             // first remove any instances from our removed/added
             ArrayUtil.removeAll(_removedFurni, furni);
@@ -317,7 +320,7 @@ public class EditRoomHelper
         } else if (sprite is PortalSprite) {
             var portal :MsoyPortal = (sprite as PortalSprite).getPortal();
             // copy the edited location back into the descriptor
-            portal.loc = sprite.loc;
+            portal.loc = (sprite.loc.clone() as MsoyLocation);
 
             // first remove any instances from our removed/added
             ArrayUtil.removeAll(_removedPortals, portal);
