@@ -10,6 +10,8 @@ import flash.ui.ContextMenu;
 
 import mx.core.Application;
 
+import mx.resources.ResourceBundle;
+
 import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 
@@ -112,6 +114,11 @@ public class MsoyClient extends Client
         c = MsoyUserObject;
         c = MsoyOccupantInfo;
         c = SpotSceneObject;
+
+        // these cause bundles to be compiled in.
+        [ResourceBundle("global")]
+        [ResourceBundle("general")]
+        var rb :ResourceBundle; // this needs to be here for the above lines
     }
 
     protected var _ctx :MsoyContext;

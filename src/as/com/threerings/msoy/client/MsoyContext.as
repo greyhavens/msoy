@@ -33,14 +33,14 @@ public class MsoyContext
         _app = app;
 
         // TODO: verify params to these constructors
-        _msgmgr = new MessageManager("rsrc", (app.root as ISystemManager));
-        _locdir = new LocationDirector(this);
-        _chatdir = new ChatDirector(this, _msgmgr, "general");
-        _screp = new SharedObjectSceneRepository()
-        _scenedir = new SceneDirector(this, _locdir, _screp,
+        _msgMgr = new MessageManager((app.root as ISystemManager));
+        _locDir = new LocationDirector(this);
+        _chatDir = new ChatDirector(this, _msgMgr, "general");
+        _sceneRepo = new SharedObjectSceneRepository()
+        _sceneDir = new SceneDirector(this, _locDir, _sceneRepo,
             new MsoySceneFactory());
-        _spotdir = new SpotSceneDirector(this, _locdir, _scenedir);
-        _mediadir = new MediaDirector(this);
+        _spotDir = new SpotSceneDirector(this, _locDir, _sceneDir);
+        _mediaDir = new MediaDirector(this);
 
         // set up the top panel
         _topPanel = new TopPanel(this, _app);
@@ -51,7 +51,7 @@ public class MsoyContext
      */
     public function displayFeedback (bundle :String, message :String) :void
     {
-        _chatdir.displayFeedback(bundle, message);
+        _chatDir.displayFeedback(bundle, message);
     }
 
     /**
@@ -59,7 +59,7 @@ public class MsoyContext
      */
     public function displayInfo (bundle :String, message :String) :void
     {
-        _chatdir.displayInfo(bundle, message);
+        _chatDir.displayInfo(bundle, message);
     }
 
     // documentation inherited from superinterface PresentsContext
@@ -77,7 +77,7 @@ public class MsoyContext
     // documentation inherited from superinterface CrowdContext
     public function getLocationDirector () :LocationDirector
     {
-        return _locdir;
+        return _locDir;
     }
 
     // documentation inherited from superinterface CrowdContext
@@ -89,13 +89,13 @@ public class MsoyContext
     // documentation inherited from superinterface CrowdContext
     public function getChatDirector () :ChatDirector
     {
-        return _chatdir;
+        return _chatDir;
     }
 
     // documentation inherited from superinterface WhirledContext
     public function getSceneDirector () :SceneDirector
     {
-        return _scenedir;
+        return _sceneDir;
     }
 
     /**
@@ -103,7 +103,7 @@ public class MsoyContext
      */
     public function getSpotSceneDirector () :SpotSceneDirector
     {
-        return _spotdir;
+        return _spotDir;
     }
 
     /**
@@ -111,7 +111,7 @@ public class MsoyContext
      */
     public function getMediaDirector () :MediaDirector
     {
-        return _mediadir;
+        return _mediaDir;
     }
 
     // documentation inherited from superinterface CrowdContext
@@ -128,7 +128,7 @@ public class MsoyContext
 
     public function TEMPClearSceneCache () :void
     {
-        _screp.TEMPClearSceneCache();
+        _sceneRepo.TEMPClearSceneCache();
     }
 
     protected var _client :Client;
@@ -137,18 +137,18 @@ public class MsoyContext
 
     protected var _topPanel :TopPanel;
 
-    protected var _msgmgr :MessageManager;
+    protected var _msgMgr :MessageManager;
 
-    protected var _locdir :LocationDirector;
+    protected var _locDir :LocationDirector;
 
-    protected var _scenedir :SceneDirector;
+    protected var _sceneDir :SceneDirector;
 
-    protected var _chatdir :ChatDirector;
+    protected var _chatDir :ChatDirector;
 
-    protected var _spotdir :SpotSceneDirector;
+    protected var _spotDir :SpotSceneDirector;
 
-    protected var _mediadir :MediaDirector;
+    protected var _mediaDir :MediaDirector;
 
-    protected var _screp :SharedObjectSceneRepository;
+    protected var _sceneRepo :SharedObjectSceneRepository;
 }
 }
