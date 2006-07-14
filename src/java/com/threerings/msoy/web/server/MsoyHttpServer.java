@@ -1,11 +1,13 @@
 //
 // $Id$
 
-package com.threerings.msoy.server;
+package com.threerings.msoy.web.server;
 
 import org.mortbay.http.HttpServer;
 
 import java.io.IOException;
+
+import com.threerings.msoy.server.ServerConfig;
 
 import static com.threerings.msoy.Log.log;
 

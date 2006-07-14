@@ -33,6 +33,7 @@ import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
 import com.threerings.whirled.util.SceneFactory;
 
+import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.data.RoomConfig;
 
 import com.threerings.msoy.server.persist.MemberRepository;
