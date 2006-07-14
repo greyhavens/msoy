@@ -5,7 +5,7 @@ package com.threerings.msoy.server;
 
 import com.threerings.presents.server.Authenticator;
 
-import com.threerings.msoy.client.LogonException;
+import com.threerings.msoy.web.client.LogonException;
 
 /**
  * Extends the standard {@link Authenticator} and defines some additional

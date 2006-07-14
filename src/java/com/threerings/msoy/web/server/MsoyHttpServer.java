@@ -3,9 +3,13 @@
 
 package com.threerings.msoy.web.server;
 
-import org.mortbay.http.HttpServer;
-
+import java.io.File;
 import java.io.IOException;
+
+import org.mortbay.http.HttpContext;
+import org.mortbay.http.HttpServer;
+import org.mortbay.http.handler.ResourceHandler;
+import org.mortbay.jetty.servlet.ServletHandler;
 
 import com.threerings.msoy.server.ServerConfig;
 
@@ -23,16 +27,30 @@ public class MsoyHttpServer extends HttpServer
      */
     public MsoyHttpServer ()
     {
+        // TODO: tone down the default verbose logging
+
+        // wire up our GWT servlets
+        HttpContext context = getContext("/user");
+        ServletHandler handler= new ServletHandler();
+        handler.addServlet("user", "/*", WebUserServlet.class.getName());
+        context.addHandler(handler);
+
+        // wire up serving of static content (for testing)
+        context = getContext("/");
+        context.setResourceBase(
+            new File(ServerConfig.serverRoot, "pages").getPath());
+        context.addHandler(new ResourceHandler());
     }
 
     /**
      * Initializes our HTTP server and begins listening for connections.
      */
     public void init ()
-        throws IOException
+        throws Exception
     {
         // listen for connections on our preferred port
         addListener(":" + ServerConfig.getHttpPort());
+        start();
         log.info("Listening for HTTP connections on port " +
                  ServerConfig.getHttpPort());
     }

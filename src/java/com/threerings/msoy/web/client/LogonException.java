@@ -1,12 +1,14 @@
 //
 // $Id$
 
-package com.threerings.msoy.client;
+package com.threerings.msoy.web.client;
+
+import com.google.gwt.user.client.rpc.SerializableException;
 
 /**
  * Thrown to indicate a failure during logon.
  */
-public class LogonException extends Exception
+public class LogonException extends SerializableException
 {
     /**
      * Creates a logon exception with the supplied translatable string
@@ -15,5 +17,10 @@ public class LogonException extends Exception
     public LogonException (String reason)
     {
         super(reason);
+    }
+
+    /** Used when unserializing. */
+    public LogonException ()
+    {
     }
 }

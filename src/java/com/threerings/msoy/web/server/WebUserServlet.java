@@ -3,15 +3,18 @@
 
 package com.threerings.msoy.web.server;
 
-import com.threerings.msoy.client.LogonException;
-import com.threerings.msoy.client.WebUserService;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
+
+import com.threerings.msoy.web.client.LogonException;
+import com.threerings.msoy.web.client.WebUserService;
 
 /**
  * Provides the server implementation of {@link WebUserService}.
  */
-public class WebUserServlet
+public class WebUserServlet extends RemoteServiceServlet
     implements WebUserService
 {
     // from interface WebUserService

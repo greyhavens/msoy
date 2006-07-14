@@ -15,7 +15,7 @@
   <property name="deploy.dir"   value="dist"/>
   <property name="javadoc.dir"  value="${deploy.dir}/docs"/>
   <property name="savedoc.dir"  value="docs"/>
-  <property name="nartool.path"   value="projects/narya/bin"/>
+  <property name="gwtout.dir"   value="pages"/>
 
   <!-- declare our classpath -->
   <path id="classpath">
@@ -24,6 +24,35 @@
     <fileset dir="lib" includes="*.jar"/>
     <fileset dir="/export/tools/lib/java" includes="**/*.jar"/>
   </path>
+
+  <!-- special bits used by GWT -->
+  <path id="gwt.classpath">
+    <fileset dir="lib" includes="**/*.jar"/>
+    <pathelement location="${deploy.dir}/classes"/>
+    <pathelement location="src/java"/>
+    <pathelement location="src/gwt"/>
+  </path>
+
+  <!-- runs the GWT debugging shell -->
+  <property name="page"  value="index.html"/>
+  <target name="gshell">
+    <java classpathref="gwt.classpath" fork="true"
+          classname="com.google.gwt.dev.GWTShell">
+      <arg value="-out"/>
+      <arg value="${gwtout.dir}"/>
+      <arg value="${app.name}/${page}"/>
+    </java>
+  </target> 
+
+  <!-- runs the GWT compiler -->
+  <target name="gcompile">
+    <java classpathref="gwt.classpath" fork="true"
+          classname="com.google.gwt.dev.GWTCompiler">
+      <arg value="-out"/>
+      <arg value="${gwtout.dir}"/>
+      <arg value="${app.name}"/>
+    </java>
+  </target> 
 
   <!-- generates additional methods for distributed object classes -->
   <target name="gendobj" depends="prepare">

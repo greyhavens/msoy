@@ -125,6 +125,13 @@ public class MsoyServer extends WhirledServer
     {
         super.shutdown();
 
+        // shut down our http server
+        try {
+            httpServer.stop(true);
+        } catch (InterruptedException ie) {
+            log.log(Level.WARNING, "Failed to stop http server.", ie);
+        }
+
         // close our audit logs
         _glog.close();
         _ilog.close();

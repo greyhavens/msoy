@@ -23,7 +23,6 @@ import com.threerings.presents.net.AuthResponseData;
 
 import com.threerings.presents.server.net.AuthingConnection;
 
-import com.threerings.msoy.client.LogonException;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -32,6 +31,7 @@ import com.threerings.msoy.server.MsoyClientResolver;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.Member;
+import com.threerings.msoy.web.client.LogonException;
 
 import static com.threerings.msoy.Log.log;
 import static com.threerings.msoy.data.MsoyAuthCodes.*;
