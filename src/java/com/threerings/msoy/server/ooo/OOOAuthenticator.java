@@ -21,12 +21,13 @@ import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.AuthResponse;
 import com.threerings.presents.net.AuthResponseData;
 
-import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
+import com.threerings.msoy.client.LogonException;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyClientResolver;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
@@ -38,7 +39,7 @@ import static com.threerings.msoy.data.MsoyAuthCodes.*;
 /**
  * Delegates authentication to the OOO user manager.
  */
-public class OOOAuthenticator extends Authenticator
+public class OOOAuthenticator extends MsoyAuthenticator
 {
     public OOOAuthenticator ()
     {
@@ -54,7 +55,7 @@ public class OOOAuthenticator extends Authenticator
         }
     }
 
-    // documentation inherited
+    // from Authenticator
     public void authenticateConnection (final AuthingConnection conn)
     {
         // fire up an invoker unit that will load the user object just to
@@ -66,6 +67,35 @@ public class OOOAuthenticator extends Authenticator
                 return false;
             }
         });
+    }
+
+    // from MsoyAuthenticator
+    public String authenticateSession (String username, String password,
+                                       boolean persist)
+        throws LogonException
+    {
+        try {
+            // load up the user record and verify various bits
+            OOOUser user = _authrep.loadUser(username, false);
+            if (user == null) {
+                throw new LogonException(NO_SUCH_USER);
+            }
+            if (!user.password.equals(password)) {
+                throw new LogonException(INVALID_PASSWORD);
+            }
+            if (user.isBanned()) {
+                throw new LogonException(BANNED);
+            }
+
+            // if they made it through that gauntlet, create or update their
+            // session token and let 'em on in
+            return _authrep.registerSession(user, persist);
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Error authenticating user " +
+                    "[who=" + username + "].", pe);
+            throw new LogonException(SERVER_ERROR);
+        }
     }
 
     /**
