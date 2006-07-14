@@ -60,6 +60,31 @@ public class MsoyServer extends WhirledServer
     /** Handles HTTP servlet requests. */
     public static MsoyHttpServer httpServer;
 
+    /**
+     * Creates an audit log with the specified name (which should not include
+     * the <code>.log</code> suffix) in our server log directory.
+     */
+    public static AuditLogger createAuditLog (String logname)
+    {
+        return new AuditLogger(_logdir, logname + ".log");
+    }
+
+    /**
+     * Loads a message to the general audit log.
+     */
+    public static void generalLog (String message)
+    {
+        _glog.log(message);
+    }
+
+    /**
+     * Loads a message to the item audit log.
+     */
+    public static void itemLog (String message)
+    {
+        _ilog.log(message);
+    }
+
     @Override
     public void init ()
         throws Exception
@@ -103,31 +128,6 @@ public class MsoyServer extends WhirledServer
         _glog.close();
         _ilog.close();
         _stlog.close();
-    }
-
-    /**
-     * Creates an audit log with the specified name (which should not include
-     * the <code>.log</code> suffix) in our server log directory.
-     */
-    public static AuditLogger createAuditLog (String logname)
-    {
-        return new AuditLogger(_logdir, logname + ".log");
-    }
-
-    /**
-     * Loads a message to the general audit log.
-     */
-    public static void generalLog (String message)
-    {
-        _glog.log(message);
-    }
-
-    /**
-     * Loads a message to the item audit log.
-     */
-    public static void itemLog (String message)
-    {
-        _ilog.log(message);
     }
 
     @Override
