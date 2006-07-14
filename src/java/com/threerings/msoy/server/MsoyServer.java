@@ -64,6 +64,9 @@ public class MsoyServer extends WhirledServer
     public void init ()
         throws Exception
     {
+        // create our connection provider before calling super.init() because
+        // our superclass will attempt to create our authenticator and we'll
+        // need the connection provider ready at that time
         conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
 
         super.init();
