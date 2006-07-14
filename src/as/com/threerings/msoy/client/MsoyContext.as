@@ -36,8 +36,9 @@ public class MsoyContext
         _msgmgr = new MessageManager("rsrc", (app.root as ISystemManager));
         _locdir = new LocationDirector(this);
         _chatdir = new ChatDirector(this, _msgmgr, "general");
-        _scenedir = new SceneDirector(this, _locdir,
-            new SharedObjectSceneRepository(), new MsoySceneFactory());
+        _screp = new SharedObjectSceneRepository()
+        _scenedir = new SceneDirector(this, _locdir, _screp,
+            new MsoySceneFactory());
         _spotdir = new SpotSceneDirector(this, _locdir, _scenedir);
         _mediadir = new MediaDirector(this);
 
@@ -125,6 +126,11 @@ public class MsoyContext
         _topPanel.clearPlaceView(view);
     }
 
+    public function TEMPClearSceneCache () :void
+    {
+        _screp.TEMPClearSceneCache();
+    }
+
     protected var _client :Client;
 
     protected var _app :Application;
@@ -142,5 +148,7 @@ public class MsoyContext
     protected var _spotdir :SpotSceneDirector;
 
     protected var _mediadir :MediaDirector;
+
+    protected var _screp :SharedObjectSceneRepository;
 }
 }

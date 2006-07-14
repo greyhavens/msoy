@@ -38,6 +38,8 @@ public class RoomController extends SceneController
     public static const DISCARD_EDITS :String = "discard_edits";
     public static const PORTAL_CLICKED :String = "portalClicked";
 
+    public static const TEMP_CLEAR_SCENE_CACHE :String = "clrScenes";
+
     // documentation inherited
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
@@ -112,6 +114,9 @@ public class RoomController extends SceneController
         } else if ((cmd == SAVE_EDITS) || (cmd == DISCARD_EDITS)) {
             endEditing(cmd == SAVE_EDITS);
 
+        } else if (cmd == TEMP_CLEAR_SCENE_CACHE) {
+            _mctx.TEMPClearSceneCache();
+
         } else {
             return super.handleAction(cmd, arg);
         }
@@ -135,15 +140,21 @@ public class RoomController extends SceneController
         } else if (true) { // TODO: if canEditScene...
             addMenuItem(EDIT_SCENE);
         }
+
+        addMenuItem(TEMP_CLEAR_SCENE_CACHE, null, true);
     }
 
     /**
      * Add the specified command to the context menu for the current scene.
      */
-    protected function addMenuItem (cmd :String) :void
+    protected function addMenuItem (
+            cmd :String, arg :Object = null, separatorBefore :Boolean = false,
+            enabled :Boolean = true, visible :Boolean = true)
+            :void
     {
         _menu.customItems.push(
-            MenuUtil.createControllerMenuItem("m." + cmd, cmd));
+            MenuUtil.createControllerMenuItem("m." + cmd, cmd, arg,
+                separatorBefore, enabled, visible));
     }
 
     /**

@@ -266,17 +266,37 @@ public class EditRoomHelper
      */
     protected function spriteScaling (event :MouseEvent) :void
     {
+        // TODO: this will clean up more when I revamp the perspective
+        // math in the RoomView.
+        // Until then, there's no point in trying to make it less annoying.
+
         var p :Point = _editSprite.globalToLocal(
             new Point(event.stageX, event.stageY));
         var hs :Point = _editSprite.hotSpot;
 
         if (_scalingX) {
-            _editSprite.setMediaScaleX(_editSprite.getMediaScaleX() *
-                (p.x - hs.x) / (_xoffset - hs.x));
+            var ox :Number = _editSprite.getMediaScaleX();
+            var sx :Number = (ox == 0) ? 1 : ox;
+            sx *= (p.x - hs.x) / (_xoffset - hs.x);
+            if (sx != 0 && !isNaN(sx) && isFinite(sx)) {
+                _editSprite.setMediaScaleX(sx);
+                if (_editSprite.contentWidth < 2) {
+                    // re-set the old scale
+                    _editSprite.setMediaScaleX(ox);
+                }
+            }
         }
         if (_scalingY) {
-            _editSprite.setMediaScaleY(_editSprite.getMediaScaleY() *
-                (p.y - hs.y) / (_yoffset - hs.y));
+            var oy :Number = _editSprite.getMediaScaleY();
+            var sy :Number = (oy == 0) ? 1 : oy;
+            sy *= (p.y - hs.y) / (_yoffset - hs.y);
+            if (sy != 0 && !isNaN(sy) && isFinite(sy)) {
+                _editSprite.setMediaScaleY(sy);
+                if (_editSprite.contentHeight < 2) {
+                    // re-set the old scale
+                    _editSprite.setMediaScaleY(oy);
+                }
+            }
         }
 
         // since the scale has changed, update the scaling hint graphics

@@ -314,12 +314,12 @@ public class MsoySprite extends Box
 
     public function get contentWidth () :int
     {
-        return Math.min(_w * getMediaScaleX(), maxContentWidth);
+        return Math.min(Math.abs(_w * getMediaScaleX()), maxContentWidth);
     }
 
     public function get contentHeight () :int
     {
-        return Math.min(_h * getMediaScaleY(), maxContentHeight);
+        return Math.min(Math.abs(_h * getMediaScaleY()), maxContentHeight);
     }
 
     /**

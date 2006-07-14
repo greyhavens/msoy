@@ -29,7 +29,7 @@ public class SharedObjectSceneRepository
         // scenes 
     }
 
-    // documentation inherited from interface SceneRepository
+    // from SceneRepository
     public function loadSceneModel (sceneId :int) :SceneModel
     {
         // retrieve the shared object
@@ -51,7 +51,7 @@ public class SharedObjectSceneRepository
         return (ins.readObject() as SceneModel);
     }
 
-    // documentation inherited from interface SceneRepository
+    // from SceneRepository
     public function storeSceneModel (model :SceneModel) :void
     {
         // retrieve the shared object
@@ -72,12 +72,25 @@ public class SharedObjectSceneRepository
         so.flush(); // TODO: we could specify a min size..
     }
 
-    // documentation inherited from interface SceneRepository
+    // from SceneRepository
     public function deleteSceneModel (sceneId :int) :void
     {
         var so :SharedObject = getShared(sceneId);
         if (so != null) {
             so.clear();
+        }
+    }
+
+    /**
+     * Temporary? code to clear the scene cache.
+     */
+    public function TEMPClearSceneCache () :void
+    {
+        // TODO: this is unbelievably slow
+        // What we likely need to do is maintain a directory of stored scenes
+        // as noted in the constructor's note
+        for (var ii :int = 0; ii < 100; ii++) {
+            deleteSceneModel(ii);
         }
     }
 
