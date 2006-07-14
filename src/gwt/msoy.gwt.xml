@@ -4,5 +4,5 @@
   <source path="client"/>
   <source path="com/threerings/msoy/web/client"/>
   <source path="com/threerings/msoy/web/data"/>
-  <!--<servlet path="/user" class="com.threerings.msoy.web.server.WebUserServlet"/>-->
+  <servlet path="/user" class="com.threerings.msoy.web.server.RedirectServlet"/>
 </module>

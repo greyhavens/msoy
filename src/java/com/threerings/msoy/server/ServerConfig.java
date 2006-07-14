@@ -5,6 +5,7 @@ package com.threerings.msoy.server;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -86,8 +87,14 @@ public class ServerConfig
                 props.load(new FileInputStream(propPath));
             } else {
                 propPath = "server.properties";
-                props.load(ServerConfig.class.getClassLoader().
-                           getResourceAsStream(propPath));
+                InputStream in = ServerConfig.class.getClassLoader().
+                    getResourceAsStream(propPath);
+                if (in == null) {
+                    log.warning("Failed to locate server.properties " +
+                                "on the classpath.");
+                } else {
+                    props.load(in);
+                }
             }
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to load install properties " +

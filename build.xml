@@ -38,6 +38,7 @@
   <target name="gshell">
     <java classpathref="gwt.classpath" fork="true"
           classname="com.google.gwt.dev.GWTShell">
+      <sysproperty key="msoy.home" value="."/>
       <arg value="-out"/>
       <arg value="${gwtout.dir}"/>
       <arg value="${app.name}/${page}"/>
