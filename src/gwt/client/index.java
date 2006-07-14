@@ -70,7 +70,7 @@ public class index
             String password = _password.getText();
             if (username.length() > 0 && password.length() > 0) {
                 _cookie.setText("Logging in...");
-                _usersvc.login(username, password, false, this);
+                _usersvc.login(username, md5hex(password), false, this);
             }
         }
         public void onKeyPress (Widget sender, char keyCode, int modifiers) {
@@ -84,6 +84,10 @@ public class index
             _cookie.setText("Error: " + caught.toString());
         }
     }
+
+    protected native String md5hex (String text) /*-{
+       return $wnd.hex_md5(text);
+    }-*/;
 
     protected WebUserServiceAsync _usersvc;
     protected TextBox _username;
