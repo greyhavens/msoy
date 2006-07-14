@@ -10,8 +10,8 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.KeyboardListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -38,10 +38,10 @@ public class index
         FlexTable table = new FlexTable();
         table.setText(0, 0, "Username");
         table.setWidget(0, 1, _username = new TextBox());
-        _username.addChangeListener(helper);
+        _username.addKeyboardListener(helper);
         table.setText(1, 0, "Password");
         table.setWidget(1, 1, _password = new TextBox());
-        _password.addChangeListener(helper);
+        _password.addKeyboardListener(helper);
         table.setText(2, 0, "Cookie");
         table.setWidget(2, 1, _cookie = new Label(""));
         RootPanel.get("content").add(table);
@@ -61,13 +61,21 @@ public class index
         // TODO
     }
 
-    protected class LoginHelper implements ChangeListener, AsyncCallback {
-        public void onChange (Widget sender) {
+    protected class LoginHelper implements KeyboardListener, AsyncCallback {
+        public void onKeyDown (Widget sender, char keyCode, int modifiers) {
+            if (keyCode != KeyboardListener.KEY_ENTER) {
+                return;
+            }
             String username = _username.getText();
             String password = _password.getText();
             if (username.length() > 0 && password.length() > 0) {
+                _cookie.setText("Logging in...");
                 _usersvc.login(username, password, false, this);
             }
+        }
+        public void onKeyPress (Widget sender, char keyCode, int modifiers) {
+        }
+        public void onKeyUp (Widget sender, char keyCode, int modifiers) {
         }
         public void onSuccess (Object result) {
             _cookie.setText((String)result);
