@@ -164,7 +164,7 @@ public class MsoyServer extends WhirledServer
     @Override
     protected int[] getListenPorts ()
     {
-        return new int[] { 4010 };
+        return ServerConfig.serverPorts;
     }
 
     @Override
