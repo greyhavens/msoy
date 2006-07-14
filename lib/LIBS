@@ -1,1 +1,5 @@
+commons-logging.jar
+gwt-dev-linux.jar
+gwt-user.jar
 mysql-connector-java-3.1.12-bin.jar
+org.mortbay.jetty.jar

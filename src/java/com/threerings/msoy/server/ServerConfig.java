@@ -63,6 +63,17 @@ public class ServerConfig
     }
 
     /**
+     * Returns the port on which the server should listen for HTTP connections.
+     * The default is 8080 to avoid conflict with local web server
+     * installations on development servers but the expectation is that in
+     * production the server will listen directly on port 80.
+     */
+    public static int getHttpPort ()
+    {
+        return config.getValue("http_port", 8080);
+    }
+
+    /**
      * Configures the install config with the path to our installation
      * properties file. This method is called automatically.
      */
