@@ -9,6 +9,9 @@ import mx.containers.Canvas;
 
 import mx.events.ResizeEvent;
 
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Name;
+
 import com.threerings.crowd.client.PlaceView;
 
 public class TopPanel extends Canvas
@@ -17,6 +20,7 @@ public class TopPanel extends Canvas
 
     public function TopPanel (ctx :MsoyContext, app :Application)
     {
+        _ctx = ctx;
         includeInLayout = false;
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
@@ -37,7 +41,16 @@ public class TopPanel extends Canvas
     {
         clearPlaceView(null);
         _placeView = view;
+
+        if (_friendsList == null) {
+            _friendsList = new FriendsList(_ctx);
+        } else {
+            removeChild(_friendsList);
+        }
+
         addChild(view as UIComponent);
+        // put the pals list atop everything else
+        addChild(_friendsList);
 
         configureSize(parent as Container);
     }
@@ -78,7 +91,13 @@ public class TopPanel extends Canvas
         configureSize(container);
     }
 
+    /** The giver of life. */
+    protected var _ctx :MsoyContext;
+
     /** The current place view. */
     protected var _placeView :PlaceView;
+
+    /** The list of our friends. */
+    protected var _friendsList :FriendsList;
 }
 }

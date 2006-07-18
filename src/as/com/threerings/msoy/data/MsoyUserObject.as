@@ -9,6 +9,8 @@ import com.threerings.util.Short;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
+import com.threerings.presents.dobj.DSet;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
@@ -38,6 +40,9 @@ public class MsoyUserObject extends BodyObject
 
     /** The field name of the <code>chatPopStyle</code> field. */
     public static const CHAT_POP_STYLE :String = "chatPopStyle";
+
+    /** The field name of the <code>friends</code> field. */
+    public static const FRIENDS :String = "friends";
     // AUTO-GENERATED: FIELDS END
 
     /** The scene id that the user is currently occupying. */
@@ -47,7 +52,7 @@ public class MsoyUserObject extends BodyObject
     public var clusterOid :int;
 
     /** The tokens defining the access controls for this user. */
-    public var tokens :TokenRing;
+    public var tokens :MsoyTokenRing;
 
     /** The avatar that the user has chosen. */
     public var avatar :MediaData;
@@ -57,6 +62,9 @@ public class MsoyUserObject extends BodyObject
 
     /** The pop style of our chat. */
     public var chatPopStyle :int;
+
+    /** The buddies of this player. */
+    public var friends :DSet;
 
     /**
      * Return true if this user is merely a guest.
@@ -123,9 +131,17 @@ public class MsoyUserObject extends BodyObject
         this.clusterOid = value;
     }
 
-    public function setTokens (value :TokenRing) :void
+    /**
+     * Requests that the <code>tokens</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public function setTokens (value :MsoyTokenRing) :void
     {
-        var ovalue :TokenRing = this.tokens;
+        var ovalue :MsoyTokenRing = this.tokens;
         requestAttributeChange(
             TOKENS, value, ovalue);
         this.tokens = value;
@@ -180,7 +196,6 @@ public class MsoyUserObject extends BodyObject
     }
     // AUTO-GENERATED: METHODS END
 
-    // documentation inherited
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
@@ -191,19 +206,20 @@ public class MsoyUserObject extends BodyObject
         out.writeObject(avatar);
         out.writeShort(chatStyle);
         out.writeShort(chatPopStyle);
+        out.writeObject(friends);
     }
 
-    // documentation inherited
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
-        tokens = (ins.readObject() as TokenRing);
+        tokens = (ins.readObject() as MsoyTokenRing);
         avatar = (ins.readObject() as MediaData);
         chatStyle = ins.readShort();
         chatPopStyle = ins.readShort();
+        friends = (ins.readObject() as DSet);
     }
 }
 }

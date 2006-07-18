@@ -5,6 +5,8 @@ package com.threerings.msoy.data;
 
 import com.samskivert.util.IntListUtil;
 
+import com.threerings.presents.dobj.DSet;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.TokenRing;
@@ -35,6 +37,9 @@ public class MsoyUserObject extends BodyObject
 
     /** The field name of the <code>chatPopStyle</code> field. */
     public static final String CHAT_POP_STYLE = "chatPopStyle";
+
+    /** The field name of the <code>friends</code> field. */
+    public static final String FRIENDS = "friends";
     // AUTO-GENERATED: FIELDS END
 
     /** The scene id that the user is currently occupying. */
@@ -44,7 +49,7 @@ public class MsoyUserObject extends BodyObject
     public int clusterOid;
 
     /** The tokens defining the access controls for this user. */
-    public TokenRing tokens;
+    public MsoyTokenRing tokens;
 
     /** The avatar that the user has chosen. */
     public MediaData avatar;
@@ -54,6 +59,9 @@ public class MsoyUserObject extends BodyObject
 
     /** The pop style of our chat. */
     public short chatPopStyle;
+
+    /** The friends of this player. */
+    public DSet<FriendEntry> friends = new DSet<FriendEntry>();
 
     /**
      * Return true if this user is merely a guest.
@@ -86,6 +94,12 @@ public class MsoyUserObject extends BodyObject
     public OccupantInfo createOccupantInfo ()
     {
         return new MsoyOccupantInfo(this);
+    }
+
+    @Override
+    public TokenRing getTokens ()
+    {
+        return tokens;
     }
 
     @Override
@@ -158,9 +172,9 @@ public class MsoyUserObject extends BodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setTokens (TokenRing value)
+    public void setTokens (MsoyTokenRing value)
     {
-        TokenRing ovalue = this.tokens;
+        MsoyTokenRing ovalue = this.tokens;
         requestAttributeChange(
             TOKENS, value, ovalue);
         this.tokens = value;
@@ -212,6 +226,52 @@ public class MsoyUserObject extends BodyObject
         requestAttributeChange(
             CHAT_POP_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
         this.chatPopStyle = value;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>friends</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToFriends (FriendEntry elem)
+    {
+        requestEntryAdd(FRIENDS, friends, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>friends</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromFriends (Comparable key)
+    {
+        requestEntryRemove(FRIENDS, friends, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>friends</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateFriends (FriendEntry elem)
+    {
+        requestEntryUpdate(FRIENDS, friends, elem);
+    }
+
+    /**
+     * Requests that the <code>friends</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setFriends (DSet<com.threerings.msoy.data.FriendEntry> value)
+    {
+        requestAttributeChange(FRIENDS, value, this.friends);
+        this.friends = (value == null) ? null : value.typedClone();
     }
     // AUTO-GENERATED: METHODS END
 
