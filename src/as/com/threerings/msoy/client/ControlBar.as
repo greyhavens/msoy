@@ -4,6 +4,8 @@ import mx.core.ScrollPolicy;
 
 import mx.containers.Canvas;
 
+import com.threerings.mx.controls.CommandButton;
+
 import com.threerings.msoy.chat.client.ChatControl;
 
 import com.threerings.msoy.data.MediaData;
@@ -28,6 +30,16 @@ public class ControlBar extends Canvas
 
         // TODO: any fixed graphics should just be compiled in
         setStyle("backgroundImage", MediaData.BASE_URL + "uibar.png");
+
+        // set up buttons
+        var friendsBtn :CommandButton =
+            new CommandButton(MsoyController.SHOW_FRIENDS);
+        // TODO: dynamic layout?
+        friendsBtn.x = 585;
+        friendsBtn.y = 0;
+        friendsBtn.width = 38;
+        friendsBtn.height = 59;
+        addChild(friendsBtn);
     }
 }
 }

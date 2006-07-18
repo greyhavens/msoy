@@ -5,6 +5,8 @@ import mx.controls.listClasses.ListItemRenderer;
 
 import mx.core.ClassFactory;
 
+import mx.events.FlexEvent;
+
 import com.threerings.util.ArrayUtil;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -23,16 +25,14 @@ public class FriendsList extends List
     {
         super();
         _ctx = ctx;
-        _userObj = (_ctx.getClient().getClientObject() as MsoyUserObject);
-        _userObj.addListener(this);
-        // TODO: remove listener?
 
         dataTipFunction = getTipFor;
         iconFunction = getIconFor;
         labelFunction = getLabelFor;
         //itemRenderer = new ClassFactory(FriendsItemRenderer);
 
-        updateFriends();
+        addEventListener(FlexEvent.ADD, wasAdded);
+        addEventListener(FlexEvent.REMOVE, wasRemoved);
     }
 
     // from interface SetListener
@@ -63,6 +63,26 @@ public class FriendsList extends List
         if (MsoyUserObject.FRIENDS === event.getName()) {
             updateFriends();
         }
+    }
+
+    /**
+     * Listener callback for FlexEvent.ADD.
+     */
+    protected function wasAdded (event :FlexEvent) :void
+    {
+        _userObj = (_ctx.getClient().getClientObject() as MsoyUserObject);
+        _userObj.addListener(this);
+        updateFriends();
+    }
+
+    /**
+     * Listener callback for FlexEvent.REMOVE.
+     */
+    protected function wasRemoved (event :FlexEvent) :void
+    {
+        _userObj.removeListener(this);
+        _userObj = null;
+        dataProvider = null;
     }
 
     /**

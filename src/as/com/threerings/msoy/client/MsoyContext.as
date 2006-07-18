@@ -45,6 +45,7 @@ public class MsoyContext
 
         // set up the top panel
         _topPanel = new TopPanel(this, _app);
+        _controller = new MsoyController(this, _topPanel);
     }
 
     /**
@@ -147,6 +148,8 @@ public class MsoyContext
     protected var _app :Application;
 
     protected var _topPanel :TopPanel;
+
+    protected var _controller :MsoyController;
 
     protected var _msgMgr :MessageManager;
 
