@@ -7,6 +7,7 @@ import mx.core.Application;
 
 import mx.managers.ISystemManager;
 
+import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
 
 import com.threerings.presents.client.Client;
@@ -124,6 +125,16 @@ public class MsoyContext
     public function clearPlaceView (view :PlaceView) :void
     {
         _topPanel.clearPlaceView(view);
+    }
+
+    /**
+     * Convenience method to translate a key using the general bundle.
+     */
+    public function xlate (key :String, ... args) :String
+    {
+        args.unshift(key);
+        var mb :MessageBundle = _msgMgr.getBundle("general");
+        return mb.get.call(mb, args);
     }
 
     public function TEMPClearSceneCache () :void

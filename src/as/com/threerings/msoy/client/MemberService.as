@@ -14,10 +14,10 @@ import com.threerings.presents.client.InvocationService;
 public interface MemberService extends InvocationService
 {
     /**
-     * Request to add the specified buddy to the user's buddylist.
+     * Request to add the specified friend to the user's buddylist.
      */
-    function alterBuddy (
-            client :Client, buddy :Name, add :Boolean,
+    function alterFriend (
+            client :Client, friend :Name, add :Boolean,
             listener :InvocationService_InvocationListener);
 }
 }

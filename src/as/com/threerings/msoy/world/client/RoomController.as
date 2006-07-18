@@ -152,8 +152,9 @@ public class RoomController extends SceneController
             enabled :Boolean = true, visible :Boolean = true)
             :void
     {
+        var menuText :String = _mctx.xlate("b." + cmd);
         _menu.customItems.push(
-            MenuUtil.createControllerMenuItem("b." + cmd, cmd, arg,
+            MenuUtil.createControllerMenuItem(menuText, cmd, arg,
                 separatorBefore, enabled, visible));
     }
 
