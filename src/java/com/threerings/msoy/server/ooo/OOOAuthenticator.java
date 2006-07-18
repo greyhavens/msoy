@@ -152,6 +152,14 @@ public class OOOAuthenticator extends MsoyAuthenticator
 
             // check their provided machine identifier
             MsoyCredentials creds = (MsoyCredentials)req.getCredentials();
+
+            // TODO: remove temporary guest-access code
+            if (creds.ident == null) {
+                rdata.code = MsoyAuthResponseData.SUCCESS;
+                return;
+            }
+            // END: temp
+
             String username = creds.getUsername().toString();
             if (StringUtil.isBlank(creds.ident)) {
                 log.warning("Received blank ident [creds=" +

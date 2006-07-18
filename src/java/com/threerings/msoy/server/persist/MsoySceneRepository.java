@@ -193,8 +193,8 @@ public class MsoySceneRepository extends SimpleRepository
                         "from SCENES where SCENE_ID=" + sceneId);
                     if (rs.next()) {
                         model.version = rs.getInt(1);
-                        model.name = rs.getString(2);
-                        model.type = rs.getString(3);
+                        model.name = rs.getString(2).intern();
+                        model.type = rs.getString(3).intern();
                         spotModel.defaultEntranceId = rs.getInt(4);
                         model.width = rs.getShort(5);
                         int bkgId = rs.getInt(6);

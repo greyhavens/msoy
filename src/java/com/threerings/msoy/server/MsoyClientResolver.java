@@ -5,9 +5,9 @@ package com.threerings.msoy.server;
 
 import com.threerings.presents.data.ClientObject;
 
+import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserObject;
 
-import com.threerings.crowd.data.TokenRing;
 import com.threerings.crowd.server.CrowdClientResolver;
 
 /**
@@ -27,6 +27,6 @@ public class MsoyClientResolver extends CrowdClientResolver
         super.resolveClientData(clobj);
 
         MsoyUserObject userObj = (MsoyUserObject) clobj;
-        userObj.setTokens(new TokenRing());
+        userObj.setTokens(new MsoyTokenRing());
     }
 }

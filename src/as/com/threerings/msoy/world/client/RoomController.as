@@ -153,7 +153,7 @@ public class RoomController extends SceneController
             :void
     {
         _menu.customItems.push(
-            MenuUtil.createControllerMenuItem("m." + cmd, cmd, arg,
+            MenuUtil.createControllerMenuItem("b." + cmd, cmd, arg,
                 separatorBefore, enabled, visible));
     }
 

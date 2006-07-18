@@ -18,7 +18,6 @@ import com.threerings.util.ResultAdapter;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.net.UsernamePasswordCreds;
 
 import com.threerings.presents.dobj.DObjectManager;
 
@@ -34,7 +33,9 @@ import com.threerings.whirled.data.SceneMarshaller;
 import com.threerings.whirled.spot.data.SpotMarshaller;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
+import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
+import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyOccupantInfo;
 import com.threerings.msoy.data.MsoyUserObject;
 
@@ -48,7 +49,7 @@ public class MsoyClient extends Client
     {
         var guestId :int = int(Math.random() * int.MAX_VALUE);
         var guestName :Name = new Name("guest" + guestId);
-        super(new UsernamePasswordCreds(guestName, "guest"), app.stage);
+        super(new MsoyCredentials(guestName, "guest"), app.stage);
 
         // set up a context menu that blocks funnybiz on the stage
         var menu :ContextMenu = new ContextMenu();
@@ -114,6 +115,7 @@ public class MsoyClient extends Client
         c = MsoyUserObject;
         c = MsoyOccupantInfo;
         c = SpotSceneObject;
+        c = MsoyAuthResponseData;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("global")]
