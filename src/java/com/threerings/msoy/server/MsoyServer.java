@@ -49,6 +49,9 @@ public class MsoyServer extends WhirledServer
     /** The connection provider used to access our JDBC databases. */
     public static ConnectionProvider conProv;
 
+    /** Our runtime member manager. */
+    public static MemberManager memberMan;
+
     /** Contains information on our members. */
     public static MemberRepository memberRepo;
 
@@ -112,6 +115,8 @@ public class MsoyServer extends WhirledServer
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), true);
         sceneRepo = (MsoySceneRepository) _screp;
+        memberRepo = new MemberRepository(conProv);
+        memberMan = new MemberManager(memberRepo);
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();

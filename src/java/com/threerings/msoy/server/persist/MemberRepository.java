@@ -5,8 +5,11 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import java.util.ArrayList;
 
 import com.samskivert.io.PersistenceException;
 
@@ -43,6 +46,10 @@ public class MemberRepository extends JORARepository
         super(conprov, MEMBER_DB_IDENT);
         _byNameMask = _ptable.getFieldMask();
         _byNameMask.setModified("accountName");
+
+        // tune our table keys on every startup
+        maintenance("analyze", "FRIENDS");
+        maintenance("analyze", "FRIEND_REQUESTS");
     }
 
     /**
@@ -150,17 +157,6 @@ public class MemberRepository extends JORARepository
     }
 
     /**
-     * Updates the specified member's record to reflect that they now have
-     * access to the specified town (and all towns up to that point).
-     */
-    public void grantTownAccess (int memberId, String townId)
-        throws PersistenceException
-    {
-        checkedUpdate("update MEMBERS set TOWN_ID = '" + townId + "' " +
-                      "where MEMBER_ID = " + memberId, 1);
-    }
-
-    /**
      * Mimics the disabling of deleted members by renaming them to an
      * invalid value that we do in our member management system. This is
      * triggered by us receiving a member action indicating that the
@@ -199,12 +195,121 @@ public class MemberRepository extends JORARepository
     public void noteSessionEnded (int memberId, int minutes)
         throws PersistenceException
     {
-        StringBuffer update = new StringBuffer();
-        update.append("update MEMBERS set SESSIONS = SESSIONS + 1, ");
-        update.append("SESSION_MINUTES = SESSION_MINUTES + ");
-        update.append(minutes).append(", ");
-        update.append("LAST_SESSION = NOW() where MEMBER_ID=").append(memberId);
-        checkedUpdate(update.toString(), 1);
+        String sql = "update MEMBERS set SESSIONS = SESSIONS + 1, " +
+            "SESSION_MINUTES = SESSION_MINUTES + " + minutes + ", " +
+            "LAST_SESSION = NOW() where MEMBER_ID=" + memberId;
+        checkedUpdate(sql, 1);
+    }
+
+    /**
+     * Get the names of all the mateys of the specified memberId.
+     */
+    public ArrayList<Name> getFriends (final int memberId)
+        throws PersistenceException
+    {
+        return execute(new Operation<ArrayList<Name>>() {
+            public ArrayList<Name> invoke (
+                    Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                ArrayList<Name> list = new ArrayList<Name>();
+                Statement stmt = conn.createStatement();
+                try {
+                    ResultSet rs = stmt.executeQuery(
+                        "select NAME from FRIENDS straight join MEMBERS " +
+                        "where (MEMBER_ID1=" + memberId +
+                        " and MEMBER_ID=MEMBER_ID2) " +
+                        "union select NAME from FRIENDS " +
+                        "straight join MEMBERS where (MEMBER_ID2=" + memberId +
+                        " and MEMBER_ID=MEMBER_ID1)");
+                    while (rs.next()) {
+                        list.add(new Name(JDBCUtil.unjigger(rs.getString(1))));
+                    }
+                    return list;
+
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
+    }
+
+    /**
+     * Add a new matey relation to the database. The user ids may be
+     * specified in any order.
+     */
+    public void addFriends (int memberId1, int memberId2)
+        throws PersistenceException
+    {
+        // we use a convention where the first memberId is the smaller one
+        if (memberId1 > memberId2) {
+            int temp = memberId2;
+            memberId2 = memberId1;
+            memberId1 = temp;
+        }
+        update("insert into FRIENDS values(" + memberId1 + ", " +
+            memberId2 + ")");
+    }
+
+    /**
+     * Remove a matey mapping from the database where the memberId for one
+     * is known and only the name for the other is known.
+     */
+    public void removeFriends (final int memberId1, final Name username2)
+        throws PersistenceException
+    {
+        executeUpdate(new Operation<Object>() {
+            public Object invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                Statement stmt = conn.createStatement();
+                try {
+                    // first look up the userid for user2
+                    int memId2 = -1;
+                    ResultSet rs = stmt.executeQuery(
+                        "select MEMBER_ID from MEMBERS where NAME = " +
+                        JDBCUtil.escape(JDBCUtil.jigger(
+                            username2.toString())));
+                    while (rs.next()) {
+                        memId2 = rs.getInt(1);
+                    }
+                    rs.close();
+
+                    if (memId2 == -1) {
+                        log.warning("Failed to delete friends " +
+                            "[mid=" + memberId1 + ", friend=" + username2 +
+                            "]. Friend no longer exists.");
+                        return null;
+                    }
+
+                    int memId1 = memberId1;
+                    if (memId1 > memId2) {
+                        int temp = memId2;
+                        memId2 = memId1;
+                        memId1 = temp;
+                    }
+
+                    // now delete any matey relation between these two
+                    stmt.executeUpdate("delete from FRIENDS where " +
+                        "(MEMBER_ID1 = " + memId1 +
+                        " and MEMBER_ID2 = " + memId2 + ")");
+                    return null;
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
+    }
+
+    /**
+     * Delete all the matey relations involving the specified userid
+     * because they're being deleted.
+     */
+    public void deleteAllFriends (int memberId)
+        throws PersistenceException
+    {
+        update("delete from FRIENDS where MEMBER_ID1 = " + memberId +
+           " or MEMBER_ID2 = " + memberId);
     }
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
@@ -237,17 +342,31 @@ public class MemberRepository extends JORARepository
         throws SQLException, PersistenceException
     {
         JDBCUtil.createTableIfMissing(conn, "MEMBERS", new String[] {
-            "MEMBER_ID INTEGER NOT NULL AUTO_INCREMENT",
-            "ACCOUNT_NAME VARCHAR(64) NOT NULL",
-            "NAME VARCHAR(64) UNIQUE",
-            "FLOW INTEGER NOT NULL",
-            "CREATED DATETIME NOT NULL",
-            "SESSIONS INTEGER NOT NULL",
-            "SESSION_MINUTES INTEGER NOT NULL",
-            "LAST_SESSION DATETIME NOT NULL",
-            "FLAGS INTEGER NOT NULL",
-            "PRIMARY KEY (MEMBER_ID)",
-            "UNIQUE (ACCOUNT_NAME)",
+            "MEMBER_ID integer not null auto_increment",
+            "ACCOUNT_NAME varchar(64) not null",
+            "NAME varchar(64) unique",
+            "FLOW integer not null",
+            "CREATED datetime not null",
+            "SESSIONS integer not null",
+            "SESSION_MINUTES integer not null",
+            "LAST_SESSION datetime not null",
+            "FLAGS integer not null",
+            "primary key (MEMBER_ID)",
+            "unique (ACCOUNT_NAME)",
+        }, "");
+
+        JDBCUtil.createTableIfMissing(conn, "FRIENDS", new String[] {
+            "MEMBER_ID1 integer not null",
+            "MEMBER_ID2 integer not null",
+            "unique (MEMBER_ID1, MEMBER_ID2)",
+            "index (MEMBER_ID2)",
+        }, "");
+
+        JDBCUtil.createTableIfMissing(conn, "FRIEND_REQUESTS", new String[] {
+            "REQUESTER integer not null",
+            "FRIEND integer not null",
+            "unique (REQUESTER, FRIEND)",
+            "index (FRIEND)",
         }, "");
     }
 

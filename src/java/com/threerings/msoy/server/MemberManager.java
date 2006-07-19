@@ -10,17 +10,23 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 
+import com.threerings.msoy.server.persist.MemberRepository;
+
 /**
  * Manage msoy members.
  */
 public class MemberManager
     implements MemberProvider
 {
+    /** The member repository. */
+    public MemberRepository memberRepo;
+
     /**
      * Construct our member manager.
      */
-    public MemberManager ()
+    public MemberManager (MemberRepository memberRepo)
     {
+        this.memberRepo = memberRepo;
         MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), true);
     }
 
