@@ -49,7 +49,6 @@ public class MemberRepository extends JORARepository
 
         // tune our table keys on every startup
         maintenance("analyze", "FRIENDS");
-        maintenance("analyze", "FRIEND_REQUESTS");
     }
 
     /**
@@ -202,7 +201,7 @@ public class MemberRepository extends JORARepository
     }
 
     /**
-     * Get the names of all the mateys of the specified memberId.
+     * Get the names of all the friends of the specified memberId.
      */
     public ArrayList<Name> getFriends (final int memberId)
         throws PersistenceException
@@ -235,7 +234,7 @@ public class MemberRepository extends JORARepository
     }
 
     /**
-     * Add a new matey relation to the database. The user ids may be
+     * Add a new friend relation to the database. The user ids may be
      * specified in any order.
      */
     public void addFriends (int memberId1, int memberId2)
@@ -252,7 +251,7 @@ public class MemberRepository extends JORARepository
     }
 
     /**
-     * Remove a matey mapping from the database where the memberId for one
+     * Remove a friend mapping from the database where the memberId for one
      * is known and only the name for the other is known.
      */
     public void removeFriends (final int memberId1, final Name username2)
@@ -289,7 +288,7 @@ public class MemberRepository extends JORARepository
                         memId1 = temp;
                     }
 
-                    // now delete any matey relation between these two
+                    // now delete any friend relation between these two
                     stmt.executeUpdate("delete from FRIENDS where " +
                         "(MEMBER_ID1 = " + memId1 +
                         " and MEMBER_ID2 = " + memId2 + ")");
@@ -302,7 +301,7 @@ public class MemberRepository extends JORARepository
     }
 
     /**
-     * Delete all the matey relations involving the specified userid
+     * Delete all the friend relations involving the specified userid
      * because they're being deleted.
      */
     public void deleteAllFriends (int memberId)
@@ -358,15 +357,9 @@ public class MemberRepository extends JORARepository
         JDBCUtil.createTableIfMissing(conn, "FRIENDS", new String[] {
             "MEMBER_ID1 integer not null",
             "MEMBER_ID2 integer not null",
+            "STATUS tinyint not null",
             "unique (MEMBER_ID1, MEMBER_ID2)",
             "index (MEMBER_ID2)",
-        }, "");
-
-        JDBCUtil.createTableIfMissing(conn, "FRIEND_REQUESTS", new String[] {
-            "REQUESTER integer not null",
-            "FRIEND integer not null",
-            "unique (REQUESTER, FRIEND)",
-            "index (FRIEND)",
         }, "");
     }
 
