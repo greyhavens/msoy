@@ -23,6 +23,9 @@ public class MsoyUserObject extends BodyObject
     implements ClusteredBodyObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>memberId</code> field. */
+    public static const MEMBER_ID :String = "memberId";
+
     /** The field name of the <code>sceneId</code> field. */
     public static const SCENE_ID :String = "sceneId";
 
@@ -44,6 +47,9 @@ public class MsoyUserObject extends BodyObject
     /** The field name of the <code>friends</code> field. */
     public static const FRIENDS :String = "friends";
     // AUTO-GENERATED: FIELDS END
+
+    /** The memberId for this user. */
+    public var memberId :int;
 
     /** The scene id that the user is currently occupying. */
     public var sceneId :int;
@@ -200,6 +206,7 @@ public class MsoyUserObject extends BodyObject
     {
         super.writeObject(out);
 
+        out.writeInt(memberId);
         out.writeInt(sceneId);
         out.writeInt(clusterOid);
         out.writeObject(tokens);
@@ -213,6 +220,7 @@ public class MsoyUserObject extends BodyObject
     {
         super.readObject(ins);
 
+        memberId = ins.readInt();
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
         tokens = (ins.readObject() as MsoyTokenRing);

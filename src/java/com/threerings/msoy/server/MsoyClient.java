@@ -80,6 +80,8 @@ public class MsoyClient extends WhirledClient
     @Override
     public void clientResolved (Name username, ClientObject clobj)
     {
+        _clobj = (MsoyUserObject) clobj;
+
         super.clientResolved(username, clobj);
 
         // TEMP code to alter avatar/chat styles
@@ -87,17 +89,23 @@ public class MsoyClient extends WhirledClient
             public void messageReceived (MessageEvent event) {
                 if ("alterTEMP".equals(event.getName())) {
                     String frob = (String) event.getArgs()[0];
-                    MsoyUserObject user = (MsoyUserObject) _clobj;
-                    user.alter(frob);
+                    _clobj.alter(frob);
 
                     PlaceManager plmgr = MsoyServer.plreg.getPlaceManager(
-                        user.location);
+                        _clobj.location);
                     if (plmgr != null) {
-                        plmgr.updateOccupantInfo(user.createOccupantInfo());
+                        plmgr.updateOccupantInfo(_clobj.createOccupantInfo());
                     }
                 }
             }
         });
+    }
+
+    @Override
+    public void endSession ()
+    {
+        super.endSession();
+        _clobj = null;
     }
 
     // TEMP: assign sequential guest ids
@@ -111,4 +119,7 @@ public class MsoyClient extends WhirledClient
     }
     protected static int _guestCount;
     // END: Temp
+
+    /** A casted reference to the userobject. */
+    protected MsoyUserObject _clobj;
 }

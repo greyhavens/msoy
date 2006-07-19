@@ -17,8 +17,17 @@ public class FriendEntry
     /** Is the friend online? */
     public var online :Boolean;
 
+    /** The status of this friend. */
+    public var status :int;
+
+    /** Status constants. */
+    public static const FRIEND :int = 0;
+    public static const PENDING_MY_APPROVAL :int = 1;
+    public static const PENDING_THEIR_APPROVAL :int = 2;
+
     /** Mr. Constructor. */
-    public function FriendEntry (name :Name = null, online :Boolean = false)
+    public function FriendEntry (
+            name :Name = null, online :Boolean = false, status :int = 0)
     {
         this.name = name;
         this.online = online;
@@ -47,6 +56,7 @@ public class FriendEntry
     {
         out.writeObject(name);
         out.writeBoolean(online);
+        out.writeByte(status);
     }
 
     // from interface Streamable
@@ -54,6 +64,7 @@ public class FriendEntry
     {
         name = (ins.readObject() as Name);
         online = ins.readBoolean();
+        status = ins.readByte();
     }
 }
 }

@@ -22,6 +22,8 @@ import com.samskivert.jdbc.jora.Table;
 
 import com.threerings.util.Name;
 
+import com.threerings.msoy.data.FriendEntry;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -201,28 +203,36 @@ public class MemberRepository extends JORARepository
     }
 
     /**
-     * Get the names of all the friends of the specified memberId.
+     * Get the FriendEntry record for all friends (pending, too) of the
+     * specified memberId. The online status of each friend will be false.
      */
-    public ArrayList<Name> getFriends (final int memberId)
+    public ArrayList<FriendEntry> getFriends (final int memberId)
         throws PersistenceException
     {
-        return execute(new Operation<ArrayList<Name>>() {
-            public ArrayList<Name> invoke (
+        return execute(new Operation<ArrayList<FriendEntry>>() {
+            public ArrayList<FriendEntry> invoke (
                     Connection conn, DatabaseLiaison liaison)
                 throws SQLException, PersistenceException
             {
-                ArrayList<Name> list = new ArrayList<Name>();
+                ArrayList<FriendEntry> list = new ArrayList<FriendEntry>();
                 Statement stmt = conn.createStatement();
                 try {
                     ResultSet rs = stmt.executeQuery(
-                        "select NAME from FRIENDS straight join MEMBERS " +
-                        "where (MEMBER_ID1=" + memberId +
-                        " and MEMBER_ID=MEMBER_ID2) " +
-                        "union select NAME from FRIENDS " +
-                        "straight join MEMBERS where (MEMBER_ID2=" + memberId +
-                        " and MEMBER_ID=MEMBER_ID1)");
+                        "select NAME, INVITER_ID, STATUS from FRIENDS " +
+                        "straight join MEMBERS where (INVITER_ID=" + memberId +
+                        " and MEMBER_ID=INVITEE_ID) " +
+                        "union select NAME, INVITER_ID, STATUS from FRIENDS " +
+                        "straight join MEMBERS where (INVITEE_ID=" + memberId +
+                        " and MEMBER_ID=INVITER_ID)");
                     while (rs.next()) {
-                        list.add(new Name(JDBCUtil.unjigger(rs.getString(1))));
+                        Name name = new Name(
+                            JDBCUtil.unjigger(rs.getString(1)));
+                        boolean established = rs.getBoolean(3);
+                        byte status = established ? FriendEntry.FRIEND
+                            : ((memberId == rs.getInt(2))
+                                ? FriendEntry.PENDING_THEIR_APPROVAL
+                                : FriendEntry.PENDING_MY_APPROVAL);
+                        list.add(new FriendEntry(name, false, status));
                     }
                     return list;
 
@@ -234,27 +244,85 @@ public class MemberRepository extends JORARepository
     }
 
     /**
-     * Add a new friend relation to the database. The user ids may be
-     * specified in any order.
+     * Invite or approve the specified member name as our friend.
+     *
+     * @return the FriendEntry status code, or -1 on error.
+     *
+     * If there is a pending invite from the other member,
+     * the friendship will be established and FriendEntry.FRIEND is returned.
+     * If no pending friendship exists, one is established and
+     * FriendEntry.PENDING_THEIR_APPROVAL is returned.
+     * Otherwise, no change is made and FriendEntry.FRIEND or
+     * FriendEntry.PENDING_THEIR_APPROVAL is returned, depending.
      */
-    public void addFriends (int memberId1, int memberId2)
+    public byte inviteOrApproveFriend (final int memberId, final Name other)
         throws PersistenceException
     {
-        // we use a convention where the first memberId is the smaller one
-        if (memberId1 > memberId2) {
-            int temp = memberId2;
-            memberId2 = memberId1;
-            memberId1 = temp;
-        }
-        update("insert into FRIENDS values(" + memberId1 + ", " +
-            memberId2 + ")");
+        return executeUpdate(new Operation<Byte>() {
+            public Byte invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                Statement stmt = conn.createStatement();
+                try {
+                    // first look up the userid for the other user
+                    int otherId = nameToId(stmt, other);
+                    if (otherId == -1) {
+                        log.warning("Failed to establish friends: member no " +
+                            "longer exists [missing=" + other +
+                            ", initiatingMemberId=" + memberId + "].");
+                        return (byte) -1;
+                    }
+
+                    // see if there is already a connection, either way
+                    ResultSet rs = stmt.executeQuery(
+                        "select INVITER_ID, STATUS from FRIENDS " +
+                        "where (INVITER_ID=" + memberId +
+                        " and INVITEE_ID=" + otherId + ") " +
+                        "union select INVITER_ID, STATUS from FRIENDS " +
+                        "where INVITER_ID=" + otherId +
+                        " and INVITEE_ID=" + memberId + ")");
+                    int inviterId = -1;
+                    boolean status = false;
+                    if (rs.next()) {
+                        inviterId = rs.getInt(1);
+                        status = rs.getBoolean(2);
+                    }
+                    rs.close();
+
+                    if (inviterId == -1) {
+                        // there is no connection yet: invite the other
+                        String sql = "insert into FRIENDS " +
+                            "(INVITER_ID, INVITEE_ID, STATUS) values (" +
+                            memberId + ", " + otherId + ", false)";
+                        JDBCUtil.checkedUpdate(stmt, sql, 1);
+                        return FriendEntry.PENDING_THEIR_APPROVAL;
+
+                    } else if (inviterId == otherId) {
+                        // we're responding to an invite
+                        String sql = "update FRIENDS " +
+                            "set STATUS=true where INVITER_ID=" + otherId +
+                            " and INVITEE_ID=" + memberId;
+                        JDBCUtil.checkedUpdate(stmt, sql, 1);
+                        return FriendEntry.FRIEND;
+
+                    } else {
+                        // we've already done all we can
+                        return status ? FriendEntry.FRIEND
+                                      : FriendEntry.PENDING_THEIR_APPROVAL;
+                    }
+
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
     }
 
     /**
      * Remove a friend mapping from the database where the memberId for one
      * is known and only the name for the other is known.
      */
-    public void removeFriends (final int memberId1, final Name username2)
+    public void removeFriends (final int memberId1, final Name name2)
         throws PersistenceException
     {
         executeUpdate(new Operation<Object>() {
@@ -264,35 +332,22 @@ public class MemberRepository extends JORARepository
                 Statement stmt = conn.createStatement();
                 try {
                     // first look up the userid for user2
-                    int memId2 = -1;
-                    ResultSet rs = stmt.executeQuery(
-                        "select MEMBER_ID from MEMBERS where NAME = " +
-                        JDBCUtil.escape(JDBCUtil.jigger(
-                            username2.toString())));
-                    while (rs.next()) {
-                        memId2 = rs.getInt(1);
-                    }
-                    rs.close();
-
-                    if (memId2 == -1) {
+                    int memberId2 = nameToId(stmt, name2);
+                    if (memberId2 == -1) {
                         log.warning("Failed to delete friends " +
-                            "[mid=" + memberId1 + ", friend=" + username2 +
+                            "[mid=" + memberId1 + ", friend=" + name2 +
                             "]. Friend no longer exists.");
                         return null;
                     }
 
-                    int memId1 = memberId1;
-                    if (memId1 > memId2) {
-                        int temp = memId2;
-                        memId2 = memId1;
-                        memId1 = temp;
-                    }
-
                     // now delete any friend relation between these two
                     stmt.executeUpdate("delete from FRIENDS where " +
-                        "(MEMBER_ID1 = " + memId1 +
-                        " and MEMBER_ID2 = " + memId2 + ")");
+                        "(INVITER_ID = " + memberId1 +
+                        " and INVITEE_ID = " + memberId2 + ") or " +
+                        "(INVITER_ID = " + memberId2 +
+                        " and INVITEE_ID = " + memberId1 + ")");
                     return null;
+
                 } finally {
                     JDBCUtil.close(stmt);
                 }
@@ -301,14 +356,32 @@ public class MemberRepository extends JORARepository
     }
 
     /**
-     * Delete all the friend relations involving the specified userid
-     * because they're being deleted.
+     * Delete all the friend relations involving the specified userid,
+     * usually because they're being deleted.
      */
     public void deleteAllFriends (int memberId)
         throws PersistenceException
     {
-        update("delete from FRIENDS where MEMBER_ID1 = " + memberId +
-           " or MEMBER_ID2 = " + memberId);
+        update("delete from FRIENDS where INVITER_ID = " + memberId +
+           " or INVITEE_ID = " + memberId);
+    }
+
+    /**
+     * A convenience method to look up the member's id, given their name,
+     * or -1 if unknown.
+     */
+    protected int nameToId (Statement stmt, Name name)
+        throws SQLException, PersistenceException
+    {
+        ResultSet rs = stmt.executeQuery(
+            "select MEMBER_ID from MEMBERS where NAME = " +
+            JDBCUtil.escape(JDBCUtil.jigger(name.toString())));
+        try {
+            return rs.next() ? rs.getInt(1) : -1;
+
+        } finally {
+            rs.close();
+        }
     }
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
@@ -355,11 +428,11 @@ public class MemberRepository extends JORARepository
         }, "");
 
         JDBCUtil.createTableIfMissing(conn, "FRIENDS", new String[] {
-            "MEMBER_ID1 integer not null",
-            "MEMBER_ID2 integer not null",
-            "STATUS tinyint not null",
-            "unique (MEMBER_ID1, MEMBER_ID2)",
-            "index (MEMBER_ID2)",
+            "INVITER_ID integer not null",
+            "INVITEE_ID integer not null",
+            "STATUS boolean not null",
+            "unique (INVITER_ID, INVITEE_ID)",
+            "index (INVITEE_ID)",
         }, "");
     }
 

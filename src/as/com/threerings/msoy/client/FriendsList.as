@@ -104,7 +104,12 @@ public class FriendsList extends List
     // our function for retrieving an icon for an entry in the list
     protected function getIconFor (obj :Object) :Class
     {
-        return (obj as FriendEntry).online ? OpenEye : CloseEye;
+        var fe :FriendEntry = (obj as FriendEntry);
+        if (fe.status == FriendEntry.FRIEND) {
+            return fe.online ? OpenEye : CloseEye;
+        } else {
+            return fe.online ? OpenEyePending : CloseEyePending;
+        }
     }
 
     // our function for retrieving a tooltip for an entry in the list
@@ -148,6 +153,13 @@ class CloseEye extends SpriteAsset
         graphics.curveTo(10, 20, 20, 10);
     }
 
+    protected function drawAsPending () :void
+    {
+        graphics.lineStyle(1, 0xFF0000, .5);
+        graphics.moveTo(0, 5);
+        graphics.lineTo(20, 5);
+    }
+
     override public function get measuredWidth () :Number
     {
         return 20;
@@ -156,6 +168,15 @@ class CloseEye extends SpriteAsset
     override public function get measuredHeight () :Number
     {
         return 10;
+    }
+}
+
+class CloseEyePending extends CloseEye
+{
+    public function CloseEyePending ()
+    {
+        super();
+        drawAsPending();
     }
 }
 
@@ -172,5 +193,14 @@ class OpenEye extends CloseEye
 
         graphics.beginFill(0x000000);
         graphics.drawCircle(10, 10, 2);
+    }
+}
+
+class OpenEyePending extends OpenEye
+{
+    public function OpenEyePending ()
+    {
+        super();
+        drawAsPending();
     }
 }

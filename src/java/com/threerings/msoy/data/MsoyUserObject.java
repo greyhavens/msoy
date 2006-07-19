@@ -20,6 +20,9 @@ public class MsoyUserObject extends BodyObject
     implements ClusteredBodyObject
 {
     // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>memberId</code> field. */
+    public static final String MEMBER_ID = "memberId";
+
     /** The field name of the <code>sceneId</code> field. */
     public static final String SCENE_ID = "sceneId";
 
@@ -41,6 +44,9 @@ public class MsoyUserObject extends BodyObject
     /** The field name of the <code>friends</code> field. */
     public static final String FRIENDS = "friends";
     // AUTO-GENERATED: FIELDS END
+
+    /** The memberId for this user. */
+    public int memberId;
 
     /** The scene id that the user is currently occupying. */
     public int sceneId;
@@ -132,6 +138,22 @@ public class MsoyUserObject extends BodyObject
     }
 
     // AUTO-GENERATED: METHODS START
+    /**
+     * Requests that the <code>memberId</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setMemberId (int value)
+    {
+        int ovalue = this.memberId;
+        requestAttributeChange(
+            MEMBER_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.memberId = value;
+    }
+
     /**
      * Requests that the <code>sceneId</code> field be set to the
      * specified value. The local value will be updated immediately and an
