@@ -10,6 +10,8 @@ import flash.text.TextFieldAutoSize;
 
 import mx.events.EffectEvent;
 
+import mx.effects.EffectInstance;
+
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.data.ChatMessage;
 
@@ -136,8 +138,6 @@ public class AvatarSprite extends MsoySprite
         _move.duration = Math.sqrt(36 * dx * dx * sceneWidth * sceneWidth +
             dy * dy * 4 + dz * dz * 9);
 
-        _move.addEventListener(EffectEvent.EFFECT_END, moveStopped);
-
         _move.play();
     }
 
@@ -178,20 +178,17 @@ public class AvatarSprite extends MsoySprite
         _label.width = ww;
     }
 
-    protected function moveStopped (event :EffectEvent) :void
+    override public function moveCompleted (orient :Number) :void
     {
+        super.moveCompleted(orient);
+        setOrientation(int(orient));
+
         _move = null;
         sendMessage("setAction", "standing");
 
         if (parent is RoomView) {
             (parent as RoomView).moveFinished(this);
         }
-    }
-
-    override public function moveCompleted (orient :Number) :void
-    {
-        super.moveCompleted(orient);
-        setOrientation(int(orient));
     }
 
     override protected function mouseClick (event :MouseEvent) :void
