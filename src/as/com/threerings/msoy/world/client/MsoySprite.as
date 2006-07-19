@@ -488,7 +488,9 @@ public class MsoySprite extends Box
 
     protected function getContext (url :String) :LoaderContext
     {
-        return null;
+        return new LoaderContext(false, 
+            new ApplicationDomain(ApplicationDomain.currentDomain),
+            null);
         /*
         var loadCtx :LoaderContext = (_loadCtx.get(url) as LoaderContext);
         if (loadCtx == null) {
@@ -819,6 +821,6 @@ public class MsoySprite extends Box
     /** A single LocalConnection used to communicate with all AVM1 media. */
     protected static var _oldDispatch :LocalConnection;
 
-    protected static var _loadCtx :HashMap = new HashMap();
+//    protected static var _loadCtx :HashMap = new HashMap();
 }
 }
