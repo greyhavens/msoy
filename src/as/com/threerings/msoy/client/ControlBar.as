@@ -32,8 +32,10 @@ public class ControlBar extends Canvas
         setStyle("backgroundImage", MediaData.BASE_URL + "uibar.png");
 
         // set up buttons
-        var friendsBtn :CommandButton =
-            new CommandButton(MsoyController.SHOW_FRIENDS);
+        var friendsBtn :CommandButton = new CommandButton();
+        friendsBtn.setCommand(MsoyController.SHOW_FRIENDS, friendsBtn);
+        friendsBtn.toggle = true;
+
         // TODO: dynamic layout?
         friendsBtn.x = 585;
         friendsBtn.y = 0;

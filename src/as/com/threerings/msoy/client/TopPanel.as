@@ -42,7 +42,7 @@ public class TopPanel extends Canvas
         clearPlaceView(null);
         _placeView = view;
 
-        addChild(view as UIComponent);
+        addChildAt(view as UIComponent, 0);
 
         configureSize(parent as Container);
     }
@@ -55,16 +55,21 @@ public class TopPanel extends Canvas
         }
     }
 
-    public function showFriends () :void
+    public function showFriends (show :Boolean) :void
     {
-        if (_friendsList == null) {
-            _friendsList = new FriendsList(_ctx);
-        } else {
-            removeChild(_friendsList);
-        }
+        if (show) {
+            // lazy-init the friendslist
+            if (_friendsList == null) {
+                _friendsList = new FriendsList(_ctx);
+            }
+            // put the pals list atop everything else
+            addChild(_friendsList);
 
-        // put the pals list atop everything else
-        addChild(_friendsList);
+        } else {
+            if (_friendsList != null) {
+                removeChild(_friendsList);
+            }
+        }
     }
 
     protected function configureSize (container :Container) :void

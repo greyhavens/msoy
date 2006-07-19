@@ -1,5 +1,7 @@
 package com.threerings.msoy.client {
 
+import mx.controls.Button;
+
 import com.threerings.util.Controller;
 
 public class MsoyController extends Controller
@@ -17,10 +19,12 @@ public class MsoyController extends Controller
         setControlledPanel(topPanel);
     }
 
+    // from Controller
     override public function handleAction (cmd :String, arg :Object) :Boolean
     {
         if (cmd == SHOW_FRIENDS) {
-            _topPanel.showFriends();
+            var btn :Button = Button(arg);
+            _topPanel.showFriends(btn.selected);
 
         } else {
             return super.handleAction(cmd, arg);
