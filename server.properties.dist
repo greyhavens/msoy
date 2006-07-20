@@ -37,7 +37,7 @@ server_auth = com.threerings.msoy.server.ooo.OOOAuthenticator
 # defaults
 
 db.default.driver = com.mysql.jdbc.Driver
-db.default.url = jdbc:mysql://DBHOST:3306/msoy
+db.default.url = jdbc:mysql://DBHOST:3306/msoy?useServerPrepStmts=false
 db.default.username = USERNAME
 db.default.password = PASSWORD
 
@@ -46,8 +46,8 @@ db.default.password = PASSWORD
 
 # db.userdb.username = USERNAME
 # db.userdb.password = PASSWORD
-# db.userdb.url = jdbc:mysql://USERDBHOST:3306/USERDB
-# db.sitedb.url = jdbc:mysql://USERDBHOST:3306/USERDB
+# db.userdb.url = jdbc:mysql://USERDBHOST:3306/USERDB?useServerPrepStmts=false
+# db.sitedb.url = jdbc:mysql://USERDBHOST:3306/USERDB?useServerPrepStmts=false
 
 #
 # Bits for the OOO authenticator
