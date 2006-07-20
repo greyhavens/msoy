@@ -9,8 +9,7 @@ public class LoggingTargets
 {
     public static function configureLogging (ctx :MsoyContext) :void
     {
-        var userObj :MsoyUserObject =
-            (ctx.getClient().getClientObject() as MsoyUserObject);
+        var userObj :MsoyUserObject = ctx.getClientObject();
 
         // for now, everything logs to the FireBug console
         mx.logging.Log.addTarget(new FireBugTarget());

@@ -7,6 +7,7 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService_InvocationListener;
 
 /**
  * Services for members.
@@ -18,6 +19,6 @@ public interface MemberService extends InvocationService
      */
     function alterFriend (
             client :Client, friendId :int, add :Boolean,
-            listener :InvocationService_InvocationListener);
+            listener :InvocationService_InvocationListener) :void;
 }
 }

@@ -70,7 +70,7 @@ public class FriendsList extends List
      */
     protected function wasAdded (event :FlexEvent) :void
     {
-        _userObj = (_ctx.getClient().getClientObject() as MsoyUserObject);
+        _userObj = _ctx.getClientObject();
         _userObj.addListener(this);
         updateFriends();
     }

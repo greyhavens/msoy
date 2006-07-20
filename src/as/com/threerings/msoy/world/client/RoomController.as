@@ -13,6 +13,8 @@ import com.threerings.util.MenuUtil;
 
 import com.threerings.io.TypedArray;
 
+import com.threerings.mx.controls.CommandMenu;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
@@ -22,7 +24,9 @@ import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Portal;
 
+import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MsoyOccupantInfo;
 import com.threerings.msoy.data.MsoyUserObject;
 
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -36,7 +40,12 @@ public class RoomController extends SceneController
     public static const EDIT_SCENE :String = "edit_scene";
     public static const SAVE_EDITS :String = "save_edits";
     public static const DISCARD_EDITS :String = "discard_edits";
-    public static const PORTAL_CLICKED :String = "portalClicked";
+
+    public static const PORTAL_CLICKED :String = "PortalClicked";
+    public static const AVATAR_CLICKED :String = "AvatarClicked";
+
+    public static const ALTER_FRIEND :String = "AlterFriend";
+    public static const TELL :String = "Tell";
 
     public static const TEMP_CLEAR_SCENE_CACHE :String = "clrScenes";
 
@@ -104,11 +113,7 @@ public class RoomController extends SceneController
 
     override public function handleAction (cmd :String, arg :Object) :Boolean
     {
-        if (cmd == PORTAL_CLICKED) {
-            var portal :Portal = (arg as Portal);
-            _mctx.getSpotSceneDirector().traversePortal(portal.portalId);
-
-        } else if (cmd == EDIT_SCENE) {
+        if (cmd == EDIT_SCENE) {
             startEditing();
 
         } else if ((cmd == SAVE_EDITS) || (cmd == DISCARD_EDITS)) {
@@ -121,7 +126,55 @@ public class RoomController extends SceneController
             return super.handleAction(cmd, arg);
         }
 
-        return true;
+        return true; // for handled commands
+    }
+
+    /**
+     * Handles PORTAL_CLICKED.
+     */
+    public function handlePortalClicked (portal :Portal) :void
+    {
+        _mctx.getSpotSceneDirector().traversePortal(portal.portalId);
+    }
+
+    /**
+     * Handles AVATAR_CLICKED.
+     */
+    public function handleAvatarClicked (avatar :AvatarSprite) :void
+    {
+        var occInfo :MsoyOccupantInfo = avatar.getOccupantInfo();
+        var us :MsoyUserObject = _mctx.getClientObject();
+        var menuItems :Array;
+        if (occInfo.bodyOid == us.getOid()) {
+            // create a menu for clicking on ourselves
+            menuItems = [];
+
+        } else {
+            // create a menu for clicking on someone else
+            var isFriend :Boolean = us.friends.containsKey(occInfo.memberId);
+            menuItems = [
+                [ _mctx.xlate(isFriend ? "b.removeAsFriend" : "b.addAsFriend"),
+                    null, ALTER_FRIEND, [occInfo.memberId, !isFriend] ],
+                [ _mctx.xlate("b.tell"), null, TELL, occInfo.memberId ]
+            ];
+        }
+
+        var menu :CommandMenu = CommandMenu.createMenu(avatar, menuItems);
+        var p :Point = avatar.localToGlobal(new Point());
+        menu.show(p.x, p.y);
+    }
+
+    /**
+     * Handles AVATAR_CLICKED.
+     */
+    public function handleAlterFriend (args :Array) :void
+    {
+        var friendId :int = int(args[0]);
+        var alteration :Boolean = Boolean(args[1]);
+        var msvc :MemberService =
+            (_mctx.getClient().requireService(MemberService) as MemberService);
+        msvc.alterFriend(_mctx.getClient(), friendId, alteration,
+            new ReportingListener(_mctx));
     }
 
     protected function configureContextMenu () :void

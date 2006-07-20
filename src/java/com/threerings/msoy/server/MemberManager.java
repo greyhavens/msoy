@@ -70,13 +70,15 @@ public class MemberManager
                     return;
                 }
 
+                FriendEntry oldEntry = user.friends.get(friendId);
                 if (!add || _entry == null) {
                     // remove the friend
-                    user.removeFromFriends(friendId);
+                    if (oldEntry != null) {
+                        user.removeFromFriends(friendId);
+                    }
 
                 } else {
                     // add or update the friend/status
-                    FriendEntry oldEntry = user.friends.get(friendId);
                     if (oldEntry == null) {
                         // TODO: real lookup of online status
                         _entry.online = false; // TODO

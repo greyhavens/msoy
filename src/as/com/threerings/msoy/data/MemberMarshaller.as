@@ -6,7 +6,9 @@ package com.threerings.msoy.data {
 import com.threerings.msoy.client.MemberService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
 import com.threerings.util.Name;
 

@@ -33,6 +33,7 @@ import com.threerings.whirled.data.SceneMarshaller;
 import com.threerings.whirled.spot.data.SpotMarshaller;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
+import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -116,6 +117,7 @@ public class MsoyClient extends Client
         c = MsoyOccupantInfo;
         c = SpotSceneObject;
         c = MsoyAuthResponseData;
+        c = MemberMarshaller;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("global")]

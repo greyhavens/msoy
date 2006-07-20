@@ -12,6 +12,8 @@ import mx.events.EffectEvent;
 
 import mx.effects.EffectInstance;
 
+import com.threerings.mx.events.CommandEvent;
+
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.data.ChatMessage;
 
@@ -65,6 +67,14 @@ public class AvatarSprite extends MsoySprite
 
         _label.textColor = getStatusColor(_occInfo.status);
         _label.text = occInfo.username.toString();
+    }
+
+    /**
+     * Get the occupant info for this avatar.
+     */
+    public function getOccupantInfo () :MsoyOccupantInfo
+    {
+        return _occInfo;
     }
 
     /**
@@ -193,10 +203,16 @@ public class AvatarSprite extends MsoySprite
 
     override protected function mouseClick (event :MouseEvent) :void
     {
-        //setFacing(!_left);
+        // let's just post a command to our controller
+        dispatchEvent(new CommandEvent(RoomController.AVATAR_CLICKED, this));
     }
 
     override public function isInteractive () :Boolean
+    {
+        return true;
+    }
+
+    override public function hasAction () :Boolean
     {
         return true;
     }

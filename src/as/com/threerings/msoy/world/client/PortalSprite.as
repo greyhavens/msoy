@@ -2,7 +2,7 @@ package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
-import com.threerings.events.ControllerEvent;
+import com.threerings.mx.events.CommandEvent;
 
 import com.threerings.whirled.spot.data.Portal;
 
@@ -51,8 +51,8 @@ public class PortalSprite extends MsoySprite
     // documentation inherited
     override protected function mouseClick (event :MouseEvent) :void
     {
-        dispatchEvent(new ControllerEvent(
-            RoomController.PORTAL_CLICKED, _portal));
+        dispatchEvent(
+            new CommandEvent(RoomController.PORTAL_CLICKED, _portal));
     }
 
     override public function getMediaScaleX () :Number
