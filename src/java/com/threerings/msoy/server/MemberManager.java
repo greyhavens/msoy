@@ -95,7 +95,5 @@ public class MemberManager
 
             protected FriendEntry _entry;
         });
-
-        throw new InvocationException("TODO");
     }
 }
