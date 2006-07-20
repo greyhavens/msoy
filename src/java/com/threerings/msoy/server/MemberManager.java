@@ -39,7 +39,7 @@ public class MemberManager
 
     // from interface MemberProvider
     public void alterFriend (
-            ClientObject caller, final Name friend, final boolean add,
+            ClientObject caller, final int friendId, final boolean add,
             final InvocationService.InvocationListener listener)
         throws InvocationException
     {
@@ -50,12 +50,11 @@ public class MemberManager
             {
                 try {
                     if (add) {
-                        _status = memberRepo.inviteOrApproveFriend(
-                            user.memberId, friend);
+                        _entry = memberRepo.inviteOrApproveFriend(
+                            user.memberId, friendId);
 
                     } else {
-                        memberRepo.removeFriends(user.memberId, friend);
-                        _status = (byte) -1;
+                        memberRepo.removeFriends(user.memberId, friendId);
                     }
 
                 } catch (PersistenceException pe) {
@@ -71,28 +70,28 @@ public class MemberManager
                     return;
                 }
 
-                if (!add || _status == -1) {
+                if (!add || _entry == null) {
                     // remove the friend
-                    user.removeFromFriends(friend);
+                    user.removeFromFriends(friendId);
 
                 } else {
                     // add or update the friend/status
-                    FriendEntry entry = user.friends.get(friend);
-                    if (entry == null) {
-                        boolean friendIsOnline = false; // TODO
-                        user.addToFriends(
-                            new FriendEntry(friend, friendIsOnline, _status));
+                    FriendEntry oldEntry = user.friends.get(friendId);
+                    if (oldEntry == null) {
+                        // TODO: real lookup of online status
+                        _entry.online = false; // TODO
+                        user.addToFriends(_entry);
 
                     } else {
-                        entry.status = _status;
-                        user.updateFriends(entry);
+                        _entry.online = oldEntry.online;
+                        user.updateFriends(_entry);
                     }
                 }
             }
 
             protected Exception _error;
 
-            protected byte _status;
+            protected FriendEntry _entry;
         });
 
         throw new InvocationException("TODO");

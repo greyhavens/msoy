@@ -45,7 +45,7 @@ public class MsoyUserObject extends BodyObject
     public static final String FRIENDS = "friends";
     // AUTO-GENERATED: FIELDS END
 
-    /** The memberId for this user. */
+    /** The memberId for this user, or 0 if they're not a member. */
     public int memberId;
 
     /** The scene id that the user is currently occupying. */

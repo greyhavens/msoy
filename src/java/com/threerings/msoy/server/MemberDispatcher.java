@@ -11,7 +11,6 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.util.Name;
 
 /**
  * Dispatches requests to the {@link MemberProvider}.
@@ -42,7 +41,7 @@ public class MemberDispatcher extends InvocationDispatcher
         case MemberMarshaller.ALTER_FRIEND:
             ((MemberProvider)provider).alterFriend(
                 source,
-                (Name)args[0], ((Boolean)args[1]).booleanValue(), (InvocationService.InvocationListener)args[2]
+                ((Integer)args[0]).intValue(), ((Boolean)args[1]).booleanValue(), (InvocationService.InvocationListener)args[2]
             );
             return;
 

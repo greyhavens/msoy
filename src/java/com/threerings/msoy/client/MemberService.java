@@ -17,6 +17,6 @@ public interface MemberService extends InvocationService
      * Request to add the specified user to the client's friendlist.
      */
     public void alterFriend (
-            Client client, Name friend, boolean add,
+            Client client, int friendId, boolean add,
             InvocationListener listener);
 }

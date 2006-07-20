@@ -13,7 +13,10 @@ import com.threerings.presents.dobj.DSet;
 public class FriendEntry
     implements Comparable, DSet.Entry
 {
-    /** The name of the friend. */
+    /** The immutable memberId for the friend. */
+    public int memberId;
+
+    /** The display name of the friend. */
     public Name name;
 
     /** Is the friend online? */
@@ -33,8 +36,9 @@ public class FriendEntry
     }
 
     /** Mr. Constructor. */
-    public FriendEntry (Name name, boolean online, byte status)
+    public FriendEntry (int memberId, Name name, boolean online, byte status)
     {
+        this.memberId = memberId;
         this.name = name;
         this.online = online;
         this.status = status;
@@ -43,7 +47,7 @@ public class FriendEntry
     // from interface DSet.Entry
     public Comparable getKey ()
     {
-        return name;
+        return memberId;
     }
 
     // from interface Comparable

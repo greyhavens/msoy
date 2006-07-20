@@ -17,7 +17,7 @@ public interface MemberService extends InvocationService
      * Request to add the specified friend to the user's buddylist.
      */
     function alterFriend (
-            client :Client, friend :Name, add :Boolean,
+            client :Client, friendId :int, add :Boolean,
             listener :InvocationService_InvocationListener);
 }
 }

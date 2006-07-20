@@ -11,7 +11,10 @@ import com.threerings.presents.dobj.DSet_Entry;
 public class FriendEntry
     implements Comparable, DSet_Entry
 {
-    /** The name of this friend. */
+    /** The immutable memberId for the friend. */
+    public var memberId :int;
+
+    /** The display name of this friend. */
     public var name :Name;
 
     /** Is the friend online? */
@@ -27,16 +30,19 @@ public class FriendEntry
 
     /** Mr. Constructor. */
     public function FriendEntry (
-            name :Name = null, online :Boolean = false, status :int = 0)
+            memberId :int = 0, name :Name = null, online :Boolean = false,
+            status :int = 0)
     {
+        this.memberId = memberId;
         this.name = name;
         this.online = online;
+        this.status = status;
     }
 
     // from interface DSet_Entry
     public function getKey () :Object
     {
-        return name;
+        return memberId;
     }
 
     // from interface Comparable
@@ -54,6 +60,7 @@ public class FriendEntry
     // from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
+        out.writeInt(memberId);
         out.writeObject(name);
         out.writeBoolean(online);
         out.writeByte(status);
@@ -62,6 +69,7 @@ public class FriendEntry
     // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
+        memberId = ins.readInt();
         name = (ins.readObject() as Name);
         online = ins.readBoolean();
         status = ins.readByte();

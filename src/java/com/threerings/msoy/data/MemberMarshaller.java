@@ -8,7 +8,6 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
-import com.threerings.util.Name;
 
 /**
  * Provides the implementation of the {@link MemberService} interface
@@ -24,12 +23,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int ALTER_FRIEND = 1;
 
     // documentation inherited from interface
-    public void alterFriend (Client arg1, Name arg2, boolean arg3, InvocationService.InvocationListener arg4)
+    public void alterFriend (Client arg1, int arg2, boolean arg3, InvocationService.InvocationListener arg4)
     {
         ListenerMarshaller listener4 = new ListenerMarshaller();
         listener4.listener = arg4;
         sendRequest(arg1, ALTER_FRIEND, new Object[] {
-            arg2, Boolean.valueOf(arg3), listener4
+            Integer.valueOf(arg2), Boolean.valueOf(arg3), listener4
         });
     }
 

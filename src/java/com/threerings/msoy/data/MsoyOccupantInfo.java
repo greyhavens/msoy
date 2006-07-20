@@ -12,6 +12,9 @@ import com.threerings.crowd.data.OccupantInfo;
  */
 public class MsoyOccupantInfo extends OccupantInfo
 {
+    /** The memberId of this occupant, or 0 if they're not a member. */
+    public int memberId;
+
     /** The media that represents our avatar. */
     public MediaData media;
 
@@ -30,6 +33,7 @@ public class MsoyOccupantInfo extends OccupantInfo
     {
         super(user);
 
+        memberId = user.memberId;
         media = user.avatar;
         chatStyle = user.chatStyle;
         chatPopStyle = user.chatPopStyle;

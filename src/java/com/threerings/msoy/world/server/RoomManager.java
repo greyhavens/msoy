@@ -59,8 +59,9 @@ public class RoomManager extends SpotSceneManager
     protected SceneLocation computeEnteringLocation (
             BodyObject body, Portal entry)
     {
+        int memberId = RandomUtil.getInt(10000);
         ((MsoyUserObject) body).addToFriends(
-            new FriendEntry(new Name(String.valueOf(RandomUtil.getInt(10000))),
+            new FriendEntry(memberId, new Name(String.valueOf(memberId)),
                 (RandomUtil.getInt(2) == 0),
                 (byte) RandomUtil.getInt(3)));
 
