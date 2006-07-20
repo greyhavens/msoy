@@ -5,6 +5,8 @@ package client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListener;
@@ -29,17 +31,17 @@ public class LogonPanel extends HorizontalPanel
 
         // create our interface elements
         _status = new HTML("");
-        _username = new TextBox();
-        _username.addKeyboardListener(this);
+        _email = new TextBox();
+        _email.addKeyboardListener(this);
         _password = new PasswordTextBox();
         _password.addKeyboardListener(this);
 
-        String username = CookieUtil.get("who");
+        _who = CookieUtil.get("who");
         _token = CookieUtil.get("token");
-        if (_token == null) {
-            displayLogon(username);
+        if (_token == null || _token.length() == 0) {
+            displayChoice();
         } else {
-            displayCreds(username);
+            displayLoggedOn();
         }
     }
 
@@ -51,13 +53,23 @@ public class LogonPanel extends HorizontalPanel
         return _token;
     }
 
+    /**
+     * Clears out our credentials and displays the logon interface.
+     */
+    public void logout ()
+    {
+        _token = null;
+        CookieUtil.set("token", "");
+        displayChoice();
+    }
+
     // from interface KeyboardListener
     public void onKeyDown (Widget sender, char keyCode, int modifiers)
     {
         if (keyCode != KeyboardListener.KEY_ENTER) {
             return;
         }
-        _who = _username.getText();
+        _who = _email.getText();
         String password = _password.getText();
         if (_who.length() > 0 && password.length() > 0) {
             displayStatus("Logging in...");
@@ -79,9 +91,10 @@ public class LogonPanel extends HorizontalPanel
     public void onSuccess (Object result)
     {
         _token = (String)result;
+        _password.setText("");
         CookieUtil.set("token", _token);
         CookieUtil.set("who", _who);
-        displayCreds(_who);
+        displayLoggedOn();
     }
 
     // from interface AsyncCallback
@@ -90,19 +103,42 @@ public class LogonPanel extends HorizontalPanel
         // TODO: report user friendly error; make it possible to display status
         // and the logon elements at the same time
         displayStatus("Error: " + caught.toString());
-        displayLogon(_who);
+        displayLogon();
     }
 
-    protected void displayLogon (String who)
+    protected void displayChoice ()
     {
         clear();
-        add(new Label("Username:"));
-        add(_username);
-        if (who != null) {
-            _username.setText(who);
+        add(new Button("Login", new ClickListener() {
+            public void onClick (Widget sender) {
+                displayLogon();
+            }
+        }));
+        add(new Label("or"));
+        add(new Button("join!"));
+    }
+
+    protected void displayLogon ()
+    {
+        clear();
+        add(new Label("Email:"));
+        add(_email);
+        if (_who != null) {
+            _email.setText(_who);
         }
         add(new Label("Password"));
         add(_password);
+    }
+
+    protected void displayLoggedOn ()
+    {
+        clear();
+        add(new HTML("Welcome <b>" + _who + "</b>"));
+        add(new Button("Logout", new ClickListener() {
+            public void onClick (Widget sender) {
+                logout();
+            }
+        }));
     }
 
     protected void displayStatus (String status)
@@ -112,11 +148,6 @@ public class LogonPanel extends HorizontalPanel
         _status.setHTML(status);
     }
 
-    protected void displayCreds (String who)
-    {
-        displayStatus("Welcome <b>" + who + "</b>");
-    }
-
     protected native String md5hex (String text) /*-{
        return $wnd.hex_md5(text);
     }-*/;
@@ -124,7 +155,7 @@ public class LogonPanel extends HorizontalPanel
     protected WebUserServiceAsync _usersvc;
     protected String _who, _token;
 
-    protected TextBox _username;
+    protected TextBox _email;
     protected PasswordTextBox _password;
     protected HTML _status;
 }

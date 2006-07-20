@@ -1,13 +1,13 @@
 //
 // $Id$
 
-package client;
+package client.profile;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 
 /**
- * Handles the MetaSOY main page.
+ * Handles the MetaSOY profile page.
  */
 public class index extends MsoyEntryPoint
     implements HistoryListener
