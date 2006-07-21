@@ -37,9 +37,9 @@ public class ControlBar extends Canvas
     /**
      * Check to see which controls the client should see.
      */
-    protected function checkControls () :void
+    protected function checkControls (forceLogoff :Boolean = false) :void
     {
-        var user :MsoyUserObject = _ctx.getClientObject();
+        var user :MsoyUserObject = forceLogoff ? null : _ctx.getClientObject();
         var isMember :Boolean = (user != null) && !user.isGuest();
         if (numChildren > 0 && (isMember == _isMember)) {
             return;
@@ -98,7 +98,7 @@ public class ControlBar extends Canvas
     // from SessionObserver
     public function clientDidLogoff (event :ClientEvent) :void
     {
-        checkControls();
+        checkControls(true);
     }
 
     /** Our clientside context. */
