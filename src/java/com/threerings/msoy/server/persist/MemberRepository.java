@@ -301,7 +301,7 @@ public class MemberRepository extends JORARepository
     }
 
     /**
-     * Invite or approve the specified member name as our friend.
+     * Invite or approve the specified member as our friend.
      *
      * @param memberId The id of the member performing this action.
      * @param otherId The id of the other member.
@@ -400,8 +400,8 @@ public class MemberRepository extends JORARepository
     }
 
     /**
-     * A convenience method to look up the member's id, given their name,
-     * or -1 if unknown.
+     * A convenience method to look up the member's name, given their id,
+     * or null if unknown.
      */
     protected Name idToName (Statement stmt, int memberId)
         throws SQLException, PersistenceException
@@ -416,7 +416,6 @@ public class MemberRepository extends JORARepository
             rs.close();
         }
     }
-
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
     protected void updateFlow (String where, int amount, String type)

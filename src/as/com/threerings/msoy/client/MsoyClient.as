@@ -94,11 +94,6 @@ public class MsoyClient extends Client
                         "local storage capacity.");
                 }));
         }
-
-        // TODO: for now, we start with scene 1
-        _ctx.getSceneDirector().moveTo(1);
-        //_ctx.getLocationDirector().moveTo(
-        //    (getBootstrapData() as MsoyBootstrapData).chatOid);
     }
 
     public function fuckingCompiler () :void

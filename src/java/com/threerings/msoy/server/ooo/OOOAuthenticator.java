@@ -20,6 +20,7 @@ import com.threerings.user.OOOUserRepository;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.AuthResponse;
 import com.threerings.presents.net.AuthResponseData;
+import com.threerings.presents.net.Credentials;
 
 import com.threerings.presents.server.net.AuthingConnection;
 
@@ -157,18 +158,19 @@ public class OOOAuthenticator extends MsoyAuthenticator
 //             }
 
             // make sure they've sent valid credentials
-            if (!(req.getCredentials() instanceof MsoyCredentials)) {
-                log.warning("Invalid creds " + req.getCredentials() + ".");
+            Credentials ucreds = req.getCredentials();
+            if (!(ucreds instanceof MsoyCredentials)) {
+                log.warning("Invalid creds " + ucreds + ".");
                 rdata.code = SERVER_ERROR;
                 return;
             }
 
+            // check their provided machine identifier
+            MsoyCredentials creds = (MsoyCredentials) ucreds;
+
             // TODO: if they provide no client identifier, determine whether
             // one has been assigned to the account in question and provide
             // that to them if so, otherwise assign them a new one
-
-            // check their provided machine identifier
-            MsoyCredentials creds = (MsoyCredentials)req.getCredentials();
 
             // TODO: remove temporary guest-access code
             if (creds.ident == null) {

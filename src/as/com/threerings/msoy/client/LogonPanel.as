@@ -10,7 +10,12 @@ import mx.controls.TextInput;
 
 import mx.core.UITextField;
 
+import com.threerings.util.Name;
+
+import com.threerings.mx.events.CommandEvent;
+
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MsoyCredentials;
 
 public class LogonPanel extends HBox
 {
@@ -45,7 +50,8 @@ public class LogonPanel extends HBox
      */
     protected function doLogon (event :Event) :void
     {
-        trace("doLogon called");
+        dispatchEvent(new CommandEvent(MsoyController.LOGON,
+            new MsoyCredentials(new Name(_email.text), _password.text)));
     }
 
     /** The giver of life. */

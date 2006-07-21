@@ -1,6 +1,7 @@
 package com.threerings.msoy.client {
 
 import com.threerings.presents.client.BasicDirector;
+import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.FurniSprite;
@@ -26,7 +27,7 @@ public class MediaDirector extends BasicDirector
     {
         var isOurs :Boolean =
             (occInfo.bodyOid == _ctx.getClient().getClientOid());
-        if (_ourAvatar != null && isOurs) {
+        if (isOurs && _ourAvatar != null) {
             _ourAvatar.setOccupantInfo(occInfo);
             return _ourAvatar;
         }
@@ -67,6 +68,14 @@ public class MediaDirector extends BasicDirector
             // prevent it from continuing to move, but don't shut it down
             _ourAvatar.stopMove();
         }
+    }
+
+    override public function clientDidLogoff (event :ClientEvent) :void
+    {
+        super.clientDidLogoff(event);
+
+        // release our hold on our avatar
+        _ourAvatar = null;
     }
 
     /** Our very own avatar: avoid loading and unloading it. */
