@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.client.WebCreds;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 
 import client.util.CookieUtil;
@@ -37,8 +38,8 @@ public class LogonPanel extends HorizontalPanel
         _password.addKeyboardListener(this);
 
         _who = CookieUtil.get("who");
-        _token = CookieUtil.get("token");
-        if (_token == null || _token.length() == 0) {
+        _creds = WebCreds.fromCookie(CookieUtil.get("creds"));
+        if (_creds == null) {
             displayChoice();
         } else {
             displayLoggedOn();
@@ -46,11 +47,11 @@ public class LogonPanel extends HorizontalPanel
     }
 
     /**
-     * Returns our authentication token or null if we are not logged in.
+     * Returns our credentials or null if we are not logged in.
      */
-    public String getAuthToken ()
+    public WebCreds getCredentials ()
     {
-        return _token;
+        return _creds;
     }
 
     /**
@@ -58,8 +59,8 @@ public class LogonPanel extends HorizontalPanel
      */
     public void logout ()
     {
-        _token = null;
-        CookieUtil.set("token", "");
+        _creds = null;
+        CookieUtil.set("creds", "");
         displayChoice();
     }
 
@@ -90,9 +91,9 @@ public class LogonPanel extends HorizontalPanel
     // from interface AsyncCallback
     public void onSuccess (Object result)
     {
-        _token = (String)result;
+        _creds = (WebCreds)result;
         _password.setText("");
-        CookieUtil.set("token", _token);
+        CookieUtil.set("creds", _creds.toCookie());
         CookieUtil.set("who", _who);
         displayLoggedOn();
     }
@@ -153,7 +154,8 @@ public class LogonPanel extends HorizontalPanel
     }-*/;
 
     protected WebUserServiceAsync _usersvc;
-    protected String _who, _token;
+    protected String _who;
+    protected WebCreds _creds;
 
     protected TextBox _email;
     protected PasswordTextBox _password;

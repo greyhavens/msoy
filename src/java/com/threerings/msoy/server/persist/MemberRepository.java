@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.lang.ref.WeakReference;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -10,8 +12,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.LRUHashMap;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.DatabaseLiaison;
@@ -23,6 +27,7 @@ import com.samskivert.jdbc.jora.Table;
 import com.threerings.util.Name;
 
 import com.threerings.msoy.data.FriendEntry;
+import com.threerings.msoy.server.CacheConfig;
 
 import static com.threerings.msoy.Log.log;
 
@@ -46,7 +51,7 @@ public class MemberRepository extends JORARepository
         throws PersistenceException
     {
         super(conprov, MEMBER_DB_IDENT);
-        _byNameMask = _ptable.getFieldMask();
+        _byNameMask = _mtable.getFieldMask();
         _byNameMask.setModified("accountName");
 
         // tune our table keys on every startup
@@ -55,13 +60,61 @@ public class MemberRepository extends JORARepository
 
     /**
      * Loads up the member record associated with the specified account.
-     * Returns null if no matching record could be found.
+     * Returns null if no matching record could be found. The record will be
+     * fetched from the cache if possible and cached if not.
      */
     public Member loadMember (String accountName)
         throws PersistenceException
     {
-        return (Member)loadByExample(
-            _ptable, new Member(accountName), _byNameMask);
+        Member member;
+
+        // allow access to the cache from multiple threads but don't try to
+        // prevent multiple simultaneous lookups; we don't want to keep the
+        // member cache locked during the database load
+        synchronized (_memberCache) {
+            member = _memberCache.get(accountName);
+            if (member != null) {
+                return member;
+            }
+        }
+
+        // load up and cache the member
+        member = loadByExample(_mtable, new Member(accountName), _byNameMask);
+        cacheMember(member);
+
+        return member;
+    }
+
+    /**
+     * Loads up a member record by id. Returns null if no member exists with
+     * the specified id. The record will be fetched from the cache if possible
+     * and cached if not.
+     */
+    public Member loadMember (int memberId)
+        throws PersistenceException
+    {
+        Member member;
+
+        // allow access to the cache from multiple threads but don't try to
+        // prevent multiple simultaneous lookups; we don't want to keep the
+        // member cache locked during the database load
+        synchronized (_memberCache) {
+            WeakReference<Member> ref = _memberIdCache.get(memberId);
+            if (ref != null) {
+                member = ref.get();
+                // make sure this record hasn't expired from the primary cache
+                if (member != null &&
+                    _memberCache.containsKey(member.accountName)) {
+                    return member;
+                }
+            }
+        }
+
+        // load and cache up the member
+        member = load(_mtable, "where MEMBER_ID = " + memberId);
+        cacheMember(member);
+
+        return member;
     }
 
     /**
@@ -76,7 +129,7 @@ public class MemberRepository extends JORARepository
             member.created = new Date(System.currentTimeMillis());
             member.lastSession = member.created;
         }
-        member.memberId = insert(_ptable, member);
+        member.memberId = insert(_mtable, member);
     }
 
     /**
@@ -124,7 +177,7 @@ public class MemberRepository extends JORARepository
     public void deleteMember (final Member member)
         throws PersistenceException
     {
-        delete(_ptable, member);
+        delete(_mtable, member);
     }
 
     /**
@@ -390,6 +443,21 @@ public class MemberRepository extends JORARepository
         }
     }
 
+    /**
+     * Caches the supplied member record which was presumably freshly loaded
+     * from the database.
+     */
+    protected void cacheMember (Member member)
+    {
+        if (member != null) {
+            synchronized (_memberCache) {
+                _memberCache.put(member.accountName, member);
+                _memberIdCache.put(
+                    member.memberId, new WeakReference<Member>(member));
+            }
+        }
+    }
+
     @Override // documentation inherited
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
@@ -420,9 +488,19 @@ public class MemberRepository extends JORARepository
     @Override // documentation inherited
     protected void createTables ()
     {
-	_ptable = new Table<Member>(Member.class, "MEMBERS", "MEMBER_ID", true);
+	_mtable = new Table<Member>(Member.class, "MEMBERS", "MEMBER_ID", true);
     }
 
-    protected Table<Member> _ptable;
+    protected Table<Member> _mtable;
     protected FieldMask _byNameMask;
+
+    /** Contains a mapping from account name to {@link Member} records.
+     * TODO: create a fancier cache system that expires records after some time
+     * period. */
+    protected LRUHashMap<String,Member> _memberCache =
+        new LRUHashMap<String,Member>(CacheConfig.MEMBER_CACHE_SIZE);
+
+    /** Contains a mapping from memberId to {@link Member} records. */
+    protected HashMap<Integer,WeakReference<Member>> _memberIdCache =
+        new HashMap<Integer,WeakReference<Member>>();
 }

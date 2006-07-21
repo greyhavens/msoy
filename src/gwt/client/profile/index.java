@@ -5,6 +5,9 @@ package client.profile;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.ui.RootPanel;
+
+import client.MsoyEntryPoint;
 
 /**
  * Handles the MetaSOY profile page.
@@ -24,6 +27,8 @@ public class index extends MsoyEntryPoint
         } else {
             // displaySummary();
         }
+
+        RootPanel.get("content").add(new HeaderPanel());
     }
 
     // from interface HistoryListener

@@ -9,6 +9,7 @@ import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.LogonException;
+import com.threerings.msoy.web.client.WebCreds;
 import com.threerings.msoy.web.client.WebUserService;
 
 /**
@@ -18,7 +19,7 @@ public class WebUserServlet extends RemoteServiceServlet
     implements WebUserService
 {
     // from interface WebUserService
-    public String login (String username, String password, boolean persist)
+    public WebCreds login (String username, String password, boolean persist)
         throws LogonException
     {
         // we are running on a servlet thread at this point and can thus talk

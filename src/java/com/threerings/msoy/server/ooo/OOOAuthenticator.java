@@ -32,6 +32,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.Member;
 import com.threerings.msoy.web.client.LogonException;
+import com.threerings.msoy.web.client.WebCreds;
 
 import static com.threerings.msoy.Log.log;
 import static com.threerings.msoy.data.MsoyAuthCodes.*;
@@ -70,8 +71,8 @@ public class OOOAuthenticator extends MsoyAuthenticator
     }
 
     // from MsoyAuthenticator
-    public String authenticateSession (String username, String password,
-                                       boolean persist)
+    public WebCreds authenticateSession (String username, String password,
+                                         boolean persist)
         throws LogonException
     {
         try {
@@ -87,9 +88,25 @@ public class OOOAuthenticator extends MsoyAuthenticator
                 throw new LogonException(BANNED);
             }
 
+            // TODO: do all authentication via a mechanism that triggers a
+            // minimal game server logon
+
+            // load up their member information to get their member id
+            Member mrec = MsoyServer.memberRepo.loadMember(user.username);
+
+            // if this is their first logon, insert a skeleton member record
+            if (mrec == null) {
+                mrec = new Member();
+                mrec.accountName = user.username;
+                MsoyServer.memberRepo.insertMember(mrec);
+            }
+
             // if they made it through that gauntlet, create or update their
             // session token and let 'em on in
-            return _authrep.registerSession(user, persist);
+            WebCreds creds = new WebCreds();
+            creds.memberId = mrec.memberId;
+            creds.token = _authrep.registerSession(user, persist);
+            return creds;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Error authenticating user " +

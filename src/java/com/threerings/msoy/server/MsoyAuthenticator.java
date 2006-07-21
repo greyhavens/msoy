@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import com.threerings.presents.server.Authenticator;
 
 import com.threerings.msoy.web.client.LogonException;
+import com.threerings.msoy.web.client.WebCreds;
 
 /**
  * Extends the standard {@link Authenticator} and defines some additional
@@ -25,13 +26,13 @@ public abstract class MsoyAuthenticator extends Authenticator
      * expire in a day or two (the client will be instructed to expire the
      * session token when it next terminates).
      *
-     * @return the session identifier that should be supplied to web-based
+     * @return the session credentials that should be supplied to web-based
      * service requests for authentication.
      *
      * @exception LogonException thrown if the password is incorrect, the user
      * does not exist or some other problem occurs with logon.
      */
-    public abstract String authenticateSession (
+    public abstract WebCreds authenticateSession (
             String username, String password, boolean persist)
         throws LogonException;
 }
