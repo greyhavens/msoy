@@ -12,10 +12,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.LRUHashMap;
+import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.DatabaseLiaison;
@@ -115,6 +117,122 @@ public class MemberRepository extends JORARepository
         cacheMember(member);
 
         return member;
+    }
+
+    /**
+     * Loads up the member associated with the supplied session token. Returns
+     * null if the session has expired or is not valid.
+     */
+    public Member loadMemberForSession (String sessionToken)
+        throws PersistenceException
+    {
+        Integer memberId;
+
+        // first check the cache
+        synchronized (_sessions) {
+            memberId = _sessions.get(sessionToken);
+        }
+
+        // if it was not in the cache, look up the token in the session table
+        if (memberId == null) {
+            Session session = loadByExample(_stable, new Session(sessionToken));
+            if (session != null) {
+                // cache the result
+                synchronized (_sessions) {
+                    _sessions.put(sessionToken, session.memberId);
+                }
+                memberId = session.memberId;
+            }
+        }
+
+        // if we got no member id, there is no such session; otherwise load up
+        // the user normally
+        return (memberId == null) ? null : loadMember(memberId);
+    }
+
+    /**
+     * Creates a mapping from the supplied memberId to a session token (or
+     * reusese an existing mapping). The member is assumed to have provided
+     * valid credentials and we will allow anyone who presents the returned
+     * session token access as the specified member. If an existing session is
+     * reused, its expiration date will be adjusted as if the session was newly
+     * created as of now (using the supplied <code>persist</code> setting).
+     *
+     * @param persist if true the session will be set to expire in one month,
+     * if false it will be set to expire in one day.
+     */
+    public String startOrJoinSession (int memberId, boolean persist)
+        throws PersistenceException
+    {
+        // we don't check the cache when someone is starting a session; we
+        // assume that since they are logging in we want to make sure we have
+        // the latest and the freshest bits as logins happen infrequently
+
+        // assume we'll be creating a new session record
+        final Session nsess = new Session();
+	Calendar cal = Calendar.getInstance();
+	cal.add(Calendar.DATE, persist ? 30 : 1);
+        nsess.expires = new Date(cal.getTime().getTime());
+        nsess.memberId = memberId;
+        nsess.token = StringUtil.md5hex(
+            "" + memberId + System.currentTimeMillis() + Math.random());
+
+        // try to insert our new session record and if that fails with a
+        // duplicate key, reuse the old record but adjust its expiration
+        String token = executeUpdate(new Operation<String>() {
+            public String invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                try {
+                    _stable.insert(conn, nsess);
+                    // we inserted our session record, so use it
+                    return nsess.token;
+                } catch (SQLException sqe) {
+                    if (!liaison.isDuplicateRowException(sqe)) {
+                        throw sqe;
+                    }
+                }
+
+                // there must already be a session record, so reuse it
+                Session sess = _stable.select(
+                    conn, "where MEMBER_ID = "  + nsess.memberId).get();
+                if (sess != null) {
+                    sess.expires = nsess.expires;
+                    _stable.update(conn, sess);
+                    return sess.token;
+                }
+
+                // WTF? some seriously racey shit must be going on; make a last
+                // ditch attempt to create a new session record (using a new
+                // session key in case we got a hash collision)
+                nsess.token = StringUtil.md5hex(
+                    "" + nsess.memberId + System.currentTimeMillis() +
+                    Math.random());
+                _stable.insert(conn, nsess);
+                return nsess.token;
+            }
+        });
+
+        // finally cache and return whatever result we ended up with
+        synchronized (_sessions) {
+            _sessions.put(token, memberId);
+        }
+        return token;
+    }
+
+    /**
+     * Clears out a session to member id mapping. This should be called when a
+     * user logs off.
+     */
+    public void clearSession (String sessionToken)
+        throws PersistenceException
+    {
+        // clear the token from the cache
+        synchronized (_sessions) {
+            _sessions.remove(sessionToken);
+        }
+        // and wipe it from the database
+        delete(_stable, new Session(sessionToken));
     }
 
     /**
@@ -475,6 +593,14 @@ public class MemberRepository extends JORARepository
             "unique (ACCOUNT_NAME)",
         }, "");
 
+        JDBCUtil.createTableIfMissing(conn, "SESSIONS", new String[] {
+            "TOKEN VARCHAR(64) not null",
+            "MEMBER_ID integer not null",
+            "EXPIRES date not null",
+            "unique index MEMID_INDEX (MEMBER_ID)",
+            "primary key (TOKEN)",
+        }, "");
+
         JDBCUtil.createTableIfMissing(conn, "FRIENDS", new String[] {
             "INVITER_ID integer not null",
             "INVITEE_ID integer not null",
@@ -488,9 +614,12 @@ public class MemberRepository extends JORARepository
     protected void createTables ()
     {
 	_mtable = new Table<Member>(Member.class, "MEMBERS", "MEMBER_ID", true);
+	_stable = new Table<Session>(
+            Session.class, "SESSIONS", "MEMBER_ID", true);
     }
 
     protected Table<Member> _mtable;
+    protected Table<Session> _stable;
     protected FieldMask _byNameMask;
 
     /** Contains a mapping from account name to {@link Member} records.
@@ -502,4 +631,8 @@ public class MemberRepository extends JORARepository
     /** Contains a mapping from memberId to {@link Member} records. */
     protected HashMap<Integer,WeakReference<Member>> _memberIdCache =
         new HashMap<Integer,WeakReference<Member>>();
+
+    /** Contains a mapping from session token to member id.
+     * TODO: expire values from this table 1 hour after they were last got(). */
+    protected HashMap<String,Integer> _sessions = new HashMap<String,Integer>();
 }

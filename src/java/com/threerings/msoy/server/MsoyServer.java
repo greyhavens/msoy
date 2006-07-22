@@ -167,11 +167,7 @@ public class MsoyServer extends WhirledServer
     @Override
     protected Authenticator createAuthenticator ()
     {
-        Authenticator auth = ServerConfig.getAuthenticator();
-        if (auth != null) {
-            return auth;
-        }
-        return super.createAuthenticator();
+        return new MsoyAuthenticator();
     }
 
     @Override

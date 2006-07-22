@@ -27,11 +27,6 @@ server_root = /export/msoy
 webapp_dir = /export/threerings/webapps
 
 #
-# Defines the client authenticator used by the server.
-
-server_auth = com.threerings.msoy.server.ooo.OOOAuthenticator
-
-#
 # The default database mapping; all other definitions will inherit from
 # this and need only be specified in cases where they differ from the
 # defaults

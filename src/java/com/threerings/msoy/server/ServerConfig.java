@@ -13,7 +13,6 @@ import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.client.Client;
-import com.threerings.presents.server.Authenticator;
 
 import static com.threerings.msoy.Log.log;
 
@@ -43,24 +42,6 @@ public class ServerConfig
     public static Properties getJDBCConfig ()
     {
         return config.getSubProperties("db");
-    }
-
-    /**
-     * Instantiates and returns the authenticator that the server will use
-     * to authenticate client connections.
-     */
-    public static Authenticator getAuthenticator ()
-    {
-        String aclass = config.getValue("server_auth", "");
-        try {
-            if (!StringUtil.isBlank(aclass)) {
-                return (Authenticator)Class.forName(aclass).newInstance();
-            }
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to instantiate authenticator " +
-                    "[class=" + aclass + "]", e);
-        }
-        return null;
     }
 
     /**
