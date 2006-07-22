@@ -10,6 +10,8 @@ import mx.containers.HBox;
 import mx.controls.Button;
 import mx.controls.TextInput;
 
+import mx.events.FlexEvent;
+
 import mx.utils.StringUtil;
 
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -39,8 +41,8 @@ public class ChatControl extends HBox
         //_txt.addEventListener(FlexEvent.ENTER, sendChat);
         //but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat);
         _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent, false, 0, true);
-        _txt.addEventListener("enter", sendChat, false, 0, true);
-        but.addEventListener("buttonDown", sendChat, false, 0, true);
+        _txt.addEventListener(FlexEvent.ENTER, sendChat, false, 0, true);
+        but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat, false, 0, true);
     }
 
     /**
@@ -66,7 +68,10 @@ public class ChatControl extends HBox
         _curLine = _txt.text;
     }
 
-    protected function sendChat (event :Event) :void
+    /**
+     * Handles FlexEvent.ENTER and FlexEvent.BUTTON_DOWN to send chat.
+     */
+    protected function sendChat (event :FlexEvent) :void
     {
         var message :String = StringUtil.trim(_txt.text);
         if ("" == message) {

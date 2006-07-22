@@ -10,6 +10,8 @@ import mx.controls.TextInput;
 
 import mx.core.UITextField;
 
+import mx.events.FlexEvent;
+
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
@@ -44,8 +46,9 @@ public class LogonPanel extends HBox
         _logonBtn.label = ctx.xlate("b.logon");
         addChild(_logonBtn);
 
-        _password.addEventListener("enter", doLogon, false, 0, true);
-        _logonBtn.addEventListener("buttonDown", doLogon, false, 0, true);
+        _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);
+        _logonBtn.addEventListener(
+            FlexEvent.BUTTON_DOWN, doLogon, false, 0, true);
 
         _email.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
         _password.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
@@ -70,9 +73,10 @@ public class LogonPanel extends HBox
     }
 
     /**
-     * Handles "enter" or "buttonDown" events generated to process a logon. 
+     * Handles FlexEvent.ENTER or FlexEvent.BUTTON_DOWN events
+     * generated to process a logon. 
      */
-    protected function doLogon (event :Event) :void
+    protected function doLogon (event :FlexEvent) :void
     {
         if (!canTryLogon()) {
             // we disable the button, but they could still try pressing

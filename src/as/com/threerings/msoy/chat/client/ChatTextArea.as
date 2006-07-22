@@ -4,6 +4,8 @@ import flash.events.Event;
 
 import mx.controls.TextArea;
 
+import mx.events.FlexEvent;
+
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatMessage;
@@ -29,9 +31,9 @@ public class ChatTextArea extends TextArea
         height = 150;
 
         // set up some events to manage how we'll be shown, etc.
-        addEventListener("creationComplete", checkVis);
-        addEventListener("show", checkVis);
-        addEventListener("hide", checkVis);
+        addEventListener(FlexEvent.CREATION_COMPLETE, checkVis);
+        addEventListener(FlexEvent.SHOW, checkVis);
+        addEventListener(FlexEvent.HIDE, checkVis);
     }
 
     // documentation inherited from interface ChatDisplay
@@ -70,7 +72,7 @@ public class ChatTextArea extends TextArea
      * Check to see if we should register or unregister ourselves as a
      * ChatDisplay.
      */
-    protected function checkVis (event :Event) :void
+    protected function checkVis (event :FlexEvent) :void
     {
         var chatdir :ChatDirector = _ctx.getChatDirector();
         if (this.visible) {
