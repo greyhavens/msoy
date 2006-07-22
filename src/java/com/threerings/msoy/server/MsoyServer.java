@@ -33,6 +33,7 @@ import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
 import com.threerings.whirled.util.SceneFactory;
 
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.data.RoomConfig;
 
@@ -57,6 +58,9 @@ public class MsoyServer extends WhirledServer
 
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
+
+    /** The Msoy item manager. */
+    public static ItemManager itemMan = new ItemManager();
 
     /** Provides spot-related services. */
     public static SpotProvider spotProv;
@@ -117,6 +121,7 @@ public class MsoyServer extends WhirledServer
         sceneRepo = (MsoySceneRepository) _screp;
         memberRepo = new MemberRepository(conProv);
         memberMan = new MemberManager(memberRepo);
+        itemMan.init(conProv);
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();
