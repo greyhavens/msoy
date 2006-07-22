@@ -46,21 +46,31 @@ public class LogonPanel extends HBox
 
         _password.addEventListener("enter", doLogon, false, 0, true);
         _logonBtn.addEventListener("buttonDown", doLogon, false, 0, true);
+
+        _email.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
+        _password.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
     }
 
+    /**
+     * Are the username/password fields non-blank such that we can attempt
+     * logon?
+     */
     protected function canTryLogon () :Boolean
     {
         return (!StringUtil.isBlank(_email.text) &&
             !StringUtil.isBlank(_password.text));
     }
 
+    /**
+     * Handles Event.CHANGE events from the text input fields.
+     */
     protected function checkTexts (event :Event) :void
     {
         _logonBtn.enabled = canTryLogon();
     }
 
     /**
-     * Handles 
+     * Handles "enter" or "buttonDown" events generated to process a logon. 
      */
     protected function doLogon (event :Event) :void
     {
