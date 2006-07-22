@@ -11,6 +11,7 @@ import mx.controls.TextInput;
 import mx.core.UITextField;
 
 import com.threerings.util.Name;
+import com.threerings.util.StringUtil;
 
 import com.threerings.mx.events.CommandEvent;
 
@@ -27,6 +28,7 @@ public class LogonPanel extends HBox
         addChild(label);
 
         _email = new TextInput();
+        _email.text = Prefs.getUsername();
         addChild(_email);
 
         label = new UITextField();
@@ -35,14 +37,26 @@ public class LogonPanel extends HBox
 
         _password = new TextInput();
         _password.displayAsPassword = true;
+        _password.text = Prefs.getPassword();
         addChild(_password);
 
-        var but :Button = new Button();
-        but.label = ctx.xlate("b.logon");
-        addChild(but);
+        _logonBtn = new Button();
+        _logonBtn.label = ctx.xlate("b.logon");
+        addChild(_logonBtn);
 
         _password.addEventListener("enter", doLogon, false, 0, true);
-        but.addEventListener("buttonDown", doLogon, false, 0, true);
+        _logonBtn.addEventListener("buttonDown", doLogon, false, 0, true);
+    }
+
+    protected function canTryLogon () :Boolean
+    {
+        return (!StringUtil.isBlank(_email.text) &&
+            !StringUtil.isBlank(_password.text));
+    }
+
+    protected function checkTexts (event :Event) :void
+    {
+        _logonBtn.enabled = canTryLogon();
     }
 
     /**
@@ -50,6 +64,13 @@ public class LogonPanel extends HBox
      */
     protected function doLogon (event :Event) :void
     {
+        if (!canTryLogon()) {
+            // we disable the button, but they could still try pressing
+            // return in the password field, and I don't want to mess
+            // with adding/removing the listener in checkTexts
+            return;
+        }
+
         dispatchEvent(new CommandEvent(MsoyController.LOGON,
             new MsoyCredentials(new Name(_email.text), _password.text)));
     }
@@ -59,5 +80,7 @@ public class LogonPanel extends HBox
 
     protected var _email :TextInput;
     protected var _password :TextInput;
+
+    protected var _logonBtn :Button;
 }
 }

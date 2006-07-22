@@ -56,6 +56,15 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
+        var creds :MsoyCredentials =
+            (_ctx.getClient().getCredentials() as MsoyCredentials);
+        var name :String = creds.getUsername().toString();
+        if (name.substr(0, 5) !== "guest") {
+            // save them
+            Prefs.setUsername(name);
+            Prefs.setPassword(creds.getPassword());
+        }
+
         // TODO
         // for now, all we do is move to a starter scene
         _ctx.getSceneDirector().moveTo(1);
@@ -88,6 +97,12 @@ public class MsoyController extends Controller
 
     // from ClientObserver
     public function clientWillLogoff (event :ClientEvent) :void
+    {
+        // nada
+    }
+
+    // from ClientObserver
+    public function clientDidClear (event :ClientEvent) :void
     {
         // nada
     }

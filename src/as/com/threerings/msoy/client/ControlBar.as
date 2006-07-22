@@ -7,7 +7,7 @@ import mx.containers.Canvas;
 import com.threerings.mx.controls.CommandButton;
 
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.SessionObserver;
+import com.threerings.presents.client.ClientObserver;
 
 import com.threerings.msoy.chat.client.ChatControl;
 
@@ -18,7 +18,7 @@ import com.threerings.msoy.data.MsoyUserObject;
  * The control bar: the main menu and global UI element across all scenes.
  */
 public class ControlBar extends Canvas
-    implements SessionObserver
+    implements ClientObserver
 {
     public function ControlBar (ctx :MsoyContext)
     {
@@ -37,9 +37,9 @@ public class ControlBar extends Canvas
     /**
      * Check to see which controls the client should see.
      */
-    protected function checkControls (forceLogoff :Boolean = false) :void
+    protected function checkControls () :void
     {
-        var user :MsoyUserObject = forceLogoff ? null : _ctx.getClientObject();
+        var user :MsoyUserObject = _ctx.getClientObject();
         var isMember :Boolean = (user != null) && !user.isGuest();
         if (numChildren > 0 && (isMember == _isMember)) {
             return;
@@ -83,22 +83,46 @@ public class ControlBar extends Canvas
         _isMember = isMember;
     }
 
-    // from SessionObserver
+    // from ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
         checkControls();
     }
 
-    // from SessionObserver
+    // from ClientObserver
     public function clientObjectDidChange (event :ClientEvent) :void
     {
         checkControls();
     }
 
-    // from SessionObserver
+    // from ClientObserver
     public function clientDidLogoff (event :ClientEvent) :void
     {
-        checkControls(true);
+        // nada
+    }
+
+    // from ClientObserver
+    public function clientFailedToLogon (event :ClientEvent) :void
+    {
+        // nada
+    }
+
+    // from ClientObserver
+    public function clientConnectionFailed (event :ClientEvent) :void
+    {
+        // nada
+    }
+
+    // from ClientObserver
+    public function clientWillLogoff (event :ClientEvent) :void
+    {
+        // nada
+    }
+
+    // from ClientObserver
+    public function clientDidClear (event :ClientEvent) :void
+    {
+        checkControls();
     }
 
     /** Our clientside context. */
