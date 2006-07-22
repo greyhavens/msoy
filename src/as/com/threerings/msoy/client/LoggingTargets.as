@@ -1,5 +1,7 @@
 package com.threerings.msoy.client {
 
+import flash.external.ExternalInterface;
+
 import mx.logging.Log;
 
 import com.threerings.msoy.data.MsoyUserObject;
@@ -12,7 +14,15 @@ public class LoggingTargets
         var userObj :MsoyUserObject = ctx.getClientObject();
 
         // for now, everything logs to the FireBug console
-        mx.logging.Log.addTarget(new FireBugTarget());
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.call("console.debug",
+                        "Msoy console logging enabled");
+                mx.logging.Log.addTarget(new FireBugTarget());
+            }
+        } catch (err :Error) {
+            // oh well!
+        }
 
         // admins log to the chatbox
         if (userObj.getTokens().isAdmin()) {

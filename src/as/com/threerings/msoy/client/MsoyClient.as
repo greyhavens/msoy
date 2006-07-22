@@ -69,13 +69,17 @@ public class MsoyClient extends Client
         _ctx = new MsoyContext(this, app);
 
         // register our logoff function as being available from javascript
-        if (ExternalInterface.available) {
-            ExternalInterface.addCallback("msoyLogoff", function () :void {
-                logoff(false);
-            });
+        try {
+            if (ExternalInterface.available) {
+                ExternalInterface.addCallback("msoyLogoff", function () :void {
+                    logoff(false);
+                });
 
-        } else {
-            trace("Unable to communicate with javascript!");
+            } else {
+                trace("Unable to communicate with javascript!");
+            }
+        } catch (err :Error) {
+            // nada: ExternalInterface isn't there. Oh well!
         }
 
         //setServer("tasman.sea.earth.threerings.net", DEFAULT_SERVER_PORTS);
