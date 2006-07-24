@@ -26,14 +26,17 @@ public abstract class MediaItem extends Item
     /** The MIME type for WAV audio data. */
     public static final byte AUDIO_WAV = 21;
 
+    /** The MIME type for FLV video data. */
+    public static final byte VIDEO_FLASH = 30;
+
     /** The MIME type for MPEG video data. */
-    public static final byte VIDEO_MPEG = 30;
+    public static final byte VIDEO_MPEG = 31;
 
     /** The MIME type for Quicktime video data. */
-    public static final byte VIDEO_QUICKTIME = 31;
+    public static final byte VIDEO_QUICKTIME = 32;
 
     /** The MIME type for AVI video data. */
-    public static final byte VIDEO_MSVIDEO = 32;
+    public static final byte VIDEO_MSVIDEO = 33;
 
     /** The MIME type for Flash SWF files. */
     public static final byte APPLICATION_SHOCKWAVE_FLASH = 40;
