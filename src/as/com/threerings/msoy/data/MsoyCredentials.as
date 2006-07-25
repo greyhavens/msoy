@@ -16,6 +16,10 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class MsoyCredentials extends UsernamePasswordCreds
 {
+    /** A session token that identifies a user without requiring username
+     * or password. */
+    public var sessionToken :String;
+
     /** The machine identifier of the client, if one is known. */
     public var ident :String;
 
@@ -33,6 +37,7 @@ public class MsoyCredentials extends UsernamePasswordCreds
     {
         super.writeObject(out);
 
+        out.writeField(sessionToken);
         out.writeField(ident);
     }
 
@@ -40,6 +45,7 @@ public class MsoyCredentials extends UsernamePasswordCreds
     {
         super.readObject(ins);
 
+        sessionToken = (ins.readField(String) as String);
         ident = (ins.readField(String) as String);
     }
 

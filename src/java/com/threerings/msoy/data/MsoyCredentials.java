@@ -13,6 +13,10 @@ import com.threerings.util.Name;
  */
 public class MsoyCredentials extends UsernamePasswordCreds
 {
+    /** A session token that identifies a user without requiring username
+     * or password. */
+    public String sessionToken;
+
     /** The machine identifier of the client, if one is known. */
     public String ident;
 

@@ -12,6 +12,8 @@ import mx.core.UITextField;
 
 import mx.events.FlexEvent;
 
+import com.adobe.crypto.MD5;
+
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
@@ -39,7 +41,6 @@ public class LogonPanel extends HBox
 
         _password = new TextInput();
         _password.displayAsPassword = true;
-        _password.text = Prefs.getPassword();
         addChild(_password);
 
         _logonBtn = new Button();
@@ -85,8 +86,12 @@ public class LogonPanel extends HBox
             return;
         }
 
-        dispatchEvent(new CommandEvent(MsoyController.LOGON,
-            new MsoyCredentials(new Name(_email.text), _password.text)));
+        var creds :MsoyCredentials = new MsoyCredentials(
+            new Name(_email.text),
+            MD5.hash(_password.text));
+        creds.ident = ""; // TODO?
+
+        dispatchEvent(new CommandEvent(MsoyController.LOGON, creds));
     }
 
     /** The giver of life. */

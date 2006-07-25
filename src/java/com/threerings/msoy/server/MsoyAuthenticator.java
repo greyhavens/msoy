@@ -126,19 +126,11 @@ public class MsoyAuthenticator extends Authenticator
 //                 // ignore it and fail below
 //             }
 //             if (svers != cvers) {
-//                 if (cvers > svers) {
-//                     throw new LogonException(NEWER_VERSION);
-//                 } else {
-//                     // TEMP: force the use of the old auth response data to
-//                     // avoid freaking out older clients
-//                     rsp = new AuthResponse(new AuthResponseData());
-//                     rsp.getData().code = MessageBundle.tcompose(
-//                         VERSION_MISMATCH, "" + svers);
-//                 }
 //                 log.info("Refusing wrong version " +
 //                          "[creds=" + req.getCredentials() +
 //                          ", cvers=" + cvers + ", svers=" + svers + "].");
-//                 return;
+//                 throw new LogonException((cvers > svers) ? NEWER_VERSION
+//                    : MessageBundle.tcompose(VERSION_MISMATCH, svers));
 //             }
 
             // make sure they've sent valid credentials
@@ -151,18 +143,33 @@ public class MsoyAuthenticator extends Authenticator
                 throw new LogonException(MsoyAuthCodes.SERVER_ERROR);
             }
 
+            Member member = null;
+            String accountName;
+            if (creds.getUsername() == null) {
+                // attempt to load the member by sessionToken
+                if (creds.sessionToken != null) {
+                    member = MsoyServer.memberRepo.loadMemberForSession(
+                        creds.sessionToken);
+                }
+
+                // GUEST access
+                if (member == null) {
+                    rdata.code = MsoyAuthResponseData.SUCCESS;
+                    return;
+                }
+
+                // otherwise, we've loaded by sessionToken
+                accountName = member.accountName;
+
+            } else {
+                member = null;
+                accountName = creds.getUsername().toString();
+            }
+
             // TODO: if they provide no client identifier, determine whether
             // one has been assigned to the account in question and provide
             // that to them if so, otherwise assign them a new one
-
-            // TODO: remove temporary guest-access code
-            if (creds.ident == null) {
-                rdata.code = MsoyAuthResponseData.SUCCESS;
-                return;
-            }
-            // END: temp
-
-            String username = creds.getUsername().toString();
+/*
             if (StringUtil.isBlank(creds.ident)) {
                 log.warning("Received blank ident [creds=" +
                             req.getCredentials() + "].");
@@ -171,8 +178,6 @@ public class MsoyAuthenticator extends Authenticator
                     " ip:" + conn.getInetAddress());
                 throw new LogonException(MsoyAuthCodes.SERVER_ERROR);
             }
-
-            // TODO: allow guest login
 
             // if they supplied a known non-unique machine identifier, create
             // one for them
@@ -199,14 +204,15 @@ public class MsoyAuthenticator extends Authenticator
                                       " id:" + creds.ident);
                 throw new LogonException(MsoyAuthCodes.SERVER_ERROR);
             }
+*/
 
             // obtain the authentication domain appropriate to their account
             // name (which is their email address)
-            Domain domain = getDomain(username);
+            Domain domain = getDomain(accountName);
 
             // load up and authenticate their domain account record
             Account account = domain.authenticateAccount(
-                username, creds.getPassword());
+                accountName, creds.getPassword());
 
             // we need to find out if this account has ever logged in so that
             // we can decide how to handle tainted idents; so we load up the
@@ -214,11 +220,13 @@ public class MsoyAuthenticator extends Authenticator
             // the gauntlet, we'll stash this away in a place that the client
             // resolver can get its hands on it so that we can avoid loading
             // the record twice during authentication
-            Member mrec = MsoyServer.memberRepo.loadMember(account.accountName);
+            if (member == null) {
+                member = MsoyServer.memberRepo.loadMember(account.accountName);
+            }
 
             // check to see whether this account has been banned or if this is
             // a first time user logging in from a tainted machine
-            domain.validateAccount(account, creds.ident, mrec == null);
+            domain.validateAccount(account, creds.ident, member == null);
 
 //             // check whether we're restricting non-insider login
 //             if (!RuntimeConfig.server.openToPublic &&
@@ -246,12 +254,13 @@ public class MsoyAuthenticator extends Authenticator
 
 //             // pass their user record to the client resolver for retrieval
 //             // later in the logging on process
-//             if (mrec != null) {
-//                 MsoyClientResolver.stashMember(mrec);
+//             if (member != null) {
+//                 MsoyClientResolver.stashMember(member);
 //             }
 
         } catch (LogonException le) {
             rdata.code = le.getMessage();
+            log.info("Rejecting authentication: " + rdata.code);
         }
     }
 

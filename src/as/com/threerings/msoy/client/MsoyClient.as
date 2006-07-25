@@ -49,15 +49,10 @@ public class MsoyClient extends Client
 
     public function MsoyClient (app :Application)
     {
-        var name :String = Prefs.getUsername();
-        var pw :String = Prefs.getPassword();
-        if (StringUtil.isBlank(name) || StringUtil.isBlank(pw) ||
-                (name.substr(0, 5) === "guest")) {
-            var guestId :int = int(Math.random() * int.MAX_VALUE);
-            name = "guest" + guestId;
-            pw = "guest";
-        }
-        super(new MsoyCredentials(new Name(name), pw), app.stage);
+        var creds :MsoyCredentials = new MsoyCredentials(null, null);
+        creds.sessionToken = Prefs.getSessionToken();
+        creds.ident = Prefs.getMachineIdent();
+        super(creds, app.stage);
 
         // set up a context menu that blocks funnybiz on the stage
         var menu :ContextMenu = new ContextMenu();

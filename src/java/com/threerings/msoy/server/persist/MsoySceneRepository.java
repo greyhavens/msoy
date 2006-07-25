@@ -247,7 +247,7 @@ public class MsoySceneRepository extends SimpleRepository
                             rs.getFloat(3), rs.getFloat(4), rs.getFloat(5), 0);
                         furni.scaleX = rs.getFloat(6);
                         furni.scaleY = rs.getFloat(7);
-                        furni.action = null; // TODO: decode blob
+                        furni.action = "http://bogocorp.com"; // null; // TODO: decode blob
                         flist.add(furni);
                     }
                     model.furnis = new FurniData[flist.size()];

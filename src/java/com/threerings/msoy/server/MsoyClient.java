@@ -48,7 +48,7 @@ public class MsoyClient extends WhirledClient
     protected void assignStartingUsername ()
     {
         Name credName = _creds.getUsername();
-        if (credName.toString().startsWith("guest")) {
+        if (null == credName) {
             _username = getNextGuestName();
 
         } else {

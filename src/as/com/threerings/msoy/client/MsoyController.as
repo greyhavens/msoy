@@ -56,13 +56,11 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
-        var creds :MsoyCredentials =
-            (_ctx.getClient().getCredentials() as MsoyCredentials);
-        var name :String = creds.getUsername().toString();
-        if (name.substr(0, 5) !== "guest") {
-            // save them
-            Prefs.setUsername(name);
-            Prefs.setPassword(creds.getPassword());
+        // if not a guest, save the username that we logged in with
+        if (!_ctx.getClientObject().isGuest()) {
+            var creds :MsoyCredentials =
+                (_ctx.getClient().getCredentials() as MsoyCredentials);
+            Prefs.setUsername(creds.getUsername().toString());
         }
 
         // TODO
