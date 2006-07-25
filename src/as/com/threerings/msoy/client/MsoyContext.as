@@ -34,7 +34,6 @@ public class MsoyContext
         _client = client;
         _app = app;
 
-        // TODO: verify params to these constructors
         _msgMgr = new MessageManager((app.root as ISystemManager));
         _locDir = new LocationDirector(this);
         _chatDir = new ChatDirector(this, _msgMgr, "general");

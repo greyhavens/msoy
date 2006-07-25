@@ -140,7 +140,6 @@ public class AvatarSprite extends MsoySprite
         _move = new SceneMove(this);
         _move.src = this.loc;
         _move.dest = destLoc;
-        //_move.duration = destLoc.distance(this.loc) * sceneWidth * 6; // TODO
 
         var dx :Number = destLoc.x - loc.x;
         var dy :Number = destLoc.y - loc.y;

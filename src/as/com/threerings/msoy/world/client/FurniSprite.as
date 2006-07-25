@@ -2,8 +2,7 @@ package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
-import flash.net.URLRequest;
-import flash.net.navigateToURL;
+import com.threerings.util.NetUtil;
 
 import com.threerings.msoy.world.data.FurniData;
 
@@ -93,7 +92,7 @@ public class FurniSprite extends MsoySprite
     override protected function mouseClick (event :MouseEvent) :void
     {
         if (_furni.action is String) {
-            navigateToURL(new URLRequest(_furni.action as String), "_self");
+            NetUtil.navigateToURL(_furni.action as String);
         }
     }
 
