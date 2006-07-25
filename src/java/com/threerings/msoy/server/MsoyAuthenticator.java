@@ -13,6 +13,7 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.AuthResponse;
+import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
@@ -101,82 +102,19 @@ public class MsoyAuthenticator extends Authenticator
             throws LogonException, PersistenceException;
     }
 
-    @Override // from Authenticator
-    public void authenticateConnection (final AuthingConnection conn)
+    @Override
+    protected AuthResponseData createResponseData ()
     {
-        // fire up an invoker unit that will load the user object just to
-        // make sure they exist
-        String name = "auth:" + conn.getAuthRequest().getCredentials();
-        MsoyServer.invoker.postUnit(new Invoker.Unit(name) {
-            public boolean invoke () {
-                processAuthentication(conn);
-                return false;
-            }
-        });
+        return new MsoyAuthResponseData();
     }
 
-    /**
-     * Authenticates a web sesssion, verifying the supplied username and
-     * password and creating (or reusing) a record in a session repository that
-     * can be used to authenticate for the duration of that session.
-     *
-     * @param username the account to be authenticated.
-     * @param password the MD5 encrypted password for this account.
-     * @param persist if true the session should persist for some long but not
-     * infinite duration (a month), if false the session should be scheduled to
-     * expire in a day or two (the client will be instructed to expire the
-     * session token when it next terminates).
-     *
-     * @return the session credentials that should be supplied to web-based
-     * service requests for authentication.
-     *
-     * @exception LogonException thrown if the password is incorrect, the user
-     * does not exist or some other problem occurs with logon.
-     */
-    public WebCreds authenticateSession (String username, String password,
-                                         boolean persist)
-        throws LogonException
-    {
-        try {
-            // validate their account credentials; make sure they're not banned
-            Domain domain = getDomain(username);
-            Account account = domain.authenticateAccount(username, password);
-            domain.validateAccount(account);
-
-            // load up their member information to get their member id
-            Member mrec = MsoyServer.memberRepo.loadMember(account.accountName);
-
-            // if this is their first logon, insert a skeleton member record
-            if (mrec == null) {
-                mrec = new Member();
-                mrec.accountName = account.accountName;
-                MsoyServer.memberRepo.insertMember(mrec);
-            }
-
-            // if they made it through that gauntlet, create or update their
-            // session token and let 'em on in
-            WebCreds creds = new WebCreds();
-            creds.memberId = mrec.memberId;
-            creds.token = MsoyServer.memberRepo.startOrJoinSession(
-                mrec.memberId, persist);
-            return creds;
-
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Error authenticating user " +
-                    "[who=" + username + "].", pe);
-            throw new LogonException(MsoyAuthCodes.SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Here we do the actual authentication processing while running
-     * happily on the invoker thread.
-     */
-    protected void processAuthentication (AuthingConnection conn)
+    // from abstract Authenticator
+    protected void processAuthentication (
+            AuthingConnection conn, AuthResponse rsp)
+        throws PersistenceException
     {
         AuthRequest req = conn.getAuthRequest();
-        MsoyAuthResponseData rdata = new MsoyAuthResponseData();
-        AuthResponse rsp = new AuthResponse(rdata);
+        MsoyAuthResponseData rdata = (MsoyAuthResponseData) rsp.getData();
 
         try {
 //             // make sure they've got the correct version
@@ -204,7 +142,11 @@ public class MsoyAuthenticator extends Authenticator
 //             }
 
             // make sure they've sent valid credentials
-            if (!(req.getCredentials() instanceof MsoyCredentials)) {
+            MsoyCredentials creds;
+            try {
+                creds = (MsoyCredentials) req.getCredentials();
+
+            } catch (ClassCastException cce) {
                 log.warning("Invalid creds " + req.getCredentials() + ".");
                 throw new LogonException(MsoyAuthCodes.SERVER_ERROR);
             }
@@ -212,9 +154,6 @@ public class MsoyAuthenticator extends Authenticator
             // TODO: if they provide no client identifier, determine whether
             // one has been assigned to the account in question and provide
             // that to them if so, otherwise assign them a new one
-
-            // check their provided machine identifier
-            MsoyCredentials creds = (MsoyCredentials)req.getCredentials();
 
             // TODO: remove temporary guest-access code
             if (creds.ident == null) {
@@ -313,15 +252,59 @@ public class MsoyAuthenticator extends Authenticator
 
         } catch (LogonException le) {
             rdata.code = le.getMessage();
+        }
+    }
+
+    /**
+     * Authenticates a web sesssion, verifying the supplied username and
+     * password and creating (or reusing) a record in a session repository that
+     * can be used to authenticate for the duration of that session.
+     *
+     * @param username the account to be authenticated.
+     * @param password the MD5 encrypted password for this account.
+     * @param persist if true the session should persist for some long but not
+     * infinite duration (a month), if false the session should be scheduled to
+     * expire in a day or two (the client will be instructed to expire the
+     * session token when it next terminates).
+     *
+     * @return the session credentials that should be supplied to web-based
+     * service requests for authentication.
+     *
+     * @exception LogonException thrown if the password is incorrect, the user
+     * does not exist or some other problem occurs with logon.
+     */
+    public WebCreds authenticateSession (String username, String password,
+                                         boolean persist)
+        throws LogonException
+    {
+        try {
+            // validate their account credentials; make sure they're not banned
+            Domain domain = getDomain(username);
+            Account account = domain.authenticateAccount(username, password);
+            domain.validateAccount(account);
+
+            // load up their member information to get their member id
+            Member mrec = MsoyServer.memberRepo.loadMember(account.accountName);
+
+            // if this is their first logon, insert a skeleton member record
+            if (mrec == null) {
+                mrec = new Member();
+                mrec.accountName = account.accountName;
+                MsoyServer.memberRepo.insertMember(mrec);
+            }
+
+            // if they made it through that gauntlet, create or update their
+            // session token and let 'em on in
+            WebCreds creds = new WebCreds();
+            creds.memberId = mrec.memberId;
+            creds.token = MsoyServer.memberRepo.startOrJoinSession(
+                mrec.memberId, persist);
+            return creds;
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Error authenticating user " +
-                    "[areq=" + req + "].", pe);
-            rdata.code = MsoyAuthCodes.SERVER_ERROR;
-
-        } finally {
-            // let the powers that be know that we're done authenticating
-            connectionWasAuthenticated(conn, rsp);
+                    "[who=" + username + "].", pe);
+            throw new LogonException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
 
