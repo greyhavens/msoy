@@ -10,6 +10,9 @@ ROOT=`cd $ROOT; cd ..; pwd`
 
 java -jar "$ROOT/lib/as-compiler/lib/mxmlc.jar" \
     -locale en_US \
+    -compiler.library-path $ROOT/lib/ \
+                           $ROOT/lib/as-compiler/frameworks/libs \
+                           $ROOT/lib/as-compiler/frameworks/locale/en_US \
     -load-config $ROOT/lib/as-compiler/frameworks/flex-config.xml \
     -link-report /tmp/link-report.txt \
     -resource-bundle-list "/tmp/bundles.list" \
