@@ -1,5 +1,7 @@
 package com.threerings.msoy.chat.client {
 
+import flash.display.DisplayObjectContainer;
+
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 
@@ -35,9 +37,6 @@ public class ChatControl extends HBox
         but.label = ctx.xlate("b.send");
         addChild(but);
 
-        addEventListener(Event.ADDED, wasAdded, false, 0, true);
-        addEventListener(Event.REMOVED, wasRemoved, false, 0, true);
-
         //_txt.addEventListener(FlexEvent.ENTER, sendChat);
         //but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat);
         _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent, false, 0, true);
@@ -45,27 +44,23 @@ public class ChatControl extends HBox
         but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat, false, 0, true);
     }
 
-    /**
-     * Called when this is added to the display hierarchy.
-     */
-    protected function wasAdded (event :Event) :void
+    override public function parentChanged (p :DisplayObjectContainer) :void
     {
-        // set up any already-configured text
-        _txt.text = _curLine;
-        _histIdx = -1;
+        super.parentChanged(p);
 
-        // request focus
-        if (_txt.focusManager != null) {
-            _txt.focusManager.setFocus(_txt);
+        if (p != null) {
+            // set up any already-configured text
+            _txt.text = _curLine;
+            _histIdx = -1;
+
+            // request focus
+            if (_txt.focusManager != null) {
+                _txt.focusManager.setFocus(_txt);
+            }
+
+        } else {
+            _curLine = _txt.text;
         }
-    }
-
-    /**
-     * Called when this is removed to the display hierarchy.
-     */
-    protected function wasRemoved (event :Event) :void
-    {
-        _curLine = _txt.text;
     }
 
     /**

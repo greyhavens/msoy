@@ -1,11 +1,11 @@
 package com.threerings.msoy.client {
 
+import flash.display.DisplayObjectContainer;
+
 import mx.controls.List;
 import mx.controls.listClasses.ListItemRenderer;
 
 import mx.core.ClassFactory;
-
-import mx.events.FlexEvent;
 
 import com.threerings.util.ArrayUtil;
 
@@ -30,9 +30,22 @@ public class FriendsList extends List
         iconFunction = getIconFor;
         labelFunction = getLabelFor;
         //itemRenderer = new ClassFactory(FriendsItemRenderer);
+    }
 
-        addEventListener(FlexEvent.ADD, wasAdded);
-        addEventListener(FlexEvent.REMOVE, wasRemoved);
+    override public function parentChanged (p :DisplayObjectContainer) :void
+    {
+        super.parentChanged(p);
+
+        if (p != null) {
+            _userObj = _ctx.getClientObject();
+            _userObj.addListener(this);
+            updateFriends();
+
+        } else {
+            _userObj.removeListener(this);
+            _userObj = null;
+            dataProvider = null;
+        }
     }
 
     // from interface SetListener
@@ -63,26 +76,6 @@ public class FriendsList extends List
         if (MsoyUserObject.FRIENDS === event.getName()) {
             updateFriends();
         }
-    }
-
-    /**
-     * Listener callback for FlexEvent.ADD.
-     */
-    protected function wasAdded (event :FlexEvent) :void
-    {
-        _userObj = _ctx.getClientObject();
-        _userObj.addListener(this);
-        updateFriends();
-    }
-
-    /**
-     * Listener callback for FlexEvent.REMOVE.
-     */
-    protected function wasRemoved (event :FlexEvent) :void
-    {
-        _userObj.removeListener(this);
-        _userObj = null;
-        dataProvider = null;
     }
 
     /**
