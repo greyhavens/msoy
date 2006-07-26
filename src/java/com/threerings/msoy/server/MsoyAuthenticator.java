@@ -49,6 +49,10 @@ public class MsoyAuthenticator extends Authenticator
     /** Provides authentication information for a particular partner. */
     public static interface Domain
     {
+        /** A string that can be passed to the Domain to bypass password
+         * checking. Pass this actual instance. */
+        public static final String PASSWORD_BYPASS = new String("pwBypass");
+
         /**
          * Initializes this authentication domain and gives it a chance to
          * connect to its underlying authentication data source. If the domain
@@ -145,6 +149,7 @@ public class MsoyAuthenticator extends Authenticator
 
             Member member = null;
             String accountName;
+            String password;
             if (creds.getUsername() == null) {
                 // attempt to load the member by sessionToken
                 if (creds.sessionToken != null) {
@@ -160,10 +165,12 @@ public class MsoyAuthenticator extends Authenticator
 
                 // otherwise, we've loaded by sessionToken
                 accountName = member.accountName;
+                password = Domain.PASSWORD_BYPASS;
 
             } else {
-                member = null;
+                // we're doing standard password login
                 accountName = creds.getUsername().toString();
+                password = creds.getPassword();
             }
 
             // TODO: if they provide no client identifier, determine whether
@@ -212,7 +219,7 @@ public class MsoyAuthenticator extends Authenticator
 
             // load up and authenticate their domain account record
             Account account = domain.authenticateAccount(
-                accountName, creds.getPassword());
+                accountName, password);
 
             // we need to find out if this account has ever logged in so that
             // we can decide how to handle tainted idents; so we load up the
@@ -222,6 +229,11 @@ public class MsoyAuthenticator extends Authenticator
             // the record twice during authentication
             if (member == null) {
                 member = MsoyServer.memberRepo.loadMember(account.accountName);
+                if (member != null) {
+                    rdata.sessionToken =
+                        MsoyServer.memberRepo.startOrJoinSession(
+                            member.memberId, false);
+                }
             }
 
             // check to see whether this account has been banned or if this is

@@ -1,5 +1,7 @@
 package com.threerings.msoy.client {
 
+import flash.display.DisplayObjectContainer;
+
 import flash.events.Event;
 
 import mx.containers.HBox;
@@ -17,16 +19,25 @@ import com.adobe.crypto.MD5;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
+import com.threerings.mx.controls.CommandButton;
 import com.threerings.mx.events.CommandEvent;
+
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.MsoyUserObject;
 
 public class LogonPanel extends HBox
 {
     public function LogonPanel (ctx :MsoyContext)
     {
         _ctx = ctx;
+        _clientObs = new ClientAdapter(
+            recheckGuest, recheckGuest, recheckGuest, recheckGuest,
+            recheckGuest, recheckGuest, recheckGuest);
+
         var label :UITextField = new UITextField();
         label.text = ctx.xlate("l.email");
         addChild(label);
@@ -45,7 +56,11 @@ public class LogonPanel extends HBox
 
         _logonBtn = new Button();
         _logonBtn.label = ctx.xlate("b.logon");
+        _logonBtn.enabled = false;
         addChild(_logonBtn);
+
+        _guestBtn = new CommandButton(MsoyController.LOGON);
+        _guestBtn.label = ctx.xlate("b.logon_guest");
 
         _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);
         _logonBtn.addEventListener(
@@ -53,6 +68,29 @@ public class LogonPanel extends HBox
 
         _email.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
         _password.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
+    }
+
+    override public function parentChanged (p :DisplayObjectContainer) :void
+    {
+        super.parentChanged(p);
+
+        if (p != null) {
+            _ctx.getClient().addClientObserver(_clientObs);
+            recheckGuest(null);
+
+        } else {
+            _ctx.getClient().removeClientObserver(_clientObs);
+        }
+    }
+
+    /**
+     * Called to configure the current user.
+     */
+    public function recheckGuest (event :ClientEvent) :void
+    {
+        // we only get the option here to log in as a guest if
+        // we aren't even logged in
+        _guestBtn.visible = (_ctx.getClientObject() == null);
     }
 
     /**
@@ -101,5 +139,8 @@ public class LogonPanel extends HBox
     protected var _password :TextInput;
 
     protected var _logonBtn :Button;
+    protected var _guestBtn :CommandButton;
+
+    protected var _clientObs :ClientAdapter;
 }
 }

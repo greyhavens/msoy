@@ -3,6 +3,7 @@ package com.threerings.msoy.client {
 import mx.controls.Button;
 
 import com.threerings.util.Controller;
+import com.threerings.util.Name;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
@@ -46,9 +47,11 @@ public class MsoyController extends Controller
         _ctx.getClient().logoff(false);
         _topPanel.callLater(function () :void {
             var client :Client = _ctx.getClient();
-            if (creds != null) {
-                client.setCredentials(creds);
+            if (creds == null) {
+                creds = new MsoyCredentials(null, null);
+                creds.ident = "";
             }
+            client.setCredentials(creds);
             client.logon();
         });
     }
@@ -60,7 +63,10 @@ public class MsoyController extends Controller
         if (!_ctx.getClientObject().isGuest()) {
             var creds :MsoyCredentials =
                 (_ctx.getClient().getCredentials() as MsoyCredentials);
-            Prefs.setUsername(creds.getUsername().toString());
+            var name :Name = creds.getUsername();
+            if (name != null) {
+                Prefs.setUsername(name.toString());
+            }
         }
 
         // TODO

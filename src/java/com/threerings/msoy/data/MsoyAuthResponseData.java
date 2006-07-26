@@ -10,6 +10,9 @@ import com.threerings.presents.net.AuthResponseData;
  */
 public class MsoyAuthResponseData extends AuthResponseData
 {
-    /** A machine identifier to be assigned to this machine. */
+    /** The session token assigned to this user, or null. */
+    public String sessionToken;
+
+    /** A machine identifier to be assigned to this machine, or null. */
     public String ident;
 }

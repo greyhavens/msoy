@@ -13,13 +13,17 @@ import com.threerings.io.ObjectInputStream;
  */
 public class MsoyAuthResponseData extends AuthResponseData
 {
-    /** A machine identifier to be assigned to this machine. */
+    /** The session token assigned to this user, or null. */
+    public var sessionToken :String;
+
+    /** A machine identifier to be assigned to this machine, or null. */
     public var ident :String;
 
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
+        out.writeField(sessionToken);
         out.writeField(ident);
     }
 
@@ -27,6 +31,7 @@ public class MsoyAuthResponseData extends AuthResponseData
     {
         super.readObject(ins);
 
+        sessionToken = (ins.readField(String) as String);
         ident = (ins.readField(String) as String);
     }
 }

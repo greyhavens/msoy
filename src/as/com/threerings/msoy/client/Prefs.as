@@ -28,7 +28,7 @@ public class Prefs
 
     public static function getMachineIdent () :String
     {
-        return (config.getValue(MACHINE_IDENT, null) as String);
+        return (config.getValue(MACHINE_IDENT, "") as String);
     }
 
     public static function setMachineIdent (ident :String) :void

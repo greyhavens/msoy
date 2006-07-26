@@ -83,6 +83,22 @@ public class MsoyClient extends Client
         logon();
     }
 
+    override public function gotBootstrap (
+            data :BootstrapData, omgr :DObjectManager) :void
+    {
+        super.gotBootstrap(data, omgr);
+
+        // save any machineIdent or sessionToken from the server.
+        var rdata :MsoyAuthResponseData =
+            (getAuthResponseData() as MsoyAuthResponseData);
+        if (rdata.ident != null) {
+            Prefs.setMachineIdent(rdata.ident);
+        }
+        if (rdata.sessionToken != null) {
+            Prefs.setSessionToken(rdata.sessionToken);
+        }
+    }
+
     // documetnation inherited
     override public function gotClientObject (clobj :ClientObject) :void
     {
