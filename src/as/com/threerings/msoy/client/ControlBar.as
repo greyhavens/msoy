@@ -56,8 +56,9 @@ public class ControlBar extends Canvas
         }
 
         if (isMember) {
-            // TODO: any fixed graphics should just be compiled in
-            setStyle("backgroundImage", MediaData.BASE_URL + "uibar.png");
+            [Embed(source="../../../../../../rsrc/media/uibar.png")]
+            var cls :Class;
+            setStyle("backgroundImage", cls);
 
             var chatControl :ChatControl = new ChatControl(_ctx);
             chatControl.x = 10;

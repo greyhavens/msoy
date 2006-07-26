@@ -93,6 +93,8 @@ public class MsoySprite extends Box
     public function MsoySprite (desc :MediaData)
     {
         setup(desc);
+        setStyle("backgroundSize", "100%");
+        setStyle("backgroundImage", _loadingImgClass);
     }
 
     protected function setup (desc :MediaData) :void
@@ -136,7 +138,7 @@ public class MsoySprite extends Box
         } else {
             // set up mouse listeners
             if (isInteractive()) {
-                mouseEnabled = true;
+                mouseEnabled = false; //true;
                 mouseChildren = true;
 
                 if (hasAction()) {
@@ -603,6 +605,9 @@ public class MsoySprite extends Box
 
     protected function updateContentDimensions (ww :int, hh :int) :void
     {
+        width = ww;
+        height = hh;
+
         // update our saved size, and possibly notify our container
         if (_w != ww || _h != hh) {
             _w = ww;
@@ -627,6 +632,12 @@ public class MsoySprite extends Box
             soFar :Number, total :Number) :void
     {
         var prog :Number = (total == 0) ? 0 : (soFar / total);
+        setStyle("backgroundImage", (prog < 1) ? _loadingImgClass : null);
+
+        /*
+        ** old style progress updating. We may want to do something like this
+        ** again to show progress
+        **
         graphics.clear();
         if (prog >= 1) {
             if (parent != null) {
@@ -641,6 +652,7 @@ public class MsoySprite extends Box
         graphics.drawCircle(radius, radius, radius);
         graphics.beginFill(0xFFFFFF, .5);
         graphics.drawCircle(radius, radius, radius * prog);
+        */
     }
 
     public function isInteractive () :Boolean
@@ -820,6 +832,9 @@ public class MsoySprite extends Box
 
     /** A single LocalConnection used to communicate with all AVM1 media. */
     protected static var _oldDispatch :LocalConnection;
+
+    [Embed(source="../../../../../../../rsrc/media/indian_h.png")]
+    protected static const _loadingImgClass :Class;
 
 //    protected static var _loadCtx :HashMap = new HashMap();
 }
