@@ -61,6 +61,7 @@ public class LogonPanel extends HBox
 
         _guestBtn = new CommandButton(MsoyController.LOGON);
         _guestBtn.label = ctx.xlate("b.logon_guest");
+        addChild(_guestBtn);
 
         _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);
         _logonBtn.addEventListener(
