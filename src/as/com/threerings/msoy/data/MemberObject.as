@@ -19,7 +19,7 @@ import com.threerings.whirled.spot.data.ClusteredBodyObject;
 /**
  * Represents a connected msoy user.
  */
-public class MsoyUserObject extends BodyObject
+public class MemberObject extends BodyObject
     implements ClusteredBodyObject
 {
     // AUTO-GENERATED: FIELDS START

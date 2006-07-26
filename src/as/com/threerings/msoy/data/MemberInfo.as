@@ -8,7 +8,7 @@ import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-public class MsoyOccupantInfo extends OccupantInfo
+public class MemberInfo extends OccupantInfo
 {
     /** The memberId of this occupant. */
     public var memberId :int;

@@ -38,8 +38,8 @@ import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.MsoyOccupantInfo;
-import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.MemberInfo;
+import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.data.RoomConfig;
 
@@ -108,7 +108,7 @@ public class MsoyClient extends Client
         LoggingTargets.configureLogging(_ctx);
 
         // possibly ensure our local storage capacity
-        var user :MsoyUserObject = (clobj as MsoyUserObject);
+        var user :MemberObject = (clobj as MemberObject);
         if (!user.isGuest()) {
             Prefs.config.ensureCapacity(102400, new ResultAdapter(null,
                 function (cause :Error) :void {
@@ -130,8 +130,8 @@ public class MsoyClient extends Client
         c = SceneMarshaller;
         c = SpotMarshaller;
         c = MsoyBootstrapData;
-        c = MsoyUserObject;
-        c = MsoyOccupantInfo;
+        c = MemberObject;
+        c = MemberInfo;
         c = SpotSceneObject;
         c = MsoyAuthResponseData;
         c = MemberMarshaller;

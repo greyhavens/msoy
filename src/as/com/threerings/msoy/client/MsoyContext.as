@@ -24,7 +24,7 @@ import com.threerings.whirled.spot.client.SpotSceneDirector;
 import com.threerings.whirled.util.WhirledContext;
 
 import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
-import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.MemberObject;
 
 public class MsoyContext
     implements WhirledContext
@@ -73,9 +73,9 @@ public class MsoyContext
     /**
      * Convenience method.
      */
-    public function getClientObject () :MsoyUserObject
+    public function getClientObject () :MemberObject
     {
-        return (_client.getClientObject() as MsoyUserObject);
+        return (_client.getClientObject() as MemberObject);
     }
 
     // documentation inherited from superinterface PresentsContext

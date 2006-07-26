@@ -4,14 +4,14 @@ import flash.external.ExternalInterface;
 
 import mx.logging.Log;
 
-import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.MemberObject;
 
 // TODO: stop listening at the end?
 public class LoggingTargets
 {
     public static function configureLogging (ctx :MsoyContext) :void
     {
-        var userObj :MsoyUserObject = ctx.getClientObject();
+        var userObj :MemberObject = ctx.getClientObject();
 
         // for now, everything logs to the FireBug console
         try {

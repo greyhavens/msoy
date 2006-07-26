@@ -10,7 +10,7 @@ import com.threerings.msoy.world.client.PortalSprite;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyPortal;
 
-import com.threerings.msoy.data.MsoyOccupantInfo;
+import com.threerings.msoy.data.MemberInfo;
 
 public class MediaDirector extends BasicDirector
 {
@@ -23,7 +23,7 @@ public class MediaDirector extends BasicDirector
      * Get an avatar sprite for the specified occupant info,
      * caching as appropriate.
      */
-    public function getAvatar (occInfo :MsoyOccupantInfo) :AvatarSprite
+    public function getAvatar (occInfo :MemberInfo) :AvatarSprite
     {
         var isOurs :Boolean =
             (occInfo.bodyOid == _ctx.getClient().getClientOid());

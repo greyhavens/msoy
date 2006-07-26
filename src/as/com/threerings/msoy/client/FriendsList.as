@@ -16,7 +16,7 @@ import com.threerings.presents.dobj.NamedEvent;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.data.FriendEntry;
-import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.MemberObject;
 
 public class FriendsList extends List
     implements SetListener
@@ -73,7 +73,7 @@ public class FriendsList extends List
     {
         // TODO: we'll want to update only the items that have changed
         // in the standard data
-        if (MsoyUserObject.FRIENDS === event.getName()) {
+        if (MemberObject.FRIENDS === event.getName()) {
             updateFriends();
         }
     }
@@ -117,7 +117,7 @@ public class FriendsList extends List
     protected var _ctx :MsoyContext;
 
     /** Our own user object. */
-    protected var _userObj :MsoyUserObject;
+    protected var _userObj :MemberObject;
 }
 }
 

@@ -8,9 +8,9 @@ import com.samskivert.util.RandomUtil;
 import com.threerings.crowd.data.OccupantInfo;
 
 /**
- * Extends basic OccupantInfo with information specific to msoy.
+ * Extends basic OccupantInfo with member-specific information.
  */
-public class MsoyOccupantInfo extends OccupantInfo
+public class MemberInfo extends OccupantInfo
 {
     /** The memberId of this occupant, or 0 if they're not a member. */
     public int memberId;
@@ -25,11 +25,11 @@ public class MsoyOccupantInfo extends OccupantInfo
     public short chatPopStyle;
 
     /** Suitable for unserialization. */
-    public MsoyOccupantInfo ()
+    public MemberInfo ()
     {
     }
 
-    public MsoyOccupantInfo (MsoyUserObject user)
+    public MemberInfo (MemberObject user)
     {
         super(user);
 

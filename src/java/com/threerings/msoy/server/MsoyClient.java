@@ -21,7 +21,7 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.data.MsoyBootstrapData;
-import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.MemberObject;
 
 /**
  * Represents an attached Msoy client on the server-side.
@@ -80,7 +80,7 @@ public class MsoyClient extends WhirledClient
     @Override
     public void clientResolved (Name username, ClientObject clobj)
     {
-        _clobj = (MsoyUserObject) clobj;
+        _clobj = (MemberObject) clobj;
 
         super.clientResolved(username, clobj);
 
@@ -121,5 +121,5 @@ public class MsoyClient extends WhirledClient
     // END: Temp
 
     /** A casted reference to the userobject. */
-    protected MsoyUserObject _clobj;
+    protected MemberObject _clobj;
 }

@@ -27,7 +27,7 @@ import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.MemberObject;
 
 public class LogonPanel extends HBox
 {

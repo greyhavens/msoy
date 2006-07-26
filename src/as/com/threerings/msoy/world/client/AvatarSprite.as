@@ -18,12 +18,12 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.data.ChatMessage;
 
 import com.threerings.msoy.data.MediaData;
-import com.threerings.msoy.data.MsoyOccupantInfo;
+import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 public class AvatarSprite extends MsoySprite
 {
-    public function AvatarSprite (occInfo :MsoyOccupantInfo)
+    public function AvatarSprite (occInfo :MemberInfo)
     {
         super(occInfo.media);
 
@@ -57,7 +57,7 @@ public class AvatarSprite extends MsoySprite
     /**
      * Update the occupant info.
      */
-    public function setOccupantInfo (occInfo :MsoyOccupantInfo) :void
+    public function setOccupantInfo (occInfo :MemberInfo) :void
     {
         _occInfo = occInfo;
 
@@ -72,7 +72,7 @@ public class AvatarSprite extends MsoySprite
     /**
      * Get the occupant info for this avatar.
      */
-    public function getOccupantInfo () :MsoyOccupantInfo
+    public function getOccupantInfo () :MemberInfo
     {
         return _occInfo;
     }
@@ -225,7 +225,7 @@ public class AvatarSprite extends MsoySprite
         _label.x = 0;
     }
 
-    protected var _occInfo :MsoyOccupantInfo;
+    protected var _occInfo :MemberInfo;
 
     protected var _move :SceneMove;
 

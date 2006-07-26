@@ -9,7 +9,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
@@ -24,7 +24,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Override
     public Class<? extends ClientObject> getClientObjectClass ()
     {
-        return MsoyUserObject.class;
+        return MemberObject.class;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         super.resolveClientData(clobj);
 
-        MsoyUserObject userObj = (MsoyUserObject) clobj;
+        MemberObject userObj = (MemberObject) clobj;
         if (userObj.isGuest()) {
             resolveGuest(userObj);
 
@@ -45,7 +45,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     /**
      * Resolve a msoy member. This is called on the invoker thread.
      */
-    protected void resolveMember (MsoyUserObject userObj)
+    protected void resolveMember (MemberObject userObj)
         throws Exception
     {
         // TODO
@@ -67,7 +67,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     /**
      * Resolve a lowly guest. This is called on the invoker thread.
      */
-    protected void resolveGuest (MsoyUserObject userObj)
+    protected void resolveGuest (MemberObject userObj)
         throws Exception
     {
         userObj.setTokens(new MsoyTokenRing());

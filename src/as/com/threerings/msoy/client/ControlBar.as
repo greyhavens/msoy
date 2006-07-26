@@ -13,7 +13,7 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.msoy.chat.client.ChatControl;
 
 import com.threerings.msoy.data.MediaData;
-import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.MemberObject;
 
 /**
  * The control bar: the main menu and global UI element across all scenes.
@@ -44,7 +44,7 @@ public class ControlBar extends Canvas
      */
     protected function checkControls () :void
     {
-        var user :MsoyUserObject = _ctx.getClientObject();
+        var user :MemberObject = _ctx.getClientObject();
         var isMember :Boolean = (user != null) && !user.isGuest();
         if (numChildren > 0 && (isMember == _isMember)) {
             return;

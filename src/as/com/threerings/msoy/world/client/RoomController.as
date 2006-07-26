@@ -26,8 +26,8 @@ import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MsoyOccupantInfo;
-import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.MemberInfo;
+import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -142,8 +142,8 @@ public class RoomController extends SceneController
      */
     public function handleAvatarClicked (avatar :AvatarSprite) :void
     {
-        var occInfo :MsoyOccupantInfo = avatar.getOccupantInfo();
-        var us :MsoyUserObject = _mctx.getClientObject();
+        var occInfo :MemberInfo = avatar.getOccupantInfo();
+        var us :MemberObject = _mctx.getClientObject();
         var menuItems :Array;
         if (occInfo.bodyOid == us.getOid()) {
             // create a menu for clicking on ourselves
@@ -309,19 +309,19 @@ public class RoomController extends SceneController
             var frob :String = null;
             switch (event.keyCode) {
             case Keyboard.F1:
-                frob = MsoyUserObject.AVATAR;
+                frob = MemberObject.AVATAR;
                 break;
 
             case Keyboard.F2:
-                frob = MsoyUserObject.CHAT_STYLE;
+                frob = MemberObject.CHAT_STYLE;
                 break;
 
             case Keyboard.F3:
-                frob = MsoyUserObject.CHAT_POP_STYLE;
+                frob = MemberObject.CHAT_POP_STYLE;
                 break;
 
             case Keyboard.F4:
-                frob = MsoyUserObject.AVATAR + "r";
+                frob = MemberObject.AVATAR + "r";
                 break;
             }
 

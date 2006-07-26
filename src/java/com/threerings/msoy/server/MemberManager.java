@@ -16,7 +16,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.FriendEntry;
-import com.threerings.msoy.data.MsoyUserObject;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 /**
@@ -43,7 +43,7 @@ public class MemberManager
             final InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        final MsoyUserObject user = (MsoyUserObject) caller;
+        final MemberObject user = (MemberObject) caller;
 
         MsoyServer.invoker.postUnit(new Invoker.Unit("alterFriend") {
             public boolean invoke ()
