@@ -10,7 +10,7 @@ ROOT=`cd $ROOT; cd ..; pwd`
 
 java -jar "$ROOT/lib/as-compiler/lib/mxmlc.jar" \
     -locale en_US \
-    -compiler.optimize \
+    -compiler.debug \
     -compiler.library-path $ROOT/lib/ \
                            $ROOT/lib/as-compiler/frameworks/libs \
                            $ROOT/lib/as-compiler/frameworks/locale/en_US \
@@ -19,6 +19,7 @@ java -jar "$ROOT/lib/as-compiler/lib/mxmlc.jar" \
     -resource-bundle-list "/tmp/bundles.list" \
     -compiler.warn-class-is-sealed=true \
     -compiler.warn-constructor-returns-value=true \
+    -compiler.verbose-stacktraces=true \
     -compiler.fonts.local-fonts-snapshot=$ROOT/lib/as-compiler/frameworks/localFonts.ser \
     -compiler.source-path="$ROOT/projects/narya/src/as/" \
     -compiler.source-path="$ROOT/projects/vilya/src/as/" \
