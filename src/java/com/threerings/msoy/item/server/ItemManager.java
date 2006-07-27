@@ -9,12 +9,16 @@ import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.RepositoryListenerUnit;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.LRUHashMap;
+import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.item.data.Item;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.util.ItemEnum;
+import com.threerings.msoy.server.MsoyServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -57,6 +61,32 @@ public class ItemManager
                         "[class=" + repclass + "].", e);
             }
         }
+    }
+
+    /**
+     * Inserts the supplied item into the system. The item should be fully
+     * configured, and an item id will be assigned during the insertion
+     * process. Success or failure will be communicated to the supplied result
+     * listener.
+     */
+    public <T extends Item> void insertItem (
+        final T item, ResultListener<T> rlist)
+    {
+        // locate the appropriate repository
+        @SuppressWarnings("unchecked") final ItemRepository<T> repo =
+            (ItemRepository<T>)_repos.get(item.getType());
+        if (repo == null) {
+            String errmsg = "Unknown item type '" + item.getType() + "'.";
+            rlist.requestFailed(new Exception(errmsg));
+        }
+
+        // and insert the item; notifying the listener on success or failure
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<T>(rlist) {
+            public T invokePersistResult () throws PersistenceException {
+                repo.insertItem(item);
+                return item;
+            }
+        });
     }
 
     /** Maps string identifier to repository for all digital item types. */
