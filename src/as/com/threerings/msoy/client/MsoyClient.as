@@ -52,7 +52,7 @@ public class MsoyClient extends Client
         var creds :MsoyCredentials = new MsoyCredentials(null, null);
         creds.sessionToken = Prefs.getSessionToken();
         creds.ident = Prefs.getMachineIdent();
-        super(creds, app.stage);
+        super(creds, app);
 
         // set up a context menu that blocks funnybiz on the stage
         var menu :ContextMenu = new ContextMenu();
