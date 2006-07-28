@@ -52,10 +52,10 @@ public class ItemManager
 
             // create and initialize this repository
             try {
-                ItemRepository irepo = (ItemRepository)
-                    Class.forName(repclass).newInstance();
+                @SuppressWarnings("unchecked") ItemRepository<Item> irepo =
+                    (ItemRepository<Item>)Class.forName(repclass).newInstance();
                 irepo.init(conProv);
-                _repos.put(itype.toString(), irepo);
+                _repos.put(itype, irepo);
             } catch (Exception e) {
                 log.log(Level.WARNING, "Failed to prepare item repository " +
                         "[class=" + repclass + "].", e);
@@ -69,32 +69,78 @@ public class ItemManager
      * process. Success or failure will be communicated to the supplied result
      * listener.
      */
-    public <T extends Item> void insertItem (
-        final T item, ResultListener<T> rlist)
+    public void insertItem (final Item item, ResultListener<Item> rlist)
     {
+        // map this items type back to an enum
+        ItemEnum type = ItemEnum.valueOf(item.getType());
+        if (type == null) {
+            rlist.requestFailed(
+                new Exception("Unknown item type '" + item.getType() + "'."));
+            return;
+        }
+
         // locate the appropriate repository
-        @SuppressWarnings("unchecked") final ItemRepository<T> repo =
-            (ItemRepository<T>)_repos.get(item.getType());
+        final ItemRepository<Item> repo = _repos.get(type);
         if (repo == null) {
-            String errmsg = "Unknown item type '" + item.getType() + "'.";
-            rlist.requestFailed(new Exception(errmsg));
+            rlist.requestFailed(
+                new Exception("No repository registered for " + type + "."));
+            return;
         }
 
         // and insert the item; notifying the listener on success or failure
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<T>(rlist) {
-            public T invokePersistResult () throws PersistenceException {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(rlist) {
+            public Item invokePersistResult () throws PersistenceException {
                 repo.insertItem(item);
                 return item;
             }
         });
     }
 
+    /**
+     * Loads up the inventory of items of the specified type for the specified
+     * member. The results may come from the cache and will be cached after
+     * being loaded from the database.
+     */
+    public void loadInventory (final int memberId, ItemEnum type,
+                               ResultListener<ArrayList<Item>> rlist)
+    {
+        // first check the cache
+        final Tuple<Integer,ItemEnum> key =
+            new Tuple<Integer,ItemEnum>(memberId, type);
+        ArrayList<Item> items = _itemCache.get(key);
+        if (items != null) {
+            rlist.requestCompleted(items);
+            return;
+        }
+
+        // locate the appropriate repository
+        final ItemRepository<Item> repo = _repos.get(type);
+        if (repo == null) {
+            rlist.requestFailed(
+                new Exception("No repository registered for " + type + "."));
+            return;
+        }
+
+        // and insert the item; notifying the listener on success or failure
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ArrayList<Item>>(rlist) {
+            public ArrayList<Item> invokePersistResult ()
+                throws PersistenceException {
+                return repo.loadItems(memberId);
+            }
+            public void handleSuccess () {
+                _itemCache.put(key, _result);
+                super.handleSuccess();
+            }
+        });
+    }
+
     /** Maps string identifier to repository for all digital item types. */
-    protected HashMap<String,ItemRepository> _repos = new
-        HashMap<String,ItemRepository>();
+    protected HashMap<ItemEnum,ItemRepository<Item>> _repos = new
+        HashMap<ItemEnum,ItemRepository<Item>>();
 
     /** TEMP: a cache of item list indexed on (user,type). This will soon be
      * replaced with our fancy cache. */
-    protected LRUHashMap<Tuple<Integer,String>,ArrayList<Item>> _itemCache =
-        new LRUHashMap<Tuple<Integer,String>,ArrayList<Item>>(100);
+    protected LRUHashMap<Tuple<Integer,ItemEnum>,ArrayList<Item>> _itemCache =
+        new LRUHashMap<Tuple<Integer,ItemEnum>,ArrayList<Item>>(100);
 }

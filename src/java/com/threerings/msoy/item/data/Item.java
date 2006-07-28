@@ -7,8 +7,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.item.util.ItemEnum;
-
 /**
  * The base class for all digital items in the MSOY system.
  *
@@ -32,11 +30,10 @@ public abstract class Item implements Streamable, IsSerializable
     public int ownerId;
 
     /**
-     * This is used to map {@link Item} concrete classes to {@link ItemEnum}
-     * values. We cannot simply reference the {@link ItemEnum} itself because
-     * item classes must be translatable to JavaScript which doesn't support
-     * enums. So be sure to properly wire things up when creating a new
-     * concrete item class.
+     * This is used to map {@link Item} concrete classes to ItemEnum values. We
+     * cannot simply reference the ItemEnum itself because item classes must be
+     * translatable to JavaScript which doesn't support enums. So be sure to
+     * properly wire things up when creating a new concrete item class.
      */
     public abstract String getType ();
 }

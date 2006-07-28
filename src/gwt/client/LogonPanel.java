@@ -26,9 +26,9 @@ import client.util.CookieUtil;
 public class LogonPanel extends HorizontalPanel
     implements KeyboardListener, AsyncCallback
 {
-    public LogonPanel (WebUserServiceAsync usersvc)
+    public LogonPanel (MsoyEntryPoint app, WebUserServiceAsync usersvc)
     {
-        _usersvc = usersvc;
+        setSpacing(5);
 
         // create our interface elements
         _status = new HTML("");
@@ -37,12 +37,15 @@ public class LogonPanel extends HorizontalPanel
         _password = new PasswordTextBox();
         _password.addKeyboardListener(this);
 
+        _app = app;
+        _usersvc = usersvc;
         _who = CookieUtil.get("who");
         _creds = WebCreds.fromCookie(CookieUtil.get("creds"));
         if (_creds == null) {
             displayChoice();
         } else {
             displayLoggedOn();
+            _app.didLogon(_creds);
         }
     }
 
@@ -61,6 +64,7 @@ public class LogonPanel extends HorizontalPanel
     {
         _creds = null;
         CookieUtil.set("creds", "");
+        _app.didLogoff();
         displayChoice();
     }
 
@@ -96,6 +100,7 @@ public class LogonPanel extends HorizontalPanel
         CookieUtil.set("creds", _creds.toCookie());
         CookieUtil.set("who", _who);
         displayLoggedOn();
+        _app.didLogon(_creds);
     }
 
     // from interface AsyncCallback
@@ -153,6 +158,7 @@ public class LogonPanel extends HorizontalPanel
        return $wnd.hex_md5(text);
     }-*/;
 
+    protected MsoyEntryPoint _app;
     protected WebUserServiceAsync _usersvc;
     protected String _who;
     protected WebCreds _creds;

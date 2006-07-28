@@ -12,15 +12,15 @@ import com.threerings.msoy.item.data.Photo;
  */
 public enum ItemEnum
 {
-    // NOTE WELL: These enumerations never change order nor be removed; all new
-    // item mappings *MUST* go at the end of this list (before UNUSED). Don't
-    // fuck up!
+    // NOTE WELL: These enumerations must never change order nor be removed;
+    // all new item mappings *MUST* go at the end of this list (before UNUSED).
+    // Don't fuck up!
     PHOTO(Photo.class),
     DOCUMENT(Document.class),
 
-    // NOTE ALSO: if you add an item to this list, you need to make sure that
+    // NOTE ALSO: If you add an item to this list, you need to make sure that
     // Item.getType() returns the string value of the enumeration that is added
-    // to correspond to the new item
+    // to correspond to the new item.
     UNUSED(null);
 
     /**

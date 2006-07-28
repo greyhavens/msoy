@@ -1,0 +1,11 @@
+.item_editor_title {
+   font-weight: bold;
+}
+
+.item_editor_submit {
+   font-weight: bold;
+}
+
+.inventory_item { 
+   border: 1px solid;
+}

@@ -12,7 +12,7 @@ public class Photo extends MediaItem
     /** A caption for this photo (max length 255 characters). */
     public String caption;
 
-    @Override // from Item
+    // @Override from Item
     public String getType ()
     {
         return "PHOTO";

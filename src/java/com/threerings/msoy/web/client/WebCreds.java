@@ -18,14 +18,6 @@ public class WebCreds implements IsSerializable
     public String token;
 
     /**
-     * Converts these credentials to a string that can be stored in a cookie.
-     */
-    public String toCookie ()
-    {
-        return memberId + ";" + token;
-    }
-
-    /**
      * Extracts our credential from a cookie string.
      *
      * @return null if the cookie was null or unparseable, a set of credentials
@@ -45,5 +37,21 @@ public class WebCreds implements IsSerializable
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * Converts these credentials to a string that can be stored in a cookie.
+     */
+    public String toCookie ()
+    {
+        return memberId + ";" + token;
+    }
+
+    /**
+     * Generates a string representaton of this instance.
+     */
+    public String toString ()
+    {
+        return "[id=" + memberId + ", token=" + token + "]";
     }
 }
