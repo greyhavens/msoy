@@ -19,6 +19,9 @@ import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
+import com.threerings.parlor.client.ParlorDirector;
+import com.threerings.parlor.util.ParlorContext;
+
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.spot.client.SpotSceneDirector;
 import com.threerings.whirled.util.WhirledContext;
@@ -27,7 +30,7 @@ import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
 import com.threerings.msoy.data.MemberObject;
 
 public class MsoyContext
-    implements WhirledContext
+    implements WhirledContext, ParlorContext
 {
     public function MsoyContext (client :Client, app :Application)
     {
@@ -42,6 +45,7 @@ public class MsoyContext
             new MsoySceneFactory());
         _spotDir = new SpotSceneDirector(this, _locDir, _sceneDir);
         _mediaDir = new MediaDirector(this);
+        _parlorDir = new ParlorDirector(this);
 
         // set up the top panel
         _topPanel = new TopPanel(this, _app);
@@ -64,7 +68,7 @@ public class MsoyContext
         _chatDir.displayInfo(bundle, message);
     }
 
-    // documentation inherited from superinterface PresentsContext
+    // from PresentsContext
     public function getClient () :Client
     {
         return _client;
@@ -78,34 +82,40 @@ public class MsoyContext
         return (_client.getClientObject() as MemberObject);
     }
 
-    // documentation inherited from superinterface PresentsContext
+    // from PresentsContext
     public function getDObjectManager () :DObjectManager
     {
         return _client.getDObjectManager();
     }
 
-    // documentation inherited from superinterface CrowdContext
+    // from CrowdContext
     public function getLocationDirector () :LocationDirector
     {
         return _locDir;
     }
 
-    // documentation inherited from superinterface CrowdContext
+    // from CrowdContext
     public function getOccupantDirector () :OccupantDirector
     {
         return null; // TODO
     }
 
-    // documentation inherited from superinterface CrowdContext
+    // from CrowdContext
     public function getChatDirector () :ChatDirector
     {
         return _chatDir;
     }
 
-    // documentation inherited from superinterface WhirledContext
+    // from WhirledContext
     public function getSceneDirector () :SceneDirector
     {
         return _sceneDir;
+    }
+
+    // from ParlorContext
+    public function getParlorDirector () :ParlorDirector
+    {
+        return _parlorDir;
     }
 
     /**
@@ -170,6 +180,8 @@ public class MsoyContext
     protected var _spotDir :SpotSceneDirector;
 
     protected var _mediaDir :MediaDirector;
+
+    protected var _parlorDir :ParlorDirector;
 
     protected var _sceneRepo :SharedObjectSceneRepository;
 }
