@@ -25,32 +25,39 @@ import client.MsoyEntryPoint;
 public class index extends MsoyEntryPoint
     implements HistoryListener
 {
-    // @Override
-    public void onModuleLoad ()
+    /** Required to map this entry point to a page. */
+    public static Creator getCreator ()
     {
-        super.onModuleLoad();
+        return new Creator() {
+            public MsoyEntryPoint createEntryPoint () {
+                return new index();
+            }
+        };
+    }
 
+    // @Override from MsoyEntryPoint
+    public void onPageLoad ()
+    {
         // get access to our service
         _itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
         ServiceDefTarget target = (ServiceDefTarget)_itemsvc;
         target.setServiceEntryPoint("/item");
 
-        History.addHistoryListener(this);
-        String initToken = History.getToken();
-        if (initToken.length() > 0) {
-            onHistoryChanged(initToken);
-        } else {
-            // displaySummary();
-        }
-
+        // set up our navigation
         HorizontalPanel navi = new HorizontalPanel();
         navi.setSpacing(5);
         navi.add(new Hyperlink("Inventory", "inventory"));
         navi.add(new Hyperlink("Upload", "upload"));
         RootPanel.get("navi").add(navi);
 
-        // start with the user's inventory
-        onHistoryChanged("inventory");
+        History.addHistoryListener(this);
+        String initToken = History.getToken();
+        if (initToken.length() > 0) {
+            onHistoryChanged(initToken);
+        } else {
+            // default to the user's inventory
+            onHistoryChanged("inventory");
+        }
     }
 
     // from interface HistoryListener

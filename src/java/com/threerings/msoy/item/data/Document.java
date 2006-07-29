@@ -16,4 +16,10 @@ public class Document extends MediaItem
     {
         return "DOCUMENT";
     }
+
+    // @Override from Item
+    public String getInventoryDescrip ()
+    {
+        return toInventoryDescrip(title);
+    }
 }

@@ -9,6 +9,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
+import com.threerings.msoy.item.data.Item;
+
 import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.WebCreds;
 
@@ -36,7 +38,7 @@ public class ItemPanel extends FlowPanel
                         add(new Label("You have no " + _type + " items."));
                     } else {
                         for (int ii = 0; ii < _items.size(); ii++) {
-                            add(new Label(_items.get(ii).toString()));
+                            add(new ItemThumbnail((Item)_items.get(ii)));
                         }
                     }
                 }

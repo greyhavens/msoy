@@ -15,10 +15,20 @@ import client.MsoyEntryPoint;
 public class index extends MsoyEntryPoint
     implements HistoryListener
 {
-    // @Override
-    public void onModuleLoad ()
+    /** Required to map this entry point to a page. */
+    public static Creator getCreator ()
     {
-        super.onModuleLoad();
+        return new Creator() {
+            public MsoyEntryPoint createEntryPoint () {
+                return new index();
+            }
+        };
+    }
+
+    // @Override from MsoyEntryPoint
+    public void onPageLoad ()
+    {
+        RootPanel.get("content").add(new HeaderPanel());
 
         History.addHistoryListener(this);
         String initToken = History.getToken();
@@ -27,8 +37,6 @@ public class index extends MsoyEntryPoint
         } else {
             // displaySummary();
         }
-
-        RootPanel.get("content").add(new HeaderPanel());
     }
 
     // from interface HistoryListener

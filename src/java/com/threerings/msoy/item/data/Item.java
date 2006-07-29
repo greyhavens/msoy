@@ -36,4 +36,19 @@ public abstract class Item implements Streamable, IsSerializable
      * properly wire things up when creating a new concrete item class.
      */
     public abstract String getType ();
+
+    /**
+     * Returns the text that should be displayed under the thumbnail image
+     * shown in a player's inventory.
+     */
+    public abstract String getInventoryDescrip ();
+
+    /**
+     * A handy method for truncating some potentially long bit of text for use
+     * in {@link #getInventoryDescrip}.
+     */
+    protected String toInventoryDescrip (String text)
+    {
+        return (text.length() > 32) ? (text.substring(0, 30) + "...") : text;
+    }
 }

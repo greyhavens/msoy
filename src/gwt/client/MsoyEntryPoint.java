@@ -20,6 +20,12 @@ import com.threerings.msoy.web.client.WebUserServiceAsync;
 public abstract class MsoyEntryPoint
     implements EntryPoint
 {
+    /** Used to dynamically create the appropriate entry point depending on
+     * which page via which our module was loaded. */
+    public static interface Creator {
+        public MsoyEntryPoint createEntryPoint ();
+    }
+
     // from interface EntryPoint
     public void onModuleLoad ()
     {
@@ -28,10 +34,24 @@ public abstract class MsoyEntryPoint
         ServiceDefTarget target = (ServiceDefTarget)_usersvc;
         target.setServiceEntryPoint("/user");
 
-        // create our standard logon panel which will provide access to our
-        // credentials (TODO: have entry point manage creds?)
+        // create our standard logon panel
         RootPanel.get("logon").add(_logon = new LogonPanel(this, _usersvc));
+
+        // initialize the rest of the application
+        onPageLoad();
+
+        // and now potentially trigger a call to didLogon()
+        _logon.init();
     }
+
+    /**
+     * Called during {@link #onModuleLoad} to initialize the application. Entry
+     * points should override this method rather than onModuleLoad to set
+     * themselves up. When this call returns, a call may immediately follow to
+     * {@link #didLogon} if the user is already logged in, but the derived
+     * class's onModuleLoad will <em>not</em> have been called yet.
+     */
+    protected abstract void onPageLoad ();
 
     /**
      * Called by our logon panel when the player logs on (or if we show up on

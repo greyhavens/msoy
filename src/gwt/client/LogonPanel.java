@@ -39,6 +39,14 @@ public class LogonPanel extends HorizontalPanel
 
         _app = app;
         _usersvc = usersvc;
+    }
+
+    /**
+     * Called once the rest of our application is set up. Checks to see if
+     * we're already logged on, in which case it triggers a call to didLogon().
+     */
+    public void init ()
+    {
         _who = CookieUtil.get("who");
         _creds = WebCreds.fromCookie(CookieUtil.get("creds"));
         if (_creds == null) {

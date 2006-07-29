@@ -17,4 +17,10 @@ public class Photo extends MediaItem
     {
         return "PHOTO";
     }
+
+    // @Override from Item
+    public String getInventoryDescrip ()
+    {
+        return toInventoryDescrip(caption);
+    }
 }

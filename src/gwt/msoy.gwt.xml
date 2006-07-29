@@ -1,8 +1,11 @@
 <module>
   <inherits name='com.google.gwt.user.User'/>
-  <entry-point class='client.index'/>
+  <entry-point class='client.EntryPointDispatcher'/>
   <source path="client"/>
+  <source path="com/threerings/io"/>
   <source path="com/threerings/msoy/web/client"/>
   <source path="com/threerings/msoy/web/data"/>
+  <source path="com/threerings/msoy/item/data"/>
   <servlet path="/user" class="com.threerings.msoy.web.server.RedirectServlet"/>
+  <servlet path="/item" class="com.threerings.msoy.web.server.RedirectServlet"/>
 </module>
