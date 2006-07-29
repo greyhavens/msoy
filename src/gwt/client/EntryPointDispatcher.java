@@ -7,6 +7,8 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -43,8 +45,14 @@ public class EntryPointDispatcher
             return;
         }
 
+        // work around a bug in the current version of GWT
         if (RootPanel.get("logon") == null) {
-            GWT.log("No go. Try again!", null);
+            GWT.log("Zoiks, trying again!", null);
+            DeferredCommand.add(new Command() {
+                public void execute () {
+                    onModuleLoad();
+                }
+            });
             return;
         }
 
