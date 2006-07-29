@@ -1,5 +1,7 @@
 package com.threerings.msoy.world.data {
 
+import com.threerings.util.ArrayUtil;
+
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.TypedArray;
@@ -38,12 +40,7 @@ public class MsoySceneModel extends SceneModel
      */
     public function removeFurni (furni :FurniData) :void
     {
-        for (var ii :int = 0; ii < furnis.length; ii++) {
-            if (furni.equals(furnis[ii])) {
-                furnis.splice(ii, 1);
-                return;
-            }
-        }
+        ArrayUtil.removeFirst(furnis, furni);
     }
 
     // documentation inherited
