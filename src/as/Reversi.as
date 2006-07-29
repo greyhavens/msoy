@@ -1,0 +1,65 @@
+package {
+
+import com.threerings.util.HashMap;
+
+import flash.display.Sprite;
+import flash.display.MovieClip;
+
+import flash.geom.Point;
+
+[SWF(width="400", height="400")]
+public class Reversi extends MovieClip
+{
+    public function Reversi ()
+    {
+        _board = new Board(BOARD_SIZE);
+        for (var xx :int = 0; xx < BOARD_SIZE; xx++) {
+            for (var yy :int = 0; yy < BOARD_SIZE; yy++) {
+                var p :Point = new Point(xx, yy);
+                var piece :Piece = new Piece(this, p);
+                _pieces.put(p, piece);
+                addChild(piece);
+            }
+        }
+        readBoard();
+        showMoves();
+
+        width = BOARD_SIZE * Piece.SIZE;
+        height = BOARD_SIZE * Piece.SIZE;
+    }
+
+    public function pieceClicked (p :Point) :void
+    {
+        _board.playPiece(p.x, p.y, _turn);
+        readBoard();
+        _turn = (1 - _turn);
+        showMoves();
+    }
+
+    protected function readBoard () :void
+    {
+        for (var xx :int = 0; xx < BOARD_SIZE; xx++) {
+            for (var yy :int = 0; yy < BOARD_SIZE; yy++) {
+                (_pieces.get(new Point(xx, yy)) as Piece).setDisplay(
+                    _board.getPiece(xx, yy));
+            }
+        }
+    }
+
+    protected function showMoves () :void
+    {
+        var moves :Array = _board.getMoves(_turn);
+        for each (var p :Point in moves) {
+            (_pieces.get(p) as Piece).setDisplay(_turn, true);
+        }
+    }
+
+    protected var _pieces :HashMap = new HashMap();
+
+    protected var _turn :int = Board.BLACK_IDX;
+
+    protected static const BOARD_SIZE :int = 8;
+
+    protected var _board :Board;
+}
+}
