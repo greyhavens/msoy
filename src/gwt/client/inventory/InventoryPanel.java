@@ -5,21 +5,20 @@ package client.inventory;
 
 import com.google.gwt.user.client.ui.TabPanel;
 
-import com.threerings.msoy.web.client.ItemServiceAsync;
-import com.threerings.msoy.web.client.WebCreds;
+import com.threerings.msoy.web.client.WebContext;
 
 /**
  * Displays a tabbed panel containing a player's inventory.
  */
 public class InventoryPanel extends TabPanel
 {
-    public InventoryPanel (WebCreds creds, ItemServiceAsync itemsvc)
+    public InventoryPanel (WebContext ctx)
     {
         setStyleName("inventory");
         // create item panels for our known item types (alas we can't use
         // ItemEnum here)
-        add(new ItemPanel(creds, itemsvc, "PHOTO"), "Photos");
-        add(new ItemPanel(creds, itemsvc, "DOCUMENT"), "Documents");
+        add(new ItemPanel(ctx, "PHOTO"), "Photos");
+        add(new ItemPanel(ctx, "DOCUMENT"), "Documents");
         selectTab(0);
     }
 }

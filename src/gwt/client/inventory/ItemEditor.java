@@ -3,11 +3,16 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.web.client.WebContext;
 
 /**
  * The base class for an interface for creating and editing digital items.
@@ -27,10 +32,38 @@ public abstract class ItemEditor extends DockPanel
         setSpacing(5);
         add(_etitle = new Label("title"), NORTH);
         _etitle.setStyleName("item_editor_title");
-        add(_esubmit = new Button("submit"), SOUTH);
-        setCellHorizontalAlignment(_esubmit, ALIGN_RIGHT);
-        _esubmit.setStyleName("item_editor_submit");
+
+        HorizontalPanel bpanel = new HorizontalPanel();
+        add(bpanel, SOUTH);
+        setCellHorizontalAlignment(bpanel, ALIGN_RIGHT);
+
+        bpanel.add(_esubmit = new Button("submit"));
+        _esubmit.setStyleName("item_editor_button");
         _esubmit.setEnabled(false);
+        _esubmit.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                commitEdit();
+            }
+        });
+
+        Button ecancel;
+        bpanel.add(ecancel = new Button("Cancel"));
+        ecancel.setStyleName("item_editor_button");
+        ecancel.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                _parent.editComplete(ItemEditor.this, null);
+            }
+        });
+    }
+
+    /**
+     * Configures this editor with a reference to the item service and its item
+     * panel parent.
+     */
+    public void init (WebContext ctx, ItemPanel parent)
+    {
+        _ctx = ctx;
+        _parent = parent;
     }
 
     /**
@@ -72,12 +105,34 @@ public abstract class ItemEditor extends DockPanel
         _esubmit.setEnabled(itemConsistent());
     }
 
-    /** Displays the title of this editor. */
-    protected Label _etitle;
+    /**
+     * Called when the user has clicked the "update" or "create" button to
+     * commit their edits or create a new item, respectively.
+     */
+    protected void commitEdit ()
+    {
+        _ctx.itemsvc.createItem(_ctx.creds, _item, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _parent.setStatus("Item created.");
+                _parent.editComplete(ItemEditor.this, _item);
+            }
+            public void onFailure (Throwable caught) {
+                String reason = caught.getMessage();
+                _parent.setStatus("Item creation failed: " + reason);
+            }
+        });
+    }
 
-    /** The button that submits the item for upload. */
-    protected Button _esubmit;
+    /**
+     * Creates a blank item for use when creating a new item using this editor.
+     */
+    protected abstract Item createBlankItem ();
 
-    /** The item we are editing. */
+    protected WebContext _ctx;
+    protected ItemPanel _parent;
+
     protected Item _item;
+
+    protected Label _etitle;
+    protected Button _esubmit;
 }

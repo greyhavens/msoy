@@ -15,8 +15,8 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.client.WebCreds;
-import com.threerings.msoy.web.client.WebUserServiceAsync;
 
 import client.util.CookieUtil;
 
@@ -26,8 +26,11 @@ import client.util.CookieUtil;
 public class LogonPanel extends HorizontalPanel
     implements KeyboardListener, AsyncCallback
 {
-    public LogonPanel (MsoyEntryPoint app, WebUserServiceAsync usersvc)
+    public LogonPanel (WebContext ctx, MsoyEntryPoint app)
     {
+        _ctx = ctx;
+        _app = app;
+
         setSpacing(5);
 
         // create our interface elements
@@ -36,9 +39,6 @@ public class LogonPanel extends HorizontalPanel
         _email.addKeyboardListener(this);
         _password = new PasswordTextBox();
         _password.addKeyboardListener(this);
-
-        _app = app;
-        _usersvc = usersvc;
     }
 
     /**
@@ -86,7 +86,7 @@ public class LogonPanel extends HorizontalPanel
         String password = _password.getText();
         if (_who.length() > 0 && password.length() > 0) {
             displayStatus("Logging in...");
-            _usersvc.login(_who, md5hex(password), false, this);
+            _ctx.usersvc.login(_who, md5hex(password), false, this);
         }
     }
 
@@ -166,8 +166,9 @@ public class LogonPanel extends HorizontalPanel
        return $wnd.hex_md5(text);
     }-*/;
 
+    protected WebContext _ctx;
     protected MsoyEntryPoint _app;
-    protected WebUserServiceAsync _usersvc;
+
     protected String _who;
     protected WebCreds _creds;
 

@@ -9,6 +9,9 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.google.gwt.user.client.ui.RootPanel;
 
+import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.client.ItemServiceAsync;
+import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.client.WebCreds;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
@@ -29,13 +32,15 @@ public abstract class MsoyEntryPoint
     // from interface EntryPoint
     public void onModuleLoad ()
     {
-        // get access to our service
-        _usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
-        ServiceDefTarget target = (ServiceDefTarget)_usersvc;
-        target.setServiceEntryPoint("/user");
+        // create our web context
+        _ctx = new WebContext();
+        _ctx.usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
+        ((ServiceDefTarget)_ctx.usersvc).setServiceEntryPoint("/user");
+        _ctx.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
+        ((ServiceDefTarget)_ctx.itemsvc).setServiceEntryPoint("/item");
 
         // create our standard logon panel
-        RootPanel.get("logon").add(_logon = new LogonPanel(this, _usersvc));
+        RootPanel.get("logon").add(_logon = new LogonPanel(_ctx, this));
 
         // initialize the rest of the application
         onPageLoad();
@@ -59,6 +64,7 @@ public abstract class MsoyEntryPoint
      */
     protected void didLogon (WebCreds creds)
     {
+        _ctx.creds = creds;
     }
 
     /**
@@ -66,8 +72,9 @@ public abstract class MsoyEntryPoint
      */
     protected void didLogoff ()
     {
+        _ctx.creds = null;
     }
 
-    protected WebUserServiceAsync _usersvc;
+    protected WebContext _ctx;
     protected LogonPanel _logon;
 }

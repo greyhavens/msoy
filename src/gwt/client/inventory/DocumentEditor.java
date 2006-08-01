@@ -44,6 +44,12 @@ public class DocumentEditor extends ItemEditor
         return (_title.getText().trim().length() > 0);
     }
 
+    // @Override from ItemEditor
+    protected Item createBlankItem ()
+    {
+        return new Document();
+    }
+
     protected Document _doc;
     protected TextBox _title;
 }
