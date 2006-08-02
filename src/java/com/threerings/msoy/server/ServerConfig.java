@@ -32,6 +32,9 @@ public class ServerConfig
     /** The ports on which we are listening for client connections. */
     public static int[] serverPorts;
 
+    /** The directory into which uploaded media is stored. */
+    public static File mediaDir;
+
     /** Provides access to our config properties. <em>Do not</em> modify
      * these properties! */
     public static Config config;
@@ -86,6 +89,7 @@ public class ServerConfig
         // fill in our standard properties
         serverName = config.getValue("server_name", "msoy");
         serverRoot = new File(config.getValue("server_root", "/tmp"));
+        mediaDir = new File(config.getValue("media_dir", "/tmp"));
         serverPorts = config.getValue(
             "server_ports", Client.DEFAULT_SERVER_PORTS);
     }

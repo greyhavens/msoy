@@ -46,6 +46,7 @@ public class MsoyHttpServer extends HttpServer
         ServletHandler handler= new ServletHandler();
         handler.addServlet("user", "/user", WebUserServlet.class.getName());
         handler.addServlet("item", "/item", ItemServlet.class.getName());
+        handler.addServlet("upload", "/upload", UploadServlet.class.getName());
         context.addHandler(handler);
 
         // tone down the default verbose logging; unfortunately some creates a
