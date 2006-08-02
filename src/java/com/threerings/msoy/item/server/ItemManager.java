@@ -93,6 +93,11 @@ public class ItemManager
                 repo.insertItem(item);
                 return item;
             }
+            public void handleSuccess () {
+                super.handleSuccess();
+                // add the item to the user's cached inventory
+                updateUserCache(item);
+            }
         });
     }
 
@@ -133,6 +138,26 @@ public class ItemManager
                 super.handleSuccess();
             }
         });
+    }
+
+    /**
+     * Called when an item is newly created and should be inserted into the
+     * owning user's inventory cache.
+     */
+    protected void updateUserCache (Item item)
+    {
+        ItemEnum type = ItemEnum.valueOf(item.getType());
+        if (type == null) {
+            log.warning("Item reported invalid type '" + item + "': " +
+                        item.getType() + ".");
+            return;
+        }
+
+        ArrayList<Item> items = _itemCache.get(
+            new Tuple<Integer,ItemEnum>(item.ownerId, type));
+        if (items != null) {
+            items.add(item);
+        }
     }
 
     /** Maps string identifier to repository for all digital item types. */
