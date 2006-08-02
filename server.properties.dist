@@ -27,6 +27,11 @@ server_root = /export/msoy
 webapp_dir = /export/threerings/webapps
 
 #
+# Defines the directory into which uploaded media will be stored.
+
+media_dir = /export/msoy/pages/media
+
+#
 # The default database mapping; all other definitions will inherit from
 # this and need only be specified in cases where they differ from the
 # defaults
