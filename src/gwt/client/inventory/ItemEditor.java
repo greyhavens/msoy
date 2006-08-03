@@ -6,7 +6,8 @@ package client.inventory;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -24,18 +25,32 @@ import com.threerings.msoy.web.client.WebContext;
  * <li> item_editor_submit - the style of the submit button
  * </ul>
  */
-public abstract class ItemEditor extends DockPanel
+public abstract class ItemEditor extends FlexTable
 {
     public ItemEditor ()
     {
         setStyleName("item_editor");
-        setSpacing(5);
-        add(_etitle = new Label("title"), NORTH);
+        setCellSpacing(5);
+
+        setWidget(0, 0, _etitle = new Label("title"));
         _etitle.setStyleName("item_editor_title");
 
+        // have the child do its business
+        createEditorInterface();
+
+        // compute our widest row so we can set our colspans
+        int rows = getRowCount(), cols = 0;
+        for (int ii = 0; ii < rows; ii++) {
+            cols = Math.max(cols, getCellCount(ii));
+        }
+        getFlexCellFormatter().setColSpan(0, 0, cols);
+
         HorizontalPanel bpanel = new HorizontalPanel();
-        add(bpanel, SOUTH);
-        setCellHorizontalAlignment(bpanel, ALIGN_RIGHT);
+        int butrow = getRowCount();
+        setWidget(butrow, 0, bpanel);
+        getFlexCellFormatter().setHorizontalAlignment(
+            0, butrow, HasAlignment.ALIGN_RIGHT);
+        getFlexCellFormatter().setColSpan(0, butrow, cols);
 
         bpanel.add(_esubmit = new Button("submit"));
         _esubmit.setStyleName("item_editor_button");
@@ -55,6 +70,12 @@ public abstract class ItemEditor extends DockPanel
             }
         });
     }
+
+    /**
+     * Derived classes should create and add their interface components in this
+     * method.
+     */
+    protected abstract void createEditorInterface ();
 
     /**
      * Configures this editor with a reference to the item service and its item

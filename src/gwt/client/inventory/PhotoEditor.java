@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
@@ -14,12 +15,24 @@ import com.threerings.msoy.item.data.Photo;
 /**
  * A class for creating and editing {@link Photo} digital items.
  */
-public class PhotoEditor extends ItemEditor
+public class PhotoEditor extends MediaItemEditor
 {
-    public PhotoEditor ()
+    // @Override from ItemEditor
+    public void setItem (Item item)
     {
-        add(new Label("Caption"), WEST);
-        add(_caption = new TextBox(), CENTER);
+        super.setItem(item);
+        _photo = (Photo)item;
+        _caption.setText((_photo.caption == null) ? "" : _photo.caption);
+    }
+
+    // @Override from ItemEditor
+    protected void createEditorInterface ()
+    {
+        super.createEditorInterface();
+
+        int row = getRowCount();
+        setText(row, 0, "Caption");
+        setWidget(row, 1, _caption = new TextBox());
         _caption.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char keyCode, int mods) {
                 if (_photo != null) {
@@ -28,14 +41,6 @@ public class PhotoEditor extends ItemEditor
                 }
             }
         });
-    }
-
-    // @Override from ItemEditor
-    public void setItem (Item item)
-    {
-        super.setItem(item);
-        _photo = (Photo)item;
-        _caption.setText((_photo.caption == null) ? "" : _photo.caption);
     }
 
     // @Override from ItemEditor

@@ -5,6 +5,7 @@ package client.inventory;
 
 import java.util.ArrayList;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -94,7 +95,7 @@ public class ItemPanel extends VerticalPanel
         remove(editor);
         insert(_create, 1);
         if (item != null) {
-            _contents.insert(new ItemThumbnail(item), 0);
+            _contents.add(new ItemThumbnail(item));
         }
     }
 
