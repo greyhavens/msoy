@@ -5,6 +5,9 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.web.data.LogonException;
+import com.threerings.msoy.web.data.WebCreds;
+
 /**
  * Defines general user services available to the GWT/AJAX web client.
  */

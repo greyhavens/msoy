@@ -13,8 +13,8 @@ import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.ItemService;
-import com.threerings.msoy.web.client.ServiceException;
-import com.threerings.msoy.web.client.WebCreds;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.WebCreds;
 
 import static com.threerings.msoy.Log.log;
 

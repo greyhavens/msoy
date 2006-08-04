@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.SerializableException;
 

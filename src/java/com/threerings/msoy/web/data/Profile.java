@@ -1,9 +1,11 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
+import com.threerings.msoy.item.data.Photo;
 
 /**
  * Contains all member profile data for display on the profile page.
@@ -16,8 +18,8 @@ public class Profile implements IsSerializable
     /** The member's display name. */
     public String displayName;
 
-    /** The item id of the member's profile picture. */
-    public int photoItemId;
+    /** The the member's selected profile picture. */
+    public Photo photo;
 
     /** A member provided profile headline. */
     public String headline;

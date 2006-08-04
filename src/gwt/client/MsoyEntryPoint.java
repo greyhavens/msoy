@@ -11,10 +11,12 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.client.ItemServiceAsync;
+import com.threerings.msoy.web.client.ProfileService;
+import com.threerings.msoy.web.client.ProfileServiceAsync;
 import com.threerings.msoy.web.client.WebContext;
-import com.threerings.msoy.web.client.WebCreds;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
+import com.threerings.msoy.web.data.WebCreds;
 
 /**
  * Handles some standard services for a top-level MetaSOY web application
@@ -38,6 +40,8 @@ public abstract class MsoyEntryPoint
         ((ServiceDefTarget)_ctx.usersvc).setServiceEntryPoint("/user");
         _ctx.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
         ((ServiceDefTarget)_ctx.itemsvc).setServiceEntryPoint("/item");
+        _ctx.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
+        ((ServiceDefTarget)_ctx.profilesvc).setServiceEntryPoint("/profile");
 
         // create our standard logon panel
         RootPanel.get("logon").add(_logon = new LogonPanel(_ctx, this));

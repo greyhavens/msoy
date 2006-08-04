@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.client.WebContext;
-import com.threerings.msoy.web.client.WebCreds;
+import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.CookieUtil;
 

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
+import com.threerings.msoy.web.data.WebCreds;
+
 /**
  * Contains a reference to the various bits that we're likely to need in the
  * web client interface.
@@ -17,4 +19,7 @@ public class WebContext
 
     /** Provides item-related services. */
     public ItemServiceAsync itemsvc;
+
+    /** Provides profile-related services. */
+    public ProfileServiceAsync profilesvc;
 }

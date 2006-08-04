@@ -23,8 +23,8 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.server.persist.Member;
-import com.threerings.msoy.web.client.LogonException;
-import com.threerings.msoy.web.client.WebCreds;
+import com.threerings.msoy.web.data.LogonException;
+import com.threerings.msoy.web.data.WebCreds;
 
 import static com.threerings.msoy.Log.log;
 

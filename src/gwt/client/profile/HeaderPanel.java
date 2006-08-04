@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 
-import com.threerings.msoy.web.client.Profile;
+import com.threerings.msoy.web.data.Profile;
 
 /**
  * Displays the photo and header bits of a member's profile.

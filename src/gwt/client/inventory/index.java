@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import com.threerings.msoy.item.data.Document;
-import com.threerings.msoy.web.client.WebCreds;
+import com.threerings.msoy.web.data.WebCreds;
 
 import client.MsoyEntryPoint;
 
