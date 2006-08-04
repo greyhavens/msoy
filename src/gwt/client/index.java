@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import com.threerings.msoy.web.client.WebCreds;
+
 import client.util.FlashWidget;
 
 /**
@@ -27,7 +29,7 @@ public class index extends MsoyEntryPoint
         };
     }
 
-    // @Override from MsoyEntryPoint
+    // @Override // from MsoyEntryPoint
     public void onPageLoad ()
     {
         History.addHistoryListener(this);
@@ -44,13 +46,64 @@ public class index extends MsoyEntryPoint
     {
         RootPanel.get("content").clear();
 
+        if (_client != null) {
+            // TODO: JavaScript magic to log off
+            _client = null;
+        }
+
         if ("home".equals(token)) {
-            FlashWidget client = new FlashWidget("client");
-            client.setMovie("/clients/Msoy.swf");
-            client.setSize(900, 600);
-            RootPanel.get("content").add(client);
+            _client = new FlashWidget("asclient");
+            _client.setMovie("/clients/Msoy.swf");
+            _client.setSize(900, 600);
+            RootPanel.get("content").add(_client);
         } else {
             RootPanel.get("content").add(new Label("Unknown page: " + token));
         }
     }
+
+    // @Override // from MsoyEntryPoint
+    protected void didLogon (WebCreds creds)
+    {
+        super.didLogon(creds);
+        clientLogon(creds.token);
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void didLogoff ()
+    {
+        super.didLogoff();
+        clientLogoff();
+    }
+
+    /**
+     * Logs on the MetaSOY Flash client using magical JavaScript.
+     */
+    protected static native void clientLogon (String token) /*-{
+        try {
+            if ($doc.asclient) {
+                $doc.asclient.logon(token);
+            } else if ($wnd.asclient) {
+                $wnd.asclient.logon(token);
+            }
+        } catch (e) {
+            // oh well
+        }
+    }-*/;
+
+    /**
+     * Logs off the MetaSOY Flash client using magical JavaScript.
+     */
+    protected static native void clientLogoff () /*-{
+        try {
+            if ($doc.asclient) {
+                $doc.asclient.logoff();
+            } else if ($wnd.asclient) {
+                $wnd.asclient.logoff();
+            }
+        } catch (e) {
+            // oh well
+        }
+    }-*/;
+
+    protected FlashWidget _client;
 }
