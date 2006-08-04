@@ -169,9 +169,7 @@ public class MediaData
         [ "square100.png", false, new Point(50, 50) ],
     ];
 
-    public static const BASE_URL :String =
-        "http://tasman.sea.earth.threerings.net/~ray/msoy/";
-        //"http://ice.puzzlepirates.com/msoy/";
+    public static const BASE_URL :String = "/media/static/";
 }
 
 }
