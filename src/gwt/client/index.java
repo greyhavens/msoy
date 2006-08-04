@@ -46,17 +46,21 @@ public class index extends MsoyEntryPoint
     {
         RootPanel.get("content").clear();
 
-        if (_client != null) {
-            // TODO: JavaScript magic to log off
-            _client = null;
-        }
-
         if ("home".equals(token)) {
-            _client = new FlashWidget("asclient");
-            _client.setMovie("/clients/Msoy.swf");
-            _client.setSize(900, 600);
+            if (_client != null) {
+                _client = new FlashWidget("asclient");
+                _client.setMovie("/clients/Msoy.swf");
+                _client.setSize(900, 600);
+            }
             RootPanel.get("content").add(_client);
+
         } else {
+            // if we have a client around, log if off
+            if (_client != null) {
+                clientLogoff();
+                _client = null;
+            }
+
             RootPanel.get("content").add(new Label("Unknown page: " + token));
         }
     }
