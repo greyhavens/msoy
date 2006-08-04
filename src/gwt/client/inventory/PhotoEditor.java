@@ -3,7 +3,9 @@
 
 package client.inventory;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
@@ -31,8 +33,13 @@ public class PhotoEditor extends MediaItemEditor
         super.createEditorInterface();
 
         int row = getRowCount();
-        setText(row, 0, "Caption");
-        setWidget(row, 1, _caption = new TextBox());
+        setText(row, 0, "Preview");
+        getFlexCellFormatter().setColSpan(row, 0, 2);
+        setWidget(row+1, 0, _preview = new Image());
+        getFlexCellFormatter().setColSpan(row+1, 0, 2);
+
+        setText(row+2, 0, "Caption");
+        setWidget(row+2, 1, _caption = new TextBox());
         _caption.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char keyCode, int mods) {
                 if (_photo != null) {
@@ -43,10 +50,20 @@ public class PhotoEditor extends MediaItemEditor
         });
     }
 
+    // @Override from MediaItemEditor
+    protected void setHash (String mediaHash, int mimeType)
+    {
+        super.setHash(mediaHash, mimeType);
+        if (mediaHash.length() > 0) {
+            _preview.setUrl(_photo.getPath(GWT.isScript()));
+        }
+    }
+
     // @Override from ItemEditor
     protected boolean itemConsistent ()
     {
-        return (_caption.getText().trim().length() > 0);
+        return super.itemConsistent() &&
+            (_caption.getText().trim().length() > 0);
     }
 
     // @Override from ItemEditor
@@ -56,5 +73,6 @@ public class PhotoEditor extends MediaItemEditor
     }
 
     protected Photo _photo;
+    protected Image _preview;
     protected TextBox _caption;
 }

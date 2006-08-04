@@ -3,11 +3,15 @@
 
 package client.inventory;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.msoy.item.data.MediaItem;
 
 import org.gwtwidgets.client.ui.FileUploadField;
 import org.gwtwidgets.client.ui.FormPanel;
@@ -25,40 +29,106 @@ public abstract class MediaItemEditor extends ItemEditor
     protected void createEditorInterface ()
     {
         _panel = new FormPanel(new FlowPanel());
-        _panel.setAction("http://localhost:8080/upload");
+        if (GWT.isScript()) {
+            _panel.setAction("/upload");
+        } else {
+            _panel.setAction("http://localhost:8080/upload");
+        }
         _panel.setTarget("upload");
         _panel.setMethodAsPost();
         _panel.setMultipartEncoding();
         _panel.addField(new FileUploadField("media"), "media");
 
-        _panel.add(_submit = new Button("Upload"));
-        _submit.addClickListener(new ClickListener() {
-            public void onClick (Widget button) {
-                _submit.setEnabled(false);
-                _panel.submit();
-            }
-        });
+        if (GWT.isScript()) {
+            _panel.addField(new SubmitField("submit", "Upload"), "submit");
+        } else {
+            Button submit = new Button("Upload");
+            submit.addClickListener(new ClickListener() {
+                public void onClick (Widget widget) {
+                    _panel.submit();
+                }
+            });
+            _panel.add(submit);
+        }
 
         int row = getRowCount();
         setText(row, 0, "Upload");
         setWidget(row, 1, _panel);
 
-        setWidget(row+1, 0, _out = new Label());
-        setWidget(row+1, 1, _check = new Button("Check"));
-        _check.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                _out.setText(checkUpload());
-            }
-        });
+        String msg = "First upload the file from your computer. " +
+            "Then create the item below.";
+        setWidget(row+1, 0, _out = new Label(msg));
+        getFlexCellFormatter().setColSpan(row+1, 0, 2);
+
+        // we have to do this wacky singleton crap because GWT and/or
+        // JavaScript doesn't seem to cope with our trying to create an
+        // anonymous function that calls an instance method on a JavaScript
+        // object
+        _singleton = this;
     }
 
-    protected static native String checkUpload () /*-{
-        return $doc.getElementById('__msoy_uploadFrame').toString();
-    }-*/;
+    // @Override // from Widget
+    protected void onLoad ()
+    {
+        super.onLoad();
+        configureBridge();
+    }
+
+    // @Override // from ItemEditor
+    protected boolean itemConsistent ()
+    {
+        MediaItem item = (MediaItem)_item;
+        return (_item != null) && (item.mediaHash != null) &&
+            (item.mediaHash.length() > 0);
+    }
+
+    /**
+     * Configures this item editor with the hash value for media that it is
+     * about to upload.
+     */
+    protected void setHash (String mediaHash, int mimeType)
+    {
+        if (_item != null) {
+            ((MediaItem)_item).mediaHash = mediaHash;
+            ((MediaItem)_item).mimeType = (byte)mimeType;
+        }
+        // _out.setText(mediaHash);
+        _out.setText("File uploaded.");
+        updateSubmittable();
+    }
+
+    /**
+     * This is called from our magical JavaScript method by JavaScript code
+     * received from the server as a response to our file upload POST request.
+     */
+    protected static void callBridge (String mediaHash, int mimeType)
+    {
+        _singleton.setHash(mediaHash, mimeType);
+    }
+
+    /**
+     * This wires up a sensibly named function that our POST response
+     * JavaScript code can call.
+     */
+    protected static native void configureBridge () /*-{
+        $wnd.setHash = function (hash, type) {
+           @client.inventory.MediaItemEditor::callBridge(Ljava/lang/String;I)(hash, type);
+        };
+    }-*/; 
+
+    /** Create a forum submit button. */
+    protected class SubmitField extends Widget
+    {
+        public SubmitField (String name, String value) {
+            setElement(DOM.createElement("input"));
+            DOM.setAttribute(getElement(), "type", "submit");
+            DOM.setAttribute(getElement(), "value", value);
+            DOM.setAttribute(getElement(), "name", name);
+        }
+    }
 
     protected FormPanel _panel;
-    protected Button _submit;
-
     protected Label _out;
-    protected Button _check;
+
+    protected static MediaItemEditor _singleton;
 }

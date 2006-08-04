@@ -3,12 +3,14 @@
 
 package client.inventory;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.data.Photo;
 
 /**
  * Displays a thumbnail version of an item.
@@ -25,8 +27,13 @@ public class ItemThumbnail extends VerticalPanel
     {
         // TODO: handle absolute inventory image URLs (real thumbnails rather
         // than just icons)
-        Image image = new Image(
-            "images/items/" + item.getType().toLowerCase() + ".png");
+        Image image;
+        if (item instanceof Photo) {
+            image = new Image(((Photo)item).getPath(GWT.isScript()));
+        } else {
+            image = new Image(
+                "images/items/" + item.getType().toLowerCase() + ".png");
+        }
         image.setStyleName("item_thumb_image");
         add(image);
         Label label = new Label(item.getInventoryDescrip());

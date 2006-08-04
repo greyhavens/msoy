@@ -24,6 +24,9 @@ import org.apache.commons.fileupload.servlet.ServletRequestContext;
 
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.Tuple;
+
+import com.threerings.msoy.item.data.MediaItem;
 import com.threerings.msoy.server.ServerConfig;
 
 import static com.threerings.msoy.Log.log;
@@ -50,7 +53,7 @@ public class UploadServlet extends HttpServlet
         // right place from the start and computes the SHA hash on the way
         ServletFileUpload upload =
             new ServletFileUpload(new DiskFileItemFactory());
-        String mediaHash = "";
+        Tuple<String,Integer> mediaInfo = null;
         try {
             for (Object obj : upload.parseRequest(req)) {
                 FileItem item = (FileItem)obj;
@@ -60,32 +63,46 @@ public class UploadServlet extends HttpServlet
                     // TODO: check that this is a supported content type
                     log.info("Receiving file [type: " + item.getContentType() +
                              ", size=" + item.getSize() + "].");
-                    mediaHash = handleFileItem(item);
+                    mediaInfo = handleFileItem(item);
                 }
             }
 
         } catch (FileUploadException e) {
             log.info("File upload choked: " + e + ".");
+            // TODO: send JavaScript that communicates a friendly error
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
 
-        // TODO: write out the magical incantations that are needed to cause
-        // our magical little frame to communicate the newly assigned mediaHash
-        // to the ItemEditor widget
+        // if we parsed no info, handleFileItem will have logged an error or
+        // the user didn't send anything; TODO: send JavaScript that
+        // communicates a friendly error
+        if (mediaInfo == null) {
+            rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        // write out the magical incantations that are needed to cause our
+        // magical little frame to communicate the newly assigned mediaHash to
+        // the ItemEditor widget
         PrintStream out = new PrintStream(rsp.getOutputStream());
         try {
-            out.println(mediaHash);
+            out.println("<html>");
+            out.println("<head></head>");
+            String script = "parent.setHash('" + mediaInfo.left + "', " +
+                mediaInfo.right + ")";
+            out.println("<body onLoad=\"" + script + "\"></body>");
+            out.println("</html>");
         } finally {
             StreamUtil.close(out);
         }
     }
 
     /**
-     * Computes and returns the SHA hash of the supplied item and puts it in
-     * the proper place in the media upload directory.
+     * Computes and returns the SHA hash and mime type of the supplied item and
+     * puts it in the proper place in the media upload directory.
      */
-    protected String handleFileItem (FileItem item)
+    protected Tuple<String,Integer> handleFileItem (FileItem item)
         throws IOException
     {
         MessageDigest digest;
@@ -121,13 +138,17 @@ public class UploadServlet extends HttpServlet
             StreamUtil.close(in);
         }
 
-        // for now just use the client's suffix, but later we want to create
-        // a suffix based on the content-type
-        int didx = item.getName().lastIndexOf(".");
-        String suff = (didx == -1) ? ".dat" : item.getName().substring(didx);
+        // look up the mime type
+        int mimeType = MediaItem.stringToMimeType(item.getContentType());
+        if (mimeType == -1) {
+            log.warning("Received upload of unknown mime type " +
+                        "[type=" + item.getContentType() + "].");
+            return null;
+        }
 
         // now name it using the digest value and the suffix
         String hash = StringUtil.hexlate(digest.digest());
+        String suff = MediaItem.mimeTypeToSuffix(mimeType);
         // TODO: turn XXXXXXX... into XX/XX/XXXX... to avoid freaking out the
         // file system with the amazing four hundred billion files
         File target = new File(ServerConfig.mediaDir, hash + suff);
@@ -137,7 +158,7 @@ public class UploadServlet extends HttpServlet
             return null;
         }
 
-        return hash;
+        return new Tuple<String,Integer>(hash, mimeType);
     }
 
     /** Prevent Captain Insano from showing up to fill our drives. */
