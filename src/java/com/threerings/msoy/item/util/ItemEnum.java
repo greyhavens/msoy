@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.util;
 
 import com.threerings.msoy.item.data.Document;
+import com.threerings.msoy.item.data.Furniture;
 import com.threerings.msoy.item.data.Item;
 import com.threerings.msoy.item.data.Photo;
 
@@ -17,6 +18,7 @@ public enum ItemEnum
     // Don't fuck up!
     PHOTO(Photo.class),
     DOCUMENT(Document.class),
+    FURNITURE(Furniture.class),
 
     // NOTE ALSO: If you add an item to this list, you need to make sure that
     // Item.getType() returns the string value of the enumeration that is added
