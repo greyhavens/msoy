@@ -12,7 +12,7 @@ public class Furniture extends MediaItem
     /** An action associated with this furniture which is dispatched to the
      * virtual world client when the furniture is clicked on (max length 255
      * characters). */
-    public String action;
+    public String action = "";
 
     /** A description of this piece of furniture (max length 255 characters). */
     public String description;

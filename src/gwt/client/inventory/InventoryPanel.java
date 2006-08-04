@@ -19,6 +19,7 @@ public class InventoryPanel extends TabPanel
         // ItemEnum here)
         add(new ItemPanel(ctx, "PHOTO"), "Photos");
         add(new ItemPanel(ctx, "DOCUMENT"), "Documents");
+        add(new ItemPanel(ctx, "FURNITURE"), "Furniture");
         selectTab(0);
     }
 }

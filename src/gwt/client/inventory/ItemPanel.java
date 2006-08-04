@@ -74,6 +74,8 @@ public class ItemPanel extends VerticalPanel
             editor = new PhotoEditor();
         } else if (_type.equals("DOCUMENT")) {
             editor = new DocumentEditor();
+        } else if (_type.equals("FURNITURE")) {
+            editor = new FurnitureEditor();
         }
         if (editor != null) {
             editor.init(_ctx, this);

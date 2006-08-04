@@ -42,7 +42,7 @@ public abstract class MediaItem extends Item
     public static final byte APPLICATION_SHOCKWAVE_FLASH = 40;
 
     /** A hash code identifying the media associated with this item. */
-    public String mediaHash = ""; // TEMP: require this to be filled in?
+    public String mediaHash;
 
     /** The MIME type of the media associated with this item. */
     public byte mimeType;
