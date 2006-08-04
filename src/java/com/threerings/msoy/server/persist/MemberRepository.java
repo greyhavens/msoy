@@ -29,6 +29,7 @@ import com.samskivert.jdbc.jora.Table;
 import com.threerings.util.Name;
 
 import com.threerings.msoy.data.FriendEntry;
+import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.server.CacheConfig;
 
 import static com.threerings.msoy.Log.log;
@@ -398,16 +399,14 @@ public class MemberRepository extends JORARepository
                         "where (INVITEE_ID=" + memberId +
                         " and MEMBER_ID=INVITER_ID)");
                     while (rs.next()) {
-                        Name name = new Name(
-                            JDBCUtil.unjigger(rs.getString(1)));
-                        int memberId = rs.getInt(2);
+                        MemberName name = new MemberName(
+                            JDBCUtil.unjigger(rs.getString(1)), rs.getInt(2));
                         boolean established = rs.getBoolean(4);
                         byte status = established ? FriendEntry.FRIEND
                             : ((memberId == rs.getInt(3))
                                 ? FriendEntry.PENDING_THEIR_APPROVAL
                                 : FriendEntry.PENDING_MY_APPROVAL);
-                        list.add(
-                            new FriendEntry(memberId, name, false, status));
+                        list.add(new FriendEntry(name, false, status));
                     }
                     return list;
 
@@ -437,7 +436,7 @@ public class MemberRepository extends JORARepository
             {
                 Statement stmt = conn.createStatement();
                 try {
-                    Name otherName = idToName(stmt, otherId);
+                    MemberName otherName = idToName(stmt, otherId);
                     if (otherName == null) {
                         log.warning("Failed to establish friends: " +
                             "member no longer exists " +
@@ -468,8 +467,8 @@ public class MemberRepository extends JORARepository
                             "(INVITER_ID, INVITEE_ID, STATUS) values (" +
                             memberId + ", " + otherId + ", false)";
                         JDBCUtil.checkedUpdate(stmt, sql, 1);
-                        return new FriendEntry(otherId, otherName,
-                            false, FriendEntry.PENDING_THEIR_APPROVAL);
+                        return new FriendEntry(otherName, false,
+                            FriendEntry.PENDING_THEIR_APPROVAL);
 
                     } else if (inviterId == otherId) {
                         // we're responding to an invite
@@ -477,12 +476,12 @@ public class MemberRepository extends JORARepository
                             "set STATUS=true where INVITER_ID=" + otherId +
                             " and INVITEE_ID=" + memberId;
                         JDBCUtil.checkedUpdate(stmt, sql, 1);
-                        return new FriendEntry(otherId, otherName,
-                            false, FriendEntry.FRIEND);
+                        return new FriendEntry(otherName, false,
+                            FriendEntry.FRIEND);
 
                     } else {
                         // we've already done all we can
-                        return new FriendEntry(otherId, otherName, false,
+                        return new FriendEntry(otherName, false,
                             status ? FriendEntry.FRIEND
                                    : FriendEntry.PENDING_THEIR_APPROVAL);
                     }
@@ -521,14 +520,15 @@ public class MemberRepository extends JORARepository
      * A convenience method to look up the member's name, given their id,
      * or null if unknown.
      */
-    protected Name idToName (Statement stmt, int memberId)
+    protected MemberName idToName (Statement stmt, int memberId)
         throws SQLException, PersistenceException
     {
         ResultSet rs = stmt.executeQuery(
             "select NAME from MEMBERS where MEMBER_ID = " + memberId);
         try {
-            return rs.next() ? new Name(JDBCUtil.unjigger(rs.getString(1)))
-                             : null;
+            return rs.next()
+                ? new MemberName(JDBCUtil.unjigger(rs.getString(1)), memberId)
+                : null;
 
         } finally {
             rs.close();

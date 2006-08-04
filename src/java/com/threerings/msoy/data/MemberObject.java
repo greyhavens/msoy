@@ -74,8 +74,7 @@ public class MemberObject extends BodyObject
      */
     public boolean isGuest ()
     {
-        // TODO
-        return username.toString().startsWith("guest");
+        return (memberId <= 0);
     }
 
     // documentation inherited from superinterface ScenedBodyObject

@@ -5,8 +5,6 @@ package com.threerings.msoy.world.server;
 
 import com.samskivert.util.RandomUtil;
 
-import com.threerings.util.Name;
-
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.server.InvocationException;
@@ -21,6 +19,7 @@ import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.server.MsoyServer;
 
@@ -61,7 +60,7 @@ public class RoomManager extends SpotSceneManager
     {
         int memberId = RandomUtil.getInt(10000);
         ((MemberObject) body).addToFriends(
-            new FriendEntry(memberId, new Name(String.valueOf(memberId)),
+            new FriendEntry(new MemberName(String.valueOf(memberId), memberId),
                 (RandomUtil.getInt(2) == 0),
                 (byte) RandomUtil.getInt(3)));
 

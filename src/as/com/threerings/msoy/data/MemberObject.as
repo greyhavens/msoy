@@ -77,7 +77,7 @@ public class MemberObject extends BodyObject
      */
     public function isGuest () :Boolean
     {
-        return username.toString().indexOf("guest") == 0;
+        return (memberId <= 0);
     }
 
     // documentation inherited from superinterface ScenedBodyObject

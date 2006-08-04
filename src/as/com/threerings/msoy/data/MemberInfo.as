@@ -10,9 +10,6 @@ import com.threerings.crowd.data.OccupantInfo;
 
 public class MemberInfo extends OccupantInfo
 {
-    /** The memberId of this occupant. */
-    public var memberId :int;
-
     /** The media that represents our avatar. */
     public var media :MediaData;
 
@@ -22,12 +19,19 @@ public class MemberInfo extends OccupantInfo
     /** The style with which the chat bubble pops up. */
     public var chatPopStyle :int;
 
+    /**
+     * Get the member id for this user, or -1 if they're a guest.
+     */
+    public function getMemberId () :int
+    {
+        return (username as MemberName).getMemberId();
+    }
+
     // documentation inherited
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
-        out.writeInt(memberId);
         out.writeObject(media);
         out.writeShort(chatStyle);
         out.writeShort(chatPopStyle);
@@ -38,7 +42,6 @@ public class MemberInfo extends OccupantInfo
     {
         super.readObject(ins);
 
-        memberId = ins.readInt();
         media = (ins.readObject() as MediaData);
         chatStyle = ins.readShort();
         chatPopStyle = ins.readShort();

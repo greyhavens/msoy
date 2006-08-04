@@ -151,11 +151,12 @@ public class RoomController extends SceneController
 
         } else {
             // create a menu for clicking on someone else
-            var isFriend :Boolean = us.friends.containsKey(occInfo.memberId);
+            var memId :int = occInfo.getMemberId();
+            var isFriend :Boolean = us.friends.containsKey(memId);
             menuItems = [
                 [ _mctx.xlate(isFriend ? "b.removeAsFriend" : "b.addAsFriend"),
-                    null, ALTER_FRIEND, [occInfo.memberId, !isFriend] ],
-                [ _mctx.xlate("b.tell"), null, TELL, occInfo.memberId ]
+                    null, ALTER_FRIEND, [memId, !isFriend] ],
+                [ _mctx.xlate("b.tell"), null, TELL, memId]
             ];
         }
 

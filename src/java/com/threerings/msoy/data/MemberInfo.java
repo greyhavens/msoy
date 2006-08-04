@@ -12,9 +12,6 @@ import com.threerings.crowd.data.OccupantInfo;
  */
 public class MemberInfo extends OccupantInfo
 {
-    /** The memberId of this occupant, or 0 if they're not a member. */
-    public int memberId;
-
     /** The media that represents our avatar. */
     public MediaData media;
 
@@ -33,9 +30,16 @@ public class MemberInfo extends OccupantInfo
     {
         super(user);
 
-        memberId = user.memberId;
         media = user.avatar;
         chatStyle = user.chatStyle;
         chatPopStyle = user.chatPopStyle;
+    }
+
+    /**
+     * Get the member id for this user, or -1 if they're a guest.
+     */
+    public int getMemberId ()
+    {
+        return ((MemberName) username).getMemberId();
     }
 }

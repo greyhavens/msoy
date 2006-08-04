@@ -7,7 +7,7 @@ import java.sql.Date;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.util.Name;
+import com.threerings.msoy.data.MemberName;
 
 /**
  * Contains persistent data stored for every member of MetaSOY.
@@ -60,9 +60,9 @@ public class Member
     }
 
     /** Returns this member's name as a proper {@link Name} instance. */
-    public Name getName ()
+    public MemberName getName ()
     {
-        return new Name(name);
+        return new MemberName(name, memberId);
     }
 
     /** Generates a string representation of this instance. */

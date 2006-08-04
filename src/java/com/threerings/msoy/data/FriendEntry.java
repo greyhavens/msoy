@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.data;
 
-import com.threerings.util.Name;
-
 import com.threerings.presents.dobj.DSet;
 
 /**
@@ -13,11 +11,8 @@ import com.threerings.presents.dobj.DSet;
 public class FriendEntry
     implements Comparable, DSet.Entry
 {
-    /** The immutable memberId for the friend. */
-    public int memberId;
-
     /** The display name of the friend. */
-    public Name name;
+    public MemberName name;
 
     /** Is the friend online? */
     public boolean online;
@@ -36,18 +31,25 @@ public class FriendEntry
     }
 
     /** Mr. Constructor. */
-    public FriendEntry (int memberId, Name name, boolean online, byte status)
+    public FriendEntry (MemberName name, boolean online, byte status)
     {
-        this.memberId = memberId;
         this.name = name;
         this.online = online;
         this.status = status;
     }
 
+    /**
+     * Get the member id of this friend.
+     */
+    public int getMemberId ()
+    {
+        return name.getMemberId();
+    }
+
     // from interface DSet.Entry
     public Comparable getKey ()
     {
-        return memberId;
+        return getMemberId();
     }
 
     // from interface Comparable

@@ -1,7 +1,6 @@
 package com.threerings.msoy.data {
 
 import com.threerings.util.Comparable;
-import com.threerings.util.Name;
 
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
@@ -11,11 +10,8 @@ import com.threerings.presents.dobj.DSet_Entry;
 public class FriendEntry
     implements Comparable, DSet_Entry
 {
-    /** The immutable memberId for the friend. */
-    public var memberId :int;
-
     /** The display name of this friend. */
-    public var name :Name;
+    public var name :MemberName;
 
     /** Is the friend online? */
     public var online :Boolean;
@@ -30,19 +26,22 @@ public class FriendEntry
 
     /** Mr. Constructor. */
     public function FriendEntry (
-            memberId :int = 0, name :Name = null, online :Boolean = false,
-            status :int = 0)
+            name :MemberName = null, online :Boolean = false, status :int = 0)
     {
-        this.memberId = memberId;
         this.name = name;
         this.online = online;
         this.status = status;
     }
 
+    public function getMemberId () :int
+    {
+        return name.getMemberId();
+    }
+
     // from interface DSet_Entry
     public function getKey () :Object
     {
-        return memberId;
+        return getMemberId();
     }
 
     // from interface Comparable
@@ -60,7 +59,6 @@ public class FriendEntry
     // from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeInt(memberId);
         out.writeObject(name);
         out.writeBoolean(online);
         out.writeByte(status);
@@ -69,8 +67,7 @@ public class FriendEntry
     // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        memberId = ins.readInt();
-        name = (ins.readObject() as Name);
+        name = (ins.readObject() as MemberName);
         online = ins.readBoolean();
         status = ins.readByte();
     }
