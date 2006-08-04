@@ -400,7 +400,7 @@ public class MemberRepository extends JORARepository
                         " and MEMBER_ID=INVITER_ID)");
                     while (rs.next()) {
                         MemberName name = new MemberName(
-                            JDBCUtil.unjigger(rs.getString(1)), rs.getInt(2));
+                            rs.getString(1), rs.getInt(2));
                         boolean established = rs.getBoolean(4);
                         byte status = established ? FriendEntry.FRIEND
                             : ((memberId == rs.getInt(3))
@@ -527,7 +527,7 @@ public class MemberRepository extends JORARepository
             "select NAME from MEMBERS where MEMBER_ID = " + memberId);
         try {
             return rs.next()
-                ? new MemberName(JDBCUtil.unjigger(rs.getString(1)), memberId)
+                ? new MemberName(rs.getString(1), memberId)
                 : null;
 
         } finally {
