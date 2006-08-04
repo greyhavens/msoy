@@ -13,7 +13,7 @@ import com.threerings.user.OOOUserRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.web.client.LogonException;
+import com.threerings.msoy.web.data.LogonException;
 
 import static com.threerings.msoy.Log.log;
 

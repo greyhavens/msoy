@@ -7,7 +7,7 @@ import java.util.logging.Level;
 
 import com.samskivert.servlet.util.ServiceWaiter;
 
-import com.threerings.msoy.web.client.ServiceException;
+import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;
 
