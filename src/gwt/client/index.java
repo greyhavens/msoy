@@ -3,6 +3,7 @@
 
 package client;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.HTML;
@@ -47,12 +48,15 @@ public class index extends MsoyEntryPoint
         RootPanel.get("content").clear();
 
         if ("home".equals(token)) {
-            if (_client != null) {
-                _client = new FlashWidget("asclient");
-                _client.setMovie("/clients/Msoy.swf");
-                _client.setSize(900, 600);
+            // don't show the flash client in the GWT shell
+            if (GWT.isScript()) {
+                if (_client != null) {
+                    _client = new FlashWidget("asclient");
+                    _client.setMovie("/clients/Msoy.swf");
+                    _client.setSize(900, 600);
+                }
+                RootPanel.get("content").add(_client);
             }
-            RootPanel.get("content").add(_client);
 
         } else {
             // if we have a client around, log if off

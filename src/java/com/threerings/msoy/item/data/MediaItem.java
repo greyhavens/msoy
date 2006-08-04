@@ -50,13 +50,9 @@ public abstract class MediaItem extends Item
     /**
      * Returns the path of the URL that references this media.
      */
-    public String getPath (boolean isScript)
+    public String getMediaPath ()
     {
-        String path = "/media/" + mediaHash + mimeTypeToSuffix(mimeType);
-        if (!isScript) {
-            path = "http://localhost:8080" + path;
-        }
-        return path;
+        return "/media/" + mediaHash + mimeTypeToSuffix(mimeType);
     }
 
     /**

@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.Item;
 import com.threerings.msoy.item.data.Photo;
 
+import client.MsoyEntryPoint;
+
 /**
  * A class for creating and editing {@link Photo} digital items.
  */
@@ -55,7 +57,8 @@ public class PhotoEditor extends MediaItemEditor
     {
         super.setHash(mediaHash, mimeType);
         if (mediaHash.length() > 0) {
-            _preview.setUrl(_photo.getPath(GWT.isScript()));
+            _preview.setUrl(
+                MsoyEntryPoint.toMediaPath(_photo.getThumbnailPath()));
         }
     }
 

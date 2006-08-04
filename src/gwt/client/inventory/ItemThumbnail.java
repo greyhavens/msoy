@@ -12,6 +12,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.msoy.item.data.Item;
 import com.threerings.msoy.item.data.Photo;
 
+import client.MsoyEntryPoint;
+
 /**
  * Displays a thumbnail version of an item.
  *
@@ -25,15 +27,8 @@ public class ItemThumbnail extends VerticalPanel
 {
     public ItemThumbnail (Item item)
     {
-        // TODO: handle absolute inventory image URLs (real thumbnails rather
-        // than just icons)
-        Image image;
-        if (item instanceof Photo) {
-            image = new Image(((Photo)item).getPath(GWT.isScript()));
-        } else {
-            image = new Image(
-                "images/items/" + item.getType().toLowerCase() + ".png");
-        }
+        Image image = new Image(
+            MsoyEntryPoint.toMediaPath(item.getThumbnailPath()));
         image.setStyleName("item_thumb_image");
         add(image);
         Label label = new Label(item.getInventoryDescrip());

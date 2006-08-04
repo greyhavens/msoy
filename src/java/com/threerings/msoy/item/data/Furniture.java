@@ -28,4 +28,10 @@ public class Furniture extends MediaItem
     {
         return toInventoryDescrip(description);
     }
+
+    // @Override // from Item
+    public String getThumbnailPath ()
+    {
+        return getMediaPath();
+    }
 }

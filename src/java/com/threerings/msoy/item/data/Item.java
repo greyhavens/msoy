@@ -44,6 +44,14 @@ public abstract class Item implements Streamable, IsSerializable
     public abstract String getInventoryDescrip ();
 
     /**
+     * Returns the path to a thumbnail image for this item.
+     */
+    public String getThumbnailPath ()
+    {
+        return "/media/static/items/" + getType().toLowerCase() + ".png";
+    }
+
+    /**
      * A handy method for truncating some potentially long bit of text for use
      * in {@link #getInventoryDescrip}.
      */

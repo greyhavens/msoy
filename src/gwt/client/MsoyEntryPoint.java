@@ -31,6 +31,14 @@ public abstract class MsoyEntryPoint
         public MsoyEntryPoint createEntryPoint ();
     }
 
+    /**
+     * Makes our media work both inside and out of the GWT development shell.
+     */
+    public static String toMediaPath (String path)
+    {
+        return GWT.isScript() ? path : "http://localhost:8080" + path;
+    }
+
     // from interface EntryPoint
     public void onModuleLoad ()
     {

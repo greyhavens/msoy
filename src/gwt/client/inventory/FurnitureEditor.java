@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.data.Item;
 import com.threerings.msoy.item.data.Furniture;
 
+import client.MsoyEntryPoint;
+
 /**
  * A class for creating and editing {@link Furniture} digital items.
  */
@@ -56,7 +58,8 @@ public class FurnitureEditor extends MediaItemEditor
     {
         super.setHash(mediaHash, mimeType);
         if (mediaHash.length() > 0) {
-            _preview.setUrl(_furniture.getPath(GWT.isScript()));
+            _preview.setUrl(
+                MsoyEntryPoint.toMediaPath(_furniture.getThumbnailPath()));
         }
     }
 

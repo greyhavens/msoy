@@ -5,9 +5,12 @@ package client.profile;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.web.data.Profile;
+
+import client.MsoyEntryPoint;
 
 /**
  * Displays the photo and header bits of a member's profile.
@@ -16,7 +19,7 @@ public class HeaderPanel extends FlexTable
 {
     public HeaderPanel ()
     {
-        setWidget(0, 0, _photo = new HTML("photo"));
+        setWidget(0, 0, _photo = new Image());
         getFlexCellFormatter().setRowSpan(0, 0, 4);
 
         setWidget(0, 1, _name = new Label("name"));
@@ -32,9 +35,18 @@ public class HeaderPanel extends FlexTable
 
     public void setProfile (Profile profile)
     {
+        if (profile.photo != null) {
+            _photo.setUrl(
+                MsoyEntryPoint.toMediaPath(profile.photo.getThumbnailPath()));
+        }
+        _name.setText(profile.displayName);
+        _headline.setText(profile.headline);
+        _homepage.setHTML("<a href=\"" + profile.homePageURL + "\">" +
+                          profile.homePageURL + "</a>");
     }
 
-    protected HTML _photo, _homepage;
+    protected Image _photo;
+    protected HTML _homepage;
     protected Label _name, _headline, _laston;
     protected HTML _blog, _gallery, _hood;
 }
