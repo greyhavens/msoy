@@ -9,6 +9,11 @@
 server_name = msoy
 
 #
+# The hostname used by the client to connect to the game server
+
+server_host = game.metasoy.com
+
+#
 # The port on which the server listens for client and HTTP connections.
 
 # server_ports = 47624, 443

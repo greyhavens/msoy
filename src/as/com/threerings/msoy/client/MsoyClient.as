@@ -77,9 +77,8 @@ public class MsoyClient extends Client
             // nada: ExternalInterface isn't there. Oh well!
         }
 
-        //setServer("tasman.sea.earth.threerings.net", DEFAULT_SERVER_PORTS);
-        setServer("tasman.sea.earth.threerings.net", [ 4010 ]);
-        //setServer("ice.puzzlepirates.com", [ 4010 ]);
+        // configure our server and port info and logon
+        setServer(DeploymentConfig.serverHost, DeploymentConfig.serverPorts);
         logon();
     }
 

@@ -7,7 +7,7 @@
   <property name="copy.holder"      value="Three Rings Design, Inc."/>
 
   <!-- read in our deployment properties -->
-  <property file="deployment.properties"/>
+  <property file="server.properties"/>
   <property file="build.properties"/>
 
   <!-- things you probably don't want to change -->
@@ -57,8 +57,24 @@
     </java>
   </target> 
 
+  <!-- prepares to build our Flash client -->
+  <target name="asprepare">
+    <mkdir dir="pages/clients"/>
+    <tstamp>
+      <format property="build_time" pattern="M/yyyy" unit="month"/>
+    </tstamp>
+    <copy file="src/as/com/threerings/msoy/client/DeploymentConfig.as.tmpl"
+          tofile="src/as/com/threerings/msoy/client/DeploymentConfig.as">
+      <filterset>
+        <filter token="build_time" value="${build_time}"/>
+        <filter token="server_host" value="${server_host}"/>
+        <filter token="server_ports" value="${server_ports}"/>
+      </filterset>
+    </copy>
+  </target>
+
   <!-- builds our Flash client -->
-  <target name="asclient">
+  <target name="asclient" depends="asprepare">
     <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true">
       <arg value="-locale"/>
       <arg value="en_US"/>
@@ -83,7 +99,6 @@
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="src/mxml/Msoy.mxml"/>
     </java>
-    <mkdir dir="pages/clients"/>
     <copy file="src/mxml/Msoy.swf" todir="pages/clients"/>
   </target>
 
