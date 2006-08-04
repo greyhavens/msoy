@@ -33,6 +33,12 @@ public class MemberName extends Name
     }
 
     @Override
+    public int hashCode ()
+    {
+        return _memberId;
+    }
+
+    @Override
     public boolean equals (Object other)
     {
         if (other != null) {

@@ -30,6 +30,11 @@ public class MemberName extends Name
         return _memberId;
     }
 
+    override public function hashCode () :int
+    {
+        return _memberId;
+    }
+
     override public function equals (other :Object) :Boolean
     {
         if (other is MemberName) {
