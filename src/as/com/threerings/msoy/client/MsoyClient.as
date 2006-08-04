@@ -66,9 +66,16 @@ public class MsoyClient extends Client
         // register our logoff function as being available from javascript
         try {
             if (ExternalInterface.available) {
-                ExternalInterface.addCallback("msoyLogoff", function () :void {
-                    logoff(false);
-                });
+                ExternalInterface.addCallback("logoff",
+                    function (backAsGuest :Boolean) :void {
+                        // TODO
+                        logoff(false);
+                    });
+
+                ExternalInterface.addCallback("setCredentials",
+                    function (username :String, sessionToken :String) :void {
+                        // TODO
+                    });
 
             } else {
                 trace("Unable to communicate with javascript!");
