@@ -23,14 +23,16 @@ public class HeaderPanel extends FlexTable
         getFlexCellFormatter().setRowSpan(0, 0, 4);
 
         setWidget(0, 1, _name = new Label("name"));
+        _name.setStyleName("profile_name");
         getFlexCellFormatter().setColSpan(0, 1, 2);
         setWidget(1, 1, _headline = new Label("headline"));
+        _headline.setStyleName("profile_headline");
         setWidget(2, 1, _homepage = new HTML("homepage"));
-        setWidget(3, 1, _laston = new Label("laston"));
+        setWidget(3, 1, _laston = new Label("..."));
 
-        setWidget(1, 2, _blog = new HTML("blog"));
-        setWidget(2, 2, _gallery = new HTML("gallery"));
-        setWidget(3, 2, _hood = new HTML("hood"));
+        setWidget(1, 2, _blog = new HTML(""));
+        setWidget(2, 2, _gallery = new HTML(""));
+        setWidget(3, 2, _hood = new HTML(""));
     }
 
     public void setProfile (Profile profile)

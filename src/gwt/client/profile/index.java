@@ -3,9 +3,14 @@
 
 package client.profile;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
+
+import com.threerings.msoy.web.data.Profile;
+import com.threerings.msoy.web.data.WebCreds;
 
 import client.MsoyEntryPoint;
 
@@ -25,7 +30,7 @@ public class index extends MsoyEntryPoint
         };
     }
 
-    // @Override from MsoyEntryPoint
+    // @Override // from MsoyEntryPoint
     public void onPageLoad ()
     {
         RootPanel.get("content").add(_header = new HeaderPanel());
@@ -50,9 +55,39 @@ public class index extends MsoyEntryPoint
         }
     }
 
-    protected void displayProfile (int memberId)
+    // @Override // from MsoyEntryPoint
+    protected void didLogon (WebCreds creds)
     {
+        super.didLogon(creds);
+
+        // if we just logged on and weren't looking at someone elses profile,
+        // display ours
+        if (_profile == null) {
+            displayProfile(creds.memberId);
+        }
     }
 
+    protected void didLogoff ()
+    {
+        super.didLogoff();
+
+        // TODO: disable any pending edit; disallow further editing
+    }
+
+    protected void displayProfile (int memberId)
+    {
+        _ctx.profilesvc.loadProfile(_ctx.creds, memberId, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _profile = (Profile)result;
+                _header.setProfile(_profile);
+            }
+            public void onFailure (Throwable cause) {
+                // TODO: display friendly error
+                GWT.log("Failed to load profile", cause);
+            }
+        });
+    }
+
+    protected Profile _profile;
     protected HeaderPanel _header;
 }
