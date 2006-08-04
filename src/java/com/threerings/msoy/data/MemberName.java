@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data;
 
+import java.util.Comparator;
+
 import com.threerings.util.Name;
 
 /**
@@ -10,6 +12,17 @@ import com.threerings.util.Name;
  */
 public class MemberName extends Name
 {
+    /** A comparator for sorting Names by their display portion, case
+     * insensitively. */
+    public static final Comparator<Name> BY_DISPLAY_NAME =
+        new Comparator<Name>() {
+            public int compare (Name o1, Name o2)
+            {
+                return String.CASE_INSENSITIVE_ORDER.compare(
+                    o1.toString(), o2.toString());
+            }
+        };
+
     /** For unserialization. */
     public MemberName ()
     {
@@ -53,6 +66,22 @@ public class MemberName extends Name
             }
         }
         return false;
+    }
+
+    @Override
+    public int compareTo (Object o)
+    {
+        MemberName that = (MemberName) o;
+        int diff = this._memberId - that._memberId;
+        // memberId is the primary sorting key
+        if (diff != 0) {
+            return diff;
+        }
+
+        // return 0 if diff is the same (they have the same memberId)
+        // UNLESS the memberId is -1, in which case they're a guest
+        // and we compare by name
+        return (_memberId != -1) ? 0 : BY_DISPLAY_NAME.compare(this, that);
     }
 
     @Override
