@@ -5,13 +5,18 @@ import com.threerings.util.HashMap;
 import flash.display.Sprite;
 import flash.display.MovieClip;
 
+import flash.external.ExternalInterface;
+
 import flash.geom.Point;
 
 [SWF(width="400", height="400")]
-public class Reversi extends MovieClip
+public class Reversi extends Sprite
 {
     public function Reversi ()
     {
+        ExternalInterface.call("console.debug",
+            "this is my reversi board, stage=[" + stage + "]");
+
         _board = new Board(BOARD_SIZE);
         for (var xx :int = 0; xx < BOARD_SIZE; xx++) {
             for (var yy :int = 0; yy < BOARD_SIZE; yy++) {
@@ -21,11 +26,28 @@ public class Reversi extends MovieClip
                 addChild(piece);
             }
         }
+
+        var max :int = BOARD_SIZE * Piece.SIZE;
+//        width = height = max;
+
+        // draw the board
+        graphics.clear();
+        graphics.beginFill(0x777777);
+        graphics.drawRect(0, 0, max, max);
+        graphics.endFill();
+
+        graphics.lineStyle(2);
+        for (var ii :int = 0; ii <= BOARD_SIZE; ii++) {
+            var d :int = (ii * Piece.SIZE);
+            graphics.moveTo(0, d);
+            graphics.lineTo(max, d);
+
+            graphics.moveTo(d, 0);
+            graphics.lineTo(d, max);
+        }
+
         readBoard();
         showMoves();
-
-        width = BOARD_SIZE * Piece.SIZE;
-        height = BOARD_SIZE * Piece.SIZE;
     }
 
     public function pieceClicked (p :Point) :void

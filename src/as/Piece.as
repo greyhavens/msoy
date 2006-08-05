@@ -14,7 +14,7 @@ public class Piece extends Sprite
     {
         _reversi = reversi;
         _coord = coordinate;
-        height = width = SIZE;
+//        height = width = SIZE;
         x = SIZE * _coord.x;
         y = SIZE * _coord.y;
 
@@ -30,7 +30,6 @@ public class Piece extends Sprite
 
         if (pieceType != Board.NO_PIECE) {
             graphics.beginFill(uint(COLORS[pieceType]));
-            graphics.beginFill(0xFF00FF);
             graphics.drawCircle(SIZE/2, SIZE/2, SIZE/2);
         }
 
