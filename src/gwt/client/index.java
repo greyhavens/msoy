@@ -50,7 +50,7 @@ public class index extends MsoyEntryPoint
         if ("home".equals(token)) {
             // don't show the flash client in the GWT shell
             if (GWT.isScript()) {
-                if (_client != null) {
+                if (_client == null) {
                     _client = new FlashWidget("asclient");
                     _client.setMovie("/clients/Msoy.swf");
                     _client.setSize(900, 600);
