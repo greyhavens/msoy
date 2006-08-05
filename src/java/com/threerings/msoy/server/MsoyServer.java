@@ -26,6 +26,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.parlor.server.ParlorManager;
+
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.server.WhirledServer;
 import com.threerings.whirled.server.persist.SceneRepository;
@@ -64,6 +66,9 @@ public class MsoyServer extends WhirledServer
 
     /** Provides spot-related services. */
     public static SpotProvider spotProv;
+
+    /** The parlor manager in operation on this server. */
+    public static ParlorManager parlorMan = new ParlorManager();
 
     /** Handles HTTP servlet requests. */
     public static MsoyHttpServer httpServer;
@@ -118,6 +123,7 @@ public class MsoyServer extends WhirledServer
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), true);
+        parlorMan.init(invmgr, plreg);
         sceneRepo = (MsoySceneRepository) _screp;
         memberRepo = new MemberRepository(conProv);
         memberMan = new MemberManager(memberRepo);
