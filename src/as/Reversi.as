@@ -5,8 +5,6 @@ import com.threerings.util.HashMap;
 import flash.display.Sprite;
 import flash.display.MovieClip;
 
-import flash.external.ExternalInterface;
-
 import flash.geom.Point;
 
 [SWF(width="400", height="400")]
@@ -14,9 +12,6 @@ public class Reversi extends Sprite
 {
     public function Reversi ()
     {
-        ExternalInterface.call("console.debug",
-            "this is my reversi board, stage=[" + stage + "]");
-
         _board = new Board(BOARD_SIZE);
         for (var xx :int = 0; xx < BOARD_SIZE; xx++) {
             for (var yy :int = 0; yy < BOARD_SIZE; yy++) {
@@ -32,11 +27,11 @@ public class Reversi extends Sprite
 
         // draw the board
         graphics.clear();
-        graphics.beginFill(0x777777);
+        graphics.beginFill(0x77FF77);
         graphics.drawRect(0, 0, max, max);
         graphics.endFill();
 
-        graphics.lineStyle(2);
+        graphics.lineStyle(1.2);
         for (var ii :int = 0; ii <= BOARD_SIZE; ii++) {
             var d :int = (ii * Piece.SIZE);
             graphics.moveTo(0, d);
