@@ -74,6 +74,11 @@ public class MsoyContext
         return _client;
     }
 
+    public function getRootPanel () :DisplayObject
+    {
+        return _app;
+    }
+
     /**
      * Convenience method.
      */

@@ -27,6 +27,9 @@ import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MemberName;
+
+import com.threerings.msoy.game.client.InvitePanel;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -45,6 +48,7 @@ public class RoomController extends SceneController
 
     public static const ALTER_FRIEND :String = "AlterFriend";
     public static const TELL :String = "Tell";
+    public static const GAME_INVITE :String = "GameInvite";
 
     public static const TEMP_CLEAR_SCENE_CACHE :String = "clrScenes";
 
@@ -148,7 +152,9 @@ public class RoomController extends SceneController
             menuItems = [
                 [ _mctx.xlate(isFriend ? "b.removeAsFriend" : "b.addAsFriend"),
                     null, ALTER_FRIEND, [memId, !isFriend] ],
-                [ _mctx.xlate("b.tell"), null, TELL, memId]
+                [ _mctx.xlate("b.tell"), null, TELL, memId ],
+                [ _mctx.xlate("b.inviteGame"), null, GAME_INVITE,
+                    occInfo.username ]
             ];
         }
 
@@ -168,6 +174,14 @@ public class RoomController extends SceneController
             (_mctx.getClient().requireService(MemberService) as MemberService);
         msvc.alterFriend(_mctx.getClient(), friendId, alteration,
             new ReportingListener(_mctx));
+    }
+
+    /**
+     * Handles GAME_INVITE.
+     */
+    public function handleGameInvite (invitee :MemberName) :void
+    {
+        new InvitePanel(_mctx, invitee);
     }
 
     /**

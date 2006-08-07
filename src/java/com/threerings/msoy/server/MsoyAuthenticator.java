@@ -259,7 +259,9 @@ public class MsoyAuthenticator extends Authenticator
             // replace the username in their credentials with the canonical
             // name in their user record as that username will later be stuffed
             // into their user object
-            creds.setUsername(new Name(account.accountName));
+            if (member != null) {
+                creds.setUsername(member.getName());
+            }
 
             // log.info("User logged on [user=" + user.username + "].");
             rdata.code = MsoyAuthResponseData.SUCCESS;
