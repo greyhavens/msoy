@@ -102,6 +102,36 @@
     <copy file="src/mxml/Msoy.swf" todir="pages/clients"/>
   </target>
 
+  <!-- builds our Flash debug client -->
+  <target name="asdebug" depends="asprepare">
+    <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true">
+      <arg value="-locale"/>
+      <arg value="en_US"/>
+      <arg value="-compiler.debug"/>
+      <arg value="-compiler.verbose-stacktraces=true"/>
+      <arg value="-compiler.library-path"/>
+      <arg value="lib"/>
+      <arg value="lib/as-compiler/frameworks/libs"/>
+      <arg value="lib/as-compiler/frameworks/locale/en_US"/>
+      <arg value="-load-config"/>
+      <arg value="lib/as-compiler/frameworks/flex-config.xml"/>
+      <arg value="-link-report"/>
+      <arg value="/tmp/link-report.txt"/>
+      <arg value="-resource-bundle-list"/>
+      <arg value="/tmp/bundles.list"/>
+      <arg value="-compiler.warn-class-is-sealed=true"/>
+      <arg value="-compiler.warn-constructor-returns-value=true"/>
+      <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
+      <arg value="-compiler.source-path=projects/narya/src/as/"/>
+      <arg value="-compiler.source-path=projects/vilya/src/as/"/>
+      <arg value="-compiler.source-path=src/as/"/>
+      <arg value="-compiler.source-path=src/css/"/>
+      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
+      <arg value="src/mxml/Msoy.mxml"/>
+    </java>
+    <copy file="src/mxml/Msoy.swf" todir="pages/clients"/>
+  </target>
+
   <!-- generates additional methods for distributed object classes -->
   <target name="gendobj" depends="prepare">
     <taskdef name="dobj"
