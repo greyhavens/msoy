@@ -42,6 +42,7 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.chat.client.ChatPopper;
+import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MediaData;
@@ -52,11 +53,12 @@ import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 
 public class RoomView extends AbstractRoomView
-    implements SetListener, ChatDisplay
+    implements ContextMenuProvider, SetListener, ChatDisplay
 {
-    public function RoomView (ctx :MsoyContext)
+    public function RoomView (ctx :MsoyContext, ctrl :RoomController)
     {
         super(ctx);
+        _ctrl = ctrl;
     }
 
     override protected function updateComplete (evt :FlexEvent) :void
@@ -131,6 +133,12 @@ public class RoomView extends AbstractRoomView
     public function dimFurni (setDim :Boolean) :void
     {
         setActive(_furni, !setDim);
+    }
+
+    // from ContextMenuProvider
+    public function populateContextMenu (menuItems :Array) :void
+    {
+        _ctrl.populateContextMenu(menuItems);
     }
 
     override public function scrollViewBy (xpixels :int) :Boolean
@@ -443,6 +451,9 @@ public class RoomView extends AbstractRoomView
 
         ChatPopper.popUp(msg, avatar);
     }
+
+    /** Our controller. */
+    protected var _ctrl :RoomController;
 
     /** The background music in the scene. */
     protected var _music :SoundPlayer;

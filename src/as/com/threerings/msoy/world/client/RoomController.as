@@ -5,7 +5,6 @@ import flash.display.InteractiveObject;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
-import flash.ui.ContextMenu;
 import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 
@@ -60,12 +59,7 @@ public class RoomController extends SceneController
     // documentation inherited
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        _roomView = new RoomView(ctx as MsoyContext);
-
-        _menu = new ContextMenu();
-        // disallow all builtins, but allow printing
-        _menu.hideBuiltInItems();
-        _roomView.contextMenu = _menu;
+        _roomView = new RoomView(ctx as MsoyContext, this);
         return _roomView;
     }
 
@@ -78,7 +72,6 @@ public class RoomController extends SceneController
 
         // get a copy of the scene
         _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
-        configureContextMenu();
 
         _walkTarget.visible = false;
         _roomView.rawChildren.addChild(_walkTarget);
@@ -106,7 +99,6 @@ public class RoomController extends SceneController
 
         _scene = null;
         _roomObj = null;
-        configureContextMenu();
 
         super.didLeavePlace(plobj);
     }
@@ -178,38 +170,37 @@ public class RoomController extends SceneController
             new ReportingListener(_mctx));
     }
 
-    protected function configureContextMenu () :void
+    /**
+     * Called by the RoomView prior to a context menu popping up.
+     */
+    public function populateContextMenu (menuItems :Array) :void
     {
-        // first remove any custom actions that were already in there
-        _menu.customItems.length = 0; // clear
-
         if (_scene == null) {
             return;
         }
 
         if (_editor != null) {
-            addMenuItem(SAVE_EDITS);
-            addMenuItem(DISCARD_EDITS);
+            menuItems.push(createMenuItem(SAVE_EDITS));
+            menuItems.push(createMenuItem(DISCARD_EDITS));
 
         } else if (true) { // TODO: if canEditScene...
-            addMenuItem(EDIT_SCENE);
+            menuItems.push(createMenuItem(EDIT_SCENE));
         }
 
-        addMenuItem(TEMP_CLEAR_SCENE_CACHE, null, true);
+        menuItems.push(createMenuItem(TEMP_CLEAR_SCENE_CACHE, null, true));
     }
 
     /**
      * Add the specified command to the context menu for the current scene.
      */
-    protected function addMenuItem (
+    protected function createMenuItem (
             cmd :String, arg :Object = null, separatorBefore :Boolean = false,
             enabled :Boolean = true, visible :Boolean = true)
-            :void
+            :ContextMenuItem
     {
         var menuText :String = _mctx.xlate("b." + cmd);
-        _menu.customItems.push(
-            MenuUtil.createControllerMenuItem(menuText, cmd, arg,
-                separatorBefore, enabled, visible));
+        return MenuUtil.createControllerMenuItem(menuText, cmd, arg,
+                separatorBefore, enabled, visible);
     }
 
     /**
@@ -224,7 +215,6 @@ public class RoomController extends SceneController
         _walkTarget.visible = false;
 
         _editor = new EditRoomHelper(_mctx, _roomView);
-        configureContextMenu();
     }
 
     /**
@@ -239,7 +229,6 @@ public class RoomController extends SceneController
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
         _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-        configureContextMenu();
 
         // possibly save the edits
         if (edits != null) {
@@ -341,17 +330,6 @@ public class RoomController extends SceneController
         _roomView.updateAllFurniAndPortals();
     }
 
-    /**
-     * Callback when an item is selected from the context menu.
-     */
-/*
-    protected function menuItemSelected (event :ContextMenuEvent) :void
-    {
-        var item :ContextMenuItem = (event.target as ContextMenuItem);
-        var cmd :String = item.caption
-    }
-*/
-
     /** The life-force of the client. */
     protected var _mctx :MsoyContext;
 
@@ -368,8 +346,5 @@ public class RoomController extends SceneController
 
     /** Are we editing the current scene? */
     protected var _editor :EditRoomHelper;
-
-    /** The context menu. */
-    protected var _menu :ContextMenu;
 }
 }

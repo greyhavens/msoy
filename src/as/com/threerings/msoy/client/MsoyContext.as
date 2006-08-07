@@ -134,6 +134,14 @@ public class MsoyContext
         return _mediaDir;
     }
 
+    /**
+     * Get the message manager.
+     */
+    public function getMessageManager () :MessageManager
+    {
+        return _msgMgr;
+    }
+
     // documentation inherited from superinterface CrowdContext
     public function setPlaceView (view :PlaceView) :void
     {

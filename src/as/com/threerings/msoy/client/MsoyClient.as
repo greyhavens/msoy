@@ -1,8 +1,11 @@
 package com.threerings.msoy.client {
 
+import flash.display.DisplayObject;
 import flash.display.Stage;
 
 import flash.external.ExternalInterface;
+
+import flash.events.ContextMenuEvent;
 
 import flash.system.Security;
 
@@ -34,6 +37,8 @@ import com.threerings.whirled.data.SceneMarshaller;
 import com.threerings.whirled.spot.data.SpotMarshaller;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
+import com.threerings.parlor.data.ParlorMarshaller;
+
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
@@ -58,6 +63,10 @@ public class MsoyClient extends Client
         var menu :ContextMenu = new ContextMenu();
         menu.hideBuiltInItems();
         app.contextMenu = menu;
+        menu.addEventListener(
+            ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
+        menu.addEventListener(
+            ContextMenuEvent.MENU_ITEM_SELECT, contextMenuItemSelected);
 
 //        Security.allowDomain("*"); // TODO
 
@@ -124,6 +133,35 @@ public class MsoyClient extends Client
         }
     }
 
+    /**
+     * Called to process ContextMenuEvent.MENU_SELECT.
+     */
+    protected function contextMenuWillPopUp (event :ContextMenuEvent) :void
+    {
+        var disp :DisplayObject = event.mouseTarget;
+        var menu :ContextMenu = (event.target as ContextMenu);
+        var custom :Array = menu.customItems;
+        custom.length = 0;
+
+        do {
+            if (disp is ContextMenuProvider) {
+                (disp as ContextMenuProvider).populateContextMenu(custom);
+            }
+
+            disp = disp.parent;
+        } while (disp != null);
+
+        // then, the menu will pop up
+    }
+
+    /**
+     * Called to process ContextMenuEvent.MENU_ITEM_SELECT.
+     */
+    protected function contextMenuItemSelected (event :ContextMenuEvent) :void
+    {
+        trace("context menu: " + event.mouseTarget.contextMenu);
+    }
+
     public function fuckingCompiler () :void
     {
         var i :int = TimeBaseMarshaller.GET_TIME_OID;
@@ -141,6 +179,7 @@ public class MsoyClient extends Client
         c = SpotSceneObject;
         c = MsoyAuthResponseData;
         c = MemberMarshaller;
+        c = ParlorMarshaller;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("global")]
