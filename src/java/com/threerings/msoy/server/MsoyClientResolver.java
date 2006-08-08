@@ -31,7 +31,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     /**
      * Return true if we're resolving a guest.
      */
-    protected boolean resolvingGuest ()
+    protected boolean isResolvingGuest ()
     {
         return !(_username instanceof MemberName) ||
             (((MemberName) _username).getMemberId() == -1);
@@ -44,7 +44,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         super.resolveClientData(clobj);
 
         MemberObject userObj = (MemberObject) clobj;
-        if (resolvingGuest()) {
+        if (isResolvingGuest()) {
             resolveGuest(userObj);
 
         } else {
