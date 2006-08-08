@@ -12,6 +12,7 @@ import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.msoy.chat.client.ChatControl;
 
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.data.MemberObject;
 
@@ -76,6 +77,15 @@ public class ControlBar extends Canvas
             friendsBtn.width = 38;
             friendsBtn.height = 59;
             addChild(friendsBtn);
+
+            // set up a guest login button
+            var guestBtn :CommandButton =
+                new CommandButton(MsoyController.LOGON);
+            guestBtn.x = 753;
+            guestBtn.y = 0;
+            guestBtn.width = 47;
+            guestBtn.height = 59;
+            addChild(guestBtn);
 
         } else {
             setStyle("backgroundImage", null);

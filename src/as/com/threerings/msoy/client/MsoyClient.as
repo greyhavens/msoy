@@ -71,6 +71,7 @@ public class MsoyClient extends Client
 //        Security.allowDomain("*"); // TODO
 
         _ctx = new MsoyContext(this, app);
+        LoggingTargets.configureLogging(_ctx);
 
         // register our logoff function as being available from javascript
         try {

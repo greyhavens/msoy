@@ -17,6 +17,7 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MemberName;
 
 public class FriendsList extends List
     implements SetListener
@@ -84,7 +85,7 @@ public class FriendsList extends List
     protected function updateFriends () :void
     {
         var friends :Array = _userObj.friends.toArray();
-        ArrayUtil.sort(friends);
+        friends.sort(MemberName.BY_DISPLAY_NAME);
         dataProvider = friends;
     }
 

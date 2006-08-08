@@ -3,6 +3,7 @@ package com.threerings.msoy.client {
 import flash.external.ExternalInterface;
 
 import mx.logging.Log;
+import mx.logging.ILoggingTarget;
 
 import com.threerings.msoy.data.MemberObject;
 
@@ -15,20 +16,30 @@ public class LoggingTargets
 
         // for now, everything logs to the FireBug console
         try {
-            if (ExternalInterface.available) {
+            if (_bugTarget == null && ExternalInterface.available) {
                 ExternalInterface.call("console.debug",
                         "Msoy console logging enabled");
-                mx.logging.Log.addTarget(new FireBugTarget());
+                _bugTarget = new FireBugTarget();
+                mx.logging.Log.addTarget(_bugTarget);
             }
         } catch (err :Error) {
             // oh well!
         }
 
         // admins log to the chatbox
-        if (userObj.getTokens().isAdmin()) {
-            mx.logging.Log.addTarget(new ChatTarget(ctx));
+        if (userObj != null && userObj.getTokens().isAdmin()) {
+            if (_chatTarget == null) {
+                _chatTarget = new ChatTarget(ctx);
+                mx.logging.Log.addTarget(_chatTarget);
+            }
+        } else if (_chatTarget != null) {
+            mx.logging.Log.removeTarget(_chatTarget);
+            _chatTarget = null;
         }
     }
+
+    protected static var _bugTarget :ILoggingTarget;
+    protected static var _chatTarget :ILoggingTarget;
 }
 }
 
@@ -82,6 +93,7 @@ class FireBugTarget extends LineFormattedTarget
 
     override mx_internal function internalLog (msg :String) :void
     {
+/*
         // TEMP: needed because of bug in ExternalInterface
         // (long lines are unterminated)
         var max_length :int = 79;
@@ -91,6 +103,7 @@ class FireBugTarget extends LineFormattedTarget
             msg = msg.substring(max_length);
         }
         // END: temp
+*/
 
         ExternalInterface.call("console.debug", msg);
     }
