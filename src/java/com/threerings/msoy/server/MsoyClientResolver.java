@@ -10,6 +10,7 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MemberName;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
@@ -27,6 +28,15 @@ public class MsoyClientResolver extends CrowdClientResolver
         return MemberObject.class;
     }
 
+    /**
+     * Return true if we're resolving a guest.
+     */
+    protected boolean resolvingGuest ()
+    {
+        return !(_username instanceof MemberName) ||
+            (((MemberName) _username).getMemberId() == -1);
+    }
+
     @Override
     protected void resolveClientData (ClientObject clobj)
         throws Exception
@@ -34,7 +44,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         super.resolveClientData(clobj);
 
         MemberObject userObj = (MemberObject) clobj;
-        if (userObj.isGuest()) {
+        if (resolvingGuest()) {
             resolveGuest(userObj);
 
         } else {
