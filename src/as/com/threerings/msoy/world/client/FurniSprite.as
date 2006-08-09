@@ -95,6 +95,9 @@ public class FurniSprite extends MsoySprite
      */
     protected function configureAction () :void
     {
+        // clear out any residuals from the last action
+        toolTip = null;
+
         var action :Object = _furni.action;
         if (action == null) {
             return;

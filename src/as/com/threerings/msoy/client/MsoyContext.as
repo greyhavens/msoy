@@ -158,6 +158,14 @@ public class MsoyContext
         return _msgMgr;
     }
 
+    /**
+     * Get the top-level msoy controller.
+     */
+    public function getMsoyController () :MsoyController
+    {
+        return _controller;
+    }
+
     // documentation inherited from superinterface CrowdContext
     public function setPlaceView (view :PlaceView) :void
     {

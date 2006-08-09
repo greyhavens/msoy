@@ -141,7 +141,11 @@ public class RoomController extends SceneController
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
             // create a menu for clicking on ourselves
-            // TODO
+
+            // TEMP: allow us to start a game with ourselves
+            menuItems.push( [
+                _mctx.xlate("b.inviteGame"), null, GAME_INVITE,
+                occInfo.username ]);
 
         } else {
             // create a menu for clicking on someone else
@@ -152,7 +156,8 @@ public class RoomController extends SceneController
 
             if (!isGuest) {
                 menuItems.push( [
-                    _mctx.xlate(isFriend ? "b.removeAsFriend" : "b.addAsFriend"),
+                    _mctx.xlate(isFriend ? "b.removeAsFriend"
+                                         : "b.addAsFriend"),
                     null, ALTER_FRIEND, [memId, !isFriend] ]);
                 menuItems.push( [
                     _mctx.xlate("b.inviteGame"), null, GAME_INVITE,

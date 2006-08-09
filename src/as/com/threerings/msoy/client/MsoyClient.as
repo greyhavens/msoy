@@ -71,25 +71,8 @@ public class MsoyClient extends Client
         _ctx = new MsoyContext(this, app);
         LoggingTargets.configureLogging(_ctx);
 
-        // register our logoff function as being available from javascript
-        try {
-            if (ExternalInterface.available) {
-                ExternalInterface.addCallback("logoff",
-                    function (backAsGuest :Boolean) :void {
-                        // TODO
-                        logoff(false);
-                    });
-
-                ExternalInterface.addCallback("setCredentials",
-                    function (username :String, sessionToken :String) :void {
-                        // TODO
-                    });
-
-            } else {
-                trace("Unable to communicate with javascript!");
-            }
-        } catch (err :Error) {
-            // nada: ExternalInterface isn't there. Oh well!
+        if (!configureExternalFunctions()) {
+            log.info("Unable to configure external functions.");
         }
 
         // configure our server and port info and logon
@@ -130,6 +113,45 @@ public class MsoyClient extends Client
                         "local storage capacity.");
                 }));
         }
+    }
+
+    /**
+     * Configure our external functions that we expose to javascript.
+     *
+     * @return true if successfully configured.
+     */
+    protected function configureExternalFunctions () :Boolean
+    {
+        try {
+            if (!ExternalInterface.available) {
+                return false;
+            }
+
+            ExternalInterface.addCallback("logoff",
+                function (backAsGuest :Boolean = false) :void {
+                    if (backAsGuest) {
+                        // have the controller handle it
+                        // it will logoff, then back as a guest
+                        _ctx.getMsoyController().handleLogon(null);
+
+                    } else {
+                        logoff(false);
+                    }
+                });
+
+            ExternalInterface.addCallback("setCredentials",
+                function (username :String, sessionToken :String) :void {
+                    Prefs.setUsername(username);
+                    Prefs.setSessionToken(sessionToken);
+                    // TODO: log us on if not?
+                });
+
+        } catch (err :Error) {
+            // nada: ExternalInterface isn't there. Oh well!
+            return false;
+        }
+
+        return true;
     }
 
     /**
