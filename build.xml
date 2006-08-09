@@ -61,10 +61,11 @@
   <target name="asprepare">
     <mkdir dir="pages/clients"/>
     <tstamp>
-      <format property="build_time" pattern="M/yyyy" unit="month"/>
+      <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss"/>
     </tstamp>
     <copy file="src/as/com/threerings/msoy/client/DeploymentConfig.as.tmpl"
-          tofile="src/as/com/threerings/msoy/client/DeploymentConfig.as">
+          tofile="src/as/com/threerings/msoy/client/DeploymentConfig.as"
+          overwrite="true">
       <filterset>
         <filter token="build_time" value="${build_time}"/>
         <filter token="server_host" value="${server_host}"/>
