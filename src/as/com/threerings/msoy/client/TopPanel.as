@@ -89,7 +89,12 @@ public class TopPanel extends Canvas
             //place.setActualSize(width, placeHeight);
 
             // TODO: this is a hack
-            (place as Object).setViewSize(width, placeHeight);
+            try {
+                (place as Object).setViewSize(width, placeHeight);
+            } catch (err :ReferenceError) {
+                Log.getLog(this).warning("placeView does not have a " +
+                    "setViewSize method. We need to make this standard anyway.");
+            }
             place.move(0, 0);
         }
     }

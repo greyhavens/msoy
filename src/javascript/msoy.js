@@ -6,7 +6,7 @@ window.onbeforeunload = function ()
     } else {
         msoy = document.Msoy[1];
     }
-    msoy.msoyLogoff();
+    msoy.logoff();
 }
 
 // -----------------------------------------------------------------------------

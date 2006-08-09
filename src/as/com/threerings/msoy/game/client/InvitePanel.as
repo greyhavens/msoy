@@ -67,6 +67,9 @@ public class InvitePanel extends VBox
         addChild(butbox);
     }
 
+    /**
+     * Close the dialog.
+     */
     protected function close () :void
     {
         PopUpManager.removePopUp(this);
@@ -75,8 +78,7 @@ public class InvitePanel extends VBox
     protected function okClicked (event :MouseEvent) :void
     {
         var gc :GameConfig = _configger.getGameConfig();
-
-        // HERE
+        _ctx.getGameDirector().sendInvite(_invitee, gc);
 
         close();
     }

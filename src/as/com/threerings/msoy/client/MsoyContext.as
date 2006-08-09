@@ -29,6 +29,8 @@ import com.threerings.whirled.util.WhirledContext;
 import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
 import com.threerings.msoy.data.MemberObject;
 
+import com.threerings.msoy.game.client.GameDirector;
+
 public class MsoyContext
     implements WhirledContext, ParlorContext
 {
@@ -46,6 +48,7 @@ public class MsoyContext
         _spotDir = new SpotSceneDirector(this, _locDir, _sceneDir);
         _mediaDir = new MediaDirector(this);
         _parlorDir = new ParlorDirector(this);
+        _gameDir = new GameDirector(this);
 
         // set up the top panel
         _topPanel = new TopPanel(this, _app);
@@ -124,6 +127,14 @@ public class MsoyContext
     }
 
     /**
+     * Get the GameDirector.
+     */
+    public function getGameDirector () :GameDirector
+    {
+        return _gameDir;
+    }
+
+    /**
      * Get the SpotSceneDirector.
      */
     public function getSpotSceneDirector () :SpotSceneDirector
@@ -166,7 +177,7 @@ public class MsoyContext
     {
         args.unshift(key);
         var mb :MessageBundle = _msgMgr.getBundle("general");
-        return mb.get.call(mb, args);
+        return mb.get.apply(mb, args);
     }
 
     public function TEMPClearSceneCache () :void
@@ -195,6 +206,8 @@ public class MsoyContext
     protected var _mediaDir :MediaDirector;
 
     protected var _parlorDir :ParlorDirector;
+
+    protected var _gameDir :GameDirector;
 
     protected var _sceneRepo :SharedObjectSceneRepository;
 }

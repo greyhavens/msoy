@@ -65,8 +65,6 @@ public class MsoyClient extends Client
         app.contextMenu = menu;
         menu.addEventListener(
             ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
-        menu.addEventListener(
-            ContextMenuEvent.MENU_ITEM_SELECT, contextMenuItemSelected);
 
 //        Security.allowDomain("*"); // TODO
 
@@ -155,14 +153,6 @@ public class MsoyClient extends Client
         // then, the menu will pop up
     }
 
-    /**
-     * Called to process ContextMenuEvent.MENU_ITEM_SELECT.
-     */
-    protected function contextMenuItemSelected (event :ContextMenuEvent) :void
-    {
-        trace("context menu: " + event.mouseTarget.contextMenu);
-    }
-
     public function fuckingCompiler () :void
     {
         var i :int = TimeBaseMarshaller.GET_TIME_OID;
@@ -185,6 +175,7 @@ public class MsoyClient extends Client
         // these cause bundles to be compiled in.
         [ResourceBundle("global")]
         [ResourceBundle("general")]
+        [ResourceBundle("game")]
         var rb :ResourceBundle; // this needs to be here for the above lines
     }
 

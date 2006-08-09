@@ -29,8 +29,6 @@ import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
 
-import com.threerings.msoy.game.client.InvitePanel;
-
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
@@ -140,22 +138,26 @@ public class RoomController extends SceneController
     {
         var occInfo :MemberInfo = avatar.getOccupantInfo();
         var us :MemberObject = _mctx.getClientObject();
-        var menuItems :Array;
+        var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
             // create a menu for clicking on ourselves
-            menuItems = [];
+            // TODO
 
         } else {
             // create a menu for clicking on someone else
             var memId :int = occInfo.getMemberId();
+            var isGuest :Boolean = (memId == -1);
             var isFriend :Boolean = us.friends.containsKey(memId);
-            menuItems = [
-                [ _mctx.xlate(isFriend ? "b.removeAsFriend" : "b.addAsFriend"),
-                    null, ALTER_FRIEND, [memId, !isFriend] ],
-                [ _mctx.xlate("b.tell"), null, TELL, memId ],
-                [ _mctx.xlate("b.inviteGame"), null, GAME_INVITE,
-                    occInfo.username ]
-            ];
+            menuItems.push([ _mctx.xlate("b.tell"), null, TELL, memId ]);
+
+            if (!isGuest) {
+                menuItems.push( [
+                    _mctx.xlate(isFriend ? "b.removeAsFriend" : "b.addAsFriend"),
+                    null, ALTER_FRIEND, [memId, !isFriend] ]);
+                menuItems.push( [
+                    _mctx.xlate("b.inviteGame"), null, GAME_INVITE,
+                    occInfo.username ]);
+            }
         }
 
         var menu :CommandMenu = CommandMenu.createMenu(avatar, menuItems);
@@ -181,7 +183,7 @@ public class RoomController extends SceneController
      */
     public function handleGameInvite (invitee :MemberName) :void
     {
-        new InvitePanel(_mctx, invitee);
+        _mctx.getGameDirector().configureInvite(invitee);
     }
 
     /**

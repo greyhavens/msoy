@@ -8,12 +8,15 @@ import com.threerings.util.MessageBundle;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
+import com.threerings.crowd.client.PlaceController;
+
 import com.threerings.parlor.game.client.GameConfigurator;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.data.MediaData;
 
 import com.threerings.msoy.game.client.FlashGameConfigurator;
+import com.threerings.msoy.game.client.FlashGameController;
 
 /**
  * A game config for a simple multiplayer flash game.
@@ -25,6 +28,11 @@ public class FlashGameConfig extends GameConfig
 
     /** The media that is the game we're going to play. */
     public var game :MediaData;
+
+    override public function createController () :PlaceController
+    {
+        return new FlashGameController();
+    }
 
     override public function getBundleName () :String
     {

@@ -77,12 +77,6 @@ public class FurniSprite extends MsoySprite
     }
 
     // documentation inherited
-    override public function isInteractive () :Boolean
-    {
-        return _desc.isInteractive();
-    }
-
-    // documentation inherited
     override protected function getHoverColor () :uint
     {
         return 0xe0e040; // yellow

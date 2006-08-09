@@ -657,7 +657,7 @@ public class MsoySprite extends Box
 
     public function isInteractive () :Boolean
     {
-        return false;
+        return _desc.isInteractive();
     }
 
     public function hasAction () :Boolean

@@ -22,6 +22,7 @@ import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MemberName;
 
 /**
  * Represents an attached Msoy client on the server-side.
@@ -115,7 +116,7 @@ public class MsoyClient extends WhirledClient
         while (val.length() < 3) {
             val = "0" + val;
         }
-        return new Name("guest" + val);
+        return new MemberName("guest" + val, -1);
     }
     protected static int _guestCount;
     // END: Temp

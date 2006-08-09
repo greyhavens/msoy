@@ -20,7 +20,7 @@ public class Board
             for (var ii :int = 0; ii < _data.length; ii++) {
                 _data[ii] = NO_PIECE;
             }
-            var half :int = _dimension / 2;
+            var half :int = (_dimension - 1) / 2;
             setPiece(half, half, WHITE_IDX);
             setPiece(half + 1, half, BLACK_IDX);
             setPiece(half, half + 1, BLACK_IDX);
