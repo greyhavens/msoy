@@ -7,6 +7,8 @@ import mx.core.UIComponent;
 
 import mx.containers.Canvas;
 
+import mx.controls.Label;
+
 import mx.events.ResizeEvent;
 
 import com.threerings.util.ArrayUtil;
@@ -25,6 +27,13 @@ public class TopPanel extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
+        // set up the build stamp label
+        _buildStamp = new Label();
+        _buildStamp.text = "Build: " + DeploymentConfig.buildTime;
+        _buildStamp.setStyle("color", "#FF6633");
+        addChild(_buildStamp);
+
+        // set up the control bar
         controlBar = new ControlBar(ctx);
         addChild(controlBar);
 
@@ -113,5 +122,8 @@ public class TopPanel extends Canvas
 
     /** The list of our friends. */
     protected var _friendsList :FriendsList;
+
+    /** A label indicating the build stamp for the client. */
+    protected var _buildStamp :Label;
 }
 }
