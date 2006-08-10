@@ -206,8 +206,7 @@ public class Board
     protected var _dimension :int;
 
     /** An array representing the current state of the board.
-     * Each element is null, 0, or 1.
-     */
+     * Each element is -1, 0, or 1. */
     protected var _data :Array;
 }
 }

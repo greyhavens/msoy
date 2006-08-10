@@ -169,6 +169,7 @@ public class MediaData
         [ "clothestest.swf", false ],
         [ "humanbase.swf", false ],
         [ "square100.png", false, new Point(50, 50) ],
+        [ "djamesbunny.swf", false, new Point(155, 360) ],
     ];
 
     public static const BASE_URL :String = "/media/static/";
