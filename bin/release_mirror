@@ -22,8 +22,7 @@ $MIRROR `find rsrc -name '*.jar'`
 
 # mirror the configuration files
 echo "** Mirroring configuration files..."
-$MIRROR server.conf *.properties build.xml log/README \
-    rsrc/config/resource/manager.properties
+$MIRROR server.conf *.properties build.xml log/README
 
 # mirror the server scripts
 echo "** Mirroring scripts..."
