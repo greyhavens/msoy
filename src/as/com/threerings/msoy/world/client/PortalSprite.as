@@ -51,8 +51,7 @@ public class PortalSprite extends MsoySprite
     // documentation inherited
     override protected function mouseClick (event :MouseEvent) :void
     {
-        dispatchEvent(
-            new CommandEvent(RoomController.PORTAL_CLICKED, _portal));
+        CommandEvent.dispatch(this, RoomController.PORTAL_CLICKED, _portal);
     }
 
     override public function getMediaScaleX () :Number

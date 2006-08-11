@@ -130,7 +130,7 @@ public class LogonPanel extends HBox
             MD5.hash(_password.text));
         creds.ident = ""; // TODO?
 
-        dispatchEvent(new CommandEvent(MsoyController.LOGON, creds));
+        CommandEvent.dispatch(this, MsoyController.LOGON, creds);
     }
 
     /** The giver of life. */

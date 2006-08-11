@@ -203,7 +203,7 @@ public class AvatarSprite extends MsoySprite
     override protected function mouseClick (event :MouseEvent) :void
     {
         // let's just post a command to our controller
-        dispatchEvent(new CommandEvent(RoomController.AVATAR_CLICKED, this));
+        CommandEvent.dispatch(this, RoomController.AVATAR_CLICKED, this);
     }
 
     override public function isInteractive () :Boolean
