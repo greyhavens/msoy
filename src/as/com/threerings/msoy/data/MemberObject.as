@@ -4,6 +4,7 @@
 package com.threerings.msoy.data {
 
 import com.threerings.util.Integer;
+import com.threerings.util.Name;
 import com.threerings.util.Short;
 
 import com.threerings.io.ObjectInputStream;
@@ -15,6 +16,8 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
+
+import com.threerings.msoy.data.MemberName;
 
 /**
  * Represents a connected msoy user.
@@ -73,11 +76,19 @@ public class MemberObject extends BodyObject
     public var friends :DSet;
 
     /**
+     * Return this member's unique id.
+     */
+    public function getMemberId () :int
+    {
+        return (memberName == null) ? 0 : memberName.getMemberId();
+    }
+
+    /**
      * Return true if this user is merely a guest.
      */
     public function isGuest () :Boolean
     {
-        return (memberName == null || memberName.getMemberId() <= 0);
+        return (getMemberId() <= 0);
     }
 
     // documentation inherited from superinterface ScenedBodyObject
@@ -102,6 +113,11 @@ public class MemberObject extends BodyObject
     override public function getTokens () :TokenRing
     {
         return tokens;
+    }
+
+    override public function getVisibleName () :Name
+    {
+        return memberName;
     }
 
     // AUTO-GENERATED: METHODS START
