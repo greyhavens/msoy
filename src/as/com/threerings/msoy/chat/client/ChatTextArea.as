@@ -54,6 +54,8 @@ public class ChatTextArea extends TextArea
 
     override public function parentChanged (p :DisplayObjectContainer) :void
     {
+        super.parentChanged(p);
+
         var chatdir :ChatDirector = _ctx.getChatDirector();
         if (p != null) {
             chatdir.addChatDisplay(this);

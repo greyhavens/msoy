@@ -8,6 +8,11 @@ import flash.events.Event;
 import mx.containers.Canvas;
 import mx.containers.VBox;
 
+import mx.core.Container;
+import mx.core.IChildList;
+
+import mx.utils.DisplayUtil;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
@@ -44,7 +49,7 @@ public class FlashGameView extends VBox
     public function willEnterPlace (plobj :PlaceObject) :void
     {
         _gameObject = (plobj as FlashGameObject);
-        notifyOfGame(this);
+        notifyOfGame(_gameView);
     }
 
     // from PlaceView
@@ -52,6 +57,15 @@ public class FlashGameView extends VBox
     {
         _gameObject = null;
     }
+
+//    override public function parentChanged (p :DisplayObjectContainer) :void
+//    {
+//        super.parentChanged(p);
+//
+//        if (p != null) {
+//            notifyOfGame(_gameView);
+//        }
+//    }
 
     /**
      * Handle ADDED events.
@@ -67,18 +81,15 @@ public class FlashGameView extends VBox
      * Find any children of the specified object that implement
      * com.metasoy.game.Game and provide them with the GameObject.
      */
-    protected function notifyOfGame (disp :DisplayObject) :void
+    protected function notifyOfGame (root :DisplayObject) :void
     {
-        if (disp is Game) {
-            (disp as Game).setGameObject(_gameObject.getImpl());
-        }
-
-        if (disp is DisplayObjectContainer) {
-            var cont :DisplayObjectContainer = (disp as DisplayObjectContainer);
-            for (var ii :int = 0; ii < cont.numChildren; ii++) {
-                notifyOfGame(cont.getChildAt(ii));
-            }
-        }
+        DisplayUtil.walkDisplayObjects(root,
+            function (disp :DisplayObject) :void
+            {
+                if (disp is Game) {
+                    (disp as Game).setGameObject(_gameObject.getImpl());
+                }
+            });
     }
 
     protected var _ctx :MsoyContext;

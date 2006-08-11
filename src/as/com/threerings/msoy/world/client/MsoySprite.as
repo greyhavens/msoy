@@ -490,9 +490,19 @@ public class MsoySprite extends Box
 
     protected function getContext (url :String) :LoaderContext
     {
+        /* Super unrestrictive */
+//        return null;
+
+        /* a little unrestrictive */
+//        return new LoaderContext(false, 
+//            ApplicationDomain.currentDomain,
+//            null);
+
+        /* more restrictive */
         return new LoaderContext(false, 
             new ApplicationDomain(ApplicationDomain.currentDomain),
             null);
+
         /*
         var loadCtx :LoaderContext = (_loadCtx.get(url) as LoaderContext);
         if (loadCtx == null) {

@@ -121,9 +121,7 @@ public class MsoyServer extends WhirledServer
      */
     public static void registerMember (MemberObject member)
     {
-        if (!member.isGuest()) {
-            _online.put(member.memberName, member);
-        }
+        _online.put(member.memberName, member);
     }
 
     /**
@@ -132,9 +130,7 @@ public class MsoyServer extends WhirledServer
      */
     public static void clearMember (MemberObject member)
     {
-        if (!member.isGuest()) {
-            _online.remove(member.memberName);
-        }
+        _online.remove(member.memberName);
     }
 
     @Override
