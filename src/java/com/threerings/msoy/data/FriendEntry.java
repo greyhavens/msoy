@@ -65,12 +65,15 @@ public class FriendEntry
     }
 
     @Override // from Object
+    public int hashCode ()
+    {
+        return getMemberId();
+    }
+
+    @Override // from Object
     public boolean equals (Object other)
     {
-        if (other instanceof FriendEntry) {
-            return getMemberId() == ((FriendEntry)other).getMemberId();
-        } else {
-            return false;
-        }
+        return (other instanceof FriendEntry) &&
+            (getMemberId() == ((FriendEntry)other).getMemberId());
     }
 }
