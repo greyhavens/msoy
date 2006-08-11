@@ -12,7 +12,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.SoftCacheMap;
+import com.samskivert.util.SoftCache;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.item.data.Item;
@@ -165,6 +165,6 @@ public class ItemManager
         HashMap<ItemEnum,ItemRepository<Item>>();
 
     /** A soft reference cache of item list indexed on (user,type). */
-    protected SoftCacheMap<Tuple<Integer,ItemEnum>,ArrayList<Item>> _itemCache =
-        new SoftCacheMap<Tuple<Integer,ItemEnum>,ArrayList<Item>>();
+    protected SoftCache<Tuple<Integer,ItemEnum>,ArrayList<Item>> _itemCache =
+        new SoftCache<Tuple<Integer,ItemEnum>,ArrayList<Item>>();
 }

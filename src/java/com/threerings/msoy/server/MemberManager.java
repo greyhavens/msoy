@@ -10,7 +10,7 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.SoftCacheMap;
+import com.samskivert.util.SoftCache;
 
 import com.threerings.util.Name;
 
@@ -124,6 +124,6 @@ public class MemberManager
     }
 
     /** A soft reference cache of friends lists indexed on memberId. */
-    protected SoftCacheMap<Integer,ArrayList<FriendEntry>> _friendCache =
-        new SoftCacheMap<Integer,ArrayList<FriendEntry>>();
+    protected SoftCache<Integer,ArrayList<FriendEntry>> _friendCache =
+        new SoftCache<Integer,ArrayList<FriendEntry>>();
 }
