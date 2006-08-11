@@ -7,8 +7,12 @@ import flash.display.MovieClip;
 
 import flash.geom.Point;
 
+import com.metasoy.game.Game;
+import com.metasoy.game.GameObject;
+
 [SWF(width="400", height="400")]
 public class Reversi extends Sprite
+    implements Game
 {
     public function Reversi ()
     {
@@ -43,6 +47,12 @@ public class Reversi extends Sprite
 
         readBoard();
         showMoves();
+    }
+
+    // from Game
+    public function setGameObject (gameObj :GameObject) :void
+    {
+        trace("OMG! I totally got the game object: " + gameObj);
     }
 
     public function pieceClicked (p :Point) :void

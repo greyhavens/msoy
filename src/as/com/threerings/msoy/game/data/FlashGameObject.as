@@ -1,5 +1,7 @@
 package com.threerings.msoy.game.data {
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.FlashObjectMarshaller;
 
 import com.threerings.io.ObjectInputStream;
@@ -9,12 +11,22 @@ import com.threerings.parlor.game.data.GameObject;
 
 public class FlashGameObject extends GameObject
 {
+    public function FlashGameObject ()
+    {
+        _impl = new GameObjectImpl(this);
+    }
+
     public function getGameData () :Object
     {
         return _gameData;
     }
 
-    protected void propertySet (property :String, data :Object) :void
+    public function getImpl () :GameObjectImpl
+    {
+        return _impl;
+    }
+
+    protected function propertySet (property :String, data :Object) :void
     {
         _gameData[property] = data;
     }
@@ -49,5 +61,8 @@ public class FlashGameObject extends GameObject
 
     /** The current state of game data. */
     protected var _gameData :Object = new Object();
+
+    /** The proxy that implements the GameObject API. */
+    protected var _impl :GameObjectImpl;
 }
 }
