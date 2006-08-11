@@ -1,5 +1,7 @@
 package com.threerings.msoy.chat.client {
 
+import flash.display.DisplayObjectContainer;
+
 import flash.events.Event;
 
 import mx.controls.TextArea;
