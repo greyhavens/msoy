@@ -6,6 +6,7 @@ package com.threerings.msoy.data;
 import com.samskivert.util.IntListUtil;
 
 import com.threerings.presents.dobj.DSet;
+import com.threerings.util.Name;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
@@ -109,12 +110,19 @@ public class MemberObject extends BodyObject
         return new MemberInfo(this);
     }
 
-    @Override
+    @Override // from BodyObject
     public TokenRing getTokens ()
     {
         return tokens;
     }
 
+    @Override // from BodyObject
+    public Name getVisibleName ()
+    {
+        return memberName;
+    }
+
+    // TEMP: hackery
     @Override
     public void setOid (int oid)
     {
@@ -127,6 +135,7 @@ public class MemberObject extends BodyObject
         }
         chatPopStyle = (short) (oid % 2);
     }
+    // END
 
     public void alter (String field)
     {
