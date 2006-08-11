@@ -71,6 +71,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         throws Exception
     {
         userObj.setTokens(new MsoyTokenRing());
+        // TODO: make a proper guest display name
+        userObj.setMemberName(new MemberName(userObj.username.toString(), -1));
     }
 
     @Override // from PresentsClient
