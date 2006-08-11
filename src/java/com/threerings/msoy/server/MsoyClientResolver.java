@@ -5,6 +5,7 @@ package com.threerings.msoy.server;
 
 import java.util.ArrayList;
 
+import com.samskivert.util.ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 
@@ -17,6 +18,8 @@ import com.threerings.crowd.server.CrowdClientResolver;
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.server.persist.Member;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Used to configure msoy-specific client object data.
  */
@@ -28,16 +31,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         return MemberObject.class;
     }
 
-    /**
-     * Return true if we're resolving a guest.
-     */
-    protected boolean isResolvingGuest ()
-    {
-        return !(_username instanceof MemberName) ||
-            (((MemberName) _username).getMemberId() == -1);
-    }
-
-    @Override
+    @Override // from PresentsClient
     protected void resolveClientData (ClientObject clobj)
         throws Exception
     {
@@ -46,7 +40,6 @@ public class MsoyClientResolver extends CrowdClientResolver
         MemberObject userObj = (MemberObject) clobj;
         if (isResolvingGuest()) {
             resolveGuest(userObj);
-
         } else {
             resolveMember(userObj);
         }
@@ -58,20 +51,17 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveMember (MemberObject userObj)
         throws Exception
     {
+        // load up their member information using on their authentication
+        // (account) name
+        Member member = MsoyServer.memberRepo.loadMember(_username.toString());
+
+        // configure their member name which is a combination of their display
+        // name and their member id
+        userObj.setMemberName(new MemberName(member.name, member.memberId));
+
         // TODO
         userObj.setTokens(new MsoyTokenRing());
-
-        // TODO: use the real account name to load stuff
-        Member member = MsoyServer.memberRepo.loadMember(
-            userObj.username.toString());
-
-        userObj.setMemberId(member.memberId);
         // TODO: etc..
-
-        // load friends
-        ArrayList<FriendEntry> friends =
-            MsoyServer.memberRepo.getFriends(member.memberId);
-        userObj.setFriends(new DSet<FriendEntry>(friends.iterator()));
     }
 
     /**
@@ -81,5 +71,37 @@ public class MsoyClientResolver extends CrowdClientResolver
         throws Exception
     {
         userObj.setTokens(new MsoyTokenRing());
+    }
+
+    @Override // from PresentsClient
+    protected void finishResolution (ClientObject clobj)
+    {
+        super.finishResolution(clobj);
+
+        final MemberObject user = (MemberObject)clobj;
+
+        // load up their friend info
+        if (!user.isGuest()) {
+            MsoyServer.memberMan.loadFriends(user.getMemberId(),
+                new ResultListener<ArrayList<FriendEntry>>() {
+                public void requestCompleted (ArrayList<FriendEntry> friends) {
+                    user.setFriends(
+                        new DSet<FriendEntry>(friends.iterator()));
+                }
+                public void requestFailed (Exception cause) {
+                    log.warning("Failed to load member's friend info " +
+                        "[who=" + user.who() + ", error=" + cause + "].");
+                }
+            });
+        }
+    }
+
+    /**
+     * Return true if we're resolving a guest.
+     */
+    protected boolean isResolvingGuest ()
+    {
+        return _username.toString().startsWith(
+            MsoyClient.GUEST_USERNAME_PREFIX);
     }
 }

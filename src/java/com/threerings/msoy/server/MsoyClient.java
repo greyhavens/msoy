@@ -22,22 +22,22 @@ import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MemberName;
 
 /**
  * Represents an attached Msoy client on the server-side.
  */
 public class MsoyClient extends WhirledClient
 {
-    // documentation inherited
-    @Override
+    /** The prefix for all authentication usernames provided to guests. */
+    public static final String GUEST_USERNAME_PREFIX = "!guest";
+
+    @Override // from PresentsClient
     protected BootstrapData createBootstrapData ()
     {
         return new MsoyBootstrapData();
     }
 
-    // documentation inherited
-    @Override
+    @Override // from PresentsClient
     protected void populateBootstrapData (BootstrapData data)
     {
         super.populateBootstrapData(data);
@@ -45,24 +45,26 @@ public class MsoyClient extends WhirledClient
         //((MsoyBootstrapData) data).chatOid = MsoyServer.chatOid;
     }
 
-    @Override
+    @Override // from PresentsClient
     protected void assignStartingUsername ()
     {
         Name credName = _creds.getUsername();
         if (null == credName) {
-            _username = getNextGuestName();
-
+            _username = new Name(GUEST_USERNAME_PREFIX + ++_guestCount);
         } else {
             _username = credName;
         }
     }
 
-    @Override
+    @Override // from PresentsClient
     protected void sessionWillStart ()
     {
         super.sessionWillStart();
 
-        _clobj.setAccessController(new AccessController() {
+        _memobj = (MemberObject) _clobj;
+        MsoyServer.registerMember(_memobj);
+
+        _memobj.setAccessController(new AccessController() {
             public boolean allowSubscribe (DObject obj, Subscriber sub) {
                 return CrowdObjectAccess.USER.allowSubscribe(obj, sub);
             }
@@ -72,55 +74,44 @@ public class MsoyClient extends WhirledClient
                         "alterTEMP".equals(((MessageEvent) event).getName())) {
                     return true;
                 }
-
                 return CrowdObjectAccess.USER.allowDispatch(obj, event);
             }
         });
-    }
-
-    @Override
-    public void clientResolved (Name username, ClientObject clobj)
-    {
-        _clobj = (MemberObject) clobj;
-
-        super.clientResolved(username, clobj);
 
         // TEMP code to alter avatar/chat styles
-        clobj.addListener(new MessageListener() {
+        _memobj.addListener(new MessageListener() {
             public void messageReceived (MessageEvent event) {
                 if ("alterTEMP".equals(event.getName())) {
                     String frob = (String) event.getArgs()[0];
-                    _clobj.alter(frob);
+                    _memobj.alter(frob);
 
                     PlaceManager plmgr = MsoyServer.plreg.getPlaceManager(
-                        _clobj.location);
+                        _memobj.location);
                     if (plmgr != null) {
-                        plmgr.updateOccupantInfo(_clobj.createOccupantInfo());
+                        plmgr.updateOccupantInfo(_memobj.createOccupantInfo());
                     }
                 }
             }
         });
+        // END TEMP
     }
 
-    @Override
-    public void endSession ()
+    @Override // from PresentsClient
+    protected void sessionDidEnd ()
     {
-        super.endSession();
-        _clobj = null;
-    }
+        super.sessionDidEnd();
 
-    // TEMP: assign sequential guest ids
-    protected static Name getNextGuestName ()
-    {
-        String val = String.valueOf(++_guestCount);
-        while (val.length() < 3) {
-            val = "0" + val;
+        if (_memobj != null) {
+            MsoyServer.clearMember(_memobj);
+            _memobj = null;
         }
-        return new MemberName("guest" + val, -1);
     }
-    protected static int _guestCount;
-    // END: Temp
 
     /** A casted reference to the userobject. */
-    protected MemberObject _clobj;
+    protected MemberObject _memobj;
+
+    /** Used to assign unique authentication usernames to guests that
+     * authenticate with the server. Their display names are handled
+     * elsewhere. */
+    protected static int _guestCount;
 }

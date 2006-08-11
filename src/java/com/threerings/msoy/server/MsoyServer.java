@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.logging.Level;
 
 import com.samskivert.jdbc.ConnectionProvider;
@@ -21,6 +22,7 @@ import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.PresentsClient;
 
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
@@ -35,6 +37,8 @@ import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
 import com.threerings.whirled.util.SceneFactory;
 
+import com.threerings.msoy.data.MemberName;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.data.RoomConfig;
@@ -63,6 +67,9 @@ public class MsoyServer extends WhirledServer
 
     /** The Msoy item manager. */
     public static ItemManager itemMan = new ItemManager();
+
+    /** The Msoy person page blurb manager. */
+    public static BlurbManager blurbMan = new BlurbManager();
 
     /** Provides spot-related services. */
     public static SpotProvider spotProv;
@@ -96,6 +103,38 @@ public class MsoyServer extends WhirledServer
     public static void itemLog (String message)
     {
         _ilog.log(message);
+    }
+
+    /**
+     * Returns the member object for the specified user if they are online
+     * currently, null otherwise. This should only be called from the dobjmgr
+     * thread.
+     */
+    public static MemberObject lookupMember (MemberName name)
+    {
+        return _online.get(name);
+    }
+
+    /**
+     * Called when a member starts their session to associate the name with the
+     * member's distributed object.
+     */
+    public static void registerMember (MemberObject member)
+    {
+        if (!member.isGuest()) {
+            _online.put(member.memberName, member);
+        }
+    }
+
+    /**
+     * Called when a member ends their session to clear their name to member
+     * object mapping.
+     */
+    public static void clearMember (MemberObject member)
+    {
+        if (!member.isGuest()) {
+            _online.remove(member.memberName);
+        }
     }
 
     @Override
@@ -193,6 +232,16 @@ public class MsoyServer extends WhirledServer
         _stlog.log(report);
     }
 
+    @Override // documentation inherited
+    protected BodyLocator createBodyLocator ()
+    {
+        return new BodyLocator() {
+            public BodyObject get (Name visibleName) {
+                return _online.get(visibleName);
+            }
+        };
+    }
+
     public static void main (String[] args)
     {
         // set up the proper logging services
@@ -210,6 +259,10 @@ public class MsoyServer extends WhirledServer
 
     /** Our scene and config factory. */
     protected MsoySceneFactory _sceneFactory = new MsoySceneFactory();
+
+    /** A mapping from member name to member object for all online members. */
+    protected static HashMap<MemberName,MemberObject> _online =
+        new HashMap<MemberName,MemberObject>();
 
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");
     protected static AuditLogger _glog = createAuditLog("server");

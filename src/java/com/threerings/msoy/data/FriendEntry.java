@@ -63,4 +63,14 @@ public class FriendEntry
         // then, sort by name
         return this.name.compareTo(that.name);
     }
+
+    @Override // from Object
+    public boolean equals (Object other)
+    {
+        if (other instanceof FriendEntry) {
+            return getMemberId() == ((FriendEntry)other).getMemberId();
+        } else {
+            return false;
+        }
+    }
 }

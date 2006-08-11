@@ -22,4 +22,7 @@ public class WebContext
 
     /** Provides profile-related services. */
     public ProfileServiceAsync profilesvc;
+
+    /** Provides person-related services. */
+    public PersonServiceAsync personsvc;
 }

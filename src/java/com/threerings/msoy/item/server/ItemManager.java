@@ -126,7 +126,7 @@ public class ItemManager
             return;
         }
 
-        // and insert the item; notifying the listener on success or failure
+        // and load their items; notifying the listener on success or failure
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<ArrayList<Item>>(rlist) {
             public ArrayList<Item> invokePersistResult ()

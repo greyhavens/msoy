@@ -20,8 +20,8 @@ public class MemberObject extends BodyObject
     implements ClusteredBodyObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>memberId</code> field. */
-    public static final String MEMBER_ID = "memberId";
+    /** The field name of the <code>memberName</code> field. */
+    public static final String MEMBER_NAME = "memberName";
 
     /** The field name of the <code>sceneId</code> field. */
     public static final String SCENE_ID = "sceneId";
@@ -45,8 +45,8 @@ public class MemberObject extends BodyObject
     public static final String FRIENDS = "friends";
     // AUTO-GENERATED: FIELDS END
 
-    /** The memberId for this user, or 0 if they're not a member. */
-    public int memberId;
+    /** The name and id information for this user. */
+    public MemberName memberName;
 
     /** The scene id that the user is currently occupying. */
     public int sceneId;
@@ -70,11 +70,19 @@ public class MemberObject extends BodyObject
     public DSet<FriendEntry> friends = new DSet<FriendEntry>();
 
     /**
+     * Returns this member's unique id.
+     */
+    public int getMemberId ()
+    {
+        return (memberName == null) ? 0 : memberName.getMemberId();
+    }
+
+    /**
      * Return true if this user is merely a guest.
      */
     public boolean isGuest ()
     {
-        return (memberId <= 0);
+        return (getMemberId() <= 0);
     }
 
     // documentation inherited from superinterface ScenedBodyObject
@@ -138,19 +146,19 @@ public class MemberObject extends BodyObject
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Requests that the <code>memberId</code> field be set to the
+     * Requests that the <code>memberName</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
      * that the attribute did change. Proxied copies of this object (on
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setMemberId (int value)
+    public void setMemberName (MemberName value)
     {
-        int ovalue = this.memberId;
+        MemberName ovalue = this.memberName;
         requestAttributeChange(
-            MEMBER_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.memberId = value;
+            MEMBER_NAME, value, ovalue);
+        this.memberName = value;
     }
 
     /**
