@@ -256,13 +256,6 @@ public class MsoyAuthenticator extends Authenticator
 
 //             rsp.authdata = new MsoyTokenRing(tokens);
 
-            // replace the username in their credentials with the canonical
-            // name in their user record as that username will later be stuffed
-            // into their user object
-            if (member != null) {
-                creds.setUsername(member.getName());
-            }
-
             // log.info("User logged on [user=" + user.username + "].");
             rdata.code = MsoyAuthResponseData.SUCCESS;
 
