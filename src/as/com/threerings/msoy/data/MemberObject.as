@@ -23,8 +23,8 @@ public class MemberObject extends BodyObject
     implements ClusteredBodyObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>memberId</code> field. */
-    public static const MEMBER_ID :String = "memberId";
+    /** The field name of the <code>memberName</code> field. */
+    public static const MEMBER_NAME :String = "memberName";
 
     /** The field name of the <code>sceneId</code> field. */
     public static const SCENE_ID :String = "sceneId";
@@ -48,8 +48,8 @@ public class MemberObject extends BodyObject
     public static const FRIENDS :String = "friends";
     // AUTO-GENERATED: FIELDS END
 
-    /** The memberId for this user. */
-    public var memberId :int;
+    /** The member name and id for this user. */
+    public var memberName :MemberName;
 
     /** The scene id that the user is currently occupying. */
     public var sceneId :int;
@@ -77,7 +77,7 @@ public class MemberObject extends BodyObject
      */
     public function isGuest () :Boolean
     {
-        return (memberId <= 0);
+        return (memberName == null || memberName.getMemberId() <= 0);
     }
 
     // documentation inherited from superinterface ScenedBodyObject
@@ -206,7 +206,7 @@ public class MemberObject extends BodyObject
     {
         super.writeObject(out);
 
-        out.writeInt(memberId);
+        out.writeObject(memberName);
         out.writeInt(sceneId);
         out.writeInt(clusterOid);
         out.writeObject(tokens);
@@ -220,7 +220,7 @@ public class MemberObject extends BodyObject
     {
         super.readObject(ins);
 
-        memberId = ins.readInt();
+        memberName = (ins.readObject() as MemberName);
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
         tokens = (ins.readObject() as MsoyTokenRing);
