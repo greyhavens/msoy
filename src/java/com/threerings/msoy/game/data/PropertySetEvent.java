@@ -30,7 +30,7 @@ public class PropertySetEvent extends NamedEvent
     // from abstract DEvent
     public boolean applyToObject (DObject target)
     {
-        ((FlashGameObject) target).propertySet(_name, _data);
+        ((FlashGameObject) target).applyPropertySet(_name, _data);
         return true;
     }
 

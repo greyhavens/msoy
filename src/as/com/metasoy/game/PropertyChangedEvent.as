@@ -42,11 +42,18 @@ public class PropertyChangedEvent extends Event
             propName :String, newValue :Object, oldValue :Object)
     {
         super(TYPE);
+        _name = propName;
+        _newValue = newValue;
+        _oldValue = oldValue;
     }
 
     override public function clone () :Event
     {
         return new PropertyChangedEvent(_name, _newValue, _oldValue);
     }
+
+    protected var _name :String;
+    protected var _newValue :Object;
+    protected var _oldValue :Object;
 }
 }

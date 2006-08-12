@@ -22,8 +22,9 @@ public class FlashGameObject extends GameObject
     /**
      * Called by PropertySetEvent to effect the property update.
      */
-    protected void propertySet (String property, byte[] data)
+    protected void applyPropertySet (String property, byte[] data)
     {
+        System.err.println("Property was set on server: " + property);
         _gameData.put(property, data);
     }
 

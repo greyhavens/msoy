@@ -38,10 +38,9 @@ public class PropertySetEvent extends NamedEvent
         return _data;
     }
 
-    // from abstract DEvent
-    public function applyToObject (target :DObject) :Boolean
+    override public function applyToObject (target :DObject) :Boolean
     {
-        FlashGameObject(target).propertySet(_name, _data);
+        FlashGameObject(target).applyPropertySet(_name, _data);
         return true;
     }
 
@@ -56,14 +55,15 @@ public class PropertySetEvent extends NamedEvent
     {
         super.writeObject(out);
 
-        out.writeObject(FlashObjectMarshaller.encode(_data));
+        out.writeField(FlashObjectMarshaller.encode(_data));
     }
 
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 
-        _data = FlashObjectMarshaller.decode(ins.readObject() as ByteArray);
+        var bytes :ByteArray = (ins.readField(ByteArray) as ByteArray);
+        _data = FlashObjectMarshaller.decode(bytes);
     }
 
     /** The flash-side data that is assigned to this property. */
