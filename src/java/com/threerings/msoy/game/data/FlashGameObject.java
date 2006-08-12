@@ -24,7 +24,6 @@ public class FlashGameObject extends GameObject
      */
     protected void applyPropertySet (String property, byte[] data)
     {
-        System.err.println("Property was set on server: " + property);
         _gameData.put(property, data);
     }
 
