@@ -38,6 +38,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         super.resolveClientData(clobj);
 
         MemberObject userObj = (MemberObject) clobj;
+        // set up the standard user access controller
+        userObj.setAccessController(MsoyObjectAccess.USER);
         if (isResolvingGuest()) {
             resolveGuest(userObj);
         } else {

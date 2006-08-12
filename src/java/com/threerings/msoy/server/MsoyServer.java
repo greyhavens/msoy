@@ -155,6 +155,9 @@ public class MsoyServer extends WhirledServer
             }
         });
 
+        // set up our default object access controller
+        omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
+
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), true);
