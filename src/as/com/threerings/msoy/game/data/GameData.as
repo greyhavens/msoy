@@ -2,8 +2,12 @@ package com.threerings.msoy.game.data {
 
 import flash.errors.IllegalOperationError;
 
+import flash.utils.IExternalizable;
 import flash.utils.Proxy;
+
 import flash.utils.flash_proxy;
+
+import mx.utils.ObjectUtil;
 
 use namespace flash_proxy;
 
@@ -49,6 +53,7 @@ public class GameData extends Proxy
         if (value is Function) {
             throw new IllegalOperationError();
         }
+        validateProperty(value);
         _gameObject.requestPropertyChange(name, value);
     }
 
@@ -88,6 +93,23 @@ public class GameData extends Proxy
     override flash_proxy function nextValue (index :int) :*
     {
         return _obj[nextName(index)];
+    }
+
+    /**
+     * Validate that the user is setting a reasonable property.
+     */
+    private function validateProperty (prop :Object) :void
+    {
+        if (prop.constructor == Object) {
+            // make sure all sub-props are kosher
+            for each (var subProp :Object in prop) {
+                validateProperty(subProp);
+            }
+
+        } else if (!(prop is IExternalizable) && !ObjectUtil.isSimple(prop)) {
+            throw new IllegalOperationError("You may not add non-simple " +
+                "object properties unless the class implements IExternalizable");
+        }
     }
 
     protected var _gameObject :FlashGameObject;
