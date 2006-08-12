@@ -37,6 +37,14 @@ public class Piece extends Sprite
         mouseEnabled = possibleMove;
     }
 
+    public function showLast (lastMoved :Boolean) :void
+    {
+        if (lastMoved) {
+            graphics.beginFill(uint(0x33FF99));
+            graphics.drawCircle(SIZE/2, SIZE/2, SIZE/5);
+        }
+    }
+
     protected function mouseClick (event :MouseEvent) :void
     {
         event.stopImmediatePropagation();

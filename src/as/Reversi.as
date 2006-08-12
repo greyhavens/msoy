@@ -9,6 +9,7 @@ import flash.geom.Point;
 
 import com.metasoy.game.Game;
 import com.metasoy.game.GameObject;
+import com.metasoy.game.PropertyChangedEvent;
 
 [SWF(width="400", height="400")]
 public class Reversi extends Sprite
@@ -52,7 +53,12 @@ public class Reversi extends Sprite
     // from Game
     public function setGameObject (gameObj :GameObject) :void
     {
-        trace("OMG! I totally got the game object: " + gameObj);
+        if (_gameObject != null) {
+            return; // we already got one!
+        }
+
+        _gameObject = gameObj;
+        _gameObject.addEventListener(PropertyChangedEvent.TYPE, propChanged);
     }
 
     public function pieceClicked (p :Point) :void
@@ -60,6 +66,7 @@ public class Reversi extends Sprite
         _board.playPiece(p.x, p.y, _turn);
         readBoard();
         _turn = (1 - _turn);
+        _gameObject.data["lastMove"] = { x : p.x, y : p.y };
         showMoves();
     }
 
@@ -81,6 +88,23 @@ public class Reversi extends Sprite
         }
     }
 
+    protected function propChanged (event :PropertyChangedEvent) :void
+    {
+        var name :String = event.name;
+        if (name == "lastMove") {
+            if (event.oldValue != null) {
+                (_pieces.get(objToPoint(event.oldValue)) as Piece).
+                    showLast(false);
+            }
+            (_pieces.get(objToPoint(event.newValue)) as Piece).showLast(true);
+        }
+    }
+
+    protected function objToPoint (obj :Object) :Point
+    {
+        return new Point(Number(obj.x), Number(obj.y));
+    }
+
     protected var _pieces :HashMap = new HashMap();
 
     protected var _turn :int = Board.BLACK_IDX;
@@ -88,5 +112,8 @@ public class Reversi extends Sprite
     protected static const BOARD_SIZE :int = 8;
 
     protected var _board :Board;
+
+    /** Our game object. */
+    protected var _gameObject :GameObject;
 }
 }
