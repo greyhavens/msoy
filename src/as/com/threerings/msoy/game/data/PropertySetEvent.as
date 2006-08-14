@@ -27,7 +27,11 @@ public class PropertySetEvent extends NamedEvent
     {
         super(targetOid, propertyName);
 
-        _data = data;
+        // to help prevent the kids from doing bad things, we serialize
+        // the property immediately.
+        if (propertyName != null) {
+            _data = FlashObjectMarshaller.encode(data);
+        }
     }
 
     /**
@@ -55,7 +59,9 @@ public class PropertySetEvent extends NamedEvent
     {
         super.writeObject(out);
 
-        out.writeField(FlashObjectMarshaller.encode(_data));
+        // _data is a ByteArray here, because we already serialized it
+        // in the constructor
+        out.writeField(_data);
     }
 
     override public function readObject (ins :ObjectInputStream) :void

@@ -2,12 +2,16 @@ package com.threerings.msoy.game.data {
 
 import flash.errors.IllegalOperationError;
 
+import flash.net.registerClassAlias; // function import
+
 import flash.utils.IExternalizable;
 import flash.utils.Proxy;
 
 import flash.utils.flash_proxy;
 
 import mx.utils.ObjectUtil;
+
+import com.threerings.util.ClassUtil;
 
 use namespace flash_proxy;
 
@@ -17,6 +21,25 @@ public class GameData extends Proxy
     {
         _gameObject = gameObject;
         _obj = obj;
+    }
+
+    public function hasOwnProperty (name :String) :Boolean
+    {
+        // pass-through
+        return _obj.hasOwnProperty(name);
+    }
+
+    public function propertyIsEnumerable (name :String) :Boolean
+    {
+        // pass-through
+        return _obj.propertyIsEnumerable(name);
+    }
+
+    public function setPropertyIsEnumerable (
+        name :String, isEnum :Boolean = true) :void
+    {
+        // pass-through
+        _obj.setPropertyIsEnumerable(name, isEnum);
     }
 
     override flash_proxy function callProperty (name :*, ... rest) :*
@@ -39,21 +62,24 @@ public class GameData extends Proxy
 
     override flash_proxy function getProperty (name :*) :*
     {
+        // pass-through
         return _obj[name];
-        // TODO: sub-proxying for non-simple property values???
     }
 
     override flash_proxy function hasProperty (name :*) :Boolean
     {
+        // pass-through
         return (_obj[name] != undefined);
     }
 
     override flash_proxy function setProperty (name :*, value :*) :void
     {
-        if (value is Function) {
+        if (name == null) {
             throw new IllegalOperationError();
+
+        } else if (value != null) {
+            validateProperty(value);
         }
-        validateProperty(value);
         _gameObject.requestPropertyChange(name, value);
     }
 
@@ -87,6 +113,7 @@ public class GameData extends Proxy
 
     override flash_proxy function nextName (index :int) :String
     {
+        // the index is 1-based, so subtract one
         return (_propertyList[index - 1] as String);
     }
 
@@ -106,7 +133,13 @@ public class GameData extends Proxy
                 validateProperty(subProp);
             }
 
-        } else if (!(prop is IExternalizable) && !ObjectUtil.isSimple(prop)) {
+        } else if (prop is IExternalizable) {
+            var name :String = ClassUtil.getClassName(prop);
+            registerClassAlias(
+                ClassUtil.getClassName(prop), ClassUtil.getClass(prop));
+
+
+        } else if (!ObjectUtil.isSimple(prop)) {
             throw new IllegalOperationError("You may not add non-simple " +
                 "object properties unless the class implements IExternalizable");
         }
