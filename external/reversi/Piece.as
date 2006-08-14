@@ -1,7 +1,5 @@
 package {
 
-import flash.geom.Point;
-
 import flash.display.Sprite;
 
 import flash.events.MouseEvent;

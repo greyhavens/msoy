@@ -1,11 +1,9 @@
 package {
 
-import com.threerings.util.HashMap;
+import com.threerings.util.Hashtable;
 
 import flash.display.Sprite;
 import flash.display.MovieClip;
-
-import flash.geom.Point;
 
 import com.metasoy.game.Game;
 import com.metasoy.game.GameObject;
@@ -66,7 +64,7 @@ public class Reversi extends Sprite
         _board.playPiece(p.x, p.y, _turn);
         readBoard();
         _turn = (1 - _turn);
-        _gameObject.data["lastMove"] = { x : p.x, y : p.y };
+        _gameObject.data["lastMove"] = p;
         showMoves();
     }
 
@@ -102,10 +100,11 @@ public class Reversi extends Sprite
 
     protected function objToPoint (obj :Object) :Point
     {
-        return new Point(Number(obj.x), Number(obj.y));
+        //return new Point(Number(obj.x), Number(obj.y));
+        return (obj as Point);
     }
 
-    protected var _pieces :HashMap = new HashMap();
+    protected var _pieces :Hashtable = new Hashtable();
 
     protected var _turn :int = Board.BLACK_IDX;
 

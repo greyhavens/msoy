@@ -1,7 +1,5 @@
 package {
 
-import flash.geom.Point;
-
 public class Board
 {
     public static const NO_PIECE :int = -1;
