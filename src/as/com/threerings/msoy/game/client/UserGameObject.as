@@ -1,20 +1,26 @@
-package com.threerings.msoy.game.data {
+package com.threerings.msoy.game.client {
 
 import flash.errors.IllegalOperationError;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
+import com.threerings.util.Name;
+
 import com.threerings.msoy.msoy_internal;
+import com.threerings.msoy.client.MsoyContext;
+
+import com.threerings.msoy.game.data.FlashGameObject;
 
 import com.metasoy.game.GameObject;
 import com.metasoy.game.PropertyChangedEvent;
 
-public class GameObjectImpl extends EventDispatcher
+public class UserGameObject extends EventDispatcher
     implements GameObject
 {
-    public function GameObjectImpl (gameObj :FlashGameObject)
+    public function UserGameObject (ctx :MsoyContext, gameObj :FlashGameObject)
     {
+        _ctx = ctx;
         _gameObj = gameObj;
     }
 
@@ -49,7 +55,17 @@ public class GameObjectImpl extends EventDispatcher
     // from GameObject
     public function getPlayerNames () :Array
     {
-        return []; // TODO
+        var names :Array = new Array();
+        for each (var name :Name in _gameObj.players) {
+            names.push((name == null) ? null : name.toString());
+        }
+        return names;
+    }
+
+    // from GameObject
+    public function getMyIndex () :int
+    {
+        return _gameObj.getPlayerIndex(_ctx.getClientObject().getVisibleName());
     }
 
     override public function willTrigger (type :String) :Boolean
@@ -69,12 +85,18 @@ public class GameObjectImpl extends EventDispatcher
     /**
      * Secret function to dispatch property changed events.
      */
-    msoy_internal function dispatch (
-        propName :String, newValue :Object, oldValue :Object, index :int) :void
+    msoy_internal function dispatch (event :Event) :void
     {
-        super.dispatchEvent(
-            new PropertyChangedEvent(propName, newValue, oldValue, index));
+        try {
+            super.dispatchEvent(event);
+        } catch (err :Error) {
+            var log :Log = Log.getLog(this);
+            log.warning("Error dispatching event to user game.");
+            log.logStackTrace(err);
+        }
     }
+
+    protected var _ctx :MsoyContext;
 
     protected var _gameObj :FlashGameObject;
 }

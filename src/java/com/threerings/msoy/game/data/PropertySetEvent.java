@@ -24,18 +24,6 @@ public class PropertySetEvent extends NamedEvent
     {
     }
 
-    /**
-     * Create a PropertySetEvent.
-     */
-    /*
-    public PropertySetEvent (int targetOid, String propertyName, byte[] data)
-    {
-        super(targetOid, propertyName);
-
-        _data = data;
-    }
-    */
-
     // from abstract DEvent
     public boolean applyToObject (DObject target)
     {
@@ -51,24 +39,27 @@ public class PropertySetEvent extends NamedEvent
     {
         out.defaultWriteObject();
 
-        Streamer streamer = Streamer.getStreamer(BYTE_ARRAY_CLASS);
+        //Streamer streamer = Streamer.getStreamer(BYTE_ARRAY_CLASS);
 
         if (_index >= 0) {
             out.writeByte(SET_ELEMENT);
             out.writeInt(_index);
-            streamer.writeObject(_data, out, false);
+            out.writeBareObject(_data);
+            //streamer.writeObject(_data, out, false);
 
         } else if (_data instanceof byte[][]) {
             out.writeByte(SET_ARRAY);
             byte[][] data = (byte[][]) _data;
             out.writeInt(data.length);
             for (int ii = 0; ii < data.length; ii++) {
-                streamer.writeObject(data[ii], out, false);
+                out.writeBareObject(data[ii]);
+                //streamer.writeObject(data[ii], out, false);
             }
 
         } else {
             out.writeByte(SET_NORMAL);
-            streamer.writeObject(_data, out, false);
+            out.writeBareObject(_data);
+            //streamer.writeObject(_data, out, false);
         }
     }
 

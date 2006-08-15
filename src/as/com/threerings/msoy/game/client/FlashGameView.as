@@ -58,15 +58,6 @@ public class FlashGameView extends VBox
         _gameObject = null;
     }
 
-//    override public function parentChanged (p :DisplayObjectContainer) :void
-//    {
-//        super.parentChanged(p);
-//
-//        if (p != null) {
-//            notifyOfGame(_gameView);
-//        }
-//    }
-
     /**
      * Handle ADDED events.
      */
@@ -87,7 +78,7 @@ public class FlashGameView extends VBox
             function (disp :DisplayObject) :void
             {
                 if (disp is Game) {
-                    (disp as Game).setGameObject(_gameObject.getImpl());
+                    (disp as Game).setGameObject(_ctrl.userGameObj);
                 }
             });
     }

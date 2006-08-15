@@ -1,5 +1,7 @@
 package com.threerings.msoy.game.data {
 
+import flash.events.Event;
+
 import flash.utils.ByteArray;
 
 import com.threerings.util.ClassUtil;
@@ -8,15 +10,12 @@ import com.threerings.util.FlashObjectMarshaller;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.msoy.msoy_internal;
-
 import com.threerings.parlor.game.data.GameObject;
 
 public class FlashGameObject extends GameObject
 {
     public function FlashGameObject ()
     {
-        _impl = new GameObjectImpl(this);
         _gameData = new GameData(this, _props);
     }
 
@@ -25,15 +24,10 @@ public class FlashGameObject extends GameObject
         return _gameData;
     }
 
-    public function getImpl () :GameObjectImpl
-    {
-        return _impl;
-    }
-
     /**
      * Called by entities to request a property set from the server.
      */
-    internal function requestPropertyChange (
+    public function requestPropertyChange (
         propName :String, value :Object, index :int = -1,
         setNow :Boolean = true) :void
     {
@@ -52,6 +46,9 @@ public class FlashGameObject extends GameObject
         }
     }
 
+    /**
+     * Verify that the property name / value are valid.
+     */
     protected function validatePropertyChange (
         propName :String, value :Object, index :int) :void
     {
@@ -78,14 +75,23 @@ public class FlashGameObject extends GameObject
 
     /**
      * Called by a PropertySetEvent to enact a property change.
+     * @return the old value
      */
     public function applyPropertySet (
-        propName :String, value :Object, index :int) :void
+        propName :String, value :Object, index :int) :Object
     {
         var oldValue :Object = _props[propName];
-        _props[propName] = value;
+        if (index < 0) {
+            // a normal property set
+            _props[propName] = value;
 
-        _impl.msoy_internal::dispatch(propName, value, oldValue, index);
+        } else {
+            // set an array element
+            var arr :Array = (oldValue as Array);
+            oldValue = arr[index];
+            arr[index] = value;
+        }
+        return oldValue;
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
@@ -136,9 +142,6 @@ public class FlashGameObject extends GameObject
 
     /** The current state of game data. */
     protected var _gameData :GameData;
-
-    /** The proxy that implements the GameObject API. */
-    protected var _impl :GameObjectImpl;
 
     /** The raw properties set by the game. */
     protected var _props :Object = new Object();

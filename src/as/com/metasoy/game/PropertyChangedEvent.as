@@ -56,6 +56,12 @@ public class PropertyChangedEvent extends Event
         _index = index;
     }
 
+    override public function toString () :String
+    {
+        return "[PropertyChangedEvent name=" + _name + ", value=" + _newValue +
+            ((index < 0) ? "" : (", index=" + index)) + "]";
+    }
+
     override public function clone () :Event
     {
         return new PropertyChangedEvent(_name, _newValue, _oldValue, _index);

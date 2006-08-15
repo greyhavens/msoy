@@ -10,6 +10,7 @@ import com.threerings.util.FlashObjectMarshaller;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+import com.threerings.io.Streamer;
 
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.NamedEvent;
@@ -36,7 +37,7 @@ public class PropertySetEvent extends NamedEvent
 
             if (index < 0 && (value is Array)) {
                 var array :Array = (value as Array);
-                var encoded :TypedArray = new TypedArray("[[B");
+                var encoded :Array = new Array();
                 for (var ii :int = 0; ii < array.length; ii++) {
                     encoded[ii] = FlashObjectMarshaller.encode(array[ii]);
                 }
@@ -57,6 +58,14 @@ public class PropertySetEvent extends NamedEvent
     }
 
     /**
+     * Get the old value.
+     */
+    public function getOldValue () :Object
+    {
+        return _oldValue;
+    }
+
+    /**
      * Get the index, or -1 if not applicable.
      */
     public function getIndex () :int
@@ -66,7 +75,8 @@ public class PropertySetEvent extends NamedEvent
 
     override public function applyToObject (target :DObject) :Boolean
     {
-        FlashGameObject(target).applyPropertySet(_name, _data, _index);
+        _oldValue =
+            FlashGameObject(target).applyPropertySet(_name, _data, _index);
         return true;
     }
 
@@ -84,19 +94,19 @@ public class PropertySetEvent extends NamedEvent
         if (_index >= 0) {
             out.writeByte(SET_ELEMENT);
             out.writeInt(_index);
-            out.writeField(_data);
+            out.writeBareObject(_data);
 
         } else if (_data is Array) {
             out.writeByte(SET_ARRAY);
             var arr :Array = (_data as Array);
             out.writeInt(arr.length);
             for (var ii :int = 0; ii < arr.length; ii++) {
-                out.writeField(arr[ii]);
+                out.writeBareObject(arr[ii]);
             }
 
         } else {
             out.writeByte(SET_NORMAL);
-            out.writeField(_data);
+            out.writeBareObject(_data);
         }
     }
 
@@ -107,18 +117,23 @@ public class PropertySetEvent extends NamedEvent
         var type :int = ins.readByte();
         _index = (type == SET_ELEMENT) ? ins.readInt() : -1;
 
+        var streamer :Streamer = Streamer.getStreamerByClass(ByteArray);
+        var o :Object;
+
         if (type == SET_ARRAY) {
             var arr :Array = new Array();
             arr.length = ins.readInt();
             for (var ii :int = 0; ii < arr.length; ii++) {
-                arr[ii] = FlashObjectMarshaller.decode(
-                    (ins.readField(ByteArray) as ByteArray));
+                o = streamer.createObject(ins);
+                streamer.readObject(o, ins);
+                arr[ii] = FlashObjectMarshaller.decode(o as ByteArray);
             }
             _data = arr;
 
         } else {
-            _data = FlashObjectMarshaller.decode(
-                (ins.readField(ByteArray) as ByteArray));
+            o = streamer.createObject(ins);
+            streamer.readObject(o, ins);
+            _data = FlashObjectMarshaller.decode(o as ByteArray);
         }
     }
 
@@ -131,5 +146,7 @@ public class PropertySetEvent extends NamedEvent
 
     /** The index of the property, if applicable. */
     protected var _index :int;
+
+    protected var _oldValue :Object;
 }
 }
