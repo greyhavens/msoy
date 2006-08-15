@@ -232,6 +232,17 @@ public class MsoySprite extends Box
     }
 
     /**
+     * Get the application domain being used by this media, or null if
+     * none or not applicable.
+     */
+    public function getApplicationDomain () :ApplicationDomain
+    {
+        return (_media is Loader)
+            ? (_media as Loader).contentLoaderInfo.applicationDomain
+            : null;
+    }
+
+    /**
      * Unload the media we're displaying, clean up any resources.
      *
      * @param completely if true, we're going away and should stop
