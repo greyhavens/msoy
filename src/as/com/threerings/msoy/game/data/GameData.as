@@ -134,14 +134,15 @@ public class GameData extends Proxy
             }
 
         } else if (prop is IExternalizable) {
-            var name :String = ClassUtil.getClassName(prop);
-            registerClassAlias(
-                ClassUtil.getClassName(prop), ClassUtil.getClass(prop));
-
+            throw new IllegalOperationError(
+                "IExternalizable is not yet supported");
+            // TODO
 
         } else if (!ObjectUtil.isSimple(prop)) {
             throw new IllegalOperationError("You may not add non-simple " +
-                "object properties unless the class implements IExternalizable");
+                "object properties.");
+                //"object properties unless the class implements " +
+                //"IExternalizable.");
         }
     }
 
