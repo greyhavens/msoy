@@ -37,12 +37,7 @@ public class FlashGameObject extends GameObject
         postEvent(new PropertySetEvent(_oid, propName, value, index));
 
         if (setNow) {
-            if (index >= 0) {
-                (_props[propName] as Array)[index] = value;
-
-            } else {
-                _props[propName] = value;
-            }
+            applyPropertySet(propName, value, index);
         }
     }
 
@@ -81,15 +76,19 @@ public class FlashGameObject extends GameObject
         propName :String, value :Object, index :int) :Object
     {
         var oldValue :Object = _props[propName];
-        if (index < 0) {
-            // a normal property set
-            _props[propName] = value;
-
-        } else {
+        if (index >= 0) {
             // set an array element
             var arr :Array = (oldValue as Array);
             oldValue = arr[index];
             arr[index] = value;
+
+        } else if (value != null) {
+            // normal property set
+            _props[propName] = value;
+
+        } else {
+            // remove a property
+            delete _props[propName];
         }
         return oldValue;
     }

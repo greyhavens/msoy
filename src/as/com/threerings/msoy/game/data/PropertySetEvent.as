@@ -94,19 +94,19 @@ public class PropertySetEvent extends NamedEvent
         if (_index >= 0) {
             out.writeByte(SET_ELEMENT);
             out.writeInt(_index);
-            out.writeBareObject(_data);
+            out.writeField(_data);
 
         } else if (_data is Array) {
             out.writeByte(SET_ARRAY);
             var arr :Array = (_data as Array);
             out.writeInt(arr.length);
             for (var ii :int = 0; ii < arr.length; ii++) {
-                out.writeBareObject(arr[ii]);
+                out.writeField(arr[ii]);
             }
 
         } else {
             out.writeByte(SET_NORMAL);
-            out.writeBareObject(_data);
+            out.writeField(_data);
         }
     }
 
@@ -117,23 +117,18 @@ public class PropertySetEvent extends NamedEvent
         var type :int = ins.readByte();
         _index = (type == SET_ELEMENT) ? ins.readInt() : -1;
 
-        var streamer :Streamer = Streamer.getStreamerByClass(ByteArray);
-        var o :Object;
-
         if (type == SET_ARRAY) {
             var arr :Array = new Array();
             arr.length = ins.readInt();
             for (var ii :int = 0; ii < arr.length; ii++) {
-                o = streamer.createObject(ins);
-                streamer.readObject(o, ins);
-                arr[ii] = FlashObjectMarshaller.decode(o as ByteArray);
+                arr[ii] = FlashObjectMarshaller.decode(
+                    ins.readField(ByteArray) as ByteArray);
             }
             _data = arr;
 
         } else {
-            o = streamer.createObject(ins);
-            streamer.readObject(o, ins);
-            _data = FlashObjectMarshaller.decode(o as ByteArray);
+            _data = FlashObjectMarshaller.decode(
+                ins.readField(ByteArray) as ByteArray);
         }
     }
 

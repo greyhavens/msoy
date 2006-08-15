@@ -39,27 +39,31 @@ public class PropertySetEvent extends NamedEvent
     {
         out.defaultWriteObject();
 
-        //Streamer streamer = Streamer.getStreamer(BYTE_ARRAY_CLASS);
-
         if (_index >= 0) {
             out.writeByte(SET_ELEMENT);
             out.writeInt(_index);
-            out.writeBareObject(_data);
-            //streamer.writeObject(_data, out, false);
+            out.writeBoolean(_data != null);
+            if (_data != null) {
+                out.writeBareObject(_data);
+            }
 
         } else if (_data instanceof byte[][]) {
             out.writeByte(SET_ARRAY);
             byte[][] data = (byte[][]) _data;
             out.writeInt(data.length);
             for (int ii = 0; ii < data.length; ii++) {
-                out.writeBareObject(data[ii]);
-                //streamer.writeObject(data[ii], out, false);
+                out.writeBoolean(data[ii] != null);
+                if (data[ii] != null) {
+                    out.writeBareObject(data[ii]);
+                }
             }
 
         } else {
             out.writeByte(SET_NORMAL);
-            out.writeBareObject(_data);
-            //streamer.writeObject(_data, out, false);
+            out.writeBoolean(_data != null);
+            if (_data != null) {
+                out.writeBareObject(_data);
+            }
         }
     }
 
@@ -80,15 +84,21 @@ public class PropertySetEvent extends NamedEvent
             int length = ins.readInt();
             byte[][] data = new byte[length][];
             for (int ii=0; ii < length; ii++) {
-                data[ii] = (byte[]) streamer.createObject(ins);
-                streamer.readObject(data[ii], ins, false);
+                if (ins.readBoolean()) {
+                    data[ii] = (byte[]) streamer.createObject(ins);
+                    streamer.readObject(data[ii], ins, false);
+                }
             }
             _data = data;
 
         } else {
-            byte[] data = (byte[]) streamer.createObject(ins);
-            streamer.readObject(data, ins, false);
-            _data = data;
+            if (ins.readBoolean()) {
+                byte[] data = (byte[]) streamer.createObject(ins);
+                streamer.readObject(data, ins, false);
+                _data = data;
+            } else {
+                _data = null;
+            }
         }
     }
 

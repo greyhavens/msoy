@@ -28,6 +28,8 @@ public class FlashGameObject extends GameObject
             byte[][] arr = (byte[][]) _props.get(propName);
             // the array should never be null...
             if (arr.length <= index) {
+                // TODO: in case a user sets element 0 and element 90000,
+                // we might want to store elements in a hash
                 byte[][] newArr = new byte[index + 1][];
                 System.arraycopy(arr, 0, newArr, 0, arr.length);
                 _props.put(propName, newArr);
@@ -35,9 +37,11 @@ public class FlashGameObject extends GameObject
             }
             arr[index] = (byte[]) data;
 
-        } else {
+        } else if (data != null) {
             _props.put(propName, data);
-            return;
+
+        } else {
+            _props.remove(propName);
         }
     }
 
