@@ -6,6 +6,7 @@ import flash.display.MovieClip;
 import com.metasoy.game.Game;
 import com.metasoy.game.GameObject;
 import com.metasoy.game.PropertyChangedEvent;
+import com.metasoy.game.StateChangedEvent;
 
 [SWF(width="400", height="400")]
 public class Reversi extends Sprite
@@ -24,13 +25,29 @@ public class Reversi extends Sprite
 
         _gameObject = gameObj;
         _gameObject.addEventListener(PropertyChangedEvent.TYPE, propChanged);
+        _gameObject.addEventListener(StateChangedEvent.GAME_STARTED, gameStart);
+    }
 
+    protected function gameStart (event :StateChangedEvent) :void
+    {
         // configure the board
         _board = new Board(_gameObject, BOARD_SIZE);
 
-        var max :int = BOARD_SIZE * BOARD_SIZE;
+        // if we're the first player, we take care of setting up the board
+        if (_gameObject.getMyIndex() == 0) {
+            _board.initialize();
+            setUpPieces();
+        }
+    }
+
+    /**
+     * Called to initialize the piece sprites and start the game.
+     */
+    protected function setUpPieces () :void
+    {
+        _pieces = new Array();
         var ii :int;
-        for (ii = 0; ii < max; ii++) {
+        for (ii = 0; ii < BOARD_SIZE * BOARD_SIZE; ii++) {
             var piece :Piece = new Piece(this, ii);
             piece.x = Piece.SIZE * _board.idxToX(ii);
             piece.y = Piece.SIZE * _board.idxToY(ii);
@@ -38,9 +55,8 @@ public class Reversi extends Sprite
             _pieces[ii] = piece;
         }
 
-//        width = height = max;
-
         // draw the board
+        var max :int = BOARD_SIZE * Piece.SIZE;
         graphics.clear();
         graphics.beginFill(0x77FF77);
         graphics.drawRect(0, 0, max, max);
@@ -89,10 +105,19 @@ public class Reversi extends Sprite
     protected function propChanged (event :PropertyChangedEvent) :void
     {
         var name :String = event.name;
-        trace("property changed: " + event);
+        if (name == "board") {
+            if (event.index == -1 && _pieces == null) {
+                // the other player has initialized the game
+                setUpPieces();
+
+            } else {
+                // read the change
+                readBoard();
+            }
+        }
     }
 
-    protected var _pieces :Array = new Array();
+    protected var _pieces :Array;
 
     protected var _turn :int = Board.BLACK_IDX;
 

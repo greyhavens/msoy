@@ -12,24 +12,25 @@ public class Board
     {
         _gameObj = gameObj;
         _lengthOfSide = lengthOfSide;
+    }
 
-        if (_lengthOfSide > 0) {
-            var data :Array = new Array();
-            data.length = (_lengthOfSide * _lengthOfSide);
+    public function initialize () :void
+    {
+        var data :Array = new Array();
+        data.length = (_lengthOfSide * _lengthOfSide);
 
-            // configure the starting board configuration
-            for (var ii :int = 0; ii < data.length; ii++) {
-                data[ii] = NO_PIECE;
-            }
-
-            gameObj.set("board", data);
-
-            var half :int = (_lengthOfSide - 1) / 2;
-            setPiece(half, half, WHITE_IDX);
-            setPiece(half + 1, half, BLACK_IDX);
-            setPiece(half, half + 1, BLACK_IDX);
-            setPiece(half + 1, half + 1, WHITE_IDX);
+        // configure the starting board configuration
+        for (var ii :int = 0; ii < data.length; ii++) {
+            data[ii] = NO_PIECE;
         }
+
+        _gameObj.set("board", data);
+
+        var half :int = (_lengthOfSide - 1) / 2;
+        setPiece(half, half, WHITE_IDX);
+        setPiece(half + 1, half, BLACK_IDX);
+        setPiece(half, half + 1, BLACK_IDX);
+        setPiece(half + 1, half + 1, WHITE_IDX);
     }
 
     /**
