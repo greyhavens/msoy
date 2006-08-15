@@ -2,6 +2,7 @@ package com.threerings.msoy.game.data {
 
 import flash.utils.ByteArray;
 
+import com.threerings.util.ClassUtil;
 import com.threerings.util.FlashObjectMarshaller;
 
 import com.threerings.io.ObjectInputStream;
@@ -33,25 +34,66 @@ public class FlashGameObject extends GameObject
      * Called by entities to request a property set from the server.
      */
     internal function requestPropertyChange (
-        property :String, value :Object) :void
+        propName :String, value :Object, index :int = -1,
+        setNow :Boolean = true) :void
     {
-        postEvent(new PropertySetEvent(_oid, property, value));
+        validatePropertyChange(propName, value, index);
+
+        // Post the event
+        postEvent(new PropertySetEvent(_oid, propName, value, index));
+
+        if (setNow) {
+            if (index >= 0) {
+                (_props[propName] as Array)[index] = value;
+
+            } else {
+                _props[propName] = value;
+            }
+        }
+    }
+
+    protected function validatePropertyChange (
+        propName :String, value :Object, index :int) :void
+    {
+        if (propName == null) {
+            throw new ArgumentError();
+        }
+
+        // validate the property
+        if (index >= 0) {
+            if (!(_props[propName] is Array)) {
+                throw new ArgumentError("Property " + propName +
+                    " is not an Array.");
+            }
+
+        } else if ((value is Array) && (ClassUtil.getClass(value) != Array)) {
+            // We can't allow arrays to be serialized as IExternalizables
+            // because we need to know element values (opaquely) on the
+            // server. Also, we don't allow other types because we wouldn't
+            // create the right class on the other side.
+            throw new ArgumentError(
+                "Custom array subclasses are not supported");
+        }
     }
 
     /**
      * Called by a PropertySetEvent to enact a property change.
      */
-    public function applyPropertySet (property :String, data :Object) :void
+    public function applyPropertySet (
+        propName :String, value :Object, index :int) :void
     {
-        var oldValue :Object = _props[property];
-        _props[property] = data;
+        var oldValue :Object = _props[propName];
+        _props[propName] = value;
 
-        _impl.msoy_internal::dispatch(property, data, oldValue);
+        _impl.msoy_internal::dispatch(propName, value, oldValue, index);
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
+
+        throw new Error("Un-needed");
+        /*
 
         var keys :Array = [];
         var key :String;
@@ -63,6 +105,7 @@ public class FlashGameObject extends GameObject
             out.writeUTF(key);
             out.writeObject(FlashObjectMarshaller.encode(_props[key]));
         }
+        */
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -72,8 +115,22 @@ public class FlashGameObject extends GameObject
         var count :int = ins.readInt();
         while (count-- > 0) {
             var key :String = ins.readUTF();
-            var bytes :ByteArray = (ins.readObject() as ByteArray);
-            _props[key] = FlashObjectMarshaller.decode(bytes);
+            var data :Object = ins.readObject();
+            if (data is Array) {
+                // read an array value
+                var ta :Array = (data as Array);
+                var array :Array = [];
+
+                for (var ii :int = 0; ii < ta.length; ii++) {
+                    array[ii] = FlashObjectMarshaller.decode(
+                        ta[ii] as ByteArray);
+                }
+                _props[key] = array;
+
+            } else {
+                _props[key] = FlashObjectMarshaller.decode(
+                    data as ByteArray);
+            }
         }
     }
 

@@ -22,9 +22,23 @@ public class FlashGameObject extends GameObject
     /**
      * Called by PropertySetEvent to effect the property update.
      */
-    protected void applyPropertySet (String property, byte[] data)
+    protected void applyPropertySet (String propName, Object data, int index)
     {
-        _gameData.put(property, data);
+        if (index != -1) {
+            byte[][] arr = (byte[][]) _props.get(propName);
+            // the array should never be null...
+            if (arr.length <= index) {
+                byte[][] newArr = new byte[index + 1][];
+                System.arraycopy(arr, 0, newArr, 0, arr.length);
+                _props.put(propName, newArr);
+                arr = newArr;
+            }
+            arr[index] = (byte[]) data;
+
+        } else {
+            _props.put(propName, data);
+            return;
+        }
     }
 
     /**
@@ -36,8 +50,8 @@ public class FlashGameObject extends GameObject
         out.defaultWriteObject();
 
         // write the number of properties, followed by each one
-        out.writeInt(_gameData.size());
-        for (Map.Entry<String, byte[]> entry : _gameData.entrySet()) {
+        out.writeInt(_props.size());
+        for (Map.Entry<String, Object> entry : _props.entrySet()) {
             out.writeUTF(entry.getKey());
             out.writeObject(entry.getValue());
         }
@@ -51,16 +65,15 @@ public class FlashGameObject extends GameObject
     {
         ins.defaultReadObject();
 
-        _gameData.clear();
+        _props.clear();
         int count = ins.readInt();
         while (count-- > 0) {
             String key = ins.readUTF();
-            byte[] data = (byte[]) ins.readObject();
-            _gameData.put(key, data);
+            _props.put(key, ins.readObject());
         }
     }
 
     /** The current state of game data, opaque to us here on the server. */
-    protected transient HashMap<String, byte[]> _gameData =
-        new HashMap<String, byte[]>();
+    protected transient HashMap<String, Object> _props =
+        new HashMap<String, Object>();
 }

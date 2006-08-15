@@ -8,13 +8,10 @@ public class Piece extends Sprite
 {
     public static const SIZE :int = 20;
 
-    public function Piece (reversi :Reversi, coordinate :Point)
+    public function Piece (reversi :Reversi, boardIndex :int)
     {
         _reversi = reversi;
-        _coord = coordinate;
-//        height = width = SIZE;
-        x = SIZE * _coord.x;
-        y = SIZE * _coord.y;
+        _boardIndex = boardIndex;
 
         buttonMode = true;
         addEventListener(MouseEvent.CLICK, mouseClick)
@@ -45,13 +42,12 @@ public class Piece extends Sprite
 
     protected function mouseClick (event :MouseEvent) :void
     {
-        event.stopImmediatePropagation();
-        _reversi.pieceClicked(_coord);
+        _reversi.pieceClicked(_boardIndex);
     }
 
     protected var _reversi :Reversi;
 
-    protected var _coord :Point; 
+    protected var _boardIndex :int; 
 
     protected static const COLORS :Array = [ 0xFFFFFF, 0x000000 ];
 }

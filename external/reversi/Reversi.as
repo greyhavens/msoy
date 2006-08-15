@@ -1,7 +1,5 @@
 package {
 
-import com.threerings.util.Hashtable;
-
 import flash.display.Sprite;
 import flash.display.MovieClip;
 
@@ -15,17 +13,31 @@ public class Reversi extends Sprite
 {
     public function Reversi ()
     {
-        _board = new Board(BOARD_SIZE);
-        for (var xx :int = 0; xx < BOARD_SIZE; xx++) {
-            for (var yy :int = 0; yy < BOARD_SIZE; yy++) {
-                var p :Point = new Point(xx, yy);
-                var piece :Piece = new Piece(this, p);
-                _pieces.put(p, piece);
-                addChild(piece);
-            }
+    }
+
+    // from Game
+    public function setGameObject (gameObj :GameObject) :void
+    {
+        if (_gameObject != null) {
+            return; // we already got one!
         }
 
-        var max :int = BOARD_SIZE * Piece.SIZE;
+        _gameObject = gameObj;
+        _gameObject.addEventListener(PropertyChangedEvent.TYPE, propChanged);
+
+        // configure the board
+        _board = new Board(_gameObject, BOARD_SIZE);
+
+        var max :int = BOARD_SIZE * BOARD_SIZE;
+        var ii :int;
+        for (ii = 0; ii < max; ii++) {
+            var piece :Piece = new Piece(this, ii);
+            piece.x = Piece.SIZE * _board.idxToX(ii);
+            piece.y = Piece.SIZE * _board.idxToY(ii);
+            addChild(piece);
+            _pieces[ii] = piece;
+        }
+
 //        width = height = max;
 
         // draw the board
@@ -35,7 +47,7 @@ public class Reversi extends Sprite
         graphics.endFill();
 
         graphics.lineStyle(1.2);
-        for (var ii :int = 0; ii <= BOARD_SIZE; ii++) {
+        for (ii = 0; ii <= BOARD_SIZE; ii++) {
             var d :int = (ii * Piece.SIZE);
             graphics.moveTo(0, d);
             graphics.lineTo(max, d);
@@ -48,63 +60,39 @@ public class Reversi extends Sprite
         showMoves();
     }
 
-    // from Game
-    public function setGameObject (gameObj :GameObject) :void
+    public function pieceClicked (index :int) :void
     {
-        if (_gameObject != null) {
-            return; // we already got one!
-        }
-
-        _gameObject = gameObj;
-        _gameObject.addEventListener(PropertyChangedEvent.TYPE, propChanged);
-    }
-
-    public function pieceClicked (p :Point) :void
-    {
-        _board.playPiece(p.x, p.y, _turn);
+        _board.playPiece(index, _turn);
         readBoard();
         _turn = (1 - _turn);
-        _gameObject.data["lastMove"] = p;
+
+        //_gameObject.set("lastMove", p);
+
         showMoves();
     }
 
     protected function readBoard () :void
     {
-        for (var xx :int = 0; xx < BOARD_SIZE; xx++) {
-            for (var yy :int = 0; yy < BOARD_SIZE; yy++) {
-                (_pieces.get(new Point(xx, yy)) as Piece).setDisplay(
-                    _board.getPiece(xx, yy));
-            }
+        for (var ii :int = 0; ii < _pieces.length; ii++) {
+            (_pieces[ii] as Piece).setDisplay(_board.getPiece(ii));
         }
     }
 
     protected function showMoves () :void
     {
         var moves :Array = _board.getMoves(_turn);
-        for each (var p :Point in moves) {
-            (_pieces.get(p) as Piece).setDisplay(_turn, true);
+        for each (var index :int in moves) {
+            (_pieces[index] as Piece).setDisplay(_turn, true);
         }
     }
 
     protected function propChanged (event :PropertyChangedEvent) :void
     {
         var name :String = event.name;
-        if (name == "lastMove") {
-            if (event.oldValue != null) {
-                (_pieces.get(objToPoint(event.oldValue)) as Piece).
-                    showLast(false);
-            }
-            (_pieces.get(objToPoint(event.newValue)) as Piece).showLast(true);
-        }
+        trace("property changed: " + event);
     }
 
-    protected function objToPoint (obj :Object) :Point
-    {
-        //return new Point(Number(obj.x), Number(obj.y));
-        return (obj as Point);
-    }
-
-    protected var _pieces :Hashtable = new Hashtable();
+    protected var _pieces :Array = new Array();
 
     protected var _turn :int = Board.BLACK_IDX;
 

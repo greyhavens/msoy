@@ -23,26 +23,26 @@ public class GameData extends Proxy
         _obj = obj;
     }
 
-    public function hasOwnProperty (name :String) :Boolean
+    public function hasOwnProperty (propName :String) :Boolean
     {
         // pass-through
-        return _obj.hasOwnProperty(name);
+        return _obj.hasOwnProperty(propName);
     }
 
-    public function propertyIsEnumerable (name :String) :Boolean
+    public function propertyIsEnumerable (propName :String) :Boolean
     {
         // pass-through
-        return _obj.propertyIsEnumerable(name);
+        return _obj.propertyIsEnumerable(propName);
     }
 
     public function setPropertyIsEnumerable (
-        name :String, isEnum :Boolean = true) :void
+        propName :String, isEnum :Boolean = true) :void
     {
         // pass-through
-        _obj.setPropertyIsEnumerable(name, isEnum);
+        _obj.setPropertyIsEnumerable(propName, isEnum);
     }
 
-    override flash_proxy function callProperty (name :*, ... rest) :*
+    override flash_proxy function callProperty (propName :*, ... rest) :*
     {
         // don't allow function calls
         throw new IllegalOperationError();
@@ -60,33 +60,33 @@ public class GameData extends Proxy
         throw new IllegalOperationError();
     }
 
-    override flash_proxy function getProperty (name :*) :*
+    override flash_proxy function getProperty (propName :*) :*
     {
         // pass-through
-        return _obj[name];
+        return _obj[propName];
     }
 
-    override flash_proxy function hasProperty (name :*) :Boolean
+    override flash_proxy function hasProperty (propName :*) :Boolean
     {
         // pass-through
-        return (_obj[name] != undefined);
+        return (_obj[propName] != undefined);
     }
 
-    override flash_proxy function setProperty (name :*, value :*) :void
+    override flash_proxy function setProperty (propName :*, value :*) :void
     {
-        if (name == null) {
+        if (propName == null) {
             throw new IllegalOperationError();
 
         } else if (value != null) {
             validateProperty(value);
         }
-        _gameObject.requestPropertyChange(name, value);
+        _gameObject.requestPropertyChange(propName, value);
     }
 
-    override flash_proxy function deleteProperty (name :*) :Boolean
+    override flash_proxy function deleteProperty (propName :*) :Boolean
     {
-        var hasProp :Boolean = hasProperty(name);
-        _gameObject.requestPropertyChange(name, null);
+        var hasProp :Boolean = hasProperty(propName);
+        _gameObject.requestPropertyChange(propName, null);
         return hasProp;
     }
 

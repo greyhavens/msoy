@@ -1,24 +1,30 @@
 package {
 
+import com.metasoy.game.GameObject;
+
 public class Board
 {
     public static const NO_PIECE :int = -1;
     public static const WHITE_IDX :int = 0;
     public static const BLACK_IDX :int = 1;
 
-    public function Board (dimension :int = 8)
+    public function Board (gameObj :GameObject, lengthOfSide :int = 8)
     {
-        _dimension = dimension;
-        _data = new Array();
+        _gameObj = gameObj;
+        _lengthOfSide = lengthOfSide;
 
-        if (_dimension > 0) {
-            _data.length = (_dimension * _dimension);
+        if (_lengthOfSide > 0) {
+            var data :Array = new Array();
+            data.length = (_lengthOfSide * _lengthOfSide);
 
             // configure the starting board configuration
-            for (var ii :int = 0; ii < _data.length; ii++) {
-                _data[ii] = NO_PIECE;
+            for (var ii :int = 0; ii < data.length; ii++) {
+                data[ii] = NO_PIECE;
             }
-            var half :int = (_dimension - 1) / 2;
+
+            gameObj.set("board", data);
+
+            var half :int = (_lengthOfSide - 1) / 2;
             setPiece(half, half, WHITE_IDX);
             setPiece(half + 1, half, BLACK_IDX);
             setPiece(half, half + 1, BLACK_IDX);
@@ -31,13 +37,19 @@ public class Board
      *
      * @return -1, or 0, or 1.
      */
-    public function getPiece (x :int, y :int) :int
+    public function getPiece (index :int) :int
     {
-        return int(_data[checkCoords(x, y)]);
+        checkIndex(index);
+        return int(_gameObj.get("board")[index]);
+    }
+
+    public function getPieceByCoords (x :int, y :int) :int
+    {
+        return getPiece(coordsToIdx(x, y));
     }
 
     /**
-     * @return an array of Point objects that specify the valid move
+     * @return an array of indicies that specify the valid move
      * coordinates for the given player.
      */
     public function getMoves (playerIdx :int) :Array
@@ -46,22 +58,22 @@ public class Board
         var moves :Array = new Array();
 
         // for each space, it is a legal move if 
-        for (var xx :int = 0; xx < _dimension; xx++) {
-            for (var yy :int = 0; yy < _dimension; yy++) {
-                if (isValidMove(xx, yy, playerIdx)) {
-                    moves.push(new Point(xx, yy));
-                }
+        for (var ii :int = (_lengthOfSide * _lengthOfSide) - 1; ii >= 0; ii--) {
+            if (isValidMove(ii, playerIdx)) {
+                moves.push(ii);
             }
         }
         return moves;
     }
 
-    public function playPiece (x :int, y :int, playerIdx :int) :void
+    public function playPiece (index :int, playerIdx :int) :void
     {
-        checkPlayerIdx(playerIdx);
-        if (!isValidMove(x, y, playerIdx)) {
+        if (!isValidMove(index, playerIdx)) {
             throw new ArgumentError("Invalid move!");
         }
+
+        var x :int = idxToX(index);
+        var y :int = idxToY(index);
 
         // flip any qualifying pieces of the opponent's color
         for (var dx :int = -1; dx <= 1; dx++) {
@@ -79,12 +91,18 @@ public class Board
     /**
      * Is the specified square a legal play for the specified player?
      */
-    public function isValidMove (x :int, y :int, playerIdx :int) :Boolean
+    public function isValidMove (index :int, playerIdx :int) :Boolean
     {
+        checkPlayerIdx(playerIdx);
+        checkIndex(index);
+
         // the square must be blank
-        if (getPiece(x, y) != NO_PIECE) {
+        if (getPiece(index) != NO_PIECE) {
             return false;
         }
+
+        var x :int = idxToX(index);
+        var y :int = idxToY(index);
 
         // and at least one direction must contain opponent pieces
         // followed by one of our own
@@ -104,7 +122,7 @@ public class Board
 
     protected function setPiece (x :int, y :int, playerIdx :int) :void
     {
-        _data[coordsToIdx(x, y)] = playerIdx;
+        _gameObj.set("board", playerIdx, coordsToIdx(x, y));
     }
 
     /**
@@ -118,13 +136,13 @@ public class Board
             x += dx;
             y += dy;
             // there must be at least 1 piece of the opponent's color
-            if (getPiece(x, y) != (1 - playerIdx)) {
+            if (getPieceByCoords(x, y) != (1 - playerIdx)) {
                 return false;
             }
             while (true) {
                 x += dx;
                 y += dy;
-                var piece :int = getPiece(x, y);
+                var piece :int = getPieceByCoords(x, y);
                 if (piece == -1) {
                     return false;
                 } else if (piece == playerIdx) {
@@ -150,7 +168,7 @@ public class Board
         y += dy;
 
         try {
-            var piece :int = getPiece(x, y);
+            var piece :int = getPieceByCoords(x, y);
             if (piece == NO_PIECE) {
                 // found a blank, so this line of inquiry is a bust
                 return false;
@@ -176,21 +194,30 @@ public class Board
         return false;
     }
 
-    protected function coordsToIdx (x :int, y :int) :int
+    public function coordsToIdx (x :int, y :int) :int
     {
-        return (x * _dimension + y);
+        return (y * _lengthOfSide) + x;
+    }
+
+    public function idxToX (index :int) :int
+    {
+        return (index % _lengthOfSide);
+    }
+
+    public function idxToY (index :int) :int
+    {
+        return (index / _lengthOfSide);
     }
 
     /**
      * Like coordsToIdx, but validates the coordinates.
      */
-    protected function checkCoords (x :int, y :int) :int
+    protected function checkIndex (index :int) :void
     {
-        if (x < 0 || x >= _dimension || y < 0 || y >= _dimension) {
-            throw new RangeError("X and Y must be in the range [0.." +
-                _dimension + "].");
+        if (index < 0 || index >= (_lengthOfSide * _lengthOfSide)) {
+            throw new RangeError("index must be in the range [0.." +
+                (_lengthOfSide * _lengthOfSide) + "].");
         }
-        return coordsToIdx(x, y);
     }
 
     protected function checkPlayerIdx (idx :int) :void
@@ -201,10 +228,10 @@ public class Board
     }
 
     /** The length of one side of the board. */
-    protected var _dimension :int;
+    protected var _lengthOfSide :int;
 
     /** An array representing the current state of the board.
      * Each element is -1, 0, or 1. */
-    protected var _data :Array;
+    protected var _gameObj :GameObject;
 }
 }
