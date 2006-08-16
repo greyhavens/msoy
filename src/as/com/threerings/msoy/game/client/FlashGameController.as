@@ -2,11 +2,16 @@ package com.threerings.msoy.game.client {
 
 import flash.events.Event;
 
+import com.threerings.util.Name;
+
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.parlor.game.client.GameController;
+
+import com.threerings.parlor.turn.client.TurnGameController;
+import com.threerings.parlor.turn.client.TurnGameControllerDelegate;
 
 import com.threerings.msoy.msoy_internal;
 
@@ -23,10 +28,15 @@ import com.metasoy.game.StateChangedEvent;
  * A controller for flash games.
  */
 public class FlashGameController extends GameController
-    implements PropertySetListener
+    implements TurnGameController, PropertySetListener
 {
     /** The implementation of the GameObject interface for users. */
     public var userGameObj :UserGameObject;
+
+    public function FlashGameController ()
+    {
+        addDelegate(_turnDelegate = new TurnGameControllerDelegate(this));
+    }
 
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
@@ -39,6 +49,13 @@ public class FlashGameController extends GameController
     {
         super.didLeavePlace(plobj);
         _fgObj = null;
+    }
+
+    // from TurnGameController
+    public function turnDidChange (turnHolder :Name) :void
+    {
+        dispatchUserEvent(
+            new StateChangedEvent(StateChangedEvent.TURN_CHANGED));
     }
 
     // from PropertySetListener
@@ -75,5 +92,7 @@ public class FlashGameController extends GameController
     }
 
     protected var _fgObj :FlashGameObject;
+
+    protected var _turnDelegate :TurnGameControllerDelegate;
 }
 }

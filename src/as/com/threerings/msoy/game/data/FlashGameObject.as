@@ -6,14 +6,29 @@ import flash.utils.ByteArray;
 
 import com.threerings.util.ClassUtil;
 import com.threerings.util.FlashObjectMarshaller;
+import com.threerings.util.Name;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+import com.threerings.io.TypedArray;
 
 import com.threerings.parlor.game.data.GameObject;
+import com.threerings.parlor.turn.data.TurnGameObject;
 
 public class FlashGameObject extends GameObject
+    implements TurnGameObject
 {
+    // AUTO-GENERATED: FIELDS START
+    /** The field name of the <code>turnHolder</code> field. */
+    public static const TURN_HOLDER :String = "turnHolder";
+    // AUTO-GENERATED: FIELDS END
+
+    /** The current turn holder. */
+    public var turnHolder :Name;
+
+    /**
+     * Constructor.
+     */
     public function FlashGameObject ()
     {
         _gameData = new GameData(this, _props);
@@ -23,6 +38,42 @@ public class FlashGameObject extends GameObject
     {
         return _gameData;
     }
+
+    // from TurnGameObject
+    public function getTurnHolderFieldName () :String
+    {
+        return TURN_HOLDER;
+    }
+
+    // from TurnGameObject
+    public function getTurnHolder () :Name
+    {
+        return turnHolder;
+    }
+
+    // from TurnGameObject
+    public function getPlayers () :TypedArray /* of Name */
+    {
+        return players;
+    }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Requests that the <code>turnHolder</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public function setTurnHolder (value :Name) :void
+    {
+        var ovalue :Name = this.turnHolder;
+        requestAttributeChange(
+            TURN_HOLDER, value, ovalue);
+        this.turnHolder = value;
+    }
+    // AUTO-GENERATED: METHODS END
 
     /**
      * Called by entities to request a property set from the server.
@@ -100,6 +151,8 @@ public class FlashGameObject extends GameObject
         throw new Error("Un-needed");
         /*
 
+        out.writeObject(turnHolder);
+
         var keys :Array = [];
         var key :String;
         for (key in _props) {
@@ -117,6 +170,10 @@ public class FlashGameObject extends GameObject
     {
         super.readObject(ins);
 
+        // first read any regular bits
+        turnHolder = (ins.readObject() as Name);
+
+        // then user properties
         var count :int = ins.readInt();
         while (count-- > 0) {
             var key :String = ins.readUTF();
