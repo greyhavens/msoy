@@ -70,7 +70,8 @@ public class FlashGameManager extends GameManager
     {
         validateStateModification(caller);
 
-        // TODO
+        _winnerIndexes = winners;
+        endGame();
     }
 
     /**
@@ -119,12 +120,25 @@ public class FlashGameManager extends GameManager
         super.didShutdown();
     }
 
+    @Override
+    protected void assignWinners (boolean[] winners)
+    {
+        if (_winnerIndexes != null) {
+            for (int index : _winnerIndexes) {
+                if (index >= 0 && index < winners.length) {
+                    winners[index] = true;
+                }
+            }
+            _winnerIndexes = null;
+        }
+    }
+
     /** A nice casted reference to the game object. */
     protected FlashGameObject _gameObj;
 
     /** Our turn delegate. */
     protected FlashGameTurnDelegate _turnDelegate;
 
-    /** The index of the next player turn, or -1 to proceed. */
-    protected int _nextPlayerIndex = -1;
+    /** The array of winners, after the user has filled it in. */
+    protected int[] _winnerIndexes;
 }
