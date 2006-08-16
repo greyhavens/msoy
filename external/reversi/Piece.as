@@ -19,7 +19,8 @@ public class Piece extends Sprite
     }
 
     public function setDisplay (
-            pieceType :int, possibleMove :Boolean = false) :void
+        pieceType :int, possibleMove :Boolean = false,
+        myTurn :Boolean = false) :void
     {
         graphics.clear();
 
@@ -29,7 +30,7 @@ public class Piece extends Sprite
         }
 
         alpha = possibleMove ? .5 : 1;
-        mouseEnabled = possibleMove;
+        mouseEnabled = possibleMove && myTurn;
     }
 
     public function showLast (lastMoved :Boolean) :void

@@ -19,18 +19,20 @@ public class Board
         var data :Array = new Array();
         data.length = (_lengthOfSide * _lengthOfSide);
 
-        // configure the starting board configuration
+        // blank out every piece
         for (var ii :int = 0; ii < data.length; ii++) {
             data[ii] = NO_PIECE;
         }
 
-        _gameObj.set("board", data);
-
+        // but then set up the 4 starting pieces in the middle
         var half :int = (_lengthOfSide - 1) / 2;
-        setPiece(half, half, WHITE_IDX);
-        setPiece(half + 1, half, BLACK_IDX);
-        setPiece(half, half + 1, BLACK_IDX);
-        setPiece(half + 1, half + 1, WHITE_IDX);
+        data[coordsToIdx(half, half)] = WHITE_IDX;
+        data[coordsToIdx(half + 1, half)] = BLACK_IDX;
+        data[coordsToIdx(half, half + 1)] = BLACK_IDX;
+        data[coordsToIdx(half + 1, half + 1)] = WHITE_IDX;
+
+        // assign it to the game object
+        _gameObj.set("board", data);
     }
 
     /**
@@ -87,6 +89,7 @@ public class Board
 
         // finally, place the new piece
         setPiece(x, y, playerIdx);
+        _gameObj.set("lastMove", index);
     }
 
     /**
@@ -121,6 +124,35 @@ public class Board
         return false;
     }
 
+    /**
+     * Determine the winner, or return -1 for a tie.
+     * This should only be called after getMoves() returns an empty
+     * array for both players.
+     */
+    public function getWinner () :int
+    {
+        var whiteCount :int = 0;
+        var blackCount :int = 0;
+        for each (var piece :int in _gameObj.data["board"]) {
+            if (piece == WHITE_IDX) {
+                whiteCount++;
+
+            } else if (piece == BLACK_IDX) {
+                blackCount++;
+            }
+        }
+
+        if (whiteCount > blackCount) {
+            return WHITE_IDX;
+
+        } else if (blackCount > whiteCount) {
+            return BLACK_IDX;
+
+        } else {
+            return -1;
+        }
+    }
+
     protected function setPiece (x :int, y :int, playerIdx :int) :void
     {
         _gameObj.set("board", playerIdx, coordsToIdx(x, y));
@@ -136,6 +168,7 @@ public class Board
         try {
             x += dx;
             y += dy;
+            checkCoords(x, y);
             // there must be at least 1 piece of the opponent's color
             if (getPieceByCoords(x, y) != (1 - playerIdx)) {
                 return false;
@@ -143,6 +176,7 @@ public class Board
             while (true) {
                 x += dx;
                 y += dy;
+                checkCoords(x, y);
                 var piece :int = getPieceByCoords(x, y);
                 if (piece == -1) {
                     return false;
@@ -169,6 +203,7 @@ public class Board
         y += dy;
 
         try {
+            checkCoords(x, y);
             var piece :int = getPieceByCoords(x, y);
             if (piece == NO_PIECE) {
                 // found a blank, so this line of inquiry is a bust
@@ -218,6 +253,13 @@ public class Board
         if (index < 0 || index >= (_lengthOfSide * _lengthOfSide)) {
             throw new RangeError("index must be in the range [0.." +
                 (_lengthOfSide * _lengthOfSide) + "].");
+        }
+    }
+
+    protected function checkCoords (x :int, y :int) :void
+    {
+        if (x < 0 || y < 0 || x >= _lengthOfSide || y >= _lengthOfSide) {
+            throw new RangeError();
         }
     }
 

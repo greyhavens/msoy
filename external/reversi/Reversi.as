@@ -25,19 +25,12 @@ public class Reversi extends Sprite
 
         _gameObject = gameObj;
         _gameObject.addEventListener(PropertyChangedEvent.TYPE, propChanged);
-        _gameObject.addEventListener(StateChangedEvent.GAME_STARTED, gameStart);
-    }
-
-    protected function gameStart (event :StateChangedEvent) :void
-    {
-        // configure the board
-        _board = new Board(_gameObject, BOARD_SIZE);
-
-        // if we're the first player, we take care of setting up the board
-        if (_gameObject.getMyIndex() == 0) {
-            _board.initialize();
-            setUpPieces();
-        }
+        _gameObject.addEventListener(
+            StateChangedEvent.GAME_STARTED, gameStarted);
+        _gameObject.addEventListener(
+            StateChangedEvent.GAME_ENDED, gameEnded);
+        _gameObject.addEventListener(
+            StateChangedEvent.TURN_CHANGED, turnChanged);
     }
 
     /**
@@ -72,54 +65,114 @@ public class Reversi extends Sprite
             graphics.lineTo(d, max);
         }
 
-        readBoard();
         showMoves();
     }
 
-    public function pieceClicked (index :int) :void
+    public function pieceClicked (pieceIndex :int) :void
     {
-        _board.playPiece(index, _turn);
+        // enact the play
+        var myIdx :int = _gameObject.getMyIndex();
+        _board.playPiece(pieceIndex, myIdx);
+        _gameObject.endTurn();
+
+        // display something so that the player knows they clicked
         readBoard();
-        _turn = (1 - _turn);
-
-        //_gameObject.set("lastMove", p);
-
-        showMoves();
+        (_pieces[pieceIndex] as Piece).showLast(true);
     }
 
     protected function readBoard () :void
     {
+        // re-read the whole thing
         for (var ii :int = 0; ii < _pieces.length; ii++) {
-            (_pieces[ii] as Piece).setDisplay(_board.getPiece(ii));
+            var piece :Piece = (_pieces[ii] as Piece);
+            piece.setDisplay(_board.getPiece(ii));
+            if (_gameObject.data["lastMove"] === ii) {
+                piece.showLast(true);
+            }
         }
     }
 
     protected function showMoves () :void
     {
-        var moves :Array = _board.getMoves(_turn);
-        for each (var index :int in moves) {
-            (_pieces[index] as Piece).setDisplay(_turn, true);
-        }
-    }
+        readBoard();
 
-    protected function propChanged (event :PropertyChangedEvent) :void
-    {
-        var name :String = event.name;
-        if (name == "board") {
-            if (event.index == -1 && _pieces == null) {
-                // the other player has initialized the game
-                setUpPieces();
+        var turnHolder :int = _gameObject.getTurnHolderIndex();
+        var myTurn :Boolean = _gameObject.isMyTurn();
+
+        var moves :Array = _board.getMoves(turnHolder);
+        for each (var index :int in moves) {
+            (_pieces[index] as Piece).setDisplay(turnHolder, true, myTurn);
+        }
+
+        // detect end-game or other situations
+        if (myTurn && moves.length == 0) {
+            // we cannot move, so we'll pass back to the other player
+            if (_board.getMoves(1 - turnHolder).length == 0) {
+                // ah, but they can't move either, so the game is over
+                _gameObject.endGame(_board.getWinner());
 
             } else {
-                // read the change
-                readBoard();
+                _gameObject.endTurn();
             }
         }
     }
 
-    protected var _pieces :Array;
+    /**
+     * A callback we've registered to received StateChangedEvent.GAME_STARTED.
+     */
+    protected function gameStarted (event :StateChangedEvent) :void
+    {
+        _gameObject.writeToLocalChat("Reversi superchallenge: go!");
 
-    protected var _turn :int = Board.BLACK_IDX;
+        // configure the board
+        _board = new Board(_gameObject, BOARD_SIZE);
+    }
+
+    /**
+     * A callback we've registered to received StateChangedEvent.GAME_STARTED.
+     */
+    protected function gameEnded (event :StateChangedEvent) :void
+    {
+        _gameObject.writeToLocalChat("Thank you for playing Reversi!");
+    }
+
+    /**
+     * A callback we've registered to received PropertyChangedEvents
+     */
+    protected function propChanged (event :PropertyChangedEvent) :void
+    {
+        var name :String = event.name;
+        if (name == "board") {
+            if (event.index != -1) {
+                // read the change
+                readBoard();
+
+            } else if (_pieces == null) {
+                // the other player has initialized the game
+                setUpPieces();
+            }
+        }
+    }
+
+    /**
+     * A callback we've registered to received StateChangedEvent.TURN_CHANGED.
+     */
+    protected function turnChanged (event :StateChangedEvent) :void
+    {
+        if (_pieces == null) {
+            // if we're the first player, we take care of setting up the board
+            if (_gameObject.isMyTurn()) {
+                _board.initialize();
+                _gameObject.set("startGame", true);
+                setUpPieces();
+            }
+
+        } else {
+            showMoves();
+        }
+    }
+
+    protected var _pieces :Array;
 
     protected static const BOARD_SIZE :int = 8;
 
