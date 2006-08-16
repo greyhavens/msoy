@@ -5,6 +5,7 @@ import flash.display.MovieClip;
 
 import com.metasoy.game.Game;
 import com.metasoy.game.GameObject;
+import com.metasoy.game.MessageReceivedEvent;
 import com.metasoy.game.PropertyChangedEvent;
 import com.metasoy.game.StateChangedEvent;
 
@@ -25,6 +26,7 @@ public class Reversi extends Sprite
 
         _gameObject = gameObj;
         _gameObject.addEventListener(PropertyChangedEvent.TYPE, propChanged);
+        _gameObject.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
         _gameObject.addEventListener(
             StateChangedEvent.GAME_STARTED, gameStarted);
         _gameObject.addEventListener(
@@ -109,11 +111,31 @@ public class Reversi extends Sprite
             // we cannot move, so we'll pass back to the other player
             if (_board.getMoves(1 - turnHolder).length == 0) {
                 // ah, but they can't move either, so the game is over
-                _gameObject.endGame(_board.getWinner());
+                var winner :int = _board.getWinner();
+                _gameObject.endGame(winner);
+                if (winner == -1) {
+                    _gameObject.sendMessage("chat", "The game was a tie!");
+                } else {
+                    _gameObject.sendMessage("chat",
+                        _gameObject.getPlayerNames()[winner] + " has won!");
+                }
 
             } else {
+                _gameObject.sendMessage("chat",
+                    _gameObject.getPlayerNames()[turnHolder] +
+                    " cannot play and so loses a turn.");
                 _gameObject.endTurn();
             }
+        }
+    }
+
+    /**
+     * A callback we've registered to received MessageReceivedEvents.
+     */
+    protected function msgReceived (event :MessageReceivedEvent) :void
+    {
+        if (event.name == "chat") {
+            _gameObject.writeToLocalChat(String(event.value));
         }
     }
 
@@ -174,7 +196,7 @@ public class Reversi extends Sprite
 
     protected var _pieces :Array;
 
-    protected static const BOARD_SIZE :int = 8;
+    protected static const BOARD_SIZE :int = 4;
 
     protected var _board :Board;
 
