@@ -23,6 +23,9 @@ import com.threerings.parlor.turn.data.TurnGameObject;
 public class FlashGameObject extends GameObject
     implements TurnGameObject
 {
+    /** The identifier for a MessageEvent containing a user message. */
+    public static final String USER_MESSAGE = "Umsg";
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>turnHolder</code> field. */
     public static final String TURN_HOLDER = "turnHolder";

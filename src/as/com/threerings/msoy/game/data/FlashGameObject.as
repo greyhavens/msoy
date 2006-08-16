@@ -18,6 +18,9 @@ import com.threerings.parlor.turn.data.TurnGameObject;
 public class FlashGameObject extends GameObject
     implements TurnGameObject
 {
+    /** The identifier for a MessageEvent containing a user message. */
+    public static const USER_MESSAGE :String = "Umsg";
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>turnHolder</code> field. */
     public static const TURN_HOLDER :String = "turnHolder";
@@ -99,6 +102,18 @@ public class FlashGameObject extends GameObject
     }
 
     /**
+     * Called by the UserGameObject to request a message be sent on
+     * the game object.
+     */
+    public function sendUserMessage (
+        messageName :String, value :Object) :void
+    {
+        validateValue(value);
+        postMessage(USER_MESSAGE,
+            [ messageName , FlashObjectMarshaller.encode(value) ]);
+    }
+
+    /**
      * Verify that the property name / value are valid.
      */
     protected function validatePropertyChange (
@@ -108,14 +123,24 @@ public class FlashGameObject extends GameObject
             throw new ArgumentError();
         }
 
-        // validate the property
+        // check that we're setting an array element on an array
         if (index >= 0) {
             if (!(_props[propName] is Array)) {
                 throw new ArgumentError("Property " + propName +
                     " is not an Array.");
             }
+        }
 
-        } else if ((value is Array) && (ClassUtil.getClass(value) != Array)) {
+        // validate the value too
+        validateValue(value);
+    }
+
+    /**
+     * Verify that the value is legal to be streamed to other clients.
+     */
+    protected function validateValue (value :Object) :void
+    {
+        if ((value is Array) && (ClassUtil.getClass(value) != Array)) {
             // We can't allow arrays to be serialized as IExternalizables
             // because we need to know element values (opaquely) on the
             // server. Also, we don't allow other types because we wouldn't

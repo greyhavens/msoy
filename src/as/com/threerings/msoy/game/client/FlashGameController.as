@@ -2,7 +2,13 @@ package com.threerings.msoy.game.client {
 
 import flash.events.Event;
 
+import flash.utils.ByteArray;
+
+import com.threerings.util.FlashObjectMarshaller;
 import com.threerings.util.Name;
+
+import com.threerings.presents.dobj.MessageListener;
+import com.threerings.presents.dobj.MessageEvent;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
@@ -21,6 +27,7 @@ import com.threerings.msoy.game.data.FlashGameObject;
 import com.threerings.msoy.game.data.PropertySetEvent;
 import com.threerings.msoy.game.data.PropertySetListener;
 
+import com.metasoy.game.MessageReceivedEvent;
 import com.metasoy.game.PropertyChangedEvent;
 import com.metasoy.game.StateChangedEvent;
 
@@ -28,7 +35,7 @@ import com.metasoy.game.StateChangedEvent;
  * A controller for flash games.
  */
 public class FlashGameController extends GameController
-    implements TurnGameController, PropertySetListener
+    implements TurnGameController, PropertySetListener, MessageListener
 {
     /** The implementation of the GameObject interface for users. */
     public var userGameObj :UserGameObject;
@@ -65,6 +72,17 @@ public class FlashGameController extends GameController
         dispatchUserEvent(new PropertyChangedEvent(
             event.getName(), event.getValue(), event.getOldValue(),
             event.getIndex()));
+    }
+
+    // from MessageListener
+    public function messageReceived (event :MessageEvent) :void
+    {
+        if (FlashGameObject.USER_MESSAGE == event.getName()) {
+            var args :Array = event.getArgs();
+            dispatchUserEvent(new MessageReceivedEvent(
+                (args[0] as String),
+                FlashObjectMarshaller.decode((args[1] as ByteArray))));
+        }
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView

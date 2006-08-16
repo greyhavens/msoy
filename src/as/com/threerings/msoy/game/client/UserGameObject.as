@@ -34,12 +34,6 @@ public class UserGameObject extends EventDispatcher
     }
 
     // from GameObject
-    public function set (propName :String, value :Object, index :int = -1) :void
-    {
-        _gameObj.requestPropertyChange(propName, value, index);
-    }
-
-    // from GameObject
     public function get (propName :String, index :int = -1) :Object
     {
         var value :Object = data[propName];
@@ -53,6 +47,18 @@ public class UserGameObject extends EventDispatcher
             }
         }
         return value;
+    }
+
+    // from GameObject
+    public function set (propName :String, value :Object, index :int = -1) :void
+    {
+        _gameObj.requestPropertyChange(propName, value, index);
+    }
+
+    // from GameObject
+    public function sendMessage (messageName :String, value :Object) :void
+    {
+        _gameObj.sendUserMessage(messageName, value);
     }
 
     // from GameObject
@@ -81,6 +87,20 @@ public class UserGameObject extends EventDispatcher
     public function getTurnHolderIndex () :int
     {
         return _gameObj.getPlayerIndex(_gameObj.turnHolder);
+    }
+
+    // from GameObject
+    public function getWinnerIndexes () :Array /* of int */
+    {
+        var arr :Array = new Array();
+        if (_gameObj.winners != null) {
+            for (var ii :int = 0; ii < _gameObj.winners.length; ii++) {
+                if (_gameObj.winners[ii]) {
+                    arr.push(ii);
+                }
+            }
+        }
+        return arr;
     }
 
     // from GameObject
