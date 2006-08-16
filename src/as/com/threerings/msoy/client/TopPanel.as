@@ -27,13 +27,15 @@ public class TopPanel extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
-        // set up the build stamp label
-        _buildStamp = new Label();
-        _buildStamp.mouseEnabled = false;
-        _buildStamp.mouseChildren = false;
-        _buildStamp.text = "Build: " + DeploymentConfig.buildTime;
-        _buildStamp.setStyle("color", "#FF6633");
-        addChild(_buildStamp);
+        if (DeploymentConfig.devClient) {
+            // set up the build stamp label
+            _buildStamp = new Label();
+            _buildStamp.mouseEnabled = false;
+            _buildStamp.mouseChildren = false;
+            _buildStamp.text = "Build: " + DeploymentConfig.buildTime;
+            _buildStamp.setStyle("color", "#FF6633");
+            addChild(_buildStamp);
+        }
 
         // set up the control bar
         controlBar = new ControlBar(ctx);
