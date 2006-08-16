@@ -29,6 +29,8 @@ public class TopPanel extends Canvas
 
         // set up the build stamp label
         _buildStamp = new Label();
+        _buildStamp.mouseEnabled = false;
+        _buildStamp.mouseChildren = false;
         _buildStamp.text = "Build: " + DeploymentConfig.buildTime;
         _buildStamp.setStyle("color", "#FF6633");
         addChild(_buildStamp);
