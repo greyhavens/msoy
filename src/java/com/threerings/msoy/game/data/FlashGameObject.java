@@ -26,10 +26,16 @@ public class FlashGameObject extends GameObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>turnHolder</code> field. */
     public static final String TURN_HOLDER = "turnHolder";
+
+    /** The field name of the <code>flashGameService</code> field. */
+    public static final String FLASH_GAME_SERVICE = "flashGameService";
     // AUTO-GENERATED: FIELDS END
 
     /** The current turn holder. */
     public Name turnHolder;
+
+    /** The service interface for requesting special things from the server. */
+    public FlashGameMarshaller flashGameService;
 
     // from TurnGameObject
     public String getTurnHolderFieldName ()
@@ -90,6 +96,22 @@ public class FlashGameObject extends GameObject
         requestAttributeChange(
             TURN_HOLDER, value, ovalue);
         this.turnHolder = value;
+    }
+
+    /**
+     * Requests that the <code>flashGameService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setFlashGameService (FlashGameMarshaller value)
+    {
+        FlashGameMarshaller ovalue = this.flashGameService;
+        requestAttributeChange(
+            FLASH_GAME_SERVICE, value, ovalue);
+        this.flashGameService = value;
     }
     // AUTO-GENERATED: METHODS END
 

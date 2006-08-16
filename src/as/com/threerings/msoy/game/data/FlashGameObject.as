@@ -21,10 +21,16 @@ public class FlashGameObject extends GameObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>turnHolder</code> field. */
     public static const TURN_HOLDER :String = "turnHolder";
+
+    /** The field name of the <code>flashGameService</code> field. */
+    public static const FLASH_GAME_SERVICE :String = "flashGameService";
     // AUTO-GENERATED: FIELDS END
 
     /** The current turn holder. */
     public var turnHolder :Name;
+
+    /** The service interface for requesting special things from the server. */
+    public var flashGameService :FlashGameMarshaller;
 
     /**
      * Constructor.
@@ -152,6 +158,7 @@ public class FlashGameObject extends GameObject
         /*
 
         out.writeObject(turnHolder);
+        out.writeObject(flashGameService);
 
         var keys :Array = [];
         var key :String;
@@ -172,6 +179,7 @@ public class FlashGameObject extends GameObject
 
         // first read any regular bits
         turnHolder = (ins.readObject() as Name);
+        flashGameService = (ins.readObject() as FlashGameMarshaller);
 
         // then user properties
         var count :int = ins.readInt();

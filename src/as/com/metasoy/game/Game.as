@@ -13,5 +13,4 @@ public interface Game
      */
     function setGameObject (gameObj :GameObject) :void;
 }
-
 }

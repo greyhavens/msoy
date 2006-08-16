@@ -5,6 +5,9 @@ import flash.errors.IllegalOperationError;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
+import com.threerings.io.TypedArray;
+
+import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
 import com.threerings.msoy.msoy_internal;
@@ -53,6 +56,12 @@ public class UserGameObject extends EventDispatcher
     }
 
     // from GameObject
+    public function writeToLocalChat (msg :String) :void
+    {
+        _ctx.displayInfo(null, MessageBundle.taint(msg));
+    }
+
+    // from GameObject
     public function getPlayerNames () :Array
     {
         var names :Array = new Array();
@@ -66,6 +75,38 @@ public class UserGameObject extends EventDispatcher
     public function getMyIndex () :int
     {
         return _gameObj.getPlayerIndex(_ctx.getClientObject().getVisibleName());
+    }
+
+    // from GameObject
+    public function getTurnHolderIndex () :int
+    {
+        return _gameObj.getPlayerIndex(_gameObj.turnHolder);
+    }
+
+    // from GameObject
+    public function isMyTurn () :Boolean
+    {
+        return _ctx.getClientObject().getVisibleName().equals(
+            _gameObj.turnHolder);
+    }
+
+    // from GameObject
+    public function endTurn (nextPlayerIndex :int = -1) :void
+    {
+        _gameObj.flashGameService.endTurn(_ctx.getClient(), nextPlayerIndex,
+            new LoggingListener("endTurn"));
+    }
+
+    // from GameObject
+    public function endGame (winnerIndex :int, ... rest) :void
+    {
+        var winners :TypedArray = TypedArray.create(int);
+        winners.push(winnerIndex);
+        while (rest.length > 0) {
+            winners.push(int(rest.shift()));
+        }
+        _gameObj.flashGameService.endGame(_ctx.getClient(), winners,
+            new LoggingListener("endGame"));
     }
 
     override public function willTrigger (type :String) :Boolean
@@ -100,4 +141,23 @@ public class UserGameObject extends EventDispatcher
 
     protected var _gameObj :FlashGameObject;
 }
+}
+
+import com.threerings.presents.client.InvocationService_InvocationListener;
+
+class LoggingListener
+    implements InvocationService_InvocationListener
+{
+    public function LoggingListener (service :String)
+    {
+        _service = service;
+    }
+
+    public function requestFailed (cause :String) :void
+    {
+        Log.getLog(this).warning("Service failure [service=" + _service +
+            ", cause=" + cause + "].");
+    }
+
+    protected var _service :String;
 }
