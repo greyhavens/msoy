@@ -25,4 +25,10 @@ public class BlurbData implements IsSerializable
 
     /** Arbitrary layout information interpreted by the layout code. */
     public String layoutData;
+
+    /** Generates a string representation of this instance. */
+    public String toString ()
+    {
+        return "[t=" + type + ", id=" + blurbId + ", ldata=" + layoutData + "]";
+    }
 }

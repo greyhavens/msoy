@@ -5,6 +5,8 @@ package com.threerings.msoy.data;
 
 import com.threerings.presents.dobj.DSet;
 
+import com.threerings.msoy.web.data.FriendInfo;
+
 /**
  * Represents a friend connection.
  */
@@ -44,6 +46,19 @@ public class FriendEntry
     public int getMemberId ()
     {
         return name.getMemberId();
+    }
+
+    /**
+     * Converts this record into a simpler format that we can send to the web
+     * client.
+     */
+    public FriendInfo toInfo ()
+    {
+        FriendInfo info = new FriendInfo();
+        info.memberId = name.getMemberId();
+        info.name = name.toString();
+        info.status = status;
+        return info;
     }
 
     // from interface DSet.Entry

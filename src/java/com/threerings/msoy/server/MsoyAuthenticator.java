@@ -306,6 +306,7 @@ public class MsoyAuthenticator extends Authenticator
             if (mrec == null) {
                 mrec = new Member();
                 mrec.accountName = account.accountName;
+                mrec.name = account.accountName;
                 MsoyServer.memberRepo.insertMember(mrec);
             }
 

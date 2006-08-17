@@ -17,7 +17,7 @@ public class PersonLayout implements IsSerializable
     public static final int ONE_COLUMN_LAYOUT = 0;
 
     /** One of the available person page layout formats. */
-    public static final int TWO_COLUMN_LAYOUT = 0;
+    public static final int TWO_COLUMN_LAYOUT = 1;
 
     /** The layout format of this page. */
     public int layout;

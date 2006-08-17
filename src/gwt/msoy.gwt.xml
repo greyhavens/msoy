@@ -10,4 +10,5 @@
   <servlet path="/user" class="com.threerings.msoy.web.server.RedirectServlet"/>
   <servlet path="/item" class="com.threerings.msoy.web.server.RedirectServlet"/>
   <servlet path="/profile" class="com.threerings.msoy.web.server.RedirectServlet"/>
+  <servlet path="/person" class="com.threerings.msoy.web.server.RedirectServlet"/>
 </module>

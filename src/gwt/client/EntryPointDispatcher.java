@@ -7,8 +7,9 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
@@ -40,8 +41,9 @@ public class EntryPointDispatcher
         MsoyEntryPoint.Creator creator =
             (MsoyEntryPoint.Creator)_pages.get(entry);
         if (creator == null) {
-            GWT.log("Page maps to unknown entry point " +
-                    "[entry=" + entry + "].", null);
+            RootPanel.get("content").clear();
+            RootPanel.get("content").add(
+                new Label("Page maps to unknown entry point '" + entry + "'."));
             return;
         }
 
@@ -73,6 +75,7 @@ public class EntryPointDispatcher
         _pages.put("index", client.index.getCreator());
         _pages.put("profile", client.profile.index.getCreator());
         _pages.put("inventory", client.inventory.index.getCreator());
+        _pages.put("person", client.person.index.getCreator());
     }
 
     protected HashMap _pages = new HashMap();

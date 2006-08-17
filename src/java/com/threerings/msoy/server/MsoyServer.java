@@ -7,6 +7,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
+
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.util.AuditLogger;
@@ -40,9 +43,11 @@ import com.threerings.whirled.util.SceneFactory;
 import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.person.server.PersonPageManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.data.RoomConfig;
 
+import com.threerings.msoy.person.server.persist.PersonPageRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
 
@@ -68,8 +73,8 @@ public class MsoyServer extends WhirledServer
     /** The Msoy item manager. */
     public static ItemManager itemMan = new ItemManager();
 
-    /** The Msoy person page blurb manager. */
-    public static BlurbManager blurbMan = new BlurbManager();
+    /** The Msoy person page manager. */
+    public static PersonPageManager ppageMan = new PersonPageManager();
 
     /** Provides spot-related services. */
     public static SpotProvider spotProv;
@@ -158,6 +163,16 @@ public class MsoyServer extends WhirledServer
         // set up our default object access controller
         omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
+        // configure and create our hibernate session configuration
+        AnnotationConfiguration hibConfig = new AnnotationConfiguration();
+        PersonPageRepository ppageRepo = new PersonPageRepository();
+        ppageRepo.configure(hibConfig);
+
+        // now that our repositories have all wired in their persistent
+        // classes, we can create the session factory
+        SessionFactory sessionFactory = hibConfig.buildSessionFactory();
+        ppageRepo.init(sessionFactory);
+
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), true);
@@ -166,6 +181,7 @@ public class MsoyServer extends WhirledServer
         memberRepo = new MemberRepository(conProv);
         memberMan = new MemberManager(memberRepo);
         itemMan.init(conProv);
+        ppageMan.init(ppageRepo);
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();
@@ -253,6 +269,7 @@ public class MsoyServer extends WhirledServer
             server.run();
         } catch (Exception e) {
             log.log(Level.WARNING, "Unable to initialize server", e);
+            System.exit(255);
         }
     }
 

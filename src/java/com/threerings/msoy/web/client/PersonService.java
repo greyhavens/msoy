@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
@@ -19,5 +20,6 @@ public interface PersonService extends RemoteService
      * entry in the list will be information on the page layout and subsequent
      * entries will be data for each of the blurbs on the page.
      */
-    public ArrayList loadBlurbs (int memberId);
+    public ArrayList loadBlurbs (int memberId)
+        throws ServiceException;
 }

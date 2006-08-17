@@ -8,9 +8,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.client.ItemServiceAsync;
+import com.threerings.msoy.web.client.PersonService;
+import com.threerings.msoy.web.client.PersonServiceAsync;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.client.ProfileServiceAsync;
 import com.threerings.msoy.web.client.WebContext;
@@ -50,6 +53,8 @@ public abstract class MsoyEntryPoint
         ((ServiceDefTarget)_ctx.itemsvc).setServiceEntryPoint("/item");
         _ctx.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
         ((ServiceDefTarget)_ctx.profilesvc).setServiceEntryPoint("/profile");
+        _ctx.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
+        ((ServiceDefTarget)_ctx.personsvc).setServiceEntryPoint("/person");
 
         // create our standard logon panel
         RootPanel.get("logon").add(_logon = new LogonPanel(_ctx, this));
@@ -69,6 +74,16 @@ public abstract class MsoyEntryPoint
      * class's onModuleLoad will <em>not</em> have been called yet.
      */
     protected abstract void onPageLoad ();
+
+    /**
+     * Clears out any existing content and sets the specified widget as the
+     * main page content.
+     */
+    protected void setContent (Widget content)
+    {
+        RootPanel.get("content").clear();
+        RootPanel.get("content").add(content);
+    }
 
     /**
      * Called by our logon panel when the player logs on (or if we show up on

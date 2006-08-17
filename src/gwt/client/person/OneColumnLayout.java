@@ -1,0 +1,34 @@
+//
+// $Id$
+
+package client.person;
+
+import java.util.ArrayList;
+
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import com.threerings.msoy.web.client.WebContext;
+import com.threerings.msoy.web.data.BlurbData;
+import com.threerings.msoy.web.data.PersonLayout;
+
+/**
+ * Lays out a person page in one column.
+ */
+public class OneColumnLayout extends VerticalPanel
+{
+    public OneColumnLayout (
+        WebContext ctx, int memberId, PersonLayout layout, ArrayList blurbs)
+    {
+        for (int ii = 0; ii < layout.blurbs.size(); ii++) {
+            BlurbData bdata = (BlurbData)layout.blurbs.get(ii);
+            Blurb blurb = Blurb.createBlurb(bdata.type);
+            if (blurb != null) {
+                blurb.init(ctx, memberId, bdata.blurbId, blurbs.get(ii));
+                add(blurb);
+            } else {
+                add(new Label("Unknown blurb type " + bdata.type));
+            }
+        }
+    }
+}

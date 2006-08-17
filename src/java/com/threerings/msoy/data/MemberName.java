@@ -5,12 +5,15 @@ package com.threerings.msoy.data;
 
 import java.util.Comparator;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.util.Name;
 
 /**
  * Extends Name with persistent member information.
  */
 public class MemberName extends Name
+    implements IsSerializable
 {
     /** A comparator for sorting Names by their display portion, case
      * insensitively. */
