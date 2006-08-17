@@ -37,7 +37,7 @@ public class ClickFest extends Sprite
         _gameObj.addEventListener(PropertyChangedEvent.TYPE, propChanged);
 
         // do some other fun stuff
-        _gameObj.writeToLocalChat("Welcome to ClickFest!\n\n" +
+        _gameObj.localChat("Welcome to ClickFest!\n\n" +
             "The object of the game is simple: Click like the wind!\n\n" +
             "You are awarded " + POINTS_NEW + " point for clicking on a " +
             "new point, or " + POINTS_OVER_OTHER + " points for clicking on " +
@@ -63,7 +63,7 @@ public class ClickFest extends Sprite
     protected function gameStarted (event :StateChangedEvent) :void
     {
         _myScore = 0;
-        _gameObj.writeToLocalChat("GO!!!!");
+        _gameObj.localChat("GO!!!!");
 
         // start processing!
         mouseChildren = true;
@@ -119,7 +119,7 @@ public class ClickFest extends Sprite
         mouseChildren = false;
         var names :Array = _gameObj.getPlayerNames();
         for each (var idx :int in _gameObj.getWinnerIndexes()) {
-            _gameObj.writeToLocalChat(names[idx] + " has won!");
+            _gameObj.localChat(names[idx] + " has won!");
         }
     }
 

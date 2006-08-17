@@ -114,14 +114,14 @@ public class Reversi extends Sprite
                 var winner :int = _board.getWinner();
                 _gameObject.endGame(winner);
                 if (winner == -1) {
-                    _gameObject.sendMessage("chat", "The game was a tie!");
+                    _gameObject.sendChat("The game was a tie!");
                 } else {
-                    _gameObject.sendMessage("chat",
+                    _gameObject.sendChat(
                         _gameObject.getPlayerNames()[winner] + " has won!");
                 }
 
             } else {
-                _gameObject.sendMessage("chat",
+                _gameObject.sendChat(
                     _gameObject.getPlayerNames()[turnHolder] +
                     " cannot play and so loses a turn.");
                 _gameObject.endTurn();
@@ -134,9 +134,7 @@ public class Reversi extends Sprite
      */
     protected function msgReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == "chat") {
-            _gameObject.writeToLocalChat(String(event.value));
-        }
+        // nada
     }
 
     /**
@@ -144,7 +142,7 @@ public class Reversi extends Sprite
      */
     protected function gameStarted (event :StateChangedEvent) :void
     {
-        _gameObject.writeToLocalChat("Reversi superchallenge: go!");
+        _gameObject.localChat("Reversi superchallenge: go!");
 
         // configure the board
         _board = new Board(_gameObject, BOARD_SIZE);
@@ -155,7 +153,7 @@ public class Reversi extends Sprite
      */
     protected function gameEnded (event :StateChangedEvent) :void
     {
-        _gameObject.writeToLocalChat("Thank you for playing Reversi!");
+        _gameObject.localChat("Thank you for playing Reversi!");
     }
 
     /**
