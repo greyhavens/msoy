@@ -91,8 +91,14 @@ public class FlashGameController extends GameController
     // from MessageListener
     public function messageReceived (event :MessageEvent) :void
     {
-        if (FlashGameObject.USER_MESSAGE == event.getName()) {
+        var name :String = event.getName();
+        if (FlashGameObject.USER_MESSAGE == name) {
             dispatchUserMessage(event.getArgs());
+
+        } else if (FlashGameObject.GAME_CHAT == name) {
+            // this is chat send by the game, let's route it like
+            // localChat, which is also sent by the game
+            userGameObj.localChat(String(event.getArgs()[0]));
         }
     }
 

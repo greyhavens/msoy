@@ -20,6 +20,9 @@ public class FlashGameObject extends GameObject
     /** The identifier for a MessageEvent containing a user message. */
     public static const USER_MESSAGE :String = "Umsg";
 
+    /** The identifier for a MessageEvent containing game-system chat. */
+    public static const GAME_CHAT :String = "Uchat";
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>turnHolder</code> field. */
     public static const TURN_HOLDER :String = "turnHolder";

@@ -97,12 +97,17 @@ public class UserGameObject extends EventDispatcher
     // from GameObject
     public function sendChat (msg :String) :void
     {
-        // TODO
+        // Post a message to the game object, the controller
+        // will listen and call localChat().
+        _gameObj.postMessage(FlashGameObject.GAME_CHAT, [ msg ]);
     }
 
     // from GameObject
     public function localChat (msg :String) :void
     {
+        // The sendChat() messages will end up being routed
+        // through this method on each client.
+        // TODO: make this look distinct from other system chat
         _ctx.displayInfo(null, MessageBundle.taint(msg));
     }
 

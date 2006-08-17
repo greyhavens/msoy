@@ -26,6 +26,9 @@ public class FlashGameObject extends GameObject
     /** The identifier for a MessageEvent containing a user message. */
     public static final String USER_MESSAGE = "Umsg";
 
+    /** The identifier for a MessageEvent containing game-system chat. */
+    public static final String GAME_CHAT = "Uchat";
+
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>turnHolder</code> field. */
     public static final String TURN_HOLDER = "turnHolder";
