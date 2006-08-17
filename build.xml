@@ -195,6 +195,7 @@
     <mkdir dir="${deploy.dir}/classes"/>
     <mkdir dir="${deploy.dir}/classes/rsrc"/>
     <mkdir dir="${javadoc.dir}"/>
+    <copy todir="${deploy.dir}/classes" file="etc/hibernate.properties"/>
     <copy todir="${deploy.dir}/classes/rsrc">
       <fileset dir="rsrc">
        <include name="**/*"/>
