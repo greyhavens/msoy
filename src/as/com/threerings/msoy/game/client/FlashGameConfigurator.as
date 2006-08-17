@@ -19,6 +19,7 @@ public class FlashGameConfigurator extends FlexGameConfigurator
         // TODO: This will get and populate game types?
         _game = new ComboBox();
         _game.dataProvider = [ { label:"Reversi", data:15 },
+            { label:"ClickFest", data:55 },
             { label:"Invalid", data:-1 } ];
 
         var label :Label = new Label();

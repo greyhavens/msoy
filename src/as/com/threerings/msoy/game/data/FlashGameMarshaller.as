@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.data {
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.Integer;
 
 import com.threerings.io.TypedArray;
@@ -48,6 +50,19 @@ public class FlashGameMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, END_TURN, [
             Integer.valueOf(arg2), listener3
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #sendMessage} requests. */
+    public static const SEND_MESSAGE :int = 3;
+
+    // documentation inherited from interface
+    public function sendMessage (arg1 :Client, arg2 :int, arg3 :String, arg4 :ByteArray, arg5 :InvocationService_InvocationListener) :void
+    {
+        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, SEND_MESSAGE, [
+            Integer.valueOf(arg2), arg3, arg4, listener5
         ]);
     }
 

@@ -5,8 +5,13 @@ import flash.errors.IllegalOperationError;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
+import flash.utils.IExternalizable;
+import flash.utils.ByteArray;
+
 import com.threerings.io.TypedArray;
 
+import com.threerings.util.ClassUtil;
+import com.threerings.util.FlashObjectMarshaller;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
@@ -14,6 +19,7 @@ import com.threerings.msoy.msoy_internal;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.game.data.FlashGameObject;
+import com.threerings.msoy.game.data.PropertySetEvent;
 
 import com.metasoy.game.GameObject;
 import com.metasoy.game.PropertyChangedEvent;
@@ -25,12 +31,13 @@ public class UserGameObject extends EventDispatcher
     {
         _ctx = ctx;
         _gameObj = gameObj;
+        _gameData = new GameData(this, _gameObj.getUserProps());
     }
 
     // from GameObject
     public function get data () :Object
     {
-        return _gameObj.getGameData();
+        return _gameData;
     }
 
     // from GameObject
@@ -52,17 +59,49 @@ public class UserGameObject extends EventDispatcher
     // from GameObject
     public function set (propName :String, value :Object, index :int = -1) :void
     {
-        _gameObj.requestPropertyChange(propName, value, index);
+        validatePropertyChange(propName, value, index);
+
+        _gameObj.postEvent(
+            new PropertySetEvent(_gameObj.getOid(), propName, value, index));
+
+        // set it immediately in the game object
+        _gameObj.applyPropertySet(propName, value, index);
     }
 
     // from GameObject
     public function sendMessage (messageName :String, value :Object) :void
     {
-        _gameObj.sendUserMessage(messageName, value);
+        sendPlayerMessage(-1, messageName, value);
     }
 
     // from GameObject
-    public function writeToLocalChat (msg :String) :void
+    public function sendPlayerMessage (
+        playerIdx :int, messageName :String, value :Object) :void
+    {
+        validateValue(value);
+
+        var data :ByteArray = FlashObjectMarshaller.encode(value);
+
+        // dispatch the message to all, or just to one player
+        if (playerIdx == -1) {
+            _gameObj.postMessage(FlashGameObject.USER_MESSAGE,
+                [ messageName, data ]);
+
+        } else {
+            _gameObj.flashGameService.sendMessage(_ctx.getClient(),
+                playerIdx, messageName, data, 
+                new LoggingListener("sendPlayerMessage"));
+        }
+    }
+
+    // from GameObject
+    public function sendChat (msg :String) :void
+    {
+        // TODO
+    }
+
+    // from GameObject
+    public function localChat (msg :String) :void
     {
         _ctx.displayInfo(null, MessageBundle.taint(msg));
     }
@@ -157,9 +196,75 @@ public class UserGameObject extends EventDispatcher
         }
     }
 
+    /**
+     * Verify that the property name / value are valid.
+     */
+    private function validatePropertyChange (
+        propName :String, value :Object, index :int) :void
+    {
+        if (propName == null) {
+            throw new ArgumentError(); 
+        }
+
+        // check that we're setting an array element on an array
+        if (index >= 0) {
+            if (!(_gameData[propName] is Array)) {
+                throw new ArgumentError("Property " + propName +
+                    " is not an Array.");
+            }
+        }
+
+        // validate the value too
+        validateValue(value);
+    }
+
+    /**
+     * Verify that the value is legal to be streamed to other clients.
+     */
+    private function validateValue (value :Object) :void
+    {
+        if (value == null) {
+            return;
+
+        } else if (value is IExternalizable) {
+            throw new ArgumentError(
+                "IExternalizable is not yet supported");
+
+        } else if (value is Array) {
+            if (ClassUtil.getClass(value) != Array) {
+                // We can't allow arrays to be serialized as IExternalizables
+                // because we need to know element values (opaquely) on the
+                // server. Also, we don't allow other types because we wouldn't
+                // create the right class on the other side.
+                throw new ArgumentError(
+                    "Custom array subclasses are not supported");
+            }
+            // then, continue on with the sub-properties check (below)
+
+        } else {
+            var type :String = typeof(value);
+            if (type == "number" || type == "string" || type == "boolean" ) {
+                // kosher!
+                return;
+            }
+            if (ClassUtil.getClass(value) != Object) {
+                throw new ArgumentError(
+                    "Non-simple properties may not be set.");
+            }
+            // fall through and verify the object's sub-properties
+        }
+
+        // check sub-properties (of arrays and objects)
+        for each (var arrValue :Object in (value as Array)) {
+            validateValue(arrValue);
+        }
+    }
+
     protected var _ctx :MsoyContext;
 
     protected var _gameObj :FlashGameObject;
+
+    protected var _gameData :GameData;
 }
 }
 

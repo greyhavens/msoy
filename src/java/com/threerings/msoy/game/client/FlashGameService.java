@@ -24,4 +24,12 @@ public interface FlashGameService extends InvocationService
      */
     public void endGame (
         Client client, int[] winners, InvocationListener listener);
+
+    /**
+     * Request to send a private message to one other player in
+     * the game.
+     */
+    public void sendMessage (
+        Client client, int playerIdx, String msgName, byte[] data,
+        InvocationListener listener);
 }

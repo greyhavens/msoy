@@ -45,4 +45,17 @@ public class FlashGameMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #sendMessage} requests. */
+    public static final int SEND_MESSAGE = 3;
+
+    // documentation inherited from interface
+    public void sendMessage (Client arg1, int arg2, String arg3, byte[] arg4, InvocationService.InvocationListener arg5)
+    {
+        ListenerMarshaller listener5 = new ListenerMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, SEND_MESSAGE, new Object[] {
+            Integer.valueOf(arg2), arg3, arg4, listener5
+        });
+    }
+
 }

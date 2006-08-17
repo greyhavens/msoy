@@ -4,7 +4,6 @@ import flash.events.Event;
 
 import flash.utils.ByteArray;
 
-import com.threerings.util.ClassUtil;
 import com.threerings.util.FlashObjectMarshaller;
 import com.threerings.util.Name;
 
@@ -36,16 +35,11 @@ public class FlashGameObject extends GameObject
     public var flashGameService :FlashGameMarshaller;
 
     /**
-     * Constructor.
+     * Access the underlying user properties.
      */
-    public function FlashGameObject ()
+    public function getUserProps () :Object
     {
-        _gameData = new GameData(this, _props);
-    }
-
-    public function getGameData () :Object
-    {
-        return _gameData;
+        return _props;
     }
 
     // from TurnGameObject
@@ -83,72 +77,6 @@ public class FlashGameObject extends GameObject
         this.turnHolder = value;
     }
     // AUTO-GENERATED: METHODS END
-
-    /**
-     * Called by entities to request a property set from the server.
-     */
-    public function requestPropertyChange (
-        propName :String, value :Object, index :int = -1,
-        setNow :Boolean = true) :void
-    {
-        validatePropertyChange(propName, value, index);
-
-        // Post the event
-        postEvent(new PropertySetEvent(_oid, propName, value, index));
-
-        if (setNow) {
-            applyPropertySet(propName, value, index);
-        }
-    }
-
-    /**
-     * Called by the UserGameObject to request a message be sent on
-     * the game object.
-     */
-    public function sendUserMessage (
-        messageName :String, value :Object) :void
-    {
-        validateValue(value);
-        postMessage(USER_MESSAGE,
-            [ messageName , FlashObjectMarshaller.encode(value) ]);
-    }
-
-    /**
-     * Verify that the property name / value are valid.
-     */
-    protected function validatePropertyChange (
-        propName :String, value :Object, index :int) :void
-    {
-        if (propName == null) {
-            throw new ArgumentError();
-        }
-
-        // check that we're setting an array element on an array
-        if (index >= 0) {
-            if (!(_props[propName] is Array)) {
-                throw new ArgumentError("Property " + propName +
-                    " is not an Array.");
-            }
-        }
-
-        // validate the value too
-        validateValue(value);
-    }
-
-    /**
-     * Verify that the value is legal to be streamed to other clients.
-     */
-    protected function validateValue (value :Object) :void
-    {
-        if ((value is Array) && (ClassUtil.getClass(value) != Array)) {
-            // We can't allow arrays to be serialized as IExternalizables
-            // because we need to know element values (opaquely) on the
-            // server. Also, we don't allow other types because we wouldn't
-            // create the right class on the other side.
-            throw new ArgumentError(
-                "Custom array subclasses are not supported");
-        }
-    }
 
     /**
      * Called by a PropertySetEvent to enact a property change.
@@ -228,9 +156,6 @@ public class FlashGameObject extends GameObject
             }
         }
     }
-
-    /** The current state of game data. */
-    protected var _gameData :GameData;
 
     /** The raw properties set by the game. */
     protected var _props :Object = new Object();

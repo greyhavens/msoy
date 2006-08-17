@@ -7,13 +7,15 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.parlor.game.client.GameConfigurator;
 import com.threerings.parlor.game.data.GameConfig;
+import com.threerings.parlor.game.data.PartyGameConfig;
 
 import com.threerings.msoy.data.MediaData;
 
 /**
- * Does something extraordinary.
+ * A game config for a simple multiplayer flash game.
  */
 public class FlashGameConfig extends GameConfig
+    implements PartyGameConfig
 {
     /** A creator-submitted name of the game. */
     public String gameName;
@@ -43,6 +45,13 @@ public class FlashGameConfig extends GameConfig
     public String getManagerClassName ()
     {
         return "com.threerings.msoy.game.server.FlashGameManager";
+    }
+
+    // from PartyGameConfig
+    public byte getPartyGameType ()
+    {
+        // TODO
+        return NOT_PARTY_GAME;
     }
 
     @Override

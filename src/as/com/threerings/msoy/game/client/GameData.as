@@ -1,45 +1,38 @@
-package com.threerings.msoy.game.data {
+package com.threerings.msoy.game.client {
 
 import flash.errors.IllegalOperationError;
 
-import flash.net.registerClassAlias; // function import
-
-import flash.utils.IExternalizable;
 import flash.utils.Proxy;
 
 import flash.utils.flash_proxy;
-
-import mx.utils.ObjectUtil;
-
-import com.threerings.util.ClassUtil;
 
 use namespace flash_proxy;
 
 public class GameData extends Proxy
 {
-    public function GameData (gameObject :FlashGameObject, obj :Object)
+    public function GameData (gameObject :UserGameObject, props :Object)
     {
         _gameObject = gameObject;
-        _obj = obj;
+        _props = props;
     }
 
     public function hasOwnProperty (propName :String) :Boolean
     {
         // pass-through
-        return _obj.hasOwnProperty(propName);
+        return _props.hasOwnProperty(propName);
     }
 
     public function propertyIsEnumerable (propName :String) :Boolean
     {
         // pass-through
-        return _obj.propertyIsEnumerable(propName);
+        return _props.propertyIsEnumerable(propName);
     }
 
     public function setPropertyIsEnumerable (
         propName :String, isEnum :Boolean = true) :void
     {
         // pass-through
-        _obj.setPropertyIsEnumerable(propName, isEnum);
+        _props.setPropertyIsEnumerable(propName, isEnum);
     }
 
     override flash_proxy function callProperty (propName :*, ... rest) :*
@@ -63,30 +56,24 @@ public class GameData extends Proxy
     override flash_proxy function getProperty (propName :*) :*
     {
         // pass-through
-        return _obj[propName];
+        return _props[propName];
     }
 
     override flash_proxy function hasProperty (propName :*) :Boolean
     {
         // pass-through
-        return (_obj[propName] != undefined);
+        return (_props[propName] != undefined);
     }
 
     override flash_proxy function setProperty (propName :*, value :*) :void
     {
-        if (propName == null) {
-            throw new IllegalOperationError();
-
-        } else if (value != null) {
-            validateProperty(value);
-        }
-        _gameObject.requestPropertyChange(propName, value);
+        _gameObject.set(String(propName), value);
     }
 
     override flash_proxy function deleteProperty (propName :*) :Boolean
     {
         var hasProp :Boolean = hasProperty(propName);
-        _gameObject.requestPropertyChange(propName, null);
+        _gameObject.set(String(propName), null);
         return hasProp;
     }
 
@@ -95,7 +82,7 @@ public class GameData extends Proxy
         // possibly set up the property list on the first call
         if (index == 0) {
             _propertyList = [];
-            for (var prop :String in _obj) {
+            for (var prop :String in _props) {
                 _propertyList.push(prop);
             }
         }
@@ -119,37 +106,14 @@ public class GameData extends Proxy
 
     override flash_proxy function nextValue (index :int) :*
     {
-        return _obj[nextName(index)];
+        return _props[nextName(index)];
     }
 
-    /**
-     * Validate that the user is setting a reasonable property.
-     */
-    private function validateProperty (prop :Object) :void
-    {
-        if (prop.constructor == Object) {
-            // make sure all sub-props are kosher
-            for each (var subProp :Object in prop) {
-                validateProperty(subProp);
-            }
-
-        } else if (prop is IExternalizable) {
-            throw new IllegalOperationError(
-                "IExternalizable is not yet supported");
-            // TODO
-
-        } else if (!ObjectUtil.isSimple(prop)) {
-            throw new IllegalOperationError("You may not add non-simple " +
-                "object properties.");
-                //"object properties unless the class implements " +
-                //"IExternalizable.");
-        }
-    }
-
-    protected var _gameObject :FlashGameObject;
+    /** The GameObject that controls things. */
+    protected var _gameObject :UserGameObject;
 
     /** The object we're proxying. */
-    protected var _obj :Object;
+    protected var _props :Object;
 
     /** Used temporarily while iterating over our names or values. */
     protected var _propertyList :Array;

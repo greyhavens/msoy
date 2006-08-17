@@ -7,10 +7,12 @@ import flash.utils.ByteArray;
 import com.threerings.util.FlashObjectMarshaller;
 import com.threerings.util.Name;
 
+import com.threerings.presents.dobj.MessageAdapter;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.MessageEvent;
 
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
@@ -45,16 +47,28 @@ public class FlashGameController extends GameController
         addDelegate(_turnDelegate = new TurnGameControllerDelegate(this));
     }
 
+    override public function init (ctx :CrowdContext, config :PlaceConfig) :void
+    {
+        _mctx = (ctx as MsoyContext);
+        super.init(ctx, config);
+    }
+
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
         _fgObj = (plobj as FlashGameObject);
-        userGameObj = new UserGameObject(_ctx as MsoyContext, _fgObj);
+        userGameObj = new UserGameObject(_mctx, _fgObj);
+
+        _mctx.getClientObject().addListener(_userListener);
+
         super.willEnterPlace(plobj);
     }
 
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         super.didLeavePlace(plobj);
+
+        _mctx.getClientObject().removeListener(_userListener);
+
         _fgObj = null;
     }
 
@@ -78,11 +92,32 @@ public class FlashGameController extends GameController
     public function messageReceived (event :MessageEvent) :void
     {
         if (FlashGameObject.USER_MESSAGE == event.getName()) {
-            var args :Array = event.getArgs();
-            dispatchUserEvent(new MessageReceivedEvent(
-                (args[0] as String),
-                FlashObjectMarshaller.decode((args[1] as ByteArray))));
+            dispatchUserMessage(event.getArgs());
         }
+    }
+
+    /**
+     * Called by our user listener when we receive a message event
+     * on the user object.
+     */
+    protected function messageReceivedOnUserObject (event :MessageEvent) :void
+    {
+        // see if it's a message about user games
+        var msgName :String =
+            FlashGameObject.USER_MESSAGE + ":" + _fgObj.getOid();
+        if (msgName == event.getName()) {
+            dispatchUserMessage(event.getArgs());
+        }
+    }
+
+    /**
+     * Dispatch the user message.
+     */
+    protected function dispatchUserMessage (args :Array) :void
+    {
+        dispatchUserEvent(new MessageReceivedEvent(
+            (args[0] as String),
+            FlashObjectMarshaller.decode((args[1] as ByteArray))));
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
@@ -109,8 +144,14 @@ public class FlashGameController extends GameController
         userGameObj.msoy_internal::dispatch(event);
     }
 
+    /** A casted reference to our context. */
+    protected var _mctx :MsoyContext;
+
     protected var _fgObj :FlashGameObject;
 
     protected var _turnDelegate :TurnGameControllerDelegate;
+
+    protected var _userListener :MessageAdapter =
+        new MessageAdapter(messageReceivedOnUserObject);
 }
 }

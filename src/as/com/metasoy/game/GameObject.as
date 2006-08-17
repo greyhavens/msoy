@@ -32,9 +32,22 @@ public interface GameObject
     function sendMessage (messageName :String, value :Object) :void;
 
     /**
-     * Send the specified message to the chatbox for this game.
+     * Send a "message" to just one other player.
      */
-    function writeToLocalChat (msg :String) :void
+    function sendPlayerMessage (
+        playerIdx :int, messageName :String, value :Object) :void;
+
+    /**
+     * Send a message that will be heard by everyone in the game room,
+     * even observers.
+     */
+    function sendChat (msg :String) :void;
+
+    /**
+     * Display the specified message immediately locally: not sent
+     * to any other players or observers in the game room.
+     */
+    function localChat (msg :String) :void
 
     /**
      * Get the player names, as an array.

@@ -12,6 +12,8 @@ import com.threerings.crowd.client.PlaceController;
 
 import com.threerings.parlor.game.client.GameConfigurator;
 import com.threerings.parlor.game.data.GameConfig;
+import com.threerings.parlor.game.data.PartyGameConfig;
+import com.threerings.parlor.game.data.PartyGameCodes;
 
 import com.threerings.msoy.data.MediaData;
 
@@ -22,6 +24,7 @@ import com.threerings.msoy.game.client.FlashGameController;
  * A game config for a simple multiplayer flash game.
  */
 public class FlashGameConfig extends GameConfig
+    implements PartyGameConfig
 {
     /** A creator-submitted name of the game. */
     public var gameName :String;
@@ -47,6 +50,13 @@ public class FlashGameConfig extends GameConfig
     override public function getGameName () :String
     {
         return MessageBundle.taint(gameName);
+    }
+
+    // from PartyGameConfig
+    public function getPartyGameType () :int
+    {
+        // TODO
+        return PartyGameCodes.NOT_PARTY_GAME;
     }
 
     override public function equals (other :Object) :Boolean

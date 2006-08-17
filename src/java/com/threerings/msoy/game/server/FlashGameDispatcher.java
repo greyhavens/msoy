@@ -52,6 +52,13 @@ public class FlashGameDispatcher extends InvocationDispatcher
             );
             return;
 
+        case FlashGameMarshaller.SEND_MESSAGE:
+            ((FlashGameProvider)provider).sendMessage(
+                source,
+                ((Integer)args[0]).intValue(), (String)args[1], (byte[])args[2], (InvocationService.InvocationListener)args[3]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

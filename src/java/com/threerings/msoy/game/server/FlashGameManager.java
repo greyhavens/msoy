@@ -74,6 +74,41 @@ public class FlashGameManager extends GameManager
         endGame();
     }
 
+    // from FlashGameProvider
+    public void sendMessage (
+        ClientObject caller, int playerIdx, String msg, byte[] data,
+        InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        validateUser(caller);
+
+        if (playerIdx < 0 || playerIdx >= _gameObj.players.length) {
+            // TODO: this code has no corresponding translation
+            throw new InvocationException("m.invalid_player_index");
+        }
+
+        BodyObject target = getPlayer(playerIdx);
+        if (target == null) {
+            // TODO: this code has no corresponding translation
+            throw new InvocationException("m.player_not_around");
+        }
+
+        target.postMessage(
+            FlashGameObject.USER_MESSAGE + ":" + _gameObj.getOid(),
+            new Object[] { msg, data });
+    }
+
+    /**
+     * Validate that the specified user has access to do things in the game.
+     */
+    protected void validateUser (ClientObject caller)
+        throws InvocationException
+    {
+        if (!_gameObj.occupants.contains(caller.getOid())) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+    }
+
     /**
      * Validate that the specified listener has access to make a
      * change.
@@ -81,6 +116,8 @@ public class FlashGameManager extends GameManager
     protected void validateStateModification (ClientObject caller)
         throws InvocationException
     {
+        validateUser(caller);
+
         Name holder = _gameObj.turnHolder;
         if (holder != null &&
                 !holder.equals(((BodyObject) caller).getVisibleName())) {

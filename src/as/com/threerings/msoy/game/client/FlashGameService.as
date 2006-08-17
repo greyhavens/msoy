@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.utils.ByteArray;
+
 import com.threerings.io.TypedArray;
 
 import com.threerings.presents.client.Client;
@@ -28,6 +30,14 @@ public interface FlashGameService extends InvocationService
      */
     function endGame (
         client :Client, winners :TypedArray /* of int */,
+        listener :InvocationService_InvocationListener) :void;
+
+    /**
+     * Request to send a private message to one other player in
+     * the game.
+     */
+    function sendMessage (
+        client :Client, playerIdx :int, msgName :String, data :ByteArray,
         listener :InvocationService_InvocationListener) :void;
 }
 }

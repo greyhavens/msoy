@@ -76,4 +76,10 @@ public class FriendEntry
         return (other instanceof FriendEntry) &&
             (getMemberId() == ((FriendEntry)other).getMemberId());
     }
+
+    @Override
+    public String toString ()
+    {
+        return "FriendEntry[" + name + "]";
+    }
 }
