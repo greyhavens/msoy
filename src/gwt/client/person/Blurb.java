@@ -33,7 +33,9 @@ public abstract class Blurb extends DockPanel
 
     public Blurb ()
     {
+        setStyleName("blurb_box");
         add(_title = new Label("Title"), NORTH);
+        _title.setStyleName("blurb_title");
         add(createContent(), CENTER);
     }
 

@@ -25,10 +25,12 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (Object blurbData)
     {
-        ArrayList friends = (ArrayList)blurbData;
+        setTitle("Friends");
 
+        ArrayList friends = (ArrayList)blurbData;
         if (friends.size() == 0) {
             setStatus("You have no friends. Boo hoo.");
+
         } else {
             for (int ii = 0, ll = friends.size(); ii < ll; ii++) {
                 FriendInfo friend = (FriendInfo)friends.get(ii);
@@ -42,6 +44,7 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected void didFail (String cause)
     {
+        setTitle("Error");
         setStatus("Failed to load friends: " + cause);
     }
 

@@ -55,6 +55,8 @@ public class ProfileBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (Object blurbData)
     {
+        setTitle("Profile");
+
         _profile = (Profile)blurbData;
         if (_profile.photo != null) {
             _photo.setUrl(
@@ -73,6 +75,7 @@ public class ProfileBlurb extends Blurb
     // @Override // from Blurb
     protected void didFail (String cause)
     {
+        setTitle("Error");
         _name.setText("Failed to load profile data: " + cause);
     }
 
