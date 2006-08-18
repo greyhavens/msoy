@@ -155,6 +155,12 @@ public class UserGameObject extends EventDispatcher
     }
 
     // from GameObject
+    public function isInPlay () :Boolean
+    {
+        return _gameObj.isInPlay();
+    }
+
+    // from GameObject
     public function endTurn (nextPlayerIndex :int = -1) :void
     {
         _gameObj.flashGameService.endTurn(_ctx.getClient(), nextPlayerIndex,

@@ -30,6 +30,12 @@ public class MessageReceivedEvent extends Event
         _value = value;
     }
 
+    override public function toString () :String
+    {
+        return "[MessageReceivedEvent name=" + _name +
+            ", value=" + _value + "]";
+    }
+
     override public function clone () :Event
     {
         return new MessageReceivedEvent(_name, _value);

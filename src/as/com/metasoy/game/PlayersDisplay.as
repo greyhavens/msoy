@@ -25,7 +25,8 @@ public class PlayersDisplay extends Sprite
     public function setGameObject (gameObj :GameObject) :void
     {
         _gameObj = gameObj;
-        _gameObj.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
+        _gameObj.addEventListener(StateChangedEvent.TURN_CHANGED, recheckTurn);
+        _gameObj.addEventListener(StateChangedEvent.GAME_ENDED, recheckTurn);
 
         setupPlayers();
     }
@@ -93,7 +94,7 @@ public class PlayersDisplay extends Sprite
      */
     protected function displayCurrentTurn () :void
     {
-        var idx :int = _gameObj.getTurnHolderIndex();
+        var idx :int = _gameObj.isInPlay() ? _gameObj.getTurnHolderIndex() : -1;
         for (var ii :int = 0; ii < _playerLabels.length; ii++) {
             var label :TextField = (_playerLabels[ii] as TextField);
             label.backgroundColor = (ii == idx) ? TURN_BACKGROUND
@@ -102,9 +103,10 @@ public class PlayersDisplay extends Sprite
     }
 
     /**
-     * Registered to receive TURN_CHANGED events from the GameObject.
+     * Registered to receive TURN_CHANGED and GAME_ENDED events
+     * from the GameObject.
      */
-    protected function turnChanged (event :StateChangedEvent) :void
+    protected function recheckTurn (event :StateChangedEvent) :void
     {
         displayCurrentTurn();
     }

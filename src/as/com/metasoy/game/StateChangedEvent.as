@@ -22,6 +22,11 @@ public class StateChangedEvent extends Event
         super(type);
     }
 
+    override public function toString () :String
+    {
+        return "[StateChangedEvent type=" + type + "]";
+    }
+
     override public function clone () :Event
     {
         return new StateChangedEvent(type);
