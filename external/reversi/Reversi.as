@@ -6,6 +6,7 @@ import flash.display.MovieClip;
 import com.metasoy.game.Game;
 import com.metasoy.game.GameObject;
 import com.metasoy.game.MessageReceivedEvent;
+import com.metasoy.game.PlayersDisplay;
 import com.metasoy.game.PropertyChangedEvent;
 import com.metasoy.game.StateChangedEvent;
 
@@ -15,6 +16,13 @@ public class Reversi extends Sprite
 {
     public function Reversi ()
     {
+        // all we have to do is add the players display, it will
+        // work automatically
+        var players :PlayersDisplay = new PlayersDisplay();
+        // position it to the right of the play board
+        players.x = Piece.SIZE * BOARD_SIZE + 10;
+        players.y = 0;
+        addChild(players);
     }
 
     // from Game
