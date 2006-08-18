@@ -5,6 +5,8 @@ import flash.display.DisplayObjectContainer;
 
 import flash.events.Event;
 
+import flash.utils.Dictionary;
+
 import mx.containers.Canvas;
 import mx.containers.VBox;
 
@@ -78,13 +80,20 @@ public class FlashGameView extends VBox
             function (disp :DisplayObject) :void
             {
                 if (disp is Game) {
-                    (disp as Game).setGameObject(_ctrl.userGameObj);
+                    // only notify the Game if we haven't seen it before
+                    if (null == _seenGames[disp]) {
+                        (disp as Game).setGameObject(_ctrl.userGameObj);
+                        _seenGames[disp] = true;
+                    }
                 }
             });
     }
 
     protected var _ctx :MsoyContext;
     protected var _ctrl :FlashGameController;
+
+    /** A weak-key hash of the Game interfaces we've already seen. */
+    protected var _seenGames :Dictionary = new Dictionary(true);
 
     protected var _gameView :MsoySprite;
     protected var _gameObject :FlashGameObject;

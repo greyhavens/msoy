@@ -464,6 +464,10 @@ public class MsoySprite extends Box
     {
 //        trace("sending [" + type + "=" + msg + "]");
 
+        // TODO: we can check loaderInfo.swfVersion, but
+        // as of now we need to know the version prior to loading
+        // anyway (so that we know whether to load with a random id
+        // appended
         if (_desc.isAVM1) {
             if (_oldDispatch == null) {
                 _oldDispatch = new LocalConnection();

@@ -26,10 +26,6 @@ public class ClickFest extends Sprite
     // from Game
     public function setGameObject (gameObj :GameObject) :void
     {
-        if (_gameObj != null) {
-            return; // we already got one!
-        }
-
         // set up our listeners
         _gameObj = gameObj;
         _gameObj.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);

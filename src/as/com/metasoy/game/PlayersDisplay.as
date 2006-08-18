@@ -24,10 +24,6 @@ public class PlayersDisplay extends Sprite
     // implementation of Game method
     public function setGameObject (gameObj :GameObject) :void
     {
-        if (_gameObj != null) {
-            return;
-        }
-
         _gameObj = gameObj;
         _gameObj.addEventListener(StateChangedEvent.TURN_CHANGED, turnChanged);
 

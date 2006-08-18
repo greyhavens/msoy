@@ -28,10 +28,6 @@ public class Reversi extends Sprite
     // from Game
     public function setGameObject (gameObj :GameObject) :void
     {
-        if (_gameObject != null) {
-            return; // we already got one!
-        }
-
         _gameObject = gameObj;
         _gameObject.addEventListener(PropertyChangedEvent.TYPE, propChanged);
         _gameObject.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
