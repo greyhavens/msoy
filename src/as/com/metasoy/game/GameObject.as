@@ -75,6 +75,8 @@ public interface GameObject
      */
     function isMyTurn () :Boolean;
 
+    // TODO: get game state? get list of watchers? 
+
     /**
      * End the current turn. If no next player index is specified,
      * then the next player after the current one is used.
