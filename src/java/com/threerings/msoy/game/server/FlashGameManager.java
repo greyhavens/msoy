@@ -82,18 +82,29 @@ public class FlashGameManager extends GameManager
 
     // from FlashGameProvider
     public void sendMessage (
-        ClientObject caller, int playerIdx, String msg, byte[] data,
+        ClientObject caller, String msg, Object data, int playerIdx,
         InvocationService.InvocationListener listener)
         throws InvocationException
     {
         validateUser(caller);
 
         if (playerIdx < 0 || playerIdx >= _gameObj.players.length) {
-            // TODO: this code has no corresponding translation
-            throw new InvocationException("m.invalid_player_index");
-        }
+            _gameObj.postMessage(FlashGameObject.USER_MESSAGE,
+                new Object[] { msg, data });
 
-        sendPrivateMessage(playerIdx, msg, data);
+        } else {
+            sendPrivateMessage(playerIdx, msg, data);
+        }
+    }
+
+    // from FlashGameProvider
+    public void setProperty (
+        ClientObject caller, String propName, Object data, int index,
+        InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        validateUser(caller);
+        setProperty(propName, data, index);
     }
 
     // from FlashGameProvider

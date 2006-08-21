@@ -65,8 +65,10 @@ public class UserGameObject extends EventDispatcher
     {
         validatePropertyChange(propName, value, index);
 
-        _gameObj.postEvent(
-            new PropertySetEvent(_gameObj.getOid(), propName, value, index));
+        var encoded :Object = FlashObjectMarshaller.encode(value);
+        _gameObj.flashGameService.setProperty(
+            _ctx.getClient(), propName, encoded, index,
+            createLoggingListener("setProperty"));
 
         // set it immediately in the game object
         _gameObj.applyPropertySet(propName, value, index);
@@ -112,30 +114,16 @@ public class UserGameObject extends EventDispatcher
     }
 
     // from GameObject
-    public function sendMessage (messageName :String, value :Object) :void
-    {
-        sendPlayerMessage(-1, messageName, value);
-    }
-
-    // from GameObject
-    public function sendPlayerMessage (
-        playerIdx :int, messageName :String, value :Object) :void
+    public function sendMessage (
+        messageName :String, value :Object, playerIndex :int = -1) :void
     {
         validateName(messageName);
         validateValue(value);
 
-        var data :ByteArray = FlashObjectMarshaller.encode(value);
-
-        // dispatch the message to all, or just to one player
-        if (playerIdx == -1) {
-            _gameObj.postMessage(FlashGameObject.USER_MESSAGE,
-                [ messageName, data ]);
-
-        } else {
-            _gameObj.flashGameService.sendMessage(_ctx.getClient(),
-                playerIdx, messageName, data, 
-                createLoggingListener("sendPlayerMessage"));
-        }
+        var encoded :Object = FlashObjectMarshaller.encode(value);
+        _gameObj.flashGameService.sendMessage(_ctx.getClient(),
+            messageName, encoded, playerIndex,
+            createLoggingListener("sendMessage"));
     }
 
     // from GameObject
@@ -277,10 +265,8 @@ public class UserGameObject extends EventDispatcher
         }
         validateValue(values);
 
-        var encodedValues :TypedArray = TypedArray.create(ByteArray);
-        for (var ii :int = 0; ii < values.length; ii++) {
-            encodedValues[ii] = FlashObjectMarshaller.encode(values[ii]);
-        }
+        var encodedValues :TypedArray =
+            (FlashObjectMarshaller.encode(values) as TypedArray);
 
         _gameObj.flashGameService.addToCollection(
             _ctx.getClient(), collName, encodedValues, clearExisting,

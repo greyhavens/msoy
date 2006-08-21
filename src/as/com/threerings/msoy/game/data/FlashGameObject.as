@@ -92,6 +92,10 @@ public class FlashGameObject extends GameObject
         if (index >= 0) {
             // set an array element
             var arr :Array = (oldValue as Array);
+            if (arr == null) {
+                arr = [];
+                _props[propName] = arr;
+            }
             oldValue = arr[index];
             arr[index] = value;
 
@@ -141,22 +145,8 @@ public class FlashGameObject extends GameObject
         var count :int = ins.readInt();
         while (count-- > 0) {
             var key :String = ins.readUTF();
-            var data :Object = ins.readObject();
-            if (data is Array) {
-                // read an array value
-                var ta :Array = (data as Array);
-                var array :Array = [];
-
-                for (var ii :int = 0; ii < ta.length; ii++) {
-                    array[ii] = FlashObjectMarshaller.decode(
-                        ta[ii] as ByteArray);
-                }
-                _props[key] = array;
-
-            } else {
-                _props[key] = FlashObjectMarshaller.decode(
-                    data as ByteArray);
-            }
+            var value :Object = FlashObjectMarshaller.decode(ins.readObject());
+            _props[key] = value;
         }
     }
 

@@ -18,6 +18,13 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 public interface FlashGameService extends InvocationService
 {
     /**
+     * Request to set the specified property.
+     */
+    function setProperty (
+        client :Client, propName :String, value :Object, index :int,
+        listener :InvocationService_InvocationListener) :void;
+
+    /**
      * Request to end the turn, possibly futzing the next turn holder unless
      * -1 is specified for the nextPlayerIndex.
      */
@@ -38,7 +45,7 @@ public interface FlashGameService extends InvocationService
      * the game.
      */
     function sendMessage (
-        client :Client, playerIdx :int, msgName :String, data :ByteArray,
+        client :Client, msgName :String, value :Object, playerIdx :int,
         listener :InvocationService_InvocationListener) :void;
  
     /**

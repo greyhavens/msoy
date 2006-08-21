@@ -12,6 +12,13 @@ import com.threerings.presents.client.InvocationService;
 public interface FlashGameService extends InvocationService
 {
     /**
+     * Request to set the specified property.
+     */
+    public void setProperty (
+        Client client, String propName, Object value, int index,
+        InvocationListener listener);
+
+    /**
      * Request to end the turn, possibly futzing the next turn holder unless
      * -1 is specified for the nextPlayerIndex.
      */
@@ -30,7 +37,7 @@ public interface FlashGameService extends InvocationService
      * the game.
      */
     public void sendMessage (
-        Client client, int playerIdx, String msgName, byte[] data,
+        Client client, String msgName, Object value, int playerIdx,
         InvocationListener listener);
 
     /**

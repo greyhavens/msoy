@@ -48,6 +48,12 @@ public interface FlashGameProvider extends InvocationProvider
     /**
      * Handles a {@link FlashGameService#sendMessage} request.
      */
-    public void sendMessage (ClientObject caller, int arg1, String arg2, byte[] arg3, InvocationService.InvocationListener arg4)
+    public void sendMessage (ClientObject caller, String arg1, Object arg2, int arg3, InvocationService.InvocationListener arg4)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link FlashGameService#setProperty} request.
+     */
+    public void setProperty (ClientObject caller, String arg1, Object arg2, int arg3, InvocationService.InvocationListener arg4)
         throws InvocationException;
 }

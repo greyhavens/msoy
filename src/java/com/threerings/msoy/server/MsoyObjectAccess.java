@@ -6,13 +6,12 @@ package com.threerings.msoy.server;
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.Subscriber;
 
 import com.threerings.crowd.server.CrowdObjectAccess;
 
 import com.threerings.parlor.game.server.GameManager;
-
-import com.threerings.msoy.game.data.PropertySetEvent;
 
 /**
  * Contains standard access controllers for msoy.
@@ -34,16 +33,12 @@ public class MsoyObjectAccess
 
         public boolean allowDispatch (DObject object, DEvent event)
         {
-            boolean allow = DEFAULT.allowDispatch(object, event);
-            if (!allow && (event instanceof PropertySetEvent)) {
-                // only players can distribute this event
-                GameManager gmgr = (GameManager)
-                    MsoyServer.plreg.getPlaceManager(object.getOid());
-                allow =
-                    (gmgr.getPresentPlayerIndex(event.getSourceOid()) != -1);
+            if (event instanceof MessageEvent) {
+                // we actually block messages from clients
+                return (event.getSourceOid() == -1);
             }
 
-            return allow;
+            return DEFAULT.allowDispatch(object, event);
         }
     };
 }

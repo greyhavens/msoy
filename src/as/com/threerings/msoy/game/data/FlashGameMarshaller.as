@@ -99,12 +99,25 @@ public class FlashGameMarshaller extends InvocationMarshaller
     public static const SEND_MESSAGE :int = 6;
 
     // documentation inherited from interface
-    public function sendMessage (arg1 :Client, arg2 :int, arg3 :String, arg4 :ByteArray, arg5 :InvocationService_InvocationListener) :void
+    public function sendMessage (arg1 :Client, arg2 :String, arg3 :Object, arg4 :int, arg5 :InvocationService_InvocationListener) :void
     {
         var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
         listener5.listener = arg5;
         sendRequest(arg1, SEND_MESSAGE, [
-            Integer.valueOf(arg2), arg3, arg4, listener5
+            arg2, arg3, Integer.valueOf(arg4), listener5
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #setProperty} requests. */
+    public static const SET_PROPERTY :int = 7;
+
+    // documentation inherited from interface
+    public function setProperty (arg1 :Client, arg2 :String, arg3 :Object, arg4 :int, arg5 :InvocationService_InvocationListener) :void
+    {
+        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, SET_PROPERTY, [
+            arg2, arg3, Integer.valueOf(arg4), listener5
         ]);
     }
 

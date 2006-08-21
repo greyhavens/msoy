@@ -24,29 +24,9 @@ public class PropertySetEvent extends NamedEvent
     /**
      * Create a PropertySetEvent.
      */
-    public function PropertySetEvent (
-        targetOid :int = 0, propName :String = null, value :Object = null,
-        index :int = -1)
+    public function PropertySetEvent () // unserialize-only
     {
-        super(targetOid, propName);
-
-        // to help prevent the kids from doing bad things, we serialize
-        // the value immediately.
-        if (propName != null) {
-            _index = index;
-
-            if (index < 0 && (value is Array)) {
-                var array :Array = (value as Array);
-                var encoded :Array = new Array();
-                for (var ii :int = 0; ii < array.length; ii++) {
-                    encoded[ii] = FlashObjectMarshaller.encode(array[ii]);
-                }
-                _data = encoded;
-
-            } else {
-                _data = FlashObjectMarshaller.encode(value);
-            }
-        }
+        super(0, null);
     }
 
     /**
@@ -87,60 +67,19 @@ public class PropertySetEvent extends NamedEvent
         }
     }
 
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        if (_index >= 0) {
-            out.writeByte(SET_ELEMENT);
-            out.writeInt(_index);
-            out.writeField(_data);
-
-        } else if (_data is Array) {
-            out.writeByte(SET_ARRAY);
-            var arr :Array = (_data as Array);
-            out.writeInt(arr.length);
-            for (var ii :int = 0; ii < arr.length; ii++) {
-                out.writeField(arr[ii]);
-            }
-
-        } else {
-            out.writeByte(SET_NORMAL);
-            out.writeField(_data);
-        }
-    }
-
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 
-        var type :int = ins.readByte();
-        _index = (type == SET_ELEMENT) ? ins.readInt() : -1;
-
-        if (type == SET_ARRAY) {
-            var arr :Array = new Array();
-            arr.length = ins.readInt();
-            for (var ii :int = 0; ii < arr.length; ii++) {
-                arr[ii] = FlashObjectMarshaller.decode(
-                    ins.readField(ByteArray) as ByteArray);
-            }
-            _data = arr;
-
-        } else {
-            _data = FlashObjectMarshaller.decode(
-                ins.readField(ByteArray) as ByteArray);
-        }
+        _index = ins.readInt();
+        _data = FlashObjectMarshaller.decode(ins.readObject());
     }
-
-    protected static const SET_NORMAL :int = 0;
-    protected static const SET_ARRAY :int = 1;
-    protected static const SET_ELEMENT :int = 2;
-
-    /** The flash-side data that is assigned to this property. */
-    protected var _data :Object;
 
     /** The index of the property, if applicable. */
     protected var _index :int;
+
+    /** The flash-side data that is assigned to this property. */
+    protected var _data :Object;
 
     protected var _oldValue :Object;
 }

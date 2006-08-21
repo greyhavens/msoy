@@ -88,12 +88,25 @@ public class FlashGameMarshaller extends InvocationMarshaller
     public static final int SEND_MESSAGE = 6;
 
     // documentation inherited from interface
-    public void sendMessage (Client arg1, int arg2, String arg3, byte[] arg4, InvocationService.InvocationListener arg5)
+    public void sendMessage (Client arg1, String arg2, Object arg3, int arg4, InvocationService.InvocationListener arg5)
     {
         ListenerMarshaller listener5 = new ListenerMarshaller();
         listener5.listener = arg5;
         sendRequest(arg1, SEND_MESSAGE, new Object[] {
-            Integer.valueOf(arg2), arg3, arg4, listener5
+            arg2, arg3, Integer.valueOf(arg4), listener5
+        });
+    }
+
+    /** The method id used to dispatch {@link #setProperty} requests. */
+    public static final int SET_PROPERTY = 7;
+
+    // documentation inherited from interface
+    public void setProperty (Client arg1, String arg2, Object arg3, int arg4, InvocationService.InvocationListener arg5)
+    {
+        ListenerMarshaller listener5 = new ListenerMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, SET_PROPERTY, new Object[] {
+            arg2, arg3, Integer.valueOf(arg4), listener5
         });
     }
 

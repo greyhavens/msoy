@@ -76,7 +76,14 @@ public class FlashGameDispatcher extends InvocationDispatcher
         case FlashGameMarshaller.SEND_MESSAGE:
             ((FlashGameProvider)provider).sendMessage(
                 source,
-                ((Integer)args[0]).intValue(), (String)args[1], (byte[])args[2], (InvocationService.InvocationListener)args[3]
+                (String)args[0], (Object)args[1], ((Integer)args[2]).intValue(), (InvocationService.InvocationListener)args[3]
+            );
+            return;
+
+        case FlashGameMarshaller.SET_PROPERTY:
+            ((FlashGameProvider)provider).setProperty(
+                source,
+                (String)args[0], (Object)args[1], ((Integer)args[2]).intValue(), (InvocationService.InvocationListener)args[3]
             );
             return;
 

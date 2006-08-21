@@ -66,14 +66,17 @@ public class FlashGameObject extends GameObject
      */
     protected void applyPropertySet (String propName, Object data, int index)
     {
-        if (index != -1) {
-            byte[][] arr = (byte[][]) _props.get(propName);
-            // the array should never be null...
-            if (arr.length <= index) {
+        if (index >= 0) {
+            Object something = _props.get(propName);
+            byte[][] arr = (something instanceof byte[][])
+                ? (byte[][]) something : null;
+            if (arr == null || arr.length <= index) {
                 // TODO: in case a user sets element 0 and element 90000,
                 // we might want to store elements in a hash
                 byte[][] newArr = new byte[index + 1][];
-                System.arraycopy(arr, 0, newArr, 0, arr.length);
+                if (arr != null) {
+                    System.arraycopy(arr, 0, newArr, 0, arr.length);
+                }
                 _props.put(propName, newArr);
                 arr = newArr;
             }

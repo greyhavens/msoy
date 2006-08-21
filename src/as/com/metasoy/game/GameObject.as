@@ -69,14 +69,12 @@ public interface GameObject
      * These is similar to setting a property, except that the
      * value will not be saved- it will merely end up coming out
      * as a MessageReceivedEvent.
+     *
+     * @param playerIndex if -1, sends to all players, otherwise
+     * the message will be private to just one player
      */
-    function sendMessage (messageName :String, value :Object) :void;
-
-    /**
-     * Send a "message" to just one other player.
-     */
-    function sendPlayerMessage (
-        playerIdx :int, messageName :String, value :Object) :void;
+    function sendMessage (
+        messageName :String, value :Object, playerIndex :int = -1) :void;
 
     /**
      * Send a message that will be heard by everyone in the game room,

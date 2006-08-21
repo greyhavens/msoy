@@ -121,21 +121,9 @@ public class FlashGameController extends GameController
      */
     protected function dispatchUserMessage (args :Array) :void
     {
-        var value :Object = args[1];
-        if (value is ByteArray) {
-            value = FlashObjectMarshaller.decode(value as ByteArray);
-
-        } else {
-            // an array of byte arrays
-            var array :Array = [];
-            for each (var ba :ByteArray in value) {
-                array.push(FlashObjectMarshaller.decode(ba));
-            }
-            value = array;
-        }
-
-        dispatchUserEvent(
-            new MessageReceivedEvent((args[0] as String), value));
+        dispatchUserEvent(new MessageReceivedEvent(
+            (args[0] as String),
+            FlashObjectMarshaller.decode(args[1])));
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
