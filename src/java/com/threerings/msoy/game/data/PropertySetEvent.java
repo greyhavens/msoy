@@ -24,6 +24,17 @@ public class PropertySetEvent extends NamedEvent
     {
     }
 
+    /**
+     * Create a PropertySetEvent.
+     */
+    public PropertySetEvent (
+        int targetOid, String propName, Object value, int index)
+    {
+        super(targetOid, propName);
+        _data = value;
+        _index = index;
+    }
+
     // from abstract DEvent
     public boolean applyToObject (DObject target)
     {

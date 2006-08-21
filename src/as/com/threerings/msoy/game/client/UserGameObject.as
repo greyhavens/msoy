@@ -14,6 +14,10 @@ import com.threerings.util.ClassUtil;
 import com.threerings.util.FlashObjectMarshaller;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
+import com.threerings.util.StringUtil;
+
+import com.threerings.presents.client.ConfirmAdapter;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 
 import com.threerings.msoy.msoy_internal;
 import com.threerings.msoy.client.MsoyContext;
@@ -69,6 +73,45 @@ public class UserGameObject extends EventDispatcher
     }
 
     // from GameObject
+    public function setCollection (collName :String, values :Array) :void
+    {
+        populateCollection(collName, values, true);
+    }
+
+    // from GameObject
+    public function addToCollection (collName :String, values :Array) :void
+    {
+        populateCollection(collName, values, false);
+    }
+
+    // from GameObject
+    public function pickFromCollection (
+        collName :String, count :int, msgOrPropName :String,
+        playerIndex :int = -1) :void
+    {
+        getFromCollection(collName, count, msgOrPropName, playerIndex,
+            false, null);
+    }
+
+    // from GameObject
+    public function dealFromCollection (
+        collName :String, count :int, msgOrPropName :String,
+        callback :Function = null, playerIndex :int = -1) :void
+    {
+        getFromCollection(collName, count, msgOrPropName, playerIndex,
+            true, callback);
+    }
+
+    // from GameObject
+    public function mergeCollection (srcColl :String, intoColl :String) :void
+    {
+        validateName(srcColl);
+        validateName(intoColl);
+        _gameObj.flashGameService.mergeCollection(_ctx.getClient(),
+            srcColl, intoColl, createLoggingListener("mergeCollection"));
+    }
+
+    // from GameObject
     public function sendMessage (messageName :String, value :Object) :void
     {
         sendPlayerMessage(-1, messageName, value);
@@ -78,6 +121,7 @@ public class UserGameObject extends EventDispatcher
     public function sendPlayerMessage (
         playerIdx :int, messageName :String, value :Object) :void
     {
+        validateName(messageName);
         validateValue(value);
 
         var data :ByteArray = FlashObjectMarshaller.encode(value);
@@ -90,13 +134,14 @@ public class UserGameObject extends EventDispatcher
         } else {
             _gameObj.flashGameService.sendMessage(_ctx.getClient(),
                 playerIdx, messageName, data, 
-                new LoggingListener("sendPlayerMessage"));
+                createLoggingListener("sendPlayerMessage"));
         }
     }
 
     // from GameObject
     public function sendChat (msg :String) :void
     {
+        validateChat(msg);
         // Post a message to the game object, the controller
         // will listen and call localChat().
         _gameObj.postMessage(FlashGameObject.GAME_CHAT, [ msg ]);
@@ -105,6 +150,7 @@ public class UserGameObject extends EventDispatcher
     // from GameObject
     public function localChat (msg :String) :void
     {
+        validateChat(msg);
         // The sendChat() messages will end up being routed
         // through this method on each client.
         // TODO: make this look distinct from other system chat
@@ -164,7 +210,7 @@ public class UserGameObject extends EventDispatcher
     public function endTurn (nextPlayerIndex :int = -1) :void
     {
         _gameObj.flashGameService.endTurn(_ctx.getClient(), nextPlayerIndex,
-            new LoggingListener("endTurn"));
+            createLoggingListener("endTurn"));
     }
 
     // from GameObject
@@ -176,7 +222,7 @@ public class UserGameObject extends EventDispatcher
             winners.push(int(rest.shift()));
         }
         _gameObj.flashGameService.endGame(_ctx.getClient(), winners,
-            new LoggingListener("endGame"));
+            createLoggingListener("endGame"));
     }
 
     override public function willTrigger (type :String) :Boolean
@@ -208,14 +254,81 @@ public class UserGameObject extends EventDispatcher
     }
 
     /**
+     * Create a listener for service requests.
+     */
+    private function createLoggingListener (
+        service :String) :InvocationService_ConfirmListener
+    {
+        return new ConfirmAdapter(function (cause :String) :void {
+            Log.getLog(GameObject).warning("Service failure " +
+                "[service=" + service + ", cause=" + cause + "].");
+        });
+    }
+
+    /**
+     * Helper method for setCollection and addToCollection.
+     */
+    private function populateCollection (
+        collName :String, values :Array, clearExisting :Boolean) :void
+    {
+        validateName(collName);
+        if (values == null) {
+            throw new ArgumentError("Collection values may not be null.");
+        }
+        validateValue(values);
+
+        var encodedValues :TypedArray = TypedArray.create(ByteArray);
+        for (var ii :int = 0; ii < values.length; ii++) {
+            encodedValues[ii] = FlashObjectMarshaller.encode(values[ii]);
+        }
+
+        _gameObj.flashGameService.addToCollection(
+            _ctx.getClient(), collName, encodedValues, clearExisting,
+            createLoggingListener("populateCollection"));
+    }
+
+    /**
+     * Helper method for pickFromCollection and dealFromCollection.
+     */
+    private function getFromCollection(
+        collName :String, count :int, msgOrPropName :String, playerIndex :int,
+        consume :Boolean, callback :Function) :void
+    {
+        validateName(collName);
+        validateName(msgOrPropName);
+        if (count < 1) {
+            throw new ArgumentError("Must retrieve at least one element!");
+        }
+
+        var listener :InvocationService_ConfirmListener;
+        if (callback != null) {
+            // TODO: Figure out the method sig of the callback, and what it
+            // means
+            var fn :Function = function (cause :String = null) :void {
+                if (cause == null) {
+                    callback(count);
+                } else {
+                    callback(parseInt(cause));
+                }
+            };
+            listener = new ConfirmAdapter(fn, fn);
+
+        } else {
+            listener = createLoggingListener("getFromCollection");
+        }
+
+        _gameObj.flashGameService.getFromCollection(
+            _ctx.getClient(), collName, consume, count, msgOrPropName,
+            playerIndex, listener);
+    }
+
+    /**
      * Verify that the property name / value are valid.
      */
     private function validatePropertyChange (
         propName :String, value :Object, index :int) :void
     {
-        if (propName == null) {
-            throw new ArgumentError(); 
-        }
+        validateName(propName);
 
         // check that we're setting an array element on an array
         if (index >= 0) {
@@ -227,6 +340,25 @@ public class UserGameObject extends EventDispatcher
 
         // validate the value too
         validateValue(value);
+    }
+
+    /**
+     * Verify that the specified name is valid.
+     */
+    private function validateName (name :String) :void
+    {
+        if (name == null) {
+            throw new ArgumentError(
+                "Property, message, and collection names must not be null.");
+        }
+    }
+
+    private function validateChat (msg :String) :void
+    {
+        if (StringUtil.isBlank(msg)) {
+            throw new ArgumentError(
+                "Empty chat may not be displayed.");
+        }
     }
 
     /**
@@ -277,23 +409,4 @@ public class UserGameObject extends EventDispatcher
 
     protected var _gameData :GameData;
 }
-}
-
-import com.threerings.presents.client.InvocationService_InvocationListener;
-
-class LoggingListener
-    implements InvocationService_InvocationListener
-{
-    public function LoggingListener (service :String)
-    {
-        _service = service;
-    }
-
-    public function requestFailed (cause :String) :void
-    {
-        Log.getLog(this).warning("Service failure [service=" + _service +
-            ", cause=" + cause + "].");
-    }
-
-    protected var _service :String;
 }

@@ -38,6 +38,13 @@ public class FlashGameDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case FlashGameMarshaller.ADD_TO_COLLECTION:
+            ((FlashGameProvider)provider).addToCollection(
+                source,
+                (String)args[0], (byte[][])args[1], ((Boolean)args[2]).booleanValue(), (InvocationService.InvocationListener)args[3]
+            );
+            return;
+
         case FlashGameMarshaller.END_GAME:
             ((FlashGameProvider)provider).endGame(
                 source,
@@ -49,6 +56,20 @@ public class FlashGameDispatcher extends InvocationDispatcher
             ((FlashGameProvider)provider).endTurn(
                 source,
                 ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
+        case FlashGameMarshaller.GET_FROM_COLLECTION:
+            ((FlashGameProvider)provider).getFromCollection(
+                source,
+                (String)args[0], ((Boolean)args[1]).booleanValue(), ((Integer)args[2]).intValue(), (String)args[3], ((Integer)args[4]).intValue(), (InvocationService.ConfirmListener)args[5]
+            );
+            return;
+
+        case FlashGameMarshaller.MERGE_COLLECTION:
+            ((FlashGameProvider)provider).mergeCollection(
+                source,
+                (String)args[0], (String)args[1], (InvocationService.InvocationListener)args[2]
             );
             return;
 

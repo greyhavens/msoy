@@ -9,6 +9,7 @@ import com.threerings.io.TypedArray;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 
 /**
@@ -39,5 +40,32 @@ public interface FlashGameService extends InvocationService
     function sendMessage (
         client :Client, playerIdx :int, msgName :String, data :ByteArray,
         listener :InvocationService_InvocationListener) :void;
+ 
+    /**
+     * Add to the specified named collection.
+     *
+     * @param clearExisting if true, wipe the old contents.
+     */
+    function addToCollection (
+        client :Client, collName :String, data :TypedArray /* of ByteArray */,
+        clearExisting :Boolean, listener :InvocationService_InvocationListener)
+        :void;
+
+    /**
+     * Merge the specified collection into the other.
+     */
+    function mergeCollection (
+        client :Client, srcColl :String, intoColl :String,
+        listener :InvocationService_InvocationListener) :void;
+
+    /**
+     * Pick or deal some number of elements from the specified collection,
+     * and either set a property in the flash object, or delivery the
+     * picks to the specified player index via a game message.
+     */
+    function getFromCollection (
+        client :Client, collName :String, consume :Boolean, count :int,
+        msgOrPropName :String, playerIndex :int,
+        listener :InvocationService_ConfirmListener) :void;
 }
 }

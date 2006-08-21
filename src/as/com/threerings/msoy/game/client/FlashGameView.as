@@ -50,8 +50,17 @@ public class FlashGameView extends VBox
     // from PlaceView
     public function willEnterPlace (plobj :PlaceObject) :void
     {
-        _gameObject = (plobj as FlashGameObject);
-        notifyOfGame(_gameView);
+        // don't start notifying anything of the game until we've
+        // notified the game manager that we're in the game
+        // (done in GameController, and it uses callLater, so we do it twice!)
+        _ctx.getClient().callLater(function () :void {
+            _ctx.getClient().callLater(function () :void {
+                _gameObject = (plobj as FlashGameObject);
+
+                // we don't want to notify the view that 
+                notifyOfGame(_gameView);
+            });
+        });
     }
 
     // from PlaceView

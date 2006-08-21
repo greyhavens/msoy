@@ -170,6 +170,7 @@ public class MediaData
         [ "square100.png", false, new Point(50, 50) ],
         [ "djamesbunny.swf", false, new Point(155, 360) ],
  /*55*/ [ "ClickFest.swf", true ],
+        [ "BigTwo.swf", true ],
     ];
 
     public static const BASE_URL :String = "/media/static/";
