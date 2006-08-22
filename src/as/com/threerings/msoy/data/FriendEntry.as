@@ -48,10 +48,9 @@ public class FriendEntry
     public function compareTo (other :Object) :int
     {
         var that :FriendEntry = (other as FriendEntry);
-        // real friends go above not-yet-friends
-        var c :int = this.status - that.status;
-        if (c != 0) {
-            return c;
+        // real friends go above not-yet-friends (of whatever kind)
+        if ((this.status == FRIEND) != (that.status == FRIEND)) {
+            return (this.status == FRIEND) ? -1 : 1;
         }
         // online folks show up above offline folks
         if (this.online != that.online) {
