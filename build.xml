@@ -74,8 +74,38 @@
     </copy>
   </target>
 
+  <target name="checkaslib">
+    <uptodate property="aslib_is_up_to_date" targetfile="lib/naryavilya.swc">
+      <srcfiles dir="projects/narya/src/as" includes="**/*.as"/>
+      <srcfiles dir="projects/vilya/src/as" includes="**/*.as"/>
+    </uptodate>
+  </target>
+
+  <!-- builds our Flash library -->
+  <target name="aslib" unless="aslib_is_up_to_date" depends="checkaslib">
+    <java jar="lib/as-compiler/lib/compc.jar" fork="true">
+      <arg value="-locale"/>
+      <arg value="en_US"/>
+      <arg value="-compiler.optimize"/>
+      <arg value="-compiler.external-library-path"/>
+      <arg value="lib/as-compiler/frameworks/libs"/>
+      <arg value="lib/as-compiler/frameworks/locale/en_US"/>
+      <arg value="-load-config"/>
+      <arg value="lib/as-compiler/frameworks/flex-config.xml"/>
+      <arg value="-compiler.warn-class-is-sealed=true"/>
+      <arg value="-compiler.warn-constructor-returns-value=true"/>
+      <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
+      <arg value="-compiler.source-path=projects/narya/src/as/"/>
+      <arg value="-compiler.source-path=projects/vilya/src/as/"/>
+      <arg value="-include-sources=projects/narya/src/as/"/>
+      <arg value="-include-sources=projects/vilya/src/as/"/>
+      <arg value="-output"/>
+      <arg value="lib/naryavilya.swc"/>
+    </java>
+  </target>
+
   <!-- builds our Flash client -->
-  <target name="asclient" depends="asprepare">
+  <target name="asclient" depends="asprepare,aslib">
     <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true">
       <arg value="-locale"/>
       <arg value="en_US"/>
@@ -93,8 +123,6 @@
       <arg value="-compiler.warn-class-is-sealed=true"/>
       <arg value="-compiler.warn-constructor-returns-value=true"/>
       <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
-      <arg value="-compiler.source-path=projects/narya/src/as/"/>
-      <arg value="-compiler.source-path=projects/vilya/src/as/"/>
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=src/css/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
@@ -104,7 +132,7 @@
   </target>
 
   <!-- builds our Flash debug client -->
-  <target name="asdebug" depends="asprepare">
+  <target name="asdebug" depends="asprepare,aslib">
     <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true">
       <arg value="-locale"/>
       <arg value="en_US"/>
@@ -123,8 +151,6 @@
       <arg value="-compiler.warn-class-is-sealed=true"/>
       <arg value="-compiler.warn-constructor-returns-value=true"/>
       <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
-      <arg value="-compiler.source-path=projects/narya/src/as/"/>
-      <arg value="-compiler.source-path=projects/vilya/src/as/"/>
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=src/css/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
