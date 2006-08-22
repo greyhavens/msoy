@@ -94,13 +94,6 @@ public class DisconnectedPanel extends VBox
         }
     }
 
-    // TODO: hack function required by TopPanel
-    public function setViewSize (w :Number, h :Number) :void
-    {
-        width = w;
-        height = h;
-    }
-
     /**
      * Return a translatable String that sums up the cause of the
      * logon error.

@@ -16,6 +16,7 @@ import mx.controls.VideoDisplay;
 
 import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
+import mx.core.mx_internal;
 
 import mx.events.FlexEvent;
 import mx.events.ResizeEvent;
@@ -75,16 +76,40 @@ public class AbstractRoomView extends Canvas
         relayout();
     }
 
-    public function setViewSize (w :Number, h :Number) :void
+/*
+    override protected function updateDisplayList (
+        unscaledWidth :Number, unscaledHeight :Number) :void
     {
-        // de-futz the scale value
+        super.updateDisplayList(unscaledWidth, unscaledHeight);
+        var scale :Number = int(100 * unscaledHeight / TARGET_HEIGHT) / 100;
+
+        scaleX = scale;
+        scaleY = scale;
+        setActualSize(unscaledWidth / scale, TARGET_HEIGHT);
+    }
+*/
+
+    override public function setActualSize (w :Number, h :Number) :void
+    {
         var scale :Number = int(100 * h / TARGET_HEIGHT) / 100;
 
         scaleX = scale;
         scaleY = scale;
-        height = TARGET_HEIGHT;
-        width = (w / scale);
+        super.setActualSize(w, TARGET_HEIGHT);
     }
+
+/*
+    override mx_internal function adjustSizesForScaleChanges () :void
+    {
+
+    }
+*/
+
+/*
+    override protected function measure () :void
+    {
+    }
+*/
 
     protected function didResize (event :ResizeEvent) :void
     {

@@ -18,12 +18,17 @@ import com.threerings.crowd.client.PlaceView;
 
 public class TopPanel extends Canvas
 {
+    /** The control bar. */
     public var controlBar :ControlBar;
 
+    /**
+     * Construct the top panel.
+     */
     public function TopPanel (ctx :MsoyContext, app :Application)
     {
         _ctx = ctx;
-        includeInLayout = false;
+        percentWidth = 100;
+        percentHeight = 100;
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
@@ -39,15 +44,12 @@ public class TopPanel extends Canvas
 
         // set up the control bar
         controlBar = new ControlBar(ctx);
+        controlBar.setStyle("bottom", 0);
         addChild(controlBar);
 
         // clear out the application and install ourselves as the only child
         app.removeAllChildren();
         app.addChild(this);
-
-        // listen for resizes
-        app.addEventListener(ResizeEvent.RESIZE, didResize);
-        configureSize(app);
     }
 
     public function setPlaceView (view :PlaceView) :void
@@ -55,9 +57,12 @@ public class TopPanel extends Canvas
         clearPlaceView(null);
         _placeView = view;
 
-        addChildAt(view as UIComponent, 0);
-
-        configureSize(parent as Container);
+        var comp :UIComponent = (view as UIComponent);
+        comp.setStyle("top", 0);
+        comp.setStyle("left", 0);
+        comp.setStyle("right", 0);
+        comp.setStyle("bottom", 59);
+        addChildAt(comp, 0);
     }
 
     public function clearPlaceView (view :PlaceView) :void
@@ -83,39 +88,6 @@ public class TopPanel extends Canvas
                 removeChild(_friendsList);
             }
         }
-    }
-
-    protected function configureSize (container :Container) :void
-    {
-        // set our size to the same as the container
-        width = container.width;
-        height = container.height;
-
-        // position the control bar
-        var placeHeight :Number = height - controlBar.height;
-        controlBar.move(0, placeHeight);
-        controlBar.setActualSize(width, controlBar.height);
-
-        // possibly position and size the place view
-        if (_placeView != null) {
-            var place :UIComponent = (_placeView as UIComponent);
-            //place.setActualSize(width, placeHeight);
-
-            // TODO: this is a hack
-            try {
-                (place as Object).setViewSize(width, placeHeight);
-            } catch (err :ReferenceError) {
-                Log.getLog(this).warning("placeView does not have a " +
-                    "setViewSize method. We need to make this standard anyway.");
-            }
-            place.move(0, 0);
-        }
-    }
-
-    protected function didResize (event :ResizeEvent) :void
-    {
-        var container :Container = (event.currentTarget as Container);
-        configureSize(container);
     }
 
     /** The giver of life. */
