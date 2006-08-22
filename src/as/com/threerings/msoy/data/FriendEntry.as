@@ -48,12 +48,17 @@ public class FriendEntry
     public function compareTo (other :Object) :int
     {
         var that :FriendEntry = (other as FriendEntry);
+        // real friends go above not-yet-friends
+        var c :int = this.status - that.status;
+        if (c != 0) {
+            return c;
+        }
         // online folks show up above offline folks
         if (this.online != that.online) {
             return this.online ? -1 : 1;
         }
         // then, sort by name
-        return this.name.compareTo(that.name);
+        return MemberName.BY_DISPLAY_NAME(this.name, that.name);
     }
 
     // from interface Streamable

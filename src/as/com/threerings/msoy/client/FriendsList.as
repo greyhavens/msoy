@@ -25,6 +25,7 @@ public class FriendsList extends List
     public function FriendsList (ctx :MsoyContext)
     {
         super();
+        includeInLayout = false;
         _ctx = ctx;
 
         dataTipFunction = getTipFor;
@@ -85,7 +86,7 @@ public class FriendsList extends List
     protected function updateFriends () :void
     {
         var friends :Array = _userObj.friends.toArray();
-        friends.sort(MemberName.BY_DISPLAY_NAME);
+        ArrayUtil.sort(friends);
         dataProvider = friends;
     }
 
