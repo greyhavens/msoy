@@ -4,6 +4,7 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.ezgame.client.EZGamePanel;
 
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.chat.client.ChatTextArea;
 
 import com.threerings.msoy.world.client.MsoySprite; // TODO: make new base class
@@ -12,7 +13,8 @@ import com.threerings.msoy.game.data.FlashGameConfig;
 
 public class FlashGamePanel extends EZGamePanel
 {
-    public function FlashGamePanel (ctx :CrowdContext, ctrl :FlashGameController)
+    public function FlashGamePanel (
+        ctx :CrowdContext, ctrl :FlashGameController)
     {
         super(ctx, ctrl);
 
@@ -21,9 +23,10 @@ public class FlashGamePanel extends EZGamePanel
         _gameView = new MsoySprite(cfg.game);
         addChild(_gameView);
 
-        addChild(new ChatTextArea(ctx));
+        addChild(new ChatTextArea(ctx as MsoyContext));
     }
 
     /** The actual flash game. */
     protected var _gameView :MsoySprite;
+}
 }

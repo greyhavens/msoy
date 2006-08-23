@@ -8,6 +8,10 @@ import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.crowd.client.PlaceController;
 
+import com.threerings.parlor.game.client.GameConfigurator;
+
+import com.threerings.ezgame.data.EZGameConfig;
+
 import com.threerings.msoy.data.MediaData;
 
 import com.threerings.msoy.game.client.FlashGameConfigurator;
