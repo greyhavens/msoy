@@ -2,7 +2,6 @@ package com.threerings.msoy.world.client {
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Shape;
@@ -34,8 +33,6 @@ import flash.system.SecurityDomain;
 
 import flash.net.URLRequest;
 
-import flash.utils.Timer;
-
 import mx.core.Container;
 import mx.core.UIComponent;
 
@@ -47,9 +44,7 @@ import mx.effects.Glow;
 import mx.events.EffectEvent;
 import mx.events.VideoEvent;
 
-import com.threerings.util.StringUtil;
-
-import com.threerings.media.image.ImageUtil;
+import com.threerings.util.MediaContainer;
 
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MediaData;
@@ -79,11 +74,8 @@ import com.threerings.util.HashMap;
  that contains all possible commands..
 
  */
-public class MsoySprite extends Box
+public class MsoySprite extends MediaContainer
 {
-    /** A log instance that can be shared by sprites. */
-    protected static const log :Log = Log.getLog(MsoySprite);
-
     /** The current logical coordinate of this media. */
     public const loc :MsoyLocation = new MsoyLocation();
 
@@ -92,6 +84,7 @@ public class MsoySprite extends Box
      */
     public function MsoySprite (desc :MediaData)
     {
+        super(null);
         setup(desc);
         setStyle("backgroundSize", "100%");
         setStyle("backgroundImage", _loadingImgClass);
@@ -102,22 +95,11 @@ public class MsoySprite extends Box
         if (_desc != null && _desc.id == desc.id) {
             return;
         }
-        // shutdown any previous media
-        if (_media != null) {
-            shutdown(false);
-        }
 
-        _desc = desc;
         _id = int(Math.random() * int.MAX_VALUE);
+        _desc = desc;
 
-        // configure the media
-        var url :String = desc.URL;
-        if (StringUtil.endsWith(url.toLowerCase(), ".flv")) {
-            setupVideo(url);
-
-        } else {
-            setupOther(url);
-        }
+        setMedia(desc.URL);
 
         scaleUpdated();
 
@@ -154,92 +136,22 @@ public class MsoySprite extends Box
         }
     }
 
-    /**
-     * Configure this sprite to show a video.
-     */
-    protected function setupVideo (url :String) :void
-    {
-        var vid :VideoDisplay = new VideoDisplay();
-        vid.autoPlay = false;
-        _media = vid;
-        addChild(vid);
-        vid.addEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
-        vid.addEventListener(VideoEvent.READY, loadVideoReady);
-        vid.addEventListener(VideoEvent.REWIND, videoDidRewind);
-
-        // start it loading
-        vid.source = url;
-        vid.load();
-
-        /*
-        var timer :Timer = new Timer(1000);
-        timer.addEventListener(TimerEvent.TIMER,
-            function (evt :Event) :void {
-                trace("Video: (" + vid.bytesLoaded + " / " +
-                    vid.bytesTotal + " bytes) " + vid.playheadTime +
-                    ": " + vid.state + "  (" + width + ", " + height +
-                    ") (" + vid.width + ", " + vid.height + ")");
-                updateContentDimensions(
-                    vid.videoWidth, vid.videoHeight);
-            });
-        timer.start();
-        */
-    }
-
-    /**
-     * Configure this sprite to show an image or flash movie.
-     */
-    protected function setupOther (url :String) :void
+    override protected function setupSwfOrImage (url :String) :void
     {
         if (_desc.isAVM1) {
             // TODO
             url += "?oid=" + _id;
         }
+        super.setupSwfOrImage(url);
 
-        // create our loader and set up some event listeners
-        var loader :Loader = new Loader();
-        _media = loader;
-        var info :LoaderInfo = loader.contentLoaderInfo;
-        info.addEventListener(Event.COMPLETE, loadingComplete);
-        info.addEventListener(IOErrorEvent.IO_ERROR, loadError);
-        info.addEventListener(ProgressEvent.PROGRESS, loadProgress);
-
-        // grab hold of the EventDispatcher we'll use for comm
-        _dispatch = info.sharedEvents;
-
-        // create a mask to prevent the media from drawing out of bounds
-        if (maxContentWidth < int.MAX_VALUE  &&
-                maxContentHeight < int.MAX_VALUE) {
-            var mask :Shape = new Shape();
-            mask.graphics.beginFill(0xFFFFFF);
-            mask.graphics.drawRect(0, 0, maxContentWidth, maxContentHeight);
-            mask.graphics.endFill();
-            // the mask must be added to the display list (which is wacky)
-            rawChildren.addChild(mask);
-            loader.mask = mask;
-        }
-
-        // start it loading, add it as a child
-        loader.load(new URLRequest(url), getContext(url));
-        rawChildren.addChild(loader);
-
-        try {
-            updateContentDimensions(info.width, info.height);
-        } catch (err :Error) {
-            // an error is thrown trying to access these props before they're
-            // ready
-        }
+        // then, grab a reference to the shared event dispatcher
+        _dispatch = (_media as Loader).contentLoaderInfo.sharedEvents;
     }
 
-    /**
-     * Get the application domain being used by this media, or null if
-     * none or not applicable.
-     */
-    public function getApplicationDomain () :ApplicationDomain
+    override protected function setupBrokenImage (
+        w :int = -1, h :int = -1) :void
     {
-        return (_media is Loader)
-            ? (_media as Loader).contentLoaderInfo.applicationDomain
-            : null;
+        super.setupBrokenImage(_desc.width, _desc.height);
     }
 
     /**
@@ -248,66 +160,17 @@ public class MsoySprite extends Box
      * @param completely if true, we're going away and should stop
      * everything. Otherwise, we're just loading up new media.
      */
-    public function shutdown (completely :Boolean = true) :void
+    override public function shutdown (completely :Boolean = true) :void
     {
-        try {
-            if (_media is Loader) {
-                var loader :Loader = (_media as Loader);
-                // remove any listeners
-                removeListeners(loader.contentLoaderInfo);
-
-                // dispose of media
-                try {
-                    loader.close();
-                } catch (ioe :IOError) {
-                    // ignore
-                }
-                loader.unload();
-
-                // remove from hierarchy
-                if (loader.mask != null) {
-                    rawChildren.removeChild(loader.mask);
-                }
-                rawChildren.removeChild(loader);
-
-            } else if (_media is VideoDisplay) {
-                var vid :VideoDisplay = (_media as VideoDisplay);
-                // remove any listeners
-                vid.removeEventListener(ProgressEvent.PROGRESS,
-                    loadVideoProgress);
-                vid.removeEventListener(VideoEvent.READY, loadVideoReady);
-                vid.removeEventListener(VideoEvent.REWIND, videoDidRewind);
-
-                // dispose of media
-                vid.pause();
-                Prefs.setMediaPosition(_desc.id, vid.playheadTime);
-                trace("saving media pos: " + vid.playheadTime);
-                try {
-                    vid.close();
-                } catch (ioe :IOError) {
-                    // ignore
-                }
-                vid.stop();
-
-                // remove from hierarchy
-                removeChild(vid);
-
-            } else if (_media != null) {
-                if (_media is UIComponent) {
-                    removeChild(_media);
-                } else {
-                    rawChildren.removeChild(_media);
-                }
-            }
-        } catch (ioe :IOError) {
-            log.warning("Error shutting down media: " + ioe);
-            log.logStackTrace(ioe);
+        if (_media is VideoDisplay) {
+            var vid :VideoDisplay = (_media as VideoDisplay);
+            Prefs.setMediaPosition(_desc.id, vid.playheadTime);
+            trace("saving media pos: " + vid.playheadTime);
         }
 
-        // clean everything up
-        _w = 0;
-        _h = 0;
-        _media = null;
+        super.shutdown(completely);
+
+        // clean up
         _dispatch = null;
     }
 
@@ -323,32 +186,6 @@ public class MsoySprite extends Box
                 Math.abs(p.y * getMediaScaleY()));
         }
         return p;
-    }
-
-    public function get contentWidth () :int
-    {
-        return Math.min(Math.abs(_w * getMediaScaleX()), maxContentWidth);
-    }
-
-    public function get contentHeight () :int
-    {
-        return Math.min(Math.abs(_h * getMediaScaleY()), maxContentHeight);
-    }
-
-    /**
-     * Get the maximum allowable width for our content.
-     */
-    public function get maxContentWidth () :int
-    {
-        return int.MAX_VALUE;
-    }
-
-    /**
-     * Get the maximum allowable height for our content.
-     */
-    public function get maxContentHeight () :int
-    {
-        return int.MAX_VALUE;
     }
 
     /**
@@ -419,24 +256,6 @@ public class MsoySprite extends Box
     }
 
     /**
-     * Get the X scaling factor to use on the actual media, independent
-     * of the scaling done to simulate depth.
-     */
-    public function getMediaScaleX () :Number
-    {
-        return 1;
-    }
-
-    /**
-     * Get the Y scaling factor to use on the actual media, independent
-     * of the scaling done to simulate depth.
-     */
-    public function getMediaScaleY () :Number
-    {
-        return 1;
-    }
-
-    /**
      * During editing, set the X scale of this sprite.
      */
     public function setMediaScaleX (scaleX :Number) :void
@@ -503,146 +322,22 @@ public class MsoySprite extends Box
         }
     }
 
-    protected function getContext (url :String) :LoaderContext
-    {
-        /* Super unrestrictive */
-//        return null;
-
-        /* a little unrestrictive */
-//        return new LoaderContext(false, 
-//            ApplicationDomain.currentDomain,
-//            null);
-
-        /* more restrictive */
-        return new LoaderContext(false, 
-            new ApplicationDomain(ApplicationDomain.currentDomain),
-            null);
-
-        /*
-        var loadCtx :LoaderContext = (_loadCtx.get(url) as LoaderContext);
-        if (loadCtx == null) {
-            trace("Creating new loadctx for " + url);
-            loadCtx = new LoaderContext(
-                false,
-                //new ApplicationDomain(ApplicationDomain.currentDomain),
-                ApplicationDomain.currentDomain,
-                null
-                );
-            _loadCtx.put(url, loadCtx);
-        }
-        return loadCtx;
-        */
-    }
-
-    /**
-     * Remove our listeners from the LoaderInfo object.
-     */
-    protected function removeListeners (info :LoaderInfo) :void
-    {
-        info.removeEventListener(Event.COMPLETE, loadingComplete);
-        info.removeEventListener(IOErrorEvent.IO_ERROR, loadError);
-        info.removeEventListener(ProgressEvent.PROGRESS, loadProgress);
-    }
-
-    /**
-     * Callback function.
-     */
-    protected function loadError (event :IOErrorEvent) :void
-    {
-        var info :LoaderInfo = (event.target as LoaderInfo);
-        removeListeners(info);
-
-        var loader :Loader = (_media as Loader);
-        rawChildren.removeChild(loader);
-        if (loader.mask != null) {
-            rawChildren.removeChild(loader.mask);
-        }
-
-        // create a 'broken media' image and use that instead
-        var w :int = _desc.width;
-        var h :int = _desc.height;
-        if (w == -1) {
-            w = 100;
-        }
-        if (h == -1) {
-            h = 100;
-        }
-        _media = ImageUtil.createErrorImage(w, h);
-        rawChildren.addChild(_media);
-    }
-
-    protected function loadProgress (event :ProgressEvent) :void
-    {
-        updateLoadingProgress(event.bytesLoaded, event.bytesTotal);
-        var info :LoaderInfo = (event.target as LoaderInfo);
-        try {
-            updateContentDimensions(info.width, info.height);
-        } catch (err :Error) {
-            // an error is thrown trying to access these props before they're
-            // ready
-        }
-    }
-
-    protected function loadVideoProgress (event :ProgressEvent) :void
+    override protected function loadVideoReady (event :VideoEvent) :void
     {
         var vid :VideoDisplay = (event.currentTarget as VideoDisplay);
-        updateContentDimensions(vid.videoWidth, vid.videoHeight);
-
-        updateLoadingProgress(vid.bytesLoaded, vid.bytesTotal);
-    }
-
-    protected function loadVideoReady (event :VideoEvent) :void
-    {
-        var vid :VideoDisplay = (event.currentTarget as VideoDisplay);
-        updateContentDimensions(vid.videoWidth, vid.videoHeight);
-        updateLoadingProgress(1, 1);
 
         // TODO: this seems broken, check it
         // set the position of the media to the specified timestamp
         vid.playheadTime = Prefs.getMediaPosition(_desc.id);
         trace("restored playhead time: " + Prefs.getMediaPosition(_desc.id));
-        vid.play();
 
-        // remove the two listeners
-        vid.removeEventListener(ProgressEvent.PROGRESS, loadVideoProgress);
-        vid.removeEventListener(VideoEvent.READY, loadVideoReady);
+        super.loadVideoReady(event);
     }
 
-    /**
-     * Callback function.
-     */
-    protected function loadingComplete (event :Event) :void
+    override protected function contentDimensionsUpdated () :void
     {
-        var info :LoaderInfo = (event.target as LoaderInfo);
-        removeListeners(info);
+        super.contentDimensionsUpdated();
 
-        updateContentDimensions(info.width, info.height);
-        updateLoadingProgress(1, 1);
-    }
-
-    /**
-     * Called when the video auto-rewinds.
-     */
-    protected function videoDidRewind (event :VideoEvent) :void
-    {
-        (_media as VideoDisplay).play();
-    }
-
-    protected function updateContentDimensions (ww :int, hh :int) :void
-    {
-        width = ww;
-        height = hh;
-
-        // update our saved size, and possibly notify our container
-        if (_w != ww || _h != hh) {
-            _w = ww;
-            _h = hh;
-            contentDimensionsUpdated();
-        }
-    }
-
-    protected function contentDimensionsUpdated () :void
-    {
         // Normally, we'd only need to tell our parent that our location
         // changed if we have no hotspot, but we could be loading
         // up a brand new piece of media (with a different hotspot)
@@ -650,10 +345,7 @@ public class MsoySprite extends Box
         locationUpdated();
     }
 
-    /**
-     * Update the graphics to indicate how much is loaded.
-     */
-    protected function updateLoadingProgress (
+    override protected function updateLoadingProgress (
             soFar :Number, total :Number) :void
     {
         var prog :Number = (total == 0) ? 0 : (soFar / total);
@@ -837,17 +529,8 @@ public class MsoySprite extends Box
 
     protected var _id :int;
 
-    /** The unscaled width of our content. */
-    protected var _w :int;
-
-    /** The unscaled height of our content. */
-    protected var _h :int;
-
     /** Our Media descripter. */
     protected var _desc :MediaData;
-
-    /** Either a Loader or a VideoDisplay. */
-    protected var _media :DisplayObject;
 
     /** Used to dispatch events down to the swf we contain. */
     protected var _dispatch :EventDispatcher;
@@ -860,7 +543,5 @@ public class MsoySprite extends Box
 
     [Embed(source="../../../../../../../rsrc/media/indian_h.png")]
     protected static const _loadingImgClass :Class;
-
-//    protected static var _loadCtx :HashMap = new HashMap();
 }
 }
