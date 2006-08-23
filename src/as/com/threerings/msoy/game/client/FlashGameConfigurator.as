@@ -42,8 +42,7 @@ public class FlashGameConfigurator extends FlexGameConfigurator
         var fconfig :FlashGameConfig = (_config as FlashGameConfig);
 
         var sel :Object = _game.selectedItem;
-        fconfig.gameName = String(sel["label"]);
-        fconfig.game = new MediaData(int(sel["data"]));
+        fconfig.configData = new MediaData(int(sel["data"])).URL;
     }
 
     /** The game being picked. */
