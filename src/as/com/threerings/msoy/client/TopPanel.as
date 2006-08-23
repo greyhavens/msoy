@@ -45,6 +45,7 @@ public class TopPanel extends Canvas
         // set up the control bar
         controlBar = new ControlBar(ctx);
         controlBar.setStyle("bottom", 0);
+        controlBar.setStyle("left", 0);
         addChild(controlBar);
 
         // clear out the application and install ourselves as the only child
@@ -61,7 +62,7 @@ public class TopPanel extends Canvas
         comp.setStyle("top", 0);
         comp.setStyle("left", 0);
         comp.setStyle("right", 0);
-        comp.setStyle("bottom", 59);
+        comp.setStyle("bottom", ControlBar.HEIGHT);
         addChildAt(comp, 0);
     }
 

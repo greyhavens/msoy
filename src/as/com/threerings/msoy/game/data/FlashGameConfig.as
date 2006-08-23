@@ -3,17 +3,10 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.util.MessageBundle;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.crowd.client.PlaceController;
-
-import com.threerings.parlor.game.client.GameConfigurator;
-import com.threerings.parlor.game.data.GameConfig;
-import com.threerings.parlor.game.data.PartyGameConfig;
-import com.threerings.parlor.game.data.PartyGameCodes;
 
 import com.threerings.msoy.data.MediaData;
 
@@ -23,12 +16,8 @@ import com.threerings.msoy.game.client.FlashGameController;
 /**
  * A game config for a simple multiplayer flash game.
  */
-public class FlashGameConfig extends GameConfig
-    implements PartyGameConfig
+public class FlashGameConfig extends EZGameConfig
 {
-    /** A creator-submitted name of the game. */
-    public var gameName :String;
-
     /** The media that is the game we're going to play. */
     public var game :MediaData;
 
@@ -37,26 +26,9 @@ public class FlashGameConfig extends GameConfig
         return new FlashGameController();
     }
 
-    override public function getBundleName () :String
-    {
-        return "general";
-    }
-
     override public function createConfigurator () :GameConfigurator
     {
         return new FlashGameConfigurator();
-    }
-
-    override public function getGameName () :String
-    {
-        return MessageBundle.taint(gameName);
-    }
-
-    // from PartyGameConfig
-    public function getPartyGameType () :int
-    {
-        // TODO
-        return PartyGameCodes.NOT_PARTY_GAME;
     }
 
     override public function equals (other :Object) :Boolean
@@ -66,8 +38,7 @@ public class FlashGameConfig extends GameConfig
         }
 
         var that :FlashGameConfig = (other as FlashGameConfig);
-        return (this.gameName === that.gameName) && 
-            (this.game === that.game);
+        return this.game.equals(that.game);
     }
 
     override public function hashCode () :int
@@ -79,7 +50,6 @@ public class FlashGameConfig extends GameConfig
     {
         super.writeObject(out);
 
-        out.writeField(gameName);
         out.writeObject(game);
     }
 
@@ -87,7 +57,6 @@ public class FlashGameConfig extends GameConfig
     {
         super.readObject(ins);
 
-        gameName = (ins.readField(String) as String);
         game = (ins.readObject() as MediaData);
     }
 }

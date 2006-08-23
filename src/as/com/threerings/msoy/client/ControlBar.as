@@ -21,6 +21,9 @@ import com.threerings.msoy.data.MemberObject;
  */
 public class ControlBar extends Canvas
 {
+    /** The height of the control bar. This is fixed. */
+    public static const HEIGHT :int = 59;
+
     public function ControlBar (ctx :MsoyContext)
     {
         _ctx = ctx;
@@ -34,8 +37,7 @@ public class ControlBar extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
-        width = 800;
-        height = 59;
+        height = HEIGHT;
 
         checkControls();
     }
@@ -75,7 +77,7 @@ public class ControlBar extends Canvas
             friendsBtn.x = 585;
             friendsBtn.y = 0;
             friendsBtn.width = 38;
-            friendsBtn.height = 59;
+            friendsBtn.height = HEIGHT;
             addChild(friendsBtn);
 
             // set up a guest login button
@@ -84,7 +86,7 @@ public class ControlBar extends Canvas
             guestBtn.x = 753;
             guestBtn.y = 0;
             guestBtn.width = 47;
-            guestBtn.height = 59;
+            guestBtn.height = HEIGHT;
             addChild(guestBtn);
 
         } else {
