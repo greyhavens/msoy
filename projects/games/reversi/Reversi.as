@@ -3,12 +3,12 @@ package {
 import flash.display.Sprite;
 import flash.display.MovieClip;
 
-import com.metasoy.game.Game;
-import com.metasoy.game.GameObject;
-import com.metasoy.game.MessageReceivedEvent;
-import com.metasoy.game.PlayersDisplay;
-import com.metasoy.game.PropertyChangedEvent;
-import com.metasoy.game.StateChangedEvent;
+import com.threerings.ezgame.Game;
+import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.MessageReceivedEvent;
+import com.threerings.ezgame.PlayersDisplay;
+import com.threerings.ezgame.PropertyChangedEvent;
+import com.threerings.ezgame.StateChangedEvent;
 
 [SWF(width="400", height="400")]
 public class Reversi extends Sprite
@@ -26,7 +26,7 @@ public class Reversi extends Sprite
     }
 
     // from Game
-    public function setGameObject (gameObj :GameObject) :void
+    public function setGameObject (gameObj :EZGame) :void
     {
         _gameObject = gameObj;
         _gameObject.addEventListener(PropertyChangedEvent.TYPE, propChanged);
@@ -203,6 +203,6 @@ public class Reversi extends Sprite
     protected var _board :Board;
 
     /** Our game object. */
-    protected var _gameObject :GameObject;
+    protected var _gameObject :EZGame;
 }
 }

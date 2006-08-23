@@ -1,6 +1,6 @@
 package {
 
-import com.metasoy.game.GameObject;
+import com.threerings.ezgame.EZGame;
 
 public class Board
 {
@@ -8,7 +8,7 @@ public class Board
     public static const WHITE_IDX :int = 0;
     public static const BLACK_IDX :int = 1;
 
-    public function Board (gameObj :GameObject, lengthOfSide :int = 8)
+    public function Board (gameObj :EZGame, lengthOfSide :int = 8)
     {
         _gameObj = gameObj;
         _lengthOfSide = lengthOfSide;
@@ -275,6 +275,6 @@ public class Board
 
     /** An array representing the current state of the board.
      * Each element is -1, 0, or 1. */
-    protected var _gameObj :GameObject;
+    protected var _gameObj :EZGame;
 }
 }
