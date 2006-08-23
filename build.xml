@@ -83,7 +83,7 @@
 
   <!-- builds our Flash library -->
   <target name="aslib" unless="aslib_is_up_to_date" depends="checkaslib">
-    <java jar="lib/as-compiler/lib/compc.jar" fork="true">
+    <java jar="lib/as-compiler/lib/compc.jar" fork="true" failonerror="true">
       <arg value="-locale"/>
       <arg value="en_US"/>
       <arg value="-compiler.optimize"/>
