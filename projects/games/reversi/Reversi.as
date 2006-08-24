@@ -6,19 +6,21 @@ import flash.display.MovieClip;
 import com.threerings.ezgame.Game;
 import com.threerings.ezgame.EZGame;
 import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.PlayersDisplay;
+import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
+import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
+import com.threerings.ezgame.StateChangedListener;
 
 [SWF(width="400", height="400")]
 public class Reversi extends Sprite
-    implements Game
+    implements Game, PropertyChangedListener, StateChangedListener
 {
     public function Reversi ()
     {
         // all we have to do is add the players display, it will
         // work automatically
-        var players :PlayersDisplay = new PlayersDisplay();
+        var players :ReversiPlayersDisplay = new ReversiPlayersDisplay();
         // position it to the right of the play board
         players.x = Piece.SIZE * BOARD_SIZE + 10;
         players.y = 0;
@@ -29,14 +31,6 @@ public class Reversi extends Sprite
     public function setGameObject (gameObj :EZGame) :void
     {
         _gameObject = gameObj;
-        _gameObject.addEventListener(PropertyChangedEvent.TYPE, propChanged);
-        _gameObject.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
-        _gameObject.addEventListener(
-            StateChangedEvent.GAME_STARTED, gameStarted);
-        _gameObject.addEventListener(
-            StateChangedEvent.GAME_ENDED, gameEnded);
-        _gameObject.addEventListener(
-            StateChangedEvent.TURN_CHANGED, turnChanged);
     }
 
     /**
@@ -133,37 +127,37 @@ public class Reversi extends Sprite
         }
     }
 
-    /**
-     * A callback we've registered to received MessageReceivedEvents.
-     */
-    protected function msgReceived (event :MessageReceivedEvent) :void
+    // from StateChangedListener
+    public function stateChanged (event :StateChangedEvent) :void
     {
-        // nada
+        if (event.type == StateChangedEvent.TURN_CHANGED) {
+            if (_pieces == null) {
+                // if we're the first player, we take care of setting up the
+                // board
+                if (_gameObject.isMyTurn()) {
+                    _board.initialize();
+                    _gameObject.set("startGame", true);
+                    setUpPieces();
+                }
+
+            } else {
+                showMoves();
+            }
+
+        } else if (event.type == StateChangedEvent.GAME_STARTED) {
+            _gameObject.localChat("Reversi superchallenge: go!");
+
+            // configure the board
+            _board = new Board(_gameObject, BOARD_SIZE);
+
+        } else if (event.type == StateChangedEvent.GAME_ENDED) {
+            _gameObject.localChat("Thank you for playing Reversi!");
+
+        }
     }
 
-    /**
-     * A callback we've registered to received StateChangedEvent.GAME_STARTED.
-     */
-    protected function gameStarted (event :StateChangedEvent) :void
-    {
-        _gameObject.localChat("Reversi superchallenge: go!");
-
-        // configure the board
-        _board = new Board(_gameObject, BOARD_SIZE);
-    }
-
-    /**
-     * A callback we've registered to received StateChangedEvent.GAME_STARTED.
-     */
-    protected function gameEnded (event :StateChangedEvent) :void
-    {
-        _gameObject.localChat("Thank you for playing Reversi!");
-    }
-
-    /**
-     * A callback we've registered to received PropertyChangedEvents
-     */
-    protected function propChanged (event :PropertyChangedEvent) :void
+    // from PropertyChangedListener
+    public function propertyChanged (event :PropertyChangedEvent) :void
     {
         var name :String = event.name;
         if (name == "board") {
@@ -175,24 +169,6 @@ public class Reversi extends Sprite
                 // the other player has initialized the game
                 setUpPieces();
             }
-        }
-    }
-
-    /**
-     * A callback we've registered to received StateChangedEvent.TURN_CHANGED.
-     */
-    protected function turnChanged (event :StateChangedEvent) :void
-    {
-        if (_pieces == null) {
-            // if we're the first player, we take care of setting up the board
-            if (_gameObject.isMyTurn()) {
-                _board.initialize();
-                _gameObject.set("startGame", true);
-                setUpPieces();
-            }
-
-        } else {
-            showMoves();
         }
     }
 

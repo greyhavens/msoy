@@ -8,6 +8,8 @@ public class Piece extends Sprite
 {
     public static const SIZE :int = 20;
 
+    public static const COLORS :Array = [ 0xFFFFFF, 0x000000 ];
+
     public function Piece (reversi :Reversi, boardIndex :int)
     {
         _reversi = reversi;
@@ -49,7 +51,5 @@ public class Piece extends Sprite
     protected var _reversi :Reversi;
 
     protected var _boardIndex :int; 
-
-    protected static const COLORS :Array = [ 0xFFFFFF, 0x000000 ];
 }
 }
