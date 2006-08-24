@@ -74,9 +74,9 @@ public class RoomManager extends SpotSceneManager
     }
 
     @Override
-    protected Class<? extends PlaceObject> getPlaceObjectClass ()
+    protected PlaceObject createPlaceObject ()
     {
-        return RoomObject.class;
+        return new RoomObject();
     }
 
     // documentation inherited from RoomProvider

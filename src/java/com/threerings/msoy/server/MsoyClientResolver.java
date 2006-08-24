@@ -26,9 +26,9 @@ import static com.threerings.msoy.Log.log;
 public class MsoyClientResolver extends CrowdClientResolver
 {
     @Override
-    public Class<? extends ClientObject> getClientObjectClass ()
+    public ClientObject createClientObject ()
     {
-        return MemberObject.class;
+        return new MemberObject();
     }
 
     @Override // from PresentsClient
