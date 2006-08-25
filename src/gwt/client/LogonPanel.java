@@ -117,7 +117,7 @@ public class LogonPanel extends HorizontalPanel
         // TODO: report user friendly error; make it possible to display status
         // and the logon elements at the same time
         displayStatus("Error: " + caught.toString());
-        displayLogon();
+        // displayLogon();
     }
 
     protected void displayChoice ()

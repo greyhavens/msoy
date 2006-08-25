@@ -3,6 +3,8 @@
 
 package client.person;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -41,11 +43,14 @@ public class ProfileBlurb extends Blurb
         _content.setWidget(1, 2, _blog = new HTML(""));
         _content.setWidget(2, 2, _gallery = new HTML(""));
         // setWidget(3, 2, _hood = new HTML(""));
-        _content.setWidget(3, 2, _edit = new Button("Edit"));
+        _edit = new Button("Edit");
         _edit.addClickListener(new ClickListener() {
             public void onClick (Widget source) {
-                startEdit();
-                _edit.setEnabled(false);
+                if (_editing) {
+                    commitEdit();
+                } else {
+                    startEdit();
+                }
             }
         });
 
@@ -58,18 +63,7 @@ public class ProfileBlurb extends Blurb
         setTitle("Profile");
 
         _profile = (Profile)blurbData;
-        if (_profile.photo != null) {
-            _photo.setUrl(
-                MsoyEntryPoint.toMediaPath(_profile.photo.getThumbnailPath()));
-        }
-        _name.setText(_profile.displayName);
-        _headline.setText(_profile.headline);
-        _homepage.setHTML("<a href=\"" + _profile.homePageURL + "\">" +
-                          _profile.homePageURL + "</a>");
-
-        _content.setWidget(0, 1, _name);
-        _content.setWidget(1, 1, _headline);
-        _content.setWidget(2, 1, _homepage);
+        displayProfile();
     }
 
     // @Override // from Blurb
@@ -84,6 +78,10 @@ public class ProfileBlurb extends Blurb
         if (_profile == null) {
             return; // nothing doing
         }
+
+        // switch to update mode
+        _edit.setText("Done");
+        _editing = true;
 
         if (_ename == null) {
             _ename = new TextBox();
@@ -101,7 +99,53 @@ public class ProfileBlurb extends Blurb
         _content.setWidget(2, 1, _ehomepage);
     }
 
+    protected void displayProfile ()
+    {
+        if (_profile.photo != null) {
+            _photo.setUrl(
+                MsoyEntryPoint.toMediaPath(_profile.photo.getThumbnailPath()));
+        }
+        _name.setText(_profile.displayName);
+        _headline.setText(_profile.headline);
+        _homepage.setHTML("<a href=\"" + _profile.homePageURL + "\">" +
+            _profile.homePageURL + "</a>");
+
+        _content.setWidget(0, 1, _name);
+        _content.setWidget(1, 1, _headline);
+        _content.setWidget(2, 1, _homepage);
+
+        // display the edit button if this is our profile
+        if (_profile.memberId == _ctx.creds.memberId) {
+            _content.setWidget(3, 2, _edit);
+        }
+    }
+
+    protected void commitEdit ()
+    {
+        // go back to edit mode
+        _edit.setText("Edit");
+        _editing = false;
+
+        // configure our profile instance with their bits
+        _profile.displayName = _ename.getText();
+        _profile.headline = _eheadline.getText();
+        _profile.homePageURL = _ehomepage.getText();
+
+        _ctx.profilesvc.updateProfileHeader(
+            _ctx.creds, _profile.displayName, _profile.homePageURL,
+            _profile.headline, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                GWT.log("Yay!", null);
+                displayProfile();
+            }
+            public void onFailure (Throwable cause) {
+                GWT.log("Nay!", cause);
+            }
+        });
+    }
+
     protected FlexTable _content;
+    protected boolean _editing = false;
 
     protected Profile _profile;
     protected Image _photo;

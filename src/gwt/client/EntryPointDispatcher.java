@@ -73,7 +73,6 @@ public class EntryPointDispatcher
     protected void createMappings ()
     {
         _pages.put("index", client.index.getCreator());
-        _pages.put("profile", client.profile.index.getCreator());
         _pages.put("inventory", client.inventory.index.getCreator());
         _pages.put("person", client.person.index.getCreator());
     }

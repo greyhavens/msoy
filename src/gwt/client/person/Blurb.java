@@ -31,14 +31,6 @@ public abstract class Blurb extends DockPanel
         }
     }
 
-    public Blurb ()
-    {
-        setStyleName("blurb_box");
-        add(_title = new Label("Title"), NORTH);
-        _title.setStyleName("blurb_title");
-        add(createContent(), CENTER);
-    }
-
     /**
      * Configures this blurb with a context and the member id for whom it is
      * displaying content.
@@ -56,6 +48,17 @@ public abstract class Blurb extends DockPanel
         }
     }
 
+    protected Blurb ()
+    {
+        setStyleName("blurb_box");
+        add(_title = new Label("Title"), NORTH);
+        _title.setStyleName("blurb_title");
+        add(createContent(), CENTER);
+    }
+
+    /**
+     * Can be called by the derived class to set the title of this blurb.
+     */
     protected void setTitle (String title)
     {
         _title.setText(title);
@@ -81,6 +84,5 @@ public abstract class Blurb extends DockPanel
     protected WebContext _ctx;
     protected int _memberId;
     protected int _blurbId;
-
     protected Label _title;
 }

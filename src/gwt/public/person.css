@@ -6,3 +6,11 @@
    border: 1px solid;
    font-weight: bold;
 }
+
+.profile_name {
+   font-weight: bold;
+}
+
+.profile_headline {
+   font-style: italic;
+}
