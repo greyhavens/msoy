@@ -23,7 +23,12 @@ import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.item.data.Photo;
+import com.threerings.msoy.web.data.Profile;
+
+import com.threerings.msoy.server.persist.Member;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.persist.ProfileRepository;
 
 /**
  * Manage msoy members.
@@ -31,21 +36,20 @@ import com.threerings.msoy.server.persist.MemberRepository;
 public class MemberManager
     implements MemberProvider
 {
-    /** The member repository. */
-    public MemberRepository memberRepo;
-
     /**
-     * Construct our member manager.
+     * Prepares our member manager for operation.
      */
-    public MemberManager (MemberRepository memberRepo)
+    public void init (
+        MemberRepository memberRepo, ProfileRepository profileRepo)
     {
-        this.memberRepo = memberRepo;
+        _memberRepo = memberRepo;
+        _profileRepo = profileRepo;
         MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), true);
     }
 
     /**
      * Loads the specified member's friends list. The results may come from the
-     * cache and will be cached if they were loaded from the database.
+     * cache and will be cached if they are loaded from the database.
      */
     public void loadFriends (
         final int memberId, ResultListener<ArrayList<FriendEntry>> listener)
@@ -61,11 +65,51 @@ public class MemberManager
             new RepositoryListenerUnit<ArrayList<FriendEntry>>(listener) {
             public ArrayList<FriendEntry> invokePersistResult ()
                 throws PersistenceException {
-                return memberRepo.getFriends(memberId);
+                return _memberRepo.getFriends(memberId);
             }
             public void handleSuccess () {
                 _friendCache.put(memberId, _result);
                 super.handleSuccess();
+            }
+        });
+    }
+
+    /**
+     * Loads the specified member's profile.
+     */
+    public void loadProfile (
+        final int memberId, ResultListener<Profile> listener)
+    {
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Profile>(listener) {
+            public Profile invokePersistResult () throws PersistenceException {
+                // load up their member info
+                Member member = MsoyServer.memberRepo.loadMember(memberId);
+                if (member == null) {
+                    return null;
+                }
+
+                Profile profile = new Profile();
+                profile.memberId = memberId;
+                profile.displayName = member.name;
+                // profile.lastLogon = ;
+
+                // fake bits!
+                profile.photo = new Photo();
+                profile.photo.mediaHash = "816cd5aebc2d9d228bf66cff193b81eba1a6ac85";
+                profile.photo.mimeType = Photo.IMAGE_JPEG;
+                profile.headline = "Arr! Mateys, this here be me profile!";
+                profile.homePageURL = "http://www.puzzlepirates.com/";
+                profile.isMale = true;
+                profile.location = "San Francisco, CA";
+                profile.age = 36;
+
+//                 ProfileRecord prec = _profileRepo.loadProfile(memberId);
+//                 if (prec != null) {
+//                     profile.
+
+                // load other bits!
+                return profile;
             }
         });
     }
@@ -80,10 +124,10 @@ public class MemberManager
         MsoyServer.invoker.postUnit(new PersistingUnit("alterFriend", lner) {
             public void invokePersistent () throws PersistenceException {
                 if (add) {
-                    _entry = memberRepo.inviteOrApproveFriend(
+                    _entry = _memberRepo.inviteOrApproveFriend(
                         user.getMemberId(), friendId);
                 } else {
-                    memberRepo.removeFriends(user.getMemberId(), friendId);
+                    _memberRepo.removeFriends(user.getMemberId(), friendId);
                 }
             }
 
@@ -122,6 +166,12 @@ public class MemberManager
             protected FriendEntry _entry;
         });
     }
+
+    /** Provides access to persistent member data. */
+    protected MemberRepository _memberRepo;
+
+    /** Provides access to persistent profile data. */
+    protected ProfileRepository _profileRepo;
 
     /** A soft reference cache of friends lists indexed on memberId. */
     protected SoftCache<Integer,ArrayList<FriendEntry>> _friendCache =
