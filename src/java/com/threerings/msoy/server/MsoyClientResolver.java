@@ -16,7 +16,7 @@ import com.threerings.msoy.data.MemberName;
 import com.threerings.crowd.server.CrowdClientResolver;
 
 import com.threerings.msoy.data.FriendEntry;
-import com.threerings.msoy.server.persist.Member;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -55,7 +55,8 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         // load up their member information using on their authentication
         // (account) name
-        Member member = MsoyServer.memberRepo.loadMember(_username.toString());
+        MemberRecord member =
+            MsoyServer.memberRepo.loadMember(_username.toString());
 
         // configure their member name which is a combination of their display
         // name and their member id

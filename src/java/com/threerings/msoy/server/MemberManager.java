@@ -26,7 +26,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.data.Photo;
 import com.threerings.msoy.web.data.Profile;
 
-import com.threerings.msoy.server.persist.Member;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.ProfileRepository;
 
@@ -84,7 +84,8 @@ public class MemberManager
             new RepositoryListenerUnit<Profile>(listener) {
             public Profile invokePersistResult () throws PersistenceException {
                 // load up their member info
-                Member member = MsoyServer.memberRepo.loadMember(memberId);
+                MemberRecord member =
+                    MsoyServer.memberRepo.loadMember(memberId);
                 if (member == null) {
                     return null;
                 }
@@ -96,7 +97,8 @@ public class MemberManager
 
                 // fake bits!
                 profile.photo = new Photo();
-                profile.photo.mediaHash = "816cd5aebc2d9d228bf66cff193b81eba1a6ac85";
+                profile.photo.mediaHash =
+                    "816cd5aebc2d9d228bf66cff193b81eba1a6ac85";
                 profile.photo.mimeType = Photo.IMAGE_JPEG;
                 profile.headline = "Arr! Mateys, this here be me profile!";
                 profile.homePageURL = "http://www.puzzlepirates.com/";

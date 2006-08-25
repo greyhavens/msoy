@@ -17,7 +17,7 @@ import java.sql.Date;
  */
 @Entity
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class AuthSession
+public class SessionRecord
 {
     /** The unique session identifier. */
     @Id
@@ -32,12 +32,12 @@ public class AuthSession
     public Date expires;
 
     /** Used when unserializing. */
-    public AuthSession ()
+    public SessionRecord ()
     {
     }
 
     /** Used to create a "key" for doing database fiddling. */
-    public AuthSession (String sessionToken)
+    public SessionRecord (String sessionToken)
     {
         token = sessionToken;
     }

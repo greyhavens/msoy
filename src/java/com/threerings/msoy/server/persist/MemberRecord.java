@@ -18,7 +18,7 @@ import com.threerings.msoy.data.MemberName;
  */
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class Member
+public class MemberRecord
 {
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -57,12 +57,12 @@ public class Member
     public int flags;
 
     /** A blank constructor used when loading records from the database. */
-    public Member ()
+    public MemberRecord ()
     {
     }
 
     /** Constructs a blank member record for the supplied account. */
-    public Member (String accountName)
+    public MemberRecord (String accountName)
     {
         this.accountName = accountName;
     }

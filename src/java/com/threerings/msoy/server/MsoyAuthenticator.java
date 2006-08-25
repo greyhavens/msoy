@@ -22,7 +22,7 @@ import com.threerings.crowd.data.TokenRing;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.server.persist.Member;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.LogonException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -147,7 +147,7 @@ public class MsoyAuthenticator extends Authenticator
                 throw new LogonException(MsoyAuthCodes.SERVER_ERROR);
             }
 
-            Member member = null;
+            MemberRecord member = null;
             String accountName;
             String password;
             if (creds.getUsername() == null) {
@@ -300,11 +300,12 @@ public class MsoyAuthenticator extends Authenticator
             domain.validateAccount(account);
 
             // load up their member information to get their member id
-            Member mrec = MsoyServer.memberRepo.loadMember(account.accountName);
+            MemberRecord mrec =
+                MsoyServer.memberRepo.loadMember(account.accountName);
 
             // if this is their first logon, insert a skeleton member record
             if (mrec == null) {
-                mrec = new Member();
+                mrec = new MemberRecord();
                 mrec.accountName = account.accountName;
                 mrec.name = account.accountName;
                 MsoyServer.memberRepo.insertMember(mrec);

@@ -66,10 +66,10 @@ public class MemberRepository extends JORARepository
      * Returns null if no matching record could be found. The record will be
      * fetched from the cache if possible and cached if not.
      */
-    public Member loadMember (String accountName)
+    public MemberRecord loadMember (String accountName)
         throws PersistenceException
     {
-        Member member;
+        MemberRecord member;
 
         // allow access to the cache from multiple threads but don't try to
         // prevent multiple simultaneous lookups; we don't want to keep the
@@ -82,7 +82,8 @@ public class MemberRepository extends JORARepository
         }
 
         // load up and cache the member
-        member = loadByExample(_mtable, new Member(accountName), _byNameMask);
+        member = loadByExample(
+            _mtable, new MemberRecord(accountName), _byNameMask);
         cacheMember(member);
 
         return member;
@@ -93,16 +94,16 @@ public class MemberRepository extends JORARepository
      * the specified id. The record will be fetched from the cache if possible
      * and cached if not.
      */
-    public Member loadMember (int memberId)
+    public MemberRecord loadMember (int memberId)
         throws PersistenceException
     {
-        Member member;
+        MemberRecord member;
 
         // allow access to the cache from multiple threads but don't try to
         // prevent multiple simultaneous lookups; we don't want to keep the
         // member cache locked during the database load
         synchronized (_memberCache) {
-            WeakReference<Member> ref = _memberIdCache.get(memberId);
+            WeakReference<MemberRecord> ref = _memberIdCache.get(memberId);
             if (ref != null) {
                 member = ref.get();
                 // make sure this record hasn't expired from the primary cache
@@ -124,7 +125,7 @@ public class MemberRepository extends JORARepository
      * Loads up the member associated with the supplied session token. Returns
      * null if the session has expired or is not valid.
      */
-    public Member loadMemberForSession (String sessionToken)
+    public MemberRecord loadMemberForSession (String sessionToken)
         throws PersistenceException
     {
         Integer memberId;
@@ -136,7 +137,8 @@ public class MemberRepository extends JORARepository
 
         // if it was not in the cache, look up the token in the session table
         if (memberId == null) {
-            AuthSession session = loadByExample(_stable, new AuthSession(sessionToken));
+            SessionRecord session =
+                loadByExample(_stable, new SessionRecord(sessionToken));
             if (session != null) {
                 // cache the result
                 synchronized (_sessions) {
@@ -170,7 +172,7 @@ public class MemberRepository extends JORARepository
         // the latest and the freshest bits as logins happen infrequently
 
         // assume we'll be creating a new session record
-        final AuthSession nsess = new AuthSession();
+        final SessionRecord nsess = new SessionRecord();
 	Calendar cal = Calendar.getInstance();
 	cal.add(Calendar.DATE, persist ? 30 : 1);
         nsess.expires = new Date(cal.getTime().getTime());
@@ -195,7 +197,7 @@ public class MemberRepository extends JORARepository
                 }
 
                 // there must already be a session record, so reuse it
-                AuthSession sess = _stable.select(
+                SessionRecord sess = _stable.select(
                     conn, "where MEMBER_ID = "  + nsess.memberId).get();
                 if (sess != null) {
                     sess.expires = nsess.expires;
@@ -233,15 +235,15 @@ public class MemberRepository extends JORARepository
             _sessions.remove(sessionToken);
         }
         // and wipe it from the database
-        delete(_stable, new AuthSession(sessionToken));
+        delete(_stable, new SessionRecord(sessionToken));
     }
 
     /**
-     * Insert a new member record into the repository and assigns them a
-     * unique member id in the process. The {@link Member#created} field
-     * will be filled in by this method if it is not already.
+     * Insert a new member record into the repository and assigns them a unique
+     * member id in the process. The {@link MemberRecord#created} field will be
+     * filled in by this method if it is not already.
      */
-    public void insertMember (final Member member)
+    public void insertMember (MemberRecord member)
         throws PersistenceException
     {
         if (member.created == null) {
@@ -293,7 +295,7 @@ public class MemberRepository extends JORARepository
     /**
      * Deletes the specified member from the repository.
      */
-    public void deleteMember (final Member member)
+    public void deleteMember (MemberRecord member)
         throws PersistenceException
     {
         delete(_mtable, member);
@@ -564,13 +566,13 @@ public class MemberRepository extends JORARepository
      * Caches the supplied member record which was presumably freshly loaded
      * from the database.
      */
-    protected void cacheMember (Member member)
+    protected void cacheMember (MemberRecord member)
     {
         if (member != null) {
             synchronized (_memberCache) {
                 _memberCache.put(member.accountName, member);
                 _memberIdCache.put(
-                    member.memberId, new WeakReference<Member>(member));
+                    member.memberId, new WeakReference<MemberRecord>(member));
             }
         }
     }
@@ -613,24 +615,25 @@ public class MemberRepository extends JORARepository
     @Override // documentation inherited
     protected void createTables ()
     {
-	_mtable = new Table<Member>(Member.class, "MEMBERS", "MEMBER_ID", true);
-	_stable = new Table<AuthSession>(
-            AuthSession.class, "SESSIONS", "MEMBER_ID", true);
+	_mtable = new Table<MemberRecord>(
+            MemberRecord.class, "MEMBERS", "MEMBER_ID", true);
+	_stable = new Table<SessionRecord>(
+            SessionRecord.class, "SESSIONS", "MEMBER_ID", true);
     }
 
-    protected Table<Member> _mtable;
-    protected Table<AuthSession> _stable;
+    protected Table<MemberRecord> _mtable;
+    protected Table<SessionRecord> _stable;
     protected FieldMask _byNameMask;
 
-    /** Contains a mapping from account name to {@link Member} records.
+    /** Contains a mapping from account name to {@link MemberRecord} records.
      * TODO: create a fancier cache system that expires records after some time
      * period. */
-    protected LRUHashMap<String,Member> _memberCache =
-        new LRUHashMap<String,Member>(CacheConfig.MEMBER_CACHE_SIZE);
+    protected LRUHashMap<String,MemberRecord> _memberCache =
+        new LRUHashMap<String,MemberRecord>(CacheConfig.MEMBER_CACHE_SIZE);
 
-    /** Contains a mapping from memberId to {@link Member} records. */
-    protected HashMap<Integer,WeakReference<Member>> _memberIdCache =
-        new HashMap<Integer,WeakReference<Member>>();
+    /** Contains a mapping from memberId to {@link MemberRecord} records. */
+    protected HashMap<Integer,WeakReference<MemberRecord>> _memberIdCache =
+        new HashMap<Integer,WeakReference<MemberRecord>>();
 
     /** Contains a mapping from session token to member id.
      * TODO: expire values from this table 1 hour after they were last got(). */
