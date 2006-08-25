@@ -13,12 +13,6 @@ import com.threerings.msoy.web.data.WebCreds;
 public interface ProfileServiceAsync
 {
     /**
-     * The asynchronous version of {@link ProfileService#loadProfile}.
-     */
-    public void loadProfile (WebCreds creds, int memberId,
-                             AsyncCallback callback);
-
-    /**
      * The asynchronous version of {@link ProfileService#updateProfileHeader}.
      */
     public void updateProfileHeader (WebCreds creds, String displayName,
