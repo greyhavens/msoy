@@ -136,7 +136,7 @@ public class MemberRepository extends JORARepository
 
         // if it was not in the cache, look up the token in the session table
         if (memberId == null) {
-            Session session = loadByExample(_stable, new Session(sessionToken));
+            AuthSession session = loadByExample(_stable, new AuthSession(sessionToken));
             if (session != null) {
                 // cache the result
                 synchronized (_sessions) {
@@ -170,7 +170,7 @@ public class MemberRepository extends JORARepository
         // the latest and the freshest bits as logins happen infrequently
 
         // assume we'll be creating a new session record
-        final Session nsess = new Session();
+        final AuthSession nsess = new AuthSession();
 	Calendar cal = Calendar.getInstance();
 	cal.add(Calendar.DATE, persist ? 30 : 1);
         nsess.expires = new Date(cal.getTime().getTime());
@@ -195,7 +195,7 @@ public class MemberRepository extends JORARepository
                 }
 
                 // there must already be a session record, so reuse it
-                Session sess = _stable.select(
+                AuthSession sess = _stable.select(
                     conn, "where MEMBER_ID = "  + nsess.memberId).get();
                 if (sess != null) {
                     sess.expires = nsess.expires;
@@ -233,7 +233,7 @@ public class MemberRepository extends JORARepository
             _sessions.remove(sessionToken);
         }
         // and wipe it from the database
-        delete(_stable, new Session(sessionToken));
+        delete(_stable, new AuthSession(sessionToken));
     }
 
     /**
@@ -614,12 +614,12 @@ public class MemberRepository extends JORARepository
     protected void createTables ()
     {
 	_mtable = new Table<Member>(Member.class, "MEMBERS", "MEMBER_ID", true);
-	_stable = new Table<Session>(
-            Session.class, "SESSIONS", "MEMBER_ID", true);
+	_stable = new Table<AuthSession>(
+            AuthSession.class, "SESSIONS", "MEMBER_ID", true);
     }
 
     protected Table<Member> _mtable;
-    protected Table<Session> _stable;
+    protected Table<AuthSession> _stable;
     protected FieldMask _byNameMask;
 
     /** Contains a mapping from account name to {@link Member} records.

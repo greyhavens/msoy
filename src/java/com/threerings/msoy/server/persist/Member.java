@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.server.persist;
 
+import javax.persistence.*; // for EJB3 annotations
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import java.sql.Date;
 
 import com.samskivert.util.StringUtil;
@@ -12,34 +16,44 @@ import com.threerings.msoy.data.MemberName;
 /**
  * Contains persistent data stored for every member of MetaSOY.
  */
+@Entity
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Member
 {
     /** This member's unique id. */
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int memberId;
 
     /** The authentication account associated with this member. */
+    @Column(unique=true, nullable=false)
     public String accountName;
 
     /** The name by which this member is known in MetaSOY. */
     public String name;
 
     /** The quantity of flow possessed by this member. */
+    @Column(nullable=false)
     public int flow;
 
     /** The time at which this player was created (when they first starting
      * playing  this particular game). */
+    @Column(nullable=false)
     public Date created;
 
     /** The number of sessions this player has played. */
+    @Column(nullable=false)
     public int sessions;
 
     /** The cumulative number of minutes spent playing. */
+    @Column(nullable=false)
     public int sessionMinutes;
 
     /** The time at which the player ended their last session. */
+    @Column(nullable=false)
     public Date lastSession;
 
     /** Various one bit data. */
+    @Column(nullable=false)
     public int flags;
 
     /** A blank constructor used when loading records from the database. */

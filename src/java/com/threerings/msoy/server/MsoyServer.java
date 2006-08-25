@@ -50,6 +50,7 @@ import com.threerings.msoy.world.data.RoomConfig;
 import com.threerings.msoy.person.server.persist.PersonPageRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
+import com.threerings.msoy.server.persist.ProfileRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -62,7 +63,7 @@ public class MsoyServer extends WhirledServer
     public static ConnectionProvider conProv;
 
     /** Our runtime member manager. */
-    public static MemberManager memberMan;
+    public static MemberManager memberMan = new MemberManager();
 
     /** Contains information on our members. */
     public static MemberRepository memberRepo;
@@ -167,19 +168,22 @@ public class MsoyServer extends WhirledServer
         AnnotationConfiguration hibConfig = new AnnotationConfiguration();
         PersonPageRepository ppageRepo = new PersonPageRepository();
         ppageRepo.configure(hibConfig);
+        memberRepo = new MemberRepository(conProv);
+        // memberRepo.configure(hibConfig);
+        ProfileRepository profileRepo = new ProfileRepository(conProv);
 
         // now that our repositories have all wired in their persistent
         // classes, we can create the session factory
         SessionFactory sessionFactory = hibConfig.buildSessionFactory();
         ppageRepo.init(sessionFactory);
+        // memberRepo.init(sessionFactory);
 
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), true);
         parlorMan.init(invmgr, plreg);
         sceneRepo = (MsoySceneRepository) _screp;
-        memberRepo = new MemberRepository(conProv);
-        memberMan = new MemberManager(memberRepo);
+        memberMan.init(memberRepo, profileRepo);
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
 
