@@ -9,6 +9,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCredentials;
 
 public class MsoyController extends Controller
@@ -59,8 +60,9 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
+        var memberObj :MemberObject = _ctx.getClientObject();
         // if not a guest, save the username that we logged in with
-        if (!_ctx.getClientObject().isGuest()) {
+        if (!memberObj.isGuest()) {
             var creds :MsoyCredentials =
                 (_ctx.getClient().getCredentials() as MsoyCredentials);
             var name :Name = creds.getUsername();
@@ -71,7 +73,11 @@ public class MsoyController extends Controller
 
         // TODO
         // for now, all we do is move to a starter scene
-        _ctx.getSceneDirector().moveTo(1);
+        var starterSceneId :int = memberObj.homeSceneId;
+        if (starterSceneId == 0) {
+            starterSceneId = 1; // for "packwards combatability"
+        }
+        _ctx.getSceneDirector().moveTo(starterSceneId);
     }
 
     // from ClientObserver

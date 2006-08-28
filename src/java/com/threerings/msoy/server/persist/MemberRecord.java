@@ -35,6 +35,10 @@ public class MemberRecord
     @Column(nullable=false)
     public int flow;
 
+    /** The home scene for this member. */
+    @Column(nullable=false)
+    public int homeSceneId;
+
     /** The time at which this player was created (when they first starting
      * playing  this particular game). */
     @Column(nullable=false)

@@ -24,6 +24,7 @@ import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.RoomMarshaller;
 
@@ -56,7 +57,7 @@ public class RoomManager extends SpotSceneManager
 
     @Override // documentation inherited
     protected SceneLocation computeEnteringLocation (
-            BodyObject body, Portal entry)
+        BodyObject body, Portal entry)
     {
         int memberId = RandomUtil.getInt(10000);
         ((MemberObject) body).addToFriends(
@@ -81,11 +82,13 @@ public class RoomManager extends SpotSceneManager
 
     // documentation inherited from RoomProvider
     public void updateRoom (
-            ClientObject caller, SceneUpdate[] updates,
-            InvocationListener listener)
+        ClientObject caller, SceneUpdate[] updates,
+        InvocationListener listener)
         throws InvocationException
     {
-        // TODO: validate that the client has permissions to edit this room
+        if (!((MsoyScene) _scene).canEdit((MemberObject) caller)) {
+            throw new InvocationException(ACCESS_DENIED);
+        }
 
         for (SceneUpdate update : updates) {
             System.err.println("Got update: " + update);

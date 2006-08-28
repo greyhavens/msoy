@@ -38,6 +38,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>tokens</code> field. */
     public static const TOKENS :String = "tokens";
 
+    /** The field name of the <code>homeSceneId</code> field. */
+    public static const HOME_SCENE_ID :String = "homeSceneId";
+
     /** The field name of the <code>avatar</code> field. */
     public static const AVATAR :String = "avatar";
 
@@ -62,6 +65,9 @@ public class MemberObject extends BodyObject
 
     /** The tokens defining the access controls for this user. */
     public var tokens :MsoyTokenRing;
+
+    /** The id of the user's home scene. */
+    public var homeSceneId :int;
 
     /** The avatar that the user has chosen. */
     public var avatar :MediaData;
@@ -170,6 +176,22 @@ public class MemberObject extends BodyObject
     }
 
     /**
+     * Requests that the <code>homeSceneId</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public function setHomeSceneId (value :int) :void
+    {
+        var ovalue :int = this.homeSceneId;
+        requestAttributeChange(
+            HOME_SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.homeSceneId = value;
+    }
+
+    /**
      * Requests that the <code>avatar</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
@@ -226,6 +248,7 @@ public class MemberObject extends BodyObject
         out.writeInt(sceneId);
         out.writeInt(clusterOid);
         out.writeObject(tokens);
+        out.writeInt(homeSceneId);
         out.writeObject(avatar);
         out.writeShort(chatStyle);
         out.writeShort(chatPopStyle);
@@ -240,6 +263,7 @@ public class MemberObject extends BodyObject
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
         tokens = (ins.readObject() as MsoyTokenRing);
+        homeSceneId = ins.readInt();
         avatar = (ins.readObject() as MediaData);
         chatStyle = ins.readShort();
         chatPopStyle = ins.readShort();

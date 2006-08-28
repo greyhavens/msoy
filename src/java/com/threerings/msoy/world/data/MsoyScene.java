@@ -7,6 +7,8 @@ import java.util.Iterator;
 
 import com.threerings.crowd.data.PlaceConfig;
 
+import com.threerings.msoy.data.MemberObject;
+
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneImpl;
 import com.threerings.whirled.data.SceneUpdate;
@@ -32,11 +34,27 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Can the specified member edit this scene?
+     */
+    public boolean canEdit (MemberObject member)
+    {
+        return !member.isGuest() && (getOwnerId() == member.getMemberId());
+    }
+
+    /**
      * Returns the type of the scene.
      */
     public String getType ()
     {
         return _model.type;
+    }
+
+    /**
+     * Get the memberId of the owner of this scene.
+     */
+    public int getOwnerId ()
+    {
+        return _model.ownerId;
     }
 
     /**

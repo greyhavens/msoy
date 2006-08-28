@@ -19,6 +19,9 @@ public class MsoySceneModel extends SceneModel
     /** The type of scene that this is. Determines how it is rendered. */
     public String type;
 
+    /** The memberId of the owner of this scene. */
+    public int ownerId;
+
     /** The pixel width of the room. */
     public short width;
 

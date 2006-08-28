@@ -83,6 +83,11 @@ public class MsoySceneRepository extends SimpleRepository
             "UPDATE_TYPE integer not null",
             "DATA blob not null",
             "primary key (SCENE_ID, SCENE_VERSION)" }, "");
+
+        if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "OWNER_ID")) {
+            JDBCUtil.addColumn(conn, "SCENES", "OWNER_ID",
+                "integer not null", "SCENE_ID");
+        }
     }
 
     // documentation inherited from interface SceneRepository
@@ -271,7 +276,7 @@ public class MsoySceneRepository extends SimpleRepository
      * Apply a furniture changing update.
      */
     protected void applyFurniUpdate (
-            final MsoySceneModel mmodel, final ModifyFurniUpdate update)
+        final MsoySceneModel mmodel, final ModifyFurniUpdate update)
         throws PersistenceException
     {
         executeUpdate(new Operation<Object>() {
@@ -295,7 +300,7 @@ public class MsoySceneRepository extends SimpleRepository
      * Apply a portal changing update.
      */
     protected void applyPortalsUpdate (
-            final MsoySceneModel mmodel, final ModifyPortalsUpdate update)
+        final MsoySceneModel mmodel, final ModifyPortalsUpdate update)
         throws PersistenceException
     {
         executeUpdate(new Operation<Object>() {
@@ -316,32 +321,77 @@ public class MsoySceneRepository extends SimpleRepository
     }
 
     /**
-     * Insert a new scene and return the newly assigned scene id.
+     * Create a new blank room for the specified member.
+     *
+     * @return the scene id of the newly created room.
+     */
+    public int createBlankRoom (int ownerMemberId)
+        throws PersistenceException
+    {
+        // TODO: perhaps clone a prototype room?
+        final MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
+        model.ownerId = ownerMemberId;
+        model.version = 1;
+        model.name = "Room"; // TODO
+
+        // TODO
+        //SpotSceneModel spotty = SpotSceneModel.getSceneModel(model);
+        //spotty.addPortal(portal);
+        //spotty.defaultEntranceId = 1;
+
+        return executeUpdate(new Operation<Integer>() {
+            public Integer invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                return insertScene(conn, liaison, model);
+            }
+        });
+    }
+
+    /**
+     * Insert a new scene, with portals and furni and all, into the database
+     * and return the newly assigned sceneId.
      */
     protected int insertScene (
-            Connection conn, DatabaseLiaison liaison, MsoySceneModel model)
+        Connection conn, DatabaseLiaison liaison, MsoySceneModel model)
+        throws SQLException, PersistenceException
+    {
+        SpotSceneModel spotModel = SpotSceneModel.getSceneModel(model);
+        int sceneId = insertSceneModel(conn, liaison, model);
+        // add the portals and furni for the room
+        insertPortals(conn, liaison, sceneId, spotModel.portals);
+        insertFurni(conn, liaison, sceneId, model.furnis);
+        return sceneId;
+    }
+
+    /**
+     * Insert a new scene model and return the newly assigned scene id.
+     */
+    protected int insertSceneModel (
+        Connection conn, DatabaseLiaison liaison, MsoySceneModel model)
         throws SQLException, PersistenceException
     {
         SpotSceneModel spotModel = SpotSceneModel.getSceneModel(model);
 
         PreparedStatement stmt = conn.prepareStatement("insert into SCENES " +
-            "(VERSION, NAME, TYPE, DEF_PORTAL_ID, WIDTH, " +
-            "BACKGROUND, MUSIC) values (?, ?, ?, ?, ?, ?, ?)");
+            "(OWNER_ID, VERSION, NAME, TYPE, DEF_PORTAL_ID, WIDTH, " +
+            "BACKGROUND, MUSIC) values (?, ?, ?, ?, ?, ?, ?, ?)");
         try {
-            stmt.setInt(1, model.version);
-            stmt.setString(2, model.name);
-            stmt.setString(3, model.type);
-            stmt.setInt(4, spotModel.defaultEntranceId);
-            stmt.setShort(5, model.width);
+            stmt.setInt(1, model.ownerId);
+            stmt.setInt(2, model.version);
+            stmt.setString(3, model.name);
+            stmt.setString(4, model.type);
+            stmt.setInt(5, spotModel.defaultEntranceId);
+            stmt.setShort(6, model.width);
             if (model.background != null) {
-                stmt.setInt(6, model.background.id);
-            } else {
-                stmt.setNull(6, Types.INTEGER);
-            }
-            if (model.music != null) {
-                stmt.setInt(7, model.music.id);
+                stmt.setInt(7, model.background.id);
             } else {
                 stmt.setNull(7, Types.INTEGER);
+            }
+            if (model.music != null) {
+                stmt.setInt(8, model.music.id);
+            } else {
+                stmt.setNull(8, Types.INTEGER);
             }
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
@@ -355,8 +405,8 @@ public class MsoySceneRepository extends SimpleRepository
      * Insert the specified portals into the database.
      */
     protected void insertPortals (
-            Connection conn, DatabaseLiaison liaison,
-            int sceneId, Portal[] portals)
+        Connection conn, DatabaseLiaison liaison, int sceneId,
+        Portal[] portals)
         throws SQLException, PersistenceException
     {
         PreparedStatement stmt = conn.prepareStatement("insert into PORTALS " +
@@ -388,8 +438,8 @@ public class MsoySceneRepository extends SimpleRepository
      * Delete the specified portals from the database.
      */
     protected void deletePortals (
-            Connection conn, DatabaseLiaison liaison,
-            int sceneId, Portal[] portals)
+        Connection conn, DatabaseLiaison liaison, int sceneId,
+        Portal[] portals)
         throws SQLException, PersistenceException
     {
         PreparedStatement stmt = conn.prepareStatement(
@@ -410,8 +460,8 @@ public class MsoySceneRepository extends SimpleRepository
      * Insert the specified pieces of furni into the database.
      */
     protected void insertFurni (
-            Connection conn, DatabaseLiaison liaison,
-            int sceneId, FurniData[] furni)
+        Connection conn, DatabaseLiaison liaison, int sceneId,
+        FurniData[] furni)
         throws SQLException, PersistenceException
     {
         PreparedStatement stmt = conn.prepareStatement("insert into FURNI " +
@@ -440,8 +490,8 @@ public class MsoySceneRepository extends SimpleRepository
      * Delete the specified pieces of furni from the database.
      */
     protected void deleteFurni (
-            Connection conn, DatabaseLiaison liaison,
-            int sceneId, FurniData[] furni)
+        Connection conn, DatabaseLiaison liaison, int sceneId,
+        FurniData[] furni)
         throws SQLException, PersistenceException
     {
         PreparedStatement stmt = conn.prepareStatement(
@@ -517,6 +567,7 @@ public class MsoySceneRepository extends SimpleRepository
     {
         JDBCUtil.createTableIfMissing(conn, "SCENES", new String[] {
             "SCENE_ID integer not null auto_increment",
+            "OWNER_ID integer not null",
             "VERSION integer not null",
             "NAME varchar(255) not null",
             "TYPE varchar(255)",
@@ -553,16 +604,10 @@ public class MsoySceneRepository extends SimpleRepository
 
         // populate some starting scenes
         for (int sceneId = 1; sceneId < 8; sceneId++) {
-            MsoySceneModel model = createSampleScene(sceneId);
-            SpotSceneModel spotModel = SpotSceneModel.getSceneModel(model);
-            int insertedId = insertScene(conn, liaison, model);
-            if (insertedId != sceneId) {
+            if (sceneId !=
+                    insertScene(conn, liaison, createSampleScene(sceneId))) {
                 throw new RuntimeException("It's not quite right!");
             }
-
-            // add the portals and furni for the room
-            insertPortals(conn, liaison, sceneId, spotModel.portals);
-            insertFurni(conn, liaison, sceneId, model.furnis);
         }
     }
 
@@ -838,13 +883,13 @@ public class MsoySceneRepository extends SimpleRepository
 
     /** The marshaller that assists us in managing scene updates. */
     protected SceneUpdateMarshaller _updateMarshaller =
-        new SceneUpdateMarshaller(new Class[] {
+        new SceneUpdateMarshaller(
             // register the update classes
             // (DO NOT CHANGE ORDER! see note in SceneUpdateMarshaller const.)
             ModifyFurniUpdate.class,
-            ModifyPortalsUpdate.class,
+            ModifyPortalsUpdate.class
             // end of update class registration (DO NOT CHANGE ORDER)
-        });
+        );
 
     /** The maximum number of updates to store for each scene. */
     protected static final int MAX_UPDATES_PER_SCENE = 16;

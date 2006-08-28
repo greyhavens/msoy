@@ -33,6 +33,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>tokens</code> field. */
     public static final String TOKENS = "tokens";
 
+    /** The field name of the <code>homeSceneId</code> field. */
+    public static final String HOME_SCENE_ID = "homeSceneId";
+
     /** The field name of the <code>avatar</code> field. */
     public static final String AVATAR = "avatar";
 
@@ -57,6 +60,9 @@ public class MemberObject extends BodyObject
 
     /** The tokens defining the access controls for this user. */
     public MsoyTokenRing tokens;
+
+    /** The id of the user's home scene. */
+    public int homeSceneId;
 
     /** The avatar that the user has chosen. */
     public MediaData avatar;
@@ -219,6 +225,22 @@ public class MemberObject extends BodyObject
     }
 
     /**
+     * Requests that the <code>homeSceneId</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setHomeSceneId (int value)
+    {
+        int ovalue = this.homeSceneId;
+        requestAttributeChange(
+            HOME_SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.homeSceneId = value;
+    }
+
+    /**
      * Requests that the <code>avatar</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
@@ -309,7 +331,9 @@ public class MemberObject extends BodyObject
     public void setFriends (DSet<com.threerings.msoy.data.FriendEntry> value)
     {
         requestAttributeChange(FRIENDS, value, this.friends);
-        this.friends = (value == null) ? null : value.typedClone();
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.FriendEntry> clone =
+            (value == null) ? null : value.typedClone();
+        this.friends = clone;
     }
     // AUTO-GENERATED: METHODS END
 

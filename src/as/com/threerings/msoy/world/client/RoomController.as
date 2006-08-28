@@ -204,7 +204,7 @@ public class RoomController extends SceneController
             menuItems.push(createMenuItem(SAVE_EDITS));
             menuItems.push(createMenuItem(DISCARD_EDITS));
 
-        } else if (true) { // TODO: if canEditScene...
+        } else if (_scene.canEdit(_mctx.getClientObject())) {
             menuItems.push(createMenuItem(EDIT_SCENE));
         }
 

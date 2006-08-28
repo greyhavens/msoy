@@ -332,6 +332,27 @@ public class MemberRepository extends JORARepository
     }
 
     /**
+     * Set the home scene id for the specified memberId.
+     */
+    public void setHomeSceneId (int memberId, int homeSceneId)
+        throws PersistenceException
+    {
+        checkedUpdate("update MEMBERS set HOME_SCENE_ID=" + homeSceneId +
+            " where MEMBER_ID=" + memberId, 1);
+
+        // update the cache, which is currently a fiasco
+        synchronized (_memberCache) {
+            WeakReference<MemberRecord> ref = _memberIdCache.get(memberId);
+            if (ref != null) {
+                MemberRecord member = ref.get();
+                if (member != null) {
+                    member.homeSceneId = homeSceneId;
+                }
+            }
+        }
+    }
+
+    /**
      * Mimics the disabling of deleted members by renaming them to an
      * invalid value that we do in our member management system. This is
      * triggered by us receiving a member action indicating that the
@@ -586,6 +607,7 @@ public class MemberRepository extends JORARepository
             "ACCOUNT_NAME varchar(64) not null",
             "NAME varchar(64) unique",
             "FLOW integer not null",
+            "HOME_SCENE_ID integer not null",
             "CREATED datetime not null",
             "SESSIONS integer not null",
             "SESSION_MINUTES integer not null",
@@ -610,6 +632,11 @@ public class MemberRepository extends JORARepository
             "unique (INVITER_ID, INVITEE_ID)",
             "index (INVITEE_ID)",
         }, "");
+
+        if (!JDBCUtil.tableContainsColumn(conn, "MEMBERS", "HOME_SCENE_ID")) {
+            JDBCUtil.addColumn(conn, "MEMBERS", "HOME_SCENE_ID",
+                "integer not null", "FLOW");
+        }
     }
 
     @Override // documentation inherited

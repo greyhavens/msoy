@@ -309,6 +309,12 @@ public class MsoyAuthenticator extends Authenticator
                 mrec.accountName = account.accountName;
                 mrec.name = account.accountName;
                 MsoyServer.memberRepo.insertMember(mrec);
+
+                // create a blank room for them, store it
+                mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(
+                    mrec.memberId);
+                MsoyServer.memberRepo.setHomeSceneId(
+                    mrec.memberId, mrec.homeSceneId);
             }
 
             // if they made it through that gauntlet, create or update their

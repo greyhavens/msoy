@@ -15,6 +15,9 @@ public class MsoySceneModel extends SceneModel
     /** The type of scene. */
     public var type :String;
 
+    /** The memberId of the owner of this scene. */
+    public var ownerId :int;
+
     /** The pixel width of the room. */
     public var width :int;
 
@@ -49,6 +52,7 @@ public class MsoySceneModel extends SceneModel
         super.writeObject(out);
 
         out.writeField(type);
+        out.writeInt(ownerId);
         out.writeShort(width);
         out.writeObject(background);
         out.writeObject(music);
@@ -61,6 +65,7 @@ public class MsoySceneModel extends SceneModel
         super.readObject(ins);
 
         type = (ins.readField(String) as String);
+        ownerId = ins.readInt();
         width = ins.readShort();
         background = (ins.readObject() as MediaData);
         music = (ins.readObject() as MediaData);

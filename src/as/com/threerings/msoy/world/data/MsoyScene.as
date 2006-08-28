@@ -5,6 +5,8 @@ import com.threerings.util.Cloneable;
 
 import com.threerings.crowd.data.PlaceConfig;
 
+import com.threerings.msoy.data.MemberObject;
+
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneImpl;
 import com.threerings.whirled.data.SceneUpdate;
@@ -27,11 +29,27 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Can the specified member edit this scene?
+     */
+    public function canEdit (member :MemberObject) :Boolean
+    {
+        return !member.isGuest() && (getOwnerId() == member.getMemberId());
+    }
+
+    /**
      * Returns the scene type.
      */
     public function getType () :String
     {
         return _msoyModel.type;
+    }
+
+    /**
+     * Returns the owner id.
+     */
+    public function getOwnerId () :int
+    {
+        return _msoyModel.ownerId;
     }
 
     /**
