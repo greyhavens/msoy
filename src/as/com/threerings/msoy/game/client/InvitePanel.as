@@ -6,6 +6,7 @@ import flash.events.MouseEvent;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
+import mx.containers.TitleWindow;
 
 import mx.controls.Button;
 import mx.controls.Label;
@@ -23,12 +24,14 @@ import com.threerings.msoy.game.data.FlashGameConfig;
 /**
  * A panel for configuring a game invitation to another player.
  */
-public class InvitePanel extends VBox
+public class InvitePanel extends TitleWindow
 {
     public function InvitePanel (ctx :MsoyContext, invitee :MemberName)
     {
         _ctx = ctx;
         _invitee = invitee;
+
+        title = ctx.xlate("game", "t.inviteGame", invitee);
 
         PopUpManager.addPopUp(this, _ctx.getRootPanel(), true);
         PopUpManager.centerPopUp(this);
@@ -36,9 +39,7 @@ public class InvitePanel extends VBox
 
     override protected function createChildren () :void
     {
-        // set up the title
-        var title :Label = new Label();
-        title.text = _ctx.xlate("game", "t.inviteGame", _invitee);
+        super.createChildren();
 
         // set up the actual configurator
         // TODO
@@ -62,7 +63,6 @@ public class InvitePanel extends VBox
         butbox.addChild(cancelBtn);
 
         // add everything to the interface and pop it up
-        addChild(title);
         addChild(_configger.getContainer());
         addChild(butbox);
     }
