@@ -39,7 +39,7 @@ public class LogonPanel extends HBox
             recheckGuest, recheckGuest, recheckGuest);
 
         var label :UITextField = new UITextField();
-        label.text = ctx.xlate("l.email");
+        label.text = ctx.xlate(null, "l.email");
         addChild(label);
 
         _email = new TextInput();
@@ -47,7 +47,7 @@ public class LogonPanel extends HBox
         addChild(_email);
 
         label = new UITextField();
-        label.text = ctx.xlate("l.password");
+        label.text = ctx.xlate(null, "l.password");
         addChild(label);
 
         _password = new TextInput();
@@ -55,12 +55,12 @@ public class LogonPanel extends HBox
         addChild(_password);
 
         _logonBtn = new Button();
-        _logonBtn.label = ctx.xlate("b.logon");
+        _logonBtn.label = ctx.xlate(null, "b.logon");
         _logonBtn.enabled = false;
         addChild(_logonBtn);
 
         _guestBtn = new CommandButton(MsoyController.LOGON);
-        _guestBtn.label = ctx.xlate("b.logon_guest");
+        _guestBtn.label = ctx.xlate(null, "b.logon_guest");
         addChild(_guestBtn);
 
         _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);

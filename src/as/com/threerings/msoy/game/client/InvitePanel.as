@@ -38,7 +38,7 @@ public class InvitePanel extends VBox
     {
         // set up the title
         var title :Label = new Label();
-        title.text = _ctx.xlate("t.inviteGame", _invitee);
+        title.text = _ctx.xlate("game", "t.inviteGame", _invitee);
 
         // set up the actual configurator
         // TODO
@@ -49,11 +49,11 @@ public class InvitePanel extends VBox
 
         // set up OK and CANCEL buttons
         var okBtn :Button = new Button();
-        okBtn.label = _ctx.xlate("b.ok");
+        okBtn.label = _ctx.xlate(null, "b.ok");
         okBtn.addEventListener(MouseEvent.CLICK, okClicked);
 
         var cancelBtn :Button = new Button();
-        cancelBtn.label = _ctx.xlate("b.cancel");
+        cancelBtn.label = _ctx.xlate(null, "b.cancel");
         cancelBtn.addEventListener(MouseEvent.CLICK, cancelClicked);
 
         // create a box to hold the buttons

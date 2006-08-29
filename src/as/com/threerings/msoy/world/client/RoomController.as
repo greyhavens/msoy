@@ -38,8 +38,6 @@ import com.threerings.msoy.chat.client.ReportingListener;
 public class RoomController extends SceneController
 {
     public static const EDIT_SCENE :String = "edit_scene";
-    public static const SAVE_EDITS :String = "save_edits";
-    public static const DISCARD_EDITS :String = "discard_edits";
 
     public static const PORTAL_CLICKED :String = "PortalClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
@@ -105,13 +103,29 @@ public class RoomController extends SceneController
         super.didLeavePlace(plobj);
     }
 
+    /**
+     * Exit editing mode.
+     */
+    public function endEditing (edits :TypedArray) :void
+    {
+        _editor = null;
+
+        // turn editing off
+        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
+        _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+
+        // possibly save the edits
+        if (edits != null) {
+            _roomObj.roomService.updateRoom(_mctx.getClient(), edits,
+                new ReportingListener(_mctx));
+        }
+    }
+
     override public function handleAction (cmd :String, arg :Object) :Boolean
     {
         if (cmd == EDIT_SCENE) {
             startEditing();
-
-        } else if ((cmd == SAVE_EDITS) || (cmd == DISCARD_EDITS)) {
-            endEditing(cmd == SAVE_EDITS);
 
         } else if (cmd == TEMP_CLEAR_SCENE_CACHE) {
             _mctx.TEMPClearSceneCache();
@@ -144,7 +158,7 @@ public class RoomController extends SceneController
 
             // TEMP: allow us to start a game with ourselves
             menuItems.push( [
-                _mctx.xlate("b.inviteGame"), null, GAME_INVITE,
+                _mctx.xlate(null, "b.inviteGame"), null, GAME_INVITE,
                 occInfo.username ]);
 
         } else {
@@ -152,15 +166,15 @@ public class RoomController extends SceneController
             var memId :int = occInfo.getMemberId();
             var isGuest :Boolean = (memId == -1);
             var isFriend :Boolean = us.friends.containsKey(memId);
-            menuItems.push([ _mctx.xlate("b.tell"), null, TELL, memId ]);
+            menuItems.push([ _mctx.xlate(null, "b.tell"), null, TELL, memId ]);
 
             if (!isGuest) {
                 menuItems.push( [
-                    _mctx.xlate(isFriend ? "b.removeAsFriend"
-                                         : "b.addAsFriend"),
+                    _mctx.xlate(null, isFriend ? "b.removeAsFriend"
+                                               : "b.addAsFriend"),
                     null, ALTER_FRIEND, [memId, !isFriend] ]);
                 menuItems.push( [
-                    _mctx.xlate("b.inviteGame"), null, GAME_INVITE,
+                    _mctx.xlate(null, "b.inviteGame"), null, GAME_INVITE,
                     occInfo.username ]);
             }
         }
@@ -200,11 +214,7 @@ public class RoomController extends SceneController
             return;
         }
 
-        if (_editor != null) {
-            menuItems.push(createMenuItem(SAVE_EDITS));
-            menuItems.push(createMenuItem(DISCARD_EDITS));
-
-        } else if (_scene.canEdit(_mctx.getClientObject())) {
+        if (_editor == null && _scene.canEdit(_mctx.getClientObject())) {
             menuItems.push(createMenuItem(EDIT_SCENE));
         }
 
@@ -215,11 +225,10 @@ public class RoomController extends SceneController
      * Add the specified command to the context menu for the current scene.
      */
     protected function createMenuItem (
-            cmd :String, arg :Object = null, separatorBefore :Boolean = false,
-            enabled :Boolean = true, visible :Boolean = true)
-            :ContextMenuItem
+        cmd :String, arg :Object = null, separatorBefore :Boolean = false,
+        enabled :Boolean = true, visible :Boolean = true) :ContextMenuItem
     {
-        var menuText :String = _mctx.xlate("b." + cmd);
+        var menuText :String = _mctx.xlate(null, "b." + cmd);
         return MenuUtil.createControllerMenuItem(menuText, cmd, arg,
                 separatorBefore, enabled, visible);
     }
@@ -235,27 +244,7 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
         _walkTarget.visible = false;
 
-        _editor = new EditRoomHelper(_mctx, _roomView);
-    }
-
-    /**
-     * Exit editing mode.
-     */
-    protected function endEditing (saveEdits :Boolean) :void
-    {
-        var edits :TypedArray = _editor.endEditing(saveEdits);
-        _editor = null;
-
-        // turn editing off
-        _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-        _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-
-        // possibly save the edits
-        if (edits != null) {
-            _roomObj.roomService.updateRoom(_mctx.getClient(), edits,
-                new ReportingListener(_mctx));
-        }
+        _editor = new EditRoomHelper(_mctx, this, _roomView, _scene);
     }
 
     protected function mouseLeft (event :MouseEvent) :void

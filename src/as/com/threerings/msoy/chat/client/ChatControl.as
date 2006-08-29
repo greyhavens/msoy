@@ -34,7 +34,7 @@ public class ChatControl extends HBox
         addChild(_txt = new TextInput());
         _txt.styleName = "chatInput";
         var but :Button = new Button();
-        but.label = ctx.xlate("b.send");
+        but.label = ctx.xlate(null, "b.send");
         addChild(but);
 
         //_txt.addEventListener(FlexEvent.ENTER, sendChat);

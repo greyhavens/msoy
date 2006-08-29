@@ -11,6 +11,7 @@ import flash.geom.Point;
 import flash.ui.Keyboard;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.Controller;
 import com.threerings.util.Iterator;
 
 import com.threerings.io.TypedArray;
@@ -20,6 +21,7 @@ import com.threerings.whirled.spot.data.ModifyPortalsUpdate;
 import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.data.MediaData;
 
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyPortal;
@@ -27,28 +29,44 @@ import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 
-public class EditRoomHelper
+public class EditRoomHelper extends Controller
 {
-    public function EditRoomHelper (ctx :MsoyContext, roomView :RoomView)
+    public static const INSERT_PORTAL :String = "InsertPortal";
+    public static const DISCARD_EDITS :String = "DiscardEdits";
+    public static const SAVE_EDITS :String = "SaveEdits";
+
+    public function EditRoomHelper (
+        ctx :MsoyContext, roomCtrl :RoomController, roomView :RoomView,
+        scene :MsoyScene)
     {
         _ctx = ctx;
+        _roomCtrl = roomCtrl;
         _roomView = roomView;
+        _scene = scene;
 
+        _nextPortalId = _scene.getNextPortalId();
         _roomView.setEditing(true, enableEditingVisitor);
+
+        _panel = new EditRoomPanel(ctx, this, roomView);
+        setControlledPanel(_panel);
     }
 
     /**
      * Called by the controller to end editing.
      */
-    public function endEditing (saveEdits :Boolean) :TypedArray
+    public function endEditing (saveEdits :Boolean) :void
     {
+        _panel.popDown();
+
+        // remove all sprites we've added
+        while (_addedSprites.length > 0) {
+            _roomView.removeChild(_addedSprites.pop() as MsoySprite);
+        }
+
         var edits :TypedArray = null;
-        
         if (saveEdits) {
-            var scene :MsoyScene =
-                (_ctx.getSceneDirector().getScene() as MsoyScene);
-            var sceneId :int = scene.getId();
-            var version :int = scene.getVersion();
+            var sceneId :int = _scene.getId();
+            var version :int = _scene.getVersion();
 
             edits = TypedArray.create(SceneUpdate);
 
@@ -80,7 +98,45 @@ public class EditRoomHelper
         // turn off editing in the room, which restores original positions
         _roomView.setEditing(false, disableEditingVisitor);
 
-        return edits;
+        _roomCtrl.endEditing(edits);
+    }
+
+    /**
+     * Handles INSERT_PORTAL.
+     */
+    public function handleInsertPortal () :void
+    {
+        // create a generic portal descriptor
+        var portal :MsoyPortal = new MsoyPortal();
+        portal.portalId = getNextPortalId();
+        portal.loc = new MsoyLocation(.5, 0, .5);
+        portal.media = new MediaData(1);
+        portal.targetSceneId = 1;
+        portal.targetPortalId = -1;
+
+        // create a loose sprite to represent it, add it to the panel
+        var sprite :PortalSprite = _ctx.getMediaDirector().getPortal(portal);
+        _roomView.addChild(sprite);
+        sprite.setLocation(portal.loc);
+
+        _addedSprites.push(sprite);
+
+        // set it up for editing
+        sprite.setEditing(true);
+        addEditingListeners(sprite);
+    }
+
+    /**
+     * Handles SAVE_EDITS.
+     */
+    public function handleSaveEdits () :void
+    {
+        endEditing(true);
+    }
+
+    public function handleDiscardEdits () :void
+    {
+        endEditing(false);
     }
 
     protected function enableEditingVisitor (key :Object, value :Object) :void
@@ -474,16 +530,35 @@ public class EditRoomHelper
         }
     }
 
+    protected function getNextPortalId () :int
+    {
+        // TODO: cope with ids getting too large.
+        // we don't ask the scene, because it doesn't know about our
+        // editing portals yet
+        return _nextPortalId++;
+    }
+
     protected var _ctx :MsoyContext;
+
+    protected var _scene :MsoyScene;
+
+    protected var _panel :EditRoomPanel;
+
+    protected var _roomCtrl :RoomController;
 
     /** The room view. */
     protected var _roomView :RoomView;
+
+    protected var _nextPortalId :int;
 
     protected var _removedFurni :TypedArray = TypedArray.create(FurniData);
     protected var _addedFurni :TypedArray = TypedArray.create(FurniData);
 
     protected var _removedPortals :TypedArray = TypedArray.create(Portal);
     protected var _addedPortals :TypedArray = TypedArray.create(Portal);
+
+    protected var _addedSprites :Array = new Array();
+    protected var _removedSprites :Array = new Array();
 
     /** The offset from the clicked point to the object's hotspot. */
     protected var _xoffset :Number;

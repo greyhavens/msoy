@@ -24,7 +24,7 @@ public class FlashGameConfigurator extends FlexGameConfigurator
             { label:"Invalid", data:-1 }];
 
         var label :Label = new Label();
-        label.text = ctx.xlate("l.gameName");
+        label.text = ctx.xlate("game", "l.gameName");
 
         addControl(label, _game);
     }

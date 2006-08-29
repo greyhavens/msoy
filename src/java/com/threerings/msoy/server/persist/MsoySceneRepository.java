@@ -193,23 +193,24 @@ public class MsoySceneRepository extends SimpleRepository
                 try {
                     // Load: basic scene data
                     ResultSet rs = stmt.executeQuery("select " +
-                        "VERSION, NAME, TYPE, DEF_PORTAL_ID, WIDTH, " +
-                        "BACKGROUND, MUSIC " +
+                        "OWNER_ID, VERSION, NAME, TYPE, DEF_PORTAL_ID, " +
+                        "WIDTH, BACKGROUND, MUSIC " +
                         "from SCENES where SCENE_ID=" + sceneId);
                     if (rs.next()) {
-                        model.version = rs.getInt(1);
-                        model.name = rs.getString(2).intern();
-                        model.type = rs.getString(3);
+                        model.ownerId = rs.getInt(1);
+                        model.version = rs.getInt(2);
+                        model.name = rs.getString(3).intern();
+                        model.type = rs.getString(4);
                         if (model.type != null) {
                             model.type = model.type.intern();
                         }
-                        spotModel.defaultEntranceId = rs.getInt(4);
-                        model.width = rs.getShort(5);
-                        int bkgId = rs.getInt(6);
+                        spotModel.defaultEntranceId = rs.getInt(5);
+                        model.width = rs.getShort(6);
+                        int bkgId = rs.getInt(7);
                         if (!rs.wasNull()) {
                             model.background = new MediaData(bkgId);
                         }
-                        int musicId = rs.getInt(7);
+                        int musicId = rs.getInt(8);
                         if (!rs.wasNull()) {
                             model.music = new MediaData(musicId);
                         }

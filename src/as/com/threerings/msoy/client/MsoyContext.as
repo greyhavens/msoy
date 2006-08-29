@@ -181,10 +181,13 @@ public class MsoyContext
     /**
      * Convenience method to translate a key using the general bundle.
      */
-    public function xlate (key :String, ... args) :String
+    public function xlate (bundle :String, key :String, ... args) :String
     {
         args.unshift(key);
-        var mb :MessageBundle = _msgMgr.getBundle("general");
+        if (bundle == null) {
+            bundle = "general";
+        }
+        var mb :MessageBundle = _msgMgr.getBundle(bundle);
         return mb.get.apply(mb, args);
     }
 

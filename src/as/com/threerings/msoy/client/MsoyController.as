@@ -102,7 +102,7 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientConnectionFailed (event :ClientEvent) :void
     {
-        _logoffMessage = _ctx.xlate("m.lost_connection");
+        _logoffMessage = _ctx.xlate(null, "m.lost_connection");
     }
 
     // from ClientObserver
