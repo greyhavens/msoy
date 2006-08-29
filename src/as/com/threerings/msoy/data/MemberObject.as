@@ -63,6 +63,9 @@ public class MemberObject extends BodyObject
     /** The object ID of the user's cluster. */
     public var clusterOid :int;
 
+    /** The recent scenes we've been through. */
+    public var recentScenes :DSet;
+
     /** The tokens defining the access controls for this user. */
     public var tokens :MsoyTokenRing;
 
@@ -247,6 +250,7 @@ public class MemberObject extends BodyObject
         out.writeObject(memberName);
         out.writeInt(sceneId);
         out.writeInt(clusterOid);
+        out.writeObject(recentScenes);
         out.writeObject(tokens);
         out.writeInt(homeSceneId);
         out.writeObject(avatar);
@@ -262,6 +266,7 @@ public class MemberObject extends BodyObject
         memberName = (ins.readObject() as MemberName);
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
+        recentScenes = (ins.readObject() as DSet);
         tokens = (ins.readObject() as MsoyTokenRing);
         homeSceneId = ins.readInt();
         avatar = (ins.readObject() as MediaData);

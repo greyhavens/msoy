@@ -70,7 +70,7 @@ public class ControlBar extends Canvas
 
             // set up buttons
             var friendsBtn :CommandButton = new CommandButton();
-            friendsBtn.setCommand(MsoyController.SHOW_FRIENDS, friendsBtn);
+            friendsBtn.setCommand(MsoyController.SHOW_FRIENDS);
             friendsBtn.toggle = true;
 
             // TODO: dynamic layout?
@@ -79,6 +79,16 @@ public class ControlBar extends Canvas
             friendsBtn.width = 38;
             friendsBtn.height = HEIGHT;
             addChild(friendsBtn);
+
+            var scenesBtn :CommandButton = new CommandButton();
+            scenesBtn.setCommand(MsoyController.SHOW_RECENT_SCENES);
+            scenesBtn.toggle = true;
+
+            scenesBtn.x = 624
+            scenesBtn.y = 0;
+            scenesBtn.width = 38;
+            scenesBtn.height = HEIGHT;
+            addChild(scenesBtn);
 
             // set up a guest login button
             var guestBtn :CommandButton =

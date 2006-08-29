@@ -2,11 +2,6 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObjectContainer;
 
-import mx.controls.List;
-import mx.controls.listClasses.ListItemRenderer;
-
-import mx.core.ClassFactory;
-
 import com.threerings.util.ArrayUtil;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -14,6 +9,8 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.NamedEvent;
 import com.threerings.presents.dobj.SetListener;
+
+import com.threerings.msoy.ui.List;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
@@ -24,14 +21,8 @@ public class FriendsList extends List
 {
     public function FriendsList (ctx :MsoyContext)
     {
-        super();
+        super(ctx);
         includeInLayout = false;
-        _ctx = ctx;
-
-        dataTipFunction = getTipFor;
-        iconFunction = getIconFor;
-        labelFunction = getLabelFor;
-        //itemRenderer = new ClassFactory(FriendsItemRenderer);
     }
 
     override public function parentChanged (p :DisplayObjectContainer) :void
@@ -88,16 +79,16 @@ public class FriendsList extends List
         var friends :Array = _userObj.friends.toArray();
         ArrayUtil.sort(friends);
         dataProvider = friends;
+
+        itemsNeedMeasurement = true;
     }
 
-    // our function for retrieving a label for an entry in the list
-    protected function getLabelFor (obj :Object) :String
+    override public function itemToLabel (obj :Object) :String
     {
         return (obj as FriendEntry).name.toString();
     }
 
-    // our function for retrieving an icon for an entry in the list
-    protected function getIconFor (obj :Object) :Class
+    override public function itemToIcon (obj :Object) :Class
     {
         var fe :FriendEntry = (obj as FriendEntry);
         if (fe.status == FriendEntry.FRIEND) {
@@ -107,16 +98,12 @@ public class FriendsList extends List
         }
     }
 
-    // our function for retrieving a tooltip for an entry in the list
-    protected function getTipFor (obj :Object) :String
+    override public function itemToDataTip (obj :Object) :String
     {
-        // TODO: translate correctly
         var fe :FriendEntry = (obj as FriendEntry);
-        return (fe.name.toString() + ": " + (fe.online ? "online" : "offline"));
+        return _ctx.xlate("general",
+            (fe.online ? "m.friend_online" : "m.friend_offline"), fe.name);
     }
-
-    /** The giver of life. */
-    protected var _ctx :MsoyContext;
 
     /** Our own user object. */
     protected var _userObj :MemberObject;
@@ -124,12 +111,6 @@ public class FriendsList extends List
 }
 
 import mx.core.SpriteAsset;
-
-import mx.controls.listClasses.ListItemRenderer;
-
-//class FriendsItemRenderer extends ListItemRenderer
-//{
-//}
 
 class CloseEye extends SpriteAsset
 {

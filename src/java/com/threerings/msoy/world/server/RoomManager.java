@@ -59,11 +59,15 @@ public class RoomManager extends SpotSceneManager
     protected SceneLocation computeEnteringLocation (
         BodyObject body, Portal entry)
     {
+        MemberObject memberObj = (MemberObject) body;
         int memberId = RandomUtil.getInt(10000);
-        ((MemberObject) body).addToFriends(
+        memberObj.addToFriends(
             new FriendEntry(new MemberName(String.valueOf(memberId), memberId),
                 (RandomUtil.getInt(2) == 0),
                 (byte) RandomUtil.getInt(3)));
+
+        // automatically add this scene to the user's recent list
+        memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
 
         if (entry != null) {
             return super.computeEnteringLocation(body, entry);

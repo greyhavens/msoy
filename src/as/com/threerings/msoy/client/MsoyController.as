@@ -21,6 +21,12 @@ public class MsoyController extends Controller
     /** Command to display the friends list. */
     public static const SHOW_FRIENDS :String = "ShowFriends";
 
+    /** Command to display the recent scenes list. */
+    public static const SHOW_RECENT_SCENES :String = "ShowRecentScenes";
+
+    /** Command to go to a particular scene. */
+    public static const GO_SCENE :String = "GoScene";
+
     /**
      * Create the msoy controller.
      */
@@ -29,15 +35,31 @@ public class MsoyController extends Controller
         _ctx = ctx;
         _ctx.getClient().addClientObserver(this);
         _topPanel = topPanel;
-        setControlledPanel(topPanel);
+        setControlledPanel(ctx.getRootPanel());
     }
 
     /**
      * Handle the SHOW_FRIENDS command.
      */
-    public function handleShowFriends (btn :Button) :void
+    public function handleShowFriends (show :Boolean) :void
     {
-        _topPanel.showFriends(btn.selected);
+        _topPanel.showFriends(show);
+    }
+
+    /**
+     * Handle the SHOW_RECENT_SCENES command.
+     */
+    public function handleShowRecentScenes (show :Boolean) :void
+    {
+        _topPanel.showRecentScenes(show);
+    }
+
+    /**
+     * Handle the GO_SCENE command.
+     */
+    public function handleGoScene (sceneId :int) :void
+    {
+        _ctx.getSceneDirector().moveTo(sceneId);
     }
 
     /**

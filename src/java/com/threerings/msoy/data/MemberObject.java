@@ -30,6 +30,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>clusterOid</code> field. */
     public static final String CLUSTER_OID = "clusterOid";
 
+    /** The field name of the <code>recentScenes</code> field. */
+    public static final String RECENT_SCENES = "recentScenes";
+
     /** The field name of the <code>tokens</code> field. */
     public static final String TOKENS = "tokens";
 
@@ -57,6 +60,10 @@ public class MemberObject extends BodyObject
 
     /** The object ID of the user's cluster. */
     public int clusterOid;
+
+    /** The recent scenes we've been through. */
+    public DSet<SceneBookmarkEntry> recentScenes =
+        new DSet<SceneBookmarkEntry>();
 
     /** The tokens defining the access controls for this user. */
     public MsoyTokenRing tokens;
@@ -159,6 +166,37 @@ public class MemberObject extends BodyObject
         }
     }
 
+    /**
+     * Add the specified scene to the recent scene list for this user.
+     */
+    public void addToRecentScenes (int sceneId, String name)
+    {
+        SceneBookmarkEntry newEntry = new SceneBookmarkEntry(
+            sceneId, name, System.currentTimeMillis());
+
+        SceneBookmarkEntry oldest = null;
+        for (SceneBookmarkEntry sbe : recentScenes) {
+            if (sbe.sceneId == sceneId) {
+                newEntry.orderingId = sbe.orderingId;
+                updateRecentScenes(newEntry);
+                return;
+            }
+            if (oldest == null || oldest.lastVisit > sbe.lastVisit) {
+                oldest = sbe;
+            }
+        }
+
+        int size = recentScenes.size();
+        if (size < MAX_RECENT_SCENES) {
+            newEntry.orderingId = (short) size;
+            addToRecentScenes(newEntry);
+
+        } else {
+            newEntry.orderingId = oldest.orderingId;
+            updateRecentScenes(newEntry);
+        }
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Requests that the <code>memberName</code> field be set to the
@@ -206,6 +244,54 @@ public class MemberObject extends BodyObject
         requestAttributeChange(
             CLUSTER_OID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.clusterOid = value;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>recentScenes</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToRecentScenes (SceneBookmarkEntry elem)
+    {
+        requestEntryAdd(RECENT_SCENES, recentScenes, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>recentScenes</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromRecentScenes (Comparable key)
+    {
+        requestEntryRemove(RECENT_SCENES, recentScenes, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>recentScenes</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateRecentScenes (SceneBookmarkEntry elem)
+    {
+        requestEntryUpdate(RECENT_SCENES, recentScenes, elem);
+    }
+
+    /**
+     * Requests that the <code>recentScenes</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setRecentScenes (DSet<com.threerings.msoy.data.SceneBookmarkEntry> value)
+    {
+        requestAttributeChange(RECENT_SCENES, value, this.recentScenes);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.SceneBookmarkEntry> clone =
+            (value == null) ? null : value.typedClone();
+        this.recentScenes = clone;
     }
 
     /**
@@ -342,4 +428,6 @@ public class MemberObject extends BodyObject
         0, 1, 2, 20, 21, 22, 25, 38, 39,
         40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54
     };
+
+    public static final int MAX_RECENT_SCENES = 10;
 }
