@@ -1,5 +1,7 @@
 package com.threerings.msoy.client {
 
+import flash.events.MouseEvent;
+
 import mx.core.ScrollPolicy;
 
 import mx.containers.Canvas;
@@ -94,9 +96,8 @@ public class ControlBar extends Canvas
             */
 
             var scenesBtn :Button = new Button();
-            scenesBtn.addEventListener(FlexEvent.BUTTON_DOWN,
-                function (event :FlexEvent) :void {
-                    event.stopImmediatePropagation();
+            scenesBtn.addEventListener(MouseEvent.CLICK,
+                function (event :MouseEvent) :void {
                     showRoomsMenu();
                 });
 
@@ -146,7 +147,6 @@ public class ControlBar extends Canvas
 
         var menu :Menu = Menu.createMenu(_ctx.getRootPanel(), menuData, false);
         menu.show(25, 25);
-        //menu.show(200, 200);
     }
 
     /** Our clientside context. */
