@@ -51,7 +51,9 @@ public class MemberName extends Name
     @Override
     public int hashCode ()
     {
-        return _memberId;
+        // we return a different hash for guests so that they
+        // don't end up all in the same bucket in a Map.
+        return (_memberId != -1) ? _memberId : super.hashCode();
     }
 
     @Override

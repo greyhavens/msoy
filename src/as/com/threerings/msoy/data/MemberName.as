@@ -41,7 +41,9 @@ public class MemberName extends Name
 
     override public function hashCode () :int
     {
-        return _memberId;
+        // we return a different hash for guests so that they
+        // don't end up all in the same bucket in a Map.
+        return (_memberId != -1) ? _memberId : super.hashCode();
     }
 
     override public function equals (other :Object) :Boolean
