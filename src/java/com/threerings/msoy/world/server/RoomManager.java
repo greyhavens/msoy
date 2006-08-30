@@ -66,9 +66,6 @@ public class RoomManager extends SpotSceneManager
                 (RandomUtil.getInt(2) == 0),
                 (byte) RandomUtil.getInt(3)));
 
-        // automatically add this scene to the user's recent list
-        memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
-
         if (entry != null) {
             return super.computeEnteringLocation(body, entry);
         }
@@ -82,6 +79,19 @@ public class RoomManager extends SpotSceneManager
     protected PlaceObject createPlaceObject ()
     {
         return new RoomObject();
+    }
+
+    @Override
+    protected void bodyLeft (int bodyOid)
+    {
+        super.bodyLeft(bodyOid);
+
+        MemberObject memberObj =
+            (MemberObject) MsoyServer.omgr.getObject(bodyOid);
+        if (memberObj != null) {
+            // automatically add this scene to the user's recent list
+            memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
+        }
     }
 
     // documentation inherited from RoomProvider
