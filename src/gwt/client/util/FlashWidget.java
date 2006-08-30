@@ -20,11 +20,16 @@ public class FlashWidget extends Widget
 
         // configure our <object> element
         DOM.setAttribute(getElement(), "classid",
-                         "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000");
+                         "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000");
         DOM.setAttribute(getElement(), "codebase",
-                         "http://download.macromedia.com/pub/shockwave/cabs" +
-                         "/flash/swflash.cab#version=6,0,40,0");
+                         "http://active.macromedia.com/flash7/cabs/" +
+                         "swflash.cab#version=9,0,0,0");
         DOM.setAttribute(getElement(), "id", ident);
+
+        // create some child <param> tags
+        DOM.appendChild(getElement(), _bgcolor = createParam("bgcolor", ""));
+        DOM.appendChild(getElement(), _quality = createParam("quality", ""));
+        DOM.appendChild(getElement(), _movie = createParam("movie", ""));
 
         // create and configure our <embed> element
         DOM.appendChild(getElement(), _embed = DOM.createElement("embed"));
@@ -33,12 +38,9 @@ public class FlashWidget extends Widget
                          "http://www.macromedia.com/go/getflashplayer");
         DOM.setAttribute(_embed, "name", ident);
 
-        // set up some defaults
-        DOM.appendChild(getElement(), _bgcolor = createParam("bgcolor", ""));
+        // set up some defaults, filling in both the embed and param tags
         setBackgroundColor("#FFFFFF");
-        DOM.appendChild(getElement(), _quality = createParam("quality", ""));
         setQuality("high");
-        DOM.appendChild(getElement(), _movie = createParam("movie", ""));
         setSize(400, 400);
     }
 
@@ -62,10 +64,12 @@ public class FlashWidget extends Widget
 
     public void setSize (int width, int height)
     {
-        DOM.setAttribute(getElement(), "width", String.valueOf(width));
-        DOM.setAttribute(_embed, "width", String.valueOf(width));
-        DOM.setAttribute(getElement(), "height", String.valueOf(height));
-        DOM.setAttribute(_embed, "height", String.valueOf(height));
+        String strWidth = String.valueOf(width);
+        String strHeight = String.valueOf(height);
+        DOM.setAttribute(getElement(), "width", strWidth);
+        DOM.setAttribute(_embed, "width", strWidth);
+        DOM.setAttribute(getElement(), "height", strHeight);
+        DOM.setAttribute(_embed, "height", strHeight);
     }
 
     protected Element createParam (String name, String value)
