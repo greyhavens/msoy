@@ -37,9 +37,14 @@ public class LogonPanel extends HBox
         _clientObs = new ClientAdapter(
             recheckGuest, recheckGuest, recheckGuest, recheckGuest,
             recheckGuest, recheckGuest, recheckGuest);
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
 
         var label :UITextField = new UITextField();
-        label.text = ctx.xlate(null, "l.email");
+        label.text = _ctx.xlate(null, "l.email");
         addChild(label);
 
         _email = new TextInput();
@@ -47,7 +52,7 @@ public class LogonPanel extends HBox
         addChild(_email);
 
         label = new UITextField();
-        label.text = ctx.xlate(null, "l.password");
+        label.text = _ctx.xlate(null, "l.password");
         addChild(label);
 
         _password = new TextInput();
@@ -55,12 +60,12 @@ public class LogonPanel extends HBox
         addChild(_password);
 
         _logonBtn = new Button();
-        _logonBtn.label = ctx.xlate(null, "b.logon");
+        _logonBtn.label = _ctx.xlate(null, "b.logon");
         _logonBtn.enabled = false;
         addChild(_logonBtn);
 
         _guestBtn = new CommandButton(MsoyController.LOGON);
-        _guestBtn.label = ctx.xlate(null, "b.logon_guest");
+        _guestBtn.label = _ctx.xlate(null, "b.logon_guest");
         addChild(_guestBtn);
 
         _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);
@@ -69,6 +74,7 @@ public class LogonPanel extends HBox
 
         _email.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
         _password.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
+        recheckGuest(null);
     }
 
     override public function parentChanged (p :DisplayObjectContainer) :void
@@ -89,9 +95,11 @@ public class LogonPanel extends HBox
      */
     public function recheckGuest (event :ClientEvent) :void
     {
-        // we only get the option here to log in as a guest if
-        // we aren't even logged in
-        _guestBtn.visible = (_ctx.getClientObject() == null);
+        if (_guestBtn != null) {
+            // we only get the option here to log in as a guest if
+            // we aren't even logged in
+            _guestBtn.visible = (_ctx.getClientObject() == null);
+        }
     }
 
     /**

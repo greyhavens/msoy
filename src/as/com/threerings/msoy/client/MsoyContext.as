@@ -1,6 +1,7 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 
 import mx.core.Application;
@@ -77,7 +78,7 @@ public class MsoyContext
         return _client;
     }
 
-    public function getRootPanel () :DisplayObject
+    public function getRootPanel () :DisplayObjectContainer
     {
         return _app;
     }

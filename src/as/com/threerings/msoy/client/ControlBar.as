@@ -4,17 +4,24 @@ import mx.core.ScrollPolicy;
 
 import mx.containers.Canvas;
 
+import mx.controls.Button;
+import mx.controls.Menu;
+import mx.controls.PopUpMenuButton;
+
+import mx.events.FlexEvent;
+
 import com.threerings.mx.controls.CommandButton;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientAdapter;
 
-import com.threerings.msoy.chat.client.ChatControl;
-
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.SceneBookmarkEntry;
+
+import com.threerings.msoy.chat.client.ChatControl;
 
 /**
  * The control bar: the main menu and global UI element across all scenes.
@@ -80,9 +87,18 @@ public class ControlBar extends Canvas
             friendsBtn.height = HEIGHT;
             addChild(friendsBtn);
 
+            /*
             var scenesBtn :CommandButton = new CommandButton();
             scenesBtn.setCommand(MsoyController.SHOW_RECENT_SCENES);
             scenesBtn.toggle = true;
+            */
+
+            var scenesBtn :Button = new Button();
+            scenesBtn.addEventListener(FlexEvent.BUTTON_DOWN,
+                function (event :FlexEvent) :void {
+                    event.stopImmediatePropagation();
+                    showRoomsMenu();
+                });
 
             scenesBtn.x = 624
             scenesBtn.y = 0;
@@ -109,6 +125,28 @@ public class ControlBar extends Canvas
 
         // and remember how things are set for now
         _isMember = isMember;
+    }
+
+    protected function showRoomsMenu () :void
+    {
+        var entries :Array = _ctx.getClientObject().recentScenes.toArray();
+        entries.sort(function (o1 :Object, o2 :Object) :int {
+            var sb1 :SceneBookmarkEntry = (o1 as SceneBookmarkEntry);
+            var sb2 :SceneBookmarkEntry = (o2 as SceneBookmarkEntry);
+            return int(sb1.lastVisit - sb2.lastVisit);
+        });
+
+        var menuData :Array = [
+            { label: "HOME", type: "check" },
+            { type: "separator" },
+            { label: _ctx.xlate("general", "l.recent_scenes"),
+              children: entries },
+            { label: "dweebie" }
+        ];
+
+        var menu :Menu = Menu.createMenu(_ctx.getRootPanel(), menuData, false);
+        menu.show(25, 25);
+        //menu.show(200, 200);
     }
 
     /** Our clientside context. */
