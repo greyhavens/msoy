@@ -55,8 +55,8 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         // load up their member information using on their authentication
         // (account) name
-        MemberRecord member =
-            MsoyServer.memberRepo.loadMember(_username.toString());
+        MemberRecord member = (MemberRecord) _authdata;
+            //MsoyServer.memberRepo.loadMember(_username.toString());
 
         // configure their member name which is a combination of their display
         // name and their member id
@@ -107,7 +107,8 @@ public class MsoyClientResolver extends CrowdClientResolver
      */
     protected boolean isResolvingGuest ()
     {
-        return _username.toString().startsWith(
-            MsoyClient.GUEST_USERNAME_PREFIX);
+        return (_authdata == null);
+        //return _username.toString().startsWith(
+        //    MsoyClient.GUEST_USERNAME_PREFIX);
     }
 }

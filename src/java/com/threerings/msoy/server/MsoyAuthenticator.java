@@ -164,6 +164,7 @@ public class MsoyAuthenticator extends Authenticator
                 }
 
                 // otherwise, we've loaded by sessionToken
+                rsp.authdata = member;
                 accountName = member.accountName;
                 password = Domain.PASSWORD_BYPASS;
 
@@ -233,6 +234,7 @@ public class MsoyAuthenticator extends Authenticator
                     rdata.sessionToken =
                         MsoyServer.memberRepo.startOrJoinSession(
                             member.memberId, false);
+                    rsp.authdata = member;
                 }
             }
 
