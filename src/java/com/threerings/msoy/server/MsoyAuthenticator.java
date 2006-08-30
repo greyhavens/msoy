@@ -159,12 +159,12 @@ public class MsoyAuthenticator extends Authenticator
 
                 // GUEST access
                 if (member == null) {
+                    rsp.authdata = null;
                     rdata.code = MsoyAuthResponseData.SUCCESS;
                     return;
                 }
 
                 // otherwise, we've loaded by sessionToken
-                rsp.authdata = member;
                 accountName = member.accountName;
                 password = Domain.PASSWORD_BYPASS;
 
@@ -234,7 +234,6 @@ public class MsoyAuthenticator extends Authenticator
                     rdata.sessionToken =
                         MsoyServer.memberRepo.startOrJoinSession(
                             member.memberId, false);
-                    rsp.authdata = member;
                 }
             }
 
@@ -259,6 +258,7 @@ public class MsoyAuthenticator extends Authenticator
 //             rsp.authdata = new MsoyTokenRing(tokens);
 
             // log.info("User logged on [user=" + user.username + "].");
+            rsp.authdata = account.accountName;
             rdata.code = MsoyAuthResponseData.SUCCESS;
 
 //             // pass their user record to the client resolver for retrieval

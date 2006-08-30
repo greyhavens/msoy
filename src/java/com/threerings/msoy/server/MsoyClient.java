@@ -22,6 +22,7 @@ import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MemberName;
 
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -51,27 +52,21 @@ public class MsoyClient extends WhirledClient
     protected void assignStartingUsername ()
     {
         if (_authdata != null) {
-            _username = new Name(((MemberRecord) _authdata).accountName);
+            // for members, this is just their auth username
+            _username = new Name((String) _authdata);
 
         } else {
-            _username = new Name(GUEST_USERNAME_PREFIX + ++_guestCount);
+            // for guests, we use the same Name object as their usename
+            // and their display name. We create it here.
+            _username = new MemberName(
+                GUEST_USERNAME_PREFIX + ++_guestCount, -1);
         }
-
-        /*
-        Name credName = _creds.getUsername();
-        if (null == credName) {
-            _username = new Name(GUEST_USERNAME_PREFIX + ++_guestCount);
-        } else {
-            _username = credName;
-        }
-        */
     }
 
     @Override // from PresentsClient
     protected void sessionWillStart ()
     {
         super.sessionWillStart();
-        _authdata = null; // gc
 
         _memobj = (MemberObject) _clobj;
         MsoyServer.registerMember(_memobj);

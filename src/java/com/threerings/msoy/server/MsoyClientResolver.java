@@ -55,8 +55,8 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         // load up their member information using on their authentication
         // (account) name
-        MemberRecord member = (MemberRecord) _authdata;
-            //MsoyServer.memberRepo.loadMember(_username.toString());
+        MemberRecord member =
+            MsoyServer.memberRepo.loadMember(_username.toString());
 
         // configure their member name which is a combination of their display
         // name and their member id
@@ -76,7 +76,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         userObj.setTokens(new MsoyTokenRing());
         // TODO: make a proper guest display name
-        userObj.setMemberName(new MemberName(userObj.username.toString(), -1));
+        userObj.setMemberName((MemberName) _username);
     }
 
     @Override // from PresentsClient
@@ -107,8 +107,11 @@ public class MsoyClientResolver extends CrowdClientResolver
      */
     protected boolean isResolvingGuest ()
     {
-        return (_authdata == null);
-        //return _username.toString().startsWith(
-        //    MsoyClient.GUEST_USERNAME_PREFIX);
+        // this seems strange, but we're testing the authentication
+        // username, which is set to be a MemberName for guests and a regular
+        // Name for members. The reason for this is that the guests
+        // will use the same MemberName object for their display name
+        // and auth name
+        return (_username instanceof MemberName);
     }
 }
