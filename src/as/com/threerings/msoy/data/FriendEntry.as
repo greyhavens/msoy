@@ -1,6 +1,7 @@
 package com.threerings.msoy.data {
 
 import com.threerings.util.Comparable;
+import com.threerings.util.Hashable;
 
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
@@ -60,6 +61,19 @@ public class FriendEntry
         return MemberName.BY_DISPLAY_NAME(this.name, that.name);
     }
 
+    // from Hashable
+    public function hashCode () :int
+    {
+        return getMemberId();
+    }
+
+    // from Hashable
+    public function equals (other :Object) :Boolean
+    {
+        return (other is FriendEntry) &&
+            (getMemberId() == (other as FriendEntry).getMemberId());
+    }
+
     // from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
@@ -74,6 +88,11 @@ public class FriendEntry
         name = (ins.readObject() as MemberName);
         online = ins.readBoolean();
         status = ins.readByte();
+    }
+
+    public function toString () :String
+    {
+        return "FriendEntry[" + name + "]";
     }
 }
 }

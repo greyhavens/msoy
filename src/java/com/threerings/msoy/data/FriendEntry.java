@@ -71,6 +71,10 @@ public class FriendEntry
     public int compareTo (Object other)
     {
         FriendEntry that = (FriendEntry) other;
+        // real friends go above not-yet-friends (of whatever kind)
+        if ((this.status == FRIEND) != (that.status == FRIEND)) {
+            return (this.status == FRIEND) ? -1 : 1;
+        }
         // online folks show up above offline folks
         if (this.online != that.online) {
             return this.online ? -1 : 1;
