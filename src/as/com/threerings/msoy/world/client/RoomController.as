@@ -157,25 +157,24 @@ public class RoomController extends SceneController
             // create a menu for clicking on ourselves
 
             // TEMP: allow us to start a game with ourselves
-            menuItems.push( [
-                _mctx.xlate(null, "b.inviteGame"), null, GAME_INVITE,
-                occInfo.username ]);
+            menuItems.push({ label: _mctx.xlate(null, "b.inviteGame"),
+                command: GAME_INVITE, arg: occInfo.username });
 
         } else {
             // create a menu for clicking on someone else
             var memId :int = occInfo.getMemberId();
             var isGuest :Boolean = (memId == -1);
             var isFriend :Boolean = us.friends.containsKey(memId);
-            menuItems.push([ _mctx.xlate(null, "b.tell"), null, TELL, memId ]);
+            menuItems.push({ label: _mctx.xlate(null, "b.tell"),
+                command: TELL, arg: memId });
 
             if (!isGuest) {
-                menuItems.push( [
-                    _mctx.xlate(null, isFriend ? "b.removeAsFriend"
-                                               : "b.addAsFriend"),
-                    null, ALTER_FRIEND, [memId, !isFriend] ]);
-                menuItems.push( [
-                    _mctx.xlate(null, "b.inviteGame"), null, GAME_INVITE,
-                    occInfo.username ]);
+                menuItems.push(
+                    { label: _mctx.xlate(null, isFriend ? "b.removeAsFriend"
+                                                        : "b.addAsFriend"),
+                      command: ALTER_FRIEND, arg: [memId, !isFriend] },
+                    { label: _mctx.xlate(null, "b.inviteGame"),
+                      command: GAME_INVITE, arg: occInfo.username });
             }
         }
 

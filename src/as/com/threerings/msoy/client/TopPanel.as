@@ -39,6 +39,8 @@ public class TopPanel extends Canvas
             _buildStamp.mouseChildren = false;
             _buildStamp.text = "Build: " + DeploymentConfig.buildTime;
             _buildStamp.setStyle("color", "#FF6633");
+            _buildStamp.setStyle("fontSize", 12);
+            _buildStamp.setStyle("fontWeight", "bold");
             addChild(_buildStamp);
         }
 

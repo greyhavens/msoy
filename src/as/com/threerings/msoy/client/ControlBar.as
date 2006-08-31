@@ -7,16 +7,17 @@ import mx.core.ScrollPolicy;
 import mx.containers.Canvas;
 
 import mx.controls.Button;
-import mx.controls.Menu;
-import mx.controls.PopUpMenuButton;
 
 import mx.events.FlexEvent;
 
 import com.threerings.mx.controls.CommandButton;
+import com.threerings.mx.controls.CommandMenu;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientAdapter;
+
+import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MediaData;
@@ -98,7 +99,7 @@ public class ControlBar extends Canvas
             var scenesBtn :Button = new Button();
             scenesBtn.addEventListener(MouseEvent.CLICK,
                 function (event :MouseEvent) :void {
-                    showRoomsMenu();
+                    showRoomsMenu(scenesBtn);
                 });
 
             scenesBtn.x = 624
@@ -128,25 +129,48 @@ public class ControlBar extends Canvas
         _isMember = isMember;
     }
 
-    protected function showRoomsMenu () :void
+    protected function showRoomsMenu (trigger :Button) :void
     {
-        var entries :Array = _ctx.getClientObject().recentScenes.toArray();
+        var scene :Scene = _ctx.getSceneDirector().getScene();
+        var currentSceneId :int = (scene == null) ? -1 : scene.getId();
+
+        var memberObj :MemberObject = _ctx.getClientObject();
+        var entries :Array = memberObj.recentScenes.toArray();
         entries.sort(function (o1 :Object, o2 :Object) :int {
             var sb1 :SceneBookmarkEntry = (o1 as SceneBookmarkEntry);
             var sb2 :SceneBookmarkEntry = (o2 as SceneBookmarkEntry);
             return int(sb1.lastVisit - sb2.lastVisit);
         });
 
+        entries = entries.map(
+            function (item :*, index :int, array :Array) :Object {
+                var sb :SceneBookmarkEntry = (item as SceneBookmarkEntry);
+                return {
+                    label: sb.toString(),
+                    enabled: (sb.sceneId != currentSceneId),
+                    command: MsoyController.GO_SCENE,
+                    arg: sb.sceneId
+                };
+            });
+
         var menuData :Array = [
-            { label: "HOME", type: "check" },
-            { type: "separator" },
             { label: _ctx.xlate("general", "l.recent_scenes"),
-              children: entries },
-            { label: "dweebie" }
+              children: entries }
         ];
 
-        var menu :Menu = Menu.createMenu(_ctx.getRootPanel(), menuData, false);
-        menu.show(25, 25);
+        if (!memberObj.isGuest()) {
+            menuData.push(
+                { type: "separator" },
+                { label: _ctx.xlate("general", "l.go_home"),
+                  enabled: (memberObj.homeSceneId != currentSceneId),
+                  command :MsoyController.GO_SCENE,
+                  arg: memberObj.homeSceneId
+                });
+        }
+
+        var menu :CommandMenu =
+            CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
+        menu.popUp(trigger);
     }
 
     /** Our clientside context. */

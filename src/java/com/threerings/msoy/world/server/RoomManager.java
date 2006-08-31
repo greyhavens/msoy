@@ -60,11 +60,17 @@ public class RoomManager extends SpotSceneManager
         BodyObject body, Portal entry)
     {
         MemberObject memberObj = (MemberObject) body;
+
+        // automatically add the room to their recent list
+        memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
+
+        // TEMP
         int memberId = RandomUtil.getInt(10000);
         memberObj.addToFriends(
             new FriendEntry(new MemberName(String.valueOf(memberId), memberId),
                 (RandomUtil.getInt(2) == 0),
                 (byte) RandomUtil.getInt(3)));
+        // END: temp
 
         if (entry != null) {
             return super.computeEnteringLocation(body, entry);
@@ -72,26 +78,13 @@ public class RoomManager extends SpotSceneManager
 
         // fallback if there is no portal
         return new SceneLocation(
-            new MsoyLocation(0, 0, 0, (short) 0), body.getOid());
+            new MsoyLocation(.5, 0, .5, (short) 0), body.getOid());
     }
 
     @Override
     protected PlaceObject createPlaceObject ()
     {
         return new RoomObject();
-    }
-
-    @Override
-    protected void bodyLeft (int bodyOid)
-    {
-        super.bodyLeft(bodyOid);
-
-        MemberObject memberObj =
-            (MemberObject) MsoyServer.omgr.getObject(bodyOid);
-        if (memberObj != null) {
-            // automatically add this scene to the user's recent list
-            memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
-        }
     }
 
     // documentation inherited from RoomProvider

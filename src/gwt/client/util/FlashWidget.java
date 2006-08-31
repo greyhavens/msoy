@@ -19,7 +19,8 @@ public class FlashWidget extends Widget
         setStyleName("gwt-FlashWidget");
 
         // configure our <object> element
-        DOM.setAttribute(getElement(), "classid",
+        DOM.setAttribute(getElement(), "classid", "peeny");
+        DOM.setAttribute(getElement(), "floogle",
                          "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000");
         DOM.setAttribute(getElement(), "codebase",
                          "http://active.macromedia.com/flash7/cabs/" +
