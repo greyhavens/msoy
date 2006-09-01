@@ -90,7 +90,7 @@ public abstract class MediaItem extends Item
             return VIDEO_QUICKTIME;
         } else if (mimeType.equals("video/msvideo")) {
             return VIDEO_MSVIDEO;
-        } else if (mimeType.equals("application/shockwave_flash")) {
+        } else if (mimeType.equals("application/x-shockwave-flash")) {
             return APPLICATION_SHOCKWAVE_FLASH;
         } else {
             return -1;

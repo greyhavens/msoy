@@ -96,7 +96,7 @@ public /*abstract*/ class MediaItem extends Item
             return VIDEO_QUICKTIME;
         } else if (mimeType == "video/msvideo") {
             return VIDEO_MSVIDEO;
-        } else if (mimeType == "application/shockwave_flash") {
+        } else if (mimeType == "application/x-shockwave-flash") {
             return APPLICATION_SHOCKWAVE_FLASH;
         } else {
             return -1;
