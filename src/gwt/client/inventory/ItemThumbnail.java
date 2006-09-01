@@ -8,11 +8,15 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.data.MediaItem;
 import com.threerings.msoy.item.data.Photo;
 
 import client.MsoyEntryPoint;
+
+import client.util.FlashWidget;
 
 /**
  * Displays a thumbnail version of an item.
@@ -27,12 +31,28 @@ public class ItemThumbnail extends VerticalPanel
 {
     public ItemThumbnail (Item item)
     {
-        Image image = new Image(
-            MsoyEntryPoint.toMediaPath(item.getThumbnailPath()));
-        image.setStyleName("item_thumb_image");
-        add(image);
+        Widget thumb = createThumbnail(item);
+        thumb.setStyleName("item_thumb_image"); // TODO?
+        add(thumb);
         Label label = new Label(item.getInventoryDescrip());
         label.setStyleName("item_thumb_text");
         add(label);
+    }
+
+    /**
+     * Helper method to create the thumbnail widget.
+     */
+    protected Widget createThumbnail (Item item)
+    {
+        if (item instanceof MediaItem) {
+            MediaItem mitem = (MediaItem) item;
+            if (mitem.mimeType == MediaItem.APPLICATION_SHOCKWAVE_FLASH) {
+                FlashWidget fw = new FlashWidget(mitem.mediaHash);
+                fw.setMovie(MsoyEntryPoint.toMediaPath(mitem.getMediaPath()));
+                return fw;
+            }
+        }
+
+        return new Image(MsoyEntryPoint.toMediaPath(item.getThumbnailPath()));
     }
 }
