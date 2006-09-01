@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.item.data;
 
-import com.samskivert.util.StringUtil;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
@@ -53,13 +51,13 @@ public abstract class Item implements Streamable, IsSerializable
         return "/media/static/items/" + getType().toLowerCase() + ".png";
     }
 
-    @Override
+    // @Override
     public int hashCode ()
     {
         return itemId;
     }
 
-    @Override
+    // @Override
     public boolean equals (Object other)
     {
         if (other instanceof Item) {
@@ -77,6 +75,6 @@ public abstract class Item implements Streamable, IsSerializable
      */
     protected String toInventoryDescrip (String text)
     {
-        return StringUtil.truncate(text, 32, "...");
+        return (text.length() <= 32) ? text : (text.substring(0, 29) + "...");
     }
 }
