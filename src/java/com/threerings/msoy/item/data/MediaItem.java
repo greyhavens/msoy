@@ -52,6 +52,14 @@ public abstract class MediaItem extends Item
      */
     public String getMediaPath ()
     {
+        return getMediaPath(mediaHash, mimeType);
+    }
+
+    /**
+     * Get the path of the URL for the media specified.
+     */
+    public static String getMediaPath (String mediaHash, byte mimeType)
+    {
         return "/media/" + mediaHash + mimeTypeToSuffix(mimeType);
     }
 

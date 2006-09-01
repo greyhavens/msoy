@@ -10,6 +10,10 @@ import flash.geom.Point;
 
 import flash.ui.Keyboard;
 
+import mx.events.DragEvent;
+
+import mx.managers.DragManager;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Iterator;
@@ -24,6 +28,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MediaData;
 
 import com.threerings.msoy.item.client.InventoryPanel;
+import com.threerings.msoy.item.data.Item;
 
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyPortal;
@@ -48,10 +53,18 @@ public class EditRoomHelper extends Controller
         _scene = scene;
 
         _nextPortalId = _scene.getNextPortalId();
+        _nextFurniId = _scene.getNextFurniId();
         _roomView.setEditing(true, enableEditingVisitor);
 
+        // pop up our control kit
         _panel = new EditRoomPanel(ctx, this, roomView);
+
+        // set it as our controlled panel
         setControlledPanel(_panel);
+        _roomView.addEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
+        _roomView.addEventListener(DragEvent.DRAG_EXIT, dragExitHandler);
+        _roomView.addEventListener(DragEvent.DRAG_OVER, dragOverHandler);
+        _roomView.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
     }
 
     /**
@@ -59,11 +72,18 @@ public class EditRoomHelper extends Controller
      */
     public function endEditing (saveEdits :Boolean) :void
     {
+        // close our panels
         _panel.close();
         if (_invPanel != null) {
             _invPanel.close();
             _invPanel = null;
         }
+
+        // stop listening from drop events on the roomView
+        _roomView.removeEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
+        _roomView.removeEventListener(DragEvent.DRAG_EXIT, dragExitHandler);
+        _roomView.removeEventListener(DragEvent.DRAG_OVER, dragOverHandler);
+        _roomView.removeEventListener(DragEvent.DRAG_DROP, dragDropHandler);
 
         // remove all sprites we've added
         while (_addedSprites.length > 0) {
@@ -113,18 +133,28 @@ public class EditRoomHelper extends Controller
      */
     public function handleInsertPortal () :void
     {
+        var loc :MsoyLocation = new MsoyLocation(.5, 0, .5);
         // create a generic portal descriptor
         var portal :MsoyPortal = new MsoyPortal();
         portal.portalId = getNextPortalId();
-        portal.loc = new MsoyLocation(.5, 0, .5);
+        portal.loc = loc;
         portal.media = new MediaData(1);
         portal.targetSceneId = 1;
         portal.targetPortalId = -1;
 
         // create a loose sprite to represent it, add it to the panel
         var sprite :PortalSprite = _ctx.getMediaDirector().getPortal(portal);
+        insertSprite(sprite, loc);
+    }
+
+    /**
+     * Helper for methods that insert a new sprite into a scene.
+     */
+    protected function insertSprite (
+        sprite :MsoySprite, loc :MsoyLocation) :void
+    {
         _roomView.addChild(sprite);
-        sprite.setLocation(portal.loc);
+        sprite.setLocation(loc);
 
         _addedSprites.push(sprite);
 
@@ -186,6 +216,88 @@ public class EditRoomHelper extends Controller
         sprite.addEventListener(MouseEvent.MOUSE_DOWN, spritePressed);
         sprite.addEventListener(MouseEvent.MOUSE_OVER, spriteRollOver);
         sprite.addEventListener(MouseEvent.MOUSE_OUT, spriteRollOut);
+    }
+
+    protected function dragEnterHandler (event :DragEvent) :void
+    {
+        if (event.isDefaultPrevented()) {
+            return;
+        }
+        if (null != dragItem(event)) {
+            DragManager.acceptDragDrop(_roomView);
+            DragManager.showFeedback(DragManager.MOVE);
+
+        } else {
+            DragManager.showFeedback(DragManager.NONE);
+        }
+    }
+
+    protected function dragOverHandler (event :DragEvent) :void
+    {
+        if (event.isDefaultPrevented()) {
+            return;
+        }
+
+        if (null != dragItem(event)) {
+            DragManager.showFeedback(DragManager.MOVE);
+
+        } else {
+            DragManager.showFeedback(DragManager.NONE);
+        }
+    }
+
+    protected function dragExitHandler (event :DragEvent) :void
+    {
+        if (event.isDefaultPrevented()) {
+            return;
+        }
+
+        DragManager.showFeedback(DragManager.NONE);
+    }
+
+    protected function dragDropHandler (event :DragEvent) :void
+    {
+        if (event.isDefaultPrevented()) {
+            return;
+        }
+
+        var item :Item = dragItem(event);
+        var loc :MsoyLocation = _roomView.pointToLocation(
+            event.stageX, event.stageY);
+        // TODO: this next block won't be necessary soon because
+        // the roomview will return locations for ALL points.
+        if (loc == null) {
+            loc = new MsoyLocation(.5, 0, .5);
+        }
+
+        // let's go ahead and create furni
+
+        // create a generic portal descriptor
+        var furni :FurniData = new FurniData();
+        furni.id = getNextFurniId();
+        furni.loc = loc;
+        furni.media = MediaData.fromItem(item);
+
+        // create a loose sprite to represent it, add it to the panel
+        var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
+        insertSprite(sprite, loc);
+    }
+
+    /**
+     * A helper method for all my drag*Handlers.
+     * Return the Item being dragged, or null if not an item or 
+     * not the right kind of drag, or whatever.
+     */
+    protected function dragItem (event :DragEvent) :Item
+    {
+        // this is internal flex juju, not related to our items
+        if (event.dragSource.hasFormat("items")) {
+            var arr :Array = (event.dragSource.dataForFormat("items") as Array);
+            if ((arr.length == 1) && (arr[0] is Item)) {
+                return (arr[0] as Item);
+            }
+        }
+        return null;
     }
 
     protected function spritePressed (event :MouseEvent) :void
@@ -551,8 +663,15 @@ public class EditRoomHelper extends Controller
     {
         // TODO: cope with ids getting too large.
         // we don't ask the scene, because it doesn't know about our
-        // editing portals yet
+        // editing portals yet, but we should ask the scene and look
+        // at our so-far-added portals
         return _nextPortalId++;
+    }
+
+    protected function getNextFurniId () :int
+    {
+        // TODO: see note in getNextPortalId().
+        return _nextFurniId++;
     }
 
     protected var _ctx :MsoyContext;
@@ -567,6 +686,7 @@ public class EditRoomHelper extends Controller
     protected var _roomView :RoomView;
 
     protected var _nextPortalId :int;
+    protected var _nextFurniId :int;
 
     protected var _invPanel :InventoryPanel;
 

@@ -37,6 +37,9 @@ public class InventoryPanel extends FloatingPanel
         super.createChildren();
 
         _list = new List(_ctx);
+        _list.dragEnabled = true;
+        _list.maxHeight = 400;
+        _list.minWidth = 300;
         _list.itemRenderer = new ClassFactory(ItemRenderer);
         _list.dataProvider = _itemsToShow;
         addChild(_list);

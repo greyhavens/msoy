@@ -100,6 +100,14 @@ public class MsoyScene extends SceneImpl
         return _msoyModel.furnis;
     }
 
+    /**
+     * Get the next available furniture id.
+     */
+    public function getNextFurniId () :int
+    {
+        return _msoyModel.getNextFurniId();
+    }
+
     // from SpotScene
     public function addPortal (portal :Portal) :void
     {

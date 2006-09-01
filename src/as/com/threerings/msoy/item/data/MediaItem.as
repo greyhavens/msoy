@@ -57,6 +57,15 @@ public /*abstract*/ class MediaItem extends Item
      */
     public function getMediaPath () :String
     {
+        return MediaItem.getMediaPath(mediaHash, mimeType);
+    }
+
+    /**
+     * Get the path of the URL for the media specified.
+     */
+    public static function getMediaPath (
+        mediaHash :String, mimeType :int) :String
+    {
         return "/media/" + mediaHash + mimeTypeToSuffix(mimeType);
     }
 

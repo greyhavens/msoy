@@ -54,6 +54,28 @@ public class MsoySceneModel extends SceneModel
     }
 
     /**
+     * Get the next available furni id.
+     */
+    public int getNextFurniId ()
+    {
+        // TODO?
+        int length = furnis.length;
+        for (int ii=1; ii < 5000; ii++) {
+            boolean found = false;
+            for (int idx=0; idx < length; idx++) {
+                if (furnis[idx].id == ii) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return ii;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Create a blank scene.
      */
     public static MsoySceneModel blankMsoySceneModel ()

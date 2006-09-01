@@ -3,10 +3,14 @@ package com.threerings.msoy.data {
 import flash.geom.Point;
 
 import com.threerings.util.Hashable;
+import com.threerings.util.Util;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
+
+import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.data.MediaItem;
 
 /**
  * A class containing metadata about a media object.
@@ -17,7 +21,32 @@ public class MediaData
     public var isAVM1 :Boolean;
 
     /** Temp: a universal id for this media. */
+    /** or -1 if newstyle. */
     public var id :int;
+
+    public var hash :String;
+
+    public var mimeType :int;
+
+
+    /**
+     * Create a media descriptor from the specified item.
+     */
+    public static function fromItem (item :Item) :MediaData
+    {
+        var data :MediaData = new MediaData(-1);
+        if (item is MediaItem) {
+            var mitem :MediaItem = (item as MediaItem);
+            data.hash = mitem.mediaHash;
+            data.mimeType = mitem.mimeType;
+        } else {
+            // other kinds of items should have default representations
+            // of some special media already in the system...
+            // TODO
+        }
+
+        return data;
+    }
 
     public static function getTestCount () :int
     {
@@ -37,6 +66,9 @@ public class MediaData
      */
     public function get hotSpot () :Point
     {
+        if (id == -1) {
+            return null;
+        }
         return (DATA[id][2] as Point);
     }
 
@@ -45,6 +77,10 @@ public class MediaData
      */
     public function get URL () :String
     {
+        if (id == -1) {
+            return MediaItem.getMediaPath(hash, mimeType);
+        }
+
         if (DATA[id][3]) {
             return String(DATA[id][0]);
         }
@@ -69,6 +105,10 @@ public class MediaData
      */
     public function isInteractive () :Boolean
     {
+        if (id == -1) {
+            // TODO? Fawk
+            return false;
+        }
         return Boolean(DATA[id][1]);
     }
 
@@ -81,21 +121,27 @@ public class MediaData
     // documentation inherited from Hashable
     public function equals (other :Object) :Boolean
     {
-        return (other is MediaData) && (other as MediaData).id == id;
+        if (other is MediaData) {
+            var that :MediaData = (other as MediaData);
+            return (this.id == that.id) && Util.equals(this.hash, that.hash);
+        }
+        return false;
     }
 
     // documentation inherited from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeInt(id);
-        // TODO
+        out.writeField(hash);
+        out.writeByte(mimeType);
     }
 
     // documentation inherited from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
         id = ins.readInt();
-        // TODO
+        hash = (ins.readField(String) as String);
+        mimeType = ins.readByte();
     }
 
     /** temp */

@@ -34,12 +34,26 @@ public class ItemRenderer extends VBox
         }
     }
 
+    override protected function measure () :void
+    {
+        measuredWidth = 300;
+        measuredHeight = 300;
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
 
-        addChild(_container = new MediaContainer());
+        var scrollBox :VBox = new VBox();
+        scrollBox.maxWidth = 250;
+        scrollBox.maxHeight = 200;
+
+        addChild(scrollBox);
+        scrollBox.addChild(_container = new MediaContainer());
+
         addChild(_label = new Label());
+        _label.maxHeight = 50;
+        _label.maxWidth = 250;
     }
 
     protected var _container :MediaContainer;

@@ -46,6 +46,27 @@ public class MsoySceneModel extends SceneModel
         ArrayUtil.removeFirst(furnis, furni);
     }
 
+    /**
+     * Get the next available furni id.
+     */
+    public function getNextFurniId () :int
+    {
+        var length :int = furnis.length;
+        for (var ii :int = 1; ii < 5000; ii++) {
+            var found :Boolean = false;
+            for (var idx :int = 0; idx < length; idx++) {
+                if ((furnis[idx] as FurniData).id == ii) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return ii;
+            }
+        }
+        return -1;
+    }
+
     // documentation inherited
     override public function writeObject (out :ObjectOutputStream) :void
     {

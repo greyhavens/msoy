@@ -88,6 +88,26 @@ public class MsoySceneRepository extends SimpleRepository
             JDBCUtil.addColumn(conn, "SCENES", "OWNER_ID",
                 "integer not null", "SCENE_ID");
         }
+
+        // TEMP: db upgrade
+        if (Types.INTEGER == JDBCUtil.getColumnType(conn, "PORTALS", "MEDIA")) {
+            // just change them all
+            JDBCUtil.changeColumn(conn, "PORTALS", "MEDIA",
+                "MEDIA varchar(255) not null");
+            JDBCUtil.changeColumn(conn, "FURNI", "MEDIA",
+                "MEDIA varchar(255) not null");
+            JDBCUtil.changeColumn(conn, "SCENES", "BACKGROUND",
+                "BACKGROUND varchar(255)");
+            JDBCUtil.changeColumn(conn, "SCENES", "MUSIC",
+                "MUSIC varchar(255)");
+
+            Statement stmt = conn.createStatement();
+            try {
+                stmt.executeUpdate("delete from SCENE_UPDATES");
+            } finally {
+                JDBCUtil.close(stmt);
+            }
+        }
     }
 
     // documentation inherited from interface SceneRepository
@@ -206,14 +226,10 @@ public class MsoySceneRepository extends SimpleRepository
                         }
                         spotModel.defaultEntranceId = rs.getInt(5);
                         model.width = rs.getShort(6);
-                        int bkgId = rs.getInt(7);
-                        if (!rs.wasNull()) {
-                            model.background = new MediaData(bkgId);
-                        }
-                        int musicId = rs.getInt(8);
-                        if (!rs.wasNull()) {
-                            model.music = new MediaData(musicId);
-                        }
+                        model.background =
+                            MediaData.fromDBString(rs.getString(7));
+                        model.music =
+                            MediaData.fromDBString(rs.getString(8));
 
                     } else {
                         return Boolean.FALSE; // no scene found
@@ -230,7 +246,7 @@ public class MsoySceneRepository extends SimpleRepository
                         p.portalId = rs.getShort(1);
                         p.targetPortalId = rs.getShort(2);
                         p.targetSceneId = rs.getInt(3);
-                        p.media = new MediaData(rs.getInt(4));
+                        p.media = MediaData.fromDBString(rs.getString(4));
                         p.loc = new MsoyLocation(
                             rs.getFloat(5), rs.getFloat(6), rs.getFloat(7), 0);
                         p.scaleX = rs.getFloat(8);
@@ -248,7 +264,7 @@ public class MsoySceneRepository extends SimpleRepository
                     while (rs.next()) {
                         FurniData furni = new FurniData();
                         furni.id = rs.getInt(1);
-                        furni.media = new MediaData(rs.getInt(2));
+                        furni.media = MediaData.fromDBString(rs.getString(2));
                         furni.loc = new MsoyLocation(
                             rs.getFloat(3), rs.getFloat(4), rs.getFloat(5), 0);
                         furni.scaleX = rs.getFloat(6);
@@ -384,16 +400,8 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setString(4, model.type);
             stmt.setInt(5, spotModel.defaultEntranceId);
             stmt.setShort(6, model.width);
-            if (model.background != null) {
-                stmt.setInt(7, model.background.id);
-            } else {
-                stmt.setNull(7, Types.INTEGER);
-            }
-            if (model.music != null) {
-                stmt.setInt(8, model.music.id);
-            } else {
-                stmt.setNull(8, Types.INTEGER);
-            }
+            stmt.setString(7, MediaData.asDBString(model.background));
+            stmt.setString(8, MediaData.asDBString(model.music));
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
 
@@ -422,7 +430,7 @@ public class MsoySceneRepository extends SimpleRepository
                 stmt.setInt(2, p.portalId);
                 stmt.setInt(3, p.targetPortalId);
                 stmt.setInt(4, p.targetSceneId);
-                stmt.setInt(5, p.media.id);
+                stmt.setString(5, MediaData.asDBString(p.media));
                 stmt.setFloat(6, loc.x);
                 stmt.setFloat(7, loc.y);
                 stmt.setFloat(8, loc.z);
@@ -473,7 +481,7 @@ public class MsoySceneRepository extends SimpleRepository
 
             for (FurniData f : furni) {
                 stmt.setInt(2, f.id);
-                stmt.setInt(3, f.media.id);
+                stmt.setString(3, MediaData.asDBString(f.media));
                 stmt.setFloat(4, f.loc.x);
                 stmt.setFloat(5, f.loc.y);
                 stmt.setFloat(6, f.loc.z);
@@ -574,8 +582,8 @@ public class MsoySceneRepository extends SimpleRepository
             "TYPE varchar(255)",
             "DEF_PORTAL_ID integer not null",
             "WIDTH integer not null",
-            "BACKGROUND integer",
-            "MUSIC integer",
+            "BACKGROUND varchar(255)",
+            "MUSIC varchar(255)",
             "primary key (SCENE_ID)" }, "");
 
         JDBCUtil.createTableIfMissing(conn, "PORTALS", new String[] {
@@ -583,7 +591,7 @@ public class MsoySceneRepository extends SimpleRepository
             "PORTAL_ID smallint not null",
             "TARGET_PORTAL_ID smallint not null",
             "TARGET_SCENE_ID integer not null",
-            "MEDIA integer not null",
+            "MEDIA varchar(255) not null",
             "X float not null",
             "Y float not null",
             "Z float not null",
@@ -594,7 +602,7 @@ public class MsoySceneRepository extends SimpleRepository
         JDBCUtil.createTableIfMissing(conn, "FURNI", new String[] {
             "SCENE_ID integer not null",
             "FURNI_ID integer not null",
-            "MEDIA integer not null",
+            "MEDIA varchar(255) not null",
             "X float not null",
             "Y float not null",
             "Z float not null",
