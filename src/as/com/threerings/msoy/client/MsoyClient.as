@@ -46,6 +46,11 @@ import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
+import com.threerings.msoy.item.data.ItemMarshaller;
+import com.threerings.msoy.item.data.Document;
+import com.threerings.msoy.item.data.Photo;
+import com.threerings.msoy.item.data.Furniture;
+
 import com.threerings.msoy.world.data.RoomConfig;
 
 public class MsoyClient extends Client
@@ -193,12 +198,17 @@ public class MsoyClient extends Client
         c = MsoyAuthResponseData;
         c = MemberMarshaller;
         c = ParlorMarshaller;
+        c = Document;
+        c = Photo;
+        c = Furniture;
+        c = ItemMarshaller;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("global")]
         [ResourceBundle("general")]
         [ResourceBundle("game")]
         [ResourceBundle("editing")]
+        [ResourceBundle("item")]
         var rb :ResourceBundle; // this needs to be here for the above lines
     }
 

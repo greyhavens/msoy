@@ -15,10 +15,17 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.SoftCache;
 import com.samskivert.util.Tuple;
 
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.server.InvocationException;
+
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.server.MsoyServer;
+
 import com.threerings.msoy.item.data.Item;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.util.ItemEnum;
-import com.threerings.msoy.server.MsoyServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -26,6 +33,7 @@ import static com.threerings.msoy.Log.log;
  * Manages digital items and their underlying repositories.
  */
 public class ItemManager
+    implements ItemProvider
 {
     /**
      * Initializes the item manager, which will establish database connections
@@ -61,6 +69,36 @@ public class ItemManager
                         "[class=" + repclass + "].", e);
             }
         }
+
+        // register our invocation service
+        MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), true);
+    }
+
+    // from ItemProvider
+    public void getInventory (
+        ClientObject caller, final InvocationService.ResultListener listener)
+        throws InvocationException
+    {
+        MemberObject memberObj = (MemberObject) caller;
+        if (memberObj.isGuest()) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+
+        // for now, we grab FURNITURE
+        loadInventory(memberObj.getMemberId(), ItemEnum.FURNITURE,
+            new ResultListener<ArrayList<Item>>() {
+                public void requestCompleted (ArrayList<Item> result) {
+                    Item[] items = new Item[result.size()];
+                    result.toArray(items);
+                    listener.requestProcessed(items);
+                }
+
+                public void requestFailed (Exception cause) {
+                    log.warning("Unable to retrieve inventory " +
+                        "[cause=" + cause + "].");
+                    listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                }
+            });
     }
 
     /**

@@ -23,6 +23,8 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MediaData;
 
+import com.threerings.msoy.item.client.InventoryPanel;
+
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -32,6 +34,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 public class EditRoomHelper extends Controller
 {
     public static const INSERT_PORTAL :String = "InsertPortal";
+    public static const INSERT_FURNI :String = "InsertFurni";
     public static const DISCARD_EDITS :String = "DiscardEdits";
     public static const SAVE_EDITS :String = "SaveEdits";
 
@@ -56,7 +59,11 @@ public class EditRoomHelper extends Controller
      */
     public function endEditing (saveEdits :Boolean) :void
     {
-        _panel.popDown();
+        _panel.close();
+        if (_invPanel != null) {
+            _invPanel.close();
+            _invPanel = null;
+        }
 
         // remove all sprites we've added
         while (_addedSprites.length > 0) {
@@ -124,6 +131,16 @@ public class EditRoomHelper extends Controller
         // set it up for editing
         sprite.setEditing(true);
         addEditingListeners(sprite);
+    }
+
+    /**
+     * Handles INSERT_FURNI.
+     */
+    public function handleInsertFurni () :void
+    {
+        if (_invPanel == null) {
+            _invPanel = new InventoryPanel(_ctx);
+        }
     }
 
     /**
@@ -550,6 +567,8 @@ public class EditRoomHelper extends Controller
     protected var _roomView :RoomView;
 
     protected var _nextPortalId :int;
+
+    protected var _invPanel :InventoryPanel;
 
     protected var _removedFurni :TypedArray = TypedArray.create(FurniData);
     protected var _addedFurni :TypedArray = TypedArray.create(FurniData);

@@ -21,20 +21,19 @@ import com.threerings.msoy.data.MemberName;
 
 import com.threerings.msoy.game.data.FlashGameConfig;
 
+import com.threerings.msoy.ui.FloatingPanel;
+
 /**
  * A panel for configuring a game invitation to another player.
  */
-public class InvitePanel extends TitleWindow
+public class InvitePanel extends FloatingPanel
 {
     public function InvitePanel (ctx :MsoyContext, invitee :MemberName)
     {
-        _ctx = ctx;
+        super(ctx, ctx.xlate("game", "t.inviteGame", invitee));
         _invitee = invitee;
 
-        title = ctx.xlate("game", "t.inviteGame", invitee);
-
-        PopUpManager.addPopUp(this, _ctx.getRootPanel(), true);
-        PopUpManager.centerPopUp(this);
+        open(true);
     }
 
     override protected function createChildren () :void
@@ -47,48 +46,20 @@ public class InvitePanel extends TitleWindow
         _configger = FlexGameConfigurator(gc.createConfigurator());
         _configger.init(_ctx);
         _configger.setGameConfig(gc);
-
-        // set up OK and CANCEL buttons
-        var okBtn :Button = new Button();
-        okBtn.label = _ctx.xlate(null, "b.ok");
-        okBtn.addEventListener(MouseEvent.CLICK, okClicked);
-
-        var cancelBtn :Button = new Button();
-        cancelBtn.label = _ctx.xlate(null, "b.cancel");
-        cancelBtn.addEventListener(MouseEvent.CLICK, cancelClicked);
-
-        // create a box to hold the buttons
-        var butbox :HBox = new HBox();
-        butbox.addChild(okBtn);
-        butbox.addChild(cancelBtn);
-
-        // add everything to the interface and pop it up
         addChild(_configger.getContainer());
-        addChild(butbox);
+
+        addButtons(CANCEL_BUTTON, OK_BUTTON);
     }
 
-    /**
-     * Close the dialog.
-     */
-    protected function close () :void
+    override protected function buttonClicked (buttonId :int) :void
     {
-        PopUpManager.removePopUp(this);
+        if (buttonId == OK_BUTTON) {
+            var gc :GameConfig = _configger.getGameConfig();
+            _ctx.getGameDirector().sendInvite(_invitee, gc);
+        }
+
+        super.buttonClicked(buttonId); // will close() on OK or CANCEL
     }
-
-    protected function okClicked (event :MouseEvent) :void
-    {
-        var gc :GameConfig = _configger.getGameConfig();
-        _ctx.getGameDirector().sendInvite(_invitee, gc);
-
-        close();
-    }
-
-    protected function cancelClicked (event :MouseEvent) :void
-    {
-        close();
-    }
-
-    protected var _ctx :MsoyContext;
 
     protected var _invitee :MemberName;
 
