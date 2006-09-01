@@ -64,12 +64,21 @@ public class FlashWidget extends Widget
 
     public void setSize (int width, int height)
     {
-        String strWidth = String.valueOf(width);
-        String strHeight = String.valueOf(height);
-        DOM.setAttribute(getElement(), "width", strWidth);
-        DOM.setAttribute(_embed, "width", strWidth);
-        DOM.setAttribute(getElement(), "height", strHeight);
-        DOM.setAttribute(_embed, "height", strHeight);
+        setSize(String.valueOf(width), String.valueOf(height));
+    }
+
+    // @Override (UIObject)
+    public void setHeight (String height)
+    {
+        DOM.setAttribute(getElement(), "height", height);
+        DOM.setAttribute(_embed, "height", height);
+    }
+
+    // @Override (UIObject)
+    public void setWidth (String width)
+    {
+        DOM.setAttribute(getElement(), "width", width);
+        DOM.setAttribute(_embed, "width", width);
     }
 
     protected Element createParam (String name, String value)

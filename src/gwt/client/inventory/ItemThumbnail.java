@@ -17,6 +17,7 @@ import com.threerings.msoy.item.data.Photo;
 import client.MsoyEntryPoint;
 
 import client.util.FlashWidget;
+import client.util.SizeableImage;
 
 /**
  * Displays a thumbnail version of an item.
@@ -32,7 +33,8 @@ public class ItemThumbnail extends VerticalPanel
     public ItemThumbnail (Item item)
     {
         Widget thumb = createThumbnail(item);
-        thumb.setStyleName("item_thumb_image"); // TODO?
+        thumb.setStyleName("item_thumb_image");
+        thumb.setSize(THUMB_WIDTH, THUMB_HEIGHT);
         add(thumb);
         Label label = new Label(item.getInventoryDescrip());
         label.setStyleName("item_thumb_text");
@@ -53,6 +55,11 @@ public class ItemThumbnail extends VerticalPanel
             }
         }
 
-        return new Image(MsoyEntryPoint.toMediaPath(item.getThumbnailPath()));
+        return new SizeableImage(
+            MsoyEntryPoint.toMediaPath(item.getThumbnailPath()));
     }
+
+    /** So arbitrary. TODO. */
+    public static final String THUMB_WIDTH = String.valueOf(250);
+    public static final String THUMB_HEIGHT = String.valueOf(200);
 }
