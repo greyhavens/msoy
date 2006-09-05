@@ -5,12 +5,18 @@ import mx.controls.Button;
 import com.threerings.util.Controller;
 import com.threerings.util.Name;
 
+import com.threerings.mx.controls.CommandMenu;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
 
+import com.threerings.whirled.data.Scene;
+import com.threerings.whirled.data.SceneObject;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.SceneBookmarkEntry;
 
 public class MsoyController extends Controller
     implements ClientObserver
@@ -22,7 +28,7 @@ public class MsoyController extends Controller
     public static const SHOW_FRIENDS :String = "ShowFriends";
 
     /** Command to display the recent scenes list. */
-    public static const SHOW_RECENT_SCENES :String = "ShowRecentScenes";
+    public static const POP_ROOMS_MENU :String = "PopRoomsMenu"
 
     /** Command to go to a particular scene. */
     public static const GO_SCENE :String = "GoScene";
@@ -47,11 +53,53 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the SHOW_RECENT_SCENES command.
+     * Handle the POP_ROOMS_MENU command.
      */
-    public function handleShowRecentScenes (show :Boolean) :void
+    public function handlePopRoomsMenu (trigger :Button) :void
     {
-        _topPanel.showRecentScenes(show);
+        var scene :Scene = _ctx.getSceneDirector().getScene();
+        var currentSceneId :int = (scene == null) ? -1 : scene.getId();
+        if (!(_ctx.getLocationDirector().getPlaceObject() is SceneObject)) {
+            currentSceneId = -1;
+        }
+
+        var memberObj :MemberObject = _ctx.getClientObject();
+        var entries :Array = memberObj.recentScenes.toArray();
+        entries.sort(function (o1 :Object, o2 :Object) :int {
+            var sb1 :SceneBookmarkEntry = (o1 as SceneBookmarkEntry);
+            var sb2 :SceneBookmarkEntry = (o2 as SceneBookmarkEntry);
+            return int(sb1.lastVisit - sb2.lastVisit);
+        });
+
+        entries = entries.map(
+            function (item :*, index :int, array :Array) :Object {
+                var sb :SceneBookmarkEntry = (item as SceneBookmarkEntry);
+                return {
+                    label: sb.toString(),
+                    enabled: (sb.sceneId != currentSceneId),
+                    command: GO_SCENE,
+                    arg: sb.sceneId
+                };
+            });
+
+        var menuData :Array = [];
+
+        menuData.push({ label: _ctx.xlate("general", "l.recent_scenes"),
+            children: entries });
+
+        if (!memberObj.isGuest()) {
+            menuData.push(
+                { type: "separator" },
+                { label: _ctx.xlate("general", "l.go_home"),
+                  enabled: (memberObj.homeSceneId != currentSceneId),
+                  command :GO_SCENE,
+                  arg: memberObj.homeSceneId
+                });
+        }
+
+        var menu :CommandMenu =
+            CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
+        menu.popUp(trigger);
     }
 
     /**

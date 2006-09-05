@@ -93,22 +93,6 @@ public class TopPanel extends Canvas
         }
     }
 
-    public function showRecentScenes (show :Boolean) :void
-    {
-        if (show) {
-            if (_scenesList == null) {
-                _scenesList = new SceneBookmarkList(_ctx);
-            }
-            addChild(_scenesList);
-
-        } else {
-            if (_scenesList != null) {
-                removeChild(_scenesList);
-                _scenesList = null;
-            }
-        }
-    }
-
     /** The giver of life. */
     protected var _ctx :MsoyContext;
 
@@ -118,9 +102,6 @@ public class TopPanel extends Canvas
     /** The list of our friends. */
     protected var _friendsList :FriendsList;
     
-    /** The list of recent scenes. */
-    protected var _scenesList :SceneBookmarkList;
-
     /** A label indicating the build stamp for the client. */
     protected var _buildStamp :Label;
 }
