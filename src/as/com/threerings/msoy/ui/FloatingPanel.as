@@ -90,16 +90,26 @@ public class FloatingPanel extends TitleWindow
 
             // if not a CommandButton, add our own event handling...
             if (!(but is CommandButton)) {
-                but.addEventListener(MouseEvent.CLICK,
-                    function (evt :MouseEvent) :void {
-                        evt.stopImmediatePropagation();
-                        buttonClicked(buttonId);
-                    });
+                addListener(but, buttonId);
             }
             butBox.addChild(but);
         }
 
         addChild(butBox);
+    }
+
+    /**
+     * Function to add a listener to the buttn. We cannot
+     * inline this function because otherwise the bound function in here
+     * will retain the latest value of buttonId.
+     */
+    protected function addListener (but :Button, buttonId :int) :void
+    {
+        but.addEventListener(MouseEvent.CLICK,
+            function (evt :MouseEvent) :void {
+                evt.stopImmediatePropagation();
+                buttonClicked(buttonId);
+            });
     }
 
     /**
