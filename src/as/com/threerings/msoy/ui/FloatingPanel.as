@@ -9,6 +9,8 @@ import mx.containers.TitleWindow;
 import mx.controls.Button;
 import mx.controls.ButtonBar;
 
+import mx.events.CloseEvent;
+
 import mx.managers.PopUpManager;
 
 import com.threerings.mx.controls.CommandButton;
@@ -110,6 +112,16 @@ public class FloatingPanel extends TitleWindow
                 evt.stopImmediatePropagation();
                 buttonClicked(buttonId);
             });
+
+        // if we're showing a standard cancel button, also add
+        // the close "X"
+        if (buttonId == CANCEL_BUTTON) {
+            showCloseButton = true;
+            addEventListener(CloseEvent.CLOSE,
+                function (event :CloseEvent) :void {
+                    buttonClicked(CANCEL_BUTTON);
+                });
+        }
     }
 
     /**

@@ -1,5 +1,9 @@
 package com.threerings.msoy.world.client {
 
+import mx.core.UIComponent;
+
+import mx.containers.VBox;
+
 import mx.controls.Button;
 
 import com.threerings.mx.controls.CommandButton;
@@ -21,10 +25,42 @@ public class EditRoomPanel extends FloatingPanel
     {
         super(ctx, ctx.xlate("editing", "t.editing"));
         _ctrl = ctrl;
-        showCloseButton = false;
 
         // open non-modal with the room as the parent
         open(false, roomView);
+    }
+
+    public function setEditSprite (sprite :MsoySprite) :void
+    {
+        if (_spriteEditor != null) {
+            _box.removeChild(_spriteEditor);
+            _spriteEditor = null;
+        }
+
+        if (sprite != null) {
+            if (sprite is FurniSprite) {
+                _spriteEditor = new FurniEditorPanel(_ctx);
+            } else if (sprite is PortalSprite) {
+                _spriteEditor = new PortalEditorPanel(_ctx);
+            } else {
+                throw new Error();
+            }
+            _spriteEditor.setSprite(sprite);
+            _box.addChild(_spriteEditor);
+        }
+
+        _deleteBtn.enabled = (sprite != null);
+    }
+
+    /**
+     * Called by the EditRoomHelper while sprite properties are
+     * being updated interactively.
+     */
+    public function spritePropertiesUpdated () :void
+    {
+        if (_spriteEditor != null) {
+            _spriteEditor.updateInputFields();
+        }
     }
 
     override protected function createChildren () :void
@@ -40,6 +76,14 @@ public class EditRoomPanel extends FloatingPanel
         btn = new CommandButton(EditRoomHelper.INSERT_FURNI);
         btn.label = _ctx.xlate("editing", "b.new_furni");
         addChild(btn);
+
+        btn = new CommandButton(EditRoomHelper.DEL_ITEM);
+        btn.label = _ctx.xlate("editing", "b.delete_item");
+        btn.enabled = false;
+        _deleteBtn = btn;
+        addChild(btn);
+
+        addChild(_box = new VBox());
 
         addButtons(DISCARD_BUTTON, SAVE_BUTTON);
     }
@@ -64,5 +108,11 @@ public class EditRoomPanel extends FloatingPanel
     }
 
     protected var _ctrl :EditRoomHelper;
+
+    protected var _box :VBox;
+
+    protected var _deleteBtn :CommandButton;
+
+    protected var _spriteEditor :SpriteEditorPanel;
 }
 }

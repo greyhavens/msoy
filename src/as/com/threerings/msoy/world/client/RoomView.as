@@ -36,7 +36,10 @@ import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
+import com.threerings.whirled.data.SceneUpdate;
+
 import com.threerings.whirled.spot.data.Location;
+import com.threerings.whirled.spot.data.ModifyPortalsUpdate;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
@@ -48,6 +51,7 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -139,6 +143,28 @@ public class RoomView extends AbstractRoomView
     public function populateContextMenu (menuItems :Array) :void
     {
         _ctrl.populateContextMenu(menuItems);
+    }
+
+    /**
+     * Called by our controller when a scene update is received.
+     */
+    public function processUpdated (update :SceneUpdate) :void
+    {
+        if (update is ModifyFurniUpdate) {
+            for each (var furni :FurniData in
+                    (update as ModifyFurniUpdate).furniRemoved) {
+                removeFurni(furni);
+            }
+
+        } else if (update is ModifyPortalsUpdate) {
+            for each (var portal :MsoyPortal in
+                    (update as ModifyPortalsUpdate).portalsRemoved) {
+                removePortal(portal);
+            }
+        }
+
+        // this will take care of anything added
+        updateAllFurniAndPortals();
     }
 
     override public function scrollViewBy (xpixels :int) :Boolean
@@ -450,6 +476,23 @@ public class RoomView extends AbstractRoomView
         }
 
         ChatPopper.popUp(msg, avatar);
+    }
+
+    protected function removePortal (portal :MsoyPortal) :void
+    {
+        var sprite :PortalSprite =
+            (_portals.remove(portal.portalId) as PortalSprite);
+        if (sprite != null) {
+            removeSprite(sprite);
+        }
+    }
+
+    protected function removeFurni (furni :FurniData) :void
+    {
+        var sprite :FurniSprite = (_furni.remove(furni.id) as FurniSprite);
+        if (sprite != null) {
+            removeSprite(sprite);
+        }
     }
 
     /** Our controller. */

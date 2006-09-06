@@ -26,6 +26,8 @@ public class MsoyPortal extends Portal
     public function equivalent (that :MsoyPortal) :Boolean
     {
         return (this.portalId == that.portalId) &&
+            (this.targetSceneId == that.targetSceneId) &&
+            (this.targetPortalId == that.targetPortalId) &&
             this.loc.equals(that.loc) &&
             (this.scaleX == that.scaleX) &&
             (this.scaleY == that.scaleY)

@@ -40,6 +40,14 @@ public class EditRoomHelper extends Controller
 {
     public static const INSERT_PORTAL :String = "InsertPortal";
     public static const INSERT_FURNI :String = "InsertFurni";
+
+    /** Delete a furni or portal (specified as arg). */
+    public static const DEL_ITEM :String = "DelItem";
+
+    /** Dispatched when properties of a sprite were updated by the
+     * SpriteEditorPanel. */
+    public static const PROPERTIES_TYPED :String = "PropsTyped";
+
     public static const DISCARD_EDITS :String = "DiscardEdits";
     public static const SAVE_EDITS :String = "SaveEdits";
 
@@ -65,6 +73,7 @@ public class EditRoomHelper extends Controller
         _roomView.addEventListener(DragEvent.DRAG_EXIT, dragExitHandler);
         _roomView.addEventListener(DragEvent.DRAG_OVER, dragOverHandler);
         _roomView.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
+        _roomView.addEventListener(MouseEvent.MOUSE_DOWN, roomPressed);
     }
 
     /**
@@ -72,6 +81,8 @@ public class EditRoomHelper extends Controller
      */
     public function endEditing (saveEdits :Boolean) :void
     {
+        setEditSprite(null);
+
         // close our panels
         _panel.close();
         if (_invPanel != null) {
@@ -84,10 +95,14 @@ public class EditRoomHelper extends Controller
         _roomView.removeEventListener(DragEvent.DRAG_EXIT, dragExitHandler);
         _roomView.removeEventListener(DragEvent.DRAG_OVER, dragOverHandler);
         _roomView.removeEventListener(DragEvent.DRAG_DROP, dragDropHandler);
+        _roomView.removeEventListener(MouseEvent.MOUSE_DOWN, roomPressed);
 
         // remove all sprites we've added
         while (_addedSprites.length > 0) {
             _roomView.removeChild(_addedSprites.pop() as MsoySprite);
+        }
+        while (_removedSprites.length > 0) {
+            _roomView.addChild(_removedSprites.pop() as MsoySprite);
         }
 
         var edits :TypedArray = null;
@@ -161,6 +176,8 @@ public class EditRoomHelper extends Controller
         // set it up for editing
         sprite.setEditing(true);
         addEditingListeners(sprite);
+        setEditSprite(sprite);
+        spriteUpdated(sprite);
     }
 
     /**
@@ -171,6 +188,65 @@ public class EditRoomHelper extends Controller
         if (_invPanel == null) {
             _invPanel = new InventoryPanel(_ctx);
         }
+    }
+
+    /**
+     * Handles DEL_ITEM.
+     */
+    public function handleDelItem () :void
+    {
+        var sprite :MsoySprite = _editSprite;
+        setEditSprite(null);
+        _roomView.removeChild(sprite);
+        ArrayUtil.removeAll(_addedSprites, sprite);
+        _removedSprites.push(sprite);
+
+        var scene :MsoyScene = (_ctx.getSceneDirector().getScene() as MsoyScene);
+
+        if (sprite is FurniSprite) {
+            var furni :FurniData = (sprite as FurniSprite).getFurniData();
+
+            // first remove any instances from our removed/added
+            ArrayUtil.removeAll(_removedFurni, furni);
+            ArrayUtil.removeAll(_addedFurni, furni);
+
+            // find the original furni to remove (if any)
+            for each (var f :FurniData in scene.getFurni()) {
+                if (furni.equals(f)) {
+                    _removedFurni.push(f);
+                    break;
+                }
+            }
+
+        } else if (sprite is PortalSprite) {
+            var portal :MsoyPortal = (sprite as PortalSprite).getPortal();
+
+            // first remove any instances from our removed/added
+            ArrayUtil.removeAll(_removedPortals, portal);
+            ArrayUtil.removeAll(_addedPortals, portal);
+
+            // find the original portal to remove (if any)
+            var itr :Iterator = scene.getPortals();
+            while (itr.hasNext()) {
+                var iportal :MsoyPortal = (itr.next() as MsoyPortal);
+                if (portal.equals(iportal)) {
+                    _removedPortals.push(iportal);
+                    break;
+                }
+            }
+
+        } else {
+            throw new Error("Unknown sprite type deleted");
+        }
+    }
+
+    /**
+     * Handles PROPERTIES_TYPED.
+     */
+    public function handlePropsTyped (sprite :MsoySprite) :void
+    {
+        drawEditing(sprite);
+        spriteUpdated(sprite);
     }
 
     /**
@@ -186,6 +262,27 @@ public class EditRoomHelper extends Controller
         endEditing(false);
     }
 
+    protected function setEditSprite (sprite :MsoySprite) :void
+    {
+        if (_editSprite != null) {
+            // stop drawing it selected
+            _editSprite.graphics.clear();
+
+            // remove any listeners that might be hanging
+            _editSprite.removeEventListener(
+                MouseEvent.MOUSE_DOWN, editSpritePressed);
+            addEditingListeners(_editSprite);
+        }
+
+        _editSprite = sprite;
+        _panel.setEditSprite(sprite);
+
+        if (_editSprite != null) {
+            // draw it like we're editing it
+            drawEditing(_editSprite);
+        }
+    }
+
     protected function enableEditingVisitor (key :Object, value :Object) :void
     {
         var sprite :MsoySprite = (value as MsoySprite);
@@ -198,7 +295,7 @@ public class EditRoomHelper extends Controller
     {
         var sprite :MsoySprite = (value as MsoySprite);
 
-        sprite.removeEventListener(MouseEvent.MOUSE_DOWN, spritePressed);
+        sprite.removeEventListener(MouseEvent.MOUSE_DOWN, spriteSelected);
         sprite.removeEventListener(MouseEvent.MOUSE_OVER, spriteRollOver);
         sprite.removeEventListener(MouseEvent.MOUSE_OUT, spriteRollOut);
 
@@ -213,7 +310,7 @@ public class EditRoomHelper extends Controller
 
     protected function addEditingListeners (sprite :MsoySprite) :void
     {
-        sprite.addEventListener(MouseEvent.MOUSE_DOWN, spritePressed);
+        sprite.addEventListener(MouseEvent.MOUSE_DOWN, spriteSelected);
         sprite.addEventListener(MouseEvent.MOUSE_OVER, spriteRollOver);
         sprite.addEventListener(MouseEvent.MOUSE_OUT, spriteRollOut);
     }
@@ -300,22 +397,49 @@ public class EditRoomHelper extends Controller
         return null;
     }
 
-    protected function spritePressed (event :MouseEvent) :void
+    protected function roomPressed (event :MouseEvent) :void
     {
-        if (_editSprite != null) {
-            return;
-        }
+        event.stopPropagation();
+        setEditSprite(null);
+    }
+
+    protected function spriteRollOver (event :MouseEvent) :void
+    {
+        var sprite :MsoySprite = (event.currentTarget as MsoySprite);
+        drawHover(sprite);
+    }
+
+    protected function spriteRollOut (event :MouseEvent) :void
+    {
+        var sprite :MsoySprite = (event.currentTarget as MsoySprite);
+        sprite.graphics.clear();
+    }
+
+    /**
+     * Select a sprite for editing.
+     */
+    protected function spriteSelected (event :MouseEvent) :void
+    {
         // Stop event prop, otherwise the roomView registers the click too
         // causing spritePositioned() to be called.
         event.stopPropagation();
 
         // determine the edit sprite
-        _editSprite = (event.currentTarget as MsoySprite);
+        setEditSprite(event.currentTarget as MsoySprite);
 
         // stop listening for these bits
-        _editSprite.removeEventListener(MouseEvent.MOUSE_DOWN, spritePressed);
+        _editSprite.removeEventListener(MouseEvent.MOUSE_DOWN, spriteSelected);
         _editSprite.removeEventListener(MouseEvent.MOUSE_OVER, spriteRollOver);
         _editSprite.removeEventListener(MouseEvent.MOUSE_OUT, spriteRollOut);
+
+        _editSprite.addEventListener(MouseEvent.MOUSE_DOWN, editSpritePressed);
+    }
+
+    protected function editSpritePressed (event :MouseEvent) :void
+    {
+        event.stopPropagation();
+        _editSprite.removeEventListener(MouseEvent.MOUSE_DOWN,
+            editSpritePressed);
 
         // determine whether we're going to adjust scaling or position
         var w :Number = _editSprite.contentWidth;
@@ -365,24 +489,6 @@ public class EditRoomHelper extends Controller
         }
     }
 
-    protected function spriteRollOver (event :MouseEvent) :void
-    {
-        if (_editSprite != null) {
-            return;
-        }
-        var sprite :MsoySprite = (event.currentTarget as MsoySprite);
-        drawScaling(sprite);
-    }
-
-    protected function spriteRollOut (event :MouseEvent) :void
-    {
-        if (_editSprite != null) {
-            return;
-        }
-        var sprite :MsoySprite = (event.currentTarget as MsoySprite);
-        sprite.graphics.clear();
-    }
-
     /**
      * Listens for MOUSE_MOVE when positioning a sprite.
      */
@@ -410,6 +516,7 @@ public class EditRoomHelper extends Controller
                 _editSprite.setLocation(newLoc);
             }
         }
+        _panel.spritePropertiesUpdated();
     }
 
     protected function spritePositioningKey (event :KeyboardEvent) :void
@@ -441,9 +548,10 @@ public class EditRoomHelper extends Controller
 
         spriteUpdated(_editSprite);
 
-        _editSprite.graphics.clear();
-        addEditingListeners(_editSprite);
-        _editSprite = null;
+        //_editSprite.graphics.clear();
+        //addEditingListeners(_editSprite);
+        drawEditing(_editSprite);
+        _editSprite.addEventListener(MouseEvent.MOUSE_DOWN, editSpritePressed);
     }
 
     /**
@@ -486,6 +594,7 @@ public class EditRoomHelper extends Controller
 
         // since the scale has changed, update the scaling hint graphics
         drawScaling(_editSprite);
+        _panel.spritePropertiesUpdated();
     }
 
     /**
@@ -498,9 +607,10 @@ public class EditRoomHelper extends Controller
 
         spriteUpdated(_editSprite);
 
-        _editSprite.graphics.clear();
-        addEditingListeners(_editSprite);
-        _editSprite = null;
+        //_editSprite.graphics.clear();
+        //addEditingListeners(_editSprite);
+        drawEditing(_editSprite);
+        _editSprite.addEventListener(MouseEvent.MOUSE_DOWN, editSpritePressed);
     }
 
     /**
@@ -612,6 +722,24 @@ public class EditRoomHelper extends Controller
             g.moveTo(hs.x, hs.y - ho/2);
             g.lineTo(hs.x, hs.y + ho/2);
         }
+    }
+
+    protected function drawHover (sprite :MsoySprite) :void
+    {
+        var g :Graphics = sprite.graphics;
+
+        g.clear();
+        g.lineStyle(2, 0x0033FF, 1, false, LineScaleMode.NONE);
+        g.drawRect(0, 0, sprite.contentWidth - 2, sprite.contentHeight - 2);
+    }
+
+    protected function drawEditing (sprite :MsoySprite) :void
+    {
+        var g :Graphics = sprite.graphics;
+
+        g.clear();
+        g.lineStyle(2, 0xFF3300, 1, false, LineScaleMode.NONE);
+        g.drawRect(0, 0, sprite.contentWidth - 2, sprite.contentHeight - 2);
     }
 
     protected function drawScaling (sprite :MsoySprite) :void

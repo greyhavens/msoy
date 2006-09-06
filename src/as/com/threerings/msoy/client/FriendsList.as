@@ -23,6 +23,7 @@ public class FriendsList extends List
     {
         super(ctx);
         includeInLayout = false;
+        showDataTips = true;
     }
 
     override public function parentChanged (p :DisplayObjectContainer) :void
