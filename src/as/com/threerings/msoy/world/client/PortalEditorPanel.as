@@ -2,6 +2,7 @@ package com.threerings.msoy.world.client {
 
 import mx.binding.utils.BindingUtils;
 
+import mx.controls.ComboBox;
 import mx.controls.TextInput;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -32,7 +33,10 @@ public class PortalEditorPanel extends SpriteEditorPanel
 
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_scene")),
-            _destScene = new TextInput());
+            _destScene = new ComboBox());
+        _destScene.editable = true;
+        _destScene.dataProvider = _ctx.getClientObject().recentScenes.toArray();
+
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_portal")),
             _destPortal = new TextInput());
@@ -60,7 +64,7 @@ public class PortalEditorPanel extends SpriteEditorPanel
         }, _destPortal, "text");
     }
 
-    protected var _destScene :TextInput;
+    protected var _destScene :ComboBox;
     protected var _destPortal :TextInput;
 }
 }

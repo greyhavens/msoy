@@ -57,18 +57,23 @@ public class SpriteEditorPanel extends Grid
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.x")),
             _x = new TextInput());
+        MsoyUI.enforceNumber(_x);
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.y")),
             _y = new TextInput());
+        MsoyUI.enforceNumber(_y);
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.z")),
             _z = new TextInput());
+        MsoyUI.enforceNumber(_z);
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.xscale")),
             _xScale = new TextInput());
+        MsoyUI.enforceNumber(_xScale);
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.yscale")),
             _yScale = new TextInput());
+        MsoyUI.enforceNumber(_yScale);
     }
 
     override protected function childrenCreated () :void
