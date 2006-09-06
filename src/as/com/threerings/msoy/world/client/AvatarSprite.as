@@ -2,11 +2,9 @@ package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
-import flash.geom.Matrix;
 import flash.geom.Point;
 
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
+import mx.controls.Label;
 
 import mx.events.EffectEvent;
 
@@ -27,16 +25,9 @@ public class AvatarSprite extends MsoySprite
     {
         super(occInfo.media);
 
-        var txt :TextField = new TextField();
-        txt.wordWrap = false;
-        txt.multiline = false;
-        txt.selectable = false;
-        txt.restrict = "";
-        txt.autoSize = TextFieldAutoSize.CENTER;
-        txt.x = 0;
-        txt.y = 0;
-        _label = txt;
-        rawChildren.addChild(txt);
+        _label = new Label();
+        _label.setStyle("textAlign", "center");
+        addChild(_label);
 
         // set up our occupant info
         setOccupantInfo(occInfo);
@@ -48,10 +39,12 @@ public class AvatarSprite extends MsoySprite
     {
         super.setup(desc);
 
+/*
         if (_label != null) {
             // ensure the name label always stays on top
             rawChildren.setChildIndex(_label, rawChildren.numChildren - 1);
         }
+*/
     }
 
     /**
@@ -65,7 +58,7 @@ public class AvatarSprite extends MsoySprite
             setup(_occInfo.media);
         }
 
-        _label.textColor = getStatusColor(_occInfo.status);
+        _label.setStyle("color", getStatusColor(_occInfo.status));
         _label.text = occInfo.username.toString();
     }
 
@@ -216,19 +209,10 @@ public class AvatarSprite extends MsoySprite
         return true;
     }
 
-    override protected function contentDimensionsUpdated () :void
-    {
-        super.contentDimensionsUpdated();
-
-        // ensure the name label is centered and reasonably located
-        _label.width = _w;
-        _label.x = 0;
-    }
-
     protected var _occInfo :MemberInfo;
 
     protected var _move :SceneMove;
 
-    protected var _label :TextField;
+    protected var _label :Label;
 }
 }
