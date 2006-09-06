@@ -51,7 +51,7 @@ public class MsoySceneModel extends SceneModel
      */
     public function getNextFurniId () :int
     {
-        var length :int = furnis.length;
+        var length :int = (furnis == null) ? 0 : furnis.length;
         for (var ii :int = 1; ii < 5000; ii++) {
             var found :Boolean = false;
             for (var idx :int = 0; idx < length; idx++) {
@@ -65,6 +65,20 @@ public class MsoySceneModel extends SceneModel
             }
         }
         return -1;
+    }
+
+    override public function clone () :Object
+    {
+        var model :MsoySceneModel = (super.clone() as MsoySceneModel);
+
+        model.type = type;
+        model.ownerId = ownerId;
+        model.width = width;
+        model.background = background;
+        model.music = music;
+        model.furnis = (furnis.clone() as TypedArray);
+
+        return model;
     }
 
     // documentation inherited

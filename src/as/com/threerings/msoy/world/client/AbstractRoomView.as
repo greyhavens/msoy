@@ -405,41 +405,10 @@ public class AbstractRoomView extends Canvas
 
         // get the specifics on the current scene from the scene director
         _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
+
         configureScrollRect();
-
-        updateDrawnRoom();
-
-        // set up the background image
-        var bkgMedia :MediaData = _scene.getBackground();
-        if (bkgMedia != null) {
-            _bkg = new MsoySprite(_scene.getBackground());
-            switch (_scene.getType()) {
-            case "image":
-                // by adding it to the raw children, it does not participate
-                // in Z order movements
-                _bkg.includeInLayout = false;
-                addChild(_bkg);
-                _bkg.setLocation([.5, 0, 0, 0]);
-                break;
-
-            default:
-                addChild(_bkg);
-                _bkg.setLocation([.5, 0, 1, 0]);
-                break;
-            }
-        }
-
-        // set up any portals
-        var itr :Iterator = _scene.getPortals();
-        while (itr.hasNext()) {
-            var portal :MsoyPortal = (itr.next() as MsoyPortal);
-            addPortal(portal);
-        }
-
-        // set up any furniture
-        for each (var furni :FurniData in _scene.getFurni()) {
-            addFurni(furni);
-        }
+        configureBackground();
+        updateAllFurniAndPortals();
     }
 
     public function updateAllFurniAndPortals () :void
@@ -469,6 +438,45 @@ public class AbstractRoomView extends Canvas
 
         _roomObj = null;
         _scene = null;
+    }
+
+    protected function configureBackground () :void
+    {
+        updateDrawnRoom();
+
+        // set up the background image
+        var bkgMedia :MediaData = _scene.getBackground();
+
+        // if we had a background and now we don't or it's changed, shutdown old
+        if (_bkg != null &&
+                ((bkgMedia == null) || !bkgMedia.equals(_bkg.description))) {
+            removeChild(_bkg);
+            _bkg.shutdown();
+            _bkg = null;
+        }
+
+        if (bkgMedia != null) {
+            if (_bkg == null) {
+                _bkg = new MsoySprite(bkgMedia);
+            } else {
+                removeChild(_bkg); // we'll re-add
+            }
+            switch (_scene.getType()) {
+            case "image":
+                // by adding it to the raw children, it does not participate
+                // in Z order movements
+                _bkg.includeInLayout = false;
+                addChild(_bkg);
+                _bkg.setLocation([.5, 0, 0, 0]);
+                break;
+
+            default:
+                _bkg.includeInLayout = true;
+                addChild(_bkg);
+                _bkg.setLocation([.5, 0, 1, 0]);
+                break;
+            }
+        }
     }
 
     protected function updateDrawnRoom () :void

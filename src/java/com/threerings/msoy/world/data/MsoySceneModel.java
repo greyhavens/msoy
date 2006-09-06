@@ -75,6 +75,14 @@ public class MsoySceneModel extends SceneModel
         return -1;
     }
 
+    public Object clone ()
+        throws CloneNotSupportedException
+    {
+        MsoySceneModel model = (MsoySceneModel) super.clone();
+        model.furnis = furnis.clone();
+        return model;
+    }
+
     /**
      * Create a blank scene.
      */

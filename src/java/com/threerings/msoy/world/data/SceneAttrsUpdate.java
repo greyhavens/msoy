@@ -1,0 +1,42 @@
+//
+// $Id$
+
+package com.threerings.msoy.world.data;
+
+import com.threerings.whirled.data.SceneModel;
+import com.threerings.whirled.data.SceneUpdate;
+
+import com.threerings.msoy.data.MediaData;
+
+/**
+ * Encodes a scene update that updates the attributes in the MsoySceneModel.
+ * Note that this contains all attributes, even ones that have not changed.
+ * In other words, a field being null doesn't mean that the field
+ * isn't updated, it means the new value should be null.
+ */
+public class SceneAttrsUpdate extends SceneUpdate
+{
+    /** The new type. */
+    public String type;
+
+    /** The new width. */
+    public short width;
+
+    /** The new background. */
+    public MediaData background;
+
+    /** The new music. */
+    public MediaData music;
+
+    @Override
+    public void apply (SceneModel model)
+    {
+        super.apply(model);
+
+        MsoySceneModel mmodel = (MsoySceneModel) model;
+        mmodel.type = type;;
+        mmodel.width = width;
+        mmodel.background = background;
+        mmodel.music = music;
+    }
+}

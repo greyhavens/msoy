@@ -55,6 +55,7 @@ import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 public class RoomView extends AbstractRoomView
     implements ContextMenuProvider, SetListener, ChatDisplay
@@ -95,9 +96,30 @@ public class RoomView extends AbstractRoomView
             removeAllOccupants();
 
         } else {
+            rereadScene();
             _roomObj.addListener(this)
             addAllOccupants();
         }
+    }
+
+    /**
+     * Re-set our scene to the one that the scene director knows about.
+     */
+    public function rereadScene () :void
+    {
+        setScene(_ctx.getSceneDirector().getScene() as MsoyScene);
+    }
+
+    /**
+     * Called to re-set the scene to the one specified.
+     * Only the scene properties are updated, furni and portal
+     * changes are not typically noted.
+     */
+    public function setScene (scene :MsoyScene) :void
+    {
+        _scene = scene;
+        configureBackground();
+        relayout();
     }
 
     override public function locationUpdated (sprite :MsoySprite) :void
@@ -148,7 +170,7 @@ public class RoomView extends AbstractRoomView
     /**
      * Called by our controller when a scene update is received.
      */
-    public function processUpdated (update :SceneUpdate) :void
+    public function processUpdate (update :SceneUpdate) :void
     {
         if (update is ModifyFurniUpdate) {
             for each (var furni :FurniData in
@@ -161,6 +183,14 @@ public class RoomView extends AbstractRoomView
                     (update as ModifyPortalsUpdate).portalsRemoved) {
                 removePortal(portal);
             }
+
+        } else if (update is SceneAttrsUpdate) {
+            // re-read our scene and that's it
+            rereadScene();
+            return;
+
+        } else {
+            throw new Error();
         }
 
         // this will take care of anything added

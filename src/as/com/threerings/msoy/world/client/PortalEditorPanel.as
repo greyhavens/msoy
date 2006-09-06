@@ -35,15 +35,12 @@ public class PortalEditorPanel extends SpriteEditorPanel
         var data :Object = _destScene.dataProvider;
         for (var ii :int = 0; ii < data.length; ii++) {
             var sbe :SceneBookmarkEntry = (data[ii] as SceneBookmarkEntry);
-            trace("sbe: " + sbe);
             if (sbe.sceneId === portal.targetSceneId) {
-                trace("found dest in recent");
                 _destScene.selectedIndex = ii;
                 return;
             }
         }
         // never found
-        trace("never found dest in recent");
         _destScene.text = String(portal.targetSceneId);
     }
 

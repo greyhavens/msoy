@@ -17,6 +17,7 @@ import mx.managers.DragManager;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Iterator;
+import com.threerings.util.Util;
 
 import com.threerings.io.TypedArray;
 
@@ -35,6 +36,8 @@ import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 public class EditRoomHelper extends Controller
 {
@@ -58,14 +61,14 @@ public class EditRoomHelper extends Controller
         _ctx = ctx;
         _roomCtrl = roomCtrl;
         _roomView = roomView;
-        _scene = scene;
+        _scene = (scene.clone() as MsoyScene);
 
         _nextPortalId = _scene.getNextPortalId();
         _nextFurniId = _scene.getNextFurniId();
         _roomView.setEditing(true, enableEditingVisitor);
 
         // pop up our control kit
-        _panel = new EditRoomPanel(ctx, this, roomView);
+        _panel = new EditRoomPanel(ctx, this, roomView, _scene);
 
         // set it as our controlled panel
         setControlledPanel(_panel);
@@ -111,6 +114,26 @@ public class EditRoomHelper extends Controller
             var version :int = _scene.getVersion();
 
             edits = TypedArray.create(SceneUpdate);
+
+            // configure a attrs updates, if needed
+            var editModel :MsoySceneModel =
+                (_scene.getSceneModel() as MsoySceneModel);
+            var origModel :MsoySceneModel =
+                (_ctx.getSceneDirector().getScene().getSceneModel()
+                    as MsoySceneModel);
+            if (!Util.equals(editModel.type, origModel.type) ||
+                    (editModel.width != origModel.width) ||
+                    !Util.equals(editModel.background, origModel.background) ||
+                    !Util.equals(editModel.music, origModel.music)) {
+                var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
+                attrUpdate.init(sceneId, version++);
+
+                attrUpdate.type = editModel.type;
+                attrUpdate.width = editModel.width;
+                attrUpdate.background = editModel.background;
+                attrUpdate.music = editModel.music;
+                edits.push(attrUpdate);
+            }
 
             // configure any furniture updates
             if (_addedFurni.length > 0 || _removedFurni.length > 0) {
@@ -260,6 +283,14 @@ public class EditRoomHelper extends Controller
     public function handleDiscardEdits () :void
     {
         endEditing(false);
+    }
+
+    /**
+     * Called by our panel to notify us that the scene model has changed.
+     */
+    public function sceneModelUpdated () :void
+    {
+        _roomView.setScene(_scene);
     }
 
     protected function setEditSprite (sprite :MsoySprite) :void

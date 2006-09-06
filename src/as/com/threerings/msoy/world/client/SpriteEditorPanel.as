@@ -4,9 +4,6 @@ import mx.binding.utils.BindingUtils;
 
 import mx.core.UIComponent;
 
-import mx.containers.Grid;
-import mx.containers.GridItem;
-import mx.containers.GridRow;
 import mx.containers.VBox;
 
 import mx.controls.TextInput;
@@ -15,6 +12,7 @@ import com.threerings.mx.events.CommandEvent;
 
 import com.threerings.msoy.client.MsoyContext;
 
+import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.MsoyUI;
 
 public class SpriteEditorPanel extends Grid
@@ -85,22 +83,6 @@ public class SpriteEditorPanel extends Grid
         }
     }
 
-    protected function addRow (... comps) :void
-    {
-        var row :GridRow = new GridRow();
-        for each (var comp :UIComponent in comps) {
-            addToRow(row, comp);
-        }
-        addChild(row);
-    }
-
-    protected function addToRow (row :GridRow, comp :UIComponent) :void
-    {
-        var item :GridItem = new GridItem();
-        item.addChild(comp);
-        row.addChild(item);
-    }
-
     protected function bind () :void
     {
         updateInputFields();
@@ -144,6 +126,11 @@ public class SpriteEditorPanel extends Grid
         }, _yScale, "text");
     }
 
+    /**
+     * This should be called after any fields have been edited that
+     * modify the sprite. It will dispatch an event that will cause the
+     * controller to re-render the sprite.
+     */
     protected function spriteWasTextuallyEdited () :void
     {
         CommandEvent.dispatch(this, EditRoomHelper.PROPERTIES_TYPED, _sprite);

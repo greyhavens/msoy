@@ -37,6 +37,7 @@ import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
+import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 import static com.threerings.msoy.Log.log;
 
@@ -127,6 +128,9 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (update instanceof ModifyPortalsUpdate) {
             applyPortalsUpdate(mmodel, (ModifyPortalsUpdate) update);
+
+        } else if (update instanceof SceneAttrsUpdate) {
+            applySceneAttrsUpdate(mmodel, (SceneAttrsUpdate) update);
 
         } else {
             log.warning("Requested to apply unknown update to scene repo " +
@@ -331,6 +335,36 @@ public class MsoySceneRepository extends SimpleRepository
                 if (update.portalsAdded != null) {
                     insertPortals(conn, liaison, mmodel.sceneId,
                         update.portalsAdded);
+                }
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Apply an update that changes the basic scene attributes.
+     */
+    protected void applySceneAttrsUpdate (
+        final MsoySceneModel mmodel, final SceneAttrsUpdate update)
+        throws PersistenceException
+    {
+        executeUpdate(new Operation<Object>() {
+            public Object invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                PreparedStatement stmt = conn.prepareStatement(
+                    "update SCENES " +
+                    "set TYPE=?, WIDTH=?, BACKGROUND=?, MUSIC=? " +
+                    "where SCENE_ID=" + mmodel.sceneId);
+                try {
+                    stmt.setString(1, update.type);
+                    stmt.setInt(2, update.width);
+                    stmt.setString(3, MediaData.asDBString(update.background));
+                    stmt.setString(4, MediaData.asDBString(update.music));
+
+                    JDBCUtil.checkedUpdate(stmt, 1);
+                } finally {
+                    JDBCUtil.close(stmt);
                 }
                 return null;
             }
@@ -896,7 +930,8 @@ public class MsoySceneRepository extends SimpleRepository
             // register the update classes
             // (DO NOT CHANGE ORDER! see note in SceneUpdateMarshaller const.)
             ModifyFurniUpdate.class,
-            ModifyPortalsUpdate.class
+            ModifyPortalsUpdate.class,
+            SceneAttrsUpdate.class
             // end of update class registration (DO NOT CHANGE ORDER)
         );
 

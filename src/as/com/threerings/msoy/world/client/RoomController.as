@@ -334,7 +334,7 @@ public class RoomController extends SceneController
     override protected function sceneUpdated (update :SceneUpdate) :void
     {
         super.sceneUpdated(update);
-        _roomView.processUpdated(update);
+        _roomView.processUpdate(update);
     }
 
     /** The life-force of the client. */

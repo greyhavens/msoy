@@ -1,16 +1,24 @@
 package com.threerings.msoy.world.client {
 
+import mx.binding.utils.BindingUtils;
+
 import mx.core.UIComponent;
 
 import mx.containers.VBox;
 
 import mx.controls.Button;
+import mx.controls.TextInput;
 
 import com.threerings.mx.controls.CommandButton;
 
 import com.threerings.msoy.client.MsoyContext;
 
+import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.MsoyUI;
+
+import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.MsoySceneModel;
 
 /**
  * A floating control widget that aids in scene editing.
@@ -21,10 +29,13 @@ public class EditRoomPanel extends FloatingPanel
     public static const SAVE_BUTTON :int = 11;
 
     public function EditRoomPanel (
-        ctx :MsoyContext, ctrl :EditRoomHelper, roomView :RoomView)
+        ctx :MsoyContext, ctrl :EditRoomHelper, roomView :RoomView,
+        editableScene :MsoyScene)
     {
         super(ctx, ctx.xlate("editing", "t.editing"));
         _ctrl = ctrl;
+        _scene = editableScene;
+        _sceneModel = (editableScene.getSceneModel() as MsoySceneModel);
 
         // open non-modal with the room as the parent
         open(false, roomView);
@@ -67,6 +78,13 @@ public class EditRoomPanel extends FloatingPanel
     {
         super.createChildren();
 
+        // add a grid of controls for the room
+        var grid :Grid = new Grid();
+        grid.addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_width")),
+            _width = new TextInput());
+        addChild(grid);
+
         var btn :CommandButton;
 
         btn = new CommandButton(EditRoomHelper.INSERT_PORTAL);
@@ -86,6 +104,29 @@ public class EditRoomPanel extends FloatingPanel
         addChild(_box = new VBox());
 
         addButtons(DISCARD_BUTTON, SAVE_BUTTON);
+    }
+
+    /**
+     * Set the current displayed values to those in the model.
+     */
+    public function updateInputFields () :void
+    {
+        _width.text = String(_sceneModel.width);
+    }
+
+    override protected function childrenCreated () :void
+    {
+        super.childrenCreated();
+
+        updateInputFields();
+
+        BindingUtils.bindSetter(function (o :Object) :void {
+            var val :Number = Number(o);
+            if (!isNaN(val)) {
+                _sceneModel.width = int(val);
+                _ctrl.sceneModelUpdated();
+            }
+        }, _width, "text");
     }
 
     override protected function createButton (buttonId :int) :Button
@@ -109,7 +150,12 @@ public class EditRoomPanel extends FloatingPanel
 
     protected var _ctrl :EditRoomHelper;
 
+    protected var _scene :MsoyScene;
+    protected var _sceneModel :MsoySceneModel;
+
     protected var _box :VBox;
+
+    protected var _width :TextInput;
 
     protected var _deleteBtn :CommandButton;
 
