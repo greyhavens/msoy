@@ -7,6 +7,8 @@ import mx.controls.TextInput;
 
 import com.threerings.msoy.client.MsoyContext;
 
+import com.threerings.msoy.data.SceneBookmarkEntry;
+
 import com.threerings.msoy.world.data.MsoyPortal;
 
 import com.threerings.msoy.ui.MsoyUI;
@@ -23,8 +25,26 @@ public class PortalEditorPanel extends SpriteEditorPanel
         super.updateInputFields();
 
         var portal :MsoyPortal = (_sprite as PortalSprite).getPortal();
-        _destScene.text = String(portal.targetSceneId);
+
+        updateDestScene(portal);
         _destPortal.text = String(portal.targetPortalId);
+    }
+
+    protected function updateDestScene (portal :MsoyPortal) :void
+    {
+        var data :Object = _destScene.dataProvider;
+        for (var ii :int = 0; ii < data.length; ii++) {
+            var sbe :SceneBookmarkEntry = (data[ii] as SceneBookmarkEntry);
+            trace("sbe: " + sbe);
+            if (sbe.sceneId === portal.targetSceneId) {
+                trace("found dest in recent");
+                _destScene.selectedIndex = ii;
+                return;
+            }
+        }
+        // never found
+        trace("never found dest in recent");
+        _destScene.text = String(portal.targetSceneId);
     }
 
     override protected function createChildren () :void
@@ -47,11 +67,17 @@ public class PortalEditorPanel extends SpriteEditorPanel
         super.bind();
 
         BindingUtils.bindSetter(function (o :Object) :void {
-            var val :Number = Number(o);
-            if (!isNaN(val)) {
-                var p :MsoyPortal = (_sprite as PortalSprite).getPortal();
-                p.targetSceneId = int(val);
+            var p :MsoyPortal = (_sprite as PortalSprite).getPortal();
+            var item :Object = _destScene.selectedItem;
+            if (item != null) {
+                p.targetSceneId = (item as SceneBookmarkEntry).sceneId;
                 spriteWasTextuallyEdited();
+            } else {
+                var val :Number = Number(o);
+                if (!isNaN(val)) {
+                    p.targetSceneId = int(val);
+                    spriteWasTextuallyEdited();
+                }
             }
         }, _destScene, "text");
         BindingUtils.bindSetter(function (o :Object) :void {
