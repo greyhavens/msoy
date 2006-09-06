@@ -153,7 +153,7 @@ public class AbstractRoomView extends Canvas
     }
 
     /**
-     * Enable or disable editing. Called by the EditRoomHelper.
+     * Enable or disable editing. Called by the EditRoomController.
      */
     public function setEditing (
             editing :Boolean, spriteVisitFn :Function) :void

@@ -243,7 +243,7 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
         _walkTarget.visible = false;
 
-        _editor = new EditRoomHelper(_mctx, this, _roomView, _scene);
+        _editor = new EditRoomController(_mctx, this, _roomView, _scene);
     }
 
     protected function mouseLeft (event :MouseEvent) :void
@@ -352,6 +352,6 @@ public class RoomController extends SceneController
     protected var _walkTarget :DisplayObject = new TargetCursor();
 
     /** Are we editing the current scene? */
-    protected var _editor :EditRoomHelper;
+    protected var _editor :EditRoomController;
 }
 }

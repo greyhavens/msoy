@@ -29,7 +29,7 @@ public class EditRoomPanel extends FloatingPanel
     public static const SAVE_BUTTON :int = 11;
 
     public function EditRoomPanel (
-        ctx :MsoyContext, ctrl :EditRoomHelper, roomView :RoomView,
+        ctx :MsoyContext, ctrl :EditRoomController, roomView :RoomView,
         editableScene :MsoyScene)
     {
         super(ctx, ctx.xlate("editing", "t.editing"));
@@ -64,7 +64,7 @@ public class EditRoomPanel extends FloatingPanel
     }
 
     /**
-     * Called by the EditRoomHelper while sprite properties are
+     * Called by the EditRoomController while sprite properties are
      * being updated interactively.
      */
     public function spritePropertiesUpdated () :void
@@ -87,15 +87,15 @@ public class EditRoomPanel extends FloatingPanel
 
         var btn :CommandButton;
 
-        btn = new CommandButton(EditRoomHelper.INSERT_PORTAL);
+        btn = new CommandButton(EditRoomController.INSERT_PORTAL);
         btn.label = _ctx.xlate("editing", "b.new_portal");
         addChild(btn);
 
-        btn = new CommandButton(EditRoomHelper.INSERT_FURNI);
+        btn = new CommandButton(EditRoomController.INSERT_FURNI);
         btn.label = _ctx.xlate("editing", "b.new_furni");
         addChild(btn);
 
-        btn = new CommandButton(EditRoomHelper.DEL_ITEM);
+        btn = new CommandButton(EditRoomController.DEL_ITEM);
         btn.label = _ctx.xlate("editing", "b.delete_item");
         btn.enabled = false;
         _deleteBtn = btn;
@@ -134,12 +134,12 @@ public class EditRoomPanel extends FloatingPanel
         var btn :CommandButton;
         switch (buttonId) {
         case DISCARD_BUTTON:
-            btn = new CommandButton(EditRoomHelper.DISCARD_EDITS);
+            btn = new CommandButton(EditRoomController.DISCARD_EDITS);
             btn.label = _ctx.xlate("editing", "b.discard_edits");
             return btn;
 
         case SAVE_BUTTON:
-            btn = new CommandButton(EditRoomHelper.SAVE_EDITS);
+            btn = new CommandButton(EditRoomController.SAVE_EDITS);
             btn.label = _ctx.xlate("editing", "b.save_edits");
             return btn;
 
@@ -148,7 +148,7 @@ public class EditRoomPanel extends FloatingPanel
         }
     }
 
-    protected var _ctrl :EditRoomHelper;
+    protected var _ctrl :EditRoomController;
 
     protected var _scene :MsoyScene;
     protected var _sceneModel :MsoySceneModel;

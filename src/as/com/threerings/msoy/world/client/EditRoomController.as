@@ -39,7 +39,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
-public class EditRoomHelper extends Controller
+public class EditRoomController extends Controller
 {
     public static const INSERT_PORTAL :String = "InsertPortal";
     public static const INSERT_FURNI :String = "InsertFurni";
@@ -54,7 +54,7 @@ public class EditRoomHelper extends Controller
     public static const DISCARD_EDITS :String = "DiscardEdits";
     public static const SAVE_EDITS :String = "SaveEdits";
 
-    public function EditRoomHelper (
+    public function EditRoomController (
         ctx :MsoyContext, roomCtrl :RoomController, roomView :RoomView,
         scene :MsoyScene)
     {

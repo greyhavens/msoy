@@ -133,7 +133,8 @@ public class SpriteEditorPanel extends Grid
      */
     protected function spriteWasTextuallyEdited () :void
     {
-        CommandEvent.dispatch(this, EditRoomHelper.PROPERTIES_TYPED, _sprite);
+        CommandEvent.dispatch(
+            this, EditRoomController.PROPERTIES_TYPED, _sprite);
     }
 
     protected var _ctx :MsoyContext;
