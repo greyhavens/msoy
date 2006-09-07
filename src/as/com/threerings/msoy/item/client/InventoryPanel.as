@@ -17,6 +17,7 @@ public class InventoryPanel extends FloatingPanel
     public function InventoryPanel (ctx :MsoyContext)
     {
         super(ctx, ctx.xlate("item", "t.inventory"));
+        showCloseButton = true;
 
         open();
 

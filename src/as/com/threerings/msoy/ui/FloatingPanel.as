@@ -36,6 +36,14 @@ public class FloatingPanel extends TitleWindow
     {
         _ctx = ctx;
         this.title = title;
+
+        // Add a listener for the CLOSE event. It's only possible to
+        // be dispatched if showCloseButton=true, which we allow
+        // subclasses to do with convenience.
+        addEventListener(CloseEvent.CLOSE,
+            function (event :CloseEvent) :void {
+                buttonClicked(CANCEL_BUTTON);
+            });
     }
 
     /**
@@ -117,10 +125,6 @@ public class FloatingPanel extends TitleWindow
         // the close "X"
         if (buttonId == CANCEL_BUTTON) {
             showCloseButton = true;
-            addEventListener(CloseEvent.CLOSE,
-                function (event :CloseEvent) :void {
-                    buttonClicked(CANCEL_BUTTON);
-                });
         }
     }
 
