@@ -14,10 +14,7 @@ public class ScalingMediaContainer extends MediaContainer
     {
         super.contentDimensionsUpdated();
 
-        var largerRatio :Number = Math.max(_w / _maxW, _h / _maxH);
-        if (largerRatio > 1) {
-            scaleX = scaleY = 1 / largerRatio;
-        }
+        scaleX = scaleY = Math.min(1, Math.min(_maxW / _w, _maxH / _h));
     }
 
     protected var _maxW :int;
