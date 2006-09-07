@@ -124,11 +124,13 @@
       <arg value="-compiler.warn-constructor-returns-value=true"/>
       <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
       <arg value="-compiler.source-path=src/as/"/>
-      <arg value="-compiler.source-path=src/css/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
-      <arg value="src/mxml/Msoy.mxml"/>
+      <arg value="-output"/>
+      <arg value="dist/Msoy.swf"/>
+      <arg value="-file-specs"/>
+      <arg value="src/as/Msoy.mxml"/>
     </java>
-    <copy file="src/mxml/Msoy.swf" todir="pages/clients"/>
+    <copy file="dist/Msoy.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds our Flash debug client -->
@@ -152,11 +154,13 @@
       <arg value="-compiler.warn-constructor-returns-value=true"/>
       <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
       <arg value="-compiler.source-path=src/as/"/>
-      <arg value="-compiler.source-path=src/css/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
-      <arg value="src/mxml/Msoy.mxml"/>
+      <arg value="-output"/>
+      <arg value="dist/Msoy.swf"/>
+      <arg value="-file-specs"/>
+      <arg value="src/as/Msoy.mxml"/>
     </java>
-    <copy file="src/mxml/Msoy.swf" todir="pages/clients"/>
+    <copy file="dist/Msoy.swf" todir="pages/clients"/>
   </target>
 
   <!-- generates additional methods for distributed object classes -->
