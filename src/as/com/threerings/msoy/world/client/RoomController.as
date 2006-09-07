@@ -254,9 +254,9 @@ public class RoomController extends SceneController
     protected function mouseMoved (event :MouseEvent) :void
     {
         if (_roomView.isLocationTarget(event.target as DisplayObject)) {
-            var newLoc :MsoyLocation =
+            var cloc :ClickLocation =
                 _roomView.pointToLocation(event.stageX, event.stageY);
-            if (newLoc != null) {
+            if (cloc.click == ClickLocation.FLOOR) {
                 _walkTarget.x = event.localX;
                 _walkTarget.y = event.localY;
                 _walkTarget.visible = true;
@@ -276,10 +276,11 @@ public class RoomController extends SceneController
             }
 
             // calculate where the location is
-            var newLoc :MsoyLocation = _roomView.pointToLocation(
+            var cloc :ClickLocation = _roomView.pointToLocation(
                 event.stageX, event.stageY);
-            if (newLoc != null) {
+            if (cloc.click == ClickLocation.FLOOR) {
                 // orient the location as appropriate
+                var newLoc :MsoyLocation = cloc.loc;
                 newLoc.orient = (curLoc.x > newLoc.x ? 180 : 0);
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
             }

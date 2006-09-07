@@ -53,6 +53,12 @@ import com.threerings.msoy.world.data.RoomObject;
 public class AbstractRoomView extends Canvas
     implements PlaceView
 {
+    public static const FLOOR :int = 0;
+    public static const BACK_WALL :int = 1;
+    public static const CEILING :int = 2;
+    public static const LEFT_WALL :int = 3;
+    public static const RIGHT_WALL :int = 4;
+
     public function AbstractRoomView (ctx :MsoyContext)
     {
         _ctx = ctx;
@@ -190,10 +196,10 @@ public class AbstractRoomView extends Canvas
      * Turn the screen coordinate into a MsoyLocation, with the
      * orient field set to 0.
      *
-     * @return null if the coordinates could not be turned into a location.
+     * @return a ClickLocation object.
      */
     public function pointToLocation (
-            globalX :Number, globalY :Number) :MsoyLocation
+            globalX :Number, globalY :Number) :ClickLocation
     {
         var p :Point = globalToLocal(new Point(globalX, globalY));
         var x :Number = p.x;
@@ -207,43 +213,70 @@ public class AbstractRoomView extends Canvas
         var horizonY :Number = unscaledHeight * horizon;
         var backWallTop :Number = horizonY - (backWallHeight * horizon);
         var backWallBottom :Number = backWallTop + backWallHeight;
+        var floorWidth :Number, floorInset :Number;
+        var xx :Number, yy :Number, zz :Number;
+        var scale :Number;
 
         // do some partitioning depending on where the y lies
         if (y < backWallTop) {
-            // probably the ceiling
+            // probably the ceiling, but maybe not
             // TODO
-            return null;
-            //trace("over backWallTop(" + backWallTop + ")");
-            //return OLDpointToLocation(globalX, globalY);
+            return new ClickLocation(ClickLocation.CEILING,
+                new MsoyLocation(.5, 1, .5, 0));
 
         } else if (y < backWallBottom) {
-            // probably the back wall
-            // TODO
-            return null;
-            //trace("over backWallBottom(" + backWallTop + ")");
-            //return OLDpointToLocation(globalX, globalY);
+            // somewhere in the realm of the back wall...
+            // see how wide the floor is at that scale
+            floorWidth = (sceneWidth * minScale);
+            floorInset = (sceneWidth - floorWidth) / 2;
+            if (x < floorInset) {
+                // TODO
+                return new ClickLocation(ClickLocation.LEFT_WALL,
+                    new MsoyLocation(0, .5, .5));
+
+            } else if (x - floorInset > floorWidth) {
+                // TODO
+                return new ClickLocation(ClickLocation.RIGHT_WALL,
+                    new MsoyLocation(1, .5, .5));
+
+            } else {
+                xx = (x - floorInset) / floorWidth;
+                // y is simply how high they clicked on the wall
+                yy = (backWallBottom - y) / backWallHeight;
+                return new ClickLocation(ClickLocation.BACK_WALL,
+                    new MsoyLocation(xx, yy, 1, 0));
+            }
 
         } else {
             // solve for scale
-            var scale :Number = minScale +
+            scale = minScale +
                 (y - backWallBottom) / (unscaledHeight - backWallBottom) *
                 (MAX_SCALE - minScale);
 
             // see how wide the floor is at that scale
-            var floorDist :Number = (sceneWidth * scale);
-            var floorStartX :Number = (sceneWidth - floorDist) / 2;
-            x -= floorStartX;
-            if (x < 0 || x > floorDist) {
+            floorWidth = (sceneWidth * scale);
+            floorInset = (sceneWidth - floorWidth) / 2;
+            x -= floorInset;
+            if (x < 0) {
                 // TODO
-                return null; // on the side walls
+                return new ClickLocation(ClickLocation.LEFT_WALL,
+                    new MsoyLocation(0, .5, .5));
+
+            } else if (x > floorWidth) {
+                // TODO
+                return new ClickLocation(ClickLocation.RIGHT_WALL,
+                    new MsoyLocation(1, .5, .5));
+
+            } else {
+
+                // solve for x & z
+                xx = (x / floorWidth) * MAX_COORD;
+                zz = MAX_COORD *
+                    (1 - ((scale - minScale) / (MAX_SCALE - minScale)));
+
+                return new ClickLocation(ClickLocation.FLOOR,
+                    new MsoyLocation(xx, 0, zz, 0));
             }
-
-            // solve for x & z
-            var xx :Number = (x / floorDist) * MAX_COORD;
-            var zz :Number =
-                MAX_COORD * (1 - ((scale - minScale) / (MAX_SCALE - minScale)));
-
-            return new MsoyLocation(xx, 0, zz, 0);
         }
     }
 
@@ -295,10 +328,10 @@ public class AbstractRoomView extends Canvas
         sprite.scaleY = scale;
 
         // x position depends on logical x and the scale
-        var floorDist :Number = (sceneWidth * scale);
-        var floorStart :Number = (sceneWidth - floorDist) / 2;
-        sprite.x = floorStart - (scale * hotSpot.x) +
-            (loc.x / MAX_COORD) * floorDist;
+        var floorWidth :Number = (sceneWidth * scale);
+        var floorInset :Number = (sceneWidth - floorWidth) / 2;
+        sprite.x = floorInset - (scale * hotSpot.x) +
+            (loc.x / MAX_COORD) * floorWidth;
 
         // y position depends on logical y and the scale (z)
         var horizon :Number = 1 - _scene.getHorizon();
@@ -533,11 +566,11 @@ public class AbstractRoomView extends Canvas
         var backWallBottom :Number = backWallTop + backWallHeight;
 
         var floorWidth :Number = (sceneWidth * minScale);
-        var floorDist :Number = (sceneWidth - floorWidth) / 2;
+        var floorInset :Number = (sceneWidth - floorWidth) / 2;
 
         // rename a few things for ease of use below...
-        var x1 :Number = floorDist;
-        var x2 :Number = sceneWidth - floorDist;
+        var x1 :Number = floorInset;
+        var x2 :Number = sceneWidth - floorInset;
         var y1 :Number = backWallTop;
         var y2 :Number = backWallBottom;
 
@@ -615,9 +648,14 @@ public class AbstractRoomView extends Canvas
     /** Are we editing the scene? */
     protected var _editing :Boolean = false;
 
-    private static const FOCAL :Number = 488; // Just because
+    /** The focal length of our perspective rendering. */
+    // This value (488) was chosen so that the standard depth (400)
+    // causes layout nearly identical to the original perspective math.
+    // So, it's purely historical, but we could choose a new focal length
+    // and even a new standard scene depth.
+    // TODO
+    private static const FOCAL :Number = 488;
 
-    private static const MIN_SCALE :Number = 0.55;
     private static const MAX_SCALE :Number = 1;
     private static const MAX_COORD :Number = 1;
     private static const PHI :Number = (1 + Math.sqrt(5)) / 2;

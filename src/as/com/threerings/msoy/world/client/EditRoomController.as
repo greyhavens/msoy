@@ -394,25 +394,20 @@ public class EditRoomController extends Controller
         }
 
         var item :Item = dragItem(event);
-        var loc :MsoyLocation = _roomView.pointToLocation(
+        var cloc :ClickLocation = _roomView.pointToLocation(
             event.stageX, event.stageY);
-        // TODO: this next block won't be necessary soon because
-        // the roomview will return locations for ALL points.
-        if (loc == null) {
-            loc = new MsoyLocation(.5, 0, .5);
-        }
 
         // let's go ahead and create furni
 
         // create a generic portal descriptor
         var furni :FurniData = new FurniData();
         furni.id = getNextFurniId();
-        furni.loc = loc;
+        furni.loc = cloc.loc;
         furni.media = MediaData.fromItem(item);
 
         // create a loose sprite to represent it, add it to the panel
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
-        insertSprite(sprite, loc);
+        insertSprite(sprite, cloc.loc);
     }
 
     /**
@@ -544,12 +539,12 @@ public class EditRoomController extends Controller
             _editSprite.setLocation(loc);
 
         } else {
-            var newLoc :MsoyLocation = _roomView.pointToLocation(
+            var cloc :ClickLocation = _roomView.pointToLocation(
                 event.stageX, event.stageY);
-            if (newLoc != null) {
-                newLoc.y = _editSprite.loc.y;
-                _editSprite.setLocation(newLoc);
+            if (cloc.click == ClickLocation.FLOOR) {
+                cloc.loc.y = _editSprite.loc.y;
             }
+            _editSprite.setLocation(cloc.loc);
         }
         _panel.spritePropertiesUpdated();
     }
