@@ -19,8 +19,14 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new type. */
     public String type;
 
+    /** The new depth. */
+    public short depth;
+
     /** The new width. */
     public short width;
+
+    /** The new horizon. */
+    public float horizon;
 
     /** The new background. */
     public MediaData background;
@@ -35,7 +41,9 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         MsoySceneModel mmodel = (MsoySceneModel) model;
         mmodel.type = type;;
+        mmodel.depth = depth;
         mmodel.width = width;
+        mmodel.horizon = horizon;
         mmodel.background = background;
         mmodel.music = music;
     }

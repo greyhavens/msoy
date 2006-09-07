@@ -22,8 +22,14 @@ public class MsoySceneModel extends SceneModel
     /** The memberId of the owner of this scene. */
     public int ownerId;
 
+    /** The "pixel" depth of the room. */
+    public short depth;
+
     /** The pixel width of the room. */
     public short width;
+
+    /** A value between 0 - 1, for the height of the horizon in the room. */
+    public float horizon;
 
     /** The background image of the scene. */
     public MediaData background;
@@ -89,7 +95,9 @@ public class MsoySceneModel extends SceneModel
     public static MsoySceneModel blankMsoySceneModel ()
     {
         MsoySceneModel model = new MsoySceneModel();
+        model.depth = 400;
         model.width = 800;
+        model.horizon = .5f;
         populateBlankMsoySceneModel(model);
         return model;
     }

@@ -19,8 +19,14 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new type. */
     public var type :String;
 
+    /** The new depth. */
+    public var depth :int;
+
     /** The new width. */
     public var width :int;
+
+    /** The new horizon. */
+    public var horizon :Number;
 
     /** The new background. */
     public var background :MediaData;
@@ -34,7 +40,9 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         var mmodel :MsoySceneModel = (model as MsoySceneModel);
         mmodel.type = type;
+        mmodel.depth = depth;
         mmodel.width = width;
+        mmodel.horizon = horizon;
         mmodel.background = background;
         mmodel.music = music;
     }
@@ -44,7 +52,9 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.writeObject(out);
 
         out.writeField(type);
+        out.writeShort(depth);
         out.writeShort(width);
+        out.writeFloat(horizon);
         out.writeObject(background);
         out.writeObject(music);
     }
@@ -54,7 +64,9 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.readObject(ins);
 
         type = (ins.readField(String) as String);
+        depth = ins.readShort();
         width = ins.readShort();
+        horizon = ins.readFloat();
         background = (ins.readObject() as MediaData);
         music = (ins.readObject() as MediaData);
     }

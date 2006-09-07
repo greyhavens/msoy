@@ -53,11 +53,28 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Returns the "pixel" depth of the scene.
+     */
+    public function getDepth () :int
+    {
+        return _msoyModel.depth;
+    }
+
+    /**
      * Returns the pixel width of the scene.
      */
     public function getWidth () :int
     {
         return _msoyModel.width;
+    }
+
+    /**
+     * Get the height of the horizon, expressed as a floating
+     * point number between 0 and 1. (1 == horizon at top of screen)
+     */
+    public function getHorizon () :Number
+    {
+        return _msoyModel.horizon;
     }
 
     /**

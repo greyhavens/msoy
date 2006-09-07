@@ -122,14 +122,18 @@ public class EditRoomController extends Controller
                 (_ctx.getSceneDirector().getScene().getSceneModel()
                     as MsoySceneModel);
             if (!Util.equals(editModel.type, origModel.type) ||
+                    (editModel.depth != origModel.depth) ||
                     (editModel.width != origModel.width) ||
+                    (editModel.horizon != origModel.horizon) ||
                     !Util.equals(editModel.background, origModel.background) ||
                     !Util.equals(editModel.music, origModel.music)) {
                 var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
                 attrUpdate.init(sceneId, version++);
 
                 attrUpdate.type = editModel.type;
+                attrUpdate.depth = editModel.depth;
                 attrUpdate.width = editModel.width;
+                attrUpdate.horizon = editModel.horizon;
                 attrUpdate.background = editModel.background;
                 attrUpdate.music = editModel.music;
                 edits.push(attrUpdate);

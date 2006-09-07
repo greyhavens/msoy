@@ -109,6 +109,30 @@ public class MsoySceneRepository extends SimpleRepository
                 JDBCUtil.close(stmt);
             }
         }
+
+        // TEMP: db update
+        if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "DEPTH")) {
+            JDBCUtil.addColumn(conn, "SCENES", "DEPTH",
+                "integer not null", "DEF_PORTAL_ID");
+            Statement stmt = conn.createStatement();
+            try {
+                stmt.executeUpdate("update SCENES set DEPTH=400");
+            } finally {
+                JDBCUtil.close(stmt);
+            }
+        }
+
+        // TEMP: db update
+        if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "HORIZON")) {
+            JDBCUtil.addColumn(conn, "SCENES", "HORIZON",
+                "float not null", "WIDTH");
+            Statement stmt = conn.createStatement();
+            try {
+                stmt.executeUpdate("update SCENES set HORIZON=.5");
+            } finally {
+                JDBCUtil.close(stmt);
+            }
+        }
     }
 
     // documentation inherited from interface SceneRepository
@@ -218,7 +242,7 @@ public class MsoySceneRepository extends SimpleRepository
                     // Load: basic scene data
                     ResultSet rs = stmt.executeQuery("select " +
                         "OWNER_ID, VERSION, NAME, TYPE, DEF_PORTAL_ID, " +
-                        "WIDTH, BACKGROUND, MUSIC " +
+                        "DEPTH, WIDTH, HORIZON, BACKGROUND, MUSIC " +
                         "from SCENES where SCENE_ID=" + sceneId);
                     if (rs.next()) {
                         model.ownerId = rs.getInt(1);
@@ -229,11 +253,13 @@ public class MsoySceneRepository extends SimpleRepository
                             model.type = model.type.intern();
                         }
                         spotModel.defaultEntranceId = rs.getInt(5);
-                        model.width = rs.getShort(6);
+                        model.depth = rs.getShort(6);
+                        model.width = rs.getShort(7);
+                        model.horizon = rs.getFloat(8);
                         model.background =
-                            MediaData.fromDBString(rs.getString(7));
+                            MediaData.fromDBString(rs.getString(9));
                         model.music =
-                            MediaData.fromDBString(rs.getString(8));
+                            MediaData.fromDBString(rs.getString(10));
 
                     } else {
                         return Boolean.FALSE; // no scene found
@@ -354,13 +380,16 @@ public class MsoySceneRepository extends SimpleRepository
             {
                 PreparedStatement stmt = conn.prepareStatement(
                     "update SCENES " +
-                    "set TYPE=?, WIDTH=?, BACKGROUND=?, MUSIC=? " +
+                    "set TYPE=?, DEPTH=?, WIDTH=?, HORIZON=?, " +
+                    "BACKGROUND=?, MUSIC=? " +
                     "where SCENE_ID=" + mmodel.sceneId);
                 try {
                     stmt.setString(1, update.type);
-                    stmt.setInt(2, update.width);
-                    stmt.setString(3, MediaData.asDBString(update.background));
-                    stmt.setString(4, MediaData.asDBString(update.music));
+                    stmt.setInt(2, update.depth);
+                    stmt.setInt(3, update.width);
+                    stmt.setFloat(4, update.horizon);
+                    stmt.setString(5, MediaData.asDBString(update.background));
+                    stmt.setString(6, MediaData.asDBString(update.music));
 
                     JDBCUtil.checkedUpdate(stmt, 1);
                 } finally {
@@ -425,17 +454,19 @@ public class MsoySceneRepository extends SimpleRepository
         SpotSceneModel spotModel = SpotSceneModel.getSceneModel(model);
 
         PreparedStatement stmt = conn.prepareStatement("insert into SCENES " +
-            "(OWNER_ID, VERSION, NAME, TYPE, DEF_PORTAL_ID, WIDTH, " +
-            "BACKGROUND, MUSIC) values (?, ?, ?, ?, ?, ?, ?, ?)");
+            "(OWNER_ID, VERSION, NAME, TYPE, DEF_PORTAL_ID, DEPTH, WIDTH, " +
+            "HORIZON, BACKGROUND, MUSIC) values (?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setInt(1, model.ownerId);
             stmt.setInt(2, model.version);
             stmt.setString(3, model.name);
             stmt.setString(4, model.type);
             stmt.setInt(5, spotModel.defaultEntranceId);
-            stmt.setShort(6, model.width);
-            stmt.setString(7, MediaData.asDBString(model.background));
-            stmt.setString(8, MediaData.asDBString(model.music));
+            stmt.setShort(6, model.depth);
+            stmt.setShort(7, model.width);
+            stmt.setFloat(8, model.horizon);
+            stmt.setString(9, MediaData.asDBString(model.background));
+            stmt.setString(10, MediaData.asDBString(model.music));
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
 
@@ -615,7 +646,9 @@ public class MsoySceneRepository extends SimpleRepository
             "NAME varchar(255) not null",
             "TYPE varchar(255)",
             "DEF_PORTAL_ID integer not null",
+            "DEPTH integer not null",
             "WIDTH integer not null",
+            "HORIZON float not null",
             "BACKGROUND varchar(255)",
             "MUSIC varchar(255)",
             "primary key (SCENE_ID)" }, "");

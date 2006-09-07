@@ -58,11 +58,28 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Returns the "pixel" depth of the scene.
+     */
+    public short getDepth ()
+    {
+        return _model.depth;
+    }
+
+    /**
      * Returns the pixel width of the scene.
      */
     public short getWidth ()
     {
         return _model.width;
+    }
+
+    /**
+     * Get the height of the horizon, expressed as a floating
+     * point number between 0 and 1. (1 == horizon at top of screen)
+     */
+    public float getHorizon ()
+    {
+        return _model.horizon;
     }
 
     /**

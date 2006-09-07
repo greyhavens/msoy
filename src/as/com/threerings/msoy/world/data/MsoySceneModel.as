@@ -18,8 +18,14 @@ public class MsoySceneModel extends SceneModel
     /** The memberId of the owner of this scene. */
     public var ownerId :int;
 
+    /** The "pixel" depth of the room. */
+    public var depth :int;
+
     /** The pixel width of the room. */
     public var width :int;
+
+    /** A value between 0 - 1, for the height of the horizon in the room. */
+    public var horizon :Number;
 
     /** The background image of the scene. */
     public var background :MediaData;
@@ -73,7 +79,9 @@ public class MsoySceneModel extends SceneModel
 
         model.type = type;
         model.ownerId = ownerId;
+        model.depth = depth;
         model.width = width;
+        model.horizon = horizon;
         model.background = background;
         model.music = music;
         model.furnis = (furnis.clone() as TypedArray);
@@ -88,7 +96,9 @@ public class MsoySceneModel extends SceneModel
 
         out.writeField(type);
         out.writeInt(ownerId);
+        out.writeShort(depth);
         out.writeShort(width);
+        out.writeFloat(horizon);
         out.writeObject(background);
         out.writeObject(music);
         out.writeObject(furnis);
@@ -101,7 +111,9 @@ public class MsoySceneModel extends SceneModel
 
         type = (ins.readField(String) as String);
         ownerId = ins.readInt();
+        depth = ins.readShort();
         width = ins.readShort();
+        horizon = ins.readFloat();
         background = (ins.readObject() as MediaData);
         music = (ins.readObject() as MediaData);
         furnis = (ins.readObject() as TypedArray);

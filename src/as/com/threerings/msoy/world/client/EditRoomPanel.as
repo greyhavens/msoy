@@ -7,6 +7,7 @@ import mx.core.UIComponent;
 import mx.containers.VBox;
 
 import mx.controls.Button;
+import mx.controls.HSlider;
 import mx.controls.TextInput;
 
 import com.threerings.mx.controls.CommandButton;
@@ -83,6 +84,16 @@ public class EditRoomPanel extends FloatingPanel
         grid.addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_width")),
             _width = new TextInput());
+        grid.addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_depth")),
+            _depth = new TextInput());
+        grid.addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.horizon")),
+            _horizon = new HSlider());
+        _horizon.minimum = 0;
+        _horizon.maximum = 1;
+        _horizon.liveDragging = true;
+
         addChild(grid);
 
         var btn :CommandButton;
@@ -112,6 +123,8 @@ public class EditRoomPanel extends FloatingPanel
     public function updateInputFields () :void
     {
         _width.text = String(_sceneModel.width);
+        _depth.text = String(_sceneModel.depth);
+        _horizon.value = _sceneModel.horizon;
     }
 
     override protected function childrenCreated () :void
@@ -127,6 +140,20 @@ public class EditRoomPanel extends FloatingPanel
                 _ctrl.sceneModelUpdated();
             }
         }, _width, "text");
+
+        BindingUtils.bindSetter(function (o :Object) :void {
+            var val :Number = Number(o);
+            if (!isNaN(val)) {
+                _sceneModel.depth = int(val);
+                _ctrl.sceneModelUpdated();
+            }
+        }, _depth, "text");
+
+        BindingUtils.bindSetter(function (o :Object) :void {
+            var val :Number = Number(o);
+            _sceneModel.horizon = val;
+            _ctrl.sceneModelUpdated();
+        }, _horizon, "value");
     }
 
     override protected function createButton (buttonId :int) :Button
@@ -156,6 +183,8 @@ public class EditRoomPanel extends FloatingPanel
     protected var _box :VBox;
 
     protected var _width :TextInput;
+    protected var _depth :TextInput;
+    protected var _horizon :HSlider;
 
     protected var _deleteBtn :CommandButton;
 

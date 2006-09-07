@@ -179,6 +179,12 @@ public class AbstractRoomView extends Canvas
             scrollRect = null;
         }
     }
+
+    protected function computeMinScale () :Number
+    {
+        var sceneDepth :int = _scene.getDepth();
+        return (sceneDepth == 0) ? 0 : (FOCAL / (FOCAL + sceneDepth));
+    }
     
     /**
      * Turn the screen coordinate into a MsoyLocation, with the
@@ -193,36 +199,52 @@ public class AbstractRoomView extends Canvas
         var x :Number = p.x;
         var y :Number = p.y;
 
-        // flip y
-        y = unscaledHeight - y;
+        var sceneWidth :int = _scene.getWidth();
+        var minScale :Number = computeMinScale();
+        var backWallHeight :Number = unscaledHeight * minScale;
 
-        var sceneWidth :Number = _scene.getWidth();
+        var horizon :Number = 1 - _scene.getHorizon();
+        var horizonY :Number = unscaledHeight * horizon;
+        var backWallTop :Number = horizonY - (backWallHeight * horizon);
+        var backWallBottom :Number = backWallTop + backWallHeight;
 
-        var sheight :Number = (unscaledHeight * MIN_SCALE);
-        var yoffset :Number = (unscaledHeight - sheight) / 2;
-        if (y > yoffset) {
+        // do some partitioning depending on where the y lies
+        if (y < backWallTop) {
+            // probably the ceiling
+            // TODO
             return null;
-        }
+            //trace("over backWallTop(" + backWallTop + ")");
+            //return OLDpointToLocation(globalX, globalY);
 
-        // then, solve for scale given the current y
-        var scale :Number = 1 + (y * -2) / unscaledHeight;
-
-        // see if x is legal
-        var swidth :Number = (sceneWidth * scale);
-        var xoffset :Number = (sceneWidth - swidth) / 2;
-        x -= xoffset;
-        if (x < 0 || x > swidth) {
+        } else if (y < backWallBottom) {
+            // probably the back wall
+            // TODO
             return null;
+            //trace("over backWallBottom(" + backWallTop + ")");
+            //return OLDpointToLocation(globalX, globalY);
+
+        } else {
+            // solve for scale
+            var scale :Number = minScale +
+                (y - backWallBottom) / (unscaledHeight - backWallBottom) *
+                (MAX_SCALE - minScale);
+
+            // see how wide the floor is at that scale
+            var floorDist :Number = (sceneWidth * scale);
+            var floorStartX :Number = (sceneWidth - floorDist) / 2;
+            x -= floorStartX;
+            if (x < 0 || x > floorDist) {
+                // TODO
+                return null; // on the side walls
+            }
+
+            // solve for x & z
+            var xx :Number = (x / floorDist) * MAX_COORD;
+            var zz :Number =
+                MAX_COORD * (1 - ((scale - minScale) / (MAX_SCALE - minScale)));
+
+            return new MsoyLocation(xx, 0, zz, 0);
         }
-
-        // solve for x
-        var xx :Number = (x / swidth) * MAX_COORD;
-
-        // solve for z
-        var zz :Number =
-            MAX_COORD * (1 - ((scale - MIN_SCALE) / (MAX_SCALE - MIN_SCALE)));
-
-        return new MsoyLocation(xx, 0, zz, 0);
     }
 
     /**
@@ -231,8 +253,9 @@ public class AbstractRoomView extends Canvas
      */
     public function getYDistance (z :Number, pixels :int) :Number
     {
-        var scale :Number = MIN_SCALE +
-            ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - MIN_SCALE);
+        var minScale :Number = computeMinScale();
+        var scale :Number = minScale +
+            ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - minScale);
         var sheight :Number = (unscaledHeight * scale);
         return (pixels / sheight);
     }
@@ -264,23 +287,26 @@ public class AbstractRoomView extends Canvas
     {
         var sceneWidth :Number = _scene.getWidth();
         var hotSpot :Point = sprite.hotSpot;
+        var minScale :Number = computeMinScale();
         // the scale of the object is determined by the z coordinate
-        var scale :Number = MIN_SCALE +
-            ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - MIN_SCALE);
+        var scale :Number = minScale +
+            ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - minScale);
         sprite.scaleX = scale;
         sprite.scaleY = scale;
 
         // x position depends on logical x and the scale
-        var swidth :Number = (sceneWidth * scale);
-        var xoffset :Number = (sceneWidth - swidth) / 2;
-        sprite.x = xoffset - (scale * hotSpot.x) +
-            (loc.x / MAX_COORD) * swidth;
+        var floorDist :Number = (sceneWidth * scale);
+        var floorStart :Number = (sceneWidth - floorDist) / 2;
+        sprite.x = floorStart - (scale * hotSpot.x) +
+            (loc.x / MAX_COORD) * floorDist;
 
         // y position depends on logical y and the scale (z)
-        var sheight :Number = (unscaledHeight * scale);
-        var yoffset :Number = (unscaledHeight - sheight) / 2;
-        sprite.y = unscaledHeight - yoffset - (scale * hotSpot.y) -
-            (loc.y / MAX_COORD) * sheight;
+        var horizon :Number = 1 - _scene.getHorizon();
+        var horizonY :Number = unscaledHeight * horizon;
+
+        sprite.y = (horizonY + (unscaledHeight - horizonY) * scale) -
+            (scale * hotSpot.y) - 
+            (loc.y / MAX_COORD) * (unscaledHeight * scale);
     }
 
     /**
@@ -497,18 +523,23 @@ public class AbstractRoomView extends Canvas
         var g :Graphics = _bkgGraphics.graphics;
 
         g.clear();
-        var sceneWidth :Number = _scene.getWidth();
+        var sceneWidth :int = _scene.getWidth();
+        var minScale :Number = computeMinScale();
+        var backWallHeight :Number = unscaledHeight * minScale;
 
-        var swidth :Number = (sceneWidth * MIN_SCALE);
-        var sheight :Number = (height * MIN_SCALE);
-        var xoffset :Number = (sceneWidth - swidth) / 2;
-        var yoffset :Number = (height - sheight) / 2;
+        var horizon :Number = 1 - _scene.getHorizon();
+        var horizonY :Number = unscaledHeight * horizon;
+        var backWallTop :Number = horizonY - (backWallHeight * horizon);
+        var backWallBottom :Number = backWallTop + backWallHeight;
 
-        // calculate the coordinates of the back wall corners
-        var x1 :Number = xoffset;
-        var y1 :Number = yoffset;
-        var x2 :Number = sceneWidth - xoffset;
-        var y2 :Number = height - yoffset;
+        var floorWidth :Number = (sceneWidth * minScale);
+        var floorDist :Number = (sceneWidth - floorWidth) / 2;
+
+        // rename a few things for ease of use below...
+        var x1 :Number = floorDist;
+        var x2 :Number = sceneWidth - floorDist;
+        var y1 :Number = backWallTop;
+        var y2 :Number = backWallBottom;
 
         // fill in the floor
         g.beginFill(0x333333);
@@ -583,6 +614,8 @@ public class AbstractRoomView extends Canvas
 
     /** Are we editing the scene? */
     protected var _editing :Boolean = false;
+
+    private static const FOCAL :Number = 488; // Just because
 
     private static const MIN_SCALE :Number = 0.55;
     private static const MAX_SCALE :Number = 1;
