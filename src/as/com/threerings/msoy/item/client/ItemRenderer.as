@@ -4,8 +4,12 @@ import mx.containers.VBox;
 
 import mx.controls.Label;
 
+import mx.core.ScrollPolicy;
+
 import com.threerings.util.MediaContainer;
 import com.threerings.util.Util;
+
+import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.item.data.Item;
 
@@ -15,6 +19,13 @@ import com.threerings.msoy.item.data.Item;
  */
 public class ItemRenderer extends VBox
 {
+    public function ItemRenderer ()
+    {
+        super();
+        verticalScrollPolicy = ScrollPolicy.OFF;
+        horizontalScrollPolicy = ScrollPolicy.OFF;
+    }
+
     override public function validateDisplayList () :void
     {
         super.validateDisplayList();
@@ -44,16 +55,26 @@ public class ItemRenderer extends VBox
     {
         super.createChildren();
 
+/*
         var scrollBox :VBox = new VBox();
         scrollBox.maxWidth = 250;
         scrollBox.maxHeight = 200;
 
         addChild(scrollBox);
         scrollBox.addChild(_container = new MediaContainer());
+*/
+        _container = new ScalingMediaContainer(250, 250);
+        /*
+        _container.maxWidth = 250;
+        _container.maxHeight = 200;
+        */
+        addChild(_container);
 
         addChild(_label = new Label());
+        /*
         _label.maxHeight = 50;
         _label.maxWidth = 250;
+        */
     }
 
     protected var _container :MediaContainer;
