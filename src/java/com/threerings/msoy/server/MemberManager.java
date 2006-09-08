@@ -11,6 +11,7 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SoftCache;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.util.Name;
 
@@ -97,8 +98,8 @@ public class MemberManager
 
                 // fake bits!
                 profile.photo = new Photo();
-                profile.photo.mediaHash =
-                    "816cd5aebc2d9d228bf66cff193b81eba1a6ac85";
+                profile.photo.mediaHash = StringUtil.unhexlate(
+                    "816cd5aebc2d9d228bf66cff193b81eba1a6ac85");
                 profile.photo.mimeType = Photo.IMAGE_JPEG;
                 profile.headline = "Arr! Mateys, this here be me profile!";
                 profile.homePageURL = "http://www.puzzlepirates.com/";

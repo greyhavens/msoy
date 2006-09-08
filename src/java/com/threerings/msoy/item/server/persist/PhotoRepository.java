@@ -32,10 +32,14 @@ public class PhotoRepository extends ItemRepository<Photo>
             "ITEM_ID integer not null auto_increment primary key",
             "FLAGS tinyint not null",
             "OWNER_ID integer not null",
-            "MEDIA_HASH varchar(64) not null",
+            "MEDIA_HASH tinyblob not null",
             "MIME_TYPE tinyint not null",
             "CAPTION varchar(255) not null",
         }, "");
+
+        // TEMP
+        JDBCUtil.changeColumn(conn, "PHOTOS", "MEDIA_HASH",
+            "MEDIA_HASH tinyblob not null");
     }
 
     @Override // from JORARepository

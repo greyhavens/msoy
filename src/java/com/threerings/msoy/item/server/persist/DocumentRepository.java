@@ -32,10 +32,14 @@ public class DocumentRepository extends ItemRepository<Document>
             "ITEM_ID integer not null auto_increment primary key",
             "FLAGS tinyint not null",
             "OWNER_ID integer not null",
-            "MEDIA_HASH varchar(64) not null",
+            "MEDIA_HASH tinyblob not null",
             "MIME_TYPE tinyint not null",
             "TITLE varchar(255) not null",
         }, "");
+
+        // TEMP
+        JDBCUtil.changeColumn(conn, "DOCUMENTS", "MEDIA_HASH",
+            "MEDIA_HASH tinyblob not null");
     }
 
     @Override // from JORARepository

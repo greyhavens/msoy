@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.data {
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.StringUtil;
 
 import com.threerings.io.ObjectInputStream;
@@ -47,7 +49,7 @@ public /*abstract*/ class MediaItem extends Item
     public static const APPLICATION_SHOCKWAVE_FLASH :int = 40;
 
     /** A hash code identifying the media associated with this item. */
-    public var mediaHash :String;
+    public var mediaHash :ByteArray;
 
     /** The MIME type of the media associated with this item. */
     public var mimeType :int;
@@ -60,13 +62,28 @@ public /*abstract*/ class MediaItem extends Item
         return MediaItem.getMediaPath(mediaHash, mimeType);
     }
 
+    // REMOVE
+    public function getHashAsString () :String
+    {
+        return MediaItem.hashToString(mediaHash);
+    }
+
     /**
      * Get the path of the URL for the media specified.
      */
     public static function getMediaPath (
-        mediaHash :String, mimeType :int) :String
+        mediaHash :ByteArray, mimeType :int) :String
     {
-        return "/media/" + mediaHash + mimeTypeToSuffix(mimeType);
+        return "/media/" + hashToString(mediaHash) +
+            mimeTypeToSuffix(mimeType);
+    }
+
+    /**
+     * Convert the specified media hash into a String
+     */
+    public static function hashToString (hash :ByteArray) :String
+    {
+        return StringUtil.hexlate(hash);
     }
 
     /**
@@ -145,13 +162,13 @@ public /*abstract*/ class MediaItem extends Item
     {
         switch (mimeType) {
         case TEXT_PLAIN: return ".txt";
-        case IMAGE_PNG: return ".txt";
+        case IMAGE_PNG: return ".png";
         case IMAGE_JPEG: return ".jpg";
         case IMAGE_GIF: return ".gif";
-        case AUDIO_MPEG: return ".txt";
+        case AUDIO_MPEG: return ".mp3";
         case AUDIO_WAV: return ".wav";
         case VIDEO_FLASH: return ".flv";
-        case VIDEO_MPEG: return ".txt";
+        case VIDEO_MPEG: return ".mpg";
         case VIDEO_QUICKTIME: return ".mov";
         case VIDEO_MSVIDEO: return ".avi";
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
@@ -171,7 +188,7 @@ public /*abstract*/ class MediaItem extends Item
     {
         super.readObject(ins);
 
-        mediaHash = (ins.readField(String) as String);
+        mediaHash = (ins.readField(ByteArray) as ByteArray);
         mimeType = ins.readByte();
     }
 }

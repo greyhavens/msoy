@@ -78,8 +78,7 @@ public abstract class MediaItemEditor extends ItemEditor
     protected boolean itemConsistent ()
     {
         MediaItem item = (MediaItem)_item;
-        return (_item != null) && (item.mediaHash != null) &&
-            (item.mediaHash.length() > 0);
+        return (_item != null) && (item.mediaHash != null);
     }
 
     /**
@@ -89,8 +88,7 @@ public abstract class MediaItemEditor extends ItemEditor
     protected void setHash (String mediaHash, int mimeType)
     {
         if (_item != null) {
-            ((MediaItem)_item).mediaHash = mediaHash;
-            ((MediaItem)_item).mimeType = (byte)mimeType;
+            ((MediaItem)_item).setHash(mediaHash, (byte)mimeType);
         }
         // _out.setText(mediaHash);
         _out.setText("File uploaded.");

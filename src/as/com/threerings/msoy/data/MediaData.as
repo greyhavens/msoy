@@ -4,6 +4,7 @@ import flash.geom.Point;
 
 import com.threerings.util.Hashable;
 import com.threerings.util.Util;
+import com.threerings.util.StringUtil;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -37,7 +38,7 @@ public class MediaData
         var data :MediaData = new MediaData(-1);
         if (item is MediaItem) {
             var mitem :MediaItem = (item as MediaItem);
-            data.hash = mitem.mediaHash;
+            data.hash = mitem.getHashAsString();
             data.mimeType = mitem.mimeType;
         } else {
             // other kinds of items should have default representations
@@ -78,7 +79,7 @@ public class MediaData
     public function get URL () :String
     {
         if (id == -1) {
-            return MediaItem.getMediaPath(hash, mimeType);
+            return MediaItem.getMediaPath(StringUtil.unhexlate(hash), mimeType);
         }
 
         if (DATA[id][3]) {

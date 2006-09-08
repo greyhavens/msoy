@@ -32,11 +32,15 @@ public class FurnitureRepository extends ItemRepository<Furniture>
             "ITEM_ID integer not null auto_increment primary key",
             "FLAGS tinyint not null",
             "OWNER_ID integer not null",
-            "MEDIA_HASH varchar(64) not null",
+            "MEDIA_HASH tinyblob not null",
             "MIME_TYPE tinyint not null",
             "ACTION varchar(255) not null",
             "DESCRIPTION varchar(255) not null",
         }, "");
+
+        // Temp
+        JDBCUtil.changeColumn(conn, "FURNITURE", "MEDIA_HASH",
+            "MEDIA_HASH tinyblob not null");
     }
 
     @Override // from JORARepository

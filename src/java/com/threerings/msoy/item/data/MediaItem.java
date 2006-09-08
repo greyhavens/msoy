@@ -42,7 +42,7 @@ public abstract class MediaItem extends Item
     public static final byte APPLICATION_SHOCKWAVE_FLASH = 40;
 
     /** A hash code identifying the media associated with this item. */
-    public String mediaHash;
+    public byte[] mediaHash;
 
     /** The MIME type of the media associated with this item. */
     public byte mimeType;
@@ -55,12 +55,70 @@ public abstract class MediaItem extends Item
         return getMediaPath(mediaHash, mimeType);
     }
 
+    // REMOVE
+    public String getHashAsString ()
+    {
+        return hashToString(mediaHash);
+    }
+
+    /**
+     * Set the hash and mimetype of this item.
+     */
+    public void setHash (String strHash, byte newMimeType)
+    {
+        mediaHash = stringToHash(strHash);
+        mimeType = newMimeType;
+    }
+
     /**
      * Get the path of the URL for the media specified.
      */
-    public static String getMediaPath (String mediaHash, byte mimeType)
+    public static String getMediaPath (byte[] mediaHash, byte mimeType)
     {
-        return "/media/" + mediaHash + mimeTypeToSuffix(mimeType);
+        return "/media/" + hashToString(mediaHash) +
+            mimeTypeToSuffix(mimeType);
+    }
+
+    /**
+     * Convert the specified media hash into a String.
+     */
+    public static String hashToString (byte[] hash)
+    {
+        if (hash == null) {
+            return "";
+        }
+        char[] chars= new char[hash.length * 2];
+        for (int ii = 0; ii < hash.length; ii++) {
+            int val = hash[ii];
+            if (val < 0) {
+                val += 256;
+            }
+            chars[2 * ii] = HEX.charAt(val/16);
+            chars[2 * ii + 1] = HEX.charAt(val%16);
+        }
+        return new String(chars);
+    }
+
+    /**
+     * Convert the specified String back into a media hash.
+     */
+    public static byte[] stringToHash (String hash)
+    {
+        if (hash == null || hash.length() % 2 != 0) {
+            return null;
+        }
+
+        hash = hash.toLowerCase();
+        byte[] data = new byte[hash.length() / 2];
+        for (int ii = 0; ii < hash.length(); ii += 2) {
+            int value = (byte) (HEX.indexOf(hash.charAt(ii)) << 4);
+            value += HEX.indexOf(hash.charAt(ii + 1));
+
+            // values over 127 are wrapped around, restoring negative bytes
+            data[ii / 2] = (byte) value;
+        }
+
+        return data;
     }
 
     /**
@@ -139,17 +197,20 @@ public abstract class MediaItem extends Item
     {
         switch (mimeType) {
         case TEXT_PLAIN: return ".txt";
-        case IMAGE_PNG: return ".txt";
+        case IMAGE_PNG: return ".png";
         case IMAGE_JPEG: return ".jpg";
         case IMAGE_GIF: return ".gif";
-        case AUDIO_MPEG: return ".txt";
+        case AUDIO_MPEG: return ".mp3";
         case AUDIO_WAV: return ".wav";
         case VIDEO_FLASH: return ".flv";
-        case VIDEO_MPEG: return ".txt";
+        case VIDEO_MPEG: return ".mpg";
         case VIDEO_QUICKTIME: return ".mov";
         case VIDEO_MSVIDEO: return ".avi";
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
         default: return ".dat";
         }
     }
+
+    /** Hexidecimal digits. */
+    protected static final String HEX = "0123456789abcdef";
 }

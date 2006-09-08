@@ -49,7 +49,7 @@ public class ItemThumbnail extends VerticalPanel
         if (item instanceof MediaItem) {
             MediaItem mitem = (MediaItem) item;
             if (mitem.mimeType == MediaItem.APPLICATION_SHOCKWAVE_FLASH) {
-                FlashWidget fw = new FlashWidget(mitem.mediaHash);
+                FlashWidget fw = new FlashWidget(mitem.getHashAsString());
                 fw.setMovie(MsoyEntryPoint.toMediaPath(mitem.getMediaPath()));
                 return fw;
             }

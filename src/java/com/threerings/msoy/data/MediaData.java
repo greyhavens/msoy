@@ -33,7 +33,7 @@ public class MediaData extends SimpleStreamableObject
         MediaData data = new MediaData(-1);
         if (item instanceof MediaItem) {
             MediaItem mitem = (MediaItem) item;
-            data.hash = mitem.mediaHash;
+            data.hash = mitem.getHashAsString();
             data.mimeType = mitem.mimeType;
 
         } else {
