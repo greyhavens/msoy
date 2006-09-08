@@ -19,7 +19,6 @@ import mx.utils.StringUtil;
 import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MediaData;
 
 /**
  * IMPORTANT NOTE: this class was written for testing things and does not

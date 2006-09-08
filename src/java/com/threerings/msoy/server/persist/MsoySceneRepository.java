@@ -30,7 +30,7 @@ import com.threerings.whirled.server.persist.SceneUpdateMarshaller;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -257,9 +257,9 @@ public class MsoySceneRepository extends SimpleRepository
                         model.width = rs.getShort(7);
                         model.horizon = rs.getFloat(8);
                         model.background =
-                            MediaData.fromDBString(rs.getString(9));
+                            MediaDesc.fromDBString(rs.getString(9));
                         model.music =
-                            MediaData.fromDBString(rs.getString(10));
+                            MediaDesc.fromDBString(rs.getString(10));
 
                     } else {
                         return Boolean.FALSE; // no scene found
@@ -276,7 +276,7 @@ public class MsoySceneRepository extends SimpleRepository
                         p.portalId = rs.getShort(1);
                         p.targetPortalId = rs.getShort(2);
                         p.targetSceneId = rs.getInt(3);
-                        p.media = MediaData.fromDBString(rs.getString(4));
+                        p.media = MediaDesc.fromDBString(rs.getString(4));
                         p.loc = new MsoyLocation(
                             rs.getFloat(5), rs.getFloat(6), rs.getFloat(7), 0);
                         p.scaleX = rs.getFloat(8);
@@ -294,7 +294,7 @@ public class MsoySceneRepository extends SimpleRepository
                     while (rs.next()) {
                         FurniData furni = new FurniData();
                         furni.id = rs.getInt(1);
-                        furni.media = MediaData.fromDBString(rs.getString(2));
+                        furni.media = MediaDesc.fromDBString(rs.getString(2));
                         furni.loc = new MsoyLocation(
                             rs.getFloat(3), rs.getFloat(4), rs.getFloat(5), 0);
                         furni.scaleX = rs.getFloat(6);
@@ -388,8 +388,8 @@ public class MsoySceneRepository extends SimpleRepository
                     stmt.setInt(2, update.depth);
                     stmt.setInt(3, update.width);
                     stmt.setFloat(4, update.horizon);
-                    stmt.setString(5, MediaData.asDBString(update.background));
-                    stmt.setString(6, MediaData.asDBString(update.music));
+                    stmt.setString(5, MediaDesc.asDBString(update.background));
+                    stmt.setString(6, MediaDesc.asDBString(update.music));
 
                     JDBCUtil.checkedUpdate(stmt, 1);
                 } finally {
@@ -465,8 +465,8 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setShort(6, model.depth);
             stmt.setShort(7, model.width);
             stmt.setFloat(8, model.horizon);
-            stmt.setString(9, MediaData.asDBString(model.background));
-            stmt.setString(10, MediaData.asDBString(model.music));
+            stmt.setString(9, MediaDesc.asDBString(model.background));
+            stmt.setString(10, MediaDesc.asDBString(model.music));
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
 
@@ -495,7 +495,7 @@ public class MsoySceneRepository extends SimpleRepository
                 stmt.setInt(2, p.portalId);
                 stmt.setInt(3, p.targetPortalId);
                 stmt.setInt(4, p.targetSceneId);
-                stmt.setString(5, MediaData.asDBString(p.media));
+                stmt.setString(5, MediaDesc.asDBString(p.media));
                 stmt.setFloat(6, loc.x);
                 stmt.setFloat(7, loc.y);
                 stmt.setFloat(8, loc.z);
@@ -546,7 +546,7 @@ public class MsoySceneRepository extends SimpleRepository
 
             for (FurniData f : furni) {
                 stmt.setInt(2, f.id);
-                stmt.setString(3, MediaData.asDBString(f.media));
+                stmt.setString(3, MediaDesc.asDBString(f.media));
                 stmt.setFloat(4, f.loc.x);
                 stmt.setFloat(5, f.loc.y);
                 stmt.setFloat(6, f.loc.z);
@@ -708,13 +708,13 @@ public class MsoySceneRepository extends SimpleRepository
             // crayon room
             model.type = "image";
             model.width = 1600;
-            model.background = new MediaData(28); // crayon room
+            model.background = new MediaDesc(28); // crayon room
 
             portal.loc = new MsoyLocation(0, 0, .3, 0);
             portal.targetSceneId = 2;
             portal.targetPortalId = 1;
             portal.scaleX = portal.scaleY = (float) (1 / .865f);
-            portal.media = new MediaData(34); // smile door
+            portal.media = new MediaDesc(34); // smile door
 
             p2 = new MsoyPortal();
             p2.portalId = 2;
@@ -722,7 +722,7 @@ public class MsoySceneRepository extends SimpleRepository
             p2.targetSceneId = 6;
             p2.loc = new MsoyLocation(.8, 0, 1, 0);
             p2.scaleX = p2.scaleY = (float) (1 / .55);
-            p2.media = new MediaData(33); // aqua door
+            p2.media = new MediaDesc(33); // aqua door
             spotty.addPortal(p2);
 
             p2 = new MsoyPortal();
@@ -731,7 +731,7 @@ public class MsoySceneRepository extends SimpleRepository
             p2.targetSceneId = 4;
             p2.loc = new MsoyLocation(1, 0, .3, 0);
             p2.scaleX = p2.scaleY = (float) (1 / .865f);
-            p2.media = new MediaData(32); // red door
+            p2.media = new MediaDesc(32); // red door
             spotty.addPortal(p2);
 
             p2 = new MsoyPortal();
@@ -739,7 +739,7 @@ public class MsoySceneRepository extends SimpleRepository
             p2.targetPortalId = 1;
             p2.targetSceneId = 5;
             p2.loc = new MsoyLocation(.75, 1, .5, 0);
-            p2.media = new MediaData(31); // ladder
+            p2.media = new MediaDesc(31); // ladder
             spotty.addPortal(p2);
 
             p2 = new MsoyPortal();
@@ -748,37 +748,37 @@ public class MsoySceneRepository extends SimpleRepository
             p2.targetSceneId = 7;
             p2.loc = new MsoyLocation(.95, 0, 1, 0);
             p2.scaleX = p2.scaleY = .3f;
-            p2.media = new MediaData(33); // aqua door (made small)
+            p2.media = new MediaDesc(33); // aqua door (made small)
             spotty.addPortal(p2);
 
             furn = new FurniData();
             furn.id = 1;
-            furn.media = new MediaData(35); // candles
+            furn.media = new MediaDesc(35); // candles
             furn.loc = new MsoyLocation(.45, 1, 0, 0);
             model.addFurni(furn);
 
             furn = new FurniData();
             furn.id = 2;
-            furn.media = new MediaData(29); // cactus
+            furn.media = new MediaDesc(29); // cactus
             furn.loc = new MsoyLocation(.6, -.1, 0, 0);
             model.addFurni(furn);
 
             furn = new FurniData();
             furn.id = 3;
-            furn.media = new MediaData(30); // fishbowl
+            furn.media = new MediaDesc(30); // fishbowl
             furn.loc = new MsoyLocation(.8, -.1, 0, 0);
             model.addFurni(furn);
 
             furn = new FurniData();
             furn.id = 4;
-            furn.media = new MediaData(37); // frame
+            furn.media = new MediaDesc(37); // frame
             furn.loc = new MsoyLocation(.42, .5, .999, 0);
             furn.scaleX = furn.scaleY = 1.9f;
             model.addFurni(furn);
 
             furn = new FurniData();
             furn.id = 5;
-            furn.media = new MediaData(5); // joshua tree
+            furn.media = new MediaDesc(5); // joshua tree
             furn.loc = new MsoyLocation(.42, .22, 1, 0);
             furn.scaleX = 1.3f;
             furn.scaleY = 1.3f;
@@ -786,7 +786,7 @@ public class MsoySceneRepository extends SimpleRepository
 
             furn = new FurniData();
             furn.id = 6;
-            furn.media = new MediaData(53); // square100
+            furn.media = new MediaDesc(53); // square100
             furn.loc = new MsoyLocation(.2, 0, .2, 0);
             furn.scaleX = .5f;
             model.addFurni(furn);
@@ -794,16 +794,16 @@ public class MsoySceneRepository extends SimpleRepository
         } else if (sceneId == 2) {
             // alley
             model.type = "image";
-            model.background = new MediaData(11); // alley
-            model.music = new MediaData(13); // boll weevil
+            model.background = new MediaDesc(11); // alley
+            model.music = new MediaDesc(13); // boll weevil
 
             portal.loc = new MsoyLocation(0, .1, .53, 180);
             portal.targetSceneId = 1;
-            portal.media = new MediaData(3); // alley door
+            portal.media = new MediaDesc(3); // alley door
 
             furn = new FurniData();
             furn.id = 0;
-            furn.media = new MediaData(10); // director's chair
+            furn.media = new MediaDesc(10); // director's chair
             furn.loc = new MsoyLocation(.46, 0, .15, 0);
             model.addFurni(furn);
 
@@ -811,22 +811,22 @@ public class MsoySceneRepository extends SimpleRepository
             // cliff
             model.type = "image";
             model.width = 800;
-            model.background = new MediaData(23); // cliff background
+            model.background = new MediaDesc(23); // cliff background
 
             portal.loc = new MsoyLocation(.5, 0, .5, 0);
             portal.targetSceneId = 6;
             portal.targetPortalId = 2;
-            portal.media = new MediaData(19); // bendaydoor
+            portal.media = new MediaDesc(19); // bendaydoor
 
             furn = new FurniData();
             furn.id = 1;
-            furn.media = new MediaData(24); // cliff foreground
+            furn.media = new MediaDesc(24); // cliff foreground
             furn.loc = new MsoyLocation(.5, 0, 0, 0);
             model.addFurni(furn);
 
             furn = new FurniData();
             furn.id = 2;
-            furn.media = new MediaData(36); // cedric
+            furn.media = new MediaDesc(36); // cedric
             furn.loc = new MsoyLocation(.15, 0, .35, 0);
             model.addFurni(furn);
 
@@ -834,25 +834,25 @@ public class MsoySceneRepository extends SimpleRepository
             // fans
             model.type = "image";
             model.width = 800;
-            model.background = new MediaData(8); // fancy room
+            model.background = new MediaDesc(8); // fancy room
 
             portal.loc = new MsoyLocation(0, 0, .8, 0);
             portal.targetSceneId = 1;
             portal.targetPortalId = 3;
             portal.scaleX = -1;
-            portal.media = new MediaData(6); // rainbow door
+            portal.media = new MediaDesc(6); // rainbow door
 
             furn = new FurniData();
             furn.id = 1;
             //furn.scaleX = -2f;
             //furn.scaleY = 1f;
-            furn.media = new MediaData(7); // fans
+            furn.media = new MediaDesc(7); // fans
             furn.loc = new MsoyLocation(.5, 0, 0, 0);
             model.addFurni(furn);
 
             furn = new FurniData();
             furn.id = 2;
-            furn.media = new MediaData(9); // pinball
+            furn.media = new MediaDesc(9); // pinball
             furn.scaleX = -1;
             furn.loc = new MsoyLocation(.8, 0, .2, 0);
             //furn.action = "http://www.pinballnews.com/";
@@ -861,14 +861,14 @@ public class MsoySceneRepository extends SimpleRepository
 
             furn = new FurniData();
             furn.id = 3;
-            furn.media = new MediaData(12); // curtain
+            furn.media = new MediaDesc(12); // curtain
             furn.loc = new MsoyLocation(.2, 0, 1, 0);
             model.addFurni(furn);
 
             /*
             furn = new FurniData();
             furn.id = 4;
-            furn.media = new MediaData(5); // Joshua Tree
+            furn.media = new MediaDesc(5); // Joshua Tree
             furn.loc = new MsoyLocation(.5, 0, 1, 0);
             furn.scaleX = 2;
             furn.scaleY = 2;
@@ -879,7 +879,7 @@ public class MsoySceneRepository extends SimpleRepository
             /*
             furn = new FurniData();
             furn.id = 5;
-            furn.media = new MediaData(15); // 3d logic
+            furn.media = new MediaDesc(15); // 3d logic
             furn.loc = new MsoyLocation(.5, 0, 0, 0);
             model.addFurni(furn);
             */
@@ -888,30 +888,30 @@ public class MsoySceneRepository extends SimpleRepository
             // faucet
             model.type = "image";
             model.width = 1600;
-            model.background = new MediaData(26); // faucet forest
+            model.background = new MediaDesc(26); // faucet forest
 
             portal.loc = new MsoyLocation(.3125, .71, 0, 0);
             portal.targetSceneId = 1;
             portal.targetPortalId = 4;
-            portal.media = new MediaData(27); // pipe
+            portal.media = new MediaDesc(27); // pipe
 
         } else if (sceneId == 6) {
             // comic
             model.type = "image";
             model.width = 1600;
-            model.background = new MediaData(16); // comic room
+            model.background = new MediaDesc(16); // comic room
 
             portal.loc = new MsoyLocation(0, 0, .5, 0);
             portal.targetSceneId = 1;
             portal.targetPortalId = 2;
-            portal.media = new MediaData(18); // bendaydoor
+            portal.media = new MediaDesc(18); // bendaydoor
 
             p2 = new MsoyPortal();
             p2.portalId = 2;
             p2.targetSceneId = 3;
             p2.targetPortalId = 1;
             p2.loc = new MsoyLocation(.84, 0, .3, 0);
-            p2.media = new MediaData(19); // bendaytransport
+            p2.media = new MediaDesc(19); // bendaytransport
             spotty.addPortal(p2);
 
             /*
@@ -920,13 +920,13 @@ public class MsoySceneRepository extends SimpleRepository
             p2.targetPortalId = 1;
             p2.targetSceneId = 2;
             p2.loc = new MsoyLocation(.5, 0, .5, 0);
-            p2.media = new MediaData(6);
+            p2.media = new MediaDesc(6);
             spotty.addPortal(p2);
             */
 
             furn = new FurniData();
             furn.id = 1;
-            furn.media = new MediaData(17); // comic foreground
+            furn.media = new MediaDesc(17); // comic foreground
             furn.loc = new MsoyLocation(.5, 0, 0, 0);
             model.addFurni(furn);
 
@@ -936,7 +936,7 @@ public class MsoySceneRepository extends SimpleRepository
 
             furn = new FurniData();
             furn.id = 1;
-            furn.media = new MediaData(15); // 3d logic
+            furn.media = new MediaDesc(15); // 3d logic
             furn.loc = new MsoyLocation(.5, 0, 1, 0);
             furn.scaleX = 1.1f;
             furn.scaleY = .9f;
@@ -945,7 +945,7 @@ public class MsoySceneRepository extends SimpleRepository
             portal.loc = new MsoyLocation(.5, 0, .5, 0);
             portal.targetSceneId = 1;
             portal.targetPortalId = 5;
-            portal.media = new MediaData(19); // bendaytransport
+            portal.media = new MediaDesc(19); // bendaytransport
 
         } else {
             System.err.println("Unknown scene: " + sceneId);

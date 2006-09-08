@@ -26,7 +26,7 @@ import com.threerings.whirled.spot.data.ModifyPortalsUpdate;
 import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 import com.threerings.msoy.item.client.InventoryPanel;
 import com.threerings.msoy.item.data.Item;
@@ -180,7 +180,7 @@ public class EditRoomController extends Controller
         var portal :MsoyPortal = new MsoyPortal();
         portal.portalId = getNextPortalId();
         portal.loc = loc;
-        portal.media = new MediaData(1);
+        portal.media = new MediaDesc(1);
         portal.targetSceneId = 1;
         portal.targetPortalId = -1;
 
@@ -403,7 +403,7 @@ public class EditRoomController extends Controller
         var furni :FurniData = new FurniData();
         furni.id = getNextFurniId();
         furni.loc = cloc.loc;
-        furni.media = MediaData.fromItem(item);
+        furni.media = MediaDesc.fromItem(item);
 
         // create a loose sprite to represent it, add it to the panel
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);

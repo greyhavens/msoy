@@ -32,7 +32,7 @@ import mx.effects.Zoom;
 import mx.events.EffectEvent;
 import mx.events.SliderEvent;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 import com.threerings.msoy.world.client.MsoySprite;
 
 public class TestFPS
@@ -93,10 +93,10 @@ public class TestFPS
         // add any new media necessary
         while (value > _media.length) {
 
-            var pick :int = int(Math.random() * MediaData.getTestCount());
-            var desc :MediaData = new MediaData(pick);
+            var pick :int = int(Math.random() * MediaDesc.getTestCount());
+            var desc :MediaDesc = new MediaDesc(pick);
             //if (url.indexOf("tube") != -1) {
-            //    desc = new MediaData(url, 100, 100);
+            //    desc = new MediaDesc(url, 100, 100);
             //}
             var screenMedia :MsoySprite = new MsoySprite(desc);
             screenMedia.x = Math.random() * _container.width;

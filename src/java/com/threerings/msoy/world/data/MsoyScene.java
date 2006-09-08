@@ -18,7 +18,7 @@ import com.threerings.whirled.spot.data.SpotScene;
 import com.threerings.whirled.spot.data.SpotSceneImpl;
 import com.threerings.whirled.spot.data.SpotSceneModel;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 /**
  * Implementation of the Msoy scene interface.
@@ -85,7 +85,7 @@ public class MsoyScene extends SceneImpl
     /**
      * Get the background image.
      */
-    public MediaData getBackground ()
+    public MediaDesc getBackground ()
     {
         return _model.background;
     }
@@ -93,7 +93,7 @@ public class MsoyScene extends SceneImpl
     /**
      * Get the background music.
      */
-    public MediaData getMusic ()
+    public MediaDesc getMusic ()
     {
         return _model.music;
     }

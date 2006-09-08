@@ -73,7 +73,7 @@ public class MemberObject extends BodyObject
     public var homeSceneId :int;
 
     /** The avatar that the user has chosen. */
-    public var avatar :MediaData;
+    public var avatar :MediaDesc;
 
     /** The style of our chat. */
     public var chatStyle :int;
@@ -202,9 +202,9 @@ public class MemberObject extends BodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public function setAvatar (value :MediaData) :void
+    public function setAvatar (value :MediaDesc) :void
     {
-        var ovalue :MediaData = this.avatar;
+        var ovalue :MediaDesc = this.avatar;
         requestAttributeChange(
             AVATAR, value, ovalue);
         this.avatar = value;
@@ -269,7 +269,7 @@ public class MemberObject extends BodyObject
         recentScenes = (ins.readObject() as DSet);
         tokens = (ins.readObject() as MsoyTokenRing);
         homeSceneId = ins.readInt();
-        avatar = (ins.readObject() as MediaData);
+        avatar = (ins.readObject() as MediaDesc);
         chatStyle = ins.readShort();
         chatPopStyle = ins.readShort();
         friends = (ins.readObject() as DSet);

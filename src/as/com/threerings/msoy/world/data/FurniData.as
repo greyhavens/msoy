@@ -9,7 +9,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 public class FurniData
     implements Cloneable, Hashable, Streamable
@@ -18,7 +18,7 @@ public class FurniData
     public var id :int;
 
     /** Info about the media that represents this piece of furni. */
-    public var media :MediaData;
+    public var media :MediaDesc;
 
     /** The location in the scene. */
     public var loc :MsoyLocation;
@@ -87,7 +87,7 @@ public class FurniData
     public function readObject (ins :ObjectInputStream) :void
     {
         id = ins.readInt();
-        media = (ins.readObject() as MediaData);
+        media = (ins.readObject() as MediaDesc);
         loc = (ins.readObject() as MsoyLocation);
         scaleX = ins.readFloat();
         scaleY = ins.readFloat();

@@ -6,7 +6,7 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 /**
  * Encodes a scene update that updates the attributes in the MsoySceneModel.
@@ -29,10 +29,10 @@ public class SceneAttrsUpdate extends SceneUpdate
     public var horizon :Number;
 
     /** The new background. */
-    public var background :MediaData;
+    public var background :MediaDesc;
 
     /** The new music. */
-    public var music :MediaData;
+    public var music :MediaDesc;
 
     override public function apply (model :SceneModel) :void
     {
@@ -67,8 +67,8 @@ public class SceneAttrsUpdate extends SceneUpdate
         depth = ins.readShort();
         width = ins.readShort();
         horizon = ins.readFloat();
-        background = (ins.readObject() as MediaData);
-        music = (ins.readObject() as MediaData);
+        background = (ins.readObject() as MediaDesc);
+        music = (ins.readObject() as MediaDesc);
     }
 }
 }

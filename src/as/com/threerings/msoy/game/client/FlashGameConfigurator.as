@@ -6,7 +6,7 @@ import mx.controls.Label;
 import com.threerings.parlor.game.client.FlexGameConfigurator;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 import com.threerings.msoy.game.data.FlashGameConfig;
 
@@ -42,7 +42,7 @@ public class FlashGameConfigurator extends FlexGameConfigurator
         var fconfig :FlashGameConfig = (_config as FlashGameConfig);
 
         var sel :Object = _game.selectedItem;
-        fconfig.configData = new MediaData(int(sel["data"])).URL;
+        fconfig.configData = new MediaDesc(int(sel["data"])).URL;
     }
 
     /** The game being picked. */

@@ -6,7 +6,7 @@ import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.whirled.spot.data.Portal;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 /**
  * Contains additional info about portals necessary for the msoy world.
@@ -14,7 +14,7 @@ import com.threerings.msoy.data.MediaData;
 public class MsoyPortal extends Portal
 {
     /** The media used to represent the portal. */
-    public var media :MediaData;
+    public var media :MediaDesc;
 
     public var scaleX :Number = 1;
 
@@ -48,7 +48,7 @@ public class MsoyPortal extends Portal
     {
         super.readObject(ins);
 
-        media = (ins.readObject() as MediaData);
+        media = (ins.readObject() as MediaDesc);
         scaleX = ins.readFloat();
         scaleY = ins.readFloat();
     }

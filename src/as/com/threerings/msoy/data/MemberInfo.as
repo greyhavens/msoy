@@ -11,7 +11,7 @@ import com.threerings.crowd.data.OccupantInfo;
 public class MemberInfo extends OccupantInfo
 {
     /** The media that represents our avatar. */
-    public var media :MediaData;
+    public var media :MediaDesc;
 
     /** The style of chat bubble to use. */
     public var chatStyle :int;
@@ -42,7 +42,7 @@ public class MemberInfo extends OccupantInfo
     {
         super.readObject(ins);
 
-        media = (ins.readObject() as MediaData);
+        media = (ins.readObject() as MediaDesc);
         chatStyle = ins.readShort();
         chatPopStyle = ins.readShort();
     }

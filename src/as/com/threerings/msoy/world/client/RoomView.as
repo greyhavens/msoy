@@ -48,7 +48,7 @@ import com.threerings.msoy.chat.client.ChatPopper;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -402,7 +402,7 @@ public class RoomView extends AbstractRoomView
         _ctx.getChatDirector().addChatDisplay(this);
 
         // maybe set up background music
-        var music :MediaData = _scene.getMusic();
+        var music :MediaDesc = _scene.getMusic();
         if (music != null) {
 
 // TODO: playing music is causing freezing right now. Revisit.

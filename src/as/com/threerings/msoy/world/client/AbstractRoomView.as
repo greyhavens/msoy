@@ -43,7 +43,7 @@ import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
@@ -504,7 +504,7 @@ public class AbstractRoomView extends Canvas
         updateDrawnRoom();
 
         // set up the background image
-        var bkgMedia :MediaData = _scene.getBackground();
+        var bkgMedia :MediaDesc = _scene.getBackground();
 
         // if we had a background and now we don't or it's changed, shutdown old
         if (_bkg != null &&

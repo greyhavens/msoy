@@ -15,7 +15,7 @@ import com.threerings.mx.events.CommandEvent;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.data.ChatMessage;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -35,7 +35,7 @@ public class AvatarSprite extends MsoySprite
         sendMessage("setAction", (_move == null) ? "standing" : "walking");
     }
 
-    override protected function setup (desc :MediaData) :void
+    override protected function setup (desc :MediaDesc) :void
     {
         super.setup(desc);
 

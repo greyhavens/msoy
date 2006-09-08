@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.data;
 
-import com.samskivert.util.ObjectUtil;
+import java.util.Arrays;
+
+import com.samskivert.util.StringUtil;
 
 import com.threerings.io.SimpleStreamableObject;
 
@@ -13,13 +15,13 @@ import com.threerings.msoy.item.data.MediaItem;
 /**
  * Contains information about a piece of media in the catalog.
  */
-public class MediaData extends SimpleStreamableObject
+public class MediaDesc extends SimpleStreamableObject
 {
     /** The global id for the media, or -1 to indicate newstyle. */
     public int id;
 
-    /** Newstyle. TODO. */
-    public String hash;
+    /** The hash used to identify a piece of media. */
+    public byte[] hash;
 
     public byte mimeType;
 
@@ -28,12 +30,12 @@ public class MediaData extends SimpleStreamableObject
     /**
      * Create a media descriptor from the specified item.
      */
-    public static MediaData fromItem (Item item)
+    public static MediaDesc fromItem (Item item)
     {
-        MediaData data = new MediaData(-1);
+        MediaDesc data = new MediaDesc(-1);
         if (item instanceof MediaItem) {
             MediaItem mitem = (MediaItem) item;
-            data.hash = mitem.getHashAsString();
+            data.hash = mitem.mediaHash;
             data.mimeType = mitem.mimeType;
 
         } else {
@@ -45,7 +47,7 @@ public class MediaData extends SimpleStreamableObject
         return data;
     }
 
-    public static MediaData fromDBString (String encoded)
+    public static MediaDesc fromDBString (String encoded)
     {
         if (encoded == null) {
             return null;
@@ -53,11 +55,11 @@ public class MediaData extends SimpleStreamableObject
         try {
             int colon = encoded.indexOf(':');
             if (colon == -1) {
-                return new MediaData(Integer.parseInt(encoded));
+                return new MediaDesc(Integer.parseInt(encoded));
             }
 
-            MediaData data = new MediaData(-1);
-            data.hash = encoded.substring(0, colon);
+            MediaDesc data = new MediaDesc(-1);
+            data.hash = StringUtil.unhexlate(encoded.substring(0, colon));
             data.mimeType =
                 (byte) Integer.parseInt(encoded.substring(colon + 1));
             return data;
@@ -67,34 +69,34 @@ public class MediaData extends SimpleStreamableObject
         }
     }
 
-    public static String asDBString (MediaData data)
+    public static String asDBString (MediaDesc data)
     {
         if (data == null) {
             return null;
         }
         if (data.id == -1) {
-            return data.hash + ":" + data.mimeType;
+            return StringUtil.hexlate(data.hash) + ":" + data.mimeType;
         } else {
             return String.valueOf(data.id);
         }
     }
 
     /** Suitable for unserialization. */
-    public MediaData ()
+    public MediaDesc ()
     {
     }
 
-    public MediaData (int id)
+    public MediaDesc (int id)
     {
         this.id = id;
     }
 
     public boolean equals (Object other)
     {
-        if (other instanceof MediaData) {
-            MediaData that = (MediaData) other;
+        if (other instanceof MediaDesc) {
+            MediaDesc that = (MediaDesc) other;
             return (this.id == that.id) &&
-                ObjectUtil.equals(this.hash, that.hash);
+                Arrays.equals(this.hash, that.hash);
         }
         return false;
     }

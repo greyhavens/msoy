@@ -16,7 +16,7 @@ import com.threerings.whirled.spot.data.SpotScene;
 import com.threerings.whirled.spot.data.SpotSceneImpl;
 import com.threerings.whirled.spot.data.SpotSceneModel;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 public class MsoyScene extends SceneImpl
     implements SpotScene, Cloneable
@@ -80,7 +80,7 @@ public class MsoyScene extends SceneImpl
     /**
      * Get the background media.
      */
-    public function getBackground () :MediaData
+    public function getBackground () :MediaDesc
     {
         return _msoyModel.background;
     }
@@ -88,7 +88,7 @@ public class MsoyScene extends SceneImpl
     /**
      * Get the background music.
      */
-    public function getMusic () :MediaData
+    public function getMusic () :MediaDesc
     {
         return _msoyModel.music;
     }

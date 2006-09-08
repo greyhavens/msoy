@@ -8,11 +8,11 @@ import flash.media.SoundChannel;
 
 import flash.net.URLRequest;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 public class SoundPlayer
 {
-    public function SoundPlayer (desc :MediaData)
+    public function SoundPlayer (desc :MediaDesc)
     {
         _desc = desc;
 
@@ -75,6 +75,6 @@ public class SoundPlayer
 
     protected var _chan :SoundChannel;
 
-    protected var _desc :MediaData;
+    protected var _desc :MediaDesc;
 }
 }

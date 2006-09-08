@@ -72,7 +72,7 @@ public class MemberObject extends BodyObject
     public int homeSceneId;
 
     /** The avatar that the user has chosen. */
-    public MediaData avatar;
+    public MediaDesc avatar;
 
     /** The style of our chat. */
     public short chatStyle;
@@ -142,7 +142,7 @@ public class MemberObject extends BodyObject
         super.setOid(oid);
 
         // configure some starter options
-        avatar = new MediaData(AVATARS[oid % AVATARS.length]);
+        avatar = new MediaDesc(AVATARS[oid % AVATARS.length]);
         if (avatar.id == 0) {
             chatStyle = (short) 1;
         }
@@ -162,7 +162,7 @@ public class MemberObject extends BodyObject
             int increment = AVATAR.equals(field) ? 1 : (AVATARS.length - 1);
             int dex = IntListUtil.indexOf(AVATARS, avatar.id);
             int newId = AVATARS[(dex + increment) % AVATARS.length];
-            setAvatar(new MediaData(newId));
+            setAvatar(new MediaDesc(newId));
         }
     }
 
@@ -334,9 +334,9 @@ public class MemberObject extends BodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setAvatar (MediaData value)
+    public void setAvatar (MediaDesc value)
     {
-        MediaData ovalue = this.avatar;
+        MediaDesc ovalue = this.avatar;
         requestAttributeChange(
             AVATAR, value, ovalue);
         this.avatar = value;

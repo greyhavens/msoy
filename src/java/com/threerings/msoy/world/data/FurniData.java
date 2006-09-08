@@ -7,7 +7,7 @@ import com.samskivert.util.ObjectUtil;
 
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 /**
  * Contains information on the location of furniture in a scene.
@@ -19,7 +19,7 @@ public class FurniData extends SimpleStreamableObject
     public int id;
 
     /** Info about the media that represents this piece of furni. */
-    public MediaData media;
+    public MediaDesc media;
 
     /** The location in the scene. */
     public MsoyLocation loc;

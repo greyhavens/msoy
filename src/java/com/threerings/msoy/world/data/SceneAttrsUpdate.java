@@ -6,7 +6,7 @@ package com.threerings.msoy.world.data;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 /**
  * Encodes a scene update that updates the attributes in the MsoySceneModel.
@@ -29,10 +29,10 @@ public class SceneAttrsUpdate extends SceneUpdate
     public float horizon;
 
     /** The new background. */
-    public MediaData background;
+    public MediaDesc background;
 
     /** The new music. */
-    public MediaData music;
+    public MediaDesc music;
 
     @Override
     public void apply (SceneModel model)

@@ -2,6 +2,8 @@ package com.threerings.msoy.data {
 
 import flash.geom.Point;
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.Hashable;
 import com.threerings.util.Util;
 import com.threerings.util.StringUtil;
@@ -16,7 +18,7 @@ import com.threerings.msoy.item.data.MediaItem;
 /**
  * A class containing metadata about a media object.
  */
-public class MediaData
+public class MediaDesc
     implements Hashable, Streamable
 {
     public var isAVM1 :Boolean;
@@ -25,7 +27,7 @@ public class MediaData
     /** or -1 if newstyle. */
     public var id :int;
 
-    public var hash :String;
+    public var hash :ByteArray;
 
     public var mimeType :int;
 
@@ -33,12 +35,12 @@ public class MediaData
     /**
      * Create a media descriptor from the specified item.
      */
-    public static function fromItem (item :Item) :MediaData
+    public static function fromItem (item :Item) :MediaDesc
     {
-        var data :MediaData = new MediaData(-1);
+        var data :MediaDesc = new MediaDesc(-1);
         if (item is MediaItem) {
             var mitem :MediaItem = (item as MediaItem);
-            data.hash = mitem.getHashAsString();
+            data.hash = mitem.mediaHash;
             data.mimeType = mitem.mimeType;
         } else {
             // other kinds of items should have default representations
@@ -55,7 +57,7 @@ public class MediaData
     }
 
     /** Temporary constructor. */
-    public function MediaData (id :int = 0)
+    public function MediaDesc (id :int = 0)
     {
         this.id = id;
         _width = _height = -1;
@@ -79,7 +81,7 @@ public class MediaData
     public function get URL () :String
     {
         if (id == -1) {
-            return MediaItem.getMediaPath(StringUtil.unhexlate(hash), mimeType);
+            return MediaItem.getMediaPath(hash, mimeType);
         }
 
         if (DATA[id][3]) {
@@ -122,8 +124,8 @@ public class MediaData
     // documentation inherited from Hashable
     public function equals (other :Object) :Boolean
     {
-        if (other is MediaData) {
-            var that :MediaData = (other as MediaData);
+        if (other is MediaDesc) {
+            var that :MediaDesc = (other as MediaDesc);
             return (this.id == that.id) && Util.equals(this.hash, that.hash);
         }
         return false;
@@ -141,7 +143,7 @@ public class MediaData
     public function readObject (ins :ObjectInputStream) :void
     {
         id = ins.readInt();
-        hash = (ins.readField(String) as String);
+        hash = (ins.readField(ByteArray) as ByteArray);
         mimeType = ins.readByte();
     }
 

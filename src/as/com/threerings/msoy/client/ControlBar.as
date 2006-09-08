@@ -17,7 +17,6 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.data.MediaData;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.chat.client.ChatControl;

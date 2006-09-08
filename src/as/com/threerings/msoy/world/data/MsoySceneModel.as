@@ -8,7 +8,7 @@ import com.threerings.io.TypedArray;
 
 import com.threerings.whirled.data.SceneModel;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 public class MsoySceneModel extends SceneModel
 {
@@ -28,10 +28,10 @@ public class MsoySceneModel extends SceneModel
     public var horizon :Number;
 
     /** The background image of the scene. */
-    public var background :MediaData;
+    public var background :MediaDesc;
 
     /** The music to play in the background. */
-    public var music :MediaData;
+    public var music :MediaDesc;
 
     /** The furniture in the scene. */
     public var furnis :TypedArray;
@@ -114,8 +114,8 @@ public class MsoySceneModel extends SceneModel
         depth = ins.readShort();
         width = ins.readShort();
         horizon = ins.readFloat();
-        background = (ins.readObject() as MediaData);
-        music = (ins.readObject() as MediaData);
+        background = (ins.readObject() as MediaDesc);
+        music = (ins.readObject() as MediaDesc);
         furnis = (ins.readObject() as TypedArray);
     }
 

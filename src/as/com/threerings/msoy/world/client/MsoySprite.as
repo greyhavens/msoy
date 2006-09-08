@@ -47,7 +47,7 @@ import mx.events.VideoEvent;
 import com.threerings.util.MediaContainer;
 
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -82,7 +82,7 @@ public class MsoySprite extends MediaContainer
     /**
      * Constructor.
      */
-    public function MsoySprite (desc :MediaData)
+    public function MsoySprite (desc :MediaDesc)
     {
         super(null);
         setup(desc);
@@ -90,7 +90,7 @@ public class MsoySprite extends MediaContainer
         setStyle("backgroundImage", _loadingImgClass);
     }
 
-    protected function setup (desc :MediaData) :void
+    protected function setup (desc :MediaDesc) :void
     {
         if (_desc != null && _desc.id == desc.id) {
             return;
@@ -271,7 +271,7 @@ public class MsoySprite extends MediaContainer
         throw new Error("Cannot set scale of abstract MsoySprite");
     }
 
-    public function get description () :MediaData
+    public function get description () :MediaDesc
     {
         return _desc;
     }
@@ -530,7 +530,7 @@ public class MsoySprite extends MediaContainer
     protected var _id :int;
 
     /** Our Media descripter. */
-    protected var _desc :MediaData;
+    protected var _desc :MediaDesc;
 
     /** Used to dispatch events down to the swf we contain. */
     protected var _dispatch :EventDispatcher;

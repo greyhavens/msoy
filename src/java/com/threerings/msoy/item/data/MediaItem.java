@@ -55,12 +55,6 @@ public abstract class MediaItem extends Item
         return getMediaPath(mediaHash, mimeType);
     }
 
-    // REMOVE
-    public String getHashAsString ()
-    {
-        return hashToString(mediaHash);
-    }
-
     /**
      * Set the hash and mimetype of this item.
      */

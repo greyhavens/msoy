@@ -9,7 +9,7 @@ import com.samskivert.util.ListUtil;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.spot.data.SpotSceneModel;
 
-import com.threerings.msoy.data.MediaData;
+import com.threerings.msoy.data.MediaDesc;
 
 /**
  * Extends basic scene model with scene type.
@@ -32,10 +32,10 @@ public class MsoySceneModel extends SceneModel
     public float horizon;
 
     /** The background image of the scene. */
-    public MediaData background;
+    public MediaDesc background;
 
     /** The background music for the scene. */
-    public MediaData music;
+    public MediaDesc music;
 
     /** The furniture in the scene. */
     public FurniData[] furnis = new FurniData[0];

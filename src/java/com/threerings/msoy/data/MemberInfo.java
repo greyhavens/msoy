@@ -13,7 +13,7 @@ import com.threerings.crowd.data.OccupantInfo;
 public class MemberInfo extends OccupantInfo
 {
     /** The media that represents our avatar. */
-    public MediaData media;
+    public MediaDesc media;
 
     /** The style of chat bubble to use. */
     public short chatStyle;
