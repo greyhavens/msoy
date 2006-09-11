@@ -19,13 +19,13 @@ public class MsoyAuthResponseData extends AuthResponseData
     /** A machine identifier to be assigned to this machine, or null. */
     public var ident :String;
 
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        out.writeField(sessionToken);
-        out.writeField(ident);
-    }
+//    override public function writeObject (out :ObjectOutputStream) :void
+//    {
+//        super.writeObject(out);
+//
+//        out.writeField(sessionToken);
+//        out.writeField(ident);
+//    }
 
     override public function readObject (ins :ObjectInputStream) :void
     {

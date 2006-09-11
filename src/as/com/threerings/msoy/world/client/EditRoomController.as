@@ -705,7 +705,7 @@ public class EditRoomController extends Controller
             }
 
         } else {
-            throw new Error("Unknown sprite type edited");
+            throw new Error("Unknown sprite type edited: " + sprite);
         }
     }
 

@@ -129,135 +129,135 @@ public class MemberObject extends BodyObject
         return memberName;
     }
 
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Requests that the <code>sceneId</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public function setSceneId (value :int) :void
-    {
-        var ovalue :int = this.sceneId;
-        requestAttributeChange(
-            SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.sceneId = value;
-    }
-
-    /**
-     * Requests that the <code>clusterOid</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public function setClusterOid (value :int) :void
-    {
-        var ovalue :int = this.clusterOid;
-        requestAttributeChange(
-            CLUSTER_OID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.clusterOid = value;
-    }
-
-    /**
-     * Requests that the <code>tokens</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public function setTokens (value :MsoyTokenRing) :void
-    {
-        var ovalue :MsoyTokenRing = this.tokens;
-        requestAttributeChange(
-            TOKENS, value, ovalue);
-        this.tokens = value;
-    }
-
-    /**
-     * Requests that the <code>homeSceneId</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public function setHomeSceneId (value :int) :void
-    {
-        var ovalue :int = this.homeSceneId;
-        requestAttributeChange(
-            HOME_SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.homeSceneId = value;
-    }
-
-    /**
-     * Requests that the <code>avatar</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public function setAvatar (value :MediaDesc) :void
-    {
-        var ovalue :MediaDesc = this.avatar;
-        requestAttributeChange(
-            AVATAR, value, ovalue);
-        this.avatar = value;
-    }
-
-    /**
-     * Requests that the <code>chatStyle</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public function setChatStyle (value :int) :void
-    {
-        var ovalue :int = this.chatStyle;
-        requestAttributeChange(
-            CHAT_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
-        this.chatStyle = value;
-    }
-
-    /**
-     * Requests that the <code>chatPopStyle</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public function setChatPopStyle (value :int) :void
-    {
-        var ovalue :int = this.chatPopStyle;
-        requestAttributeChange(
-            CHAT_POP_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
-        this.chatPopStyle = value;
-    }
-    // AUTO-GENERATED: METHODS END
-
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-
-        out.writeObject(memberName);
-        out.writeInt(sceneId);
-        out.writeInt(clusterOid);
-        out.writeObject(recentScenes);
-        out.writeObject(tokens);
-        out.writeInt(homeSceneId);
-        out.writeObject(avatar);
-        out.writeShort(chatStyle);
-        out.writeShort(chatPopStyle);
-        out.writeObject(friends);
-    }
+//    // AUTO-GENERATED: METHODS START
+//    /**
+//     * Requests that the <code>sceneId</code> field be set to the
+//     * specified value. The local value will be updated immediately and an
+//     * event will be propagated through the system to notify all listeners
+//     * that the attribute did change. Proxied copies of this object (on
+//     * clients) will apply the value change when they received the
+//     * attribute changed notification.
+//     */
+//    public function setSceneId (value :int) :void
+//    {
+//        var ovalue :int = this.sceneId;
+//        requestAttributeChange(
+//            SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+//        this.sceneId = value;
+//    }
+//
+//    /**
+//     * Requests that the <code>clusterOid</code> field be set to the
+//     * specified value. The local value will be updated immediately and an
+//     * event will be propagated through the system to notify all listeners
+//     * that the attribute did change. Proxied copies of this object (on
+//     * clients) will apply the value change when they received the
+//     * attribute changed notification.
+//     */
+//    public function setClusterOid (value :int) :void
+//    {
+//        var ovalue :int = this.clusterOid;
+//        requestAttributeChange(
+//            CLUSTER_OID, Integer.valueOf(value), Integer.valueOf(ovalue));
+//        this.clusterOid = value;
+//    }
+//
+//    /**
+//     * Requests that the <code>tokens</code> field be set to the
+//     * specified value. The local value will be updated immediately and an
+//     * event will be propagated through the system to notify all listeners
+//     * that the attribute did change. Proxied copies of this object (on
+//     * clients) will apply the value change when they received the
+//     * attribute changed notification.
+//     */
+//    public function setTokens (value :MsoyTokenRing) :void
+//    {
+//        var ovalue :MsoyTokenRing = this.tokens;
+//        requestAttributeChange(
+//            TOKENS, value, ovalue);
+//        this.tokens = value;
+//    }
+//
+//    /**
+//     * Requests that the <code>homeSceneId</code> field be set to the
+//     * specified value. The local value will be updated immediately and an
+//     * event will be propagated through the system to notify all listeners
+//     * that the attribute did change. Proxied copies of this object (on
+//     * clients) will apply the value change when they received the
+//     * attribute changed notification.
+//     */
+//    public function setHomeSceneId (value :int) :void
+//    {
+//        var ovalue :int = this.homeSceneId;
+//        requestAttributeChange(
+//            HOME_SCENE_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+//        this.homeSceneId = value;
+//    }
+//
+//    /**
+//     * Requests that the <code>avatar</code> field be set to the
+//     * specified value. The local value will be updated immediately and an
+//     * event will be propagated through the system to notify all listeners
+//     * that the attribute did change. Proxied copies of this object (on
+//     * clients) will apply the value change when they received the
+//     * attribute changed notification.
+//     */
+//    public function setAvatar (value :MediaDesc) :void
+//    {
+//        var ovalue :MediaDesc = this.avatar;
+//        requestAttributeChange(
+//            AVATAR, value, ovalue);
+//        this.avatar = value;
+//    }
+//
+//    /**
+//     * Requests that the <code>chatStyle</code> field be set to the
+//     * specified value. The local value will be updated immediately and an
+//     * event will be propagated through the system to notify all listeners
+//     * that the attribute did change. Proxied copies of this object (on
+//     * clients) will apply the value change when they received the
+//     * attribute changed notification.
+//     */
+//    public function setChatStyle (value :int) :void
+//    {
+//        var ovalue :int = this.chatStyle;
+//        requestAttributeChange(
+//            CHAT_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
+//        this.chatStyle = value;
+//    }
+//
+//    /**
+//     * Requests that the <code>chatPopStyle</code> field be set to the
+//     * specified value. The local value will be updated immediately and an
+//     * event will be propagated through the system to notify all listeners
+//     * that the attribute did change. Proxied copies of this object (on
+//     * clients) will apply the value change when they received the
+//     * attribute changed notification.
+//     */
+//    public function setChatPopStyle (value :int) :void
+//    {
+//        var ovalue :int = this.chatPopStyle;
+//        requestAttributeChange(
+//            CHAT_POP_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
+//        this.chatPopStyle = value;
+//    }
+//    // AUTO-GENERATED: METHODS END
+//
+//    override public function writeObject (out :ObjectOutputStream) :void
+//    {
+//        super.writeObject(out);
+//
+//        out.writeObject(memberName);
+//        out.writeInt(sceneId);
+//        out.writeInt(clusterOid);
+//        out.writeObject(recentScenes);
+//        out.writeObject(tokens);
+//        out.writeInt(homeSceneId);
+//        out.writeObject(avatar);
+//        out.writeShort(chatStyle);
+//        out.writeShort(chatPopStyle);
+//        out.writeObject(friends);
+//    }
 
     override public function readObject (ins :ObjectInputStream) :void
     {
