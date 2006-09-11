@@ -101,11 +101,13 @@ public class EditRoomController extends Controller
         _roomView.removeEventListener(MouseEvent.MOUSE_DOWN, roomPressed);
 
         // remove all sprites we've added
-        while (_addedSprites.length > 0) {
-            _roomView.removeChild(_addedSprites.pop() as MsoySprite);
+        var sprite :MsoySprite;
+        for each (sprite in _addedSprites) {
+            _roomView.removeChild(sprite);
+            _ctx.getMediaDirector().returnSprite(sprite);
         }
-        while (_removedSprites.length > 0) {
-            _roomView.addChild(_removedSprites.pop() as MsoySprite);
+        for each (sprite in _removedSprites) {
+            _roomView.addChild(sprite);
         }
 
         var edits :TypedArray = null;

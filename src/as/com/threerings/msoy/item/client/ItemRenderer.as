@@ -1,5 +1,7 @@
 package com.threerings.msoy.item.client {
 
+import flash.display.DisplayObjectContainer;
+
 import mx.containers.VBox;
 
 import mx.controls.Label;
@@ -29,7 +31,27 @@ public class ItemRenderer extends VBox
     override public function validateDisplayList () :void
     {
         super.validateDisplayList();
+        recheckItem();
+    }
 
+    override public function parentChanged (p :DisplayObjectContainer) :void
+    {
+        super.parentChanged(p);
+
+        if (p == null && data != null) {
+            data = null;
+            recheckItem();
+        }
+    }
+
+    override protected function measure () :void
+    {
+        measuredWidth = 300;
+        measuredHeight = 250;
+    }
+
+    protected function recheckItem () :void
+    {
         var item :Item = (data as Item);
         if (!Util.equals(item, _item)) {
             _item = item;
@@ -43,12 +65,6 @@ public class ItemRenderer extends VBox
                 _label.text = _item.getInventoryDescrip();
             }
         }
-    }
-
-    override protected function measure () :void
-    {
-        measuredWidth = 300;
-        measuredHeight = 300;
     }
 
     override protected function createChildren () :void

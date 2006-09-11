@@ -27,9 +27,8 @@ public class InventoryPanel extends FloatingPanel
 
         svc.getInventory(_ctx.getClient(), new ResultWrapper(
             function (cause :String) :void {
-                // TODO: put in status bar?
-                Log.getLog(InventoryPanel).warning(
-                    "Unable to retrieve inventory: " + cause);
+                // place failure cause in the status
+                status = _ctx.xlate(null, cause);
             }, inventoryRetrieved));
     }
 
