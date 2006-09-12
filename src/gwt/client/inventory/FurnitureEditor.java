@@ -4,6 +4,10 @@
 package client.inventory;
 
 import com.google.gwt.core.client.GWT;
+
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
+
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
@@ -46,8 +50,12 @@ public class FurnitureEditor extends MediaItemEditor
         _descrip.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char keyCode, int mods) {
                 if (_furniture != null) {
-                    _furniture.description = _descrip.getText();
-                    updateSubmittable();
+                    DeferredCommand.add(new Command() {
+                        public void execute () {
+                            _furniture.description = _descrip.getText();
+                            updateSubmittable();
+                        }
+                    });
                 }
             }
         });
