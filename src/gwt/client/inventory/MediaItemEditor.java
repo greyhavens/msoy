@@ -8,6 +8,9 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FormHandler;
+import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -37,6 +40,19 @@ public abstract class MediaItemEditor extends ItemEditor
         _panel.setTarget("upload");
         _panel.setMethodAsPost();
         _panel.setMultipartEncoding();
+
+// TODO: make this work, handle errors, check the status
+//        _panel.addFormHandler(new FormHandler() {
+//            public void onSubmit (FormSubmitEvent event) {
+//                // nada for now
+//            }
+//
+//            public void onSubmitComplete (FormSubmitCompleteEvent event) {
+//                // TODO: what is the format of the results?
+//                _out.setText(event.getResults());
+//            }
+//        });
+
         _panel.addField(new FileUploadField("media"), "media");
 
         if (GWT.isScript()) {
