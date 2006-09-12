@@ -41,7 +41,7 @@ public class FlashWidget extends Widget
         // set up some defaults, filling in both the embed and param tags
         setBackgroundColor("#FFFFFF");
         setQuality("high");
-        setSize(400, 400);
+        setPixelSize(400, 400);
     }
 
     public void setMovie (String path)
@@ -62,14 +62,10 @@ public class FlashWidget extends Widget
         DOM.setAttribute(_embed, "bgcolor", bgcolor);
     }
 
-    public void setSize (int width, int height)
-    {
-        setSize(String.valueOf(width), String.valueOf(height));
-    }
-
     // @Override (UIObject)
     public void setHeight (String height)
     {
+        height = ensurePixels(height);
         DOM.setAttribute(getElement(), "height", height);
         DOM.setAttribute(_embed, "height", height);
     }
@@ -77,6 +73,7 @@ public class FlashWidget extends Widget
     // @Override (UIObject)
     public void setWidth (String width)
     {
+        width = ensurePixels(width);
         DOM.setAttribute(getElement(), "width", width);
         DOM.setAttribute(_embed, "width", width);
     }
@@ -87,6 +84,21 @@ public class FlashWidget extends Widget
         DOM.setAttribute(pelem, "name", name);
         DOM.setAttribute(pelem, "value", value);
         return pelem;
+    }
+
+    /**
+     * Chop off any non-numeric suffix.
+     */
+    protected String ensurePixels (String value)
+    {
+        int index = 0;
+        for (int nn = value.length(); index < nn; index++) {
+            char c = value.charAt(index);
+            if (c < '0' || c > '9') {
+                break;
+            }
+        }
+        return value.substring(0, index);
     }
 
     protected Element _embed;

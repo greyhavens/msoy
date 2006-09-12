@@ -53,7 +53,7 @@ public class index extends MsoyEntryPoint
                 if (_client == null) {
                     _client = new FlashWidget("asclient");
                     _client.setMovie("/clients/Msoy.swf");
-                    _client.setSize(900, 600);
+                    _client.setPixelSize(900, 600);
                 }
                 RootPanel.get("content").add(_client);
             }
