@@ -33,6 +33,8 @@ import flash.system.SecurityDomain;
 
 import flash.net.URLRequest;
 
+import flash.utils.getTimer; // function import
+
 import mx.core.Container;
 import mx.core.UIComponent;
 
@@ -99,7 +101,6 @@ public class MsoySprite extends MediaContainer
             return;
         }
 
-        _id = int(Math.random() * int.MAX_VALUE);
         _desc = desc;
 
         setMedia(desc.URL);
@@ -141,10 +142,13 @@ public class MsoySprite extends MediaContainer
 
     override protected function setupSwfOrImage (url :String) :void
     {
-//        if (_desc.isAVM1) {
-//            // TODO
-//            url += "?oid=" + _id;
-//        }
+        if (_desc.mimeType == MediaItem.APPLICATION_SHOCKWAVE_FLASH) {
+            // create a unique id for the media
+            _id = String(getTimer()) + int(Math.random() * int.MAX_VALUE);
+
+            // TODO
+            url += "?oid=" + _id;
+        }
         super.setupSwfOrImage(url);
 
         // then, grab a reference to the shared event dispatcher
@@ -298,29 +302,24 @@ public class MsoySprite extends MediaContainer
 // assign a different mimetype to old swfs so that we know as part of the
 // MediaDesc that it's AVM1
 
+        // do it both ways for now
 
-//        // TODO: we can check loaderInfo.swfVersion, but
-//        // as of now we need to know the version prior to loading
-//        // anyway (so that we know whether to load with a random id
-//        // appended
-//        if (_desc.isAVM1) {
-//            if (_oldDispatch == null) {
-//                _oldDispatch = new LocalConnection();
-//                _oldDispatch.allowDomain("*");
-//                _oldDispatch.addEventListener(
-//                    StatusEvent.STATUS, onLocalConnStatus);
-//            }
-//            try {
-//                _oldDispatch.send("_msoy" + _id, type, msg);
-//            } catch (e :Error) {
-//                // nada
-//            }
-//
-//        } else {
-            // the new way
-            // simply post an event across the security boundary
-            _dispatch.dispatchEvent(new TextEvent(type, false, false, msg));
-//        }
+        // old way
+        if (_oldDispatch == null) {
+            _oldDispatch = new LocalConnection();
+            _oldDispatch.allowDomain("*");
+            _oldDispatch.addEventListener(
+                StatusEvent.STATUS, onLocalConnStatus);
+        }
+        try {
+            _oldDispatch.send("_msoy" + _id, type, msg);
+        } catch (e :Error) {
+            // nada
+        }
+
+        // and the new way
+        // simply post an event across the security boundary
+        _dispatch.dispatchEvent(new TextEvent(type, false, false, msg));
     }
 
     /**
@@ -543,7 +542,9 @@ public class MsoySprite extends MediaContainer
     }
 */
 
-    protected var _id :int;
+    /** An id (hopefully unique on this machine) used to communicate with
+     * AVM1 swfs over a LocalConnection. */
+    protected var _id :String;
 
     /** Our Media descripter. */
     protected var _desc :MediaDesc;
@@ -554,8 +555,8 @@ public class MsoySprite extends MediaContainer
     /** The glow effect used for mouse hovering. */
     protected var _glow :Glow;
 
-//    /** A single LocalConnection used to communicate with all AVM1 media. */
-//    protected static var _oldDispatch :LocalConnection;
+    /** A single LocalConnection used to communicate with all AVM1 media. */
+    protected static var _oldDispatch :LocalConnection;
 
     [Embed(source="../../../../../../../rsrc/media/indian_h.png")]
     protected static const _loadingImgClass :Class;
