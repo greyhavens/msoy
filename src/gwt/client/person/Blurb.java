@@ -51,17 +51,17 @@ public abstract class Blurb extends DockPanel
     protected Blurb ()
     {
         setStyleName("blurb_box");
-        add(_title = new Label("Title"), NORTH);
-        _title.setStyleName("blurb_title");
+        add(_header = new Label("Header"), NORTH);
+        _header.setStyleName("blurb_header");
         add(createContent(), CENTER);
     }
 
     /**
-     * Can be called by the derived class to set the title of this blurb.
+     * Can be called by the derived class to set the header text of this blurb.
      */
-    public void setTitle (String title)
+    protected void setHeader (String header)
     {
-        _title.setText(title);
+        _header.setText(header);
     }
 
     /**
@@ -84,5 +84,5 @@ public abstract class Blurb extends DockPanel
     protected WebContext _ctx;
     protected int _memberId;
     protected int _blurbId;
-    protected Label _title;
+    protected Label _header;
 }

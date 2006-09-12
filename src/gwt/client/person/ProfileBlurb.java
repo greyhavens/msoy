@@ -60,7 +60,7 @@ public class ProfileBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (Object blurbData)
     {
-        setTitle("Profile");
+        setHeader("Profile");
 
         _profile = (Profile)blurbData;
         displayProfile();
@@ -69,7 +69,7 @@ public class ProfileBlurb extends Blurb
     // @Override // from Blurb
     protected void didFail (String cause)
     {
-        setTitle("Error");
+        setHeader("Error");
         _name.setText("Failed to load profile data: " + cause);
     }
 

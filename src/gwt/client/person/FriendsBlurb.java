@@ -25,7 +25,7 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected void didInit (Object blurbData)
     {
-        setTitle("Friends");
+        setHeader("Friends");
 
         ArrayList friends = (ArrayList)blurbData;
         if (friends.size() == 0) {
@@ -44,7 +44,7 @@ public class FriendsBlurb extends Blurb
     // @Override // from Blurb
     protected void didFail (String cause)
     {
-        setTitle("Error");
+        setHeader("Error");
         setStatus("Failed to load friends: " + cause);
     }
 
