@@ -59,7 +59,7 @@ public abstract class Blurb extends DockPanel
     /**
      * Can be called by the derived class to set the title of this blurb.
      */
-    protected void setTitle (String title)
+    public void setTitle (String title)
     {
         _title.setText(title);
     }
