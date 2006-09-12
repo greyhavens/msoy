@@ -139,6 +139,10 @@ public class UploadServlet extends HttpServlet
         }
 
         // look up the mime type
+        // TODO: this will have to change. We cannot depend on the user
+        // supplying us with a valid content type, not because of malice, but
+        // because it's quite common to have a file type that your own
+        // computer doesn't understand but which you can play on the web.
         int mimeType = MediaItem.stringToMimeType(item.getContentType());
         if (mimeType == -1) {
             log.warning("Received upload of unknown mime type " +
