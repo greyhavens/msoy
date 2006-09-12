@@ -17,22 +17,19 @@ import com.threerings.msoy.item.data.MediaItem;
  */
 public class MediaDesc extends SimpleStreamableObject
 {
-    /** The global id for the media, or -1 to indicate newstyle. */
-    public int id;
-
     /** The hash used to identify a piece of media. */
     public byte[] hash;
 
     public byte mimeType;
 
-    // more to come
+    // more to come?
 
     /**
      * Create a media descriptor from the specified item.
      */
     public static MediaDesc fromItem (Item item)
     {
-        MediaDesc data = new MediaDesc(-1);
+        MediaDesc data = new MediaDesc();
         if (item instanceof MediaItem) {
             MediaItem mitem = (MediaItem) item;
             data.hash = mitem.mediaHash;
@@ -47,6 +44,7 @@ public class MediaDesc extends SimpleStreamableObject
         return data;
     }
 
+/*
     public static MediaDesc fromDBString (String encoded)
     {
         if (encoded == null) {
@@ -80,22 +78,29 @@ public class MediaDesc extends SimpleStreamableObject
             return String.valueOf(data.id);
         }
     }
+*/
 
     /** Suitable for unserialization. */
     public MediaDesc ()
     {
     }
 
-    public MediaDesc (int id)
+    /**
+     * TEMPORARY CONSTRUCTOR, for making it easy for me to
+     * pre-initialize some media...
+     */
+    public MediaDesc (String filename)
     {
-        this.id = id;
+        hash = MediaItem.stringToHash(
+            filename.substring(0, filename.indexOf('.')));
+        mimeType = (byte) MediaItem.suffixToMimeType(filename);
     }
 
     public boolean equals (Object other)
     {
         if (other instanceof MediaDesc) {
             MediaDesc that = (MediaDesc) other;
-            return (this.id == that.id) &&
+            return (this.mimeType == that.mimeType) &&
                 Arrays.equals(this.hash, that.hash);
         }
         return false;
@@ -104,6 +109,11 @@ public class MediaDesc extends SimpleStreamableObject
     // documentation inherited
     public int hashCode ()
     {
-        return id;
+        int code = 0;
+        for (int ii = Math.min(3, hash.length - 1); ii >= 0; ii--) {
+            code <<= 8;
+            code |= hash[ii];
+        }
+        return code;
     }
 }

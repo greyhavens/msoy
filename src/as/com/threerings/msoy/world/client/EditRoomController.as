@@ -17,6 +17,7 @@ import mx.managers.DragManager;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Iterator;
+import com.threerings.util.StringUtil;
 import com.threerings.util.Util;
 
 import com.threerings.io.TypedArray;
@@ -30,6 +31,7 @@ import com.threerings.msoy.data.MediaDesc;
 
 import com.threerings.msoy.item.client.InventoryPanel;
 import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.data.MediaItem;
 
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyPortal;
@@ -182,7 +184,10 @@ public class EditRoomController extends Controller
         var portal :MsoyPortal = new MsoyPortal();
         portal.portalId = getNextPortalId();
         portal.loc = loc;
-        portal.media = new MediaDesc(1);
+        portal.media = new MediaDesc();
+        portal.media.hash = StringUtil.unhexlate(
+            "7fbc0922c7f36e1ce14648466b42c093185b6c1b");
+        portal.media.mimeType = MediaItem.IMAGE_PNG;
         portal.targetSceneId = 1;
         portal.targetPortalId = -1;
 

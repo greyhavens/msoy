@@ -39,7 +39,7 @@ public class MsoyScene extends SceneImpl
     /**
      * Returns the scene type.
      */
-    public function getType () :String
+    public function getType () :int
     {
         return _msoyModel.type;
     }

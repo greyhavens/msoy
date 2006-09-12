@@ -17,7 +17,7 @@ import com.threerings.msoy.data.MediaDesc;
 public class SceneAttrsUpdate extends SceneUpdate
 {
     /** The new type. */
-    public var type :String;
+    public var type :int;
 
     /** The new depth. */
     public var depth :int;
@@ -51,7 +51,7 @@ public class SceneAttrsUpdate extends SceneUpdate
     {
         super.writeObject(out);
 
-        out.writeField(type);
+        out.writeByte(type);
         out.writeShort(depth);
         out.writeShort(width);
         out.writeFloat(horizon);
@@ -63,7 +63,7 @@ public class SceneAttrsUpdate extends SceneUpdate
     {
         super.readObject(ins);
 
-        type = (ins.readField(String) as String);
+        type = ins.readByte();
         depth = ins.readShort();
         width = ins.readShort();
         horizon = ins.readFloat();

@@ -17,7 +17,7 @@ import com.threerings.msoy.data.MediaDesc;
 public class SceneAttrsUpdate extends SceneUpdate
 {
     /** The new type. */
-    public String type;
+    public byte type;
 
     /** The new depth. */
     public short depth;

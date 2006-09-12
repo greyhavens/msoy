@@ -16,8 +16,17 @@ import com.threerings.msoy.data.MediaDesc;
  */
 public class MsoySceneModel extends SceneModel
 {
+    /** A type constant indicating a normal room where defaultly
+     * draw some walls. */
+    public static final byte DRAWN_ROOM = 0;
+
+    /** A type constant indicating a room where the background image should
+     * be drawn covering everything, but layered behind everything else such
+     * that the background image IS the scene to the viewer. */
+    public static final byte IMAGE_OVERLAY = 1;
+
     /** The type of scene that this is. Determines how it is rendered. */
-    public String type;
+    public byte type;
 
     /** The memberId of the owner of this scene. */
     public int ownerId;

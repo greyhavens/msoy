@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.data;
 
-import com.samskivert.util.IntListUtil;
+import com.samskivert.util.ListUtil;
 
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
@@ -142,10 +142,8 @@ public class MemberObject extends BodyObject
         super.setOid(oid);
 
         // configure some starter options
-        avatar = new MediaDesc(AVATARS[oid % AVATARS.length]);
-        if (avatar.id == 0) {
-            chatStyle = (short) 1;
-        }
+        avatar = AVATARS[oid % AVATARS.length];
+        chatStyle = (short) (oid % 2);
         chatPopStyle = (short) (oid % 2);
     }
     // END
@@ -160,9 +158,8 @@ public class MemberObject extends BodyObject
 
         } else {
             int increment = AVATAR.equals(field) ? 1 : (AVATARS.length - 1);
-            int dex = IntListUtil.indexOf(AVATARS, avatar.id);
-            int newId = AVATARS[(dex + increment) % AVATARS.length];
-            setAvatar(new MediaDesc(newId));
+            int dex = ListUtil.indexOf(AVATARS, avatar);
+            setAvatar(AVATARS[(dex + increment) % AVATARS.length]);
         }
     }
 
@@ -424,9 +421,10 @@ public class MemberObject extends BodyObject
     // AUTO-GENERATED: METHODS END
 
     // TEMP: media ids for our standard avatars
-    public static final int[] AVATARS = {
-        0, 1, 2, 20, 21, 22, 25, 38, 39,
-        40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 54
+    public static final MediaDesc[] AVATARS = {
+        new MediaDesc("e1c4cd0111619e0d8c038b90292aa6ec0bd5d86a.swf"),
+        new MediaDesc("4cadc322f2afbc7330a5e0098025637cf568f2cb.swf"),
+        new MediaDesc("2a6b4b657db5a7138f1a97cff91544c4d41deffa.swf"),
     };
 
     public static final int MAX_RECENT_SCENES = 10;

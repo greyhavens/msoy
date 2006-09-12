@@ -44,7 +44,7 @@ public class MsoyScene extends SceneImpl
     /**
      * Returns the type of the scene.
      */
-    public String getType ()
+    public byte getType ()
     {
         return _model.type;
     }

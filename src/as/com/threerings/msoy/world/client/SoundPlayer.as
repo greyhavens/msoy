@@ -10,6 +10,8 @@ import flash.net.URLRequest;
 
 import com.threerings.msoy.data.MediaDesc;
 
+import com.threerings.msoy.item.data.MediaItem;
+
 public class SoundPlayer
 {
     public function SoundPlayer (desc :MediaDesc)
@@ -50,9 +52,9 @@ public class SoundPlayer
         }
     }
 
-    public function getMediaId () :int
+    public function getMediaId () :String
     {
-        return _desc.id;
+        return MediaItem.hashToString(_desc.hash);
     }
 
     public function getPosition () :Number

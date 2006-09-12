@@ -48,6 +48,7 @@ import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomObject;
 
 public class AbstractRoomView extends Canvas
@@ -521,7 +522,7 @@ public class AbstractRoomView extends Canvas
                 removeChild(_bkg); // we'll re-add
             }
             switch (_scene.getType()) {
-            case "image":
+            case MsoySceneModel.IMAGE_OVERLAY:
                 // by adding it to the raw children, it does not participate
                 // in Z order movements
                 _bkg.includeInLayout = false;
@@ -545,7 +546,7 @@ public class AbstractRoomView extends Canvas
             _bkgGraphics = null;
         }
 
-        if (_scene.getType() == "image") {
+        if (_scene.getType() == MsoySceneModel.IMAGE_OVERLAY) {
             return; // nothing to draw
         }
 

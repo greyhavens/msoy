@@ -36,12 +36,12 @@ public class Prefs
         config.setValue(MACHINE_IDENT, ident);
     }
 
-    public static function getMediaPosition (id :int) :Number
+    public static function getMediaPosition (id :String) :Number
     {
         return (config.getValue(mediaKey(id), 0) as Number);
     }
 
-    public static function setMediaPosition (id :int, position :Number) :void
+    public static function setMediaPosition (id :String, position :Number) :void
     {
         config.setValue(mediaKey(id), position);
     }
@@ -54,7 +54,7 @@ public class Prefs
     /**
      * Internal function to create a media position key.
      */
-    private static function mediaKey (id :int) :String
+    private static function mediaKey (id :String) :String
     {
         return "mediaPos_" + id;
     }

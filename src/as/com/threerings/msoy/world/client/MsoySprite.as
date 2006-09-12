@@ -44,10 +44,13 @@ import mx.effects.Glow;
 import mx.events.EffectEvent;
 import mx.events.VideoEvent;
 
+import com.threerings.util.Util;
 import com.threerings.util.MediaContainer;
 
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MediaDesc;
+
+import com.threerings.msoy.item.data.MediaItem;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -92,7 +95,7 @@ public class MsoySprite extends MediaContainer
 
     protected function setup (desc :MediaDesc) :void
     {
-        if (_desc != null && _desc.id == desc.id) {
+        if (Util.equals(desc, _desc)) {
             return;
         }
 
@@ -138,21 +141,24 @@ public class MsoySprite extends MediaContainer
 
     override protected function setupSwfOrImage (url :String) :void
     {
-        if (_desc.isAVM1) {
-            // TODO
-            url += "?oid=" + _id;
-        }
+//        if (_desc.isAVM1) {
+//            // TODO
+//            url += "?oid=" + _id;
+//        }
         super.setupSwfOrImage(url);
 
         // then, grab a reference to the shared event dispatcher
         _dispatch = (_media as Loader).contentLoaderInfo.sharedEvents;
     }
 
+// TODO: do we want to save media dimensions?
+/*
     override protected function setupBrokenImage (
         w :int = -1, h :int = -1) :void
     {
         super.setupBrokenImage(_desc.width, _desc.height);
     }
+*/
 
     /**
      * Unload the media we're displaying, clean up any resources.
@@ -164,8 +170,8 @@ public class MsoySprite extends MediaContainer
     {
         if (_media is VideoDisplay) {
             var vid :VideoDisplay = (_media as VideoDisplay);
-            Prefs.setMediaPosition(_desc.id, vid.playheadTime);
-            trace("saving media pos: " + vid.playheadTime);
+            Prefs.setMediaPosition(
+                MediaItem.hashToString(_desc.hash), vid.playheadTime);
         }
 
         super.shutdown(completely);
@@ -176,7 +182,8 @@ public class MsoySprite extends MediaContainer
 
     public function get hotSpot () :Point
     {
-        var p :Point = _desc.hotSpot;
+        // TODO: figure out where we're going to store hotspot info
+        var p :Point = null; // TODO _desc.hotSpot;
         if (p == null) {
             p = new Point(contentWidth/2, contentHeight);
 
@@ -283,28 +290,37 @@ public class MsoySprite extends MediaContainer
     {
 //        trace("sending [" + type + "=" + msg + "]");
 
-        // TODO: we can check loaderInfo.swfVersion, but
-        // as of now we need to know the version prior to loading
-        // anyway (so that we know whether to load with a random id
-        // appended
-        if (_desc.isAVM1) {
-            if (_oldDispatch == null) {
-                _oldDispatch = new LocalConnection();
-                _oldDispatch.allowDomain("*");
-                _oldDispatch.addEventListener(
-                    StatusEvent.STATUS, onLocalConnStatus);
-            }
-            try {
-                _oldDispatch.send("_msoy" + _id, type, msg);
-            } catch (e :Error) {
-                // nada
-            }
 
-        } else {
+// Note:
+// I'm thinking that we just do not support old swfs with our interaction
+// API. This makes this AVM1 nonsense just go away.
+// If it turns out that this isn't possible, then perhaps we should
+// assign a different mimetype to old swfs so that we know as part of the
+// MediaDesc that it's AVM1
+
+
+//        // TODO: we can check loaderInfo.swfVersion, but
+//        // as of now we need to know the version prior to loading
+//        // anyway (so that we know whether to load with a random id
+//        // appended
+//        if (_desc.isAVM1) {
+//            if (_oldDispatch == null) {
+//                _oldDispatch = new LocalConnection();
+//                _oldDispatch.allowDomain("*");
+//                _oldDispatch.addEventListener(
+//                    StatusEvent.STATUS, onLocalConnStatus);
+//            }
+//            try {
+//                _oldDispatch.send("_msoy" + _id, type, msg);
+//            } catch (e :Error) {
+//                // nada
+//            }
+//
+//        } else {
             // the new way
             // simply post an event across the security boundary
             _dispatch.dispatchEvent(new TextEvent(type, false, false, msg));
-        }
+//        }
     }
 
     /**
@@ -328,8 +344,8 @@ public class MsoySprite extends MediaContainer
 
         // TODO: this seems broken, check it
         // set the position of the media to the specified timestamp
-        vid.playheadTime = Prefs.getMediaPosition(_desc.id);
-        trace("restored playhead time: " + Prefs.getMediaPosition(_desc.id));
+        vid.playheadTime = Prefs.getMediaPosition(
+            MediaItem.hashToString(_desc.hash));
 
         super.loadVideoReady(event);
     }
@@ -538,8 +554,8 @@ public class MsoySprite extends MediaContainer
     /** The glow effect used for mouse hovering. */
     protected var _glow :Glow;
 
-    /** A single LocalConnection used to communicate with all AVM1 media. */
-    protected static var _oldDispatch :LocalConnection;
+//    /** A single LocalConnection used to communicate with all AVM1 media. */
+//    protected static var _oldDispatch :LocalConnection;
 
     [Embed(source="../../../../../../../rsrc/media/indian_h.png")]
     protected static const _loadingImgClass :Class;

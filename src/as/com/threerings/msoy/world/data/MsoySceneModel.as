@@ -12,8 +12,17 @@ import com.threerings.msoy.data.MediaDesc;
 
 public class MsoySceneModel extends SceneModel
 {
+    /** A type constant indicating a normal room where defaultly
+     * draw some walls. */
+    public static const DRAWN_ROOM :int = 0;
+
+    /** A type constant indicating a room where the background image should
+     * be drawn covering everything, but layered behind everything else such
+     * that the background image IS the scene to the viewer. */
+    public static const IMAGE_OVERLAY :int = 1;
+
     /** The type of scene. */
-    public var type :String;
+    public var type :int;
 
     /** The memberId of the owner of this scene. */
     public var ownerId :int;
@@ -94,7 +103,7 @@ public class MsoySceneModel extends SceneModel
     {
         super.writeObject(out);
 
-        out.writeField(type);
+        out.writeByte(type);
         out.writeInt(ownerId);
         out.writeShort(depth);
         out.writeShort(width);
@@ -109,7 +118,7 @@ public class MsoySceneModel extends SceneModel
     {
         super.readObject(ins);
 
-        type = (ins.readField(String) as String);
+        type = ins.readByte();
         ownerId = ins.readInt();
         depth = ins.readShort();
         width = ins.readShort();
