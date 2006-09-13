@@ -47,9 +47,9 @@ import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
-import com.threerings.msoy.item.data.Document;
-import com.threerings.msoy.item.data.Photo;
-import com.threerings.msoy.item.data.Furniture;
+import com.threerings.msoy.item.web.Document;
+import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.item.web.Furniture;
 
 import com.threerings.msoy.world.data.RoomConfig;
 

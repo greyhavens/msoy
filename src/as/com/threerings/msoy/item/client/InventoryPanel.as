@@ -10,7 +10,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.List;
 
-import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.web.Item;
 
 public class InventoryPanel extends FloatingPanel
 {

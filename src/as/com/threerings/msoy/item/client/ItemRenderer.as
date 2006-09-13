@@ -13,7 +13,7 @@ import com.threerings.util.Util;
 
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
-import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.web.Item;
 
 /**
  * Renders an item in our inventory.
