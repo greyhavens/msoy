@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.data;
+package com.threerings.msoy.item.web;
 
 /**
  * Represents a piece of furniture (any prop really) that a user can place into

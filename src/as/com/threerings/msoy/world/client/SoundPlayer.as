@@ -10,7 +10,7 @@ import flash.net.URLRequest;
 
 import com.threerings.msoy.data.MediaDesc;
 
-import com.threerings.msoy.item.data.MediaItem;
+import com.threerings.msoy.item.web.MediaItem;
 
 public class SoundPlayer
 {

@@ -13,7 +13,7 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JORARepository;
 import com.samskivert.jdbc.jora.Table;
 
-import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.web.Item;
 
 /**
  * Manages a repository of digital items of a particular type.

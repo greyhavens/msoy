@@ -26,7 +26,7 @@ import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.msoy.item.data.MediaItem;
+import com.threerings.msoy.item.web.MediaItem;
 import com.threerings.msoy.server.ServerConfig;
 
 import static com.threerings.msoy.Log.log;

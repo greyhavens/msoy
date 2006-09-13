@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.item.util;
 
-import com.threerings.msoy.item.data.Document;
-import com.threerings.msoy.item.data.Furniture;
-import com.threerings.msoy.item.data.Item;
-import com.threerings.msoy.item.data.Photo;
+import com.threerings.msoy.item.web.Document;
+import com.threerings.msoy.item.web.Furniture;
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.Photo;
 
 /**
  * Defines the set of all known concrete {@link Item} types.

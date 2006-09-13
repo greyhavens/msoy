@@ -30,8 +30,8 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MediaDesc;
 
 import com.threerings.msoy.item.client.InventoryPanel;
-import com.threerings.msoy.item.data.Item;
-import com.threerings.msoy.item.data.MediaItem;
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaItem;
 
 import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.client.FurniSprite;

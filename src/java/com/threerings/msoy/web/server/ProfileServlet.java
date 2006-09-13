@@ -11,7 +11,7 @@ import com.samskivert.io.PersistenceException;
 
 import com.threerings.util.Name;
 
-import com.threerings.msoy.item.data.Photo;
+import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.Profile;

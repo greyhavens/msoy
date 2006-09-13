@@ -9,8 +9,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.Document;
-import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.web.Document;
+import com.threerings.msoy.item.web.Item;
 
 /**
  * A class for creating and editing {@link Document} digital items.

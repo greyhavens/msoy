@@ -5,7 +5,7 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.item.data.Photo;
+import com.threerings.msoy.item.web.Photo;
 
 /**
  * Contains all member profile data for display on the profile page.

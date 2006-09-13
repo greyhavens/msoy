@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.data {
+package com.threerings.msoy.item.web {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;

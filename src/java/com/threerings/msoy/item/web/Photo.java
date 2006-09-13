@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.data;
+package com.threerings.msoy.item.web;
 
 /**
  * Represents an uploaded photograph for display in albumns or for use as a

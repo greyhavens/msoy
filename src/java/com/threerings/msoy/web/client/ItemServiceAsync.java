@@ -5,7 +5,7 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**

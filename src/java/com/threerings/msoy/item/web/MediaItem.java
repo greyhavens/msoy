@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.data;
+package com.threerings.msoy.item.web;
 
 /**
  * The base class for all digital items that have associated static media.

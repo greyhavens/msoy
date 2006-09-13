@@ -24,7 +24,7 @@ import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.item.data.Photo;
+import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.Profile;
 
 import com.threerings.msoy.server.persist.MemberRecord;

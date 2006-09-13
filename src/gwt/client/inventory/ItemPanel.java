@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.web.client.WebContext;
 
 /**

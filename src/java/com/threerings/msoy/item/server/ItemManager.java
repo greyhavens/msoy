@@ -23,7 +23,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.util.ItemEnum;
 

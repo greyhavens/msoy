@@ -9,8 +9,8 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.msoy.item.data.Item;
-import com.threerings.msoy.item.data.MediaItem;
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaItem;
 
 /**
  * Contains information about a piece of media in the catalog.

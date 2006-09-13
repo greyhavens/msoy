@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import com.threerings.msoy.item.data.Document;
+import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.MsoyEntryPoint;

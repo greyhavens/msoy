@@ -11,7 +11,7 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.jora.Table;
 
-import com.threerings.msoy.item.data.Document;
+import com.threerings.msoy.item.web.Document;
 
 /**
  * Manages the persistent store of {@link Document} items.

@@ -52,7 +52,7 @@ import com.threerings.util.MediaContainer;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MediaDesc;
 
-import com.threerings.msoy.item.data.MediaItem;
+import com.threerings.msoy.item.web.MediaItem;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 

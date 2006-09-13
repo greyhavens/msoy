@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.data;
+package com.threerings.msoy.item.web;
 
 /**
  * A digital item representing a simple text document.

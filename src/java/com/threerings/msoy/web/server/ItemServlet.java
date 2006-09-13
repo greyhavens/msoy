@@ -8,7 +8,7 @@ import java.util.logging.Level;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import com.threerings.msoy.item.data.Item;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.server.MsoyServer;
 

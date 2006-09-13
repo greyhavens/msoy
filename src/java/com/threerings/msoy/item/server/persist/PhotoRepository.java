@@ -11,7 +11,7 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.jora.Table;
 
-import com.threerings.msoy.item.data.Photo;
+import com.threerings.msoy.item.web.Photo;
 
 /**
  * Manages the persistent store of {@link Photo} items.

@@ -15,10 +15,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.Item;
-import com.threerings.msoy.item.data.Furniture;
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.Furniture;
 
 import client.MsoyEntryPoint;
+
+import client.util.DeferredKeyPressCommand;
 
 /**
  * A class for creating and editing {@link Furniture} digital items.
@@ -47,6 +49,16 @@ public class FurnitureEditor extends MediaItemEditor
 
         setText(row+2, 0, "Description");
         setWidget(row+2, 1, _descrip = new TextBox());
+        /*
+        _descrip.addKeyboardListener(new DeferredKeyPressCommand(new Command() {
+            public void execute () {
+                if (_furniture != null) {
+                    _furniture.description = _descrip.getText();
+                    updateSubmittable();
+                }
+            }
+        }));
+        */
         _descrip.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char keyCode, int mods) {
                 if (_furniture != null) {

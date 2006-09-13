@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.item.data.MediaItem;
+import com.threerings.msoy.item.web.MediaItem;
 
 import org.gwtwidgets.client.ui.FileUploadField;
 import org.gwtwidgets.client.ui.FormPanel;

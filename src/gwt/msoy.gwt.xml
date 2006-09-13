@@ -6,7 +6,7 @@
   <source path="com/threerings/io"/>
   <source path="com/threerings/msoy/web/client"/>
   <source path="com/threerings/msoy/web/data"/>
-  <source path="com/threerings/msoy/item/data"/>
+  <source path="com/threerings/msoy/item/web"/>
   <servlet path="/user" class="com.threerings.msoy.web.server.RedirectServlet"/>
   <servlet path="/item" class="com.threerings.msoy.web.server.RedirectServlet"/>
   <servlet path="/profile" class="com.threerings.msoy.web.server.RedirectServlet"/>

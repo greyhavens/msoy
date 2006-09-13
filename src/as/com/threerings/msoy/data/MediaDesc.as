@@ -12,8 +12,8 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.item.data.Item;
-import com.threerings.msoy.item.data.MediaItem;
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaItem;
 
 /**
  * A class containing metadata about a media object.
