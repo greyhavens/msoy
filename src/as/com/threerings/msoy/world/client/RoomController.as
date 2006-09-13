@@ -29,6 +29,8 @@ import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
 
+import com.threerings.msoy.world.client.editor.EditorController;
+
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
@@ -243,7 +245,7 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
         _walkTarget.visible = false;
 
-        _editor = new EditRoomController(_mctx, this, _roomView, _scene);
+        _editor = new EditorController(_mctx, this, _roomView, _scene);
     }
 
     protected function mouseLeft (event :MouseEvent) :void
@@ -353,6 +355,6 @@ public class RoomController extends SceneController
     protected var _walkTarget :DisplayObject = new TargetCursor();
 
     /** Are we editing the current scene? */
-    protected var _editor :EditRoomController;
+    protected var _editor :EditorController;
 }
 }

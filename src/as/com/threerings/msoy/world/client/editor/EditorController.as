@@ -1,4 +1,4 @@
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.editor {
 
 import flash.events.MouseEvent;
 import flash.events.KeyboardEvent;
@@ -33,6 +33,13 @@ import com.threerings.msoy.item.client.InventoryPanel;
 import com.threerings.msoy.item.data.Item;
 import com.threerings.msoy.item.data.MediaItem;
 
+import com.threerings.msoy.world.client.ClickLocation;
+import com.threerings.msoy.world.client.FurniSprite;
+import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.PortalSprite;
+import com.threerings.msoy.world.client.RoomController;
+import com.threerings.msoy.world.client.RoomView;
+
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -41,7 +48,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
-public class EditRoomController extends Controller
+public class EditorController extends Controller
 {
     public static const INSERT_PORTAL :String = "InsertPortal";
     public static const INSERT_FURNI :String = "InsertFurni";
@@ -56,7 +63,7 @@ public class EditRoomController extends Controller
     public static const DISCARD_EDITS :String = "DiscardEdits";
     public static const SAVE_EDITS :String = "SaveEdits";
 
-    public function EditRoomController (
+    public function EditorController (
         ctx :MsoyContext, roomCtrl :RoomController, roomView :RoomView,
         scene :MsoyScene)
     {
@@ -70,7 +77,7 @@ public class EditRoomController extends Controller
         _roomView.setEditing(true, enableEditingVisitor);
 
         // pop up our control kit
-        _panel = new EditRoomPanel(ctx, this, roomView, _scene);
+        _panel = new EditorPanel(ctx, this, roomView, _scene);
 
         // set it as our controlled panel
         setControlledPanel(_panel);
@@ -843,7 +850,7 @@ public class EditRoomController extends Controller
 
     protected var _scene :MsoyScene;
 
-    protected var _panel :EditRoomPanel;
+    protected var _panel :EditorPanel;
 
     protected var _roomCtrl :RoomController;
 

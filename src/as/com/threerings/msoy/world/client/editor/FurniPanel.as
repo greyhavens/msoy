@@ -1,4 +1,4 @@
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.editor {
 
 import mx.controls.TextInput;
 
@@ -6,9 +6,9 @@ import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.ui.MsoyUI;
 
-public class FurniEditorPanel extends SpriteEditorPanel
+public class FurniPanel extends SpritePanel
 {
-    public function FurniEditorPanel (ctx :MsoyContext)
+    public function FurniPanel (ctx :MsoyContext)
     {
         super(ctx);
     }

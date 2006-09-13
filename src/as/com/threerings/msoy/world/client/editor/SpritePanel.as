@@ -1,4 +1,4 @@
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.editor {
 
 import mx.binding.utils.BindingUtils;
 
@@ -15,9 +15,12 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.MsoyUI;
 
-public class SpriteEditorPanel extends Grid
+import com.threerings.msoy.world.client.MsoySprite;
+
+
+public class SpritePanel extends Grid
 {
-    public function SpriteEditorPanel (ctx :MsoyContext)
+    public function SpritePanel (ctx :MsoyContext)
     {
         _ctx = ctx;
     }
@@ -134,7 +137,7 @@ public class SpriteEditorPanel extends Grid
     protected function spriteWasTextuallyEdited () :void
     {
         CommandEvent.dispatch(
-            this, EditRoomController.PROPERTIES_TYPED, _sprite);
+            this, EditorController.PROPERTIES_TYPED, _sprite);
     }
 
     protected var _ctx :MsoyContext;

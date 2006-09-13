@@ -1,4 +1,4 @@
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.editor {
 
 import mx.binding.utils.BindingUtils;
 
@@ -13,9 +13,12 @@ import com.threerings.msoy.world.data.MsoyPortal;
 
 import com.threerings.msoy.ui.MsoyUI;
 
-public class PortalEditorPanel extends SpriteEditorPanel
+import com.threerings.msoy.world.client.PortalSprite;
+
+
+public class PortalPanel extends SpritePanel
 {
-    public function PortalEditorPanel (ctx :MsoyContext)
+    public function PortalPanel (ctx :MsoyContext)
     {
         super(ctx);
     }

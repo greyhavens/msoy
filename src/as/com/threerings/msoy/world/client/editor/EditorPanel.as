@@ -1,4 +1,4 @@
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.world.client.editor {
 
 import mx.binding.utils.BindingUtils;
 
@@ -18,19 +18,24 @@ import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
+import com.threerings.msoy.world.client.FurniSprite;
+import com.threerings.msoy.world.client.MsoySprite;
+import com.threerings.msoy.world.client.PortalSprite;
+import com.threerings.msoy.world.client.RoomView;
+
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 /**
  * A floating control widget that aids in scene editing.
  */
-public class EditRoomPanel extends FloatingPanel
+public class EditorPanel extends FloatingPanel
 {
     public static const DISCARD_BUTTON :int = 10;
     public static const SAVE_BUTTON :int = 11;
 
-    public function EditRoomPanel (
-        ctx :MsoyContext, ctrl :EditRoomController, roomView :RoomView,
+    public function EditorPanel (
+        ctx :MsoyContext, ctrl :EditorController, roomView :RoomView,
         editableScene :MsoyScene)
     {
         super(ctx, ctx.xlate("editing", "t.editing"));
@@ -51,9 +56,9 @@ public class EditRoomPanel extends FloatingPanel
 
         if (sprite != null) {
             if (sprite is FurniSprite) {
-                _spriteEditor = new FurniEditorPanel(_ctx);
+                _spriteEditor = new FurniPanel(_ctx);
             } else if (sprite is PortalSprite) {
-                _spriteEditor = new PortalEditorPanel(_ctx);
+                _spriteEditor = new PortalPanel(_ctx);
             } else {
                 throw new Error();
             }
@@ -65,7 +70,7 @@ public class EditRoomPanel extends FloatingPanel
     }
 
     /**
-     * Called by the EditRoomController while sprite properties are
+     * Called by the EditorController while sprite properties are
      * being updated interactively.
      */
     public function spritePropertiesUpdated () :void
@@ -98,15 +103,15 @@ public class EditRoomPanel extends FloatingPanel
 
         var btn :CommandButton;
 
-        btn = new CommandButton(EditRoomController.INSERT_PORTAL);
+        btn = new CommandButton(EditorController.INSERT_PORTAL);
         btn.label = _ctx.xlate("editing", "b.new_portal");
         addChild(btn);
 
-        btn = new CommandButton(EditRoomController.INSERT_FURNI);
+        btn = new CommandButton(EditorController.INSERT_FURNI);
         btn.label = _ctx.xlate("editing", "b.new_furni");
         addChild(btn);
 
-        btn = new CommandButton(EditRoomController.DEL_ITEM);
+        btn = new CommandButton(EditorController.DEL_ITEM);
         btn.label = _ctx.xlate("editing", "b.delete_item");
         btn.enabled = false;
         _deleteBtn = btn;
@@ -161,12 +166,12 @@ public class EditRoomPanel extends FloatingPanel
         var btn :CommandButton;
         switch (buttonId) {
         case DISCARD_BUTTON:
-            btn = new CommandButton(EditRoomController.DISCARD_EDITS);
+            btn = new CommandButton(EditorController.DISCARD_EDITS);
             btn.label = _ctx.xlate("editing", "b.discard_edits");
             return btn;
 
         case SAVE_BUTTON:
-            btn = new CommandButton(EditRoomController.SAVE_EDITS);
+            btn = new CommandButton(EditorController.SAVE_EDITS);
             btn.label = _ctx.xlate("editing", "b.save_edits");
             return btn;
 
@@ -175,7 +180,7 @@ public class EditRoomPanel extends FloatingPanel
         }
     }
 
-    protected var _ctrl :EditRoomController;
+    protected var _ctrl :EditorController;
 
     protected var _scene :MsoyScene;
     protected var _sceneModel :MsoySceneModel;
@@ -188,6 +193,6 @@ public class EditRoomPanel extends FloatingPanel
 
     protected var _deleteBtn :CommandButton;
 
-    protected var _spriteEditor :SpriteEditorPanel;
+    protected var _spriteEditor :SpritePanel;
 }
 }
