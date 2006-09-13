@@ -798,9 +798,8 @@ public class MsoySceneRepository extends SimpleRepository
 
             furn = new FurniData();
             furn.id = 5;
-            furn.media = new MediaDesc( // joshua tree
-                // TODO: josh tree wouldn't upload
-                "abd5e0df720cad59ae1603912f1169eaebe27bcd.png"); //fishbowl
+            furn.media = new MediaDesc( // mario galaxy
+                "97080f068568a9c403e5d7fb70ec625754ed807e.flv");
             furn.loc = new MsoyLocation(.42, .22, 1, 0);
             furn.scaleX = 1.3f;
             furn.scaleY = 1.3f;
