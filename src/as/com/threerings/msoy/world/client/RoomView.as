@@ -323,9 +323,9 @@ public class RoomView extends AbstractRoomView
             avatar.setOrientation(loc.orient);
 
         } else {
-            // move the sprite back to the set of active sprites
+            // place the sprite back into the set of active sprites
             _avatars.put(bodyOid, avatar);
-            avatar.moveTo(loc, _scene.getWidth());
+            avatar.moveTo(loc, _scene);
         }
     }
 
@@ -350,7 +350,7 @@ public class RoomView extends AbstractRoomView
             (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
-        avatar.moveTo(loc, _scene.getWidth());
+        avatar.moveTo(loc, _scene);
     }
 
     protected function updateBody (occInfo :MemberInfo) :void

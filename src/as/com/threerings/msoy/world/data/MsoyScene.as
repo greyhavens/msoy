@@ -33,7 +33,8 @@ public class MsoyScene extends SceneImpl
      */
     public function canEdit (member :MemberObject) :Boolean
     {
-        return !member.isGuest() && (getOwnerId() == member.getMemberId());
+        return member.getTokens().isAdmin() ||
+            (!member.isGuest() && (getOwnerId() == member.getMemberId()));
     }
 
     /**

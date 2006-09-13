@@ -217,68 +217,93 @@ public class AbstractRoomView extends Canvas
         var floorWidth :Number, floorInset :Number;
         var xx :Number, yy :Number, zz :Number;
         var scale :Number;
+        var clickWall :int;
 
         // do some partitioning depending on where the y lies
         if (y < backWallTop) {
-            // probably the ceiling, but maybe not
-            // TODO
-            return new ClickLocation(ClickLocation.CEILING,
-                new MsoyLocation(.5, 1, .5, 0));
+            clickWall = ClickLocation.CEILING;
+            scale = minScale +
+                (backWallTop - y) / backWallTop * (MAX_SCALE - minScale);
 
         } else if (y < backWallBottom) {
-            // somewhere in the realm of the back wall...
-            // see how wide the floor is at that scale
-            floorWidth = (sceneWidth * minScale);
-            floorInset = (sceneWidth - floorWidth) / 2;
-            if (x < floorInset) {
-                // TODO
-                return new ClickLocation(ClickLocation.LEFT_WALL,
-                    new MsoyLocation(0, .5, .5));
-
-            } else if (x - floorInset > floorWidth) {
-                // TODO
-                return new ClickLocation(ClickLocation.RIGHT_WALL,
-                    new MsoyLocation(1, .5, .5));
-
-            } else {
-                xx = (x - floorInset) / floorWidth;
-                // y is simply how high they clicked on the wall
-                yy = (backWallBottom - y) / backWallHeight;
-                return new ClickLocation(ClickLocation.BACK_WALL,
-                    new MsoyLocation(xx, yy, 1, 0));
-            }
+            clickWall = ClickLocation.BACK_WALL;
+            scale = minScale;
 
         } else {
-            // solve for scale
+            clickWall = ClickLocation.FLOOR;
             scale = minScale +
                 (y - backWallBottom) / (unscaledHeight - backWallBottom) *
                 (MAX_SCALE - minScale);
+        }
 
-            // see how wide the floor is at that scale
-            floorWidth = (sceneWidth * scale);
-            floorInset = (sceneWidth - floorWidth) / 2;
-            x -= floorInset;
-            if (x < 0) {
-                // TODO
-                return new ClickLocation(ClickLocation.LEFT_WALL,
-                    new MsoyLocation(0, .5, .5));
+        // see how wide the floor is at that scale
+        floorWidth = (sceneWidth * scale);
+        floorInset = (sceneWidth - floorWidth) / 2;
 
-            } else if (x > floorWidth) {
-                // TODO
-                return new ClickLocation(ClickLocation.RIGHT_WALL,
-                    new MsoyLocation(1, .5, .5));
+        if (x < floorInset || x - floorInset > floorWidth) {
+            if (x < floorInset) {
+                clickWall = ClickLocation.LEFT_WALL;
+                xx = 0;
 
             } else {
+                clickWall = ClickLocation.RIGHT_WALL;
+                xx = MAX_COORD;
+            }
 
-                // solve for x & z
-                xx = (x / floorWidth) * MAX_COORD;
+            // recalculate floorWidth at the minimum scale
+            if (scale != minScale) {
+                floorWidth = (sceneWidth * minScale);
+                floorInset = (sceneWidth - floorWidth) / 2;
+            }
+
+            switch (clickWall) {
+            case ClickLocation.LEFT_WALL:
+                scale = minScale +
+                    (x / floorInset) * (MAX_SCALE - minScale);
+                break;
+
+            case ClickLocation.RIGHT_WALL:
+                scale = minScale +
+                    ((sceneWidth - x) / floorInset) * (MAX_SCALE - minScale);
+                break;
+
+            default:
+                throw new Error(clickWall);
+            }
+
+            // TODO: factor in horizon here
+            var wallHeight :Number = (unscaledHeight * scale);
+            var wallInset :Number = (unscaledHeight - wallHeight) / 2;
+            yy = MAX_COORD *
+                (1 - ((y - wallInset) / wallHeight));
+            zz = MAX_COORD *
+                ((scale - minScale) / (MAX_SCALE - minScale));
+
+        } else {
+            // normal case: the x coordinate is within the floor width
+            // at that scale, so we're definitely not clicking on a side wall
+            xx = ((x - floorInset) / floorWidth) * MAX_COORD;
+
+            switch (clickWall) {
+            case ClickLocation.CEILING:
+            case ClickLocation.FLOOR:
+                yy = (clickWall == ClickLocation.CEILING) ? MAX_COORD : 0;
                 zz = MAX_COORD *
                     (1 - ((scale - minScale) / (MAX_SCALE - minScale)));
+                break;
 
-                return new ClickLocation(ClickLocation.FLOOR,
-                    new MsoyLocation(xx, 0, zz, 0));
+            case ClickLocation.BACK_WALL:
+                // y is simply how high they clicked on the wall
+                yy = (backWallBottom - y) / backWallHeight;
+                zz = 1;
+                break;
+
+            default:
+                throw new Error(clickWall);
             }
         }
+
+        return new ClickLocation(clickWall, new MsoyLocation(xx, yy, zz, 0));
     }
 
     /**

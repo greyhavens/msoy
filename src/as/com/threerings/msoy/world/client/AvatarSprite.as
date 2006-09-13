@@ -18,6 +18,7 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.msoy.data.MediaDesc;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.MsoyScene;
 
 public class AvatarSprite extends MsoySprite
 {
@@ -115,7 +116,7 @@ public class AvatarSprite extends MsoySprite
         return _occInfo.chatPopStyle;
     }
 
-    public function moveTo (destLoc :MsoyLocation, sceneWidth :int) :void
+    public function moveTo (destLoc :MsoyLocation, scene :MsoyScene) :void
     {
         // if there's already a move, kill it
         if (_move != null) {
@@ -130,16 +131,7 @@ public class AvatarSprite extends MsoySprite
             setOrientation(180);
         }
 
-        _move = new SceneMove(this);
-        _move.src = this.loc;
-        _move.dest = destLoc;
-
-        var dx :Number = destLoc.x - loc.x;
-        var dy :Number = destLoc.y - loc.y;
-        var dz :Number = destLoc.z - loc.z;
-        _move.duration = Math.sqrt(36 * dx * dx * sceneWidth * sceneWidth +
-            dy * dy * 4 + dz * dz * 9);
-
+        _move = new SceneMove(this, scene, this.loc, destLoc);
         _move.play();
     }
 

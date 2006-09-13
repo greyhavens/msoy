@@ -38,7 +38,8 @@ public class MsoyScene extends SceneImpl
      */
     public boolean canEdit (MemberObject member)
     {
-        return !member.isGuest() && (getOwnerId() == member.getMemberId());
+        return member.getTokens().isAdmin() ||
+            (!member.isGuest() && (getOwnerId() == member.getMemberId()));
     }
 
     /**
