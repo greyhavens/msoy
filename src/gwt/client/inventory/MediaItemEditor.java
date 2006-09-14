@@ -90,13 +90,6 @@ public abstract class MediaItemEditor extends ItemEditor
         configureBridge();
     }
 
-    // @Override // from ItemEditor
-    protected boolean itemConsistent ()
-    {
-        MediaItem item = (MediaItem)_item;
-        return (_item != null) && (item.mediaHash != null);
-    }
-
     /**
      * Configures this item editor with the hash value for media that it is
      * about to upload.

@@ -24,14 +24,20 @@ public class Furniture extends MediaItem
     }
 
     // @Override from Item
-    public String getInventoryDescrip ()
+    public String getDescription ()
     {
-        return toInventoryDescrip(description);
+        return description;
     }
 
     // @Override // from Item
     public String getThumbnailPath ()
     {
         return getMediaPath();
+    }
+
+    // @Override
+    public boolean isConsistent ()
+    {
+        return super.isConsistent() && nonBlank(description);
     }
 }

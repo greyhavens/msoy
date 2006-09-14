@@ -18,8 +18,14 @@ public class Document extends MediaItem
     }
 
     // @Override from Item
-    public String getInventoryDescrip ()
+    public String getDescription ()
     {
-        return toInventoryDescrip(title);
+        return title;
+    }
+
+    // @Override
+    public boolean isConsistent ()
+    {
+        return super.isConsistent() && nonBlank(title);
     }
 }

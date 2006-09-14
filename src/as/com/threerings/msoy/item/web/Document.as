@@ -19,9 +19,9 @@ public class Document extends MediaItem
         return "DOCUMENT";
     }
 
-    override public function getInventoryDescrip () :String
+    override public function getDescription () :String
     {
-        return toInventoryDescrip(title);
+        return title;
     }
 
     override public function writeObject (out :ObjectOutputStream) :void

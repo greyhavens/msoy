@@ -113,7 +113,7 @@ public abstract class ItemEditor extends FlexTable
      */
     protected boolean itemConsistent ()
     {
-        return false;
+        return (_item != null) && _item.isConsistent();
     }
 
     /**

@@ -63,13 +63,6 @@ public class PhotoEditor extends MediaItemEditor
     }
 
     // @Override from ItemEditor
-    protected boolean itemConsistent ()
-    {
-        return super.itemConsistent() &&
-            (_caption.getText().trim().length() > 0);
-    }
-
-    // @Override from ItemEditor
     protected Item createBlankItem ()
     {
         return new Photo();

@@ -55,6 +55,12 @@ public abstract class MediaItem extends Item
         return getMediaPath(mediaHash, mimeType);
     }
 
+    // @Override
+    public boolean isConsistent ()
+    {
+        return super.isConsistent() && (mediaHash != null);
+    }
+
     /**
      * Set the hash and mimetype of this item.
      */

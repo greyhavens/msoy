@@ -19,14 +19,20 @@ public class Photo extends MediaItem
     }
 
     // @Override // from Item
-    public String getInventoryDescrip ()
+    public String getDescription ()
     {
-        return toInventoryDescrip(caption);
+        return caption;
     }
 
     // @Override // from Item
     public String getThumbnailPath ()
     {
         return getMediaPath();
+    }
+
+    // @Override
+    public boolean isConsistent ()
+    {
+        return super.isConsistent() && nonBlank(caption);
     }
 }

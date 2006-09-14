@@ -22,9 +22,9 @@ public class Photo extends MediaItem
     }
 
     // from Item
-    override public function getInventoryDescrip () :String
+    override public function getDescription () :String
     {
-        return toInventoryDescrip(caption);
+        return caption;
     }
 
     // from Item

@@ -48,7 +48,7 @@ public /*abstract*/ class Item
      * Returns the text that should be displayed under the thumbnail image
      * shown in a player's inventory.
      */
-    public function getInventoryDescrip () :String
+    public function getDescription () :String
     {
         throw new Error("abstract");
     }
@@ -59,15 +59,6 @@ public /*abstract*/ class Item
     public function getThumbnailPath () :String
     {
         return "/media/static/items/" + getType().toLowerCase() + ".png";
-    }
-
-    /**
-     * A handy method for truncating some potentially long bit of text for use
-     * in {@link #getInventoryDescrip}.
-     */
-    protected function toInventoryDescrip (text :String) :String
-    {
-        return StringUtil.truncate(text, 32, "...");
     }
 
     // from Hashable

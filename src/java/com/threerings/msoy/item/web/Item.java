@@ -38,10 +38,9 @@ public abstract class Item implements Streamable, IsSerializable
     public abstract String getType ();
 
     /**
-     * Returns the text that should be displayed under the thumbnail image
-     * shown in a player's inventory.
+     * Get a textual description of this item.
      */
-    public abstract String getInventoryDescrip ();
+    public abstract String getDescription ();
 
     /**
      * Returns the path to a thumbnail image for this item.
@@ -49,6 +48,17 @@ public abstract class Item implements Streamable, IsSerializable
     public String getThumbnailPath ()
     {
         return "/media/static/items/" + getType().toLowerCase() + ".png";
+    }
+
+    /**
+     * Verify that all the required fields in this particular Item subclass
+     * are filled in, make sense, and are consistent with each other.
+     * This is used to verify the data being edited by a user during
+     * item creation, and also that the final uploaded item isn't hacked.
+     */
+    public boolean isConsistent ()
+    {
+        return true;
     }
 
     // @Override
@@ -70,11 +80,11 @@ public abstract class Item implements Streamable, IsSerializable
     }
 
     /**
-     * A handy method for truncating some potentially long bit of text for use
-     * in {@link #getInventoryDescrip}.
+     * A handy method that makes sure that the specified text is
+     * not null or all-whitespace. Usually used by isConsistent().
      */
-    protected String toInventoryDescrip (String text)
+    protected boolean nonBlank (String text)
     {
-        return (text.length() <= 32) ? text : (text.substring(0, 29) + "...");
+        return (text != null) && (text.trim().length() > 0);
     }
 }

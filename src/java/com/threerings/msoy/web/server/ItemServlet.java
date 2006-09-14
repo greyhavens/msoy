@@ -30,6 +30,12 @@ public class ItemServlet extends RemoteServiceServlet
     {
         // TODO: validate this user's creds
 
+        // validate the item
+        if (!item.isConsistent()) {
+            // TODO?
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
+
         // TODO: validate anything else?
 
         // configure the item's owner

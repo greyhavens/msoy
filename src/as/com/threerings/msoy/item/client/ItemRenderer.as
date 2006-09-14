@@ -62,7 +62,7 @@ public class ItemRenderer extends VBox
 
             } else {
                 _container.setMedia(_item.getThumbnailPath());
-                _label.text = _item.getInventoryDescrip();
+                _label.text = _item.getDescription();
             }
         }
     }
@@ -87,10 +87,8 @@ public class ItemRenderer extends VBox
         addChild(_container);
 
         addChild(_label = new Label());
-        /*
         _label.maxHeight = 50;
         _label.maxWidth = 250;
-        */
     }
 
     protected var _container :MediaContainer;

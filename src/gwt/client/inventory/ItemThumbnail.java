@@ -35,7 +35,7 @@ public class ItemThumbnail extends VerticalPanel
         thumb.setStyleName("item_thumb_image");
         thumb.setPixelSize(THUMB_WIDTH, THUMB_HEIGHT);
         add(thumb);
-        Label label = new Label(item.getInventoryDescrip());
+        Label label = new Label(truncateDescription(item.getDescription()));
         label.setStyleName("item_thumb_text");
         add(label);
     }
@@ -57,6 +57,14 @@ public class ItemThumbnail extends VerticalPanel
 
         return new Image(
             MsoyEntryPoint.toMediaPath(item.getThumbnailPath()));
+    }
+
+    /**
+     * Convenience method to truncate the specified description to fit.
+     */
+    protected String truncateDescription (String text)
+    {
+        return (text.length() <= 32) ? text : (text.substring(0, 29) + "...");
     }
 
     /** So arbitrary. TODO. */

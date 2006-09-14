@@ -84,13 +84,6 @@ public class FurnitureEditor extends MediaItemEditor
     }
 
     // @Override from ItemEditor
-    protected boolean itemConsistent ()
-    {
-        return super.itemConsistent() &&
-            (_descrip.getText().trim().length() > 0);
-    }
-
-    // @Override from ItemEditor
     protected Item createBlankItem ()
     {
         return new Furniture();

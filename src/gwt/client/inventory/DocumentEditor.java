@@ -44,12 +44,6 @@ public class DocumentEditor extends MediaItemEditor
     }
 
     // @Override from ItemEditor
-    protected boolean itemConsistent ()
-    {
-        return (_title.getText().trim().length() > 0);
-    }
-
-    // @Override from ItemEditor
     protected Item createBlankItem ()
     {
         return new Document();
