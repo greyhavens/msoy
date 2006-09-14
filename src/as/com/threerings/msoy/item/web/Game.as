@@ -30,14 +30,6 @@ public class Game extends MediaItem
         return name;
     }
 
-    // @Override from Item
-    override public function getThumbnailPath () :String
-    {
-        // The games aren't really standalone, so we can't show
-        // the game as the thumbnail...
-        return "/media/static/game.png"; // TODO?
-    }
-
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);

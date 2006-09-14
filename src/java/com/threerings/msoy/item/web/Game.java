@@ -32,14 +32,6 @@ public class Game extends MediaItem
         return name;
     }
 
-    // @Override from Item
-    public String getThumbnailPath ()
-    {
-        // The games aren't really standalone, so we can't show
-        // the game as the thumbnail...
-        return "/media/static/game.png"; // TODO?
-    }
-
     // @Override
     public boolean isConsistent ()
     {
