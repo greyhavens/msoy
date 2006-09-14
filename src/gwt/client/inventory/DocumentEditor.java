@@ -33,12 +33,9 @@ public class DocumentEditor extends MediaItemEditor
         int row = getRowCount();
         setText(0, 0, "Title");
         setWidget(0, 1, _title = new TextBox());
-        _title.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char keyCode, int mods) {
-                if (_doc != null) {
-                    _doc.title = _title.getText();
-                    updateSubmittable();
-                }
+        bind(_title, new Binder() {
+            public void textUpdated (String text) {
+                _doc.title = text;
             }
         });
     }

@@ -6,7 +6,6 @@ package client.inventory;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
@@ -19,8 +18,6 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Furniture;
 
 import client.MsoyEntryPoint;
-
-import client.util.DeferredKeyPressCommand;
 
 /**
  * A class for creating and editing {@link Furniture} digital items.
@@ -49,26 +46,9 @@ public class FurnitureEditor extends MediaItemEditor
 
         setText(row+2, 0, "Description");
         setWidget(row+2, 1, _descrip = new TextBox());
-        /*
-        _descrip.addKeyboardListener(new DeferredKeyPressCommand(new Command() {
-            public void execute () {
-                if (_furniture != null) {
-                    _furniture.description = _descrip.getText();
-                    updateSubmittable();
-                }
-            }
-        }));
-        */
-        _descrip.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char keyCode, int mods) {
-                if (_furniture != null) {
-                    DeferredCommand.add(new Command() {
-                        public void execute () {
-                            _furniture.description = _descrip.getText();
-                            updateSubmittable();
-                        }
-                    });
-                }
+        bind(_descrip, new Binder() {
+            public void textUpdated (String text) {
+                _furniture.description = text;
             }
         });
     }

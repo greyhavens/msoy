@@ -3,13 +3,18 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
@@ -27,6 +32,11 @@ import com.threerings.msoy.web.client.WebContext;
  */
 public abstract class ItemEditor extends FlexTable
 {
+    public static interface Binder
+    {
+        public void textUpdated (String newText);
+    }
+
     public ItemEditor ()
     {
         setStyleName("item_editor");
@@ -148,6 +158,26 @@ public abstract class ItemEditor extends FlexTable
      * Creates a blank item for use when creating a new item using this editor.
      */
     protected abstract Item createBlankItem ();
+
+    /**
+     * A convenience method for attaching a textbox directly to
+     * a field in the item to be edited.
+     */
+    protected void bind (final TextBox textbox, final Binder binder)
+    {
+        textbox.addKeyboardListener(new KeyboardListenerAdapter() {
+            public void onKeyPress (Widget sender, char keyCode, int mods) {
+                if (_item != null) {
+                    DeferredCommand.add(new Command() {
+                        public void execute () {
+                            binder.textUpdated(textbox.getText());
+                            updateSubmittable();
+                        }
+                    });
+                }
+            }
+        });
+    }
 
     protected WebContext _ctx;
     protected ItemPanel _parent;

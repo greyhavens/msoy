@@ -42,12 +42,9 @@ public class PhotoEditor extends MediaItemEditor
 
         setText(row+2, 0, "Caption");
         setWidget(row+2, 1, _caption = new TextBox());
-        _caption.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char keyCode, int mods) {
-                if (_photo != null) {
-                    _photo.caption = _caption.getText();
-                    updateSubmittable();
-                }
+        bind(_caption, new Binder() {
+            public void textUpdated (String text) {
+                _photo.caption = text;
             }
         });
     }
