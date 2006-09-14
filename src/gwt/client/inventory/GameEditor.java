@@ -39,13 +39,6 @@ public class GameEditor extends MediaItemEditor
         super.createEditorInterface();
 
         int row = getRowCount();
-//        setText(row, 0, "Preview");
-//        getFlexCellFormatter().setColSpan(row, 0, 2);
-//        row++
-//        setWidget(row+1, 0, _preview = new Image());
-//        getFlexCellFormatter().setColSpan(row+1, 0, 2);
-//        row++
-
         setText(row, 0, "Name");
         setWidget(row, 1, _name = new TextBox());
         bind(_name, new Binder() {
@@ -64,6 +57,5 @@ public class GameEditor extends MediaItemEditor
     }
 
     protected Game _game;
-    //protected Image _preview;
     protected TextBox _name;
 }

@@ -45,6 +45,8 @@ public abstract class ItemEditor extends FlexTable
         setWidget(0, 0, _etitle = new Label("title"));
         _etitle.setStyleName("item_editor_title");
 
+        FlexCellFormatter cellFormatter = getFlexCellFormatter();
+
         // have the child do its business
         createEditorInterface();
 
@@ -53,14 +55,14 @@ public abstract class ItemEditor extends FlexTable
         for (int ii = 0; ii < rows; ii++) {
             cols = Math.max(cols, getCellCount(ii));
         }
-        getFlexCellFormatter().setColSpan(0, 0, cols);
+        cellFormatter.setColSpan(0, 0, cols);
 
         HorizontalPanel bpanel = new HorizontalPanel();
         int butrow = getRowCount();
         setWidget(butrow, 0, bpanel);
-        getFlexCellFormatter().setHorizontalAlignment(
+        cellFormatter.setHorizontalAlignment(
             0, butrow, HasAlignment.ALIGN_RIGHT);
-        getFlexCellFormatter().setColSpan(0, butrow, cols);
+        cellFormatter.setColSpan(0, butrow, cols);
 
         bpanel.add(_esubmit = new Button("submit"));
         _esubmit.setStyleName("item_editor_button");
@@ -160,6 +162,35 @@ public abstract class ItemEditor extends FlexTable
     protected abstract Item createBlankItem ();
 
     /**
+     * Call from your configureEditorInterface to add a preview area
+     * that can later be filled-in by calling updatePreview().
+     */
+    protected void reservePreviewSpace ()
+    {
+        FlexCellFormatter cellFormatter = getFlexCellFormatter();
+        int row = getRowCount();
+        setText(row, 0, "Preview");
+        cellFormatter.setColSpan(row, 0, 2);
+
+        _previewRow = row + 1;
+        prepareCell(_previewRow, 0);
+        cellFormatter.setColSpan(_previewRow, 0, 2);
+    }
+
+    /**
+     * Call to update the preview.
+     */
+    protected void updatePreview ()
+    {
+        if (_item != null) {
+            if (_previewRow == -1) {
+                reservePreviewSpace(); // a little late, but ok!
+            }
+            setWidget(_previewRow, 0, new ItemContainer(_item, false, false));
+        }
+    }
+
+    /**
      * A convenience method for attaching a textbox directly to
      * a field in the item to be edited.
      */
@@ -183,6 +214,8 @@ public abstract class ItemEditor extends FlexTable
     protected ItemPanel _parent;
 
     protected Item _item;
+
+    protected int _previewRow = -1;
 
     protected Label _etitle;
     protected Button _esubmit;

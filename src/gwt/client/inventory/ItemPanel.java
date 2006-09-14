@@ -54,7 +54,7 @@ public class ItemPanel extends VerticalPanel
                     } else {
                         for (int ii = 0; ii < _items.size(); ii++) {
                             _contents.add(
-                                new ItemThumbnail((Item)_items.get(ii)));
+                                new ItemContainer((Item)_items.get(ii)));
                         }
                     }
                 }
@@ -99,7 +99,7 @@ public class ItemPanel extends VerticalPanel
         remove(editor);
         insert(_create, 1);
         if (item != null) {
-            _contents.add(new ItemThumbnail(item));
+            _contents.add(new ItemContainer(item));
         }
     }
 

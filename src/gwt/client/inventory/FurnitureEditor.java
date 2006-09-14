@@ -39,28 +39,13 @@ public class FurnitureEditor extends MediaItemEditor
         super.createEditorInterface();
 
         int row = getRowCount();
-        setText(row, 0, "Preview");
-        getFlexCellFormatter().setColSpan(row, 0, 2);
-        setWidget(row+1, 0, _preview = new Image());
-        getFlexCellFormatter().setColSpan(row+1, 0, 2);
-
-        setText(row+2, 0, "Description");
-        setWidget(row+2, 1, _descrip = new TextBox());
+        setText(row, 0, "Description");
+        setWidget(row, 1, _descrip = new TextBox());
         bind(_descrip, new Binder() {
             public void textUpdated (String text) {
                 _furniture.description = text;
             }
         });
-    }
-
-    // @Override from MediaItemEditor
-    protected void setHash (String mediaHash, int mimeType)
-    {
-        super.setHash(mediaHash, mimeType);
-        if (mediaHash.length() > 0) {
-            _preview.setUrl(
-                MsoyEntryPoint.toMediaPath(_furniture.getThumbnailPath()));
-        }
     }
 
     // @Override from ItemEditor
@@ -70,6 +55,5 @@ public class FurnitureEditor extends MediaItemEditor
     }
 
     protected Furniture _furniture;
-    protected Image _preview;
     protected TextBox _descrip;
 }

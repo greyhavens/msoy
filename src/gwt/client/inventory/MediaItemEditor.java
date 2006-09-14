@@ -76,6 +76,9 @@ public abstract class MediaItemEditor extends ItemEditor
         setWidget(row+1, 0, _out = new Label(msg));
         getFlexCellFormatter().setColSpan(row+1, 0, 2);
 
+        // reserve area for the preview
+        reservePreviewSpace();
+
         // we have to do this wacky singleton crap because GWT and/or
         // JavaScript doesn't seem to cope with our trying to create an
         // anonymous function that calls an instance method on a JavaScript
@@ -98,8 +101,8 @@ public abstract class MediaItemEditor extends ItemEditor
     {
         if (_item != null) {
             ((MediaItem)_item).setHash(mediaHash, (byte)mimeType);
+            updatePreview();
         }
-        // _out.setText(mediaHash);
         _out.setText("File uploaded.");
         updateSubmittable();
     }

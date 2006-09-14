@@ -35,28 +35,13 @@ public class PhotoEditor extends MediaItemEditor
         super.createEditorInterface();
 
         int row = getRowCount();
-        setText(row, 0, "Preview");
-        getFlexCellFormatter().setColSpan(row, 0, 2);
-        setWidget(row+1, 0, _preview = new Image());
-        getFlexCellFormatter().setColSpan(row+1, 0, 2);
-
-        setText(row+2, 0, "Caption");
-        setWidget(row+2, 1, _caption = new TextBox());
+        setText(row, 0, "Caption");
+        setWidget(row, 1, _caption = new TextBox());
         bind(_caption, new Binder() {
             public void textUpdated (String text) {
                 _photo.caption = text;
             }
         });
-    }
-
-    // @Override from MediaItemEditor
-    protected void setHash (String mediaHash, int mimeType)
-    {
-        super.setHash(mediaHash, mimeType);
-        if (mediaHash.length() > 0) {
-            _preview.setUrl(
-                MsoyEntryPoint.toMediaPath(_photo.getThumbnailPath()));
-        }
     }
 
     // @Override from ItemEditor
@@ -66,6 +51,5 @@ public class PhotoEditor extends MediaItemEditor
     }
 
     protected Photo _photo;
-    protected Image _preview;
     protected TextBox _caption;
 }
