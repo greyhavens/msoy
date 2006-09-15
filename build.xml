@@ -307,7 +307,10 @@
   <target name="dist" depends="prepare,compile">
     <!-- stick all our code in one jar file -->
     <jar file="${deploy.dir}/${app.name}-code.jar"
-         basedir="${deploy.dir}/classes" includes="com/**"/>
+         basedir="${deploy.dir}/classes">
+      <include name="com/**"/>
+      <include name="*.properties"/>
+    </jar>
     <!-- and all of our configuration and media in another -->
     <jar file="${deploy.dir}/${app.name}-media.jar"
          basedir="${deploy.dir}/classes" includes="rsrc/**"/>
