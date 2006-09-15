@@ -73,21 +73,24 @@ public class MsoySceneRepository extends SimpleRepository
         // migration code will come and go
         super.migrateSchema(conn, liaison);
 
+        boolean tablesExist = JDBCUtil.tableExists(conn, "SCENES"); 
         // TEMP: db update of a massive kind
-        if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "BACKGROUND_HASH")) {
+        if (tablesExist &&
+            !JDBCUtil.tableContainsColumn(conn, "SCENES", "BACKGROUND_HASH")) {
             Statement stmt = conn.createStatement();
             try {
                 stmt.executeUpdate("drop table SCENES");
                 stmt.executeUpdate("drop table PORTALS");
                 stmt.executeUpdate("drop table FURNI");
                 stmt.executeUpdate("drop table SCENE_UPDATES");
+                tablesExist = false;
 
             } finally {
                 JDBCUtil.close(stmt);
             }
         }
 
-        if (!JDBCUtil.tableExists(conn, "SCENES")) {
+        if (!tablesExist) {
             createAndPopulate(conn, liaison);
         }
 
