@@ -4,8 +4,6 @@
 package com.threerings.msoy.server.persist;
 
 import javax.persistence.*; // for EJB3 annotations
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.sql.Date;
 
@@ -17,7 +15,6 @@ import com.threerings.msoy.data.MemberName;
  * Contains persistent data stored for every member of MetaSOY.
  */
 @Entity
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class MemberRecord
 {
     /** This member's unique id. */

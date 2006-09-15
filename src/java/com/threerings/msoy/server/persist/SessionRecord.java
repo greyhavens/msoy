@@ -4,8 +4,6 @@
 package com.threerings.msoy.server.persist;
 
 import javax.persistence.*; // for EJB3 annotations
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.lang.String;
 
@@ -16,7 +14,6 @@ import java.sql.Date;
  * authenticated session for some period of time.
  */
 @Entity
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class SessionRecord
 {
     /** The unique session identifier. */

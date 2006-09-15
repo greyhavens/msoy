@@ -7,9 +7,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
-
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.util.AuditLogger;
@@ -164,19 +161,10 @@ public class MsoyServer extends WhirledServer
         // set up our default object access controller
         omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
-        // configure and create our hibernate session configuration
-        AnnotationConfiguration hibConfig = new AnnotationConfiguration();
+        // create our various repositories
         PersonPageRepository ppageRepo = new PersonPageRepository();
-        ppageRepo.configure(hibConfig);
         memberRepo = new MemberRepository(conProv);
-        // memberRepo.configure(hibConfig);
         ProfileRepository profileRepo = new ProfileRepository(conProv);
-
-        // now that our repositories have all wired in their persistent
-        // classes, we can create the session factory
-        SessionFactory sessionFactory = hibConfig.buildSessionFactory();
-        ppageRepo.init(sessionFactory);
-        // memberRepo.init(sessionFactory);
 
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
