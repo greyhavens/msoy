@@ -31,6 +31,9 @@ import client.util.FlashWidget;
  */
 public class ItemContainer extends VerticalPanel
 {
+    /** So arbitrary. TODO. */
+    public static final int THUMB_HEIGHT = 100;
+
     public ItemContainer (Item item)
     {
         this(item, true, true);
@@ -61,7 +64,7 @@ public class ItemContainer extends VerticalPanel
 
         if (thumbnail) {
             disp.setStyleName("item_thumb_image");
-            disp.setPixelSize(THUMB_WIDTH, THUMB_HEIGHT);
+            disp.setHeight(THUMB_HEIGHT + "px");
             label.setStyleName("item_thumb_text");
 
         } else {
@@ -105,8 +108,4 @@ public class ItemContainer extends VerticalPanel
     {
         return (text.length() <= 32) ? text : (text.substring(0, 29) + "...");
     }
-
-    /** So arbitrary. TODO. */
-    public static final int THUMB_WIDTH = 250;
-    public static final int THUMB_HEIGHT = 200;
 }

@@ -145,8 +145,13 @@ public class UploadServlet extends HttpServlet
         // computer doesn't understand but which you can play on the web.
         int mimeType = MediaDesc.stringToMimeType(item.getContentType());
         if (mimeType == -1) {
+            // if that failed, try inferring the type from the path
+            mimeType = MediaDesc.suffixToMimeType(item.getName());
+        }
+        if (mimeType == -1) {
             log.warning("Received upload of unknown mime type " +
-                        "[type=" + item.getContentType() + "].");
+                "[type=" + item.getContentType() +
+                ", name=" + item.getName() + "].");
             return null;
         }
 

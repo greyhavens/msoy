@@ -44,15 +44,11 @@ public class MsoyHttpServer extends HttpServer
 
         // wire up our GWT servlets
         ServletHandler handler= new ServletHandler();
-        handler.addServlet(
-            "user", "/msoy/user", WebUserServlet.class.getName());
-        handler.addServlet("item", "/msoy/item", ItemServlet.class.getName());
-        handler.addServlet(
-            "upload", "/msoy/upload", UploadServlet.class.getName());
-        handler.addServlet(
-            "profile", "/msoy/profile", ProfileServlet.class.getName());
-        handler.addServlet(
-            "person", "/msoy/person", PersonServlet.class.getName());
+        for (int ii = 0; ii < SERVLETS.length; ii += 2) {
+            String name = SERVLETS[ii];
+            handler.addServlet(name, "/msoy/" + name, SERVLETS[ii+1]);
+            handler.addServlet(name, "/" + name, SERVLETS[ii+1]);
+        }
         context.addHandler(handler);
 
         // tone down the default verbose logging; unfortunately some creates a
@@ -79,4 +75,12 @@ public class MsoyHttpServer extends HttpServer
         addListener(":" + ServerConfig.getHttpPort());
         start();
     }
+
+    protected static final String[] SERVLETS = {
+        "user", WebUserServlet.class.getName(),
+        "item", ItemServlet.class.getName(),
+        "profile", ProfileServlet.class.getName(),
+        "person", PersonServlet.class.getName(),
+        "upload", UploadServlet.class.getName(),
+    };
 }

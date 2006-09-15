@@ -283,8 +283,8 @@ public abstract class ItemEditor extends FlexTable
     }
 
     /**
-     * A convenience method for attaching a textbox directly to
-     * a field in the item to be edited.
+     * A convenience method for attaching a textbox directly to a field in the
+     * item to be edited.
      */
     protected void bind (final TextBox textbox, final Binder binder)
     {
