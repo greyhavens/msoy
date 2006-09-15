@@ -11,3 +11,220 @@
 .chatInput {
     themeColor: #FF00A0;
 }
+
+Application {
+  backgroundSize: "100%";
+  backgroundColor: #b98c3b;
+  backgroundGradientColors: #d7c39d, #403323;
+  backgroundGradientAlphas: 0.83, 1;
+  themeColor: #fe009f;
+  color: #0b333c;
+}
+
+Panel {
+  cornerRadius: 0;
+  headerHeight: 20;
+  borderThickness: 0;
+  dropShadowEnabled: true;
+  shadowDistance: 2;
+  dropShadowColor: #443522;
+  roundedBottomCorners: false;
+  textAlign: left;
+  backgroundAlpha: 1;
+  borderAlpha: 1;
+  highlightAlphas: 0, 0;
+  borderStyle: undefined;
+  headerColors: #413424, #5c4934;
+  footerColors: #ffffff, #c7c7c7;
+  backgroundColor: #ffffff;
+  borderColor: #d6c09c;
+  titleStyleName: "msoyTitleStyle";
+}
+
+.msoyTitleStyle {
+  color: #d6c09c;
+}
+
+
+TabNavigator {
+  tabHeight: 20;
+  tabWidth: 71;
+  cornerRadius: 3;
+  horizontalGap: 0;
+  horizontalAlign: left;
+  paddingLeft: 3;
+  paddingRight: 0;
+  textAlign: left;
+  textIndent: 0;
+  backgroundAlpha: 1;
+  backgroundColor: #b7c1c7;
+  borderStyle: outset;
+  borderThickness: 1;
+  color: #000000;
+  dropShadowEnabled: true;
+  shadowDistance: 0;
+  dropShadowColor: #000000;
+  tabStyleName: "msoyTabs";
+}
+
+.msoyTabs {
+  cornerRadius: 5;
+  highlightAlphas: 0.53, 0;
+  fillAlphas: 1, 1;
+  fillColors: #dadfe3, #9eabb2;
+  backgroundAlpha: 1;
+  borderColor: #8d8f91;
+  color: #000000;
+  textRollOverColor: #ff009f;
+  themeColor: #ff009f;
+}
+
+Accordion {
+  headerHeight: 20;
+  dropShadowEnabled: true;
+  shadowDirection: center;
+  borderStyle: solid;
+  borderThickness: 5;
+  backgroundAlpha: 0.41;
+  highlightAlphas: 0, 0;
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #3e3123, #5c442d, #dbb56c, #fad58f;
+  selectedFillColors: #453929, #5c4932;
+  themeColor: #d8c49f;
+  borderColor: #d8c49f;
+  color: #d8c49f;
+  textRollOverColor: #fd019f;
+  textSelectedColor: #fd019f;
+  openDuration: 225;
+}
+
+TextInput {
+  backgroundAlpha: 1;
+  color: #000000;
+  borderStyle: inset;
+  borderColor: #d5dcdf;
+  borderThickness: 2;
+  cornerRadius: 0;
+  textIndent: 2;
+  dropShadowEnabled: false;
+}
+
+NumericStepper {
+  backgroundAlpha: 1;
+  color: #000000;
+  cornerRadius: 4;
+  highlightAlphas: 0, 0;
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #dadfe3, #9eabb2, #dadfe3, #9eabb2;
+  themeColor: #ff0099;
+}
+
+
+ComboBox {
+  highlightAlphas: 0.26, 0;
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #dadfe3, #9eabb2, #9eabb2, #dadfe3;
+  selectionColor: #ff0099;
+  useRollOver: true;
+  rollOverColor: #c8d0d3;
+  themeColor: #ff0099;
+}
+
+CheckBox {
+  borderColor: #403424;
+  highlightAlphas: 0, 0;
+  fillAlphas: 0, 0, 0.75, 0.65;
+  fillColors: #403424, #403424, #ffffff, #eeeeee;
+  themeColor: #ff0099;
+}
+
+RadioButton {
+  borderColor: #403424;
+  highlightAlphas: 0, 0;
+  fillAlphas: 0, 0, 0.75, 0.65;
+  fillColors: #403424, #403424, #ffffff, #eeeeee;
+  themeColor: #ff0099;
+}
+
+HSlider {
+  labelOffset: -8;
+  thumbOffset: 0;
+  dataTipOffset: 16;
+  tickLength: 5;
+  tickOffset: -3;
+  tickThickness: 1;
+  showTrackHighlight: false;
+  themeColor: #ff0099;
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #d5dcdf, #9eabb2, #9eabb2, #d5dcdf;
+}
+
+Button {
+  paddingBottom: 3;
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
+  themeColor: #ff0099;
+}
+
+PopUpButton {
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
+  themeColor: #ff0099;
+}
+
+ButtonBar {
+  themeColor: #ff0099;
+  buttonStyleName: "msoyButtonBar";
+}
+
+.msoyButtonBar {
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
+}
+
+VScrollBar {
+  cornerRadius: 4;
+  borderColor: #cccccc;
+  highlightAlphas: 0.18, 0;
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #d2d8dc, #9ba8b0, #9ba8b0, #d2d8dc;
+  themeColor: #ffcc66;
+  trackColors: #d8bd8f, #e3cfab;
+}
+
+HScrollBar {
+  cornerRadius: 4;
+  borderColor: #cccccc;
+  highlightAlphas: 0.18, 0;
+  fillAlphas: 1, 1, 1, 1;
+  fillColors: #d2d8dc, #9ba8b0, #9ba8b0, #d2d8dc;
+  themeColor: #ffcc66;
+  trackColors: #d8bd8f, #e3cfab;
+}
+
+MenuBar {
+  cornerRadius: 4;
+  backgroundAlpha: 1;
+  backgroundColor: #ffffff;
+  fillAlphas: 1, 1;
+  fillColors: #d2d8dc, #9ba8b0;
+  rollOverColor: #c8d0d3;
+  selectionColor: #ff0099;
+  themeColor: #999999;
+}
+
+HRule {
+  strokeColor: #d5dcdf;
+  shadowColor: #9facb3;
+  strokeWidth: 2;
+}
+
+LinkButton {
+  rollOverColor: #d2d8dc;
+  selectionColor: #ff0099;
+}
+
+ProgressBar {
+  barColor: #ff0099;
+}
+
