@@ -3,16 +3,12 @@
 
 package com.threerings.msoy.item.web;
 
-import java.util.Arrays;
-
-import com.samskivert.util.StringUtil;
-
-import com.threerings.io.SimpleStreamableObject;
+import com.threerings.io.Streamable;
 
 /**
  * Contains information about a piece of media.
  */
-public class MediaDesc extends SimpleStreamableObject
+public class MediaDesc implements Streamable
 {
     /** The MIME type for plain UTF-8 text. */
     public static final byte TEXT_PLAIN = 0;
@@ -262,17 +258,18 @@ public class MediaDesc extends SimpleStreamableObject
         return getMediaPath(hash, mimeType);
     }
 
+    // @Override // from Object
     public boolean equals (Object other)
     {
         if (other instanceof MediaDesc) {
             MediaDesc that = (MediaDesc) other;
             return (this.mimeType == that.mimeType) &&
-                Arrays.equals(this.hash, that.hash);
+                arraysEqual(this.hash, that.hash);
         }
         return false;
     }
 
-    // documentation inherited
+    // @Override // from Object
     public int hashCode ()
     {
         int code = 0;
@@ -281,6 +278,32 @@ public class MediaDesc extends SimpleStreamableObject
             code |= hash[ii];
         }
         return code;
+    }
+
+    // @Override // from Object
+    public String toString ()
+    {
+        return hashToString(hash) + mimeTypeToSuffix(mimeType);
+    }
+
+    /**
+     * Helper function for {@link #equals} because we must work in JavaScript
+     * land.
+     */
+    protected static boolean arraysEqual (byte[] left, byte[] right)
+    {
+        if (left == right) {
+            return true;
+        }
+        if (left == null || right == null || left.length != right.length) {
+            return false;
+        }
+        for (int ii = 0; ii < left.length; ii++) {
+            if (left[ii] != right[ii]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** Hexidecimal digits. */

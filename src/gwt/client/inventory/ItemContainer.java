@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaItem;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 
 import client.MsoyEntryPoint;
@@ -86,8 +86,8 @@ public class ItemContainer extends VerticalPanel
     protected Widget createContainer (Item item)
     {
         String thumbPath = MsoyEntryPoint.toMediaPath(item.getThumbnailPath());
-        switch (MediaItem.suffixToMimeType(thumbPath)) {
-        case MediaItem.APPLICATION_SHOCKWAVE_FLASH:
+        switch (MediaDesc.suffixToMimeType(thumbPath)) {
+        case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
             String ident = String.valueOf(item.itemId);
             FlashWidget fw = new FlashWidget(ident);
             fw.setMovie(thumbPath);

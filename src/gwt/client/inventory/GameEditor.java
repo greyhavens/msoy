@@ -23,7 +23,7 @@ import client.MsoyEntryPoint;
 /**
  * A class for creating and editing {@link Game} digital items.
  */
-public class GameEditor extends MediaItemEditor
+public class GameEditor extends ItemEditor
 {
     // @Override from ItemEditor
     public void setItem (Item item)

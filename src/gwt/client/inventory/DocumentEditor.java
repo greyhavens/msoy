@@ -15,7 +15,7 @@ import com.threerings.msoy.item.web.Item;
 /**
  * A class for creating and editing {@link Document} digital items.
  */
-public class DocumentEditor extends MediaItemEditor
+public class DocumentEditor extends ItemEditor
 {
     // @Override from ItemEditor
     public void setItem (Item item)

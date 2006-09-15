@@ -19,7 +19,7 @@ import client.MsoyEntryPoint;
 /**
  * A class for creating and editing {@link Photo} digital items.
  */
-public class PhotoEditor extends MediaItemEditor
+public class PhotoEditor extends ItemEditor
 {
     // @Override from ItemEditor
     public void setItem (Item item)

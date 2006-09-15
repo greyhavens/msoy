@@ -22,7 +22,7 @@ import client.MsoyEntryPoint;
 /**
  * A class for creating and editing {@link Furniture} digital items.
  */
-public class FurnitureEditor extends MediaItemEditor
+public class FurnitureEditor extends ItemEditor
 {
     // @Override from ItemEditor
     public void setItem (Item item)
