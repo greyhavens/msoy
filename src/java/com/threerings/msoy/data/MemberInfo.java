@@ -7,6 +7,8 @@ import com.samskivert.util.RandomUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.item.web.MediaDesc;
+
 /**
  * Extends basic OccupantInfo with member-specific information.
  */

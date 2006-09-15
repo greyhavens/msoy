@@ -16,6 +16,10 @@ import java.sql.Date;
 @Entity
 public class SessionRecord
 {
+    public static final String TOKEN = "token";
+    public static final String MEMBER_ID = "memberId";
+    public static final String EXPIRES = "expires";
+
     /** The unique session identifier. */
     @Id
     public String token;

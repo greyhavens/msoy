@@ -3,10 +3,16 @@
 
 package com.threerings.msoy.item.web;
 
+import java.util.Arrays;
+
+import com.samskivert.util.StringUtil;
+
+import com.threerings.io.SimpleStreamableObject;
+
 /**
- * The base class for all digital items that have associated static media.
+ * Contains information about a piece of media.
  */
-public abstract class MediaItem extends Item
+public class MediaDesc extends SimpleStreamableObject
 {
     /** The MIME type for plain UTF-8 text. */
     public static final byte TEXT_PLAIN = 0;
@@ -41,34 +47,13 @@ public abstract class MediaItem extends Item
     /** The MIME type for Flash SWF files. */
     public static final byte APPLICATION_SHOCKWAVE_FLASH = 40;
 
-    /** A hash code identifying the media associated with this item. */
-    public byte[] mediaHash;
+    /** The SHA-1 hash of this media's data. */
+    public byte[] hash;
 
     /** The MIME type of the media associated with this item. */
     public byte mimeType;
 
-    /**
-     * Returns the path of the URL that references this media.
-     */
-    public String getMediaPath ()
-    {
-        return getMediaPath(mediaHash, mimeType);
-    }
-
-    // @Override
-    public boolean isConsistent ()
-    {
-        return super.isConsistent() && (mediaHash != null);
-    }
-
-    /**
-     * Set the hash and mimetype of this item.
-     */
-    public void setHash (String strHash, byte newMimeType)
-    {
-        mediaHash = stringToHash(strHash);
-        mimeType = newMimeType;
-    }
+    // more to come?
 
     /**
      * Get the path of the URL for the media specified.
@@ -209,6 +194,93 @@ public abstract class MediaItem extends Item
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
         default: return ".dat";
         }
+    }
+
+/*
+    public static MediaDesc fromDBString (String encoded)
+    {
+        if (encoded == null) {
+            return null;
+        }
+        try {
+            int colon = encoded.indexOf(':');
+            if (colon == -1) {
+                return new MediaDesc(Integer.parseInt(encoded));
+            }
+
+            MediaDesc data = new MediaDesc(-1);
+            data.hash = StringUtil.unhexlate(encoded.substring(0, colon));
+            data.mimeType =
+                (byte) Integer.parseInt(encoded.substring(colon + 1));
+            return data;
+
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
+    }
+
+    public static String asDBString (MediaDesc data)
+    {
+        if (data == null) {
+            return null;
+        }
+        if (data.id == -1) {
+            return StringUtil.hexlate(data.hash) + ":" + data.mimeType;
+        } else {
+            return String.valueOf(data.id);
+        }
+    }
+*/
+
+    /** Creates a media descriptor from the supplied data. */
+    public MediaDesc (byte[] hash, byte mimeType)
+    {
+        this.hash = hash;
+        this.mimeType = mimeType;
+    }
+
+    /** Used for unserialization. */
+    public MediaDesc ()
+    {
+    }
+
+    /**
+     * TEMPORARY CONSTRUCTOR, for making it easy for me to
+     * pre-initialize some media...
+     */
+    public MediaDesc (String filename)
+    {
+        hash = stringToHash(filename.substring(0, filename.indexOf('.')));
+        mimeType = (byte) suffixToMimeType(filename);
+    }
+
+    /**
+     * Returns the path of the URL that references this media.
+     */
+    public String getMediaPath ()
+    {
+        return getMediaPath(hash, mimeType);
+    }
+
+    public boolean equals (Object other)
+    {
+        if (other instanceof MediaDesc) {
+            MediaDesc that = (MediaDesc) other;
+            return (this.mimeType == that.mimeType) &&
+                Arrays.equals(this.hash, that.hash);
+        }
+        return false;
+    }
+
+    // documentation inherited
+    public int hashCode ()
+    {
+        int code = 0;
+        for (int ii = Math.min(3, hash.length - 1); ii >= 0; ii--) {
+            code <<= 8;
+            code |= hash[ii];
+        }
+        return code;
     }
 
     /** Hexidecimal digits. */

@@ -31,9 +31,12 @@ public class FurnitureRepository extends ItemRepository<Furniture>
         JDBCUtil.createTableIfMissing(conn, "FURNITURE", new String[] {
             "ITEM_ID integer not null auto_increment primary key",
             "FLAGS tinyint not null",
+            "CREATOR_ID integer not null",
             "OWNER_ID integer not null",
-            "MEDIA_HASH tinyblob not null",
-            "MIME_TYPE tinyint not null",
+            "THUMBNAIL_MEDIA_HASH tinyblob",
+            "THUMBNAIL_MIME_TYPE tinyint",
+            "FURNI_MEDIA_HASH tinyblob",
+            "FURNI_MIME_TYPE tinyint",
             "ACTION varchar(255) not null",
             "DESCRIPTION varchar(255) not null",
         }, "");

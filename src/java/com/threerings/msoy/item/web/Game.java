@@ -4,9 +4,9 @@
 package com.threerings.msoy.item.web;
 
 /**
- * Extends MediaItem with game info.
+ * Extends Item with game info.
  */
-public class Game extends MediaItem
+public class Game extends Item
 {
     /** The name of the game. */
     public String name;
@@ -19,6 +19,20 @@ public class Game extends MediaItem
 
     /** The desired number of players. */
     public short desiredPlayers;
+
+    /** A hash code identifying the game media. */
+    public byte[] gameMediaHash;
+
+    /** The MIME type of the {@link #gameMediaHash} media. */
+    public byte gameMimeType;
+
+    /**
+     * Returns a media descriptor for the actual game media.
+     */
+    public MediaDesc getGameMedia ()
+    {
+        return new MediaDesc(gameMediaHash, gameMimeType);
+    }
 
     // @Override from Item
     public String getType ()
@@ -43,6 +57,6 @@ public class Game extends MediaItem
                 desiredPlayers > maxPlayers) {
             return false;
         }
-        return true;
+        return (gameMediaHash != null);
     }
 }

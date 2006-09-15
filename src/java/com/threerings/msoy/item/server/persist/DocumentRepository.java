@@ -31,9 +31,14 @@ public class DocumentRepository extends ItemRepository<Document>
         JDBCUtil.createTableIfMissing(conn, "DOCUMENTS", new String[] {
             "ITEM_ID integer not null auto_increment primary key",
             "FLAGS tinyint not null",
+            "CREATOR_ID integer not null",
             "OWNER_ID integer not null",
-            "MEDIA_HASH tinyblob not null",
-            "MIME_TYPE tinyint not null",
+            "THUMBNAIL_MEDIA_HASH tinyblob",
+            "THUMBNAIL_MIME_TYPE tinyint",
+            "FURNI_MEDIA_HASH tinyblob",
+            "FURNI_MIME_TYPE tinyint",
+            "DOC_MEDIA_HASH tinyblob not null",
+            "DOC_MIME_TYPE tinyint not null",
             "TITLE varchar(255) not null",
         }, "");
 

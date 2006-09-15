@@ -24,6 +24,7 @@ import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.Profile;
 
@@ -98,9 +99,9 @@ public class MemberManager
 
                 // fake bits!
                 profile.photo = new Photo();
-                profile.photo.mediaHash = StringUtil.unhexlate(
+                profile.photo.photoMediaHash = StringUtil.unhexlate(
                     "816cd5aebc2d9d228bf66cff193b81eba1a6ac85");
-                profile.photo.mimeType = Photo.IMAGE_JPEG;
+                profile.photo.photoMimeType = MediaDesc.IMAGE_JPEG;
                 profile.headline = "Arr! Mateys, this here be me profile!";
                 profile.homePageURL = "http://www.puzzlepirates.com/";
                 profile.isMale = true;

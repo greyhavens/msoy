@@ -17,6 +17,14 @@ import com.threerings.msoy.data.MemberName;
 @Entity
 public class MemberRecord
 {
+    public static final String MEMBER_ID = "memberId";
+    public static final String ACCOUNT_NAME = "accountName";
+    public static final String NAME = "name";
+    public static final String HOME_SCENE_ID = "homeSceneId";
+    public static final String SESSIONS = "sessions";
+    public static final String SESSION_MINUTES = "sessionMinutes";
+    public static final String LAST_SESSION = "lastSession";
+
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int memberId;

@@ -9,7 +9,7 @@ import com.samskivert.util.ListUtil;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.spot.data.SpotSceneModel;
 
-import com.threerings.msoy.data.MediaDesc;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Extends basic scene model with scene type.

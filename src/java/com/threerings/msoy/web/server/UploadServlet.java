@@ -26,7 +26,7 @@ import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
-import com.threerings.msoy.item.web.MediaItem;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 
 import static com.threerings.msoy.Log.log;
@@ -143,7 +143,7 @@ public class UploadServlet extends HttpServlet
         // supplying us with a valid content type, not because of malice, but
         // because it's quite common to have a file type that your own
         // computer doesn't understand but which you can play on the web.
-        int mimeType = MediaItem.stringToMimeType(item.getContentType());
+        int mimeType = MediaDesc.stringToMimeType(item.getContentType());
         if (mimeType == -1) {
             log.warning("Received upload of unknown mime type " +
                         "[type=" + item.getContentType() + "].");
@@ -152,7 +152,7 @@ public class UploadServlet extends HttpServlet
 
         // now name it using the digest value and the suffix
         String hash = StringUtil.hexlate(digest.digest());
-        String suff = MediaItem.mimeTypeToSuffix(mimeType);
+        String suff = MediaDesc.mimeTypeToSuffix(mimeType);
         // TODO: turn XXXXXXX... into XX/XX/XXXX... to avoid freaking out the
         // file system with the amazing four hundred billion files
         File target = new File(ServerConfig.mediaDir, hash + suff);

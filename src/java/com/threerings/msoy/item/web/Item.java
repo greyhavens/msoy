@@ -26,8 +26,25 @@ public abstract class Item implements Streamable, IsSerializable
      * without doing further database lookups or network requests. */
     public byte flags;
 
+    /** The member id of the member that created this item. */
+    public int creatorId;
+
     /** The member id of the member that owns this item. */
     public int ownerId;
+
+    /** A hash code identifying the media used to display this item's thumbnail
+     * representation. */
+    public byte[] thumbMediaHash;
+
+    /** The MIME type of the {@link #thumbMediaHash} media. */
+    public byte thumbMimeType;
+
+    /** A hash code identifying the media used to display this item's furniture
+     * representation. */
+    public byte[] furniMediaHash;
+
+    /** The MIME type of the {@link #furniMediaHash} media. */
+    public byte furniMimeType;
 
     /**
      * This is used to map {@link Item} concrete classes to ItemEnum values. We
@@ -42,23 +59,54 @@ public abstract class Item implements Streamable, IsSerializable
      */
     public abstract String getDescription ();
 
+    // TODO: add getThumbnailMedia() (or getIconMedia())?
+
+    /**
+     * Returns a media descriptor for the media that should be used to display
+     * our thumbnail representation.
+     */
+    public MediaDesc getThumbnailMedia ()
+    {
+        return (thumbMediaHash == null) ? getDefaultThumbnailMedia() :
+            new MediaDesc(thumbMediaHash, thumbMimeType);
+    }
+
+    /**
+     * Returns a media descriptor for the media that should be used to display
+     * our furniture representation.
+     */
+    public MediaDesc getFurniMedia ()
+    {
+        return (furniMediaHash == null) ? getDefaultFurniMedia() :
+            new MediaDesc(furniMediaHash, furniMimeType);
+    }
+
     /**
      * Returns the path to a thumbnail image for this item.
      */
     public String getThumbnailPath ()
     {
-        return "/media/static/items/" + getType().toLowerCase() + ".png";
+        return getFurniMedia().getMediaPath();
     }
 
     /**
-     * Verify that all the required fields in this particular Item subclass
-     * are filled in, make sense, and are consistent with each other.
-     * This is used to verify the data being edited by a user during
-     * item creation, and also that the final uploaded item isn't hacked.
+     * Verify that all the required fields in this particular Item subclass are
+     * filled in, make sense, and are consistent with each other. This is used
+     * to verify the data being edited by a user during item creation, and also
+     * that the final uploaded item isn't hacked.
      */
     public boolean isConsistent ()
     {
         return true;
+    }
+
+    /**
+     * Set the hash and mimetype of this item.
+     */
+    public void setHash (String strHash, byte newMimeType)
+    {
+        furniMediaHash = MediaDesc.stringToHash(strHash);
+        furniMimeType = newMimeType;
     }
 
     // @Override
@@ -80,10 +128,30 @@ public abstract class Item implements Streamable, IsSerializable
     }
 
     /**
-     * A handy method that makes sure that the specified text is
-     * not null or all-whitespace. Usually used by isConsistent().
+     * Returns the default thumbnail media for use if this item has no provided
+     * custom media.
      */
-    protected boolean nonBlank (String text)
+    protected MediaDesc getDefaultThumbnailMedia ()
+    {
+        return new StaticMediaDesc(
+            "/media/static/thumbnails/" + getType().toLowerCase() + ".png");
+    }
+
+    /**
+     * Returns the default furni media for use if this item has no provided
+     * custom media.
+     */
+    protected MediaDesc getDefaultFurniMedia ()
+    {
+        return new StaticMediaDesc(
+            "/media/static/furni/" + getType().toLowerCase() + ".png");
+    }
+
+    /**
+     * A handy method that makes sure that the specified text is not null or
+     * all-whitespace. Usually used by isConsistent().
+     */
+    protected static boolean nonBlank (String text)
     {
         return (text != null) && (text.trim().length() > 0);
     }

@@ -13,6 +13,9 @@ import javax.persistence.*; // for EJB3 annotations
        {@UniqueConstraint(columnNames={"inviterId", "inviteeId"})})
 public class FriendRecord
 {
+    public static final String INVITER_ID = "inviterId";
+    public static final String INVITEE_ID = "inviteeId";
+
     /** The member id of the inviter. */
     @Column(nullable=false)
     public int inviterId;

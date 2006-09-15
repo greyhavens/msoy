@@ -7,7 +7,7 @@ package com.threerings.msoy.item.web;
  * Represents a piece of furniture (any prop really) that a user can place into
  * a virtual world scene and potentially interact with.
  */
-public class Furniture extends MediaItem
+public class Furniture extends Item
 {
     /** An action associated with this furniture which is dispatched to the
      * virtual world client when the furniture is clicked on (max length 255
@@ -29,15 +29,16 @@ public class Furniture extends MediaItem
         return description;
     }
 
-    // @Override // from Item
-    public String getThumbnailPath ()
-    {
-        return getMediaPath();
-    }
-
     // @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && nonBlank(description);
+        return super.isConsistent() && (furniMediaHash != null) &&
+            nonBlank(description);
+    }
+
+    // @Override // from Item
+    protected MediaDesc getDefaultThumbnailMedia ()
+    {
+        return getFurniMedia();
     }
 }

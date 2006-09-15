@@ -7,7 +7,7 @@ import com.samskivert.util.ObjectUtil;
 
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.msoy.data.MediaDesc;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Contains information on the location of furniture in a scene.
