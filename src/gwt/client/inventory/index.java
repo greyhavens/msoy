@@ -36,13 +36,6 @@ public class index extends MsoyEntryPoint
     // @Override from MsoyEntryPoint
     public void onPageLoad ()
     {
-//         // set up our navigation
-//         HorizontalPanel navi = new HorizontalPanel();
-//         navi.setSpacing(5);
-//         navi.add(new Hyperlink("Inventory", "inventory"));
-//         navi.add(new Hyperlink("Upload", "upload"));
-//         RootPanel.get("navi").add(navi);
-
         History.addHistoryListener(this);
         String initToken = History.getToken();
         if (initToken.length() > 0) {

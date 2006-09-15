@@ -44,12 +44,15 @@ public class MsoyHttpServer extends HttpServer
 
         // wire up our GWT servlets
         ServletHandler handler= new ServletHandler();
-        handler.addServlet("user", "/user", WebUserServlet.class.getName());
-        handler.addServlet("item", "/item", ItemServlet.class.getName());
-        handler.addServlet("upload", "/upload", UploadServlet.class.getName());
         handler.addServlet(
-            "profile", "/profile", ProfileServlet.class.getName());
-        handler.addServlet("person", "/person", PersonServlet.class.getName());
+            "user", "/msoy/user", WebUserServlet.class.getName());
+        handler.addServlet("item", "/msoy/item", ItemServlet.class.getName());
+        handler.addServlet(
+            "upload", "/msoy/upload", UploadServlet.class.getName());
+        handler.addServlet(
+            "profile", "/msoy/profile", ProfileServlet.class.getName());
+        handler.addServlet(
+            "person", "/msoy/person", PersonServlet.class.getName());
         context.addHandler(handler);
 
         // tone down the default verbose logging; unfortunately some creates a
