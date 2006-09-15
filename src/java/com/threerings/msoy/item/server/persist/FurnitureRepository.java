@@ -40,10 +40,6 @@ public class FurnitureRepository extends ItemRepository<Furniture>
             "ACTION varchar(255) not null",
             "DESCRIPTION varchar(255) not null",
         }, "");
-
-        // Temp
-        JDBCUtil.changeColumn(conn, "FURNITURE", "MEDIA_HASH",
-            "MEDIA_HASH tinyblob not null");
     }
 
     @Override // from JORARepository

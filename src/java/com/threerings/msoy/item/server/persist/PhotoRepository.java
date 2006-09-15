@@ -41,10 +41,6 @@ public class PhotoRepository extends ItemRepository<Photo>
             "PHOTO_MIME_TYPE tinyint not null",
             "CAPTION varchar(255) not null",
         }, "");
-
-        // TEMP
-        JDBCUtil.changeColumn(conn, "PHOTOS", "MEDIA_HASH",
-            "MEDIA_HASH tinyblob not null");
     }
 
     @Override // from JORARepository

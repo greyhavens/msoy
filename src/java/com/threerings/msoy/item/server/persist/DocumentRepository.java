@@ -41,10 +41,6 @@ public class DocumentRepository extends ItemRepository<Document>
             "DOC_MIME_TYPE tinyint not null",
             "TITLE varchar(255) not null",
         }, "");
-
-        // TEMP
-        JDBCUtil.changeColumn(conn, "DOCUMENTS", "MEDIA_HASH",
-            "MEDIA_HASH tinyblob not null");
     }
 
     @Override // from JORARepository
