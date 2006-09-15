@@ -47,18 +47,18 @@ public abstract class MsoyEntryPoint
     {
         // create our web context
         _ctx = new WebContext();
+
+        String prefix = GWT.isScript() ? "/" : GWT.getModuleBaseURL();
         _ctx.usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
-        ((ServiceDefTarget)_ctx.usersvc).setServiceEntryPoint(
-            GWT.getModuleBaseURL() + "user");
+        ((ServiceDefTarget)_ctx.usersvc).setServiceEntryPoint(prefix + "user");
         _ctx.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
-        ((ServiceDefTarget)_ctx.itemsvc).setServiceEntryPoint(
-            GWT.getModuleBaseURL() + "item");
+        ((ServiceDefTarget)_ctx.itemsvc).setServiceEntryPoint(prefix + "item");
         _ctx.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
         ((ServiceDefTarget)_ctx.profilesvc).setServiceEntryPoint(
-            GWT.getModuleBaseURL() + "profile");
+            prefix + "profile");
         _ctx.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
         ((ServiceDefTarget)_ctx.personsvc).setServiceEntryPoint(
-            GWT.getModuleBaseURL() + "person");
+            prefix + "person");
 
         // create our standard logon panel
         RootPanel.get("logon").add(_logon = new LogonPanel(_ctx, this));
