@@ -46,8 +46,36 @@ public class GameEditor extends MediaItemEditor
                 _game.name = text;
             }
         });
+        row++;
 
-        // TODO: other fields
+        // TODO: it'd be nice to force-format this text field for integers,
+        // or something.
+        setText(row, 0, "Minimum players");
+        setWidget(row, 1, _minPlayers = new TextBox());
+        bind(_minPlayers, new Binder() {
+            public void textUpdated (String text) {
+                _game.minPlayers = asShort(text);
+            }
+        });
+        row++;
+
+        setText(row, 0, "Maximum players");
+        setWidget(row, 1, _maxPlayers = new TextBox());
+        bind(_maxPlayers, new Binder() {
+            public void textUpdated (String text) {
+                _game.maxPlayers = asShort(text);
+            }
+        });
+        row++;
+
+        setText(row, 0, "Desired players");
+        setWidget(row, 1, _desiredPlayers = new TextBox());
+        bind(_desiredPlayers, new Binder() {
+            public void textUpdated (String text) {
+                _game.desiredPlayers = asShort(text);
+            }
+        });
+        row++;
     }
 
     // @Override from ItemEditor
@@ -56,6 +84,18 @@ public class GameEditor extends MediaItemEditor
         return new Game();
     }
 
+    // mr. utility
+    protected static short asShort (String s)
+    {
+        try {
+            return (short) Integer.parseInt(s);
+        } catch (Exception e) {
+            return (short) 0;
+        }
+    }
+
     protected Game _game;
     protected TextBox _name;
+
+    protected TextBox _minPlayers, _maxPlayers, _desiredPlayers;
 }
