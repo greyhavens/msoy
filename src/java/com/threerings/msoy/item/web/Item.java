@@ -22,6 +22,12 @@ public abstract class Item implements Streamable, IsSerializable
      * identifier space. */
     public int itemId;
 
+    /**
+     * The item ID from which this object was cloned, or -1 if this is not
+     * a clone. This field is not persisted in the database.
+     */
+    public transient int parentId;
+    
     /** A bit-mask of flags that we need to know about every digital item
      * without doing further database lookups or network requests. */
     public byte flags;

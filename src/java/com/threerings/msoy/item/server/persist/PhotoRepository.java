@@ -23,6 +23,12 @@ public class PhotoRepository extends ItemRepository<Photo>
     {
         return _table;
     }
+    
+    @Override // from ItemRepository
+    protected String getCloneTableName ()
+    {
+        return "PHOTO_CLONES";
+    }
 
     @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
@@ -40,6 +46,11 @@ public class PhotoRepository extends ItemRepository<Photo>
             "PHOTO_MEDIA_HASH tinyblob not null",
             "PHOTO_MIME_TYPE tinyint not null",
             "CAPTION varchar(255) not null",
+        }, "");
+        
+        JDBCUtil.createTableIfMissing(conn, "PHOTO_CLONES", new String[] {
+            "ORIGINAL_ITEM_ID integer not null",
+            "OWNER_ID integer not null",
         }, "");
     }
 

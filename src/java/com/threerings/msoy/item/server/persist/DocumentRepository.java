@@ -23,6 +23,12 @@ public class DocumentRepository extends ItemRepository<Document>
     {
         return _table;
     }
+    
+    @Override // from ItemRepository
+    protected String getCloneTableName ()
+    {
+        return "DOCUMENT_CLONES";
+    }
 
     @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
@@ -40,6 +46,11 @@ public class DocumentRepository extends ItemRepository<Document>
             "DOC_MEDIA_HASH tinyblob not null",
             "DOC_MIME_TYPE tinyint not null",
             "TITLE varchar(255) not null",
+        }, "");
+        
+        JDBCUtil.createTableIfMissing(conn, "DOCUMENT_CLONES", new String[] {
+            "ORIGINAL_ITEM_ID integer not null",
+            "OWNER_ID integer not null",
         }, "");
     }
 

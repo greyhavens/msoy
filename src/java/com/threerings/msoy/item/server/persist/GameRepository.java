@@ -18,13 +18,19 @@ import com.threerings.msoy.item.web.Game;
  */
 public class GameRepository extends ItemRepository<Game>
 {
-    @Override
+    @Override // from ItemRepository
     protected Table<Game> getTable ()
     {
         return _table;
     }
+    
+    @Override // from ItemRepository
+    protected String getCloneTableName ()
+    {
+        return "GAME_CLONES";
+    }
 
-    @Override
+    @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
@@ -44,9 +50,14 @@ public class GameRepository extends ItemRepository<Game>
             "MAX_PLAYERS smallint not null",
             "DESIRED_PLAYERS smallint not null",
         }, "");
+        
+        JDBCUtil.createTableIfMissing(conn, "GAME_CLONES", new String[] {
+            "ORIGINAL_ITEM_ID integer not null",
+            "OWNER_ID integer not null",
+        }, "");
     }
 
-    @Override
+    @Override // from JORARepository
     protected void createTables ()
     {
         _table = new Table<Game>(

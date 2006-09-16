@@ -23,6 +23,12 @@ public class FurnitureRepository extends ItemRepository<Furniture>
     {
         return _table;
     }
+    
+    @Override // from ItemRepository
+    protected String getCloneTableName ()
+    {
+        return "FURNITURE_CLONES";
+    }
 
     @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
@@ -39,6 +45,11 @@ public class FurnitureRepository extends ItemRepository<Furniture>
             "FURNI_MIME_TYPE tinyint",
             "ACTION varchar(255) not null",
             "DESCRIPTION varchar(255) not null",
+        }, "");
+        
+        JDBCUtil.createTableIfMissing(conn, "FURNITURE_CLONES", new String[] {
+            "ORIGINAL_ITEM_ID integer not null",
+            "OWNER_ID integer not null",
         }, "");
     }
 

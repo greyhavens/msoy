@@ -39,6 +39,7 @@ public class ItemServlet extends RemoteServiceServlet
         // TODO: validate anything else?
 
         // configure the item's creator and owner
+        item.parentId = -1;
         item.creatorId = creds.memberId;
         item.ownerId = creds.memberId;
 
