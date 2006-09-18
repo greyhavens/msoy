@@ -8,6 +8,8 @@ import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.item.web.MediaDesc;
+
 public class MemberInfo extends OccupantInfo
 {
     /** The media that represents our avatar. */

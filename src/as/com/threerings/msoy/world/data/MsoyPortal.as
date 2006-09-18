@@ -6,7 +6,7 @@ import com.threerings.io.ObjectOutputStream;
 
 import com.threerings.whirled.spot.data.Portal;
 
-import com.threerings.msoy.data.MediaDesc;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Contains additional info about portals necessary for the msoy world.

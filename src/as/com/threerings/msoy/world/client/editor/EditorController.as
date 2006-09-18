@@ -27,11 +27,10 @@ import com.threerings.whirled.spot.data.ModifyPortalsUpdate;
 import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MediaDesc;
 
 import com.threerings.msoy.item.client.InventoryPanel;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaItem;
+import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.client.FurniSprite;
@@ -194,7 +193,7 @@ public class EditorController extends Controller
         portal.media = new MediaDesc();
         portal.media.hash = StringUtil.unhexlate(
             "7fbc0922c7f36e1ce14648466b42c093185b6c1b");
-        portal.media.mimeType = MediaItem.IMAGE_PNG;
+        portal.media.mimeType = MediaDesc.IMAGE_PNG;
         portal.targetSceneId = 1;
         portal.targetPortalId = -1;
 
@@ -417,7 +416,7 @@ public class EditorController extends Controller
         var furni :FurniData = new FurniData();
         furni.id = getNextFurniId();
         furni.loc = cloc.loc;
-        furni.media = MediaDesc.fromItem(item);
+        furni.media = item.getFurniMedia();
 
         // create a loose sprite to represent it, add it to the panel
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);

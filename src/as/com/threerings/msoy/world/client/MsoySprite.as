@@ -50,9 +50,8 @@ import com.threerings.util.Util;
 import com.threerings.util.MediaContainer;
 
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.data.MediaDesc;
 
-import com.threerings.msoy.item.web.MediaItem;
+import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 
@@ -142,7 +141,7 @@ public class MsoySprite extends MediaContainer
 
     override protected function setupSwfOrImage (url :String) :void
     {
-        if (_desc.mimeType == MediaItem.APPLICATION_SHOCKWAVE_FLASH) {
+        if (_desc.mimeType == MediaDesc.APPLICATION_SHOCKWAVE_FLASH) {
             // create a unique id for the media
             _id = String(getTimer()) + int(Math.random() * int.MAX_VALUE);
 
@@ -175,7 +174,7 @@ public class MsoySprite extends MediaContainer
         if (_media is VideoDisplay) {
             var vid :VideoDisplay = (_media as VideoDisplay);
             Prefs.setMediaPosition(
-                MediaItem.hashToString(_desc.hash), vid.playheadTime);
+                MediaDesc.hashToString(_desc.hash), vid.playheadTime);
         }
 
         super.shutdown(completely);
@@ -344,7 +343,7 @@ public class MsoySprite extends MediaContainer
         // TODO: this seems broken, check it
         // set the position of the media to the specified timestamp
         vid.playheadTime = Prefs.getMediaPosition(
-            MediaItem.hashToString(_desc.hash));
+            MediaDesc.hashToString(_desc.hash));
 
         super.loadVideoReady(event);
     }

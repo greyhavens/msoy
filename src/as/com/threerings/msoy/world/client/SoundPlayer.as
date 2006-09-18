@@ -8,9 +8,7 @@ import flash.media.SoundChannel;
 
 import flash.net.URLRequest;
 
-import com.threerings.msoy.data.MediaDesc;
-
-import com.threerings.msoy.item.web.MediaItem;
+import com.threerings.msoy.item.web.MediaDesc;
 
 public class SoundPlayer
 {
@@ -54,7 +52,7 @@ public class SoundPlayer
 
     public function getMediaId () :String
     {
-        return MediaItem.hashToString(_desc.hash);
+        return MediaDesc.hashToString(_desc.hash);
     }
 
     public function getPosition () :Number

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.web {
 
+import flash.utils.ByteArray;
+
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
@@ -10,7 +12,7 @@ import com.threerings.io.ObjectOutputStream;
  * Represents a piece of furniture (any prop really) that a user can place into
  * a virtual world scene and potentially interact with.
  */
-public class Furniture extends MediaItem
+public class Furniture extends Item
 {
     /** An action associated with this furniture which is dispatched to the
      * virtual world client when the furniture is clicked on (max length 255
@@ -35,7 +37,7 @@ public class Furniture extends MediaItem
     // from Item
     override public function getThumbnailPath () :String
     {
-        return getMediaPath();
+        return getFurniMedia().getMediaPath();
     }
 
     override public function writeObject (out :ObjectOutputStream) :void

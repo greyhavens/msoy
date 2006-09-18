@@ -15,8 +15,8 @@ import com.threerings.mx.events.CommandEvent;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.data.ChatMessage;
 
-import com.threerings.msoy.data.MediaDesc;
 import com.threerings.msoy.data.MemberInfo;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 

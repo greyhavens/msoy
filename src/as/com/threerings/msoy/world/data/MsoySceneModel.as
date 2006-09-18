@@ -8,7 +8,7 @@ import com.threerings.io.TypedArray;
 
 import com.threerings.whirled.data.SceneModel;
 
-import com.threerings.msoy.data.MediaDesc;
+import com.threerings.msoy.item.web.MediaDesc;
 
 public class MsoySceneModel extends SceneModel
 {

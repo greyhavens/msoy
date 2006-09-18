@@ -9,7 +9,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.data.MediaDesc;
+import com.threerings.msoy.item.web.MediaDesc;
 
 public class FurniData
     implements Cloneable, Hashable, Streamable

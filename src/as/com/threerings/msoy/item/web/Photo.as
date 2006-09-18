@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.web {
 
+import flash.utils.ByteArray;
+
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
@@ -12,6 +14,12 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class Photo extends MediaItem
 {
+    /** A hash code identifying the photo media. */
+    public var photoMediaHash :ByteArray;
+
+    /** The MIME type of the {@link #photoMediaHash} media. */
+    public var photoMimeType :int;
+
     /** A caption for this photo (max length 255 characters). */
     public var caption :String;
 
@@ -30,13 +38,16 @@ public class Photo extends MediaItem
     // from Item
     override public function getThumbnailPath () :String
     {
-        return getMediaPath();
+        // TODO: fixy fixy
+        return getFurniMedia().getMediaPath();
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
+        out.writeField(photoMediaHash);
+        out.writeByte(photoMimeType);
         out.writeField(caption);
     }
 
@@ -44,6 +55,8 @@ public class Photo extends MediaItem
     {
         super.readObject(ins);
 
+        photoMediaHash = (ins.readField(ByteArray) as ByteArray);
+        photoMimeType = ins.readByte();
         caption = (ins.readField(String) as String);
     }
 }

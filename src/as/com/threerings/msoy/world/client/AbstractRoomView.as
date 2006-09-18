@@ -43,7 +43,7 @@ import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.data.MediaDesc;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyPortal;

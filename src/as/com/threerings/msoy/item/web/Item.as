@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.web {
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.Hashable;
 import com.threerings.util.StringUtil;
 
@@ -30,8 +32,25 @@ public /*abstract*/ class Item
      * without doing further database lookups or network requests. */
     public var flags :int;
 
+    /** The member id of the member that created this item. */
+    public var creatorId :int;
+
     /** The member id of the member that owns this item. */
     public var ownerId :int;
+
+    /** A hash code identifying the media used to display this item's thumbnail
+     * representation. */
+    public var thumbMediaHash :ByteArray;
+
+    /** The MIME type of the thumbMediaHash media. */
+    public var thumbMimeType :int;
+
+    /** A hash code identifying the media used to display this item's furniture
+     * representation. */
+    public var furniMediaHash :ByteArray;
+
+    /** The MIME type of the furniMediaHash media. */
+    public var furniMimeType :int;
 
     /**
      * This is used to map {@link Item} concrete classes to ItemEnum values. We
@@ -61,6 +80,26 @@ public /*abstract*/ class Item
         return "/media/static/items/" + getType().toLowerCase() + ".png";
     }
 
+    /**
+     * Returns a media descriptor for the media that should be used to display
+     * our thumbnail representation.
+     */
+    public MediaDesc getThumbnailMedia ()
+    {
+        return (thumbMediaHash == null) ? getDefaultThumbnailMedia() :
+            new MediaDesc(thumbMediaHash, thumbMimeType);
+    }
+
+    /**
+     * Returns a media descriptor for the media that should be used to display
+     * our furniture representation.
+     */
+    public MediaDesc getFurniMedia ()
+    {
+        return (furniMediaHash == null) ? getDefaultFurniMedia() :
+            new MediaDesc(furniMediaHash, furniMimeType);
+    }
+
     // from Hashable
     public function hashCode () :int
     {
@@ -84,7 +123,12 @@ public /*abstract*/ class Item
     {
         out.writeInt(itemId);
         out.writeByte(flags);
+        out.writeInt(creatorId);
         out.writeInt(ownerId);
+        out.writeField(thumbMediaHash);
+        out.writeByte(thumbMimeType);
+        out.writeField(furniMediaHash);
+        out.writeByte(furniMimeType);
     }
 
     // from Streamable
@@ -92,7 +136,32 @@ public /*abstract*/ class Item
     {
         itemId = ins.readInt();
         flags = ins.readByte();
+        creatorId = ins.readInt();
         ownerId = ins.readInt();
+        thumbMediaHash = (ins.readField(ByteArray) as ByteArray);
+        thumbMimeType = ins.readByte();
+        furniMediaHash = (ins.readField(ByteArray) as ByteArray);
+        furniMimeType = ins.readByte();
+    }
+
+    /**
+     * Returns the default thumbnail media for use if this item has no provided
+     * custom media.
+     */
+    protected function getDefaultThumbnailMedia () :MediaDesc
+    {
+        return new StaticMediaDesc(
+            "/media/static/thumbnails/" + getType().toLowerCase() + ".png");
+    }
+
+    /**
+     * Returns the default furni media for use if this item has no provided
+     * custom media.
+     */
+    protected function getDefaultFurniMedia () :MediaDesc
+    {
+        return new StaticMediaDesc(
+            "/media/static/furni/" + getType().toLowerCase() + ".png");
     }
 }
 }

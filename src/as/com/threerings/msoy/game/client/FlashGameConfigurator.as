@@ -6,7 +6,7 @@ import mx.controls.Label;
 import com.threerings.parlor.game.client.FlexGameConfigurator;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MediaDesc;
+import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.game.data.FlashGameConfig;
 

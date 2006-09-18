@@ -17,7 +17,7 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
-import com.threerings.msoy.data.MemberName;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Represents a connected msoy user.
