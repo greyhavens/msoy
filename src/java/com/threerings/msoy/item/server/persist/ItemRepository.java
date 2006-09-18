@@ -16,6 +16,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.JORARepository;
+import com.samskivert.jdbc.Repository.Operation;
 import com.samskivert.jdbc.jora.Table;
 
 import com.threerings.msoy.item.web.CatalogListing;
@@ -89,31 +90,6 @@ public abstract class
         item.itemId = insert(getTable(), item);
     }
 
-    /** Insert an item clone into the database with the given owner. */
-    public void cloneItem (T item, int ownerId)
-        throws PersistenceException
-    {
-        executeUpdate(new Operation<Void>() {
-            public Void invoke (Connection conn, DatabaseLiaison liaison)
-                throws SQLException, PersistenceException
-            {
-                PreparedStatement stmt = null;
-                try {
-                    stmt = conn.prepareStatement(
-                        "insert into " + getCloneTableName() + " " +
-                        "        set ORIGINAL_ITEM_ID = ?," +
-                        "            OWNER_ID = ?");
-                    stmt.executeUpdate();
-                    
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-                return null;
-            }
-        });
-    }
-    
-    
     /**
      * Loads all items in the catalog.
      * TODO: As soon as we're out of the prototyping stage, this will need
@@ -156,10 +132,52 @@ public abstract class
         });
     }
 
+    /**
+     * Perform the low level operations involved with purchasing an item:
+     * instantiating the immutable item, making a new clone row, returning
+     * the tweaked instance.
+     */
     public Item purchaseItem (int memberId, int itemId)
+        throws PersistenceException
     {
-        // TODO Auto-generated method stub
-        return null;
+        // load the item being purchased
+        Item item = loadItem(itemId);
+        // sanity check it
+        if (item.ownerId != -1) {
+            throw new PersistenceException(
+                "Can't purchase item with owner [itemId=" + itemId + "]");
+        }
+        // insert a new clone row for us
+        cloneItem(itemId, memberId);
+        // and mark the instance as ours
+        item.ownerId = memberId;
+        return item;
+    }
+
+    /** Insert an item clone into the database with the given owner. */
+    protected void cloneItem (final int itemId, final int ownerId)
+        throws PersistenceException
+    {
+        executeUpdate(new Operation<Void>() {
+            public Void invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                PreparedStatement stmt = null;
+                try {
+                    stmt = conn.prepareStatement(
+                        "insert into " + getCloneTableName() + " " +
+                        "        set ORIGINAL_ITEM_ID = ?," +
+                        "            OWNER_ID = ?");
+                    stmt.setInt(1, itemId);
+                    stmt.setInt(2, ownerId);
+                    stmt.executeUpdate();
+                    
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return null;
+            }
+        });
     }
 
     /**

@@ -179,7 +179,7 @@ public class ItemManager
     }
 
     /**
-     * Fetch the entire catalog of listed items of the given type.
+     * Fetches the entire catalog of listed items of the given type.
      */
     public void loadCatalog (
             int memberId, ItemEnum type,
@@ -203,6 +203,10 @@ public class ItemManager
         });
     }
 
+    /**
+     * Purchases a given item for a given member from the catalog by
+     * creating a new clone row in the appropriate database table.
+     */
     public void purchaseItem (
             final int memberId, final int itemId, ItemEnum type,
             ResultListener<Item> rlist)
