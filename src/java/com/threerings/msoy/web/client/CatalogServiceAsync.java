@@ -23,4 +23,10 @@ public interface CatalogServiceAsync
      */
     public void purchaseItem (WebCreds creds, int itemId, String type,
                               AsyncCallback callback);
+    
+    /**
+     *  The asynchronous version of {@link CatalogService#listItem}
+     */
+    public void listItem (WebCreds creds, int itemId, String type,
+                          AsyncCallback callback);
 }

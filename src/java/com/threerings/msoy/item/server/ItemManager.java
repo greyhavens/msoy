@@ -227,7 +227,32 @@ public class ItemManager
                 return repo.purchaseItem(memberId, itemId);
             }
         });
+    }
+    
+    /**
+     * Lists the given item in the catalog by creating a new item row and
+     * a new catalog row and returning the immutable form of the item.
+     */
 
+    public void listItem (
+            final int itemId, ItemEnum type, ResultListener<Item> rlist)
+    {
+        // locate the appropriate repository
+        final ItemRepository<Item> repo = _repos.get(type);
+        if (repo == null) {
+            rlist.requestFailed(
+                new Exception("No repository registered for " + type + "."));
+            return;
+        }
+
+        // and perform the listing
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Item>(rlist) {
+            public Item invokePersistResult ()
+                throws PersistenceException {
+                return repo.listItem(itemId);
+            }
+        });
     }
 
     /**

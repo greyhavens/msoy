@@ -133,15 +133,53 @@ public abstract class
     }
 
     /**
+     * Perform the low level operations involved with listing an item in
+     * the catalog: create a new, immutable version of the item, insert it
+     * into the item table, then create a row in the catalog table.
+     */
+    public T listItem (int itemId)
+        throws PersistenceException
+    {
+        // load the item being listed
+        final T item = loadItem(itemId);
+        // items in the catalog don't have an owner
+        item.ownerId = -1;
+        // create a new row for the new item, giving the object a new id
+        insertItem(item);
+        // finally add it to the actual catalog
+        executeUpdate(new Operation<Void>() {
+            public Void invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                PreparedStatement stmt = null;
+                try {
+                    stmt = conn.prepareStatement(
+                        "insert into " + getCatalogTableName() + " " +
+                        "        set ITEM_ID = ?," +
+                        "            LISTED_DATE = ?");
+                    stmt.setInt(1, item.itemId);
+                    stmt.setDate(2, new Date(System.currentTimeMillis()));
+                    stmt.executeUpdate();
+                    
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return null;
+            }
+        });
+        return item;
+    }
+    
+    /**
      * Perform the low level operations involved with purchasing an item:
      * instantiating the immutable item, making a new clone row, returning
      * the tweaked instance.
      */
-    public Item purchaseItem (int memberId, int itemId)
+    public T purchaseItem (int memberId, int itemId)
         throws PersistenceException
     {
         // load the item being purchased
-        Item item = loadItem(itemId);
+        T item = loadItem(itemId);
         // sanity check it
         if (item.ownerId != -1) {
             throw new PersistenceException(

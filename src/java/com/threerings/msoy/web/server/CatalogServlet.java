@@ -52,7 +52,7 @@ public class CatalogServlet extends RemoteServiceServlet
     {
         ItemEnum etype = ItemEnum.valueOf(type);
         if (etype == null) {
-            log.warning("Requested to create item of invalid item type " +
+            log.warning("Requested to purchase item of invalid item type " +
                         "[who=" + creds + ", itemId=" + itemId +
                         "type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
@@ -65,5 +65,22 @@ public class CatalogServlet extends RemoteServiceServlet
             creds.memberId, itemId, etype, waiter);
         return waiter.waitForResult();
 
+    }
+
+    // from interface CatalogService
+    public Item listItem (WebCreds creds, int itemId, String type)
+        throws ServiceException
+    {
+        ItemEnum etype = ItemEnum.valueOf(type);
+        if (etype == null) {
+            log.warning("Requested to list item of invalid item type " +
+                        "[who=" + creds + ", itemId=" + itemId +
+                        "type=" + type + "].");
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
+        ServletWaiter<Item> waiter =
+            new ServletWaiter<Item>("listItem[" + itemId + ", " + etype + "]");
+        MsoyServer.itemMan.listItem(itemId, etype, waiter);
+        return waiter.waitForResult();
     }
 }

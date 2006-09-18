@@ -23,4 +23,8 @@ public interface CatalogService extends RemoteService
     /** Purchases the item of the specified id and type. */
     public Item purchaseItem (WebCreds creds, int itemId, String type)
         throws ServiceException;
+    
+    /** Lists the specified item in the catalog. */
+    public Item listItem (WebCreds creds, int itemId, String type)
+        throws ServiceException;
 } 
