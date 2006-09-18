@@ -106,7 +106,7 @@
 
   <!-- builds our Flash client -->
   <target name="asclient" depends="asprepare,aslib">
-    <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true">
+    <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-locale"/>
       <arg value="en_US"/>
       <arg value="-compiler.optimize"/>
@@ -120,6 +120,7 @@
       <arg value="/tmp/link-report.txt"/>
       <arg value="-resource-bundle-list"/>
       <arg value="/tmp/bundles.list"/>
+      <!--<arg value="-compiler.keep-all-type-selectors=true"/>-->
       <arg value="-compiler.warn-class-is-sealed=true"/>
       <arg value="-compiler.warn-constructor-returns-value=true"/>
       <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
@@ -135,7 +136,7 @@
 
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare,aslib">
-    <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true">
+    <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-locale"/>
       <arg value="en_US"/>
       <arg value="-compiler.debug"/>
