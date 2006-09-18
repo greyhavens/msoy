@@ -12,7 +12,7 @@ public class StaticMediaDesc extends MediaDesc
         mimeType = suffixToMimeType(path);
     }
 
-    // @Override // from MediaDesc
+    // from MediaDesc
     override public function getMediaPath () :String
     {
         return _path;
