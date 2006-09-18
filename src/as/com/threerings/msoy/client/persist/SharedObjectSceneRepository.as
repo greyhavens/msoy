@@ -46,6 +46,7 @@ public class SharedObjectSceneRepository
 
         // uncompress the bytes and read out the scene model
         ba.endian = Endian.BIG_ENDIAN; // this should be saved, but...
+        ba.position = 0;
         ba.uncompress();
         var ins :ObjectInputStream = new ObjectInputStream(ba);
         return (ins.readObject() as SceneModel);
