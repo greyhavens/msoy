@@ -30,6 +30,12 @@ public class FurnitureRepository extends ItemRepository<Furniture>
         return "FURNITURE_CLONES";
     }
 
+    @Override // from ItemRepository
+    protected String getCatalogTableName ()
+    {
+        return "FURNITURE_CATALOG";
+    }
+
     @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
@@ -50,6 +56,11 @@ public class FurnitureRepository extends ItemRepository<Furniture>
         JDBCUtil.createTableIfMissing(conn, "FURNITURE_CLONES", new String[] {
             "ORIGINAL_ITEM_ID integer not null",
             "OWNER_ID integer not null",
+        }, "");
+        
+        JDBCUtil.createTableIfMissing(conn, "FURNITURE_CATALOG", new String[] {
+            "ITEM_ID integer not null",
+            "LISTED_DATE date not null",
         }, "");
     }
 

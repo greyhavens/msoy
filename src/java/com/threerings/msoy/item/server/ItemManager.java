@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SoftCache;
 import com.samskivert.util.Tuple;
@@ -23,6 +22,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.util.ItemEnum;
@@ -176,6 +176,54 @@ public class ItemManager
                 super.handleSuccess();
             }
         });
+    }
+
+    /**
+     * Fetch the entire catalog of listed items of the given type.
+     */
+    public void loadCatalog (
+            int memberId, ItemEnum type,
+            ResultListener<ArrayList<CatalogListing>> rlist)
+    {
+        // locate the appropriate repository
+        final ItemRepository<Item> repo = _repos.get(type);
+        if (repo == null) {
+            rlist.requestFailed(
+                new Exception("No repository registered for " + type + "."));
+            return;
+        }
+
+        // and load the catalog
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ArrayList<CatalogListing>>(rlist) {
+            public ArrayList<CatalogListing> invokePersistResult ()
+                throws PersistenceException {
+                return repo.loadCatalog();
+            }
+        });
+    }
+
+    public void purchaseItem (
+            final int memberId, final int itemId, ItemEnum type,
+            ResultListener<Item> rlist)
+    {
+        // locate the appropriate repository
+        final ItemRepository<Item> repo = _repos.get(type);
+        if (repo == null) {
+            rlist.requestFailed(
+                new Exception("No repository registered for " + type + "."));
+            return;
+        }
+
+        // and perform the purchase
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Item>(rlist) {
+            public Item invokePersistResult ()
+                throws PersistenceException {
+                return repo.purchaseItem(memberId, itemId);
+            }
+        });
+
     }
 
     /**

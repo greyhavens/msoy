@@ -30,6 +30,12 @@ public class PhotoRepository extends ItemRepository<Photo>
         return "PHOTO_CLONES";
     }
 
+    @Override // from ItemRepository
+    protected String getCatalogTableName ()
+    {
+        return "PHOTO_CATALOG";
+    }
+
     @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
@@ -51,6 +57,11 @@ public class PhotoRepository extends ItemRepository<Photo>
         JDBCUtil.createTableIfMissing(conn, "PHOTO_CLONES", new String[] {
             "ORIGINAL_ITEM_ID integer not null",
             "OWNER_ID integer not null",
+        }, "");
+        
+        JDBCUtil.createTableIfMissing(conn, "PHOTO_CATALOG", new String[] {
+            "ITEM_ID integer not null",
+            "LISTED_DATE date not null",
         }, "");
     }
 

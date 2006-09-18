@@ -10,6 +10,8 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.PersonService;
@@ -59,6 +61,9 @@ public abstract class MsoyEntryPoint
         _ctx.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
         ((ServiceDefTarget)_ctx.personsvc).setServiceEntryPoint(
             prefix + "person");
+        _ctx.catalogsvc = (CatalogServiceAsync)GWT.create(CatalogService.class);
+        ((ServiceDefTarget)_ctx.catalogsvc).setServiceEntryPoint(
+            prefix + "catalog");
 
         // create our standard logon panel
         RootPanel.get("logon").add(_logon = new LogonPanel(_ctx, this));

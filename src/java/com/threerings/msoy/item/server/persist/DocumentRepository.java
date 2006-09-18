@@ -11,6 +11,7 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.jora.Table;
 
+import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Document;
 
 /**
@@ -24,6 +25,12 @@ public class DocumentRepository extends ItemRepository<Document>
         return _table;
     }
     
+    @Override // from ItemRepository
+    protected String getCatalogTableName ()
+    {
+        return "DOCUMENT_CATALOG";
+    }
+
     @Override // from ItemRepository
     protected String getCloneTableName ()
     {
@@ -51,6 +58,11 @@ public class DocumentRepository extends ItemRepository<Document>
         JDBCUtil.createTableIfMissing(conn, "DOCUMENT_CLONES", new String[] {
             "ORIGINAL_ITEM_ID integer not null",
             "OWNER_ID integer not null",
+        }, "");
+
+        JDBCUtil.createTableIfMissing(conn, "DOCUMENT_CATALOG", new String[] {
+            "ITEM_ID integer not null",
+            "LISTED_DATE date not null",
         }, "");
     }
 

@@ -1,0 +1,20 @@
+.item_editor_title {
+   font-weight: bold;
+}
+
+.item_editor_button {
+   font-weight: bold;
+}
+
+.inventory_item { 
+   border: 1px solid;
+}
+
+.item_thumb_image {
+  border: 1px solid;
+  padding: 5px;
+}
+
+.item_thumb_text {
+  font-size: small;
+}

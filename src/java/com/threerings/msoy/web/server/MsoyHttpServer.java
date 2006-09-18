@@ -79,6 +79,7 @@ public class MsoyHttpServer extends HttpServer
     protected static final String[] SERVLETS = {
         "user", WebUserServlet.class.getName(),
         "item", ItemServlet.class.getName(),
+        "catalog", CatalogServlet.class.getName(),
         "profile", ProfileServlet.class.getName(),
         "person", PersonServlet.class.getName(),
         "upload", UploadServlet.class.getName(),

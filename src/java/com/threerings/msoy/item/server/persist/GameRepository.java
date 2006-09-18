@@ -30,6 +30,12 @@ public class GameRepository extends ItemRepository<Game>
         return "GAME_CLONES";
     }
 
+    @Override // from ItemRepository
+    protected String getCatalogTableName ()
+    {
+        return "GAME_CATALOG";
+    }
+
     @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
@@ -54,6 +60,11 @@ public class GameRepository extends ItemRepository<Game>
         JDBCUtil.createTableIfMissing(conn, "GAME_CLONES", new String[] {
             "ORIGINAL_ITEM_ID integer not null",
             "OWNER_ID integer not null",
+        }, "");
+        
+        JDBCUtil.createTableIfMissing(conn, "GAME_CATALOG", new String[] {
+            "ITEM_ID integer not null",
+            "LISTED_DATE date not null",
         }, "");
     }
 

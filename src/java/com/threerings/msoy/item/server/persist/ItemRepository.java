@@ -4,7 +4,9 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -16,12 +18,14 @@ import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.JORARepository;
 import com.samskivert.jdbc.jora.Table;
 
+import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 
 /**
  * Manages a repository of digital items of a particular type.
  */
-public abstract class ItemRepository<T extends Item>
+public abstract class
+    ItemRepository<T extends Item>
     extends JORARepository
 {
     /**
@@ -109,6 +113,55 @@ public abstract class ItemRepository<T extends Item>
         });
     }
     
+    
+    /**
+     * Loads all items in the catalog.
+     * TODO: As soon as we're out of the prototyping stage, this will need
+     * to turn into a paging method; int offset, int rows perhaps?
+     * TODO: This should be a single join over two tables, but there is no
+     * way to coerce the current ORM system into doing that, so we iterate &
+     * lookup, as placeholder until that day (or until we decide it's the
+     * kind of thing that just needs an explicit query).
+     * TODO: need a powerful way to supply search criteria.
+     */
+    public ArrayList<CatalogListing> loadCatalog ()
+        throws PersistenceException
+    {
+        return execute(new Operation<ArrayList<CatalogListing>>() {
+            public ArrayList<CatalogListing> invoke (
+                Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                ArrayList<CatalogListing> list =
+                    new ArrayList<CatalogListing> ();
+                Statement stmt = conn.createStatement();
+                try {
+                    ResultSet rs = stmt.executeQuery(
+                        "  select ITEM_ID, LISTED_DATE " +
+                        "    from " + getCatalogTableName());
+                    while (rs.next()) {
+                        int itemId = rs.getInt(1);
+                        Date listedDate = rs.getDate(2);
+                        CatalogListing listing = new CatalogListing();
+                        listing.item = loadItem(itemId);
+                        listing.listedDate = listedDate;
+                        list.add(listing);
+                    }
+
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+                return list;
+            }
+        });
+    }
+
+    public Item purchaseItem (int memberId, int itemId)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
     /**
      * Returns the database identifier for this item's database. The default is
      * <code>itemdb</code> but if we need to partition our item tables across
@@ -121,7 +174,10 @@ public abstract class ItemRepository<T extends Item>
 
     /** Returns the table via which we can manipulate the item table. */
     protected abstract Table<T> getTable ();
-    
+
+    /** Returns the name of the table returned by getTable(). */
+    protected abstract String getCatalogTableName ();
+
     /**
      * Returns the name of the _CLONES table associated with the main table.
      */
