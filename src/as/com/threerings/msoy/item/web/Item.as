@@ -84,7 +84,7 @@ public /*abstract*/ class Item
      * Returns a media descriptor for the media that should be used to display
      * our thumbnail representation.
      */
-    public MediaDesc getThumbnailMedia ()
+    public function getThumbnailMedia () :MediaDesc
     {
         return (thumbMediaHash == null) ? getDefaultThumbnailMedia() :
             new MediaDesc(thumbMediaHash, thumbMimeType);
@@ -94,7 +94,7 @@ public /*abstract*/ class Item
      * Returns a media descriptor for the media that should be used to display
      * our furniture representation.
      */
-    public MediaDesc getFurniMedia ()
+    public function getFurniMedia () :MediaDesc
     {
         return (furniMediaHash == null) ? getDefaultFurniMedia() :
             new MediaDesc(furniMediaHash, furniMimeType);

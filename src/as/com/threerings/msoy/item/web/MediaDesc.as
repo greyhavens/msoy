@@ -156,6 +156,15 @@ public class MediaDesc
     }
 
     /**
+     * Creates either a configured or blank media descriptor.
+     */
+    public function MediaDesc (hash :ByteArray = null, mimeType :int = 0)
+    {
+        this.hash = hash;
+        this.mimeType = mimeType;
+    }
+
+    /**
      * Returns the path of the URL that references this media.
      */
     public function getMediaPath () :String
