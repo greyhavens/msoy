@@ -192,52 +192,16 @@ public class MediaDesc implements Streamable
         }
     }
 
-/*
-    public static MediaDesc fromDBString (String encoded)
+    /** Used for unserialization. */
+    public MediaDesc ()
     {
-        if (encoded == null) {
-            return null;
-        }
-        try {
-            int colon = encoded.indexOf(':');
-            if (colon == -1) {
-                return new MediaDesc(Integer.parseInt(encoded));
-            }
-
-            MediaDesc data = new MediaDesc(-1);
-            data.hash = StringUtil.unhexlate(encoded.substring(0, colon));
-            data.mimeType =
-                (byte) Integer.parseInt(encoded.substring(colon + 1));
-            return data;
-
-        } catch (NumberFormatException nfe) {
-            return null;
-        }
     }
-
-    public static String asDBString (MediaDesc data)
-    {
-        if (data == null) {
-            return null;
-        }
-        if (data.id == -1) {
-            return StringUtil.hexlate(data.hash) + ":" + data.mimeType;
-        } else {
-            return String.valueOf(data.id);
-        }
-    }
-*/
 
     /** Creates a media descriptor from the supplied data. */
     public MediaDesc (byte[] hash, byte mimeType)
     {
         this.hash = hash;
         this.mimeType = mimeType;
-    }
-
-    /** Used for unserialization. */
-    public MediaDesc ()
-    {
     }
 
     /**
