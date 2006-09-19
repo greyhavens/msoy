@@ -13,9 +13,9 @@ public interface ItemService extends InvocationService
 {
     /**
      * Get the items in the user's inventory.
-     * TODO: item types
      * TODO: WTF? Can we ever load the inventory? At best we can display
      *       a page of it.
      */
-    public void getInventory (Client client, ResultListener listener);
+    public void getInventory (
+        Client client, String type, ResultListener listener);
 }

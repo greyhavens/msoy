@@ -25,12 +25,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static const GET_INVENTORY :int = 1;
 
     // documentation inherited from interface
-    public function getInventory (arg1 :Client, arg2 :InvocationService_ResultListener) :void
+    public function getInventory (arg1 :Client, arg2 :String, arg3 :InvocationService_ResultListener) :void
     {
-        var listener2 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener2.listener = arg2;
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, GET_INVENTORY, [
-            listener2
+            arg2, listener3
         ]);
     }
 

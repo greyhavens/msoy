@@ -14,11 +14,11 @@ public interface ItemService extends InvocationService
 {
     /**
      * Get the items in the user's inventory.
-     * TODO: item types
      * TODO: WTF? Can we ever load the inventory? At best we can display
      *       a page of it.
      */
     function getInventory (
-        client :Client, listener :InvocationService_ResultListener) :void;
+        client :Client, type :String,
+        listener :InvocationService_ResultListener) :void;
 }
 }

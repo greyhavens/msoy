@@ -18,6 +18,6 @@ public interface ItemProvider extends InvocationProvider
     /**
      * Handles a {@link ItemService#getInventory} request.
      */
-    public void getInventory (ClientObject caller, InvocationService.ResultListener arg1)
+    public void getInventory (ClientObject caller, String arg1, InvocationService.ResultListener arg2)
         throws InvocationException;
 }

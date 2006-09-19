@@ -76,16 +76,20 @@ public class ItemManager
 
     // from ItemProvider
     public void getInventory (
-        ClientObject caller, final InvocationService.ResultListener listener)
+        ClientObject caller, String type,
+        final InvocationService.ResultListener listener)
         throws InvocationException
     {
         MemberObject memberObj = (MemberObject) caller;
         if (memberObj.isGuest()) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
+        // go ahead and throw a RuntimeException if 'type' is bogus
+        ItemEnum etype = Enum.valueOf(ItemEnum.class, type);
 
-        // for now, we grab FURNITURE
-        loadInventory(memberObj.getMemberId(), ItemEnum.FURNITURE,
+        // then, load that type
+        // TODO: not everything!
+        loadInventory(memberObj.getMemberId(), etype,
             new ResultListener<ArrayList<Item>>() {
                 public void requestCompleted (ArrayList<Item> result) {
                     Item[] items = new Item[result.size()];

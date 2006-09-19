@@ -174,11 +174,11 @@ public class MemberRepository extends JORARepository
         // assume we'll be creating a new session record
         final SessionRecord nsess = new SessionRecord();
 	Calendar cal = Calendar.getInstance();
+        long now = cal.getTimeInMillis();
 	cal.add(Calendar.DATE, persist ? 30 : 1);
-        nsess.expires = new Date(cal.getTime().getTime());
+        nsess.expires = new Date(cal.getTimeInMillis());
         nsess.memberId = memberId;
-        nsess.token = StringUtil.md5hex(
-            "" + memberId + System.currentTimeMillis() + Math.random());
+        nsess.token = StringUtil.md5hex("" + memberId + now + Math.random());
 
         // try to insert our new session record and if that fails with a
         // duplicate key, reuse the old record but adjust its expiration

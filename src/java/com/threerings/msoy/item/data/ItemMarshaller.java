@@ -23,12 +23,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static final int GET_INVENTORY = 1;
 
     // documentation inherited from interface
-    public void getInventory (Client arg1, InvocationService.ResultListener arg2)
+    public void getInventory (Client arg1, String arg2, InvocationService.ResultListener arg3)
     {
-        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
-        listener2.listener = arg2;
+        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, GET_INVENTORY, new Object[] {
-            listener2
+            arg2, listener3
         });
     }
 

@@ -28,7 +28,7 @@ import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MsoyContext;
 
-import com.threerings.msoy.item.client.InventoryPanel;
+import com.threerings.msoy.item.client.InventoryWindow;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
@@ -226,7 +226,7 @@ public class EditorController extends Controller
     public function handleInsertFurni () :void
     {
         if (_invPanel == null) {
-            _invPanel = new InventoryPanel(_ctx);
+            _invPanel = new InventoryWindow(_ctx);
         }
     }
 
@@ -859,7 +859,7 @@ public class EditorController extends Controller
     protected var _nextPortalId :int;
     protected var _nextFurniId :int;
 
-    protected var _invPanel :InventoryPanel;
+    protected var _invPanel :InventoryWindow;
 
     protected var _removedFurni :TypedArray = TypedArray.create(FurniData);
     protected var _addedFurni :TypedArray = TypedArray.create(FurniData);

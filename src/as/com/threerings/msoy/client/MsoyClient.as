@@ -48,8 +48,9 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.web.Document;
-import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.item.web.Furniture;
+import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.web.Photo;
 
 import com.threerings.msoy.world.data.RoomConfig;
 
@@ -201,6 +202,7 @@ public class MsoyClient extends Client
         c = Document;
         c = Photo;
         c = Furniture;
+        c = Game;
         c = ItemMarshaller;
 
         // these cause bundles to be compiled in.
