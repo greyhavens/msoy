@@ -97,7 +97,7 @@ public /*abstract*/ class Item
      */
     public function getThumbnailPath () :String
     {
-        return "/media/static/items/" + getType().toLowerCase() + ".png";
+        return getThumbnailMedia().getMediaPath();
     }
 
     // from Hashable
