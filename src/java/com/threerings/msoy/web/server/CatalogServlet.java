@@ -71,11 +71,18 @@ public class CatalogServlet extends RemoteServiceServlet
     public Item listItem (WebCreds creds, int itemId, String type)
         throws ServiceException
     {
+        if (itemId == -1) {
+            log.warning(
+                "Reqested to list a cloned item " +
+                "[who=" + creds + ", itemId=" + itemId +
+                "type=" + type + "].");
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
         ItemEnum etype = ItemEnum.valueOf(type);
         if (etype == null) {
             log.warning("Requested to list item of invalid item type " +
-                        "[who=" + creds + ", itemId=" + itemId +
-                        "type=" + type + "].");
+                "[who=" + creds + ", itemId=" + itemId +
+                "type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
         }
         ServletWaiter<Item> waiter =

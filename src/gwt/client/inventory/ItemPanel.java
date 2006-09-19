@@ -117,7 +117,11 @@ public class ItemPanel extends VerticalPanel
         remove(editor);
         insert(_create, 1);
         if (item != null) {
-            _contents.add(new ItemContainer(item, this));
+            // we really need to re-fetch the item from the database to get
+            // things like itemId set. just refresh the entire list for now.
+            _contents.clear();
+            _items = null;
+            onLoad();
         }
     }
 
