@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.web.MediaDesc;
 
 import client.MsoyEntryPoint;
 
@@ -76,6 +77,16 @@ public class GameEditor extends ItemEditor
             }
         });
         row++;
+    }
+
+    // TEMPORARY: so that I can play around with creating games for now
+    protected void setHash (String mediaHash, int mimeType)
+    {
+        if (_game != null) {
+            _game.gameMediaHash = MediaDesc.stringToHash(mediaHash);
+            _game.gameMimeType = (byte) mimeType;
+        }
+        super.setHash(mediaHash, mimeType);
     }
 
     // @Override from ItemEditor
