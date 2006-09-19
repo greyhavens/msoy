@@ -73,14 +73,6 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns the path to a thumbnail image for this item.
-     */
-    public function getThumbnailPath () :String
-    {
-        return "/media/static/items/" + getType().toLowerCase() + ".png";
-    }
-
-    /**
      * Returns a media descriptor for the media that should be used to display
      * our thumbnail representation.
      */
@@ -98,6 +90,14 @@ public /*abstract*/ class Item
     {
         return (furniMediaHash == null) ? getDefaultFurniMedia() :
             new MediaDesc(furniMediaHash, furniMimeType);
+    }
+
+    /**
+     * Returns the path to a thumbnail image for this item.
+     */
+    public function getThumbnailPath () :String
+    {
+        return "/media/static/items/" + getType().toLowerCase() + ".png";
     }
 
     // from Hashable

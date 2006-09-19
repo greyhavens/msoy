@@ -8,7 +8,7 @@ import flash.utils.ByteArray;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-public class Game extends MediaItem
+public class Game extends Item
 {
     /** The name of the game. */
     public var name :String;

@@ -12,7 +12,7 @@ import com.threerings.io.ObjectOutputStream;
  * Represents an uploaded photograph for display in albumns or for use as a
  * profile picture.
  */
-public class Photo extends MediaItem
+public class Photo extends Item
 {
     /** A hash code identifying the photo media. */
     public var photoMediaHash :ByteArray;
