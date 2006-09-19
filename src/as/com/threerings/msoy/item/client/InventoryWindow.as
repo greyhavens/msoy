@@ -1,10 +1,16 @@
 package com.threerings.msoy.item.client {
 
+import mx.core.ContainerCreationPolicy;
+
+import mx.core.UIComponent;
+
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.LazyTabNavigator;
+
 
 /**
  * A simple in-game panel that shows inventory and acts as a drag source
@@ -24,7 +30,7 @@ public class InventoryWindow extends FloatingPanel
     {
         super.createChildren();
 
-        var tn :TabNavigator = new TabNavigator();
+        var tn :LazyTabNavigator = new LazyTabNavigator();
         addChild(tn);
 
         addTab(tn, "FURNITURE");
@@ -33,12 +39,12 @@ public class InventoryWindow extends FloatingPanel
         addTab(tn, "GAME");
     }
 
-    protected function addTab (tn :TabNavigator, type :String) :void
+    protected function addTab (tn :LazyTabNavigator, type :String) :void
     {
-        var box :VBox = new VBox();
-        box.label = _ctx.xlate("item", "t.items_" + type);
-        box.addChild(new InventoryList(_ctx, type));
-        tn.addChild(box);
+        tn.addTab(_ctx.xlate("item", "t.items_" + type),
+            function () :UIComponent {
+                return new InventoryList(_ctx, type);
+            });
     }
 }
 }

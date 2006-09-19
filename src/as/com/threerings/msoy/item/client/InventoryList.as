@@ -2,6 +2,8 @@ package com.threerings.msoy.item.client {
 
 import flash.display.DisplayObjectContainer;
 
+import mx.events.FlexEvent;
+
 import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -18,29 +20,25 @@ public class InventoryList extends ItemList
 
         dragEnabled = true;
 
-        _type = type;
+        var svc :ItemService =
+            (_ctx.getClient().requireService(ItemService) as ItemService);
+        svc.getInventory(_ctx.getClient(), type, new ResultWrapper(
+            function (cause :String) :void {
+                // report status somewhere?
+                Log.getLog(this).warning("Error retrieving inventory: " +
+                    cause);
+            }, function (items :Array) :void {
+                clearItems();
+                if (items.length == 0) {
+                    _itemsToShow.addItem(ctx.xlate("item", "m.no_items"));
+
+                } else {
+                    addItems(items);
+                }
+            }));
+
+        // add a status item
+        _itemsToShow.addItem(ctx.xlate("item", "m.retrieving"));
     }
-
-    override public function parentChanged (p :DisplayObjectContainer) :void
-    {
-        super.parentChanged(p);
-
-        if (p != null && !_retrieved) {
-            trace("isVis(" + _type + "): " + visible);
-            var svc :ItemService =
-                (_ctx.getClient().requireService(ItemService) as ItemService);
-            svc.getInventory(_ctx.getClient(), _type, new ResultWrapper(
-                function (cause :String) :void {
-                    // report status somewhere?
-                    Log.getLog(this).warning("Error retrieving inventory: " +
-                        cause);
-                }, addItems));
-            _retrieved = true;
-        }
-    }
-
-    /** The type of item we're showing in this particular list. */
-    protected var _type :String;
-    protected var _retrieved :Boolean;
 }
 }

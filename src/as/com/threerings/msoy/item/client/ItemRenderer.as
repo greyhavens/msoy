@@ -52,18 +52,28 @@ public class ItemRenderer extends VBox
 
     protected function recheckItem () :void
     {
-        var item :Item = (data as Item);
-        if (!Util.equals(item, _item)) {
-            _item = item;
+        if (data is Item) {
+            var item :Item = (data as Item);
+            if (!Util.equals(item, _item)) {
+                _item = item;
 
-            if (_item == null) {
-                _container.shutdown();
-                _label.text = "";
+                if (_item == null) {
+                    _container.shutdown();
+                    _label.text = "";
 
-            } else {
-                _container.setMedia(_item.getThumbnailPath());
-                _label.text = _item.getDescription();
+                } else {
+                    _container.setMedia(_item.getThumbnailPath());
+                    _label.text = _item.getDescription();
+                }
             }
+
+        } else if (data is String) {
+            var str :String = (data as String);
+            if (_item != null) {
+                _container.shutdown();
+                _item = null;
+            }
+            _label.text = str;
         }
     }
 
