@@ -43,17 +43,17 @@ public class ItemPanel extends VerticalPanel
                             "There are no " + _type + " items listed."));
                     } else {
                         for (int ii = 0; ii < _listings.size(); ii++) {
-                            _contents.add(new Label("Item: " + ii));
                             _contents.add(new ItemContainer(
                                 (CatalogListing) _listings.get(ii),
                                 ItemPanel.this));
-                        }
+                            }
                     }
                 }
                 public void onFailure (Throwable caught) {
                     GWT.log("loadCatalog failed", caught);
                     // TODO: if ServiceException, translate
-                    _contents.add(new Label("Failed to load catalog."));
+                    _contents.add(new Label(
+                        "Failed to load catalog: " + caught.toString()));
                 }
             });
         }

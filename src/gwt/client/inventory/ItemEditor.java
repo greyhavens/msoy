@@ -278,7 +278,9 @@ public abstract class ItemEditor extends FlexTable
             if (_previewRow == -1) {
                 reservePreviewSpace(); // a little late, but ok!
             }
-            setWidget(_previewRow, 0, new ItemContainer(_item, false, false));
+            ItemContainer container = 
+                new ItemContainer(_item, _parent, false, false);
+            setWidget(_previewRow, 0, container);
         }
     }
 

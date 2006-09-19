@@ -3,8 +3,8 @@
 
 package client.inventory;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.Photo;
 
 import client.MsoyEntryPoint;
 
@@ -34,12 +33,14 @@ public class ItemContainer extends VerticalPanel
     /** So arbitrary. TODO. */
     public static final int THUMB_HEIGHT = 100;
 
-    public ItemContainer (Item item)
+    public ItemContainer (Item item, ItemPanel panel)
     {
-        this(item, true, true);
+        this(item, panel, true, true);
     }
 
-    public ItemContainer (Item item, boolean thumbnail, boolean showLabel)
+    public ItemContainer (
+            final Item item, final ItemPanel panel,
+            boolean thumbnail, boolean showLabel)
     {
 /*
         setItem(item, thumbnail, showLabel);
@@ -81,6 +82,16 @@ public class ItemContainer extends VerticalPanel
         if (showLabel) {
             add(label);
         }
+         // TODO: this check will work when parentId isn't transient
+        // if (item.parentId != -1) {
+            Button button = new Button("List in Catalog ...");
+            button.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    panel.listItem(item.itemId, item.getType());
+                }
+            });
+            add(button);
+        //}
     }
 
     /**

@@ -4,12 +4,13 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
@@ -117,10 +118,11 @@ public abstract class
                         "    from " + getCatalogTableName());
                     while (rs.next()) {
                         int itemId = rs.getInt(1);
-                        Date listedDate = rs.getDate(2);
+                        Timestamp listedDate = rs.getTimestamp(2);
                         CatalogListing listing = new CatalogListing();
                         listing.item = loadItem(itemId);
-                        listing.listedDate = listedDate;
+                        // create a java.util.Date so GWT doesn't flip out
+                        listing.listedDate = new Date(listedDate.getTime());
                         list.add(listing);
                     }
 
@@ -145,6 +147,7 @@ public abstract class
         // items in the catalog don't have an owner
         item.ownerId = -1;
         // create a new row for the new item, giving the object a new id
+        item.itemId = 0;
         insertItem(item);
         // finally add it to the actual catalog
         executeUpdate(new Operation<Void>() {
@@ -158,7 +161,7 @@ public abstract class
                         "        set ITEM_ID = ?," +
                         "            LISTED_DATE = ?");
                     stmt.setInt(1, item.itemId);
-                    stmt.setDate(2, new Date(System.currentTimeMillis()));
+                    stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
                     stmt.executeUpdate();
                     
                 } finally {
@@ -231,7 +234,9 @@ public abstract class
     /** Returns the table via which we can manipulate the item table. */
     protected abstract Table<T> getTable ();
 
-    /** Returns the name of the table returned by getTable(). */
+    /**
+     * Returns the name of the _CATALOG table associated with the main table.
+     */
     protected abstract String getCatalogTableName ();
 
     /**

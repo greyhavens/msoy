@@ -62,7 +62,7 @@ public class DocumentRepository extends ItemRepository<Document>
 
         JDBCUtil.createTableIfMissing(conn, "DOCUMENT_CATALOG", new String[] {
             "ITEM_ID integer not null",
-            "LISTED_DATE date not null",
+            "LISTED_DATE datetime not null",
         }, "");
     }
 

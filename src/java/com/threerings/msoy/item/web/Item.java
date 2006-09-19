@@ -24,9 +24,11 @@ public abstract class Item implements Streamable, IsSerializable
 
     /**
      * The item ID from which this object was cloned, or -1 if this is not
-     * a clone. This field is not persisted in the database.
+     * a clone.
+     * TODO: Marking this field transient means it's not serialized; fix this
+     * as soon as the new ORM code allows us to use @Transient.
      */
-    public transient int parentId;
+    public transient int parentId = -1;
     
     /** A bit-mask of flags that we need to know about every digital item
      * without doing further database lookups or network requests. */
@@ -35,7 +37,10 @@ public abstract class Item implements Streamable, IsSerializable
     /** The member id of the member that created this item. */
     public int creatorId;
 
-    /** The member id of the member that owns this item. */
+    /**
+     *  The member id of the member that owns this item, or -1 if the item
+     *  is an immutable catalog listing.
+     */
     public int ownerId;
 
     /** A hash code identifying the media used to display this item's thumbnail

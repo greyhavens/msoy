@@ -56,8 +56,8 @@ public class ItemPanel extends VerticalPanel
                             new Label("You have no " + _type + " items."));
                     } else {
                         for (int ii = 0; ii < _items.size(); ii++) {
-                            _contents.add(
-                                new ItemContainer((Item)_items.get(ii)));
+                            _contents.add(new ItemContainer(
+                                (Item)_items.get(ii), ItemPanel.this));
                         }
                     }
                 }
@@ -68,6 +68,20 @@ public class ItemPanel extends VerticalPanel
                 }
             });
         }
+    }
+
+    protected void listItem (int itemId, String type)
+    {
+        _ctx.catalogsvc.listItem(
+            _ctx.creds, itemId, type, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    setStatus("Item listed.");
+                }
+                public void onFailure (Throwable caught) {
+                    String reason = caught.getMessage();
+                    setStatus("Item listing failed: " + reason);
+                }
+            });
     }
 
     protected void createNewItem ()
@@ -103,7 +117,7 @@ public class ItemPanel extends VerticalPanel
         remove(editor);
         insert(_create, 1);
         if (item != null) {
-            _contents.add(new ItemContainer(item));
+            _contents.add(new ItemContainer(item, this));
         }
     }
 
