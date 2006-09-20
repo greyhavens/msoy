@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import com.samskivert.io.PersistenceException;
@@ -30,7 +31,9 @@ import com.threerings.whirled.server.persist.SceneUpdateMarshaller;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
+import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -224,15 +227,12 @@ public class MsoySceneRepository extends SimpleRepository
                         model.horizon = rs.getFloat(8);
                         byte[] hash = rs.getBytes(9);
                         if (hash != null) {
-                            model.background = new MediaDesc();
-                            model.background.hash = hash;
-                            model.background.mimeType = rs.getByte(10);
+                            model.background =
+                                createMediaDesc(hash, rs.getByte(10));
                         }
                         hash = rs.getBytes(11);
                         if (hash != null) {
-                            model.music = new MediaDesc();
-                            model.music.hash = hash;
-                            model.music.mimeType = rs.getByte(12);
+                            model.music = createMediaDesc(hash, rs.getByte(12));
                         }
 
                     } else {
@@ -250,9 +250,8 @@ public class MsoySceneRepository extends SimpleRepository
                         p.portalId = rs.getShort(1);
                         p.targetPortalId = rs.getShort(2);
                         p.targetSceneId = rs.getInt(3);
-                        p.media = new MediaDesc();
-                        p.media.hash = rs.getBytes(4);
-                        p.media.mimeType = rs.getByte(5);
+                        p.media = createMediaDesc(
+                            rs.getBytes(4), rs.getByte(5));
                         p.loc = new MsoyLocation(
                             rs.getFloat(6), rs.getFloat(7), rs.getFloat(8), 0);
                         p.scaleX = rs.getFloat(9);
@@ -271,9 +270,8 @@ public class MsoySceneRepository extends SimpleRepository
                     while (rs.next()) {
                         FurniData furni = new FurniData();
                         furni.id = rs.getInt(1);
-                        furni.media = new MediaDesc();
-                        furni.media.hash = rs.getBytes(2);
-                        furni.media.mimeType = rs.getByte(3);
+                        furni.media = createMediaDesc(
+                            rs.getBytes(2), rs.getByte(3));
                         furni.loc = new MsoyLocation(
                             rs.getFloat(4), rs.getFloat(5), rs.getFloat(6), 0);
                         furni.scaleX = rs.getFloat(7);
@@ -369,14 +367,14 @@ public class MsoySceneRepository extends SimpleRepository
                     stmt.setInt(3, update.width);
                     stmt.setFloat(4, update.horizon);
                     if (update.background != null) {
-                        stmt.setBytes(5, update.background.hash);
+                        stmt.setBytes(5, flattenMediaDesc(update.background));
                         stmt.setByte(6, update.background.mimeType);
                     } else {
                         stmt.setBytes(5, null);
                         stmt.setByte(6, (byte) 0);
                     }
                     if (update.music != null) {
-                        stmt.setBytes(7, update.music.hash);
+                        stmt.setBytes(7, flattenMediaDesc(update.music));
                         stmt.setByte(8, update.music.mimeType);
                     } else {
                         stmt.setBytes(7, null);
@@ -460,14 +458,14 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setShort(7, model.width);
             stmt.setFloat(8, model.horizon);
             if (model.background != null) {
-                stmt.setBytes(9, model.background.hash);
+                stmt.setBytes(9, flattenMediaDesc(model.background));
                 stmt.setByte(10, model.background.mimeType);
             } else {
                 stmt.setBytes(9, null);
                 stmt.setByte(10, (byte) 0);
             }
             if (model.music != null) {
-                stmt.setBytes(11, model.music.hash);
+                stmt.setBytes(11, flattenMediaDesc(model.music));
                 stmt.setByte(12, model.music.mimeType);
             } else {
                 stmt.setBytes(11, null);
@@ -501,7 +499,7 @@ public class MsoySceneRepository extends SimpleRepository
                 stmt.setInt(2, p.portalId);
                 stmt.setInt(3, p.targetPortalId);
                 stmt.setInt(4, p.targetSceneId);
-                stmt.setBytes(5, p.media.hash);
+                stmt.setBytes(5, flattenMediaDesc(p.media));
                 stmt.setByte(6, p.media.mimeType);
                 stmt.setFloat(7, loc.x);
                 stmt.setFloat(8, loc.y);
@@ -554,7 +552,7 @@ public class MsoySceneRepository extends SimpleRepository
 
             for (FurniData f : furni) {
                 stmt.setInt(2, f.id);
-                stmt.setBytes(3, f.media.hash);
+                stmt.setBytes(3, flattenMediaDesc(f.media));
                 stmt.setByte(4, f.media.mimeType);
                 stmt.setFloat(5, f.loc.x);
                 stmt.setFloat(6, f.loc.y);
@@ -640,6 +638,50 @@ public class MsoySceneRepository extends SimpleRepository
                 return null;
             }
         });
+    }
+
+    /**
+     * Creates a {@link MediaDesc} of the appropriate type (possibly a {@link
+     * StaticMediaDesc} based on the supplied hash and mime type. The hash
+     * should previously have been created by calling {@link #flattenMediaDesc}
+     * on a media descriptor.
+     */
+    protected MediaDesc createMediaDesc (byte[] mediaHash, byte mimeType)
+    {
+        if (mediaHash.length == 4) {
+            int type = ByteBuffer.wrap(mediaHash).asIntBuffer().get();
+            return new StaticMediaDesc(
+                StaticMediaDesc.FURNI, ItemEnum.getItem(type).toString());
+        } else {
+            return new MediaDesc(mediaHash, mimeType);
+        }
+    }
+
+    /**
+     * Flattens the supplied {@link MediaDesc} into bytes that can later be
+     * decoded by {@link #createMediaDesc} into the appropriate type of
+     * descriptor.
+     */
+    protected byte[] flattenMediaDesc (MediaDesc desc)
+    {
+        if (desc instanceof StaticMediaDesc) {
+            StaticMediaDesc sdesc = (StaticMediaDesc)desc;
+
+            // sanity check; if we later need to flatten other static types
+            // than furni, we can have the type constant map to an integer and
+            // stuff that into the byte array as well
+            if (!sdesc.getType().equals(StaticMediaDesc.FURNI)) {
+                throw new IllegalArgumentException(
+                    "Cannot flatten non-furni static media " + desc + ".");
+            }
+
+            ByteBuffer data = ByteBuffer.allocate(4);
+            data.asIntBuffer().put(ItemEnum.valueOf(sdesc.getType()).getCode());
+            return data.array();
+
+        } else {
+            return desc.hash;
+        }
     }
 
     /**

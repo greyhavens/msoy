@@ -9,17 +9,41 @@ package com.threerings.msoy.item.web;
  */
 public class StaticMediaDesc extends MediaDesc
 {
-    public StaticMediaDesc (String path)
+    /** Identifies stock thumbnail images. */
+    public static final String THUMBNAIL = "thumbnails";
+
+    /** Identifies stock furniture visualizations. */
+    public static final String FURNI = "furni";
+
+    public StaticMediaDesc (String type, String item)
     {
-        _path = path;
-        mimeType = (byte)suffixToMimeType(path);
+        _type = type;
+        _item = item;
+        mimeType = MediaDesc.IMAGE_PNG;
+    }
+
+    /**
+     * Returns the type of static media to which this descriptor refers.
+     * Currently one of {@link #THUMBNAIL} or {@link #FURNI}.
+     */
+    public String getType ()
+    {
+        return _type;
+    }
+
+    /**
+     * Returns the type of item for which we're providing static media.
+     */
+    public String getItem ()
+    {
+        return _item;
     }
 
     // @Override // from MediaDesc
     public String getMediaPath ()
     {
-        return _path;
+        return "/media/static/" + _type + "/" + _item.toLowerCase() + ".png";
     }
 
-    protected String _path;
+    protected String _type, _item;
 }

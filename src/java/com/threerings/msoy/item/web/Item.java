@@ -151,8 +151,7 @@ public abstract class Item implements Streamable, IsSerializable
      */
     protected MediaDesc getDefaultThumbnailMedia ()
     {
-        return new StaticMediaDesc(
-            "/media/static/thumbnails/" + getType().toLowerCase() + ".png");
+        return new StaticMediaDesc(StaticMediaDesc.THUMBNAIL, getType());
     }
 
     /**
@@ -161,8 +160,7 @@ public abstract class Item implements Streamable, IsSerializable
      */
     protected MediaDesc getDefaultFurniMedia ()
     {
-        return new StaticMediaDesc(
-            "/media/static/furni/" + getType().toLowerCase() + ".png");
+        return new StaticMediaDesc(StaticMediaDesc.FURNI, getType());
     }
 
     /**
