@@ -16,6 +16,10 @@ import java.sql.Date;
 @Entity
 public class SessionRecord
 {
+    /** Increment this value if you modify the definition of this persistent
+     * object in a way that will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 1;
+
     public static final String TOKEN = "token";
     public static final String MEMBER_ID = "memberId";
     public static final String EXPIRES = "expires";
