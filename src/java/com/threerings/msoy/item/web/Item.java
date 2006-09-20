@@ -70,8 +70,6 @@ public abstract class Item implements Streamable, IsSerializable
      */
     public abstract String getDescription ();
 
-    // TODO: add getThumbnailMedia() (or getIconMedia())?
-
     /**
      * Returns a media descriptor for the media that should be used to display
      * our thumbnail representation.
@@ -97,7 +95,7 @@ public abstract class Item implements Streamable, IsSerializable
      */
     public String getThumbnailPath ()
     {
-        return getFurniMedia().getMediaPath();
+        return getThumbnailMedia().getMediaPath();
     }
 
     /**
