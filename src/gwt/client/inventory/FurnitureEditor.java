@@ -49,6 +49,18 @@ public class FurnitureEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
+    protected void setHash (String id, String mediaHash, int mimeType)
+    {
+        super.setHash(id, mediaHash, mimeType);
+
+        // if the user has not yet uploaded thumb media, use any uploaded
+        // furni media for the thumb, too
+        if (_furniture.thumbMediaHash == null && FURNI_ID.equals(id)) {
+            setHash(THUMB_ID, mediaHash, mimeType);
+        }
+    }
+
+    // @Override from ItemEditor
     protected Item createBlankItem ()
     {
         return new Furniture();

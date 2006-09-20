@@ -54,16 +54,20 @@ public class UploadServlet extends HttpServlet
         ServletFileUpload upload =
             new ServletFileUpload(new DiskFileItemFactory());
         Tuple<String,Integer> mediaInfo = null;
+        String mediaId = null;
         try {
             for (Object obj : upload.parseRequest(req)) {
                 FileItem item = (FileItem)obj;
                 if (item.isFormField()) {
-                    // do we care?
+                    // currently, we don't care about these
+
                 } else {
                     // TODO: check that this is a supported content type
                     log.info("Receiving file [type: " + item.getContentType() +
-                             ", size=" + item.getSize() + "].");
+                             ", size=" + item.getSize() +
+                             ", id=" + item.getFieldName() + "].");
                     mediaInfo = handleFileItem(item);
+                    mediaId = item.getFieldName();
                 }
             }
 
@@ -77,7 +81,7 @@ public class UploadServlet extends HttpServlet
         // if we parsed no info, handleFileItem will have logged an error or
         // the user didn't send anything; TODO: send JavaScript that
         // communicates a friendly error
-        if (mediaInfo == null) {
+        if (mediaInfo == null || mediaId == null) {
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -89,8 +93,8 @@ public class UploadServlet extends HttpServlet
         try {
             out.println("<html>");
             out.println("<head></head>");
-            String script = "parent.setHash('" + mediaInfo.left + "', " +
-                mediaInfo.right + ")";
+            String script = "parent.setHash('" + mediaId + "', '" +
+                mediaInfo.left + "', " + mediaInfo.right + ")";
             out.println("<body onLoad=\"" + script + "\"></body>");
             out.println("</html>");
         } finally {

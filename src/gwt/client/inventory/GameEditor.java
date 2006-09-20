@@ -37,6 +37,14 @@ public class GameEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createEditorInterface ()
     {
+        // configure the main uploader first
+        configureMainUploader("Upload your game.", new MediaUpdater() {
+            public void updateMedia (byte[] hash, byte mimeType) {
+                _game.gameMediaHash = hash;
+                _game.gameMimeType = mimeType;
+            }
+        });
+
         super.createEditorInterface();
 
         int row = getRowCount();
@@ -77,16 +85,6 @@ public class GameEditor extends ItemEditor
             }
         });
         row++;
-    }
-
-    // TEMPORARY: so that I can play around with creating games for now
-    protected void setHash (String mediaHash, int mimeType)
-    {
-        if (_game != null) {
-            _game.gameMediaHash = MediaDesc.stringToHash(mediaHash);
-            _game.gameMimeType = (byte) mimeType;
-        }
-        super.setHash(mediaHash, mimeType);
     }
 
     // @Override from ItemEditor

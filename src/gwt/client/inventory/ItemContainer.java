@@ -30,6 +30,23 @@ import client.util.FlashWidget;
  */
 public class ItemContainer extends VerticalPanel
 {
+    /**
+     * Create a container to hold the media in the specified path.
+     */
+    public static Widget createContainer (String path)
+    {
+        switch (MediaDesc.suffixToMimeType(path)) {
+        case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
+            //String ident = String.valueOf(item.itemId);
+            FlashWidget fw = new FlashWidget(path);
+            fw.setMovie(path);
+            return fw;
+
+        default:
+            return new Image(path);
+        }
+    }
+
     /** So arbitrary. TODO. */
     public static final int THUMB_HEIGHT = 100;
 
@@ -100,16 +117,7 @@ public class ItemContainer extends VerticalPanel
     protected Widget createContainer (Item item)
     {
         String thumbPath = MsoyEntryPoint.toMediaPath(item.getThumbnailPath());
-        switch (MediaDesc.suffixToMimeType(thumbPath)) {
-        case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
-            String ident = String.valueOf(item.itemId);
-            FlashWidget fw = new FlashWidget(ident);
-            fw.setMovie(thumbPath);
-            return fw;
-
-        default:
-            return new Image(thumbPath);
-        }
+        return createContainer(thumbPath);
     }
 
     /**

@@ -33,12 +33,19 @@ public class Furniture extends Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && (furniMediaHash != null) &&
+            (thumbMediaHash != null) &&
             nonBlank(description);
     }
 
     // @Override // from Item
     protected MediaDesc getDefaultThumbnailMedia ()
     {
-        return getFurniMedia();
+        return null; // there is no default
+    }
+
+    // @Override // from Item
+    protected MediaDesc getDefaultFurniMedia ()
+    {
+        return null; // there is no default
     }
 }

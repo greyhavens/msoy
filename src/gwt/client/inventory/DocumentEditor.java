@@ -28,6 +28,13 @@ public class DocumentEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createEditorInterface ()
     {
+        configureMainUploader("Upload your document.", new MediaUpdater() {
+            public void updateMedia (byte[] hash, byte mimeType) {
+                _doc.docMediaHash = hash;
+                _doc.docMimeType = mimeType;
+            }
+        });
+
         super.createEditorInterface();
 
         int row = getRowCount();

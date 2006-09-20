@@ -32,6 +32,13 @@ public class PhotoEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createEditorInterface ()
     {
+        configureMainUploader("Upload your photo.", new MediaUpdater() {
+            public void updateMedia (byte[] hash, byte mimeType) {
+                _photo.photoMediaHash = hash;
+                _photo.photoMimeType = mimeType;
+            }
+        });
+
         super.createEditorInterface();
 
         int row = getRowCount();
@@ -42,6 +49,21 @@ public class PhotoEditor extends ItemEditor
                 _photo.caption = text;
             }
         });
+    }
+
+    // @Override from ItemEditor
+    protected void setHash (String id, String mediaHash, int mimeType)
+    {
+        super.setHash(id, mediaHash, mimeType);
+
+        if (_photo.thumbMediaHash == null &&
+                (MAIN_ID.equals(id) || FURNI_ID.equals(id))) {
+            setHash(THUMB_ID, mediaHash, mimeType);
+        }
+        if (_photo.furniMediaHash == null &&
+                (MAIN_ID.equals(id) || THUMB_ID.equals(id))) {
+            setHash(FURNI_ID, mediaHash, mimeType);
+        }
     }
 
     // @Override from ItemEditor

@@ -109,24 +109,6 @@ public abstract class Item implements Streamable, IsSerializable
         return true;
     }
 
-    /**
-     * Set the hash and mimetype of this item's thumbnail representation.
-     */
-    public void setThumbnailHash (String strHash, byte newMimeType)
-    {
-        thumbMediaHash = MediaDesc.stringToHash(strHash);
-        thumbMimeType = newMimeType;
-    }
-
-    /**
-     * Set the hash and mimetype of this item's furniture representation.
-     */
-    public void setFurniHash (String strHash, byte newMimeType)
-    {
-        furniMediaHash = MediaDesc.stringToHash(strHash);
-        furniMimeType = newMimeType;
-    }
-
     // @Override
     public int hashCode ()
     {

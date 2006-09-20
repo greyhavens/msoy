@@ -24,6 +24,7 @@ import org.gwtwidgets.client.ui.FileUploadField;
 import org.gwtwidgets.client.ui.FormPanel;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.client.WebContext;
 
 /**
@@ -41,6 +42,11 @@ public abstract class ItemEditor extends FlexTable
     public static interface Binder
     {
         public void textUpdated (String newText);
+    }
+
+    public static interface MediaUpdater
+    {
+        public void updateMedia (byte[] hash, byte mimeType);
     }
 
     public ItemEditor ()
@@ -108,6 +114,14 @@ public abstract class ItemEditor extends FlexTable
         _item = item;
         _etitle.setText((item.itemId <= 0) ? "Create" : "Edit");
         _esubmit.setText((item.itemId <= 0) ? "Create" : "Update");
+
+        if (_thumbUploader != null) {
+            _thumbUploader.setMedia(item.getThumbnailMedia());
+        }
+        if (_furniUploader != null) {
+            _furniUploader.setMedia(item.getFurniMedia());
+        }
+
         updateSubmittable();
     }
 
@@ -132,59 +146,53 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void createEditorInterface ()
     {
-        _panel = new FormPanel(new FlowPanel());
-        if (GWT.isScript()) {
-            _panel.setAction("/upload");
-        } else {
-            _panel.setAction("http://localhost:8080/upload");
-        }
-        _panel.setTarget("upload");
-        _panel.setMethodAsPost();
-        _panel.setMultipartEncoding();
+        String title = "Configure the furniture visualization for this media.";
+        _furniUploader = createUploader(FURNI_ID, title, new MediaUpdater() {
+            public void updateMedia (byte[] hash, byte mimeType) {
+                _item.furniMediaHash = hash;
+                _item.furniMimeType = mimeType;
+            }
+        });
 
-// TODO: make this work, handle errors, check the status
-//        _panel.addFormHandler(new FormHandler() {
-//            public void onSubmit (FormSubmitEvent event) {
-//                // nada for now
-//            }
-//
-//            public void onSubmitComplete (FormSubmitCompleteEvent event) {
-//                // TODO: what is the format of the results?
-//                _out.setText(event.getResults());
-//            }
-//        });
-
-        _panel.addField(new FileUploadField("media"), "media");
-
-        if (GWT.isScript()) {
-            _panel.addField(new SubmitField("submit", "Upload"), "submit");
-        } else {
-            Button submit = new Button("Upload");
-            submit.addClickListener(new ClickListener() {
-                public void onClick (Widget widget) {
-                    _panel.submit();
-                }
-            });
-            _panel.add(submit);
-        }
-
-        int row = getRowCount();
-        setText(row, 0, "Upload");
-        setWidget(row, 1, _panel);
-
-        String msg = "First upload the file from your computer. " +
-            "Then create the item below.";
-        setWidget(row+1, 0, _out = new Label(msg));
-        getFlexCellFormatter().setColSpan(row+1, 0, 2);
-
-        // reserve area for the preview
-        reservePreviewSpace();
+        title = "Configure the thumbnail image that will be used " +
+            "in the catalog and inventory lists.";
+        _thumbUploader = createUploader(THUMB_ID, title, new MediaUpdater() {
+            public void updateMedia (byte[] hash, byte mimeType) {
+                _item.thumbMediaHash = hash;
+                _item.thumbMimeType = mimeType;
+            }
+        });
 
         // we have to do this wacky singleton crap because GWT and/or
         // JavaScript doesn't seem to cope with our trying to create an
         // anonymous function that calls an instance method on a JavaScript
         // object
         _singleton = this;
+    }
+
+    /**
+     * This should be called by item editors that are used for editing
+     * media that has a 'main' piece of media.
+     */
+    protected void configureMainUploader (String title, MediaUpdater updater)
+    {
+        _mainUploader = createUploader(MAIN_ID, title, updater);
+    }
+
+    /**
+     * Create and add an uploader to the interface.
+     */
+    protected MediaUploader createUploader (
+        String name, String title, MediaUpdater updater)
+    {
+        MediaUploader mu = new MediaUploader(name, title, updater);
+
+        FlexCellFormatter cellFormatter = getFlexCellFormatter();
+        int row = getRowCount();
+
+        setWidget(row, 0, mu);
+        cellFormatter.setColSpan(row, 0, 2);
+        return mu;
     }
 
     /**
@@ -200,14 +208,28 @@ public abstract class ItemEditor extends FlexTable
      * Configures this item editor with the hash value for media that it is
      * about to upload.
      */
-    protected void setHash (String mediaHash, int mimeType)
+    protected void setHash (String id, String mediaHash, int mimeType)
     {
-        if (_item != null) {
-            // TODO: a bunch of stuff
-            _item.setFurniHash(mediaHash, (byte)mimeType);
-            updatePreview();
+        MediaUploader mu = null;
+
+        if (FURNI_ID.equals(id)) {
+            mu = _furniUploader;
+
+        } else if (THUMB_ID.equals(id)) {
+            mu = _thumbUploader;
+
+        } else if (MAIN_ID.equals(id)) {
+            mu = _mainUploader; // could be null...
         }
-        _out.setText("File uploaded.");
+
+        if (mu == null) {
+            return; // TODO: log something? in gwt land?
+        }
+
+        // set the new media in preview and in the item
+        mu.setUploadedMedia(new MediaDesc(
+            MediaDesc.stringToHash(mediaHash), (byte) mimeType));
+        // re-check submittable
         updateSubmittable();
     }
 
@@ -215,9 +237,9 @@ public abstract class ItemEditor extends FlexTable
      * This is called from our magical JavaScript method by JavaScript code
      * received from the server as a response to our file upload POST request.
      */
-    protected static void callBridge (String mediaHash, int mimeType)
+    protected static void callBridge (String id, String mediaHash, int mimeType)
     {
-        _singleton.setHash(mediaHash, mimeType);
+        _singleton.setHash(id, mediaHash, mimeType);
     }
 
     /**
@@ -254,37 +276,6 @@ public abstract class ItemEditor extends FlexTable
     protected abstract Item createBlankItem ();
 
     /**
-     * Call from your configureEditorInterface to add a preview area that can
-     * later be filled-in by calling updatePreview().
-     */
-    protected void reservePreviewSpace ()
-    {
-        FlexCellFormatter cellFormatter = getFlexCellFormatter();
-        int row = getRowCount();
-        setText(row, 0, "Preview");
-        cellFormatter.setColSpan(row, 0, 2);
-
-        _previewRow = row + 1;
-        prepareCell(_previewRow, 0);
-        cellFormatter.setColSpan(_previewRow, 0, 2);
-    }
-
-    /**
-     * Call to update the preview.
-     */
-    protected void updatePreview ()
-    {
-        if (_item != null) {
-            if (_previewRow == -1) {
-                reservePreviewSpace(); // a little late, but ok!
-            }
-            ItemContainer container = 
-                new ItemContainer(_item, _parent, false, false);
-            setWidget(_previewRow, 0, container);
-        }
-    }
-
-    /**
      * A convenience method for attaching a textbox directly to a field in the
      * item to be edited.
      */
@@ -309,21 +300,10 @@ public abstract class ItemEditor extends FlexTable
      * JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
-        $wnd.setHash = function (hash, type) {
-           @client.inventory.ItemEditor::callBridge(Ljava/lang/String;I)(hash, type);
+        $wnd.setHash = function (id, hash, type) {
+           @client.inventory.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;I)(id, hash, type);
         };
     }-*/; 
-
-    /** Create a forum submit button. */
-    protected static class SubmitField extends Widget
-    {
-        public SubmitField (String name, String value) {
-            setElement(DOM.createElement("input"));
-            DOM.setAttribute(getElement(), "type", "submit");
-            DOM.setAttribute(getElement(), "value", value);
-            DOM.setAttribute(getElement(), "name", name);
-        }
-    }
 
     protected WebContext _ctx;
     protected ItemPanel _parent;
@@ -332,9 +312,16 @@ public abstract class ItemEditor extends FlexTable
     protected int _previewRow = -1;
 
     protected FormPanel _panel;
-    protected Label _out;
     protected Label _etitle;
     protected Button _esubmit;
 
     protected static ItemEditor _singleton;
+
+    protected MediaUploader _thumbUploader;
+    protected MediaUploader _furniUploader;
+    protected MediaUploader _mainUploader;
+
+    protected static String FURNI_ID = "furni";
+    protected static String THUMB_ID = "thumb";
+    protected static String MAIN_ID = "main";
 }

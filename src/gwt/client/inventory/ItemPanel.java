@@ -44,6 +44,11 @@ public class ItemPanel extends VerticalPanel
         add(_status = new Label(""));
     }
 
+    // TODO: each ItemPanel is currently loading everything up when
+    // the inventory panel loads.
+    // We should only load a category when it's made visible.
+    // (In addition to only loading inventory in chunks. We cannot show
+    // the user's whole inventory, even in one category.)
     protected void onLoad ()
     {
         // load the users inventory if we have no already
