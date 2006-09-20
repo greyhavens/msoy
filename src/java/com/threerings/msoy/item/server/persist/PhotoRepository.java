@@ -25,21 +25,17 @@ public class PhotoRepository extends ItemRepository<Photo>
     }
     
     @Override // from ItemRepository
-    protected String getCloneTableName ()
+    protected String getTypeEponym ()
     {
-        return "PHOTO_CLONES";
-    }
-
-    @Override // from ItemRepository
-    protected String getCatalogTableName ()
-    {
-        return "PHOTO_CATALOG";
+        return "PHOTO";
     }
 
     @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
+        super.migrateSchema(conn, liaison);
+
         JDBCUtil.createTableIfMissing(conn, "PHOTOS", new String[] {
             "ITEM_ID integer not null auto_increment primary key",
             "FLAGS tinyint not null",
@@ -52,16 +48,6 @@ public class PhotoRepository extends ItemRepository<Photo>
             "PHOTO_MEDIA_HASH tinyblob not null",
             "PHOTO_MIME_TYPE tinyint not null",
             "CAPTION varchar(255) not null",
-        }, "");
-        
-        JDBCUtil.createTableIfMissing(conn, "PHOTO_CLONES", new String[] {
-            "ORIGINAL_ITEM_ID integer not null",
-            "OWNER_ID integer not null",
-        }, "");
-        
-        JDBCUtil.createTableIfMissing(conn, "PHOTO_CATALOG", new String[] {
-            "ITEM_ID integer not null",
-            "LISTED_DATE datetime not null",
         }, "");
     }
 

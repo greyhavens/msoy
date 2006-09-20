@@ -9,6 +9,7 @@ import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SoftCache;
@@ -173,7 +174,9 @@ public class ItemManager
             new RepositoryListenerUnit<ArrayList<Item>>(rlist) {
             public ArrayList<Item> invokePersistResult ()
                 throws PersistenceException {
-                return repo.loadItems(memberId);
+                ArrayList<Item> list = repo.loadOriginalItems(memberId);
+                list.addAll(repo.loadClonedItems(memberId));
+                return list;
             }
             public void handleSuccess () {
                 _itemCache.put(key, _result);
@@ -226,9 +229,19 @@ public class ItemManager
         // and perform the purchase
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Item>(rlist) {
-            public Item invokePersistResult ()
-                throws PersistenceException {
-                return repo.purchaseItem(memberId, itemId);
+            public Item invokePersistResult () throws PersistenceException {
+                // load the item being purchased
+                Item item = repo.loadItem(itemId);
+                // sanity check it
+                if (item.ownerId != -1) {
+                    throw new PersistenceException(
+                        "Can't purchase unlisted item [itemId=" + itemId + "]");
+                }
+                // create the row in the database!
+                repo.insertClone(item, memberId);
+                // and finally mark it as ours
+                item.ownerId = memberId;
+                return item;
             }
         });
     }
@@ -248,15 +261,65 @@ public class ItemManager
                 new Exception("No repository registered for " + type + "."));
             return;
         }
-
+        
         // and perform the listing
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Item>(rlist) {
-            public Item invokePersistResult ()
-                throws PersistenceException {
-                return repo.listItem(itemId);
+            public Item invokePersistResult () throws PersistenceException {
+                // load the original item
+                Item listItem = repo.loadItem(itemId);
+                if (listItem == null) {
+                    throw new PersistenceException(
+                        "Can't find object to list [itemId = " + itemId + "]");
+                }
+//                if (listItem.parentId != -1) {
+//                    throw new PersistenceException(
+//                        "Can't list a cloned object [itemId=" + itemId + "]");
+//                }
+                if (listItem.ownerId == -1) {
+                    throw new PersistenceException(
+                        "Object is already listed [itemId=" + itemId + "]");
+                }
+                // and reset the owner
+                listItem.ownerId = -1;
+                // then insert it into the catalog
+                return repo.insertIntoCatalog(listItem);
             }
         });
+    }
+    
+    /**
+     * Remix a clone, turning it back into a full-featured original.
+     */
+    public void remixItem(
+            final int itemId, String type, ResultListener<Item> rlist)
+    {
+        // locate the appropriate repository
+        final ItemRepository<Item> repo = _repos.get(type);
+        if (repo == null) {
+            rlist.requestFailed(
+                new Exception("No repository registered for " + type + "."));
+            return;
+        }
+
+        // and perform the remixing
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Item>(rlist) {
+            public Item invokePersistResult () throws PersistenceException {
+                // load a copy of the clone to modify
+                Item item = repo.loadClone(itemId);
+                // make it ours
+                item.creatorId = item.ownerId;
+                // forget whence it came
+                item.parentId = -1;
+                // insert it as a genuinely new item
+                repo.insertItem(item);
+                // and finally delete the old clone
+                repo.deleteClone(itemId);
+                return item;
+            }
+        });
+
     }
 
     /**

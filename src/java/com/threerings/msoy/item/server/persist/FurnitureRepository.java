@@ -25,23 +25,19 @@ public class FurnitureRepository extends ItemRepository<Furniture>
     }
     
     @Override // from ItemRepository
-    protected String getCloneTableName ()
+    protected String getTypeEponym ()
     {
-        return "FURNITURE_CLONES";
-    }
-
-    @Override // from ItemRepository
-    protected String getCatalogTableName ()
-    {
-        return "FURNITURE_CATALOG";
+        return "FURNITURE";
     }
 
     @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
+        super.migrateSchema(conn, liaison);
+
         JDBCUtil.createTableIfMissing(conn, "FURNITURE", new String[] {
-            "ITEM_ID integer not null auto_increment primary key",
+            "ITEM_ID integer not null primary key",
             "FLAGS tinyint not null",
             "CREATOR_ID integer not null",
             "OWNER_ID integer not null",
@@ -51,16 +47,6 @@ public class FurnitureRepository extends ItemRepository<Furniture>
             "FURNI_MIME_TYPE tinyint",
             "ACTION varchar(255) not null",
             "DESCRIPTION varchar(255) not null",
-        }, "");
-        
-        JDBCUtil.createTableIfMissing(conn, "FURNITURE_CLONES", new String[] {
-            "ORIGINAL_ITEM_ID integer not null",
-            "OWNER_ID integer not null",
-        }, "");
-        
-        JDBCUtil.createTableIfMissing(conn, "FURNITURE_CATALOG", new String[] {
-            "ITEM_ID integer not null",
-            "LISTED_DATE datetime not null",
         }, "");
     }
 

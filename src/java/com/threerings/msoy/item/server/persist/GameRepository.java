@@ -25,21 +25,17 @@ public class GameRepository extends ItemRepository<Game>
     }
     
     @Override // from ItemRepository
-    protected String getCloneTableName ()
+    protected String getTypeEponym ()
     {
-        return "GAME_CLONES";
-    }
-
-    @Override // from ItemRepository
-    protected String getCatalogTableName ()
-    {
-        return "GAME_CATALOG";
+        return "GAME";
     }
 
     @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
+        super.migrateSchema(conn, liaison);
+
         JDBCUtil.createTableIfMissing(conn, "GAME", new String[] {
             "ITEM_ID integer not null auto_increment primary key",
             "FLAGS tinyint not null",
@@ -55,16 +51,6 @@ public class GameRepository extends ItemRepository<Game>
             "MIN_PLAYERS smallint not null",
             "MAX_PLAYERS smallint not null",
             "DESIRED_PLAYERS smallint not null",
-        }, "");
-        
-        JDBCUtil.createTableIfMissing(conn, "GAME_CLONES", new String[] {
-            "ORIGINAL_ITEM_ID integer not null",
-            "OWNER_ID integer not null",
-        }, "");
-        
-        JDBCUtil.createTableIfMissing(conn, "GAME_CATALOG", new String[] {
-            "ITEM_ID integer not null",
-            "LISTED_DATE datetime not null",
         }, "");
     }
 

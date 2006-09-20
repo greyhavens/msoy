@@ -26,23 +26,19 @@ public class DocumentRepository extends ItemRepository<Document>
     }
     
     @Override // from ItemRepository
-    protected String getCatalogTableName ()
+    protected String getTypeEponym ()
     {
-        return "DOCUMENT_CATALOG";
-    }
-
-    @Override // from ItemRepository
-    protected String getCloneTableName ()
-    {
-        return "DOCUMENT_CLONES";
+        return "DOCUMENT";
     }
 
     @Override // from JORARepository
     protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
         throws SQLException, PersistenceException
     {
+        super.migrateSchema(conn, liaison);
+        
         JDBCUtil.createTableIfMissing(conn, "DOCUMENTS", new String[] {
-            "ITEM_ID integer not null auto_increment primary key",
+            "ITEM_ID integer not null primary key",
             "FLAGS tinyint not null",
             "CREATOR_ID integer not null",
             "OWNER_ID integer not null",
@@ -53,16 +49,6 @@ public class DocumentRepository extends ItemRepository<Document>
             "DOC_MEDIA_HASH tinyblob not null",
             "DOC_MIME_TYPE tinyint not null",
             "TITLE varchar(255) not null",
-        }, "");
-        
-        JDBCUtil.createTableIfMissing(conn, "DOCUMENT_CLONES", new String[] {
-            "ORIGINAL_ITEM_ID integer not null",
-            "OWNER_ID integer not null",
-        }, "");
-
-        JDBCUtil.createTableIfMissing(conn, "DOCUMENT_CATALOG", new String[] {
-            "ITEM_ID integer not null",
-            "LISTED_DATE datetime not null",
         }, "");
     }
 
