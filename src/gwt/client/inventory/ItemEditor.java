@@ -115,12 +115,8 @@ public abstract class ItemEditor extends FlexTable
         _etitle.setText((item.itemId <= 0) ? "Create" : "Edit");
         _esubmit.setText((item.itemId <= 0) ? "Create" : "Update");
 
-        if (_thumbUploader != null) {
-            _thumbUploader.setMedia(item.getThumbnailMedia());
-        }
-        if (_furniUploader != null) {
-            _furniUploader.setMedia(item.getFurniMedia());
-        }
+        recheckFurniMedia();
+        recheckThumbMedia();
 
         updateSubmittable();
     }
@@ -231,6 +227,28 @@ public abstract class ItemEditor extends FlexTable
             MediaDesc.stringToHash(mediaHash), (byte) mimeType));
         // re-check submittable
         updateSubmittable();
+    }
+
+    /**
+     * Called to re-set the displayed furni media to the MediaDesc
+     * returned by the item.
+     */
+    protected void recheckFurniMedia ()
+    {
+        if (_thumbUploader != null) {
+            _thumbUploader.setMedia(_item.getThumbnailMedia());
+        }
+    }
+
+    /**
+     * Called to re-set the displayed thumb media to the MediaDesc
+     * returned by the item.
+     */
+    protected void recheckThumbMedia ()
+    {
+        if (_furniUploader != null) {
+            _furniUploader.setMedia(_item.getFurniMedia());
+        }
     }
 
     /**

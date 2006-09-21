@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Furniture;
+import com.threerings.msoy.item.web.MediaDesc;
 
 import client.MsoyEntryPoint;
 
@@ -55,8 +56,17 @@ public class FurnitureEditor extends ItemEditor
 
         // if the user has not yet uploaded thumb media, use any uploaded
         // furni media for the thumb, too
-        if (_furniture.thumbMediaHash == null && FURNI_ID.equals(id)) {
-            setHash(THUMB_ID, mediaHash, mimeType);
+        if (FURNI_ID.equals(id) && _furniture.thumbMediaHash == null) {
+            recheckThumbMedia();
+        }
+
+        // if the thumb and the furni are identical, null the thumb
+        if (_furniture.thumbMimeType == _furniture.furniMimeType &&
+                MediaDesc.arraysEqual(_furniture.thumbMediaHash,
+                _furniture.furniMediaHash)) {
+            _furniture.thumbMediaHash = null;
+            _furniture.thumbMimeType = (byte) 0;
+            recheckThumbMedia();
         }
     }
 

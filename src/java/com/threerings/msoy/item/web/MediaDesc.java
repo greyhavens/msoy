@@ -254,7 +254,7 @@ public class MediaDesc implements Streamable
      * Helper function for {@link #equals} because we must work in JavaScript
      * land.
      */
-    protected static boolean arraysEqual (byte[] left, byte[] right)
+    public static boolean arraysEqual (byte[] left, byte[] right)
     {
         if (left == right) {
             return true;

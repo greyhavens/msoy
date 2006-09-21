@@ -42,19 +42,18 @@ public class Photo extends Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && (photoMediaHash != null) &&
-            (thumbMediaHash != null) && (furniMediaHash != null) &&
             nonBlank(caption);
     }
 
     // @Override // from Item
     protected MediaDesc getDefaultThumbnailMedia ()
     {
-        return null; // no default
+        return getPhotoMedia();
     }
 
     // @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
-        return null; // no default
+        return getPhotoMedia();
     }
 }
