@@ -50,27 +50,6 @@ public class FurnitureEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void setHash (String id, String mediaHash, int mimeType)
-    {
-        super.setHash(id, mediaHash, mimeType);
-
-        // if the user has not yet uploaded thumb media, use any uploaded
-        // furni media for the thumb, too
-        if (FURNI_ID.equals(id) && _furniture.thumbMediaHash == null) {
-            recheckThumbMedia();
-        }
-
-        // if the thumb and the furni are identical, null the thumb
-        if (_furniture.thumbMimeType == _furniture.furniMimeType &&
-                MediaDesc.arraysEqual(_furniture.thumbMediaHash,
-                _furniture.furniMediaHash)) {
-            _furniture.thumbMediaHash = null;
-            _furniture.thumbMimeType = (byte) 0;
-            recheckThumbMedia();
-        }
-    }
-
-    // @Override from ItemEditor
     protected Item createBlankItem ()
     {
         return new Furniture();

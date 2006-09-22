@@ -53,41 +53,6 @@ public class PhotoEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void setHash (String id, String mediaHash, int mimeType)
-    {
-        super.setHash(id, mediaHash, mimeType);
-
-        // once the main media is uploaded, we may use the same media
-        // in the other two places
-        if (MAIN_ID.equals(id)) {
-            if (_photo.thumbMediaHash == null) {
-                recheckThumbMedia();
-            }
-            if (_photo.furniMediaHash == null) {
-                recheckFurniMedia();
-            }
-        }
-
-        // if the thumb and photo are the same, null the thumb
-        if (_photo.thumbMimeType == _photo.photoMimeType &&
-                MediaDesc.arraysEqual(_photo.thumbMediaHash,
-                _photo.photoMediaHash)) {
-            _photo.thumbMediaHash = null;
-            _photo.thumbMimeType = (byte) 0;
-            recheckThumbMedia();
-        }
-
-        // if the furni and photo are the same, null the furni
-        if (_photo.furniMimeType == _photo.photoMimeType &&
-                MediaDesc.arraysEqual(_photo.furniMediaHash,
-                _photo.photoMediaHash)) {
-            _photo.furniMediaHash = null;
-            _photo.furniMimeType = (byte) 0;
-            recheckFurniMedia();
-        }
-    }
-
-    // @Override from ItemEditor
     protected Item createBlankItem ()
     {
         return new Photo();

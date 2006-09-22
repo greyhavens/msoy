@@ -225,6 +225,15 @@ public abstract class ItemEditor extends FlexTable
         // set the new media in preview and in the item
         mu.setUploadedMedia(new MediaDesc(
             MediaDesc.stringToHash(mediaHash), (byte) mimeType));
+
+        // re-check the other two, as they may have changed
+        if (!THUMB_ID.equals(id)) {
+            recheckThumbMedia();
+        }
+        if (!FURNI_ID.equals(id)) {
+            recheckFurniMedia();
+        }
+
         // re-check submittable
         updateSubmittable();
     }
