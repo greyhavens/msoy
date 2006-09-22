@@ -226,6 +226,10 @@ public abstract class ItemEditor extends FlexTable
         mu.setUploadedMedia(new MediaDesc(
             MediaDesc.stringToHash(mediaHash), (byte) mimeType));
 
+        // have the item re-validate that no media ids are duplicated
+        // unnecessarily
+        _item.checkConsolidateMedia();
+
         // re-check the other two, as they may have changed
         if (!THUMB_ID.equals(id)) {
             recheckThumbMedia();

@@ -97,6 +97,25 @@ public abstract class Item implements Streamable, IsSerializable
     }
 
     /**
+     * Called during item creation to ensure that media descriptors
+     * are not duplicated in this item more than necessary.
+     */
+    public void checkConsolidateMedia ()
+    {
+        if (thumbMediaHash != null &&
+                getThumbnailMedia().equals(getDefaultThumbnailMedia())) {
+            thumbMediaHash = null;
+            thumbMimeType = (byte) 0;
+        }
+
+        if (furniMediaHash != null &&
+                getFurniMedia().equals(getDefaultFurniMedia())) {
+            furniMediaHash = null;
+            furniMimeType = (byte) 0;
+        }
+    }
+
+    /**
      * Verify that all the required fields in this particular Item subclass are
      * filled in, make sense, and are consistent with each other. This is used
      * to verify the data being edited by a user during item creation, and also
