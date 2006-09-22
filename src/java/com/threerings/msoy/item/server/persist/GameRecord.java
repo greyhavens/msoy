@@ -61,7 +61,7 @@ public class GameRecord extends ItemRecord
         super();
     }
 
-    public GameRecord (Game game)
+    protected GameRecord (Game game)
     {
         super(game);
 

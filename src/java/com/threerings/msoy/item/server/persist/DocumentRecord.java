@@ -46,7 +46,7 @@ public class DocumentRecord extends ItemRecord
         super();
     }
 
-    public DocumentRecord (Document document)
+    protected DocumentRecord (Document document)
     {
         super(document);
 

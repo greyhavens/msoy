@@ -18,7 +18,7 @@ public class DocumentCatalogRecord extends CatalogRecord<DocumentRecord>
         super();
     }
 
-    public DocumentCatalogRecord (CatalogListing listing)
+    protected DocumentCatalogRecord (CatalogListing listing)
     {
         super(listing);
     }

@@ -45,7 +45,7 @@ public abstract class CatalogRecord<T extends ItemRecord>
         super();
     }
     
-    public CatalogRecord (CatalogListing listing)
+    protected CatalogRecord (CatalogListing listing)
     {
         super();
         

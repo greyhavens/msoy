@@ -23,6 +23,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -32,6 +33,8 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.util.ItemEnum;
+import com.threerings.msoy.item.web.CatalogListing;
+import com.threerings.msoy.item.web.Item;
 
 import static com.threerings.msoy.Log.log;
 
@@ -72,10 +75,10 @@ public class ItemManager
         // TODO: not everything!
         loadInventory(
             memberObj.getMemberId(), etype,
-            new ResultListener<ArrayList<ItemRecord>>() {
-                public void requestCompleted (ArrayList<ItemRecord> result)
+            new ResultListener<ArrayList<Item>>() {
+                public void requestCompleted (ArrayList<Item> result)
                 {
-                    ItemRecord[] items = new ItemRecord[result.size()];
+                    Item[] items = new Item[result.size()];
                     result.toArray(items);
                     listener.requestProcessed(items);
                 }
@@ -95,26 +98,27 @@ public class ItemManager
      * process. Success or failure will be communicated to the supplied result
      * listener.
      */
-    public void insertItem (final ItemRecord item,
-            ResultListener<ItemRecord> rlist)
+    public void insertItem (final Item item, ServletWaiter<Item> waiter)
     {
-        ItemEnum type = item.getType();
+        final ItemRecord record = ItemRecord.newRecord(item); 
+        ItemEnum type = record.getType();
 
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
         if (repo == null) {
-            rlist.requestFailed(new Exception("No repository registered for "
+            waiter.requestFailed(new Exception("No repository registered for "
                 + type + "."));
             return;
         }
 
         // and insert the item; notifying the listener on success or failure
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ItemRecord>(
-            rlist) {
-            public ItemRecord invokePersistResult ()
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(
+            waiter) {
+            public Item invokePersistResult ()
                 throws PersistenceException
             {
-                repo.insertItem(item);
+                repo.insertItem(record);
+                item.itemId = record.itemId;
                 return item;
             }
 
@@ -122,7 +126,7 @@ public class ItemManager
             {
                 super.handleSuccess();
                 // add the item to the user's cached inventory
-                updateUserCache(item);
+                updateUserCache(record);
             }
         });
     }
@@ -133,7 +137,7 @@ public class ItemManager
      * being loaded from the database.
      */
     public void loadInventory (final int memberId, ItemEnum type,
-            ResultListener<ArrayList<ItemRecord>> rlist)
+            ResultListener<ArrayList<Item>> waiter)
     {
         // first check the cache
         final Tuple<Integer, ItemEnum> key =
@@ -141,35 +145,43 @@ public class ItemManager
 //      TODO: Disable cache for the moment
         if (false) {
         Collection<ItemRecord> items = _itemCache.get(key);
-        if (false && items != null) {
-            rlist.requestCompleted(new ArrayList<ItemRecord>(items));
+        if (items != null) {
+            ArrayList<Item> list = new ArrayList<Item>();
+            for (ItemRecord record : items) {
+                list.add(record.toItem());
+            }
+            waiter.requestCompleted(list);
             return;
         }
         }
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
         if (repo == null) {
-            rlist.requestFailed(new Exception("No repository registered for "
+            waiter.requestFailed(new Exception("No repository registered for "
                 + type + "."));
             return;
         }
 
         // and load their items; notifying the listener on success or failure
-        MsoyServer.invoker
-                .postUnit(new RepositoryListenerUnit<ArrayList<ItemRecord>>(
-                    rlist) {
-                    public ArrayList<ItemRecord> invokePersistResult ()
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ArrayList<Item>>(waiter) {
+                    public ArrayList<Item> invokePersistResult ()
                         throws PersistenceException
                     {
                         Collection<ItemRecord> list =
                             repo.loadOriginalItems(memberId);
                         list.addAll(repo.loadClonedItems(memberId));
-                        return new ArrayList(list);
+                        ArrayList<Item> newList = new ArrayList<Item>();
+                        for (ItemRecord record : list) {
+                            newList.add(record.toItem());
+                        }
+                        return newList;
                     }
 
                     public void handleSuccess ()
                     {
-                        _itemCache.put(key, _result);
+// TODO: The cache needs some rethinking, I figure.
+//                        _itemCache.put(key, _result);
                         super.handleSuccess();
                     }
                 });
@@ -179,27 +191,30 @@ public class ItemManager
      * Fetches the entire catalog of listed items of the given type.
      */
     public void loadCatalog (int memberId, ItemEnum type,
-            ResultListener<ArrayList<CatalogRecord>> rlist)
+            ResultListener<ArrayList<CatalogListing>> waiter)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
         if (repo == null) {
-            rlist.requestFailed(new Exception("No repository registered for "
+            waiter.requestFailed(new Exception("No repository registered for "
                 + type + "."));
             return;
         }
 
         // and load the catalog
-        MsoyServer.invoker
-                .postUnit(new RepositoryListenerUnit<ArrayList<CatalogRecord>>(
-                    rlist) {
-                    public ArrayList<CatalogRecord> invokePersistResult ()
-                        throws PersistenceException
-                    {
-                        // TODO: Should just change service/servlet to Collection
-                        return new ArrayList<CatalogRecord>(repo.loadCatalog());
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ArrayList<CatalogListing>>(waiter) {
+                public ArrayList<CatalogListing> invokePersistResult ()
+                    throws PersistenceException
+                {
+                    ArrayList<CatalogListing> list =
+                        new ArrayList<CatalogListing>();
+                    for (CatalogRecord record : repo.loadCatalog()) {
+                        list.add(record.toListing());
                     }
-                });
+                    return list;
+                }
+            });
     }
 
     /**
@@ -207,20 +222,19 @@ public class ItemManager
      * creating a new clone row in the appropriate database table.
      */
     public void purchaseItem (final int memberId, final int itemId,
-            ItemEnum type, ResultListener<ItemRecord> rlist)
+            ItemEnum type, ServletWaiter<Item> waiter)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
         if (repo == null) {
-            rlist.requestFailed(new Exception("No repository registered for "
+            waiter.requestFailed(new Exception("No repository registered for "
                 + type + "."));
             return;
         }
 
         // and perform the purchase
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ItemRecord>(
-            rlist) {
-            public ItemRecord invokePersistResult ()
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(waiter) {
+            public Item invokePersistResult ()
                 throws PersistenceException
             {
                 // load the item being purchased
@@ -241,7 +255,7 @@ public class ItemManager
                 item.ownerId = memberId;
                 item.parentId = item.itemId;
                 item.itemId = cloneId;
-                return item;
+                return item.toItem();
             }
         });
     }
@@ -252,20 +266,20 @@ public class ItemManager
      */
 
     public void listItem (final int itemId, ItemEnum type,
-            ResultListener<CatalogRecord> rlist)
+            ServletWaiter<CatalogListing> waiter)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
         if (repo == null) {
-            rlist.requestFailed(new Exception("No repository registered for "
+            waiter.requestFailed(new Exception("No repository registered for "
                 + type + "."));
             return;
         }
 
         // and perform the listing
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<CatalogRecord>(
-            rlist) {
-            public CatalogRecord invokePersistResult ()
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<CatalogListing>(waiter) {
+            public CatalogListing invokePersistResult ()
                 throws PersistenceException
             {
                 // load a copy of the original item
@@ -291,7 +305,7 @@ public class ItemManager
                 // and finally create & insert the catalog record
                 CatalogRecord record = repo.insertListing(
                     listItem, new Timestamp(System.currentTimeMillis()));
-                return record;
+                return record.toListing();
             }
         });
     }
@@ -300,7 +314,7 @@ public class ItemManager
      * Remix a clone, turning it back into a full-featured original.
      */
     public void remixItem (final int itemId, ItemEnum type,
-            ResultListener<ItemRecord> rlist)
+            ResultListener<Item> rlist)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
@@ -310,9 +324,9 @@ public class ItemManager
             return;
         }
         // and perform the remixing
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ItemRecord>(
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(
             rlist) {
-            public ItemRecord invokePersistResult ()
+            public Item invokePersistResult ()
                 throws PersistenceException
             {
                 // load a copy of the clone to modify
@@ -326,7 +340,7 @@ public class ItemManager
                 repo.insertItem(_item);
                 // and finally delete the old clone
                 repo.deleteClone(itemId);
-                return _item;
+                return _item.toItem();
             }
 
             public void handleSuccess ()

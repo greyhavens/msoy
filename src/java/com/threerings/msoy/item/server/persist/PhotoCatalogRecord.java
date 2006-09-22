@@ -18,7 +18,7 @@ public class PhotoCatalogRecord extends CatalogRecord<PhotoRecord>
         super();
     }
 
-    public PhotoCatalogRecord (CatalogListing listing)
+    protected PhotoCatalogRecord (CatalogListing listing)
     {
         super(listing);
     }

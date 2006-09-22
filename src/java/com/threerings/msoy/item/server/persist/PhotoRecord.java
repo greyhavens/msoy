@@ -46,7 +46,7 @@ public class PhotoRecord extends ItemRecord
         super();
     }
 
-    public PhotoRecord (Photo photo)
+    protected PhotoRecord (Photo photo)
     {
         super(photo);
 

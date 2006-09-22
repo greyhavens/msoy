@@ -18,7 +18,7 @@ public class FurnitureCatalogRecord extends CatalogRecord<FurnitureRecord>
         super();
     }
 
-    public FurnitureCatalogRecord (CatalogListing listing)
+    protected FurnitureCatalogRecord (CatalogListing listing)
     {
         super(listing);
     }

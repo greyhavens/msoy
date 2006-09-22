@@ -45,7 +45,7 @@ public class FurnitureRecord extends ItemRecord
         super();
     }
 
-    public FurnitureRecord (Furniture furniture)
+    protected FurnitureRecord (Furniture furniture)
     {
         super(furniture);
 

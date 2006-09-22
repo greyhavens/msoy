@@ -18,7 +18,7 @@ public class GameCatalogRecord extends CatalogRecord<GameRecord>
         super();
     }
 
-    public GameCatalogRecord (CatalogListing listing)
+    protected GameCatalogRecord (CatalogListing listing)
     {
         super(listing);
     }

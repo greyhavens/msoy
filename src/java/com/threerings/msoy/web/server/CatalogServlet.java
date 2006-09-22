@@ -9,8 +9,6 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.server.MsoyServer;
 
@@ -41,15 +39,11 @@ public class CatalogServlet extends RemoteServiceServlet
         }
 
         // load their catalog via the catalog manager
-        ServletWaiter<ArrayList<CatalogRecord>> waiter =
-            new ServletWaiter<ArrayList<CatalogRecord>>(
+        ServletWaiter<ArrayList<CatalogListing>> waiter =
+            new ServletWaiter<ArrayList<CatalogListing>>(
                 "loadCatalog[" + creds.memberId + ", " + etype + "]");
         MsoyServer.itemMan.loadCatalog(creds.memberId, etype, waiter);
-        ArrayList<CatalogListing> listing = new ArrayList<CatalogListing>();
-        for (CatalogRecord record : waiter.waitForResult()) {
-            listing.add(record.toListing());
-        }
-        return listing;
+        return waiter.waitForResult();
     }
 
     // from interface CatalogService
@@ -63,13 +57,12 @@ public class CatalogServlet extends RemoteServiceServlet
                         "type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
         }
-        ServletWaiter<ItemRecord> waiter =
-            new ServletWaiter<ItemRecord>(
+        ServletWaiter<Item> waiter = new ServletWaiter<Item>(
                 "purchaseItem[" + creds.memberId + ", " +
                 itemId + ", " + etype + "]");
         MsoyServer.itemMan.purchaseItem(
             creds.memberId, itemId, etype, waiter);
-        return waiter.waitForResult().toItem();
+        return waiter.waitForResult();
 
     }
 
@@ -84,9 +77,10 @@ public class CatalogServlet extends RemoteServiceServlet
                 "type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
         }
-        ServletWaiter<CatalogRecord> waiter = new ServletWaiter<CatalogRecord>(
+        ServletWaiter<CatalogListing> waiter =
+            new ServletWaiter<CatalogListing>(
                 "listItem[" + itemId + ", " + etype + "]");
         MsoyServer.itemMan.listItem(itemId, etype, waiter);
-        return waiter.waitForResult().toListing();
+        return waiter.waitForResult();
     }
 }
