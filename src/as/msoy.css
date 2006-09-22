@@ -228,3 +228,8 @@ ProgressBar {
   barColor: #ff0099;
 }
 
+ListBase
+{
+  rollOverColor: #c8d0d3;
+  selectionColor: #ff0099;
+}
