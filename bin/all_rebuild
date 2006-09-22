@@ -26,6 +26,12 @@ while [ ! -z "$1" ]; do
     if [ $1 = "--update" ]; then
         UPDATE=true
     fi
+    if [ $1 = "--asclient" ]; then
+        ASCLIENT=true
+    fi
+    if [ $1 = "--gclient" ]; then
+        GCLIENT=true
+    fi
     shift
 done
 
@@ -68,6 +74,24 @@ ant distclean dist
 if [ $? != 0 ]; then
     rm -f $LOCKFILE
     exit 255
+fi
+
+# build the ActionScript client if requested
+if [ ! -z "$ASCLIENT" ]; then
+    ant asclient
+    if [ $? != 0 ]; then
+        rm -f $LOCKFILE
+        exit 255
+    fi
+fi
+
+# build the GWT client if requested
+if [ ! -z "$GCLIENT" ]; then
+    ant gclient
+    if [ $? != 0 ]; then
+        rm -f $LOCKFILE
+        exit 255
+    fi
 fi
 
 # remove the lockfile

@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Does the hourly build of the development deployment and mirrors the results
+# to the development server.
+
+ROOT=`dirname $0`/..
+$ROOT/bin/all_rebuild --update --asclient --gclient > /tmp/rebuild-msoy.log
+$ROOT/bin/release_mirror >> /tmp/rebuild-msoy.log
+$ROOT/bin/client_mirror >> /tmp/rebuild-msoy.log
