@@ -33,4 +33,8 @@ public interface ItemService extends RemoteService
      */
     public ArrayList loadInventory (WebCreds creds, String type)
         throws ServiceException;
+    
+    /** Remixes a cloned item into a fully mutable original item. */
+    public Item remixItem (WebCreds creds, int itemId, String type)
+        throws ServiceException;
 }

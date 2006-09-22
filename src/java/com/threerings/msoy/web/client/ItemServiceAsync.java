@@ -23,4 +23,10 @@ public interface ItemServiceAsync
      */
     public void loadInventory (WebCreds creds, String type,
                                AsyncCallback callback);
+    
+    /**
+     * The asynchronous version of {@link ItemService#remixItem}.
+     */
+    public void remixItem (WebCreds creds, int itemId, String type,
+                           AsyncCallback callback);
 }

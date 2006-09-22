@@ -99,8 +99,7 @@ public class ItemContainer extends VerticalPanel
         if (showLabel) {
             add(label);
         }
-         // TODO: this check will work when parentId isn't transient
-        // if (item.parentId != -1) {
+        if (item.parentId == -1) {
             Button button = new Button("List in Catalog ...");
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -108,7 +107,15 @@ public class ItemContainer extends VerticalPanel
                 }
             });
             add(button);
-        //}
+        } else {
+            Button button = new Button("Remix ...");
+            button.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    panel.remixItem(item.itemId, item.getType());
+                }
+            });
+            add(button);            
+        }
     }
 
     /**

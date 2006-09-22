@@ -89,6 +89,20 @@ public class ItemPanel extends VerticalPanel
             });
     }
 
+    protected void remixItem (int itemId, String type)
+    {
+        _ctx.itemsvc.remixItem(
+            _ctx.creds, itemId, type, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    setStatus("Item remixed.");
+                }
+                public void onFailure (Throwable caught) {
+                    String reason = caught.getMessage();
+                    setStatus("Item remixing failed: " + reason);
+                }
+            });
+    }
+
     protected void createNewItem ()
     {
         ItemEditor editor = null;

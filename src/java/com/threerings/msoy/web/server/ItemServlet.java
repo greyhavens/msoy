@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.server.MsoyServer;
 
@@ -43,9 +44,9 @@ public class ItemServlet extends RemoteServiceServlet
         item.ownerId = creds.memberId;
 
         // pass the buck to the item manager to do the dirty work
-        ServletWaiter<Item> waiter = new ServletWaiter<Item>(
+        ServletWaiter<ItemRecord> waiter = new ServletWaiter<ItemRecord>(
             "insertItem[" + creds + ", " + item + "]");
-        MsoyServer.itemMan.insertItem(item, waiter);
+        MsoyServer.itemMan.insertItem(ItemRecord.newRecord(item), waiter);
         return waiter.waitForResult().itemId;
     }
 
@@ -64,10 +65,30 @@ public class ItemServlet extends RemoteServiceServlet
         }
 
         // load their inventory via the item manager
-        ServletWaiter<ArrayList<Item>> waiter =
-            new ServletWaiter<ArrayList<Item>>(
+        ServletWaiter<ArrayList<ItemRecord>> waiter =
+            new ServletWaiter<ArrayList<ItemRecord>>(
                 "loadInventory[" + creds.memberId + ", " + etype + "]");
         MsoyServer.itemMan.loadInventory(creds.memberId, etype, waiter);
-        return waiter.waitForResult();
+        ArrayList<Item> items = new ArrayList<Item>();
+        for (ItemRecord record : waiter.waitForResult()) {
+            items.add(record.toItem());
+        }
+        return items;
+    }
+
+    public Item remixItem (WebCreds creds, int itemId, String type)
+        throws ServiceException
+    {
+        ItemEnum etype = ItemEnum.valueOf(type);
+        if (etype == null) {
+            log.warning("Requested to remix item of invalid item type " +
+                "[who=" + creds + ", itemId=" + itemId +
+                "type=" + type + "].");
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
+        ServletWaiter<ItemRecord> waiter = new ServletWaiter<ItemRecord>(
+                "remixItem[" + itemId + ", " + etype + "]");
+        MsoyServer.itemMan.remixItem(itemId, etype, waiter);
+        return waiter.waitForResult().toItem();
     }
 }

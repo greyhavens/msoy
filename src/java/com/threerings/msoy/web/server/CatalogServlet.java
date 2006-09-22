@@ -9,6 +9,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.server.MsoyServer;
 
@@ -39,11 +41,15 @@ public class CatalogServlet extends RemoteServiceServlet
         }
 
         // load their catalog via the catalog manager
-        ServletWaiter<ArrayList<CatalogListing>> waiter =
-            new ServletWaiter<ArrayList<CatalogListing>>(
+        ServletWaiter<ArrayList<CatalogRecord>> waiter =
+            new ServletWaiter<ArrayList<CatalogRecord>>(
                 "loadCatalog[" + creds.memberId + ", " + etype + "]");
         MsoyServer.itemMan.loadCatalog(creds.memberId, etype, waiter);
-        return waiter.waitForResult();
+        ArrayList<CatalogListing> listing = new ArrayList<CatalogListing>();
+        for (CatalogRecord record : waiter.waitForResult()) {
+            listing.add(record.toListing());
+        }
+        return listing;
     }
 
     // from interface CatalogService
@@ -57,27 +63,20 @@ public class CatalogServlet extends RemoteServiceServlet
                         "type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
         }
-        ServletWaiter<Item> waiter =
-            new ServletWaiter<Item>(
+        ServletWaiter<ItemRecord> waiter =
+            new ServletWaiter<ItemRecord>(
                 "purchaseItem[" + creds.memberId + ", " +
                 itemId + ", " + etype + "]");
         MsoyServer.itemMan.purchaseItem(
             creds.memberId, itemId, etype, waiter);
-        return waiter.waitForResult();
+        return waiter.waitForResult().toItem();
 
     }
 
     // from interface CatalogService
-    public Item listItem (WebCreds creds, int itemId, String type)
+    public CatalogListing listItem (WebCreds creds, int itemId, String type)
         throws ServiceException
     {
-        if (itemId == -1) {
-            log.warning(
-                "Reqested to list a cloned item " +
-                "[who=" + creds + ", itemId=" + itemId +
-                "type=" + type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
-        }
         ItemEnum etype = ItemEnum.valueOf(type);
         if (etype == null) {
             log.warning("Requested to list item of invalid item type " +
@@ -85,9 +84,9 @@ public class CatalogServlet extends RemoteServiceServlet
                 "type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
         }
-        ServletWaiter<Item> waiter =
-            new ServletWaiter<Item>("listItem[" + itemId + ", " + etype + "]");
+        ServletWaiter<CatalogRecord> waiter = new ServletWaiter<CatalogRecord>(
+                "listItem[" + itemId + ", " + etype + "]");
         MsoyServer.itemMan.listItem(itemId, etype, waiter);
-        return waiter.waitForResult();
+        return waiter.waitForResult().toListing();
     }
 }

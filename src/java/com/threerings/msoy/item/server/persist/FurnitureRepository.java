@@ -3,59 +3,38 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.JDBCUtil;
-import com.samskivert.jdbc.jora.Table;
-
-import com.threerings.msoy.item.web.Furniture;
+import com.samskivert.jdbc.ConnectionProvider;
 
 /**
  * Manages the persistent store of {@link Furniture} items.
  */
-public class FurnitureRepository extends ItemRepository<Furniture>
+public class FurnitureRepository extends ItemRepository<FurnitureRecord>
 {
-    @Override // from ItemRepository
-    protected Table<Furniture> getTable ()
+    public FurnitureRepository (ConnectionProvider provider)
     {
-        return _table;
+        super(provider);
+    }
+
+    @Override
+    protected Class<FurnitureRecord> getItemClass () {
+        return FurnitureRecord.class;
     }
     
+    @Override
+    protected Class<? extends CatalogRecord<FurnitureRecord>> getCatalogClass ()
+    {
+        return FurnitureCatalogRecord.class;
+    }
+
+    @Override
+    protected Class<? extends CloneRecord<FurnitureRecord>> getCloneClass ()
+    {
+        return FurnitureCloneRecord.class;
+    }
+
     @Override // from ItemRepository
     protected String getTypeEponym ()
     {
         return "FURNITURE";
     }
-
-    @Override // from JORARepository
-    protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
-        throws SQLException, PersistenceException
-    {
-        super.migrateSchema(conn, liaison);
-
-        JDBCUtil.createTableIfMissing(conn, "FURNITURE", new String[] {
-            "ITEM_ID integer not null primary key",
-            "FLAGS tinyint not null",
-            "CREATOR_ID integer not null",
-            "OWNER_ID integer not null",
-            "THUMB_MEDIA_HASH tinyblob",
-            "THUMB_MIME_TYPE tinyint",
-            "FURNI_MEDIA_HASH tinyblob",
-            "FURNI_MIME_TYPE tinyint",
-            "ACTION varchar(255) not null",
-            "DESCRIPTION varchar(255) not null",
-        }, "");
-    }
-
-    @Override // from JORARepository
-    protected void createTables ()
-    {
-	_table = new Table<Furniture>(
-            Furniture.class, "FURNITURE", "ITEM_ID", true);
-    }
-
-    protected Table<Furniture> _table;
 }

@@ -1,0 +1,65 @@
+//
+// $Id$
+
+package com.threerings.msoy.item.server.persist;
+
+import java.sql.Timestamp;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.threerings.io.Streamable;
+import com.threerings.msoy.item.web.CatalogListing;
+
+/**
+ * Represents a catalog listing of an item.
+ */
+@Entity
+@Table
+public abstract class CatalogRecord<T extends ItemRecord>
+    implements Streamable
+{
+    public static final int SCHEMA_VERSION = 1;
+    
+    public static final String ITEM_ID = "itemId";
+    public static final String LISTED_DATE = "listedDate";
+    
+    /** A reference to the listed item. This value is not persisted. */
+    @Transient
+    public ItemRecord item;
+
+    /** The ID of the listed item. */
+    @Id
+    public int itemId;
+
+    /** The in time this item was listed in the catalog. */
+    @Column(nullable=false)
+    public Timestamp listedDate;
+    
+    public CatalogRecord ()
+    {
+        super();
+    }
+    
+    public CatalogRecord (CatalogListing listing)
+    {
+        super();
+        
+        this.item = ItemRecord.newRecord(listing.item);
+        this.listedDate = new Timestamp(listing.listedDate.getTime());
+
+    }
+
+    public CatalogListing toListing ()
+    {
+        CatalogListing listing = new CatalogListing();
+        listing.item = this.item.toItem();
+        // GWT can't handle java.sql.Timestamp
+        listing.listedDate = new Date(this.listedDate.getTime());
+        return listing;
+    }
+}

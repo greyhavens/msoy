@@ -3,59 +3,39 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.JDBCUtil;
-import com.samskivert.jdbc.jora.Table;
-
-import com.threerings.msoy.item.web.Photo;
+import com.samskivert.jdbc.ConnectionProvider;
 
 /**
- * Manages the persistent store of {@link Photo} items.
+ * Manages the persistent store of {@link PhotoRecord} items.
  */
-public class PhotoRepository extends ItemRepository<Photo>
+public class PhotoRepository extends ItemRepository<PhotoRecord>
 {
-    @Override // from ItemRepository
-    protected Table<Photo> getTable ()
+    public PhotoRepository (ConnectionProvider provider)
     {
-        return _table;
+        super(provider);
+    }
+
+    @Override
+    protected Class<PhotoRecord> getItemClass () {
+        return PhotoRecord.class;
     }
     
+    @Override
+    protected Class<? extends CatalogRecord<PhotoRecord>> getCatalogClass ()
+    {
+        return PhotoCatalogRecord.class;
+    }
+
+    @Override
+    protected Class<? extends CloneRecord<PhotoRecord>> getCloneClass ()
+    {
+        return PhotoCloneRecord.class;
+    }
+
+
     @Override // from ItemRepository
     protected String getTypeEponym ()
     {
         return "PHOTO";
     }
-
-    @Override // from JORARepository
-    protected void migrateSchema (Connection conn, DatabaseLiaison liaison)
-        throws SQLException, PersistenceException
-    {
-        super.migrateSchema(conn, liaison);
-
-        JDBCUtil.createTableIfMissing(conn, "PHOTOS", new String[] {
-            "ITEM_ID integer not null auto_increment primary key",
-            "FLAGS tinyint not null",
-            "CREATOR_ID integer not null",
-            "OWNER_ID integer not null",
-            "THUMB_MEDIA_HASH tinyblob",
-            "THUMB_MIME_TYPE tinyint",
-            "FURNI_MEDIA_HASH tinyblob",
-            "FURNI_MIME_TYPE tinyint",
-            "PHOTO_MEDIA_HASH tinyblob not null",
-            "PHOTO_MIME_TYPE tinyint not null",
-            "CAPTION varchar(255) not null",
-        }, "");
-    }
-
-    @Override // from JORARepository
-    protected void createTables ()
-    {
-	_table = new Table<Photo>(Photo.class, "PHOTOS", "ITEM_ID", true);
-    }
-
-    protected Table<Photo> _table;
 }

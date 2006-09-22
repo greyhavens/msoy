@@ -1,0 +1,83 @@
+//
+// $Id$
+
+package com.threerings.msoy.item.server.persist;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+
+import com.threerings.msoy.item.util.ItemEnum;
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.Photo;
+
+/**
+ * Represents an uploaded photograph for display in albumns or for use as a
+ * profile picture.
+ */
+@Entity
+@Table
+@TableGenerator(
+    name="itemId",
+    allocationSize=1,
+    pkColumnValue="PHOTO")
+public class PhotoRecord extends ItemRecord
+{
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;
+
+    public static final String PHOTO_MEDIA_HASH = "photoMediaHash";
+    public static final String PHOTO_MIME_TYPE = "photoMimeType";
+    
+    /** A hash code identifying the photo media. */
+    @Column(nullable=false)
+    public byte[] photoMediaHash;
+
+    /** The MIME type of the {@link #photoMediaHash} media. */
+    @Column(nullable=false)
+    public byte photoMimeType;
+
+    /** A caption for this photo (max length 255 characters). */
+    @Column(nullable=false)
+    public String caption;
+
+    public PhotoRecord ()
+    {
+        super();
+    }
+
+    public PhotoRecord (Photo photo)
+    {
+        super(photo);
+
+        this.photoMediaHash = photo.photoMediaHash == null ?
+            null : photo.photoMediaHash.clone();
+        this.photoMimeType = photo.photoMimeType;
+        this.caption = photo.caption;
+    }
+
+    @Override // from ItemRecord
+    public ItemEnum getType ()
+    {
+        return ItemEnum.PHOTO;
+    }
+    
+    @Override
+    public Object clone ()
+    {
+        PhotoRecord clone = (PhotoRecord) super.clone();
+        clone.photoMediaHash = photoMediaHash.clone();
+        return clone;
+    }
+
+    @Override
+    protected Item createItem ()
+    {
+        Photo object = new Photo();
+        object.photoMediaHash = this.photoMediaHash == null ?
+            null : this.photoMediaHash.clone();
+        object.photoMimeType = this.photoMimeType;
+        object.caption = this.caption;
+        return object;
+    }
+}
