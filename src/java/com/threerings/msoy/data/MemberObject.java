@@ -427,6 +427,7 @@ public class MemberObject extends BodyObject
         new MediaDesc("e1c4cd0111619e0d8c038b90292aa6ec0bd5d86a.swf"),
         new MediaDesc("4cadc322f2afbc7330a5e0098025637cf568f2cb.swf"),
         new MediaDesc("2a6b4b657db5a7138f1a97cff91544c4d41deffa.swf"),
+        new MediaDesc("d6c6afaebf7231cf94fdc35c0956908896f48e04.swf"),
     };
 
     public static final int MAX_RECENT_SCENES = 10;
