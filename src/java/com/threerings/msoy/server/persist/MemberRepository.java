@@ -252,23 +252,22 @@ public class MemberRepository extends DepotRepository
     public ArrayList<FriendEntry> getFriends (final int memberId)
         throws PersistenceException
     {
+        // force the creation of the FriendRecord table if necessary
+        getMarshaller(FriendRecord.class);
+
         Key key = new Key("FriendsCache", memberId);
         return invoke(new CollectionQuery<ArrayList<FriendEntry>>(key) {
             public ArrayList<FriendEntry> invoke (Connection conn)
                 throws SQLException
             {
+                String query = "select name, memberId, inviterId, status " +
+                    "from FriendRecord straight join MemberRecord where (" +
+                    "(inviterId=" + memberId + " and memberId=inviteeId) or " +
+                    "(inviteeId=" + memberId + " and memberId=inviterId))";
                 ArrayList<FriendEntry> list = new ArrayList<FriendEntry>();
                 Statement stmt = conn.createStatement();
                 try {
-                    ResultSet rs = stmt.executeQuery(
-                        "select NAME, MEMBER_ID, INVITER_ID, STATUS " +
-                        "from FRIENDS straight join MEMBERS " +
-                        "where (INVITER_ID=" + memberId +
-                        " and MEMBER_ID=INVITEE_ID) " +
-                        "union select NAME, MEMBER_ID, INVITER_ID, STATUS " +
-                        "from FRIENDS straight join MEMBERS " +
-                        "where (INVITEE_ID=" + memberId +
-                        " and MEMBER_ID=INVITER_ID)");
+                    ResultSet rs = stmt.executeQuery(query);
                     while (rs.next()) {
                         MemberName name = new MemberName(
                             rs.getString(1), rs.getInt(2));
