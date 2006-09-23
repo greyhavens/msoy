@@ -104,6 +104,15 @@ public class MsoySceneRepository extends SimpleRepository
             "UPDATE_TYPE integer not null",
             "DATA blob not null",
             "primary key (SCENE_ID, SCENE_VERSION)" }, "");
+
+        // TEMP: removeable after all servers have been updated past 2006-09-22
+        if (JDBCUtil.tableContainsColumn(conn, "FURNI", "ACTION")) {
+            JDBCUtil.dropColumn(conn, "FURNI", "ACTION");
+            JDBCUtil.addColumn(conn, "FURNI", "ACTION_TYPE",
+                "tinyint not null", "SCALE_Y");
+            JDBCUtil.addColumn(conn, "FURNI", "ACTION_DATA",
+                "varchar(255)", "ACTION_TYPE");
+        }
     }
 
     // documentation inherited from interface SceneRepository
@@ -264,7 +273,7 @@ public class MsoySceneRepository extends SimpleRepository
                     // Load: furni
                     rs = stmt.executeQuery("select " +
                         "FURNI_ID, MEDIA_HASH, MEDIA_TYPE, X, Y, Z, " +
-                        "SCALE_X, SCALE_Y, ACTION " +
+                        "SCALE_X, SCALE_Y, ACTION_TYPE, ACTION_DATA " +
                         "from FURNI where SCENE_ID=" + sceneId);
                     ArrayList<FurniData> flist = new ArrayList<FurniData>();
                     while (rs.next()) {
@@ -276,7 +285,8 @@ public class MsoySceneRepository extends SimpleRepository
                             rs.getFloat(4), rs.getFloat(5), rs.getFloat(6), 0);
                         furni.scaleX = rs.getFloat(7);
                         furni.scaleY = rs.getFloat(8);
-                        furni.action = "http://bogocorp.com"; // null; // TODO: decode blob
+                        furni.actionType = rs.getByte(9);
+                        furni.actionData = rs.getString(10);
                         flist.add(furni);
                     }
                     model.furnis = new FurniData[flist.size()];
@@ -545,8 +555,8 @@ public class MsoySceneRepository extends SimpleRepository
     {
         PreparedStatement stmt = conn.prepareStatement("insert into FURNI " +
             "(SCENE_ID, FURNI_ID, MEDIA_HASH, MEDIA_TYPE, X, Y, Z, " +
-            "SCALE_X, SCALE_Y, ACTION) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "SCALE_X, SCALE_Y, ACTION_TYPE, ACTION_DATA) " +
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setInt(1, sceneId);
 
@@ -559,7 +569,8 @@ public class MsoySceneRepository extends SimpleRepository
                 stmt.setFloat(7, f.loc.z);
                 stmt.setFloat(8, f.scaleX);
                 stmt.setFloat(9, f.scaleY);
-                stmt.setBytes(10, null); // TODO: save action
+                stmt.setByte(10, f.actionType);
+                stmt.setString(11, f.actionData);
                 JDBCUtil.checkedUpdate(stmt, 1);
             }
         } finally {
@@ -730,7 +741,8 @@ public class MsoySceneRepository extends SimpleRepository
             "Z float not null",
             "SCALE_X float not null",
             "SCALE_Y float not null",
-            "ACTION blob",
+            "ACTION_TYPE tinyint not null",
+            "ACTION_DATA varchar(255)",
             "primary key (SCENE_ID, FURNI_ID)" }, "");
 
         // populate some starting scenes
@@ -926,8 +938,9 @@ public class MsoySceneRepository extends SimpleRepository
                 "52c2f1dd0b1bb8aea5e7ce2d98b196c1b88a25bc.swf");
             furn.scaleX = -1;
             furn.loc = new MsoyLocation(.8, 0, .2, 0);
-            //furn.action = "http://www.pinballnews.com/";
-            furn.action = "http://www.t45ol.com/play/420/jungle-quest.html";
+            furn.actionType = FurniData.ACTION_URL;
+            //furn.actionData = "http://www.pinballnews.com/";
+            furn.actionData = "http://www.t45ol.com/play/420/jungle-quest.html";
             model.addFurni(furn);
 
             furn = new FurniData();

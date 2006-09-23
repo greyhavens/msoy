@@ -449,7 +449,7 @@ public class AbstractRoomView extends Canvas
     {
         var sprite :FurniSprite = (_furni.get(furni.id) as FurniSprite);
         if (sprite != null) {
-            sprite.update(furni);
+            sprite.update(_ctx, furni);
         } else {
             addFurni(furni);
         }
@@ -470,7 +470,7 @@ public class AbstractRoomView extends Canvas
         var sprite :PortalSprite =
             (_portals.get(portal.portalId) as PortalSprite);
         if (sprite != null) {
-            sprite.update(portal);
+            sprite.update(_ctx, portal);
         } else {
             addPortal(portal);
         }

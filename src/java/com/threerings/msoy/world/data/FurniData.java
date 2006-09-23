@@ -15,6 +15,15 @@ import com.threerings.msoy.item.web.MediaDesc;
 public class FurniData extends SimpleStreamableObject
     implements Cloneable
 {
+    /** An actionType indicating 'no action'. */
+    public static final byte ACTION_NONE = 0;
+
+    /** An actionType indicating that actionData is a URL. */
+    public static final byte ACTION_URL = 1;
+
+    /** An actionType indicating that actionData is a game item id. */
+    public static final byte ACTION_GAME = 2;
+
     /** The id of this piece of furni. */
     public int id;
 
@@ -30,8 +39,11 @@ public class FurniData extends SimpleStreamableObject
     /** A scale factor in the Y direction. */
     public float scaleY = 1f;
 
-    /** The action associated with this furniture. */
-    public Object action;
+    /** The type of action, determines how to use actionData. */
+    public byte actionType;
+
+    /** The action, interpreted using actionType. */
+    public String actionData;
 
     // documentation inherited
     public boolean equals (Object other)
@@ -56,7 +68,8 @@ public class FurniData extends SimpleStreamableObject
             this.loc.equals(that.loc) &&
             (this.scaleX == that.scaleX) &&
             (this.scaleY == that.scaleY) &&
-            ObjectUtil.equals(this.action, that.action);
+            (this.actionType == that.actionType) &&
+            ObjectUtil.equals(this.actionData, that.actionData);
     }
 
     // documentation inherited

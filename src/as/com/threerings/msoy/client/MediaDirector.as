@@ -17,6 +17,7 @@ public class MediaDirector extends BasicDirector
     public function MediaDirector (ctx :MsoyContext)
     {
         super(ctx);
+        _mctx = ctx;
     }
 
     /**
@@ -28,11 +29,11 @@ public class MediaDirector extends BasicDirector
         var isOurs :Boolean =
             (occInfo.bodyOid == _ctx.getClient().getClientOid());
         if (isOurs && _ourAvatar != null) {
-            _ourAvatar.setOccupantInfo(occInfo);
+            _ourAvatar.setOccupantInfo(_mctx, occInfo);
             return _ourAvatar;
         }
 
-        var avatar :AvatarSprite = new AvatarSprite(occInfo);
+        var avatar :AvatarSprite = new AvatarSprite(_mctx, occInfo);
         if (isOurs) {
             _ourAvatar = avatar;
         }
@@ -45,7 +46,7 @@ public class MediaDirector extends BasicDirector
      */
     public function getFurni (furni :FurniData) :FurniSprite
     {
-        return new FurniSprite(furni);
+        return new FurniSprite(_mctx, furni);
     }
 
     /**
@@ -53,7 +54,7 @@ public class MediaDirector extends BasicDirector
      */
     public function getPortal (portal :MsoyPortal) :PortalSprite
     {
-        return new PortalSprite(portal);
+        return new PortalSprite(_mctx, portal);
     }
 
     /**
@@ -77,6 +78,9 @@ public class MediaDirector extends BasicDirector
         // release our hold on our avatar
         _ourAvatar = null;
     }
+
+    /** A casted copy of the context. */
+    protected var _mctx :MsoyContext;
 
     /** Our very own avatar: avoid loading and unloading it. */
     protected var _ourAvatar :AvatarSprite;

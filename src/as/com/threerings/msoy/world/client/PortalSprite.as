@@ -6,6 +6,8 @@ import com.threerings.mx.events.CommandEvent;
 
 import com.threerings.whirled.spot.data.Portal;
 
+import com.threerings.msoy.client.MsoyContext;
+
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.world.data.MsoyPortal;
@@ -15,7 +17,7 @@ import flash.utils.Timer;
 
 public class PortalSprite extends MsoySprite
 {
-    public function PortalSprite (portal :MsoyPortal)
+    public function PortalSprite (ctx :MsoyContext, portal :MsoyPortal)
     {
         _portal = portal;
         super(portal.media);
@@ -31,7 +33,7 @@ public class PortalSprite extends MsoySprite
         return _portal;
     }
 
-    public function update (portal :MsoyPortal) :void
+    public function update (ctx :MsoyContext, portal :MsoyPortal) :void
     {
         _portal = portal;
         setup(portal.media);

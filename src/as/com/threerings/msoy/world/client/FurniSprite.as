@@ -4,16 +4,18 @@ import flash.events.MouseEvent;
 
 import com.threerings.util.NetUtil;
 
+import com.threerings.msoy.client.MsoyContext;
+
 import com.threerings.msoy.world.data.FurniData;
 
 public class FurniSprite extends MsoySprite
 {
-    public function FurniSprite (furni :FurniData)
+    public function FurniSprite (ctx :MsoyContext, furni :FurniData)
     {
         _furni = furni;
         super(furni.media);
 
-        configureAction();
+        configureToolTip(ctx);
     }
 
     public function getFurniData () :FurniData
@@ -21,13 +23,13 @@ public class FurniSprite extends MsoySprite
         return _furni;
     }
 
-    public function update (furni :FurniData) :void
+    public function update (ctx :MsoyContext, furni :FurniData) :void
     {
         _furni = furni;
         setup(furni.media);
         scaleUpdated();
         setLocation(furni.loc);
-        configureAction();
+        configureToolTip(ctx);
     }
 
     override public function setEditing (editing :Boolean) :void
@@ -73,7 +75,7 @@ public class FurniSprite extends MsoySprite
     // documentation inherited
     override public function hasAction () :Boolean
     {
-        return (_furni.action != null);
+        return (_furni.actionType != FurniData.ACTION_NONE);
     }
 
     // documentation inherited
@@ -85,31 +87,50 @@ public class FurniSprite extends MsoySprite
     // documentation inherited
     override protected function mouseClick (event :MouseEvent) :void
     {
-        if (_furni.action is String) {
-            NetUtil.navigateToURL(_furni.action as String);
+        switch (_furni.actionType) {
+        case FurniData.ACTION_URL:
+            NetUtil.navigateToURL(_furni.actionData);
+            break;
+
+        case FurniData.ACTION_GAME:
+            // TODO: request the lobby for that game
+            trace("It seems as if the user wants to play this game! Hrum hrum!");
+            break;
+
+        default:
+            log.warning("Clicked on unhandled furni action type " +
+                "[actionType=" + _furni.actionType +
+                ", actionData=" + _furni.actionData + "].");
+            break;
         }
     }
 
     /**
-     * Do any setup required for the furniture's action.
+     * Do any setup required for the furniture's tooltip.
      */
-    protected function configureAction () :void
+    protected function configureToolTip (ctx :MsoyContext) :void
     {
         // clear out any residuals from the last action
         toolTip = null;
 
-        var action :Object = _furni.action;
-        if (action == null) {
-            return;
-        }
+        switch (_furni.actionType) {
+        case FurniData.ACTION_NONE:
+            // do nothing
+            break;
 
-        // set our dest url as a tooltip..
-        if (action is String) {
-            toolTip = (action as String);
+        case FurniData.ACTION_URL:
+            toolTip = _furni.actionData;
+            break;
 
-        } else {
-            Log.getLog(this).warning("Don't understand furniture action " +
-                "[action=" + action + "].");
+        case FurniData.ACTION_GAME:
+            toolTip = ctx.xlate(null, "i.play_game");
+            break;
+
+        default:
+            log.warning("Tooltip requested for unhandled furni action type " +
+                "[actionType=" + _furni.actionType +
+                ", actionData=" + _furni.actionData + "].");
+            break;
         }
     }
 

@@ -15,6 +15,8 @@ import com.threerings.mx.events.CommandEvent;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.data.ChatMessage;
 
+import com.threerings.msoy.client.MsoyContext;
+
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -22,7 +24,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 
 public class AvatarSprite extends MsoySprite
 {
-    public function AvatarSprite (occInfo :MemberInfo)
+    public function AvatarSprite (ctx :MsoyContext, occInfo :MemberInfo)
     {
         super(occInfo.media);
 
@@ -31,7 +33,7 @@ public class AvatarSprite extends MsoySprite
         addChild(_label);
 
         // set up our occupant info
-        setOccupantInfo(occInfo);
+        setOccupantInfo(ctx, occInfo);
 
         sendMessage("setAction", (_move == null) ? "standing" : "walking");
     }
@@ -51,7 +53,7 @@ public class AvatarSprite extends MsoySprite
     /**
      * Update the occupant info.
      */
-    public function setOccupantInfo (occInfo :MemberInfo) :void
+    public function setOccupantInfo (ctx :MsoyContext, occInfo :MemberInfo) :void
     {
         _occInfo = occInfo;
 

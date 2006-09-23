@@ -362,7 +362,7 @@ public class RoomView extends AbstractRoomView
                 "[occInfo=" + occInfo + "].");
             return;
         }
-        avatar.setOccupantInfo(occInfo);
+        avatar.setOccupantInfo(_ctx, occInfo);
     }
 
     /**

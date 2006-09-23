@@ -14,6 +14,15 @@ import com.threerings.msoy.item.web.MediaDesc;
 public class FurniData
     implements Cloneable, Hashable, Streamable
 {
+    /** An actionType indicating 'no action'. */
+    public static const ACTION_NONE :int = 0;
+
+    /** An actionType indicating that actionData is a URL. */
+    public static const ACTION_URL :int = 1;
+
+    /** An actionType indicating that actionData is a game item id. */
+    public static const ACTION_GAME :int = 2;
+
     /** The id of this piece of furni. */
     public var id :int;
 
@@ -29,8 +38,11 @@ public class FurniData
     /** A scale factor in the Y direction. */
     public var scaleY :Number = 1;
 
-    /** The action associated with this furniture. */
-    public var action :Object;
+    /** The type of action, determines how to use actionData. */
+    public var actionType :int;
+
+    /** The action, interpreted using actionType. */
+    public var actionData :String;
 
     // documentation inherited from superinterface Equalable
     public function equals (other :Object) :Boolean
@@ -55,7 +67,8 @@ public class FurniData
             this.loc.equals(that.loc) &&
             (this.scaleX == that.scaleX) &&
             (this.scaleY == that.scaleY) &&
-            Util.equals(this.action, that.action);
+            (this.actionType == that.actionType) &&
+            Util.equals(this.actionData, that.actionData);
     }
 
     // documentation inherited from interface Cloneable
@@ -68,7 +81,8 @@ public class FurniData
         that.loc = this.loc;
         that.scaleX = this.scaleX;
         that.scaleY = this.scaleY;
-        that.action = this.action;
+        that.actionType = this.actionType;
+        that.actionData = this.actionData;
         return that;
     }
 
@@ -80,7 +94,8 @@ public class FurniData
         out.writeObject(loc);
         out.writeFloat(scaleX);
         out.writeFloat(scaleY);
-        out.writeObject(action);
+        out.writeByte(actionType);
+        out.writeField(actionData);
     }
 
     // documentation inherited from interface Streamable
@@ -91,7 +106,8 @@ public class FurniData
         loc = (ins.readObject() as MsoyLocation);
         scaleX = ins.readFloat();
         scaleY = ins.readFloat();
-        action = ins.readObject();
+        actionType = ins.readByte();
+        actionData = (ins.readField(String) as String);
     }
 }
 }
