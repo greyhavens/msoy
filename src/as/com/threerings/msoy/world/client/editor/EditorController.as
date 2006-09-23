@@ -412,7 +412,7 @@ public class EditorController extends Controller
 
         // let's go ahead and create furni
 
-        // create a generic portal descriptor
+        // create a generic furniture descriptor
         var furni :FurniData = new FurniData();
         furni.id = getNextFurniId();
         furni.loc = cloc.loc;
@@ -484,31 +484,31 @@ public class EditorController extends Controller
         _editSprite.removeEventListener(MouseEvent.MOUSE_DOWN,
             editSpritePressed);
 
-        // determine whether we're going to adjust scaling or position
-        var w :Number = _editSprite.contentWidth;
-        var h :Number = _editSprite.contentHeight;
-        var xScaleTrigger :Number = (w > SCALING_TRIGGER_AREA * 2)
-            ? SCALING_TRIGGER_AREA : 1;
-        var yScaleTrigger :Number = (h > SCALING_TRIGGER_AREA * 2)
-            ? SCALING_TRIGGER_AREA : 1;
-        _scalingX = (event.localX < xScaleTrigger) ||
-            (event.localX > (w - xScaleTrigger));
-        _scalingY = (event.localY < yScaleTrigger) ||
-            (event.localY > (h - yScaleTrigger));
-
         var hs :Point = _editSprite.localToGlobal(_editSprite.hotSpot);
 
-        if (_scalingX || _scalingY) {
-            // we are editing scale
-
-            // TODO: I think this fucks up when either scale is negative
-            _xoffset = (event.stageX < hs.x) ? 0 : w;
-            _yoffset = (event.stageY < hs.y) ? 0 : h;
-
-            _roomView.addEventListener(MouseEvent.MOUSE_MOVE, spriteScaling);
-            _roomView.addEventListener(MouseEvent.MOUSE_UP, spriteScaled);
-
-        } else {
+//        // determine whether we're going to adjust scaling or position
+//        var w :Number = _editSprite.contentWidth;
+//        var h :Number = _editSprite.contentHeight;
+//        var xScaleTrigger :Number = (w > SCALING_TRIGGER_AREA * 2)
+//            ? SCALING_TRIGGER_AREA : 1;
+//        var yScaleTrigger :Number = (h > SCALING_TRIGGER_AREA * 2)
+//            ? SCALING_TRIGGER_AREA : 1;
+//        _scalingX = (event.localX < xScaleTrigger) ||
+//            (event.localX > (w - xScaleTrigger));
+//        _scalingY = (event.localY < yScaleTrigger) ||
+//            (event.localY > (h - yScaleTrigger));
+//
+//        if (_scalingX || _scalingY) {
+//            // we are editing scale
+//
+//            // TODO: I think this fucks up when either scale is negative
+//            _xoffset = (event.stageX < hs.x) ? 0 : w;
+//            _yoffset = (event.stageY < hs.y) ? 0 : h;
+//
+//            _roomView.addEventListener(MouseEvent.MOUSE_MOVE, spriteScaling);
+//            _roomView.addEventListener(MouseEvent.MOUSE_UP, spriteScaled);
+//
+//        } else {
             // we are editing position
 
             // figure out the offset to the hotspot
@@ -529,7 +529,7 @@ public class EditorController extends Controller
             } else {
                 drawPositioning(_editSprite);
             }
-        }
+//        }
     }
 
     /**
