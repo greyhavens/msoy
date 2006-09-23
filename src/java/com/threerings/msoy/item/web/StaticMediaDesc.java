@@ -15,6 +15,16 @@ public class StaticMediaDesc extends MediaDesc
     /** Identifies stock furniture visualizations. */
     public static final String FURNI = "furni";
 
+    /**
+     * Used for unserialization.
+     */
+    public StaticMediaDesc ()
+    {
+    }
+
+    /**
+     * Creates a configured static media descriptor.
+     */
     public StaticMediaDesc (String type, String item)
     {
         _type = type;
