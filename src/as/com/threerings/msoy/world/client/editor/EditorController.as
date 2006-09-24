@@ -30,6 +30,7 @@ import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.item.client.InventoryWindow;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.world.client.ClickLocation;
@@ -417,6 +418,7 @@ public class EditorController extends Controller
         furni.id = getNextFurniId();
         furni.loc = cloc.loc;
         furni.media = item.getFurniMedia();
+        configureFurniAction(furni, item);
 
         // create a loose sprite to represent it, add it to the panel
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
@@ -438,6 +440,18 @@ public class EditorController extends Controller
             }
         }
         return null;
+    }
+
+    /**
+     * Configure the default action for furni constructed from the
+     * specified object.
+     */
+    protected function configureFurniAction (furni :FurniData, item :Item) :void
+    {
+        if (item is Game) {
+            furni.actionType = FurniData.ACTION_GAME;
+            furni.actionData = String(item.itemId);
+        }
     }
 
     protected function roomPressed (event :MouseEvent) :void

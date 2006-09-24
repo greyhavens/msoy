@@ -28,6 +28,12 @@ public /*abstract*/ class Item
      * identifier space. */
     public var itemId :int;
 
+    /**
+     * The item ID from which this object was cloned, or -1 if this is not
+     * a clone.
+     */
+    public var parentId :int;
+
     /** A bit-mask of flags that we need to know about every digital item
      * without doing further database lookups or network requests. */
     public var flags :int;
@@ -122,6 +128,7 @@ public /*abstract*/ class Item
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeInt(itemId);
+        out.writeInt(parentId);
         out.writeByte(flags);
         out.writeInt(creatorId);
         out.writeInt(ownerId);
@@ -135,6 +142,7 @@ public /*abstract*/ class Item
     public function readObject (ins :ObjectInputStream) :void
     {
         itemId = ins.readInt();
+        parentId = ins.readInt();
         flags = ins.readByte();
         creatorId = ins.readInt();
         ownerId = ins.readInt();

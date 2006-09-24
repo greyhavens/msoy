@@ -9,10 +9,13 @@ import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 
 import com.threerings.util.MenuUtil;
+import com.threerings.util.NetUtil;
 
 import com.threerings.io.TypedArray;
 
 import com.threerings.mx.controls.CommandMenu;
+
+import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
@@ -29,8 +32,11 @@ import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
 
+import com.threerings.msoy.game.client.LobbyService;
+
 import com.threerings.msoy.world.client.editor.EditorController;
 
+import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
@@ -39,9 +45,12 @@ import com.threerings.msoy.chat.client.ReportingListener;
 
 public class RoomController extends SceneController
 {
+    private const log :Log = Log.getLog(RoomController);
+
     public static const EDIT_SCENE :String = "edit_scene";
 
     public static const PORTAL_CLICKED :String = "PortalClicked";
+    public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
 
     public static const ALTER_FRIEND :String = "AlterFriend";
@@ -148,6 +157,28 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Handles FURNI_CLICKED.
+     */
+    public function handleFurniClicked (furni :FurniData) :void
+    {
+        switch (furni.actionType) {
+        case FurniData.ACTION_URL:
+            NetUtil.navigateToURL(furni.actionData);
+            return;
+
+        case FurniData.ACTION_GAME:
+            goToGameLobby(int(furni.actionData));
+            return;
+
+        default:
+            log.warning("Clicked on unhandled furni action type " +
+                "[actionType=" + furni.actionType +
+                ", actionData=" + furni.actionData + "].");
+            return;
+        }
+    }
+
+    /**
      * Handles AVATAR_CLICKED.
      */
     public function handleAvatarClicked (avatar :AvatarSprite) :void
@@ -220,6 +251,23 @@ public class RoomController extends SceneController
         }
 
         menuItems.push(createMenuItem(TEMP_CLEAR_SCENE_CACHE, null, true));
+    }
+
+    /**
+     * Move to the specified game lobby.
+     */
+    protected function goToGameLobby (gameId :int) :void
+    {
+        var lsvc :LobbyService =
+            (_mctx.getClient().requireService(LobbyService) as LobbyService);
+        lsvc.identifyLobby(_mctx.getClient(), gameId,
+            new ResultWrapper(function (cause :String) :void {
+                log.warning("Ack: " + cause);
+            },
+            function (result :Object) :void {
+                // TODO
+                trace("Lobby identified: " + result);
+            }));
     }
 
     /**

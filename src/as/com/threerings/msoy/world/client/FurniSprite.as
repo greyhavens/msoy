@@ -2,7 +2,7 @@ package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
-import com.threerings.util.NetUtil;
+import com.threerings.mx.events.CommandEvent;
 
 import com.threerings.msoy.client.MsoyContext;
 
@@ -72,6 +72,11 @@ public class FurniSprite extends MsoySprite
         return 1000;
     }
 
+    override public function isInteractive () :Boolean
+    {
+        return hasAction();
+    }
+
     // documentation inherited
     override public function hasAction () :Boolean
     {
@@ -87,22 +92,7 @@ public class FurniSprite extends MsoySprite
     // documentation inherited
     override protected function mouseClick (event :MouseEvent) :void
     {
-        switch (_furni.actionType) {
-        case FurniData.ACTION_URL:
-            NetUtil.navigateToURL(_furni.actionData);
-            break;
-
-        case FurniData.ACTION_GAME:
-            // TODO: request the lobby for that game
-            trace("It seems as if the user wants to play this game! Hrum hrum!");
-            break;
-
-        default:
-            log.warning("Clicked on unhandled furni action type " +
-                "[actionType=" + _furni.actionType +
-                ", actionData=" + _furni.actionData + "].");
-            break;
-        }
+        CommandEvent.dispatch(this, RoomController.FURNI_CLICKED, _furni);
     }
 
     /**
