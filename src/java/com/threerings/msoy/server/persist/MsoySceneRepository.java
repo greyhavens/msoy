@@ -556,7 +556,7 @@ public class MsoySceneRepository extends SimpleRepository
         PreparedStatement stmt = conn.prepareStatement("insert into FURNI " +
             "(SCENE_ID, FURNI_ID, MEDIA_HASH, MEDIA_TYPE, X, Y, Z, " +
             "SCALE_X, SCALE_Y, ACTION_TYPE, ACTION_DATA) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setInt(1, sceneId);
 
@@ -687,7 +687,7 @@ public class MsoySceneRepository extends SimpleRepository
             }
 
             ByteBuffer data = ByteBuffer.allocate(4);
-            data.asIntBuffer().put(ItemEnum.valueOf(sdesc.getType()).getCode());
+            data.asIntBuffer().put(ItemEnum.valueOf(sdesc.getItem()).getCode());
             return data.array();
 
         } else {
