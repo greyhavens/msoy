@@ -31,6 +31,8 @@ public class StaticMediaDesc extends MediaDesc
     // documentation inherited from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
+        super.writeObject(out);
+
         out.writeField(_type);
         out.writeField(_item);
     }
@@ -38,6 +40,8 @@ public class StaticMediaDesc extends MediaDesc
     // documentation inherited from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
+        super.readObject(ins);
+
         _type = (ins.readField(String) as String);
         _item = (ins.readField(String) as String);
         mimeType = IMAGE_PNG;
