@@ -40,6 +40,7 @@ import com.threerings.whirled.util.SceneFactory;
 import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.person.server.PersonPageManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.data.RoomConfig;
@@ -79,6 +80,9 @@ public class MsoyServer extends WhirledServer
 
     /** The parlor manager in operation on this server. */
     public static ParlorManager parlorMan = new ParlorManager();
+
+    /** The lobby registry for this server. */
+    public static LobbyRegistry lobbyReg = new LobbyRegistry();
 
     /** Handles HTTP servlet requests. */
     public static MsoyHttpServer httpServer;
@@ -174,6 +178,7 @@ public class MsoyServer extends WhirledServer
         memberMan.init(memberRepo, profileRepo);
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
+        lobbyReg.init(invmgr);
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();

@@ -93,6 +93,29 @@ public class ItemManager
     }
 
     /**
+     * Get the specified item.
+     */
+    public void getItem (
+        ItemEnum type, final int itemId, ResultListener<Item> listener)
+    {
+        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        if (repo == null) {
+            listener.requestFailed(new Exception("No repository registered " +
+                "for " + type + "."));
+            return;
+        }
+
+        // TODO: do we have to check cloned items as well?
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
+            public Item invokePersistResult ()
+                throws PersistenceException
+            {
+                return repo.loadItem(itemId).toItem();
+            }
+        });
+    }
+
+    /**
      * Inserts the supplied item into the system. The item should be fully
      * configured, and an item id will be assigned during the insertion
      * process. Success or failure will be communicated to the supplied result
