@@ -31,10 +31,4 @@ public class GameRepository extends ItemRepository<GameRecord>
     {
         return GameCloneRecord.class;
     }
-
-    @Override // from ItemRepository
-    protected String getTypeEponym ()
-    {
-        return "GAME";
-    }
 }

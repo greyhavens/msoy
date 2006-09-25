@@ -31,10 +31,4 @@ public class DocumentRepository extends ItemRepository<DocumentRecord>
     {
         return DocumentCloneRecord.class;
     }
-
-    @Override // from ItemRepository
-    protected String getTypeEponym ()
-    {
-        return "DOCUMENT";
-    }
 }

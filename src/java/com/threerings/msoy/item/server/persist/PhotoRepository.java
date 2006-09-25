@@ -31,11 +31,4 @@ public class PhotoRepository extends ItemRepository<PhotoRecord>
     {
         return PhotoCloneRecord.class;
     }
-
-
-    @Override // from ItemRepository
-    protected String getTypeEponym ()
-    {
-        return "PHOTO";
-    }
 }

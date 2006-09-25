@@ -181,10 +181,4 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected abstract Class<T> getItemClass ();
     protected abstract Class<? extends CloneRecord<T>> getCloneClass ();
     protected abstract Class<? extends CatalogRecord<T>> getCatalogClass ();
-    
-
-    /**
-     * Returns the name of the _CATALOG table associated with the main table.
-     */
-    protected abstract String getTypeEponym ();
 }

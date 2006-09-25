@@ -31,10 +31,4 @@ public class FurnitureRepository extends ItemRepository<FurnitureRecord>
     {
         return FurnitureCloneRecord.class;
     }
-
-    @Override // from ItemRepository
-    protected String getTypeEponym ()
-    {
-        return "FURNITURE";
-    }
 }
