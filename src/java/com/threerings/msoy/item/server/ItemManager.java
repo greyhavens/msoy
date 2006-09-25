@@ -48,12 +48,17 @@ public class ItemManager
      * Initializes the item manager, which will establish database connections
      * for all of its item repositories.
      */
+    @SuppressWarnings("unchecked")
     public void init (ConnectionProvider conProv) throws PersistenceException
     {
-        _repos.put(ItemEnum.DOCUMENT, new DocumentRepository(conProv));
-        _repos.put(ItemEnum.FURNITURE, new FurnitureRepository(conProv));
-        _repos.put(ItemEnum.GAME, new GameRepository(conProv));
-        _repos.put(ItemEnum.PHOTO, new PhotoRepository(conProv));
+        _repos.put(ItemEnum.DOCUMENT,
+            (ItemRepository) new DocumentRepository(conProv));
+        _repos.put(ItemEnum.FURNITURE,
+            (ItemRepository) new FurnitureRepository(conProv));
+        _repos.put(ItemEnum.GAME,
+            (ItemRepository) new GameRepository(conProv));
+        _repos.put(ItemEnum.PHOTO,
+            (ItemRepository) new PhotoRepository(conProv));
 
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), true);
@@ -393,8 +398,8 @@ public class ItemManager
     }
 
     /** Maps string identifier to repository for all digital item types. */
-    protected HashMap<ItemEnum, ItemRepository> _repos =
-        new HashMap<ItemEnum, ItemRepository>();
+    protected HashMap<ItemEnum, ItemRepository<ItemRecord>> _repos =
+        new HashMap<ItemEnum, ItemRepository<ItemRecord>>();
 
     /** A soft reference cache of item list indexed on (user,type). */
     protected SoftCache<Tuple<Integer, ItemEnum>, Collection<ItemRecord>> _itemCache =
