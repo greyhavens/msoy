@@ -4,17 +4,29 @@ import com.threerings.mx.events.CommandEvent;
 
 import com.threerings.parlor.data.TableConfig;
 
+import com.threerings.parlor.client.TableConfigurator;
+import com.threerings.parlor.client.DefaultFlexTableConfigurator;
+
+import com.threerings.parlor.game.data.GameConfig;
+
+import com.threerings.parlor.game.client.GameConfigurator;
+import com.threerings.parlor.game.client.FlexGameConfigurator;
+
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.ui.FloatingPanel;
+
+import com.threerings.msoy.item.web.Game;
 
 import com.threerings.msoy.game.data.FlashGameConfig;
 
 public class TableCreationPanel extends FloatingPanel
 {
-    public function TableCreationPanel (ctx :MsoyContext, panel :LobbyPanel)
+    public function TableCreationPanel (
+        ctx :MsoyContext, game :Game, panel :LobbyPanel)
     {
-        super(ctx, ctx.xlate("game", "t.create"));
+        super(ctx, ctx.xlate("game", "t.create", game.name));
+        _game = game;
         _panel = panel;
         showCloseButton = true;
 
@@ -51,7 +63,18 @@ public class TableCreationPanel extends FloatingPanel
      */
     protected function createConfigInterface () :void
     {
-        // TODO
+        var gconf :FlexGameConfigurator = new FlexGameConfigurator();
+        _gconfigger = gconf;
+        _tconfigger = new DefaultFlexTableConfigurator(
+            _game.desiredPlayers, _game.minPlayers, _game.maxPlayers, true);
+        _gconfigger.init(_ctx);
+        _tconfigger.init(_ctx, _gconfigger);
+
+        var config :FlashGameConfig = new FlashGameConfig();
+        config.configData = _game.getGameMedia().getMediaPath();
+        gconf.setGameConfig(config);
+
+        addChild(gconf.getContainer());
     }
 
     /**
@@ -59,16 +82,18 @@ public class TableCreationPanel extends FloatingPanel
      */
     protected function submitTableCreate () :void
     {
-        var tableConfig :TableConfig = new TableConfig();
-        tableConfig.desiredPlayerCount = 2;
-        tableConfig.minimumPlayerCount = 2;
-
-        var gameConfig :FlashGameConfig = new FlashGameConfig();
-        gameConfig.configData = "scary meat buckets";
-
         CommandEvent.dispatch(_panel, LobbyController.SUBMIT_TABLE,
-            [ tableConfig, gameConfig ]);
+            [ _tconfigger.getTableConfig(), _gconfigger.getGameConfig() ]);
     }
+
+    /** The game item, for configuration reference. */
+    protected var _game :Game;
+
+    /** The table configurator. */
+    protected var _tconfigger :TableConfigurator;
+
+    /** The game configurator. */
+    protected var _gconfigger :GameConfigurator;
 
     /** The lobby panel we're in. */
     protected var _panel :LobbyPanel;

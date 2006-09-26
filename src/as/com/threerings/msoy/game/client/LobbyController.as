@@ -62,7 +62,7 @@ public class LobbyController extends PlaceController
     public function handleCreateTable () :void
     {
         _panel.createBtn.enabled = false;
-        new TableCreationPanel(_mctx, _panel);
+        new TableCreationPanel(_mctx, _game, _panel);
     }
 
     /**
@@ -93,6 +93,7 @@ public class LobbyController extends PlaceController
     {
         _panel = new LobbyPanel(_mctx);
         _tableDir = new TableDirector(_mctx, LobbyObject.TABLES, _panel);
+        _tableDir.addSeatednessObserver(_panel);
         return _panel;
     }
     

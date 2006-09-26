@@ -22,6 +22,14 @@ public class Document extends Item
     /** The title of this document (max length 255 characters). */
     public var title :String;
 
+    /**
+     * Returns a media descriptor for the actual document media.
+     */
+    public function getDocumentMedia () :MediaDesc
+    {
+        return new MediaDesc(docMediaHash, docMimeType);
+    }
+
     override public function getType () :String
     {
         return "DOCUMENT";

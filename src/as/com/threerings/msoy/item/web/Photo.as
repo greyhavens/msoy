@@ -23,6 +23,14 @@ public class Photo extends Item
     /** A caption for this photo (max length 255 characters). */
     public var caption :String;
 
+    /**
+     * Returns a media descriptor for the actual photo media.
+     */
+    public function getPhotoMedia () :MediaDesc
+    {
+        return new MediaDesc(photoMediaHash, photoMimeType);
+    }
+
     // from Item
     override public function getType () :String
     {
@@ -35,11 +43,14 @@ public class Photo extends Item
         return caption;
     }
 
-    // from Item
-    override public function getThumbnailPath () :String
+    override protected function getDefaultThumbnailMedia () :MediaDesc
     {
-        // TODO: fixy fixy
-        return getFurniMedia().getMediaPath();
+        return getPhotoMedia();
+    }
+
+    override protected function getDefaultFurniMedia () :MediaDesc
+    {
+        return getPhotoMedia();
     }
 
     override public function writeObject (out :ObjectOutputStream) :void

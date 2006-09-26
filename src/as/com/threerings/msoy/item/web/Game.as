@@ -28,6 +28,14 @@ public class Game extends Item
     /** The MIME type of the {@link #gameMediaHash} media. */
     public var gameMimeType :int;
 
+    /**
+     * Returns a media descriptor for the actual game media.
+     */
+    public function getGameMedia () :MediaDesc
+    {
+        return new MediaDesc(gameMediaHash, gameMimeType);
+    }
+
     override public function getType () :String
     {
         return "GAME";

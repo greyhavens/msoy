@@ -34,10 +34,14 @@ public class Furniture extends Item
         return description;
     }
 
-    // from Item
-    override public function getThumbnailPath () :String
+    override protected function getDefaultThumbnailMedia () :MediaDesc
     {
-        return getFurniMedia().getMediaPath();
+        return getFurniMedia();
+    }
+
+    override protected function getDefaultFurniMedia () :MediaDesc
+    {
+        return null; // there is no default
     }
 
     override public function writeObject (out :ObjectOutputStream) :void

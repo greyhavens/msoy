@@ -102,7 +102,22 @@ public class LobbyPanel extends VBox
     // from SeatednessObserver
     public function seatednessDidChange (isSeated :Boolean) :void
     {
+        _isSeated = isSeated;
         createBtn.enabled = !isSeated;
+
+        // wacky: I think I'd need to refresh the list or something
+        // but apparently everything gets re-rendered when any element
+        // changes, so I don't. If this turns out to be not true, then
+        // here we'll want to do _tables.refresh() or, if we save
+        // the list we can do list.updateList().
+    }
+
+    /**
+     * Are we seated at a table?
+     */
+    public function isSeated () :Boolean
+    {
+        return _isSeated;
     }
 
     override protected function createChildren () :void
@@ -113,7 +128,7 @@ public class LobbyPanel extends VBox
         addChild(list);
 
         var factory :ClassFactory = new ClassFactory(TableRenderer);
-        factory.properties = { ctx: _ctx };
+        factory.properties = { ctx: _ctx, panel: this };
         list.itemRenderer = factory;
         list.dataProvider = _tables;
 
@@ -127,6 +142,9 @@ public class LobbyPanel extends VBox
 
     /** Buy one get one free. */
     protected var _ctx :MsoyContext;
+
+    /** Are we seated? */
+    protected var _isSeated :Boolean;
 
     /** The currently displayed tables. */
     protected var _tables :ArrayCollection = new ArrayCollection();
@@ -150,11 +168,15 @@ import com.threerings.parlor.data.Table;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.game.client.LobbyController;
+import com.threerings.msoy.game.client.LobbyPanel;
 
 class TableRenderer extends HBox
 {
     /** The context, initialized by our ClassFactory. */
     public var ctx :MsoyContext;
+
+    /** The panel we're rendering to. */
+    public var panel :LobbyPanel;
 
     public function TableRenderer ()
     {
@@ -200,10 +222,12 @@ class TableRenderer extends HBox
                 if (occupant == null) {
                     btn.setCommand(LobbyController.SIT, [ table.tableId , ii ]);
                     btn.label = ctx.xlate("game", "b.sit");
+                    btn.enabled = !panel.isSeated();
 
                 } else {
                     btn.setCommand(LobbyController.LEAVE, table.tableId);
                     btn.label = ctx.xlate("game", "b.leave");
+                    btn.enabled = true;
                 }
 
             } else {
