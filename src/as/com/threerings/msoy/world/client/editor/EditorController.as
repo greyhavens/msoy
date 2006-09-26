@@ -450,7 +450,7 @@ public class EditorController extends Controller
     {
         if (item is Game) {
             furni.actionType = FurniData.ACTION_GAME;
-            furni.actionData = String(item.itemId);
+            furni.actionData = String(item.getProgenitorId());
         }
     }
 

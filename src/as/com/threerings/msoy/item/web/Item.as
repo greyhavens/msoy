@@ -28,10 +28,8 @@ public /*abstract*/ class Item
      * identifier space. */
     public var itemId :int;
 
-    /**
-     * The item ID from which this object was cloned, or -1 if this is not
-     * a clone.
-     */
+    /** The item ID from which this object was cloned, or -1 if this is not
+     * a clone. */
     public var parentId :int;
 
     /** A bit-mask of flags that we need to know about every digital item
@@ -41,7 +39,8 @@ public /*abstract*/ class Item
     /** The member id of the member that created this item. */
     public var creatorId :int;
 
-    /** The member id of the member that owns this item. */
+    /** The member id of the member that owns this item, or -1 if the item
+     *  is an immutable catalog listing. */
     public var ownerId :int;
 
     /** A hash code identifying the media used to display this item's thumbnail
@@ -76,6 +75,14 @@ public /*abstract*/ class Item
     public function getDescription () :String
     {
         throw new Error("abstract");
+    }
+
+    /**
+     * Returns the parentId, or the itemId if this item is not a clone.
+     */
+    public function getProgenitorId () :int
+    {
+        return (parentId == -1) ? itemId : parentId;
     }
 
     /**

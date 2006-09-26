@@ -22,10 +22,8 @@ public abstract class Item implements Streamable, IsSerializable
      * identifier space. */
     public int itemId;
 
-    /**
-     * The item ID from which this object was cloned, or -1 if this is not
-     * a clone.
-     */
+    /** The item ID from which this object was cloned, or -1 if this is not
+     * a clone. */
     public int parentId = -1;
     
     /** A bit-mask of flags that we need to know about every digital item
@@ -35,10 +33,8 @@ public abstract class Item implements Streamable, IsSerializable
     /** The member id of the member that created this item. */
     public int creatorId;
 
-    /**
-     *  The member id of the member that owns this item, or -1 if the item
-     *  is an immutable catalog listing.
-     */
+    /** The member id of the member that owns this item, or -1 if the item
+     *  is an immutable catalog listing. */
     public int ownerId;
 
     /** A hash code identifying the media used to display this item's thumbnail
@@ -67,6 +63,14 @@ public abstract class Item implements Streamable, IsSerializable
      * Get a textual description of this item.
      */
     public abstract String getDescription ();
+
+    /**
+     * Returns the parentId, or the itemId if this item is not a clone.
+     */
+    public int getProgenitorId ()
+    {
+        return (parentId == -1) ? itemId : parentId;
+    }
 
     /**
      * Returns a media descriptor for the media that should be used to display
