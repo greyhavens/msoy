@@ -143,7 +143,8 @@ public abstract class ItemEditor extends FlexTable
     protected void createEditorInterface ()
     {
         String title = "Configure the furniture visualization for this media.";
-        _furniUploader = createUploader(FURNI_ID, title, new MediaUpdater() {
+        _furniUploader = createUploader(FURNI_ID, title, -1,
+            new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _item.furniMediaHash = hash;
                 _item.furniMimeType = mimeType;
@@ -152,7 +153,8 @@ public abstract class ItemEditor extends FlexTable
 
         title = "Configure the thumbnail image that will be used " +
             "in the catalog and inventory lists.";
-        _thumbUploader = createUploader(THUMB_ID, title, new MediaUpdater() {
+        _thumbUploader = createUploader(THUMB_ID, title,
+            ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _item.thumbMediaHash = hash;
                 _item.thumbMimeType = mimeType;
@@ -172,16 +174,17 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void configureMainUploader (String title, MediaUpdater updater)
     {
-        _mainUploader = createUploader(MAIN_ID, title, updater);
+        _mainUploader = createUploader(MAIN_ID, title, -1, updater);
     }
 
     /**
      * Create and add an uploader to the interface.
      */
     protected MediaUploader createUploader (
-        String name, String title, MediaUpdater updater)
+        String name, String title, int previewHeight, MediaUpdater updater)
     {
-        MediaUploader mu = new MediaUploader(name, title, updater);
+        MediaUploader mu = new MediaUploader(name, title, previewHeight,
+                updater);
 
         FlexCellFormatter cellFormatter = getFlexCellFormatter();
         int row = getRowCount();

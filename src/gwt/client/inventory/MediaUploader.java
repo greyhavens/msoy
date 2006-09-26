@@ -36,9 +36,20 @@ import client.util.SubmitField;
  */
 public class MediaUploader extends FlexTable
 {
+    /**
+     * @param id the id of the uploader to create. This value is later
+     * passed to the bridge to identify the hash/mimeType returned by the
+     * server.
+     * @param title A title to be displayed to the user.
+     * @param previewHeight the maximum height of the preview, or -1.
+     * @param updater the updater that knows how to set the media hash on
+     * the item.
+     */
     public MediaUploader (
-        String id, String title, ItemEditor.MediaUpdater updater)
+        String id, String title, int previewHeight,
+        ItemEditor.MediaUpdater updater)
     {
+        _previewHeight = previewHeight;
         _updater = updater;
 
         _panel = new FormPanel(new FlowPanel());
@@ -84,7 +95,7 @@ public class MediaUploader extends FlexTable
         setWidget(row, 1, _panel);
         row++;
 
-        String msg = "Upload Message TODO";
+        String msg = "Browse for the file, then upload it.";
         setWidget(row, 0, _out = new Label(msg));
         cellFormatter.setColSpan(row, 0, 2);
         row++;
@@ -104,9 +115,18 @@ public class MediaUploader extends FlexTable
     public void setMedia (MediaDesc desc)
     {
         if (desc != null) {
+            Widget w = ItemContainer.createContainer(desc.getMediaPath());
+            if (_previewHeight != -1) {
+                // TODO: setting the height alone should preserve scale,
+                // but it's still not good enough.
+                // We want to leave the image alone if it's small enough,
+                // or scale it (preserving proportions) if it's too big.
+                // I think we need to do this javascript that examines an
+                // image's native size while it's loading.
+                w.setHeight(_previewHeight + "px");
+            }
             // update our preview
-            setWidget(_previewRow, 0,
-                ItemContainer.createContainer(desc.getMediaPath()));
+            setWidget(_previewRow, 0, w);
         }
     }
 
@@ -129,4 +149,5 @@ public class MediaUploader extends FlexTable
     protected FormPanel _panel;
     protected Label _out;
     protected int _previewRow;
+    protected int _previewHeight;
 }
