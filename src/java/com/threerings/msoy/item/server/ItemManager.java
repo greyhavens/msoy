@@ -12,21 +12,17 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
-import com.samskivert.jdbc.depot.DepotMarshaller;
-import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SoftCache;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -36,7 +32,6 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.TagNameRecord;
-import com.threerings.msoy.item.server.persist.TagRecord;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
@@ -292,7 +287,6 @@ public class ItemManager
      * Lists the given item in the catalog by creating a new item row and
      * a new catalog row and returning the immutable form of the item.
      */
-
     public void listItem (final int itemId, ItemEnum type,
             ResultListener<CatalogListing> waiter)
     {
@@ -337,8 +331,8 @@ public class ItemManager
     /**
      * Remix a clone, turning it back into a full-featured original.
      */
-    public void remixItem (final int itemId, ItemEnum type,
-            ResultListener<Item> waiter)
+    public void remixItem (
+            final int itemId, ItemEnum type, ResultListener<Item> waiter)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
@@ -354,15 +348,21 @@ public class ItemManager
             {
                 // load a copy of the clone to modify
                 _item = repo.loadClone(itemId);
+                // TODO: make sure we should not use the original creator here
                 // make it ours
                 _item.creatorId = _item.ownerId;
-                // forget whence it came
+                // let the object forget whence it came
+                int originalId = _item.parentId;
                 _item.parentId = -1;
                 // insert it as a genuinely new item
                 _item.itemId = 0;
                 repo.insertItem(_item);
-                // and finally delete the old clone
+                // delete the old clone
                 repo.deleteClone(itemId);
+                // copy tags from the original to the new item
+                repo.copyTags(
+                    originalId, _item.itemId, _item.ownerId,
+                    System.currentTimeMillis());
                 return _item.toItem();
             }
 
@@ -370,7 +370,7 @@ public class ItemManager
             {
                 super.handleSuccess();
                 // add the item to the user's cached inventory
-                updateUserCache(_item);
+//                updateUserCache(_item);
             }
 
             protected ItemRecord _item;

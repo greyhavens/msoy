@@ -94,6 +94,7 @@ public class ItemPanel extends VerticalPanel
         _ctx.itemsvc.remixItem(
             _ctx.creds, itemId, type, new AsyncCallback() {
                 public void onSuccess (Object result) {
+                    // TODO: update display
                     setStatus("Item remixed.");
                 }
                 public void onFailure (Throwable caught) {

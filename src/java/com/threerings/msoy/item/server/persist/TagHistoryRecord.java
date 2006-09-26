@@ -29,6 +29,7 @@ public abstract class TagHistoryRecord<T extends ItemRecord>
 
     public static final byte ACTION_ADDED = 1;
     public static final byte ACTION_REMOVED = 2;
+    public static final byte ACTION_COPIED = 3;
     
     /** The ID of the item being operated on. */
     @Column(nullable=false)
@@ -48,5 +49,5 @@ public abstract class TagHistoryRecord<T extends ItemRecord>
 
     /** The time of the tagging event. */
     @Column(nullable=false)
-    public Timestamp when;
+    public Timestamp time;
 }

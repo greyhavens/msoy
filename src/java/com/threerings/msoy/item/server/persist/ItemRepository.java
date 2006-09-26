@@ -3,12 +3,17 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 
 /**
@@ -63,7 +68,16 @@ public abstract class ItemRepository<T extends ItemRecord>
     public ItemRecord loadClone (int cloneId) throws PersistenceException
     {
         CloneRecord<?> cloneRecord = load(getCloneClass(), cloneId);
+        if (cloneRecord == null) {
+            throw new PersistenceException(
+                "Clone does not exist [cloneId=" + cloneId + "]");
+        }
         ItemRecord clone = loadItem(cloneRecord.originalItemId);
+        if (clone == null) {
+            throw new PersistenceException(
+                "Clone's original does not exist [cloneId=" + cloneId + 
+                ", originalItemId=" + cloneRecord.originalItemId + "]");
+        }
         clone.parentId = clone.itemId;
         clone.itemId = cloneRecord.itemId;
         clone.ownerId = cloneRecord.ownerId;
@@ -228,7 +242,9 @@ public abstract class ItemRepository<T extends ItemRecord>
         history.tagId = tagId;
         history.memberId = taggerId;
         history.action = TagHistoryRecord.ACTION_ADDED;
-        insert(history);
+        history.time = new Timestamp(now);
+        // TODO: enable when depot can do multi-column keys
+        // insert(history);
         return true;
     }
     
@@ -259,12 +275,68 @@ public abstract class ItemRepository<T extends ItemRecord>
         history.tagId = tagId;
         history.memberId = taggerId;
         history.action = TagHistoryRecord.ACTION_REMOVED;
-        history.when = new Timestamp(now);
-        insert(history);
+        history.time = new Timestamp(now);
+        // TODO: enable when depot can do multi-column keys
+        // insert(history);
         return true;
     }
 
-
+    /**
+     * Copy all tags from one item to another. We have to resort to JDBC
+     * here, because we want to do the rather non-generic:
+     * 
+     *   INSERT INTO PhotoTagRecord (itemId, tagId)
+     *        SELECT 153567, tagId
+     *          FROM PhotoTagRecord
+     *         WHERE itemId = 89736;
+     */
+    public int copyTags (int fromItemId, int toItemId, int ownerId, long now)
+        throws PersistenceException
+    {
+        int rows;
+        String tagTable = getMarshaller(getTagClass()).getTableName();
+        Connection conn = _conprov.getConnection(getIdent(), false);
+        try {
+            PreparedStatement stmt = null;
+            try {
+                stmt = conn.prepareStatement(
+                    " INSERT INTO " + tagTable +
+                    " (" + TagRecord.ITEM_ID + ", " + TagRecord.TAG_ID + ")" +
+                    "      SELECT ?, " + TagRecord.TAG_ID +
+                    "        FROM " + tagTable +
+                    "       WHERE " + TagRecord.ITEM_ID + " = ?");
+                stmt.setInt(1, toItemId);
+                stmt.setInt(2, fromItemId);
+                rows = stmt.executeUpdate();
+            } finally {
+                JDBCUtil.close(stmt);
+            }
+        } catch (SQLException sqle) {
+            throw new PersistenceException(
+                "Failed to copy tags to remixed item [fromItemId=" + 
+                fromItemId + ", toItemId=" + toItemId + "]", sqle);
+        } finally {
+            _conprov.releaseConnection(getIdent(), false, conn);
+        }
+        
+        // add a single row to history for the copy
+        TagHistoryRecord<T> history;
+        try {
+            history = getTagHistoryClass().newInstance();
+        } catch (Exception e) {
+            throw new PersistenceException(
+                "Failed to create a new item tag history tag record " +
+                "[itemId=" + toItemId + "]", e);
+        }
+        history.itemId = toItemId;
+        history.tagId = -1;
+        history.memberId = ownerId;
+        history.action = TagHistoryRecord.ACTION_COPIED;
+        history.time = new Timestamp(now);
+        // TODO: enable when depot can do multi-column keys
+        // insert(history);
+        return rows;
+    }
 
     /**
      * Returns the database identifier for this item's database. The default is
