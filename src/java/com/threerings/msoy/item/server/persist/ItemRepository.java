@@ -49,6 +49,10 @@ public abstract class ItemRepository<T extends ItemRecord>
     public Collection<T> loadClonedItems (int ownerId)
         throws PersistenceException
     {
+        // TODO: This will be a single join once Depot can handle it. It's a
+        // TODO: special case because itemId is ambiguous between the tables.
+        // TODO: We will still probably need to iterate afterwards, but not
+        // TODO: hit the database further.
         Collection<? extends CloneRecord<?>> cloneRecords =
             findAll(getCloneClass(), new Key(CloneRecord.OWNER_ID, ownerId));
         Collection<T> cloneItems = new ArrayList<T>();
