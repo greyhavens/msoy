@@ -30,6 +30,11 @@ public class InventoryWindow extends FloatingPanel
     {
         super.createChildren();
 
+        // TODO: due to the way items are classified and used,
+        // this should probably not be presented as tabs to the user.
+        // Rather, a more appropriate UI might be to have a pull-down
+        // box that lists item types and have the resultant types
+        // displayed below (use a ViewStack with a ComboBox).
         var tn :LazyTabNavigator = new LazyTabNavigator();
         addChild(tn);
 
