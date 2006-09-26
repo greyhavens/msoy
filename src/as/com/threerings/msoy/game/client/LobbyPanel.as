@@ -48,7 +48,6 @@ public class LobbyPanel extends VBox
     public function LobbyPanel (ctx :MsoyContext)
     {
         _ctx = ctx;
-        TableRenderer.ctx = ctx;
     }
 
     // from PlaceView
@@ -112,7 +111,10 @@ public class LobbyPanel extends VBox
 
         var list :List = new List(_ctx);
         addChild(list);
-        list.itemRenderer = new ClassFactory(TableRenderer);
+
+        var factory :ClassFactory = new ClassFactory(TableRenderer);
+        factory.properties = { ctx: _ctx };
+        list.itemRenderer = factory;
         list.dataProvider = _tables;
 
         createBtn = new CommandButton(LobbyController.CREATE_TABLE);
@@ -151,9 +153,8 @@ import com.threerings.msoy.game.client.LobbyController;
 
 class TableRenderer extends HBox
 {
-    /** Total hackery, to pass a few things in... */
-    // TODO?
-    public static var ctx :MsoyContext;
+    /** The context, initialized by our ClassFactory. */
+    public var ctx :MsoyContext;
 
     public function TableRenderer ()
     {
