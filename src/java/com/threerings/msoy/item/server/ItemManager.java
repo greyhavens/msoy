@@ -12,11 +12,14 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
+import com.samskivert.jdbc.depot.DepotMarshaller;
+import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SoftCache;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
@@ -32,6 +35,8 @@ import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
+import com.threerings.msoy.item.server.persist.TagNameRecord;
+import com.threerings.msoy.item.server.persist.TagRecord;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
@@ -126,7 +131,7 @@ public class ItemManager
      * process. Success or failure will be communicated to the supplied result
      * listener.
      */
-    public void insertItem (final Item item, ServletWaiter<Item> waiter)
+    public void insertItem (final Item item, ResultListener<Item> waiter)
     {
         final ItemRecord record = ItemRecord.newRecord(item); 
         ItemEnum type = record.getType();
@@ -250,7 +255,7 @@ public class ItemManager
      * creating a new clone row in the appropriate database table.
      */
     public void purchaseItem (final int memberId, final int itemId,
-            ItemEnum type, ServletWaiter<Item> waiter)
+            ItemEnum type, ResultListener<Item> waiter)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
@@ -262,8 +267,7 @@ public class ItemManager
 
         // and perform the purchase
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(waiter) {
-            public Item invokePersistResult ()
-                throws PersistenceException
+            public Item invokePersistResult () throws PersistenceException
             {
                 // load the item being purchased
                 ItemRecord item = repo.loadItem(itemId);
@@ -272,10 +276,6 @@ public class ItemManager
                     throw new PersistenceException(
                         "Can only clone listed items [itemId=" +
                         item.itemId + "]");
-                }
-                if (item.parentId != -1) {
-                    throw new PersistenceException(
-                        "Can't clone a clone [itemId=" + item.itemId + "]");
                 }
                 // create the clone row in the database!
                 int cloneId = repo.insertClone(item.itemId, memberId);
@@ -294,7 +294,7 @@ public class ItemManager
      */
 
     public void listItem (final int itemId, ItemEnum type,
-            ServletWaiter<CatalogListing> waiter)
+            ResultListener<CatalogListing> waiter)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
@@ -315,10 +315,6 @@ public class ItemManager
                 if (listItem == null) {
                     throw new PersistenceException(
                         "Can't find object to list [itemId = " + itemId + "]");
-                }
-                if (listItem.parentId != -1) {
-                    throw new PersistenceException(
-                        "Can't list a cloned object [itemId=" + itemId + "]");
                 }
                 if (listItem.ownerId == -1) {
                     throw new PersistenceException(
@@ -342,20 +338,19 @@ public class ItemManager
      * Remix a clone, turning it back into a full-featured original.
      */
     public void remixItem (final int itemId, ItemEnum type,
-            ResultListener<Item> rlist)
+            ResultListener<Item> waiter)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
         if (repo == null) {
-            rlist.requestFailed(new Exception("No repository registered for "
+            waiter.requestFailed(new Exception("No repository registered for "
                 + type + "."));
             return;
         }
         // and perform the remixing
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(
-            rlist) {
-            public Item invokePersistResult ()
-                throws PersistenceException
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Item>(waiter) {
+            public Item invokePersistResult () throws PersistenceException
             {
                 // load a copy of the clone to modify
                 _item = repo.loadClone(itemId);
@@ -379,6 +374,66 @@ public class ItemManager
             }
 
             protected ItemRecord _item;
+        });
+
+    }
+
+    // TODO: copy on remix
+    /** Add the specified tag to the specified item. */
+    public void tagItem (
+            int itemId, ItemEnum type, int taggerId, String tagName,
+            ResultListener<Void> waiter)
+    {
+        itemTagging(itemId, type, taggerId, tagName, waiter, true);
+    }
+
+    /** Remove the specified tag from the specified item. */
+    public void untagItem (
+            int itemId, ItemEnum type, int taggerId, String tagName,
+            ResultListener<Void> waiter)
+    {
+        itemTagging(itemId, type, taggerId, tagName, waiter, false);
+    }
+
+    // do the facade work for tagging
+    protected void itemTagging (
+            final int itemId, ItemEnum type, final int taggerId,
+            final String tagName, ResultListener<Void> waiter,
+            final boolean doTag)
+    {
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        if (repo == null) {
+            waiter.requestFailed(new Exception("No repository registered for "
+                + type + "."));
+            return;
+        }
+        // and perform the remixing
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Void>(waiter) {
+                public Void invokePersistResult () throws PersistenceException {
+                    long now = System.currentTimeMillis();
+
+                    ItemRecord item = repo.loadItem(itemId);
+                    int originalId;
+                    if (item == null) {
+                        item = repo.loadClone(itemId);
+                        if (item == null) {
+                            throw new PersistenceException(
+                                "Can't find item [itemId=" + itemId + "]");
+                        }
+                        originalId = item.parentId;
+                    } else {
+                        originalId = itemId;
+                    }
+                    TagNameRecord tag = repo.getTag(tagName);
+                    if (doTag) {
+                        repo.tagItem(originalId, tag.tagId, taggerId, now);
+                    } else {
+                        repo.untagItem(originalId, tag.tagId, taggerId, now);
+                    }
+                    return null;
+            }
         });
 
     }

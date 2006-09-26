@@ -31,4 +31,16 @@ public class GameRepository extends ItemRepository<GameRecord>
     {
         return GameCloneRecord.class;
     }
+
+    @Override
+    protected Class<? extends TagRecord<GameRecord>> getTagClass ()
+    {
+        return GameTagRecord.class;
+    }
+
+    @Override
+    protected Class<? extends TagHistoryRecord<GameRecord>> getTagHistoryClass ()
+    {
+        return GameTagHistoryRecord.class;
+    }
 }

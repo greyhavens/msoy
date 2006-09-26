@@ -31,4 +31,16 @@ public class FurnitureRepository extends ItemRepository<FurnitureRecord>
     {
         return FurnitureCloneRecord.class;
     }
+
+    @Override
+    protected Class<? extends TagRecord<FurnitureRecord>> getTagClass ()
+    {
+        return FurnitureTagRecord.class;
+    }
+
+    @Override
+    protected Class<? extends TagHistoryRecord<FurnitureRecord>> getTagHistoryClass ()
+    {
+        return FurnitureTagHistoryRecord.class;
+    }
 }

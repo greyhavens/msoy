@@ -168,6 +168,104 @@ public abstract class ItemRepository<T extends ItemRecord>
         delete(getCloneClass(), cloneId);
     }
 
+    /** Find the tag record for a certain tag, or create it. */
+    public TagNameRecord getTag (String tagName)
+        throws PersistenceException
+    {
+        // load the tag, if it exists
+        TagNameRecord record = load(
+            TagNameRecord.class, new Key(TagNameRecord.TAG, tagName));
+        if (record == null) {
+            // if it doesn't, create it on the fly
+            record = new TagNameRecord();
+            record.tag = tagName;
+            insert(record);
+        }
+        return record;
+    }
+
+    /** Find the tag record for a certain tag id, or create it. */
+    public TagNameRecord getTag (int tagId)
+        throws PersistenceException
+    {
+        return load(TagNameRecord.class, new Key(TagNameRecord.TAG_ID, tagId));
+    }
+
+    
+    /**
+     * Add a tag to an item. If the tag already exists, return false and do
+     * nothing else. If it did not, create the tag and add a record in the
+     * history table.
+     */
+    public boolean tagItem (int itemId, int tagId, int taggerId, long now)
+        throws PersistenceException
+    {
+        TagRecord<T> tag = load(getTagClass(), new Key2(
+            TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId));
+        if (tag != null) {
+            return false;
+        }
+        try {
+            tag = getTagClass().newInstance();
+        } catch (Exception e) {
+            throw new PersistenceException(
+                "Failed to create a new item tag record " +
+                "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
+        }
+        tag.itemId = itemId;
+        tag.tagId = tagId;
+        insert(tag);
+
+        TagHistoryRecord<T> history;
+        try {
+            history = getTagHistoryClass().newInstance();
+        } catch (Exception e) {
+            throw new PersistenceException(
+                "Failed to create a new item tag history tag record " +
+                "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
+        }
+        history.itemId = itemId;
+        history.tagId = tagId;
+        history.memberId = taggerId;
+        history.action = TagHistoryRecord.ACTION_ADDED;
+        insert(history);
+        return true;
+    }
+    
+    /**
+     * Remove a tag from an item. If the tag didn't exist, return false and
+     * do nothing else. If it did, remove the tag and add a record in the
+     * history table.
+     */
+    public boolean untagItem (int itemId, int tagId, int taggerId, long now)
+        throws PersistenceException
+    {
+        TagRecord<T> tag = load(getTagClass(), new Key2(
+            TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId));
+        if (tag == null) {
+            return false;
+        }
+        delete(tag);
+
+        TagHistoryRecord<T> history;
+        try {
+            history = getTagHistoryClass().newInstance();
+        } catch (Exception e) {
+            throw new PersistenceException(
+                "Failed to create a new item tag history tag record " +
+                "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
+        }
+        history.itemId = itemId;
+        history.tagId = tagId;
+        history.memberId = taggerId;
+        history.action = TagHistoryRecord.ACTION_REMOVED;
+        history.when = new Timestamp(now);
+        insert(history);
+        return true;
+    }
+
+
+
     /**
      * Returns the database identifier for this item's database. The default is
      * <code>itemdb</code> but if we need to partition our item tables across
@@ -181,4 +279,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected abstract Class<T> getItemClass ();
     protected abstract Class<? extends CloneRecord<T>> getCloneClass ();
     protected abstract Class<? extends CatalogRecord<T>> getCatalogClass ();
+
+    protected abstract Class<? extends TagRecord<T>> getTagClass ();
+    protected abstract Class<? extends TagHistoryRecord<T>> getTagHistoryClass ();
 }

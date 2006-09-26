@@ -31,4 +31,16 @@ public class DocumentRepository extends ItemRepository<DocumentRecord>
     {
         return DocumentCloneRecord.class;
     }
+
+    @Override
+    protected Class<? extends TagRecord<DocumentRecord>> getTagClass ()
+    {
+        return DocumentTagRecord.class;
+    }
+
+    @Override
+    protected Class<? extends TagHistoryRecord<DocumentRecord>> getTagHistoryClass ()
+    {
+        return DocumentTagHistoryRecord.class;
+    }
 }
