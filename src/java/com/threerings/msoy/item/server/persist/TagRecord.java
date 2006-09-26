@@ -15,7 +15,7 @@ import com.threerings.io.Streamable;
  */
 @Entity
 @Table(uniqueConstraints =
-        @UniqueConstraint(columnNames={TAG_ID, ITEM_ID}))
+        @UniqueConstraint(columnNames={TagRecord.TAG_ID, TagRecord.ITEM_ID}))
 public abstract class TagRecord<T extends ItemRecord>
     implements Streamable
 {
