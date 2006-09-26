@@ -265,8 +265,7 @@ public class RoomController extends SceneController
                 log.warning("Ack: " + cause);
             },
             function (result :Object) :void {
-                // TODO
-                trace("Lobby identified: " + result);
+                _ctx.getLocationDirector().moveTo(int(result));
             }));
     }
 

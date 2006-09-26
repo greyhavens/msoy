@@ -5,9 +5,12 @@ package com.threerings.msoy.game.data {
 
 import com.threerings.io.ObjectInputStream;
 
+import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.item.web.Game;
+
+import com.threerings.msoy.game.client.LobbyController;
 
 /**
  * The configuration data for a lobby object.

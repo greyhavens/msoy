@@ -18,7 +18,7 @@ import com.threerings.msoy.item.web.Game;
  * Represents a lobby for a particular game.
  */
 public class LobbyObject extends PlaceObject
-    implements TableLobbyObject
+//    implements TableLobbyObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>tables</code> field. */
@@ -28,11 +28,11 @@ public class LobbyObject extends PlaceObject
     /** The tables. */
     public var tables :DSet = new DSet();
 
-    // from TableLobbyObject
-    public function getTables () :DSet
-    {
-        return tables;
-    }
+//    // from TableLobbyObject
+//    public function getTables () :DSet
+//    {
+//        return tables;
+//    }
 
     override public function readObject (ins :ObjectInputStream) :void
     {
