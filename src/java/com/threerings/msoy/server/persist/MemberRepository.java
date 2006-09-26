@@ -105,6 +105,9 @@ public class MemberRepository extends DepotRepository
                 new Key(SessionRecord.MEMBER_ID, memberId));
             esess.expires = nsess.expires;
             update(esess, SessionRecord.EXPIRES);
+
+            // then, use the existing record
+            nsess = esess;
         }
 
         return nsess.token;
