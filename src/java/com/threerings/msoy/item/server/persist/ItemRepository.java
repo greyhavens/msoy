@@ -417,5 +417,5 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     protected abstract Class<? extends TagRecord<T>> getTagClass ();
     protected abstract Class<? extends TagHistoryRecord<T>> getTagHistoryClass ();
-    protected abstract Class<? extends RatingRecord<T>> getRatingClass();
+    protected abstract Class<? extends RatingRecord<T>> getRatingClass ();
 }
