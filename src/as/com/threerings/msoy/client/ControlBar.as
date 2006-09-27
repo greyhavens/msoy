@@ -75,6 +75,7 @@ public class ControlBar extends Canvas
 
             // set up buttons
             var friendsBtn :CommandButton = new CommandButton();
+            friendsBtn.styleName = BUTTON_STYLE;
             friendsBtn.setCommand(MsoyController.SHOW_FRIENDS);
             friendsBtn.toggle = true;
 
@@ -86,6 +87,7 @@ public class ControlBar extends Canvas
             addChild(friendsBtn);
 
             var scenesBtn :CommandButton = new CommandButton();
+            scenesBtn.styleName = BUTTON_STYLE;
             scenesBtn.setCommand(MsoyController.POP_ROOMS_MENU, scenesBtn);
 
             scenesBtn.x = 624
@@ -97,6 +99,7 @@ public class ControlBar extends Canvas
             // set up a guest login button
             var guestBtn :CommandButton =
                 new CommandButton(MsoyController.LOGON);
+            guestBtn.styleName = BUTTON_STYLE;
             guestBtn.x = 753;
             guestBtn.y = 0;
             guestBtn.width = 47;
@@ -120,5 +123,8 @@ public class ControlBar extends Canvas
 
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
+
+    /** The style class used by buttons appearing on this bar. */
+    protected static const BUTTON_STYLE :String = "controlBarButtons";
 }
 }
