@@ -225,7 +225,9 @@ public abstract class ItemRepository<T extends ItemRecord>
                         "Failed to calculate new rating for item [itemId=" +
                         itemId + "]"); 
                 }
-                newRating = (float) ((double) rs.getInt(2) / rs.getInt(1));
+                int count = rs.getInt(1);
+                double sum = rs.getInt(2);
+                newRating = (float) ((count == 0) ? 0.0 : sum/count);
             } finally {
                 JDBCUtil.close(stmt);
             }
