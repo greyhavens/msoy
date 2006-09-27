@@ -43,7 +43,7 @@ public /*abstract*/ class Item
      *  is an immutable catalog listing. */
     public var ownerId :int;
 
-    /** The current rating of this item, between 1 and 5. */
+    /** The current rating of this item, either 0 or between 1 and 5. */
     public var rating :Number;
 
     /** A hash code identifying the media used to display this item's thumbnail
