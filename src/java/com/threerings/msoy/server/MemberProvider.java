@@ -20,4 +20,10 @@ public interface MemberProvider extends InvocationProvider
      */
     public void alterFriend (ClientObject caller, int arg1, boolean arg2, InvocationService.InvocationListener arg3)
         throws InvocationException;
+
+    /**
+     * Handles a {@link MemberService#getMemberHomeId} request.
+     */
+    public void getMemberHomeId (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+        throws InvocationException;
 }

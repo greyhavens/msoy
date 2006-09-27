@@ -21,6 +21,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.PersistingUnit;
+import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
@@ -86,8 +87,7 @@ public class MemberManager
             new RepositoryListenerUnit<Profile>(listener) {
             public Profile invokePersistResult () throws PersistenceException {
                 // load up their member info
-                MemberRecord member =
-                    MsoyServer.memberRepo.loadMember(memberId);
+                MemberRecord member = _memberRepo.loadMember(memberId);
                 if (member == null) {
                     return null;
                 }
@@ -168,6 +168,36 @@ public class MemberManager
             }
 
             protected FriendEntry _entry;
+        });
+    }
+
+    // from interface MemberProvider
+    public void getMemberHomeId (
+        ClientObject caller, final int memberId,
+        InvocationService.ResultListener listener)
+            throws InvocationException
+    {
+        // TODO: only give out homeIds to people who are friends?
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Integer>(
+                new ResultAdapter<Integer>(listener)) {
+                public Integer invokePersistResult ()
+                throws PersistenceException
+                {
+                    // load up their member info
+                    MemberRecord member = _memberRepo.loadMember(memberId);
+                    return (member == null) ? null : member.homeSceneId;
+                }
+
+                public void handleSuccess ()
+                {
+                    if (_result == null) {
+                        handleFailure(
+                            new InvocationException("m.no_such_user"));
+                    } else {
+                        super.handleSuccess();
+                    }
+                }
         });
     }
 

@@ -7,8 +7,10 @@ import com.threerings.msoy.client.MemberService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
+import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
 import com.threerings.util.Name;
 
@@ -35,6 +37,19 @@ public class MemberMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, ALTER_FRIEND, [
             Integer.valueOf(arg2), langBoolean.valueOf(arg3), listener4
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #getMemberHomeId} requests. */
+    public static const GET_MEMBER_HOME_ID :int = 2;
+
+    // documentation inherited from interface 
+    public function getMemberHomeId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    {
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, GET_MEMBER_HOME_ID, [
+            Integer.valueOf(arg2), listener3
         ]);
     }
 

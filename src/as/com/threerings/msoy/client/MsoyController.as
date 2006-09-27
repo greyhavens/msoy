@@ -10,17 +10,22 @@ import com.threerings.mx.controls.CommandMenu;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
+import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
+import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
 public class MsoyController extends Controller
     implements ClientObserver
 {
+    public static const log :Log = Log.getLog(MsoyController);
+
     /** Command to log us on. */
     public static const LOGON :String = "Logon";
 
@@ -32,6 +37,9 @@ public class MsoyController extends Controller
 
     /** Command to go to a particular scene. */
     public static const GO_SCENE :String = "GoScene";
+
+    /** Command to go to a friend's home scene. */
+    public static const GO_FRIEND_HOME :String = "GoFriendHome";
 
     /**
      * Create the msoy controller.
@@ -64,14 +72,32 @@ public class MsoyController extends Controller
         }
 
         var memberObj :MemberObject = _ctx.getClientObject();
-        var entries :Array = memberObj.recentScenes.toArray();
-        entries.sort(function (o1 :Object, o2 :Object) :int {
+
+        var friends :Array = memberObj.friends.toArray();
+        friends.sort(function (o1 :Object, o2 :Object) :int {
+            var fe1 :FriendEntry = (o1 as FriendEntry);
+            var fe2 :FriendEntry = (o2 as FriendEntry);
+            return MemberName.BY_DISPLAY_NAME(fe1.name, fe2.name);
+        });
+
+        friends = friends.map(
+            function (item :*, index :int, array :Array) :Object {
+                var fe :FriendEntry = (item as FriendEntry);
+                return {
+                    label: fe.name.toString(),
+                    command: GO_FRIEND_HOME,
+                    arg: fe.getMemberId()
+                };
+            });
+
+        var recent :Array = memberObj.recentScenes.toArray();
+        recent.sort(function (o1 :Object, o2 :Object) :int {
             var sb1 :SceneBookmarkEntry = (o1 as SceneBookmarkEntry);
             var sb2 :SceneBookmarkEntry = (o2 as SceneBookmarkEntry);
             return int(sb1.lastVisit - sb2.lastVisit);
         });
 
-        entries = entries.map(
+        recent = recent.map(
             function (item :*, index :int, array :Array) :Object {
                 var sb :SceneBookmarkEntry = (item as SceneBookmarkEntry);
                 return {
@@ -84,8 +110,12 @@ public class MsoyController extends Controller
 
         var menuData :Array = [];
 
+        if (friends.length > 0) {
+            menuData.push({ label: _ctx.xlate("general", "l.visit_friends"),
+                children: friends });
+        }
         menuData.push({ label: _ctx.xlate("general", "l.recent_scenes"),
-            children: entries });
+            children: recent });
 
         if (!memberObj.isGuest()) {
             menuData.push(
@@ -108,6 +138,22 @@ public class MsoyController extends Controller
     public function handleGoScene (sceneId :int) :void
     {
         _ctx.getSceneDirector().moveTo(sceneId);
+    }
+
+    /**
+     * Handle the GO_FRIEND_HOME command.
+     */
+    public function handleGoFriendHome (memberId :int) :void
+    {
+        var msvc :MemberService =
+            (_ctx.getClient().requireService(MemberService) as MemberService);
+        msvc.getMemberHomeId(_ctx.getClient(), memberId, new ResultWrapper(
+            function (cause :String) :void {
+                log.warning("Unable to go to friend's home: " + cause);
+            },
+            function (sceneId :int) :void {
+                _ctx.getSceneDirector().moveTo(sceneId);
+            }));
     }
 
     /**
