@@ -526,7 +526,7 @@ public class ItemManager
 
     /** A regexp pattern to validate tags. */
     protected static final Pattern validTag =
-        Pattern.compile("[a-z0-9_]{3,60");
+        Pattern.compile("[a-z](_?[a-z0-9]){2,59}");
 
     /** Maps string identifier to repository for all digital item types. */
     protected HashMap<ItemEnum, ItemRepository<ItemRecord>> _repos =
