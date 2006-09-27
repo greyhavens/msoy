@@ -7,7 +7,6 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
-import com.threerings.msoy.data.MemberName;
 
 /**
  * Keeps a history of tagging events for a given item.
@@ -25,9 +24,12 @@ public class TagHistory
     /** The tag that was added or deleted. */
     public String tag;
     
-    /** The member who added or deleted the tag. */
-    public MemberName member;
-
+    /** The ID of the member who added or deleted the tag. */
+    public int memberId;
+    
+    /** The name of the member who added or deleted the tag. */
+    public String memberName;
+    
     /** The action taken (ADDED or REMOVED or COPIED). */
     public byte action;
 

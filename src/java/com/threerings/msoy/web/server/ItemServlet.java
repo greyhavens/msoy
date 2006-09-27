@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Level;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -126,7 +127,7 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public Iterable<TagHistory> getTagHistory (
+    public Collection<TagHistory> getTagHistory (
         WebCreds creds, int itemId, String type)
             throws ServiceException
     {
@@ -137,8 +138,8 @@ public class ItemServlet extends RemoteServiceServlet
                 "type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
         }
-        ServletWaiter<Iterable<TagHistory>> waiter =
-            new ServletWaiter<Iterable<TagHistory>>(
+        ServletWaiter<Collection<TagHistory>> waiter =
+            new ServletWaiter<Collection<TagHistory>>(
                 "getTagHistory[" + itemId + ", " + etype + "]");
         MsoyServer.itemMan.getTagHistory(itemId, etype, waiter);
         return waiter.waitForResult();

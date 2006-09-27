@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
@@ -50,7 +51,7 @@ public interface ItemService extends RemoteService
             throws ServiceException;
     
     /** Fetches the tagging history for a given item. */
-    public Iterable getTagHistory (WebCreds creds, int itemId, String type)
+    public Collection getTagHistory (WebCreds creds, int itemId, String type)
             throws ServiceException;
     
     /** Associates a tag with an item. */

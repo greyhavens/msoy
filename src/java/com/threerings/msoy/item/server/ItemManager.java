@@ -410,7 +410,7 @@ public class ItemManager
     /** Fetch the tagging history for a given item. */
     public void getTagHistory (
         final int itemId, ItemEnum type,
-        ResultListener<Iterable<TagHistory>> waiter)
+        ResultListener<Collection<TagHistory>> waiter)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
@@ -420,8 +420,8 @@ public class ItemManager
             return;
         }
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Iterable<TagHistory>>(waiter) {
-                public Iterable<TagHistory> invokePersistResult ()
+            new RepositoryListenerUnit<Collection<TagHistory>>(waiter) {
+                public Collection<TagHistory> invokePersistResult ()
                         throws PersistenceException {
                     HashMap<Integer, MemberRecord> memberCache =
                         new HashMap<Integer, MemberRecord>();
@@ -438,7 +438,8 @@ public class ItemManager
                         TagNameRecord tag = repo.getTag(record.tagId);
                         TagHistory history = new TagHistory();
                         history.itemId = record.itemId;
-                        history.member = memRec.getName();
+                        history.memberName = memRec.name;
+                        history.memberId = memRec.memberId;
                         history.tag = tag.tag;
                         history.action = record.action;
                         history.time = new Date(record.time.getTime());
@@ -563,7 +564,8 @@ public class ItemManager
                     // and create the return value
                     TagHistory history = new TagHistory();
                     history.itemId = originalId;
-                    history.member = member.getName();
+                    history.memberName = member.name;
+                    history.memberId = member.memberId;
                     history.tag = tag.tag;
                     history.action = historyRecord.action;
                     history.time = new Date(historyRecord.time.getTime());
