@@ -10,7 +10,6 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.SoftCache;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.util.Name;
@@ -52,29 +51,21 @@ public class MemberManager
     }
 
     /**
-     * Loads the specified member's friends list. The results may come from the
-     * cache and will be cached if they are loaded from the database.
+     * Loads the specified member's friends list. 
+     *
+     * Note: all the friends will be marked as offline. If you
+     * desire to know their online status, that should be filled in
+     * elsewhere.
      */
     public void loadFriends (
         final int memberId, ResultListener<ArrayList<FriendEntry>> listener)
     {
-//        // first check the cache
-//        ArrayList<FriendEntry> friends = _friendCache.get(memberId);
-//        if (friends != null) {
-//            listener.requestCompleted(friends);
-//            return;
-//        }
-
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<ArrayList<FriendEntry>>(listener) {
             public ArrayList<FriendEntry> invokePersistResult ()
                 throws PersistenceException {
                 return _memberRepo.getFriends(memberId);
             }
-//            public void handleSuccess () {
-//                _friendCache.put(memberId, _result);
-//                super.handleSuccess();
-//            }
         });
     }
 
@@ -179,18 +170,6 @@ public class MemberManager
                         }
                     }
                 }
-
-//                // keep the cache up to date
-//                ArrayList<FriendEntry> flist =
-//                    _friendCache.get(user.getMemberId());
-//                if (flist != null) {
-//                    if (oldEntry != null) {
-//                        flist.remove(oldEntry);
-//                    }
-//                    if (_entry != null) {
-//                        flist.add(_entry);
-//                    }
-//                }
             }
 
             protected FriendEntry _entry;
@@ -249,8 +228,4 @@ public class MemberManager
 
     /** Provides access to persistent profile data. */
     protected ProfileRepository _profileRepo;
-
-//    /** A soft reference cache of friends lists indexed on memberId. */
-//    protected SoftCache<Integer,ArrayList<FriendEntry>> _friendCache =
-//        new SoftCache<Integer,ArrayList<FriendEntry>>();
 }
