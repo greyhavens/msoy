@@ -408,7 +408,7 @@ public class ItemManager
     }
     
     /** Fetch the tagging history for a given item. */
-    public void getTagHistory(
+    public void getTagHistory (
         final int itemId, ItemEnum type,
         ResultListener<Iterable<TagHistory>> waiter)
     {
