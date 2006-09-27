@@ -424,7 +424,8 @@ public class ItemManager
         int itemId, ItemEnum type, int taggerId, String tagName,
         ResultListener<Void> waiter)
     {
-        itemTagging(itemId, type, taggerId, tagName, waiter, true);
+        itemTagging(
+            itemId, type, taggerId, tagName.toLowerCase(), waiter, true);
     }
 
     /** Remove the specified tag from the specified item. */
@@ -432,7 +433,8 @@ public class ItemManager
         int itemId, ItemEnum type, int taggerId, String tagName,
         ResultListener<Void> waiter)
     {
-        itemTagging(itemId, type, taggerId, tagName, waiter, false);
+        itemTagging(
+            itemId, type, taggerId, tagName.toLowerCase(), waiter, false);
     }
 
     // do the facade work for tagging

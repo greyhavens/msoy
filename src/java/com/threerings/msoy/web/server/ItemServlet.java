@@ -86,4 +86,21 @@ public class ItemServlet extends RemoteServiceServlet
         MsoyServer.itemMan.remixItem(itemId, etype, waiter);
         return waiter.waitForResult();
     }
+    
+    public Item tagItem (WebCreds creds, int itemId, String type, String tag)
+            throws ServiceException
+    {
+    ItemEnum etype = ItemEnum.valueOf(type);
+    if (etype == null) {
+        log.warning("Requested to remix item of invalid item type " +
+            "[who=" + creds + ", itemId=" + itemId +
+            "type=" + type + "].");
+        throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+    }
+    ServletWaiter<Item> waiter = new ServletWaiter<Item>(
+            "remixItem[" + itemId + ", " + etype + "]");
+    MsoyServer.itemMan.remixItem(itemId, etype, waiter);
+    return waiter.waitForResult();
+}
+
 }
