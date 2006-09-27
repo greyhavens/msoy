@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -186,9 +187,67 @@ public abstract class ItemRepository<T extends ItemRecord>
         delete(getCloneClass(), cloneId);
     }
 
+    /** Insert/update a rating row, calculate the new rating and finally
+     *  update the item's rating. */
+    public float rateItem (int itemId, int memberId, byte rating)
+            throws PersistenceException
+    {
+        // first create a new rating record
+        RatingRecord<T> record;
+        try {
+            record = getRatingClass().newInstance();
+        } catch (Exception e) {
+            throw new PersistenceException(
+                "Failed to create a new item rating record " +
+                "[itemId=" + itemId + ", memberId=" + memberId + "]", e);
+        }
+        // populate and insert it
+        record.itemId = itemId;
+        record.memberId = memberId;
+        record.rating = rating;
+        store(record);
+
+        // then calculate the new average rating for this item from scratch
+        float newRating;
+        String ratingTable = getMarshaller(getRatingClass()).getTableName();
+        Connection conn = _conprov.getConnection(getIdent(), false);
+        try {
+            PreparedStatement stmt = null;
+            try {
+                stmt = conn.prepareStatement(
+                    " SELECT COUNT(*), SUM(" + RatingRecord.RATING + ")" +
+                    "        FROM " + ratingTable +
+                    "       WHERE " + RatingRecord.ITEM_ID + " = ?");
+                stmt.setInt(1, itemId);
+                ResultSet rs = stmt.executeQuery();
+                if (!rs.next()) {
+                    throw new PersistenceException(
+                        "Failed to calculate new rating for item [itemId=" +
+                        itemId + "]"); 
+                }
+                newRating = (float) ((double) rs.getInt(2) / rs.getInt(1));
+            } finally {
+                JDBCUtil.close(stmt);
+            }
+        } catch (SQLException sqle) {
+            throw new PersistenceException(
+                "Failed to calculate new rating for item [itemId=" +
+                itemId + "]");
+        } finally {
+            _conprov.releaseConnection(getIdent(), false, conn);
+        }
+        
+        // and then smack the new value into the item using yummy depot code
+        updatePartial(
+            getItemClass(), itemId, new Object[] {
+                ItemRecord.RATING, newRating });
+        return newRating;
+    }
+
+    
     /** Find the tag record for a certain tag, or create it. */
     public TagNameRecord getTag (String tagName)
-        throws PersistenceException
+            throws PersistenceException
     {
         // load the tag, if it exists
         TagNameRecord record = load(
@@ -204,7 +263,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /** Find the tag record for a certain tag id, or create it. */
     public TagNameRecord getTag (int tagId)
-        throws PersistenceException
+            throws PersistenceException
     {
         return load(TagNameRecord.class, new Key(TagNameRecord.TAG_ID, tagId));
     }
@@ -216,7 +275,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      * history table.
      */
     public boolean tagItem (int itemId, int tagId, int taggerId, long now)
-        throws PersistenceException
+            throws PersistenceException
     {
         TagRecord<T> tag = load(getTagClass(), new Key2(
             TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId));
@@ -258,7 +317,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      * history table.
      */
     public boolean untagItem (int itemId, int tagId, int taggerId, long now)
-        throws PersistenceException
+            throws PersistenceException
     {
         TagRecord<T> tag = load(getTagClass(), new Key2(
             TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId));
@@ -295,7 +354,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      *         WHERE itemId = 89736;
      */
     public int copyTags (int fromItemId, int toItemId, int ownerId, long now)
-        throws PersistenceException
+            throws PersistenceException
     {
         int rows;
         String tagTable = getMarshaller(getTagClass()).getTableName();
@@ -358,4 +417,5 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     protected abstract Class<? extends TagRecord<T>> getTagClass ();
     protected abstract Class<? extends TagHistoryRecord<T>> getTagHistoryClass ();
+    protected abstract Class<? extends RatingRecord<T>> getRatingClass();
 }

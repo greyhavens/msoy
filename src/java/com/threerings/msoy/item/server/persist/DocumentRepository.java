@@ -43,4 +43,10 @@ public class DocumentRepository extends ItemRepository<DocumentRecord>
     {
         return DocumentTagHistoryRecord.class;
     }
+
+    @Override
+    protected Class<? extends RatingRecord<DocumentRecord>> getRatingClass ()
+    {
+        return DocumentRatingRecord.class;
+    }
 }

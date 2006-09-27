@@ -43,4 +43,10 @@ public class PhotoRepository extends ItemRepository<PhotoRecord>
     {
         return PhotoTagHistoryRecord.class;
     }
+
+    @Override
+    protected Class<? extends RatingRecord<PhotoRecord>> getRatingClass ()
+    {
+        return PhotoRatingRecord.class;
+    }
 }

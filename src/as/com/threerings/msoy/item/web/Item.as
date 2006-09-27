@@ -43,6 +43,9 @@ public /*abstract*/ class Item
      *  is an immutable catalog listing. */
     public var ownerId :int;
 
+    /** The current rating of this item, between 1 and 5. */
+    public var rating :Number;
+
     /** A hash code identifying the media used to display this item's thumbnail
      * representation. */
     public var thumbMediaHash :ByteArray;
@@ -139,6 +142,7 @@ public /*abstract*/ class Item
         out.writeByte(flags);
         out.writeInt(creatorId);
         out.writeInt(ownerId);
+        out.writeFloat(rating);
         out.writeField(thumbMediaHash);
         out.writeByte(thumbMimeType);
         out.writeField(furniMediaHash);
@@ -153,6 +157,7 @@ public /*abstract*/ class Item
         flags = ins.readByte();
         creatorId = ins.readInt();
         ownerId = ins.readInt();
+        rating = ins.readFloat();
         thumbMediaHash = (ins.readField(ByteArray) as ByteArray);
         thumbMimeType = ins.readByte();
         furniMediaHash = (ins.readField(ByteArray) as ByteArray);

@@ -33,6 +33,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
     public static final String FLAGS = "flags";
     public static final String CREATOR_ID = "creatorId";
     public static final String OWNER_ID = "ownerId";
+    public static final String RATING = "rating";
     public static final String THUMB_MEDIA_HASH = "thumbMediaHash";
     public static final String THUMB_MIME_TYPE = "thumbMimeType";
     public static final String FURNI_MEDIA_HASH = "furniMediaHash";
@@ -82,6 +83,10 @@ public abstract class ItemRecord implements Streamable, Cloneable
     @Column(nullable=false)
     public int ownerId;
 
+    /** The current rating of this item, from 1 to 5. */
+    @Column(nullable=false)
+    public float rating;
+    
     /** A hash code identifying the media used to display this item's thumbnail
      * representation. */
     @Column(nullable=true)
@@ -119,6 +124,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
         this.itemId = item.itemId;
         this.ownerId = item.ownerId;
         this.parentId = item.parentId;
+        this.rating = item.rating;
         this.thumbMediaHash = item.thumbMediaHash == null ?
             null : item.thumbMediaHash.clone();
         this.thumbMimeType = item.thumbMimeType;
@@ -172,6 +178,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
         item.itemId = this.itemId;
         item.ownerId = this.ownerId;
         item.parentId = this.parentId;
+        item.rating = this.rating;
         item.thumbMediaHash = this.thumbMediaHash == null ?
             null : this.thumbMediaHash.clone();
         item.thumbMimeType = this.thumbMimeType;

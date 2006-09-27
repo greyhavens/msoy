@@ -43,4 +43,10 @@ public class FurnitureRepository extends ItemRepository<FurnitureRecord>
     {
         return FurnitureTagHistoryRecord.class;
     }
+    
+    @Override
+    protected Class<? extends RatingRecord<FurnitureRecord>> getRatingClass ()
+    {
+        return FurnitureRatingRecord.class;
+    }
 }

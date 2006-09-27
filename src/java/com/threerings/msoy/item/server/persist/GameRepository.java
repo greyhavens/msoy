@@ -43,4 +43,10 @@ public class GameRepository extends ItemRepository<GameRecord>
     {
         return GameTagHistoryRecord.class;
     }
+    
+    @Override
+    protected Class<? extends RatingRecord<GameRecord>> getRatingClass ()
+    {
+        return GameRatingRecord.class;
+    }
 }

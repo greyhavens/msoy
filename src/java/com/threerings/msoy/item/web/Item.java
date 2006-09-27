@@ -37,6 +37,9 @@ public abstract class Item implements Streamable, IsSerializable
      *  is an immutable catalog listing. */
     public int ownerId;
 
+    /** The current rating of this item, between 1 and 5. */
+    public float rating;
+    
     /** A hash code identifying the media used to display this item's thumbnail
      * representation. */
     public byte[] thumbMediaHash;

@@ -31,6 +31,7 @@ import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
+import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.TagNameRecord;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.CatalogListing;
@@ -378,28 +379,67 @@ public class ItemManager
 
     }
 
-    // TODO: copy on remix
+    /** Let a member rate an object. */
+    public void rateItem (
+        final int itemId, ItemEnum type, final int memberId,
+        final byte rating, ResultListener<Item> waiter)
+    {
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        if (repo == null) {
+            waiter.requestFailed(new Exception("No repository registered for "
+                + type + "."));
+            return;
+        }
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Item>(waiter) {
+                public Item invokePersistResult () throws PersistenceException {
+                    ItemRecord item = repo.loadItem(itemId);
+                    int originalId;
+                    if (item == null) {
+                        item = repo.loadClone(itemId);
+                        if (item == null) {
+                            throw new PersistenceException(
+                                "Can't find item [itemId=" + itemId + "]");
+                        }
+                        originalId = item.parentId;
+                    } else {
+                        // make sure we're not trying to rate a mutable
+                        if (item.ownerId != -1) {
+                            throw new PersistenceException(
+                                "Can't rate mutable object [itemId=" +
+                                itemId + "]");
+                        }
+                        originalId = itemId;
+                    }
+                    item.rating = repo.rateItem(originalId, memberId, rating);
+                    return item.toItem();
+                }
+            });
+
+    }
+
     /** Add the specified tag to the specified item. */
     public void tagItem (
-            int itemId, ItemEnum type, int taggerId, String tagName,
-            ResultListener<Void> waiter)
+        int itemId, ItemEnum type, int taggerId, String tagName,
+        ResultListener<Void> waiter)
     {
         itemTagging(itemId, type, taggerId, tagName, waiter, true);
     }
 
     /** Remove the specified tag from the specified item. */
     public void untagItem (
-            int itemId, ItemEnum type, int taggerId, String tagName,
-            ResultListener<Void> waiter)
+        int itemId, ItemEnum type, int taggerId, String tagName,
+        ResultListener<Void> waiter)
     {
         itemTagging(itemId, type, taggerId, tagName, waiter, false);
     }
 
     // do the facade work for tagging
     protected void itemTagging (
-            final int itemId, ItemEnum type, final int taggerId,
-            final String tagName, ResultListener<Void> waiter,
-            final boolean doTag)
+        final int itemId, ItemEnum type, final int taggerId,
+        final String tagName, ResultListener<Void> waiter,
+        final boolean doTag)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
