@@ -18,17 +18,16 @@ import static com.threerings.msoy.Log.log;
  */
 public enum ItemEnum
 {
-    // NOTE: Don't remove or change the name of any of these unless you know
-    // what you're doing.
+    // NOTE: If you add an item to this list, you need to make sure that
+    // Item.getType() returns the string value of the enumeration that is added
+    // to correspond to the new item.
+    // NOTE: each new type added should have a new code. Do not re-use
+    // old codes.
     PHOTO(Photo.class, (byte)1),
     DOCUMENT(Document.class,(byte)2),
     FURNITURE(Furniture.class, (byte)3),
     GAME(Game.class, (byte)4),
-
-    // NOTE: If you add an item to this list, you need to make sure that
-    // Item.getType() returns the string value of the enumeration that is added
-    // to correspond to the new item.
-    UNUSED(null, (byte)-1);
+    ;
 
     /**
      * Maps an {@link ItemEnum}'s code code back to an instance.
