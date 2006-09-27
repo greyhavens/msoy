@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
@@ -425,7 +426,8 @@ public class ItemManager
         ResultListener<Void> waiter)
     {
         itemTagging(
-            itemId, type, taggerId, tagName.toLowerCase(), waiter, true);
+            itemId, type, taggerId, tagName.trim().toLowerCase(),
+            waiter, true);
     }
 
     /** Remove the specified tag from the specified item. */
@@ -434,15 +436,20 @@ public class ItemManager
         ResultListener<Void> waiter)
     {
         itemTagging(
-            itemId, type, taggerId, tagName.toLowerCase(), waiter, false);
+            itemId, type, taggerId, tagName.trim().toLowerCase(),
+            waiter, false);
     }
-
     // do the facade work for tagging
     protected void itemTagging (
         final int itemId, ItemEnum type, final int taggerId,
         final String tagName, ResultListener<Void> waiter,
         final boolean doTag)
     {
+        if (!validTag.matcher(tagName).matches()) {
+            waiter.requestFailed(new IllegalArgumentException(
+                "Invalid tag [tag=" + tagName + "]"));
+            return;
+        }
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _repos.get(type);
         if (repo == null) {
@@ -493,6 +500,10 @@ public class ItemManager
             items.add(item);
         }
     }
+
+    /** A regexp pattern to validate tags. */
+    protected static final Pattern validTag =
+        Pattern.compile("[a-z0-9_]{3,60");
 
     /** Maps string identifier to repository for all digital item types. */
     protected HashMap<ItemEnum, ItemRepository<ItemRecord>> _repos =
