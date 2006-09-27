@@ -91,8 +91,24 @@ public class MsoyClientResolver extends CrowdClientResolver
             MsoyServer.memberMan.loadFriends(user.getMemberId(),
                 new ResultListener<ArrayList<FriendEntry>>() {
                 public void requestCompleted (ArrayList<FriendEntry> friends) {
+                    for (FriendEntry entry : friends) {
+                        MemberObject friendObj =
+                            MsoyServer.lookupMember(entry.name);
+                        if (friendObj == null) {
+                            continue;
+                        }
+                        // if the friend is online, mark them as such
+                        entry.online = true;
+                        // and notify them that we're online
+                        FriendEntry oppEntry = friendObj.friends.get(
+                            user.getMemberId());
+                        oppEntry.online = true;
+                        friendObj.updateFriends(oppEntry);
+                    }
                     user.setFriends(
                         new DSet<FriendEntry>(friends.iterator()));
+                    // TODO: we currently never note that friends have
+                    // logged off
                 }
                 public void requestFailed (Exception cause) {
                     log.warning("Failed to load member's friend info " +

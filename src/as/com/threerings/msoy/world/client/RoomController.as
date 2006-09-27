@@ -28,6 +28,7 @@ import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
@@ -53,7 +54,6 @@ public class RoomController extends SceneController
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
 
-    public static const ALTER_FRIEND :String = "AlterFriend";
     public static const TELL :String = "Tell";
     public static const GAME_INVITE :String = "GameInvite";
 
@@ -205,28 +205,17 @@ public class RoomController extends SceneController
                 menuItems.push(
                     { label: _mctx.xlate(null, isFriend ? "b.removeAsFriend"
                                                         : "b.addAsFriend"),
-                      command: ALTER_FRIEND, arg: [memId, !isFriend] },
+                      command: MsoyController.ALTER_FRIEND,
+                      arg: [memId, !isFriend] },
                     { label: _mctx.xlate(null, "b.inviteGame"),
-                      command: GAME_INVITE, arg: occInfo.username });
+                      command: GAME_INVITE,
+                      arg: occInfo.username });
             }
         }
 
         var menu :CommandMenu = CommandMenu.createMenu(avatar, menuItems);
         var p :Point = avatar.localToGlobal(new Point());
         menu.show(p.x, p.y);
-    }
-
-    /**
-     * Handles AVATAR_CLICKED.
-     */
-    public function handleAlterFriend (args :Array) :void
-    {
-        var friendId :int = int(args[0]);
-        var alteration :Boolean = Boolean(args[1]);
-        var msvc :MemberService =
-            (_mctx.getClient().requireService(MemberService) as MemberService);
-        msvc.alterFriend(_mctx.getClient(), friendId, alteration,
-            new ReportingListener(_mctx));
     }
 
     /**

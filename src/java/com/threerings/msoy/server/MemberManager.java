@@ -25,6 +25,7 @@ import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.Profile;
@@ -57,12 +58,12 @@ public class MemberManager
     public void loadFriends (
         final int memberId, ResultListener<ArrayList<FriendEntry>> listener)
     {
-        // first check the cache
-        ArrayList<FriendEntry> friends = _friendCache.get(memberId);
-        if (friends != null) {
-            listener.requestCompleted(friends);
-            return;
-        }
+//        // first check the cache
+//        ArrayList<FriendEntry> friends = _friendCache.get(memberId);
+//        if (friends != null) {
+//            listener.requestCompleted(friends);
+//            return;
+//        }
 
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<ArrayList<FriendEntry>>(listener) {
@@ -70,10 +71,10 @@ public class MemberManager
                 throws PersistenceException {
                 return _memberRepo.getFriends(memberId);
             }
-            public void handleSuccess () {
-                _friendCache.put(memberId, _result);
-                super.handleSuccess();
-            }
+//            public void handleSuccess () {
+//                _friendCache.put(memberId, _result);
+//                super.handleSuccess();
+//            }
         });
     }
 
@@ -125,6 +126,10 @@ public class MemberManager
             throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
+        if (user.isGuest()) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+
         MsoyServer.invoker.postUnit(new PersistingUnit("alterFriend", lner) {
             public void invokePersistent () throws PersistenceException {
                 if (add) {
@@ -137,34 +142,55 @@ public class MemberManager
 
             public void handleSuccess () {
                 FriendEntry oldEntry = user.friends.get(friendId);
+                MemberName friendName = (oldEntry != null) ? oldEntry.name :
+                    (_entry != null ? _entry.name : null);
+                MemberObject friendObj = (friendName != null)
+                    ? MsoyServer.lookupMember(friendName) : null;
+
+                // update ourselves and the friend
                 if (!add || _entry == null) {
                     // remove the friend
                     if (oldEntry != null) {
                         user.removeFromFriends(friendId);
+                        if (friendObj != null) {
+                            friendObj.removeFromFriends(user.getMemberId());
+                        }
                     }
 
                 } else {
                     // add or update the friend/status
-                    _entry.online =
-                        (MsoyServer.lookupMember(_entry.name) != null);
+                    _entry.online = (friendObj != null);
+                    byte oppStatus = getOppositeFriendStatus(_entry.status);
                     if (oldEntry == null) {
                         user.addToFriends(_entry);
+                        if (friendObj != null) {
+                            FriendEntry opp = new FriendEntry(
+                                user.memberName, true, oppStatus);
+                            friendObj.addToFriends(opp);
+                        }
+
                     } else {
                         user.updateFriends(_entry);
+                        if (friendObj != null) {
+                            FriendEntry opp = friendObj.friends.get(
+                                user.getMemberId());
+                            opp.status = oppStatus;
+                            friendObj.updateFriends(opp);
+                        }
                     }
                 }
 
-                // keep the cache up to date
-                ArrayList<FriendEntry> flist =
-                    _friendCache.get(user.getMemberId());
-                if (flist != null) {
-                    if (oldEntry != null) {
-                        flist.remove(oldEntry);
-                    }
-                    if (_entry != null) {
-                        flist.add(_entry);
-                    }
-                }
+//                // keep the cache up to date
+//                ArrayList<FriendEntry> flist =
+//                    _friendCache.get(user.getMemberId());
+//                if (flist != null) {
+//                    if (oldEntry != null) {
+//                        flist.remove(oldEntry);
+//                    }
+//                    if (_entry != null) {
+//                        flist.add(_entry);
+//                    }
+//                }
             }
 
             protected FriendEntry _entry;
@@ -201,13 +227,30 @@ public class MemberManager
         });
     }
 
+    /**
+     * Return the status of a friendship as viewed from the other side.
+     */
+    protected byte getOppositeFriendStatus (byte status)
+    {
+        switch (status) {
+        case FriendEntry.PENDING_MY_APPROVAL:
+            return FriendEntry.PENDING_THEIR_APPROVAL;
+
+        case FriendEntry.PENDING_THEIR_APPROVAL:
+            return FriendEntry.PENDING_MY_APPROVAL;
+
+        default:
+            return FriendEntry.FRIEND;
+        }
+    }
+
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
 
     /** Provides access to persistent profile data. */
     protected ProfileRepository _profileRepo;
 
-    /** A soft reference cache of friends lists indexed on memberId. */
-    protected SoftCache<Integer,ArrayList<FriendEntry>> _friendCache =
-        new SoftCache<Integer,ArrayList<FriendEntry>>();
+//    /** A soft reference cache of friends lists indexed on memberId. */
+//    protected SoftCache<Integer,ArrayList<FriendEntry>> _friendCache =
+//        new SoftCache<Integer,ArrayList<FriendEntry>>();
 }

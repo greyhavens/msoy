@@ -50,6 +50,7 @@ public class MsoyContext
         _mediaDir = new MediaDirector(this);
         _parlorDir = new ParlorDirector(this);
         _gameDir = new GameDirector(this);
+        _memberDir = new MemberDirector(this);
 
         // set up the top panel
         _topPanel = new TopPanel(this, _app);
@@ -133,6 +134,14 @@ public class MsoyContext
     public function getGameDirector () :GameDirector
     {
         return _gameDir;
+    }
+
+    /**
+     * Get the MemberDirector.
+     */
+    public function getMemberDirector () :MemberDirector
+    {
+        return _memberDir;
     }
 
     /**
@@ -220,6 +229,8 @@ public class MsoyContext
     protected var _parlorDir :ParlorDirector;
 
     protected var _gameDir :GameDirector;
+
+    protected var _memberDir :MemberDirector;
 
     protected var _sceneRepo :SharedObjectSceneRepository;
 }

@@ -21,6 +21,8 @@ import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
+import com.threerings.msoy.chat.client.ReportingListener;
+
 public class MsoyController extends Controller
     implements ClientObserver
 {
@@ -40,6 +42,9 @@ public class MsoyController extends Controller
 
     /** Command to go to a friend's home scene. */
     public static const GO_FRIEND_HOME :String = "GoFriendHome";
+
+    /** Command to add/remove friends. */
+    public static const ALTER_FRIEND :String = "AlterFriend";
 
     /**
      * Create the msoy controller.
@@ -154,6 +159,19 @@ public class MsoyController extends Controller
             function (sceneId :int) :void {
                 _ctx.getSceneDirector().moveTo(sceneId);
             }));
+    }
+
+    /**
+     * Handles ALTER_FRIEND.
+     */
+    public function handleAlterFriend (args :Array) :void
+    {
+        var friendId :int = int(args[0]);
+        var alteration :Boolean = Boolean(args[1]);
+        var msvc :MemberService =
+            (_ctx.getClient().requireService(MemberService) as MemberService);
+        msvc.alterFriend(_ctx.getClient(), friendId, alteration,
+            new ReportingListener(_ctx));
     }
 
     /**

@@ -64,14 +64,6 @@ public class RoomManager extends SpotSceneManager
         // automatically add the room to their recent list
         memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
 
-        // TEMP
-        int memberId = RandomUtil.getInt(10000);
-        memberObj.addToFriends(
-            new FriendEntry(new MemberName(String.valueOf(memberId), memberId),
-                (RandomUtil.getInt(2) == 0),
-                (byte) RandomUtil.getInt(3)));
-        // END: temp
-
         if (entry != null) {
             return super.computeEnteringLocation(body, entry);
         }
