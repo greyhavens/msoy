@@ -38,6 +38,11 @@ public interface ItemService extends RemoteService
     public Item remixItem (WebCreds creds, int itemId, String type)
         throws ServiceException;
     
+    /** Fetches the rating somebody gave somebody, or 0. */
+    public byte getRating (
+        WebCreds creds, int itemId, String type, int memberId)
+            throws ServiceException;
+    
     /** Awards an item a rating from 1 to 5. */
     public Item rateItem (
         WebCreds creds, int itemId, String type, byte rating)

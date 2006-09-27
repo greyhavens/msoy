@@ -88,6 +88,25 @@ public class ItemServlet extends RemoteServiceServlet
         return waiter.waitForResult();
     }
     
+    // from interface ItemService    
+    public byte getRating (
+        WebCreds creds, int itemId, String type, int memberId)
+            throws ServiceException
+    {
+        ItemEnum etype = ItemEnum.valueOf(type);
+        if (etype == null) {
+            log.warning("Requested to rate item of invalid item type " +
+                "[who=" + creds + ", itemId=" + itemId +
+                "type=" + type + "].");
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
+        ServletWaiter<Byte> waiter = new ServletWaiter<Byte>(
+                "rateItem[" + itemId + ", " + etype + "]");
+        MsoyServer.itemMan.getRating(itemId, etype, memberId, waiter);
+        return waiter.waitForResult();
+    }
+
+    // from interface ItemService
     public Item rateItem (WebCreds creds, int itemId, String type, byte rating)
             throws ServiceException
     {

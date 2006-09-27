@@ -31,7 +31,14 @@ public interface ItemServiceAsync
     public void remixItem (
         WebCreds creds, int itemId, String type,
         AsyncCallback callback);
-    
+
+    /**
+     * The asynchronous version of {@link ItemService#getRating}.
+     */
+    public void getRating (
+        WebCreds creds, int itemId, String type, int memberId,
+        AsyncCallback callback);
+
     /**
      * The asynchronous version of {@link ItemService#rateItem}.
      */

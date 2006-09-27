@@ -182,9 +182,18 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /** Delete an item clone from the database */
-    public void deleteClone (int cloneId) throws PersistenceException
+    public void deleteClone (int cloneId)
+            throws PersistenceException
     {
         delete(getCloneClass(), cloneId);
+    }
+
+    public RatingRecord<T> getRating (int itemId, int memberId)
+            throws PersistenceException
+    {
+        return load(getRatingClass(), new Key2(
+            RatingRecord.ITEM_ID, itemId, RatingRecord.MEMBER_ID, memberId));
+            
     }
 
     /** Insert/update a rating row, calculate the new rating and finally

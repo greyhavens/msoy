@@ -380,6 +380,28 @@ public class ItemManager
 
     }
 
+    /** Fetch the rating a user has given an item, or 0. */
+    public void getRating (
+        final int itemId, ItemEnum type, final int memberId,
+        ResultListener<Byte> waiter)
+    {
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        if (repo == null) {
+            waiter.requestFailed(new Exception("No repository registered for "
+                + type + "."));
+            return;
+        }
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Byte>(waiter) {
+                public Byte invokePersistResult () throws PersistenceException {
+                    RatingRecord<ItemRecord> record =
+                        repo.getRating(itemId, memberId);
+                    return record != null ? record.rating : 0;
+                }
+            });
+    }
+    
     /** Let a member rate an object. */
     public void rateItem (
         final int itemId, ItemEnum type, final int memberId,
@@ -439,6 +461,7 @@ public class ItemManager
             itemId, type, taggerId, tagName.trim().toLowerCase(),
             waiter, false);
     }
+
     // do the facade work for tagging
     protected void itemTagging (
         final int itemId, ItemEnum type, final int taggerId,
