@@ -71,6 +71,7 @@ public class ItemServlet extends RemoteServiceServlet
         return waiter.waitForResult();
     }
 
+    // from interface ItemService
     public Item remixItem (WebCreds creds, int itemId, String type)
         throws ServiceException
     {
@@ -87,20 +88,56 @@ public class ItemServlet extends RemoteServiceServlet
         return waiter.waitForResult();
     }
     
-    public Item tagItem (WebCreds creds, int itemId, String type, String tag)
+    public Item rateItem (WebCreds creds, int itemId, String type, byte rating)
             throws ServiceException
     {
-    ItemEnum etype = ItemEnum.valueOf(type);
-    if (etype == null) {
-        log.warning("Requested to remix item of invalid item type " +
-            "[who=" + creds + ", itemId=" + itemId +
-            "type=" + type + "].");
-        throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        ItemEnum etype = ItemEnum.valueOf(type);
+        if (etype == null) {
+            log.warning("Requested to rate item of invalid item type " +
+                "[who=" + creds + ", itemId=" + itemId +
+                "type=" + type + "].");
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
+        ServletWaiter<Item> waiter = new ServletWaiter<Item>(
+                "rateItem[" + itemId + ", " + etype + "]");
+        MsoyServer.itemMan.rateItem(
+            itemId, etype, creds.memberId, rating, waiter);
+        return waiter.waitForResult();
     }
-    ServletWaiter<Item> waiter = new ServletWaiter<Item>(
-            "remixItem[" + itemId + ", " + etype + "]");
-    MsoyServer.itemMan.remixItem(itemId, etype, waiter);
-    return waiter.waitForResult();
-}
 
+    // from interface ItemService
+    public void tagItem (WebCreds creds, int itemId, String type, String tag)
+            throws ServiceException
+    {
+        ItemEnum etype = ItemEnum.valueOf(type);
+        if (etype == null) {
+            log.warning("Requested to tag item of invalid item type " +
+                "[who=" + creds + ", itemId=" + itemId +
+                "type=" + type + "].");
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
+        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+                "tagItem[" + itemId + ", " + etype + "]");
+        MsoyServer.itemMan.tagItem(
+            itemId, etype, creds.memberId, tag, waiter);
+        waiter.waitForResult();
+    }
+
+    // from interface ItemService
+    public void untagItem (WebCreds creds, int itemId, String type, String tag)
+            throws ServiceException
+    {
+        ItemEnum etype = ItemEnum.valueOf(type);
+        if (etype == null) {
+            log.warning("Requested to untag item of invalid item type " +
+                "[who=" + creds + ", itemId=" + itemId +
+                "type=" + type + "].");
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
+        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+                "untagItem[" + itemId + ", " + etype + "]");
+        MsoyServer.itemMan.untagItem(
+            itemId, etype, creds.memberId, tag, waiter);
+        waiter.waitForResult();
+    }
 }

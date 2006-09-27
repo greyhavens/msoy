@@ -16,17 +16,40 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#createItem}.
      */
-    public void createItem (WebCreds creds, Item item, AsyncCallback callback);
+    public void createItem (
+        WebCreds creds, Item item, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ItemService#loadInventory}.
      */
-    public void loadInventory (WebCreds creds, String type,
-                               AsyncCallback callback);
+    public void loadInventory (
+        WebCreds creds, String type, AsyncCallback callback);
     
     /**
      * The asynchronous version of {@link ItemService#remixItem}.
      */
-    public void remixItem (WebCreds creds, int itemId, String type,
-                           AsyncCallback callback);
+    public void remixItem (
+        WebCreds creds, int itemId, String type,
+        AsyncCallback callback);
+    
+    /**
+     * The asynchronous version of {@link ItemService#rateItem}.
+     */
+    public void rateItem (
+        WebCreds creds, int itemId, String type, byte rating,
+        AsyncCallback callback);
+        
+    /**
+     * The asynchronous version of {@link ItemService#tagItem}.
+     */
+    public void tagItem (
+        WebCreds creds, int itemId, String type, String tag,
+        AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ItemService#untagItem}.
+     */
+    public void untagItem (
+        WebCreds creds, int itemId, String type, String tag,
+        AsyncCallback callback);
 }

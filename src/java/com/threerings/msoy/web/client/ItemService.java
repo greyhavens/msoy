@@ -37,4 +37,20 @@ public interface ItemService extends RemoteService
     /** Remixes a cloned item into a fully mutable original item. */
     public Item remixItem (WebCreds creds, int itemId, String type)
         throws ServiceException;
+    
+    /** Awards an item a rating from 1 to 5. */
+    public Item rateItem (
+        WebCreds creds, int itemId, String type, byte rating)
+            throws ServiceException;
+        
+    /** Associates a tag with an item. */
+    public void tagItem (
+        WebCreds creds, int itemId, String type, String tag)
+            throws ServiceException;
+
+    /** Disassociates a tag with an item. */
+    public void untagItem (
+        WebCreds creds, int itemId, String type, String tag)
+            throws ServiceException;
+
 }
