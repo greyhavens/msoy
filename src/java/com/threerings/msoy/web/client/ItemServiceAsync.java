@@ -47,6 +47,13 @@ public interface ItemServiceAsync
         AsyncCallback callback);
         
     /**
+     * The asynchronous version of {@link ItemService#getTagHistory}.
+     */
+    public void getTagHistory (
+        WebCreds creds, int itemId, String type,
+        AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link ItemService#tagItem}.
      */
     public void tagItem (

@@ -27,10 +27,6 @@ public abstract class TagHistoryRecord<T extends ItemRecord>
     public static final String ACTION = "action";
     public static final String WHEN = "when";
 
-    public static final byte ACTION_ADDED = 1;
-    public static final byte ACTION_REMOVED = 2;
-    public static final byte ACTION_COPIED = 3;
-    
     /** The ID of the item being operated on. */
     @Column(nullable=false)
     public int itemId;

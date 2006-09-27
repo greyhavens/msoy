@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.server.MsoyServer;
 
@@ -125,7 +126,27 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public void tagItem (WebCreds creds, int itemId, String type, String tag)
+    public Iterable<TagHistory> getTagHistory (
+        WebCreds creds, int itemId, String type)
+            throws ServiceException
+    {
+        ItemEnum etype = ItemEnum.valueOf(type);
+        if (etype == null) {
+            log.warning("Requested to get tag history of invalid item type " +
+                "[who=" + creds + ", itemId=" + itemId +
+                "type=" + type + "].");
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
+        ServletWaiter<Iterable<TagHistory>> waiter =
+            new ServletWaiter<Iterable<TagHistory>>(
+                "getTagHistory[" + itemId + ", " + etype + "]");
+        MsoyServer.itemMan.getTagHistory(itemId, etype, waiter);
+        return waiter.waitForResult();
+    }
+
+    // from interface ItemService
+    public TagHistory tagItem (
+        WebCreds creds, int itemId, String type, String tag)
             throws ServiceException
     {
         ItemEnum etype = ItemEnum.valueOf(type);
@@ -135,15 +156,16 @@ public class ItemServlet extends RemoteServiceServlet
                 "type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
         }
-        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+        ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
                 "tagItem[" + itemId + ", " + etype + "]");
         MsoyServer.itemMan.tagItem(
             itemId, etype, creds.memberId, tag, waiter);
-        waiter.waitForResult();
+        return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public void untagItem (WebCreds creds, int itemId, String type, String tag)
+    public TagHistory untagItem (
+        WebCreds creds, int itemId, String type, String tag)
             throws ServiceException
     {
         ItemEnum etype = ItemEnum.valueOf(type);
@@ -153,10 +175,10 @@ public class ItemServlet extends RemoteServiceServlet
                 "type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
         }
-        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+        ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
                 "untagItem[" + itemId + ", " + etype + "]");
         MsoyServer.itemMan.untagItem(
             itemId, etype, creds.memberId, tag, waiter);
-        waiter.waitForResult();
+        return waiter.waitForResult();
     }
 }

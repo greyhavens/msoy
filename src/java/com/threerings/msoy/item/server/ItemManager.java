@@ -6,7 +6,9 @@ package com.threerings.msoy.item.server;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -24,6 +26,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -33,10 +36,12 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
+import com.threerings.msoy.item.server.persist.TagHistoryRecord;
 import com.threerings.msoy.item.server.persist.TagNameRecord;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.TagHistory;
 
 import static com.threerings.msoy.Log.log;
 
@@ -402,6 +407,48 @@ public class ItemManager
             });
     }
     
+    /** Fetch the tagging history for a given item. */
+    public void getTagHistory(
+        final int itemId, ItemEnum type,
+        ResultListener<Iterable<TagHistory>> waiter)
+    {
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        if (repo == null) {
+            waiter.requestFailed(new Exception("No repository registered for "
+                + type + "."));
+            return;
+        }
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Iterable<TagHistory>>(waiter) {
+                public Iterable<TagHistory> invokePersistResult ()
+                        throws PersistenceException {
+                    HashMap<Integer, MemberRecord> memberCache =
+                        new HashMap<Integer, MemberRecord>();
+                    ArrayList<TagHistory> list = new ArrayList<TagHistory>();
+                    for (TagHistoryRecord<ItemRecord> record :
+                            repo.getTagHistory(itemId)) {
+                        // we should probably go through/cache in MemberManager
+                        MemberRecord memRec = memberCache.get(record.memberId);
+                        if (memRec == null) {
+                            memRec = MsoyServer.memberRepo.loadMember(
+                                record.memberId);
+                            memberCache.put(record.memberId, memRec);
+                        }
+                        TagNameRecord tag = repo.getTag(record.tagId);
+                        TagHistory history = new TagHistory();
+                        history.itemId = record.itemId;
+                        history.member = memRec.getName();
+                        history.tag = tag.tag;
+                        history.action = record.action;
+                        history.time = new Date(record.time.getTime());
+                        list.add(history);
+                    }
+                    return list;
+                }
+            });
+    }
+
     /** Let a member rate an object. */
     public void rateItem (
         final int itemId, ItemEnum type, final int memberId,
@@ -442,20 +489,22 @@ public class ItemManager
 
     }
 
-    /** Add the specified tag to the specified item. */
+    /** Add the specified tag to the specified item. Return a tag history
+     *  object if the tag did not already exist. */
     public void tagItem (
         int itemId, ItemEnum type, int taggerId, String tagName,
-        ResultListener<Void> waiter)
+        ResultListener<TagHistory> waiter)
     {
         itemTagging(
             itemId, type, taggerId, tagName.trim().toLowerCase(),
             waiter, true);
     }
 
-    /** Remove the specified tag from the specified item. */
+    /** Remove the specified tag from the specified item. Return a tag history
+     *  object if the tag existed. */
     public void untagItem (
         int itemId, ItemEnum type, int taggerId, String tagName,
-        ResultListener<Void> waiter)
+        ResultListener<TagHistory> waiter)
     {
         itemTagging(
             itemId, type, taggerId, tagName.trim().toLowerCase(),
@@ -465,7 +514,7 @@ public class ItemManager
     // do the facade work for tagging
     protected void itemTagging (
         final int itemId, ItemEnum type, final int taggerId,
-        final String tagName, ResultListener<Void> waiter,
+        final String tagName, ResultListener<TagHistory> waiter,
         final boolean doTag)
     {
         if (!validTag.matcher(tagName).matches()) {
@@ -482,32 +531,45 @@ public class ItemManager
         }
         // and perform the remixing
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Void>(waiter) {
-                public Void invokePersistResult () throws PersistenceException {
+            new RepositoryListenerUnit<TagHistory>(waiter) {
+                public TagHistory invokePersistResult ()
+                        throws PersistenceException {
                     long now = System.currentTimeMillis();
 
                     ItemRecord item = repo.loadItem(itemId);
                     int originalId;
                     if (item == null) {
+                        // it's probably a clone
                         item = repo.loadClone(itemId);
                         if (item == null) {
                             throw new PersistenceException(
                                 "Can't find item [itemId=" + itemId + "]");
                         }
+                        // in which case we fetch the original
                         originalId = item.parentId;
                     } else {
                         originalId = itemId;
                     }
+                    // map tag to tag id
                     TagNameRecord tag = repo.getTag(tagName);
-                    if (doTag) {
-                        repo.tagItem(originalId, tag.tagId, taggerId, now);
-                    } else {
+                    // do the actual work
+                    TagHistoryRecord<ItemRecord> historyRecord = doTag ? 
+                        repo.tagItem(originalId, tag.tagId, taggerId, now) :
                         repo.untagItem(originalId, tag.tagId, taggerId, now);
-                    }
-                    return null;
-            }
-        });
 
+                    // finally look up the member
+                    MemberRecord member = MsoyServer.memberRepo.loadMember(
+                        historyRecord.memberId);
+                    // and create the return value
+                    TagHistory history = new TagHistory();
+                    history.itemId = originalId;
+                    history.member = member.getName();
+                    history.tag = tag.tag;
+                    history.action = historyRecord.action;
+                    history.time = new Date(historyRecord.time.getTime());
+                    return history;
+                }
+        });
     }
 
     /**

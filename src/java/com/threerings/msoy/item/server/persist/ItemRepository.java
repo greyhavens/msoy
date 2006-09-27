@@ -16,6 +16,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.threerings.msoy.item.web.TagHistory;
 
 /**
  * Manages a repository of digital items of a particular type.
@@ -255,6 +256,14 @@ public abstract class ItemRepository<T extends ItemRecord>
         return newRating;
     }
 
+    /** Load all the tag history records for a given item. */
+    public Iterable<? extends TagHistoryRecord<T>> getTagHistory (int itemId)
+            throws PersistenceException
+    {
+        return findAll(
+            getTagHistoryClass(),
+            new Key(TagHistoryRecord.ITEM_ID, itemId));
+    }
     
     /** Find the tag record for a certain tag, or create it. */
     public TagNameRecord getTag (String tagName)
@@ -285,13 +294,14 @@ public abstract class ItemRepository<T extends ItemRecord>
      * nothing else. If it did not, create the tag and add a record in the
      * history table.
      */
-    public boolean tagItem (int itemId, int tagId, int taggerId, long now)
+    public TagHistoryRecord<T> tagItem (
+        int itemId, int tagId, int taggerId, long now)
             throws PersistenceException
     {
         TagRecord<T> tag = load(getTagClass(), new Key2(
             TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId));
         if (tag != null) {
-            return false;
+            return null;
         }
         try {
             tag = getTagClass().newInstance();
@@ -315,10 +325,10 @@ public abstract class ItemRepository<T extends ItemRecord>
         history.itemId = itemId;
         history.tagId = tagId;
         history.memberId = taggerId;
-        history.action = TagHistoryRecord.ACTION_ADDED;
+        history.action = TagHistory.ACTION_ADDED;
         history.time = new Timestamp(now);
         insert(history);
-        return true;
+        return history;
     }
     
     /**
@@ -326,13 +336,14 @@ public abstract class ItemRepository<T extends ItemRecord>
      * do nothing else. If it did, remove the tag and add a record in the
      * history table.
      */
-    public boolean untagItem (int itemId, int tagId, int taggerId, long now)
+    public TagHistoryRecord<T> untagItem (
+        int itemId, int tagId, int taggerId, long now)
             throws PersistenceException
     {
         TagRecord<T> tag = load(getTagClass(), new Key2(
             TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId));
         if (tag == null) {
-            return false;
+            return null;
         }
         delete(tag);
 
@@ -347,10 +358,10 @@ public abstract class ItemRepository<T extends ItemRecord>
         history.itemId = itemId;
         history.tagId = tagId;
         history.memberId = taggerId;
-        history.action = TagHistoryRecord.ACTION_REMOVED;
+        history.action = TagHistory.ACTION_REMOVED;
         history.time = new Timestamp(now);
         insert(history);
-        return true;
+        return history;
     }
 
     /**
@@ -403,7 +414,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         history.itemId = toItemId;
         history.tagId = -1;
         history.memberId = ownerId;
-        history.action = TagHistoryRecord.ACTION_COPIED;
+        history.action = TagHistory.ACTION_COPIED;
         history.time = new Timestamp(now);
         insert(history);
         return rows;

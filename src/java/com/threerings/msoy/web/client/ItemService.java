@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -47,15 +48,18 @@ public interface ItemService extends RemoteService
     public Item rateItem (
         WebCreds creds, int itemId, String type, byte rating)
             throws ServiceException;
-        
+    
+    /** Fetches the tagging history for a given item. */
+    public Iterable getTagHistory (WebCreds creds, int itemId, String type)
+            throws ServiceException;
+    
     /** Associates a tag with an item. */
-    public void tagItem (
+    public TagHistory tagItem (
         WebCreds creds, int itemId, String type, String tag)
             throws ServiceException;
 
     /** Disassociates a tag with an item. */
-    public void untagItem (
+    public TagHistory untagItem (
         WebCreds creds, int itemId, String type, String tag)
             throws ServiceException;
-
 }
