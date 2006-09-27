@@ -43,7 +43,7 @@ public abstract class TagHistoryRecord<T extends ItemRecord>
     @Column(nullable=false)
     public int memberId;
     
-    /** The action taken (ADDED or REMOVED). */
+    /** The action taken (ADDED or REMOVED or COPIED). */
     @Column(nullable=false)
     public byte action;
 

@@ -216,8 +216,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             try {
                 stmt = conn.prepareStatement(
                     " SELECT COUNT(*), SUM(" + RatingRecord.RATING + ")" +
-                    "        FROM " + ratingTable +
-                    "       WHERE " + RatingRecord.ITEM_ID + " = ?");
+                    "   FROM " + ratingTable +
+                    "  WHERE " + RatingRecord.ITEM_ID + " = ?");
                 stmt.setInt(1, itemId);
                 ResultSet rs = stmt.executeQuery();
                 if (!rs.next()) {
@@ -306,8 +306,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         history.memberId = taggerId;
         history.action = TagHistoryRecord.ACTION_ADDED;
         history.time = new Timestamp(now);
-        // TODO: enable when depot can do multi-column keys
-        // insert(history);
+        insert(history);
         return true;
     }
     
@@ -339,8 +338,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         history.memberId = taggerId;
         history.action = TagHistoryRecord.ACTION_REMOVED;
         history.time = new Timestamp(now);
-        // TODO: enable when depot can do multi-column keys
-        // insert(history);
+        insert(history);
         return true;
     }
 
@@ -396,8 +394,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         history.memberId = ownerId;
         history.action = TagHistoryRecord.ACTION_COPIED;
         history.time = new Timestamp(now);
-        // TODO: enable when depot can do multi-column keys
-        // insert(history);
+        insert(history);
         return rows;
     }
 
