@@ -662,7 +662,7 @@ public class MsoySceneRepository extends SimpleRepository
         if (mediaHash.length == 4) {
             int type = ByteBuffer.wrap(mediaHash).asIntBuffer().get();
             return new StaticMediaDesc(
-                StaticMediaDesc.FURNI, ItemEnum.getItem(type).toString());
+                StaticMediaDesc.FURNI, ItemEnum.getItem((byte)type).toString());
         } else {
             return new MediaDesc(mediaHash, mimeType);
         }
