@@ -130,7 +130,7 @@ public class EditorPanel extends FloatingPanel
      */
     public function updateInputFields () :void
     {
-        _name.text= _sceneModel.name;
+        _name.text = _sceneModel.name;
         _width.text = String(_sceneModel.width);
         _depth.text = String(_sceneModel.depth);
         _horizon.value = _sceneModel.horizon;
