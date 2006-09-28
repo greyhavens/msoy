@@ -132,7 +132,8 @@ public class EditorController extends Controller
             var origModel :MsoySceneModel =
                 (_ctx.getSceneDirector().getScene().getSceneModel()
                     as MsoySceneModel);
-            if (!Util.equals(editModel.type, origModel.type) ||
+            if (!Util.equals(editModel.name, origModel.name) ||
+                    (editModel.type != origModel.type) ||
                     (editModel.depth != origModel.depth) ||
                     (editModel.width != origModel.width) ||
                     (editModel.horizon != origModel.horizon) ||
@@ -141,6 +142,7 @@ public class EditorController extends Controller
                 var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
                 attrUpdate.init(sceneId, version++);
 
+                attrUpdate.name = editModel.name;
                 attrUpdate.type = editModel.type;
                 attrUpdate.depth = editModel.depth;
                 attrUpdate.width = editModel.width;

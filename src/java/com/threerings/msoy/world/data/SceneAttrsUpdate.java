@@ -16,6 +16,9 @@ import com.threerings.msoy.item.web.MediaDesc;
  */
 public class SceneAttrsUpdate extends SceneUpdate
 {
+    /** The new name. */
+    public String name;
+
     /** The new type. */
     public byte type;
 
@@ -40,6 +43,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.apply(model);
 
         MsoySceneModel mmodel = (MsoySceneModel) model;
+        mmodel.name = name;
         mmodel.type = type;;
         mmodel.depth = depth;
         mmodel.width = width;

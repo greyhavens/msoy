@@ -87,6 +87,9 @@ public class EditorPanel extends FloatingPanel
         // add a grid of controls for the room
         var grid :Grid = new Grid();
         grid.addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_name")),
+            _name = new TextInput());
+        grid.addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_width")),
             _width = new TextInput());
         grid.addRow(
@@ -127,6 +130,7 @@ public class EditorPanel extends FloatingPanel
      */
     public function updateInputFields () :void
     {
+        _name.text= _sceneModel.name;
         _width.text = String(_sceneModel.width);
         _depth.text = String(_sceneModel.depth);
         _horizon.value = _sceneModel.horizon;
@@ -137,6 +141,10 @@ public class EditorPanel extends FloatingPanel
         super.childrenCreated();
 
         updateInputFields();
+
+        BindingUtils.bindSetter(function (o :String) :void {
+            _sceneModel.name = o;
+        }, _name, "text");
 
         BindingUtils.bindSetter(function (o :Object) :void {
             var val :Number = Number(o);
@@ -187,6 +195,7 @@ public class EditorPanel extends FloatingPanel
 
     protected var _box :VBox;
 
+    protected var _name :TextInput;
     protected var _width :TextInput;
     protected var _depth :TextInput;
     protected var _horizon :HSlider;

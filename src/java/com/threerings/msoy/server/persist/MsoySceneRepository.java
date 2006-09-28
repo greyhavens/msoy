@@ -367,28 +367,29 @@ public class MsoySceneRepository extends SimpleRepository
             {
                 PreparedStatement stmt = conn.prepareStatement(
                     "update SCENES " +
-                    "set TYPE=?, DEPTH=?, WIDTH=?, HORIZON=?, " +
+                    "set NAME=?, TYPE=?, DEPTH=?, WIDTH=?, HORIZON=?, " +
                     "BACKGROUND_HASH=?, BACKGROUND_TYPE=?, " +
                     "MUSIC_HASH=?, MUSIC_TYPE=? " +
                     "where SCENE_ID=" + mmodel.sceneId);
                 try {
-                    stmt.setByte(1, update.type);
-                    stmt.setInt(2, update.depth);
-                    stmt.setInt(3, update.width);
-                    stmt.setFloat(4, update.horizon);
+                    stmt.setString(1, update.name);
+                    stmt.setByte(2, update.type);
+                    stmt.setInt(3, update.depth);
+                    stmt.setInt(4, update.width);
+                    stmt.setFloat(5, update.horizon);
                     if (update.background != null) {
-                        stmt.setBytes(5, flattenMediaDesc(update.background));
-                        stmt.setByte(6, update.background.mimeType);
+                        stmt.setBytes(6, flattenMediaDesc(update.background));
+                        stmt.setByte(7, update.background.mimeType);
                     } else {
-                        stmt.setBytes(5, null);
-                        stmt.setByte(6, (byte) 0);
+                        stmt.setBytes(6, null);
+                        stmt.setByte(7, (byte) 0);
                     }
                     if (update.music != null) {
-                        stmt.setBytes(7, flattenMediaDesc(update.music));
-                        stmt.setByte(8, update.music.mimeType);
+                        stmt.setBytes(8, flattenMediaDesc(update.music));
+                        stmt.setByte(9, update.music.mimeType);
                     } else {
-                        stmt.setBytes(7, null);
-                        stmt.setByte(8, (byte) 0);
+                        stmt.setBytes(8, null);
+                        stmt.setByte(9, (byte) 0);
                     }
 
                     JDBCUtil.checkedUpdate(stmt, 1);
@@ -405,14 +406,14 @@ public class MsoySceneRepository extends SimpleRepository
      *
      * @return the scene id of the newly created room.
      */
-    public int createBlankRoom (int ownerMemberId)
+    public int createBlankRoom (int ownerMemberId, String name)
         throws PersistenceException
     {
         // TODO: perhaps clone a prototype room?
         final MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
         model.ownerId = ownerMemberId;
         model.version = 1;
-        model.name = "Room"; // TODO
+        model.name = name + "'s Room"; // TODO
 
         // TODO
         //SpotSceneModel spotty = SpotSceneModel.getSceneModel(model);

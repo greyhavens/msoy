@@ -16,6 +16,9 @@ import com.threerings.msoy.item.web.MediaDesc;
  */
 public class SceneAttrsUpdate extends SceneUpdate
 {
+    /** The new name. */
+    public var name :String;
+
     /** The new type. */
     public var type :int;
 
@@ -39,6 +42,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.apply(model);
 
         var mmodel :MsoySceneModel = (model as MsoySceneModel);
+        mmodel.name = name;
         mmodel.type = type;
         mmodel.depth = depth;
         mmodel.width = width;
@@ -51,6 +55,7 @@ public class SceneAttrsUpdate extends SceneUpdate
     {
         super.writeObject(out);
 
+        out.writeField(name);
         out.writeByte(type);
         out.writeShort(depth);
         out.writeShort(width);
@@ -63,6 +68,7 @@ public class SceneAttrsUpdate extends SceneUpdate
     {
         super.readObject(ins);
 
+        name = (ins.readField(String) as String);
         type = ins.readByte();
         depth = ins.readShort();
         width = ins.readShort();
