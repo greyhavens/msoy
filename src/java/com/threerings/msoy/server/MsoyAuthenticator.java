@@ -19,6 +19,7 @@ import com.threerings.presents.server.net.AuthingConnection;
 
 import com.threerings.crowd.data.TokenRing;
 
+import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
@@ -36,6 +37,9 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyAuthenticator extends Authenticator
 {
+    /** The prefix for all authentication usernames provided to guests. */
+    public static final String GUEST_USERNAME_PREFIX = "!guest";
+
     /** Used to coordinate with authentication domains. */
     public static class Account
     {
@@ -119,6 +123,7 @@ public class MsoyAuthenticator extends Authenticator
     {
         AuthRequest req = conn.getAuthRequest();
         MsoyAuthResponseData rdata = (MsoyAuthResponseData) rsp.getData();
+        MsoyCredentials creds = null;
 
         try {
 //             // make sure they've got the correct version
@@ -138,7 +143,6 @@ public class MsoyAuthenticator extends Authenticator
 //             }
 
             // make sure they've sent valid credentials
-            MsoyCredentials creds;
             try {
                 creds = (MsoyCredentials) req.getCredentials();
 
@@ -270,6 +274,21 @@ public class MsoyAuthenticator extends Authenticator
         } catch (LogonException le) {
             rdata.code = le.getMessage();
             log.info("Rejecting authentication: " + rdata.code);
+
+        } finally {
+            if (creds != null) {
+                // we must assign their starting username
+                if (rsp.authdata != null) {
+                    // for members, we set it to their auth username
+                    creds.setUsername(new Name((String) rsp.authdata));
+
+                } else {
+                    // for guests, we use the same Name object as their
+                    // username and their display name. We create it here.
+                    creds.setUsername(new MemberName(
+                        GUEST_USERNAME_PREFIX + (++_guestCount), -1));
+                }
+            }
         }
     }
 
@@ -359,4 +378,8 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     protected Domain _defaultDomain;
+
+    /** Used to assign unique authentication usernames to guests that
+     * authenticate with the server. */
+    protected static int _guestCount;
 }

@@ -31,9 +31,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
  */
 public class MsoyClient extends WhirledClient
 {
-    /** The prefix for all authentication usernames provided to guests. */
-    public static final String GUEST_USERNAME_PREFIX = "!guest";
-
     @Override // from PresentsClient
     protected BootstrapData createBootstrapData ()
     {
@@ -46,21 +43,6 @@ public class MsoyClient extends WhirledClient
         super.populateBootstrapData(data);
 
         //((MsoyBootstrapData) data).chatOid = MsoyServer.chatOid;
-    }
-
-    @Override // from PresentsClient
-    protected void assignStartingUsername ()
-    {
-        if (_authdata != null) {
-            // for members, this is just their auth username
-            _username = new Name((String) _authdata);
-
-        } else {
-            // for guests, we use the same Name object as their usename
-            // and their display name. We create it here.
-            _username = new MemberName(
-                GUEST_USERNAME_PREFIX + ++_guestCount, -1);
-        }
     }
 
     @Override // from PresentsClient
@@ -116,9 +98,4 @@ public class MsoyClient extends WhirledClient
 
     /** A casted reference to the userobject. */
     protected MemberObject _memobj;
-
-    /** Used to assign unique authentication usernames to guests that
-     * authenticate with the server. Their display names are handled
-     * elsewhere. */
-    protected static int _guestCount;
 }
