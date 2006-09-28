@@ -27,6 +27,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.web.data.MemberGName;
 
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -438,8 +439,8 @@ public class ItemManager
                         TagNameRecord tag = repo.getTag(record.tagId);
                         TagHistory history = new TagHistory();
                         history.itemId = record.itemId;
-                        history.memberName = memRec.name;
-                        history.memberId = memRec.memberId;
+                        history.member = 
+                            new MemberGName(memRec.name, memRec.memberId);
                         history.tag = tag.tag;
                         history.action = record.action;
                         history.time = new Date(record.time.getTime());
@@ -564,8 +565,8 @@ public class ItemManager
                     // and create the return value
                     TagHistory history = new TagHistory();
                     history.itemId = originalId;
-                    history.memberName = member.name;
-                    history.memberId = member.memberId;
+                    history.member =
+                        new MemberGName(member.name, member.memberId);
                     history.tag = tag.tag;
                     history.action = historyRecord.action;
                     history.time = new Date(historyRecord.time.getTime());
