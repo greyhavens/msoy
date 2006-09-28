@@ -34,6 +34,14 @@ public final class ItemEnum
     }
 
     /**
+     * Returns all the ItemEnum instances.
+     */
+    public static function values () :Array
+    {
+        return _codeToEnum.values();
+    }
+
+    /**
      * Returns the {@link Item} derived class that represents this item type.
      */
     public function getItemClass () :Class
@@ -48,6 +56,14 @@ public final class ItemEnum
     public function getCode () :int
     {
         return _code;
+    }
+
+    /**
+     * Returns the string code for this enum, like "PHOTO".
+     */
+    public function getStringCode () :String
+    {
+        return ClassUtil.tinyClassName(_itemClass).toUpperCase();
     }
 
     /**
