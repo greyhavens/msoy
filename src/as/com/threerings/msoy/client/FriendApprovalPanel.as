@@ -17,6 +17,8 @@ import com.threerings.msoy.ui.MsoyUI;
 
 public class FriendApprovalPanel extends FloatingPanel
 {
+    public static const DENY_BUTTON :int = -1;
+
     public function FriendApprovalPanel (ctx :MsoyContext, asker :MemberName)
     {
         super(ctx, ctx.xlate(null, "t.approve_friend"));
@@ -31,22 +33,32 @@ public class FriendApprovalPanel extends FloatingPanel
         addChild(MsoyUI.createLabel(
             _ctx.xlate(null, "m.approve_friend", _asker)));
 
-        addButtons(CANCEL_BUTTON, OK_BUTTON);
+        addButtons(DENY_BUTTON, OK_BUTTON);
     }
 
     override protected function createButton (buttonId :int) :Button
     {
-        var btn :Button = super.createButton(buttonId);
-        if (buttonId == CANCEL_BUTTON) {
+        if (buttonId == DENY_BUTTON) {
+            var btn :Button = new Button();
             btn.label = _ctx.xlate(null, "b.deny_friend");
+            return btn;
         }
-        return btn;
+
+        return super.createButton(buttonId);
     }
 
     override protected function buttonClicked (buttonId :int) :void
     {
         var approve :Boolean = (buttonId == OK_BUTTON);
-        super.buttonClicked(buttonId);
+        switch (buttonId) {
+        case DENY_BUTTON:
+            close();
+            break;
+
+        default:
+            super.buttonClicked(buttonId);
+            break;
+        }
         CommandEvent.dispatch(_ctx.getRootPanel(),
             MsoyController.ALTER_FRIEND, [ _asker.getMemberId(), approve ]);
     }
