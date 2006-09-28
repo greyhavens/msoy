@@ -5,6 +5,7 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.web.data.ItemGIdent;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
@@ -21,12 +22,12 @@ public interface CatalogServiceAsync
     /**
      *  The asynchronous version of {@link CatalogService#purchaseItem}
      */
-    public void purchaseItem (WebCreds creds, int itemId, String type,
+    public void purchaseItem (WebCreds creds, ItemGIdent item,
                               AsyncCallback callback);
     
     /**
      *  The asynchronous version of {@link CatalogService#listItem}
      */
-    public void listItem (WebCreds creds, int itemId, String type,
+    public void listItem (WebCreds creds, ItemGIdent item,
                           AsyncCallback callback);
 }

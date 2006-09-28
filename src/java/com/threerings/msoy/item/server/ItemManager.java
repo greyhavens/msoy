@@ -29,21 +29,23 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.MemberGName;
 
+import com.threerings.msoy.item.data.ItemIdent;
+import com.threerings.msoy.item.util.ItemEnum;
+import com.threerings.msoy.item.web.CatalogListing;
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.TagHistory;
+
 import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.TagHistoryRecord;
 import com.threerings.msoy.item.server.persist.TagNameRecord;
-import com.threerings.msoy.item.util.ItemEnum;
-import com.threerings.msoy.item.web.CatalogListing;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.TagHistory;
 
 import static com.threerings.msoy.Log.log;
 
@@ -111,13 +113,10 @@ public class ItemManager
     /**
      * Get the specified item.
      */
-    public void getItem (
-        ItemEnum type, final int itemId, ResultListener<Item> listener)
+    public void getItem (final ItemIdent ident, ResultListener<Item> listener)
     {
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
         if (repo == null) {
-            listener.requestFailed(new Exception("No repository registered " +
-                "for " + type + "."));
             return;
         }
 
@@ -126,7 +125,7 @@ public class ItemManager
             public Item invokePersistResult ()
                 throws PersistenceException
             {
-                return repo.loadItem(itemId).toItem();
+                return repo.loadItem(ident.itemId).toItem();
             }
         });
     }
@@ -137,22 +136,20 @@ public class ItemManager
      * process. Success or failure will be communicated to the supplied result
      * listener.
      */
-    public void insertItem (final Item item, ResultListener<Item> waiter)
+    public void insertItem (final Item item, ResultListener<Item> listener)
     {
-        final ItemRecord record = ItemRecord.newRecord(item); 
+        final ItemRecord record = ItemRecord.newRecord(item);
         ItemEnum type = record.getType();
 
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(type, listener);
         if (repo == null) {
-            waiter.requestFailed(new Exception("No repository registered for "
-                + type + "."));
             return;
         }
 
         // and insert the item; notifying the listener on success or failure
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(
-            waiter) {
+            listener) {
             public Item invokePersistResult ()
                 throws PersistenceException
             {
@@ -176,7 +173,7 @@ public class ItemManager
      * being loaded from the database.
      */
     public void loadInventory (final int memberId, ItemEnum type,
-            ResultListener<ArrayList<Item>> waiter)
+                               ResultListener<ArrayList<Item>> listener)
     {
         // first check the cache
         final Tuple<Integer, ItemEnum> key =
@@ -189,21 +186,20 @@ public class ItemManager
             for (ItemRecord record : items) {
                 list.add(record.toItem());
             }
-            waiter.requestCompleted(list);
+            listener.requestCompleted(list);
             return;
         }
         }
+
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(type, listener);
         if (repo == null) {
-            waiter.requestFailed(new Exception("No repository registered for "
-                + type + "."));
             return;
         }
 
         // and load their items; notifying the listener on success or failure
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<ArrayList<Item>>(waiter) {
+            new RepositoryListenerUnit<ArrayList<Item>>(listener) {
                     public ArrayList<Item> invokePersistResult ()
                         throws PersistenceException
                     {
@@ -230,19 +226,17 @@ public class ItemManager
      * Fetches the entire catalog of listed items of the given type.
      */
     public void loadCatalog (int memberId, ItemEnum type,
-            ResultListener<ArrayList<CatalogListing>> waiter)
+                             ResultListener<ArrayList<CatalogListing>> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(type, listener);
         if (repo == null) {
-            waiter.requestFailed(new Exception("No repository registered for "
-                + type + "."));
             return;
         }
 
         // and load the catalog
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<ArrayList<CatalogListing>>(waiter) {
+            new RepositoryListenerUnit<ArrayList<CatalogListing>>(listener) {
                 public ArrayList<CatalogListing> invokePersistResult ()
                     throws PersistenceException
                 {
@@ -260,23 +254,21 @@ public class ItemManager
      * Purchases a given item for a given member from the catalog by
      * creating a new clone row in the appropriate database table.
      */
-    public void purchaseItem (final int memberId, final int itemId,
-            ItemEnum type, ResultListener<Item> waiter)
+    public void purchaseItem (final int memberId, final ItemIdent ident,
+                              ResultListener<Item> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
         if (repo == null) {
-            waiter.requestFailed(new Exception("No repository registered for "
-                + type + "."));
             return;
         }
 
         // and perform the purchase
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(waiter) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
             public Item invokePersistResult () throws PersistenceException
             {
                 // load the item being purchased
-                ItemRecord item = repo.loadItem(itemId);
+                ItemRecord item = repo.loadItem(ident.itemId);
                 // sanity check it
                 if (item.ownerId != -1) {
                     throw new PersistenceException(
@@ -298,32 +290,30 @@ public class ItemManager
      * Lists the given item in the catalog by creating a new item row and
      * a new catalog row and returning the immutable form of the item.
      */
-    public void listItem (final int itemId, ItemEnum type,
-            ResultListener<CatalogListing> waiter)
+    public void listItem (final ItemIdent ident,
+                          ResultListener<CatalogListing> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
         if (repo == null) {
-            waiter.requestFailed(new Exception("No repository registered for "
-                + type + "."));
             return;
         }
 
         // and perform the listing
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<CatalogListing>(waiter) {
+            new RepositoryListenerUnit<CatalogListing>(listener) {
             public CatalogListing invokePersistResult ()
                 throws PersistenceException
             {
                 // load a copy of the original item
-                ItemRecord listItem = repo.loadItem(itemId);
+                ItemRecord listItem = repo.loadItem(ident.itemId);
                 if (listItem == null) {
                     throw new PersistenceException(
-                        "Can't find object to list [itemId = " + itemId + "]");
+                        "Can't find object to list [item= " + ident + "]");
                 }
                 if (listItem.ownerId == -1) {
                     throw new PersistenceException(
-                        "Object is already listed [itemId=" + itemId + "]");
+                        "Object is already listed [item=" + ident + "]");
                 }
                 // reset the owner
                 listItem.ownerId = -1;
@@ -342,23 +332,21 @@ public class ItemManager
     /**
      * Remix a clone, turning it back into a full-featured original.
      */
-    public void remixItem (
-            final int itemId, ItemEnum type, ResultListener<Item> waiter)
+    public void remixItem (final ItemIdent ident, ResultListener<Item> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
         if (repo == null) {
-            waiter.requestFailed(new Exception("No repository registered for "
-                + type + "."));
             return;
         }
+
         // and perform the remixing
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Item>(waiter) {
+            new RepositoryListenerUnit<Item>(listener) {
             public Item invokePersistResult () throws PersistenceException
             {
                 // load a copy of the clone to modify
-                _item = repo.loadClone(itemId);
+                _item = repo.loadClone(ident.itemId);
                 // TODO: make sure we should not use the original creator here
                 // make it ours
                 _item.creatorId = _item.ownerId;
@@ -369,7 +357,7 @@ public class ItemManager
                 _item.itemId = 0;
                 repo.insertItem(_item);
                 // delete the old clone
-                repo.deleteClone(itemId);
+                repo.deleteClone(ident.itemId);
                 // copy tags from the original to the new item
                 repo.copyTags(
                     originalId, _item.itemId, _item.ownerId,
@@ -390,191 +378,182 @@ public class ItemManager
     }
 
     /** Fetch the rating a user has given an item, or 0. */
-    public void getRating (
-        final int itemId, ItemEnum type, final int memberId,
-        ResultListener<Byte> waiter)
+    public void getRating (final ItemIdent ident, final int memberId,
+                           ResultListener<Byte> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
         if (repo == null) {
-            waiter.requestFailed(new Exception("No repository registered for "
-                + type + "."));
             return;
         }
+
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Byte>(waiter) {
+            new RepositoryListenerUnit<Byte>(listener) {
                 public Byte invokePersistResult () throws PersistenceException {
                     RatingRecord<ItemRecord> record =
-                        repo.getRating(itemId, memberId);
+                        repo.getRating(ident.itemId, memberId);
                     return record != null ? record.rating : 0;
                 }
             });
     }
-    
+
     /** Fetch the tagging history for a given item. */
-    public void getTagHistory (
-        final int itemId, ItemEnum type,
-        ResultListener<Collection<TagHistory>> waiter)
+    public void getTagHistory (final ItemIdent ident,
+                               ResultListener<Collection<TagHistory>> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
         if (repo == null) {
-            waiter.requestFailed(new Exception("No repository registered for "
-                + type + "."));
             return;
         }
+
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Collection<TagHistory>>(waiter) {
-                public Collection<TagHistory> invokePersistResult ()
-                        throws PersistenceException {
-                    HashMap<Integer, MemberRecord> memberCache =
-                        new HashMap<Integer, MemberRecord>();
-                    ArrayList<TagHistory> list = new ArrayList<TagHistory>();
-                    for (TagHistoryRecord<ItemRecord> record :
-                            repo.getTagHistory(itemId)) {
-                        // we should probably go through/cache in MemberManager
-                        MemberRecord memRec = memberCache.get(record.memberId);
-                        if (memRec == null) {
-                            memRec = MsoyServer.memberRepo.loadMember(
-                                record.memberId);
-                            memberCache.put(record.memberId, memRec);
-                        }
-                        TagNameRecord tag = repo.getTag(record.tagId);
-                        TagHistory history = new TagHistory();
-                        history.itemId = record.itemId;
-                        history.member = 
-                            new MemberGName(memRec.name, memRec.memberId);
-                        history.tag = tag.tag;
-                        history.action = record.action;
-                        history.time = new Date(record.time.getTime());
-                        list.add(history);
+            new RepositoryListenerUnit<Collection<TagHistory>>(listener) {
+            public Collection<TagHistory> invokePersistResult ()
+                throws PersistenceException {
+                HashMap<Integer, MemberRecord> memberCache =
+                    new HashMap<Integer, MemberRecord>();
+                ArrayList<TagHistory> list = new ArrayList<TagHistory>();
+                for (TagHistoryRecord<ItemRecord> record :
+                         repo.getTagHistory(ident.itemId)) {
+                    // we should probably go through/cache in MemberManager
+                    MemberRecord memRec = memberCache.get(record.memberId);
+                    if (memRec == null) {
+                        memRec = MsoyServer.memberRepo.loadMember(
+                            record.memberId);
+                        memberCache.put(record.memberId, memRec);
                     }
-                    return list;
+                    TagNameRecord tag = repo.getTag(record.tagId);
+                    TagHistory history = new TagHistory();
+                    history.itemId = record.itemId;
+                    history.member =
+                        new MemberGName(memRec.name, memRec.memberId);
+                    history.tag = tag.tag;
+                    history.action = record.action;
+                    history.time = new Date(record.time.getTime());
+                    list.add(history);
                 }
-            });
+                return list;
+            }
+        });
     }
 
-    /** Let a member rate an object. */
-    public void rateItem (
-        final int itemId, ItemEnum type, final int memberId,
-        final byte rating, ResultListener<Item> waiter)
+    /**
+     * Records the specified member's rating of an item.
+     */
+    public void rateItem (final ItemIdent ident, final int memberId,
+                          final byte rating, ResultListener<Item> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
         if (repo == null) {
-            waiter.requestFailed(new Exception("No repository registered for "
-                + type + "."));
             return;
         }
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Item>(waiter) {
-                public Item invokePersistResult () throws PersistenceException {
-                    ItemRecord item = repo.loadItem(itemId);
-                    int originalId;
-                    if (item == null) {
-                        item = repo.loadClone(itemId);
-                        if (item == null) {
-                            throw new PersistenceException(
-                                "Can't find item [itemId=" + itemId + "]");
-                        }
-                        originalId = item.parentId;
-                    } else {
-                        // make sure we're not trying to rate a mutable
-                        if (item.ownerId != -1) {
-                            throw new PersistenceException(
-                                "Can't rate mutable object [itemId=" +
-                                itemId + "]");
-                        }
-                        originalId = itemId;
-                    }
-                    item.rating = repo.rateItem(originalId, memberId, rating);
-                    return item.toItem();
-                }
-            });
 
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
+            public Item invokePersistResult () throws PersistenceException {
+                ItemRecord item = repo.loadItem(ident.itemId);
+                int originalId;
+                if (item == null) {
+                    item = repo.loadClone(ident.itemId);
+                    if (item == null) {
+                        throw new PersistenceException(
+                            "Can't find item [item=" + ident + "]");
+                    }
+                    originalId = item.parentId;
+                } else {
+                    // make sure we're not trying to rate a mutable
+                    if (item.ownerId != -1) {
+                        throw new PersistenceException(
+                            "Can't rate mutable object [item=" + ident + "]");
+                    }
+                    originalId = ident.itemId;
+                }
+                item.rating = repo.rateItem(originalId, memberId, rating);
+                return item.toItem();
+            }
+        });
     }
 
     /** Add the specified tag to the specified item. Return a tag history
      *  object if the tag did not already exist. */
-    public void tagItem (
-        int itemId, ItemEnum type, int taggerId, String tagName,
-        ResultListener<TagHistory> waiter)
+    public void tagItem (ItemIdent ident, int taggerId, String tagName,
+                         ResultListener<TagHistory> listener)
     {
-        itemTagging(
-            itemId, type, taggerId, tagName.trim().toLowerCase(),
-            waiter, true);
+        itemTagging(ident, taggerId, tagName, listener, true);
     }
 
     /** Remove the specified tag from the specified item. Return a tag history
      *  object if the tag existed. */
-    public void untagItem (
-        int itemId, ItemEnum type, int taggerId, String tagName,
-        ResultListener<TagHistory> waiter)
+    public void untagItem (ItemIdent ident, int taggerId, String tagName,
+                           ResultListener<TagHistory> listener)
     {
-        itemTagging(
-            itemId, type, taggerId, tagName.trim().toLowerCase(),
-            waiter, false);
+        itemTagging(ident, taggerId, tagName, listener, false);
     }
 
     // do the facade work for tagging
     protected void itemTagging (
-        final int itemId, ItemEnum type, final int taggerId,
-        final String tagName, ResultListener<TagHistory> waiter,
-        final boolean doTag)
+        final ItemIdent ident, final int taggerId, final String rawTagName,
+        ResultListener<TagHistory> listener, final boolean doTag)
     {
+        // sanitize the tag name
+        final String tagName = rawTagName.trim().toLowerCase();
+
         if (!validTag.matcher(tagName).matches()) {
-            waiter.requestFailed(new IllegalArgumentException(
+            listener.requestFailed(new IllegalArgumentException(
                 "Invalid tag [tag=" + tagName + "]"));
             return;
         }
+
         // locate the appropriate repository
-        final ItemRepository<ItemRecord> repo = _repos.get(type);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
         if (repo == null) {
-            waiter.requestFailed(new Exception("No repository registered for "
-                + type + "."));
             return;
         }
+
         // and perform the remixing
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<TagHistory>(waiter) {
-                public TagHistory invokePersistResult ()
-                        throws PersistenceException {
-                    long now = System.currentTimeMillis();
+            new RepositoryListenerUnit<TagHistory>(listener) {
+            public TagHistory invokePersistResult ()
+                throws PersistenceException {
+                long now = System.currentTimeMillis();
 
-                    ItemRecord item = repo.loadItem(itemId);
-                    int originalId;
+                ItemRecord item = repo.loadItem(ident.itemId);
+                int originalId;
+                if (item == null) {
+                    // it's probably a clone
+                    item = repo.loadClone(ident.itemId);
                     if (item == null) {
-                        // it's probably a clone
-                        item = repo.loadClone(itemId);
-                        if (item == null) {
-                            throw new PersistenceException(
-                                "Can't find item [itemId=" + itemId + "]");
-                        }
-                        // in which case we fetch the original
-                        originalId = item.parentId;
-                    } else {
-                        originalId = itemId;
+                        throw new PersistenceException(
+                            "Can't find item [item=" + ident + "]");
                     }
-                    // map tag to tag id
-                    TagNameRecord tag = repo.getTag(tagName);
-                    // do the actual work
-                    TagHistoryRecord<ItemRecord> historyRecord = doTag ? 
-                        repo.tagItem(originalId, tag.tagId, taggerId, now) :
-                        repo.untagItem(originalId, tag.tagId, taggerId, now);
-
-                    // finally look up the member
-                    MemberRecord member = MsoyServer.memberRepo.loadMember(
-                        historyRecord.memberId);
-                    // and create the return value
-                    TagHistory history = new TagHistory();
-                    history.itemId = originalId;
-                    history.member =
-                        new MemberGName(member.name, member.memberId);
-                    history.tag = tag.tag;
-                    history.action = historyRecord.action;
-                    history.time = new Date(historyRecord.time.getTime());
-                    return history;
+                    // in which case we fetch the original
+                    originalId = item.parentId;
+                } else {
+                    originalId = ident.itemId;
                 }
+
+                // map tag to tag id
+                TagNameRecord tag = repo.getTag(tagName);
+
+                // do the actual work
+                TagHistoryRecord<ItemRecord> historyRecord = doTag ?
+                    repo.tagItem(originalId, tag.tagId, taggerId, now) :
+                    repo.untagItem(originalId, tag.tagId, taggerId, now);
+
+                // finally look up the member
+                MemberRecord member = MsoyServer.memberRepo.loadMember(
+                    historyRecord.memberId);
+
+                // and create the return value
+                TagHistory history = new TagHistory();
+                history.itemId = originalId;
+                history.member = new MemberGName(member.name, member.memberId);
+                history.tag = tag.tag;
+                history.action = historyRecord.action;
+                history.time = new Date(historyRecord.time.getTime());
+                return history;
+            }
         });
     }
 
@@ -592,6 +571,23 @@ public class ItemManager
         }
     }
 
+    protected ItemRepository<ItemRecord> getRepository (
+        ItemIdent ident, ResultListener<?> listener)
+    {
+        return getRepository(ident.type, listener);
+    }
+
+    protected ItemRepository<ItemRecord> getRepository (
+        ItemEnum type, ResultListener<?> listener)
+    {
+        ItemRepository<ItemRecord> repo = _repos.get(type);
+        if (repo == null) {
+            String errmsg = "No repository registered for " + type + ".";
+            listener.requestFailed(new Exception(errmsg));
+        }
+        return repo;
+    }
+
     /** A regexp pattern to validate tags. */
     protected static final Pattern validTag =
         Pattern.compile("[a-z](_?[a-z0-9]){2,18}");
@@ -601,6 +597,7 @@ public class ItemManager
         new HashMap<ItemEnum, ItemRepository<ItemRecord>>();
 
     /** A soft reference cache of item list indexed on (user,type). */
-    protected SoftCache<Tuple<Integer, ItemEnum>, Collection<ItemRecord>> _itemCache =
+    protected SoftCache<Tuple<Integer, ItemEnum>, Collection<ItemRecord>>
+        _itemCache =
         new SoftCache<Tuple<Integer, ItemEnum>, Collection<ItemRecord>>();
 }

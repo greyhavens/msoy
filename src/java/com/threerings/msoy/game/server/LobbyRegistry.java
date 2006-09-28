@@ -23,8 +23,9 @@ import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.web.Item;
 
 import com.threerings.msoy.item.util.ItemEnum;
 
@@ -77,7 +78,7 @@ public class LobbyRegistry
         list.add(listener);
         _loading.put(gameId, list);
 
-        MsoyServer.itemMan.getItem(ItemEnum.GAME, gameId,
+        MsoyServer.itemMan.getItem(new ItemIdent(ItemEnum.GAME, gameId),
             new ResultListener<Item>() {
             public void requestCompleted (Item item)
             {

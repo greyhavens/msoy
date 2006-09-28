@@ -7,12 +7,14 @@ import java.util.ArrayList;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import com.threerings.msoy.item.data.ItemIdent;
+import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.data.ItemGIdent;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -47,40 +49,25 @@ public class CatalogServlet extends RemoteServiceServlet
     }
 
     // from interface CatalogService
-    public Item purchaseItem (WebCreds creds, int itemId, String type)
+    public Item purchaseItem (WebCreds creds, ItemGIdent item)
         throws ServiceException
     {
-        ItemEnum etype = ItemEnum.valueOf(type);
-        if (etype == null) {
-            log.warning("Requested to purchase item of invalid item type " +
-                        "[who=" + creds + ", itemId=" + itemId +
-                        "type=" + type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
-        }
+        ItemIdent ident = ItemServlet.toIdent(creds, item, "purchaseItem");
         ServletWaiter<Item> waiter = new ServletWaiter<Item>(
-                "purchaseItem[" + creds.memberId + ", " +
-                itemId + ", " + etype + "]");
-        MsoyServer.itemMan.purchaseItem(
-            creds.memberId, itemId, etype, waiter);
+            "purchaseItem[" + creds.memberId + ", " + item + "]");
+        MsoyServer.itemMan.purchaseItem(creds.memberId, ident, waiter);
         return waiter.waitForResult();
 
     }
 
     // from interface CatalogService
-    public CatalogListing listItem (WebCreds creds, int itemId, String type)
+    public CatalogListing listItem (WebCreds creds, ItemGIdent item)
         throws ServiceException
     {
-        ItemEnum etype = ItemEnum.valueOf(type);
-        if (etype == null) {
-            log.warning("Requested to list item of invalid item type " +
-                "[who=" + creds + ", itemId=" + itemId +
-                "type=" + type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
-        }
+        ItemIdent ident = ItemServlet.toIdent(creds, item, "listItem");
         ServletWaiter<CatalogListing> waiter =
-            new ServletWaiter<CatalogListing>(
-                "listItem[" + itemId + ", " + etype + "]");
-        MsoyServer.itemMan.listItem(itemId, etype, waiter);
+            new ServletWaiter<CatalogListing>("listItem[" + item + "]");
+        MsoyServer.itemMan.listItem(ident, waiter);
         return waiter.waitForResult();
     }
 }

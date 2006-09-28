@@ -9,12 +9,14 @@ import java.util.logging.Level;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import com.threerings.msoy.item.data.ItemIdent;
+import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.TagHistory;
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.data.ItemGIdent;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -58,8 +60,8 @@ public class ItemServlet extends RemoteServiceServlet
         // TODO: validate this user's creds
 
         // convert the string they supplied to an item enumeration
-        ItemEnum etype = ItemEnum.valueOf(type);
-        if (etype == null) {
+        ItemEnum itype = ItemEnum.valueOf(type);
+        if (type == null) {
             log.warning("Requested to load inventory for invalid item type " +
                         "[who=" + creds + ", type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
@@ -68,118 +70,100 @@ public class ItemServlet extends RemoteServiceServlet
         // load their inventory via the item manager
         ServletWaiter<ArrayList<Item>> waiter =
             new ServletWaiter<ArrayList<Item>>(
-                "loadInventory[" + creds.memberId + ", " + etype + "]");
-        MsoyServer.itemMan.loadInventory(creds.memberId, etype, waiter);
+                "loadInventory[" + creds.memberId + ", " + itype + "]");
+        MsoyServer.itemMan.loadInventory(creds.memberId, itype, waiter);
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public Item remixItem (WebCreds creds, int itemId, String type)
+    public Item loadItem (WebCreds creds, ItemGIdent item)
         throws ServiceException
     {
-        ItemEnum etype = ItemEnum.valueOf(type);
-        if (etype == null) {
-            log.warning("Requested to remix item of invalid item type " +
-                "[who=" + creds + ", itemId=" + itemId +
-                "type=" + type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
-        }
-        ServletWaiter<Item> waiter = new ServletWaiter<Item>(
-                "remixItem[" + itemId + ", " + etype + "]");
-        MsoyServer.itemMan.remixItem(itemId, etype, waiter);
+        ItemIdent ident = toIdent(creds, item, "loadItem");
+        ServletWaiter<Item> waiter =
+            new ServletWaiter<Item>("loadItem[" + item + "]");
+        MsoyServer.itemMan.getItem(ident, waiter);
+        return waiter.waitForResult();
+    }
+
+    // from interface ItemService
+    public Item remixItem (WebCreds creds, ItemGIdent item)
+        throws ServiceException
+    {
+        ItemIdent ident = toIdent(creds, item, "remixItem");
+        ServletWaiter<Item> waiter =
+            new ServletWaiter<Item>("remixItem[" + item + "]");
+        MsoyServer.itemMan.remixItem(ident, waiter);
         return waiter.waitForResult();
     }
     
     // from interface ItemService    
-    public byte getRating (
-        WebCreds creds, int itemId, String type, int memberId)
+    public byte getRating (WebCreds creds, ItemGIdent item, int memberId)
             throws ServiceException
     {
-        ItemEnum etype = ItemEnum.valueOf(type);
-        if (etype == null) {
-            log.warning("Requested to rate item of invalid item type " +
-                "[who=" + creds + ", itemId=" + itemId +
-                "type=" + type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
-        }
-        ServletWaiter<Byte> waiter = new ServletWaiter<Byte>(
-                "rateItem[" + itemId + ", " + etype + "]");
-        MsoyServer.itemMan.getRating(itemId, etype, memberId, waiter);
+        ItemIdent ident = toIdent(creds, item, "getRating");
+        ServletWaiter<Byte> waiter =
+            new ServletWaiter<Byte>("rateItem[" + item + "]");
+        MsoyServer.itemMan.getRating(ident, memberId, waiter);
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public Item rateItem (WebCreds creds, int itemId, String type, byte rating)
+    public Item rateItem (WebCreds creds, ItemGIdent item, byte rating)
             throws ServiceException
     {
-        ItemEnum etype = ItemEnum.valueOf(type);
-        if (etype == null) {
-            log.warning("Requested to rate item of invalid item type " +
-                "[who=" + creds + ", itemId=" + itemId +
-                "type=" + type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
-        }
-        ServletWaiter<Item> waiter = new ServletWaiter<Item>(
-                "rateItem[" + itemId + ", " + etype + "]");
-        MsoyServer.itemMan.rateItem(
-            itemId, etype, creds.memberId, rating, waiter);
+        ItemIdent ident = toIdent(creds, item, "rateItem");
+        ServletWaiter<Item> waiter =
+            new ServletWaiter<Item>("rateItem[" + item + "]");
+        MsoyServer.itemMan.rateItem(ident, creds.memberId, rating, waiter);
         return waiter.waitForResult();
     }
 
     // from interface ItemService
     public Collection<TagHistory> getTagHistory (
-        WebCreds creds, int itemId, String type)
+        WebCreds creds, ItemGIdent item)
             throws ServiceException
     {
-        ItemEnum etype = ItemEnum.valueOf(type);
-        if (etype == null) {
-            log.warning("Requested to get tag history of invalid item type " +
-                "[who=" + creds + ", itemId=" + itemId +
-                "type=" + type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
-        }
+        ItemIdent ident = toIdent(creds, item, "getTagHistory");
         ServletWaiter<Collection<TagHistory>> waiter =
             new ServletWaiter<Collection<TagHistory>>(
-                "getTagHistory[" + itemId + ", " + etype + "]");
-        MsoyServer.itemMan.getTagHistory(itemId, etype, waiter);
+                "getTagHistory[" + item + "]");
+        MsoyServer.itemMan.getTagHistory(ident, waiter);
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public TagHistory tagItem (
-        WebCreds creds, int itemId, String type, String tag)
-            throws ServiceException
+    public TagHistory tagItem (WebCreds creds, ItemGIdent item, String tag)
+        throws ServiceException
     {
-        ItemEnum etype = ItemEnum.valueOf(type);
-        if (etype == null) {
-            log.warning("Requested to tag item of invalid item type " +
-                "[who=" + creds + ", itemId=" + itemId +
-                "type=" + type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
-        }
-        ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
-                "tagItem[" + itemId + ", " + etype + "]");
-        MsoyServer.itemMan.tagItem(
-            itemId, etype, creds.memberId, tag, waiter);
+        ItemIdent ident = toIdent(creds, item, "tagItem");
+        ServletWaiter<TagHistory> waiter =
+            new ServletWaiter<TagHistory>("tagItem[" + item + "]");
+        MsoyServer.itemMan.tagItem(ident, creds.memberId, tag, waiter);
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public TagHistory untagItem (
-        WebCreds creds, int itemId, String type, String tag)
-            throws ServiceException
+    public TagHistory untagItem (WebCreds creds, ItemGIdent item, String tag)
+        throws ServiceException
     {
-        ItemEnum etype = ItemEnum.valueOf(type);
-        if (etype == null) {
-            log.warning("Requested to untag item of invalid item type " +
-                "[who=" + creds + ", itemId=" + itemId +
-                "type=" + type + "].");
+        ItemIdent ident = toIdent(creds, item, "untagItem");
+        ServletWaiter<TagHistory> waiter =
+            new ServletWaiter<TagHistory>("untagItem[" + item + "]");
+        MsoyServer.itemMan.untagItem(ident, creds.memberId, tag, waiter);
+        return waiter.waitForResult();
+    }
+
+    protected static ItemIdent toIdent (WebCreds creds, ItemGIdent item,
+                                        String where)
+        throws ServiceException
+    {
+        ItemEnum type = ItemEnum.valueOf(item.type);
+        if (type == null) {
+            log.warning("Rejecting invalid item type [where=" + where +
+                        ", who=" + creds + ", type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
         }
-        ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
-                "untagItem[" + itemId + ", " + etype + "]");
-        MsoyServer.itemMan.untagItem(
-            itemId, etype, creds.memberId, tag, waiter);
-        return waiter.waitForResult();
+        return new ItemIdent(type, item.itemId);
     }
 }
