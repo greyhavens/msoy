@@ -9,6 +9,7 @@ import java.util.logging.Level;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
+import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.util.AuditLogger;
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
@@ -84,6 +85,9 @@ public class MsoyServer extends WhirledServer
     /** The lobby registry for this server. */
     public static LobbyRegistry lobbyReg = new LobbyRegistry();
 
+    /** Our transition repository. */
+    public static TransitionRepository transitRepo;
+
     /** Handles HTTP servlet requests. */
     public static MsoyHttpServer httpServer;
 
@@ -148,6 +152,9 @@ public class MsoyServer extends WhirledServer
         // our superclass will attempt to create our authenticator and we'll
         // need the connection provider ready at that time
         conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
+
+        // create our transition manager prior to doing anything else
+        transitRepo = new TransitionRepository(conProv);
 
         super.init();
 
