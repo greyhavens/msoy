@@ -13,7 +13,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Photo;
 
 /**
- * Represents an uploaded photograph for display in albumns or for use as a
+ * Represents an uploaded photograph for display in albums or for use as a
  * profile picture.
  */
 @Entity

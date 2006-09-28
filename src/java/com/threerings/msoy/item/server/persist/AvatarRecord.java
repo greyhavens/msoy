@@ -13,8 +13,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Avatar;
 
 /**
- * Represents an uploaded avatargraph for display in albumns or for use as a
- * profile picture.
+ * Represents an uploaded avatar.
  */
 @Entity
 @Table
