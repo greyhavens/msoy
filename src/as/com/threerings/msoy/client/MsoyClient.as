@@ -66,6 +66,7 @@ public class MsoyClient extends Client
         var creds :MsoyCredentials = new MsoyCredentials(null, null);
         creds.sessionToken = Prefs.getSessionToken();
         creds.ident = Prefs.getMachineIdent();
+        trace("==== sending " + creds.sessionToken);
         super(creds, app);
 
         // set up a context menu that blocks funnybiz on the stage
@@ -102,6 +103,7 @@ public class MsoyClient extends Client
         }
         if (rdata.sessionToken != null) {
             Prefs.setSessionToken(rdata.sessionToken);
+            trace("==== storing " + rdata.sessionToken);
         }
     }
 

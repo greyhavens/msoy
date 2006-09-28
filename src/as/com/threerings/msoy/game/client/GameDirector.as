@@ -18,6 +18,11 @@ import com.threerings.msoy.game.data.GameCodes;
 /**
  * A director that manages invitations and game starting.
  */
+
+// TODO: most of this is temporary and will be re-done, this class
+// may even die.
+//
+
 public class GameDirector extends BasicDirector
     implements InvitationHandler, InvitationResponseObserver
 {

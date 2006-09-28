@@ -41,7 +41,7 @@ public class MsoyController extends Controller
     public static const GO_SCENE :String = "GoScene";
 
     /** Command to go to a friend's home scene. */
-    public static const GO_FRIEND_HOME :String = "GoFriendHome";
+    public static const GO_MEMBER_HOME :String = "GoMemberHome";
 
     /** Command to add/remove friends. */
     public static const ALTER_FRIEND :String = "AlterFriend";
@@ -83,7 +83,7 @@ public class MsoyController extends Controller
             function (fe :FriendEntry, index :int, array :Array) :Object {
                 return {
                     label: fe.name.toString(),
-                    command: GO_FRIEND_HOME,
+                    command: GO_MEMBER_HOME,
                     arg: fe.getMemberId()
                 };
             });
@@ -137,9 +137,9 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the GO_FRIEND_HOME command.
+     * Handle the GO_MEMBER_HOME command.
      */
-    public function handleGoFriendHome (memberId :int) :void
+    public function handleGoMemberHome (memberId :int) :void
     {
         var msvc :MemberService =
             (_ctx.getClient().requireService(MemberService) as MemberService);

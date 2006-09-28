@@ -55,7 +55,6 @@ public class RoomController extends SceneController
     public static const AVATAR_CLICKED :String = "AvatarClicked";
 
     public static const TELL :String = "Tell";
-    public static const GAME_INVITE :String = "GameInvite";
 
     public static const TEMP_CLEAR_SCENE_CACHE :String = "clrScenes";
 
@@ -189,10 +188,6 @@ public class RoomController extends SceneController
         if (occInfo.bodyOid == us.getOid()) {
             // create a menu for clicking on ourselves
 
-            // TEMP: allow us to start a game with ourselves
-            menuItems.push({ label: _mctx.xlate(null, "b.inviteGame"),
-                command: GAME_INVITE, arg: occInfo.username });
-
         } else {
             // create a menu for clicking on someone else
             var memId :int = occInfo.getMemberId();
@@ -203,27 +198,19 @@ public class RoomController extends SceneController
 
             if (!isGuest) {
                 menuItems.push(
+                    { label: _mctx.xlate(null, "b.visit_home"),
+                      command: MsoyController.GO_MEMBER_HOME,
+                      arg: memId },
                     { label: _mctx.xlate(null, isFriend ? "b.removeAsFriend"
                                                         : "b.addAsFriend"),
                       command: MsoyController.ALTER_FRIEND,
-                      arg: [memId, !isFriend] },
-                    { label: _mctx.xlate(null, "b.inviteGame"),
-                      command: GAME_INVITE,
-                      arg: occInfo.username });
+                      arg: [memId, !isFriend] });
             }
         }
 
         var menu :CommandMenu = CommandMenu.createMenu(avatar, menuItems);
         var p :Point = avatar.localToGlobal(new Point());
         menu.show(p.x, p.y);
-    }
-
-    /**
-     * Handles GAME_INVITE.
-     */
-    public function handleGameInvite (invitee :MemberName) :void
-    {
-        _mctx.getGameDirector().configureInvite(invitee);
     }
 
     /**
