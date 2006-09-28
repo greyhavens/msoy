@@ -7,10 +7,13 @@ import mx.core.UIComponent;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
+import com.threerings.util.ArrayUtil;
+
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.LazyTabNavigator;
 
+import com.threerings.msoy.item.util.ItemEnum;
 
 /**
  * A simple in-game panel that shows inventory and acts as a drag source
@@ -38,10 +41,15 @@ public class InventoryWindow extends FloatingPanel
         var tn :LazyTabNavigator = new LazyTabNavigator();
         addChild(tn);
 
-        addTab(tn, "FURNITURE");
-        addTab(tn, "PHOTO");
-        addTab(tn, "DOCUMENT");
-        addTab(tn, "GAME");
+        // get all the item types
+        var itemTypes :Array = ItemEnum.values();
+        // move furniture to be the first
+        ArrayUtil.removeFirst(itemTypes, ItemEnum.FURNITURE);
+        itemTypes.unshift(ItemEnum.FURNITURE);
+
+        for each (var itemType :ItemEnum in itemTypes) {
+            addTab(tn, itemType.getStringCode());
+        }
     }
 
     protected function addTab (tn :LazyTabNavigator, type :String) :void
