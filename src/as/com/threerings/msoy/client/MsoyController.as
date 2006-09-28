@@ -78,13 +78,7 @@ public class MsoyController extends Controller
 
         var memberObj :MemberObject = _ctx.getClientObject();
 
-        var friends :Array = memberObj.friends.toArray();
-        friends.sort(function (o1 :Object, o2 :Object) :int {
-            var fe1 :FriendEntry = (o1 as FriendEntry);
-            var fe2 :FriendEntry = (o2 as FriendEntry);
-            return MemberName.BY_DISPLAY_NAME(fe1.name, fe2.name);
-        });
-
+        var friends :Array = memberObj.getSortedEstablishedFriends();
         friends = friends.map(
             function (item :*, index :int, array :Array) :Object {
                 var fe :FriendEntry = (item as FriendEntry);

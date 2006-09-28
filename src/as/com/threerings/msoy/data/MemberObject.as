@@ -100,6 +100,26 @@ public class MemberObject extends BodyObject
         return (getMemberId() <= 0);
     }
 
+    /**
+     * Get a sorted list of friends that are "real" friends
+     * (the friendship is not in a pending state).
+     */
+    public function getSortedEstablishedFriends () :Array
+    {
+        var friends :Array = this.friends.toArray();
+        friends = friends.filter(
+            function (item :*, index :int, arr :Array) :Boolean {
+                var fe :FriendEntry = (item as FriendEntry);
+                return (fe.status == FriendEntry.FRIEND);
+            });
+        friends = friends.sort(function (o1 :Object, o2 :Object) :int {
+            var fe1 :FriendEntry = (o1 as FriendEntry);
+            var fe2 :FriendEntry = (o2 as FriendEntry);
+            return MemberName.BY_DISPLAY_NAME(fe1.name, fe2.name);
+        });
+        return friends;
+    }
+
     // documentation inherited from superinterface ScenedBodyObject
     public function getSceneId () :int
     {
