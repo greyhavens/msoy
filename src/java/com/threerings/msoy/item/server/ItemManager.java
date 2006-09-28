@@ -31,6 +31,7 @@ import com.threerings.msoy.web.data.MemberGName;
 
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -59,6 +60,8 @@ public class ItemManager
     @SuppressWarnings("unchecked")
     public void init (ConnectionProvider conProv) throws PersistenceException
     {
+        _repos.put(ItemEnum.AVATAR,
+            (ItemRepository) new AvatarRepository(conProv));
         _repos.put(ItemEnum.DOCUMENT,
             (ItemRepository) new DocumentRepository(conProv));
         _repos.put(ItemEnum.FURNITURE,
@@ -591,7 +594,7 @@ public class ItemManager
 
     /** A regexp pattern to validate tags. */
     protected static final Pattern validTag =
-        Pattern.compile("[a-z](_?[a-z0-9]){2,59}");
+        Pattern.compile("[a-z](_?[a-z0-9]){2,18}");
 
     /** Maps string identifier to repository for all digital item types. */
     protected HashMap<ItemEnum, ItemRepository<ItemRecord>> _repos =

@@ -13,6 +13,7 @@ import javax.persistence.Transient;
 
 import com.threerings.io.Streamable;
 import com.threerings.msoy.item.util.ItemEnum;
+import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
@@ -48,6 +49,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
             return new GameRecord((Game) item);
         } else if (item instanceof Photo) {
             return new PhotoRecord((Photo) item);
+        } else if (item instanceof Avatar) {
+            return new AvatarRecord((Avatar) item);
         }
         throw new RuntimeException("Unknown item type: " + item);
     }

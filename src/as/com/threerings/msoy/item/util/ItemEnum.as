@@ -8,6 +8,7 @@ import flash.errors.IllegalOperationError;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Hashtable;
 
+import com.threerings.msoy.item.web.Avatar; 
 import com.threerings.msoy.item.web.Document; 
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
@@ -23,6 +24,7 @@ public final class ItemEnum
     public static const DOCUMENT :ItemEnum = new ItemEnum(Document, 2);
     public static const FURNITURE :ItemEnum = new ItemEnum(Furniture, 3);
     public static const GAME :ItemEnum = new ItemEnum(Game, 4);
+    public static const AVATAR :ItemEnum = new ItemEnum(Avatar, 5);
     _blockConstructor = true; // we emulate real enums..
 
     /**

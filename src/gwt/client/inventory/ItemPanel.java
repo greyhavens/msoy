@@ -116,6 +116,8 @@ public class ItemPanel extends VerticalPanel
             editor = new FurnitureEditor();
         } else if (_type.equals("GAME")) {
             editor = new GameEditor();
+        } else if (_type.equals("AVATAR")) {
+            editor = new AvatarEditor();
         }
         if (editor != null) {
             editor.init(_ctx, this);

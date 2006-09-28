@@ -5,6 +5,7 @@ package com.threerings.msoy.item.util;
 
 import com.samskivert.util.HashIntMap;
 
+import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
@@ -27,6 +28,7 @@ public enum ItemEnum
     DOCUMENT(Document.class,(byte)2),
     FURNITURE(Furniture.class, (byte)3),
     GAME(Game.class, (byte)4),
+    AVATAR(Avatar.class, (byte)5),
     ;
 
     /**
