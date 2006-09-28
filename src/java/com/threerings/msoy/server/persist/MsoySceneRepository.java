@@ -20,6 +20,7 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.JORARepository;
 import com.samskivert.jdbc.SimpleRepository;
+import com.samskivert.jdbc.TransitionRepository;
 
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
@@ -30,6 +31,8 @@ import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.server.persist.SceneUpdateMarshaller;
 import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
+
+import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -113,6 +116,30 @@ public class MsoySceneRepository extends SimpleRepository
             JDBCUtil.addColumn(conn, "FURNI", "ACTION_DATA",
                 "varchar(255)", "ACTION_TYPE");
         }
+
+        // TEMP: removable after all servers are past the date specified...
+        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20060927",
+            new TransitionRepository.Transition() {
+                public void run ()
+                    throws PersistenceException
+                {
+                    executeUpdate(new Operation<Void>() {
+                        public Void invoke (Connection conn,
+                            DatabaseLiaison liaison)
+                            throws SQLException, PersistenceException
+                        {
+                            Statement stmt = conn.createStatement();
+                            try {
+                                stmt.executeUpdate("delete from SCENE_UPDATES");
+                            } finally {
+                                JDBCUtil.close(stmt);
+                            }
+                            return null;
+                        }
+                    });
+                }
+            });
+        // END: temp
     }
 
     // documentation inherited from interface SceneRepository
