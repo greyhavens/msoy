@@ -80,8 +80,7 @@ public class MsoyController extends Controller
 
         var friends :Array = memberObj.getSortedEstablishedFriends();
         friends = friends.map(
-            function (item :*, index :int, array :Array) :Object {
-                var fe :FriendEntry = (item as FriendEntry);
+            function (fe :FriendEntry, index :int, array :Array) :Object {
                 return {
                     label: fe.name.toString(),
                     command: GO_FRIEND_HOME,
@@ -90,15 +89,13 @@ public class MsoyController extends Controller
             });
 
         var recent :Array = memberObj.recentScenes.toArray();
-        recent.sort(function (o1 :Object, o2 :Object) :int {
-            var sb1 :SceneBookmarkEntry = (o1 as SceneBookmarkEntry);
-            var sb2 :SceneBookmarkEntry = (o2 as SceneBookmarkEntry);
-            return int(sb1.lastVisit - sb2.lastVisit);
-        });
+        recent.sort(
+            function (sb1 :SceneBookmarkEntry, sb2 :SceneBookmarkEntry) :int {
+                return int(sb1.lastVisit - sb2.lastVisit);
+            });
 
         recent = recent.map(
-            function (item :*, index :int, array :Array) :Object {
-                var sb :SceneBookmarkEntry = (item as SceneBookmarkEntry);
+            function (sb :SceneBookmarkEntry, index :int, array :Array) :Object {
                 return {
                     label: sb.toString(),
                     enabled: (sb.sceneId != currentSceneId),

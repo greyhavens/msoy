@@ -108,15 +108,13 @@ public class MemberObject extends BodyObject
     {
         var friends :Array = this.friends.toArray();
         friends = friends.filter(
-            function (item :*, index :int, arr :Array) :Boolean {
-                var fe :FriendEntry = (item as FriendEntry);
+            function (fe :FriendEntry, index :int, arr :Array) :Boolean {
                 return (fe.status == FriendEntry.FRIEND);
             });
-        friends = friends.sort(function (o1 :Object, o2 :Object) :int {
-            var fe1 :FriendEntry = (o1 as FriendEntry);
-            var fe2 :FriendEntry = (o2 as FriendEntry);
-            return MemberName.BY_DISPLAY_NAME(fe1.name, fe2.name);
-        });
+        friends = friends.sort(
+            function (fe1 :FriendEntry, fe2 :FriendEntry) :int {
+                return MemberName.BY_DISPLAY_NAME(fe1.name, fe2.name);
+            });
         return friends;
     }
 
