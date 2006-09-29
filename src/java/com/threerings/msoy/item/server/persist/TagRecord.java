@@ -3,10 +3,8 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.Id;
 
 import com.threerings.io.Streamable;
 
@@ -14,8 +12,6 @@ import com.threerings.io.Streamable;
  * Represents which tags have been added to which items.
  */
 @Entity
-@Table(uniqueConstraints =
-        @UniqueConstraint(columnNames={TagRecord.TAG_ID, TagRecord.ITEM_ID}))
 public abstract class TagRecord<T extends ItemRecord>
     implements Streamable
 {
@@ -25,10 +21,10 @@ public abstract class TagRecord<T extends ItemRecord>
     public static final String ITEM_ID = "itemId";
  
     /** The ID of the tag. */
-    @Column(nullable=false)
+    @Id
     public int tagId;
 
      /** The ID of the tagged item. */
-    @Column(nullable=false)
+    @Id
     public int itemId;
 }

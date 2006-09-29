@@ -5,8 +5,8 @@ package com.threerings.msoy.item.server.persist;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import com.threerings.io.Streamable;
 
@@ -14,9 +14,7 @@ import com.threerings.io.Streamable;
  * Represents a member's rating of an item.
  */
 @Entity
-@Table(uniqueConstraints =
-        @UniqueConstraint(columnNames={
-            RatingRecord.ITEM_ID, RatingRecord.MEMBER_ID}))
+@Table
 public abstract class RatingRecord<T extends ItemRecord>
     implements Streamable
 {
@@ -27,11 +25,11 @@ public abstract class RatingRecord<T extends ItemRecord>
     public static final String RATING = "rating";
 
     /** The ID of the tagged item. */
-    @Column(nullable=false)
+    @Id
     public int itemId;
-    
+
     /** The ID of the rating member. */
-    @Column(nullable=false)
+    @Id
     public int memberId;
     
     /** The rating, from 1 to 5 */
