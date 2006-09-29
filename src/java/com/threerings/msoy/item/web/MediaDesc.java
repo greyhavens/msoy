@@ -43,6 +43,9 @@ public class MediaDesc implements Streamable
     /** The MIME type for Flash SWF files. */
     public static final byte APPLICATION_SHOCKWAVE_FLASH = 40;
 
+    /** The MIME type for Java JAR files. */
+    public static final byte APPLICATION_JAVA_ARCHIVE = 41;
+
     /** The SHA-1 hash of this media's data. */
     public byte[] hash;
 
@@ -131,6 +134,8 @@ public class MediaDesc implements Streamable
             return VIDEO_MSVIDEO;
         } else if (mimeType.equals("application/x-shockwave-flash")) {
             return APPLICATION_SHOCKWAVE_FLASH;
+        } else if (mimeType.equals("application/java-archive")) {
+            return APPLICATION_JAVA_ARCHIVE;
         } else {
             return -1;
         }
@@ -165,6 +170,8 @@ public class MediaDesc implements Streamable
             return VIDEO_MSVIDEO;
         } else if (filename.endsWith(".swf")) {
             return APPLICATION_SHOCKWAVE_FLASH;
+        } else if (filename.endsWith(".jar")) {
+            return APPLICATION_JAVA_ARCHIVE;
         } else {
             return -1;
         }
@@ -188,6 +195,7 @@ public class MediaDesc implements Streamable
         case VIDEO_QUICKTIME: return ".mov";
         case VIDEO_MSVIDEO: return ".avi";
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
+        case APPLICATION_JAVA_ARCHIVE: return ".jar";
         default: return ".dat";
         }
     }

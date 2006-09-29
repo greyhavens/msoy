@@ -51,6 +51,9 @@ public class MediaDesc
     /** The MIME type for Flash SWF files. */
     public static const APPLICATION_SHOCKWAVE_FLASH :int = 40;
 
+    /** The MIME type for Java JAR files. */
+    public static const APPLICATION_JAVA_ARCHIVE :int = 41;
+
     /** A hash code identifying this media. */
     public var hash :ByteArray;
 
@@ -94,6 +97,8 @@ public class MediaDesc
             return VIDEO_MSVIDEO;
         } else if (mimeType == "application/x-shockwave-flash") {
             return APPLICATION_SHOCKWAVE_FLASH;
+        } else if (mimeType == "application/java-archive") {
+            return APPLICATION_JAVA_ARCHIVE;
         } else {
             return -1;
         }
@@ -128,6 +133,8 @@ public class MediaDesc
             return VIDEO_MSVIDEO;
         } else if (StringUtil.endsWith(filename, ".swf")) {
             return APPLICATION_SHOCKWAVE_FLASH;
+        } else if (StringUtil.endsWith(filename, ".jar")) {
+            return APPLICATION_JAVA_ARCHIVE;
         } else {
             return -1;
         }
@@ -151,6 +158,7 @@ public class MediaDesc
         case VIDEO_QUICKTIME: return ".mov";
         case VIDEO_MSVIDEO: return ".avi";
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
+        case APPLICATION_JAVA_ARCHIVE: return ".jar";
         default: return ".dat";
         }
     }
