@@ -28,8 +28,12 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
+import com.threerings.msoy.item.data.ItemIdent;
+import com.threerings.msoy.item.web.Avatar;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.web.data.Profile;
 
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -113,6 +117,17 @@ public class MemberManager
                 return profile;
             }
         });
+    }
+
+    /**
+     * Update the user's occupant info.
+     */
+    public void updateOccupantInfo (MemberObject user)
+    {
+        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location);
+        if (pmgr != null) {
+            pmgr.updateOccupantInfo(user.createOccupantInfo());
+        }
     }
 
     // from interface MemberProvider
@@ -211,13 +226,25 @@ public class MemberManager
     // from interface MemberProvider
     public void setAvatar (
         ClientObject caller, int avatarItemId,
-        InvocationService.InvocationListener listener)
+        final InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        final MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
 
-        // TODO
+        MsoyServer.itemMan.getItem(new ItemIdent(ItemEnum.AVATAR, avatarItemId),
+            new ResultListener<Item>() {
+            public void requestCompleted (Item item)
+            {
+                Avatar avatar = (Avatar) item;
+                finishSetAvatar(user, avatar, listener);
+            }
+
+            public void requestFailed (Exception cause)
+            {
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
     }
 
     // from interface MemberProvider
@@ -267,17 +294,6 @@ public class MemberManager
     }
 
     /**
-     * Update the user's occupant info.
-     */
-    protected void updateOccupantInfo (MemberObject user)
-    {
-        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location);
-        if (pmgr != null) {
-            pmgr.updateOccupantInfo(user.createOccupantInfo());
-        }
-    }
-
-    /**
      * Return the status of a friendship as viewed from the other side.
      */
     protected byte getOppositeFriendStatus (byte status)
@@ -292,6 +308,37 @@ public class MemberManager
         default:
             return FriendEntry.FRIEND;
         }
+    }
+
+    /**
+     * Finish configuring the user's avatar.
+     */
+    protected void finishSetAvatar (
+        final MemberObject user, final Avatar avatar,
+        final InvocationService.InvocationListener listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
+            public void invokePersist ()
+                throws PersistenceException
+            {
+                _memberRepo.configureAvatarId(user.getMemberId(), avatar.itemId);
+            }
+
+            public void handleSuccess ()
+            {
+                user.setAvatar(avatar);
+                updateOccupantInfo(user);
+            }
+
+            public void handleFailure (Exception pe)
+            {
+                log.warning("Unable to set avatar " +
+                    "[user=" + user.which() + ", avatar='" + avatar + "', " +
+                    "error=" + pe + "].");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
+
     }
 
     /** Provides access to persistent member data. */

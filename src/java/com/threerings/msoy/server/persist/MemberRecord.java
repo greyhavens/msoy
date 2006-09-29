@@ -19,13 +19,14 @@ public class MemberRecord
 {
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     public static final String MEMBER_ID = "memberId";
     public static final String ACCOUNT_NAME = "accountName";
     public static final String NAME = "name";
     public static final String FLOW = "flow";
     public static final String HOME_SCENE_ID = "homeSceneId";
+    public static final String AVATAR_ID = "avatarId";
     public static final String SESSIONS = "sessions";
     public static final String SESSION_MINUTES = "sessionMinutes";
     public static final String LAST_SESSION = "lastSession";
@@ -49,6 +50,10 @@ public class MemberRecord
     /** The home scene for this member. */
     @Column(nullable=false)
     public int homeSceneId;
+
+    /** The avatar of this user, or 0. */
+    @Column(nullable=false)
+    public int avatarId;
 
     /** The time at which this player was created (when they first starting
      * playing  this particular game). */

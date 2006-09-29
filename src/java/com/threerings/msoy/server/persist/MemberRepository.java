@@ -148,6 +148,16 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Configures a member's avatar.
+     */
+    public void configureAvatarId (int memberId, int avatarId)
+        throws PersistenceException
+    {
+        updatePartial(MemberRecord.class, memberId,
+            MemberRecord.AVATAR_ID, avatarId);
+    }
+
+    /**
      * Deletes the specified member from the repository.
      */
     public void deleteMember (MemberRecord member)

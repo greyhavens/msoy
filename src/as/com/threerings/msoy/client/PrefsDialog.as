@@ -11,6 +11,12 @@ import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.MsoyUI;
 
+import com.threerings.msoy.data.MemberObject;
+
+import com.threerings.msoy.item.client.InventoryList;
+import com.threerings.msoy.item.web.Avatar;
+import com.threerings.msoy.item.util.ItemEnum;
+
 public class PrefsDialog extends FloatingPanel
 {
     public function PrefsDialog (ctx :MsoyContext)
@@ -23,23 +29,40 @@ public class PrefsDialog extends FloatingPanel
     {
         super.createChildren();
 
+        var memberObj :MemberObject = _ctx.getClientObject();
+
         var grid :Grid = new Grid();
         grid.addRow(
             MsoyUI.createLabel(_ctx.xlate("general", "l.display_name")),
             _name = new TextInput());
-        _name.text = _ctx.getClientObject().memberName.toString();
+        _name.text = memberObj.memberName.toString();
 
         addChild(grid);
+
+        _avatars = new InventoryList(_ctx, ItemEnum.AVATAR.getStringCode());
+        _avatars.dragEnabled = false;
+
+        // TODO: this doesn't actually work because flash only does
+        // reference equality on non-primitives..
+        _avatars.selectedItem = memberObj.avatar;
+
+        addChild(_avatars);
 
         addButtons(OK_BUTTON);
     }
 
     override protected function buttonClicked (buttonId :int) :void
     {
+        var memberObj :MemberObject = _ctx.getClientObject();
+
         // save any changed info
         var newName :String = StringUtil.trim(_name.text);
-        if (_ctx.getClientObject().memberName.toString() !== newName) {
+        if (memberObj.memberName.toString() !== newName) {
             _ctx.getMemberDirector().setDisplayName(newName);
+        }
+        var newAvatar :Avatar = (_avatars.selectedItem as Avatar);
+        if (newAvatar != null && !newAvatar.equals(memberObj.avatar)) {
+            _ctx.getMemberDirector().setAvatar(newAvatar.itemId);
         }
 
         super.buttonClicked(buttonId);
@@ -47,5 +70,8 @@ public class PrefsDialog extends FloatingPanel
 
     /** The field for editing the user's display name. */
     protected var _name :TextInput;
+
+    /** The list of our avatars. */
+    protected var _avatars :InventoryList;
 }
 }

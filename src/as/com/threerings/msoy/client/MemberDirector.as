@@ -63,6 +63,15 @@ public class MemberDirector extends BasicDirector
             new ReportingListener(_mctx));
     }
 
+    /**
+     * Request a change to our avatar.
+     */
+    public function setAvatar (avatarId :int) :void
+    {
+        _msvc.setAvatar(_mctx.getClient(), avatarId,
+            new ReportingListener(_mctx));
+    }
+
     // from interface SetListener
     public function entryAdded (event :EntryAddedEvent) :void
     {

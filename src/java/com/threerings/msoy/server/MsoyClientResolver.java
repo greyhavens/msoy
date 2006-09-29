@@ -18,6 +18,11 @@ import com.threerings.crowd.server.CrowdClientResolver;
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.item.data.ItemIdent;
+import com.threerings.msoy.item.web.Avatar;
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.util.ItemEnum;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -57,6 +62,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // (account) name
         MemberRecord member =
             MsoyServer.memberRepo.loadMember(_username.toString());
+        _avatarId = member.avatarId;
 
         // configure their member name which is a combination of their display
         // name and their member id
@@ -115,6 +121,21 @@ public class MsoyClientResolver extends CrowdClientResolver
                         "[who=" + user.who() + ", error=" + cause + "].");
                 }
             });
+
+            if (_avatarId != 0) {
+                MsoyServer.itemMan.getItem(
+                    new ItemIdent(ItemEnum.AVATAR, _avatarId),
+                    new ResultListener<Item>() {
+                    public void requestCompleted (Item avatar) {
+                        user.setAvatar((Avatar) avatar);
+                        MsoyServer.memberMan.updateOccupantInfo(user);
+                    }
+                    public void requestFailed (Exception cause) {
+                        log.warning("Failed to load member's avatar " +
+                            "[who=" + user.who() + ", error=" + cause + "].");
+                    }
+                });
+            }
         }
     }
 
@@ -130,4 +151,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // and auth name
         return (_username instanceof MemberName);
     }
+
+    /** The user's avatarId, or 0. */
+    protected int _avatarId;
 }
