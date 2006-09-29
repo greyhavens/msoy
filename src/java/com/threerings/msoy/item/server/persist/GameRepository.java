@@ -9,6 +9,8 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.threerings.toybox.server.ToyBoxManager;
 import com.threerings.toybox.server.persist.Game;
 
+import com.threerings.msoy.item.web.MediaDesc;
+
 /**
  * Manages the persistent store of {@link Game} items.
  */
@@ -37,7 +39,7 @@ public class GameRepository extends ItemRepository<GameRecord>
         tgame.status = Game.Status.READY.toString();
         tgame.host = ""; // TODO
         tgame.definition = ""; // TODO
-        tgame.digest = ""; // TODO
+        tgame.digest = MediaDesc.hashToString(game.gameMediaHash);
         tgame.description = ""; // TODO
         tgame.created = null; // TODO
         tgame.lastUpdated = null; // TODO

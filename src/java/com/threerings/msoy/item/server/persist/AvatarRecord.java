@@ -17,10 +17,7 @@ import com.threerings.msoy.item.web.Avatar;
  */
 @Entity
 @Table
-@TableGenerator(
-    name="itemId",
-    allocationSize=1,
-    pkColumnValue="AVATAR")
+@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="AVATAR")
 public class AvatarRecord extends ItemRecord
 {
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;

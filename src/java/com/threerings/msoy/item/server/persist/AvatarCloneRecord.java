@@ -10,10 +10,7 @@ import javax.persistence.TableGenerator;
 /** Clone records for Avatars. */
 @Entity
 @Table
-@TableGenerator(
-    name="itemId",
-    allocationSize=1,
-    pkColumnValue="AVATAR")
+@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="AVATAR")
 public class AvatarCloneRecord extends CloneRecord<AvatarRecord>
 {
 }

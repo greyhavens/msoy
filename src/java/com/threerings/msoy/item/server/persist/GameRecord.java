@@ -17,10 +17,7 @@ import com.threerings.msoy.item.web.Item;
  */
 @Entity
 @Table
-@TableGenerator(
-    name="itemId",
-    allocationSize=1,
-    pkColumnValue="GAME")
+@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="GAME")
 public class GameRecord extends ItemRecord
 {
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;

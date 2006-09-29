@@ -18,10 +18,7 @@ import com.threerings.msoy.item.web.Photo;
  */
 @Entity
 @Table
-@TableGenerator(
-    name="itemId",
-    allocationSize=1,
-    pkColumnValue="PHOTO")
+@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="PHOTO")
 public class PhotoRecord extends ItemRecord
 {
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;

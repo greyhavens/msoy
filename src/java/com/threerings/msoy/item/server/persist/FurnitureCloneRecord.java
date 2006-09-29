@@ -10,10 +10,7 @@ import javax.persistence.TableGenerator;
 /** Clone records for Furniture. */
 @Entity
 @Table
-@TableGenerator(
-    name="itemId",
-    allocationSize=1,
-    pkColumnValue="FURNITURE")
+@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="FURNITURE")
 public class FurnitureCloneRecord extends CloneRecord<FurnitureRecord>
 {
 }

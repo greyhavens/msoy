@@ -10,10 +10,7 @@ import javax.persistence.TableGenerator;
 /** Clone records for Photos. */
 @Entity
 @Table
-@TableGenerator(
-    name="itemId",
-    allocationSize=1,
-    pkColumnValue="PHOTO")
+@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="PHOTO")
 public class PhotoCloneRecord extends CloneRecord<PhotoRecord>
 {
 }
