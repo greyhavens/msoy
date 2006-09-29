@@ -176,6 +176,7 @@
       storepass="${sign.storepass}" alias="${sign.alias}">
       <fileset dir="${deploy.dir}" includes="game-client.jar"/>
     </signjar>
+    <copy file="${deploy.dir}/game-client.jar" todir="pages/clients"/>
   </target>
 
   <!-- generates additional methods for distributed object classes -->
