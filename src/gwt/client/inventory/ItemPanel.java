@@ -5,9 +5,6 @@ package client.inventory;
 
 import java.util.ArrayList;
 
-import client.inventory.ItemContainer;
-import client.inventory.ItemEditor;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;

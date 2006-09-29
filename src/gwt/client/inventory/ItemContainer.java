@@ -116,6 +116,18 @@ public class ItemContainer extends VerticalPanel
             });
             add(button);            
         }
+        // TODO: all these buttons have to go soon
+        Button button = new Button("Details ...");
+        button.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                ItemDetail foo = new ItemDetail(panel._ctx, item);
+                foo.setPopupPosition(
+                    sender.getAbsoluteLeft()+20, sender.getAbsoluteTop()-200);
+                foo.show();
+            }
+        });
+        add(button);            
+
     }
 
     /**

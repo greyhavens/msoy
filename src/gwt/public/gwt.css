@@ -16,3 +16,18 @@
    background: #CCFF99;
    padding: 5px;
 }
+
+.itemDetailPopup {
+   border: 2px solid red;
+   background: brown;
+   padding: 5px;
+}
+
+.headerRow {
+   font-weight: bold;
+   background: #7B3F00;
+}
+
+.dataRow {
+   background: #6F4242;
+}
