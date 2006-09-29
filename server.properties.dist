@@ -59,3 +59,8 @@ db.default.password = PASSWORD
 
 oooauth.login_url = /register/register.wm?from=%R
 oooauth.access_denied_url = /register/access_denied.wm
+
+#
+# Used for signing our Java client code
+
+cert_dir = /export/threerings

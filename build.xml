@@ -9,6 +9,7 @@
   <!-- read in our deployment properties -->
   <property file="server.properties"/>
   <property file="build.properties"/>
+  <property file="${cert_dir}/certificate.properties"/>
 
   <!-- things you probably don't want to change -->
   <property name="src.dir"      value="src/java"/>
@@ -163,6 +164,18 @@
       <arg value="src/as/Msoy.mxml"/>
     </java>
     <copy file="dist/Msoy.swf" todir="pages/clients"/>
+  </target>
+
+  <!-- builds and signs our Java game client -->
+  <target name="jclient">
+    <taskdef resource="proguard/ant/task.properties"
+             classpath="lib/proguard.jar"/>
+    <mkdir dir="${deploy.dir}"/>
+    <proguard configuration="etc/game-client.pro"/>
+    <signjar lazy="true" keystore="${cert_dir}/lib/keystore.dat"
+      storepass="${sign.storepass}" alias="${sign.alias}">
+      <fileset dir="${deploy.dir}" includes="game-client.jar"/>
+    </signjar>
   </target>
 
   <!-- generates additional methods for distributed object classes -->
