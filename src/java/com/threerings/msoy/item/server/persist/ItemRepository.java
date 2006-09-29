@@ -255,9 +255,23 @@ public abstract class ItemRepository<T extends ItemRecord>
                 ItemRecord.RATING, newRating });
         return newRating;
     }
+    
+    /** Load all tag records for the given item, translated to tag names. */
+    public Iterable<TagNameRecord> getTags (int itemId)
+            throws PersistenceException
+    {
+        ArrayList<TagNameRecord> result = new ArrayList<TagNameRecord>();
+        // TODO: This will obviously be a join as soon as Depot can do one.
+        for (TagRecord tagRecord :
+                findAll(getTagClass(), new Key(TagRecord.ITEM_ID, itemId))) {
+            result.add(getTag(tagRecord.tagId));
+        }
+        return result;
+    }
 
     /** Load all the tag history records for a given item. */
-    public Iterable<? extends TagHistoryRecord<T>> getTagHistory (int itemId)
+    public Iterable<? extends TagHistoryRecord<T>> getTagHistoryByItem (
+        int itemId)
             throws PersistenceException
     {
         return findAll(
@@ -265,6 +279,16 @@ public abstract class ItemRepository<T extends ItemRecord>
             new Key(TagHistoryRecord.ITEM_ID, itemId));
     }
     
+    /** Load all the tag history records for a given member. */
+    public Iterable<? extends TagHistoryRecord<T>> getTagHistoryByMember (
+        int memberId)
+            throws PersistenceException
+    {
+        return findAll(
+            getTagHistoryClass(),
+            new Key(TagHistoryRecord.MEMBER_ID, memberId));
+    }
+
     /** Find the tag record for a certain tag, or create it. */
     public TagNameRecord getTag (String tagName)
             throws PersistenceException

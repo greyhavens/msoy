@@ -120,6 +120,18 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
+    public Collection<String> getTags (
+        WebCreds creds, ItemGIdent item)
+            throws ServiceException
+    {
+        ItemIdent ident = toIdent(creds, item, "getTagHistory");
+        ServletWaiter<Collection<String>> waiter =
+            new ServletWaiter<Collection<String>>("getTags[" + item + "]");
+        MsoyServer.itemMan.getTags(ident, waiter);
+        return waiter.waitForResult();
+    }
+
+    // from interface ItemService
     public Collection<TagHistory> getTagHistory (
         WebCreds creds, ItemGIdent item)
             throws ServiceException
@@ -129,6 +141,17 @@ public class ItemServlet extends RemoteServiceServlet
             new ServletWaiter<Collection<TagHistory>>(
                 "getTagHistory[" + item + "]");
         MsoyServer.itemMan.getTagHistory(ident, waiter);
+        return waiter.waitForResult();
+    }
+
+    // from interface ItemService
+    public Collection<TagHistory> getTagHistory (WebCreds creds, int memberId)
+            throws ServiceException
+    {
+        ServletWaiter<Collection<TagHistory>> waiter =
+            new ServletWaiter<Collection<TagHistory>>(
+                "getTagHistory[" + memberId + "]");
+        MsoyServer.itemMan.getTagHistory(memberId, waiter);
         return waiter.waitForResult();
     }
 

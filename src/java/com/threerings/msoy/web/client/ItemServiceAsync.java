@@ -52,10 +52,19 @@ public interface ItemServiceAsync
         WebCreds creds, ItemGIdent item, byte rating, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link ItemService#getTagHistory}.
+     * The asynchronous version of {@link ItemService#getTags}.
+     */
+    public void getTags (
+        WebCreds creds, ItemGIdent item, AsyncCallback callback);
+
+    /**
+     * The asynchronous versions of {@link ItemService#getTagHistory}.
      */
     public void getTagHistory (
         WebCreds creds, ItemGIdent item, AsyncCallback callback);
+
+    public void getTagHistory (
+        WebCreds creds, int memberId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link ItemService#tagItem}.

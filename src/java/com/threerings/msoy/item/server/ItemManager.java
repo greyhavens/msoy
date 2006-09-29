@@ -46,6 +46,7 @@ import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.TagHistoryRecord;
 import com.threerings.msoy.item.server.persist.TagNameRecord;
+import com.threerings.msoy.item.server.persist.TagRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -373,6 +374,30 @@ public class ItemManager
                 }
             });
     }
+    
+    /** Fetch the tags for a given item. */
+    public void getTags (final ItemIdent ident,
+                         ResultListener<Collection<String>> listener)
+    {
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
+        if (repo == null) {
+            return;
+        }
+
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Collection<String>>(listener) {
+                public Collection<String> invokePersistResult ()
+                        throws PersistenceException {
+                    ArrayList<String> result = new ArrayList<String>();
+                    for (TagNameRecord tagName : repo.getTags(ident.itemId)) {
+                        result.add(tagName.tag);
+                    }
+                    return result;
+                }
+            });
+    }
+            
 
     /**
      * Fetch the tagging history for a given item.
@@ -394,8 +419,8 @@ public class ItemManager
                     new HashMap<Integer, MemberRecord>();
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
                 for (TagHistoryRecord<ItemRecord> record :
-                         repo.getTagHistory(ident.itemId)) {
-                    // we should probably go through/cache in MemberManager
+                         repo.getTagHistoryByItem(ident.itemId)) {
+                    // TODO: we should probably cache in MemberRepository
                     MemberRecord memRec = memberCache.get(record.memberId);
                     if (memRec == null) {
                         memRec = MsoyServer.memberRepo.loadMember(
@@ -417,6 +442,38 @@ public class ItemManager
         });
     }
 
+    /** Fetch the tagging history for any item by  a given member. */
+    public void getTagHistory (final int memberId,
+                               ResultListener<Collection<TagHistory>> listener)
+    {
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Collection<TagHistory>>(listener) {
+            public Collection<TagHistory> invokePersistResult ()
+                throws PersistenceException {
+                MemberRecord memRec =
+                    MsoyServer.memberRepo.loadMember(memberId);
+                MemberGName memName =
+                    new MemberGName(memRec.name, memRec.memberId);
+                ArrayList<TagHistory> list = new ArrayList<TagHistory>();
+                for (ItemRepository<ItemRecord> repo : _repos.values()) {
+                    for (TagHistoryRecord<ItemRecord> record :
+                        repo.getTagHistoryByMember(memberId)) {
+                        TagNameRecord tag = record.tagId == -1 ? null :
+                            repo.getTag(record.tagId);
+                        TagHistory history = new TagHistory();
+                        history.itemId = record.itemId;
+                        history.member = memName;
+                        history.tag = tag == null ? null : tag.tag;
+                        history.action = record.action;
+                        history.time = new Date(record.time.getTime());
+                        list.add(history);
+                    }
+                }
+                return list;
+            }
+        });
+    }
+    
     /**
      * Records the specified member's rating of an item.
      */
