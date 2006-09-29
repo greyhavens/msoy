@@ -39,7 +39,7 @@ public class PrefsDialog extends FloatingPanel
 
         addChild(grid);
 
-        _avatars = new InventoryList(_ctx, ItemEnum.AVATAR.getStringCode());
+        _avatars = new InventoryList(_ctx, ItemEnum.AVATAR);
         _avatars.dragEnabled = false;
 
         // TODO: this doesn't actually work because flash only does

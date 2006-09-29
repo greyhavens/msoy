@@ -1,17 +1,23 @@
 package com.threerings.msoy.item.client {
 
+import mx.binding.utils.BindingUtils;
+
 import mx.core.ContainerCreationPolicy;
 
 import mx.core.UIComponent;
 
-import mx.containers.TabNavigator;
 import mx.containers.VBox;
+import mx.containers.ViewStack;
+
+import mx.controls.ComboBox;
 
 import com.threerings.util.ArrayUtil;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.LazyTabNavigator;
+import com.threerings.msoy.ui.Grid;
+import com.threerings.msoy.ui.LazyContainer;
+import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.item.util.ItemEnum;
 
@@ -33,13 +39,11 @@ public class InventoryWindow extends FloatingPanel
     {
         super.createChildren();
 
-        // TODO: due to the way items are classified and used,
-        // this should probably not be presented as tabs to the user.
-        // Rather, a more appropriate UI might be to have a pull-down
-        // box that lists item types and have the resultant types
-        // displayed below (use a ViewStack with a ComboBox).
-        var tn :LazyTabNavigator = new LazyTabNavigator();
-        addChild(tn);
+        var grid :Grid = new Grid();
+        grid.addRow(
+            MsoyUI.createLabel(_ctx.xlate("item", "l.types")),
+            _type = new ComboBox());
+        addChild(grid);
 
         // get all the item types
         var itemTypes :Array = ItemEnum.values();
@@ -47,17 +51,30 @@ public class InventoryWindow extends FloatingPanel
         ArrayUtil.removeFirst(itemTypes, ItemEnum.FURNITURE);
         itemTypes.unshift(ItemEnum.FURNITURE);
 
+        addChild(_lists = new ViewStack());
+        var typeLabels :Array = [];
         for each (var itemType :ItemEnum in itemTypes) {
-            addTab(tn, itemType.getStringCode());
+            addList(itemType);
+            typeLabels.push(
+                _ctx.xlate("item", "t.items_" + itemType.getStringCode()));
         }
+        _type.dataProvider = typeLabels;
+
+        // wire up the combobox to select items from the viewstack
+        BindingUtils.bindProperty(_lists, "selectedIndex",
+            _type, "selectedIndex");
     }
 
-    protected function addTab (tn :LazyTabNavigator, type :String) :void
+    protected function addList (type :ItemEnum) :void
     {
-        tn.addTab(_ctx.xlate("item", "t.items_" + type),
-            function () :UIComponent {
-                return new InventoryList(_ctx, type);
-            });
+        _lists.addChild(new LazyContainer(function () :UIComponent {
+            return new InventoryList(_ctx, type);
+        }));
     }
+
+    /** The item type to display. */
+    protected var _type :ComboBox;
+
+    protected var _lists :ViewStack;
 }
 }
