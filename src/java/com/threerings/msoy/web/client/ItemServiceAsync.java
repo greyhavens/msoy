@@ -29,7 +29,7 @@ public interface ItemServiceAsync
     /**
      * Loads the details of a particular item.
      */
-    public Item loadItem (
+    public void loadItem (
         WebCreds creds, ItemGIdent item, AsyncCallback callback);
 
     /**

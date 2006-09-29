@@ -89,7 +89,7 @@ public class ItemContainer extends VerticalPanel
         Button button = new Button("Purchase ...");
         button.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                panel.purchaseItem(item.itemId, item.getType());
+                panel.purchaseItem(item.getIdent());
             }
         });
         add(button);

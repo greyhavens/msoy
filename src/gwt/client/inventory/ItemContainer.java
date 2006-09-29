@@ -103,7 +103,7 @@ public class ItemContainer extends VerticalPanel
             Button button = new Button("List in Catalog ...");
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    panel.listItem(item.itemId, item.getType());
+                    panel.listItem(item.getIdent());
                 }
             });
             add(button);
@@ -111,7 +111,7 @@ public class ItemContainer extends VerticalPanel
             Button button = new Button("Remix ...");
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    panel.remixItem(item.itemId, item.getType());
+                    panel.remixItem(item.getIdent());
                 }
             });
             add(button);            

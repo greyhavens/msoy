@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.CatalogListing;
+import com.threerings.msoy.item.web.ItemGIdent;
 import com.threerings.msoy.web.client.WebContext;
 
 /**
@@ -58,18 +59,17 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
-    protected void purchaseItem (int itemId, String type)
+    protected void purchaseItem (ItemGIdent item)
     {
-        _ctx.catalogsvc.purchaseItem(
-            _ctx.creds, itemId, type, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    setStatus("Item purchased.");
-                }
-                public void onFailure (Throwable caught) {
-                    String reason = caught.getMessage();
-                    setStatus("Item creation failed: " + reason);
-                }
-            });
+        _ctx.catalogsvc.purchaseItem(_ctx.creds, item, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                setStatus("Item purchased.");
+            }
+            public void onFailure (Throwable caught) {
+                String reason = caught.getMessage();
+                setStatus("Item creation failed: " + reason);
+            }
+        });
     }
 
     /**

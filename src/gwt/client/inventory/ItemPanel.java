@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemGIdent;
 import com.threerings.msoy.web.client.WebContext;
 
 /**
@@ -75,33 +76,31 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
-    protected void listItem (int itemId, String type)
+    protected void listItem (ItemGIdent item)
     {
-        _ctx.catalogsvc.listItem(
-            _ctx.creds, itemId, type, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    setStatus("Item listed.");
-                }
-                public void onFailure (Throwable caught) {
-                    String reason = caught.getMessage();
-                    setStatus("Item listing failed: " + reason);
-                }
-            });
+        _ctx.catalogsvc.listItem(_ctx.creds, item, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                setStatus("Item listed.");
+            }
+            public void onFailure (Throwable caught) {
+                String reason = caught.getMessage();
+                setStatus("Item listing failed: " + reason);
+            }
+        });
     }
 
-    protected void remixItem (int itemId, String type)
+    protected void remixItem (ItemGIdent item)
     {
-        _ctx.itemsvc.remixItem(
-            _ctx.creds, itemId, type, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    // TODO: update display
-                    setStatus("Item remixed.");
-                }
-                public void onFailure (Throwable caught) {
-                    String reason = caught.getMessage();
-                    setStatus("Item remixing failed: " + reason);
-                }
-            });
+        _ctx.itemsvc.remixItem(_ctx.creds, item, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                // TODO: update display
+                setStatus("Item remixed.");
+            }
+            public void onFailure (Throwable caught) {
+                String reason = caught.getMessage();
+                setStatus("Item remixing failed: " + reason);
+            }
+        });
     }
 
     protected void createNewItem ()
