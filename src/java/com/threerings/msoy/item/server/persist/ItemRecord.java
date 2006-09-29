@@ -39,7 +39,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
     public static final String THUMB_MIME_TYPE = "thumbMimeType";
     public static final String FURNI_MEDIA_HASH = "furniMediaHash";
     public static final String FURNI_MIME_TYPE = "furniMimeType";
-    
+
     public static ItemRecord newRecord (Item item) {
         if (item instanceof Document) {
             return new DocumentRecord((Document) item);
@@ -54,7 +54,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
         }
         throw new RuntimeException("Unknown item type: " + item);
     }
-    
+
     /** This item's unique identifier. <em>Note:</em> this identifier is not
      * globally unique among all digital items. Each type of item has its own
      * identifier space. */
@@ -69,7 +69,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
      */
     @Transient
     public int parentId = -1;
-    
+
     /** A bit-mask of flags that we need to know about every digital item
      * without doing further database lookups or network requests. */
     @Column(nullable=false)
@@ -89,7 +89,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
     /** The current rating of this item, from 1 to 5. */
     @Column(nullable=false)
     public float rating;
-    
+
     /** A hash code identifying the media used to display this item's thumbnail
      * representation. */
     @Column(nullable=true)
@@ -105,7 +105,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
     public byte[] furniMediaHash;
 
     /**
-     * The MIME type of the  {@link #furniMediaHash}  media. 
+     * The MIME type of the  {@link #furniMediaHash}  media.
      */
     @Column(nullable = true)
     public byte furniMimeType;
@@ -114,11 +114,11 @@ public abstract class ItemRecord implements Streamable, Cloneable
     {
         super();
     }
-    
+
     protected ItemRecord (Item item)
     {
         super();
-        
+
         this.creatorId = item.creatorId;
         this.flags = item.flags;
         this.furniMediaHash = item.furniMediaHash == null ?
@@ -132,7 +132,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
             null : item.thumbMediaHash.clone();
         this.thumbMimeType = item.thumbMimeType;
     }
-    
+
 
     /**
      * This is used to map {@link ItemRecord} concrete classes to ItemEnum
@@ -152,7 +152,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
             throw new RuntimeException(cnse); // not going to happen
         }
     }
-    
+
     @Override
     public int hashCode ()
     {
@@ -169,7 +169,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
         }
         return false;
     }
-    
+
     public Item toItem ()
     {
         Item item = createItem();
@@ -187,6 +187,6 @@ public abstract class ItemRecord implements Streamable, Cloneable
         item.thumbMimeType = this.thumbMimeType;
         return item;
     }
-    
+
     protected abstract Item createItem ();
 }
