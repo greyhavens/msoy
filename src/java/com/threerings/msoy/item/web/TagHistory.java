@@ -19,8 +19,8 @@ public class TagHistory
     public static final byte ACTION_REMOVED = 2;
     public static final byte ACTION_COPIED = 3;
     
-    /** The ID of the item being operated on. */
-    public int itemId;
+    /** The item being operated on. */
+    public ItemGIdent item;
 
     /** The tag that was added or deleted, or null for COPIED. */
     public String tag;

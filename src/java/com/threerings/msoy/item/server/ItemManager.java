@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -33,6 +34,7 @@ import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemGIdent;
 import com.threerings.msoy.item.web.TagHistory;
 
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -429,7 +431,8 @@ public class ItemManager
                     }
                     TagNameRecord tag = repo.getTag(record.tagId);
                     TagHistory history = new TagHistory();
-                    history.itemId = record.itemId;
+                    history.item =
+                        new ItemGIdent(ident.type.name(), ident.itemId);
                     history.member =
                         new MemberGName(memRec.name, memRec.memberId);
                     history.tag = tag.tag;
@@ -455,13 +458,17 @@ public class ItemManager
                 MemberGName memName =
                     new MemberGName(memRec.name, memRec.memberId);
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
-                for (ItemRepository<ItemRecord> repo : _repos.values()) {
+                for (Entry<ItemEnum, ItemRepository<ItemRecord>> entry :
+                        _repos.entrySet()) {
+                    ItemEnum type = entry.getKey();
+                    ItemRepository<ItemRecord> repo = entry.getValue();
                     for (TagHistoryRecord<ItemRecord> record :
                         repo.getTagHistoryByMember(memberId)) {
                         TagNameRecord tag = record.tagId == -1 ? null :
                             repo.getTag(record.tagId);
                         TagHistory history = new TagHistory();
-                        history.itemId = record.itemId;
+                        history.item = new ItemGIdent(
+                            type.name(), record.itemId);
                         history.member = memName;
                         history.tag = tag == null ? null : tag.tag;
                         history.action = record.action;
@@ -622,7 +629,7 @@ public class ItemManager
 
                 // and create the return value
                 TagHistory history = new TagHistory();
-                history.itemId = originalId;
+                history.item = new ItemGIdent(ident.type.name(), originalId);
                 history.member = new MemberGName(member.name, member.memberId);
                 history.tag = tag.tag;
                 history.action = historyRecord.action;
