@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * A class for creating and editing {@link Document} digital items.
@@ -30,8 +31,7 @@ public class DocumentEditor extends ItemEditor
     {
         configureMainUploader("Upload your document.", new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
-                _doc.docMediaHash = hash;
-                _doc.docMimeType = mimeType;
+                _doc.docMedia = new MediaDesc(hash, mimeType);
             }
         });
 

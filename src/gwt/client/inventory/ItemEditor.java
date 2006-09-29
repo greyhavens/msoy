@@ -146,8 +146,7 @@ public abstract class ItemEditor extends FlexTable
         _furniUploader = createUploader(FURNI_ID, title, -1,
             new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
-                _item.furniMediaHash = hash;
-                _item.furniMimeType = mimeType;
+                _item.furniMedia = new MediaDesc(hash, mimeType);
             }
         });
 
@@ -156,8 +155,7 @@ public abstract class ItemEditor extends FlexTable
         _thumbUploader = createUploader(THUMB_ID, title,
             ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
-                _item.thumbMediaHash = hash;
-                _item.thumbMimeType = mimeType;
+                _item.thumbMedia = new MediaDesc(hash, mimeType);
             }
         });
 

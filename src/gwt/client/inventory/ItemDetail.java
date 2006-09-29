@@ -64,7 +64,7 @@ public class ItemDetail extends PopupPanel
                "Flag mask", String.valueOf(_item.flags));
         // TODO: Should be MemberGNames
         addRow("Owner ID", String.valueOf(_item.ownerId),
-               "Creator ID", String.valueOf(_item.creatorId)); 
+               "Creator ID", String.valueOf(_item.creatorId));
         Widget thumbContainer =
             ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
                 _item.getThumbnailPath()));
@@ -80,10 +80,10 @@ public class ItemDetail extends PopupPanel
             addRow("Title", ((Document)_item).title);
             // we should check if the document has a useful visual
             String url = MsoyEntryPoint.toMediaPath(
-                ((Document)_item).getDocumentMedia().getMediaPath());
+                ((Document)_item).docMedia.getMediaPath());
             addRow("Document Media", new HTML(
                 "<A HREF='" + url + "'>" + url + "</a>"));
-            
+
         } else if (_item instanceof Furniture) {
             addHeader("Furniture Information");
             addRow("Action", ((Furniture)_item).action,
@@ -103,10 +103,10 @@ public class ItemDetail extends PopupPanel
             addHeader("Photo Information");
             Widget photoContainer =
                 ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
-                    ((Photo)_item).getPhotoMedia().getMediaPath()));
+                    ((Photo)_item).photoMedia.getMediaPath()));
             addRow("Photo Media", photoContainer);
             addRow("Caption", ((Photo)_item).caption);
-            
+
         } else {
             addHeader("UNKNOWN OBJECT TYPE");
         }
@@ -117,9 +117,9 @@ public class ItemDetail extends PopupPanel
         addRow("Average Rating", String.valueOf(_item.rating),
                "Your Rating", _ratingContainer);
         updateRatingContainer(false);
-        
+
         addHeader("Tagging Information");
-        
+
         TextBox newTagBox = new TextBox();
         newTagBox.setMaxLength(20);
         newTagBox.setVisibleLength(12);
@@ -127,7 +127,7 @@ public class ItemDetail extends PopupPanel
             public void onChange (Widget sender) {
                 _ctx.itemsvc.tagItem(
                     _ctx.creds, _itemId,
-                    ((TextBox) sender).getText(), 
+                    ((TextBox) sender).getText(),
                     new AsyncCallback() {
                         public void onSuccess (Object result) {
                             updateTags();
@@ -155,9 +155,9 @@ public class ItemDetail extends PopupPanel
                             // TODO: generalize error handling
                         }
                     });
-            }            
+            }
         });
-        
+
         _tagContainer = new FlowPanel();
         updateTags();
         ComplexPanel enterTagContainer = new HorizontalPanel();
@@ -166,7 +166,7 @@ public class ItemDetail extends PopupPanel
         addRow("Enter a new tag", enterTagContainer);
         addRow("Tags", _tagContainer);
     }
-    
+
     protected void updateTags ()
     {
         _ctx.itemsvc.getTagHistory(
@@ -280,7 +280,7 @@ public class ItemDetail extends PopupPanel
             }
         }
     }
-    
+
     protected void addHeader (String header)
     {
         _table.setText(_row, 0, header);
@@ -339,7 +339,7 @@ public class ItemDetail extends PopupPanel
             _row, 3,
             HasHorizontalAlignment.ALIGN_LEFT,
             HasVerticalAlignment.ALIGN_MIDDLE);
-            
+
         _row ++;
     }
 

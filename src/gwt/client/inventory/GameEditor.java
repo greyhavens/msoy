@@ -40,8 +40,7 @@ public class GameEditor extends ItemEditor
         // configure the main uploader first
         configureMainUploader("Upload your game.", new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
-                _game.gameMediaHash = hash;
-                _game.gameMimeType = mimeType;
+                _game.gameMedia = new MediaDesc(hash, mimeType);
             }
         });
 
