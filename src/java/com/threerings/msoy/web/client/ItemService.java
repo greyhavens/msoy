@@ -9,8 +9,8 @@ import java.util.Collection;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemGIdent;
 import com.threerings.msoy.item.web.TagHistory;
-import com.threerings.msoy.web.data.ItemGIdent;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 

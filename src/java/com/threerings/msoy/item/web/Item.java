@@ -55,6 +55,14 @@ public abstract class Item implements Streamable, IsSerializable
     public byte furniMimeType;
 
     /**
+     * Returns this item's composite identifier.
+     */
+    public ItemGIdent getIdent ()
+    {
+        return new ItemGIdent(getType(), itemId);
+    }
+
+    /**
      * This is used to map {@link Item} concrete classes to ItemEnum values. We
      * cannot simply reference the ItemEnum itself because item classes must be
      * translatable to JavaScript which doesn't support enums. So be sure to

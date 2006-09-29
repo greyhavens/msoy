@@ -11,10 +11,10 @@ import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemGIdent;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.CatalogService;
-import com.threerings.msoy.web.data.ItemGIdent;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 

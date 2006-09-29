@@ -12,11 +12,11 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemGIdent;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.ItemService;
-import com.threerings.msoy.web.data.ItemGIdent;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
