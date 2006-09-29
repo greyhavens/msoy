@@ -32,6 +32,9 @@ done
 if [ ! -d threerings ]; then
     svn checkout $SVNROOT/threerings/trunk/projects/threerings threerings
 fi
+if [ ! -d toybox ]; then
+    svn checkout $SVNROOT/gardens/trunk/projects/toybox toybox
+fi
 
 # now run all_rebuild to make sure everything works
 $ROOT/bin/all_rebuild
