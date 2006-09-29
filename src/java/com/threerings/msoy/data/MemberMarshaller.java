@@ -45,4 +45,30 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #setAvatar} requests. */
+    public static final int SET_AVATAR = 3;
+
+    // documentation inherited from interface
+    public void setAvatar (Client arg1, int arg2, InvocationService.InvocationListener arg3)
+    {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, SET_AVATAR, new Object[] {
+            Integer.valueOf(arg2), listener3
+        });
+    }
+
+    /** The method id used to dispatch {@link #setDisplayName} requests. */
+    public static final int SET_DISPLAY_NAME = 4;
+
+    // documentation inherited from interface
+    public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)
+    {
+        ListenerMarshaller listener3 = new ListenerMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, SET_DISPLAY_NAME, new Object[] {
+            arg2, listener3
+        });
+    }
+
 }

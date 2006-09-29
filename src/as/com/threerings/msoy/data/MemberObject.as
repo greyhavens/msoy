@@ -17,7 +17,7 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.Avatar;
 
 /**
  * Represents a connected msoy user.
@@ -72,8 +72,8 @@ public class MemberObject extends BodyObject
     /** The id of the user's home scene. */
     public var homeSceneId :int;
 
-    /** The avatar that the user has chosen. */
-    public var avatar :MediaDesc;
+    /** The avatar that the user has chosen, or null for guests. */
+    public var avatar :Avatar;
 
     /** The style of our chat. */
     public var chatStyle :int;
@@ -287,7 +287,7 @@ public class MemberObject extends BodyObject
         recentScenes = (ins.readObject() as DSet);
         tokens = (ins.readObject() as MsoyTokenRing);
         homeSceneId = ins.readInt();
-        avatar = (ins.readObject() as MediaDesc);
+        avatar = (ins.readObject() as Avatar);
         chatStyle = ins.readShort();
         chatPopStyle = ins.readShort();
         friends = (ins.readObject() as DSet);

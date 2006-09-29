@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.util.ArrayList;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.Invoker;
@@ -22,6 +23,8 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
 
+import com.threerings.crowd.server.PlaceManager;
+
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
@@ -32,6 +35,8 @@ import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.ProfileRepository;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manage msoy members.
@@ -117,9 +122,7 @@ public class MemberManager
             throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
-        if (user.isGuest()) {
-            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
-        }
+        ensureNotGuest(user);
 
         MsoyServer.invoker.postUnit(new PersistingUnit("alterFriend", lner) {
             public void invokePersistent () throws PersistenceException {
@@ -182,7 +185,6 @@ public class MemberManager
         InvocationService.ResultListener listener)
             throws InvocationException
     {
-        // TODO: only give out homeIds to people who are friends?
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Integer>(
                 new ResultAdapter<Integer>(listener)) {
@@ -204,6 +206,75 @@ public class MemberManager
                     }
                 }
         });
+    }
+
+    // from interface MemberProvider
+    public void setAvatar (
+        ClientObject caller, int avatarItemId,
+        InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
+        ensureNotGuest(user);
+
+        // TODO
+    }
+
+    // from interface MemberProvider
+    public void setDisplayName (
+        ClientObject caller, final String name,
+        final InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        final MemberObject user = (MemberObject) caller;
+        ensureNotGuest(user);
+
+        // TODO: verify entered string
+
+        MsoyServer.invoker.postUnit(new RepositoryUnit("setDisplayName") {
+            public void invokePersist ()
+                throws PersistenceException
+            {
+                _memberRepo.configureDisplayName(user.getMemberId(), name);
+            }
+
+            public void handleSuccess ()
+            {
+                user.setMemberName(new MemberName(name, user.getMemberId()));
+                updateOccupantInfo(user);
+            }
+
+            public void handleFailure (Exception pe)
+            {
+                log.warning("Unable to set display name " +
+                    "[user=" + user.which() + ", name='" + name + "', " +
+                    "error=" + pe + "].");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
+    }
+
+    /**
+     * Convenience method to ensure that the specified caller is not
+     * a guest.
+     */
+    protected void ensureNotGuest (MemberObject caller)
+        throws InvocationException
+    {
+        if (caller.isGuest()) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+    }
+
+    /**
+     * Update the user's occupant info.
+     */
+    protected void updateOccupantInfo (MemberObject user)
+    {
+        PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.sceneId);
+        if (pmgr != null) {
+            pmgr.updateOccupantInfo(user.createOccupantInfo());
+        }
     }
 
     /**

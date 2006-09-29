@@ -333,20 +333,12 @@ public class RoomController extends SceneController
         if (keyDown) {
             var frob :String = null;
             switch (event.keyCode) {
-            case Keyboard.F1:
-                frob = MemberObject.AVATAR;
-                break;
-
             case Keyboard.F2:
                 frob = MemberObject.CHAT_STYLE;
                 break;
 
             case Keyboard.F3:
                 frob = MemberObject.CHAT_POP_STYLE;
-                break;
-
-            case Keyboard.F4:
-                frob = MemberObject.AVATAR + "r";
                 break;
             }
 

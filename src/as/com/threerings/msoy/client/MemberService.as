@@ -19,14 +19,28 @@ public interface MemberService extends InvocationService
      * Request to add the specified friend to the user's buddylist.
      */
     function alterFriend (
-            client :Client, friendId :int, add :Boolean,
-            listener :InvocationService_InvocationListener) :void;
+        client :Client, friendId :int, add :Boolean,
+        listener :InvocationService_InvocationListener) :void;
 
     /**
      * Request to know the home scene id for the specified friend.
      */
     function getMemberHomeId (
-            client :Client, memberId :int,
-            listener :InvocationService_ResultListener) :void
+        client :Client, memberId :int,
+        listener :InvocationService_ResultListener) :void
+
+    /**
+     * Set the avatar in use by this user.
+     */
+    function setAvatar (
+        client :Client, avatarId :int,
+        listener :InvocationService_InvocationListener) :void;
+
+    /**
+     * Set the display name for this user.
+     */
+    function setDisplayName (
+        client :Client, name :String,
+        listener :InvocationService_InvocationListener) :void;
 }
 }

@@ -96,15 +96,15 @@ public class ControlBar extends Canvas
             scenesBtn.height = HEIGHT;
             addChild(scenesBtn);
 
-            // set up a guest login button
-            var guestBtn :CommandButton =
-                new CommandButton(MsoyController.LOGON);
-            guestBtn.styleName = BUTTON_STYLE;
-            guestBtn.x = 753;
-            guestBtn.y = 0;
-            guestBtn.width = 47;
-            guestBtn.height = HEIGHT;
-            addChild(guestBtn);
+            // settings, prefs, whatever we want to call them
+            var prefsBtn :CommandButton = new CommandButton();
+            prefsBtn.styleName = BUTTON_STYLE;
+            prefsBtn.setCommand(MsoyController.POP_PREFS_MENU, prefsBtn);
+            prefsBtn.x = 753;
+            prefsBtn.y = 0;
+            prefsBtn.width = 47;
+            prefsBtn.height = HEIGHT;
+            addChild(prefsBtn);
 
         } else {
             setStyle("backgroundImage", null);

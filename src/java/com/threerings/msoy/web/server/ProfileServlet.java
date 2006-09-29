@@ -34,8 +34,8 @@ public class ProfileServlet extends RemoteServiceServlet
             // doing anything properly
             log.info("Updating display name " + creds.memberId +
                 " to '" + displayName + "'.");
-            MsoyServer.memberRepo.configureMember(
-                creds.memberId, new Name(displayName));
+            MsoyServer.memberRepo.configureDisplayName(
+                creds.memberId, displayName);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update member's display name " +
                 "[mid=" + creds.memberId + ", name=" + displayName + "].", pe);

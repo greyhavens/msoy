@@ -39,6 +39,7 @@ public class MemberRecord
     public String accountName;
 
     /** The name by which this member is known in MetaSOY. */
+    @Column(nullable=false)
     public String name;
 
     /** The quantity of flow possessed by this member. */

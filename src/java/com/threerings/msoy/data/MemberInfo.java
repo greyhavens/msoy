@@ -17,6 +17,9 @@ public class MemberInfo extends OccupantInfo
     /** The media that represents our avatar. */
     public MediaDesc media;
 
+    /** The itemId of the item that is the avatar. */
+    public int avatarId;
+
     /** The style of chat bubble to use. */
     public short chatStyle;
 
@@ -32,7 +35,17 @@ public class MemberInfo extends OccupantInfo
     {
         super(user);
 
-        media = user.avatar;
+        if (user.avatar != null) {
+            media = user.avatar.getAvatarMedia();
+            avatarId = user.avatar.itemId;
+
+        } else {
+            // TODO
+            media =
+                new MediaDesc("e1c4cd0111619e0d8c038b90292aa6ec0bd5d86a.swf");
+            avatarId = -1;
+        }
+
         chatStyle = user.chatStyle;
         chatPopStyle = user.chatPopStyle;
     }

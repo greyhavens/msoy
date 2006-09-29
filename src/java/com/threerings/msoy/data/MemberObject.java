@@ -14,6 +14,7 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
+import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.MediaDesc;
 
 /**
@@ -73,8 +74,8 @@ public class MemberObject extends BodyObject
     /** The id of the user's home scene. */
     public int homeSceneId;
 
-    /** The avatar that the user has chosen. */
-    public MediaDesc avatar;
+    /** The avatar that the user has chosen, or null for guests. */
+    public Avatar avatar;
 
     /** The style of our chat. */
     public short chatStyle;
@@ -144,7 +145,7 @@ public class MemberObject extends BodyObject
         super.setOid(oid);
 
         // configure some starter options
-        avatar = AVATARS[oid % AVATARS.length];
+//        avatar = AVATARS[oid % AVATARS.length].;
         chatStyle = (short) (oid % 2);
         chatPopStyle = (short) (oid % 2);
     }
@@ -158,10 +159,10 @@ public class MemberObject extends BodyObject
         } else if (CHAT_POP_STYLE.equals(field)) {
             setChatPopStyle((short) ((chatPopStyle + 1) % 2));
 
-        } else {
-            int increment = AVATAR.equals(field) ? 1 : (AVATARS.length - 1);
-            int dex = ListUtil.indexOf(AVATARS, avatar);
-            setAvatar(AVATARS[(dex + increment) % AVATARS.length]);
+//        } else {
+//            int increment = AVATAR.equals(field) ? 1 : (AVATARS.length - 1);
+//            int dex = ListUtil.indexOf(AVATARS, avatar);
+//            setAvatar(AVATARS[(dex + increment) % AVATARS.length]);
         }
     }
 
@@ -333,9 +334,9 @@ public class MemberObject extends BodyObject
      * clients) will apply the value change when they received the
      * attribute changed notification.
      */
-    public void setAvatar (MediaDesc value)
+    public void setAvatar (Avatar value)
     {
-        MediaDesc ovalue = this.avatar;
+        Avatar ovalue = this.avatar;
         requestAttributeChange(
             AVATAR, value, ovalue);
         this.avatar = value;
@@ -422,13 +423,13 @@ public class MemberObject extends BodyObject
     }
     // AUTO-GENERATED: METHODS END
 
-    // TEMP: media ids for our standard avatars
-    public static final MediaDesc[] AVATARS = {
-        new MediaDesc("e1c4cd0111619e0d8c038b90292aa6ec0bd5d86a.swf"),
-        new MediaDesc("4cadc322f2afbc7330a5e0098025637cf568f2cb.swf"),
-        new MediaDesc("2a6b4b657db5a7138f1a97cff91544c4d41deffa.swf"),
-        new MediaDesc("d6c6afaebf7231cf94fdc35c0956908896f48e04.swf"),
-    };
+//    // TEMP: media ids for our standard avatars
+//    public static final MediaDesc[] AVATARS = {
+//        new MediaDesc("e1c4cd0111619e0d8c038b90292aa6ec0bd5d86a.swf"),
+//        new MediaDesc("4cadc322f2afbc7330a5e0098025637cf568f2cb.swf"),
+//        new MediaDesc("2a6b4b657db5a7138f1a97cff91544c4d41deffa.swf"),
+//        new MediaDesc("d6c6afaebf7231cf94fdc35c0956908896f48e04.swf"),
+//    };
 
     public static final int MAX_RECENT_SCENES = 10;
 }

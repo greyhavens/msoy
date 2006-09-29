@@ -52,6 +52,20 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.SET_AVATAR:
+            ((MemberProvider)provider).setAvatar(
+                source,
+                ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
+        case MemberMarshaller.SET_DISPLAY_NAME:
+            ((MemberProvider)provider).setDisplayName(
+                source,
+                (String)args[0], (InvocationService.InvocationListener)args[1]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

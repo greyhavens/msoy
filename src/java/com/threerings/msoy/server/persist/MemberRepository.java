@@ -139,21 +139,12 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Configures a member's name.
-     *
-     * @return true if the member was properly configured, false if the
-     * requested name is a duplicate of an existing name.
+     * Configures a member's display name.
      */
-    public boolean configureMember (int memberId, Name name)
+    public void configureDisplayName (int memberId, String name)
         throws PersistenceException
     {
-        try {
-            updatePartial(MemberRecord.class, memberId,
-                MemberRecord.NAME, name);
-            return true;
-        } catch (DuplicateKeyException dke) {
-            return false;
-        }
+        updatePartial(MemberRecord.class, memberId, MemberRecord.NAME, name);
     }
 
     /**

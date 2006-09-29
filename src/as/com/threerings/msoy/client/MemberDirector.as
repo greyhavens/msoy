@@ -7,6 +7,7 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -17,13 +18,49 @@ import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
 
+import com.threerings.msoy.chat.client.ReportingListener;
+
 public class MemberDirector extends BasicDirector
     implements SetListener
 {
+    public const log :Log = Log.getLog(MemberDirector);
+
     public function MemberDirector (ctx :MsoyContext)
     {
         super(ctx);
         _mctx = ctx;
+    }
+
+    /**
+     * Request to move to the specified member's home.
+     */
+    public function goToMemberHome (memberId :int) :void
+    {
+        _msvc.getMemberHomeId(_mctx.getClient(), memberId, new ResultWrapper(
+            function (cause :String) :void {
+                log.warning("Unable to go to friend's home: " + cause);
+            }, 
+            function (sceneId :int) :void {
+                _mctx.getSceneDirector().moveTo(sceneId);
+            }));
+    }
+
+    /**
+     * Request to make the user our friend, or remove them as a friend.
+     */
+    public function alterFriend (friendId :int, makeFriend :Boolean) :void
+    {
+        _msvc.alterFriend(_mctx.getClient(), friendId, makeFriend,
+            new ReportingListener(_mctx));
+    }
+
+    /**
+     * Request to change our display name.
+     */
+    public function setDisplayName (newName :String) :void
+    {
+        _msvc.setDisplayName(_mctx.getClient(), newName,
+            new ReportingListener(_mctx));
     }
 
     // from interface SetListener
@@ -96,6 +133,13 @@ public class MemberDirector extends BasicDirector
         client.getClientObject().addListener(this);
     }
 
+    override protected function fetchServices (client :Client) :void
+    {
+        super.fetchServices(client);
+
+        _msvc = (client.requireService(MemberService) as MemberService);
+    }
+
     /**
      * Query the user as to whether they want to make this user their
      * friend.
@@ -106,5 +150,7 @@ public class MemberDirector extends BasicDirector
     }
 
     protected var _mctx :MsoyContext;
+
+    protected var _msvc :MemberService;
 }
 }

@@ -37,6 +37,9 @@ public class MsoyController extends Controller
     /** Command to display the recent scenes list. */
     public static const POP_ROOMS_MENU :String = "PopRoomsMenu"
 
+    /** Command to display the prefs. */
+    public static const POP_PREFS_MENU :String = "PopPrefsMenu"
+
     /** Command to go to a particular scene. */
     public static const GO_SCENE :String = "GoScene";
 
@@ -45,6 +48,9 @@ public class MsoyController extends Controller
 
     /** Command to add/remove friends. */
     public static const ALTER_FRIEND :String = "AlterFriend";
+
+    /** Command to edit preferences. */
+    public static const EDIT_PREFS :String = "EditPrefs";
 
     /**
      * Create the msoy controller.
@@ -129,6 +135,29 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Handle the POP_PREFS_MENU command.
+     */
+    public function handlePopPrefsMenu (trigger :Button) :void
+    {
+        var memberObj :MemberObject = _ctx.getClientObject();
+
+        var menuData :Array = [ ];
+
+        if (!memberObj.isGuest()) {
+            menuData.push(
+                { label: _ctx.xlate("general", "b.logon_guest"),
+                  command: LOGON },
+                { type: "separator" },
+                { label: _ctx.xlate("general", "b.edit_prefs"),
+                  command: EDIT_PREFS});
+        }
+
+        var menu :CommandMenu =
+            CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
+        menu.popUp(trigger);
+    }
+
+    /**
      * Handle the GO_SCENE command.
      */
     public function handleGoScene (sceneId :int) :void
@@ -141,15 +170,7 @@ public class MsoyController extends Controller
      */
     public function handleGoMemberHome (memberId :int) :void
     {
-        var msvc :MemberService =
-            (_ctx.getClient().requireService(MemberService) as MemberService);
-        msvc.getMemberHomeId(_ctx.getClient(), memberId, new ResultWrapper(
-            function (cause :String) :void {
-                log.warning("Unable to go to friend's home: " + cause);
-            },
-            function (sceneId :int) :void {
-                _ctx.getSceneDirector().moveTo(sceneId);
-            }));
+        _ctx.getMemberDirector().goToMemberHome(memberId);
     }
 
     /**
@@ -157,12 +178,15 @@ public class MsoyController extends Controller
      */
     public function handleAlterFriend (args :Array) :void
     {
-        var friendId :int = int(args[0]);
-        var alteration :Boolean = Boolean(args[1]);
-        var msvc :MemberService =
-            (_ctx.getClient().requireService(MemberService) as MemberService);
-        msvc.alterFriend(_ctx.getClient(), friendId, alteration,
-            new ReportingListener(_ctx));
+        _ctx.getMemberDirector().alterFriend(int(args[0]), Boolean(args[1]));
+    }
+
+    /**
+     * Handles EDIT_PREFS.
+     */
+    public function handleEditPrefs () :void
+    {
+        new PrefsDialog(_ctx);
     }
 
     /**
