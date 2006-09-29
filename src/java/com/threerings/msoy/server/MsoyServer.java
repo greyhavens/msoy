@@ -38,6 +38,8 @@ import com.threerings.whirled.spot.server.SpotDispatcher;
 import com.threerings.whirled.spot.server.SpotProvider;
 import com.threerings.whirled.util.SceneFactory;
 
+import com.threerings.toybox.server.ToyBoxManager;
+
 import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.server.ItemManager;
@@ -90,6 +92,9 @@ public class MsoyServer extends WhirledServer
 
     /** Handles HTTP servlet requests. */
     public static MsoyHttpServer httpServer;
+
+    /** Handles sandboxed game server code. */
+    public static ToyBoxManager toyMan = new ToyBoxManager();
 
     /**
      * Creates an audit log with the specified name (which should not include
@@ -186,6 +191,7 @@ public class MsoyServer extends WhirledServer
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
         lobbyReg.init(invmgr);
+        toyMan.init(invmgr, itemMan.getGameRepository());
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();

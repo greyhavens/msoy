@@ -62,52 +62,29 @@ public class ItemManager
     @SuppressWarnings("unchecked")
     public void init (ConnectionProvider conProv) throws PersistenceException
     {
-        _repos.put(ItemEnum.AVATAR,
-            (ItemRepository) new AvatarRepository(conProv));
-        _repos.put(ItemEnum.DOCUMENT,
-            (ItemRepository) new DocumentRepository(conProv));
-        _repos.put(ItemEnum.FURNITURE,
-            (ItemRepository) new FurnitureRepository(conProv));
-        _repos.put(ItemEnum.GAME,
-            (ItemRepository) new GameRepository(conProv));
-        _repos.put(ItemEnum.PHOTO,
-            (ItemRepository) new PhotoRepository(conProv));
+        // create our various repositories
+        ItemRepository repo = new AvatarRepository(conProv);
+        _repos.put(ItemEnum.AVATAR, repo);
+        repo = new DocumentRepository(conProv);
+        _repos.put(ItemEnum.DOCUMENT, repo);
+        repo = new FurnitureRepository(conProv);
+        _repos.put(ItemEnum.FURNITURE, repo);
+        repo = (_gameRepo = new GameRepository(conProv));
+        _repos.put(ItemEnum.GAME, repo);
+        repo = new PhotoRepository(conProv);
+        _repos.put(ItemEnum.PHOTO, repo);
 
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), true);
     }
 
-    // from ItemProvider
-    public void getInventory (ClientObject caller, String type,
-            final InvocationService.ResultListener listener)
-        throws InvocationException
+    /**
+     * Provides a reference to the {@link GameRepository} which is used for
+     * nefarious ToyBox purposes.
+     */
+    public GameRepository getGameRepository ()
     {
-        MemberObject memberObj = (MemberObject) caller;
-        if (memberObj.isGuest()) {
-            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
-        }
-        // go ahead and throw a RuntimeException if 'type' is bogus
-        ItemEnum etype = Enum.valueOf(ItemEnum.class, type);
-
-        // then, load that type
-        // TODO: not everything!
-        loadInventory(
-            memberObj.getMemberId(), etype,
-            new ResultListener<ArrayList<Item>>() {
-                public void requestCompleted (ArrayList<Item> result)
-                {
-                    Item[] items = new Item[result.size()];
-                    result.toArray(items);
-                    listener.requestProcessed(items);
-                }
-
-                public void requestFailed (Exception cause)
-                {
-                    log.warning("Unable to retrieve inventory " + "[cause="
-                        + cause + "].");
-                    listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-                }
-            });
+        return _gameRepo;
     }
 
     /**
@@ -397,7 +374,9 @@ public class ItemManager
             });
     }
 
-    /** Fetch the tagging history for a given item. */
+    /**
+     * Fetch the tagging history for a given item.
+     */
     public void getTagHistory (final ItemIdent ident,
                                ResultListener<Collection<TagHistory>> listener)
     {
@@ -475,23 +454,62 @@ public class ItemManager
         });
     }
 
-    /** Add the specified tag to the specified item. Return a tag history
-     *  object if the tag did not already exist. */
+    /**
+     * Add the specified tag to the specified item. Return a tag history object
+     * if the tag did not already exist.
+     */
     public void tagItem (ItemIdent ident, int taggerId, String tagName,
                          ResultListener<TagHistory> listener)
     {
         itemTagging(ident, taggerId, tagName, listener, true);
     }
 
-    /** Remove the specified tag from the specified item. Return a tag history
-     *  object if the tag existed. */
+    /**
+     * Remove the specified tag from the specified item. Return a tag history
+     * object if the tag existed.
+     */
     public void untagItem (ItemIdent ident, int taggerId, String tagName,
                            ResultListener<TagHistory> listener)
     {
         itemTagging(ident, taggerId, tagName, listener, false);
     }
 
-    // do the facade work for tagging
+    // from ItemProvider
+    public void getInventory (ClientObject caller, String type,
+            final InvocationService.ResultListener listener)
+        throws InvocationException
+    {
+        MemberObject memberObj = (MemberObject) caller;
+        if (memberObj.isGuest()) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+        // go ahead and throw a RuntimeException if 'type' is bogus
+        ItemEnum etype = Enum.valueOf(ItemEnum.class, type);
+
+        // then, load that type
+        // TODO: not everything!
+        loadInventory(
+            memberObj.getMemberId(), etype,
+            new ResultListener<ArrayList<Item>>() {
+                public void requestCompleted (ArrayList<Item> result)
+                {
+                    Item[] items = new Item[result.size()];
+                    result.toArray(items);
+                    listener.requestProcessed(items);
+                }
+
+                public void requestFailed (Exception cause)
+                {
+                    log.warning("Unable to retrieve inventory " + "[cause="
+                        + cause + "].");
+                    listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                }
+            });
+    }
+
+    /**
+     * Does the facade work for tagging.
+     */
     protected void itemTagging (
         final ItemIdent ident, final int taggerId, final String rawTagName,
         ResultListener<TagHistory> listener, final boolean doTag)
@@ -571,12 +589,18 @@ public class ItemManager
         }
     }
 
+    /**
+     * Helper function for mapping ident to repository.
+     */
     protected ItemRepository<ItemRecord> getRepository (
         ItemIdent ident, ResultListener<?> listener)
     {
         return getRepository(ident.type, listener);
     }
 
+    /**
+     * Helper function for mapping ident to repository.
+     */
     protected ItemRepository<ItemRecord> getRepository (
         ItemEnum type, ResultListener<?> listener)
     {
@@ -587,6 +611,11 @@ public class ItemManager
         }
         return repo;
     }
+
+    /** Contains a reference to our game repository. We'd just look this up
+     * from the table but we can't downcast an ItemRepository<ItemRecord> to a
+     * GameRepository, annoyingly. */
+    protected GameRepository _gameRepo;
 
     /** A regexp pattern to validate tags. */
     protected static final Pattern validTag =
