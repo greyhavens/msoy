@@ -22,7 +22,7 @@ public class TagHistory
     /** The ID of the item being operated on. */
     public int itemId;
 
-    /** The tag that was added or deleted. */
+    /** The tag that was added or deleted, or null for COPIED. */
     public String tag;
     
     /** The member who added or deleted the tag. */
