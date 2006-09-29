@@ -65,7 +65,12 @@ build_libraries samskivert narya nenya vilya threerings
 cd $ROOT/lib
 make_symlinks `cat LIBS`
 if [ -d ../projects/narya/dist/lib ]; then
-    ln -sf ../projects/narya/dist/lib/* .
+    # get our arch-os native library crap from narya
+    for DIR in ../projects/narya/dist/lib/*-* ; do
+        if [ -d $DIR ]; then
+            ln -sf $DIR .
+        fi
+    done
 fi
 
 # build the main thang
