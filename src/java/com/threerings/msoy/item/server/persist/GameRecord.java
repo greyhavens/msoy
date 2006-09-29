@@ -47,7 +47,7 @@ public class GameRecord extends ItemRecord
     public short desiredPlayers;
 
     /** The XML game configuration. */
-    @Column(columnDefinition="TEXT NOT NULL")
+    @Column(columnDefinition="config TEXT NOT NULL")
     public String config;
 
     /** A hash code identifying the game media. */
