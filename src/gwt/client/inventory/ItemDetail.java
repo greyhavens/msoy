@@ -223,7 +223,7 @@ public class ItemDetail extends PopupPanel
                     GWT.log("getRating failed", caught);
                     // TODO: for now, handle all async errors this way
                     _ratingContainer.add(
-                        new HTML("[Error: " + caught.getMessage() + "]"));
+                        new Label("[Error: " + caught.getMessage() + "]"));
                     return;
                 }
             });
@@ -259,7 +259,7 @@ public class ItemDetail extends PopupPanel
                                 GWT.log("getRating failed", caught);
                                 // TODO: if ServiceException, translate
                                 _ratingContainer.add(
-                                    new HTML("[Error: " + caught.getMessage() + "]"));
+                                    new Label("[Error: " + caught.getMessage() + "]"));
                             }
                         });
                 }
@@ -312,7 +312,7 @@ public class ItemDetail extends PopupPanel
 
     protected void addRow (String head, String val)
     {
-        addRow(head, new HTML(val));
+        addRow(head, new Label(val));
     }
 
     protected void addRow (String lhead, Widget lval, String rhead, Widget rval)
@@ -345,17 +345,17 @@ public class ItemDetail extends PopupPanel
 
     protected void addRow (String lhead, String lval, String rhead, Widget rval)
     {
-        addRow(lhead, new HTML(lval), rhead, rval);
+        addRow(lhead, new Label(lval), rhead, rval);
     }
 
     protected void addRow (String lhead, Widget lval, String rhead, String rval)
     {
-        addRow(lhead, lval, rhead, new HTML(rval));
+        addRow(lhead, lval, rhead, new Label(rval));
     }
 
     protected void addRow (String lhead, String lval, String rhead, String rval)
     {
-        addRow(lhead, new HTML(lval), rhead, new HTML(rval));
+        addRow(lhead, new Label(lval), rhead, new Label(rval));
     }
 
     protected WebContext _ctx;
