@@ -36,7 +36,7 @@ public class MemberInfo extends OccupantInfo
         super(user);
 
         if (user.avatar != null) {
-            media = user.avatar.getAvatarMedia();
+            media = user.avatar.avatarMedia;
             avatarId = user.avatar.itemId;
 
         } else {

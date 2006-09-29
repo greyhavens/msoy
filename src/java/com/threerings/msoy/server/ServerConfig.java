@@ -29,6 +29,9 @@ public class ServerConfig
     /** The root directory of the server installation. */
     public static File serverRoot;
 
+    /** The hostname to use when connecting to this server. */
+    public static String serverHost;
+
     /** The ports on which we are listening for client connections. */
     public static int[] serverPorts;
 
@@ -90,6 +93,7 @@ public class ServerConfig
         serverName = config.getValue("server_name", "msoy");
         serverRoot = new File(config.getValue("server_root", "/tmp"));
         mediaDir = new File(config.getValue("media_dir", "/tmp"));
+        serverHost = config.getValue("server_host", "localhost");
         serverPorts = config.getValue(
             "server_ports", Client.DEFAULT_SERVER_PORTS);
     }

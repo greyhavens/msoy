@@ -11,6 +11,7 @@ import javax.persistence.TableGenerator;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * A digital item representing a simple text document.
@@ -47,10 +48,11 @@ public class DocumentRecord extends ItemRecord
     {
         super(document);
 
-        this.docMediaHash = document.docMediaHash == null ?
-            null : document.docMediaHash.clone();
-        this.docMimeType = document.docMimeType;
-        this.title = document.title;
+        if (document.docMedia != null) {
+            docMediaHash = document.docMedia.hash;
+            docMimeType = document.docMedia.mimeType;
+        }
+        title = document.title;
     }
 
     @Override // from ItemRecord
@@ -60,21 +62,12 @@ public class DocumentRecord extends ItemRecord
     }
 
     @Override
-    public Object clone ()
-    {
-        DocumentRecord clone = (DocumentRecord) super.clone();
-        clone.docMediaHash = docMediaHash.clone();
-        return clone;
-    }
-
-    @Override
     protected Item createItem ()
     {
         Document object = new Document();
-        object.docMediaHash = this.docMediaHash == null ?
-            null : this.docMediaHash.clone();
-        object.docMimeType = this.docMimeType;
-        object.title = this.title;
+        object.docMedia = docMediaHash == null ? null :
+            new MediaDesc(docMediaHash, docMimeType);
+        object.title = title;
         return object;
     }
 }

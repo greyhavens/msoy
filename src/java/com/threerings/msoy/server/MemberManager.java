@@ -100,9 +100,9 @@ public class MemberManager
 
                 // fake bits!
                 profile.photo = new Photo();
-                profile.photo.photoMediaHash = StringUtil.unhexlate(
-                    "816cd5aebc2d9d228bf66cff193b81eba1a6ac85");
-                profile.photo.photoMimeType = MediaDesc.IMAGE_JPEG;
+                profile.photo.photoMedia =
+                    new MediaDesc(StringUtil.unhexlate(
+                                      "816cd5aebc2d9d228bf66cff193b81eba1a6ac85"), MediaDesc.IMAGE_JPEG);
                 profile.headline = "Arr! Mateys, this here be me profile!";
                 profile.homePageURL = "http://www.puzzlepirates.com/";
                 profile.isMale = true;

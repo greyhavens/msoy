@@ -20,19 +20,11 @@ public class Game extends Item
     /** The desired number of players. */
     public short desiredPlayers;
 
-    /** A hash code identifying the game media. */
-    public byte[] gameMediaHash;
+    /** The XML game configuration. */
+    public String config;
 
-    /** The MIME type of the {@link #gameMediaHash} media. */
-    public byte gameMimeType;
-
-    /**
-     * Returns a media descriptor for the actual game media.
-     */
-    public MediaDesc getGameMedia ()
-    {
-        return new MediaDesc(gameMediaHash, gameMimeType);
-    }
+    /** The primary game media. */
+    public MediaDesc gameMedia;
 
     // @Override from Item
     public String getType ()
@@ -57,6 +49,6 @@ public class Game extends Item
                 desiredPlayers > maxPlayers) {
             return false;
         }
-        return (gameMediaHash != null);
+        return (gameMedia != null);
     }
 }

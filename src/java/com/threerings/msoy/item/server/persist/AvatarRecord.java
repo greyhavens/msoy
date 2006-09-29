@@ -11,6 +11,7 @@ import javax.persistence.TableGenerator;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Avatar;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Represents an uploaded avatar.
@@ -24,7 +25,7 @@ public class AvatarRecord extends ItemRecord
 
     public static final String AVATAR_MEDIA_HASH = "avatarMediaHash";
     public static final String AVATAR_MIME_TYPE = "avatarMimeType";
-    
+
     /** A hash code identifying the avatar media. */
     @Column(nullable=false)
     public byte[] avatarMediaHash;
@@ -46,10 +47,11 @@ public class AvatarRecord extends ItemRecord
     {
         super(avatar);
 
-        this.avatarMediaHash = avatar.avatarMediaHash == null ?
-            null : avatar.avatarMediaHash.clone();
-        this.avatarMimeType = avatar.avatarMimeType;
-        this.description = avatar.description;
+        if (avatar.avatarMedia != null) {
+            avatarMediaHash = avatar.avatarMedia.hash;
+            avatarMimeType = avatar.avatarMedia.mimeType;
+        }
+        description = avatar.description;
     }
 
     @Override // from ItemRecord
@@ -57,23 +59,14 @@ public class AvatarRecord extends ItemRecord
     {
         return ItemEnum.AVATAR;
     }
-    
-    @Override
-    public Object clone ()
-    {
-        AvatarRecord clone = (AvatarRecord) super.clone();
-        clone.avatarMediaHash = avatarMediaHash.clone();
-        return clone;
-    }
 
     @Override
     protected Item createItem ()
     {
         Avatar object = new Avatar();
-        object.avatarMediaHash = this.avatarMediaHash == null ?
-            null : this.avatarMediaHash.clone();
-        object.avatarMimeType = this.avatarMimeType;
-        object.description = this.description;
+        object.avatarMedia = avatarMediaHash == null ? null :
+            new MediaDesc(avatarMediaHash, avatarMimeType);
+        object.description = description;
         return object;
     }
 }

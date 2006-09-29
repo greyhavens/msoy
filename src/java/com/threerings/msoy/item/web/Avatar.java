@@ -8,22 +8,11 @@ package com.threerings.msoy.item.web;
  */
 public class Avatar extends Item
 {
-    /** A hash code indentifying the avatar media. */
-    public byte[] avatarMediaHash;
-
-    /** The MIME typeof the {@link #avatarMediaHash} media. */
-    public byte avatarMimeType;
+    /** The avatar media. */
+    public MediaDesc avatarMedia;
 
     /** A description for this avatar (max length 255 characters). */
     public String description;
-
-    /**
-     * Returns a media descriptor for the actual avatar media.
-     */
-    public MediaDesc getAvatarMedia ()
-    {
-        return new MediaDesc(avatarMediaHash, avatarMimeType);
-    }
 
     // @Override // from Item
     public String getType ()
@@ -40,19 +29,19 @@ public class Avatar extends Item
     // @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (avatarMediaHash != null) &&
+        return super.isConsistent() && (avatarMedia != null) &&
             nonBlank(description);
     }
 
     // @Override // from Item
     protected MediaDesc getDefaultThumbnailMedia ()
     {
-        return getAvatarMedia();
+        return avatarMedia;
     }
 
     // @Override // from Item
     protected MediaDesc getDefaultFurniMedia ()
     {
-        return getAvatarMedia();
+        return avatarMedia;
     }
 }

@@ -11,6 +11,7 @@ import javax.persistence.TableGenerator;
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Extends Item with game info.
@@ -20,7 +21,7 @@ import com.threerings.msoy.item.web.Item;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="GAME")
 public class GameRecord extends ItemRecord
 {
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 2;
 
     public static final String NAME = "name";
     public static final String MIN_PLAYERS = "minPlayers";
@@ -28,7 +29,7 @@ public class GameRecord extends ItemRecord
     public static final String DESIRED_PLAYERS = "desiredPlayers";
     public static final String GAME_MEDIA_HASH = "gameMediaHash";
     public static final String GAME_MIME_TYPE = "gameMimeType";
-    
+
     /** The name of the game. */
     @Column(nullable=false)
     public String name;
@@ -44,6 +45,10 @@ public class GameRecord extends ItemRecord
     /** The desired number of players. */
     @Column(nullable=false)
     public short desiredPlayers;
+
+    /** The XML game configuration. */
+    @Column(columnDefinition="TEXT NOT NULL")
+    public String config;
 
     /** A hash code identifying the game media. */
     @Column(nullable=false)
@@ -62,13 +67,15 @@ public class GameRecord extends ItemRecord
     {
         super(game);
 
-        this.name = game.name;
-        this.minPlayers = game.minPlayers;
-        this.maxPlayers = game.maxPlayers;
-        this.desiredPlayers = game.desiredPlayers;
-        this.gameMediaHash = game.gameMediaHash == null ?
-            null : game.gameMediaHash.clone();
-        this.gameMimeType = game.gameMimeType;
+        name = game.name;
+        minPlayers = game.minPlayers;
+        maxPlayers = game.maxPlayers;
+        desiredPlayers = game.desiredPlayers;
+        config = game.config;
+        if (game.gameMedia != null) {
+            gameMediaHash = game.gameMedia.hash;
+            gameMimeType = game.gameMedia.mimeType;
+        }
     }
 
     @Override // from Item
@@ -76,26 +83,18 @@ public class GameRecord extends ItemRecord
     {
         return ItemEnum.GAME;
     }
-    
-    @Override
-    public Object clone ()
-    {
-        GameRecord clone = (GameRecord) super.clone();
-        clone.gameMediaHash = gameMediaHash.clone();
-        return clone;
-    }
 
-    @Override
+    @Override // from Item
     protected Item createItem ()
     {
         Game object = new Game();
-        object.gameMediaHash = this.gameMediaHash == null ?
-            null : this.gameMediaHash;
-        object.gameMimeType = this.gameMimeType;
-        object.name = this.name;
-        object.minPlayers = this.minPlayers;
-        object.maxPlayers = this.maxPlayers;
-        object.desiredPlayers = this.desiredPlayers;
+        object.name = name;
+        object.minPlayers = minPlayers;
+        object.maxPlayers = maxPlayers;
+        object.desiredPlayers = desiredPlayers;
+        object.config = config;
+        object.gameMedia = gameMediaHash == null ? null :
+            new MediaDesc(gameMediaHash, gameMimeType);
         return object;
     }
 }

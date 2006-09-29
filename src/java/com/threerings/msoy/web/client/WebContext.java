@@ -25,7 +25,10 @@ public class WebContext
 
     /** Provides person-related services. */
     public PersonServiceAsync personsvc;
-    
+
     /** Provides catalog-related services. */
     public CatalogServiceAsync catalogsvc;
+
+    /** Provides game-related services. */
+    public GameServiceAsync gamesvc;
 }

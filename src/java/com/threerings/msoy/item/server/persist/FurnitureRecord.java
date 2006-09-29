@@ -25,7 +25,7 @@ public class FurnitureRecord extends ItemRecord
 
     public static final String ACTION = "action";
     public static final String DESCRIPTION = "description";
-    
+
     /** An action associated with this furniture which is dispatched to the
      * virtual world client when the furniture is clicked on (max length 255
      * characters). */
@@ -36,7 +36,6 @@ public class FurnitureRecord extends ItemRecord
     @Column(nullable=false)
     public String description;
 
-    
     public FurnitureRecord ()
     {
         super();
@@ -46,8 +45,8 @@ public class FurnitureRecord extends ItemRecord
     {
         super(furniture);
 
-        this.action = furniture.action;
-        this.description = furniture.description;
+        action = furniture.action;
+        description = furniture.description;
     }
 
     @Override // from Item
@@ -55,20 +54,13 @@ public class FurnitureRecord extends ItemRecord
     {
         return ItemEnum.FURNITURE;
     }
-    
-    @Override
-    public Object clone ()
-    {
-        FurnitureRecord clone = (FurnitureRecord) super.clone();
-        return clone;
-    }
 
     @Override
     protected Item createItem ()
     {
         Furniture object = new Furniture();
-        object.action = this.action;
-        object.description = this.description;
+        object.action = action;
+        object.description = description;
         return object;
     }
 }

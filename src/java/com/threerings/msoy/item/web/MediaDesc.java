@@ -3,12 +3,14 @@
 
 package com.threerings.msoy.item.web;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.io.Streamable;
 
 /**
  * Contains information about a piece of media.
  */
-public class MediaDesc implements Streamable
+public class MediaDesc implements Streamable, IsSerializable
 {
     /** The MIME type for plain UTF-8 text. */
     public static final byte TEXT_PLAIN = 0;

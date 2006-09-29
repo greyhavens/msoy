@@ -40,19 +40,11 @@ public abstract class Item implements Streamable, IsSerializable
     /** The current rating of this item, either 0 or between 1 and 5. */
     public float rating;
     
-    /** A hash code identifying the media used to display this item's thumbnail
-     * representation. */
-    public byte[] thumbMediaHash;
+    /** The media used to display this item's thumbnail representation. */
+    public MediaDesc thumbMedia;
 
-    /** The MIME type of the {@link #thumbMediaHash} media. */
-    public byte thumbMimeType;
-
-    /** A hash code identifying the media used to display this item's furniture
-     * representation. */
-    public byte[] furniMediaHash;
-
-    /** The MIME type of the {@link #furniMediaHash} media. */
-    public byte furniMimeType;
+    /** The media used to display this item's furniture representation. */
+    public MediaDesc furniMedia;
 
     /**
      * Returns this item's composite identifier.
@@ -89,8 +81,7 @@ public abstract class Item implements Streamable, IsSerializable
      */
     public MediaDesc getThumbnailMedia ()
     {
-        return (thumbMediaHash == null) ? getDefaultThumbnailMedia() :
-            new MediaDesc(thumbMediaHash, thumbMimeType);
+        return (thumbMedia == null) ? getDefaultThumbnailMedia() : thumbMedia;
     }
 
     /**
@@ -99,8 +90,7 @@ public abstract class Item implements Streamable, IsSerializable
      */
     public MediaDesc getFurniMedia ()
     {
-        return (furniMediaHash == null) ? getDefaultFurniMedia() :
-            new MediaDesc(furniMediaHash, furniMimeType);
+        return (furniMedia == null) ? getDefaultFurniMedia() : furniMedia;
     }
 
     /**
@@ -112,21 +102,19 @@ public abstract class Item implements Streamable, IsSerializable
     }
 
     /**
-     * Called during item creation to ensure that media descriptors
-     * are not duplicated in this item more than necessary.
+     * Called during item creation to ensure that media descriptors are not
+     * duplicated in this item more than necessary.
      */
     public void checkConsolidateMedia ()
     {
-        if (thumbMediaHash != null &&
-                getThumbnailMedia().equals(getDefaultThumbnailMedia())) {
-            thumbMediaHash = null;
-            thumbMimeType = (byte) 0;
+        if (thumbMedia != null &&
+            getThumbnailMedia().equals(getDefaultThumbnailMedia())) {
+            thumbMedia = null;
         }
 
-        if (furniMediaHash != null &&
-                getFurniMedia().equals(getDefaultFurniMedia())) {
-            furniMediaHash = null;
-            furniMimeType = (byte) 0;
+        if (furniMedia != null &&
+            getFurniMedia().equals(getDefaultFurniMedia())) {
+            furniMedia = null;
         }
     }
 

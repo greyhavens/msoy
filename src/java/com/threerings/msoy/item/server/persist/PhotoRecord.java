@@ -10,6 +10,7 @@ import javax.persistence.TableGenerator;
 
 import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 
 /**
@@ -25,7 +26,7 @@ public class PhotoRecord extends ItemRecord
 
     public static final String PHOTO_MEDIA_HASH = "photoMediaHash";
     public static final String PHOTO_MIME_TYPE = "photoMimeType";
-    
+
     /** A hash code identifying the photo media. */
     @Column(nullable=false)
     public byte[] photoMediaHash;
@@ -47,10 +48,11 @@ public class PhotoRecord extends ItemRecord
     {
         super(photo);
 
-        this.photoMediaHash = photo.photoMediaHash == null ?
-            null : photo.photoMediaHash.clone();
-        this.photoMimeType = photo.photoMimeType;
-        this.caption = photo.caption;
+        if (photo.photoMedia != null) {
+            photoMediaHash = photo.photoMedia.hash;
+            photoMimeType = photo.photoMedia.mimeType;
+        }
+        caption = photo.caption;
     }
 
     @Override // from ItemRecord
@@ -58,23 +60,14 @@ public class PhotoRecord extends ItemRecord
     {
         return ItemEnum.PHOTO;
     }
-    
-    @Override
-    public Object clone ()
-    {
-        PhotoRecord clone = (PhotoRecord) super.clone();
-        clone.photoMediaHash = photoMediaHash.clone();
-        return clone;
-    }
 
     @Override
     protected Item createItem ()
     {
         Photo object = new Photo();
-        object.photoMediaHash = this.photoMediaHash == null ?
-            null : this.photoMediaHash.clone();
-        object.photoMimeType = this.photoMimeType;
-        object.caption = this.caption;
+        object.photoMedia = photoMediaHash == null ? null :
+            new MediaDesc(photoMediaHash, photoMimeType);
+        object.caption = caption;
         return object;
     }
 }

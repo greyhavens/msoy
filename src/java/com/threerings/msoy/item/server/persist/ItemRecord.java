@@ -18,6 +18,7 @@ import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 
 /**
@@ -119,39 +120,27 @@ public abstract class ItemRecord implements Streamable, Cloneable
     {
         super();
 
-        this.creatorId = item.creatorId;
-        this.flags = item.flags;
-        this.furniMediaHash = item.furniMediaHash == null ?
-            null : item.furniMediaHash.clone();
-        this.furniMimeType = item.furniMimeType;
-        this.itemId = item.itemId;
-        this.ownerId = item.ownerId;
-        this.parentId = item.parentId;
-        this.rating = item.rating;
-        this.thumbMediaHash = item.thumbMediaHash == null ?
-            null : item.thumbMediaHash.clone();
-        this.thumbMimeType = item.thumbMimeType;
+        itemId = item.itemId;
+        ownerId = item.ownerId;
+        parentId = item.parentId;
+        rating = item.rating;
+        creatorId = item.creatorId;
+        flags = item.flags;
+        if (item.thumbMedia != null) {
+            thumbMediaHash = item.thumbMedia.hash;
+            thumbMimeType = item.thumbMedia.mimeType;
+        }
+        if (item.furniMedia != null) {
+            furniMediaHash = item.furniMedia.hash;
+            furniMimeType = item.furniMedia.mimeType;
+        }
     }
-
 
     /**
      * This is used to map {@link ItemRecord} concrete classes to ItemEnum
      * values.
      */
     public abstract ItemEnum getType ();
-
-    @Override
-    public Object clone ()
-    {
-        try {
-            ItemRecord clone = (ItemRecord) super.clone();
-            clone.furniMediaHash = furniMediaHash.clone();
-            clone.thumbMediaHash = thumbMediaHash.clone();
-            return clone;
-        } catch (CloneNotSupportedException cnse) {
-            throw new RuntimeException(cnse); // not going to happen
-        }
-    }
 
     @Override
     public int hashCode ()
@@ -164,8 +153,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
     {
         if (other instanceof ItemRecord) {
             ItemRecord that = (ItemRecord) other;
-            return (this.itemId == that.itemId) &&
-                (this.getType() == that.getType());
+            return (itemId == that.itemId) && (getType() == that.getType());
         }
         return false;
     }
@@ -173,18 +161,16 @@ public abstract class ItemRecord implements Streamable, Cloneable
     public Item toItem ()
     {
         Item item = createItem();
-        item.creatorId = this.creatorId;
-        item.flags = this.flags;
-        item.furniMediaHash = this.furniMediaHash == null ?
-            null : this.furniMediaHash.clone();
-        item.furniMimeType = this.furniMimeType;
-        item.itemId = this.itemId;
-        item.ownerId = this.ownerId;
-        item.parentId = this.parentId;
-        item.rating = this.rating;
-        item.thumbMediaHash = this.thumbMediaHash == null ?
-            null : this.thumbMediaHash.clone();
-        item.thumbMimeType = this.thumbMimeType;
+        item.itemId = itemId;
+        item.ownerId = ownerId;
+        item.parentId = parentId;
+        item.rating = rating;
+        item.creatorId = creatorId;
+        item.flags = flags;
+        item.furniMedia = furniMediaHash == null ? null :
+            new MediaDesc(furniMediaHash, furniMimeType);
+        item.thumbMedia = thumbMediaHash == null ? null :
+            new MediaDesc(thumbMediaHash, thumbMimeType);
         return item;
     }
 

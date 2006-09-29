@@ -32,7 +32,7 @@ public class Furniture extends Item
     // @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (furniMediaHash != null) &&
+        return super.isConsistent() && (furniMedia != null) &&
             nonBlank(description);
     }
 

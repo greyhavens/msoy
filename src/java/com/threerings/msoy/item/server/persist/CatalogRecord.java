@@ -49,17 +49,17 @@ public abstract class CatalogRecord<T extends ItemRecord>
     {
         super();
         
-        this.item = ItemRecord.newRecord(listing.item);
-        this.listedDate = new Timestamp(listing.listedDate.getTime());
+        item = ItemRecord.newRecord(listing.item);
+        listedDate = new Timestamp(listing.listedDate.getTime());
 
     }
 
     public CatalogListing toListing ()
     {
         CatalogListing listing = new CatalogListing();
-        listing.item = this.item.toItem();
+        listing.item = item.toItem();
         // GWT can't handle java.sql.Timestamp
-        listing.listedDate = new Date(this.listedDate.getTime());
+        listing.listedDate = new Date(listedDate.getTime());
         return listing;
     }
 }
