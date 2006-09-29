@@ -129,11 +129,11 @@
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
-      <arg value="dist/Msoy.swf"/>
+      <arg value="dist/game-client.swf"/>
       <arg value="-file-specs"/>
       <arg value="src/as/Msoy.mxml"/>
     </java>
-    <copy file="dist/Msoy.swf" todir="pages/clients"/>
+    <copy file="dist/game-client.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds our Flash debug client -->
@@ -159,11 +159,11 @@
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
-      <arg value="dist/Msoy.swf"/>
+      <arg value="dist/game-client.swf"/>
       <arg value="-file-specs"/>
       <arg value="src/as/Msoy.mxml"/>
     </java>
-    <copy file="dist/Msoy.swf" todir="pages/clients"/>
+    <copy file="dist/game-client.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds and signs our Java game client -->
