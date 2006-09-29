@@ -34,35 +34,9 @@ public class LazyTabNavigator extends TabNavigator
     public function addTabAt (
         label :String, creation :Function, index :int) :void
     {
-        var box :WeeBox = new WeeBox(creation);
+        var box :LazyContainer = new LazyContainer(creation);
         box.label = label;
         addChildAt(box, index);
     }
 }
-}
-
-import mx.core.ContainerCreationPolicy;
-import mx.core.UIComponent;
-import mx.containers.VBox;
-
-class WeeBox extends VBox
-{
-    public function WeeBox (creation :Function)
-    {
-        _creation = creation;
-        creationPolicy = ContainerCreationPolicy.NONE;
-    }
-
-    override public function createComponentsFromDescriptors (
-        recurse :Boolean = true) :void
-    {
-        super.createComponentsFromDescriptors(recurse);
-
-        if (_creation != null) {
-            addChild(_creation() as UIComponent);
-            _creation = null; // assist gc
-        }
-    }
-
-    protected var _creation :Function;
 }
