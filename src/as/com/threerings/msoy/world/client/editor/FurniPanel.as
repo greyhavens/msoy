@@ -50,6 +50,8 @@ public class FurniPanel extends SpritePanel
         _actionType.dataProvider = [
             { label: _ctx.xlate("editing", "l.action_none"),
               data: FurniData.ACTION_NONE },
+            { label: _ctx.xlate("editing", "l.background"),
+              data: FurniData.BACKGROUND },
             { label: _ctx.xlate("editing", "l.action_game"),
               data: FurniData.ACTION_GAME },
             { label: _ctx.xlate("editing", "l.action_url"),

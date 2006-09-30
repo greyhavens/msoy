@@ -39,12 +39,6 @@ public class MsoySceneModel extends SceneModel
     /** A value between 0 - 1, for the height of the horizon in the room. */
     public var horizon :Number;
 
-    /** The background image of the scene. */
-    public var background :MediaDesc;
-
-    /** The music to play in the background. */
-    public var music :MediaDesc;
-
     /** The furniture in the scene. */
     public var furnis :TypedArray;
 
@@ -94,8 +88,6 @@ public class MsoySceneModel extends SceneModel
         model.depth = depth;
         model.width = width;
         model.horizon = horizon;
-        model.background = background;
-        model.music = music;
         model.furnis = (furnis.clone() as TypedArray);
 
         return model;
@@ -111,8 +103,6 @@ public class MsoySceneModel extends SceneModel
         out.writeShort(depth);
         out.writeShort(width);
         out.writeFloat(horizon);
-        out.writeObject(background);
-        out.writeObject(music);
         out.writeObject(furnis);
     }
 
@@ -126,8 +116,6 @@ public class MsoySceneModel extends SceneModel
         depth = ins.readShort();
         width = ins.readShort();
         horizon = ins.readFloat();
-        background = (ins.readObject() as MediaDesc);
-        music = (ins.readObject() as MediaDesc);
         furnis = (ins.readObject() as TypedArray);
     }
 

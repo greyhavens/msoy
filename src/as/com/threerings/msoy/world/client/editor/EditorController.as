@@ -136,9 +136,7 @@ public class EditorController extends Controller
                     (editModel.type != origModel.type) ||
                     (editModel.depth != origModel.depth) ||
                     (editModel.width != origModel.width) ||
-                    (editModel.horizon != origModel.horizon) ||
-                    !Util.equals(editModel.background, origModel.background) ||
-                    !Util.equals(editModel.music, origModel.music)) {
+                    (editModel.horizon != origModel.horizon)) {
                 var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
                 attrUpdate.init(sceneId, version++);
 
@@ -147,8 +145,6 @@ public class EditorController extends Controller
                 attrUpdate.depth = editModel.depth;
                 attrUpdate.width = editModel.width;
                 attrUpdate.horizon = editModel.horizon;
-                attrUpdate.background = editModel.background;
-                attrUpdate.music = editModel.music;
                 edits.push(attrUpdate);
             }
 

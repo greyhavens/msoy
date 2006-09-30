@@ -84,22 +84,6 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
-     * Get the background image.
-     */
-    public MediaDesc getBackground ()
-    {
-        return _model.background;
-    }
-
-    /**
-     * Get the background music.
-     */
-    public MediaDesc getMusic ()
-    {
-        return _model.music;
-    }
-
-    /**
      * Add the specified furniture to the scene.
      */
     public void addFurni (FurniData furn)

@@ -31,12 +31,6 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new horizon. */
     public float horizon;
 
-    /** The new background. */
-    public MediaDesc background;
-
-    /** The new music. */
-    public MediaDesc music;
-
     @Override
     public void apply (SceneModel model)
     {
@@ -44,11 +38,9 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         MsoySceneModel mmodel = (MsoySceneModel) model;
         mmodel.name = name;
-        mmodel.type = type;;
+        mmodel.type = type;
         mmodel.depth = depth;
         mmodel.width = width;
         mmodel.horizon = horizon;
-        mmodel.background = background;
-        mmodel.music = music;
     }
 }

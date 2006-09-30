@@ -43,12 +43,6 @@ public class MsoySceneModel extends SceneModel
     /** A value between 0 - 1, for the height of the horizon in the room. */
     public float horizon;
 
-    /** The background image of the scene. */
-    public MediaDesc background;
-
-    /** The background music for the scene. */
-    public MediaDesc music;
-
     /** The furniture in the scene. */
     public FurniData[] furnis = new FurniData[0];
 

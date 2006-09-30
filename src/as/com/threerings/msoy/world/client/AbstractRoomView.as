@@ -146,10 +146,6 @@ public class AbstractRoomView extends Canvas
     {
         configureScrollRect();
 
-        if (_bkg != null) {
-            locationUpdated(_bkg);
-        }
-
         var sprite :MsoySprite;
         for each (sprite in _portals.values()) {
             locationUpdated(sprite);
@@ -443,6 +439,8 @@ public class AbstractRoomView extends Canvas
         sprite.setLocation(furni.loc);
 
         _furni.put(furni.id, sprite);
+
+        checkIsBackground(sprite);
     }
 
     protected function updateFurni (furni :FurniData) :void
@@ -450,8 +448,20 @@ public class AbstractRoomView extends Canvas
         var sprite :FurniSprite = (_furni.get(furni.id) as FurniSprite);
         if (sprite != null) {
             sprite.update(_ctx, furni);
+            checkIsBackground(sprite);
         } else {
             addFurni(furni);
+        }
+    }
+
+    protected function checkIsBackground (sprite :FurniSprite) :void
+    {
+        if (sprite.isBackground()) {
+            _bkg = sprite;
+            setChildIndex(_bkg, 0);
+            locationUpdated(sprite);
+        } else if (sprite == _bkg) {
+            _bkg = null;
         }
     }
 
@@ -480,6 +490,10 @@ public class AbstractRoomView extends Canvas
     {
         removeChild(sprite);
         _ctx.getMediaDirector().returnSprite(sprite);
+
+        if (sprite == _bkg) {
+            _bkg = null;
+        }
     }
 
     // documentation inherited from interface PlaceView
@@ -492,7 +506,7 @@ public class AbstractRoomView extends Canvas
         _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
 
         configureScrollRect();
-        configureBackground();
+        updateDrawnRoom();
         updateAllFurniAndPortals();
     }
 
@@ -513,55 +527,11 @@ public class AbstractRoomView extends Canvas
     // documentation inherited from interface PlaceView
     public function didLeavePlace (plobj :PlaceObject) :void
     {
-        if (_bkg != null) {
-            removeSprite(_bkg);
-            _bkg = null;
-        }
-
         removeAll(_portals);
         removeAll(_furni);
 
         _roomObj = null;
         _scene = null;
-    }
-
-    protected function configureBackground () :void
-    {
-        updateDrawnRoom();
-
-        // set up the background image
-        var bkgMedia :MediaDesc = _scene.getBackground();
-
-        // if we had a background and now we don't or it's changed, shutdown old
-        if (_bkg != null &&
-                ((bkgMedia == null) || !bkgMedia.equals(_bkg.description))) {
-            removeChild(_bkg);
-            _bkg.shutdown();
-            _bkg = null;
-        }
-
-        if (bkgMedia != null) {
-            if (_bkg == null) {
-                _bkg = new MsoySprite(bkgMedia);
-            } else {
-                removeChild(_bkg); // we'll re-add
-            }
-            switch (_scene.getType()) {
-            case MsoySceneModel.IMAGE_OVERLAY:
-                // by adding it to the raw children, it does not participate
-                // in Z order movements
-                _bkg.includeInLayout = false;
-                addChild(_bkg);
-                _bkg.setLocation([.5, 0, 0, 0]);
-                break;
-
-            default:
-                _bkg.includeInLayout = true;
-                addChild(_bkg);
-                _bkg.setLocation([.5, 0, 1, 0]);
-                break;
-            }
-        }
     }
 
     protected function updateDrawnRoom () :void
@@ -659,8 +629,8 @@ public class AbstractRoomView extends Canvas
     /** The transitory properties of the current scene. */
     protected var _roomObj :RoomObject;
 
-    /** The background image. */
-    protected var _bkg :MsoySprite;
+    /** Our background sprite, if any. */
+    protected var _bkg :FurniSprite;
 
     /** A hand-drawn background to look like a room. */
     protected var _bkgGraphics :UIComponent;

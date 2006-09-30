@@ -99,10 +99,10 @@ public class EditorPanel extends FloatingPanel
         }
         _type.dataProvider = types;
 
-        // background furni
-        grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_background")),
-            _background = new ItemReceptor(_ctx));
+//        // background furni
+//        grid.addRow(
+//            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_background")),
+//            _background = new ItemReceptor(_ctx));
 
         grid.addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_name")),
@@ -161,6 +161,11 @@ public class EditorPanel extends FloatingPanel
         super.childrenCreated();
 
         updateInputFields();
+
+        BindingUtils.bindSetter(function (o :Object) :void {
+            _sceneModel.type = int(o.data);
+            _ctrl.sceneModelUpdated();
+        }, _type, "selectedItem");
 
         BindingUtils.bindSetter(function (o :String) :void {
             _sceneModel.name = o;

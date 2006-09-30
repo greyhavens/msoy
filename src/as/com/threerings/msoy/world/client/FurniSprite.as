@@ -14,6 +14,7 @@ public class FurniSprite extends MsoySprite
     {
         _furni = furni;
         super(furni.media);
+        includeInLayout = !isBackground();
 
         configureToolTip(ctx);
     }
@@ -23,10 +24,16 @@ public class FurniSprite extends MsoySprite
         return _furni;
     }
 
+    public function isBackground () :Boolean
+    {
+        return (_furni.actionType == FurniData.BACKGROUND);
+    }
+
     public function update (ctx :MsoyContext, furni :FurniData) :void
     {
         _furni = furni;
         setup(furni.media);
+        includeInLayout = !isBackground();
         scaleUpdated();
         setLocation(furni.loc);
         configureToolTip(ctx);
@@ -80,7 +87,14 @@ public class FurniSprite extends MsoySprite
     // documentation inherited
     override public function hasAction () :Boolean
     {
-        return (_furni.actionType != FurniData.ACTION_NONE);
+        switch (_furni.actionType) {
+        case FurniData.ACTION_NONE:
+        case FurniData.BACKGROUND:
+            return false;
+
+        default:
+            return true;
+        }
     }
 
     // documentation inherited
@@ -105,6 +119,7 @@ public class FurniSprite extends MsoySprite
 
         switch (_furni.actionType) {
         case FurniData.ACTION_NONE:
+        case FurniData.BACKGROUND:
             // do nothing
             break;
 

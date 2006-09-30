@@ -402,13 +402,13 @@ public class RoomView extends AbstractRoomView
         _ctx.getChatDirector().addChatDisplay(this);
 
         // maybe set up background music
-        var music :MediaDesc = _scene.getMusic();
-        if (music != null) {
-
-// TODO: playing music is causing freezing right now. Revisit.
-//            _music = new SoundPlayer(music);
-//            _music.loop(Prefs.getMediaPosition(music.id));
-        }
+//        var music :MediaDesc = _scene.getMusic();
+//        if (music != null) {
+//
+//// TODO: playing music is causing freezing right now. Revisit.
+////            _music = new SoundPlayer(music);
+////            _music.loop(Prefs.getMediaPosition(music.id));
+//        }
 
         addAllOccupants();
 
