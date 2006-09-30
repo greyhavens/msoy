@@ -118,7 +118,7 @@ public class RoomView extends AbstractRoomView
     public function setScene (scene :MsoyScene) :void
     {
         _scene = scene;
-        configureBackground();
+        updateDrawnRoom();
         relayout();
     }
 
