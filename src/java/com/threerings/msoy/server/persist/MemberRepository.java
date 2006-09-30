@@ -326,17 +326,8 @@ public class MemberRepository extends DepotRepository
             FriendRecord rec = existing.get(0);
             if (rec.inviterId == otherId) {
                 // we're responding to an invite
-                // TODO: change this once a straight update(rec)
-                // works with multi-key records
-                if (true) {
-                    updatePartial(FriendRecord.class,
-                        new Key2(FriendRecord.INVITER_ID, rec.inviterId,
-                            FriendRecord.INVITEE_ID, rec.inviteeId),
-                        "status", true);
-                } else {
-                    rec.status = true;
-                    update(rec);
-                }
+                rec.status = true;
+                update(rec);
                 return new FriendEntry(
                     other.getName(), false, FriendEntry.FRIEND);
 
