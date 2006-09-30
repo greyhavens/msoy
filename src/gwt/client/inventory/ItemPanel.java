@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemGIdent;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.client.WebContext;
 
 /**
@@ -73,7 +73,7 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
-    protected void listItem (ItemGIdent item)
+    protected void listItem (ItemIdent item)
     {
         _ctx.catalogsvc.listItem(_ctx.creds, item, new AsyncCallback() {
             public void onSuccess (Object result) {
@@ -86,7 +86,7 @@ public class ItemPanel extends VerticalPanel
         });
     }
 
-    protected void remixItem (ItemGIdent item)
+    protected void remixItem (ItemIdent item)
     {
         _ctx.itemsvc.remixItem(_ctx.creds, item, new AsyncCallback() {
             public void onSuccess (Object result) {

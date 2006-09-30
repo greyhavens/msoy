@@ -31,7 +31,7 @@ import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemGIdent;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.web.client.WebContext;
@@ -43,7 +43,7 @@ public class ItemDetail extends PopupPanel
         super(true);
         _item = item;
         _ctx = ctx;
-        _itemId = new ItemGIdent(_item.getType(), _item.getProgenitorId());
+        _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
 
         setStyleName("itemDetailPopup");
 
@@ -359,7 +359,7 @@ public class ItemDetail extends PopupPanel
     }
 
     protected WebContext _ctx;
-    protected ItemGIdent _itemId;
+    protected ItemIdent _itemId;
     protected Item _item;
 
     protected FlexTable _table;

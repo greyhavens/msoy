@@ -30,10 +30,9 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.MemberGName;
 
-import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemGIdent;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
 
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -431,7 +430,7 @@ public class ItemManager
                     TagNameRecord tag = repo.getTag(record.tagId);
                     TagHistory history = new TagHistory();
                     history.item =
-                        new ItemGIdent(ident.type, ident.itemId);
+                        new ItemIdent(ident.type, ident.itemId);
                     history.member =
                         new MemberGName(memRec.name, memRec.memberId);
                     history.tag = tag.tag;
@@ -466,7 +465,7 @@ public class ItemManager
                         TagNameRecord tag = record.tagId == -1 ? null :
                             repo.getTag(record.tagId);
                         TagHistory history = new TagHistory();
-                        history.item = new ItemGIdent(
+                        history.item = new ItemIdent(
                             type, record.itemId);
                         history.member = memName;
                         history.tag = tag == null ? null : tag.tag;
@@ -626,7 +625,7 @@ public class ItemManager
 
                 // and create the return value
                 TagHistory history = new TagHistory();
-                history.item = new ItemGIdent(ident.type, originalId);
+                history.item = new ItemIdent(ident.type, originalId);
                 history.member = new MemberGName(member.name, member.memberId);
                 history.tag = tag.tag;
                 history.action = historyRecord.action;

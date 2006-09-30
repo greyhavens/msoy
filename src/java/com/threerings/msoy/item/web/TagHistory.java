@@ -20,7 +20,7 @@ public class TagHistory
     public static final byte ACTION_COPIED = 3;
     
     /** The item being operated on. */
-    public ItemGIdent item;
+    public ItemIdent item;
 
     /** The tag that was added or deleted, or null for COPIED. */
     public String tag;

@@ -7,10 +7,9 @@ import java.util.ArrayList;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemGIdent;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.CatalogService;
@@ -47,7 +46,7 @@ public class CatalogServlet extends RemoteServiceServlet
     }
 
     // from interface CatalogService
-    public Item purchaseItem (WebCreds creds, ItemGIdent item)
+    public Item purchaseItem (WebCreds creds, ItemIdent item)
         throws ServiceException
     {
         ItemIdent ident = ItemServlet.toIdent(creds, item, "purchaseItem");
@@ -59,7 +58,7 @@ public class CatalogServlet extends RemoteServiceServlet
     }
 
     // from interface CatalogService
-    public CatalogListing listItem (WebCreds creds, ItemGIdent item)
+    public CatalogListing listItem (WebCreds creds, ItemIdent item)
         throws ServiceException
     {
         ItemIdent ident = ItemServlet.toIdent(creds, item, "listItem");

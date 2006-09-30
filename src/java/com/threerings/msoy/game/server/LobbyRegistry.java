@@ -23,9 +23,9 @@ import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemIdent;
 
 import com.threerings.msoy.game.data.LobbyConfig;
 

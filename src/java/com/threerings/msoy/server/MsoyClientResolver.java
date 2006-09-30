@@ -18,9 +18,9 @@ import com.threerings.crowd.server.CrowdClientResolver;
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemIdent;
 
 import static com.threerings.msoy.Log.log;
 

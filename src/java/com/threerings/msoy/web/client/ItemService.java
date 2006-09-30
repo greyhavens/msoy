@@ -9,7 +9,7 @@ import java.util.Collection;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemGIdent;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
@@ -40,37 +40,37 @@ public interface ItemService extends RemoteService
     /**
      * Loads the details of a particular item.
      */
-    public Item loadItem (WebCreds creds, ItemGIdent item)
+    public Item loadItem (WebCreds creds, ItemIdent item)
         throws ServiceException;
 
     /**
      * Remixes a cloned item into a fully mutable original item.
      */
-    public Item remixItem (WebCreds creds, ItemGIdent item)
+    public Item remixItem (WebCreds creds, ItemIdent item)
         throws ServiceException;
 
     /**
      * Fetches the rating somebody gave somebody, or 0.
      */
-    public byte getRating (WebCreds creds, ItemGIdent item, int memberId)
+    public byte getRating (WebCreds creds, ItemIdent item, int memberId)
             throws ServiceException;
 
     /**
      * Awards an item a rating from 1 to 5.
      */
-    public Item rateItem (WebCreds creds, ItemGIdent item, byte rating)
+    public Item rateItem (WebCreds creds, ItemIdent item, byte rating)
             throws ServiceException;
 
     /**
      * Fetches the tags associated with an item.
      */
-    public Collection getTags(WebCreds creds, ItemGIdent item)
+    public Collection getTags(WebCreds creds, ItemIdent item)
             throws ServiceException;
     
     /**
      * Fetches the tagging history for a given item.
      */
-    public Collection getTagHistory (WebCreds creds, ItemGIdent item)
+    public Collection getTagHistory (WebCreds creds, ItemIdent item)
             throws ServiceException;
 
     /**
@@ -82,12 +82,12 @@ public interface ItemService extends RemoteService
     /**
      * Associates a tag with an item.
      */
-    public TagHistory tagItem (WebCreds creds, ItemGIdent item, String tag)
+    public TagHistory tagItem (WebCreds creds, ItemIdent item, String tag)
             throws ServiceException;
 
     /**
      * Disassociates a tag with an item.
      */
-    public TagHistory untagItem (WebCreds creds, ItemGIdent item, String tag)
+    public TagHistory untagItem (WebCreds creds, ItemIdent item, String tag)
             throws ServiceException;
 }

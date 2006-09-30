@@ -8,9 +8,9 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.web.client.GameService;

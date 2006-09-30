@@ -9,9 +9,8 @@ import java.util.logging.Level;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemGIdent;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.server.MsoyServer;
 
@@ -74,7 +73,7 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public Item loadItem (WebCreds creds, ItemGIdent item)
+    public Item loadItem (WebCreds creds, ItemIdent item)
         throws ServiceException
     {
         ItemIdent ident = toIdent(creds, item, "loadItem");
@@ -85,7 +84,7 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public Item remixItem (WebCreds creds, ItemGIdent item)
+    public Item remixItem (WebCreds creds, ItemIdent item)
         throws ServiceException
     {
         ItemIdent ident = toIdent(creds, item, "remixItem");
@@ -96,7 +95,7 @@ public class ItemServlet extends RemoteServiceServlet
     }
     
     // from interface ItemService    
-    public byte getRating (WebCreds creds, ItemGIdent item, int memberId)
+    public byte getRating (WebCreds creds, ItemIdent item, int memberId)
             throws ServiceException
     {
         ItemIdent ident = toIdent(creds, item, "getRating");
@@ -107,7 +106,7 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public Item rateItem (WebCreds creds, ItemGIdent item, byte rating)
+    public Item rateItem (WebCreds creds, ItemIdent item, byte rating)
             throws ServiceException
     {
         ItemIdent ident = toIdent(creds, item, "rateItem");
@@ -119,7 +118,7 @@ public class ItemServlet extends RemoteServiceServlet
 
     // from interface ItemService
     public Collection<String> getTags (
-        WebCreds creds, ItemGIdent item)
+        WebCreds creds, ItemIdent item)
             throws ServiceException
     {
         ItemIdent ident = toIdent(creds, item, "getTagHistory");
@@ -131,7 +130,7 @@ public class ItemServlet extends RemoteServiceServlet
 
     // from interface ItemService
     public Collection<TagHistory> getTagHistory (
-        WebCreds creds, ItemGIdent item)
+        WebCreds creds, ItemIdent item)
             throws ServiceException
     {
         ItemIdent ident = toIdent(creds, item, "getTagHistory");
@@ -154,7 +153,7 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public TagHistory tagItem (WebCreds creds, ItemGIdent item, String tag)
+    public TagHistory tagItem (WebCreds creds, ItemIdent item, String tag)
         throws ServiceException
     {
         ItemIdent ident = toIdent(creds, item, "tagItem");
@@ -165,7 +164,7 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public TagHistory untagItem (WebCreds creds, ItemGIdent item, String tag)
+    public TagHistory untagItem (WebCreds creds, ItemIdent item, String tag)
         throws ServiceException
     {
         ItemIdent ident = toIdent(creds, item, "untagItem");
@@ -175,7 +174,7 @@ public class ItemServlet extends RemoteServiceServlet
         return waiter.waitForResult();
     }
 
-    protected static ItemIdent toIdent (WebCreds creds, ItemGIdent item,
+    protected static ItemIdent toIdent (WebCreds creds, ItemIdent item,
                                         String where)
         throws ServiceException
     {

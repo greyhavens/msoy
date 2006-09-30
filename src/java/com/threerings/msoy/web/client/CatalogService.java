@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemGIdent;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -23,10 +23,10 @@ public interface CatalogService extends RemoteService
         throws ServiceException;
     
     /** Purchases the item of the specified id and type. */
-    public Item purchaseItem (WebCreds creds, ItemGIdent item)
+    public Item purchaseItem (WebCreds creds, ItemIdent item)
         throws ServiceException;
     
     /** Lists the specified item in the catalog. */
-    public CatalogListing listItem (WebCreds creds, ItemGIdent item)
+    public CatalogListing listItem (WebCreds creds, ItemIdent item)
         throws ServiceException;
 } 

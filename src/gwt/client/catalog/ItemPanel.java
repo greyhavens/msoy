@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.CatalogListing;
-import com.threerings.msoy.item.web.ItemGIdent;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.client.WebContext;
 
 /**
@@ -59,7 +59,7 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
-    protected void purchaseItem (ItemGIdent item)
+    protected void purchaseItem (ItemIdent item)
     {
         _ctx.catalogsvc.purchaseItem(_ctx.creds, item, new AsyncCallback() {
             public void onSuccess (Object result) {

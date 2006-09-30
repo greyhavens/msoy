@@ -101,9 +101,9 @@ public abstract class Item implements Streamable, IsSerializable
     /**
      * Returns this item's composite identifier.
      */
-    public ItemGIdent getIdent ()
+    public ItemIdent getIdent ()
     {
-        return new ItemGIdent(getType(), itemId);
+        return new ItemIdent(getType(), itemId);
     }
 
     /**

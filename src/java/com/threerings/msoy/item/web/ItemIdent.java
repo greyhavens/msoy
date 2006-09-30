@@ -1,14 +1,17 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.data;
+package com.threerings.msoy.item.web;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * A fully qualified item identifier (type and integer id).
  */
 public class ItemIdent
+    implements IsSerializable
 {
-    /** The type constant that represents this item's type. */
+    /** The item type identifier. */
     public byte type;
 
     /** The integer identifier of the item. */
