@@ -21,7 +21,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.util.ItemEnum;
 
 import static com.threerings.msoy.Log.log;
 
@@ -124,7 +123,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
             if (_avatarId != 0) {
                 MsoyServer.itemMan.getItem(
-                    new ItemIdent(ItemEnum.AVATAR, _avatarId),
+                    new ItemIdent(Item.AVATAR, _avatarId),
                     new ResultListener<Item>() {
                     public void requestCompleted (Item avatar) {
                         user.setAvatar((Avatar) avatar);

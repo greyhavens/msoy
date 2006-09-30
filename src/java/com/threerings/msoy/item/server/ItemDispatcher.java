@@ -41,7 +41,7 @@ public class ItemDispatcher extends InvocationDispatcher
         case ItemMarshaller.GET_INVENTORY:
             ((ItemProvider)provider).getInventory(
                 source,
-                (String)args[0], (InvocationService.ResultListener)args[1]
+                ((Byte)args[0]).byteValue(), (InvocationService.ResultListener)args[1]
             );
             return;
 

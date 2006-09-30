@@ -27,8 +27,6 @@ import com.threerings.msoy.item.data.ItemIdent;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 
-import com.threerings.msoy.item.util.ItemEnum;
-
 import com.threerings.msoy.game.data.LobbyConfig;
 
 /**
@@ -78,7 +76,7 @@ public class LobbyRegistry
         list.add(listener);
         _loading.put(gameId, list);
 
-        MsoyServer.itemMan.getItem(new ItemIdent(ItemEnum.GAME, gameId),
+        MsoyServer.itemMan.getItem(new ItemIdent(Item.GAME, gameId),
             new ResultListener<Item>() {
             public void requestCompleted (Item item)
             {

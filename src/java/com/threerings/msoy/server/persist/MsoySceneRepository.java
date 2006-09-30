@@ -34,7 +34,6 @@ import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.StaticMediaDesc;
 
@@ -690,7 +689,7 @@ public class MsoySceneRepository extends SimpleRepository
         if (mediaHash.length == 4) {
             int type = ByteBuffer.wrap(mediaHash).asIntBuffer().get();
             return new StaticMediaDesc(
-                StaticMediaDesc.FURNI, ItemEnum.getItem((byte)type).toString());
+                StaticMediaDesc.FURNI, (byte) type);
         } else {
             return new MediaDesc(mediaHash, mimeType);
         }
@@ -715,7 +714,7 @@ public class MsoySceneRepository extends SimpleRepository
             }
 
             ByteBuffer data = ByteBuffer.allocate(4);
-            data.asIntBuffer().put(ItemEnum.valueOf(sdesc.getItem()).getCode());
+            data.asIntBuffer().put(sdesc.getItemType());
             return data.array();
 
         } else {

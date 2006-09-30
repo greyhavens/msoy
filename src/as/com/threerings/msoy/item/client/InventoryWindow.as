@@ -19,7 +19,7 @@ import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.LazyContainer;
 import com.threerings.msoy.ui.MsoyUI;
 
-import com.threerings.msoy.item.util.ItemEnum;
+import com.threerings.msoy.item.web.Item;
 
 /**
  * A simple in-game panel that shows inventory and acts as a drag source
@@ -46,17 +46,17 @@ public class InventoryWindow extends FloatingPanel
         addChild(grid);
 
         // get all the item types
-        var itemTypes :Array = ItemEnum.values();
+        var itemTypes :Array = Item.getTypes();
         // move furniture to be the first
-        ArrayUtil.removeFirst(itemTypes, ItemEnum.FURNITURE);
-        itemTypes.unshift(ItemEnum.FURNITURE);
+        ArrayUtil.removeFirst(itemTypes, Item.FURNITURE);
+        itemTypes.unshift(Item.FURNITURE);
 
         addChild(_lists = new ViewStack());
         var typeLabels :Array = [];
-        for each (var itemType :ItemEnum in itemTypes) {
+        for each (var itemType :int in itemTypes) {
             addList(itemType);
             typeLabels.push(
-                _ctx.xlate("item", "t.items_" + itemType.getStringCode()));
+                _ctx.xlate("item", "t.items_" + Item.getTypeName(itemType)));
         }
         _type.dataProvider = typeLabels;
 
@@ -65,7 +65,7 @@ public class InventoryWindow extends FloatingPanel
             _type, "selectedIndex");
     }
 
-    protected function addList (type :ItemEnum) :void
+    protected function addList (type :int) :void
     {
         _lists.addChild(new LazyContainer(function () :UIComponent {
             return new InventoryList(_ctx, type);

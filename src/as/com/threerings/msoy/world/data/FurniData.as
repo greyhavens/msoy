@@ -23,6 +23,9 @@ public class FurniData
     /** An actionType indicating that actionData is a game item id. */
     public static const ACTION_GAME :int = 2;
 
+//    /** The itemType of the item that was used to create this furni. */
+//    public var itemType :int;
+
     /** The id of this piece of furni. */
     public var id :int;
 

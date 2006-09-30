@@ -25,6 +25,9 @@ public class MsoySceneModel extends SceneModel
      * that the background image IS the scene to the viewer. */
     public static final byte IMAGE_OVERLAY = 1;
 
+    /** The number of type constants. */
+    public static final int TYPE_COUNT = 2;
+
     /** The type of scene that this is. Determines how it is rendered. */
     public byte type;
 

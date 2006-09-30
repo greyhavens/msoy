@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -79,9 +78,9 @@ public class GameRecord extends ItemRecord
     }
 
     @Override // from Item
-    public ItemEnum getType ()
+    public byte getType ()
     {
-        return ItemEnum.GAME;
+        return Item.GAME;
     }
 
     @Override // from Item

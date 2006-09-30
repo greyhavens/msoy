@@ -33,7 +33,6 @@ import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.web.data.Profile;
 
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -232,7 +231,7 @@ public class MemberManager
         final MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
 
-        MsoyServer.itemMan.getItem(new ItemIdent(ItemEnum.AVATAR, avatarItemId),
+        MsoyServer.itemMan.getItem(new ItemIdent(Item.AVATAR, avatarItemId),
             new ResultListener<Item>() {
             public void requestCompleted (Item item)
             {

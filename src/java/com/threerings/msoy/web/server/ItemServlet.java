@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.item.data.ItemIdent;
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemGIdent;
 import com.threerings.msoy.item.web.TagHistory;
@@ -54,14 +53,13 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public ArrayList loadInventory (WebCreds creds, String type)
+    public ArrayList loadInventory (WebCreds creds, byte type)
         throws ServiceException
     {
         // TODO: validate this user's creds
 
         // convert the string they supplied to an item enumeration
-        ItemEnum itype = ItemEnum.valueOf(type);
-        if (type == null) {
+        if (Item.getClassForType(type) == null) {
             log.warning("Requested to load inventory for invalid item type " +
                         "[who=" + creds + ", type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
@@ -70,8 +68,8 @@ public class ItemServlet extends RemoteServiceServlet
         // load their inventory via the item manager
         ServletWaiter<ArrayList<Item>> waiter =
             new ServletWaiter<ArrayList<Item>>(
-                "loadInventory[" + creds.memberId + ", " + itype + "]");
-        MsoyServer.itemMan.loadInventory(creds.memberId, itype, waiter);
+                "loadInventory[" + creds.memberId + ", " + type + "]");
+        MsoyServer.itemMan.loadInventory(creds.memberId, type, waiter);
         return waiter.waitForResult();
     }
 
@@ -181,12 +179,11 @@ public class ItemServlet extends RemoteServiceServlet
                                         String where)
         throws ServiceException
     {
-        ItemEnum type = ItemEnum.valueOf(item.type);
-        if (type == null) {
+        if (Item.getClassForType(item.type) == null) {
             log.warning("Rejecting invalid item type [where=" + where +
-                        ", who=" + creds + ", type=" + type + "].");
+                        ", who=" + creds + ", type=" + item.type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
         }
-        return new ItemIdent(type, item.itemId);
+        return new ItemIdent(item.type, item.itemId);
     }
 }

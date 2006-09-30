@@ -18,7 +18,7 @@ public interface ItemService extends InvocationService
      *       a page of it.
      */
     function getInventory (
-        client :Client, type :String,
+        client :Client, type :int,
         listener :InvocationService_ResultListener) :void;
 }
 }

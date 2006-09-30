@@ -20,7 +20,7 @@ import com.threerings.msoy.web.client.WebContext;
  */
 public class ItemPanel extends VerticalPanel
 {
-    public ItemPanel (WebContext ctx, String type)
+    public ItemPanel (WebContext ctx, byte type)
     {
         // setStyleName("inventory_item");
         _ctx = ctx;
@@ -85,6 +85,6 @@ public class ItemPanel extends VerticalPanel
     protected FlowPanel _contents;
     protected Label _status;
 
-    protected String _type;
+    protected byte _type;
     protected ArrayList _listings;
 }

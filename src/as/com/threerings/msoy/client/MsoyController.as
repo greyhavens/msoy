@@ -145,7 +145,7 @@ public class MsoyController extends Controller
 
         if (!memberObj.isGuest()) {
             menuData.push(
-                { label: _ctx.xlate("general", "b.logon_guest"),
+                { label: _ctx.xlate("general", "b.relogon_guest"),
                   command: LOGON },
                 { type: "separator" },
                 { label: _ctx.xlate("general", "b.edit_prefs"),

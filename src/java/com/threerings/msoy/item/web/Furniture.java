@@ -18,9 +18,9 @@ public class Furniture extends Item
     public String description;
 
     // @Override from Item
-    public String getType ()
+    public byte getType ()
     {
-        return "FURNITURE";
+        return FURNITURE;
     }
 
     // @Override from Item

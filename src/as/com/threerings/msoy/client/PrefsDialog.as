@@ -14,8 +14,8 @@ import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.client.InventoryList;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Avatar;
-import com.threerings.msoy.item.util.ItemEnum;
 
 public class PrefsDialog extends FloatingPanel
 {
@@ -39,7 +39,7 @@ public class PrefsDialog extends FloatingPanel
 
         addChild(grid);
 
-        _avatars = new InventoryList(_ctx, ItemEnum.AVATAR);
+        _avatars = new InventoryList(_ctx, Item.AVATAR);
         _avatars.dragEnabled = false;
 
         // TODO: this doesn't actually work because flash only does

@@ -35,6 +35,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>clusterOid</code> field. */
     public static const CLUSTER_OID :String = "clusterOid";
 
+    /** The field name of the <code>recentScenes</code> field. */
+    public static const RECENT_SCENES :String = "recentScenes";
+
     /** The field name of the <code>tokens</code> field. */
     public static const TOKENS :String = "tokens";
 

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.item.web {
 
-import flash.utils.ByteArray;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
@@ -23,9 +21,9 @@ public class Furniture extends Item
     public var description :String;
 
     // from Item
-    override public function getType () :String
+    override public function getType () :int
     {
-        return "FURNITURE";
+        return FURNITURE;
     }
 
     // from Item

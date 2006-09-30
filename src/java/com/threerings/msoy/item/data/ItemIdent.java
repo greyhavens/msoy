@@ -3,15 +3,13 @@
 
 package com.threerings.msoy.item.data;
 
-import com.threerings.msoy.item.util.ItemEnum;
-
 /**
  * A fully qualified item identifier (type and integer id).
  */
 public class ItemIdent
 {
-    /** The ItemEnum that represents this item's type. */
-    public ItemEnum type;
+    /** The type constant that represents this item's type. */
+    public byte type;
 
     /** The integer identifier of the item. */
     public int itemId;
@@ -26,7 +24,7 @@ public class ItemIdent
     /**
      * Creates an identifier for the specified item.
      */
-    public ItemIdent (ItemEnum type, int itemId)
+    public ItemIdent (byte type, int itemId)
     {
         this.type = type;
         this.itemId = itemId;

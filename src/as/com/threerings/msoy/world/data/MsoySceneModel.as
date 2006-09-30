@@ -21,6 +21,9 @@ public class MsoySceneModel extends SceneModel
      * that the background image IS the scene to the viewer. */
     public static const IMAGE_OVERLAY :int = 1;
 
+    /** The number of type constants. */
+    public static const TYPE_COUNT :int = 2;
+
     /** The type of scene. */
     public var type :int;
 

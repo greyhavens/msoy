@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.web;
 
+import java.util.HashMap;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
@@ -17,6 +19,15 @@ import com.threerings.io.Streamable;
  */
 public abstract class Item implements Streamable, IsSerializable
 {
+    // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
+    public static final byte NOT_A_TYPE = (byte) 0;
+    public static final byte PHOTO = registerItemType(Photo.class, 1);
+    public static final byte DOCUMENT = registerItemType(Document.class, 2);
+    public static final byte FURNITURE = registerItemType(Furniture.class, 3);
+    public static final byte GAME = registerItemType(Game.class, 4);
+    public static final byte AVATAR = registerItemType(Avatar.class, 5);
+    // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
+    
     /** This item's unique identifier. <em>Note:</em> this identifier is not
      * globally unique among all digital items. Each type of item has its own
      * identifier space. */
@@ -47,6 +58,47 @@ public abstract class Item implements Streamable, IsSerializable
     public MediaDesc furniMedia;
 
     /**
+     * Get the class for the specified item type.
+     */
+    public static Class getClassForType (byte itemType)
+    {
+        return (Class) _mapping.get(new Byte(itemType));
+    }
+
+    /**
+     * Get the item type for the specified item class.
+     */
+    public static byte getTypeForClass (Class iclass)
+    {
+        Byte val = (Byte) _reverseMapping.get(iclass);
+        return (val != null) ? val.byteValue() : NOT_A_TYPE;
+    }
+
+    /**
+     * Get the Stringy name of the specified item type.
+     */
+    public static String getTypeName (byte type)
+    {
+        // we can't use reflection here... gawdammy TODO
+        // We also can't use a switch statement because our final
+        // variables are not actually constants (they are assigned values
+        // at class initialization time).
+        if (type == PHOTO) {
+            return "PHOTO";
+        } else if (type == AVATAR) {
+            return "AVATAR";
+        } else if (type == GAME) {
+            return "GAME";
+        } else if (type == PHOTO) {
+            return "PHOTO";
+        } else if (type == DOCUMENT) {
+            return "DOCUMENT";
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Returns this item's composite identifier.
      */
     public ItemGIdent getIdent ()
@@ -55,12 +107,9 @@ public abstract class Item implements Streamable, IsSerializable
     }
 
     /**
-     * This is used to map {@link Item} concrete classes to ItemEnum values. We
-     * cannot simply reference the ItemEnum itself because item classes must be
-     * translatable to JavaScript which doesn't support enums. So be sure to
-     * properly wire things up when creating a new concrete item class.
+     * Get the type code for this item.
      */
-    public abstract String getType ();
+    public abstract byte getType ();
 
     /**
      * Get a textual description of this item.
@@ -142,7 +191,7 @@ public abstract class Item implements Streamable, IsSerializable
             Item that = (Item) other;
             // cheap comparison first...
             return (this.itemId == that.itemId) &&
-                this.getType().equals(that.getType());
+                (this.getType() == that.getType());
         }
         return false;
     }
@@ -173,4 +222,29 @@ public abstract class Item implements Streamable, IsSerializable
     {
         return (text != null) && (text.trim().length() > 0);
     }
+
+    /**
+     * Register a concrete subclass and it's associated type code.
+     */
+    private static byte registerItemType (Class iclass, int itype)
+    {
+        byte type = (byte) itype;
+        if (itype != type) {
+            throw new IllegalArgumentException("not a byte");
+        }
+
+        if (_mapping == null) {
+            _mapping = new HashMap();
+            _reverseMapping = new HashMap();
+        }
+
+        Byte otype = new Byte(type);
+        _mapping.put(otype, iclass);
+        _reverseMapping.put(iclass, otype);
+
+        return type;
+    }
+
+    private static HashMap _mapping;
+    private static HashMap _reverseMapping;
 }

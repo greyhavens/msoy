@@ -27,9 +27,9 @@ public class Game extends Item
     public MediaDesc gameMedia;
 
     // @Override from Item
-    public String getType ()
+    public byte getType ()
     {
-        return "GAME";
+        return GAME;
     }
 
     // @Override from Item

@@ -25,10 +25,10 @@ public class StaticMediaDesc extends MediaDesc
     /**
      * Creates a configured static media descriptor.
      */
-    public StaticMediaDesc (String type, String item)
+    public StaticMediaDesc (String type, byte itemType)
     {
         _type = type;
-        _item = item;
+        _itemType = itemType;
         mimeType = MediaDesc.IMAGE_PNG;
     }
 
@@ -44,16 +44,18 @@ public class StaticMediaDesc extends MediaDesc
     /**
      * Returns the type of item for which we're providing static media.
      */
-    public String getItem ()
+    public byte getItemType ()
     {
-        return _item;
+        return _itemType;
     }
 
     // @Override // from MediaDesc
     public String getMediaPath ()
     {
-        return "/media/static/" + _type + "/" + _item.toLowerCase() + ".png";
+        return "/media/static/" + _type + "/" +
+            Item.getTypeName(_itemType).toLowerCase() + ".png";
     }
 
-    protected String _type, _item;
+    protected String _type;
+    protected byte _itemType;
 }

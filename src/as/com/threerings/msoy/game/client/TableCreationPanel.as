@@ -71,7 +71,7 @@ public class TableCreationPanel extends FloatingPanel
         _tconfigger.init(_ctx, _gconfigger);
 
         var config :FlashGameConfig = new FlashGameConfig();
-        config.configData = _game.getGameMedia().getMediaPath();
+        config.configData = _game.gameMedia.getMediaPath();
         gconf.setGameConfig(config);
 
         addChild(gconf.getContainer());

@@ -3,9 +3,10 @@
 
 package com.threerings.msoy.item.web {
 
-import flash.utils.ByteArray;
+import mx.core.Application;
 
 import com.threerings.util.Hashable;
+import com.threerings.util.HashMap;
 import com.threerings.util.StringUtil;
 
 import com.threerings.io.ObjectInputStream;
@@ -23,6 +24,16 @@ import com.threerings.io.Streamable;
 public /*abstract*/ class Item
     implements Hashable, Streamable
 {
+    // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
+    public static const NOT_A_TYPE :int = 0;
+    public static const PHOTO :int = 1; //registerItemType(Photo, 1);
+    public static const DOCUMENT :int = 2; //registerItemType(Document, 2);
+    public static const FURNITURE :int = 3; //registerItemType(Furniture, 3);
+    public static const GAME :int = 4; //registerItemType(Game, 4);
+    public static const AVATAR :int = 5; //registerItemType(Avatar, 5);
+    // Note: registery of Item types is done at the bottom of this class
+    // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
+
     /** This item's unique identifier. <em>Note:</em> this identifier is not
      * globally unique among all digital items. Each type of item has its own
      * identifier space. */
@@ -46,27 +57,65 @@ public /*abstract*/ class Item
     /** The current rating of this item, either 0 or between 1 and 5. */
     public var rating :Number;
 
-    /** A hash code identifying the media used to display this item's thumbnail
-     * representation. */
-    public var thumbMediaHash :ByteArray;
+    /** The media used to display this item's thumbnail representation. */
+    public var thumbMedia :MediaDesc;
 
-    /** The MIME type of the thumbMediaHash media. */
-    public var thumbMimeType :int;
-
-    /** A hash code identifying the media used to display this item's furniture
-     * representation. */
-    public var furniMediaHash :ByteArray;
-
-    /** The MIME type of the furniMediaHash media. */
-    public var furniMimeType :int;
+    /** The media used to display this item's furniture representation. */
+    public var furniMedia :MediaDesc;
 
     /**
-     * This is used to map {@link Item} concrete classes to ItemEnum values. We
-     * cannot simply reference the ItemEnum itself because item classes must be
-     * translatable to JavaScript which doesn't support enums. So be sure to
-     * properly wire things up when creating a new concrete item class.
+     * Get the item class corresponding to the specified type.
      */
-    public function getType () :String
+    public static function getClassForType (itemType :int) :Class
+    {
+        return (_mapping.get(itemType) as Class);
+    }
+
+    /**
+     * Get the item type for the specified item class.
+     */
+    public static function getTypeForClass (iclass :Class) :int
+    {
+        return (_reverseMapping.get(iclass) as int);
+    }
+
+    /**
+     * Get an array of all the item types.
+     */
+    public static function getTypes () :Array
+    {
+        return _mapping.keys();
+    }
+
+    /**
+     * Get the Stringy name of the specified item type.
+     */
+    public static function getTypeName (type :int) :String
+    {
+        // we can't use reflection here... gawdammy TODO
+
+        // We also can't use a switch statement because our final
+        // variables are not actually constants (they are assigned values
+        // at class initialization time).
+        if (type == PHOTO) {
+            return "PHOTO"; 
+        } else if (type == AVATAR) {
+            return "AVATAR";
+        } else if (type == GAME) {
+            return "GAME";
+        } else if (type == FURNITURE) {
+            return "FURNITURE";
+        } else if (type == DOCUMENT) { 
+            return "DOCUMENT";
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get the type code for this item's type.
+     */
+    public function getType () :int
     {
         throw new Error("abstract");
     }
@@ -94,8 +143,7 @@ public /*abstract*/ class Item
      */
     public function getThumbnailMedia () :MediaDesc
     {
-        return (thumbMediaHash == null) ? getDefaultThumbnailMedia() :
-            new MediaDesc(thumbMediaHash, thumbMimeType);
+        return (thumbMedia == null) ? getDefaultThumbnailMedia() : thumbMedia;
     }
 
     /**
@@ -104,8 +152,7 @@ public /*abstract*/ class Item
      */
     public function getFurniMedia () :MediaDesc
     {
-        return (furniMediaHash == null) ? getDefaultFurniMedia() :
-            new MediaDesc(furniMediaHash, furniMimeType);
+        return (furniMedia == null) ? getDefaultFurniMedia() : furniMedia;
     }
 
     /**
@@ -143,10 +190,8 @@ public /*abstract*/ class Item
         out.writeInt(creatorId);
         out.writeInt(ownerId);
         out.writeFloat(rating);
-        out.writeField(thumbMediaHash);
-        out.writeByte(thumbMimeType);
-        out.writeField(furniMediaHash);
-        out.writeByte(furniMimeType);
+        out.writeObject(thumbMedia);
+        out.writeObject(furniMedia);
     }
 
     // from Streamable
@@ -158,10 +203,8 @@ public /*abstract*/ class Item
         creatorId = ins.readInt();
         ownerId = ins.readInt();
         rating = ins.readFloat();
-        thumbMediaHash = (ins.readField(ByteArray) as ByteArray);
-        thumbMimeType = ins.readByte();
-        furniMediaHash = (ins.readField(ByteArray) as ByteArray);
-        furniMimeType = ins.readByte();
+        thumbMedia = (ins.readObject() as MediaDesc);
+        furniMedia = (ins.readObject() as MediaDesc);
     }
 
     /**
@@ -181,5 +224,48 @@ public /*abstract*/ class Item
     {
         return new StaticMediaDesc(StaticMediaDesc.FURNI, getType());
     }
+
+    private static function registerItemType (iclass :Class, itype :int) :int
+    {
+        if (_mapping == null) {
+            _mapping = new HashMap();
+            _reverseMapping = new HashMap();
+        }
+
+        _mapping.put(itype, iclass);
+        _reverseMapping.put(iclass, itype);
+        return itype;
+    }
+
+    private static var _mapping :HashMap;
+    private static var _reverseMapping :HashMap;
+
+    /**
+     * Behold the twisted backbends to get this to work.
+     * If I do it like I do in Java, it starts to initialize the
+     * Item class when it sees the first use of a subclass, which is
+     * usually Avatar (in your MemberObject). It starts to set up the static
+     * variables in Item and then has to resolve the Photo class, and while
+     * it's doing that it sees that Photo extends Item so it tries to
+     * resolve the still-unresolved Item and discovers the circular
+     * dependancy and freaks out.
+     *
+     * So we need to make sure to not reference our subclasses until
+     * this class is fully initialized.
+     * There may be a better way.
+     */
+    private static function registerAll () :void
+    {
+        registerItemType(Avatar, AVATAR);
+        registerItemType(Document, DOCUMENT);
+        registerItemType(Furniture, FURNITURE);
+        registerItemType(Game, GAME);
+        registerItemType(Photo, PHOTO);
+    }
+    private static function staticInit () :void
+    {
+        Application.application.callLater(registerAll);
+    }
+    staticInit();
 }
 }

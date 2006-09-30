@@ -8,7 +8,7 @@ import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.msoy.client.MsoyContext;
 
-import com.threerings.msoy.item.util.ItemEnum;
+import com.threerings.msoy.item.web.Item;
 
 /**
  * Lists one particular type of item from a user's inventory.
@@ -16,7 +16,7 @@ import com.threerings.msoy.item.util.ItemEnum;
  */
 public class InventoryList extends ItemList
 {
-    public function InventoryList (ctx :MsoyContext, type :ItemEnum)
+    public function InventoryList (ctx :MsoyContext, type :int)
     {
         super(ctx);
 
@@ -24,7 +24,7 @@ public class InventoryList extends ItemList
 
         var svc :ItemService =
             (_ctx.getClient().requireService(ItemService) as ItemService);
-        svc.getInventory(_ctx.getClient(), type.getStringCode(),
+        svc.getInventory(_ctx.getClient(), type,
             new ResultWrapper(
             function (cause :String) :void {
                 // report status somewhere?

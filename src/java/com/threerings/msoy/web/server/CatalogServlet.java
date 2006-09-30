@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.item.data.ItemIdent;
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemGIdent;
@@ -27,14 +26,13 @@ public class CatalogServlet extends RemoteServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public ArrayList loadCatalog (WebCreds creds, String type)
+    public ArrayList loadCatalog (WebCreds creds, byte type)
         throws ServiceException
     {
         // TODO: validate this user's creds
 
         // convert the string they supplied to an item enumeration
-        ItemEnum etype = ItemEnum.valueOf(type);
-        if (etype == null) {
+        if (Item.getClassForType(type) == null) {
             log.warning("Requested to load catalog for invalid item type " +
                         "[who=" + creds + ", type=" + type + "].");
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);
@@ -43,8 +41,8 @@ public class CatalogServlet extends RemoteServiceServlet
         // load their catalog via the catalog manager
         ServletWaiter<ArrayList<CatalogListing>> waiter =
             new ServletWaiter<ArrayList<CatalogListing>>(
-                "loadCatalog[" + creds.memberId + ", " + etype + "]");
-        MsoyServer.itemMan.loadCatalog(creds.memberId, etype, waiter);
+                "loadCatalog[" + creds.memberId + ", " + type + "]");
+        MsoyServer.itemMan.loadCatalog(creds.memberId, type, waiter);
         return waiter.waitForResult();
     }
 

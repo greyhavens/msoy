@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Item;
 
@@ -50,9 +49,9 @@ public class FurnitureRecord extends ItemRecord
     }
 
     @Override // from Item
-    public ItemEnum getType ()
+    public byte getType ()
     {
-        return ItemEnum.FURNITURE;
+        return Item.FURNITURE;
     }
 
     @Override

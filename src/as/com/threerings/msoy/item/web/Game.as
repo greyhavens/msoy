@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.item.web {
 
-import flash.utils.ByteArray;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
@@ -22,23 +20,12 @@ public class Game extends Item
     /** The desired number of players. */
     public var desiredPlayers :int;
 
-    /** A hash code identifying the game media. */
-    public var gameMediaHash :ByteArray;
+    /** The game media. */
+    public var gameMedia :MediaDesc;
 
-    /** The MIME type of the {@link #gameMediaHash} media. */
-    public var gameMimeType :int;
-
-    /**
-     * Returns a media descriptor for the actual game media.
-     */
-    public function getGameMedia () :MediaDesc
+    override public function getType () :int
     {
-        return new MediaDesc(gameMediaHash, gameMimeType);
-    }
-
-    override public function getType () :String
-    {
-        return "GAME";
+        return GAME;
     }
 
     override public function getDescription () :String
@@ -54,8 +41,7 @@ public class Game extends Item
         out.writeShort(minPlayers);
         out.writeShort(maxPlayers);
         out.writeShort(desiredPlayers);
-        out.writeField(gameMediaHash);
-        out.writeByte(gameMimeType);
+        out.writeObject(gameMedia);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -66,8 +52,7 @@ public class Game extends Item
         minPlayers = ins.readShort();
         maxPlayers = ins.readShort();
         desiredPlayers = ins.readShort();
-        gameMediaHash = (ins.readField(ByteArray) as ByteArray);
-        gameMimeType = ins.readByte();
+        gameMedia = (ins.readObject() as MediaDesc);
     }
 }
 }

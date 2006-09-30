@@ -11,8 +11,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class ItemGIdent
     implements IsSerializable
 {
-    /** The string value of the ItemEnum that represents this item's type. */
-    public String type;
+    /** The item type identifier. */
+    public byte type;
 
     /** The integer identifier of the item. */
     public int itemId;
@@ -27,7 +27,7 @@ public class ItemGIdent
     /**
      * Creates an identifier for the specified item.
      */
-    public ItemGIdent (String type, int itemId)
+    public ItemGIdent (byte type, int itemId)
     {
         this.type = type;
         this.itemId = itemId;

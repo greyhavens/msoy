@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.data {
 
+import com.threerings.util.Byte;
+
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -25,12 +27,12 @@ public class ItemMarshaller extends InvocationMarshaller
     public static const GET_INVENTORY :int = 1;
 
     // documentation inherited from interface
-    public function getInventory (arg1 :Client, arg2 :String, arg3 :InvocationService_ResultListener) :void
+    public function getInventory (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
     {
         var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, GET_INVENTORY, [
-            arg2, listener3
+            Byte.valueOf(arg2), listener3
         ]);
     }
 

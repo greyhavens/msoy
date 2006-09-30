@@ -15,17 +15,18 @@ public class StaticMediaDesc extends MediaDesc
     /** Identifies stock furniture visualizations. */
     public static const FURNI :String = "furni";
 
-    public function StaticMediaDesc (type :String = null, item :String = null)
+    public function StaticMediaDesc (type :String = null, itemType :int = 0)
     {
         _type = type;
-        _item = item;
+        _itemType = itemType;
         mimeType = IMAGE_PNG;
     }
 
     // from MediaDesc
     override public function getMediaPath () :String
     {
-        return "/media/static/" + _type + "/" + _item.toLowerCase() + ".png";
+        return "/media/static/" + _type + "/" +
+            Item.getTypeName(_itemType).toLowerCase() + ".png";
     }
 
     // documentation inherited from interface Streamable
@@ -34,7 +35,7 @@ public class StaticMediaDesc extends MediaDesc
         super.writeObject(out);
 
         out.writeField(_type);
-        out.writeField(_item);
+        out.writeByte(_itemType);
     }
 
     // documentation inherited from interface Streamable
@@ -43,11 +44,11 @@ public class StaticMediaDesc extends MediaDesc
         super.readObject(ins);
 
         _type = (ins.readField(String) as String);
-        _item = (ins.readField(String) as String);
+        _itemType = ins.readByte();
         mimeType = IMAGE_PNG;
     }
 
     protected var _type :String;
-    protected var _item :String;
+    protected var _itemType :int;
 }
 }

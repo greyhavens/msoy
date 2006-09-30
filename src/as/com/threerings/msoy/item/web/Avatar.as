@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.item.web {
 
-import flash.utils.ByteArray;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
@@ -13,27 +11,16 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class Avatar extends Item
 {
-    /** A hash code identifying the avatar media. */
-    public var avatarMediaHash :ByteArray;
-
-    /** The MIME type of the {@link #avatarMediaHash} media. */
-    public var avatarMimeType :int;
+    /** The avatar media. */
+    public var avatarMedia :MediaDesc;
 
     /** A description for this avatar (max length 255 characters). */
     public var description :String;
 
-    /**
-     * Returns a media descriptor for the actual avatar media.
-     */
-    public function getAvatarMedia () :MediaDesc
-    {
-        return new MediaDesc(avatarMediaHash, avatarMimeType);
-    }
-
     // from Item
-    override public function getType () :String
+    override public function getType () :int
     {
-        return "AVATAR";
+        return AVATAR;
     }
 
     // from Item
@@ -44,20 +31,19 @@ public class Avatar extends Item
 
     override protected function getDefaultThumbnailMedia () :MediaDesc
     {
-        return getAvatarMedia();
+        return avatarMedia;
     }
 
     override protected function getDefaultFurniMedia () :MediaDesc
     {
-        return getAvatarMedia();
+        return avatarMedia;
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
-        out.writeField(avatarMediaHash);
-        out.writeByte(avatarMimeType);
+        out.writeObject(avatarMedia);
         out.writeField(description);
     }
 
@@ -65,8 +51,7 @@ public class Avatar extends Item
     {
         super.readObject(ins);
 
-        avatarMediaHash = (ins.readField(ByteArray) as ByteArray);
-        avatarMimeType = ins.readByte();
+        avatarMedia = (ins.readObject() as MediaDesc);
         description = (ins.readField(String) as String);
     }
 }

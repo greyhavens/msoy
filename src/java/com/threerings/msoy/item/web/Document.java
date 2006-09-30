@@ -15,9 +15,9 @@ public class Document extends Item
     public String title;
 
     // @Override from Item
-    public String getType ()
+    public byte getType ()
     {
-        return "DOCUMENT";
+        return DOCUMENT;
     }
 
     // @Override from Item

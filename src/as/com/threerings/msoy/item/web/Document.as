@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.item.web {
 
-import flash.utils.ByteArray;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
@@ -13,26 +11,15 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class Document extends Item
 {
-    /** A hash code identifying the document media. */
-    public var docMediaHash :ByteArray;
-
-    /** The MIME type of the {@link #docMediaHash} media. */
-    public var docMimeType :int;
+    /** The document media. */
+    public var docMedia :MediaDesc;
 
     /** The title of this document (max length 255 characters). */
     public var title :String;
 
-    /**
-     * Returns a media descriptor for the actual document media.
-     */
-    public function getDocumentMedia () :MediaDesc
+    override public function getType () :int
     {
-        return new MediaDesc(docMediaHash, docMimeType);
-    }
-
-    override public function getType () :String
-    {
-        return "DOCUMENT";
+        return DOCUMENT;
     }
 
     override public function getDescription () :String
@@ -44,8 +31,7 @@ public class Document extends Item
     {
         super.writeObject(out);
 
-        out.writeField(docMediaHash);
-        out.writeByte(docMimeType);
+        out.writeObject(docMedia);
         out.writeField(title);
     }
 
@@ -53,8 +39,7 @@ public class Document extends Item
     {
         super.readObject(ins);
 
-        docMediaHash = (ins.readField(ByteArray) as ByteArray);
-        docMimeType = ins.readByte();
+        docMedia = (ins.readObject() as MediaDesc);
         title = (ins.readField(String) as String);
     }
 }

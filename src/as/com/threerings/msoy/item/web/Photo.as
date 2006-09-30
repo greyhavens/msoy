@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.item.web {
 
-import flash.utils.ByteArray;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
@@ -14,27 +12,16 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class Photo extends Item
 {
-    /** A hash code identifying the photo media. */
-    public var photoMediaHash :ByteArray;
-
-    /** The MIME type of the {@link #photoMediaHash} media. */
-    public var photoMimeType :int;
+    /** The photo media. */
+    public var photoMedia :MediaDesc;
 
     /** A caption for this photo (max length 255 characters). */
     public var caption :String;
 
-    /**
-     * Returns a media descriptor for the actual photo media.
-     */
-    public function getPhotoMedia () :MediaDesc
-    {
-        return new MediaDesc(photoMediaHash, photoMimeType);
-    }
-
     // from Item
-    override public function getType () :String
+    override public function getType () :int
     {
-        return "PHOTO";
+        return PHOTO;
     }
 
     // from Item
@@ -45,20 +32,19 @@ public class Photo extends Item
 
     override protected function getDefaultThumbnailMedia () :MediaDesc
     {
-        return getPhotoMedia();
+        return photoMedia;
     }
 
     override protected function getDefaultFurniMedia () :MediaDesc
     {
-        return getPhotoMedia();
+        return photoMedia;
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
 
-        out.writeField(photoMediaHash);
-        out.writeByte(photoMimeType);
+        out.writeObject(photoMedia);
         out.writeField(caption);
     }
 
@@ -66,8 +52,7 @@ public class Photo extends Item
     {
         super.readObject(ins);
 
-        photoMediaHash = (ins.readField(ByteArray) as ByteArray);
-        photoMimeType = ins.readByte();
+        photoMedia = (ins.readObject() as MediaDesc);
         caption = (ins.readField(String) as String);
     }
 }

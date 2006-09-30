@@ -31,7 +31,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.MemberGName;
 
 import com.threerings.msoy.item.data.ItemIdent;
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemGIdent;
@@ -67,15 +66,15 @@ public class ItemManager
     {
         // create our various repositories
         ItemRepository repo = new AvatarRepository(conProv);
-        _repos.put(ItemEnum.AVATAR, repo);
+        _repos.put(Item.AVATAR, repo);
         repo = new DocumentRepository(conProv);
-        _repos.put(ItemEnum.DOCUMENT, repo);
+        _repos.put(Item.DOCUMENT, repo);
         repo = new FurnitureRepository(conProv);
-        _repos.put(ItemEnum.FURNITURE, repo);
+        _repos.put(Item.FURNITURE, repo);
         repo = (_gameRepo = new GameRepository(conProv));
-        _repos.put(ItemEnum.GAME, repo);
+        _repos.put(Item.GAME, repo);
         repo = new PhotoRepository(conProv);
-        _repos.put(ItemEnum.PHOTO, repo);
+        _repos.put(Item.PHOTO, repo);
 
         // register our invocation service
         MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), true);
@@ -119,7 +118,7 @@ public class ItemManager
     public void insertItem (final Item item, ResultListener<Item> listener)
     {
         final ItemRecord record = ItemRecord.newRecord(item);
-        ItemEnum type = record.getType();
+        byte type = record.getType();
 
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = getRepository(type, listener);
@@ -152,12 +151,12 @@ public class ItemManager
      * member. The results may come from the cache and will be cached after
      * being loaded from the database.
      */
-    public void loadInventory (final int memberId, ItemEnum type,
+    public void loadInventory (final int memberId, byte type,
                                ResultListener<ArrayList<Item>> listener)
     {
         // first check the cache
-        final Tuple<Integer, ItemEnum> key =
-            new Tuple<Integer, ItemEnum>(memberId, type);
+        final Tuple<Integer, Byte> key =
+            new Tuple<Integer, Byte>(memberId, type);
 //      TODO: Disable cache for the moment
         if (false) {
         Collection<ItemRecord> items = _itemCache.get(key);
@@ -205,7 +204,7 @@ public class ItemManager
     /**
      * Fetches the entire catalog of listed items of the given type.
      */
-    public void loadCatalog (int memberId, ItemEnum type,
+    public void loadCatalog (int memberId, byte type,
                              ResultListener<ArrayList<CatalogListing>> listener)
     {
         // locate the appropriate repository
@@ -432,7 +431,7 @@ public class ItemManager
                     TagNameRecord tag = repo.getTag(record.tagId);
                     TagHistory history = new TagHistory();
                     history.item =
-                        new ItemGIdent(ident.type.name(), ident.itemId);
+                        new ItemGIdent(ident.type, ident.itemId);
                     history.member =
                         new MemberGName(memRec.name, memRec.memberId);
                     history.tag = tag.tag;
@@ -458,17 +457,17 @@ public class ItemManager
                 MemberGName memName =
                     new MemberGName(memRec.name, memRec.memberId);
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
-                for (Entry<ItemEnum, ItemRepository<ItemRecord>> entry :
+                for (Entry<Byte, ItemRepository<ItemRecord>> entry :
                         _repos.entrySet()) {
-                    ItemEnum type = entry.getKey();
+                    byte type = entry.getKey();
                     ItemRepository<ItemRecord> repo = entry.getValue();
                     for (TagHistoryRecord<ItemRecord> record :
-                        repo.getTagHistoryByMember(memberId)) {
+                            repo.getTagHistoryByMember(memberId)) {
                         TagNameRecord tag = record.tagId == -1 ? null :
                             repo.getTag(record.tagId);
                         TagHistory history = new TagHistory();
                         history.item = new ItemGIdent(
-                            type.name(), record.itemId);
+                            type, record.itemId);
                         history.member = memName;
                         history.tag = tag == null ? null : tag.tag;
                         history.action = record.action;
@@ -539,7 +538,7 @@ public class ItemManager
     }
 
     // from ItemProvider
-    public void getInventory (ClientObject caller, String type,
+    public void getInventory (ClientObject caller, byte type,
             final InvocationService.ResultListener listener)
         throws InvocationException
     {
@@ -547,13 +546,11 @@ public class ItemManager
         if (memberObj.isGuest()) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
-        // go ahead and throw a RuntimeException if 'type' is bogus
-        ItemEnum etype = Enum.valueOf(ItemEnum.class, type);
 
         // then, load that type
         // TODO: not everything!
         loadInventory(
-            memberObj.getMemberId(), etype,
+            memberObj.getMemberId(), type,
             new ResultListener<ArrayList<Item>>() {
                 public void requestCompleted (ArrayList<Item> result)
                 {
@@ -629,7 +626,7 @@ public class ItemManager
 
                 // and create the return value
                 TagHistory history = new TagHistory();
-                history.item = new ItemGIdent(ident.type.name(), originalId);
+                history.item = new ItemGIdent(ident.type, originalId);
                 history.member = new MemberGName(member.name, member.memberId);
                 history.tag = tag.tag;
                 history.action = historyRecord.action;
@@ -645,9 +642,9 @@ public class ItemManager
      */
     protected void updateUserCache (ItemRecord item)
     {
-        ItemEnum type = item.getType();
+        byte type = item.getType();
         Collection<ItemRecord> items =
-            _itemCache.get(new Tuple<Integer, ItemEnum>(item.ownerId, type));
+            _itemCache.get(new Tuple<Integer, Byte>(item.ownerId, type));
         if (items != null) {
             items.add(item);
         }
@@ -666,7 +663,7 @@ public class ItemManager
      * Helper function for mapping ident to repository.
      */
     protected ItemRepository<ItemRecord> getRepository (
-        ItemEnum type, ResultListener<?> listener)
+        byte type, ResultListener<?> listener)
     {
         ItemRepository<ItemRecord> repo = _repos.get(type);
         if (repo == null) {
@@ -685,12 +682,12 @@ public class ItemManager
     protected static final Pattern validTag =
         Pattern.compile("[a-z](_?[a-z0-9]){2,18}");
 
-    /** Maps string identifier to repository for all digital item types. */
-    protected HashMap<ItemEnum, ItemRepository<ItemRecord>> _repos =
-        new HashMap<ItemEnum, ItemRepository<ItemRecord>>();
+    /** Maps byte type ids to repository for all digital item types. */
+    protected HashMap<Byte, ItemRepository<ItemRecord>> _repos =
+        new HashMap<Byte, ItemRepository<ItemRecord>>();
 
     /** A soft reference cache of item list indexed on (user,type). */
-    protected SoftCache<Tuple<Integer, ItemEnum>, Collection<ItemRecord>>
+    protected SoftCache<Tuple<Integer, Byte>, Collection<ItemRecord>>
         _itemCache =
-        new SoftCache<Tuple<Integer, ItemEnum>, Collection<ItemRecord>>();
+        new SoftCache<Tuple<Integer, Byte>, Collection<ItemRecord>>();
 }

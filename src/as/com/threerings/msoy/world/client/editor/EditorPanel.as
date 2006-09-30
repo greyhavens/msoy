@@ -7,6 +7,7 @@ import mx.core.UIComponent;
 import mx.containers.VBox;
 
 import mx.controls.Button;
+import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.TextInput;
 
@@ -86,6 +87,23 @@ public class EditorPanel extends FloatingPanel
 
         // add a grid of controls for the room
         var grid :Grid = new Grid();
+
+        // edit scene type
+        grid.addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_type")),
+            _type = new ComboBox());
+        var types :Array = [];
+        for (var ii :int = 0; ii < MsoySceneModel.TYPE_COUNT; ii++) {
+            types.push({ label: _ctx.xlate("editing", "m.scene_type_" + ii),
+                         data: ii });
+        }
+        _type.dataProvider = types;
+
+        // background furni
+        grid.addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_background")),
+            _background = new ItemReceptor(_ctx));
+
         grid.addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_name")),
             _name = new TextInput());
@@ -130,6 +148,8 @@ public class EditorPanel extends FloatingPanel
      */
     public function updateInputFields () :void
     {
+        _type.selectedIndex = _sceneModel.type;
+        //_background = 
         _name.text = _sceneModel.name;
         _width.text = String(_sceneModel.width);
         _depth.text = String(_sceneModel.depth);
@@ -194,6 +214,9 @@ public class EditorPanel extends FloatingPanel
     protected var _sceneModel :MsoySceneModel;
 
     protected var _box :VBox;
+
+    protected var _type :ComboBox;
+    protected var _background :ItemReceptor;
 
     protected var _name :TextInput;
     protected var _width :TextInput;

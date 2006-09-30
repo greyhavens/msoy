@@ -9,7 +9,6 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.item.data.ItemIdent;
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -34,7 +33,7 @@ public class GameServlet extends RemoteServiceServlet
         // TODO: validate this user's creds
 
         // load up the metadata for this game
-        ItemIdent ident = new ItemIdent(ItemEnum.GAME, gameId);
+        ItemIdent ident = new ItemIdent(Item.GAME, gameId);
         ServletWaiter<Item> waiter =
             new ServletWaiter<Item>("loadItem[" + ident + "]");
         MsoyServer.itemMan.getItem(ident, waiter);

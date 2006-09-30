@@ -12,7 +12,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.threerings.io.Streamable;
-import com.threerings.msoy.item.util.ItemEnum;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Furniture;
@@ -137,10 +136,10 @@ public abstract class ItemRecord implements Streamable, Cloneable
     }
 
     /**
-     * This is used to map {@link ItemRecord} concrete classes to ItemEnum
+     * This is used to map {@link ItemRecord} concrete classes to item type
      * values.
      */
-    public abstract ItemEnum getType ();
+    public abstract byte getType ();
 
     @Override
     public int hashCode ()

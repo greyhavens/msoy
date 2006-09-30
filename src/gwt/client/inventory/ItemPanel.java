@@ -23,7 +23,7 @@ import com.threerings.msoy.web.client.WebContext;
  */
 public class ItemPanel extends VerticalPanel
 {
-    public ItemPanel (WebContext ctx, String type)
+    public ItemPanel (WebContext ctx, byte type)
     {
         // setStyleName("inventory_item");
         _ctx = ctx;
@@ -102,19 +102,21 @@ public class ItemPanel extends VerticalPanel
 
     protected void createNewItem ()
     {
-        ItemEditor editor = null;
-        Item item = null;
-        if (_type.equals("PHOTO")) {
+        ItemEditor editor;
+        if (_type == Item.PHOTO) {
             editor = new PhotoEditor();
-        } else if (_type.equals("DOCUMENT")) {
+        } else if (_type == Item.DOCUMENT) {
             editor = new DocumentEditor();
-        } else if (_type.equals("FURNITURE")) {
+        } else if (_type == Item.FURNITURE) {
             editor = new FurnitureEditor();
-        } else if (_type.equals("GAME")) {
+        } else if (_type == Item.GAME) {
             editor = new GameEditor();
-        } else if (_type.equals("AVATAR")) {
+        } else if (_type == Item.AVATAR) {
             editor = new AvatarEditor();
+        } else {
+            editor = null; // and you suck!
         }
+
         if (editor != null) {
             editor.init(_ctx, this);
             editor.setItem(editor.createBlankItem());
@@ -157,6 +159,6 @@ public class ItemPanel extends VerticalPanel
     protected Button _create;
     protected Label _status;
 
-    protected String _type;
+    protected byte _type;
     protected ArrayList _items;
 }

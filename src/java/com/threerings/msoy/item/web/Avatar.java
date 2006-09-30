@@ -15,9 +15,9 @@ public class Avatar extends Item
     public String description;
 
     // @Override // from Item
-    public String getType ()
+    public byte getType ()
     {
-        return "AVATAR";
+        return AVATAR;
     }
 
     // @Override // from Item

@@ -16,7 +16,7 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.
      */
-    public void loadCatalog (WebCreds creds, String type,
+    public void loadCatalog (WebCreds creds, byte type,
                              AsyncCallback callback);
     
     /**

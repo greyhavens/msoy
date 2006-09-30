@@ -16,9 +16,9 @@ public class Photo extends Item
     public String caption;
 
     // @Override // from Item
-    public String getType ()
+    public byte getType ()
     {
-        return "PHOTO";
+        return PHOTO;
     }
 
     // @Override // from Item
