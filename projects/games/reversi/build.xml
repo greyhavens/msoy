@@ -2,8 +2,7 @@
 <project name="reversi" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name"         value="reversi"/>
-  <property name="app.main"         value="Reversi.as"/>
+  <property name="app.name"         value="Reversi"/>
   <property name="root.path"        value="../../.."/>
 
   <!-- builds our Flash game -->
@@ -23,7 +22,7 @@
       <arg value="-compiler.warn-constructor-returns-value=true"/>
       <arg value="-compiler.fonts.local-fonts-snapshot=${root.path}/lib/as-compiler/frameworks/localFonts.ser"/>
       <arg value="-compiler.source-path=${root.path}/projects/vilya/src/as/"/>
-      <arg value="-compiler.source-path=${root.path}/projects/games/${app.name}/"/>
+      <arg value="-compiler.source-path=."/>
       <arg value="-externs"/>
       <arg value="com.threerings.ezgame:EZGame"/>
       <arg value="com.threerings.ezgame:Game"/>
@@ -31,8 +30,16 @@
       <arg value="com.threerings.ezgame:PropertyChangedEvent"/>
       <arg value="com.threerings.ezgame:StateChangedEvent"/>
       <arg value="-file-specs"/>
-      <arg value="${root.path}/projects/games/${app.name}/${app.main}"/>
+      <arg value="${app.name}.as"/>
     </java>
   </target>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+    </delete>
+  </target>
+
 
 </project>
