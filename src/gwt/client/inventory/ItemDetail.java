@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
+import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
@@ -115,6 +116,15 @@ public class ItemDetail extends PopupPanel
                     ((Photo)_item).photoMedia.getMediaPath()));
             addRow("Photo Media", photoContainer);
             addRow("Caption", ((Photo)_item).caption);
+            
+        } else if (_item instanceof Avatar) {
+            addHeader("Avatar Information");
+            Widget avatarContainer =
+                ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
+                    ((Avatar)_item).avatarMedia.getMediaPath()));
+            addRow("Description", ((Avatar)_item).description);
+            addRow("Avatar Media", avatarContainer);
+            
 
         } else {
             addHeader("UNKNOWN OBJECT TYPE: " + _item.getType());
