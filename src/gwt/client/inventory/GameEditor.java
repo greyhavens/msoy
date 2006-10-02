@@ -31,6 +31,12 @@ public class GameEditor extends ItemEditor
     {
         super.setItem(item);
         _game = (Game)item;
+
+        // TEMP: so that I can upload games
+        // TODO: remove
+        _game.config = "";
+        // END: temp
+
         _name.setText((_game.name == null) ? "" : _game.name);
     }
 
