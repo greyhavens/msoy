@@ -5,10 +5,11 @@ import flash.display.Sprite;
 
 import flash.events.MouseEvent;
 
-import com.metasoy.game.Game;
-import com.metasoy.game.GameObject;
-import com.metasoy.game.PropertyChangedEvent;
-import com.metasoy.game.StateChangedEvent;
+import com.threerings.ezgame.Game;
+import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.PropertyChangedEvent;
+import com.threerings.ezgame.StateChangedEvent;
+import com.threerings.ezgame.MessageReceivedEvent;
 
 [SWF(width="400", height="400")]
 public class ClickFest extends Sprite
@@ -24,7 +25,7 @@ public class ClickFest extends Sprite
     }
 
     // from Game
-    public function setGameObject (gameObj :GameObject) :void
+    public function setGameObject (gameObj :EZGame) :void
     {
         // set up our listeners
         _gameObj = gameObj;
@@ -119,7 +120,7 @@ public class ClickFest extends Sprite
         }
     }
 
-    protected var _gameObj :GameObject;
+    protected var _gameObj :EZGame;
 
     protected var _myScore :int;
 
