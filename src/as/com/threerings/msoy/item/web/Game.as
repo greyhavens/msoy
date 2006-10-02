@@ -20,6 +20,9 @@ public class Game extends Item
     /** The desired number of players. */
     public var desiredPlayers :int;
 
+    /** XML game configuration. */
+    public var config :String;
+
     /** The game media. */
     public var gameMedia :MediaDesc;
 
@@ -41,6 +44,7 @@ public class Game extends Item
         out.writeShort(minPlayers);
         out.writeShort(maxPlayers);
         out.writeShort(desiredPlayers);
+        out.writeField(config);
         out.writeObject(gameMedia);
     }
 
@@ -52,6 +56,7 @@ public class Game extends Item
         minPlayers = ins.readShort();
         maxPlayers = ins.readShort();
         desiredPlayers = ins.readShort();
+        config = (ins.readField(String) as String);
         gameMedia = (ins.readObject() as MediaDesc);
     }
 }
