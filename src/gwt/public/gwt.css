@@ -23,8 +23,13 @@
    padding: 5px;
 }
 
-.headerRow {
+.itemDetailErrors {
    font-weight: bold;
+   background: brown;
+}
+
+.headerRow {
+   font-weight: italic;
    background: #7B3F00;
 }
 

@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ComplexPanel;
+import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -24,6 +25,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
@@ -44,15 +46,21 @@ public class ItemDetail extends PopupPanel
         _item = item;
         _ctx = ctx;
         _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
-
         setStyleName("itemDetailPopup");
 
+        _mainContainer = new DockPanel();
+        setWidget(_mainContainer);
+        
         _table = new FlexTable();
         _table.setBorderWidth(0);
         _table.setCellSpacing(0);
         _table.setCellPadding(3);
-        setWidget(_table);
+        _mainContainer.add(_table, DockPanel.CENTER);
         _row = 0;
+
+        _errorContainer = new VerticalPanel();
+        _errorContainer.setStyleName("itemDetailErrors");
+        _mainContainer.add(_errorContainer, DockPanel.NORTH);
 
         if (_item.parentId != -1) {
             addHeader("Clone Information");
@@ -60,6 +68,7 @@ public class ItemDetail extends PopupPanel
                    "Owner", String.valueOf(_item.ownerId));
         }
         addHeader("Generic Item Information");
+        // TODO: flags should be checkboxes when we have some?
         addRow("Item ID", String.valueOf(_item.getProgenitorId()),
                "Flag mask", String.valueOf(_item.flags));
         // TODO: Should be MemberGNames
@@ -108,7 +117,7 @@ public class ItemDetail extends PopupPanel
             addRow("Caption", ((Photo)_item).caption);
 
         } else {
-            addHeader("UNKNOWN OBJECT TYPE");
+            addHeader("UNKNOWN OBJECT TYPE: " + _item.getType());
         }
 
         _ratingContainer = new HorizontalPanel();
@@ -125,24 +134,43 @@ public class ItemDetail extends PopupPanel
         newTagBox.setVisibleLength(12);
         newTagBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
+                clearErrors();
+                String tagName = ((TextBox) sender).getText().toLowerCase();
+                if (tagName.length() > 24) { 
+                    addError("Invalid tag: can't be more than 24 characters.");
+                    return;
+                }
+                for (int i = 0; i < tagName.length(); i ++) {
+                    char c = tagName.charAt(i);
+                    if (Character.isLetter(c) || !Character.isDigit(c) ||
+                        c == '_') {
+                        continue;
+                    }
+                    addError(
+                        "Invalid tag: use letters, numbers, and underscore.");
+                    return;
+                }
                 _ctx.itemsvc.tagItem(
-                    _ctx.creds, _itemId,
-                    ((TextBox) sender).getText(),
+                    _ctx.creds, _itemId, tagName,
                     new AsyncCallback() {
                         public void onSuccess (Object result) {
                             updateTags();
                         }
                         public void onFailure (Throwable caught) {
-                            // TODO: generalize error handling
+                            GWT.log("tagItem failed", caught);
+                            addError(
+                                "Internal error adding tag: " +
+                                caught.getMessage());
                         }
                     });
                 ((TextBox) sender).setText(null);
             }
         });
 
-        _tagHistory = new ListBox();
-        _tagHistory.addChangeListener(new ChangeListener() {
+        _historicalTags = new ListBox();
+        _historicalTags.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
+                clearErrors();
                 ListBox box = (ListBox) sender;
                 _ctx.itemsvc.tagItem(
                     _ctx.creds, _itemId,
@@ -152,19 +180,33 @@ public class ItemDetail extends PopupPanel
                             updateTags();
                         }
                         public void onFailure (Throwable caught) {
-                            // TODO: generalize error handling
+                            GWT.log("tagItem failed", caught);
+                            addError(
+                                "Internal error adding tag: " +
+                                caught.getMessage());
                         }
                     });
             }
         });
 
         _tagContainer = new FlowPanel();
-        updateTags();
+        // it seems only an explicit width will cause the label to wrap
+        _tagContainer.setWidth("400px");
         ComplexPanel enterTagContainer = new HorizontalPanel();
         enterTagContainer.add(newTagBox);
-        enterTagContainer.add(_tagHistory);
+        enterTagContainer.add(new HTML(" &nbsp; "));
+        enterTagContainer.add(_historicalTags);
         addRow("Enter a new tag", enterTagContainer);
         addRow("Tags", _tagContainer);
+        updateTags();
+        
+        Button button = new Button("Hide/Show");
+        button.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                toggleTagHistory();
+            }
+        });
+        addRow("Tagging History", button);
     }
 
     protected void updateTags ()
@@ -172,20 +214,23 @@ public class ItemDetail extends PopupPanel
         _ctx.itemsvc.getTagHistory(
             _ctx.creds, _ctx.creds.memberId, new AsyncCallback() {
                 public void onSuccess (Object result) {
-                    _tagHistory.clear();
+                    _historicalTags.clear();
                     Iterator i = ((Collection) result).iterator();
                     while (i.hasNext()) {
                         TagHistory history = (TagHistory) i.next();
                         if (history.member.memberId == _ctx.creds.memberId) {
                             if (history.tag != null) {
-                                _tagHistory.addItem(history.tag);
+                                _historicalTags.addItem(history.tag);
                             }
                         }
                     }
-                    _tagHistory.setVisible(_tagHistory.getItemCount() > 0);
+                    _historicalTags.setVisible(_historicalTags.getItemCount() > 0);
                 }
                 public void onFailure (Throwable caught) {
-                    // TODO: generalize error handling
+                    GWT.log("getTagHistory failed", caught);
+                    addError(
+                        "Internal error fetching tag history: " +
+                        caught.getMessage());
                 }
             });
 
@@ -203,9 +248,13 @@ public class ItemDetail extends PopupPanel
                     first = false;
                     builder.append(tag);
                 }
-                _tagContainer.add(new Label(builder.toString()));
+                _tagContainer.add(new Label(builder.toString(), true));
             }
             public void onFailure (Throwable caught) {
+                GWT.log("getTags failed", caught);
+                addError(
+                    "Internal error fetching item tags: " +
+                    caught.getMessage());
             }
         });
 
@@ -221,10 +270,9 @@ public class ItemDetail extends PopupPanel
                 }
                 public void onFailure (Throwable caught) {
                     GWT.log("getRating failed", caught);
-                    // TODO: for now, handle all async errors this way
-                    _ratingContainer.add(
-                        new Label("[Error: " + caught.getMessage() + "]"));
-                    return;
+                    addError(
+                        "Internal error fetching user's rating: " +
+                        caught.getMessage());
                 }
             });
     }
@@ -244,6 +292,7 @@ public class ItemDetail extends PopupPanel
             }
             box.addChangeListener(new ChangeListener() {
                 public void onChange (Widget sender) {
+                    clearErrors();
                     final byte newRating =
                         (byte) (((ListBox)sender).getSelectedIndex()+1);
                     _ctx.itemsvc.rateItem(
@@ -257,9 +306,9 @@ public class ItemDetail extends PopupPanel
                             }
                             public void onFailure (Throwable caught) {
                                 GWT.log("getRating failed", caught);
-                                // TODO: if ServiceException, translate
-                                _ratingContainer.add(
-                                    new Label("[Error: " + caught.getMessage() + "]"));
+                                addError(
+                                    "Internal error setting user's rating: " +
+                                    caught.getMessage());
                             }
                         });
                 }
@@ -279,6 +328,64 @@ public class ItemDetail extends PopupPanel
                 _ratingContainer.add(changeButton);
             }
         }
+    }
+    
+    private void toggleTagHistory ()
+    {
+        if (_tagHistory != null) {
+            if (_mainContainer.getWidgetDirection(_tagHistory) == null) {
+                _mainContainer.add(_tagHistory, DockPanel.EAST);
+            } else {
+                _mainContainer.remove(_tagHistory);
+            }
+            return;
+        }
+        _ctx.itemsvc.getTagHistory(
+            _ctx.creds, _itemId, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    _tagHistory = new FlexTable();
+                    _tagHistory.setBorderWidth(0);
+                    _tagHistory.setCellSpacing(0);
+                    _tagHistory.setCellPadding(2);
+                    int tRow = 0;
+                    Iterator iterator = ((Collection) result).iterator();
+                    while (iterator.hasNext()) {
+                        TagHistory history = (TagHistory) iterator.next();
+                        String date = history.time.toGMTString();
+                        // Fri Sep 29 2006 12:46:12
+                        date = date.substring(0, 23);
+                        _tagHistory.setText(tRow, 0, date);
+                        _tagHistory.setText(
+                            tRow, 1, history.member.memberName);
+                        String actionString;
+                        switch(history.action) {
+                        case TagHistory.ACTION_ADDED:
+                            actionString = "added";
+                            break;
+                        case TagHistory.ACTION_COPIED:
+                            actionString = "copied";
+                            break;
+                        case TagHistory.ACTION_REMOVED:
+                            actionString = "removed";
+                            break;
+                        default:
+                            actionString = "???";
+                        break;
+                        }
+                        _tagHistory.setText(tRow, 2, actionString);
+                        _tagHistory.setText(tRow, 3,
+                            history.tag == null ?
+                                "N/A" : "'" + history.tag + "'");
+                        tRow ++;
+                    }
+                    _mainContainer.add(_tagHistory, DockPanel.EAST);
+                }
+                public void onFailure (Throwable caught) {
+                    GWT.log("getTagHistory failed", caught);
+                    addError("Internal error fetching item tag history: " +
+                             caught.getMessage());
+                }
+            });
     }
 
     protected void addHeader (String header)
@@ -357,7 +464,17 @@ public class ItemDetail extends PopupPanel
     {
         addRow(lhead, new Label(lval), rhead, new Label(rval));
     }
+    
+    protected void addError (String error)
+    {
+        _errorContainer.add(new Label(error));
+    }
+    protected void clearErrors ()
+    {
+        _errorContainer.clear();
+    }
 
+    
     protected WebContext _ctx;
     protected ItemIdent _itemId;
     protected Item _item;
@@ -365,8 +482,12 @@ public class ItemDetail extends PopupPanel
     protected FlexTable _table;
     protected int _row;
 
-    protected ComplexPanel _ratingContainer;
-    protected ComplexPanel _tagContainer;
-    protected ListBox _tagHistory;
+    protected DockPanel _mainContainer;
+    protected VerticalPanel _errorContainer;
+    protected HorizontalPanel _ratingContainer;
+    protected FlowPanel _tagContainer;
+    protected ListBox _historicalTags;
     protected int _ratingRow;
+
+    protected FlexTable _tagHistory;
 }
