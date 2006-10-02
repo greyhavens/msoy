@@ -13,7 +13,9 @@ fi
 ROOT=`dirname $0`
 ROOT=`cd $ROOT ; cd .. ; pwd`
 LOCKFILE=/tmp/rebuild-msoy.lock
-export JAVA_HOME=/usr/local/jdk1.5
+if [ -z "$JAVA_HOME" ]; then
+    export JAVA_HOME=/usr/local/jdk1.5
+fi
 
 # load up some handy shell functions
 . /export/tools/lib/sh/build_helper
