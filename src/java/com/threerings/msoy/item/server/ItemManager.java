@@ -614,23 +614,25 @@ public class ItemManager
                 // map tag to tag id
                 TagNameRecord tag = repo.getTag(tagName);
 
-                // do the actual work
+                // and do the actual work
                 TagHistoryRecord<ItemRecord> historyRecord = doTag ?
                     repo.tagItem(originalId, tag.tagId, taggerId, now) :
                     repo.untagItem(originalId, tag.tagId, taggerId, now);
-
-                // finally look up the member
-                MemberRecord member = MsoyServer.memberRepo.loadMember(
-                    historyRecord.memberId);
-
-                // and create the return value
-                TagHistory history = new TagHistory();
-                history.item = new ItemIdent(ident.type, originalId);
-                history.member = new MemberGName(member.name, member.memberId);
-                history.tag = tag.tag;
-                history.action = historyRecord.action;
-                history.time = new Date(historyRecord.time.getTime());
-                return history;
+                if (historyRecord != null) {
+                    // look up the member
+                    MemberRecord member = MsoyServer.memberRepo.loadMember(
+                        taggerId);
+                    // and create the return value
+                    TagHistory history = new TagHistory();
+                    history.item = new ItemIdent(ident.type, originalId);
+                    history.member =
+                        new MemberGName(member.name, member.memberId);
+                    history.tag = tag.tag;
+                    history.action = historyRecord.action; 
+                    history.time = new Date(historyRecord.time.getTime());
+                    return history;
+                }
+                return null;
             }
         });
     }
