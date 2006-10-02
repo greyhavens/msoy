@@ -48,6 +48,7 @@
 
   <!-- builds our GWT web client -->
   <target name="gclient">
+    <mkdir dir="pages/msoy"/>
     <delete><fileset dir="pages/msoy" includes="*/*.*"/></delete>
     <java classpathref="gwt.classpath" fork="true"
           classname="com.google.gwt.dev.GWTCompiler">
