@@ -44,6 +44,9 @@ public class Blimp extends Sprite
         // here's how we communicate back to metasoy, this event requests
         // to have our location changed
         if (this.root.loaderInfo != null) {
+            // we dispatch a text event called "msoyLoc" with the
+            // text set to our x/y/z coords, separated by commas.
+            // (All msoy coordinates are between 0 and 1)
             this.root.loaderInfo.sharedEvents.dispatchEvent(
                 new TextEvent("msoyLoc", true, false, _loc.join()));
         }

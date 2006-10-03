@@ -1,5 +1,5 @@
 <!-- build configuration -->
-<project name="reversi" default="compile" basedir=".">
+<project name="blimp" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
   <property name="app.name"         value="Blimp"/>
@@ -41,8 +41,10 @@
     </delete>
   </target>
 
+<!--
   <target name="dist" depends="compile">
     <copy file="Blimp.swf" tofile="/export/msoy/pages/media/d2a329f63447c25f83e92f04fbb201cbcc820d5a.swf"/>
   </target>
+-->
 
 </project>
