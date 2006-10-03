@@ -31,7 +31,7 @@ public /*abstract*/ class Item
     public static const FURNITURE :int = 3; //registerItemType(Furniture, 3);
     public static const GAME :int = 4; //registerItemType(Game, 4);
     public static const AVATAR :int = 5; //registerItemType(Avatar, 5);
-    public static const PET :int = 6; //registerItemType(Avatar, 5);
+    public static const PET :int = 6; //registerItemType(Pet, 6);
     // Note: registery of Item types is done at the bottom of this class
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
