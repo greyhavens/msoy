@@ -103,7 +103,7 @@ public class ChatPopper
         _bubbles.push(viz);
         _rects.push(rect);
 
-        var timer :Timer = new Timer(10000, 1);
+        var timer :Timer = new Timer(20000, 1);
         timer.addEventListener(TimerEvent.TIMER,
             function (evt :TimerEvent) :void
             {
