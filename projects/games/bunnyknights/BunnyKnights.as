@@ -1,9 +1,12 @@
 package {
 
 import flash.display.Sprite;
+import flash.events.Event;
 import flash.events.KeyboardEvent;
+import flash.events.TimerEvent;
 import flash.external.ExternalInterface;
 import flash.ui.Keyboard;
+import flash.utils.Timer;
 
 import com.threerings.ezgame.Game;
 import com.threerings.ezgame.EZGame;
@@ -39,6 +42,7 @@ public class BunnyKnights extends Sprite
         addChild(_bunny);
         _bunny.y = 300;
         stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+        stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
     }
 
     // from StateChangedListener
@@ -51,15 +55,58 @@ public class BunnyKnights extends Sprite
     {
     }
 
+    protected function keyUpHandler (event :KeyboardEvent) :void
+    {
+        switch (event.keyCode) {
+          case Keyboard.LEFT:
+            _leftDown = false;
+            moveBunny();
+            break;
+          case Keyboard.RIGHT:
+            _rightDown = false;
+            moveBunny();
+            break;
+        }
+    }
+
     protected function keyDownHandler (event :KeyboardEvent) :void
     {
         switch (event.keyCode) {
           case Keyboard.LEFT:
-            _bunny.x = Math.max(0, _bunny.x - 5);
+            _leftDown = true;
+            moveBunny();
             break;
           case Keyboard.RIGHT:
-            _bunny.x = Math.min(640 - _bunny.width, _bunny.x + 5);
+            _rightDown = true;
+            moveBunny();
             break;
+        }
+    }
+
+    protected function moveBunny () :void
+    {
+        if (_leftDown == _rightDown) {
+            if (_moveTimer != null) {
+                _moveTimer.stop();
+                _moveTimer = null;
+                _bunny.idle();
+            }
+            return;
+        } else if (_moveTimer != null) {
+            return;
+        }
+        _moveTimer = new Timer(100);
+        _moveTimer.addEventListener(TimerEvent.TIMER, bunnyTick);
+        _moveTimer.start();
+        bunnyTick(null);
+    }
+
+    public function bunnyTick (event :TimerEvent) :void
+    {
+        if (_leftDown) {
+            _bunny.walk(-5);
+        } else {
+            _bunny.walk(5);
         }
     }
 
@@ -67,5 +114,9 @@ public class BunnyKnights extends Sprite
     protected var _gameObject :EZGame;
 
     protected var _bunny :Bunny;
+
+    protected var _moveTimer :Timer;
+    
+    protected var _leftDown :Boolean, _rightDown :Boolean;
 }
 }
