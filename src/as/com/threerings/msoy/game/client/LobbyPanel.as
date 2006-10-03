@@ -183,6 +183,9 @@ class TableRenderer extends HBox
         super();
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
+
+        // TODO: fix the dynamic layout of this container, it sucks
+        minWidth = 300;
     }
 
     override public function validateDisplayList () :void
