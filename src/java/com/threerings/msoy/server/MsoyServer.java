@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
+import java.security.Security;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -153,6 +154,10 @@ public class MsoyServer extends WhirledServer
     public void init ()
         throws Exception
     {
+        // before doing anything else, let's ensure that we don't cache DNS
+        // queries forever -- this breaks Amazon S3, specifically.
+        Security.setProperty("networkaddress.cache.ttl" , "30");
+
         // create our connection provider before calling super.init() because
         // our superclass will attempt to create our authenticator and we'll
         // need the connection provider ready at that time
