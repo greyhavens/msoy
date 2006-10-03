@@ -56,7 +56,9 @@ public class ItemPanel extends VerticalPanel
                     _items = (ArrayList)result;
                     if (_items == null || _items.size() == 0) {
                         _contents.add(
-                            new Label("You have no " + _type + " items."));
+                            new Label(
+                                "You have no " + Item.getTypeName(_type) +
+                                " items."));
                     } else {
                         for (int ii = 0; ii < _items.size(); ii++) {
                             _contents.add(new ItemContainer(

@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.CatalogListing;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.client.WebContext;
 
@@ -41,7 +42,8 @@ public class ItemPanel extends VerticalPanel
                     _listings = (ArrayList)result;
                     if (_listings == null || _listings.size() == 0) {
                         _contents.add(new Label(
-                            "There are no " + _type + " items listed."));
+                            "There are no " + Item.getTypeName(_type) +
+                            " items listed."));
                     } else {
                         for (int ii = 0; ii < _listings.size(); ii++) {
                             _contents.add(new ItemContainer(
