@@ -26,6 +26,7 @@ public abstract class Item implements Streamable, IsSerializable
     public static final byte FURNITURE = registerItemType(Furniture.class, 3);
     public static final byte GAME = registerItemType(Game.class, 4);
     public static final byte AVATAR = registerItemType(Avatar.class, 5);
+    public static final byte PET = registerItemType(Pet.class, 6);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     
     /** This item's unique identifier. <em>Note:</em> this identifier is not
@@ -93,6 +94,8 @@ public abstract class Item implements Streamable, IsSerializable
             return "PHOTO";
         } else if (type == DOCUMENT) {
             return "DOCUMENT";
+        } else if (type == PET) {
+            return "PET";
         } else {
             return null;
         }

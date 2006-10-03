@@ -18,6 +18,7 @@ import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.Pet;
 import com.threerings.msoy.item.web.Photo;
 
 /**
@@ -51,6 +52,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
             return new PhotoRecord((Photo) item);
         } else if (item instanceof Avatar) {
             return new AvatarRecord((Avatar) item);
+        } else if (item instanceof Pet) {
+            return new PetRecord((Pet) item);
         }
         throw new RuntimeException("Unknown item type: " + item);
     }

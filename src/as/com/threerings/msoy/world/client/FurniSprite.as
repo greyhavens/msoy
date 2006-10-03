@@ -1,6 +1,8 @@
 package com.threerings.msoy.world.client {
 
+import flash.events.EventDispatcher;
 import flash.events.MouseEvent;
+import flash.events.TextEvent;
 
 import com.threerings.mx.events.CommandEvent;
 
@@ -137,6 +139,20 @@ public class FurniSprite extends MsoySprite
                 ", actionData=" + _furni.actionData + "].");
             break;
         }
+    }
+
+    override protected function addContentListeners (
+        dispatch :EventDispatcher) :void
+    {
+        super.addContentListeners(dispatch);
+
+        dispatch.addEventListener("msoyLoc", function (event :TextEvent) :void {
+            var loc :Array = event.text.split(",");
+            setLocation(loc.map(
+                function (item :*, index :int, array :Array) :Number {
+                    return Number(item);
+                }));
+        });
     }
 
     /** The furniture data for this piece of furni. */

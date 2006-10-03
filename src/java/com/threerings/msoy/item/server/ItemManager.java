@@ -42,6 +42,7 @@ import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.TagHistoryRecord;
@@ -72,6 +73,8 @@ public class ItemManager
         _repos.put(Item.FURNITURE, repo);
         repo = (_gameRepo = new GameRepository(conProv));
         _repos.put(Item.GAME, repo);
+        repo = new PetRepository(conProv);
+        _repos.put(Item.PET, repo);
         repo = new PhotoRepository(conProv);
         _repos.put(Item.PHOTO, repo);
 

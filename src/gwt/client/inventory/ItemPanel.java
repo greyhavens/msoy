@@ -115,6 +115,8 @@ public class ItemPanel extends VerticalPanel
             editor = new GameEditor();
         } else if (_type == Item.AVATAR) {
             editor = new AvatarEditor();
+        } else if (_type == Item.PET) {
+            editor = new PetEditor();
         } else {
             editor = null; // and you suck!
         }

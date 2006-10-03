@@ -36,6 +36,7 @@ import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.Pet;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.web.client.WebContext;
@@ -104,6 +105,10 @@ public class ItemDetail extends PopupPanel
             addHeader("Furniture Information");
             addRow("Action", ((Furniture)_item).action,
                    "Description", ((Furniture)_item).description);
+
+        } else if (_item instanceof Pet) {
+            addHeader("Pet Information");
+            addRow("Description", ((Pet)_item).description);
 
         } else if (_item instanceof Game) {
             addHeader("Game Information");
