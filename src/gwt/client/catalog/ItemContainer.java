@@ -15,8 +15,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import client.MsoyEntryPoint;
-
-import client.util.FlashWidget;
+import client.util.WidgetUtil;
 
 /**
  * Displays a catalog listing.
@@ -104,9 +103,9 @@ public class ItemContainer extends VerticalPanel
         switch (MediaDesc.suffixToMimeType(thumbPath)) {
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
             String ident = String.valueOf(item.itemId);
-            FlashWidget fw = new FlashWidget(ident);
-            fw.setMovie(thumbPath);
-            return fw;
+            return WidgetUtil.createFlashMovie(
+                // TODO: allow passing -1 for width
+                ident, thumbPath, THUMB_HEIGHT, THUMB_HEIGHT);
 
         default:
             return new Image(thumbPath);

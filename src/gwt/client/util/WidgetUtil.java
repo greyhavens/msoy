@@ -16,6 +16,9 @@ public class WidgetUtil
      * Creates the necessary bullshit HTML to display a Flash movie in a way
      * that doesn't bunch up the panties of one or more of the goddamned web
      * browsers that we're trying to support.
+     *
+     * TODO: redo this with browser specific stuff so that we don't have tag ID
+     * conflicts.
      */
     public static HTML createFlashMovie (
         String ident, String movie, int width, int height)
@@ -40,6 +43,9 @@ public class WidgetUtil
      * Creates the necessary bullshit HTML to display a Java Applet in a way
      * that doesn't bunch up the panties of one or more of the goddamned web
      * browsers that we're trying to support.
+     *
+     * TODO: redo this with browser specific stuff so that we don't have tag ID
+     * conflicts.
      */
     public static HTML createApplet (
         String ident, String archive, String clazz,
