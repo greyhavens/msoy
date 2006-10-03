@@ -31,8 +31,6 @@ public class InventoryWindow extends FloatingPanel
     {
         super(ctx, ctx.xlate("item", "t.inventory"));
         showCloseButton = true;
-
-        open();
     }
 
     override protected function createChildren () :void

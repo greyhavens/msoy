@@ -227,6 +227,7 @@ public class EditorController extends Controller
         if (_invPanel == null) {
             _invPanel = new InventoryWindow(_ctx);
         }
+        _invPanel.open();
     }
 
     /**
