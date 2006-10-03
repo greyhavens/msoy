@@ -40,9 +40,6 @@ public class Board
             return;
         }
 
-        var subs :Array = [ ];
-        var scores :Array = [ ];
-
         // player 0 is responsible for setting up the initial board
         var board :Array = new Array();
         board.length = SIZE * SIZE;
@@ -50,21 +47,8 @@ public class Board
             board[ii] = false;
         }
 
-        // assign starting positions
-        // for now, assign the two players to opposite corners
-        subs[0] = coordsToIdx(0, 0);
-        scores[0] = 0;
-        subs[1] = coordsToIdx(SIZE - 1, SIZE - 1);
-        scores[1] = 0;
-        // and clear out those spots on the board
-        for each (var pos :int in subs) {
-            board[pos] = true;
-        }
-
         // set up the board
-        _gameObj.set("subs", subs);
         _gameObj.set("board", board);
-        _gameObj.set("scores", scores);
 
         // start things going
         _gameObj.startTicker("tick", 100);

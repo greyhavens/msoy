@@ -40,6 +40,33 @@ public class SubAttack extends Sprite
         if (_myIndex != -1) {
             stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         }
+
+        // create a submarine for each player
+        var names :Array = gameObj.getPlayerNames();
+        var xx :int;
+        var yy :int;
+        for (var ii :int = 0; ii < names.length; ii++) {
+            switch (ii) {
+            default:
+                trace("Cannot yet handle " + (ii + 1) + " player games!");
+                // fall through to 0
+
+            case 0:
+                xx = 0;
+                yy = 0;
+                break;
+
+            case 1:
+                xx = Board.SIZE - 1;
+                yy = Board.SIZE - 1;
+                break;
+            }
+
+            var sub :Submarine = new Submarine(
+                ii, String(names[ii]), xx, yy, _board);
+            addChild(sub);
+            _subs[ii] = sub;
+        }
     }
 
     // from PropertyChangedListener
@@ -66,33 +93,6 @@ public class SubAttack extends Sprite
             } else {
                 // TODO: modify a board element
             }
-
-        } else if (name == "subs") {
-            var pos :int;
-            var submarine :Submarine;
-            if (index == -1) {
-                var subs :Array = (_gameObj.get("subs") as Array);
-                for (var ii :int = 0; ii < subs.length; ii++) {
-                    submarine = new Submarine(ii);
-                    pos = int(subs[ii]);
-                    submarine.x = _board.idxToX(pos) * TILE_SIZE;
-                    submarine.y = _board.idxToY(pos) * TILE_SIZE;
-                    addChild(submarine);
-                    _subs[ii] = submarine;
-                }
-
-            } else {
-                // update the sub to its new location
-                pos = int(event.newValue);
-                submarine = (_subs[index] as Submarine);
-                // update position
-                submarine.x = _board.idxToX(pos) * TILE_SIZE;
-                submarine.y = _board.idxToY(pos) * TILE_SIZE;
-
-//                if (index == _myIndex) {
-//                    _canMoveNextTick = true;
-//                }
-            }
         }
     }
 
@@ -101,55 +101,35 @@ public class SubAttack extends Sprite
     {
         var name :String = event.name;
         if (name == "tick") {
-            _canMove = true;
+            // clear out the move counts
+            for each (var sub :Submarine in _subs) {
+                sub.resetMoveCounter();
+            }
+
+        } else if (name.indexOf("sub") == 0) {
+            var subIndex :int = int(name.substring(3));
+            var moveResult :Boolean = Submarine(_subs[subIndex]).performAction(
+                int(event.value));
+            if (!moveResult) {
+                trace("Dropped action: " + name);
+            }
         }
     }
 
     protected function keyEvent (event :KeyboardEvent) :void
     {
-        if (!_canMove) {
-            return;
-        }
-        var idx :int = int(_gameObj.get("subs", _myIndex));
-        var xx :int = _board.idxToX(idx);
-        var yy :int = _board.idxToY(idx);
-
         switch (event.keyCode) {
         case Keyboard.DOWN:
-            if (yy == Board.SIZE - 1) {
-                return;
-            }
-            yy++;
-            break;
-
         case Keyboard.UP:
-            if (yy == 0) {
-                return;
-            }
-            yy--;
-            break;
-
         case Keyboard.RIGHT:
-            if (xx == Board.SIZE - 1) {
-                return;
-            }
-            xx++;
-            break;
-
         case Keyboard.LEFT:
-            if (xx == 0) {
-                return;
-            }
-            xx--;
+        case Keyboard.SPACE:
+            _gameObj.sendMessage("sub" + _myIndex, event.keyCode);
             break;
 
         default:
             return;
         }
-
-        // attempt to set our new position
-        _gameObj.set("subs", _board.coordsToIdx(xx, yy), _myIndex);
-        _canMove = false;
     }
 
     /** The game object. */
@@ -163,10 +143,6 @@ public class SubAttack extends Sprite
     protected var _seaweed :Array = [];
 
     protected var _subs :Array = [];
-
-    protected var _canMove :Boolean = false;
-//    protected var _canMoveNextTick :Boolean = true;
-//    protected var _nextMove :Object;
 
     /** How many tiles in any direction can we see? */
     protected static const VISION_DISTANCE :int = 5;
