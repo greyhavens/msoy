@@ -35,6 +35,7 @@ import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.web.client.WebContext;
@@ -75,14 +76,19 @@ public class ItemDetail extends PopupPanel
         // TODO: Should be MemberGNames
         addRow("Owner ID", String.valueOf(_item.ownerId),
                "Creator ID", String.valueOf(_item.creatorId));
-        Widget thumbContainer =
+        
+        MediaDesc thumbMedia = _item.getThumbnailMedia();
+        Widget thumbWidget =
             ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
-                _item.getThumbnailPath()));
-        Widget furniContainer =
+                thumbMedia.getMediaPath()));
+        
+        MediaDesc furniMedia = _item.getFurniMedia();
+        Widget furniWidget = furniMedia.equals(thumbMedia) ?
+            new Label("(same as thumbnail)") :
             ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
                 _item.getFurniMedia().getMediaPath()));
-        addRow("Thumbnail", thumbContainer,
-               "Furniture", furniContainer);
+        addRow("Thumbnail", thumbWidget,
+               "Furniture", furniWidget);
         // TODO: Maybe merge ItemDetail and ItemEditor, so we could put these
         // TODO: subclass-specific bits into (and rename) e.g. DocumentEditor?
         if (_item instanceof Document) {
@@ -111,17 +117,33 @@ public class ItemDetail extends PopupPanel
 
         } else if (_item instanceof Photo) {
             addHeader("Photo Information");
-            Widget photoContainer =
-                ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
-                    ((Photo)_item).photoMedia.getMediaPath()));
+            MediaDesc photoMedia = ((Photo)_item).photoMedia;
+            Widget photoContainer;
+            if (photoMedia.equals(thumbMedia)) {
+                photoContainer = new Label("(same as thumbnail)");
+            } else if (photoMedia.equals(furniMedia)) {
+                photoContainer = new Label("(same as furniture)");
+            } else {
+                photoContainer =
+                    ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
+                        photoMedia.getMediaPath()));
+            }
             addRow("Photo Media", photoContainer);
             addRow("Caption", ((Photo)_item).caption);
-            
+
         } else if (_item instanceof Avatar) {
             addHeader("Avatar Information");
-            Widget avatarContainer =
-                ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
-                    ((Avatar)_item).avatarMedia.getMediaPath()));
+            MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
+            Widget avatarContainer;
+            if (avatarMedia.equals(thumbMedia)) {
+                avatarContainer = new Label("(same as thumbnail)");
+            } else if (avatarMedia.equals(furniMedia)) {
+                avatarContainer = new Label("(same as furniture)");
+            } else {
+                avatarContainer =
+                    ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
+                        avatarMedia.getMediaPath()));
+            }
             addRow("Description", ((Avatar)_item).description);
             addRow("Avatar Media", avatarContainer);
             
