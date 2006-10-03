@@ -10,8 +10,12 @@
 -injars ../lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../lib/nenya-media.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../lib/vilya-parlor.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../lib/vilya-whirled.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../lib/samskivert.jar(!META-INF/*,!**/velocity/**,!**/xml/**)
 -injars ../lib/toybox.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
+-injars ../dist/msoy-code.jar(
+  !META-INF/*,!**/tools/**,!**/server/**,!**/world/**,!**/web/**,
+  !com/threerings/io/**)
 
 -libraryjars <java.home>/lib/rt.jar
 -dontskipnonpubliclibraryclasses
@@ -52,3 +56,6 @@
 -keep public class com.threerings.** {
     public protected *;
 }
+
+# we need to cope with an MSOY auth respose
+-keep public class com.threerings.msoy.data.MsoyAuthResponseData

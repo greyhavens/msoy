@@ -78,6 +78,7 @@ public class EntryPointDispatcher
         _pages.put("inventory", client.inventory.index.getCreator());
         _pages.put("person", client.person.index.getCreator());
         _pages.put("catalog", client.catalog.index.getCreator());
+        _pages.put("game", client.game.index.getCreator());
     }
 
     protected HashMap _pages = new HashMap();

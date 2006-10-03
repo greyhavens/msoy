@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.util.FlashWidget;
+import client.util.WidgetUtil;
 
 /**
  * Handles the MetaSOY main page.
@@ -51,9 +51,8 @@ public class index extends MsoyEntryPoint
             // don't show the flash client in the GWT shell
             if (GWT.isScript()) {
                 if (_client == null) {
-                    _client = new FlashWidget("asclient");
-                    _client.setMovie("/clients/game-client.swf");
-                    _client.setPixelSize(900, 600);
+                    _client = WidgetUtil.createFlashMovie(
+                        "asclient", "/clients/game-client.swf", 900, 600);
                 }
                 RootPanel.get("content").add(_client);
             }
@@ -113,5 +112,5 @@ public class index extends MsoyEntryPoint
         }
     }-*/;
 
-    protected FlashWidget _client;
+    protected HTML _client;
 }

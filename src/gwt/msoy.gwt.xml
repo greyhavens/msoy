@@ -13,12 +13,4 @@
   <servlet path="/profile" class="com.threerings.msoy.web.server.RedirectServlet"/>
   <servlet path="/person" class="com.threerings.msoy.web.server.RedirectServlet"/>
   <servlet path="/game" class="com.threerings.msoy.web.server.RedirectServlet"/>
-
-  <replace-with class="client.util.impl.FlashWidgetImplMozilla">
-    <when-type-is class="client.util.impl.FlashWidgetImpl"/>
-    <any>
-      <when-property-is name="user.agent" value="gecko"/>
-      <when-property-is name="user.agent" value="gecko1_8"/>
-    </any>
-  </replace-with>
 </module>
