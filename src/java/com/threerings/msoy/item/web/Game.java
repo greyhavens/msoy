@@ -44,7 +44,7 @@ public class Game extends Item
         if (!super.isConsistent()) {
             return false;
         }
-        if (minPlayers < 2 || minPlayers > maxPlayers ||
+        if (minPlayers < 1 || minPlayers > maxPlayers ||
                 desiredPlayers < minPlayers ||
                 desiredPlayers > maxPlayers) {
             return false;
