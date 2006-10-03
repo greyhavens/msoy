@@ -147,6 +147,9 @@ public class FurniSprite extends MsoySprite
         super.addContentListeners(dispatch);
 
         dispatch.addEventListener("msoyLoc", function (event :TextEvent) :void {
+            if (_editing) {
+                return; // do not allow movement during editing
+            }
             var loc :Array = event.text.split(",");
             setLocation(loc.map(
                 function (item :*, index :int, array :Array) :Number {

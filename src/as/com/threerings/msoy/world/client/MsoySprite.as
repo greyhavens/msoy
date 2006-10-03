@@ -94,6 +94,7 @@ public class MsoySprite extends MediaContainer
 
     public function setEditing (editing :Boolean) :void
     {
+        _editing = editing;
         if (editing) {
             mouseEnabled = true;
             mouseChildren = false;
@@ -540,6 +541,9 @@ public class MsoySprite extends MediaContainer
 
     /** Our Media descripter. */
     protected var _desc :MediaDesc;
+
+    /** Are we being edited? */
+    protected var _editing :Boolean;
 
     /** Used to dispatch events down to the swf we contain. */
     protected var _dispatch :EventDispatcher;
