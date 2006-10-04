@@ -18,15 +18,14 @@ import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 
-[SWF(width="400", height="400")]
+[SWF(width="416", height="416")]
 public class SubAttack extends Sprite
     implements Game, MessageReceivedListener
 {
-    /** The size of a tile. */
-    public static const TILE_SIZE :int = 24;
+    /** How many tiles does our vision extend past our tile? */
+    public static const VISION_TILES :int = 6;
 
-    public static const VISION_TILES :int = 8;
-
+    /** How many total tiles are in one direction in the view? */
     public static const VIEW_TILES :int = (VISION_TILES * 2) + 1;
 
     public function SubAttack ()
@@ -37,7 +36,7 @@ public class SubAttack extends Sprite
         tabEnabled = true;
         tabIndex = 1;
 
-        var maskSize :int = VIEW_TILES * TILE_SIZE;
+        var maskSize :int = VIEW_TILES * SeaDisplay.TILE_SIZE;
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0xFFFFFF);
         masker.graphics.drawRect(0, 0, maskSize, maskSize);
@@ -71,20 +70,38 @@ public class SubAttack extends Sprite
      */
     protected function keyEvent (event :KeyboardEvent) :void
     {
-        switch (event.keyCode) {
-        case Keyboard.DOWN:
-        case Keyboard.UP:
-        case Keyboard.RIGHT:
-        case Keyboard.LEFT:
-        case Keyboard.SPACE:
+        var action :int = getActionForKey(event.keyCode);
+        if (action != Action.NONE) {
             if (_sentMoves < MAX_MESSAGES_PER_TICK) {
                 _sentMoves++;
-                _gameObj.sendMessage("sub" + _myIndex, event.keyCode);
+                _gameObj.sendMessage("sub" + _myIndex, action);
             }
-            break;
+        }
+    }
+
+    /**
+     * Get the action that corresponds to the specified key.
+     */
+    protected function getActionForKey (keyCode :int) :int
+    {
+        switch (keyCode) {
+        case Keyboard.DOWN:
+            return Action.DOWN;
+
+        case Keyboard.UP:
+            return Action.UP;
+
+        case Keyboard.RIGHT:
+            return Action.RIGHT;
+
+        case Keyboard.LEFT:
+            return Action.LEFT;
+
+        case Keyboard.SPACE:
+            return Action.SHOOT;
 
         default:
-            return;
+            return Action.NONE;
         }
     }
 
@@ -94,8 +111,10 @@ public class SubAttack extends Sprite
     /** Represents our board. */
     protected var _board :Board;
 
+    /** The visual display of the game. */
     protected var _seaDisplay :SeaDisplay;
 
+    /** Our player index, or -1 if we're not a player. */
     protected var _myIndex :int;
 
     protected var _sentMoves :int = 0;

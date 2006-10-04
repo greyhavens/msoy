@@ -7,7 +7,7 @@ import flash.events.Event;
 public class SeaDisplay extends Sprite
 {
     /** The size of a tile. */
-    public static const TILE_SIZE :int = 24;
+    public static const TILE_SIZE :int = 32;
 
     public function SeaDisplay ()
     {

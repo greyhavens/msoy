@@ -2,8 +2,6 @@ package {
 
 import flash.display.Sprite;
 
-import flash.ui.Keyboard;
-
 /**
  * A base sprite that moves around the sea.
  */
@@ -35,28 +33,28 @@ public class BaseSprite extends Sprite
     protected function advanceLocation () :Boolean
     {
         switch (_orient) {
-        case Keyboard.DOWN:
+        case Action.DOWN:
             if (!_board.isTraversable(_x, _y + 1)) {
                 return false;
             }
             _y++;
             break;
 
-        case Keyboard.UP:
+        case Action.UP:
             if (!_board.isTraversable(_x, _y - 1)) {
                 return false;
             }
             _y--;
             break;
 
-        case Keyboard.LEFT:
+        case Action.LEFT:
             if (!_board.isTraversable(_x - 1, _y)) {
                 return false;
             }
             _x--;
             break;
 
-        case Keyboard.RIGHT:
+        case Action.RIGHT:
             if (!_board.isTraversable(_x + 1, _y)) {
                 return false;
             }
@@ -84,8 +82,7 @@ public class BaseSprite extends Sprite
     protected var _x :int;
     protected var _y :int;
 
-    /** Our orientation, which is specified using the keyboard codes
-     * for UP/LEFT/DOWN/RIGHT... */
+    /** Our orientation, which is specified using the direction action codes. */
     protected var _orient :int;
 }
 }

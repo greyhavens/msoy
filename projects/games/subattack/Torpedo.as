@@ -53,19 +53,19 @@ public class Torpedo extends BaseSprite
         // advance our coordinates anyway so that we're on the tile 
         // to explode upon
         switch (_orient) {
-        case Keyboard.DOWN:
+        case Action.DOWN:
             _y++;
             break;
 
-        case Keyboard.UP:
+        case Action.UP:
             _y--;
             break;
 
-        case Keyboard.LEFT:
+        case Action.LEFT:
             _x--;
             break;
 
-        case Keyboard.RIGHT:
+        case Action.RIGHT:
             _x++;
             break;
         }
@@ -84,8 +84,8 @@ public class Torpedo extends BaseSprite
         var high :int = mid + low;
 
         switch (_orient) {
-        case Keyboard.UP:
-        case Keyboard.DOWN:
+        case Action.UP:
+        case Action.DOWN:
             graphics.moveTo(mid, low);
             graphics.lineTo(mid, high);
             break;

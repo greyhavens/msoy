@@ -2,8 +2,6 @@ package {
 
 import flash.text.TextField;
 
-import flash.ui.Keyboard;
-
 import com.threerings.ezgame.EZGame;
 
 public class Submarine extends BaseSprite
@@ -18,7 +16,7 @@ public class Submarine extends BaseSprite
         _playerName = playerName;
         _x = startx;
         _y = starty;
-        _orient = (_x == 0) ? Keyboard.RIGHT : Keyboard.LEFT;
+        _orient = (_x == 0) ? Action.RIGHT : Action.LEFT;
 
         updateVisual();
         updateLocation();
@@ -31,18 +29,17 @@ public class Submarine extends BaseSprite
     }
 
     /**
-     * Perform the action specified by the keycode, or return false
-     * if unable.
+     * Perform the action specified, or return false if unable.
      */
-    public function performAction (keyCode :int) :Boolean
+    public function performAction (action :int) :Boolean
     {
         if (_queuedMoves.length > 0) {
             // TODO: don't queue shoots?
-            _queuedMoves.push(keyCode);
+            _queuedMoves.push(action);
         }
-        var result :int = performActionInternal(keyCode);
+        var result :int = performActionInternal(action);
         if (result == CANT) {
-            _queuedMoves.push(keyCode);
+            _queuedMoves.push(action);
         }
         return true;
     }
@@ -51,15 +48,15 @@ public class Submarine extends BaseSprite
     protected static const CANT :int = 1;
     protected static const DROP :int = 2;
 
-    protected function performActionInternal (keyCode :int) :int
+    protected function performActionInternal (action :int) :int
     {
         // TEMP: until I sort out a few things...
         if (_shot || _moved) {
-            return (keyCode == Keyboard.SPACE) ? DROP : CANT;
+            return (action == Action.SHOOT) ? DROP : CANT;
         }
         // END: temp
 
-        if (keyCode == Keyboard.SPACE) {
+        if (action == Action.SHOOT) {
             if (_shot || _torpedos.length == MAX_TORPEDOS) {
                 // shoot once per tick, max 2 in-flight
                 return CANT;
@@ -74,8 +71,8 @@ public class Submarine extends BaseSprite
         // otherwise, it's a move request
 
         // we can always re-orient
-        if (keyCode != _orient) {
-            _orient = keyCode;
+        if (_orient != action) {
+            _orient = action;
             updateVisual();
             return OK;
 
@@ -106,9 +103,9 @@ public class Submarine extends BaseSprite
     public function postTick () :void
     {
         while (_queuedMoves.length > 0) {
-            var move :int = int(_queuedMoves[0]);
-            if (CANT == performActionInternal(move)) {
-//                if (move != Keyboard.SPACE) {
+            var action :int = int(_queuedMoves[0]);
+            if (CANT == performActionInternal(action)) {
+//                if (move != Action.SHOOT) {
                     return;
 //                }
             }
@@ -153,19 +150,19 @@ public class Submarine extends BaseSprite
         var yy :int = xx;
         graphics.moveTo(xx, yy);
         switch (_orient) {
-        case Keyboard.UP:
+        case Action.UP:
             yy = 0;
             break;
 
-        case Keyboard.DOWN:
+        case Action.DOWN:
             yy = SeaDisplay.TILE_SIZE;
             break;
 
-        case Keyboard.LEFT:
+        case Action.LEFT:
             xx = 0;
             break;
 
-        case Keyboard.RIGHT:
+        case Action.RIGHT:
             xx = SeaDisplay.TILE_SIZE;
             break;
         }
