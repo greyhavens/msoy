@@ -90,6 +90,8 @@ public class Robot extends Sprite
 
         _parts[partType] =
             _robotFactory.getPart(color, partType, _style[partType]);
+        _parts[partType].x = - (_parts[partType].width / 2 );
+        _parts[partType].y = - _parts[partType].height;
         addChild(_parts[partType]);
 
         // TODO: cut to the transition animation for this part
@@ -186,25 +188,24 @@ public class Robot extends Sprite
     protected var _robotFactory :RobotFactory;
 
     /** Identifier for the color of our robot. */
-    protected const PART_COLOR :int = 0;
+    protected static const PART_COLOR :int = 0;
 
     /** Identifier for the robot's head. */
-    protected const PART_HEAD :int = 1;
+    protected static const PART_HEAD :int = 1;
 
     /** Identifier for the robot's torso. */
-    protected const PART_TORSO :int = 2;
+    protected static const PART_TORSO :int = 2;
 
     /** Identifier for the robot's legs. */
-    protected const PART_LEGS :int = 3;
+    protected static const PART_LEGS :int = 3;
 
     /** How many different parts make up our robot. */
-    protected const PART_COUNT :int = 4;
+    protected static const PART_COUNT :int = 4;
 
     /** How many options do we have for each thing in our robot's style. */
-    protected const STYLE_OPTIONS :int = 3;
+    protected static const STYLE_OPTIONS :int = 3;
 
     /** The glow effect used for mouse hovering. */
     protected var _glow :Glow;
-
 }
 }

@@ -40,7 +40,7 @@ public class RobotRampage extends Sprite
 
         graphics.clear();
         graphics.beginFill(0xCCCCFF);
-        graphics.drawRect(0, 0, 640, 480);
+        graphics.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         graphics.endFill();
 
         addMoonBases();
@@ -64,11 +64,12 @@ public class RobotRampage extends Sprite
         var count :int = names.length;
         _bases = new Array(count);
 
-        var radius :int = Math.min(width, height) / 2;
+        var radius :int = (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) / 2) - 
+            MoonBase.MOON_BASE_RADIUS;
 
         for (var ii :int = 0; ii < count; ii++) {
             // Make new base
-            var base :MoonBase = new MoonBase("foo", ii);
+            var base :MoonBase = new MoonBase(names[ii], ii);
             _bases[ii] = base;
             var angle :Number = ii * 2 * Math.PI / count;
 
@@ -81,8 +82,8 @@ public class RobotRampage extends Sprite
              * from that perspective.
              * For now though, meh.
              */
-            base.x = (width/2) - (radius * Math.sin(angle));
-            base.y = (height/2) + (radius * Math.cos(angle));
+            base.x = (SCREEN_WIDTH/2) - (radius * Math.sin(angle));
+            base.y = (SCREEN_HEIGHT/2) + (radius * Math.cos(angle));
 
             addChild(base);
         }
@@ -111,6 +112,12 @@ public class RobotRampage extends Sprite
 
     /** A factory for building robots. */
     protected var _robotFactory :RobotFactory;
+
+    /** Width of our play area. */
+    protected static const SCREEN_WIDTH :int = 640;
+
+    /** Height of our play area. */
+    protected static const SCREEN_HEIGHT :int = 480;
 
 }
 }

@@ -14,7 +14,7 @@ public class MoonBase extends Sprite
 
         graphics.clear();
         graphics.beginFill(uint(BASE_COLORS[_playerIndex]));
-        graphics.drawCircle(0, 0, 10);
+        graphics.drawCircle(0, 0, MOON_BASE_RADIUS);
         graphics.endFill();
     }
 
@@ -37,5 +37,7 @@ public class MoonBase extends Sprite
 
     /** The damage done by a robot hitting us. */
     protected static const ROBOT_HIT_DAMAGE :int = 10;
+
+    public static const MOON_BASE_RADIUS :int = 10;
 }
 }
