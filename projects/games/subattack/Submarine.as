@@ -25,7 +25,8 @@ public class Submarine extends BaseSprite
 
         var nameLabel :TextField = new TextField();
         nameLabel.text = playerName;
-        nameLabel.y = -1 * nameLabel.textHeight;
+        nameLabel.y = -1 * (nameLabel.textHeight + NAME_PADDING);
+        nameLabel.x = (SeaDisplay.TILE_SIZE - nameLabel.textWidth) / 2;
         addChild(nameLabel);
     }
 
@@ -84,8 +85,6 @@ public class Submarine extends BaseSprite
      */
     public function torpedoExploded (torp :Torpedo) :void
     {
-        trace("Checking torp: " + torp);
-        trace("array: " + _torpedos.join(", "));
         var idx :int = _torpedos.indexOf(torp);
         if (idx == -1) {
             trace("OMG: missing torp!");
@@ -94,6 +93,15 @@ public class Submarine extends BaseSprite
 
         // remove it
         _torpedos.splice(idx, 1);
+    }
+
+    override protected function updateLocation () :void
+    {
+        super.updateLocation();
+
+        if (parent != null) {
+            (parent as SeaDisplay).subUpdated(this, _x, _y);
+        }
     }
 
     protected function updateVisual () :void
@@ -151,5 +159,8 @@ public class Submarine extends BaseSprite
 
     /** The maximum number of torpedos that may be in-flight at once. */
     protected static const MAX_TORPEDOS :int = 2;
+
+    /** The number of pixels to raise the name above the sprite. */
+    protected static const NAME_PADDING :int = 3;
 }
 }

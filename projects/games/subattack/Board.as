@@ -7,7 +7,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 public class Board
 {
     /** The dimensions of the board. */
-    public static const SIZE :int = 16;
+    public static const WIDTH :int = 60;
+    public static const HEIGHT :int = 30;
 
     public function Board (gameObj :EZGame, seaDisplay :SeaDisplay)
     {
@@ -18,12 +19,12 @@ public class Board
 
         // create a submarine for each player
         var names :Array = gameObj.getPlayerNames();
+        var sub :Submarine;
         for (var ii :int = 0; ii < names.length; ii++) {
             var xx :int = getStartingX(ii);
             var yy :int = getStartingY(ii);
 
-            var sub :Submarine = new Submarine(
-                ii, String(names[ii]), xx, yy, this);
+            sub = new Submarine(ii, String(names[ii]), xx, yy, this);
             _seaDisplay.addChild(sub);
             _subs[ii] = sub;
 
@@ -36,8 +37,9 @@ public class Board
         // shows up always on top of other submarines
         var myIndex :int = gameObj.getMyIndex();
         if (myIndex != -1) {
-            _seaDisplay.setChildIndex(
-                (_subs[myIndex] as Submarine), _seaDisplay.numChildren - 1);
+            sub = (_subs[myIndex] as Submarine);
+            _seaDisplay.setChildIndex(sub, _seaDisplay.numChildren - 1);
+            _seaDisplay.setFollowSub(sub);
         }
     }
 
@@ -46,7 +48,7 @@ public class Board
      */
     public function isTraversable (xx :int, yy :int) :Boolean
     {
-        return (xx >= 0) && (xx < SIZE) && (yy >= 0) && (yy < SIZE) &&
+        return (xx >= 0) && (xx < WIDTH) && (yy >= 0) && (yy < HEIGHT) &&
             Boolean(_traversable[coordsToIdx(xx, yy)]);
     }
 
@@ -82,11 +84,8 @@ public class Board
 
         // TODO find all the subs that were affected
 
-        // modify the board
-        if (xx < 0 || xx >= SIZE || yy < 0 || yy >= SIZE) {
-            // no-op: out of bounds, does not modify board
-
-        } else {
+        // if it exploded in bounds, make that area traversable
+        if (xx >= 0 && xx < WIDTH && yy >= 0 && yy < HEIGHT) {
             // mark the board area as traversable there
             _traversable[coordsToIdx(xx, yy)] = true;
             _seaDisplay.markTraversable(xx, yy);
@@ -97,27 +96,18 @@ public class Board
 
     protected function coordsToIdx (x :int, y :int) :int
     {
-        return (y * SIZE) + x;
+        return (y * WIDTH) + x;
     }
 
+    /**
+     * Handles game did start, and that's it.
+     */
     protected function gameDidStart (event :StateChangedEvent) :void
     {
-        if (_gameObj.getMyIndex() != 0) {
-            return;
+        // player 0 starts the ticker
+        if (_gameObj.getMyIndex() == 0) {
+            _gameObj.startTicker("tick", 100);
         }
-
-        // player 0 is responsible for setting up the initial board
-        var board :Array = new Array();
-        board.length = SIZE * SIZE;
-        for (var ii :int = 0; ii < board.length; ii++) {
-            board[ii] = false;
-        }
-
-        // set up the board
-        _gameObj.set("board", board);
-
-        // start things going
-        _gameObj.startTicker("tick", 100);
     }
 
     /**
@@ -168,6 +158,9 @@ public class Board
         }
     }
 
+    /**
+     * Return the starting x coordinate for the specified player.
+     */
     protected function getStartingX (playerIndex :int) :int
     {
         switch (playerIndex) {
@@ -178,10 +171,19 @@ public class Board
             return 0;
 
         case 1:
-            return (SIZE - 1);
+            return (WIDTH - 1);
+
+        case 2:
+            return 0;
+
+        case 3:
+            return (WIDTH - 1);
         }
     }
 
+    /**
+     * Return the starting y coordinate for the specified player.
+     */
     protected function getStartingY (playerIndex :int) :int
     {
         switch (playerIndex) {
@@ -192,7 +194,13 @@ public class Board
             return 0;
 
         case 1:
-            return (SIZE - 1);
+            return (HEIGHT - 1);
+
+        case 2:
+            return (HEIGHT - 1);
+
+        case 3:
+            return 0;
         }
     }
 
