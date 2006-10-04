@@ -20,7 +20,7 @@ import com.threerings.ezgame.MessageReceivedListener;
 
 [SWF(width="400", height="400")]
 public class SubAttack extends Sprite
-    implements Game, PropertyChangedListener, MessageReceivedListener
+    implements Game, MessageReceivedListener
 {
     /** The size of a tile. */
     public static const TILE_SIZE :int = 24;
@@ -58,19 +58,12 @@ public class SubAttack extends Sprite
         }
     }
 
-    // from PropertyChangedListener
-    public function propertyChanged (event :PropertyChangedEvent) :void
-    {
-        var name :String = event.name;
-        var index :int = event.index;
-
-        // nada
-    }
-
     // from MessageReceivedListener
     public function messageReceived (event :MessageReceivedEvent) :void
     {
-        // nada
+        if (event.name == "tick") {
+            _sentMoves = 0;
+        }
     }
 
     /**
@@ -84,7 +77,10 @@ public class SubAttack extends Sprite
         case Keyboard.RIGHT:
         case Keyboard.LEFT:
         case Keyboard.SPACE:
-            _gameObj.sendMessage("sub" + _myIndex, event.keyCode);
+            if (_sentMoves < MAX_MESSAGES_PER_TICK) {
+                _sentMoves++;
+                _gameObj.sendMessage("sub" + _myIndex, event.keyCode);
+            }
             break;
 
         default:
@@ -101,5 +97,9 @@ public class SubAttack extends Sprite
     protected var _seaDisplay :SeaDisplay;
 
     protected var _myIndex :int;
+
+    protected var _sentMoves :int = 0;
+
+    protected static const MAX_MESSAGES_PER_TICK :int = 5;
 }
 }

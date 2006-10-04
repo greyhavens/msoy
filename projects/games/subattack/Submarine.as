@@ -36,15 +36,38 @@ public class Submarine extends BaseSprite
      */
     public function performAction (keyCode :int) :Boolean
     {
+        if (_queuedMoves.length > 0) {
+            // TODO: don't queue shoots?
+            _queuedMoves.push(keyCode);
+        }
+        var result :int = performActionInternal(keyCode);
+        if (result == CANT) {
+            _queuedMoves.push(keyCode);
+        }
+        return true;
+    }
+
+    protected static const OK :int = 0;
+    protected static const CANT :int = 1;
+    protected static const DROP :int = 2;
+
+    protected function performActionInternal (keyCode :int) :int
+    {
+        // TEMP: until I sort out a few things...
+        if (_shot || _moved) {
+            return (keyCode == Keyboard.SPACE) ? DROP : CANT;
+        }
+        // END: temp
+
         if (keyCode == Keyboard.SPACE) {
             if (_shot || _torpedos.length == MAX_TORPEDOS) {
                 // shoot once per tick, max 2 in-flight
-                return false;
+                return CANT;
 
             } else {
                 _torpedos.push(new Torpedo(this, _board));
                 _shot = true;
-                return true;
+                return OK;
             }
         }
 
@@ -54,20 +77,20 @@ public class Submarine extends BaseSprite
         if (keyCode != _orient) {
             _orient = keyCode;
             updateVisual();
-            return true;
+            return OK;
 
         // but we can't move twice in the same tick
         } else if (_moved) {
-            return false;
+            return CANT;
 
         // try to move, blocking on non-traversable tiles
         } else if (!advanceLocation()) {
-            return false;
+            return DROP;
         }
 
         // we did it!
         _moved = true;
-        return true;
+        return OK;
     }
 
     /**
@@ -78,6 +101,19 @@ public class Submarine extends BaseSprite
         // reset our move counter
         _moved = false;
         _shot = false;
+    }
+
+    public function postTick () :void
+    {
+        while (_queuedMoves.length > 0) {
+            var move :int = int(_queuedMoves[0]);
+            if (CANT == performActionInternal(move)) {
+//                if (move != Keyboard.SPACE) {
+                    return;
+//                }
+            }
+            _queuedMoves.shift();
+        }
     }
 
     /**
@@ -135,6 +171,9 @@ public class Submarine extends BaseSprite
         }
         graphics.lineTo(xx, yy);
     }
+
+    /** Queued moves. */
+    protected var _queuedMoves :Array = [];
 
     /** The player index that this submarine corresponds to. */
     protected var _playerIdx :int;

@@ -156,6 +156,11 @@ public class Board
                 }
             }
         }
+
+        // now let each sub enact any queued moves
+        for each (sub in _subs) {
+            sub.postTick();
+        }
     }
 
     /**
