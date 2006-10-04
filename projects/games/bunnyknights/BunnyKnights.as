@@ -1,5 +1,6 @@
 package {
 
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
@@ -33,16 +34,43 @@ public class BunnyKnights extends Sprite
     // from Game
     public function setGameObject (gameObj :EZGame) :void
     {
+        log("Got game object");
         _gameObject = gameObj;
         graphics.clear();
-        graphics.beginFill(0x2222CC);
+        graphics.beginFill(0x000000);
         graphics.drawRect(0, 0, 640, 480);
         graphics.endFill();
+
+        _layers = new Array(Tile.LAYER_HUD + 1);
+        for (var ii :int = 0; ii < Tile.LAYER_HUD; ii++) {
+            _layers[ii] = new Sprite();
+            addChild(Sprite(_layers[ii]));
+        }
+
+        log("Creating board");
+        _board = new Board(this);
+        for (var xx :int = 0; xx < Board.BOARD_WIDTH; xx++) {
+            for (var yy :int = 0; yy < Board.BOARD_HEIGHT; yy++) {
+                if (xx == 0 || xx == Board.BOARD_WIDTH - 1 ||
+                    yy == 0 || yy == Board.BOARD_HEIGHT - 1) {
+                    var tile :Tile = new Tile(xx, yy);
+                    _board.addTile(tile);
+                }
+            }
+        }
+
+        log("Creating bunny");
         _bunny = new Bunny();
-        addChild(_bunny);
+        addChildToLayer(_bunny, Tile.LAYER_ACTION_FRONT);
         _bunny.y = 300;
         stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
         stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
+    }
+
+    public function addChildToLayer (child :DisplayObject, layer :int)
+        :DisplayObject
+    {
+        return Sprite(_layers[layer]).addChild(child);
     }
 
     // from StateChangedListener
@@ -80,6 +108,9 @@ public class BunnyKnights extends Sprite
             _rightDown = true;
             moveBunny();
             break;
+          case Keyboard.SPACE:
+            _bunny.attack();
+            break;
         }
     }
 
@@ -95,7 +126,7 @@ public class BunnyKnights extends Sprite
         } else if (_moveTimer != null) {
             return;
         }
-        _moveTimer = new Timer(100);
+        _moveTimer = new Timer(50);
         _moveTimer.addEventListener(TimerEvent.TIMER, bunnyTick);
         _moveTimer.start();
         bunnyTick(null);
@@ -104,9 +135,9 @@ public class BunnyKnights extends Sprite
     public function bunnyTick (event :TimerEvent) :void
     {
         if (_leftDown) {
-            _bunny.walk(-5);
+            _bunny.walk(-3);
         } else {
-            _bunny.walk(5);
+            _bunny.walk(3);
         }
     }
 
@@ -116,7 +147,10 @@ public class BunnyKnights extends Sprite
     protected var _bunny :Bunny;
 
     protected var _moveTimer :Timer;
+
+    protected var _board :Board;
+    protected var _layers :Array;
     
-    protected var _leftDown :Boolean, _rightDown :Boolean;
+    protected var _leftDown :Boolean = false, _rightDown :Boolean = false;
 }
 }
