@@ -42,6 +42,8 @@ public class Submarine extends BaseSprite
 
             } else {
                 _torpedos.push(new Torpedo(this, _board));
+                _shot = true;
+                return true;
             }
         }
 
@@ -74,6 +76,24 @@ public class Submarine extends BaseSprite
     {
         // reset our move counter
         _moved = false;
+        _shot = false;
+    }
+
+    /**
+     * Called by our torpedo to let us know that it's gone.
+     */
+    public function torpedoExploded (torp :Torpedo) :void
+    {
+        trace("Checking torp: " + torp);
+        trace("array: " + _torpedos.join(", "));
+        var idx :int = _torpedos.indexOf(torp);
+        if (idx == -1) {
+            trace("OMG: missing torp!");
+            return;
+        }
+
+        // remove it
+        _torpedos.splice(idx, 1);
     }
 
     protected function updateVisual () :void

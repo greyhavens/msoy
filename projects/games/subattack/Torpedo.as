@@ -13,10 +13,13 @@ public class Torpedo extends BaseSprite
         _x = owner.getX();
         _y = owner.getY();
 
-        advanceLocation();
         updateVisual();
 
         _board.torpedoAdded(this);
+
+//        // advance it one immediately so that it starts out in front of the sub
+//        // NOTE: This may cause it to explode
+//        advanceLocation();
     }
 
     /**
@@ -24,14 +27,51 @@ public class Torpedo extends BaseSprite
      */
     public function tick () :void
     {
-        if (!advanceLocation()) {
-            explode();
-        }
+        advanceLocation();
     }
 
     public function explode () :void
     {
-        _board.torpedoExploded(this);
+        var hitSubs :Array = _board.torpedoExploded(this);
+        for each (var hitSub :Submarine in hitSubs) {
+            // TODO
+        }
+
+        // tell our originating sub that we exploded
+        _sub.torpedoExploded(this);
+    }
+
+    // overridden: it's always legal for a torpedo to advance, so
+    // this returns false if the torpedo has exploded
+    override protected function advanceLocation () :Boolean
+    {
+        var adv :Boolean = super.advanceLocation();
+        if (adv) {
+            return true;
+        }
+
+        // advance our coordinates anyway so that we're on the tile 
+        // to explode upon
+        switch (_orient) {
+        case Keyboard.DOWN:
+            _y++;
+            break;
+
+        case Keyboard.UP:
+            _y--;
+            break;
+
+        case Keyboard.LEFT:
+            _x--;
+            break;
+
+        case Keyboard.RIGHT:
+            _x++;
+            break;
+        }
+
+        explode();
+        return false;
     }
 
     protected function updateVisual () :void
@@ -56,6 +96,13 @@ public class Torpedo extends BaseSprite
             break;
         }
     }
+
+    override public function toString () :String
+    {
+        return "Torpedo[" + _id + "]";
+    }
+
+    protected var _id :Number = Math.random();
 
     /** The sub that shot us. */
     protected var _sub :Submarine;

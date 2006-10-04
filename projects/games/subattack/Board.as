@@ -29,6 +29,15 @@ public class Board
 
             // mark this sub's 
             _traversable[coordsToIdx(xx, yy)] = true;
+            _seaDisplay.markTraversable(xx, yy);
+        }
+
+        // if we're a player, put our submarine last, so that it
+        // shows up always on top of other submarines
+        var myIndex :int = gameObj.getMyIndex();
+        if (myIndex != -1) {
+            _seaDisplay.setChildIndex(
+                (_subs[myIndex] as Submarine), _seaDisplay.numChildren - 1);
         }
     }
 
@@ -47,10 +56,43 @@ public class Board
     public function torpedoAdded (torpedo :Torpedo) :void
     {
         _torpedos.push(torpedo);
+        _seaDisplay.addChild(torpedo);
     }
 
-    public function torpedoExploded (torpedo :Torpedo) :void
+    /**
+     * Called by a torpedo when it has exploded.
+     *
+     * @return an Array of the subs hit.
+     */
+    public function torpedoExploded (torpedo :Torpedo) :Array
     {
+        // remove it from our list of torpedos
+        var idx :int = _torpedos.indexOf(torpedo);
+        if (idx == -1) {
+            trace("OMG! Unable to find torpedo??");
+            return null;
+        }
+        _torpedos.splice(idx, 1); // remove that torpedo
+
+        _seaDisplay.removeChild(torpedo); // TODO
+
+        var xx :int = torpedo.getX();
+        var yy :int = torpedo.getY();
+        var subs :Array = [];
+
+        // TODO find all the subs that were affected
+
+        // modify the board
+        if (xx < 0 || xx >= SIZE || yy < 0 || yy >= SIZE) {
+            // no-op: out of bounds, does not modify board
+
+        } else {
+            // mark the board area as traversable there
+            _traversable[coordsToIdx(xx, yy)] = true;
+            _seaDisplay.markTraversable(xx, yy);
+        }
+
+        return subs;
     }
 
     protected function coordsToIdx (x :int, y :int) :int
@@ -85,13 +127,7 @@ public class Board
     {
         var name :String = event.name;
         if (name == "tick") {
-            // clear out the move counts
-            for each (var sub :Submarine in _subs) {
-                sub.tick();
-            }
-            for each (var torp :Torpedo in _torpedos) {
-                torp.tick();
-            }
+            doTick();
 
         } else if (name.indexOf("sub") == 0) {
             var subIndex :int = int(name.substring(3));
@@ -99,6 +135,35 @@ public class Board
                 int(event.value));
             if (!moveResult) {
                 trace("Dropped action: " + name);
+            }
+        }
+    }
+
+    protected function doTick () :void
+    {
+        var sub :Submarine;
+        var torp :Torpedo;
+        // tick all subs and torps
+        for each (sub in _subs) {
+            sub.tick();
+        }
+        var torpsCopy :Array = _torpedos.concat();
+        for each (torp in torpsCopy) {
+            // this may explode a torpedo if it hits seaweed or a wall
+            torp.tick();
+        }
+
+        // check to see if any torpedos are hitting subs
+        torpsCopy = _torpedos.concat();
+        for each (torp in torpsCopy) {
+            var xx :int = torp.getX();
+            var yy :int = torp.getY();
+            for each (sub in _subs) {
+                if ((xx == sub.getX()) && (yy == sub.getY())) {
+                    // we have a hit!
+                    torp.explode(); // will end up calling torpedoExploded
+                    break; // break the inner loop
+                }
             }
         }
     }
