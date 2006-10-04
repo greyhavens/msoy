@@ -27,7 +27,7 @@ public class Robot extends Sprite
             _parts[ii] = null;
         }
 
-        _target = -1;
+        _target = null;
 
         randomizeRobot();
 
@@ -36,12 +36,57 @@ public class Robot extends Sprite
         addEventListener(MouseEvent.CLICK, mouseClick);
     }
 
-    public function targetPlayer (playerIndex :int) : void
+    public function setTarget (base :MoonBase) : void
     {
-        _target = playerIndex;
+        _target = base;
         // TODO: stuff.
     }
 
+    public function tick () :void
+    {
+        if (_target == null) {
+            return;
+        }
+
+        walkTowardsTarget();
+
+        // TODO: Try and fall into rank with my robot bretheren
+    }
+
+    public function isNearTarget () :Boolean
+    {
+        if (_target == null) {
+            return false;
+        }
+
+        var dx :int = Math.abs(x - _target.x);
+        var dy :int = Math.abs(y - _target.y);
+
+        if ((dx*dx + dy*dy) <= DESTRUCTION_RADIUS_SQUARED) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function walkTowardsTarget () :void
+    {
+        /* FIXME: Walk less stupidly. Although I suppose they ARE dumb robots,
+         * and they DO look pretty amusing jittering along their path....
+         */
+        if (_target.x < x) {
+            x--;
+        } else if (_target.x > x) {
+            x++;
+        }
+
+        if (_target.y < y) {
+            y--;
+        } else if (_target.y > y) {
+            y++;
+        }
+
+    }
     
     /**
      * Randomizes the specified aspect of the robot, or if part is
@@ -115,6 +160,28 @@ public class Robot extends Sprite
         _labelY += label.height;
     }
 
+    /**
+     * KABOOOOOOOM!
+     */
+    public function explode () :void
+    {
+        if (_target == null) {
+            // Huh? We were told to explode, but we don't have a target?
+            return;
+        }
+
+        // TODO: deal damage to our target base
+    }
+
+    /**
+     * Returns whether or not we're done doing our fancy little explosion
+     * animation and can be shuffled off this mortal coil.
+     */
+    public function isDoneExploding () :Boolean
+    {
+        return true;
+    }
+
     /** The position of our last placed label. */
     protected var _labelY :int = 0;
 
@@ -159,10 +226,10 @@ public class Robot extends Sprite
             _glow.alphaFrom = 0;
             _glow.alphaTo = 1;
             _glow.blurXFrom = 0;
-            _glow.blurXTo = 20;
+            _glow.blurXTo = GLOW_RADIUS;
             _glow.blurYFrom = 0;
-            _glow.blurYTo = 20;
-            _glow.color = 0xFFFF99;
+            _glow.blurYTo = GLOW_RADIUS;
+            _glow.color = GLOW_COLOR_HOVER;
             _glow.duration = 200;
             _glow.play();
 
@@ -176,7 +243,7 @@ public class Robot extends Sprite
     }
 
     /** The player this robot is currently targetting, or -1 for none. */
-    protected var _target :int;
+    protected var _target :MoonBase;
 
     /** An array of ints describing this robot's style. */
     protected var _style :Array;
@@ -207,5 +274,17 @@ public class Robot extends Sprite
 
     /** The glow effect used for mouse hovering. */
     protected var _glow :Glow;
+
+    /** Radius of the glow that surrounds a robot.*/
+    protected static const GLOW_RADIUS :int = 10;
+
+    /** Color to glow when we're mousing over a robot. */
+    protected static const GLOW_COLOR_HOVER :uint = 0xffffff;
+
+    /** Color to glow when we've selected a robot for our set. */
+    protected static const GLOW_COLOR_SELECTED :uint = 0x000000;
+
+    /** How close we must be to a base to destroy it, squared. */
+    protected static const DESTRUCTION_RADIUS_SQUARED :int = 25;
 }
 }

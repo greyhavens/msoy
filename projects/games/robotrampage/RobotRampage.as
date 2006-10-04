@@ -37,6 +37,7 @@ public class RobotRampage extends Sprite
     {
         _gameObj = gameObj;
         _myIndex = _gameObj.getMyIndex();
+        _robotInterval = INITIAL_ROBOT_INTERVAL;
 
         graphics.clear();
         graphics.beginFill(0xCCCCFF);
@@ -45,7 +46,14 @@ public class RobotRampage extends Sprite
 
         addMoonBases();
 
-        addRobot();
+        _gameObj.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+
+        if (isMaster()) {
+            for (var ii :int = 0; ii < INITIAL_ROBOTS; ii++) {
+                addRobot(true);
+            }
+            _gameObj.startTicker("tick", 100);
+        }
     }
 
     // from StateChangedListener
@@ -57,6 +65,61 @@ public class RobotRampage extends Sprite
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
     }
+
+    /**
+     * Handles MessageReceivedEvents.
+     */
+    protected function msgReceived (event :MessageReceivedEvent) :void
+    {
+        var name :String = event.name;
+        if (name == "tick") {
+            doTick();
+        }
+    }
+
+    protected function doTick () :void
+    {
+        var robot :Robot;
+        for each (robot in _robots) {
+            robot.tick();
+        }
+
+        if (isMaster()) {
+            _ticksSinceRobot++;
+
+            var tmpRobots :Array = []
+
+            // Look successful attacks
+            for each (robot in _robots) {
+                if (robot.isNearTarget()) {
+                    // Kaboom!
+                    _explodingRobots.push(robot);
+                    robot.explode();
+                } else {
+                    tmpRobots.push(robot);
+                }
+            }
+
+            for each (robot in _explodingRobots) {
+                if (robot.isDoneExploding()) {
+                    removeChild(robot);
+                }
+            }
+
+            _robots = tmpRobots;
+
+
+            // Add more robots as appropriate
+            if (_ticksSinceRobot >= _robotInterval) {
+                if (_robots.length < MAX_ROBOTS) {
+                    addRobot(true);
+                }
+            }
+        }
+
+        // TODO: Resort our robots render order to match their coordinates
+    }
+
 
     public function addMoonBases () : void
     {
@@ -90,15 +153,37 @@ public class RobotRampage extends Sprite
     }
 
     /**
-     * Adds a new robot with random attributes and no target.
+     * Adds a new robot with random attributes.
      */
-    public function addRobot () : void
+    public function addRobot (pickTarget :Boolean=false) : void
     {
         var robot :Robot = new Robot(_robotFactory);
-        robot.x = width/2;
-        robot.y = height/2;
+
+        robot.x = (width/2) + 
+            (Math.random() * 2 * CENTER_RADIUS) - CENTER_RADIUS;
+        robot.y = (height/2) + 
+            (Math.random() * 2 * CENTER_RADIUS) - CENTER_RADIUS;
+
+        if (pickTarget) {
+            // FIXME: worry about destroyed players
+            var target :int = int(Math.random() * _bases.length);
+            robot.setTarget(_bases[target]);
+        }
 
         addChild(robot);
+
+        _robots.push(robot);
+
+        _ticksSinceRobot = 0;
+    }
+
+    /** 
+     * Returns whether we're serving as the master, forcing our will on all
+     * the other clients with an iron fist.
+     */
+    protected function isMaster () :Boolean
+    {
+        return _myIndex == 0;
     }
 
     /** Our game object. */
@@ -110,6 +195,19 @@ public class RobotRampage extends Sprite
     /** An array of moonbases. */
     protected var _bases :Array;
 
+    /** Number of ticks before we should add another robot. */
+    protected var _robotInterval :int;
+
+    /** Number of ticks since we last added a robot. */
+    protected var _ticksSinceRobot :int = 0;
+
+    /** An array of robots. */
+    protected var _robots :Array = [];
+
+
+    /** An array of exploding robots. */
+    protected var _explodingRobots :Array = [];
+
     /** A factory for building robots. */
     protected var _robotFactory :RobotFactory;
 
@@ -118,6 +216,23 @@ public class RobotRampage extends Sprite
 
     /** Height of our play area. */
     protected static const SCREEN_HEIGHT :int = 480;
+
+    /** The radius of the circle at the middle of our screen for new robots. */
+    protected static const CENTER_RADIUS :int = 25;
+
+    /** Initial robot interval. */
+    protected static const INITIAL_ROBOT_INTERVAL :int = 50;
+
+    /** Initial number of robots. */
+    protected static const INITIAL_ROBOTS :int = 5;
+
+    /** Maximum number of robots to have at any given time. */
+    /* FIXME: This should probably vary based on the number of players at a 
+     * time. And maybe, grow as the game goes on... By raising the spawn speed
+     * and the max robots allowed, it could get pretty psycho and force the
+     * game to end. Yay for increasing difficulty.
+     */
+    protected static const MAX_ROBOTS :int = 20;
 
 }
 }
