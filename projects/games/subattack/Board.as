@@ -7,8 +7,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 public class Board
 {
     /** The dimensions of the board. */
-    public static const WIDTH :int = 60;
-    public static const HEIGHT :int = 30;
+    public static const WIDTH :int = 16;
+    public static const HEIGHT :int = 16;
 
     public function Board (gameObj :EZGame, seaDisplay :SeaDisplay)
     {
@@ -78,17 +78,25 @@ public class Board
 
         _seaDisplay.removeChild(torpedo); // TODO
 
+        // find all the subs affected
+        var subs :Array = [];
         var xx :int = torpedo.getX();
         var yy :int = torpedo.getY();
-        var subs :Array = [];
+        for each (var sub :Submarine in _subs) {
+            if (sub.getX() == xx && sub.getY() == yy) {
+                subs.push(sub);
+            }
+        }
 
-        // TODO find all the subs that were affected
 
         // if it exploded in bounds, make that area traversable
         if (xx >= 0 && xx < WIDTH && yy >= 0 && yy < HEIGHT) {
             // mark the board area as traversable there
             _traversable[coordsToIdx(xx, yy)] = true;
             _seaDisplay.markTraversable(xx, yy);
+
+            var duration :int = (subs.length == 0) ? 200 : 400;
+            _seaDisplay.addChild(new Explosion(xx, yy, duration, this));
         }
 
         return subs;

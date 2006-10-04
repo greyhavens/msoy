@@ -2,8 +2,6 @@ package {
 
 import flash.text.TextField;
 
-import com.threerings.ezgame.EZGame;
-
 public class Submarine extends BaseSprite
 {
     public function Submarine (
@@ -23,6 +21,7 @@ public class Submarine extends BaseSprite
 
         var nameLabel :TextField = new TextField();
         nameLabel.text = playerName;
+        // center the label above us
         nameLabel.y = -1 * (nameLabel.textHeight + NAME_PADDING);
         nameLabel.x = (SeaDisplay.TILE_SIZE - nameLabel.textWidth) / 2;
         addChild(nameLabel);
@@ -74,7 +73,8 @@ public class Submarine extends BaseSprite
         if (_orient != action) {
             _orient = action;
             updateVisual();
-            return OK;
+            return performActionInternal(action);
+            //return OK;
 
         // but we can't move twice in the same tick
         } else if (_moved) {
