@@ -37,7 +37,7 @@ public class GamePanel extends VerticalPanel
         case LaunchConfig.JAVA_LOBBIED: {
             display = WidgetUtil.createApplet(
                 "game", "/clients/game-client.jar",
-                "com.threerings.toybox.client.ToyBoxApplet", 800, 600,
+                "com.threerings.msoy.game.client.GameApplet", 800, 600,
                 new String[] { "game_id", "" + config.gameId,
                                "resource_url",
                                "http://" + config.server + "/media/", // TODO

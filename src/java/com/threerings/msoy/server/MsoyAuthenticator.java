@@ -147,7 +147,8 @@ public class MsoyAuthenticator extends Authenticator
                 creds = (MsoyCredentials) req.getCredentials();
 
             } catch (ClassCastException cce) {
-                log.warning("Invalid creds " + req.getCredentials() + ".");
+                log.log(Level.WARNING,
+                        "Invalid creds " + req.getCredentials() + ".", cce);
                 throw new LogonException(MsoyAuthCodes.SERVER_ERROR);
             }
 
@@ -217,6 +218,11 @@ public class MsoyAuthenticator extends Authenticator
                 throw new LogonException(MsoyAuthCodes.SERVER_ERROR);
             }
 */
+
+            // TODO: sort out the above
+            if (creds.ident == null) {
+                creds.ident = "";
+            }
 
             // obtain the authentication domain appropriate to their account
             // name (which is their email address)

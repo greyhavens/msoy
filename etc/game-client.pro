@@ -13,8 +13,9 @@
 -injars ../lib/vilya-whirled.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../lib/samskivert.jar(!META-INF/*,!**/velocity/**,!**/xml/**)
 -injars ../lib/toybox.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
+-injars ../lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(
-  !META-INF/*,!**/tools/**,!**/server/**,!**/world/**,!**/web/**,
+  !META-INF/*,!**/tools/**,!**/server/**,!**/world/**,!**threerings/web/**,
   !com/threerings/io/**)
 
 -libraryjars <java.home>/lib/rt.jar
