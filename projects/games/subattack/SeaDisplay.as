@@ -7,6 +7,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 public class SeaDisplay extends Sprite
 {
@@ -15,13 +16,6 @@ public class SeaDisplay extends Sprite
 
     public function SeaDisplay ()
     {
-        /**
-        graphics.beginFill(0x00CC66);
-        graphics.drawRect(0, 0,
-            TILE_SIZE * Board.WIDTH, TILE_SIZE * Board.HEIGHT);
-        graphics.endFill();
-        */
-
         var ups :Array = [];
         ups[0] = Bitmap(new _up1()).bitmapData;
         ups[1] = Bitmap(new _up2()).bitmapData;
@@ -41,16 +35,21 @@ public class SeaDisplay extends Sprite
             }
         }
 
-//        graphics.lineStyle(2, 0x000000);
-//        graphics.drawRect(0, 0,
-//            TILE_SIZE * Board.WIDTH, TILE_SIZE * Board.HEIGHT);
-//        graphics.lineStyle(0, 0, 0);
-
+        // set up a respawn message, to be centered in the main view
         _respawnMsg = new TextField();
         _respawnMsg.text = "Press ENTER to spawn.";
         _respawnMsg.background = true;
+        _respawnMsg.autoSize = TextFieldAutoSize.CENTER;
+        _respawnMsg.selectable = false;
+        _respawnMsg.x =
+            ((SubAttack.VIEW_TILES * TILE_SIZE) - _respawnMsg.textWidth) / 2;
+        _respawnMsg.y = 
+            ((SubAttack.VIEW_TILES * TILE_SIZE) - _respawnMsg.textHeight) / 2;
     }
 
+    /**
+     * Set the submarine that we focus on and follow.
+     */
     public function setFollowSub (sub :Submarine) :void
     {
         _sub = sub;
@@ -62,12 +61,13 @@ public class SeaDisplay extends Sprite
      */
     public function markTraversable (xx :int, yy :int) :void
     {
-        //graphics.beginFill(0x009999);
-        //graphics.beginBitmapFill(_downs);
         pickBitmap(_downs);
         graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
 
+    /**
+     * Called by subs when their location changes.
+     */
     public function subUpdated (sub :Submarine, xx :int, yy :int) :void
     {
         if (_sub != sub) {
@@ -92,19 +92,22 @@ public class SeaDisplay extends Sprite
         y = vy * -1 * TILE_SIZE;
     }
 
-    public function checkSubDeath (sub :Submarine) :void
+    /**
+     * Called by subs when their death state changes.
+     */
+    public function deathUpdated (sub :Submarine) :void
     {
+        // we only care if it's the sub we're watching
         if (sub != _sub) {
             return;
         }
+
         var isDead :Boolean = sub.isDead();
         if (isDead == (_respawnMsg.parent == null)) {
             if (isDead) {
-                _respawnMsg.x = sub.x;
-                _respawnMsg.y = sub.y;
-                addChild(_respawnMsg);
+                parent.addChild(_respawnMsg);
             } else {
-                removeChild(_respawnMsg);
+                parent.removeChild(_respawnMsg);
             }
         }
     }
@@ -126,6 +129,8 @@ public class SeaDisplay extends Sprite
 
     protected var _downs :Array = [];
 
+    /** A simple message we display when the player we care about has
+     * died. */
     protected var _respawnMsg :TextField;
 
     /** The frequency with which to pick each bitmap. Must add to 1.0 */

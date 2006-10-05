@@ -27,23 +27,32 @@ public class Submarine extends BaseSprite
         addChild(nameLabel);
     }
 
+    /**
+     * Is this sub dead?
+     */
     public function isDead () :Boolean
     {
         return _dead;
     }
 
+    /**
+     * Called to respawn this sub at the coordinates specified.
+     */
     public function respawn (xx :int, yy :int) :void
     {
         if (_dead) {
             _dead = false;
             _x = xx;
             _y = yy;
-            updateKilled();
+            updateDeath();
             updateLocation();
             updateVisual();
         }
     }
 
+    /**
+     * Return the distance from this sub to the specified coordinate.
+     */
     public function distance (xx :int, yy :int) :Number
     {
         var dx :Number = xx - _x;
@@ -176,7 +185,7 @@ public class Submarine extends BaseSprite
         _deaths++;
         _queuedActions.length = 0; // drop any queued actions
         updateVisual();
-        updateKilled();
+        updateDeath();
     }
 
     override protected function updateLocation () :void
@@ -188,10 +197,10 @@ public class Submarine extends BaseSprite
         }
     }
 
-    protected function updateKilled () :void
+    protected function updateDeath () :void
     {
         if (parent != null) {
-            (parent as SeaDisplay).checkSubDeath(this);
+            (parent as SeaDisplay).deathUpdated(this);
         }
     }
 

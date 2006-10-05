@@ -166,7 +166,19 @@ public class Board
     {
         var name :String = event.name;
         if (name == "tick") {
-            doTick();
+            _ticks.push(new Array());
+
+            if (_ticks.length > MAX_QUEUED_TICKS) {
+                doTick(); // do one now...
+            }
+
+        } else {
+            trace("name=" + name + ", " + event.value);
+            // add any actions received during this tick
+            var array :Array = (_ticks[_ticks.length - 1] as Array);
+            array.push(event.name);
+            array.push(event.value);
+        }
 
 /*
             if (_ticks < MAX_QUEUED_TICKS) {
@@ -174,26 +186,34 @@ public class Board
             } else {
                 doTick();
             }
+        }
             */
+    }
 
-        } else if (name.indexOf("sub") == 0) {
+    protected function processAction (name :String, value :int) :void
+    {
+        if (name.indexOf("sub") == 0) {
             var subIndex :int = int(name.substring(3));
             var moveResult :Boolean = Submarine(_subs[subIndex]).performAction(
-                int(event.value));
+                value);
             if (!moveResult) {
                 trace("Dropped action: " + name);
             }
 
         } else if (name.indexOf("spawn") == 0) {
             var spawnIndex :int = int(name.substring(5));
-            var position :int = int(event.value);
             Submarine(_subs[spawnIndex]).respawn(
-                int(position % WIDTH), int(position / WIDTH));
+                int(value % WIDTH), int(value / WIDTH));
         }
     }
 
     protected function doTick () :void
     {
+        var array :Array = (_ticks.shift() as Array);
+        for (var ii :int = 0; ii < array.length; ii += 2) {
+            processAction(String(array[ii]), int(array[ii + 1]));
+        }
+
         var sub :Submarine;
         var torp :Torpedo;
         // tick all subs and torps
@@ -231,8 +251,7 @@ public class Board
      */
     protected function enterFrame (event :Event) :void
     {
-        if (_ticks > 0) {
-            _ticks--;
+        if (_ticks.length > 1) {
             doTick();
         }
     }
@@ -313,7 +332,7 @@ public class Board
     /** The 'sea' where everything lives. */
     protected var _seaDisplay :SeaDisplay;
     
-    protected var _ticks :int = 0;
+    protected var _ticks :Array = [];
 
     /** Contains the submarines, indexed by player index. */
     protected var _subs :Array = [];
