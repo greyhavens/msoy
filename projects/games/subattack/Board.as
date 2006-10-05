@@ -255,13 +255,10 @@ public class Board
 
         // now let each sub enact any queued moves
         for each (sub in _subs) {
-            sub.postTick();
-            if (_gameObj.getMyIndex() == 0) {
-                if (sub.getScore() > 4) {
-                    _gameObj.sendChat(sub.getPlayerName() + " is the winner!");
-                    _gameObj.endGame(sub.getPlayerIndex());
-                    return;
-                }
+            if (sub.getScore() > 4) {
+                _gameObj.sendChat(sub.getPlayerName() + " is the winner!");
+                _gameObj.endGame(sub.getPlayerIndex());
+                return;
             }
         }
     }

@@ -27,13 +27,21 @@ public class SeaDisplay extends Sprite
         _downs[2] = Bitmap(new _down3()).bitmapData;
         _downs[3] = Bitmap(new _down4()).bitmapData;
 
-        for (var yy :int = 0; yy < Board.HEIGHT; yy++) {
-            for (var xx :int = 0; xx < Board.WIDTH; xx++) {
+        for (var yy :int = -SubAttack.VISION_TILES;
+                yy < Board.HEIGHT + SubAttack.VISION_TILES; yy++) {
+            for (var xx :int = -SubAttack.VISION_TILES;
+                    xx < Board.WIDTH + SubAttack.VISION_TILES; xx++) {
                 pickBitmap(ups);
                 graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE,
                     TILE_SIZE);
             }
         }
+
+        // draw a nice border around Mr. Game Area
+        graphics.lineStyle(5, 0xFFFFFF);
+        graphics.drawRect(-5, -5, Board.WIDTH * TILE_SIZE + 10,
+            Board.HEIGHT * TILE_SIZE + 10);
+        graphics.lineStyle(0, 0, 0); // turn off lines
 
         // set up a status text area, to be centered in the main view
         _status = new TextField();
@@ -96,16 +104,16 @@ public class SeaDisplay extends Sprite
 
         var vx :int = xx - SubAttack.VISION_TILES;
         var vy :int = yy - SubAttack.VISION_TILES;
-        if (vx < 0) {
-            vx = 0;
-        } else if (vx > Board.WIDTH - SubAttack.VIEW_TILES) {
-            vx = Board.WIDTH - SubAttack.VIEW_TILES;
-        }
-        if (vy < 0) {
-            vy = 0;
-        } else if (vy > Board.HEIGHT - SubAttack.VIEW_TILES) {
-            vy = Board.HEIGHT - SubAttack.VIEW_TILES;
-        }
+//        if (vx < 0) {
+//            vx = 0;
+//        } else if (vx > Board.WIDTH - SubAttack.VIEW_TILES) {
+//            vx = Board.WIDTH - SubAttack.VIEW_TILES;
+//        }
+//        if (vy < 0) {
+//            vy = 0;
+//        } else if (vy > Board.HEIGHT - SubAttack.VIEW_TILES) {
+//            vy = Board.HEIGHT - SubAttack.VIEW_TILES;
+//        }
 
         // update OUR location..
         x = vx * -1 * TILE_SIZE;
@@ -130,12 +138,17 @@ public class SeaDisplay extends Sprite
         }
     }
 
+    /**
+     * Set the graphics to begin filling a bitmap picked from the
+     * specified set.
+     */
     protected function pickBitmap (choices :Array) :void
     {
         var n :Number = Math.random();
         var ii :int;
         for (ii = 0; ii < PICKS.length - 1; ii++) {
-            if (n <= PICKS[ii]) {
+            n -= PICKS[ii];
+            if (n <= 0) {
                 break;
             }
         }
@@ -151,7 +164,7 @@ public class SeaDisplay extends Sprite
     protected var _status :TextField;
 
     /** The frequency with which to pick each bitmap. Must add to 1.0 */
-    protected static const PICKS :Array = [ 0.05, 0.15, 0.30, 0.50 ];
+    protected static const PICKS :Array = [ 0.10, 0.20, 0.30, 0.40 ];
 
     [Embed(source="up_01.png")]
     protected static const _up1 :Class;

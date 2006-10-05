@@ -43,6 +43,7 @@
 
   <target name="dist" depends="compile">
     <copy file="SubAttack.swf" tofile="/export/msoy/pages/media/99a546a59a2132a6510f8be979dea8c7083dffa4.swf"/>
+    <copy file="SubAttack.swf" tofile="/export/msoy/pages/media/2de3606d7553809b2815762bf947061498ba9693.swf"/>
   </target>
 
 

@@ -2,6 +2,8 @@ package {
 
 import flash.text.TextField;
 
+import flash.geom.ColorTransform;
+
 public class Submarine extends BaseSprite
 {
     public function Submarine (
@@ -25,6 +27,11 @@ public class Submarine extends BaseSprite
         nameLabel.y = -1 * (nameLabel.textHeight + NAME_PADDING);
         nameLabel.x = (SeaDisplay.TILE_SIZE - nameLabel.textWidth) / 2;
         addChild(nameLabel);
+
+        var scheme :Array = (SCHEMES[playerIdx] as Array);
+        this.transform.colorTransform = new ColorTransform(
+            Number(scheme[0]), Number(scheme[1]), Number(scheme[2]), 1,
+            Number(scheme[3]), Number(scheme[4]), Number(scheme[5]));
     }
 
     public function getPlayerName () :String
@@ -71,18 +78,6 @@ public class Submarine extends BaseSprite
     public function performAction (action :int) :Boolean
     {
         _queuedActions.push(action);
-
-//        if (_queuedActions.length > 0) {
-//            if (_queuedActions.length >= 5) {
-//                return true; // don't queue?
-//            }
-//            // TODO: don't queue shoots?
-//            _queuedActions.push(action);
-//        }
-//        var result :int = performActionInternal(action);
-//        if (result == CANT) {
-//            _queuedActions.push(action);
-//        }
         return true;
     }
 
@@ -154,19 +149,6 @@ public class Submarine extends BaseSprite
         }
     }
 
-    public function postTick () :void
-    {
-//        while (_queuedActions.length > 0) {
-//            var action :int = int(_queuedActions[0]);
-//            if (CANT == performActionInternal(action)) {
-////                if (move != Action.SHOOT) {
-//                    return;
-////                }
-//            }
-//            _queuedActions.shift();
-//        }
-    }
-
     /**
      * Called by our torpedo to let us know that it's gone.
      */
@@ -222,7 +204,7 @@ public class Submarine extends BaseSprite
 
         // draw the circle
         graphics.lineStyle(2, 0x000000);
-        graphics.beginFill(uint(COLORS[_playerIdx]))
+        graphics.beginFill(0xFFFFFF); //uint(COLORS[_playerIdx]))
         graphics.drawCircle(SeaDisplay.TILE_SIZE / 2, SeaDisplay.TILE_SIZE / 2,
             SeaDisplay.TILE_SIZE / 2);
 
@@ -278,6 +260,17 @@ public class Submarine extends BaseSprite
 
     protected static const COLORS :Array = [ 0xFFFF00, 0xFF00FF,
         0x00FFFF, 0xFF0000, 0x0000FF, 0x00FF00, 0xFF6600, 0x6600FF ];
+
+    protected static const SCHEMES :Array = [
+        [ .5, 0, 1, 127, 255, 0 ],
+        [ 1, 0, .5, 255, 0, 127 ],
+        [ 0, 127, 255 ],
+        [ 255, 127, 0 ],
+        [ 127, 0, 255 ],
+        [ 0, 255, 127 ],
+        [ 255, 0, 255 ],
+        [ 0, 255, 255 ]
+    ];
 
     /** The maximum number of torpedos that may be in-flight at once. */
     protected static const MAX_TORPEDOS :int = 2;
