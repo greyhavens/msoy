@@ -35,16 +35,36 @@ public class SeaDisplay extends Sprite
             }
         }
 
-        // set up a respawn message, to be centered in the main view
-        _respawnMsg = new TextField();
-        _respawnMsg.text = "Press ENTER to spawn.";
-        _respawnMsg.background = true;
-        _respawnMsg.autoSize = TextFieldAutoSize.CENTER;
-        _respawnMsg.selectable = false;
-        _respawnMsg.x =
-            ((SubAttack.VIEW_TILES * TILE_SIZE) - _respawnMsg.textWidth) / 2;
-        _respawnMsg.y = 
-            ((SubAttack.VIEW_TILES * TILE_SIZE) - _respawnMsg.textHeight) / 2;
+        // set up a status text area, to be centered in the main view
+        _status = new TextField();
+        _status.background = true;
+        _status.autoSize = TextFieldAutoSize.CENTER;
+        _status.selectable = false;
+    }
+
+    /**
+     * Set the status message to be shown over the game board.
+     */
+    public function setStatus (msg :String) :void
+    {
+        _status.text = msg;
+        _status.x =
+            ((SubAttack.VIEW_TILES * TILE_SIZE) - _status.textWidth) / 2;
+        _status.y = 
+            ((SubAttack.VIEW_TILES * TILE_SIZE) - _status.textHeight) / 2;
+        if (_status.parent == null) {
+            parent.addChild(_status);
+        }
+    }
+
+    /**
+     * Clear any status message being shown.
+     */
+    public function clearStatus () :void
+    {
+        if (_status.parent != null) {
+            parent.removeChild(_status);
+        }
     }
 
     /**
@@ -103,12 +123,10 @@ public class SeaDisplay extends Sprite
         }
 
         var isDead :Boolean = sub.isDead();
-        if (isDead == (_respawnMsg.parent == null)) {
-            if (isDead) {
-                parent.addChild(_respawnMsg);
-            } else {
-                parent.removeChild(_respawnMsg);
-            }
+        if (isDead) {
+            setStatus("Press ENTER to respawn.");
+        } else {
+            clearStatus();
         }
     }
 
@@ -129,9 +147,8 @@ public class SeaDisplay extends Sprite
 
     protected var _downs :Array = [];
 
-    /** A simple message we display when the player we care about has
-     * died. */
-    protected var _respawnMsg :TextField;
+    /** Our status message. */
+    protected var _status :TextField;
 
     /** The frequency with which to pick each bitmap. Must add to 1.0 */
     protected static const PICKS :Array = [ 0.05, 0.15, 0.30, 0.50 ];

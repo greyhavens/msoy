@@ -28,6 +28,16 @@ public class BaseSprite extends Sprite
     }
 
     /**
+     * Return the distance from this sub to the specified coordinate.
+     */
+    public function distance (xx :int, yy :int) :Number
+    {
+        var dx :Number = xx - _x;
+        var dy :Number = yy - _y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    /**
      * Advance our location in the direction of our orientation.
      */
     protected function advanceLocation () :Boolean

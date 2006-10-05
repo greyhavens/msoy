@@ -9,8 +9,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 public class Board
 {
     /** The dimensions of the board. */
-    public static const WIDTH :int = 60;
-    public static const HEIGHT :int = 30;
+    public static const WIDTH :int = 13; //60;
+    public static const HEIGHT :int = 13; //30;
 
     public function Board (gameObj :EZGame, seaDisplay :SeaDisplay)
     {
@@ -57,18 +57,12 @@ public class Board
     }
 
     /**
-     * Called by the game to respawn the current player.
+     * Called by a submarine to respawn.
      */
-    public function respawn () :void
+    public function respawn (sub :Submarine) :void
     {
-        var playerIndex :int = _gameObj.getMyIndex();
-        var sub :Submarine = (_subs[playerIndex] as Submarine);
-        if (!sub.isDead()) {
-            return; // don't try to respawn
-        }
-
         // scan through the entire array and remember the location furthest
-        // away from other subs
+        // away from other subs and torpedos
         var bestx :int = sub.getX();
         var besty :int = sub.getY();
         var bestDist :Number = 0;
@@ -77,9 +71,38 @@ public class Board
                 if (Boolean(_traversable[coordsToIdx(xx, yy)])) {
                     var minDist :Number = Number.MAX_VALUE;
                     for each (var otherSub :Submarine in _subs) {
-                        if (otherSub != sub) {
+                        if (otherSub != sub && !otherSub.isDead()) {
                             minDist = Math.min(minDist,
                                 otherSub.distance(xx, yy));
+                        }
+                    }
+                    for each (var torp :Torpedo in _torpedos) {
+                        var checkDist :Boolean = false;
+                        switch (torp.getOrient()) {
+                        case Action.UP:
+                            checkDist = (torp.getX() == xx) &&
+                                (torp.getY() >= yy);
+                            break;
+
+                        case Action.DOWN:
+                            checkDist = (torp.getX() == xx) &&
+                                (torp.getY() <= yy);
+                            break;
+
+                        case Action.LEFT:
+                            checkDist = (torp.getY() == yy) &&
+                                (torp.getX() >= xx);
+                            break;
+
+                        case Action.RIGHT:
+                            checkDist = (torp.getY() == yy) &&
+                                (torp.getX() <= xx);
+                            break;
+                        }
+
+                        if (checkDist) {
+                            minDist = Math.min(minDist,
+                                torp.distance(xx, yy));
                         }
                     }
                     if (minDist > bestDist) {
@@ -91,7 +114,9 @@ public class Board
             }
         }
 
-        _gameObj.sendMessage("spawn" + playerIndex, coordsToIdx(bestx, besty));
+        // we've found such a great spot, and all the other clients
+        // should find the same spot
+        sub.respawn(bestx, besty);
     }
 
     /**
@@ -202,11 +227,6 @@ public class Board
             if (!moveResult) {
                 trace("Dropped action: " + name);
             }
-
-        } else if (name.indexOf("spawn") == 0) {
-            var spawnIndex :int = int(name.substring(5));
-            Submarine(_subs[spawnIndex]).respawn(
-                int(value % WIDTH), int(value / WIDTH));
         }
     }
 

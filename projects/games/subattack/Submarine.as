@@ -66,16 +66,6 @@ public class Submarine extends BaseSprite
     }
 
     /**
-     * Return the distance from this sub to the specified coordinate.
-     */
-    public function distance (xx :int, yy :int) :Number
-    {
-        var dx :Number = xx - _x;
-        var dy :Number = yy - _y;
-        return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    /**
      * Perform the action specified, or return false if unable.
      */
     public function performAction (action :int) :Boolean
@@ -102,7 +92,11 @@ public class Submarine extends BaseSprite
 
     protected function performActionInternal (action :int) :int
     {
-        if (_dead) {
+        if (_dead || action == Action.RESPAWN) {
+            if (_dead && action == Action.RESPAWN) {
+                _board.respawn(this);
+                return OK;
+            }
             return DROP;
         }
 

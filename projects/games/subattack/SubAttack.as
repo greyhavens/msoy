@@ -76,22 +76,8 @@ public class SubAttack extends Sprite
         case Action.NONE:
             break;
 
-        case Action.RESPAWN:
-            _board.respawn();
-            break;
-
-        case Action.SHOOT:
-            if (_sentShoots < MAX_SHOOTS_PER_TICK) {
-                _sentShoots++;
-                _gameObj.sendMessage("sub" + _myIndex, action);
-            }
-            break;
-
         default:
-            if (_sentMoves < MAX_MOVES_PER_TICK) {
-                _sentMoves++;
-                _gameObj.sendMessage("sub" + _myIndex, action);
-            }
+            _gameObj.sendMessage("sub" + _myIndex, action);
             break;
         }
     }
