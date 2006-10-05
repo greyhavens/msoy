@@ -196,7 +196,7 @@ public class MsoyServer extends WhirledServer
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
         lobbyReg.init(invmgr);
-        toyMan.init(invmgr, itemMan.getGameRepository());
+        toyMan.init(omgr, invoker, invmgr, plreg, itemMan.getGameRepository());
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();
