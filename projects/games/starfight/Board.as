@@ -29,7 +29,6 @@ public class Board
      */
     public function readFrom (bytes :ByteArray) :void
     {
-        StarFight.log("Reading bytes: " + bytes.length);
         width = bytes.readInt();
         height = bytes.readInt();
         
@@ -51,8 +50,6 @@ public class Board
         for each (var obs :Obstacle in obstacles) {
             obs.writeTo(bytes);
         }
-
-        StarFight.log("Writing to: " + bytes.length);
 
         return bytes;
     }

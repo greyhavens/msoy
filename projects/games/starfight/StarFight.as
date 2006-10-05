@@ -61,24 +61,15 @@ public class StarFight extends Sprite
         var boardBytes :ByteArray =  ByteArray(_gameObj.get("board"));
         if (boardBytes != null) {
             boardObj = new Board(0, 0, false);
+            boardBytes.position = 0;
             boardObj.readFrom(boardBytes);
         }
 
         if (boardObj == null) {
             if (_gameObj.getMyIndex() == 0) {
                 boardObj = new Board(50, 50, true);
-                _gameObj.set("ship", new Array());
+                _gameObj.set("ship", new Array(2));
                 _gameObj.set("board", boardObj.writeTo(new ByteArray()));
-            }
-        }
-
-        var gameShips :Array = (_gameObj.get("ship") as Array);
-        _ships = [];
-        if (gameShips != null) {
-            for (var ii :int = 0; ii < gameShips.length; ii++)
-            {
-                _ships[ii] = new ShipSprite(_board);
-                _ships[ii].readFrom(gameShips[ii]);
             }
         }
 
@@ -107,6 +98,25 @@ public class StarFight extends Sprite
         _gameObj.set("ship", _ownShip.writeTo(new ByteArray()),
             _gameObj.getMyIndex());
 
+        // Set up our initial ship sprites.
+        var gameShips :Array = (_gameObj.get("ship") as Array);
+        _ships = [];
+
+        if (gameShips != null) {
+            for (var ii :int = 0; ii < gameShips.length; ii++)
+            {
+                if (gameShips[ii] == null) {
+                    _ships[ii] = null;
+                } else {
+                    _ships[ii] = new ShipSprite(_board);
+                    gameShips[ii].position = 0;
+                    _ships[ii].readFrom(gameShips[ii]);
+                }
+            }
+        }
+
+        _ships[_gameObj.getMyIndex()] = _ownShip;
+
         // Set up our ticker that will control movement.
         var screenTimer :Timer = new Timer(REFRESH_RATE, 0);
         screenTimer.addEventListener(TimerEvent.TIMER, tick);
@@ -122,14 +132,21 @@ public class StarFight extends Sprite
             // Someone else initialized our board.
             var boardBytes :ByteArray =  ByteArray(_gameObj.get("board"));
             var boardObj :Board = new Board(0, 0, false);
+            boardBytes.position = 0;
             boardObj.readFrom(boardBytes);
             gotBoard(boardObj);
         } else if ((name == "ship") && (event.index >= 0)) {
-            var ship :ShipSprite = _ships[event.index];
-            if (ship == null) {
-                _ships[event.index] = ship = new ShipSprite(_board);
+            if (_ships != null && event.index != _gameObj.getMyIndex()) {
+                log("Got ship update event");
+                var ship :ShipSprite = _ships[event.index];
+                if (ship == null) {
+                    _ships[event.index] = ship = new ShipSprite(_board);
+                    addChild(ship);
+                }
+                var bytes :ByteArray = ByteArray(event.newValue);
+                bytes.position = 0;
+                ship.readFrom(bytes);
             }
-            ship.readFrom(ByteArray(event.newValue));
         }
     }
 
@@ -148,11 +165,20 @@ public class StarFight extends Sprite
     public function tick (event :TimerEvent) :void
     {
         for each (var ship :ShipSprite in _ships) {
-            ship.tick();
+            if (ship != null) {
+                ship.tick();
+                ship.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+            }
         }
+
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
 
-        _gameObj.set("ship", _ownShip.writeTo(new ByteArray()), _gameObj.getMyIndex());
+        
+        if (_updateCount++ % FRAMES_PER_UPDATE == 0) {
+            _gameObj.set("ship", _ownShip.writeTo(new ByteArray()),
+                _gameObj.getMyIndex());
+        }
+        
     }
 
     protected var _gameObj :EZGame;
@@ -163,6 +189,10 @@ public class StarFight extends Sprite
 
     protected var _board :BoardSprite;
 
+    protected var _updateCount :int = 0;
+
     protected static const REFRESH_RATE :int = 50;
+
+    protected static const FRAMES_PER_UPDATE :int = 2;
 }
 }

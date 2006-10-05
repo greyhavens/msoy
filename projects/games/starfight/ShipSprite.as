@@ -133,6 +133,8 @@ public class ShipSprite extends Sprite
         } else {
             setAnimMode(IDLE);
         }
+
+        StarFight.log ("after tick x,y: " + boardX + ", " + boardY);
     }
     
     protected function setAnimMode (mode :int) :void
@@ -178,6 +180,8 @@ public class ShipSprite extends Sprite
      */
     public function keyPressed (event :KeyboardEvent) :void
     {
+        StarFight.log("Key Pressed: " + event.keyCode);
+
         if (event.keyCode == KV_LEFT) {
             turnRate = -TURN_RATE;
         } else if (event.keyCode == KV_RIGHT) {
@@ -217,6 +221,7 @@ public class ShipSprite extends Sprite
         boardX = bytes.readFloat();
         boardY = bytes.readFloat();
         turnRate = bytes.readFloat();
+        rotation = bytes.readShort();
     }
 
     /**
@@ -230,6 +235,7 @@ public class ShipSprite extends Sprite
         bytes.writeFloat(boardX);
         bytes.writeFloat(boardY);
         bytes.writeFloat(turnRate);
+        bytes.writeShort(rotation);
 
         return bytes;
     }
