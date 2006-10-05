@@ -119,7 +119,7 @@ public class MsoySceneModel extends SceneModel
         furnis = (ins.readObject() as TypedArray);
     }
 
-    public function toString () :String
+    override public function toString () :String
     {
         return "MsoySceneModel[\"" + name + "\" (" + sceneId + ")" +
             ", version=" + version + ", type=" + type + "]";
