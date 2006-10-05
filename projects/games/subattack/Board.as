@@ -9,8 +9,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 public class Board
 {
     /** The dimensions of the board. */
-    public static const WIDTH :int = 13; //60;
-    public static const HEIGHT :int = 13; //30;
+    public static const WIDTH :int = 60;
+    public static const HEIGHT :int = 30;
 
     public function Board (gameObj :EZGame, seaDisplay :SeaDisplay)
     {
@@ -207,25 +207,15 @@ public class Board
             array.push(event.name);
             array.push(event.value);
         }
-
-/*
-            if (_ticks < MAX_QUEUED_TICKS) {
-                _ticks++;
-            } else {
-                doTick();
-            }
-        }
-            */
     }
 
-    protected function processAction (name :String, value :int) :void
+    protected function processAction (name :String, actions :Array) :void
     {
         if (name.indexOf("sub") == 0) {
             var subIndex :int = int(name.substring(3));
-            var moveResult :Boolean = Submarine(_subs[subIndex]).performAction(
-                value);
-            if (!moveResult) {
-                trace("Dropped action: " + name);
+            var sub :Submarine = Submarine(_subs[subIndex]);
+            for each (var action :int in actions) {
+                sub.performAction(action);
             }
         }
     }
@@ -234,7 +224,7 @@ public class Board
     {
         var array :Array = (_ticks.shift() as Array);
         for (var ii :int = 0; ii < array.length; ii += 2) {
-            processAction(String(array[ii]), int(array[ii + 1]));
+            processAction(String(array[ii]), (array[ii + 1] as Array));
         }
 
         var sub :Submarine;

@@ -4,10 +4,13 @@ import flash.display.Graphics;
 import flash.display.Shape;
 import flash.display.Sprite;
 
+import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
 import flash.ui.Keyboard;
+
+import flash.utils.getTimer; // function import
 
 import com.threerings.ezgame.Game;
 import com.threerings.ezgame.EZGame;
@@ -20,7 +23,7 @@ import com.threerings.ezgame.MessageReceivedListener;
 
 [SWF(width="416", height="416")]
 public class SubAttack extends Sprite
-    implements Game, MessageReceivedListener
+    implements Game
 {
     /** How many tiles does our vision extend past our tile? */
     public static const VISION_TILES :int = 6;
@@ -32,17 +35,13 @@ public class SubAttack extends Sprite
     {
         addChild(_seaDisplay = new SeaDisplay());
 
-        // this might make it so that keyboard focus is grabbed out of the gate
-        tabEnabled = true;
-        tabIndex = 1;
-
         var maskSize :int = VIEW_TILES * SeaDisplay.TILE_SIZE;
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0xFFFFFF);
         masker.graphics.drawRect(0, 0, maskSize, maskSize);
         masker.graphics.endFill();
         this.mask = masker;
-        addChild(masker);
+        addChild(masker); // the mask must be added to the display
     }
 
     // from Game
@@ -54,15 +53,8 @@ public class SubAttack extends Sprite
 
         if (_myIndex != -1) {
             stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
-        }
-    }
 
-    // from MessageReceivedListener
-    public function messageReceived (event :MessageReceivedEvent) :void
-    {
-        if (event.name == "tick") {
-            _sentMoves = 0;
-            _sentShoots = 0;
+            addEventListener(Event.ENTER_FRAME, enterFrame);
         }
     }
 
@@ -77,8 +69,34 @@ public class SubAttack extends Sprite
             break;
 
         default:
-            _gameObj.sendMessage("sub" + _myIndex, action);
+            if (_queued != null) {
+                _queued.push(action);
+
+            } else {
+                var now :int = getTimer();
+                if ((now - _lastSent) < SEND_THROTTLE) {
+                    _queued = [ action ];
+
+                } else {
+                    _gameObj.sendMessage("sub" + _myIndex, [ action ]);
+                    trace("sent: " + now);
+                    _lastSent = now;
+                }
+            }
             break;
+        }
+    }
+
+    protected function enterFrame (event :Event) :void
+    {
+        if (_queued != null) {
+            var now :int = getTimer();
+            if ((now - _lastSent) >= SEND_THROTTLE) {
+                _gameObj.sendMessage("sub" + _myIndex, _queued);
+                _lastSent = now;
+                trace("sent: " + now);
+                _queued = null;
+            }
         }
     }
 
@@ -123,10 +141,12 @@ public class SubAttack extends Sprite
     /** Our player index, or -1 if we're not a player. */
     protected var _myIndex :int;
 
-    protected var _sentMoves :int = 0;
-    protected var _sentShoots :int = 0;
+    /** The time at which we last sent our actions. */
+    protected var _lastSent :int = 0;
 
-    protected static const MAX_MOVES_PER_TICK :int = 2;
-    protected static const MAX_SHOOTS_PER_TICK :int = 3;
+    /** The actions we have queued to be sent. */
+    protected var _queued :Array;
+
+    protected static const SEND_THROTTLE :int = 105;
 }
 }
