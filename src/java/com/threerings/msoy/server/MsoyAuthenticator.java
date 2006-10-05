@@ -229,8 +229,7 @@ public class MsoyAuthenticator extends Authenticator
             Domain domain = getDomain(accountName);
 
             // load up and authenticate their domain account record
-            Account account = domain.authenticateAccount(
-                accountName, password);
+            Account account = domain.authenticateAccount(accountName, password);
 
             // we need to find out if this account has ever logged in so that
             // we can decide how to handle tainted idents; so we load up the
@@ -240,11 +239,12 @@ public class MsoyAuthenticator extends Authenticator
             // the record twice during authentication
             if (member == null) {
                 member = MsoyServer.memberRepo.loadMember(account.accountName);
-                if (member != null) {
-                    rdata.sessionToken =
-                        MsoyServer.memberRepo.startOrJoinSession(
-                            member.memberId, false);
+                // if this is their first logon, create them a member record
+                if (member == null) {
+                    member = createMember(account);
                 }
+                rdata.sessionToken = MsoyServer.memberRepo.startOrJoinSession(
+                    member.memberId, false);
             }
 
             // check to see whether this account has been banned or if this is
@@ -332,16 +332,7 @@ public class MsoyAuthenticator extends Authenticator
 
             // if this is their first logon, insert a skeleton member record
             if (mrec == null) {
-                mrec = new MemberRecord();
-                mrec.accountName = account.accountName;
-                mrec.name = account.accountName;
-                MsoyServer.memberRepo.insertMember(mrec);
-
-                // create a blank room for them, store it
-                mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(
-                    mrec.memberId, mrec.name);
-                MsoyServer.memberRepo.setHomeSceneId(
-                    mrec.memberId, mrec.homeSceneId);
+                mrec = createMember(account);
             }
 
             // if they made it through that gauntlet, create or update their
@@ -381,6 +372,26 @@ public class MsoyAuthenticator extends Authenticator
         // exciting partners
 
         return _defaultDomain;
+    }
+
+    /**
+     * Called to create a starting member record for a first-time logger in.
+     */
+    protected MemberRecord createMember (Account account)
+        throws PersistenceException
+    {
+        // create their main member record
+        MemberRecord mrec = new MemberRecord();
+        mrec.accountName = account.accountName;
+        mrec.name = account.accountName;
+        MsoyServer.memberRepo.insertMember(mrec);
+
+        // create a blank room for them, store it
+        mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(
+            mrec.memberId, mrec.name);
+        MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
+
+        return mrec;
     }
 
     protected Domain _defaultDomain;
