@@ -1,8 +1,9 @@
 package {
 
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 import flash.display.Sprite;
 
-import mx.core.BitmapAsset;
 
 public class Tile
 {
@@ -15,9 +16,12 @@ public class Tile
     public static const LAYER_HUD :int = 6;
 
     public static const TYPE_BRICK :int = 0;
+    public static const TYPE_BLACK :int = 1;
 
     public static const EFFECT_NONE :int = 0;
     public static const EFFECT_SOLID :int = 1;
+
+    public static const TILE_SIZE :int = 32;
     
     public var x :int, y :int;
     public var type :int;
@@ -26,7 +30,7 @@ public class Tile
 
     public function Tile (x :int, y :int, 
         type :int = TYPE_BRICK, layer :int = LAYER_MIDDLE, 
-        effect :int = EFFECT_NONE)
+        effect :int = EFFECT_SOLID)
     {
         this.x = x;
         this.y = y;
@@ -39,14 +43,34 @@ public class Tile
     {
         if (_sprite == null) {
             _sprite = new Sprite();
-            _sprite.addChild(BitmapAsset(new tileAsset()));
+            _sprite.addChild(getBitmap());
         }
         return _sprite;
+    }
+
+    public function getBitmapData () :BitmapData
+    {
+        return getBitmap().bitmapData;
+    }
+
+    protected function getBitmap () :Bitmap
+    {
+        switch (type) {
+          case TYPE_BRICK:
+            return Bitmap(new blueTileAsset());
+          case TYPE_BLACK:
+            return Bitmap(new blackTileAsset());
+          default:
+            return Bitmap(new blueTileAsset());
+        }
     }
 
     protected var _sprite :Sprite;
 
     [Embed(source="rsrc/blue_tile.gif")]
-    protected var tileAsset :Class;
+    protected var blueTileAsset :Class;
+
+    [Embed(source="rsrc/black_tile.gif")]
+    protected var blackTileAsset :Class;
 }
 }
