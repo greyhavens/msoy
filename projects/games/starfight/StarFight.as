@@ -87,10 +87,6 @@ public class StarFight extends Sprite
         if (boardObj != null) {
             gotBoard(boardObj);
         }
-
-        // Our ship is interested in keystrokes.
-        stage.addEventListener(KeyboardEvent.KEY_DOWN, _ownShip.keyPressed);
-        stage.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
     }
 
     /**
@@ -131,6 +127,10 @@ public class StarFight extends Sprite
         }
 
         _ships[_gameObj.getMyIndex()] = _ownShip;
+
+        // Our ship is interested in keystrokes.
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, _ownShip.keyPressed);
+        stage.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
 
         // Set up our ticker that will control movement.
         var screenTimer :Timer = new Timer(REFRESH_RATE, 0);
