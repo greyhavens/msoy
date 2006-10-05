@@ -22,6 +22,9 @@ import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 
+/**
+ * The main game class for the client.
+ */
 [SWF(width="800", height="530")]
 public class StarFight extends Sprite
     implements Game, PropertyChangedListener
@@ -29,6 +32,9 @@ public class StarFight extends Sprite
     public static const WIDTH :int = 800;
     public static const HEIGHT :int = 530;
 
+    /**
+     * Constructs our main view area for the game.
+     */
     public function StarFight ()
     {
         var mask :Shape = new Shape();
@@ -42,9 +48,12 @@ public class StarFight extends Sprite
         log("Created Game Object");
     }
 
-    public static function log (msg :String) :void
+    /**
+     * For debug logging.
+     */
+    public function log (msg :String) :void
     {
-        ExternalInterface.call("console.debug", msg);
+        Logger.log(msg);
     }
 
     // from Game
@@ -65,18 +74,21 @@ public class StarFight extends Sprite
             boardObj.readFrom(boardBytes);
         }
 
-        if (boardObj == null) {
-            if (_gameObj.getMyIndex() == 0) {
-                boardObj = new Board(50, 50, true);
-                _gameObj.set("ship", new Array(2));
-                _gameObj.set("board", boardObj.writeTo(new ByteArray()));
-            }
+        // We don't already have a board and we're the host?  Create it and our
+        //  initial ship array too.
+        if ((boardObj == null) && (_gameObj.getMyIndex() == 0)) {
+            boardObj = new Board(50, 50, true);
+            _gameObj.set("ship", new Array(2));
+            _gameObj.set("board", boardObj.writeTo(new ByteArray()));
         }
 
+        // If we now have ourselves a board, do something with it, otherwise
+        //  wait til we hear from the EZGame object.
         if (boardObj != null) {
             gotBoard(boardObj);
         }
 
+        // Our ship is interested in keystrokes.
         stage.addEventListener(KeyboardEvent.KEY_DOWN, _ownShip.keyPressed);
         stage.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
     }
@@ -89,12 +101,13 @@ public class StarFight extends Sprite
         _board = new BoardSprite(boardObj);
         addChild(_board);
 
-        _ownShip = new ShipSprite(_board);
+        // Create our local ship and center the board on it.
+        _ownShip = new ShipSprite(_board, false);
         _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
-        
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
         addChild(_ownShip);
 
+        // Add ourselves to the ship array.
         _gameObj.set("ship", _ownShip.writeTo(new ByteArray()),
             _gameObj.getMyIndex());
 
@@ -102,13 +115,14 @@ public class StarFight extends Sprite
         var gameShips :Array = (_gameObj.get("ship") as Array);
         _ships = [];
 
+        // The game already has some ships, create sprites for em.
         if (gameShips != null) {
             for (var ii :int = 0; ii < gameShips.length; ii++)
             {
                 if (gameShips[ii] == null) {
                     _ships[ii] = null;
                 } else {
-                    _ships[ii] = new ShipSprite(_board);
+                    _ships[ii] = new ShipSprite(_board, true);
                     gameShips[ii].position = 0;
                     _ships[ii].readFrom(gameShips[ii]);
                 }
@@ -137,10 +151,12 @@ public class StarFight extends Sprite
             gotBoard(boardObj);
         } else if ((name == "ship") && (event.index >= 0)) {
             if (_ships != null && event.index != _gameObj.getMyIndex()) {
-                log("Got ship update event");
+                // Someone else's ship - update our sprite for em.
+                // TODO: Something to try to deal with latency and maybe smooth
+                //  any shifts that occur.
                 var ship :ShipSprite = _ships[event.index];
                 if (ship == null) {
-                    _ships[event.index] = ship = new ShipSprite(_board);
+                    _ships[event.index] = ship = new ShipSprite(_board, true);
                     addChild(ship);
                 }
                 var bytes :ByteArray = ByteArray(event.newValue);
@@ -171,9 +187,10 @@ public class StarFight extends Sprite
             }
         }
 
+        // Recenter the board on our ship.
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
 
-        
+        // Every few frames, broadcast our status to everyone else.
         if (_updateCount++ % FRAMES_PER_UPDATE == 0) {
             _gameObj.set("ship", _ownShip.writeTo(new ByteArray()),
                 _gameObj.getMyIndex());
@@ -181,18 +198,23 @@ public class StarFight extends Sprite
         
     }
 
+    /** The game data. */
     protected var _gameObj :EZGame;
 
+    /** Our local ship. */
     protected var _ownShip :ShipSprite;
 
-    protected var _ships :Array;
+    /** All the ships. */
+    protected var _ships :Array; // Array<ShipSprite>
 
+    /** The board with all its obstacles. */
     protected var _board :BoardSprite;
 
+    /** How many frames its been since we broadcasted. */
     protected var _updateCount :int = 0;
 
+    /** Constants to control update frequency. */
     protected static const REFRESH_RATE :int = 50;
-
     protected static const FRAMES_PER_UPDATE :int = 2;
 }
 }

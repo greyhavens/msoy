@@ -2,7 +2,7 @@ package {
 
 import flash.external.ExternalInterface;
 
-public class Log
+public class Logger
 {
     public static function log (msg :String) :void
     {

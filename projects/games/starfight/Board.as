@@ -2,6 +2,9 @@ package {
 
 import flash.utils.ByteArray;
 
+/**
+ * Data structure for the board.
+ */
 public class Board
 {
     /** Board size in tiles. */

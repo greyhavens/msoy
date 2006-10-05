@@ -10,6 +10,9 @@ import flash.utils.ByteArray;
 
 import mx.core.MovieClipAsset;
 
+/**
+ * Represents a single ships (ours or opponent's) in the world.
+ */
 public class ShipSprite extends Sprite
 {
     /** Some useful key codes. */
@@ -36,22 +39,29 @@ public class ShipSprite extends Sprite
     /** How fast are we currently turning. */
     public var turnRate :Number;
 
-    public function ShipSprite (board :BoardSprite)
+    /**
+     * Constructs a new ship.  If skipStartingPos, don't bother finding an
+     *  empty space to start in.
+     */
+    public function ShipSprite (board :BoardSprite, skipStartingPos :Boolean)
     {
         accel = 0.0;
         turnRate = 0.0;
         xVel = 0.0;
         yVel = 0.0;
 
-        var pt :Point = board.getStartingPos();
-        boardX = pt.x;
-        boardY = pt.y;
+        if (!skipStartingPos) {
+            var pt :Point = board.getStartingPos();
+            boardX = pt.x;
+            boardY = pt.y;
+        }
 
         _board = board;
 
+        // Set up our animation.
         _shipMovie = MovieClipAsset(new shipAnim());
         setAnimMode(IDLE);
-        _shipMovie.gotoAndStop(IDLE); // TODO : remove this
+        _shipMovie.gotoAndStop(FORWARD); // TODO : remove this
         _shipMovie.x = WIDTH/2;
         _shipMovie.y = -HEIGHT/2;
         _shipMovie.rotation = 90;
@@ -71,6 +81,11 @@ public class ShipSprite extends Sprite
         resolveMove(boardX, boardY, boardX + xVel, boardY + yVel);
     }
 
+    /**
+     * Try to move the ship between the specified points, reacting to any
+     *  collisions along the way.  This function calls itself recursively
+     *  to resolve collisions created in the rebound from earlier collisions.
+     */
     public function resolveMove (startX :Number, startY :Number,
         endX :Number, endY :Number) :void
     {
@@ -122,7 +137,6 @@ public class ShipSprite extends Sprite
      */
     public function tick () :void
     {
-        StarFight.log("Ticking");
         turn(turnRate);
 
         move();
@@ -133,10 +147,11 @@ public class ShipSprite extends Sprite
         } else {
             setAnimMode(IDLE);
         }
-
-        StarFight.log ("after tick x,y: " + boardX + ", " + boardY);
     }
-    
+
+    /**
+     * Sets our animation to show forward/idle/reverse
+     */
     protected function setAnimMode (mode :int) :void
     {
         if (_shipMovie.currentFrame != mode) {
@@ -164,24 +179,11 @@ public class ShipSprite extends Sprite
         y = ((boardY - otherY) * PIXELS_PER_TILE) + StarFight.HEIGHT/2;
     }
 
-    public function paint () :void
-    {
-        // TODO : use an image here.
-        graphics.beginFill(RED);
-        graphics.drawCircle(0, 0, HEIGHT/2);
-
-        graphics.lineStyle(1, BLACK);
-        graphics.moveTo(0, 0);
-        graphics.lineTo(WIDTH/2, 0);
-    }
-
     /**
      * Register that a key was pressed.  We only care about arrows.
      */
     public function keyPressed (event :KeyboardEvent) :void
     {
-        StarFight.log("Key Pressed: " + event.keyCode);
-
         if (event.keyCode == KV_LEFT) {
             turnRate = -TURN_RATE;
         } else if (event.keyCode == KV_RIGHT) {
@@ -199,7 +201,6 @@ public class ShipSprite extends Sprite
     public function keyReleased (event :KeyboardEvent) :void
     {
         if (event.keyCode == KV_LEFT) {
-            StarFight.log("Stop turning left");
             turnRate = Math.max(turnRate, 0);
         } else if (event.keyCode == KV_RIGHT) {
             turnRate = Math.min(turnRate, 0);
@@ -240,20 +241,22 @@ public class ShipSprite extends Sprite
         return bytes;
     }
 
+    /** The board we inhabit. */
     protected var _board :BoardSprite;
 
     /** Various UI constants. */
     protected static const RED :uint = uint(0xFF0000);
     protected static const BLACK :uint = uint(0x000000);
 
+    /** Ship performance characteristics. */
     protected static const TURN_RATE :Number = 10.0;
     protected static const FORWARD_ACCEL :Number = 0.05;
     protected static const BACKWARD_ACCEL :Number = -0.025;
+    protected static const FRICTION :Number = 0.95;
 
     protected static const PIXELS_PER_TILE :int = 20;
 
-    protected static const FRICTION :Number = 0.95;
-
+    /** Our ship animation. */
     protected var _shipMovie :MovieClipAsset;
 
     [Embed(source="rsrc/ship.swf#ship_movie_01")]

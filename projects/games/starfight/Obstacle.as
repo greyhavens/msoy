@@ -4,6 +4,9 @@ import flash.display.Graphics;
 
 import flash.utils.ByteArray;
 
+/**
+ * Represents something in the world that ships may interact with.
+ */
 public class Obstacle
 {
     /** Constants for types of obstacles. */
@@ -25,6 +28,9 @@ public class Obstacle
         this.y = y;
     }
 
+    /**
+     * Draw the obstacle.
+     */
     public function paint (gfx :Graphics) :void
     {
         var sx :int = x * Codes.PIXELS_PER_TILE - StarFight.WIDTH/2;
@@ -56,6 +62,9 @@ public class Obstacle
         }
     }
 
+    /**
+     * Get a value for how much bounce ships should get off the obstacle.
+     */
     public function getElasticity () :Number
     {
         // TODO: Something different for different obstacles.
@@ -84,6 +93,7 @@ public class Obstacle
         return bytes;
     }
 
+    /** Color constants. */
     protected static const GREY :uint = uint(0x808080);
 }
 }

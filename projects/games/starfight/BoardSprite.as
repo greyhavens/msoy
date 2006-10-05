@@ -27,11 +27,15 @@ public class BoardSprite extends Sprite
         y = StarFight.HEIGHT - (boardY*Codes.PIXELS_PER_TILE);
     }
 
+    /**
+     * Returns the first collision for a ship moving along the given path.
+     */
     public function getCollision (oldX :Number, oldY :Number,
         newX :Number, newY :Number) :Collision
     {
         var hits :Array = [];
 
+        /** The first one we've seen so far. */
         var bestTime :Number = 1.0;
         var bestHit :Collision = null;
 
@@ -75,6 +79,9 @@ public class BoardSprite extends Sprite
         return bestHit;
     }
 
+    /**
+     * Returns a valid starting point for a ship which is clear.
+     */
     public function getStartingPos () :Point
     {
         var pt :Point;
@@ -90,6 +97,9 @@ public class BoardSprite extends Sprite
         return null;
     }
 
+    /**
+     * Draw the board.
+     */
     public function paint () :void
     {
         graphics.beginFill(BLACK);
@@ -102,8 +112,10 @@ public class BoardSprite extends Sprite
         }
     }
 
+    /** All the obstacles in the world. */
     protected var _obstacles :Array;
 
+    /** Color constants. */
     protected static const BLACK :uint = uint(0x000000);
 }
 }
