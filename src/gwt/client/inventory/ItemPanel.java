@@ -62,7 +62,8 @@ public class ItemPanel extends VerticalPanel
                     } else {
                         for (int ii = 0; ii < _items.size(); ii++) {
                             _contents.add(new ItemContainer(
-                                (Item)_items.get(ii), ItemPanel.this));
+                                              ItemPanel.this,
+                                              (Item)_items.get(ii)));
                         }
                     }
                 }
@@ -104,7 +105,23 @@ public class ItemPanel extends VerticalPanel
 
     protected void createNewItem ()
     {
-        ItemEditor editor;
+        ItemEditor editor = createItemEditor(_type);
+        if (editor != null) {
+            _create.setEnabled(false);
+            editor.setItem(editor.createBlankItem());
+            editor.setPopupPosition(
+                _create.getAbsoluteLeft()+20, _create.getAbsoluteTop()-200);
+            editor.show();
+        }
+    }
+
+    /**
+     * Creates an item editor interface for items of the specified type.
+     * Returns null if the type is unknown.
+     */
+    protected ItemEditor createItemEditor (int type)
+    {
+        ItemEditor editor = null;
         if (_type == Item.PHOTO) {
             editor = new PhotoEditor();
         } else if (_type == Item.DOCUMENT) {
@@ -118,15 +135,10 @@ public class ItemPanel extends VerticalPanel
         } else if (_type == Item.PET) {
             editor = new PetEditor();
         } else {
-            editor = null; // and you suck!
+            return null; // woe be the caller
         }
-
-        if (editor != null) {
-            editor.init(_ctx, this);
-            editor.setItem(editor.createBlankItem());
-            remove(_create);
-            insert(editor, 1);
-        }
+        editor.init(_ctx, this);
+        return editor;
     }
 
     /**
@@ -136,10 +148,10 @@ public class ItemPanel extends VerticalPanel
      * @param item if the editor was creating a new item, the new item should
      * be passed to this method so that it can be added to the display.
      */
-    protected void editComplete (ItemEditor editor, Item item)
+    protected void editComplete (Item item)
     {
-        remove(editor);
-        insert(_create, 1);
+        _create.setEnabled(true);
+
         if (item != null) {
             // we really need to re-fetch the item from the database to get
             // things like itemId set. just refresh the entire list for now.

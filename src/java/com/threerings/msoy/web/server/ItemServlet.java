@@ -52,6 +52,27 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
+    public void updateItem (WebCreds creds, Item item)
+        throws ServiceException
+    {
+        // TODO: validate this user's creds
+
+        // validate the item
+        if (!item.isConsistent()) {
+            // TODO?
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
+
+        // TODO: validate anything else?
+
+        // pass the buck to the item manager to do the dirty work
+        ServletWaiter<Item> waiter = new ServletWaiter<Item>(
+            "updateItem[" + creds + ", " + item + "]");
+        MsoyServer.itemMan.updateItem(item, waiter);
+        waiter.waitForResult();
+    }
+
+    // from interface ItemService
     public ArrayList loadInventory (WebCreds creds, byte type)
         throws ServiceException
     {

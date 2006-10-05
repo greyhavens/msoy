@@ -49,29 +49,27 @@ public class ItemContainer extends VerticalPanel
     /** So arbitrary. TODO. */
     public static final int THUMB_HEIGHT = 100;
 
-    public ItemContainer (Item item, ItemPanel panel)
+    public ItemContainer (ItemPanel panel, Item item)
     {
-        this(item, panel, true, true);
+        this(panel, item, true, true);
     }
 
-    public ItemContainer (
-            final Item item, final ItemPanel panel,
-            boolean thumbnail, boolean showLabel)
+    public ItemContainer (ItemPanel panel, Item item, boolean thumbnail,
+                          boolean showLabel)
     {
-/*
+        _panel = panel;
         setItem(item, thumbnail, showLabel);
     }
 
     public void setItem (Item item, boolean thumbnail, boolean showLabel)
     {
-        while (getWidgetCount() > 0) {
-            remove(0);
-        }
-
         if (item == null) {
             return;
         }
-*/
+        _item = item;
+
+        // clear out our old UI, and we'll create it anew
+        clear();
 
         Widget disp = createContainer(item);
         Label label = null;
@@ -98,28 +96,31 @@ public class ItemContainer extends VerticalPanel
         if (showLabel) {
             add(label);
         }
+
         if (item.parentId == -1) {
             Button button = new Button("List in Catalog ...");
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    panel.listItem(item.getIdent());
+                    _panel.listItem(_item.getIdent());
                 }
             });
             add(button);
+
         } else {
             Button button = new Button("Remix ...");
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    panel.remixItem(item.getIdent());
+                    _panel.remixItem(_item.getIdent());
                 }
             });
             add(button);            
         }
+
         // TODO: all these buttons have to go soon
         Button button = new Button("Details ...");
         button.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                ItemDetail foo = new ItemDetail(panel._ctx, item);
+                ItemDetail foo = new ItemDetail(_panel._ctx, _item);
                 foo.setPopupPosition(
                     sender.getAbsoluteLeft()+20, sender.getAbsoluteTop()-200);
                 foo.show();
@@ -127,6 +128,17 @@ public class ItemContainer extends VerticalPanel
         });
         add(button);            
 
+        button = new Button("Edit ...");
+        button.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                ItemEditor editor = _panel.createItemEditor(_item.getType());
+                editor.setItem(_item);
+                editor.setPopupPosition(
+                    sender.getAbsoluteLeft()+20, sender.getAbsoluteTop()-200);
+                editor.show();
+            }
+        });
+        add(button);            
     }
 
     /**
@@ -145,4 +157,7 @@ public class ItemContainer extends VerticalPanel
     {
         return (text.length() <= 32) ? text : (text.substring(0, 29) + "...");
     }
+
+    protected ItemPanel _panel;
+    protected Item _item;
 }

@@ -124,14 +124,23 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Inserts the supplied item into the database. {@link Item#itemId} will be
      * filled in as a result of this call.
      */
-    public void insertItem (T item) throws PersistenceException
+    public void insertItem (T item)
+        throws PersistenceException
     {
         if (item.itemId != 0) {
             throw new PersistenceException(
-                "Can't insert item with existing key [itemId=" + item.itemId
-                    + "]");
+                "Can't insert item with existing key " + item);
         }
         insert(item);
+    }
+
+    /**
+     * Updates the supplied item in the database.
+     */
+    public void updateItem (T item)
+        throws PersistenceException
+    {
+        update(item);
     }
 
     /**

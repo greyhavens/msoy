@@ -42,9 +42,7 @@ public class AvatarEditor extends ItemEditor
 
         super.createEditorInterface();
 
-        int row = getRowCount();
-        setText(row, 0, "Description");
-        setWidget(row, 1, _description = new TextBox());
+        addRow("Description", _description = new TextBox());
         bind(_description, new Binder() {
             public void textUpdated (String text) {
                 _avatar.description = text;

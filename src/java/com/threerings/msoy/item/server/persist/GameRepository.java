@@ -38,7 +38,7 @@ public class GameRepository extends ItemRepository<GameRecord>
         tgame.maintainerId = game.creatorId;
         tgame.status = Game.Status.READY.toString();
         tgame.host = ""; // TODO
-        tgame.definition = ""; // TODO
+        tgame.definition = game.config; 
         tgame.digest = MediaDesc.hashToString(game.gameMediaHash);
         tgame.description = ""; // TODO
         tgame.created = null; // TODO

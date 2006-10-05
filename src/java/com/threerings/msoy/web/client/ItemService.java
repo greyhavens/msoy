@@ -32,6 +32,16 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
+     * Requests that the supplied item be updated based on user provided
+     * changes.
+     *
+     * @exception ServiceException thrown if there is a problem updating the
+     * item.
+     */
+    public void updateItem (WebCreds creds, Item item)
+        throws ServiceException;
+
+    /**
      * Loads all items in a player's inventory of the specified type.
      */
     public ArrayList loadInventory (WebCreds creds, byte type)
@@ -64,7 +74,7 @@ public interface ItemService extends RemoteService
     /**
      * Fetches the tags associated with an item.
      */
-    public Collection getTags(WebCreds creds, ItemIdent item)
+    public Collection getTags (WebCreds creds, ItemIdent item)
             throws ServiceException;
     
     /**

@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -31,12 +32,6 @@ public class GameEditor extends ItemEditor
     {
         super.setItem(item);
         _game = (Game)item;
-
-        // TEMP: so that I can upload games
-        // TODO: remove
-        _game.config = "";
-        // END: temp
-
         _name.setText((_game.name == null) ? "" : _game.name);
     }
 
@@ -52,44 +47,42 @@ public class GameEditor extends ItemEditor
 
         super.createEditorInterface();
 
-        int row = getRowCount();
-        setText(row, 0, "Name");
-        setWidget(row, 1, _name = new TextBox());
+        addRow("Name", _name = new TextBox());
         bind(_name, new Binder() {
             public void textUpdated (String text) {
                 _game.name = text;
             }
         });
-        row++;
 
         // TODO: it'd be nice to force-format this text field for integers,
         // or something.
-        setText(row, 0, "Minimum players");
-        setWidget(row, 1, _minPlayers = new TextBox());
+        addRow("Minimum players", _minPlayers = new TextBox());
         bind(_minPlayers, new Binder() {
             public void textUpdated (String text) {
                 _game.minPlayers = asShort(text);
             }
         });
-        row++;
 
-        setText(row, 0, "Maximum players");
-        setWidget(row, 1, _maxPlayers = new TextBox());
+        addRow("Maximum players", _maxPlayers = new TextBox());
         bind(_maxPlayers, new Binder() {
             public void textUpdated (String text) {
                 _game.maxPlayers = asShort(text);
             }
         });
-        row++;
 
-        setText(row, 0, "Desired players");
-        setWidget(row, 1, _desiredPlayers = new TextBox());
+        addRow("Desired players", _desiredPlayers = new TextBox());
         bind(_desiredPlayers, new Binder() {
             public void textUpdated (String text) {
                 _game.desiredPlayers = asShort(text);
             }
         });
-        row++;
+
+        addRow("Game definition", _gamedef = new TextArea());
+        bind(_gamedef, new Binder() {
+            public void textUpdated (String text) {
+                _game.config = text;
+            }
+        });
     }
 
     // @Override from ItemEditor
@@ -112,4 +105,5 @@ public class GameEditor extends ItemEditor
     protected TextBox _name;
 
     protected TextBox _minPlayers, _maxPlayers, _desiredPlayers;
+    protected TextArea _gamedef;
 }

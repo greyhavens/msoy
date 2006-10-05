@@ -41,9 +41,7 @@ public class PhotoEditor extends ItemEditor
 
         super.createEditorInterface();
 
-        int row = getRowCount();
-        setText(row, 0, "Caption");
-        setWidget(row, 1, _caption = new TextBox());
+        addRow("Caption", _caption = new TextBox());
         bind(_caption, new Binder() {
             public void textUpdated (String text) {
                 _photo.caption = text;

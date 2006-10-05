@@ -37,9 +37,7 @@ public class DocumentEditor extends ItemEditor
 
         super.createEditorInterface();
 
-        int row = getRowCount();
-        setText(0, 0, "Title");
-        setWidget(0, 1, _title = new TextBox());
+        addRow("Title", _title = new TextBox());
         bind(_title, new Binder() {
             public void textUpdated (String text) {
                 _doc.title = text;

@@ -39,9 +39,7 @@ public class PetEditor extends ItemEditor
     {
         super.createEditorInterface();
 
-        int row = getRowCount();
-        setText(row, 0, "Description");
-        setWidget(row, 1, _descrip = new TextBox());
+        addRow("Description", _descrip = new TextBox());
         bind(_descrip, new Binder() {
             public void textUpdated (String text) {
                 _pet.description = text;

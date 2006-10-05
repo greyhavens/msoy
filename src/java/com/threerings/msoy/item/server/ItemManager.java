@@ -129,18 +129,43 @@ public class ItemManager
         }
 
         // and insert the item; notifying the listener on success or failure
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(
-            listener) {
-            public Item invokePersistResult ()
-                throws PersistenceException
-            {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
+            public Item invokePersistResult () throws PersistenceException {
                 repo.insertItem(record);
                 item.itemId = record.itemId;
                 return item;
             }
+            public void handleSuccess () {
+                super.handleSuccess();
+                // add the item to the user's cached inventory
+                updateUserCache(record);
+            }
+        });
+    }
 
-            public void handleSuccess ()
-            {
+    /**
+     * Updates the supplied item. The item should have previously been checked
+     * for validity. Success or failure will be communicated to the supplied
+     * result listener.
+     */
+    public void updateItem (final Item item, ResultListener<Item> listener)
+    {
+        final ItemRecord record = ItemRecord.newRecord(item);
+        byte type = record.getType();
+
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord> repo = getRepository(type, listener);
+        if (repo == null) {
+            return;
+        }
+
+        // and update the item; notifying the listener on success or failure
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
+            public Item invokePersistResult () throws PersistenceException {
+                repo.updateItem(record);
+                return item;
+            }
+            public void handleSuccess () {
                 super.handleSuccess();
                 // add the item to the user's cached inventory
                 updateUserCache(record);

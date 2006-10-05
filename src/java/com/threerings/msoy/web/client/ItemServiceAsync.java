@@ -21,6 +21,12 @@ public interface ItemServiceAsync
         WebCreds creds, Item item, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link ItemService#updateItem}.
+     */
+    public void updateItem (
+        WebCreds creds, Item item, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link ItemService#loadInventory}.
      */
     public void loadInventory (
@@ -63,6 +69,9 @@ public interface ItemServiceAsync
     public void getTagHistory (
         WebCreds creds, ItemIdent item, AsyncCallback callback);
 
+    /**
+     * The asynchronous versions of {@link ItemService#getTagHistory}.
+     */
     public void getTagHistory (
         WebCreds creds, int memberId, AsyncCallback callback);
 

@@ -49,21 +49,20 @@ public class ItemDetail extends PopupPanel
         _item = item;
         _ctx = ctx;
         _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
-        setStyleName("itemDetailPopup");
+        setStyleName("itemPopup");
 
-        _mainContainer = new DockPanel();
-        setWidget(_mainContainer);
-        
+        setWidget(_content = new DockPanel());
+
         _table = new FlexTable();
         _table.setBorderWidth(0);
         _table.setCellSpacing(0);
         _table.setCellPadding(3);
-        _mainContainer.add(_table, DockPanel.CENTER);
+        _content.add(_table, DockPanel.CENTER);
         _row = 0;
 
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("itemDetailErrors");
-        _mainContainer.add(_errorContainer, DockPanel.NORTH);
+        _content.add(_errorContainer, DockPanel.NORTH);
 
         if (_item.parentId != -1) {
             addHeader("Clone Information");
@@ -77,12 +76,12 @@ public class ItemDetail extends PopupPanel
         // TODO: Should be MemberGNames
         addRow("Owner ID", String.valueOf(_item.ownerId),
                "Creator ID", String.valueOf(_item.creatorId));
-        
+
         MediaDesc thumbMedia = _item.getThumbnailMedia();
         Widget thumbWidget =
             ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
                 thumbMedia.getMediaPath()));
-        
+
         MediaDesc furniMedia = _item.getFurniMedia();
         Widget furniWidget = furniMedia.equals(thumbMedia) ?
             new Label("(same as thumbnail)") :
@@ -151,7 +150,7 @@ public class ItemDetail extends PopupPanel
             }
             addRow("Description", ((Avatar)_item).description);
             addRow("Avatar Media", avatarContainer);
-            
+
 
         } else {
             addHeader("UNKNOWN OBJECT TYPE: " + _item.getType());
@@ -173,7 +172,7 @@ public class ItemDetail extends PopupPanel
             public void onChange (Widget sender) {
                 clearErrors();
                 String tagName = ((TextBox) sender).getText().toLowerCase();
-                if (tagName.length() > 24) { 
+                if (tagName.length() > 24) {
                     addError("Invalid tag: can't be more than 24 characters.");
                     return;
                 }
@@ -236,7 +235,7 @@ public class ItemDetail extends PopupPanel
         addRow("Enter a new tag", enterTagContainer);
         addRow("Tags", _tagContainer);
         updateTags();
-        
+
         Button button = new Button("Hide/Show");
         button.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -250,26 +249,27 @@ public class ItemDetail extends PopupPanel
     {
         _ctx.itemsvc.getTagHistory(
             _ctx.creds, _ctx.creds.memberId, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    _historicalTags.clear();
-                    Iterator i = ((Collection) result).iterator();
-                    while (i.hasNext()) {
-                        TagHistory history = (TagHistory) i.next();
-                        if (history.member.memberId == _ctx.creds.memberId) {
-                            if (history.tag != null) {
-                                _historicalTags.addItem(history.tag);
-                            }
+            public void onSuccess (Object result) {
+                _historicalTags.clear();
+                Iterator i = ((Collection) result).iterator();
+                while (i.hasNext()) {
+                    TagHistory history = (TagHistory) i.next();
+                    if (history.member.memberId == _ctx.creds.memberId) {
+                        if (history.tag != null) {
+                            _historicalTags.addItem(history.tag);
                         }
                     }
-                    _historicalTags.setVisible(_historicalTags.getItemCount() > 0);
                 }
-                public void onFailure (Throwable caught) {
-                    GWT.log("getTagHistory failed", caught);
-                    addError(
-                        "Internal error fetching tag history: " +
-                        caught.getMessage());
-                }
-            });
+                _historicalTags.setVisible(
+                    _historicalTags.getItemCount() > 0);
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("getTagHistory failed", caught);
+                addError(
+                    "Internal error fetching tag history: " +
+                    caught.getMessage());
+            }
+        });
 
         _ctx.itemsvc.getTags(_ctx.creds, _itemId, new AsyncCallback() {
             public void onSuccess (Object result) {
@@ -294,25 +294,23 @@ public class ItemDetail extends PopupPanel
                     caught.getMessage());
             }
         });
-
-
     }
+
     protected void updateRatingContainer (final boolean edit)
     {
         _ctx.itemsvc.getRating(
-            _ctx.creds, _itemId,
-            _ctx.creds.memberId, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    fillRatingContainer(((Byte)result).byteValue(), edit);
-                }
-                public void onFailure (Throwable caught) {
-                    GWT.log("getRating failed", caught);
-                    addError(
-                        "Internal error fetching user's rating: " +
-                        caught.getMessage());
-                }
-            });
+            _ctx.creds, _itemId, _ctx.creds.memberId, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                fillRatingContainer(((Byte)result).byteValue(), edit);
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("getRating failed", caught);
+                addError("Internal error fetching user's rating: " +
+                         caught.getMessage());
+            }
+        });
     }
+
     protected void fillRatingContainer (final byte rating, boolean edit)
     {
         _ratingContainer.clear();
@@ -351,6 +349,7 @@ public class ItemDetail extends PopupPanel
                 }
             });
             _ratingContainer.add(box);
+
         } else {
             // display a text field, with a button that calls back with 'true'
             _ratingContainer.add(new HTML(String.valueOf(rating) + " &nbsp; "));
@@ -366,63 +365,65 @@ public class ItemDetail extends PopupPanel
             }
         }
     }
-    
+
     private void toggleTagHistory ()
     {
         if (_tagHistory != null) {
-            if (_mainContainer.getWidgetDirection(_tagHistory) == null) {
-                _mainContainer.add(_tagHistory, DockPanel.EAST);
+            if (_content.getWidgetDirection(_tagHistory) == null) {
+                _content.add(_tagHistory, DockPanel.EAST);
             } else {
-                _mainContainer.remove(_tagHistory);
+                _content.remove(_tagHistory);
             }
             return;
         }
-        _ctx.itemsvc.getTagHistory(
-            _ctx.creds, _itemId, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    _tagHistory = new FlexTable();
-                    _tagHistory.setBorderWidth(0);
-                    _tagHistory.setCellSpacing(0);
-                    _tagHistory.setCellPadding(2);
-                    int tRow = 0;
-                    Iterator iterator = ((Collection) result).iterator();
-                    while (iterator.hasNext()) {
-                        TagHistory history = (TagHistory) iterator.next();
-                        String date = history.time.toGMTString();
-                        // Fri Sep 29 2006 12:46:12
-                        date = date.substring(0, 23);
-                        _tagHistory.setText(tRow, 0, date);
-                        _tagHistory.setText(
-                            tRow, 1, history.member.memberName);
-                        String actionString;
-                        switch(history.action) {
-                        case TagHistory.ACTION_ADDED:
-                            actionString = "added";
-                            break;
-                        case TagHistory.ACTION_COPIED:
-                            actionString = "copied";
-                            break;
-                        case TagHistory.ACTION_REMOVED:
-                            actionString = "removed";
-                            break;
-                        default:
-                            actionString = "???";
+
+        _ctx.itemsvc.getTagHistory(_ctx.creds, _itemId, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _tagHistory = new FlexTable();
+                _tagHistory.setBorderWidth(0);
+                _tagHistory.setCellSpacing(0);
+                _tagHistory.setCellPadding(2);
+
+                int tRow = 0;
+                Iterator iterator = ((Collection) result).iterator();
+                while (iterator.hasNext()) {
+                    TagHistory history = (TagHistory) iterator.next();
+                    String date = history.time.toGMTString();
+                    // Fri Sep 29 2006 12:46:12
+                    date = date.substring(0, 23);
+                    _tagHistory.setText(tRow, 0, date);
+                    _tagHistory.setText(
+                        tRow, 1, history.member.memberName);
+                    String actionString;
+                    switch(history.action) {
+                    case TagHistory.ACTION_ADDED:
+                        actionString = "added";
                         break;
-                        }
-                        _tagHistory.setText(tRow, 2, actionString);
-                        _tagHistory.setText(tRow, 3,
-                            history.tag == null ?
-                                "N/A" : "'" + history.tag + "'");
-                        tRow ++;
+                    case TagHistory.ACTION_COPIED:
+                        actionString = "copied";
+                        break;
+                    case TagHistory.ACTION_REMOVED:
+                        actionString = "removed";
+                        break;
+                    default:
+                        actionString = "???";
+                        break;
                     }
-                    _mainContainer.add(_tagHistory, DockPanel.EAST);
+                    _tagHistory.setText(tRow, 2, actionString);
+                    _tagHistory.setText(tRow, 3,
+                                        history.tag == null ?
+                                        "N/A" : "'" + history.tag + "'");
+                    tRow ++;
                 }
-                public void onFailure (Throwable caught) {
-                    GWT.log("getTagHistory failed", caught);
-                    addError("Internal error fetching item tag history: " +
-                             caught.getMessage());
-                }
-            });
+                _content.add(_tagHistory, DockPanel.EAST);
+            }
+
+            public void onFailure (Throwable caught) {
+                GWT.log("getTagHistory failed", caught);
+                addError("Internal error fetching item tag history: " +
+                         caught.getMessage());
+            }
+        });
     }
 
     protected void addHeader (String header)
@@ -483,7 +484,6 @@ public class ItemDetail extends PopupPanel
             _row, 3,
             HasHorizontalAlignment.ALIGN_LEFT,
             HasVerticalAlignment.ALIGN_MIDDLE);
-
         _row ++;
     }
 
@@ -501,17 +501,17 @@ public class ItemDetail extends PopupPanel
     {
         addRow(lhead, new Label(lval), rhead, new Label(rval));
     }
-    
+
     protected void addError (String error)
     {
         _errorContainer.add(new Label(error));
     }
+
     protected void clearErrors ()
     {
         _errorContainer.clear();
     }
 
-    
     protected WebContext _ctx;
     protected ItemIdent _itemId;
     protected Item _item;
@@ -519,7 +519,7 @@ public class ItemDetail extends PopupPanel
     protected FlexTable _table;
     protected int _row;
 
-    protected DockPanel _mainContainer;
+    protected DockPanel _content;
     protected VerticalPanel _errorContainer;
     protected HorizontalPanel _ratingContainer;
     protected FlowPanel _tagContainer;

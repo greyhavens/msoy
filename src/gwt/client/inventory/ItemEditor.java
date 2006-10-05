@@ -17,7 +17,9 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.ui.FileUploadField;
@@ -37,7 +39,7 @@ import com.threerings.msoy.web.client.WebContext;
  * <li> item_editor_submit - the style of the submit button
  * </ul>
  */
-public abstract class ItemEditor extends FlexTable
+public abstract class ItemEditor extends PopupPanel
 {
     public static interface Binder
     {
@@ -51,27 +53,30 @@ public abstract class ItemEditor extends FlexTable
 
     public ItemEditor ()
     {
-        setStyleName("item_editor");
-        setCellSpacing(5);
+        super(false);
+        setStyleName("itemPopup");
 
-        setWidget(0, 0, _etitle = new Label("title"));
+        setWidget(_content = new FlexTable());
+        _content.setCellSpacing(5);
+        _content.setWidget(0, 0, _etitle = new Label("title"));
         _etitle.setStyleName("item_editor_title");
 
-        FlexCellFormatter cellFormatter = getFlexCellFormatter();
+        FlexTable.FlexCellFormatter cellFormatter =
+            _content.getFlexCellFormatter();
 
         // have the child do its business
         createEditorInterface();
 
         // compute our widest row so we can set our colspans
-        int rows = getRowCount(), cols = 0;
+        int rows = _content.getRowCount(), cols = 0;
         for (int ii = 0; ii < rows; ii++) {
-            cols = Math.max(cols, getCellCount(ii));
+            cols = Math.max(cols, _content.getCellCount(ii));
         }
         cellFormatter.setColSpan(0, 0, cols);
 
         HorizontalPanel bpanel = new HorizontalPanel();
-        int butrow = getRowCount();
-        setWidget(butrow, 0, bpanel);
+        int butrow = _content.getRowCount();
+        _content.setWidget(butrow, 0, bpanel);
         cellFormatter.setHorizontalAlignment(
             0, butrow, HasAlignment.ALIGN_RIGHT);
         cellFormatter.setColSpan(0, butrow, cols);
@@ -90,7 +95,8 @@ public abstract class ItemEditor extends FlexTable
         ecancel.setStyleName("item_editor_button");
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                _parent.editComplete(ItemEditor.this, null);
+                _parent.editComplete(null);
+                hide();
             }
         });
     }
@@ -167,6 +173,16 @@ public abstract class ItemEditor extends FlexTable
     }
 
     /**
+     * Adds a label and widget to the row of editable fields.
+     */
+    protected void addRow (String title, Widget widget)
+    {
+        int row = _content.getRowCount();
+        _content.setText(row, 0, title);
+        _content.setWidget(row, 1, widget);
+    }
+
+    /**
      * This should be called by item editors that are used for editing
      * media that has a 'main' piece of media.
      */
@@ -181,13 +197,12 @@ public abstract class ItemEditor extends FlexTable
     protected MediaUploader createUploader (
         String name, String title, int previewHeight, MediaUpdater updater)
     {
-        MediaUploader mu = new MediaUploader(name, title, previewHeight,
-                updater);
-
-        FlexCellFormatter cellFormatter = getFlexCellFormatter();
-        int row = getRowCount();
-
-        setWidget(row, 0, mu);
+        MediaUploader mu = new MediaUploader(
+            name, title, previewHeight, updater);
+        FlexTable.FlexCellFormatter cellFormatter =
+            _content.getFlexCellFormatter();
+        int row = _content.getRowCount();
+        _content.setWidget(row, 0, mu);
         cellFormatter.setColSpan(row, 0, 2);
         return mu;
     }
@@ -290,16 +305,25 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void commitEdit ()
     {
-        _ctx.itemsvc.createItem(_ctx.creds, _item, new AsyncCallback() {
+        AsyncCallback cb = new AsyncCallback() {
             public void onSuccess (Object result) {
-                _parent.setStatus("Item created.");
-                _parent.editComplete(ItemEditor.this, _item);
+                _parent.setStatus(_item.itemId == 0 ?
+                                  "Item created." : "Item updated.");
+                _parent.editComplete(_item);
+                hide();
             }
             public void onFailure (Throwable caught) {
                 String reason = caught.getMessage();
-                _parent.setStatus("Item creation failed: " + reason);
+                _parent.setStatus(_item.itemId == 0 ?
+                                  "Item creation failed: " + reason :
+                                  "Item update failed: " + reason);
             }
-        });
+        };
+        if (_item.itemId == 0) {
+            _ctx.itemsvc.createItem(_ctx.creds, _item, cb);
+        } else {
+            _ctx.itemsvc.updateItem(_ctx.creds, _item, cb);
+        }
     }
 
     /**
@@ -311,7 +335,7 @@ public abstract class ItemEditor extends FlexTable
      * A convenience method for attaching a textbox directly to a field in the
      * item to be edited.
      */
-    protected void bind (final TextBox textbox, final Binder binder)
+    protected void bind (final TextBoxBase textbox, final Binder binder)
     {
         textbox.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char keyCode, int mods) {
@@ -343,7 +367,7 @@ public abstract class ItemEditor extends FlexTable
     protected Item _item;
     protected int _previewRow = -1;
 
-    protected FormPanel _panel;
+    protected FlexTable _content;
     protected Label _etitle;
     protected Button _esubmit;
 
