@@ -121,7 +121,21 @@ public class RobotRampage extends Sprite
             }
         }
 
-        // TODO: Resort our robots render order to match their coordinates
+        sortRobots();
+    }
+
+    /**
+     * Sorts the robots based on their position and then updates their 
+     * positioning so they draw in a sane order.
+     */
+    protected function sortRobots () :void
+    {
+        _robots.sortOn("y");
+
+        for (var ii :int = 0; ii < _robots.length; ii++)
+        {
+            setChildIndex(_robots[ii], ii + _bases.length);
+        }
     }
 
 
@@ -139,7 +153,7 @@ public class RobotRampage extends Sprite
 
         for (var ii :int = 0; ii < count; ii++) {
             // Make new base
-            var base :MoonBase = new MoonBase(names[ii], ii);
+            var base :MoonBase = new MoonBase(_gameObj, String(names[ii]), ii);
             _bases[ii] = base;
             var angle :Number = ii * 2 * Math.PI / count;
 

@@ -1,12 +1,14 @@
 package {
 
 import flash.display.Sprite;
+import com.threerings.ezgame.EZGame;
 
 public class MoonBase extends Sprite
 {
 
-    public function MoonBase (name :String, playerIndex :int)
+    public function MoonBase (gameObj :EZGame, name :String, playerIndex :int)
     {
+        _gameObj = gameObj;
         _name = name;
         _playerIndex = playerIndex;
         _health = BASE_MAX_HEALTH;
@@ -63,8 +65,12 @@ public class MoonBase extends Sprite
             return;
         }
 
+        _gameObj.localChat(name + " has been destroyed by the robots!");
         // TODO: really report this and do sane things.
     }
+
+    /** The game object. */
+    protected var _gameObj :EZGame;
 
     /** The name of the player controlling this base. */
     protected var _name :String;
