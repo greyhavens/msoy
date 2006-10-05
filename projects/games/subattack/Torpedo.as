@@ -23,6 +23,11 @@ public class Torpedo extends BaseSprite
 //        advanceLocation();
     }
 
+    public function getOwner () :Submarine
+    {
+        return _sub;
+    }
+
     /**
      * Called by the board to notify us that time has passed.
      */

@@ -27,6 +27,21 @@ public class Submarine extends BaseSprite
         addChild(nameLabel);
     }
 
+    public function getPlayerName () :String
+    {
+        return _playerName;
+    }
+
+    public function getPlayerIndex () :int
+    {
+        return _playerIdx;
+    }
+
+    public function getScore () :int
+    {
+        return _kills - _deaths;
+    }
+
     /**
      * Is this sub dead?
      */
@@ -213,7 +228,7 @@ public class Submarine extends BaseSprite
 
         // draw the circle
         graphics.lineStyle(2, 0x000000);
-        graphics.beginFill((_playerIdx == 0) ? 0xFFFF00 : 0x00FFFF);
+        graphics.beginFill(uint(COLORS[_playerIdx]))
         graphics.drawCircle(SeaDisplay.TILE_SIZE / 2, SeaDisplay.TILE_SIZE / 2,
             SeaDisplay.TILE_SIZE / 2);
 
@@ -266,6 +281,9 @@ public class Submarine extends BaseSprite
 
     /** The number of times we've been killed. */
     protected var _deaths :int;
+
+    protected static const COLORS :Array = [ 0xFFFF00, 0xFF00FF,
+        0x00FFFF, 0xFF0000, 0x0000FF, 0x00FF00, 0xFF6600, 0x6600FF ];
 
     /** The maximum number of torpedos that may be in-flight at once. */
     protected static const MAX_TORPEDOS :int = 2;

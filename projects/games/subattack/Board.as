@@ -9,8 +9,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 public class Board
 {
     /** The dimensions of the board. */
-    public static const WIDTH :int = 16;
-    public static const HEIGHT :int = 16;
+    public static const WIDTH :int = 60;
+    public static const HEIGHT :int = 30;
 
     public function Board (gameObj :EZGame, seaDisplay :SeaDisplay)
     {
@@ -120,13 +120,17 @@ public class Board
         _seaDisplay.removeChild(torpedo);
 
         // find all the subs affected
+        var killer :Submarine = torpedo.getOwner();
         var killCount :int = 0;
         var xx :int = torpedo.getX();
         var yy :int = torpedo.getY();
         for each (var sub :Submarine in _subs) {
-            if (sub.getX() == xx && sub.getY() == yy) {
+            if (!sub.isDead() && sub.getX() == xx && sub.getY() == yy) {
                 sub.wasKilled();
                 killCount++;
+
+                _gameObj.localChat(killer.getPlayerName() + " has shot " +
+                    sub.getPlayerName());
             }
         }
 
@@ -173,7 +177,6 @@ public class Board
             }
 
         } else {
-            trace("name=" + name + ", " + event.value);
             // add any actions received during this tick
             var array :Array = (_ticks[_ticks.length - 1] as Array);
             array.push(event.name);
@@ -232,7 +235,7 @@ public class Board
             var xx :int = torp.getX();
             var yy :int = torp.getY();
             for each (sub in _subs) {
-                if ((xx == sub.getX()) && (yy == sub.getY())) {
+                if (!sub.isDead() && (xx == sub.getX()) && (yy == sub.getY())) {
                     // we have a hit!
                     torp.explode(); // will end up calling torpedoExploded
                     break; // break the inner loop
@@ -243,6 +246,13 @@ public class Board
         // now let each sub enact any queued moves
         for each (sub in _subs) {
             sub.postTick();
+            if (_gameObj.getMyIndex() == 0) {
+                if (sub.getScore() > 4) {
+                    _gameObj.sendChat(sub.getPlayerName() + " is the winner!");
+                    _gameObj.endGame(sub.getPlayerIndex());
+                    return;
+                }
+            }
         }
     }
 
