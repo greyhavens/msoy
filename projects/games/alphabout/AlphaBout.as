@@ -1,6 +1,8 @@
 package {
 
 import flash.display.Sprite;
+import flash.events.KeyboardEvent;
+import flash.ui.Keyboard;
 
 import com.threerings.ezgame.Game;
 import com.threerings.ezgame.EZGame;
@@ -34,6 +36,7 @@ public class AlphaBout extends Sprite
     public function setGameObject (gameObj :EZGame) :void
     {
         _gameObject = gameObj;
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
     }
 
     /**
@@ -59,12 +62,25 @@ public class AlphaBout extends Sprite
         }
     }
 
-    // add a letter to the board somewhere towards the bottom right corner
-    protected function addLetter (letterIndex :int) :void
+    // tell all of the pieces to update their theme
+    protected function changePiecesTheme() :void
     {
-        var piecesIndex :int = findBlankSquare();
+        for (var ii :int = 0; ii < _pieces.length; ii++) {
+            if (_pieces[ii].getLetterIndex() != Piece.NO_LETTER) {
+                _pieces[ii].updateTheme();
+            }
+        } 
+    }
+
+    // add a letter to the board somewhere towards the bottom right corner
+    // optionally pass the index in _pieces where this piece is currently
+    protected function addLetter (letterIndex :int, piecesIndex :int = -1) :void
+    {
+        if (piecesIndex == -1) {
+            piecesIndex = findBlankSquare();
+        }
         var piece :Piece = new Piece(this, piecesIndex, letterIndex);
-        _pieces[piecesIndex] = letterIndex;
+        _pieces[piecesIndex] = piece;
         piece.x = Piece.SIZE * idxToX(piecesIndex) + (Piece.SIZE / 2);
         piece.y = Piece.SIZE * idxToY(piecesIndex) + (Piece.SIZE / 2);
         addChild(piece);
@@ -74,7 +90,7 @@ public class AlphaBout extends Sprite
     public function stateChanged (event :StateChangedEvent) :void
     {
         if (event.type == StateChangedEvent.GAME_STARTED) {
-            _gameObject.localChat("Begin your Alpha Bout!");
+            _gameObject.localChat("Begin your Alpha Bout!\n");
 
             // if we are the first player do some setup
             if (_gameObject.getMyIndex() == 0) {
@@ -85,12 +101,12 @@ public class AlphaBout extends Sprite
             _pieces = new Array(BOARD_SIZE * BOARD_SIZE);
             // initialize the board to have no letters
             for (var ii :int = 0; ii < _pieces.length; ii++) {
-                _pieces[ii] = Piece.NO_LETTER;
+               _pieces[ii] = new Piece(this, ii, Piece.NO_LETTER);
             }
             drawBoard();
 
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
-            _gameObject.localChat("Thank you for playing AlphaBout!");
+            _gameObject.localChat("Thank you for playing AlphaBout!\n");
 
         }
     }
@@ -112,6 +128,24 @@ public class AlphaBout extends Sprite
         }
     }
 
+    protected function keyDownHandler (event :KeyboardEvent) :void
+    {
+        switch (event.keyCode) {
+          case Keyboard.RIGHT:
+            if (_theme < (NUMBER_OF_THEMES - 1)) {
+                _theme++;
+                themeChange();
+            }
+            break;
+          case Keyboard.LEFT:
+            if (_theme > 0) {
+                _theme--;
+                themeChange();
+            }
+            break;
+        }
+    }
+
     public function coordsToIdx (x :int, y :int) :int
     {
         return (int(((y - (Piece.SIZE / 2)) / Piece.SIZE) * BOARD_SIZE) + 
@@ -126,6 +160,17 @@ public class AlphaBout extends Sprite
     public function idxToY (index :int) :int
     {
         return (index / BOARD_SIZE);
+    }
+
+    public function getTheme () :int
+    {
+        return _theme;
+    }
+
+    protected function themeChange () :void
+    {
+        drawBoard();
+        changePiecesTheme();
     }
 
     // deal the inital pieces to each player
@@ -155,9 +200,8 @@ public class AlphaBout extends Sprite
     // find a square in _pieces towards the bottom that is empty
     protected function findBlankSquare () :int
     {
-        var ii :int;
-        for (ii = (BOARD_SIZE * BOARD_SIZE) - 1; ii > 0; ii--) {
-            if (_pieces[ii] == Piece.NO_LETTER) {
+        for (var ii :int = _pieces.length - 1; ii >= 0; ii--) {
+            if (_pieces[ii].getLetterIndex() == Piece.NO_LETTER) {
                 return ii;
             }
         }
@@ -169,11 +213,12 @@ public class AlphaBout extends Sprite
     // returns the new index. Returns -1 if there is already a piece there
     public function letterMoved (oldIndex :int, x :int, y :int) :int {
         var newIndex :int = coordsToIdx(x, y);
-        if (_pieces[newIndex] != Piece.NO_LETTER) {
+        if (_pieces[newIndex].getLetterIndex() != Piece.NO_LETTER) {
             return -1;
         }
+        var tmpPiece :Piece = Piece(_pieces[newIndex]);
         _pieces[newIndex] = _pieces[oldIndex];
-        _pieces[oldIndex] = Piece.NO_LETTER;
+        _pieces[oldIndex] = tmpPiece;
         return newIndex;
     }
 
@@ -186,6 +231,15 @@ public class AlphaBout extends Sprite
     protected static const PIECE_BAG :String = "pieceBag";
 
     protected static const NEW_PIECE :String = "newPiece";
+
+    // our current theme
+    protected var _theme :int = BASIC_THEME;
+
+    // theme constants
+    protected static const NUMBER_OF_THEMES :int = 3;
+    protected static const BASIC_THEME :int = 0;
+    protected static const TIMES_THEME :int = 1;
+    protected static const RANSOM_THEME :int = 2;
 
     // Letter distribution using the patented $crabble system for now
     protected static const LETTER_DISTRIBUTION :Array = new Array(

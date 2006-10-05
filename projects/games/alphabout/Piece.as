@@ -20,7 +20,27 @@ public class Piece extends Sprite
         _alphabout = alphabout;
         _piecesIndex = piecesIndex;
         _letterIndex = letterIndex;
-        _letterMovie = MovieClipAsset(new _letterAnim());
+        if (letterIndex != NO_LETTER) {
+            updateTheme();
+        }
+    }
+
+    public function getLetterIndex () :int
+    {
+        return _letterIndex;
+    }
+
+    public function setLetterIndex (letterIndex :int) :void
+    {
+        _letterIndex = letterIndex;
+    }
+
+    public function updateTheme () :void
+    {
+        if (_letterMovie) {
+            removeChild(_letterMovie);
+        }
+        _letterMovie = MovieClipAsset(new _themeMap[_alphabout.getTheme()]);
 
         // TODO do we need both of these?
         buttonMode = true;
@@ -28,13 +48,8 @@ public class Piece extends Sprite
         _letterMovie.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
         _letterMovie.addEventListener(MouseEvent.MOUSE_UP, mouseReleased);
 
-        _letterMovie.gotoAndStop(letterIndex);
+        _letterMovie.gotoAndStop(_letterIndex);
         addChild(_letterMovie);
-    }
-
-    public function getLetterIndex () :int
-    {
-        return _letterIndex;
     }
 
     protected function mouseDown (event :MouseEvent) :void
@@ -54,6 +69,9 @@ public class Piece extends Sprite
         var possibleY :int = int(y / SIZE) * SIZE + (SIZE / 2);
         var newIndex :int = _alphabout.letterMoved(
             _piecesIndex, possibleX, possibleY);
+        // TODO consider having the piece place in the nearest spot
+        // as you drag it along so when you release it goes to last
+        // valid spot?
         if (newIndex != -1) {
             x = possibleX;
             y = possibleY;
@@ -75,9 +93,23 @@ public class Piece extends Sprite
     protected var _previousX :int;
     protected var _previousY :int;
 
-    // our source swf with the animation used for our letters
+    // the source for the basic letters
     [Embed(source="rsrc/letters/alphabet32_basic.swf#mc_BasicAlphabet")]
-    protected var _letterAnim :Class
+    protected var _basicAnim :Class;
+
+    // the source for the times letters
+    [Embed(source="rsrc/letters/alphabet32_times.swf#mc_timesalphabet")]
+    protected var _timesAnim :Class;
+
+    // the source for the ransom letters
+    [Embed(source="rsrc/letters/alphabet38_ransom.swf#mc_ransomalphabet")]
+    protected var _ransomAnim :Class;
+
+    // map letter animations to theme constants from AlphaBout.as
+    // TODO this could probably be done in a better way
+    protected var _themeMap :Array = new Array(
+        _basicAnim, _timesAnim, _ransomAnim);
+
     protected var _letterMovie :MovieClipAsset;
 }
 }
