@@ -11,13 +11,60 @@ public class MoonBase extends Sprite
         _playerIndex = playerIndex;
         _health = BASE_MAX_HEALTH;
 
+        updateGraphics();
+    }
+
+    protected function updateGraphics () :void
+    {
+        var color :uint = isDestroyed() ? 0x000000 : BASE_COLORS[_playerIndex];
+
+        // TODO: Show something about our state of disrepair
 
         graphics.clear();
-        graphics.beginFill(uint(BASE_COLORS[_playerIndex]));
+        graphics.beginFill(color);
         graphics.drawCircle(0, 0, MOON_BASE_RADIUS);
         graphics.endFill();
     }
 
+    /**
+     * A robot just smashed up against us. Ouch.
+     */
+    public function takeDamage () :void
+    {
+        _health -= ROBOT_HIT_DAMAGE;
+
+        if (isDestroyed()) {
+            destroyBase();
+        }
+
+        updateGraphics();
+    }
+
+    /**
+     * Returns true if we've taken enough damage to be dead.
+     */
+    public function isDestroyed () :Boolean
+    {
+        return _health <= 0;
+    }
+
+    public function getPlayerIndex () :int
+    {
+        return _playerIndex;
+    }
+
+    /**
+     * The bitter end.
+     */
+    protected function destroyBase() :void
+    {
+        if (!isDestroyed()) {
+            // Reports of my death have been greatly exagerated.
+            return;
+        }
+
+        // TODO: really report this and do sane things.
+    }
 
     /** The name of the player controlling this base. */
     protected var _name :String;
@@ -36,8 +83,8 @@ public class MoonBase extends Sprite
     protected static const BASE_MAX_HEALTH :int = 100;
 
     /** The damage done by a robot hitting us. */
-    protected static const ROBOT_HIT_DAMAGE :int = 10;
+    protected static const ROBOT_HIT_DAMAGE :int = 30;
 
-    public static const MOON_BASE_RADIUS :int = 10;
+    public static const MOON_BASE_RADIUS :int = 15;
 }
 }

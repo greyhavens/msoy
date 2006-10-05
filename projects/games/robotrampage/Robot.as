@@ -36,21 +36,30 @@ public class Robot extends Sprite
         addEventListener(MouseEvent.CLICK, mouseClick);
     }
 
+    /**
+     * Point our robot at an unsuspecting moon base.
+     */
     public function setTarget (base :MoonBase) : void
     {
         _target = base;
-        // TODO: stuff.
     }
 
+    /**
+     * A beat of or cold, robotic heart.
+     */
     public function tick () :void
     {
-        if (_target == null) {
-            return;
+        if (_target != null && _target.isDestroyed()) {
+            setTarget(null);
         }
 
-        walkTowardsTarget();
+        if (_target == null) {
+            paceIdly();
+        } else {
+            walkTowardsTarget();
 
-        // TODO: Try and fall into rank with my robot bretheren
+            // TODO: Try and fall into rank with my robot bretheren
+        }
     }
 
     public function isNearTarget () :Boolean
@@ -69,6 +78,9 @@ public class Robot extends Sprite
         return false;
     }
 
+    /**
+     * Makes the robot walk towards its target.
+     */
     protected function walkTowardsTarget () :void
     {
         /* FIXME: Walk less stupidly. Although I suppose they ARE dumb robots,
@@ -85,7 +97,38 @@ public class Robot extends Sprite
         } else if (_target.y > y) {
             y++;
         }
+    }
 
+    /**
+     * Makes the robot pace around in no particular direction, because it has
+     * no place to go.
+     */
+    protected function paceIdly () :void 
+    {
+        /* TODO: Maybe some fancier pacing than total random jitter.
+         * But then again, it's pretty funny stuff
+         */
+        switch (int(Math.random() * 3)) {
+        case 0:
+            x++;
+            break;
+        case 1:
+            x--;
+            break;
+        default:
+            // Do nothing
+        }
+
+        switch (int(Math.random() * 3)) {
+        case 0:
+            y++;
+            break;
+        case 1:
+            y--;
+            break;
+        default:
+            // Do nothing
+        }
     }
     
     /**
@@ -145,6 +188,7 @@ public class Robot extends Sprite
     /**
      * Hacky debug function to print some text on the screen.
      */
+    protected var _labelY :int = 0;
     protected function makeLabel (text :String) :void
     {
         var label :TextField = new TextField();
@@ -170,7 +214,7 @@ public class Robot extends Sprite
             return;
         }
 
-        // TODO: deal damage to our target base
+        _target.takeDamage();
     }
 
     /**
@@ -181,9 +225,6 @@ public class Robot extends Sprite
     {
         return true;
     }
-
-    /** The position of our last placed label. */
-    protected var _labelY :int = 0;
 
     /**
      * Handles things when the mouse comes over the robot.

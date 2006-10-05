@@ -52,7 +52,7 @@ public class RobotRampage extends Sprite
             for (var ii :int = 0; ii < INITIAL_ROBOTS; ii++) {
                 addRobot(true);
             }
-            _gameObj.startTicker("tick", 100);
+            _gameObj.startTicker("tick", 50);
         }
     }
 
@@ -87,27 +87,31 @@ public class RobotRampage extends Sprite
         if (isMaster()) {
             _ticksSinceRobot++;
 
-            var tmpRobots :Array = []
+            var tmpRobots :Array;
 
-            // Look successful attacks
+            // Look for successful attacks
+            tmpRobots = [];
             for each (robot in _robots) {
                 if (robot.isNearTarget()) {
                     // Kaboom!
-                    _explodingRobots.push(robot);
                     robot.explode();
+                    _explodingRobots.push(robot);
                 } else {
                     tmpRobots.push(robot);
                 }
             }
+            _robots = tmpRobots;
 
+            // Reap finished exploders
+            tmpRobots = [];
             for each (robot in _explodingRobots) {
                 if (robot.isDoneExploding()) {
                     removeChild(robot);
+                } else {
+                    tmpRobots.push(robot);
                 }
             }
-
-            _robots = tmpRobots;
-
+            _explodingRobots = tmpRobots;
 
             // Add more robots as appropriate
             if (_ticksSinceRobot >= _robotInterval) {
@@ -121,6 +125,9 @@ public class RobotRampage extends Sprite
     }
 
 
+    /**
+     * Creates our moon bases.
+     */
     public function addMoonBases () : void
     {
         var names :Array = _gameObj.getPlayerNames();
@@ -155,7 +162,7 @@ public class RobotRampage extends Sprite
     /**
      * Adds a new robot with random attributes.
      */
-    public function addRobot (pickTarget :Boolean=false) : void
+    protected function addRobot (pickTarget :Boolean=false) : void
     {
         var robot :Robot = new Robot(_robotFactory);
 
@@ -163,18 +170,36 @@ public class RobotRampage extends Sprite
             (Math.random() * 2 * CENTER_RADIUS) - CENTER_RADIUS;
         robot.y = (height/2) + 
             (Math.random() * 2 * CENTER_RADIUS) - CENTER_RADIUS;
-
-        if (pickTarget) {
-            // FIXME: worry about destroyed players
-            var target :int = int(Math.random() * _bases.length);
-            robot.setTarget(_bases[target]);
-        }
-
-        addChild(robot);
-
         _robots.push(robot);
 
+
+        if (pickTarget) {
+            var bases :Array = [];
+            var base :MoonBase;
+
+            for each (base in _bases) {
+                if (!base.isDestroyed()) {
+                    bases.push(base);
+                }
+            }
+
+            if (bases.length > 0) {
+                setRobotTarget(robot, bases[int(Math.random() * bases.length)]);
+            } else {
+                // All bases are destroyed, but we're still adding robots?
+            }
+        }
+
         _ticksSinceRobot = 0;
+        addChild(robot);
+    }
+
+    /**
+     * Turns a robot's steely glare upon a moon base.
+     */
+    protected function setRobotTarget (robot :Robot, base :MoonBase) :void
+    {
+        robot.setTarget(base);
     }
 
     /** 
@@ -203,7 +228,6 @@ public class RobotRampage extends Sprite
 
     /** An array of robots. */
     protected var _robots :Array = [];
-
 
     /** An array of exploding robots. */
     protected var _explodingRobots :Array = [];
