@@ -193,7 +193,7 @@ public class Particle extends Sprite {
 		var perpMomentum:Vector = velProjection.multNew(sysObj.coeffFric);
 
 		// compute momentum of particle in direction of normal
-		var normMomentum:Vector = normal.multNew(sDotV * sysObj.coeffRest);
+		var normMomentum:Vector = normal.multNew(sDotV * sysObj.coeffRest - sysObj.coeffPinball);
 		var totalMomentum:Vector = normMomentum.plusNew(perpMomentum);
 
 		// set new velocity w/ total momentum

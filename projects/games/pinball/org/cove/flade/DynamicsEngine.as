@@ -37,6 +37,7 @@ public class DynamicsEngine {
 
 	public var gravity:Vector;
 	public var coeffRest:Number;
+        public var coeffPinball:Number;
 	public var coeffFric:Number;
 	public var coeffDamp:Number;	
 

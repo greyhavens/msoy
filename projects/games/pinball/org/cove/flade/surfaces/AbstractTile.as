@@ -157,9 +157,9 @@ public class AbstractTile extends Sprite {
 	}
 
         public function onContact():void {
-                if (onContactListener != null) {
-                        onContactListener();
-                }
+            if (onContactListener != null) {
+                onContactListener(this);
+            }
         }	
 }
 }
