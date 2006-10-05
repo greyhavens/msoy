@@ -38,6 +38,7 @@ import com.threerings.whirled.spot.data.SpotMarshaller;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.parlor.data.ParlorMarshaller;
+import com.threerings.toybox.data.ToyBoxMarshaller;
 
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MsoyAuthResponseData;
@@ -209,6 +210,7 @@ public class MsoyClient extends Client
         c = ItemMarshaller;
         c = LobbyMarshaller;
         c = LobbyController;
+        c = ToyBoxMarshaller;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("global")]
