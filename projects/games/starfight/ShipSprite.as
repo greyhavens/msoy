@@ -78,8 +78,8 @@ public class ShipSprite extends Sprite
     {
         var friction :Number = getFriction();
 
-        xVel = xVel*friction + Math.cos(rotation*Math.PI/180)*accel;
-        yVel = yVel*friction + Math.sin(rotation*Math.PI/180)*accel;
+        xVel = xVel*friction + Math.cos(rotation*Codes.DEGS_TO_RADS)*accel;
+        yVel = yVel*friction + Math.sin(rotation*Codes.DEGS_TO_RADS)*accel;
 
         resolveMove(boardX, boardY, boardX + xVel, boardY + yVel);
     }
@@ -213,12 +213,12 @@ public class ShipSprite extends Sprite
 
     public function fire () :void
     {
-        var rads :Number = rotation*Math.PI/180;
+        var rads :Number = rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
         _game.fireShot(boardX + cos, boardY + sin,
             cos * SHOT_SPD, sin * SHOT_SPD);
-        _ticksToFire = TICKS_PER_SHOT;
+        _ticksToFire = TICKS_PER_SHOT - 1;
     }
 
     /**
@@ -288,7 +288,7 @@ public class ShipSprite extends Sprite
     protected static const BACKWARD_ACCEL :Number = -0.025;
     protected static const FRICTION :Number = 0.95;
     protected static const SHOT_SPD :Number = 1.0;
-    protected static const TICKS_PER_SHOT :int = 3;
+    protected static const TICKS_PER_SHOT :int = 4;
 
     /** Our ship animation. */
     protected var _shipMovie :MovieClipAsset;

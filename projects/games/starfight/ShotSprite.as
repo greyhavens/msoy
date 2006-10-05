@@ -28,9 +28,9 @@ public class ShotSprite extends Sprite {
 
         _shotMovie = MovieClipAsset(new shotAnim());
         _shotMovie.gotoAndPlay(1);
-        _shotMovie.x = 0;
+        _shotMovie.x = -_shotMovie.width/2;
         _shotMovie.y = 0;
-        _shotMovie.rotation = 180/Math.PI*Math.atan2(xVel, -yVel);
+        rotation = Codes.RADS_TO_DEGS*Math.atan2(xVel, -yVel);
         addChild(_shotMovie);
     }
 
