@@ -1,10 +1,9 @@
 package {
 
-import flash.display.Graphics;
 import flash.display.Sprite;
-
 import flash.events.KeyboardEvent;
-import flash.events.MouseEvent;
+import flash.ui.Keyboard;
+import flash.external.ExternalInterface;
 
 import com.threerings.ezgame.Game;
 import com.threerings.ezgame.EZGame;
@@ -12,7 +11,7 @@ import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
-[SWF(width="600", height="400")]
+[SWF(width="512", height="512")]
 public class TruckOrTreat extends Sprite
     implements Game
 {
@@ -23,8 +22,39 @@ public class TruckOrTreat extends Sprite
     public function setGameObject (gameObj :EZGame) :void
     {
         _gameObj = gameObj;
+        // Create board and put a kid on it.
         _board = new Board(gameObj);
-        _gameObj.localChat("Run fast, get candy, and don't get run over!")
+        addChild(_board);
+        _kid = new Kid(1, 5);
+        addChild(_kid);
+        
+        // Listen for keys being hit
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, keyHandler);
+    }
+    
+    public static function log (msg :String) :void
+    {
+        ExternalInterface.call("console.debug", msg);
+    }
+    
+    protected function keyHandler(event :KeyboardEvent) :void
+    {
+        switch (event.keyCode) {
+        case Keyboard.UP:
+            _kid.move(0, -1);
+            break;
+        case Keyboard.DOWN:
+            _kid.move(0, 1);
+            break;
+        case Keyboard.LEFT:
+            _kid.move(-1, 0);
+            break;
+        case Keyboard.RIGHT:
+            _kid.move(1, 0);
+            break;
+        default:
+            return;
+        }
     }
     
     /** The game object. */
@@ -33,8 +63,7 @@ public class TruckOrTreat extends Sprite
     /** Game board. */
     protected var _board :Board;
     
-    /** The player's character. */
+    /** The player's kid character. */
     protected var _kid :Kid
-    
 }
 }
