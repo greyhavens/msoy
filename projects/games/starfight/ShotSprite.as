@@ -2,6 +2,8 @@ package {
 
 import flash.display.Sprite;
 
+import mx.core.MovieClipAsset;
+
 public class ShotSprite extends Sprite {
 
     /** Position. */
@@ -24,16 +26,19 @@ public class ShotSprite extends Sprite {
 
         complete = false;
 
-        // TODO: Fancy image.
-        graphics.beginFill(uint(0xFF0000));
-        graphics.drawCircle(0, 0, 4);
+        _shotMovie = MovieClipAsset(new shotAnim());
+        _shotMovie.gotoAndPlay(1);
+        _shotMovie.x = 0;
+        _shotMovie.y = 0;
+        _shotMovie.rotation = 180/Math.PI*Math.atan2(xVel, -yVel);
+        addChild(_shotMovie);
     }
 
     public function tick (board :BoardSprite) :void
     {
         var coll :Collision = board.getCollision(boardX, boardY,
             boardX + xVel, boardY + yVel, COLLISION_RAD);
-        if (coll != null) {
+        if (coll == null) {
             boardX += xVel;
             boardY += yVel;
         } else {
@@ -53,5 +58,12 @@ public class ShotSprite extends Sprite {
     }
 
     protected static const COLLISION_RAD :Number = 0.1;
+
+    /** Our shot animation. */
+    protected var _shotMovie :MovieClipAsset;
+
+    [Embed(source="rsrc/beam.swf")]
+    protected var shotAnim :Class;
+
 }
 }

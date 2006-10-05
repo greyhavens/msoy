@@ -10,6 +10,8 @@
   <target name="compile">
     <java jar="${root.path}/lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-compiler.optimize"/>
+      <arg value="-compiler.debug"/>
+      <arg value="-compiler.verbose-stacktraces=true"/>
       <arg value="-compiler.library-path"/>
       <arg value="${root.path}"/>
       <arg value="${root.path}/lib/as-compiler/frameworks/libs"/>

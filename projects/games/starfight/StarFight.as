@@ -64,7 +64,7 @@ public class StarFight extends Sprite
         _gameObj = gameObj;
         _gameObj.addEventListener(StateChangedEvent.GAME_STARTED, gameStarted);
 
-        _gameObj.localChat("Welcome to <game to be named later>!");
+        _gameObj.localChat("Welcome to Zyraxxus!");
 
         var boardObj :Board;
         var boardBytes :ByteArray =  ByteArray(_gameObj.get("board"));
@@ -176,6 +176,8 @@ public class StarFight extends Sprite
             var shot :ShotSprite =
                 new ShotSprite(val[0], val[1], val[2], val[3]);
             _shots.push(shot);
+            shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+            log("Rcvd shot: " + val);
             addChild(shot);
         }
     }
@@ -201,6 +203,7 @@ public class StarFight extends Sprite
         args[2] = xVel;
         args[3] = yVel;
         _gameObj.sendMessage("shot", args);
+        log("Firing: " + args);
     }
 
     /**
@@ -218,7 +221,7 @@ public class StarFight extends Sprite
 
         // Recenter the board on our ship.
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
-/*
+
         // Update all live shots.
         var completed :Array = []; // Array<ShotSprite>
         for each (var shot :ShotSprite in _shots) {
@@ -236,7 +239,7 @@ public class StarFight extends Sprite
             _shots.splice(_shots.indexOf(shot), 1);
             removeChild(shot);
         }
-*/
+
         // Every few frames, broadcast our status to everyone else.
         if (_updateCount++ % FRAMES_PER_UPDATE == 0) {
             _gameObj.set("ship", _ownShip.writeTo(new ByteArray()),

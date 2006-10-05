@@ -65,7 +65,6 @@ public class ShipSprite extends Sprite
         // Set up our animation.
         _shipMovie = MovieClipAsset(new shipAnim());
         setAnimMode(IDLE);
-        _shipMovie.gotoAndStop(FORWARD); // TODO : remove this
         _shipMovie.x = WIDTH/2;
         _shipMovie.y = -HEIGHT/2;
         _shipMovie.rotation = 90;
@@ -152,6 +151,12 @@ public class ShipSprite extends Sprite
         } else {
             setAnimMode(IDLE);
         }
+
+        if (_firing && (_ticksToFire == 0)) {
+            fire();
+        } else if (_ticksToFire > 0) {
+            _ticksToFire--;
+        }
     }
 
     /**
@@ -161,7 +166,7 @@ public class ShipSprite extends Sprite
     {
         if (_shipMovie.currentFrame != mode) {
             //TODO : re-enable
-            //_shipMovie.gotoAndStop(mode);
+            _shipMovie.gotoAndStop(mode);
         }
     }
 
@@ -199,12 +204,21 @@ public class ShipSprite extends Sprite
             accel = BACKWARD_ACCEL;
         } else if (event.keyCode == KV_SPACE) {
             // TODO : firing mode rather than instantaneous.
-            var rads :Number = rotation*Math.PI/180;
-            var cos :Number = Math.cos(rads);
-            var sin :Number = Math.sin(rads);
-            _game.fireShot(boardX + cos, boardY + sin,
-                cos * SHOT_SPD, sin * SHOT_SPD);
+            if (_ticksToFire == 0) {
+                fire();
+            }
+            _firing = true;
         }
+    }
+
+    public function fire () :void
+    {
+        var rads :Number = rotation*Math.PI/180;
+        var cos :Number = Math.cos(rads);
+        var sin :Number = Math.sin(rads);
+        _game.fireShot(boardX + cos, boardY + sin,
+            cos * SHOT_SPD, sin * SHOT_SPD);
+        _ticksToFire = TICKS_PER_SHOT;
     }
 
     /**
@@ -220,6 +234,8 @@ public class ShipSprite extends Sprite
             accel = Math.min(accel, 0);
         } else if (event.keyCode == KV_DOWN) {
             accel = Math.max(accel, 0);
+        } else if (event.keyCode == KV_SPACE) {
+            _firing = false;
         }
     }
 
@@ -259,6 +275,9 @@ public class ShipSprite extends Sprite
     /** The main game object. */
     protected var _game :StarFight;
 
+    protected var _firing :Boolean;
+    protected var _ticksToFire :int;
+
     /** Various UI constants. */
     protected static const RED :uint = uint(0xFF0000);
     protected static const BLACK :uint = uint(0x000000);
@@ -268,7 +287,8 @@ public class ShipSprite extends Sprite
     protected static const FORWARD_ACCEL :Number = 0.05;
     protected static const BACKWARD_ACCEL :Number = -0.025;
     protected static const FRICTION :Number = 0.95;
-    protected static const SHOT_SPD :Number = 2.0;
+    protected static const SHOT_SPD :Number = 1.0;
+    protected static const TICKS_PER_SHOT :int = 3;
 
     /** Our ship animation. */
     protected var _shipMovie :MovieClipAsset;
