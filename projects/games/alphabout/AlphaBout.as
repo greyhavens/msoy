@@ -114,8 +114,8 @@ public class AlphaBout extends Sprite
 
     public function coordsToIdx (x :int, y :int) :int
     {
-        return (int(((y - 16) / Piece.SIZE) * BOARD_SIZE) + 
-                int((x - 16) / Piece.SIZE));
+        return (int(((y - (Piece.SIZE / 2)) / Piece.SIZE) * BOARD_SIZE) + 
+                int((x - (Piece.SIZE /2)) / Piece.SIZE));
     }
 
     public function idxToX (index :int) :int
