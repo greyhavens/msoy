@@ -28,10 +28,11 @@ public class BoardSprite extends Sprite
     }
 
     /**
-     * Returns the first collision for a ship moving along the given path.
+     * Returns the first collision for something of the specified radius (rad)
+     *  moving along the given path.
      */
     public function getCollision (oldX :Number, oldY :Number,
-        newX :Number, newY :Number) :Collision
+        newX :Number, newY :Number, rad :Number) :Collision
     {
         var hits :Array = [];
 
@@ -44,17 +45,17 @@ public class BoardSprite extends Sprite
 
         // Check each obstacle and figure out which one we hit first.
         for each (var obs :Obstacle in _obstacles) {
-            if ((obs.x <= (newX + 1.0)) &&
-                ((obs.x+1.0) >= (newX - 1.0)) &&
-                (obs.y <= (newY + 1.0)) &&
-                ((obs.y+1.0) >= (newY - 1.0))) {
+            if ((obs.x <= (newX + rad)) &&
+                ((obs.x+1.0) >= (newX - rad)) &&
+                (obs.y <= (newY + rad)) &&
+                ((obs.y+1.0) >= (newY - rad))) {
 
                 // Find how long it is til our X coords collide.
                 var timeToX :Number;
                 if (dx > 0.0) {
-                    timeToX = (obs.x - (oldX+1.0))/dx;
+                    timeToX = (obs.x - (oldX+rad))/dx;
                 } else if (dx < 0.0) {
-                    timeToX = ((obs.x+1.0) - (oldX-1.0))/dx;
+                    timeToX = ((obs.x+1.0) - (oldX-rad))/dx;
                 } else {
                     timeToX = 0.0;
                 }
@@ -62,9 +63,9 @@ public class BoardSprite extends Sprite
                 // Find how long it is til our Y coords collide.
                 var timeToY :Number;
                 if (dy > 0.0) {
-                    timeToY = (obs.y - (oldY+1.0))/dy;
+                    timeToY = (obs.y - (oldY+rad))/dy;
                 } else if (dy < 0.0) {
-                    timeToY = ((obs.y+1.0) - (oldY-1.0))/dy;
+                    timeToY = ((obs.y+1.0) - (oldY-rad))/dy;
                 } else {
                     timeToY = 0.0;
                 }
@@ -88,7 +89,8 @@ public class BoardSprite extends Sprite
         while (true) {
             pt = new Point(Math.random() * (boardWidth - 4) + 2,
                 Math.random() * (boardHeight - 4) + 2);
-            if (getCollision(pt.x, pt.y, pt.x, pt.y) == null) {
+            if (getCollision(pt.x, pt.y, pt.x, pt.y, ShipSprite.COLLISION_RAD)
+                == null) {
                 return pt;
             }
         }

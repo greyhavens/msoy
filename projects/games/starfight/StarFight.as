@@ -27,7 +27,7 @@ import com.threerings.ezgame.StateChangedListener;
  */
 [SWF(width="800", height="530")]
 public class StarFight extends Sprite
-    implements Game, PropertyChangedListener
+    implements Game, PropertyChangedListener, MessageReceivedListener
 {
     public static const WIDTH :int = 800;
     public static const HEIGHT :int = 530;
@@ -102,7 +102,7 @@ public class StarFight extends Sprite
         addChild(_board);
 
         // Create our local ship and center the board on it.
-        _ownShip = new ShipSprite(_board, false);
+        _ownShip = new ShipSprite(_board, this, false);
         _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
         addChild(_ownShip);
@@ -114,6 +114,7 @@ public class StarFight extends Sprite
         // Set up our initial ship sprites.
         var gameShips :Array = (_gameObj.get("ship") as Array);
         _ships = [];
+        _shots = [];
 
         // The game already has some ships, create sprites for em.
         if (gameShips != null) {
@@ -122,7 +123,7 @@ public class StarFight extends Sprite
                 if (gameShips[ii] == null) {
                     _ships[ii] = null;
                 } else {
-                    _ships[ii] = new ShipSprite(_board, true);
+                    _ships[ii] = new ShipSprite(_board, this, true);
                     gameShips[ii].position = 0;
                     _ships[ii].readFrom(gameShips[ii]);
                 }
@@ -156,13 +157,26 @@ public class StarFight extends Sprite
                 //  any shifts that occur.
                 var ship :ShipSprite = _ships[event.index];
                 if (ship == null) {
-                    _ships[event.index] = ship = new ShipSprite(_board, true);
+                    _ships[event.index] =
+                        ship = new ShipSprite(_board, this, true);
                     addChild(ship);
                 }
                 var bytes :ByteArray = ByteArray(event.newValue);
                 bytes.position = 0;
                 ship.readFrom(bytes);
             }
+        }
+    }
+
+    // from MessageReceivedListener
+    public function messageReceived (event :MessageReceivedEvent) :void
+    {
+        if (event.name == "shot") {
+            var val :Array = (event.value as Array);
+            var shot :ShotSprite =
+                new ShotSprite(val[0], val[1], val[2], val[3]);
+            _shots.push(shot);
+            addChild(shot);
         }
     }
 
@@ -176,10 +190,25 @@ public class StarFight extends Sprite
     }
 
     /**
+     * Send a message to the server about our shot.
+     */
+    public function fireShot (x :Number, y :Number,
+        xVel :Number, yVel :Number) :void
+    {
+        var args :Array = new Array(4);
+        args[0] = x;
+        args[1] = y;
+        args[2] = xVel;
+        args[3] = yVel;
+        _gameObj.sendMessage("shot", args);
+    }
+
+    /**
      * When our screen updater timer ticks...
      */
     public function tick (event :TimerEvent) :void
     {
+        // Update all ships.
         for each (var ship :ShipSprite in _ships) {
             if (ship != null) {
                 ship.tick();
@@ -189,7 +218,25 @@ public class StarFight extends Sprite
 
         // Recenter the board on our ship.
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+/*
+        // Update all live shots.
+        var completed :Array = []; // Array<ShotSprite>
+        for each (var shot :ShotSprite in _shots) {
+            if (shot != null) {
+                shot.tick(_board);
+                if (shot.complete) {
+                    completed.push(shot);
+                }
+                shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+            }
+        }
 
+        // Remove any that were done.
+        for each (shot in completed) {
+            _shots.splice(_shots.indexOf(shot), 1);
+            removeChild(shot);
+        }
+*/
         // Every few frames, broadcast our status to everyone else.
         if (_updateCount++ % FRAMES_PER_UPDATE == 0) {
             _gameObj.set("ship", _ownShip.writeTo(new ByteArray()),
@@ -206,6 +253,9 @@ public class StarFight extends Sprite
 
     /** All the ships. */
     protected var _ships :Array; // Array<ShipSprite>
+
+    /** Live shots. */
+    protected var _shots :Array; // Array<ShotSprite>
 
     /** The board with all its obstacles. */
     protected var _board :BoardSprite;

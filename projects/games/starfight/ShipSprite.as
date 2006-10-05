@@ -20,10 +20,12 @@ public class ShipSprite extends Sprite
     public static const KV_UP :uint = 38;
     public static const KV_RIGHT :uint = 39;
     public static const KV_DOWN :uint = 40;
+    public static const KV_SPACE :uint = 32;
 
     /** The size of the ship. */
     public static const WIDTH :int = 40;
     public static const HEIGHT :int = 40;
+    public static const COLLISION_RAD :Number = 0.9;
 
     /** How fast the ship is accelerating. */
     public var accel :Number;
@@ -43,7 +45,8 @@ public class ShipSprite extends Sprite
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
      */
-    public function ShipSprite (board :BoardSprite, skipStartingPos :Boolean)
+    public function ShipSprite (board :BoardSprite, game :StarFight,
+        skipStartingPos :Boolean)
     {
         accel = 0.0;
         turnRate = 0.0;
@@ -57,6 +60,7 @@ public class ShipSprite extends Sprite
         }
 
         _board = board;
+        _game = game;
 
         // Set up our animation.
         _shipMovie = MovieClipAsset(new shipAnim());
@@ -89,7 +93,8 @@ public class ShipSprite extends Sprite
     public function resolveMove (startX :Number, startY :Number,
         endX :Number, endY :Number) :void
     {
-        var coll :Collision = _board.getCollision(startX, startY, endX, endY);
+        var coll :Collision = _board.getCollision(startX, startY, endX, endY,
+            COLLISION_RAD);
         if (coll != null) {
             var bounce :Number = coll.obstacle.getElasticity();
             var dx :Number = endX - startX;
@@ -175,8 +180,8 @@ public class ShipSprite extends Sprite
      */
     public function setPosRelTo (otherX :Number, otherY: Number) :void
     {
-        x = ((boardX - otherX) * PIXELS_PER_TILE) + StarFight.WIDTH/2;
-        y = ((boardY - otherY) * PIXELS_PER_TILE) + StarFight.HEIGHT/2;
+        x = ((boardX - otherX) * Codes.PIXELS_PER_TILE) + StarFight.WIDTH/2;
+        y = ((boardY - otherY) * Codes.PIXELS_PER_TILE) + StarFight.HEIGHT/2;
     }
 
     /**
@@ -192,6 +197,13 @@ public class ShipSprite extends Sprite
             accel = FORWARD_ACCEL;
         } else if (event.keyCode == KV_DOWN) {
             accel = BACKWARD_ACCEL;
+        } else if (event.keyCode == KV_SPACE) {
+            // TODO : firing mode rather than instantaneous.
+            var rads :Number = rotation*Math.PI/180;
+            var cos :Number = Math.cos(rads);
+            var sin :Number = Math.sin(rads);
+            _game.fireShot(boardX + cos, boardY + sin,
+                cos * SHOT_SPD, sin * SHOT_SPD);
         }
     }
 
@@ -244,6 +256,9 @@ public class ShipSprite extends Sprite
     /** The board we inhabit. */
     protected var _board :BoardSprite;
 
+    /** The main game object. */
+    protected var _game :StarFight;
+
     /** Various UI constants. */
     protected static const RED :uint = uint(0xFF0000);
     protected static const BLACK :uint = uint(0x000000);
@@ -253,8 +268,7 @@ public class ShipSprite extends Sprite
     protected static const FORWARD_ACCEL :Number = 0.05;
     protected static const BACKWARD_ACCEL :Number = -0.025;
     protected static const FRICTION :Number = 0.95;
-
-    protected static const PIXELS_PER_TILE :int = 20;
+    protected static const SHOT_SPD :Number = 2.0;
 
     /** Our ship animation. */
     protected var _shipMovie :MovieClipAsset;
