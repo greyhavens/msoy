@@ -79,7 +79,6 @@ public class SubAttack extends Sprite
 
                 } else {
                     _gameObj.sendMessage("sub" + _myIndex, [ action ]);
-                    trace("sent: " + now);
                     _lastSent = now;
                 }
             }
@@ -94,7 +93,6 @@ public class SubAttack extends Sprite
             if ((now - _lastSent) >= SEND_THROTTLE) {
                 _gameObj.sendMessage("sub" + _myIndex, _queued);
                 _lastSent = now;
-                trace("sent: " + now);
                 _queued = null;
             }
         }
