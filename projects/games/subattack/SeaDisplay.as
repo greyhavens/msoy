@@ -6,6 +6,8 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
+import flash.text.TextField;
+
 public class SeaDisplay extends Sprite
 {
     /** The size of a tile. */
@@ -43,6 +45,10 @@ public class SeaDisplay extends Sprite
 //        graphics.drawRect(0, 0,
 //            TILE_SIZE * Board.WIDTH, TILE_SIZE * Board.HEIGHT);
 //        graphics.lineStyle(0, 0, 0);
+
+        _respawnMsg = new TextField();
+        _respawnMsg.text = "Press ENTER to spawn.";
+        _respawnMsg.background = true;
     }
 
     public function setFollowSub (sub :Submarine) :void
@@ -86,6 +92,23 @@ public class SeaDisplay extends Sprite
         y = vy * -1 * TILE_SIZE;
     }
 
+    public function checkSubDeath (sub :Submarine) :void
+    {
+        if (sub != _sub) {
+            return;
+        }
+        var isDead :Boolean = sub.isDead();
+        if (isDead == (_respawnMsg.parent == null)) {
+            if (isDead) {
+                _respawnMsg.x = sub.x;
+                _respawnMsg.y = sub.y;
+                addChild(_respawnMsg);
+            } else {
+                removeChild(_respawnMsg);
+            }
+        }
+    }
+
     protected function pickBitmap (choices :Array) :void
     {
         var n :Number = Math.random();
@@ -102,6 +125,8 @@ public class SeaDisplay extends Sprite
     protected var _sub :Submarine;
 
     protected var _downs :Array = [];
+
+    protected var _respawnMsg :TextField;
 
     /** The frequency with which to pick each bitmap. Must add to 1.0 */
     protected static const PICKS :Array = [ 0.05, 0.15, 0.30, 0.50 ];

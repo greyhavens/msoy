@@ -11,5 +11,6 @@ public class Action
     public static const DOWN :int = 3;
     public static const LEFT :int = 4;
     public static const RIGHT :int = 5;
+    public static const RESPAWN :int = 6;
 }
 }

@@ -27,19 +27,48 @@ public class Submarine extends BaseSprite
         addChild(nameLabel);
     }
 
+    public function isDead () :Boolean
+    {
+        return _dead;
+    }
+
+    public function respawn (xx :int, yy :int) :void
+    {
+        if (_dead) {
+            _dead = false;
+            _x = xx;
+            _y = yy;
+            updateKilled();
+            updateLocation();
+            updateVisual();
+        }
+    }
+
+    public function distance (xx :int, yy :int) :Number
+    {
+        var dx :Number = xx - _x;
+        var dy :Number = yy - _y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
     /**
      * Perform the action specified, or return false if unable.
      */
     public function performAction (action :int) :Boolean
     {
-        if (_queuedMoves.length > 0) {
-            // TODO: don't queue shoots?
-            _queuedMoves.push(action);
-        }
-        var result :int = performActionInternal(action);
-        if (result == CANT) {
-            _queuedMoves.push(action);
-        }
+        _queuedActions.push(action);
+
+//        if (_queuedActions.length > 0) {
+//            if (_queuedActions.length >= 5) {
+//                return true; // don't queue?
+//            }
+//            // TODO: don't queue shoots?
+//            _queuedActions.push(action);
+//        }
+//        var result :int = performActionInternal(action);
+//        if (result == CANT) {
+//            _queuedActions.push(action);
+//        }
         return true;
     }
 
@@ -49,16 +78,19 @@ public class Submarine extends BaseSprite
 
     protected function performActionInternal (action :int) :int
     {
-        // TEMP: until I sort out a few things...
-        if (_shot || _moved) {
+        if (_dead) {
+            return DROP;
+        }
+
+        // if we've already shot, we can do no more
+        if (_shot) {
             return (action == Action.SHOOT) ? DROP : CANT;
         }
-        // END: temp
 
         if (action == Action.SHOOT) {
-            if (_shot || _torpedos.length == MAX_TORPEDOS) {
+            if (_torpedos.length == MAX_TORPEDOS) {
                 // shoot once per tick, max 2 in-flight
-                return CANT;
+                return DROP;
 
             } else {
                 _torpedos.push(new Torpedo(this, _board));
@@ -67,21 +99,17 @@ public class Submarine extends BaseSprite
             }
         }
 
-        // otherwise, it's a move request
+        // otherwise, it's a move request, it'll have to happen next tick
+        if (_moved) {
+            return CANT;
+        }
 
         // we can always re-orient
         if (_orient != action) {
             _orient = action;
             updateVisual();
-            return performActionInternal(action);
-            //return OK;
-
-        // but we can't move twice in the same tick
-        } else if (_moved) {
-            return CANT;
-
-        // try to move, blocking on non-traversable tiles
-        } else if (!advanceLocation()) {
+        }
+        if (!advanceLocation()) {
             return DROP;
         }
 
@@ -98,25 +126,33 @@ public class Submarine extends BaseSprite
         // reset our move counter
         _moved = false;
         _shot = false;
+
+        while (_queuedActions.length > 0) {
+            var action :int = int(_queuedActions[0]);
+            if (CANT == performActionInternal(action)) {
+                return;
+            }
+            _queuedActions.shift();
+        }
     }
 
     public function postTick () :void
     {
-        while (_queuedMoves.length > 0) {
-            var action :int = int(_queuedMoves[0]);
-            if (CANT == performActionInternal(action)) {
-//                if (move != Action.SHOOT) {
-                    return;
-//                }
-            }
-            _queuedMoves.shift();
-        }
+//        while (_queuedActions.length > 0) {
+//            var action :int = int(_queuedActions[0]);
+//            if (CANT == performActionInternal(action)) {
+////                if (move != Action.SHOOT) {
+//                    return;
+////                }
+//            }
+//            _queuedActions.shift();
+//        }
     }
 
     /**
      * Called by our torpedo to let us know that it's gone.
      */
-    public function torpedoExploded (torp :Torpedo) :void
+    public function torpedoExploded (torp :Torpedo, kills :int) :void
     {
         var idx :int = _torpedos.indexOf(torp);
         if (idx == -1) {
@@ -126,6 +162,21 @@ public class Submarine extends BaseSprite
 
         // remove it
         _torpedos.splice(idx, 1);
+
+        // track the kills
+        _kills += kills;
+    }
+
+    /**
+     * Called to indicate that this sub was hit with a torpedo.
+     */
+    public function wasKilled () :void
+    {
+        _dead = true;
+        _deaths++;
+        _queuedActions.length = 0; // drop any queued actions
+        updateVisual();
+        updateKilled();
     }
 
     override protected function updateLocation () :void
@@ -137,8 +188,20 @@ public class Submarine extends BaseSprite
         }
     }
 
+    protected function updateKilled () :void
+    {
+        if (parent != null) {
+            (parent as SeaDisplay).checkSubDeath(this);
+        }
+    }
+
     protected function updateVisual () :void
     {
+        graphics.clear();
+        if (_dead) {
+            return;
+        }
+
         // draw the circle
         graphics.lineStyle(2, 0x000000);
         graphics.beginFill((_playerIdx == 0) ? 0xFFFF00 : 0x00FFFF);
@@ -169,8 +232,10 @@ public class Submarine extends BaseSprite
         graphics.lineTo(xx, yy);
     }
 
-    /** Queued moves. */
-    protected var _queuedMoves :Array = [];
+    /** Queued actions. */
+    protected var _queuedActions :Array = [];
+
+    protected var _dead :Boolean;
 
     /** The player index that this submarine corresponds to. */
     protected var _playerIdx :int;

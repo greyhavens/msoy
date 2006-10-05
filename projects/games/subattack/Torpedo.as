@@ -13,6 +13,7 @@ public class Torpedo extends BaseSprite
         _x = owner.getX();
         _y = owner.getY();
 
+        updateLocation();
         updateVisual();
 
         _board.torpedoAdded(this);
@@ -32,13 +33,10 @@ public class Torpedo extends BaseSprite
 
     public function explode () :void
     {
-        var hitSubs :Array = _board.torpedoExploded(this);
-        for each (var hitSub :Submarine in hitSubs) {
-            // TODO
-        }
-
-        // tell our originating sub that we exploded
-        _sub.torpedoExploded(this);
+        // tell the board we exploded
+        var subsKilled :int = _board.torpedoExploded(this);
+        // tell our sub, too
+        _sub.torpedoExploded(this, subsKilled);
     }
 
     // overridden: it's always legal for a torpedo to advance, so

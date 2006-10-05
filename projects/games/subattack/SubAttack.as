@@ -62,6 +62,7 @@ public class SubAttack extends Sprite
     {
         if (event.name == "tick") {
             _sentMoves = 0;
+            _sentShoots = 0;
         }
     }
 
@@ -71,11 +72,27 @@ public class SubAttack extends Sprite
     protected function keyEvent (event :KeyboardEvent) :void
     {
         var action :int = getActionForKey(event.keyCode);
-        if (action != Action.NONE) {
-            if (_sentMoves < MAX_MESSAGES_PER_TICK) {
+        switch (action) {
+        case Action.NONE:
+            break;
+
+        case Action.RESPAWN:
+            _board.respawn();
+            break;
+
+        case Action.SHOOT:
+            if (_sentShoots < MAX_SHOOTS_PER_TICK) {
+                _sentShoots++;
+                _gameObj.sendMessage("sub" + _myIndex, action);
+            }
+            break;
+
+        default:
+            if (_sentMoves < MAX_MOVES_PER_TICK) {
                 _sentMoves++;
                 _gameObj.sendMessage("sub" + _myIndex, action);
             }
+            break;
         }
     }
 
@@ -100,6 +117,9 @@ public class SubAttack extends Sprite
         case Keyboard.SPACE:
             return Action.SHOOT;
 
+        case Keyboard.ENTER:
+            return Action.RESPAWN
+
         default:
             return Action.NONE;
         }
@@ -118,7 +138,9 @@ public class SubAttack extends Sprite
     protected var _myIndex :int;
 
     protected var _sentMoves :int = 0;
+    protected var _sentShoots :int = 0;
 
-    protected static const MAX_MESSAGES_PER_TICK :int = 5;
+    protected static const MAX_MOVES_PER_TICK :int = 2;
+    protected static const MAX_SHOOTS_PER_TICK :int = 3;
 }
 }

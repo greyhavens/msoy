@@ -1,5 +1,7 @@
 package {
 
+import flash.events.Event;
+
 import com.threerings.ezgame.EZGame;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
@@ -41,6 +43,8 @@ public class Board
             _seaDisplay.setChildIndex(sub, _seaDisplay.numChildren - 1);
             _seaDisplay.setFollowSub(sub);
         }
+
+        _seaDisplay.addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
     /**
@@ -50,6 +54,44 @@ public class Board
     {
         return (xx >= 0) && (xx < WIDTH) && (yy >= 0) && (yy < HEIGHT) &&
             Boolean(_traversable[coordsToIdx(xx, yy)]);
+    }
+
+    /**
+     * Called by the game to respawn the current player.
+     */
+    public function respawn () :void
+    {
+        var playerIndex :int = _gameObj.getMyIndex();
+        var sub :Submarine = (_subs[playerIndex] as Submarine);
+        if (!sub.isDead()) {
+            return; // don't try to respawn
+        }
+
+        // scan through the entire array and remember the location furthest
+        // away from other subs
+        var bestx :int = sub.getX();
+        var besty :int = sub.getY();
+        var bestDist :Number = 0;
+        for (var yy :int = 0; yy < HEIGHT; yy++) {
+            for (var xx :int = 0; xx < WIDTH; xx++) {
+                if (Boolean(_traversable[coordsToIdx(xx, yy)])) {
+                    var minDist :Number = Number.MAX_VALUE;
+                    for each (var otherSub :Submarine in _subs) {
+                        if (otherSub != sub) {
+                            minDist = Math.min(minDist,
+                                otherSub.distance(xx, yy));
+                        }
+                    }
+                    if (minDist > bestDist) {
+                        bestDist = minDist;
+                        bestx = xx;
+                        besty = yy;
+                    }
+                }
+            }
+        }
+
+        _gameObj.sendMessage("spawn" + playerIndex, coordsToIdx(bestx, besty));
     }
 
     /**
@@ -64,30 +106,29 @@ public class Board
     /**
      * Called by a torpedo when it has exploded.
      *
-     * @return an Array of the subs hit.
+     * @return the number of subs hit by the explosion.
      */
-    public function torpedoExploded (torpedo :Torpedo) :Array
+    public function torpedoExploded (torpedo :Torpedo) :int
     {
         // remove it from our list of torpedos
         var idx :int = _torpedos.indexOf(torpedo);
         if (idx == -1) {
             trace("OMG! Unable to find torpedo??");
-            return null;
+            return 0;
         }
         _torpedos.splice(idx, 1); // remove that torpedo
-
-        _seaDisplay.removeChild(torpedo); // TODO
+        _seaDisplay.removeChild(torpedo);
 
         // find all the subs affected
-        var subs :Array = [];
+        var killCount :int = 0;
         var xx :int = torpedo.getX();
         var yy :int = torpedo.getY();
         for each (var sub :Submarine in _subs) {
             if (sub.getX() == xx && sub.getY() == yy) {
-                subs.push(sub);
+                sub.wasKilled();
+                killCount++;
             }
         }
-
 
         // if it exploded in bounds, make that area traversable
         if (xx >= 0 && xx < WIDTH && yy >= 0 && yy < HEIGHT) {
@@ -95,11 +136,11 @@ public class Board
             _traversable[coordsToIdx(xx, yy)] = true;
             _seaDisplay.markTraversable(xx, yy);
 
-            var duration :int = (subs.length == 0) ? 200 : 400;
+            var duration :int = (killCount == 0) ? 200 : 400;
             _seaDisplay.addChild(new Explosion(xx, yy, duration, this));
         }
 
-        return subs;
+        return killCount;
     }
 
     protected function coordsToIdx (x :int, y :int) :int
@@ -127,6 +168,14 @@ public class Board
         if (name == "tick") {
             doTick();
 
+/*
+            if (_ticks < MAX_QUEUED_TICKS) {
+                _ticks++;
+            } else {
+                doTick();
+            }
+            */
+
         } else if (name.indexOf("sub") == 0) {
             var subIndex :int = int(name.substring(3));
             var moveResult :Boolean = Submarine(_subs[subIndex]).performAction(
@@ -134,6 +183,12 @@ public class Board
             if (!moveResult) {
                 trace("Dropped action: " + name);
             }
+
+        } else if (name.indexOf("spawn") == 0) {
+            var spawnIndex :int = int(name.substring(5));
+            var position :int = int(event.value);
+            Submarine(_subs[spawnIndex]).respawn(
+                int(position % WIDTH), int(position / WIDTH));
         }
     }
 
@@ -172,6 +227,17 @@ public class Board
     }
 
     /**
+     * Handles Event.ENTER_FRAME.
+     */
+    protected function enterFrame (event :Event) :void
+    {
+        if (_ticks > 0) {
+            _ticks--;
+            doTick();
+        }
+    }
+
+    /**
      * Return the starting x coordinate for the specified player.
      */
     protected function getStartingX (playerIndex :int) :int
@@ -191,6 +257,18 @@ public class Board
 
         case 3:
             return (WIDTH - 1);
+
+        case 4:
+            return 0;
+
+        case 5:
+            return (WIDTH - 1);
+
+        case 6:
+            return (WIDTH / 2);
+
+        case 7:
+            return (WIDTH / 2);
         }
     }
 
@@ -214,6 +292,18 @@ public class Board
 
         case 3:
             return 0;
+
+        case 4:
+            return (HEIGHT / 2);
+
+        case 5:
+            return (HEIGHT / 2);
+
+        case 6:
+            return 0;
+
+        case 7:
+            return (HEIGHT - 1);
         }
     }
 
@@ -222,6 +312,8 @@ public class Board
 
     /** The 'sea' where everything lives. */
     protected var _seaDisplay :SeaDisplay;
+    
+    protected var _ticks :int = 0;
 
     /** Contains the submarines, indexed by player index. */
     protected var _subs :Array = [];
@@ -231,5 +323,7 @@ public class Board
 
     /** An array tracking the traversability of each tile. */
     protected var _traversable :Array = [];
+
+    protected static const MAX_QUEUED_TICKS :int = 5;
 }
 }
