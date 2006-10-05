@@ -334,6 +334,8 @@ public abstract class ItemEditor extends PopupPanel
     /**
      * A convenience method for attaching a textbox directly to a field in the
      * item to be edited.
+     *
+     * TODO: If you paste text into the field, this doesn't detect it.
      */
     protected void bind (final TextBoxBase textbox, final Binder binder)
     {
