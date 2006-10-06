@@ -14,20 +14,23 @@ import com.threerings.ezgame.MessageReceivedEvent;
 
 public class Board extends Sprite
 {
+    /** The color of the background. */
+    public static const BACKGROUND_COLOR :int = 0x000000;
+    
     public function Board (gameObj :EZGame)
     {
         _gameObj = gameObj;
         
         // draw the background
-        graphics.beginFill(0x000000);
+        graphics.beginFill(BACKGROUND_COLOR);
         graphics.drawRect(0, 0, 300, 400);
-        graphics.endFill();
         
         // clip everything against the board boundaries
         scrollRect = new Rectangle(0, 0, 300, 400);
         
         // add the paddle and ball objects (which will respond to UI and
         // network events)
+        addChild(_bricks = new Bricks(gameObj, this));
         addChild(_ownPaddle = new Paddle(gameObj, this, true, OWN_COLOR));
         addChild(_oppPaddle = new Paddle(gameObj, this, false, OPP_COLOR));
         addChild(_ownBall = new Ball(gameObj, this, true, OWN_COLOR));
@@ -51,6 +54,11 @@ public class Board extends Sprite
     public function get oppPaddle () :Paddle
     {
         return _oppPaddle;
+    }
+    
+    public function get bricks () :Bricks
+    {
+        return _bricks;
     }
     
     public function get latency () :int
@@ -80,10 +88,11 @@ public class Board extends Sprite
     
     protected var _gameObj :EZGame;
     
-    /** The paddles and balls on the board. */
+    /** The paddles, balls, and bricks on the board. */
     protected var _ownPaddle :Paddle, _oppPaddle :Paddle;
     protected var _ownBall :Ball, _oppBall :Ball;
-
+    protected var _bricks :Bricks;
+    
     /** The current latency estimate. */
     protected var _latency :int;
     

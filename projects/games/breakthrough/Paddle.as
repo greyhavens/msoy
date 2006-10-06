@@ -1,7 +1,6 @@
 package {
 
 import flash.display.Shape;
-import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -36,7 +35,6 @@ public class Paddle extends Shape
         // draw the paddle
         graphics.beginFill(color);
         graphics.drawRect(0, 0, WIDTH, HEIGHT);
-        graphics.endFill();
         
         // center the paddle horizontally
         position = board.width / 2;

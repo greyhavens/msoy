@@ -13,6 +13,9 @@ import com.threerings.ezgame.PropertyChangedEvent;
 
 public class Ball extends Shape
 {
+    /** The radius of the ball. */
+    public static const RADIUS :int = 5;
+    
     public function Ball (
         gameObj :EZGame, board :Board, own :Boolean, color :uint)
     {
@@ -23,7 +26,6 @@ public class Ball extends Shape
         // draw the ball
         graphics.beginFill(color);
         graphics.drawCircle(RADIUS, RADIUS, RADIUS);
-        graphics.endFill();
         
         // make sure the states are initialized
         if (gameObj.get(BALL_STATES) == null) {
@@ -67,7 +69,11 @@ public class Ball extends Shape
                 dx :Number = p2.x - p1.x,
                 dy :Number = p2.y - p1.y,
                 dist :Number = Math.sqrt(dx*dx + dy*dy),
-                t :Number = _pdist / dist;
+                t :Number = _pdist / dist,
+                bcoll :Object = _path[_pidx].bcoll;
+            if (bcoll != null) {
+                _board.bricks.wasHit(bcoll.bx, bcoll.by);
+            }
             if (t >= 1 && _pidx < _path.length - 2) {
                 // proceed to next segment
                 _pdist -= dist;
@@ -111,13 +117,13 @@ public class Ball extends Shape
         if (state.pidx == _gameObj.getMyIndex()) {
             return; // it came from us
         }
-        // if the position is -1, it's attached to the opponent's paddle
-        if (state.position == -1) {
+        // if the path is null, it's attached to the opponent's paddle
+        if (state.path == null) {
             _paddle = _board.oppPaddle;
         
-        // otherwise, it was fired from the opponent's paddle
+        // otherwise, start following the contained path
         } else {
-            fireBall(false, state.position, state.angle, state.progress);
+            followPath(state.path, false);
         }
     }
     
@@ -127,9 +133,9 @@ public class Ball extends Shape
         var angle :Number = _own ? LAUNCH_ANGLE : (Math.PI - LAUNCH_ANGLE);
         
         // fire the ball and announce the update
-        fireBall(true, getAttachX(), angle);
-        _gameObj.set(BALL_STATES, createState(_gameObj.getMyIndex(), _x,
-            angle, 0), getIndex());
+        _gameObj.set(BALL_STATES,
+            createState(_gameObj.getMyIndex(), followNewPath(_x, angle)),
+            getIndex());
     }
     
     protected function hit (
@@ -146,18 +152,15 @@ public class Ball extends Shape
             MAX_REFLECTION_ANGLE);
         
         // fire the ball and announce the update
-        fireBall(true, hx, reflection, penetration);
-        _gameObj.set(BALL_STATES, createState(_gameObj.getMyIndex(),
-            hx, reflection, penetration), getIndex());
+        _gameObj.set(BALL_STATES,
+            createState(_gameObj.getMyIndex(),
+                followNewPath(hx, reflection, penetration)),
+            getIndex());
     }
     
-    protected function fireBall (
-        bottom :Boolean, position :Number, angle :Number,
-        progress: Number = 0) :void
+    protected function followNewPath (
+        position :Number, angle :Number, progress: Number = 0) :Object
     {
-        _paddle = null;
-        _passedPaddle = false;
-    
         // compute the entire path up to the point where the ball
         // leaves the field
         var dx :Number = Math.cos(angle),
@@ -165,47 +168,80 @@ public class Ball extends Shape
             px :Number = position + dx * progress,
             py :Number = (_board.height - (Paddle.HEIGHT + RADIUS)) +
                 dy * progress,
-            oob :Boolean = false;
-        _path = new Array({x: px, y: py});
-        _plen = 0;
+            time :int = getTimer(),
+            oob :Boolean = false,
+            nodes :Array = new Array({x: px, y: py}),
+            path :Object = {btime: time, nodes: nodes},
+            plen :Number = 0;
         do {
             var wx :Number = 0,
-                wy :Number = -RADIUS,
+                wy :Number = Number.MAX_VALUE,
                 t :Number;
-            if (dx != 0) { // check against the walls
-                wx = (dx < 0) ? RADIUS : (_board.width - RADIUS);
-                t = (wx - px) / dx;
-                wy = py + t * dy;
-            }
-            if (wy > -RADIUS) { // bounce off wall
-                dx = -dx;
+            // check against bricks
+            var bcoll :Object = _board.bricks.intersect(
+                px, py, dx, dy, BASE_SPEED, time);
+            if (bcoll != null) {
+                wx = bcoll.x;
+                wy = bcoll.y;
+                dx = bcoll.dx;
+                dy = bcoll.dy;
+                t = bcoll.dist;
                 
-            } else { // compute point of exit
-                wy = -RADIUS;
-                t = (wy - py) / dy;
-                wx = px + t * dx;
-                oob = true;
+            } else {
+                if (dx != 0) { // check against the walls
+                    wx = (dx < 0) ? RADIUS : (_board.width - RADIUS);
+                    t = (wx - px) / dx;
+                    wy = py + t * dy;
+                }
+                if (wy > -RADIUS && wy < _board.height + RADIUS) { 
+                    dx = -dx; // bounce off wall
+                    
+                } else { // compute point of exit
+                    wy = (dy < 0 ? -RADIUS : (_board.height + RADIUS));
+                    t = (wy - py) / dy;
+                    wx = px + t * dx;
+                    oob = true;
+                }
             }
-            _plen += t;
-            _path.push({x: (px = wx), y: (py = wy)});
+            plen += t;
+            time += (t * BASE_SPEED);
+            nodes.push({x: (px = wx), y: (py = wy), bcoll: bcoll});
               
         } while (!oob);
         
-        // flip the path if it's coming from above
-        if (!bottom) {
-            for (var ii :Number = 0; ii < _path.length; ii++) {
-                _path[ii].x = _board.width - _path[ii].x;
-                _path[ii].y = _board.height - _path[ii].y;
+        followPath(path, true);
+        return path;
+    }
+    
+    protected function followPath (path :Object, own :Boolean) :void
+    {
+        _paddle = null;
+        _passedPaddle = false;
+        
+        // prepare the path received from the opponent by rotating it
+        // around and adjusting timestamps
+        if (!own) {
+            var time :int = getTimer();
+            for each (var node :Object in path.nodes) {
+                node.x = _board.width - node.x;
+                node.y = _board.height - node.y;
+                var bcoll :Object = node.bcoll;
+                if (bcoll != null) {
+                    bcoll.bx = _board.bricks.columns - (bcoll.bx + 1);
+                    bcoll.by =  Bricks.LAYERS - (bcoll.by + 1);
+                    _board.bricks.willBeHit(bcoll.bx, bcoll.by,
+                        time + (bcoll.ctime - path.btime));
+                }
             }
         }
         
         // adjust the acceleration to compensate for latency
-        dy = Math.abs(dy);
-        var duration :Number = (_plen / BASE_SPEED) +
-                _board.latency * (bottom ? +2 : -2);
-        _accel = 2*(_plen - _speed*duration) / (duration*duration);
+        //dy = Math.abs(dy);
+        //var duration :Number = (_plen / BASE_SPEED) +
+        //        _board.latency * (bottom ? +2 : -2);
+        //_accel = 2*(_plen - _speed*duration) / (duration*duration);
         
-        // start on the path
+        _path = path.nodes;
         setLocation(_path[0].x, _path[0].y);
         _pidx = 0;
         _pdist = 0;
@@ -235,12 +271,9 @@ public class Ball extends Shape
         this.y = (_y = y) - RADIUS;
     }
     
-    protected function createState (
-        pidx :int, position: Number = -1, angle :Number = 0,
-        progress :Number = 0) :Object
+    protected function createState (pidx :int, path :Object = null) :Object
     {
-        return {pidx: pidx, position: position, angle: angle,
-            progress: progress};
+        return {pidx: pidx, path: path};
     }
     
     protected var _gameObj :EZGame;
@@ -254,7 +287,7 @@ public class Ball extends Shape
     protected var _x :Number, _y :Number;
     
     /** The speed at which the ball travels. */
-    protected var _speed :Number = BASE_SPEED, _accel :Number;
+    protected var _speed :Number = BASE_SPEED, _accel :Number = 0;
     
     /** The path that the ball is following. */
     protected var _path :Array, _plen :Number;
@@ -266,9 +299,6 @@ public class Ball extends Shape
     
     /** The time of the last frame. */
     protected var _lastFrame :int;
-    
-    /** The radius of the ball. */
-    protected static const RADIUS :int = 5;
     
     /** The property used to track ball states. */
     protected static const BALL_STATES :String = "ballStates";
