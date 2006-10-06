@@ -155,6 +155,12 @@ public class Submarine extends BaseSprite
             }
             _queuedActions.shift();
         }
+
+        if (_dead) {
+            if (--_respawnTicks == 0) {
+                performActionInternal(Action.RESPAWN);
+            }
+        }
     }
 
     /**
@@ -185,6 +191,7 @@ public class Submarine extends BaseSprite
         _queuedActions.length = 0; // drop any queued actions
         updateVisual();
         updateDeath();
+        _respawnTicks = AUTO_RESPAWN_TICKS;
     }
 
     override protected function updateLocation () :void
@@ -261,6 +268,9 @@ public class Submarine extends BaseSprite
     /** The number of times we've been killed. */
     protected var _deaths :int;
 
+    /** A count of how long until we respawn. */
+    protected var _respawnTicks :int;
+
     /** The movie clip that represents us. */
     protected var _avatar :MovieClip;
 
@@ -283,6 +293,9 @@ public class Submarine extends BaseSprite
 
     /** The number of pixels to raise the name above the sprite. */
     protected static const NAME_PADDING :int = 3;
+
+    /** The number of ticks that may elapse before we're auto-respawned. */
+    protected static const AUTO_RESPAWN_TICKS :int = 100;
 
     [Embed(source="trucker.swf#animations")]
     protected static const AVATAR :Class;
