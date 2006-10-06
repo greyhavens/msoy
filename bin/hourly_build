@@ -6,6 +6,7 @@
 # to the development server.
 
 ROOT=`dirname $0`/..
-$ROOT/bin/all_rebuild --update --asclient --gclient > /tmp/rebuild-msoy.log
+$ROOT/bin/all_rebuild --update --asclient --gclient --jclient \
+    > /tmp/rebuild-msoy.log
 $ROOT/bin/release_mirror >> /tmp/rebuild-msoy.log
 $ROOT/bin/client_mirror >> /tmp/rebuild-msoy.log

@@ -34,6 +34,9 @@ while [ ! -z "$1" ]; do
     if [ $1 = "--gclient" ]; then
         GCLIENT=true
     fi
+    if [ $1 = "--jclient" ]; then
+        JCLIENT=true
+    fi
     shift
 done
 
@@ -96,6 +99,15 @@ fi
 # build the GWT client if requested
 if [ ! -z "$GCLIENT" ]; then
     ant gclient
+    if [ $? != 0 ]; then
+        rm -f $LOCKFILE
+        exit 255
+    fi
+fi
+
+# build the Java client if requested
+if [ ! -z "JGCLIENT" ]; then
+    ant jclient
     if [ $? != 0 ]; then
         rm -f $LOCKFILE
         exit 255
