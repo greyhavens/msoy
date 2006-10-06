@@ -98,6 +98,7 @@ public class StarFight extends Sprite
         if ((boardObj == null) && (_gameObj.getMyIndex() == 0)) {
             boardObj = new Board(50, 50, true);
             _gameObj.set("ship", new Array(2));
+            _gameObj.set("powerup", new Array(MAX_POWERUPS));
             _gameObj.set("board", boardObj.writeTo(new ByteArray()));
         }
 
@@ -115,8 +116,9 @@ public class StarFight extends Sprite
     {
         _ships = [];
         _shots = [];
+        _powerups = [];
 
-        _board = new BoardSprite(boardObj, _ships);
+        _board = new BoardSprite(boardObj, _ships, _powerups);
         _boardLayer.addChild(_board);
 
         // Create our local ship and center the board on it.
@@ -147,6 +149,33 @@ public class StarFight extends Sprite
             }
         }
 
+        // Set up our initial powerups.
+        var gamePows :Array = (_gameObj.get("powerup") as Array);
+
+        // The game already has some ships, create sprites for em.
+        if (gamePows != null) {
+            for (var pp :int = 0; pp < gamePows.length; pp++)
+            {
+                if (gamePows[pp] == null) {
+                    _powerups[pp] = null;
+                } else {
+                    _powerups[pp] = new Powerup(0, 0, 0);
+                    gamePows[pp].position = 0;
+                    _powerups[pp].readFrom(gamePows[pp]);
+                    Logger.log("Adding powerup child");
+                    _board.powerupLayer.addChild(_powerups[pp]);
+                }
+            }
+        }
+
+        // The first player is in charge of adding powerups.
+        if (_gameObj.getMyIndex() == 0) {
+            addPowerup(null);
+            var timer :Timer = new Timer(20000, 0);
+            timer.addEventListener(TimerEvent.TIMER, addPowerup);
+            timer.start();
+        }
+
         _ships[_gameObj.getMyIndex()] = _ownShip;
 
         // Our ship is interested in keystrokes.
@@ -157,6 +186,44 @@ public class StarFight extends Sprite
         var screenTimer :Timer = new Timer(REFRESH_RATE, 0); // As fast as possible.
         screenTimer.addEventListener(TimerEvent.TIMER, tick);
         screenTimer.start();
+    }
+
+    /**
+     * Tells everyone about a new powerup.
+     */
+    public function addPowerup (event :TimerEvent) :void
+    {
+        for (var ii :int = 0; ii < MAX_POWERUPS; ii++) {
+            if (_powerups[ii] == null) {
+                var x :int = Math.random() * _board.boardWidth;
+                var y :int = Math.random() * _board.boardHeight;
+
+                while (_board.getCollision(x+0.5, y+0.5, x+0.5, y+0.5,
+                           0.1, -1) ||
+                    (_board.getPowerupIdx(x+0.5, y+0.5, x+0.5, y+0.5,
+                        0.1) != -1)) {
+                    x = Math.random() * _board.boardWidth;
+                    y = Math.random() * _board.boardHeight;
+                }
+
+                _powerups[ii] = new Powerup(1+Math.random()*3, x, y);
+
+                _gameObj.set("powerup", _powerups[ii].writeTo(new ByteArray()),
+                    ii);
+                Logger.log("Adding powerup child");
+                _board.powerupLayer.addChild(_powerups[ii]);
+                return;
+            }
+        }
+
+        // If we're all full up, don't do anything.
+    }
+
+    public function removePowerup (idx :int) :void
+    {
+        _gameObj.set("powerup", null, idx);
+        _board.powerupLayer.removeChild(_powerups[idx]);
+        _powerups[idx] = null;
     }
 
     // from PropertyChangedListener
@@ -185,6 +252,28 @@ public class StarFight extends Sprite
                 var bytes :ByteArray = ByteArray(event.newValue);
                 bytes.position = 0;
                 ship.readFrom(bytes);
+            }
+        } else if ((name =="powerup") && (event.index >= 0)) {
+            if (_powerups != null) {
+                if (event.newValue == null) {
+                    if (_powerups[event.index] != null) {
+                        _board.powerupLayer.removeChild(
+                            _powerups[event.index]);
+                        _powerups[event.index] = null;
+                    }
+                    return;
+                }
+
+                var pow :Powerup = _powerups[event.index];
+                if (pow == null) {
+                    _powerups[event.index] =
+                        pow = new Powerup(0, 0, 0);
+                    Logger.log("Adding powerup child");
+                    _board.powerupLayer.addChild(pow);
+                }
+                var pBytes :ByteArray = ByteArray(event.newValue);
+                pBytes.position = 0;
+                pow.readFrom(pBytes);
             }
         }
     }
@@ -270,12 +359,31 @@ public class StarFight extends Sprite
         var now :int = getTimer();
         var time :Number = (now - _lastTickTime)/REFRESH_RATE;
 
+        var ownOldX :Number = _ownShip.boardX;
+        var ownOldY :Number = _ownShip.boardY;
+
         // Update all ships.
         for each (var ship :ShipSprite in _ships) {
             if (ship != null) {
                 ship.tick(time);
+            }
+        }
+
+        // And then shift em based on ownship's new pos.
+        for each (ship in _ships) {
+            if (ship != null) {
                 ship.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
             }
+        }
+
+        var powIdx :int = _board.getPowerupIdx(ownOldX, ownOldY,
+            _ownShip.boardX, _ownShip.boardY, ShipSprite.COLLISION_RAD);
+        while (powIdx != -1) {
+            _ownShip.awardPowerup(_powerups[powIdx].type);
+            removePowerup(powIdx);
+
+            powIdx = _board.getPowerupIdx(ownOldX, ownOldY,
+                _ownShip.boardX, _ownShip.boardY, ShipSprite.COLLISION_RAD);
         }
 
         // Recenter the board on our ship.
@@ -318,6 +426,9 @@ public class StarFight extends Sprite
     /** All the ships. */
     protected var _ships :Array; // Array<ShipSprite>
 
+    /** All the active powerups. */
+    protected var _powerups :Array; // Array<Powerup>
+
     /** Live shots. */
     protected var _shots :Array; // Array<ShotSprite>
 
@@ -340,6 +451,9 @@ public class StarFight extends Sprite
     /** Constants to control update frequency. */
     protected static const REFRESH_RATE :int = 50;
     protected static const FRAMES_PER_UPDATE :int = 2;
+
+    /** This oughta be more dynamic, but ah well. */
+    protected static const MAX_POWERUPS :int = 10;
 
     /** Color constants. */
     protected static const BLACK :uint = uint(0x000000);

@@ -28,9 +28,9 @@ public class ShipSprite extends Sprite
     public static const COLLISION_RAD :Number = 0.9;
 
     /** Powerup flags. */
-    public static const SPEED_MASK :int = 1 << 0;
-    public static const SPREAD_MASK :int = 1 << 1;
-    public static const SHIELDS_MASK :int = 1 << 2;
+    public static const SPEED_MASK :int = 1 << Powerup.SPEED;
+    public static const SPREAD_MASK :int = 1 << Powerup.SPREAD;
+    public static const SHIELDS_MASK :int = 1 << Powerup.SHIELDS;
 
     /** How fast the ship is accelerating. */
     public var accel :Number;
@@ -151,10 +151,9 @@ public class ShipSprite extends Sprite
      */
     public function hit () :void
     {
-        power -= HIT_POWER;
+        power -= ((powerups & SHIELDS_MASK) ? HIT_POWER/2 : HIT_POWER);
         if (power <= 0.0) {
-            _game.explode(boardX, boardY,
-                rotation);
+            _game.explode(boardX, boardY, rotation);
             power = 1.0; //full
             var pt :Point = _board.getStartingPos();
             boardX = pt.x;
@@ -235,9 +234,11 @@ public class ShipSprite extends Sprite
         } else if (event.keyCode == KV_RIGHT) {
             turnRate = TURN_RATE;
         } else if (event.keyCode == KV_UP) {
-            accel = FORWARD_ACCEL;
+            accel = ((powerups & SPEED_MASK) ? FORWARD_ACCEL*1.3 :
+                FORWARD_ACCEL);
         } else if (event.keyCode == KV_DOWN) {
-            accel = BACKWARD_ACCEL;
+            accel = ((powerups & SPEED_MASK) ? BACKWARD_ACCEL*1.3 :
+                BACKWARD_ACCEL);
         } else if (event.keyCode == KV_SPACE) {
             // TODO : firing mode rather than instantaneous.
             if (_ticksToFire <= 0) {
@@ -254,6 +255,21 @@ public class ShipSprite extends Sprite
         var sin :Number = Math.sin(rads);
         _game.fireShot(boardX + cos, boardY + sin,
             cos * SHOT_SPD + xVel, sin * SHOT_SPD + yVel, shipId);
+
+        if (powerups & SPREAD_MASK) {
+            rads += 0.1;
+            cos = Math.cos(rads);
+            sin = Math.sin(rads);
+            _game.fireShot(boardX + cos, boardY + sin,
+                cos * SHOT_SPD + xVel, sin * SHOT_SPD + yVel, shipId);
+
+            rads -= 0.2;
+            cos = Math.cos(rads);
+            sin = Math.sin(rads);
+            _game.fireShot(boardX + cos, boardY + sin,
+                cos * SHOT_SPD + xVel, sin * SHOT_SPD + yVel, shipId);
+        }
+
         _ticksToFire = TICKS_PER_SHOT - 1;
     }
 
@@ -273,6 +289,11 @@ public class ShipSprite extends Sprite
         } else if (event.keyCode == KV_SPACE) {
             _firing = false;
         }
+    }
+
+    public function awardPowerup (type :int) :void
+    {
+        powerups |= (1 << type);
     }
 
     /**

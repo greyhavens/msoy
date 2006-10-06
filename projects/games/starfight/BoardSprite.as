@@ -14,13 +14,17 @@ public class BoardSprite extends Sprite
     public var boardWidth :int;
     public var boardHeight :int;
 
-    public function BoardSprite (board :Board, ships :Array) :void
+    public var powerupLayer :Sprite;
+
+    public function BoardSprite (board :Board, ships :Array,
+        powerups :Array) :void
     {
         this.boardWidth = board.width;
         this.boardHeight = board.height;
 
         _obstacles = board.obstacles;
         _ships = ships;
+        _powerups = powerups;
         paint();
     }
 
@@ -62,7 +66,7 @@ public class BoardSprite extends Sprite
                 }
                 var bX :Number = ship.boardX;
                 var bY :Number = ship.boardY;
-                var r :Number = ShipSprite.COLLISION_RAD;
+                var r :Number = ShipSprite.COLLISION_RAD + rad;
                 // We approximate a ship as a circle for this...
                 var a :Number = dx*dx + dy*dy;
                 var b :Number = 2*(dx*(oldX-bX) + dy*(oldY-bY));
@@ -126,6 +130,46 @@ public class BoardSprite extends Sprite
         return bestHit;
     }
 
+    public function getPowerupIdx (oldX :Number, oldY :Number,
+        newX :Number, newY :Number, rad :Number) :int
+    {
+
+        /** The first one we've seen so far. */
+        var bestTime :Number = 1.0;
+        var bestHit :int = -1;
+
+        var dx :Number = newX - oldX;
+        var dy :Number = newY - oldY;
+        
+        // Check each powerup and figure out which one we hit first.
+        for (var ii :int; ii < _powerups.length; ii++) {
+            var pow :Powerup = _powerups[ii];
+            if (pow == null) {
+                continue;
+            }
+            var bX :Number = pow.boardX;
+            var bY :Number = pow.boardY;
+            var r :Number = rad + 0.5; // Our radius...
+            // We approximate a powerup as a circle for this...
+            var a :Number = dx*dx + dy*dy;
+            var b :Number = 2*(dx*(oldX-bX) + dy*(oldY-bY));
+            var c :Number = bX*bX + bY*bY + oldX*oldX + oldY*oldY -
+                2*(bX*oldX + bY*oldY) - r*r;
+            
+            var determ :Number = b*b - 4*a*c;
+            if (determ >= 0.0) {
+                var u :Number = (-b - Math.sqrt(determ))/(2*a);
+                if ((u >= 0.0) && (u <= 1.0)) {
+                    if (u < bestTime) {
+                        bestTime = u;
+                        bestHit = ii;
+                    }
+                }                    
+            }
+        }
+        return bestHit;
+    }
+
     /**
      * Returns a valid starting point for a ship which is clear.
      */
@@ -174,6 +218,8 @@ public class BoardSprite extends Sprite
         for each (var obs :Obstacle in _obstacles) {
             addChild(obs);
         }
+
+        addChild(powerupLayer = new Sprite());
     }
 
     /** All the obstacles in the world. */
@@ -181,6 +227,9 @@ public class BoardSprite extends Sprite
 
     /** Reference to the array of ships we know about. */
     protected var _ships :Array;
+
+    /** Reference to the array of powerups we know about. */
+    protected var _powerups :Array;
 
     /** Our ship animation. */
     protected var _spaceMovie :MovieClipAsset;
