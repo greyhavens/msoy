@@ -21,9 +21,14 @@
       <arg value="-compiler.warn-class-is-sealed=true"/>
       <arg value="-compiler.warn-constructor-returns-value=true"/>
       <arg value="-compiler.fonts.local-fonts-snapshot=${root.path}/lib/as-compiler/frameworks/localFonts.ser"/>
-      <arg value="-compiler.source-path=${root.path}/projects/narya/src/as/"/>
       <arg value="-compiler.source-path=${root.path}/projects/vilya/src/as/"/>
       <arg value="-compiler.source-path=."/>
+      <arg value="-externs"/>
+      <arg value="com.threerings.ezgame:EZGame"/>
+      <arg value="com.threerings.ezgame:Game"/>
+      <arg value="com.threerings.ezgame:MessageReceivedEvent"/>
+      <arg value="com.threerings.ezgame:PropertyChangedEvent"/>
+      <arg value="com.threerings.ezgame:StateChangedEvent"/>
       <arg value="-file-specs"/>
       <arg value="${app.name}.as"/>
     </java>
