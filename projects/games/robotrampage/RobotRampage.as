@@ -1,9 +1,12 @@
 package {
 
 import flash.display.Sprite;
-import flash.events.KeyboardEvent;
+
+import flash.events.TimerEvent;
 import flash.external.ExternalInterface;
-import flash.ui.Keyboard;
+
+import flash.utils.Timer;
+import flash.utils.getTimer;
 
 import com.threerings.ezgame.Game;
 import com.threerings.ezgame.EZGame;
@@ -18,7 +21,9 @@ import flash.text.StyleSheet;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
-[SWF(width="640", height="480")]
+import flash.utils.ByteArray;
+
+[SWF(width="800", height="540")]
 public class RobotRampage extends Sprite
     implements Game
 {
@@ -49,8 +54,22 @@ public class RobotRampage extends Sprite
         _gameObj.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
 
         if (isMaster()) {
-            _gameObj.startTicker("tick", 100);
+            for (var ii: int = 0; ii < INITIAL_ROBOTS; ii++) {
+                addRobot();
+            }
+
+            var timer :Timer = new Timer(125);
+            timer.addEventListener(TimerEvent.TIMER, doTick);
+            timer.start();
         }
+    }
+
+    public function getBase (playerIndex :int) :MoonBase
+    {
+        if (playerIndex == -1) {
+            return null;
+        }
+        return _bases[playerIndex];
     }
 
     /**
@@ -59,56 +78,114 @@ public class RobotRampage extends Sprite
     protected function msgReceived (event :MessageReceivedEvent) :void
     {
         var name :String = event.name;
-        if (name == "tick") {
-            doTick();
+        if (name == "update") {
+            if (!isMaster()) {
+                updateBases(event.value[0]);
+                updateRobots(event.value[1]);
+            }
+            sortRobots();
+        } else if (name.indexOf("setmade") == 0)  {
+           var playerIndex :int = int(name.substring(7));
+           makeSet(playerIndex, event.value as Array);
+
+        } else {
+            makeLabel("received message: '" + name + "': " + event.value);
         }
     }
 
-    protected function doTick () :void
+    protected function makeSet (playerIndex :int, robotIndices :Array) :void
+    {
+        for each (var ii :int in robotIndices) {
+            var robot :Robot = _robots[ii];
+
+            // FIXME: actually target someone appropriate
+            targetRandomBase(robot);
+            robot.randomizeOnePart();
+        }
+    }
+
+    protected function updateBases (bytes :ByteArray) :void
+    {
+        for each (var base :MoonBase in _bases) {
+            base.readFrom(bytes);
+        }
+    }
+
+    protected function updateRobots (bytes :ByteArray) :void
+    {
+        var robot :Robot;
+        var ii : int;
+
+        
+        // Update existing robots
+        ii = 0;
+        for each (robot in _robots) {
+            ii++;
+            robot.readFrom(bytes);
+        }
+
+        // Add new ones
+        ii = 0;
+        while (bytes.bytesAvailable != 0) {
+            ii++;
+            robot = new Robot(_robotFactory, this);
+            addChild(robot);
+            _robots.push(robot);
+            robot.readFrom(bytes);
+        }
+
+        // prune dead ones
+        for each (robot in _robots) {
+            if (robot.isDead()) {
+                _robots.splice(_robots.indexOf(robot), 1);
+                removeChild(robot);
+            }
+        }
+
+    }
+
+    protected function doTick (event :TimerEvent) :void
     {
         var robot :Robot;
         for each (robot in _robots) {
             robot.tick();
         }
 
-        if (isMaster()) {
-            _ticksSinceRobot++;
+        _ticksSinceRobot++;
 
-            var tmpRobots :Array;
-
-            // Look for successful attacks
-            tmpRobots = [];
-            for each (robot in _robots) {
-                if (robot.isNearTarget()) {
-                    // Kaboom!
-                    robot.explode();
-                    _explodingRobots.push(robot);
-                } else {
-                    tmpRobots.push(robot);
-                }
-            }
-            _robots = tmpRobots;
-
-            // Reap finished exploders
-            tmpRobots = [];
-            for each (robot in _explodingRobots) {
-                if (robot.isDoneExploding()) {
-                    removeChild(robot);
-                } else {
-                    tmpRobots.push(robot);
-                }
-            }
-            _explodingRobots = tmpRobots;
-
-            // Add more robots as appropriate
-            if (_ticksSinceRobot >= _robotInterval) {
-                if (_robots.length < MAX_ROBOTS) {
-                    addRobot();
-                }
+        // Look for robots to explode
+        for each (robot in _robots) {
+            if (robot.isNearTarget()) {
+                robot.explode();
             }
         }
 
-        sortRobots();
+        // Add more robots as appropriate
+        if (_ticksSinceRobot >= _robotInterval) {
+            if (_robots.length < MAX_ROBOTS) {
+                addRobot();
+            }
+        }
+
+        // And now, in true brute force fashion, we're going to just send
+        // the whole state of EVERYTHING.
+        sendGameState();
+    }
+
+    protected function sendGameState () :void
+    {
+        var baseData :ByteArray = new ByteArray();
+        for each (var base :MoonBase in _bases) {
+            base.writeTo(baseData);
+        }
+
+        var robotData :ByteArray = new ByteArray();
+        for each (var robot :Robot in _robots) {
+            robot.writeTo(robotData);
+        }
+
+
+        _gameObj.sendMessage("update", [baseData, robotData]);
     }
 
     /**
@@ -117,7 +194,7 @@ public class RobotRampage extends Sprite
      */
     protected function sortRobots () :void
     {
-        _robots.sortOn("y");
+        _robots.sortOn(["y", "x"]);
 
         for (var ii :int = 0; ii < _robots.length; ii++)
         {
@@ -128,7 +205,7 @@ public class RobotRampage extends Sprite
     /**
      * Creates our moon bases.
      */
-    public function addMoonBases () : void
+    protected function addMoonBases () : void
     {
         var names :Array = _gameObj.getPlayerNames();
         var count :int = names.length;
@@ -164,8 +241,7 @@ public class RobotRampage extends Sprite
      */
     protected function addRobot (pickTarget :Boolean=false) :void
     {
-        _robotCount ++;
-        var robot :Robot = new Robot(_robotCount, _robotFactory, this);
+        var robot :Robot = new Robot(_robotFactory, this);
 
         robot.x = (width/2) + 
             (Math.random() * 2 * CENTER_RADIUS) - CENTER_RADIUS;
@@ -199,7 +275,6 @@ public class RobotRampage extends Sprite
         }
     }
 
-
     /** 
      * Returns whether we're serving as the master, forcing our will on all
      * the other clients with an iron fist.
@@ -216,12 +291,12 @@ public class RobotRampage extends Sprite
         if (_selection.length == 3) { // FIXME: magic number
             if (Robot.isValidSet(_selection)) {
                 // They made a set!
-
+                var data :Array = []
                 for each (robot in _selection) {
-                    // FIXME: actually target someone appropriate
-                    targetRandomBase(robot);
-                    robot.randomizeOnePart();
+                    data.push(_robots.indexOf(robot));
                 }
+                _gameObj.sendMessage("setmade" + _myIndex, data, 0);
+
             }
 
             for each (robot in _selection) {
@@ -249,9 +324,6 @@ public class RobotRampage extends Sprite
     /** An array of moonbases. */
     protected var _bases :Array;
 
-    /** The number of robots we've ever spawned. */
-    protected var _robotCount :int = 0;
-
     /** Number of ticks before we should add another robot. */
     protected var _robotInterval :int;
 
@@ -271,14 +343,17 @@ public class RobotRampage extends Sprite
     protected var _selection :Array = [];
 
     /** Width of our play area. */
-    protected static const SCREEN_WIDTH :int = 640;
+    protected static const SCREEN_WIDTH :int = 800;
 
     /** Height of our play area. */
-    protected static const SCREEN_HEIGHT :int = 480;
+    protected static const SCREEN_HEIGHT :int = 540;
 
     /** The radius of the circle at the middle of our screen for new robots. */
     protected static const CENTER_RADIUS :int = 
         Math.min(SCREEN_HEIGHT, SCREEN_WIDTH) / 4;
+
+    /** Number of robots to start with. */
+    protected static const INITIAL_ROBOTS :int = 6;
 
     /** Initial robot interval. */
     protected static const INITIAL_ROBOT_INTERVAL :int = 25;
@@ -289,7 +364,28 @@ public class RobotRampage extends Sprite
      * and the max robots allowed, it could get pretty psycho and force the
      * game to end. Yay for increasing difficulty.
      */
-    protected static const MAX_ROBOTS :int = 12;
+    protected static const MAX_ROBOTS :int = 21;
+
+
+    /**
+     * Hacky debug function to print some text on the screen.
+     */
+    protected var _labelY :int = 0;
+    protected function makeLabel (text :String) :void
+    {
+        var label :TextField = new TextField();
+        label.autoSize = TextFieldAutoSize.LEFT;
+        label.background = true;
+        label.selectable = false;
+        label.text = text;
+        label.x = 0;
+        label.y = _labelY;
+        label.width = label.textWidth;
+        addChild(label);
+
+        _labelY += label.height;
+    }
+
 
 }
 }

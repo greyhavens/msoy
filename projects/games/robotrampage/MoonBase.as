@@ -1,6 +1,9 @@
 package {
 
 import flash.display.Sprite;
+
+import flash.utils.ByteArray;
+
 import com.threerings.ezgame.EZGame;
 
 public class MoonBase extends Sprite
@@ -14,6 +17,24 @@ public class MoonBase extends Sprite
         _health = BASE_MAX_HEALTH;
 
         updateGraphics();
+    }
+
+    /**
+     * Unserialize our data from a byte array.
+     */
+    public function readFrom (bytes :ByteArray) :void
+    {
+        setHealth(bytes.readInt());
+    }
+
+    /**
+     * Serialize our data to a byte array.
+     */
+    public function writeTo (bytes :ByteArray) :ByteArray
+    {
+        bytes.writeInt(_health);
+
+        return bytes;
     }
 
     protected function updateGraphics () :void
@@ -33,7 +54,16 @@ public class MoonBase extends Sprite
      */
     public function takeDamage () :void
     {
-        _health -= ROBOT_HIT_DAMAGE;
+        setHealth(_health - ROBOT_HIT_DAMAGE);
+    }
+
+    protected function setHealth (health :int) :void
+    {
+        if (_health == health) {
+            return;
+        }
+
+        _health = health;
 
         if (isDestroyed()) {
             destroyBase();

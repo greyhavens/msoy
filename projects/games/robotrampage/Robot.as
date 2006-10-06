@@ -4,6 +4,11 @@ import flash.display.Sprite;
 import flash.display.Scene;
 
 import flash.events.MouseEvent;
+import flash.events.TimerEvent;
+
+import flash.utils.ByteArray;
+import flash.utils.Timer;
+import flash.utils.getTimer;
 
 import mx.core.BitmapAsset;
 import mx.core.MovieClipAsset;
@@ -17,10 +22,8 @@ import flash.text.TextFieldAutoSize;
 public class Robot extends Sprite
 {
 
-    public function Robot (
-        robotId :int, robotFactory :RobotFactory, rr :RobotRampage)
+    public function Robot (robotFactory :RobotFactory, rr :RobotRampage)
     {
-        _robotId = robotId;
         _robotFactory = robotFactory;
         _rr = rr;
 
@@ -31,6 +34,7 @@ public class Robot extends Sprite
         }
 
         _target = null;
+        _state = STATE_IDLE;
 
         randomizeRobot();
 
@@ -40,11 +44,46 @@ public class Robot extends Sprite
     }
 
     /**
+     * Unserialize our data from a byte array.
+     */
+    public function readFrom (bytes :ByteArray) :void
+    {
+        x = bytes.readFloat();
+        y = bytes.readFloat();
+        _target = _rr.getBase(bytes.readInt());
+        _state = bytes.readInt();
+        var ii :int;
+        for (ii = 0; ii < PART_COUNT; ii++) {
+            _style[ii] = bytes.readInt();
+            updatePart(ii);
+        }
+
+        sortBodyParts ();
+    }
+
+    /**
+     * Serialize our data to a byte array.
+     */
+    public function writeTo (bytes :ByteArray) :ByteArray
+    {
+        bytes.writeFloat(x);
+        bytes.writeFloat(y);
+        bytes.writeInt(_target == null ? -1 : _target.getPlayerIndex());
+        bytes.writeInt(_state);
+        for (var ii :int = 0; ii < PART_COUNT; ii++) {
+            bytes.writeInt(_style[ii]);
+        }
+
+        return bytes;
+    }
+
+    /**
      * Point our robot at an unsuspecting moon base.
      */
     public function setTarget (base :MoonBase) : void
     {
         _target = base;
+        _state = (_target != null) ? STATE_WALKING : STATE_IDLE;
     }
 
     /**
@@ -56,12 +95,18 @@ public class Robot extends Sprite
             setTarget(null);
         }
 
-        if (_target == null) {
-            paceIdly();
-        } else {
-            walkTowardsTarget();
+        // TODO: Try and fall into rank with my robot bretheren
 
-            // TODO: Try and fall into rank with my robot bretheren
+        switch (_state) {
+        case STATE_IDLE:
+            paceIdly();
+            break;
+        case STATE_WALKING:
+            walkTowardsTarget();
+            break;
+        case STATE_EXPLODING:
+            // TODO: swap to explosion animation
+            break;
         }
     }
 
@@ -90,15 +135,15 @@ public class Robot extends Sprite
          * and they DO look pretty amusing jittering along their path....
          */
         if (_target.x < x) {
-            x--;
+            x -= ROBOT_STEP_SIZE;
         } else if (_target.x > x) {
-            x++;
+            x += ROBOT_STEP_SIZE;
         }
 
         if (_target.y < y) {
-            y--;
+            y -= ROBOT_STEP_SIZE;
         } else if (_target.y > y) {
-            y++;
+            y += ROBOT_STEP_SIZE;
         }
     }
 
@@ -134,6 +179,11 @@ public class Robot extends Sprite
         }
     }
 
+    /**
+     * Picks an aspect of the robot at random, and changes it to a new random
+     * value. Note: this might not actually change anything, since the new
+     * part might get turned to the same value as the old part.
+     */
     public function randomizeOnePart () :void
     {
         randomizeRobot(int(Math.random() * PART_COUNT));
@@ -167,13 +217,7 @@ public class Robot extends Sprite
             updatePart(part);
         }
 
-        // sort the body parts so they're stacked properly
-        for (var ii :int = 0; ii < PART_COUNT; ii++) {
-            if (_parts[ii] != null) {
-                setChildIndex(_parts[ii], 0);
-            }
-        }
-
+        sortBodyParts ();
     }
 
     /**
@@ -230,16 +274,41 @@ public class Robot extends Sprite
             return;
         }
 
+        _state = STATE_EXPLODING;
         _target.takeDamage();
+
+        /* TODO: do a real explosion animation, but for now we'll just sit him
+         * here for a moment and then say we're done blowing up
+         */
+        var timer :Timer = new Timer(500, 1);
+        timer.addEventListener(TimerEvent.TIMER, finishExploding);
+        timer.start();
+    }
+
+    protected function finishExploding (event :TimerEvent) :void
+    {
+        _state = STATE_DEAD;
     }
 
     /**
      * Returns whether or not we're done doing our fancy little explosion
      * animation and can be shuffled off this mortal coil.
      */
-    public function isDoneExploding () :Boolean
+    public function isDead () :Boolean
     {
-        return true;
+        return _state == STATE_DEAD;
+    }
+
+    /**
+     * Sorts the display order of our body parts so things draw properly.
+     */
+    protected function sortBodyParts () :void
+    {
+        for (var ii :int = 0; ii < PART_COUNT; ii++) {
+            if (_parts[ii] != null) {
+                setChildIndex(_parts[ii], 0);
+            }
+        }
     }
 
     /**
@@ -346,8 +415,8 @@ public class Robot extends Sprite
         setGlow(false);
     }
 
-    /** The unique id number for this robot. */
-    protected var _robotId :int;
+    /** What this robot is currently doing. */
+    protected var _state :int;
 
     /** Whether or not this robot is selected by the user. */
     protected var _selected :Boolean = false;
@@ -399,5 +468,13 @@ public class Robot extends Sprite
 
     /** How close we must be to a base to destroy it, squared. */
     protected static const DESTRUCTION_RADIUS_SQUARED :int = 25;
+
+
+    protected static const STATE_IDLE :int = 0;
+    protected static const STATE_WALKING :int = 1;
+    protected static const STATE_EXPLODING :int = 2;
+    protected static const STATE_DEAD :int = 3;
+
+    protected static const ROBOT_STEP_SIZE :Number = 1.5;
 }
 }
