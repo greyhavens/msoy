@@ -33,7 +33,7 @@ public class WorldStateStreamer implements Streamable
 
     public function writeObject (out :ObjectOutputStream) :void
     {
-        var i :Number;
+        var i :int;
 
         writeVector(out, engine.gravity);
         out.writeFloat(engine.coeffRest);
@@ -55,24 +55,24 @@ public class WorldStateStreamer implements Streamable
 
     public function readObject (ins :ObjectInputStream) :void
     {
-        var i :Number;
+        var i :int;
 
         engine.gravity = readVector(ins);
         engine.coeffRest = ins.readFloat();
         engine.coeffFric = ins.readFloat();
         engine.coeffDamp = ins.readFloat();
 
-        var pNum:Number = ins.readInt();
+        var pNum:int = ins.readInt();
         engine.primitives = new Array();
         for (i = 0; i < pNum; i ++) {
             engine.primitives[i] = readPrimitive(ins);
         }
-        var sNum:Number = ins.readInt();
+        var sNum:int = ins.readInt();
         engine.surfaces = new Array();
         for (i = 0; i < sNum; i ++) {
             engine.surfaces[i] = readSurface(ins);
         }
-        var cNum:Number = ins.readInt();
+        var cNum:int = ins.readInt();
         engine.constraints = new Array();
         for (i = 0; i < cNum; i ++) {
             engine.constraints[i] = readConstraint(ins);
@@ -128,7 +128,7 @@ public class WorldStateStreamer implements Streamable
     protected function readPrimitive(ins :ObjectInputStream) :Particle
     {
         var p :Particle;
-        var pType :Number = ins.readByte();
+        var pType :int = ins.readByte();
         switch(pType) {
         case P_WHEEL:
             p = new Wheel();

@@ -45,7 +45,7 @@ public class DynamicsEngine {
 	public var surfaces:Array;
 	public var constraints:Array;
 
-        protected var sprite:Sprite;
+        public var sprite:Sprite;
 	
 	public function DynamicsEngine(s:Sprite) {
                 sprite = s;

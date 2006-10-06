@@ -9,6 +9,7 @@ import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 
+import org.cove.flade.util.*;
 import org.cove.flade.surfaces.*;
 import org.cove.flade.constraints.*;
 import org.cove.flade.primitives.*;
@@ -34,8 +35,8 @@ public class SiegePinball extends Sprite
 
         engine = new DynamicsEngine(this);
 
-        engine.setDamping(1.0);
-        engine.setGravity(0.0, 0.03);
+        engine.setDamping(0.999);
+        engine.setGravity(0.0, 0.04);
         engine.setSurfaceBounce(1.0);
         engine.setSurfaceFriction(0.1);
         engine.coeffPinball = 8;
@@ -55,11 +56,12 @@ public class SiegePinball extends Sprite
         var lastBeep :int = -1;
         // circles
         var soundPerTile:Array = new Array();
-        for (var i :int = 0; i < 20; i ++) {
+        for (var i :int = 0; i < 6; i ++) {
             var tile :Circle = new Circle(
-                100 + Math.random() * 420,
-                80 + Math.random() * 320,
-                20 + Math.random() * 20);
+                120 + Math.random() * 380,
+                140 + Math.random() * 240,
+                40 + Math.random() * 20);
+            tile.color = Math.random() * 0x1000000;
             engine.addSurface(tile);
             tile.sound = 
                 sounds[Math.floor(Math.random()*sounds.length)];
@@ -95,33 +97,132 @@ public class SiegePinball extends Sprite
         addEventListener(Event.ENTER_FRAME, enterFrame);
         this.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
         this.stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
+
+        newCow();
     }
 
     public function enterFrame (event:Event) :void {
         run();
     }
 
+    protected var leftKey :Boolean = false;
+    protected var rightKey :Boolean = false;
+    protected var downKey :Boolean = false;
+    protected var cow:Cow;
+    protected var cowPicture:Bitmap;
+    protected var cowBackLeg:Bitmap;
+    protected var cowFrontLeg:Bitmap;
+
+    protected var cowAngle:Number = 0;
+    protected var backLegAngle:Number = 0;
+    protected var frontLegAngle:Number = 0;
+
     public function keyDown (event:KeyboardEvent) :void {
         if (event.keyCode == Keyboard.LEFT) {
+            leftKey = true;
+        } else if (event.keyCode == Keyboard.RIGHT) {
+            rightKey = true;
+        } else if (event.keyCode == Keyboard.DOWN) {
+            downKey = true;
+        }
+    }
+
+    public function keyUp (event:KeyboardEvent) :void {
+        if (event.keyCode == Keyboard.LEFT) {
+            leftKey = false;
+        } else if (event.keyCode == Keyboard.RIGHT) {
+            rightKey = false;
+        } else if (event.keyCode == Keyboard.DOWN) {
             fireCow();
         }
     }
 
-
+    protected function newCow () :void
+    {
+        if (cow != null) {
+            // cow.remove();
+        }
+        cow = new Cow(engine, 580, 380);
+        cowAngle = 0;
+        backLegAngle = 0;
+        frontLegAngle = 0;
+        launched = false;
+        if (cowPicture == null) {
+            cowPicture = new _cowWithoutLegs();
+            this.addChild(cowPicture);
+            cowBackLeg = new _cowBackLeg();
+            this.addChild(cowBackLeg);
+            cowFrontLeg = new _cowFrontLeg();
+            this.addChild(cowFrontLeg);
+          var scale :Number =
+                cow.p1.curr.distance(cow.p0.curr) / cowPicture.bitmapData.width;
+            cowPicture.scaleX = scale;
+            cowPicture.scaleY = scale;
+            cowBackLeg.scaleX = scale;
+            cowBackLeg.scaleY = scale;
+            cowFrontLeg.scaleX = scale;
+            cowFrontLeg.scaleY = scale;
+        }
+        leftKey = false;
+        rightKey = false;
+        downKey = false;
+    }
 
     protected function fireCow () :void {
-        new Cow(engine, 120 + Math.random()*380, 10);
-//            cow.prev.x = 6;
-//            cow.prev.y = 455;
-//            engine.addPrimitive(cow);
+        backLegAngle = 0;
+        frontLegAngle = 0;
+        cow.launch(cowAngle + Math.PI, 6);
+        launched = true;
     }
-
-    public function keyUp (event:KeyboardEvent) :void {
-    }
+    protected var launched :Boolean;
 
     public function run () :void {
+        if (cow.p0.curr.y > 500) {
+            newCow();
+            return;
+        }
+        if (leftKey) {
+            cowAngle += 0.03;
+        } else if (rightKey) {
+            cowAngle -= 0.03;
+        }
+//        if (downKey) {
+//            frontLegAngle += 0.03;
+//            backLegAngle += 0.03;
+//        }
         engine.timeStep();
         engine.timeStep();
+        engine.timeStep();
+        engine.timeStep();
+        if (!launched) {
+            cow.reconfigureCow(580, 380, cowAngle);
+        } else {
+            cowAngle = cow.p1.curr.minusNew(cow.p0.curr).angle();
+        }
+            frontLegAngle =
+                cow.leg0.curr.minusNew(cow.p3.curr).angle() + Math.PI/2;
+            frontLegAngle -= cowAngle;
+            backLegAngle =
+                cow.leg1.curr.minusNew(cow.p2.curr).angle() + Math.PI/2;
+            backLegAngle -= cowAngle;
+        cowPicture.x = cow.p0.curr.x;
+        cowPicture.y = cow.p0.curr.y;
+        cowPicture.rotation = -180 * cowAngle / Math.PI;
+        cowBackLeg.x =
+            .15*cow.p0.curr.x + .35*cow.p1.curr.x +
+            .35*cow.p2.curr.x + .15*cow.p3.curr.x;
+        cowBackLeg.y =
+            .15*cow.p0.curr.y + .35*cow.p1.curr.y +
+            .35*cow.p2.curr.y + .15*cow.p3.curr.y;
+        cowBackLeg.rotation = -180 * (cowAngle+backLegAngle) / Math.PI;
+        cowFrontLeg.x =
+            .35*cow.p0.curr.x + .15*cow.p1.curr.x +
+            .15*cow.p2.curr.x + .35*cow.p3.curr.x;
+        cowFrontLeg.y =
+            .35*cow.p0.curr.y + .15*cow.p1.curr.y +
+            .15*cow.p2.curr.y + .35*cow.p3.curr.y;
+        cowFrontLeg.rotation = -180 * (cowAngle+frontLegAngle) / Math.PI;
+
         engine.paintPrimitives();
         engine.paintConstraints();          
     }       
@@ -138,6 +239,15 @@ public class SiegePinball extends Sprite
 
     [Embed(source="Spittoon.mp3")]
     protected static const _spittoon :Class;
+
+    [Embed(source="alpha-cow-no-legs.png")]
+    protected static const _cowWithoutLegs :Class;
+
+    [Embed(source="alpha-back-leg.png")]
+    protected static const _cowBackLeg :Class;
+
+    [Embed(source="alpha-front-leg.png")]
+    protected static const _cowFrontLeg :Class;
 
 }
 }

@@ -42,8 +42,11 @@ public class GfxUtil {
 	}
 
 
-	public static function paintCircle (gfx:Graphics, x:Number, y:Number, r:Number):void {
-            gfx.beginFill(Math.random() * 0xFFFFFF);
+	public static function paintCircle (gfx:Graphics, x:Number, y:Number,
+                                            r:Number, color:int = -1):void {
+            if (color != -1) {
+                gfx.beginFill(color);
+            }
             gfx.drawCircle(x, y, r);
 	}
 	

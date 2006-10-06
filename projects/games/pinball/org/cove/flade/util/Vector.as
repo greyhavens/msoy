@@ -114,6 +114,10 @@ public class Vector {
 		return Math.sqrt(x * x + y * y);
 	}
 
+        public function angle() :Number
+        {
+            return Math.atan2(-y, x);
+        }
 
 	/**
 	 * projects this vector onto b
