@@ -68,7 +68,7 @@ cd $ROOT/lib
 make_symlinks `cat LIBS`
 
 # rebuild our libraries
-build_libraries samskivert narya nenya vilya toybox threerings
+build_libraries samskivert narya nenya vilya toybox threerings s3lib
 
 # get our arch-os native library crap from narya
 if [ -d ../projects/narya/dist/lib ]; then
