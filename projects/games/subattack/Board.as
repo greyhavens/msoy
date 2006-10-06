@@ -162,9 +162,7 @@ public class Board
         if (xx >= 0 && xx < WIDTH && yy >= 0 && yy < HEIGHT) {
             // mark the board area as traversable there
             setTraversable(xx, yy);
-
-            var duration :int = (killCount == 0) ? 200 : 400;
-            _seaDisplay.addChild(new Explode(xx, yy, duration, this));
+            _seaDisplay.addChild(new Explode(xx, yy, this));
         }
 
         return killCount;

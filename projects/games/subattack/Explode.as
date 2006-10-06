@@ -8,7 +8,7 @@ import flash.utils.Timer;
 
 public class Explode extends BaseSprite
 {
-    public function Explode (xx :int, yy :int, duration :int, board :Board)
+    public function Explode (xx :int, yy :int, board :Board)
     {
         super(board);
         _x = xx;
@@ -20,7 +20,7 @@ public class Explode extends BaseSprite
         splode.y = -1.25 * SeaDisplay.TILE_SIZE;
         addChild(splode);
 
-        var t :Timer = new Timer(duration, 1);
+        var t :Timer = new Timer(DURATION, 1);
         t.addEventListener(TimerEvent.TIMER, remove);
         t.start();
     }
@@ -29,6 +29,8 @@ public class Explode extends BaseSprite
     {
         parent.removeChild(this);
     }
+
+    protected static const DURATION :int = 800;
 
     [Embed(source="explosion.swf")]
     protected static const EXPLOSION :Class;
