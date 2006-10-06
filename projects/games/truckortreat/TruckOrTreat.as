@@ -2,8 +2,9 @@ package {
 
 import flash.display.Sprite;
 import flash.events.KeyboardEvent;
-import flash.ui.Keyboard;
 import flash.external.ExternalInterface;
+import flash.events.TimerEvent;
+import flash.utils.Timer;
 
 import com.threerings.ezgame.Game;
 import com.threerings.ezgame.EZGame;
@@ -25,11 +26,17 @@ public class TruckOrTreat extends Sprite
         // Create board and put a kid on it.
         _board = new Board(gameObj);
         addChild(_board);
-        _kid = new Kid(1, 5);
+        _kid = new Kid(15, 25);
         addChild(_kid);
         
-        // Listen for keys being hit
-        stage.addEventListener(KeyboardEvent.KEY_DOWN, keyHandler);
+        // Set up a ticker that will control movement and new candy placement.
+        var gameTimer :Timer = new Timer(REFRESH_RATE, 0);
+        gameTimer.addEventListener(TimerEvent.TIMER, tick);
+        gameTimer.start();
+        
+        // Listen for keys being pressed and released.
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, _kid.keyDownHandler);
+        stage.addEventListener(KeyboardEvent.KEY_UP, _kid.keyUpHandler);
     }
     
     public static function log (msg :String) :void
@@ -37,24 +44,10 @@ public class TruckOrTreat extends Sprite
         ExternalInterface.call("console.debug", msg);
     }
     
-    protected function keyHandler(event :KeyboardEvent) :void
+    /** Do whatever needs to be done on each clock tick. */
+    protected function tick (event :TimerEvent) :void
     {
-        switch (event.keyCode) {
-        case Keyboard.UP:
-            _kid.move(0, -1);
-            break;
-        case Keyboard.DOWN:
-            _kid.move(0, 1);
-            break;
-        case Keyboard.LEFT:
-            _kid.move(-1, 0);
-            break;
-        case Keyboard.RIGHT:
-            _kid.move(1, 0);
-            break;
-        default:
-            return;
-        }
+        _kid.tick();
     }
     
     /** The game object. */
@@ -65,5 +58,8 @@ public class TruckOrTreat extends Sprite
     
     /** The player's kid character. */
     protected var _kid :Kid
+    
+    /** Number of milliseconds between clock ticks. */
+    protected static const REFRESH_RATE :int = 50;
 }
 }
