@@ -29,6 +29,7 @@ public class ItemPanel extends VerticalPanel
 
         // this will contain our items
         add(_contents = new FlowPanel());
+        _contents.setStyleName("catalog_contents");
 
         add(_status = new Label(""));
     }
