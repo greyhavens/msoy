@@ -102,8 +102,7 @@ public class RobotRampage extends Sprite
         for each (var ii :int in robotIndices) {
             var robot :Robot = _robots[ii];
 
-            // FIXME: actually target someone appropriate
-            targetRandomBase(robot);
+            targetRandomBase(robot, playerIndex);
             robot.randomizeOnePart();
         }
     }
@@ -136,6 +135,10 @@ public class RobotRampage extends Sprite
             addChild(robot);
             _robots.push(robot);
             robot.readFrom(bytes);
+
+            if (_lowestRobot == -1) {
+                _lowestRobot = getChildIndex(robot);
+            }
         }
 
         // prune dead ones
@@ -145,7 +148,6 @@ public class RobotRampage extends Sprite
                 removeChild(robot);
             }
         }
-
     }
 
     protected function doTick (event :TimerEvent) :void
@@ -188,7 +190,6 @@ public class RobotRampage extends Sprite
             robot.writeTo(robotData);
         }
 
-
         _gameObj.sendMessage("update", [baseData, robotData]);
     }
 
@@ -202,7 +203,7 @@ public class RobotRampage extends Sprite
 
         for (var ii :int = 0; ii < _robots.length; ii++)
         {
-            setChildIndex(_robots[ii], ii + _bases.length);
+            setChildIndex(_robots[ii], ii + _lowestRobot);
         }
     }
 
@@ -259,15 +260,24 @@ public class RobotRampage extends Sprite
 
         _ticksSinceRobot = 0;
         addChild(robot);
+
+        if (_lowestRobot == -1) {
+            _lowestRobot = getChildIndex(robot);
+        }
     }
 
-    protected function targetRandomBase (robot :Robot) :void
+    /**
+     * Picks a random base for this robot to target. Will not target the
+     * base specified as ignoreBase.
+     */
+    protected function targetRandomBase (
+        robot :Robot, ignoreBase :int = -1) :void
     {
         var bases :Array = [];
         var base :MoonBase;
 
         for each (base in _bases) {
-            if (!base.isDestroyed()) {
+            if (!base.isDestroyed() && base.getPlayerIndex() != ignoreBase) {
                 bases.push(base);
             }
         }
@@ -325,6 +335,9 @@ public class RobotRampage extends Sprite
     /** The index of this particular player. */
     protected var _myIndex :int;
 
+    /** The index of our lowest stacked robot. */
+    protected var _lowestRobot :int = -1;
+
     /** An array of moonbases. */
     protected var _bases :Array;
 
@@ -372,8 +385,6 @@ public class RobotRampage extends Sprite
 
     [Embed(source="rsrc/lunar_surface.jpg")]
     protected var LUNAR_SURFACE :Class;
-
-
 
     /**
      * Hacky debug function to print some text on the screen.
