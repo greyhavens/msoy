@@ -6,13 +6,17 @@ import flash.utils.ByteArray;
 
 import flash.display.Sprite;
 
+import mx.core.MovieClipAsset;
+
 /**
  * Represents something in the world that ships may interact with.
  */
 public class Obstacle extends Sprite
 {
     /** Constants for types of obstacles. */
-    public static const WALL :int = 0;
+    public static const ASTEROID_1 :int = 2;
+    public static const ASTEROID_2 :int = 3;
+    public static const WALL :int = 6;
 
     public static const LEFT :int = 0;
     public static const RIGHT :int = 1;
@@ -34,8 +38,11 @@ public class Obstacle extends Sprite
         bX = x;
         bY = y;
 
-        graphics.beginFill(GREY);
-        graphics.drawRect(0, 0, Codes.PIXELS_PER_TILE, Codes.PIXELS_PER_TILE);
+
+        var obsMovie :MovieClipAsset = MovieClipAsset(new obstacleAnim);
+        obsMovie.gotoAndStop(type);
+        addChild(obsMovie);
+
     }
 
     /**
@@ -73,5 +80,8 @@ public class Obstacle extends Sprite
 
     /** Color constants. */
     protected static const GREY :uint = uint(0x808080);
+
+    [Embed(source="rsrc/obstacle.swf#obstacles_movie")]
+    protected var obstacleAnim :Class;
 }
 }

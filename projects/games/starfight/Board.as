@@ -68,7 +68,9 @@ public class Board
 
         // TODO Load obstacles from a file instead of random.
         for (ii = 0; ii < 50; ii++) {
-            obstacles.push(new Obstacle(Obstacle.WALL,
+            var type :int =
+                Math.random() < 0.5 ? Obstacle.ASTEROID_1 : Obstacle.ASTEROID_2;
+            obstacles.push(new Obstacle(type,
                 Math.random()*width, Math.random()*height));
         }
         
