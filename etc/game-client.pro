@@ -16,7 +16,7 @@
 -injars ../lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(
   !META-INF/*,!**/tools/**,!**/server/**,!**/world/**,!**threerings/web/**,
-  !com/threerings/io/**)
+  !**/xml/**,!com/threerings/io/**)
 
 -libraryjars <java.home>/lib/rt.jar
 -dontskipnonpubliclibraryclasses

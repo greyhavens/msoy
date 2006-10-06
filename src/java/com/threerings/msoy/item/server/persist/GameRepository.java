@@ -8,7 +8,9 @@ import com.samskivert.jdbc.ConnectionProvider;
 
 import com.threerings.toybox.server.ToyBoxManager;
 import com.threerings.toybox.server.persist.Game;
+import com.threerings.toybox.xml.GameParser;
 
+import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.item.web.MediaDesc;
 
 /**
@@ -32,7 +34,15 @@ public class GameRepository extends ItemRepository<GameRecord>
             return null;
         }
 
-        Game tgame = new Game();
+        // we create a custom parser that will create a custom game definition
+        // that will look for the game jar file using the digest as a name
+        // instead of the game ident
+        Game tgame = new Game() {
+            protected GameParser createParser () {
+                return new MsoyGameParser();
+            }
+        };
+
         tgame.gameId = gameId;
         tgame.name = game.name;
         tgame.maintainerId = game.creatorId;
