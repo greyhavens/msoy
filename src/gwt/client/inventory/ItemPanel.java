@@ -31,6 +31,7 @@ public class ItemPanel extends VerticalPanel
 
         // this will contain our items
         add(_contents = new FlowPanel());
+        _contents.setStyleName("inventory_contents");
 
         // this will allow us to create new items
         add(_create = new Button("Create new..."));

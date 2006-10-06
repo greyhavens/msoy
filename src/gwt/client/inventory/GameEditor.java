@@ -43,7 +43,7 @@ public class GameEditor extends ItemEditor
     protected void createEditorInterface ()
     {
         // configure the main uploader first
-        configureMainUploader("Upload your game.", new MediaUpdater() {
+        configureMainUploader("Game Media", new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _game.gameMedia = new MediaDesc(hash, mimeType);
             }
@@ -82,6 +82,8 @@ public class GameEditor extends ItemEditor
         });
 
         addRow("Game definition", _gamedef = new TextArea());
+        _gamedef.setCharacterWidth(80);
+        _gamedef.setVisibleLines(5);
         bind(_gamedef, new Binder() {
             public void textUpdated (String text) {
                 _game.config = text;

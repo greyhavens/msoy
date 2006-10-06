@@ -36,6 +36,7 @@ public class PhotoEditor extends ItemEditor
         configureMainUploader("Upload your photo.", new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _photo.photoMedia = new MediaDesc(hash, mimeType);
+                recenter();
             }
         });
 

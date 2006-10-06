@@ -10,6 +10,12 @@
    border: 1px solid;
 }
 
+.inventory_contents { 
+   border: 1px solid;
+   padding: 10px;
+   margin-bottom: 10px;
+}
+
 .item_thumb_image {
   border: 1px solid;
   padding: 5px;

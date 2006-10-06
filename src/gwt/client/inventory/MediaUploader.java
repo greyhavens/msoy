@@ -95,12 +95,7 @@ public class MediaUploader extends FlexTable
         setWidget(row, 1, _panel);
         row++;
 
-        String msg = "Browse for the file, then upload it.";
-        setWidget(row, 0, _out = new Label(msg));
-        cellFormatter.setColSpan(row, 0, 2);
-        row++;
-
-        setText(row, 0, "Preview");
+        setText(row, 0, "Browse and upload and we'll show a preview here.");
         cellFormatter.setColSpan(row, 0, 2);
         row++;
 
@@ -126,6 +121,7 @@ public class MediaUploader extends FlexTable
                 w.setHeight(_previewHeight + "px");
             }
             // update our preview
+            setText(_previewRow-1, 0, "Preview:");
             setWidget(_previewRow, 0, w);
         }
     }

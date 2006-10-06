@@ -3,12 +3,12 @@
 .gwt-TabBar .gwt-TabBarItem {
    border: 1px solid;
    padding: 5px;
-   background: #FFCC99;
+   background: #CCCCFF;
 }
 
 .gwt-TabBar .gwt-TabBarItem-selected {
    border: 2px solid;
-   background: #CCFF99;
+   background: #6699CC;
 }
 
 .gwt-TabPanel .Bottom { 
@@ -18,21 +18,21 @@
 }
 
 .itemPopup {
-   border: 2px solid red;
-   background: brown;
+   border: 2px solid #0066FF;
+   background: #6699CC;
    padding: 5px;
 }
 
 .itemDetailErrors {
    font-weight: bold;
-   background: brown;
+   background: #FFFFFF;
 }
 
 .headerRow {
    font-style: italic;
-   background: #7B3F00;
+   background: #6699CC;
 }
 
 .dataRow {
-   background: #6F4242;
+   background: #99CCFF;
 }

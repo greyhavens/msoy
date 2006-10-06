@@ -76,6 +76,7 @@ public abstract class ItemEditor extends PopupPanel
         cellFormatter.setColSpan(0, 0, cols);
 
         HorizontalPanel bpanel = new HorizontalPanel();
+        bpanel.setSpacing(5);
         int butrow = _content.getRowCount();
         _content.setWidget(butrow, 0, bpanel);
         cellFormatter.setHorizontalAlignment(
@@ -140,12 +141,8 @@ public abstract class ItemEditor extends PopupPanel
     protected void onLoad ()
     {
         super.onLoad();
-
         configureBridge();
-
-        // center ourselves
-        setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
-                         (Window.getClientHeight() - getOffsetHeight()) / 2);
+        recenter();
     }
 
     /**
@@ -154,20 +151,21 @@ public abstract class ItemEditor extends PopupPanel
      */
     protected void createEditorInterface ()
     {
-        String title = "Configure the furniture visualization for this media.";
+        String title = "Furniture Image";
         _furniUploader = createUploader(FURNI_ID, title, -1,
             new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _item.furniMedia = new MediaDesc(hash, mimeType);
+                recenter();
             }
         });
 
-        title = "Configure the thumbnail image that will be used " +
-            "in the catalog and inventory lists.";
+        title = "Thumbnail Image";
         _thumbUploader = createUploader(THUMB_ID, title,
             ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _item.thumbMedia = new MediaDesc(hash, mimeType);
+                recenter();
             }
         });
 
@@ -186,6 +184,16 @@ public abstract class ItemEditor extends PopupPanel
         int row = _content.getRowCount();
         _content.setText(row, 0, title);
         _content.setWidget(row, 1, widget);
+    }
+
+    /**
+     * Recenters our popup which should be done when media previews are
+     * changed.
+     */
+    protected void recenter ()
+    {
+        setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
+                         (Window.getClientHeight() - getOffsetHeight()) / 2);
     }
 
     /**

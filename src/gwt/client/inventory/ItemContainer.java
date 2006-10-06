@@ -5,6 +5,7 @@ package client.inventory;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -92,48 +93,55 @@ public class ItemContainer extends VerticalPanel
             */
         }
 
-        add(disp);
         if (showLabel) {
             add(label);
         }
+        add(disp);
 
+        HorizontalPanel buttons = new HorizontalPanel();
+        buttons.setSpacing(5);
+        add(buttons);
+
+        Button button;
         if (item.parentId == -1) {
-            Button button = new Button("List in Catalog ...");
+            button = new Button("List in Catalog ...");
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     _panel.listItem(_item.getIdent());
                 }
             });
-            add(button);
 
         } else {
-            Button button = new Button("Remix ...");
+            button = new Button("Remix ...");
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     _panel.remixItem(_item.getIdent());
                 }
             });
-            add(button);            
         }
+        buttons.add(button);
 
         // TODO: all these buttons have to go soon
-        Button button = new Button("Details ...");
+        button = new Button("Details ...");
         button.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 new ItemDetail(_panel._ctx, _item).show();
             }
         });
-        add(button);            
+        buttons.add(button);
 
-        button = new Button("Edit ...");
-        button.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                ItemEditor editor = _panel.createItemEditor(_item.getType());
-                editor.setItem(_item);
-                editor.show();
-            }
-        });
-        add(button);            
+        if (item.parentId == -1) {
+            button = new Button("Edit ...");
+            button.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    ItemEditor editor =
+                        _panel.createItemEditor(_item.getType());
+                    editor.setItem(_item);
+                    editor.show();
+                }
+            });
+            buttons.add(button);
+        }
     }
 
     /**

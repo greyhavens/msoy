@@ -37,6 +37,7 @@ public class AvatarEditor extends ItemEditor
         configureMainUploader("Upload your avatar.", new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _avatar.avatarMedia = new MediaDesc(hash, mimeType);
+                recenter();
             }
         });
 
