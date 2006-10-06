@@ -65,8 +65,9 @@ public class Piece extends Sprite
     protected function mouseReleased (event :MouseEvent) :void
     {
         alpha = 1;
-        var possibleX :int = int(x / SIZE) * SIZE + (SIZE / 2);
-        var possibleY :int = int(y / SIZE) * SIZE + (SIZE / 2);
+        // TODO why are we having to fudge these numbers?
+        var possibleX :int = int(x / SIZE) * SIZE + 2;
+        var possibleY :int = int(y / SIZE) * SIZE + 2;
         var newIndex :int = _alphabout.letterMoved(
             _piecesIndex, possibleX, possibleY);
         // TODO consider having the piece place in the nearest spot
@@ -95,20 +96,24 @@ public class Piece extends Sprite
 
     // the source for the basic letters
     [Embed(source="rsrc/letters/alphabet32_basic.swf#mc_BasicAlphabet")]
-    protected var _basicAnim :Class;
+    protected static const _basicAnim :Class;
 
     // the source for the times letters
     [Embed(source="rsrc/letters/alphabet32_times.swf#mc_timesalphabet")]
-    protected var _timesAnim :Class;
+    protected static const _timesAnim :Class;
 
     // the source for the ransom letters
     [Embed(source="rsrc/letters/alphabet38_ransom.swf#mc_ransomalphabet")]
-    protected var _ransomAnim :Class;
+    protected static const _ransomAnim :Class;
+
+    // the source for the photo letters
+    [Embed(source="rsrc/letters/alphabet32_photo.swf#mc_photoalphabet")]
+    protected static const _photoAnim :Class;
 
     // map letter animations to theme constants from AlphaBout.as
     // TODO this could probably be done in a better way
     protected var _themeMap :Array = new Array(
-        _basicAnim, _timesAnim, _ransomAnim);
+        _basicAnim, _timesAnim, _ransomAnim, _photoAnim);
 
     protected var _letterMovie :MovieClipAsset;
 }
