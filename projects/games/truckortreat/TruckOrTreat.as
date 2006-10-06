@@ -12,7 +12,7 @@ import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
-[SWF(width="512", height="512")]
+[SWF(width="834", height="688")]
 public class TruckOrTreat extends Sprite
     implements Game
 {
@@ -26,9 +26,9 @@ public class TruckOrTreat extends Sprite
         // Create board and put a kid and car on it.
         _board = new Board(gameObj);
         addChild(_board);
-        _kid = new Kid(15, 25);
+        _kid = new Kid(150, 200, Kid.IMAGE_GHOST, _board);
         addChild(_kid);
-        _car = new Car(50, 20, Car.DOWN);
+        _car = new Car(300, 110, Car.DOWN, _board);
         addChild(_car);
         
         // Set up a ticker that will control movement and new candy placement.

@@ -1,21 +1,37 @@
 package {
 
 import flash.display.Sprite;
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 
 /** This class should be considered abstract. */
 
 public class MovingSprite extends Sprite
-{
-    /** Dimensions of the sprite on the board. */
-    public static const WIDTH :int = 20;
-    public static const HEIGHT :int = 30;
-    
+{   
     /** Create a new sprite at the coordinates on the board given. */
-    public function MovingSprite (startX :int, startY :int)
+    public function MovingSprite (startX :int, startY :int, speed :int, 
+        bitmap :Bitmap, board :Board)
     {
+        _board = board;
+        _speed = speed;
+        // Get dimensions of bitmap in pixels.
+        _width = bitmap.bitmapData.width;
+        _height = bitmap.bitmapData.height;
+        // Draw sprite at starting coordinates given.
         x = startX;
         y = startY;
-        setPosition();
+        addChild(bitmap);
+    }
+    
+    /** Get dimensions of sprite's bitmap. */
+    public function getWidth () :int
+    {
+        return _width;
+    }
+    
+    public function getHeight () :int
+    {
+        return _height;
     }
     
     /** Called to move sprite at each clock tick. */
@@ -23,10 +39,10 @@ public class MovingSprite extends Sprite
     {
         var deltaX :int = _speed * _moveX;
         var deltaY :int = _speed * _moveY;
-        if (0 <= x + deltaX && x + deltaX + WIDTH <= Board.WIDTH) {
+        if (0 <= x + deltaX && x + deltaX + _width <= _board.getWidth()) {
             x += deltaX;
         }
-        if (0 <= y + deltaY && y + deltaY + HEIGHT <= Board.HEIGHT) {
+        if (0 <= y + deltaY && y + deltaY + _height <= _board.getHeight()) {
             y += deltaY;
         }
     }
@@ -35,14 +51,6 @@ public class MovingSprite extends Sprite
     public function setSpeed(newSpeed :int) :void
     {
         _speed = newSpeed;
-    }
-    
-    /** Set location coordinates and draw the sprite on the board there. */
-    protected function setPosition () :void
-    {
-        // Draw a boring blue rectangle for this default sprite.
-        graphics.beginFill(0x0000FF)
-        graphics.drawRect(0, 0, WIDTH, HEIGHT);
     }
     
     /** 
@@ -54,5 +62,12 @@ public class MovingSprite extends Sprite
     
     /** Current speed (in pixels per tick). */
     protected var _speed :int;
+    
+    /** Dimensions of sprite in pixels. */
+    protected var _width :int;
+    protected var _height :int;
+    
+    /** Board we're drawn on top of. */
+    protected var _board :Board;
 }
 }

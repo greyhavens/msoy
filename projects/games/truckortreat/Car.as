@@ -1,31 +1,30 @@
 package {
 
 import flash.display.Sprite;
+import flash.display.Bitmap;
 
 public class Car extends MovingSprite
-{
-    /** Dimensions of the sprite on the board. */
-    public static const WIDTH :int = 30;
-    public static const HEIGHT :int = 45;
-    
+{   
     /** Default number of pixels car can move per tick. */
     public static const DEFAULT_SPEED :int = 10;
     
     /** Constants to keep track of whether car is going up or down. */
-    public static const UP :int = 0;
+    public static const UP :int = -1;
     public static const DOWN :int = 1;
     
     /** Create a new Car object at the coordinates on the board given. */
-    public function Car (startX :int, startY :int, direction :int)
+    public function Car (startX :int, startY :int, direction :int, board :Board)
     {
-        super(startX, startY);
-        setSpeed(DEFAULT_SPEED);
-        // Set direction we're driving.
+        var bitmap :Bitmap;
+        // Set image based on direction we're driving.
         if (direction == UP) {
-            _moveY = -1;
+            bitmap = Bitmap(new carBackAsset());
+            _direction = UP;
         } else if (direction == DOWN) {
-            _moveY = 1;
+            bitmap = Bitmap(new carFrontAsset());
+            _direction = DOWN;
         }
+        super(startX, startY, DEFAULT_SPEED, bitmap, board);
     }
     
     /** 
@@ -34,13 +33,22 @@ public class Car extends MovingSprite
      */
     override public function tick () :void
     {
-        y += _speed * _moveY;
-        if (y > Board.HEIGHT) {
+        y += _speed * _direction;
+        if (y > _board.getHeight()) {
             y = 0;
         } else if (y < 0) {
-            y = Board.HEIGHT;
+            y = _board.getHeight();
         }
     }
     
+    /** Keeps track of the direction car is going. */
+    protected var _direction :int;
+        
+    /** Car images. */
+    [Embed(source="rsrc/carfront.png")]
+    protected static const carFrontAsset :Class;
+    
+    [Embed(source="rsrc/carback.png")]
+    protected static const carBackAsset :Class;    
 }
 }

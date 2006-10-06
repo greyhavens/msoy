@@ -1,24 +1,24 @@
 package {
 
 import flash.display.Sprite;
+import flash.display.Bitmap;
 import flash.events.KeyboardEvent;
 import flash.ui.Keyboard;
 
 public class Kid extends MovingSprite
-{
-    /** Dimensions of the sprite on the board. */
-    public static const WIDTH :int = 10;
-    public static const HEIGHT :int = 15;
+{   
+    /** Images that can be used for kid. */
+    public static const IMAGE_VAMPIRE :int = 0;
+    public static const IMAGE_GHOST :int = 1;
     
     /** Default number of pixels kid can move per tick. */
     public static const DEFAULT_SPEED :int = 5;
     
     /** Create a new Kid object at the coordinates on the board given. */
-    public function Kid (startX :int, startY :int)
+    public function Kid (startX :int, startY :int, image :int, board :Board)
     {
-        super(startX, startY);
-        setSpeed(DEFAULT_SPEED);
         _health = STARTING_HEALTH;
+        super(startX, startY, DEFAULT_SPEED, getBitmap(image), board);
     }
     
     public function isDead () :Boolean
@@ -65,14 +65,16 @@ public class Kid extends MovingSprite
         }
     }
     
-    /**
-     * Set location coordinates and draw the kid on the board there.
-     */
-    override protected function setPosition () :void
+    protected function getBitmap(image :int) :Bitmap
     {
-        // Draw a boring blue ellipse for the kid until we have actual art.
-        graphics.beginFill(0x0000FF)
-        graphics.drawEllipse(0, 0, WIDTH, HEIGHT);
+        switch (image) {
+          case IMAGE_VAMPIRE:
+            return Bitmap(new vampireAsset());
+          case IMAGE_GHOST:
+            return Bitmap(new ghostAsset());
+          default:
+            return Bitmap(new vampireAsset());
+        }
     }
 
     /** Kid's health level. */
@@ -80,5 +82,12 @@ public class Kid extends MovingSprite
     
     /** Initial health level. */
     protected static const STARTING_HEALTH :int = 3;
+    
+    /** Images for kid. */
+    [Embed(source="rsrc/vampire.png")]
+    protected static const vampireAsset :Class;
+    
+    [Embed(source="rsrc/ghost.png")]
+    protected static const ghostAsset :Class;
 }
 }
