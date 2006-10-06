@@ -40,6 +40,15 @@ public class StarFight extends Sprite
      */
     public function StarFight ()
     {
+        _boardLayer = new Sprite();
+        _shipLayer = new Sprite();
+        _shotLayer = new Sprite();
+        _statusLayer = new Sprite();
+        addChild(_boardLayer);
+        addChild(_shipLayer);
+        addChild(_shotLayer);
+        addChild(_statusLayer);
+
         var mask :Shape = new Shape();
         addChild(mask);
         mask.graphics.clear();
@@ -54,6 +63,8 @@ public class StarFight extends Sprite
         graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
 
         _lastTickTime = getTimer();
+
+        _statusLayer.addChild(_status = new StatusOverlay());
     }
 
     /**
@@ -106,13 +117,13 @@ public class StarFight extends Sprite
         _shots = [];
 
         _board = new BoardSprite(boardObj, _ships);
-        addChild(_board);
+        _boardLayer.addChild(_board);
 
         // Create our local ship and center the board on it.
         _ownShip = new ShipSprite(_board, this, false, _gameObj.getMyIndex());
         _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
-        addChild(_ownShip);
+        _shipLayer.addChild(_ownShip);
 
         // Add ourselves to the ship array.
         _gameObj.set("ship", _ownShip.writeTo(new ByteArray()),
@@ -131,7 +142,7 @@ public class StarFight extends Sprite
                     _ships[ii] = new ShipSprite(_board, this, true, ii);
                     gameShips[ii].position = 0;
                     _ships[ii].readFrom(gameShips[ii]);
-                    addChild(_ships[ii]);
+                    _shipLayer.addChild(_ships[ii]);
                 }
             }
         }
@@ -169,7 +180,7 @@ public class StarFight extends Sprite
                 if (ship == null) {
                     _ships[event.index] =
                         ship = new ShipSprite(_board, this, true, event.index);
-                    addChild(ship);
+                    _shipLayer.addChild(ship);
                 }
                 var bytes :ByteArray = ByteArray(event.newValue);
                 bytes.position = 0;
@@ -187,7 +198,7 @@ public class StarFight extends Sprite
                 new ShotSprite(val[0], val[1], val[2], val[3], val[4], this);
             _shots.push(shot);
             shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
-            addChild(shot);
+            _shotLayer.addChild(shot);
         } else if (event.name == "explode") {
             var arr :Array = (event.value as Array);
             _board.explode(arr[0], arr[1], arr[2], false);
@@ -202,6 +213,7 @@ public class StarFight extends Sprite
         _board.explode(x, y, 0, true);
         if (ship == _ownShip) {
             ship.hit();
+            _status.setPower(ship.power);
         }
     }
 
@@ -284,7 +296,7 @@ public class StarFight extends Sprite
         // Remove any that were done.
         for each (shot in completed) {
             _shots.splice(_shots.indexOf(shot), 1);
-            removeChild(shot);
+            _shotLayer.removeChild(shot);
         }
 
         // Every few frames, broadcast our status to everyone else.
@@ -311,10 +323,18 @@ public class StarFight extends Sprite
     /** The board with all its obstacles. */
     protected var _board :BoardSprite;
 
+    /** Status info. */
+    protected var _status :StatusOverlay;
+
     /** How many frames its been since we broadcasted. */
     protected var _updateCount :int = 0;
 
     protected var _lastTickTime :int;
+
+    protected var _boardLayer :Sprite;
+    protected var _shipLayer :Sprite;
+    protected var _shotLayer :Sprite;
+    protected var _statusLayer :Sprite;
 
     /** Constants to control update frequency. */
     protected static const REFRESH_RATE :int = 50;

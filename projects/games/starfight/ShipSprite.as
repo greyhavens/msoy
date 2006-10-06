@@ -27,6 +27,11 @@ public class ShipSprite extends Sprite
     public static const HEIGHT :int = 40;
     public static const COLLISION_RAD :Number = 0.9;
 
+    /** Powerup flags. */
+    public static const SPEED_MASK :int = 1 << 0;
+    public static const SPREAD_MASK :int = 1 << 1;
+    public static const SHIELDS_MASK :int = 1 << 2;
+
     /** How fast the ship is accelerating. */
     public var accel :Number;
 
@@ -44,6 +49,9 @@ public class ShipSprite extends Sprite
     /** Our current health */
     public var power :Number;
 
+    /** All the powerups we've got. */
+    public var powerups :int;
+
     /** our id. */
     public var shipId :int;
 
@@ -59,6 +67,7 @@ public class ShipSprite extends Sprite
         xVel = 0.0;
         yVel = 0.0;
         power = 1.0; // full
+        powerups = 0;
         this.shipId = shipId;
 
         if (!skipStartingPos) {
@@ -143,7 +152,7 @@ public class ShipSprite extends Sprite
     public function hit () :void
     {
         power -= HIT_POWER;
-        if (power < 0.0) {
+        if (power <= 0.0) {
             _game.explode(boardX, boardY,
                 rotation);
             power = 1.0; //full
@@ -279,6 +288,7 @@ public class ShipSprite extends Sprite
         turnRate = bytes.readFloat();
         rotation = bytes.readShort();
         power = bytes.readFloat();
+        powerups = bytes.readInt();
     }
 
     /**
@@ -294,6 +304,7 @@ public class ShipSprite extends Sprite
         bytes.writeFloat(turnRate);
         bytes.writeShort(rotation);
         bytes.writeFloat(power);
+        bytes.writeInt(powerups);
 
         return bytes;
     }
