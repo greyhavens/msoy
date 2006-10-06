@@ -34,6 +34,9 @@ fi
 if [ ! -d toybox ]; then
     svn checkout $SVNROOT/gardens/trunk/projects/toybox toybox
 fi
+if [ ! -d s3lib ]; then
+    svn checkout $SVNROOT/s3lib/trunk/java s3lib
+fi
 
 # now run all_rebuild to make sure everything works
 $ROOT/bin/all_rebuild
