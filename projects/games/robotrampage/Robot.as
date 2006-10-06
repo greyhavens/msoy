@@ -464,7 +464,7 @@ public class Robot extends Sprite
     protected static const GLOW_COLOR_HOVER :uint = 0xffff00;
 
     /** Color to glow when we've selected a robot for our set. */
-    protected static const GLOW_COLOR_SELECTED :uint = 0x000000;
+    protected static const GLOW_COLOR_SELECTED :uint = 0x00ffff;
 
     /** How close we must be to a base to destroy it, squared. */
     protected static const DESTRUCTION_RADIUS_SQUARED :int = 25;
