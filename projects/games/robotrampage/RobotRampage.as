@@ -20,7 +20,7 @@ import flash.text.TextFieldAutoSize;
 
 [SWF(width="640", height="480")]
 public class RobotRampage extends Sprite
-    implements Game, PropertyChangedListener, StateChangedListener
+    implements Game
 {
     public function RobotRampage ()
     {
@@ -49,21 +49,8 @@ public class RobotRampage extends Sprite
         _gameObj.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
 
         if (isMaster()) {
-            for (var ii :int = 0; ii < INITIAL_ROBOTS; ii++) {
-                addRobot(true);
-            }
-            _gameObj.startTicker("tick", 50);
+            _gameObj.startTicker("tick", 100);
         }
-    }
-
-    // from StateChangedListener
-    public function stateChanged (event :StateChangedEvent) :void
-    {
-    }
-
-    // from PropertyChangedListener
-    public function propertyChanged (event :PropertyChangedEvent) :void
-    {
     }
 
     /**
@@ -116,7 +103,7 @@ public class RobotRampage extends Sprite
             // Add more robots as appropriate
             if (_ticksSinceRobot >= _robotInterval) {
                 if (_robots.length < MAX_ROBOTS) {
-                    addRobot(true);
+                    addRobot();
                 }
             }
         }
@@ -137,7 +124,6 @@ public class RobotRampage extends Sprite
             setChildIndex(_robots[ii], ii + _bases.length);
         }
     }
-
 
     /**
      * Creates our moon bases.
@@ -176,9 +162,10 @@ public class RobotRampage extends Sprite
     /**
      * Adds a new robot with random attributes.
      */
-    protected function addRobot (pickTarget :Boolean=false) : void
+    protected function addRobot (pickTarget :Boolean=false) :void
     {
-        var robot :Robot = new Robot(_robotFactory);
+        _robotCount ++;
+        var robot :Robot = new Robot(_robotCount, _robotFactory, this);
 
         robot.x = (width/2) + 
             (Math.random() * 2 * CENTER_RADIUS) - CENTER_RADIUS;
@@ -186,35 +173,32 @@ public class RobotRampage extends Sprite
             (Math.random() * 2 * CENTER_RADIUS) - CENTER_RADIUS;
         _robots.push(robot);
 
-
         if (pickTarget) {
-            var bases :Array = [];
-            var base :MoonBase;
-
-            for each (base in _bases) {
-                if (!base.isDestroyed()) {
-                    bases.push(base);
-                }
-            }
-
-            if (bases.length > 0) {
-                setRobotTarget(robot, bases[int(Math.random() * bases.length)]);
-            } else {
-                // All bases are destroyed, but we're still adding robots?
-            }
+            targetRandomBase(robot);
         }
 
         _ticksSinceRobot = 0;
         addChild(robot);
     }
 
-    /**
-     * Turns a robot's steely glare upon a moon base.
-     */
-    protected function setRobotTarget (robot :Robot, base :MoonBase) :void
+    protected function targetRandomBase (robot :Robot) :void
     {
-        robot.setTarget(base);
+        var bases :Array = [];
+        var base :MoonBase;
+
+        for each (base in _bases) {
+            if (!base.isDestroyed()) {
+                bases.push(base);
+            }
+        }
+
+        if (bases.length > 0) {
+            robot.setTarget(bases[int(Math.random() * bases.length)]);
+        } else {
+            // All bases are destroyed, but we're still adding robots?
+        }
     }
+
 
     /** 
      * Returns whether we're serving as the master, forcing our will on all
@@ -225,6 +209,37 @@ public class RobotRampage extends Sprite
         return _myIndex == 0;
     }
 
+    public function selectRobot (robot :Robot) :void
+    {
+        _selection.push(robot);
+
+        if (_selection.length == 3) { // FIXME: magic number
+            if (Robot.isValidSet(_selection)) {
+                // They made a set!
+
+                for each (robot in _selection) {
+                    // FIXME: actually target someone appropriate
+                    targetRandomBase(robot);
+                    robot.randomizeOnePart();
+                }
+            }
+
+            for each (robot in _selection) {
+                robot.unselect();
+            }
+
+            _selection.length = 0;
+        }
+    }
+
+    public function unselectRobot (robot :Robot) :void
+    {
+        var ii :int = _selection.indexOf(robot);
+        if (ii != -1) {
+            _selection.splice(ii, 1);
+        }
+    }
+
     /** Our game object. */
     protected var _gameObj :EZGame;
 
@@ -233,6 +248,9 @@ public class RobotRampage extends Sprite
 
     /** An array of moonbases. */
     protected var _bases :Array;
+
+    /** The number of robots we've ever spawned. */
+    protected var _robotCount :int = 0;
 
     /** Number of ticks before we should add another robot. */
     protected var _robotInterval :int;
@@ -249,6 +267,9 @@ public class RobotRampage extends Sprite
     /** A factory for building robots. */
     protected var _robotFactory :RobotFactory;
 
+    /** The currently selected robots. */
+    protected var _selection :Array = [];
+
     /** Width of our play area. */
     protected static const SCREEN_WIDTH :int = 640;
 
@@ -256,13 +277,11 @@ public class RobotRampage extends Sprite
     protected static const SCREEN_HEIGHT :int = 480;
 
     /** The radius of the circle at the middle of our screen for new robots. */
-    protected static const CENTER_RADIUS :int = 25;
+    protected static const CENTER_RADIUS :int = 
+        Math.min(SCREEN_HEIGHT, SCREEN_WIDTH) / 4;
 
     /** Initial robot interval. */
-    protected static const INITIAL_ROBOT_INTERVAL :int = 50;
-
-    /** Initial number of robots. */
-    protected static const INITIAL_ROBOTS :int = 5;
+    protected static const INITIAL_ROBOT_INTERVAL :int = 25;
 
     /** Maximum number of robots to have at any given time. */
     /* FIXME: This should probably vary based on the number of players at a 
@@ -270,7 +289,7 @@ public class RobotRampage extends Sprite
      * and the max robots allowed, it could get pretty psycho and force the
      * game to end. Yay for increasing difficulty.
      */
-    protected static const MAX_ROBOTS :int = 20;
+    protected static const MAX_ROBOTS :int = 12;
 
 }
 }

@@ -17,9 +17,12 @@ import flash.text.TextFieldAutoSize;
 public class Robot extends Sprite
 {
 
-    public function Robot (robotFactory :RobotFactory)
+    public function Robot (
+        robotId :int, robotFactory :RobotFactory, rr :RobotRampage)
     {
+        _robotId = robotId;
         _robotFactory = robotFactory;
+        _rr = rr;
 
         _style = new Array(PART_COUNT);
         _parts = new Array(PART_COUNT);
@@ -130,6 +133,11 @@ public class Robot extends Sprite
             // Do nothing
         }
     }
+
+    public function randomizeOnePart () :void
+    {
+        randomizeRobot(int(Math.random() * PART_COUNT));
+    }
     
     /**
      * Randomizes the specified aspect of the robot, or if part is
@@ -158,6 +166,14 @@ public class Robot extends Sprite
         for each (part in parts) {
             updatePart(part);
         }
+
+        // sort the body parts so they're stacked properly
+        for (var ii :int = 0; ii < PART_COUNT; ii++) {
+            if (_parts[ii] != null) {
+                setChildIndex(_parts[ii], 0);
+            }
+        }
+
     }
 
     /**
@@ -231,7 +247,9 @@ public class Robot extends Sprite
      */
     protected function mouseOver (event :MouseEvent) :void
     {
-        setGlow(true);
+        if (!_selected) {
+            setGlow(true);
+        }
     }
 
     /**
@@ -239,7 +257,9 @@ public class Robot extends Sprite
      */
     protected function mouseOut (event :MouseEvent) :void
     {
-        setGlow(false);
+        if (!_selected) {
+            setGlow(false);
+        }
     }
 
     /**
@@ -248,7 +268,20 @@ public class Robot extends Sprite
     protected function mouseClick (event :MouseEvent) :void
     {
         //randomizeRobot();
-        randomizeRobot(int(Math.random() * PART_COUNT));
+        toggleSelected();
+    }
+
+    protected function toggleSelected () :void
+    {
+        _selected = !_selected;
+
+        if (_selected) {
+            _rr.selectRobot(this);
+            setGlow(true);
+        } else {
+            _rr.unselectRobot(this);
+            setGlow(false);
+        }
     }
 
     /**
@@ -256,12 +289,19 @@ public class Robot extends Sprite
      */
     protected function setGlow (doGlow :Boolean) :void
     {
+        // nuke any existing glow
+        if (_glow != null) {
+            _glow.end();
+            _glow = null;
+
+            filters = new Array();
+        }
         // if things are already in the proper state, do nothing
         if (doGlow == (_glow != null)) {
             return;
         }
 
-        // otherwise, enable or disable the glow
+        // add a glow if appropriate
         if (doGlow) {
             _glow = new Glow(this);
             _glow.alphaFrom = 0;
@@ -270,18 +310,47 @@ public class Robot extends Sprite
             _glow.blurXTo = GLOW_RADIUS;
             _glow.blurYFrom = 0;
             _glow.blurYTo = GLOW_RADIUS;
-            _glow.color = GLOW_COLOR_HOVER;
+            _glow.color = _selected ? GLOW_COLOR_SELECTED : GLOW_COLOR_HOVER;
             _glow.duration = 200;
             _glow.play();
-
-        } else {
-            _glow.end();
-            _glow = null;
-
-            // remove the GlowFilter that is added
-            filters = new Array();
         }
     }
+
+    public function getPartStyle (part :int) :int
+    {
+        return _style[part];
+    }
+
+    public static function isValidSet (robots :Array) :Boolean
+    {
+        var r1 :Robot = robots[0];
+        var r2 :Robot = robots[1];
+        var r3 :Robot = robots[2];
+
+        for (var ii :int = 0; ii < PART_COUNT; ii++) {
+            if (! ((r1.getPartStyle(ii) == r2.getPartStyle(ii) && 
+                    r2.getPartStyle(ii) == r3.getPartStyle(ii)) ||
+                   (r1.getPartStyle(ii) != r2.getPartStyle(ii) &&
+                    r1.getPartStyle(ii) != r3.getPartStyle(ii) &&
+                    r2.getPartStyle(ii) != r3.getPartStyle(ii)))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function unselect () :void
+    {
+        _selected = false;
+        setGlow(false);
+    }
+
+    /** The unique id number for this robot. */
+    protected var _robotId :int;
+
+    /** Whether or not this robot is selected by the user. */
+    protected var _selected :Boolean = false;
 
     /** The player this robot is currently targetting, or -1 for none. */
     protected var _target :MoonBase;
@@ -294,6 +363,9 @@ public class Robot extends Sprite
 
     /** A factory for building robots. */
     protected var _robotFactory :RobotFactory;
+
+    /** Our top level game object. */
+    protected var _rr :RobotRampage;
 
     /** Identifier for the color of our robot. */
     protected static const PART_COLOR :int = 0;
@@ -317,10 +389,10 @@ public class Robot extends Sprite
     protected var _glow :Glow;
 
     /** Radius of the glow that surrounds a robot.*/
-    protected static const GLOW_RADIUS :int = 10;
+    protected static const GLOW_RADIUS :int = 20;
 
     /** Color to glow when we're mousing over a robot. */
-    protected static const GLOW_COLOR_HOVER :uint = 0xffffff;
+    protected static const GLOW_COLOR_HOVER :uint = 0xffff00;
 
     /** Color to glow when we've selected a robot for our set. */
     protected static const GLOW_COLOR_SELECTED :uint = 0x000000;
