@@ -164,7 +164,7 @@ public class Board
             setTraversable(xx, yy);
 
             var duration :int = (killCount == 0) ? 200 : 400;
-            _seaDisplay.addChild(new Explosion(xx, yy, duration, this));
+            _seaDisplay.addChild(new Explode(xx, yy, duration, this));
         }
 
         return killCount;

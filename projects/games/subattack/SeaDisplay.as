@@ -37,6 +37,7 @@ public class SeaDisplay extends Sprite
                     TILE_SIZE);
             }
         }
+        graphics.endFill();
 
         // draw a nice border around Mr. Game Area
         graphics.lineStyle(5, 0xFFFFFF);
@@ -103,6 +104,7 @@ public class SeaDisplay extends Sprite
             graphics.drawRect(xx * TILE_SIZE, (yy + 1) * TILE_SIZE,
                 TILE_SIZE, TILE_SIZE);
         }
+        graphics.endFill();
     }
 
     /**

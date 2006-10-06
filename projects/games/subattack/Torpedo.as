@@ -1,6 +1,6 @@
 package {
 
-import flash.ui.Keyboard;
+import flash.display.MovieClip;
 
 public class Torpedo extends BaseSprite
 {
@@ -79,24 +79,28 @@ public class Torpedo extends BaseSprite
 
     protected function updateVisual () :void
     {
-        graphics.clear();
-        graphics.lineStyle(3, 0xFF0000);
+        var missile :MovieClip = MovieClip(new MISSILE());
+        missile.gotoAndStop(orientToFrame());
+        missile.x = SeaDisplay.TILE_SIZE / 2;
+        missile.y = SeaDisplay.TILE_SIZE;
+        addChild(missile);
+    }
 
-        var mid :int = SeaDisplay.TILE_SIZE / 2;
-        var low :int = SeaDisplay.TILE_SIZE / 4;
-        var high :int = mid + low;
-
+    protected function orientToFrame () :int
+    {
         switch (_orient) {
-        case Action.UP:
         case Action.DOWN:
-            graphics.moveTo(mid, low);
-            graphics.lineTo(mid, high);
-            break;
-
         default:
-            graphics.moveTo(low, mid);
-            graphics.lineTo(high, mid);
-            break;
+            return 1;
+
+        case Action.LEFT:
+            return 2;
+
+        case Action.UP:
+            return 3;
+
+        case Action.RIGHT:
+            return 4;
         }
     }
 
@@ -109,5 +113,8 @@ public class Torpedo extends BaseSprite
 
     /** The sub that shot us. */
     protected var _sub :Submarine;
+
+    [Embed(source="missile.swf#animations")]
+    protected static const MISSILE :Class;
 }
 }

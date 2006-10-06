@@ -1,5 +1,7 @@
 package {
 
+import flash.display.MovieClip;
+
 import flash.text.TextField;
 
 import flash.geom.ColorTransform;
@@ -18,19 +20,26 @@ public class Submarine extends BaseSprite
         _y = starty;
         _orient = (_x == 0) ? Action.RIGHT : Action.LEFT;
 
+        var scheme :Array = (SCHEMES[playerIdx] as Array);
+        _avatar = MovieClip(new AVATAR());
+        _avatar.scaleX = .5;
+        _avatar.scaleY = .5;
+        _avatar.x = SeaDisplay.TILE_SIZE / 2;
+        _avatar.y = SeaDisplay.TILE_SIZE;
+        _avatar.transform.colorTransform = new ColorTransform(
+            Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
+        addChild(_avatar);
+
+        _nameLabel = new TextField();
+        _nameLabel.selectable = false;
+        _nameLabel.text = playerName;
+        // center the label above us
+        _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
+        _nameLabel.x = (SeaDisplay.TILE_SIZE - _nameLabel.textWidth) / 2;
+        addChild(_nameLabel);
+
         updateVisual();
         updateLocation();
-
-        var nameLabel :TextField = new TextField();
-        nameLabel.text = playerName;
-        // center the label above us
-        nameLabel.y = -1 * (nameLabel.textHeight + NAME_PADDING);
-        nameLabel.x = (SeaDisplay.TILE_SIZE - nameLabel.textWidth) / 2;
-        addChild(nameLabel);
-
-        var scheme :Array = (SCHEMES[playerIdx] as Array);
-        this.transform.colorTransform = new ColorTransform(
-            Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
     }
 
     public function getPlayerName () :String
@@ -196,39 +205,34 @@ public class Submarine extends BaseSprite
 
     protected function updateVisual () :void
     {
-        graphics.clear();
-        if (_dead) {
-            return;
+        alpha = _dead ? 0 : 1;
+        // fucking label doesn't alpha out.. so we need to add or remove it
+        if (_dead != (_nameLabel.parent == null)) {
+            if (_dead) {
+                removeChild(_nameLabel);
+            } else {
+                addChild(_nameLabel);
+            }
         }
+        _avatar.gotoAndStop(orientToFrame());
+    }
 
-        // draw the circle
-        graphics.lineStyle(2, 0x000000);
-        graphics.beginFill(0xFFFFFF); //uint(COLORS[_playerIdx]))
-        graphics.drawCircle(SeaDisplay.TILE_SIZE / 2, SeaDisplay.TILE_SIZE / 2,
-            SeaDisplay.TILE_SIZE / 2);
-
-        // draw our orientation
-        var xx :int = SeaDisplay.TILE_SIZE / 2;
-        var yy :int = xx;
-        graphics.moveTo(xx, yy);
+    protected function orientToFrame () :int
+    {
         switch (_orient) {
-        case Action.UP:
-            yy = 0;
-            break;
-
         case Action.DOWN:
-            yy = SeaDisplay.TILE_SIZE;
-            break;
+        default:
+            return 1;
 
         case Action.LEFT:
-            xx = 0;
-            break;
+            return 2;
+
+        case Action.UP:
+            return 3;
 
         case Action.RIGHT:
-            xx = SeaDisplay.TILE_SIZE;
-            break;
+            return 4;
         }
-        graphics.lineTo(xx, yy);
     }
 
     /** Queued actions. */
@@ -257,6 +261,11 @@ public class Submarine extends BaseSprite
     /** The number of times we've been killed. */
     protected var _deaths :int;
 
+    /** The movie clip that represents us. */
+    protected var _avatar :MovieClip;
+
+    protected var _nameLabel :TextField;
+
     /** Color schemes for each player. */
     protected static const SCHEMES :Array = [
         [ 1, .5, 0],
@@ -274,5 +283,8 @@ public class Submarine extends BaseSprite
 
     /** The number of pixels to raise the name above the sprite. */
     protected static const NAME_PADDING :int = 3;
+
+    [Embed(source="trucker.swf#animations")]
+    protected static const AVATAR :Class;
 }
 }
