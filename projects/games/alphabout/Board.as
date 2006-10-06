@@ -20,29 +20,24 @@ public class Board extends Sprite
 
     public function changeTheme () :void
     {
-        graphics.clear();
         if (_boardBitmap != null) {
             removeChild(_boardBitmap);
-            _boardBitmap = null;
         }
         switch (_alphabout.getTheme()) {
           case AlphaBout.BASIC_THEME:
             _boardBitmap = new _basicBoard();
-            addChild(_boardBitmap);
             break;
           case AlphaBout.TIMES_THEME:
             _boardBitmap = new _timesBoard();
-            addChild(_boardBitmap);
             break;
           case AlphaBout.RANSOM_THEME:
             _boardBitmap = new _ransomBoard();
-            addChild(_boardBitmap);
             break;
           case AlphaBout.PHOTO_THEME:
             _boardBitmap = new _photoBoard();
-            addChild(_boardBitmap);
             break;
         }
+        addChild(_boardBitmap);
     }
 
     protected var _boardBitmap :BitmapAsset = null;
