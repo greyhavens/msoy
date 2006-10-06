@@ -10,4 +10,5 @@ cd $ROOT
 
 # the client lives in the web document tree
 echo "** Mirroring client..."
-$MIRROR $* `find pages/msoy -type f | grep -v .svn` pages/clients/*.swf
+$MIRROR $* `find pages/msoy -type f | grep -v .svn` \
+    pages/clients/*.swf pages/clients/*.jar
