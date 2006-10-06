@@ -10,6 +10,7 @@ import flash.ui.Keyboard;
 
 import com.threerings.util.MenuUtil;
 import com.threerings.util.NetUtil;
+import com.threerings.util.StringUtil;
 
 import com.threerings.io.TypedArray;
 
@@ -166,7 +167,13 @@ public class RoomController extends SceneController
             return;
 
         case FurniData.ACTION_GAME:
-            goToGameLobby(int(furni.actionData));
+            // TODO: fix hackery
+            if (StringUtil.startsWith(furni.actionData, "gg:")) {
+                NetUtil.navigateToURL("game.html#" +
+                                      furni.actionData.substring(3));
+            } else {
+                goToGameLobby(int(furni.actionData));
+            }
             return;
 
         default:
