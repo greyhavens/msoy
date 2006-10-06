@@ -36,7 +36,7 @@ public class Car extends BaseSprite
     {
         y += _speed * _direction;
         if (y > _boardHeight) {
-            y = 0;
+            y = Board.HORIZON - _height;
         } else if (y < 0) {
             y = _boardHeight;
         }

@@ -28,7 +28,7 @@ public class TruckOrTreat extends Sprite
         addChild(_board);
         _kid = new Kid(180, 200, Kid.IMAGE_GHOST, _board);
         addChild(_kid);
-        _car = new Car(275, 110, Car.DOWN, _board);
+        _car = new Car(275, 150, Car.DOWN, _board);
         addChild(_car);
         
         // Set up a ticker that will control movement and new candy placement.

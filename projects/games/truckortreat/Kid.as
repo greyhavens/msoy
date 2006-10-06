@@ -71,7 +71,8 @@ public class Kid extends BaseSprite
         if (0 <= x + deltaX && x + deltaX + _width <= _boardWidth) {
             x += deltaX;
         }
-        if (0 <= y + deltaY && y + deltaY + _height <= _boardHeight) {
+        if (Board.HORIZON - _height <= y + deltaY && 
+            y + deltaY + _height <= _boardHeight) {
             y += deltaY;
         }
     }

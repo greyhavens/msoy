@@ -8,6 +8,9 @@ public class Board extends BaseSprite
     public static const SIDEWALK_X :Array = [];
     public static const SIDEWALK_Y :Array = [];
     
+    /** The y coordinate of the horizon line. */
+    public static const HORIZON :int = 157;
+    
     public function Board ()
     {
         super(0, 0, Bitmap(new backgroundAsset()));
@@ -18,7 +21,7 @@ public class Board extends BaseSprite
         
     }
     
-    protected var _kids :Array = [];
+    protected var _kid :Kid;
     
     protected var _cars :Array = [];
     
