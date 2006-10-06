@@ -33,6 +33,10 @@ public class GameEditor extends ItemEditor
         super.setItem(item);
         _game = (Game)item;
         _name.setText((_game.name == null) ? "" : _game.name);
+        _minPlayers.setText("" + _game.minPlayers);
+        _maxPlayers.setText("" + _game.maxPlayers);
+        _desiredPlayers.setText("" + _game.desiredPlayers);
+        _gamedef.setText(_game.config);
     }
 
     // @Override from ItemEditor
