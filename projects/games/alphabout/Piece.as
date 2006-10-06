@@ -14,6 +14,8 @@ public class Piece extends Sprite
 
     public static const NO_LETTER :int = -1;
 
+    public static const ASCII_OFFSET :int = 96;
+
     public function Piece (alphabout :AlphaBout, piecesIndex :int, 
                            letterIndex :int)
     {
@@ -28,6 +30,21 @@ public class Piece extends Sprite
     public function getLetterIndex () :int
     {
         return _letterIndex;
+    }
+
+    // returns the string character for this letter
+    public function getLetter () :String
+    {
+        // TODO what should we return if NO_LETTER? Maybe just NO_LETTER
+        if (hasNoLetter()) {
+            return " ";
+        }
+        return String.fromCharCode(_letterIndex + ASCII_OFFSET);
+    }
+
+    public function hasNoLetter () :Boolean
+    {
+        return _letterIndex == NO_LETTER;
     }
 
     public function setLetterIndex (letterIndex :int) :void

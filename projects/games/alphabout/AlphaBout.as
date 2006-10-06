@@ -54,12 +54,16 @@ public class AlphaBout extends Sprite
             return -1;
         }
         var newIndex :int = coordsToIdx(x, y);
-        if (_pieces[newIndex].getLetterIndex() != Piece.NO_LETTER) {
+        if (!_pieces[newIndex].hasNoLetter()) {
             return -1;
         }
         var tmpPiece :Piece = Piece(_pieces[newIndex]);
         _pieces[newIndex] = _pieces[oldIndex];
         _pieces[oldIndex] = tmpPiece;
+
+        // our board has changed so highlight the words
+        highlightWords();
+        
         return newIndex;
     }
 
@@ -72,7 +76,7 @@ public class AlphaBout extends Sprite
             // if we are the first player do some setup
             if (_gameObject.getMyIndex() == 0) {
                 setupPieceBag();
-                dealInitialPieces(); 
+                dealPlayersPieces(INITIAL_PIECES);
                 _gameObject.set("startGame", true);
             }
             _pieces = new Array(BOARD_SIZE * BOARD_SIZE);
@@ -82,6 +86,7 @@ public class AlphaBout extends Sprite
             }
 
             // setup the board
+            _gameObject.localChat("Setting up the board\n");
             _board = new Board(this, BOARD_SIZE);
             addChild(_board);
 
@@ -142,14 +147,22 @@ public class AlphaBout extends Sprite
           case Keyboard.RIGHT:
             if (_theme < (NUMBER_OF_THEMES - 1)) {
                 _theme++;
-                themeChange();
+            } else {
+                _theme = 0;
             }
+            themeChange();
             break;
           case Keyboard.LEFT:
             if (_theme > 0) {
                 _theme--;
-                themeChange();
+            } else {
+                _theme = (NUMBER_OF_THEMES - 1);
             }
+            themeChange();
+            break;
+          case Keyboard.SPACE:
+            // TODO if bag is empty send the end of game event
+            dealPlayersPieces();
             break;
         }
     }
@@ -158,7 +171,7 @@ public class AlphaBout extends Sprite
     protected function changePiecesTheme() :void
     {
         for (var ii :int = 0; ii < _pieces.length; ii++) {
-            if (_pieces[ii].getLetterIndex() != Piece.NO_LETTER) {
+            if (!_pieces[ii].hasNoLetter()) {
                 _pieces[ii].updateTheme();
             }
         } 
@@ -184,13 +197,13 @@ public class AlphaBout extends Sprite
         changePiecesTheme();
     }
 
-    // deal the inital pieces to each player
-    protected function dealInitialPieces () :void
+    // deal pieces to players. by default, only one
+    protected function dealPlayersPieces (count :int = 1) :void
     {
         var playerNames :Array = _gameObject.getPlayerNames();
         for (var ii :int = 0; ii < playerNames.length; ii++) {
             _gameObject.dealFromCollection(
-                PIECE_BAG, INITIAL_PIECES, NEW_PIECE, null, ii);
+                PIECE_BAG, count, NEW_PIECE, null, ii);
         }
     }
 
@@ -212,15 +225,113 @@ public class AlphaBout extends Sprite
     protected function findBlankSquare () :int
     {
         for (var ii :int = _pieces.length - 1; ii >= 0; ii--) {
-            if (_pieces[ii].getLetterIndex() == Piece.NO_LETTER) {
+            if (_pieces[ii].hasNoLetter()) {
                 return ii;
             }
         }
         return -1;
     }
 
+    protected function highlightWords () :void
+    {
+        // array to hold our word pieces
+        var word :Array = new Array();
+        var boardSize :int = _board.getSize();
+        var piece :Piece = null;
+        _currentScore = 0;
+
+        // first search all the words in rows
+        for (var ii :int = 0; ii < _pieces.length; ii++) {
+            piece = _pieces[ii];
+            // if we have no letter or are at the edge of the board
+            if (piece.hasNoLetter() || ((ii + 1) % boardSize) == 0) {
+                if (!piece.hasNoLetter()) {
+                    word.push(piece);
+                }
+                // if we previously have a word longer than a letter, check it
+                if (word.length > 1) {
+                    if (lookupWord(word)) {
+                        _currentScore += wordScore(word);
+                    }
+                } 
+                if (word.length > 0) {
+                    // need to clear the word out
+                    word = new Array();
+                }
+            } else {
+                // else we have a letter, add the piece to our word
+                word.push(piece);
+            }
+        }
+        
+        // TODO factor out the shared loop contents into function
+        // second search all the words in columns
+        var column :int = 0;
+        var row :int = 0;
+        var yIdx :int = 0;
+        word = new Array();
+        for (ii = 0; ii < _pieces.length; ii++) {
+            row = ((ii * boardSize) % (boardSize * boardSize));
+            if (ii > 0 && row == 0) {
+                column++;
+            }
+            yIdx = row + column;
+            piece = _pieces[yIdx];
+            // if we have no letter or are at the edge of the board
+            if (piece.hasNoLetter() ||
+                int(yIdx / boardSize) == (boardSize - 1)) {
+                if (!piece.hasNoLetter()) {
+                    word.push(piece);
+                }
+                // if we previously have a word longer than a letter, check it
+                if (word.length > 1) {
+                    if (lookupWord(word)) {
+                        _currentScore += wordScore(word);
+                    }
+                }
+                if (word.length > 0) {
+                    // need to clear the word out
+                    word = new Array();
+                }
+            } else {
+                // else we have a letter, add the piece to our word
+                word.push(piece);
+            }
+        }
+
+      _gameObject.localChat("Current score: " + _currentScore + "\n");
+     // TODO potentially set a value that says whether the whole board has been
+     // completed.. maybe just return true or false from this method 
+    }
+
+    protected function lookupWord (pieces :Array) :Boolean
+    {
+        var word :String = piecesToString(pieces);
+        // _gameObject.localChat("Looking up: " + word + "\n");
+        return true;
+    }
+
+    protected function wordScore (pieces :Array) :int 
+    {
+        var score :int = 0;
+        for each (var piece :Piece in pieces) {
+            score += LETTER_SCORES[piece.getLetterIndex()]; 
+        }
+        return score;
+    }
+
+    protected function piecesToString (pieces :Array) :String
+    {
+        var str :String = new String();
+        for each (var piece :Piece in pieces) {
+            str += piece.getLetter();
+        }
+        return str;
+    }
+
     // max sure x and y are places we would even want to allow a drop
-    protected function validXandY (x :int, y :int) :Boolean {
+    protected function validXandY (x :int, y :int) :Boolean 
+    {
         var max :int = (Piece.SIZE * BOARD_SIZE) + getBoardBorder();
         if (x > max || y > max) {
             return false;
@@ -247,6 +358,9 @@ public class AlphaBout extends Sprite
     // our current theme
     protected var _theme :int = BASIC_THEME;
 
+    // our current score in the game
+    protected var _currentScore :int = 0;
+
     // Letter distribution using the patented $crabble system for now
     protected static const LETTER_DISTRIBUTION :Array = new Array(
         /* blank spot for now */ 0, /* A's */ 9, /* B's */ 2,
@@ -256,6 +370,16 @@ public class AlphaBout extends Sprite
         /* O's */ 8, /* P's */ 2, /* Q's */ 1, /* R's */ 6,
         /* S's */ 4, /* T's */ 6, /* U's */ 4, /* V's */ 2,
         /* W's */ 2, /* X's */ 1, /* Y's */ 2, /* Z's */ 1)
+
+    // Scoring based on $crabble
+    protected static const LETTER_SCORES :Array = new Array(
+        /* blank spot for now */ 0, /* A's */ 1, /* B's */ 3,
+        /* C's */ 3, /* D's */ 2, /* E's */ 1, /* F's */ 4,
+        /* G's */ 2, /* H's */ 4, /* I's */ 1, /* J's */ 8,
+        /* K's */ 5, /* L's */ 1, /* M's */ 3, /* N's */ 1,
+        /* O's */ 1, /* P's */ 3, /* Q's */ 10, /* R's */ 1,
+        /* S's */ 1, /* T's */ 1, /* U's */ 1, /* V's */ 4,
+        /* W's */ 4, /* X's */ 8, /* Y's */ 4, /* Z's */ 10)
 
     /** Our game object. */
     protected var _gameObject :EZGame;

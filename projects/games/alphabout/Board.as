@@ -18,6 +18,11 @@ public class Board extends Sprite
         return _border;
     }
 
+    public function getSize () :int
+    {
+        return _size;
+    }
+
     public function changeTheme () :void
     {
         if (_boardBitmap != null) {
