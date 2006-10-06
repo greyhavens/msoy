@@ -97,8 +97,8 @@ public class Board extends Sprite
     protected var _latency :int;
     
     /** Colors used for our own and for opponents' paddles. */
-    protected static const OWN_COLOR :uint = 0x00FF00,
-        OPP_COLOR :uint = 0x00FFFF;
+    protected static const OWN_COLOR :uint = 0x00FFFF,
+        OPP_COLOR :uint = 0xFFFF00;
         
     /** Messages used to measure communication latency. */
     protected static const PING :String = "ping",

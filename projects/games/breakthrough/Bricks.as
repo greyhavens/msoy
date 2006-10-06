@@ -1,6 +1,9 @@
 package {
 
+import flash.display.GradientType;
 import flash.display.Shape;
+
+import flash.geom.Matrix;
 
 import com.threerings.ezgame.EZGame;
 
@@ -138,7 +141,15 @@ public class Bricks extends Shape
     protected function drawBrick (bx :int, by :int, occupied :Boolean) :void
     {
         graphics.lineStyle(1, Board.BACKGROUND_COLOR);
-        graphics.beginFill(occupied ? BRICK_COLOR : Board.BACKGROUND_COLOR);
+        if (occupied) {
+            var gmat :Matrix = new Matrix();
+            gmat.createGradientBox(_columns * BRICK_WIDTH * 1.125,
+                LAYERS * BRICK_HEIGHT * 1.125, Math.PI/4);
+            graphics.beginGradientFill(GradientType.LINEAR, BRICK_COLORS,
+                BRICK_ALPHAS, BRICK_RATIOS, gmat);
+        } else {
+            graphics.beginFill(Board.BACKGROUND_COLOR);
+        }
         graphics.drawRect(bx * BRICK_WIDTH, by * BRICK_HEIGHT,
             BRICK_WIDTH, BRICK_HEIGHT);
     }
@@ -160,7 +171,14 @@ public class Bricks extends Shape
     /** The dimensions of the bricks. */
     protected static const BRICK_WIDTH :int = 40, BRICK_HEIGHT :int = 20;
     
-    /** The color of the bricks. */
-    protected static const BRICK_COLOR :uint = 0xFF00FF;
+    /** The rainbow colors of the bricks. */
+    protected static const BRICK_COLORS :Array =
+        [0xFF0000, 0xFFA000, 0xFFFF00, 0x00FF00, 0x0000FF, 0x4B0082, 0x8B00FF];
+        
+    protected static const BRICK_ALPHAS :Array =
+        [1, 1, 1, 1, 1, 1, 1];
+    
+    protected static const BRICK_RATIOS :Array =
+        [0, 42, 84, 126, 168, 210, 252];
 }
 }

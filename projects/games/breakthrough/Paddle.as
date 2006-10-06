@@ -1,10 +1,13 @@
 package {
 
+import flash.display.GradientType;
 import flash.display.Shape;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
+
+import flash.geom.Matrix;
 
 import flash.utils.getTimer;
 
@@ -33,8 +36,11 @@ public class Paddle extends Shape
         _own = own;
         
         // draw the paddle
-        graphics.beginFill(color);
-        graphics.drawRect(0, 0, WIDTH, HEIGHT);
+        var gmat :Matrix = new Matrix();
+        gmat.createGradientBox(WIDTH, HEIGHT, Math.PI/2);
+        graphics.beginGradientFill(GradientType.LINEAR, [0xFFFFFF, color],
+            [1, 1], [0, 255], gmat);
+        graphics.drawRoundRect(0, 0, WIDTH, HEIGHT, HEIGHT, HEIGHT);
         
         // center the paddle horizontally
         position = board.width / 2;

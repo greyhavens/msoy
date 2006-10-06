@@ -1,10 +1,13 @@
 package {
 
+import flash.display.GradientType;
 import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+
+import flash.geom.Matrix;
 
 import flash.utils.getTimer;
 
@@ -24,7 +27,10 @@ public class Ball extends Shape
         _own = own;
         
         // draw the ball
-        graphics.beginFill(color);
+        var gmat :Matrix = new Matrix();
+        gmat.createGradientBox(RADIUS*2, RADIUS*2, Math.PI/4);
+        graphics.beginGradientFill(GradientType.RADIAL, [0xFFFFFF, color],
+            [1, 1], [0, 255], gmat, "pad", "rgb", -0.75);
         graphics.drawCircle(RADIUS, RADIUS, RADIUS);
         
         // make sure the states are initialized
