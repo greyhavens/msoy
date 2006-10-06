@@ -28,6 +28,15 @@ public class Torpedo extends BaseSprite
         return _sub;
     }
 
+    public function willExplode (other :Torpedo) :Boolean
+    {
+        // we will explode if we're on the same tile
+        return ((_x == other.getX()) && (_y == other.getY())) ||
+        // or if we're about to pass through each other
+            ((_x == other.advancedX()) && (_y == other.advancedY()) &&
+             (other.getX() == advancedX()) && (other.getY() == advancedY()));
+    }
+
     /**
      * Called by the board to notify us that time has passed.
      */
@@ -55,24 +64,8 @@ public class Torpedo extends BaseSprite
 
         // advance our coordinates anyway so that we're on the tile 
         // to explode upon
-        switch (_orient) {
-        case Action.DOWN:
-            _y++;
-            break;
-
-        case Action.UP:
-            _y--;
-            break;
-
-        case Action.LEFT:
-            _x--;
-            break;
-
-        case Action.RIGHT:
-            _x++;
-            break;
-        }
-
+        _x = advancedX();
+        _y = advancedY();
         explode();
         return false;
     }

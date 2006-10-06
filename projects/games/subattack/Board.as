@@ -9,8 +9,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 public class Board
 {
     /** The dimensions of the board. */
-    public static const WIDTH :int = 60;
-    public static const HEIGHT :int = 30;
+    public static const WIDTH :int = 13; 60;
+    public static const HEIGHT :int = 13; 30;
 
     public function Board (gameObj :EZGame, seaDisplay :SeaDisplay)
     {
@@ -242,19 +242,7 @@ public class Board
             torp.tick();
         }
 
-        // check to see if any torpedos are hitting subs
-        torpsCopy = _torpedos.concat();
-        for each (torp in torpsCopy) {
-            var xx :int = torp.getX();
-            var yy :int = torp.getY();
-            for each (sub in _subs) {
-                if (!sub.isDead() && (xx == sub.getX()) && (yy == sub.getY())) {
-                    // we have a hit!
-                    torp.explode(); // will end up calling torpedoExploded
-                    break; // break the inner loop
-                }
-            }
-        }
+        checkTorpedos();
 
         // now let each sub enact any queued moves
         for each (sub in _subs) {
@@ -263,6 +251,45 @@ public class Board
                 _gameObj.endGame(sub.getPlayerIndex());
                 return;
             }
+        }
+    }
+
+    protected function checkTorpedos () :void
+    {
+        // check to see if any torpedos are hitting subs
+        var torp :Torpedo;
+        var sub :Submarine;
+        var xx :int;
+        var yy :int;
+        var exploders :Array = [];
+        for each (torp in _torpedos) {
+            xx = torp.getX();
+            yy = torp.getY();
+            for each (sub in _subs) {
+                if (!sub.isDead() && (xx == sub.getX()) && (yy == sub.getY())) {
+                    // we have a hit!
+                    if (-1 == exploders.indexOf(torp)) {
+                        exploders.push(torp);
+                    }
+                    break; // break the inner loop (one sub is enough!)
+                }
+            }
+
+            for each (var torp2 :Torpedo in _torpedos) {
+                if (torp != torp2 && torp.willExplode(torp2)) {
+                    if (-1 == exploders.indexOf(torp)) {
+                        exploders.push(torp);
+                    }
+                    if (-1 == exploders.indexOf(torp2)) {
+                        exploders.push(torp2);
+                    }
+                }
+            }
+        }
+
+        // now explode any torps that need it
+        for each (torp in exploders) {
+            torp.explode();
         }
     }
 

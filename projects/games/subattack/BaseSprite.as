@@ -42,38 +42,45 @@ public class BaseSprite extends Sprite
      */
     protected function advanceLocation () :Boolean
     {
-        switch (_orient) {
-        case Action.DOWN:
-            if (!_board.isTraversable(_x, _y + 1)) {
-                return false;
-            }
-            _y++;
-            break;
+        var newX :int = advancedX();
+        var newY :int = advancedY();
+        if (!_board.isTraversable(newX, newY)) {
+            return false;
 
-        case Action.UP:
-            if (!_board.isTraversable(_x, _y - 1)) {
-                return false;
-            }
-            _y--;
-            break;
+        } else {
+            _x = newX;
+            _y = newY;
+            updateLocation();
+            return true;
+        }
+    }
+
+    protected function advancedX () :int
+    {
+        switch (_orient) {
+        default:
+            return _x;
 
         case Action.LEFT:
-            if (!_board.isTraversable(_x - 1, _y)) {
-                return false;
-            }
-            _x--;
-            break;
+            return (_x - 1);
 
         case Action.RIGHT:
-            if (!_board.isTraversable(_x + 1, _y)) {
-                return false;
-            }
-            _x++;
-            break;
+            return (_x + 1);
         }
+    }
 
-        updateLocation();
-        return true;
+    protected function advancedY () :int
+    {
+        switch (_orient) {
+        default:
+            return _y;
+
+        case Action.DOWN:
+            return (_y + 1);
+
+        case Action.UP:
+            return (_y - 1);
+        }
     }
 
     /**
