@@ -21,5 +21,14 @@ public class Board extends Sprite
         graphics.beginFill(0xC9C9C9);
         graphics.drawRect(0, 0, WIDTH, HEIGHT);
     }
+    
+    protected function detectCollions() :void
+    {
+        
+    }
+    
+    protected var _kid :Kid;
+    
+    protected var _cars :Array = [];
 }
 }

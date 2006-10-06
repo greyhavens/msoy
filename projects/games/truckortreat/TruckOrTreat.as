@@ -23,11 +23,13 @@ public class TruckOrTreat extends Sprite
     public function setGameObject (gameObj :EZGame) :void
     {
         _gameObj = gameObj;
-        // Create board and put a kid on it.
+        // Create board and put a kid and car on it.
         _board = new Board(gameObj);
         addChild(_board);
         _kid = new Kid(15, 25);
         addChild(_kid);
+        _car = new Car(50, 20, Car.DOWN);
+        addChild(_car);
         
         // Set up a ticker that will control movement and new candy placement.
         var gameTimer :Timer = new Timer(REFRESH_RATE, 0);
@@ -48,6 +50,7 @@ public class TruckOrTreat extends Sprite
     protected function tick (event :TimerEvent) :void
     {
         _kid.tick();
+        _car.tick();
     }
     
     /** The game object. */
@@ -57,7 +60,10 @@ public class TruckOrTreat extends Sprite
     protected var _board :Board;
     
     /** The player's kid character. */
-    protected var _kid :Kid
+    protected var _kid :Kid;
+    
+    /** A car. */
+    protected var _car :Car;
     
     /** Number of milliseconds between clock ticks. */
     protected static const REFRESH_RATE :int = 50;
