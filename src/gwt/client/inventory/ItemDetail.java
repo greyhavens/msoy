@@ -89,6 +89,7 @@ public class ItemDetail extends PopupPanel
                 _item.getFurniMedia().getMediaPath()));
         addRow("Thumbnail", thumbWidget,
                "Furniture", furniWidget);
+
         // TODO: Maybe merge ItemDetail and ItemEditor, so we could put these
         // TODO: subclass-specific bits into (and rename) e.g. DocumentEditor?
         if (_item instanceof Document) {
@@ -118,6 +119,8 @@ public class ItemDetail extends PopupPanel
                    String.valueOf(((Game)_item).minPlayers),
                    "# Players (Maximum)",
                    String.valueOf(((Game)_item).maxPlayers));
+            String url = "game.html#" + _item.itemId;
+            addRow("Play", new HTML("<a href=\"" + url + "\">Play now</a>"));
 
         } else if (_item instanceof Photo) {
             addHeader("Photo Information");
