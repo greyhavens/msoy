@@ -100,11 +100,14 @@ public class StarFight extends Sprite
      */
     protected function gotBoard (boardObj :Board) :void
     {
-        _board = new BoardSprite(boardObj);
+        _ships = [];
+        _shots = [];
+
+        _board = new BoardSprite(boardObj, _ships);
         addChild(_board);
 
         // Create our local ship and center the board on it.
-        _ownShip = new ShipSprite(_board, this, false);
+        _ownShip = new ShipSprite(_board, this, false, _gameObj.getMyIndex());
         _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
         addChild(_ownShip);
@@ -115,8 +118,6 @@ public class StarFight extends Sprite
 
         // Set up our initial ship sprites.
         var gameShips :Array = (_gameObj.get("ship") as Array);
-        _ships = [];
-        _shots = [];
 
         // The game already has some ships, create sprites for em.
         if (gameShips != null) {
@@ -125,9 +126,10 @@ public class StarFight extends Sprite
                 if (gameShips[ii] == null) {
                     _ships[ii] = null;
                 } else {
-                    _ships[ii] = new ShipSprite(_board, this, true);
+                    _ships[ii] = new ShipSprite(_board, this, true, ii);
                     gameShips[ii].position = 0;
                     _ships[ii].readFrom(gameShips[ii]);
+                    addChild(_ships[ii]);
                 }
             }
         }
@@ -164,7 +166,7 @@ public class StarFight extends Sprite
                 var ship :ShipSprite = _ships[event.index];
                 if (ship == null) {
                     _ships[event.index] =
-                        ship = new ShipSprite(_board, this, true);
+                        ship = new ShipSprite(_board, this, true, event.index);
                     addChild(ship);
                 }
                 var bytes :ByteArray = ByteArray(event.newValue);
@@ -180,7 +182,7 @@ public class StarFight extends Sprite
         if (event.name == "shot") {
             var val :Array = (event.value as Array);
             var shot :ShotSprite =
-                new ShotSprite(val[0], val[1], val[2], val[3]);
+                new ShotSprite(val[0], val[1], val[2], val[3], val[4]);
             _shots.push(shot);
             shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
             addChild(shot);
@@ -200,13 +202,14 @@ public class StarFight extends Sprite
      * Send a message to the server about our shot.
      */
     public function fireShot (x :Number, y :Number,
-        xVel :Number, yVel :Number) :void
+        xVel :Number, yVel :Number, shipId :int) :void
     {
         var args :Array = new Array(4);
         args[0] = x;
         args[1] = y;
         args[2] = xVel;
         args[3] = yVel;
+        args[4] = shipId;
         _gameObj.sendMessage("shot", args);
     }
 

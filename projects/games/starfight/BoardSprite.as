@@ -11,13 +11,14 @@ public class BoardSprite extends Sprite
 {
     public var boardWidth :int;
     public var boardHeight :int;
-    
-    public function BoardSprite (board :Board) :void
+
+    public function BoardSprite (board :Board, ships :Array) :void
     {
         this.boardWidth = board.width;
         this.boardHeight = board.height;
 
         _obstacles = board.obstacles;
+        _ships = ships;
         paint();
     }
 
@@ -32,10 +33,11 @@ public class BoardSprite extends Sprite
 
     /**
      * Returns the first collision for something of the specified radius (rad)
-     *  moving along the given path.
+     *  moving along the given path.  ignoreShip is a ship ID to ignore, or
+     *  we  ignore all if -1.
      */
     public function getCollision (oldX :Number, oldY :Number,
-        newX :Number, newY :Number, rad :Number) :Collision
+        newX :Number, newY :Number, rad :Number, ignoreShip :int) :Collision
     {
         var hits :Array = [];
 
@@ -45,6 +47,38 @@ public class BoardSprite extends Sprite
 
         var dx :Number = newX - oldX;
         var dy :Number = newY - oldY;
+
+        if (ignoreShip >= 0) {
+            // Check each ship and figure out which one we hit first.
+            for (var ii :int; ii < _ships.length; ii++) {
+                if (ii == ignoreShip || (dx == dx && dy == dy)) {
+                    continue;
+                }
+                var ship :ShipSprite = _ships[ii];
+                if (ship == null) {
+                    continue;
+                }
+                var bX :Number = ship.boardX;
+                var bY :Number = ship.boardY;
+                var rad :Number = ShipSprite.COLLISION_RAD;
+                // We approximate a ship as a circle for this...
+                var a :Number = dx*dx + dy*dy;
+                var b :Number = 2*(dx*(oldX-bX) + dy*(oldY-bY));
+                var c :Number = bX*bX + bY*bY + oldX*oldX + oldY*oldY -
+                    2*(bX*oldX + bY*oldY) - rad*rad;
+
+                var determ :Number = b*b - 4*a*c;
+                if (determ >= 0.0) {
+                    var u :Number = (-b - Math.sqrt(determ))/(2*a);
+                    if ((u >= 0.0) && (u <= 1.0)) {
+                        if (u < bestTime) {
+                            bestTime = u;
+                            bestHit = new Collision(ship, u, false);
+                        }
+                    }                    
+                }
+            }
+        }
 
         // Check each obstacle and figure out which one we hit first.
         for each (var obs :Obstacle in _obstacles) {
@@ -92,8 +126,8 @@ public class BoardSprite extends Sprite
         while (true) {
             pt = new Point(Math.random() * (boardWidth - 4) + 2,
                 Math.random() * (boardHeight - 4) + 2);
-            if (getCollision(pt.x, pt.y, pt.x, pt.y, ShipSprite.COLLISION_RAD)
-                == null) {
+            if (getCollision(pt.x, pt.y, pt.x, pt.y, ShipSprite.COLLISION_RAD,
+                    -1) == null) {
                 return pt;
             }
         }
@@ -127,6 +161,9 @@ public class BoardSprite extends Sprite
 
     /** All the obstacles in the world. */
     protected var _obstacles :Array;
+
+    /** Reference to the array of ships we know about. */
+    protected var _ships :Array;
 
     /** Our ship animation. */
     protected var _spaceMovie :MovieClipAsset;

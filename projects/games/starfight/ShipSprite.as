@@ -41,17 +41,21 @@ public class ShipSprite extends Sprite
     /** How fast are we currently turning. */
     public var turnRate :Number;
 
+    /** our id. */
+    public var shipId :int;
+
     /**
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
      */
     public function ShipSprite (board :BoardSprite, game :StarFight,
-        skipStartingPos :Boolean)
+        skipStartingPos :Boolean, shipId :int)
     {
         accel = 0.0;
         turnRate = 0.0;
         xVel = 0.0;
         yVel = 0.0;
+        this.shipId = shipId;
 
         if (!skipStartingPos) {
             var pt :Point = board.getStartingPos();
@@ -94,9 +98,10 @@ public class ShipSprite extends Sprite
         endX :Number, endY :Number) :void
     {
         var coll :Collision = _board.getCollision(startX, startY, endX, endY,
-            COLLISION_RAD);
+            COLLISION_RAD, -1);
         if (coll != null) {
-            var bounce :Number = coll.obstacle.getElasticity();
+            var obstacle :Obstacle = Obstacle(coll.hit);
+            var bounce :Number = obstacle.getElasticity();
             var dx :Number = endX - startX;
             var dy :Number = endY - startY;
             if (coll.isHoriz) {
@@ -218,7 +223,7 @@ public class ShipSprite extends Sprite
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
         _game.fireShot(boardX + cos, boardY + sin,
-            cos * SHOT_SPD, sin * SHOT_SPD);
+            cos * SHOT_SPD, sin * SHOT_SPD, shipId);
         _ticksToFire = TICKS_PER_SHOT - 1;
     }
 

@@ -2,8 +2,8 @@ package {
 
 public class Collision
 {
-    /** The obstacle we've collided with. */
-    public var obstacle :Obstacle;
+    /** What we've hit. */
+    public var hit :Object;
 
     /** The time along the route we collided. (0-1)*/
     public var time :Number;
@@ -11,9 +11,9 @@ public class Collision
     /** Whether we collided horizontally or vertically. */
     public var isHoriz :Boolean;
 
-    public function Collision (obs :Obstacle, time :Number, isHoriz :Boolean)
+    public function Collision (hit :Object, time :Number, isHoriz :Boolean)
     {
-        this.obstacle = obs;
+        this.hit = hit;
         this.time = time;
         this.isHoriz = isHoriz;
     }

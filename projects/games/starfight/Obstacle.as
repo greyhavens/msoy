@@ -29,7 +29,7 @@ public class Obstacle extends Sprite
     public var bX :Number;
     public var bY :Number;
 
-    public function Obstacle (type :int, x :int, y :int) :void
+    public function Obstacle (type :int, x :int, y :int, anim :Boolean) :void
     {
         this.type = type;
         this.x = x * Codes.PIXELS_PER_TILE;
@@ -38,11 +38,17 @@ public class Obstacle extends Sprite
         bX = x;
         bY = y;
 
+        if (anim) {
+            paint();
+        }
 
+    }
+
+    protected function paint () :void
+    {
         var obsMovie :MovieClipAsset = MovieClipAsset(new obstacleAnim);
         obsMovie.gotoAndStop(type);
         addChild(obsMovie);
-
     }
 
     /**
@@ -64,6 +70,8 @@ public class Obstacle extends Sprite
         y = bytes.readInt();
         bX = x / Codes.PIXELS_PER_TILE;
         bY = y / Codes.PIXELS_PER_TILE; 
+
+        paint();
     }
 
     /**

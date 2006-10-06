@@ -37,7 +37,7 @@ public class Board
         
         obstacles = [];
         while (bytes.bytesAvailable > 0) {
-            var obs :Obstacle = new Obstacle(0, 0, 0);
+            var obs :Obstacle = new Obstacle(0, 0, 0, false);
             obs.readFrom(bytes);
             obstacles.push(obs);
         }
@@ -71,19 +71,19 @@ public class Board
             var type :int =
                 Math.random() < 0.5 ? Obstacle.ASTEROID_1 : Obstacle.ASTEROID_2;
             obstacles.push(new Obstacle(type,
-                Math.random()*width, Math.random()*height));
+                Math.random()*width, Math.random()*height, true));
         }
         
         // Place a wall around the outside of the board.
 
         for (ii = 0; ii < height; ii++) {
-            obstacles.push(new Obstacle(Obstacle.WALL, 0, ii));
-            obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii));
+            obstacles.push(new Obstacle(Obstacle.WALL, 0, ii, true));
+            obstacles.push(new Obstacle(Obstacle.WALL, width-1, ii, true));
         }
 
         for (ii = 0; ii < width; ii++) {
-            obstacles.push(new Obstacle(Obstacle.WALL, ii, 0));
-            obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1));
+            obstacles.push(new Obstacle(Obstacle.WALL, ii, 0, true));
+            obstacles.push(new Obstacle(Obstacle.WALL, ii, height-1, true));
         }
     }
 }

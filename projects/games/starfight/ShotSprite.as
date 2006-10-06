@@ -14,15 +14,19 @@ public class ShotSprite extends Sprite {
     public var xVel :Number;
     public var yVel :Number;
 
+    /** the ships that fired us. */
+    public var shipId :int;
+
     public var complete :Boolean;
 
     public function ShotSprite (x :Number, y :Number,
-        xVel :Number, yVel :Number) :void
+        xVel :Number, yVel :Number, shipId :int) :void
     {
         boardX = x;
         boardY = y;
         this.xVel = xVel;
         this.yVel = yVel;
+        this.shipId = shipId;
 
         complete = false;
 
@@ -37,12 +41,15 @@ public class ShotSprite extends Sprite {
     public function tick (board :BoardSprite, time :Number) :void
     {
         var coll :Collision = board.getCollision(boardX, boardY,
-            boardX + xVel*time, boardY + yVel*time, COLLISION_RAD);
+            boardX + xVel*time, boardY + yVel*time, COLLISION_RAD, shipId);
         if (coll == null) {
             boardX += xVel*time;
             boardY += yVel*time;
         } else {
-            // TODO: Animate explosion if ship.
+            if (coll.hit is ShipSprite) {
+                Logger.log("Hit a ship!");
+                // TODO: Animate explosion.
+            }
             complete = true;
         }
     }
