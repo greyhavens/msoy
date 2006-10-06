@@ -42,8 +42,13 @@ public class ItemContainer extends VerticalPanel
                 // TODO: allow passing -1 for width
                 "", path, THUMB_HEIGHT, THUMB_HEIGHT);
 
-        default:
+        case MediaDesc.IMAGE_PNG:
+        case MediaDesc.IMAGE_JPEG:
+        case MediaDesc.IMAGE_GIF:
             return new Image(path);
+
+        default:
+            return new Label(path);
         }
     }
 
