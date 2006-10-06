@@ -16,11 +16,19 @@ public class SeaDisplay extends Sprite
 
     public function SeaDisplay ()
     {
-        var ups :Array = [];
-        ups[0] = Bitmap(new UP1()).bitmapData;
-        ups[1] = Bitmap(new UP2()).bitmapData;
-        ups[2] = Bitmap(new UP3()).bitmapData;
-        ups[3] = Bitmap(new UP4()).bitmapData;
+        var ups :Array = [
+            Bitmap(new UP1()).bitmapData,
+            Bitmap(new UP2()).bitmapData,
+            Bitmap(new UP3()).bitmapData,
+            Bitmap(new UP4()).bitmapData,
+            Bitmap(new UP5()).bitmapData,
+            Bitmap(new UP6()).bitmapData,
+            Bitmap(new UP7()).bitmapData,
+            Bitmap(new UP8()).bitmapData,
+            Bitmap(new UP9()).bitmapData,
+            Bitmap(new UP10()).bitmapData,
+            Bitmap(new UP11()).bitmapData
+        ];
 
         _downs[0] = Bitmap(new DOWN1()).bitmapData;
         _downs[1] = Bitmap(new DOWN2()).bitmapData;
@@ -32,7 +40,8 @@ public class SeaDisplay extends Sprite
                 yy < Board.HEIGHT + SubAttack.VISION_TILES; yy++) {
             for (var xx :int = -SubAttack.VISION_TILES;
                     xx < Board.WIDTH + SubAttack.VISION_TILES; xx++) {
-                pickBitmap(ups);
+                graphics.beginBitmapFill(
+                    BitmapData(ups[int(Math.random() * ups.length)]));
                 graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE,
                     TILE_SIZE);
             }
@@ -193,6 +202,27 @@ public class SeaDisplay extends Sprite
 
     [Embed(source="up_04.png")]
     protected static const UP4 :Class;
+
+    [Embed(source="up_05.png")]
+    protected static const UP5 :Class;
+
+    [Embed(source="up_06.png")]
+    protected static const UP6 :Class;
+
+    [Embed(source="up_07.png")]
+    protected static const UP7 :Class;
+
+    [Embed(source="up_08.png")]
+    protected static const UP8 :Class;
+
+    [Embed(source="up_09.png")]
+    protected static const UP9 :Class;
+
+    [Embed(source="up_10.png")]
+    protected static const UP10 :Class;
+
+    [Embed(source="up_11.png")]
+    protected static const UP11 :Class;
 
     [Embed(source="down_wall.png")]
     protected static const DOWN_WALL :Class;

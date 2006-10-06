@@ -33,6 +33,7 @@ public class Submarine extends BaseSprite
         _nameLabel = new TextField();
         _nameLabel.selectable = false;
         _nameLabel.text = playerName;
+        _nameLabel.textColor = uint(0x33CC33);
         // center the label above us
         _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
         _nameLabel.x = (SeaDisplay.TILE_SIZE - _nameLabel.textWidth) / 2;

@@ -9,8 +9,8 @@ import com.threerings.ezgame.MessageReceivedEvent;
 public class Board
 {
     /** The dimensions of the board. */
-    public static const WIDTH :int = 13; 60;
-    public static const HEIGHT :int = 13; 30;
+    public static const WIDTH :int = 60;
+    public static const HEIGHT :int = 30;
 
     public function Board (gameObj :EZGame, seaDisplay :SeaDisplay)
     {
@@ -152,6 +152,7 @@ public class Board
             if (!sub.isDead() && sub.getX() == xx && sub.getY() == yy) {
                 sub.wasKilled();
                 killCount++;
+                _totalDeaths++;
 
                 _gameObj.localChat(killer.getPlayerName() + " has shot " +
                     sub.getPlayerName());
@@ -242,15 +243,25 @@ public class Board
             torp.tick();
         }
 
+        // then we check torpedo-on-torpedo action, and pass-through
         checkTorpedos();
 
-        // now let each sub enact any queued moves
-        for each (sub in _subs) {
-            if (sub.getScore() > 4) {
-                _gameObj.sendChat(sub.getPlayerName() + " is the winner!");
-                _gameObj.endGame(sub.getPlayerIndex());
-                return;
+        // maybe end the game
+        if (_totalDeaths >= (_gameObj.getPlayerCount() * 5)) {
+            // find the winners
+            var winners :Array;
+            var hiScore :int = int.MIN_VALUE;
+            for each (sub in _subs) {
+                var score :int = sub.getScore();
+                if (score > hiScore) {
+                    hiScore = score;
+                    winners = [];
+                }
+                if (score == hiScore) {
+                    winners.push(sub.getPlayerIndex());
+                }
             }
+            _gameObj.endGame.apply(null, winners);
         }
     }
 
@@ -378,6 +389,8 @@ public class Board
 
     /** The 'sea' where everything lives. */
     protected var _seaDisplay :SeaDisplay;
+
+    protected var _totalDeaths :int = 0;
     
     protected var _ticks :Array = [];
 
