@@ -21,6 +21,7 @@ public class GamePanel extends VerticalPanel
     {
         add(new Label(config.name));
 
+        String authtoken = (ctx.creds == null) ? "" : ctx.creds.token;
         Widget display = null;
         switch (config.type) {
         case LaunchConfig.FLASH_LOBBIED: {
@@ -41,7 +42,8 @@ public class GamePanel extends VerticalPanel
                 new String[] { "game_id", "" + config.gameId,
                                "resource_url", config.resourceURL,
                                "server", config.server,
-                               "port", "" + config.port });
+                               "port", "" + config.port,
+                               "authtoken", authtoken });
             break;
         }
 
