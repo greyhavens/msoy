@@ -16,15 +16,6 @@ public class Board extends BaseSprite
         super(0, 0, Bitmap(new backgroundAsset()));
     }
     
-    protected function detectCollions() :void
-    {
-        
-    }
-    
-    protected var _kid :Kid;
-    
-    protected var _cars :Array = [];
-    
     /** Background image. */
     [Embed(source="rsrc/background.png")]
     protected var backgroundAsset :Class;
