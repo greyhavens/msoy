@@ -86,6 +86,14 @@ public class ShipSprite extends Sprite
         _shipMovie.y = -HEIGHT/2;
         _shipMovie.rotation = 90;
         addChild(_shipMovie);
+
+        _shieldMovie = MovieClipAsset(new shieldAnim());
+        _shieldMovie.gotoAndStop(1);
+        _shieldMovie.x = 55/2;
+        _shieldMovie.y = -58/2;
+        _shieldMovie.rotation = 90;
+        addChild(_shieldMovie);
+        
     }
 
     /**
@@ -186,6 +194,12 @@ public class ShipSprite extends Sprite
             setAnimMode(REVERSE);
         } else {
             setAnimMode(IDLE);
+        }
+
+        if (powerups & SHIELDS_MASK) {
+            _shieldMovie.alpha = 1.0;
+        } else {
+            _shieldMovie.alpha = 0.0;
         }
 
         if (_firing && (_ticksToFire <= 0)) {
@@ -355,9 +369,13 @@ public class ShipSprite extends Sprite
 
     /** Our ship animation. */
     protected var _shipMovie :MovieClipAsset;
+    protected var _shieldMovie :MovieClipAsset;
 
     [Embed(source="rsrc/ship.swf#ship_movie_01")]
     protected var shipAnim :Class;
+
+    [Embed(source="rsrc/ship_shield.swf")]
+    protected var shieldAnim :Class;
 
     /** "frames" within the actionscript for movement animations. */
     protected static const IDLE :int = 1;
