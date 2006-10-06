@@ -4,10 +4,12 @@ import flash.display.Graphics;
 
 import flash.utils.ByteArray;
 
+import flash.display.Sprite;
+
 /**
  * Represents something in the world that ships may interact with.
  */
-public class Obstacle
+public class Obstacle extends Sprite
 {
     /** Constants for types of obstacles. */
     public static const WALL :int = 0;
@@ -18,48 +20,22 @@ public class Obstacle
     public static const DOWN :int = 3;
 
     public var type :int;
-    public var x :int;
-    public var y :int;
+
+    /** Board-coords. */
+    public var bX :Number;
+    public var bY :Number;
 
     public function Obstacle (type :int, x :int, y :int) :void
     {
         this.type = type;
-        this.x = x;
-        this.y = y;
-    }
+        this.x = x * Codes.PIXELS_PER_TILE;
+        this.y = y * Codes.PIXELS_PER_TILE;
 
-    /**
-     * Draw the obstacle.
-     */
-    public function paint (gfx :Graphics) :void
-    {
-        var sx :int = x * Codes.PIXELS_PER_TILE - StarFight.WIDTH/2;
-        var sy :int = y * Codes.PIXELS_PER_TILE - StarFight.HEIGHT/2;
-        gfx.beginFill(GREY);
-        gfx.drawRect(sx, sy, Codes.PIXELS_PER_TILE, Codes.PIXELS_PER_TILE);
-    }
+        bX = x;
+        bY = y;
 
-    /**
-     * Returns the direction the obstacle lies from the position.
-     */
-    public function getDir (boardX :Number, boardY :Number) :int
-    {
-        var dx :Number = x - boardX;
-        var dy :Number = y - boardY;
-
-        if (Math.abs(dx) > Math.abs(dy)) {
-            if (dx > 0) {
-                return RIGHT;
-            } else {
-                return LEFT;
-            }
-        } else {
-            if (dy > 0) {
-                return UP;
-            } else {
-                return DOWN;
-            }
-        }
+        graphics.beginFill(GREY);
+        graphics.drawRect(0, 0, Codes.PIXELS_PER_TILE, Codes.PIXELS_PER_TILE);
     }
 
     /**
@@ -79,6 +55,8 @@ public class Obstacle
         type = bytes.readInt();
         x = bytes.readInt();
         y = bytes.readInt();
+        bX = x / Codes.PIXELS_PER_TILE;
+        bY = y / Codes.PIXELS_PER_TILE; 
     }
 
     /**

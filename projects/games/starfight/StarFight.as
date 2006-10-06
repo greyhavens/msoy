@@ -46,6 +46,9 @@ public class StarFight extends Sprite
         this.mask = mask;
 
         log("Created Game Object");
+
+        graphics.beginFill(BLACK);
+        graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
     }
 
     /**
@@ -177,7 +180,6 @@ public class StarFight extends Sprite
                 new ShotSprite(val[0], val[1], val[2], val[3]);
             _shots.push(shot);
             shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
-            log("Rcvd shot: " + val);
             addChild(shot);
         }
     }
@@ -203,7 +205,6 @@ public class StarFight extends Sprite
         args[2] = xVel;
         args[3] = yVel;
         _gameObj.sendMessage("shot", args);
-        log("Firing: " + args);
     }
 
     /**
@@ -269,5 +270,8 @@ public class StarFight extends Sprite
     /** Constants to control update frequency. */
     protected static const REFRESH_RATE :int = 50;
     protected static const FRAMES_PER_UPDATE :int = 2;
+
+    /** Color constants. */
+    protected static const BLACK :uint = uint(0x000000);
 }
 }

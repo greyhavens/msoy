@@ -1,8 +1,11 @@
 package {
 
 import flash.display.Sprite;
+import flash.display.Shape;
 
 import flash.geom.Point;
+
+import mx.core.MovieClipAsset;
 
 public class BoardSprite extends Sprite
 {
@@ -23,8 +26,8 @@ public class BoardSprite extends Sprite
      */
     public function setAsCenter (boardX :Number, boardY :Number) :void
     {
-        x = StarFight.WIDTH - (boardX*Codes.PIXELS_PER_TILE);
-        y = StarFight.HEIGHT - (boardY*Codes.PIXELS_PER_TILE);
+        x = StarFight.WIDTH/2 - (boardX*Codes.PIXELS_PER_TILE);
+        y = StarFight.HEIGHT/2 - (boardY*Codes.PIXELS_PER_TILE);
     }
 
     /**
@@ -45,17 +48,17 @@ public class BoardSprite extends Sprite
 
         // Check each obstacle and figure out which one we hit first.
         for each (var obs :Obstacle in _obstacles) {
-            if ((obs.x <= (newX + rad)) &&
-                ((obs.x+1.0) >= (newX - rad)) &&
-                (obs.y <= (newY + rad)) &&
-                ((obs.y+1.0) >= (newY - rad))) {
+            if ((obs.bX <= (newX + rad)) &&
+                ((obs.bX+1.0) >= (newX - rad)) &&
+                (obs.bY <= (newY + rad)) &&
+                ((obs.bY+1.0) >= (newY - rad))) {
 
                 // Find how long it is til our X coords collide.
                 var timeToX :Number;
                 if (dx > 0.0) {
-                    timeToX = (obs.x - (oldX+rad))/dx;
+                    timeToX = (obs.bX - (oldX+rad))/dx;
                 } else if (dx < 0.0) {
-                    timeToX = ((obs.x+1.0) - (oldX-rad))/dx;
+                    timeToX = ((obs.bX+1.0) - (oldX-rad))/dx;
                 } else {
                     timeToX = 0.0;
                 }
@@ -63,9 +66,9 @@ public class BoardSprite extends Sprite
                 // Find how long it is til our Y coords collide.
                 var timeToY :Number;
                 if (dy > 0.0) {
-                    timeToY = (obs.y - (oldY+rad))/dy;
+                    timeToY = (obs.bY - (oldY+rad))/dy;
                 } else if (dy < 0.0) {
-                    timeToY = ((obs.y+1.0) - (oldY-rad))/dy;
+                    timeToY = ((obs.bY+1.0) - (oldY-rad))/dy;
                 } else {
                     timeToY = 0.0;
                 }
@@ -104,20 +107,32 @@ public class BoardSprite extends Sprite
      */
     public function paint () :void
     {
-        graphics.beginFill(BLACK);
-        graphics.drawRect(-StarFight.WIDTH/2, - StarFight.HEIGHT/2,
-            boardWidth*Codes.PIXELS_PER_TILE,
+        var mask :Shape = new Shape();
+        addChild(mask);
+        mask.graphics.clear();
+        mask.graphics.beginFill(0xFFFFFF);
+        mask.graphics.drawRect(0, 0, boardWidth*Codes.PIXELS_PER_TILE,
             boardHeight*Codes.PIXELS_PER_TILE);
+        mask.graphics.endFill();
+        this.mask = mask;
+
+        _spaceMovie = MovieClipAsset(new spaceAnim());
+        _spaceMovie.gotoAndStop(1);
+        addChild(_spaceMovie);
 
         for each (var obs :Obstacle in _obstacles) {
-            obs.paint(graphics);
+            addChild(obs);
         }
     }
 
     /** All the obstacles in the world. */
     protected var _obstacles :Array;
 
-    /** Color constants. */
-    protected static const BLACK :uint = uint(0x000000);
+    /** Our ship animation. */
+    protected var _spaceMovie :MovieClipAsset;
+
+    [Embed(source="rsrc/space.swf")]
+    protected var spaceAnim :Class;
+
 }
 }
