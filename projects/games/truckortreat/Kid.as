@@ -1,24 +1,22 @@
 package {
 
-import flash.display.Sprite;
 import flash.display.Bitmap;
 import flash.events.KeyboardEvent;
 import flash.ui.Keyboard;
 
-public class Kid extends MovingSprite
+public class Kid extends BaseSprite
 {   
     /** Images that can be used for kid. */
     public static const IMAGE_VAMPIRE :int = 0;
     public static const IMAGE_GHOST :int = 1;
     
-    /** Default number of pixels kid can move per tick. */
-    public static const DEFAULT_SPEED :int = 5;
-    
     /** Create a new Kid object at the coordinates on the board given. */
     public function Kid (startX :int, startY :int, image :int, board :Board)
     {
+        _boardWidth = board.getWidth(); _boardHeight = board.getHeight();
+        _speed = DEFAULT_SPEED;
         _health = STARTING_HEALTH;
-        super(startX, startY, DEFAULT_SPEED, getBitmap(image), board);
+        super(startX, startY, getBitmap(image));
     }
     
     public function isDead () :Boolean
@@ -65,6 +63,26 @@ public class Kid extends MovingSprite
         }
     }
     
+    /** Called to move kid at each clock tick. */
+    public function tick () :void
+    {
+        var deltaX :int = _speed * _moveX;
+        var deltaY :int = _speed * _moveY;
+        if (0 <= x + deltaX && x + deltaX + _width <= _boardWidth) {
+            x += deltaX;
+        }
+        if (0 <= y + deltaY && y + deltaY + _height <= _boardHeight) {
+            y += deltaY;
+        }
+    }
+    
+    /** Set the kid's speed to a new value. */
+    public function setSpeed(newSpeed :int) :void
+    {
+        _speed = newSpeed;
+    }
+    
+    /** Get the bitmap used to draw the kid. */
     protected function getBitmap(image :int) :Bitmap
     {
         switch (image) {
@@ -76,12 +94,29 @@ public class Kid extends MovingSprite
             return Bitmap(new vampireAsset());
         }
     }
+    
+    /** 
+     * Direction we're moving in a given tick. If zero, not moving on this
+     * axis. If -1, moving up or left. If 1, moving down or right. 
+     */
+    protected var _moveY :int = 0;
+    protected var _moveX :int = 0;
+    
+    /** Current speed (in pixels per tick). */
+    protected var _speed :int;
 
     /** Kid's health level. */
     protected var _health :int;
     
+    /** Dimensions of board we're drawn on. */
+    protected var _boardHeight :int;
+    protected var _boardWidth :int;
+    
     /** Initial health level. */
     protected static const STARTING_HEALTH :int = 3;
+    
+    /** Default number of pixels kid can move per tick. */
+    protected static const DEFAULT_SPEED :int = 5;
     
     /** Images for kid. */
     [Embed(source="rsrc/vampire.png")]

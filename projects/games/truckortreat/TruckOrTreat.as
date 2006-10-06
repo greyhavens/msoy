@@ -12,7 +12,7 @@ import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
-[SWF(width="834", height="688")]
+[SWF(width="834", height="539")]
 public class TruckOrTreat extends Sprite
     implements Game
 {
@@ -24,11 +24,11 @@ public class TruckOrTreat extends Sprite
     {
         _gameObj = gameObj;
         // Create board and put a kid and car on it.
-        _board = new Board(gameObj);
+        _board = new Board();
         addChild(_board);
-        _kid = new Kid(150, 200, Kid.IMAGE_GHOST, _board);
+        _kid = new Kid(180, 200, Kid.IMAGE_GHOST, _board);
         addChild(_kid);
-        _car = new Car(300, 110, Car.DOWN, _board);
+        _car = new Car(275, 110, Car.DOWN, _board);
         addChild(_car);
         
         // Set up a ticker that will control movement and new candy placement.
@@ -49,8 +49,8 @@ public class TruckOrTreat extends Sprite
     /** Do whatever needs to be done on each clock tick. */
     protected function tick (event :TimerEvent) :void
     {
-        _kid.tick();
         _car.tick();
+        _kid.tick();
     }
     
     /** The game object. */

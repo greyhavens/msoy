@@ -1,42 +1,22 @@
 package {
 
-import flash.display.Sprite;
 import flash.display.Bitmap;
-import flash.display.BitmapData;
-import com.threerings.ezgame.EZGame;
 
-public class Board extends Sprite
+public class Board extends BaseSprite
 {   
     /** Lists of sidewalk coordinates. These are safe spots to start on. */
     public static const SIDEWALK_X :Array = [];
     public static const SIDEWALK_Y :Array = [];
     
-    public function Board (gameObj :EZGame)
+    public function Board ()
     {
-        var bitmap :Bitmap = Bitmap(new backgroundAsset());
-        _width = bitmap.bitmapData.width;
-        _height = bitmap.bitmapData.height;
-        addChild(bitmap);
-    }
-    
-    public function getWidth() :int 
-    {
-        return _width;
-    }
-    
-    public function getHeight() :int
-    {
-        return _height;
+        super(0, 0, Bitmap(new backgroundAsset()));
     }
     
     protected function detectCollions() :void
     {
         
     }
-    
-    /** Dimensions of board. */
-    protected var _width :int;
-    protected var _height :int;
     
     protected var _kids :Array = [];
     

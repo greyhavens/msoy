@@ -1,9 +1,8 @@
 package {
 
-import flash.display.Sprite;
 import flash.display.Bitmap;
 
-public class Car extends MovingSprite
+public class Car extends BaseSprite
 {   
     /** Default number of pixels car can move per tick. */
     public static const DEFAULT_SPEED :int = 10;
@@ -15,6 +14,8 @@ public class Car extends MovingSprite
     /** Create a new Car object at the coordinates on the board given. */
     public function Car (startX :int, startY :int, direction :int, board :Board)
     {
+        _boardHeight = board.getHeight();
+        _speed = DEFAULT_SPEED;
         var bitmap :Bitmap;
         // Set image based on direction we're driving.
         if (direction == UP) {
@@ -24,31 +25,37 @@ public class Car extends MovingSprite
             bitmap = Bitmap(new carFrontAsset());
             _direction = DOWN;
         }
-        super(startX, startY, DEFAULT_SPEED, bitmap, board);
+        super(startX, startY, bitmap);
     }
     
     /** 
      * Move up or down on the board, as appropriate. If we go past the edge, 
      * set y coordinate to other end to start over again.
      */
-    override public function tick () :void
+    public function tick () :void
     {
         y += _speed * _direction;
-        if (y > _board.getHeight()) {
+        if (y > _boardHeight) {
             y = 0;
         } else if (y < 0) {
-            y = _board.getHeight();
+            y = _boardHeight;
         }
     }
     
+    /** Number of pixels car moves per tick. */
+    protected var _speed :int;
+    
     /** Keeps track of the direction car is going. */
     protected var _direction :int;
+    
+    /** Height of board we're drawn on, in pixels. */
+    protected var _boardHeight :int;
         
     /** Car images. */
-    [Embed(source="rsrc/carfront.png")]
+    [Embed(source="rsrc/car_front.png")]
     protected static const carFrontAsset :Class;
     
-    [Embed(source="rsrc/carback.png")]
+    [Embed(source="rsrc/car_back.png")]
     protected static const carBackAsset :Class;    
 }
 }
