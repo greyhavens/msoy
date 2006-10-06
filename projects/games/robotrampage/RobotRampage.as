@@ -30,6 +30,13 @@ public class RobotRampage extends Sprite
     public function RobotRampage ()
     {
         _robotFactory = new RobotFactory();
+
+        var square :Sprite = new Sprite();
+        square.graphics.beginFill(0x000000);
+        square.graphics.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        square.graphics.endFill();
+        addChild(square);
+        mask = square;
     }
 
     public static function log (msg :String) :void
@@ -44,10 +51,7 @@ public class RobotRampage extends Sprite
         _myIndex = _gameObj.getMyIndex();
         _robotInterval = INITIAL_ROBOT_INTERVAL;
 
-        graphics.clear();
-        graphics.beginFill(0xCCCCFF);
-        graphics.drawRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        graphics.endFill();
+        addChild(new LUNAR_SURFACE());
 
         addMoonBases();
 
@@ -243,9 +247,9 @@ public class RobotRampage extends Sprite
     {
         var robot :Robot = new Robot(_robotFactory, this);
 
-        robot.x = (width/2) + 
+        robot.x = (SCREEN_WIDTH/2) + 
             (Math.random() * 2 * CENTER_RADIUS) - CENTER_RADIUS;
-        robot.y = (height/2) + 
+        robot.y = (SCREEN_HEIGHT/2) + 
             (Math.random() * 2 * CENTER_RADIUS) - CENTER_RADIUS;
         _robots.push(robot);
 
@@ -365,6 +369,10 @@ public class RobotRampage extends Sprite
      * game to end. Yay for increasing difficulty.
      */
     protected static const MAX_ROBOTS :int = 21;
+
+    [Embed(source="rsrc/lunar_surface.jpg")]
+    protected var LUNAR_SURFACE :Class;
+
 
 
     /**
