@@ -82,7 +82,11 @@ public class Bunny extends Sprite
 
     public function walk (deltaX :int, primary :Boolean = true) :void
     {
-        if (_attacking || _climbing) {
+        if (_attacking) {
+            return;
+        }
+        if (_climbing) {
+            idle();
             return;
         }
         if (bunnyMovie.currentFrame != 2) {
@@ -175,7 +179,6 @@ public class Bunny extends Sprite
             return;
         }
         if (_climbing) {
-            BunnyKnights.log("Idling while climbing");
             bunnyMovie.gotoAndStop(5);
             return;
         }

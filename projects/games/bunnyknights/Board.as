@@ -16,6 +16,11 @@ public class Board
         bheight = height;
         _shadow = new Array(bwidth, bheight);
         _tiles = new Array();
+        var backLayer :Sprite = _bn.getLayer(Tile.LAYER_BACK);
+        backLayer.graphics.beginFill(0x000000);
+        backLayer.graphics.drawRect(
+                0, 0, bwidth*Tile.TILE_SIZE, bheight * Tile.TILE_SIZE);
+        backLayer.graphics.endFill();
     }
 
     public function addTiles (
@@ -24,7 +29,7 @@ public class Board
     {
         for (var yy :int = y; yy < y + height; yy++) {
             for (var xx :int = x; xx < x + width; xx++) {
-                addTile(tile(x, y));
+                addTile(tile(xx, yy));
             }
         }
     }
@@ -57,7 +62,7 @@ public class Board
     {
         // don't allow a movement longer than 1 tile until I implment
         // proper collision detection
-        delta = Math.max(Math.min(delta, Tile.TILE_SIZE), -Tile.TILE_SIZE);
+        delta = Math.max(Math.min(delta, Tile.TILE_SIZE-1), -Tile.TILE_SIZE+1);
         var bx :int = bunny.getBX();
         var by :int = bunny.getBY();
         var tx1 :int = int((bx + delta) / Tile.TILE_SIZE);
@@ -85,7 +90,7 @@ public class Board
 
     public function climb (bunny :Bunny, delta :int, width :int) :Boolean
     {
-        delta = Math.max(Math.min(delta, Tile.TILE_SIZE), -Tile.TILE_SIZE);
+        delta = Math.max(Math.min(delta, Tile.TILE_SIZE-1), -Tile.TILE_SIZE+1);
         var bx :int = bunny.getBX();
         var by :int = bunny.getBY();
         var tx :int = int((bx + width/2) / Tile.TILE_SIZE);
@@ -114,7 +119,8 @@ public class Board
                 return false;
             } else if (!shadowd) {
                 by = ty * Tile.TILE_SIZE;
-                isClimbing = false;
+                isClimbing = int(_shadow[tx + tyd * bwidth]) == 
+                    Tile.EFFECT_NONE;
             } else {
                 by += delta;
             }

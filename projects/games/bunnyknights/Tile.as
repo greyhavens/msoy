@@ -30,12 +30,12 @@ public class Tile
     public var layer :int;
     public var effect :int;
 
-    public static function Brick (x :int, y :int) :Tile
+    public static function brick (x :int, y :int) :Tile
     {
         return new Tile(x, y);
     }
 
-    public static function Ladder (x :int, y :int) :Tile
+    public static function ladder (x :int, y :int) :Tile
     {
         return new Tile(x, y, TYPE_LADDER, LAYER_FRONT, EFFECT_LADDER);
     }
@@ -70,8 +70,6 @@ public class Tile
         switch (type) {
           case TYPE_BRICK:
             return Bitmap(new blueTileAsset());
-          case TYPE_BLACK:
-            return Bitmap(new blackTileAsset());
           case TYPE_LADDER:
             return Bitmap(new ladderTileAsset());
           default:
@@ -84,8 +82,6 @@ public class Tile
     [Embed(source="rsrc/blue_tile.gif")]
     protected var blueTileAsset :Class;
 
-    [Embed(source="rsrc/black_tile.gif")]
-    protected var blackTileAsset :Class;
 
     [Embed(source="rsrc/ladder_middle.gif")]
     protected var ladderTileAsset :Class;

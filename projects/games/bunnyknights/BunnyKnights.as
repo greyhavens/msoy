@@ -75,38 +75,15 @@ public class BunnyKnights extends Sprite
         log("Creating board");
         _board = new Board(this, 40, 30);
         var random :Random = new Random(7);
-        var nextLevel :int = 0;
-        var nextLadder :int = -1;
-        var backLayer :Sprite = getLayer(Tile.LAYER_BACK);
-        backLayer.graphics.beginFill(0x000000);
-        backLayer.graphics.drawRect(0, 0, _board.bwidth * Tile.TILE_SIZE, 
-                _board.bheight * Tile.TILE_SIZE);
-        backLayer.graphics.endFill();
-        for (var yy :int = 0; yy < _board.bheight; yy++) {
-            if (nextLevel > 0 && nextLevel == yy) {
-                nextLadder = random.nextInt(_board.bwidth - 2) + 1;
-                //int(Math.random() * (_board.bwidth - 2) + 1);
-            }
-            if (nextLevel < yy) {
-                nextLevel = random.nextInt(3) + 2 + yy;
-                //int(Math.random() * 3 + 2) + yy;
-                if (nextLevel > _board.bheight - 4) {
-                    nextLevel = 0;
-                }
-            }
-            for (var xx :int = 0; xx < _board.bwidth; xx++) {
-                var tile :Tile;
-                if (xx == 0 || xx == _board.bwidth - 1 ||
-                    yy == 0 || yy == _board.bheight - 1 ||
-                    yy == nextLevel) {
-                    tile = Tile.Brick(xx, yy);
-                }
-                _board.addTile(tile);
-                if (nextLadder == xx && yy < _board.bheight - 1) {
-                    _board.addTile(Tile.Ladder(xx, yy));
-                }
-            }
-        }
+        _board.addTiles(Tile.brick, 0, 0, _board.bwidth);
+        _board.addTiles(Tile.brick, 0, 0, 1, _board.bheight);
+        _board.addTiles(Tile.brick, _board.bwidth-1, 0, 1, _board.bheight);
+        _board.addTiles(Tile.brick, 0, _board.bheight-1, _board.bwidth);
+
+        _board.addTiles(Tile.brick, 1, 25, 10, 1);
+        _board.addTiles(Tile.ladder, 7, 25, 1, 4);
+        _board.addTiles(Tile.ladder, 10, 22, 1, 3);
+        _board.addTiles(Tile.brick, 8, 22, 5, 1);
 
         _bunnies = new Array(_numPlayers);
         for (var ii : int = 0; ii < _numPlayers; ii++) {
@@ -167,22 +144,18 @@ public class BunnyKnights extends Sprite
           case Keyboard.LEFT:
             if (_leftDown) _keysDown--;
             _leftDown = false;
-            moveBunny();
             break;
           case Keyboard.RIGHT:
             if (_rightDown) _keysDown--;
             _rightDown = false;
-            moveBunny();
             break;
           case Keyboard.UP:
             if (_upDown) _keysDown--;
             _upDown = false;
-            moveBunny();
             break;
           case Keyboard.DOWN:
             if (_downDown) _keysDown--;
             _downDown = false;
-            moveBunny();
             break;
         }
     }
@@ -193,22 +166,18 @@ public class BunnyKnights extends Sprite
           case Keyboard.LEFT:
             if (!_leftDown) _keysDown++;
             _leftDown = true;
-            moveBunny();
             break;
           case Keyboard.RIGHT:
             if (!_rightDown) _keysDown++;
             _rightDown = true;
-            moveBunny();
             break;
           case Keyboard.UP:
             if (!_upDown) _keysDown++;
             _upDown = true;
-            moveBunny();
             break;
           case Keyboard.DOWN:
             if (!_downDown) _keysDown++;
             _downDown = true;
-            moveBunny();
             break;
           case Keyboard.SPACE:
             _bunny.attack();
@@ -216,19 +185,13 @@ public class BunnyKnights extends Sprite
         }
     }
 
-    protected function moveBunny () :void
-    {
-        if (_keysDown != 1) {
-            _bunny.idle();
-            return;
-        }
-        //bunnyTick(null);
-    }
-
     public function bunnyTick (event :TimerEvent) :void
     {
         var delta :int = int((getTimer() - _tick) / 50 * 6);
         _tick = getTimer();
+        if (_keysDown != 1) {
+            _bunny.idle();
+        }
         if (delta == 0) {
             return;
         }
