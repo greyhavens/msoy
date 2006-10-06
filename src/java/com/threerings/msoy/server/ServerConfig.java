@@ -35,8 +35,20 @@ public class ServerConfig
     /** The ports on which we are listening for client connections. */
     public static int[] serverPorts;
 
-    /** The directory into which uploaded media is stored. */
+    /** The local directory into which uploaded media is stored. */
     public static File mediaDir;
+
+    /** Enables S3 media storage. */
+    public static boolean mediaS3Enable;
+
+    /** The remote S3 bucket in which media is stored. */
+    public static String mediaS3Bucket;
+
+    /** The user ID used for S3 authentication. */
+    public static String mediaS3Id;
+
+    /** The secret key used for S3 authentication. */
+    public static String mediaS3Key;
 
     /** Provides access to our config properties. <em>Do not</em> modify
      * these properties! */
@@ -93,6 +105,10 @@ public class ServerConfig
         serverName = config.getValue("server_name", "msoy");
         serverRoot = new File(config.getValue("server_root", "/tmp"));
         mediaDir = new File(config.getValue("media_dir", "/tmp"));
+        mediaS3Enable = config.getValue("media_s3enable", false);
+        mediaS3Bucket = config.getValue("media_s3bucket", "msoy");
+        mediaS3Id = config.getValue("media_s3id", "id");
+        mediaS3Key = config.getValue("media_s3key", "key");
         serverHost = config.getValue("server_host", "localhost");
         serverPorts = config.getValue(
             "server_ports", Client.DEFAULT_SERVER_PORTS);

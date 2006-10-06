@@ -26,6 +26,10 @@ import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
+import com.threerings.s3.AWSAuthConnection;
+import com.threerings.s3.S3FileObject;
+import com.threerings.s3.S3Exception;
+
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -169,6 +173,21 @@ public class UploadServlet extends HttpServlet
             log.warning("Unable to rename uploaded file [temp=" + output +
                         ", perm=" + target + "].");
             return null;
+        }
+
+        if (ServerConfig.mediaS3Enable) {
+            try {
+                AWSAuthConnection conn = new AWSAuthConnection(
+                    ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
+                S3FileObject uploadTarget = new S3FileObject(hash + suff,
+                    item.getContentType(), target);
+
+                conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget);
+            } catch (S3Exception e) {
+                log.warning("S3 upload failed [code=" + e.getClass().getName() +
+                    ", requestId=" + e.getRequestId() + ", hostId=" +
+                    e.getHostId() + ", message=" + e.getMessage() + "].");
+            }
         }
 
         return new Tuple<String,Integer>(hash, mimeType);

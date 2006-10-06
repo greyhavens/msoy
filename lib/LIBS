@@ -1,6 +1,8 @@
 ant.jar
+commons-codec.jar
 commons-digester.jar
 commons-fileupload.jar
+commons-httpclient.jar
 commons-io.jar
 commons-logging.jar
 getdown.jar
