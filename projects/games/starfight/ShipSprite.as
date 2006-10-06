@@ -41,6 +41,9 @@ public class ShipSprite extends Sprite
     /** How fast are we currently turning. */
     public var turnRate :Number;
 
+    /** Our current health */
+    public var power :Number;
+
     /** our id. */
     public var shipId :int;
 
@@ -55,6 +58,7 @@ public class ShipSprite extends Sprite
         turnRate = 0.0;
         xVel = 0.0;
         yVel = 0.0;
+        power = 1.0; // full
         this.shipId = shipId;
 
         if (!skipStartingPos) {
@@ -130,6 +134,23 @@ public class ShipSprite extends Sprite
             // Everything's happy - no collisions.
             boardX = endX;
             boardY = endY;
+        }
+    }
+
+    /**
+     * Registers that the ship was hit.
+     */
+    public function hit () :void
+    {
+        power -= HIT_POWER;
+        if (power < 0.0) {
+            _game.explode(boardX, boardY,
+                rotation);
+            power = 1.0; //full
+            var pt :Point = _board.getStartingPos();
+            boardX = pt.x;
+            boardY = pt.y;
+            rotation = 0;
         }
     }
 
@@ -257,6 +278,7 @@ public class ShipSprite extends Sprite
         boardY = bytes.readFloat();
         turnRate = bytes.readFloat();
         rotation = bytes.readShort();
+        power = bytes.readFloat();
     }
 
     /**
@@ -271,6 +293,7 @@ public class ShipSprite extends Sprite
         bytes.writeFloat(boardY);
         bytes.writeFloat(turnRate);
         bytes.writeShort(rotation);
+        bytes.writeFloat(power);
 
         return bytes;
     }
@@ -295,6 +318,7 @@ public class ShipSprite extends Sprite
     protected static const FRICTION :Number = 0.95;
     protected static const SHOT_SPD :Number = 0.5;
     protected static const TICKS_PER_SHOT :int = 6;
+    protected static const HIT_POWER :Number = 0.25;
 
     /** Our ship animation. */
     protected var _shipMovie :MovieClipAsset;

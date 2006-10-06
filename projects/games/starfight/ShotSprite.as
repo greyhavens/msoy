@@ -20,7 +20,7 @@ public class ShotSprite extends Sprite {
     public var complete :Boolean;
 
     public function ShotSprite (x :Number, y :Number,
-        xVel :Number, yVel :Number, shipId :int) :void
+        xVel :Number, yVel :Number, shipId :int, game :StarFight) :void
     {
         boardX = x;
         boardY = y;
@@ -29,6 +29,8 @@ public class ShotSprite extends Sprite {
         this.shipId = shipId;
 
         complete = false;
+
+        _game = game;
 
         _shotMovie = MovieClipAsset(new shotAnim());
         _shotMovie.gotoAndStop(1);
@@ -48,7 +50,9 @@ public class ShotSprite extends Sprite {
         } else {
             if (coll.hit is ShipSprite) {
                 Logger.log("Hit a ship!");
-                // TODO: Animate explosion.
+                var ship :ShipSprite = ShipSprite(coll.hit);
+                _game.hit(ship, boardX + xVel*coll.time*time,
+                    boardY + yVel*coll.time*time);
             }
             complete = true;
         }
@@ -71,6 +75,9 @@ public class ShotSprite extends Sprite {
 
     [Embed(source="rsrc/beam.swf")]
     protected var shotAnim :Class;
+
+    /** Our game. */
+    protected var _game :StarFight;
 
 }
 }

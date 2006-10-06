@@ -3,6 +3,8 @@ package {
 import flash.display.Sprite;
 import flash.display.Shape;
 
+import flash.events.Event;
+
 import flash.geom.Point;
 
 import mx.core.MovieClipAsset;
@@ -51,13 +53,14 @@ public class BoardSprite extends Sprite
         if (ignoreShip >= 0) {
             // Check each ship and figure out which one we hit first.
             for (var ii :int; ii < _ships.length; ii++) {
-                if (ii == ignoreShip || (dx == dx && dy == dy)) {
+                if (ii == ignoreShip || (dx == 0 && dy == 0)) {
                     continue;
                 }
                 var ship :ShipSprite = _ships[ii];
                 if (ship == null) {
                     continue;
                 }
+
                 var bX :Number = ship.boardX;
                 var bY :Number = ship.boardY;
                 var rad :Number = ShipSprite.COLLISION_RAD;
@@ -136,6 +139,14 @@ public class BoardSprite extends Sprite
         return null;
     }
 
+    public function explode (x :Number, y :Number, rot :int,
+        isSmall :Boolean) :void
+    {
+        var exp :Explosion = new Explosion(x * Codes.PIXELS_PER_TILE,
+            y * Codes.PIXELS_PER_TILE, rot, isSmall, this);
+        addChild(exp);
+    }
+
     /**
      * Draw the board.
      */
@@ -152,7 +163,7 @@ public class BoardSprite extends Sprite
 
         _spaceMovie = MovieClipAsset(new spaceAnim());
         _spaceMovie.gotoAndStop(1);
-        addChild(_spaceMovie);
+        //MSTaddChild(_spaceMovie);
 
         for each (var obs :Obstacle in _obstacles) {
             addChild(obs);
@@ -170,6 +181,5 @@ public class BoardSprite extends Sprite
 
     [Embed(source="rsrc/space.swf")]
     protected var spaceAnim :Class;
-
 }
 }

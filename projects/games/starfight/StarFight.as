@@ -4,6 +4,8 @@ import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.MovieClip;
 
+import mx.core.MovieClipAsset;
+
 import flash.utils.ByteArray;
 
 import flash.external.ExternalInterface;
@@ -182,12 +184,28 @@ public class StarFight extends Sprite
         if (event.name == "shot") {
             var val :Array = (event.value as Array);
             var shot :ShotSprite =
-                new ShotSprite(val[0], val[1], val[2], val[3], val[4]);
+                new ShotSprite(val[0], val[1], val[2], val[3], val[4], this);
             _shots.push(shot);
             shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
             addChild(shot);
+        } else if (event.name == "explode") {
+            var arr :Array = (event.value as Array);
+            _board.explode(arr[0], arr[1], arr[2], false);
         }
     }
+
+    /**
+     * Register that a ship was hit at the location.
+     */
+    public function hit (ship :ShipSprite, x :int, y :int) :void
+    {
+        _board.explode(x, y, 0, true);
+        if (ship == _ownShip) {
+            ship.hit();
+        }
+    }
+
+
 
     /**
      * The game has started - do our initial startup.
@@ -204,7 +222,7 @@ public class StarFight extends Sprite
     public function fireShot (x :Number, y :Number,
         xVel :Number, yVel :Number, shipId :int) :void
     {
-        var args :Array = new Array(4);
+        var args :Array = new Array(5);
         args[0] = x;
         args[1] = y;
         args[2] = xVel;
@@ -214,13 +232,24 @@ public class StarFight extends Sprite
     }
 
     /**
+     * Register a big ole' explosion at the location.
+     */
+    public function explode (x :Number, y :Number, rot :int) :void
+    {
+        var args :Array = new Array(3);
+        args[0] = x;
+        args[1] = y;
+        args[2] = rot;
+        _gameObj.sendMessage("explode", args);
+    }
+
+    /**
      * When our screen updater timer ticks...
      */
     public function tick (event :TimerEvent) :void
     {
         var now :int = getTimer();
         var time :Number = (now - _lastTickTime)/REFRESH_RATE;
-        log("Time: " + time);
 
         // Update all ships.
         for each (var ship :ShipSprite in _ships) {
@@ -286,5 +315,6 @@ public class StarFight extends Sprite
 
     /** Color constants. */
     protected static const BLACK :uint = uint(0x000000);
+
 }
 }
