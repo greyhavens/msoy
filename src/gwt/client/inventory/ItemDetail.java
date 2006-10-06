@@ -119,8 +119,9 @@ public class ItemDetail extends PopupPanel
                    String.valueOf(((Game)_item).minPlayers),
                    "# Players (Maximum)",
                    String.valueOf(((Game)_item).maxPlayers));
-            String url = "game.html#" + _item.itemId;
-            addRow("Play", new HTML("<a href=\"" + url + "\">Play now</a>"));
+            int gameId = (_item.parentId == -1) ? _item.itemId : _item.parentId;
+            String href = "<a href=\"game.html#" + gameId + "\">";
+            addRow("Play", new HTML(href + "Play now</a>"));
 
         } else if (_item instanceof Photo) {
             addHeader("Photo Information");
