@@ -20,12 +20,12 @@ public class StatusOverlay extends Sprite
         _power.mask = mask;
 
         addChild(Bitmap(new frameAsset()));
-        addChild(_speed = (Bitmap(new speedAsset())));
-        _speed.x = 698;
-        _speed.y = 63;
         addChild(_spread = (Bitmap(new spreadAsset())));
-        _spread.x = 728;
+        _spread.x = 696;
         _spread.y = 63;
+        addChild(_speed = (Bitmap(new speedAsset())));
+        _speed.x = 727;
+        _speed.y = 63;
         addChild(_shields = (Bitmap(new shieldsAsset())));
         _shields.x = 758;
         _shields.y = 63;

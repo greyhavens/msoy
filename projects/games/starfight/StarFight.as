@@ -280,6 +280,7 @@ public class StarFight extends Sprite
 
         // Recenter the board on our ship.
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+        _status.setPowerups(_ownShip.powerups);
 
         // Update all live shots.
         var completed :Array = []; // Array<ShotSprite>
