@@ -18,10 +18,12 @@ import com.samskivert.util.OneLineLogFormatter;
 import com.threerings.util.Name;
 
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
+import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 
 import com.threerings.crowd.data.BodyObject;
@@ -248,6 +250,18 @@ public class MsoyServer extends WhirledServer
     protected Authenticator createAuthenticator ()
     {
         return new MsoyAuthenticator();
+    }
+
+    @Override
+    protected PlaceRegistry createPlaceRegistry (
+        InvocationManager invmgr, RootDObjectManager omgr)
+    {
+        return new PlaceRegistry(invmgr, omgr) {
+            public ClassLoader getClassLoader (PlaceConfig config) {
+                ClassLoader loader = toyMan.getClassLoader(config);
+                return (loader == null) ? super.getClassLoader(config) : loader;
+            }
+        };
     }
 
     @Override

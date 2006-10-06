@@ -32,8 +32,12 @@ public class LaunchConfig
     /** The display name of this game. */
     public String name;
 
-    /** The URL for the game client media (SWF or JAR). */
-    public String gameMediaURL;
+    /** The URL relative to which game resources should be downloaded. */
+    public String resourceURL;
+
+    /** The path (relative to the reosurce URL) for the game client media (SWF
+     * or JAR). */
+    public String gameMediaPath;
 
     /** The server to which the game should connect (if this is a multiplayer
      * game). */

@@ -30,7 +30,7 @@ public class GamePanel extends VerticalPanel
 
         case LaunchConfig.FLASH_SOLO: {
             display = WidgetUtil.createFlashMovie(
-                "game", config.gameMediaURL, 800, 600);
+                "game", config.gameMediaPath, 800, 600);
             break;
         }
 
@@ -39,8 +39,7 @@ public class GamePanel extends VerticalPanel
                 "game", "/clients/game-client.jar",
                 "com.threerings.msoy.game.client.GameApplet", 800, 600,
                 new String[] { "game_id", "" + config.gameId,
-                               "resource_url",
-                               "http://" + config.server + "/media/", // TODO
+                               "resource_url", config.resourceURL,
                                "server", config.server,
                                "port", "" + config.port });
             break;

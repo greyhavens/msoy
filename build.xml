@@ -251,6 +251,16 @@
        <include name="**/*"/>
       </fileset>
     </copy>
+    <!-- create our toybox properts from server.properties -->
+    <exec executable="egrep">
+      <arg line="^toybox\."/>
+      <arg line="server.properties"/>
+      <redirector output="${deploy.dir}/classes/toybox.properties">
+        <outputfilterchain>
+          <replacestring from="toybox." to=""/>
+        </outputfilterchain>
+      </redirector>
+    </exec>
   </target>
 
   <!-- creates the serialized color repository config -->

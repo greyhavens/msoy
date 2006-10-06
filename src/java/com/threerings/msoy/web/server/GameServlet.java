@@ -60,7 +60,9 @@ public class GameServlet extends RemoteServiceServlet
             return null;
         }
 
-        config.gameMediaURL = ""; // TODO
+        config.resourceURL = "http://" + ServerConfig.serverHost + ":" +
+            ServerConfig.getHttpPort() + "/"; // TODO
+        config.gameMediaPath = game.gameMedia.getMediaPath();
         config.name = game.getDescription();
         config.server = ServerConfig.serverHost;
         config.port = ServerConfig.serverPorts[0];
