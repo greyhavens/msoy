@@ -234,6 +234,9 @@ public class AlphaBout extends Sprite
 
     protected function highlightWords () :void
     {
+        // clear out any previous invalid state?
+        makePiecesValid(_pieces);
+    
         // array to hold our word pieces
         var word :Array = new Array();
         var boardSize :int = _board.getSize();
@@ -308,7 +311,25 @@ public class AlphaBout extends Sprite
     {
         var word :String = piecesToString(pieces);
         // _gameObject.localChat("Looking up: " + word + "\n");
+        // TODO clearly this should only fire if the word is invalid
+        if (pieces.length > 3) {
+            makePiecesInvalid(pieces);
+        }
         return true;
+    }
+
+    protected function makePiecesInvalid (pieces :Array) :void
+    {
+        for each (var piece :Piece in pieces) {
+           piece.setLetterInvalid(); 
+        }
+    }
+
+    protected function makePiecesValid (pieces :Array) :void
+    {
+        for each (var piece :Piece in pieces) {
+           piece.setLetterValid(); 
+        }
     }
 
     protected function wordScore (pieces :Array) :int 

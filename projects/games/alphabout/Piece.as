@@ -1,7 +1,7 @@
 package {
 
 import flash.display.Sprite;
-
+import flash.geom.ColorTransform;
 import flash.events.MouseEvent;
 
 import mx.core.MovieClipAsset;
@@ -50,6 +50,15 @@ public class Piece extends Sprite
     public function setLetterIndex (letterIndex :int) :void
     {
         _letterIndex = letterIndex;
+    }
+
+    public function setLetterInvalid () :void {
+        // TODO play around with this and use constants
+        this.transform.colorTransform = new ColorTransform(1, .5, .5);
+    }
+
+    public function setLetterValid () :void {
+        this.transform.colorTransform = new ColorTransform(1, 1, 1);
     }
 
     public function updateTheme () :void
