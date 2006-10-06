@@ -73,23 +73,25 @@ public class BunnyKnights extends Sprite
     public function startGame () :void
     {
         log("Creating board");
-        _board = new Board(this, 40, 30);
+        _board = new Board(this, 80, 60);
         var random :Random = new Random(7);
-        _board.addTiles(Tile.brick, 0, 0, _board.bwidth);
-        _board.addTiles(Tile.brick, 0, 0, 1, _board.bheight);
-        _board.addTiles(Tile.brick, _board.bwidth-1, 0, 1, _board.bheight);
-        _board.addTiles(Tile.brick, 0, _board.bheight-1, _board.bwidth);
+        _board.addTiles(Tile.brick, 0, 0, _board.bwidth, 2);
+        _board.addTiles(Tile.brick, 0, 0, 2, _board.bheight);
+        _board.addTiles(Tile.brick, _board.bwidth-2, 0, 2, _board.bheight);
+        _board.addTiles(Tile.brick, 0, _board.bheight-2, _board.bwidth, 2);
 
-        _board.addTiles(Tile.brick, 1, 25, 10, 1);
-        _board.addTiles(Tile.ladder, 7, 25, 1, 4);
-        _board.addTiles(Tile.ladder, 10, 22, 1, 3);
-        _board.addTiles(Tile.brick, 8, 22, 5, 1);
+        _board.addTiles(Tile.brick, 2, 52, 20, 2);
+        _board.addTiles(Tile.ladder, 14, 52, 2, 6);
+        _board.addTiles(Tile.ladder, 20, 44, 2, 8);
+        _board.addTiles(Tile.brick, 16, 44, 10, 2);
+        var doorIdx :int = _board.addDoor(Tile.door(22, 52));
+        _board.addSwitch(Tile.tswitch(14, 44), doorIdx);
 
         _bunnies = new Array(_numPlayers);
         for (var ii : int = 0; ii < _numPlayers; ii++) {
             var newBunny :Bunny = new Bunny(_board, ii);
             _bunnies[ii] = newBunny;
-            _board.addBunny(newBunny, 1, _board.bheight - 2);
+            _board.addBunny(newBunny, 2, _board.bheight - 3);
             if (ii == _myIndex) {
                 _bunny = newBunny;
             }
@@ -108,6 +110,11 @@ public class BunnyKnights extends Sprite
     public function getLayer (layer :int) :Sprite
     {
         return Sprite(_layers[layer]);
+    }
+
+    public function getBunnies () :Array
+    {
+        return _bunnies;
     }
 
     public function addChildToLayer (child :DisplayObject, layer :int)
@@ -135,7 +142,20 @@ public class BunnyKnights extends Sprite
             if (bunIdx != _myIndex) {
                 Bunny(_bunnies[bunIdx]).remote(String(event.value));
             }
+        } else if (name == "off") {
+            var coords :Array = String(event.value).split(",");
+            _board.tswitch(false, coords[0], coords[1], coords[2]);
+        } else if (name == "on") {
+            coords = String(event.value).split(",");
+            _board.tswitch(true, coords[0], coords[1], coords[2]);
         }
+    }
+
+    public function tswitch (on :Boolean, x :int, y :int, idx :int) :void
+    {
+        var msg :String = "off";
+        if (on) msg = "on";
+        _gameObj.sendMessage(msg, String(x) + "," + y + "," + idx);    
     }
 
     protected function keyUpHandler (event :KeyboardEvent) :void
@@ -187,8 +207,9 @@ public class BunnyKnights extends Sprite
 
     public function bunnyTick (event :TimerEvent) :void
     {
-        var delta :int = int((getTimer() - _tick) / 50 * 6);
-        _tick = getTimer();
+        var now :int = getTimer();
+        var delta :int = int((now - _tick) / 50 * 6);
+        _tick = now - (now % 50);
         if (_keysDown != 1) {
             _bunny.idle();
         }
@@ -216,7 +237,7 @@ public class BunnyKnights extends Sprite
         }
         if (getTimer() - _messageTick > 110) {
             _bunny.sendStore(_gameObj, _myIndex);
-            _messageTick = getTimer();
+            _messageTick = now;
         }
     }
 

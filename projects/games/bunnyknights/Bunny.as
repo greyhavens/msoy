@@ -14,6 +14,9 @@ import com.threerings.ezgame.EZGame;
 
 public class Bunny extends Sprite
 {
+    public var ax :int = -1, ay :int = -1;
+    public var atile :Tile;
+
     public function Bunny (board :Board, index :int)
     {
         _board = board;
