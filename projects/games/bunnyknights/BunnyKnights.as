@@ -11,6 +11,8 @@ import flash.ui.Keyboard;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
+import com.threerings.util.Random;
+
 import com.threerings.ezgame.Game;
 import com.threerings.ezgame.EZGame;
 import com.threerings.ezgame.MessageReceivedEvent;
@@ -27,7 +29,6 @@ public class BunnyKnights extends Sprite
 {
     public function BunnyKnights ()
     {
-        log("I feeeeel happy");
         var square :Sprite = new Sprite();
         square.graphics.beginFill(0x000000);
         square.graphics.drawRect(0, 0, 640, 480);
@@ -47,11 +48,11 @@ public class BunnyKnights extends Sprite
     {
         _gameObj = gameObj;
         _myIndex = _gameObj.getMyIndex();
-        log("My index:" + _myIndex);
         _numPlayers = _gameObj.getPlayerCount();
-        log("num players:" + _numPlayers);
 
         _world = new Sprite();
+        _world.scaleX = 2;
+        _world.scaleY = 2;
         addChild(_world);
         _layers = new Array(Tile.LAYER_HUD + 1);
         for (var ii :int = 0; ii <= Tile.LAYER_HUD; ii++) {
@@ -63,25 +64,53 @@ public class BunnyKnights extends Sprite
             }
         }
 
+        if (_myIndex == 0) {
+            _gameObj.sendMessage("rseed", getTimer());
+        }
+        startGame();
+    }
+
+    public function startGame () :void
+    {
         log("Creating board");
         _board = new Board(this, 40, 30);
-        for (var xx :int = 0; xx < _board.bwidth; xx++) {
-            for (var yy :int = 0; yy < _board.bheight; yy++) {
+        var random :Random = new Random(7);
+        var nextLevel :int = 0;
+        var nextLadder :int = -1;
+        var backLayer :Sprite = getLayer(Tile.LAYER_BACK);
+        backLayer.graphics.beginFill(0x000000);
+        backLayer.graphics.drawRect(0, 0, _board.bwidth * Tile.TILE_SIZE, 
+                _board.bheight * Tile.TILE_SIZE);
+        backLayer.graphics.endFill();
+        for (var yy :int = 0; yy < _board.bheight; yy++) {
+            if (nextLevel > 0 && nextLevel == yy) {
+                nextLadder = random.nextInt(_board.bwidth - 2) + 1;
+                //int(Math.random() * (_board.bwidth - 2) + 1);
+            }
+            if (nextLevel < yy) {
+                nextLevel = random.nextInt(3) + 2 + yy;
+                //int(Math.random() * 3 + 2) + yy;
+                if (nextLevel > _board.bheight - 4) {
+                    nextLevel = 0;
+                }
+            }
+            for (var xx :int = 0; xx < _board.bwidth; xx++) {
                 var tile :Tile;
                 if (xx == 0 || xx == _board.bwidth - 1 ||
-                    yy == 0 || yy == _board.bheight - 1) {
-                    tile = new Tile(xx, yy);
-                } else {
-                    tile = new Tile(xx, yy, Tile.TYPE_BLACK, 
-                            Tile.LAYER_BACK, Tile.EFFECT_NONE);
+                    yy == 0 || yy == _board.bheight - 1 ||
+                    yy == nextLevel) {
+                    tile = Tile.Brick(xx, yy);
                 }
                 _board.addTile(tile);
+                if (nextLadder == xx && yy < _board.bheight - 1) {
+                    _board.addTile(Tile.Ladder(xx, yy));
+                }
             }
         }
 
         _bunnies = new Array(_numPlayers);
-        for (ii = 0; ii < _numPlayers; ii++) {
-            var newBunny :Bunny = new Bunny(_board);
+        for (var ii : int = 0; ii < _numPlayers; ii++) {
+            var newBunny :Bunny = new Bunny(_board, ii);
             _bunnies[ii] = newBunny;
             _board.addBunny(newBunny, 1, _board.bheight - 2);
             if (ii == _myIndex) {
@@ -126,7 +155,6 @@ public class BunnyKnights extends Sprite
         var name :String = event.name;
         if (name.indexOf("bunny") == 0) {
             var bunIdx :int = int(name.substring(5));
-            log("Message from bunny " + bunIdx);
             if (bunIdx != _myIndex) {
                 Bunny(_bunnies[bunIdx]).remote(String(event.value));
             }
@@ -137,11 +165,23 @@ public class BunnyKnights extends Sprite
     {
         switch (event.keyCode) {
           case Keyboard.LEFT:
+            if (_leftDown) _keysDown--;
             _leftDown = false;
             moveBunny();
             break;
           case Keyboard.RIGHT:
+            if (_rightDown) _keysDown--;
             _rightDown = false;
+            moveBunny();
+            break;
+          case Keyboard.UP:
+            if (_upDown) _keysDown--;
+            _upDown = false;
+            moveBunny();
+            break;
+          case Keyboard.DOWN:
+            if (_downDown) _keysDown--;
+            _downDown = false;
             moveBunny();
             break;
         }
@@ -151,11 +191,23 @@ public class BunnyKnights extends Sprite
     {
         switch (event.keyCode) {
           case Keyboard.LEFT:
+            if (!_leftDown) _keysDown++;
             _leftDown = true;
             moveBunny();
             break;
           case Keyboard.RIGHT:
+            if (!_rightDown) _keysDown++;
             _rightDown = true;
+            moveBunny();
+            break;
+          case Keyboard.UP:
+            if (!_upDown) _keysDown++;
+            _upDown = true;
+            moveBunny();
+            break;
+          case Keyboard.DOWN:
+            if (!_downDown) _keysDown++;
+            _downDown = true;
             moveBunny();
             break;
           case Keyboard.SPACE:
@@ -166,11 +218,11 @@ public class BunnyKnights extends Sprite
 
     protected function moveBunny () :void
     {
-        if (_leftDown == _rightDown) {
+        if (_keysDown != 1) {
             _bunny.idle();
             return;
         }
-        bunnyTick(null);
+        //bunnyTick(null);
     }
 
     public function bunnyTick (event :TimerEvent) :void
@@ -185,11 +237,18 @@ public class BunnyKnights extends Sprite
                 Bunny(_bunnies[ii]).remoteWalk(delta);
             }
         }
-        if (_leftDown != _rightDown) {
-            if (_leftDown) {
-                delta = -delta;
+        if (_keysDown == 1) { 
+            if (_leftDown || _rightDown) {
+                if (_leftDown) {
+                    delta = -delta;
+                }
+                _bunny.walk(delta);
+            } else if (_upDown || _downDown) {
+                if (_upDown) {
+                    delta = -delta;
+                }
+                _bunny.climb(delta);
             }
-            _bunny.walk(delta);
             recenter();
         }
         if (getTimer() - _messageTick > 110) {
@@ -200,17 +259,17 @@ public class BunnyKnights extends Sprite
 
     public function recenter () :void
     {
-        if (_bunny.getBX() + _world.x > 480) {
-            _world.x = Math.max(mask.width - width,
-                                480 - _bunny.getBX());
-        } else if (_bunny.getBX() + _world.x < 100) {
-            _world.x = Math.min(0, 100 - _bunny.getBX());
+        var bx :int = _bunny.getBX()*2;
+        var by :int = _bunny.getBY()*2;
+        if (bx + _world.x > 400) {
+            _world.x = Math.max(mask.width - _world.width, 400 - bx);
+        } else if (bx + _world.x < 180) {
+            _world.x = Math.min(0, 180 - bx);
         }
-        if (_bunny.getBY() + _world.y > 380) {
-            _world.y = Math.max(mask.height - height,
-                                380 - _bunny.getBY());
-        } else if (_bunny.getBY() + _world.y < 100) {
-            _world.y = Math.min(0, 100 - _bunny.getBY());
+        if (by + _world.y > 300) {
+            _world.y = Math.max(mask.height - _world.height, 300 - by);
+        } else if (by + _world.y < 150) {
+            _world.y = Math.min(0, 150 - by);
         }
     }
 
@@ -232,5 +291,7 @@ public class BunnyKnights extends Sprite
     protected var _numPlayers :int;
     
     protected var _leftDown :Boolean = false, _rightDown :Boolean = false;
+    protected var _upDown :Boolean = false, _downDown :Boolean = false;
+    protected var _keysDown :int;
 }
 }

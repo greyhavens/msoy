@@ -22,6 +22,7 @@
       <arg value="-compiler.warn-class-is-sealed=true"/>
       <arg value="-compiler.warn-constructor-returns-value=true"/>
       <arg value="-compiler.fonts.local-fonts-snapshot=${root.path}/lib/as-compiler/frameworks/localFonts.ser"/>
+      <arg value="-compiler.source-path=${root.path}/projects/narya/src/as/"/>
       <arg value="-compiler.source-path=${root.path}/projects/vilya/src/as/"/>
       <arg value="-compiler.source-path=."/>
       <arg value="-externs"/>

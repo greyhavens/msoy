@@ -14,10 +14,14 @@ import com.threerings.ezgame.EZGame;
 
 public class Bunny extends Sprite
 {
-    public function Bunny (board :Board)
+    public function Bunny (board :Board, index :int)
     {
         _board = board;
-        bunnyMovie = MovieClipAsset(new bunnyAnim());
+        if (index == 0) {
+            bunnyMovie = MovieClipAsset(new bunnyBlue());
+        } else {
+            bunnyMovie = MovieClipAsset(new bunnyRed());
+        }
         idle();
         addChild(bunnyMovie);
         _moveQueue = new Array();
@@ -39,8 +43,10 @@ public class Bunny extends Sprite
             var action :String = String(_moveQueue.shift());
             switch (action) {
               case "w":
+              case "c":
                 var pop :int = int(_moveQueue.shift());
                 tot += Math.abs(pop);
+                /*
                 if (tot > delta) {
                     var remaining :int = tot - delta;
                     var sign :int = pop / Math.abs(pop);
@@ -49,26 +55,41 @@ public class Bunny extends Sprite
                     _moveQueue.unshift("w");
                 } else {
                     sum += pop;
-                }
+                }*/
+                doAction(action, pop);
                 break;
               case "s":
-                if (sum != 0) {
-                    walk(sum, false);
-                }
                 attack();
                 return;
             }
         }
-        walk(sum, false);
+    }
+
+    protected function doAction (action :String, sum :int) :void
+    {
+        if (sum == 0) {
+            return;
+        }
+        switch (action) {
+          case "w":
+            walk(sum, false);
+            break;
+          case "c":
+            climb(sum);
+            break;
+        }
     }
 
     public function walk (deltaX :int, primary :Boolean = true) :void
     {
-        if (_attacking) {
+        if (_attacking || _climbing) {
             return;
         }
         if (bunnyMovie.currentFrame != 2) {
             bunnyMovie.gotoAndStop(2);
+        }
+        if (deltaX == 0) {
+            return;
         }
         var newOrient :int;
         if (deltaX < 0) {
@@ -93,6 +114,24 @@ public class Bunny extends Sprite
         _board.move(this, deltaX, BWIDTH);
         _moveStore.push("w");
         _moveStore.push(String(deltaX));
+    }
+
+    public function climb (deltaY :int) :void
+    {
+        if (_attacking || deltaY == 0) {
+            return;
+        }
+        if (_board.climb(this, deltaY, BWIDTH)) {
+            _climbing = true;
+            if (bunnyMovie.currentFrame != 4) {
+                bunnyMovie.gotoAndStop(4);
+            }
+        } else {
+            _climbing = false;
+            idle();
+        }
+        _moveStore.push("c");
+        _moveStore.push(String(deltaY));
     }
 
     public function sendStore (gameObj :EZGame, index :int) :void
@@ -135,12 +174,17 @@ public class Bunny extends Sprite
         if (_attacking) {
             return;
         }
+        if (_climbing) {
+            BunnyKnights.log("Idling while climbing");
+            bunnyMovie.gotoAndStop(5);
+            return;
+        }
         bunnyMovie.gotoAndStop(1);
     }
 
     public function attack () :void
     {
-        if (_attacking) {
+        if (_attacking || _climbing) {
             return;
         }
         _attacking = true;
@@ -167,10 +211,14 @@ public class Bunny extends Sprite
     protected var _board :Board;
     protected var _moveQueue :Array;
     protected var _moveStore :Array;
+    protected var _climbing :Boolean = false;
     protected static const BWIDTH :int = 28;
     
 
     [Embed(source="rsrc/bunny/bunny_knight_blue.swf#bunny_blue_master")]
-    protected var bunnyAnim :Class;
+    protected var bunnyBlue :Class;
+
+    [Embed(source="rsrc/bunny/bunny_knight_blue.swf#bunny_red_master")]
+    protected var bunnyRed :Class;
 }
 }
