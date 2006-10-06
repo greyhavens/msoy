@@ -9,12 +9,14 @@ import java.util.Iterator;
 import client.MsoyEntryPoint;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -27,7 +29,6 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Document;
@@ -246,6 +247,16 @@ public class ItemDetail extends PopupPanel
             }
         });
         addRow("Tagging History", button);
+    }
+
+    // @Override // from Widget
+    protected void onLoad ()
+    {
+        super.onLoad();
+
+        // center ourselves
+        setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
+                         (Window.getClientHeight() - getOffsetHeight()) / 2);
     }
 
     protected void updateTags ()
