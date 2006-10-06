@@ -34,13 +34,13 @@ public class ShotSprite extends Sprite {
         addChild(_shotMovie);
     }
 
-    public function tick (board :BoardSprite) :void
+    public function tick (board :BoardSprite, time :Number) :void
     {
         var coll :Collision = board.getCollision(boardX, boardY,
-            boardX + xVel, boardY + yVel, COLLISION_RAD);
+            boardX + xVel*time, boardY + yVel*time, COLLISION_RAD);
         if (coll == null) {
-            boardX += xVel;
-            boardY += yVel;
+            boardX += xVel*time;
+            boardY += yVel*time;
         } else {
             // TODO: Animate explosion if ship.
             complete = true;

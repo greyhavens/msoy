@@ -74,14 +74,15 @@ public class ShipSprite extends Sprite
     /**
      * Move one tick's worth of distance on its current heading.
      */
-    public function move () :void
+    public function move (time :Number) :void
     {
-        var friction :Number = getFriction();
+        var friction :Number = Math.pow(getFriction(), time);
+        var accelFact :Number = accel * time;
 
-        xVel = xVel*friction + Math.cos(rotation*Codes.DEGS_TO_RADS)*accel;
-        yVel = yVel*friction + Math.sin(rotation*Codes.DEGS_TO_RADS)*accel;
+        xVel = xVel*friction + Math.cos(rotation*Codes.DEGS_TO_RADS)*accelFact;
+        yVel = yVel*friction + Math.sin(rotation*Codes.DEGS_TO_RADS)*accelFact;
 
-        resolveMove(boardX, boardY, boardX + xVel, boardY + yVel);
+        resolveMove(boardX, boardY, boardX + xVel*time, boardY + yVel*time);
     }
 
     /**
@@ -139,11 +140,11 @@ public class ShipSprite extends Sprite
     /**
      * Process the movement of the ship for this timestep.
      */
-    public function tick () :void
+    public function tick (time :Number) :void
     {
-        turn(turnRate);
+        turn(turnRate*time);
 
-        move();
+        move(time);
         if (accel > 0.0) {
             setAnimMode(FORWARD);
         } else if (accel < 0.0) {
@@ -152,10 +153,10 @@ public class ShipSprite extends Sprite
             setAnimMode(IDLE);
         }
 
-        if (_firing && (_ticksToFire == 0)) {
+        if (_firing && (_ticksToFire <= 0)) {
             fire();
         } else if (_ticksToFire > 0) {
-            _ticksToFire--;
+            _ticksToFire -= time;
         }
     }
 
@@ -204,7 +205,7 @@ public class ShipSprite extends Sprite
             accel = BACKWARD_ACCEL;
         } else if (event.keyCode == KV_SPACE) {
             // TODO : firing mode rather than instantaneous.
-            if (_ticksToFire == 0) {
+            if (_ticksToFire <= 0) {
                 fire();
             }
             _firing = true;
@@ -283,12 +284,12 @@ public class ShipSprite extends Sprite
     protected static const BLACK :uint = uint(0x000000);
 
     /** Ship performance characteristics. */
-    protected static const TURN_RATE :Number = 10.0;
-    protected static const FORWARD_ACCEL :Number = 0.05;
-    protected static const BACKWARD_ACCEL :Number = -0.025;
+    protected static const TURN_RATE :Number = 7.0;
+    protected static const FORWARD_ACCEL :Number = 0.02;
+    protected static const BACKWARD_ACCEL :Number = -0.01;
     protected static const FRICTION :Number = 0.95;
-    protected static const SHOT_SPD :Number = 1.0;
-    protected static const TICKS_PER_SHOT :int = 4;
+    protected static const SHOT_SPD :Number = 0.5;
+    protected static const TICKS_PER_SHOT :int = 6;
 
     /** Our ship animation. */
     protected var _shipMovie :MovieClipAsset;

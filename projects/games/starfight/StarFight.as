@@ -12,6 +12,7 @@ import flash.events.KeyboardEvent;
 import flash.events.TimerEvent;
 
 import flash.utils.Timer;
+import flash.utils.getTimer;
 
 import com.threerings.ezgame.Game;
 import com.threerings.ezgame.EZGame;
@@ -49,6 +50,8 @@ public class StarFight extends Sprite
 
         graphics.beginFill(BLACK);
         graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
+
+        _lastTickTime = getTimer();
     }
 
     /**
@@ -136,7 +139,7 @@ public class StarFight extends Sprite
         stage.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
 
         // Set up our ticker that will control movement.
-        var screenTimer :Timer = new Timer(REFRESH_RATE, 0);
+        var screenTimer :Timer = new Timer(REFRESH_RATE, 0); // As fast as possible.
         screenTimer.addEventListener(TimerEvent.TIMER, tick);
         screenTimer.start();
     }
@@ -212,10 +215,14 @@ public class StarFight extends Sprite
      */
     public function tick (event :TimerEvent) :void
     {
+        var now :int = getTimer();
+        var time :Number = (now - _lastTickTime)/REFRESH_RATE;
+        log("Time: " + time);
+
         // Update all ships.
         for each (var ship :ShipSprite in _ships) {
             if (ship != null) {
-                ship.tick();
+                ship.tick(time);
                 ship.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
             }
         }
@@ -227,7 +234,7 @@ public class StarFight extends Sprite
         var completed :Array = []; // Array<ShotSprite>
         for each (var shot :ShotSprite in _shots) {
             if (shot != null) {
-                shot.tick(_board);
+                shot.tick(_board, time);
                 if (shot.complete) {
                     completed.push(shot);
                 }
@@ -246,7 +253,8 @@ public class StarFight extends Sprite
             _gameObj.set("ship", _ownShip.writeTo(new ByteArray()),
                 _gameObj.getMyIndex());
         }
-        
+
+        _lastTickTime = now;
     }
 
     /** The game data. */
@@ -266,6 +274,8 @@ public class StarFight extends Sprite
 
     /** How many frames its been since we broadcasted. */
     protected var _updateCount :int = 0;
+
+    protected var _lastTickTime :int;
 
     /** Constants to control update frequency. */
     protected static const REFRESH_RATE :int = 50;
