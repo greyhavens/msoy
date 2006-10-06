@@ -37,6 +37,11 @@ webapp_dir = /export/threerings/webapps
 media_dir = /export/msoy/pages/media
 
 #
+# This is where ToyBox looks for uploaded game jar files
+
+toybox.resource_dir = /export/msoy/pages/media
+
+#
 # The default database mapping; all other definitions will inherit from
 # this and need only be specified in cases where they differ from the
 # defaults
