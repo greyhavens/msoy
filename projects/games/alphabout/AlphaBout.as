@@ -54,7 +54,6 @@ public class AlphaBout extends Sprite
             return -1;
         }
         var newIndex :int = coordsToIdx(x, y);
-        _gameObject.localChat("Moved: "+ newIndex + "\n");
         if (_pieces[newIndex].getLetterIndex() != Piece.NO_LETTER) {
             return -1;
         }
@@ -200,7 +199,7 @@ public class AlphaBout extends Sprite
     {
         var bag :Array = new Array();
         var ii :int = 0;
-        for each (var idx :int in LETTER_DISTRIBUTION) {
+        for (var idx :int = 0; idx < LETTER_DISTRIBUTION.length; idx++) {
             for (var jj :int = 1; jj <= LETTER_DISTRIBUTION[idx]; jj++) {
                 bag[ii] = idx;
                 ii++;
