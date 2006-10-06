@@ -17,15 +17,16 @@ public class SeaDisplay extends Sprite
     public function SeaDisplay ()
     {
         var ups :Array = [];
-        ups[0] = Bitmap(new _up1()).bitmapData;
-        ups[1] = Bitmap(new _up2()).bitmapData;
-        ups[2] = Bitmap(new _up3()).bitmapData;
-        ups[3] = Bitmap(new _up4()).bitmapData;
+        ups[0] = Bitmap(new UP1()).bitmapData;
+        ups[1] = Bitmap(new UP2()).bitmapData;
+        ups[2] = Bitmap(new UP3()).bitmapData;
+        ups[3] = Bitmap(new UP4()).bitmapData;
 
-        _downs[0] = Bitmap(new _down1()).bitmapData;
-        _downs[1] = Bitmap(new _down2()).bitmapData;
-        _downs[2] = Bitmap(new _down3()).bitmapData;
-        _downs[3] = Bitmap(new _down4()).bitmapData;
+        _downs[0] = Bitmap(new DOWN1()).bitmapData;
+        _downs[1] = Bitmap(new DOWN2()).bitmapData;
+        _downs[2] = Bitmap(new DOWN3()).bitmapData;
+        _downs[3] = Bitmap(new DOWN4()).bitmapData;
+        _downWall = Bitmap(new DOWN_WALL()).bitmapData;
 
         for (var yy :int = -SubAttack.VISION_TILES;
                 yy < Board.HEIGHT + SubAttack.VISION_TILES; yy++) {
@@ -87,10 +88,21 @@ public class SeaDisplay extends Sprite
     /**
      * Display the specified tile as now being traversable.
      */
-    public function markTraversable (xx :int, yy :int) :void
+    public function markTraversable (
+        xx :int, yy :int, aboveIsTrav :Boolean, belowIsTrav :Boolean) :void
     {
-        pickBitmap(_downs);
+        if (!aboveIsTrav) {
+            graphics.beginBitmapFill(_downWall);
+        } else {
+            pickBitmap(_downs);
+        }
         graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+        if (belowIsTrav) {
+            pickBitmap(_downs);
+            graphics.drawRect(xx * TILE_SIZE, (yy + 1) * TILE_SIZE,
+                TILE_SIZE, TILE_SIZE);
+        }
     }
 
     /**
@@ -160,6 +172,8 @@ public class SeaDisplay extends Sprite
 
     protected var _downs :Array = [];
 
+    protected var _downWall :BitmapData;
+
     /** Our status message. */
     protected var _status :TextField;
 
@@ -167,27 +181,30 @@ public class SeaDisplay extends Sprite
     protected static const PICKS :Array = [ 0.10, 0.20, 0.30, 0.40 ];
 
     [Embed(source="up_01.png")]
-    protected static const _up1 :Class;
+    protected static const UP1 :Class;
 
     [Embed(source="up_02.png")]
-    protected static const _up2 :Class;
+    protected static const UP2 :Class;
 
     [Embed(source="up_03.png")]
-    protected static const _up3 :Class;
+    protected static const UP3 :Class;
 
     [Embed(source="up_04.png")]
-    protected static const _up4 :Class;
+    protected static const UP4 :Class;
+
+    [Embed(source="down_wall.png")]
+    protected static const DOWN_WALL :Class;
 
     [Embed(source="down_01.png")]
-    protected static const _down1 :Class;
+    protected static const DOWN1 :Class;
 
     [Embed(source="down_02.png")]
-    protected static const _down2 :Class;
+    protected static const DOWN2 :Class;
 
     [Embed(source="down_03.png")]
-    protected static const _down3 :Class;
+    protected static const DOWN3 :Class;
 
     [Embed(source="down_04.png")]
-    protected static const _down4 :Class;
+    protected static const DOWN4 :Class;
 }
 }

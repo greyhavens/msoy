@@ -30,8 +30,7 @@ public class Submarine extends BaseSprite
 
         var scheme :Array = (SCHEMES[playerIdx] as Array);
         this.transform.colorTransform = new ColorTransform(
-            Number(scheme[0]), Number(scheme[1]), Number(scheme[2]), 1,
-            Number(scheme[3]), Number(scheme[4]), Number(scheme[5]));
+            Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
     }
 
     public function getPlayerName () :String
@@ -258,18 +257,16 @@ public class Submarine extends BaseSprite
     /** The number of times we've been killed. */
     protected var _deaths :int;
 
-    protected static const COLORS :Array = [ 0xFFFF00, 0xFF00FF,
-        0x00FFFF, 0xFF0000, 0x0000FF, 0x00FF00, 0xFF6600, 0x6600FF ];
-
+    /** Color schemes for each player. */
     protected static const SCHEMES :Array = [
-        [ .5, 0, 1, 127, 255, 0 ],
-        [ 1, 0, .5, 255, 0, 127 ],
-        [ 0, 127, 255 ],
-        [ 255, 127, 0 ],
-        [ 127, 0, 255 ],
-        [ 0, 255, 127 ],
-        [ 255, 0, 255 ],
-        [ 0, 255, 255 ]
+        [ 1, .5, 0],
+        [ .5, 0, 1],
+        [ 0, 1, .5],
+        [ 1, 0, 1],
+        [ 0, 1, 1],
+        [ 1, 1, 0],
+        [ 1, .5, 1],
+        [ .5, 1, 1]
     ];
 
     /** The maximum number of torpedos that may be in-flight at once. */

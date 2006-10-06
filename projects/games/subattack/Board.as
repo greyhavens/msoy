@@ -30,9 +30,8 @@ public class Board
             _seaDisplay.addChild(sub);
             _subs[ii] = sub;
 
-            // mark this sub's 
-            _traversable[coordsToIdx(xx, yy)] = true;
-            _seaDisplay.markTraversable(xx, yy);
+            // mark this sub's starting location as traversable
+            setTraversable(xx, yy);
         }
 
         // if we're a player, put our submarine last, so that it
@@ -162,8 +161,7 @@ public class Board
         // if it exploded in bounds, make that area traversable
         if (xx >= 0 && xx < WIDTH && yy >= 0 && yy < HEIGHT) {
             // mark the board area as traversable there
-            _traversable[coordsToIdx(xx, yy)] = true;
-            _seaDisplay.markTraversable(xx, yy);
+            setTraversable(xx, yy);
 
             var duration :int = (killCount == 0) ? 200 : 400;
             _seaDisplay.addChild(new Explosion(xx, yy, duration, this));
@@ -172,9 +170,16 @@ public class Board
         return killCount;
     }
 
-    protected function coordsToIdx (x :int, y :int) :int
+    protected function coordsToIdx (xx :int, yy :int) :int
     {
-        return (y * WIDTH) + x;
+        return (yy * WIDTH) + xx;
+    }
+
+    protected function setTraversable (xx :int, yy :int) :void
+    {
+        _traversable[coordsToIdx(xx, yy)] = true;
+        _seaDisplay.markTraversable(xx, yy, isTraversable(xx, yy - 1),
+            isTraversable(xx, yy + 1));
     }
 
     /**
