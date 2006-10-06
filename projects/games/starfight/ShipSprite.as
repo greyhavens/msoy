@@ -155,6 +155,7 @@ public class ShipSprite extends Sprite
         if (power <= 0.0) {
             _game.explode(boardX, boardY, rotation);
             power = 1.0; //full
+            powerups = 0;
             var pt :Point = _board.getStartingPos();
             boardX = pt.x;
             boardY = pt.y;
