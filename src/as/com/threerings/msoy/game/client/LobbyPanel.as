@@ -188,11 +188,17 @@ class TableRenderer extends HBox
         minWidth = 300;
     }
 
-    override public function validateDisplayList () :void
+    override public function set data (newData :Object) :void
     {
-        super.validateDisplayList();
+        super.data = newData;
         recheckTable();
     }
+
+//    override public function validateDisplayList () :void
+//    {
+//        super.validateDisplayList();
+//        recheckTable();
+//    }
 
     protected function recheckTable () :void
     {
@@ -246,6 +252,16 @@ class TableRenderer extends HBox
                 }
                 lbl.text = occupant.toString();
             }
+        }
+
+        // if we are the creator, add a button for starting the game now
+        if (table != null &&
+            (table.tconfig.minimumPlayerCount < table.tconfig.desiredPlayerCount)
+                && ourName.equals(table.occupants[0])) {
+            btn = new CommandButton(LobbyController.START_TABLE, table.tableId);
+            btn.label = ctx.xlate("game", "b.start_now");
+            btn.enabled = table.mayBeStarted();
+            addChild(btn);
         }
     }
 }

@@ -31,6 +31,9 @@ public class LobbyController extends PlaceController
     /** A command to submit a configured table configuration for creation. */
     public static const SUBMIT_TABLE :String = "SubmitTable";
 
+    /** A command to start a table early (when everyone's not yet sitting) */
+    public static const START_TABLE :String = "StartTable";
+
     /** A command to sit in a place in a table. */
     public static const SIT :String = "Sit";
 
@@ -87,6 +90,14 @@ public class LobbyController extends PlaceController
     public function handleLeave (tableId :int) :void
     {
         _tableDir.leaveTable(tableId);
+    }
+
+    /**
+     * Handles START_TABLE.
+     */
+    public function handleStartTable (tableId :int) :void
+    {
+        _tableDir.startTableNow(tableId);
     }
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
