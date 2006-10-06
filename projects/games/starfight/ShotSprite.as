@@ -49,10 +49,14 @@ public class ShotSprite extends Sprite {
             boardY += yVel*time;
         } else {
             if (coll.hit is ShipSprite) {
-                Logger.log("Hit a ship!");
                 var ship :ShipSprite = ShipSprite(coll.hit);
-                _game.hit(ship, boardX + xVel*coll.time*time,
-                    boardY + yVel*coll.time*time);
+                _game.hitShip(ship, boardX + (xVel*coll.time*time),
+                    boardY + (yVel*coll.time*time));
+
+            } else {
+                var obs :Obstacle = Obstacle(coll.hit);
+                _game.hitObs(obs, boardX + (xVel*coll.time*time),
+                    boardY + (yVel*coll.time*time));
             }
             complete = true;
         }

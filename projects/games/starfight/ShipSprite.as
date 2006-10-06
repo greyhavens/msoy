@@ -244,7 +244,7 @@ public class ShipSprite extends Sprite
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
         _game.fireShot(boardX + cos, boardY + sin,
-            cos * SHOT_SPD, sin * SHOT_SPD, shipId);
+            cos * SHOT_SPD + xVel, sin * SHOT_SPD + yVel, shipId);
         _ticksToFire = TICKS_PER_SHOT - 1;
     }
 

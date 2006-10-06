@@ -127,7 +127,7 @@ public class StarFight extends Sprite
             {
                 if (gameShips[ii] == null) {
                     _ships[ii] = null;
-                } else {
+                } else if (ii != _gameObj.getMyIndex()) {
                     _ships[ii] = new ShipSprite(_board, this, true, ii);
                     gameShips[ii].position = 0;
                     _ships[ii].readFrom(gameShips[ii]);
@@ -197,7 +197,7 @@ public class StarFight extends Sprite
     /**
      * Register that a ship was hit at the location.
      */
-    public function hit (ship :ShipSprite, x :int, y :int) :void
+    public function hitShip (ship :ShipSprite, x :Number, y :Number) :void
     {
         _board.explode(x, y, 0, true);
         if (ship == _ownShip) {
@@ -205,6 +205,13 @@ public class StarFight extends Sprite
         }
     }
 
+    /**
+     * Register that an obstacle was hit.
+     */
+    public function hitObs (obs :Obstacle, x :Number, y :Number) :void
+    {
+        _board.explode(x, y, 0, true);
+    }
 
 
     /**

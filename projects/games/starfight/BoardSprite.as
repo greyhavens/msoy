@@ -60,15 +60,14 @@ public class BoardSprite extends Sprite
                 if (ship == null) {
                     continue;
                 }
-
                 var bX :Number = ship.boardX;
                 var bY :Number = ship.boardY;
-                var rad :Number = ShipSprite.COLLISION_RAD;
+                var r :Number = ShipSprite.COLLISION_RAD;
                 // We approximate a ship as a circle for this...
                 var a :Number = dx*dx + dy*dy;
                 var b :Number = 2*(dx*(oldX-bX) + dy*(oldY-bY));
                 var c :Number = bX*bX + bY*bY + oldX*oldX + oldY*oldY -
-                    2*(bX*oldX + bY*oldY) - rad*rad;
+                    2*(bX*oldX + bY*oldY) - r*r;
 
                 var determ :Number = b*b - 4*a*c;
                 if (determ >= 0.0) {
@@ -85,6 +84,9 @@ public class BoardSprite extends Sprite
 
         // Check each obstacle and figure out which one we hit first.
         for each (var obs :Obstacle in _obstacles) {
+            // TODO: This check shouldn't be necessary - and it causes shots to
+            //  sometimes go through an obstacle - but removing it causes
+            //  further problems.
             if ((obs.bX <= (newX + rad)) &&
                 ((obs.bX+1.0) >= (newX - rad)) &&
                 (obs.bY <= (newY + rad)) &&
@@ -96,8 +98,10 @@ public class BoardSprite extends Sprite
                     timeToX = (obs.bX - (oldX+rad))/dx;
                 } else if (dx < 0.0) {
                     timeToX = ((obs.bX+1.0) - (oldX-rad))/dx;
+                } else if ((oldX+rad >= obs.bX) && (oldX-rad <= obs.bX+1.0)) {
+                    timeToX = -1.0; // already there.
                 } else {
-                    timeToX = 0.0;
+                    timeToX = 2.0; // doesn't hit.
                 }
 
                 // Find how long it is til our Y coords collide.
@@ -106,12 +110,14 @@ public class BoardSprite extends Sprite
                     timeToY = (obs.bY - (oldY+rad))/dy;
                 } else if (dy < 0.0) {
                     timeToY = ((obs.bY+1.0) - (oldY-rad))/dy;
+                } else if ((oldY+rad >= obs.bY) && (oldY-rad <= obs.bY+1.0)) {
+                    timeToY = -1.0; // already there.
                 } else {
-                    timeToY = 0.0;
+                    timeToY = 2.0; // doesn't hit.
                 }
+
                 var time :Number = Math.max(timeToX, timeToY);
-                
-                if (time < bestTime) {
+                if (time >= 0.0 && time <= 1.0 && time < bestTime) {
                     bestTime = time;
                     bestHit = new Collision(obs, time, timeToX > timeToY);
                 }
@@ -163,7 +169,7 @@ public class BoardSprite extends Sprite
 
         _spaceMovie = MovieClipAsset(new spaceAnim());
         _spaceMovie.gotoAndStop(1);
-        //MSTaddChild(_spaceMovie);
+        addChild(_spaceMovie);
 
         for each (var obs :Obstacle in _obstacles) {
             addChild(obs);
