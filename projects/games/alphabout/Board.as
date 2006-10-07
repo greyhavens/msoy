@@ -6,7 +6,7 @@ import mx.core.BitmapAsset;
 
 public class Board extends Sprite
 {
-    public function Board (alphabout :AlphaBout, size :int)
+    public function Board (alphabout :AlphaBout, size :int = 15)
     {
         _alphabout = alphabout;
         _size = size;

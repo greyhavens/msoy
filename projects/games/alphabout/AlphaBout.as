@@ -30,8 +30,11 @@ public class AlphaBout extends Sprite
         // all we have to do is add the players display, it will
         // work automatically
         var players :AlphaBoutPlayersDisplay = new AlphaBoutPlayersDisplay();
+        // add our board
+        _board = new Board(this);
+        addChild(_board);
         // position it to the right of the play board
-        players.x = Piece.SIZE * BOARD_SIZE + 10;
+        players.x = Piece.SIZE * _board.getSize() + 10;
         players.y = 0;
         // TODO add me some buttons here for I am done and a button
         // that only appears if every piece is in a word for NEXT!
@@ -79,17 +82,11 @@ public class AlphaBout extends Sprite
                 dealPlayersPieces(INITIAL_PIECES);
                 _gameObject.set("startGame", true);
             }
-            _pieces = new Array(BOARD_SIZE * BOARD_SIZE);
+            _pieces = new Array(_board.getSize() * _board.getSize());
             // initialize the board to have no letters
             for (var ii :int = 0; ii < _pieces.length; ii++) {
                _pieces[ii] = new Piece(this, ii, Piece.NO_LETTER);
             }
-
-            // setup the board
-            _gameObject.localChat("Setting up the board\n");
-            _board = new Board(this, BOARD_SIZE);
-            addChild(_board);
-
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
             _gameObject.localChat("Thank you for playing AlphaBout!\n");
         }
@@ -106,6 +103,13 @@ public class AlphaBout extends Sprite
         var name :String = event.name;
         if (name == NEW_PIECE) {
             var valueArray :Array = event.value as Array;
+            // TODO if I can't get this to work, then just store how many
+            // pieces I should be getting at the start and check that.
+            /*
+            if (valueArray.length == 0) {
+                _gameObject.endGame(_gameObject.getMyIndex());
+            }
+            */
             for each (var letterIndex :int in valueArray) {
                 addPiece(letterIndex);
             }
@@ -115,19 +119,19 @@ public class AlphaBout extends Sprite
     public function coordsToIdx (x :int, y :int) :int
     {
         // TODO clean up this math
-        return (int(y / Piece.SIZE) * BOARD_SIZE) +
+        return (int(y / Piece.SIZE) * _board.getSize()) +
                 int(x / Piece.SIZE) - Piece.SIZE;
     }
 
     public function idxToX (index :int) :int
     {
-        return (Piece.SIZE * int(index % BOARD_SIZE)) +
+        return (Piece.SIZE * int(index % _board.getSize())) +
                 getBoardBorder() + int(Piece.SIZE / 2);
     }
 
     public function idxToY (index :int) :int
     {
-        return (Piece.SIZE * int(index / BOARD_SIZE)) +
+        return (Piece.SIZE * int(index / _board.getSize())) +
                 getBoardBorder() + int(Piece.SIZE / 2);
     }
 
@@ -191,6 +195,9 @@ public class AlphaBout extends Sprite
         addChild(piece);
     }
 
+    // TODO Since board size/border and piece size could potentially change 
+    // when a theme changes, there should be some code in here that adjusts 
+    // the pieces x and y based on the new board values.
     protected function themeChange () :void
     {
         _board.changeTheme();
@@ -210,6 +217,8 @@ public class AlphaBout extends Sprite
     // populate the shared pieceBag
     protected function setupPieceBag () :void
     {
+        // TODO this needs to find out how many players are playing, and only
+        // add enough pieces so everyone can get one.
         var bag :Array = new Array();
         var ii :int = 0;
         for (var idx :int = 0; idx < LETTER_DISTRIBUTION.length; idx++) {
@@ -353,7 +362,7 @@ public class AlphaBout extends Sprite
     // max sure x and y are places we would even want to allow a drop
     protected function validXandY (x :int, y :int) :Boolean 
     {
-        var max :int = (Piece.SIZE * BOARD_SIZE) + getBoardBorder();
+        var max :int = (Piece.SIZE * _board.getSize()) + getBoardBorder();
         if (x > max || y > max) {
             return false;
         }
@@ -367,8 +376,6 @@ public class AlphaBout extends Sprite
     protected var _pieces :Array;
 
     protected var _board :Board;
-
-    protected static const BOARD_SIZE :int = 15;
 
     protected static const INITIAL_PIECES :int = 7;
 
