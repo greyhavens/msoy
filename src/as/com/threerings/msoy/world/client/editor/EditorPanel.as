@@ -72,10 +72,6 @@ public class EditorPanel extends FloatingPanel
         _tabBox.selectedIndex = hasSprite ? 1 : 0;
         _tabBox.getTabAt(1).enabled = hasSprite;
         _deleteBtn.enabled = hasSprite;
-
-        _spriteBox.invalidateSize();
-        _tabBox.invalidateSize();
-        invalidateSize();
     }
 
     /**
