@@ -4,6 +4,7 @@ import mx.binding.utils.BindingUtils;
 
 import mx.core.UIComponent;
 
+import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
 import mx.controls.Button;
@@ -51,11 +52,12 @@ public class EditorPanel extends FloatingPanel
     public function setEditSprite (sprite :MsoySprite) :void
     {
         if (_spriteEditor != null) {
-            _box.removeChild(_spriteEditor);
+            _spriteBox.removeChild(_spriteEditor);
             _spriteEditor = null;
         }
 
-        if (sprite != null) {
+        var hasSprite :Boolean = (sprite != null);
+        if (hasSprite) {
             if (sprite is FurniSprite) {
                 _spriteEditor = new FurniPanel(_ctx);
             } else if (sprite is PortalSprite) {
@@ -64,10 +66,16 @@ public class EditorPanel extends FloatingPanel
                 throw new Error();
             }
             _spriteEditor.setSprite(sprite);
-            _box.addChild(_spriteEditor);
+            _spriteBox.addChild(_spriteEditor);
         }
 
-        _deleteBtn.enabled = (sprite != null);
+        _tabBox.selectedIndex = hasSprite ? 1 : 0;
+        _tabBox.getTabAt(1).enabled = hasSprite;
+        _deleteBtn.enabled = hasSprite;
+
+        _spriteBox.invalidateSize();
+        _tabBox.invalidateSize();
+        invalidateSize();
     }
 
     /**
@@ -84,6 +92,29 @@ public class EditorPanel extends FloatingPanel
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        _tabBox = new TabNavigator();
+        _tabBox.minHeight = 450; // Jesus, can't anything dynamically size?
+        _tabBox.minWidth = 300;
+        _tabBox.addChild(createRoomPanel());
+
+        _spriteBox = new VBox();
+        _spriteBox.label = _ctx.xlate("editing", "t.sprite_props");
+        _deleteBtn = new CommandButton(EditorController.DEL_ITEM);
+        _deleteBtn.label = _ctx.xlate("editing", "b.delete_item");
+        _deleteBtn.enabled = false;
+        _spriteBox.addChild(_deleteBtn);
+        _tabBox.addChild(_spriteBox);
+
+        addChild(_tabBox);
+
+        addButtons(DISCARD_BUTTON, SAVE_BUTTON);
+    }
+
+    protected function createRoomPanel () :VBox
+    {
+        var box :VBox = new VBox();
+        box.label = _ctx.xlate("editing", "t.room_props");
 
         // add a grid of controls for the room
         var grid :Grid = new Grid();
@@ -120,27 +151,19 @@ public class EditorPanel extends FloatingPanel
         _horizon.maximum = 1;
         _horizon.liveDragging = true;
 
-        addChild(grid);
+        box.addChild(grid);
 
         var btn :CommandButton;
 
         btn = new CommandButton(EditorController.INSERT_PORTAL);
         btn.label = _ctx.xlate("editing", "b.new_portal");
-        addChild(btn);
+        box.addChild(btn);
 
         btn = new CommandButton(EditorController.INSERT_FURNI);
         btn.label = _ctx.xlate("editing", "b.new_furni");
-        addChild(btn);
+        box.addChild(btn);
 
-        btn = new CommandButton(EditorController.DEL_ITEM);
-        btn.label = _ctx.xlate("editing", "b.delete_item");
-        btn.enabled = false;
-        _deleteBtn = btn;
-        addChild(btn);
-
-        addChild(_box = new VBox());
-
-        addButtons(DISCARD_BUTTON, SAVE_BUTTON);
+        return box;
     }
 
     /**
@@ -218,7 +241,10 @@ public class EditorPanel extends FloatingPanel
     protected var _scene :MsoyScene;
     protected var _sceneModel :MsoySceneModel;
 
-    protected var _box :VBox;
+    protected var _tabBox :TabNavigator;
+
+    /** The place where we add the sprite editor. */
+    protected var _spriteBox :VBox;
 
     protected var _type :ComboBox;
     protected var _background :ItemReceptor;

@@ -32,7 +32,7 @@ public class SpritePanel extends Grid
     {
         _sprite = sprite;
 
-        if (_x != null) {
+        if (_locEditor != null) {
             bind();
         }
     }
@@ -43,9 +43,10 @@ public class SpritePanel extends Grid
      */
     public function updateInputFields () :void
     {
-        _x.text = String(_sprite.loc.x);
-        _y.text = String(_sprite.loc.y);
-        _z.text = String(_sprite.loc.z);
+        _locEditor.setSprite(_sprite);
+//        _x.text = String(_sprite.loc.x);
+//        _y.text = String(_sprite.loc.y);
+//        _z.text = String(_sprite.loc.z);
 
         _xScale.text = String(_sprite.getMediaScaleX());
         _yScale.text = String(_sprite.getMediaScaleY());
@@ -56,17 +57,21 @@ public class SpritePanel extends Grid
         super.createChildren();
 
         addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.x")),
-            _x = new TextInput());
-        MsoyUI.enforceNumber(_x);
-        addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.y")),
-            _y = new TextInput());
-        MsoyUI.enforceNumber(_y);
-        addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.z")),
-            _z = new TextInput());
-        MsoyUI.enforceNumber(_z);
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.loc")),
+            _locEditor = new LocationEditor(_ctx));
+
+//        addRow(
+//            MsoyUI.createLabel(_ctx.xlate("editing", "l.x")),
+//            _x = new TextInput());
+//        MsoyUI.enforceNumber(_x);
+//        addRow(
+//            MsoyUI.createLabel(_ctx.xlate("editing", "l.y")),
+//            _y = new TextInput());
+//        MsoyUI.enforceNumber(_y);
+//        addRow(
+//            MsoyUI.createLabel(_ctx.xlate("editing", "l.z")),
+//            _z = new TextInput());
+//        MsoyUI.enforceNumber(_z);
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.xscale")),
             _xScale = new TextInput());
@@ -90,28 +95,28 @@ public class SpritePanel extends Grid
     {
         updateInputFields();
 
-        // we can set up bindings pretty easily on all these text fields
-        BindingUtils.bindSetter(function (o :Object) :void {
-            var val :Number = Number(o);
-            if (!isNaN(val)) {
-                _sprite.setLocation([ val, _sprite.loc.y, _sprite.loc.z ]);
-                spriteWasTextuallyEdited();
-            }
-        }, _x, "text");
-        BindingUtils.bindSetter(function (o :Object) :void {
-            var val :Number = Number(o);
-            if (!isNaN(val)) {
-                _sprite.setLocation([ _sprite.loc.x, val, _sprite.loc.z ]);
-                spriteWasTextuallyEdited();
-            }
-        }, _y, "text");
-        BindingUtils.bindSetter(function (o :Object) :void {
-            var val :Number = Number(o);
-            if (!isNaN(val)) {
-                _sprite.setLocation([ _sprite.loc.x, _sprite.loc.y, val ]);
-                spriteWasTextuallyEdited();
-            }
-        }, _z, "text");
+//        // we can set up bindings pretty easily on all these text fields
+//        BindingUtils.bindSetter(function (o :Object) :void {
+//            var val :Number = Number(o);
+//            if (!isNaN(val)) {
+//                _sprite.setLocation([ val, _sprite.loc.y, _sprite.loc.z ]);
+//                spriteWasTextuallyEdited();
+//            }
+//        }, _x, "text");
+//        BindingUtils.bindSetter(function (o :Object) :void {
+//            var val :Number = Number(o);
+//            if (!isNaN(val)) {
+//                _sprite.setLocation([ _sprite.loc.x, val, _sprite.loc.z ]);
+//                spriteWasTextuallyEdited();
+//            }
+//        }, _y, "text");
+//        BindingUtils.bindSetter(function (o :Object) :void {
+//            var val :Number = Number(o);
+//            if (!isNaN(val)) {
+//                _sprite.setLocation([ _sprite.loc.x, _sprite.loc.y, val ]);
+//                spriteWasTextuallyEdited();
+//            }
+//        }, _z, "text");
 
         BindingUtils.bindSetter(function (o :Object) :void {
             var val :Number = Number(o);
@@ -147,8 +152,10 @@ public class SpritePanel extends Grid
     protected var _xScale :TextInput;
     protected var _yScale :TextInput;
 
-    protected var _x :TextInput;
-    protected var _y :TextInput;
-    protected var _z :TextInput;
+    protected var _locEditor :LocationEditor;
+
+//    protected var _x :TextInput;
+//    protected var _y :TextInput;
+//    protected var _z :TextInput;
 }
 }
