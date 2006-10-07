@@ -1,5 +1,6 @@
 package {
 
+import flash.display.Bitmap;
 import flash.display.Sprite;
 import flash.display.Graphics;
 
@@ -9,33 +10,31 @@ import flash.events.TextEvent;;
 /**
  * An extremely simple pet that moves randomly around the room.
  */
-[SWF(width="40", height="40")]
+[SWF(width="83", height="47")]
 public class Blimp extends Sprite
 {
     public function Blimp ()
     {
         addEventListener(Event.ENTER_FRAME, enterFrame);
-        _loc = [];
-        for (var ii :int = 0; ii < 3; ii++) {
+        _loc = [0, 0, 0];
+        for (var ii :int = 0; ii < 3; ii += 2) {
             _loc[ii] = Math.random();
         }
+
+        addChild(Bitmap(new ROOMBA()));
+        scaleX = .25;
+        scaleY = .25;
     }
 
     protected function enterFrame (event :Event) :void
     {
-        var color :uint = ((256 * Math.random()) << 16) |
-            ((256 * Math.random()) << 8) | (256 * Math.random());
-        graphics.clear();
-        graphics.beginFill(color);
-        graphics.drawCircle(20, 20, 20);
-
-        for (var ii :int = 0; ii < 3; ii++) {
-            _incs[ii] = ((Number(_incs[ii]) < 0) ? -1 : 1) *
-                (Math.random() / 100);
+        for (var ii :int = 0; ii < 3; ii += 2) {
 
             var newVal :Number = Number(_loc[ii]) + Number(_incs[ii]);
             if (newVal < 0 || newVal > 1) {
-                _incs[ii] = -1 * Number(_incs[ii]);
+            _incs[ii] = ((Number(_incs[ii]) < 0) ? 1 : -1) *
+                (Math.random() / 100);
+//                _incs[ii] = -1 * Number(_incs[ii]);
                 newVal += Number(_incs[ii]);
             }
             _loc[ii] = newVal;
@@ -53,6 +52,9 @@ public class Blimp extends Sprite
     }
 
     protected var _loc :Array;
-    protected var _incs :Array = [.01, .01, .01];
+    protected var _incs :Array = [.01, 0, .01];
+
+    [Embed(source="roomba.png")]
+    protected static const ROOMBA :Class;
 }
 }
