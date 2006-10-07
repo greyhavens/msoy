@@ -90,8 +90,7 @@ public class EditorPanel extends FloatingPanel
         super.createChildren();
 
         _tabBox = new TabNavigator();
-        _tabBox.minHeight = 450; // Jesus, can't anything dynamically size?
-        _tabBox.minWidth = 300;
+        _tabBox.resizeToContent = true;
         _tabBox.addChild(createRoomPanel());
 
         _spriteBox = new VBox();
