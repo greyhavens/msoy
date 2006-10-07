@@ -16,12 +16,15 @@ public class SeaDisplay extends Sprite
 
     public function SeaDisplay ()
     {
-        var ups :Array = [
+        var bigups :Array = [
             Bitmap(new UP1()).bitmapData,
-            Bitmap(new UP2()).bitmapData,
             Bitmap(new UP3()).bitmapData,
+            Bitmap(new UP5()).bitmapData
+        ];
+
+        _ups = [
+            Bitmap(new UP2()).bitmapData,
             Bitmap(new UP4()).bitmapData,
-            Bitmap(new UP5()).bitmapData,
             Bitmap(new UP6()).bitmapData,
             Bitmap(new UP7()).bitmapData,
             Bitmap(new UP8()).bitmapData,
@@ -30,18 +33,19 @@ public class SeaDisplay extends Sprite
             Bitmap(new UP11()).bitmapData
         ];
 
-        _downs[0] = Bitmap(new DOWN1()).bitmapData;
-        _downs[1] = Bitmap(new DOWN2()).bitmapData;
-        _downs[2] = Bitmap(new DOWN3()).bitmapData;
-        _downs[3] = Bitmap(new DOWN4()).bitmapData;
+        _downs = [
+            Bitmap(new DOWN1()).bitmapData,
+            Bitmap(new DOWN2()).bitmapData,
+            Bitmap(new DOWN3()).bitmapData,
+            Bitmap(new DOWN4()).bitmapData
+         ];
         _downWall = Bitmap(new DOWN_WALL()).bitmapData;
 
         for (var yy :int = -SubAttack.VISION_TILES;
                 yy < Board.HEIGHT + SubAttack.VISION_TILES; yy++) {
             for (var xx :int = -SubAttack.VISION_TILES;
                     xx < Board.WIDTH + SubAttack.VISION_TILES; xx++) {
-                graphics.beginBitmapFill(
-                    BitmapData(ups[int(Math.random() * ups.length)]));
+                pickBitmap(bigups);
                 graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE,
                     TILE_SIZE);
             }
@@ -99,16 +103,20 @@ public class SeaDisplay extends Sprite
      * Display the specified tile as now being traversable.
      */
     public function markTraversable (
-        xx :int, yy :int, aboveIsTrav :Boolean, belowIsTrav :Boolean) :void
+        xx :int, yy :int, level :int,
+        aboveIsTrav :Boolean, belowIsTrav :Boolean) :void
     {
-        if (!aboveIsTrav) {
+        if (level == 1) {
+            pickBitmap(_ups);
+
+        } else if (!aboveIsTrav) {
             graphics.beginBitmapFill(_downWall);
         } else {
             pickBitmap(_downs);
         }
         graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
-        if (belowIsTrav) {
+        if (level == 0 && belowIsTrav) {
             pickBitmap(_downs);
             graphics.drawRect(xx * TILE_SIZE, (yy + 1) * TILE_SIZE,
                 TILE_SIZE, TILE_SIZE);
@@ -167,21 +175,25 @@ public class SeaDisplay extends Sprite
      */
     protected function pickBitmap (choices :Array) :void
     {
-        var n :Number = Math.random();
-        var ii :int;
-        for (ii = 0; ii < PICKS.length - 1; ii++) {
-            n -= PICKS[ii];
-            if (n <= 0) {
-                break;
-            }
-        }
-        graphics.beginBitmapFill(BitmapData(choices[ii]));
+        graphics.beginBitmapFill(
+            BitmapData(choices[int(Math.random() * choices.length)]));
+//        var n :Number = Math.random();
+//        var ii :int;
+//        for (ii = 0; ii < PICKS.length - 1; ii++) {
+//            n -= PICKS[ii];
+//            if (n <= 0) {
+//                break;
+//            }
+//        }
+//        graphics.beginBitmapFill(BitmapData(choices[ii]));
     }
 
     /** The submarine that we're following. */
     protected var _sub :Submarine;
 
-    protected var _downs :Array = [];
+    protected var _downs :Array;
+
+    protected var _ups :Array;
 
     protected var _downWall :BitmapData;
 

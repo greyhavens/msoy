@@ -19,10 +19,15 @@ public class Board
         _gameObj.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _gameObj.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
 
+        var ii :int;
+        for (ii = WIDTH * HEIGHT - 1; ii >= 0; ii--) {
+            _traversable[ii] = 2;
+        }
+
         // create a submarine for each player
         var names :Array = gameObj.getPlayerNames();
         var sub :Submarine;
-        for (var ii :int = 0; ii < names.length; ii++) {
+        for (ii = 0; ii < names.length; ii++) {
             var xx :int = getStartingX(ii);
             var yy :int = getStartingY(ii);
 
@@ -52,7 +57,7 @@ public class Board
     public function isTraversable (xx :int, yy :int) :Boolean
     {
         return (xx >= 0) && (xx < WIDTH) && (yy >= 0) && (yy < HEIGHT) &&
-            Boolean(_traversable[coordsToIdx(xx, yy)]);
+            (0 == int(_traversable[coordsToIdx(xx, yy)]));
     }
 
     /**
@@ -67,7 +72,7 @@ public class Board
         var bestDist :Number = 0;
         for (var yy :int = 0; yy < HEIGHT; yy++) {
             for (var xx :int = 0; xx < WIDTH; xx++) {
-                if (Boolean(_traversable[coordsToIdx(xx, yy)])) {
+                if (0 == int(_traversable[coordsToIdx(xx, yy)])) {
                     var minDist :Number = Number.MAX_VALUE;
                     for each (var otherSub :Submarine in _subs) {
                         if (otherSub != sub && !otherSub.isDead()) {
@@ -162,7 +167,7 @@ public class Board
         // if it exploded in bounds, make that area traversable
         if (xx >= 0 && xx < WIDTH && yy >= 0 && yy < HEIGHT) {
             // mark the board area as traversable there
-            setTraversable(xx, yy);
+            incTraversable(xx, yy);
             _seaDisplay.addChild(new Explode(xx, yy, this));
         }
 
@@ -176,9 +181,21 @@ public class Board
 
     protected function setTraversable (xx :int, yy :int) :void
     {
-        _traversable[coordsToIdx(xx, yy)] = true;
-        _seaDisplay.markTraversable(xx, yy, isTraversable(xx, yy - 1),
+        _traversable[coordsToIdx(xx, yy)] = 0;
+        _seaDisplay.markTraversable(xx, yy, 0, isTraversable(xx, yy - 1),
             isTraversable(xx, yy + 1));
+    }
+
+    protected function incTraversable (xx :int, yy :int) :void
+    {
+        var idx :int = coordsToIdx(xx, yy);
+        var val :int = int(_traversable[idx]);
+        if (val > 0) {
+            val--;
+            _traversable[idx] = val;
+            _seaDisplay.markTraversable(xx, yy, val, isTraversable(xx, yy - 1),
+                isTraversable(xx, yy + 1));
+        }
     }
 
     /**
