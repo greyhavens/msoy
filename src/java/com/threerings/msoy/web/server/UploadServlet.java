@@ -180,7 +180,7 @@ public class UploadServlet extends HttpServlet
                 AWSAuthConnection conn = new AWSAuthConnection(
                     ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
                 S3FileObject uploadTarget = new S3FileObject(hash + suff,
-                    item.getContentType(), target);
+                    target, item.getContentType());
 
                 conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget);
             } catch (S3Exception e) {
