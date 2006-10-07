@@ -14,7 +14,7 @@ if [ ! -d $ROOT/projects ]; then
 fi
 
 # determine our subversion repository URL
-SVNROOT=`svn info $ROOT | grep Root: | awk '{ print $3 }' | sed 's:/msoy.*:/:'`
+SVNROOT=`svn info $ROOT | grep URL: | awk '{ print $2 }' | sed 's:/msoy.*:/:'`
 
 # check out the various project directories
 cd $ROOT/projects
