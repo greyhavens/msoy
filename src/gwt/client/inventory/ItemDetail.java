@@ -119,7 +119,7 @@ public class ItemDetail extends PopupPanel
                    String.valueOf(((Game)_item).minPlayers),
                    "# Players (Maximum)",
                    String.valueOf(((Game)_item).maxPlayers));
-            int gameId = (_item.parentId == -1) ? _item.itemId : _item.parentId;
+            int gameId = _item.getProgenitorId();
             String href = "<a href=\"game.html#" + gameId + "\">";
             addRow("Play", new HTML(href + "Play now</a>"));
 
