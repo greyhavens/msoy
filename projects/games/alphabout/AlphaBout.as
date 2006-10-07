@@ -33,6 +33,9 @@ public class AlphaBout extends Sprite
         // add our board
         _board = new Board(this);
         addChild(_board);
+        // setup our dictionary
+        _dict = new Dict();
+        _dict.init();
         // position it to the right of the play board
         players.x = Piece.SIZE * _board.getSize() + 10;
         players.y = 0;
@@ -261,7 +264,7 @@ public class AlphaBout extends Sprite
                     word.push(piece);
                 }
                 // if we previously have a word longer than a letter, check it
-                if (word.length > 1) {
+                if (word.length > 0) {
                     if (lookupWord(word)) {
                         _currentScore += wordScore(word);
                     }
@@ -319,10 +322,9 @@ public class AlphaBout extends Sprite
     protected function lookupWord (pieces :Array) :Boolean
     {
         var word :String = piecesToString(pieces);
-        // _gameObject.localChat("Looking up: " + word + "\n");
-        // TODO clearly this should only fire if the word is invalid
-        if (pieces.length > 3) {
+        if (!_dict.contains(word)) {
             makePiecesInvalid(pieces);
+            return false;
         }
         return true;
     }
@@ -376,6 +378,8 @@ public class AlphaBout extends Sprite
     protected var _pieces :Array;
 
     protected var _board :Board;
+
+    protected var _dict :Dict;
 
     protected static const INITIAL_PIECES :int = 7;
 
