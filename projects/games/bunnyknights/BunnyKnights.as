@@ -73,8 +73,9 @@ public class BunnyKnights extends Sprite
     public function startGame () :void
     {
         log("Creating board");
-        _board = new Board(this, 80, 60);
+        _board = new Board(this, 40, 30);
         var random :Random = new Random(7);
+        /*
         _board.addTiles(Tile.brick, 0, 0, _board.bwidth, 2);
         _board.addTiles(Tile.brick, 0, 0, 2, _board.bheight);
         _board.addTiles(Tile.brick, _board.bwidth-2, 0, 2, _board.bheight);
@@ -86,12 +87,71 @@ public class BunnyKnights extends Sprite
         _board.addTiles(Tile.brick, 16, 44, 10, 2);
         var doorIdx :int = _board.addDoor(Tile.door(22, 52));
         _board.addSwitch(Tile.tswitch(14, 44), doorIdx);
+        */
+        _board.addBlocks(Tile.TYPE_EARTH_GRASS, 0, 28);
+        _board.addBlocks(Tile.TYPE_EARTH, 0, 29);
+        _board.addBlocks(Tile.TYPE_EARTH_GRASS, 1, 29, 4, 1);
+        _board.addBlocks(Tile.TYPE_EARTH_GRASS, 7, 29, 17, 1);
+        _board.addBlocks(Tile.TYPE_COLUMN_SHORT, 29, 29, 2, 1);
+        _board.addBlocks(Tile.TYPE_COLUMN_SHORT, 39, 29);
+        _board.addTile(Tile.statue(12, 25, Tile.TYPE_STATUE_ORANGE));
+        _board.addTile(Tile.statue(16, 25, Tile.TYPE_STATUE_ORANGE));
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 22, 28);
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 29, 28);
+        _board.addBlocks(Tile.TYPE_COLUMN_TALL, 22, 26, 2, 2);
+        _board.addBlocks(Tile.TYPE_COLUMN_TALL, 29, 26, 2, 2);
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 22, 25, 4, 1);
+        _board.addBlocks(Tile.TYPE_BLOCK, 26, 25, 1, 1);
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 27, 25, 4, 1);
+        _board.addBlocks(Tile.TYPE_CHECKER, 31, 28, 8, 1);
+        _board.addTiles(Tile.ladder, 19, 23, 2, 6);
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 11, 23);
+        _board.addBlocks(Tile.TYPE_CHECKER, 13, 23, 3);
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 16, 23);
+        _board.addBlocks(Tile.TYPE_CHECKER, 18, 23, 4);
+        _board.addBlocks(Tile.TYPE_BLOCK, 22, 23, 1, 2);
+        _board.addBlocks(Tile.TYPE_CHECKER, 23, 23, 7, 2);
+        _board.addBlocks(Tile.TYPE_BLOCK, 30, 23, 1, 2);
+        _board.addBlocks(Tile.TYPE_BLOCK, 31, 23);
+        _board.addBlocks(Tile.TYPE_CHECKER, 32, 23, 7, 1);
+        _board.addBlocks(Tile.TYPE_BLOCK, 39, 19, 1, 10);
+        _board.addTiles(Tile.ladder, 37, 23, 2, 5);
+        _board.addBlocks(Tile.TYPE_CHECKER, 9, 21, 2, 2);
+        _board.addBlocks(Tile.TYPE_CHECKER, 11, 20, 10, 1);
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 2, 20, 2, 1);
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 2, 22, 2, 1);
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 7, 20, 2, 1);
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 7, 22, 2, 1);
+        _board.addBlocks(Tile.TYPE_COLUMN_SHORT, 2, 21, 2, 1);
+        _board.addBlocks(Tile.TYPE_COLUMN_SHORT, 7, 21, 2, 1);
+        _board.addBlocks(Tile.TYPE_CHECKER, 4, 20, 3, 1);
+        _board.addBlocks(Tile.TYPE_CHECKER, 4, 22, 3, 1);
+        _board.addBlocks(Tile.TYPE_BLOCK, 2, 17, 1, 3);
+        _board.addTiles(Tile.ladder, 11, 20, 2, 3);
+        _board.addBlocks(Tile.TYPE_BLOCK_REC, 21, 20, 4, 1);
+        _board.addBlocks(Tile.TYPE_COLUMN_GIANT, 21, 16, 2, 4);
+        _board.addBlocks(Tile.TYPE_CHECKER, 2, 15, 38, 1);
+        _board.addBlocks(Tile.TYPE_BLOCK, 39, 10, 1, 5);
+        _board.addTiles(Tile.ladder, 17, 15, 2, 5);
+        _board.addBlocks(Tile.TYPE_COLUMN_GIANT, 2, 11, 2, 4);
+        _board.addBlocks(Tile.TYPE_CHECKER, 1, 7, 30, 1);
+        _board.addBlocks(Tile.TYPE_CHECKER, 33, 7, 7, 1);
+        _board.addBlocks(Tile.TYPE_COLUMN_GIANT, 38, 3, 2, 4);
+        _board.addTiles(Tile.ladder, 36, 7, 2, 8);
+
+        
+        var doorIdx :int = _board.addDoor(Tile.door(9, 23));
+        _board.addSwitch(Tile.tswitch(5, 29), doorIdx);
+        _board.addSwitch(Tile.tswitch(9, 20), doorIdx);
+
+        doorIdx = _board.addDoor(Tile.door(27, 1));
+        _board.addSwitch(Tile.tswitch(31, 7), doorIdx);
 
         _bunnies = new Array(_numPlayers);
         for (var ii : int = 0; ii < _numPlayers; ii++) {
             var newBunny :Bunny = new Bunny(_board, ii);
             _bunnies[ii] = newBunny;
-            _board.addBunny(newBunny, 2, _board.bheight - 3);
+            _board.addBunny(newBunny, 1, 28);
             if (ii == _myIndex) {
                 _bunny = newBunny;
             }

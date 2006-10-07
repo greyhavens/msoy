@@ -2,6 +2,7 @@ package {
 
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.geom.Matrix;
 
 public class Board
 {
@@ -22,6 +23,17 @@ public class Board
         backLayer.graphics.drawRect(
                 0, 0, bwidth*Tile.TILE_SIZE, bheight * Tile.TILE_SIZE);
         backLayer.graphics.endFill();
+    }
+
+    public function addBlocks (
+            type :int, x :int, y :int, width :int = 1, height :int = 1) :void
+    {
+        var baseTile :Tile = Tile.block(0, 0, type);
+        for (var yy :int = y; yy < y + height; yy += baseTile.height) {
+            for (var xx :int = x; xx < x + width; xx += baseTile.width) {
+                addTile(Tile.block(xx, yy, type));
+            }
+        }
     }
 
     public function addTiles (
@@ -57,7 +69,9 @@ public class Board
     {
         if (tile.effect <= Tile.EFFECT_LADDER) {
             var layerSprite :Sprite = _bn.getLayer(tile.layer);
-            layerSprite.graphics.beginBitmapFill(tile.getBitmapData());
+            var matrix :Matrix = new Matrix();
+            matrix.translate(tile.x * Tile.TILE_SIZE, tile.y * Tile.TILE_SIZE);
+            layerSprite.graphics.beginBitmapFill(tile.getBitmapData(), matrix);
             layerSprite.graphics.drawRect(
                 tile.x * Tile.TILE_SIZE, tile.y * Tile.TILE_SIZE,
                 tile.width * Tile.TILE_SIZE, tile.height * Tile.TILE_SIZE);
@@ -80,8 +94,6 @@ public class Board
 
     public function tswitch (on :Boolean, x :int, y :int, idx :int) :void
     {
-        BunnyKnights.log("Board toggling switch to " + on + ", at (" + x +
-                ", " + y + ") idx: " + idx);
         var doorArr :Array = _doors[idx] as Array;
         var door :Tile = Tile(doorArr[0]);
         var state :int = Tile.STATE_CLOSED;
@@ -138,35 +150,47 @@ public class Board
             bx += delta;
         }
         var switchWidth :int = Tile.TILE_SIZE * Tile.SWITCH_SIZE;
-        var tx :int = int((bx + width/2) / switchWidth) * Tile.SWITCH_SIZE;
+        var tx :int = int((bx + width/2) / Tile.TILE_SIZE);
         ty = int((by + Tile.TILE_SIZE) / Tile.TILE_SIZE);
+        if ((int(_shadow[tx + ty * bwidth]) == Tile.EFFECT_SWITCH) &&
+            (int(_shadow[tx - 1 + ty * bwidth]) == Tile.EFFECT_SWITCH)) {
+            tx--;
+        }
         var doorArr :Array;
         if (bunny.ax > -1 && (bunny.ax != tx || bunny.ay != ty)) {
-            _bn.tswitch(false, bunny.ax, bunny.ay, bunny.atile.assoc);
             doorArr = _doors[bunny.atile.assoc] as Array;
-            var door :Tile = Tile(doorArr[0])
             var gstate :int = Tile.STATE_CLOSED;
-            bunny.atile.setState(Tile.STATE_CLOSED);
-            for (var ii :int = 1; ii < doorArr.length; ii++) {
-                var stile :Tile = Tile(doorArr[ii]);
-                if (stile.state == Tile.STATE_OPENED) {
-                    gstate = Tile.STATE_OPENED;
-                    break;
+            var bunnies :Array = _bn.getBunnies();
+            for (var jj :int = 0; jj < bunnies.length; jj++) {
+                var bun :Bunny = Bunny(bunnies[jj]);
+                if (bun == bunny || bun.atile != bunny.atile) {
+                    continue;
                 }
+                gstate = Tile.STATE_OPENED;
             }
-            Tile(doorArr[0]).setState(gstate);
-            shadowTile(door);
+            bunny.atile.setState(gstate);
+            if (gstate != Tile.STATE_OPENED) {
+                var door :Tile = Tile(doorArr[0])
+                _bn.tswitch(false, bunny.ax, bunny.ay, bunny.atile.assoc);
+                for (var ii :int = 1; ii < doorArr.length; ii++) {
+                    var stile :Tile = Tile(doorArr[ii]);
+                    if (stile.state == Tile.STATE_OPENED) {
+                        gstate = Tile.STATE_OPENED;
+                        break;
+                    }
+                }
+                Tile(doorArr[0]).setState(gstate);
+                shadowTile(door);
+            }
             bunny.ax = -1;
             bunny.ay = -1;
             bunny.atile = null;
         }
         if (bunny.atile == null && 
                 int(_shadow[tx + ty * bwidth]) == Tile.EFFECT_SWITCH) {
-            BunnyKnights.log("checking " + tx + ", " + ty + 
-                " for switch, effect=" + _shadow[tx + ty * bwidth]);
             for (ii = 0; ii < _doors.length; ii++) {
                 doorArr = _doors[ii] as Array;
-                for (var jj :int = 1; jj < doorArr.length; jj++) {
+                for (jj = 1; jj < doorArr.length; jj++) {
                     stile = Tile(doorArr[jj]);
                     if (stile.x == tx && stile.y == ty) {
                         bunny.ax = tx;
@@ -194,13 +218,16 @@ public class Board
         var bx :int = bunny.getBX();
         var by :int = bunny.getBY();
         var ladderWidth :int = Tile.TILE_SIZE * Tile.LADDER_SIZE;
-        var tx :int = int((bx + width/2) / ladderWidth) * Tile.LADDER_SIZE;
+        var tx :int = int(bx + Tile.TILE_SIZE/2) / Tile.TILE_SIZE;
+        var tx2 :int = tx + 1;
         var ty :int = int((by + Tile.TILE_SIZE - 1)/ Tile.TILE_SIZE);
         var tyd :int = int((by + Tile.TILE_SIZE - 1 + delta) / Tile.TILE_SIZE);
         var shadow :Boolean = 
-                int(_shadow[tx + ty * bwidth]) == Tile.EFFECT_LADDER;
+                int(_shadow[tx + ty * bwidth]) == Tile.EFFECT_LADDER &&
+                int(_shadow[tx2 + ty * bwidth]) == Tile.EFFECT_LADDER;
         var shadowd :Boolean = 
-                int(_shadow[tx + tyd * bwidth]) == Tile.EFFECT_LADDER;
+                int(_shadow[tx + tyd * bwidth]) == Tile.EFFECT_LADDER &&
+                int(_shadow[tx2 + tyd * bwidth]) == Tile.EFFECT_LADDER;
         var isClimbing :Boolean = true;
         bx = tx * Tile.TILE_SIZE + (ladderWidth - width)/2;
         if (ty == tyd && shadow) {
