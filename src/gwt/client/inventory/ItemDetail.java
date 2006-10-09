@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -51,7 +52,6 @@ public class ItemDetail extends PopupPanel
         _ctx = ctx;
         _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
         setStyleName("itemPopup");
-
         setWidget(_content = new DockPanel());
 
         _table = new FlexTable();
@@ -65,6 +65,20 @@ public class ItemDetail extends PopupPanel
         _errorContainer.setStyleName("itemDetailErrors");
         _content.add(_errorContainer, DockPanel.NORTH);
 
+        _ctx.itemsvc.loadItemDetail(_ctx.creds, _itemId, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _itemDetail = (com.threerings.msoy.item.web.ItemDetail) result;
+                buildUI();
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("loadInventory failed", caught);
+                // TODO: if ServiceException, translate
+                addError("Failed to load item detail.");
+            }
+        });
+    }
+
+    protected void buildUI () {
         if (_item.parentId != -1) {
             addHeader("Clone Information");
             addRow("Clone ID", String.valueOf(_item.itemId),
@@ -74,9 +88,19 @@ public class ItemDetail extends PopupPanel
         // TODO: flags should be checkboxes when we have some?
         addRow("Item ID", String.valueOf(_item.getProgenitorId()),
                "Flag mask", String.valueOf(_item.flags));
-        // TODO: Should be MemberGNames
-        addRow("Owner ID", String.valueOf(_item.ownerId),
-               "Creator ID", String.valueOf(_item.creatorId));
+        String owner;
+        if (_item.ownerId == _ctx.creds.memberId) {
+            owner = "You";
+        } else if (_itemDetail.owner != null) {
+            owner = _itemDetail.owner.memberName;
+        } else if (_item.parentId == -1) {
+            owner = "<catalog>";
+        } else {
+            // this only happens if we're looking at another member's clone
+            // which is probably an admin function?
+            owner = "Member #" + _item.ownerId;
+        }
+        addRow("Owner", owner, "Creator", _itemDetail.creator.memberName);
 
         Widget thumbWidget = _item.thumbMedia == null ?
             new Label("(default)") :
@@ -148,12 +172,14 @@ public class ItemDetail extends PopupPanel
             addHeader("UNKNOWN OBJECT TYPE: " + _item.getType());
         }
 
-        _ratingContainer = new HorizontalPanel();
         addHeader("Rating Information");
-        _ratingRow = _row;
-        addRow("Average Rating", String.valueOf(_item.rating),
-               "Your Rating", _ratingContainer);
-        updateRatingContainer(false);
+
+        // we can rate this item if it's a clone, or if it's listed
+        int ratingMode = (_item.parentId != -1 || _item.ownerId == -1) ?
+            ItemRating.MODE_BOTH :
+            ItemRating.MODE_READ;
+        _ratingImage = new ItemRating(_ctx, _itemDetail, ratingMode);
+        addRow("Rating", _ratingImage);
 
         addHeader("Tagging Information");
 
@@ -298,75 +324,6 @@ public class ItemDetail extends PopupPanel
         });
     }
 
-    protected void updateRatingContainer (final boolean edit)
-    {
-        _ctx.itemsvc.getRating(
-            _ctx.creds, _itemId, _ctx.creds.memberId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                fillRatingContainer(((Byte)result).byteValue(), edit);
-            }
-            public void onFailure (Throwable caught) {
-                GWT.log("getRating failed", caught);
-                addError("Internal error fetching user's rating: " +
-                         caught.getMessage());
-            }
-        });
-    }
-
-    protected void fillRatingContainer (final byte rating, boolean edit)
-    {
-        _ratingContainer.clear();
-
-        if (edit) {
-            // display a dropdown, with a listener that calls back with 'false'
-            ListBox box = new ListBox();
-            for (int i = 1; i <= 5; i ++) {
-                box.addItem(String.valueOf(i));
-            }
-            box.setVisibleItemCount(1);
-            if (rating > 0) {
-                box.setSelectedIndex(rating - 1);
-            }
-            box.addChangeListener(new ChangeListener() {
-                public void onChange (Widget sender) {
-                    clearErrors();
-                    final byte newRating =
-                        (byte) (((ListBox)sender).getSelectedIndex()+1);
-                    _ctx.itemsvc.rateItem(
-                        _ctx.creds, _itemId, newRating,
-                        new AsyncCallback() {
-                            public void onSuccess (Object result) {
-                                _item = (Item) result;
-                                _table.setText(_ratingRow, 1,
-                                    String.valueOf(_item.rating));
-                                fillRatingContainer(newRating, false);
-                            }
-                            public void onFailure (Throwable caught) {
-                                GWT.log("getRating failed", caught);
-                                addError(
-                                    "Internal error setting user's rating: " +
-                                    caught.getMessage());
-                            }
-                        });
-                }
-            });
-            _ratingContainer.add(box);
-
-        } else {
-            // display a text field, with a button that calls back with 'true'
-            _ratingContainer.add(new HTML(String.valueOf(rating) + " &nbsp; "));
-            // we can rate the item if it's a clone or if it's listed
-            if (_item.parentId != -1 || _item.ownerId == -1) {
-                Button changeButton = new Button("Change");
-                changeButton.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        fillRatingContainer(rating, true);
-                    }
-                });
-                _ratingContainer.add(changeButton);
-            }
-        }
-    }
 
     private void toggleTagHistory ()
     {
@@ -517,16 +474,17 @@ public class ItemDetail extends PopupPanel
     protected WebContext _ctx;
     protected ItemIdent _itemId;
     protected Item _item;
+    // TODO: We need a name conflict resolution...
+    protected com.threerings.msoy.item.web.ItemDetail _itemDetail;
 
     protected FlexTable _table;
     protected int _row;
 
     protected DockPanel _content;
     protected VerticalPanel _errorContainer;
-    protected HorizontalPanel _ratingContainer;
     protected FlowPanel _tagContainer;
     protected ListBox _historicalTags;
-    protected int _ratingRow;
 
     protected FlexTable _tagHistory;
+    protected ItemRating _ratingImage;
 }

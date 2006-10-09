@@ -15,7 +15,7 @@ import com.threerings.io.Streamable;
  * <p><em>Note:</em> this class and all derived classes are very strictly
  * limited in their contents as they must be translatable into JavaScript
  * ({@link IsSerializable}) and must work with the Presents streaming system
- * ({@link Streamable}) and must work with the JORA object persistence system.
+ * ({@link Streamable}).
  */
 public abstract class Item implements Streamable, IsSerializable
 {

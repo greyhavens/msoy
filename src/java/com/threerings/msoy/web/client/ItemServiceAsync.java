@@ -39,6 +39,11 @@ public interface ItemServiceAsync
         WebCreds creds, ItemIdent item, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link ItemService#loadItemDetail}.
+     */
+    public void loadItemDetail (
+        WebCreds creds, ItemIdent item, AsyncCallback callback);
+    /**
      * The asynchronous version of {@link ItemService#remixItem}.
      */
     public void remixItem (

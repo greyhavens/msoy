@@ -9,6 +9,7 @@ import java.util.Collection;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.web.data.ServiceException;
@@ -54,13 +55,19 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Remixes a cloned item into a fully mutable original item.
+     * Loads the detailed details of a particular item.
+     */
+    public ItemDetail loadItemDetail (WebCreds creds, ItemIdent item)
+        throws ServiceException;
+
+    /**
+     * Remixes a cloned item into a mutable original item.
      */
     public Item remixItem (WebCreds creds, ItemIdent item)
         throws ServiceException;
 
     /**
-     * Fetches the rating somebody gave somebody, or 0.
+     * Fetches the rating somebody gave something, or 0.
      */
     public byte getRating (WebCreds creds, ItemIdent item, int memberId)
             throws ServiceException;
@@ -68,7 +75,7 @@ public interface ItemService extends RemoteService
     /**
      * Awards an item a rating from 1 to 5.
      */
-    public Item rateItem (WebCreds creds, ItemIdent item, byte rating)
+    public ItemDetail rateItem (WebCreds creds, ItemIdent item, byte rating)
             throws ServiceException;
 
     /**

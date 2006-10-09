@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.server.MsoyServer;
@@ -105,6 +106,17 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
+    public ItemDetail loadItemDetail (WebCreds creds, ItemIdent item)
+        throws ServiceException
+    {
+        ItemIdent ident = toIdent(creds, item, "loadItemDetail");
+        ServletWaiter<ItemDetail> waiter =
+            new ServletWaiter<ItemDetail>("loadItem[" + item + "]");
+        MsoyServer.itemMan.getItemDetail(ident, creds.memberId, waiter);
+        return waiter.waitForResult();
+    }
+
+    // from interface ItemService
     public Item remixItem (WebCreds creds, ItemIdent item)
         throws ServiceException
     {
@@ -127,12 +139,12 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public Item rateItem (WebCreds creds, ItemIdent item, byte rating)
+    public ItemDetail rateItem (WebCreds creds, ItemIdent item, byte rating)
             throws ServiceException
     {
         ItemIdent ident = toIdent(creds, item, "rateItem");
-        ServletWaiter<Item> waiter =
-            new ServletWaiter<Item>("rateItem[" + item + "]");
+        ServletWaiter<ItemDetail> waiter =
+            new ServletWaiter<ItemDetail>("rateItem[" + item + "]");
         MsoyServer.itemMan.rateItem(ident, creds.memberId, rating, waiter);
         return waiter.waitForResult();
     }

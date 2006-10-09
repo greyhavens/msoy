@@ -36,3 +36,9 @@
 .dataRow {
    background: #99CCFF;
 }
+
+.itemRating {
+  background: #FFFFFF;
+  border: 1px solid black;
+}
+  

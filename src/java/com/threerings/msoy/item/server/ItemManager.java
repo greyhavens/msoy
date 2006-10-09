@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -32,6 +31,7 @@ import com.threerings.msoy.web.data.MemberGName;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
 
@@ -47,7 +47,6 @@ import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.TagHistoryRecord;
 import com.threerings.msoy.item.server.persist.TagNameRecord;
-import com.threerings.msoy.item.server.persist.TagRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -170,6 +169,55 @@ public class ItemManager
                 // add the item to the user's cached inventory
                 updateUserCache(record);
             }
+        });
+    }
+
+    /**
+     * Get the details of specified item: display-friendly names of creator
+     * and owner and the rating given to this item by the member specified
+     * by memberId.
+     * 
+     * TODO: This method re-reads an ItemRecord that the caller of the
+     * function almost certainly already has, which seems kind of wasteful.
+     * On the other hand, transmitting that entire Item over the wire seems
+     * wasteful, too, and sending in ownerId and creatorId by themselves
+     * seems cheesy. If we were to cache ItemRecords in the repository, this
+     * would be fine. Will we?
+     */
+    public void getItemDetail (
+        final ItemIdent ident, final int memberId,
+        ResultListener<ItemDetail> listener)
+    {
+        final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
+        if (repo == null) {
+            return;
+        }
+            
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ItemDetail>(listener) {
+                public ItemDetail invokePersistResult ()
+                    throws PersistenceException
+                {
+                    ItemRecord record = repo.loadItem(ident.itemId);
+                    ItemDetail detail = new ItemDetail();
+                    detail.item = record.toItem();
+                    RatingRecord<ItemRecord> rr = repo.getRating(ident.itemId, memberId);
+                    detail.memberRating = rr == null ? 0 : rr.rating;
+                    MemberRecord memRec =
+                        MsoyServer.memberRepo.loadMember(record.creatorId);
+                    detail.creator = 
+                        new MemberGName(memRec.name, memRec.memberId);
+                    if (record.ownerId != -1) {
+                        memRec = 
+                            MsoyServer.memberRepo.loadMember(record.ownerId);
+                        detail.owner =
+                            new MemberGName(memRec.name, memRec.memberId);
+                    } else {
+                        detail.owner = null;
+                    }
+                    return detail;
+                }
+
         });
     }
 
@@ -511,7 +559,8 @@ public class ItemManager
      * Records the specified member's rating of an item.
      */
     public void rateItem (final ItemIdent ident, final int memberId,
-                          final byte rating, ResultListener<Item> listener)
+                          final byte rating,
+                          final ResultListener<ItemDetail> listener)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = getRepository(ident, listener);
@@ -519,27 +568,44 @@ public class ItemManager
             return;
         }
 
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
-            public Item invokePersistResult () throws PersistenceException {
-                ItemRecord item = repo.loadItem(ident.itemId);
-                int originalId;
-                if (item == null) {
-                    item = repo.loadClone(ident.itemId);
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ItemDetail>(listener) {
+                public ItemDetail invokePersistResult ()
+                    throws PersistenceException {
+                    ItemRecord item = repo.loadItem(ident.itemId);
+                    int originalId;
                     if (item == null) {
-                        throw new PersistenceException(
-                            "Can't find item [item=" + ident + "]");
+                        item = repo.loadClone(ident.itemId);
+                        if (item == null) {
+                            throw new PersistenceException(
+                                "Can't find item [item=" + ident + "]");
+                        }
+                        originalId = item.parentId;
+                    } else {
+                        // make sure we're not trying to rate a mutable
+                        if (item.ownerId != -1) {
+                            throw new PersistenceException(
+                                "Can't rate mutable object [item=" + ident + "]");
+                        }
+                        originalId = ident.itemId;
                     }
-                    originalId = item.parentId;
-                } else {
-                    // make sure we're not trying to rate a mutable
+                    item.rating = repo.rateItem(originalId, memberId, rating);
+                    ItemDetail detail = new ItemDetail();
+                    detail.item = item.toItem();
+                    detail.memberRating = rating;
+                    MemberRecord memRec =
+                        MsoyServer.memberRepo.loadMember(item.creatorId);
+                    detail.creator = 
+                        new MemberGName(memRec.name, memRec.memberId);
                     if (item.ownerId != -1) {
-                        throw new PersistenceException(
-                            "Can't rate mutable object [item=" + ident + "]");
+                        memRec = 
+                            MsoyServer.memberRepo.loadMember(item.ownerId);
+                        detail.owner =
+                            new MemberGName(memRec.name, memRec.memberId);
+                    } else {
+                        detail.owner = null;
                     }
-                    originalId = ident.itemId;
-                }
-                item.rating = repo.rateItem(originalId, memberId, rating);
-                return item.toItem();
+                    return detail;
             }
         });
     }
@@ -664,7 +730,7 @@ public class ItemManager
             }
         });
     }
-
+    
     /**
      * Called when an item is newly created and should be inserted into the
      * owning user's inventory cache.
