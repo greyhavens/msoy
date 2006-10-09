@@ -71,6 +71,11 @@ public class FurniPanel extends SpritePanel
             var furni :FurniData = (_sprite as FurniSprite).getFurniData();
             var item :Object = _actionType.selectedItem;
             furni.actionType = int(item.data);
+
+            // TODO: maybe remove?
+            // since currently background is an action type, we recheck
+            (_sprite as FurniSprite).update(_ctx, furni);
+
             spriteWasTextuallyEdited();
         }, _actionType, "text");
 
