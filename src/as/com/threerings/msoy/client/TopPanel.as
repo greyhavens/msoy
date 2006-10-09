@@ -32,23 +32,26 @@ public class TopPanel extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
-        if (DeploymentConfig.devClient) {
-            // set up the build stamp label
-            _buildStamp = new Label();
-            _buildStamp.mouseEnabled = false;
-            _buildStamp.mouseChildren = false;
-            _buildStamp.text = "Build: " + DeploymentConfig.buildTime;
-            _buildStamp.setStyle("color", "#FF6633");
-            _buildStamp.setStyle("fontSize", 12);
-            _buildStamp.setStyle("fontWeight", "bold");
-            addChild(_buildStamp);
-        }
-
         // set up the control bar
         controlBar = new ControlBar(ctx);
+        controlBar.includeInLayout = false;
         controlBar.setStyle("bottom", 0);
         controlBar.setStyle("left", 0);
         addChild(controlBar);
+
+        if (DeploymentConfig.devClient) {
+            // set up the build stamp label
+            _buildStamp = new Label();
+            _buildStamp.includeInLayout = false;
+            _buildStamp.mouseEnabled = false;
+            _buildStamp.mouseChildren = false;
+            _buildStamp.text = "Build: " + DeploymentConfig.buildTime;
+            _buildStamp.setStyle("color", "#F7069A");
+            _buildStamp.setStyle("fontSize", 12);
+            _buildStamp.setStyle("fontWeight", "bold");
+            _buildStamp.setStyle("bottom", 0);
+            addChild(_buildStamp);
+        }
 
         // clear out the application and install ourselves as the only child
         app.removeAllChildren();
