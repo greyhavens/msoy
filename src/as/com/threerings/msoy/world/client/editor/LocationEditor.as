@@ -67,31 +67,35 @@ public class LocationEditor extends Canvas
         super.createChildren();
 
         _x = new HSlider();
+        _x.tickInterval = .1;
         _x.liveDragging = true;
         _x.minimum = 0;
         _x.maximum = 1;
-        _x.x = 10;
-        _x.y = 170;
+        _x.x = 0;
+        _x.y = 180;
         _x.width = 180;
         addChild(_x);
 
         _y = new VSlider();
+        _y.tickInterval = .1;
         _y.liveDragging = true;
         _y.minimum = 0;
         _y.maximum = 1;
-        _y.x = 180;
-        _y.y = 10;
+        _y.x = 175;
+        _y.y = 0;
         _y.height = 180;
         addChild(_y);
 
         _z = new HSlider();
+        _z.tickInterval = .1;
+        _y.liveDragging = true;
         _z.liveDragging = true;
         _z.minimum = 0;
         _z.maximum = 1;
-        _z.x = 180;
+        _z.x = 175;
         _z.y = 180;
         _z.width = 180;
-        // TODO: make the Z slider angle match that of the room
+        // TODO: make the Z slider angle match that of the room?
         _z.rotation = 215;
         addChild(_z);
     }
