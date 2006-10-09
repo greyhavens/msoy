@@ -35,7 +35,7 @@ public class FurniSprite extends MsoySprite
     {
         _furni = furni;
         setup(furni.media);
-        includeInLayout = !isBackground();
+        checkBackground();
         scaleUpdated();
         setLocation(furni.loc);
         configureToolTip(ctx);
@@ -47,6 +47,8 @@ public class FurniSprite extends MsoySprite
         _furni = (_furni.clone() as FurniData);
 
         super.setEditing(editing);
+
+        checkBackground();
     }
 
     override public function getMediaScaleX () :Number
@@ -109,6 +111,16 @@ public class FurniSprite extends MsoySprite
     override protected function mouseClick (event :MouseEvent) :void
     {
         CommandEvent.dispatch(this, RoomController.FURNI_CLICKED, _furni);
+    }
+
+    /**
+     * Configure any layout changes that may be different when we're
+     * 'background' or not.
+     */
+    protected function checkBackground () :void
+    {
+        includeInLayout = !isBackground();
+        alpha = (_editing && isBackground()) ? .65 : 1;
     }
 
     /**

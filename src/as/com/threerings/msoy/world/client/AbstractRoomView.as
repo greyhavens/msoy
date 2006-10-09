@@ -153,6 +153,8 @@ public class AbstractRoomView extends Canvas
         for each (sprite in _furni.values()) {
             locationUpdated(sprite);
         }
+
+        validateNow();
     }
 
     /**
@@ -541,13 +543,16 @@ public class AbstractRoomView extends Canvas
             _bkgGraphics = null;
         }
 
-        if (_scene.getType() == MsoySceneModel.IMAGE_OVERLAY) {
+        var drawWalls :Boolean = (_scene.getType() == MsoySceneModel.DRAWN_ROOM);
+        var drawEdges :Boolean = drawWalls || _editing;
+
+        if (!drawEdges) {
             return; // nothing to draw
         }
 
         _bkgGraphics = new UIComponent();
         _bkgGraphics.includeInLayout = false;
-        addChild(_bkgGraphics);
+        addChildAt(_bkgGraphics, 0);
 
         var g :Graphics = _bkgGraphics.graphics;
 
@@ -570,54 +575,65 @@ public class AbstractRoomView extends Canvas
         var y1 :Number = backWallTop;
         var y2 :Number = backWallBottom;
 
-        // fill in the floor
-        g.beginFill(0x333333);
-        g.moveTo(0, height);
-        g.lineTo(x1, y2);
-        g.lineTo(x2, y2);
-        g.lineTo(sceneWidth, height);
-        g.lineTo(0, height);
-        g.endFill();
+        if (drawWalls) {
+            // fill in the floor
+            g.beginFill(0x333333);
+            g.moveTo(0, unscaledHeight);
+            g.lineTo(x1, y2);
+            g.lineTo(x2, y2);
+            g.lineTo(sceneWidth, unscaledHeight);
+            g.lineTo(0, unscaledHeight);
+            g.endFill();
 
-        // fill in the three walls
-        g.beginFill(0x666666);
-        g.moveTo(0, 0);
-        g.lineTo(x1, y1);
-        g.lineTo(x2, y1);
-        g.lineTo(sceneWidth, 0);
-        g.lineTo(sceneWidth, height);
-        g.lineTo(x2, y2);
-        g.lineTo(x1, y2);
-        g.lineTo(0, height);
-        g.lineTo(0, 0);
-        g.endFill();
+            // fill in the three walls
+            g.beginFill(0x666666);
+            g.moveTo(0, 0);
+            g.lineTo(x1, y1);
+            g.lineTo(x2, y1);
+            g.lineTo(sceneWidth, 0);
+            g.lineTo(sceneWidth, unscaledHeight);
+            g.lineTo(x2, y2);
+            g.lineTo(x1, y2);
+            g.lineTo(0, unscaledHeight);
+            g.lineTo(0, 0);
+            g.endFill();
 
-        // fill in the ceiling
-        g.beginFill(0x999999);
-        g.moveTo(0, 0);
-        g.lineTo(x1, y1);
-        g.lineTo(x2, y1);
-        g.lineTo(sceneWidth, 0);
-        g.lineTo(0, 0);
-        g.endFill();
+            // fill in the ceiling
+            g.beginFill(0x999999);
+            g.moveTo(0, 0);
+            g.lineTo(x1, y1);
+            g.lineTo(x2, y1);
+            g.lineTo(sceneWidth, 0);
+            g.lineTo(0, 0);
+            g.endFill();
+
+        } else {
+            g.beginFill(0xFFFFFF);
+            g.drawRect(0, 0, sceneWidth, unscaledHeight);
+            g.endFill();
+        }
 
         // draw the lines defining the walls
-        g.lineStyle(2);
-        g.moveTo(0, 0);
-        g.lineTo(x1, y1);
-        g.lineTo(x2, y1);
+        if (drawEdges) {
+            g.lineStyle(2);
+            g.moveTo(0, 0);
+            g.lineTo(x1, y1);
+            g.lineTo(x2, y1);
 
-        g.moveTo(sceneWidth, 0);
-        g.lineTo(x2, y1);
-        g.lineTo(x2, y2);
+            g.moveTo(sceneWidth, 0);
+            g.lineTo(x2, y1);
+            g.lineTo(x2, y2);
 
-        g.moveTo(sceneWidth, height);
-        g.lineTo(x2, y2);
-        g.lineTo(x1, y2);
+            g.moveTo(sceneWidth, unscaledHeight);
+            g.lineTo(x2, y2);
+            g.lineTo(x1, y2);
 
-        g.moveTo(0, height);
-        g.lineTo(x1, y2);
-        g.lineTo(x1, y1);
+            g.moveTo(0, unscaledHeight);
+            g.lineTo(x1, y2);
+            g.lineTo(x1, y1);
+
+            g.lineStyle(0, 0, 0); // stop drawing lines
+        }
     }
 
     /** The msoy context. */
