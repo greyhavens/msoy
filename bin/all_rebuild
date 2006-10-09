@@ -106,7 +106,7 @@ if [ ! -z "$GCLIENT" ]; then
 fi
 
 # build the Java client if requested
-if [ ! -z "JGCLIENT" ]; then
+if [ ! -z "$JCLIENT" ]; then
     ant jclient
     if [ $? != 0 ]; then
         rm -f $LOCKFILE
