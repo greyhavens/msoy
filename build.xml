@@ -175,8 +175,25 @@
   <target name="jclient">
     <taskdef resource="proguard/ant/task.properties"
              classpath="lib/proguard.jar"/>
+    <!-- On Mac OS X, rt.jar is cleverly renamed classes.jar -->
+    <condition property="isDarwin">
+      <and>
+        <os family="mac"/>
+        <os family="unix"/>
+      </and>
+    </condition>
+    <condition property="rtClasses"
+               value="${java.home}/../Classes/classes.jar">
+      <istrue value="${isDarwin}"/>
+    </condition>
+    <condition property="rtClasses"
+               value="${java.home}/lib/rt.jar">
+      <isfalse value="${isDarwin}"/>
+    </condition>
     <mkdir dir="${deploy.dir}"/>
-    <proguard configuration="etc/game-client.pro"/>
+    <proguard configuration="etc/game-client.pro">
+      <libraryjar name="${rtClasses}"/>
+    </proguard>
     <signjar lazy="true" keystore="${cert_dir}/lib/keystore.dat"
       storepass="${sign.storepass}" alias="${sign.alias}">
       <fileset dir="${deploy.dir}" includes="game-client.jar"/>

@@ -18,7 +18,6 @@
   !META-INF/*,!**/tools/**,!**/server/**,!**/world/**,!**threerings/web/**,
   !**/xml/**,!com/threerings/io/**)
 
--libraryjars <java.home>/lib/rt.jar
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
 -outjars ../dist/game-client.jar
