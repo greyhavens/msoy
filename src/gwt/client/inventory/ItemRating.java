@@ -56,7 +56,8 @@ public class ItemRating extends Image
     }
     public void onMouseUp (Widget sender, int x, int y)
     {
-        if (x >= 0 && x < sender.getOffsetWidth() &&
+        if (_mode != MODE_READ &&
+            x >= 0 && x < sender.getOffsetWidth() &&
             y >= 0 && y < sender.getOffsetHeight()) {
             rateItem((byte) (1 + ((x * 5) / sender.getOffsetWidth())));
         }
