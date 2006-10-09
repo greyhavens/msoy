@@ -169,7 +169,11 @@ public class AlphaBout extends Sprite
             break;
           case Keyboard.SPACE:
             // TODO if bag is empty send the end of game event
-            dealPlayersPieces();
+            if (_boardComplete) {
+                dealPlayersPieces();
+            } else {
+                _gameObject.localChat("Your board is not complete.\n");
+            }
             break;
         }
     }
@@ -246,14 +250,15 @@ public class AlphaBout extends Sprite
 
     protected function highlightWords () :void
     {
-        // clear out any previous invalid state?
-        makePiecesValid(_pieces);
-    
+        // start with all words assumed invalid
+        makePiecesInvalid(_pieces);
+
         // array to hold our word pieces
         var word :Array = new Array();
         var boardSize :int = _board.getSize();
         var piece :Piece = null;
         _currentScore = 0;
+        _boardComplete = true;
 
         // first search all the words in rows
         for (var ii :int = 0; ii < _pieces.length; ii++) {
@@ -263,16 +268,18 @@ public class AlphaBout extends Sprite
                 if (!piece.hasNoLetter()) {
                     word.push(piece);
                 }
-                // if we previously have a word longer than a letter, check it
+                // if we previously have a word, check it
                 if (word.length > 0) {
                     if (lookupWord(word)) {
                         _currentScore += wordScore(word);
+                    } else {
+                        // TODO if single letter is part of valid Y direction word,
+                        // this should not be set
+                        _boardComplete = false;
                     }
-                } 
-                if (word.length > 0) {
-                    // need to clear the word out
-                    word = new Array();
                 }
+                // need to clear the word out
+                word = new Array();
             } else {
                 // else we have a letter, add the piece to our word
                 word.push(piece);
@@ -298,16 +305,18 @@ public class AlphaBout extends Sprite
                 if (!piece.hasNoLetter()) {
                     word.push(piece);
                 }
-                // if we previously have a word longer than a letter, check it
-                if (word.length > 1) {
+                // if we previously have a word, check it
+                if (word.length > 0) {
                     if (lookupWord(word)) {
                         _currentScore += wordScore(word);
+                    } else {
+                        // TODO if single letter is part of valid X direction word,
+                        // this should not be set
+                        _boardComplete = false;
                     }
                 }
-                if (word.length > 0) {
-                    // need to clear the word out
-                    word = new Array();
-                }
+                // need to clear the word out
+                word = new Array();
             } else {
                 // else we have a letter, add the piece to our word
                 word.push(piece);
@@ -322,24 +331,25 @@ public class AlphaBout extends Sprite
     protected function lookupWord (pieces :Array) :Boolean
     {
         var word :String = piecesToString(pieces);
+        // words not in the dictionary or only one letter are invalid
         if (!_dict.contains(word)) {
-            makePiecesInvalid(pieces);
             return false;
         }
+        makePiecesValid(pieces);
         return true;
     }
 
     protected function makePiecesInvalid (pieces :Array) :void
     {
         for each (var piece :Piece in pieces) {
-           piece.setLetterInvalid(); 
+            piece.setLetterInvalid(); 
         }
     }
 
     protected function makePiecesValid (pieces :Array) :void
     {
         for each (var piece :Piece in pieces) {
-           piece.setLetterValid(); 
+            piece.setLetterValid(); 
         }
     }
 
@@ -380,6 +390,8 @@ public class AlphaBout extends Sprite
     protected var _board :Board;
 
     protected var _dict :Dict;
+
+    protected var _boardComplete :Boolean;
 
     protected static const INITIAL_PIECES :int = 7;
 
