@@ -8,7 +8,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.client.WebContext;
@@ -56,6 +55,7 @@ public class ItemRating extends Image
     }
     public void onMouseUp (Widget sender, int x, int y)
     {
+        // make sure we're still on the widget when we unclick
         if (_mode != MODE_READ &&
             x >= 0 && x < sender.getOffsetWidth() &&
             y >= 0 && y < sender.getOffsetHeight()) {
@@ -63,10 +63,13 @@ public class ItemRating extends Image
         }
     }
 
+    // called to update image when we're not over the widget
     protected void update ()
     {
         setUrl("/msoy/stars/" + getRatingImage(-1, -1) + ".gif");
     }
+    
+    // called when we are over the widget
     protected void update (int pos, int width)
     {
         // a little sanity check -- this is the web we're dealing with
@@ -74,6 +77,8 @@ public class ItemRating extends Image
             setUrl("/msoy/stars/" + getRatingImage(pos, width) + ".gif");
         }
     }
+    
+    // calculate the right image to display for this situation
     protected String getRatingImage (int pos, int width)
     {
         // if we're off the widget, or in read-only mode, show fixed # of stars
@@ -99,6 +104,7 @@ public class ItemRating extends Image
         return "stars_2_" + (10 + ((pos * 5) / width) * 10);
     }
 
+    // perform a server call to give an item a new rating by this member
     protected void rateItem (byte newRating)
     {
         _ctx.itemsvc.rateItem(
