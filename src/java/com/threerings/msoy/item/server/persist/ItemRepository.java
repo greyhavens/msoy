@@ -69,15 +69,16 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Loads the clone with the given ID.
+     * Loads the clone with the given identifier. Returns null if no clone
+     * exists with that identifier.
      */
     public ItemRecord loadClone (int cloneId) throws PersistenceException
     {
         CloneRecord<?> cloneRecord = load(getCloneClass(), cloneId);
         if (cloneRecord == null) {
-            throw new PersistenceException(
-                "Clone does not exist [cloneId=" + cloneId + "]");
+            return null;
         }
+
         ItemRecord clone = loadItem(cloneRecord.originalItemId);
         if (clone == null) {
             throw new PersistenceException(
@@ -91,7 +92,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Loads an item with the specified identifier.
+     * Loads an item with the specified identifier. Returns null if no item
+     * exists with that identifier.
      */
     public T loadItem (int itemId) throws PersistenceException
     {

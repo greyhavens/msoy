@@ -401,6 +401,10 @@ public class ItemManager
             {
                 // load a copy of the clone to modify
                 _item = repo.loadClone(ident.itemId);
+                if (_item == null) {
+                    throw new PersistenceException(
+                        "Can't find item [item=" + ident + "]");
+                }
                 // TODO: make sure we should not use the original creator here
                 // make it ours
                 _item.creatorId = _item.ownerId;
