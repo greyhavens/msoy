@@ -49,45 +49,41 @@ public class FurniSprite extends MsoySprite
 
     public function addPersp () :void
     {
-        var pinchLeft :Number = .5;
+        var pinchLeft :Number = .1;
         var pinchRight :Number = 1;
 
-        var map :BitmapData = new BitmapData(_w, _h, false, 0xFFFFFF);
-        for (var xx :int = 0; xx < _w; xx++) {
-            var ww :int = _w - 1;
-            var rightness :Number = (xx / _w);
-            var scaleHere :Number = (rightness * pinchRight) +
-                ((1 - rightness) * pinchLeft);
-            Log.testing("scaleHere: " + scaleHere);
-            var heightHere :Number = _h * scaleHere;
-            for (var yy :int = 0; yy < _h; yy++) {
-                map.setPixel(xx, yy, makePixel(yy, scaleHere, heightHere));
-            }
-        }
+        var maxVal :Number = (127 / 256); // max positive displacement
+        var maxScaleDiff :Number = _h * (1 - Math.min(pinchLeft, pinchRight));
+        var maxJump :Number = maxScaleDiff / maxVal;
 
         var filter :DisplacementMapFilter = new DisplacementMapFilter();
         filter.alpha = 0;
         filter.componentX = BitmapDataChannel.RED;
         filter.componentY = BitmapDataChannel.BLUE;
-        filter.mapBitmap = map;
         filter.mode = DisplacementMapFilterMode.COLOR;
         filter.scaleX = 1;
-        filter.scaleY = (_h * (1 - Math.min(pinchLeft, pinchRight)));
+        filter.scaleY = maxJump;
+
+        var map :BitmapData = new BitmapData(_w, _h, false, 0xFFFFFF);
+        var ww :Number = _w - 1;
+        for (var xx :int = 0; xx < _w; xx++) {
+            var rightness :Number = (xx / ww);
+            var scaleHere :Number = (rightness * pinchRight) +
+                ((1 - rightness) * pinchLeft);
+            var srcHeight :Number = _h / scaleHere;
+            var start :Number = (_h - srcHeight) / 2;
+            for (var yy :int = 0; yy < _h; yy++) {
+                var srcYY :Number = (yy / _h) * srcHeight + start;
+                var val :Number = (srcYY - yy) / maxJump;
+                val = Math.max(-maxVal, Math.min(maxVal, val));
+                var jump :uint = 128 + (val * 256);
+                map.setPixel(xx, yy, uint(((uint(128) << 16) | jump)));
+            }
+        }
+
+        filter.mapBitmap = map;
 
         this.filters = [ filter ];
-    }
-
-    protected function makePixel (
-        yy :Number, scaleHere :Number, heightHere :Number) :uint
-    {
-        var srcHeight :Number = _h / scaleHere;
-        var start :Number = (_h - srcHeight) / 2;
-        var srcYY :Number = (yy / _h) * srcHeight + start;
-
-        var jump :uint = Math.min(255, Math.max(0,
-            ((srcYY - yy) / (_h * .5)) * 256 + 128));
-
-        return (uint(128) << 16) | jump;
     }
 
     override public function setEditing (editing :Boolean) :void
