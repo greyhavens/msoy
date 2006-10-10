@@ -22,12 +22,14 @@ public class Submarine extends BaseSprite
 
         var scheme :Array = (SCHEMES[playerIdx] as Array);
         _avatar = MovieClip(new AVATAR());
-        _avatar.scaleX = .5;
-        _avatar.scaleY = .5;
-        _avatar.x = SeaDisplay.TILE_SIZE / 2;
-        _avatar.y = SeaDisplay.TILE_SIZE;
-        _avatar.transform.colorTransform = new ColorTransform(
-            Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
+
+        // TODO: not working: we should only color the recolory child
+//        var colorChild :MovieClip =
+//            (_avatar.getChildByName("color") as MovieClip);
+//        colorChild.transform.colorTransform =
+        _avatar.transform.colorTransform =
+            new ColorTransform(
+                Number(scheme[0]), Number(scheme[1]), Number(scheme[2]));
         addChild(_avatar);
 
         _nameLabel = new TextField();
@@ -298,7 +300,7 @@ public class Submarine extends BaseSprite
     /** The number of ticks that may elapse before we're auto-respawned. */
     protected static const AUTO_RESPAWN_TICKS :int = 100;
 
-    [Embed(source="trucker.swf#animations")]
+    [Embed(source="trucks_recolor.swf#animations")]
     protected static const AVATAR :Class;
 }
 }
