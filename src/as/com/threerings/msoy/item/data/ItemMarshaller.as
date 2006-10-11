@@ -3,15 +3,14 @@
 
 package com.threerings.msoy.item.data {
 
-import com.threerings.util.Byte;
+import com.threerings.util.*; // for Float, Integer, etc.
 
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-import com.threerings.presents.dobj.InvocationResponseEvent;
 
 /**
  * Provides the implementation of the {@link ItemService} interface
@@ -26,7 +25,7 @@ public class ItemMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #getInventory} requests. */
     public static const GET_INVENTORY :int = 1;
 
-    // documentation inherited from interface
+    // from interface ItemService
     public function getInventory (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
     {
         var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
@@ -35,6 +34,5 @@ public class ItemMarshaller extends InvocationMarshaller
             Byte.valueOf(arg2), listener3
         ]);
     }
-
 }
 }

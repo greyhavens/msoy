@@ -22,7 +22,7 @@ public class MemberMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #alterFriend} requests. */
     public static final int ALTER_FRIEND = 1;
 
-    // documentation inherited from interface
+    // from interface MemberService
     public void alterFriend (Client arg1, int arg2, boolean arg3, InvocationService.InvocationListener arg4)
     {
         ListenerMarshaller listener4 = new ListenerMarshaller();
@@ -35,7 +35,7 @@ public class MemberMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #getMemberHomeId} requests. */
     public static final int GET_MEMBER_HOME_ID = 2;
 
-    // documentation inherited from interface
+    // from interface MemberService
     public void getMemberHomeId (Client arg1, int arg2, InvocationService.ResultListener arg3)
     {
         InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
@@ -48,7 +48,7 @@ public class MemberMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #setAvatar} requests. */
     public static final int SET_AVATAR = 3;
 
-    // documentation inherited from interface
+    // from interface MemberService
     public void setAvatar (Client arg1, int arg2, InvocationService.InvocationListener arg3)
     {
         ListenerMarshaller listener3 = new ListenerMarshaller();
@@ -61,7 +61,7 @@ public class MemberMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #setDisplayName} requests. */
     public static final int SET_DISPLAY_NAME = 4;
 
-    // documentation inherited from interface
+    // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)
     {
         ListenerMarshaller listener3 = new ListenerMarshaller();
@@ -70,5 +70,4 @@ public class MemberMarshaller extends InvocationMarshaller
             arg2, listener3
         });
     }
-
 }

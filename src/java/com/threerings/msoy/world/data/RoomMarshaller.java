@@ -23,7 +23,7 @@ public class RoomMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #updateRoom} requests. */
     public static final int UPDATE_ROOM = 1;
 
-    // documentation inherited from interface
+    // from interface RoomService
     public void updateRoom (Client arg1, SceneUpdate[] arg2, InvocationService.InvocationListener arg3)
     {
         ListenerMarshaller listener3 = new ListenerMarshaller();
@@ -32,5 +32,4 @@ public class RoomMarshaller extends InvocationMarshaller
             arg2, listener3
         });
     }
-
 }

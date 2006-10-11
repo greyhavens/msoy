@@ -3,22 +3,19 @@
 
 package com.threerings.msoy.item.client {
 
+import com.threerings.msoy.item.client.ItemService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
+import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
- * Provides services related to items.
+ * An ActionScript version of the Java ItemService interface.
  */
 public interface ItemService extends InvocationService
 {
-    /**
-     * Get the items in the user's inventory.
-     * TODO: WTF? Can we ever load the inventory? At best we can display
-     *       a page of it.
-     */
-    function getInventory (
-        client :Client, type :int,
-        listener :InvocationService_ResultListener) :void;
+    // from Java interface ItemService
+    function getInventory (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 }
 }

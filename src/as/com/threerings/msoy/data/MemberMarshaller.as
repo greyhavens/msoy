@@ -3,19 +3,15 @@
 
 package com.threerings.msoy.data {
 
+import com.threerings.util.*; // for Float, Integer, etc.
+
 import com.threerings.msoy.client.MemberService;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
-import com.threerings.presents.dobj.InvocationResponseEvent;
-import com.threerings.util.Name;
-
-import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
 
 /**
  * Provides the implementation of the {@link MemberService} interface
@@ -27,10 +23,10 @@ import com.threerings.util.langBoolean;
 public class MemberMarshaller extends InvocationMarshaller
     implements MemberService
 {
-    /** The method id used to dispatch {@link #alterBuddy} requests. */
+    /** The method id used to dispatch {@link #alterFriend} requests. */
     public static const ALTER_FRIEND :int = 1;
 
-    // documentation inherited from interface
+    // from interface MemberService
     public function alterFriend (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void
     {
         var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
@@ -43,7 +39,7 @@ public class MemberMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #getMemberHomeId} requests. */
     public static const GET_MEMBER_HOME_ID :int = 2;
 
-    // documentation inherited from interface 
+    // from interface MemberService
     public function getMemberHomeId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
     {
         var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
@@ -56,7 +52,7 @@ public class MemberMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #setAvatar} requests. */
     public static const SET_AVATAR :int = 3;
 
-    // documentation inherited from interface
+    // from interface MemberService
     public function setAvatar (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
     {
         var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
@@ -69,7 +65,7 @@ public class MemberMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #setDisplayName} requests. */
     public static const SET_DISPLAY_NAME :int = 4;
 
-    // documentation inherited from interface
+    // from interface MemberService
     public function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
     {
         var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
@@ -78,6 +74,5 @@ public class MemberMarshaller extends InvocationMarshaller
             arg2, listener3
         ]);
     }
-
 }
 }

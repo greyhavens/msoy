@@ -22,7 +22,7 @@ public class ItemMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #getInventory} requests. */
     public static final int GET_INVENTORY = 1;
 
-    // documentation inherited from interface
+    // from interface ItemService
     public void getInventory (Client arg1, byte arg2, InvocationService.ResultListener arg3)
     {
         InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
@@ -31,5 +31,4 @@ public class ItemMarshaller extends InvocationMarshaller
             Byte.valueOf(arg2), listener3
         });
     }
-
 }

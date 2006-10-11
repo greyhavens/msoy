@@ -22,7 +22,7 @@ public class LobbyMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #identifyLobby} requests. */
     public static final int IDENTIFY_LOBBY = 1;
 
-    // documentation inherited from interface
+    // from interface LobbyService
     public void identifyLobby (Client arg1, int arg2, InvocationService.ResultListener arg3)
     {
         InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
@@ -31,5 +31,4 @@ public class LobbyMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), listener3
         });
     }
-
 }

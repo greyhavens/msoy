@@ -3,13 +3,13 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.util.Integer;
+import com.threerings.util.*; // for Float, Integer, etc.
 
 import com.threerings.msoy.game.client.LobbyService;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
@@ -25,7 +25,7 @@ public class LobbyMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #identifyLobby} requests. */
     public static const IDENTIFY_LOBBY :int = 1;
 
-    // documentation inherited from interface
+    // from interface LobbyService
     public function identifyLobby (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
     {
         var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
@@ -34,6 +34,5 @@ public class LobbyMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), listener3
         ]);
     }
-
 }
 }

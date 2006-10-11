@@ -3,44 +3,28 @@
 
 package com.threerings.msoy.client {
 
-import com.threerings.util.Name;
-
+import com.threerings.msoy.client.MemberService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
+import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
- * Services for members.
+ * An ActionScript version of the Java MemberService interface.
  */
 public interface MemberService extends InvocationService
 {
-    /**
-     * Request to add the specified friend to the user's buddylist.
-     */
-    function alterFriend (
-        client :Client, friendId :int, add :Boolean,
-        listener :InvocationService_InvocationListener) :void;
+    // from Java interface MemberService
+    function alterFriend (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void;
 
-    /**
-     * Request to know the home scene id for the specified friend.
-     */
-    function getMemberHomeId (
-        client :Client, memberId :int,
-        listener :InvocationService_ResultListener) :void
+    // from Java interface MemberService
+    function getMemberHomeId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
-    /**
-     * Set the avatar in use by this user.
-     */
-    function setAvatar (
-        client :Client, avatarId :int,
-        listener :InvocationService_InvocationListener) :void;
+    // from Java interface MemberService
+    function setAvatar (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
 
-    /**
-     * Set the display name for this user.
-     */
-    function setDisplayName (
-        client :Client, name :String,
-        listener :InvocationService_InvocationListener) :void;
+    // from Java interface MemberService
+    function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
 }
 }

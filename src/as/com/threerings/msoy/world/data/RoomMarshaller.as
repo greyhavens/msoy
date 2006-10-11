@@ -3,15 +3,13 @@
 
 package com.threerings.msoy.world.data {
 
-import com.threerings.io.TypedArray;
+import com.threerings.util.*; // for Float, Integer, etc.
 
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
-import com.threerings.presents.dobj.InvocationResponseEvent;
 import com.threerings.whirled.data.SceneUpdate;
 
 /**
@@ -27,15 +25,14 @@ public class RoomMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #updateRoom} requests. */
     public static const UPDATE_ROOM :int = 1;
 
-    // documentation inherited from interface
-    public function updateRoom (
-            arg1 :Client, arg2 :TypedArray,
-            arg3 :InvocationService_InvocationListener) :void
+    // from interface RoomService
+    public function updateRoom (arg1 :Client, arg2 :Array, arg3 :InvocationService_InvocationListener) :void
     {
         var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, UPDATE_ROOM, [ arg2, listener3 ]);
+        sendRequest(arg1, UPDATE_ROOM, [
+            arg2, listener3
+        ]);
     }
-
 }
 }
