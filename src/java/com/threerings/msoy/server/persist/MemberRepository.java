@@ -18,6 +18,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.util.Name;
@@ -46,7 +47,7 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MemberRecord.class,
-            new Key(MemberRecord.ACCOUNT_NAME, accountName));
+                    new Key(MemberRecord.ACCOUNT_NAME, accountName));
     }
 
     /**
@@ -101,7 +102,8 @@ public class MemberRepository extends DepotRepository
         } catch (DuplicateKeyException dke) {
             // if that fails with a duplicate key, reuse the old record but
             // adjust its expiration
-            SessionRecord esess = load(SessionRecord.class,
+            SessionRecord esess = load(
+                SessionRecord.class,
                 new Key(SessionRecord.MEMBER_ID, memberId));
             esess.expires = nsess.expires;
             update(esess, SessionRecord.EXPIRES);
@@ -214,8 +216,8 @@ public class MemberRepository extends DepotRepository
     public void disableMember (String accountName, String disabledName)
         throws PersistenceException
     {
-        int mods = updatePartial(MemberRecord.class,
-            new Key(MemberRecord.ACCOUNT_NAME, accountName),
+        int mods = updatePartial(
+            MemberRecord.class, new Key(MemberRecord.ACCOUNT_NAME, accountName),
             MemberRecord.ACCOUNT_NAME, disabledName);
         switch (mods) {
         case 0:
@@ -257,10 +259,10 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         // force the creation of the FriendRecord table if necessary
-        getMarshaller(FriendRecord.class);
+        _ctx.getMarshaller(FriendRecord.class);
 
         Key key = new Key("FriendsCache", memberId);
-        return invoke(new CollectionQuery<ArrayList<FriendEntry>>(key) {
+        return _ctx.invoke(new CollectionQuery<ArrayList<FriendEntry>>(key) {
             public ArrayList<FriendEntry> invoke (Connection conn)
                 throws SQLException
             {
@@ -314,11 +316,11 @@ public class MemberRepository extends DepotRepository
         // see if there is already a connection, either way
         ArrayList<FriendRecord> existing = new ArrayList<FriendRecord>();
         existing.addAll(findAll(FriendRecord.class,
-                            new Key2(FriendRecord.INVITER_ID, memberId,
-                                FriendRecord.INVITEE_ID, otherId)));
+                                new Key(FriendRecord.INVITER_ID, memberId,
+                                        FriendRecord.INVITEE_ID, otherId)));
         existing.addAll(findAll(FriendRecord.class,
-                            new Key2(FriendRecord.INVITER_ID, otherId,
-                                FriendRecord.INVITEE_ID, memberId)));
+                                new Key(FriendRecord.INVITER_ID, otherId,
+                                        FriendRecord.INVITEE_ID, memberId)));
 
         // TODO: update or invalidate "FriendsCache" for both parties
 
@@ -356,11 +358,11 @@ public class MemberRepository extends DepotRepository
     {
         // TODO: update or invalidate "FriendsCache" for both parties
         deleteAll(FriendRecord.class,
-            new Key2(FriendRecord.INVITER_ID, memberId,
-                FriendRecord.INVITEE_ID, otherId));
+                  new Key(FriendRecord.INVITER_ID, memberId,
+                          FriendRecord.INVITEE_ID, otherId));
         deleteAll(FriendRecord.class,
-            new Key2(FriendRecord.INVITER_ID, otherId,
-                FriendRecord.INVITEE_ID, memberId));
+                  new Key(FriendRecord.INVITER_ID, otherId,
+                          FriendRecord.INVITEE_ID, memberId));
     }
 
     /**
@@ -372,9 +374,9 @@ public class MemberRepository extends DepotRepository
     {
         // TODO: update or invalidate "FriendsCache"
         deleteAll(FriendRecord.class,
-            new Key(FriendRecord.INVITER_ID, memberId));
+                  new Key(FriendRecord.INVITER_ID, memberId));
         deleteAll(FriendRecord.class,
-            new Key(FriendRecord.INVITEE_ID, memberId));
+                  new Key(FriendRecord.INVITEE_ID, memberId));
     }
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
