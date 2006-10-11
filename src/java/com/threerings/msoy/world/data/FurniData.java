@@ -76,6 +76,8 @@ public class FurniData extends SimpleStreamableObject
     public boolean equivalent (FurniData that)
     {
         return (this.id == that.id) &&
+            (this.itemType == that.itemType) &&
+            (this.itemId == that.itemId) &&
             this.media.equals(that.media) &&
             this.loc.equals(that.loc) &&
             (this.scaleX == that.scaleX) &&

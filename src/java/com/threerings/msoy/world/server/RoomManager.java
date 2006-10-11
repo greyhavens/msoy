@@ -3,12 +3,17 @@
 
 package com.threerings.msoy.world.server;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.RandomUtil;
+import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.client.InvocationService.InvocationListener;
-import com.threerings.presents.client.InvocationService.ResultListener;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
@@ -24,10 +29,17 @@ import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemIdent;
+
+import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.RoomMarshaller;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages a "Room".
@@ -82,22 +94,30 @@ public class RoomManager extends SpotSceneManager
 
     // documentation inherited from RoomProvider
     public void editRoom (
-        ClientObject caller, ResultListener listener)
+        ClientObject caller, InvocationService.ResultListener listener)
         throws InvocationException
     {
         if (!((MsoyScene) _scene).canEdit((MemberObject) caller)) {
             throw new InvocationException(ACCESS_DENIED);
         }
 
-        // TODO: retrieve items used in the current scene
+        // Create a list of all item ids
+        ArrayList<ItemIdent> list = new ArrayList<ItemIdent>();
+        for (FurniData furni : ((MsoyScene) _scene).getFurni()) {
+            if (furni.itemType == Item.NOT_A_TYPE) {
+                continue;
+            }
+            list.add(new ItemIdent(furni.itemType, furni.itemId));
+        }
 
-        listener.requestProcessed(new Object[0]);
+        MsoyServer.itemMan.getItems(list,
+            new ResultAdapter<ArrayList<Item>>(listener));
     }
 
     // documentation inherited from RoomProvider
     public void updateRoom (
         ClientObject caller, SceneUpdate[] updates,
-        InvocationListener listener)
+        InvocationService.InvocationListener listener)
         throws InvocationException
     {
         if (!((MsoyScene) _scene).canEdit((MemberObject) caller)) {
@@ -106,6 +126,20 @@ public class RoomManager extends SpotSceneManager
 
         for (SceneUpdate update : updates) {
             recordUpdate(update);
+
+            // furniture modification updates require us to mark item usage
+            if (update instanceof ModifyFurniUpdate) {
+                ModifyFurniUpdate mfu = (ModifyFurniUpdate) update;
+                MsoyServer.itemMan.updateItemUsage(_scene.getId(),
+                    mfu.furniRemoved, mfu.furniAdded,
+                    new ResultListener() {
+                        public void requestCompleted (Object result) {}
+                        public void requestFailed (Exception cause) {
+                            log.warning("Unable to update item usage " +
+                                "[e=" + cause + "].");
+                        }
+                    });
+            }
         }
     }
 

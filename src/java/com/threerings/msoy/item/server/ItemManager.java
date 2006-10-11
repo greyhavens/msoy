@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -15,6 +17,7 @@ import java.util.regex.Pattern;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SoftCache;
 import com.samskivert.util.Tuple;
@@ -48,6 +51,8 @@ import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.TagHistoryRecord;
 import com.threerings.msoy.item.server.persist.TagNameRecord;
 
+import com.threerings.msoy.world.data.FurniData;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -56,6 +61,17 @@ import static com.threerings.msoy.Log.log;
 public class ItemManager
     implements ItemProvider
 {
+    /**
+     * An exception that may be thrown if an item repository doesn't exist.
+     */
+    public static class MissingRepositoryException extends Exception
+    {
+        public MissingRepositoryException (byte type)
+        {
+            super("No repository registered for " + type + ".");
+        }
+    } /* End: static class MissingRepositoryException. */
+
     /**
      * Initializes the item manager, which will establish database connections
      * for all of its item repositories.
@@ -106,6 +122,115 @@ public class ItemManager
                 throws PersistenceException
             {
                 return repo.loadItem(ident.itemId).toItem();
+            }
+        });
+    }
+
+    /**
+     * Mass-load the specified items. If any type is invalid, none are
+     * returned. If specific itemIds are invalid, they are omitted from
+     * the result list.
+     */
+    public void getItems (
+        Collection<ItemIdent> ids, ResultListener<ArrayList<Item>> listener)
+    {
+        final LookupList list = new LookupList();
+        try {
+            for (ItemIdent ident : ids) {
+                list.addItem(ident);
+            }
+
+        } catch (MissingRepositoryException mre) {
+            listener.requestFailed(mre);
+            return;
+        }
+
+        // do it all at once
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<ArrayList<Item>>(listener) {
+                public ArrayList<Item> invokePersistResult ()
+                    throws PersistenceException
+                {
+                    // create a list to hold the results
+                    ArrayList<Item> items = new ArrayList<Item>();
+
+                    // mass-lookup items, a repo at a time
+                    for (Tuple<ItemRepository<ItemRecord>, int[]> tup : list) {
+                        ArrayList<ItemRecord> recs =
+                            tup.left.loadItems(tup.right);
+                        for (ItemRecord rec : recs) {
+                            items.add(rec.toItem());
+                        }
+                    }
+
+                    return items;
+                }
+            });
+    }
+
+    /**
+     * Update usage of the specified items.
+     *
+     * The supplied listener will be notified of success with null.
+     */
+    public void updateItemUsage (
+        final int sceneId, FurniData[] removedFurni, FurniData[] addedFurni,
+        ResultListener<?> listener)
+    {
+        final LookupList unused = new LookupList();
+        final LookupList scened = new LookupList();
+
+        try {
+            ArrayIntSet props = null;
+            if (removedFurni != null) {
+                for (FurniData furni : removedFurni) {
+                    // allow removal of 'props'
+                    if (furni.itemType == Item.NOT_A_TYPE) {
+                        if (props == null) {
+                            props = new ArrayIntSet();
+                        }
+                        props.add(furni.id);
+                        continue;
+                    }
+                    unused.addItem(furni.itemType, furni.itemId);
+                }
+            }
+            if (addedFurni != null) {
+                for (FurniData furni :addedFurni) {
+                    if (furni.itemType == Item.NOT_A_TYPE) {
+                        // it's only legal to add props that were already there
+                        if (props == null || !props.contains(furni.id)) {
+                            listener.requestFailed(new Exception("Furni " +
+                                "added with invalid item source."));
+                            return;
+                        }
+                        continue;
+                    }
+                    scened.addItem(furni.itemType, furni.itemId);
+                    unused.removeItem(furni.itemType, furni.itemId);
+                }
+            }
+
+        } catch (MissingRepositoryException mre) {
+            listener.requestFailed(mre);
+            return;
+        }
+
+        @SuppressWarnings("unchecked")
+        ResultListener<Object> rlo = (ResultListener<Object>) listener;
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Object>(rlo) {
+            public Object invokePersistResult ()
+                throws PersistenceException
+            {
+                for (Tuple<ItemRepository<ItemRecord>, int[]> tup : unused) {
+                    tup.left.markItemUsage(tup.right, Item.UNUSED, 0);
+                }
+                for (Tuple<ItemRepository<ItemRecord>, int[]> tup : scened) {
+                    tup.left.markItemUsage(tup.right,
+                        Item.USED_AS_FURNITURE, sceneId);
+                }
+                return null;
             }
         });
     }
@@ -764,18 +889,137 @@ public class ItemManager
     protected ItemRepository<ItemRecord> getRepository (
         byte type, ResultListener<?> listener)
     {
+        try {
+            return getRepository(type);
+
+        } catch (MissingRepositoryException mre) {
+            listener.requestFailed(mre);
+            return null;
+        }
+    }
+
+    /**
+     * Get the specified ItemRepository.
+     */
+    protected ItemRepository<ItemRecord> getRepository (byte type)
+        throws MissingRepositoryException
+    {
         ItemRepository<ItemRecord> repo = _repos.get(type);
         if (repo == null) {
-            String errmsg = "No repository registered for " + type + ".";
-            listener.requestFailed(new Exception(errmsg));
+            throw new MissingRepositoryException(type);
         }
         return repo;
     }
+
 
     /** Contains a reference to our game repository. We'd just look this up
      * from the table but we can't downcast an ItemRepository<ItemRecord> to a
      * GameRepository, annoyingly. */
     protected GameRepository _gameRepo;
+
+    /**
+     *  A class that helps manage loading or storing a bunch of items
+     *  that may be spread in difference repositories.
+     */
+    protected class LookupList
+        implements Iterable<Tuple<ItemRepository<ItemRecord>, int[]>>
+    {
+        /**
+         * Add the specified item id to the list.
+         */
+        public void addItem (ItemIdent ident)
+            throws MissingRepositoryException
+        {
+            addItem(ident.type, ident.itemId);
+        }
+
+        /**
+         * Add the specified item id to the list.
+         */
+        public void addItem (byte itemType, int itemId)
+            throws MissingRepositoryException
+        {
+            LookupType lt = _byType.get(itemType);
+            if (lt == null) {
+                lt = new LookupType(getRepository(itemType));
+                _byType.put(itemType, lt);
+            }
+            lt.addItemId(itemId);
+        }
+
+        public void removeItem (byte itemType, int itemId)
+        {
+            LookupType lt = _byType.get(itemType);
+            if (lt != null) {
+                lt.removeItemId(itemId);
+            }
+        }
+
+        // from Iterable
+        public Iterator<Tuple<ItemRepository<ItemRecord>, int[]>> iterator ()
+        {
+            final Iterator<LookupType> itr = _byType.values().iterator();
+            return new Iterator<Tuple<ItemRepository<ItemRecord>, int[]>>() {
+                public boolean hasNext ()
+                {
+                    return itr.hasNext();
+                }
+                
+                public Tuple<ItemRepository<ItemRecord>, int[]> next ()
+                {
+                    LookupType lookup = itr.next();
+                    return new Tuple<ItemRepository<ItemRecord>, int[]>(
+                        lookup.repo, lookup.getItemIds());
+                }
+
+                public void remove ()
+                {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+
+        protected class LookupType
+        {
+            /** The repository associated with this list. */
+            public ItemRepository<ItemRecord> repo;
+
+            /**
+             * Create a new LookupType for the specified repository.
+             */
+            public LookupType (ItemRepository<ItemRecord> repo)
+            {
+                this.repo = repo;
+            }
+
+            /**
+             * Add the specified item to the list.
+             */
+            public void addItemId (int id)
+            {
+                _ids.add(id);
+            }
+            
+            public void removeItemId (int id)
+            {
+                _ids.remove(id);
+            }
+
+            /**
+             * Get all the item ids in this list.
+             */
+            public int[] getItemIds ()
+            {
+                return _ids.toIntArray();
+            }
+
+            protected ArrayIntSet _ids = new ArrayIntSet();
+        }
+
+        /** A mapping of item type to LookupType record of repo / ids. */
+        protected HashMap<Byte, LookupType> _byType =
+            new HashMap<Byte, LookupType>();
+    } /* End: class LookupList. */
 
     /** A regexp pattern to validate tags. */
     protected static final Pattern validTag =

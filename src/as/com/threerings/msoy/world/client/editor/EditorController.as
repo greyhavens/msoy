@@ -401,6 +401,8 @@ public class EditorController extends Controller
         // create a generic furniture descriptor
         var furni :FurniData = new FurniData();
         furni.id = getNextFurniId();
+        furni.itemType = item.getType();
+        furni.itemId = item.itemId;
         furni.loc = cloc.loc;
         furni.media = item.getFurniMedia();
         configureFurniAction(furni, item);

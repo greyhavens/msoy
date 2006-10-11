@@ -99,6 +99,41 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Loads the specified items. Omits missing items from results.
+     */
+    public ArrayList<T> loadItems (int[] itemIds)
+        throws PersistenceException
+    {
+        // TODO: Support added to Depot to load a bunch of things at once?
+        ArrayList<T> list = new ArrayList<T>();
+        Class<T> iclass = getItemClass();
+        for (int id : itemIds) {
+            T result = load(iclass, id);
+            if (result != null) {
+                list.add(result);
+            }
+        }
+
+        return list;
+    }
+
+    /**
+     * Mark the specified items as being used in the specified way.
+     */
+    public void markItemUsage (int[] itemIds, byte usageType, int location)
+        throws PersistenceException
+    {
+        Class<T> iclass = getItemClass();
+        Byte utype = Byte.valueOf(usageType);
+        Integer loc = Integer.valueOf(location);
+
+        for (int itemId : itemIds) {
+            updatePartial(iclass, itemId,
+                ItemRecord.USED, utype, ItemRecord.LOCATION, loc);
+        }
+    }
+
+    /**
      * Loads all items in the catalog.
      * TODO: As soon as we're out of the prototyping stage, this will need
      * to turn into a paging method; int offset, int rows perhaps?

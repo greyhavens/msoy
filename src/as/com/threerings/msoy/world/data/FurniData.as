@@ -75,6 +75,8 @@ public class FurniData
     public function equivalent (that :FurniData) :Boolean
     {
         return (this.id == that.id) &&
+            (this.itemType == that.itemType) &&
+            (this.itemId == that.itemId) &&
             this.media.equals(that.media) &&
             this.loc.equals(that.loc) &&
             (this.scaleX == that.scaleX) &&
@@ -89,6 +91,8 @@ public class FurniData
         // just a shallow copy at present
         var that :FurniData = (ClassUtil.newInstance(this) as FurniData);
         that.id = this.id;
+        that.itemType = this.itemType;
+        that.itemId = this.itemId;
         that.media = this.media;
         that.loc = this.loc;
         that.scaleX = this.scaleX;
