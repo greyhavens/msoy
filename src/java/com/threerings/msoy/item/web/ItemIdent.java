@@ -33,6 +33,22 @@ public class ItemIdent
         this.itemId = itemId;
     }
 
+    // @Override from Object
+    public boolean equals (Object other)
+    {
+        if (other instanceof ItemIdent) {
+            ItemIdent that = (ItemIdent) other;
+            return (this.type == that.type) && (this.itemId == that.itemId);
+        }
+        return false;
+    }
+
+    // @Override from Object
+    public int hashCode ()
+    {
+        return (type * 37) | itemId;
+    }
+
     /**
      * Generates a string representation of this instance.
      */
