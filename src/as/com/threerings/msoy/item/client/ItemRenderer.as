@@ -2,7 +2,7 @@ package com.threerings.msoy.item.client {
 
 import flash.display.DisplayObjectContainer;
 
-import mx.containers.VBox;
+import mx.containers.HBox;
 
 import mx.controls.Label;
 
@@ -19,7 +19,7 @@ import com.threerings.msoy.item.web.Item;
  * Renders an item in our inventory.
  * The item should be set to the "data" property.
  */
-public class ItemRenderer extends VBox
+public class ItemRenderer extends HBox
 {
     public function ItemRenderer ()
     {
@@ -44,11 +44,11 @@ public class ItemRenderer extends VBox
         }
     }
 
-    override protected function measure () :void
-    {
-        measuredWidth = 300;
-        measuredHeight = 250;
-    }
+//    override protected function measure () :void
+//    {
+//        measuredWidth = 300;
+//        measuredHeight = 250;
+//    }
 
     protected function recheckItem () :void
     {
@@ -57,23 +57,18 @@ public class ItemRenderer extends VBox
             if (!Util.equals(item, _item)) {
                 _item = item;
 
-                if (_item == null) {
-                    _container.shutdown();
-                    _label.text = "";
-
-                } else {
-                    _container.setMedia(_item.getThumbnailPath());
-                    _label.text = _item.getDescription();
-                }
+                _container.setMedia(_item.getThumbnailPath());
+                _label.text = _item.getDescription();
+///                validateNow();
             }
 
-        } else if (data is String) {
-            var str :String = (data as String);
-            if (_item != null) {
-                _container.shutdown();
-                _item = null;
-            }
-            _label.text = str;
+        } else if (_item != null) {
+            _container.shutdown();
+            _item = null;
+        }
+
+        if (data is String) {
+            _label.text = (data as String);
         }
     }
 
@@ -89,7 +84,7 @@ public class ItemRenderer extends VBox
         addChild(scrollBox);
         scrollBox.addChild(_container = new MediaContainer());
 */
-        _container = new ScalingMediaContainer(250, 250);
+        _container = new ScalingMediaContainer(100, 100);
         /*
         _container.maxWidth = 250;
         _container.maxHeight = 200;
@@ -97,8 +92,7 @@ public class ItemRenderer extends VBox
         addChild(_container);
 
         addChild(_label = new Label());
-        _label.maxHeight = 50;
-        _label.maxWidth = 250;
+        _label.maxWidth = 200;
     }
 
     protected var _container :MediaContainer;
