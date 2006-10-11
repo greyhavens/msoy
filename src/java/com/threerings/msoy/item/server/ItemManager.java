@@ -776,9 +776,7 @@ public class ItemManager
             new ResultListener<ArrayList<Item>>() {
                 public void requestCompleted (ArrayList<Item> result)
                 {
-                    Item[] items = new Item[result.size()];
-                    result.toArray(items);
-                    listener.requestProcessed(items);
+                    listener.requestProcessed(result);
                 }
 
                 public void requestFailed (Exception cause)
