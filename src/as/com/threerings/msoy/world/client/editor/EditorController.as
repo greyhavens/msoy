@@ -51,7 +51,6 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
 public class EditorController extends Controller
 {
     public static const INSERT_PORTAL :String = "InsertPortal";
-    public static const INSERT_FURNI :String = "InsertFurni";
 
     /** Delete a furni or portal (specified as arg). */
     public static const DEL_ITEM :String = "DelItem";
@@ -65,7 +64,7 @@ public class EditorController extends Controller
 
     public function EditorController (
         ctx :MsoyContext, roomCtrl :RoomController, roomView :RoomView,
-        scene :MsoyScene)
+        scene :MsoyScene, items :Array)
     {
         _ctx = ctx;
         _roomCtrl = roomCtrl;
@@ -77,7 +76,7 @@ public class EditorController extends Controller
         _roomView.setEditing(true, enableEditingVisitor);
 
         // pop up our control kit
-        _panel = new EditorPanel(ctx, this, roomView, _scene);
+        _panel = new EditorPanel(ctx, this, roomView, _scene, items);
 
         // set it as our controlled panel
         setControlledPanel(_panel);
@@ -86,6 +85,9 @@ public class EditorController extends Controller
         _roomView.addEventListener(DragEvent.DRAG_OVER, dragOverHandler);
         _roomView.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
         _roomView.addEventListener(MouseEvent.MOUSE_DOWN, roomPressed);
+
+        // add the panel to the sidepane
+        _ctx.getTopPanel().setSidePanel(_panel);
     }
 
     /**
@@ -95,12 +97,7 @@ public class EditorController extends Controller
     {
         setEditSprite(null);
 
-        // close our panels
-        _panel.close();
-        if (_invPanel != null) {
-            _invPanel.close();
-            _invPanel = null;
-        }
+        _ctx.getTopPanel().clearSidePanel(_panel);
 
         // stop listening from drop events on the roomView
         _roomView.removeEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
@@ -217,17 +214,6 @@ public class EditorController extends Controller
         addEditingListeners(sprite);
         setEditSprite(sprite);
         spriteUpdated(sprite);
-    }
-
-    /**
-     * Handles INSERT_FURNI.
-     */
-    public function handleInsertFurni () :void
-    {
-        if (_invPanel == null) {
-            _invPanel = new InventoryWindow(_ctx);
-        }
-        _invPanel.open();
     }
 
     /**
@@ -435,7 +421,11 @@ public class EditorController extends Controller
         if (event.dragSource.hasFormat("items")) {
             var arr :Array = (event.dragSource.dataForFormat("items") as Array);
             if ((arr.length == 1) && (arr[0] is Item)) {
-                return (arr[0] as Item);
+                var item :Item = (arr[0] as Item);
+                // we only accept drops of un-utilized items
+                if (!item.isUsed()) {
+                    return item;
+                }
             }
         }
         return null;
@@ -871,8 +861,6 @@ public class EditorController extends Controller
 
     protected var _nextPortalId :int;
     protected var _nextFurniId :int;
-
-    protected var _invPanel :InventoryWindow;
 
     protected var _removedFurni :TypedArray = TypedArray.create(FurniData);
     protected var _addedFurni :TypedArray = TypedArray.create(FurniData);

@@ -32,6 +32,13 @@ public class FurniData extends SimpleStreamableObject
     /** The id of this piece of furni. */
     public int id;
 
+    /** Identifies the type of the item that was used to create this furni,
+     * or Item.NOT_A_TYPE. */
+    public byte itemType;
+
+    /** Identifies the id of the item that was used to create this. */
+    public int itemId;
+
     /** Info about the media that represents this piece of furni. */
     public MediaDesc media;
 

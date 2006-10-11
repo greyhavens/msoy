@@ -8,6 +8,7 @@ import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
 import mx.controls.Button;
+import mx.controls.ButtonBar;
 import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.TextInput;
@@ -20,6 +21,9 @@ import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
+import com.threerings.msoy.item.client.InventoryDisplay;
+import com.threerings.msoy.item.client.ItemList;
+
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.PortalSprite;
@@ -31,22 +35,19 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 /**
  * A floating control widget that aids in scene editing.
  */
-public class EditorPanel extends FloatingPanel
+public class EditorPanel extends VBox
 {
-    public static const DISCARD_BUTTON :int = 10;
-    public static const SAVE_BUTTON :int = 11;
-
     public function EditorPanel (
         ctx :MsoyContext, ctrl :EditorController, roomView :RoomView,
-        editableScene :MsoyScene)
+        editableScene :MsoyScene, items :Array)
     {
-        super(ctx, ctx.xlate("editing", "t.editing"));
+        _ctx = ctx;
         _ctrl = ctrl;
         _scene = editableScene;
         _sceneModel = (editableScene.getSceneModel() as MsoySceneModel);
 
-        // open non-modal with the room as the parent
-        open(false, roomView);
+        _itemList = new ItemList(_ctx);
+        _itemList.addItems(items);
     }
 
     public function setEditSprite (sprite :MsoySprite) :void
@@ -95,15 +96,36 @@ public class EditorPanel extends FloatingPanel
 
         _spriteBox = new VBox();
         _spriteBox.label = _ctx.xlate("editing", "t.sprite_props");
+
+        // add a list that will display items in the room
+        _spriteBox.addChild(_itemList);
+
+        // add a delete button (temp?)
         _deleteBtn = new CommandButton(EditorController.DEL_ITEM);
         _deleteBtn.label = _ctx.xlate("editing", "b.delete_item");
         _deleteBtn.enabled = false;
         _spriteBox.addChild(_deleteBtn);
+
         _tabBox.addChild(_spriteBox);
+
+        _inventoryBox = new InventoryDisplay(_ctx);
+        _inventoryBox.label = _ctx.xlate("items", "t.inventory");
+        _tabBox.addChild(_inventoryBox);
 
         addChild(_tabBox);
 
-        addButtons(DISCARD_BUTTON, SAVE_BUTTON);
+        var butBox :ButtonBar = new ButtonBar();
+        var btn :CommandButton;
+
+        btn = new CommandButton(EditorController.DISCARD_EDITS);
+        btn.label = _ctx.xlate("editing", "b.discard_edits");
+        butBox.addChild(btn);
+
+        btn = new CommandButton(EditorController.SAVE_EDITS);
+        btn.label = _ctx.xlate("editing", "b.save_edits");
+        butBox.addChild(btn);
+
+        addChild(butBox);
     }
 
     protected function createRoomPanel () :VBox
@@ -152,10 +174,6 @@ public class EditorPanel extends FloatingPanel
 
         btn = new CommandButton(EditorController.INSERT_PORTAL);
         btn.label = _ctx.xlate("editing", "b.new_portal");
-        box.addChild(btn);
-
-        btn = new CommandButton(EditorController.INSERT_FURNI);
-        btn.label = _ctx.xlate("editing", "b.new_furni");
         box.addChild(btn);
 
         return box;
@@ -212,24 +230,7 @@ public class EditorPanel extends FloatingPanel
         }, _horizon, "value");
     }
 
-    override protected function createButton (buttonId :int) :Button
-    {
-        var btn :CommandButton;
-        switch (buttonId) {
-        case DISCARD_BUTTON:
-            btn = new CommandButton(EditorController.DISCARD_EDITS);
-            btn.label = _ctx.xlate("editing", "b.discard_edits");
-            return btn;
-
-        case SAVE_BUTTON:
-            btn = new CommandButton(EditorController.SAVE_EDITS);
-            btn.label = _ctx.xlate("editing", "b.save_edits");
-            return btn;
-
-        default:
-            return super.createButton(buttonId);
-        }
-    }
+    protected var _ctx :MsoyContext;
 
     protected var _ctrl :EditorController;
 
@@ -241,8 +242,13 @@ public class EditorPanel extends FloatingPanel
     /** The place where we add the sprite editor. */
     protected var _spriteBox :VBox;
 
+    /** The list of items within this room. */
+    protected var _itemList :ItemList;
+
     protected var _type :ComboBox;
     protected var _background :ItemReceptor;
+
+    protected var _inventoryBox :InventoryDisplay;
 
     protected var _name :TextInput;
     protected var _width :TextInput;

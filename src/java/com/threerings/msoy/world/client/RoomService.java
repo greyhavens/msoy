@@ -14,6 +14,13 @@ import com.threerings.whirled.data.SceneUpdate;
 public interface RoomService extends InvocationService
 {
     /**
+     * Requests to edit the client's current room.
+     *
+     * @param listener will be informed with an array of items in the room.
+     */
+    public void editRoom (Client client, ResultListener listener);
+
+    /**
      * Request to apply the specified scene updates to the room.
      */
     public void updateRoom (

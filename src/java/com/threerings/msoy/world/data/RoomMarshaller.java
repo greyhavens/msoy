@@ -20,8 +20,21 @@ import com.threerings.whirled.data.SceneUpdate;
 public class RoomMarshaller extends InvocationMarshaller
     implements RoomService
 {
+    /** The method id used to dispatch {@link #editRoom} requests. */
+    public static final int EDIT_ROOM = 1;
+
+    // from interface RoomService
+    public void editRoom (Client arg1, InvocationService.ResultListener arg2)
+    {
+        InvocationMarshaller.ResultMarshaller listener2 = new InvocationMarshaller.ResultMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, EDIT_ROOM, new Object[] {
+            listener2
+        });
+    }
+
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static final int UPDATE_ROOM = 1;
+    public static final int UPDATE_ROOM = 2;
 
     // from interface RoomService
     public void updateRoom (Client arg1, SceneUpdate[] arg2, InvocationService.InvocationListener arg3)

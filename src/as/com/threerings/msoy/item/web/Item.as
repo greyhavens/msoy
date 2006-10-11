@@ -35,6 +35,19 @@ public /*abstract*/ class Item
     // Note: registery of Item types is done at the bottom of this class
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
+    /** A 'used' constant value to indicate that the item is unused. */
+    public static const UNUSED :int = 0;
+
+    /** A 'used' constant value to indicate that the item is placed
+     * as furniture. The 'location' field will contain the sceneId. */
+    public static const USED_AS_FURNITURE :int = 1;
+
+    /** A 'used' constant value to indicate that the item is used
+     * as an avatar. */
+    public static const USED_AS_AVATAR :int = 2;
+
+    // == Instance variables follow =========================================
+
     /** This item's unique identifier. <em>Note:</em> this identifier is not
      * globally unique among all digital items. Each type of item has its own
      * identifier space. */
@@ -57,6 +70,13 @@ public /*abstract*/ class Item
 
     /** The current rating of this item, either 0 or between 1 and 5. */
     public var rating :Number;
+
+    /** A code indicating where this item is being used. */
+    public var used :int;
+
+    /** A number, interpreted along with 'used' that identifies the
+     * location at which this item is being used. */
+    public var location :int;
 
     /** The media used to display this item's thumbnail representation. */
     public var thumbMedia :MediaDesc;
@@ -141,6 +161,14 @@ public /*abstract*/ class Item
     }
 
     /**
+     * Is the item currently in use somewhere?
+     */
+    public function isUsed () :Boolean
+    {
+        return (used != UNUSED);
+    }
+
+    /**
      * Returns a media descriptor for the media that should be used to display
      * our thumbnail representation.
      */
@@ -193,6 +221,8 @@ public /*abstract*/ class Item
         out.writeInt(creatorId);
         out.writeInt(ownerId);
         out.writeFloat(rating);
+        out.writeByte(used);
+        out.writeInt(location);
         out.writeObject(thumbMedia);
         out.writeObject(furniMedia);
     }
@@ -206,6 +236,8 @@ public /*abstract*/ class Item
         creatorId = ins.readInt();
         ownerId = ins.readInt();
         rating = ins.readFloat();
+        used = ins.readByte();
+        location = ins.readInt();
         thumbMedia = (ins.readObject() as MediaDesc);
         furniMedia = (ins.readObject() as MediaDesc);
     }

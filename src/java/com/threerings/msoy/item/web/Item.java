@@ -28,6 +28,19 @@ public abstract class Item implements Streamable, IsSerializable
     public static final byte AVATAR = registerItemType(Avatar.class, 5);
     public static final byte PET = registerItemType(Pet.class, 6);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
+
+    /** A 'used' constant value to indicate that the item is unused. */
+    public static final byte UNUSED = (byte) 0;
+
+    /** A 'used' constant value to indicate that the item is placed
+     * as furniture. The 'location' field will contain the sceneId. */
+    public static final byte USED_AS_FURNITURE = (byte) 1;
+
+    /** A 'used' constant value to indicate that the item is used
+     * as an avatar. */
+    public static final byte USED_AS_AVATAR = (byte) 2;
+
+    // == Instance variables follow =========================================
     
     /** This item's unique identifier. <em>Note:</em> this identifier is not
      * globally unique among all digital items. Each type of item has its own
@@ -51,6 +64,13 @@ public abstract class Item implements Streamable, IsSerializable
 
     /** The current rating of this item, either 0 or between 1 and 5. */
     public float rating;
+
+    /** A code indicating where this item is being used. */
+    public byte used;
+
+    /** A number, interpreted along with 'used' that identifies the
+     * location at which this item is being used. */
+    public int location;
     
     /** The media used to display this item's thumbnail representation. */
     public MediaDesc thumbMedia;
@@ -125,6 +145,14 @@ public abstract class Item implements Streamable, IsSerializable
     public int getProgenitorId ()
     {
         return (parentId == -1) ? itemId : parentId;
+    }
+
+    /**
+     * Is the item currently in use somewhere?
+     */
+    public boolean isUsed ()
+    {
+        return (used != UNUSED);
     }
 
     /**

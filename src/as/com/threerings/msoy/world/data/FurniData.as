@@ -28,11 +28,15 @@ public class FurniData
     /** An actionType indicating that actionData is a game item id. */
     public static const ACTION_GAME :int = 2;
 
-//    /** The itemType of the item that was used to create this furni. */
-//    public var itemType :int;
-
     /** The id of this piece of furni. */
     public var id :int;
+
+    /** Identifies the type of the item that was used to create this furni,
+     * or Item.NOT_A_TYPE. */
+    public var itemType :int;
+
+    /** Identifies the id of the item that was used to create this. */
+    public var itemId :int;
 
     /** Info about the media that represents this piece of furni. */
     public var media :MediaDesc;
@@ -98,6 +102,8 @@ public class FurniData
     public function writeObject (out :ObjectOutputStream) :void
     {
         out.writeInt(id);
+        out.writeByte(itemType);
+        out.writeInt(itemId);
         out.writeObject(media);
         out.writeObject(loc);
         out.writeFloat(scaleX);
@@ -110,6 +116,8 @@ public class FurniData
     public function readObject (ins :ObjectInputStream) :void
     {
         id = ins.readInt();
+        itemType = ins.readByte();
+        itemId = ins.readInt();
         media = (ins.readObject() as MediaDesc);
         loc = (ins.readObject() as MsoyLocation);
         scaleX = ins.readFloat();

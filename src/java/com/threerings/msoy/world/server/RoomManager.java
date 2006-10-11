@@ -7,6 +7,7 @@ import com.samskivert.util.RandomUtil;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.client.InvocationService.InvocationListener;
+import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.BodyObject;
@@ -80,6 +81,20 @@ public class RoomManager extends SpotSceneManager
     }
 
     // documentation inherited from RoomProvider
+    public void editRoom (
+        ClientObject caller, ResultListener listener)
+        throws InvocationException
+    {
+        if (!((MsoyScene) _scene).canEdit((MemberObject) caller)) {
+            throw new InvocationException(ACCESS_DENIED);
+        }
+
+        // TODO: retrieve items used in the current scene
+
+        listener.requestProcessed(new Object[0]);
+    }
+
+    // documentation inherited from RoomProvider
     public void updateRoom (
         ClientObject caller, SceneUpdate[] updates,
         InvocationListener listener)
@@ -90,7 +105,6 @@ public class RoomManager extends SpotSceneManager
         }
 
         for (SceneUpdate update : updates) {
-            System.err.println("Got update: " + update);
             recordUpdate(update);
         }
     }

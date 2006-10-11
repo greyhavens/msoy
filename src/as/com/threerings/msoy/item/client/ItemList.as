@@ -36,6 +36,14 @@ public class ItemList extends List
     }
 
     /**
+     * Add the specified item to the end of the list.
+     */
+    public function addItem (item :Item) :void
+    {
+        _itemsToShow.addItem(item);
+    }
+
+    /**
      * Add the specified items to the end of the list.
      */
     public function addItems (items :Array) :void

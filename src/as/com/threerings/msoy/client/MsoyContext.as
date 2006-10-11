@@ -188,6 +188,11 @@ public class MsoyContext
         _topPanel.clearPlaceView(view);
     }
 
+    public function getTopPanel () :TopPanel
+    {
+        return _topPanel;
+    }
+
     /**
      * Convenience method to translate a key using the general bundle.
      */

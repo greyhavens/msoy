@@ -28,7 +28,7 @@ import com.threerings.msoy.item.web.Photo;
 @Table
 public abstract class ItemRecord implements Streamable, Cloneable
 {
-    public static final int BASE_SCHEMA_VERSION = 2;
+    public static final int BASE_SCHEMA_VERSION = 3;
 
     public static final String ITEM_ID = "itemId";
     public static final String PARENT_ID = "parentId";
@@ -36,6 +36,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
     public static final String CREATOR_ID = "creatorId";
     public static final String OWNER_ID = "ownerId";
     public static final String RATING = "rating";
+    public static final String USED = "used";
+    public static final String LOCATION = "location";
     public static final String THUMB_MEDIA_HASH = "thumbMediaHash";
     public static final String THUMB_MIME_TYPE = "thumbMimeType";
     public static final String FURNI_MEDIA_HASH = "furniMediaHash";
@@ -82,16 +84,22 @@ public abstract class ItemRecord implements Streamable, Cloneable
     @Column(nullable=false)
     public int creatorId;
 
-    /**
-     *  The member id of the member that owns this item, or -1 if the item
-     *  is an immutable catalog listing.
-     */
+    /** The member id of the member that owns this item, or -1 if the item
+     * is an immutable catalog listing. */
     @Column(nullable=false)
     public int ownerId;
 
     /** The current rating of this item, from 1 to 5. */
     @Column(nullable=false)
     public float rating;
+
+    /** How this item is being used (see Item.USED_AS_FURNITURE). */
+    @Column(nullable=false)
+    public byte used;
+
+    /** Where it's being used. */
+    @Column(nullable=false)
+    public int location;
 
     /** A hash code identifying the media used to display this item's thumbnail
      * representation. */
@@ -128,6 +136,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
         rating = item.rating;
         creatorId = item.creatorId;
         flags = item.flags;
+        used = item.used;
+        location = item.location;
         if (item.thumbMedia != null) {
             thumbMediaHash = item.thumbMedia.hash;
             thumbMimeType = item.thumbMedia.mimeType;
@@ -167,6 +177,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
         item.ownerId = ownerId;
         item.parentId = parentId;
         item.rating = rating;
+        item.used = used;
+        item.location = location;
         item.creatorId = creatorId;
         item.flags = flags;
         item.furniMedia = furniMediaHash == null ? null :

@@ -136,7 +136,11 @@ public class RoomController extends SceneController
     override public function handleAction (cmd :String, arg :Object) :Boolean
     {
         if (cmd == EDIT_SCENE) {
-            startEditing();
+            _roomObj.roomService.editRoom(_mctx.getClient(),
+                new ResultWrapper(null, // TODO: no failure case
+                    function (result :Object) :void {
+                        startEditing(result as Array);
+                    }));
 
         } else if (cmd == TEMP_CLEAR_SCENE_CACHE) {
             _mctx.TEMPClearSceneCache();
@@ -267,7 +271,7 @@ public class RoomController extends SceneController
     /**
      * Begin editing the scene.
      */
-    protected function startEditing () :void
+    protected function startEditing (items :Array) :void
     {
         // set up editing
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
@@ -275,7 +279,7 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
         _walkTarget.visible = false;
 
-        _editor = new EditorController(_mctx, this, _roomView, _scene);
+        _editor = new EditorController(_mctx, this, _roomView, _scene, items);
     }
 
     protected function mouseLeft (event :MouseEvent) :void

@@ -6,6 +6,7 @@ import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import mx.containers.Canvas;
+import mx.containers.HBox;
 
 import mx.controls.Label;
 
@@ -66,16 +67,48 @@ public class TopPanel extends Canvas
         var comp :UIComponent = (view as UIComponent);
         comp.setStyle("top", 0);
         comp.setStyle("left", 0);
-        comp.setStyle("right", 0);
+        comp.setStyle("right", _sideAttachment);
         comp.setStyle("bottom", ControlBar.HEIGHT);
         addChildAt(comp, 0);
     }
 
+    /**
+     * Clear the specified place view, or null to clear any.
+     */
     public function clearPlaceView (view :PlaceView) :void
     {
         if ((_placeView != null) && (view == null || view == _placeView)) {
             removeChild(_placeView as UIComponent);
             _placeView = null;
+        }
+    }
+
+    public function setSidePanel (side :UIComponent) :void
+    {
+        clearSidePanel(null);
+        _sidePanel = side;
+        _sidePanel.includeInLayout = false;
+
+        setSideAttachment(_sidePanel.width);
+        _sidePanel.addEventListener(ResizeEvent.RESIZE, sideResized);
+
+        _sidePanel.setStyle("top", 0);
+        _sidePanel.setStyle("bottom", ControlBar.HEIGHT);
+        _sidePanel.setStyle("right", 0);
+
+        addChild(_sidePanel); // add to end
+    }
+
+    /**
+     * Clear the specified side panel, or null to clear any.
+     */
+    public function clearSidePanel (side :UIComponent) :void
+    {
+        if ((_sidePanel != null) && (side == null || side == _sidePanel)) {
+            removeChild(_sidePanel);
+            _sidePanel.removeEventListener(ResizeEvent.RESIZE, sideResized);
+            _sidePanel = null;
+            setSideAttachment(0);
         }
     }
 
@@ -96,11 +129,32 @@ public class TopPanel extends Canvas
         }
     }
 
+    protected function sideResized (event :ResizeEvent) :void
+    {
+        setSideAttachment(_sidePanel.width);
+    }
+
+    protected function setSideAttachment (rightSpace :int) :void
+    {
+        _sideAttachment = rightSpace;
+        if (_placeView != null) {
+            UIComponent(_placeView).setStyle("right", _sideAttachment);
+        }
+    }
+
     /** The giver of life. */
     protected var _ctx :MsoyContext;
 
+//    /** Where we hold the world and other bits. */
+//    protected var _worldContainer :HBox;
+
     /** The current place view. */
     protected var _placeView :PlaceView;
+
+    /** The current side panel component. */
+    protected var _sidePanel :UIComponent;
+
+    protected var _sideAttachment :int = 0;
 
     /** The list of our friends. */
     protected var _friendsList :FriendsList;

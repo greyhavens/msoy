@@ -39,6 +39,13 @@ public class RoomDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case RoomMarshaller.EDIT_ROOM:
+            ((RoomProvider)provider).editRoom(
+                source,
+                (InvocationService.ResultListener)args[0]
+            );
+            return;
+
         case RoomMarshaller.UPDATE_ROOM:
             ((RoomProvider)provider).updateRoom(
                 source,

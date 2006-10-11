@@ -17,6 +17,12 @@ import com.threerings.whirled.data.SceneUpdate;
 public interface RoomProvider extends InvocationProvider
 {
     /**
+     * Handles a {@link RoomService#editRoom} request.
+     */
+    public void editRoom (ClientObject caller, InvocationService.ResultListener arg1)
+        throws InvocationException;
+
+    /**
      * Handles a {@link RoomService#updateRoom} request.
      */
     public void updateRoom (ClientObject caller, SceneUpdate[] arg1, InvocationService.InvocationListener arg2)

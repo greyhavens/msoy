@@ -16,7 +16,9 @@ import com.threerings.msoy.item.web.Item;
  */
 public class InventoryList extends ItemList
 {
-    public function InventoryList (ctx :MsoyContext, type :int)
+    public function InventoryList (
+        ctx :MsoyContext, type :int,
+        showUsed :Boolean = false, showUnused :Boolean = true)
     {
         super(ctx);
 
@@ -31,7 +33,16 @@ public class InventoryList extends ItemList
                 Log.getLog(this).warning("Error retrieving inventory: " +
                     cause);
             }, function (items :Array) :void {
-                clearItems();
+                clearItems(); // clear the status
+
+                // possibly filter unwanted items
+                if (!showUsed || !showUnused) {
+                    items = items.filter(
+                        function (elem :*, index :int, arr :Array) :Boolean {
+                            return (Item(elem).used == Item.UNUSED) ?
+                                showUnused : showUsed;
+                        });
+                }
                 if (items.length == 0) {
                     _itemsToShow.addItem(ctx.xlate("item", "m.no_items"));
 

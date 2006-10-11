@@ -99,8 +99,25 @@ public class MsoySceneRepository extends SimpleRepository
                 "varchar(255)", "ACTION_TYPE");
         }
 
+        // TEMP: can be removed after all servers updated past 2006-09-30
+        if (JDBCUtil.tableContainsColumn(conn, "SCENES", "BACKGROUND_HASH")) {
+            JDBCUtil.dropColumn(conn, "SCENES", "MUSIC_TYPE");
+            JDBCUtil.dropColumn(conn, "SCENES", "MUSIC_HASH");
+            JDBCUtil.dropColumn(conn, "SCENES", "BACKGROUND_TYPE");
+            JDBCUtil.dropColumn(conn, "SCENES", "BACKGROUND_HASH");
+        }
+        // END: temp
+
+        // TEMP: can be removed after all servers updated past 2006-10-10
+        if (!JDBCUtil.tableContainsColumn(conn, "FURNI", "ITEM_TYPE")) {
+            JDBCUtil.addColumn(conn, "FURNI", "ITEM_TYPE",
+                "tinyint not null", "FURNI_ID");
+            JDBCUtil.addColumn(conn, "FURNI", "ITEM_ID",
+                "integer not null", "ITEM_TYPE");
+        } // END: temp
+
         // TEMP: removable after all servers are past the date specified...
-        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20060930",
+        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061010",
             new TransitionRepository.Transition() {
                 public void run ()
                     throws PersistenceException
@@ -121,15 +138,6 @@ public class MsoySceneRepository extends SimpleRepository
                     });
                 }
             });
-        // END: temp
-
-        // TEMP: can be removed after all servers updated past 2006-09-30
-        if (JDBCUtil.tableContainsColumn(conn, "SCENES", "BACKGROUND_HASH")) {
-            JDBCUtil.dropColumn(conn, "SCENES", "MUSIC_TYPE");
-            JDBCUtil.dropColumn(conn, "SCENES", "MUSIC_HASH");
-            JDBCUtil.dropColumn(conn, "SCENES", "BACKGROUND_TYPE");
-            JDBCUtil.dropColumn(conn, "SCENES", "BACKGROUND_HASH");
-        }
         // END: temp
     }
 
@@ -280,21 +288,24 @@ public class MsoySceneRepository extends SimpleRepository
 
                     // Load: furni
                     rs = stmt.executeQuery("select " +
-                        "FURNI_ID, MEDIA_HASH, MEDIA_TYPE, X, Y, Z, " +
+                        "FURNI_ID, ITEM_TYPE, ITEM_ID, " +
+                        "MEDIA_HASH, MEDIA_TYPE, X, Y, Z, " +
                         "SCALE_X, SCALE_Y, ACTION_TYPE, ACTION_DATA " +
                         "from FURNI where SCENE_ID=" + sceneId);
                     ArrayList<FurniData> flist = new ArrayList<FurniData>();
                     while (rs.next()) {
                         FurniData furni = new FurniData();
                         furni.id = rs.getInt(1);
+                        furni.itemType = rs.getByte(2);
+                        furni.itemId = rs.getInt(3);
                         furni.media = createMediaDesc(
-                            rs.getBytes(2), rs.getByte(3));
+                            rs.getBytes(4), rs.getByte(5));
                         furni.loc = new MsoyLocation(
-                            rs.getFloat(4), rs.getFloat(5), rs.getFloat(6), 0);
-                        furni.scaleX = rs.getFloat(7);
-                        furni.scaleY = rs.getFloat(8);
-                        furni.actionType = rs.getByte(9);
-                        furni.actionData = rs.getString(10);
+                            rs.getFloat(6), rs.getFloat(7), rs.getFloat(8), 0);
+                        furni.scaleX = rs.getFloat(9);
+                        furni.scaleY = rs.getFloat(10);
+                        furni.actionType = rs.getByte(11);
+                        furni.actionData = rs.getString(12);
                         flist.add(furni);
                     }
                     model.furnis = new FurniData[flist.size()];
@@ -532,23 +543,26 @@ public class MsoySceneRepository extends SimpleRepository
         throws SQLException, PersistenceException
     {
         PreparedStatement stmt = conn.prepareStatement("insert into FURNI " +
-            "(SCENE_ID, FURNI_ID, MEDIA_HASH, MEDIA_TYPE, X, Y, Z, " +
-            "SCALE_X, SCALE_Y, ACTION_TYPE, ACTION_DATA) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "(SCENE_ID, FURNI_ID, ITEM_TYPE, ITEM_ID, " +
+            " MEDIA_HASH, MEDIA_TYPE, X, Y, Z, " +
+            " SCALE_X, SCALE_Y, ACTION_TYPE, ACTION_DATA) " +
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setInt(1, sceneId);
 
             for (FurniData f : furni) {
                 stmt.setInt(2, f.id);
-                stmt.setBytes(3, flattenMediaDesc(f.media));
-                stmt.setByte(4, f.media.mimeType);
-                stmt.setFloat(5, f.loc.x);
-                stmt.setFloat(6, f.loc.y);
-                stmt.setFloat(7, f.loc.z);
-                stmt.setFloat(8, f.scaleX);
-                stmt.setFloat(9, f.scaleY);
-                stmt.setByte(10, f.actionType);
-                stmt.setString(11, f.actionData);
+                stmt.setByte(3, f.itemType);
+                stmt.setInt(4, f.itemId);
+                stmt.setBytes(5, flattenMediaDesc(f.media));
+                stmt.setByte(6, f.media.mimeType);
+                stmt.setFloat(7, f.loc.x);
+                stmt.setFloat(8, f.loc.y);
+                stmt.setFloat(9, f.loc.z);
+                stmt.setFloat(10, f.scaleX);
+                stmt.setFloat(11, f.scaleY);
+                stmt.setByte(12, f.actionType);
+                stmt.setString(13, f.actionData);
                 JDBCUtil.checkedUpdate(stmt, 1);
             }
         } finally {
@@ -708,6 +722,8 @@ public class MsoySceneRepository extends SimpleRepository
         JDBCUtil.createTableIfMissing(conn, "FURNI", new String[] {
             "SCENE_ID integer not null",
             "FURNI_ID integer not null",
+            "ITEM_TYPE tinyint not null",
+            "ITEM_ID integer not null",
             "MEDIA_HASH tinyblob not null",
             "MEDIA_TYPE tinyint not null",
             "X float not null",
