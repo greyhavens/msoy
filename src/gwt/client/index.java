@@ -52,7 +52,7 @@ public class index extends MsoyEntryPoint
             if (GWT.isScript()) {
                 if (_client == null) {
                     _client = WidgetUtil.createFlashMovie(
-                        "asclient", "/clients/game-client.swf", 900, 600);
+                        "asclient", "/clients/game-client.swf", "100%", "90%");
                 }
                 RootPanel.get("content").add(_client);
             }
