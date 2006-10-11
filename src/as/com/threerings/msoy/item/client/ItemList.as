@@ -17,14 +17,26 @@ import com.threerings.msoy.item.web.Item;
  */
 public class ItemList extends List
 {
-    public function ItemList (ctx :MsoyContext)
+    public function ItemList (
+        ctx :MsoyContext, rendererClass :Class = null)
     {
         super(ctx);
 
         maxHeight = 400;
         minWidth = 300;
-        itemRenderer = new ClassFactory(ItemRenderer);
+        if (rendererClass == null) {
+            rendererClass = ItemRenderer;
+        }
+        itemRenderer = new ClassFactory(rendererClass);
         dataProvider = _itemsToShow;
+    }
+
+    public function removeItem (item :Object) :void
+    {
+        var dex :int = _itemsToShow.getItemIndex(item);
+        if (dex != -1) {
+            _itemsToShow.removeItemAt(dex);
+        }
     }
 
     /**
@@ -38,7 +50,7 @@ public class ItemList extends List
     /**
      * Add the specified item to the end of the list.
      */
-    public function addItem (item :Item) :void
+    public function addItem (item :Object) :void
     {
         _itemsToShow.addItem(item);
     }
@@ -48,7 +60,7 @@ public class ItemList extends List
      */
     public function addItems (items :Array) :void
     {
-        for each (var item :Item in items) {
+        for each (var item :Object in items) {
             _itemsToShow.addItem(item);
         }
     }

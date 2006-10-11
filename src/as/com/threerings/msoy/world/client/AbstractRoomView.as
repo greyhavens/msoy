@@ -76,6 +76,14 @@ public class AbstractRoomView extends Canvas
         addEventListener(ResizeEvent.RESIZE, didResize);
     }
 
+    /**
+     * Called by the editor to have direct access to our sprite list..
+     */
+    public function getFurniSprites () :Array
+    {
+        return _furni.values();
+    }
+
     protected function updateComplete (evt :FlexEvent) :void
     {
         removeEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);

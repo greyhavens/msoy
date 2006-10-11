@@ -62,6 +62,9 @@ public class EditorController extends Controller
     public static const DISCARD_EDITS :String = "DiscardEdits";
     public static const SAVE_EDITS :String = "SaveEdits";
 
+    /** Our editor log. */
+    public const log :Log = Log.getLog(this);
+
     public function EditorController (
         ctx :MsoyContext, roomCtrl :RoomController, roomView :RoomView,
         scene :MsoyScene, items :Array)
@@ -177,6 +180,45 @@ public class EditorController extends Controller
     }
 
     /**
+     * Called by the EditorPanel when someone clicks on the item list therein.
+     */
+    public function itemSelectedFromList (obj :Object) :void
+    {
+        var selected :MsoySprite;
+        var fsprite :FurniSprite;
+        var furni :FurniData;
+        if (obj == null || (obj is String)) {
+            selected = null;
+
+        } else if (obj is Item) {
+            var item :Item = (obj as Item);
+            // find the furni sprite with matching attrs
+            var allSprites :Array =
+                _addedSprites.concat(_roomView.getFurniSprites());
+            for each (fsprite in allSprites) {
+                furni = fsprite.getFurniData();
+                if (furni.itemType == item.getType() &&
+                        furni.itemId == item.itemId) {
+                    selected = fsprite;
+                    break;
+                }
+            }
+
+        } else if (obj is FurniData) {
+            var selData :FurniData = (obj as FurniData);
+            for each (fsprite in _roomView.getFurniSprites()) {
+                furni = fsprite.getFurniData();
+                if (selData.id == furni.id) {
+                    selected = fsprite;
+                    break;
+                }
+            }
+        }
+
+        setEditSprite(selected);
+    }
+
+    /**
      * Handles INSERT_PORTAL.
      */
     public function handleInsertPortal () :void
@@ -226,6 +268,8 @@ public class EditorController extends Controller
         _roomView.removeChild(sprite);
         ArrayUtil.removeAll(_addedSprites, sprite);
         _removedSprites.push(sprite);
+
+        _panel.itemList.removeItem(_panel.listedItemFromSprite(sprite));
 
         var scene :MsoyScene = (_ctx.getSceneDirector().getScene() as MsoyScene);
 
@@ -406,6 +450,9 @@ public class EditorController extends Controller
         furni.loc = cloc.loc;
         furni.media = item.getFurniMedia();
         configureFurniAction(furni, item);
+
+        // add the item to our item list
+        _panel.itemList.addItem(item);
 
         // create a loose sprite to represent it, add it to the panel
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);

@@ -13,6 +13,8 @@ import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.TextInput;
 
+import mx.events.ListEvent;
+
 import com.threerings.mx.controls.CommandButton;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -21,6 +23,7 @@ import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.client.InventoryDisplay;
 import com.threerings.msoy.item.client.ItemList;
 
@@ -29,6 +32,7 @@ import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.PortalSprite;
 import com.threerings.msoy.world.client.RoomView;
 
+import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
@@ -37,6 +41,9 @@ import com.threerings.msoy.world.data.MsoySceneModel;
  */
 public class EditorPanel extends VBox
 {
+    /** An item list containing the items and props in the scene. */
+    public var itemList :ItemList;
+
     public function EditorPanel (
         ctx :MsoyContext, ctrl :EditorController, roomView :RoomView,
         editableScene :MsoyScene, items :Array)
@@ -46,8 +53,50 @@ public class EditorPanel extends VBox
         _scene = editableScene;
         _sceneModel = (editableScene.getSceneModel() as MsoySceneModel);
 
-        _itemList = new ItemList(_ctx);
-        _itemList.addItems(items);
+        itemList = new ItemList(_ctx, FurniItemRenderer);
+        itemList.addItems(items);
+
+        // add all props to the list of items in the room
+        for each (var furni :FurniData in _sceneModel.furnis) {
+            if (furni.itemType == Item.NOT_A_TYPE) {
+                itemList.addItem(furni);
+            }
+        }
+
+        itemList.addEventListener(ListEvent.ITEM_CLICK, itemClicked);
+    }
+
+    /**
+     * Given a MsoySprite, find the appropriate Item or FurniData (prop) from
+     * the itemList.
+     */
+    public function listedItemFromSprite (sprite :MsoySprite) :Object
+    {
+        // TEMP
+        if (!(sprite is FurniSprite)) {
+            return null;
+        }
+        // END: TEMP
+
+        var sprData :FurniData = (sprite as FurniSprite).getFurniData();
+        for each (var element :Object in itemList.dataProvider) {
+            if (element is Item) {
+                var item :Item = (element as Item);
+                if (sprData.itemType == item.getType() &&
+                        sprData.itemId == item.itemId) {
+                    return element;
+                }
+
+            } else if (element is FurniData) {
+                var furni :FurniData = (element as FurniData);
+                if (furni.id == sprData.id) {
+                    return element;
+                }
+            }
+        }
+
+        _ctrl.log.warning("Ack! Sprite not found: " + sprData);
+        return null;
     }
 
     public function setEditSprite (sprite :MsoySprite) :void
@@ -68,10 +117,14 @@ public class EditorPanel extends VBox
             }
             _spriteEditor.setSprite(sprite);
             _spriteBox.addChild(_spriteEditor);
+
+            itemList.selectedItem = listedItemFromSprite(sprite);
+
+        } else {
+            itemList.selectedItem = null;
         }
 
-        _tabBox.selectedIndex = hasSprite ? 1 : 0;
-        _tabBox.getTabAt(1).enabled = hasSprite;
+        //_tabBox.selectedIndex = hasSprite ? 1 : 0;
         _deleteBtn.enabled = hasSprite;
     }
 
@@ -98,7 +151,7 @@ public class EditorPanel extends VBox
         _spriteBox.label = _ctx.xlate("editing", "t.sprite_props");
 
         // add a list that will display items in the room
-        _spriteBox.addChild(_itemList);
+        _spriteBox.addChild(itemList);
 
         // add a delete button (temp?)
         _deleteBtn = new CommandButton(EditorController.DEL_ITEM);
@@ -109,7 +162,7 @@ public class EditorPanel extends VBox
         _tabBox.addChild(_spriteBox);
 
         _inventoryBox = new InventoryDisplay(_ctx);
-        _inventoryBox.label = _ctx.xlate("items", "t.inventory");
+        _inventoryBox.label = _ctx.xlate("editing", "t.inventory");
         _tabBox.addChild(_inventoryBox);
 
         addChild(_tabBox);
@@ -230,6 +283,14 @@ public class EditorPanel extends VBox
         }, _horizon, "value");
     }
 
+    /**
+     * Handles clicks on the items in the 'placed' list.
+     */
+    protected function itemClicked (event :ListEvent) :void
+    {
+        _ctrl.itemSelectedFromList(itemList.selectedItem);
+    }
+
     protected var _ctx :MsoyContext;
 
     protected var _ctrl :EditorController;
@@ -241,9 +302,6 @@ public class EditorPanel extends VBox
 
     /** The place where we add the sprite editor. */
     protected var _spriteBox :VBox;
-
-    /** The list of items within this room. */
-    protected var _itemList :ItemList;
 
     protected var _type :ComboBox;
     protected var _background :ItemReceptor;
