@@ -18,6 +18,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SoftCache;
 import com.samskivert.util.Tuple;
@@ -33,6 +34,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.MemberGName;
 
 import com.threerings.msoy.item.web.CatalogListing;
+import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
@@ -166,6 +168,48 @@ public class ItemManager
                     return items;
                 }
             });
+    }
+
+    /**
+     * Update usage of the specified items.
+     *
+     * The supplied listener will be notified of success with null.
+     */
+    public void updateItemUsage (
+        final int memberId, Avatar oldAvatar, Avatar newAvatar,
+        final ResultListener<?> listener)
+    {
+        if (ObjectUtil.equals(oldAvatar, newAvatar)) {
+            listener.requestCompleted(null); // mr. no-op
+            return;
+        }
+
+        final ItemRepository<ItemRecord> repo =
+            getRepository(Item.AVATAR, listener);
+        if (repo == null) {
+            return;
+        }
+
+        final int oldId = (oldAvatar == null) ? 0 : oldAvatar.itemId;
+        final int newId = (newAvatar == null) ? 0 : newAvatar.itemId;
+
+        @SuppressWarnings("unchecked")
+        ResultListener<Object> rlo = (ResultListener<Object>) listener;
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Object>(rlo) {
+            public Object invokePersistResult ()
+                throws PersistenceException
+            {
+                if (oldId != 0) {
+                    repo.markItemUsage(new int[] { oldId }, Item.UNUSED, 0);
+                }
+                if (newId != 0) {
+                    repo.markItemUsage(new int[] { newId },
+                        Item.USED_AS_AVATAR, memberId);
+                }
+                return null;
+            }
+        });
     }
 
     /**

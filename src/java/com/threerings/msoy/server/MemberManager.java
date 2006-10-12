@@ -325,6 +325,14 @@ public class MemberManager
 
             public void handleSuccess ()
             {
+                MsoyServer.itemMan.updateItemUsage(user.getMemberId(),
+                    user.avatar, avatar, new ResultListener() {
+                        public void requestCompleted (Object result) {}
+                        public void requestFailed (Exception cause) {
+                            log.warning("Unable to update usage " +
+                                "from an avatar change.");
+                        }
+                    });
                 user.setAvatar(avatar);
                 updateOccupantInfo(user);
             }
