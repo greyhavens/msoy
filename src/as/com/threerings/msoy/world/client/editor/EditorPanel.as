@@ -15,6 +15,8 @@ import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.TextInput;
 
+import com.threerings.util.ClassUtil;
+
 import com.threerings.mx.controls.CommandButton;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -110,28 +112,42 @@ public class EditorPanel extends VBox
 
     public function setEditSprite (sprite :MsoySprite) :void
     {
-        if (_spriteEditor != null) {
-            _spriteBox.removeChild(_spriteEditor);
-            _spriteEditor = null;
-        }
-
         var hasSprite :Boolean = (sprite != null);
+        _deleteBtn.enabled = hasSprite;
+
+        // figure out which class of item the editor should be
+        var editorClass :Class = null;
+        var currentClass :Class = (_spriteEditor == null) ? null
+            : ClassUtil.getClass(_spriteEditor);
         if (hasSprite) {
             if (sprite is FurniSprite) {
-                _spriteEditor = new FurniPanel(_ctx);
+                editorClass = FurniPanel;
+
             } else {
                 throw new Error();
             }
-            _spriteEditor.setSprite(sprite);
-            _spriteBox.addChild(_spriteEditor);
 
             itemList.selectedItem = listedItemFromSprite(sprite);
+            _tabBox.selectedIndex = 1; // furni tab
 
         } else {
             itemList.selectedItem = null;
         }
 
-        _deleteBtn.enabled = hasSprite;
+        // configure the sprite editor
+        if (currentClass != editorClass) {
+            if (_spriteEditor != null) { // shutdown current..
+                _spriteBox.removeChild(_spriteEditor);
+                _spriteEditor = null;
+            }
+            if (editorClass != null) { // instantiate new..
+                _spriteEditor = new editorClass(_ctx);
+                _spriteBox.addChild(_spriteEditor);
+            }
+        }
+        if (_spriteEditor != null) {
+            _spriteEditor.setSprite(sprite);
+        }
     }
 
     /**
@@ -246,7 +262,6 @@ public class EditorPanel extends VBox
     public function updateInputFields () :void
     {
         _type.selectedIndex = _sceneModel.type;
-        //_background = 
         _name.text = _sceneModel.name;
         _width.text = String(_sceneModel.width);
         _depth.text = String(_sceneModel.depth);

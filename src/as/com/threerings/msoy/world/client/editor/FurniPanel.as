@@ -4,18 +4,24 @@ import flash.events.MouseEvent;
 
 import mx.binding.utils.BindingUtils;
 
-import mx.containers.GridRow;
+import mx.containers.VBox;
+import mx.containers.ViewStack;
 
 import mx.controls.Button;
 import mx.controls.ComboBox;
+import mx.controls.Label;
 import mx.controls.TextInput;
+
+import mx.core.UIComponent;
 
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
+import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.MsoyUI;
 
+import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.data.FurniData;
 
@@ -31,10 +37,26 @@ public class FurniPanel extends SpritePanel
     {
         super.updateInputFields();
 
+        _locEditor.setSprite(_sprite);
+
+        _xScale.text = String(_sprite.getMediaScaleX());
+        _yScale.text = String(_sprite.getMediaScaleY());
+
         var furni :FurniData = (_sprite as FurniSprite).getFurniData();
         updateActionType(furni);
+
+        switch (furni.actionType) {
+        case FurniData.ACTION_PORTAL:
+            updatePortal(furni);
+            break;
+
+        case FurniData.ACTION_URL:
+            _url.text = furni.actionData;
+            break;
+        }
+
+        // TEMP: update the show-all/edit-all control
         _actionData.text = furni.actionData;
-        updatePortal(furni);
     }
 
     protected function updateActionType (furni :FurniData) :void
@@ -50,14 +72,6 @@ public class FurniPanel extends SpritePanel
 
     protected function updatePortal (furni :FurniData) :void
     {
-        var isPortal :Boolean = (furni.actionType == FurniData.ACTION_PORTAL);
-        _portalDestSceneRow.visible = isPortal;
-        _portalDestPortalRow.visible = isPortal;
-
-        if (!isPortal) {
-            return;
-        }
-
         var vals :Array = furni.actionData.split(":");
         var targetSceneId :int = int(vals[0]);
         var targetPortalId :int = int(vals[1]);
@@ -80,16 +94,20 @@ public class FurniPanel extends SpritePanel
     {
         super.createChildren();
 
-        var btn :Button = new Button();
-        btn.label = "perspective?";
-        btn.addEventListener(MouseEvent.CLICK,
-            function (evt :MouseEvent) :void {
-                (_sprite as FurniSprite).addPersp();
-            });
-
+        // location: big controls
         addRow(
-            MsoyUI.createLabel("testing:"),
-            btn);
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.loc")),
+            _locEditor = new LocationEditor(_ctx));
+
+        // scale
+        addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.xscale")),
+            _xScale = new TextInput());
+        MsoyUI.enforceNumber(_xScale);
+        addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.yscale")),
+            _yScale = new TextInput());
+        MsoyUI.enforceNumber(_yScale);
 
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.action")),
@@ -107,19 +125,61 @@ public class FurniPanel extends SpritePanel
               data: FurniData.ACTION_PORTAL }
         ];
 
-        addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.action")),
-            _actionData = new TextInput());
+        _actionPanels = new ViewStack();
+        _actionPanels.addChild(new VBox()); // ACTION_NONE
+        _actionPanels.addChild(new VBox()); // BACKGROUND (nothing to edit)
+        _actionPanels.addChild(new VBox()); // ACTION_GAME (nothing to edit)
+        _actionPanels.addChild(createURLEditor()); // ACTION_URL
+        _actionPanels.addChild(createPortalEditor()); // ACTION_PORTAL
+        addRow(_actionPanels, [2, 1]);
 
-        _portalDestSceneRow = addRow(
+        BindingUtils.bindProperty(_actionPanels, "selectedIndex",
+            _actionType, "selectedIndex");
+
+        // BEGIN temporary controls
+        var lbl :Label;
+        var btn :Button = new Button();
+        btn.label = "perspective?";
+        btn.addEventListener(MouseEvent.CLICK,
+            function (evt :MouseEvent) :void {
+                (_sprite as FurniSprite).addPersp();
+            });
+        addRow(
+            lbl = MsoyUI.createLabel("testing:"),
+            btn);
+        lbl.setStyle("color", 0xFF0000);
+
+        // add an "expert control" for directly editing the action
+        addRow(
+            lbl = MsoyUI.createLabel(_ctx.xlate("editing", "l.action")),
+            _actionData = new TextInput());
+        lbl.setStyle("color", 0xFF0000);
+        // END: temporary things
+    }
+
+    protected function createURLEditor () :UIComponent
+    {
+        var grid :Grid = new Grid();
+        grid.addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.url")),
+            _url = new TextInput());
+        return grid;
+    }
+
+    protected function createPortalEditor () :UIComponent
+    {
+        var grid :Grid = new Grid();
+        grid.addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_scene")),
             _destScene = new ComboBox());
         _destScene.editable = true;
         _destScene.dataProvider = _ctx.getClientObject().recentScenes.toArray();
 
-        _portalDestPortalRow = addRow(
+        grid.addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_portal")),
             _destPortal = new TextInput());
+
+        return grid;
     }
 
     override protected function bind () :void
@@ -127,25 +187,53 @@ public class FurniPanel extends SpritePanel
         super.bind();
 
         BindingUtils.bindSetter(function (o :Object) :void {
+            var val :Number = Number(o);
+            if (!isNaN(val)) {
+                _sprite.setMediaScaleX(val);
+                spritePropsUpdated();
+            }
+        }, _xScale, "text");
+
+        BindingUtils.bindSetter(function (o :Object) :void {
+            var val :Number = Number(o);
+            if (!isNaN(val)) {
+                _sprite.setMediaScaleY(val);
+                spritePropsUpdated();
+            }
+        }, _yScale, "text");
+
+        BindingUtils.bindSetter(function (o :Object) :void {
             var furni :FurniData = (_sprite as FurniSprite).getFurniData();
             var item :Object = _actionType.selectedItem;
             furni.actionType = int(item.data);
 
-            // TODO: maybe remove?
-            // since currently background is an action type, we recheck
+            // force the sprite to recheck props, so that it re-reads
+            // whether it's a background
             (_sprite as FurniSprite).update(_ctx, furni);
 
-            spriteWasTextuallyEdited();
+            spritePropsUpdated();
         }, _actionType, "text");
 
         BindingUtils.bindSetter(function (o :Object) :void {
             var furni :FurniData = (_sprite as FurniSprite).getFurniData();
             furni.actionData = String(o);
-            spriteWasTextuallyEdited();
+            spritePropsUpdated();
         }, _actionData, "text");
+
+        BindingUtils.bindSetter(function (url :String) :void {
+            var furni :FurniData = (_sprite as FurniSprite).getFurniData();
+            if (furni.actionType != FurniData.ACTION_URL) {
+                return; // don't update if we shouldn't
+            }
+            furni.actionData = url;
+            spritePropsUpdated();
+        }, _url, "text");
 
         BindingUtils.bindSetter(function (o :Object) :void {
             var furni :FurniData = (_sprite as FurniSprite).getFurniData();
+            if (furni.actionType != FurniData.ACTION_PORTAL) {
+                return; // don't update if we shouldn't
+            }
             var item :Object = _destScene.selectedItem;
             var targetSceneId :int;
             if (item != null) {
@@ -160,29 +248,37 @@ public class FurniPanel extends SpritePanel
             }
             var vals :Array = furni.actionData.split(":");
             furni.actionData = targetSceneId + ":" + int(vals[1]);
-            spriteWasTextuallyEdited();
-
+            spritePropsUpdated();
         }, _destScene, "text");
+
         BindingUtils.bindSetter(function (o :Object) :void {
+            var furni :FurniData = (_sprite as FurniSprite).getFurniData();
+            if (furni.actionType != FurniData.ACTION_PORTAL) {
+                return; // don't update if we shouldn't
+            }
             var val :Number = Number(o);
             if (isNaN(val)) {
                 return;
             }
-            var furni :FurniData = (_sprite as FurniSprite).getFurniData();
             var vals :Array = furni.actionData.split(":");
             furni.actionData = int(vals[0]) + ":" + int(val);
-            spriteWasTextuallyEdited();
+            spritePropsUpdated();
         }, _destPortal, "text");
     }
+
+    protected var _xScale :TextInput;
+    protected var _yScale :TextInput;
+
+    protected var _locEditor :LocationEditor;
     
     protected var _actionType :ComboBox;
     protected var _actionData :TextInput;
 
+    protected var _actionPanels :ViewStack;
+
     protected var _destScene :ComboBox;
     protected var _destPortal :TextInput;
 
-    protected var _portalDestSceneRow :GridRow;
-    protected var _portalDestPortalRow :GridRow;
+    protected var _url :TextInput;
 }
 }
-

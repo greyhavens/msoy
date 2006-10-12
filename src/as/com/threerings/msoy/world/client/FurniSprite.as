@@ -210,6 +210,10 @@ public class FurniSprite extends MsoySprite
             toolTip = ctx.xlate(null, "i.play_game");
             break;
 
+        case FurniData.ACTION_PORTAL:
+            toolTip = ctx.xlate(null, "i.trav_portal");
+            break;
+
         default:
             log.warning("Tooltip requested for unhandled furni action type " +
                 "[actionType=" + _furni.actionType +

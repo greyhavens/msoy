@@ -103,7 +103,7 @@ public class LocationEditor extends Canvas
     protected function wasEdited () :void
     {
         CommandEvent.dispatch(
-            this, EditorController.PROPERTIES_TYPED, _sprite);
+            this, EditorController.SPRITE_PROPS_UPDATED, _sprite);
     }
 
     /** The giver of life. */

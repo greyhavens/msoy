@@ -54,7 +54,7 @@ public class EditorController extends Controller
 
     /** Dispatched when properties of a sprite were updated by the
      * SpriteEditorPanel. */
-    public static const PROPERTIES_TYPED :String = "PropsTyped";
+    public static const SPRITE_PROPS_UPDATED :String = "SpritePropsUpdated";
 
     public static const DISCARD_EDITS :String = "DiscardEdits";
     public static const SAVE_EDITS :String = "SaveEdits";
@@ -277,9 +277,9 @@ public class EditorController extends Controller
     }
 
     /**
-     * Handles PROPERTIES_TYPED.
+     * Handles SPRITE_PROPS_UPDATED.
      */
-    public function handlePropsTyped (sprite :MsoySprite) :void
+    public function handleSpritePropsUpdated (sprite :MsoySprite) :void
     {
         drawEditing(sprite);
         spriteUpdated(sprite);

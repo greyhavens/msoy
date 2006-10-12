@@ -17,7 +17,9 @@ import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.world.client.MsoySprite;
 
-
+/**
+ * A base class for editing sprites.
+ */
 public class SpritePanel extends Grid
 {
     public function SpritePanel (ctx :MsoyContext)
@@ -32,7 +34,7 @@ public class SpritePanel extends Grid
     {
         _sprite = sprite;
 
-        if (_locEditor != null) {
+        if (processedDescriptors) {
             bind();
         }
     }
@@ -43,43 +45,17 @@ public class SpritePanel extends Grid
      */
     public function updateInputFields () :void
     {
-        _locEditor.setSprite(_sprite);
-//        _x.text = String(_sprite.loc.x);
-//        _y.text = String(_sprite.loc.y);
-//        _z.text = String(_sprite.loc.z);
-
-        _xScale.text = String(_sprite.getMediaScaleX());
-        _yScale.text = String(_sprite.getMediaScaleY());
+        // nada
     }
 
-    override protected function createChildren () :void
+    /**
+     * Called to bind any controls created.
+     */
+    protected function bind () :void
     {
-        super.createChildren();
+        updateInputFields();
 
-        addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.loc")),
-            _locEditor = new LocationEditor(_ctx));
-
-//        addRow(
-//            MsoyUI.createLabel(_ctx.xlate("editing", "l.x")),
-//            _x = new TextInput());
-//        MsoyUI.enforceNumber(_x);
-//        addRow(
-//            MsoyUI.createLabel(_ctx.xlate("editing", "l.y")),
-//            _y = new TextInput());
-//        MsoyUI.enforceNumber(_y);
-//        addRow(
-//            MsoyUI.createLabel(_ctx.xlate("editing", "l.z")),
-//            _z = new TextInput());
-//        MsoyUI.enforceNumber(_z);
-        addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.xscale")),
-            _xScale = new TextInput());
-        MsoyUI.enforceNumber(_xScale);
-        addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.yscale")),
-            _yScale = new TextInput());
-        MsoyUI.enforceNumber(_yScale);
+        // do your binding here
     }
 
     override protected function childrenCreated () :void
@@ -91,71 +67,19 @@ public class SpritePanel extends Grid
         }
     }
 
-    protected function bind () :void
-    {
-        updateInputFields();
-
-//        // we can set up bindings pretty easily on all these text fields
-//        BindingUtils.bindSetter(function (o :Object) :void {
-//            var val :Number = Number(o);
-//            if (!isNaN(val)) {
-//                _sprite.setLocation([ val, _sprite.loc.y, _sprite.loc.z ]);
-//                spriteWasTextuallyEdited();
-//            }
-//        }, _x, "text");
-//        BindingUtils.bindSetter(function (o :Object) :void {
-//            var val :Number = Number(o);
-//            if (!isNaN(val)) {
-//                _sprite.setLocation([ _sprite.loc.x, val, _sprite.loc.z ]);
-//                spriteWasTextuallyEdited();
-//            }
-//        }, _y, "text");
-//        BindingUtils.bindSetter(function (o :Object) :void {
-//            var val :Number = Number(o);
-//            if (!isNaN(val)) {
-//                _sprite.setLocation([ _sprite.loc.x, _sprite.loc.y, val ]);
-//                spriteWasTextuallyEdited();
-//            }
-//        }, _z, "text");
-
-        BindingUtils.bindSetter(function (o :Object) :void {
-            var val :Number = Number(o);
-            if (!isNaN(val)) {
-                _sprite.setMediaScaleX(val);
-                spriteWasTextuallyEdited();
-            }
-        }, _xScale, "text");
-        BindingUtils.bindSetter(function (o :Object) :void {
-            var val :Number = Number(o);
-            if (!isNaN(val)) {
-                _sprite.setMediaScaleY(val);
-                spriteWasTextuallyEdited();
-            }
-        }, _yScale, "text");
-    }
-
     /**
      * This should be called after any fields have been edited that
      * modify the sprite. It will dispatch an event that will cause the
      * controller to re-render the sprite.
      */
-    protected function spriteWasTextuallyEdited () :void
+    protected function spritePropsUpdated () :void
     {
         CommandEvent.dispatch(
-            this, EditorController.PROPERTIES_TYPED, _sprite);
+            this, EditorController.SPRITE_PROPS_UPDATED, _sprite);
     }
 
     protected var _ctx :MsoyContext;
 
     protected var _sprite :MsoySprite;
-
-    protected var _xScale :TextInput;
-    protected var _yScale :TextInput;
-
-    protected var _locEditor :LocationEditor;
-
-//    protected var _x :TextInput;
-//    protected var _y :TextInput;
-//    protected var _z :TextInput;
 }
 }
