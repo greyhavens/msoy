@@ -1,7 +1,10 @@
 package com.threerings.msoy.world.client.editor {
 
+import flash.events.MouseEvent;
+
 import mx.binding.utils.BindingUtils;
 
+import mx.controls.Button;
 import mx.controls.ComboBox;
 import mx.controls.TextInput;
 
@@ -43,6 +46,17 @@ public class FurniPanel extends SpritePanel
     override protected function createChildren () :void
     {
         super.createChildren();
+
+        var btn :Button = new Button();
+        btn.label = "perspective?";
+        btn.addEventListener(MouseEvent.CLICK,
+            function (evt :MouseEvent) :void {
+                (_sprite as FurniSprite).addPersp();
+            });
+
+        addRow(
+            MsoyUI.createLabel("testing:"),
+            btn);
 
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.action")),
