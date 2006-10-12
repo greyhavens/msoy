@@ -14,13 +14,14 @@ public class Grid extends mx.containers.Grid
      * Add a new row to the grid, containing the specified
      * components.
      */
-    public function addRow (... comps) :void
+    public function addRow (... comps) :GridRow
     {
         var row :GridRow = new GridRow();
         for each (var comp :UIComponent in comps) {
             addToRow(row, comp);
         }
         addChild(row);
+        return row;
     }
 
     /**

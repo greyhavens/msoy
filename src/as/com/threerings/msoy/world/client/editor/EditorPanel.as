@@ -29,7 +29,6 @@ import com.threerings.msoy.item.client.ItemList;
 
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
-import com.threerings.msoy.world.client.PortalSprite;
 import com.threerings.msoy.world.client.RoomView;
 
 import com.threerings.msoy.world.data.FurniData;
@@ -120,8 +119,6 @@ public class EditorPanel extends VBox
         if (hasSprite) {
             if (sprite is FurniSprite) {
                 _spriteEditor = new FurniPanel(_ctx);
-            } else if (sprite is PortalSprite) {
-                _spriteEditor = new PortalPanel(_ctx);
             } else {
                 throw new Error();
             }
@@ -239,12 +236,6 @@ public class EditorPanel extends VBox
         _horizon.liveDragging = true;
 
         box.addChild(grid);
-
-        var btn :CommandButton;
-
-        btn = new CommandButton(EditorController.INSERT_PORTAL);
-        btn.label = _ctx.xlate("editing", "b.new_portal");
-        box.addChild(btn);
 
         return box;
     }

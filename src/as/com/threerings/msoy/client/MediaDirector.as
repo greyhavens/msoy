@@ -6,9 +6,7 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
-import com.threerings.msoy.world.client.PortalSprite;
 import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.MsoyPortal;
 
 import com.threerings.msoy.data.MemberInfo;
 
@@ -47,14 +45,6 @@ public class MediaDirector extends BasicDirector
     public function getFurni (furni :FurniData) :FurniSprite
     {
         return new FurniSprite(_mctx, furni);
-    }
-
-    /**
-     * Get a portal sprite for the specified portal, caching as appropriate.
-     */
-    public function getPortal (portal :MsoyPortal) :PortalSprite
-    {
-        return new PortalSprite(_mctx, portal);
     }
 
     /**

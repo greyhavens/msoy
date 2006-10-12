@@ -47,6 +47,15 @@ public class FurniSprite extends MsoySprite
         configureToolTip(ctx);
     }
 
+    /**
+     * If we're a portal furniture, called to animate a player entering
+     * or leaving.
+     */
+    public function wasTraversed (entering :Boolean) :void
+    {
+        sendMessage("action", entering ? "bodyEntered" : "bodyLeft");
+    }
+
     public function addPersp () :void
     {
         var pinchLeft :Number = .1;
@@ -154,7 +163,13 @@ public class FurniSprite extends MsoySprite
     // documentation inherited
     override protected function getHoverColor () :uint
     {
-        return 0xe0e040; // yellow
+        switch (_furni.actionType) {
+        case FurniData.ACTION_PORTAL:
+            return 0xe04040; // red
+
+        default:
+            return 0xe0e040; // yellow
+        }
     }
 
     // documentation inherited

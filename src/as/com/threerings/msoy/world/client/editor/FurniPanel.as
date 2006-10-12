@@ -4,11 +4,15 @@ import flash.events.MouseEvent;
 
 import mx.binding.utils.BindingUtils;
 
+import mx.containers.GridRow;
+
 import mx.controls.Button;
 import mx.controls.ComboBox;
 import mx.controls.TextInput;
 
 import com.threerings.msoy.client.MsoyContext;
+
+import com.threerings.msoy.data.SceneBookmarkEntry;
 
 import com.threerings.msoy.ui.MsoyUI;
 
@@ -30,6 +34,7 @@ public class FurniPanel extends SpritePanel
         var furni :FurniData = (_sprite as FurniSprite).getFurniData();
         updateActionType(furni);
         _actionData.text = furni.actionData;
+        updatePortal(furni);
     }
 
     protected function updateActionType (furni :FurniData) :void
@@ -41,6 +46,34 @@ public class FurniPanel extends SpritePanel
                 return;
             }
         }
+    }
+
+    protected function updatePortal (furni :FurniData) :void
+    {
+        var isPortal :Boolean = (furni.actionType == FurniData.ACTION_PORTAL);
+        _portalDestSceneRow.visible = isPortal;
+        _portalDestPortalRow.visible = isPortal;
+
+        if (!isPortal) {
+            return;
+        }
+
+        var vals :Array = furni.actionData.split(":");
+        var targetSceneId :int = int(vals[0]);
+        var targetPortalId :int = int(vals[1]);
+
+        _destPortal.text = String(targetPortalId);
+
+        var data :Object = _destScene.dataProvider;
+        for (var ii :int = 0; ii < data.length; ii++) {
+            var sbe :SceneBookmarkEntry = (data[ii] as SceneBookmarkEntry);
+            if (sbe.sceneId === targetSceneId) {
+                _destScene.selectedIndex = ii;
+                return;
+            }
+        }
+        // never found
+        _destScene.text = String(targetSceneId);
     }
 
     override protected function createChildren () :void
@@ -69,12 +102,24 @@ public class FurniPanel extends SpritePanel
             { label: _ctx.xlate("editing", "l.action_game"),
               data: FurniData.ACTION_GAME },
             { label: _ctx.xlate("editing", "l.action_url"),
-              data: FurniData.ACTION_URL }
+              data: FurniData.ACTION_URL },
+            { label: _ctx.xlate("editing", "l.action_portal"),
+              data: FurniData.ACTION_PORTAL }
         ];
 
         addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.action")),
             _actionData = new TextInput());
+
+        _portalDestSceneRow = addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_scene")),
+            _destScene = new ComboBox());
+        _destScene.editable = true;
+        _destScene.dataProvider = _ctx.getClientObject().recentScenes.toArray();
+
+        _portalDestPortalRow = addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_portal")),
+            _destPortal = new TextInput());
     }
 
     override protected function bind () :void
@@ -98,10 +143,46 @@ public class FurniPanel extends SpritePanel
             furni.actionData = String(o);
             spriteWasTextuallyEdited();
         }, _actionData, "text");
+
+        BindingUtils.bindSetter(function (o :Object) :void {
+            var furni :FurniData = (_sprite as FurniSprite).getFurniData();
+            var item :Object = _destScene.selectedItem;
+            var targetSceneId :int;
+            if (item != null) {
+                targetSceneId = (item as SceneBookmarkEntry).sceneId;
+
+            } else {
+                var val :Number = Number(o);
+                if (isNaN(val)) {
+                    return;
+                }
+                targetSceneId = int(val);
+            }
+            var vals :Array = furni.actionData.split(":");
+            furni.actionData = targetSceneId + ":" + int(vals[1]);
+            spriteWasTextuallyEdited();
+
+        }, _destScene, "text");
+        BindingUtils.bindSetter(function (o :Object) :void {
+            var val :Number = Number(o);
+            if (isNaN(val)) {
+                return;
+            }
+            var furni :FurniData = (_sprite as FurniSprite).getFurniData();
+            var vals :Array = furni.actionData.split(":");
+            furni.actionData = int(vals[0]) + ":" + int(val);
+            spriteWasTextuallyEdited();
+        }, _destPortal, "text");
     }
     
     protected var _actionType :ComboBox;
     protected var _actionData :TextInput;
+
+    protected var _destScene :ComboBox;
+    protected var _destPortal :TextInput;
+
+    protected var _portalDestSceneRow :GridRow;
+    protected var _portalDestPortalRow :GridRow;
 }
 }
 

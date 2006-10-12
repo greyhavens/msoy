@@ -38,15 +38,12 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.whirled.spot.data.Location;
-import com.threerings.whirled.spot.data.Portal;
-import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
-import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomObject;
@@ -155,9 +152,6 @@ public class AbstractRoomView extends Canvas
         configureScrollRect();
 
         var sprite :MsoySprite;
-        for each (sprite in _portals.values()) {
-            locationUpdated(sprite);
-        }
         for each (sprite in _furni.values()) {
             locationUpdated(sprite);
         }
@@ -172,11 +166,10 @@ public class AbstractRoomView extends Canvas
             editing :Boolean, spriteVisitFn :Function) :void
     {
         _editing = editing;
-        _portals.forEach(spriteVisitFn);
         _furni.forEach(spriteVisitFn);
 
         if (!editing) {
-            updateAllFurniAndPortals();
+            updateAllFurni();
         }
     }
 
@@ -475,27 +468,6 @@ public class AbstractRoomView extends Canvas
         }
     }
 
-    protected function addPortal (portal :MsoyPortal) :void
-    {
-        var sprite :PortalSprite = _ctx.getMediaDirector().getPortal(portal);
-        var loc :MsoyLocation = (portal.loc as MsoyLocation);
-        addChild(sprite);
-        sprite.setLocation(loc);
-
-        _portals.put(portal.portalId, sprite);
-    }
-
-    protected function updatePortal (portal :MsoyPortal) :void
-    {
-        var sprite :PortalSprite =
-            (_portals.get(portal.portalId) as PortalSprite);
-        if (sprite != null) {
-            sprite.update(_ctx, portal);
-        } else {
-            addPortal(portal);
-        }
-    }
-
     protected function removeSprite (sprite :MsoySprite) :void
     {
         removeChild(sprite);
@@ -517,17 +489,11 @@ public class AbstractRoomView extends Canvas
 
         configureScrollRect();
         updateDrawnRoom();
-        updateAllFurniAndPortals();
+        updateAllFurni();
     }
 
-    public function updateAllFurniAndPortals () :void
+    public function updateAllFurni() :void
     {
-        var itr :Iterator = _scene.getPortals();
-        while (itr.hasNext()) {
-            var portal :MsoyPortal = (itr.next() as MsoyPortal);
-            updatePortal(portal);
-        }
-
         // set up any furniture
         for each (var furni :FurniData in _scene.getFurni()) {
             updateFurni(furni);
@@ -537,7 +503,6 @@ public class AbstractRoomView extends Canvas
     // documentation inherited from interface PlaceView
     public function didLeavePlace (plobj :PlaceObject) :void
     {
-        removeAll(_portals);
         removeAll(_furni);
 
         _roomObj = null;
@@ -658,9 +623,6 @@ public class AbstractRoomView extends Canvas
 
     /** A hand-drawn background to look like a room. */
     protected var _bkgGraphics :UIComponent;
-
-    /** A map of portalId -> Portal. */
-    protected var _portals :HashMap = new HashMap();
 
     /** A map of id -> Furni. */
     protected var _furni :HashMap = new HashMap();

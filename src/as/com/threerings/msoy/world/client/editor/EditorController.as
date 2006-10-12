@@ -23,8 +23,6 @@ import com.threerings.util.Util;
 import com.threerings.io.TypedArray;
 
 import com.threerings.whirled.data.SceneUpdate;
-import com.threerings.whirled.spot.data.ModifyPortalsUpdate;
-import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MsoyContext;
 
@@ -36,12 +34,10 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
-import com.threerings.msoy.world.client.PortalSprite;
 import com.threerings.msoy.world.client.RoomController;
 import com.threerings.msoy.world.client.RoomView;
 
 import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
@@ -50,9 +46,7 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 public class EditorController extends Controller
 {
-    public static const INSERT_PORTAL :String = "InsertPortal";
-
-    /** Delete a furni or portal (specified as arg). */
+    /** Delete a furni (specified as arg). */
     public static const DEL_ITEM :String = "DelItem";
 
     /** Add an item (from the inventory). */
@@ -77,7 +71,6 @@ public class EditorController extends Controller
         _roomView = roomView;
         _scene = (scene.clone() as MsoyScene);
 
-        _nextPortalId = _scene.getNextPortalId();
         _nextFurniId = _scene.getNextFurniId();
         _roomView.setEditing(true, enableEditingVisitor);
 
@@ -160,16 +153,6 @@ public class EditorController extends Controller
                 edits.push(furniUpdate);
             }
 
-            // configure any portal updates
-            if (_addedPortals.length > 0 || _removedPortals.length > 0) {
-                var portalUpdate :ModifyPortalsUpdate =
-                    new ModifyPortalsUpdate();
-                portalUpdate.initialize(sceneId, version++,
-                    (_removedPortals.length > 0) ? _removedPortals : null,
-                    (_addedPortals.length > 0) ? _addedPortals : null);
-                edits.push(portalUpdate);
-            }
-
             // return something, or null
             if (edits.length == 0) {
                 edits = null;
@@ -219,28 +202,6 @@ public class EditorController extends Controller
         }
 
         setEditSprite(selected);
-    }
-
-    /**
-     * Handles INSERT_PORTAL.
-     */
-    public function handleInsertPortal () :void
-    {
-        var loc :MsoyLocation = new MsoyLocation(.5, 0, .5);
-        // create a generic portal descriptor
-        var portal :MsoyPortal = new MsoyPortal();
-        portal.portalId = getNextPortalId();
-        portal.loc = loc;
-        portal.media = new MediaDesc();
-        portal.media.hash = StringUtil.unhexlate(
-            "7fbc0922c7f36e1ce14648466b42c093185b6c1b");
-        portal.media.mimeType = MediaDesc.IMAGE_PNG;
-        portal.targetSceneId = 1;
-        portal.targetPortalId = -1;
-
-        // create a loose sprite to represent it, add it to the panel
-        var sprite :PortalSprite = _ctx.getMediaDirector().getPortal(portal);
-        insertSprite(sprite, loc);
     }
 
     /**
@@ -306,23 +267,6 @@ public class EditorController extends Controller
             for each (var f :FurniData in scene.getFurni()) {
                 if (furni.equals(f)) {
                     _removedFurni.push(f);
-                    break;
-                }
-            }
-
-        } else if (sprite is PortalSprite) {
-            var portal :MsoyPortal = (sprite as PortalSprite).getPortal();
-
-            // first remove any instances from our removed/added
-            ArrayUtil.removeAll(_removedPortals, portal);
-            ArrayUtil.removeAll(_addedPortals, portal);
-
-            // find the original portal to remove (if any)
-            var itr :Iterator = scene.getPortals();
-            while (itr.hasNext()) {
-                var iportal :MsoyPortal = (itr.next() as MsoyPortal);
-                if (portal.equals(iportal)) {
-                    _removedPortals.push(iportal);
                     break;
                 }
             }
@@ -772,33 +716,6 @@ public class EditorController extends Controller
                 _removedFurni.push(ofurni);
             }
 
-        } else if (sprite is PortalSprite) {
-            var portal :MsoyPortal = (sprite as PortalSprite).getPortal();
-            // copy the edited location back into the descriptor
-            portal.loc = (sprite.loc.clone() as MsoyLocation);
-
-            // first remove any instances from our removed/added
-            ArrayUtil.removeAll(_removedPortals, portal);
-            ArrayUtil.removeAll(_addedPortals, portal);
-
-            // now compare to the original
-            var oportal :MsoyPortal;
-            var itr :Iterator = scene.getPortals();
-            while (itr.hasNext()) {
-                var iportal :MsoyPortal = (itr.next() as MsoyPortal);
-                if (portal.equals(iportal)) {
-                    oportal = iportal;
-                    break;
-                }
-            }
-            if (oportal == null) {
-                _addedPortals.push(portal);
-
-            } else if (!portal.equivalent(oportal)) {
-                _addedPortals.push(portal);
-                _removedPortals.push(oportal);
-            }
-
         } else {
             throw new Error("Unknown sprite type edited: " + sprite);
         }
@@ -914,18 +831,12 @@ public class EditorController extends Controller
         }
     }
 
-    protected function getNextPortalId () :int
+    protected function getNextFurniId () :int
     {
         // TODO: cope with ids getting too large.
         // we don't ask the scene, because it doesn't know about our
-        // editing portals yet, but we should ask the scene and look
-        // at our so-far-added portals
-        return _nextPortalId++;
-    }
-
-    protected function getNextFurniId () :int
-    {
-        // TODO: see note in getNextPortalId().
+        // editing furni yet, but we should ask the scene and look
+        // at our so-far-added furni
         return _nextFurniId++;
     }
 
@@ -940,14 +851,10 @@ public class EditorController extends Controller
     /** The room view. */
     protected var _roomView :RoomView;
 
-    protected var _nextPortalId :int;
     protected var _nextFurniId :int;
 
     protected var _removedFurni :TypedArray = TypedArray.create(FurniData);
     protected var _addedFurni :TypedArray = TypedArray.create(FurniData);
-
-    protected var _removedPortals :TypedArray = TypedArray.create(Portal);
-    protected var _addedPortals :TypedArray = TypedArray.create(Portal);
 
     protected var _addedSprites :Array = new Array();
     protected var _removedSprites :Array = new Array();

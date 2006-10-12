@@ -29,6 +29,10 @@ public class FurniData extends SimpleStreamableObject
     /** An actionType indicating that actionData is a game item id. */
     public static final byte ACTION_GAME = 2;
 
+    /** An actionType indicating that we're a portal. actionData
+     * will be in the format "targetScene:targetId", for now. */
+    public static final byte ACTION_PORTAL = 3;
+
     /** The id of this piece of furni. */
     public int id;
 

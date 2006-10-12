@@ -28,6 +28,10 @@ public class FurniData
     /** An actionType indicating that actionData is a game item id. */
     public static const ACTION_GAME :int = 2;
 
+    /** An actionType indicating that we're a portal. actionData
+     * will be in the format "targetScene:targetId", for now. */
+    public static const ACTION_PORTAL :int = 3;
+
     /** The id of this piece of furni. */
     public var id :int;
 

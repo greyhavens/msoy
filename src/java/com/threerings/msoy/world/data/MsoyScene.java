@@ -15,8 +15,6 @@ import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;
-import com.threerings.whirled.spot.data.SpotSceneImpl;
-import com.threerings.whirled.spot.data.SpotSceneModel;
 
 import com.threerings.msoy.item.web.MediaDesc;
 
@@ -30,7 +28,6 @@ public class MsoyScene extends SceneImpl
     {
         super(model, config);
         _model = model;
-        _sdelegate = new SpotSceneImpl(SpotSceneModel.getSceneModel(_model));
     }
 
     /**
@@ -118,58 +115,50 @@ public class MsoyScene extends SceneImpl
     // from SpotScene
     public void addPortal (Portal portal)
     {
-        _sdelegate.addPortal(portal);
+        throw new UnsupportedOperationException("BREEP!");
     }
     
     // from SpotScene
     public Portal getDefaultEntrance ()
     {
-        return _sdelegate.getDefaultEntrance();
+        return _model.getDefaultEntrance();
     }
     
     // from SpotScene
     public short getNextPortalId ()
     {
-        return _sdelegate.getNextPortalId();
+        // since portals are just furni...
+        return (short) _model.getNextFurniId();
     }
 
     // from SpotScene
     public Portal getPortal (int portalId)
     {
-        return _sdelegate.getPortal(portalId);
+        return _model.getPortal(portalId);
     }
     
     // from SpotScene
     public int getPortalCount ()
     {
-        return _sdelegate.getPortalCount();
+        return _model.getPortalCount();
     }
     
     // from SpotScene
     public Iterator getPortals ()
     {
-        return _sdelegate.getPortals();
+        return _model.getPortals();
     }
 
     // from SpotScene
     public void removePortal (Portal portal)
     {
-        _sdelegate.removePortal(portal);
+        throw new UnsupportedOperationException("BREEP!");
     }
 
     // from SpotScene
     public void setDefaultEntrance (Portal portal)
     {
-        _sdelegate.setDefaultEntrance(portal);
-    }
-
-    @Override
-    public void updateReceived (SceneUpdate update)
-    {
-        super.updateReceived(update);
-
-        // inform our spot delegate of possible changes
-        _sdelegate.updateReceived();
+        throw new UnsupportedOperationException("BREEP!");
     }
 
     // from Cloneable
@@ -181,7 +170,4 @@ public class MsoyScene extends SceneImpl
 
     /** A reference to our scene model. */
     protected MsoySceneModel _model;
-
-    /** Our spot scene delegate. */
-    protected SpotSceneImpl _sdelegate;
 }

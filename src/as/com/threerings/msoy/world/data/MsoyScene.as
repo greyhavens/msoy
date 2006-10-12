@@ -1,5 +1,7 @@
 package com.threerings.msoy.world.data {
 
+import flash.errors.IllegalOperationError;
+
 import com.threerings.util.Iterator;
 import com.threerings.util.Cloneable;
 
@@ -13,8 +15,6 @@ import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;
-import com.threerings.whirled.spot.data.SpotSceneImpl;
-import com.threerings.whirled.spot.data.SpotSceneModel;
 
 import com.threerings.msoy.item.web.MediaDesc;
 
@@ -25,7 +25,6 @@ public class MsoyScene extends SceneImpl
     {
         super(model, config);
         _msoyModel = model;
-        _sdelegate = new SpotSceneImpl(SpotSceneModel.getSceneModel(model));
     }
 
     /**
@@ -113,57 +112,50 @@ public class MsoyScene extends SceneImpl
     // from SpotScene
     public function addPortal (portal :Portal) :void
     {
-        _sdelegate.addPortal(portal);
+        throw new IllegalOperationError("BREEP!");
     }
 
     // from SpotScene
     public function getDefaultEntrance () :Portal
     {
-        return _sdelegate.getDefaultEntrance();
+        return _msoyModel.getDefaultEntrance();
     }
 
     // from SpotScene
     public function getNextPortalId () :int
     {
-        return _sdelegate.getNextPortalId();
+        // since portals are just furni...
+        return _msoyModel.getNextFurniId();
     }
 
     // from SpotScene
     public function getPortal (portalId :int) :Portal
     {
-        return _sdelegate.getPortal(portalId);
+        return _msoyModel.getPortal(portalId);
     }
 
     // from SpotScene
     public function getPortalCount () :int
     {
-        return _sdelegate.getPortalCount();
+        return _msoyModel.getPortalCount();
     }
 
     // from SpotScene
     public function getPortals () :Iterator
     {
-        return _sdelegate.getPortals();
+        return _msoyModel.getPortals();
     }
 
     // from SpotScene
     public function removePortal (portal :Portal) :void
     {
-        _sdelegate.removePortal(portal);
+        throw new IllegalOperationError("BREEP!");
     }
 
     // from SpotScene
     public function setDefaultEntrance (portal :Portal) :void
     {
-        _sdelegate.setDefaultEntrance(portal);
-    }
-
-    override public function updateReceived (update :SceneUpdate) :void
-    {
-        super.updateReceived(update);
-
-        // inform our spot delegate of possible changes
-        _sdelegate.updateReceived();
+        throw new IllegalOperationError("BREEP!");
     }
 
     // from Cloneable
@@ -174,8 +166,5 @@ public class MsoyScene extends SceneImpl
 
     /** A reference to our scene model. */
     protected var _msoyModel :MsoySceneModel;
-
-    /** Our spot scene delegate. */
-    protected var _sdelegate :SpotSceneImpl;
 }
 }

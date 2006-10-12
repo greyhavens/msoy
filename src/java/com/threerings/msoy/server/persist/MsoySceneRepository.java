@@ -24,9 +24,6 @@ import com.samskivert.jdbc.TransitionRepository;
 
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
-import com.threerings.whirled.spot.data.ModifyPortalsUpdate;
-import com.threerings.whirled.spot.data.Portal;
-import com.threerings.whirled.spot.data.SpotSceneModel;
 import com.threerings.whirled.server.persist.SceneRepository;
 import com.threerings.whirled.server.persist.SceneUpdateMarshaller;
 import com.threerings.whirled.util.NoSuchSceneException;
@@ -39,7 +36,6 @@ import com.threerings.msoy.item.web.StaticMediaDesc;
 
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MsoyLocation;
-import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
@@ -66,7 +62,6 @@ public class MsoySceneRepository extends SimpleRepository
         super(provider, SCENE_DB_IDENT);
 
         maintenance("analyze", "SCENES");
-        maintenance("analyze", "PORTALS");
         maintenance("analyze", "FURNI");
     }
 
@@ -117,7 +112,7 @@ public class MsoySceneRepository extends SimpleRepository
         } // END: temp
 
         // TEMP: removable after all servers are past the date specified...
-        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061010",
+        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061012",
             new TransitionRepository.Transition() {
                 public void run ()
                     throws PersistenceException
@@ -139,6 +134,42 @@ public class MsoySceneRepository extends SimpleRepository
                 }
             });
         // END: temp
+
+        // TEMP: portal update, can be removed when all servers past 2006-10-12
+        if (JDBCUtil.tableExists(conn, "PORTALS")) {
+            Statement stmt = conn.createStatement();
+            try {
+                ResultSet rs = stmt.executeQuery("select " +
+                    "SCENE_ID, PORTAL_ID, TARGET_PORTAL_ID, TARGET_SCENE_ID, " +
+                    "MEDIA_HASH, MEDIA_TYPE, X, Y, Z, SCALE_X, SCALE_Y " +
+                    "from PORTALS");
+                // convert each portal into... furni!
+                while (rs.next()) {
+                    FurniData furni = new FurniData();
+                    int sceneId = rs.getInt(1);
+                    furni.id = 50 + rs.getShort(2);
+                    furni.actionType = FurniData.ACTION_PORTAL;
+                    furni.actionData = rs.getInt(4) + ":" +
+                        (50 + rs.getShort(3));
+                    furni.media = createMediaDesc(
+                        rs.getBytes(5), rs.getByte(6));
+                    furni.loc = new MsoyLocation(
+                        rs.getFloat(7), rs.getFloat(8), rs.getFloat(9), 0);
+                    furni.scaleX = rs.getFloat(10);
+                    furni.scaleY = rs.getFloat(11);
+
+                    insertFurni(conn, liaison, sceneId,
+                        new FurniData[] { furni });
+                }
+
+                // then, delete the table
+                stmt.executeUpdate("drop table PORTALS");
+
+            } finally {
+                JDBCUtil.close(stmt);
+            }
+        }
+        // END: temp
     }
 
     // documentation inherited from interface SceneRepository
@@ -155,9 +186,6 @@ public class MsoySceneRepository extends SimpleRepository
         MsoySceneModel mmodel = (MsoySceneModel) model;
         if (update instanceof ModifyFurniUpdate) {
             applyFurniUpdate(mmodel, (ModifyFurniUpdate) update);
-
-        } else if (update instanceof ModifyPortalsUpdate) {
-            applyPortalsUpdate(mmodel, (ModifyPortalsUpdate) update);
 
         } else if (update instanceof SceneAttrsUpdate) {
             applySceneAttrsUpdate(mmodel, (SceneAttrsUpdate) update);
@@ -235,8 +263,6 @@ public class MsoySceneRepository extends SimpleRepository
         throws PersistenceException, NoSuchSceneException
     {
         final MsoySceneModel model = new MsoySceneModel();
-        final SpotSceneModel spotModel = new SpotSceneModel();
-        model.addAuxModel(spotModel);
         model.sceneId = sceneId;
 
         Boolean success = execute(new Operation<Boolean>() {
@@ -255,7 +281,7 @@ public class MsoySceneRepository extends SimpleRepository
                         model.version = rs.getInt(2);
                         model.name = rs.getString(3).intern();
                         model.type = rs.getByte(4);
-                        spotModel.defaultEntranceId = rs.getInt(5);
+                        model.defaultEntranceId = (short) rs.getInt(5);
                         model.depth = rs.getShort(6);
                         model.width = rs.getShort(7);
                         model.horizon = rs.getFloat(8);
@@ -263,28 +289,6 @@ public class MsoySceneRepository extends SimpleRepository
                     } else {
                         return Boolean.FALSE; // no scene found
                     }
-
-                    // Load: portals
-                    rs = stmt.executeQuery("select " +
-                        "PORTAL_ID, TARGET_PORTAL_ID, TARGET_SCENE_ID, " +
-                        "MEDIA_HASH, MEDIA_TYPE, X, Y, Z, SCALE_X, SCALE_Y " +
-                        "from PORTALS where SCENE_ID=" + sceneId);
-                    ArrayList<MsoyPortal> plist = new ArrayList<MsoyPortal>();
-                    while (rs.next()) {
-                        MsoyPortal p = new MsoyPortal();
-                        p.portalId = rs.getShort(1);
-                        p.targetPortalId = rs.getShort(2);
-                        p.targetSceneId = rs.getInt(3);
-                        p.media = createMediaDesc(
-                            rs.getBytes(4), rs.getByte(5));
-                        p.loc = new MsoyLocation(
-                            rs.getFloat(6), rs.getFloat(7), rs.getFloat(8), 0);
-                        p.scaleX = rs.getFloat(9);
-                        p.scaleY = rs.getFloat(10);
-                        plist.add(p);
-                    }
-                    spotModel.portals = new Portal[plist.size()];
-                    plist.toArray(spotModel.portals);
 
                     // Load: furni
                     rs = stmt.executeQuery("select " +
@@ -350,30 +354,6 @@ public class MsoySceneRepository extends SimpleRepository
     }
 
     /**
-     * Apply a portal changing update.
-     */
-    protected void applyPortalsUpdate (
-        final MsoySceneModel mmodel, final ModifyPortalsUpdate update)
-        throws PersistenceException
-    {
-        executeUpdate(new Operation<Object>() {
-            public Object invoke (Connection conn, DatabaseLiaison liaison)
-                throws SQLException, PersistenceException
-            {
-                if (update.portalsRemoved != null) {
-                    deletePortals(conn, liaison, mmodel.sceneId,
-                        update.portalsRemoved);
-                }
-                if (update.portalsAdded != null) {
-                    insertPortals(conn, liaison, mmodel.sceneId,
-                        update.portalsAdded);
-                }
-                return null;
-            }
-        });
-    }
-
-    /**
      * Apply an update that changes the basic scene attributes.
      */
     protected void applySceneAttrsUpdate (
@@ -418,11 +398,6 @@ public class MsoySceneRepository extends SimpleRepository
         model.version = 1;
         model.name = name + "'s Room"; // TODO
 
-        // TODO
-        //SpotSceneModel spotty = SpotSceneModel.getSceneModel(model);
-        //spotty.addPortal(portal);
-        //spotty.defaultEntranceId = 1;
-
         return executeUpdate(new Operation<Integer>() {
             public Integer invoke (Connection conn, DatabaseLiaison liaison)
                 throws SQLException, PersistenceException
@@ -433,17 +408,15 @@ public class MsoySceneRepository extends SimpleRepository
     }
 
     /**
-     * Insert a new scene, with portals and furni and all, into the database
+     * Insert a new scene, with furni and all, into the database
      * and return the newly assigned sceneId.
      */
     protected int insertScene (
         Connection conn, DatabaseLiaison liaison, MsoySceneModel model)
         throws SQLException, PersistenceException
     {
-        SpotSceneModel spotModel = SpotSceneModel.getSceneModel(model);
         int sceneId = insertSceneModel(conn, liaison, model);
-        // add the portals and furni for the room
-        insertPortals(conn, liaison, sceneId, spotModel.portals);
+        // add the furni for the room
         insertFurni(conn, liaison, sceneId, model.furnis);
         return sceneId;
     }
@@ -455,8 +428,6 @@ public class MsoySceneRepository extends SimpleRepository
         Connection conn, DatabaseLiaison liaison, MsoySceneModel model)
         throws SQLException, PersistenceException
     {
-        SpotSceneModel spotModel = SpotSceneModel.getSceneModel(model);
-
         PreparedStatement stmt = conn.prepareStatement("insert into SCENES " +
             "(OWNER_ID, VERSION, NAME, TYPE, DEF_PORTAL_ID, " +
             "DEPTH, WIDTH, HORIZON) " +
@@ -466,69 +437,13 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setInt(2, model.version);
             stmt.setString(3, model.name);
             stmt.setByte(4, model.type);
-            stmt.setInt(5, spotModel.defaultEntranceId);
+            stmt.setInt(5, model.defaultEntranceId);
             stmt.setShort(6, model.depth);
             stmt.setShort(7, model.width);
             stmt.setFloat(8, model.horizon);
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
 
-        } finally {
-            JDBCUtil.close(stmt);
-        }
-    }
-
-    /**
-     * Insert the specified portals into the database.
-     */
-    protected void insertPortals (
-        Connection conn, DatabaseLiaison liaison, int sceneId,
-        Portal[] portals)
-        throws SQLException, PersistenceException
-    {
-        PreparedStatement stmt = conn.prepareStatement("insert into PORTALS " +
-            "(SCENE_ID, PORTAL_ID, TARGET_PORTAL_ID, TARGET_SCENE_ID, " +
-            "MEDIA_HASH, MEDIA_TYPE, X, Y, Z, SCALE_X, SCALE_Y) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        try {
-            stmt.setInt(1, sceneId);
-            for (Portal portal : portals) {
-                MsoyPortal p = (MsoyPortal) portal;
-                MsoyLocation loc = (MsoyLocation) p.loc;
-                stmt.setInt(2, p.portalId);
-                stmt.setInt(3, p.targetPortalId);
-                stmt.setInt(4, p.targetSceneId);
-                stmt.setBytes(5, flattenMediaDesc(p.media));
-                stmt.setByte(6, p.media.mimeType);
-                stmt.setFloat(7, loc.x);
-                stmt.setFloat(8, loc.y);
-                stmt.setFloat(9, loc.z);
-                stmt.setFloat(10, p.scaleX);
-                stmt.setFloat(11, p.scaleY);
-                JDBCUtil.checkedUpdate(stmt, 1);
-            }
-        } finally {
-            JDBCUtil.close(stmt);
-        }
-    }
-
-    /**
-     * Delete the specified portals from the database.
-     */
-    protected void deletePortals (
-        Connection conn, DatabaseLiaison liaison, int sceneId,
-        Portal[] portals)
-        throws SQLException, PersistenceException
-    {
-        PreparedStatement stmt = conn.prepareStatement(
-            "delete from PORTALS where SCENE_ID = ? and PORTAL_ID = ?");
-        try {
-            stmt.setInt(1, sceneId);
-
-            for (Portal p : portals) {
-                stmt.setInt(2, p.portalId);
-                JDBCUtil.checkedUpdate(stmt, 1);
-            }
         } finally {
             JDBCUtil.close(stmt);
         }
@@ -705,20 +620,6 @@ public class MsoySceneRepository extends SimpleRepository
             "HORIZON float not null",
             "primary key (SCENE_ID)" }, "");
 
-        JDBCUtil.createTableIfMissing(conn, "PORTALS", new String[] {
-            "SCENE_ID integer not null",
-            "PORTAL_ID smallint not null",
-            "TARGET_PORTAL_ID smallint not null",
-            "TARGET_SCENE_ID integer not null",
-            "MEDIA_HASH tinyblob not null",
-            "MEDIA_TYPE tinyint not null",
-            "X float not null",
-            "Y float not null",
-            "Z float not null",
-            "SCALE_X float not null",
-            "SCALE_Y float not null",
-            "primary key (SCENE_ID, PORTAL_ID)" }, "");
-
         JDBCUtil.createTableIfMissing(conn, "FURNI", new String[] {
             "SCENE_ID integer not null",
             "FURNI_ID integer not null",
@@ -753,12 +654,11 @@ public class MsoySceneRepository extends SimpleRepository
         model.sceneId = sceneId;
         model.version = 1;
         model.name = "SampleScene" + sceneId;
-        SpotSceneModel spotty = SpotSceneModel.getSceneModel(model);
 
-        MsoyPortal portal = new MsoyPortal();
-        portal.portalId = 1;
-        portal.targetPortalId = -1;
-        MsoyPortal p2;
+        FurniData portal = new FurniData();
+        portal.id = 51;
+        portal.actionType = FurniData.ACTION_PORTAL;
+        FurniData p2;
         FurniData furn;
 
         if (sceneId == 1) {
@@ -767,50 +667,49 @@ public class MsoySceneRepository extends SimpleRepository
             model.width = 1600;
 
             portal.loc = new MsoyLocation(0, 0, .3, 0);
-            portal.targetSceneId = 2;
-            portal.targetPortalId = 1;
+            portal.actionData = "2:51";
             portal.scaleX = portal.scaleY = (float) (1 / .865f);
             portal.media = new MediaDesc( // smile door
                 "7511842ed6201ccddb7b072fc4886c21d395376f.png");
 
-            p2 = new MsoyPortal();
-            p2.portalId = 2;
-            p2.targetPortalId = 1;
-            p2.targetSceneId = 6;
+            p2 = new FurniData();
+            p2.id = 52;
+            p2.actionType = FurniData.ACTION_PORTAL;
+            p2.actionData = "6:51";
             p2.loc = new MsoyLocation(.8, 0, 1, 0);
             p2.scaleX = p2.scaleY = (float) (1 / .55);
             p2.media = new MediaDesc( // aqua door
                 "7fbc0922c7f36e1ce14648466b42c093185b6c1b.png");
-            spotty.addPortal(p2);
+            model.addFurni(p2);
 
-            p2 = new MsoyPortal();
-            p2.portalId = 3;
-            p2.targetPortalId = 1;
-            p2.targetSceneId = 4;
+            p2 = new FurniData();
+            p2.id = 53;
+            p2.actionType = FurniData.ACTION_PORTAL;
+            p2.actionData = "4:51";
             p2.loc = new MsoyLocation(1, 0, .3, 0);
             p2.scaleX = p2.scaleY = (float) (1 / .865f);
             p2.media = new MediaDesc( // red door
                 "2c75bf2cc3e9a35aafb2e96bd13dd05060d132a0.png");
-            spotty.addPortal(p2);
+            model.addFurni(p2);
 
-            p2 = new MsoyPortal();
-            p2.portalId = 4;
-            p2.targetPortalId = 1;
-            p2.targetSceneId = 5;
+            p2 = new FurniData();
+            p2.id = 51;
+            p2.actionType = FurniData.ACTION_PORTAL;
+            p2.actionData = "5:51";
             p2.loc = new MsoyLocation(.75, 1, .5, 0);
             p2.media = new MediaDesc( // ladder
                 "92d6dbe0b44a1c070b638f93d9fff8a907ba1cda.png");
-            spotty.addPortal(p2);
+            model.addFurni(p2);
 
-            p2 = new MsoyPortal();
-            p2.portalId = 5;
-            p2.targetPortalId = 1;
-            p2.targetSceneId = 7;
+            p2 = new FurniData();
+            p2.id = 55;
+            p2.actionType = FurniData.ACTION_PORTAL;
+            p2.actionData = "7:51";
             p2.loc = new MsoyLocation(.95, 0, 1, 0);
             p2.scaleX = p2.scaleY = .3f;
             p2.media = new MediaDesc(
                 "7fbc0922c7f36e1ce14648466b42c093185b6c1b.png");
-            spotty.addPortal(p2);
+            model.addFurni(p2);
 
             furn = new FurniData();
             furn.id = 1;
@@ -863,7 +762,7 @@ public class MsoySceneRepository extends SimpleRepository
             model.type = MsoySceneModel.IMAGE_OVERLAY;
 
             portal.loc = new MsoyLocation(0, .1, .53, 180);
-            portal.targetSceneId = 1;
+            portal.actionData = "1:-1";
             portal.media = new MediaDesc( // alley door
                 "fcd7eedea57bc869e3ab576661ac8516dcb561a8.swf");
 
@@ -896,8 +795,7 @@ public class MsoySceneRepository extends SimpleRepository
             model.width = 800;
 
             portal.loc = new MsoyLocation(.5, 0, .5, 0);
-            portal.targetSceneId = 6;
-            portal.targetPortalId = 2;
+            portal.actionData = "6:52";
             portal.media = new MediaDesc( // bendaytransport
                 "636dfebde41fb73d0bf6ee3cca0387ac5532b9ce.swf");
 
@@ -929,8 +827,7 @@ public class MsoySceneRepository extends SimpleRepository
             model.width = 800;
 
             portal.loc = new MsoyLocation(0, 0, .8, 0);
-            portal.targetSceneId = 1;
-            portal.targetPortalId = 3;
+            portal.actionData = "1:53";
             portal.scaleX = -1;
             portal.media = new MediaDesc( // rainbow door
                 "e8b660ec5aa0aa30dab46b267daf3b80996269e7.swf");
@@ -995,8 +892,7 @@ public class MsoySceneRepository extends SimpleRepository
             model.width = 1600;
 
             portal.loc = new MsoyLocation(.3125, .71, 0, 0);
-            portal.targetSceneId = 1;
-            portal.targetPortalId = 4;
+            portal.actionData = "1:54";
             portal.media = new MediaDesc( // pipe
                 "d63cfbf63645d168094119a784e2e5f780d4218d.png");
 
@@ -1014,29 +910,18 @@ public class MsoySceneRepository extends SimpleRepository
             model.width = 1600;
 
             portal.loc = new MsoyLocation(0, 0, .5, 0);
-            portal.targetSceneId = 1;
-            portal.targetPortalId = 2;
+            portal.actionData = "1:52";
             portal.media = new MediaDesc( // bendaydoor
                 "dae195a14e7b24fb7d21c0da1404785bdad1cd92.swf");
 
-            p2 = new MsoyPortal();
-            p2.portalId = 2;
-            p2.targetSceneId = 3;
-            p2.targetPortalId = 1;
+            p2 = new FurniData();
+            p2.id = 52;
+            p2.actionType = FurniData.ACTION_PORTAL;
+            p2.actionData = "3:51";
             p2.loc = new MsoyLocation(.84, 0, .3, 0);
             p2.media = new MediaDesc( // bendaytransport
                 "636dfebde41fb73d0bf6ee3cca0387ac5532b9ce.swf");
-            spotty.addPortal(p2);
-
-            /*
-            p2 = new MsoyPortal();
-            p2.portalId = 3;
-            p2.targetPortalId = 1;
-            p2.targetSceneId = 2;
-            p2.loc = new MsoyLocation(.5, 0, .5, 0);
-            p2.media = new MediaDesc(6);
-            spotty.addPortal(p2);
-            */
+            model.addFurni(p2);
 
             furn = new FurniData();
             furn.id = 1;
@@ -1067,8 +952,7 @@ public class MsoySceneRepository extends SimpleRepository
             model.addFurni(furn);
 
             portal.loc = new MsoyLocation(.5, 0, .5, 0);
-            portal.targetSceneId = 1;
-            portal.targetPortalId = 5;
+            portal.actionData = "1:55";
             portal.media = new MediaDesc( // bendaytransport
                 "636dfebde41fb73d0bf6ee3cca0387ac5532b9ce.swf");
 
@@ -1076,8 +960,7 @@ public class MsoySceneRepository extends SimpleRepository
             System.err.println("Unknown scene: " + sceneId);
         }
 
-        spotty.addPortal(portal);
-        spotty.defaultEntranceId = 1;
+        model.addFurni(portal);
 
         return model;
     }
@@ -1088,7 +971,7 @@ public class MsoySceneRepository extends SimpleRepository
             // register the update classes
             // (DO NOT CHANGE ORDER! see note in SceneUpdateMarshaller const.)
             ModifyFurniUpdate.class,
-            ModifyPortalsUpdate.class,
+            null,                           // previously: ModifyPortalsUpdate
             SceneAttrsUpdate.class
             // end of update class registration (DO NOT CHANGE ORDER)
         );

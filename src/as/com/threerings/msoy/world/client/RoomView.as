@@ -39,7 +39,6 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.whirled.spot.data.Location;
-import com.threerings.whirled.spot.data.ModifyPortalsUpdate;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
@@ -53,7 +52,6 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
-import com.threerings.msoy.world.data.MsoyPortal;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
@@ -151,11 +149,6 @@ public class RoomView extends AbstractRoomView
         setActive(_pendingRemoveAvatars, !setDim);
     }
 
-    public function dimPortals (setDim :Boolean) :void
-    {
-        setActive(_portals, !setDim);
-    }
-
     public function dimFurni (setDim :Boolean) :void
     {
         setActive(_furni, !setDim);
@@ -178,12 +171,6 @@ public class RoomView extends AbstractRoomView
                 removeFurni(furni);
             }
 
-        } else if (update is ModifyPortalsUpdate) {
-            for each (var portal :MsoyPortal in
-                    (update as ModifyPortalsUpdate).portalsRemoved) {
-                removePortal(portal);
-            }
-
         } else if (update is SceneAttrsUpdate) {
             // re-read our scene and that's it
             rereadScene();
@@ -194,7 +181,7 @@ public class RoomView extends AbstractRoomView
         }
 
         // this will take care of anything added
-        updateAllFurniAndPortals();
+        updateAllFurni();
     }
 
     override public function scrollViewBy (xpixels :int) :Boolean
@@ -374,8 +361,8 @@ public class RoomView extends AbstractRoomView
         while (itr.hasNext()) {
             var portal :Portal = (itr.next() as Portal);
             if (loc.equals(portal.loc)) {
-                var sprite :PortalSprite =
-                    (_portals.get(portal.portalId) as PortalSprite);
+                var sprite :FurniSprite =
+                    (_furni.get(portal.portalId) as FurniSprite);
                 sprite.wasTraversed(entering);
                 return;
             }
@@ -506,15 +493,6 @@ public class RoomView extends AbstractRoomView
         }
 
         ChatPopper.popUp(msg, avatar);
-    }
-
-    protected function removePortal (portal :MsoyPortal) :void
-    {
-        var sprite :PortalSprite =
-            (_portals.remove(portal.portalId) as PortalSprite);
-        if (sprite != null) {
-            removeSprite(sprite);
-        }
     }
 
     protected function removeFurni (furni :FurniData) :void

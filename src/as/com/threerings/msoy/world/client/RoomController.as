@@ -25,7 +25,6 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.SceneUpdate;
-import com.threerings.whirled.spot.data.Portal;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.MsoyContext;
@@ -51,7 +50,6 @@ public class RoomController extends SceneController
 
     public static const EDIT_SCENE :String = "edit_scene";
 
-    public static const PORTAL_CLICKED :String = "PortalClicked";
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
 
@@ -153,14 +151,6 @@ public class RoomController extends SceneController
     }
 
     /**
-     * Handles PORTAL_CLICKED.
-     */
-    public function handlePortalClicked (portal :Portal) :void
-    {
-        _mctx.getSpotSceneDirector().traversePortal(portal.portalId);
-    }
-
-    /**
      * Handles FURNI_CLICKED.
      */
     public function handleFurniClicked (furni :FurniData) :void
@@ -178,6 +168,10 @@ public class RoomController extends SceneController
             } else {
                 goToGameLobby(int(furni.actionData));
             }
+            return;
+
+        case FurniData.ACTION_PORTAL:
+            _mctx.getSpotSceneDirector().traversePortal(furni.id);
             return;
 
         default:
