@@ -112,7 +112,7 @@ public class MsoySceneRepository extends SimpleRepository
         } // END: temp
 
         // TEMP: removable after all servers are past the date specified...
-        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061012",
+        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061012a",
             new TransitionRepository.Transition() {
                 public void run ()
                     throws PersistenceException
@@ -147,7 +147,7 @@ public class MsoySceneRepository extends SimpleRepository
                 while (rs.next()) {
                     FurniData furni = new FurniData();
                     int sceneId = rs.getInt(1);
-                    furni.id = 50 + rs.getShort(2);
+                    furni.id = (short) (50 + rs.getShort(2));
                     furni.actionType = FurniData.ACTION_PORTAL;
                     furni.actionData = rs.getInt(4) + ":" +
                         (50 + rs.getShort(3));
@@ -170,6 +170,15 @@ public class MsoySceneRepository extends SimpleRepository
             }
         }
         // END: temp
+
+        // TEMP: portal update, can be removed when all servers past 2006-10-12
+        if (Types.INTEGER ==
+                JDBCUtil.getColumnType(conn, "FURNI", "FURNI_ID")) {
+            JDBCUtil.changeColumn(conn, "FURNI", "FURNI_ID",
+                "FURNI_ID smallint not null");
+            JDBCUtil.changeColumn(conn, "SCENES", "DEF_PORTAL_ID",
+                "DEF_PORTAL_ID smallint not null");
+        }
     }
 
     // documentation inherited from interface SceneRepository
@@ -281,7 +290,7 @@ public class MsoySceneRepository extends SimpleRepository
                         model.version = rs.getInt(2);
                         model.name = rs.getString(3).intern();
                         model.type = rs.getByte(4);
-                        model.defaultEntranceId = (short) rs.getInt(5);
+                        model.defaultEntranceId = rs.getShort(5);
                         model.depth = rs.getShort(6);
                         model.width = rs.getShort(7);
                         model.horizon = rs.getFloat(8);
@@ -299,7 +308,7 @@ public class MsoySceneRepository extends SimpleRepository
                     ArrayList<FurniData> flist = new ArrayList<FurniData>();
                     while (rs.next()) {
                         FurniData furni = new FurniData();
-                        furni.id = rs.getInt(1);
+                        furni.id = rs.getShort(1);
                         furni.itemType = rs.getByte(2);
                         furni.itemId = rs.getInt(3);
                         furni.media = createMediaDesc(
@@ -437,7 +446,7 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setInt(2, model.version);
             stmt.setString(3, model.name);
             stmt.setByte(4, model.type);
-            stmt.setInt(5, model.defaultEntranceId);
+            stmt.setShort(5, model.defaultEntranceId);
             stmt.setShort(6, model.depth);
             stmt.setShort(7, model.width);
             stmt.setFloat(8, model.horizon);
@@ -466,7 +475,7 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setInt(1, sceneId);
 
             for (FurniData f : furni) {
-                stmt.setInt(2, f.id);
+                stmt.setShort(2, f.id);
                 stmt.setByte(3, f.itemType);
                 stmt.setInt(4, f.itemId);
                 stmt.setBytes(5, flattenMediaDesc(f.media));
@@ -499,7 +508,7 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setInt(1, sceneId);
 
             for (FurniData f : furni) {
-                stmt.setInt(2, f.id);
+                stmt.setShort(2, f.id);
                 JDBCUtil.checkedUpdate(stmt, 1);
             }
         } finally {
@@ -614,7 +623,7 @@ public class MsoySceneRepository extends SimpleRepository
             "VERSION integer not null",
             "NAME varchar(255) not null",
             "TYPE tinyint not null",
-            "DEF_PORTAL_ID integer not null",
+            "DEF_PORTAL_ID smallint not null",
             "DEPTH integer not null",
             "WIDTH integer not null",
             "HORIZON float not null",
@@ -622,7 +631,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         JDBCUtil.createTableIfMissing(conn, "FURNI", new String[] {
             "SCENE_ID integer not null",
-            "FURNI_ID integer not null",
+            "FURNI_ID smallint not null",
             "ITEM_TYPE tinyint not null",
             "ITEM_ID integer not null",
             "MEDIA_HASH tinyblob not null",

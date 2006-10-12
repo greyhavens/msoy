@@ -34,7 +34,7 @@ public class FurniData extends SimpleStreamableObject
     public static final byte ACTION_PORTAL = 3;
 
     /** The id of this piece of furni. */
-    public int id;
+    public short id;
 
     /** Identifies the type of the item that was used to create this furni,
      * or Item.NOT_A_TYPE. */

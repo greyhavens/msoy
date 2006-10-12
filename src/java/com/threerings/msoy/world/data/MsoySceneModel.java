@@ -77,7 +77,7 @@ public class MsoySceneModel extends SceneModel
     /**
      * Get the next available furni id.
      */
-    public int getNextFurniId ()
+    public short getNextFurniId ()
     {
         // TODO?
         int length = furnis.length;
@@ -90,10 +90,10 @@ public class MsoySceneModel extends SceneModel
                 }
             }
             if (!found) {
-                return ii;
+                return (short) ii;
             }
         }
-        return -1;
+        return (short) -1;
     }
 
     /**
@@ -172,7 +172,7 @@ public class MsoySceneModel extends SceneModel
             String[] vals = furni.actionData.split(":");
 
             Portal p = new Portal();
-            p.portalId = (short) furni.id;
+            p.portalId = furni.id;
             p.loc = furni.loc;
             try {
                 p.targetSceneId = Integer.parseInt(vals[0]);

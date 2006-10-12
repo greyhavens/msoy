@@ -109,7 +109,7 @@ public class FurniData
     // documentation inherited from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeInt(id);
+        out.writeShort(id);
         out.writeByte(itemType);
         out.writeInt(itemId);
         out.writeObject(media);
@@ -123,7 +123,7 @@ public class FurniData
     // documentation inherited from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        id = ins.readInt();
+        id = ins.readShort();
         itemType = ins.readByte();
         itemId = ins.readInt();
         media = (ins.readObject() as MediaDesc);
