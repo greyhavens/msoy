@@ -3,7 +3,6 @@
 
 package client.inventory;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -21,8 +20,7 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -81,8 +79,7 @@ public class ItemDetail extends PopupPanel
     protected void buildUI () {
         if (_item.parentId != -1) {
             addHeader("Clone Information");
-            addRow("Clone ID", String.valueOf(_item.itemId),
-                   "Owner", String.valueOf(_item.ownerId));
+            addRow("Clone ID", String.valueOf(_item.itemId), "Owner", String.valueOf(_item.ownerId));
         }
         addHeader("Generic Item Information");
         // TODO: flags should be checkboxes when we have some?
@@ -102,16 +99,10 @@ public class ItemDetail extends PopupPanel
         }
         addRow("Owner", owner, "Creator", _itemDetail.creator.memberName);
 
-        Widget thumbWidget = _item.thumbMedia == null ?
-            new Label("(default)") :
-            ItemContainer.createContainer(
-                MsoyEntryPoint.toMediaPath(
-                    _item.getThumbnailMedia().getMediaPath()));
-        Widget furniWidget = _item.furniMedia == null ?
-            new Label("(default)") :
-            ItemContainer.createContainer(
-                MsoyEntryPoint.toMediaPath(
-                    _item.getFurniMedia().getMediaPath()));
+        Widget thumbWidget = _item.thumbMedia == null ? new Label("(default)") :
+            ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(_item.getThumbnailMedia().getMediaPath()));
+        Widget furniWidget = _item.furniMedia == null ? new Label("(default)") :
+            ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(_item.getFurniMedia().getMediaPath()));
         addRow("Thumbnail", thumbWidget, "Furniture", furniWidget);
 
         // TODO: Maybe merge ItemDetail and ItemEditor, so we could put these
@@ -120,15 +111,12 @@ public class ItemDetail extends PopupPanel
             addHeader("Document Information");
             addRow("Title", ((Document)_item).title);
             // we should check if the document has a useful visual
-            String url = MsoyEntryPoint.toMediaPath(
-                ((Document)_item).docMedia.getMediaPath());
-            addRow("Document Media", new HTML(
-                "<A HREF='" + url + "'>" + url + "</a>"));
+            String url = MsoyEntryPoint.toMediaPath(((Document)_item).docMedia.getMediaPath());
+            addRow("Document Media", new HTML("<A HREF='" + url + "'>" + url + "</a>"));
 
         } else if (_item instanceof Furniture) {
             addHeader("Furniture Information");
-            addRow("Action", ((Furniture)_item).action,
-                   "Description", ((Furniture)_item).description);
+            addRow("Action", ((Furniture)_item).action, "Description", ((Furniture)_item).description);
 
         } else if (_item instanceof Pet) {
             addHeader("Pet Information");
@@ -137,12 +125,9 @@ public class ItemDetail extends PopupPanel
         } else if (_item instanceof Game) {
             addHeader("Game Information");
             addRow("Name", ((Game)_item).name,
-                   "# Players (Desired)",
-                   String.valueOf(((Game)_item).desiredPlayers));
-            addRow("# Players (Minimum)",
-                   String.valueOf(((Game)_item).minPlayers),
-                   "# Players (Maximum)",
-                   String.valueOf(((Game)_item).maxPlayers));
+                   "# Players (Desired)", String.valueOf(((Game)_item).desiredPlayers));
+            addRow("# Players (Minimum)", String.valueOf(((Game)_item).minPlayers),
+                   "# Players (Maximum)", String.valueOf(((Game)_item).maxPlayers));
             int gameId = _item.getProgenitorId();
             String href = "<a href=\"game.html#" + gameId + "\">";
             addRow("Play", new HTML(href + "Play now</a>"));
@@ -151,9 +136,7 @@ public class ItemDetail extends PopupPanel
             addHeader("Photo Information");
             MediaDesc photoMedia = ((Photo)_item).photoMedia;
             Widget photoContainer;
-            photoContainer =
-                ItemContainer.createContainer(
-                    MsoyEntryPoint.toMediaPath(photoMedia.getMediaPath()));
+            photoContainer = ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(photoMedia.getMediaPath()));
             addRow("Photo", photoContainer);
             addRow("Caption", ((Photo)_item).caption);
 
@@ -161,12 +144,9 @@ public class ItemDetail extends PopupPanel
             addHeader("Avatar Information");
             MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
             Widget avatarContainer;
-            avatarContainer =
-                ItemContainer.createContainer(
-                    MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath()));
+            avatarContainer = ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath()));
             addRow("Description", ((Avatar)_item).description);
             addRow("Avatar", avatarContainer);
-
 
         } else {
             addHeader("UNKNOWN OBJECT TYPE: " + _item.getType());
@@ -175,9 +155,7 @@ public class ItemDetail extends PopupPanel
         addHeader("Rating Information");
 
         // we can rate this item if it's a clone, or if it's listed
-        int ratingMode = (_item.parentId != -1 || _item.ownerId == -1) ?
-            ItemRating.MODE_BOTH :
-            ItemRating.MODE_READ;
+        int ratingMode = (_item.parentId != -1 || _item.ownerId == -1) ? ItemRating.MODE_BOTH : ItemRating.MODE_READ;
         _ratingImage = new ItemRating(_ctx, _itemDetail, ratingMode);
         addRow("Rating", _ratingImage);
 
@@ -196,27 +174,22 @@ public class ItemDetail extends PopupPanel
                 }
                 for (int i = 0; i < tagName.length(); i ++) {
                     char c = tagName.charAt(i);
-                    if (Character.isLetter(c) || !Character.isDigit(c) ||
-                        c == '_') {
+                    if (Character.isLetter(c) || !Character.isDigit(c) || c == '_') {
                         continue;
                     }
                     addError(
                         "Invalid tag: use letters, numbers, and underscore.");
                     return;
                 }
-                _ctx.itemsvc.tagItem(
-                    _ctx.creds, _itemId, tagName,
-                    new AsyncCallback() {
-                        public void onSuccess (Object result) {
-                            updateTags();
-                        }
-                        public void onFailure (Throwable caught) {
-                            GWT.log("tagItem failed", caught);
-                            addError(
-                                "Internal error adding tag: " +
-                                caught.getMessage());
-                        }
-                    });
+                _ctx.itemsvc.tagItem(_ctx.creds, _itemId, tagName, new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        updateTags();
+                    }
+                    public void onFailure (Throwable caught) {
+                        GWT.log("tagItem failed", caught);
+                        addError("Internal error adding tag: " + caught.getMessage());
+                    }
+                });
                 ((TextBox) sender).setText(null);
             }
         });
@@ -226,20 +199,16 @@ public class ItemDetail extends PopupPanel
             public void onChange (Widget sender) {
                 clearErrors();
                 ListBox box = (ListBox) sender;
-                _ctx.itemsvc.tagItem(
-                    _ctx.creds, _itemId,
-                    box.getValue(box.getSelectedIndex()),
-                    new AsyncCallback() {
-                        public void onSuccess (Object result) {
-                            updateTags();
-                        }
-                        public void onFailure (Throwable caught) {
-                            GWT.log("tagItem failed", caught);
-                            addError(
-                                "Internal error adding tag: " +
-                                caught.getMessage());
-                        }
-                    });
+                String value = box.getValue(box.getSelectedIndex());
+                _ctx.itemsvc.tagItem(_ctx.creds, _itemId, value, new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        updateTags();
+                    }
+                    public void onFailure (Throwable caught) {
+                        GWT.log("tagItem failed", caught);
+                        addError("Internal error adding tag: " + caught.getMessage());
+                    }
+                });
             }
         });
 
@@ -275,8 +244,7 @@ public class ItemDetail extends PopupPanel
 
     protected void updateTags ()
     {
-        _ctx.itemsvc.getTagHistory(
-            _ctx.creds, _ctx.creds.memberId, new AsyncCallback() {
+        _ctx.itemsvc.getTagHistory(_ctx.creds, _ctx.creds.memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _historicalTags.clear();
                 Iterator i = ((Collection) result).iterator();
@@ -288,14 +256,11 @@ public class ItemDetail extends PopupPanel
                         }
                     }
                 }
-                _historicalTags.setVisible(
-                    _historicalTags.getItemCount() > 0);
+                _historicalTags.setVisible(_historicalTags.getItemCount() > 0);
             }
             public void onFailure (Throwable caught) {
                 GWT.log("getTagHistory failed", caught);
-                addError(
-                    "Internal error fetching tag history: " +
-                    caught.getMessage());
+                addError("Internal error fetching tag history: " + caught.getMessage());
             }
         });
 
@@ -351,8 +316,7 @@ public class ItemDetail extends PopupPanel
                     // Fri Sep 29 2006 12:46:12
                     date = date.substring(0, 23);
                     _tagHistory.setText(tRow, 0, date);
-                    _tagHistory.setText(
-                        tRow, 1, history.member.memberName);
+                    _tagHistory.setText(tRow, 1, history.member.memberName);
                     String actionString;
                     switch(history.action) {
                     case TagHistory.ACTION_ADDED:
@@ -369,9 +333,7 @@ public class ItemDetail extends PopupPanel
                         break;
                     }
                     _tagHistory.setText(tRow, 2, actionString);
-                    _tagHistory.setText(tRow, 3,
-                                        history.tag == null ?
-                                        "N/A" : "'" + history.tag + "'");
+                    _tagHistory.setText(tRow, 3, history.tag == null ? "N/A" : "'" + history.tag + "'");
                     tRow ++;
                 }
                 _content.add(_tagHistory, DockPanel.EAST);
@@ -389,9 +351,8 @@ public class ItemDetail extends PopupPanel
     {
         _table.setText(_row, 0, header);
         _table.getFlexCellFormatter().setColSpan(_row, 0, 4);
-        _table.getFlexCellFormatter().setAlignment(_row, 0,
-            HasHorizontalAlignment.ALIGN_CENTER,
-            HasVerticalAlignment.ALIGN_MIDDLE);
+        _table.getFlexCellFormatter().setAlignment(
+            _row, 0, HasAlignment.ALIGN_CENTER, HasAlignment.ALIGN_MIDDLE);
         _table.getRowFormatter().setStyleName(_row, "headerRow");
         _row ++;
     }
@@ -403,14 +364,8 @@ public class ItemDetail extends PopupPanel
         _table.setWidget(_row, 1, val);
         _table.getFlexCellFormatter().setColSpan(_row, 1, 3);
         _table.getRowFormatter().setStyleName(_row, "dataRow");
-        flexCellFormatter.setAlignment(
-            _row, 0,
-            HasHorizontalAlignment.ALIGN_RIGHT,
-            HasVerticalAlignment.ALIGN_MIDDLE);
-        flexCellFormatter.setAlignment(
-            _row, 1,
-            HasHorizontalAlignment.ALIGN_LEFT,
-            HasVerticalAlignment.ALIGN_MIDDLE);
+        flexCellFormatter.setAlignment(_row, 0, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
+        flexCellFormatter.setAlignment(_row, 1, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
         _row ++;
     }
 
@@ -427,22 +382,10 @@ public class ItemDetail extends PopupPanel
         _table.setText(_row, 2, rhead + ":");
         _table.setWidget(_row, 3, rval);
         _table.getRowFormatter().setStyleName(_row, "dataRow");
-        flexCellFormatter.setAlignment(
-            _row, 0,
-            HasHorizontalAlignment.ALIGN_RIGHT,
-            HasVerticalAlignment.ALIGN_MIDDLE);
-        flexCellFormatter.setAlignment(
-            _row, 1,
-            HasHorizontalAlignment.ALIGN_LEFT,
-            HasVerticalAlignment.ALIGN_MIDDLE);
-        flexCellFormatter.setAlignment(
-            _row, 2,
-            HasHorizontalAlignment.ALIGN_RIGHT,
-            HasVerticalAlignment.ALIGN_MIDDLE);
-        flexCellFormatter.setAlignment(
-            _row, 3,
-            HasHorizontalAlignment.ALIGN_LEFT,
-            HasVerticalAlignment.ALIGN_MIDDLE);
+        flexCellFormatter.setAlignment(_row, 0, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
+        flexCellFormatter.setAlignment(_row, 1, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
+        flexCellFormatter.setAlignment(_row, 2, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
+        flexCellFormatter.setAlignment(_row, 3, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
         _row ++;
     }
 
