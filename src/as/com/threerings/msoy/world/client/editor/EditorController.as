@@ -55,6 +55,9 @@ public class EditorController extends Controller
     /** Delete a furni or portal (specified as arg). */
     public static const DEL_ITEM :String = "DelItem";
 
+    /** Add an item (from the inventory). */
+    public static const ADD_ITEM :String = "AddItem";
+
     /** Dispatched when properties of a sprite were updated by the
      * SpriteEditorPanel. */
     public static const PROPERTIES_TYPED :String = "PropsTyped";
@@ -259,6 +262,25 @@ public class EditorController extends Controller
     }
 
     /**
+     * Handles selection of an item from the inventory list.
+     */
+    public function handleInventoryItemSelected (item :Item) :void
+    {
+        _panel.addButton.enabled = (item != null);
+    }
+
+    /**
+     * Handles ADD_ITEM.
+     */
+    public function handleAddItem () :void
+    {
+        var item :Item = _panel.inventory.getSelectedItem();
+        if (item != null) {
+            addFurni(item, new MsoyLocation(.5, 0, .5));
+        }
+    }
+
+    /**
      * Handles DEL_ITEM.
      */
     public function handleDelItem () :void
@@ -441,22 +463,32 @@ public class EditorController extends Controller
             event.stageX, event.stageY);
 
         // let's go ahead and create furni
+        addFurni(item, cloc.loc);
+    }
 
+    /**
+     * Add a new piece of furni to the scene.
+     */
+    protected function addFurni (item :Item, loc :MsoyLocation) :void
+    {
         // create a generic furniture descriptor
         var furni :FurniData = new FurniData();
         furni.id = getNextFurniId();
         furni.itemType = item.getType();
         furni.itemId = item.itemId;
-        furni.loc = cloc.loc;
+        furni.loc = loc;
         furni.media = item.getFurniMedia();
         configureFurniAction(furni, item);
+
+        // make sure it doesn't show up in our inventory list
+        _addedItems.push(item);
 
         // add the item to our item list
         _panel.itemList.addItem(item);
 
         // create a loose sprite to represent it, add it to the panel
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
-        insertSprite(sprite, cloc.loc);
+        insertSprite(sprite, loc);
     }
 
     /**
@@ -919,6 +951,8 @@ public class EditorController extends Controller
 
     protected var _addedSprites :Array = new Array();
     protected var _removedSprites :Array = new Array();
+
+    protected var _addedItems :Array = new Array();
 
     /** The offset from the clicked point to the object's hotspot. */
     protected var _xoffset :Number;

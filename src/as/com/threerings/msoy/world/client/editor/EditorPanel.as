@@ -1,5 +1,7 @@
 package com.threerings.msoy.world.client.editor {
 
+import flash.events.Event;
+
 import mx.binding.utils.BindingUtils;
 
 import mx.core.UIComponent;
@@ -12,8 +14,6 @@ import mx.controls.ButtonBar;
 import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.TextInput;
-
-import mx.events.ListEvent;
 
 import com.threerings.mx.controls.CommandButton;
 
@@ -44,6 +44,12 @@ public class EditorPanel extends VBox
     /** An item list containing the items and props in the scene. */
     public var itemList :ItemList;
 
+    /** The list of items in our inventory. */
+    public var inventory :InventoryDisplay;
+
+    /** The button for adding an item from inventory. */
+    public var addButton :CommandButton;
+
     public function EditorPanel (
         ctx :MsoyContext, ctrl :EditorController, roomView :RoomView,
         editableScene :MsoyScene, items :Array)
@@ -63,7 +69,11 @@ public class EditorPanel extends VBox
             }
         }
 
-        itemList.addEventListener(ListEvent.ITEM_CLICK, itemClicked);
+        itemList.addEventListener(Event.CHANGE, function (event :Event) :void {
+            // for the love of beavis, for some reason using
+            // they keyboard to hightlight items is broken, broken, broken
+            _ctrl.itemSelectedFromList(itemList.selectedItem);
+        });
     }
 
     /**
@@ -124,7 +134,6 @@ public class EditorPanel extends VBox
             itemList.selectedItem = null;
         }
 
-        //_tabBox.selectedIndex = hasSprite ? 1 : 0;
         _deleteBtn.enabled = hasSprite;
     }
 
@@ -161,8 +170,16 @@ public class EditorPanel extends VBox
 
         _tabBox.addChild(_spriteBox);
 
-        _inventoryBox = new InventoryDisplay(_ctx);
+        _inventoryBox = new VBox();
         _inventoryBox.label = _ctx.xlate("editing", "t.inventory");
+        inventory = new InventoryDisplay(_ctx)
+        _inventoryBox.addChild(inventory);
+
+        addButton = new CommandButton(EditorController.ADD_ITEM);
+        addButton.label = _ctx.xlate("editing", "b.add_item");
+        addButton.enabled = false;
+        _inventoryBox.addChild(addButton);
+
         _tabBox.addChild(_inventoryBox);
 
         addChild(_tabBox);
@@ -283,14 +300,6 @@ public class EditorPanel extends VBox
         }, _horizon, "value");
     }
 
-    /**
-     * Handles clicks on the items in the 'placed' list.
-     */
-    protected function itemClicked (event :ListEvent) :void
-    {
-        _ctrl.itemSelectedFromList(itemList.selectedItem);
-    }
-
     protected var _ctx :MsoyContext;
 
     protected var _ctrl :EditorController;
@@ -306,7 +315,7 @@ public class EditorPanel extends VBox
     protected var _type :ComboBox;
     protected var _background :ItemReceptor;
 
-    protected var _inventoryBox :InventoryDisplay;
+    protected var _inventoryBox :VBox;
 
     protected var _name :TextInput;
     protected var _width :TextInput;
