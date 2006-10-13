@@ -12,14 +12,17 @@
   <property file="${cert_dir}/certificate.properties"/>
 
   <!-- things you probably don't want to change -->
-  <property name="src.dir"      value="src/java"/>
-  <property name="deploy.dir"   value="dist"/>
-  <property name="javadoc.dir"  value="${deploy.dir}/docs"/>
-  <property name="savedoc.dir"  value="docs"/>
-  <property name="gwtout.dir"   value="pages"/>
+  <property name="src.dir"       value="src/java"/>
+  <property name="deploy.dir"    value="dist"/>
+  <property name="javadoc.dir"   value="${deploy.dir}/docs"/>
+  <property name="savedoc.dir"   value="docs"/>
+  <property name="gwtout.dir"    value="pages"/>
 
-  <property name="projects"       value="samskivert,narya,nenya,vilya,toybox,s3lib,threerings"/>
-  <property name="libs.root"      value="."/>
+  <!-- define our subprojects for the standard build system -->
+  <property name="projects.root" value="."/>
+  <property name="projects"      value="samskivert,narya,nenya,vilya,toybox,s3lib,threerings"/>
+
+  <!-- declare the location of our various subprojects -->
   <property name="tools.dir"      value="projects/tools"/>
   <property name="samskivert.dir" value="projects/samskivert"/>
   <property name="narya.dir"      value="projects/narya"/>
@@ -30,10 +33,10 @@
   <property name="threerings.dir" value="projects/threerings"/>
 
   <!-- import useful tasks -->
-  <import file="${libs.root}/${tools.dir}/etc/build-support.xml"/>
+  <import file="${projects.root}/${tools.dir}/etc/build-support.xml"/>
 
   <!-- declare the libraries needed by the MSOY runtime -->
-  <fileset dir="${libs.root}" id="dist.libs">
+  <fileset dir="${projects.root}" id="dist.libs">
     <include name="${tools.dir}/lib/java/ant.jar"/>
     <include name="${tools.dir}/lib/java/commons-codec.jar"/>
     <include name="${tools.dir}/lib/java/commons-digester.jar"/>
@@ -51,7 +54,7 @@
   </fileset>
 
   <!-- declare the libraries needed to build toybox -->
-  <fileset dir="${libs.root}" id="toybox.libs">
+  <fileset dir="${projects.root}" id="toybox.libs">
     <include name="${tools.dir}/lib/java/ant.jar"/>
     <include name="${tools.dir}/lib/java/commons-beanutils.jar"/>
     <include name="${tools.dir}/lib/java/commons-collections.jar"/>
@@ -71,7 +74,7 @@
   </fileset>
 
   <!-- declare the libraries needed to build s3lib -->
-  <fileset dir="${libs.root}" id="s3lib.libs">
+  <fileset dir="${projects.root}" id="s3lib.libs">
     <include name="${tools.dir}/lib/java/commons-codec.jar"/>
     <include name="${tools.dir}/lib/java/commons-httpclient.jar"/>
     <include name="${tools.dir}/lib/java/commons-logging.jar"/>
