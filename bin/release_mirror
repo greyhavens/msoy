@@ -17,8 +17,8 @@ echo "** Mirroring project jars..."
 $MIRROR dist/*.jar projects/*/dist/*.jar
 
 # mirror the project jar files
-echo "** Mirroring resources..."
-$MIRROR `find rsrc -name '*.jar'`
+# echo "** Mirroring resources..."
+# $MIRROR `find rsrc -name '*.jar'`
 
 # mirror the configuration files
 echo "** Mirroring configuration files..."
