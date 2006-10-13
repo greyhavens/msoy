@@ -4,6 +4,8 @@ import flash.events.MouseEvent;
 
 import mx.binding.utils.BindingUtils;
 
+import mx.collections.ListCollectionView;
+
 import mx.containers.VBox;
 import mx.containers.ViewStack;
 
@@ -80,14 +82,23 @@ public class FurniPanel extends SpritePanel
 
         var data :Object = _destScene.dataProvider;
         for (var ii :int = 0; ii < data.length; ii++) {
-            var sbe :SceneBookmarkEntry = (data[ii] as SceneBookmarkEntry);
-            if (sbe.sceneId === targetSceneId) {
+            var o :Object = data[ii];
+            if (o is SceneBookmarkEntry) {
+                var sbe :SceneBookmarkEntry = (o as SceneBookmarkEntry);
+                if (sbe.sceneId === targetSceneId) {
+                    _destScene.selectedIndex = ii;
+                    return;
+                }
+            } else if (targetSceneId === o) {
                 _destScene.selectedIndex = ii;
                 return;
             }
         }
-        // never found
-        _destScene.text = String(targetSceneId);
+
+        // never found. setting _destScene.text should work, but it
+        // doesn't, so add the scene to the dataprovider..
+        ListCollectionView(_destScene.dataProvider).addItem(targetSceneId);
+        _destScene.selectedIndex = data.length;
     }
 
     override protected function createChildren () :void
@@ -236,10 +247,14 @@ public class FurniPanel extends SpritePanel
             }
             var item :Object = _destScene.selectedItem;
             var targetSceneId :int;
-            if (item != null) {
+            if (item is SceneBookmarkEntry) {
                 targetSceneId = (item as SceneBookmarkEntry).sceneId;
+                
+            } else if (item is int) {
+                targetSceneId = int(item);
 
             } else {
+                // parse the 'text' value
                 var val :Number = Number(o);
                 if (isNaN(val)) {
                     return;
