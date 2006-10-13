@@ -9,11 +9,13 @@ import javax.persistence.*; // for EJB3 annotations
 @Table
 public abstract class CloneRecord<T extends ItemRecord>
 {
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     public static final String ITEM_ID = "itemId";
     public static final String ORIGINAL_ITEM_ID = "originalItemId";
     public static final String OWNER_ID = "ownerId";
+    public static final String USED = "used";
+    public static final String LOCATION = "location";
 
     /** This clone's ID, unique relative all items of the same type. */
     @Id
@@ -27,4 +29,12 @@ public abstract class CloneRecord<T extends ItemRecord>
     /** The owner of this clone. */
     @Column(nullable=false)
     public int ownerId;
+
+    /** How this item is being used (see Item.USED_AS_FURNITURE). */
+    @Column(nullable=false)
+    public byte used;
+
+    /** Where it's being used. */
+    @Column(nullable=false)
+    public int location;
 }

@@ -77,6 +77,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         clone.parentId = clone.itemId;
         clone.itemId = cloneRecord.itemId;
         clone.ownerId = cloneRecord.ownerId;
+        clone.used = cloneRecord.used;
+        clone.location = cloneRecord.location;
         return clone;
     }
 
@@ -137,13 +139,21 @@ public abstract class ItemRepository<T extends ItemRecord>
         throws PersistenceException
     {
         Class<T> iclass = getItemClass();
+        Class<? extends CloneRecord<T>> cclass = getCloneClass();
         Byte utype = Byte.valueOf(usageType);
         Integer loc = Integer.valueOf(location);
 
         for (int itemId : itemIds) {
-            // HERE
-            updatePartial(iclass, itemId,
-                ItemRecord.USED, utype, ItemRecord.LOCATION, loc);
+            if (0 == updatePartial(iclass, itemId,
+                    ItemRecord.USED, utype, ItemRecord.LOCATION, loc)) {
+                // if the item didn't update, try the clone
+                if (0 == updatePartial(cclass, itemId,
+                        ItemRecord.USED, utype, ItemRecord.LOCATION, loc)) {
+                    Log.warning("Unable to find item to mark usage " +
+                        "[itemId=" + itemId + ", usageType=" + usageType +
+                        ", location=" + location + "].");
+                }
+            }
         }
     }
 
