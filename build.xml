@@ -18,6 +18,7 @@
   <property name="savedoc.dir"  value="docs"/>
   <property name="gwtout.dir"   value="pages"/>
 
+  <property name="projects"       value="samskivert,narya,nenya,vilya,toybox,s3lib,threerings"/>
   <property name="libs.root"      value="."/>
   <property name="tools.dir"      value="projects/tools"/>
   <property name="samskivert.dir" value="projects/samskivert"/>
@@ -91,63 +92,6 @@
     <pathelement location="src/java"/>
     <pathelement location="src/gwt"/>
   </path>
-
-  <!-- build all the projects -->
-  <target name="distprojects" depends="prepare">
-     <antcall target="buildproject">
-      <param name="project.dir"  value="${libs.root}/${samskivert.dir}"/>
-      <param name="project.libs" value="samskivert.libs"/>
-     </antcall>
-     <antcall target="buildproject">
-      <param name="project.dir"  value="${libs.root}/${narya.dir}"/>
-      <param name="project.libs" value="narya.libs"/>
-     </antcall>
-     <antcall target="buildproject">
-      <param name="project.dir"  value="${libs.root}/${nenya.dir}"/>
-      <param name="project.libs" value="nenya.libs"/>
-     </antcall>
-     <antcall target="buildproject">
-      <param name="project.dir"  value="${libs.root}/${vilya.dir}"/>
-      <param name="project.libs" value="vilya.libs"/>
-     </antcall>
-     <antcall target="buildproject">
-      <param name="project.dir"  value="${libs.root}/${toybox.dir}"/>
-      <param name="project.libs" value="toybox.libs"/>
-     </antcall>
-     <antcall target="buildproject">
-      <param name="project.dir"  value="${libs.root}/${s3lib.dir}"/>
-      <param name="project.libs" value="s3lib.libs"/>
-     </antcall>
-     <antcall target="buildproject">
-      <param name="project.dir"  value="${libs.root}/${threerings.dir}"/>
-      <param name="project.libs" value="threerings.libs"/>
-     </antcall>
-  </target>
-
-  <!-- clean out all the projects -->
-  <target name="cleanprojects">
-     <antcall target="cleanproject">
-      <param name="project.dir"  value="${libs.root}/${samskivert.dir}"/>
-     </antcall>
-     <antcall target="cleanproject">
-      <param name="project.dir"  value="${libs.root}/${narya.dir}"/>
-     </antcall>
-     <antcall target="cleanproject">
-      <param name="project.dir"  value="${libs.root}/${nenya.dir}"/>
-     </antcall>
-     <antcall target="cleanproject">
-      <param name="project.dir"  value="${libs.root}/${vilya.dir}"/>
-     </antcall>
-     <antcall target="cleanproject">
-      <param name="project.dir"  value="${libs.root}/${toybox.dir}"/>
-     </antcall>
-     <antcall target="cleanproject">
-      <param name="project.dir"  value="${libs.root}/${s3lib.dir}"/>
-     </antcall>
-     <antcall target="cleanproject">
-      <param name="project.dir"  value="${libs.root}/${threerings.dir}"/>
-     </antcall>
-  </target>
 
   <!-- runs the GWT debugging shell -->
   <property name="page"  value="index.html"/>
@@ -376,6 +320,7 @@
   <!-- prepares the application directories -->
   <target name="prepare">
     <mkdir dir="${deploy.dir}"/>
+    <mkdir dir="${deploy.dir}/lib"/>
     <mkdir dir="${deploy.dir}/classes"/>
     <mkdir dir="${deploy.dir}/classes/rsrc"/>
     <mkdir dir="${javadoc.dir}"/>
