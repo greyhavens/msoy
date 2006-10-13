@@ -39,10 +39,11 @@ media_dir = /export/msoy/pages/media
 
 #
 # S3-backed media storage configuration.
-#media_s3enable = true
-#media_s3bucket = media.metasoy.com
-#media_s3id = AWS ID
-#media_s3key = SECRET KEY
+
+# media_s3enable = true
+# media_s3bucket = media.metasoy.com
+# media_s3id = AWS ID
+# media_s3key = SECRET KEY
 
 #
 # This is where ToyBox looks for uploaded game jar files
