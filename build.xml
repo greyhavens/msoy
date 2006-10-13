@@ -2,9 +2,9 @@
 <project name="msoy" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name"         value="msoy"/>
-  <property name="doc.packages"     value="com.threerings.msoy.*"/>
-  <property name="copy.holder"      value="Three Rings Design, Inc."/>
+  <property name="app.name"     value="msoy"/>
+  <property name="doc.packages" value="com.threerings.msoy.*"/>
+  <property name="copy.holder"  value="Three Rings Design, Inc."/>
 
   <!-- read in our deployment properties -->
   <property file="server.properties"/>
@@ -18,21 +18,136 @@
   <property name="savedoc.dir"  value="docs"/>
   <property name="gwtout.dir"   value="pages"/>
 
+  <property name="libs.root"      value="."/>
+  <property name="tools.dir"      value="projects/tools"/>
+  <property name="samskivert.dir" value="projects/samskivert"/>
+  <property name="narya.dir"      value="projects/narya"/>
+  <property name="nenya.dir"      value="projects/nenya"/>
+  <property name="vilya.dir"      value="projects/vilya"/>
+  <property name="toybox.dir"     value="projects/toybox"/>
+  <property name="s3lib.dir"      value="projects/s3lib/java"/>
+  <property name="threerings.dir" value="projects/threerings"/>
+
+  <!-- import useful tasks -->
+  <import file="${libs.root}/${tools.dir}/etc/build-support.xml"/>
+
+  <!-- declare the libraries needed by the MSOY runtime -->
+  <fileset dir="${libs.root}" id="dist.libs">
+    <include name="${tools.dir}/lib/java/ant.jar"/>
+    <include name="${tools.dir}/lib/java/commons-codec.jar"/>
+    <include name="${tools.dir}/lib/java/commons-digester.jar"/>
+    <include name="${tools.dir}/lib/java/commons-fileupload.jar"/>
+    <include name="${tools.dir}/lib/java/commons-httpclient.jar"/>
+    <include name="${tools.dir}/lib/java/commons-io.jar"/>
+    <include name="${tools.dir}/lib/java/commons-logging.jar"/>
+    <include name="${tools.dir}/lib/java/ejb3-persistence.jar"/>
+    <include name="${tools.dir}/lib/java/getdown.jar"/>
+    <include name="${tools.dir}/lib/java/mysql-connector-java-3.1.12.jar"/>
+    <include name="${tools.dir}/lib/java/proguard.jar"/>
+    <include name="${tools.dir}/lib/java/gwt/gwt-dev-linux.jar"/>
+    <include name="${tools.dir}/lib/java/gwt/gwt-user.jar"/>
+    <include name="${tools.dir}/lib/java/jetty/lib/org.mortbay.jetty.jar"/>
+  </fileset>
+
+  <!-- declare the libraries needed to build toybox -->
+  <fileset dir="${libs.root}" id="toybox.libs">
+    <include name="${tools.dir}/lib/java/ant.jar"/>
+    <include name="${tools.dir}/lib/java/commons-beanutils.jar"/>
+    <include name="${tools.dir}/lib/java/commons-collections.jar"/>
+    <include name="${tools.dir}/lib/java/commons-digester.jar"/>
+    <include name="${tools.dir}/lib/java/commons-io.jar"/>
+    <include name="${tools.dir}/lib/java/commons-lang.jar"/>
+    <include name="${tools.dir}/lib/java/commons-logging.jar"/>
+    <include name="${tools.dir}/lib/java/getdown.jar"/>
+    <include name="${tools.dir}/lib/java/velocity-1.5-dev.jar"/>
+    <include name="${samskivert.dir}/dist/samskivert.jar"/>
+    <include name="${narya.dir}/dist/narya-base.jar"/>
+    <include name="${narya.dir}/dist/narya-distrib.jar"/>
+    <include name="${nenya.dir}/dist/nenya-media.jar"/>
+    <include name="${nenya.dir}/dist/nenya-rsrc.jar"/>
+    <include name="${vilya.dir}/dist/vilya-micasa.jar"/>
+    <include name="${vilya.dir}/dist/vilya-parlor.jar"/>
+  </fileset>
+
+  <!-- declare the libraries needed to build toybox -->
+  <fileset dir="${libs.root}" id="s3lib.libs">
+    <include name="${tools.dir}/lib/java/commons-codec.jar"/>
+    <include name="${tools.dir}/lib/java/commons-httpclient.jar"/>
+    <include name="${tools.dir}/lib/java/commons-logging.jar"/>
+    <include name="${tools.dir}/lib/java/junit-3.7.jar"/>
+  </fileset>
+
   <!-- declare our classpath -->
   <path id="classpath">
     <pathelement location="${deploy.dir}/classes"/>
-    <fileset dir="dist" includes="${app.name}-code.jar"/>
-    <fileset dir="lib" includes="*.jar"/>
-    <fileset dir="/export/tools/lib/java" includes="**/*.jar"/>
+    <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
+    <fileset dir="${deploy.dir}" includes="${app.name}-code.jar"/>
   </path>
 
   <!-- special bits used by GWT -->
   <path id="gwt.classpath">
-    <fileset dir="lib" includes="**/*.jar"/>
+    <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
     <pathelement location="${deploy.dir}/classes"/>
     <pathelement location="src/java"/>
     <pathelement location="src/gwt"/>
   </path>
+
+  <!-- build all the projects -->
+  <target name="distprojects" depends="prepare">
+     <antcall target="buildproject">
+      <param name="project.dir"  value="${libs.root}/${samskivert.dir}"/>
+      <param name="project.libs" value="samskivert.libs"/>
+     </antcall>
+     <antcall target="buildproject">
+      <param name="project.dir"  value="${libs.root}/${narya.dir}"/>
+      <param name="project.libs" value="narya.libs"/>
+     </antcall>
+     <antcall target="buildproject">
+      <param name="project.dir"  value="${libs.root}/${nenya.dir}"/>
+      <param name="project.libs" value="nenya.libs"/>
+     </antcall>
+     <antcall target="buildproject">
+      <param name="project.dir"  value="${libs.root}/${vilya.dir}"/>
+      <param name="project.libs" value="vilya.libs"/>
+     </antcall>
+     <antcall target="buildproject">
+      <param name="project.dir"  value="${libs.root}/${toybox.dir}"/>
+      <param name="project.libs" value="toybox.libs"/>
+     </antcall>
+     <antcall target="buildproject">
+      <param name="project.dir"  value="${libs.root}/${s3lib.dir}"/>
+      <param name="project.libs" value="s3lib.libs"/>
+     </antcall>
+     <antcall target="buildproject">
+      <param name="project.dir"  value="${libs.root}/${threerings.dir}"/>
+      <param name="project.libs" value="threerings.libs"/>
+     </antcall>
+  </target>
+
+  <!-- clean out all the projects -->
+  <target name="cleanprojects">
+     <antcall target="cleanproject">
+      <param name="project.dir"  value="${libs.root}/${samskivert.dir}"/>
+     </antcall>
+     <antcall target="cleanproject">
+      <param name="project.dir"  value="${libs.root}/${narya.dir}"/>
+     </antcall>
+     <antcall target="cleanproject">
+      <param name="project.dir"  value="${libs.root}/${nenya.dir}"/>
+     </antcall>
+     <antcall target="cleanproject">
+      <param name="project.dir"  value="${libs.root}/${vilya.dir}"/>
+     </antcall>
+     <antcall target="cleanproject">
+      <param name="project.dir"  value="${libs.root}/${toybox.dir}"/>
+     </antcall>
+     <antcall target="cleanproject">
+      <param name="project.dir"  value="${libs.root}/${s3lib.dir}"/>
+     </antcall>
+     <antcall target="cleanproject">
+      <param name="project.dir"  value="${libs.root}/${threerings.dir}"/>
+     </antcall>
+  </target>
 
   <!-- runs the GWT debugging shell -->
   <property name="page"  value="index.html"/>
@@ -307,14 +422,8 @@
     <delete dir="${deploy.dir}/classes/com"/>
   </target>
 
-  <!-- fully cleans out the installed application -->
-  <target name="distclean">
-    <delete dir="${deploy.dir}"/>
-    <delete><fileset dir="rsrc" includes="**/*.jar"/></delete>
-  </target>
-
   <!-- build the java class files -->
-  <target name="compile" depends="prepare">
+  <target name="compile" depends="prepare,copydistlibs">
     <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
            debug="on" optimize="off" deprecation="on">
       <classpath refid="classpath"/>
@@ -362,6 +471,15 @@
     <!-- and all of our configuration and media in another -->
     <jar file="${deploy.dir}/${app.name}-media.jar"
          basedir="${deploy.dir}/classes" includes="rsrc/**"/>
+  </target>
+
+  <!-- rebuilds all subprojects and the top-level application -->
+  <target name="distall" depends="distprojects,dist"/>
+
+  <!-- fully cleans out the installed application and all subprojects -->
+  <target name="cleanall" depends="cleanprojects">
+    <delete dir="${deploy.dir}"/>
+    <delete><fileset dir="rsrc" includes="**/*.jar"/></delete>
   </target>
 
 </project>
