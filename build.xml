@@ -46,7 +46,7 @@
     <include name="${tools.dir}/lib/java/commons-logging.jar"/>
     <include name="${tools.dir}/lib/java/ejb3-persistence.jar"/>
     <include name="${tools.dir}/lib/java/getdown.jar"/>
-    <include name="${tools.dir}/lib/java/mysql-connector-java-3.1.12.jar"/>
+    <include name="${tools.dir}/lib/java/mysql-connector-java-3.1.12-bin.jar"/>
     <include name="${tools.dir}/lib/java/proguard.jar"/>
     <include name="${tools.dir}/lib/java/gwt/gwt-dev-linux.jar"/>
     <include name="${tools.dir}/lib/java/gwt/gwt-user.jar"/>
