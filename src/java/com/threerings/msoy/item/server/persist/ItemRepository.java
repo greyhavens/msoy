@@ -35,6 +35,52 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Load an item, or a clone.
+     */
+    public T loadItem (int itemId)
+        throws PersistenceException
+    {
+        T result = loadOriginalItem(itemId);
+        if (result == null) {
+            result = loadClone(itemId);
+        }
+        return result;
+    }
+
+    /**
+     * Loads an item with the specified identifier. Returns null if no item
+     * exists with that identifier.
+     */
+    public T loadOriginalItem (int itemId)
+        throws PersistenceException
+    {
+        return load(getItemClass(), itemId);
+    }
+
+    /**
+     * Loads the clone with the given identifier. Returns null if no clone
+     * exists with that identifier.
+     */
+    public T loadClone (int cloneId) throws PersistenceException
+    {
+        CloneRecord<?> cloneRecord = load(getCloneClass(), cloneId);
+        if (cloneRecord == null) {
+            return null;
+        }
+
+        T clone = loadOriginalItem(cloneRecord.originalItemId);
+        if (clone == null) {
+            throw new PersistenceException(
+                "Clone's original does not exist [cloneId=" + cloneId +
+                ", originalItemId=" + cloneRecord.originalItemId + "]");
+        }
+        clone.parentId = clone.itemId;
+        clone.itemId = cloneRecord.itemId;
+        clone.ownerId = cloneRecord.ownerId;
+        return clone;
+    }
+
+    /**
      * Loads all original items owned by the specified member.
      */
     public Collection<T> loadOriginalItems (int ownerId)
@@ -57,45 +103,13 @@ public abstract class ItemRepository<T extends ItemRecord>
             findAll(getCloneClass(), new Key(CloneRecord.OWNER_ID, ownerId));
         Collection<T> cloneItems = new ArrayList<T>();
         for (CloneRecord<?> record : cloneRecords) {
-            T item = loadItem(record.originalItemId);
+            T item = loadOriginalItem(record.originalItemId);
             item.itemId = record.itemId;
             item.parentId = record.originalItemId;
             item.ownerId = ownerId;
             cloneItems.add(item);
         }
         return cloneItems;
-    }
-
-    /**
-     * Loads the clone with the given identifier. Returns null if no clone
-     * exists with that identifier.
-     */
-    public ItemRecord loadClone (int cloneId) throws PersistenceException
-    {
-        CloneRecord<?> cloneRecord = load(getCloneClass(), cloneId);
-        if (cloneRecord == null) {
-            return null;
-        }
-
-        ItemRecord clone = loadItem(cloneRecord.originalItemId);
-        if (clone == null) {
-            throw new PersistenceException(
-                "Clone's original does not exist [cloneId=" + cloneId +
-                ", originalItemId=" + cloneRecord.originalItemId + "]");
-        }
-        clone.parentId = clone.itemId;
-        clone.itemId = cloneRecord.itemId;
-        clone.ownerId = cloneRecord.ownerId;
-        return clone;
-    }
-
-    /**
-     * Loads an item with the specified identifier. Returns null if no item
-     * exists with that identifier.
-     */
-    public T loadItem (int itemId) throws PersistenceException
-    {
-        return load(getItemClass(), itemId);
     }
 
     /**
@@ -106,9 +120,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         // TODO: Support added to Depot to load a bunch of things at once?
         ArrayList<T> list = new ArrayList<T>();
-        Class<T> iclass = getItemClass();
         for (int id : itemIds) {
-            T result = load(iclass, id);
+            T result = loadItem(id);
             if (result != null) {
                 list.add(result);
             }
@@ -128,6 +141,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         Integer loc = Integer.valueOf(location);
 
         for (int itemId : itemIds) {
+            // HERE
             updatePartial(iclass, itemId,
                 ItemRecord.USED, utype, ItemRecord.LOCATION, loc);
         }
@@ -149,7 +163,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         Collection<? extends CatalogRecord<T>> records =
             findAll(getCatalogClass());
         for (CatalogRecord<T> record : records) {
-            record.item = loadItem(record.itemId);
+            record.item = loadOriginalItem(record.itemId);
         }
         return records;
     }
@@ -159,7 +173,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Inserts the supplied item into the database. {@link Item#itemId} will be
      * filled in as a result of this call.
      */
-    public void insertItem (T item)
+    public void insertOriginalItem (T item)
         throws PersistenceException
     {
         if (item.itemId != 0) {
@@ -172,7 +186,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Updates the supplied item in the database.
      */
-    public void updateItem (T item)
+    public void updateOriginalItem (T item)
         throws PersistenceException
     {
         update(item);

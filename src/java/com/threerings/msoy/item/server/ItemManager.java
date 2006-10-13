@@ -123,7 +123,17 @@ public class ItemManager
             public Item invokePersistResult ()
                 throws PersistenceException
             {
-                return repo.loadItem(ident.itemId).toItem();
+                ItemRecord rec = repo.loadItem(ident.itemId);
+                return (rec != null) ? rec.toItem() : null;
+            }
+
+            public void handleSuccess ()
+            {
+                if (_result != null) {
+                    super.handleSuccess();
+                } else {
+                    handleFailure(new Exception("No such item"));
+                }
             }
         });
     }
@@ -299,7 +309,7 @@ public class ItemManager
         // and insert the item; notifying the listener on success or failure
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
             public Item invokePersistResult () throws PersistenceException {
-                repo.insertItem(record);
+                repo.insertOriginalItem(record);
                 item.itemId = record.itemId;
                 return item;
             }
@@ -330,7 +340,7 @@ public class ItemManager
         // and update the item; notifying the listener on success or failure
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
             public Item invokePersistResult () throws PersistenceException {
-                repo.updateItem(record);
+                repo.updateOriginalItem(record);
                 return item;
             }
             public void handleSuccess () {
@@ -491,7 +501,7 @@ public class ItemManager
             public Item invokePersistResult () throws PersistenceException
             {
                 // load the item being purchased
-                ItemRecord item = repo.loadItem(ident.itemId);
+                ItemRecord item = repo.loadOriginalItem(ident.itemId);
                 // sanity check it
                 if (item.ownerId != -1) {
                     throw new PersistenceException(
@@ -529,7 +539,7 @@ public class ItemManager
                 throws PersistenceException
             {
                 // load a copy of the original item
-                ItemRecord listItem = repo.loadItem(ident.itemId);
+                ItemRecord listItem = repo.loadOriginalItem(ident.itemId);
                 if (listItem == null) {
                     throw new PersistenceException(
                         "Can't find object to list [item= " + ident + "]");
@@ -543,7 +553,7 @@ public class ItemManager
                 // and the iD
                 listItem.itemId = 0;
                 // then insert it as the immutable copy we list
-                repo.insertItem(listItem);
+                repo.insertOriginalItem(listItem);
                 // and finally create & insert the catalog record
                 CatalogRecord record = repo.insertListing(
                     listItem, new Timestamp(System.currentTimeMillis()));
@@ -582,7 +592,7 @@ public class ItemManager
                 _item.parentId = -1;
                 // insert it as a genuinely new item
                 _item.itemId = 0;
-                repo.insertItem(_item);
+                repo.insertOriginalItem(_item);
                 // delete the old clone
                 repo.deleteClone(ident.itemId);
                 // copy tags from the original to the new item
@@ -746,19 +756,20 @@ public class ItemManager
                 public ItemDetail invokePersistResult ()
                     throws PersistenceException {
                     ItemRecord item = repo.loadItem(ident.itemId);
-                    int originalId;
                     if (item == null) {
-                        item = repo.loadClone(ident.itemId);
-                        if (item == null) {
-                            throw new PersistenceException(
-                                "Can't find item [item=" + ident + "]");
-                        }
+                        throw new PersistenceException(
+                            "Can't find item [item=" + ident + "]");
+                    }
+                    int originalId;
+                    if (item.parentId == -1) {
                         originalId = item.parentId;
+
                     } else {
                         // make sure we're not trying to rate a mutable
                         if (item.ownerId != -1) {
                             throw new PersistenceException(
-                                "Can't rate mutable object [item=" + ident + "]");
+                                "Can't rate mutable object [item=" + ident +
+                                "]");
                         }
                         originalId = ident.itemId;
                     }
@@ -862,19 +873,12 @@ public class ItemManager
                 long now = System.currentTimeMillis();
 
                 ItemRecord item = repo.loadItem(ident.itemId);
-                int originalId;
                 if (item == null) {
-                    // it's probably a clone
-                    item = repo.loadClone(ident.itemId);
-                    if (item == null) {
-                        throw new PersistenceException(
-                            "Can't find item [item=" + ident + "]");
-                    }
-                    // in which case we fetch the original
-                    originalId = item.parentId;
-                } else {
-                    originalId = ident.itemId;
+                    throw new PersistenceException(
+                        "Can't find item [item=" + ident + "]");
                 }
+                int originalId =
+                    (item.parentId == -1) ? item.parentId : ident.itemId;
 
                 // map tag to tag id
                 TagNameRecord tag = repo.getTag(tagName);
