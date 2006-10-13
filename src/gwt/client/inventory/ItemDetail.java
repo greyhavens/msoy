@@ -79,7 +79,8 @@ public class ItemDetail extends PopupPanel
     protected void buildUI () {
         if (_item.parentId != -1) {
             addHeader("Clone Information");
-            addRow("Clone ID", String.valueOf(_item.itemId), "Owner", String.valueOf(_item.ownerId));
+            addRow("Clone ID", String.valueOf(_item.itemId),
+                   "Owner", String.valueOf(_item.ownerId));
         }
         addHeader("Generic Item Information");
         // TODO: flags should be checkboxes when we have some?
@@ -99,10 +100,14 @@ public class ItemDetail extends PopupPanel
         }
         addRow("Owner", owner, "Creator", _itemDetail.creator.memberName);
 
-        Widget thumbWidget = _item.thumbMedia == null ? new Label("(default)") :
-            ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(_item.getThumbnailMedia().getMediaPath()));
-        Widget furniWidget = _item.furniMedia == null ? new Label("(default)") :
-            ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(_item.getFurniMedia().getMediaPath()));
+        Widget thumbWidget = _item.thumbMedia == null ?
+            new Label("(default)") :
+            ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
+                _item.getThumbnailMedia().getMediaPath()));
+        Widget furniWidget = _item.furniMedia == null ?
+            new Label("(default)") :
+            ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
+                _item.getFurniMedia().getMediaPath()));
         addRow("Thumbnail", thumbWidget, "Furniture", furniWidget);
 
         // TODO: Maybe merge ItemDetail and ItemEditor, so we could put these
@@ -116,7 +121,8 @@ public class ItemDetail extends PopupPanel
 
         } else if (_item instanceof Furniture) {
             addHeader("Furniture Information");
-            addRow("Action", ((Furniture)_item).action, "Description", ((Furniture)_item).description);
+            addRow("Action", ((Furniture)_item).action,
+                "Description", ((Furniture)_item).description);
 
         } else if (_item instanceof Pet) {
             addHeader("Pet Information");
@@ -136,7 +142,8 @@ public class ItemDetail extends PopupPanel
             addHeader("Photo Information");
             MediaDesc photoMedia = ((Photo)_item).photoMedia;
             Widget photoContainer;
-            photoContainer = ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(photoMedia.getMediaPath()));
+            photoContainer = ItemContainer.createContainer(
+                MsoyEntryPoint.toMediaPath(photoMedia.getMediaPath()));
             addRow("Photo", photoContainer);
             addRow("Caption", ((Photo)_item).caption);
 
@@ -144,7 +151,8 @@ public class ItemDetail extends PopupPanel
             addHeader("Avatar Information");
             MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
             Widget avatarContainer;
-            avatarContainer = ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath()));
+            avatarContainer = ItemContainer.createContainer(
+                MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath()));
             addRow("Description", ((Avatar)_item).description);
             addRow("Avatar", avatarContainer);
 
@@ -155,7 +163,8 @@ public class ItemDetail extends PopupPanel
         addHeader("Rating Information");
 
         // we can rate this item if it's a clone, or if it's listed
-        int ratingMode = (_item.parentId != -1 || _item.ownerId == -1) ? ItemRating.MODE_BOTH : ItemRating.MODE_READ;
+        int ratingMode = (_item.parentId != -1 || _item.ownerId == -1) ?
+            ItemRating.MODE_BOTH : ItemRating.MODE_READ;
         _ratingImage = new ItemRating(_ctx, _itemDetail, ratingMode);
         addRow("Rating", _ratingImage);
 
@@ -333,7 +342,8 @@ public class ItemDetail extends PopupPanel
                         break;
                     }
                     _tagHistory.setText(tRow, 2, actionString);
-                    _tagHistory.setText(tRow, 3, history.tag == null ? "N/A" : "'" + history.tag + "'");
+                    _tagHistory.setText(
+                        tRow, 3, history.tag == null ? "N/A" : "'" + history.tag + "'");
                     tRow ++;
                 }
                 _content.add(_tagHistory, DockPanel.EAST);
@@ -359,13 +369,13 @@ public class ItemDetail extends PopupPanel
 
     protected void addRow (String head, Widget val)
     {
-        FlexCellFormatter flexCellFormatter = _table.getFlexCellFormatter();
+        FlexCellFormatter formatter = _table.getFlexCellFormatter();
         _table.setText(_row, 0, head + ":");
         _table.setWidget(_row, 1, val);
         _table.getFlexCellFormatter().setColSpan(_row, 1, 3);
         _table.getRowFormatter().setStyleName(_row, "dataRow");
-        flexCellFormatter.setAlignment(_row, 0, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
-        flexCellFormatter.setAlignment(_row, 1, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
+        formatter.setAlignment(_row, 0, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
+        formatter.setAlignment(_row, 1, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
         _row ++;
     }
 
@@ -376,16 +386,16 @@ public class ItemDetail extends PopupPanel
 
     protected void addRow (String lhead, Widget lval, String rhead, Widget rval)
     {
-        FlexCellFormatter flexCellFormatter = _table.getFlexCellFormatter();
+        FlexCellFormatter formatter = _table.getFlexCellFormatter();
         _table.setText(_row, 0, lhead + ":");
         _table.setWidget(_row, 1, lval);
         _table.setText(_row, 2, rhead + ":");
         _table.setWidget(_row, 3, rval);
         _table.getRowFormatter().setStyleName(_row, "dataRow");
-        flexCellFormatter.setAlignment(_row, 0, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
-        flexCellFormatter.setAlignment(_row, 1, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
-        flexCellFormatter.setAlignment(_row, 2, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
-        flexCellFormatter.setAlignment(_row, 3, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
+        formatter.setAlignment(_row, 0, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
+        formatter.setAlignment(_row, 1, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
+        formatter.setAlignment(_row, 2, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
+        formatter.setAlignment(_row, 3, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
         _row ++;
     }
 
