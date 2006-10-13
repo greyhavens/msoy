@@ -5,6 +5,8 @@ package com.threerings.msoy.server;
 
 import java.util.ArrayList;
 
+import java.util.logging.Level;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
@@ -241,8 +243,10 @@ public class MemberManager
 
             public void requestFailed (Exception cause)
             {
-                log.warning("Unable to retrieve user's avatar " +
-                    "[cause=" + cause + "].");
+                log.log(Level.WARNING,
+                    "Unable to retrieve user's avatar " +
+                    "[cause=" + cause + "].",
+                    cause);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
