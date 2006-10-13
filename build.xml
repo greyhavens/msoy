@@ -70,7 +70,7 @@
     <include name="${vilya.dir}/dist/vilya-parlor.jar"/>
   </fileset>
 
-  <!-- declare the libraries needed to build toybox -->
+  <!-- declare the libraries needed to build s3lib -->
   <fileset dir="${libs.root}" id="s3lib.libs">
     <include name="${tools.dir}/lib/java/commons-codec.jar"/>
     <include name="${tools.dir}/lib/java/commons-httpclient.jar"/>
