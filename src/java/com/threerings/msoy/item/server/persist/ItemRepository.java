@@ -10,16 +10,22 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.util.Tuple;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.Query;
+import com.samskivert.jdbc.depot.clause.FieldOverrideClause;
+import com.samskivert.jdbc.depot.clause.JoinClause;
+import com.samskivert.jdbc.depot.clause.OrderByClause;
+import com.samskivert.jdbc.depot.expression.ColumnExpression;
 import com.threerings.msoy.item.web.TagHistory;
 
 /**
@@ -40,11 +46,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     public T loadItem (int itemId)
         throws PersistenceException
     {
-        T result = loadOriginalItem(itemId);
-        if (result == null) {
-            result = loadClone(itemId);
-        }
-        return result;
+        // TODO: This will only work for the first two billion clones.
+        return itemId > 0 ? loadOriginalItem(itemId) : loadClone(itemId);
     }
 
     /**
@@ -88,7 +91,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     public Collection<T> loadOriginalItems (int ownerId)
         throws PersistenceException
     {
-        return findAll(getItemClass(), new Key(ItemRecord.OWNER_ID, ownerId));
+        return findAll(getItemClass(), new Key(ItemRecord.OWNER_ID, ownerId),
+                       new OrderByClause(new ColumnExpression(ItemRecord.RATING)));
     }
 
     /**
@@ -97,21 +101,22 @@ public abstract class ItemRepository<T extends ItemRecord>
     public Collection<T> loadClonedItems (int ownerId)
         throws PersistenceException
     {
-        // TODO: This will be a single join once Depot can handle it. It's a
-        // TODO: special case because itemId is ambiguous between the tables.
-        // TODO: We will still probably need to iterate afterwards, but not
-        // TODO: hit the database further.
-        Collection<? extends CloneRecord<?>> cloneRecords =
-            findAll(getCloneClass(), new Key(CloneRecord.OWNER_ID, ownerId));
-        Collection<T> cloneItems = new ArrayList<T>();
-        for (CloneRecord<?> record : cloneRecords) {
-            T item = loadOriginalItem(record.originalItemId);
-            item.itemId = record.itemId;
-            item.parentId = record.originalItemId;
-            item.ownerId = ownerId;
-            cloneItems.add(item);
-        }
-        return cloneItems;
+        ColumnExpression cloneOwner =
+            new ColumnExpression(getCloneClass(), CloneRecord.OWNER_ID);
+        return findAll(
+            getItemClass(),
+            new Key(cloneOwner, ownerId),
+            new JoinClause(
+                ItemRecord.ITEM_ID,
+                getCloneClass(),
+                CloneRecord.ORIGINAL_ITEM_ID),
+            new FieldOverrideClause(
+                ItemRecord.ITEM_ID,
+                new ColumnExpression(getCloneClass(), CloneRecord.ITEM_ID)),
+            new FieldOverrideClause(
+                ItemRecord.PARENT_ID,
+                new ColumnExpression(getItemClass(), ItemRecord.ITEM_ID)),
+            new FieldOverrideClause(ItemRecord.OWNER_ID, cloneOwner));
     }
 
     /**
@@ -289,7 +294,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         // then calculate the new average rating for this item from scratch
         final String ratingTable =
             _ctx.getMarshaller(getRatingClass()).getTableName();
-        float newRating = _ctx.invoke(new Query<Float>(_ctx, null, null) {
+        float newRating = _ctx.invoke(new Query<Float>(_ctx, getRatingClass(), null) {
             public Float invoke (Connection conn) throws SQLException {
                 PreparedStatement stmt = null;
                 try {
@@ -319,17 +324,62 @@ public abstract class ItemRepository<T extends ItemRecord>
         return newRating;
     }
 
+    /**
+     * Join TagNameRecord and TagRecord, group by tag, and count how many items
+     * reference each such tag. We should be able to do this in Depot shortly. 
+     */
+    public Iterable<Tuple<TagNameRecord, Integer>> getPopularTags (int rows)
+        throws PersistenceException
+    {
+        final String tnTable =
+            _ctx.getMarshaller(TagNameRecord.class).getTableName(); 
+        final String tTable =
+            _ctx.getMarshaller(getTagClass()).getTableName();
+
+        final String query =
+            "  select t.tagId, tn.tag, count(*) " +
+            "    from " + tTable + " t, " +
+            "         " + tnTable + " tn " +
+            "    where t.tagId = tn.tagId " +
+            " group by t.tagId " +
+            "    limit " + rows;
+
+        return _ctx.invoke(
+            new Query<List<Tuple<TagNameRecord, Integer>>>(_ctx, null, null) {
+                public List<Tuple<TagNameRecord, Integer>> invoke (
+                    Connection conn) throws SQLException {
+                    PreparedStatement stmt = conn.prepareStatement(query);
+                    try {
+                        ArrayList<Tuple<TagNameRecord, Integer>> results =
+                            new ArrayList<Tuple<TagNameRecord, Integer>>();
+                        ResultSet rs = stmt.executeQuery(query);
+                        while (rs.next()) {
+                            TagNameRecord record = new TagNameRecord();
+                            record.tagId = rs.getInt(1);
+                            record.tag = rs.getString(2);
+                            int count = rs.getInt(3);
+                            results.add(
+                                new Tuple<TagNameRecord, Integer>(record, count));
+                        }
+                        return results;
+
+                    } finally {
+                        stmt.close();
+                    }
+                }
+            });
+    }
+    
     /** Load all tag records for the given item, translated to tag names. */
     public Iterable<TagNameRecord> getTags (int itemId)
             throws PersistenceException
     {
-        ArrayList<TagNameRecord> result = new ArrayList<TagNameRecord>();
-        // TODO: This will obviously be a join as soon as Depot can do one.
-        for (TagRecord tagRecord :
-                findAll(getTagClass(), new Key(TagRecord.ITEM_ID, itemId))) {
-            result.add(getTag(tagRecord.tagId));
-        }
-        return result;
+        return findAll(TagNameRecord.class,
+                       new Key(TagRecord.ITEM_ID, itemId),
+                       new JoinClause(
+                           TagNameRecord.TAG_ID,
+                           getTagClass(),
+                           TagRecord.TAG_ID));
     }
 
     /** Load all the tag history records for a given item. */

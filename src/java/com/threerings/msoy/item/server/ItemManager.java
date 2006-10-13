@@ -634,6 +634,33 @@ public class ItemManager
             });
     }
     
+    /** Fetch the most popular tags across all items. */
+    public void getPopularTags (
+        byte type, final int rows,
+        ResultListener<HashMap<String, Integer>> listener)
+    {
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord> repo = getRepository(type, listener);
+        if (repo == null) {
+            return;
+        }
+
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<HashMap<String, Integer>>(listener) {
+                public HashMap<String, Integer> invokePersistResult ()
+                        throws PersistenceException {
+                    HashMap<String, Integer> result =
+                        new HashMap<String, Integer>();
+                    for (Tuple<TagNameRecord, Integer> tuple :
+                            repo.getPopularTags(rows)) {
+                        result.put(tuple.left.tag, tuple.right);
+                    }
+                    return result;
+                }
+            });
+
+    }
+    
     /** Fetch the tags for a given item. */
     public void getTags (final ItemIdent ident,
                          ResultListener<Collection<String>> listener)
@@ -656,7 +683,7 @@ public class ItemManager
                 }
             });
     }
-            
+    
 
     /**
      * Fetch the tagging history for a given item.

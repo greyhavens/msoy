@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
@@ -28,5 +29,11 @@ public interface CatalogService extends RemoteService
     
     /** Lists the specified item in the catalog. */
     public CatalogListing listItem (WebCreds creds, ItemIdent item)
+        throws ServiceException;
+
+    /**
+     * Fetches the N most-used tags for a given item type.
+     */
+    public HashMap getPopularTags(WebCreds creds, byte type, int rows)
         throws ServiceException;
 } 

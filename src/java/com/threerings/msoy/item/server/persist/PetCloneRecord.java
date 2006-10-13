@@ -10,7 +10,8 @@ import javax.persistence.TableGenerator;
 /** Clone records for Pet. */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="PET")
+@TableGenerator(name="cloneId", allocationSize=-1,
+                initialValue=-1, pkColumnValue="PET_CLONE")
 public class PetCloneRecord extends CloneRecord<PetRecord>
 {
 }

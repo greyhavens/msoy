@@ -16,18 +16,20 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.
      */
-    public void loadCatalog (WebCreds creds, byte type,
-                             AsyncCallback callback);
+    public void loadCatalog (WebCreds creds, byte type, AsyncCallback callback);
     
     /**
      *  The asynchronous version of {@link CatalogService#purchaseItem}
      */
-    public void purchaseItem (WebCreds creds, ItemIdent item,
-                              AsyncCallback callback);
+    public void purchaseItem (WebCreds creds, ItemIdent item, AsyncCallback callback);
     
     /**
      *  The asynchronous version of {@link CatalogService#listItem}
      */
-    public void listItem (WebCreds creds, ItemIdent item,
-                          AsyncCallback callback);
+    public void listItem (WebCreds creds, ItemIdent item, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link CatalogService#getPopularTags}.
+     */
+    public void getPopularTags (WebCreds creds, byte type, int count, AsyncCallback callback);
 }

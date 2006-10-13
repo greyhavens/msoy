@@ -10,7 +10,8 @@ import javax.persistence.TableGenerator;
 /** Clone records for Documents. */
 @Entity
 @Table
-@TableGenerator(name="itemId", allocationSize=1, pkColumnValue="DOCUMENT")
+@TableGenerator(name="cloneId", allocationSize=-1,
+                initialValue=-1, pkColumnValue="DOCUMENT_CLNE")
 public class DocumentCloneRecord extends CloneRecord<DocumentRecord>
 {
 }

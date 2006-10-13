@@ -19,7 +19,7 @@ public abstract class CloneRecord<T extends ItemRecord>
 
     /** This clone's ID, unique relative all items of the same type. */
     @Id
-    @GeneratedValue(generator="itemId", strategy=GenerationType.TABLE)
+    @GeneratedValue(generator="cloneId", strategy=GenerationType.TABLE)
     public int itemId;
 
     /** The ID of the immutable item from which this was cloned. */

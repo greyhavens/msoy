@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.samskivert.jdbc.depot.Computed;
 import com.threerings.io.Streamable;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Document;
@@ -72,7 +73,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
      * a clone. This field is not persisted to the database, but set when
      * we load a clone.
      */
-    @Transient
+    @Computed
     public int parentId = -1;
 
     /** A bit-mask of flags that we need to know about every digital item
