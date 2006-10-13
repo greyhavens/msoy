@@ -289,7 +289,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         // then calculate the new average rating for this item from scratch
         final String ratingTable =
             _ctx.getMarshaller(getRatingClass()).getTableName();
-        float newRating = _ctx.invoke(new Query<Float>(null) {
+        float newRating = _ctx.invoke(new Query<Float>(_ctx, null, null) {
             public Float invoke (Connection conn) throws SQLException {
                 PreparedStatement stmt = null;
                 try {

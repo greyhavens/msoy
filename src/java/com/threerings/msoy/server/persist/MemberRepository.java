@@ -262,7 +262,8 @@ public class MemberRepository extends DepotRepository
         _ctx.getMarshaller(FriendRecord.class);
 
         Key key = new Key("FriendsCache", memberId);
-        return _ctx.invoke(new CollectionQuery<ArrayList<FriendEntry>>(key) {
+        return _ctx.invoke(
+            new CollectionQuery<ArrayList<FriendEntry>>(_ctx, FriendRecord.class, key) {
             public ArrayList<FriendEntry> invoke (Connection conn)
                 throws SQLException
             {
