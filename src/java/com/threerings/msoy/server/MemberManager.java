@@ -241,6 +241,8 @@ public class MemberManager
 
             public void requestFailed (Exception cause)
             {
+                log.warning("Unable to retrieve user's avatar " +
+                    "[cause=" + cause + "].");
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
