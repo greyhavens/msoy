@@ -17,25 +17,22 @@ if [ -z "$JAVA_HOME" ]; then
     export JAVA_HOME=/usr/local/jdk1.5
 fi
 
-# load up some handy shell functions
-. /export/tools/lib/sh/build_helper
-
 # make sure directories are created sanely
 umask 002
 
 # "parse" our arguments
 while [ ! -z "$1" ]; do
     if [ $1 = "--update" ]; then
-        UPDATE=true
+        UPDATE="update"
     fi
     if [ $1 = "--asclient" ]; then
-        ASCLIENT=true
+        ANTARGS="$ANTARGS asclient"
     fi
     if [ $1 = "--gclient" ]; then
-        GCLIENT=true
+        ANTARGS="$ANTARGS gclient"
     fi
     if [ $1 = "--jclient" ]; then
-        JCLIENT=true
+        ANTARGS="$ANTARGS jclient"
     fi
     shift
 done
@@ -51,68 +48,8 @@ fi
 # bookkeeping
 echo "*** Starting build in $ROOT at" `date`
 
-if [ ! -z "$UPDATE" ]; then
-    # update the whole enchilada
-    echo "Updating main tree..."
-    cd $ROOT
-    svn update -q
-    if [ $? != 0 ] ; then
-        echo >&2 "*** svn update failed in" `pwd`
-        rm -f $LOCKFILE
-        exit 255
-    fi
-fi
-
-# make sure our lib/ symlinks are up to date
-cd $ROOT/lib
-make_symlinks `cat LIBS`
-
-# rebuild our libraries
-build_libraries samskivert narya nenya vilya toybox threerings s3lib
-
-# get our arch-os native library crap from narya
-if [ -d ../projects/narya/dist/lib ]; then
-    for DIR in ../projects/narya/dist/lib/*-* ; do
-        if [ -d $DIR ]; then
-            ln -sf $DIR .
-        fi
-    done
-fi
-
-# build the main thang
 cd $ROOT
-ant distclean dist
-if [ $? != 0 ]; then
-    rm -f $LOCKFILE
-    exit 255
-fi
-
-# build the ActionScript client if requested
-if [ ! -z "$ASCLIENT" ]; then
-    ant asclient
-    if [ $? != 0 ]; then
-        rm -f $LOCKFILE
-        exit 255
-    fi
-fi
-
-# build the GWT client if requested
-if [ ! -z "$GCLIENT" ]; then
-    ant gclient
-    if [ $? != 0 ]; then
-        rm -f $LOCKFILE
-        exit 255
-    fi
-fi
-
-# build the Java client if requested
-if [ ! -z "$JCLIENT" ]; then
-    ant jclient
-    if [ $? != 0 ]; then
-        rm -f $LOCKFILE
-        exit 255
-    fi
-fi
+ant $UPDATE cleanall distall $ANTARGS
 
 # remove the lockfile
 rm -f $LOCKFILE
