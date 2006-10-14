@@ -18,67 +18,56 @@
   <property name="savedoc.dir"   value="docs"/>
   <property name="gwtout.dir"    value="pages"/>
 
-  <!-- define our subprojects for the standard build system -->
+  <!-- define our subprojects and include the standard build system -->
+  <property name="libs.dir"      value="project/tools/lib/java"/>
   <property name="projects.root" value="."/>
-  <property name="projects"      value="samskivert,narya,nenya,vilya,toybox,s3lib,threerings"/>
-
-  <!-- declare the location of our various subprojects -->
-  <property name="tools.dir"      value="projects/tools"/>
-  <property name="samskivert.dir" value="projects/samskivert"/>
-  <property name="narya.dir"      value="projects/narya"/>
-  <property name="nenya.dir"      value="projects/nenya"/>
-  <property name="vilya.dir"      value="projects/vilya"/>
-  <property name="toybox.dir"     value="projects/toybox"/>
-  <property name="s3lib.dir"      value="projects/s3lib/java"/>
-  <property name="threerings.dir" value="projects/threerings"/>
-
-  <!-- import useful tasks -->
-  <import file="${projects.root}/${tools.dir}/etc/build-support.xml"/>
+  <property name="projects"      value="samskivert,narya,nenya,vilya,toybox,s3lib/java,threerings"/>
+  <import file="${projects.root}/projects/tools/etc/build-support.xml"/>
 
   <!-- declare the libraries needed by the MSOY runtime -->
   <fileset dir="${projects.root}" id="dist.libs">
-    <include name="${tools.dir}/lib/java/ant.jar"/>
-    <include name="${tools.dir}/lib/java/commons-codec.jar"/>
-    <include name="${tools.dir}/lib/java/commons-digester.jar"/>
-    <include name="${tools.dir}/lib/java/commons-fileupload.jar"/>
-    <include name="${tools.dir}/lib/java/commons-httpclient.jar"/>
-    <include name="${tools.dir}/lib/java/commons-io.jar"/>
-    <include name="${tools.dir}/lib/java/commons-logging.jar"/>
-    <include name="${tools.dir}/lib/java/ejb3-persistence.jar"/>
-    <include name="${tools.dir}/lib/java/getdown.jar"/>
-    <include name="${tools.dir}/lib/java/mysql-connector-java-3.1.12-bin.jar"/>
-    <include name="${tools.dir}/lib/java/proguard.jar"/>
-    <include name="${tools.dir}/lib/java/gwt/gwt-dev-linux.jar"/>
-    <include name="${tools.dir}/lib/java/gwt/gwt-user.jar"/>
-    <include name="${tools.dir}/lib/java/jetty/lib/org.mortbay.jetty.jar"/>
+    <include name="${libs.dir}/ant.jar"/>
+    <include name="${libs.dir}/commons-codec.jar"/>
+    <include name="${libs.dir}/commons-digester.jar"/>
+    <include name="${libs.dir}/commons-fileupload.jar"/>
+    <include name="${libs.dir}/commons-httpclient.jar"/>
+    <include name="${libs.dir}/commons-io.jar"/>
+    <include name="${libs.dir}/commons-logging.jar"/>
+    <include name="${libs.dir}/ejb3-persistence.jar"/>
+    <include name="${libs.dir}/getdown.jar"/>
+    <include name="${libs.dir}/mysql-connector-java-3.1.12-bin.jar"/>
+    <include name="${libs.dir}/proguard.jar"/>
+    <include name="${libs.dir}/gwt/gwt-dev-linux.jar"/>
+    <include name="${libs.dir}/gwt/gwt-user.jar"/>
+    <include name="${libs.dir}/jetty/lib/org.mortbay.jetty.jar"/>
   </fileset>
 
   <!-- declare the libraries needed to build toybox -->
   <fileset dir="${projects.root}" id="toybox.libs">
-    <include name="${tools.dir}/lib/java/ant.jar"/>
-    <include name="${tools.dir}/lib/java/commons-beanutils.jar"/>
-    <include name="${tools.dir}/lib/java/commons-collections.jar"/>
-    <include name="${tools.dir}/lib/java/commons-digester.jar"/>
-    <include name="${tools.dir}/lib/java/commons-io.jar"/>
-    <include name="${tools.dir}/lib/java/commons-lang.jar"/>
-    <include name="${tools.dir}/lib/java/commons-logging.jar"/>
-    <include name="${tools.dir}/lib/java/getdown.jar"/>
-    <include name="${tools.dir}/lib/java/velocity-1.5-dev.jar"/>
-    <include name="${samskivert.dir}/dist/samskivert.jar"/>
-    <include name="${narya.dir}/dist/narya-base.jar"/>
-    <include name="${narya.dir}/dist/narya-distrib.jar"/>
-    <include name="${nenya.dir}/dist/nenya-media.jar"/>
-    <include name="${nenya.dir}/dist/nenya-rsrc.jar"/>
-    <include name="${vilya.dir}/dist/vilya-micasa.jar"/>
-    <include name="${vilya.dir}/dist/vilya-parlor.jar"/>
+    <include name="${libs.dir}/ant.jar"/>
+    <include name="${libs.dir}/commons-beanutils.jar"/>
+    <include name="${libs.dir}/commons-collections.jar"/>
+    <include name="${libs.dir}/commons-digester.jar"/>
+    <include name="${libs.dir}/commons-io.jar"/>
+    <include name="${libs.dir}/commons-lang.jar"/>
+    <include name="${libs.dir}/commons-logging.jar"/>
+    <include name="${libs.dir}/getdown.jar"/>
+    <include name="${libs.dir}/velocity-1.5-dev.jar"/>
+    <include name="${project.dir}/samskivert/dist/samskivert.jar"/>
+    <include name="${project.dir}/narya/dist/narya-base.jar"/>
+    <include name="${project.dir}/narya/dist/narya-distrib.jar"/>
+    <include name="${project.dir}/nenya/dist/nenya-media.jar"/>
+    <include name="${project.dir}/nenya/dist/nenya-rsrc.jar"/>
+    <include name="${project.dir}/vilya/dist/vilya-micasa.jar"/>
+    <include name="${project.dir}/vilya/dist/vilya-parlor.jar"/>
   </fileset>
 
   <!-- declare the libraries needed to build s3lib -->
   <fileset dir="${projects.root}" id="s3lib.libs">
-    <include name="${tools.dir}/lib/java/commons-codec.jar"/>
-    <include name="${tools.dir}/lib/java/commons-httpclient.jar"/>
-    <include name="${tools.dir}/lib/java/commons-logging.jar"/>
-    <include name="${tools.dir}/lib/java/junit-3.7.jar"/>
+    <include name="${libs.dir}/commons-codec.jar"/>
+    <include name="${libs.dir}/commons-httpclient.jar"/>
+    <include name="${libs.dir}/commons-logging.jar"/>
+    <include name="${libs.dir}/junit-3.7.jar"/>
   </fileset>
 
   <!-- declare our classpath -->
