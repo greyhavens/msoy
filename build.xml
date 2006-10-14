@@ -42,26 +42,6 @@
     <include name="${libs.dir}/jetty/lib/org.mortbay.jetty.jar"/>
   </fileset>
 
-  <!-- declare the libraries needed to build toybox -->
-  <fileset dir="${projects.root}" id="toybox.libs">
-    <include name="${libs.dir}/ant.jar"/>
-    <include name="${libs.dir}/commons-beanutils.jar"/>
-    <include name="${libs.dir}/commons-collections.jar"/>
-    <include name="${libs.dir}/commons-digester.jar"/>
-    <include name="${libs.dir}/commons-io.jar"/>
-    <include name="${libs.dir}/commons-lang.jar"/>
-    <include name="${libs.dir}/commons-logging.jar"/>
-    <include name="${libs.dir}/getdown.jar"/>
-    <include name="${libs.dir}/velocity-1.5-dev.jar"/>
-    <include name="${project.dir}/samskivert/dist/samskivert.jar"/>
-    <include name="${project.dir}/narya/dist/narya-base.jar"/>
-    <include name="${project.dir}/narya/dist/narya-distrib.jar"/>
-    <include name="${project.dir}/nenya/dist/nenya-media.jar"/>
-    <include name="${project.dir}/nenya/dist/nenya-rsrc.jar"/>
-    <include name="${project.dir}/vilya/dist/vilya-micasa.jar"/>
-    <include name="${project.dir}/vilya/dist/vilya-parlor.jar"/>
-  </fileset>
-
   <!-- declare our classpath -->
   <path id="classpath">
     <pathelement location="${deploy.dir}/classes"/>
