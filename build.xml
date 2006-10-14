@@ -62,14 +62,6 @@
     <include name="${project.dir}/vilya/dist/vilya-parlor.jar"/>
   </fileset>
 
-  <!-- declare the libraries needed to build s3lib -->
-  <fileset dir="${projects.root}" id="s3lib.libs">
-    <include name="${libs.dir}/commons-codec.jar"/>
-    <include name="${libs.dir}/commons-httpclient.jar"/>
-    <include name="${libs.dir}/commons-logging.jar"/>
-    <include name="${libs.dir}/junit-3.7.jar"/>
-  </fileset>
-
   <!-- declare our classpath -->
   <path id="classpath">
     <pathelement location="${deploy.dir}/classes"/>
