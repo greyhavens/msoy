@@ -23,6 +23,12 @@
   <property name="projects.root" value="."/>
   <property name="projects"      value="samskivert,narya,nenya,vilya,toybox,s3lib/java,threerings"/>
   <import file="${projects.root}/projects/tools/etc/build-support.xml"/>
+  <fileset dir="." id="check.paths">
+    <include name="projects/s3lib/java/src/java/**/*.java"/> 
+    <include name="projects/toybox/src/java/**/*.java"/> 
+    <include name="src/java/**/*.java"/> 
+    <include name="src/gwt/**/*.java"/> 
+  </fileset>
 
   <!-- declare the libraries needed by the MSOY runtime -->
   <fileset dir="${projects.root}" id="dist.libs">
