@@ -45,6 +45,7 @@
     <include name="${libs.dir}/proguard.jar"/>
     <include name="${libs.dir}/gwt/gwt-dev-linux.jar"/>
     <include name="${libs.dir}/gwt/gwt-user.jar"/>
+    <include name="${libs.dir}/gwt/gwt-widgets-0.1.1.jar"/>
     <include name="${libs.dir}/jetty/lib/org.mortbay.jetty.jar"/>
   </fileset>
 
