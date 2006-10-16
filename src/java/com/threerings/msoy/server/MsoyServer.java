@@ -52,6 +52,7 @@ import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.data.RoomConfig;
 
 import com.threerings.msoy.person.server.persist.PersonPageRepository;
+import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.persist.ProfileRepository;
@@ -188,13 +189,14 @@ public class MsoyServer extends WhirledServer
         PersonPageRepository ppageRepo = new PersonPageRepository();
         memberRepo = new MemberRepository(conProv);
         ProfileRepository profileRepo = new ProfileRepository(conProv);
-
+        GroupRepository groupRepo = new GroupRepository(conProv);
+        
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), true);
         parlorMan.init(invmgr, plreg);
         sceneRepo = (MsoySceneRepository) _screp;
-        memberMan.init(memberRepo, profileRepo);
+        memberMan.init(memberRepo, profileRepo, groupRepo);
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
         lobbyReg.init(invmgr);

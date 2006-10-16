@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 
 public class MemberGName 
-    implements IsSerializable
+    implements IsSerializable, Cloneable
 {
     /** This member's name. */
     public String memberName;

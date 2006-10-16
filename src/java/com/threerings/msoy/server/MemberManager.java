@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.server;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 import java.util.logging.Level;
 
@@ -35,8 +37,14 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupMembership;
+import com.threerings.msoy.web.data.MemberGName;
 import com.threerings.msoy.web.data.Profile;
 
+import com.threerings.msoy.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.server.persist.GroupRecord;
+import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.ProfileRepository;
@@ -52,11 +60,12 @@ public class MemberManager
     /**
      * Prepares our member manager for operation.
      */
-    public void init (
-        MemberRepository memberRepo, ProfileRepository profileRepo)
+    public void init (MemberRepository memberRepo, ProfileRepository profileRepo,
+                      GroupRepository groupRepo)
     {
         _memberRepo = memberRepo;
         _profileRepo = profileRepo;
+        _groupRepo = groupRepo;
         MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), true);
     }
 
@@ -335,8 +344,7 @@ public class MemberManager
                     user.avatar, avatar, new ResultListener() {
                         public void requestCompleted (Object result) {}
                         public void requestFailed (Exception cause) {
-                            log.warning("Unable to update usage " +
-                                "from an avatar change.");
+                            log.warning("Unable to update usage from an avatar change.");
                         }
                     });
                 user.setAvatar(avatar);
@@ -353,10 +361,143 @@ public class MemberManager
         });
 
     }
+    
+    /**
+     * Creates a new group record in the database and return a {@link Group} for
+     * it. This method assigns the group a new, unique id.
+     */
+    public void createGroup (final Group groupDef, ResultListener<Group> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Group>(listener) {
+            public Group invokePersistResult () throws PersistenceException {
+                GroupRecord record = new GroupRecord();
+                record.name = groupDef.name;
+                record.charter = groupDef.charter;
+                record.logoMimeType = groupDef.logoMimeType;
+                record.logoMediaHash = groupDef.logoMediaHash;
+                record.creatorId = groupDef.creatorId;
+                record.creationDate = new Timestamp(groupDef.creationDate.getTime());
+                record.policy = groupDef.policy;
+                _groupRepo.createGroup(record);
+                return record.toGroup();
+            }
+        });
+    }
+
+    /**
+     * Fetches the members of a given group, as {@link GroupMembership} records. This method
+     * does not distinguish between a nonexistent group and a group without members;
+     * both situations yield empty collections.
+     */
+    public void getGroupMembers (final int groupId, ResultListener<List<GroupMembership>> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<GroupMembership>>(listener) {
+            public List<GroupMembership> invokePersistResult () throws PersistenceException {
+                List<GroupMembership> result = new ArrayList<GroupMembership>();
+                GroupRecord gRec = _groupRepo.loadGroup(groupId); 
+                for (GroupMembershipRecord gmRec : _groupRepo.getMembers(groupId)) {
+                    MemberRecord mRec = _memberRepo.loadMember(gmRec.memberId);
+                    GroupMembership gm = new GroupMembership();
+                    gm.member = new MemberGName();
+                    gm.member.memberId = mRec.memberId;
+                    gm.member.memberName = mRec.name;
+                    gm.groupId = groupId;
+                    gm.groupName = gRec.name;
+                    result.add(gm);
+                }
+                return result;
+            }
+        });
+    }
+
+    /**
+     * Fetches the groups a given person is a member of, as {@link GroupMembership} records.
+     * This method does not distinguish between a nonexistent person, and a person who is
+     * a member of no groups; both situations yield empty collections.
+     */
+    public void getMemberGroups (final int memberId,
+                                 ResultListener<List<GroupMembership>> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<GroupMembership>>(listener) {
+            public List<GroupMembership> invokePersistResult () throws PersistenceException {
+                MemberRecord mRec = _memberRepo.loadMember(memberId);
+                List<GroupMembership> result = new ArrayList<GroupMembership>();
+                for (GroupMembershipRecord gmRec : _groupRepo.getGroups(memberId)) {
+                    GroupMembership gm = new GroupMembership();
+                    gm.member = new MemberGName(mRec.name, mRec.memberId);
+                    GroupRecord gRec = _groupRepo.loadGroup(gmRec.groupId);
+                    gm.groupId = gmRec.groupId;
+                    gm.groupName = gRec.name;
+                    result.add(gm);
+                }
+                return result;
+            }
+        });
+
+    }
+
+    /**
+     * Cancels the given person's membership in the given group.
+     */
+    public void leaveGroup (final int groupId, final int memberId, ResultListener<Void> listener)
+        throws PersistenceException
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
+            public Void invokePersistResult() throws PersistenceException {
+                _groupRepo.leaveGroup(groupId, memberId);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Makes the given person a member of the given group, of the given rank.
+     */
+    public void joinGroup (final int groupId, final int memberId, final byte rank,
+                           ResultListener<Void> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
+            public Void invokePersistResult() throws PersistenceException {
+                _groupRepo.joinGroup(groupId, memberId, rank);
+                return null;
+            }
+        });        
+    }
+
+    /**
+     * Returns the rank of a group member, or null.
+     */
+    public void getRank (final int groupId, final int memberId, ResultListener<Byte> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Byte>(listener) {
+            public Byte invokePersistResult() throws PersistenceException {
+                GroupMembershipRecord gmr = _groupRepo.getMembership(groupId, memberId);
+                return gmr != null ? gmr.rank : null;
+            }
+        });
+    }
+
+    /**
+     * Sets the rank of a group member. Throws an exception if there is no
+     * such person, no such group, or the person is not a member of the group.
+     */
+    public void setRank (final int groupId, final int memberId, final byte newRank,
+                         ResultListener<Void> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
+            public Void invokePersistResult() throws PersistenceException {
+                _groupRepo.setRank(groupId, memberId, newRank);
+                return null;
+            }
+        });
+    }
 
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
 
     /** Provides access to persistent profile data. */
     protected ProfileRepository _profileRepo;
+    
+    /** Provides access to persistent group data. */
+    protected GroupRepository _groupRepo;
 }

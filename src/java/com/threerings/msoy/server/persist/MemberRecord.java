@@ -16,6 +16,7 @@ import com.threerings.msoy.data.MemberName;
  */
 @Entity
 public class MemberRecord
+    implements Cloneable
 {
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */

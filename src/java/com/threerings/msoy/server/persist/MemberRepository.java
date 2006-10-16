@@ -11,7 +11,6 @@ import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
@@ -20,8 +19,6 @@ import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.util.StringUtil;
-
-import com.threerings.util.Name;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberName;
