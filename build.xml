@@ -389,8 +389,8 @@
          basedir="${deploy.dir}/classes" includes="rsrc/**"/>
   </target>
 
-  <!-- rebuilds all subprojects and the top-level application -->
-  <target name="distall" depends="distprojects,dist"/>
+  <!-- rebuilds all subprojects and the whole top-level distribution -->
+  <target name="distall" depends="distprojects,dist,asclient,gclient,jclient"/>
 
   <!-- fully cleans out the installed application and all subprojects -->
   <target name="cleanall" depends="cleanprojects">

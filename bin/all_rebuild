@@ -25,15 +25,6 @@ while [ ! -z "$1" ]; do
     if [ $1 = "--update" ]; then
         UPDATE="update"
     fi
-    if [ $1 = "--asclient" ]; then
-        ANTARGS="$ANTARGS asclient"
-    fi
-    if [ $1 = "--gclient" ]; then
-        ANTARGS="$ANTARGS gclient"
-    fi
-    if [ $1 = "--jclient" ]; then
-        ANTARGS="$ANTARGS jclient"
-    fi
     shift
 done
 
@@ -49,7 +40,7 @@ fi
 echo "*** Starting build in $ROOT at" `date`
 
 cd $ROOT
-ant $UPDATE cleanall distall $ANTARGS
+ant $UPDATE cleanall distall
 
 # remove the lockfile
 rm -f $LOCKFILE
