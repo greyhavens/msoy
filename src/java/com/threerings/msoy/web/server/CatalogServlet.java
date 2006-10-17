@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -26,7 +27,7 @@ public class CatalogServlet extends RemoteServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public ArrayList loadCatalog (WebCreds creds, byte type)
+    public List loadCatalog (WebCreds creds, byte type)
         throws ServiceException
     {
         // TODO: validate this user's creds
@@ -39,10 +40,9 @@ public class CatalogServlet extends RemoteServiceServlet
         }
 
         // load their catalog via the catalog manager
-        ServletWaiter<ArrayList<CatalogListing>> waiter =
-            new ServletWaiter<ArrayList<CatalogListing>>(
-                "loadCatalog[" + creds.memberId + ", " + type + "]");
-        MsoyServer.itemMan.loadCatalog(creds.memberId, type, waiter);
+        ServletWaiter<List<CatalogListing>> waiter =
+            new ServletWaiter<List<CatalogListing>>("loadCatalog[" + type + "]");
+        MsoyServer.itemMan.loadCatalog(type, waiter);
         return waiter.waitForResult();
     }
 

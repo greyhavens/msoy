@@ -5,6 +5,7 @@ package com.threerings.msoy.web.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
@@ -20,7 +21,7 @@ import com.threerings.msoy.web.data.WebCreds;
 public interface CatalogService extends RemoteService
 {
     /** Loads all catalogue items of the specified type. */
-    public ArrayList loadCatalog (WebCreds creds, byte type)
+    public List loadCatalog (WebCreds creds, byte type)
         throws ServiceException;
     
     /** Purchases the item of the specified id and type. */

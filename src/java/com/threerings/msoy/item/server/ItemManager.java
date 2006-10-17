@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -458,8 +459,7 @@ public class ItemManager
     /**
      * Fetches the entire catalog of listed items of the given type.
      */
-    public void loadCatalog (int memberId, byte type,
-                             ResultListener<ArrayList<CatalogListing>> listener)
+    public void loadCatalog (byte type, ResultListener<List<CatalogListing>> listener)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = getRepository(type, listener);
@@ -469,12 +469,11 @@ public class ItemManager
 
         // and load the catalog
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<ArrayList<CatalogListing>>(listener) {
-                public ArrayList<CatalogListing> invokePersistResult ()
+            new RepositoryListenerUnit<List<CatalogListing>>(listener) {
+                public List<CatalogListing> invokePersistResult ()
                     throws PersistenceException
                 {
-                    ArrayList<CatalogListing> list =
-                        new ArrayList<CatalogListing>();
+                    List<CatalogListing> list = new ArrayList<CatalogListing>();
                     for (CatalogRecord record : repo.loadCatalog()) {
                         list.add(record.toListing());
                     }
