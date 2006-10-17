@@ -702,7 +702,7 @@ public class MsoySceneRepository extends SimpleRepository
             model.addFurni(p2);
 
             p2 = new FurniData();
-            p2.id = 51;
+            p2.id = 54;
             p2.actionType = FurniData.ACTION_PORTAL;
             p2.actionData = "5:51";
             p2.loc = new MsoyLocation(.75, 1, .5, 0);
