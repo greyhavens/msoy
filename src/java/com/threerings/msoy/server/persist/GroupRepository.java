@@ -45,12 +45,12 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Modify the specified group record with field/value pairs, e.g.
-     *     modifyGroup(groupId,
+     * Update the specified group record with field/value pairs, e.g.
+     *     updateGroup(groupId,
      *                 GroupRecord.CHARTER, newCharter,
      *                 GroupRecord.POLICY, Group.EXCLUSIVE);
      */
-    public void modifyGroup (int groupId, Object... fieldValues)
+    public void updateGroup (int groupId, Object... fieldValues)
         throws PersistenceException
     {
         int rows = updatePartial(GroupRecord.class, groupId, fieldValues);

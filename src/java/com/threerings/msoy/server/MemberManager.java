@@ -363,6 +363,42 @@ public class MemberManager
     }
     
     /**
+     * Updates a group record in the database with new data. Only non-null/non-zero parameters
+     * are used for the update, and data is not read back from the database. This is a low-level
+     * method without privilige checks; it's up to the callers to secure it.
+     */
+    public void updateGroup (final int groupId, final String name, final String charter,
+                             final MediaDesc logo, final byte policy,
+                             ResultListener<Void> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
+            public Void invokePersistResult () throws PersistenceException {
+                List<Object> argList = new ArrayList<Object>();
+                if (name != null) {
+                    argList.add(GroupRecord.NAME);
+                    argList.add(name);
+                }
+                if (charter != null) {
+                    argList.add(GroupRecord.CHARTER);
+                    argList.add(charter);
+                }
+                if (logo != null) {
+                    argList.add(GroupRecord.LOGO_MIME_TYPE);
+                    argList.add(logo.mimeType);
+                    argList.add(GroupRecord.LOGO_MEDIA_HASH);
+                    argList.add(logo.hash);
+                }
+                if (policy > 0) {
+                    argList.add(GroupRecord.POLICY);
+                    argList.add(policy);
+                }
+                _groupRepo.updateGroup(groupId, argList.toArray());
+                return null;
+            }
+        });
+    }
+
+    /**
      * Creates a new group record in the database and return a {@link Group} for
      * it. This method assigns the group a new, unique id.
      */
@@ -370,19 +406,23 @@ public class MemberManager
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Group>(listener) {
             public Group invokePersistResult () throws PersistenceException {
-                GroupRecord record = new GroupRecord();
-                record.name = groupDef.name;
-                record.charter = groupDef.charter;
-                record.logoMimeType = groupDef.logoMimeType;
-                record.logoMediaHash = groupDef.logoMediaHash;
-                record.creatorId = groupDef.creatorId;
-                record.creationDate = new Timestamp(groupDef.creationDate.getTime());
-                record.policy = groupDef.policy;
-                _groupRepo.createGroup(record);
-                return record.toGroup();
+                GroupRecord gRec = new GroupRecord();
+                gRec.name = groupDef.name;
+                gRec.charter = groupDef.charter;
+                gRec.logoMimeType = groupDef.logo.mimeType;
+                gRec.logoMediaHash = groupDef.logo.hash;
+                gRec.creatorId = groupDef.creatorId;
+                gRec.creationDate = new Timestamp(groupDef.creationDate.getTime());
+                gRec.policy = groupDef.policy;
+                _groupRepo.createGroup(gRec);
+
+                _groupRepo.joinGroup(gRec.groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
+
+                return gRec.toGroup();
             }
         });
     }
+    
 
     /**
      * Fetches the members of a given group, as {@link GroupMembership} records. This method

@@ -12,6 +12,9 @@ import com.threerings.io.Streamable;
 public class GroupMembership
     implements Streamable, IsSerializable
 {
+    public static final byte RANK_MEMBER = 1;
+    public static final byte RANK_MANAGER = 2;
+    
     /** The name and id of the member of the group. */
     public MemberGName member;
 

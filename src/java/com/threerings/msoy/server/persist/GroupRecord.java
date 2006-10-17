@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import com.samskivert.util.StringUtil;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Group;
 
 /**
@@ -75,8 +76,7 @@ public class GroupRecord
         group.groupId = groupId;
         group.name = name;
         group.charter = charter;
-        group.logoMimeType = logoMimeType;
-        group.logoMediaHash = logoMediaHash.clone();
+        group.logo = new MediaDesc(logoMediaHash.clone(), logoMimeType);
         group.creatorId = creatorId;
         group.creationDate = new Date(creationDate.getTime());
         group.policy = policy;

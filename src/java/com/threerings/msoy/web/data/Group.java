@@ -7,6 +7,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Contains the details of a group.
@@ -27,11 +28,7 @@ public class Group
     /** The group's charter, or null if one has yet to be set. */
     public String charter;
 
-    /** The MIME type of this group's logo. */
-    public byte logoMimeType;
-
-    /** A hash code identifying the media for this group's logo. */
-    public byte[] logoMediaHash;
+    public MediaDesc logo;
 
     /** The member id of the person who created the group. */
     public int creatorId;
