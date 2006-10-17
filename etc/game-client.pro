@@ -3,17 +3,17 @@
 #
 # Proguard configuration file for the Java game client
 
--injars ../lib/commons-io.jar(!META-INF/*)
--injars ../lib/getdown.jar(!META-INF/*,!**/tools/**)
--injars ../lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../lib/narya-distrib.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../lib/nenya-media.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../lib/vilya-parlor.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../lib/vilya-whirled.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../lib/samskivert.jar(!META-INF/*,!**/velocity/**,!**/xml/**)
--injars ../lib/toybox.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
--injars ../lib/gwt-user.jar(**/user/client/rpc/**)
+-injars ../dist/lib/commons-io.jar(!META-INF/*)
+-injars ../dist/lib/getdown.jar(!META-INF/*,!**/tools/**)
+-injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/narya-distrib.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/nenya-media.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/vilya-parlor.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/vilya-whirled.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/samskivert.jar(!META-INF/*,!**/velocity/**,!**/xml/**)
+-injars ../dist/lib/toybox.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
+-injars ../dist/lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(
   !META-INF/*,!**/tools/**,!**/server/**,!**/world/**,!**threerings/web/**,
   !**/xml/**,!com/threerings/io/**)

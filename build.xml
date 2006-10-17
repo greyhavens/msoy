@@ -202,9 +202,9 @@
   </target>
 
   <!-- builds and signs our Java game client -->
-  <target name="jclient">
+  <target name="jclient" depends="dist">
     <taskdef resource="proguard/ant/task.properties"
-             classpath="lib/proguard.jar"/>
+             classpath="${libs.dir}/proguard.jar"/>
     <!-- On Mac OS X, rt.jar is cleverly renamed classes.jar -->
     <condition property="isDarwin">
       <and>
