@@ -34,6 +34,7 @@ import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Pet;
@@ -41,9 +42,9 @@ import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.web.client.WebContext;
 
-public class ItemDetail extends PopupPanel
+public class ItemView extends PopupPanel
 {
-    public ItemDetail (WebContext ctx, Item item)
+    public ItemView (WebContext ctx, Item item)
     {
         super(true);
         _item = item;
@@ -427,8 +428,7 @@ public class ItemDetail extends PopupPanel
     protected WebContext _ctx;
     protected ItemIdent _itemId;
     protected Item _item;
-    // TODO: We need a name conflict resolution...
-    protected com.threerings.msoy.item.web.ItemDetail _itemDetail;
+    protected ItemDetail _itemDetail;
 
     protected FlexTable _table;
     protected int _row;

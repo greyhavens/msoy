@@ -130,7 +130,7 @@ public class ItemContainer extends VerticalPanel
         button = new Button("Details ...");
         button.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                new ItemDetail(_panel._ctx, _item).show();
+                new ItemView(_panel._ctx, _item).show();
             }
         });
         buttons.add(button);
