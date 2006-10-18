@@ -31,7 +31,7 @@ public class FurniData
     public static const ACTION_GAME :int = 2;
 
     /** An actionType indicating that we're a portal.
-        actionData = "<targetSceneId>:<targetPortalId>" */
+        actionData = "<targetSceneId>:<targetSceneName>" */
     public static const ACTION_PORTAL :int = 3;
 
     /** The id of this piece of furni. */
