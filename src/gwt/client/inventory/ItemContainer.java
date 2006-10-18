@@ -40,7 +40,7 @@ public class ItemContainer extends VerticalPanel
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
             return WidgetUtil.createFlashMovie(
                 // TODO: allow passing -1 for width
-                "", path, THUMB_HEIGHT, THUMB_HEIGHT);
+                "", path, THUMB_HEIGHT, THUMB_HEIGHT, null);
 
         case MediaDesc.IMAGE_PNG:
         case MediaDesc.IMAGE_JPEG:

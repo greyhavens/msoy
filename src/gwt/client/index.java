@@ -54,7 +54,8 @@ public class index extends MsoyEntryPoint
                     _client = WidgetUtil.createFlashMovie(
                         // TODO: fix height arg to be 100%
                         // (doesn't currently work)
-                        "asclient", "/clients/game-client.swf", "100%", "600");
+                        "asclient", "/clients/game-client.swf", "100%", "600",
+                        null);
                 }
                 RootPanel.get("content").add(_client);
             }

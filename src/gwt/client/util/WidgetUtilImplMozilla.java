@@ -14,13 +14,19 @@ public class WidgetUtilImplMozilla extends WidgetUtilImpl
      * Creates the HTML needed to display a Flash movie.
      */
     public HTML createFlashMovie (
-        String ident, String movie, String width, String height)
+        String ident, String movie, String width, String height,
+        String flashVars)
     {
+        String params = "";
+        if (flashVars != null) {
+            params += "FlashVars=\"" + flashVars + "\" "; // trailing space
+        }
+
         return new HTML(
             "<embed type=\"application/x-shockwave-flash\" " +
             "pluginspage=\"http://www.macromedia.com/go/getflashplayer\" " +
             "width=\"" + width + "\" height=\"" + height + "\" " +
-            "src=\"" + movie + "\"/>");
+            "src=\"" + movie + "\" " + params + "/>");
     }
 
     /**

@@ -16,21 +16,30 @@ public class WidgetUtil
     /**
      * Creates the HTML to display a Flash movie for the browser on which we're
      * running.
+     *
+     * @param flashVars a pre-URLEncoded string containing flash variables,
+     *        or null.
+     *        http://www.adobe.com/cfusion/knowledgebase/index.cfm?id=tn_16417
      */
     public static HTML createFlashMovie (
-        String ident, String movie, int width, int height)
+        String ident, String movie, int width, int height, String flashVars)
     {
-        return createFlashMovie(ident, movie, ""+width, ""+height);
+        return createFlashMovie(ident, movie, ""+width, ""+height, flashVars);
     }
 
     /**
      * Creates the HTML to display a Flash movie for the browser on which we're
      * running.
+     *
+     * @param flashVars a pre-URLEncoded string containing flash variables,
+     *        or null.
+     *        http://www.adobe.com/cfusion/knowledgebase/index.cfm?id=tn_16417
      */
     public static HTML createFlashMovie (
-        String ident, String movie, String width, String height)
+        String ident, String movie, String width, String height,
+        String flashVars)
     {
-        return _impl.createFlashMovie(ident, movie, width, height);
+        return _impl.createFlashMovie(ident, movie, width, height, flashVars);
     }
 
     /**

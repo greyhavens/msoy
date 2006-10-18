@@ -105,7 +105,7 @@ public class ItemContainer extends VerticalPanel
             String ident = String.valueOf(item.itemId);
             return WidgetUtil.createFlashMovie(
                 // TODO: allow passing -1 for width
-                ident, thumbPath, THUMB_HEIGHT, THUMB_HEIGHT);
+                ident, thumbPath, THUMB_HEIGHT, THUMB_HEIGHT, null);
 
         default:
             return new Image(thumbPath);

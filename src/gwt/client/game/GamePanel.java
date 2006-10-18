@@ -25,13 +25,16 @@ public class GamePanel extends VerticalPanel
         Widget display = null;
         switch (config.type) {
         case LaunchConfig.FLASH_LOBBIED: {
-            // TODO
+            display = WidgetUtil.createFlashMovie(
+               // TODO: separate SWF for the lobby client
+               "aslobby", "/clients/game-client.swf", "800", "600",
+               "gameLobby=" + config.gameId);
             break;
         }
 
         case LaunchConfig.FLASH_SOLO: {
             display = WidgetUtil.createFlashMovie(
-                "game", config.gameMediaPath, 800, 600);
+                "game", config.gameMediaPath, 800, 600, null);
             break;
         }
 

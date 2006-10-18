@@ -10,7 +10,6 @@ import flash.ui.Keyboard;
 
 import com.threerings.util.MenuUtil;
 import com.threerings.util.NetUtil;
-import com.threerings.util.StringUtil;
 
 import com.threerings.io.TypedArray;
 
@@ -32,8 +31,6 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
-
-import com.threerings.msoy.game.client.LobbyService;
 
 import com.threerings.msoy.world.client.editor.EditorController;
 
@@ -163,13 +160,7 @@ public class RoomController extends SceneController
         case FurniData.ACTION_GAME:
             var actionData :Array = furni.splitActionData();
             var gameId :String = String(actionData[0]);
-            // TODO: fix hackery
-            if (StringUtil.startsWith(gameId, "gg-")) {
-                NetUtil.navigateToURL("game.html#" +
-                                      gameId.substring(3));
-            } else {
-                goToGameLobby(int(gameId));
-            }
+            postAction(MsoyController.GO_GAME_LOBBY, gameId);
             return;
 
         case FurniData.ACTION_PORTAL:
@@ -234,23 +225,6 @@ public class RoomController extends SceneController
         }
 
         menuItems.push(createMenuItem(TEMP_CLEAR_SCENE_CACHE, null, true));
-    }
-
-    /**
-     * Move to the specified game lobby.
-     */
-    protected function goToGameLobby (gameId :int) :void
-    {
-        var lsvc :LobbyService =
-            (_mctx.getClient().requireService(LobbyService) as LobbyService);
-        lsvc.identifyLobby(_mctx.getClient(), gameId,
-            new ResultWrapper(function (cause :String) :void {
-                log.warning("Ack: " + cause);
-            },
-            function (result :Object) :void {
-                _mctx.getSceneDirector().didLeaveScene();
-                _mctx.getLocationDirector().moveTo(int(result));
-            }));
     }
 
     /**
