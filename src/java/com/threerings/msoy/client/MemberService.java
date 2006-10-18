@@ -37,4 +37,10 @@ public interface MemberService extends InvocationService
      */
     public void setDisplayName (
         Client client, String name, InvocationListener listener);
+
+    /**
+     * Request to purchase a new room.
+     */
+    public void purchaseRoom (
+        Client client, ConfirmListener listener);
 }

@@ -12,6 +12,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
+import com.threerings.msoy.data.SceneBookmarkEntry;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
@@ -67,6 +68,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         // name and their member id
         userObj.setMemberName(new MemberName(member.name, member.memberId));
         userObj.setHomeSceneId(member.homeSceneId);
+        userObj.setOwnedScenes(new DSet<SceneBookmarkEntry>(
+            MsoyServer.sceneRepo.getOwnedScenes(member.memberId).iterator()));
 
         // TODO
         userObj.setTokens(new MsoyTokenRing());

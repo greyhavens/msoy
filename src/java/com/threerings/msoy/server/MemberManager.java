@@ -32,6 +32,7 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
+import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
@@ -292,6 +293,44 @@ public class MemberManager
                     "error=" + pe + "].");
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
+        });
+    }
+
+    // from interface MemberProvider
+    public void purchaseRoom (
+        ClientObject caller, final InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        final MemberObject user = (MemberObject) caller;
+        ensureNotGuest(user);
+        final int memberId = user.getMemberId();
+        final String roomName = user.memberName + "'s new room";
+
+        // TODO: charge some flow
+
+        MsoyServer.invoker.postUnit(new RepositoryUnit("purchaseRoom") {
+            public void invokePersist ()
+                throws PersistenceException
+            {
+                _newRoomId =
+                    MsoyServer.sceneRepo.createBlankRoom(memberId, roomName);
+            }
+
+            public void handleSuccess ()
+            {
+                user.addToOwnedScenes(
+                    new SceneBookmarkEntry(_newRoomId, roomName, 0));
+                listener.requestProcessed();
+            }
+
+            public void handleFailure (Exception pe)
+            {
+                log.warning("Unable to create a new room " +
+                    "[user=" + user.which() + "error=" + pe + "].");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+
+            protected int _newRoomId;
         });
     }
 

@@ -45,8 +45,21 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #purchaseRoom} requests. */
+    public static final int PURCHASE_ROOM = 3;
+
+    // from interface MemberService
+    public void purchaseRoom (Client arg1, InvocationService.ConfirmListener arg2)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener2 = new InvocationMarshaller.ConfirmMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, PURCHASE_ROOM, new Object[] {
+            listener2
+        });
+    }
+
     /** The method id used to dispatch {@link #setAvatar} requests. */
-    public static final int SET_AVATAR = 3;
+    public static final int SET_AVATAR = 4;
 
     // from interface MemberService
     public void setAvatar (Client arg1, int arg2, InvocationService.InvocationListener arg3)
@@ -59,7 +72,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setDisplayName} requests. */
-    public static final int SET_DISPLAY_NAME = 4;
+    public static final int SET_DISPLAY_NAME = 5;
 
     // from interface MemberService
     public void setDisplayName (Client arg1, String arg2, InvocationService.InvocationListener arg3)

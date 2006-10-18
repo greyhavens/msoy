@@ -68,6 +68,9 @@ public class MemberObject extends BodyObject
 
     /** The recent scenes we've been through. */
     public var recentScenes :DSet;
+    
+    /** The scenes we own. */
+    public var ownedScenes :DSet;
 
     /** The tokens defining the access controls for this user. */
     public var tokens :MsoyTokenRing;
@@ -288,6 +291,7 @@ public class MemberObject extends BodyObject
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
         recentScenes = (ins.readObject() as DSet);
+        ownedScenes = (ins.readObject() as DSet);
         tokens = (ins.readObject() as MsoyTokenRing);
         homeSceneId = ins.readInt();
         avatar = (ins.readObject() as Avatar);

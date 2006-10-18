@@ -52,6 +52,9 @@ public class MsoyController extends Controller
     /** Command to edit preferences. */
     public static const EDIT_PREFS :String = "EditPrefs";
 
+    /** Command to purchase a room. */
+    public static const PURCHASE_ROOM :String = "PurchaseRoom";
+
     /**
      * Create the msoy controller.
      */
@@ -100,22 +103,35 @@ public class MsoyController extends Controller
                 return int(sb1.lastVisit - sb2.lastVisit);
             });
 
-        recent = recent.map(
-            function (sb :SceneBookmarkEntry, index :int, array :Array) :Object {
+        var owned :Array = memberObj.ownedScenes.toArray();
+        // TODO: sort owned?
+
+        var bookmarkMapper :Function = function (
+            sb :SceneBookmarkEntry, index :int, array :Array) :Object {
                 return {
                     label: sb.toString(),
                     enabled: (sb.sceneId != currentSceneId),
                     command: GO_SCENE,
                     arg: sb.sceneId
                 };
-            });
+            };
+
+        recent = recent.map(bookmarkMapper);
+        owned = owned.map(bookmarkMapper);
 
         var menuData :Array = [];
 
+        // add the friends if present
         if (friends.length > 0) {
             menuData.push({ label: _ctx.xlate("general", "l.visit_friends"),
                 children: friends });
         }
+        // add owned scenes, if any
+        if (owned.length > 0) {
+            menuData.push({ label: _ctx.xlate("general", "l.owned_scenes"),
+                children: owned});
+        }
+        // always add recent scenes
         menuData.push({ label: _ctx.xlate("general", "l.recent_scenes"),
             children: recent });
 
@@ -187,6 +203,14 @@ public class MsoyController extends Controller
     public function handleEditPrefs () :void
     {
         new PrefsDialog(_ctx);
+    }
+
+    /**
+     * Handles PURCHASE_ROOM.
+     */
+    public function handlePurchaseRoom () :void
+    {
+        _ctx.getMemberDirector().purchaseRoom();
     }
 
     /**

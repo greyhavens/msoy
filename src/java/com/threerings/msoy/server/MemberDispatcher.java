@@ -52,6 +52,13 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
+        case MemberMarshaller.PURCHASE_ROOM:
+            ((MemberProvider)provider).purchaseRoom(
+                source,
+                (InvocationService.ConfirmListener)args[0]
+            );
+            return;
+
         case MemberMarshaller.SET_AVATAR:
             ((MemberProvider)provider).setAvatar(
                 source,

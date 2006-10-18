@@ -16,6 +16,8 @@ import mx.controls.TextInput;
 
 import mx.core.UIComponent;
 
+import com.threerings.util.ArrayUtil;
+
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.SceneBookmarkEntry;
@@ -184,7 +186,17 @@ public class FurniPanel extends SpritePanel
             MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_scene")),
             _destScene = new ComboBox());
         _destScene.editable = true;
-        _destScene.dataProvider = _ctx.getClientObject().recentScenes.toArray();
+
+        // combine recent and owned scenes into one array
+        var recent :Array = _ctx.getClientObject().recentScenes.toArray();
+        var owned :Array = _ctx.getClientObject().ownedScenes.toArray();
+        var scenes :Array = recent.concat();
+        for each (var sbe :SceneBookmarkEntry in owned) {
+            if (!ArrayUtil.contains(recent, sbe)) {
+                scenes.push(sbe);
+            }
+        }
+        _destScene.dataProvider = scenes;
 
         grid.addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_portal")),

@@ -31,6 +31,8 @@ import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.data.SceneBookmarkEntry;
+
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.StaticMediaDesc;
 
@@ -179,6 +181,42 @@ public class MsoySceneRepository extends SimpleRepository
             JDBCUtil.changeColumn(conn, "SCENES", "DEF_PORTAL_ID",
                 "DEF_PORTAL_ID smallint not null");
         }
+
+        // TEMP: add an index on OWNER_ID in SCENES, (2006-10-17)
+        if (!JDBCUtil.tableContainsIndex(conn, "SCENES", "OWNER_ID", null)) {
+            JDBCUtil.addIndexToTable(conn, "SCENES", "OWNER_ID", null);
+        }
+    }
+
+    /**
+     * Retrieve a list of all the scenes that the user directly owns.
+     */
+    public ArrayList<SceneBookmarkEntry> getOwnedScenes (final int memberId)
+        throws PersistenceException
+    {
+        return execute(new Operation<ArrayList<SceneBookmarkEntry>>() {
+            public ArrayList<SceneBookmarkEntry> invoke (
+                Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                ArrayList<SceneBookmarkEntry> list =
+                    new ArrayList<SceneBookmarkEntry>();
+                Statement stmt = conn.createStatement();
+                try {
+                    ResultSet rs = stmt.executeQuery("select " +
+                        "SCENE_ID, NAME from SCENES " +
+                        "where OWNER_ID = " + memberId);
+                    while (rs.next()) {
+                        list.add(new SceneBookmarkEntry(
+                            rs.getInt(1), rs.getString(2), 0L));
+                    }
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+
+                return list;
+            }
+        });
     }
 
     // documentation inherited from interface SceneRepository
@@ -398,14 +436,14 @@ public class MsoySceneRepository extends SimpleRepository
      *
      * @return the scene id of the newly created room.
      */
-    public int createBlankRoom (int ownerMemberId, String name)
+    public int createBlankRoom (int ownerMemberId, String roomName)
         throws PersistenceException
     {
-        // TODO: perhaps clone a prototype room?
+        // TODO: we'll clone a starter room
         final MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
         model.ownerId = ownerMemberId;
         model.version = 1;
-        model.name = name + "'s Room"; // TODO
+        model.name = roomName;
 
         return executeUpdate(new Operation<Integer>() {
             public Integer invoke (Connection conn, DatabaseLiaison liaison)
@@ -627,7 +665,8 @@ public class MsoySceneRepository extends SimpleRepository
             "DEPTH integer not null",
             "WIDTH integer not null",
             "HORIZON float not null",
-            "primary key (SCENE_ID)" }, "");
+            "primary key (SCENE_ID)",
+            "index (OWNER_ID)" }, "");
 
         JDBCUtil.createTableIfMissing(conn, "FURNI", new String[] {
             "SCENE_ID integer not null",

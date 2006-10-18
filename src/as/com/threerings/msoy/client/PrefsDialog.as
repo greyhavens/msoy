@@ -3,9 +3,12 @@
 
 package com.threerings.msoy.client {
 
+import mx.controls.Button;
 import mx.controls.TextInput;
 
 import com.threerings.util.StringUtil;
+
+import com.threerings.mx.controls.CommandButton;
 
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.Grid;
@@ -47,6 +50,10 @@ public class PrefsDialog extends FloatingPanel
         _avatars.selectedItem = memberObj.avatar;
 
         addChild(_avatars);
+
+        var btn :CommandButton = new CommandButton(MsoyController.PURCHASE_ROOM);
+        btn.label = _ctx.xlate("general", "b.purchase_room");
+        addChild(btn);
 
         addButtons(OK_BUTTON);
     }

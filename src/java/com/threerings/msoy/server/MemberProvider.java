@@ -28,6 +28,12 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#purchaseRoom} request.
+     */
+    public void purchaseRoom (ClientObject caller, InvocationService.ConfirmListener arg1)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#setAvatar} request.
      */
     public void setAvatar (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)

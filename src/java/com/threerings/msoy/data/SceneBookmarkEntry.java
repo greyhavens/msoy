@@ -38,7 +38,7 @@ public class SceneBookmarkEntry
     // from DSet.Entry
     public Comparable getKey ()
     {
-        return orderingId;
+        return sceneId;
     }
 
     // from Comparable

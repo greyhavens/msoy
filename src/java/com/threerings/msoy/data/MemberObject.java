@@ -36,6 +36,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>recentScenes</code> field. */
     public static final String RECENT_SCENES = "recentScenes";
 
+    /** The field name of the <code>ownedScenes</code> field. */
+    public static final String OWNED_SCENES = "ownedScenes";
+
     /** The field name of the <code>tokens</code> field. */
     public static final String TOKENS = "tokens";
 
@@ -66,6 +69,10 @@ public class MemberObject extends BodyObject
 
     /** The recent scenes we've been through. */
     public DSet<SceneBookmarkEntry> recentScenes =
+        new DSet<SceneBookmarkEntry>();
+
+    /** The scenes we own. */
+    public DSet<SceneBookmarkEntry> ownedScenes =
         new DSet<SceneBookmarkEntry>();
 
     /** The tokens defining the access controls for this user. */
@@ -144,8 +151,6 @@ public class MemberObject extends BodyObject
     {
         super.setOid(oid);
 
-        // configure some starter options
-//        avatar = AVATARS[oid % AVATARS.length].;
         chatStyle = (short) (oid % 2);
         chatPopStyle = (short) (oid % 2);
     }
@@ -158,11 +163,6 @@ public class MemberObject extends BodyObject
 
         } else if (CHAT_POP_STYLE.equals(field)) {
             setChatPopStyle((short) ((chatPopStyle + 1) % 2));
-
-//        } else {
-//            int increment = AVATAR.equals(field) ? 1 : (AVATARS.length - 1);
-//            int dex = ListUtil.indexOf(AVATARS, avatar);
-//            setAvatar(AVATARS[(dex + increment) % AVATARS.length]);
         }
     }
 
@@ -295,6 +295,54 @@ public class MemberObject extends BodyObject
     }
 
     /**
+     * Requests that the specified entry be added to the
+     * <code>ownedScenes</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToOwnedScenes (SceneBookmarkEntry elem)
+    {
+        requestEntryAdd(OWNED_SCENES, ownedScenes, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>ownedScenes</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromOwnedScenes (Comparable key)
+    {
+        requestEntryRemove(OWNED_SCENES, ownedScenes, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>ownedScenes</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateOwnedScenes (SceneBookmarkEntry elem)
+    {
+        requestEntryUpdate(OWNED_SCENES, ownedScenes, elem);
+    }
+
+    /**
+     * Requests that the <code>ownedScenes</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setOwnedScenes (DSet<com.threerings.msoy.data.SceneBookmarkEntry> value)
+    {
+        requestAttributeChange(OWNED_SCENES, value, this.ownedScenes);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.SceneBookmarkEntry> clone =
+            (value == null) ? null : value.typedClone();
+        this.ownedScenes = clone;
+    }
+
+    /**
      * Requests that the <code>tokens</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
@@ -422,14 +470,6 @@ public class MemberObject extends BodyObject
         this.friends = clone;
     }
     // AUTO-GENERATED: METHODS END
-
-//    // TEMP: media ids for our standard avatars
-//    public static final MediaDesc[] AVATARS = {
-//        new MediaDesc("e1c4cd0111619e0d8c038b90292aa6ec0bd5d86a.swf"),
-//        new MediaDesc("4cadc322f2afbc7330a5e0098025637cf568f2cb.swf"),
-//        new MediaDesc("2a6b4b657db5a7138f1a97cff91544c4d41deffa.swf"),
-//        new MediaDesc("d6c6afaebf7231cf94fdc35c0956908896f48e04.swf"),
-//    };
 
     public static final int MAX_RECENT_SCENES = 10;
 }

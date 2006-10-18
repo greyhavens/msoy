@@ -72,6 +72,15 @@ public class MemberDirector extends BasicDirector
             new ReportingListener(_mctx));
     }
 
+    /**
+     * Request to purchase a new room.
+     */
+    public function purchaseRoom () :void
+    {
+        _msvc.purchaseRoom(_mctx.getClient(),
+            new ReportingListener(_mctx, null, null, "m.room_created"));
+    }
+
     // from interface SetListener
     public function entryAdded (event :EntryAddedEvent) :void
     {

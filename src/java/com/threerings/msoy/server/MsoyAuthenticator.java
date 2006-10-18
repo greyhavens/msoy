@@ -388,7 +388,7 @@ public class MsoyAuthenticator extends Authenticator
 
         // create a blank room for them, store it
         mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(
-            mrec.memberId, mrec.name);
+            mrec.memberId, /* TODO: */ mrec.name + "'s room");
         MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
         return mrec;

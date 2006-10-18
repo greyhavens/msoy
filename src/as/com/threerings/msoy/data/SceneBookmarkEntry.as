@@ -38,7 +38,7 @@ public class SceneBookmarkEntry
     // from DSet.Entry
     public function getKey () :Object
     {
-        return orderingId;
+        return sceneId;
     }
 
     // from Comparable
