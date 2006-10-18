@@ -38,15 +38,18 @@
     <include name="${libs.dir}/commons-fileupload.jar"/>
     <include name="${libs.dir}/commons-httpclient.jar"/>
     <include name="${libs.dir}/commons-io.jar"/>
+    <include name="${libs.dir}/commons-lang.jar"/>
     <include name="${libs.dir}/commons-logging.jar"/>
     <include name="${libs.dir}/ejb3-persistence.jar"/>
     <include name="${libs.dir}/getdown.jar"/>
     <include name="${libs.dir}/mysql-connector-java-3.1.12-bin.jar"/>
     <include name="${libs.dir}/proguard.jar"/>
+    <include name="${libs.dir}/velocity-1.5-dev.jar"/>
     <include name="${libs.dir}/gwt/gwt-dev-linux.jar"/>
     <include name="${libs.dir}/gwt/gwt-user.jar"/>
     <include name="${libs.dir}/jetty/lib/org.mortbay.jetty.jar"/>
     <include name="lib/gwt-widgets-0.1.1.jar"/>
+    <include name="${project.dir}/narya/dist/narya-tools.jar"/>
   </fileset>
 
   <!-- declare our classpath -->
@@ -63,6 +66,30 @@
     <pathelement location="src/java"/>
     <pathelement location="src/gwt"/>
   </path>
+
+  <!-- prepares the application directories -->
+  <target name="prepare">
+    <mkdir dir="${deploy.dir}"/>
+    <mkdir dir="${deploy.dir}/lib"/>
+    <mkdir dir="${deploy.dir}/classes"/>
+    <mkdir dir="${deploy.dir}/classes/rsrc"/>
+    <mkdir dir="${javadoc.dir}"/>
+    <copy todir="${deploy.dir}/classes/rsrc">
+      <fileset dir="rsrc">
+       <include name="**/*"/>
+      </fileset>
+    </copy>
+    <!-- create our toybox properts from server.properties -->
+    <exec executable="egrep">
+      <arg line="^toybox\."/>
+      <arg line="server.properties"/>
+      <redirector output="${deploy.dir}/classes/toybox.properties">
+        <outputfilterchain>
+          <replacestring from="toybox." to=""/>
+        </outputfilterchain>
+      </redirector>
+    </exec>
+  </target>
 
   <!-- runs the GWT debugging shell -->
   <property name="page"  value="index.html"/>
@@ -232,7 +259,7 @@
   </target>
 
   <!-- generates additional methods for distributed object classes -->
-  <target name="gendobj" depends="prepare">
+  <target name="gendobj" depends="prepare,copydistlibs">
     <taskdef name="dobj"
              classname="com.threerings.presents.tools.GenDObjectTask"
              classpathref="classpath"/>
@@ -250,7 +277,7 @@
 
   <!-- generates marshaller and dispatcher classes for all invocation -->
   <!-- service declarations -->
-  <target name="genservice"> 
+  <target name="genservice" depends="prepare,copydistlibs">
     <taskdef name="service"
              classname="com.threerings.presents.tools.GenServiceTask"
              classpathref="classpath"/>
@@ -270,7 +297,7 @@
 
   <!-- generates sender and decoder classes for all invocation -->
   <!-- receiver declarations -->
-  <target name="genreceiver"> 
+  <target name="genreceiver" depends="prepare,copydistlibs"> 
     <taskdef name="receiver"
              classname="com.threerings.presents.tools.GenReceiverTask"
              classpathref="classpath"/>
@@ -286,30 +313,6 @@
       <fileset dir="src/java" includes="**/*Receiver.java"
         excludes="**/InvocationReceiver.java"/>
     </receiver>
-  </target>
-
-  <!-- prepares the application directories -->
-  <target name="prepare">
-    <mkdir dir="${deploy.dir}"/>
-    <mkdir dir="${deploy.dir}/lib"/>
-    <mkdir dir="${deploy.dir}/classes"/>
-    <mkdir dir="${deploy.dir}/classes/rsrc"/>
-    <mkdir dir="${javadoc.dir}"/>
-    <copy todir="${deploy.dir}/classes/rsrc">
-      <fileset dir="rsrc">
-       <include name="**/*"/>
-      </fileset>
-    </copy>
-    <!-- create our toybox properts from server.properties -->
-    <exec executable="egrep">
-      <arg line="^toybox\."/>
-      <arg line="server.properties"/>
-      <redirector output="${deploy.dir}/classes/toybox.properties">
-        <outputfilterchain>
-          <replacestring from="toybox." to=""/>
-        </outputfilterchain>
-      </redirector>
-    </exec>
   </target>
 
   <!-- creates the serialized color repository config -->
