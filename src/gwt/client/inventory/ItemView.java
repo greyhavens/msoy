@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import client.MsoyEntryPoint;
+import client.util.HeaderValueTable;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -16,11 +17,9 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -53,12 +52,8 @@ public class ItemView extends PopupPanel
         setStyleName("itemPopup");
         setWidget(_content = new DockPanel());
 
-        _table = new FlexTable();
-        _table.setBorderWidth(0);
-        _table.setCellSpacing(0);
-        _table.setCellPadding(3);
+        _table = new HeaderValueTable();
         _content.add(_table, DockPanel.CENTER);
-        _row = 0;
 
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("itemDetailErrors");
@@ -79,13 +74,13 @@ public class ItemView extends PopupPanel
 
     protected void buildUI () {
         if (_item.parentId != -1) {
-            addHeader("Clone Information");
-            addRow("Clone ID", String.valueOf(_item.itemId),
+            _table.addHeader("Clone Information");
+            _table.addRow("Clone ID", String.valueOf(_item.itemId),
                    "Owner", String.valueOf(_item.ownerId));
         }
-        addHeader("Generic Item Information");
+        _table.addHeader("Generic Item Information");
         // TODO: flags should be checkboxes when we have some?
-        addRow("Item ID", String.valueOf(_item.getProgenitorId()),
+        _table.addRow("Item ID", String.valueOf(_item.getProgenitorId()),
                "Flag mask", String.valueOf(_item.flags));
         String owner;
         if (_item.ownerId == _ctx.creds.memberId) {
@@ -99,7 +94,7 @@ public class ItemView extends PopupPanel
             // which is probably an admin function?
             owner = "Member #" + _item.ownerId;
         }
-        addRow("Owner", owner, "Creator", _itemDetail.creator.memberName);
+        _table.addRow("Owner", owner, "Creator", _itemDetail.creator.memberName);
 
         Widget thumbWidget = _item.thumbMedia == null ?
             new Label("(default)") :
@@ -109,67 +104,67 @@ public class ItemView extends PopupPanel
             new Label("(default)") :
             ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
                 _item.getFurniMedia().getMediaPath()));
-        addRow("Thumbnail", thumbWidget, "Furniture", furniWidget);
+        _table.addRow("Thumbnail", thumbWidget, "Furniture", furniWidget);
 
         // TODO: Maybe merge ItemDetail and ItemEditor, so we could put these
         // TODO: subclass-specific bits into (and rename) e.g. DocumentEditor?
         if (_item instanceof Document) {
-            addHeader("Document Information");
-            addRow("Title", ((Document)_item).title);
+            _table.addHeader("Document Information");
+            _table.addRow("Title", ((Document)_item).title);
             // we should check if the document has a useful visual
             String url = MsoyEntryPoint.toMediaPath(((Document)_item).docMedia.getMediaPath());
-            addRow("Document Media", new HTML("<A HREF='" + url + "'>" + url + "</a>"));
+            _table.addRow("Document Media", new HTML("<A HREF='" + url + "'>" + url + "</a>"));
 
         } else if (_item instanceof Furniture) {
-            addHeader("Furniture Information");
-            addRow("Action", ((Furniture)_item).action,
+            _table.addHeader("Furniture Information");
+            _table.addRow("Action", ((Furniture)_item).action,
                 "Description", ((Furniture)_item).description);
 
         } else if (_item instanceof Pet) {
-            addHeader("Pet Information");
-            addRow("Description", ((Pet)_item).description);
+            _table.addHeader("Pet Information");
+            _table.addRow("Description", ((Pet)_item).description);
 
         } else if (_item instanceof Game) {
-            addHeader("Game Information");
-            addRow("Name", ((Game)_item).name,
+            _table.addHeader("Game Information");
+            _table.addRow("Name", ((Game)_item).name,
                    "# Players (Desired)", String.valueOf(((Game)_item).desiredPlayers));
-            addRow("# Players (Minimum)", String.valueOf(((Game)_item).minPlayers),
+            _table.addRow("# Players (Minimum)", String.valueOf(((Game)_item).minPlayers),
                    "# Players (Maximum)", String.valueOf(((Game)_item).maxPlayers));
             int gameId = _item.getProgenitorId();
             String href = "<a href=\"game.html#" + gameId + "\">";
-            addRow("Play", new HTML(href + "Play now</a>"));
+            _table.addRow("Play", new HTML(href + "Play now</a>"));
 
         } else if (_item instanceof Photo) {
-            addHeader("Photo Information");
+            _table.addHeader("Photo Information");
             MediaDesc photoMedia = ((Photo)_item).photoMedia;
             Widget photoContainer;
             photoContainer = ItemContainer.createContainer(
                 MsoyEntryPoint.toMediaPath(photoMedia.getMediaPath()));
-            addRow("Photo", photoContainer);
-            addRow("Caption", ((Photo)_item).caption);
+            _table.addRow("Photo", photoContainer);
+            _table.addRow("Caption", ((Photo)_item).caption);
 
         } else if (_item instanceof Avatar) {
-            addHeader("Avatar Information");
+            _table.addHeader("Avatar Information");
             MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
             Widget avatarContainer;
             avatarContainer = ItemContainer.createContainer(
                 MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath()));
-            addRow("Description", ((Avatar)_item).description);
-            addRow("Avatar", avatarContainer);
+            _table.addRow("Description", ((Avatar)_item).description);
+            _table.addRow("Avatar", avatarContainer);
 
         } else {
-            addHeader("UNKNOWN OBJECT TYPE: " + _item.getType());
+            _table.addHeader("UNKNOWN OBJECT TYPE: " + _item.getType());
         }
 
-        addHeader("Rating Information");
+        _table.addHeader("Rating Information");
 
         // we can rate this item if it's a clone, or if it's listed
         int ratingMode = (_item.parentId != -1 || _item.ownerId == -1) ?
             ItemRating.MODE_BOTH : ItemRating.MODE_READ;
         _ratingImage = new ItemRating(_ctx, _itemDetail, ratingMode);
-        addRow("Rating", _ratingImage);
+        _table.addRow("Rating", _ratingImage);
 
-        addHeader("Tagging Information");
+        _table.addHeader("Tagging Information");
 
         TextBox newTagBox = new TextBox();
         newTagBox.setMaxLength(20);
@@ -229,8 +224,8 @@ public class ItemView extends PopupPanel
         enterTagContainer.add(newTagBox);
         enterTagContainer.add(new HTML(" &nbsp; "));
         enterTagContainer.add(_historicalTags);
-        addRow("Enter a new tag", enterTagContainer);
-        addRow("Tags", _tagContainer);
+        _table.addRow("Enter a new tag", enterTagContainer);
+        _table.addRow("Tags", _tagContainer);
         updateTags();
 
         Button button = new Button("Hide/Show");
@@ -239,7 +234,7 @@ public class ItemView extends PopupPanel
                 toggleTagHistory();
             }
         });
-        addRow("Tagging History", button);
+        _table.addRow("Tagging History", button);
     }
 
     // @Override // from Widget
@@ -358,63 +353,6 @@ public class ItemView extends PopupPanel
         });
     }
 
-    protected void addHeader (String header)
-    {
-        _table.setText(_row, 0, header);
-        _table.getFlexCellFormatter().setColSpan(_row, 0, 4);
-        _table.getFlexCellFormatter().setAlignment(
-            _row, 0, HasAlignment.ALIGN_CENTER, HasAlignment.ALIGN_MIDDLE);
-        _table.getRowFormatter().setStyleName(_row, "headerRow");
-        _row ++;
-    }
-
-    protected void addRow (String head, Widget val)
-    {
-        FlexCellFormatter formatter = _table.getFlexCellFormatter();
-        _table.setText(_row, 0, head + ":");
-        _table.setWidget(_row, 1, val);
-        _table.getFlexCellFormatter().setColSpan(_row, 1, 3);
-        _table.getRowFormatter().setStyleName(_row, "dataRow");
-        formatter.setAlignment(_row, 0, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
-        formatter.setAlignment(_row, 1, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
-        _row ++;
-    }
-
-    protected void addRow (String head, String val)
-    {
-        addRow(head, new Label(val));
-    }
-
-    protected void addRow (String lhead, Widget lval, String rhead, Widget rval)
-    {
-        FlexCellFormatter formatter = _table.getFlexCellFormatter();
-        _table.setText(_row, 0, lhead + ":");
-        _table.setWidget(_row, 1, lval);
-        _table.setText(_row, 2, rhead + ":");
-        _table.setWidget(_row, 3, rval);
-        _table.getRowFormatter().setStyleName(_row, "dataRow");
-        formatter.setAlignment(_row, 0, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
-        formatter.setAlignment(_row, 1, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
-        formatter.setAlignment(_row, 2, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
-        formatter.setAlignment(_row, 3, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
-        _row ++;
-    }
-
-    protected void addRow (String lhead, String lval, String rhead, Widget rval)
-    {
-        addRow(lhead, new Label(lval), rhead, rval);
-    }
-
-    protected void addRow (String lhead, Widget lval, String rhead, String rval)
-    {
-        addRow(lhead, lval, rhead, new Label(rval));
-    }
-
-    protected void addRow (String lhead, String lval, String rhead, String rval)
-    {
-        addRow(lhead, new Label(lval), rhead, new Label(rval));
-    }
-
     protected void addError (String error)
     {
         _errorContainer.add(new Label(error));
@@ -430,8 +368,7 @@ public class ItemView extends PopupPanel
     protected Item _item;
     protected ItemDetail _itemDetail;
 
-    protected FlexTable _table;
-    protected int _row;
+    protected HeaderValueTable _table;
 
     protected DockPanel _content;
     protected VerticalPanel _errorContainer;
