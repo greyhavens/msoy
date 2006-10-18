@@ -159,7 +159,7 @@ public class RoomController extends SceneController
 
         case FurniData.ACTION_GAME:
             var actionData :Array = furni.splitActionData();
-            var gameId :String = String(actionData[0]);
+            var gameId :int = int(actionData[0]);
             postAction(MsoyController.GO_GAME_LOBBY, gameId);
             return;
 

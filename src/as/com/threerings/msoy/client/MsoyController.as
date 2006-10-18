@@ -199,14 +199,10 @@ public class MsoyController extends Controller
     /**
      * Handle the GO_GAME_LOBBY command.
      */
-    public function handleGoGameLobby (gameId :String) :void
+    public function handleGoGameLobby (gameId :int) :void
     {
-        // TODO: fix hackery
-        if (StringUtil.startsWith(gameId, "gg-")) {
-            NetUtil.navigateToURL("game.html#" +
-                                  gameId.substring(3));
-
-        } else if (/*shouldLaunchLobbyClient*/ true) {
+        // TODO
+        if (/*shouldLaunchLobbyClient*/ true) {
             NetUtil.navigateToURL("game.html#" + gameId);
 
         } else {
