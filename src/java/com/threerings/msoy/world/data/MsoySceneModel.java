@@ -38,9 +38,6 @@ public class MsoySceneModel extends SceneModel
     /** The memberId of the owner of this scene. */
     public int ownerId;
 
-    /** The default entrance for this scene. */
-    public short defaultEntranceId;
-
     /** The "pixel" depth of the room. */
     public short depth;
 
@@ -52,6 +49,9 @@ public class MsoySceneModel extends SceneModel
 
     /** The furniture in the scene. */
     public FurniData[] furnis = new FurniData[0];
+
+    /** The entrance location. */
+    public MsoyLocation entrance;
 
     /**
      * Add a piece of furniture to this model.
@@ -101,10 +101,13 @@ public class MsoySceneModel extends SceneModel
      */
     public Portal getDefaultEntrance ()
     {
-        // Note that we can't just call getPortal(_defaultPortalId) because
-        // we have to validate prior to accessing _defaultPortalId.
-        validatePortalInfo();
-        return _portalInfo.get(_defaultPortalId);
+        Portal p = new Portal();
+        p.portalId = (short) -1;
+        p.loc = entrance;
+        p.targetSceneId = sceneId;
+        p.targetPortalId = -1;
+
+        return p;
     }
 
     /**
@@ -158,12 +161,12 @@ public class MsoySceneModel extends SceneModel
      */
     protected void validatePortalInfo ()
     {
+        // if non-null, we're already valid
         if (_portalInfo != null) {
             return;
         }
 
         _portalInfo = new HashIntMap<Portal>();
-        _defaultPortalId = Integer.MIN_VALUE;
         for (FurniData furni : furnis) {
             if (furni.actionType != FurniData.ACTION_PORTAL) {
                 continue;
@@ -180,16 +183,12 @@ public class MsoySceneModel extends SceneModel
                 // TODO: eventually, all data from the clients will
                 // have to be extensively verified
             }
-            try {
-                p.targetPortalId = (short) Integer.parseInt(vals[1]);
-            } catch (Exception e) {
-                // same as above
-            }
-
-            // TODO: something real here.. :)
-            if (_defaultPortalId == Integer.MIN_VALUE) {
-                _defaultPortalId = p.portalId;
-            }
+            p.targetPortalId = (short) -1;
+//            try {
+//                p.targetPortalId = (short) Integer.parseInt(vals[1]);
+//            } catch (Exception e) {
+//                // same as above
+//            }
 
             // remember this portal
             _portalInfo.put(p.portalId, p);
@@ -214,6 +213,7 @@ public class MsoySceneModel extends SceneModel
         model.depth = 400;
         model.width = 800;
         model.horizon = .5f;
+        model.entrance = new MsoyLocation(.5, 0, .5, 0);
         populateBlankMsoySceneModel(model);
         return model;
     }
@@ -225,7 +225,4 @@ public class MsoySceneModel extends SceneModel
 
     /** Cached portal info. */
     protected transient HashIntMap<Portal> _portalInfo;
-
-    /** The default portal id. */
-    protected transient int _defaultPortalId;
 }

@@ -35,9 +35,6 @@ public class MsoySceneModel extends SceneModel
     /** The memberId of the owner of this scene. */
     public var ownerId :int;
 
-    /** The default entrance for this scene. */
-    public var defaultEntranceId :int;
-
     /** The "pixel" depth of the room. */
     public var depth :int;
 
@@ -49,6 +46,9 @@ public class MsoySceneModel extends SceneModel
 
     /** The furniture in the scene. */
     public var furnis :TypedArray;
+
+    /** The entrance location. */
+    public var entrance :MsoyLocation;
 
     /**
      * Add a piece of furniture to this model.
@@ -94,10 +94,13 @@ public class MsoySceneModel extends SceneModel
      */
     public function getDefaultEntrance () :Portal
     {
-        // Note that we can't just call getPortal(_defaultPortalId) because
-        // we have to validate prior to accessing _defaultPortalId.
-        validatePortalInfo();
-        return (_portalInfo.get(_defaultPortalId) as Portal);
+        var p :Portal = new Portal();
+        p.portalId = -1;
+        p.loc = entrance;
+        p.targetSceneId = sceneId;
+        p.targetPortalId = -1;
+
+        return p;
     }
 
     /**
@@ -145,29 +148,24 @@ public class MsoySceneModel extends SceneModel
      */
     protected function validatePortalInfo () :void
     {
+        // if non-null, we're already valid
         if (_portalInfo != null) {
             return;
         }
 
         _portalInfo = new Hashtable();
-        _defaultPortalId = int.MIN_VALUE;
         for each (var furni :FurniData in furnis) {
             if (furni.actionType != FurniData.ACTION_PORTAL) {
                 continue;
             }
 
-            var vals :Array = furni.actionData.split(":");
+            var vals :Array = furni.splitActionData();
 
             var p :Portal = new Portal();
             p.portalId = furni.id;
             p.loc = furni.loc;
             p.targetSceneId = int(vals[0]);
-            p.targetPortalId = int(vals[1]);
-
-            // TODO: something real here.. :)
-            if (_defaultPortalId == int.MIN_VALUE) {
-                _defaultPortalId = p.portalId;
-            }
+            p.targetPortalId = -1; // int(vals[1]);
 
             // remember this portal
             _portalInfo.put(p.portalId, p);
@@ -180,11 +178,11 @@ public class MsoySceneModel extends SceneModel
 
         model.type = type;
         model.ownerId = ownerId;
-        model.defaultEntranceId = defaultEntranceId;
         model.depth = depth;
         model.width = width;
         model.horizon = horizon;
         model.furnis = (furnis.clone() as TypedArray);
+        model.entrance = entrance;
 
         return model;
     }
@@ -196,11 +194,11 @@ public class MsoySceneModel extends SceneModel
 
         out.writeByte(type);
         out.writeInt(ownerId);
-        out.writeShort(defaultEntranceId);
         out.writeShort(depth);
         out.writeShort(width);
         out.writeFloat(horizon);
         out.writeObject(furnis);
+        out.writeObject(entrance);
     }
 
     // documentation inherited
@@ -210,11 +208,11 @@ public class MsoySceneModel extends SceneModel
 
         type = ins.readByte();
         ownerId = ins.readInt();
-        defaultEntranceId = ins.readShort();
         depth = ins.readShort();
         width = ins.readShort();
         horizon = ins.readFloat();
         furnis = (ins.readObject() as TypedArray);
+        entrance = (ins.readObject() as MsoyLocation);
     }
 
     override public function toString () :String
@@ -225,6 +223,5 @@ public class MsoySceneModel extends SceneModel
 
     /** Cached portal info. Not streamed. */
     protected var _portalInfo :Hashtable;
-    protected var _defaultPortalId :int;
 }
 }

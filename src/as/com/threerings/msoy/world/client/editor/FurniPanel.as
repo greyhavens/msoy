@@ -76,11 +76,10 @@ public class FurniPanel extends SpritePanel
 
     protected function updatePortal (furni :FurniData) :void
     {
-        var vals :Array = furni.actionData.split(":");
+        var vals :Array = furni.splitActionData();
         var targetSceneId :int = int(vals[0]);
-        var targetPortalId :int = int(vals[1]);
 
-        _destPortal.text = String(targetPortalId);
+//        _destPortal.text = String(targetPortalId);
 
         var data :Object = _destScene.dataProvider;
         for (var ii :int = 0; ii < data.length; ii++) {
@@ -140,7 +139,7 @@ public class FurniPanel extends SpritePanel
 
         _actionPanels = new ViewStack();
         _actionPanels.addChild(new VBox()); // ACTION_NONE
-        _actionPanels.addChild(new VBox()); // BACKGROUND (nothing to edit)
+        _actionPanels.addChild(new VBox()); // BACKGROUND (nothing to edit) TODO
         _actionPanels.addChild(new VBox()); // ACTION_GAME (nothing to edit)
         _actionPanels.addChild(createURLEditor()); // ACTION_URL
         _actionPanels.addChild(createPortalEditor()); // ACTION_PORTAL
@@ -198,9 +197,9 @@ public class FurniPanel extends SpritePanel
         }
         _destScene.dataProvider = scenes;
 
-        grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_portal")),
-            _destPortal = new TextInput());
+//        grid.addRow(
+//            MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_portal")),
+//            _destPortal = new TextInput());
 
         return grid;
     }
@@ -273,24 +272,28 @@ public class FurniPanel extends SpritePanel
                 }
                 targetSceneId = int(val);
             }
-            var vals :Array = furni.actionData.split(":");
-            furni.actionData = targetSceneId + ":" + int(vals[1]);
+//            var vals :Array = furni.splitActionData();
+//            vals.shift(); // remove the previous first entry
+//            vals.unshift(targetSceneId);
+//            furni.actionData = vals.join(":");
+            furni.actionData = String(targetSceneId);
             spritePropsUpdated();
         }, _destScene, "text");
 
-        BindingUtils.bindSetter(function (o :Object) :void {
-            var furni :FurniData = (_sprite as FurniSprite).getFurniData();
-            if (furni.actionType != FurniData.ACTION_PORTAL) {
-                return; // don't update if we shouldn't
-            }
-            var val :Number = Number(o);
-            if (isNaN(val)) {
-                return;
-            }
-            var vals :Array = furni.actionData.split(":");
-            furni.actionData = int(vals[0]) + ":" + int(val);
-            spritePropsUpdated();
-        }, _destPortal, "text");
+//        BindingUtils.bindSetter(function (o :Object) :void {
+//            var furni :FurniData = (_sprite as FurniSprite).getFurniData();
+//            if (furni.actionType != FurniData.ACTION_PORTAL) {
+//                return; // don't update if we shouldn't
+//            }
+//            var val :Number = Number(o);
+//            if (isNaN(val)) {
+//                return;
+//            }
+//            var vals :Array = furni.splitActionData();
+//            vals[1] = int(val); // replace the target portal id
+//            furni.actionData = vals.join(":");
+//            spritePropsUpdated();
+//        }, _destPortal, "text");
     }
 
     protected var _xScale :TextInput;
@@ -304,7 +307,7 @@ public class FurniPanel extends SpritePanel
     protected var _actionPanels :ViewStack;
 
     protected var _destScene :ComboBox;
-    protected var _destPortal :TextInput;
+//    protected var _destPortal :TextInput;
 
     protected var _url :TextInput;
 }
