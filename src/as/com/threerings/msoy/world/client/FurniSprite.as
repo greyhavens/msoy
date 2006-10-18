@@ -195,6 +195,7 @@ public class FurniSprite extends MsoySprite
     {
         // clear out any residuals from the last action
         toolTip = null;
+        var actionData :Array = _furni.splitActionData();
 
         switch (_furni.actionType) {
         case FurniData.ACTION_NONE:
@@ -207,7 +208,7 @@ public class FurniSprite extends MsoySprite
             break;
 
         case FurniData.ACTION_GAME:
-            toolTip = ctx.xlate(null, "i.play_game");
+            toolTip = ctx.xlate(null, "i.play_game", String(actionData[1]));
             break;
 
         case FurniData.ACTION_PORTAL:

@@ -161,12 +161,14 @@ public class RoomController extends SceneController
             return;
 
         case FurniData.ACTION_GAME:
+            var actionData :Array = furni.splitActionData();
+            var gameId :String = String(actionData[0]);
             // TODO: fix hackery
-            if (StringUtil.startsWith(furni.actionData, "gg:")) {
+            if (StringUtil.startsWith(gameId, "gg-")) {
                 NetUtil.navigateToURL("game.html#" +
-                                      furni.actionData.substring(3));
+                                      gameId.substring(3));
             } else {
-                goToGameLobby(int(furni.actionData));
+                goToGameLobby(int(gameId));
             }
             return;
 
@@ -246,7 +248,8 @@ public class RoomController extends SceneController
                 log.warning("Ack: " + cause);
             },
             function (result :Object) :void {
-                _ctx.getLocationDirector().moveTo(int(result));
+                _mctx.getSceneDirector().didLeaveScene();
+                _mctx.getLocationDirector().moveTo(int(result));
             }));
     }
 

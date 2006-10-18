@@ -22,14 +22,16 @@ public class FurniData
     /** An actionType indicating 'no action'. */
     public static const ACTION_NONE :int = 0;
 
-    /** An actionType indicating that actionData is a URL. */
+    /** An actionType indicating that actionData is a URL.
+        actionData = "<url>" */
     public static const ACTION_URL :int = 1;
 
-    /** An actionType indicating that actionData is a game item id. */
+    /** An actionType indicating that actionData is a game item id.
+        actionData = "<gameId>:<gameName>" */
     public static const ACTION_GAME :int = 2;
 
-    /** An actionType indicating that we're a portal. actionData
-     * will be in the format "targetScene:targetId", for now. */
+    /** An actionType indicating that we're a portal.
+        actionData = "<targetSceneId>:<targetPortalId>" */
     public static const ACTION_PORTAL :int = 3;
 
     /** The id of this piece of furni. */
@@ -59,6 +61,23 @@ public class FurniData
 
     /** The action, interpreted using actionType. */
     public var actionData :String;
+
+    /**
+     * Return the actionData as two strings, split after the first colon.
+     * If there is no colon, then a single-element array is returned.
+     */
+    public function splitActionData () :Array
+    {
+        if (actionData == null) {
+            return null;
+        }
+        var colonDex :int = actionData.indexOf(":");
+        if (colonDex == -1) {
+            return [ actionData ];
+        }
+        return [ actionData.substring(0, colonDex),
+            actionData.substring(colonDex + 1) ];
+    }
 
     // documentation inherited from superinterface Equalable
     public function equals (other :Object) :Boolean

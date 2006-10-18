@@ -463,8 +463,9 @@ public class EditorController extends Controller
     protected function configureFurniAction (furni :FurniData, item :Item) :void
     {
         if (item is Game) {
+            var game :Game = (item as Game);
             furni.actionType = FurniData.ACTION_GAME;
-            furni.actionData = String(item.getProgenitorId());
+            furni.actionData = String(game.getProgenitorId()) + ":" + game.name;
         }
     }
 
