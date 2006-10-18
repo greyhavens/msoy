@@ -8,14 +8,14 @@ import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.msoy.client.MsoyContext;
 
-import com.threerings.msoy.ui.List;
+import com.threerings.msoy.ui.MsoyList;
 
 import com.threerings.msoy.item.web.Item;
 
 /**
  * A basic list that can show items in-world.
  */
-public class ItemList extends List
+public class ItemList extends MsoyList
 {
     public function ItemList (
         ctx :MsoyContext, rendererClass :Class = null)

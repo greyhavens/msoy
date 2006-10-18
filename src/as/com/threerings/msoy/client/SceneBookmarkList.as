@@ -4,11 +4,11 @@ import flash.display.DisplayObjectContainer;
 
 import com.threerings.mx.events.CommandEvent;
 
-import com.threerings.msoy.ui.List;
+import com.threerings.msoy.ui.MsoyList;
 
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
-public class SceneBookmarkList extends List
+public class SceneBookmarkList extends MsoyList
 {
     public function SceneBookmarkList (ctx :MsoyContext)
     {

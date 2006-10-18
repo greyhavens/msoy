@@ -8,9 +8,9 @@ import mx.events.ListEvent;
 
 import com.threerings.msoy.client.MsoyContext;
 
-public class List extends mx.controls.List
+public class MsoyList extends List
 {
-    public function List (ctx :MsoyContext)
+    public function MsoyList (ctx :MsoyContext)
     {
         super();
         _ctx = ctx;
@@ -22,8 +22,7 @@ public class List extends mx.controls.List
                     itemClicked((dp as IList).getItemAt(event.rowIndex));
 
                 } else {
-                    Log.getLog(com.threerings.msoy.ui.List).warning(
-                        "Unknown dataProvider: " + dp);
+                    Log.getLog(MsoyList).warning("Unknown dataProvider: " + dp);
                 }
             });
     }

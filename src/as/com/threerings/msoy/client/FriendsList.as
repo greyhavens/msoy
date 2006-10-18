@@ -10,13 +10,13 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.NamedEvent;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.msoy.ui.List;
+import com.threerings.msoy.ui.MsoyList;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MemberName;
 
-public class FriendsList extends List
+public class FriendsList extends MsoyList
     implements SetListener
 {
     public function FriendsList (ctx :MsoyContext)

@@ -26,7 +26,7 @@ import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.MsoyContext;
 
-import com.threerings.msoy.ui.List;
+import com.threerings.msoy.ui.MsoyList;
 
 import com.threerings.msoy.game.data.LobbyObject;
 
@@ -124,7 +124,7 @@ public class LobbyPanel extends VBox
     {
         super.createChildren();
 
-        var list :List = new List(_ctx);
+        var list :MsoyList = new MsoyList(_ctx);
         addChild(list);
 
         var factory :ClassFactory = new ClassFactory(TableRenderer);
