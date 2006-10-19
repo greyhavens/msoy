@@ -67,9 +67,6 @@ public class AbstractRoomView extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
-//        width = TARGET_WIDTH;
-//        height = TARGET_HEIGHT;
-
         addEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
         addEventListener(ResizeEvent.RESIZE, didResize);
     }
@@ -89,40 +86,14 @@ public class AbstractRoomView extends Canvas
         relayout();
     }
 
-/*
-    override protected function updateDisplayList (
-        unscaledWidth :Number, unscaledHeight :Number) :void
-    {
-        super.updateDisplayList(unscaledWidth, unscaledHeight);
-        var scale :Number = int(100 * unscaledHeight / TARGET_HEIGHT) / 100;
-
-        scaleX = scale;
-        scaleY = scale;
-        setActualSize(unscaledWidth / scale, TARGET_HEIGHT);
-    }
-*/
-
     override public function setActualSize (w :Number, h :Number) :void
     {
-        var scale :Number = int(100 * h / TARGET_HEIGHT) / 100;
+        var scale :Number = (h / TARGET_HEIGHT);
 
         scaleX = scale;
         scaleY = scale;
-        super.setActualSize(w, TARGET_HEIGHT);
+        super.setActualSize(w, h);
     }
-
-/*
-    override mx_internal function adjustSizesForScaleChanges () :void
-    {
-
-    }
-*/
-
-/*
-    override protected function measure () :void
-    {
-    }
-*/
 
     protected function didResize (event :ResizeEvent) :void
     {
@@ -208,12 +179,14 @@ public class AbstractRoomView extends Canvas
         var x :Number = p.x;
         var y :Number = p.y;
 
+        // TODO: much of this could be pre-computed, perhaps we store it in
+        // a SceneMetrics class
         var sceneWidth :int = _scene.getWidth();
         var minScale :Number = computeMinScale();
-        var backWallHeight :Number = unscaledHeight * minScale;
+        var backWallHeight :Number = TARGET_HEIGHT * minScale;
 
         var horizon :Number = 1 - _scene.getHorizon();
-        var horizonY :Number = unscaledHeight * horizon;
+        var horizonY :Number = TARGET_HEIGHT * horizon;
         var backWallTop :Number = horizonY - (backWallHeight * horizon);
         var backWallBottom :Number = backWallTop + backWallHeight;
         var floorWidth :Number, floorInset :Number;
@@ -234,7 +207,7 @@ public class AbstractRoomView extends Canvas
         } else {
             clickWall = ClickLocation.FLOOR;
             scale = minScale +
-                (y - backWallBottom) / (unscaledHeight - backWallBottom) *
+                (y - backWallBottom) / (TARGET_HEIGHT - backWallBottom) *
                 (MAX_SCALE - minScale);
         }
 
@@ -274,8 +247,8 @@ public class AbstractRoomView extends Canvas
             }
 
             // TODO: factor in horizon here
-            var wallHeight :Number = (unscaledHeight * scale);
-            var wallInset :Number = (unscaledHeight - wallHeight) / 2;
+            var wallHeight :Number = (TARGET_HEIGHT * scale);
+            var wallInset :Number = (TARGET_HEIGHT - wallHeight) / 2;
             yy = MAX_COORD *
                 (1 - ((y - wallInset) / wallHeight));
             zz = MAX_COORD *
@@ -317,7 +290,7 @@ public class AbstractRoomView extends Canvas
         var minScale :Number = computeMinScale();
         var scale :Number = minScale +
             ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - minScale);
-        var sheight :Number = (unscaledHeight * scale);
+        var sheight :Number = (TARGET_HEIGHT * scale);
         return (pixels / sheight);
     }
 
@@ -333,8 +306,11 @@ public class AbstractRoomView extends Canvas
             return false;
         }
 
-        rect.x = Math.min(_scene.getWidth() - rect.width,
-            Math.max(0, rect.x + xpixels));
+        // when editing, allow scrolling out of bounds somewhat
+        var outBoundsDistance :int = _editing ? (rect.width * 2 / 3) : 0;
+
+        rect.x = Math.min(_scene.getWidth() - rect.width + outBoundsDistance,
+            Math.max(-outBoundsDistance, rect.x + xpixels));
         scrollRect = rect;
         return true;
     }
@@ -363,11 +339,11 @@ public class AbstractRoomView extends Canvas
 
         // y position depends on logical y and the scale (z)
         var horizon :Number = 1 - _scene.getHorizon();
-        var horizonY :Number = unscaledHeight * horizon;
+        var horizonY :Number = TARGET_HEIGHT * horizon;
 
-        sprite.y = (horizonY + (unscaledHeight - horizonY) * scale) -
+        sprite.y = (horizonY + (TARGET_HEIGHT - horizonY) * scale) -
             (scale * hotSpot.y) - 
-            (loc.y / MAX_COORD) * (unscaledHeight * scale);
+            (loc.y / MAX_COORD) * (TARGET_HEIGHT * scale);
     }
 
     /**
@@ -535,10 +511,10 @@ public class AbstractRoomView extends Canvas
         g.clear();
         var sceneWidth :int = _scene.getWidth();
         var minScale :Number = computeMinScale();
-        var backWallHeight :Number = unscaledHeight * minScale;
+        var backWallHeight :Number = TARGET_HEIGHT * minScale;
 
         var horizon :Number = 1 - _scene.getHorizon();
-        var horizonY :Number = unscaledHeight * horizon;
+        var horizonY :Number = TARGET_HEIGHT * horizon;
         var backWallTop :Number = horizonY - (backWallHeight * horizon);
         var backWallBottom :Number = backWallTop + backWallHeight;
 
@@ -554,11 +530,11 @@ public class AbstractRoomView extends Canvas
         if (drawWalls) {
             // fill in the floor
             g.beginFill(0x333333);
-            g.moveTo(0, unscaledHeight);
+            g.moveTo(0, TARGET_HEIGHT);
             g.lineTo(x1, y2);
             g.lineTo(x2, y2);
-            g.lineTo(sceneWidth, unscaledHeight);
-            g.lineTo(0, unscaledHeight);
+            g.lineTo(sceneWidth, TARGET_HEIGHT);
+            g.lineTo(0, TARGET_HEIGHT);
             g.endFill();
 
             // fill in the three walls
@@ -567,10 +543,10 @@ public class AbstractRoomView extends Canvas
             g.lineTo(x1, y1);
             g.lineTo(x2, y1);
             g.lineTo(sceneWidth, 0);
-            g.lineTo(sceneWidth, unscaledHeight);
+            g.lineTo(sceneWidth, TARGET_HEIGHT);
             g.lineTo(x2, y2);
             g.lineTo(x1, y2);
-            g.lineTo(0, unscaledHeight);
+            g.lineTo(0, TARGET_HEIGHT);
             g.lineTo(0, 0);
             g.endFill();
 
@@ -585,7 +561,7 @@ public class AbstractRoomView extends Canvas
 
         } else {
             g.beginFill(0xFFFFFF);
-            g.drawRect(0, 0, sceneWidth, unscaledHeight);
+            g.drawRect(0, 0, sceneWidth, TARGET_HEIGHT);
             g.endFill();
         }
 
@@ -600,11 +576,11 @@ public class AbstractRoomView extends Canvas
             g.lineTo(x2, y1);
             g.lineTo(x2, y2);
 
-            g.moveTo(sceneWidth, unscaledHeight);
+            g.moveTo(sceneWidth, TARGET_HEIGHT);
             g.lineTo(x2, y2);
             g.lineTo(x1, y2);
 
-            g.moveTo(0, unscaledHeight);
+            g.moveTo(0, TARGET_HEIGHT);
             g.lineTo(x1, y2);
             g.lineTo(x1, y1);
 

@@ -2,6 +2,8 @@ package com.threerings.msoy.client {
 
 import flash.display.Shape;
 
+import flash.events.Event;
+
 import mx.core.Application;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
@@ -73,6 +75,13 @@ public class TopPanel extends Canvas
         // clear out the application and install ourselves as the only child
         app.removeAllChildren();
         app.addChild(this);
+        adjustPlaceMask();
+
+        app.stage.addEventListener(Event.RESIZE, stageResized);
+    }
+
+    protected function stageResized (event :Event) :void
+    {
         adjustPlaceMask();
     }
 
