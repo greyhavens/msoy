@@ -104,8 +104,12 @@ public class FurniSprite extends MsoySprite
 
         checkBackground();
 
-        // turn the filters back off
-        if (!editing) {
+        if (editing) {
+            // we don't want a tooltip while editing
+            toolTip = null;
+
+        } else {
+            // TEMP: to undo perspective
             filters = [];
         }
     }
