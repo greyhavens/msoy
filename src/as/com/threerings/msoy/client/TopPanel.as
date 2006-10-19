@@ -1,5 +1,7 @@
 package com.threerings.msoy.client {
 
+import flash.display.Shape;
+
 import mx.core.Application;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
@@ -7,6 +9,7 @@ import mx.core.UIComponent;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
+import mx.containers.VBox;
 
 import mx.controls.Label;
 
@@ -33,6 +36,19 @@ public class TopPanel extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
+        _placeBox = new Canvas();
+        _placeBox.includeInLayout = false;
+        _placeBox.setStyle("top", 0);
+        _placeBox.setStyle("left", 0);
+        _placeBox.setStyle("right", _sideAttachment);
+        _placeBox.setStyle("bottom", ControlBar.HEIGHT);
+        addChild(_placeBox);
+
+        // set up a mask on the placebox
+        _placeMask = new Shape();
+        _placeBox.mask = _placeMask;
+        rawChildren.addChild(_placeMask);
+
         // set up the control bar
         controlBar = new ControlBar(ctx);
         controlBar.includeInLayout = false;
@@ -57,6 +73,7 @@ public class TopPanel extends Canvas
         // clear out the application and install ourselves as the only child
         app.removeAllChildren();
         app.addChild(this);
+        adjustPlaceMask();
     }
 
     public function setPlaceView (view :PlaceView) :void
@@ -65,11 +82,11 @@ public class TopPanel extends Canvas
         _placeView = view;
 
         var comp :UIComponent = (view as UIComponent);
-        comp.setStyle("top", 0);
         comp.setStyle("left", 0);
-        comp.setStyle("right", _sideAttachment);
-        comp.setStyle("bottom", ControlBar.HEIGHT);
-        addChildAt(comp, 0);
+        comp.setStyle("top", 0);
+        comp.setStyle("right", 0);
+        comp.setStyle("bottom", 0);
+        _placeBox.addChild(comp);
     }
 
     /**
@@ -78,7 +95,7 @@ public class TopPanel extends Canvas
     public function clearPlaceView (view :PlaceView) :void
     {
         if ((_placeView != null) && (view == null || view == _placeView)) {
-            removeChild(_placeView as UIComponent);
+            _placeBox.removeChild(_placeView as UIComponent);
             _placeView = null;
         }
     }
@@ -89,12 +106,13 @@ public class TopPanel extends Canvas
         _sidePanel = side;
         _sidePanel.includeInLayout = false;
 
-        setSideAttachment(_sidePanel.width);
-        _sidePanel.addEventListener(ResizeEvent.RESIZE, sideResized);
+        setSideAttachment(SIDE_PANEL_WIDTH);
+//        _sidePanel.addEventListener(ResizeEvent.RESIZE, sideResized);
 
         _sidePanel.setStyle("top", 0);
         _sidePanel.setStyle("bottom", ControlBar.HEIGHT);
         _sidePanel.setStyle("right", 0);
+        _sidePanel.setStyle("left", unscaledWidth - SIDE_PANEL_WIDTH);
 
         addChild(_sidePanel); // add to end
     }
@@ -106,7 +124,7 @@ public class TopPanel extends Canvas
     {
         if ((_sidePanel != null) && (side == null || side == _sidePanel)) {
             removeChild(_sidePanel);
-            _sidePanel.removeEventListener(ResizeEvent.RESIZE, sideResized);
+//            _sidePanel.removeEventListener(ResizeEvent.RESIZE, sideResized);
             _sidePanel = null;
             setSideAttachment(0);
         }
@@ -129,31 +147,45 @@ public class TopPanel extends Canvas
         }
     }
 
-    protected function sideResized (event :ResizeEvent) :void
-    {
-        setSideAttachment(_sidePanel.width);
-    }
+// TODO: doesn't work, we're using a hardcoded sidebar size now
+//    protected function sideResized (event :ResizeEvent) :void
+//    {
+//        setSideAttachment(_sidePanel.width);
+//    }
 
     protected function setSideAttachment (rightSpace :int) :void
     {
         _sideAttachment = rightSpace;
-        if (_placeView != null) {
-            UIComponent(_placeView).setStyle("right", _sideAttachment);
-        }
+        _placeBox.setStyle("right", _sideAttachment);
+        adjustPlaceMask();
+    }
+
+    protected function adjustPlaceMask () :void
+    {
+        _placeMask.graphics.clear();
+        _placeMask.graphics.beginFill(0xFFFFFF);
+        _placeMask.graphics.drawRect(0, 0, stage.stageWidth - _sideAttachment,
+            stage.stageHeight - ControlBar.HEIGHT);
+        _placeMask.graphics.endFill();
     }
 
     /** The giver of life. */
     protected var _ctx :MsoyContext;
 
-//    /** Where we hold the world and other bits. */
-//    protected var _worldContainer :HBox;
-
     /** The current place view. */
     protected var _placeView :PlaceView;
+
+    /** The box that will hold the placeview. */
+    protected var _placeBox :Canvas;
+
+    /** The mask configured on the placeview so that it doesn't overlap
+     * our other components. */
+    protected var _placeMask :Shape;
 
     /** The current side panel component. */
     protected var _sidePanel :UIComponent;
 
+    /** The current size of the sidepanel. */
     protected var _sideAttachment :int = 0;
 
     /** The list of our friends. */
@@ -161,5 +193,7 @@ public class TopPanel extends Canvas
     
     /** A label indicating the build stamp for the client. */
     protected var _buildStamp :Label;
+
+    protected static const SIDE_PANEL_WIDTH :int = 350;
 }
 }

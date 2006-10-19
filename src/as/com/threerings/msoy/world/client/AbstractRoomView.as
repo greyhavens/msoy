@@ -2,6 +2,7 @@ package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.Graphics;
+import flash.display.Shape;
 
 import flash.events.Event;
 
@@ -66,8 +67,8 @@ public class AbstractRoomView extends Canvas
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
-        width = TARGET_WIDTH;
-        height = TARGET_HEIGHT;
+//        width = TARGET_WIDTH;
+//        height = TARGET_HEIGHT;
 
         addEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
         addEventListener(ResizeEvent.RESIZE, didResize);
@@ -168,7 +169,9 @@ public class AbstractRoomView extends Canvas
         _editing = editing;
         _furni.forEach(spriteVisitFn);
 
-        if (!editing) {
+        if (editing) {
+
+        } else {
             updateAllFurni();
         }
     }
@@ -623,7 +626,7 @@ public class AbstractRoomView extends Canvas
 
     /** A hand-drawn background to look like a room. */
     protected var _bkgGraphics :UIComponent;
-
+    
     /** A map of id -> Furni. */
     protected var _furni :HashMap = new HashMap();
 
