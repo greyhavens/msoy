@@ -13,6 +13,8 @@ import javax.persistence.*; // for EJB3 annotations
        {@UniqueConstraint(columnNames={"inviterId", "inviteeId"})})
 public class FriendRecord
 {
+    public static final int SCHEMA_VERSION = 1;
+    
     public static final String INVITER_ID = "inviterId";
     public static final String INVITEE_ID = "inviteeId";
 
