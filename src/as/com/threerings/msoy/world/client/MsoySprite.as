@@ -85,7 +85,7 @@ public class MsoySprite extends MediaContainer
 
         _desc = desc;
 
-        setMedia(desc.URL);
+        setMedia(desc.getMediaPath());
 
         scaleUpdated();
 

@@ -182,14 +182,6 @@ public class MediaDesc
     }
 
     /**
-     * Get the url at which the media may be loaded.
-     */
-    public function get URL () :String
-    {
-        return getMediaPath();
-    }
-
-    /**
      * @return true if the media is clickable.
      */
     public function isInteractive () :Boolean

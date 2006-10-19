@@ -16,7 +16,7 @@ public class SoundPlayer
     {
         _desc = desc;
 
-        _sound = new Sound(new URLRequest(desc.URL));
+        _sound = new Sound(new URLRequest(desc.getMediaPath()));
 
         _sound.addEventListener(IOErrorEvent.IO_ERROR, ioError);
         _sound.addEventListener(ProgressEvent.PROGRESS, loadingProgress);
