@@ -8,7 +8,7 @@ import flash.text.TextField;
 
 import mx.containers.VBox;
 
-import mx.core.UITextField;
+import mx.controls.Label;
 
 import com.threerings.util.MessageBundle;
 
@@ -32,14 +32,16 @@ public class DisconnectedPanel extends VBox
             clientObserver, clientObserver, clientObserver, clientObserver,
             clientObserver, clientObserver, clientObserver);
 
-        // TODO: piece of festering shit...
-        // I want to use a UITextField here so we can get all the standard
-        // love from using an advanced ui toolkit, but it is broken here
-        // for reasons beyond me. We can use a TextField and it will at
-        // least work.
-        _message = new TextField();
+        _message = new Label();
+        _message.setStyle("fontSize", 12);
+        _message.setStyle("fontWeight", "bold");
+
+        // stretch it!
+        _message.setStyle("left", 0);
+        _message.setStyle("right", 0);
+        addChild(_message);
+
         setMessage(msg);
-        rawChildren.addChild(_message);
     }
 
     override public function parentChanged (p :DisplayObjectContainer) :void
@@ -59,7 +61,8 @@ public class DisconnectedPanel extends VBox
      */
     public function setMessage (msg :String) :void
     {
-        _message.text = (msg == null) ? _ctx.xlate(null, "m.disconnected") : msg;
+        _message.text = (msg == null)
+            ? _ctx.xlate(null, "m.disconnected") : msg;
     }
 
     // from PlaceView
@@ -114,6 +117,6 @@ public class DisconnectedPanel extends VBox
 
     protected var _clientObs :ClientAdapter;
 
-    protected var _message :TextField;
+    protected var _message :Label;
 }
 }
