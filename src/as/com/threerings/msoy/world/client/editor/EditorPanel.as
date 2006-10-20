@@ -4,6 +4,7 @@ import flash.events.Event;
 
 import mx.binding.utils.BindingUtils;
 
+import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import mx.containers.TabNavigator;
@@ -59,6 +60,9 @@ public class EditorPanel extends VBox
         _ctrl = ctrl;
         _scene = editableScene;
         _sceneModel = (editableScene.getSceneModel() as MsoySceneModel);
+
+        verticalScrollPolicy = ScrollPolicy.OFF;
+        horizontalScrollPolicy = ScrollPolicy.OFF;
 
         itemList = new ItemList(_ctx, FurniItemRenderer);
         itemList.addItems(items);
@@ -166,7 +170,9 @@ public class EditorPanel extends VBox
         super.createChildren();
 
         _tabBox = new TabNavigator();
-        _tabBox.resizeToContent = true;
+        _tabBox.percentWidth = 100;
+        _tabBox.percentHeight = 100;
+        //_tabBox.resizeToContent = true;
         _tabBox.addChild(createRoomPanel());
 
         _spriteBox = new VBox();
