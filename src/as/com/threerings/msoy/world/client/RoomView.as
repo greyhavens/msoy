@@ -92,6 +92,7 @@ public class RoomView extends AbstractRoomView
         if (editing) {
             _roomObj.removeListener(this);
             removeAllOccupants();
+            setCenterSprite(null);
 
         } else {
             rereadScene();
@@ -124,12 +125,9 @@ public class RoomView extends AbstractRoomView
     {
         super.locationUpdated(sprite);
 
-        // if we moved our own sprite, possibly update the scroll position
-        if (sprite is AvatarSprite) {
-            var avatar :AvatarSprite = (sprite as AvatarSprite);
-            if (avatar.getOid() == _ctx.getClient().getClientOid()) {
-                scrollView(avatar);
-            }
+        // if we moved the _centerSprite, possibly update the scroll position
+        if (sprite == _centerSprite) {
+            scrollView();
         }
     }
 
@@ -141,6 +139,23 @@ public class RoomView extends AbstractRoomView
         if (null != _pendingRemoveAvatars.remove(avatar.getOid())) {
             removeSprite(avatar);
         }
+    }
+
+    /**
+     * Set the sprite we should be following.
+     */
+    public function setCenterSprite (center :MsoySprite) :void
+    {
+        _centerSprite = center;
+        scrollView();
+    }
+
+    /**
+     * Set whether we instantly jump to center, or scroll there.
+     */
+    public function setFastCentering (fastCentering :Boolean) :void
+    {
+        _jumpScroll = fastCentering;
     }
 
     public function dimAvatars (setDim :Boolean) :void
@@ -196,15 +211,18 @@ public class RoomView extends AbstractRoomView
         return canScroll;
     }
 
-    protected function scrollView (center :AvatarSprite) :void
+    protected function scrollView () :void
     {
+        if (_centerSprite == null) {
+            return;
+        }
         var rect :Rectangle = scrollRect;
         if (rect == null) {
             // return if there's nothing to scroll
             return;
         }
 
-        var centerX :int = center.x + center.hotSpot.x;
+        var centerX :int = _centerSprite.x + _centerSprite.hotSpot.x;
         var newX :Number = Math.min(_scene.getWidth() - rect.width,
             Math.max(0, centerX - rect.width/2));
         if (_jumpScroll) {
@@ -232,9 +250,8 @@ public class RoomView extends AbstractRoomView
     protected function tick (event :Event) :void
     {
         if (!_suppressAutoScroll) {
-            var avatar :AvatarSprite = getMyAvatar();
-            if (avatar != null) {
-                scrollView(avatar);
+            if (_centerSprite != null) {
+                scrollView();
 
             } else {
                 // stop scrolling
@@ -309,6 +326,12 @@ public class RoomView extends AbstractRoomView
             avatar.setLocation(loc);
             avatar.setOrientation(loc.orient);
 
+            // if we ever add ourselves, we follow it
+            if (bodyOid == _ctx.getClient().getClientOid()) {
+                setFastCentering(true);
+                setCenterSprite(avatar);
+            }
+
         } else {
             // place the sprite back into the set of active sprites
             _avatars.put(bodyOid, avatar);
@@ -376,6 +399,9 @@ public class RoomView extends AbstractRoomView
         if (sprite is AvatarSprite) {
             var avatar :AvatarSprite = (sprite as AvatarSprite);
             portalTraversed(avatar.loc, false);
+        }
+        if (sprite == _centerSprite) {
+            _centerSprite = null;
         }
     }
 
@@ -511,6 +537,9 @@ public class RoomView extends AbstractRoomView
 
     /** A map of bodyOid -> AvatarSprite. */
     protected var _avatars :HashMap = new HashMap();
+
+    /** The sprite we should center on. */
+    protected var _centerSprite :MsoySprite;
 
     /** A map of bodyOid -> AvatarSprite for those that we'll remove
      * when they stop moving. */

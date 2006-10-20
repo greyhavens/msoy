@@ -318,6 +318,11 @@ public class EditorController extends Controller
             addEditingListeners(_editSprite);
         }
 
+        _roomView.setFastCentering(_editSprite == sprite);
+        if (_editSprite != sprite) {
+            _roomView.setCenterSprite(sprite);
+        }
+
         _editSprite = sprite;
         _panel.setEditSprite(sprite);
 
@@ -513,6 +518,9 @@ public class EditorController extends Controller
         _editSprite.removeEventListener(MouseEvent.MOUSE_DOWN,
             editSpritePressed);
 
+        // stop following the sprite
+        _roomView.setCenterSprite(null);
+
         var hs :Point = _editSprite.localToGlobal(_editSprite.hotSpot);
 
 //        // determine whether we're going to adjust scaling or position
@@ -619,6 +627,7 @@ public class EditorController extends Controller
             spritePositioningKey);
 
         spriteUpdated(_editSprite);
+        _roomView.setCenterSprite(_editSprite);
 
         //_editSprite.graphics.clear();
         //addEditingListeners(_editSprite);
