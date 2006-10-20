@@ -21,6 +21,15 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Fetch all groups. This will be a pager soon.
+     */
+    public Collection<GroupRecord> findGroups ()
+        throws PersistenceException
+    {
+        return findAll(GroupRecord.class);
+    }
+    
+    /**
      * Fetch a single group, by id. Returns null if there's no such group.
      */
     public GroupRecord loadGroup (int groupId)

@@ -40,7 +40,7 @@ public class GroupRecord
     public int groupId;
 
     /** The name of the group. */
-    @Column(nullable=false)
+    @Column(nullable=false, unique=true)
     public String name;
 
     /** The group's charter, or null if one has yet to be set. */
@@ -70,13 +70,14 @@ public class GroupRecord
     /**
      * CreateS a web-safe version of this group.
      */
-    public Group toGroup ()
+    public Group toWebObject ()
     {
         Group group = new Group();
         group.groupId = groupId;
         group.name = name;
         group.charter = charter;
-        group.logo = new MediaDesc(logoMediaHash.clone(), logoMimeType);
+        group.logo = logoMediaHash != null ?
+            new MediaDesc(logoMediaHash.clone(), logoMimeType) : null;
         group.creatorId = creatorId;
         group.creationDate = new Date(creationDate.getTime());
         group.policy = policy;

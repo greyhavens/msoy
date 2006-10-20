@@ -17,6 +17,10 @@
    padding: 5px;
 }
 
+.inline {
+   display: inline;
+}   
+
 .itemPopup {
    border: 2px solid #0066FF;
    background: #6699CC;
@@ -26,6 +30,10 @@
 .itemDetailErrors {
    font-weight: bold;
    background: #FFFFFF;
+}
+
+.headerValueTable {
+   border: 1 px solid black;
 }
 
 .headerRow {
@@ -41,4 +49,14 @@
   background: #FFFFFF;
   border: 1px solid black;
 }
-  
+
+.groupLogoPopup {
+  border: 2px solid #0066FF;
+  background: #6699CC;
+  padding: 5px;
+}
+
+.groupLogoThumbnail {
+  border: 1px solid black;
+  height: 50px;
+}

@@ -1,0 +1,16 @@
+.blurb_box {
+   background: #99CCFF;
+}
+
+.blurb_header {
+   border: 1px solid;
+   font-weight: bold;
+}
+
+.profile_name {
+   font-weight: bold;
+}
+
+.profile_headline {
+   font-style: italic;
+}

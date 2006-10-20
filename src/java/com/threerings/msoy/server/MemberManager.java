@@ -5,7 +5,10 @@ package com.threerings.msoy.server;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import java.util.logging.Level;
 
@@ -13,13 +16,9 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
-import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.util.Name;
-
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -39,6 +38,7 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberGName;
 import com.threerings.msoy.web.data.Profile;
@@ -402,6 +402,53 @@ public class MemberManager
     }
     
     /**
+     * Fetches all group records and sends them back in web object format.
+     * This method will most likely become a pager in the near future, or we
+     * will be returning some kind of summary object.
+     */
+    public void getGroups (ResultListener<List<Group>> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Group>>(listener) {
+            public List<Group> invokePersistResult () throws PersistenceException {
+                List<Group> groups = new ArrayList<Group>();
+                for (GroupRecord gRec : _groupRepo.findGroups()) {
+                    groups.add(gRec.toWebObject());
+                }
+                return groups;
+            }
+        });
+    }
+
+    /**
+     * Creates a new group record in the database and return a {@link Group} for
+     * it. This method assigns the group a new, unique id.
+     * 
+     * TODO: Sanity checks on group name.
+     */
+    public void createGroup (final Group groupDef, ResultListener<Group> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Group>(listener) {
+            public Group invokePersistResult () throws PersistenceException {
+                GroupRecord gRec = new GroupRecord();
+                gRec.name = groupDef.name;
+                gRec.charter = groupDef.charter;
+                if (groupDef.logo != null) {
+                    gRec.logoMimeType = groupDef.logo.mimeType;
+                    gRec.logoMediaHash = groupDef.logo.hash;
+                }
+                gRec.creatorId = groupDef.creatorId;
+                gRec.creationDate = new Timestamp(groupDef.creationDate.getTime());
+                gRec.policy = groupDef.policy;
+                _groupRepo.createGroup(gRec);
+    
+                _groupRepo.joinGroup(gRec.groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
+    
+                return gRec.toWebObject();
+            }
+        });
+    }
+
+    /**
      * Updates a group record in the database with new data. Only non-null/non-zero parameters
      * are used for the update, and data is not read back from the database. This is a low-level
      * method without privilige checks; it's up to the callers to secure it.
@@ -438,53 +485,28 @@ public class MemberManager
     }
 
     /**
-     * Creates a new group record in the database and return a {@link Group} for
-     * it. This method assigns the group a new, unique id.
-     */
-    public void createGroup (final Group groupDef, ResultListener<Group> listener)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Group>(listener) {
-            public Group invokePersistResult () throws PersistenceException {
-                GroupRecord gRec = new GroupRecord();
-                gRec.name = groupDef.name;
-                gRec.charter = groupDef.charter;
-                gRec.logoMimeType = groupDef.logo.mimeType;
-                gRec.logoMediaHash = groupDef.logo.hash;
-                gRec.creatorId = groupDef.creatorId;
-                gRec.creationDate = new Timestamp(groupDef.creationDate.getTime());
-                gRec.policy = groupDef.policy;
-                _groupRepo.createGroup(gRec);
-
-                _groupRepo.joinGroup(gRec.groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
-
-                return gRec.toGroup();
-            }
-        });
-    }
-    
-
-    /**
      * Fetches the members of a given group, as {@link GroupMembership} records. This method
      * does not distinguish between a nonexistent group and a group without members;
      * both situations yield empty collections.
      */
-    public void getGroupMembers (final int groupId, ResultListener<List<GroupMembership>> listener)
+    public void getGroupDetail (final int groupId, ResultListener<GroupDetail> listener)
     {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<GroupMembership>>(listener) {
-            public List<GroupMembership> invokePersistResult () throws PersistenceException {
-                List<GroupMembership> result = new ArrayList<GroupMembership>();
-                GroupRecord gRec = _groupRepo.loadGroup(groupId); 
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<GroupDetail>(listener) {
+            public GroupDetail invokePersistResult () throws PersistenceException {
+                // load the group record
+                GroupRecord gRec = _groupRepo.loadGroup(groupId);
+                // load the creator's member record
+                MemberRecord mRec = _memberRepo.loadMember(gRec.creatorId);
+                // set up the detail
+                GroupDetail detail = new GroupDetail();
+                detail.creator = new MemberGName(mRec.name, mRec.memberId);
+                detail.group = gRec.toWebObject();
+                detail.members = new HashMap<MemberGName, Byte>(); 
                 for (GroupMembershipRecord gmRec : _groupRepo.getMembers(groupId)) {
-                    MemberRecord mRec = _memberRepo.loadMember(gmRec.memberId);
-                    GroupMembership gm = new GroupMembership();
-                    gm.member = new MemberGName();
-                    gm.member.memberId = mRec.memberId;
-                    gm.member.memberName = mRec.name;
-                    gm.groupId = groupId;
-                    gm.groupName = gRec.name;
-                    result.add(gm);
+                    mRec = _memberRepo.loadMember(gmRec.memberId);
+                    detail.members.put(new MemberGName(mRec.name, mRec.memberId), gmRec.rank);
                 }
-                return result;
+                return detail;
             }
         });
     }
@@ -519,7 +541,6 @@ public class MemberManager
      * Cancels the given person's membership in the given group.
      */
     public void leaveGroup (final int groupId, final int memberId, ResultListener<Void> listener)
-        throws PersistenceException
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
             public Void invokePersistResult() throws PersistenceException {
@@ -570,7 +591,7 @@ public class MemberManager
             }
         });
     }
-
+    
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
 

@@ -14,6 +14,8 @@ import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.client.GameServiceAsync;
+import com.threerings.msoy.web.client.GroupService;
+import com.threerings.msoy.web.client.GroupServiceAsync;
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.PersonService;
@@ -58,14 +60,13 @@ public abstract class MsoyEntryPoint
         _ctx.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
         ((ServiceDefTarget)_ctx.itemsvc).setServiceEntryPoint(prefix + "item");
         _ctx.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
-        ((ServiceDefTarget)_ctx.profilesvc).setServiceEntryPoint(
-            prefix + "profile");
+        ((ServiceDefTarget)_ctx.profilesvc).setServiceEntryPoint(prefix + "profile");
         _ctx.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
-        ((ServiceDefTarget)_ctx.personsvc).setServiceEntryPoint(
-            prefix + "person");
+        ((ServiceDefTarget)_ctx.personsvc).setServiceEntryPoint(prefix + "person");
+        _ctx.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);
+        ((ServiceDefTarget)_ctx.groupsvc).setServiceEntryPoint(prefix + "group");
         _ctx.catalogsvc = (CatalogServiceAsync)GWT.create(CatalogService.class);
-        ((ServiceDefTarget)_ctx.catalogsvc).setServiceEntryPoint(
-            prefix + "catalog");
+        ((ServiceDefTarget)_ctx.catalogsvc).setServiceEntryPoint(prefix + "catalog");
         _ctx.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
         ((ServiceDefTarget)_ctx.gamesvc).setServiceEntryPoint(prefix + "game");
 

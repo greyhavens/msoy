@@ -26,6 +26,9 @@ public class WebContext
     /** Provides person-related services. */
     public PersonServiceAsync personsvc;
 
+    /** Provides group-related services. */
+    public GroupServiceAsync groupsvc;
+
     /** Provides catalog-related services. */
     public CatalogServiceAsync catalogsvc;
 

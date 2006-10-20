@@ -10,7 +10,7 @@ import com.threerings.io.Streamable;
 import com.threerings.msoy.item.web.MediaDesc;
 
 /**
- * Contains the details of a group.
+ * Contains the basic data of a group.
  */
 public class Group
     implements Streamable, IsSerializable
@@ -28,11 +28,12 @@ public class Group
     /** The group's charter, or null if one has yet to be set. */
     public String charter;
 
+    /** The group's logo. */
     public MediaDesc logo;
 
-    /** The member id of the person who created the group. */
+    /** The id of the person who created the group. */
     public int creatorId;
-    
+
     public Date creationDate;
 
     public byte policy;

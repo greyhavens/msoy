@@ -10,6 +10,8 @@ public class HeaderValueTable extends FlexTable
     public HeaderValueTable ()
     {
         super();
+        // default style
+        setStyleName("headerValueTable");
         setBorderWidth(0);
         setCellSpacing(0);
         setCellPadding(3);

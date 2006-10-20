@@ -31,4 +31,17 @@ public class MemberGName
         this.memberName = name;
         this.memberId = id;
     }
+    
+    public int hashCode()
+    {
+        return memberId;
+    }
+
+    public boolean equals(Object other)
+    {
+        if (other instanceof MemberGName) {
+            return memberId == ((MemberGName) other).memberId;
+        }
+        return false;
+    }
 }

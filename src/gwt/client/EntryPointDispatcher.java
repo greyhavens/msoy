@@ -12,8 +12,6 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import client.inventory.index;
-
 /**
  * Due to the way GWT is structured, we have a single {@link EntryPoint} to our
  * entire application and it then looks for an argument passed by the page to
@@ -77,6 +75,7 @@ public class EntryPointDispatcher
         _pages.put("index", client.index.getCreator());
         _pages.put("inventory", client.inventory.index.getCreator());
         _pages.put("person", client.person.index.getCreator());
+        _pages.put("group", client.group.index.getCreator());
         _pages.put("catalog", client.catalog.index.getCreator());
         _pages.put("game", client.game.index.getCreator());
     }
