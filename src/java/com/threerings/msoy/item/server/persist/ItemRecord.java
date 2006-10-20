@@ -72,7 +72,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
      * a clone. This field is not persisted to the database, but set when
      * we load a clone.
      */
-    @Computed
+    @Computed(required=false)
     public int parentId = -1;
 
     /** A bit-mask of flags that we need to know about every digital item
