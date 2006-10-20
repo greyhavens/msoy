@@ -53,6 +53,7 @@ import com.threerings.msoy.world.data.RoomConfig;
 
 import com.threerings.msoy.person.server.persist.PersonPageRepository;
 import com.threerings.msoy.server.persist.GroupRepository;
+import com.threerings.msoy.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.persist.ProfileRepository;
@@ -69,6 +70,9 @@ public class MsoyServer extends WhirledServer
 
     /** Our runtime member manager. */
     public static MemberManager memberMan = new MemberManager();
+
+    /** Our runtime mail manager. */
+    public static MailManager mailMan = new MailManager();
 
     /** Contains information on our members. */
     public static MemberRepository memberRepo;
@@ -190,13 +194,15 @@ public class MsoyServer extends WhirledServer
         memberRepo = new MemberRepository(conProv);
         ProfileRepository profileRepo = new ProfileRepository(conProv);
         GroupRepository groupRepo = new GroupRepository(conProv);
-        
+        MailRepository mailRepo = new MailRepository(conProv);
+
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), true);
         parlorMan.init(invmgr, plreg);
         sceneRepo = (MsoySceneRepository) _screp;
         memberMan.init(memberRepo, profileRepo, groupRepo);
+        mailMan.init(mailRepo, memberRepo);
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
         lobbyReg.init(invmgr);
