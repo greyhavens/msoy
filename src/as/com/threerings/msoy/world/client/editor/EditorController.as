@@ -254,7 +254,8 @@ public class EditorController extends Controller
 
         _panel.itemList.removeItem(_panel.listedItemFromSprite(sprite));
 
-        var scene :MsoyScene = (_ctx.getSceneDirector().getScene() as MsoyScene);
+        var scene :MsoyScene =
+            (_ctx.getSceneDirector().getScene() as MsoyScene);
 
         if (sprite is FurniSprite) {
             var furni :FurniData = (sprite as FurniSprite).getFurniData();
@@ -283,6 +284,7 @@ public class EditorController extends Controller
     {
         drawEditing(sprite);
         spriteUpdated(sprite);
+        _panel.itemList.refresh();
     }
 
     /**

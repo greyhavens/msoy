@@ -41,15 +41,15 @@ public class TopPanel extends Canvas
         _placeBox = new Canvas();
         _placeBox.includeInLayout = false;
         _placeBox.setStyle("top", 0);
-        _placeBox.setStyle("left", 0);
-        _placeBox.setStyle("right", _sideAttachment);
+        _placeBox.setStyle("left", _sideAttachment);
+        _placeBox.setStyle("right", 0);
         _placeBox.setStyle("bottom", ControlBar.HEIGHT);
         addChild(_placeBox);
 
         // set up a mask on the placebox
         _placeMask = new Shape();
         _placeBox.mask = _placeMask;
-        rawChildren.addChild(_placeMask);
+        _placeBox.rawChildren.addChild(_placeMask);
 
         // set up the control bar
         controlBar = new ControlBar(ctx);
@@ -120,8 +120,8 @@ public class TopPanel extends Canvas
 
         _sidePanel.setStyle("top", 0);
         _sidePanel.setStyle("bottom", ControlBar.HEIGHT);
-        _sidePanel.setStyle("right", 0);
-        _sidePanel.setStyle("left", unscaledWidth - SIDE_PANEL_WIDTH);
+        _sidePanel.setStyle("left", 0);
+        _sidePanel.setStyle("right", unscaledWidth - SIDE_PANEL_WIDTH);
 
         addChild(_sidePanel); // add to end
     }
@@ -165,7 +165,7 @@ public class TopPanel extends Canvas
     protected function setSideAttachment (rightSpace :int) :void
     {
         _sideAttachment = rightSpace;
-        _placeBox.setStyle("right", _sideAttachment);
+        _placeBox.setStyle("left", _sideAttachment);
         adjustPlaceMask();
     }
 

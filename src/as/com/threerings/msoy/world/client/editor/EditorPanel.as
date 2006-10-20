@@ -7,6 +7,8 @@ import mx.binding.utils.BindingUtils;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
+import mx.collections.Sort;
+
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
@@ -35,6 +37,7 @@ import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomView;
 
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
@@ -58,6 +61,7 @@ public class EditorPanel extends VBox
     {
         _ctx = ctx;
         _ctrl = ctrl;
+        _roomView = roomView;
         _scene = editableScene;
         _sceneModel = (editableScene.getSceneModel() as MsoySceneModel);
 
@@ -79,6 +83,10 @@ public class EditorPanel extends VBox
             // they keyboard to hightlight items is broken, broken, broken
             _ctrl.itemSelectedFromList(itemList.selectedItem);
         });
+
+        _itemSort = new Sort();
+        _itemSort.compareFunction = itemSortFn;
+        itemList.setSort(_itemSort);
     }
 
     /**
@@ -236,11 +244,6 @@ public class EditorPanel extends VBox
         }
         _type.dataProvider = types;
 
-//        // background furni
-//        grid.addRow(
-//            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_background")),
-//            _background = new ItemReceptor(_ctx));
-
         grid.addRow(
             MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_name")),
             _name = new TextInput());
@@ -312,6 +315,55 @@ public class EditorPanel extends VBox
         }, _horizon, "value");
     }
 
+    /**
+     * Our sorting function for the placed furni list (itemList).
+     */
+    private function itemSortFn (a :Object, b:Object, fields :Array = null) :int
+    {
+        var va :Number = sortOrder(a);
+        var vb :Number = sortOrder(b);
+        return (va < vb) ? -1 : ((va > vb) ? 1 : 0);
+    }
+
+    /**
+     * Determine the sort order for the item in our itemList.
+     */
+    private function sortOrder (o :Object) :Number
+    {
+        var spr :FurniSprite = null;
+        if (o is Item) {
+            var io :Item = (o as Item);
+            spr = findFurni(-1, io.getType(), io.itemId);
+
+        } else if (o is FurniData) { // props
+            var fo :FurniData = (o as FurniData);
+            spr = findFurni(fo.id, fo.itemType, fo.itemId);
+        }
+
+        // for now, just sort by x position
+        return (spr != null) ? spr.x : 0;
+    }
+
+    /**
+     * Helper method for sorting: look up the sprite for a given
+     * item in the itemList.
+     */
+    private function findFurni (
+        furniId :int, itemType :int, itemId :int) :FurniSprite
+    {
+        for each (var spr :FurniSprite in _roomView.getFurniSprites()) {
+            var furni :FurniData = spr.getFurniData();
+            if (furni.id == furniId) {
+                return spr;
+            }
+            if (furni.itemType != Item.NOT_A_TYPE &&
+                    furni.itemType == itemType && furni.itemId == itemId) {
+                return spr;
+            }
+        }
+        return null;
+    }
+
     protected var _ctx :MsoyContext;
 
     protected var _ctrl :EditorController;
@@ -321,13 +373,16 @@ public class EditorPanel extends VBox
 
     protected var _tabBox :TabNavigator;
 
+    protected var _roomView :RoomView;
+
     /** The place where we add the sprite editor. */
     protected var _spriteBox :VBox;
 
     protected var _type :ComboBox;
-    protected var _background :ItemReceptor;
 
     protected var _inventoryBox :VBox;
+
+    protected var _itemSort :Sort;
 
     protected var _name :TextInput;
     protected var _width :TextInput;

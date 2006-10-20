@@ -3,6 +3,7 @@ package com.threerings.msoy.item.client {
 import mx.core.ClassFactory;
 
 import mx.collections.ArrayCollection;
+import mx.collections.Sort;
 
 import com.threerings.presents.client.ResultWrapper;
 
@@ -62,6 +63,25 @@ public class ItemList extends MsoyList
     {
         for each (var item :Object in items) {
             _itemsToShow.addItem(item);
+        }
+    }
+
+    /**
+     * Set the sort that should be used on these items.
+     */
+    public function setSort (sort :Sort) :void
+    {
+        _itemsToShow.sort = sort;
+        refresh();
+    }
+
+    public function refresh () :void
+    {
+        _itemsToShow.refresh();
+        var si :int = selectedIndex;
+        // again, this should scroll things on-screen, but it doesn't always
+        if (si != -1) {
+            scrollToIndex(si);
         }
     }
 
