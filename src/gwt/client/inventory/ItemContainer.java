@@ -53,6 +53,12 @@ public class ItemContainer extends VerticalPanel
     }
 
     /** So arbitrary. TODO. */
+    public static final int MAIN_HEIGHT = 200;
+
+    /** So arbitrary. TODO. */
+    public static final int FURNI_HEIGHT = 100;
+
+    /** So arbitrary. TODO. */
     public static final int THUMB_HEIGHT = 100;
 
     public ItemContainer (ItemPanel panel, Item item)

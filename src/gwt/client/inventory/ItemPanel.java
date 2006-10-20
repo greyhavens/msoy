@@ -9,7 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,15 +23,33 @@ import com.threerings.msoy.web.client.WebContext;
  */
 public class ItemPanel extends VerticalPanel
 {
+    public static final int COLUMNS = 2;
+
+    public static final int ROWS = 3;
+
     public ItemPanel (WebContext ctx, byte type)
     {
         // setStyleName("inventory_item");
         _ctx = ctx;
         _type = type;
 
-        // this will contain our items
-        add(_contents = new FlowPanel());
+        // this will contain our items (an extra for for "next, back")
+        add(_contents = new Grid(ROWS+1, COLUMNS));
         _contents.setStyleName("inventory_contents");
+
+        // these will be used for navigation
+        _next = new Button("Next");
+        _next.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                displayPage(_page+1, false);
+            }
+        });
+        _prev = new Button("Prev");
+        _prev.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                displayPage(_page-1, false);
+            }
+        });
 
         // this will allow us to create new items
         add(_create = new Button("Create new..."));
@@ -55,18 +73,7 @@ public class ItemPanel extends VerticalPanel
             _ctx.itemsvc.loadInventory(_ctx.creds, _type, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _items = (ArrayList)result;
-                    if (_items == null || _items.size() == 0) {
-                        _contents.add(
-                            new Label(
-                                "You have no " + Item.getTypeName(_type) +
-                                " items."));
-                    } else {
-                        for (int ii = 0; ii < _items.size(); ii++) {
-                            _contents.add(new ItemContainer(
-                                              ItemPanel.this,
-                                              (Item)_items.get(ii)));
-                        }
-                    }
+                    displayPage(_page, true);
                 }
                 public void onFailure (Throwable caught) {
                     GWT.log("loadInventory failed", caught);
@@ -75,6 +82,32 @@ public class ItemPanel extends VerticalPanel
                 }
             });
         }
+    }
+
+    protected void displayPage (int page, boolean forceRefresh)
+    {
+        if (_page == page && !forceRefresh) {
+            return; // NOOP!
+        }
+
+        _page = Math.max(page, 0);
+        _contents.clear();
+        if (_items == null || _items.size() == 0) {
+            _contents.setText(0, 0, "You have no " + Item.getTypeName(_type) + " items.");
+            return;
+        }
+
+        int count = COLUMNS * ROWS, start = COLUMNS * ROWS * page;
+        int limit = Math.min(count, _items.size()-start), row = -1;
+        for (int ii = 0; ii < limit; ii++) {
+            _contents.setWidget(row = (ii / COLUMNS), ii % COLUMNS,
+                                new ItemContainer(ItemPanel.this, (Item)_items.get(ii+start)));
+        }
+
+        _contents.setWidget(row+1, 0, _prev);
+        _prev.setEnabled(start > 0);
+        _contents.setWidget(row+1, 1, _next);
+        _next.setEnabled(start+limit < _items.size());
     }
 
     protected void listItem (ItemIdent item)
@@ -172,10 +205,11 @@ public class ItemPanel extends VerticalPanel
 
     protected WebContext _ctx;
 
-    protected FlowPanel _contents;
-    protected Button _create;
+    protected Grid _contents;
+    protected Button _create, _next, _prev;
     protected Label _status;
 
     protected byte _type;
     protected ArrayList _items;
+    protected int _page;
 }

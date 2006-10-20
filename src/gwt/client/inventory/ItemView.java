@@ -10,6 +10,8 @@ import client.MsoyEntryPoint;
 import client.util.HeaderValueTable;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -235,16 +237,25 @@ public class ItemView extends PopupPanel
             }
         });
         _table.addRow("Tagging History", button);
+
+        recenter(false);
     }
 
-    // @Override // from Widget
-    protected void onLoad ()
+    /**
+     * Recenters our popup.
+     */
+    protected void recenter (boolean defer)
     {
-        super.onLoad();
-
-        // center ourselves
-        setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
-                         (Window.getClientHeight() - getOffsetHeight()) / 2);
+        if (defer) {
+            DeferredCommand.add(new Command() {
+                public void execute () {
+                    recenter(false);
+                }
+            });
+        } else {
+            setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
+                             (Window.getClientHeight() - getOffsetHeight()) / 2);
+        }
     }
 
     protected void updateTags ()

@@ -142,7 +142,12 @@ public abstract class ItemEditor extends PopupPanel
     {
         super.onLoad();
         configureBridge();
-        recenter();
+
+        // recenter immediately and then do it again in a deferred command;
+        // TODO: figure out how to trigger on an image being fully loaded and
+        // have that result in calls to recenter(); yay for asynchronous layout
+        recenter(false);
+        recenter(true);
     }
 
     /**
@@ -152,20 +157,20 @@ public abstract class ItemEditor extends PopupPanel
     protected void createEditorInterface ()
     {
         String title = "Furniture Image";
-        _furniUploader = createUploader(FURNI_ID, title, -1,
-            new MediaUpdater() {
+        _furniUploader = createUploader(
+            FURNI_ID, title, ItemContainer.FURNI_HEIGHT, new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _item.furniMedia = new MediaDesc(hash, mimeType);
-                recenter();
+                recenter(true);
             }
         });
 
         title = "Thumbnail Image";
-        _thumbUploader = createUploader(THUMB_ID, title,
-            ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
+        _thumbUploader = createUploader(
+            THUMB_ID, title, ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _item.thumbMedia = new MediaDesc(hash, mimeType);
-                recenter();
+                recenter(true);
             }
         });
 
@@ -187,13 +192,21 @@ public abstract class ItemEditor extends PopupPanel
     }
 
     /**
-     * Recenters our popup which should be done when media previews are
+     * Recenters our popup. This should be called when media previews are
      * changed.
      */
-    protected void recenter ()
+    protected void recenter (boolean defer)
     {
-        setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
-                         (Window.getClientHeight() - getOffsetHeight()) / 2);
+        if (defer) {
+            DeferredCommand.add(new Command() {
+                public void execute () {
+                    recenter(false);
+                }
+            });
+        } else {
+            setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
+                             (Window.getClientHeight() - getOffsetHeight()) / 2);
+        }
     }
 
     /**
@@ -202,7 +215,8 @@ public abstract class ItemEditor extends PopupPanel
      */
     protected void configureMainUploader (String title, MediaUpdater updater)
     {
-        _mainUploader = createUploader(MAIN_ID, title, -1, updater);
+        _mainUploader = createUploader(
+            MAIN_ID, title, ItemContainer.MAIN_HEIGHT, updater);
     }
 
     /**

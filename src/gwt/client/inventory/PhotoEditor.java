@@ -28,6 +28,7 @@ public class PhotoEditor extends ItemEditor
         super.setItem(item);
         _photo = (Photo)item;
         _caption.setText((_photo.caption == null) ? "" : _photo.caption);
+        _mainUploader.setMedia(_photo.photoMedia);
     }
 
     // @Override from ItemEditor
@@ -36,7 +37,7 @@ public class PhotoEditor extends ItemEditor
         configureMainUploader("Upload your photo.", new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _photo.photoMedia = new MediaDesc(hash, mimeType);
-                recenter();
+                recenter(true);
             }
         });
 

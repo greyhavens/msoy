@@ -29,6 +29,7 @@ public class AvatarEditor extends ItemEditor
         _avatar = (Avatar)item;
         _description.setText((_avatar.description == null)
             ? "" : _avatar.description);
+        _mainUploader.setMedia(_avatar.avatarMedia);
     }
 
     // @Override from ItemEditor
@@ -37,7 +38,7 @@ public class AvatarEditor extends ItemEditor
         configureMainUploader("Upload your avatar.", new MediaUpdater() {
             public void updateMedia (byte[] hash, byte mimeType) {
                 _avatar.avatarMedia = new MediaDesc(hash, mimeType);
-                recenter();
+                recenter(true);
             }
         });
 
