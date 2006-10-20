@@ -5,11 +5,10 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
- * The asynchronous (client-side) version of {@link PersonService}.
+ * The asynchronous (client-side) version of {@link GroupService}.
  */
 public interface GroupServiceAsync
 {

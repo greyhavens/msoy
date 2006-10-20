@@ -12,7 +12,7 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
- * Defines "person page" services available to the GWT/AJAX web client.
+ * Defines group services available to the GWT/AJAX web client.
  */
 public interface GroupService extends RemoteService
 {
