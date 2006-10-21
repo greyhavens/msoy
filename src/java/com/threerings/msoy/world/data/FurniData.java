@@ -63,6 +63,25 @@ public class FurniData extends SimpleStreamableObject
     /** The action, interpreted using actionType. */
     public String actionData;
 
+    /**
+     * Return the actionData as two strings, split after the first colon.
+     * If there is no colon, then a single-element array is returned.
+     */
+    public String[] splitActionData ()
+    {
+        if (actionData == null) {
+            return new String[] { null };
+        }
+        int colonDex = actionData.indexOf(':');
+        if (colonDex == -1) {
+            return new String[] { actionData };
+
+        } else {
+            return new String[] { actionData.substring(0, colonDex),
+                actionData.substring(colonDex + 1) };
+        }
+    }
+
     // documentation inherited
     public boolean equals (Object other)
     {

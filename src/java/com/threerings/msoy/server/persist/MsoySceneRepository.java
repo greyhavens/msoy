@@ -22,6 +22,9 @@ import com.samskivert.jdbc.JORARepository;
 import com.samskivert.jdbc.SimpleRepository;
 import com.samskivert.jdbc.TransitionRepository;
 
+import com.samskivert.util.HashIntMap;
+import com.samskivert.util.StringUtil;
+
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.persist.SceneRepository;
@@ -218,6 +221,38 @@ public class MsoySceneRepository extends SimpleRepository
                 }
 
                 return list;
+            }
+        });
+    }
+
+    /**
+     * Given a list of scene ids, return a map containing the current names,
+     * indexed by scene id.
+     */
+    public HashIntMap<String> identifyScenes (int[] scenes)
+        throws PersistenceException
+    {
+        final String sceneSet = StringUtil.toString(scenes);
+
+        return execute(new Operation<HashIntMap<String>>() {
+            public HashIntMap<String> invoke (
+                Connection conn, DatabaseLiaison liaison)
+                throws SQLException, PersistenceException
+            {
+                HashIntMap<String> names = new HashIntMap<String>();
+                Statement stmt = conn.createStatement();
+                try {
+                    ResultSet rs = stmt.executeQuery("select " +
+                        "SCENE_ID, NAME from SCENES " +
+                        "where SCENE_ID in " + sceneSet);
+                    while (rs.next()) {
+                        names.put(rs.getInt(1), rs.getString(2));
+                    }
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+
+                return names;
             }
         });
     }

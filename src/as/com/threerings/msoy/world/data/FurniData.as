@@ -69,7 +69,7 @@ public class FurniData
     public function splitActionData () :Array
     {
         if (actionData == null) {
-            return null;
+            return [ null ];
         }
         var colonDex :int = actionData.indexOf(":");
         if (colonDex == -1) {

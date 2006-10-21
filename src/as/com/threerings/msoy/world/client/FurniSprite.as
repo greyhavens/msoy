@@ -216,7 +216,7 @@ public class FurniSprite extends MsoySprite
             break;
 
         case FurniData.ACTION_PORTAL:
-            toolTip = ctx.xlate(null, "i.trav_portal");
+            toolTip = ctx.xlate(null, "i.trav_portal", String(actionData[1]));
             break;
 
         default:

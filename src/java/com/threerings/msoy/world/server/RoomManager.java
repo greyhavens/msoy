@@ -6,7 +6,12 @@ package com.threerings.msoy.world.server;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.samskivert.io.PersistenceException;
+
+import com.samskivert.jdbc.RepositoryUnit;
+
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.ResultListener;
 
@@ -124,8 +129,11 @@ public class RoomManager extends SpotSceneManager
             throw new InvocationException(ACCESS_DENIED);
         }
 
+        ArrayIntSet scenesToId = null;
         for (SceneUpdate update : updates) {
-            recordUpdate(update);
+            // TODO: complicated verification of changes, including
+            // verifying that the user owns the items they're adding
+            // (and that they don't add any props)
 
             // furniture modification updates require us to mark item usage
             if (update instanceof ModifyFurniUpdate) {
@@ -139,7 +147,105 @@ public class RoomManager extends SpotSceneManager
                                 "[e=" + cause + "].");
                         }
                     });
+
+
+                // also, we locate all the scene ids named in added portals
+                if (mfu.furniAdded != null) {
+                    for (FurniData furni : mfu.furniAdded) {
+                        if (furni.actionType == FurniData.ACTION_PORTAL) {
+                            try {
+                                int sceneId = Integer.parseInt(
+                                    furni.splitActionData()[0]);
+                                if (scenesToId == null) {
+                                    scenesToId = new ArrayIntSet();
+                                }
+                                scenesToId.add(sceneId);
+                            } catch (Exception e) {
+                                // just accept it
+                            }
+                        }
+                    }
+                }
             }
+        }
+
+        if (scenesToId != null) {
+            updateRoom2(updates, scenesToId);
+
+        } else {
+            finishUpdateRoom(updates);
+        }
+    }
+
+    /**
+     * updateRoom, continued. Look up any scene names for new portals.
+     */
+    protected void updateRoom2 (
+        final SceneUpdate[] updates, ArrayIntSet scenesToId)
+    {
+        final int[] sceneIds = scenesToId.toIntArray();
+
+        MsoyServer.invoker.postUnit(new RepositoryUnit("IdentifyScenes") {
+            public void invokePersist ()
+                throws PersistenceException
+            {
+                _sceneNames = MsoyServer.sceneRepo.identifyScenes(sceneIds);
+            }
+
+            public void handleSuccess ()
+            {
+                updateRoom3(updates, _sceneNames);
+            }
+
+            public void handleFailure (Exception e)
+            {
+                log.warning("Unable to identify scenes [err=" + e + "]");
+                // just finish off
+                finishUpdateRoom(updates);
+            }
+
+            protected HashIntMap<String> _sceneNames;
+        });
+    }
+
+    /**
+     * Assign the names to portals.
+     */
+    protected void updateRoom3 (
+        SceneUpdate[] updates, HashIntMap<String> sceneNames)
+    {
+        for (SceneUpdate update : updates) {
+            if (update instanceof ModifyFurniUpdate) {
+                ModifyFurniUpdate mfu = (ModifyFurniUpdate) update;
+                if (mfu.furniAdded != null) {
+                    for (FurniData furni : mfu.furniAdded) {
+                        if (furni.actionType == FurniData.ACTION_PORTAL) {
+                            try {
+                                int sceneId = Integer.parseInt(
+                                    furni.splitActionData()[0]);
+                                String name = sceneNames.get(sceneId);
+                                if (name != null) {
+                                    furni.actionData = sceneId + ":" + name;
+                                }
+                            } catch (Exception e) {
+                                // whatever
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        finishUpdateRoom(updates);
+    }
+
+    /**
+     * Ah, the final step in updating the room.
+     */
+    protected void finishUpdateRoom (SceneUpdate[] updates)
+    {
+        for (SceneUpdate update : updates) {
+            recordUpdate(update);
         }
     }
 
