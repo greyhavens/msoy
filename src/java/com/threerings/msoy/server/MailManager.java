@@ -7,12 +7,12 @@ import com.threerings.msoy.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 /**
- * Manage msoy members.
+ * Manage msoy mail.
  */
 public class MailManager
 {
     /**
-     * Prepares our member manager for operation.
+     * Prepares our mail manager for operation.
      */
     public void init (MailRepository mailRepo, MemberRepository memberRepo)
     {
