@@ -28,6 +28,7 @@ public class ControlBar extends Canvas
 {
     /** The height of the control bar. This is fixed. */
     public static const HEIGHT :int = 59;
+    public static const WIDTH :int = 800;
 
     public function ControlBar (ctx :MsoyContext)
     {
@@ -43,6 +44,7 @@ public class ControlBar extends Canvas
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
         height = HEIGHT;
+        width = WIDTH;
 
         checkControls();
     }
