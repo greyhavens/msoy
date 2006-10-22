@@ -8,17 +8,9 @@ MIRROR=/export/tools/bin/mirror
 ROOT=`dirname $0 | sed s:/bin$::`
 cd $ROOT
 
-# mirror the library files
-echo "** Mirroring libraries..."
-$MIRROR lib/*.jar lib/i?86-*/lib*.so
-
-# mirror the project jar files
-echo "** Mirroring project jars..."
-$MIRROR dist/*.jar projects/*/dist/*.jar
-
-# mirror the project jar files
-# echo "** Mirroring resources..."
-# $MIRROR `find rsrc -name '*.jar'`
+# mirror the code
+echo "** Mirroring jar files..."
+$MIRROR dist/*.jar dist/lib/*.jar dist/lib/*/lib*.so
 
 # mirror the configuration files
 echo "** Mirroring configuration files..."

@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Sets up standard bits and runs java
+
+MSOY_HOME=`dirname $0`
+MSOY_HOME=`cd $MSOY_HOME/.. ; pwd`
+
+umask 002
+
+JAVA_VM="$JAVA_HOME/bin/java"
+if [ ! -e $JAVA_VM ]; then
+    echo "$0: Cannot find JVM in $JAVA_HOME. Exiting."
+    exit 255
+fi
+
+# set up our java arguments
+JAVA_ARGS="-Dno_unpack_resources=true \
+    -Dmsoy.home=$MSOY_HOME \
+    -Dresource_dir=$MSOY_HOME/rsrc \
+    -Drsrc_cache_dir=/tmp"
+
+# extract -D arguments so that we can put them before the classname
+while [ ! -z "$1" ]; do
+    case "$1" in
+        -D*)
+            JAVA_ARGS="$JAVA_ARGS $1"
+            ;;
+
+        *)
+            ARGS="$ARGS $1"
+            ;;
+    esac
+    shift
+done
+
+# Some temporary business for multiprocessor FreeBSD machines
+NEEDS_MEMBAR=`$JAVA_VM -fullversion 2>&1 | grep diablo`
+if [ ! -z "$NEEDS_MEMBAR" ]; then
+     JAVA_ARGS="$JAVA_ARGS -XX:+UseMembar"
+fi
+
+# add all necessary JAR files and $MSOY_HOME to the CLASSPATH
+CLASSPATH="$JAVA_HOME/jre/lib/rt.jar"
+for jar in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-code.jar; do
+    if [ -e $jar ]; then
+        CLASSPATH=$jar:$CLASSPATH
+    fi
+done
+CLASSPATH=$MSOY_HOME:$CLASSPATH
+export CLASSPATH
+
+# set up the LD_LIBRARY_PATH to include our shared libraries
+LD_LIBRARY_PATH=$MSOY_HOME/dist/lib/`uname -m`-`uname -s`
+export LD_LIBRARY_PATH
+
+# do the deed
+$JAVA_VM $JAVA_ARGS $ARGS

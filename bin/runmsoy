@@ -56,7 +56,7 @@ fi
 CLASSPATH="$JAVA_HOME/jre/lib/rt.jar"
 
 # Add all necessary JAR files to the CLASSPATH
-for jar in $MSOY_HOME/lib/*.jar $MSOY_HOME/dist/msoy-*.jar; do
+for jar in $MSOY_HOME/dist/lib/*.jar $MSOY_HOME/dist/msoy-code.jar; do
     if [ -e $jar ]; then
         CLASSPATH=$jar:$CLASSPATH
     fi
@@ -68,7 +68,7 @@ CLASSPATH=$MSOY_HOME:$CLASSPATH
 export CLASSPATH
 
 # Set up the LD_LIBRARY_PATH to include our shared libraries
-LD_LIBRARY_PATH=$MSOY_HOME/lib/`uname -m`-`uname -s`
+LD_LIBRARY_PATH=$MSOY_HOME/dist/lib/`uname -m`-`uname -s`
 export LD_LIBRARY_PATH
 
 # Create the logfile

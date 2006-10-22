@@ -89,6 +89,11 @@
         </outputfilterchain>
       </redirector>
     </exec>
+    <!-- copy native libraries into dist/lib -->
+    <mkdir dir="${deploy.dir}/lib"/>
+    <copy todir="${deploy.dir}/lib">
+      <fileset dir="projects/narya/dist/lib" includes="**/libsignal.so"/>
+    </copy>
   </target>
 
   <!-- runs the GWT debugging shell -->
