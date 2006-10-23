@@ -9,6 +9,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.clause.ForUpdateClause;
 
 /**
  * Manages the persistent store of mail and mailboxes.
@@ -47,7 +48,7 @@ public class MailRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MailMessageRecord.class,
-                    new Key(MailMessageRecord.MEMBER_ID, memberId,
+                    new Key(MailMessageRecord.OWNER_ID, memberId,
                             MailMessageRecord.FOLDER_ID, folderId,
                             MailMessageRecord.MESSAGE_ID, messageId));
     }
@@ -59,54 +60,73 @@ public class MailRepository extends DepotRepository
          throws PersistenceException
      {
          return findAll(MailMessageRecord.class,
-                        new Key(MailMessageRecord.MEMBER_ID, memberId,
+                        new Key(MailMessageRecord.OWNER_ID, memberId,
                                 MailMessageRecord.FOLDER_ID, folderId));
      }
 
      /**
-      * Insert a message into the database, for a given member and folder. This method
-      * fills in the messageId field with a new value that's unique within the folder.
+      * Insert a new folder record into the database.
       */
-     public MailMessageRecord deliverMail(MailMessageRecord record)
+     public MailFolderRecord createFolder (MailFolderRecord record)
          throws PersistenceException
      {
-         record.folderId = claimMessageId(record.memberId, record.folderId, 1);
          insert(record);
          return record;
      }
      
      /**
-      * Move a message from one folder to another. TODO: Bulk move?
+      * Insert a message into the database, for a given member and folder. This method
+      * fills in the messageId field with a new value that's unique within the folder.
       */
-     public void moveMessage (MailMessageRecord record, int newFolderId)
+     public MailMessageRecord fileMessage (MailMessageRecord record)
          throws PersistenceException
      {
-         int newId = claimMessageId(record.memberId, newFolderId, 1);
-         record.folderId = newFolderId;
-         record.messageId = newId;
-         update(record, MailMessageRecord.FOLDER_ID, MailMessageRecord.MESSAGE_ID);
+         record.folderId = claimMessageId(record.ownerId, record.folderId, 1);
+         insert(record);
+         return record;
+     }
+     
+     /**
+      * Move a message from one folder to another. TODO: Bulk move, see deleteMessage.
+      */
+     public void moveMessage (int ownerId, int folderId, int messageId, int newFolderId)
+         throws PersistenceException
+     {
+         int newId = claimMessageId(ownerId, newFolderId, 1);
+         updatePartial(MailMessageRecord.class,
+                       new Key(MailMessageRecord.OWNER_ID, ownerId,
+                               MailMessageRecord.FOLDER_ID, folderId,
+                               MailMessageRecord.MESSAGE_ID, messageId),
+                       MailMessageRecord.FOLDER_ID, newFolderId,
+                       MailMessageRecord.MESSAGE_ID, newId);
      }
 
      /**
       * Delete a message record.
+      * 
+      * TODO: For bulk deletion support, add 'IN (1, 3, 7)' support to Depot.
       */
-     public void deleteMessage (MailMessageRecord record)
+     public void deleteMessage (int memberId, int folderId, int messageId)
          throws PersistenceException
      {
-         delete(record);
+         deleteAll(MailMessageRecord.class,
+                   new Key(MailMessageRecord.OWNER_ID, memberId,
+                           MailMessageRecord.FOLDER_ID, folderId,
+                           MailMessageRecord.MESSAGE_ID, messageId));
      }
 
      // claim space in a folder to deliver idCount messages; returns the first usable id
      protected int claimMessageId (int memberId, int folderId, int idCount)
          throws PersistenceException
      {
-         // TODO: We need SELECT ... FOR UPDATE support.
          MailFolderRecord record = load(MailFolderRecord.class,
                                         new Key(MailFolderRecord.MEMBER_ID, memberId,
-                                                MailFolderRecord.FOLDER_ID, folderId));
+                                                MailFolderRecord.FOLDER_ID, folderId),
+                                        new ForUpdateClause());
          int firstId = record.nextMessageId;
          record.nextMessageId += idCount;
          update(record, MailFolderRecord.NEXT_MESSAGE_ID);
          return firstId;
      }
+
 }

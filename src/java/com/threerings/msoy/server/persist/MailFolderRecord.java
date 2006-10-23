@@ -22,8 +22,8 @@ public class MailFolderRecord
 {
     public static final int SCHEMA_VERSION = 1;
 
-    public static final String MEMBER_ID = "memberId";
     public static final String FOLDER_ID = "folderId";
+    public static final String MEMBER_ID = "ownerId";
     public static final String NAME = "name";
     public static final String NEXT_MESSAGE_ID = "nextMessageId";
 
@@ -33,7 +33,7 @@ public class MailFolderRecord
 
     /** The id of the member who owns this folder. */
     @Id
-    public int memberId;
+    public int ownerId;
     
     /** The name of this folder. */
     @Column(nullable=false)

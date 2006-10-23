@@ -12,11 +12,15 @@ import com.threerings.io.Streamable;
 public class MailFolder
     implements IsSerializable, Streamable
 {
-    /** The id of this folder, unique relative to this member. */
+    public static final int INBOX_FOLDER_ID = 1;
+    public static final int TRASH_FOLDER_ID = 2;
+    public static final int SENT_FOLDER_ID = 3;
+
+    /** The id of this folder, unique relative to its member. */
     public int folderId;
 
     /** The id of the member who owns this folder. */
-    public int memberId;
+    public int ownerId;
     
     /** The name of this folder. */
     public String name;

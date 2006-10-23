@@ -22,10 +22,13 @@ public class MailMessage
     public int folderId;
 
     /** The id of the owner of this message. */
-    public int memberId;
+    public int ownerId;
 
     /** The message sender. */
     public MemberGName sender;
+
+    /** The message recipient. */
+    public MemberGName recipient;
 
     /** The subject of this message. */
     public String subject;

@@ -29,8 +29,9 @@ public class MailMessageRecord
 
     public static final String MESSAGE_ID = "messageId";
     public static final String FOLDER_ID = "folderId";
-    public static final String MEMBER_ID = "memberId";
+    public static final String OWNER_ID = "ownerId";
     public static final String SENDER_ID = "senderId";
+    public static final String RECIPIENT_ID = "recipientId";
     public static final String SUBJECT = "subject";
     public static final String SENT = "sent";
 
@@ -44,11 +45,15 @@ public class MailMessageRecord
 
     /** The id of the owner of this message. */
     @Id
-    public int memberId;
+    public int ownerId;
 
     /** The id of the sender. */
     @Column(nullable=false)
     public int senderId;
+
+    /** The id of the recipient. */
+    @Column(nullable=false)
+    public int recipientId;
 
     /** The subject of this message. */
     @Column(nullable=false)

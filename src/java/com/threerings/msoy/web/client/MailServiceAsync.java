@@ -37,18 +37,13 @@ public interface MailServiceAsync
     public List getMessages (WebCreds creds, int folderId, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link MailService#deliverMail}
+     * The asynchronous version of {@link MailService#deliverMessage}
      */
-    public void deliverMail (WebCreds creds, MailMessage msg, AsyncCallback callback);
+    public void deliverMessage (WebCreds creds, MailMessage msg, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link MailService#moveMail}
+     * The asynchronous version of {@link MailService#deleteMessages}
      */
-    public void moveMail (WebCreds creds, MailMessage msg, int newFolderId,
-                          AsyncCallback callback);
-
-    /**
-     * The asynchronous version of {@link MailService#deleteMail}
-     */
-    public void deleteMail (WebCreds creds, int folderId, int[] msgIdArr, AsyncCallback callback);
+    public void deleteMessages (WebCreds creds, int folderId, int[] msgIdArr,
+                                AsyncCallback callback);
 }

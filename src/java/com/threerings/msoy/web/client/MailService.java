@@ -28,12 +28,9 @@ public interface MailService extends RemoteService
     public List getMessages (WebCreds creds, int folderId)
         throws ServiceException;
     
-    public void deliverMail (WebCreds creds, MailMessage msg)
+    public void deliverMessage (WebCreds creds, MailMessage msg)
         throws ServiceException;
 
-    public void moveMail (WebCreds creds, MailMessage msg, int newFolderId)
-        throws ServiceException;
-
-    public void deleteMail (WebCreds creds, int folderId, int[] msgIdArr)
+    public void deleteMessages (WebCreds creds, int folderId, int[] msgIdArr)
         throws ServiceException;
 }
