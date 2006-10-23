@@ -18,6 +18,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import client.util.PagedGrid;
+
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
@@ -34,16 +36,23 @@ public class ItemPanel extends DockPanel
         _ctx = ctx;
         _type = type;
 
-        _itemContents = new FlowPanel();
-        _itemContents.setStyleName("catalog_contents");
-        _tagContents = new FlowPanel();
-        _tagContents.setStyleName("tag_contents");
+        _items = new PagedGrid(3, 2) {
+            protected Widget createWidget (Object item) {
+                return new ItemContainer((CatalogListing)item, ItemPanel.this);
+            }
+            protected String getEmptyMessage () {
+                return "There are no " + Item.getTypeName(_type) + " items listed.";
+            }
+        };
+        _items.setStyleName("catalog_contents");
+        _tags = new FlowPanel();
+        _tags.setStyleName("tag_contents");
         updateContents();
 
         Button button = new Button("Items/Tags");
         button.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                _tags = !_tags;
+                _tagMode = !_tagMode;
                 updateContents();
             }
         });
@@ -53,12 +62,12 @@ public class ItemPanel extends DockPanel
 
     protected void updateContents ()
     {
-        if (_tags) {
-            remove(_itemContents);
-            add(_tagContents, DockPanel.CENTER);
+        if (_tagMode) {
+            remove(_items);
+            add(_tags, DockPanel.CENTER);
         } else {
-            remove(_tagContents);
-            add(_itemContents, DockPanel.CENTER);
+            remove(_tags);
+            add(_items, DockPanel.CENTER);
         }
     }
     
@@ -70,20 +79,12 @@ public class ItemPanel extends DockPanel
             _ctx.catalogsvc.loadCatalog(_ctx.creds, _type, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _listings = (ArrayList)result;
-                    if (_listings == null || _listings.size() == 0) {
-                        _itemContents.add(new Label(
-                            "There are no " + Item.getTypeName(_type) + " items listed."));
-                    } else {
-                        for (int ii = 0; ii < _listings.size(); ii++) {
-                            _itemContents.add(new ItemContainer(
-                                (CatalogListing) _listings.get(ii), ItemPanel.this));
-                            }
-                    }
+                    _items.setItems((ArrayList)result);
                 }
                 public void onFailure (Throwable caught) {
                     GWT.log("loadCatalog failed", caught);
                     // TODO: if ServiceException, translate
-                    _itemContents.add(new Label("Failed to load catalog."));
+                    _items.add(new Label("Failed to load catalog."));
                 }
             });
         }
@@ -92,7 +93,7 @@ public class ItemPanel extends DockPanel
                 public void onSuccess (Object result) {
                     _tagMap = (HashMap) result;
                     if (_tagMap.size() == 0) {
-                        _tagContents.add(new Label("No tags in use."));
+                        _tags.add(new Label("No tags in use."));
                         return;
                     }
 
@@ -122,16 +123,16 @@ public class ItemPanel extends DockPanel
                         buf.append("&nbsp; . &nbsp;");
                     }
                     
-                    _tagContents.add(new Label(
+                    _tags.add(new Label(
                         "The " + _tagMap.size() + " most commonly used tags:"));
                     HTML tags = new HTML(buf.toString());
                     tags.setHorizontalAlignment(HTML.ALIGN_CENTER);
-                    _tagContents.add(tags);
+                    _tags.add(tags);
                 }
                 public void onFailure (Throwable caught) {
                     GWT.log("getPopularTags failed", caught);
                     // TODO: if ServiceException, translate
-                    _itemContents.add(new Label("Failed to get popular tags."));
+                    _tags.add(new Label("Failed to get popular tags."));
                 }
             });
 
@@ -162,12 +163,14 @@ public class ItemPanel extends DockPanel
     protected WebContext _ctx;
     protected byte _type;
 
-    protected boolean _tags;
-    protected FlowPanel _itemContents;
-    protected FlowPanel _tagContents;
+    protected boolean _tagMode;
+    protected PagedGrid _items;
+    protected Button _next, _prev;
+    protected FlowPanel _tags;
     protected Label _status;
 
     protected ArrayList _listings;
+    protected int _page;
 
     protected int _maxTagCount;
     protected Object[] _sortedTags;

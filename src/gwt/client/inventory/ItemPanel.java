@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import client.util.PagedGrid;
+
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.client.WebContext;
@@ -34,22 +36,15 @@ public class ItemPanel extends VerticalPanel
         _type = type;
 
         // this will contain our items (an extra for for "next, back")
-        add(_contents = new Grid(ROWS+1, COLUMNS));
+        add(_contents = new PagedGrid(ROWS+1, COLUMNS) {
+            protected Widget createWidget (Object item) {
+                return new ItemContainer(ItemPanel.this, (Item)item);
+            }
+            protected String getEmptyMessage () {
+                return "You have no " + Item.getTypeName(_type) + " items.";
+            }
+        });
         _contents.setStyleName("inventory_contents");
-
-        // these will be used for navigation
-        _next = new Button("Next");
-        _next.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                displayPage(_page+1, false);
-            }
-        });
-        _prev = new Button("Prev");
-        _prev.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                displayPage(_page-1, false);
-            }
-        });
 
         // this will allow us to create new items
         add(_create = new Button("Create new..."));
@@ -69,11 +64,10 @@ public class ItemPanel extends VerticalPanel
     protected void onLoad ()
     {
         // load the users inventory if we have no already
-        if (_items == null) {
+        if (!_contents.hasItems()) {
             _ctx.itemsvc.loadInventory(_ctx.creds, _type, new AsyncCallback() {
                 public void onSuccess (Object result) {
-                    _items = (ArrayList)result;
-                    displayPage(_page, true);
+                    _contents.setItems((ArrayList)result);
                 }
                 public void onFailure (Throwable caught) {
                     GWT.log("loadInventory failed", caught);
@@ -82,32 +76,6 @@ public class ItemPanel extends VerticalPanel
                 }
             });
         }
-    }
-
-    protected void displayPage (int page, boolean forceRefresh)
-    {
-        if (_page == page && !forceRefresh) {
-            return; // NOOP!
-        }
-
-        _page = Math.max(page, 0);
-        _contents.clear();
-        if (_items == null || _items.size() == 0) {
-            _contents.setText(0, 0, "You have no " + Item.getTypeName(_type) + " items.");
-            return;
-        }
-
-        int count = COLUMNS * ROWS, start = COLUMNS * ROWS * page;
-        int limit = Math.min(count, _items.size()-start), row = -1;
-        for (int ii = 0; ii < limit; ii++) {
-            _contents.setWidget(row = (ii / COLUMNS), ii % COLUMNS,
-                                new ItemContainer(ItemPanel.this, (Item)_items.get(ii+start)));
-        }
-
-        _contents.setWidget(row+1, 0, _prev);
-        _prev.setEnabled(start > 0);
-        _contents.setWidget(row+1, 1, _next);
-        _next.setEnabled(start+limit < _items.size());
     }
 
     protected void listItem (ItemIdent item)
@@ -189,8 +157,7 @@ public class ItemPanel extends VerticalPanel
         if (item != null) {
             // we really need to re-fetch the item from the database to get
             // things like itemId set. just refresh the entire list for now.
-            _contents.clear();
-            _items = null;
+            _contents.setItems(null);
             onLoad();
         }
     }
@@ -205,7 +172,7 @@ public class ItemPanel extends VerticalPanel
 
     protected WebContext _ctx;
 
-    protected Grid _contents;
+    protected PagedGrid _contents;
     protected Button _create, _next, _prev;
     protected Label _status;
 
