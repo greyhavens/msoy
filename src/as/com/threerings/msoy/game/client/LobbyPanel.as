@@ -12,6 +12,8 @@ import mx.core.ClassFactory;
 
 import com.threerings.util.ArrayUtil;
 
+import com.threerings.mx.controls.ChatDisplayBox;
+
 import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.crowd.data.PlaceObject;
@@ -125,6 +127,8 @@ public class LobbyPanel extends VBox
         super.createChildren();
 
         var list :MsoyList = new MsoyList(_ctx);
+        list.percentHeight = 100;
+        list.percentWidth = 100;
         addChild(list);
 
         var factory :ClassFactory = new ClassFactory(TableRenderer);
@@ -138,6 +142,9 @@ public class LobbyPanel extends VBox
         var butbar :ButtonBar = new ButtonBar();
         butbar.addChild(createBtn);
         addChild(butbar);
+
+        // and a chat box
+        addChild(new ChatDisplayBox(_ctx));
     }
 
     /** Buy one get one free. */
@@ -183,9 +190,6 @@ class TableRenderer extends HBox
         super();
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
-
-        // TODO: fix the dynamic layout of this container, it sucks
-        minWidth = 300;
     }
 
     override public function set data (newData :Object) :void
@@ -193,12 +197,6 @@ class TableRenderer extends HBox
         super.data = newData;
         recheckTable();
     }
-
-//    override public function validateDisplayList () :void
-//    {
-//        super.validateDisplayList();
-//        recheckTable();
-//    }
 
     protected function recheckTable () :void
     {
