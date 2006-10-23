@@ -507,7 +507,8 @@ public class RoomView extends AbstractRoomView
     }
 
     // documentation inherited from interface ChatDisplay
-    public function displayMessage (msg :ChatMessage) :void
+    public function displayMessage (
+        msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
         var avatar :AvatarSprite = null;
         if (msg is UserMessage) {
@@ -519,6 +520,7 @@ public class RoomView extends AbstractRoomView
         }
 
         ChatPopper.popUp(msg, avatar);
+        return true;
     }
 
     protected function removeFurni (furni :FurniData) :void

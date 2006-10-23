@@ -34,10 +34,6 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.crowd.chat.client.ChatDisplay;
-import com.threerings.crowd.chat.data.ChatMessage;
-import com.threerings.crowd.chat.data.UserMessage;
-
 import com.threerings.whirled.spot.data.Location;
 
 import com.threerings.msoy.client.MsoyContext;
