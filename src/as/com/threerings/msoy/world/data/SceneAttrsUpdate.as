@@ -31,6 +31,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new horizon. */
     public var horizon :Number;
 
+    /** The new entrance location. */
+    public var entrance :MsoyLocation;
+
     override public function apply (model :SceneModel) :void
     {
         super.apply(model);
@@ -41,6 +44,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         mmodel.depth = depth;
         mmodel.width = width;
         mmodel.horizon = horizon;
+        mmodel.entrance = entrance;
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
@@ -52,6 +56,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         out.writeShort(depth);
         out.writeShort(width);
         out.writeFloat(horizon);
+        out.writeObject(entrance);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -63,6 +68,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         depth = ins.readShort();
         width = ins.readShort();
         horizon = ins.readFloat();
+        entrance = (ins.readObject() as MsoyLocation);
     }
 }
 }

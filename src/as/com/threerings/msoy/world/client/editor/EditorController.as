@@ -71,8 +71,18 @@ public class EditorController extends Controller
         _roomView = roomView;
         _scene = (scene.clone() as MsoyScene);
 
+        // create a sprite for editing the scene location
+        var editModel :MsoySceneModel =
+            (_scene.getSceneModel() as MsoySceneModel);
+        _entranceSprite = new EntranceSprite();
+        _entranceSprite.setLocation(editModel.entrance);
+        enableEditingVisitor(null, _entranceSprite);
+        _roomView.addOtherSprite(_entranceSprite);
+
         _nextFurniId = _scene.getNextFurniId();
         _roomView.setEditing(true, enableEditingVisitor);
+
+        items.push(_entranceSprite);
 
         // pop up our control kit
         _panel = new EditorPanel(ctx, this, roomView, _scene, items);
@@ -114,6 +124,7 @@ public class EditorController extends Controller
         for each (sprite in _removedSprites) {
             _roomView.addChild(sprite);
         }
+        _roomView.removeOtherSprite(_entranceSprite);
 
         var edits :TypedArray = null;
         if (saveEdits) {
@@ -132,7 +143,8 @@ public class EditorController extends Controller
                     (editModel.type != origModel.type) ||
                     (editModel.depth != origModel.depth) ||
                     (editModel.width != origModel.width) ||
-                    (editModel.horizon != origModel.horizon)) {
+                    (editModel.horizon != origModel.horizon) ||
+                    (!Util.equals(_entranceSprite.loc, origModel.entrance))) {
                 var attrUpdate :SceneAttrsUpdate = new SceneAttrsUpdate();
                 attrUpdate.init(sceneId, version++);
 
@@ -141,6 +153,7 @@ public class EditorController extends Controller
                 attrUpdate.depth = editModel.depth;
                 attrUpdate.width = editModel.width;
                 attrUpdate.horizon = editModel.horizon;
+                attrUpdate.entrance = _entranceSprite.loc;
                 edits.push(attrUpdate);
             }
 
@@ -199,9 +212,33 @@ public class EditorController extends Controller
                     break;
                 }
             }
+
+        } else if (obj is EntranceSprite) {
+            selected = _entranceSprite;
+
+        } else {
+            log.warning("Unknown object selected from item list: " + obj);
         }
 
         setEditSprite(selected);
+    }
+
+    /**
+     * Are we currently attempting to center on the selected sprite?
+     */
+    public function getCentering () :Boolean
+    {
+        return _centering;
+    }
+
+    /**
+     * Change the current centering pref.
+     */
+    public function setCentering (centering :Boolean) :void
+    {
+        _centering = centering;
+        _roomView.setCenterSprite(_centering ? _editSprite : null);
+        _panel.spritePropertiesUpdated();
     }
 
     /**
@@ -320,13 +357,15 @@ public class EditorController extends Controller
             addEditingListeners(_editSprite);
         }
 
-        _roomView.setFastCentering(_editSprite == sprite);
-        if (_editSprite != sprite) {
-            _roomView.setCenterSprite(sprite);
-        }
+        var newSprite :Boolean = (_editSprite != sprite);
+        _roomView.setFastCentering(!newSprite);
 
         _editSprite = sprite;
         _panel.setEditSprite(sprite);
+
+        if (newSprite) {
+            setCentering(true);
+        }
 
         if (_editSprite != null) {
             // draw it like we're editing it
@@ -521,7 +560,8 @@ public class EditorController extends Controller
             editSpritePressed);
 
         // stop following the sprite
-        _roomView.setCenterSprite(null);
+        _wasCentering = _centering;
+        setCentering(false);
 
         var hs :Point = _editSprite.localToGlobal(_editSprite.hotSpot);
 
@@ -629,7 +669,7 @@ public class EditorController extends Controller
             spritePositioningKey);
 
         spriteUpdated(_editSprite);
-        _roomView.setCenterSprite(_editSprite);
+        setCentering(_wasCentering);
 
         //_editSprite.graphics.clear();
         //addEditingListeners(_editSprite);
@@ -727,6 +767,8 @@ public class EditorController extends Controller
                 _addedFurni.push(furni);
                 _removedFurni.push(ofurni);
             }
+
+        } else if (sprite is EntranceSprite) {
 
         } else {
             throw new Error("Unknown sprite type edited: " + sprite);
@@ -865,6 +907,10 @@ public class EditorController extends Controller
 
     protected var _nextFurniId :int;
 
+    /** A sprite added to the room during editing to display the
+     * entrance location. */
+    protected var _entranceSprite :EntranceSprite;
+
     protected var _removedFurni :TypedArray = TypedArray.create(FurniData);
     protected var _addedFurni :TypedArray = TypedArray.create(FurniData);
 
@@ -872,6 +918,12 @@ public class EditorController extends Controller
     protected var _removedSprites :Array = new Array();
 
     protected var _addedItems :Array = new Array();
+
+    /** True if we want to center on the sprite during positioning. */
+    protected var _centering :Boolean;
+
+    /** Holds the centering pref while we're dragging a sprite. */
+    protected var _wasCentering :Boolean;
 
     /** The offset from the clicked point to the object's hotspot. */
     protected var _xoffset :Number;

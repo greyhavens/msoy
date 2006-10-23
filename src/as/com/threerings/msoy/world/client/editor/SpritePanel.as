@@ -6,6 +6,7 @@ import mx.core.UIComponent;
 
 import mx.containers.VBox;
 
+import mx.controls.CheckBox;
 import mx.controls.TextInput;
 
 import com.threerings.mx.events.CommandEvent;
@@ -22,9 +23,10 @@ import com.threerings.msoy.world.client.MsoySprite;
  */
 public class SpritePanel extends Grid
 {
-    public function SpritePanel (ctx :MsoyContext)
+    public function init (ctx :MsoyContext, ctrl :EditorController) :void
     {
         _ctx = ctx;
+        _ctrl = ctrl;
     }
 
     /**
@@ -45,7 +47,12 @@ public class SpritePanel extends Grid
      */
     public function updateInputFields () :void
     {
-        // nada
+        var centering :Boolean = _ctrl.getCentering();
+        if (centering != _centering.selected) {
+            _centering.selected = centering;
+        }
+
+        _locEditor.setSprite(_sprite);
     }
 
     /**
@@ -55,7 +62,23 @@ public class SpritePanel extends Grid
     {
         updateInputFields();
 
-        // do your binding here
+        BindingUtils.bindSetter(function (state :Boolean) :void {
+            _ctrl.setCentering(state);
+        }, _centering, "selected");
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.center")),
+            _centering = new CheckBox());
+
+        // location: big controls
+        addRow(
+            MsoyUI.createLabel(_ctx.xlate("editing", "l.loc")),
+            _locEditor = new LocationEditor(_ctx));
     }
 
     override protected function childrenCreated () :void
@@ -80,6 +103,14 @@ public class SpritePanel extends Grid
 
     protected var _ctx :MsoyContext;
 
+    protected var _ctrl :EditorController;
+
     protected var _sprite :MsoySprite;
+
+    /** A checkbox used to select whether we'd like to center on this sprite. */
+    protected var _centering :CheckBox;
+
+    /** The location editor control. */
+    protected var _locEditor :LocationEditor;
 }
 }

@@ -31,6 +31,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new horizon. */
     public float horizon;
 
+    /** The new entrance location. */
+    public MsoyLocation entrance;
+
     @Override
     public void apply (SceneModel model)
     {
@@ -42,5 +45,6 @@ public class SceneAttrsUpdate extends SceneUpdate
         mmodel.depth = depth;
         mmodel.width = width;
         mmodel.horizon = horizon;
+        mmodel.entrance = entrance;
     }
 }

@@ -4,6 +4,8 @@ import com.threerings.util.Util;
 
 import com.threerings.msoy.item.client.ItemRenderer;
 
+import com.threerings.msoy.world.client.MsoySprite;
+
 import com.threerings.msoy.world.data.FurniData;
 
 /**
@@ -12,11 +14,12 @@ import com.threerings.msoy.world.data.FurniData;
  */
 public class FurniItemRenderer extends ItemRenderer
 {
-    override protected function recheckItem () :void
+    override protected function configureItem () :Boolean
     {
-        super.recheckItem();
+        var mediaShown :Boolean = super.configureItem();
 
         if (data is FurniData) {
+            mediaShown = true;
             var furni :FurniData = (data as FurniData);
             if (!Util.equals(furni, _furni)) {
                 _furni = furni;
@@ -27,12 +30,24 @@ public class FurniItemRenderer extends ItemRenderer
 
         } else if (_furni != null) {
             _furni = null;
-            if (_item == null) {
-                _container.shutdown();
-            }
         }
+
+        if (data is EntranceSprite) {
+            mediaShown = true;
+            if (!Util.equals(data, _spr)) {
+                _spr = (data as EntranceSprite);
+                _container.setMediaClass(EntranceSprite.MEDIA_CLASS);
+                _label.text = "<Entrance>";
+            }
+
+        } else {
+            _spr = null;
+        }
+
+        return mediaShown;
     }
 
     protected var _furni :FurniData; // the furni we're displaying
+    protected var _spr :EntranceSprite;
 }
 }

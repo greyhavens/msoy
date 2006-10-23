@@ -116,30 +116,6 @@ public class MsoySceneRepository extends SimpleRepository
                 "integer not null", "ITEM_TYPE");
         } // END: temp
 
-        // TEMP: removable after all servers are past the date specified...
-        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061012a",
-            new TransitionRepository.Transition() {
-                public void run ()
-                    throws PersistenceException
-                {
-                    executeUpdate(new Operation<Void>() {
-                        public Void invoke (Connection conn,
-                            DatabaseLiaison liaison)
-                            throws SQLException, PersistenceException
-                        {
-                            Statement stmt = conn.createStatement();
-                            try {
-                                stmt.executeUpdate("delete from SCENE_UPDATES");
-                            } finally {
-                                JDBCUtil.close(stmt);
-                            }
-                            return null;
-                        }
-                    });
-                }
-            });
-        // END: temp
-
         // TEMP: portal update, can be removed when all servers past 2006-10-12
         if (JDBCUtil.tableExists(conn, "PORTALS")) {
             Statement stmt = conn.createStatement();
@@ -192,6 +168,49 @@ public class MsoySceneRepository extends SimpleRepository
         if (JDBCUtil.tableContainsColumn(conn, "SCENES", "DEF_PORTAL_ID")) {
             JDBCUtil.dropColumn(conn, "SCENES", "DEF_PORTAL_ID");
         }
+
+        // TEMP: can be removed after all servers past 2006-10-23
+        if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "ENTRANCE_X")) {
+            JDBCUtil.addColumn(conn, "SCENES", "ENTRANCE_X",
+                "float not null", "HORIZON");
+            JDBCUtil.addColumn(conn, "SCENES", "ENTRANCE_Y",
+                "float not null", "ENTRANCE_X");
+            JDBCUtil.addColumn(conn, "SCENES", "ENTRANCE_Z",
+                "float not null", "ENTRANCE_Y");
+
+            // set some default values on those new columns
+            Statement stmt = conn.createStatement();
+            try {
+                stmt.executeUpdate("update SCENES set ENTRANCE_X = 0.5, " +
+                    "ENTRANCE_Z = 0.5");
+            } finally {
+                JDBCUtil.close(stmt);
+            }
+        }
+
+        // TEMP: removable after all servers are past the date specified...
+        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061023",
+            new TransitionRepository.Transition() {
+                public void run ()
+                    throws PersistenceException
+                {
+                    executeUpdate(new Operation<Void>() {
+                        public Void invoke (Connection conn,
+                            DatabaseLiaison liaison)
+                            throws SQLException, PersistenceException
+                        {
+                            Statement stmt = conn.createStatement();
+                            try {
+                                stmt.executeUpdate("delete from SCENE_UPDATES");
+                            } finally {
+                                JDBCUtil.close(stmt);
+                            }
+                            return null;
+                        }
+                    });
+                }
+            });
+        // END: temp
     }
 
     /**
@@ -358,8 +377,8 @@ public class MsoySceneRepository extends SimpleRepository
                 try {
                     // Load: basic scene data
                     ResultSet rs = stmt.executeQuery("select " +
-                        "OWNER_ID, VERSION, NAME, TYPE, " +
-                        "DEPTH, WIDTH, HORIZON " +
+                        "OWNER_ID, VERSION, NAME, TYPE, DEPTH, WIDTH, " +
+                        "HORIZON, ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z " +
                         "from SCENES where SCENE_ID=" + sceneId);
                     if (rs.next()) {
                         model.ownerId = rs.getInt(1);
@@ -369,7 +388,8 @@ public class MsoySceneRepository extends SimpleRepository
                         model.depth = rs.getShort(5);
                         model.width = rs.getShort(6);
                         model.horizon = rs.getFloat(7);
-                        model.entrance = new MsoyLocation(.5, 0, .5, 0); // TODO
+                        model.entrance = new MsoyLocation(
+                            rs.getFloat(8), rs.getFloat(9), rs.getFloat(10), 0);
 
                     } else {
                         return Boolean.FALSE; // no scene found
@@ -451,7 +471,8 @@ public class MsoySceneRepository extends SimpleRepository
             {
                 PreparedStatement stmt = conn.prepareStatement(
                     "update SCENES " +
-                    "set NAME=?, TYPE=?, DEPTH=?, WIDTH=?, HORIZON=? " +
+                    "set NAME=?, TYPE=?, DEPTH=?, WIDTH=?, HORIZON=?, " +
+                    "ENTRANCE_X=?, ENTRANCE_Y=?, ENTRANCE_Z=? " +
                     "where SCENE_ID=" + mmodel.sceneId);
                 try {
                     stmt.setString(1, update.name);
@@ -459,6 +480,9 @@ public class MsoySceneRepository extends SimpleRepository
                     stmt.setInt(3, update.depth);
                     stmt.setInt(4, update.width);
                     stmt.setFloat(5, update.horizon);
+                    stmt.setFloat(6, update.entrance.x);
+                    stmt.setFloat(7, update.entrance.y);
+                    stmt.setFloat(8, update.entrance.z);
 
                     JDBCUtil.checkedUpdate(stmt, 1);
                 } finally {
@@ -514,8 +538,9 @@ public class MsoySceneRepository extends SimpleRepository
         throws SQLException, PersistenceException
     {
         PreparedStatement stmt = conn.prepareStatement("insert into SCENES " +
-            "(OWNER_ID, VERSION, NAME, TYPE, DEPTH, WIDTH, HORIZON) " +
-            "values (?, ?, ?, ?, ?, ?, ?)");
+            "(OWNER_ID, VERSION, NAME, TYPE, DEPTH, WIDTH, HORIZON, " +
+            " ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z) " +
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setInt(1, model.ownerId);
             stmt.setInt(2, model.version);
@@ -524,6 +549,9 @@ public class MsoySceneRepository extends SimpleRepository
             stmt.setShort(5, model.depth);
             stmt.setShort(6, model.width);
             stmt.setFloat(7, model.horizon);
+            stmt.setFloat(8, model.entrance.x);
+            stmt.setFloat(9, model.entrance.y);
+            stmt.setFloat(10, model.entrance.z);
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
 
@@ -700,6 +728,9 @@ public class MsoySceneRepository extends SimpleRepository
             "DEPTH integer not null",
             "WIDTH integer not null",
             "HORIZON float not null",
+            "ENTRANCE_X float not null",
+            "ENTRANCE_Y float not null",
+            "ENTRANCE_Z float not null",
             "primary key (SCENE_ID)",
             "index (OWNER_ID)" }, "");
 

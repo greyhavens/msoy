@@ -95,11 +95,9 @@ public class EditorPanel extends VBox
      */
     public function listedItemFromSprite (sprite :MsoySprite) :Object
     {
-        // TEMP
         if (!(sprite is FurniSprite)) {
-            return null;
+            return sprite;
         }
-        // END: TEMP
 
         var sprData :FurniData = (sprite as FurniSprite).getFurniData();
         for each (var element :Object in itemList.dataProvider) {
@@ -124,19 +122,19 @@ public class EditorPanel extends VBox
 
     public function setEditSprite (sprite :MsoySprite) :void
     {
-        var hasSprite :Boolean = (sprite != null);
-        _deleteBtn.enabled = hasSprite;
+        _deleteBtn.enabled = (sprite is FurniSprite);
 
         // figure out which class of item the editor should be
         var editorClass :Class = null;
         var currentClass :Class = (_spriteEditor == null) ? null
             : ClassUtil.getClass(_spriteEditor);
+        var hasSprite :Boolean = (sprite != null);
         if (hasSprite) {
             if (sprite is FurniSprite) {
                 editorClass = FurniPanel;
 
             } else {
-                throw new Error();
+                editorClass = SpritePanel;
             }
 
             itemList.selectedItem = listedItemFromSprite(sprite);
@@ -153,7 +151,9 @@ public class EditorPanel extends VBox
                 _spriteEditor = null;
             }
             if (editorClass != null) { // instantiate new..
-                _spriteEditor = new editorClass(_ctx);
+                _spriteEditor = new editorClass();
+                _spriteEditor.init(_ctx, _ctrl);
+
                 _spriteBox.addChild(_spriteEditor);
             }
         }
@@ -330,7 +330,7 @@ public class EditorPanel extends VBox
      */
     private function sortOrder (o :Object) :Number
     {
-        var spr :FurniSprite = null;
+        var spr :MsoySprite = null;
         if (o is Item) {
             var io :Item = (o as Item);
             spr = findFurni(-1, io.getType(), io.itemId);
@@ -338,6 +338,9 @@ public class EditorPanel extends VBox
         } else if (o is FurniData) { // props
             var fo :FurniData = (o as FurniData);
             spr = findFurni(fo.id, fo.itemType, fo.itemId);
+
+        } else if (o is MsoySprite) {
+            spr = (o as MsoySprite);
         }
 
         // for now, just sort by x position

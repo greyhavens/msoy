@@ -32,16 +32,9 @@ import com.threerings.msoy.world.data.FurniData;
 
 public class FurniPanel extends SpritePanel
 {
-    public function FurniPanel (ctx :MsoyContext)
-    {
-        super(ctx);
-    }
-
     override public function updateInputFields () :void
     {
         super.updateInputFields();
-
-        _locEditor.setSprite(_sprite);
 
         _xScale.text = String(_sprite.getMediaScaleX());
         _yScale.text = String(_sprite.getMediaScaleY());
@@ -69,6 +62,9 @@ public class FurniPanel extends SpritePanel
         for (var ii :int = 0; ii < data.length; ii++) {
             if (data[ii].data == furni.actionType) {
                 _actionType.selectedIndex = ii;
+                if (furni.actionType == FurniData.BACKGROUND) {
+                    _centering.selected = false;
+                }
                 return;
             }
         }
@@ -105,11 +101,6 @@ public class FurniPanel extends SpritePanel
     override protected function createChildren () :void
     {
         super.createChildren();
-
-        // location: big controls
-        addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.loc")),
-            _locEditor = new LocationEditor(_ctx));
 
         // scale
         addRow(
@@ -299,8 +290,6 @@ public class FurniPanel extends SpritePanel
     protected var _xScale :TextInput;
     protected var _yScale :TextInput;
 
-    protected var _locEditor :LocationEditor;
-    
     protected var _actionType :ComboBox;
     protected var _actionData :TextInput;
 

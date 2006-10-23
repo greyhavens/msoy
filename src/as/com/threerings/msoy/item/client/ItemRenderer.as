@@ -28,48 +28,41 @@ public class ItemRenderer extends HBox
         horizontalScrollPolicy = ScrollPolicy.OFF;
     }
 
-    override public function validateDisplayList () :void
+    override public function set data (value :Object) :void
     {
-        super.validateDisplayList();
-        recheckItem();
-    }
+        super.data = value;
 
-    override public function parentChanged (p :DisplayObjectContainer) :void
-    {
-        super.parentChanged(p);
-
-        if (p == null && data != null) {
-            data = null;
-            recheckItem();
+        if (!configureItem()) {
+            _container.shutdown();
         }
     }
 
-//    override protected function measure () :void
-//    {
-//        measuredWidth = 300;
-//        measuredHeight = 250;
-//    }
-
-    protected function recheckItem () :void
+    /**
+     * Return label text if we're not showing any media.
+     */
+    protected function configureItem () :Boolean
     {
+        var mediaShown :Boolean = false;
+
         if (data is Item) {
+            mediaShown = true;
             var item :Item = (data as Item);
             if (!Util.equals(item, _item)) {
                 _item = item;
 
                 _container.setMedia(_item.getThumbnailPath());
                 _label.text = _item.getDescription();
-///                validateNow();
             }
 
-        } else if (_item != null) {
-            _container.shutdown();
+        } else {
             _item = null;
         }
 
         if (data is String) {
             _label.text = (data as String);
         }
+
+        return mediaShown;
     }
 
     override protected function createChildren () :void

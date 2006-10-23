@@ -22,6 +22,7 @@ import mx.core.mx_internal;
 import mx.events.FlexEvent;
 import mx.events.ResizeEvent;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 
@@ -121,6 +122,9 @@ public class AbstractRoomView extends Canvas
 
         var sprite :MsoySprite;
         for each (sprite in _furni.values()) {
+            locationUpdated(sprite);
+        }
+        for each (sprite in _otherSprites) {
             locationUpdated(sprite);
         }
 
@@ -312,6 +316,25 @@ public class AbstractRoomView extends Canvas
     }
 
     /**
+     * Add the specified sprite to this display and have the room track it.
+     */
+    public function addOtherSprite (sprite :MsoySprite) :void
+    {
+        _otherSprites.push(sprite);
+        addChild(sprite);
+        sprite.setLocation(sprite.loc);
+    }
+
+    /**
+     * Remove the specified sprite.
+     */
+    public function removeOtherSprite (sprite :MsoySprite) :void
+    {
+        ArrayUtil.removeAll(_otherSprites, sprite);
+        removeSprite(sprite);
+    }
+
+    /**
      * Calculate the scale and x/y position of the specified media
      * according to its logical coordinates.
      */
@@ -443,6 +466,9 @@ public class AbstractRoomView extends Canvas
         }
     }
 
+    /**
+     * Remove the specified sprite from the view.
+     */
     protected function removeSprite (sprite :MsoySprite) :void
     {
         removeChild(sprite);
@@ -601,6 +627,9 @@ public class AbstractRoomView extends Canvas
     
     /** A map of id -> Furni. */
     protected var _furni :HashMap = new HashMap();
+
+    /** A list of other sprites (used during editing). */
+    protected var _otherSprites :Array = new Array();
 
     /** Are we editing the scene? */
     protected var _editing :Boolean = false;
