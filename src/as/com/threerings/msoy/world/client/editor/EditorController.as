@@ -27,6 +27,7 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.item.client.InventoryWindow;
+import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -79,7 +80,6 @@ public class EditorController extends Controller
         enableEditingVisitor(null, _entranceSprite);
         _roomView.addOtherSprite(_entranceSprite);
 
-        _nextFurniId = _scene.getNextFurniId();
         _roomView.setEditing(true, enableEditingVisitor);
 
         items.push(_entranceSprite);
@@ -286,8 +286,9 @@ public class EditorController extends Controller
         var sprite :MsoySprite = _editSprite;
         setEditSprite(null);
         _roomView.removeChild(sprite);
-        ArrayUtil.removeAll(_addedSprites, sprite);
-        _removedSprites.push(sprite);
+        if (!ArrayUtil.removeAll(_addedSprites, sprite)) {
+            _removedSprites.push(sprite);
+        }
 
         _panel.itemList.removeItem(_panel.listedItemFromSprite(sprite));
 
@@ -467,11 +468,8 @@ public class EditorController extends Controller
         furni.itemType = item.getType();
         furni.itemId = item.itemId;
         furni.loc = loc;
-        furni.media = item.getFurniMedia();
+        configureFurniMedia(furni, item);
         configureFurniAction(furni, item);
-
-        // make sure it doesn't show up in our inventory list
-        _addedItems.push(item);
 
         // add the item to our item list
         _panel.itemList.addItem(item);
@@ -512,6 +510,23 @@ public class EditorController extends Controller
             var game :Game = (item as Game);
             furni.actionType = FurniData.ACTION_GAME;
             furni.actionData = String(game.getProgenitorId()) + ":" + game.name;
+
+        } else if (item is Audio) {
+            // assume furni will be added as background (for now)
+            furni.actionType = FurniData.BACKGROUND;
+        }
+    }
+
+    /**
+     * Configure the media for furni constructed from the
+     * specified object.
+     */
+    protected function configureFurniMedia (furni :FurniData, item :Item) :void
+    {
+        if (item is Audio) {
+            furni.media = (item as Audio).audioMedia;
+        } else {
+            furni.media = item.getFurniMedia();
         }
     }
 
@@ -769,6 +784,7 @@ public class EditorController extends Controller
             }
 
         } else if (sprite is EntranceSprite) {
+            // nothing needed
 
         } else {
             throw new Error("Unknown sprite type edited: " + sprite);
@@ -887,11 +903,11 @@ public class EditorController extends Controller
 
     protected function getNextFurniId () :int
     {
-        // TODO: cope with ids getting too large.
-        // we don't ask the scene, because it doesn't know about our
-        // editing furni yet, but we should ask the scene and look
-        // at our so-far-added furni
-        return _nextFurniId++;
+        // we always skip over any ids we've already used in an editing
+        // session
+        var thisId :int = _scene.getNextFurniId(_lastFurniId);
+        _lastFurniId = thisId;
+        return thisId;
     }
 
     protected var _ctx :MsoyContext;
@@ -905,7 +921,8 @@ public class EditorController extends Controller
     /** The room view. */
     protected var _roomView :RoomView;
 
-    protected var _nextFurniId :int;
+    /** The furni id used last time for a new piece of furniture. */
+    protected var _lastFurniId :int = 0;
 
     /** A sprite added to the room during editing to display the
      * entrance location. */
@@ -916,8 +933,6 @@ public class EditorController extends Controller
 
     protected var _addedSprites :Array = new Array();
     protected var _removedSprites :Array = new Array();
-
-    protected var _addedItems :Array = new Array();
 
     /** True if we want to center on the sprite during positioning. */
     protected var _centering :Boolean;

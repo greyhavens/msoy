@@ -77,11 +77,10 @@ public class MsoySceneModel extends SceneModel
     /**
      * Get the next available furni id.
      */
-    public short getNextFurniId ()
+    public short getNextFurniId (short aboveId)
     {
-        // TODO?
-        int length = furnis.length;
-        for (int ii=1; ii < 5000; ii++) {
+        int length = (furnis == null) ? 0 : furnis.length;
+        for (int ii=aboveId + 1; ii < 5000; ii++) {
             boolean found = false;
             for (int idx=0; idx < length; idx++) {
                 if (furnis[idx].id == ii) {

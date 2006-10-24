@@ -118,9 +118,9 @@ public class MsoyScene extends SceneImpl
     /**
      * Get the next available furniture id.
      */
-    public function getNextFurniId () :int
+    public function getNextFurniId (aboveId :int) :int
     {
-        return _msoyModel.getNextFurniId();
+        return _msoyModel.getNextFurniId(aboveId);
     }
 
     // from SpotScene
@@ -138,8 +138,7 @@ public class MsoyScene extends SceneImpl
     // from SpotScene
     public function getNextPortalId () :int
     {
-        // since portals are just furni...
-        return _msoyModel.getNextFurniId();
+        throw new IllegalOperationError();
     }
 
     // from SpotScene

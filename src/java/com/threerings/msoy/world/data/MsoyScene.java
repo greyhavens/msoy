@@ -107,9 +107,9 @@ public class MsoyScene extends SceneImpl
     /**
      * Get the next available furni id.
      */
-    public short getNextFurniId ()
+    public short getNextFurniId (short aboveId)
     {
-        return _model.getNextFurniId();
+        return _model.getNextFurniId(aboveId);
     }
 
     // from SpotScene
@@ -127,8 +127,7 @@ public class MsoyScene extends SceneImpl
     // from SpotScene
     public short getNextPortalId ()
     {
-        // since portals are just furni...
-        return _model.getNextFurniId();
+        throw new UnsupportedOperationException();
     }
 
     // from SpotScene
