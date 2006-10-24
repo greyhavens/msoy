@@ -32,7 +32,7 @@ public class ItemRenderer extends HBox
     {
         super.data = value;
 
-        if (!configureItem()) {
+        if (processedDescriptors && !configureItem()) {
             _container.shutdown();
         }
     }
@@ -86,6 +86,10 @@ public class ItemRenderer extends HBox
 
         addChild(_label = new Label());
         _label.maxWidth = 200;
+
+        if (data != null) {
+            data = data; // re-set
+        }
     }
 
     protected var _container :MediaContainer;
