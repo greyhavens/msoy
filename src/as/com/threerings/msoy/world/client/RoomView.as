@@ -446,8 +446,12 @@ public class RoomView extends AbstractRoomView
         var music :MediaDesc = _scene.getMusic();
         if (music != null) {
             _music = new SoundPlayer(music);
-            var pos :Number = Prefs.getMediaPosition(music.getMediaId());
-            _music.loop(pos);
+            _music.loop();
+            //var pos :Number = Prefs.getMediaPosition(music.getMediaId());
+            //_music.loop(pos);
+            // NOTE: the position argument has been disabled because
+            // it causes the flash player to crash, and also seems to booch
+            // proper looping.
         }
     }
 
@@ -457,8 +461,8 @@ public class RoomView extends AbstractRoomView
     protected function shutdownMusic () :void
     {
         if (_music != null) {
-            var pos :Number = _music.getPosition();
-            Prefs.setMediaPosition(_music.getMedia().getMediaId(), pos);
+            //var pos :Number = _music.getPosition();
+            //Prefs.setMediaPosition(_music.getMedia().getMediaId(), pos);
             _music.stop();
             _music = null;
         }

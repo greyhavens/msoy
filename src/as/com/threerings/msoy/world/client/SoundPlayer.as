@@ -1,5 +1,6 @@
 package com.threerings.msoy.world.client {
 
+import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 
@@ -19,16 +20,25 @@ public class SoundPlayer
         _sound = new Sound(new URLRequest(desc.getMediaPath()));
 
         _sound.addEventListener(IOErrorEvent.IO_ERROR, ioError);
-        _sound.addEventListener(ProgressEvent.PROGRESS, loadingProgress);
+//        _sound.addEventListener(ProgressEvent.PROGRESS, loadingProgress);
+//        _sound.addEventListener(Event.COMPLETE, loadingComplete);
     }
 
     /**
      * Play the sound.
+     *
+     * Using the startTime parameter is discouraged right now, as high
+     * values seem to crash the flash player, as well as cause looping
+     * to wrap around to a position other than the begining of the sound.
      */
     public function play (startTime :Number = 0, loops :int = 0) :void
     {
         stop();
         _chan = _sound.play(startTime, loops);
+        if (_chan == null) {
+            Log.getLog(this).warning("All sound channels are in use; " +
+                "unable to play sound [sound=" + _desc + "].");
+        }
     }
 
     /**
@@ -72,11 +82,16 @@ public class SoundPlayer
             ", error=" + event + "].");
     }
 
-    protected function loadingProgress (event :ProgressEvent) :void
-    {
+//    protected function loadingProgress (event :ProgressEvent) :void
+//    {
 //        trace("sound progress: " + event.bytesLoaded +
 //            "/" + event.bytesTotal);
-    }
+//    }
+//
+//    protected function loadingComplete (event :Event) :void
+//    {
+//        trace("loading complete, total length=" + _sound.length);
+//    }
 
     protected var _sound :Sound;
 
