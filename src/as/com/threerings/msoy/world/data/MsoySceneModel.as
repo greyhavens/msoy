@@ -74,11 +74,16 @@ public class MsoySceneModel extends SceneModel
      */
     public function getNextFurniId (aboveId :int) :int
     {
-        aboveId = Math.min(Short.MAX_VALUE, Math.max(Short.MIN_VALUE, aboveId));
+        if (aboveId > Short.MAX_VALUE || aboveId < Short.MIN_VALUE) {
+            aboveId = Short.MIN_VALUE;
+        }
         var length :int = (furnis == null) ? 0 : furnis.length;
         for (var ii :int = aboveId + 1; ii != aboveId; ii++) {
             if (ii > Short.MAX_VALUE) {
                 ii = Short.MIN_VALUE;
+                if (ii == aboveId) {
+                    break;
+                }
             }
             var found :Boolean = false;
             for (var idx :int = 0; idx < length; idx++) {

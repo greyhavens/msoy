@@ -83,6 +83,9 @@ public class MsoySceneModel extends SceneModel
         for (int ii=aboveId + 1; ii != aboveId; ii++) {
             if (ii > Short.MAX_VALUE) {
                 ii = Short.MIN_VALUE;
+                if (ii == aboveId) {
+                    break;
+                }
             }
             boolean found = false;
             for (int idx=0; idx < length; idx++) {
