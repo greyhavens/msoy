@@ -26,7 +26,8 @@
   </fileset>
 
   <!-- declare the properties files. -->
-  <property name="props.list"     value="server.properties,build.properties"/>
+  <property name="props.list"     value="server.properties"/>
+  <property name="optprops.list"  value="build.properties"/>
 
   <!-- declare the libraries needed by the MSOY runtime -->
   <fileset dir="${projects.root}" id="dist.libs">
