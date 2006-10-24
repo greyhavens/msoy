@@ -4,6 +4,7 @@ import com.threerings.util.ArrayIterator;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Hashtable;
 import com.threerings.util.Iterator;
+import com.threerings.util.Short;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -73,8 +74,12 @@ public class MsoySceneModel extends SceneModel
      */
     public function getNextFurniId (aboveId :int) :int
     {
+        aboveId = Math.min(Short.MAX_VALUE, Math.max(Short.MIN_VALUE, aboveId));
         var length :int = (furnis == null) ? 0 : furnis.length;
-        for (var ii :int = aboveId + 1; ii < 5000; ii++) {
+        for (var ii :int = aboveId + 1; ii != aboveId; ii++) {
+            if (ii > Short.MAX_VALUE) {
+                ii = Short.MIN_VALUE;
+            }
             var found :Boolean = false;
             for (var idx :int = 0; idx < length; idx++) {
                 if ((furnis[idx] as FurniData).id == ii) {
