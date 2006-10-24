@@ -111,7 +111,7 @@ public class InventoryDisplay extends VBox
     protected function itemChanged (event :Event) :void
     {
         var iList :InventoryList = (event.currentTarget as InventoryList);
-        CommandEvent.dispatch(this, ITEM_SELECTED, iList.selectedItem);
+        CommandEvent.dispatch(this, ITEM_SELECTED, iList.selectedItem as Item);
     }
 
     protected var _ctx :MsoyContext;
