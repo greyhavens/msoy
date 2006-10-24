@@ -123,7 +123,7 @@
   </target> 
 
   <!-- prepares to build our Flash client -->
-  <target name="asprepare">
+  <target name="asprepare" depends="prepare">
     <mkdir dir="pages/clients"/>
     <tstamp>
       <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss"/>
