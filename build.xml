@@ -6,11 +6,6 @@
   <property name="doc.packages" value="com.threerings.msoy.*"/>
   <property name="copy.holder"  value="Three Rings Design, Inc."/>
 
-  <!-- read in our deployment properties -->
-  <property file="server.properties"/>
-  <property file="build.properties"/>
-  <property file="${cert_dir}/certificate.properties"/>
-
   <!-- things you probably don't want to change -->
   <property name="src.dir"       value="src/java"/>
   <property name="deploy.dir"    value="dist"/>
@@ -29,6 +24,9 @@
     <include name="src/java/**/*.java"/> 
     <include name="src/gwt/**/*.java"/> 
   </fileset>
+
+  <!-- declare the properties files. -->
+  <property name="props.list"     value="server.properties,build.properties"/>
 
   <!-- declare the libraries needed by the MSOY runtime -->
   <fileset dir="${projects.root}" id="dist.libs">
@@ -68,7 +66,7 @@
   </path>
 
   <!-- prepares the application directories -->
-  <target name="prepare">
+  <target name="prepare" depends="copydistlibs,copydistprops">
     <mkdir dir="${deploy.dir}"/>
     <mkdir dir="${deploy.dir}/lib"/>
     <mkdir dir="${deploy.dir}/classes"/>
@@ -82,7 +80,7 @@
     <!-- create our toybox properts from server.properties -->
     <exec executable="egrep">
       <arg line="^toybox\."/>
-      <arg line="server.properties"/>
+      <arg line="${deploy.dir}/server.properties"/>
       <redirector output="${deploy.dir}/classes/toybox.properties">
         <outputfilterchain>
           <replacestring from="toybox." to=""/>
@@ -256,6 +254,9 @@
     <proguard configuration="etc/game-client.pro">
       <libraryjar name="${rtClasses}"/>
     </proguard>
+
+    <!-- read in our certificate properties -->
+    <property file="${cert_dir}/certificate.properties"/>
     <signjar lazy="true" keystore="${cert_dir}/lib/keystore.dat"
       storepass="${sign.storepass}" alias="${sign.alias}">
       <fileset dir="${deploy.dir}" includes="game-client.jar"/>
@@ -264,7 +265,7 @@
   </target>
 
   <!-- generates additional methods for distributed object classes -->
-  <target name="gendobj" depends="prepare,copydistlibs">
+  <target name="gendobj" depends="prepare">
     <taskdef name="dobj"
              classname="com.threerings.presents.tools.GenDObjectTask"
              classpathref="classpath"/>
@@ -282,7 +283,7 @@
 
   <!-- generates marshaller and dispatcher classes for all invocation -->
   <!-- service declarations -->
-  <target name="genservice" depends="prepare,copydistlibs">
+  <target name="genservice" depends="prepare">
     <taskdef name="service"
              classname="com.threerings.presents.tools.GenServiceTask"
              classpathref="classpath"/>
@@ -302,7 +303,7 @@
 
   <!-- generates sender and decoder classes for all invocation -->
   <!-- receiver declarations -->
-  <target name="genreceiver" depends="prepare,copydistlibs"> 
+  <target name="genreceiver" depends="prepare"> 
     <taskdef name="receiver"
              classname="com.threerings.presents.tools.GenReceiverTask"
              classpathref="classpath"/>
@@ -347,7 +348,7 @@
   </target>
 
   <!-- build the java class files -->
-  <target name="compile" depends="prepare,copydistlibs">
+  <target name="compile" depends="prepare">
     <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
            debug="on" optimize="off" deprecation="on">
       <classpath refid="classpath"/>
