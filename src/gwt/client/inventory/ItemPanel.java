@@ -136,6 +136,8 @@ public class ItemPanel extends VerticalPanel
             editor = new AvatarEditor();
         } else if (_type == Item.PET) {
             editor = new PetEditor();
+        } else if (_type == Item.AUDIO) {
+            editor = new AudioEditor();
         } else {
             return null; // woe be the caller
         }

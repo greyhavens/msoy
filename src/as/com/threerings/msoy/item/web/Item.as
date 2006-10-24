@@ -32,6 +32,7 @@ public /*abstract*/ class Item
     public static const GAME :int = 4; //registerItemType(Game, 4);
     public static const AVATAR :int = 5; //registerItemType(Avatar, 5);
     public static const PET :int = 6; //registerItemType(Pet, 6);
+    public static const AUDIO :int = 7; //registerItemType(Audio, 7);
     // Note: registery of Item types is done at the bottom of this class
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
@@ -130,6 +131,8 @@ public /*abstract*/ class Item
             return "DOCUMENT";
         } else if (type == PET) { 
             return "PET";
+        } else if (type == AUDIO) { 
+            return "AUDIO";
         } else {
             return null;
         }
@@ -297,6 +300,7 @@ public /*abstract*/ class Item
         registerItemType(Game, GAME);
         registerItemType(Photo, PHOTO);
         registerItemType(Pet, PET);
+        registerItemType(Audio, AUDIO);
     }
     private static function staticInit () :void
     {

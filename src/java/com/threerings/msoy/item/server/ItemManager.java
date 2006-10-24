@@ -39,8 +39,9 @@ import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
 
-import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -80,8 +81,11 @@ public class ItemManager
     @SuppressWarnings("unchecked")
     public void init (ConnectionProvider conProv) throws PersistenceException
     {
+        ItemRepository repo;
         // create our various repositories
-        ItemRepository repo = new AvatarRepository(conProv);
+        repo = new AudioRepository(conProv);
+        _repos.put(Item.AUDIO, repo);
+        repo = new AvatarRepository(conProv);
         _repos.put(Item.AVATAR, repo);
         repo = new DocumentRepository(conProv);
         _repos.put(Item.DOCUMENT, repo);

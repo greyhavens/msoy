@@ -24,6 +24,7 @@ public class CatalogPanel extends TabPanel
         add(new ItemPanel(ctx, Item.GAME), "Games");
         add(new ItemPanel(ctx, Item.AVATAR), "Avatars");
         add(new ItemPanel(ctx, Item.PET), "Pets");
+        add(new ItemPanel(ctx, Item.AUDIO), "Audio");
         selectTab(0);
     }
 }

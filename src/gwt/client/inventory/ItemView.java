@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Furniture;
@@ -153,6 +154,15 @@ public class ItemView extends PopupPanel
                 MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath()));
             _table.addRow("Description", ((Avatar)_item).description);
             _table.addRow("Avatar", avatarContainer);
+
+        } else if (_item instanceof Audio) {
+            _table.addHeader("Audio Information");
+            MediaDesc audioMedia = ((Audio)_item).audioMedia;
+            Widget audioContainer;
+            audioContainer = ItemContainer.createContainer(
+                MsoyEntryPoint.toMediaPath(audioMedia.getMediaPath()));
+            _table.addRow("Description", ((Audio)_item).description);
+            _table.addRow("Audio", audioContainer);
 
         } else {
             _table.addHeader("UNKNOWN OBJECT TYPE: " + _item.getType());

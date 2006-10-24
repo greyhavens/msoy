@@ -27,6 +27,7 @@ public abstract class Item implements Streamable, IsSerializable
     public static final byte GAME = registerItemType(Game.class, 4);
     public static final byte AVATAR = registerItemType(Avatar.class, 5);
     public static final byte PET = registerItemType(Pet.class, 6);
+    public static final byte AUDIO = registerItemType(Audio.class, 7);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
 
     /** A 'used' constant value to indicate that the item is unused. */
@@ -116,6 +117,8 @@ public abstract class Item implements Streamable, IsSerializable
             return "DOCUMENT";
         } else if (type == PET) {
             return "PET";
+        } else if (type == AUDIO) {
+            return "AUDIO";
         } else {
             return null;
         }

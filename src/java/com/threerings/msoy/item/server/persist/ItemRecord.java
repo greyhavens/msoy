@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import com.samskivert.jdbc.depot.Computed;
 import com.threerings.io.Streamable;
+import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.item.web.Furniture;
@@ -56,6 +57,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
             return new AvatarRecord((Avatar) item);
         } else if (item instanceof Pet) {
             return new PetRecord((Pet) item);
+        } else if (item instanceof Audio) {
+            return new AudioRecord((Audio) item);
         }
         throw new RuntimeException("Unknown item type: " + item);
     }
