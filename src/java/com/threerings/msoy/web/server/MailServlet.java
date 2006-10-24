@@ -11,6 +11,7 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.MailService;
 import com.threerings.msoy.web.data.MailFolder;
+import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
@@ -58,11 +59,11 @@ public class MailServlet extends RemoteServiceServlet
     }
 
     // from MailService
-    public List<MailMessage> getMessages (WebCreds creds, int folderId) throws ServiceException
+    public List<MailHeaders> getHeaders (WebCreds creds, int folderId) throws ServiceException
     {
-        ServletWaiter<List<MailMessage>> waiter =
-            new ServletWaiter<List<MailMessage>>("getMessages[]");
-        MsoyServer.mailMan.getMessages(creds.memberId, folderId, waiter);
+        ServletWaiter<List<MailHeaders>> waiter =
+            new ServletWaiter<List<MailHeaders>>("getHeaders[]");
+        MsoyServer.mailMan.getHeaders(creds.memberId, folderId, waiter);
         return waiter.waitForResult();
     }
 

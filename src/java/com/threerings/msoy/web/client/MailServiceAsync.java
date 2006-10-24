@@ -32,9 +32,9 @@ public interface MailServiceAsync
                                    AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link MailService#getMessages}
+     * The asynchronous version of {@link MailService#getHeaders}
      */
-    public List getMessages (WebCreds creds, int folderId, AsyncCallback callback);
+    public List getHeaders (WebCreds creds, int folderId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MailService#deliverMessage}

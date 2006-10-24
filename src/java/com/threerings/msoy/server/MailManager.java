@@ -17,6 +17,7 @@ import com.threerings.msoy.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.MailFolder;
+import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MemberGName;
 
@@ -43,7 +44,7 @@ public class MailManager
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<MailMessage>(waiter) {
             public MailMessage invokePersistResult () throws PersistenceException {
-                return toWebObject(_mailRepo.getMessage(memberId, folderId, messageId));
+                return toMailMessage(_mailRepo.getMessage(memberId, folderId, messageId));
             }
         });
     }
@@ -51,15 +52,15 @@ public class MailManager
     /**
      * Fetch and return all the messages in a folder from the database. 
      */
-    public void getMessages (final int memberId, final int folderId,
-                             ResultListener<List<MailMessage>> waiter)
+    public void getHeaders (final int memberId, final int folderId,
+                             ResultListener<List<MailHeaders>> waiter)
     {
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<List<MailMessage>>(waiter) {
-            public List<MailMessage> invokePersistResult () throws PersistenceException {
-                List<MailMessage> result = new ArrayList<MailMessage>();
+            new RepositoryListenerUnit<List<MailHeaders>>(waiter) {
+            public List<MailHeaders> invokePersistResult () throws PersistenceException {
+                List<MailHeaders> result = new ArrayList<MailHeaders>();
                 for (MailMessageRecord record : _mailRepo.getMessages(memberId, folderId)) {
-                    result.add(toWebObject(record));
+                    result.add(toMailHeaders(record));
                 }
                 return result;
             }
@@ -74,7 +75,7 @@ public class MailManager
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MailFolder>(waiter) {
             public MailFolder invokePersistResult () throws PersistenceException {
-                return toWebObject(_mailRepo.getFolder(memberId, folderId));
+                return toMailFolder(_mailRepo.getFolder(memberId, folderId));
             }
         });
     }
@@ -89,7 +90,7 @@ public class MailManager
             public List<MailFolder> invokePersistResult () throws PersistenceException {
                 List<MailFolder> result = new ArrayList<MailFolder>();
                 for (MailFolderRecord record : _mailRepo.getFolders(memberId)) {
-                    result.add(toWebObject(record));
+                    result.add(toMailFolder(record));
                 }
                 return result;
             }
@@ -105,24 +106,24 @@ public class MailManager
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
-                testFolders(msg.recipient.memberId);
-                testFolders(msg.sender.memberId);
+                testFolders(msg.headers.recipient.memberId);
+                testFolders(msg.headers.sender.memberId);
                 
                 // copy the mail message into record format
                 MailMessageRecord record = new MailMessageRecord();
-                record.senderId = msg.sender.memberId;
-                record.recipientId = msg.recipient.memberId;
-                record.subject = msg.subject;
+                record.senderId = msg.headers.sender.memberId;
+                record.recipientId = msg.headers.recipient.memberId;
+                record.subject = msg.headers.subject;
                 record.message = msg.message;
                 record.sent = new Timestamp(System.currentTimeMillis());
 
                 // file one copy for ourselves
-                record.ownerId = msg.sender.memberId;
+                record.ownerId = msg.headers.sender.memberId;
                 record.folderId = MailFolder.SENT_FOLDER_ID;
                 _mailRepo.fileMessage(record);
                 
                 // and one for the recipient (safely reusing the record object)
-                record.ownerId = msg.recipient.memberId;
+                record.ownerId = msg.headers.recipient.memberId;
                 record.folderId = MailFolder.INBOX_FOLDER_ID;
                 _mailRepo.fileMessage(record);
                 return null;
@@ -190,28 +191,37 @@ public class MailManager
         }
     }
 
-    // convert a MailMessageRecord to its MailMessage form
-    protected MailMessage toWebObject (MailMessageRecord record)
+    // create a MailHeaders object from a a MailMessageRecord
+    protected MailHeaders toMailHeaders (MailMessageRecord record)
+        throws PersistenceException
+    {
+        MailHeaders headers = new MailHeaders();
+        headers.messageId = record.messageId;
+        headers.folderId = record.folderId;
+        headers.ownerId = record.ownerId;
+        headers.subject = record.subject;
+        headers.sent = new Date(record.sent.getTime());
+        
+        MemberRecord memRec = _memberRepo.loadMember(record.senderId);
+        headers.sender = new MemberGName(memRec.name, memRec.memberId);
+
+        memRec = _memberRepo.loadMember(record.recipientId);
+        headers.recipient = new MemberGName(memRec.name, memRec.memberId);
+        return headers;
+    }
+    
+    // convert a MailMessageRecord to a MailMessage
+    protected MailMessage toMailMessage (MailMessageRecord record)
         throws PersistenceException
     {
         MailMessage message = new MailMessage();
-        message.messageId = record.messageId;
-        message.folderId = record.folderId;
-        message.ownerId = record.ownerId;
-        message.subject = record.subject;
-        message.sent = new Date(record.sent.getTime());
+        message.headers = toMailHeaders(record);
         message.message = record.message;
-        
-        MemberRecord memRec = _memberRepo.loadMember(record.senderId);
-        message.sender = new MemberGName(memRec.name, memRec.memberId);
-
-        memRec = _memberRepo.loadMember(record.recipientId);
-        message.recipient = new MemberGName(memRec.name, memRec.memberId);
         return message;
     }
 
     // convert a MailFolderRecord to its MailFolder form
-    protected MailFolder toWebObject (MailFolderRecord record)
+    protected MailFolder toMailFolder (MailFolderRecord record)
         throws PersistenceException
     {
         MailFolder folder = new MailFolder();
