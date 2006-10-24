@@ -93,11 +93,13 @@ public class RoomView extends AbstractRoomView
             _roomObj.removeListener(this);
             removeAllOccupants();
             setCenterSprite(null);
+            shutdownMusic();
 
         } else {
             rereadScene();
             _roomObj.addListener(this)
             addAllOccupants();
+            setupMusic();
         }
     }
 
@@ -414,15 +416,7 @@ public class RoomView extends AbstractRoomView
 
         _ctx.getChatDirector().addChatDisplay(this);
 
-        // maybe set up background music
-//        var music :MediaDesc = _scene.getMusic();
-//        if (music != null) {
-//
-//// TODO: playing music is causing freezing right now. Revisit.
-////            _music = new SoundPlayer(music);
-////            _music.loop(Prefs.getMediaPosition(music.id));
-//        }
-
+        setupMusic();
         addAllOccupants();
 
         // and animate ourselves entering the room (everyone already in the
@@ -438,15 +432,36 @@ public class RoomView extends AbstractRoomView
         _ctx.getChatDirector().removeChatDisplay(this);
         ChatPopper.popAllDown();
 
-        if (_music != null) {
-            Prefs.setMediaPosition(_music.getMediaId(), _music.getPosition());
-            _music.stop();
-            _music = null;
-        }
-
+        shutdownMusic();
         removeAllOccupants();
 
         super.didLeavePlace(plobj);
+    }
+
+    /**
+     * Configure any background music in this room.
+     */
+    protected function setupMusic () :void
+    {
+        var music :MediaDesc = _scene.getMusic();
+        if (music != null) {
+            _music = new SoundPlayer(music);
+            var pos :Number = Prefs.getMediaPosition(music.getMediaId());
+            _music.loop(pos);
+        }
+    }
+
+    /**
+     * Shut-down the background music in the room.
+     */
+    protected function shutdownMusic () :void
+    {
+        if (_music != null) {
+            var pos :Number = _music.getPosition();
+            Prefs.setMediaPosition(_music.getMedia().getMediaId(), pos);
+            _music.stop();
+            _music = null;
+        }
     }
 
     protected function addAllOccupants () :void

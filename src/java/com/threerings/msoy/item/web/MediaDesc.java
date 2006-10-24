@@ -232,6 +232,21 @@ public class MediaDesc implements Streamable, IsSerializable
         return getMediaPath(hash, mimeType);
     }
 
+    /**
+     * Is this media purely audio?
+     */
+    public boolean isAudio ()
+    {
+        switch (mimeType) {
+        case AUDIO_MPEG:
+        case AUDIO_WAV:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
     // @Override // from Object
     public boolean equals (Object other)
     {

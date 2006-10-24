@@ -182,6 +182,30 @@ public class MediaDesc
     }
 
     /**
+     * Get some identifier that can be used to refer to this media across
+     * sessions (used as a key in prefs).
+     */
+    public function getMediaId () :String
+    {
+        return hashToString(hash);
+    }
+
+    /**
+     * Is this media purely audio?
+     */
+    public function isAudio () :Boolean
+    {
+        switch (mimeType) {
+        case AUDIO_MPEG:
+        case AUDIO_WAV:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
      * @return true if the media is clickable.
      */
     public function isInteractive () :Boolean

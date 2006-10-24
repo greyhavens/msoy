@@ -78,6 +78,20 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Retrieve the first background furni data that specifies music
+     */
+    public function getMusic () :MediaDesc
+    {
+        for each (var furni :FurniData in getFurni()) {
+            if (furni.actionType == FurniData.BACKGROUND &&
+                    furni.media.isAudio()) {
+                return furni.media;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Add a new piece of furniture to this scene.
      */
     public function addFurni (furn :FurniData) :void
@@ -112,7 +126,7 @@ public class MsoyScene extends SceneImpl
     // from SpotScene
     public function addPortal (portal :Portal) :void
     {
-        throw new IllegalOperationError("BREEP!");
+        throw new IllegalOperationError();
     }
 
     // from SpotScene
@@ -149,13 +163,13 @@ public class MsoyScene extends SceneImpl
     // from SpotScene
     public function removePortal (portal :Portal) :void
     {
-        throw new IllegalOperationError("BREEP!");
+        throw new IllegalOperationError();
     }
 
     // from SpotScene
     public function setDefaultEntrance (portal :Portal) :void
     {
-        throw new IllegalOperationError("BREEP!");
+        throw new IllegalOperationError();
     }
 
     // from Cloneable

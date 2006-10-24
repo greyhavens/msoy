@@ -50,11 +50,17 @@ public class SoundPlayer
         }
     }
 
-    public function getMediaId () :String
+    /**
+     * Get the media descriptor for the music we're playing.
+     */
+    public function getMedia () :MediaDesc
     {
-        return MediaDesc.hashToString(_desc.hash);
+        return _desc;
     }
 
+    /**
+     * Get the current position of this media.
+     */
     public function getPosition () :Number
     {
         return (_chan == null) ? 0 : _chan.position;
@@ -68,7 +74,8 @@ public class SoundPlayer
 
     protected function loadingProgress (event :ProgressEvent) :void
     {
-        //trace("sound progress: " + event.bytesLoaded + "/" + event.bytesTotal);
+//        trace("sound progress: " + event.bytesLoaded +
+//            "/" + event.bytesTotal);
     }
 
     protected var _sound :Sound;

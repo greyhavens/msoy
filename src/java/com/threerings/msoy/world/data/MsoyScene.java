@@ -115,7 +115,7 @@ public class MsoyScene extends SceneImpl
     // from SpotScene
     public void addPortal (Portal portal)
     {
-        throw new UnsupportedOperationException("BREEP!");
+        throw new UnsupportedOperationException();
     }
     
     // from SpotScene
@@ -152,13 +152,13 @@ public class MsoyScene extends SceneImpl
     // from SpotScene
     public void removePortal (Portal portal)
     {
-        throw new UnsupportedOperationException("BREEP!");
+        throw new UnsupportedOperationException();
     }
 
     // from SpotScene
     public void setDefaultEntrance (Portal portal)
     {
-        throw new UnsupportedOperationException("BREEP!");
+        throw new UnsupportedOperationException();
     }
 
     // from Cloneable

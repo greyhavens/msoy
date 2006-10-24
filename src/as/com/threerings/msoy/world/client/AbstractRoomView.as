@@ -497,7 +497,9 @@ public class AbstractRoomView extends Canvas
     {
         // set up any furniture
         for each (var furni :FurniData in _scene.getFurni()) {
-            updateFurni(furni);
+            if (!furni.media.isAudio()) {
+                updateFurni(furni);
+            }
         }
     }
 
