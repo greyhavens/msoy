@@ -21,7 +21,7 @@ public class FriendApprovalPanel extends FloatingPanel
 
     public function FriendApprovalPanel (ctx :MsoyContext, asker :MemberName)
     {
-        super(ctx, ctx.xlate(null, "t.approve_friend"));
+        super(ctx, Msgs.GENERAL.get("t.approve_friend"));
         _asker = asker;
         open(false); // non-modal..
     }
@@ -31,7 +31,7 @@ public class FriendApprovalPanel extends FloatingPanel
         super.createChildren();
 
         addChild(MsoyUI.createLabel(
-            _ctx.xlate(null, "m.approve_friend", _asker)));
+            Msgs.GENERAL.get("m.approve_friend", _asker)));
 
         addButtons(DENY_BUTTON, OK_BUTTON);
     }
@@ -40,7 +40,7 @@ public class FriendApprovalPanel extends FloatingPanel
     {
         if (buttonId == DENY_BUTTON) {
             var btn :Button = new Button();
-            btn.label = _ctx.xlate(null, "b.deny_friend");
+            btn.label = Msgs.GENERAL.get("b.deny_friend");
             return btn;
         }
 

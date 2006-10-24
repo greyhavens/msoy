@@ -12,6 +12,7 @@ import com.threerings.parlor.game.data.GameConfig;
 import com.threerings.parlor.game.client.GameConfigurator;
 import com.threerings.parlor.game.client.FlexGameConfigurator;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.ui.FloatingPanel;
@@ -25,7 +26,7 @@ public class TableCreationPanel extends FloatingPanel
     public function TableCreationPanel (
         ctx :MsoyContext, game :Game, panel :LobbyPanel)
     {
-        super(ctx, ctx.xlate("game", "t.create", game.name));
+        super(ctx, Msgs.GAME.get("t.create", game.name));
         _game = game;
         _panel = panel;
         showCloseButton = true;

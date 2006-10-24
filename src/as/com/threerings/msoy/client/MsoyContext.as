@@ -40,7 +40,11 @@ public class MsoyContext
         _client = client;
         _app = app;
 
+        // initialize the message manager
         _msgMgr = new MessageManager((app.root as ISystemManager));
+        // and our convenience holder
+        Msgs.init(this);
+
         _locDir = new LocationDirector(this);
         _chatDir = new ChatDirector(this, _msgMgr, "general");
         _sceneRepo = new SharedObjectSceneRepository()
@@ -194,7 +198,7 @@ public class MsoyContext
     }
 
     /**
-     * Convenience method to translate a key using the general bundle.
+     * Convenience translation method. If the first arg imethod to translate a key using the general bundle.
      */
     public function xlate (bundle :String, key :String, ... args) :String
     {

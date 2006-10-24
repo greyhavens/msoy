@@ -102,7 +102,7 @@ public class FriendsList extends MsoyList
     override public function itemToDataTip (obj :Object) :String
     {
         var fe :FriendEntry = (obj as FriendEntry);
-        return _ctx.xlate("general",
+        return Msgs.GENERAL.get(
             (fe.online ? "m.friend_online" : "m.friend_offline"), fe.name);
     }
 

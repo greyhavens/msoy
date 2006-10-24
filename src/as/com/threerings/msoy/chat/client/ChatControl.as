@@ -9,6 +9,8 @@ import flash.ui.Keyboard;
 
 import mx.containers.HBox;
 
+import mx.core.Application;
+
 import mx.controls.Button;
 import mx.controls.TextInput;
 
@@ -18,6 +20,7 @@ import mx.utils.StringUtil;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 /**
@@ -33,7 +36,7 @@ public class ChatControl extends HBox
         addChild(_txt = new TextInput());
         _txt.styleName = "chatInput";
         var but :Button = new Button();
-        but.label = ctx.xlate(null, "b.send");
+        but.label = Msgs.GENERAL.get("b.send");
         addChild(but);
 
         //_txt.addEventListener(FlexEvent.ENTER, sendChat);
@@ -53,9 +56,9 @@ public class ChatControl extends HBox
             _histIdx = -1;
 
             // request focus
-            if (_txt.focusManager != null) {
-                _txt.focusManager.setFocus(_txt);
-            }
+            callLater(function () :void {
+                _txt.setFocus();
+            });
 
         } else {
             _curLine = _txt.text;

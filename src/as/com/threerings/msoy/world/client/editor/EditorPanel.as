@@ -22,6 +22,7 @@ import com.threerings.util.ClassUtil;
 
 import com.threerings.mx.controls.CommandButton;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.ui.Grid;
@@ -184,26 +185,26 @@ public class EditorPanel extends VBox
         _tabBox.addChild(createRoomPanel());
 
         _spriteBox = new VBox();
-        _spriteBox.label = _ctx.xlate("editing", "t.sprite_props");
+        _spriteBox.label = Msgs.EDITING.get("t.sprite_props");
 
         // add a list that will display items in the room
         _spriteBox.addChild(itemList);
 
         // add a delete button (temp?)
         _deleteBtn = new CommandButton(EditorController.DEL_ITEM);
-        _deleteBtn.label = _ctx.xlate("editing", "b.delete_item");
+        _deleteBtn.label = Msgs.EDITING.get("b.delete_item");
         _deleteBtn.enabled = false;
         _spriteBox.addChild(_deleteBtn);
 
         _tabBox.addChild(_spriteBox);
 
         _inventoryBox = new VBox();
-        _inventoryBox.label = _ctx.xlate("editing", "t.inventory");
+        _inventoryBox.label = Msgs.EDITING.get("t.inventory");
         inventory = new InventoryDisplay(_ctx)
         _inventoryBox.addChild(inventory);
 
         addButton = new CommandButton(EditorController.ADD_ITEM);
-        addButton.label = _ctx.xlate("editing", "b.add_item");
+        addButton.label = Msgs.EDITING.get("b.add_item");
         addButton.enabled = false;
         _inventoryBox.addChild(addButton);
 
@@ -215,11 +216,11 @@ public class EditorPanel extends VBox
         var btn :CommandButton;
 
         btn = new CommandButton(EditorController.DISCARD_EDITS);
-        btn.label = _ctx.xlate("editing", "b.discard_edits");
+        btn.label = Msgs.EDITING.get("b.discard_edits");
         butBox.addChild(btn);
 
         btn = new CommandButton(EditorController.SAVE_EDITS);
-        btn.label = _ctx.xlate("editing", "b.save_edits");
+        btn.label = Msgs.EDITING.get("b.save_edits");
         butBox.addChild(btn);
 
         addChild(butBox);
@@ -228,33 +229,33 @@ public class EditorPanel extends VBox
     protected function createRoomPanel () :VBox
     {
         var box :VBox = new VBox();
-        box.label = _ctx.xlate("editing", "t.room_props");
+        box.label = Msgs.EDITING.get("t.room_props");
 
         // add a grid of controls for the room
         var grid :Grid = new Grid();
 
         // edit scene type
         grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_type")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_type")),
             _type = new ComboBox());
         var types :Array = [];
         for (var ii :int = 0; ii < MsoySceneModel.TYPE_COUNT; ii++) {
-            types.push({ label: _ctx.xlate("editing", "m.scene_type_" + ii),
+            types.push({ label: Msgs.EDITING.get("m.scene_type_" + ii),
                          data: ii });
         }
         _type.dataProvider = types;
 
         grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_name")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_name")),
             _name = new TextInput());
         grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_width")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_width")),
             _width = new TextInput());
         grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.scene_depth")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_depth")),
             _depth = new TextInput());
         grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.horizon")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.horizon")),
             _horizon = new HSlider());
         _horizon.minimum = 0;
         _horizon.maximum = 1;

@@ -26,6 +26,7 @@ import com.threerings.parlor.client.TableObserver;
 
 import com.threerings.parlor.data.Table;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.ui.MsoyList;
@@ -137,7 +138,7 @@ public class LobbyPanel extends VBox
         list.dataProvider = _tables;
 
         createBtn = new CommandButton(LobbyController.CREATE_TABLE);
-        createBtn.label = _ctx.xlate("game", "b.create");
+        createBtn.label = Msgs.GAME.get("b.create");
 
         var butbar :ButtonBar = new ButtonBar();
         butbar.addChild(createBtn);

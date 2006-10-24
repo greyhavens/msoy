@@ -16,6 +16,7 @@ import mx.managers.PopUpManager;
 import com.threerings.parlor.game.client.FlexGameConfigurator;
 import com.threerings.parlor.game.data.GameConfig;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MemberName;
 
@@ -30,7 +31,7 @@ public class InvitePanel extends FloatingPanel
 {
     public function InvitePanel (ctx :MsoyContext, invitee :MemberName)
     {
-        super(ctx, ctx.xlate("game", "t.inviteGame", invitee));
+        super(ctx, Msgs.GAME.get("t.inviteGame", invitee));
         _invitee = invitee;
 
         open(true);

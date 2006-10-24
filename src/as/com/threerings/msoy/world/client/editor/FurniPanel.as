@@ -18,6 +18,7 @@ import mx.core.UIComponent;
 
 import com.threerings.util.ArrayUtil;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.SceneBookmarkEntry;
@@ -104,27 +105,27 @@ public class FurniPanel extends SpritePanel
 
         // scale
         addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.xscale")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.xscale")),
             _xScale = new TextInput());
         MsoyUI.enforceNumber(_xScale);
         addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.yscale")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.yscale")),
             _yScale = new TextInput());
         MsoyUI.enforceNumber(_yScale);
 
         addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.action")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.action")),
             _actionType = new ComboBox());
         _actionType.dataProvider = [
-            { label: _ctx.xlate("editing", "l.action_none"),
+            { label: Msgs.EDITING.get("l.action_none"),
               data: FurniData.ACTION_NONE },
-            { label: _ctx.xlate("editing", "l.background"),
+            { label: Msgs.EDITING.get("l.background"),
               data: FurniData.BACKGROUND },
-            { label: _ctx.xlate("editing", "l.action_game"),
+            { label: Msgs.EDITING.get("l.action_game"),
               data: FurniData.ACTION_GAME },
-            { label: _ctx.xlate("editing", "l.action_url"),
+            { label: Msgs.EDITING.get("l.action_url"),
               data: FurniData.ACTION_URL },
-            { label: _ctx.xlate("editing", "l.action_portal"),
+            { label: Msgs.EDITING.get("l.action_portal"),
               data: FurniData.ACTION_PORTAL }
         ];
 
@@ -154,7 +155,7 @@ public class FurniPanel extends SpritePanel
 
         // add an "expert control" for directly editing the action
         addRow(
-            lbl = MsoyUI.createLabel(_ctx.xlate("editing", "l.action")),
+            lbl = MsoyUI.createLabel(Msgs.EDITING.get("l.action")),
             _actionData = new TextInput());
         lbl.setStyle("color", 0xFF0000);
         // END: temporary things
@@ -164,7 +165,7 @@ public class FurniPanel extends SpritePanel
     {
         var grid :Grid = new Grid();
         grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.url")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.url")),
             _url = new TextInput());
         return grid;
     }
@@ -173,7 +174,7 @@ public class FurniPanel extends SpritePanel
     {
         var grid :Grid = new Grid();
         grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_scene")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.dest_scene")),
             _destScene = new ComboBox());
         _destScene.editable = true;
 
@@ -189,7 +190,7 @@ public class FurniPanel extends SpritePanel
         _destScene.dataProvider = scenes;
 
 //        grid.addRow(
-//            MsoyUI.createLabel(_ctx.xlate("editing", "l.dest_portal")),
+//            MsoyUI.createLabel(Msgs.EDITING.get("l.dest_portal")),
 //            _destPortal = new TextInput());
 
         return grid;

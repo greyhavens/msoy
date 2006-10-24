@@ -62,7 +62,7 @@ public class DisconnectedPanel extends VBox
     public function setMessage (msg :String) :void
     {
         _message.text = (msg == null)
-            ? _ctx.xlate(null, "m.disconnected") : msg;
+            ? Msgs.GENERAL.get("m.disconnected") : msg;
     }
 
     // from PlaceView
@@ -93,7 +93,7 @@ public class DisconnectedPanel extends VBox
         }
 
         if (msg != null) {
-            setMessage(_ctx.xlate(null, msg));
+            setMessage(Msgs.GENERAL.get(msg));
         }
     }
 

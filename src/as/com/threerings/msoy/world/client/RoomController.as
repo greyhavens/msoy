@@ -26,6 +26,7 @@ import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.MemberService;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberInfo;
@@ -191,16 +192,16 @@ public class RoomController extends SceneController
             var memId :int = occInfo.getMemberId();
             var isGuest :Boolean = (memId == -1);
             var isFriend :Boolean = us.friends.containsKey(memId);
-            menuItems.push({ label: _mctx.xlate(null, "b.tell"),
+            menuItems.push({ label: Msgs.GENERAL.get("b.tell"),
                 command: TELL, arg: memId });
 
             if (!isGuest) {
                 menuItems.push(
-                    { label: _mctx.xlate(null, "b.visit_home"),
+                    { label: Msgs.GENERAL.get("b.visit_home"),
                       command: MsoyController.GO_MEMBER_HOME,
                       arg: memId },
-                    { label: _mctx.xlate(null, isFriend ? "b.removeAsFriend"
-                                                        : "b.addAsFriend"),
+                    { label: Msgs.GENERAL.get(isFriend ? "b.removeAsFriend"
+                                                       : "b.addAsFriend"),
                       command: MsoyController.ALTER_FRIEND,
                       arg: [memId, !isFriend] });
             }
@@ -234,7 +235,7 @@ public class RoomController extends SceneController
         cmd :String, arg :Object = null, separatorBefore :Boolean = false,
         enabled :Boolean = true, visible :Boolean = true) :ContextMenuItem
     {
-        var menuText :String = _mctx.xlate(null, "b." + cmd);
+        var menuText :String = Msgs.GENERAL.get("b." + cmd);
         return MenuUtil.createControllerMenuItem(menuText, cmd, arg,
                 separatorBefore, enabled, visible);
     }

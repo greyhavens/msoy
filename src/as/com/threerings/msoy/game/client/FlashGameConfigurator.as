@@ -5,6 +5,7 @@ import mx.controls.Label;
 
 import com.threerings.parlor.game.client.FlexGameConfigurator;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.item.web.MediaDesc;
 
@@ -24,7 +25,7 @@ public class FlashGameConfigurator extends FlexGameConfigurator
             { label:"Invalid", url:-1 }];
 
         var label :Label = new Label();
-        label.text = ctx.xlate("game", "l.gameName");
+        label.text = Msgs.GAME.get("l.gameName");
 
         addControl(label, _game);
     }

@@ -16,6 +16,7 @@ import mx.managers.PopUpManager;
 import com.threerings.mx.controls.CommandButton;
 import com.threerings.mx.events.CommandEvent;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 public class FloatingPanel extends TitleWindow
@@ -142,11 +143,11 @@ public class FloatingPanel extends TitleWindow
         var btn :Button = new Button();
         switch (buttonId) {
         case CANCEL_BUTTON:
-            btn.label = _ctx.xlate(null, "b.cancel");
+            btn.label = Msgs.GENERAL.get("b.cancel");
             break;
 
         case OK_BUTTON:
-            btn.label = _ctx.xlate(null, "b.ok");
+            btn.label = Msgs.GENERAL.get("b.ok");
             break;
 
         default:

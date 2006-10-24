@@ -44,7 +44,7 @@ public class LogonPanel extends HBox
         super.createChildren();
 
         var label :UITextField = new UITextField();
-        label.text = _ctx.xlate(null, "l.email");
+        label.text = Msgs.GENERAL.get("l.email");
         addChild(label);
 
         _email = new TextInput();
@@ -52,7 +52,7 @@ public class LogonPanel extends HBox
         addChild(_email);
 
         label = new UITextField();
-        label.text = _ctx.xlate(null, "l.password");
+        label.text = Msgs.GENERAL.get("l.password");
         addChild(label);
 
         _password = new TextInput();
@@ -60,12 +60,12 @@ public class LogonPanel extends HBox
         addChild(_password);
 
         _logonBtn = new Button();
-        _logonBtn.label = _ctx.xlate(null, "b.logon");
+        _logonBtn.label = Msgs.GENERAL.get("b.logon");
         _logonBtn.enabled = false;
         addChild(_logonBtn);
 
         _guestBtn = new CommandButton(MsoyController.LOGON);
-        _guestBtn.label = _ctx.xlate(null, "b.logon_guest");
+        _guestBtn.label = Msgs.GENERAL.get("b.logon_guest");
         addChild(_guestBtn);
 
         _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);

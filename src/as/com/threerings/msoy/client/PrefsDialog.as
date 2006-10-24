@@ -24,7 +24,7 @@ public class PrefsDialog extends FloatingPanel
 {
     public function PrefsDialog (ctx :MsoyContext)
     {
-        super(ctx, ctx.xlate("general", "t.prefs"));
+        super(ctx, Msgs.GENERAL.get("t.prefs"));
         open(true);
     }
 
@@ -36,7 +36,7 @@ public class PrefsDialog extends FloatingPanel
 
         var grid :Grid = new Grid();
         grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("general", "l.display_name")),
+            MsoyUI.createLabel(Msgs.GENERAL.get("l.display_name")),
             _name = new TextInput());
         _name.text = memberObj.memberName.toString();
 
@@ -52,7 +52,7 @@ public class PrefsDialog extends FloatingPanel
         addChild(_avatars);
 
         var btn :CommandButton = new CommandButton(MsoyController.PURCHASE_ROOM);
-        btn.label = _ctx.xlate("general", "b.purchase_room");
+        btn.label = Msgs.GENERAL.get("b.purchase_room");
         addChild(btn);
 
         addButtons(OK_BUTTON);

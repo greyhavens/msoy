@@ -17,6 +17,7 @@ import com.threerings.util.ArrayUtil;
 
 import com.threerings.mx.events.CommandEvent;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.Grid;
@@ -56,7 +57,7 @@ public class InventoryDisplay extends VBox
 
         var grid :Grid = new Grid();
         grid.addRow(
-            MsoyUI.createLabel(_ctx.xlate("item", "l.types")),
+            MsoyUI.createLabel(Msgs.ITEM.get("l.types")),
             _type = new ComboBox());
         addChild(grid);
 
@@ -72,7 +73,7 @@ public class InventoryDisplay extends VBox
         for each (var itemType :int in itemTypes) {
             addList(itemType, index++);
             typeLabels.push(
-                _ctx.xlate("item", "t.items_" + Item.getTypeName(itemType)));
+                Msgs.ITEM.get("t.items_" + Item.getTypeName(itemType)));
         }
         _type.dataProvider = typeLabels;
 

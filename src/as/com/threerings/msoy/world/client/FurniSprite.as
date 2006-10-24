@@ -12,6 +12,7 @@ import flash.filters.DisplacementMapFilterMode;
 
 import com.threerings.mx.events.CommandEvent;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.world.data.FurniData;
@@ -212,11 +213,11 @@ public class FurniSprite extends MsoySprite
             break;
 
         case FurniData.ACTION_GAME:
-            toolTip = ctx.xlate(null, "i.play_game", String(actionData[1]));
+            toolTip = Msgs.GENERAL.get("i.play_game", String(actionData[1]));
             break;
 
         case FurniData.ACTION_PORTAL:
-            toolTip = ctx.xlate(null, "i.trav_portal", String(actionData[1]));
+            toolTip = Msgs.GENERAL.get("i.trav_portal", String(actionData[1]));
             break;
 
         default:

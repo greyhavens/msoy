@@ -6,6 +6,7 @@ import mx.events.FlexEvent;
 
 import com.threerings.presents.client.ResultWrapper;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.item.web.Item;
@@ -44,7 +45,7 @@ public class InventoryList extends ItemList
                         });
                 }
                 if (items.length == 0) {
-                    _itemsToShow.addItem(ctx.xlate("item", "m.no_items"));
+                    _itemsToShow.addItem(Msgs.ITEM.get("m.no_items"));
 
                 } else {
                     addItems(items);
@@ -52,7 +53,7 @@ public class InventoryList extends ItemList
             }));
 
         // add a status item
-        _itemsToShow.addItem(ctx.xlate("item", "m.retrieving"));
+        _itemsToShow.addItem(Msgs.ITEM.get("m.retrieving"));
     }
 }
 }

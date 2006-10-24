@@ -11,6 +11,7 @@ import mx.controls.TextInput;
 
 import com.threerings.mx.events.CommandEvent;
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.ui.Grid;
@@ -72,12 +73,12 @@ public class SpritePanel extends Grid
         super.createChildren();
 
         addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.center")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.center")),
             _centering = new CheckBox());
 
         // location: big controls
         addRow(
-            MsoyUI.createLabel(_ctx.xlate("editing", "l.loc")),
+            MsoyUI.createLabel(Msgs.EDITING.get("l.loc")),
             _locEditor = new LocationEditor(_ctx));
     }
 

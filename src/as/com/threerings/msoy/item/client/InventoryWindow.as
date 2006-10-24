@@ -1,5 +1,6 @@
 package com.threerings.msoy.item.client {
 
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.ui.FloatingPanel;
@@ -12,7 +13,7 @@ public class InventoryWindow extends FloatingPanel
 {
     public function InventoryWindow (ctx :MsoyContext)
     {
-        super(ctx, ctx.xlate("item", "t.inventory"));
+        super(ctx, Msgs.ITEM.get("t.inventory"));
         showCloseButton = true;
     }
 

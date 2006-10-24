@@ -130,22 +130,22 @@ public class MsoyController extends Controller
 
         // add the friends if present
         if (friends.length > 0) {
-            menuData.push({ label: _ctx.xlate("general", "l.visit_friends"),
+            menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"),
                 children: friends });
         }
         // add owned scenes, if any
         if (owned.length > 0) {
-            menuData.push({ label: _ctx.xlate("general", "l.owned_scenes"),
+            menuData.push({ label: Msgs.GENERAL.get("l.owned_scenes"),
                 children: owned});
         }
         // always add recent scenes
-        menuData.push({ label: _ctx.xlate("general", "l.recent_scenes"),
+        menuData.push({ label: Msgs.GENERAL.get("l.recent_scenes"),
             children: recent });
 
         if (!memberObj.isGuest()) {
             menuData.push(
                 { type: "separator" },
-                { label: _ctx.xlate("general", "l.go_home"),
+                { label: Msgs.GENERAL.get("l.go_home"),
                   enabled: (memberObj.homeSceneId != currentSceneId),
                   command :GO_SCENE,
                   arg: memberObj.homeSceneId
@@ -168,10 +168,10 @@ public class MsoyController extends Controller
 
         if (!memberObj.isGuest()) {
             menuData.push(
-                { label: _ctx.xlate("general", "b.relogon_guest"),
+                { label: Msgs.GENERAL.get("b.relogon_guest"),
                   command: LOGON },
                 { type: "separator" },
-                { label: _ctx.xlate("general", "b.edit_prefs"),
+                { label: Msgs.GENERAL.get("b.edit_prefs"),
                   command: EDIT_PREFS});
         }
 
@@ -308,7 +308,7 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientConnectionFailed (event :ClientEvent) :void
     {
-        _logoffMessage = _ctx.xlate(null, "m.lost_connection");
+        _logoffMessage = Msgs.GENERAL.get("m.lost_connection");
     }
 
     // from ClientObserver
