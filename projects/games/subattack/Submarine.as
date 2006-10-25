@@ -2,6 +2,8 @@ package {
 
 import flash.display.MovieClip;
 
+import flash.media.Sound;
+
 import flash.text.TextField;
 
 import flash.geom.ColorTransform;
@@ -22,6 +24,7 @@ public class Submarine extends BaseSprite
 
         var scheme :Array = (SCHEMES[playerIdx] as Array);
         _avatar = MovieClip(new AVATAR());
+        _shootSound = Sound(new SHOOT_SOUND());
 
         // TODO: not working: we should only color the recolory child
 //        var colorChild :MovieClip =
@@ -119,6 +122,7 @@ public class Submarine extends BaseSprite
             } else {
                 _torpedos.push(new Torpedo(this, _board));
                 _shot = true;
+                _shootSound.play();
                 return OK;
             }
         }
@@ -277,6 +281,9 @@ public class Submarine extends BaseSprite
     /** The movie clip that represents us. */
     protected var _avatar :MovieClip;
 
+    /** Our shooty-shoot sound. */
+    protected var _shootSound :Sound;
+
     protected var _nameLabel :TextField;
 
     /** Color schemes for each player. */
@@ -302,5 +309,9 @@ public class Submarine extends BaseSprite
 
     [Embed(source="trucks_recolor.swf#animations")]
     protected static const AVATAR :Class;
+
+    //[Embed(source="shooting.wav", mimeType="audio/wav")]
+    [Embed(source="Error.mp3")]
+    protected static const SHOOT_SOUND :Class;
 }
 }

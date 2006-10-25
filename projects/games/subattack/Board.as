@@ -8,20 +8,22 @@ import com.threerings.ezgame.MessageReceivedEvent;
 
 public class Board
 {
-    /** The dimensions of the board. */
-    public static const WIDTH :int = 60;
-    public static const HEIGHT :int = 30;
-
     public function Board (gameObj :EZGame, seaDisplay :SeaDisplay)
     {
         _gameObj = gameObj;
         _seaDisplay = seaDisplay;
+
+        var playerCount :int = _gameObj.getPlayerCount();
+        _width = int(DIMENSIONS[playerCount][0]);
+        _height = int(DIMENSIONS[playerCount][1]);
+
+        _seaDisplay.setupSea(_width, _height);
         _gameObj.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         _gameObj.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
 
         var ii :int;
-        for (ii = WIDTH * HEIGHT - 1; ii >= 0; ii--) {
-            _traversable[ii] = 2;
+        for (ii = _width * _height - 1; ii >= 0; ii--) {
+            _traversable[ii] = SHOTS_TO_DESTROY;
         }
 
         // create a submarine for each player
@@ -56,7 +58,7 @@ public class Board
      */
     public function isTraversable (xx :int, yy :int) :Boolean
     {
-        return (xx >= 0) && (xx < WIDTH) && (yy >= 0) && (yy < HEIGHT) &&
+        return (xx >= 0) && (xx < _width) && (yy >= 0) && (yy < _height) &&
             (0 == int(_traversable[coordsToIdx(xx, yy)]));
     }
 
@@ -70,8 +72,8 @@ public class Board
         var bestx :int = sub.getX();
         var besty :int = sub.getY();
         var bestDist :Number = 0;
-        for (var yy :int = 0; yy < HEIGHT; yy++) {
-            for (var xx :int = 0; xx < WIDTH; xx++) {
+        for (var yy :int = 0; yy < _height; yy++) {
+            for (var xx :int = 0; xx < _width; xx++) {
                 if (0 == int(_traversable[coordsToIdx(xx, yy)])) {
                     var minDist :Number = Number.MAX_VALUE;
                     for each (var otherSub :Submarine in _subs) {
@@ -165,7 +167,7 @@ public class Board
         }
 
         // if it exploded in bounds, make that area traversable
-        if (xx >= 0 && xx < WIDTH && yy >= 0 && yy < HEIGHT) {
+        if (xx >= 0 && xx < _width && yy >= 0 && yy < _height) {
             // mark the board area as traversable there
             incTraversable(xx, yy);
             _seaDisplay.addChild(new Explode(xx, yy, this));
@@ -176,7 +178,7 @@ public class Board
 
     protected function coordsToIdx (xx :int, yy :int) :int
     {
-        return (yy * WIDTH) + xx;
+        return (yy * _width) + xx;
     }
 
     protected function setTraversable (xx :int, yy :int) :void
@@ -263,21 +265,23 @@ public class Board
         // then we check torpedo-on-torpedo action, and pass-through
         checkTorpedos();
 
-        // maybe end the game
-        if (_totalDeaths >= (_gameObj.getPlayerCount() * 5)) {
-            // find the winners
-            var winners :Array;
-            var hiScore :int = int.MIN_VALUE;
-            for each (sub in _subs) {
-                var score :int = sub.getScore();
-                if (score > hiScore) {
-                    hiScore = score;
-                    winners = [];
-                }
-                if (score == hiScore) {
-                    winners.push(sub.getPlayerIndex());
-                }
+        // find the highest scoring players
+        var winners :Array;
+        var hiScore :int = int.MIN_VALUE;
+        for each (sub in _subs) {
+            var score :int = sub.getScore();
+            if (score > hiScore) {
+                hiScore = score;
+                winners = [];
             }
+            if (score == hiScore) {
+                winners.push(sub.getPlayerIndex());
+            }
+        }
+
+        // maybe end the game and declare them winners
+        if (hiScore >= 5 ||
+                _totalDeaths >= (_gameObj.getPlayerCount() * 5)) {
             _gameObj.endGame.apply(null, winners);
         }
     }
@@ -344,25 +348,25 @@ public class Board
             return 0;
 
         case 1:
-            return (WIDTH - 1);
+            return (_width - 1);
 
         case 2:
             return 0;
 
         case 3:
-            return (WIDTH - 1);
+            return (_width - 1);
 
         case 4:
             return 0;
 
         case 5:
-            return (WIDTH - 1);
+            return (_width - 1);
 
         case 6:
-            return (WIDTH / 2);
+            return (_width / 2);
 
         case 7:
-            return (WIDTH / 2);
+            return (_width / 2);
         }
     }
 
@@ -379,25 +383,25 @@ public class Board
             return 0;
 
         case 1:
-            return (HEIGHT - 1);
+            return (_height - 1);
 
         case 2:
-            return (HEIGHT - 1);
+            return (_height - 1);
 
         case 3:
             return 0;
 
         case 4:
-            return (HEIGHT / 2);
+            return (_height / 2);
 
         case 5:
-            return (HEIGHT / 2);
+            return (_height / 2);
 
         case 6:
             return 0;
 
         case 7:
-            return (HEIGHT - 1);
+            return (_height - 1);
         }
     }
 
@@ -408,6 +412,12 @@ public class Board
     protected var _seaDisplay :SeaDisplay;
 
     protected var _totalDeaths :int = 0;
+
+    /** The width of the board. */
+    protected var _width :int;
+
+    /** The height of the board. */
+    protected var _height :int;
     
     protected var _ticks :Array = [];
 
@@ -420,6 +430,20 @@ public class Board
     /** An array tracking the traversability of each tile. */
     protected var _traversable :Array = [];
 
+    protected static const DIMENSIONS :Array = [
+        [  0,  0 ], // 0 player game
+        [ 10, 10 ], // 1 player game
+        [ 50, 25 ], // 2 player game
+        [ 60, 30 ], // 3 player game
+        [ 75, 30 ], // 4 player game
+        [ 75, 40 ], // 5 player game
+        [ 80, 40 ], // 6 player game
+        [ 80, 50 ], // 7 player game
+        [ 90, 50 ]  // 8 players!
+    ];
+
     protected static const MAX_QUEUED_TICKS :int = 5;
+
+    protected static const SHOTS_TO_DESTROY :int = 1; // 2;
 }
 }

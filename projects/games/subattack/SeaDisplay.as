@@ -16,6 +16,18 @@ public class SeaDisplay extends Sprite
 
     public function SeaDisplay ()
     {
+        // set up a status text area, to be centered in the main view
+        _status = new TextField();
+        _status.background = true;
+        _status.autoSize = TextFieldAutoSize.CENTER;
+        _status.selectable = false;
+    }
+
+    /**
+     * Configure the initial visualization of the sea.
+     */
+    public function setupSea (boardWidth :int, boardHeight :int) :void
+    {
         var bigups :Array = [
             Bitmap(new UP1()).bitmapData,
             Bitmap(new UP3()).bitmapData,
@@ -42,9 +54,9 @@ public class SeaDisplay extends Sprite
         _downWall = Bitmap(new DOWN_WALL()).bitmapData;
 
         for (var yy :int = -SubAttack.VISION_TILES;
-                yy < Board.HEIGHT + SubAttack.VISION_TILES; yy++) {
+                yy < boardHeight + SubAttack.VISION_TILES; yy++) {
             for (var xx :int = -SubAttack.VISION_TILES;
-                    xx < Board.WIDTH + SubAttack.VISION_TILES; xx++) {
+                    xx < boardWidth + SubAttack.VISION_TILES; xx++) {
                 pickBitmap(bigups);
                 graphics.drawRect(xx * TILE_SIZE, yy * TILE_SIZE, TILE_SIZE,
                     TILE_SIZE);
@@ -54,16 +66,11 @@ public class SeaDisplay extends Sprite
 
         // draw a nice border around Mr. Game Area
         graphics.lineStyle(5, 0xFFFFFF);
-        graphics.drawRect(-5, -5, Board.WIDTH * TILE_SIZE + 10,
-            Board.HEIGHT * TILE_SIZE + 10);
+        graphics.drawRect(-5, -5, boardWidth * TILE_SIZE + 10,
+            boardHeight * TILE_SIZE + 10);
         graphics.lineStyle(0, 0, 0); // turn off lines
-
-        // set up a status text area, to be centered in the main view
-        _status = new TextField();
-        _status.background = true;
-        _status.autoSize = TextFieldAutoSize.CENTER;
-        _status.selectable = false;
     }
+
 
     /**
      * Set the status message to be shown over the game board.
@@ -133,22 +140,8 @@ public class SeaDisplay extends Sprite
             return;
         }
 
-        var vx :int = xx - SubAttack.VISION_TILES;
-        var vy :int = yy - SubAttack.VISION_TILES;
-//        if (vx < 0) {
-//            vx = 0;
-//        } else if (vx > Board.WIDTH - SubAttack.VIEW_TILES) {
-//            vx = Board.WIDTH - SubAttack.VIEW_TILES;
-//        }
-//        if (vy < 0) {
-//            vy = 0;
-//        } else if (vy > Board.HEIGHT - SubAttack.VIEW_TILES) {
-//            vy = Board.HEIGHT - SubAttack.VIEW_TILES;
-//        }
-
-        // update OUR location..
-        x = vx * -1 * TILE_SIZE;
-        y = vy * -1 * TILE_SIZE;
+        x = (SubAttack.VISION_TILES - xx) * TILE_SIZE;
+        y = (SubAttack.VISION_TILES - yy) * TILE_SIZE;
     }
 
     /**
