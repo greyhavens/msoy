@@ -26,12 +26,19 @@ public class WebContext
     /** Provides person-related services. */
     public PersonServiceAsync personsvc;
 
+    /** Provides member-related service. */
+    public MemberServiceAsync membersvc;
+
     /** Provides group-related services. */
     public GroupServiceAsync groupsvc;
+
+    /** Provides mail-related services. */
+    public MailServiceAsync mailsvc;
 
     /** Provides catalog-related services. */
     public CatalogServiceAsync catalogsvc;
 
     /** Provides game-related services. */
     public GameServiceAsync gamesvc;
+
 }

@@ -42,6 +42,7 @@ import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberGName;
 import com.threerings.msoy.web.data.Profile;
+import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -130,6 +131,17 @@ public class MemberManager
         });
     }
 
+    /**
+     * Look up a member's record and construct a MemberGName from it.
+     */
+    public void getName (final int memberId, ServletWaiter<MemberGName> waiter)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MemberGName>(waiter) {
+            public MemberGName invokePersistResult () throws PersistenceException {
+                return new MemberGName(_memberRepo.loadMember(memberId).name, memberId);
+            }
+        });
+    }
     /**
      * Update the user's occupant info.
      */
