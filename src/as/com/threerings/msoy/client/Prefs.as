@@ -46,10 +46,21 @@ public class Prefs
         config.setValue(mediaKey(id), position);
     }
 
+    public static function getSoundVolume () :Number
+    {
+        return (config.getValue(VOLUME, 1) as Number);
+    }
+
+    public static function setSoundVolume (vol :Number) :void
+    {
+        config.setValue(VOLUME, vol);
+    }
+
     /** Key constants. */
     private static const USERNAME :String = "username";
     private static const SESSION_TOKEN :String = "sessionTok";
     private static const MACHINE_IDENT :String = "machIdent";
+    private static const VOLUME :String = "volume";
 
     /**
      * Internal function to create a media position key.

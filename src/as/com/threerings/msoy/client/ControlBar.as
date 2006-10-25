@@ -2,11 +2,17 @@ package com.threerings.msoy.client {
 
 import flash.events.MouseEvent;
 
+import flash.media.SoundMixer;
+import flash.media.SoundTransform;
+
+import mx.binding.utils.BindingUtils;
+
 import mx.core.ScrollPolicy;
 
 import mx.containers.Canvas;
 
 import mx.controls.Button;
+import mx.controls.HSlider;
 
 import mx.events.FlexEvent;
 
@@ -34,17 +40,33 @@ public class ControlBar extends Canvas
     {
         _ctx = ctx;
 
-        var fn :Function = function (event :ClientEvent) :void {
-            checkControls();
-        };
-        _ctx.getClient().addClientObserver(
-            new ClientAdapter(fn, fn, null, null, null, null, fn));
-
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
         height = HEIGHT;
         width = WIDTH;
+
+        var volume :HSlider = new HSlider();
+        volume.tickInterval = .1;
+        volume.liveDragging = true;
+        volume.minimum = 0;
+        volume.maximum = 1;
+        volume.x = 311;
+        volume.y = 41;
+        volume.width = 190;
+        SoundMixer.soundTransform = new SoundTransform(Prefs.getSoundVolume());
+        volume.value = SoundMixer.soundTransform.volume;
+        BindingUtils.bindSetter(function (val :Number) :void {
+            SoundMixer.soundTransform = new SoundTransform(val);
+            Prefs.setSoundVolume(val);
+        }, volume, "value");
+        addChild(volume);
+
+        var fn :Function = function (event :ClientEvent) :void {
+            checkControls();
+        };
+        _ctx.getClient().addClientObserver(
+            new ClientAdapter(fn, fn, null, null, null, null, fn));
 
         checkControls();
     }
@@ -60,9 +82,9 @@ public class ControlBar extends Canvas
             return;
         }
 
-        // remove all children
-        while (numChildren > 0) {
-            removeChildAt(0);
+        // remove all children (except the volume slider)
+        while (numChildren > 1) {
+            removeChildAt(1);
         }
 
         if (isMember) {
