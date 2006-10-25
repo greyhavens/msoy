@@ -7,6 +7,7 @@ import com.samskivert.util.ObjectUtil;
 
 import com.threerings.io.SimpleStreamableObject;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 /**
@@ -109,6 +110,22 @@ public class FurniData extends SimpleStreamableObject
             (this.scaleY == that.scaleY) &&
             (this.actionType == that.actionType) &&
             ObjectUtil.equals(this.actionData, that.actionData);
+    }
+
+    @Override
+    public String toString ()
+    {
+        String s = "Furni[id=" + id + ", itemType=" + itemType;
+        if (itemType != Item.NOT_A_TYPE) {
+            s += ", itemId=" + itemId;
+        }
+        s += ", actionType=" + actionType;
+        if (actionType != ACTION_NONE) {
+            s += ", actionData=\"" + actionData + "\"";
+        }
+        s += "]";
+
+        return s;
     }
 
     // documentation inherited

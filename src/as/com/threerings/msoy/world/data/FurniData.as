@@ -9,6 +9,7 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 public class FurniData
@@ -106,6 +107,21 @@ public class FurniData
             (this.scaleY == that.scaleY) &&
             (this.actionType == that.actionType) &&
             Util.equals(this.actionData, that.actionData);
+    }
+
+    public function toString () :String
+    {
+        var s :String = "Furni[id=" + id + ", itemType=" + itemType;
+        if (itemType != Item.NOT_A_TYPE) {
+            s += ", itemId=" + itemId;
+        }
+        s += ", actionType=" + actionType;
+        if (actionType != ACTION_NONE) {
+            s += ", actionData=\"" + actionData + "\"";
+        }
+        s += "]";
+
+        return s;
     }
 
     // documentation inherited from interface Cloneable
