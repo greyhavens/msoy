@@ -18,23 +18,23 @@ public interface MailServiceAsync
     /**
      * The asynchronous version of {@link MailService#getFolder}
      */
-    public MailFolder getFolder (WebCreds creds, int folderId, AsyncCallback callback);
+    public void getFolder (WebCreds creds, int folderId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MailService#getFolders}
      */
-    public List getFolders (WebCreds creds, AsyncCallback callback);
+    public void getFolders (WebCreds creds, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MailService#getMessage}
      */
-    public MailMessage getMessage (WebCreds creds, int folderId, int messageId,
+    public void getMessage (WebCreds creds, int folderId, int messageId,
                                    AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MailService#getHeaders}
      */
-    public List getHeaders (WebCreds creds, int folderId, AsyncCallback callback);
+    public void getHeaders (WebCreds creds, int folderId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MailService#deliverMessage}
