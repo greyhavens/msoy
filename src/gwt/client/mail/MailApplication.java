@@ -3,6 +3,7 @@
 
 package client.mail;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,7 +17,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,19 +32,33 @@ public class MailApplication extends DockPanel
     {
         super();
         _ctx = ctx;
-        setHeight("100%");
-        setWidth("100%");
-        
-        _folderPanel = new ScrollPanel();
-        _folderPanel.setWidth("25%");
-        add(_folderPanel, DockPanel.WEST);
-        
-        _headerPanel = new ScrollPanel();
-        _headerPanel.setHeight("25%");
+        setStyleName("mailApp");
+        setSpacing(5);
+        VerticalPanel sideBar = new VerticalPanel();
+        sideBar.setStyleName("mailFolders");
+        Button composeButton = new Button("Compose");
+        composeButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                new MailComposition(_ctx, 2, "").show();
+            }
+        });
+        sideBar.add(composeButton);
+
+        _folderPanel = new VerticalPanel();
+        sideBar.add(_folderPanel);
+        add(sideBar, DockPanel.WEST);
+
+        _headerPanel = new SimplePanel();
+        _headerPanel.setStyleName("mailHeaders");
+        _headerPanel.setVisible(true); // TODO TO DO TODO
         add(_headerPanel, DockPanel.NORTH);
+        setCellWidth(_headerPanel, "100%");
         
-        _messagePanel = new ScrollPanel();
+        _messagePanel = new VerticalPanel();
+        _messagePanel.setStyleName("mailMessage");
+        _messagePanel.setVisible(false);
         add(_messagePanel, DockPanel.CENTER);
+        setCellWidth(_messagePanel, "100%");
         
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
@@ -60,10 +74,8 @@ public class MailApplication extends DockPanel
     
     public void showFolder (int folderId)
     {
-        if (folderId != _currentFolder) {
-            _currentFolder = folderId;
-            refreshHeaderPanel();
-        }
+        _currentFolder = folderId;
+        loadHeaders();
     }
 
     public void showMessage (int messageId)
@@ -72,12 +84,10 @@ public class MailApplication extends DockPanel
             addError("Internal error: asked to display a message, but no folder selected.");
             return;
         }
-        if (_currentMessage != messageId) {
-            _currentMessage = messageId;
-            loadMessage();
-        }
+        _currentMessage = messageId;
+        loadMessage();
     }
-    
+
     protected void loadFolders ()
     {
         _ctx.mailsvc.getFolders(_ctx.creds, new AsyncCallback() {
@@ -138,22 +148,22 @@ public class MailApplication extends DockPanel
     
     protected void refreshFolderPanel ()
     {
-        FlexTable table = new FlexTable();
-        _folderPanel.setWidget(table);
-        int row = 0;
-
+        _folderPanel.clear();
         Iterator i = _folders.iterator();
         while (i.hasNext()) {
             MailFolder folder = (MailFolder) i.next();
-            table.setWidget(row, 0, new Hyperlink(folder.name, "f" + folder.folderId));
+            _folderPanel.add(new Hyperlink(folder.name, "f" + folder.folderId));
             // TODO: Add total/unread count.
-            row ++;
         }
     }
 
     protected void refreshHeaderPanel ()
     {
+        _messagePanel.setVisible(false);
+        _headerPanel.clear();
+        _headerPanel.setVisible(true);
         FlexTable table = new FlexTable();
+        table.setWidth("100%");
         _headerPanel.setWidget(table);
         CellFormatter formatter = table.getCellFormatter();
         int row = 0;
@@ -162,30 +172,31 @@ public class MailApplication extends DockPanel
         while (i.hasNext()) {
             MailHeaders headers = (MailHeaders) i.next();
             Widget link = new Hyperlink(
-                headers.subject, "f" + _currentFolder + ":" + _currentMessage);
+                headers.subject, "f" + _currentFolder + ":" + headers.messageId);
             table.setWidget(row, 0, link);
-            formatter.setWidth(0, 0, "25%");
+            formatter.setStyleName(row, 0, "mailRowSubject");
             table.setText(row, 1, headers.sender.memberName);
-            formatter.setWidth(0, 1, "60%");
-            table.setText(row, 2, headers.sent.toString().substring(0, 20));
-            formatter.setWidth(0, 2, "15%");
+            formatter.setStyleName(row, 1, "mailRowSender");
+            table.setText(row, 2, formatDate(headers.sent));
+            formatter.setStyleName(row, 2, "mailRowDate");
             row ++;
         }
     }
 
     protected void refreshMessagePanel ()
     {
-        VerticalPanel panel = new VerticalPanel();
-        _messagePanel.setWidget(panel);
-
+        _messagePanel.clear();
+        _messagePanel.setVisible(true);
         HeaderValueTable headers = new HeaderValueTable();
-        headers.addRow("Subject", _message.headers.subject);
+        headers.setStyleName("mailMessageHeaders");
         headers.addRow("From", _message.headers.sender.memberName);
-        headers.addRow("Date", _message.headers.sent.toString().substring(0, 20));
-        headers.addRow("To", _message.headers.recipient.memberName);
-        panel.add(headers);
+        headers.addRow("Date", _message.headers.sent.toString().substring(0, 21));
+        headers.addRow("Subject", _message.headers.subject);
+        _messagePanel.add(headers);
+        _messagePanel.setCellWidth(headers, "100%");
 
         HorizontalPanel buttonBox = new HorizontalPanel();
+        buttonBox.setStyleName("mailMessageButtons");
         Button replyButton = new Button("Reply");
         replyButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -197,12 +208,37 @@ public class MailApplication extends DockPanel
             }
         });
         buttonBox.add(replyButton);
-        panel.add(buttonBox);
+        _messagePanel.add(buttonBox);
         
         SimplePanel message = new SimplePanel();
+        message.setStyleName("mailMessageBody");
         message.setWidget(new Label(_message.message));
+        _messagePanel.add(message);
     }
-
+    
+    // Date.toString() returns: Wed Oct 25 2006 15:30:32 GMT-0500 (CDT)
+    protected String formatDate(Date date)
+    {
+        long nowTime = System.currentTimeMillis();
+        Date now = new Date(nowTime);
+        if (now.getYear() != date.getYear()) {
+            // e.g. 25/10/06
+            return date.getDay() + "/" + date.getMonth() + "/" + date.getYear();
+        }
+        int hourDiff = (int) (nowTime - date.getTime()) / (3600 * 1000);
+        if (hourDiff > 6*24) {
+            // e.g. Oct 25
+            return date.toString().substring(4, 10);
+        }
+        if (hourDiff > 23) {
+            // e.g. Wed 15:10
+            String str = date.toString();
+            return str.substring(0, 3) + " " + str.substring(16, 21);
+        }
+        // e.g. 15:10
+        return date.toString().substring(16, 21);
+    }
+    
     protected void addError (String error)
     {
         _errorContainer.add(new Label(error));
@@ -221,8 +257,8 @@ public class MailApplication extends DockPanel
     protected int _currentFolder;
     protected int _currentMessage;
     
-    protected ScrollPanel _folderPanel;
-    protected ScrollPanel _headerPanel;
-    protected ScrollPanel _messagePanel;
+    protected VerticalPanel _folderPanel;
+    protected SimplePanel _headerPanel;
+    protected VerticalPanel _messagePanel;
     protected VerticalPanel _errorContainer;
 }

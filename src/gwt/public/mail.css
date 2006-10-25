@@ -1,0 +1,48 @@
+.mailApp {
+    background: #99CCFF;
+    width: 100%;
+}
+
+.mailFolders {
+    background: #6699CC;
+    width: 10ex;
+    padding: 5px;
+}
+
+.mailHeaders {
+    background: #6699CC;
+    width: 100%;
+}
+
+.mailMessage {
+    background: #6699CC;
+    width: 100%;
+    padding: 5px;
+}
+
+.mailMessageHeaders {
+    width: 100%;
+    padding: 5px;
+}
+
+.mailMessageButtons {
+    padding: 5px;
+}
+
+.mailMessagePanel {
+    padding: 5px;
+}
+
+.mailRowSubject {
+    padding: 3px;
+}
+
+.mailRowSender {
+    width: 10ex;
+    padding: 3px;
+}
+
+.mailRowDate {
+    width: 6ex;
+    padding: 3px;
+}

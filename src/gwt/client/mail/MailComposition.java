@@ -49,7 +49,8 @@ public class MailComposition extends PopupPanel
 
     protected void buildUI (String subject)
     {
-        DockPanel panel = new DockPanel();
+        setStyleName("mailComposition");
+        VerticalPanel panel = new VerticalPanel();
         setWidget(panel);
 
         HeaderValueTable headers = new HeaderValueTable();
@@ -57,7 +58,7 @@ public class MailComposition extends PopupPanel
         _subjectBox = new TextBox();
         _subjectBox.setText(subject);
         headers.addRow("Subject", _subjectBox);
-        panel.add(headers, DockPanel.NORTH);
+        panel.add(headers);
 
         HorizontalPanel buttonBox = new HorizontalPanel();
         Button replyButton = new Button("Send");
@@ -68,7 +69,7 @@ public class MailComposition extends PopupPanel
         });
         buttonBox.add(replyButton);
         Button discardButton = new Button("Discard");
-        replyButton.addClickListener(new ClickListener() {
+        discardButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 // TODO: cheesy confirmation dialogue?
                 hide();
@@ -78,11 +79,11 @@ public class MailComposition extends PopupPanel
         panel.add(buttonBox);
 
         _messageBox = new TextArea();
-        panel.add(_messageBox, DockPanel.CENTER);
+        panel.add(_messageBox);
         
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
-        panel.add(_errorContainer, DockPanel.SOUTH);
+        panel.add(_errorContainer);
     }
     
     protected void refreshRecipient ()
