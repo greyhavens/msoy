@@ -75,6 +75,7 @@ public class EntryPointDispatcher
         _pages.put("index", client.index.getCreator());
         _pages.put("inventory", client.inventory.index.getCreator());
         _pages.put("person", client.person.index.getCreator());
+        _pages.put("mail", client.mail.index.getCreator());
         _pages.put("group", client.group.index.getCreator());
         _pages.put("catalog", client.catalog.index.getCreator());
         _pages.put("game", client.game.index.getCreator());
