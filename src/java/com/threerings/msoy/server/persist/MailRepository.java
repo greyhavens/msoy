@@ -81,7 +81,7 @@ public class MailRepository extends DepotRepository
      public MailMessageRecord fileMessage (MailMessageRecord record)
          throws PersistenceException
      {
-         record.folderId = claimMessageId(record.ownerId, record.folderId, 1);
+         record.messageId = claimMessageId(record.ownerId, record.folderId, 1);
          insert(record);
          return record;
      }

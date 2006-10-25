@@ -40,7 +40,7 @@ public class MailFolderRecord
     public String name;
 
     /** The next available message id within this folder. */
-    @Column(nullable=false, unique=true)
+    @Column(nullable=false)
     public int nextMessageId;
     
     /**

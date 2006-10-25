@@ -3,11 +3,7 @@
 
 package com.threerings.msoy.web.client;
 
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**

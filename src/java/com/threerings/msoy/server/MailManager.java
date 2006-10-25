@@ -191,6 +191,21 @@ public class MailManager
             record.folderId = MailFolder.SENT_FOLDER_ID;
             record.name = "Sent";
             _mailRepo.createFolder(record);
+
+            MailMessageRecord welcome = new MailMessageRecord();
+            welcome.ownerId = memberId;
+            welcome.folderId = MailFolder.INBOX_FOLDER_ID;
+            welcome.recipientId = memberId;
+            // TODO: We need to be able to send system messages somehow.
+            welcome.senderId = memberId;
+            welcome.sent = new Timestamp(System.currentTimeMillis());
+            welcome.subject = "Welcome to MetaSOY!";
+            welcome.message =
+                "Welcome to the MetaSOY mail system! This test message exists primarly so that " +
+                "there's something in our inboxes to click on. You are encouraged to go 'Ooh' " +
+                "and perhaps 'Aah' now.\n\n" +
+                "In the very short term, its purpose is to help me write this mail reader.\n\n";
+            _mailRepo.fileMessage(welcome);
         }
     }
 
