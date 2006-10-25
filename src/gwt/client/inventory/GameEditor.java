@@ -44,8 +44,10 @@ public class GameEditor extends ItemEditor
     {
         // configure the main uploader first
         configureMainUploader("Game Media", new MediaUpdater() {
-            public void updateMedia (byte[] hash, byte mimeType) {
-                _game.gameMedia = new MediaDesc(hash, mimeType);
+            public String updateMedia (MediaDesc desc) {
+                // TODO: validate media type
+                _game.gameMedia = desc;
+                return null;
             }
         });
 

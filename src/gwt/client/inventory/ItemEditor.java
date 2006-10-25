@@ -49,7 +49,11 @@ public abstract class ItemEditor extends PopupPanel
 
     public static interface MediaUpdater
     {
-        public void updateMedia (byte[] hash, byte mimeType);
+        /**
+         * Return null, or a message indicating why the specified media
+         * will not do.
+         */
+        public String updateMedia (MediaDesc desc);
     }
 
     public ItemEditor ()
@@ -159,18 +163,28 @@ public abstract class ItemEditor extends PopupPanel
         String title = "Furniture Image";
         _furniUploader = createUploader(
             FURNI_ID, title, ItemContainer.FURNI_HEIGHT, new MediaUpdater() {
-            public void updateMedia (byte[] hash, byte mimeType) {
-                _item.furniMedia = new MediaDesc(hash, mimeType);
+            public String updateMedia (MediaDesc desc) {
+                if (!desc.hasFlashVisual()) {
+                    return "Furniture must be an web-viewable image type.";
+                }
+
+                _item.furniMedia = desc;
                 recenter(true);
+                return null;
             }
         });
 
         title = "Thumbnail Image";
         _thumbUploader = createUploader(
             THUMB_ID, title, ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
-            public void updateMedia (byte[] hash, byte mimeType) {
-                _item.thumbMedia = new MediaDesc(hash, mimeType);
+            public String updateMedia (MediaDesc desc) {
+                if (!desc.hasFlashVisual()) {
+                    return "Thumbnails must be an web-viewable image type.";
+                }
+
+                _item.thumbMedia = desc;
                 recenter(true);
+                return null;
             }
         });
 

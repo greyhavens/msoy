@@ -30,8 +30,10 @@ public class DocumentEditor extends ItemEditor
     protected void createEditorInterface ()
     {
         configureMainUploader("Upload your document.", new MediaUpdater() {
-            public void updateMedia (byte[] hash, byte mimeType) {
-                _doc.docMedia = new MediaDesc(hash, mimeType);
+            public String updateMedia (MediaDesc desc) {
+                // TODO: validate media type
+                _doc.docMedia = desc;
+                return null;
             }
         });
 

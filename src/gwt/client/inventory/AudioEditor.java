@@ -36,9 +36,14 @@ public class AudioEditor extends ItemEditor
     protected void createEditorInterface ()
     {
         configureMainUploader("Upload your audio.", new MediaUpdater() {
-            public void updateMedia (byte[] hash, byte mimeType) {
-                _audio.audioMedia = new MediaDesc(hash, mimeType);
+            public String updateMedia (MediaDesc desc) {
+                if (!desc.isAudio()) {
+                    return "Audio data must be audio!";
+                }
+
+                _audio.audioMedia = desc;
                 recenter(true);
+                return null;
             }
         });
 

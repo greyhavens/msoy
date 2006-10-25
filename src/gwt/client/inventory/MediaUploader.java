@@ -95,7 +95,8 @@ public class MediaUploader extends FlexTable
         setWidget(row, 1, _panel);
         row++;
 
-        setText(row, 0, "Browse and upload and we'll show a preview here.");
+        _out = new Label("Browse and upload and we'll show a preview here.");
+        setWidget(row, 0, _out);
         cellFormatter.setColSpan(row, 0, 2);
         row++;
 
@@ -131,13 +132,12 @@ public class MediaUploader extends FlexTable
      */
     public void setUploadedMedia (MediaDesc desc)
     {
-        setMedia(desc);
-
-        // set it in the item, if possible
-        if (_updater != null) {
-            _updater.updateMedia(desc.hash, desc.mimeType);
+        String result = _updater.updateMedia(desc);
+        if (result == null) {
+            setMedia(desc);
+            result = "File uploaded.";
         }
-        _out.setText("File uploaded.");
+        _out.setText(result);
     }
 
     protected ItemEditor.MediaUpdater _updater;

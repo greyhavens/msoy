@@ -36,9 +36,14 @@ public class AvatarEditor extends ItemEditor
     protected void createEditorInterface ()
     {
         configureMainUploader("Upload your avatar.", new MediaUpdater() {
-            public void updateMedia (byte[] hash, byte mimeType) {
-                _avatar.avatarMedia = new MediaDesc(hash, mimeType);
+            public String updateMedia (MediaDesc desc) {
+                if (!desc.hasFlashVisual()) {
+                    return "Avatars must be a web-viewable media.";
+                }
+
+                _avatar.avatarMedia = desc;
                 recenter(true);
+                return null;
             }
         });
 

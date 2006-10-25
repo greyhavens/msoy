@@ -35,9 +35,14 @@ public class PhotoEditor extends ItemEditor
     protected void createEditorInterface ()
     {
         configureMainUploader("Upload your photo.", new MediaUpdater() {
-            public void updateMedia (byte[] hash, byte mimeType) {
-                _photo.photoMedia = new MediaDesc(hash, mimeType);
+            public String updateMedia (MediaDesc desc) {
+                if (!desc.hasFlashVisual()) {
+                    return "Photos must be a web-viewable image type.";
+                }
+
+                _photo.photoMedia = desc;
                 recenter(true);
+                return null;
             }
         });
 

@@ -191,6 +191,25 @@ public class MediaDesc
     }
 
     /**
+     * Return true if this media has a visual component that can be shown
+     * in flash.
+     */
+    public function hasFlashVisual () :Boolean
+    {
+        switch (mimeType) {
+        case IMAGE_PNG:
+        case IMAGE_JPEG:
+        case IMAGE_GIF:
+        case VIDEO_FLASH:
+        case APPLICATION_SHOCKWAVE_FLASH:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
      * Is this media purely audio?
      */
     public function isAudio () :Boolean
