@@ -39,7 +39,8 @@ public interface MailServiceAsync
     /**
      * The asynchronous version of {@link MailService#deliverMessage}
      */
-    public void deliverMessage (WebCreds creds, MailMessage msg, AsyncCallback callback);
+    public void deliverMessage (WebCreds creds, int recipientId, String subject, String text,
+                                AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MailService#deleteMessages}

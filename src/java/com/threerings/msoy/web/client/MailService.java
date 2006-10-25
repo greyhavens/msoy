@@ -28,7 +28,7 @@ public interface MailService extends RemoteService
     public List getHeaders (WebCreds creds, int folderId)
         throws ServiceException;
     
-    public void deliverMessage (WebCreds creds, MailMessage msg)
+    public void deliverMessage (WebCreds creds, int recipientId, String subject, String text)
         throws ServiceException;
 
     public void deleteMessages (WebCreds creds, int folderId, int[] msgIdArr)

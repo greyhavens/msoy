@@ -33,10 +33,12 @@ public class MailServlet extends RemoteServiceServlet
     }
 
     // from MailService
-    public void deliverMessage (WebCreds creds, MailMessage msg) throws ServiceException
+    public void deliverMessage (WebCreds creds, int recipientId, String subject, String text)
+        throws ServiceException
     {
-        ServletWaiter<Void> waiter = new ServletWaiter<Void>("deliverMessage[" + msg + "]");
-        MsoyServer.mailMan.deliverMessage(msg, waiter);
+        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+                "deliverMessage[" + recipientId + ", " + subject + ", " + text + "]");
+        MsoyServer.mailMan.deliverMessage(creds.memberId, recipientId, subject, text, waiter);
         waiter.waitForResult();
     }
 

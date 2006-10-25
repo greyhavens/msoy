@@ -88,6 +88,8 @@ public class MailManager
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<List<MailFolder>>(waiter) {
             public List<MailFolder> invokePersistResult () throws PersistenceException {
+                testFolders(memberId);
+
                 List<MailFolder> result = new ArrayList<MailFolder>();
                 for (MailFolderRecord record : _mailRepo.getFolders(memberId)) {
                     result.add(toMailFolder(record));
@@ -101,29 +103,30 @@ public class MailManager
      * Deliver a message, i.e. file one copy of it in the sender's 'Sent' folder,
      * and one copy in the recipient's 'Inbox' folder.
      */    
-    public void deliverMessage (final MailMessage msg, ResultListener<Void> waiter)
+    public void deliverMessage (final int senderId, final int recipientId, final String subject,
+                                final String text, ResultListener<Void> waiter)
     {
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
-                testFolders(msg.headers.recipient.memberId);
-                testFolders(msg.headers.sender.memberId);
+                testFolders(senderId);
+                testFolders(recipientId);
                 
                 // copy the mail message into record format
                 MailMessageRecord record = new MailMessageRecord();
-                record.senderId = msg.headers.sender.memberId;
-                record.recipientId = msg.headers.recipient.memberId;
-                record.subject = msg.headers.subject;
-                record.message = msg.message;
+                record.senderId = senderId;
+                record.recipientId = recipientId;
+                record.subject = subject;
+                record.message = text;
                 record.sent = new Timestamp(System.currentTimeMillis());
 
                 // file one copy for ourselves
-                record.ownerId = msg.headers.sender.memberId;
+                record.ownerId = senderId;
                 record.folderId = MailFolder.SENT_FOLDER_ID;
                 _mailRepo.fileMessage(record);
                 
                 // and one for the recipient (safely reusing the record object)
-                record.ownerId = msg.headers.recipient.memberId;
+                record.ownerId = recipientId;
                 record.folderId = MailFolder.INBOX_FOLDER_ID;
                 _mailRepo.fileMessage(record);
                 return null;
