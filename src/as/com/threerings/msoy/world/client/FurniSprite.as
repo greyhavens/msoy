@@ -10,14 +10,21 @@ import flash.events.TextEvent;
 import flash.filters.DisplacementMapFilter;
 import flash.filters.DisplacementMapFilterMode;
 
+import com.threerings.util.MenuUtil;
+
 import com.threerings.mx.events.CommandEvent;
 
+import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyController;
+
+import com.threerings.msoy.item.web.Item;
 
 import com.threerings.msoy.world.data.FurniData;
 
 public class FurniSprite extends MsoySprite
+    implements ContextMenuProvider
 {
     public function FurniSprite (ctx :MsoyContext, furni :FurniData)
     {
@@ -46,6 +53,16 @@ public class FurniSprite extends MsoySprite
         scaleUpdated();
         setLocation(furni.loc);
         configureToolTip(ctx);
+    }
+
+    // from ContextMenuProvider
+    public function populateContextMenu (menuItems :Array) :void
+    {
+        if (_furni.itemType != Item.NOT_A_TYPE) {
+            menuItems.unshift(MenuUtil.createControllerMenuItem(
+                Msgs.GENERAL.get("b.view_item"), MsoyController.VIEW_ITEM,
+                [ _furni.itemType, _furni.itemId ]));
+        }
     }
 
     /**

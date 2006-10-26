@@ -222,7 +222,7 @@ public class RoomController extends SceneController
         }
 
         if (_editor == null && _scene.canEdit(_mctx.getClientObject())) {
-            menuItems.push(createMenuItem(EDIT_SCENE));
+            menuItems.push(createMenuItem(EDIT_SCENE, null, true));
         }
 
         menuItems.push(createMenuItem(TEMP_CLEAR_SCENE_CACHE, null, true));

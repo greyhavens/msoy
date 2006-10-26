@@ -62,6 +62,9 @@ public class MsoyController extends Controller
     /** Command to purchase a room. */
     public static const PURCHASE_ROOM :String = "PurchaseRoom";
 
+    /** Command to view an item, arg is [ itemTypeId, itemId ] */
+    public static const VIEW_ITEM :String = "ViewItem";
+
     /**
      * Create the msoy controller.
      */
@@ -178,6 +181,14 @@ public class MsoyController extends Controller
         var menu :CommandMenu =
             CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
         menu.popUp(trigger);
+    }
+
+    /**
+     * Handle the VIEW_ITEM command.
+     */
+    public function handleViewItem (args :Array) :void
+    {
+        NetUtil.navigateToURL("item.html#" + args[0] + ";" + args[1], false);
     }
 
     /**

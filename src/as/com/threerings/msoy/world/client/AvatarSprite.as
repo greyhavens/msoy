@@ -12,17 +12,26 @@ import mx.effects.EffectInstance;
 
 import com.threerings.mx.events.CommandEvent;
 
+import com.threerings.util.MenuUtil;
+
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.chat.data.ChatMessage;
 
+import com.threerings.msoy.client.ContextMenuProvider;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyController;
 
 import com.threerings.msoy.data.MemberInfo;
+
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 
 public class AvatarSprite extends MsoySprite
+    implements ContextMenuProvider
 {
     public function AvatarSprite (ctx :MsoyContext, occInfo :MemberInfo)
     {
@@ -79,6 +88,16 @@ public class AvatarSprite extends MsoySprite
     public function getOid () :int
     {
         return _occInfo.bodyOid;
+    }
+
+    // from ContextMenuProvider
+    public function populateContextMenu (menuItems :Array) :void
+    {
+        if (_occInfo.avatarId != 0) {
+            menuItems.unshift(MenuUtil.createControllerMenuItem(
+                Msgs.GENERAL.get("b.view_item"), MsoyController.VIEW_ITEM,
+                [ Item.AVATAR, _occInfo.avatarId ]));
+        }
     }
 
     protected function getStatusColor (status :int) :uint

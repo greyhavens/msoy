@@ -174,6 +174,26 @@ public class RoomView extends AbstractRoomView
     // from ContextMenuProvider
     public function populateContextMenu (menuItems :Array) :void
     {
+        // Holy flying fistfuck, batman, we're trying to get around some
+        // flash madness here. The context menu should pop up with the
+        // lowest-hitting object as the target but for some reason it doesn't.
+        // Currently the lowest target is this RoomView, so we do a service
+        // and check to see if any of our sprites are also ContextMenuProviders.
+        var sx :Number = stage.mouseX;
+        var sy :Number = stage.mouseY;
+        for (var dex :int = numChildren - 1; dex >= 0; dex--) {
+            var disp :DisplayObject = getChildAt(dex);
+            // TODO: cry and whine until hitTestPoint() behaves as it should.
+            // (It returns true for transparent pixels currently.)
+            if (disp.hitTestPoint(sx, sy, true)) {
+                if (disp is ContextMenuProvider) {
+                    (disp as ContextMenuProvider).populateContextMenu(menuItems);
+                }
+                break;
+            }
+        }
+
+        // our controller handles our population
         _ctrl.populateContextMenu(menuItems);
     }
 
