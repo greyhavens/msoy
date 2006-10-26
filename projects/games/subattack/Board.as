@@ -18,8 +18,6 @@ public class Board
         _height = int(DIMENSIONS[playerCount][1]);
 
         _seaDisplay.setupSea(_width, _height);
-        _gameObj.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
-        _gameObj.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
 
         var ii :int;
         for (ii = _width * _height - 1; ii >= 0; ii--) {
@@ -51,6 +49,14 @@ public class Board
         }
 
         _seaDisplay.addEventListener(Event.ENTER_FRAME, enterFrame);
+
+        _gameObj.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        if (gameObj.isInPlay()) {
+            gameDidStart(null);
+        } else {
+            _gameObj.addEventListener(StateChangedEvent.GAME_STARTED,
+                gameDidStart);
+        }
     }
 
     /**
