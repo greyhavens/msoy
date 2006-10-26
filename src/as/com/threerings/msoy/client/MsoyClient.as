@@ -62,23 +62,23 @@ public class MsoyClient extends Client
 {
     private static const log :Log = Log.getLog(MsoyClient);
 
-    public function MsoyClient (app :Application)
+    public function MsoyClient ()
     {
         var creds :MsoyCredentials = new MsoyCredentials(null, null);
         creds.sessionToken = Prefs.getSessionToken();
         creds.ident = Prefs.getMachineIdent();
-        super(creds, app);
+        super(creds);
 
         // set up a context menu that blocks funnybiz on the stage
         var menu :ContextMenu = new ContextMenu();
         menu.hideBuiltInItems();
-        app.contextMenu = menu;
+        Application.application.contextMenu = menu;
         menu.addEventListener(
             ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
 
 //        Security.allowDomain("*"); // TODO
 
-        _ctx = new MsoyContext(this, app);
+        _ctx = new MsoyContext(this);
         LoggingTargets.configureLogging(_ctx);
 
         if (!configureExternalFunctions()) {

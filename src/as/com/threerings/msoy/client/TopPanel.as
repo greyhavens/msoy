@@ -30,7 +30,7 @@ public class TopPanel extends Canvas
     /**
      * Construct the top panel.
      */
-    public function TopPanel (ctx :MsoyContext, app :Application)
+    public function TopPanel (ctx :MsoyContext)
     {
         _ctx = ctx;
         percentWidth = 100;
@@ -73,6 +73,7 @@ public class TopPanel extends Canvas
         }
 
         // clear out the application and install ourselves as the only child
+        var app :Application = Application(Application.application);
         app.removeAllChildren();
         app.addChild(this);
         adjustPlaceMask();

@@ -35,13 +35,13 @@ import com.threerings.msoy.game.client.GameDirector;
 public class MsoyContext
     implements WhirledContext, ParlorContext
 {
-    public function MsoyContext (client :Client, app :Application)
+    public function MsoyContext (client :Client)
     {
         _client = client;
-        _app = app;
 
         // initialize the message manager
-        _msgMgr = new MessageManager((app.root as ISystemManager));
+        _msgMgr = new MessageManager(
+            (Application.application.root as ISystemManager));
         // and our convenience holder
         Msgs.init(this);
 
@@ -57,7 +57,7 @@ public class MsoyContext
         _memberDir = new MemberDirector(this);
 
         // set up the top panel
-        _topPanel = new TopPanel(this, _app);
+        _topPanel = new TopPanel(this);
         _controller = new MsoyController(this, _topPanel);
     }
 
@@ -85,7 +85,7 @@ public class MsoyContext
 
     public function getRootPanel () :DisplayObjectContainer
     {
-        return _app;
+        return Application(Application.application);
     }
 
     /**
@@ -216,8 +216,6 @@ public class MsoyContext
     }
 
     protected var _client :Client;
-
-    protected var _app :Application;
 
     protected var _topPanel :TopPanel;
 
