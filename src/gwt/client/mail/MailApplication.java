@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
@@ -210,12 +212,59 @@ public class MailApplication extends DockPanel
         buttonBox.add(replyButton);
         _messagePanel.add(buttonBox);
         
-        SimplePanel message = new SimplePanel();
-        message.setStyleName("mailMessageBody");
-        message.setWidget(new Label(_message.message));
-        _messagePanel.add(message);
+        SimplePanel messagePanel = new SimplePanel();
+        messagePanel.setStyleName("mailMessageBody");
+        _messagePanel.add(messagePanel);
+        messagePanel.setWidget(textToHTML(_message.message));
     }
-    
+
+    // scan some text and generate HTML to deal with it
+    protected Widget textToHTML (String message)
+    {
+        StringBuffer html = new StringBuffer();
+        boolean collectSpaces = true;
+        for (int i = 0; i < message.length(); i ++) {
+            String bit;
+            char c = message.charAt(i);
+            switch(c) {
+            case '\r':
+                // completely ignore
+                continue;
+            case '<':
+                bit = "&lt;";
+                break;
+            case '>':
+                bit = "&gt;";
+                break;
+            case '&':
+                bit = "&amp;";
+                break;
+            case '\n':
+                bit = "<br>\n";
+                collectSpaces = true;
+                break;
+            case ' ': case '\t':
+                if (!collectSpaces) {
+                    collectSpaces = true;
+                    bit = null;
+                    break;
+                }
+                bit = "&nbsp;";
+                break;
+            default:
+                collectSpaces = false;
+                bit = null;
+                break;
+            }
+            if (bit != null) {
+                html.append(bit);
+            } else {
+                html.append(c);
+            }
+        }
+        return new HTML(html.toString());
+    }
+
     // Date.toString() returns: Wed Oct 25 2006 15:30:32 GMT-0500 (CDT)
     protected String formatDate(Date date)
     {
