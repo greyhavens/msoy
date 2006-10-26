@@ -232,12 +232,15 @@ public class MailApplication extends DockPanel
                 continue;
             case '<':
                 bit = "&lt;";
+                collectSpaces = false;
                 break;
             case '>':
                 bit = "&gt;";
+                collectSpaces = false;
                 break;
             case '&':
                 bit = "&amp;";
+                collectSpaces = false;
                 break;
             case '\n':
                 bit = "<br>\n";
