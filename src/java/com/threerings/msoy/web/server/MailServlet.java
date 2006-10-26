@@ -75,7 +75,7 @@ public class MailServlet extends RemoteServiceServlet
     {
         ServletWaiter<MailMessage> waiter = new ServletWaiter<MailMessage>(
                 "getMessage[" + folderId + ", " + messageId + "]");
-        MsoyServer.mailMan.getMessage(creds.memberId, folderId, messageId, waiter);
+        MsoyServer.mailMan.getMessage(creds.memberId, folderId, messageId, true, waiter);
         return waiter.waitForResult();
     }
 }

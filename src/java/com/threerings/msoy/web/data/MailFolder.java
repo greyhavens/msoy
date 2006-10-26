@@ -24,4 +24,11 @@ public class MailFolder
     
     /** The name of this folder. */
     public String name;
+
+    /** The number of unread messages in the folder, a computed value. */
+    public int unreadCount;
+    
+    /** The number of read messages in the folder, a computed value. */
+    public int readCount;
+
 }

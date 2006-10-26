@@ -34,7 +34,9 @@ public class MailMessageRecord
     public static final String RECIPIENT_ID = "recipientId";
     public static final String SUBJECT = "subject";
     public static final String SENT = "sent";
-
+    public static final String UNREAD = "unread";
+    public static final String MESSAGE = "message";
+    
     /** The id of this message, unique within its current folder. */
     @Id
     public int messageId;
@@ -63,6 +65,10 @@ public class MailMessageRecord
     @Column(nullable=false)
     public Timestamp sent;
 
+    /** Whether or not this message is yet to be read. */
+    @Column(nullable=false)
+    public boolean unread;
+    
     /** The actual message text. */
     @Column(length=32768)
     public String message;

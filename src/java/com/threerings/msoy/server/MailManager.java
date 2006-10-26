@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
@@ -39,12 +40,16 @@ public class MailManager
      * Fetch and return a single message from the database. 
      */
     public void getMessage (final int memberId, final int folderId, final int messageId,
-                            ResultListener<MailMessage> waiter)
+                            final boolean flagAsRead, ResultListener<MailMessage> waiter)
     {
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<MailMessage>(waiter) {
             public MailMessage invokePersistResult () throws PersistenceException {
-                return toMailMessage(_mailRepo.getMessage(memberId, folderId, messageId));
+                MailMessageRecord record = _mailRepo.getMessage(memberId, folderId, messageId);
+                if (record.unread && flagAsRead) {
+                    _mailRepo.setUnread(memberId, folderId, messageId, false);
+                }
+                return toMailMessage(record);
             }
         });
     }
@@ -75,7 +80,7 @@ public class MailManager
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MailFolder>(waiter) {
             public MailFolder invokePersistResult () throws PersistenceException {
-                return toMailFolder(_mailRepo.getFolder(memberId, folderId));
+                return buildFolder(_mailRepo.getFolder(memberId, folderId));
             }
         });
     }
@@ -92,7 +97,7 @@ public class MailManager
 
                 List<MailFolder> result = new ArrayList<MailFolder>();
                 for (MailFolderRecord record : _mailRepo.getFolders(memberId)) {
-                    result.add(toMailFolder(record));
+                    result.add(buildFolder(record));
                 }
                 return result;
             }
@@ -123,11 +128,13 @@ public class MailManager
                 // file one copy for ourselves
                 record.ownerId = senderId;
                 record.folderId = MailFolder.SENT_FOLDER_ID;
+                record.unread = false;
                 _mailRepo.fileMessage(record);
                 
-                // and one for the recipient (safely reusing the record object)
+                // and one for the recipient (reusing the record object is safe)
                 record.ownerId = recipientId;
                 record.folderId = MailFolder.INBOX_FOLDER_ID;
+                record.unread = true;
                 _mailRepo.fileMessage(record);
                 return null;
             }
@@ -198,8 +205,9 @@ public class MailManager
             welcome.recipientId = memberId;
             // TODO: We need to be able to send system messages somehow.
             welcome.senderId = memberId;
-            welcome.sent = new Timestamp(System.currentTimeMillis());
             welcome.subject = "Welcome to MetaSOY!";
+            welcome.sent = new Timestamp(System.currentTimeMillis());
+            welcome.unread = true;
             welcome.message =
                 "Welcome to the MetaSOY mail system! This test message exists primarly so that " +
                 "there's something in our inboxes to click on. You are encouraged to go 'Ooh' " +
@@ -219,6 +227,7 @@ public class MailManager
         headers.ownerId = record.ownerId;
         headers.subject = record.subject;
         headers.sent = new Date(record.sent.getTime());
+        headers.unread = record.unread;
         
         MemberRecord memRec = _memberRepo.loadMember(record.senderId);
         headers.sender = new MemberGName(memRec.name, memRec.memberId);
@@ -246,6 +255,18 @@ public class MailManager
         folder.folderId = record.folderId;
         folder.ownerId = record.ownerId;
         folder.name = record.name;
+        return folder;
+    }
+
+    // build a MailFolder object, including the message counts which require a separate query
+    protected MailFolder buildFolder (MailFolderRecord record) throws PersistenceException
+    {
+        MailFolder folder = toMailFolder(record);
+        Map<Boolean, Integer> unread = _mailRepo.getMessageCount(record.ownerId, record.folderId);
+        Integer uCnt = unread.get(Boolean.TRUE);
+        Integer rCnt = unread.get(Boolean.FALSE);
+        folder.unreadCount = uCnt != null ? uCnt.intValue() : 0;
+        folder.readCount = rCnt != null ? rCnt.intValue() : 0;
         return folder;
     }
 
