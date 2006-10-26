@@ -36,14 +36,21 @@ public class MemberInfo extends OccupantInfo
         super(user);
 
         if (user.avatar != null) {
-            media = user.avatar.avatarMedia;
             avatarId = user.avatar.itemId;
+            media = user.avatar.avatarMedia;
 
         } else {
-            // TODO
-            media =
-                new MediaDesc("e1c4cd0111619e0d8c038b90292aa6ec0bd5d86a.swf");
-            avatarId = -1;
+            avatarId = 0;
+            // TODO: how will these defaults actually be specified?
+            if (user.isGuest()) {
+                // guest avatar
+                media = new MediaDesc(
+                    "4890c3d1e6c16a62746f62cf7d854ed14406a78b.swf");
+            } else {
+                // default avatar
+                media = new MediaDesc(
+                    "0738674d2c3dab04978861f98a82ddc5e7b56e1b.swf");
+            }
         }
 
         chatStyle = user.chatStyle;
