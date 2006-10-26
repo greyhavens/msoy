@@ -53,7 +53,7 @@ public class StaticMediaDesc extends MediaDesc
     public String getMediaPath ()
     {
         return "/media/static/" + _type + "/" +
-            Item.getTypeName(_itemType).toLowerCase() + ".png";
+            Item.getTypeName(_itemType) + ".png";
     }
 
     protected String _type;

@@ -106,19 +106,19 @@ public abstract class Item implements Streamable, IsSerializable
         // variables are not actually constants (they are assigned values
         // at class initialization time).
         if (type == PHOTO) {
-            return "PHOTO";
+            return "photo";
         } else if (type == AVATAR) {
-            return "AVATAR";
+            return "avatar";
         } else if (type == GAME) {
-            return "GAME";
+            return "game";
         } else if (type == PHOTO) {
-            return "PHOTO";
+            return "photo";
         } else if (type == DOCUMENT) {
-            return "DOCUMENT";
+            return "document";
         } else if (type == PET) {
-            return "PET";
+            return "pet";
         } else if (type == AUDIO) {
-            return "AUDIO";
+            return "audio";
         } else {
             return null;
         }

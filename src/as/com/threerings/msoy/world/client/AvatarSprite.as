@@ -96,7 +96,7 @@ public class AvatarSprite extends MsoySprite
         if (_occInfo.avatarId != 0) {
             menuItems.unshift(MenuUtil.createControllerMenuItem(
                 Msgs.GENERAL.get("b.view_item"), MsoyController.VIEW_ITEM,
-                [ Item.AVATAR, _occInfo.avatarId ]));
+                [ Item.getTypeName(Item.AVATAR), _occInfo.avatarId ]));
         }
     }
 
