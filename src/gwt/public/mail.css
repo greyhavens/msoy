@@ -9,6 +9,13 @@
     padding: 5px;
 }
 
+.mailFolderName {
+}
+
+.mailFolderName-unread {
+    font-weight: bold;
+}
+
 .mailHeaders {
     background: #6699CC;
     width: 100%;
@@ -33,16 +40,47 @@
     padding: 5px;
 }
 
-.mailRowSubject {
+.mailRow {
     padding: 3px;
+}
+
+.mailRow-unread {
+    padding: 3px;
+    font-weight: bold;
+}
+
+.mailRowSubject {
 }
 
 .mailRowSender {
     width: 10ex;
-    padding: 3px;
 }
 
 .mailRowDate {
     width: 6ex;
-    padding: 3px;
+}
+
+
+.mailComposition {
+    background: #99CCFF;
+    width: 60ex;
+    height: 60ex;
+}
+
+.mailCompositionHeaders {
+    background: #6699CC;
+    padding: 5px;
+    width: 100%;
+}
+
+.mailCompositionButtons {
+    background: #6699CC;
+    padding: 5px;
+    width: 100%;
+}
+
+.mailCompositionBody {
+    background: #6699CC;
+    padding: 5px;
+    width: 100%;
 }

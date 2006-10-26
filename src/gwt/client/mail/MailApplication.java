@@ -9,26 +9,30 @@ import java.util.List;
 
 import client.util.HeaderValueTable;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
+import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
 
 public class MailApplication extends DockPanel
+    implements PopupListener
 {
     public MailApplication (WebContext ctx)
     {
@@ -36,15 +40,28 @@ public class MailApplication extends DockPanel
         _ctx = ctx;
         setStyleName("mailApp");
         setSpacing(5);
+        
         VerticalPanel sideBar = new VerticalPanel();
         sideBar.setStyleName("mailFolders");
+        sideBar.setSpacing(5);
+
         Button composeButton = new Button("Compose");
         composeButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                new MailComposition(_ctx, 2, "").show();
+                MailComposition composition = new MailComposition(_ctx, 2, "");
+                composition.addPopupListener(MailApplication.this);
+                composition.show();
             }
         });
         sideBar.add(composeButton);
+
+        Button refreshButton = new Button("Refresh");
+        refreshButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                refresh();
+            }
+        });
+        sideBar.add(refreshButton);
 
         _folderPanel = new VerticalPanel();
         sideBar.add(_folderPanel);
@@ -52,7 +69,7 @@ public class MailApplication extends DockPanel
 
         _headerPanel = new SimplePanel();
         _headerPanel.setStyleName("mailHeaders");
-        _headerPanel.setVisible(true); // TODO TO DO TODO
+        _headerPanel.setVisible(true); // TODO TODO TODO
         add(_headerPanel, DockPanel.NORTH);
         setCellWidth(_headerPanel, "100%");
         
@@ -65,53 +82,71 @@ public class MailApplication extends DockPanel
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
         add(_errorContainer, DockPanel.SOUTH);
+        
+        loadFolders();
     }
 
-    public void onLoad ()
+    public void onPopupClosed (PopupPanel sender, boolean autoClosed)
     {
-        _currentFolder = MailFolder.INBOX_FOLDER_ID;
-        loadFolders();
-        _currentMessage = -1;
+        refresh();
     }
-    
-    public void showFolder (int folderId)
+
+    public void show (int folderId, int messageId)
     {
         _currentFolder = folderId;
         loadHeaders();
-    }
-
-    public void showMessage (int messageId)
-    {
-        if (_currentFolder < 0) {
-            addError("Internal error: asked to display a message, but no folder selected.");
-            return;
+        if (messageId >= 0) {
+            _currentMessage = messageId;
+            loadMessage();
         }
-        _currentMessage = messageId;
-        loadMessage();
     }
 
+    public void refresh ()
+    {
+        loadFolders();
+        if (_currentFolder >= 0) {
+            loadHeaders();
+        }
+    }
+    
     protected void loadFolders ()
     {
         _ctx.mailsvc.getFolders(_ctx.creds, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _folders = (List) result;
-                if (_currentFolder < 0) {
-                    _currentFolder = MailFolder.INBOX_FOLDER_ID;
-                    loadHeaders();
-                }
                 refreshFolderPanel();
             }
             public void onFailure (Throwable caught) {
                 addError("Failed to fetch mail folders from database: " + caught.getMessage());
             }
-            
         });
     }
     
+    protected void refreshFolderPanel ()
+    {
+        _messagePanel.clear();
+        _folderPanel.setVisible(false);
+        _folderPanel.clear();
+        Iterator i = _folders.iterator();
+        while (i.hasNext()) {
+            MailFolder folder = (MailFolder) i.next();
+            String name = folder.name;
+            if (folder.unreadCount > 0) {
+                name += " (" + folder.unreadCount + ")";
+            }
+            Hyperlink link = new Hyperlink(name, "f" + folder.folderId);
+            link.setStyleName("mailFolderEntry");
+            if (folder.unreadCount > 0) {
+                link.addStyleName("unread");
+            }
+            _folderPanel.add(link);
+        }
+        _folderPanel.setVisible(true);
+    }
+
     protected void loadHeaders ()
     {
         if (_currentFolder < 0) {
-            // should not happen, needless to say
             addError("Internal error: asked to load headers, but no folder selected.");
             return;
         }
@@ -127,6 +162,36 @@ public class MailApplication extends DockPanel
         });
     }
     
+    protected void refreshHeaderPanel ()
+    {
+        _headerPanel.clear();
+        _headerPanel.setVisible(true);
+        FlexTable table = new FlexTable();
+        table.setWidth("100%");
+        _headerPanel.setWidget(table);
+        CellFormatter cellFormatter = table.getCellFormatter();
+        RowFormatter rowFormatter = table.getRowFormatter();
+        int row = 0;
+    
+        Iterator i = _headers.iterator();
+        while (i.hasNext()) {
+            MailHeaders headers = (MailHeaders) i.next();
+            Widget link = new Hyperlink(
+                headers.subject, "f" + _currentFolder + ":" + headers.messageId);
+            table.setWidget(row, 0, link);
+            cellFormatter.setStyleName(row, 0, "mailRowSubject");
+            table.setText(row, 1, headers.sender.memberName);
+            cellFormatter.setStyleName(row, 1, "mailRowSender");
+            table.setText(row, 2, formatDate(headers.sent));
+            cellFormatter.setStyleName(row, 2, "mailRowDate");
+            rowFormatter.setStyleName(row, "mailRow");
+            if (headers.unread) {
+                rowFormatter.addStyleName(row, "unread");
+            }
+            row ++;
+        }
+    }
+
     protected void loadMessage ()
     {
         if (_currentFolder < 0) {
@@ -146,43 +211,6 @@ public class MailApplication extends DockPanel
             }
             
         });
-    }
-    
-    protected void refreshFolderPanel ()
-    {
-        _folderPanel.clear();
-        Iterator i = _folders.iterator();
-        while (i.hasNext()) {
-            MailFolder folder = (MailFolder) i.next();
-            _folderPanel.add(new Hyperlink(folder.name, "f" + folder.folderId));
-            // TODO: Add total/unread count.
-        }
-    }
-
-    protected void refreshHeaderPanel ()
-    {
-        _messagePanel.setVisible(false);
-        _headerPanel.clear();
-        _headerPanel.setVisible(true);
-        FlexTable table = new FlexTable();
-        table.setWidth("100%");
-        _headerPanel.setWidget(table);
-        CellFormatter formatter = table.getCellFormatter();
-        int row = 0;
-
-        Iterator i = _headers.iterator();
-        while (i.hasNext()) {
-            MailHeaders headers = (MailHeaders) i.next();
-            Widget link = new Hyperlink(
-                headers.subject, "f" + _currentFolder + ":" + headers.messageId);
-            table.setWidget(row, 0, link);
-            formatter.setStyleName(row, 0, "mailRowSubject");
-            table.setText(row, 1, headers.sender.memberName);
-            formatter.setStyleName(row, 1, "mailRowSender");
-            table.setText(row, 2, formatDate(headers.sent));
-            formatter.setStyleName(row, 2, "mailRowDate");
-            row ++;
-        }
     }
 
     protected void refreshMessagePanel ()
@@ -206,7 +234,11 @@ public class MailApplication extends DockPanel
                 if (subject.length() < 3 || !subject.substring(0, 3).equalsIgnoreCase("re:")) {
                     subject = "re: " + subject;
                 }
-                new MailComposition(_ctx, _message.headers.sender, subject).show();
+                
+                MailComposition composition =
+                    new MailComposition(_ctx, _message.headers.sender, subject);
+                composition.addPopupListener(MailApplication.this);
+                composition.show();
             }
         });
         buttonBox.add(replyButton);

@@ -59,8 +59,7 @@ public class index extends MsoyEntryPoint
                 // just use the defaults
             }
         }
-        _mainView.showFolder(folderId);
-        _mainView.showMessage(messageId);
+        _mainView.show(folderId, messageId);
     }
 
     // @Override from MsoyEntryPoint
