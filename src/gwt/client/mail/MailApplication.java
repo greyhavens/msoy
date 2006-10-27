@@ -3,7 +3,6 @@
 
 package client.mail;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,7 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 import client.util.HeaderValueTable;
+import client.util.InlineLabel;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -37,6 +38,7 @@ import com.threerings.msoy.web.data.MailMessage;
 public class MailApplication extends DockPanel
     implements PopupListener
 {
+    private static final int HEADER_ROWS = 10;
     public MailApplication (WebContext ctx)
     {
         super();
@@ -94,9 +96,10 @@ public class MailApplication extends DockPanel
     {
         _currentFolder = folderId;
         _currentOffset = headerOffset;
+        _currentMessage = messageId;
+        updateHistory();
         loadHeaders();
         if (messageId >= 0) {
-            _currentMessage = messageId;
             loadMessage();
         } else {
             _messageContainer.clear();
@@ -105,6 +108,7 @@ public class MailApplication extends DockPanel
 
     public void refresh ()
     {
+        _currentMessage = -1;
         _messageContainer.clear();
         loadFolders();
         if (_currentFolder >= 0) {
@@ -180,10 +184,10 @@ public class MailApplication extends DockPanel
             // initialize our collection of currently checked messages
             _checkedMessages = new HashSet();
 
-            Iterator i = _headers.iterator();
-            while (i.hasNext()) {
+            int lastMsg = Math.min(_headers.size(), _currentOffset + HEADER_ROWS);
+            for (int msg = _currentOffset; msg < lastMsg; msg ++) {
                 int col = 0;
-                final MailHeaders headers = (MailHeaders) i.next();
+                final MailHeaders headers = (MailHeaders) _headers.get(msg);
 
                 CheckBox cBox = new CheckBox();
                 cBox.addClickListener(new ClickListener() {
@@ -203,8 +207,8 @@ public class MailApplication extends DockPanel
                 cellFormatter.setStyleName(row, col, "mailRowCheckbox");
                 col ++;
 
-                Widget link = new Hyperlink(
-                    headers.subject, "f" + _currentFolder + ":" + headers.messageId);
+                Widget link = new Hyperlink(headers.subject, "f" + _currentFolder + "." +
+                                            _currentOffset + "." + headers.messageId);
                 table.setWidget(row, col, link);
                 cellFormatter.setStyleName(row, col, "mailRowSubject");
                 col ++;
@@ -221,8 +225,10 @@ public class MailApplication extends DockPanel
                 row ++;
             }
             headerPanel.add(table);
-            HorizontalPanel buttonBox = new HorizontalPanel();
-            buttonBox.setSpacing(5);
+            
+            HorizontalPanel controlBox = new HorizontalPanel();
+            controlBox.setWidth("100%");
+            controlBox.setSpacing(5);
             _massDelete = new Button("Delete Checked Messages");
             _massDelete.setEnabled(false);
             _massDelete.addClickListener(new ClickListener() {
@@ -231,8 +237,37 @@ public class MailApplication extends DockPanel
                     _massDelete.setEnabled(false);
                 }
             });
-            buttonBox.add(_massDelete);
-            headerPanel.add(buttonBox);
+            controlBox.add(_massDelete);
+            HorizontalPanel pager = new HorizontalPanel();
+            pager.setSpacing(3);
+            pager.setStyleName("mailHeaderPager");
+            if (_currentOffset > 0) {
+                Label left = new InlineLabel ("<<");
+                left.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        _currentOffset = Math.max(0, _currentOffset - HEADER_ROWS);
+                        refreshHeaderPanel();
+                        updateHistory();
+                    }
+                });
+                pager.add(left);
+            }
+            Label text = new InlineLabel(
+                (_currentOffset + 1) + "-" + lastMsg + " of " + _headers.size());
+            pager.add(text);
+            if (_currentOffset + HEADER_ROWS < _headers.size()) {
+                Label right = new InlineLabel (">>");
+                right.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        _currentOffset += HEADER_ROWS;
+                        refreshHeaderPanel();
+                        updateHistory();
+                    }
+                });
+                pager.add(right);
+            }
+            controlBox.add(pager);
+            headerPanel.add(controlBox);
         }
         _headerContainer.setWidget(headerPanel);
     }
@@ -323,6 +358,15 @@ public class MailApplication extends DockPanel
                 addError("Failed to delete messages: " + caught.getMessage());
             }
         });
+    }
+
+    protected void updateHistory ()
+    {
+        if (_currentMessage >= 0) {
+            History.newItem("f" + _currentFolder + "." + _currentOffset + "." + _currentMessage);
+        } else {
+            History.newItem("f" + _currentFolder + "." + _currentOffset);
+        }
     }
 
     // scan some text and generate HTML to deal with it

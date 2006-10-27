@@ -7,6 +7,7 @@ import client.MsoyEntryPoint;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.WebCreds;
@@ -51,7 +52,7 @@ public class index extends MsoyEntryPoint
         
         if (token != null && token.length() > 0) {
             try {
-                String[] bits = token.substring(1).split(":");
+                String[] bits = token.substring(1).split("\\.");
                 folderId = Integer.parseInt(bits[0]);
                 if (bits.length > 1) {
                     headerOffset = Integer.parseInt(bits[1]);

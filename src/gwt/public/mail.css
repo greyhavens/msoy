@@ -25,6 +25,10 @@
     width: 14ex;
 }
 
+.mailHeaderPager {
+    float: right;
+}
+
 .mailMessage {
     background: #6699CC;
     width: 100%;
