@@ -21,6 +21,10 @@
     width: 100%;
 }
 
+.mailHeaderHeader {
+    width: 14ex;
+}
+
 .mailMessage {
     background: #6699CC;
     width: 100%;
@@ -49,17 +53,20 @@
     font-weight: bold;
 }
 
+.mailRowCheckbox {
+    width: 20px;
+}
+
 .mailRowSubject {
 }
 
 .mailRowSender {
-    width: 10ex;
+    width: 18ex;
 }
 
 .mailRowDate {
-    width: 6ex;
+    width: 12ex;
 }
-
 
 .mailComposition {
     background: #99CCFF;
@@ -70,6 +77,10 @@
     background: #6699CC;
     padding: 5px;
     width: 100%;
+}
+
+.mailCompositionHeaderHeader {
+    width: 14ex;
 }
 
 .mailCompositionButtons {

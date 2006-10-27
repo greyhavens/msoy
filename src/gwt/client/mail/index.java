@@ -46,20 +46,24 @@ public class index extends MsoyEntryPoint
         setContent(_mainView);
 
         int folderId = MailFolder.INBOX_FOLDER_ID;
+        int headerOffset = 0;
         int messageId = -1;
         
         if (token != null && token.length() > 0) {
             try {
                 String[] bits = token.substring(1).split(":");
                 folderId = Integer.parseInt(bits[0]);
-                if (bits.length == 2) {
-                    messageId = Integer.parseInt(bits[1]);
+                if (bits.length > 1) {
+                    headerOffset = Integer.parseInt(bits[1]);
+                    if (bits.length > 2) {
+                        messageId = Integer.parseInt(bits[2]);
+                    }
                 }
             } catch (Exception e) {
                 // just use the defaults
             }
         }
-        _mainView.show(folderId, messageId);
+        _mainView.show(folderId, headerOffset, messageId);
     }
 
     // @Override from MsoyEntryPoint
