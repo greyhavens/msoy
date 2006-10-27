@@ -18,6 +18,7 @@ import mx.core.UIComponent;
 
 import com.threerings.util.ArrayUtil;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
@@ -37,8 +38,7 @@ public class FurniPanel extends SpritePanel
     {
         super.updateInputFields();
 
-        _xScale.text = String(_sprite.getMediaScaleX());
-        _yScale.text = String(_sprite.getMediaScaleY());
+        _scaleEditor.setSprite(_sprite);
 
         var furni :FurniData = (_sprite as FurniSprite).getFurniData();
         updateActionType(furni);
@@ -103,15 +103,8 @@ public class FurniPanel extends SpritePanel
     {
         super.createChildren();
 
-        // scale
         addRow(
-            MsoyUI.createLabel(Msgs.EDITING.get("l.xscale")),
-            _xScale = new TextInput());
-        MsoyUI.enforceNumber(_xScale);
-        addRow(
-            MsoyUI.createLabel(Msgs.EDITING.get("l.yscale")),
-            _yScale = new TextInput());
-        MsoyUI.enforceNumber(_yScale);
+            _scaleEditor = new ScaleEditor(_ctx), [2, 1]);
 
         addRow(
             MsoyUI.createLabel(Msgs.EDITING.get("l.action")),
@@ -142,16 +135,18 @@ public class FurniPanel extends SpritePanel
 
         // BEGIN temporary controls
         var lbl :Label;
-        var btn :Button = new Button();
-        btn.label = "perspective?";
-        btn.addEventListener(MouseEvent.CLICK,
-            function (evt :MouseEvent) :void {
-                (_sprite as FurniSprite).addPersp();
-            });
-        addRow(
-            lbl = MsoyUI.createLabel("testing:"),
-            btn);
-        lbl.setStyle("color", 0xFF0000);
+        if (DeploymentConfig.serverHost == "tasman.sea.earth.threerings.net") {
+            var btn :Button = new Button();
+            btn.label = "perspective?";
+            btn.addEventListener(MouseEvent.CLICK,
+                function (evt :MouseEvent) :void {
+                    (_sprite as FurniSprite).addPersp();
+                });
+            addRow(
+                lbl = MsoyUI.createLabel("testing:"),
+                btn);
+            lbl.setStyle("color", 0xFF0000);
+        }
 
         // add an "expert control" for directly editing the action
         addRow(
@@ -199,22 +194,6 @@ public class FurniPanel extends SpritePanel
     override protected function bind () :void
     {
         super.bind();
-
-        BindingUtils.bindSetter(function (o :Object) :void {
-            var val :Number = Number(o);
-            if (!isNaN(val)) {
-                _sprite.setMediaScaleX(val);
-                spritePropsUpdated();
-            }
-        }, _xScale, "text");
-
-        BindingUtils.bindSetter(function (o :Object) :void {
-            var val :Number = Number(o);
-            if (!isNaN(val)) {
-                _sprite.setMediaScaleY(val);
-                spritePropsUpdated();
-            }
-        }, _yScale, "text");
 
         BindingUtils.bindSetter(function (o :Object) :void {
             var furni :FurniData = (_sprite as FurniSprite).getFurniData();
@@ -288,8 +267,7 @@ public class FurniPanel extends SpritePanel
 //        }, _destPortal, "text");
     }
 
-    protected var _xScale :TextInput;
-    protected var _yScale :TextInput;
+    protected var _scaleEditor :ScaleEditor;
 
     protected var _actionType :ComboBox;
     protected var _actionData :TextInput;

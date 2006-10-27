@@ -10,6 +10,8 @@ import flash.events.TextEvent;
 import flash.filters.DisplacementMapFilter;
 import flash.filters.DisplacementMapFilterMode;
 
+import mx.core.UIComponent;
+
 import com.threerings.util.MenuUtil;
 
 import com.threerings.mx.events.CommandEvent;
@@ -76,42 +78,54 @@ public class FurniSprite extends MsoySprite
 
     public function addPersp () :void
     {
-        var pinchLeft :Number = .1;
-        var pinchRight :Number = 1;
+        if (_media is UIComponent) {
+            rawChildren.removeChild(_media);
 
-        var maxVal :Number = (127 / 256); // max positive displacement
-        var maxScaleDiff :Number = _h * (1 - Math.min(pinchLeft, pinchRight));
-        var maxJump :Number = maxScaleDiff / maxVal;
-
-        var filter :DisplacementMapFilter = new DisplacementMapFilter();
-        filter.alpha = 0;
-        filter.componentX = BitmapDataChannel.RED;
-        filter.componentY = BitmapDataChannel.BLUE;
-        filter.mode = DisplacementMapFilterMode.COLOR;
-        filter.scaleX = 1;
-        filter.scaleY = maxJump;
-
-        var map :BitmapData = new BitmapData(_w, _h, false, 0xFFFFFF);
-        var ww :Number = _w - 1;
-        for (var xx :int = 0; xx < _w; xx++) {
-            var rightness :Number = (xx / ww);
-            var scaleHere :Number = (rightness * pinchRight) +
-                ((1 - rightness) * pinchLeft);
-            var srcHeight :Number = _h / scaleHere;
-            var start :Number = (_h - srcHeight) / 2;
-            for (var yy :int = 0; yy < _h; yy++) {
-                var srcYY :Number = (yy / _h) * srcHeight + start;
-                var val :Number = (srcYY - yy) / maxJump;
-                val = Math.max(-maxVal, Math.min(maxVal, val));
-                var jump :uint = 128 + (val * 256);
-                map.setPixel(xx, yy, uint(((uint(128) << 16) | jump)));
-            }
+        } else {
+            removeChild(_media);
         }
 
-        filter.mapBitmap = map;
-
-        this.filters = [ filter ];
+        _media = new Perspectivizer(_media);
+        rawChildren.addChild(_media);
     }
+
+//    {
+//        var pinchLeft :Number = .1;
+//        var pinchRight :Number = 1;
+//
+//        var maxVal :Number = (127 / 256); // max positive displacement
+//        var maxScaleDiff :Number = _h * (1 - Math.min(pinchLeft, pinchRight));
+//        var maxJump :Number = maxScaleDiff / maxVal;
+//
+//        var filter :DisplacementMapFilter = new DisplacementMapFilter();
+//        filter.alpha = 0;
+//        filter.componentX = BitmapDataChannel.RED;
+//        filter.componentY = BitmapDataChannel.BLUE;
+//        filter.mode = DisplacementMapFilterMode.COLOR;
+//        filter.scaleX = 1;
+//        filter.scaleY = maxJump;
+//
+//        var map :BitmapData = new BitmapData(_w, _h, false, 0xFFFFFF);
+//        var ww :Number = _w - 1;
+//        for (var xx :int = 0; xx < _w; xx++) {
+//            var rightness :Number = (xx / ww);
+//            var scaleHere :Number = (rightness * pinchRight) +
+//                ((1 - rightness) * pinchLeft);
+//            var srcHeight :Number = _h / scaleHere;
+//            var start :Number = (_h - srcHeight) / 2;
+//            for (var yy :int = 0; yy < _h; yy++) {
+//                var srcYY :Number = (yy / _h) * srcHeight + start;
+//                var val :Number = (srcYY - yy) / maxJump;
+//                val = Math.max(-maxVal, Math.min(maxVal, val));
+//                var jump :uint = 128 + (val * 256);
+//                map.setPixel(xx, yy, uint(((uint(128) << 16) | jump)));
+//            }
+//        }
+//
+//        filter.mapBitmap = map;
+//
+//        this.filters = [ filter ];
+//    }
 
     override public function setEditing (editing :Boolean) :void
     {
@@ -128,7 +142,7 @@ public class FurniSprite extends MsoySprite
 
         } else {
             // TEMP: to undo perspective
-            filters = [];
+//            filters = [];
         }
     }
 
