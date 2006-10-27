@@ -63,8 +63,7 @@
 
 .mailComposition {
     background: #99CCFF;
-    width: 60ex;
-    height: 60ex;
+    border: 1px solid black;
 }
 
 .mailCompositionHeaders {
@@ -81,6 +80,5 @@
 
 .mailCompositionBody {
     background: #6699CC;
-    padding: 5px;
-    width: 100%;
+    padding: 10px;
 }

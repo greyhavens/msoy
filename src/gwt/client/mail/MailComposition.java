@@ -51,6 +51,7 @@ public class MailComposition extends PopupPanel
     {
         setStyleName("mailComposition");
         VerticalPanel panel = new VerticalPanel();
+        panel.setSpacing(5);
         setWidget(panel);
 
         HeaderValueTable headers = new HeaderValueTable();
@@ -61,8 +62,7 @@ public class MailComposition extends PopupPanel
         _subjectBox.setText(subject);
         headers.addRow("Subject", _subjectBox);
         panel.add(headers);
-        panel.setCellWidth(headers, "100%");
-
+        
         HorizontalPanel buttonBox = new HorizontalPanel();
         buttonBox.setStyleName("mailCompositionButtons");
         Button replyButton = new Button("Send");
@@ -83,8 +83,8 @@ public class MailComposition extends PopupPanel
         panel.add(buttonBox);
 
         _messageBox = new TextArea();
-        _messageBox.setWidth("100%");
-        _messageBox.setHeight("100%");
+        _messageBox.setCharacterWidth(60);
+        _messageBox.setVisibleLines(20);
         _messageBox.setStyleName("mailCompositionBody");
         panel.add(_messageBox);
 

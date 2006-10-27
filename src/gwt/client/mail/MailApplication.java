@@ -9,7 +9,6 @@ import java.util.List;
 
 import client.util.HeaderValueTable;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
