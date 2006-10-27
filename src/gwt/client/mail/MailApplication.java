@@ -35,10 +35,20 @@ import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
 
+/**
+ * A mail reading application, with a sidebar listing available folders, the upper
+ * half of the main panel listing the message headers in the currently selected folder,
+ * and the lower half displaying individual messages.
+ */
 public class MailApplication extends DockPanel
     implements PopupListener
 {
-    private static final int HEADER_ROWS = 10;
+    /** The number of messages we display on-screen at a time. */
+    public static final int HEADER_ROWS = 10;
+    
+    /**
+     * Initialize ths application and build the UI framework.
+     */
     public MailApplication (WebContext ctx)
     {
         super();
@@ -46,13 +56,16 @@ public class MailApplication extends DockPanel
         setStyleName("mailApp");
         setSpacing(5);
         
+        // construct the side bar
         VerticalPanel sideBar = new VerticalPanel();
         sideBar.setStyleName("mailFolders");
         sideBar.setSpacing(5);
 
+        // with a button to compose a new mail
         Button composeButton = new Button("Compose");
         composeButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
+                // TODO: The hard-coded memberId is for testing only :)
                 MailComposition composition = new MailComposition(_ctx, 2, "");
                 composition.addPopupListener(MailApplication.this);
                 composition.show();
@@ -60,6 +73,7 @@ public class MailApplication extends DockPanel
         });
         sideBar.add(composeButton);
 
+        // and a button to refresh the folder contents
         Button refreshButton = new Button("Refresh");
         refreshButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -68,18 +82,22 @@ public class MailApplication extends DockPanel
         });
         sideBar.add(refreshButton);
 
+        // and finally a list of folders
         _folderContainer = new SimplePanel();
         sideBar.add(_folderContainer);
         add(sideBar, DockPanel.WEST);
 
+        // the top right side is a list of message headers
         _headerContainer = new SimplePanel();
         add(_headerContainer, DockPanel.NORTH);
         setCellWidth(_headerContainer, "100%");
 
+        // the bottom right side shows an individual message
         _messageContainer = new SimplePanel();
         add(_messageContainer, DockPanel.CENTER);
         setCellWidth(_messageContainer, "100%");
         
+        // and below it all, we display any errors
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
         add(_errorContainer, DockPanel.SOUTH);
@@ -87,11 +105,19 @@ public class MailApplication extends DockPanel
         loadFolders();
     }
 
+    /**
+     * When a composition popup closes, we need to refresh the folder/header displays.
+     */ 
     public void onPopupClosed (PopupPanel sender, boolean autoClosed)
     {
         refresh();
     }
 
+    /**
+     * Called to instruct this application to update its view.
+     * 
+     * The messageId parameter may be -1, if no message body is to be displayed.
+     */
     public void show (int folderId, int headerOffset, int messageId)
     {
         _currentFolder = folderId;
@@ -106,18 +132,25 @@ public class MailApplication extends DockPanel
         }
     }
 
+    /**
+     * Update the panel/header panels with new data from the backend.
+     */
     public void refresh ()
     {
+        // always clear the current message display on a refresh
         _currentMessage = -1;
         _messageContainer.clear();
+        // always fetch the folders
         loadFolders();
         if (_currentFolder >= 0) {
+            // and if we have a selected folder, fetch that too
             loadHeaders();
         } else {
             _headerContainer.clear();
         }
     }
-    
+
+    // fetch the folder list from the backend and trigger a display
     protected void loadFolders ()
     {
         _ctx.mailsvc.getFolders(_ctx.creds, new AsyncCallback() {
@@ -131,6 +164,7 @@ public class MailApplication extends DockPanel
         });
     }
     
+    // construct the list of folders, including unread count
     protected void refreshFolderPanel ()
     {
         VerticalPanel folderList = new VerticalPanel();
@@ -151,6 +185,7 @@ public class MailApplication extends DockPanel
         _folderContainer.setWidget(folderList);
     }
 
+    // fetch the message headers for the currently selected folder, trigger a redisplay
     protected void loadHeaders ()
     {
         if (_currentFolder < 0) {
@@ -169,26 +204,33 @@ public class MailApplication extends DockPanel
         });
     }
     
+    // construct the list of message headers
     protected void refreshHeaderPanel ()
     {
+        // the panel has two parts; the actual list, and a control box
         VerticalPanel headerPanel = new VerticalPanel();
         headerPanel.setWidth("100%");
+
         if (_headers.size() > 0) {
+            // build the actual headers
             FlexTable table = new FlexTable();
             table.setStyleName("mailHeaders");
             table.setWidth("100%");
             int row = 0;
+
             CellFormatter cellFormatter = table.getCellFormatter();
             RowFormatter rowFormatter = table.getRowFormatter();
 
             // initialize our collection of currently checked messages
             _checkedMessages = new HashSet();
 
+            // now build row after row of data
             int lastMsg = Math.min(_headers.size(), _currentOffset + HEADER_ROWS);
             for (int msg = _currentOffset; msg < lastMsg; msg ++) {
-                int col = 0;
                 final MailHeaders headers = (MailHeaders) _headers.get(msg);
+                int col = 0;
 
+                // first, a checkbox with a listener that maintains a set of checked messages
                 CheckBox cBox = new CheckBox();
                 cBox.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
@@ -207,17 +249,25 @@ public class MailApplication extends DockPanel
                 cellFormatter.setStyleName(row, col, "mailRowCheckbox");
                 col ++;
 
+                // next, the subject line, the only variable-width element in the row
                 Widget link = new Hyperlink(headers.subject, "f" + _currentFolder + "." +
                                             _currentOffset + "." + headers.messageId);
                 table.setWidget(row, col, link);
                 cellFormatter.setStyleName(row, col, "mailRowSubject");
                 col ++;
+
+                // next, the name of the sender
                 table.setText(row, col, headers.sender.memberName);
                 cellFormatter.setStyleName(row, col, "mailRowSender");
                 col ++;
+                
+                // and finally the date the message was sent, in fancy shorthand form
                 table.setText(row, col, formatDate(headers.sent));
                 cellFormatter.setStyleName(row, col, "mailRowDate");
                 col ++;
+                
+                // show the row in bold if the message is unread
+                // TODO: hrm, looks like this bit don't work yet.
                 rowFormatter.setStyleName(row, "mailRow");
                 if (headers.unread) {
                     rowFormatter.addStyleName(row, "unread");
@@ -225,10 +275,13 @@ public class MailApplication extends DockPanel
                 row ++;
             }
             headerPanel.add(table);
-            
+
+            // build the header controls
             HorizontalPanel controlBox = new HorizontalPanel();
             controlBox.setWidth("100%");
             controlBox.setSpacing(5);
+            
+            // first, a bulk delete button
             _massDelete = new Button("Delete Checked Messages");
             _massDelete.setEnabled(false);
             _massDelete.addClickListener(new ClickListener() {
@@ -238,6 +291,8 @@ public class MailApplication extends DockPanel
                 }
             });
             controlBox.add(_massDelete);
+            
+            // then, a pager control for moving between your many lovely messages
             HorizontalPanel pager = new HorizontalPanel();
             pager.setSpacing(3);
             pager.setStyleName("mailHeaderPager");
@@ -269,9 +324,11 @@ public class MailApplication extends DockPanel
             controlBox.add(pager);
             headerPanel.add(controlBox);
         }
+        // when the UI is fully constructed, switch it in
         _headerContainer.setWidget(headerPanel);
     }
 
+    // fetch the entirity (body, specifically) of a given message from the backend
     protected void loadMessage ()
     {
         if (_currentFolder < 0) {
@@ -293,10 +350,13 @@ public class MailApplication extends DockPanel
         });
     }
 
+    // display a message in its full unsummarized glory
     protected void refreshMessagePanel ()
     {
         VerticalPanel messagePanel = new VerticalPanel();
         messagePanel.setStyleName("mailMessage");
+
+        // first some headers
         HeaderValueTable headers = new HeaderValueTable();
         headers.setStyleName("mailMessageHeaders");
         headers.addRow("From", _message.headers.sender.memberName);
@@ -305,8 +365,11 @@ public class MailApplication extends DockPanel
         messagePanel.add(headers);
         messagePanel.setCellWidth(headers, "100%");
 
+        // then a couple of control buttons
         HorizontalPanel buttonBox = new HorizontalPanel();
         buttonBox.setStyleName("mailMessageButtons");
+
+        // reply functionality, which kicks off the composer
         Button replyButton = new Button("Reply");
         replyButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -321,6 +384,8 @@ public class MailApplication extends DockPanel
             }
         });
         buttonBox.add(replyButton);
+
+        // a button to delete a single message
         final Button deleteButton = new Button("Delete");
         deleteButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -330,12 +395,14 @@ public class MailApplication extends DockPanel
         });
         buttonBox.add(deleteButton);
         messagePanel.add(buttonBox);
-        
+
+        // finally show the message body, propped up with generated HTML
         SimplePanel messageBody = new SimplePanel();
         messageBody.setStyleName("mailMessageBody");
         messageBody.setWidget(textToHTML(_message.message));
         messagePanel.add(messageBody);
 
+        // switch in the fully built UI
         _messageContainer.setWidget(messagePanel);
     }
 
@@ -345,13 +412,22 @@ public class MailApplication extends DockPanel
         if (objects.length == 0) {
             return;
         }
+        // figure out which folder the messages are in
         int folderId = ((MailHeaders) objects[0]).folderId;
+        // build an array of message id's from the array of message header objects
         int msgIds[] = new int[objects.length];
         for (int i = 0; i < objects.length; i ++) {
+            MailHeaders mail = (MailHeaders) objects[i];
+            if (mail.folderId != folderId) {
+                // TODO: log this, it should definitely not be able to happen
+                continue;
+            }
             msgIds[i] = ((MailHeaders) objects[i]).messageId;
         }
+        // then send the deletion request off to the backend
         _ctx.mailsvc.deleteMessages(_ctx.creds, folderId, msgIds, new AsyncCallback() {
             public void onSuccess (Object result) {
+                // if it went well, refresh the folder view and whatnot
                 refresh();
             }
             public void onFailure (Throwable caught) {
@@ -360,6 +436,7 @@ public class MailApplication extends DockPanel
         });
     }
 
+    // anytime we wish to update the URL with a snapshot of the state, we call this
     protected void updateHistory ()
     {
         if (_currentMessage >= 0) {
@@ -369,7 +446,8 @@ public class MailApplication extends DockPanel
         }
     }
 
-    // scan some text and generate HTML to deal with it
+    // scans a text, generating HTML that respects leading/consecutive spaces and newlines,
+    // while escaping actual HTML constructs
     protected Widget textToHTML (String message)
     {
         StringBuffer html = new StringBuffer();
@@ -382,27 +460,33 @@ public class MailApplication extends DockPanel
                 // completely ignore
                 continue;
             case '<':
+                // escape HTML
                 bit = "&lt;";
                 collectSpaces = false;
                 break;
             case '>':
+                // escape HTML
                 bit = "&gt;";
                 collectSpaces = false;
                 break;
             case '&':
+                // escape HTML
                 bit = "&amp;";
                 collectSpaces = false;
                 break;
             case '\n':
+                // a newline is replaced by a HTML break
                 bit = "<br>\n";
                 collectSpaces = true;
                 break;
             case ' ': case '\t':
+                // a single space is left alone, unless it leads a line
                 if (!collectSpaces) {
                     collectSpaces = true;
                     bit = null;
                     break;
                 }
+                // but a leading space or consecutive spaces are replaced by these
                 bit = "&nbsp;";
                 break;
             default:
@@ -419,7 +503,8 @@ public class MailApplication extends DockPanel
         return new HTML(html.toString());
     }
 
-    // Date.toString() returns: Wed Oct 25 2006 15:30:32 GMT-0500 (CDT)
+    // generate a short string to summarize most relevantly a date in the past
+    // For reference: Date.toString() returns: Wed Oct 25 2006 15:30:32 GMT-0500 (CDT)
     protected String formatDate(Date date)
     {
         long nowTime = System.currentTimeMillis();

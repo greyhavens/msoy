@@ -7,7 +7,6 @@ import client.MsoyEntryPoint;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.WebCreds;
@@ -40,16 +39,18 @@ public class index extends MsoyEntryPoint
             setContent(new Label("Log in above to access your mail."));
             return;
         }
+        // initialize the application, if necessary
         if (_mainView == null) {
             _mainView = new MailApplication(_ctx);
         }
-
+        // make sure we're displaying the application
         setContent(_mainView);
 
+        // set defaults to use in liu of sane URL contents
         int folderId = MailFolder.INBOX_FOLDER_ID;
         int headerOffset = 0;
         int messageId = -1;
-        
+
         if (token != null && token.length() > 0) {
             try {
                 String[] bits = token.substring(1).split("\\.");
@@ -64,6 +65,7 @@ public class index extends MsoyEntryPoint
                 // just use the defaults
             }
         }
+        // finally update the application view
         _mainView.show(folderId, headerOffset, messageId);
     }
 
