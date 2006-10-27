@@ -38,4 +38,25 @@ public class MailHeaders
     
     /** Whether or not this message has yet to be read. */
     public boolean unread;
+
+    // @Override
+    public int hashCode ()
+    {
+        return messageId + 31*(folderId + 31*ownerId);
+    }
+
+    // @Override
+    public boolean equals (Object obj)
+    {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        MailHeaders other = (MailHeaders) obj;
+        return (other.messageId == messageId &&
+                other.folderId == folderId &&
+                other.ownerId == ownerId);
+    }
 }
