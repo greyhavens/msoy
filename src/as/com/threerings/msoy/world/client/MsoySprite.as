@@ -229,15 +229,22 @@ public class MsoySprite extends MediaContainer
 
     protected function scaleUpdated () :void
     {
-        var xscale :Number = getMediaScaleX();
-        var yscale :Number = getMediaScaleY();
+        _media.scaleX = getMediaScaleX();
+        _media.scaleY = getMediaScaleY();
 
-        // set up the scale
-        _media.scaleX = xscale;
-        _media.scaleY = yscale;
+        updateMediaPosition();
+    }
 
+    /**
+     * Should be called when the media scale or size changes to ensure
+     * that the media is positioned correctly.
+     */
+    protected function updateMediaPosition () :void
+    {
         // if scale is negative, the image is flipped and we need to move
         // the origin
+        var xscale :Number = getMediaScaleX();
+        var yscale :Number = getMediaScaleY();
         _media.x = (xscale >= 0) ? 0 : Math.abs(_w * xscale);
         _media.y = (yscale >= 0) ? 0 : Math.abs(_h * yscale);
 
@@ -346,11 +353,9 @@ public class MsoySprite extends MediaContainer
     {
         super.contentDimensionsUpdated();
 
-        // Normally, we'd only need to tell our parent that our location
-        // changed if we have no hotspot, but we could be loading
-        // up a brand new piece of media (with a different hotspot)
-        // and so we need to relayout.
-        locationUpdated();
+        // even if we don't have strange (negative) scaling, we should do this
+        // because it ends up calling locationUpdated().
+        updateMediaPosition();
     }
 
     override protected function updateLoadingProgress (
