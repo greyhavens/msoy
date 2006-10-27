@@ -10,7 +10,7 @@ import com.threerings.io.Streamable;
  * Represents a full message, both the metadata and the actual message text.
  */
 
-public class MailMessage
+final public class MailMessage
     implements IsSerializable, Streamable
 {
     /** All the metadata for this message. */
@@ -31,7 +31,7 @@ public class MailMessage
         if (this == obj) {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || !(obj instanceof MailMessage)) {
             return false;
         }
         MailMessage other = (MailMessage) obj;

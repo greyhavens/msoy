@@ -9,7 +9,7 @@ import com.threerings.io.Streamable;
 /**
  * Represents a named folder belonging to a member.
  */
-public class MailFolder
+final public class MailFolder
     implements IsSerializable, Streamable
 {
     public static final int INBOX_FOLDER_ID = 1;
@@ -43,7 +43,7 @@ public class MailFolder
         if (this == obj) {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || !(obj instanceof MailFolder)) {
             return false;
         }
         MailFolder other = (MailFolder) obj;

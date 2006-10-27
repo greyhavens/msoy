@@ -12,7 +12,7 @@ import com.threerings.io.Streamable;
  * Represents all the metadata for a mail message.
  */
 
-public class MailHeaders
+final public class MailHeaders
     implements IsSerializable, Streamable
 {
     /** The id of this message, unique within its current folder. */
@@ -51,7 +51,7 @@ public class MailHeaders
         if (this == obj) {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null || !(obj instanceof MailHeaders)) {
             return false;
         }
         MailHeaders other = (MailHeaders) obj;
