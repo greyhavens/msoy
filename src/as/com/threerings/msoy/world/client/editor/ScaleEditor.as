@@ -88,17 +88,20 @@ public class ScaleEditor extends Grid
         _x.liveDragging = true;
         _x.minimum = -2;
         _x.maximum = 2;
+        _x.tickInterval = 1;
 
         _y = new HSlider();
         _y.liveDragging = true;
         _y.minimum = -2;
         _y.maximum = 2;
+        _y.tickInterval = 1;
 
         _locked = new CheckBox();
+        _locked.percentHeight = 100;
         _locked.label = Msgs.EDITING.get("l.scale_locked");
 
-        addRow(_locked, [ 1, 2],
-            MsoyUI.createLabel(Msgs.EDITING.get("l.xscale")), _x);
+        addRow(MsoyUI.createLabel(Msgs.EDITING.get("l.xscale")), _x,
+            _locked, [ 1, 2]);
         addRow(
             MsoyUI.createLabel(Msgs.EDITING.get("l.yscale")), _y);
     }
