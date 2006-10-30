@@ -27,8 +27,8 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The MIME type for MPEG audio data. */
     public static final byte AUDIO_MPEG = 20;
 
-    /** The MIME type for WAV audio data. */
-    public static final byte AUDIO_WAV = 21;
+//    /** The MIME type for WAV audio data. */
+//    public static final byte AUDIO_WAV = 21;
 
     /** The MIME type for FLV video data. */
     public static final byte VIDEO_FLASH = 30;
@@ -124,8 +124,8 @@ public class MediaDesc implements Streamable, IsSerializable
             return IMAGE_GIF;
         } else if (mimeType.equals("audio/mpeg")) {
             return AUDIO_MPEG;
-        } else if (mimeType.equals("audio/wav")) {
-            return AUDIO_WAV;
+//        } else if (mimeType.equals("audio/wav")) {
+//            return AUDIO_WAV;
         } else if (mimeType.equals("video/flash")) {
             return VIDEO_FLASH;
         } else if (mimeType.equals("video/mpeg")) {
@@ -160,8 +160,8 @@ public class MediaDesc implements Streamable, IsSerializable
             return IMAGE_GIF;
         } else if (filename.endsWith(".mp3")) {
             return AUDIO_MPEG;
-        } else if (filename.endsWith(".wav")) {
-            return AUDIO_WAV;
+//        } else if (filename.endsWith(".wav")) {
+//            return AUDIO_WAV;
         } else if (filename.endsWith(".flv")) {
             return VIDEO_FLASH;
         } else if (filename.endsWith(".mpg")) {
@@ -191,7 +191,7 @@ public class MediaDesc implements Streamable, IsSerializable
         case IMAGE_JPEG: return ".jpg";
         case IMAGE_GIF: return ".gif";
         case AUDIO_MPEG: return ".mp3";
-        case AUDIO_WAV: return ".wav";
+//        case AUDIO_WAV: return ".wav";
         case VIDEO_FLASH: return ".flv";
         case VIDEO_MPEG: return ".mpg";
         case VIDEO_QUICKTIME: return ".mov";
@@ -252,13 +252,29 @@ public class MediaDesc implements Streamable, IsSerializable
     }
 
     /**
+     * Is this media merely an image type?
+     */
+    public boolean isImage ()
+    {
+        switch (mimeType) {
+        case IMAGE_PNG:
+        case IMAGE_JPEG:
+        case IMAGE_GIF:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
      * Is this media purely audio?
      */
     public boolean isAudio ()
     {
         switch (mimeType) {
         case AUDIO_MPEG:
-        case AUDIO_WAV:
+//        case AUDIO_WAV:
             return true;
 
         default:

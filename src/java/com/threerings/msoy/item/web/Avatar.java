@@ -36,7 +36,10 @@ public class Avatar extends Item
     // @Override // from Item
     protected MediaDesc getDefaultThumbnailMedia ()
     {
-        return avatarMedia;
+        if (avatarMedia != null && avatarMedia.isImage()) {
+            return avatarMedia;
+        }
+        return super.getDefaultThumbnailMedia();
     }
 
     // @Override // from Item

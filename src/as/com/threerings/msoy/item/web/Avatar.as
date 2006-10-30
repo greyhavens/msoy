@@ -31,7 +31,10 @@ public class Avatar extends Item
 
     override protected function getDefaultThumbnailMedia () :MediaDesc
     {
-        return avatarMedia;
+        if (avatarMedia != null && avatarMedia.isImage()) {
+            return avatarMedia;
+        }
+        return super.getDefaultThumbnailMedia();
     }
 
     override protected function getDefaultFurniMedia () :MediaDesc

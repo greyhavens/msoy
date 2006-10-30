@@ -122,7 +122,7 @@ public class MediaUploader extends FlexTable
                 w.setHeight(_previewHeight + "px");
             }
             // update our preview
-            setText(_previewRow-1, 0, "Preview:");
+            _out.setText("Preview:");
             setWidget(_previewRow, 0, w);
         }
     }
@@ -135,9 +135,10 @@ public class MediaUploader extends FlexTable
         String result = _updater.updateMedia(desc);
         if (result == null) {
             setMedia(desc);
-            result = "File uploaded.";
+
+        } else {
+            _out.setText(result);
         }
-        _out.setText(result);
     }
 
     protected ItemEditor.MediaUpdater _updater;

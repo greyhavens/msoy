@@ -32,7 +32,10 @@ public class Photo extends Item
 
     override protected function getDefaultThumbnailMedia () :MediaDesc
     {
-        return photoMedia;
+        if (photoMedia != null && photoMedia.isImage()) {
+            return photoMedia;
+        }
+        return super.getDefaultThumbnailMedia();
     }
 
     override protected function getDefaultFurniMedia () :MediaDesc

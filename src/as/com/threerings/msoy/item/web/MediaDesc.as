@@ -33,8 +33,8 @@ public class MediaDesc
     /** The MIME type for MPEG audio data. */
     public static const AUDIO_MPEG :int = 20;
 
-    /** The MIME type for WAV audio data. */
-    public static const AUDIO_WAV :int = 21;
+//    /** The MIME type for WAV audio data. */
+//    public static const AUDIO_WAV :int = 21;
 
     /** The MIME type for FLV video data. */
     public static const VIDEO_FLASH :int = 30;
@@ -85,8 +85,8 @@ public class MediaDesc
             return IMAGE_GIF;
         } else if (mimeType == "audio/mpeg") {
             return AUDIO_MPEG;
-        } else if (mimeType == "audio/wav") {
-            return AUDIO_WAV;
+//        } else if (mimeType == "audio/wav") {
+//            return AUDIO_WAV;
         } else if (mimeType == "video/flash") {
             return VIDEO_FLASH;
         } else if (mimeType == "video/mpeg") {
@@ -121,8 +121,8 @@ public class MediaDesc
             return IMAGE_GIF;
         } else if (StringUtil.endsWith(filename, ".mp3")) {
             return AUDIO_MPEG;
-        } else if (StringUtil.endsWith(filename, ".wav")) {
-            return AUDIO_WAV;
+//        } else if (StringUtil.endsWith(filename, ".wav")) {
+//            return AUDIO_WAV;
         } else if (StringUtil.endsWith(filename, ".flv")) {
             return VIDEO_FLASH;
         } else if (StringUtil.endsWith(filename, ".mpg")) {
@@ -152,7 +152,7 @@ public class MediaDesc
         case IMAGE_JPEG: return ".jpg";
         case IMAGE_GIF: return ".gif";
         case AUDIO_MPEG: return ".mp3";
-        case AUDIO_WAV: return ".wav";
+//        case AUDIO_WAV: return ".wav";
         case VIDEO_FLASH: return ".flv";
         case VIDEO_MPEG: return ".mpg";
         case VIDEO_QUICKTIME: return ".mov";
@@ -177,8 +177,9 @@ public class MediaDesc
      */
     public function getMediaPath () :String
     {
-        return "/media/" + hashToString(hash) +
-            mimeTypeToSuffix(mimeType);
+        //return "http://bogocorp.com/~ray/tempsoy/"
+        return "/media/"
+            + hashToString(hash) + mimeTypeToSuffix(mimeType);
     }
 
     /**
@@ -210,13 +211,29 @@ public class MediaDesc
     }
 
     /**
+     * Is this media merely an image type?
+     */
+    public function isImage () :Boolean
+    {
+        switch (mimeType) {
+        case IMAGE_PNG:
+        case IMAGE_JPEG:
+        case IMAGE_GIF:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
      * Is this media purely audio?
      */
     public function isAudio () :Boolean
     {
         switch (mimeType) {
         case AUDIO_MPEG:
-        case AUDIO_WAV:
+//        case AUDIO_WAV:
             return true;
 
         default:

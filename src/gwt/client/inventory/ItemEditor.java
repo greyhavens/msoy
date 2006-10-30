@@ -178,8 +178,8 @@ public abstract class ItemEditor extends PopupPanel
         _thumbUploader = createUploader(
             THUMB_ID, title, ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
-                if (!desc.hasFlashVisual()) {
-                    return "Thumbnails must be an web-viewable image type.";
+                if (!desc.isImage()) {
+                    return "Thumbnails must be an image type.";
                 }
 
                 _item.thumbMedia = desc;
@@ -306,8 +306,8 @@ public abstract class ItemEditor extends PopupPanel
      */
     protected void recheckFurniMedia ()
     {
-        if (_thumbUploader != null) {
-            _thumbUploader.setMedia(_item.getThumbnailMedia());
+        if (_furniUploader != null) {
+            _furniUploader.setMedia(_item.getFurniMedia());
         }
     }
 
@@ -317,8 +317,8 @@ public abstract class ItemEditor extends PopupPanel
      */
     protected void recheckThumbMedia ()
     {
-        if (_furniUploader != null) {
-            _furniUploader.setMedia(_item.getFurniMedia());
+        if (_thumbUploader != null) {
+            _thumbUploader.setMedia(_item.getThumbnailMedia());
         }
     }
 

@@ -34,7 +34,10 @@ public class Furniture extends Item
 
     override protected function getDefaultThumbnailMedia () :MediaDesc
     {
-        return getFurniMedia();
+        if (furniMedia != null && furniMedia.isImage()) {
+            return furniMedia;
+        }
+        return super.getDefaultThumbnailMedia();
     }
 
     override protected function getDefaultFurniMedia () :MediaDesc
