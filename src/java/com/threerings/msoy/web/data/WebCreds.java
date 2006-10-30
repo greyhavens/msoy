@@ -25,14 +25,14 @@ public class WebCreds implements IsSerializable
      */
     public static WebCreds fromCookie (String cookie)
     {
-        int semidx;
-        if (cookie == null || (semidx = cookie.indexOf(";")) == -1) {
+        int peridx;
+        if (cookie == null || (peridx = cookie.indexOf(".")) == -1) {
             return null;
         }
         try {
             WebCreds creds = new WebCreds();
-            creds.memberId = Integer.parseInt(cookie.substring(0, semidx));
-            creds.token = cookie.substring(semidx+1);
+            creds.memberId = Integer.parseInt(cookie.substring(0, peridx));
+            creds.token = cookie.substring(peridx+1);
             return creds;
         } catch (Exception e) {
             return null;
@@ -44,7 +44,7 @@ public class WebCreds implements IsSerializable
      */
     public String toCookie ()
     {
-        return memberId + ";" + token;
+        return memberId + "." + token;
     }
 
     /**
