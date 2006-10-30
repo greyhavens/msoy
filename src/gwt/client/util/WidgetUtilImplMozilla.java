@@ -26,7 +26,8 @@ public class WidgetUtilImplMozilla extends WidgetUtilImpl
             "<embed type=\"application/x-shockwave-flash\" " +
             "pluginspage=\"http://www.macromedia.com/go/getflashplayer\" " +
             "width=\"" + width + "\" height=\"" + height + "\" " +
-            "src=\"" + movie + "\" " + params + "/>");
+            "src=\"" + movie + "\" allowScriptAccess=\"sameDomain\" " +
+            params + "/>");
     }
 
     /**

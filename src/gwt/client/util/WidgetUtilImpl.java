@@ -27,7 +27,8 @@ public class WidgetUtilImpl
             "width=\"" + width + "\" height=\"" + height + "\" " +
             "classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" " +
             "codebase=\"http://active.macromedia.com/flash7/cabs/" +
-            "swflash.cab#version=9,0,0,0\">" + params + "</object>");
+            "swflash.cab#version=9,0,0,0\" allowScriptAccess=\"sameDomain\">" +
+            params + "</object>");
     }
 
     /**
