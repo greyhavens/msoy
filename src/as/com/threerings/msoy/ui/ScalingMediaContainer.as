@@ -14,6 +14,8 @@ public class ScalingMediaContainer extends MediaContainer
     {
         super.contentDimensionsUpdated();
 
+        width = _w;
+        height = _h;
         scaleX = scaleY = Math.min(1, Math.min(_maxW / _w, _maxH / _h));
     }
 
