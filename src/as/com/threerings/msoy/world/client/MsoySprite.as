@@ -77,6 +77,17 @@ public class MsoySprite extends MediaContainer
         setStyle("backgroundImage", _loadingImgClass);
     }
 
+    /**
+     * Set the scale of the media as affected by our location in the room.
+     */ 
+    public function setLocationScale (scale :Number) :void
+    {
+        if (scale != _locScale) {
+            _locScale = scale;
+            scaleUpdated();
+        }
+    }
+
     protected function setup (desc :MediaDesc) :void
     {
         if (Util.equals(desc, _desc)) {
@@ -229,8 +240,8 @@ public class MsoySprite extends MediaContainer
 
     protected function scaleUpdated () :void
     {
-        _media.scaleX = getMediaScaleX();
-        _media.scaleY = getMediaScaleY();
+        _media.scaleX = _locScale * getMediaScaleX();
+        _media.scaleY = _locScale * getMediaScaleY();
 
         updateMediaPosition();
     }
@@ -546,6 +557,10 @@ public class MsoySprite extends MediaContainer
 
     /** Our Media descripter. */
     protected var _desc :MediaDesc;
+
+    /** The 'location' scale of the media: the scaling that is the result of
+     * emulating perspective while we move around the room. */
+    protected var _locScale :Number = 1;
 
     /** Are we being edited? */
     protected var _editing :Boolean;

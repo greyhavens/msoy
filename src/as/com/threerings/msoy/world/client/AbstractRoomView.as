@@ -347,8 +347,7 @@ public class AbstractRoomView extends Canvas
         // the scale of the object is determined by the z coordinate
         var scale :Number = minScale +
             ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - minScale);
-        sprite.scaleX = scale;
-        sprite.scaleY = scale;
+        sprite.setLocationScale(scale);
 
         // x position depends on logical x and the scale
         var floorWidth :Number = (sceneWidth * scale);

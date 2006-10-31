@@ -35,28 +35,18 @@ public class AvatarSprite extends MsoySprite
 {
     public function AvatarSprite (ctx :MsoyContext, occInfo :MemberInfo)
     {
-        super(occInfo.media);
+        super(null);
 
         _label = new Label();
+        _label.includeInLayout = false;
         _label.setStyle("textAlign", "center");
+        _label.setStyle("fontWeight", "bold");
         addChild(_label);
 
         // set up our occupant info
         setOccupantInfo(ctx, occInfo);
 
         sendMessage("setAction", (_move == null) ? "standing" : "walking");
-    }
-
-    override protected function setup (desc :MediaDesc) :void
-    {
-        super.setup(desc);
-
-/*
-        if (_label != null) {
-            // ensure the name label always stays on top
-            rawChildren.setChildIndex(_label, rawChildren.numChildren - 1);
-        }
-*/
     }
 
     /**
@@ -187,10 +177,29 @@ public class AvatarSprite extends MsoySprite
         sendMessage("setFacing", left ? "left" : "right");
     }
 
-    override protected function updateContentDimensions (ww :int, hh :int) :void
+    override protected function scaleUpdated () :void
     {
-        super.updateContentDimensions(ww, hh);
-        _label.width = ww;
+        super.scaleUpdated();
+        recheckLabel();
+    }
+
+    override protected function contentDimensionsUpdated () :void
+    {
+        super.contentDimensionsUpdated();
+        recheckLabel();
+    }
+
+    /**
+     * Called to make sure the label's width and position are correct.
+     */
+    protected function recheckLabel () :void
+    {
+        // make it the right size
+        _label.width = _w * _locScale;
+
+        // this can't be done until the text is set and the label is
+        // part of the hierarchy. We just recheck it often...
+        _label.y = -1 * _label.textHeight;
     }
 
     override public function moveCompleted (orient :Number) :void
