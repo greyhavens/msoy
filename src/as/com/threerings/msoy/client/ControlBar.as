@@ -78,7 +78,7 @@ public class ControlBar extends Canvas
     {
         var user :MemberObject = _ctx.getClientObject();
         var isMember :Boolean = (user != null) && !user.isGuest();
-        if (numChildren > 0 && (isMember == _isMember)) {
+        if (numChildren > 1 && (isMember == _isMember)) {
             return;
         }
 
