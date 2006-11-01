@@ -157,17 +157,8 @@ public class MsoySprite extends MediaContainer
     protected function addContentListeners (dispatch :EventDispatcher) :void
     {
         // nothing, in base
-        /// EXAMPLE: dispatch.addEventLIstener("something", functionRef);
+        /// EXAMPLE: dispatch.addEventListener("something", functionRef);
     }
-
-// TODO: do we want to save media dimensions?
-/*
-    override protected function setupBrokenImage (
-        w :int = -1, h :int = -1) :void
-    {
-        super.setupBrokenImage(_desc.width, _desc.height);
-    }
-*/
 
     /**
      * Unload the media we're displaying, clean up any resources.

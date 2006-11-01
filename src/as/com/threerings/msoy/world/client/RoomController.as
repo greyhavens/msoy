@@ -133,7 +133,10 @@ public class RoomController extends SceneController
     {
         if (cmd == EDIT_SCENE) {
             _roomObj.roomService.editRoom(_mctx.getClient(),
-                new ResultWrapper(null, // TODO: no failure case
+                new ResultWrapper(
+                    function (cause :String) :void {
+                        _mctx.displayFeedback("general", cause);
+                    },
                     function (result :Object) :void {
                         startEditing(result as Array);
                     }));

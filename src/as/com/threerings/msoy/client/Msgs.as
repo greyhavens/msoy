@@ -3,6 +3,10 @@ package com.threerings.msoy.client {
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
 
+/**
+ * TODO: The problem with this is that if we want to use the message
+ * bundle name as an arg to displayFeedback() or somesuch...
+ */
 public class Msgs
 {
     /** The general message bundle. */

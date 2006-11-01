@@ -183,8 +183,6 @@ public class RoomView extends AbstractRoomView
         var sy :Number = stage.mouseY;
         for (var dex :int = numChildren - 1; dex >= 0; dex--) {
             var disp :DisplayObject = getChildAt(dex);
-            // TODO: cry and whine until hitTestPoint() behaves as it should.
-            // (It returns true for transparent pixels currently.)
             if (disp.hitTestPoint(sx, sy, true)) {
                 if (disp is ContextMenuProvider) {
                     (disp as ContextMenuProvider).populateContextMenu(menuItems);

@@ -46,6 +46,7 @@ public class MsoyContext
         Msgs.init(this);
 
         _locDir = new LocationDirector(this);
+        _occDir = new OccupantDirector(this);
         _chatDir = new ChatDirector(this, _msgMgr, "general");
         _sceneRepo = new SharedObjectSceneRepository()
         _sceneDir = new SceneDirector(this, _locDir, _sceneRepo,
@@ -111,7 +112,7 @@ public class MsoyContext
     // from CrowdContext
     public function getOccupantDirector () :OccupantDirector
     {
-        return null; // TODO
+        return _occDir;
     }
 
     // from CrowdContext
@@ -224,6 +225,8 @@ public class MsoyContext
     protected var _msgMgr :MessageManager;
 
     protected var _locDir :LocationDirector;
+
+    protected var _occDir :OccupantDirector;
 
     protected var _sceneDir :SceneDirector;
 

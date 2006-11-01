@@ -76,8 +76,6 @@ public class MsoyClient extends Client
         menu.addEventListener(
             ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
 
-//        Security.allowDomain("*"); // TODO
-
         _ctx = new MsoyContext(this);
         LoggingTargets.configureLogging(_ctx);
 

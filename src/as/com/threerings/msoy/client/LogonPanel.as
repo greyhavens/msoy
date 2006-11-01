@@ -136,7 +136,6 @@ public class LogonPanel extends HBox
         var creds :MsoyCredentials = new MsoyCredentials(
             new Name(_email.text),
             MD5.hash(_password.text));
-        creds.ident = ""; // TODO?
 
         CommandEvent.dispatch(this, MsoyController.LOGON, creds);
     }
