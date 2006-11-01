@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.client {
 
+import flash.events.DataEvent;
+
 import mx.controls.Button;
 import mx.controls.TextInput;
 
@@ -43,11 +45,8 @@ public class PrefsDialog extends FloatingPanel
         addChild(grid);
 
         _avatars = new InventoryList(_ctx, Item.AVATAR, true);
+        _avatars.addEventListener(DataEvent.DATA, avatarChoicesLoaded);
         _avatars.dragEnabled = false;
-
-        // TODO: this doesn't actually work because flash only does
-        // reference equality on non-primitives..
-        _avatars.selectedItem = memberObj.avatar;
 
         addChild(_avatars);
 
@@ -73,6 +72,21 @@ public class PrefsDialog extends FloatingPanel
         }
 
         super.buttonClicked(buttonId);
+    }
+
+    protected function avatarChoicesLoaded (event :DataEvent) :void
+    {
+        var memberAv :Avatar = _ctx.getClientObject().avatar;
+        if (memberAv == null) {
+            return;
+        }
+
+        for each (var av :Avatar in _avatars.dataProvider) {
+            if (av.itemId == memberAv.itemId) {
+                _avatars.selectedItem = av;
+                break;
+            }
+        }
     }
 
     /** The field for editing the user's display name. */

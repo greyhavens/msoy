@@ -2,6 +2,8 @@ package com.threerings.msoy.item.client {
 
 import flash.display.DisplayObjectContainer;
 
+import flash.events.DataEvent;
+
 import mx.events.FlexEvent;
 
 import com.threerings.presents.client.ResultWrapper;
@@ -14,6 +16,8 @@ import com.threerings.msoy.item.web.Item;
 /**
  * Lists one particular type of item from a user's inventory.
  * Allows dragging to the room for editing.
+ *
+ * Dispatches a DataEvent when data is loaded.
  */
 public class InventoryList extends ItemList
 {
@@ -50,6 +54,7 @@ public class InventoryList extends ItemList
                 } else {
                     addItems(items);
                 }
+                dispatchEvent(new DataEvent(DataEvent.DATA));
             }));
 
         // add a status item
