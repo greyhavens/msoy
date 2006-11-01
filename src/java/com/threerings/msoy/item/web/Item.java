@@ -101,8 +101,7 @@ public abstract class Item implements Streamable, IsSerializable
      */
     public static String getTypeName (byte type)
     {
-        // we can't use reflection here... gawdammy TODO
-        // We also can't use a switch statement because our final
+        // We can't use a switch statement because our final
         // variables are not actually constants (they are assigned values
         // at class initialization time).
         if (type == PHOTO) {
