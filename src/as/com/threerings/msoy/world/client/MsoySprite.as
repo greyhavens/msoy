@@ -72,6 +72,7 @@ public class MsoySprite extends MediaContainer
     public function MsoySprite (desc :MediaDesc)
     {
         super(null);
+        autoLayout = false;
         setup(desc);
         setStyle("backgroundSize", "100%");
         setStyle("backgroundImage", _loadingImgClass);
