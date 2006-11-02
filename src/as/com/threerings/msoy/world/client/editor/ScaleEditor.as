@@ -1,7 +1,10 @@
 package com.threerings.msoy.world.client.editor {
 
+import flash.events.MouseEvent;
+
 import mx.binding.utils.BindingUtils;
 
+import mx.controls.Button;
 import mx.controls.CheckBox;
 import mx.controls.HSlider;
 
@@ -35,6 +38,10 @@ public class ScaleEditor extends Grid
         _x.value = sprite.getMediaScaleX();
         _y.value = sprite.getMediaScaleY();
 
+        checkReset();
+        trace("Checking reset " + sprite.getMediaScaleX() + "    " +
+            sprite.getMediaScaleY())
+
         if (newSprite) {
             _adjustedLast = null;
             // only guess a value for locked on new sprites
@@ -47,6 +54,7 @@ public class ScaleEditor extends Grid
                 if (_locked.selected) {
                     setSlider(_y, val);
                 }
+                checkReset();
                 _adjustedLast = _x;
                 wasEdited();
             }, _x, "value");
@@ -55,6 +63,7 @@ public class ScaleEditor extends Grid
                 if (_locked.selected) {
                     setSlider(_x, val);
                 }
+                checkReset();
                 _adjustedLast = _y;
                 wasEdited();
             }, _y, "value");
@@ -97,13 +106,14 @@ public class ScaleEditor extends Grid
         _y.tickInterval = 1;
 
         _locked = new CheckBox();
-        _locked.percentHeight = 100;
         _locked.label = Msgs.EDITING.get("l.scale_locked");
 
-        addRow(MsoyUI.createLabel(Msgs.EDITING.get("l.xscale")), _x,
-            _locked, [ 1, 2]);
-        addRow(
-            MsoyUI.createLabel(Msgs.EDITING.get("l.yscale")), _y);
+        _reset = new Button();
+        _reset.label = Msgs.EDITING.get("l.scale_reset");
+        _reset.addEventListener(MouseEvent.CLICK, handleReset);
+
+        addRow(MsoyUI.createLabel(Msgs.EDITING.get("l.xscale")), _x, _locked);
+        addRow(MsoyUI.createLabel(Msgs.EDITING.get("l.yscale")), _y, _reset);
     }
 
     /**
@@ -119,10 +129,22 @@ public class ScaleEditor extends Grid
         }
     }
 
+    protected function checkReset () :void
+    {
+        _reset.enabled = (_sprite.getMediaScaleX() != 1) ||
+            (_sprite.getMediaScaleY() != 1);
+    }
+
     protected function wasEdited () :void
     {
         CommandEvent.dispatch(
             this, EditorController.SPRITE_PROPS_UPDATED, _sprite);
+    }
+
+    protected function handleReset (event :MouseEvent) :void
+    {
+        _x.value = 1;
+        _y.value = 1;
     }
 
     protected var _ctx :MsoyContext;
@@ -134,6 +156,8 @@ public class ScaleEditor extends Grid
     protected var _y :HSlider;
 
     protected var _locked :CheckBox;
+
+    protected var _reset :Button;
 
     protected var _didBind :Boolean = false;
 
