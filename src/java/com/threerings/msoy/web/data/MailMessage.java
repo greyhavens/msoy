@@ -22,7 +22,7 @@ final public class MailMessage
     // @Override
     public int hashCode ()
     {
-        return headers.hashCode() + 31*headers.hashCode();
+        return headers.hashCode() + 31*message.hashCode();
     }
 
     // @Override
