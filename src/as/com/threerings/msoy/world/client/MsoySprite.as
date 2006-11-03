@@ -148,21 +148,20 @@ public class MsoySprite extends MediaContainer
 
         // then, grab a reference to the shared event dispatcher
         _dispatch = (_media as Loader).contentLoaderInfo.sharedEvents;
-        addContentListeners(_dispatch);
+        addContentListeners();
     }
 
     /**
      * Add listeners to the event dispatch we share with our content.
      */
-    protected function addContentListeners (dispatch :EventDispatcher) :void
+    protected function addContentListeners () :void
     {
-        // nothing, in base
-        /// EXAMPLE: dispatch.addEventListener("something", functionRef);
+        _dispatch.addEventListener("msoyQuery", handleInterfaceQuery);
     }
 
-    protected function removeContentListeners (dispatch :EventDispatcher) :void
+    protected function removeContentListeners () :void
     {
-        // nothing by default
+        _dispatch.removeEventListener("msoyQuery", handleInterfaceQuery);
     }
 
     /**
@@ -183,8 +182,9 @@ public class MsoySprite extends MediaContainer
 
         // clean up
         if (completely) {
+            // shut down the dispatch
             if (_dispatch != null) {
-                removeContentListeners(_dispatch);
+                removeContentListeners();
                 _dispatch = null;
             }
         }
@@ -300,6 +300,14 @@ public class MsoySprite extends MediaContainer
     public function get description () :MediaDesc
     {
         return _desc;
+    }
+
+    /**
+     * Send a result from a query down to our clientcode content.
+     */
+    protected function sendResult (result :String) :void
+    {
+        sendMessage("msoyResult", result);
     }
 
     /**
@@ -554,6 +562,14 @@ public class MsoySprite extends MediaContainer
         }
     }
 */
+
+    /**
+     * Handle a query from our usercode content.
+     */
+    protected function handleInterfaceQuery (event :TextEvent) :void
+    {
+        log.warning("Unknown query from usercode: " + event.text);
+    }
 
     /** An id (hopefully unique on this machine) used to communicate with
      * AVM1 swfs over a LocalConnection. */

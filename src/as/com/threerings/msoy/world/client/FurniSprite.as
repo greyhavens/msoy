@@ -314,22 +314,18 @@ public class FurniSprite extends MsoySprite
         }
     }
 
-    override protected function addContentListeners (
-        dispatch :EventDispatcher) :void
+    override protected function addContentListeners () :void
     {
-        super.addContentListeners(dispatch);
+        super.addContentListeners();
 
-        dispatch.addEventListener("msoyLoc", handleInterfaceMsoyLoc);
-        dispatch.addEventListener("query", handleInterfaceQuery);
+        _dispatch.addEventListener("msoyLoc", handleInterfaceMsoyLoc);
     }
 
-    override protected function removeContentListeners (
-        dispatch :EventDispatcher) :void
+    override protected function removeContentListeners () :void
     {
-        super.removeContentListeners(dispatch);
+        super.removeContentListeners();
 
-        dispatch.removeEventListener("msoyLoc", handleInterfaceMsoyLoc);
-        dispatch.removeEventListener("query", handleInterfaceQuery);
+        _dispatch.removeEventListener("msoyLoc", handleInterfaceMsoyLoc);
     }
 
     protected function handleInterfaceMsoyLoc (event :TextEvent) :void
@@ -344,18 +340,16 @@ public class FurniSprite extends MsoySprite
             }));
     }
 
-    protected function handleInterfaceQuery (event :TextEvent) :void
+    override protected function handleInterfaceQuery (event :TextEvent) :void
     {
         switch (event.text) {
-        case "msoyLoc":
-            sendMessage("result",
+        case "location":
+            sendResult(
                 "" + loc.x + ";" + loc.y + ";" + loc.z + ";" + loc.orient);
-            break;
-
-        default:
-            log.warning("Unknown query from furniture: " + event.text);
-            break;
+            return;
         }
+
+        super.handleInterfaceQuery(event);
     }
 
     /** The furniture data for this piece of furni. */

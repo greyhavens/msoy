@@ -1,6 +1,7 @@
 package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
+import flash.events.TextEvent;
 
 import flash.geom.Point;
 
@@ -46,7 +47,7 @@ public class AvatarSprite extends MsoySprite
         // set up our occupant info
         setOccupantInfo(ctx, occInfo);
 
-        sendMessage("setAction", (_move == null) ? "standing" : "walking");
+//        sendMessage("setAction", (_move == null) ? "standing" : "walking");
     }
 
     /**
@@ -134,16 +135,15 @@ public class AvatarSprite extends MsoySprite
             _move.cancel();
         }
 
-        // set walking, and maybe change facing direction
-        sendMessage("setAction", "walking");
-        if (destLoc.x > loc.x) {
-            setOrientation(0);
-        } else if (destLoc.x < loc.x)  {
-            setOrientation(180);
-        }
+        // set the orientation towards the new location
+        var degrees :Number = 180 / Math.PI * 
+            Math.atan2(destLoc.z - loc.z, destLoc.x - loc.x);
+        // we ensure our orientation is always positive, with 0 facing forward
+        setOrientation((degrees + 90 + 360) % 360);
 
         _move = new SceneMove(this, scene, this.loc, destLoc);
         _move.play();
+        stanceDidChange();
     }
 
     /**
@@ -173,8 +173,11 @@ public class AvatarSprite extends MsoySprite
 
     public function setOrientation (orient :int) :void
     {
+        loc.orient = orient;
+        /*
         var left :Boolean = (orient >= 90 && orient < 270)
         sendMessage("setFacing", left ? "left" : "right");
+        */
     }
 
     override protected function scaleUpdated () :void
@@ -205,14 +208,18 @@ public class AvatarSprite extends MsoySprite
     override public function moveCompleted (orient :Number) :void
     {
         super.moveCompleted(orient);
-        setOrientation(int(orient));
+        // TODO: sort out what we really want to do about the orient.
+        // I'm thinking that maybe the server computes it? Maybe players
+        // can control their orientation, much like they control their
+        // location?
+//        setOrientation(int(orient));
 
         _move = null;
-        sendMessage("setAction", "standing");
 
         if (parent is RoomView) {
             (parent as RoomView).moveFinished(this);
         }
+        stanceDidChange();
     }
 
     override protected function mouseClick (event :MouseEvent) :void
@@ -229,6 +236,30 @@ public class AvatarSprite extends MsoySprite
     override public function hasAction () :Boolean
     {
         return true;
+    }
+    
+    /**
+     * Called when the avatar changes orientation or transitions between
+     * walking or standing.
+     */
+    protected function stanceDidChange () :void
+    {
+        sendMessage("msoyAvatarChange", "");
+    }
+
+    override protected function handleInterfaceQuery (event :TextEvent) :void
+    {
+        switch (event.text) {
+        case "orient":
+            sendResult(String(loc.orient));
+            return;
+
+        case "isWalking":
+            sendResult(String(isMoving()));
+            return;
+        }
+
+        super.handleInterfaceQuery(event);
     }
 
     protected var _occInfo :MemberInfo;
