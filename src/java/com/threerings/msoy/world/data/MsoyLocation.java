@@ -56,7 +56,7 @@ public class MsoyLocation
     {
         MsoyLocation l = (MsoyLocation) clone();
         // rotated 180 degrees
-        l.orient = (orient + 180) % 360;
+        l.orient = (short) ((orient + 180) % 360);
         return l;
     }
 
