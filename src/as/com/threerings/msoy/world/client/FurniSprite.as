@@ -2,6 +2,8 @@ package com.threerings.msoy.world.client {
 
 import flash.display.BitmapData;
 import flash.display.BitmapDataChannel;
+import flash.display.DisplayObject;
+import flash.display.Loader;
 
 import flash.events.EventDispatcher;
 import flash.events.MouseEvent;
@@ -79,14 +81,67 @@ public class FurniSprite extends MsoySprite
     public function addPersp () :void
     {
         if (_media is UIComponent) {
-            rawChildren.removeChild(_media);
-
-        } else {
             removeChild(_media);
+        } else {
+            rawChildren.removeChild(_media);
         }
 
-        _media = new Perspectivizer(_media);
-        rawChildren.addChild(_media);
+        var newMedia :DisplayObject;
+        if (_media is Perspectivizer) {
+            newMedia = Perspectivizer(_media).getSource();
+
+        } else {
+            var m :DisplayObject = _media;
+            if (m is Loader) {
+                m = Loader(m).content;
+            }
+
+            newMedia = new Perspectivizer(m,
+                AbstractRoomView(parent).getPerspInfo(this, _w, _h, loc),
+                getMediaScaleX(), getMediaScaleY());
+        }
+
+        _media = newMedia;
+        if (_media is UIComponent) {
+            addChild(_media);
+        } else {
+            rawChildren.addChild(_media);
+        }
+
+        scaleUpdated();
+    }
+
+    override protected function locationUpdated () :void
+    {
+        super.locationUpdated();
+        checkPerspective();
+    }
+
+    override protected function scaleUpdated () :void
+    {
+        super.scaleUpdated();
+        checkPerspective();
+    }
+
+    protected function checkPerspective () :void
+    {
+        if (!(_media is Perspectivizer) || !(parent is AbstractRoomView)) {
+            return;
+        }
+
+        var arr :Array =
+            AbstractRoomView(parent).getPerspInfo(this, _w, _h, loc);
+        Perspectivizer(_media).updatePerspInfo(
+            arr, getMediaScaleX(), getMediaScaleY());
+
+//        var sub :Array = (arr[arr.length - 1] as Array);
+//
+//        graphics.clear();
+//        graphics.lineStyle(1, 0xFF0000);
+//        graphics.moveTo(Number(sub[0]), Number(sub[1]));
+//        for each (sub in arr) {
+//            graphics.lineTo(Number(sub[0]), Number(sub[1]));
+//        }
     }
 
 //    {
@@ -264,16 +319,43 @@ public class FurniSprite extends MsoySprite
     {
         super.addContentListeners(dispatch);
 
-        dispatch.addEventListener("msoyLoc", function (event :TextEvent) :void {
-            if (_editing) {
-                return; // do not allow movement during editing
-            }
-            var loc :Array = event.text.split(",");
-            setLocation(loc.map(
-                function (item :*, index :int, array :Array) :Number {
-                    return Number(item);
-                }));
-        });
+        dispatch.addEventListener("msoyLoc", handleInterfaceMsoyLoc);
+        dispatch.addEventListener("query", handleInterfaceQuery);
+    }
+
+    override protected function removeContentListeners (
+        dispatch :EventDispatcher) :void
+    {
+        super.removeContentListeners(dispatch);
+
+        dispatch.removeEventListener("msoyLoc", handleInterfaceMsoyLoc);
+        dispatch.removeEventListener("query", handleInterfaceQuery);
+    }
+
+    protected function handleInterfaceMsoyLoc (event :TextEvent) :void
+    {
+        if (_editing) {
+            return; // do not allow movement during editing
+        }
+        var loc :Array = event.text.split(";");
+        setLocation(loc.map(
+            function (item :*, index :int, array :Array) :Number {
+                return Math.min(1, Math.max(0, Number(item)));
+            }));
+    }
+
+    protected function handleInterfaceQuery (event :TextEvent) :void
+    {
+        switch (event.text) {
+        case "msoyLoc":
+            sendMessage("result",
+                "" + loc.x + ";" + loc.y + ";" + loc.z + ";" + loc.orient);
+            break;
+
+        default:
+            log.warning("Unknown query from furniture: " + event.text);
+            break;
+        }
     }
 
     /** The furniture data for this piece of furni. */

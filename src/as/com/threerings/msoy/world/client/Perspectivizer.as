@@ -9,30 +9,69 @@ import flash.display.DisplayObject;
 
 import flash.events.Event;
 
+import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
 public class Perspectivizer extends Bitmap
 {
-    public function Perspectivizer (source :DisplayObject)
+    public function Perspectivizer (
+        source :DisplayObject,
+        perspInfo :Array, mediaScaleX :Number, mediaScaleY :Number)
     {
         super();
-
-        // TODO
-        bitmapData = new BitmapData(WIDTH, HEIGHT, true, 0);
-
         _source = source;
 
+        updatePerspInfo(perspInfo, mediaScaleX, mediaScaleY);
         addEventListener(Event.ENTER_FRAME, enterFrame);
+    }
+
+    public function getSource () :DisplayObject
+    {
+        return _source;
+    }
+
+    public function updatePerspInfo (
+        perspInfo :Array, mediaScaleX :Number, mediaScaleY :Number) :void
+    {
+        _info = perspInfo;
+        _mediaScaleX = mediaScaleX;
+        _mediaScaleY = mediaScaleY;
+
+        var ww :int = Math.round(
+            Math.abs(Number(_info[0]) - Number(_info[3])));
+        var hh :int = Math.round(
+            Math.max(Number(_info[1]), Number(_info[4])));
+        trace("persp info gives: " + ww + ", " + hh);
+
+        if (ww < 1 || hh < 1) {
+            return;
+        }
+
+        if (_destPixels == null || (ww != _destPixels.width) ||
+                (hh != _destPixels.height)) {
+            if (_destPixels != null) {
+                _destPixels.dispose();
+            }
+            _destPixels = new BitmapData(ww, hh, true, 0);
+            bitmapData = _destPixels;
+        }
         updateDisplayedImage();
     }
 
     protected function updateDisplayedImage () :void
     {
-        var r :Rectangle = _source.getBounds(_source);
-        //trace("Rect is " + r);
+        if (_destPixels == null) {
+            return;
+        }
 
-        var ww :int = int(r.width + r.x); //int(_source.width);// + 100;
-        var hh :int = int(r.height + r.y); //int(_source.height);// + 200;
+        var r :Rectangle = _source.getBounds(_source);
+
+        var ww :int = int(Math.round(_mediaScaleX * (r.width + r.x)));
+        //int(_source.width);// + 100;
+        var hh :int = int(Math.round(_mediaScaleY * (r.height + r.y)));
+        //int(_source.height);// + 200;
+
+        trace("source ww/hh : " + ww + ", " + hh);
 
         // first, see if our internal bitmapdata needs updating
         if (_sourcePixels == null || (ww != _sourcePixels.width) ||
@@ -53,17 +92,52 @@ public class Perspectivizer extends Bitmap
         }
 
         // copy the source into _sourcePixels
-        _sourcePixels.draw(_source);
+        //_sourcePixels.draw(_source, null, null, null, r);
+        _sourcePixels.draw(_source,
+            new Matrix(_mediaScaleX, 0, 0, _mediaScaleY), null, null, r);
 
-        // sample pixels out of _sourcePixels
-        // TODO: 
-        for (var yy :int = 0; yy < HEIGHT; yy++) {
+//
+//        //var sourceWidth :Number = Math.abs(_info[0] - _info[3]);
+//        var startY :Number = _info[1]
+//        var startHeight :Number = _info[2];
+//        var endY :Number = _info[4];
+//        var endHeight :Number = _info[5];
+//
+//        // sample pixels out of _sourcePixels into the bitmap data
+//        for (var xx :int = 0; xx < _destPixels.width; xx++) {
+//            var percX :Number = (xx / _destPixels.width);
+//            var sx :int = int(Math.round(percX * ww));
+//            var heightHere :Number = (percX * endHeight) +
+//                ((1 - percX) * startHeight);
+//            var firstY :Number = (percX * endY) +
+//                ((1 - percX) * startY);
+//            for (var yy :int = 0; yy < heightHere; yy++) {
+//                var dy :int = yy + firstY;
+//                var sy :int = int(Math.round(yy / heightHere * hh)); 
+//
+//                _destPixels.setPixel32(xx, dy, _sourcePixels.getPixel32(sx, sy));
+//            }
+//        }
+
+        bitmapData = _sourcePixels;
+
+/* Simple scaling
+        for (var yy :int = 0; yy < _destPixels.height; yy++) {
             var sy :int = int(Math.round((yy / HEIGHT) * hh));
-            for (var xx :int = 0; xx < WIDTH; xx++) {
+            for (var xx :int = 0; xx < _destPixels.width; xx++) {
                 var sx :int = int(Math.round((xx / WIDTH) * ww));
-                bitmapData.setPixel32(xx, yy, _sourcePixels.getPixel32(sx, sy));
+                _destPixels.setPixel32(xx, yy, _sourcePixels.getPixel32(sx, sy));
             }
         }
+*/
+    }
+
+    protected function outputStats () :void
+    {
+        var r :Rectangle = _source.getBounds(_source);
+        trace("Source bounds: " + r);
+
+        trace("source dims: " + _source.width + ", " + _source.height);
     }
 
     protected function enterFrame (event :Event) :void
@@ -76,6 +150,15 @@ public class Perspectivizer extends Bitmap
 
     /** The current pixels of _source at its native size. */
     protected var _sourcePixels :BitmapData;
+
+    protected var _destPixels :BitmapData;
+
+    protected var _info :Array;
+
+    protected var _mediaScaleX :Number;
+    protected var _mediaScaleY :Number;
+
+//    protected var _room :AbstractRoomView;
 
     protected const WIDTH :int = 300;
     protected const HEIGHT :int = 300;

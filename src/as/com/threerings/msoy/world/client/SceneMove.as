@@ -13,7 +13,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 public class SceneMove extends TweenEffect
 {
     /** The properties affected by this effect. */
-    private static const AFFECTED_PROPERTIES :Array = [ "x", "y", "zoom" ];
+    private static const AFFECTED_PROPERTIES :Array = [ "x", "y" ];
 
     /** Our source location. */
     public var src :MsoyLocation;

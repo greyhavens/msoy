@@ -365,6 +365,76 @@ public class AbstractRoomView extends Canvas
     }
 
     /**
+     * Calculate the info needed to perspectivize a piece of furni.
+     */
+    public function getPerspInfo (
+        sprite :MsoySprite, contentWidth :int, contentHeight :int,
+        loc :MsoyLocation) :Array
+    {
+        trace("Querying perspInfo (" + contentWidth + ", " + contentHeight +
+            ")");
+        var sceneWidth :Number = _scene.getWidth();
+        var hotSpot :Point = sprite.hotSpot;
+        var minScale :Number = computeMinScale();
+
+        // the scale of the object is determined by the z coordinate
+        var farFocal :Number = FOCAL + (_scene.getDepth() * loc.z) + hotSpot.x;
+
+        var farScale :Number = FOCAL / farFocal;
+        var nearScale :Number = FOCAL / (farFocal - contentWidth);
+
+//        trace("Scales: " + farScale + "   " + nearScale);
+
+/*
+        var floorWidth :Number = (sceneWidth * scale);
+        var floorInset :Number = (sceneWidth - floorWidth) / 2;
+        sprite.x = floorInset - (scale * hotSpot.x) +
+            (loc.x / MAX_COORD) * floorWidth;
+*/
+
+        // x position depends on logical x and the scale
+        var farFloorWidth :Number = (sceneWidth * farScale);
+        var farFloorInset :Number = (sceneWidth - farFloorWidth) / 2;
+        var farX :Number = farFloorInset + (loc.x * farFloorWidth);
+
+        var nearFloorWidth :Number = (sceneWidth * nearScale);
+        var nearFloorInset :Number = (sceneWidth - nearFloorWidth) / 2;
+        var nearX :Number = nearFloorInset + (loc.x * nearFloorWidth);
+
+        // y position depends on logical y and the scale (z)
+        var horizon :Number = 1 - _scene.getHorizon();
+        var horizonY :Number = TARGET_HEIGHT * horizon;
+
+        var farY :Number = (horizonY + (TARGET_HEIGHT - horizonY) * farScale) -
+            (loc.y * TARGET_HEIGHT * farScale);
+        var nearY :Number = (horizonY + (TARGET_HEIGHT - horizonY) * nearScale) -
+            (loc.y * TARGET_HEIGHT * nearScale);
+
+/*
+        sprite.y = (horizonY + (TARGET_HEIGHT - horizonY) * scale) -
+            (scale * hotSpot.y) - 
+            (loc.y / MAX_COORD) * (TARGET_HEIGHT * scale);
+*/
+
+        var farHeight :Number = contentHeight * farScale;
+        var nearHeight :Number = contentHeight * nearScale;
+
+        var minX :Number = Math.min(farX, nearX);
+        var minY :Number = Math.min(farY, nearY);
+        farX -= minX;
+        nearX -= minX;
+        farY -= minY;
+        nearY -= minY;
+
+//        trace("(" + farX + ", " + farY + "):" + farHeight +
+//            "  -  (" + nearX + ", " + nearY + "):" + nearHeight);
+
+        return [ farX, farY, farHeight, nearX, nearY, nearHeight ];
+        //return [ [ farX, farY ], [farX, farY + farHeight],
+        //         [ nearX, nearY + nearHeight], [nearX, nearY] ];
+    }
+
+    /**
      * Adjust the z order of the specified sprite so that it is drawn
      * according to its logical Z coordinate relative to other sprites.
      */

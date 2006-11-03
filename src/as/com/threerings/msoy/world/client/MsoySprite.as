@@ -160,6 +160,11 @@ public class MsoySprite extends MediaContainer
         /// EXAMPLE: dispatch.addEventListener("something", functionRef);
     }
 
+    protected function removeContentListeners (dispatch :EventDispatcher) :void
+    {
+        // nothing by default
+    }
+
     /**
      * Unload the media we're displaying, clean up any resources.
      *
@@ -177,7 +182,12 @@ public class MsoySprite extends MediaContainer
         super.shutdown(completely);
 
         // clean up
-        _dispatch = null;
+        if (completely) {
+            if (_dispatch != null) {
+                removeContentListeners(_dispatch);
+                _dispatch = null;
+            }
+        }
     }
 
     public function get hotSpot () :Point
@@ -232,8 +242,10 @@ public class MsoySprite extends MediaContainer
 
     protected function scaleUpdated () :void
     {
-        _media.scaleX = _locScale * getMediaScaleX();
-        _media.scaleY = _locScale * getMediaScaleY();
+        if (!(_media is Perspectivizer)) {
+            _media.scaleX = _locScale * getMediaScaleX();
+            _media.scaleY = _locScale * getMediaScaleY();
+        }
 
         updateMediaPosition();
     }
