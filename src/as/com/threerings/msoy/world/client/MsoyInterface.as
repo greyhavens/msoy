@@ -7,14 +7,11 @@ import flash.events.EventDispatcher;
 import flash.events.TextEvent;
 
 /**
- * This file should be included by furniture, so that it can communicate
- * with the metasoy world.
+ * The base class for FurniInterface, AvatarInterface...
  */
 public class MsoyInterface
 {
     /**
-     * Create a furni interface. The display object is your piece
-     * of furni.
      */
     public function MsoyInterface (disp :DisplayObject)
     {
@@ -77,6 +74,30 @@ public class MsoyInterface
     {
         _dispatcher.removeEventListener("msoyResult", handleResult);
         _dispatcher = null;
+    }
+
+    /**
+     * A utility method to parse an element into a Number.
+     * Compatible with Array.map();
+     */
+    protected function parseNumber (
+        elem :*, dex :int = 0, arr :Array = null) :Number
+    {
+        // non-numeric or null arguments will coerce to 0
+        return Number(elem);
+    }
+
+    /**
+     * A utility method to parse an element into a Boolean.
+     * Compatible with Array.map();
+     */
+    protected function parseBoolean (
+        elem :*, dex :int = 0, arr :Array = null) :Boolean
+    {
+        // we have to treat strings specially, but all other objects coerce
+        // to Boolean if non-null
+        return (elem is String) ? ("true" === elem.toLowerCase())
+                                : Boolean(elem);
     }
 
     /** The event dispatcher used to communicate with metasoy. */

@@ -343,8 +343,7 @@ public class RoomView extends AbstractRoomView
             avatar = _ctx.getMediaDirector().getAvatar(occInfo);
             _avatars.put(bodyOid, avatar);
             addChild(avatar);
-            avatar.setLocation(loc);
-            avatar.setOrientation(loc.orient);
+            avatar.setEntering(loc);
 
             // if we ever add ourselves, we follow it
             if (bodyOid == _ctx.getClient().getClientOid()) {

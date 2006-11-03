@@ -389,7 +389,8 @@ public class MsoySceneRepository extends SimpleRepository
                         model.width = rs.getShort(6);
                         model.horizon = rs.getFloat(7);
                         model.entrance = new MsoyLocation(
-                            rs.getFloat(8), rs.getFloat(9), rs.getFloat(10), 0);
+                            rs.getFloat(8), rs.getFloat(9), rs.getFloat(10),
+                            180);
 
                     } else {
                         return Boolean.FALSE; // no scene found

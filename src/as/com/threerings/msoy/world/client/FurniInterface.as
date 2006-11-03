@@ -35,7 +35,7 @@ public class FurniInterface extends MsoyInterface
         if (result == null) {
             return null;
         }
-        return result.split(";");
+        return result.split(";").map(parseNumber);
     }
 
     /**

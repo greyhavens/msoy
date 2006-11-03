@@ -52,8 +52,8 @@ public class MsoyLocation
     public function getOpposite () :Location
     {
         var l :MsoyLocation = (clone() as MsoyLocation);
-        // and rotate it 180 degrees
-        l.orient += 180 * ((l.orient < 180) ? 1 : -1)
+        // rotated 180 degrees
+        l.orient = (l.orient + 180) % 360;
         return l;
     }
 

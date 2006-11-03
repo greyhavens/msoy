@@ -39,8 +39,6 @@ public class ScaleEditor extends Grid
         _y.value = sprite.getMediaScaleY();
 
         checkReset();
-        trace("Checking reset " + sprite.getMediaScaleX() + "    " +
-            sprite.getMediaScaleY())
 
         if (newSprite) {
             _adjustedLast = null;

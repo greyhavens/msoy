@@ -292,7 +292,10 @@ public class RoomController extends SceneController
             if (cloc.click == ClickLocation.FLOOR) {
                 // orient the location as appropriate
                 var newLoc :MsoyLocation = cloc.loc;
-                newLoc.orient = (curLoc.x > newLoc.x ? 180 : 0);
+                var degrees :Number = 180 / Math.PI *
+                    Math.atan2(newLoc.z - curLoc.z, newLoc.x - curLoc.x);
+                // we rotate so that 0 faces forward
+                newLoc.orient = (degrees + 90 + 360) % 360;
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
             }
         }

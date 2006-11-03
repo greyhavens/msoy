@@ -55,7 +55,8 @@ public class MsoyLocation
     public Location getOpposite ()
     {
         MsoyLocation l = (MsoyLocation) clone();
-        l.orient += 180 * ((l.orient < 180) ? 1 : -1);
+        // rotated 180 degrees
+        l.orient = (orient + 180) % 360;
         return l;
     }
 

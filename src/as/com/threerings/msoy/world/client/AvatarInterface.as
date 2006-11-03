@@ -31,16 +31,14 @@ public class AvatarInterface extends MsoyInterface
      */
     public function getOrientation () :Number
     {
-        return Number(query("orient"));
-        // Number(null) == 0, if we're disconnected
+        return parseNumber(query("orient"));
     }
 
     /**
      */
     public function isWalking () :Boolean
     {
-        return Boolean(query("isWalking"));
-        // Boolean(null) == false, if we're disconnected
+        return parseBoolean(query("isWalking"));
     }
 
     /**

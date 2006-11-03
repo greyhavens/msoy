@@ -218,7 +218,7 @@ public class MsoySceneModel extends SceneModel
         model.depth = 400;
         model.width = 800;
         model.horizon = .5f;
-        model.entrance = new MsoyLocation(.5, 0, .5, 0);
+        model.entrance = new MsoyLocation(.5, 0, .5, 180);
         populateBlankMsoySceneModel(model);
         return model;
     }

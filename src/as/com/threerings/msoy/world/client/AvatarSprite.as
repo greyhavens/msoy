@@ -46,8 +46,17 @@ public class AvatarSprite extends MsoySprite
 
         // set up our occupant info
         setOccupantInfo(ctx, occInfo);
+    }
 
-//        sendMessage("setAction", (_move == null) ? "standing" : "walking");
+    /**
+     * Called to set up the avatar's initial location upon entering
+     * a room.
+     */
+    public function setEntering (loc :MsoyLocation) :void
+    {
+        setLocation(loc);
+        setOrientation(loc.orient);
+        stanceDidChange();
     }
 
     /**
@@ -136,10 +145,7 @@ public class AvatarSprite extends MsoySprite
         }
 
         // set the orientation towards the new location
-        var degrees :Number = 180 / Math.PI * 
-            Math.atan2(destLoc.z - loc.z, destLoc.x - loc.x);
-        // we ensure our orientation is always positive, with 0 facing forward
-        setOrientation((degrees + 90 + 360) % 360);
+        setOrientation(destLoc.orient);
 
         _move = new SceneMove(this, scene, this.loc, destLoc);
         _move.play();
@@ -174,10 +180,6 @@ public class AvatarSprite extends MsoySprite
     public function setOrientation (orient :int) :void
     {
         loc.orient = orient;
-        /*
-        var left :Boolean = (orient >= 90 && orient < 270)
-        sendMessage("setFacing", left ? "left" : "right");
-        */
     }
 
     override protected function scaleUpdated () :void
@@ -208,11 +210,6 @@ public class AvatarSprite extends MsoySprite
     override public function moveCompleted (orient :Number) :void
     {
         super.moveCompleted(orient);
-        // TODO: sort out what we really want to do about the orient.
-        // I'm thinking that maybe the server computes it? Maybe players
-        // can control their orientation, much like they control their
-        // location?
-//        setOrientation(int(orient));
 
         _move = null;
 
