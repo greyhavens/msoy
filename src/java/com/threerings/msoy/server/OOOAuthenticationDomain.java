@@ -75,7 +75,9 @@ public class OOOAuthenticationDomain
         throws LogonException, PersistenceException
     {
         OOOAccount oooacc = (OOOAccount)account;
-        switch (_authrep.validateUser(oooacc.record, machIdent, firstLogon)) {
+        int rv = _authrep.validateUser(
+            OOOUser.METASOY_SITE_ID, oooacc.record, machIdent, firstLogon);
+        switch (rv) {
         case OOOUserRepository.ACCOUNT_BANNED:
             throw new LogonException(MsoyAuthCodes.BANNED);
         case OOOUserRepository.NEW_ACCOUNT_TAINTED:
@@ -89,7 +91,7 @@ public class OOOAuthenticationDomain
         throws LogonException, PersistenceException
     {
         OOOAccount oooacc = (OOOAccount)account;
-        if (oooacc.record.isBanned()) {
+        if (oooacc.record.isBanned(OOOUser.METASOY_SITE_ID)) {
             throw new LogonException(MsoyAuthCodes.BANNED);
         }
         // TODO: do we care about other badness like DEADBEAT?
