@@ -11,7 +11,7 @@ public class AvatarInterface extends MsoyInterface
 {
     /**
      * A place where you can attach a function that will get called
-     * should the avatar
+     * should the avatar change.
      */
     public var avatarChanged :Function;
 

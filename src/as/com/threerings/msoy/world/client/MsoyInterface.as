@@ -84,7 +84,8 @@ public class MsoyInterface
         elem :*, dex :int = 0, arr :Array = null) :Number
     {
         // non-numeric or null arguments will coerce to 0
-        return Number(elem);
+        var n :Number = Number(elem);
+        return isNaN(n) ? 0 : n;
     }
 
     /**

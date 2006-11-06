@@ -260,15 +260,11 @@ public class MsoySprite extends MediaContainer
         // the origin
         var xscale :Number = getMediaScaleX();
         var yscale :Number = getMediaScaleY();
-        var xx :Number = (xscale >= 0) ? 0 : Math.abs(_w * xscale);
-        var yy :Number = (yscale >= 0) ? 0 : Math.abs(_h * yscale);
+        _media.x = (xscale >= 0) ? 0 : Math.abs(_w * xscale);
+        _media.y = (yscale >= 0) ? 0 : Math.abs(_h * yscale);
 
         // we may need to be repositioned
-        if (xx != _media.x || yy != _media.y) {
-            _media.x = xx;
-            _media.y = yy;
-            locationUpdated();
-        }
+        locationUpdated();
     }
 
     /** A callback from the move. */

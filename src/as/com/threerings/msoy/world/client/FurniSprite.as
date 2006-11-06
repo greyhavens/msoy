@@ -334,10 +334,16 @@ public class FurniSprite extends MsoySprite
             return; // do not allow movement during editing
         }
         var loc :Array = event.text.split(";");
-        setLocation(loc.map(
-            function (item :*, index :int, array :Array) :Number {
-                return Math.min(1, Math.max(0, Number(item)));
-            }));
+        loc = loc.map(function (item :*, index :int, array :Array) :Number {
+            var n :Number = Number(item);
+            if (isNaN(n)) {
+                return .5;
+            }
+            return Math.min(1, Math.max(0, n));
+        });
+        if (loc.length >= 3) {
+            setLocation(loc);
+        }
     }
 
     override protected function handleInterfaceQuery (event :TextEvent) :void
