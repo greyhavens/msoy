@@ -22,7 +22,7 @@ public class Perspectivizer extends Bitmap
         _source = source;
 
         updatePerspInfo(perspInfo, mediaScaleX, mediaScaleY);
-        addEventListener(Event.ENTER_FRAME, enterFrame);
+        //addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
     public function getSource () :DisplayObject
@@ -40,10 +40,15 @@ public class Perspectivizer extends Bitmap
         var ww :int = Math.round(
             Math.abs(Number(_info[0]) - Number(_info[3])));
         var hh :int = Math.round(
-            Math.max(Number(_info[1]), Number(_info[4])));
+            Math.max(Number(_info[2]), Number(_info[5])));
         trace("persp info gives: " + ww + ", " + hh);
 
         if (ww < 1 || hh < 1) {
+            return;
+
+        } else if (ww > 2880 || hh > 2880) {
+            Log.getLog(this).warning("Bitmap data too large: " +
+                "(" + ww + ", " + hh + ")");
             return;
         }
 
@@ -71,7 +76,7 @@ public class Perspectivizer extends Bitmap
         var hh :int = int(Math.round(_mediaScaleY * (r.height + r.y)));
         //int(_source.height);// + 200;
 
-        trace("source ww/hh : " + ww + ", " + hh);
+        //trace("source ww/hh : " + ww + ", " + hh);
 
         // first, see if our internal bitmapdata needs updating
         if (_sourcePixels == null || (ww != _sourcePixels.width) ||
@@ -96,30 +101,28 @@ public class Perspectivizer extends Bitmap
         _sourcePixels.draw(_source,
             new Matrix(_mediaScaleX, 0, 0, _mediaScaleY), null, null, r);
 
-//
-//        //var sourceWidth :Number = Math.abs(_info[0] - _info[3]);
-//        var startY :Number = _info[1]
-//        var startHeight :Number = _info[2];
-//        var endY :Number = _info[4];
-//        var endHeight :Number = _info[5];
-//
-//        // sample pixels out of _sourcePixels into the bitmap data
-//        for (var xx :int = 0; xx < _destPixels.width; xx++) {
-//            var percX :Number = (xx / _destPixels.width);
-//            var sx :int = int(Math.round(percX * ww));
-//            var heightHere :Number = (percX * endHeight) +
-//                ((1 - percX) * startHeight);
-//            var firstY :Number = (percX * endY) +
-//                ((1 - percX) * startY);
-//            for (var yy :int = 0; yy < heightHere; yy++) {
-//                var dy :int = yy + firstY;
-//                var sy :int = int(Math.round(yy / heightHere * hh)); 
-//
-//                _destPixels.setPixel32(xx, dy, _sourcePixels.getPixel32(sx, sy));
-//            }
-//        }
 
-        bitmapData = _sourcePixels;
+        //var sourceWidth :Number = Math.abs(_info[0] - _info[3]);
+        var startY :Number = _info[1]
+        var startHeight :Number = _info[2];
+        var endY :Number = _info[4];
+        var endHeight :Number = _info[5];
+
+        // sample pixels out of _sourcePixels into the bitmap data
+        for (var xx :int = 0; xx < _destPixels.width; xx++) {
+            var percX :Number = (xx / _destPixels.width);
+            var sx :int = int(Math.round(percX * ww));
+            var heightHere :Number = (percX * endHeight) +
+                ((1 - percX) * startHeight);
+            var firstY :Number = (percX * endY) +
+                ((1 - percX) * startY);
+            for (var yy :int = 0; yy < heightHere; yy++) {
+                var dy :int = yy + firstY;
+                var sy :int = int(Math.round(yy / heightHere * hh)); 
+
+                _destPixels.setPixel32(xx, dy, _sourcePixels.getPixel32(sx, sy));
+            }
+        }
 
 /* Simple scaling
         for (var yy :int = 0; yy < _destPixels.height; yy++) {
