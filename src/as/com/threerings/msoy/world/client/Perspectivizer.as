@@ -102,9 +102,11 @@ public class Perspectivizer extends Bitmap
             new Matrix(_mediaScaleX, 0, 0, _mediaScaleY), null, null, r);
 
 
-        //var sourceWidth :Number = Math.abs(_info[0] - _info[3]);
+//        var sourceWidth :Number = _info[0] - _info[3];
+        var startX :Number = _info[0];
         var startY :Number = _info[1]
         var startHeight :Number = _info[2];
+        var endX :Number = _info[3];
         var endY :Number = _info[4];
         var endHeight :Number = _info[5];
 
@@ -112,6 +114,7 @@ public class Perspectivizer extends Bitmap
         for (var xx :int = 0; xx < _destPixels.width; xx++) {
             var percX :Number = (xx / _destPixels.width);
             var sx :int = int(Math.round(percX * ww));
+            var dx :int = int(Math.round(percX * endX + (1 - percX) * startX));
             var heightHere :Number = (percX * endHeight) +
                 ((1 - percX) * startHeight);
             var firstY :Number = (percX * endY) +
@@ -120,7 +123,7 @@ public class Perspectivizer extends Bitmap
                 var dy :int = yy + firstY;
                 var sy :int = int(Math.round(yy / heightHere * hh)); 
 
-                _destPixels.setPixel32(xx, dy, _sourcePixels.getPixel32(sx, sy));
+                _destPixels.setPixel32(dx, dy, _sourcePixels.getPixel32(sx, sy));
             }
         }
 

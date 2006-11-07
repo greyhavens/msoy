@@ -153,7 +153,7 @@ public class AbstractRoomView extends Canvas
      */
     protected function configureScrollRect () :void
     {
-        if (_scene.getWidth() > width) {
+        if (_editing || _scene.getWidth() > width) {
             scrollRect = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
         } else {
             scrollRect = null;
@@ -373,65 +373,52 @@ public class AbstractRoomView extends Canvas
     {
         trace("Querying perspInfo (" + contentWidth + ", " + contentHeight +
             ")");
+
+        // TODO: redo, not with "far" and "near" but rather with
+        // x0, xN, focal0, focalN, etc.
+
+
         var sceneWidth :Number = _scene.getWidth();
         var hotSpot :Point = sprite.hotSpot;
         var minScale :Number = computeMinScale();
 
         // the scale of the object is determined by the z coordinate
         var farFocal :Number = FOCAL + (_scene.getDepth() * loc.z) + hotSpot.x;
-
         var farScale :Number = FOCAL / farFocal;
         var nearScale :Number = FOCAL / (farFocal - contentWidth);
 
-//        trace("Scales: " + farScale + "   " + nearScale);
-
-/*
-        var floorWidth :Number = (sceneWidth * scale);
-        var floorInset :Number = (sceneWidth - floorWidth) / 2;
-        sprite.x = floorInset - (scale * hotSpot.x) +
-            (loc.x / MAX_COORD) * floorWidth;
-*/
+        var scale0 :Number = (loc.x < .5) ? nearScale : farScale;
+        var scaleN :Number = (loc.x < .5) ? farScale : nearScale;
 
         // x position depends on logical x and the scale
-        var farFloorWidth :Number = (sceneWidth * farScale);
-        var farFloorInset :Number = (sceneWidth - farFloorWidth) / 2;
-        var farX :Number = farFloorInset + (loc.x * farFloorWidth);
+        var floorWidth0 :Number = (sceneWidth * scale0);
+        var floorInset0 :Number = (sceneWidth - floorWidth0) / 2;
+        var x0 :Number = floorInset0 + (loc.x * floorWidth0);
 
-        var nearFloorWidth :Number = (sceneWidth * nearScale);
-        var nearFloorInset :Number = (sceneWidth - nearFloorWidth) / 2;
-        var nearX :Number = nearFloorInset + (loc.x * nearFloorWidth);
+        var floorWidthN :Number = (sceneWidth * scaleN);
+        var floorInsetN :Number = (sceneWidth - floorWidthN) / 2;
+        var xN :Number = floorInsetN + (loc.x * floorWidthN);
 
         // y position depends on logical y and the scale (z)
         var horizon :Number = 1 - _scene.getHorizon();
         var horizonY :Number = TARGET_HEIGHT * horizon;
 
-        var farY :Number = (horizonY + (TARGET_HEIGHT - horizonY) * farScale) -
-            (loc.y * TARGET_HEIGHT * farScale);
-        var nearY :Number = (horizonY + (TARGET_HEIGHT - horizonY) * nearScale) -
-            (loc.y * TARGET_HEIGHT * nearScale);
+        var y0 :Number = (horizonY + (TARGET_HEIGHT - horizonY) * scale0) -
+            (loc.y * TARGET_HEIGHT * scale0);
+        var yN :Number = (horizonY + (TARGET_HEIGHT - horizonY) * scaleN) -
+            (loc.y * TARGET_HEIGHT * scaleN);
 
-/*
-        sprite.y = (horizonY + (TARGET_HEIGHT - horizonY) * scale) -
-            (scale * hotSpot.y) - 
-            (loc.y / MAX_COORD) * (TARGET_HEIGHT * scale);
-*/
+        var height0 :Number = contentHeight * scale0;
+        var heightN :Number = contentHeight * scaleN;
 
-        var farHeight :Number = contentHeight * farScale;
-        var nearHeight :Number = contentHeight * nearScale;
+        var minX :Number = Math.min(x0, xN);
+        var minY :Number = Math.min(y0, yN);
+        x0 -= minX;
+        xN -= minX;
+        y0 -= minY;
+        yN -= minY;
 
-        var minX :Number = Math.min(farX, nearX);
-        var minY :Number = Math.min(farY, nearY);
-        farX -= minX;
-        nearX -= minX;
-        farY -= minY;
-        nearY -= minY;
-
-//        trace("(" + farX + ", " + farY + "):" + farHeight +
-//            "  -  (" + nearX + ", " + nearY + "):" + nearHeight);
-
-        return [ farX, farY, farHeight, nearX, nearY, nearHeight ];
-        //return [ [ farX, farY ], [farX, farY + farHeight],
-        //         [ nearX, nearY + nearHeight], [nearX, nearY] ];
+        return [ x0, y0, height0, xN, yN, heightN ];
     }
 
     /**
