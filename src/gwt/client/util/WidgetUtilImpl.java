@@ -17,7 +17,8 @@ public class WidgetUtilImpl
         String ident, String movie, String width, String height,
         String flashVars)
     {
-        String params = "<param name=\"movie\" value=\"" + movie + "\">";
+        String params = "<param name=\"movie\" value=\"" + movie + "\">" +
+            "<param name=\"allowFullScreen\" value=\"true\">";
         if (flashVars != null) {
             params += "<param name=\"FlashVars\" value=\"" + flashVars + "\">";
         }

@@ -86,7 +86,6 @@ public class RoomController extends SceneController
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
         _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-        _roomView.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheeled);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
     }
@@ -97,8 +96,6 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
         _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-        _roomView.stage.removeEventListener(MouseEvent.MOUSE_WHEEL,
-            mouseWheeled);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
@@ -228,7 +225,8 @@ public class RoomController extends SceneController
             menuItems.push(createMenuItem(EDIT_SCENE, null, true));
         }
 
-        menuItems.push(createMenuItem(TEMP_CLEAR_SCENE_CACHE, null, true));
+        menuItems.push(MenuUtil.createControllerMenuItem(
+            "temp: clear scene cache", TEMP_CLEAR_SCENE_CACHE, null, true));
     }
 
     /**
@@ -301,22 +299,29 @@ public class RoomController extends SceneController
         }
     }
 
-    protected function mouseWheeled (event :MouseEvent) :void
-    {
-        _roomView.scrollViewBy(20 * event.delta); // TODO
-    }
-
     protected function keyEvent (event :KeyboardEvent) :void
     {
         var keyDown :Boolean = event.type == KeyboardEvent.KEY_DOWN;
         switch (event.keyCode) {
-        case Keyboard.SHIFT:
+        case Keyboard.F4:
             _roomView.dimAvatars(keyDown);
             return;
 
-        case Keyboard.CONTROL:
+        case Keyboard.F5:
             _roomView.dimFurni(keyDown);
             return;
+        }
+
+        if (keyDown) {
+            switch (event.charCode) {
+            case 91: // '['
+                _roomView.scrollViewBy(-ROOM_SCROLL_INCREMENT);
+                break;
+
+            case 93: // ']'
+                _roomView.scrollViewBy(ROOM_SCROLL_INCREMENT);
+                break;
+            }
         }
 
         if (keyDown) {
@@ -360,5 +365,8 @@ public class RoomController extends SceneController
 
     /** Are we editing the current scene? */
     protected var _editor :EditorController;
+
+    /** The number of pixels we scroll the room on a keypress. */
+    protected static const ROOM_SCROLL_INCREMENT :int = 20;
 }
 }

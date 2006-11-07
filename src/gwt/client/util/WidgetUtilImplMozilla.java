@@ -27,7 +27,7 @@ public class WidgetUtilImplMozilla extends WidgetUtilImpl
             "pluginspage=\"http://www.macromedia.com/go/getflashplayer\" " +
             "width=\"" + width + "\" height=\"" + height + "\" " +
             "src=\"" + movie + "\" allowScriptAccess=\"sameDomain\" " +
-            params + "/>");
+            "allowFullScreen=\"true\" " + params + "/>");
     }
 
     /**

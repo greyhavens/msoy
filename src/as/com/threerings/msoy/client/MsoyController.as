@@ -65,6 +65,9 @@ public class MsoyController extends Controller
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
 
+    /** Command to view the app in full-screen mode. */
+    public static const TOGGLE_FULLSCREEN :String = "ToggleFullscreen";
+
     /**
      * Create the msoy controller.
      */
@@ -181,6 +184,31 @@ public class MsoyController extends Controller
         var menu :CommandMenu =
             CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
         menu.popUp(trigger);
+    }
+
+    /**
+     * @return true if this player appears to support full-screen mode.
+     */
+    public function supportsFullScreen () :Boolean
+    {
+        // TODO: this too could be cleaned up. See note in handleToggleFullscreen
+        var o :Object = _ctx.getRootPanel().stage;
+        try {
+            return (undefined !== o.displayState);
+        } catch (e :Error) {
+        }
+        return false;
+    }
+
+    /**
+     * Handle the TOGGLE_FULLSCREEN command.
+     */
+    public function handleToggleFullscreen () :void
+    {
+        // TODO: once things are more up to date, we can use the real
+        // class and StageDisplayState for the constants
+        var o :Object = _ctx.getRootPanel().stage;
+        o.displayState = (o.displayState == "normal") ? "fullScreen" : "normal";
     }
 
     /**

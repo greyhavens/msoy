@@ -4,6 +4,8 @@ import flash.display.Shape;
 
 import flash.events.Event;
 
+import flash.system.Capabilities;
+
 import mx.core.Application;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
@@ -64,11 +66,12 @@ public class TopPanel extends Canvas
             _buildStamp.includeInLayout = false;
             _buildStamp.mouseEnabled = false;
             _buildStamp.mouseChildren = false;
-            _buildStamp.text = "Build: " + DeploymentConfig.buildTime;
+            _buildStamp.text = "Build: " + DeploymentConfig.buildTime + "  " +
+                Capabilities.version;
             _buildStamp.setStyle("color", "#F7069A");
             _buildStamp.setStyle("fontSize", 12);
             _buildStamp.setStyle("fontWeight", "bold");
-            _buildStamp.setStyle("bottom", 0);
+            _buildStamp.setStyle("bottom", -1);
             addChild(_buildStamp);
         }
 

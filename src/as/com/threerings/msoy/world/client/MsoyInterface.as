@@ -95,10 +95,8 @@ public class MsoyInterface
     protected function parseBoolean (
         elem :*, dex :int = 0, arr :Array = null) :Boolean
     {
-        // we have to treat strings specially, but all other objects coerce
-        // to Boolean if non-null
-        return (elem is String) ? ("true" === elem.toLowerCase())
-                                : Boolean(elem);
+        return ((elem is String) && ("true" === String(elem).toLowerCase())) ||
+            ((elem is Boolean) && Boolean(elem));
     }
 
     /** The event dispatcher used to communicate with metasoy. */

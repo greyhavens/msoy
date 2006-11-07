@@ -15,6 +15,7 @@ import mx.core.Application;
 
 import mx.resources.ResourceBundle;
 
+import com.threerings.util.MenuUtil;
 import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
@@ -171,6 +172,11 @@ public class MsoyClient extends Client
         var menu :ContextMenu = (event.target as ContextMenu);
         var custom :Array = menu.customItems;
         custom.length = 0;
+
+        custom.push(MenuUtil.createControllerMenuItem(
+            Msgs.GENERAL.get("b.toggle_fullscreen"),
+            MsoyController.TOGGLE_FULLSCREEN, null, false,
+            _ctx.getMsoyController().supportsFullScreen()));
 
         do {
             if (disp is ContextMenuProvider) {
