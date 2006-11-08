@@ -10,7 +10,6 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.MailService;
-import com.threerings.msoy.web.data.MailBodyObject;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
@@ -34,14 +33,12 @@ public class MailServlet extends RemoteServiceServlet
     }
 
     // from MailService
-    public void deliverMessage (WebCreds creds, int recipientId, String subject, String text,
-                                MailBodyObject object)
+    public void deliverMessage (WebCreds creds, int recipientId, String subject, String text)
         throws ServiceException
     {
         ServletWaiter<Void> waiter = new ServletWaiter<Void>(
                 "deliverMessage[" + recipientId + ", " + subject + ", " + text + "]");
-        MsoyServer.mailMan.deliverMessage(
-            creds.memberId, recipientId, subject, text, object, waiter);
+        MsoyServer.mailMan.deliverMessage(creds.memberId, recipientId, subject, text, waiter);
         waiter.waitForResult();
     }
 
