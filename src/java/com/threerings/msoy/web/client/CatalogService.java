@@ -34,6 +34,6 @@ public interface CatalogService extends RemoteService
     /**
      * Fetches the N most-used tags for a given item type.
      */
-    public Map getPopularTags(WebCreds creds, byte type, int rows)
+    public Map getPopularTags (WebCreds creds, byte type, int rows)
         throws ServiceException;
 } 
