@@ -189,7 +189,7 @@ public class MsoySceneRepository extends SimpleRepository
         }
 
         // TEMP: removable after all servers are past the date specified...
-        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061023",
+        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061107",
             new TransitionRepository.Transition() {
                 public void run ()
                     throws PersistenceException
@@ -211,6 +211,12 @@ public class MsoySceneRepository extends SimpleRepository
                 }
             });
         // END: temp
+
+        // TEMP: can be removed after all servers past 2006-10-23
+        if (!JDBCUtil.tableContainsColumn(conn, "FURNI", "LAYOUT_INFO")) {
+            JDBCUtil.addColumn(conn, "FURNI", "LAYOUT_INFO",
+                "tinyint not null", "Z");
+        }
     }
 
     /**
@@ -399,7 +405,7 @@ public class MsoySceneRepository extends SimpleRepository
                     // Load: furni
                     rs = stmt.executeQuery("select " +
                         "FURNI_ID, ITEM_TYPE, ITEM_ID, " +
-                        "MEDIA_HASH, MEDIA_TYPE, X, Y, Z, " +
+                        "MEDIA_HASH, MEDIA_TYPE, X, Y, Z, LAYOUT_INFO, " +
                         "SCALE_X, SCALE_Y, ACTION_TYPE, ACTION_DATA " +
                         "from FURNI where SCENE_ID=" + sceneId);
                     ArrayList<FurniData> flist = new ArrayList<FurniData>();
@@ -412,10 +418,11 @@ public class MsoySceneRepository extends SimpleRepository
                             rs.getBytes(4), rs.getByte(5));
                         furni.loc = new MsoyLocation(
                             rs.getFloat(6), rs.getFloat(7), rs.getFloat(8), 0);
-                        furni.scaleX = rs.getFloat(9);
-                        furni.scaleY = rs.getFloat(10);
-                        furni.actionType = rs.getByte(11);
-                        furni.actionData = rs.getString(12);
+                        furni.layoutInfo = rs.getByte(9);
+                        furni.scaleX = rs.getFloat(10);
+                        furni.scaleY = rs.getFloat(11);
+                        furni.actionType = rs.getByte(12);
+                        furni.actionData = rs.getString(13);
                         flist.add(furni);
                     }
                     model.furnis = new FurniData[flist.size()];
@@ -571,9 +578,9 @@ public class MsoySceneRepository extends SimpleRepository
     {
         PreparedStatement stmt = conn.prepareStatement("insert into FURNI " +
             "(SCENE_ID, FURNI_ID, ITEM_TYPE, ITEM_ID, " +
-            " MEDIA_HASH, MEDIA_TYPE, X, Y, Z, " +
+            " MEDIA_HASH, MEDIA_TYPE, X, Y, Z, LAYOUT_INFO, " +
             " SCALE_X, SCALE_Y, ACTION_TYPE, ACTION_DATA) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setInt(1, sceneId);
 
@@ -586,10 +593,11 @@ public class MsoySceneRepository extends SimpleRepository
                 stmt.setFloat(7, f.loc.x);
                 stmt.setFloat(8, f.loc.y);
                 stmt.setFloat(9, f.loc.z);
-                stmt.setFloat(10, f.scaleX);
-                stmt.setFloat(11, f.scaleY);
-                stmt.setByte(12, f.actionType);
-                stmt.setString(13, f.actionData);
+                stmt.setByte(10, f.layoutInfo);
+                stmt.setFloat(11, f.scaleX);
+                stmt.setFloat(12, f.scaleY);
+                stmt.setByte(13, f.actionType);
+                stmt.setString(14, f.actionData);
                 JDBCUtil.checkedUpdate(stmt, 1);
             }
         } finally {
@@ -745,6 +753,7 @@ public class MsoySceneRepository extends SimpleRepository
             "X float not null",
             "Y float not null",
             "Z float not null",
+            "LAYOUT_INFO tinyint not null",
             "SCALE_X float not null",
             "SCALE_Y float not null",
             "ACTION_TYPE tinyint not null",

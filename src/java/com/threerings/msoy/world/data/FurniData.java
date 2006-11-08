@@ -52,6 +52,9 @@ public class FurniData extends SimpleStreamableObject
     /** The location in the scene. */
     public MsoyLocation loc;
 
+    /** Layout information, used for perspectivization, etc. */
+    public byte layoutInfo;
+
     /** A scale factor in the X direction. */
     public float scaleX = 1f;
 

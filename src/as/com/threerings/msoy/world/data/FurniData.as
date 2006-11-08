@@ -48,6 +48,9 @@ public class FurniData
     /** Info about the media that represents this piece of furni. */
     public var media :MediaDesc;
 
+    /** Layout information, used for perspectivization, etc. */
+    public var layoutInfo :int;
+
     /** The location in the scene. */
     public var loc :MsoyLocation;
 
@@ -78,6 +81,27 @@ public class FurniData
         }
         return [ actionData.substring(0, colonDex),
             actionData.substring(colonDex + 1) ];
+    }
+
+    /**
+     * Sets whether this furniture is in 'perspective' mode.
+     * TODO: support floor/ceiling perspectivization
+     */
+    public function setPerspective (perspective :Boolean) :void
+    {
+        if (perspective) {
+            layoutInfo &= ~1;
+        } else {
+            layoutInfo |= 1;
+        }
+    }
+
+    /**
+     * Is this furniture being perspectivized?
+     */
+    public function isPerspective () :Boolean
+    {
+        return (layoutInfo & 1) != 0;
     }
 
     // documentation inherited from superinterface Equalable
@@ -149,6 +173,7 @@ public class FurniData
         out.writeInt(itemId);
         out.writeObject(media);
         out.writeObject(loc);
+        out.writeByte(layoutInfo);
         out.writeFloat(scaleX);
         out.writeFloat(scaleY);
         out.writeByte(actionType);
@@ -163,6 +188,7 @@ public class FurniData
         itemId = ins.readInt();
         media = (ins.readObject() as MediaDesc);
         loc = (ins.readObject() as MsoyLocation);
+        layoutInfo = ins.readByte();
         scaleX = ins.readFloat();
         scaleY = ins.readFloat();
         actionType = ins.readByte();
