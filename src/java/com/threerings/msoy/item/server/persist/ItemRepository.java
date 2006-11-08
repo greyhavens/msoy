@@ -22,10 +22,11 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.Query;
-import com.samskivert.jdbc.depot.clause.FieldOverrideClause;
-import com.samskivert.jdbc.depot.clause.JoinClause;
-import com.samskivert.jdbc.depot.clause.OrderByClause;
-import com.samskivert.jdbc.depot.expression.ColumnExpression;
+import com.samskivert.jdbc.depot.clause.FieldOverride;
+import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.OrderBy;
+import com.samskivert.jdbc.depot.clause.QueryClause;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.web.TagHistory;
 
 /**
@@ -92,7 +93,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         throws PersistenceException
     {
         return findAll(getItemClass(), new Key(ItemRecord.OWNER_ID, ownerId),
-                       new OrderByClause(new ColumnExpression(ItemRecord.RATING)));
+                       new OrderBy(new ColumnExp(ItemRecord.RATING)));
     }
 
     /**
@@ -101,22 +102,23 @@ public abstract class ItemRepository<T extends ItemRecord>
     public Collection<T> loadClonedItems (int ownerId)
         throws PersistenceException
     {
-        ColumnExpression cloneOwner =
-            new ColumnExpression(getCloneClass(), CloneRecord.OWNER_ID);
+        ColumnExp cloneOwner =
+            new ColumnExp(getCloneClass(), CloneRecord.OWNER_ID);
         return findAll(
             getItemClass(),
             new Key(cloneOwner, ownerId),
-            new JoinClause(
+            new Join(
+                getItemClass(),
                 ItemRecord.ITEM_ID,
                 getCloneClass(),
                 CloneRecord.ORIGINAL_ITEM_ID),
-            new FieldOverrideClause(
+            new FieldOverride(
                 ItemRecord.ITEM_ID,
-                new ColumnExpression(getCloneClass(), CloneRecord.ITEM_ID)),
-            new FieldOverrideClause(
+                new ColumnExp(getCloneClass(), CloneRecord.ITEM_ID)),
+            new FieldOverride(
                 ItemRecord.PARENT_ID,
-                new ColumnExpression(getItemClass(), ItemRecord.ITEM_ID)),
-            new FieldOverrideClause(ItemRecord.OWNER_ID, cloneOwner));
+                new ColumnExp(getItemClass(), ItemRecord.ITEM_ID)),
+            new FieldOverride(ItemRecord.OWNER_ID, cloneOwner));
     }
 
     /**
@@ -294,7 +296,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         // then calculate the new average rating for this item from scratch
         final String ratingTable =
             _ctx.getMarshaller(getRatingClass()).getTableName();
-        float newRating = _ctx.invoke(new Query<Float>(_ctx, getRatingClass(), null) {
+        float newRating = _ctx.invoke(new Query<Float>(_ctx, getRatingClass(), (QueryClause) null) {
             public Float invoke (Connection conn) throws SQLException {
                 PreparedStatement stmt = null;
                 try {
@@ -345,7 +347,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             "    limit " + rows;
 
         return _ctx.invoke(
-            new Query<List<Tuple<TagNameRecord, Integer>>>(_ctx, null, null) {
+            new Query<List<Tuple<TagNameRecord, Integer>>>(_ctx, null, (QueryClause) null) {
                 public List<Tuple<TagNameRecord, Integer>> invoke (
                     Connection conn) throws SQLException {
                     PreparedStatement stmt = conn.prepareStatement(query);
@@ -376,7 +378,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         return findAll(TagNameRecord.class,
                        new Key(TagRecord.ITEM_ID, itemId),
-                       new JoinClause(
+                       new Join(
+                           TagNameRecord.class,
                            TagNameRecord.TAG_ID,
                            getTagClass(),
                            TagRecord.TAG_ID));
