@@ -15,13 +15,15 @@ import flash.geom.Rectangle;
 public class Perspectivizer extends Bitmap
 {
     public function Perspectivizer (
-        source :DisplayObject,
-        perspInfo :Array, mediaScaleX :Number, mediaScaleY :Number)
+        source :DisplayObject, perspInfo :Array = null,
+        mediaScaleX :Number = 1, mediaScaleY :Number = 1)
     {
         super();
         _source = source;
 
-        updatePerspInfo(perspInfo, mediaScaleX, mediaScaleY);
+        if (perspInfo != null) {
+            updatePerspInfo(perspInfo, mediaScaleX, mediaScaleY);
+        }
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 

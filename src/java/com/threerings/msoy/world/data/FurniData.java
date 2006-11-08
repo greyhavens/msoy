@@ -109,6 +109,7 @@ public class FurniData extends SimpleStreamableObject
             (this.itemId == that.itemId) &&
             this.media.equals(that.media) &&
             this.loc.equals(that.loc) &&
+            (this.layoutInfo == that.layoutInfo) &&
             (this.scaleX == that.scaleX) &&
             (this.scaleY == that.scaleY) &&
             (this.actionType == that.actionType) &&

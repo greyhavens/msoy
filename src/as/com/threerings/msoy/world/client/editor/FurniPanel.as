@@ -135,18 +135,18 @@ public class FurniPanel extends SpritePanel
 
         // BEGIN temporary controls
         var lbl :Label;
-        if (DeploymentConfig.serverHost == "tasman.sea.earth.threerings.net") {
-            var btn :Button = new Button();
-            btn.label = "perspective?";
-            btn.addEventListener(MouseEvent.CLICK,
-                function (evt :MouseEvent) :void {
-                    (_sprite as FurniSprite).addPersp();
-                });
-            addRow(
-                lbl = MsoyUI.createLabel("testing:"),
-                btn);
-            lbl.setStyle("color", 0xFF0000);
-        }
+        var btn :Button = new Button();
+        btn.label = "perspective?";
+        btn.addEventListener(MouseEvent.CLICK,
+            function (evt :MouseEvent) :void {
+                var furn :FurniSprite = FurniSprite(_sprite);
+                furn.togglePerspective();
+                spritePropsUpdated();
+            });
+        addRow(
+            lbl = MsoyUI.createLabel("testing:"),
+            btn);
+        lbl.setStyle("color", 0xFF0000);
 
         // add an "expert control" for directly editing the action
         addRow(

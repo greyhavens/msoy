@@ -36,7 +36,8 @@ public class FurniSprite extends MsoySprite
     {
         _furni = furni;
         super(furni.media);
-        includeInLayout = !isBackground();
+        checkBackground();
+        checkPerspective();
 
         configureToolTip(ctx);
     }
@@ -51,11 +52,24 @@ public class FurniSprite extends MsoySprite
         return (_furni.actionType == FurniData.BACKGROUND);
     }
 
+    public function isPerspectivized () :Boolean
+    {
+        return _furni.isPerspective();
+    }
+
+    public function togglePerspective () :void
+    {
+        _furni.setPerspective(!isPerspectivized());
+        checkPerspective();
+        scaleUpdated();
+    }
+
     public function update (ctx :MsoyContext, furni :FurniData) :void
     {
         _furni = furni;
         setup(furni.media);
         checkBackground();
+        checkPerspective();
         scaleUpdated();
         setLocation(furni.loc);
         configureToolTip(ctx);
@@ -80,8 +94,17 @@ public class FurniSprite extends MsoySprite
         sendMessage("action", entering ? "bodyEntered" : "bodyLeft");
     }
 
-    public function addPersp () :void
+    protected function checkPerspective () :void 
     {
+        if (_media == null) {
+            return;
+        }
+        var wasPersp :Boolean = (_media is Perspectivizer);
+        if (wasPersp == isPerspectivized()) {
+            return;
+        }
+
+        // remove any old component
         if (_media is UIComponent) {
             removeChild(_media);
         } else {
@@ -89,18 +112,24 @@ public class FurniSprite extends MsoySprite
         }
 
         var newMedia :DisplayObject;
-        if (_media is Perspectivizer) {
+        if (wasPersp) {
             newMedia = Perspectivizer(_media).getSource();
 
         } else {
             var m :DisplayObject = _media;
-            if (m is Loader) {
-                m = Loader(m).content;
-            }
+// TODO: not sure if this is needed, but when we first load the loader's content
+// could be null.
+//            if (m is Loader) {
+//                m = Loader(m).content;
+//            }
 
-            newMedia = new Perspectivizer(m,
-                AbstractRoomView(parent).getPerspInfo(this, _w, _h, loc),
-                getMediaScaleX(), getMediaScaleY());
+            newMedia = new Perspectivizer(m);
+
+            if (parent is AbstractRoomView) {
+                Perspectivizer(newMedia).updatePerspInfo(
+                    AbstractRoomView(parent).getPerspInfo(this, _w, _h, loc),
+                    getMediaScaleX(), getMediaScaleY());
+            }
         }
 
         _media = newMedia;
@@ -109,8 +138,6 @@ public class FurniSprite extends MsoySprite
         } else {
             rawChildren.addChild(_media);
         }
-
-        scaleUpdated();
     }
 
     override public function getLayoutHotSpot () :Point
@@ -129,16 +156,16 @@ public class FurniSprite extends MsoySprite
     override protected function locationUpdated () :void
     {
         super.locationUpdated();
-        checkPerspective();
+        updatePerspective();
     }
 
     override protected function scaleUpdated () :void
     {
         super.scaleUpdated();
-        checkPerspective();
+        updatePerspective();
     }
 
-    protected function checkPerspective () :void
+    protected function updatePerspective () :void
     {
         if (!(_media is Perspectivizer) || !(parent is AbstractRoomView)) {
             return;

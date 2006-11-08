@@ -90,9 +90,9 @@ public class FurniData
     public function setPerspective (perspective :Boolean) :void
     {
         if (perspective) {
-            layoutInfo &= ~1;
-        } else {
             layoutInfo |= 1;
+        } else {
+            layoutInfo &= ~1;
         }
     }
 
@@ -127,6 +127,7 @@ public class FurniData
             (this.itemId == that.itemId) &&
             this.media.equals(that.media) &&
             this.loc.equals(that.loc) &&
+            (this.layoutInfo == that.layoutInfo) &&
             (this.scaleX == that.scaleX) &&
             (this.scaleY == that.scaleY) &&
             (this.actionType == that.actionType) &&
@@ -158,6 +159,7 @@ public class FurniData
         that.itemId = this.itemId;
         that.media = this.media;
         that.loc = this.loc;
+        that.layoutInfo = this.layoutInfo;
         that.scaleX = this.scaleX;
         that.scaleY = this.scaleY;
         that.actionType = this.actionType;
