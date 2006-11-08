@@ -22,7 +22,7 @@ public class Perspectivizer extends Bitmap
         _source = source;
 
         updatePerspInfo(perspInfo, mediaScaleX, mediaScaleY);
-        //addEventListener(Event.ENTER_FRAME, enterFrame);
+        addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
     public function getSource () :DisplayObject
