@@ -12,6 +12,8 @@ import flash.events.TextEvent;
 import flash.filters.DisplacementMapFilter;
 import flash.filters.DisplacementMapFilterMode;
 
+import flash.geom.Point;
+
 import mx.core.UIComponent;
 
 import com.threerings.util.MenuUtil;
@@ -111,6 +113,19 @@ public class FurniSprite extends MsoySprite
         scaleUpdated();
     }
 
+    override public function getLayoutHotSpot () :Point
+    {
+        if (_media is Perspectivizer) {
+            // when we're perspectivizing, we have a totally different
+            // geometry. We need to return a point to our transformed hotspot
+            // TODO
+            return new Point(0, 0);
+
+        } else {
+            return super.getLayoutHotSpot();
+        }
+    }
+
     override protected function locationUpdated () :void
     {
         super.locationUpdated();
@@ -129,19 +144,28 @@ public class FurniSprite extends MsoySprite
             return;
         }
 
-        var arr :Array =
+        var info :Array =
             AbstractRoomView(parent).getPerspInfo(this, _w, _h, loc);
         Perspectivizer(_media).updatePerspInfo(
-            arr, getMediaScaleX(), getMediaScaleY());
+            info, getMediaScaleX(), getMediaScaleY());
 
-//        var sub :Array = (arr[arr.length - 1] as Array);
+//        // draw an outline of the perspectivized region
+//        var x0 :Number = info[0];
+//        var y0 :Number = info[1];
+//        var height0 :Number = info[2];
+//        var xN :Number = info[3];
+//        var yN :Number = info[4];
+//        var heightN :Number = info[5];
 //
 //        graphics.clear();
-//        graphics.lineStyle(1, 0xFF0000);
-//        graphics.moveTo(Number(sub[0]), Number(sub[1]));
-//        for each (sub in arr) {
-//            graphics.lineTo(Number(sub[0]), Number(sub[1]));
-//        }
+//        graphics.lineStyle(1, 0x00FF00);
+//        graphics.moveTo(x0, y0);
+//        graphics.lineTo(x0, y0 + height0);
+//        graphics.lineStyle(1, 0x0000FF);
+//        graphics.lineTo(xN, yN + heightN);
+//        graphics.lineStyle(1, 0x00FF00);
+//        graphics.lineTo(xN, yN);
+//        graphics.lineTo(x0, y0);
     }
 
 //    {

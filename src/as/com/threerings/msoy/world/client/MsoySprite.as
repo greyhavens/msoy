@@ -190,7 +190,10 @@ public class MsoySprite extends MediaContainer
         }
     }
 
-    public function get hotSpot () :Point
+    /**
+     * Get the basic hotspot that is the registration point on the media.
+     */
+    public function getMediaHotSpot () :Point
     {
         // TODO: figure out where we're going to store hotspot info
         var p :Point = null; // TODO _desc.hotSpot;
@@ -203,6 +206,14 @@ public class MsoySprite extends MediaContainer
                 Math.abs(p.y * getMediaScaleY()));
         }
         return p;
+    }
+
+    /**
+     * Get the hotspot to use for layout purposes.
+     */
+    public function getLayoutHotSpot () :Point
+    {
+        return getMediaHotSpot();
     }
 
     /**

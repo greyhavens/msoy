@@ -342,7 +342,7 @@ public class AbstractRoomView extends Canvas
             sprite :MsoySprite, loc :MsoyLocation) :void
     {
         var sceneWidth :Number = _scene.getWidth();
-        var hotSpot :Point = sprite.hotSpot;
+        var hotSpot :Point = sprite.getLayoutHotSpot();
         var minScale :Number = computeMinScale();
         // the scale of the object is determined by the z coordinate
         var scale :Number = minScale +
@@ -371,21 +371,18 @@ public class AbstractRoomView extends Canvas
         sprite :MsoySprite, contentWidth :int, contentHeight :int,
         loc :MsoyLocation) :Array
     {
-        trace("Querying perspInfo (" + contentWidth + ", " + contentHeight +
-            ")");
-
-        // TODO: redo, not with "far" and "near" but rather with
-        // x0, xN, focal0, focalN, etc.
-
-
         var sceneWidth :Number = _scene.getWidth();
-        var hotSpot :Point = sprite.hotSpot;
+        var hotSpot :Point = sprite.getMediaHotSpot();
+        var mediaScaleX :Number = sprite.getMediaScaleX();
+        var mediaScaleY :Number = sprite.getMediaScaleY();
         var minScale :Number = computeMinScale();
 
         // the scale of the object is determined by the z coordinate
-        var farFocal :Number = FOCAL + (_scene.getDepth() * loc.z) + hotSpot.x;
+        var farFocal :Number = FOCAL + (_scene.getDepth() * loc.z) +
+            (hotSpot.x * mediaScaleX);
         var farScale :Number = FOCAL / farFocal;
-        var nearScale :Number = FOCAL / (farFocal - contentWidth);
+        var nearScale :Number = FOCAL /
+            (farFocal - (contentWidth * mediaScaleX));
 
         var scale0 :Number = (loc.x < .5) ? nearScale : farScale;
         var scaleN :Number = (loc.x < .5) ? farScale : nearScale;
@@ -408,8 +405,8 @@ public class AbstractRoomView extends Canvas
         var yN :Number = (horizonY + (TARGET_HEIGHT - horizonY) * scaleN) -
             (loc.y * TARGET_HEIGHT * scaleN);
 
-        var height0 :Number = contentHeight * scale0;
-        var heightN :Number = contentHeight * scaleN;
+        var height0 :Number = contentHeight * scale0 * mediaScaleY;
+        var heightN :Number = contentHeight * scaleN * mediaScaleY;
 
         var minX :Number = Math.min(x0, xN);
         var minY :Number = Math.min(y0, yN);

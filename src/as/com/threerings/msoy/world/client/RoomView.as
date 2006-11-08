@@ -242,7 +242,7 @@ public class RoomView extends AbstractRoomView
             return;
         }
 
-        var centerX :int = _centerSprite.x + _centerSprite.hotSpot.x;
+        var centerX :int = _centerSprite.x + _centerSprite.getLayoutHotSpot().x;
         var newX :Number = Math.min(_scene.getWidth() - rect.width,
             Math.max(0, centerX - rect.width/2));
         if (_jumpScroll) {

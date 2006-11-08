@@ -578,7 +578,8 @@ public class EditorController extends Controller
         _wasCentering = _centering;
         setCentering(false);
 
-        var hs :Point = _editSprite.localToGlobal(_editSprite.hotSpot);
+        var hs :Point = _editSprite.localToGlobal(
+            _editSprite.getLayoutHotSpot());
 
 //        // determine whether we're going to adjust scaling or position
 //        var w :Number = _editSprite.contentWidth;
@@ -703,7 +704,7 @@ public class EditorController extends Controller
 
         var p :Point = _editSprite.globalToLocal(
             new Point(event.stageX, event.stageY));
-        var hs :Point = _editSprite.hotSpot;
+        var hs :Point = _editSprite.getLayoutHotSpot();
 
         if (_scalingX) {
             var ox :Number = _editSprite.getMediaScaleX();
@@ -820,7 +821,7 @@ public class EditorController extends Controller
         var wo :Number = SCALE_TARGET_LENGTHS / sprite.scaleX;
         var ho :Number = SCALE_TARGET_LENGTHS / sprite.scaleY;
         var g :Graphics = sprite.graphics;
-        var hs :Point = sprite.hotSpot;
+        var hs :Point = sprite.getLayoutHotSpot();
 
         g.clear();
         for (var ii :int = 0; ii < 2; ii++) {

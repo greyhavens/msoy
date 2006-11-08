@@ -37,11 +37,11 @@ public class Perspectivizer extends Bitmap
         _mediaScaleX = mediaScaleX;
         _mediaScaleY = mediaScaleY;
 
-        var ww :int = Math.round(
-            Math.abs(Number(_info[0]) - Number(_info[3])));
-        var hh :int = Math.round(
-            Math.max(Number(_info[2]), Number(_info[5])));
-        trace("persp info gives: " + ww + ", " + hh);
+        var ww :int = 1 + Math.round(Math.abs(
+            Number(_info[0]) - Number(_info[3])));
+        var hh :int = 1 + Math.round(Math.max(
+            Number(_info[1]) + Number(_info[2]),
+            Number(_info[4]) + Number(_info[5])));
 
         if (ww < 1 || hh < 1) {
             return;
@@ -72,9 +72,7 @@ public class Perspectivizer extends Bitmap
         var r :Rectangle = _source.getBounds(_source);
 
         var ww :int = int(Math.round(_mediaScaleX * (r.width + r.x)));
-        //int(_source.width);// + 100;
         var hh :int = int(Math.round(_mediaScaleY * (r.height + r.y)));
-        //int(_source.height);// + 200;
 
         //trace("source ww/hh : " + ww + ", " + hh);
 
@@ -89,7 +87,7 @@ public class Perspectivizer extends Bitmap
                 return;
             }
             _sourcePixels = new BitmapData(ww, hh, true, 0);
-            trace("perspective source's dims: (" + ww + ", " + hh + ")");
+            //trace("perspective source's dims: (" + ww + ", " + hh + ")");
 
         } else {
             // clear the pixels
@@ -101,29 +99,36 @@ public class Perspectivizer extends Bitmap
         _sourcePixels.draw(_source,
             new Matrix(_mediaScaleX, 0, 0, _mediaScaleY), null, null, r);
 
-
-//        var sourceWidth :Number = _info[0] - _info[3];
-        var startX :Number = _info[0];
-        var startY :Number = _info[1]
-        var startHeight :Number = _info[2];
-        var endX :Number = _info[3];
-        var endY :Number = _info[4];
-        var endHeight :Number = _info[5];
+        var x0 :Number = _info[0];
+        var y0 :Number = _info[1]
+        var height0 :Number = _info[2];
+        var xN :Number = _info[3];
+        var yN :Number = _info[4];
+        var heightN :Number = _info[5];
+        var yy :int;
 
         // sample pixels out of _sourcePixels into the bitmap data
         for (var xx :int = 0; xx < _destPixels.width; xx++) {
             var percX :Number = (xx / _destPixels.width);
+            var iPerc :Number = 1 - percX;
             var sx :int = int(Math.round(percX * ww));
-            var dx :int = int(Math.round(percX * endX + (1 - percX) * startX));
-            var heightHere :Number = (percX * endHeight) +
-                ((1 - percX) * startHeight);
-            var firstY :Number = (percX * endY) +
-                ((1 - percX) * startY);
-            for (var yy :int = 0; yy < heightHere; yy++) {
+            var dx :int = int(Math.round(percX * xN + iPerc * x0));
+            var heightHere :Number = (percX * heightN) + (iPerc * height0);
+            var firstY :Number = (percX * yN) + (iPerc * y0);
+            // clear any unused pixels above the strip
+            for (yy = 0; yy < firstY; yy++) {
+                _destPixels.setPixel32(dx, yy, 0x00000000);
+            }
+            // fill in a vertical strip in the destination
+            for (yy = 0; yy < heightHere; yy++) {
                 var dy :int = yy + firstY;
                 var sy :int = int(Math.round(yy / heightHere * hh)); 
 
                 _destPixels.setPixel32(dx, dy, _sourcePixels.getPixel32(sx, sy));
+            }
+            // clear any unused pixels below the strip
+            for (yy = firstY + heightHere; yy < _destPixels.height; yy++) {
+                _destPixels.setPixel32(dx, yy, 0x00000000);
             }
         }
 
