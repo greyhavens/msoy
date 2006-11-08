@@ -46,7 +46,7 @@ public class MailRepository extends DepotRepository
         throws PersistenceException
     {
         final String tableName = _ctx.getMarshaller(MailMessageRecord.class).getTableName();
-        return _ctx.invoke(new Query<Map<Boolean, Integer>>(_ctx, null, null) {
+        return _ctx.invoke(new Query<Map<Boolean, Integer>>(_ctx, null) {
             public Map<Boolean, Integer> invoke (Connection conn) throws SQLException {
                 PreparedStatement stmt = conn.prepareStatement(
                     "   select count(*), " + MailMessageRecord.UNREAD +
