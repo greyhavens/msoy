@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -70,11 +71,11 @@ public class CatalogServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public HashMap<String, Integer> getPopularTags (WebCreds creds, byte type, int rows)
+    public Map<String, Integer> getPopularTags (WebCreds creds, byte type, int rows)
             throws ServiceException
     {
-        ServletWaiter<HashMap<String, Integer>> waiter =
-            new ServletWaiter<HashMap<String, Integer>>("getPopularTags[" + type + "]");
+        ServletWaiter<Map<String, Integer>> waiter =
+            new ServletWaiter<Map<String, Integer>>("getPopularTags[" + type + "]");
         MsoyServer.itemMan.getPopularTags(type, rows, waiter);
         return waiter.waitForResult();
     }
