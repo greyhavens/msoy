@@ -3,9 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
@@ -35,6 +34,6 @@ public interface CatalogService extends RemoteService
     /**
      * Fetches the N most-used tags for a given item type.
      */
-    public HashMap getPopularTags(WebCreds creds, byte type, int rows)
+    public Map getPopularTags(WebCreds creds, byte type, int rows)
         throws ServiceException;
 } 
