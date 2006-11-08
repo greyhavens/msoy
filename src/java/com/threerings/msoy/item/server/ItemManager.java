@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
@@ -52,6 +53,7 @@ import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.TagHistoryRecord;
 import com.threerings.msoy.item.server.persist.TagNameRecord;
+import com.threerings.msoy.item.server.persist.TagPopularityRecord;
 
 import com.threerings.msoy.world.data.FurniData;
 
@@ -163,17 +165,13 @@ public class ItemManager
         // do it all at once
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<ArrayList<Item>>(listener) {
-                public ArrayList<Item> invokePersistResult ()
-                    throws PersistenceException
-                {
+                public ArrayList<Item> invokePersistResult () throws PersistenceException {
                     // create a list to hold the results
                     ArrayList<Item> items = new ArrayList<Item>();
 
                     // mass-lookup items, a repo at a time
                     for (Tuple<ItemRepository<ItemRecord>, int[]> tup : list) {
-                        ArrayList<ItemRecord> recs =
-                            tup.left.loadItems(tup.right);
-                        for (ItemRecord rec : recs) {
+                        for (ItemRecord rec : tup.left.loadItems(tup.right)) {
                             items.add(rec.toItem());
                         }
                     }
@@ -439,8 +437,7 @@ public class ItemManager
                     public ArrayList<Item> invokePersistResult ()
                         throws PersistenceException
                     {
-                        Collection<ItemRecord> list =
-                            repo.loadOriginalItems(memberId);
+                        Collection<ItemRecord> list = repo.loadOriginalItems(memberId);
                         list.addAll(repo.loadClonedItems(memberId));
                         ArrayList<Item> newList = new ArrayList<Item>();
                         for (ItemRecord record : list) {
@@ -638,7 +635,7 @@ public class ItemManager
     /** Fetch the most popular tags across all items. */
     public void getPopularTags (
         byte type, final int rows,
-        ResultListener<HashMap<String, Integer>> listener)
+        ResultListener<Map<String, Integer>> listener)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = getRepository(type, listener);
@@ -647,14 +644,11 @@ public class ItemManager
         }
 
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<HashMap<String, Integer>>(listener) {
-                public HashMap<String, Integer> invokePersistResult ()
-                        throws PersistenceException {
-                    HashMap<String, Integer> result =
-                        new HashMap<String, Integer>();
-                    for (Tuple<TagNameRecord, Integer> tuple :
-                            repo.getPopularTags(rows)) {
-                        result.put(tuple.left.tag, tuple.right);
+            new RepositoryListenerUnit<Map<String, Integer>>(listener) {
+                public Map<String, Integer> invokePersistResult () throws PersistenceException {
+                    Map<String, Integer> result = new HashMap<String, Integer>();
+                    for (TagPopularityRecord record : repo.getPopularTags(rows)) {
+                        result.put(record.tag, record.count);
                     }
                     return result;
                 }
@@ -700,26 +694,22 @@ public class ItemManager
 
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Collection<TagHistory>>(listener) {
-            public Collection<TagHistory> invokePersistResult ()
-                throws PersistenceException {
-                HashMap<Integer, MemberRecord> memberCache =
-                    new HashMap<Integer, MemberRecord>();
+            public Collection<TagHistory> invokePersistResult () throws PersistenceException {
+                Map<Integer, MemberRecord> memberCache = new HashMap<Integer, MemberRecord>();
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
                 for (TagHistoryRecord<ItemRecord> record :
-                         repo.getTagHistoryByItem(ident.itemId)) {
+                        repo.getTagHistoryByItem(ident.itemId)) {
                     // TODO: we should probably cache in MemberRepository
                     MemberRecord memRec = memberCache.get(record.memberId);
                     if (memRec == null) {
-                        memRec = MsoyServer.memberRepo.loadMember(
-                            record.memberId);
+                        memRec = MsoyServer.memberRepo.loadMember(record.memberId);
                         memberCache.put(record.memberId, memRec);
                     }
+                    
                     TagNameRecord tag = repo.getTag(record.tagId);
                     TagHistory history = new TagHistory();
-                    history.item =
-                        new ItemIdent(ident.type, ident.itemId);
-                    history.member =
-                        new MemberGName(memRec.name, memRec.memberId);
+                    history.item = new ItemIdent(ident.type, ident.itemId);
+                    history.member = new MemberGName(memRec.name, memRec.memberId);
                     history.tag = tag.tag;
                     history.action = record.action;
                     history.time = new Date(record.time.getTime());
@@ -738,22 +728,17 @@ public class ItemManager
             new RepositoryListenerUnit<Collection<TagHistory>>(listener) {
             public Collection<TagHistory> invokePersistResult ()
                 throws PersistenceException {
-                MemberRecord memRec =
-                    MsoyServer.memberRepo.loadMember(memberId);
-                MemberGName memName =
-                    new MemberGName(memRec.name, memRec.memberId);
+                MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
+                MemberGName memName = new MemberGName(memRec.name, memRec.memberId);
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
-                for (Entry<Byte, ItemRepository<ItemRecord>> entry :
-                        _repos.entrySet()) {
+                for (Entry<Byte, ItemRepository<ItemRecord>> entry : _repos.entrySet()) {
                     byte type = entry.getKey();
                     ItemRepository<ItemRecord> repo = entry.getValue();
                     for (TagHistoryRecord<ItemRecord> record :
                             repo.getTagHistoryByMember(memberId)) {
-                        TagNameRecord tag = record.tagId == -1 ? null :
-                            repo.getTag(record.tagId);
+                        TagNameRecord tag = record.tagId == -1 ? null : repo.getTag(record.tagId);
                         TagHistory history = new TagHistory();
-                        history.item = new ItemIdent(
-                            type, record.itemId);
+                        history.item = new ItemIdent(type, record.itemId);
                         history.member = memName;
                         history.tag = tag == null ? null : tag.tag;
                         history.action = record.action;
@@ -769,8 +754,7 @@ public class ItemManager
     /**
      * Records the specified member's rating of an item.
      */
-    public void rateItem (final ItemIdent ident, final int memberId,
-                          final byte rating,
+    public void rateItem (final ItemIdent ident, final int memberId, final byte rating,
                           final ResultListener<ItemDetail> listener)
     {
         // locate the appropriate repository
@@ -785,35 +769,31 @@ public class ItemManager
                     throws PersistenceException {
                     ItemRecord item = repo.loadItem(ident.itemId);
                     if (item == null) {
-                        throw new PersistenceException(
-                            "Can't find item [item=" + ident + "]");
+                        throw new PersistenceException("Can't find item [item=" + ident + "]");
                     }
                     int originalId;
-                    if (item.parentId == -1) {
+                    if (item.parentId != -1) {
+                        // it's a clone: use the parent ID
                         originalId = item.parentId;
 
                     } else {
-                        // make sure we're not trying to rate a mutable
+                        // not a clone; make sure we're not trying to rate a mutable
                         if (item.ownerId != -1) {
                             throw new PersistenceException(
-                                "Can't rate mutable object [item=" + ident +
-                                "]");
+                                "Can't rate mutable object [item=" + ident + "]");
                         }
+                        // and use our real ID
                         originalId = ident.itemId;
                     }
                     item.rating = repo.rateItem(originalId, memberId, rating);
                     ItemDetail detail = new ItemDetail();
                     detail.item = item.toItem();
                     detail.memberRating = rating;
-                    MemberRecord memRec =
-                        MsoyServer.memberRepo.loadMember(item.creatorId);
-                    detail.creator = 
-                        new MemberGName(memRec.name, memRec.memberId);
+                    MemberRecord memRec = MsoyServer.memberRepo.loadMember(item.creatorId);
+                    detail.creator = new MemberGName(memRec.name, memRec.memberId);
                     if (item.ownerId != -1) {
-                        memRec = 
-                            MsoyServer.memberRepo.loadMember(item.ownerId);
-                        detail.owner =
-                            new MemberGName(memRec.name, memRec.memberId);
+                        memRec = MsoyServer.memberRepo.loadMember(item.ownerId);
+                        detail.owner = new MemberGName(memRec.name, memRec.memberId);
                     } else {
                         detail.owner = null;
                     }
@@ -844,7 +824,7 @@ public class ItemManager
 
     // from ItemProvider
     public void getInventory (ClientObject caller, byte type,
-            final InvocationService.ResultListener listener)
+                              final InvocationService.ResultListener listener)
         throws InvocationException
     {
         MemberObject memberObj = (MemberObject) caller;
@@ -854,21 +834,18 @@ public class ItemManager
 
         // then, load that type
         // TODO: not everything!
-        loadInventory(
-            memberObj.getMemberId(), type,
-            new ResultListener<ArrayList<Item>>() {
-                public void requestCompleted (ArrayList<Item> result)
-                {
-                    listener.requestProcessed(result);
-                }
+        loadInventory(memberObj.getMemberId(), type, new ResultListener<ArrayList<Item>>() {
+            public void requestCompleted (ArrayList<Item> result)
+            {
+                listener.requestProcessed(result);
+            }
 
-                public void requestFailed (Exception cause)
-                {
-                    log.warning("Unable to retrieve inventory " + "[cause="
-                        + cause + "].");
-                    listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-                }
-            });
+            public void requestFailed (Exception cause)
+            {
+                log.warning("Unable to retrieve inventory " + "[cause=" + cause + "].");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
     }
 
     /**
@@ -896,8 +873,7 @@ public class ItemManager
         // and perform the remixing
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<TagHistory>(listener) {
-            public TagHistory invokePersistResult ()
-                throws PersistenceException {
+            public TagHistory invokePersistResult () throws PersistenceException {
                 long now = System.currentTimeMillis();
 
                 ItemRecord item = repo.loadItem(ident.itemId);
@@ -905,8 +881,7 @@ public class ItemManager
                     throw new PersistenceException(
                         "Can't find item [item=" + ident + "]");
                 }
-                int originalId =
-                    (item.parentId == -1) ? item.parentId : ident.itemId;
+                int originalId = item.parentId != -1 ? item.parentId : ident.itemId;
 
                 // map tag to tag id
                 TagNameRecord tag = repo.getTag(tagName);
@@ -917,13 +892,11 @@ public class ItemManager
                     repo.untagItem(originalId, tag.tagId, taggerId, now);
                 if (historyRecord != null) {
                     // look up the member
-                    MemberRecord member = MsoyServer.memberRepo.loadMember(
-                        taggerId);
+                    MemberRecord member = MsoyServer.memberRepo.loadMember(taggerId);
                     // and create the return value
                     TagHistory history = new TagHistory();
                     history.item = new ItemIdent(ident.type, originalId);
-                    history.member =
-                        new MemberGName(member.name, member.memberId);
+                    history.member = new MemberGName(member.name, member.memberId);
                     history.tag = tag.tag;
                     history.action = historyRecord.action; 
                     history.time = new Date(historyRecord.time.getTime());
@@ -941,7 +914,7 @@ public class ItemManager
     protected void updateUserCache (ItemRecord item)
     {
         byte type = item.getType();
-        Collection<ItemRecord> items =
+        Collection<ItemRecord> items = 
             _itemCache.get(new Tuple<Integer, Byte>(item.ownerId, type));
         if (items != null) {
             items.add(item);

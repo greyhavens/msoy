@@ -5,27 +5,33 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.Entity;
 
 import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
+import com.samskivert.jdbc.depot.Computed;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.util.Tuple;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.Query;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
+import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
+import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.operator.Logic.*;
+import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.web.TagHistory;
 
@@ -102,41 +108,40 @@ public abstract class ItemRepository<T extends ItemRecord>
     public Collection<T> loadClonedItems (int ownerId)
         throws PersistenceException
     {
-        ColumnExp cloneOwner =
-            new ColumnExp(getCloneClass(), CloneRecord.OWNER_ID);
+        ColumnExp cloneOwner = new ColumnExp(getCloneClass(), CloneRecord.OWNER_ID);
         return findAll(
             getItemClass(),
             new Key(cloneOwner, ownerId),
-            new Join(
-                getItemClass(),
-                ItemRecord.ITEM_ID,
-                getCloneClass(),
-                CloneRecord.ORIGINAL_ITEM_ID),
-            new FieldOverride(
-                ItemRecord.ITEM_ID,
-                new ColumnExp(getCloneClass(), CloneRecord.ITEM_ID)),
-            new FieldOverride(
-                ItemRecord.PARENT_ID,
-                new ColumnExp(getItemClass(), ItemRecord.ITEM_ID)),
+            new Join(getItemClass(), ItemRecord.ITEM_ID,
+                     getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID),
+            new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID),
+            new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID),
             new FieldOverride(ItemRecord.OWNER_ID, cloneOwner));
     }
 
     /**
      * Loads the specified items. Omits missing items from results.
      */
-    public ArrayList<T> loadItems (int[] itemIds)
+    public Collection<T> loadItems (int[] itemIds)
         throws PersistenceException
     {
-        // TODO: Support added to Depot to load a bunch of things at once?
-        ArrayList<T> list = new ArrayList<T>();
-        for (int id : itemIds) {
-            T result = loadItem(id);
-            if (result != null) {
-                list.add(result);
-            }
+        if (itemIds.length == 0) {
+            return new ArrayList<T>();
         }
+        Comparable[] idArr = new Comparable[itemIds.length];
+        for (int ii = 0; ii < itemIds.length; ii ++) {
+            idArr[ii] = new Integer(itemIds[ii]);
+        }
+        Where inClause = new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr));
+        Collection<T> items = findAll(getItemClass(), inClause,
+            new Join(getItemClass(), ItemRecord.ITEM_ID,
+                     getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID),
+            new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID),
+            new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID),
+            new FieldOverride(ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID));
 
-        return list;
+        items.addAll(findAll(getItemClass(), inClause));
+        return items;
     }
 
     /**
@@ -168,19 +173,34 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads all items in the catalog.
      * TODO: As soon as we're out of the prototyping stage, this will need
      * to turn into a paging method; int offset, int rows perhaps?
-     * TODO: This should be a single join over two tables, but there is no
-     * way to coerce the current ORM system into doing that, so we iterate &
-     * lookup, as placeholder until that day (or until we decide it's the
-     * kind of thing that just needs an explicit query).
+     * TODO: Ideally this would be a single join.
      * TODO: need a powerful way to supply search criteria.
      */
     public Collection<? extends CatalogRecord<T>> loadCatalog ()
         throws PersistenceException
     {
-        Collection<? extends CatalogRecord<T>> records =
-            findAll(getCatalogClass());
+        // fetch all the catalog records of interest
+        Collection<? extends CatalogRecord<T>> records = findAll(getCatalogClass());
+        if (records.size() == 0) {
+            return records;
+        }
+        // construct an array of item id's we need to load
+        Comparable[] idArr = new Integer[records.size()];
+        int ii = 0;
+        for (CatalogRecord record : records) {
+            idArr[ii ++] = record.itemId;
+        }
+        // load those items
+        Collection<? extends T> items = 
+            findAll(getItemClass(), new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr)));
+        // map item ID's to items        
+        Map<Integer, T> map = new HashMap<Integer, T>();
+        for (T iRec : items) {
+            map.put(iRec.itemId, iRec);
+        }
+        // and finally populate the catalog records
         for (CatalogRecord<T> record : records) {
-            record.item = loadOriginalItem(record.itemId);
+            record.item = map.get(record.itemId);
         }
         return records;
     }
@@ -194,8 +214,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         throws PersistenceException
     {
         if (item.itemId != 0) {
-            throw new PersistenceException(
-                "Can't insert item with existing key " + item);
+            throw new PersistenceException("Can't insert item with existing key: " + item);
         }
         insert(item);
     }
@@ -293,83 +312,39 @@ public abstract class ItemRepository<T extends ItemRecord>
         record.rating = rating;
         store(record);
 
-        // then calculate the new average rating for this item from scratch
-        final String ratingTable =
-            _ctx.getMarshaller(getRatingClass()).getTableName();
-        float newRating = _ctx.invoke(new Query<Float>(_ctx, getRatingClass(), (QueryClause) null) {
-            public Float invoke (Connection conn) throws SQLException {
-                PreparedStatement stmt = null;
-                try {
-                    stmt = conn.prepareStatement(
-                        " SELECT COUNT(*), SUM(" + RatingRecord.RATING + ")" +
-                        "   FROM " + ratingTable +
-                        "  WHERE " + RatingRecord.ITEM_ID + " = ?");
-                    stmt.setInt(1, itemId);
-                    ResultSet rs = stmt.executeQuery();
-                    if (!rs.next()) {
-                        throw new SQLException(
-                            "Failed to calculate new rating for item [itemId=" +
-                            itemId + "]");
-                    }
-                    int count = rs.getInt(1);
-                    float sum = rs.getInt(2);
-                    return (float) ((count == 0) ? 0.0 : sum/count);
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-        });
-
+        RatingAverageRecord average =
+            load(RatingAverageRecord.class,
+                 new FieldOverride("count", "count(*)"),
+                 new FieldOverride("sum", "sum(" + RatingRecord.RATING + ")"),
+                 new FromOverride(getRatingClass()),
+                 new Where(new Equals(new ColumnExp(getRatingClass(), RatingRecord.ITEM_ID),
+                                      itemId)));
+        float newRating = (float) ((average.count == 0) ? 0.0 : average.sum/average.count);
         // and then smack the new value into the item using yummy depot code
-        updatePartial(getItemClass(), itemId,
-                      new Object[] { ItemRecord.RATING, newRating });
+        updatePartial(getItemClass(), itemId, new Object[] { ItemRecord.RATING, newRating });
         return newRating;
     }
+    @Computed @Entity
+    public static class RatingAverageRecord {
+        public int count;
+        public int sum;
+    }
+
 
     /**
      * Join TagNameRecord and TagRecord, group by tag, and count how many items
-     * reference each such tag. We should be able to do this in Depot shortly. 
+     * reference each such tag.
      */
-    public Iterable<Tuple<TagNameRecord, Integer>> getPopularTags (int rows)
+    public Collection<TagPopularityRecord> getPopularTags (int rows)
         throws PersistenceException
     {
-        final String tnTable =
-            _ctx.getMarshaller(TagNameRecord.class).getTableName(); 
-        final String tTable =
-            _ctx.getMarshaller(getTagClass()).getTableName();
-
-        final String query =
-            "  select t.tagId, tn.tag, count(*) " +
-            "    from " + tTable + " t, " +
-            "         " + tnTable + " tn " +
-            "    where t.tagId = tn.tagId " +
-            " group by t.tagId " +
-            "    limit " + rows;
-
-        return _ctx.invoke(
-            new Query<List<Tuple<TagNameRecord, Integer>>>(_ctx, null, (QueryClause) null) {
-                public List<Tuple<TagNameRecord, Integer>> invoke (
-                    Connection conn) throws SQLException {
-                    PreparedStatement stmt = conn.prepareStatement(query);
-                    try {
-                        ArrayList<Tuple<TagNameRecord, Integer>> results =
-                            new ArrayList<Tuple<TagNameRecord, Integer>>();
-                        ResultSet rs = stmt.executeQuery(query);
-                        while (rs.next()) {
-                            TagNameRecord record = new TagNameRecord();
-                            record.tagId = rs.getInt(1);
-                            record.tag = rs.getString(2);
-                            int count = rs.getInt(3);
-                            results.add(
-                                new Tuple<TagNameRecord, Integer>(record, count));
-                        }
-                        return results;
-
-                    } finally {
-                        stmt.close();
-                    }
-                }
-            });
+        return findAll(TagPopularityRecord.class,
+            new FromOverride(getTagClass()),
+            new Join(new ColumnExp(getTagClass(), TagRecord.TAG_ID), TagNameRecord.TAG_ID_C),
+            new FieldOverride(TagPopularityRecord.TAG_ID, TagNameRecord.TAG_ID_C),
+            new FieldOverride(TagPopularityRecord.TAG, TagNameRecord.TAG_C),
+            new FieldOverride(TagPopularityRecord.COUNT, "count(*)"),
+            new GroupBy(TagNameRecord.TAG_ID_C));
     }
     
     /** Load all tag records for the given item, translated to tag names. */
@@ -378,11 +353,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         return findAll(TagNameRecord.class,
                        new Key(TagRecord.ITEM_ID, itemId),
-                       new Join(
-                           TagNameRecord.class,
-                           TagNameRecord.TAG_ID,
-                           getTagClass(),
-                           TagRecord.TAG_ID));
+                       new Join(TagNameRecord.TAG_ID_C,
+                                new ColumnExp(getTagClass(), TagRecord.TAG_ID)));
     }
 
     /** Load all the tag history records for a given item. */
@@ -390,8 +362,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         int itemId)
             throws PersistenceException
     {
-        return findAll(getTagHistoryClass(),
-                       new Key(TagHistoryRecord.ITEM_ID, itemId));
+        return findAll(getTagHistoryClass(), new Key(TagHistoryRecord.ITEM_ID, itemId));
     }
 
     /** Load all the tag history records for a given member. */
@@ -399,8 +370,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         int memberId)
             throws PersistenceException
     {
-        return findAll(getTagHistoryClass(),
-                       new Key(TagHistoryRecord.MEMBER_ID, memberId));
+        return findAll(getTagHistoryClass(), new Key(TagHistoryRecord.MEMBER_ID, memberId));
     }
 
     /** Find the tag record for a certain tag, or create it. */
@@ -408,8 +378,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             throws PersistenceException
     {
         // load the tag, if it exists
-        TagNameRecord record = load(TagNameRecord.class,
-                                    new Key(TagNameRecord.TAG, tagName));
+        TagNameRecord record = load(TagNameRecord.class, new Key(TagNameRecord.TAG, tagName));
         if (record == null) {
             // if it doesn't, create it on the fly
             record = new TagNameRecord();

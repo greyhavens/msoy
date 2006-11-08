@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.io.Streamable;
 
 /**
