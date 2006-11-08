@@ -16,7 +16,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.Query;
-import com.samskivert.jdbc.depot.clause.ForUpdateClause;
+import com.samskivert.jdbc.depot.clause.ForUpdate;
 
 /**
  * Manages the persistent store of mail and mailboxes.
@@ -180,7 +180,7 @@ public class MailRepository extends DepotRepository
          MailFolderRecord record = load(MailFolderRecord.class,
                                         new Key(MailFolderRecord.MEMBER_ID, memberId,
                                                 MailFolderRecord.FOLDER_ID, folderId),
-                                        new ForUpdateClause());
+                                        new ForUpdate());
          int firstId = record.nextMessageId;
          record.nextMessageId += idCount;
          update(record, MailFolderRecord.NEXT_MESSAGE_ID);
