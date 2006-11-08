@@ -13,6 +13,7 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupDetail;
+import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -42,6 +43,17 @@ public class GroupServlet extends RemoteServiceServlet
     }
 
     // from interface GroupService
+    public List<GroupMembership> getMembershipGroups (WebCreds creds, int memberId,
+                                                      boolean canInvite)
+        throws ServiceException
+    {
+        ServletWaiter<List<GroupMembership>> waiter =
+            new ServletWaiter<List<GroupMembership>>("getMembershipGroups[]");
+        MsoyServer.memberMan.getMembershipGroups(memberId, canInvite, waiter);
+        return waiter.waitForResult();
+    }
+
+    // from interface GroupService
     public Group createGroup (WebCreds creds, Group group) throws ServiceException
     {
         ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
@@ -60,6 +72,7 @@ public class GroupServlet extends RemoteServiceServlet
         waiter.waitForResult();
     }
 
+    // from interface GroupService
     public void leaveGroup (WebCreds creds, int groupId, int memberId) throws ServiceException
     {
         ServletWaiter<Void> waiter = new ServletWaiter<Void>(

@@ -62,7 +62,8 @@ public class GroupView extends DockPanel
                 _detail = (GroupDetail) result;
                 _group = _detail.group;
                 // TODO: Is this too ugly?
-                MemberGName fakeName = new MemberGName("???", _ctx.creds.memberId);
+                MemberGName fakeName =
+                    new MemberGName("Member #" + _ctx.creds.memberId, _ctx.creds.memberId);
                 Byte myRank = (Byte) _detail.members.get(fakeName);
                 _amAdmin = myRank != null ?
                     myRank.byteValue() == GroupMembership.RANK_MANAGER : false;

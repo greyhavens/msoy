@@ -3,6 +3,12 @@
 
 package com.threerings.msoy.server;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +23,8 @@ import com.threerings.msoy.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.data.MailBodyObject;
+import com.threerings.msoy.web.data.MailBodyObjectComposer;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
@@ -109,7 +117,8 @@ public class MailManager
      * and one copy in the recipient's 'Inbox' folder.
      */    
     public void deliverMessage (final int senderId, final int recipientId, final String subject,
-                                final String text, ResultListener<Void> waiter)
+                                final String text, final MailBodyObject object,
+                                ResultListener<Void> waiter)
     {
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Void>(waiter) {
@@ -122,7 +131,17 @@ public class MailManager
                 record.senderId = senderId;
                 record.recipientId = recipientId;
                 record.subject = subject;
-                record.message = text;
+                record.bodyText = text;
+                if (object != null) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    try {
+                        new ObjectOutputStream(out).writeObject(object);
+                    } catch (IOException e) {
+                        throw new PersistenceException("Failed to serialize mail body object", e);
+                    }
+                    record.bodyObjectType = object.getType();
+                    record.bodyObjectState = out.toByteArray();
+                }
                 record.sent = new Timestamp(System.currentTimeMillis());
 
                 // file one copy for ourselves
@@ -163,8 +182,6 @@ public class MailManager
     /**
      * Bulk delete a number of messages from the database. Note: This actually
      * DELETES the messages, it doesn't move them to the Trash folder.
-     * 
-     * TODO: We should not need to iterate here.
      */
     public void deleteMessages (final int memberId, final int folderId, final int[] msgIdArr,
                                 ResultListener<Void> waiter)
@@ -172,7 +189,7 @@ public class MailManager
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
                 for (int msgId : msgIdArr) {
-                    _mailRepo.deleteMessage(memberId, folderId, msgId);
+                    _mailRepo.deleteMessage(memberId, folderId, msgIdArr);
                 }
                 return null;
             }
@@ -208,7 +225,7 @@ public class MailManager
             welcome.subject = "Welcome to MetaSOY!";
             welcome.sent = new Timestamp(System.currentTimeMillis());
             welcome.unread = true;
-            welcome.message =
+            welcome.bodyText =
                 "Welcome to the MetaSOY mail system! This test message exists primarly so that " +
                 "there's something in our inboxes to click on. You are encouraged to go 'Ooh' " +
                 "and perhaps 'Aah' now.\n\n" +
@@ -243,7 +260,25 @@ public class MailManager
     {
         MailMessage message = new MailMessage();
         message.headers = toMailHeaders(record);
-        message.message = record.message;
+        message.bodyText = record.bodyText;
+        if (record.bodyObjectType != 0) {
+            Map state = null;
+            if (record.bodyObjectState != null) {
+                InputStream in = new ByteArrayInputStream(record.bodyObjectState);
+                try {
+                    ObjectInputStream oin = new ObjectInputStream(in);
+                    Object obj = oin.readObject();
+                    if (obj != null && !(obj instanceof Map)) {
+                        throw new PersistenceException(
+                        "Mail object state did not deserialize to Map.");
+                    }
+                    state = (Map) obj;
+                } catch (Exception e) {
+                    throw new PersistenceException("Failed to unserialize message body object", e);
+                }
+            }
+            message.bodyObject = MailBodyObject.buildBodyObject(record.bodyObjectType, state);
+        }
         return message;
     }
 

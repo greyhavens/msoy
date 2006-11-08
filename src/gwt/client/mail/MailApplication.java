@@ -66,7 +66,7 @@ public class MailApplication extends DockPanel
         composeButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 // TODO: The hard-coded memberId is for testing only :)
-                MailComposition composition = new MailComposition(_ctx, 2, "");
+                MailComposition composition = new MailComposition(_ctx, 2, "", null);
                 composition.addPopupListener(MailApplication.this);
                 composition.show();
             }
@@ -378,7 +378,7 @@ public class MailApplication extends DockPanel
                     subject = "re: " + subject;
                 }
                 MailComposition composition =
-                    new MailComposition(_ctx, _message.headers.sender, subject);
+                    new MailComposition(_ctx, _message.headers.sender, subject, null);
                 composition.addPopupListener(MailApplication.this);
                 composition.show();
             }
@@ -396,11 +396,23 @@ public class MailApplication extends DockPanel
         buttonBox.add(deleteButton);
         messagePanel.add(buttonBox);
 
-        // finally show the message body, propped up with generated HTML
-        SimplePanel messageBody = new SimplePanel();
-        messageBody.setStyleName("mailMessageBody");
-        messageBody.setWidget(textToHTML(_message.message));
-        messagePanel.add(messageBody);
+        // if there is a message body object, display it!
+        if (_message.bodyObject != null) {
+            Widget widget = _ctx.creds.memberId == _message.headers.recipient.memberId ?
+                _message.bodyObject.widgetForRecipient(_ctx) :
+                _message.bodyObject.widgetForOthers(_ctx);
+            if (widget != null) {
+                messagePanel.add(widget);
+            }
+        }
+        
+        // finally show the message text, if any, propped up with generated HTML
+        if (_message.bodyText != null) {
+            SimplePanel messageBody = new SimplePanel();
+            messageBody.setStyleName("mailMessageBody");
+            messageBody.setWidget(textToHTML(_message.bodyText));
+            messagePanel.add(messageBody);
+        }
 
         // switch in the fully built UI
         _messageContainer.setWidget(messagePanel);

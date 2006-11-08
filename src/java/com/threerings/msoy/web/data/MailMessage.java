@@ -16,13 +16,23 @@ final public class MailMessage
     /** All the metadata for this message. */
     public MailHeaders headers;
 
-    /** The actual message text. */
-    public String message;
+    /** The (optional) text part of the message body. */
+    public String bodyText;
+    
+    /** The (optional) object part of the message body. */
+    public MailBodyObject bodyObject;
     
     // @Override
     public int hashCode ()
     {
-        return headers.hashCode() + 31*message.hashCode();
+        int hashCode = headers.hashCode();
+        if (bodyText != null) {
+            hashCode = 31*hashCode + bodyText.hashCode();
+        }
+        if (bodyObject != null) {
+            hashCode = 31*hashCode + bodyObject.hashCode();
+        }
+        return hashCode;
     }
 
     // @Override
@@ -38,9 +48,13 @@ final public class MailMessage
         if (headers == null) {
             return other.headers == null;
         }
-        if (message == null) {
-            return other.message == null;
+        if (bodyText == null) {
+            return other.bodyText == null;
         }
-        return headers.equals(other.headers) && message.equals(other.message);
+        if (bodyObject == null) {
+            return other.bodyObject == null;
+        }
+        return headers.equals(other.headers) && bodyText.equals(other.bodyText) &&
+               bodyObject.equals(other.bodyObject);
     }
 }

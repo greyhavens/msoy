@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.threerings.msoy.web.data.MailBodyObject;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
@@ -36,7 +37,7 @@ public interface MailServiceAsync
      * The asynchronous version of {@link MailService#deliverMessage}
      */
     public void deliverMessage (WebCreds creds, int recipientId, String subject, String text,
-                                AsyncCallback callback);
+                                MailBodyObject object, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MailService#deleteMessages}

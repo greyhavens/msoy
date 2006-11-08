@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
+import com.threerings.msoy.web.data.MailBodyObjectComposer;
 import com.threerings.msoy.web.data.MemberGName;
 
 /**
@@ -24,36 +25,36 @@ import com.threerings.msoy.web.data.MemberGName;
 public class MailComposition extends PopupPanel
 {
     /**
-     * Initializes a new composer with a recipient id; we do a backend request to look
-     * up the recipient's current name, and inject the name into the right UI element
-     */ 
-    public MailComposition (WebContext ctx, int recipientId, String subject)
+     * Initializes a new composer when we already have the full name.
+     */
+    public MailComposition (WebContext ctx, MemberGName recipient, String subject,
+                            MailBodyObjectComposer bodyObjectComposer)
     {
         super(false);
         _ctx = ctx;
         _senderId = ctx.creds.memberId;
-        _recipient = new MemberGName("Member #" + recipientId, recipientId);
+        _recipient = recipient;
+        _bodyObjectComposer = bodyObjectComposer;
+        buildUI(subject);
+    }
+
+    /**
+     * Initializes a new composer with a recipient id; we do a backend request to look
+     * up the recipient's current name, and inject the name into the right UI element.
+     */ 
+    public MailComposition (WebContext ctx, int recipientId, String subject,
+                            MailBodyObjectComposer factory)
+    {
+        this(ctx, new MemberGName("Member #" + recipientId, recipientId), subject, factory);
         _ctx.membersvc.getName(recipientId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _recipient = (MemberGName) result;
                 _recipientBox.setText(_recipient.memberName);
             }
             public void onFailure (Throwable caught) {
-                // let's ignore this error, everything will still work fine
+                // let's ignore this error, it's just a display thing
             }
         });
-        buildUI(subject);
-    }
-
-    /**
-     * Initializes a new composer when we already have the name.
-     */
-    public MailComposition (WebContext ctx, MemberGName recipient, String subject)
-    {
-        super(false);
-        _ctx = ctx;
-        _senderId = ctx.creds.memberId;
-        _recipient = recipient;
         buildUI(subject);
     }
 
@@ -98,6 +99,13 @@ public class MailComposition extends PopupPanel
         buttonBox.add(discardButton);
         panel.add(buttonBox);
 
+        if (_bodyObjectComposer != null) {
+            Widget widget = _bodyObjectComposer.widgetForComposition(_ctx);
+            if (widget != null) {
+                panel.add(widget);
+            }
+        }
+
         // then the textarea where we enter the body of the text
         // TODO: give us focus if this is a reply (otherwise the subject line)
         // TODO: style this better, right now it looks a bit like a hungry void
@@ -139,12 +147,14 @@ public class MailComposition extends PopupPanel
             }
         };
         _ctx.mailsvc.deliverMessage(_ctx.creds, _recipient.memberId, _subjectBox.getText(),
-                                    _messageBox.getText(), callback);
+                                    _messageBox.getText(), (_bodyObjectComposer == null) ?
+                                    null : _bodyObjectComposer.getComposedWidget(), callback);
     }
 
     protected WebContext _ctx;
     protected int _senderId;
     protected MemberGName _recipient;
+    protected MailBodyObjectComposer _bodyObjectComposer;
     protected TextBox _subjectBox;
     protected Label _recipientBox;
     protected TextArea _messageBox;

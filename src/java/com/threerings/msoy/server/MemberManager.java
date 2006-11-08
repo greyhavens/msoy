@@ -528,17 +528,23 @@ public class MemberManager
      * This method does not distinguish between a nonexistent person, and a person who is
      * a member of no groups; both situations yield empty collections.
      */
-    public void getMemberGroups (final int memberId,
-                                 ResultListener<List<GroupMembership>> listener)
+    public void getMembershipGroups (final int memberId, final boolean canInvite,
+                                     ResultListener<List<GroupMembership>> listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<GroupMembership>>(listener) {
             public List<GroupMembership> invokePersistResult () throws PersistenceException {
                 MemberRecord mRec = _memberRepo.loadMember(memberId);
                 List<GroupMembership> result = new ArrayList<GroupMembership>();
                 for (GroupMembershipRecord gmRec : _groupRepo.getGroups(memberId)) {
+                    GroupRecord gRec = _groupRepo.loadGroup(gmRec.groupId);
+                    // if we're only including groups we can invite to, strip out exclusive
+                    // groups of which we're not managers
+                    if (canInvite && gRec.policy == Group.POLICY_EXCLUSIVE &&
+                            gmRec.rank != GroupMembership.RANK_MANAGER) {
+                        continue;
+                    }
                     GroupMembership gm = new GroupMembership();
                     gm.member = new MemberGName(mRec.name, mRec.memberId);
-                    GroupRecord gRec = _groupRepo.loadGroup(gmRec.groupId);
                     gm.groupId = gmRec.groupId;
                     gm.groupName = gRec.name;
                     result.add(gm);
@@ -546,9 +552,8 @@ public class MemberManager
                 return result;
             }
         });
-
     }
-
+    
     /**
      * Cancels the given person's membership in the given group.
      */

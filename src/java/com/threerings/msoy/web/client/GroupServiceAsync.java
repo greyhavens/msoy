@@ -13,9 +13,15 @@ import com.threerings.msoy.web.data.WebCreds;
 public interface GroupServiceAsync
 {
     /**
-     * The asynchronous version of {@link GroupService#Groups}
+     * The asynchronous version of {@link GroupService#getGroups}
      */
     public void getGroups (WebCreds creds, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GroupService#getMembershipGroups}
+     */
+    public void getMembershipGroups (WebCreds creds, int memberId, boolean canInvite,
+                                     AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link GroupService.loadGroup} 

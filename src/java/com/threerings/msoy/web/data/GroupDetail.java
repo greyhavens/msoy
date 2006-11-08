@@ -20,6 +20,6 @@ public class GroupDetail
     /** The person who created the group. */
     public MemberGName creator;
 
-    /** The members of this group. */
+    /** The members of this group, mapped from {@link MemberGName} to rank, as a Byte. */
     public Map members;
 }

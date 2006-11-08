@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
 /**
@@ -16,16 +17,24 @@ import com.samskivert.util.StringUtil;
  */
 @Entity
 @Table(uniqueConstraints={
-    @UniqueConstraint(columnNames={MailFolderRecord.MEMBER_ID, MailFolderRecord.NAME })})
+    @UniqueConstraint(columnNames={MailFolderRecord.OWNER_ID, MailFolderRecord.NAME })})
 public class MailFolderRecord
     implements Cloneable
 {
     public static final int SCHEMA_VERSION = 1;
 
     public static final String FOLDER_ID = "folderId";
-    public static final String MEMBER_ID = "ownerId";
+    public static final ColumnExp FOLDER_ID_C =
+        new ColumnExp(MailFolderRecord.class, FOLDER_ID);
+    public static final String OWNER_ID = "ownerId";
+    public static final ColumnExp OWNER_ID_C =
+        new ColumnExp(MailFolderRecord.class, OWNER_ID);
     public static final String NAME = "name";
+    public static final ColumnExp NAME_C =
+        new ColumnExp(MailFolderRecord.class, NAME);
     public static final String NEXT_MESSAGE_ID = "nextMessageId";
+    public static final ColumnExp NEXT_MESSAGE_ID_C =
+        new ColumnExp(MailFolderRecord.class, NEXT_MESSAGE_ID);
 
     /** The id of this folder, unique relative to this member. */
     @Id
