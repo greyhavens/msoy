@@ -256,6 +256,19 @@ public class FurniSprite extends MsoySprite
         }
     }
 
+    override protected function updateMediaPosition () :void
+    {
+        if (_media is Perspectivizer) {
+            _media.x = 0;
+            _media.y = 0;
+
+            locationUpdated();
+
+        } else {
+            super.updateMediaPosition();
+        }
+    }
+
     // documentation inherited
     override protected function getHoverColor () :uint
     {

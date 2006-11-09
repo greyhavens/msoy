@@ -385,9 +385,8 @@ public class AbstractRoomView extends Canvas
         loc :MsoyLocation) :PerspInfo
     {
         var hotSpot :Point = sprite.getMediaHotSpot();
-        var mediaScaleX :Number = sprite.getMediaScaleX();
-        var mediaScaleY :Number = sprite.getMediaScaleY();
-        var minScale :Number = computeMinScale();
+        var mediaScaleX :Number = Math.abs(sprite.getMediaScaleX());
+        var mediaScaleY :Number = Math.abs(sprite.getMediaScaleY());
 
         // below, 0 refers to the right side of the source sprite
         // N refers to the left side, and H refers to the location

@@ -81,8 +81,8 @@ public class Perspectivizer extends Bitmap
 
         var r :Rectangle = _source.getBounds(_source);
 
-        var ww :int = int(Math.round(_mediaScaleX * (r.width + r.x)));
-        var hh :int = int(Math.round(_mediaScaleY * (r.height + r.y)));
+        var ww :int = int(Math.round(Math.abs(_mediaScaleX) * (r.width + r.x)));
+        var hh :int = int(Math.round(Math.abs(_mediaScaleY) * (r.height + r.y)));
 
         //trace("source ww/hh : " + ww + ", " + hh);
 
@@ -104,10 +104,15 @@ public class Perspectivizer extends Bitmap
             _sourcePixels.fillRect(new Rectangle(0, 0, ww, hh), 0x00000000);
         }
 
+        // set up the transformation matrix
+        var m :Matrix = new Matrix(1, 0, 0, 1,
+            (_mediaScaleX < 0) ? -r.width : 0,
+            (_mediaScaleY < 0) ? -r.height : 0);
+        m.scale(_mediaScaleX, _mediaScaleY);
+
         // copy the source into _sourcePixels
         //_sourcePixels.draw(_source, null, null, null, r);
-        _sourcePixels.draw(_source,
-            new Matrix(_mediaScaleX, 0, 0, _mediaScaleY), null, null, r);
+        _sourcePixels.draw(_source, m); //, null, null, r);
 
         var x0 :Number = _info.p0.x;
         var y0 :Number = _info.p0.y;
