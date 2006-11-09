@@ -49,6 +49,4 @@ final public class MailFolder
         MailFolder other = (MailFolder) obj;
         return other.folderId == folderId && other.ownerId == ownerId;
     }
-    
-
 }

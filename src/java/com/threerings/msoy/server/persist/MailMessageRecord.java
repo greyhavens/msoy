@@ -16,7 +16,7 @@ import com.samskivert.util.StringUtil;
 /**
  * Represents a message, with some meta-data, in a folder belonging to a member.
  * From this record is generated {@link MailHeaders}, {@link MailMessage} and in
- * some cases, a {@link MailBodyObject}.
+ * some cases, a {@link MailBodyObjectDisplay}.
  * 
  * TODO: Should we allow multiple recipients? It can be good to know who else received
  *       a certain message, and 'reply all' can be a wonderful feature.

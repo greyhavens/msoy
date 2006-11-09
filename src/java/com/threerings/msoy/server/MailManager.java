@@ -24,7 +24,6 @@ import com.threerings.msoy.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.MailBodyObject;
-import com.threerings.msoy.web.data.MailBodyObjectComposer;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
@@ -135,11 +134,11 @@ public class MailManager
                 if (object != null) {
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     try {
-                        new ObjectOutputStream(out).writeObject(object);
+                        new ObjectOutputStream(out).writeObject(object.state);
                     } catch (IOException e) {
                         throw new PersistenceException("Failed to serialize mail body object", e);
                     }
-                    record.bodyObjectType = object.getType();
+                    record.bodyObjectType = object.type;
                     record.bodyObjectState = out.toByteArray();
                 }
                 record.sent = new Timestamp(System.currentTimeMillis());
@@ -277,7 +276,7 @@ public class MailManager
                     throw new PersistenceException("Failed to unserialize message body object", e);
                 }
             }
-            message.bodyObject = MailBodyObject.buildBodyObject(record.bodyObjectType, state);
+            message.bodyObject = new MailBodyObject(record.bodyObjectType, state);
         }
         return message;
     }

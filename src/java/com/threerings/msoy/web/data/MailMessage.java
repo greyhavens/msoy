@@ -35,6 +35,7 @@ final public class MailMessage
         return hashCode;
     }
 
+
     // @Override
     public boolean equals (Object obj)
     {
@@ -46,15 +47,22 @@ final public class MailMessage
         }
         MailMessage other = (MailMessage) obj;
         if (headers == null) {
-            return other.headers == null;
+            if (other.headers != null) {
+                return false;
+            }
+        } else if (!headers.equals(other.headers)) {
+            return false;
+        }
+        if (bodyObject == null) {
+            if (other.bodyObject != null) {
+                return false;
+            }
+        } else if (!bodyObject.equals(other.bodyObject)) {
+            return false;
         }
         if (bodyText == null) {
             return other.bodyText == null;
         }
-        if (bodyObject == null) {
-            return other.bodyObject == null;
-        }
-        return headers.equals(other.headers) && bodyText.equals(other.bodyText) &&
-               bodyObject.equals(other.bodyObject);
+        return bodyText.equals(other.bodyText);
     }
 }

@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
-import com.threerings.msoy.web.data.MailBodyObjectComposer;
 import com.threerings.msoy.web.data.MemberGName;
 
 /**
@@ -148,7 +147,7 @@ public class MailComposition extends PopupPanel
         };
         _ctx.mailsvc.deliverMessage(_ctx.creds, _recipient.memberId, _subjectBox.getText(),
                                     _messageBox.getText(), (_bodyObjectComposer == null) ?
-                                    null : _bodyObjectComposer.getComposedWidget(), callback);
+                                    null : _bodyObjectComposer.getComposedObject(), callback);
     }
 
     protected WebContext _ctx;

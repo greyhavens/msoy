@@ -341,6 +341,8 @@ public class MailApplication extends DockPanel
         _ctx.mailsvc.getMessage(_ctx.creds, _currentFolder, _currentMessage, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _message = (MailMessage) result;
+                _objectDisplay = _message.bodyObject != null ?
+                    MailBodyObjectDisplay.getDisplay(_message.bodyObject) : null;
                 refreshMessagePanel();
             }
             public void onFailure (Throwable caught) {
@@ -399,8 +401,7 @@ public class MailApplication extends DockPanel
         // if there is a message body object, display it!
         if (_message.bodyObject != null) {
             Widget widget = _ctx.creds.memberId == _message.headers.recipient.memberId ?
-                _message.bodyObject.widgetForRecipient(_ctx) :
-                _message.bodyObject.widgetForOthers(_ctx);
+                _objectDisplay.widgetForRecipient(_ctx) : _objectDisplay.widgetForOthers(_ctx);
             if (widget != null) {
                 messagePanel.add(widget);
             }
@@ -554,6 +555,7 @@ public class MailApplication extends DockPanel
     protected List _folders;
     protected List _headers;
     protected MailMessage _message;
+    protected MailBodyObjectDisplay _objectDisplay;
     protected Set _checkedMessages;
     protected int _currentFolder;
     protected int _currentOffset;

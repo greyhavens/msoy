@@ -1,10 +1,11 @@
 
 //$Id$
 
-package com.threerings.msoy.web.data;
+package client.mail;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
+import com.threerings.msoy.web.data.MailBodyObject;
 
 /**
  * Assist the {@link MailComposition} UI in configuring the state of a {@link MailBodyObject}.
@@ -14,7 +15,7 @@ import com.threerings.msoy.web.client.WebContext;
  * and use {@link #widgetForComposition(WebContext)} to hand out a Widget with the
  * appropriate configuration elements.
  * 
- * When the message is ready for delivery, {@link #getComposedWidget()} is called, and the
+ * When the message is ready for delivery, {@link #getComposedObject()} is called, and the
  * {@link MailBodyObject} returned (if any) is included in the message.
  */
 public interface MailBodyObjectComposer
@@ -33,5 +34,5 @@ public interface MailBodyObjectComposer
      * the widget supplied by {@link #widgetForComposition(WebContext)}. This method may
      * return null, in which case no {@link MailBodyObject} is sent.
      */
-    public MailBodyObject getComposedWidget ();
+    public MailBodyObject getComposedObject ();
 }
