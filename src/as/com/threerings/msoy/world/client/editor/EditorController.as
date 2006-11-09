@@ -794,6 +794,10 @@ public class EditorController extends Controller
 
     protected function drawPositioning (sprite :MsoySprite) :void
     {
+        if (!DRAW_EDITING) {
+            return;
+        }
+
         var w :Number = sprite.contentWidth;
         var h :Number = sprite.contentHeight;
         var wo :Number = SCALE_TARGET_LENGTHS / sprite.scaleX;
@@ -818,6 +822,9 @@ public class EditorController extends Controller
 
     protected function drawHeightPositioning (sprite :MsoySprite) :void
     {
+        if (!DRAW_EDITING) {
+            return;
+        }
         var wo :Number = SCALE_TARGET_LENGTHS / sprite.scaleX;
         var ho :Number = SCALE_TARGET_LENGTHS / sprite.scaleY;
         var g :Graphics = sprite.graphics;
@@ -841,6 +848,9 @@ public class EditorController extends Controller
 
     protected function drawHover (sprite :MsoySprite) :void
     {
+        if (!DRAW_EDITING) {
+            return;
+        }
         var g :Graphics = sprite.graphics;
 
         g.clear();
@@ -850,6 +860,9 @@ public class EditorController extends Controller
 
     protected function drawEditing (sprite :MsoySprite) :void
     {
+        if (!DRAW_EDITING) {
+            return;
+        }
         var g :Graphics = sprite.graphics;
 
         g.clear();
@@ -859,6 +872,9 @@ public class EditorController extends Controller
 
     protected function drawScaling (sprite :MsoySprite) :void
     {
+        if (!DRAW_EDITING) {
+            return;
+        }
         var w :Number = sprite.contentWidth;
         var h :Number = sprite.contentHeight;
         var wo :Number = SCALE_TARGET_LENGTHS / sprite.scaleX;
@@ -957,5 +973,8 @@ public class EditorController extends Controller
 
     protected static const SCALE_TARGET_LENGTHS :int = 15;
     protected static const SCALING_TRIGGER_AREA :int = 5;
+
+    /** Used during debugging. */
+    protected static const DRAW_EDITING :Boolean = true; // normally true
 }
 }

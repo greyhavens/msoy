@@ -10,12 +10,13 @@ import flash.display.DisplayObject;
 import flash.events.Event;
 
 import flash.geom.Matrix;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 
 public class Perspectivizer extends Bitmap
 {
     public function Perspectivizer (
-        source :DisplayObject, perspInfo :Array = null,
+        source :DisplayObject, perspInfo :PerspInfo = null,
         mediaScaleX :Number = 1, mediaScaleY :Number = 1)
     {
         super();
@@ -24,7 +25,7 @@ public class Perspectivizer extends Bitmap
         if (perspInfo != null) {
             updatePerspInfo(perspInfo, mediaScaleX, mediaScaleY);
         }
-        addEventListener(Event.ENTER_FRAME, enterFrame);
+//        addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
     public function getSource () :DisplayObject
@@ -32,18 +33,25 @@ public class Perspectivizer extends Bitmap
         return _source;
     }
 
+    public function getHotSpot () :Point
+    {
+        if (_info != null) {
+            return _info.hotSpot;
+        } else {
+            return new Point(0, 0);
+        }
+    }
+
     public function updatePerspInfo (
-        perspInfo :Array, mediaScaleX :Number, mediaScaleY :Number) :void
+        perspInfo :PerspInfo, mediaScaleX :Number, mediaScaleY :Number) :void
     {
         _info = perspInfo;
         _mediaScaleX = mediaScaleX;
         _mediaScaleY = mediaScaleY;
 
-        var ww :int = 1 + Math.round(Math.abs(
-            Number(_info[0]) - Number(_info[3])));
+        var ww :int = 1 + Math.round(Math.abs(_info.p0.x - _info.pN.x));
         var hh :int = 1 + Math.round(Math.max(
-            Number(_info[1]) + Number(_info[2]),
-            Number(_info[4]) + Number(_info[5])));
+            _info.p0.y + _info.height0, _info.pN.y + _info.heightN));
 
         if (ww < 1 || hh < 1) {
             return;
@@ -101,15 +109,20 @@ public class Perspectivizer extends Bitmap
         _sourcePixels.draw(_source,
             new Matrix(_mediaScaleX, 0, 0, _mediaScaleY), null, null, r);
 
-        var x0 :Number = _info[0];
-        var y0 :Number = _info[1]
-        var height0 :Number = _info[2];
-        var xN :Number = _info[3];
-        var yN :Number = _info[4];
-        var heightN :Number = _info[5];
+        var x0 :Number = _info.p0.x;
+        var y0 :Number = _info.p0.y;
+        var height0 :Number = _info.height0;
+        var xN :Number = _info.pN.x;
+        var yN :Number = _info.pN.y;
+        var heightN :Number = _info.heightN;
         var yy :int;
 
         // sample pixels out of _sourcePixels into the bitmap data
+        // TODO: this is wrong, because I'm progressing from
+        // the 0 to the N scale smoothly. What we should do is
+        // just have a ref to the AbstractRoomView (or some layer-outter)
+        // and check the source X pixel column for each projected X pixel col.
+        // TODO
         for (var xx :int = 0; xx < _destPixels.width; xx++) {
             var percX :Number = (xx / _destPixels.width);
             var iPerc :Number = 1 - percX;
@@ -166,7 +179,7 @@ public class Perspectivizer extends Bitmap
 
     protected var _destPixels :BitmapData;
 
-    protected var _info :Array;
+    protected var _info :PerspInfo;
 
     protected var _mediaScaleX :Number;
     protected var _mediaScaleY :Number;

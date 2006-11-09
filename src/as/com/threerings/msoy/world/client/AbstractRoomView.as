@@ -341,7 +341,6 @@ public class AbstractRoomView extends Canvas
     protected function positionAndScale (
             sprite :MsoySprite, loc :MsoyLocation) :void
     {
-        var sceneWidth :Number = _scene.getWidth();
         var hotSpot :Point = sprite.getLayoutHotSpot();
         var minScale :Number = computeMinScale();
         // the scale of the object is determined by the z coordinate
@@ -349,19 +348,33 @@ public class AbstractRoomView extends Canvas
             ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - minScale);
         sprite.setLocationScale(scale);
 
+        var p :Point = projectedLocation(scale, loc.x, loc.y);
+        sprite.x = p.x - (scale * hotSpot.x);
+        sprite.y = p.y - (scale * hotSpot.y);
+    }
+
+    /**
+     * Determine the location of the projected coordinate.
+     *
+     * @param x the logical x coordinate (0 - 1)
+     * @param y the logical y coordinate (0 - 1)
+     */
+    protected function projectedLocation (
+        scale :Number, x :Number, y :Number) :Point
+    {
+        var sceneWidth :Number = _scene.getWidth();
+
         // x position depends on logical x and the scale
         var floorWidth :Number = (sceneWidth * scale);
         var floorInset :Number = (sceneWidth - floorWidth) / 2;
-        sprite.x = floorInset - (scale * hotSpot.x) +
-            (loc.x / MAX_COORD) * floorWidth;
 
         // y position depends on logical y and the scale (z)
         var horizon :Number = 1 - _scene.getHorizon();
         var horizonY :Number = TARGET_HEIGHT * horizon;
 
-        sprite.y = (horizonY + (TARGET_HEIGHT - horizonY) * scale) -
-            (scale * hotSpot.y) - 
-            (loc.y / MAX_COORD) * (TARGET_HEIGHT * scale);
+        return new Point(floorInset + (x * floorWidth),
+            horizonY +
+            ((TARGET_HEIGHT - horizonY) - (y * TARGET_HEIGHT)) * scale);
     }
 
     /**
@@ -369,53 +382,49 @@ public class AbstractRoomView extends Canvas
      */
     public function getPerspInfo (
         sprite :MsoySprite, contentWidth :int, contentHeight :int,
-        loc :MsoyLocation) :Array
+        loc :MsoyLocation) :PerspInfo
     {
-        var sceneWidth :Number = _scene.getWidth();
         var hotSpot :Point = sprite.getMediaHotSpot();
         var mediaScaleX :Number = sprite.getMediaScaleX();
         var mediaScaleY :Number = sprite.getMediaScaleY();
         var minScale :Number = computeMinScale();
 
+        // below, 0 refers to the right side of the source sprite
+        // N refers to the left side, and H refers to the location
+        // of the hotspot
+
         // the scale of the object is determined by the z coordinate
-        var farFocal :Number = FOCAL + (_scene.getDepth() * loc.z) +
-            (hotSpot.x * mediaScaleX);
-        var farScale :Number = FOCAL / farFocal;
-        var nearScale :Number = FOCAL /
-            (farFocal - (contentWidth * mediaScaleX));
+        var distH :Number = FOCAL + (_scene.getDepth() * loc.z);
+        var dist0 :Number = (hotSpot.x * mediaScaleX);
+        var distN :Number = (contentWidth - hotSpot.x) * mediaScaleX;
+        if (loc.x < .5) {
+            dist0 *= -1;
+        } else {
+            distN *= -1;
+        }
 
-        var scale0 :Number = (loc.x < .5) ? nearScale : farScale;
-        var scaleN :Number = (loc.x < .5) ? farScale : nearScale;
+        var scale0 :Number = FOCAL / (distH + dist0);
+        var scaleH :Number = FOCAL / distH;
+        var scaleN :Number = FOCAL / (distH + distN);
 
-        // x position depends on logical x and the scale
-        var floorWidth0 :Number = (sceneWidth * scale0);
-        var floorInset0 :Number = (sceneWidth - floorWidth0) / 2;
-        var x0 :Number = floorInset0 + (loc.x * floorWidth0);
+        var logicalY :Number = loc.y +
+            ((contentHeight * mediaScaleY) / TARGET_HEIGHT);
 
-        var floorWidthN :Number = (sceneWidth * scaleN);
-        var floorInsetN :Number = (sceneWidth - floorWidthN) / 2;
-        var xN :Number = floorInsetN + (loc.x * floorWidthN);
-
-        // y position depends on logical y and the scale (z)
-        var horizon :Number = 1 - _scene.getHorizon();
-        var horizonY :Number = TARGET_HEIGHT * horizon;
-
-        var y0 :Number = (horizonY + (TARGET_HEIGHT - horizonY) * scale0) -
-            (loc.y * TARGET_HEIGHT * scale0);
-        var yN :Number = (horizonY + (TARGET_HEIGHT - horizonY) * scaleN) -
-            (loc.y * TARGET_HEIGHT * scaleN);
+        var p0 :Point = projectedLocation(scale0, loc.x, logicalY);
+        var pH :Point = projectedLocation(scaleH, loc.x, loc.y);
+        var pN :Point = projectedLocation(scaleN, loc.x, logicalY);
 
         var height0 :Number = contentHeight * scale0 * mediaScaleY;
         var heightN :Number = contentHeight * scaleN * mediaScaleY;
 
-        var minX :Number = Math.min(x0, xN);
-        var minY :Number = Math.min(y0, yN);
-        x0 -= minX;
-        xN -= minX;
-        y0 -= minY;
-        yN -= minY;
+        // min/max don't account for the hotspot location
+        var minX :Number = Math.min(p0.x, pN.x);
+        var minY :Number = Math.min(p0.y, pN.y);
+        p0.offset(-minX, -minY);
+        pN.offset(-minX, -minY);
+        pH.offset(-minX, -minY);
 
-        return [ x0, y0, height0, xN, yN, heightN ];
+        return new PerspInfo(p0, height0, pN, heightN, pH);
     }
 
     /**

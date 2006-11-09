@@ -192,28 +192,33 @@ public class MsoySprite extends MediaContainer
 
     /**
      * Get the basic hotspot that is the registration point on the media.
+     * This point is not scaled.
      */
     public function getMediaHotSpot () :Point
     {
         // TODO: figure out where we're going to store hotspot info
         var p :Point = null; // TODO _desc.hotSpot;
         if (p == null) {
-            p = new Point(contentWidth/2, contentHeight);
+            // if there's no hotspot, it defaults to along the bottom
+            p = new Point(_w/2, _h);
 
         } else {
-            // scale the hotspot associated with the media
-            p = new Point(Math.abs(p.x * getMediaScaleX()),
-                Math.abs(p.y * getMediaScaleY()));
+            // return a clone of the hotspot in the descriptor
+            p = p.clone();
         }
         return p;
     }
 
     /**
-     * Get the hotspot to use for layout purposes.
+     * Get the hotspot to use for layout purposes. This point is 
+     * adjusted for scale and any perspectivization.
      */
     public function getLayoutHotSpot () :Point
     {
-        return getMediaHotSpot();
+        var p :Point = getMediaHotSpot();
+        p.x = Math.abs(p.x * getMediaScaleX());
+        p.y = Math.abs(p.y * getMediaScaleY());
+        return p;
     }
 
     /**

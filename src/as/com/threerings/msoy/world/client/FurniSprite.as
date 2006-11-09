@@ -143,10 +143,7 @@ public class FurniSprite extends MsoySprite
     override public function getLayoutHotSpot () :Point
     {
         if (_media is Perspectivizer) {
-            // when we're perspectivizing, we have a totally different
-            // geometry. We need to return a point to our transformed hotspot
-            // TODO
-            return new Point(0, 0);
+            return Perspectivizer(_media).getHotSpot();
 
         } else {
             return super.getLayoutHotSpot();
@@ -155,8 +152,8 @@ public class FurniSprite extends MsoySprite
 
     override protected function locationUpdated () :void
     {
-        super.locationUpdated();
         updatePerspective();
+        super.locationUpdated();
     }
 
     override protected function scaleUpdated () :void
@@ -171,67 +168,28 @@ public class FurniSprite extends MsoySprite
             return;
         }
 
-        var info :Array =
+        var info :PerspInfo =
             AbstractRoomView(parent).getPerspInfo(this, _w, _h, loc);
         Perspectivizer(_media).updatePerspInfo(
             info, getMediaScaleX(), getMediaScaleY());
 
-//        // draw an outline of the perspectivized region
-//        var x0 :Number = info[0];
-//        var y0 :Number = info[1];
-//        var height0 :Number = info[2];
-//        var xN :Number = info[3];
-//        var yN :Number = info[4];
-//        var heightN :Number = info[5];
+//        if (true) {
+//            // draw the hotspot
+//            graphics.clear();
+//            graphics.beginFill(0x0099FF);
+//            graphics.drawCircle(info.hotSpot.x, info.hotSpot.y, 5);
+//            graphics.endFill();
 //
-//        graphics.clear();
-//        graphics.lineStyle(1, 0x00FF00);
-//        graphics.moveTo(x0, y0);
-//        graphics.lineTo(x0, y0 + height0);
-//        graphics.lineStyle(1, 0x0000FF);
-//        graphics.lineTo(xN, yN + heightN);
-//        graphics.lineStyle(1, 0x00FF00);
-//        graphics.lineTo(xN, yN);
-//        graphics.lineTo(x0, y0);
-    }
-
-//    {
-//        var pinchLeft :Number = .1;
-//        var pinchRight :Number = 1;
-//
-//        var maxVal :Number = (127 / 256); // max positive displacement
-//        var maxScaleDiff :Number = _h * (1 - Math.min(pinchLeft, pinchRight));
-//        var maxJump :Number = maxScaleDiff / maxVal;
-//
-//        var filter :DisplacementMapFilter = new DisplacementMapFilter();
-//        filter.alpha = 0;
-//        filter.componentX = BitmapDataChannel.RED;
-//        filter.componentY = BitmapDataChannel.BLUE;
-//        filter.mode = DisplacementMapFilterMode.COLOR;
-//        filter.scaleX = 1;
-//        filter.scaleY = maxJump;
-//
-//        var map :BitmapData = new BitmapData(_w, _h, false, 0xFFFFFF);
-//        var ww :Number = _w - 1;
-//        for (var xx :int = 0; xx < _w; xx++) {
-//            var rightness :Number = (xx / ww);
-//            var scaleHere :Number = (rightness * pinchRight) +
-//                ((1 - rightness) * pinchLeft);
-//            var srcHeight :Number = _h / scaleHere;
-//            var start :Number = (_h - srcHeight) / 2;
-//            for (var yy :int = 0; yy < _h; yy++) {
-//                var srcYY :Number = (yy / _h) * srcHeight + start;
-//                var val :Number = (srcYY - yy) / maxJump;
-//                val = Math.max(-maxVal, Math.min(maxVal, val));
-//                var jump :uint = 128 + (val * 256);
-//                map.setPixel(xx, yy, uint(((uint(128) << 16) | jump)));
-//            }
+//            // draw an outline of the perspectivized region
+//            //graphics.clear();
+//            graphics.lineStyle(1, 0x00FF00);
+//            graphics.moveTo(info.p0.x, info.p0.y);
+//            graphics.lineTo(info.p0.x, info.p0.y + info.height0);
+//            graphics.lineTo(info.pN.x, info.pN.y + info.heightN);
+//            graphics.lineTo(info.pN.x, info.pN.y);
+//            graphics.lineTo(info.p0.x, info.p0.y);
 //        }
-//
-//        filter.mapBitmap = map;
-//
-//        this.filters = [ filter ];
-//    }
+    }
 
     override public function setEditing (editing :Boolean) :void
     {
@@ -245,10 +203,6 @@ public class FurniSprite extends MsoySprite
         if (editing) {
             // we don't want a tooltip while editing
             toolTip = null;
-
-        } else {
-            // TEMP: to undo perspective
-//            filters = [];
         }
     }
 

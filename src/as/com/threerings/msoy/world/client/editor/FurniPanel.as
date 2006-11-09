@@ -9,7 +9,7 @@ import mx.collections.ListCollectionView;
 import mx.containers.VBox;
 import mx.containers.ViewStack;
 
-import mx.controls.Button;
+import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.Label;
 import mx.controls.TextInput;
@@ -39,6 +39,8 @@ public class FurniPanel extends SpritePanel
         super.updateInputFields();
 
         _scaleEditor.setSprite(_sprite);
+
+        _perspective.selected = (_sprite as FurniSprite).isPerspectivized();
 
         var furni :FurniData = (_sprite as FurniSprite).getFurniData();
         updateActionType(furni);
@@ -133,22 +135,20 @@ public class FurniPanel extends SpritePanel
         BindingUtils.bindProperty(_actionPanels, "selectedIndex",
             _actionType, "selectedIndex");
 
-        // BEGIN temporary controls
-        var lbl :Label;
-        var btn :Button = new Button();
-        btn.label = "perspective?";
-        btn.addEventListener(MouseEvent.CLICK,
+        _perspective = new CheckBox();
+        _perspective.addEventListener(MouseEvent.CLICK,
             function (evt :MouseEvent) :void {
                 var furn :FurniSprite = FurniSprite(_sprite);
                 furn.togglePerspective();
                 spritePropsUpdated();
             });
         addRow(
-            lbl = MsoyUI.createLabel("testing:"),
-            btn);
-        lbl.setStyle("color", 0xFF0000);
+            MsoyUI.createLabel(Msgs.EDITING.get("l.perspective")),
+            _perspective);
 
+        // BEGIN temporary controls
         // add an "expert control" for directly editing the action
+        var lbl :Label;
         addRow(
             lbl = MsoyUI.createLabel(Msgs.EDITING.get("l.action")),
             _actionData = new TextInput());
@@ -275,6 +275,8 @@ public class FurniPanel extends SpritePanel
     protected var _actionPanels :ViewStack;
 
     protected var _destScene :ComboBox;
+
+    protected var _perspective :CheckBox;
 //    protected var _destPortal :TextInput;
 
     protected var _url :TextInput;
