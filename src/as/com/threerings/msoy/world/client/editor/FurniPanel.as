@@ -105,9 +105,23 @@ public class FurniPanel extends SpritePanel
     {
         super.createChildren();
 
+        // set up scale editing
         addRow(
             _scaleEditor = new ScaleEditor(_ctx), [2, 1]);
 
+        // set up perspective editing
+        _perspective = new CheckBox();
+        _perspective.addEventListener(MouseEvent.CLICK,
+            function (evt :MouseEvent) :void {
+                var furn :FurniSprite = FurniSprite(_sprite);
+                furn.togglePerspective();
+                spritePropsUpdated();
+            });
+        addRow(
+            MsoyUI.createLabel(Msgs.EDITING.get("l.perspective")),
+            _perspective);
+
+        // set up action editing
         addRow(
             MsoyUI.createLabel(Msgs.EDITING.get("l.action")),
             _actionType = new ComboBox());
@@ -134,17 +148,6 @@ public class FurniPanel extends SpritePanel
 
         BindingUtils.bindProperty(_actionPanels, "selectedIndex",
             _actionType, "selectedIndex");
-
-        _perspective = new CheckBox();
-        _perspective.addEventListener(MouseEvent.CLICK,
-            function (evt :MouseEvent) :void {
-                var furn :FurniSprite = FurniSprite(_sprite);
-                furn.togglePerspective();
-                spritePropsUpdated();
-            });
-        addRow(
-            MsoyUI.createLabel(Msgs.EDITING.get("l.perspective")),
-            _perspective);
 
         // BEGIN temporary controls
         // add an "expert control" for directly editing the action

@@ -216,8 +216,8 @@ public class MsoySprite extends MediaContainer
     public function getLayoutHotSpot () :Point
     {
         var p :Point = getMediaHotSpot();
-        p.x = Math.abs(p.x * getMediaScaleX());
-        p.y = Math.abs(p.y * getMediaScaleY());
+        p.x = Math.abs(p.x * getMediaScaleX() * _locScale);
+        p.y = Math.abs(p.y * getMediaScaleY() * _locScale);
         return p;
     }
 

@@ -35,11 +35,7 @@ public class Perspectivizer extends Bitmap
 
     public function getHotSpot () :Point
     {
-        if (_info != null) {
-            return _info.hotSpot;
-        } else {
-            return new Point(0, 0);
-        }
+        return (_info != null) ? _info.hotSpot : new Point(0, 0);
     }
 
     public function updatePerspInfo (
@@ -111,7 +107,6 @@ public class Perspectivizer extends Bitmap
         m.scale(_mediaScaleX, _mediaScaleY);
 
         // copy the source into _sourcePixels
-        //_sourcePixels.draw(_source, null, null, null, r);
         _sourcePixels.draw(_source, m); //, null, null, r);
 
         var x0 :Number = _info.p0.x;

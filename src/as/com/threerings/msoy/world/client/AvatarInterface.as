@@ -46,6 +46,11 @@ public class AvatarInterface extends MsoyInterface
      */
     protected function handleAvatarChange (event :TextEvent) :void
     {
+        // TODO: once we determine the final bits of data we'll be
+        // passing to the avatar, we should just encode them all when we
+        // send an avatarChanged from the avatar, then this would save the
+        // encoded string and refer to that instead of having isWalking()
+        // and getOrient() ask the avatar again.
         if (avatarChanged != null) {
             avatarChanged();
         }

@@ -341,16 +341,16 @@ public class AbstractRoomView extends Canvas
     protected function positionAndScale (
             sprite :MsoySprite, loc :MsoyLocation) :void
     {
-        var hotSpot :Point = sprite.getLayoutHotSpot();
-        var minScale :Number = computeMinScale();
         // the scale of the object is determined by the z coordinate
+        var minScale :Number = computeMinScale();
         var scale :Number = minScale +
             ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - minScale);
         sprite.setLocationScale(scale);
 
         var p :Point = projectedLocation(scale, loc.x, loc.y);
-        sprite.x = p.x - (scale * hotSpot.x);
-        sprite.y = p.y - (scale * hotSpot.y);
+        var hotSpot :Point = sprite.getLayoutHotSpot();
+        sprite.x = p.x - hotSpot.x;
+        sprite.y = p.y - hotSpot.y;
     }
 
     /**
