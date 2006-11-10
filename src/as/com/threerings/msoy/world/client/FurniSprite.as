@@ -111,6 +111,9 @@ public class FurniSprite extends MsoySprite
             rawChildren.removeChild(_media);
         }
 
+        var mask :DisplayObject = _media.mask;
+        _media.mask = null;
+
         var newMedia :DisplayObject;
         if (wasPersp) {
             newMedia = Perspectivizer(_media).getSource();
@@ -133,6 +136,7 @@ public class FurniSprite extends MsoySprite
         }
 
         _media = newMedia;
+        _media.mask = mask;
         if (_media is UIComponent) {
             addChild(_media);
         } else {
@@ -228,12 +232,12 @@ public class FurniSprite extends MsoySprite
         scaleUpdated();
     }
 
-    override public function get maxContentWidth () :int
+    override public function getMaxContentWidth () :int
     {
         return 2000;
     }
 
-    override public function get maxContentHeight () :int
+    override public function getMaxContentHeight () :int
     {
         return 1000;
     }

@@ -89,6 +89,16 @@ public class MsoySprite extends MediaContainer
         }
     }
 
+    public function getActualWidth () :Number
+    {
+        return getContentWidth() * _locScale;
+    }
+
+    public function getActualHeight () :Number
+    {
+        return getContentHeight() * _locScale;
+    }
+
     protected function setup (desc :MediaDesc) :void
     {
         if (Util.equals(desc, _desc)) {
@@ -313,7 +323,7 @@ public class MsoySprite extends MediaContainer
         throw new Error("Cannot set scale of abstract MsoySprite");
     }
 
-    public function get description () :MediaDesc
+    public function getDesc () :MediaDesc
     {
         return _desc;
     }

@@ -114,12 +114,12 @@ public class AvatarSprite extends MsoySprite
         }
     }
 
-    override public function get maxContentWidth () :int
+    override public function getMaxContentWidth () :int
     {
         return 300;
     }
 
-    override public function get maxContentHeight () :int
+    override public function getMaxContentHeight () :int
     {
         return 400;
     }

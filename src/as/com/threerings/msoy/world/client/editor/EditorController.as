@@ -582,8 +582,8 @@ public class EditorController extends Controller
             _editSprite.getLayoutHotSpot());
 
 //        // determine whether we're going to adjust scaling or position
-//        var w :Number = _editSprite.contentWidth;
-//        var h :Number = _editSprite.contentHeight;
+//        var w :Number = _editSprite.getActualWidth();
+//        var h :Number = _editSprite.getActualHeight();
 //        var xScaleTrigger :Number = (w > SCALING_TRIGGER_AREA * 2)
 //            ? SCALING_TRIGGER_AREA : 1;
 //        var yScaleTrigger :Number = (h > SCALING_TRIGGER_AREA * 2)
@@ -712,7 +712,7 @@ public class EditorController extends Controller
             sx *= (p.x - hs.x) / (_xoffset - hs.x);
             if (sx != 0 && !isNaN(sx) && isFinite(sx)) {
                 _editSprite.setMediaScaleX(sx);
-                if (_editSprite.contentWidth < 2) {
+                if (_editSprite.getActualWidth() < 2) {
                     // re-set the old scale
                     _editSprite.setMediaScaleX(ox);
                 }
@@ -724,7 +724,7 @@ public class EditorController extends Controller
             sy *= (p.y - hs.y) / (_yoffset - hs.y);
             if (sy != 0 && !isNaN(sy) && isFinite(sy)) {
                 _editSprite.setMediaScaleY(sy);
-                if (_editSprite.contentHeight < 2) {
+                if (_editSprite.getActualHeight() < 2) {
                     // re-set the old scale
                     _editSprite.setMediaScaleY(oy);
                 }
@@ -798,10 +798,10 @@ public class EditorController extends Controller
             return;
         }
 
-        var w :Number = sprite.contentWidth;
-        var h :Number = sprite.contentHeight;
-        var wo :Number = SCALE_TARGET_LENGTHS / sprite.scaleX;
-        var ho :Number = SCALE_TARGET_LENGTHS / sprite.scaleY;
+        var w :Number = sprite.getActualWidth();
+        var h :Number = sprite.getActualHeight();
+        var wo :Number = SCALE_TARGET_LENGTHS;
+        var ho :Number = SCALE_TARGET_LENGTHS;
         var g :Graphics = sprite.graphics;
 
         g.clear();
@@ -825,8 +825,8 @@ public class EditorController extends Controller
         if (!DRAW_EDITING) {
             return;
         }
-        var wo :Number = SCALE_TARGET_LENGTHS / sprite.scaleX;
-        var ho :Number = SCALE_TARGET_LENGTHS / sprite.scaleY;
+        var wo :Number = SCALE_TARGET_LENGTHS;
+        var ho :Number = SCALE_TARGET_LENGTHS;
         var g :Graphics = sprite.graphics;
         var hs :Point = sprite.getLayoutHotSpot();
 
@@ -855,7 +855,8 @@ public class EditorController extends Controller
 
         g.clear();
         g.lineStyle(2, 0x0033FF, 1, false, LineScaleMode.NONE);
-        g.drawRect(0, 0, sprite.contentWidth - 2, sprite.contentHeight - 2);
+        g.drawRect(0, 0, sprite.getActualWidth() - 2,
+            sprite.getActualHeight() - 2);
     }
 
     protected function drawEditing (sprite :MsoySprite) :void
@@ -867,7 +868,8 @@ public class EditorController extends Controller
 
         g.clear();
         g.lineStyle(2, 0xFF3300, 1, false, LineScaleMode.NONE);
-        g.drawRect(0, 0, sprite.contentWidth - 2, sprite.contentHeight - 2);
+        g.drawRect(0, 0, sprite.getActualWidth() - 2,
+            sprite.getActualHeight() - 2);
     }
 
     protected function drawScaling (sprite :MsoySprite) :void
@@ -875,10 +877,10 @@ public class EditorController extends Controller
         if (!DRAW_EDITING) {
             return;
         }
-        var w :Number = sprite.contentWidth;
-        var h :Number = sprite.contentHeight;
-        var wo :Number = SCALE_TARGET_LENGTHS / sprite.scaleX;
-        var ho :Number = SCALE_TARGET_LENGTHS / sprite.scaleY;
+        var w :Number = sprite.getActualWidth();
+        var h :Number = sprite.getActualHeight();
+        var wo :Number = SCALE_TARGET_LENGTHS;
+        var ho :Number = SCALE_TARGET_LENGTHS;
         var g :Graphics = sprite.graphics;
 
         g.clear();

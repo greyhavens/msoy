@@ -49,7 +49,7 @@ public class SceneMoveInstance extends TweenEffectInstance
         // we don't use IUIComponent.move() on our target, so we
         // do not need to suspend EffectManager event handling.
 
-        if (SceneMove(effect).valid) {
+        if (SceneMove(effect).isValid()) {
             MsoySprite(target).setLocation(value);
         }
     }
@@ -64,7 +64,7 @@ public class SceneMoveInstance extends TweenEffectInstance
         // will update with current coords
         super.onTweenEnd(value);
 
-        if (SceneMove(effect).valid) {
+        if (SceneMove(effect).isValid()) {
             MsoySprite(target).moveCompleted(value[3]);
         }
     }

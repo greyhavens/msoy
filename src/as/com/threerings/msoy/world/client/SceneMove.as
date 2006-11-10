@@ -24,7 +24,7 @@ public class SceneMove extends TweenEffect
     /**
      * Accessor for valid property, used by our instances.
      */
-    public function get valid () :Boolean
+    public function isValid () :Boolean
     {
         return _valid;
     }
