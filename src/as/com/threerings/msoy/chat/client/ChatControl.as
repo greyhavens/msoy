@@ -3,7 +3,9 @@ package com.threerings.msoy.chat.client {
 import flash.display.DisplayObjectContainer;
 
 import flash.events.Event;
+import flash.events.FocusEvent;
 import flash.events.KeyboardEvent;
+import flash.events.TextEvent;
 
 import flash.ui.Keyboard;
 
@@ -16,7 +18,7 @@ import mx.controls.TextInput;
 
 import mx.events.FlexEvent;
 
-import mx.utils.StringUtil;
+import com.threerings.util.StringUtil;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 
@@ -39,11 +41,14 @@ public class ChatControl extends HBox
         but.label = Msgs.GENERAL.get("b.send");
         addChild(but);
 
-        //_txt.addEventListener(FlexEvent.ENTER, sendChat);
-        //but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat);
         _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent, false, 0, true);
         _txt.addEventListener(FlexEvent.ENTER, sendChat, false, 0, true);
         but.addEventListener(FlexEvent.BUTTON_DOWN, sendChat, false, 0, true);
+
+        _txt.addEventListener(FocusEvent.FOCUS_IN, handleFocusIn,
+            false, 0, true);
+        _txt.addEventListener(FocusEvent.FOCUS_OUT, handleFocusOut,
+            false, 0, true);
     }
 
     override public function parentChanged (p :DisplayObjectContainer) :void
@@ -54,13 +59,18 @@ public class ChatControl extends HBox
             // set up any already-configured text
             _txt.text = _curLine;
             _histIdx = -1;
+            var willShowTip :Boolean = StringUtil.isBlank(_curLine);
 
             // request focus
             callLater(function () :void {
                 _txt.setFocus();
+                if (willShowTip) {
+                    showTip(true);
+                }
             });
 
         } else {
+            showTip(false);
             _curLine = _txt.text;
         }
     }
@@ -122,6 +132,47 @@ public class ChatControl extends HBox
         _txt.setSelection(text.length, text.length);
     }
 
+    protected function showTip (show :Boolean) :void
+    {
+        if (show == _showingTip) {
+            return;
+        }
+        if (show) {
+            _txt.setStyle("color", 0x666666);
+            _txt.text = Msgs.GENERAL.get("i.chat");
+            _txt.addEventListener(TextEvent.TEXT_INPUT, handleTextInput,
+                false, 0, true)
+
+        } else {
+            _txt.setStyle("color", 0x000000);
+            _txt.text = "";
+            _txt.removeEventListener(TextEvent.TEXT_INPUT, handleTextInput,
+                false);
+        }
+        _showingTip = show;
+    }
+
+    protected function handleFocusIn (evt :FocusEvent) :void
+    {
+        showTip(false);
+    }
+
+    protected function handleFocusOut (evt :FocusEvent) :void
+    {
+        if (_txt.text == "") {
+            showTip(true);
+        }
+    }
+
+    protected function handleTextInput (evt :TextEvent) :void
+    {
+        // turn off tippage, set the entered text to what the user entered
+        showTip(false);
+        callLater(function () :void {
+            _txt.text = evt.text;
+        });
+    }
+
     /** Our client-side context. */
     protected var _ctx :MsoyContext;
 
@@ -129,6 +180,8 @@ public class ChatControl extends HBox
 
     /** The current index in the chat command history. */
     protected var _histIdx :int = -1;
+
+    protected var _showingTip :Boolean = false;
 
     /** The preserved current line of text when traversing history or
      * carried between instances of ChatControl. */
