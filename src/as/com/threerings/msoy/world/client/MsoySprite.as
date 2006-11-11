@@ -5,6 +5,10 @@ import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.Shape;
+import flash.display.Sprite;
+
+import flash.display.Bitmap;
+import flash.display.BitmapData;
 
 import flash.errors.IOError;
 
@@ -89,11 +93,19 @@ public class MsoySprite extends MediaContainer
         }
     }
 
+    /**
+     * Get the screen width of this sprite, taking into account both
+     * horizontal scales.
+     */
     public function getActualWidth () :Number
     {
         return getContentWidth() * _locScale;
     }
 
+    /**
+     * Get the screen height of this sprite, taking into account both
+     * vertical scales.
+     */
     public function getActualHeight () :Number
     {
         return getContentHeight() * _locScale;
@@ -122,9 +134,10 @@ public class MsoySprite extends MediaContainer
             mouseChildren = false;
 
             // unlisten to any current mouse handlers
-            removeEventListener(MouseEvent.MOUSE_OVER, mouseOver);
-            removeEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+            removeEventListener(MouseEvent.ROLL_OVER, mouseOver);
+            removeEventListener(MouseEvent.ROLL_OUT, mouseOut);
             removeEventListener(MouseEvent.CLICK, mouseClick);
+            //removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
 
         } else {
             // set up mouse listeners
@@ -133,9 +146,10 @@ public class MsoySprite extends MediaContainer
                 mouseChildren = true;
 
                 if (hasAction()) {
-                    addEventListener(MouseEvent.MOUSE_OVER, mouseOver);
-                    addEventListener(MouseEvent.MOUSE_OUT, mouseOut);
+                    addEventListener(MouseEvent.ROLL_OVER, mouseOver);
+                    addEventListener(MouseEvent.ROLL_OUT, mouseOut);
                     addEventListener(MouseEvent.CLICK, mouseClick);
+                    //addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
                 }
 
             } else {
@@ -411,7 +425,9 @@ public class MsoySprite extends MediaContainer
             soFar :Number, total :Number) :void
     {
         var prog :Number = (total == 0) ? 0 : (soFar / total);
-        setStyle("backgroundImage", (prog < 1) ? _loadingImgClass : null);
+        if (prog >= 1) {
+            clearStyle("backgroundImage");
+        }
 
         /*
         ** old style progress updating. We may want to do something like this
@@ -449,12 +465,40 @@ public class MsoySprite extends MediaContainer
         return 0x40e0e0;
     }
 
+    // TODO: this isn't really needed, because this method is
+    // not used for our mouseOver hittesting.
+    // But: it boggles my mind that the standard hitTestPoint() on a 
+    // Bitmap doesn't seem to actually test the pixels in its BitmapData!!
+    override public function hitTestPoint
+        (x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
+    {
+        try {
+            if (_media is Loader && Loader(_media).content is Bitmap) {
+                var b :Bitmap = Bitmap(Loader(_media).content);
+                var p :Point = b.globalToLocal(new Point(x, y));
+                return b.bitmapData.hitTest(new Point(0, 0), 0xFF, p);
+            }
+        } catch (err :Error) {
+            // nada
+        }
+        return super.hitTestPoint(x, y, shapeFlag);
+    }
+
     /**
      * Callback function.
      */
     protected function mouseOver (event :MouseEvent) :void
     {
         setGlow(true);
+    }
+
+    // TODO: remove. This was used as an alternate to mouseOver/mouseOut,
+    // to try to fix transparent pixels, but the problem is that even if
+    // we decide not to glow here, no other sprite will receive
+    // the same mouse event to make a decision about it
+    protected function mouseMoved (event :MouseEvent) :void
+    {
+        setGlow(hitTestPoint(event.stageX, event.stageY, true));
     }
 
 /**
