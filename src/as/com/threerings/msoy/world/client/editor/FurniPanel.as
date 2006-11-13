@@ -11,6 +11,7 @@ import mx.containers.ViewStack;
 
 import mx.controls.CheckBox;
 import mx.controls.ComboBox;
+import mx.controls.HSlider;
 import mx.controls.Label;
 import mx.controls.TextInput;
 
@@ -46,6 +47,10 @@ public class FurniPanel extends SpritePanel
         updateActionType(furni);
 
         switch (furni.actionType) {
+        case FurniData.BACKGROUND:
+            updateBackground(furni);
+            break;
+
         case FurniData.ACTION_PORTAL:
             updatePortal(furni);
             break;
@@ -101,6 +106,21 @@ public class FurniPanel extends SpritePanel
         _destScene.selectedIndex = data.length;
     }
 
+    protected function updateBackground (furni :FurniData) :void
+    {
+        // TODO: I guess you can't use an audio item's furniture visualization
+        // as the background for a scene...
+
+        var isAudio :Boolean = furni.media.isAudio();
+        _volume.visible = isAudio;
+
+        if (isAudio) {
+            trace("Updating volume.....");
+            var v :Number = Number(furni.actionData);
+            _volume.value = isNaN(v) ? 1 : Math.min(1, Math.max(0, v));
+        }
+    }
+
     override protected function createChildren () :void
     {
         super.createChildren();
@@ -140,7 +160,7 @@ public class FurniPanel extends SpritePanel
 
         _actionPanels = new ViewStack();
         _actionPanels.addChild(new VBox()); // ACTION_NONE
-        _actionPanels.addChild(new VBox()); // BACKGROUND (nothing to edit) TODO
+        _actionPanels.addChild(createBackgroundEditor()); // BACKGROUND
         _actionPanels.addChild(new VBox()); // ACTION_GAME (nothing to edit)
         _actionPanels.addChild(createURLEditor()); // ACTION_URL
         _actionPanels.addChild(createPortalEditor()); // ACTION_PORTAL
@@ -157,6 +177,18 @@ public class FurniPanel extends SpritePanel
             _actionData = new TextInput());
         lbl.setStyle("color", 0xFF0000);
         // END: temporary things
+    }
+
+    protected function createBackgroundEditor () :UIComponent
+    {
+        var grid :Grid = new Grid();
+        grid.addRow(
+            MsoyUI.createLabel(Msgs.EDITING.get("l.volume")),
+            _volume = new HSlider());
+        _volume.liveDragging = true;
+        _volume.minimum = 0;
+        _volume.maximum = 1;
+        return grid;
     }
 
     protected function createURLEditor () :UIComponent
@@ -225,6 +257,16 @@ public class FurniPanel extends SpritePanel
             spritePropsUpdated();
         }, _url, "text");
 
+        BindingUtils.bindSetter(function (val :Number) :void {
+            var furni :FurniData = (_sprite as FurniSprite).getFurniData();
+            trace("Updating volume..... " + furni);
+            if (furni.actionType != FurniData.BACKGROUND) {
+                return; // don't update if we shouldn't
+            }
+            furni.actionData = String(val);
+            spritePropsUpdated();
+        }, _volume, "value");
+
         BindingUtils.bindSetter(function (o :Object) :void {
             var furni :FurniData = (_sprite as FurniSprite).getFurniData();
             if (furni.actionType != FurniData.ACTION_PORTAL) {
@@ -281,6 +323,8 @@ public class FurniPanel extends SpritePanel
 
     protected var _perspective :CheckBox;
 //    protected var _destPortal :TextInput;
+
+    protected var _volume :HSlider;
 
     protected var _url :TextInput;
 }

@@ -573,7 +573,7 @@ public class AbstractRoomView extends Canvas
         updateAllFurni();
     }
 
-    public function updateAllFurni() :void
+    public function updateAllFurni () :void
     {
         // set up any furniture
         for each (var furni :FurniData in _scene.getFurni()) {

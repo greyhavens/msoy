@@ -99,7 +99,6 @@ public class RoomView extends AbstractRoomView
             rereadScene();
             _roomObj.addListener(this)
             addAllOccupants();
-            setupMusic();
         }
     }
 
@@ -437,7 +436,6 @@ public class RoomView extends AbstractRoomView
 
         _ctx.getChatDirector().addChatDisplay(this);
 
-        setupMusic();
         addAllOccupants();
 
         // and animate ourselves entering the room (everyone already in the
@@ -459,20 +457,29 @@ public class RoomView extends AbstractRoomView
         super.didLeavePlace(plobj);
     }
 
-    /**
-     * Configure any background music in this room.
-     */
-    protected function setupMusic () :void
+    override public function updateAllFurni () :void
     {
-        var music :MediaDesc = _scene.getMusic();
+        super.updateAllFurni();
+
+        var music :FurniData = _scene.getMusic();
         if (music != null) {
-            _music = new SoundPlayer(music);
-            _music.loop();
-            //var pos :Number = Prefs.getMediaPosition(music.getMediaId());
-            //_music.loop(pos);
-            // NOTE: the position argument has been disabled because
-            // it causes the flash player to crash, and also seems to booch
-            // proper looping.
+            // maybe shutdown old music
+            if (_music != null && !_music.getMedia().equals(music.media)) {
+                shutdownMusic(); // will set _music = null
+            }
+            // set up the new music
+            if (_music == null) {
+                _music = new SoundPlayer(music.media);
+                _music.loop();
+                //var pos :Number = Prefs.getMediaPosition(music.getMediaId());
+                //_music.loop(pos);
+                // NOTE: the position argument has been disabled because
+                // it causes the flash player to crash, and also seems to booch
+                // proper looping.
+            }
+            // set the volume, even if we're just re-setting it on
+            // already-playing music
+            _music.setVolume(Number(music.actionData));
         }
     }
 

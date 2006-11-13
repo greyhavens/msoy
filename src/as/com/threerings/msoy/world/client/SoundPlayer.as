@@ -6,6 +6,7 @@ import flash.events.ProgressEvent;
 
 import flash.media.Sound;
 import flash.media.SoundChannel;
+import flash.media.SoundTransform;
 
 import flash.net.URLRequest;
 
@@ -25,6 +26,17 @@ public class SoundPlayer
     }
 
     /**
+     * Set the volume of this sound.
+     */
+    public function setVolume (volume :Number) :void
+    {
+        _volume = volume;
+        if (_chan != null) {
+            _chan.soundTransform = new SoundTransform(_volume);
+        }
+    }
+
+    /**
      * Play the sound.
      *
      * Using the startTime parameter is discouraged right now, as high
@@ -34,7 +46,7 @@ public class SoundPlayer
     public function play (startTime :Number = 0, loops :int = 0) :void
     {
         stop();
-        _chan = _sound.play(startTime, loops);
+        _chan = _sound.play(startTime, loops, new SoundTransform(_volume));
         if (_chan == null) {
             Log.getLog(this).warning("All sound channels are in use; " +
                 "unable to play sound [sound=" + _desc + "].");
@@ -98,5 +110,7 @@ public class SoundPlayer
     protected var _chan :SoundChannel;
 
     protected var _desc :MediaDesc;
+
+    protected var _volume :Number = 1;
 }
 }

@@ -78,14 +78,14 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
-     * Retrieve the first background furni data that specifies music
+     * Retrieve the first background furni data that specifies music.
      */
-    public function getMusic () :MediaDesc
+    public function getMusic () :FurniData
     {
         for each (var furni :FurniData in getFurni()) {
             if (furni.actionType == FurniData.BACKGROUND &&
                     furni.media.isAudio()) {
-                return furni.media;
+                return furni;
             }
         }
         return null;

@@ -202,6 +202,14 @@ public class EditorController extends Controller
                     break;
                 }
             }
+            if (selected == null) {
+                // if the background music was selected, fake up a sprite
+                var bkg :FurniData = _scene.getMusic();
+                if (bkg != null && bkg.itemType == item.getType() &&
+                        bkg.itemId == item.itemId) {
+                    selected = new FurniSprite(_ctx, bkg);
+                }
+            }
 
         } else if (obj is FurniData) {
             var selData :FurniData = (obj as FurniData);
