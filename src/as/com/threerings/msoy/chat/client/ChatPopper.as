@@ -18,6 +18,8 @@ import mx.effects.Parallel;
 import mx.effects.Sequence;
 import mx.effects.Zoom;
 
+import mx.events.ResizeEvent;
+
 import mx.managers.PopUpManager;
 
 import com.threerings.util.DisplayUtil;
@@ -33,11 +35,9 @@ public class ChatPopper
     public static function setChatView (view :UIComponent) :void
     {
         _view = view;
-        _bounds.topLeft = view.localToGlobal(new Point());
-        _bounds.x += PAD;
-        _bounds.y += PAD;
-        _bounds.width = view.width - PAD*2;
-        _bounds.height = view.height - PAD*2;
+
+        _view.addEventListener(ResizeEvent.RESIZE, handleViewResized);
+        checkViewSize();
     }
 
     public static function popUp (
@@ -164,6 +164,20 @@ public class ChatPopper
         seq.addChild(fadeOut);
         seq.addChild(goAway);
         seq.play();
+    }
+
+    protected static function handleViewResized (event :ResizeEvent) :void
+    {
+        checkViewSize();
+    }
+
+    protected static function checkViewSize () :void
+    {
+        _bounds.topLeft = _view.localToGlobal(new Point());
+        _bounds.x += PAD;
+        _bounds.y += PAD;
+        _bounds.width = _view.width - PAD*2;
+        _bounds.height = _view.height - PAD*2;
     }
 
     protected static var _view :UIComponent;
