@@ -23,6 +23,7 @@ import mx.events.FlexEvent;
 import mx.events.ResizeEvent;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.DisplayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 
@@ -153,8 +154,10 @@ public class AbstractRoomView extends Canvas
      */
     protected function configureScrollRect () :void
     {
-        if (_editing || _scene.getWidth() > width) {
+        var bounds :Rectangle = getScrollBounds();
+        if (bounds.width > unscaledWidth) {
             scrollRect = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
+
         } else {
             scrollRect = null;
         }
@@ -306,13 +309,29 @@ public class AbstractRoomView extends Canvas
             return false;
         }
 
-        // when editing, allow scrolling out of bounds somewhat
-        var outBoundsDistance :int = _editing ? (rect.width * 2 / 3) : 0;
-
-        rect.x = Math.min(_scene.getWidth() - rect.width + outBoundsDistance,
-            Math.max(-outBoundsDistance, rect.x + xpixels));
+        var bounds :Rectangle = getScrollBounds();
+        rect.x = Math.min(bounds.x + bounds.width - rect.width,
+            Math.max(bounds.x, rect.x + xpixels));
+        //rect.topLeft = DisplayUtil.fitRectInRect(rect, getScrollBounds());
         scrollRect = rect;
         return true;
+    }
+
+    /**
+     * Get the full boundaries of our scrolling area.
+     */
+    public function getScrollBounds () :Rectangle
+    {
+        if (_scene == null) {
+            return new Rectangle(0, 0, unscaledWidth, unscaledHeight);
+        }
+
+        var r :Rectangle = new Rectangle(
+            0, 0, _scene.getWidth() * scaleX, unscaledHeight);
+        if (_editing) {
+            r.inflate(unscaledWidth * 2 / 3, 0);
+        }
+        return r;
     }
 
     /**

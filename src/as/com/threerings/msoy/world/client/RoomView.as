@@ -243,8 +243,12 @@ public class RoomView extends AbstractRoomView
         }
 
         var centerX :int = _centerSprite.x + _centerSprite.getLayoutHotSpot().x;
-        var newX :Number = Math.min(_scene.getWidth() - rect.width,
-            Math.max(0, centerX - rect.width/2));
+        var bounds :Rectangle = getScrollBounds();
+
+        var newX :Number = centerX - rect.width/2;
+        newX = Math.min(bounds.x + bounds.width - rect.width,
+            Math.max(bounds.x, newX));
+
         if (_jumpScroll) {
             rect.x = newX;
 

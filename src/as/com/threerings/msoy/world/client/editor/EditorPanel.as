@@ -261,6 +261,9 @@ public class EditorPanel extends VBox
         _horizon.maximum = 1;
         _horizon.liveDragging = true;
 
+        grid.addRow(
+            new RoomViewScrollBox(_roomView, 200, 100), [2, 1]);
+
         box.addChild(grid);
 
         return box;
