@@ -52,6 +52,22 @@ public abstract class MsoyEntryPoint
         return GWT.isScript() ? path : "http://localhost:8080" + path;
     }
 
+    /**
+     * Returns a URL that displays the details of a given group.
+     */
+    public static String groupViewPath (int groupId)
+    {
+        return "group.html#" + groupId;
+    }
+
+    /**
+     * Returns a URL that displays the details of a given member.
+     */
+    public static String memberViewPath (int memberId)
+    {
+        return "person.html#" + memberId;
+    }
+
     // from interface EntryPoint
     public void onModuleLoad ()
     {
