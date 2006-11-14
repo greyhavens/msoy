@@ -130,9 +130,18 @@ public class MsoyServer extends WhirledServer
     }
 
     /**
-     * Returns the member object for the specified user if they are online
-     * currently, null otherwise. This should only be called from the dobjmgr
-     * thread.
+     * Returns the member object for the user identified by the given ID if they are online
+     * currently, null otherwise. This should only be called from the dobjmgr thread.
+     */
+    public static MemberObject lookupMember (int memberId)
+    {
+        // MemberName.equals and hashCode only depend on the id
+        return lookupMember(new MemberName(null, memberId));
+    }
+
+    /**
+     * Returns the member object for the user identified by the given name if they are online
+     * currently, null otherwise. This should only be called from the dobjmgr thread.
      */
     public static MemberObject lookupMember (MemberName name)
     {
