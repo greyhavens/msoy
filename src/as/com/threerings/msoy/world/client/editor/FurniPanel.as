@@ -115,7 +115,6 @@ public class FurniPanel extends SpritePanel
         _volume.visible = isAudio;
 
         if (isAudio) {
-            trace("Updating volume.....");
             var v :Number = Number(furni.actionData);
             _volume.value = isNaN(v) ? 1 : Math.min(1, Math.max(0, v));
         }
@@ -259,7 +258,6 @@ public class FurniPanel extends SpritePanel
 
         BindingUtils.bindSetter(function (val :Number) :void {
             var furni :FurniData = (_sprite as FurniSprite).getFurniData();
-            trace("Updating volume..... " + furni);
             if (furni.actionType != FurniData.BACKGROUND) {
                 return; // don't update if we shouldn't
             }

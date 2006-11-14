@@ -293,7 +293,13 @@ public class EditorController extends Controller
     {
         var sprite :MsoySprite = _editSprite;
         setEditSprite(null);
+
+// TEMP: so we can delete background music
+try {
         _roomView.removeChild(sprite);
+} catch (err :Error) {
+   // TEMP: nada
+}
         if (!ArrayUtil.removeAll(_addedSprites, sprite)) {
             _removedSprites.push(sprite);
         }
