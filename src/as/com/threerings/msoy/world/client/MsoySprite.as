@@ -134,9 +134,9 @@ public class MsoySprite extends MediaContainer
             mouseChildren = false;
 
             // unlisten to any current mouse handlers
-            removeEventListener(MouseEvent.ROLL_OVER, mouseOver);
-            removeEventListener(MouseEvent.ROLL_OUT, mouseOut);
-            removeEventListener(MouseEvent.CLICK, mouseClick);
+//            removeEventListener(MouseEvent.ROLL_OVER, mouseOver);
+//            removeEventListener(MouseEvent.ROLL_OUT, mouseOut);
+//            removeEventListener(MouseEvent.CLICK, mouseClick);
             //removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
 
         } else {
@@ -146,9 +146,9 @@ public class MsoySprite extends MediaContainer
                 mouseChildren = true;
 
                 if (hasAction()) {
-                    addEventListener(MouseEvent.ROLL_OVER, mouseOver);
-                    addEventListener(MouseEvent.ROLL_OUT, mouseOut);
-                    addEventListener(MouseEvent.CLICK, mouseClick);
+//                    addEventListener(MouseEvent.ROLL_OVER, mouseOver);
+//                    addEventListener(MouseEvent.ROLL_OUT, mouseOut);
+//                    addEventListener(MouseEvent.CLICK, mouseClick);
                     //addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
                 }
 
@@ -542,7 +542,7 @@ public class MsoySprite extends MediaContainer
     /**
      * Turn on or off the glow surrounding this sprite.
      */
-    protected function setGlow (doGlow :Boolean) :void
+    public function setGlow (doGlow :Boolean) :void
     {
         // if things are already in the proper state, do nothing
         if (doGlow == (_glow != null)) {
@@ -576,7 +576,7 @@ public class MsoySprite extends MediaContainer
     /**
      * Callback function.
      */
-    protected function mouseClick (event :MouseEvent) :void
+    public function mouseClick (event :MouseEvent) :void
     {
         // nada
     }

@@ -258,27 +258,67 @@ public class RoomController extends SceneController
     protected function mouseLeft (event :MouseEvent) :void
     {
         _walkTarget.visible = false;
+        setHoverSprite(null);
     }
 
     protected function mouseMoved (event :MouseEvent) :void
     {
-        if (_roomView.isLocationTarget(event.target as DisplayObject)) {
-            var cloc :ClickLocation =
-                _roomView.pointToLocation(event.stageX, event.stageY);
+        var sx :Number = event.stageX;
+        var sy :Number = event.stageY;
+        var hitter :DisplayObject = getHitObject(sx, sy);
+
+        if (_roomView.isLocationTarget(hitter)) {
+            var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
             if (cloc.click == ClickLocation.FLOOR) {
-                _walkTarget.x = event.localX;
-                _walkTarget.y = event.localY;
-                _walkTarget.visible = true;
-                return;
+                var p :Point = _roomView.globalToLocal(new Point(sx, sy));
+                _walkTarget.x = p.x;
+                _walkTarget.y = p.y;
+                hitter = null;
             }
         }
 
-        _walkTarget.visible = false;
+        _walkTarget.visible = (hitter == null);
+
+        setHoverSprite(hitter as MsoySprite); // will pass null if hitter
+        // is not a MsoySprite.
+    }
+
+    /**
+     * Get the top-most object with a non-transparent pixel at the specified
+     * location.
+     */
+    protected function getHitObject (
+        stageX :Number, stageY :Number) :DisplayObject
+    {
+        for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
+            var disp :DisplayObject = _roomView.getChildAt(dex);
+            if (disp.hitTestPoint(stageX, stageY, true)) {
+                return disp;
+            }
+        }
+
+        return _roomView;
+    }
+
+    protected function setHoverSprite (sprite :MsoySprite) :void
+    {
+        if (_hoverSprite != sprite) {
+            if (_hoverSprite != null) {
+                _hoverSprite.setGlow(false);
+                _hoverSprite = null;
+            }
+            if (sprite != null && sprite.hasAction()) {
+                sprite.setGlow(true);
+                _hoverSprite = sprite;
+            }
+        }
     }
 
     protected function mouseClicked (event :MouseEvent) :void
     {
-        if (_roomView.isLocationTarget(event.target as DisplayObject)) {
+        var hitter :DisplayObject = getHitObject(event.stageX, event.stageY);
+
+        if (_roomView.isLocationTarget(hitter)) {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
             if (curLoc == null) {
                 return; // we've already left, ignore the click
@@ -295,6 +335,12 @@ public class RoomController extends SceneController
                 // we rotate so that 0 faces forward
                 newLoc.orient = (degrees + 90 + 360) % 360;
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
+            }
+
+        } else if (hitter is MsoySprite) {
+            var sprite :MsoySprite = (hitter as MsoySprite);
+            if (sprite.hasAction()) {
+                sprite.mouseClick(event);
             }
         }
     }
@@ -356,6 +402,8 @@ public class RoomController extends SceneController
     protected var _roomView :RoomView;
 
     protected var _roomObj :RoomObject;
+
+    protected var _hoverSprite :MsoySprite;
 
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;

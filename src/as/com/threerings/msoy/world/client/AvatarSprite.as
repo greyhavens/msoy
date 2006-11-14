@@ -219,7 +219,7 @@ public class AvatarSprite extends MsoySprite
         stanceDidChange();
     }
 
-    override protected function mouseClick (event :MouseEvent) :void
+    override public function mouseClick (event :MouseEvent) :void
     {
         // let's just post a command to our controller
         CommandEvent.dispatch(this, RoomController.AVATAR_CLICKED, this);

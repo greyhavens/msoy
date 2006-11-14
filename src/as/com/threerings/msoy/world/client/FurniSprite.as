@@ -286,7 +286,7 @@ public class FurniSprite extends MsoySprite
     }
 
     // documentation inherited
-    override protected function mouseClick (event :MouseEvent) :void
+    override public function mouseClick (event :MouseEvent) :void
     {
         CommandEvent.dispatch(this, RoomController.FURNI_CLICKED, _furni);
     }
