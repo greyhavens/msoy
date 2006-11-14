@@ -26,6 +26,8 @@ public abstract class Blurb extends DockPanel
             return new ProfileBlurb();
         case BlurbData.FRIENDS:
             return new FriendsBlurb();
+        case BlurbData.GROUPS:
+            return new GroupsBlurb();
         default:
             return null; // TODO: return NOOP blurb?
         }

@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.Map;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.web.data.MailBodyObject;
+import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
@@ -38,6 +41,12 @@ public interface MailServiceAsync
      */
     public void deliverMessage (WebCreds creds, int recipientId, String subject, String text,
                                 MailBodyObject object, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link MailService#updateBodyObject}
+     */
+    public void updateBodyObject (WebCreds creds, int folderId, int messageId, Map state,
+                                  AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MailService#deleteMessages}

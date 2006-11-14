@@ -1,53 +1,56 @@
 package client.mail;
 
+import java.util.Map;
+
 import client.group.GroupInvite;
 import client.person.FriendInvite;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.MailBodyObject;
+import com.threerings.msoy.web.data.MailMessage;
 
 /**
- * Represents the general object portion of a mail message body. This object is serialized
- * to and unserialized from persistent storage, and whenever it is to be displayed, the
- * relevant functions {@link #widgetForRecipient()} or {@link #widgetForOthers()) will be
- * called to retrieve the relevant UI.
+ * Base class for body object visualizers. Concrete subclasses of this object are configured
+ * with a {@link WebContext} and a {@link MailMessage}, and will be asked to hand out Widgets
+ * to be displayed in mail messages in the GTW Mail system through the functions
+ * {@link #widgetForRecipient()} and {@link #widgetForOthers()).
  */
 public abstract class MailBodyObjectDisplay
 {
     /**
-     * Constructs and retursn the appropriate {@link MailBodyObjectDisplay} for the given type,
-     * and configured with the given state.
+     * Constructs and retursn the appropriate {@link MailBodyObjectDisplay} for the 
+     * given mail message (presuming it has a body object).
      */
-    public static MailBodyObjectDisplay getDisplay (MailBodyObject object)
+    public static MailBodyObjectDisplay getDisplay (WebContext ctx, MailMessage message)
     {
-        switch(object.type) {
+        if (message.bodyObject == null) {
+            return null;
+        }
+        switch(message.bodyObject.type) {
         case MailBodyObject.TYPE_GROUP_INVITE:
-            return new GroupInvite.Display(object.state);
+            return new GroupInvite.Display(ctx, message);
         case MailBodyObject.TYPE_FRIEND_INVITE:
-            return new FriendInvite.FriendBodyObject(object.state);
+            return new FriendInvite.Display(ctx, message);
         }
         throw new IllegalArgumentException(
-            "Unknown body object requested [type=" + object.type + "]");
+            "Unknown body object requested [type=" + message.bodyObject.type + "]");
     }
 
-    /**
-     * Returns the type of mail body object we represent.
-     */
-//    public abstract int getType ();
-
+    public MailBodyObjectDisplay (WebContext ctx, MailMessage message)
+    {
+        _ctx = ctx;
+        _message = message;
+    }
+    
     /**
      *  Returns the {@link Widget} to be displayed to the recipient of this message.
      *  This object may (and typically will) contain active UI components to initiate
      *  requests to the server. May be null, in which case nothing is displayed to
      *  the recipient.
      */
-    public abstract Widget widgetForRecipient (WebContext ctx);
-
-    /**
-     * Exports the state of this object required to reconstruct it in {@link #buildBodyObject}.
-     */
-//    public abstract Map exportState ();
+    public abstract Widget widgetForRecipient (MailUpdateListener listener);
 
     /**
      *  Returns a {@link Widget} to display to anybody who is not this message's recipient.
@@ -55,5 +58,28 @@ public abstract class MailBodyObjectDisplay
      *  the recipient, but any UI components it includes should be inactive. May be null,
      *  in which case nothing is displayed to the viewer.
      */
-    public abstract Widget widgetForOthers (WebContext ctx);
+    public abstract Widget widgetForOthers ();
+
+    /**
+     * Performs a server request to update the state for this message. If the callback
+     * argument is null, one is created for you which does nothing on success and throws
+     * a RuntimeException on failure.
+     */
+    protected void updateState (Map newState, AsyncCallback callback)
+    {
+        if (callback == null) {
+            callback = new AsyncCallback() {
+                public void onSuccess (Object result) {
+                }
+                public void onFailure (Throwable caught) {
+                    throw new RuntimeException(caught);
+                }
+            };
+        }
+        _ctx.mailsvc.updateBodyObject(_ctx.creds, _message.headers.folderId,
+                                      _message.headers.messageId, newState, callback);
+    }
+
+    protected WebContext _ctx;
+    protected MailMessage _message;
 }

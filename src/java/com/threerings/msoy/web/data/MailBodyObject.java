@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.web.data;
 
 import java.util.Map;
@@ -7,9 +10,9 @@ import com.threerings.io.Streamable;
 
 /**
  * Represents the general object portion of a mail message body. This object is serialized
- * to and unserialized from persistent storage, and whenever it is to be displayed, the
- * relevant functions {@link #widgetForRecipient()} or {@link #widgetForOthers()) will be
- * called to retrieve the relevant UI.
+ * to and unserialized from persistent storage through its 'type' and 'state' members, and
+ * whenever it is to be displayed, the relevant functions {@link #widgetForRecipient()} or
+ * {@link #widgetForOthers()) will be called to retrieve the relevant UI.
  */
 public class MailBodyObject
     implements IsSerializable, Streamable

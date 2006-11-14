@@ -111,6 +111,22 @@ public class MailManager
         });
     }
 
+
+    /**
+     * Overwrite the serialized state of a message's body object with the new supplied data.
+     */
+    public void updateBodyObject (final int memberId, final int folderId, final int messageId,
+                                  final Map state, ResultListener<Void> waiter)
+    {
+        MsoyServer.invoker.postUnit(
+            new RepositoryListenerUnit<Void>(waiter) {
+            public Void invokePersistResult () throws PersistenceException {
+                _mailRepo.setBodyObjectState(memberId, folderId, messageId, getStateBytes(state));
+                return null;
+            }
+        });
+    }
+
     /**
      * Deliver a message, i.e. file one copy of it in the sender's 'Sent' folder,
      * and one copy in the recipient's 'Inbox' folder.
@@ -131,15 +147,10 @@ public class MailManager
                 record.recipientId = recipientId;
                 record.subject = subject;
                 record.bodyText = text;
+                
                 if (object != null) {
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    try {
-                        new ObjectOutputStream(out).writeObject(object.state);
-                    } catch (IOException e) {
-                        throw new PersistenceException("Failed to serialize mail body object", e);
-                    }
                     record.bodyObjectType = object.type;
-                    record.bodyObjectState = out.toByteArray();
+                    record.bodyObjectState = getStateBytes(object.state);
                 }
                 record.sent = new Timestamp(System.currentTimeMillis());
 
@@ -302,6 +313,18 @@ public class MailManager
         folder.unreadCount = uCnt != null ? uCnt.intValue() : 0;
         folder.readCount = rCnt != null ? rCnt.intValue() : 0;
         return folder;
+    }
+
+    protected byte[] getStateBytes (Map state)
+        throws PersistenceException
+    {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            new ObjectOutputStream(out).writeObject(state);
+        } catch (IOException e) {
+            throw new PersistenceException("Failed to serialize mail body object", e);
+        }
+        return out.toByteArray();
     }
 
     /** Provides access to persistent mail data. */

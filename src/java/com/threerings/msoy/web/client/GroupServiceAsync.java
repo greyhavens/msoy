@@ -39,7 +39,13 @@ public interface GroupServiceAsync
     public void createGroup (WebCreds creds, Group _group, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link GroupService.removeMember} 
+     * The asynchronous version of {@link GroupService.leaveGroup} 
      */
     public void leaveGroup (WebCreds creds, int groupId, int memberId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GroupService.joinGroup} 
+     */
+    public void joinGroup (WebCreds creds, int groupId, int memberId, AsyncCallback callback);
+
 }

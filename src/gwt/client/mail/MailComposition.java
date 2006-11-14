@@ -27,14 +27,14 @@ public class MailComposition extends PopupPanel
      * Initializes a new composer when we already have the full name.
      */
     public MailComposition (WebContext ctx, MemberGName recipient, String subject,
-                            MailBodyObjectComposer bodyObjectComposer)
+                            MailBodyObjectComposer bodyObjectComposer, String bodyText)
     {
         super(false);
         _ctx = ctx;
         _senderId = ctx.creds.memberId;
         _recipient = recipient;
         _bodyObjectComposer = bodyObjectComposer;
-        buildUI(subject);
+        buildUI(subject, bodyText);
     }
 
     /**
@@ -42,9 +42,10 @@ public class MailComposition extends PopupPanel
      * up the recipient's current name, and inject the name into the right UI element.
      */ 
     public MailComposition (WebContext ctx, int recipientId, String subject,
-                            MailBodyObjectComposer factory)
+                            MailBodyObjectComposer factory, String bodyText)
     {
-        this(ctx, new MemberGName("Member #" + recipientId, recipientId), subject, factory);
+        this(ctx, new MemberGName("Member #" + recipientId, recipientId),
+             subject, factory, bodyText);
         _ctx.membersvc.getName(recipientId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _recipient = (MemberGName) result;
@@ -54,11 +55,11 @@ public class MailComposition extends PopupPanel
                 // let's ignore this error, it's just a display thing
             }
         });
-        buildUI(subject);
+        buildUI(subject, bodyText);
     }
 
-    // generate the composer UI wih the given subject line
-    protected void buildUI (String subject)
+    // generate the composer UI, prepopulated wih the given subject line and body text
+    protected void buildUI (String subject, String bodyText)
     {
         setStyleName("mailComposition");
         VerticalPanel panel = new VerticalPanel();
@@ -112,6 +113,7 @@ public class MailComposition extends PopupPanel
         _messageBox.setCharacterWidth(60);
         _messageBox.setVisibleLines(20);
         _messageBox.setStyleName("mailCompositionBody");
+        _messageBox.setText(bodyText);
         panel.add(_messageBox);
 
         // add the usual error container where we let the user know if something went wrong

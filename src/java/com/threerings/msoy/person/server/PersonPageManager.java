@@ -9,8 +9,6 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SoftCache;
 
-import com.threerings.presents.server.InvocationException;
-
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.web.data.BlurbData;
 import com.threerings.msoy.web.data.PersonLayout;
@@ -65,6 +63,12 @@ public class PersonPageManager
         blurb.type = BlurbData.FRIENDS;
         blurb.blurbId = 1;
         blurbs.add(blurb);
+
+        blurb = new BlurbData();
+        blurb.type = BlurbData.GROUPS;
+        blurb.blurbId = 2;
+        blurbs.add(blurb);
+
         layout.blurbs = blurbs;
         resolveBlurbData(memberId, layout, listener);
 

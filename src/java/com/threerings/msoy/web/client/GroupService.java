@@ -53,4 +53,10 @@ public interface GroupService extends RemoteService
      */
     public void leaveGroup (WebCreds creds, int groupId, int memberId)
         throws ServiceException;
+
+    /**
+     * Create a new membership connection between a group and a member.
+     */
+    public void joinGroup (WebCreds creds, int groupId, int memberId)
+        throws ServiceException;
 }

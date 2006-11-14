@@ -5,9 +5,14 @@ package client.person;
 
 import java.util.ArrayList;
 
+import client.mail.MailComposition;
+
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.FriendInfo;
 
@@ -29,7 +34,9 @@ public class FriendsBlurb extends Blurb
 
         ArrayList friends = (ArrayList)blurbData;
         if (friends.size() == 0) {
-            setStatus("You have no friends. Boo hoo.");
+            setStatus(_ctx.creds.memberId == _memberId ?
+                          "You have no friends. Boo hoo." :
+                          "This person is not a member of any groups.");
 
         } else {
             for (int ii = 0, ll = friends.size(); ii < ll; ii++) {
@@ -38,6 +45,17 @@ public class FriendsBlurb extends Blurb
                     String.valueOf(friend.memberId));
                 _content.setWidget(ii, 0, link);
             }
+        }
+        if (_ctx.creds.memberId != _memberId) {
+            Button inviteButton = new Button("Invite To Be Your Friend");
+            inviteButton.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    new MailComposition(_ctx, _memberId, "Be my Friend",
+                                        new FriendInvite.Composer(),
+                                        "Let's be buddies!").show();
+                }
+            });
+            _content.setWidget(_content.getRowCount(), 0, inviteButton);
         }
     }
 

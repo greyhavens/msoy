@@ -16,6 +16,9 @@ public class BlurbData implements IsSerializable
     /** The type code for a friends blurb. */
     public static final int FRIENDS = 1;
 
+    /** The type code for a groups blurb. */
+    public static final int GROUPS = 2;
+
     /** Indicates which kind of blurb this is. */
     public int type;
 

@@ -9,21 +9,27 @@ import java.util.Map;
 
 import client.mail.MailBodyObjectComposer;
 import client.mail.MailBodyObjectDisplay;
+import client.mail.MailUpdateListener;
+import client.util.InlineLabel;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MailBodyObject;
+import com.threerings.msoy.web.data.MailMessage;
 
 public abstract class GroupInvite
 {
+    public static final String STATE_GROUP_ID_KEY = "groupId";
+    public static final String STATE_RESPONDED_KEY = "responded";
+
     public static void getInvitationGroups (WebContext _ctx, AsyncCallback callback)
     {
         _ctx.groupsvc.getMembershipGroups(_ctx.creds, _ctx.creds.memberId, true, callback);
@@ -32,12 +38,16 @@ public abstract class GroupInvite
     public static final class Composer
         implements MailBodyObjectComposer
     {
+        public Composer (List groups)
+        {
+            _groups = groups;
+        }
+
         // @Override
         public MailBodyObject getComposedObject ()
         {
-            Map state = new HashMap();
-            state.put(STATE_GROUP_ID_KEY, new Integer(_selectedGroupId));
-            return new MailBodyObject(MailBodyObject.TYPE_GROUP_INVITE, state);
+            return new MailBodyObject(MailBodyObject.TYPE_GROUP_INVITE,
+                                      buildState(_selectedGroupId, false));
         }
 
         // @Override
@@ -46,19 +56,28 @@ public abstract class GroupInvite
             return new CompositionWidget(ctx);
         }
 
-        protected Composer (List groups)
+        // @Override
+        public void messageSent ()
         {
-            _groups = groups;
+            // TODO: if we implement backend tracking of group invites, do something here.
         }
 
-        protected class CompositionWidget extends DockPanel
+        protected class CompositionWidget extends HorizontalPanel
         {
             public CompositionWidget (WebContext ctx)
             {
                 super();
                 _ctx = ctx;
                 setWidth("100%");
+                add(new InlineLabel("Click to "));
+                Button joinButton = new Button("join");
+                joinButton.setEnabled(false);
+                add(joinButton);
+                add(new InlineLabel(" the group "));
                 _groupBox = new ListBox();
+                for (int ii = 0; ii < _groups.size(); ii ++) {
+                    _groupBox.addItem(((GroupMembership) _groups.get(ii)).groupName);
+                }
                 _groupBox.addChangeListener(new ChangeListener() {
                     public void onChange (Widget sender) {
                         int ix = _groupBox.getSelectedIndex();
@@ -66,59 +85,99 @@ public abstract class GroupInvite
                             return;
                         }
                         _selectedGroupId = ((GroupMembership)_groups.get(ix)).groupId;
+                        Window.alert("groupId now = " + _selectedGroupId);
                     }
                 });
+                add(_groupBox);
             }
             protected WebContext _ctx;
-            protected List _groupMemberships;
             protected ListBox _groupBox;
         }
         
         protected List _groups;
-
         protected int _selectedGroupId = -1;
     }
     
     public static final class Display extends MailBodyObjectDisplay
     {
-        public Display (Map state)
+        public Display (WebContext ctx, MailMessage message)
         {
-            if (state != null) {
-                Object idObj = state.get(STATE_GROUP_ID_KEY);
-                if (idObj != null && idObj instanceof Integer) {
-                    _invitationGroupId = ((Integer) idObj).intValue();
-                }
-            }
+            super(ctx, message);
+            // no sanity checks: if anything breaks here, it's already a disaster
+            Map state = message.bodyObject.state;
+            _invitationGroupId = ((Integer) state.get(STATE_GROUP_ID_KEY)).intValue();
+            _responded = ((Boolean) state.get(STATE_RESPONDED_KEY)).booleanValue();
         }
         
         // @Override
-        public Widget widgetForRecipient (WebContext ctx)
+        public Widget widgetForRecipient (MailUpdateListener listener)
         {
-            Button button = new Button("GROUP INVITE");
-            button.setEnabled(true);
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    Window.alert("I have been clickz0red!");
-                }
-            });
-            return button;
+            _listener = listener;
+            return new DisplayWidget(_responded == false);
         }
 
 
         // @Override
-        public Widget widgetForOthers (WebContext ctx)
+        public Widget widgetForOthers ()
         {
-            return null;
+            return new DisplayWidget(false);
         }
 
-        protected Display (int groupId)
+        protected class DisplayWidget extends HorizontalPanel
         {
-            _invitationGroupId = groupId;
+            public DisplayWidget (boolean enabled)
+            {
+                super();
+                add(new InlineLabel("Click to "));
+                Button joinButton = new Button("join");
+                joinButton.setEnabled(enabled);
+                joinButton.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        joinGroup();
+                    }
+                });
+                add(joinButton);
+                add(new InlineLabel(" the group #" + _invitationGroupId + "."));
+            }
+            
+            protected void joinGroup ()
+            {
+                _ctx.groupsvc.leaveGroup(
+                    _ctx.creds, _invitationGroupId, _ctx.creds.memberId, new AsyncCallback() {
+                        // if leaving the group succeeds, mark this invitation as accepted
+                        public void onSuccess (Object result) {
+                            updateState(buildState(_invitationGroupId, true), new AsyncCallback() {
+                                // and if that succeded to, let the mail app know to refresh
+                                public void onSuccess (Object result) {
+                                    if (_listener != null) {
+                                        _listener.messageChanged(_message.headers.ownerId,
+                                                                 _message.headers.folderId,
+                                                                 _message.headers.messageId);
+                                    }
+                                }
+                                public void onFailure (Throwable caught) {
+                                    // TODO: General support for errors in the MailApplication API?
+                                }
+                            });
+                        }
+                        public void onFailure (Throwable caught) {
+                            // TODO: General support for errors in the MailApplication API?
+                        }
+                });
+            }
+            protected ListBox _groupBox;
         }
-
-        protected int _invitationGroupId = -1;
+        
+        protected int _invitationGroupId;
+        protected boolean _responded;
+        protected MailUpdateListener _listener;
     }
 
-    public static final String STATE_GROUP_ID_KEY = "groupId";
-    
+    protected static Map buildState (int groupId, boolean responded)
+    {
+        Map state = new HashMap();
+        state.put(STATE_GROUP_ID_KEY, new Integer(groupId));
+        state.put(STATE_RESPONDED_KEY, new Boolean(responded));
+        return state;
+    }
 }

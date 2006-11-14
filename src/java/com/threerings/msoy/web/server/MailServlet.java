@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.server;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -42,6 +43,16 @@ public class MailServlet extends RemoteServiceServlet
                 "deliverMessage[" + recipientId + ", " + subject + ", " + text + "]");
         MsoyServer.mailMan.deliverMessage(
             creds.memberId, recipientId, subject, text, object, waiter);
+        waiter.waitForResult();
+    }
+
+    // from MailService
+    public void updateBodyObject (WebCreds creds, int folderId, int messageId, Map state)
+        throws ServiceException
+    {
+        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+                "updateBodyObject[" + folderId + ", " + messageId + "]");
+        MsoyServer.mailMan.updateBodyObject(creds.memberId, folderId, messageId, state, waiter);
         waiter.waitForResult();
     }
 

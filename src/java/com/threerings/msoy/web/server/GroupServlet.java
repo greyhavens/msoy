@@ -81,4 +81,14 @@ public class GroupServlet extends RemoteServiceServlet
         waiter.waitForResult();
 
     }
+
+    // from interface GroupService
+    public void joinGroup (WebCreds creds, int groupId, int memberId) throws ServiceException
+    {
+        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+                "createGroup[" + groupId + ", " + memberId + "]");
+        MsoyServer.memberMan.joinGroup(groupId, memberId, GroupMembership.RANK_MEMBER, waiter);
+        waiter.waitForResult();
+
+    }
 }

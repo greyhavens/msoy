@@ -35,4 +35,12 @@ public interface MailBodyObjectComposer
      * return null, in which case no {@link MailBodyObject} is sent.
      */
     public MailBodyObject getComposedObject ();
+    
+    /**
+     * Notifies this object that the message being composed was successfully sent,
+     * and that it may perform any side-effects that should be associated with the
+     * event.
+     */
+    
+    public void messageSent ();
 }

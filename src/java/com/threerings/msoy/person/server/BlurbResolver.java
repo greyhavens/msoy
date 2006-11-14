@@ -30,6 +30,8 @@ public abstract class BlurbResolver
             return new ProfileResolver();
         case BlurbData.FRIENDS:
             return new FriendsResolver();
+        case BlurbData.GROUPS:
+            return new GroupsResolver();
         default:
             log.warning("Requested resolver for unknown blurb " + data + ".");
             return null;

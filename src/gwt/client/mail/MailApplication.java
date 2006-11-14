@@ -41,7 +41,7 @@ import com.threerings.msoy.web.data.MailMessage;
  * and the lower half displaying individual messages.
  */
 public class MailApplication extends DockPanel
-    implements PopupListener
+    implements PopupListener, MailUpdateListener
 {
     /** The number of messages we display on-screen at a time. */
     public static final int HEADER_ROWS = 10;
@@ -62,11 +62,11 @@ public class MailApplication extends DockPanel
         sideBar.setSpacing(5);
 
         // with a button to compose a new mail
-        Button composeButton = new Button("Compose");
+        Button composeButton = new Button("Compose (For Testing)");
         composeButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 // TODO: The hard-coded memberId is for testing only :)
-                MailComposition composition = new MailComposition(_ctx, 2, "", null);
+                MailComposition composition = new MailComposition(_ctx, 2, "", null, "");
                 composition.addPopupListener(MailApplication.this);
                 composition.show();
             }
@@ -111,6 +111,16 @@ public class MailApplication extends DockPanel
     public void onPopupClosed (PopupPanel sender, boolean autoClosed)
     {
         refresh();
+    }
+
+    /**
+     * Called from the MailBodyObjectDisplay when the state of the body object has changed
+     */
+    public void messageChanged (int ownerId, int folderId, int messageId)
+    {
+        if (folderId == _currentFolder && messageId == _currentMessage) {
+            loadMessage();
+        }
     }
 
     /**
@@ -342,7 +352,7 @@ public class MailApplication extends DockPanel
             public void onSuccess (Object result) {
                 _message = (MailMessage) result;
                 _objectDisplay = _message.bodyObject != null ?
-                    MailBodyObjectDisplay.getDisplay(_message.bodyObject) : null;
+                    MailBodyObjectDisplay.getDisplay(_ctx, _message) : null;
                 refreshMessagePanel();
             }
             public void onFailure (Throwable caught) {
@@ -380,7 +390,7 @@ public class MailApplication extends DockPanel
                     subject = "re: " + subject;
                 }
                 MailComposition composition =
-                    new MailComposition(_ctx, _message.headers.sender, subject, null);
+                    new MailComposition(_ctx, _message.headers.sender, subject, null, "");
                 composition.addPopupListener(MailApplication.this);
                 composition.show();
             }
@@ -401,9 +411,13 @@ public class MailApplication extends DockPanel
         // if there is a message body object, display it!
         if (_message.bodyObject != null) {
             Widget widget = _ctx.creds.memberId == _message.headers.recipient.memberId ?
-                _objectDisplay.widgetForRecipient(_ctx) : _objectDisplay.widgetForOthers(_ctx);
+                _objectDisplay.widgetForRecipient(this) : _objectDisplay.widgetForOthers();
             if (widget != null) {
-                messagePanel.add(widget);
+                HorizontalPanel panel = new HorizontalPanel();
+                panel.setWidth("100%");
+                panel.setStyleName("mailBodyObject");
+                panel.add(widget);
+                messagePanel.add(panel);
             }
         }
         
@@ -518,7 +532,7 @@ public class MailApplication extends DockPanel
 
     // generate a short string to summarize most relevantly a date in the past
     // For reference: Date.toString() returns: Wed Oct 25 2006 15:30:32 GMT-0500 (CDT)
-    protected String formatDate(Date date)
+    protected String formatDate (Date date)
     {
         long nowTime = System.currentTimeMillis();
         Date now = new Date(nowTime);
