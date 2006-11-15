@@ -23,6 +23,9 @@ public class MemberName extends Name
             }
         };
 
+    /** The "member id" used for guests. */
+    public static final int GUEST_ID = 0;
+
     /** For unserialization. */
     public MemberName ()
     {
@@ -38,7 +41,7 @@ public class MemberName extends Name
     }
 
     /**
-     * Return the memberId of this user, or -1 if they're a guest.
+     * Return the memberId of this user, or 0 if they're a guest.
      */
     public int getMemberId ()
     {
@@ -50,7 +53,7 @@ public class MemberName extends Name
     {
         // we return a different hash for guests so that they
         // don't end up all in the same bucket in a Map.
-        return (_memberId != -1) ? _memberId : super.hashCode();
+        return (_memberId != GUEST_ID) ? _memberId : super.hashCode();
     }
 
     @Override
@@ -64,7 +67,7 @@ public class MemberName extends Name
                 // if we have the same memberId then we're equals, unless
                 // we're a guest, in which case we fall back to names
                 return (otherId == _memberId) &&
-                    ((_memberId != -1) || super.equals(other));
+                    ((_memberId != GUEST_ID) || super.equals(other));
             }
         }
         return false;
@@ -81,9 +84,10 @@ public class MemberName extends Name
         }
 
         // return 0 if diff is the same (they have the same memberId)
-        // UNLESS the memberId is -1, in which case they're a guest
+        // UNLESS the memberId is 0, in which case they're a guest
         // and we compare by name
-        return (_memberId != -1) ? 0 : BY_DISPLAY_NAME.compare(this, that);
+        return (_memberId != GUEST_ID) ? 0
+                                       : BY_DISPLAY_NAME.compare(this, that);
     }
 
     @Override

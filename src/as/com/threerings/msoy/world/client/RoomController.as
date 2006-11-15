@@ -8,6 +8,8 @@ import flash.geom.Point;
 import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 
+import mx.managers.ToolTipManager;
+
 import com.threerings.util.MenuUtil;
 import com.threerings.util.NetUtil;
 
@@ -104,6 +106,12 @@ public class RoomController extends SceneController
         _scene = null;
         _roomObj = null;
 
+        // pop down any showing tip (come ON!)
+        // TODO: remove this, because I bet it won't be needed soon
+        if (ToolTipManager.currentToolTip != null) {
+            ToolTipManager.destroyToolTip(ToolTipManager.currentToolTip);
+        }
+
         super.didLeavePlace(plobj);
     }
 
@@ -190,7 +198,7 @@ public class RoomController extends SceneController
         } else {
             // create a menu for clicking on someone else
             var memId :int = occInfo.getMemberId();
-            var isGuest :Boolean = (memId == -1);
+            var isGuest :Boolean = (memId == MemberName.GUEST_ID);
             var isFriend :Boolean = us.friends.containsKey(memId);
             menuItems.push({ label: Msgs.GENERAL.get("b.tell"),
                 command: TELL, arg: memId });

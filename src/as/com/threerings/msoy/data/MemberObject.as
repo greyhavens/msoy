@@ -95,7 +95,8 @@ public class MemberObject extends BodyObject
      */
     public function getMemberId () :int
     {
-        return (memberName == null) ? 0 : memberName.getMemberId();
+        return (memberName == null) ? MemberName.GUEST_ID
+                                    : memberName.getMemberId();
     }
 
     /**
@@ -103,7 +104,7 @@ public class MemberObject extends BodyObject
      */
     public function isGuest () :Boolean
     {
-        return (getMemberId() <= 0);
+        return (getMemberId() == MemberName.GUEST_ID);
     }
 
     /**

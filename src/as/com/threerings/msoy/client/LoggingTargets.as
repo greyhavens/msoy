@@ -10,6 +10,8 @@ import com.threerings.msoy.data.MemberObject;
 // TODO: stop listening at the end?
 public class LoggingTargets
 {
+    private static const LOG_TO_CHAT :Boolean = false;
+
     public static function configureLogging (ctx :MsoyContext) :void
     {
         var userObj :MemberObject = ctx.getClientObject();
@@ -27,7 +29,7 @@ public class LoggingTargets
         }
 
         // admins log to the chatbox
-        if (userObj != null && userObj.getTokens().isAdmin()) {
+        if (userObj != null && LOG_TO_CHAT) {
             if (_chatTarget == null) {
                 _chatTarget = new ChatTarget(ctx);
                 mx.logging.Log.addTarget(_chatTarget);

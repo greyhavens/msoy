@@ -58,7 +58,7 @@ public class MemberInfo extends OccupantInfo
     }
 
     /**
-     * Get the member id for this user, or -1 if they're a guest.
+     * Get the member id for this user, or 0 if they're a guest.
      */
     public int getMemberId ()
     {

@@ -292,7 +292,8 @@ public class MsoyAuthenticator extends Authenticator
                     // for guests, we use the same Name object as their
                     // username and their display name. We create it here.
                     creds.setUsername(new MemberName(
-                        GUEST_USERNAME_PREFIX + (++_guestCount), -1));
+                        GUEST_USERNAME_PREFIX + (++_guestCount),
+                        MemberName.GUEST_ID));
                 }
             }
         }

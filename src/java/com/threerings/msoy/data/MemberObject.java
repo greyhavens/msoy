@@ -98,7 +98,8 @@ public class MemberObject extends BodyObject
      */
     public int getMemberId ()
     {
-        return (memberName == null) ? 0 : memberName.getMemberId();
+        return (memberName == null) ? MemberName.GUEST_ID
+                                    : memberName.getMemberId();
     }
 
     /**
@@ -106,7 +107,7 @@ public class MemberObject extends BodyObject
      */
     public boolean isGuest ()
     {
-        return (getMemberId() <= 0);
+        return (getMemberId() == MemberName.GUEST_ID);
     }
 
     // documentation inherited from superinterface ScenedBodyObject

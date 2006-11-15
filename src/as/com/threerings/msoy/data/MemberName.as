@@ -22,10 +22,14 @@ public class MemberName extends Name
             return s1.localeCompare(s2);
         };
 
+    /** The "member id" used for guests. */
+    public static const GUEST_ID :int = 0;
+
     /**
      * Create a new MemberName.
      */
-    public function MemberName (displayName :String = "", memberId :int = -1)
+    public function MemberName (
+        displayName :String = "", memberId :int = GUEST_ID)
     {
         super(displayName);
         _memberId = memberId;
@@ -43,7 +47,7 @@ public class MemberName extends Name
     {
         // we return a different hash for guests so that they
         // don't end up all in the same bucket in a Map.
-        return (_memberId != -1) ? _memberId : super.hashCode();
+        return (_memberId != GUEST_ID) ? _memberId : super.hashCode();
     }
 
     override public function equals (other :Object) :Boolean
@@ -51,7 +55,7 @@ public class MemberName extends Name
         if (other is MemberName) {
             var otherId :int = (other as MemberName).getMemberId();
             return (otherId == _memberId) &&
-                ((_memberId != -1) || super.equals(other));
+                ((_memberId != GUEST_ID) || super.equals(other));
         }
         return false;
     }
@@ -66,9 +70,9 @@ public class MemberName extends Name
         }
 
         // return 0 if diff is the same (they have the same memberId)
-        // UNLESS the member is -1, in which case they're a guest and
+        // UNLESS the member is 0, in which case they're a guest and
         // we compare by name
-       return (_memberId != -1) ? 0 : BY_DISPLAY_NAME(this, that);
+       return (_memberId != GUEST_ID) ? 0 : BY_DISPLAY_NAME(this, that);
     }
 
     override protected function normalize (name :String) :String
