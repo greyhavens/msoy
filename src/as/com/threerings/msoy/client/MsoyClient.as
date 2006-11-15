@@ -66,8 +66,11 @@ public class MsoyClient extends Client
     public function MsoyClient ()
     {
         var creds :MsoyCredentials = new MsoyCredentials(null, null);
-        creds.sessionToken = Prefs.getSessionToken();
         creds.ident = Prefs.getMachineIdent();
+        var params :Object = Application.application.loaderInfo.parameters;
+        if (null == params["guest"]) {
+            creds.sessionToken = Prefs.getSessionToken();
+        }
         super(creds);
 
         // set up a context menu that blocks funnybiz on the stage
