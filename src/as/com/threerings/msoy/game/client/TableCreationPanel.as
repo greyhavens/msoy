@@ -73,6 +73,7 @@ public class TableCreationPanel extends FloatingPanel
 
         var config :FlashGameConfig = new FlashGameConfig();
         config.configData = _game.gameMedia.getMediaPath();
+        config.persistentGameId = _game.getProgenitorId();
         gconf.setGameConfig(config);
 
         addChild(gconf.getContainer());
