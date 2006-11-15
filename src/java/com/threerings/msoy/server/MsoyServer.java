@@ -32,6 +32,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.ezgame.server.GameCookieManager;
+
 import com.threerings.parlor.server.ParlorManager;
 
 import com.threerings.whirled.server.SceneRegistry;
@@ -215,6 +217,13 @@ public class MsoyServer extends WhirledServer
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
         lobbyReg.init(invmgr);
+        GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {
+            public int getUserId (ClientObject cliObj)
+            {
+                // will return 0 for guests..
+                return ((MemberObject) cliObj).getMemberId();
+            }
+        });
         toyMan.init(omgr, invoker, invmgr, plreg, itemMan.getGameRepository());
 
         // create and start up our HTTP server
