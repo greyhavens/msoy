@@ -5,6 +5,7 @@ import flash.display.MovieClip;
 import flash.media.Sound;
 
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 import flash.geom.ColorTransform;
 
@@ -36,6 +37,7 @@ public class Submarine extends BaseSprite
         addChild(_avatar);
 
         _nameLabel = new TextField();
+        _nameLabel.autoSize = TextFieldAutoSize.CENTER;
         _nameLabel.selectable = false;
         _nameLabel.text = playerName;
         _nameLabel.textColor = uint(0x33CC33);
@@ -43,6 +45,17 @@ public class Submarine extends BaseSprite
         _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
         _nameLabel.x = (SeaDisplay.TILE_SIZE - _nameLabel.textWidth) / 2;
         addChild(_nameLabel);
+
+        _statsLabel = new TextField();
+        _statsLabel.autoSize = TextFieldAutoSize.CENTER;
+        _statsLabel.selectable = false;
+        _statsLabel.text = "0 0";
+        _statsLabel.textColor = uint(0x000000);
+        _statsLabel.backgroundColor = uint(0xCCFFCC);
+        _statsLabel.background = true;
+        _statsLabel.y = _nameLabel.y - (_statsLabel.textHeight + NAME_PADDING);
+        _statsLabel.x = (SeaDisplay.TILE_SIZE - _statsLabel.textWidth) / 2;
+        addChild(_statsLabel);
 
         updateVisual();
         updateLocation();
@@ -69,6 +82,21 @@ public class Submarine extends BaseSprite
     public function isDead () :Boolean
     {
         return _dead;
+    }
+
+    public function gotPlayerCookie (cookie :Object) :void
+    {
+        var array :Array = (cookie as Array);
+        if (array != null) {
+            _totalKills += int(array[0]);
+            _totalDeaths += int(array[1]);
+            updateVisual();
+        }
+    }
+
+    public function getNewCookie () :Object
+    {
+        return [ _totalKills, _totalDeaths ];
     }
 
     /**
@@ -186,6 +214,7 @@ public class Submarine extends BaseSprite
 
         // track the kills
         _kills += kills;
+        _totalKills += kills;
     }
 
     /**
@@ -195,6 +224,7 @@ public class Submarine extends BaseSprite
     {
         _dead = true;
         _deaths++;
+        _totalDeaths++;
         _queuedActions.length = 0; // drop any queued actions
         updateVisual();
         updateDeath();
@@ -229,6 +259,8 @@ public class Submarine extends BaseSprite
             }
         }
         _avatar.gotoAndStop(orientToFrame());
+
+        _statsLabel.text = "" + _totalKills + " " + _totalDeaths;
     }
 
     protected function orientToFrame () :int
@@ -275,6 +307,9 @@ public class Submarine extends BaseSprite
     /** The number of times we've been killed. */
     protected var _deaths :int;
 
+    protected var _totalKills :int;
+    protected var _totalDeaths :int;
+
     /** A count of how long until we respawn. */
     protected var _respawnTicks :int;
 
@@ -285,6 +320,7 @@ public class Submarine extends BaseSprite
     protected var _shootSound :Sound;
 
     protected var _nameLabel :TextField;
+    protected var _statsLabel :TextField;
 
     /** Color schemes for each player. */
     protected static const SCHEMES :Array = [

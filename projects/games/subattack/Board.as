@@ -32,6 +32,7 @@ public class Board
             var yy :int = getStartingY(ii);
 
             sub = new Submarine(ii, String(names[ii]), xx, yy, this);
+            _gameObj.getUserCookie(ii, sub.gotPlayerCookie);
             _seaDisplay.addChild(sub);
             _subs[ii] = sub;
 
@@ -56,6 +57,8 @@ public class Board
         } else {
             _gameObj.addEventListener(StateChangedEvent.GAME_STARTED,
                 gameDidStart);
+            _gameObj.addEventListener(StateChangedEvent.GAME_ENDED,
+                gameDidEnd);
         }
     }
 
@@ -214,6 +217,14 @@ public class Board
         // player 0 starts the ticker
         if (_gameObj.getMyIndex() == 0) {
             _gameObj.startTicker("tick", 100);
+        }
+    }
+
+    protected function gameDidEnd (event :StateChangedEvent) :void
+    {
+        var mydex :int = _gameObj.getMyIndex();
+        if (mydex >= 0) {
+            _gameObj.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
         }
     }
 
