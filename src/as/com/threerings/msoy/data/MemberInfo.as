@@ -32,6 +32,14 @@ public class MemberInfo extends OccupantInfo
         return (username as MemberName).getMemberId();
     }
 
+    /**
+     * Return true if we represent a guest user.
+     */
+    public function isGuest () :Boolean
+    {
+        return (MemberName.GUEST_ID == getMemberId());
+    }
+
     // documentation inherited
     override public function writeObject (out :ObjectOutputStream) :void
     {

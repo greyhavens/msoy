@@ -93,11 +93,13 @@ public class AvatarSprite extends MsoySprite
     // from ContextMenuProvider
     public function populateContextMenu (menuItems :Array) :void
     {
-        if (_occInfo.avatarId != 0) {
-            menuItems.unshift(MenuUtil.createControllerMenuItem(
-                Msgs.GENERAL.get("b.view_item"), MsoyController.VIEW_ITEM,
-                [ Item.getTypeName(Item.AVATAR), _occInfo.avatarId ]));
-        }
+        menuItems.unshift(MenuUtil.createControllerMenuItem(
+            Msgs.GENERAL.get("b.view_member"), MsoyController.VIEW_MEMBER,
+            _occInfo.getMemberId(), false, !_occInfo.isGuest()));
+        menuItems.unshift(MenuUtil.createControllerMenuItem(
+            Msgs.GENERAL.get("b.view_item"), MsoyController.VIEW_ITEM,
+            [ Item.getTypeName(Item.AVATAR), _occInfo.avatarId ], false,
+            (_occInfo.avatarId != 0)));
     }
 
     protected function getStatusColor (status :int) :uint

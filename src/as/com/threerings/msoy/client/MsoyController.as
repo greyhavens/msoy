@@ -65,6 +65,9 @@ public class MsoyController extends Controller
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
 
+    /** Command to view a member's profile, arg is [ memberId ] */
+    public static const VIEW_MEMBER :String = "ViewMember";
+
     /** Command to view the app in full-screen mode. */
     public static const TOGGLE_FULLSCREEN :String = "ToggleFullscreen";
 
@@ -217,6 +220,14 @@ public class MsoyController extends Controller
     public function handleViewItem (args :Array) :void
     {
         NetUtil.navigateToURL("item.html#" + args[0] + ";" + args[1], false);
+    }
+
+    /**
+     * Handle the VIEW_MEMBER command.
+     */
+    public function handleViewMember (memberId :int) :void
+    {
+        NetUtil.navigateToURL("person.html#" + memberId, false);
     }
 
     /**

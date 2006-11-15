@@ -64,4 +64,12 @@ public class MemberInfo extends OccupantInfo
     {
         return ((MemberName) username).getMemberId();
     }
+
+    /**
+     * Return true if we represent a guest user.
+     */
+    public boolean isGuest ()
+    {
+        return (MemberName.GUEST_ID == getMemberId());
+    }
 }
