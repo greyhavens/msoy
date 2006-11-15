@@ -38,7 +38,7 @@ import static com.threerings.msoy.Log.log;
 public class MsoyAuthenticator extends Authenticator
 {
     /** The prefix for all authentication usernames provided to guests. */
-    public static final String GUEST_USERNAME_PREFIX = "!guest";
+    public static final String GUEST_USERNAME_PREFIX = "Guest";
 
     /** Used to coordinate with authentication domains. */
     public static class Account
