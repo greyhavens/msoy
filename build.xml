@@ -14,7 +14,6 @@
   <property name="gwtout.dir"    value="pages"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="libs.dir"      value="projects/tools/lib/java"/>
   <property name="projects.root" value="."/>
   <property name="projects"      value="samskivert,narya,nenya,vilya,toybox,s3lib/java,threerings"/>
   <import file="${projects.root}/projects/tools/etc/build-support.xml"/>
