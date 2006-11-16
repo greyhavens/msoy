@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.client {
 
+import mx.core.ClassFactory;
+
 import mx.controls.Tree;
 
 import mx.collections.ICollectionView;
@@ -26,11 +28,13 @@ public class InventoryWidget extends Tree
     {
         _ctx = ctx;
         verticalScrollPolicy = ScrollPolicy.ON;
+        variableRowHeight = true;
 
         dragEnabled = true;
         allowMultipleSelection = true;
+        itemRenderer = new ClassFactory(ItemTreeRenderer);
 
-        addEventListener(TreeEvent.ITEM_OPEN, handleItemOpen);
+        addEventListener(TreeEvent.ITEM_OPENING, handleItemOpening);
         configureItemCategories(soleType);
     }
 
@@ -71,9 +75,15 @@ public class InventoryWidget extends Tree
         dataProvider = nodes;
     }
 
-    protected function handleItemOpen (event :TreeEvent) :void
+    protected function handleItemOpening (event :TreeEvent) :void
     {
-        loadCategory(event.item);
+        if (event.opening) {
+            loadCategory(event.item);
+
+        } else if (dataProvider.length == 1) {
+            // if there is only one type, prevent closeage
+            event.preventDefault();
+        }
     }
 
     protected function loadCategory (node :Object) :void
