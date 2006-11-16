@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import client.mail.MailBodyObjectComposer;
-import client.mail.MailBodyObjectDisplay;
+import client.mail.MailPayloadComposer;
+import client.mail.MailPayloadDisplay;
 import client.mail.MailUpdateListener;
 import client.util.InlineLabel;
 
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.GroupInviteObject;
 import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.MailBodyObject;
+import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailMessage;
 
 public abstract class GroupInvite
@@ -35,7 +35,7 @@ public abstract class GroupInvite
     }
 
     public static final class Composer
-        implements MailBodyObjectComposer
+        implements MailPayloadComposer
     {
         public Composer (List groups)
         {
@@ -43,7 +43,7 @@ public abstract class GroupInvite
         }
 
         // @Override
-        public MailBodyObject getComposedObject ()
+        public MailPayload getComposedPayload ()
         {
             return new GroupInviteObject(_selectedGroupId, false);
         }
@@ -96,13 +96,13 @@ public abstract class GroupInvite
         protected int _selectedGroupId = -1;
     }
     
-    public static final class Display extends MailBodyObjectDisplay
+    public static final class Display extends MailPayloadDisplay
     {
         public Display (WebContext ctx, MailMessage message)
         {
             super(ctx, message);
             // no sanity checks: if anything breaks here, it's already a disaster
-            _inviteObject = (GroupInviteObject) message.bodyObject;
+            _inviteObject = (GroupInviteObject) message.payload;
         }
         
         // @Override

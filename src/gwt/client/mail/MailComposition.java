@@ -27,7 +27,7 @@ public class MailComposition extends PopupPanel
      * Initializes a new composer when we already have the full name.
      */
     public MailComposition (WebContext ctx, MemberGName recipient, String subject,
-                            MailBodyObjectComposer bodyObjectComposer, String bodyText)
+                            MailPayloadComposer bodyObjectComposer, String bodyText)
     {
         super(false);
         _ctx = ctx;
@@ -42,7 +42,7 @@ public class MailComposition extends PopupPanel
      * up the recipient's current name, and inject the name into the right UI element.
      */ 
     public MailComposition (WebContext ctx, int recipientId, String subject,
-                            MailBodyObjectComposer factory, String bodyText)
+                            MailPayloadComposer factory, String bodyText)
     {
         this(ctx, new MemberGName("Member #" + recipientId, recipientId),
              subject, factory, bodyText);
@@ -149,13 +149,13 @@ public class MailComposition extends PopupPanel
         };
         _ctx.mailsvc.deliverMessage(_ctx.creds, _recipient.memberId, _subjectBox.getText(),
                                     _messageBox.getText(), (_bodyObjectComposer == null) ?
-                                    null : _bodyObjectComposer.getComposedObject(), callback);
+                                    null : _bodyObjectComposer.getComposedPayload(), callback);
     }
 
     protected WebContext _ctx;
     protected int _senderId;
     protected MemberGName _recipient;
-    protected MailBodyObjectComposer _bodyObjectComposer;
+    protected MailPayloadComposer _bodyObjectComposer;
     protected TextBox _subjectBox;
     protected Label _recipientBox;
     protected TextArea _messageBox;

@@ -1,44 +1,42 @@
 package client.mail;
 
-import java.util.Map;
-
 import client.group.GroupInvite;
 import client.person.FriendInvite;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
-import com.threerings.msoy.web.data.MailBodyObject;
+import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailMessage;
 
 /**
- * Base class for body object visualizers. Concrete subclasses of this object are configured
+ * Base class for payload visualizers. Concrete subclasses of this object are configured
  * with a {@link WebContext} and a {@link MailMessage}, and will be asked to hand out Widgets
  * to be displayed in mail messages in the GTW Mail system through the functions
  * {@link #widgetForRecipient()} and {@link #widgetForOthers()).
  */
-public abstract class MailBodyObjectDisplay
+public abstract class MailPayloadDisplay
 {
     /**
-     * Constructs and retursn the appropriate {@link MailBodyObjectDisplay} for the 
-     * given mail message (presuming it has a body object).
+     * Constructs and retursn the appropriate {@link MailPayloadDisplay} for the 
+     * given mail message (presuming it has a payload).
      */
-    public static MailBodyObjectDisplay getDisplay (WebContext ctx, MailMessage message)
+    public static MailPayloadDisplay getDisplay (WebContext ctx, MailMessage message)
     {
-        if (message.bodyObject == null) {
+        if (message.payload == null) {
             return null;
         }
-        switch(message.bodyObject.getType()) {
-        case MailBodyObject.TYPE_GROUP_INVITE:
+        switch(message.payload.getType()) {
+        case MailPayload.TYPE_GROUP_INVITE:
             return new GroupInvite.Display(ctx, message);
-        case MailBodyObject.TYPE_FRIEND_INVITE:
+        case MailPayload.TYPE_FRIEND_INVITE:
             return new FriendInvite.Display(ctx, message);
         }
         throw new IllegalArgumentException(
-            "Unknown body object requested [type=" + message.bodyObject.getType() + "]");
+            "Unknown payload requested [type=" + message.payload.getType() + "]");
     }
 
-    public MailBodyObjectDisplay (WebContext ctx, MailMessage message)
+    public MailPayloadDisplay (WebContext ctx, MailMessage message)
     {
         _ctx = ctx;
         _message = message;
@@ -65,7 +63,7 @@ public abstract class MailBodyObjectDisplay
      * argument is null, one is created for you which does nothing on success and throws
      * a RuntimeException on failure.
      */
-    protected void updateState (MailBodyObject newObj, AsyncCallback callback)
+    protected void updateState (MailPayload payload, AsyncCallback callback)
     {
         if (callback == null) {
             callback = new AsyncCallback() {
@@ -76,8 +74,8 @@ public abstract class MailBodyObjectDisplay
                 }
             };
         }
-        _ctx.mailsvc.updateBodyObject(_ctx.creds, _message.headers.folderId,
-                                      _message.headers.messageId, newObj, callback);
+        _ctx.mailsvc.updatePayload(_ctx.creds, _message.headers.folderId,
+                                   _message.headers.messageId, payload, callback);
     }
 
     protected WebContext _ctx;

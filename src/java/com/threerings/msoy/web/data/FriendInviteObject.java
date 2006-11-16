@@ -6,7 +6,7 @@ package com.threerings.msoy.web.data;
 /**
  * This object holds the extra data associated with a single friend invitation message.
  */
-public class FriendInviteObject extends MailBodyObject
+public class FriendInviteObject extends MailPayload
 {
     /**
      * An empty constructor for deserialization.
@@ -18,6 +18,6 @@ public class FriendInviteObject extends MailBodyObject
     // @Override
     public int getType ()
     {
-        return MailBodyObject.TYPE_GROUP_INVITE;
+        return MailPayload.TYPE_GROUP_INVITE;
     }
 }

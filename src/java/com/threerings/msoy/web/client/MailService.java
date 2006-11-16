@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.RemoteService;
-import com.threerings.msoy.web.data.MailBodyObject;
+import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.ServiceException;
@@ -31,10 +31,10 @@ public interface MailService extends RemoteService
         throws ServiceException;
     
     public void deliverMessage (WebCreds creds, int recipientId, String subject, String text,
-                                MailBodyObject object)
+                                MailPayload object)
         throws ServiceException;
 
-    public void updateBodyObject (WebCreds creds, int folderId, int messageId, MailBodyObject obj)
+    public void updatePayload (WebCreds creds, int folderId, int messageId, MailPayload payload)
         throws ServiceException;
 
     public void deleteMessages (WebCreds creds, int folderId, int[] msgIdArr)

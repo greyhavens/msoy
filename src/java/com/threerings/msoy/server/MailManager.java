@@ -26,7 +26,7 @@ import com.threerings.msoy.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.data.MailBodyObject;
+import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
@@ -116,17 +116,17 @@ public class MailManager
 
 
     /**
-     * Overwrite the serialized state of a message's body object with the new supplied data.
+     * Overwrite the serialized state of a message's payload with the new supplied data.
      */
-    public void updateBodyObject (final int memberId, final int folderId, final int messageId,
-                                  final MailBodyObject obj, ResultListener<Void> waiter)
+    public void updatePayload (final int memberId, final int folderId, final int messageId,
+                               final MailPayload payload, ResultListener<Void> waiter)
     {
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
                 try {
-                    byte[] state = new JSONMarshaller(obj.getClass()).getState(obj);
-                    _mailRepo.setBodyObjectState(memberId, folderId, messageId, state);
+                    byte[] state = new JSONMarshaller(payload.getClass()).getState(payload);
+                    _mailRepo.setPayloadState(memberId, folderId, messageId, state);
                 } catch (Exception e) {
                     throw new PersistenceException(e);
                 }
@@ -140,7 +140,7 @@ public class MailManager
      * and one copy in the recipient's 'Inbox' folder.
      */    
     public void deliverMessage (final int senderId, final int recipientId, final String subject,
-                                final String text, final MailBodyObject obj,
+                                final String text, final MailPayload payload,
                                 ResultListener<Void> waiter)
     {
         MsoyServer.invoker.postUnit(
@@ -156,10 +156,11 @@ public class MailManager
                 record.subject = subject;
                 record.bodyText = text;
                 
-                if (obj != null) {
-                    record.bodyObjectType = obj.getType();
+                if (payload != null) {
+                    record.payloadType = payload.getType();
                     try {
-                        record.bodyObjectState = new JSONMarshaller(obj.getClass()).getState(obj);
+                        record.payloadState =
+                            new JSONMarshaller(payload.getClass()).getState(payload);
                     } catch (Exception e) {
                         throw new PersistenceException(e);
                     }
@@ -283,14 +284,14 @@ public class MailManager
         MailMessage message = new MailMessage();
         message.headers = toMailHeaders(record);
         message.bodyText = record.bodyText;
-        if (record.bodyObjectType != 0) {
-            if (record.bodyObjectState != null) {
+        if (record.payloadType != 0) {
+            if (record.payloadState != null) {
                 try {
-                    Class objectClass = MailBodyObject.getBodyObjectClass(record.bodyObjectType);
+                    Class objectClass = MailPayload.getPayloadClass(record.payloadType);
                     JSONMarshaller marsh = new JSONMarshaller(objectClass);
-                    message.bodyObject = (MailBodyObject)marsh.newInstance(record.bodyObjectState);
+                    message.payload = (MailPayload)marsh.newInstance(record.payloadState);
                 } catch (Exception e) {
-                    throw new PersistenceException("Failed to unserialize message body object", e);
+                    throw new PersistenceException("Failed to unserialize message payload", e);
                 }
             }
         }
@@ -318,18 +319,6 @@ public class MailManager
         folder.unreadCount = uCnt != null ? uCnt.intValue() : 0;
         folder.readCount = rCnt != null ? rCnt.intValue() : 0;
         return folder;
-    }
-
-    protected byte[] getStateBytes (Map state)
-        throws PersistenceException
-    {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            new ObjectOutputStream(out).writeObject(state);
-        } catch (IOException e) {
-            throw new PersistenceException("Failed to serialize mail body object", e);
-        }
-        return out.toByteArray();
     }
 
     /** Provides access to persistent mail data. */

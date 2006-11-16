@@ -3,8 +3,8 @@
 
 package client.person;
 
-import client.mail.MailBodyObjectComposer;
-import client.mail.MailBodyObjectDisplay;
+import client.mail.MailPayloadComposer;
+import client.mail.MailPayloadDisplay;
 import client.mail.MailUpdateListener;
 import client.util.InlineLabel;
 
@@ -15,21 +15,21 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.FriendInviteObject;
-import com.threerings.msoy.web.data.MailBodyObject;
+import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MemberGName;
 
 public abstract class FriendInvite
 {
     public static class Composer
-        implements MailBodyObjectComposer
+        implements MailPayloadComposer
     {
         public Widget widgetForComposition (WebContext ctx)
         {
             return new InvitationWidget();
         }
         // @Override
-        public MailBodyObject getComposedObject ()
+        public MailPayload getComposedPayload ()
         {
             return new FriendInviteObject();
         }
@@ -63,7 +63,7 @@ public abstract class FriendInvite
         
     }
 
-    public static class Display extends MailBodyObjectDisplay
+    public static class Display extends MailPayloadDisplay
     {
         public Display (WebContext ctx, MailMessage message)
         {

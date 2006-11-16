@@ -20,7 +20,7 @@ final public class MailMessage
     public String bodyText;
     
     /** The (optional) object part of the message body. */
-    public MailBodyObject bodyObject;
+    public MailPayload payload;
     
     // @Override
     public int hashCode ()
@@ -29,8 +29,8 @@ final public class MailMessage
         if (bodyText != null) {
             hashCode = 31*hashCode + bodyText.hashCode();
         }
-        if (bodyObject != null) {
-            hashCode = 31*hashCode + bodyObject.hashCode();
+        if (payload != null) {
+            hashCode = 31*hashCode + payload.hashCode();
         }
         return hashCode;
     }
@@ -53,11 +53,11 @@ final public class MailMessage
         } else if (!headers.equals(other.headers)) {
             return false;
         }
-        if (bodyObject == null) {
-            if (other.bodyObject != null) {
+        if (payload == null) {
+            if (other.payload != null) {
                 return false;
             }
-        } else if (!bodyObject.equals(other.bodyObject)) {
+        } else if (!payload.equals(other.payload)) {
             return false;
         }
         if (bodyText == null) {

@@ -6,7 +6,7 @@ package com.threerings.msoy.web.data;
 /**
  * This object holds the extra data associated with a single group invitation message.
  */
-public class GroupInviteObject extends MailBodyObject
+public class GroupInviteObject extends MailPayload
 {
     /** The group to which the member has been invited. */
     public int groupId;
@@ -33,6 +33,6 @@ public class GroupInviteObject extends MailBodyObject
     // @Override
     public int getType ()
     {
-        return MailBodyObject.TYPE_GROUP_INVITE;
+        return MailPayload.TYPE_GROUP_INVITE;
     }
 }

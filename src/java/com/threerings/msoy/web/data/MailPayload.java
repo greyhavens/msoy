@@ -13,27 +13,27 @@ import com.threerings.io.Streamable;
  * whenever it is to be displayed, the relevant functions {@link #widgetForRecipient()} or
  * {@link #widgetForOthers()) will be called to retrieve the relevant UI.
  */
-public abstract class MailBodyObject
+public abstract class MailPayload
     implements IsSerializable, Streamable
 {
     /**
-     * The identifying integer of a {@link GroupInvite} mail body object. 
+     * The identifying integer of a {@link GroupInvite} payload. 
      */
     public static final int TYPE_GROUP_INVITE = 1;
 
     /**
-     * The identifying integer of a {@link FriendInvite} mail body object. 
+     * The identifying integer of a {@link FriendInvite} payload.
      */
     public static final int TYPE_FRIEND_INVITE = 2;
 
-    public static Class getBodyObjectClass (int type) {
+    public static Class getPayloadClass (int type) {
         switch(type) {
         case TYPE_GROUP_INVITE:
             return GroupInviteObject.class;
         case TYPE_FRIEND_INVITE:
             return FriendInviteObject.class;
         }
-        throw new IllegalArgumentException("Unknown body object [type= " + type + "]");
+        throw new IllegalArgumentException("Unknown payload [type= " + type + "]");
     }
     
     public abstract int getType ();

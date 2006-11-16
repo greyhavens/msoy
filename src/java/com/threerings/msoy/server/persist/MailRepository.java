@@ -157,19 +157,22 @@ public class MailRepository extends DepotRepository
                  new In(MailMessageRecord.MESSAGE_ID_C, idArr))));
      }
 
-     public void setBodyObjectState (int ownerId, int folderId, int messageId, byte[] state)
+     /**
+      * Set the payload state of a message in the persistent store.
+      */
+     public void setPayloadState (int ownerId, int folderId, int messageId, byte[] state)
          throws PersistenceException
      {
          updatePartial(MailMessageRecord.class,
              new Key(MailMessageRecord.OWNER_ID_C, ownerId,
                      MailMessageRecord.FOLDER_ID_C, folderId,
                      MailMessageRecord.MESSAGE_ID_C, messageId),
-             MailMessageRecord.BODY_OBJECT_STATE, state);
+             MailMessageRecord.PAYLOAD_STATE, state);
      }
      
     /**
-      * Flag a message as being unread (or not).
-      */
+     * Flag a message as being unread (or not).
+     */
      public void setUnread (int ownerId, int folderId, int messageId, boolean unread)
          throws PersistenceException
      {

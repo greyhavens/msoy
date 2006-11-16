@@ -11,7 +11,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.MailService;
-import com.threerings.msoy.web.data.MailBodyObject;
+import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
@@ -36,7 +36,7 @@ public class MailServlet extends RemoteServiceServlet
 
     // from MailService
     public void deliverMessage (WebCreds creds, int recipientId, String subject, String text,
-                                MailBodyObject object)
+                                MailPayload object)
         throws ServiceException
     {
         ServletWaiter<Void> waiter = new ServletWaiter<Void>(
@@ -47,12 +47,12 @@ public class MailServlet extends RemoteServiceServlet
     }
 
     // from MailService
-    public void updateBodyObject (WebCreds creds, int folderId, int messageId, MailBodyObject obj)
+    public void updatePayload (WebCreds creds, int folderId, int messageId, MailPayload payload)
         throws ServiceException
     {
         ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-                "updateBodyObject[" + folderId + ", " + messageId + "]");
-        MsoyServer.mailMan.updateBodyObject(creds.memberId, folderId, messageId, obj, waiter);
+                "updatePayload[" + folderId + ", " + messageId + "]");
+        MsoyServer.mailMan.updatePayload(creds.memberId, folderId, messageId, payload, waiter);
         waiter.waitForResult();
     }
 

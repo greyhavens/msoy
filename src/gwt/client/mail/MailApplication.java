@@ -114,7 +114,7 @@ public class MailApplication extends DockPanel
     }
 
     /**
-     * Called from the MailBodyObjectDisplay when the state of the body object has changed
+     * Called from the MailPayloadDisplay when the state of the payload has changed
      */
     public void messageChanged (int ownerId, int folderId, int messageId)
     {
@@ -351,8 +351,8 @@ public class MailApplication extends DockPanel
         _ctx.mailsvc.getMessage(_ctx.creds, _currentFolder, _currentMessage, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _message = (MailMessage) result;
-                _objectDisplay = _message.bodyObject != null ?
-                    MailBodyObjectDisplay.getDisplay(_ctx, _message) : null;
+                _payloadDisplay = _message.payload != null ?
+                    MailPayloadDisplay.getDisplay(_ctx, _message) : null;
                 refreshMessagePanel();
             }
             public void onFailure (Throwable caught) {
@@ -408,14 +408,14 @@ public class MailApplication extends DockPanel
         buttonBox.add(deleteButton);
         messagePanel.add(buttonBox);
 
-        // if there is a message body object, display it!
-        if (_message.bodyObject != null) {
+        // if there is a payload, display it!
+        if (_message.payload != null) {
             Widget widget = _ctx.creds.memberId == _message.headers.recipient.memberId ?
-                _objectDisplay.widgetForRecipient(this) : _objectDisplay.widgetForOthers();
+                _payloadDisplay.widgetForRecipient(this) : _payloadDisplay.widgetForOthers();
             if (widget != null) {
                 HorizontalPanel panel = new HorizontalPanel();
                 panel.setWidth("100%");
-                panel.setStyleName("mailBodyObject");
+                panel.setStyleName("mailPayload");
                 panel.add(widget);
                 messagePanel.add(panel);
             }
@@ -569,7 +569,7 @@ public class MailApplication extends DockPanel
     protected List _folders;
     protected List _headers;
     protected MailMessage _message;
-    protected MailBodyObjectDisplay _objectDisplay;
+    protected MailPayloadDisplay _payloadDisplay;
     protected Set _checkedMessages;
     protected int _currentFolder;
     protected int _currentOffset;

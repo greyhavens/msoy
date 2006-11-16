@@ -16,7 +16,7 @@ import com.samskivert.util.StringUtil;
 /**
  * Represents a message, with some meta-data, in a folder belonging to a member.
  * From this record is generated {@link MailHeaders}, {@link MailMessage} and in
- * some cases, a {@link MailBodyObjectDisplay}.
+ * some cases, a {@link MailPayloadDisplay}.
  * 
  * TODO: Should we allow multiple recipients? It can be good to know who else received
  *       a certain message, and 'reply all' can be a wonderful feature.
@@ -28,7 +28,7 @@ import com.samskivert.util.StringUtil;
 public class MailMessageRecord
     implements Cloneable
 {
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     public static final String MESSAGE_ID = "messageId";
     public static final ColumnExp MESSAGE_ID_C =
@@ -57,12 +57,12 @@ public class MailMessageRecord
     public static final String BODY_TEXT = "bodyText";
     public static final ColumnExp BODY_TEXT_C =
         new ColumnExp(MailMessageRecord.class, BODY_TEXT);
-    public static final String BODY_OBJECT_TYPE = "bodyObjectType";
-    public static final ColumnExp BODY_OBJECT_TYPE_C =
-        new ColumnExp(MailMessageRecord.class, BODY_OBJECT_TYPE);
-    public static final String BODY_OBJECT_STATE = "bodyObjectState";
-    public static final ColumnExp BODY_OBJECT_STATE_C =
-        new ColumnExp(MailMessageRecord.class, BODY_OBJECT_STATE);
+    public static final String PAYLOAD_TYPE = "payloadType";
+    public static final ColumnExp PAYLOAD_TYPE_C =
+        new ColumnExp(MailMessageRecord.class, PAYLOAD_TYPE);
+    public static final String PAYLOAD_STATE = "payloadState";
+    public static final ColumnExp PAYLOAD_STATE_C =
+        new ColumnExp(MailMessageRecord.class, PAYLOAD_STATE);
     
     /** The id of this message, unique within its current folder. */
     @Id
@@ -101,12 +101,12 @@ public class MailMessageRecord
     public String bodyText;
 
     @Column(nullable=false)
-    /** An integer representing the type of body object, or zero for no body object. */
-    public int bodyObjectType;
+    /** An integer specifying which type of {@link MailPayload} object this message includes. */
+    public int payloadType;
 
     @Column(length=16384, nullable=true)
-    /** The low-level representation of a Map, the state used to instantiate a body object. */
-    public byte[] bodyObjectState;
+    /** The low-level representation of the state of a {@link MailPayload} object. */
+    public byte[] payloadState;
     
     /**
      * Generates a string representation of this instance.
