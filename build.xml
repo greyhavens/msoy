@@ -43,8 +43,7 @@
     <include name="${libs.dir}/mysql-connector-java-3.1.12-bin.jar"/>
     <include name="${libs.dir}/proguard.jar"/>
     <include name="${libs.dir}/velocity-1.5-dev.jar"/>
-    <include name="${libs.dir}/gwt/gwt-dev-linux.jar"/>
-    <include name="${libs.dir}/gwt/gwt-user.jar"/>
+    <include name="${libs.dir}/gwt-user.jar"/>
     <include name="${libs.dir}/jetty/lib/org.mortbay.jetty.jar"/>
     <include name="lib/gwt-widgets-0.1.1.jar"/>
     <include name="lib/json.jar"/>
@@ -56,14 +55,6 @@
     <pathelement location="${deploy.dir}/classes"/>
     <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
     <fileset dir="${deploy.dir}" includes="${app.name}-code.jar"/>
-  </path>
-
-  <!-- special bits used by GWT -->
-  <path id="gwt.classpath">
-    <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
-    <pathelement location="${deploy.dir}/classes"/>
-    <pathelement location="src/java"/>
-    <pathelement location="src/gwt"/>
   </path>
 
   <!-- prepares the application directories -->
@@ -98,6 +89,21 @@
   <!-- runs the GWT debugging shell -->
   <property name="page"  value="index.html"/>
   <target name="gshell">
+    <available property="gwtdir.present" file="lib/gwt"/>
+    <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
+          unless="gwtdir.present"/>
+    <path id="gwt.classpath">
+      <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
+      <fileset dir="lib/gwt" includes="*.jar"/>
+      <pathelement location="${deploy.dir}/classes"/>
+      <pathelement location="src/java"/>
+      <pathelement location="src/gwt"/>
+    </path>
+    <available property="gwt.present" classname="com.google.gwt.dev.GWTShell"
+               classpathref="gwt.classpath"/>
+    <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
+          unless="gwt.present"/>
+
     <java classpathref="gwt.classpath" fork="true"
           classname="com.google.gwt.dev.GWTShell">
       <sysproperty key="msoy.home" value="."/>
@@ -112,8 +118,13 @@
     <delete dir="pages/msoy"/>
     <mkdir dir="pages/msoy"/>
     <delete><fileset dir="pages/msoy" includes="*/*.*"/></delete>
-    <java classpathref="gwt.classpath" fork="true"
-          classname="com.google.gwt.dev.GWTCompiler">
+    <java fork="true" classname="com.google.gwt.dev.GWTCompiler">
+      <classpath>
+        <pathelement location="${deploy.dir}/classes"/>
+        <fileset dir="${project.dir}/tools/lib/java" includes="gwt*.jar"/>
+        <pathelement location="src/java"/>
+        <pathelement location="src/gwt"/>
+      </classpath>
       <!--<arg value="-style"/>-->
       <!--<arg value="PRETTY"/>-->
       <arg value="-out"/>
