@@ -125,7 +125,8 @@ public class MailManager
             new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
                 try {
-                    byte[] state = new JSONMarshaller(payload.getClass()).getState(payload);
+                    byte[] state =
+                        JSONMarshaller.getMarshaller(payload.getClass()).getState(payload);
                     _mailRepo.setPayloadState(memberId, folderId, messageId, state);
                 } catch (Exception e) {
                     throw new PersistenceException(e);
@@ -160,7 +161,7 @@ public class MailManager
                     record.payloadType = payload.getType();
                     try {
                         record.payloadState =
-                            new JSONMarshaller(payload.getClass()).getState(payload);
+                            JSONMarshaller.getMarshaller(payload.getClass()).getState(payload);
                     } catch (Exception e) {
                         throw new PersistenceException(e);
                     }
@@ -288,7 +289,7 @@ public class MailManager
             if (record.payloadState != null) {
                 try {
                     Class objectClass = MailPayload.getPayloadClass(record.payloadType);
-                    JSONMarshaller marsh = new JSONMarshaller(objectClass);
+                    JSONMarshaller marsh = JSONMarshaller.getMarshaller(objectClass);
                     message.payload = (MailPayload)marsh.newInstance(record.payloadState);
                 } catch (Exception e) {
                     throw new PersistenceException("Failed to unserialize message payload", e);
