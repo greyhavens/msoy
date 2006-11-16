@@ -41,6 +41,7 @@
     <include name="${extlib.dir}/ejb3-persistence.jar"/>
     <include name="${extlib.dir}/getdown.jar"/>
     <include name="${extlib.dir}/gwt-user.jar"/>
+    <include name="${extlib.dir}/junit-3.7.jar"/>
     <include name="${extlib.dir}/jetty/lib/org.mortbay.jetty.jar"/>
     <include name="${extlib.dir}/mail.jar"/>
     <include name="${extlib.dir}/mysql-connector-java-3.1.12-bin.jar"/>
