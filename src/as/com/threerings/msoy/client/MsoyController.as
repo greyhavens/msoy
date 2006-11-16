@@ -345,6 +345,7 @@ public class MsoyController extends Controller
     // from ClientObserver
     public function clientDidLogoff (event :ClientEvent) :void
     {
+        _topPanel.clearSidePanel(null);
         _topPanel.setPlaceView(new DisconnectedPanel(_ctx, _logoffMessage));
         _logoffMessage = null;
     }
