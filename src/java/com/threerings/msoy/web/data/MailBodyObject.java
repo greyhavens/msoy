@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.data;
 
-import client.group.GroupInvite;
-import client.person.FriendInvite;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
