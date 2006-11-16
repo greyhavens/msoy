@@ -47,7 +47,6 @@
     <include name="${extlib.dir}/proguard.jar"/>
     <include name="${extlib.dir}/servlet-2.3.jar"/>
     <include name="${extlib.dir}/velocity-1.5-dev.jar"/>
-    <include name="${extlib.dir}/xml-writer.jar"/>
     <include name="lib/gwt-widgets-0.1.1.jar"/>
     <include name="lib/json.jar"/>
   </fileset>
