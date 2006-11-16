@@ -39,6 +39,9 @@ public class JSONMarshaller<T>
         }
     }
 
+    /**
+     * Return a JSON marshaller for a given class, either through cache lookup or creation.
+     */
     public static <T> JSONMarshaller getMarshaller (Class<T> pclass)
     {
         JSONMarshaller marsh = _classMap.get(pclass);
