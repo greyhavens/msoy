@@ -14,9 +14,8 @@
   <property name="gwtout.dir"    value="pages"/>
 
   <!-- define our subprojects and include the standard build system -->
-  <property name="projects.root" value="."/>
-  <property name="projects"      value="samskivert,narya,nenya,vilya,toybox,s3lib/java,threerings"/>
-  <import file="${projects.root}/projects/tools/etc/build-support.xml"/>
+  <property name="projects" value="samskivert,narya,nenya,vilya,toybox,s3lib/java,threerings"/>
+  <import file="projects/tools/etc/build-support.xml"/>
   <fileset dir="." id="check.paths">
     <include name="projects/s3lib/java/src/java/**/*.java"/> 
     <include name="projects/toybox/src/java/**/*.java"/> 
@@ -29,25 +28,28 @@
   <property name="optprops.list"  value="build.properties"/>
 
   <!-- declare the libraries needed by the MSOY runtime -->
-  <fileset dir="${projects.root}" id="dist.libs">
-    <include name="${libs.dir}/ant.jar"/>
-    <include name="${libs.dir}/commons-codec.jar"/>
-    <include name="${libs.dir}/commons-digester.jar"/>
-    <include name="${libs.dir}/commons-fileupload.jar"/>
-    <include name="${libs.dir}/commons-httpclient.jar"/>
-    <include name="${libs.dir}/commons-io.jar"/>
-    <include name="${libs.dir}/commons-lang.jar"/>
-    <include name="${libs.dir}/commons-logging.jar"/>
-    <include name="${libs.dir}/ejb3-persistence.jar"/>
-    <include name="${libs.dir}/getdown.jar"/>
-    <include name="${libs.dir}/mysql-connector-java-3.1.12-bin.jar"/>
-    <include name="${libs.dir}/proguard.jar"/>
-    <include name="${libs.dir}/velocity-1.5-dev.jar"/>
-    <include name="${libs.dir}/gwt-user.jar"/>
-    <include name="${libs.dir}/jetty/lib/org.mortbay.jetty.jar"/>
+  <fileset dir="." id="dist.libs">
+    <include name="${extlib.dir}/ant.jar"/>
+    <include name="${extlib.dir}/commons-codec.jar"/>
+    <include name="${extlib.dir}/commons-collections.jar"/>
+    <include name="${extlib.dir}/commons-digester.jar"/>
+    <include name="${extlib.dir}/commons-fileupload.jar"/>
+    <include name="${extlib.dir}/commons-httpclient.jar"/>
+    <include name="${extlib.dir}/commons-io.jar"/>
+    <include name="${extlib.dir}/commons-lang.jar"/>
+    <include name="${extlib.dir}/commons-logging.jar"/>
+    <include name="${extlib.dir}/ejb3-persistence.jar"/>
+    <include name="${extlib.dir}/getdown.jar"/>
+    <include name="${extlib.dir}/gwt-user.jar"/>
+    <include name="${extlib.dir}/jetty/lib/org.mortbay.jetty.jar"/>
+    <include name="${extlib.dir}/mail.jar"/>
+    <include name="${extlib.dir}/mysql-connector-java-3.1.12-bin.jar"/>
+    <include name="${extlib.dir}/proguard.jar"/>
+    <include name="${extlib.dir}/servlet-2.3.jar"/>
+    <include name="${extlib.dir}/velocity-1.5-dev.jar"/>
+    <include name="${extlib.dir}/xml-writer.jar"/>
     <include name="lib/gwt-widgets-0.1.1.jar"/>
     <include name="lib/json.jar"/>
-    <include name="${project.dir}/narya/dist/narya-tools.jar"/>
   </fileset>
 
   <!-- declare our classpath -->
@@ -79,11 +81,7 @@
         </outputfilterchain>
       </redirector>
     </exec>
-    <!-- copy native libraries into dist/lib -->
     <mkdir dir="${deploy.dir}/lib"/>
-    <copy todir="${deploy.dir}/lib">
-      <fileset dir="projects/narya/dist/lib" includes="**/libsignal.so"/>
-    </copy>
   </target>
 
   <!-- runs the GWT debugging shell -->
@@ -121,7 +119,8 @@
     <java fork="true" classname="com.google.gwt.dev.GWTCompiler">
       <classpath>
         <pathelement location="${deploy.dir}/classes"/>
-        <fileset dir="${project.dir}/tools/lib/java" includes="gwt*.jar"/>
+        <fileset dir="${extlib.dir}" includes="gwt*.jar"/>
+        <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
         <pathelement location="src/java"/>
         <pathelement location="src/gwt"/>
       </classpath>
@@ -246,7 +245,7 @@
   <!-- builds and signs our Java game client -->
   <target name="jclient" depends="dist">
     <taskdef resource="proguard/ant/task.properties"
-             classpath="${libs.dir}/proguard.jar"/>
+             classpath="${extlib.dir}/proguard.jar"/>
     <!-- On Mac OS X, rt.jar is cleverly renamed classes.jar -->
     <condition property="isDarwin">
       <and>
@@ -366,6 +365,10 @@
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint:unchecked"/>
     </javac>
+    <!-- copy native libraries into dist/lib -->
+    <copy todir="${deploy.dir}/lib">
+      <fileset dir="projects/narya/dist/lib" includes="**/libsignal.so"/>
+    </copy>
   </target>
 
   <!-- build the javadoc documentation -->
@@ -411,7 +414,8 @@
   </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="distprojects,dist,asclient,gclient,jclient"/>
+  <target name="distall"
+          depends="prepare,distprojects,dist,asclient,gclient,jclient"/>
 
   <!-- fully cleans out the installed application and all subprojects -->
   <target name="cleanall" depends="cleanprojects">
