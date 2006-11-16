@@ -34,7 +34,7 @@ public interface MailService extends RemoteService
                                 MailBodyObject object)
         throws ServiceException;
 
-    public void updateBodyObject (WebCreds creds, int folderId, int messageId, Map state)
+    public void updateBodyObject (WebCreds creds, int folderId, int messageId, MailBodyObject obj)
         throws ServiceException;
 
     public void deleteMessages (WebCreds creds, int folderId, int[] msgIdArr)

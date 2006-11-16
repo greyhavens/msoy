@@ -47,12 +47,12 @@ public class MailServlet extends RemoteServiceServlet
     }
 
     // from MailService
-    public void updateBodyObject (WebCreds creds, int folderId, int messageId, Map state)
+    public void updateBodyObject (WebCreds creds, int folderId, int messageId, MailBodyObject obj)
         throws ServiceException
     {
         ServletWaiter<Void> waiter = new ServletWaiter<Void>(
                 "updateBodyObject[" + folderId + ", " + messageId + "]");
-        MsoyServer.mailMan.updateBodyObject(creds.memberId, folderId, messageId, state, waiter);
+        MsoyServer.mailMan.updateBodyObject(creds.memberId, folderId, messageId, obj, waiter);
         waiter.waitForResult();
     }
 

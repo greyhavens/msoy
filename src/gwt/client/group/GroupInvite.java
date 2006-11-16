@@ -21,14 +21,13 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
+import com.threerings.msoy.web.data.GroupInviteObject;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MailBodyObject;
 import com.threerings.msoy.web.data.MailMessage;
 
 public abstract class GroupInvite
 {
-    public static final String STATE_GROUP_ID_KEY = "groupId";
-    public static final String STATE_RESPONDED_KEY = "responded";
 
     public static void getInvitationGroups (WebContext _ctx, AsyncCallback callback)
     {
@@ -46,8 +45,7 @@ public abstract class GroupInvite
         // @Override
         public MailBodyObject getComposedObject ()
         {
-            return new MailBodyObject(MailBodyObject.TYPE_GROUP_INVITE,
-                                      buildState(_selectedGroupId, false));
+            return new GroupInviteObject(_selectedGroupId, false);
         }
 
         // @Override
@@ -104,16 +102,14 @@ public abstract class GroupInvite
         {
             super(ctx, message);
             // no sanity checks: if anything breaks here, it's already a disaster
-            Map state = message.bodyObject.state;
-            _invitationGroupId = ((Integer) state.get(STATE_GROUP_ID_KEY)).intValue();
-            _responded = ((Boolean) state.get(STATE_RESPONDED_KEY)).booleanValue();
+            _inviteObject = (GroupInviteObject) message.bodyObject;
         }
         
         // @Override
         public Widget widgetForRecipient (MailUpdateListener listener)
         {
             _listener = listener;
-            return new DisplayWidget(_responded == false);
+            return new DisplayWidget(_inviteObject.responded == false);
         }
 
 
@@ -137,16 +133,17 @@ public abstract class GroupInvite
                     }
                 });
                 add(joinButton);
-                add(new InlineLabel(" the group #" + _invitationGroupId + "."));
+                add(new InlineLabel(" the group #" + _inviteObject.groupId + "."));
             }
             
             protected void joinGroup ()
             {
                 _ctx.groupsvc.leaveGroup(
-                    _ctx.creds, _invitationGroupId, _ctx.creds.memberId, new AsyncCallback() {
+                    _ctx.creds, _inviteObject.groupId, _ctx.creds.memberId, new AsyncCallback() {
                         // if leaving the group succeeds, mark this invitation as accepted
                         public void onSuccess (Object result) {
-                            updateState(buildState(_invitationGroupId, true), new AsyncCallback() {
+                            _inviteObject.responded = true;
+                            updateState(_inviteObject, new AsyncCallback() {
                                 // and if that succeded to, let the mail app know to refresh
                                 public void onSuccess (Object result) {
                                     if (_listener != null) {
@@ -167,17 +164,7 @@ public abstract class GroupInvite
             }
             protected ListBox _groupBox;
         }
-        
-        protected int _invitationGroupId;
-        protected boolean _responded;
+        protected GroupInviteObject _inviteObject;
         protected MailUpdateListener _listener;
-    }
-
-    protected static Map buildState (int groupId, boolean responded)
-    {
-        Map state = new HashMap();
-        state.put(STATE_GROUP_ID_KEY, new Integer(groupId));
-        state.put(STATE_RESPONDED_KEY, new Boolean(responded));
-        return state;
     }
 }

@@ -15,6 +15,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ResultListener;
@@ -116,12 +119,17 @@ public class MailManager
      * Overwrite the serialized state of a message's body object with the new supplied data.
      */
     public void updateBodyObject (final int memberId, final int folderId, final int messageId,
-                                  final Map state, ResultListener<Void> waiter)
+                                  final MailBodyObject obj, ResultListener<Void> waiter)
     {
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
-                _mailRepo.setBodyObjectState(memberId, folderId, messageId, getStateBytes(state));
+                try {
+                    byte[] state = new JSONMarshaller(obj.getClass()).getState(obj);
+                    _mailRepo.setBodyObjectState(memberId, folderId, messageId, state);
+                } catch (Exception e) {
+                    throw new PersistenceException(e);
+                }
                 return null;
             }
         });
@@ -132,7 +140,7 @@ public class MailManager
      * and one copy in the recipient's 'Inbox' folder.
      */    
     public void deliverMessage (final int senderId, final int recipientId, final String subject,
-                                final String text, final MailBodyObject object,
+                                final String text, final MailBodyObject obj,
                                 ResultListener<Void> waiter)
     {
         MsoyServer.invoker.postUnit(
@@ -148,9 +156,13 @@ public class MailManager
                 record.subject = subject;
                 record.bodyText = text;
                 
-                if (object != null) {
-                    record.bodyObjectType = object.type;
-                    record.bodyObjectState = getStateBytes(object.state);
+                if (obj != null) {
+                    record.bodyObjectType = obj.getType();
+                    try {
+                        record.bodyObjectState = new JSONMarshaller(obj.getClass()).getState(obj);
+                    } catch (Exception e) {
+                        throw new PersistenceException(e);
+                    }
                 }
                 record.sent = new Timestamp(System.currentTimeMillis());
 
@@ -272,22 +284,15 @@ public class MailManager
         message.headers = toMailHeaders(record);
         message.bodyText = record.bodyText;
         if (record.bodyObjectType != 0) {
-            Map state = null;
             if (record.bodyObjectState != null) {
-                InputStream in = new ByteArrayInputStream(record.bodyObjectState);
                 try {
-                    ObjectInputStream oin = new ObjectInputStream(in);
-                    Object obj = oin.readObject();
-                    if (obj != null && !(obj instanceof Map)) {
-                        throw new PersistenceException(
-                        "Mail object state did not deserialize to Map.");
-                    }
-                    state = (Map) obj;
+                    Class objectClass = MailBodyObject.getBodyObjectClass(record.bodyObjectType);
+                    JSONMarshaller marsh = new JSONMarshaller(objectClass);
+                    message.bodyObject = (MailBodyObject)marsh.newInstance(record.bodyObjectState);
                 } catch (Exception e) {
                     throw new PersistenceException("Failed to unserialize message body object", e);
                 }
             }
-            message.bodyObject = new MailBodyObject(record.bodyObjectType, state);
         }
         return message;
     }

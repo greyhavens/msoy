@@ -3,7 +3,8 @@
 
 package com.threerings.msoy.web.data;
 
-import java.util.Map;
+import client.group.GroupInvite;
+import client.person.FriendInvite;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
@@ -14,7 +15,7 @@ import com.threerings.io.Streamable;
  * whenever it is to be displayed, the relevant functions {@link #widgetForRecipient()} or
  * {@link #widgetForOthers()) will be called to retrieve the relevant UI.
  */
-public class MailBodyObject
+public abstract class MailBodyObject
     implements IsSerializable, Streamable
 {
     /**
@@ -27,41 +28,15 @@ public class MailBodyObject
      */
     public static final int TYPE_FRIEND_INVITE = 2;
 
-    public int type;
-    public Map state;
-
-    public MailBodyObject ()
-    {
-    }
-
-    public MailBodyObject (int type, Map state)
-    {
-        this.type = type;
-        this.state = state;
-    }
-
-    // @Override
-    public int hashCode ()
-    {
-        return type + (state != null ? 31*state.hashCode() : 0);
+    public static Class getBodyObjectClass (int type) {
+        switch(type) {
+        case TYPE_GROUP_INVITE:
+            return GroupInviteObject.class;
+        case TYPE_FRIEND_INVITE:
+            return FriendInviteObject.class;
+        }
+        throw new IllegalArgumentException("Unknown body object [type= " + type + "]");
     }
     
-    // @Override
-    public boolean equals (Object obj)
-    {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || !(obj instanceof MailFolder)) {
-            return false;
-        }
-        MailBodyObject other = (MailBodyObject) obj;
-        if (type != other.type) {
-            return false;
-        }
-        if (state == null) {
-            return other.state == null;
-        }
-        return state.equals(other.state);
-    }
+    public abstract int getType ();
 }

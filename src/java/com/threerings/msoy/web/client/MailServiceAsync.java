@@ -45,8 +45,8 @@ public interface MailServiceAsync
     /**
      * The asynchronous version of {@link MailService#updateBodyObject}
      */
-    public void updateBodyObject (WebCreds creds, int folderId, int messageId, Map state,
-                                  AsyncCallback callback);
+    public void updateBodyObject (WebCreds creds, int folderId, int messageId,
+                                  MailBodyObject obj, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MailService#deleteMessages}

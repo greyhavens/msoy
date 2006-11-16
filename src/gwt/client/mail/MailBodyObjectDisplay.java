@@ -28,14 +28,14 @@ public abstract class MailBodyObjectDisplay
         if (message.bodyObject == null) {
             return null;
         }
-        switch(message.bodyObject.type) {
+        switch(message.bodyObject.getType()) {
         case MailBodyObject.TYPE_GROUP_INVITE:
             return new GroupInvite.Display(ctx, message);
         case MailBodyObject.TYPE_FRIEND_INVITE:
             return new FriendInvite.Display(ctx, message);
         }
         throw new IllegalArgumentException(
-            "Unknown body object requested [type=" + message.bodyObject.type + "]");
+            "Unknown body object requested [type=" + message.bodyObject.getType() + "]");
     }
 
     public MailBodyObjectDisplay (WebContext ctx, MailMessage message)
@@ -65,7 +65,7 @@ public abstract class MailBodyObjectDisplay
      * argument is null, one is created for you which does nothing on success and throws
      * a RuntimeException on failure.
      */
-    protected void updateState (Map newState, AsyncCallback callback)
+    protected void updateState (MailBodyObject newObj, AsyncCallback callback)
     {
         if (callback == null) {
             callback = new AsyncCallback() {
@@ -77,7 +77,7 @@ public abstract class MailBodyObjectDisplay
             };
         }
         _ctx.mailsvc.updateBodyObject(_ctx.creds, _message.headers.folderId,
-                                      _message.headers.messageId, newState, callback);
+                                      _message.headers.messageId, newObj, callback);
     }
 
     protected WebContext _ctx;

@@ -3,8 +3,6 @@
 
 package client.person;
 
-import java.util.HashMap;
-
 import client.mail.MailBodyObjectComposer;
 import client.mail.MailBodyObjectDisplay;
 import client.mail.MailUpdateListener;
@@ -16,6 +14,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
+import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.web.data.MailBodyObject;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MemberGName;
@@ -32,7 +31,7 @@ public abstract class FriendInvite
         // @Override
         public MailBodyObject getComposedObject ()
         {
-            return new MailBodyObject(MailBodyObject.TYPE_FRIEND_INVITE, new HashMap());
+            return new FriendInviteObject();
         }
         
         // @Override
