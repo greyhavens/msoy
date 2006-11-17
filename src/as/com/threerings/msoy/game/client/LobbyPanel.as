@@ -162,8 +162,6 @@ public class LobbyPanel extends VBox
 import mx.containers.HBox;
 import mx.containers.VBox;
 
-import mx.controls.Label;
-
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
@@ -171,12 +169,15 @@ import com.threerings.util.Name;
 
 import com.threerings.mx.controls.CommandButton;
 
-import com.threerings.parlor.data.Table;
-
 import com.threerings.msoy.client.MsoyContext;
 
+import com.threerings.msoy.item.web.MediaDesc;
+
+import com.threerings.msoy.game.client.HeadShotSprite;
 import com.threerings.msoy.game.client.LobbyController;
 import com.threerings.msoy.game.client.LobbyPanel;
+
+import com.threerings.msoy.game.data.MsoyTable;
 
 class TableRenderer extends HBox
 {
@@ -201,7 +202,7 @@ class TableRenderer extends HBox
 
     protected function recheckTable () :void
     {
-        var table :Table = (data as Table);
+        var table :MsoyTable = (data as MsoyTable);
         var childCount :int = numChildren;
         var seats :int = (table == null) ? 0 : table.occupants.length;
         var nn :int = Math.max(childCount, seats);
@@ -239,17 +240,17 @@ class TableRenderer extends HBox
                 }
 
             } else {
-                var lbl :Label;
-                if (comp is Label) {
-                    lbl = (comp as Label);
+                var lbl :HeadShotSprite;
+                if (comp is HeadShotSprite) {
+                    lbl = (comp as HeadShotSprite);
                 } else {
                     if (comp != null) {
                         removeChildAt(ii);
                     }
-                    lbl = new Label();
+                    lbl = new HeadShotSprite();
                     addChildAt(lbl, ii);
                 }
-                lbl.text = occupant.toString();
+                lbl.setUser(occupant, table.headShots[ii] as MediaDesc);
             }
         }
 

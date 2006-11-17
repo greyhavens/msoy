@@ -18,7 +18,9 @@ import com.threerings.parlor.game.data.GameObject;
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
 import com.threerings.msoy.item.web.Avatar;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 
 import com.threerings.msoy.game.data.GameMemberInfo;
 
@@ -116,6 +118,17 @@ public class MemberObject extends BodyObject
     public boolean isGuest ()
     {
         return (getMemberId() == MemberName.GUEST_ID);
+    }
+
+    /**
+     * Get the media to use as our headshot.
+     */
+    public MediaDesc getHeadShotMedia ()
+    {
+        if (avatar != null) {
+            return avatar.getHeadShotMedia();
+        }
+        return new StaticMediaDesc(StaticMediaDesc.HEADSHOT, Item.AVATAR);
     }
 
     // documentation inherited from superinterface ScenedBodyObject

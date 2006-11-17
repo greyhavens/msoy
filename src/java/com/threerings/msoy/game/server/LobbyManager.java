@@ -16,6 +16,7 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.game.data.LobbyConfig;
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.MsoyTable;
 
 /**
  * Manages a lobby room.
@@ -36,6 +37,7 @@ public class LobbyManager extends PlaceManager
 
         MsoyServer.lobbyReg.lobbyStartup(_gameId, plobj.getOid());
         _tableMgr = new TableManager(this);
+        _tableMgr.setTableClass(MsoyTable.class);
 
         plobj.addListener(_tableWatcher);
     }

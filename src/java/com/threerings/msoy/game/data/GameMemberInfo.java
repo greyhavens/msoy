@@ -8,7 +8,6 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.StaticMediaDesc;
 
 /**
  * Extends MemberInfo with game-specific information.
@@ -27,15 +26,6 @@ public class GameMemberInfo extends MemberInfo
     {
         super(user);
 
-        if (user.avatar != null) {
-            headShot = user.avatar.getHeadShotMedia();
-
-        } else {
-            headShot = DEFAULT_HEADSHOT;
-        }
+        headShot = user.getHeadShotMedia();
     }
-
-    /** The default headshot to use for guests and unconfigured members. */
-    protected static MediaDesc DEFAULT_HEADSHOT =
-        new StaticMediaDesc(StaticMediaDesc.HEADSHOT, Item.AVATAR);
 }
