@@ -3,20 +3,11 @@
 
 package com.threerings.msoy.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
@@ -279,6 +270,7 @@ public class MailManager
     }
     
     // convert a MailMessageRecord to a MailMessage
+    @SuppressWarnings("unchecked")
     protected MailMessage toMailMessage (MailMessageRecord record)
         throws PersistenceException
     {
@@ -288,9 +280,11 @@ public class MailManager
         if (record.payloadType != 0) {
             if (record.payloadState != null) {
                 try {
-                    Class objectClass = MailPayload.getPayloadClass(record.payloadType);
-                    JSONMarshaller marsh = JSONMarshaller.getMarshaller(objectClass);
-                    message.payload = (MailPayload)marsh.newInstance(record.payloadState);
+                    Class<? extends MailPayload> objectClass =
+                        MailPayload.getPayloadClass(record.payloadType);
+                    JSONMarshaller<? extends MailPayload> marsh =
+                        JSONMarshaller.getMarshaller(objectClass);
+                    message.payload = marsh.newInstance(record.payloadState);
                 } catch (Exception e) {
                     throw new PersistenceException("Failed to unserialize message payload", e);
                 }

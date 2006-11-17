@@ -49,11 +49,12 @@ public class JSONMarshaller<T>
     /**
      * Returns a JSON marshaller for a given class, either through cache lookup or creation.
      */
-    public static <T> JSONMarshaller getMarshaller (Class<T> pclass)
+    @SuppressWarnings("unchecked")
+    public static <T> JSONMarshaller<T> getMarshaller (Class<T> pclass)
     {
-        JSONMarshaller marsh = _classMap.get(pclass);
+        JSONMarshaller<T> marsh = _classMap.get(pclass);
         if (marsh == null) {
-            marsh = new JSONMarshaller(pclass);
+            marsh = new JSONMarshaller<T>(pclass);
             _classMap.put(pclass, marsh);
         }
         return marsh;
@@ -83,7 +84,7 @@ public class JSONMarshaller<T>
         throws JSONMarshallingException
     {
         try {
-            return (T) deserialize(new JSONObject(new String(json)), _pclass);
+            return deserializeObject(new JSONObject(new String(json)));
         } catch (Exception e) {
             throw new JSONMarshallingException("Failed to deserialize [class=" + _pclass + "]", e);
         }
@@ -92,7 +93,7 @@ public class JSONMarshaller<T>
     /**
      * Returns the JSON representation of the state of the given object.
      */
-    public byte[] getState (T obj)
+    public byte[] getState (Object obj)
         throws JSONMarshallingException
     {
         try {
@@ -103,7 +104,7 @@ public class JSONMarshaller<T>
     }
     
     // TODO: it's idiotic that org.json does not have its objects implement a JSONValue interface
-    protected Object deserialize (Object state, Class dClass)
+    protected Object deserialize (Object state, Class<?> dClass)
          throws JSONMarshallingException
     {
         try {
@@ -111,7 +112,7 @@ public class JSONMarshaller<T>
                 return state;
             }
             if (dClass.isArray()) {
-                if (!(state instanceof JSONArray)) {
+                if (!state.getClass().equals(JSONArray.class)) {
                     throw new JSONMarshallingException(
                         "Can't stuff non-array state into array field [dClass=" + dClass + "]");
                 }
@@ -124,10 +125,20 @@ public class JSONMarshaller<T>
                 }
                 return rArr;
             }
-            if (!_pclass.equals(dClass)) {
-                return getMarshaller(dClass).deserialize(state, dClass);
+            if (!state.getClass().equals(JSONObject.class)) {
+                throw new JSONMarshallingException(
+                    "Can't stuff non-object state into object field [dClass=" + dClass + "]");
             }
-            JSONObject jObj = (JSONObject) state;
+            return getMarshaller(dClass).deserializeObject((JSONObject) state);
+        } catch (Exception e) {
+            throw new JSONMarshallingException("Failed to deserialize [class=" + _pclass + "]", e);
+        }
+    }
+
+    protected T deserializeObject (JSONObject jObj)
+        throws JSONMarshallingException
+    {
+        try {
             T obj = _pclass.newInstance();
             Iterator keys = jObj.keys();
             while (keys.hasNext()) {
@@ -146,7 +157,7 @@ public class JSONMarshaller<T>
     }
 
     // TODO: it's idiotic that org.json does not have its objects implement a JSONValue interface
-    protected Object serialize (Object value, Class dClass)
+    protected Object serialize (Object value, Class<?> dClass)
         throws JSONException, IllegalAccessException
     {
         if (isJSONPrimitive(dClass)) {
