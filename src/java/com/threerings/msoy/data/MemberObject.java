@@ -10,12 +10,20 @@ import com.threerings.util.Name;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
+
+import com.threerings.parlor.game.data.GameObject;
 
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.MediaDesc;
+
+import com.threerings.msoy.game.data.GameMemberInfo;
+
+import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.WorldMemberInfo;
 
 /**
  * Represents a connected msoy user.
@@ -129,9 +137,17 @@ public class MemberObject extends BodyObject
     }
 
     // documentation inherited
-    public OccupantInfo createOccupantInfo ()
+    public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
-        return new MemberInfo(this);
+        if (plobj instanceof RoomObject) {
+            return new WorldMemberInfo(this);
+
+        } else if (plobj instanceof GameObject) {
+            return new GameMemberInfo(this);
+
+        } else {
+            return new MemberInfo(this);
+        }
     }
 
     @Override // from BodyObject

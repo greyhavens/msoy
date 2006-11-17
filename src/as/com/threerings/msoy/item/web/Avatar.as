@@ -14,6 +14,9 @@ public class Avatar extends Item
     /** The avatar media. */
     public var avatarMedia :MediaDesc;
 
+    /** The headshot media. */
+    public var headShotMedia :MediaDesc;
+
     /** A description for this avatar (max length 255 characters). */
     public var description :String;
 
@@ -27,6 +30,16 @@ public class Avatar extends Item
     override public function getDescription () :String
     {
         return description;
+    }
+
+    /**
+     * Returns a media descriptor for the media that should be used
+     * to display our headshot representation.
+     */
+    public function getHeadShotMedia () :MediaDesc
+    {
+        return (headShotMedia != null) ? headShotMedia :
+            new StaticMediaDesc(StaticMediaDesc.HEADSHOT, AVATAR);
     }
 
     override protected function getDefaultThumbnailMedia () :MediaDesc
@@ -47,6 +60,7 @@ public class Avatar extends Item
         super.writeObject(out);
 
         out.writeObject(avatarMedia);
+        out.writeObject(headShotMedia);
         out.writeField(description);
     }
 
@@ -55,6 +69,7 @@ public class Avatar extends Item
         super.readObject(ins);
 
         avatarMedia = (ins.readObject() as MediaDesc);
+        headShotMedia = (ins.readObject() as MediaDesc);
         description = (ins.readField(String) as String);
     }
 }

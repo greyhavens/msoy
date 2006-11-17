@@ -77,7 +77,8 @@ public class MsoyClient extends WhirledClient
                     PlaceManager plmgr = MsoyServer.plreg.getPlaceManager(
                         _memobj.location);
                     if (plmgr != null) {
-                        plmgr.updateOccupantInfo(_memobj.createOccupantInfo());
+                        plmgr.updateOccupantInfo(
+                            _memobj.createOccupantInfo(plmgr.getPlaceObject()));
                     }
                 }
             }

@@ -15,6 +15,9 @@ public class StaticMediaDesc extends MediaDesc
     /** Identifies stock furniture visualizations. */
     public static final String FURNI = "furni";
 
+    /** Identifies stock headshot visualizations. */
+    public static final String HEADSHOT = "headshot";
+
     /**
      * Used for unserialization.
      */

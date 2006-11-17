@@ -149,7 +149,8 @@ public class MemberManager
     {
         PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location);
         if (pmgr != null) {
-            pmgr.updateOccupantInfo(user.createOccupantInfo());
+            pmgr.updateOccupantInfo(
+                user.createOccupantInfo(pmgr.getPlaceObject()));
         }
     }
 

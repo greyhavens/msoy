@@ -15,6 +15,9 @@ public class StaticMediaDesc extends MediaDesc
     /** Identifies stock furniture visualizations. */
     public static const FURNI :String = "furni";
 
+    /** Identifies stock headshot visualization. */
+    public static const HEADSHOT :String = "headshot";
+
     public function StaticMediaDesc (type :String = null, itemType :int = 0)
     {
         _type = type;

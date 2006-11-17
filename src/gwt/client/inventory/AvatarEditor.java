@@ -30,6 +30,7 @@ public class AvatarEditor extends ItemEditor
         _description.setText((_avatar.description == null)
             ? "" : _avatar.description);
         _mainUploader.setMedia(_avatar.avatarMedia);
+        _headShotUploader.setMedia(_avatar.getHeadShotMedia());
     }
 
     // @Override from ItemEditor
@@ -47,6 +48,20 @@ public class AvatarEditor extends ItemEditor
             }
         });
 
+        String title = "Head shot";
+        _headShotUploader = createUploader(
+            HEADSHOT_ID, title, ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
+                public String updateMedia (MediaDesc desc) {
+                    if (!desc.isImage()) {
+                        return "Head shots must be an image type.";
+                    }
+
+                    _avatar.headShotMedia = desc;
+                    recenter(true);
+                    return null;
+                }
+            });
+
         super.createEditorInterface();
 
         addRow("Description", _description = new TextBox());
@@ -63,6 +78,21 @@ public class AvatarEditor extends ItemEditor
         return new Avatar();
     }
 
+    // @Override from ItemEditor
+    protected MediaUploader getUploader (String id)
+    {
+        if (HEADSHOT_ID.equals(id)) {
+            return _headShotUploader;
+
+        } else {
+            return super.getUploader(id);
+        }
+    }
+
     protected Avatar _avatar;
     protected TextBox _description;
+
+    protected MediaUploader _headShotUploader;
+
+    protected static final String HEADSHOT_ID = "headshot";
 }

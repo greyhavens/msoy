@@ -6,9 +6,9 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
-import com.threerings.msoy.world.data.FurniData;
 
-import com.threerings.msoy.data.MemberInfo;
+import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.WorldMemberInfo;
 
 public class MediaDirector extends BasicDirector
 {
@@ -22,7 +22,7 @@ public class MediaDirector extends BasicDirector
      * Get an avatar sprite for the specified occupant info,
      * caching as appropriate.
      */
-    public function getAvatar (occInfo :MemberInfo) :AvatarSprite
+    public function getAvatar (occInfo :WorldMemberInfo) :AvatarSprite
     {
         var isOurs :Boolean =
             (occInfo.bodyOid == _ctx.getClient().getClientOid());

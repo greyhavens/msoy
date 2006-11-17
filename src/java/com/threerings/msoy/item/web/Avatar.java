@@ -11,6 +11,9 @@ public class Avatar extends Item
     /** The avatar media. */
     public MediaDesc avatarMedia;
 
+    /** The headshot media. */
+    public MediaDesc headShotMedia;
+
     /** A description for this avatar (max length 255 characters). */
     public String description;
 
@@ -24,6 +27,16 @@ public class Avatar extends Item
     public String getDescription ()
     {
         return description;
+    }
+
+    /**
+     * Returns a media descriptor for the media that should be used
+     * to display our headshot representation.
+     */
+    public MediaDesc getHeadShotMedia ()
+    {
+        return (headShotMedia != null) ? headShotMedia :
+            new StaticMediaDesc(StaticMediaDesc.HEADSHOT, AVATAR);
     }
 
     // @Override // from Item

@@ -259,23 +259,31 @@ public abstract class ItemEditor extends PopupPanel
     }
 
     /**
+     * Get the MediaUploader with the specified id.
+     */
+    protected MediaUploader getUploader (String id)
+    {
+        if (FURNI_ID.equals(id)) {
+            return _furniUploader;
+
+        } else if (THUMB_ID.equals(id)) {
+            return _thumbUploader;
+
+        } else if (MAIN_ID.equals(id)) {
+            return _mainUploader; // could be null...
+
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Configures this item editor with the hash value for media that it is
      * about to upload.
      */
     protected void setHash (String id, String mediaHash, int mimeType)
     {
-        MediaUploader mu = null;
-
-        if (FURNI_ID.equals(id)) {
-            mu = _furniUploader;
-
-        } else if (THUMB_ID.equals(id)) {
-            mu = _thumbUploader;
-
-        } else if (MAIN_ID.equals(id)) {
-            mu = _mainUploader; // could be null...
-        }
-
+        MediaUploader mu = getUploader(id);
         if (mu == null) {
             return; // TODO: log something? in gwt land?
         }
@@ -421,7 +429,7 @@ public abstract class ItemEditor extends PopupPanel
     protected MediaUploader _furniUploader;
     protected MediaUploader _mainUploader;
 
-    protected static String FURNI_ID = "furni";
-    protected static String THUMB_ID = "thumb";
-    protected static String MAIN_ID = "main";
+    protected static final String FURNI_ID = "furni";
+    protected static final String THUMB_ID = "thumb";
+    protected static final String MAIN_ID = "main";
 }

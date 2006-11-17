@@ -23,18 +23,17 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 
-import com.threerings.msoy.data.MemberInfo;
-
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.WorldMemberInfo;
 
 public class AvatarSprite extends MsoySprite
     implements ContextMenuProvider
 {
-    public function AvatarSprite (ctx :MsoyContext, occInfo :MemberInfo)
+    public function AvatarSprite (ctx :MsoyContext, occInfo :WorldMemberInfo)
     {
         super(null);
 
@@ -62,12 +61,13 @@ public class AvatarSprite extends MsoySprite
     /**
      * Update the occupant info.
      */
-    public function setOccupantInfo (ctx :MsoyContext, occInfo :MemberInfo) :void
+    public function setOccupantInfo (
+        ctx :MsoyContext, occInfo :WorldMemberInfo) :void
     {
         _occInfo = occInfo;
 
-        if (!_occInfo.media.equals(_desc)) {
-            setup(_occInfo.media);
+        if (!_occInfo.avatar.equals(_desc)) {
+            setup(_occInfo.avatar);
         }
 
         _label.setStyle("color", getStatusColor(_occInfo.status));
@@ -77,7 +77,7 @@ public class AvatarSprite extends MsoySprite
     /**
      * Get the occupant info for this avatar.
      */
-    public function getOccupantInfo () :MemberInfo
+    public function getOccupantInfo () :WorldMemberInfo
     {
         return _occInfo;
     }
@@ -261,7 +261,7 @@ public class AvatarSprite extends MsoySprite
         super.handleInterfaceQuery(event);
     }
 
-    protected var _occInfo :MemberInfo;
+    protected var _occInfo :WorldMemberInfo;
 
     protected var _move :SceneMove;
 

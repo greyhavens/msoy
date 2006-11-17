@@ -47,13 +47,13 @@ import com.threerings.msoy.chat.client.ChatPopper;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
+import com.threerings.msoy.world.data.WorldMemberInfo;
 
 public class RoomView extends AbstractRoomView
     implements ContextMenuProvider, SetListener, ChatDisplay
@@ -332,8 +332,8 @@ public class RoomView extends AbstractRoomView
 
     protected function addBody (bodyOid :int) :void
     {
-        var occInfo :MemberInfo =
-            (_roomObj.occupantInfo.get(bodyOid) as MemberInfo);
+        var occInfo :WorldMemberInfo =
+            (_roomObj.occupantInfo.get(bodyOid) as WorldMemberInfo);
         var sloc :SceneLocation =
             (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
@@ -385,7 +385,7 @@ public class RoomView extends AbstractRoomView
         avatar.moveTo(loc, _scene);
     }
 
-    protected function updateBody (occInfo :MemberInfo) :void
+    protected function updateBody (occInfo :WorldMemberInfo) :void
     {
         var avatar :AvatarSprite =
             (_avatars.get(occInfo.getBodyOid()) as AvatarSprite);
@@ -516,7 +516,7 @@ public class RoomView extends AbstractRoomView
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            addBody((event.getEntry() as MemberInfo).getBodyOid());
+            addBody((event.getEntry() as WorldMemberInfo).getBodyOid());
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
             var sceneLoc :SceneLocation = (event.getEntry() as SceneLocation);
@@ -530,7 +530,7 @@ public class RoomView extends AbstractRoomView
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            updateBody(event.getEntry() as MemberInfo);
+            updateBody(event.getEntry() as WorldMemberInfo);
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
             moveBody((event.getEntry() as SceneLocation).bodyOid);
@@ -543,7 +543,7 @@ public class RoomView extends AbstractRoomView
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            removeBody((event.getOldEntry() as MemberInfo).getBodyOid());
+            removeBody((event.getOldEntry() as WorldMemberInfo).getBodyOid());
         }
     }
 
