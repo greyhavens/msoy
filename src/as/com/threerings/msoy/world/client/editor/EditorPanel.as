@@ -30,7 +30,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.client.InventoryDisplay;
+import com.threerings.msoy.item.client.InventoryWidget;
 import com.threerings.msoy.item.client.ItemList;
 
 import com.threerings.msoy.world.client.FurniSprite;
@@ -51,7 +51,7 @@ public class EditorPanel extends VBox
     public var itemList :ItemList;
 
     /** The list of items in our inventory. */
-    public var inventory :InventoryDisplay;
+    public var inventory :InventoryWidget;
 
     /** The button for adding an item from inventory. */
     public var addButton :CommandButton;
@@ -200,7 +200,8 @@ public class EditorPanel extends VBox
 
         _inventoryBox = new VBox();
         _inventoryBox.label = Msgs.EDITING.get("t.inventory");
-        inventory = new InventoryDisplay(_ctx)
+        inventory = new InventoryWidget(_ctx);
+        inventory.percentWidth = 100;
         _inventoryBox.addChild(inventory);
 
         addButton = new CommandButton(EditorController.ADD_ITEM);

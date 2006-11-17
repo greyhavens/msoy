@@ -28,8 +28,8 @@ public class LoggingTargets
             // oh well!
         }
 
-        // admins log to the chatbox
-        if (userObj != null && LOG_TO_CHAT) {
+        if ((null != ctx.getRootPanel().loaderInfo.parameters["test"]) ||
+                LOG_TO_CHAT) {
             if (_chatTarget == null) {
                 _chatTarget = new ChatTarget(ctx);
                 mx.logging.Log.addTarget(_chatTarget);

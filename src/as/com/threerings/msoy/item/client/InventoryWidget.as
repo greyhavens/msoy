@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.client {
 
+import flash.events.Event;
+
 import mx.core.ClassFactory;
 
 import mx.controls.Tree;
@@ -14,6 +16,8 @@ import mx.core.ScrollPolicy;
 
 import mx.events.TreeEvent;
 
+import com.threerings.mx.events.CommandEvent
+
 import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.msoy.client.Msgs;
@@ -23,6 +27,10 @@ import com.threerings.msoy.item.web.Item;
 
 public class InventoryWidget extends Tree
 {
+    /** A CommandEvent dispatched when a new selection is made. The arg
+     * is the Item instance, if any. */
+    public static const ITEM_SELECTED :String = "InventoryItemSelected";
+
     public function InventoryWidget (
         ctx :MsoyContext, soleType :int = Item.NOT_A_TYPE)
     {
@@ -35,7 +43,13 @@ public class InventoryWidget extends Tree
         itemRenderer = new ClassFactory(ItemTreeRenderer);
 
         addEventListener(TreeEvent.ITEM_OPENING, handleItemOpening);
+        addEventListener(Event.CHANGE, handleChange);
         configureItemCategories(soleType);
+    }
+
+    public function getSelectedItem () :Item
+    {
+        return (selectedItem is Item) ? Item(selectedItem) : null;
     }
 
     override protected function createChildren () :void
@@ -73,6 +87,11 @@ public class InventoryWidget extends Tree
         }
 
         dataProvider = nodes;
+    }
+
+    protected function handleChange (event :Event) :void
+    {
+        CommandEvent.dispatch(this, ITEM_SELECTED, getSelectedItem());
     }
 
     protected function handleItemOpening (event :TreeEvent) :void

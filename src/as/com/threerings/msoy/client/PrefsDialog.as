@@ -19,6 +19,7 @@ import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.client.InventoryList;
+import com.threerings.msoy.item.client.InventoryWidget;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Avatar;
 
@@ -44,8 +45,9 @@ public class PrefsDialog extends FloatingPanel
 
         addChild(grid);
 
-        _avatars = new InventoryList(_ctx, Item.AVATAR, true);
-        _avatars.addEventListener(DataEvent.DATA, avatarChoicesLoaded);
+        _avatars = new InventoryWidget(_ctx, Item.AVATAR);
+        _avatars.percentWidth = 100;
+        //_avatars.addEventListener(DataEvent.DATA, avatarChoicesLoaded);
         _avatars.dragEnabled = false;
 
         addChild(_avatars);
@@ -93,6 +95,6 @@ public class PrefsDialog extends FloatingPanel
     protected var _name :TextInput;
 
     /** The list of our avatars. */
-    protected var _avatars :InventoryList;
+    protected var _avatars :InventoryWidget;
 }
 }
