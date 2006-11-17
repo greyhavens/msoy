@@ -18,6 +18,6 @@ public class FriendInviteObject extends MailPayload
     // @Override
     public int getType ()
     {
-        return MailPayload.TYPE_GROUP_INVITE;
+        return MailPayload.TYPE_FRIEND_INVITE;
     }
 }
