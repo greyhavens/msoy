@@ -9,6 +9,10 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.clause.FieldOverride;
+import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.operator.Conditionals.*;
 
 /**
  * Manages the persistent store of group data.
@@ -21,16 +25,16 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Fetch all groups. This will be a pager soon.
+     * Fetches all groups. This will be a pager soon.
      */
     public Collection<GroupRecord> findGroups ()
         throws PersistenceException
     {
         return findAll(GroupRecord.class);
     }
-    
+
     /**
-     * Fetch a single group, by id. Returns null if there's no such group.
+     * Fetches a single group, by id. Returns null if there's no such group.
      */
     public GroupRecord loadGroup (int groupId)
         throws PersistenceException
@@ -39,7 +43,21 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Create a new group, defined by a {@link GroupRecord}. The key of the record must
+     * Fetches multiple groups by id.
+     */
+    public Collection<GroupRecord> loadGroups (int[] groupIds)
+        throws PersistenceException
+    {
+        Comparable[] idArr = new Integer[groupIds.length];
+        for (int ii = 0; ii < idArr.length; ii ++) {
+            idArr[ii] = Integer.valueOf(groupIds[ii]);
+        }
+        return findAll(GroupRecord.class,
+                       new Where(new In(GroupRecord.class, GroupRecord.GROUP_ID, idArr)));
+    }
+
+    /**
+     * Creates a new group, defined by a {@link GroupRecord}. The key of the record must
      * be null -- it will be filled in through the insertion, and returned.
      */
     public int createGroup (GroupRecord record)
@@ -54,7 +72,7 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Update the specified group record with field/value pairs, e.g.
+     * Updates the specified group record with field/value pairs, e.g.
      *     updateGroup(groupId,
      *                 GroupRecord.CHARTER, newCharter,
      *                 GroupRecord.POLICY, Group.EXCLUSIVE);
@@ -70,7 +88,7 @@ public class GroupRepository extends DepotRepository
     }
     
     /**
-     * Make a given person a member of a given group.
+     * Makes a given person a member of a given group.
      */
 
     public GroupMembershipRecord joinGroup (int groupId, int memberId, byte rank)
@@ -85,7 +103,7 @@ public class GroupRepository extends DepotRepository
     }
     
     /**
-     * Set the rank of a member of a group.
+     * Sets the rank of a member of a group.
      */
     public void setRank (int groupId, int memberId, byte newRank)
         throws PersistenceException
@@ -102,7 +120,7 @@ public class GroupRepository extends DepotRepository
     }
     
     /**
-     * Fetch the membership details for a given group and member, or null.
+     * Fetches the membership details for a given group and member, or null.
      * 
      */
     public GroupMembershipRecord getMembership(int groupId, int memberId)
@@ -127,7 +145,24 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Fetch the membership roster of a given group.
+     * Fetches the membership roster of a given group.
+     */
+    public int countMembers (int groupId)
+        throws PersistenceException
+    {
+        GroupMembershipCount count =
+            load(GroupMembershipCount.class,
+                 new FieldOverride(GroupMembershipCount.COUNT, "count(*)"),
+                 new Key(GroupMembershipRecord.GROUP_ID, groupId),
+                 new FromOverride(GroupMembershipRecord.class));
+        if (count == null) {
+            throw new PersistenceException("Group not found [groupId=" + groupId + "]");
+        }
+        return count.count;
+    }
+
+    /**
+     * Fetches the membership roster of a given group.
      */
     public Collection<GroupMembershipRecord> getMembers (int groupId)
         throws PersistenceException
@@ -137,9 +172,9 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Fetch the groups a given member belongs to.
+     * Fetches the group memberships a given member belongs to.
      */
-    public Collection<GroupMembershipRecord> getGroups (int memberId)
+    public Collection<GroupMembershipRecord> getMemberships (int memberId)
         throws PersistenceException
     {
         return findAll(GroupMembershipRecord.class,

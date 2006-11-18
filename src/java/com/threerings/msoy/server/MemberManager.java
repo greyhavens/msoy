@@ -5,10 +5,13 @@ package com.threerings.msoy.server;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import java.util.logging.Level;
 
@@ -16,6 +19,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
+import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
@@ -41,9 +45,13 @@ import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberGName;
+import com.threerings.msoy.web.data.NeighborGroup;
+import com.threerings.msoy.web.data.NeighborFriend;
+import com.threerings.msoy.web.data.Neighborhood;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.server.ServletWaiter;
 
+import com.threerings.msoy.server.persist.FriendRecord;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
@@ -536,7 +544,7 @@ public class MemberManager
             public List<GroupMembership> invokePersistResult () throws PersistenceException {
                 MemberRecord mRec = _memberRepo.loadMember(memberId);
                 List<GroupMembership> result = new ArrayList<GroupMembership>();
-                for (GroupMembershipRecord gmRec : _groupRepo.getGroups(memberId)) {
+                for (GroupMembershipRecord gmRec : _groupRepo.getMemberships(memberId)) {
                     GroupRecord gRec = _groupRepo.loadGroup(gmRec.groupId);
                     // if we're only including groups we can invite to, strip out exclusive
                     // groups of which we're not managers
@@ -610,6 +618,83 @@ public class MemberManager
         });
     }
     
+    /**
+     * Constructs and returns a {@link Neighborhood} record for a given member.
+     */
+    public void getNeighborhood (final int memberId, final int maxFriendDistance,
+                                 final int maxFriends, ResultListener<Neighborhood> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Neighborhood>(listener) {
+            public Neighborhood invokePersistResult() throws PersistenceException {
+                Neighborhood hood = new Neighborhood();
+                // first load the center member data
+                MemberRecord mRec = _memberRepo.loadMember(memberId);
+                hood.centerMember = new MemberGName(mRec.name, mRec.memberId);
+
+                // then all the data for the groups
+                Collection<GroupMembershipRecord> gmRecs = _groupRepo.getMemberships(memberId);
+                int[] groupIds = new int[gmRecs.size()];
+                int ii = 0;
+                for (GroupMembershipRecord gmRec : gmRecs) {
+                    groupIds[ii ++] = gmRec.groupId;
+                }
+                List<NeighborGroup> nGroups = new ArrayList<NeighborGroup>();
+                for (GroupRecord gRec : _groupRepo.loadGroups(groupIds)) {
+                    NeighborGroup nGroup = new NeighborGroup();
+                    nGroup.groupId = gRec.groupId;
+                    nGroup.groupName = gRec.name;
+                    nGroup.members = _groupRepo.countMembers(gRec.groupId);
+                    nGroups.add(nGroup);
+                }
+                hood.neighborGroups = nGroups.toArray(new NeighborGroup[0]);
+
+                // finally the tricksy member search
+                byte distance = 0;
+                // a two-dimensional array in which we store friends, friends of friends, ...
+                hood.neighborFriends = new NeighborFriend[0][];
+                // a set of visited members to do basic breadth-first traversal 
+                Set<MemberName> visited = new HashSet<MemberName>();
+                // a list of friends at our current distance that we'll hit up for the next layer
+                List<MemberName> queue = new ArrayList<MemberName>();
+                // initialized to just the center member
+                queue.add(new MemberName(mRec.name, mRec.memberId));
+                do {
+                    distance ++;
+                    // each time through, we start building a new queue
+                    List<MemberName> nextQueue = new ArrayList<MemberName>();
+                    // and record the actual results
+                    List<NeighborFriend> members = new ArrayList<NeighborFriend>();
+                    for (MemberName queued : queue) {
+                        for (FriendEntry fRec : _memberRepo.getFriends(queued.getMemberId())) {
+                            if (visited.size() >= maxFriends) {
+                               break; 
+                            }
+                            if (visited.contains(fRec.name)) {
+                                continue;
+                            }
+                            // a new member of the network has been found
+                            visited.add(fRec.name);
+                            nextQueue.add(fRec.name);
+                            NeighborFriend nMem = new NeighborFriend();
+                            nMem.member =
+                                new MemberGName(fRec.name.toString(), fRec.name.getMemberId());
+                            nMem.distance = distance;
+                            nMem.isOnline = MsoyServer.lookupMember(fRec.name) != null;
+                            nMem.parentId = queued.getMemberId();
+                            members.add(nMem);
+                        }
+                    }
+                    // store the result
+                    hood.neighborFriends =
+                        ArrayUtil.append(hood.neighborFriends,
+                                         members.toArray(new NeighborFriend[0]));
+                    queue = nextQueue;
+                } while (distance < maxFriendDistance);
+                return hood;
+            }
+        });
+    }
+
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
 
