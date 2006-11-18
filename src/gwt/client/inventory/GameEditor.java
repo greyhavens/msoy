@@ -37,6 +37,7 @@ public class GameEditor extends ItemEditor
         _maxPlayers.setText("" + _game.maxPlayers);
         _desiredPlayers.setText("" + _game.desiredPlayers);
         _gamedef.setText(_game.config);
+        _tableUploader.setMedia(_game.getTableMedia());
     }
 
     // @Override from ItemEditor
@@ -50,6 +51,19 @@ public class GameEditor extends ItemEditor
                 return null;
             }
         });
+
+        String title = "Table image";
+        _tableUploader = createUploader(
+            TABLE_ID, title, ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
+                public String updateMedia (MediaDesc desc) {
+                    if (!desc.isImage()) {
+                        return "Table images must be an image type.";
+                    }
+                    _game.tableMedia = desc;
+                    recenter(true);
+                    return null;
+                }
+            });
 
         super.createEditorInterface();
 
@@ -99,6 +113,16 @@ public class GameEditor extends ItemEditor
         return new Game();
     }
 
+    // @Override from ItemEditor
+    protected MediaUploader getUploader (String id)
+    {
+        if (TABLE_ID.equals(id)) {
+            return _tableUploader;
+        } else {
+            return super.getUploader(id);
+        }
+    }
+
     // mr. utility
     protected static short asShort (String s)
     {
@@ -114,4 +138,8 @@ public class GameEditor extends ItemEditor
 
     protected TextBox _minPlayers, _maxPlayers, _desiredPlayers;
     protected TextArea _gamedef;
+
+    protected MediaUploader _tableUploader;
+
+    protected static final String TABLE_ID = "table";
 }

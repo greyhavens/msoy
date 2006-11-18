@@ -18,6 +18,9 @@ public class StaticMediaDesc extends MediaDesc
     /** Identifies stock headshot visualizations. */
     public static final String HEADSHOT = "headshot";
 
+    /** Identifies stock table visualization. */
+    public static final String TABLE = "table";
+
     /**
      * Used for unserialization.
      */

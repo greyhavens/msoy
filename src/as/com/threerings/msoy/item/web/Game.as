@@ -26,6 +26,9 @@ public class Game extends Item
     /** The game media. */
     public var gameMedia :MediaDesc;
 
+    /** The game's table background. */
+    public var tableMedia :MediaDesc;
+
     override public function getType () :int
     {
         return GAME;
@@ -34,6 +37,16 @@ public class Game extends Item
     override public function getDescription () :String
     {
         return name;
+    }
+
+    /**
+     * Returns a media descriptor for the media to be used
+     * as a table background image.
+     */
+    public function getTableMedia () :MediaDesc
+    {
+        return (tableMedia != null) ? tableMedia :
+            new StaticMediaDesc(StaticMediaDesc.TABLE, GAME);
     }
 
     override public function writeObject (out :ObjectOutputStream) :void
@@ -46,6 +59,7 @@ public class Game extends Item
         out.writeShort(desiredPlayers);
         out.writeField(config);
         out.writeObject(gameMedia);
+        out.writeObject(tableMedia);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -58,6 +72,7 @@ public class Game extends Item
         desiredPlayers = ins.readShort();
         config = (ins.readField(String) as String);
         gameMedia = (ins.readObject() as MediaDesc);
+        tableMedia = (ins.readObject() as MediaDesc);
     }
 }
 }

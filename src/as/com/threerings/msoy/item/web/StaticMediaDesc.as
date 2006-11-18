@@ -18,6 +18,9 @@ public class StaticMediaDesc extends MediaDesc
     /** Identifies stock headshot visualization. */
     public static const HEADSHOT :String = "headshot";
 
+    /** Identifies stock table visualization. */
+    public static const TABLE :String = "table";
+
     public function StaticMediaDesc (type :String = null, itemType :int = 0)
     {
         _type = type;
