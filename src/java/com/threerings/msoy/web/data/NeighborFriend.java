@@ -18,15 +18,18 @@ public class NeighborFriend
     /** Whether or not this member is currently online. */
     public boolean isOnline;
 
-    /** The shortest path betwen this member and the center member. */
-    public byte distance;
-
-    /** The id of the nearest parent node on the path to the center member. */
-    public int parentId;
-    
     /** Constructor for unserializing. */
     public NeighborFriend ()
     {
         super();
     }
+
+    /** Constructor from fields. */
+    public NeighborFriend (MemberGName member, boolean isOnline)
+    {
+        super();
+        this.member = member;
+        this.isOnline = isOnline;
+    }
+
 }

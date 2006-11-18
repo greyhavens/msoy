@@ -665,7 +665,7 @@ public class MemberManager
                 Neighborhood hood = new Neighborhood();
                 // first load the center member data
                 MemberRecord mRec = _memberRepo.loadMember(memberId);
-                hood.centerMember = new MemberGName(mRec.name, mRec.memberId);
+                hood.member = new MemberGName(mRec.name, mRec.memberId);
 
                 // then all the data for the groups
                 Collection<GroupMembershipRecord> gmRecs = _groupRepo.getMemberships(memberId);
@@ -684,48 +684,15 @@ public class MemberManager
                 }
                 hood.neighborGroups = nGroups.toArray(new NeighborGroup[0]);
 
-                // finally the tricksy member search
-                byte distance = 0;
-                // a two-dimensional array in which we store friends, friends of friends, ...
-                hood.neighborFriends = new NeighborFriend[0][];
-                // a set of visited members to do basic breadth-first traversal 
-                Set<MemberName> visited = new HashSet<MemberName>();
-                // a list of friends at our current distance that we'll hit up for the next layer
-                List<MemberName> queue = new ArrayList<MemberName>();
-                // initialized to just the center member
-                queue.add(new MemberName(mRec.name, mRec.memberId));
-                do {
-                    distance ++;
-                    // each time through, we start building a new queue
-                    List<MemberName> nextQueue = new ArrayList<MemberName>();
-                    // and record the actual results
-                    List<NeighborFriend> members = new ArrayList<NeighborFriend>();
-                    for (MemberName queued : queue) {
-                        for (FriendEntry fRec : _memberRepo.getFriends(queued.getMemberId())) {
-                            if (visited.size() >= maxFriends) {
-                               break;
-                            }
-                            if (visited.contains(fRec.name)) {
-                                continue;
-                            }
-                            // a new member of the network has been found
-                            visited.add(fRec.name);
-                            nextQueue.add(fRec.name);
-                            NeighborFriend nMem = new NeighborFriend();
-                            nMem.member =
-                                new MemberGName(fRec.name.toString(), fRec.name.getMemberId());
-                            nMem.distance = distance;
-                            nMem.isOnline = MsoyServer.lookupMember(fRec.name) != null;
-                            nMem.parentId = queued.getMemberId();
-                            members.add(nMem);
-                        }
-                    }
-                    // store the result
-                    hood.neighborFriends =
-                        ArrayUtil.append(hood.neighborFriends,
-                                         members.toArray(new NeighborFriend[0]));
-                    queue = nextQueue;
-                } while (distance < maxFriendDistance);
+                List<NeighborFriend> members = new ArrayList<NeighborFriend>();
+                for (FriendEntry fRec : _memberRepo.getFriends(memberId)) {
+                    NeighborFriend nMem = new NeighborFriend();
+                    nMem.member =
+                        new MemberGName(fRec.name.toString(), fRec.name.getMemberId());
+                    nMem.isOnline = MsoyServer.lookupMember(fRec.name) != null;
+                    members.add(nMem);
+                }
+                hood.neighborFriends = members.toArray(new NeighborFriend[0]);
                 return hood;
             }
         });
