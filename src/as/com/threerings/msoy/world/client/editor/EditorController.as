@@ -501,13 +501,16 @@ try {
     protected function dragItem (event :DragEvent) :Item
     {
         // this is internal flex juju, not related to our items
-        if (event.dragSource.hasFormat("items")) {
-            var arr :Array = (event.dragSource.dataForFormat("items") as Array);
-            if ((arr.length == 1) && (arr[0] is Item)) {
-                var item :Item = (arr[0] as Item);
-                // we only accept drops of un-utilized items
-                if (!item.isUsed()) {
-                    return item;
+        for each (var format :String in ["items", "treeItems"]) {
+            if (event.dragSource.hasFormat(format)) {
+                var arr :Array =
+                    (event.dragSource.dataForFormat(format) as Array);
+                if ((arr.length == 1) && (arr[0] is Item)) {
+                    var item :Item = (arr[0] as Item);
+                    // we only accept drops of un-utilized items
+                    if (!item.isUsed()) {
+                        return item;
+                    }
                 }
             }
         }

@@ -18,6 +18,9 @@ public class ItemTreeRenderer extends TreeItemRenderer
     override public function set listData (value :BaseListData) :void
     {
         super.listData = value;
+        if (!(value is TreeListData)) {
+            return;
+        }
         TreeListData(value).icon = null;
 
         var node :Object = TreeListData(value).item;

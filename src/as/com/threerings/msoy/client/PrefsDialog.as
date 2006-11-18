@@ -45,7 +45,7 @@ public class PrefsDialog extends FloatingPanel
 
         addChild(grid);
 
-        _avatars = new InventoryWidget(_ctx, Item.AVATAR);
+        _avatars = new InventoryWidget(_ctx, Item.AVATAR, true);
         _avatars.percentWidth = 100;
         //_avatars.addEventListener(DataEvent.DATA, avatarChoicesLoaded);
         _avatars.dragEnabled = false;
