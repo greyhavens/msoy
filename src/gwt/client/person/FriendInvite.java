@@ -35,9 +35,16 @@ public abstract class FriendInvite
         }
         
         // @Override
-        public void messageSent ()
+        public void messageSent (WebContext ctx, MemberGName recipient)
         {
-            // do the db friend invite here
+            ctx.membersvc.inviteFriend(ctx.creds, recipient.memberId, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    // good -- nothing to do here
+                }
+                public void onFailure (Throwable caught) {
+                    // this'll get slightly confusing, but not a huge deal
+                }
+            });
         }
         
         /**

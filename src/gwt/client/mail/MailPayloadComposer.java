@@ -6,6 +6,7 @@ package client.mail;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.MailPayload;
+import com.threerings.msoy.web.data.MemberGName;
 
 /**
  * Assist the {@link MailComposition} UI in configuring the state of a {@link MailPayload}.
@@ -41,5 +42,5 @@ public interface MailPayloadComposer
      * and that it may perform any side-effects that should be associated with the
      * event.
      */
-    public void messageSent ();
+    public void messageSent (WebContext _ctx, MemberGName _recipient);
 }

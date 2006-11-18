@@ -129,6 +129,9 @@ public class MailComposition extends PopupPanel
     {
         AsyncCallback callback = new AsyncCallback() {
             public void onSuccess (Object result) {
+                if (_bodyObjectComposer != null) {
+                    _bodyObjectComposer.messageSent(_ctx, _recipient);
+                }
                 hide();
             }
             public void onFailure (Throwable caught) {

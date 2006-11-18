@@ -25,6 +25,7 @@ import com.threerings.msoy.web.data.GroupInviteObject;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailMessage;
+import com.threerings.msoy.web.data.MemberGName;
 
 public abstract class GroupInvite
 {
@@ -55,7 +56,7 @@ public abstract class GroupInvite
         }
 
         // @Override
-        public void messageSent ()
+        public void messageSent (WebContext ctx, MemberGName recipient)
         {
             // TODO: if we implement backend tracking of group invites, do something here.
         }

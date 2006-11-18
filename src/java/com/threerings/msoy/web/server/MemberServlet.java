@@ -29,24 +29,31 @@ public class MemberServlet extends RemoteServiceServlet
         return waiter.waitForResult();
     }
 
-    // TODO: wire up
-    public void acceptFriend (WebCreds creds, int memberId)
+    // from MemberService
+    public void inviteFriend (WebCreds creds, int friendId)
         throws ServiceException
     {
-//            ServletWaiter<Void> waiter =
-//                new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
-//            MsoyServer.memberMan.alterFriend(caller, friendId, true, waiter);
-//        return waiter.waitForResult();
+        ServletWaiter<Void> waiter = new ServletWaiter<Void>("inviteFriend[" + friendId + "]");
+        MsoyServer.memberMan.alterFriend(creds.memberId, friendId, true, waiter);
+        waiter.waitForResult();
     }
 
-    // TODO: wire up
-    public void declineFriend (WebCreds creds, int memberId)
+    // from MemberService
+    public void acceptFriend (WebCreds creds, int friendId)
         throws ServiceException
     {
-//        ServletWaiter<Void> waiter =
-//            new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
-//        MsoyServer.memberMan.alterFriend(caller, friendId, false, waiter);
-//    return waiter.waitForResult();
+        ServletWaiter<Void> waiter = new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
+        MsoyServer.memberMan.alterFriend(creds.memberId, friendId, true, waiter);
+        waiter.waitForResult();
+    }
+
+    // from MemberService
+    public void declineFriend (WebCreds creds, int friendId)
+        throws ServiceException
+    {
+        ServletWaiter<Void> waiter = new ServletWaiter<Void>("declineFriend[" + friendId + "]");
+        MsoyServer.memberMan.alterFriend(creds.memberId, friendId, false, waiter);
+        waiter.waitForResult();
     }
     
     // from MemberService

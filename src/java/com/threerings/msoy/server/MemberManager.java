@@ -24,6 +24,7 @@ import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
@@ -162,27 +163,56 @@ public class MemberManager
         }
     }
 
-    // from interface MemberProvider
-    public void alterFriend (
-        ClientObject caller, final int friendId, final boolean add,
-        InvocationService.InvocationListener lner)
-            throws InvocationException
+    /**
+     * Export alterFriend() functionality according to the web servlet way of doing things. 
+     */
+    public void alterFriend (int userId, int friendId, boolean add,
+                             ResultListener<Void> listener)
     {
-        final MemberObject user = (MemberObject) caller;
+        MemberObject user = MsoyServer.lookupMember(userId);
+        alterFriend(user, userId, friendId, add, listener);
+    }
+    
+    // from interface MemberProvider
+    public void alterFriend (ClientObject caller, int friendId, boolean add,
+                             final InvocationService.InvocationListener lner)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
+        ResultListener<Void> rl = new ResultListener<Void>() {
+            public void requestCompleted (Void result) {
+                // that's cool
+            }
+            public void requestFailed (Exception cause) {
+                lner.requestFailed(cause.getMessage());
+            }
+        };
+        alterFriend(user, user.getMemberId(), friendId, add, rl);
+    }
 
-        MsoyServer.invoker.postUnit(new PersistingUnit("alterFriend", lner) {
-            public void invokePersistent () throws PersistenceException {
+    // generic alterFriend() functionality for the two public methods above. please note that
+    // user can be null here (i.e. offline).
+    protected void alterFriend (final MemberObject user, final int userId, final int friendId,
+                                final boolean add, ResultListener<Void> lner)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("alterFriend", lner) {
+            public Void invokePersistResult () throws PersistenceException {
                 if (add) {
-                    _entry = _memberRepo.inviteOrApproveFriend(
-                        user.getMemberId(), friendId);
+                    _entry = _memberRepo.inviteOrApproveFriend(userId, friendId);
+                    if (user != null) {
+                        _userName = user.memberName;
+                    } else {
+                        _userName = new MemberName(_memberRepo.loadMember(userId).name, userId);
+                    }
                 } else {
-                    _memberRepo.removeFriends(user.getMemberId(), friendId);
+                    _memberRepo.removeFriends(userId, friendId);
                 }
+                return null;
             }
 
             public void handleSuccess () {
-                FriendEntry oldEntry = user.friends.get(friendId);
+                FriendEntry oldEntry = user != null ? user.friends.get(friendId) : null;
                 MemberName friendName = (oldEntry != null) ? oldEntry.name :
                     (_entry != null ? _entry.name : null);
                 MemberObject friendObj = (friendName != null)
@@ -192,9 +222,11 @@ public class MemberManager
                 if (!add || _entry == null) {
                     // remove the friend
                     if (oldEntry != null) {
-                        user.removeFromFriends(friendId);
+                        if (user != null) {
+                            user.removeFromFriends(friendId);
+                        }
                         if (friendObj != null) {
-                            friendObj.removeFromFriends(user.getMemberId());
+                            friendObj.removeFromFriends(userId);
                         }
                     }
 
@@ -203,26 +235,30 @@ public class MemberManager
                     _entry.online = (friendObj != null);
                     byte oppStatus = getOppositeFriendStatus(_entry.status);
                     if (oldEntry == null) {
-                        user.addToFriends(_entry);
+                        if (user != null) {
+                            user.addToFriends(_entry);
+                        }
                         if (friendObj != null) {
-                            FriendEntry opp = new FriendEntry(
-                                user.memberName, true, oppStatus);
+                            FriendEntry opp = new FriendEntry(_userName, user != null, oppStatus);
                             friendObj.addToFriends(opp);
                         }
 
                     } else {
-                        user.updateFriends(_entry);
+                        if (user != null) {
+                            user.updateFriends(_entry);
+                        }
                         if (friendObj != null) {
-                            FriendEntry opp = friendObj.friends.get(
-                                user.getMemberId());
+                            FriendEntry opp = friendObj.friends.get(userId);
                             opp.status = oppStatus;
                             friendObj.updateFriends(opp);
                         }
                     }
                 }
+                _listener.requestCompleted(null);
             }
 
             protected FriendEntry _entry;
+            protected MemberName _userName;
         });
     }
 
@@ -667,7 +703,7 @@ public class MemberManager
                     for (MemberName queued : queue) {
                         for (FriendEntry fRec : _memberRepo.getFriends(queued.getMemberId())) {
                             if (visited.size() >= maxFriends) {
-                               break; 
+                               break;
                             }
                             if (visited.contains(fRec.name)) {
                                 continue;
