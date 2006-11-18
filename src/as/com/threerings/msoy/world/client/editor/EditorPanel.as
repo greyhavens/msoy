@@ -202,6 +202,7 @@ public class EditorPanel extends VBox
         _inventoryBox.label = Msgs.EDITING.get("t.inventory");
         inventory = new InventoryWidget(_ctx);
         inventory.percentWidth = 100;
+        inventory.percentHeight = 100;
         _inventoryBox.addChild(inventory);
 
         addButton = new CommandButton(EditorController.ADD_ITEM);
