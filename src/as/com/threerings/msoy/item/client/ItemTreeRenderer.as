@@ -21,8 +21,8 @@ public class ItemTreeRenderer extends TreeItemRenderer
         if (!(value is TreeListData)) {
             return;
         }
-        TreeListData(value).icon = null;
 
+        TreeListData(value).icon = null;
         var node :Object = TreeListData(value).item;
         if (node is Item) {
             if (_media == null) {
@@ -40,6 +40,9 @@ public class ItemTreeRenderer extends TreeItemRenderer
     override protected function commitProperties () :void
     {
         super.commitProperties();
+        if (!(listData is TreeListData)) {
+            return;
+        }
 
         var node :Object = TreeListData(listData).item;
         if (node is Item) {
@@ -53,6 +56,9 @@ public class ItemTreeRenderer extends TreeItemRenderer
     override protected function measure () :void
     {
         super.measure();
+        if (!(listData is TreeListData)) {
+            return;
+        }
 
         if (TreeListData(listData).item is Item) {
             measuredHeight = Math.max(measuredHeight, MAX_MEDIA_HEIGHT);
