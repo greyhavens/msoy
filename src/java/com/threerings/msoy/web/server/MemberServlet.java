@@ -9,6 +9,7 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.data.MemberGName;
+import com.threerings.msoy.web.data.Neighborhood;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -18,6 +19,7 @@ import com.threerings.msoy.web.data.WebCreds;
 public class MemberServlet extends RemoteServiceServlet
     implements MemberService
 {
+    // from MemberService
     public MemberGName getName (int memberId)
         throws ServiceException
     {
@@ -45,5 +47,16 @@ public class MemberServlet extends RemoteServiceServlet
 //            new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
 //        MsoyServer.memberMan.alterFriend(caller, friendId, false, waiter);
 //    return waiter.waitForResult();
+    }
+    
+    // from MemberService
+    public Neighborhood getNeighborhood (WebCreds creds, int memberId)
+        throws ServiceException
+    {
+        ServletWaiter<Neighborhood> waiter =
+            new ServletWaiter<Neighborhood>("getNeighborhood[" + memberId + "]");
+        MsoyServer.memberMan.getNeighborhood(memberId, 1, 500, waiter);
+        return waiter.waitForResult();
+
     }
 }

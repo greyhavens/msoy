@@ -25,4 +25,9 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#declineFriend}.
      */
     public void declineFriend (WebCreds creds, int friendId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link MemberService#getNeighborhood}.
+     */
+    public void getNeighborhood (WebCreds creds, int memberId, AsyncCallback callback);
 }
