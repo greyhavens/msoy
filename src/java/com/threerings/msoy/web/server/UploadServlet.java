@@ -194,7 +194,7 @@ public class UploadServlet extends HttpServlet
     }
 
     /** Prevent Captain Insano from showing up to fill our drives. */
-    protected static final int MAX_UPLOAD_SIZE = 5 * 1024 * 1024;
+    protected static final int MAX_UPLOAD_SIZE = 10 * 1024 * 1024;
 
     /** Le chunk! */
     protected static final int UPLOAD_BUFFER_SIZE = 4096;
