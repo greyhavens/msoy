@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.server.persist;
 
-import javax.persistence.Entity;
+import com.samskivert.jdbc.depot.annotation.Computed;
+import com.samskivert.jdbc.depot.annotation.Entity;
 
-import com.samskivert.jdbc.depot.Computed;
 
 /**
  * A computed entity that receives the count(*) results for read and unread messages in a folder.

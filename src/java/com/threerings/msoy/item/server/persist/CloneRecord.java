@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import javax.persistence.*; // for EJB3 annotations
+import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
 @Entity
 @Table

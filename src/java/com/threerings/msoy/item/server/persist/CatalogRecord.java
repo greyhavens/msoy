@@ -6,11 +6,11 @@ package com.threerings.msoy.item.server.persist;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import com.samskivert.jdbc.depot.annotation.Column;
+import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Table;
+import com.samskivert.jdbc.depot.annotation.Transient;
 
 import com.threerings.io.Streamable;
 import com.threerings.msoy.item.web.CatalogListing;

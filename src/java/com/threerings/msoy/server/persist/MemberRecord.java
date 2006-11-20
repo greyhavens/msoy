@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
-import javax.persistence.*; // for EJB3 annotations
+import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
 import java.sql.Date;
 

@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.Table;
+import com.samskivert.jdbc.depot.annotation.TableGenerator;
 
 /** Clone records for Avatars. */
 @Entity

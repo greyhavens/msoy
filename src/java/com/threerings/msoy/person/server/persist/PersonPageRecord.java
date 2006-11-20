@@ -5,7 +5,7 @@ package com.threerings.msoy.person.server.persist;
 
 import java.util.List;
 
-import javax.persistence.*; // for EJB3 annotations
+import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
 /**
  * Contains the configuration of a particular member's person page.
@@ -19,7 +19,5 @@ import javax.persistence.*; // for EJB3 annotations
     public int[] blurbOrder;
 
     /** Metadata for all of the blurbs on this player's page. */
-    @OneToMany
-    @JoinColumn(name="memberId")
     public List<BlurbRecord> blurbs;
 }

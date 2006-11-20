@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import javax.persistence.Entity;
+import com.samskivert.jdbc.depot.annotation.Computed;
+import com.samskivert.jdbc.depot.annotation.Entity;
 
-import com.samskivert.jdbc.depot.Computed;
 import com.threerings.io.Streamable;
 
 /**

@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.server.persist;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import com.samskivert.jdbc.depot.annotation.Column;
+import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.Table;
+import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 
 import com.samskivert.util.StringUtil;
 

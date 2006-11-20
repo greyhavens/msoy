@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.samskivert.jdbc.depot.annotation.Column;
+import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Table;
 
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.io.Streamable;
