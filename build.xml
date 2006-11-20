@@ -38,7 +38,6 @@
     <include name="${extlib.dir}/commons-io.jar"/>
     <include name="${extlib.dir}/commons-lang.jar"/>
     <include name="${extlib.dir}/commons-logging.jar"/>
-    <include name="${extlib.dir}/ejb3-persistence.jar"/>
     <include name="${extlib.dir}/getdown.jar"/>
     <include name="${extlib.dir}/gwt-user.jar"/>
     <include name="${extlib.dir}/junit-3.7.jar"/>
