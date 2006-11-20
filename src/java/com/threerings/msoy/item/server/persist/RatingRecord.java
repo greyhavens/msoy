@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
@@ -34,7 +33,6 @@ public abstract class RatingRecord<T extends ItemRecord>
     public int memberId;
     
     /** The rating, from 1 to 5 */
-    @Column(nullable=false)
     public byte rating;
     
 }

@@ -5,7 +5,6 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
 
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 
@@ -28,22 +27,17 @@ public abstract class TagHistoryRecord<T extends ItemRecord>
     public static final String WHEN = "when";
 
     /** The ID of the item being operated on. */
-    @Column(nullable=false)
     public int itemId;
 
     /** The ID of the tag that was added or deleted. */
-    @Column(nullable=false)
     public int tagId;
     
     /** The ID of the member who added or deleted the tag. */
-    @Column(nullable=false)
     public int memberId;
     
     /** The action taken (ADDED or REMOVED or COPIED). */
-    @Column(nullable=false)
     public byte action;
 
     /** The time of the tagging event. */
-    @Column(nullable=false)
     public Timestamp time;
 }

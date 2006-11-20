@@ -29,11 +29,10 @@ public class SessionRecord
     public String token;
 
     /** The id of the member bound to this session. */
-    @Column(unique=true, nullable=false)
+    @Column(unique=true)
     public int memberId;
 
     /** The time at which this session will be expired. */
-    @Column(nullable=false)
     public Date expires;
 
     /** Used when unserializing. */

@@ -77,35 +77,29 @@ public class MailMessageRecord
     public int ownerId;
 
     /** The id of the sender. */
-    @Column(nullable=false)
     public int senderId;
 
     /** The id of the recipient. */
-    @Column(nullable=false)
     public int recipientId;
 
     /** The subject of this message. */
-    @Column(nullable=false)
     public String subject;
     
     /** The time at which the message was delivered. */
-    @Column(nullable=false)
     public Timestamp sent;
 
     /** Whether or not this message is yet to be read. */
-    @Column(nullable=false)
     public boolean unread;
     
     /** The text part of the message body, possibly null. */
     @Column(length=32768, nullable=true)
     public String bodyText;
 
-    @Column(nullable=false)
     /** An integer specifying which type of {@link MailPayload} object this message includes. */
     public int payloadType;
 
-    @Column(length=16384, nullable=true)
     /** The low-level representation of the state of a {@link MailPayload} object. */
+    @Column(length=16384, nullable=true)
     public byte[] payloadState;
     
     /**

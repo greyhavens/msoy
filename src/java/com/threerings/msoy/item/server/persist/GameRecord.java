@@ -30,19 +30,15 @@ public class GameRecord extends ItemRecord
     public static final String GAME_MIME_TYPE = "gameMimeType";
 
     /** The name of the game. */
-    @Column(nullable=false)
     public String name;
 
     /** The minimum number of players. */
-    @Column(nullable=false)
     public short minPlayers;
 
     /** The maximum number of players. */
-    @Column(nullable=false)
     public short maxPlayers;
 
     /** The desired number of players. */
-    @Column(nullable=false)
     public short desiredPlayers;
 
     /** The XML game configuration. */
@@ -50,11 +46,9 @@ public class GameRecord extends ItemRecord
     public String config;
 
     /** A hash code identifying the game media. */
-    @Column(nullable=false)
     public byte[] gameMediaHash;
 
     /** The MIME type of the {@link #gameMediaHash} media. */
-    @Column(nullable=false)
     public byte gameMimeType;
 
     public GameRecord ()

@@ -27,6 +27,5 @@ public class FriendRecord
     public int inviteeId;
 
     /** true if this friendship has been agreed to, false if it pends. */
-    @Column(nullable=false)
     public boolean status;
 }

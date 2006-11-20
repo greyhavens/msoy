@@ -40,15 +40,14 @@ public class GroupRecord
     public int groupId;
 
     /** The name of the group. */
-    @Column(nullable=false, unique=true)
+    @Column(unique=true)
     public String name;
 
     /** The group's charter, or null if one has yet to be set. */
-    @Column(nullable=true, length=2048)
+    @Column(length=2048, nullable=true)
     public String charter;
     
     /** The MIME type of this group's logo. */
-    @Column(nullable=true)
     public byte logoMimeType;
 
     /** A hash code identifying the media for this group's logo. */
@@ -56,15 +55,12 @@ public class GroupRecord
     public byte[] logoMediaHash;
 
     /** The member id of the person who created the group. */
-    @Column(nullable=false)
     public int creatorId;
     
     /** The date and time this group was created. */
-    @Column(nullable=false)
     public Timestamp creationDate;
 
     /** The group may be public, invite-only or exclusive as per {@link Group}. */
-    @Column(nullable=false)
     public byte policy;
     
     /**

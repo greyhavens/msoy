@@ -80,28 +80,22 @@ public abstract class ItemRecord implements Streamable, Cloneable
 
     /** A bit-mask of flags that we need to know about every digital item
      * without doing further database lookups or network requests. */
-    @Column(nullable=false)
     public byte flags;
 
     /** The member id of the member that created this item. */
-    @Column(nullable=false)
     public int creatorId;
 
     /** The member id of the member that owns this item, or -1 if the item
      * is an immutable catalog listing. */
-    @Column(nullable=false)
     public int ownerId;
 
     /** The current rating of this item, from 1 to 5. */
-    @Column(nullable=false)
     public float rating;
 
     /** How this item is being used (see Item.USED_AS_FURNITURE). */
-    @Column(nullable=false)
     public byte used;
 
     /** Where it's being used. */
-    @Column(nullable=false)
     public int location;
 
     /** A hash code identifying the media used to display this item's thumbnail
@@ -110,7 +104,6 @@ public abstract class ItemRecord implements Streamable, Cloneable
     public byte[] thumbMediaHash;
 
     /** The MIME type of the {@link #thumbMediaHash} media. */
-    @Column(nullable=true)
     public byte thumbMimeType;
 
     /** A hash code identifying the media used to display this item's furniture
@@ -118,10 +111,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
     @Column(nullable=true)
     public byte[] furniMediaHash;
 
-    /**
-     * The MIME type of the  {@link #furniMediaHash}  media.
-     */
-    @Column(nullable = true)
+    /** The MIME type of the  {@link #furniMediaHash}  media. */
     public byte furniMimeType;
 
     public ItemRecord ()

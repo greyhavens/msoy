@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
@@ -21,23 +20,20 @@ import com.threerings.msoy.item.web.MediaDesc;
 public class DocumentRecord extends ItemRecord
 {
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;
-    
+
     public static final String DOC_MEDIA_HASH = "docMediaHash";
     public static final String DOC_MIME_TYPE = "docMimeType";
     public static final String TITLE = "title";
-    
+
     /** A hash code identifying the document media. */
-    @Column(nullable=false)
     public byte[] docMediaHash;
 
     /** The MIME type of the {@link #docMediaHash} media. */
-    @Column(nullable=false)
     public byte docMimeType;
 
     /** The title of this document (max length 255 characters). */
-    @Column(nullable=false)
     public String title;
-    
+
     public DocumentRecord ()
     {
         super();

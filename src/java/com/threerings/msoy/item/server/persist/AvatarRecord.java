@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
@@ -26,15 +25,12 @@ public class AvatarRecord extends ItemRecord
     public static final String AVATAR_MIME_TYPE = "avatarMimeType";
 
     /** A hash code identifying the avatar media. */
-    @Column(nullable=false)
     public byte[] avatarMediaHash;
 
     /** The MIME type of the {@link #avatarMediaHash} media. */
-    @Column(nullable=false)
     public byte avatarMimeType;
 
     /** A description for this avatar (max length 255 characters). */
-    @Column(nullable=false)
     public String description;
 
     public AvatarRecord ()

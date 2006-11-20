@@ -23,18 +23,14 @@ public abstract class CloneRecord<T extends ItemRecord>
     public int itemId;
 
     /** The ID of the immutable item from which this was cloned. */
-    @Column(nullable=false)
     public int originalItemId;
 
     /** The owner of this clone. */
-    @Column(nullable=false)
     public int ownerId;
 
     /** How this item is being used (see Item.USED_AS_FURNITURE). */
-    @Column(nullable=false)
     public byte used;
 
     /** Where it's being used. */
-    @Column(nullable=false)
     public int location;
 }

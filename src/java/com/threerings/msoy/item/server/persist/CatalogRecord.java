@@ -6,7 +6,6 @@ package com.threerings.msoy.item.server.persist;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
@@ -37,7 +36,6 @@ public abstract class CatalogRecord<T extends ItemRecord>
     public int itemId;
 
     /** The in time this item was listed in the catalog. */
-    @Column(nullable=false)
     public Timestamp listedDate;
     
     public CatalogRecord ()

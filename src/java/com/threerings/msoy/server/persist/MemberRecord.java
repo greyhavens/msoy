@@ -37,44 +37,35 @@ public class MemberRecord
     public int memberId;
 
     /** The authentication account associated with this member. */
-    @Column(unique=true, nullable=false)
+    @Column(unique=true)
     public String accountName;
 
     /** The name by which this member is known in MetaSOY. */
-    @Column(nullable=false)
     public String name;
 
     /** The quantity of flow possessed by this member. */
-    @Column(nullable=false)
     public int flow;
 
     /** The home scene for this member. */
-    @Column(nullable=false)
     public int homeSceneId;
 
     /** The avatar of this user, or 0. */
-    @Column(nullable=false)
     public int avatarId;
 
     /** The time at which this player was created (when they first starting
      * playing  this particular game). */
-    @Column(nullable=false)
     public Date created;
 
     /** The number of sessions this player has played. */
-    @Column(nullable=false)
     public int sessions;
 
     /** The cumulative number of minutes spent playing. */
-    @Column(nullable=false)
     public int sessionMinutes;
 
     /** The time at which the player ended their last session. */
-    @Column(nullable=false)
     public Date lastSession;
 
     /** Various one bit data. */
-    @Column(nullable=false)
     public int flags;
 
     /** A blank constructor used when loading records from the database. */

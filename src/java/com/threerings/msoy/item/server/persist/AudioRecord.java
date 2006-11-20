@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
@@ -26,15 +25,12 @@ public class AudioRecord extends ItemRecord
     public static final String AUDIO_MIME_TYPE = "audioMimeType";
 
     /** A hash code identifying the audio media. */
-    @Column(nullable=false)
     public byte[] audioMediaHash;
 
     /** The MIME type of the {@link #audioMediaHash} media. */
-    @Column(nullable=false)
     public byte audioMimeType;
 
     /** A description of this audio (max length 255 characters). */
-    @Column(nullable=false)
     public String description;
 
     public AudioRecord ()

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
@@ -28,11 +27,9 @@ public class FurnitureRecord extends ItemRecord
     /** An action associated with this furniture which is dispatched to the
      * virtual world client when the furniture is clicked on (max length 255
      * characters). */
-    @Column(nullable=false)
     public String action = "";
 
     /** A description of this piece of furniture (max length 255 characters). */
-    @Column(nullable=false)
     public String description;
 
     public FurnitureRecord ()

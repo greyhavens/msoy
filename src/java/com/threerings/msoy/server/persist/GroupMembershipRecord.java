@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server.persist;
 
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
@@ -26,15 +25,12 @@ public class GroupMembershipRecord
     public static final String RANK = "rank";
 
     /** The id of the member in the group membership. */
-    @Column(nullable=false)
     public int memberId;
 
     /** The id of the group in the group membership. */ 
-    @Column(nullable=false)
     public int groupId;
     
     /** The rank of the member in the group, defined in {@link GroupMembership}. */
-    @Column(nullable=false)
     public byte rank;
     
     /**

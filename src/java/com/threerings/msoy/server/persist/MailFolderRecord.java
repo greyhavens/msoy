@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server.persist;
 
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
@@ -45,11 +44,9 @@ public class MailFolderRecord
     public int ownerId;
     
     /** The name of this folder. */
-    @Column(nullable=false)
     public String name;
 
     /** The next available message id within this folder. */
-    @Column(nullable=false)
     public int nextMessageId;
     
     /**

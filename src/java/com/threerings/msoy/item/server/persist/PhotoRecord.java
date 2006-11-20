@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
@@ -27,15 +26,12 @@ public class PhotoRecord extends ItemRecord
     public static final String PHOTO_MIME_TYPE = "photoMimeType";
 
     /** A hash code identifying the photo media. */
-    @Column(nullable=false)
     public byte[] photoMediaHash;
 
     /** The MIME type of the {@link #photoMediaHash} media. */
-    @Column(nullable=false)
     public byte photoMimeType;
 
     /** A caption for this photo (max length 255 characters). */
-    @Column(nullable=false)
     public String caption;
 
     public PhotoRecord ()
