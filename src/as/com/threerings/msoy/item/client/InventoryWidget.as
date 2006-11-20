@@ -195,8 +195,11 @@ public class InventoryWidget extends Tree
                 delete _loadedTypes[type];
             },
             function (items :Array) :void {
+                // first, close the branch
+                expandItem(node, false);
+
+                // remove the "loading..." node and add the received children
                 dataDescriptor.removeChildAt(node, null, 0);
-                //collection.removeAll();
                 if (items.length == 0) {
                     dataDescriptor.addChildAt(
                         node, Msgs.ITEM.get("m.no_items"), 0);
@@ -207,11 +210,17 @@ public class InventoryWidget extends Tree
                         dataDescriptor.addChildAt(node, item, count++);
                     }
                 }
+                // TODO: come up with a way to have a "no items" label in a
+                // filtered view where there are items but they're just not
+                // displayed
 
-                // this works best of all for invalidating the list
+                // try to invalidate the current list data and make it
+                // re-render non-fuckedup
                 dataDescriptor.getChildren(node).refresh();
+                ListCollectionView(dataProvider).refresh();
                 invalidateList();
-                expandItem(node, false);
+
+                // re-open the branch with the new items
                 expandItem(node, true, true);
             }));
     }
