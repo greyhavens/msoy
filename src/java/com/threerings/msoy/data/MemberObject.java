@@ -155,9 +155,9 @@ public class MemberObject extends BodyObject
         if (plobj instanceof RoomObject) {
             return new WorldMemberInfo(this);
 
-        } else if (plobj instanceof GameObject) {
-            return new GameMemberInfo(this);
-
+//        } else if (plobj instanceof GameObject) {
+//            return new GameMemberInfo(this);
+//
         } else {
             return new MemberInfo(this);
         }
