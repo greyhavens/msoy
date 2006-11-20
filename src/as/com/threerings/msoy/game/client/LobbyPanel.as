@@ -42,15 +42,19 @@ public class LobbyPanel extends VBox
     /** Our log. */
     private const log :Log = Log.getLog(LobbyPanel);
 
+    /** The lobby controller. */
+    public var controller :LobbyController;
+
     /** The create-a-table button. */
     public var createBtn :CommandButton;
 
     /**
      * Create a new LobbyPanel.
      */
-    public function LobbyPanel (ctx :MsoyContext)
+    public function LobbyPanel (ctx :MsoyContext, ctrl :LobbyController)
     {
         _ctx = ctx;
+        controller = ctrl;
     }
 
     // from PlaceView
@@ -128,6 +132,7 @@ public class LobbyPanel extends VBox
         super.createChildren();
 
         var list :MsoyList = new MsoyList(_ctx);
+        list.variableRowHeight = true;
         list.percentHeight = 100;
         list.percentWidth = 100;
         addChild(list);
@@ -159,12 +164,15 @@ public class LobbyPanel extends VBox
 }
 }
 
+import flash.events.Event;
+
 import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
+import com.threerings.util.MediaContainer;
 import com.threerings.util.Name;
 
 import com.threerings.mx.controls.CommandButton;
@@ -192,6 +200,33 @@ class TableRenderer extends HBox
         super();
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        _background = new MediaContainer(
+            panel.controller.game.getTableMedia().getMediaPath());
+        _background.mouseEnabled = false;
+        _background.mouseChildren = false;
+        rawChildren.addChild(_background);
+        _background.addEventListener(
+            MediaContainer.SIZE_KNOWN, handleBkgSizeKnown)
+    }
+
+    override protected function measure () :void
+    {
+        super.measure();
+        measuredWidth = Math.max(_background.getContentWidth(), measuredWidth);
+        measuredHeight = Math.max(_background.getContentHeight(), measuredHeight);
+        trace("Mkay then, measure(): " + measuredWidth + ", " + measuredHeight);
+    }
+
+    protected function handleBkgSizeKnown (event :Event) :void
+    {
+        trace("Mkay then, background size is known");
+        invalidateSize();
     }
 
     override public function set data (newData :Object) :void
@@ -264,4 +299,7 @@ class TableRenderer extends HBox
             addChild(btn);
         }
     }
+
+    /** Holds our game's branding background. */
+    protected var _background :MediaContainer;
 }

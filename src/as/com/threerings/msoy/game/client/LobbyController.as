@@ -40,10 +40,13 @@ public class LobbyController extends PlaceController
     /** A command to leave a table. */
     public static const LEAVE :String = "Leave";
 
+    /** The game item that is being played in this lobby. */
+    public var game :Game;
+
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
         _mctx = (ctx as MsoyContext);
-        _game = (config as LobbyConfig).game;
+        game = (config as LobbyConfig).game;
         super.init(ctx, config);
     }
 
@@ -65,7 +68,7 @@ public class LobbyController extends PlaceController
     public function handleCreateTable () :void
     {
         _panel.createBtn.enabled = false;
-        new TableCreationPanel(_mctx, _game, _panel);
+        new TableCreationPanel(_mctx, game, _panel);
     }
 
     /**
@@ -102,7 +105,7 @@ public class LobbyController extends PlaceController
 
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        _panel = new LobbyPanel(_mctx);
+        _panel = new LobbyPanel(_mctx, this);
         _tableDir = new TableDirector(_mctx, LobbyObject.TABLES, _panel);
         _tableDir.addSeatednessObserver(_panel);
         return _panel;
@@ -113,9 +116,6 @@ public class LobbyController extends PlaceController
 
     /** The panel we're controlling. */
     protected var _panel :LobbyPanel;
-
-    /** The config info for the games created from this lobby. */
-    protected var _game :Game;
 
     /** The table director. */
     protected var _tableDir :TableDirector;
