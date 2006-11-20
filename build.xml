@@ -116,7 +116,7 @@
     <delete dir="pages/msoy"/>
     <mkdir dir="pages/msoy"/>
     <delete><fileset dir="pages/msoy" includes="*/*.*"/></delete>
-    <java fork="true" classname="com.google.gwt.dev.GWTCompiler">
+    <java fork="true" maxmemory="128M" classname="com.google.gwt.dev.GWTCompiler">
       <classpath>
         <pathelement location="${deploy.dir}/classes"/>
         <fileset dir="${extlib.dir}" includes="gwt*.jar"/>
