@@ -16,7 +16,6 @@ public class HeadShotSprite extends MediaContainer
     public function HeadShotSprite ()
     {
         super(null);
-        autoLayout = false;
 
         _label = new Label();
         _label.includeInLayout = false;
@@ -27,8 +26,16 @@ public class HeadShotSprite extends MediaContainer
 
     override protected function measure () :void
     {
-        measuredWidth = 60; //_w;
-        measuredHeight = 70 + _label.textHeight; //_h + _label.textHeight;
+        measuredWidth = _w;
+        measuredHeight = _h + _label.textHeight;
+    }
+
+    override public function validateDisplayList () :void
+    {
+        super.validateDisplayList();
+
+        _label.width = _w;
+        _label.y = _h;
     }
 
     public function setUser (name :Name, desc :MediaDesc) :void
@@ -44,14 +51,7 @@ public class HeadShotSprite extends MediaContainer
     override protected function contentDimensionsUpdated () :void
     {
         super.contentDimensionsUpdated();
-        recheckLabel();
         invalidateSize();
-    }
-
-    protected function recheckLabel () :void
-    {
-        _label.width = _w;
-        _label.y = _h;
     }
 
     protected var _label :Label;
