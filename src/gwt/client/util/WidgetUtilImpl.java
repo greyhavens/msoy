@@ -13,7 +13,7 @@ public class WidgetUtilImpl
     /**
      * Creates the HTML needed to display a Flash movie.
      */
-    public HTML createFlashMovie (
+    public HTML createFlashContainer (
         String ident, String movie, String width, String height,
         String flashVars)
     {

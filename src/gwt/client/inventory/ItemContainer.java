@@ -38,7 +38,7 @@ public class ItemContainer extends VerticalPanel
     {
         switch (MediaDesc.suffixToMimeType(path)) {
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
-            return WidgetUtil.createFlashMovie(
+            return WidgetUtil.createFlashContainer(
                 // TODO: allow passing -1 for width
                 "", path, THUMB_HEIGHT, THUMB_HEIGHT, null);
 

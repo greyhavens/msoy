@@ -51,7 +51,7 @@ public class index extends MsoyEntryPoint
             // don't show the flash client in the GWT shell
             if (GWT.isScript()) {
                 if (_client == null) {
-                    _client = WidgetUtil.createFlashMovie(
+                    _client = WidgetUtil.createFlashContainer(
                         // TODO: fix height arg to be 100%
                         // (doesn't currently work)
                         "asclient", "/clients/game-client.swf", "800", "600",

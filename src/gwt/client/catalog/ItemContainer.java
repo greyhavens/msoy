@@ -103,7 +103,7 @@ public class ItemContainer extends VerticalPanel
         switch (MediaDesc.suffixToMimeType(thumbPath)) {
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
             String ident = String.valueOf(item.itemId);
-            return WidgetUtil.createFlashMovie(
+            return WidgetUtil.createFlashContainer(
                 // TODO: allow passing -1 for width
                 ident, thumbPath, THUMB_HEIGHT, THUMB_HEIGHT, null);
 

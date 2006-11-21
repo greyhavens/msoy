@@ -21,10 +21,10 @@ public class WidgetUtil
      *        or null.
      *        http://www.adobe.com/cfusion/knowledgebase/index.cfm?id=tn_16417
      */
-    public static HTML createFlashMovie (
+    public static HTML createFlashContainer (
         String ident, String movie, int width, int height, String flashVars)
     {
-        return createFlashMovie(ident, movie, ""+width, ""+height, flashVars);
+        return createFlashContainer(ident, movie, ""+width, ""+height, flashVars);
     }
 
     /**
@@ -35,11 +35,11 @@ public class WidgetUtil
      *        or null.
      *        http://www.adobe.com/cfusion/knowledgebase/index.cfm?id=tn_16417
      */
-    public static HTML createFlashMovie (
+    public static HTML createFlashContainer (
         String ident, String movie, String width, String height,
         String flashVars)
     {
-        return _impl.createFlashMovie(ident, movie, width, height, flashVars);
+        return _impl.createFlashContainer(ident, movie, width, height, flashVars);
     }
 
     /**
