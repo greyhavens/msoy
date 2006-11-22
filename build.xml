@@ -101,7 +101,7 @@
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
           unless="gwt.present"/>
 
-    <java classpathref="gwt.classpath" fork="true"
+    <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
           classname="com.google.gwt.dev.GWTShell">
       <sysproperty key="msoy.home" value="."/>
       <arg value="-out"/>
