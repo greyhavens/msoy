@@ -16,6 +16,21 @@
    padding: 5px;
 }
 
+/** Form element styles. */
+.gwt-Button {
+  border-top: none;
+  border-bottom: none;
+  border-left: 1px double #000000;
+  border-right: 1px double  #000000;
+  background-image: url(images/button_middle.png);
+  background-repeat: repeat-x;
+  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-size: 12px;
+  height: 20px;
+  vertical-align: top;
+  padding-bottom: 2px;
+}
+
 /** Header styles. */
 body {
   margin: 0px;
@@ -53,7 +68,7 @@ body {
 }
 
 .naviPanel .Link a {
-  font-family: "Helvetica";
+  font-family: Arial, Verdana, Helvetica, sans-serif;
   font-size: 12px;
   text-decoration: none;
   color: white;
@@ -79,7 +94,7 @@ body {
 }
 
 .naviPanel .SelLink a {
-  font-family: "Helvetica";
+  font-family: Arial, Verdana, Helvetica, sans-serif;
   font-size: 12px;
   text-decoration: none;
   color: black;
