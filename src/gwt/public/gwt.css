@@ -106,10 +106,33 @@ body {
   height: 20px;
 }
 
+.logonPanel .Top {
+  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-size: 8px;
+}
+
+.logonPanel .Top {
+  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.logonPopup {
+   border: 1px solid #0066FF;
+   background: #6699CC;
+   padding: 5px;
+}
+
 /** General UI styles. */
 .inline {
    display: inline;
 }   
+
+.infoPopup {
+   border: 1px solid #0066FF;
+   background: #6699CC;
+   padding: 5px;
+}
 
 .itemPopup {
    border: 2px solid #0066FF;

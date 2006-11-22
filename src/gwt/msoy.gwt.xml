@@ -4,6 +4,7 @@
   <source path="client"/>
   <source path="org/gwtwidgets/client"/>
   <source path="com/threerings/io"/>
+  <source path="com/threerings/gwt"/>
   <source path="com/threerings/msoy/web/client"/>
   <source path="com/threerings/msoy/web/data"/>
   <source path="com/threerings/msoy/item/web"/>

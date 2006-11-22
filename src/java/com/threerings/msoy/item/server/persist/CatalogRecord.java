@@ -13,6 +13,7 @@ import com.samskivert.jdbc.depot.annotation.Transient;
 
 import com.threerings.io.Streamable;
 import com.threerings.msoy.item.web.CatalogListing;
+import com.threerings.msoy.web.data.MemberGName;
 
 /**
  * Represents a catalog listing of an item.
@@ -23,10 +24,10 @@ public abstract class CatalogRecord<T extends ItemRecord>
     implements Streamable
 {
     public static final int SCHEMA_VERSION = 1;
-    
+
     public static final String ITEM_ID = "itemId";
     public static final String LISTED_DATE = "listedDate";
-    
+
     /** A reference to the listed item. This value is not persisted. */
     @Transient
     public ItemRecord item;
@@ -37,16 +38,16 @@ public abstract class CatalogRecord<T extends ItemRecord>
 
     /** The in time this item was listed in the catalog. */
     public Timestamp listedDate;
-    
+
     public CatalogRecord ()
     {
         super();
     }
-    
+
     protected CatalogRecord (CatalogListing listing)
     {
         super();
-        
+
         item = ItemRecord.newRecord(listing.item);
         listedDate = new Timestamp(listing.listedDate.getTime());
 
@@ -56,8 +57,9 @@ public abstract class CatalogRecord<T extends ItemRecord>
     {
         CatalogListing listing = new CatalogListing();
         listing.item = item.toItem();
-        // GWT can't handle java.sql.Timestamp
         listing.listedDate = new Date(listedDate.getTime());
+        listing.creator = new MemberGName("Some Guy", item.creatorId); // TODO
+        listing.price = 0; // TODO
         return listing;
     }
 }
