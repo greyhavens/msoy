@@ -842,7 +842,7 @@ public class ItemManager
 
             public void requestFailed (Exception cause)
             {
-                log.warning("Unable to retrieve inventory " + "[cause=" + cause + "].");
+                log.warning("Unable to retrieve inventory [cause=" + cause + "].");
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });

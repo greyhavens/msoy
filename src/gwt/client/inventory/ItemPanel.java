@@ -72,7 +72,7 @@ public class ItemPanel extends VerticalPanel
                 public void onFailure (Throwable caught) {
                     GWT.log("loadInventory failed", caught);
                     // TODO: if ServiceException, translate
-                    add(new Label("Failed to load inventory."));
+                    add(new Label("Failed to load inventory: " + caught));
                 }
             });
         }
