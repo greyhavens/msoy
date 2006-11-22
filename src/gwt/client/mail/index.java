@@ -24,13 +24,6 @@ public class index extends MsoyEntryPoint
         };
     }
 
-    // @Override // from MsoyEntryPoint
-    public void onPageLoad ()
-    {
-        History.addHistoryListener(this);
-        onHistoryChanged(History.getToken());
-    }
-
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
@@ -67,6 +60,19 @@ public class index extends MsoyEntryPoint
         }
         // finally update the application view
         _mainView.show(folderId, headerOffset, messageId);
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected String getPageId ()
+    {
+        return "mail";
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void onPageLoad ()
+    {
+        History.addHistoryListener(this);
+        onHistoryChanged(History.getToken());
     }
 
     // @Override from MsoyEntryPoint

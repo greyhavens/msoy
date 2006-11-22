@@ -1,5 +1,4 @@
 /** Make GWT display some sensible defaults. */
-
 .gwt-TabBar .gwt-TabBarItem {
    border: 1px solid;
    padding: 5px;
@@ -17,6 +16,82 @@
    padding: 5px;
 }
 
+/** Header styles. */
+body {
+  margin: 0px;
+}
+
+.msoyHeader .Left {
+  background-image: url(images/header_left.png);
+  background-repeat: no-repeat;
+  width: 641px;
+  height: 43px;
+  vertical-align: bottom;
+}
+
+.msoyHeader .Right {
+  background-image: url(images/header_right.png);
+  background-repeat: repeat;
+}
+
+.naviPanel {
+  padding-left: 90px;
+  background-repeat: repeat;
+}
+
+.naviPanel .Left {
+  background-image: url(images/tab_left.png);
+  width: 4px;
+  height: 20px;
+}
+
+.naviPanel .Link {
+  background-image: url(images/tab_middle.png);
+  background-repeat: repeat;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.naviPanel .Link a {
+  font-family: "Helvetica";
+  font-size: 12px;
+  text-decoration: none;
+  color: white;
+}
+
+.naviPanel .Right {
+  background-image: url(images/tab_right.png);
+  width: 4px;
+  height: 20px;
+}
+
+.naviPanel .SelLeft {
+  background-image: url(images/seltab_left.png);
+  width: 4px;
+  height: 20px;
+}
+
+.naviPanel .SelLink {
+  background-image: url(images/seltab_middle.png);
+  background-repeat: repeat;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
+.naviPanel .SelLink a {
+  font-family: "Helvetica";
+  font-size: 12px;
+  text-decoration: none;
+  color: black;
+}
+
+.naviPanel .SelRight {
+  background-image: url(images/seltab_right.png);
+  width: 4px;
+  height: 20px;
+}
+
+/** General UI styles. */
 .inline {
    display: inline;
 }   

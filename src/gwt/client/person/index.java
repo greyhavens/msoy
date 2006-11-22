@@ -34,18 +34,6 @@ public class index extends MsoyEntryPoint
         };
     }
 
-    // @Override // from MsoyEntryPoint
-    public void onPageLoad ()
-    {
-        History.addHistoryListener(this);
-        String initToken = History.getToken();
-        if (initToken.length() > 0) {
-            onHistoryChanged(initToken);
-        } else {
-            setContent(new Label("Log in to view your member page."));
-        }
-    }
-
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
@@ -53,6 +41,24 @@ public class index extends MsoyEntryPoint
             displayMemberPage(Integer.parseInt(token));
         } catch (Exception e) {
             // TODO: display error
+        }
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected String getPageId ()
+    {
+        return "person";
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void onPageLoad ()
+    {
+        History.addHistoryListener(this);
+        String initToken = History.getToken();
+        if (initToken.length() > 0) {
+            onHistoryChanged(initToken);
+        } else {
+            setContent(new Label("Log in to view your member page."));
         }
     }
 

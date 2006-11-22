@@ -33,19 +33,6 @@ public class index extends MsoyEntryPoint
         };
     }
 
-    // @Override from MsoyEntryPoint
-    public void onPageLoad ()
-    {
-        History.addHistoryListener(this);
-        String initToken = History.getToken();
-        if (initToken.length() > 0) {
-            onHistoryChanged(initToken);
-        } else {
-            // default to the user's inventory
-            onHistoryChanged("inventory");
-        }
-    }
-
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
@@ -66,6 +53,25 @@ public class index extends MsoyEntryPoint
                 _inventory = new InventoryPanel(_ctx);
             }
             RootPanel.get("content").add(_inventory);
+        }
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected String getPageId ()
+    {
+        return "inventory";
+    }
+
+    // @Override from MsoyEntryPoint
+    protected void onPageLoad ()
+    {
+        History.addHistoryListener(this);
+        String initToken = History.getToken();
+        if (initToken.length() > 0) {
+            onHistoryChanged(initToken);
+        } else {
+            // default to the user's inventory
+            onHistoryChanged("inventory");
         }
     }
 

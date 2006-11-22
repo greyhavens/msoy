@@ -30,18 +30,6 @@ public class index extends MsoyEntryPoint
         };
     }
 
-    // @Override // from MsoyEntryPoint
-    public void onPageLoad ()
-    {
-        History.addHistoryListener(this);
-        String initToken = History.getToken();
-        if (initToken.length() > 0) {
-            onHistoryChanged(initToken);
-        } else {
-            onHistoryChanged("home");
-        }
-    }
-
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
@@ -68,6 +56,24 @@ public class index extends MsoyEntryPoint
             }
 
             RootPanel.get("content").add(new Label("Unknown page: " + token));
+        }
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected String getPageId ()
+    {
+        return "index";
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void onPageLoad ()
+    {
+        History.addHistoryListener(this);
+        String initToken = History.getToken();
+        if (initToken.length() > 0) {
+            onHistoryChanged(initToken);
+        } else {
+            onHistoryChanged("home");
         }
     }
 

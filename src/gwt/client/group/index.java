@@ -21,13 +21,6 @@ public class index extends MsoyEntryPoint
         };
     }
 
-    // @Override // from MsoyEntryPoint
-    public void onPageLoad ()
-    {
-        History.addHistoryListener(this);
-        onHistoryChanged(History.getToken());
-    }
-
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
@@ -40,5 +33,18 @@ public class index extends MsoyEntryPoint
         } else {
             setContent(new GroupList(_ctx));
         }
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected String getPageId ()
+    {
+        return "group";
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void onPageLoad ()
+    {
+        History.addHistoryListener(this);
+        onHistoryChanged(History.getToken());
     }
 }

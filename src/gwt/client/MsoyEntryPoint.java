@@ -94,6 +94,9 @@ public abstract class MsoyEntryPoint
         _ctx.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
         ((ServiceDefTarget)_ctx.gamesvc).setServiceEntryPoint(prefix + "game");
 
+        // create our standard navigation panel
+        RootPanel.get("navigation").add(new NaviPanel(_ctx, getPageId()));
+
         // create our standard logon panel
         RootPanel.get("logon").add(_logon = new LogonPanel(_ctx, this));
 
@@ -103,6 +106,11 @@ public abstract class MsoyEntryPoint
         // and now potentially trigger a call to didLogon()
         _logon.init();
     }
+
+    /**
+     * Returns the identifier of this page (used for navigation).
+     */
+    protected abstract String getPageId ();
 
     /**
      * Called during {@link #onModuleLoad} to initialize the application. Entry
