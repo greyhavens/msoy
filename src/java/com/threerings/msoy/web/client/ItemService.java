@@ -70,41 +70,43 @@ public interface ItemService extends RemoteService
      * Fetches the rating somebody gave something, or 0.
      */
     public byte getRating (WebCreds creds, ItemIdent item, int memberId)
-            throws ServiceException;
+        throws ServiceException;
 
     /**
      * Awards an item a rating from 1 to 5.
+     *
+     * @return the new average rating for the item.
      */
-    public ItemDetail rateItem (WebCreds creds, ItemIdent item, byte rating)
-            throws ServiceException;
+    public float rateItem (WebCreds creds, ItemIdent item, byte rating)
+        throws ServiceException;
 
     /**
      * Fetches the tags associated with an item.
      */
     public Collection getTags (WebCreds creds, ItemIdent item)
-            throws ServiceException;
-    
+        throws ServiceException;
+
     /**
      * Fetches the tagging history for a given item.
      */
     public Collection getTagHistory (WebCreds creds, ItemIdent item)
-            throws ServiceException;
+        throws ServiceException;
 
     /**
      * Fetches the tagging history for a given member.
      */
     public Collection getTagHistory (WebCreds creds, int memberId)
-            throws ServiceException;
+        throws ServiceException;
 
     /**
      * Associates a tag with an item.
      */
     public TagHistory tagItem (WebCreds creds, ItemIdent item, String tag)
-            throws ServiceException;
+        throws ServiceException;
 
     /**
      * Disassociates a tag with an item.
      */
     public TagHistory untagItem (WebCreds creds, ItemIdent item, String tag)
-            throws ServiceException;
+        throws ServiceException;
 }

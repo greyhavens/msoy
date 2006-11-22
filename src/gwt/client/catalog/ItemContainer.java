@@ -19,7 +19,7 @@ import client.util.WidgetUtil;
 
 /**
  * Displays a catalog listing.
- * 
+ *
  * TODO: Refactor relative to inventory.ItemContainer
  *
  * <p> Styles:
@@ -35,57 +35,24 @@ public class ItemContainer extends VerticalPanel
     /** So arbitrary. TODO. */
     public static final int THUMB_HEIGHT = 100;
 
-    public ItemContainer (CatalogListing listing, ItemPanel panel)
+    public ItemContainer (CatalogListing listing, final ItemPanel panel)
     {
-        this(listing, panel, true, true);
-    }
-
-    public ItemContainer (
-            final CatalogListing listing, final ItemPanel panel,
-            boolean thumbnail, boolean showLabel)
-    {
-/*
-        setItem(item, thumbnail, showLabel);
-    }
-
-    public void setItem (Item item, boolean thumbnail, boolean showLabel)
-    {
-        while (getWidgetCount() > 0) {
-            remove(0);
-        }
-
-        if (item == null) {
-            return;
-        }
-*/
         final Item item = listing.item;
-        
+
         Widget disp = createContainer(item);
-        Label label = null;
-        if (showLabel) {
-            label = new Label(truncateDescription(item.getDescription()));
-        }
-
-        if (thumbnail) {
-            disp.setStyleName("item_thumb_image");
-            disp.setHeight(THUMB_HEIGHT + "px");
-            label.setStyleName("item_thumb_text");
-
-        } else {
-            // TODO: sort this out, setting a style name on the FlashWidget
-            // here seems to freak it out, but it works at other times.
-            /*
-            disp.setStyleName("item_image");
-            disp.setPixelSize(THUMB_WIDTH, THUMB_HEIGHT);
-            label.setStyleName("item_text");
-            */
-        }
-
+        disp.setStyleName("item_thumb_image");
+        disp.setHeight(THUMB_HEIGHT + "px");
         add(disp);
-        if (showLabel) {
-            add(label);
-        }
-        Button button = new Button("Purchase ...");
+
+        Label descrip = new Label(truncateDescription(item.getDescription()));
+        descrip.setStyleName("item_thumb_text");
+        add(descrip);
+
+        Label creator = new Label("by " + listing.creator.memberName);
+        creator.setStyleName("item_creator_text");
+        add(creator);
+
+        Button button = new Button("Buy!");
         button.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 panel.purchaseItem(item.getIdent());

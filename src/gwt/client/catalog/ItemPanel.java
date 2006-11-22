@@ -56,8 +56,21 @@ public class ItemPanel extends DockPanel
                 updateContents();
             }
         });
-        add(button, DockPanel.NORTH); 
+        add(button, DockPanel.NORTH);
         add(_status = new Label(""), DockPanel.SOUTH);
+    }
+
+    /**
+     * Called by the {@link CatalogPanel} when we're made the active tab.
+     */
+    public void wasSelected ()
+    {
+        if (_listings == null) {
+            updateListings();
+        }
+        if (_sortedTags == null) {
+            updateTags();
+        }
     }
 
     protected void updateContents ()
@@ -70,73 +83,73 @@ public class ItemPanel extends DockPanel
             add(_items, DockPanel.CENTER);
         }
     }
-    
-    
-    protected void onLoad ()
+
+    protected void updateListings ()
     {
-        // load the catalog if we haven't one already
-        if (_listings == null) {
-            _ctx.catalogsvc.loadCatalog(_ctx.creds, _type, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    _listings = (ArrayList)result;
-                    _items.setItems((ArrayList)result);
-                }
-                public void onFailure (Throwable caught) {
-                    GWT.log("loadCatalog failed", caught);
-                    // TODO: if ServiceException, translate
-                    _items.add(new Label("Failed to load catalog."));
-                }
-            });
-        }
-        if (_sortedTags == null) {
-            _ctx.catalogsvc.getPopularTags(_ctx.creds, _type, 20, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    _tagMap = (HashMap) result;
-                    if (_tagMap.size() == 0) {
-                        _tags.add(new Label("No tags in use."));
-                        return;
-                    }
+        setStatus("Loading...");
+        _ctx.catalogsvc.loadCatalog(_ctx.creds, _type, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _listings = (ArrayList)result;
+                _items.setItems((ArrayList)result);
+                setStatus("");
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("loadCatalog failed", caught);
+                // TODO: if ServiceException, translate
+                setStatus("Failed to load catalog: " + caught);
+            }
+        });
+    }
 
-                    // figure out the highest use count among all the tags
-                    Iterator vIter = _tagMap.values().iterator();
-                    _maxTagCount = 0;
-                    while (vIter.hasNext()) {
-                        int count = ((Integer) vIter.next()).intValue();
-                        if (count > _maxTagCount) {
-                            _maxTagCount = count;
-                        }
-                    }
-
-                    // then sort the tag names
-                    _sortedTags =  _tagMap.keySet().toArray();
-                    Arrays.sort(_sortedTags);
-                    StringBuffer buf = new StringBuffer();
-                    for (int ii = 0; ii < _sortedTags.length; ii ++) {
-                        String tag = (String) _sortedTags[ii];
-                        int count = ((Integer)_tagMap.get(tag)).intValue();
-                        double rate = ((double) count) / _maxTagCount;
-                        // let's start with just 4 different tag sizes
-                        int size = 1+(int)(4 * rate);
-                        buf.append("<span class='tagSize" + size + "'>");
-                        buf.append(tag);
-                        buf.append("</span>");
-                        buf.append("&nbsp; . &nbsp;");
-                    }
-                    
-                    _tags.add(new Label(
-                        "The " + _tagMap.size() + " most commonly used tags:"));
-                    HTML tags = new HTML(buf.toString());
-                    tags.setHorizontalAlignment(HTML.ALIGN_CENTER);
-                    _tags.add(tags);
+    protected void updateTags ()
+    {
+        _ctx.catalogsvc.getPopularTags(_ctx.creds, _type, 20, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _tagMap = (HashMap) result;
+                if (_tagMap.size() == 0) {
+                    _tags.add(new Label("No tags in use."));
+                    return;
                 }
-                public void onFailure (Throwable caught) {
-                    GWT.log("getPopularTags failed", caught);
-                    // TODO: if ServiceException, translate
-                    _tags.add(new Label("Failed to get popular tags."));
-                }
-            });
 
-        }
+                // figure out the highest use count among all the tags
+                Iterator vIter = _tagMap.values().iterator();
+                _maxTagCount = 0;
+                while (vIter.hasNext()) {
+                    int count = ((Integer) vIter.next()).intValue();
+                    if (count > _maxTagCount) {
+                        _maxTagCount = count;
+                    }
+                }
+
+                // then sort the tag names
+                _sortedTags = _tagMap.keySet().toArray();
+                Arrays.sort(_sortedTags);
+                StringBuffer buf = new StringBuffer();
+                for (int ii = 0; ii < _sortedTags.length; ii ++) {
+                    String tag = (String) _sortedTags[ii];
+                    int count = ((Integer)_tagMap.get(tag)).intValue();
+                    double rate = ((double) count) / _maxTagCount;
+                    // let's start with just 4 different tag sizes
+                    int size = 1+(int)(4 * rate);
+                    buf.append("<span class='tagSize" + size + "'>");
+                    buf.append(tag);
+                    buf.append("</span>");
+                    buf.append("&nbsp; . &nbsp;");
+                }
+
+                _tags.add(new Label("The " + _tagMap.size() + " most commonly used tags:"));
+                HTML tags = new HTML(buf.toString());
+                tags.setHorizontalAlignment(HTML.ALIGN_CENTER);
+                _tags.add(tags);
+            }
+
+            public void onFailure (Throwable caught) {
+                GWT.log("getPopularTags failed", caught);
+                // TODO: if ServiceException, translate
+                _tags.clear();
+                _tags.add(new Label("Failed to get popular tags."));
+            }
+        });
     }
 
     protected void purchaseItem (ItemIdent item)

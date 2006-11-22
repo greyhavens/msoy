@@ -42,7 +42,7 @@ public abstract class Item implements Streamable, IsSerializable
     public static final byte USED_AS_AVATAR = (byte) 2;
 
     // == Instance variables follow =========================================
-    
+
     /** This item's unique identifier. <em>Note:</em> this identifier is not
      * globally unique among all digital items. Each type of item has its own
      * identifier space. */
@@ -51,7 +51,7 @@ public abstract class Item implements Streamable, IsSerializable
     /** The item ID from which this object was cloned, or -1 if this is not
      * a clone. */
     public int parentId = -1;
-    
+
     /** A bit-mask of flags that we need to know about every digital item
      * without doing further database lookups or network requests. */
     public byte flags;
@@ -72,7 +72,7 @@ public abstract class Item implements Streamable, IsSerializable
     /** A number, interpreted along with 'used' that identifies the
      * location at which this item is being used. */
     public int location;
-    
+
     /** The media used to display this item's thumbnail representation. */
     public MediaDesc thumbMedia;
 

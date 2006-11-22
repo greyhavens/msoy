@@ -550,10 +550,11 @@ public class MemberManager
                 GroupDetail detail = new GroupDetail();
                 detail.creator = new MemberGName(mRec.name, mRec.memberId);
                 detail.group = gRec.toWebObject();
-                detail.members = new HashMap<MemberGName, Byte>(); 
+                HashMap<MemberGName, Byte> members = new HashMap<MemberGName, Byte>();
+                detail.members = members;
                 for (GroupMembershipRecord gmRec : _groupRepo.getMembers(groupId)) {
                     mRec = _memberRepo.loadMember(gmRec.memberId);
-                    detail.members.put(new MemberGName(mRec.name, mRec.memberId), gmRec.rank);
+                    members.put(new MemberGName(mRec.name, mRec.memberId), gmRec.rank);
                 }
                 return detail;
             }

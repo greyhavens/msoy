@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import client.MsoyEntryPoint;
+import client.item.ItemRating;
 import client.util.HeaderValueTable;
 
 import com.google.gwt.core.client.GWT;
@@ -170,10 +171,7 @@ public class ItemView extends PopupPanel
 
         _table.addHeader("Rating Information");
 
-        // we can rate this item if it's a clone, or if it's listed
-        int ratingMode = (_item.parentId != -1 || _item.ownerId == -1) ?
-            ItemRating.MODE_BOTH : ItemRating.MODE_READ;
-        _ratingImage = new ItemRating(_ctx, _itemDetail, ratingMode);
+        _ratingImage = new ItemRating(_ctx, _itemDetail.item, _itemDetail.memberRating);
         _table.addRow("Rating", _ratingImage);
 
         _table.addHeader("Tagging Information");

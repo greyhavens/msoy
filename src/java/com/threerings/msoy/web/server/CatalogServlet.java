@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -51,18 +52,21 @@ public class CatalogServlet extends RemoteServiceServlet
     public Item purchaseItem (WebCreds creds, ItemIdent item)
         throws ServiceException
     {
+        // TODO: validate this user's creds
+
         ItemIdent ident = ItemServlet.toIdent(creds, item, "purchaseItem");
         ServletWaiter<Item> waiter = new ServletWaiter<Item>(
             "purchaseItem[" + creds.memberId + ", " + item + "]");
         MsoyServer.itemMan.purchaseItem(creds.memberId, ident, waiter);
         return waiter.waitForResult();
-
     }
 
     // from interface CatalogService
     public CatalogListing listItem (WebCreds creds, ItemIdent item)
         throws ServiceException
     {
+        // TODO: validate this user's creds
+
         ItemIdent ident = ItemServlet.toIdent(creds, item, "listItem");
         ServletWaiter<CatalogListing> waiter =
             new ServletWaiter<CatalogListing>("listItem[" + item + "]");
@@ -72,7 +76,7 @@ public class CatalogServlet extends RemoteServiceServlet
 
     // from interface ItemService
     public Map<String, Integer> getPopularTags (WebCreds creds, byte type, int rows)
-            throws ServiceException
+        throws ServiceException
     {
         ServletWaiter<Map<String, Integer>> waiter =
             new ServletWaiter<Map<String, Integer>>("getPopularTags[" + type + "]");

@@ -3,6 +3,7 @@
 
 package client.catalog;
 
+import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabPanel;
 
 import com.threerings.msoy.web.client.WebContext;
@@ -26,5 +27,12 @@ public class CatalogPanel extends TabPanel
         add(new ItemPanel(ctx, Item.PET), "Pets");
         add(new ItemPanel(ctx, Item.AUDIO), "Audio");
         selectTab(0);
+    }
+
+    // @Override // from TabPanel
+    public void onTabSelected (SourcesTabEvents sender, int tabIndex)
+    {
+        super.onTabSelected(sender, tabIndex);
+        ((ItemPanel)getWidget(tabIndex)).wasSelected();
     }
 }

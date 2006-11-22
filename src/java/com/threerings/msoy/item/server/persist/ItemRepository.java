@@ -41,6 +41,12 @@ import com.threerings.msoy.item.web.TagHistory;
 public abstract class ItemRepository<T extends ItemRecord>
     extends DepotRepository
 {
+    @Computed @Entity
+    public static class RatingAverageRecord {
+        public int count;
+        public int sum;
+    }
+
     public ItemRepository (ConnectionProvider provider)
     {
         // we'll be using one persistence context per ItemRecord type
@@ -133,7 +139,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             idArr[ii] = new Integer(itemIds[ii]);
         }
         Where inClause = new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr));
-        Collection<T> items = findAll(getItemClass(), inClause,
+        Collection<T> items = findAll(
+            getItemClass(), inClause,
             new Join(getItemClass(), ItemRecord.ITEM_ID,
                      getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID),
             new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID),
@@ -157,13 +164,13 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         for (int itemId : itemIds) {
             if (0 == updatePartial(iclass, itemId,
-                    ItemRecord.USED, utype, ItemRecord.LOCATION, loc)) {
+                                   ItemRecord.USED, utype, ItemRecord.LOCATION, loc)) {
                 // if the item didn't update, try the clone
                 if (0 == updatePartial(cclass, itemId,
-                        ItemRecord.USED, utype, ItemRecord.LOCATION, loc)) {
+                                       ItemRecord.USED, utype, ItemRecord.LOCATION, loc)) {
                     Log.warning("Unable to find item to mark usage " +
-                        "[itemId=" + itemId + ", usageType=" + usageType +
-                        ", location=" + location + "].");
+                                "[itemId=" + itemId + ", usageType=" + usageType +
+                                ", location=" + location + "].");
                 }
             }
         }
@@ -171,8 +178,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * Loads all items in the catalog.
-     * TODO: As soon as we're out of the prototyping stage, this will need
-     * to turn into a paging method; int offset, int rows perhaps?
+     *
+     * TODO: As soon as we're out of the prototyping stage, this will need to turn into a paging
+     * method; int offset, int rows perhaps?
      * TODO: Ideally this would be a single join.
      * TODO: need a powerful way to supply search criteria.
      */
@@ -184,31 +192,32 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (records.size() == 0) {
             return records;
         }
-        // construct an array of item id's we need to load
+
+        // construct an array of item ids we need to load
         Comparable[] idArr = new Integer[records.size()];
         int ii = 0;
         for (CatalogRecord record : records) {
             idArr[ii ++] = record.itemId;
         }
-        // load those items
-        Collection<? extends T> items = 
-            findAll(getItemClass(), new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr)));
-        // map item ID's to items        
+
+        // load those items and map item ID's to items
+        Collection<? extends T> items = findAll(
+            getItemClass(), new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr)));
         Map<Integer, T> map = new HashMap<Integer, T>();
         for (T iRec : items) {
             map.put(iRec.itemId, iRec);
         }
-        // and finally populate the catalog records
+
+        // finally populate the catalog records
         for (CatalogRecord<T> record : records) {
             record.item = map.get(record.itemId);
         }
         return records;
     }
 
-
     /**
-     * Inserts the supplied item into the database. {@link Item#itemId} will be
-     * filled in as a result of this call.
+     * Inserts the supplied item into the database. {@link Item#itemId} will be filled in as a
+     * result of this call.
      */
     public void insertOriginalItem (T item)
         throws PersistenceException
@@ -229,19 +238,20 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Perform the low level operations involved with listing an item in
-     * the catalog: create a row in the item table for a new, immutable
-     * version of the item, then an associated row in the catalog table.
+     * Perform the low level operations involved with listing an item in the catalog: create a row
+     * in the item table for a new, immutable version of the item, then an associated row in the
+     * catalog table.
+     *
      * TODO: this method modifies the input value, totally unintuitive!
      */
-    public CatalogRecord insertListing (
-            ItemRecord listItem, Timestamp listedDate)
+    public CatalogRecord insertListing (ItemRecord listItem, Timestamp listedDate)
         throws PersistenceException
     {
         if (listItem.ownerId != -1) {
             throw new PersistenceException(
                 "Can't list item with owner [itemId=" + listItem.itemId + "]");
         }
+
         CatalogRecord<T> record;
         try {
             record = getCatalogClass().newInstance();
@@ -257,10 +267,9 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Insert an item clone into the database with the given owner.
-     * This fills itemId with the next available unique ID and ownerId
-     * with the supplied value for the new owner.
-     * */
+     * Insert an item clone into the database with the given owner.  This fills itemId with the
+     * next available unique ID and ownerId with the supplied value for the new owner.
+     */
     public int insertClone (int itemId, int newOwnerId)
         throws PersistenceException
     {
@@ -278,24 +287,23 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /** Delete an item clone from the database */
     public void deleteClone (int cloneId)
-            throws PersistenceException
+        throws PersistenceException
     {
         delete(getCloneClass(), cloneId);
     }
 
     public RatingRecord<T> getRating (int itemId, int memberId)
-            throws PersistenceException
+        throws PersistenceException
     {
-        return load(getRatingClass(),
-                    new Key(RatingRecord.ITEM_ID, itemId,
-                            RatingRecord.MEMBER_ID, memberId));
-
+        return load(getRatingClass(), new Key(RatingRecord.ITEM_ID, itemId,
+                                              RatingRecord.MEMBER_ID, memberId));
     }
 
-    /** Insert/update a rating row, calculate the new rating and finally
-     *  update the item's rating. */
+    /**
+     * Insert/update a rating row, calculate the new rating and finally update the item's rating.
+     */
     public float rateItem (final int itemId, int memberId, byte rating)
-            throws PersistenceException
+        throws PersistenceException
     {
         // first create a new rating record
         RatingRecord<T> record;
@@ -324,12 +332,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         updatePartial(getItemClass(), itemId, new Object[] { ItemRecord.RATING, newRating });
         return newRating;
     }
-    @Computed @Entity
-    public static class RatingAverageRecord {
-        public int count;
-        public int sum;
-    }
-
 
     /**
      * Join TagNameRecord and TagRecord, group by tag, and count how many items
@@ -339,17 +341,20 @@ public abstract class ItemRepository<T extends ItemRecord>
         throws PersistenceException
     {
         return findAll(TagPopularityRecord.class,
-            new FromOverride(getTagClass()),
-            new Join(new ColumnExp(getTagClass(), TagRecord.TAG_ID), TagNameRecord.TAG_ID_C),
-            new FieldOverride(TagPopularityRecord.TAG_ID, TagNameRecord.TAG_ID_C),
-            new FieldOverride(TagPopularityRecord.TAG, TagNameRecord.TAG_C),
-            new FieldOverride(TagPopularityRecord.COUNT, "count(*)"),
-            new GroupBy(TagNameRecord.TAG_ID_C));
+                       new FromOverride(getTagClass()),
+                       new Join(new ColumnExp(getTagClass(), TagRecord.TAG_ID),
+                                TagNameRecord.TAG_ID_C),
+                       new FieldOverride(TagPopularityRecord.TAG_ID, TagNameRecord.TAG_ID_C),
+                       new FieldOverride(TagPopularityRecord.TAG, TagNameRecord.TAG_C),
+                       new FieldOverride(TagPopularityRecord.COUNT, "count(*)"),
+                       new GroupBy(TagNameRecord.TAG_ID_C));
     }
-    
-    /** Load all tag records for the given item, translated to tag names. */
+
+    /**
+     * Loads all tag records for the given item, translated to tag names.
+     */
     public Iterable<TagNameRecord> getTags (int itemId)
-            throws PersistenceException
+        throws PersistenceException
     {
         return findAll(TagNameRecord.class,
                        new Key(TagRecord.ITEM_ID, itemId),
@@ -357,25 +362,29 @@ public abstract class ItemRepository<T extends ItemRecord>
                                 new ColumnExp(getTagClass(), TagRecord.TAG_ID)));
     }
 
-    /** Load all the tag history records for a given item. */
-    public Iterable<? extends TagHistoryRecord<T>> getTagHistoryByItem (
-        int itemId)
-            throws PersistenceException
+    /**
+     * Loads all the tag history records for a given item.
+     */
+    public Iterable<? extends TagHistoryRecord<T>> getTagHistoryByItem (int itemId)
+        throws PersistenceException
     {
         return findAll(getTagHistoryClass(), new Key(TagHistoryRecord.ITEM_ID, itemId));
     }
 
-    /** Load all the tag history records for a given member. */
-    public Iterable<? extends TagHistoryRecord<T>> getTagHistoryByMember (
-        int memberId)
-            throws PersistenceException
+    /**
+     * Loads all the tag history records for a given member.
+     */
+    public Iterable<? extends TagHistoryRecord<T>> getTagHistoryByMember (int memberId)
+        throws PersistenceException
     {
         return findAll(getTagHistoryClass(), new Key(TagHistoryRecord.MEMBER_ID, memberId));
     }
 
-    /** Find the tag record for a certain tag, or create it. */
+    /**
+     * Finds the tag record for a certain tag, or create it.
+     */
     public TagNameRecord getTag (String tagName)
-            throws PersistenceException
+        throws PersistenceException
     {
         // load the tag, if it exists
         TagNameRecord record = load(TagNameRecord.class, new Key(TagNameRecord.TAG, tagName));
@@ -388,22 +397,21 @@ public abstract class ItemRepository<T extends ItemRecord>
         return record;
     }
 
-    /** Find the tag record for a certain tag id, or create it. */
+    /**
+     * Find the tag record for a certain tag id, or create it.
+     */
     public TagNameRecord getTag (int tagId)
-            throws PersistenceException
+        throws PersistenceException
     {
         return load(TagNameRecord.class, new Key(TagNameRecord.TAG_ID, tagId));
     }
 
-
     /**
-     * Add a tag to an item. If the tag already exists, return false and do
-     * nothing else. If it did not, create the tag and add a record in the
-     * history table.
+     * Add a tag to an item. If the tag already exists, return false and do nothing else. If it did
+     * not, create the tag and add a record in the history table.
      */
-    public TagHistoryRecord<T> tagItem (
-        int itemId, int tagId, int taggerId, long now)
-            throws PersistenceException
+    public TagHistoryRecord<T> tagItem (int itemId, int tagId, int taggerId, long now)
+        throws PersistenceException
     {
         TagRecord<T> tag = load(
             getTagClass(),
@@ -411,12 +419,12 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (tag != null) {
             return null;
         }
+
         try {
             tag = getTagClass().newInstance();
         } catch (Exception e) {
-            throw new PersistenceException(
-                "Failed to create a new item tag record " +
-                "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
+            throw new PersistenceException("Failed to create a new item tag record " +
+                                           "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
         }
         tag.itemId = itemId;
         tag.tagId = tagId;
@@ -426,9 +434,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         try {
             history = getTagHistoryClass().newInstance();
         } catch (Exception e) {
-            throw new PersistenceException(
-                "Failed to create a new item tag history tag record " +
-                "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
+            throw new PersistenceException("Failed to create a new item tag history tag record " +
+                                           "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
         }
         history.itemId = itemId;
         history.tagId = tagId;
@@ -440,13 +447,11 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Remove a tag from an item. If the tag didn't exist, return false and
-     * do nothing else. If it did, remove the tag and add a record in the
-     * history table.
+     * Remove a tag from an item. If the tag didn't exist, return false and do nothing else. If it
+     * did, remove the tag and add a record in the history table.
      */
-    public TagHistoryRecord<T> untagItem (
-        int itemId, int tagId, int taggerId, long now)
-            throws PersistenceException
+    public TagHistoryRecord<T> untagItem (int itemId, int tagId, int taggerId, long now)
+        throws PersistenceException
     {
         TagRecord<T> tag = load(
             getTagClass(),
@@ -474,28 +479,25 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Copy all tags from one item to another. We have to resort to JDBC
-     * here, because we want to do the rather non-generic:
+     * Copy all tags from one item to another. We have to resort to JDBC here, because we want to
+     * do the rather non-generic:
      *
      *   INSERT INTO PhotoTagRecord (itemId, tagId)
      *        SELECT 153567, tagId
      *          FROM PhotoTagRecord
      *         WHERE itemId = 89736;
      */
-    public int copyTags (final int fromItemId, final int toItemId,
-                         int ownerId, long now)
-            throws PersistenceException
+    public int copyTags (final int fromItemId, final int toItemId, int ownerId, long now)
+        throws PersistenceException
     {
-        final String tagTable =
-            _ctx.getMarshaller(getTagClass()).getTableName();
+        final String tagTable = _ctx.getMarshaller(getTagClass()).getTableName();
         int rows = _ctx.invoke(new Modifier(null) {
             public int invoke (Connection conn) throws SQLException {
                 PreparedStatement stmt = null;
                 try {
                     stmt = conn.prepareStatement(
                         " INSERT INTO " + tagTable +
-                        " (" + TagRecord.ITEM_ID + ", " +
-                               TagRecord.TAG_ID + ")" +
+                        " (" + TagRecord.ITEM_ID + ", " + TagRecord.TAG_ID + ")" +
                         "      SELECT ?, " + TagRecord.TAG_ID +
                         "        FROM " + tagTable +
                         "       WHERE " + TagRecord.ITEM_ID + " = ?");
@@ -526,11 +528,39 @@ public abstract class ItemRepository<T extends ItemRecord>
         return rows;
     }
 
+    /**
+     * Specific item repositories override this method and indicate the class of item on which they
+     * operate.
+     */
     protected abstract Class<T> getItemClass ();
+
+    /**
+     * Specific item repositories override this method and indicate their item's clone persistent
+     * record class.
+     */
     protected abstract Class<? extends CloneRecord<T>> getCloneClass ();
+
+    /**
+     * Specific item repositories override this method and indicate their item's catalog persistent
+     * record class.
+     */
     protected abstract Class<? extends CatalogRecord<T>> getCatalogClass ();
 
+    /**
+     * Specific item repositories override this method and indicate their item's tag persistent
+     * record class.
+     */
     protected abstract Class<? extends TagRecord<T>> getTagClass ();
+
+    /**
+     * Specific item repositories override this method and indicate their item's tag history
+     * persistent record class.
+     */
     protected abstract Class<? extends TagHistoryRecord<T>> getTagHistoryClass ();
+
+    /**
+     * Specific item repositories override this method and indicate their item's rating persistent
+     * record class.
+     */
     protected abstract Class<? extends RatingRecord<T>> getRatingClass ();
 }

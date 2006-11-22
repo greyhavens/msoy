@@ -1,14 +1,15 @@
 //
 // $Id$
 
-package client.inventory;
+package client.item;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.msoy.item.web.ItemDetail;
+
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.client.WebContext;
 
@@ -17,42 +18,54 @@ public class ItemRating extends Image
 {
     /** Display only the item's average rating. Allow no updates. */
     public static final int MODE_READ = 1;
+
     /** Display only the user's rating of the item. Allow updates. */
     public static final int MODE_WRITE = 2;
+
     /** Display average rating, or user's on mouse-over, with updates. */
     public static final int MODE_BOTH = 3;
 
-    public ItemRating (WebContext ctx, ItemDetail detail, int mode)
+    public ItemRating (WebContext ctx, Item item, byte memberRating)
     {
-        super();
-        _detail = detail;
-        _ctx = ctx;
-        _itemId = new ItemIdent(
-            _detail.item.getType(), _detail.item.getProgenitorId());
-        _mode = mode;
         setStyleName("itemRating");
-        
         addMouseListener(this);
+
+        _ctx = ctx;
+        _item = item;
+        _memberRating = memberRating;
+        _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
+        // we can rate this item if it's a clone, or if it's listed
+        _mode = (_item.parentId != -1 || _item.ownerId == -1) ?
+            ItemRating.MODE_BOTH : ItemRating.MODE_READ;
+
         update();
     }
 
+    // from interface MouseListener
     public void onMouseEnter (Widget sender)
     {
         // we act on mouseMove
     }
+
+    // from interface MouseListener
     public void onMouseLeave (Widget sender)
     {
         update();
     }
+
+    // from interface MouseListener
     public void onMouseMove (Widget sender, int x, int y)
     {
         update(x, sender.getOffsetWidth());
     }
 
+    // from interface MouseListener
     public void onMouseDown (Widget sender, int x, int y)
     {
         // we act on mouseUp
     }
+
+    // from interface MouseListener
     public void onMouseUp (Widget sender, int x, int y)
     {
         // make sure we're still on the widget when we unclick
@@ -68,7 +81,7 @@ public class ItemRating extends Image
     {
         setUrl("/msoy/stars/" + getRatingImage(-1, -1) + ".gif");
     }
-    
+
     // called when we are over the widget
     protected void update (int pos, int width)
     {
@@ -77,7 +90,7 @@ public class ItemRating extends Image
             setUrl("/msoy/stars/" + getRatingImage(pos, width) + ".gif");
         }
     }
-    
+
     // calculate the right image to display for this situation
     protected String getRatingImage (int pos, int width)
     {
@@ -86,45 +99,46 @@ public class ItemRating extends Image
             String imgBase = "stars_";
             float ratingToDisplay;
             if (_mode == MODE_WRITE || pos != -1) {
-                ratingToDisplay = _detail.memberRating;
+                ratingToDisplay = _memberRating;
                 imgBase += "2";
-
             } else {
-                ratingToDisplay = _detail.item.rating;
+                ratingToDisplay = _item.rating;
                 if (ratingToDisplay == 0.0) {
                     return "stars_2_0";
                 }
                 imgBase += "1";
             }
             // translate [1.0, 5.0] to (10, 15, ..., 50)
-            return imgBase + "_" + ((int) (_detail.item.rating * 2)) * 5;
+            return imgBase + "_" + ((int) (_item.rating * 2)) * 5;
         }
+
         // if we're mousing over the widget and are configured to update the
         // user's rating, vary the # of stars depending on pointer's position
         return "stars_2_" + (10 + ((pos * 5) / width) * 10);
     }
 
-    // perform a server call to give an item a new rating by this member
+    /**
+     * Performs a server call to give an item a new rating by this member.
+     */
     protected void rateItem (byte newRating)
     {
-        _ctx.itemsvc.rateItem(
-            _ctx.creds, _itemId, newRating,
-            new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    _detail = (ItemDetail) result;
-                    _mode = MODE_READ;
-                    update();
-                }
-                public void onFailure (Throwable caught) {
-                    GWT.log("rateItem failed", caught);
-                    // TODO: Error image?
-                }
-            });
+        _memberRating = newRating;
+        _ctx.itemsvc.rateItem(_ctx.creds, _itemId, newRating, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _item.rating = ((Float)result).floatValue();
+                _mode = MODE_READ;
+                update();
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("rateItem failed", caught);
+                // TODO: Error image?
+            }
+        });
     }
-    
-    protected WebContext _ctx;
-    protected ItemIdent _itemId;
-    protected ItemDetail _detail;
-    protected int _mode;
 
+    protected WebContext _ctx;
+    protected Item _item;
+    protected ItemIdent _itemId;
+    protected int _mode;
+    protected byte _memberRating;
 }
