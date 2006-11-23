@@ -27,6 +27,7 @@ public class GroupServlet extends RemoteServiceServlet
     public GroupDetail getGroupDetail (WebCreds creds, int groupId)
         throws ServiceException
     {
+        // TODO: validate creds
         ServletWaiter<GroupDetail> waiter =
             new ServletWaiter<GroupDetail>("getGroupDetail[" + groupId + "]");
         MsoyServer.memberMan.getGroupDetail(groupId, waiter);
@@ -56,6 +57,7 @@ public class GroupServlet extends RemoteServiceServlet
     // from interface GroupService
     public Group createGroup (WebCreds creds, Group group) throws ServiceException
     {
+        // TODO: validate creds
         ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
         group.creationDate = new Date(System.currentTimeMillis());
         group.creatorId = creds.memberId;
@@ -66,6 +68,7 @@ public class GroupServlet extends RemoteServiceServlet
     // from interface GroupService
     public void updateGroup (WebCreds creds, Group group) throws ServiceException
     {
+        // TODO: validate creds
         ServletWaiter<Void> waiter = new ServletWaiter<Void>("createGroup[" + group + "]");
         MsoyServer.memberMan.updateGroup(group.groupId, group.name, group.charter,
                                          group.logo, group.policy, waiter);
@@ -75,20 +78,20 @@ public class GroupServlet extends RemoteServiceServlet
     // from interface GroupService
     public void leaveGroup (WebCreds creds, int groupId, int memberId) throws ServiceException
     {
+        // TODO: validate creds
         ServletWaiter<Void> waiter = new ServletWaiter<Void>(
                 "createGroup[" + groupId + ", " + memberId + "]");
         MsoyServer.memberMan.leaveGroup(groupId, memberId, waiter);
         waiter.waitForResult();
-
     }
 
     // from interface GroupService
     public void joinGroup (WebCreds creds, int groupId, int memberId) throws ServiceException
     {
+        // TODO: validate creds
         ServletWaiter<Void> waiter = new ServletWaiter<Void>(
                 "createGroup[" + groupId + ", " + memberId + "]");
         MsoyServer.memberMan.joinGroup(groupId, memberId, GroupMembership.RANK_MEMBER, waiter);
         waiter.waitForResult();
-
     }
 }
