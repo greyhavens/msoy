@@ -1,1 +1,16 @@
-# empty
+.catalogContents {
+   padding: 10px;
+   width: 800px;
+}
+
+.tagContents {
+   padding: 10px;
+}
+
+.itemDescrip {
+  font-size: 14px;
+}
+
+.itemCreator {
+  font-size: 12px;
+}

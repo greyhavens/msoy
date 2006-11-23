@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -65,7 +66,9 @@ public abstract class PagedGrid extends Grid
 
         setWidget(row+1, 0, _prev);
         _prev.setEnabled(start > 0);
-        setWidget(row+1, 1, _next);
+        setWidget(row+1, numColumns-1, _next);
+        getCellFormatter().setHorizontalAlignment(
+            row+1, numColumns-1, HasHorizontalAlignment.ALIGN_RIGHT);
         _next.setEnabled(start+limit < _items.size());
     }
 

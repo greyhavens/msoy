@@ -34,6 +34,7 @@
 /** Header styles. */
 body {
   margin: 0px;
+  font-family: Arial, Verdana, Helvetica, sans-serif;
 }
 
 .msoyHeader .Left {
@@ -106,15 +107,19 @@ body {
   height: 20px;
 }
 
-.logonPanel .Top {
-  font-family: Arial, Verdana, Helvetica, sans-serif;
-  font-size: 8px;
+.logonPanel {
+  margin-right: 10px
 }
 
 .logonPanel .Top {
-  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-size: 8px;
+  margin-right: 5px;
+}
+
+.logonPanel .Main {
   font-size: 12px;
   font-weight: bold;
+  margin-right: 5px;
 }
 
 .logonPopup {

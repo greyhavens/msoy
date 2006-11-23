@@ -40,16 +40,16 @@ public class ItemContainer extends VerticalPanel
         final Item item = listing.item;
 
         Widget disp = createContainer(item);
-        disp.setStyleName("item_thumb_image");
+        disp.setStyleName("itemThumbImage");
         disp.setHeight(THUMB_HEIGHT + "px");
         add(disp);
 
         Label descrip = new Label(truncateDescription(item.getDescription()));
-        descrip.setStyleName("item_thumb_text");
+        descrip.setStyleName("itemDescrip");
         add(descrip);
 
         Label creator = new Label("by " + listing.creator.memberName);
-        creator.setStyleName("item_creator_text");
+        creator.setStyleName("itemCreator");
         add(creator);
 
         Button button = new Button("Buy!");

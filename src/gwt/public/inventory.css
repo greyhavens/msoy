@@ -6,21 +6,18 @@
    font-weight: bold;
 }
 
-.inventory_item { 
-   border: 1px solid;
-}
-
-.inventory_contents { 
-   border: 1px solid;
+.inventoryContents {
    padding: 10px;
    margin-bottom: 10px;
+   width: 800px;
 }
 
-.item_thumb_image {
+.itemThumbImage {
   border: 1px solid;
   padding: 5px;
 }
 
-.item_thumb_text {
+.itemThumbText {
+  text-decoration: underline;
   font-size: small;
 }

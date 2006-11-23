@@ -31,6 +31,9 @@ public class LogonPanel extends FlexTable
     public LogonPanel (WebContext ctx, MsoyEntryPoint app)
     {
         setStyleName("logonPanel");
+        setCellPadding(0);
+        setCellSpacing(0);
+
         _ctx = ctx;
         _app = app;
 

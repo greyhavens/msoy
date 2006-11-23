@@ -30,13 +30,19 @@ import com.threerings.msoy.web.client.WebContext;
  */
 public class ItemPanel extends DockPanel
 {
+    /** The number of columns of items to display. */
+    public static final int COLUMNS = 4;
+
+    /** The number of rows of items to display. */
+    public static final int ROWS = 3;
+
     public ItemPanel (WebContext ctx, byte type)
     {
         // setStyleName("inventory_item");
         _ctx = ctx;
         _type = type;
 
-        _items = new PagedGrid(3, 2) {
+        _items = new PagedGrid(ROWS, COLUMNS) {
             protected Widget createWidget (Object item) {
                 return new ItemContainer((CatalogListing)item, ItemPanel.this);
             }
@@ -44,9 +50,9 @@ public class ItemPanel extends DockPanel
                 return "There are no " + Item.getTypeName(_type) + " items listed.";
             }
         };
-        _items.setStyleName("catalog_contents");
+        _items.setStyleName("catalogContents");
         _tags = new FlowPanel();
-        _tags.setStyleName("tag_contents");
+        _tags.setStyleName("tagContents");
         updateContents();
 
         Button button = new Button("Items/Tags");

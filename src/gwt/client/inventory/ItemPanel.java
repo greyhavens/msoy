@@ -25,18 +25,19 @@ import com.threerings.msoy.web.client.WebContext;
  */
 public class ItemPanel extends VerticalPanel
 {
-    public static final int COLUMNS = 2;
+    /** The number of columns of items to display. */
+    public static final int COLUMNS = 4;
 
+    /** The number of rows of items to display. */
     public static final int ROWS = 3;
 
     public ItemPanel (WebContext ctx, byte type)
     {
-        // setStyleName("inventory_item");
         _ctx = ctx;
         _type = type;
 
-        // this will contain our items (an extra for for "next, back")
-        add(_contents = new PagedGrid(ROWS+1, COLUMNS) {
+        // this will contain our items
+        add(_contents = new PagedGrid(ROWS, COLUMNS) {
             protected Widget createWidget (Object item) {
                 return new ItemContainer(ItemPanel.this, (Item)item);
             }
@@ -44,7 +45,7 @@ public class ItemPanel extends VerticalPanel
                 return "You have no " + Item.getTypeName(_type) + " items.";
             }
         });
-        _contents.setStyleName("inventory_contents");
+        _contents.setStyleName("inventoryContents");
 
         // this will allow us to create new items
         add(_create = new Button("Create new..."));
