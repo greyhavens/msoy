@@ -49,14 +49,19 @@ public class GroupView extends DockPanel
         loadGroup(groupId);
     }
 
-    // callback from {@link GroupEdit}; reload the group 
+    /**
+     * Called by {@link GroupEdit}; reloads the group.
+     */
     public void groupSubmitted (Group group)
     {
         loadGroup(group.groupId);
     }
 
-    // fetch the details of the group from the backend and trigger a UI rebuild
-    protected void loadGroup (int groupId) {
+    /**
+     * Fetches the details of the group from the backend and trigger a UI rebuild.
+     */
+    protected void loadGroup (int groupId)
+    {
         _ctx.groupsvc.getGroupDetail(_ctx.creds, groupId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _detail = (GroupDetail) result;
@@ -78,8 +83,11 @@ public class GroupView extends DockPanel
         });
     }
 
-    // rebuild the UI from scratch
-    protected void buildUI () {
+    /**
+     * Rebuilds the UI from scratch.
+     */
+    protected void buildUI ()
+    {
         // the button panel
         if (_buttonPanel != null) {
             remove(_buttonPanel);
@@ -105,7 +113,7 @@ public class GroupView extends DockPanel
         }
         _table = new HeaderValueTable();
         add(_table, DockPanel.CENTER);
-        
+
         _table.addHeader("Group Information");
         _table.addRow("Group ID", String.valueOf(_group.groupId), "Name", _group.name);
         _table.addRow("Charter", _group.charter != null ? _group.charter : "(none written)");
@@ -121,7 +129,7 @@ public class GroupView extends DockPanel
 
         // TODO: the member display is very simplistic at the moment, and probably needs the
         // TODO: most work, both aesthetically and functionality-wise.
-        
+
         FlowPanel memberFlow = new FlowPanel();
         Iterator i = _detail.members.entrySet().iterator();
         boolean first = true;
@@ -151,7 +159,9 @@ public class GroupView extends DockPanel
         _table.addRow("Members", memberFlow);
     }
 
-    // remove a member from the group, and then trigger a reload/UI rebuild
+    /**
+     * Removes a member from the group, and then trigger a reload/UI rebuild.
+     */
     protected void removeMember (final int memberId)
     {
         _ctx.groupsvc.leaveGroup(_ctx.creds, _group.groupId, memberId, new AsyncCallback() {
@@ -165,7 +175,7 @@ public class GroupView extends DockPanel
             }
         });
     }
-    
+
     protected void addError (String error)
     {
         _errorContainer.add(new Label(error));
@@ -180,7 +190,7 @@ public class GroupView extends DockPanel
     protected Group _group;
     protected GroupDetail _detail;
     protected boolean _amAdmin;
-    
+
     protected HeaderValueTable _table;
     protected HorizontalPanel _buttonPanel;
     protected VerticalPanel _errorContainer;
