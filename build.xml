@@ -84,7 +84,7 @@
   </target>
 
   <!-- runs the GWT debugging shell -->
-  <property name="page"  value="index.html"/>
+  <property name="page"  value="inventory.html"/>
   <target name="gshell">
     <available property="gwtdir.present" file="lib/gwt"/>
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
@@ -94,6 +94,7 @@
       <fileset dir="lib/gwt" includes="*.jar"/>
       <pathelement location="${deploy.dir}/classes"/>
       <pathelement location="src/java"/>
+      <pathelement location="projects/threerings/src/java"/>
       <pathelement location="src/gwt"/>
     </path>
     <available property="gwt.present" classname="com.google.gwt.dev.GWTShell"
@@ -121,6 +122,7 @@
         <fileset dir="${extlib.dir}" includes="gwt*.jar"/>
         <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
         <pathelement location="src/java"/>
+        <pathelement location="projects/threerings/src/java"/>
         <pathelement location="src/gwt"/>
       </classpath>
       <!--<arg value="-style"/>-->
