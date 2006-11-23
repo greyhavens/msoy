@@ -15,7 +15,7 @@
 -injars ../dist/lib/toybox.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(
-  !META-INF/*,!**/tools/**,!**/server/**,!**/world/**,!**threerings/web/**,
+  !META-INF/*,!**/tools/**,!**/server/**,!**/world/server/**,!**threerings/web/**,
   !**/xml/**,!com/threerings/io/**)
 
 -dontskipnonpubliclibraryclasses
