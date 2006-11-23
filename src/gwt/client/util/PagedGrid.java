@@ -57,18 +57,19 @@ public abstract class PagedGrid extends Grid
             return;
         }
 
+        setWidget(0, 0, _prev);
+        setWidget(0, numColumns-1, _next);
+        getCellFormatter().setHorizontalAlignment(
+            0, numColumns-1, HasHorizontalAlignment.ALIGN_RIGHT);
+
         int rows = numRows - 1; // last row is reserved
         int count = numColumns * rows, start = numColumns * rows * page;
-        int limit = Math.min(count, _items.size()-start), row = -1;
+        int limit = Math.min(count, _items.size()-start);
         for (int ii = 0; ii < limit; ii++) {
-            setWidget(row = (ii / numColumns), ii % numColumns, createWidget(_items.get(ii+start)));
+            setWidget((ii / numColumns) + 1, ii % numColumns, createWidget(_items.get(ii+start)));
         }
 
-        setWidget(row+1, 0, _prev);
         _prev.setEnabled(start > 0);
-        setWidget(row+1, numColumns-1, _next);
-        getCellFormatter().setHorizontalAlignment(
-            row+1, numColumns-1, HasHorizontalAlignment.ALIGN_RIGHT);
         _next.setEnabled(start+limit < _items.size());
     }
 
