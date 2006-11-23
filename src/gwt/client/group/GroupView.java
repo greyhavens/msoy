@@ -61,11 +61,12 @@ public class GroupView extends DockPanel
             public void onSuccess (Object result) {
                 _detail = (GroupDetail) result;
                 _group = _detail.group;
-                // TODO: Is this too ugly?
-                MemberGName fakeName =
-                    new MemberGName("Member #" + _ctx.creds.memberId, _ctx.creds.memberId);
-                Byte myRank = (Byte) _detail.members.get(fakeName);
-                _amAdmin = myRank != null ?
+                Byte myRank = null;
+                if (_ctx.creds != null) {
+                    // TODO: Is this too ugly?
+                    myRank = (Byte) _detail.members.get(new MemberGName("", _ctx.creds.memberId));
+                }
+                _amAdmin = (myRank != null) ?
                     myRank.byteValue() == GroupMembership.RANK_MANAGER : false;
                 buildUI();
             }
