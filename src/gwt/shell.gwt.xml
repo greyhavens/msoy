@@ -1,6 +1,7 @@
 <module>
   <inherits name='com.google.gwt.user.User'/>
 
+  <public path="public/shell"/>
   <source path="client/shell"/>
   <source path="client/util"/>
   <source path="org/gwtwidgets/client"/>
@@ -9,7 +10,6 @@
   <source path="com/threerings/msoy/web/client"/>
   <source path="com/threerings/msoy/web/data"/>
   <source path="com/threerings/msoy/item/web"/>
-  <public path="public/shell"/>
 
   <servlet path="/usersvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
   <servlet path="/itemsvc" class="com.threerings.msoy.web.server.RedirectServlet"/>

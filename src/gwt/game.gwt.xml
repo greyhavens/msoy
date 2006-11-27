@@ -1,7 +1,6 @@
 <module>
   <inherits name='shell'/>
   <entry-point class='client.game.index'/>
-
-  <source path="client/game"/>
   <public path="public/game"/>
+  <source path="client/game"/>
 </module>

@@ -1,8 +1,7 @@
 <module>
   <inherits name='shell'/>
   <entry-point class='client.inventory.index'/>
-
+  <public path="public/inventory"/>
   <source path="client/item"/>
   <source path="client/inventory"/>
-  <public path="public/inventory"/>
 </module>
