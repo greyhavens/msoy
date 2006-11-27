@@ -1,7 +1,11 @@
 package com.threerings.msoy.item.web {
 
+import mx.utils.URLUtil;
+
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+
+import com.threerings.msoy.client.DeploymentConfig;
 
 /**
  * Provides a "faked" media descriptor for static media (default thumbnails and
@@ -31,8 +35,9 @@ public class StaticMediaDesc extends MediaDesc
     // from MediaDesc
     override public function getMediaPath () :String
     {
-        return "/media/static/" + _type + "/" +
-            Item.getTypeName(_itemType) + ".png";
+        return URLUtil.getFullURL(DeploymentConfig.mediaURL,
+            "/media/static/" + _type + "/" +
+            Item.getTypeName(_itemType) + ".png");
     }
 
     // documentation inherited from interface Streamable

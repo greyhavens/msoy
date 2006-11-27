@@ -4,6 +4,8 @@ import flash.geom.Point;
 
 import flash.utils.ByteArray;
 
+import mx.utils.URLUtil;
+
 import com.threerings.util.Hashable;
 import com.threerings.util.Util;
 import com.threerings.util.StringUtil;
@@ -11,6 +13,8 @@ import com.threerings.util.StringUtil;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
+
+import com.threerings.msoy.client.DeploymentConfig;
 
 /**
  * A class containing metadata about a media object.
@@ -173,13 +177,14 @@ public class MediaDesc
     }
 
     /**
-     * Returns the path of the URL that references this media.
+     * Returns the URL that references this media.
      */
     public function getMediaPath () :String
     {
-        //return "http://bogocorp.com/~ray/tempsoy/"
-        return "/media/"
-            + hashToString(hash) + mimeTypeToSuffix(mimeType);
+        return URLUtil.getFullURL(DeploymentConfig.mediaURL,
+            //"http://bogocorp.com/~ray/tempsoy/"
+            "/media/"
+            + hashToString(hash) + mimeTypeToSuffix(mimeType));
     }
 
     /**

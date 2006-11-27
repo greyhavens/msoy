@@ -1,8 +1,11 @@
 package com.threerings.msoy.client {
 
+import flash.system.Capabilities;
+
 import mx.controls.Button;
 
 import com.threerings.util.Controller;
+import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
@@ -219,7 +222,7 @@ public class MsoyController extends Controller
      */
     public function handleViewItem (args :Array) :void
     {
-        NetUtil.navigateToURL("item.html#" + args[0] + ";" + args[1], false);
+        showExternalURL("item.html#" + args[0] + ";" + args[1]);
     }
 
     /**
@@ -227,7 +230,7 @@ public class MsoyController extends Controller
      */
     public function handleViewMember (memberId :int) :void
     {
-        NetUtil.navigateToURL("person.html#" + memberId, false);
+        showExternalURL("person.html#" + memberId);
     }
 
     /**
@@ -251,11 +254,11 @@ public class MsoyController extends Controller
      */
     public function handleGoGameLobby (gameId :int) :void
     {
-        // TODO
-        if (/*shouldLaunchLobbyClient*/ true) {
-            NetUtil.navigateToURL("game.html#" + gameId);
-
-        } else {
+        if (!shouldLoadNewPages() ||
+                !NetUtil.navigateToURL("game.html#" + gameId)) {
+            // if we shouldn't or couldn't load a new page then we
+            // just load up the module inside this client
+            // TODO
             moveToGameLobby(int(gameId));
         }
     }
@@ -401,6 +404,29 @@ public class MsoyController extends Controller
             }
             _ctx.getSceneDirector().moveTo(starterSceneId);
         }
+    }
+
+    /**
+     * Convenience method for opening an external window and showing
+     * the specified url. This is done when we want to show the user something
+     * without unloading the msoy world.
+     */
+    protected function showExternalURL (url :String) :void
+    {
+        if (!NetUtil.navigateToURL(url, false)) {
+            _ctx.displayFeedback(null,
+                MessageBundle.tcompose("e.no_navigate", url));
+        }
+    }
+
+    /**
+     * Return true if we should attempt to load sections of metasoy by 
+     * visiting a new page.
+     */
+    protected function shouldLoadNewPages () :Boolean
+    {
+        var pt :String = Capabilities.playerType;
+        return (pt !== "StandAlone") && (pt !== "External")
     }
 
     /** Provides access to client-side directors and services. */
