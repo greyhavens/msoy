@@ -14,12 +14,9 @@ public class CookieUtil
      *
      * @param expires the number of days in which the cookie should expire.
      */
-    public static void set (String domain, String path, int expires, String name, String value)
+    public static void set (String path, int expires, String name, String value)
     {
         String extra = "";
-        if (domain.length() > 0) {
-            extra += "; domain=" + domain;
-        }
         if (path.length() > 0) {
             extra += "; path=" + path;
         }
@@ -29,9 +26,9 @@ public class CookieUtil
     /**
      * Clears out the specified cookie.
      */
-    public static void clear (String domain, String path, String name)
+    public static void clear (String path, String name)
     {
-        set(domain, path, -1, name, "");
+        set(path, -1, name, "");
     }
 
     /**
@@ -64,6 +61,18 @@ public class CookieUtil
             var date = new Date();
             date.setTime(date.getTime() + (expires*24*60*60*1000));
             extra += "; expires=" + date.toGMTString();
+        }
+        if (location.host != "localhost") {
+            var host = location.host;
+            var cidx = host.indexOf(":");
+            if (cidx != -1) {
+                host = host.substring(0, cidx);
+            }
+            var didx = host.indexOf(".");
+            if (didx != -1) {
+                host = host.substring(didx);
+            }
+            extra += "; domain=" + host;
         }
         $doc.cookie = name + "=" + escape(value) + extra;
     }-*/;

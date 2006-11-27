@@ -114,14 +114,12 @@ public class LogonPanel extends FlexTable
 
     protected void setCookie (String name, String value)
     {
-        String domain = GWT.isScript() ? "metasoy.com" : "";
-        CookieUtil.set(domain, "/", 7, name, value);
+        CookieUtil.set("/", 7, name, value);
     }
 
     protected void clearCookie (String name)
     {
-        String domain = GWT.isScript() ? "metasoy.com" : "";
-        CookieUtil.clear(domain, "/", name);
+        CookieUtil.clear("/", name);
     }
 
     protected native String md5hex (String text) /*-{
