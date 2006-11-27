@@ -32,7 +32,7 @@ public class NaviPanel extends FlexTable
 
     // TODO: translate
     protected static final String[] PAGES = {
-        "index", "World",
+        "world", "World",
         "profile", "Profile",
         "group", "Groups",
         "mail", "Mail",
