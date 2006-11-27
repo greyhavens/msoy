@@ -115,7 +115,7 @@ public class LogonPanel extends FlexTable
     protected void setCookie (String name, String value)
     {
         if (GWT.isScript()) {
-            CookieUtil.set(".metasoy.com", "/", name, value);
+            CookieUtil.set("metasoy.com", "/", name, value);
         } else {
             CookieUtil.set("/", name, value);
         }

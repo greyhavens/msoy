@@ -77,6 +77,6 @@ public class CookieUtil
      * Handles the actual setting of the cookie.
      */
     protected static native void doSet (String name, String value, String extra) /*-{
-        $doc.cookie = "\"" + name + "=" + escape(value) + extra + "\"";
+        $doc.cookie = name + "=" + escape(value) + extra;
     }-*/;
 }
