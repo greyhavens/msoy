@@ -1,6 +1,9 @@
 <!-- build configuration -->
 <project name="msoy" default="compile" basedir=".">
 
+  <!-- read in our server properties -->
+  <property file="server.properties"/>
+
   <!-- define some basic project parameters -->
   <property name="app.name"     value="msoy"/>
   <property name="doc.packages" value="com.threerings.msoy.*"/>
@@ -84,11 +87,15 @@
   </target>
 
   <!-- runs the GWT debugging shell -->
-  <property name="page" value="inventory"/>
   <target name="gshell">
+    <fail unless="page">
+      Please specify a page: ant -Dpage=inventory gshell
+    </fail>
+
     <available property="gwtdir.present" file="lib/gwt"/>
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
           unless="gwtdir.present"/>
+
     <path id="gwt.classpath">
       <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
       <fileset dir="lib/gwt" includes="*.jar"/>
