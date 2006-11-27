@@ -137,6 +137,11 @@ public class LogonPanel extends FlexTable
             setWidget(contents);
             contents.setText(0, 0, "Email:");
             contents.setWidget(0, 1, _email = new TextBox());
+            _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
+                public void onClick (Widget sender) {
+                    _password.setFocus(true);
+                }
+            }));
 
             contents.setText(1, 0, "Password:");
             contents.setWidget(1, 1, _password = new PasswordTextBox());
@@ -144,6 +149,14 @@ public class LogonPanel extends FlexTable
 
             contents.setWidget(2, 0, _status = new Label(""));
             contents.getFlexCellFormatter().setColSpan(2, 0, 2);
+        }
+
+        // @Override // from PopupPanel
+        public void show ()
+        {
+            super.show();
+            // TODO: remember their email and focus the password field?
+            _email.setFocus(true);
         }
 
         // from interface ClickListener

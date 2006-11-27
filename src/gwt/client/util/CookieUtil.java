@@ -12,33 +12,44 @@ public class CookieUtil
     /**
      * Sets the specified cookie to the supplied value.
      */
-    public static native void set (String name, String value) /*-{
-        $doc.cookie = "\"" + name + "=" + escape(value) + "\"";
-    }-*/;
+    public static void set (String name, String value)
+    {
+        set("", "", "", name, value);
+    }
 
     /**
      * Sets the specified cookie to the supplied value.
      */
-    public static native void set (String path, String name, String value) /*-{
-        $doc.cookie = "\"" + name + "=" + escape(value) + "; path=" + path + "\"";
-    }-*/;
+    public static void set (String path, String name, String value)
+    {
+        set("", path, "", name, value);
+    }
 
     /**
      * Sets the specified cookie to the supplied value.
      */
-    public static native void set (String domain, String path, String name, String value) /*-{
-        $doc.cookie = "\"" + name + "=" + escape(value) + "; domain=" + domain +
-            "; path=" + path + "\"";
-    }-*/;
+    public static void set (String domain, String path, String name, String value)
+    {
+        set(domain, path, "", name, value);
+    }
 
     /**
      * Sets the specified cookie to the supplied value.
      */
-    public static native void set (String domain, String path, String expires,
-                                   String name, String value) /*-{
-        $doc.cookie = "\"" + name + "=" + escape(value) + "; domain=" + domain + "; path=" + path +
-            "; expires=" + expires + "\"";
-    }-*/;
+    public static void set (String domain, String path, String expires, String name, String value)
+    {
+        String extra = "";
+        if (domain.length() > 0) {
+            extra += "; domain=" + domain;
+        }
+        if (path.length() > 0) {
+            extra += "; path=" + path;
+        }
+        if (expires.length() > 0) {
+            extra += "; expires=" + expires;
+        }
+        doSet(name, value, extra);
+    }
 
     /**
      * Looks up and returns the value for the specified cookie.
@@ -61,4 +72,11 @@ public class CookieUtil
         }
         return unescape(dc.substring(begin + prefix.length, end));
      }-*/;
+
+    /**
+     * Handles the actual setting of the cookie.
+     */
+    protected static native void doSet (String name, String value, String extra) /*-{
+        $doc.cookie = "\"" + name + "=" + escape(value) + extra + "\"";
+    }-*/;
 }
