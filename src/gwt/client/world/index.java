@@ -41,10 +41,8 @@ public class index extends MsoyEntryPoint
             if (GWT.isScript()) {
                 if (_client == null) {
                     _client = WidgetUtil.createFlashContainer(
-                        // TODO: fix height arg to be 100%
-                        // (doesn't currently work)
-                        "asclient", "/clients/game-client.swf", "800", "600",
-                        null);
+                        // TODO: fix height arg to be 100% (doesn't currently work)
+                        "asclient", "/clients/game-client.swf", "100%", "550", null);
                 }
                 RootPanel.get("content").add(_client);
             }
