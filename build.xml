@@ -122,8 +122,7 @@
   </target>
 
   <!-- builds our GWT web client -->
-  <!--<property name="pages" value="catalog,game,group,inventory,mail,profile,world"/>-->
-  <property name="pages" value="catalog,inventory"/>
+  <property name="pages" value="catalog,game,group,inventory,mail,profile,world"/>
   <target name="gclient">
     <for list="${pages}" param="page"><sequential>
       <echo>Compiling @{page} module...</echo>
