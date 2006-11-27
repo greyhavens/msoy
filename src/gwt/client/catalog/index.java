@@ -31,24 +31,7 @@ public class index extends MsoyEntryPoint
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
-        RootPanel.get("content").clear();
-
-        // if we have no creds, just display a message saying login
-        if (_ctx.creds == null) {
-            RootPanel.get("content").add(
-                new Label("Log in above to access the catalog."));
-            return;
-        }
-
-        if (token.equals("upload")) {
-            // TODO
-
-        } else { // "inventory" or hacked URL
-            if (_catalog == null) {
-                _catalog = new CatalogPanel(_ctx);
-            }
-            RootPanel.get("content").add(_catalog);
-        }
+        // TODO: anything?
     }
 
     // @Override // from MsoyEntryPoint
@@ -60,6 +43,9 @@ public class index extends MsoyEntryPoint
     // @Override from MsoyEntryPoint
     protected void onPageLoad ()
     {
+        _catalog = new CatalogPanel(_ctx);
+        RootPanel.get("content").add(_catalog);
+
         History.addHistoryListener(this);
         String initToken = History.getToken();
         if (initToken.length() > 0) {
@@ -67,21 +53,6 @@ public class index extends MsoyEntryPoint
         } else {
             onHistoryChanged("catalog");
         }
-    }
-
-    // @Override from MsoyEntryPoint
-    protected void didLogon (WebCreds creds)
-    {
-        super.didLogon(creds);
-        onHistoryChanged("catalog");
-    }
-
-    // @Override from MsoyEntryPoint
-    protected void didLogoff ()
-    {
-        super.didLogoff();
-        _catalog = null;
-        onHistoryChanged("catalog");
     }
 
     protected CatalogPanel _catalog;
