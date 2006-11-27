@@ -13,9 +13,8 @@ public class WidgetUtilImpl
     /**
      * Creates the HTML needed to display a Flash movie.
      */
-    public HTML createFlashContainer (
-        String ident, String movie, String width, String height,
-        String flashVars)
+    public HTML createFlashContainer (String ident, String movie, String width, String height,
+                                      String flashVars)
     {
         String params = "<param name=\"movie\" value=\"" + movie + "\">" +
             "<param name=\"allowFullScreen\" value=\"true\">";
@@ -23,21 +22,25 @@ public class WidgetUtilImpl
             params += "<param name=\"FlashVars\" value=\"" + flashVars + "\">";
         }
 
-        return new HTML(
-            "<object id=\"" + ident + "\" " + // IE crap
-            "width=\"" + width + "\" height=\"" + height + "\" " +
-            "classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\" " +
-            "codebase=\"http://active.macromedia.com/flash7/cabs/" +
+        String tag = "<object id=\"" + ident + "\"";
+        if (width.length() > 0) {
+            tag += " width=\"" + width + "\"";
+        }
+        if (height.length() > 0) {
+            tag += " height=\"" + height + "\"";
+        }
+        tag += " classid=\"clsid:d27cdb6e-ae6d-11cf-96b8-444553540000\"" +
+            " codebase=\"http://active.macromedia.com/flash7/cabs/" +
             "swflash.cab#version=9,0,0,0\" allowScriptAccess=\"sameDomain\">" +
-            params + "</object>");
+            params + "</object>";
+        return new HTML(tag);
     }
 
     /**
      * Creates the HTML needed to display a Java applet.
      */
-    public HTML createApplet (
-        String ident, String archive, String clazz,
-        String width, String height, String ptags)
+    public HTML createApplet (String ident, String archive, String clazz,
+                              String width, String height, String ptags)
     {
         return new HTML(
             "<object classid=\"clsid:8AD9C840-044E-11D1-B3E9-00805F499D93\" " +

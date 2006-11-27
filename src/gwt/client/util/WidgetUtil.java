@@ -35,9 +35,8 @@ public class WidgetUtil
      *        or null.
      *        http://www.adobe.com/cfusion/knowledgebase/index.cfm?id=tn_16417
      */
-    public static HTML createFlashContainer (
-        String ident, String movie, String width, String height,
-        String flashVars)
+    public static HTML createFlashContainer (String ident, String movie, String width,
+                                             String height, String flashVars)
     {
         return _impl.createFlashContainer(ident, movie, width, height, flashVars);
     }
@@ -46,9 +45,8 @@ public class WidgetUtil
      * Creates the HTML to display a Java applet for the browser on which we're
      * running.
      */
-    public static HTML createApplet (
-        String ident, String archive, String clazz,
-        int width, int height, String[] params)
+    public static HTML createApplet (String ident, String archive, String clazz,
+                                     int width, int height, String[] params)
     {
         return createApplet(ident, archive, clazz, ""+width, ""+height, params);
     }
@@ -57,9 +55,8 @@ public class WidgetUtil
      * Creates the HTML to display a Java applet for the browser on which we're
      * running.
      */
-    public static HTML createApplet (
-        String ident, String archive, String clazz,
-        String width, String height, String[] params)
+    public static HTML createApplet (String ident, String archive, String clazz,
+                                     String width, String height, String[] params)
     {
         String ptags = "";
         for (int ii = 0; ii < params.length; ii += 2) {
