@@ -11,32 +11,10 @@ public class CookieUtil
 {
     /**
      * Sets the specified cookie to the supplied value.
+     *
+     * @param expires the number of days in which the cookie should expire.
      */
-    public static void set (String name, String value)
-    {
-        set("", "", "", name, value);
-    }
-
-    /**
-     * Sets the specified cookie to the supplied value.
-     */
-    public static void set (String path, String name, String value)
-    {
-        set("", path, "", name, value);
-    }
-
-    /**
-     * Sets the specified cookie to the supplied value.
-     */
-    public static void set (String domain, String path, String name, String value)
-    {
-        set(domain, path, "", name, value);
-    }
-
-    /**
-     * Sets the specified cookie to the supplied value.
-     */
-    public static void set (String domain, String path, String expires, String name, String value)
+    public static void set (String domain, String path, int expires, String name, String value)
     {
         String extra = "";
         if (domain.length() > 0) {
@@ -45,10 +23,15 @@ public class CookieUtil
         if (path.length() > 0) {
             extra += "; path=" + path;
         }
-        if (expires.length() > 0) {
-            extra += "; expires=" + expires;
-        }
-        doSet(name, value, extra);
+        doSet(name, value, expires, extra);
+    }
+
+    /**
+     * Clears out the specified cookie.
+     */
+    public static void clear (String domain, String path, String name)
+    {
+        set(domain, path, -1, name, "");
     }
 
     /**
@@ -76,7 +59,12 @@ public class CookieUtil
     /**
      * Handles the actual setting of the cookie.
      */
-    protected static native void doSet (String name, String value, String extra) /*-{
+    protected static native void doSet (String name, String value, int expires, String extra) /*-{
+        if (expires != 0) {
+            var date = new Date();
+            date.setTime(date.getTime() + (expires*24*60*60*1000));
+            extra += "; expires=" + date.toGMTString();
+        }
         $doc.cookie = name + "=" + escape(value) + extra;
     }-*/;
 }

@@ -80,7 +80,7 @@ public class LogonPanel extends FlexTable
     public void logout ()
     {
         _creds = null;
-        setCookie("creds", "");
+        clearCookie("creds");
         _app.didLogoff();
 
         _top.setText("Logon or");
@@ -114,11 +114,14 @@ public class LogonPanel extends FlexTable
 
     protected void setCookie (String name, String value)
     {
-        if (GWT.isScript()) {
-            CookieUtil.set("metasoy.com", "/", name, value);
-        } else {
-            CookieUtil.set("/", name, value);
-        }
+        String domain = GWT.isScript() ? "metasoy.com" : "";
+        CookieUtil.set(domain, "/", 7, name, value);
+    }
+
+    protected void clearCookie (String name)
+    {
+        String domain = GWT.isScript() ? "metasoy.com" : "";
+        CookieUtil.clear(domain, "/", name);
     }
 
     protected native String md5hex (String text) /*-{
@@ -137,6 +140,9 @@ public class LogonPanel extends FlexTable
             setWidget(contents);
             contents.setText(0, 0, "Email:");
             contents.setWidget(0, 1, _email = new TextBox());
+            if (_who != null) {
+                _email.setText(_who);
+            }
             _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
                 public void onClick (Widget sender) {
                     _password.setFocus(true);
@@ -155,8 +161,11 @@ public class LogonPanel extends FlexTable
         public void show ()
         {
             super.show();
-            // TODO: remember their email and focus the password field?
-            _email.setFocus(true);
+            if (_email.getText().length() == 0) {
+                _email.setFocus(true);
+            } else {
+                _password.setFocus(true);
+            }
         }
 
         // from interface ClickListener
