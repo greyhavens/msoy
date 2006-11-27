@@ -17,7 +17,7 @@ server_host = game.metasoy.com
 # The port on which the server listens for client and HTTP connections.
 
 # server_ports = 47624, 443
-# http_port = 8080
+http_port = 8080
 
 #
 # The directory from which the server is run. Used to put log files in the
