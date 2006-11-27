@@ -3,13 +3,14 @@
 
 package client.mail;
 
-import client.MsoyEntryPoint;
-
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Label;
+
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.WebCreds;
+
+import client.shell.MsoyEntryPoint;
 
 public class index extends MsoyEntryPoint
     implements HistoryListener

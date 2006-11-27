@@ -1,23 +1,24 @@
 //
 // $Id$
 
-package client.person;
-
-import client.mail.MailPayloadComposer;
-import client.mail.MailPayloadDisplay;
-import client.mail.MailUpdateListener;
-import client.util.InlineLabel;
+package client.profile;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MemberGName;
+
+import client.mail.MailPayloadComposer;
+import client.mail.MailPayloadDisplay;
+import client.mail.MailUpdateListener;
+import client.util.InlineLabel;
 
 public abstract class FriendInvite
 {
@@ -28,12 +29,13 @@ public abstract class FriendInvite
         {
             return new InvitationWidget();
         }
+
         // @Override
         public MailPayload getComposedPayload ()
         {
             return new FriendInviteObject();
         }
-        
+
         // @Override
         public void messageSent (WebContext ctx, MemberGName recipient)
         {
@@ -46,7 +48,7 @@ public abstract class FriendInvite
                 }
             });
         }
-        
+
         /**
          * A miniature version of the widget displayed by the mail reader.
          */
@@ -60,14 +62,13 @@ public abstract class FriendInvite
                 Button ayeButton = new Button("ACCEPT");
                 ayeButton.setEnabled(false);
                 add(ayeButton);
-                add(new InlineLabel(" this invitation, or ")); 
+                add(new InlineLabel(" this invitation, or "));
                 Button nayButton = new Button("DECLINE");
                 nayButton.setEnabled(false);
                 add(nayButton);
                 add(new InlineLabel("it."));
             }
         }
-        
     }
 
     public static class Display extends MailPayloadDisplay
@@ -104,7 +105,7 @@ public abstract class FriendInvite
                     }
                 });
                 add(ayeButton);
-                add(new InlineLabel(" this invitation, or ")); 
+                add(new InlineLabel(" this invitation, or "));
                 Button nayButton = new Button("DECLINE");
                 nayButton.setEnabled(active);
                 nayButton.addClickListener(new ClickListener() {
@@ -115,7 +116,7 @@ public abstract class FriendInvite
                 add(nayButton);
                 add(new InlineLabel("it."));
             }
-            
+
             protected void respondToInvite(final boolean accepted)
             {
                 AsyncCallback callback = new AsyncCallback() {
@@ -133,7 +134,7 @@ public abstract class FriendInvite
                     _ctx.membersvc.declineFriend(_ctx.creds, senderId, callback);
                 }
             }
-        
+
             protected void mailResponse (boolean accepted)
             {
                 MemberGName inviter = _message.headers.sender;
@@ -141,7 +142,7 @@ public abstract class FriendInvite
                 String subject, body;
                 if (accepted) {
                     subject = "Your friend invitation was accepted!";
-                    body = "Your invitation to " + invitee.memberName + 
+                    body = "Your invitation to " + invitee.memberName +
                            "was accepted! They are now a friend of yours.";
                 } else {
                     subject = "Your friends invitation has been declined.";

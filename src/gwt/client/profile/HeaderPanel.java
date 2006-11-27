@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.Profile;
 
-import client.MsoyEntryPoint;
+import client.shell.MsoyEntryPoint;
 
 /**
  * Displays the photo and header bits of a member's profile.

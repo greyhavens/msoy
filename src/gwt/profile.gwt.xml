@@ -1,0 +1,13 @@
+<module>
+  <inherits name='shell'/>
+  <entry-point class='client.profile.index'/>
+
+  <source path="client/profile"/>
+  <public path="public/profile"/>
+
+  <source path="client/mail"/>
+  <public path="public/mail"/>
+
+  <source path="client/group"/>
+  <public path="public/group"/>
+</module>

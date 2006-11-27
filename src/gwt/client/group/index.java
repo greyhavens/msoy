@@ -3,10 +3,10 @@
 
 package client.group;
 
-import client.MsoyEntryPoint;
-
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+
+import client.shell.MsoyEntryPoint;
 
 public class index extends MsoyEntryPoint
     implements HistoryListener

@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.MsoyEntryPoint;
+import client.shell.MsoyEntryPoint;
 
 /**
  * Handles the MetaSOY inventory application.

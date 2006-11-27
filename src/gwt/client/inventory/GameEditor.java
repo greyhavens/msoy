@@ -20,8 +20,6 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.MsoyEntryPoint;
-
 /**
  * A class for creating and editing {@link Game} digital items.
  */

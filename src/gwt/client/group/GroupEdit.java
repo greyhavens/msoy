@@ -6,9 +6,6 @@ package client.group;
 import java.util.Iterator;
 import java.util.List;
 
-import client.MsoyEntryPoint;
-import client.util.HeaderValueTable;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -30,6 +27,9 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.Group;
+
+import client.shell.MsoyEntryPoint;
+import client.util.HeaderValueTable;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.

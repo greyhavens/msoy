@@ -1,7 +1,10 @@
+//
+// $Id$
+
 package client.mail;
 
 import client.group.GroupInvite;
-import client.person.FriendInvite;
+import client.profile.FriendInvite;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -26,7 +29,7 @@ public abstract class MailPayloadDisplay
         if (message.payload == null) {
             return null;
         }
-        switch(message.payload.getType()) {
+        switch (message.payload.getType()) {
         case MailPayload.TYPE_GROUP_INVITE:
             return new GroupInvite.Display(ctx, message);
         case MailPayload.TYPE_FRIEND_INVITE:

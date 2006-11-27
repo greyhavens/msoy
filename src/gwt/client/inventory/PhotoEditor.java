@@ -15,8 +15,6 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 
-import client.MsoyEntryPoint;
-
 /**
  * A class for creating and editing {@link Photo} digital items.
  */

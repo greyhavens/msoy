@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client;
+package client.shell;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -49,7 +49,7 @@ public abstract class MsoyEntryPoint
      */
     public static String toMediaPath (String path)
     {
-        return GWT.isScript() ? path : "http://localhost:8080" + path;
+        return /* GWT.isScript() ? */ path /* : "http://localhost:8080" + path */;
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class MsoyEntryPoint
      */
     public static String groupViewPath (int groupId)
     {
-        return "group.html#" + groupId;
+        return "/group/index.html#" + groupId;
     }
 
     /**
@@ -65,7 +65,7 @@ public abstract class MsoyEntryPoint
      */
     public static String memberViewPath (int memberId)
     {
-        return "person.html#" + memberId;
+        return "/profile/index.html#" + memberId;
     }
 
     // from interface EntryPoint
@@ -74,25 +74,25 @@ public abstract class MsoyEntryPoint
         // create our web context
         _ctx = new WebContext();
 
-        String prefix = GWT.isScript() ? "/" : GWT.getModuleBaseURL();
+        String prefix = /* GWT.isScript() ? */ "/" /* : GWT.getModuleBaseURL() */;
         _ctx.usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
-        ((ServiceDefTarget)_ctx.usersvc).setServiceEntryPoint(prefix + "user");
+        ((ServiceDefTarget)_ctx.usersvc).setServiceEntryPoint(prefix + "usersvc");
         _ctx.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
-        ((ServiceDefTarget)_ctx.itemsvc).setServiceEntryPoint(prefix + "item");
+        ((ServiceDefTarget)_ctx.itemsvc).setServiceEntryPoint(prefix + "itemsvc");
         _ctx.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
-        ((ServiceDefTarget)_ctx.profilesvc).setServiceEntryPoint(prefix + "profile");
+        ((ServiceDefTarget)_ctx.profilesvc).setServiceEntryPoint(prefix + "profilesvc");
         _ctx.membersvc = (MemberServiceAsync)GWT.create(MemberService.class);
-        ((ServiceDefTarget)_ctx.membersvc).setServiceEntryPoint(prefix + "member");
+        ((ServiceDefTarget)_ctx.membersvc).setServiceEntryPoint(prefix + "membersvc");
         _ctx.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
-        ((ServiceDefTarget)_ctx.personsvc).setServiceEntryPoint(prefix + "person");
+        ((ServiceDefTarget)_ctx.personsvc).setServiceEntryPoint(prefix + "personsvc");
         _ctx.mailsvc = (MailServiceAsync)GWT.create(MailService.class);
-        ((ServiceDefTarget)_ctx.mailsvc).setServiceEntryPoint(prefix + "mail");
+        ((ServiceDefTarget)_ctx.mailsvc).setServiceEntryPoint(prefix + "mailsvc");
         _ctx.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);
-        ((ServiceDefTarget)_ctx.groupsvc).setServiceEntryPoint(prefix + "group");
+        ((ServiceDefTarget)_ctx.groupsvc).setServiceEntryPoint(prefix + "groupsvc");
         _ctx.catalogsvc = (CatalogServiceAsync)GWT.create(CatalogService.class);
-        ((ServiceDefTarget)_ctx.catalogsvc).setServiceEntryPoint(prefix + "catalog");
+        ((ServiceDefTarget)_ctx.catalogsvc).setServiceEntryPoint(prefix + "catalogsvc");
         _ctx.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
-        ((ServiceDefTarget)_ctx.gamesvc).setServiceEntryPoint(prefix + "game");
+        ((ServiceDefTarget)_ctx.gamesvc).setServiceEntryPoint(prefix + "gamesvc");
 
         // create our standard navigation panel
         RootPanel.get("navigation").add(new NaviPanel(_ctx, getPageId()));

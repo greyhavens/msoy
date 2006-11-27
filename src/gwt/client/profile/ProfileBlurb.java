@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.person;
+package client.profile;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.Profile;
 
-import client.MsoyEntryPoint;
+import client.shell.MsoyEntryPoint;
 
 /**
  * Displays a person's basic profile information.

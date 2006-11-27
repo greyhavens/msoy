@@ -18,8 +18,6 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.MsoyEntryPoint;
-
 /**
  * A class for creating and editing {@link Furniture} digital items.
  */

@@ -14,7 +14,7 @@ import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.MsoyEntryPoint;
+import client.shell.MsoyEntryPoint;
 import client.util.WidgetUtil;
 
 /**

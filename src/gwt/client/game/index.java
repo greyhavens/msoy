@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.MsoyEntryPoint;
+import client.shell.MsoyEntryPoint;
 
 /**
  * Displays a page that allows a player to play a particular game. If it's

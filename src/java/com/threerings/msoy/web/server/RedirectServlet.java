@@ -32,7 +32,19 @@ import static com.threerings.msoy.Log.log;
  */
 public class RedirectServlet extends HttpServlet
 {
+    protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
+        throws ServletException, IOException
+    {
+        redirect(req, rsp);
+    }
+
     protected void doPost (HttpServletRequest req, HttpServletResponse rsp)
+        throws ServletException, IOException
+    {
+        redirect(req, rsp);
+    }
+
+    protected void redirect (HttpServletRequest req, HttpServletResponse rsp)
         throws ServletException, IOException
     {
         InputStream in = null;

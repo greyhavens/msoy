@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.person;
+package client.profile;
 
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Label;

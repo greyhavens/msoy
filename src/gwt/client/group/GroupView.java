@@ -6,11 +6,6 @@ package client.group;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import client.MsoyEntryPoint;
-import client.group.GroupEdit.GroupSubmissionListener;
-import client.util.HeaderValueTable;
-import client.util.InlineLabel;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -29,10 +24,15 @@ import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberGName;
 
+import client.shell.MsoyEntryPoint;
+import client.util.HeaderValueTable;
+import client.util.InlineLabel;
+
+import client.group.GroupEdit.GroupSubmissionListener;
+
 /**
- * Display the details of a group, including all its members, and let managers
- * remove other members (unless the group's policy is PUBLIC) and pop up the
- * group editor.
+ * Display the details of a group, including all its members, and let managers remove other members
+ * (unless the group's policy is PUBLIC) and pop up the group editor.
  */
 public class GroupView extends DockPanel
     implements GroupSubmissionListener

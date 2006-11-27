@@ -1,27 +1,7 @@
 <module>
-  <inherits name='com.google.gwt.user.User'/>
-  <entry-point class='client.EntryPointDispatcher'/>
-  <source path="client"/>
-  <source path="org/gwtwidgets/client"/>
-  <source path="com/threerings/io"/>
-  <source path="com/threerings/gwt"/>
-  <source path="com/threerings/msoy/web/client"/>
-  <source path="com/threerings/msoy/web/data"/>
-  <source path="com/threerings/msoy/item/web"/>
-  <servlet path="/user" class="com.threerings.msoy.web.server.RedirectServlet"/>
-  <servlet path="/item" class="com.threerings.msoy.web.server.RedirectServlet"/>
-  <servlet path="/catalog" class="com.threerings.msoy.web.server.RedirectServlet"/>
-  <servlet path="/profile" class="com.threerings.msoy.web.server.RedirectServlet"/>
-  <servlet path="/person" class="com.threerings.msoy.web.server.RedirectServlet"/>
-  <servlet path="/mail" class="com.threerings.msoy.web.server.RedirectServlet"/>
-  <servlet path="/group" class="com.threerings.msoy.web.server.RedirectServlet"/>
-  <servlet path="/game" class="com.threerings.msoy.web.server.RedirectServlet"/>
+  <inherits name='shell'/>
+  <entry-point class='client.shell.EntryPointDispatcher'/>
 
-  <replace-with class="client.util.WidgetUtilImplMozilla">
-    <when-type-is class="client.util.WidgetUtilImpl"/>
-    <any>
-      <when-property-is name="user.agent" value="gecko"/>
-      <when-property-is name="user.agent" value="gecko1_8"/>
-    </any>
-  </replace-with>
+  <source path="client"/>
+  <public path="public"/>
 </module>

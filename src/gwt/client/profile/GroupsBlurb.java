@@ -1,14 +1,10 @@
 //
 // $Id$
 
-package client.person;
+package client.profile;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import client.MsoyEntryPoint;
-import client.group.GroupInvite;
-import client.mail.MailComposition;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -21,6 +17,10 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.GroupMembership;
+
+import client.group.GroupInvite;
+import client.mail.MailComposition;
+import client.shell.MsoyEntryPoint;
 
 /**
  * Displays a list of the groups of which a person is a member.

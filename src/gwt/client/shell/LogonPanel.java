@@ -1,8 +1,9 @@
 //
 // $Id$
 
-package client;
+package client.shell;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -79,7 +80,7 @@ public class LogonPanel extends FlexTable
     public void logout ()
     {
         _creds = null;
-        CookieUtil.set("creds", "");
+        setCookie("creds", "");
         _app.didLogoff();
 
         _top.setText("Logon or");
@@ -90,8 +91,8 @@ public class LogonPanel extends FlexTable
     protected void didLogon (WebCreds creds)
     {
         _creds = creds;
-        CookieUtil.set("creds", _creds.toCookie());
-        CookieUtil.set("who", _who);
+        setCookie("creds", _creds.toCookie());
+        setCookie("who", _who);
         _app.didLogon(_creds);
 
         _top.setText("Welcome");
@@ -108,6 +109,15 @@ public class LogonPanel extends FlexTable
                 Window.getClientWidth() - popup.getOffsetWidth(), HEADER_HEIGHT);
         } else {
             logout();
+        }
+    }
+
+    protected void setCookie (String name, String value)
+    {
+        if (GWT.isScript()) {
+            CookieUtil.set(".metasoy.com", "/", name, value);
+        } else {
+            CookieUtil.set("/", name, value);
         }
     }
 

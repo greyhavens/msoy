@@ -18,8 +18,6 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Pet;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.MsoyEntryPoint;
-
 /**
  * A class for creating and editing {@link Pet} digital items.
  */

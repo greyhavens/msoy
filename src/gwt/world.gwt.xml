@@ -1,0 +1,7 @@
+<module>
+  <inherits name='shell'/>
+  <entry-point class='client.world.index'/>
+
+  <source path="client/world"/>
+  <public path="public/world"/>
+</module>

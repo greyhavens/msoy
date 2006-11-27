@@ -1,0 +1,30 @@
+<module>
+  <inherits name='com.google.gwt.user.User'/>
+
+  <source path="client/shell"/>
+  <source path="client/util"/>
+  <source path="org/gwtwidgets/client"/>
+  <source path="com/threerings/io"/>
+  <source path="com/threerings/gwt"/>
+  <source path="com/threerings/msoy/web/client"/>
+  <source path="com/threerings/msoy/web/data"/>
+  <source path="com/threerings/msoy/item/web"/>
+  <public path="public/shell"/>
+
+  <servlet path="/usersvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
+  <servlet path="/itemsvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
+  <servlet path="/catalogsvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
+  <servlet path="/profilesvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
+  <servlet path="/personsvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
+  <servlet path="/mailsvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
+  <servlet path="/groupsvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
+  <servlet path="/gamesvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
+
+  <replace-with class="client.util.WidgetUtilImplMozilla">
+    <when-type-is class="client.util.WidgetUtilImpl"/>
+    <any>
+      <when-property-is name="user.agent" value="gecko"/>
+      <when-property-is name="user.agent" value="gecko1_8"/>
+    </any>
+  </replace-with>
+</module>

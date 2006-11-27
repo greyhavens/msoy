@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.person;
+package client.profile;
 
 import java.util.ArrayList;
 
@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.threerings.msoy.web.data.PersonLayout;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.MsoyEntryPoint;
+import client.shell.MsoyEntryPoint;
 
 /**
  * Displays a person's "portal" page with their profile information, friends,
@@ -47,7 +47,7 @@ public class index extends MsoyEntryPoint
     // @Override // from MsoyEntryPoint
     protected String getPageId ()
     {
-        return "person";
+        return "profile";
     }
 
     // @Override // from MsoyEntryPoint

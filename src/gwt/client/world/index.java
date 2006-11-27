@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client;
+package client.world;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.shell.MsoyEntryPoint;
 import client.util.WidgetUtil;
 
 /**

@@ -77,15 +77,15 @@ public class MsoyHttpServer extends HttpServer
     }
 
     protected static final String[] SERVLETS = {
-        "user", WebUserServlet.class.getName(),
-        "item", ItemServlet.class.getName(),
-        "catalog", CatalogServlet.class.getName(),
-        "profile", ProfileServlet.class.getName(),
-        "person", PersonServlet.class.getName(),
-        "member", MemberServlet.class.getName(),
-        "group", GroupServlet.class.getName(),
-        "mail", MailServlet.class.getName(),
-        "upload", UploadServlet.class.getName(),
-        "game", GameServlet.class.getName(),
+        "usersvc", WebUserServlet.class.getName(),
+        "itemsvc", ItemServlet.class.getName(),
+        "catalogsvc", CatalogServlet.class.getName(),
+        "profilesvc", ProfileServlet.class.getName(),
+        "personsvc", PersonServlet.class.getName(),
+        "membersvc", MemberServlet.class.getName(),
+        "groupsvc", GroupServlet.class.getName(),
+        "mailsvc", MailServlet.class.getName(),
+        "uploadsvc", UploadServlet.class.getName(),
+        "gamesvc", GameServlet.class.getName(),
     };
 }

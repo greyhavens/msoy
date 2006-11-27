@@ -13,11 +13,10 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /**
- * Due to the way GWT is structured, we have a single {@link EntryPoint} to our
- * entire application and it then looks for an argument passed by the page to
- * the dispatcher entry point and dynamically loads the appropriate "real"
- * entry point for that page. If it were possible to share code and data
- * between modules, we wouldn't have to do this.
+ * Due to the way GWT is structured, we have a single {@link EntryPoint} to our entire application
+ * and it then looks for an argument passed by the page to the dispatcher entry point and
+ * dynamically loads the appropriate "real" entry point for that page. If it were possible to share
+ * code and data between modules, we wouldn't have to do this.
  */
 public class EntryPointDispatcher
     implements EntryPoint
@@ -72,9 +71,9 @@ public class EntryPointDispatcher
 
     protected void createMappings ()
     {
-        _pages.put("index", client.index.getCreator());
+        _pages.put("world", client.world.index.getCreator());
         _pages.put("inventory", client.inventory.index.getCreator());
-        _pages.put("person", client.person.index.getCreator());
+        _pages.put("profile", client.profile.index.getCreator());
         _pages.put("mail", client.mail.index.getCreator());
         _pages.put("group", client.group.index.getCreator());
         _pages.put("catalog", client.catalog.index.getCreator());

@@ -13,7 +13,31 @@ public class CookieUtil
      * Sets the specified cookie to the supplied value.
      */
     public static native void set (String name, String value) /*-{
-        $doc.cookie = name + "=" + escape(value);
+        $doc.cookie = "\"" + name + "=" + escape(value) + "\"";
+    }-*/;
+
+    /**
+     * Sets the specified cookie to the supplied value.
+     */
+    public static native void set (String path, String name, String value) /*-{
+        $doc.cookie = "\"" + name + "=" + escape(value) + "; path=" + path + "\"";
+    }-*/;
+
+    /**
+     * Sets the specified cookie to the supplied value.
+     */
+    public static native void set (String domain, String path, String name, String value) /*-{
+        $doc.cookie = "\"" + name + "=" + escape(value) + "; domain=" + domain +
+            "; path=" + path + "\"";
+    }-*/;
+
+    /**
+     * Sets the specified cookie to the supplied value.
+     */
+    public static native void set (String domain, String path, String expires,
+                                   String name, String value) /*-{
+        $doc.cookie = "\"" + name + "=" + escape(value) + "; domain=" + domain + "; path=" + path +
+            "; expires=" + expires + "\"";
     }-*/;
 
     /**

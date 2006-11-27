@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.person;
+package client.profile;
 
 import java.util.ArrayList;
 

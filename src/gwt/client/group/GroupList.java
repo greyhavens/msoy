@@ -6,9 +6,6 @@ package client.group;
 import java.util.Iterator;
 import java.util.List;
 
-import client.MsoyEntryPoint;
-import client.group.GroupEdit.GroupSubmissionListener;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -20,8 +17,13 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.Group;
+
+import client.shell.MsoyEntryPoint;
+
+import client.group.GroupEdit.GroupSubmissionListener;
 
 /**
  * Display all existing groups in a simple list format. This will change when

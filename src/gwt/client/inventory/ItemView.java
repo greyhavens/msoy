@@ -6,8 +6,8 @@ package client.inventory;
 import java.util.Collection;
 import java.util.Iterator;
 
-import client.MsoyEntryPoint;
 import client.item.ItemRating;
+import client.shell.MsoyEntryPoint;
 import client.util.HeaderValueTable;
 
 import com.google.gwt.core.client.GWT;

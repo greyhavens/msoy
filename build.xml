@@ -84,7 +84,7 @@
   </target>
 
   <!-- runs the GWT debugging shell -->
-  <property name="page"  value="inventory.html"/>
+  <property name="page" value="inventory"/>
   <target name="gshell">
     <available property="gwtdir.present" file="lib/gwt"/>
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
@@ -105,32 +105,38 @@
     <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
           classname="com.google.gwt.dev.GWTShell">
       <sysproperty key="msoy.home" value="."/>
+      <arg value="-noserver"/>
+      <arg value="-port"/>
+      <arg value="${http_port}"/>
       <arg value="-out"/>
       <arg value="${gwtout.dir}"/>
-      <arg value="${app.name}/${page}"/>
+      <arg value="${page}/index.html"/>
     </java>
-  </target> 
+  </target>
 
   <!-- builds our GWT web client -->
+  <property name="pages" value="catalog,game,group,inventory,mail,profile,world"/>
   <target name="gclient">
-    <delete dir="pages/msoy"/>
-    <mkdir dir="pages/msoy"/>
-    <delete><fileset dir="pages/msoy" includes="*/*.*"/></delete>
-    <java fork="true" maxmemory="128M" classname="com.google.gwt.dev.GWTCompiler">
-      <classpath>
-        <pathelement location="${deploy.dir}/classes"/>
-        <fileset dir="${extlib.dir}" includes="gwt*.jar"/>
-        <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
-        <pathelement location="src/java"/>
-        <pathelement location="projects/threerings/src/java"/>
-        <pathelement location="src/gwt"/>
-      </classpath>
-      <!--<arg value="-style"/>-->
-      <!--<arg value="PRETTY"/>-->
-      <arg value="-out"/>
-      <arg value="${gwtout.dir}"/>
-      <arg value="${app.name}"/>
-    </java>
+    <for list="${pages}" param="page"><sequential>
+      <echo>Compiling @{page} module...</echo>
+      <delete dir="pages/@{page}"/>
+      <mkdir dir="pages/@{page}"/>
+      <java fork="true" maxmemory="128M" classname="com.google.gwt.dev.GWTCompiler">
+        <classpath>
+          <pathelement location="${deploy.dir}/classes"/>
+          <fileset dir="${extlib.dir}" includes="gwt*.jar"/>
+          <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
+          <pathelement location="src/java"/>
+          <pathelement location="projects/threerings/src/java"/>
+          <pathelement location="src/gwt"/>
+        </classpath>
+        <!--<arg value="-style"/>-->
+        <!--<arg value="PRETTY"/>-->
+        <arg value="-out"/>
+        <arg value="${gwtout.dir}"/>
+        <arg value="@{page}"/>
+      </java>
+    </sequential></for>
   </target> 
 
   <!-- prepares to build our Flash client -->
