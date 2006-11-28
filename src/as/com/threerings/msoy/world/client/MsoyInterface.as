@@ -5,8 +5,6 @@ import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.events.EventDispatcher;
 
-import mx.events.DynamicEvent;
-
 /**
  * The base class for FurniInterface, AvatarInterface...
  */
@@ -57,7 +55,7 @@ public class MsoyInterface
             return null;
         }
 
-        var de :DynamicEvent = new DynamicEvent("msoyQuery", true, false);
+        var de :MsoyEvent = new MsoyEvent();
         de.msoyName = name;
         de.msoyValue = val;
         _dispatcher.dispatchEvent(de);
@@ -84,4 +82,22 @@ public class MsoyInterface
     /** The event dispatcher used to communicate with metasoy. */
     protected var _dispatcher :EventDispatcher;
 }
+}
+
+import flash.events.Event;
+
+/**
+ * A dynamic event we can use to pass info back to metasoy.
+ */
+dynamic class MsoyEvent extends Event
+{
+    public function MsoyEvent ()
+    {
+        super("msoyQuery", true, false);
+    }
+
+    override public function clone () :Event
+    {
+        return new MsoyEvent();
+    }
 }
