@@ -222,7 +222,7 @@ public class MsoyController extends Controller
      */
     public function handleViewItem (args :Array) :void
     {
-        showExternalURL("item.html#" + args[0] + ";" + args[1]);
+        showExternalURL("/item/index.html#" + args[0] + ";" + args[1]);
     }
 
     /**
@@ -230,7 +230,7 @@ public class MsoyController extends Controller
      */
     public function handleViewMember (memberId :int) :void
     {
-        showExternalURL("person.html#" + memberId);
+        showExternalURL("/profile/index.html#" + memberId);
     }
 
     /**
@@ -255,7 +255,7 @@ public class MsoyController extends Controller
     public function handleGoGameLobby (gameId :int) :void
     {
         if (!shouldLoadNewPages() ||
-                !NetUtil.navigateToURL("game.html#" + gameId)) {
+                !NetUtil.navigateToURL("/game/index.html#" + gameId)) {
             // if we shouldn't or couldn't load a new page then we
             // just load up the module inside this client
             // TODO
