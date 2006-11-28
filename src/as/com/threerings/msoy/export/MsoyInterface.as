@@ -1,4 +1,4 @@
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.export {
 
 import flash.display.DisplayObject;
 
