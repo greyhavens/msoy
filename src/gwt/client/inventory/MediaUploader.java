@@ -54,9 +54,9 @@ public class MediaUploader extends FlexTable
 
         _panel = new FormPanel(new FlowPanel());
         if (GWT.isScript()) {
-            _panel.setAction("/upload");
+            _panel.setAction("/uploadsvc");
         } else {
-            _panel.setAction("http://localhost:8080/upload");
+            _panel.setAction("http://localhost:8080/uploadsvc");
         }
         _panel.setTarget("upload");
         _panel.setMethodAsPost();
