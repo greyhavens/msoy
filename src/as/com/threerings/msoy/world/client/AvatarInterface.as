@@ -3,7 +3,6 @@ package com.threerings.msoy.world.client {
 import flash.display.DisplayObject;
 
 import flash.events.Event;
-import flash.events.TextEvent;
 
 /**
  */
@@ -20,8 +19,6 @@ public class AvatarInterface extends MsoyInterface
     public function AvatarInterface (disp :DisplayObject)
     {
         super(disp);
-
-        _dispatcher.addEventListener("msoyAvatarChange", handleAvatarChange);
     }
 
     /**
@@ -31,35 +28,36 @@ public class AvatarInterface extends MsoyInterface
      */
     public function getOrientation () :Number
     {
-        return parseNumber(query("orient"));
+        return _orient;
     }
 
     /**
      */
     public function isWalking () :Boolean
     {
-        return parseBoolean(query("isWalking"));
+        return _isWalking;
     }
 
-    /**
-     * Essentially, we redispatch an event from the outside.
-     */
-    protected function handleAvatarChange (event :TextEvent) :void
+    override protected function handleQuery (name :String, val :Object) :Object
     {
-        // TODO: once we determine the final bits of data we'll be
-        // passing to the avatar, we should just encode them all when we
-        // send an avatarChanged from the avatar, then this would save the
-        // encoded string and refer to that instead of having isWalking()
-        // and getOrient() ask the avatar again.
-        if (avatarChanged != null) {
-            avatarChanged();
+        switch (name) {
+        case "avatarChanged":
+            _isWalking = Boolean(val[0]);
+            _orient = Number(val[1]);
+            if (avatarChanged != null) {
+                avatarChanged();
+            }
+            return null;
+
+        default:
+            return super.handleQuery(name, val);
         }
     }
 
-    override protected function handleUnload (event :Event) :void
-    {
-        _dispatcher.removeEventListener("msoyAvatarChange", handleAvatarChange);
-        super.handleUnload(event);
-    }
+    /** Are we currently walking? */
+    protected var _isWalking :Boolean;
+
+    /** Our current orientation, or 0. */
+    protected var _orient :Number;
 }
 }

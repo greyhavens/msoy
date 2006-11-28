@@ -52,6 +52,11 @@ public class FurniSprite extends MsoySprite
         return (_furni.actionType == FurniData.BACKGROUND);
     }
 
+    public function isPerspectable () :Boolean
+    {
+        return (_desc != null) && _desc.isImage();
+    }
+
     public function isPerspectivized () :Boolean
     {
         return _furni.isPerspective();
@@ -91,6 +96,7 @@ public class FurniSprite extends MsoySprite
      */
     public function wasTraversed (entering :Boolean) :void
     {
+        // TODO: figure out which messages we want to send to doors
         sendMessage("action", entering ? "bodyEntered" : "bodyLeft");
     }
 
@@ -336,26 +342,35 @@ public class FurniSprite extends MsoySprite
         }
     }
 
-    override protected function addContentListeners () :void
+    override protected function handleQuery (name :String, val :Object) :Object
     {
-        super.addContentListeners();
+        switch (name) {
+        case "getLocation":
+            return [ loc.x, loc.y, loc.z, loc.orient ];
 
-        _dispatch.addEventListener("msoyLoc", handleInterfaceMsoyLoc);
+        case "setLocation":
+            handleSetLocation(val);
+            return null;
+
+        default:
+            return super.handleQuery(name, val);
+        }
     }
 
-    override protected function removeContentListeners () :void
-    {
-        super.removeContentListeners();
-
-        _dispatch.removeEventListener("msoyLoc", handleInterfaceMsoyLoc);
-    }
-
-    protected function handleInterfaceMsoyLoc (event :TextEvent) :void
+    /**
+     * Helper method for our handleQuery, to ensure that the location
+     * we get from usercode is proper, etc.
+     */
+    protected function handleSetLocation (val :Object) :void
     {
         if (_editing) {
             return; // do not allow movement during editing
         }
-        var loc :Array = event.text.split(";");
+        var loc :Array = (val as Array);
+        if (loc == null || loc.length < 3) {
+            return; // don't fuck up
+        }
+        loc.splice(3); // lop off any extra crap
         loc = loc.map(function (item :*, index :int, array :Array) :Number {
             var n :Number = Number(item);
             if (isNaN(n)) {
@@ -363,21 +378,7 @@ public class FurniSprite extends MsoySprite
             }
             return Math.min(1, Math.max(0, n));
         });
-        if (loc.length >= 3) {
-            setLocation(loc);
-        }
-    }
-
-    override protected function handleInterfaceQuery (event :TextEvent) :void
-    {
-        switch (event.text) {
-        case "location":
-            sendResult(
-                "" + loc.x + ";" + loc.y + ";" + loc.z + ";" + loc.orient);
-            return;
-        }
-
-        super.handleInterfaceQuery(event);
+        setLocation(loc);
     }
 
     /** The furniture data for this piece of furni. */

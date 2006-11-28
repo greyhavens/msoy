@@ -31,11 +31,7 @@ public class FurniInterface extends MsoyInterface
      */
     public function getLocation () :Array
     {
-        var result :String = query("location");
-        if (result == null) {
-            return null;
-        }
-        return result.split(";").map(parseNumber);
+        return (dispatch("getLocation") as Array);
     }
 
     /**
@@ -43,7 +39,7 @@ public class FurniInterface extends MsoyInterface
      */
     public function setLocation (loc :Array) :void
     {
-        dispatch("msoyLoc", loc.join(";"));
+        dispatch("setLocation", loc);
     }
 }
 }

@@ -41,9 +41,12 @@ public class FurniPanel extends SpritePanel
 
         _scaleEditor.setSprite(_sprite);
 
-        _perspective.selected = (_sprite as FurniSprite).isPerspectivized();
+        var furniSprite :FurniSprite = (_sprite as FurniSprite);
 
-        var furni :FurniData = (_sprite as FurniSprite).getFurniData();
+        _perspective.selected = furniSprite.isPerspectivized();
+        _perspective.enabled = furniSprite.isPerspectable();
+
+        var furni :FurniData = furniSprite.getFurniData();
         updateActionType(furni);
 
         switch (furni.actionType) {

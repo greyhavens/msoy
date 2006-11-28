@@ -243,22 +243,7 @@ public class AvatarSprite extends MsoySprite
      */
     protected function stanceDidChange () :void
     {
-        sendMessage("msoyAvatarChange", "");
-    }
-
-    override protected function handleInterfaceQuery (event :TextEvent) :void
-    {
-        switch (event.text) {
-        case "orient":
-            sendResult(String(loc.orient));
-            return;
-
-        case "isWalking":
-            sendResult(String(isMoving()));
-            return;
-        }
-
-        super.handleInterfaceQuery(event);
+        sendMessage("avatarChanged", [ isMoving(), loc.orient ]);
     }
 
     protected var _occInfo :WorldMemberInfo;

@@ -47,6 +47,7 @@ import mx.controls.VideoDisplay;
 
 import mx.effects.Glow;
 
+import mx.events.DynamicEvent;
 import mx.events.EffectEvent;
 import mx.events.VideoEvent;
 
@@ -161,31 +162,18 @@ public class MsoySprite extends MediaContainer
 
     override protected function setupSwfOrImage (url :String) :void
     {
-        if (_desc.mimeType == MediaDesc.APPLICATION_SHOCKWAVE_FLASH) {
-            // create a unique id for the media
-            _id = String(getTimer()) + int(Math.random() * int.MAX_VALUE);
-
-            // TODO
-            url += "?oid=" + _id;
-        }
+//        if (_desc.mimeType == MediaDesc.APPLICATION_SHOCKWAVE_FLASH) {
+//            // create a unique id for the media
+//            _id = String(getTimer()) + int(Math.random() * int.MAX_VALUE);
+//
+//            // TODO
+//            url += "?oid=" + _id;
+//        }
         super.setupSwfOrImage(url);
 
         // then, grab a reference to the shared event dispatcher
         _dispatch = (_media as Loader).contentLoaderInfo.sharedEvents;
-        addContentListeners();
-    }
-
-    /**
-     * Add listeners to the event dispatch we share with our content.
-     */
-    protected function addContentListeners () :void
-    {
         _dispatch.addEventListener("msoyQuery", handleInterfaceQuery);
-    }
-
-    protected function removeContentListeners () :void
-    {
-        _dispatch.removeEventListener("msoyQuery", handleInterfaceQuery);
     }
 
     /**
@@ -208,7 +196,8 @@ public class MsoySprite extends MediaContainer
         if (completely) {
             // shut down the dispatch
             if (_dispatch != null) {
-                removeContentListeners();
+                _dispatch.removeEventListener("msoyQuery",
+                    handleInterfaceQuery);
                 _dispatch = null;
             }
         }
@@ -343,17 +332,9 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Send a result from a query down to our clientcode content.
-     */
-    protected function sendResult (result :String) :void
-    {
-        sendMessage("msoyResult", result);
-    }
-
-    /**
      * Send a message to the client swf that we're representing.
      */
-    protected function sendMessage (type :String, msg :String) :void
+    protected function sendMessage (name :String, value :Object) :Object
     {
 //        trace("sending [" + type + "=" + msg + "]");
 
@@ -367,22 +348,26 @@ public class MsoySprite extends MediaContainer
 
         // do it both ways for now
 
-        // old way
-        if (_oldDispatch == null) {
-            _oldDispatch = new LocalConnection();
-            _oldDispatch.allowDomain("*");
-            _oldDispatch.addEventListener(
-                StatusEvent.STATUS, onLocalConnStatus);
-        }
-        try {
-            _oldDispatch.send("_msoy" + _id, type, msg);
-        } catch (e :Error) {
-            // nada
-        }
+//        // old way
+//        if (_oldDispatch == null) {
+//            _oldDispatch = new LocalConnection();
+//            _oldDispatch.allowDomain("*");
+//            _oldDispatch.addEventListener(
+//                StatusEvent.STATUS, onLocalConnStatus);
+//        }
+//        try {
+//            _oldDispatch.send("_msoy" + _id, type, vals.join(";"));
+//        } catch (e :Error) {
+//            // nada
+//        }
 
         // and the new way
         // simply post an event across the security boundary
-        _dispatch.dispatchEvent(new TextEvent(type, false, false, msg));
+        var de :DynamicEvent = new DynamicEvent("msoyMessage", false, false);
+        de.msoyName = name;
+        de.msoyValue = value;
+        _dispatch.dispatchEvent(de);
+        return de.msoyResponse;
     }
 
     /**
@@ -636,14 +621,24 @@ public class MsoySprite extends MediaContainer
     /**
      * Handle a query from our usercode content.
      */
-    protected function handleInterfaceQuery (event :TextEvent) :void
+    protected function handleInterfaceQuery (evt :Object) :void
     {
-        log.warning("Unknown query from usercode: " + event.text);
+        evt.msoyResponse = handleQuery(String(evt.msoyName), evt.msoyValue);
     }
 
-    /** An id (hopefully unique on this machine) used to communicate with
-     * AVM1 swfs over a LocalConnection. */
-    protected var _id :String;
+    /**
+     * Handle a query from the sprite, using some of our interface code.
+     */
+    protected function handleQuery (name :String, val :Object) :Object
+    {
+        log.warning("Unknown query from usercode [name=" + name +
+            ", value=" + val + "].");
+        return null;
+    }
+
+//    /** An id (hopefully unique on this machine) used to communicate with
+//     * AVM1 swfs over a LocalConnection. */
+//    protected var _id :String;
 
     /** Our Media descripter. */
     protected var _desc :MediaDesc;

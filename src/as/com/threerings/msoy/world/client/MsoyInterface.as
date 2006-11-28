@@ -4,7 +4,8 @@ import flash.display.DisplayObject;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
-import flash.events.TextEvent;
+
+import mx.events.DynamicEvent;
 
 /**
  * The base class for FurniInterface, AvatarInterface...
@@ -19,8 +20,9 @@ public class MsoyInterface
             throw new Error("Use one of the subclasses, as appropriate: " +
                 "FurniInterface, AvatarInterface...");
         }
+
         _dispatcher = disp.root.loaderInfo.sharedEvents;
-        _dispatcher.addEventListener("msoyResult", handleResult);
+        _dispatcher.addEventListener("msoyMessage", handleMessage);
 
         disp.root.loaderInfo.addEventListener(
             Event.UNLOAD, handleUnload, false, 0, true);
@@ -35,36 +37,39 @@ public class MsoyInterface
     }
 
     /**
-     * Submit a query to metasoy, and immediately return the response.
+     * Handle a query (or notification message) from metasoy.
+     * Override this method to add custom behaviors.
      */
-    protected function query (text :String) :String
+    protected function handleQuery (name :String, val :Object) :Object
     {
-        dispatch("msoyQuery", text);
-        var s :String = _lastResult;
-        _lastResult = null;
-        return s;
+        // by default, we do nothing.
+        return null;
     }
 
     /**
-     * Convenience method to dispatch a command to metasoy.
+     * Convenience method to send a command to metasoy.
      */
-    protected function dispatch (name :String, text :String) :void
+    protected function dispatch (name :String, val :Object = null) :Object
     {
-        if (_dispatcher != null) {
-            _dispatcher.dispatchEvent(new TextEvent(name, true, false, text));
+        if (_dispatcher == null) {
+            // if the _dispatcher is null, we just silently don't send
+            // (the user can use isShutdown() to test if we're shut down)
+            return null;
         }
-        // if the _dispatcher is null, we just silently don't send
-        // (the user can use isShutdown() to test if we're shut down)
+
+        var de :DynamicEvent = new DynamicEvent("msoyQuery", true, false);
+        de.msoyName = name;
+        de.msoyValue = val;
+        _dispatcher.dispatchEvent(de);
+        return de.msoyResponse;
     }
 
     /**
-     * Listens for result events from metasoy, store the result
-     * in _lastResult.
+     * Handle messages received from metasoy.
      */
-    protected function handleResult (event :TextEvent) :void
+    protected function handleMessage (evt :Object) :void
     {
-        // we simply take the result and place it in _lastResult
-        _lastResult = event.text;
+        evt.msoyResponse = handleQuery(String(evt.msoyName), evt.msoyValue);
     }
 
     /**
@@ -72,37 +77,11 @@ public class MsoyInterface
      */
     protected function handleUnload (event :Event) :void
     {
-        _dispatcher.removeEventListener("msoyResult", handleResult);
+        _dispatcher.removeEventListener("msoyMessage", handleMessage);
         _dispatcher = null;
-    }
-
-    /**
-     * A utility method to parse an element into a Number.
-     * Compatible with Array.map();
-     */
-    protected function parseNumber (
-        elem :*, dex :int = 0, arr :Array = null) :Number
-    {
-        // non-numeric or null arguments will coerce to 0
-        var n :Number = Number(elem);
-        return isNaN(n) ? 0 : n;
-    }
-
-    /**
-     * A utility method to parse an element into a Boolean.
-     * Compatible with Array.map();
-     */
-    protected function parseBoolean (
-        elem :*, dex :int = 0, arr :Array = null) :Boolean
-    {
-        return ((elem is String) && ("true" === String(elem).toLowerCase())) ||
-            ((elem is Boolean) && Boolean(elem));
     }
 
     /** The event dispatcher used to communicate with metasoy. */
     protected var _dispatcher :EventDispatcher;
-
-    /** The last result value received from metasoy. */
-    protected var _lastResult :String;
 }
 }
