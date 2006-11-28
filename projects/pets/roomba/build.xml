@@ -45,10 +45,8 @@
     </delete>
   </target>
 
-<!--
   <target name="dist" depends="compile">
-    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/c5774730f7255c160b5a4a2baca0add71c9bf4e2.swf"/>
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/8559c6e0c34559b780323e0017cfa50e8f70e91e.swf"/>
   </target>
 
--->
 </project>

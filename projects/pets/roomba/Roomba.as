@@ -28,15 +28,15 @@ public class Roomba extends Sprite
         }
         _name = String.fromCharCode.apply(null, name);
 
-////        var t :Timer = new Timer(1000);
-////        t.addEventListener(TimerEvent.TIMER, tick);
-////        t.start();
-//
-//        this.root.loaderInfo.addEventListener(Event.UNLOAD,
-//            function (event :Event) :void {
-////                t.stop();
-////                t = null;
-//            }, false, 0, true);
+        var t :Timer = new Timer(1000);
+        t.addEventListener(TimerEvent.TIMER, tick, false, 0, true);
+        t.start();
+
+        this.root.loaderInfo.addEventListener(Event.UNLOAD,
+            function (event :Event) :void {
+//                t.stop();
+//                t = null;
+            }, false, 0, true);
 
         addEventListener(Event.ENTER_FRAME, enterFrame, false, 0, true);
         addChild(Bitmap(new ROOMBA()));
@@ -49,7 +49,7 @@ public class Roomba extends Sprite
     protected function updateLocation () :void
     {
         var loc :Array = _iface.getLocation();
-//        trace(_name + " got loc : " + loc);
+        trace(_name + " got loc : " + loc);
 
         if (loc == null) {
             // hmm, something's not quite set up yet.
@@ -76,7 +76,7 @@ public class Roomba extends Sprite
 
     protected function tick (event :TimerEvent) :void
     {
-        trace(_name + " tick");
+        trace(_name + " ticking");
     }
 
     protected var _name :String;
@@ -87,5 +87,8 @@ public class Roomba extends Sprite
 
     [Embed(source="roomba.png")]
     protected static const ROOMBA :Class;
+
+//    [Embed(source="schade01.wav")]
+//    protected static const BUMP :Class;
 }
 }
