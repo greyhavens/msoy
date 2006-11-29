@@ -515,6 +515,16 @@ public class MsoySceneRepository extends SimpleRepository
         model.version = 1;
         model.name = roomName;
 
+        FurniData f = new FurniData();
+        f.id = 1;
+        f.actionType = FurniData.ACTION_PORTAL;
+        f.actionData = "1:A common area";
+        f.loc = new MsoyLocation(.8, 0, 1, 0);
+        f.scaleX = f.scaleY = (float) (1 / .55);
+        f.media = new MediaDesc( // aqua door
+            "7fbc0922c7f36e1ce14648466b42c093185b6c1b.png");
+        model.addFurni(f);
+
         return executeUpdate(new Operation<Integer>() {
             public Integer invoke (Connection conn, DatabaseLiaison liaison)
                 throws SQLException, PersistenceException
