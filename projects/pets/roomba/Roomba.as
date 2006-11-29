@@ -10,7 +10,7 @@ import flash.events.TimerEvent;;
 
 import flash.utils.Timer;
 
-import com.threerings.msoy.world.client.FurniInterface;
+import com.threerings.msoy.export.FurniInterface;
 
 /**
  * An extremely simple pet that moves randomly around the room.
