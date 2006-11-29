@@ -20,8 +20,8 @@
   <servlet path="/groupsvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
   <servlet path="/gamesvc" class="com.threerings.msoy.web.server.RedirectServlet"/>
 
-  <replace-with class="client.util.WidgetUtilImplMozilla">
-    <when-type-is class="client.util.WidgetUtilImpl"/>
+  <replace-with class="com.threerings.gwt.ui.WidgetUtilImplMozilla">
+    <when-type-is class="com.threerings.gwt.ui.WidgetUtilImpl"/>
     <any>
       <when-property-is name="user.agent" value="gecko"/>
       <when-property-is name="user.agent" value="gecko1_8"/>
