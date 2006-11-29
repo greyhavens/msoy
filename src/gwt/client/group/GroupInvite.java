@@ -7,11 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import client.mail.MailPayloadComposer;
-import client.mail.MailPayloadDisplay;
-import client.mail.MailUpdateListener;
-import client.util.InlineLabel;
-
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -20,12 +15,19 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.InlineLabel;
+
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.GroupInviteObject;
 import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailMessage;
+import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MemberGName;
+
+import client.mail.MailPayloadComposer;
+import client.mail.MailPayloadDisplay;
+import client.mail.MailUpdateListener;
 
 public abstract class GroupInvite
 {

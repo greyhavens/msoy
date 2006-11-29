@@ -18,6 +18,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.InlineLabel;
+
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupDetail;
@@ -26,7 +28,6 @@ import com.threerings.msoy.web.data.MemberGName;
 
 import client.shell.MsoyEntryPoint;
 import client.util.HeaderValueTable;
-import client.util.InlineLabel;
 
 import client.group.GroupEdit.GroupSubmissionListener;
 

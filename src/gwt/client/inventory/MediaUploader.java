@@ -26,10 +26,10 @@ import com.google.gwt.user.client.ui.Widget;
 import org.gwtwidgets.client.ui.FileUploadField;
 import org.gwtwidgets.client.ui.FormPanel;
 
+import com.threerings.gwt.ui.SubmitField;
+
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.StaticMediaDesc;
-
-import client.util.SubmitField;
 
 /**
  * Helper class, used in ItemEditor.

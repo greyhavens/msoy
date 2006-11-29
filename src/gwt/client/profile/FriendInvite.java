@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.InlineLabel;
+
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.web.data.MailPayload;
@@ -18,7 +20,6 @@ import com.threerings.msoy.web.data.MemberGName;
 import client.mail.MailPayloadComposer;
 import client.mail.MailPayloadDisplay;
 import client.mail.MailUpdateListener;
-import client.util.InlineLabel;
 
 public abstract class FriendInvite
 {
