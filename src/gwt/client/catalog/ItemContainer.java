@@ -10,12 +10,13 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import client.shell.MsoyEntryPoint;
-import client.util.WidgetUtil;
 
 /**
  * Displays a catalog listing.

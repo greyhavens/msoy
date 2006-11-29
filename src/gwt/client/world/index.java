@@ -10,10 +10,11 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
-import client.util.WidgetUtil;
 
 /**
  * Handles the MetaSOY main page.
