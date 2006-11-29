@@ -196,8 +196,37 @@
     </java>
   </target>
 
+  <target name="checkexportlib">
+    <uptodate property="exportlib_is_up_to_date" targetfile="lib/msoy-export.swc">
+      <srcfiles dir="src/as/com/threerings/msoy/export" includes="**/*.as"/>
+    </uptodate>
+  </target>
+
+  <!-- builds our Flash library -->
+  <target name="exportlib" unless="exportlib_is_up_to_date" depends="checkexportlib">
+    <java jar="lib/as-compiler/lib/compc.jar" fork="true" failonerror="true">
+      <arg value="-locale"/>
+      <arg value="en_US"/>
+      <arg value="-compiler.optimize"/>
+      <arg value="-compiler.external-library-path"/>
+      <arg value="lib/as-compiler/frameworks/libs"/>
+      <arg value="lib/as-compiler/frameworks/locale/en_US"/>
+      <arg value="-link-report"/>
+      <arg value="/tmp/link-report.txt"/>
+      <arg value="-load-config"/>
+      <arg value="lib/as-compiler/frameworks/flex-config.xml"/>
+      <arg value="-compiler.warn-class-is-sealed=true"/>
+      <arg value="-compiler.warn-constructor-returns-value=true"/>
+      <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
+      <!--<arg value="-compiler.source-path=src/as/com/threerings/msoy/export/"/>-->
+      <arg value="-include-sources=src/as/com/threerings/msoy/export/"/>
+      <arg value="-output"/>
+      <arg value="lib/msoy-export.swc"/>
+    </java>
+  </target>
+
   <!-- builds our Flash client -->
-  <target name="asclient" depends="asprepare,aslib">
+  <target name="asclient" depends="asprepare,aslib,exportlib">
     <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-locale"/>
       <arg value="en_US"/>
@@ -227,7 +256,7 @@
   </target>
 
   <!-- builds our Flash debug client -->
-  <target name="asdebug" depends="asprepare,aslib">
+  <target name="asdebug" depends="asprepare,aslib,exportlib">
     <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-locale"/>
       <arg value="en_US"/>
