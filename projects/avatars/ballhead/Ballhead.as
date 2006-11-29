@@ -3,7 +3,7 @@ package {
 import flash.display.Graphics;
 import flash.display.Sprite;
 
-import com.threerings.msoy.world.client.AvatarInterface;
+import com.threerings.msoy.export.AvatarInterface;
 
 [SWF(width="50", height="50")]
 public class Ballhead extends Sprite
