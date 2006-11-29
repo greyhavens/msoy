@@ -105,7 +105,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         throws PersistenceException
     {
         return findAll(getItemClass(), new Key(ItemRecord.OWNER_ID, ownerId),
-                       new OrderBy(new ColumnExp(ItemRecord.RATING)));
+                       OrderBy.descending(ItemRecord.RATING));
     }
 
     /**
