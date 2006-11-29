@@ -10,7 +10,7 @@ import flash.events.Event;
 
 import flash.utils.getTimer; // function import
 
-import com.threerings.msoy.world.client.AvatarInterface;
+import com.threerings.msoy.export.AvatarInterface;
 
 [SWF(width="161", height="150")]
 public class Cock extends Sprite
