@@ -623,7 +623,25 @@ public class MsoySprite extends MediaContainer
      */
     protected function handleInterfaceQuery (evt :Object) :void
     {
-        evt.msoyResponse = handleQuery(String(evt.msoyName), evt.msoyValue);
+        var name :String;
+        var val :Object;
+        var result :Object;
+        try {
+            name = String(evt.msoyName);
+            val = evt.msoyValue;
+        } catch (err :ReferenceError) {
+            // we don't understand, fail...
+            return;
+        }
+
+        // handle the query
+        result = handleQuery(name, val);
+
+        try {
+            evt.msoyResponse = result;
+        } catch (err :ReferenceError) {
+            // silently fail
+        }
     }
 
     /**
@@ -656,8 +674,8 @@ public class MsoySprite extends MediaContainer
     /** The glow effect used for mouse hovering. */
     protected var _glow :Glow;
 
-    /** A single LocalConnection used to communicate with all AVM1 media. */
-    protected static var _oldDispatch :LocalConnection;
+//    /** A single LocalConnection used to communicate with all AVM1 media. */
+//    protected static var _oldDispatch :LocalConnection;
 
     [Embed(source="../../../../../../../rsrc/media/indian_h.png")]
     protected static const _loadingImgClass :Class;
