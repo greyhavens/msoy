@@ -485,9 +485,13 @@
          basedir="${deploy.dir}/classes" includes="rsrc/**"/>
   </target>
 
+  <!-- builds top-level flash applications. -->
+  <target name="flashapps"
+          depends="asclient,avatarviewer"/>
+
   <!-- rebuilds all subprojects and the whole top-level distribution -->
   <target name="distall"
-          depends="prepare,distprojects,dist,asclient,gclient,jclient"/>
+          depends="prepare,distprojects,dist,flashapps,gclient,jclient"/>
 
   <!-- fully cleans out the installed application and all subprojects -->
   <target name="cleanall" depends="cleanprojects">
