@@ -527,10 +527,6 @@ try {
             var game :Game = (item as Game);
             furni.actionType = FurniData.ACTION_GAME;
             furni.actionData = String(game.getProgenitorId()) + ":" + game.name;
-
-        } else if (item is Audio) {
-            // assume furni will be added as background (for now)
-            furni.actionType = FurniData.BACKGROUND;
         }
     }
 
@@ -540,11 +536,7 @@ try {
      */
     protected function configureFurniMedia (furni :FurniData, item :Item) :void
     {
-        if (item is Audio) {
-            furni.media = (item as Audio).audioMedia;
-        } else {
-            furni.media = item.getFurniMedia();
-        }
+        furni.media = item.getFurniMedia();
     }
 
     protected function roomPressed (event :MouseEvent) :void

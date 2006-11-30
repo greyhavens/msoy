@@ -107,9 +107,20 @@ public class FloatingPanel extends TitleWindow
                 addListener(but, buttonId);
             }
             butBox.addChild(but);
+
+            // store the button for later retrieval
+            _buttons[buttonId] = but;
         }
 
         addChild(butBox);
+    }
+
+    /**
+     * Return the specified button, or null.
+     */
+    protected function getButton (buttonId :int) :Button
+    {
+        return (_buttons[buttonId] as Button);
     }
 
     /**
@@ -199,6 +210,9 @@ public class FloatingPanel extends TitleWindow
 
     /** Provides client services. */
     protected var _ctx :MsoyContext;
+
+    /** An associative hash mapping buttonId to Button. */
+    protected var _buttons :Object = new Object();
 
     /** The component that is the host of this dialog. */
     protected var _parent :DisplayObject;

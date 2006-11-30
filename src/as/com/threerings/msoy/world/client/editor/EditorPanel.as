@@ -264,6 +264,14 @@ public class EditorPanel extends VBox
         _horizon.liveDragging = true;
 
         grid.addRow(
+            MsoyUI.createLabel(Msgs.EDITING.get("l.background_image")),
+            _backgroundImage = new SingleItemSelector(_ctx));
+
+        grid.addRow(
+            MsoyUI.createLabel(Msgs.EDITING.get("l.background_audio")),
+            _backgroundAudio = new SingleItemSelector(_ctx));
+
+        grid.addRow(
             new RoomViewScrollBox(_roomView, 200, 100), [2, 1]);
 
         box.addChild(grid);
@@ -281,6 +289,8 @@ public class EditorPanel extends VBox
         _width.text = String(_sceneModel.width);
         _depth.text = String(_sceneModel.depth);
         _horizon.value = _sceneModel.horizon;
+
+        //_backgroundAudio.setSelectedItem(
     }
 
     override protected function childrenCreated () :void
@@ -397,6 +407,9 @@ public class EditorPanel extends VBox
     protected var _width :TextInput;
     protected var _depth :TextInput;
     protected var _horizon :HSlider;
+
+    protected var _backgroundImage :SingleItemSelector;
+    protected var _backgroundAudio :SingleItemSelector;
 
     protected var _deleteBtn :CommandButton;
 
