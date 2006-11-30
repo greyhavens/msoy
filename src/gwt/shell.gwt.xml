@@ -1,5 +1,6 @@
 <module>
   <inherits name='com.google.gwt.user.User'/>
+  <inherits name="com.google.gwt.http.HTTP"/>
 
   <public path="public/shell"/>
   <source path="client/shell"/>
