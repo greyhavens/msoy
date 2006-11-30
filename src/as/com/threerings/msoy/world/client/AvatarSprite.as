@@ -30,7 +30,7 @@ import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 
-public class AvatarSprite extends MsoySprite
+public class AvatarSprite extends BaseAvatarSprite
     implements ContextMenuProvider
 {
     public function AvatarSprite (ctx :MsoyContext, occInfo :WorldMemberInfo)
@@ -45,17 +45,6 @@ public class AvatarSprite extends MsoySprite
 
         // set up our occupant info
         setOccupantInfo(ctx, occInfo);
-    }
-
-    /**
-     * Called to set up the avatar's initial location upon entering
-     * a room.
-     */
-    public function setEntering (loc :MsoyLocation) :void
-    {
-        setLocation(loc);
-        setOrientation(loc.orient);
-        stanceDidChange();
     }
 
     /**
@@ -116,16 +105,6 @@ public class AvatarSprite extends MsoySprite
         }
     }
 
-    override public function getMaxContentWidth () :int
-    {
-        return 300;
-    }
-
-    override public function getMaxContentHeight () :int
-    {
-        return 400;
-    }
-
     /**
      * Get the style of chat bubble to use for this occupant.
      */
@@ -157,7 +136,7 @@ public class AvatarSprite extends MsoySprite
     /**
      * @return true if we're moving.
      */
-    public function isMoving () :Boolean
+    override public function isMoving () :Boolean
     {
         return (_move != null);
     }
@@ -177,11 +156,6 @@ public class AvatarSprite extends MsoySprite
         }
 
         super.shutdown(completely);
-    }
-
-    public function setOrientation (orient :int) :void
-    {
-        loc.orient = orient;
     }
 
     override protected function scaleUpdated () :void
@@ -225,25 +199,6 @@ public class AvatarSprite extends MsoySprite
     {
         // let's just post a command to our controller
         CommandEvent.dispatch(this, RoomController.AVATAR_CLICKED, this);
-    }
-
-    override public function isInteractive () :Boolean
-    {
-        return true;
-    }
-
-    override public function hasAction () :Boolean
-    {
-        return true;
-    }
-    
-    /**
-     * Called when the avatar changes orientation or transitions between
-     * walking or standing.
-     */
-    protected function stanceDidChange () :void
-    {
-        sendMessage("avatarChanged", [ isMoving(), loc.orient ]);
     }
 
     protected var _occInfo :WorldMemberInfo;

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+    layout="absolute" styleName="plain"
+    verticalScrollPolicy="off" horizontalScrollPolicy="off"
+    width="300" height="500"
+    applicationComplete="addChild(new AvatarViewerComp());">
+<mx:Style source="msoy.css"/>
+</mx:Application>

@@ -167,6 +167,18 @@ public class MediaDesc
         }
     }
 
+//    /**
+//     * A temporary(?) way to create a MediaDesc out of a filename.
+//     */
+//    public static function createTEMP (filename :String) :MediaDesc
+//    {
+//        var hash :ByteArray =
+//            stringToHash(filename.substring(0, filename.indexOf(".")));
+//        var mimeType :int = suffixToMimeType(filename);
+//
+//        return new MediaDesc(hash, mimeType);
+//    }
+
     /**
      * Creates either a configured or blank media descriptor.
      */

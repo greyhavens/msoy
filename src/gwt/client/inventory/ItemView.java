@@ -11,6 +11,7 @@ import client.shell.MsoyEntryPoint;
 import client.util.HeaderValueTable;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
@@ -30,6 +31,8 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.item.web.Avatar;
@@ -150,11 +153,13 @@ public class ItemView extends PopupPanel
         } else if (_item instanceof Avatar) {
             _table.addHeader("Avatar Information");
             MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
-            Widget avatarContainer;
-            avatarContainer = ItemContainer.createContainer(
-                MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath()));
+            String path = MsoyEntryPoint.toMediaPath(
+                avatarMedia.getMediaPath());
+            Widget avatarViewer = WidgetUtil.createFlashContainer(
+                "avatarViewer", "/clients/avatarviewer.swf", 300, 500,
+                "avatar=" + URL.encodeComponent(path));
             _table.addRow("Description", ((Avatar)_item).description);
-            _table.addRow("Avatar", avatarContainer);
+            _table.addRow("Avatar", avatarViewer);
 
         } else if (_item instanceof Audio) {
             _table.addHeader("Audio Information");
