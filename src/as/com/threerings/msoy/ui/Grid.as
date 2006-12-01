@@ -3,6 +3,8 @@ package com.threerings.msoy.ui {
 import mx.containers.GridItem;
 import mx.containers.GridRow;
 
+import mx.controls.Label;
+
 import mx.core.UIComponent;
 
 /**
@@ -14,10 +16,11 @@ public class Grid extends mx.containers.Grid
      * Add a new row to the grid, containing the specified
      * components.
      * 
-     * @param specs a list of components, or you can follow any component
-     * with a two-dimensional array that specifies grid width/height.
+     * @param specs a list of components or Strings, or you can follow
+     * any component with a two-dimensional array that specifies
+     * grid width/height.
      *
-     * Example: addRow(_label, _entryField, _bigThing, [2, 2], _smallThing);
+     * Example: addRow("labeltxt", _entryField, _bigThing, [2, 2], _smallThing);
      *
      * All will be put in the same row, but bigThing will have
      *  colspan=2 rowspan=2
@@ -27,6 +30,11 @@ public class Grid extends mx.containers.Grid
         var row :GridRow = new GridRow();
         var lastItem :GridItem;
         for each (var o :Object in specs) {
+            if (o is String) {
+                var lbl :Label = new Label();
+                lbl.text = String(o);
+                o = lbl;
+            }
             if (o is UIComponent) {
                 lastItem = addToRow(row, UIComponent(o));
 
