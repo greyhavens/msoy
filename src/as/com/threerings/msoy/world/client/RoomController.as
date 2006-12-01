@@ -194,6 +194,15 @@ public class RoomController extends SceneController
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {
             // create a menu for clicking on ourselves
+            var actions :Array = avatar.getAvatarActions();
+            var local :String = Msgs.GENERAL.get("l.avAction_local");
+            var world :String = Msgs.GENERAL.get("l.avAction_world");
+            for each (var act :String in actions) {
+                var fn :Function = avatar.performAvatarAction;
+                menuItems.push({ label: local + act, callback: fn, arg: act },
+                    { label: world + act, callback: doWorldAvatarAction,
+                        arg: act });
+            }
 
         } else {
             // create a menu for clicking on someone else
@@ -401,6 +410,15 @@ public class RoomController extends SceneController
     {
         super.sceneUpdated(update);
         _roomView.processUpdate(update);
+    }
+
+    /**
+     * Called to enact the avatar action globally: all users will see it.
+     */
+    protected function doWorldAvatarAction (action :String) :void
+    {
+        _roomObj.postMessage("avAction",
+            [ _mctx.getClient().getClientOid(), action ]);
     }
 
     /** The life-force of the client. */

@@ -26,6 +26,8 @@ import com.threerings.util.Iterator;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.client.PlaceView;
@@ -56,7 +58,7 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 
 public class RoomView extends AbstractRoomView
-    implements ContextMenuProvider, SetListener, ChatDisplay
+    implements ContextMenuProvider, SetListener, ChatDisplay, MessageListener
 {
     public function RoomView (ctx :MsoyContext, ctrl :RoomController)
     {
@@ -547,6 +549,17 @@ public class RoomView extends AbstractRoomView
         }
     }
 
+    // fro interface MessageListener
+    public function messageReceived (event :MessageEvent) :void
+    {
+        var args :Array = event.getArgs();
+        switch (event.getName()) {
+        case "avAction":
+            performAvatarAction(int(args[0]), (args[1] as String));
+            break;
+        }
+    }
+
     // documentation inherited from interface ChatDisplay
     public function clear () :void
     {
@@ -567,7 +580,21 @@ public class RoomView extends AbstractRoomView
         }
 
         ChatPopper.popUp(msg, avatar);
+        if (avatar != null) {
+            avatar.performAvatarSpoke();
+        }
         return true;
+    }
+
+    /**
+     * Make that avatar dance, or whatever.
+     */
+    protected function performAvatarAction (bodyOid :int, action :String) :void
+    {
+        var avatar :AvatarSprite = (_avatars.get(bodyOid) as AvatarSprite);
+        if (avatar != null) {
+            avatar.performAvatarAction(action);
+        }
     }
 
     protected function removeFurni (furni :FurniData) :void

@@ -1,11 +1,15 @@
-package {
+package com.threerings.msoy.world.client {
 
 import mx.binding.utils.BindingUtils;
 
 import mx.containers.Canvas;
+import mx.controls.Button;
 import mx.controls.CheckBox;
+import mx.controls.ComboBox;
 import mx.controls.HSlider;
 import mx.controls.Label;
+
+import mx.events.FlexEvent;
 
 import com.threerings.msoy.ui.Grid;
 
@@ -30,20 +34,19 @@ public class AvatarViewerComp extends Canvas
 
         var walking :CheckBox = new CheckBox();
 
-        var rotLabel :Label = new Label();
-        rotLabel.text = "Facing angle:";
-
-        var walkLabel :Label = new Label();
-        walkLabel.text = "Walking:";
+        var talking :Button = new Button();
+        talking.label = "Talk!";
+        talking.addEventListener(FlexEvent.BUTTON_DOWN,
+            function (evt :FlexEvent) :void {
+                _avatar.performAvatarSpoke();
+            });
 
         var grid :Grid = new Grid();
-
-        grid.addRow(walkLabel, walking);
-        grid.addRow(rotLabel, rotation);
+        grid.addRow("Walking:", walking);
+        grid.addRow("Facing angle:", rotation);
+        grid.addRow(talking);
         grid.addRow(_avatar, [2, 1]);
-
         addChild(grid);
-
 
         BindingUtils.bindSetter(function (val :Number) :void {
             _avatar.setOrientation(int(val));
@@ -58,6 +61,12 @@ public class AvatarViewerComp extends Canvas
 }
 }
 
+import flash.events.MouseEvent;
+
+import flash.geom.Point;
+
+import com.threerings.mx.controls.CommandMenu;
+
 import com.threerings.msoy.world.client.BaseAvatarSprite;
 
 class ViewerAvatarSprite extends BaseAvatarSprite
@@ -66,6 +75,10 @@ class ViewerAvatarSprite extends BaseAvatarSprite
     {
         super(null);
         setMedia(url);
+
+        // add the event listener, because we don't do it ourselves anymore
+        // now that the room handles it for normal avatars
+        addEventListener(MouseEvent.CLICK, mouseClick);
     }
 
     public function setMoving (moving :Boolean) :void
@@ -83,6 +96,21 @@ class ViewerAvatarSprite extends BaseAvatarSprite
     override public function isMoving () :Boolean
     {
         return _moving;
+    }
+
+    override public function mouseClick (event :MouseEvent) :void
+    {
+        var actions :Array = getAvatarActions();
+        var menuItems :Array = [];
+
+        for each (var act :String in actions) {
+            menuItems.push({ label: act, callback: performAvatarAction,
+                arg: act });
+        }
+
+        var menu :CommandMenu = CommandMenu.createMenu(this, menuItems);
+        var p :Point = localToGlobal(new Point());
+        menu.show(p.x, p.y);
     }
 
     protected var _moving :Boolean = false;

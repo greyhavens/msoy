@@ -60,6 +60,32 @@ public class BaseAvatarSprite extends MsoySprite
     {
         return true;
     }
+
+    public function performAvatarSpoke () :void
+    {
+        sendMessage("avatarSpoke", null);
+    }
+
+    /**
+     * Get a list of the names of special actions that this avatar supports.
+     */
+    public function getAvatarActions () :Array
+    {
+        var arr :Array = (sendMessage("getActions", null) as Array);
+        if (arr == null) {
+            arr = [];
+        }
+        // TODO: filter returned array to ensure it contains Strings?
+        return arr;
+    }
+
+    /**
+     * Have this avatar perform an action.
+     */
+    public function performAvatarAction (actionName :String) :void
+    {
+        sendMessage("action", actionName);
+    }
     
     /**
      * Called when the avatar changes orientation or transitions between

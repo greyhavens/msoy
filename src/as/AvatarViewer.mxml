@@ -5,4 +5,9 @@
     width="300" height="500"
     applicationComplete="addChild(new AvatarViewerComp());">
 <mx:Style source="msoy.css"/>
+<mx:Script>
+    <![CDATA[
+        import com.threerings.msoy.world.client.AvatarViewerComp;
+    ]]>
+</mx:Script>
 </mx:Application>
