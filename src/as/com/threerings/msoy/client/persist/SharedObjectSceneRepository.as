@@ -44,15 +44,14 @@ public class SharedObjectSceneRepository
             return null;
         }
 
-        // uncompress the bytes and read out the scene model
-        ba.endian = Endian.BIG_ENDIAN; // this should be saved, but...
-        ba.position = 0;
-        // Note: compression seems to be broken: often it fails to uncompress
-        // Disabled for now
-//        trace("--- length of compressed: " + ba.length);
-//        ba.uncompress();
-//        trace("--- length after : " + ba.length);
-        var ins :ObjectInputStream = new ObjectInputStream(ba);
+        // we need to keep the saved object compressed, so we copy
+        // the bytes into another ByteArray to uncompress
+        var ba2 :ByteArray = new ByteArray();
+        ba2.endian = Endian.BIG_ENDIAN;
+        ba2.writeBytes(ba);
+        ba2.position = 0;
+        ba2.uncompress();
+        var ins :ObjectInputStream = new ObjectInputStream(ba2);
         return (ins.readObject() as SceneModel);
     }
 
@@ -70,11 +69,7 @@ public class SharedObjectSceneRepository
         ba.endian = Endian.BIG_ENDIAN;
         var out :ObjectOutputStream = new ObjectOutputStream(ba);
         out.writeObject(model);
-        // Note: compression seems to be broken: often it fails to uncompress
-        // Disabled for now
-//        trace("--- length before comp: " + ba.length);
-//        ba.compress();
-//        trace("--- length after comp: " + ba.length);
+        ba.compress();
 
         // store the byte array
         so.data.model = ba;
