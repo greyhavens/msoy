@@ -195,13 +195,20 @@ public class RoomController extends SceneController
         if (occInfo.bodyOid == us.getOid()) {
             // create a menu for clicking on ourselves
             var actions :Array = avatar.getAvatarActions();
-            var local :String = Msgs.GENERAL.get("l.avAction_local");
-            var world :String = Msgs.GENERAL.get("l.avAction_world");
-            for each (var act :String in actions) {
+            if (actions.length > 0) {
+                var localActions :Array = [];
+                var worldActions :Array = [];
                 var fn :Function = avatar.performAvatarAction;
-                menuItems.push({ label: local + act, callback: fn, arg: act },
-                    { label: world + act, callback: doWorldAvatarAction,
-                        arg: act });
+                for each (var act :String in actions) {
+                    localActions.push({ label: act, callback: fn, arg: act });
+                    worldActions.push({ label: act,
+                        callback: doWorldAvatarAction, arg: act });
+                }
+
+                menuItems.push({ label: Msgs.GENERAL.get("l.avAction_world"),
+                    children: worldActions });
+                menuItems.push({ label: Msgs.GENERAL.get("l.avAction_local"),
+                    children: localActions });
             }
 
         } else {
