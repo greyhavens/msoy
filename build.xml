@@ -65,6 +65,7 @@
   <target name="prepare" depends="copydistlibs,copydistprops">
     <mkdir dir="${deploy.dir}"/>
     <mkdir dir="${deploy.dir}/lib"/>
+    <mkdir dir="${deploy.dir}/tmp"/>
     <mkdir dir="${deploy.dir}/classes"/>
     <mkdir dir="${deploy.dir}/classes/rsrc"/>
     <mkdir dir="${javadoc.dir}"/>
@@ -121,9 +122,26 @@
     </java>
   </target>
 
+  <property name="gclient.buildstamp" value="${deploy.dir}/tmp/gclient.buildstamp"/>
+  <target name="checkgclient">
+    <uptodate property="gclient_is_up_to_date" targetfile="${gclient.buildstamp}">
+      <srcfiles dir="src/gwt/public/shell"/>
+      <srcfiles dir="src/gwt/client/shell"/>
+      <!--
+      <srcfiles dir="src/gwt/org/gwtwidgets/client"/>
+      <srcfiles dir="src/gwt/com/threerings/gwt"/>
+      -->
+      <srcfiles dir="src/gwt/com/threerings/io"/>
+      <srcfiles dir="src/gwt/com/threerings/msoy/web/client"/>
+      <srcfiles dir="src/gwt/com/threerings/msoy/web/data"/>
+      <srcfiles dir="src/gwt/com/threerings/msoy/item/web"/>
+    </uptodate>
+  </target>
+
   <!-- builds our GWT web client -->
   <property name="pages" value="catalog,game,group,inventory,mail,profile,world"/>
-  <target name="gclient">
+  <target name="gclient" unless="gclient_is_up_to_date" depends="checkgclient,prepare">
+    <delete file="${gclient.buildstamp}"/>
     <for list="${pages}" param="page"><sequential>
       <echo>Compiling @{page} module...</echo>
       <delete dir="pages/@{page}"/>
@@ -144,6 +162,7 @@
         <arg value="@{page}"/>
       </java>
     </sequential></for>
+    <touch file="${gclient.buildstamp}"/>
   </target> 
 
   <!-- prepares to build our Flash client -->
