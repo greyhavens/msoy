@@ -3,6 +3,8 @@ package {
 import flash.display.Graphics;
 import flash.display.Sprite;
 
+import flash.media.Sound;
+
 import com.threerings.msoy.export.AvatarInterface;
 
 [SWF(width="50", height="50")]
@@ -10,8 +12,14 @@ public class Ballhead extends Sprite
 {
     public function Ballhead ()
     {
+        _speakSound = Sound(new SPEAK_SOUND());
+
         _iface = new AvatarInterface(this);
         _iface.avatarChanged = setupVisual;
+        _iface.avatarSpoke = spoke;
+        _iface.addAction("start blushing", startBlushing);
+        _iface.addAction("stop blushing", stopBlushing);
+
         setupVisual();
     }
 
@@ -21,7 +29,10 @@ public class Ballhead extends Sprite
         var walking :Boolean = _iface.isWalking();
 
         graphics.clear();
-        graphics.beginFill(walking ? 0x33FF99 : 0x339933);
+
+        var color :uint = _blushing ? (walking ? 0xFF9933 : 0x993333)
+                                    : (walking ? 0x33FF99 : 0x339933);
+        graphics.beginFill(color);
         graphics.drawCircle(25, 25, 25);
         graphics.endFill();
 
@@ -35,6 +46,30 @@ public class Ballhead extends Sprite
             Math.sin(radians) * -25 + 25);
     }
 
+    protected function spoke () :void
+    {
+        _speakSound.play();
+    }
+
+    protected function startBlushing () :void
+    {
+        _blushing = true;
+        setupVisual();
+    }
+
+    protected function stopBlushing () :void
+    {
+        _blushing = false;
+        setupVisual();
+    }
+
+    protected var _speakSound :Sound;
+
     protected var _iface :AvatarInterface;
+
+    protected var _blushing :Boolean;
+
+    [Embed(source="talk.mp3")]
+    protected static const SPEAK_SOUND :Class;
 }
 }
