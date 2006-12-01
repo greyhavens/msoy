@@ -1,14 +1,11 @@
 package com.threerings.msoy.world.client.editor {
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
-import mx.core.ClassFactory;
+import mx.containers.HBox;
 
-import mx.controls.ComboBox;
-
-import mx.collections.ArrayCollection;
-
-import com.threerings.util.Util;
+import mx.controls.Button;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
@@ -17,7 +14,7 @@ import com.threerings.msoy.item.client.ItemPopupSelector;
 import com.threerings.msoy.item.client.ItemRenderer;
 import com.threerings.msoy.item.web.Item;
 
-public class SingleItemSelector extends ComboBox
+public class SingleItemSelector extends HBox
 {
     public function SingleItemSelector (ctx :MsoyContext)
     {
@@ -25,66 +22,51 @@ public class SingleItemSelector extends ComboBox
 
         _ctx = ctx;
 
-        itemRenderer = new ClassFactory(ItemRenderer);
+        addChild(_itemHolder = new ItemRenderer());
 
-        _collection.addItem(Msgs.EDITING.get("m.none"));
-        _collection.addItem(Msgs.EDITING.get("b.select_new"));
+        addChild(_add = new Button());
+        _add.label = Msgs.EDITING.get("b.select_new");
+        _add.addEventListener(MouseEvent.CLICK, handleClick);
 
-        dataProvider = _collection;
-
-        addEventListener(Event.CHANGE, handleSelectionChange);
+        addChild(_clear = new Button());
+        _clear.label = Msgs.EDITING.get("b.clear");
+        _clear.addEventListener(MouseEvent.CLICK, handleClick);
+        _clear.enabled = false;
     }
 
-    override public function set selectedItem (item :Object) :void
+    public function setSelectedItem (item :Item) :void
     {
-        // if the new item is equals() to an existing item, select the
-        // existing item
-        for (var ii :int = 0; ii < _collection.length; ii++) {
-            if (Util.equals(item, _collection[ii])) {
-                super.selectedItem = _collection[ii];
-                return;
-            }
-        }
+        _item = item;
+        _itemHolder.data = item;
 
-        // otherwise, add the new item prior to the end..
-        _collection.addItemAt(item, _collection.length - 1);
-        super.selectedItem = item;
+        _clear.enabled = (item != null);
     }
 
-    protected function handleSelectionChange (evt :Event) :void
+    public function getSelectedItem () :Item
     {
-        // if they ever select the last item, they need to select more..
-        if (selectedIndex != _collection.length - 1) {
-            _lastSelectedIndex = selectedIndex;
-            return;
-        }
-
-        // TODO: use the same inventory widget for all editing ops?
-        var ips :ItemPopupSelector = new ItemPopupSelector(
-            _ctx, newItemSelected);
-        ips.open(true, this);
+        return _item;
     }
 
-    /**
-     * A callback passed to the ItemPopupSelector.
-     */
-    protected function newItemSelected (item :Item) :void
+    protected function handleClick (evt :MouseEvent) :void
     {
-        if (item == null) {
-            // nothing new selected, revert to the last selected item
-            selectedIndex = _lastSelectedIndex;
+        if (evt.target == _add) {
+            // TODO: use the same inventory widget for all editing ops?
+            var ips :ItemPopupSelector = new ItemPopupSelector(
+                _ctx, setSelectedItem);
+            ips.open(true, this);
 
-        } else {
-            // add the new item..
-            selectedItem = item;
+        } else if (evt.target == _clear) {
+            setSelectedItem(null);
         }
     }
 
     protected var _ctx :MsoyContext;
 
-    /** The collection what stores the goods. */
-    protected var _collection :ArrayCollection = new ArrayCollection();
+    protected var _itemHolder :ItemRenderer;
 
-    protected var _lastSelectedIndex :int;
+    protected var _item :Item;
+
+    protected var _add :Button;
+    protected var _clear :Button;
 }
 }
