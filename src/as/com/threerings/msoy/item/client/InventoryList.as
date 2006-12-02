@@ -44,8 +44,7 @@ public class InventoryList extends ItemList
                 if (!showUsed || !showUnused) {
                     items = items.filter(
                         function (elem :*, index :int, arr :Array) :Boolean {
-                            return (Item(elem).used == Item.UNUSED) ?
-                                showUnused : showUsed;
+                            return Item(elem).isUsed() ? showUsed : showUnused;
                         });
                 }
                 if (items.length == 0) {

@@ -55,7 +55,7 @@ public class InventoryPicker extends VBox
     {
         super.createChildren();
 
-        _tree = new Tree();
+        _tree = new InventoryTree();
         _tree.verticalScrollPolicy = ScrollPolicy.ON;
         _tree.variableRowHeight = true;
         _tree.dragEnabled =  true;

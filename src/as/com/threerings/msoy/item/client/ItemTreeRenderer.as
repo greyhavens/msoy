@@ -29,7 +29,8 @@ public class ItemTreeRenderer extends TreeItemRenderer
                 _media = new ScalingMediaContainer(
                     MAX_MEDIA_WIDTH, MAX_MEDIA_HEIGHT);
             }
-            _media.setMedia(Item(node).getThumbnailPath());
+            var item :Item = Item(node);
+            _media.setMedia(item.getThumbnailPath());
 
         } else if (_media != null) {
             _media.shutdown();

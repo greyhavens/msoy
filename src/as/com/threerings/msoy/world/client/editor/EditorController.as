@@ -273,7 +273,7 @@ public class EditorController extends Controller
     public function handleInventoryItemSelected (item :Item) :void
     {
         // only allow it to be added if it's not already in use somewhere
-        _panel.addButton.enabled = (item != null) && !item.used;
+        _panel.addButton.enabled = (item != null) && !item.isUsed();
     }
 
     /**

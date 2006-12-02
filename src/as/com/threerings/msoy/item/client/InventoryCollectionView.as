@@ -152,7 +152,7 @@ public class InventoryCollectionView extends ArrayCollection
             showList.removeAll();
 
             for each (var item :Item in rawList) {
-                if (_showUsed || (item.used == Item.UNUSED)) {
+                if (_showUsed || !item.isUsed()) {
                     showList.addItem(item);
                 }
             }

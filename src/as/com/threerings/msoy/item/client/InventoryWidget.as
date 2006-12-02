@@ -142,7 +142,7 @@ public class InventoryWidget extends Tree
         // if the item isn't a thing we should always show it
         if (thing is Item) {
             var item :Item = Item(thing);
-            if (!_showUsed && (item.used != Item.UNUSED)) {
+            if (!_showUsed && item.isUsed()) {
                 return false;
             }
         }
