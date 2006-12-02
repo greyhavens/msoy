@@ -53,6 +53,7 @@ public class AvatarInterface extends MsoyInterface
     }
 
     /**
+     * Is the avatar currently walking?
      */
     public function isWalking () :Boolean
     {
