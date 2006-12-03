@@ -236,16 +236,16 @@ public class EditorPanel extends VBox
         // add a grid of controls for the room
         var grid :Grid = new Grid();
 
-//        // edit scene type
-//        grid.addRow(
-//            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_type")),
-//            _type = new ComboBox());
-//        var types :Array = [];
-//        for (var ii :int = 0; ii < MsoySceneModel.TYPE_COUNT; ii++) {
-//            types.push({ label: Msgs.EDITING.get("m.scene_type_" + ii),
-//                         data: ii });
-//        }
-//        _type.dataProvider = types;
+        // edit scene type
+        grid.addRow(
+            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_type")),
+            _type = new ComboBox());
+        var types :Array = [];
+        for (var ii :int = 0; ii < MsoySceneModel.TYPE_COUNT; ii++) {
+            types.push({ label: Msgs.EDITING.get("m.scene_type_" + ii),
+                         data: ii });
+        }
+        _type.dataProvider = types;
 
         grid.addRow(
             MsoyUI.createLabel(Msgs.EDITING.get("l.scene_name")),
@@ -286,17 +286,17 @@ public class EditorPanel extends VBox
      */
     public function updateInputFields () :void
     {
-//        _type.selectedIndex = _sceneModel.type;
+        _type.selectedIndex = _sceneModel.type;
         _name.text = _sceneModel.name;
         _width.text = String(_sceneModel.width);
         _depth.text = String(_sceneModel.depth);
         _horizon.value = _sceneModel.horizon;
 
         var bgImage :FurniData = SceneUtils.getBackgroundImage(_sceneModel);
-        _backgroundImage.setSelectedItem(bgImage);
+//        _backgroundImage.setSelectedItem(bgImage);
 
         var bgAudio :FurniData = SceneUtils.getBackgroundAudio(_sceneModel);
-        _backgroundAudio.setSelectedItem(bgAudio);
+//        _backgroundAudio.setSelectedItem(bgAudio);
     }
 
     override protected function childrenCreated () :void
@@ -305,10 +305,10 @@ public class EditorPanel extends VBox
 
         updateInputFields();
 
-//        BindingUtils.bindSetter(function (o :Object) :void {
-//            _sceneModel.type = int(o.data);
-//            _ctrl.sceneModelUpdated();
-//        }, _type, "selectedItem");
+        BindingUtils.bindSetter(function (o :Object) :void {
+            _sceneModel.type = int(o.data);
+            _ctrl.sceneModelUpdated();
+        }, _type, "selectedItem");
 
         BindingUtils.bindSetter(function (o :String) :void {
             _sceneModel.name = o;
@@ -344,7 +344,7 @@ public class EditorPanel extends VBox
         _sceneModel.type = (bgItem == null) ? MsoySceneModel.DRAWN_ROOM
                                             : MsoySceneModel.IMAGE_OVERLAY;
 
-        var bgFurni :FurniData = MsoyS
+        //var bgFurni :FurniData = MsoyS
     }
 
     protected function newBackgroundAudioSelected () :void
@@ -417,7 +417,7 @@ public class EditorPanel extends VBox
     /** The place where we add the sprite editor. */
     protected var _spriteBox :VBox;
 
-//    protected var _type :ComboBox;
+    protected var _type :ComboBox;
 
     protected var _inventoryBox :VBox;
 
