@@ -14,12 +14,12 @@ public class ItemPopupSelector extends FloatingPanel
      * item, or null.
      */
     public function ItemPopupSelector (
-        ctx :MsoyContext, callback :Function, inv :InventoryWidget = null)
+        ctx :MsoyContext, callback :Function, inv :InventoryPicker = null)
     {
         super(ctx, Msgs.ITEM.get("t.select_item"));
         _callback = callback;
 
-        _inv = (inv != null) ? inv : new InventoryWidget(_ctx);
+        _inv = (inv != null) ? inv : new InventoryPicker(_ctx);
         _inv.minWidth = 350;
     }
 
@@ -50,7 +50,7 @@ public class ItemPopupSelector extends FloatingPanel
     /** The function we'll call with the picked item. */
     protected var _callback :Function;
 
-    protected var _inv :InventoryWidget;
+    protected var _inv :InventoryPicker;
 }
 }
 
@@ -74,8 +74,7 @@ class SelectorController extends Controller
      */
     public function handleInventoryItemSelected (item :Item) :void
     {
-        trace("Got item : " + item);
-        _but.enabled = (item != null);
+        _but.enabled = (item != null) && !item.isUsed();
     }
 
     protected var _but :Button;

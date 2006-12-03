@@ -52,6 +52,7 @@ public class InventoryTree extends Tree
     protected function tweakColor (color :uint, node :Object) :uint
     {
         if ((node is Item) && Item(node).isUsed()) {
+            // reduce brightness by 25%
             color = ColorUtil.adjustBrightness2(color, -25);
         }
         return color;

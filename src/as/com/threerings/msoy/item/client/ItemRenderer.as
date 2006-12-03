@@ -11,6 +11,8 @@ import mx.core.ScrollPolicy;
 import com.threerings.util.MediaContainer;
 import com.threerings.util.Util;
 
+import com.threerings.msoy.client.Msgs;
+
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.item.web.Item;
@@ -60,6 +62,9 @@ public class ItemRenderer extends HBox
 
         if (data is String) {
             _label.text = (data as String);
+
+        } else if (_item == null) {
+            _label.text = Msgs.ITEM.get("m.item_none");
         }
 
         return mediaShown;
