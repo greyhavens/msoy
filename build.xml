@@ -131,7 +131,7 @@
       <srcfiles dir="src/gwt/org/gwtwidgets/client"/>
       <srcfiles dir="src/gwt/com/threerings/gwt"/>
       -->
-      <srcfiles dir="src/gwt/com/threerings/presents/dobj/"/>
+      <srcfiles dir="src/gwt/com/threerings/presents/dobj"/>
     </uptodate>
   </target>
 
