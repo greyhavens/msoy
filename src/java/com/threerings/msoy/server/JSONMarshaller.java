@@ -93,11 +93,28 @@ public class JSONMarshaller<T>
     /**
      * Returns the JSON representation of the state of the given object.
      */
-    public byte[] getState (Object obj)
+    public byte[] getStateBytes (Object obj)
         throws JSONMarshallingException
     {
         try {
             return serialize(obj, obj.getClass()).toString().getBytes();
+        } catch (Exception e) {
+            throw new JSONMarshallingException("Failed to serialize [class=" + _pclass + "]", e);
+        }
+    }
+
+    /**
+     * Serialize a non-primitive non-array into a JSONObject and return it.
+     */
+    public JSONObject getStateObject (Object obj)
+        throws JSONMarshallingException
+    {
+        if (!obj.getClass().equals(_pclass)) {
+            throw new JSONMarshallingException(
+                "Object class doesn't match marshaller [class=" + obj.getClass() + "]");
+        }
+        try {
+            return serializeObject(obj);
         } catch (Exception e) {
             throw new JSONMarshallingException("Failed to serialize [class=" + _pclass + "]", e);
         }
@@ -172,9 +189,12 @@ public class JSONMarshaller<T>
             }
             return jArr;
         }
-        if (!_pclass.equals(dClass)) {
-            return getMarshaller(dClass).serialize(value, dClass);
-        }
+        return getMarshaller(dClass).serializeObject(value);
+    }
+
+    protected JSONObject serializeObject (Object value)
+        throws JSONException, IllegalAccessException
+    {
         JSONObject state = new JSONObject();
         for (Field field : _fields.values()) {
             state.put(field.getName(), serialize(field.get(value), field.getType()));

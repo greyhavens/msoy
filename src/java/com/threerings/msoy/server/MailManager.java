@@ -117,7 +117,7 @@ public class MailManager
             public Void invokePersistResult () throws PersistenceException {
                 try {
                     byte[] state =
-                        JSONMarshaller.getMarshaller(payload.getClass()).getState(payload);
+                        JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
                     _mailRepo.setPayloadState(memberId, folderId, messageId, state);
                 } catch (Exception e) {
                     throw new PersistenceException(e);
@@ -152,7 +152,7 @@ public class MailManager
                     record.payloadType = payload.getType();
                     try {
                         record.payloadState =
-                            JSONMarshaller.getMarshaller(payload.getClass()).getState(payload);
+                            JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
                     } catch (Exception e) {
                         throw new PersistenceException(e);
                     }
