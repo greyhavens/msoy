@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.data;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
 
@@ -18,18 +20,18 @@ public class NeighborFriend
     /** Whether or not this member is currently online. */
     public boolean isOnline;
 
-    /** Constructor for unserializing. */
-    public NeighborFriend ()
-    {
-        super();
-    }
+    /** The quantity of flow possessed by this member. */
+    public int flow;
 
-    /** Constructor from fields. */
-    public NeighborFriend (MemberGName member, boolean isOnline)
-    {
-        super();
-        this.member = member;
-        this.isOnline = isOnline;
-    }
+    /** The time at which this player was created. */
+    public Date created;
 
+    /** The number of sessions this player has played. */
+    public int sessions;
+
+    /** The cumulative number of minutes spent playing. */
+    public int sessionMinutes;
+
+    /** The time at which the player ended their last session. */
+    public Date lastSession;
 }

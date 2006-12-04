@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import com.samskivert.io.PersistenceException;
@@ -51,6 +52,9 @@ public class GroupRepository extends DepotRepository
         Comparable[] idArr = new Integer[groupIds.length];
         for (int ii = 0; ii < idArr.length; ii ++) {
             idArr[ii] = Integer.valueOf(groupIds[ii]);
+        }
+        if (idArr.length == 0) {
+            return new ArrayList<GroupRecord>();
         }
         return findAll(GroupRecord.class,
                        new Where(new In(GroupRecord.class, GroupRecord.GROUP_ID, idArr)));

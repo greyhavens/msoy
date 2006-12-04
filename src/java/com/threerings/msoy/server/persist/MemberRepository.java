@@ -11,6 +11,8 @@ import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.List;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
@@ -18,6 +20,13 @@ import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.clause.FieldOverride;
+import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.operator.SQLOperator;
+import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.FriendEntry;
@@ -44,7 +53,7 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MemberRecord.class,
-                    new Key(MemberRecord.ACCOUNT_NAME, accountName));
+                    new Key(MemberRecord.ACCOUNT_NAME_C, accountName));
     }
 
     /**
@@ -152,8 +161,7 @@ public class MemberRepository extends DepotRepository
     public void configureAvatarId (int memberId, int avatarId)
         throws PersistenceException
     {
-        updatePartial(MemberRecord.class, memberId,
-            MemberRecord.AVATAR_ID, avatarId);
+        updatePartial(MemberRecord.class, memberId, MemberRecord.AVATAR_ID, avatarId);
     }
 
     /**
@@ -200,8 +208,7 @@ public class MemberRepository extends DepotRepository
     public void setHomeSceneId (int memberId, int homeSceneId)
         throws PersistenceException
     {
-        updatePartial(MemberRecord.class, memberId,
-            MemberRecord.HOME_SCENE_ID, homeSceneId);
+        updatePartial(MemberRecord.class, memberId, MemberRecord.HOME_SCENE_ID, homeSceneId);
     }
 
     /**
@@ -246,6 +253,32 @@ public class MemberRepository extends DepotRepository
             MemberRecord.SESSIONS, "sessions + 1",
             MemberRecord.SESSION_MINUTES, "sessionMinutes + " + minutes,
             MemberRecord.LAST_SESSION, "NOW()");
+    }
+    /**
+     * Returns the NeighborFriendRecords for all the established friends of a given member,
+     * through an inner join between {@link MemberRecord} and {@link FriendRecord}.
+     */
+    public Collection<NeighborFriendRecord> getNeighborhoodFriends (final int memberId)
+        throws PersistenceException
+    {
+        SQLOperator joinCondition =
+            new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
+                           new Equals(FriendRecord.INVITEE_ID_C, MemberRecord.MEMBER_ID_C)),
+                   new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
+                           new Equals(FriendRecord.INVITER_ID_C, MemberRecord.MEMBER_ID_C)));
+        // OK, we definitely need some kind of default class for computed classes...
+        return findAll(
+            NeighborFriendRecord.class,
+            new FromOverride(MemberRecord.class),
+            new Join(FriendRecord.class, joinCondition),
+            new Where(new Equals(FriendRecord.STATUS_C, true)),
+            new FieldOverride(NeighborFriendRecord.CREATED, MemberRecord.CREATED_C),
+            new FieldOverride(NeighborFriendRecord.FLOW, MemberRecord.FLOW_C),
+            new FieldOverride(NeighborFriendRecord.LAST_SESSION, MemberRecord.LAST_SESSION_C),
+            new FieldOverride(NeighborFriendRecord.MEMBER_ID, MemberRecord.MEMBER_ID_C),
+            new FieldOverride(NeighborFriendRecord.NAME, MemberRecord.NAME_C),
+            new FieldOverride(NeighborFriendRecord.SESSION_MINUTES, MemberRecord.SESSION_MINUTES_C),
+            new FieldOverride(NeighborFriendRecord.SESSIONS, MemberRecord.SESSIONS_C));
     }
 
     /**

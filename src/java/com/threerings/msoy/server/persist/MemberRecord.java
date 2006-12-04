@@ -4,6 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import java.sql.Date;
 
@@ -23,14 +24,35 @@ public class MemberRecord
     public static final int SCHEMA_VERSION = 2;
 
     public static final String MEMBER_ID = "memberId";
+    public static final ColumnExp MEMBER_ID_C =
+        new ColumnExp(MemberRecord.class, MEMBER_ID);
     public static final String ACCOUNT_NAME = "accountName";
+    public static final ColumnExp ACCOUNT_NAME_C =
+        new ColumnExp(MemberRecord.class, ACCOUNT_NAME);
     public static final String NAME = "name";
+    public static final ColumnExp NAME_C =
+        new ColumnExp(MemberRecord.class, NAME);
     public static final String FLOW = "flow";
+    public static final ColumnExp FLOW_C =
+        new ColumnExp(MemberRecord.class, FLOW);
     public static final String HOME_SCENE_ID = "homeSceneId";
+    public static final ColumnExp HOME_SCENE_ID_C =
+        new ColumnExp(MemberRecord.class, HOME_SCENE_ID);
     public static final String AVATAR_ID = "avatarId";
+    public static final ColumnExp AVATAR_ID_C =
+        new ColumnExp(MemberRecord.class, AVATAR_ID);
+    public static final String CREATED = "created";
+    public static final ColumnExp CREATED_C =
+        new ColumnExp(MemberRecord.class, CREATED);
     public static final String SESSIONS = "sessions";
+    public static final ColumnExp SESSIONS_C =
+        new ColumnExp(MemberRecord.class, SESSIONS);
     public static final String SESSION_MINUTES = "sessionMinutes";
+    public static final ColumnExp SESSION_MINUTES_C =
+        new ColumnExp(MemberRecord.class, SESSION_MINUTES);
     public static final String LAST_SESSION = "lastSession";
+    public static final ColumnExp LAST_SESSION_C =
+        new ColumnExp(MemberRecord.class, LAST_SESSION);
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)

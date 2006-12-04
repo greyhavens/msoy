@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -50,6 +51,7 @@ import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.persist.NeighborFriendRecord;
 import com.threerings.msoy.server.persist.ProfileRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -650,8 +652,7 @@ public class MemberManager
     /**
      * Constructs and returns a {@link Neighborhood} record for a given member.
      */
-    public void getNeighborhood (final int memberId, final int maxFriendDistance,
-                                 final int maxFriends, ResultListener<Neighborhood> listener)
+    public void getNeighborhood (final int memberId, ResultListener<Neighborhood> listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Neighborhood>(listener) {
             public Neighborhood invokePersistResult() throws PersistenceException {
@@ -677,16 +678,28 @@ public class MemberManager
                 }
                 hood.neighborGroups = nGroups.toArray(new NeighborGroup[0]);
 
+                // finally the friends
                 List<NeighborFriend> members = new ArrayList<NeighborFriend>();
-                for (FriendEntry fRec : _memberRepo.getFriends(memberId)) {
-                    NeighborFriend nMem = new NeighborFriend();
-                    nMem.member =
-                        new MemberGName(fRec.name.toString(), fRec.name.getMemberId());
-                    nMem.isOnline = MsoyServer.lookupMember(fRec.name) != null;
-                    members.add(nMem);
+                for (NeighborFriendRecord fRec : _memberRepo.getNeighborhoodFriends(memberId)) {
+                    NeighborFriend nFriend = new NeighborFriend();
+                    nFriend.member = new MemberGName(fRec.name, fRec.memberId);
+                    nFriend.created = new Date(fRec.created.getTime());
+                    nFriend.flow = fRec.flow;
+                    nFriend.lastSession = fRec.lastSession;
+                    nFriend.sessionMinutes = fRec.sessionMinutes;
+                    nFriend.sessions = fRec.sessions;
+                    members.add(nFriend);
                 }
                 hood.neighborFriends = members.toArray(new NeighborFriend[0]);
                 return hood;
+            }
+            
+            // after we finish, have main thread go through and set online status for friends
+            public void handleSuccess () {
+                for (NeighborFriend friend : _result.neighborFriends) {
+                    friend.isOnline = MsoyServer.lookupMember(friend.member.memberId) != null;
+                }
+                _listener.requestCompleted(_result);
             }
         });
     }

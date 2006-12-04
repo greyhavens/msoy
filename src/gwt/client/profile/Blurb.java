@@ -3,6 +3,8 @@
 
 package client.profile;
 
+import client.profile.HoodBlurb;
+
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -28,6 +30,8 @@ public abstract class Blurb extends DockPanel
             return new FriendsBlurb();
         case BlurbData.GROUPS:
             return new GroupsBlurb();
+        case BlurbData.HOOD:
+            return new HoodBlurb();
         default:
             return null; // TODO: return NOOP blurb?
         }

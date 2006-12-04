@@ -69,6 +69,11 @@ public class PersonPageManager
         blurb.blurbId = 2;
         blurbs.add(blurb);
 
+        blurb = new BlurbData();
+        blurb.type = BlurbData.HOOD;
+        blurb.blurbId = 3;
+        blurbs.add(blurb);
+
         layout.blurbs = blurbs;
         resolveBlurbData(memberId, layout, listener);
 

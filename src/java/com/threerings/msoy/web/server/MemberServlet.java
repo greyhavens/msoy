@@ -62,8 +62,7 @@ public class MemberServlet extends RemoteServiceServlet
     {
         ServletWaiter<Neighborhood> waiter =
             new ServletWaiter<Neighborhood>("getNeighborhood[" + memberId + "]");
-        MsoyServer.memberMan.getNeighborhood(memberId, 1, 500, waiter);
+        MsoyServer.memberMan.getNeighborhood(memberId, waiter);
         return waiter.waitForResult();
-
     }
 }
