@@ -35,8 +35,8 @@
     <java jar="${root.path}/lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.library-path"/>
-      <arg value="${root.path}"/>
       <arg value="${root.path}/lib/as-compiler/frameworks/libs"/>
+      <arg value="${root.path}/lib/as-compiler/frameworks/locale/en_US"/>
       <arg value="-load-config"/>
       <arg value="${root.path}/lib/as-compiler/frameworks/flex-config.xml"/>
       <arg value="-link-report"/>
@@ -50,6 +50,8 @@
       <arg value="-externs"/>
       <arg value="-file-specs"/>
       <arg value="src/as/${app.name}.as"/>
+      <arg value="-output"/>
+      <arg value="HoodViz.swf"/>
     </java>
   </target>
 
