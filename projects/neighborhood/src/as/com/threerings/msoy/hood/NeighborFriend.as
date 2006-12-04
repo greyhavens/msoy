@@ -21,11 +21,11 @@ public class NeighborFriend
     public static function fromJSON(JSON: Object) :NeighborFriend
     {
         var friend:NeighborFriend = new NeighborFriend();
-        if (JSON.memberName == null || JSON.memberId == null) {
-            throw new Error("Missing memberName/memberID in JSON");
+        if (JSON.name == null || JSON.id == null) {
+            throw new Error("Missing name/id in JSON");
         }
-        friend.memberName = JSON.memberName;
-        friend.memberId = JSON.memberId;
+        friend.memberName = JSON.name;
+        friend.memberId = JSON.id;
         friend.isOnline = JSON.isOnline;
         return friend;
     }

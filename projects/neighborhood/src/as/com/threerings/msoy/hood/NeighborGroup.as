@@ -21,11 +21,11 @@ public class NeighborGroup
     public static function fromJSON(JSON: Object) :NeighborGroup
     {
         var group:NeighborGroup = new NeighborGroup();
-        if (JSON.groupName == null || JSON.groupId == null || JSON.members == null) {
-            throw new Error("Missing groupName/groupID/members in JSON");
+        if (JSON.name == null || JSON.id == null || JSON.members == null) {
+            throw new Error("Missing name/id/members in JSON");
         }
-        group.groupName = JSON.groupName;
-        group.groupId = JSON.groupId;
+        group.groupName = JSON.name;
+        group.groupId = JSON.id;
         group.members = JSON.members;
         return group;
     }
