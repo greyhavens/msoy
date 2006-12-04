@@ -24,11 +24,11 @@ public class Neighborhood
     {
         var i :int;
         var hood:Neighborhood = new Neighborhood();
-        if (JSON.memberName == null || JSON.memberId == null) {
-            throw new Error("Missing memberName/memberID in JSON");
+        if (JSON.name == null || JSON.id == null) {
+            throw new Error("Missing name/id in JSON");
         }
-        hood.memberName = JSON.memberName;
-        hood.memberId = JSON.memberId;
+        hood.memberName = JSON.name;
+        hood.memberId = JSON.id;
         if (JSON.friends != null) {
             hood.friends = new Array();
             for (i = 0; i < JSON.friends.length; i ++) {
