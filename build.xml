@@ -131,10 +131,6 @@
       <srcfiles dir="src/gwt/org/gwtwidgets/client"/>
       <srcfiles dir="src/gwt/com/threerings/gwt"/>
       -->
-      <srcfiles dir="src/gwt/com/threerings/io"/>
-      <srcfiles dir="src/gwt/com/threerings/msoy/web/client"/>
-      <srcfiles dir="src/gwt/com/threerings/msoy/web/data"/>
-      <srcfiles dir="src/gwt/com/threerings/msoy/item/web"/>
       <srcfiles dir="src/gwt/com/threerings/presents/dobj/"/>
     </uptodate>
   </target>
