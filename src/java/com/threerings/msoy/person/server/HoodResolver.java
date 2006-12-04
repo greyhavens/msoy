@@ -38,14 +38,13 @@ public class HoodResolver extends BlurbResolver
         });
     }
     
-    // serialize a neighborhood the JSON way... might want to extend JSONMarshaller
-    // to handle this directly.
+    // handcrafted JSON serialization, to minimize the overhead
     protected JSONObject toJSON (Neighborhood hood)
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("memberName", hood.member.memberName);
-        obj.put("memberId", hood.member.memberId);
+        obj.put("name", hood.member.memberName);
+        obj.put("id", hood.member.memberId);
         JSONArray jArr = new JSONArray();
         for (NeighborFriend friend : hood.neighborFriends) {
             jArr.put(toJSON(friend));
@@ -63,8 +62,8 @@ public class HoodResolver extends BlurbResolver
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("memberName", friend.member.memberName);
-        obj.put("memberId", friend.member.memberId);
+        obj.put("name", friend.member.memberName);
+        obj.put("id", friend.member.memberId);
         obj.put("isOnline", friend.isOnline);
         return obj;
     }
@@ -73,8 +72,8 @@ public class HoodResolver extends BlurbResolver
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("groupName", group.groupName);
-        obj.put("groupId", group.groupId);
+        obj.put("name", group.groupName);
+        obj.put("id", group.groupId);
         obj.put("members", group.members);
         return obj;
     }
