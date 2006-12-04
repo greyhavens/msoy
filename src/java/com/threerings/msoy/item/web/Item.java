@@ -8,6 +8,7 @@ import java.util.HashMap;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
+import com.threerings.presents.dobj.DSet;
 
 /**
  * The base class for all digital items in the MSOY system.
@@ -17,7 +18,7 @@ import com.threerings.io.Streamable;
  * ({@link IsSerializable}) and must work with the Presents streaming system
  * ({@link Streamable}).
  */
-public abstract class Item implements Streamable, IsSerializable
+public abstract class Item implements Streamable, IsSerializable, DSet.Entry
 {
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     public static final byte NOT_A_TYPE = (byte) 0;
@@ -209,6 +210,14 @@ public abstract class Item implements Streamable, IsSerializable
     public boolean isConsistent ()
     {
         return true;
+    }
+
+    // from DSet.Entry
+    public Comparable getKey ()
+    {
+        // we can't use autoboxing here because this is used by GWT; also these are going to be
+        // large numbers so interning them isn't useful
+        return new Integer(itemId);
     }
 
     // @Override
