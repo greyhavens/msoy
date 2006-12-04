@@ -132,6 +132,11 @@
       <srcfiles dir="src/gwt/com/threerings/gwt"/>
       -->
       <srcfiles dir="src/gwt/com/threerings/presents/dobj"/>
+      <srcfiles dir="src/java/com/threerings/io"/>
+      <srcfiles dir="src/java/com/threerings/msoy/web/client"/>
+      <srcfiles dir="src/java/com/threerings/msoy/web/data"/>
+      <srcfiles dir="src/java/com/threerings/msoy/item/web"/>
+      <srcfiles dir="src/java/com/threerings/presents/dobj"/>
     </uptodate>
   </target>
 
