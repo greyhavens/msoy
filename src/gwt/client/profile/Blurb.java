@@ -43,8 +43,8 @@ public abstract class Blurb extends DockPanel
         _ctx = ctx;
         _memberId = memberId;
         _blurbId = blurbId;
-        if (blurbData instanceof String) {
-            didFail((String)blurbData);
+        if (blurbData instanceof BlurbData.ResolutionFailure) {
+            didFail(((BlurbData.ResolutionFailure)blurbData).cause);
         } else {
             didInit(blurbData);
         }

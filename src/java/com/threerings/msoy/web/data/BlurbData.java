@@ -10,6 +10,22 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class BlurbData implements IsSerializable
 {
+    /**
+     * A tiny class to wrap a failure reason during blurb resolution.
+     */
+    public static class ResolutionFailure implements IsSerializable {
+        public String cause;
+
+        public ResolutionFailure ()
+        {
+        }
+        
+        public ResolutionFailure (String cause)
+        {
+            super();
+            this.cause = cause;
+        }
+    }
     /** The type code for a profile blurb. */
     public static final int PROFILE = 0;
 

@@ -74,7 +74,7 @@ public abstract class BlurbResolver
         log.log(Level.WARNING, "Failed to resolve blurb data " +
             "[type=" + getClass().getName() + ", who=" + _memberId +
             "]", cause);
-        resolutionCompleted(MsoyCodes.INTERNAL_ERROR);
+        resolutionCompleted(new BlurbData.ResolutionFailure(MsoyCodes.INTERNAL_ERROR));
     }
 
     protected int _memberId;
