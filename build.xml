@@ -135,6 +135,7 @@
       <srcfiles dir="src/gwt/com/threerings/msoy/web/client"/>
       <srcfiles dir="src/gwt/com/threerings/msoy/web/data"/>
       <srcfiles dir="src/gwt/com/threerings/msoy/item/web"/>
+      <srcfiles dir="src/gwt/com/threerings/presents/dobj/"/>
     </uptodate>
   </target>
 
