@@ -7,6 +7,7 @@ import com.adobe.serialization.json.*;
  * count. We should probably also include its invitation policy.
  */
 public class NeighborGroup
+    implements Neighbor
 {
     /** The group's name. */
     public var groupName:String;

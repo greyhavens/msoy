@@ -7,6 +7,7 @@ import com.adobe.serialization.json.*;
  * they are online. This class will most likely fill in with more data soon.
  */
 public class NeighborFriend
+    implements Neighbor
 {
     /** The member's name. */
     public var memberName:String;

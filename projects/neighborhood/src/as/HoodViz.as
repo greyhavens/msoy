@@ -30,13 +30,6 @@ public class HoodViz extends Sprite
 
         _hood = Neighborhood.fromJSON(new JSONDecoder(json).getObject());
 
-        var tf:TextField = new TextField();
-        tf.x = 20;
-        tf.width = 600;
-        tf.autoSize = TextFieldAutoSize.LEFT;
-        tf.text = json;
-        this.addChild(tf);
-
         _canvas = new Sprite();
         this.addChild(_canvas);
 
@@ -81,7 +74,7 @@ public class HoodViz extends Sprite
             } else if (nextFriend < _hood.friends.length) {
                 var friend:NeighborFriend = _hood.friends[nextFriend ++];
                 addBit(_friend, tile.x, tile.y, true,
-                       friend.memberName = "(" + (friend.isOnline ? "Online": "Offline") + ")");
+                       friend.memberName + " (" + (friend.isOnline ? "Online": "Offline") + ")");
             }
         }
         var scale :Number = Math.min(640 / (_bound.x.max - _bound.x.min),
@@ -96,23 +89,62 @@ public class HoodViz extends Sprite
                                toolTip:String) :void
     {
         var bit:MovieClip = new bitType();
-        bit.x = y * 82 + x * 175;
-        bit.y = y * 156 - x * 69;
         bit.width = 256;
         bit.height = 224;
+        var bitHolder :ToolTipSprite = new ToolTipSprite();
+        bitHolder.addChild(bit);
+        bitHolder.x = y * 82 + x * 175;
+        bitHolder.y = y * 156 - x * 69;
         if (toolTip != null) {
-//            bit.toolTip = toolTip;
+            bitHolder.toolTip = toolTip;
+            bitHolder.addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
+            bitHolder.addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
         }
-        _canvas.addChild(bit);
+        _canvas.addChild(bitHolder);
 
         if (update) {
-            _bound.x.min = Math.min(_bound.x.min, bit.x);
-            _bound.x.max = Math.max(_bound.x.max, bit.x + bit.width);
-            _bound.y.min = Math.min(_bound.y.min, bit.y);
-            _bound.y.max = Math.max(_bound.y.max, bit.y + bit.height);
+            _bound.x.min = Math.min(_bound.x.min, bitHolder.x);
+            _bound.x.max = Math.max(_bound.x.max, bitHolder.x + bit.width);
+            _bound.y.min = Math.min(_bound.y.min, bitHolder.y);
+            _bound.y.max = Math.max(_bound.y.max, bitHolder.y + bit.height);
         }
     }
 
+    public function rollOverHandler (event :MouseEvent) :void
+    {
+        var text :String = (event.target as ToolTipSprite).toolTip;
+        _tip = new Sprite();
+        with (_tip.graphics) {
+            clear();
+            beginFill(0xFFFFFF);
+            drawRoundRect(0, 0, 120, 60, 10, 10);
+            endFill();
+            lineStyle(2, 0x000000);
+            drawRoundRect(0, 0, 120, 60, 10, 10);
+        }
+        _tip.x = event.stageX - 20;
+        _tip.y = event.stageY - 20 - _tip.height;
+
+        var tipText :TextField = new TextField();
+        tipText.text = text;
+        tipText.autoSize = TextFieldAutoSize.CENTER;
+        tipText.wordWrap = true;
+        _tip.addChild(tipText);
+        tipText.y = (_tip.height - tipText.height)/2;
+        tipText.x = (_tip.width - tipText.width)/2;
+
+        this.addChild(_tip);
+    }
+
+    public function rollOutHandler (event :MouseEvent) :void
+    {
+        if (_tip is Sprite) {
+            this.removeChild(_tip);
+            _tip = null;
+        }
+    }
+
+    protected var _tip :Sprite;
     protected var _hood :Neighborhood;
     protected var _canvas :Sprite;
     protected var _bound :Object = { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } };
