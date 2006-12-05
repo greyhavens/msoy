@@ -43,6 +43,33 @@ public class InventoryPicker extends VBox
         showUsed :Boolean = false)
     {
         _collection = new InventoryCollectionView(ctx, soleType, showUsed);
+
+        _tree = new InventoryTree();
+        _tree.verticalScrollPolicy = ScrollPolicy.ON;
+        _tree.variableRowHeight = true;
+        _tree.dragEnabled =  true;
+        _tree.dragMoveEnabled = false;
+        _tree.itemRenderer = new ClassFactory(ItemTreeRenderer);
+        _tree.dataProvider = _collection;
+
+        _tree.percentWidth = 100;
+        _tree.percentHeight = 100;
+    }
+
+    /**
+     * Pass-through setter for enabling dragging from the tree.
+     */
+    public function set dragEnabled (enabled :Boolean) :void
+    {
+        _tree.dragEnabled = enabled;
+    }
+
+    /**
+     * Pass-through getter for checking drag status from the tree.
+     */
+    public function get dragEnabled () :Boolean
+    {
+        return _tree.dragEnabled;
     }
 
     /**
@@ -68,17 +95,6 @@ public class InventoryPicker extends VBox
     {
         super.createChildren();
 
-        _tree = new InventoryTree();
-        _tree.verticalScrollPolicy = ScrollPolicy.ON;
-        _tree.variableRowHeight = true;
-        _tree.dragEnabled =  true;
-        _tree.dragMoveEnabled = false;
-        _tree.itemRenderer = new ClassFactory(ItemTreeRenderer);
-        _tree.dataProvider = _collection;
-
-        _tree.percentWidth = 100;
-        _tree.percentHeight = 100;
-
         _tree.addEventListener(TreeEvent.ITEM_OPENING, handleItemOpening);
         _tree.addEventListener(Event.CHANGE, handleItemSelected);
 
@@ -91,6 +107,12 @@ public class InventoryPicker extends VBox
 
         // and bind the checkbox to the showing of used items...
         BindingUtils.bindSetter(_collection.setShowUsed, showUsed, "selected");
+
+        // if we're only showing one category, open it.
+        if (_collection.length == 1) {
+            callLater(_tree.expandItem, [_collection[0], true]);
+            //_tree.expandItem(_collection[0], true);
+        }
     }
 
     protected function handleItemOpening (event :TreeEvent) :void
