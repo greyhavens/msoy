@@ -127,10 +127,8 @@
     <uptodate property="gclient_is_up_to_date" targetfile="${gclient.buildstamp}">
       <srcfiles dir="src/gwt/public/shell"/>
       <srcfiles dir="src/gwt/client/shell"/>
-      <!--
-      <srcfiles dir="src/gwt/org/gwtwidgets/client"/>
-      <srcfiles dir="src/gwt/com/threerings/gwt"/>
-      -->
+      <srcfiles dir="pages/css"/>
+      <!-- <srcfiles dir="src/gwt/org/gwtwidgets/client"/> -->
       <srcfiles dir="src/gwt/com/threerings/presents/dobj"/>
       <srcfiles dir="src/java/com/threerings/io"/>
       <srcfiles dir="src/java/com/threerings/msoy/web/client"/>
