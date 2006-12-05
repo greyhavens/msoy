@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.client {
 
+import flash.display.DisplayObjectContainer;
+
 import flash.events.Event;
 
 import mx.binding.utils.BindingUtils;
@@ -49,6 +51,17 @@ public class InventoryPicker extends VBox
     public function getSelectedItem () :Item
     {
         return (_tree.selectedItem as Item);
+    }
+
+    override public function parentChanged (p :DisplayObjectContainer) :void
+    {
+        super.parentChanged(p);
+
+        if (p == null) {
+            _collection.shutdown();
+        } else {
+            _collection.startup();
+        }
     }
 
     override protected function createChildren () :void
@@ -99,6 +112,7 @@ public class InventoryPicker extends VBox
     /** The tree that is displaying our inventory. */
     protected var _tree :Tree;
 
+    /** The collection representing our inventory. */
     protected var _collection :InventoryCollectionView;
 }
 }

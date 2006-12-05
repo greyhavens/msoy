@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.game.data {
 
+import flash.utils.ByteArray;
 import com.threerings.util.*; // for Float, Integer, etc.
 
 import com.threerings.msoy.game.client.LobbyService;

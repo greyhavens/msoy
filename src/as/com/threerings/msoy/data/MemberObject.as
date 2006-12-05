@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.data {
 
+import flash.errors.IllegalOperationError;
+
 import com.threerings.util.Integer;
 import com.threerings.util.Name;
 import com.threerings.util.Short;
@@ -18,6 +20,7 @@ import com.threerings.crowd.data.TokenRing;
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
 import com.threerings.msoy.item.web.Avatar;
+import com.threerings.msoy.item.web.Item;
 
 /**
  * Represents a connected msoy user.
@@ -37,6 +40,15 @@ public class MemberObject extends BodyObject
 
     /** The field name of the <code>recentScenes</code> field. */
     public static const RECENT_SCENES :String = "recentScenes";
+
+    /** The field name of the <code>ownedScenes</code> field. */
+    public static const OWNED_SCENES :String = "ownedScenes";
+
+    /** The field name of the <code>inventory</code> field. */
+    public static const INVENTORY :String = "inventory";
+
+    /** The field name of the <code>loadedInventory</code> field. */
+    public static const LOADED_INVENTORY :String = "loadedInventory";
 
     /** The field name of the <code>tokens</code> field. */
     public static const TOKENS :String = "tokens";
@@ -71,6 +83,12 @@ public class MemberObject extends BodyObject
     
     /** The scenes we own. */
     public var ownedScenes :DSet;
+
+    /** Our inventory, lazy-initialized. */
+    public var inventory :DSet;
+
+    /** A bitmask of the item types that have been loaded into inventory. */
+    public var loadedInventory :int;
 
     /** The tokens defining the access controls for this user. */
     public var tokens :MsoyTokenRing;
@@ -152,6 +170,34 @@ public class MemberObject extends BodyObject
     override public function getVisibleName () :Name
     {
         return memberName;
+    }
+
+    /**
+     * Return true if the specified item type has been loaded.
+     */
+    public function isInventoryLoaded (itemType :int) :Boolean
+    {
+        return (0 != ((1 << itemType) & loadedInventory));
+    }
+
+    /**
+     * Get an array of the items of the specified type.
+     */
+    public function getItems (itemType :int) :Array
+    {
+        if (!isInventoryLoaded(itemType)) {
+            throw new IllegalOperationError(
+                "Items not yet loaded: " + itemType);
+        }
+
+        // just filter by hand..
+        var list :Array = [];
+        for each (var item :Item in inventory.toArray()) {
+            if (item.getType() == itemType) {
+                list.push(item);
+            }
+        }
+        return list;
     }
 
 //    // AUTO-GENERATED: METHODS START
@@ -293,6 +339,8 @@ public class MemberObject extends BodyObject
         clusterOid = ins.readInt();
         recentScenes = (ins.readObject() as DSet);
         ownedScenes = (ins.readObject() as DSet);
+        inventory = (ins.readObject() as DSet);
+        loadedInventory = ins.readInt();
         tokens = (ins.readObject() as MsoyTokenRing);
         homeSceneId = ins.readInt();
         avatar = (ins.readObject() as Avatar);

@@ -17,5 +17,5 @@ public interface ItemService extends InvocationService
      *       a page of it.
      */
     public void getInventory (
-        Client client, byte type, ResultListener listener);
+        Client client, byte type, InvocationListener listener);
 }

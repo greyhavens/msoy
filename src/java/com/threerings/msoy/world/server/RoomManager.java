@@ -16,6 +16,7 @@ import com.samskivert.util.RandomUtil;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ResultAdapter;
@@ -125,7 +126,8 @@ public class RoomManager extends SpotSceneManager
         InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        if (!((MsoyScene) _scene).canEdit((MemberObject) caller)) {
+        final MemberObject user = (MemberObject) caller;
+        if (!((MsoyScene) _scene).canEdit(user)) {
             throw new InvocationException(ACCESS_DENIED);
         }
 
@@ -170,10 +172,10 @@ public class RoomManager extends SpotSceneManager
         }
 
         if (scenesToId != null) {
-            updateRoom2(updates, scenesToId);
+            updateRoom2(user, updates, scenesToId);
 
         } else {
-            finishUpdateRoom(updates);
+            finishUpdateRoom(user, updates);
         }
     }
 
@@ -181,7 +183,8 @@ public class RoomManager extends SpotSceneManager
      * updateRoom, continued. Look up any scene names for new portals.
      */
     protected void updateRoom2 (
-        final SceneUpdate[] updates, ArrayIntSet scenesToId)
+        final MemberObject user, final SceneUpdate[] updates,
+        ArrayIntSet scenesToId)
     {
         final int[] sceneIds = scenesToId.toIntArray();
 
@@ -194,14 +197,14 @@ public class RoomManager extends SpotSceneManager
 
             public void handleSuccess ()
             {
-                updateRoom3(updates, _sceneNames);
+                updateRoom3(user, updates, _sceneNames);
             }
 
             public void handleFailure (Exception e)
             {
                 log.warning("Unable to identify scenes [err=" + e + "]");
                 // just finish off
-                finishUpdateRoom(updates);
+                finishUpdateRoom(user, updates);
             }
 
             protected HashIntMap<String> _sceneNames;
@@ -212,7 +215,7 @@ public class RoomManager extends SpotSceneManager
      * Assign the names to portals.
      */
     protected void updateRoom3 (
-        SceneUpdate[] updates, HashIntMap<String> sceneNames)
+        MemberObject user, SceneUpdate[] updates, HashIntMap<String> sceneNames)
     {
         for (SceneUpdate update : updates) {
             if (update instanceof ModifyFurniUpdate) {
@@ -236,16 +239,27 @@ public class RoomManager extends SpotSceneManager
             }
         }
 
-        finishUpdateRoom(updates);
+        finishUpdateRoom(user, updates);
     }
 
     /**
      * Ah, the final step in updating the room.
      */
-    protected void finishUpdateRoom (SceneUpdate[] updates)
+    protected void finishUpdateRoom (MemberObject user, SceneUpdate[] updates)
     {
         for (SceneUpdate update : updates) {
             recordUpdate(update);
+        }
+
+        // TODO: remove this
+        // FOR NOW, since we don't update item usage properly at the end of
+        // scene editing, we zap everything out of the user's inventory
+        user.startTransaction();
+        try {
+            user.setInventory(new DSet<Item>());
+            user.setLoadedInventory(0);
+        } finally {
+            user.commitTransaction();
         }
     }
 

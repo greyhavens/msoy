@@ -3,14 +3,14 @@
 
 package com.threerings.msoy.item.data {
 
+import flash.utils.ByteArray;
 import com.threerings.util.*; // for Float, Integer, etc.
 
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService_ResultListener;
+import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
  * Provides the implementation of the {@link ItemService} interface
@@ -26,9 +26,9 @@ public class ItemMarshaller extends InvocationMarshaller
     public static const GET_INVENTORY :int = 1;
 
     // from interface ItemService
-    public function getInventory (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function getInventory (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        var listener3 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, GET_INVENTORY, [
             Byte.valueOf(arg2), listener3

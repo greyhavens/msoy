@@ -394,26 +394,22 @@ public class ItemManager
 
     /**
      * Loads up the inventory of items of the specified type for the specified
-     * member. The results may come from the cache and will be cached after
-     * being loaded from the database.
+     * member.
      */
     public void loadInventory (final int memberId, byte type,
                                ResultListener<ArrayList<Item>> listener)
     {
-        // first check the cache
-        final Tuple<Integer, Byte> key = new Tuple<Integer, Byte>(memberId, type);
-//      TEMP: Disable cache for the moment
-        if (false) {
-            Collection<ItemRecord> items = _itemCache.get(key);
-            if (items != null) {
-                ArrayList<Item> list = new ArrayList<Item>();
-                for (ItemRecord record : items) {
-                    list.add(record.toItem());
-                }
-                listener.requestCompleted(list);
-                return;
-            }
-        }
+//        // first check the cache
+//        final Tuple<Integer, Byte> key = new Tuple<Integer, Byte>(memberId, type);
+//        Collection<ItemRecord> items = _itemCache.get(key);
+//        if (items != null) {
+//            ArrayList<Item> list = new ArrayList<Item>();
+//            for (ItemRecord record : items) {
+//                list.add(record.toItem());
+//            }
+//            listener.requestCompleted(list);
+//            return;
+//        }
 
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = getRepository(type, listener);
@@ -795,21 +791,37 @@ public class ItemManager
     }
 
     // from ItemProvider
-    public void getInventory (ClientObject caller, byte type,
-                              final InvocationService.ResultListener listener)
+    public void getInventory (
+        ClientObject caller, final byte type,
+        final InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        MemberObject memberObj = (MemberObject) caller;
+        final MemberObject memberObj = (MemberObject) caller;
         if (memberObj.isGuest()) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
 
+        if (memberObj.isInventoryLoaded(type)) {
+            // already loaded!
+            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
+        }
+
         // then, load that type
-        // TODO: not everything!
         loadInventory(memberObj.getMemberId(), type, new ResultListener<ArrayList<Item>>() {
             public void requestCompleted (ArrayList<Item> result)
             {
-                listener.requestProcessed(result);
+                // apply the changes
+                memberObj.startTransaction();
+                try {
+                    for (Item item : result) {
+                        memberObj.addToInventory(item);
+                    }
+                    memberObj.setLoadedInventory(
+                        memberObj.loadedInventory | (1 << type));
+
+                } finally {
+                    memberObj.commitTransaction();
+                }
             }
 
             public void requestFailed (Exception cause)
@@ -885,12 +897,12 @@ public class ItemManager
      */
     protected void updateUserCache (ItemRecord item)
     {
-        byte type = item.getType();
-        Collection<ItemRecord> items =
-            _itemCache.get(new Tuple<Integer, Byte>(item.ownerId, type));
-        if (items != null) {
-            items.add(item);
-        }
+//        byte type = item.getType();
+//        Collection<ItemRecord> items =
+//            _itemCache.get(new Tuple<Integer, Byte>(item.ownerId, type));
+//        if (items != null) {
+//            items.add(item);
+//        }
     }
 
     /**
@@ -1049,7 +1061,7 @@ public class ItemManager
         new HashMap<Byte, ItemRepository<ItemRecord>>();
 
     /** A soft reference cache of item list indexed on (user,type). */
-    protected SoftCache<Tuple<Integer, Byte>, Collection<ItemRecord>>
-        _itemCache =
-        new SoftCache<Tuple<Integer, Byte>, Collection<ItemRecord>>();
+//    protected SoftCache<Tuple<Integer, Byte>, Collection<ItemRecord>>
+//        _itemCache =
+//        new SoftCache<Tuple<Integer, Byte>, Collection<ItemRecord>>();
 }

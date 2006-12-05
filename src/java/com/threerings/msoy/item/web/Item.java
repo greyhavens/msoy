@@ -30,6 +30,9 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     public static final byte PET = registerItemType(Pet.class, 6);
     public static final byte AUDIO = registerItemType(Audio.class, 7);
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
+    //
+    // Note: If the number of item types surpasses 31, we need to change
+    // the loadedInventory field of MemberObject to be a BitSet or something.
 
     /** A 'used' constant value to indicate that the item is unused. */
     public static final byte UNUSED = (byte) 0;
@@ -215,9 +218,7 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     // from DSet.Entry
     public Comparable getKey ()
     {
-        // we can't use autoboxing here because this is used by GWT; also these are going to be
-        // large numbers so interning them isn't useful
-        return new Integer(itemId);
+        return getIdent();
     }
 
     // @Override

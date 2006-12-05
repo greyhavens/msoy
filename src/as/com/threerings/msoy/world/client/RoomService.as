@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.client {
 
+import flash.utils.ByteArray;
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;

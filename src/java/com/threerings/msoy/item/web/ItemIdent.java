@@ -3,13 +3,15 @@
 
 package com.threerings.msoy.item.web;
 
+import com.threerings.io.Streamable;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * A fully qualified item identifier (type and integer id).
  */
 public class ItemIdent
-    implements IsSerializable
+    implements Comparable, Streamable, IsSerializable
 {
     /** The item type identifier. */
     public byte type;
@@ -31,6 +33,32 @@ public class ItemIdent
     {
         this.type = type;
         this.itemId = itemId;
+    }
+
+    // from Comparable
+    public int compareTo (Object other)
+    {
+        ItemIdent that = (ItemIdent) other;
+
+        // first, compare by type.
+        if (this.type < that.type) {
+            return 1;
+
+        } else if (this.type > that.type) {
+            return -1;
+
+        } else {
+            // if type is equal, compare by item id
+            if (this.itemId < that.itemId) {
+                return 1;
+
+            } else if (this.itemId > that.itemId) {
+                return -1;
+
+            } else {
+                return 0;
+            }
+        }
     }
 
     // @Override from Object

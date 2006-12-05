@@ -30,6 +30,8 @@ import com.threerings.whirled.util.WhirledContext;
 import com.threerings.msoy.client.persist.SharedObjectSceneRepository;
 import com.threerings.msoy.data.MemberObject;
 
+import com.threerings.msoy.item.client.ItemDirector;
+
 import com.threerings.msoy.game.client.GameDirector;
 
 public class MsoyContext
@@ -56,6 +58,7 @@ public class MsoyContext
         _parlorDir = new ParlorDirector(this);
         _gameDir = new GameDirector(this);
         _memberDir = new MemberDirector(this);
+        _itemDir = new ItemDirector(this);
 
         // set up the top panel
         _topPanel = new TopPanel(this);
@@ -150,6 +153,14 @@ public class MsoyContext
     }
 
     /**
+     * Get the ItemDirector.
+     */
+    public function getItemDirector () :ItemDirector
+    {
+        return _itemDir;
+    }
+
+    /**
      * Get the SpotSceneDirector.
      */
     public function getSpotSceneDirector () :SpotSceneDirector
@@ -241,6 +252,8 @@ public class MsoyContext
     protected var _gameDir :GameDirector;
 
     protected var _memberDir :MemberDirector;
+
+    protected var _itemDir :ItemDirector;
 
     protected var _sceneRepo :SharedObjectSceneRepository;
 }

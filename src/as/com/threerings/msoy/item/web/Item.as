@@ -13,6 +13,8 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
+import com.threerings.presents.dobj.DSet_Entry;
+
 /**
  * The base class for all digital items in the MSOY system.
  *
@@ -22,7 +24,7 @@ import com.threerings.io.Streamable;
  * ({@link Streamable}) and must work with the JORA object persistence system.
  */
 public /*abstract*/ class Item
-    implements Hashable, Streamable
+    implements Hashable, Streamable, DSet_Entry
 {
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
     public static const NOT_A_TYPE :int = 0;
@@ -137,6 +139,14 @@ public /*abstract*/ class Item
     }
 
     /**
+     * Returns this item's composite identifier.
+     */
+    public function getIdent () :ItemIdent
+    {
+        return new ItemIdent(getType(), itemId);
+    }
+
+    /**
      * Get the type code for this item's type.
      */
     public function getType () :int
@@ -193,6 +203,12 @@ public /*abstract*/ class Item
     public function getThumbnailPath () :String
     {
         return getThumbnailMedia().getMediaPath();
+    }
+
+    // from DSet_Entry
+    public function getKey () :Object
+    {
+        return getIdent();
     }
 
     // from Hashable
