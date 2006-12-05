@@ -141,9 +141,9 @@ public abstract class GroupInvite
             
             protected void joinGroup ()
             {
-                _ctx.groupsvc.leaveGroup(
+                _ctx.groupsvc.joinGroup(
                     _ctx.creds, _inviteObject.groupId, _ctx.creds.memberId, new AsyncCallback() {
-                        // if leaving the group succeeds, mark this invitation as accepted
+                        // if joining the group succeeds, mark this invitation as accepted
                         public void onSuccess (Object result) {
                             _inviteObject.responded = true;
                             updateState(_inviteObject, new AsyncCallback() {
