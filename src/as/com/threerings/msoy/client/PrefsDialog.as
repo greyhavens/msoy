@@ -19,7 +19,7 @@ import com.threerings.msoy.ui.MsoyUI;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.client.InventoryList;
-import com.threerings.msoy.item.client.InventoryWidget;
+import com.threerings.msoy.item.client.InventoryPicker;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Avatar;
 
@@ -45,9 +45,8 @@ public class PrefsDialog extends FloatingPanel
 
         addChild(grid);
 
-        _avatars = new InventoryWidget(_ctx, Item.AVATAR, true);
+        _avatars = new InventoryPicker(_ctx, Item.AVATAR, true);
         _avatars.percentWidth = 100;
-        //_avatars.addEventListener(DataEvent.DATA, avatarChoicesLoaded);
         _avatars.dragEnabled = false;
 
         addChild(_avatars);
@@ -68,7 +67,7 @@ public class PrefsDialog extends FloatingPanel
         if (memberObj.memberName.toString() !== newName) {
             _ctx.getMemberDirector().setDisplayName(newName);
         }
-        var newAvatar :Avatar = (_avatars.selectedItem as Avatar);
+        var newAvatar :Avatar = (_avatars.getSelectedItem() as Avatar);
         if (newAvatar != null && !newAvatar.equals(memberObj.avatar)) {
             _ctx.getMemberDirector().setAvatar(newAvatar.itemId);
         }
@@ -76,25 +75,33 @@ public class PrefsDialog extends FloatingPanel
         super.buttonClicked(buttonId);
     }
 
-    protected function avatarChoicesLoaded (event :DataEvent) :void
-    {
-        var memberAv :Avatar = _ctx.getClientObject().avatar;
-        if (memberAv == null) {
-            return;
-        }
-
-        for each (var av :Avatar in _avatars.dataProvider) {
-            if (av.itemId == memberAv.itemId) {
-                _avatars.selectedItem = av;
-                break;
-            }
-        }
-    }
+//    override protected function parentChanged (p :DisplayObjectContainer) :void
+//    {
+//        if (p != null) {
+//
+//        } else {
+//        }
+//    }
+//
+//    protected function avatarChoicesLoaded (event :DataEvent) :void
+//    {
+//        var memberAv :Avatar = _ctx.getClientObject().avatar;
+//        if (memberAv == null) {
+//            return;
+//        }
+//
+//        for each (var av :Avatar in _avatars.dataProvider) {
+//            if (av.itemId == memberAv.itemId) {
+//                _avatars.selectedItem = av;
+//                break;
+//            }
+//        }
+//    }
 
     /** The field for editing the user's display name. */
     protected var _name :TextInput;
 
     /** The list of our avatars. */
-    protected var _avatars :InventoryWidget;
+    protected var _avatars :InventoryPicker;
 }
 }
