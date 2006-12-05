@@ -147,7 +147,7 @@
       <echo>Compiling @{page} module...</echo>
       <delete dir="pages/@{page}"/>
       <mkdir dir="pages/@{page}"/>
-      <java fork="true" maxmemory="128M" classname="com.google.gwt.dev.GWTCompiler">
+      <java fork="true" maxmemory="128M" classname="com.google.gwt.dev.GWTCompiler" failonerror="true">
         <classpath>
           <pathelement location="${deploy.dir}/classes"/>
           <fileset dir="${extlib.dir}" includes="gwt*.jar"/>
