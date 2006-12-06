@@ -3,36 +3,74 @@
 
 package client.catalog;
 
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabPanel;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.threerings.msoy.web.client.WebContext;
+import client.item.ItemTypePanel;
+import client.item.TagCloud;
+
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SourcesTabEvents;
+import com.google.gwt.user.client.ui.TabListener;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.web.client.WebContext;
 
 /**
  * Displays a tabbed panel containing the catalog.
  */
-public class CatalogPanel extends TabPanel
+public class CatalogPanel extends VerticalPanel
+    implements TabListener
 {
     public CatalogPanel (WebContext ctx)
     {
+        _ctx = ctx;
         setStyleName("catalog");
-        // create item panels for our known item types
-        add(new ItemPanel(ctx, Item.PHOTO), "Photos");
-        add(new ItemPanel(ctx, Item.DOCUMENT), "Documents");
-        add(new ItemPanel(ctx, Item.FURNITURE), "Furniture");
-        add(new ItemPanel(ctx, Item.GAME), "Games");
-        add(new ItemPanel(ctx, Item.AVATAR), "Avatars");
-        add(new ItemPanel(ctx, Item.PET), "Pets");
-        add(new ItemPanel(ctx, Item.AUDIO), "Audio");
-        selectTab(0);
+
+        HorizontalPanel topRow = new HorizontalPanel();
+        _tagCloudContainer = new SimplePanel();
+        topRow.add(_tagCloudContainer);
+
+        ItemTypePanel itemTabs = new ItemTypePanel();
+        itemTabs.addTabListener(this);
+        topRow.add(itemTabs);
+
+        add(topRow);
+        add(_itemPaneContainer = new SimplePanel());
+
+        itemTabs.selectTab(Item.PHOTO);
     }
 
-    // @Override // from TabPanel
+    // from TabListener
     public void onTabSelected (SourcesTabEvents sender, int tabIndex)
     {
-        super.onTabSelected(sender, tabIndex);
-        ((ItemPanel)getWidget(tabIndex)).wasSelected();
+        ItemPanel panel = (ItemPanel) _itemPanes.get(new Integer(tabIndex));
+        if (panel == null) {
+            panel = new ItemPanel(_ctx, (byte) tabIndex);
+            _itemPanes.put(new Integer(tabIndex), panel);
+        }
+        _itemPaneContainer.setWidget(panel);
+
+        TagCloud cloud = (TagCloud) _tagClouds.get(new Integer(tabIndex));
+        if (cloud == null) {
+            cloud = new TagCloud(_ctx, (byte) tabIndex);
+            _tagClouds.put(new Integer(tabIndex), cloud);
+        }
+        _tagCloudContainer.setWidget(cloud);
+}
+
+    // from TabListener
+    public boolean onBeforeTabSelected (SourcesTabEvents sender, int tabIndex)
+    {
+        // always allow any item type selection 
+        return true;
     }
+    
+    protected WebContext _ctx;
+    protected Map _itemPanes = new HashMap();
+    protected Map _tagClouds = new HashMap();
+    protected SimplePanel _itemPaneContainer;
+    protected SimplePanel _tagCloudContainer;
 }

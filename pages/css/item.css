@@ -1,0 +1,107 @@
+.tagContents {
+   padding: 5px;
+   margin: 5px;
+   width: 300px;
+   border: thin solid black;
+   font-size: 9pt;
+   text-align: right;
+   font-weight: bold;
+}
+
+.tagSize1 {
+   font-size: 7pt;
+   font-style: italic;
+   font-weight: normal;
+}
+
+.tagSize2 {
+   font-size: 8pt;
+   font-style: italic;
+   font-weight: normal;
+}
+
+.tagSize3 {
+   font-size: 10pt;
+   font-style: italic;
+   font-weight: normal;
+}
+
+.tagSize4 {
+   font-size: 11pt;
+   font-style: italic;
+   font-weight: normal;
+}
+
+.tagSize5 {
+   font-size: 12pt;
+   font-style: italic;
+   font-weight: normal;
+}
+
+
+.itemTypePanel {
+  padding-top: 6px;
+  padding-left: 20px;
+  background-repeat: repeat;
+}
+
+.itemTypePanel .Left {
+  background-image: url(/images/ui/sub_tab_dark_left.png);
+  width: 3px;
+  height: 21px;
+}
+
+.itemTypePanel .Tab {
+  padding: 0px;
+}
+
+.itemTypePanel .Tab Button {
+  background-image: url(/images/ui/sub_tab_dark_middle.png);
+  background-repeat: repeat-x;
+  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-size: 12px;
+  text-decoration: none;
+  color: #606060;
+  border: 0px;
+  height: 21px;
+}
+
+.itemTypePanel .Right {
+  background-image: url(/images/ui/sub_tab_dark_right.png);
+  width: 3px;
+  height: 21px;
+}
+
+.itemTypePanel .SelLeft {
+  background-image: url(/images/ui/sub_tab_left.png);
+  width: 3px;
+  height: 21px;
+}
+
+.itemTypePanel .SelTab {
+  padding: 0px;
+}
+
+.itemTypePanel .SelTab Button {
+  background-image: url(/images/ui/sub_tab_middle.png);
+  background-repeat: repeat-x;
+  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-size: 12px;
+  text-decoration: none;
+  color: black;
+  border: 0px;
+  height: 21px;
+}
+
+.itemTypePanel .SelRight {
+  background-image: url(/images/ui/sub_tab_right.png);
+  width: 3px;
+  height: 21px;
+}
+
+.itemTypePanel .Line {
+  background-image: url(/images/ui/sub_tab_line.png);
+  background-repeat: repeat-x;
+  width: 137px;
+  height: 1px;
+}
