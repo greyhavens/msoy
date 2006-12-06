@@ -29,7 +29,7 @@ public class GroupMembership
     /** The member's rank in the group. */
     public byte rank; 
 
-    public Comparable getKey() {
+    public Comparable getKey () {
         // autoboxing makes GWT angry.  
         return new Integer(groupId);
     }
