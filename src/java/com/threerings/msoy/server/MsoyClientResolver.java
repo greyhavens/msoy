@@ -76,12 +76,8 @@ public class MsoyClientResolver extends CrowdClientResolver
             MsoyServer.sceneRepo.getOwnedScenes(member.memberId).iterator()));
         MemberName name = member.getName();
         for (GroupMembershipRecord record : MsoyServer.groupRepo.getMemberships(member.memberId)) {
-            GroupMembership membership = new GroupMembership();
-            membership.member = name;
-            membership.groupId = record.groupId;
-            membership.groupName = MsoyServer.groupRepo.loadGroup(record.groupId).name;
-            membership.rank = record.rank;
-            userObj.addToGroups(membership);
+            userObj.addToGroups(record.toGroupMembership(
+                MsoyServer.groupRepo.loadGroup(record.groupId), member));
         }
 
         // TODO

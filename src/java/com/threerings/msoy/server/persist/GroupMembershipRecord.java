@@ -9,6 +9,8 @@ import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.web.data.GroupMembership;
+
 /**
  * Contains the details of person's membership in a group.
  */
@@ -32,6 +34,19 @@ public class GroupMembershipRecord
     
     /** The rank of the member in the group, defined in {@link GroupMembership}. */
     public byte rank;
+
+    /** 
+     * Converts this persistent record to a runtime record.
+     */
+    public GroupMembership toGroupMembership (GroupRecord group, MemberRecord member)
+    {
+        GroupMembership gm = new GroupMembership();
+        gm.member = member.getName();
+        gm.groupId = groupId;
+        gm.groupName = group.name;
+        gm.rank = rank;
+        return gm;
+    }
     
     /**
      * Generates a string representation of this instance.

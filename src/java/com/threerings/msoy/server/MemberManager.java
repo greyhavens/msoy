@@ -457,11 +457,27 @@ public class MemberManager
                 gRec.creationDate = new Timestamp(groupDef.creationDate.getTime());
                 gRec.policy = groupDef.policy;
                 _groupRepo.createGroup(gRec);
-    
-                _groupRepo.joinGroup(gRec.groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
+
+                _groupId = gRec.groupId;
+                _groupRepo.joinGroup(_groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
     
                 return gRec.toWebObject();
             }
+            public void handleSuccess () {
+                super.handleSuccess();
+
+                // data made it to the db, let the dobj know
+                MemberObject member = MsoyServer.lookupMember(groupDef.creatorId);
+                if (member != null) {
+                    GroupMembership membership = new GroupMembership();
+                    membership.groupId = _groupId;
+                    membership.groupName = groupDef.name;
+                    membership.member = member.memberName;
+                    membership.rank = GroupMembership.RANK_MANAGER;
+                    member.addToGroups(membership);
+                }
+            }
+            protected int _groupId;
         });
     }
 
@@ -549,11 +565,7 @@ public class MemberManager
                             gmRec.rank != GroupMembership.RANK_MANAGER) {
                         continue;
                     }
-                    GroupMembership gm = new GroupMembership();
-                    gm.member = mRec.getName();
-                    gm.groupId = gmRec.groupId;
-                    gm.groupName = gRec.name;
-                    result.add(gm);
+                    result.add(gmRec.toGroupMembership(gRec, mRec));
                 }
                 return result;
             }
@@ -570,6 +582,15 @@ public class MemberManager
                 _groupRepo.leaveGroup(groupId, memberId);
                 return null;
             }
+            public void handleSuccess () {
+                super.handleSuccess();
+
+                // data made it to the db, let the dobj know
+                MemberObject member = MsoyServer.lookupMember(memberId);
+                if (member != null) {
+                    member.removeFromGroups(groupId);
+                }
+            }
         });
     }
 
@@ -582,8 +603,24 @@ public class MemberManager
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
             public Void invokePersistResult() throws PersistenceException {
                 _groupRepo.joinGroup(groupId, memberId, rank);
+                _groupName = MsoyServer.groupRepo.loadGroup(groupId).name;
                 return null;
             }
+            public void handleSuccess () {
+                super.handleSuccess();
+
+                // data made it to the db, let the dobj know
+                MemberObject member = MsoyServer.lookupMember(memberId);
+                if (member != null) {
+                    GroupMembership membership = new GroupMembership();
+                    membership.groupId = groupId;
+                    membership.groupName = _groupName;
+                    membership.member = member.memberName;
+                    membership.rank = rank;
+                    member.addToGroups(membership);
+                }
+            }
+            protected String _groupName;
         });        
     }
 
