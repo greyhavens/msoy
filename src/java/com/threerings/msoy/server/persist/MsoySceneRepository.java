@@ -219,7 +219,7 @@ public class MsoySceneRepository extends SimpleRepository
         }
         // END: temp
         
-        // TEMP: can be removed after all servers past 2006-12-06
+        // TEMP: can be removed after all servers past 2006-12-05
         if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "OWNER_TYPE")) {
             JDBCUtil.addColumn(conn, "SCENES", "OWNER_TYPE",
                 "tinyint not null", "TYPE"); 
@@ -487,7 +487,7 @@ public class MsoySceneRepository extends SimpleRepository
             {
                 PreparedStatement stmt = conn.prepareStatement(
                     "update SCENES " +
-                    "set NAME=?, TYPE=?, DEPTH=?, WIDTH=?, HORIZON=?, " +
+                    "set NAME=?, TYPE=?, OWNER_TYPE=?, DEPTH=?, WIDTH=?, HORIZON=?, " +
                     "ENTRANCE_X=?, ENTRANCE_Y=?, ENTRANCE_Z=? " +
                     "where SCENE_ID=" + mmodel.sceneId);
                 try {
