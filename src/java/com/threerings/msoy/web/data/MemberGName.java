@@ -4,13 +4,14 @@
 package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.threerings.io.Streamable;
 
 /**
  * A GTW-safe class corresponding to {@link MemberName}.
  */
 
 public class MemberGName 
-    implements IsSerializable, Cloneable
+    implements IsSerializable, Cloneable, Streamable
 {
     /** This member's name. */
     public String memberName;
