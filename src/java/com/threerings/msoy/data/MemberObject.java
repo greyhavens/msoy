@@ -30,6 +30,8 @@ import com.threerings.msoy.game.data.GameMemberInfo;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 
+import com.threerings.msoy.web.data.GroupMembership;
+
 /**
  * Represents a connected msoy user.
  */
@@ -75,6 +77,9 @@ public class MemberObject extends BodyObject
 
     /** The field name of the <code>friends</code> field. */
     public static final String FRIENDS = "friends";
+
+    /** The field name of the <code>groups</code> field. */
+    public static final String GROUPS = "groups";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -119,6 +124,9 @@ public class MemberObject extends BodyObject
 
     /** The friends of this player. */
     public DSet<FriendEntry> friends = new DSet<FriendEntry>();
+
+    /** The groups of this player. */
+    public DSet<GroupMembership> groups  = new DSet<GroupMembership>();
 
     /**
      * Returns this member's unique id.
@@ -611,6 +619,54 @@ public class MemberObject extends BodyObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.FriendEntry> clone =
             (value == null) ? null : value.typedClone();
         this.friends = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>groups</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToGroups (GroupMembership elem)
+    {
+        requestEntryAdd(GROUPS, groups, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>groups</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromGroups (Comparable key)
+    {
+        requestEntryRemove(GROUPS, groups, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>groups</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateGroups (GroupMembership elem)
+    {
+        requestEntryUpdate(GROUPS, groups, elem);
+    }
+
+    /**
+     * Requests that the <code>groups</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setGroups (DSet<com.threerings.msoy.web.data.GroupMembership> value)
+    {
+        requestAttributeChange(GROUPS, value, this.groups);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.web.data.GroupMembership> clone =
+            (value == null) ? null : value.typedClone();
+        this.groups = clone;
     }
     // AUTO-GENERATED: METHODS END
 

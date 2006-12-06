@@ -79,6 +79,9 @@ public class MsoyServer extends WhirledServer
     /** Contains information on our members. */
     public static MemberRepository memberRepo;
 
+    /** Contains information on our groups. */
+    public static GroupRepository groupRepo;
+
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
 
@@ -204,7 +207,7 @@ public class MsoyServer extends WhirledServer
         PersonPageRepository ppageRepo = new PersonPageRepository();
         memberRepo = new MemberRepository(conProv);
         ProfileRepository profileRepo = new ProfileRepository(conProv);
-        GroupRepository groupRepo = new GroupRepository(conProv);
+        groupRepo = new GroupRepository(conProv);
         MailRepository mailRepo = new MailRepository(conProv);
 
         // intialize various services

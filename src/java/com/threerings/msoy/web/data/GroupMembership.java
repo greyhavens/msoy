@@ -4,13 +4,15 @@
 package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.io.Streamable;
+import com.threerings.presents.dobj.DSet;
 
 /**
  * Summarizes a person's membership in a group.
  */
 public class GroupMembership
-    implements Streamable, IsSerializable
+    implements Streamable, IsSerializable, DSet.Entry
 {
     public static final byte RANK_MEMBER = 1;
     public static final byte RANK_MANAGER = 2;
@@ -26,4 +28,9 @@ public class GroupMembership
 
     /** The member's rank in the group. */
     public byte rank; 
+
+    public Comparable getKey() {
+        // autoboxing makes GWT angry.  
+        return new Integer(groupId);
+    }
 }
