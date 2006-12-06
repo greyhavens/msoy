@@ -24,7 +24,7 @@ public class HoodBlurb extends Blurb
     {
         setHeader("Neighborhood");
         _content.setWidget(WidgetUtil.createFlashContainer(
-            "hood","/media/static/HoodViz.swf", 320, 200, "data=" + (String) blurbData));
+            "hood","/media/static/HoodViz.swf", 480, 360, "data=" + (String) blurbData));
     }
 
     // @Override // from Blurb
