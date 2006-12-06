@@ -57,19 +57,11 @@ public class InventoryPicker extends VBox
     }
 
     /**
-     * Pass-through setter for enabling dragging from the tree.
+     * Get access directly to the tree widget, for customizing behavior.
      */
-    public function set dragEnabled (enabled :Boolean) :void
+    public function get tree () :Tree
     {
-        _tree.dragEnabled = enabled;
-    }
-
-    /**
-     * Pass-through getter for checking drag status from the tree.
-     */
-    public function get dragEnabled () :Boolean
-    {
-        return _tree.dragEnabled;
+        return _tree;
     }
 
     /**
@@ -80,6 +72,18 @@ public class InventoryPicker extends VBox
         return (_tree.selectedItem as Item);
     }
 
+    /**
+     * Set the currently-selected item.
+     */
+    public function setSelectedItem (item :Item) :void
+    {
+        _tree.selectedItem = item;
+        var idx :int = _tree.selectedIndex;
+        if (idx != -1) {
+            _tree.scrollToIndex(idx);
+        }
+    }
+
     override public function parentChanged (p :DisplayObjectContainer) :void
     {
         super.parentChanged(p);
@@ -88,6 +92,11 @@ public class InventoryPicker extends VBox
             _collection.shutdown();
         } else {
             _collection.startup();
+
+            // if we're only showing one category, open it.
+            if (_collection.length == 1) {
+                callLater(_tree.expandItem, [ _collection[0], true ]);
+            }
         }
     }
 
@@ -99,7 +108,7 @@ public class InventoryPicker extends VBox
         _tree.addEventListener(Event.CHANGE, handleItemSelected);
 
         var showUsed :CheckBox = new CheckBox();
-        showUsed.label = "Show Used?";
+        showUsed.label = Msgs.ITEM.get("l.show_used");
         showUsed.selected = _collection.isShowUsed();
 
         addChild(showUsed);
@@ -107,12 +116,6 @@ public class InventoryPicker extends VBox
 
         // and bind the checkbox to the showing of used items...
         BindingUtils.bindSetter(_collection.setShowUsed, showUsed, "selected");
-
-        // if we're only showing one category, open it.
-        if (_collection.length == 1) {
-            callLater(_tree.expandItem, [_collection[0], true]);
-            //_tree.expandItem(_collection[0], true);
-        }
     }
 
     protected function handleItemOpening (event :TreeEvent) :void

@@ -23,6 +23,11 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.web.Item;
 
+/**
+ * A special Collection that represents the items in the user's inventory
+ * in a hierarchical fashion. This should be used as the source for the
+ * Tree inside an InventoryPicker.
+ */
 public class InventoryCollectionView extends ArrayCollection
     implements AttributeChangeListener, SetListener
 {
@@ -70,7 +75,20 @@ public class InventoryCollectionView extends ArrayCollection
         shutdown();
         _memberObj = memObj;
         _memberObj.addListener(this);
+
+        if (_shownTypes.length == 1) {
+            loadType(int(_shownTypes[0]));
+        }
         regenerateAllShown();
+    }
+
+    /**
+     * Are we currently active? That is, are we listening to the user object,
+     * awaiting updates?
+     */
+    public function isActive () :Boolean
+    {
+        return (_memberObj != null);
     }
 
     /**
@@ -136,9 +154,14 @@ public class InventoryCollectionView extends ArrayCollection
             return; // no change
         }
 
+        // first, flush each list (release item references)
+        for each (var showList :ArrayCollection in _showItems) {
+            showList.removeAll();
+        }
+
         _shownTypes = types;
         // if we're only showing one type, load that type now
-        if (_shownTypes.length == 1) {
+        if (_shownTypes.length == 1 && isActive()) {
             loadType(int(_shownTypes[0]));
         }
         regenerateAllShown();
@@ -167,21 +190,23 @@ public class InventoryCollectionView extends ArrayCollection
     // from SetListener
     public function entryAdded (evt :EntryAddedEvent) :void
     {
+        if (evt.getName() != MemberObject.INVENTORY) {
+            return;
+        }
         var type :int = (evt.getEntry() as Item).getType();
         // hold off on updating any newly added entries if the loadedInventory
         // flag for that type is not yet set.
         if (_memberObj.isInventoryLoaded(type)) {
-            trace("Adding item right away");
             regenerateShown(type);
-
-        } else {
-            trace("Holding back on item add, expecting inventoryLoaded");
         }
     }
 
     // from SetListener
     public function entryRemoved (evt :EntryRemovedEvent) :void
     {
+        if (evt.getName() != MemberObject.INVENTORY) {
+            return;
+        }
         var type :int = (evt.getOldEntry() as Item).getType();
         regenerateShown(type);
     }
@@ -189,8 +214,16 @@ public class InventoryCollectionView extends ArrayCollection
     // from SetListener
     public function entryUpdated (evt :EntryUpdatedEvent) :void
     {
+        if (evt.getName() != MemberObject.INVENTORY) {
+            return;
+        }
         var type :int = (evt.getOldEntry() as Item).getType();
         regenerateShown(type);
+    }
+
+    override public function toString () :String
+    {
+        return "InventoryCollectionView: " + super.toString();
     }
 
     /**
@@ -211,7 +244,7 @@ public class InventoryCollectionView extends ArrayCollection
     {
         var showList :ArrayCollection = (_showItems[type] as ArrayCollection);
         if (_memberObj == null) {
-            showList.removeAll(); // flush stashed items
+            showList.removeAll(); // don't retain references
             return; // not now!
         }
 
