@@ -65,13 +65,7 @@ public class MsoyClient extends Client
 
     public function MsoyClient ()
     {
-        var creds :MsoyCredentials = new MsoyCredentials(null, null);
-        creds.ident = Prefs.getMachineIdent();
-        var params :Object = Application.application.loaderInfo.parameters;
-        if (null == params["guest"]) {
-            creds.sessionToken = Prefs.getSessionToken();
-        }
-        super(creds);
+        super(createStartupCreds());
 
         // set up a context menu that blocks funnybiz on the stage
         var menu :ContextMenu = new ContextMenu();
@@ -90,6 +84,55 @@ public class MsoyClient extends Client
         // configure our server and port info and logon
         setServer(DeploymentConfig.serverHost, DeploymentConfig.serverPorts);
         logon();
+    }
+
+    /**
+     * Create the credentials that will be used to log us on
+     */
+    protected static function createStartupCreds () :MsoyCredentials
+    {
+        var creds :MsoyCredentials = new MsoyCredentials(null, null);
+        creds.ident = Prefs.getMachineIdent();
+        var params :Object = Application.application.loaderInfo.parameters;
+        if (null == params["guest"]) {
+            var cookieToken :String = getSessionTokenFromCookie();
+            creds.sessionToken = (cookieToken != null)
+                ? cookieToken : Prefs.getSessionToken();
+        }
+
+        return creds;
+    }
+
+    /**
+     * Attempt to read our session token from the cookies set on
+     * the host document.
+     */
+    protected static function getSessionTokenFromCookie () :String
+    {
+        if (ExternalInterface.available) {
+            try {
+                var cookies :String = ExternalInterface.call(
+                    "eval", "document.cookie");
+                if (cookies != null) {
+                    var credPrefix :String = "creds=";
+                    for each (var cook :String in cookies.split(";")) {
+                        cook = StringUtil.trim(cook);
+                        if (StringUtil.startsWith(cook, credPrefix)) {
+                            cook = cook.substring(credPrefix.length);
+                            var peridx :int = cook.indexOf(".");
+                            if (peridx != -1) {
+                                return cook.substring(peridx + 1);
+                            }
+                        }
+                    }
+                }
+
+            } catch (err :Error) {
+                log.warning("Error reading session token from cookie: " + err);
+            }
+        }
+
+        return null;
     }
 
     override public function gotBootstrap (
@@ -151,8 +194,10 @@ public class MsoyClient extends Client
                     }
                 });
 
+            trace("Setting up setCredentials");
             ExternalInterface.addCallback("setCredentials",
                 function (username :String, sessionToken :String) :void {
+                    trace("Set credentials: " + username + ", " + sessionToken);
                     Prefs.setUsername(username);
                     Prefs.setSessionToken(sessionToken);
                     // TODO: log us on if not?
