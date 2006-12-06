@@ -35,6 +35,9 @@ public class MsoySceneModel extends SceneModel
     /** The type of scene that this is. Determines how it is rendered. */
     public byte type;
 
+    /** The type of owner that owns this scene. */
+    public byte ownerType;
+
     /** The memberId of the owner of this scene. */
     public int ownerId;
 

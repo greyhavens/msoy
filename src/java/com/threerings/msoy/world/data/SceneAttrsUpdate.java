@@ -22,6 +22,9 @@ public class SceneAttrsUpdate extends SceneUpdate
     /** The new type. */
     public byte type;
 
+    /** The new ownerType. */
+    public byte ownerType;
+
     /** The new depth. */
     public short depth;
 
@@ -42,6 +45,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         MsoySceneModel mmodel = (MsoySceneModel) model;
         mmodel.name = name;
         mmodel.type = type;
+        mmodel.ownerType = ownerType;
         mmodel.depth = depth;
         mmodel.width = width;
         mmodel.horizon = horizon;
