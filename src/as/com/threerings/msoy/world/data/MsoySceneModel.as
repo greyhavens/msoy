@@ -33,7 +33,10 @@ public class MsoySceneModel extends SceneModel
     /** The type of scene. */
     public var type :int;
 
-    /** The memberId of the owner of this scene. */
+    /** The type of owner that owns this scene. */
+    public var ownerType :int;
+
+    /** The id of the owner of this scene, interpreted using ownerType. */
     public var ownerId :int;
 
     /** The "pixel" depth of the room. */
@@ -203,6 +206,7 @@ public class MsoySceneModel extends SceneModel
         super.writeObject(out);
 
         out.writeByte(type);
+        out.writeByte(ownerType);
         out.writeInt(ownerId);
         out.writeShort(depth);
         out.writeShort(width);
@@ -217,6 +221,7 @@ public class MsoySceneModel extends SceneModel
         super.readObject(ins);
 
         type = ins.readByte();
+        ownerType = ins.readByte();
         ownerId = ins.readInt();
         depth = ins.readShort();
         width = ins.readShort();

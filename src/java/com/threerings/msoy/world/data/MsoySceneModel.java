@@ -38,7 +38,7 @@ public class MsoySceneModel extends SceneModel
     /** The type of owner that owns this scene. */
     public byte ownerType;
 
-    /** The memberId of the owner of this scene. */
+    /** The id of the owner of this scene, interpreted using ownerType. */
     public int ownerId;
 
     /** The "pixel" depth of the room. */
