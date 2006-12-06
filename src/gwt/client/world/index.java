@@ -43,7 +43,7 @@ public class index extends MsoyEntryPoint
                 if (_client == null) {
                     _client = WidgetUtil.createFlashContainer(
                         // TODO: fix height arg to be 100% (doesn't currently work)
-                        "asclient", "/clients/game-client.swf", "100%", "550", null);
+                        "asclient", "/clients/game-client.swf", "90%", "550", null);
                 }
                 RootPanel.get("content").add(_client);
             }
@@ -81,7 +81,7 @@ public class index extends MsoyEntryPoint
     protected void didLogon (WebCreds creds)
     {
         super.didLogon(creds);
-        clientLogon(creds.token);
+        clientLogon(creds.memberId, creds.token);
     }
 
     // @Override // from MsoyEntryPoint
@@ -94,12 +94,13 @@ public class index extends MsoyEntryPoint
     /**
      * Logs on the MetaSOY Flash client using magical JavaScript.
      */
-    protected static native void clientLogon (String token) /*-{
+    protected static native void clientLogon (int memberId, String token) /*-{
         try {
             if ($doc.asclient) {
-                $doc.asclient.logon(token);
+                $doc.asclient.clientLogon(memberId, token);
+
             } else if ($wnd.asclient) {
-                $wnd.asclient.logon(token);
+                $wnd.asclient.clientLogon(memberId, token);
             }
         } catch (e) {
             // oh well
@@ -112,9 +113,9 @@ public class index extends MsoyEntryPoint
     protected static native void clientLogoff () /*-{
         try {
             if ($doc.asclient) {
-                $doc.asclient.logoff();
+                $doc.asclient.clientLogoff();
             } else if ($wnd.asclient) {
-                $wnd.asclient.logoff();
+                $wnd.asclient.clientLogoff();
             }
         } catch (e) {
             // oh well

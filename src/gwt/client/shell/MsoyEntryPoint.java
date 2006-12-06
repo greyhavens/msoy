@@ -71,6 +71,9 @@ public abstract class MsoyEntryPoint
     // from interface EntryPoint
     public void onModuleLoad ()
     {
+        // First, set up the callback that flash can call when it logs in
+        configureLogonCallback(this);
+
         // create our web context
         _ctx = new WebContext();
 
@@ -93,6 +96,7 @@ public abstract class MsoyEntryPoint
         ((ServiceDefTarget)_ctx.catalogsvc).setServiceEntryPoint(prefix + "catalogsvc");
         _ctx.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
         ((ServiceDefTarget)_ctx.gamesvc).setServiceEntryPoint(prefix + "gamesvc");
+
 
         // create our standard navigation panel
         RootPanel.get("navigation").add(new NaviPanel(_ctx, getPageId()));
@@ -141,12 +145,34 @@ public abstract class MsoyEntryPoint
     }
 
     /**
+     * Called when the flash client has logged on.
+     */
+    protected void didLogonFromFlash (
+        String displayName, int memberId, String token)
+    {
+        WebCreds creds = new WebCreds();
+        creds.memberId = memberId;
+        creds.token = token;
+        _logon.didLogonFromFlash(displayName, creds);
+    }
+
+    /**
      * Called by our logon panel if the player logs off.
      */
     protected void didLogoff ()
     {
         _ctx.creds = null;
     }
+
+    /**
+     * Configure a top-level function (called flashDidLogon) that can be
+     * called by flash to route logon information to didLogonFromFlash, above.
+     */
+    protected static native void configureLogonCallback (MsoyEntryPoint mep) /*-{
+       $wnd.flashDidLogon = function (displayName, memberId, token) {
+           mep.@client.shell.MsoyEntryPoint::didLogonFromFlash(Ljava/lang/String;ILjava/lang/String;)(displayName, memberId, token);
+       };
+    }-*/;
 
     protected WebContext _ctx;
     protected LogonPanel _logon;

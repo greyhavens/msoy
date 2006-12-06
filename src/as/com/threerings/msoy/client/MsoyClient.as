@@ -89,15 +89,20 @@ public class MsoyClient extends Client
     /**
      * Create the credentials that will be used to log us on
      */
-    protected static function createStartupCreds () :MsoyCredentials
+    protected static function createStartupCreds (
+        allowGuest :Boolean = true, checkCookie :Boolean = true
+        ) :MsoyCredentials
     {
         var creds :MsoyCredentials = new MsoyCredentials(null, null);
         creds.ident = Prefs.getMachineIdent();
         var params :Object = Application.application.loaderInfo.parameters;
-        if (null == params["guest"]) {
-            var cookieToken :String = getSessionTokenFromCookie();
-            creds.sessionToken = (cookieToken != null)
-                ? cookieToken : Prefs.getSessionToken();
+        if (!allowGuest || (null == params["guest"])) {
+            if (checkCookie) {
+                creds.sessionToken = getSessionTokenFromCookie();
+            }
+            if (creds.sessionToken == null) {
+                creds.sessionToken = Prefs.getSessionToken();
+            }
         }
 
         return creds;
@@ -149,6 +154,17 @@ public class MsoyClient extends Client
         if (rdata.sessionToken != null) {
             Prefs.setSessionToken(rdata.sessionToken);
         }
+
+        if (rdata.sessionToken != null) {
+            try {
+                if (ExternalInterface.available) {
+                    ExternalInterface.call(
+                        "flashDidLogon", "Foo", 1, rdata.sessionToken);
+                }
+            } catch (err :Error) {
+                log.warning("Unable to inform javascript about login: " + err);
+            }
+        }
     }
 
     // documetnation inherited
@@ -182,26 +198,8 @@ public class MsoyClient extends Client
                 return false;
             }
 
-            ExternalInterface.addCallback("logoff",
-                function (backAsGuest :Boolean = false) :void {
-                    if (backAsGuest) {
-                        // have the controller handle it
-                        // it will logoff, then back as a guest
-                        _ctx.getMsoyController().handleLogon(null);
-
-                    } else {
-                        logoff(false);
-                    }
-                });
-
-            trace("Setting up setCredentials");
-            ExternalInterface.addCallback("setCredentials",
-                function (username :String, sessionToken :String) :void {
-                    trace("Set credentials: " + username + ", " + sessionToken);
-                    Prefs.setUsername(username);
-                    Prefs.setSessionToken(sessionToken);
-                    // TODO: log us on if not?
-                });
+            ExternalInterface.addCallback("clientLogon", externalClientLogon);
+            ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
 
         } catch (err :Error) {
             // nada: ExternalInterface isn't there. Oh well!
@@ -235,6 +233,39 @@ public class MsoyClient extends Client
         } while (disp != null);
 
         // then, the menu will pop up
+    }
+
+    /**
+     * Exposed to javascript so that it may notify us to logon.
+     */
+    protected function externalClientLogon (
+        memberId :int, sessionToken :String) :void
+    {
+        if (sessionToken == null) {
+            return;
+        }
+        Prefs.setSessionToken(sessionToken);
+
+        var co :MemberObject = _ctx.getClientObject();
+        if (co == null || co.getMemberId() != memberId) {
+            _ctx.getMsoyController().handleLogon(
+                createStartupCreds(false, false));
+        }
+    }
+
+    /**
+     * Exposed to javascript so that it may notify us to logoff.
+     */
+    protected function externalClientLogoff (backAsGuest :Boolean = true) :void
+    {
+        if (backAsGuest) {
+            // have the controller handle it
+            // it will logoff, then back as a guest
+            _ctx.getMsoyController().handleLogon(null);
+
+        } else {
+            logoff(false);
+        }
     }
 
     public function fuckingCompiler () :void

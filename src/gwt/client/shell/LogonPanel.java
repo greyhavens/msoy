@@ -99,6 +99,12 @@ public class LogonPanel extends FlexTable
         _action.setText("Logoff");
     }
 
+    protected void didLogonFromFlash (String displayName, WebCreds creds)
+    {
+        _who = displayName;
+        didLogon(creds);
+    }
+
     protected void actionClicked ()
     {
         if (_creds == null) {
