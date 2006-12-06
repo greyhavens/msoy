@@ -36,7 +36,7 @@ public class MemberName extends Name
     }
 
     /**
-     * Return the memberId of this user, or -1 if they're a guest.
+     * Return the memberId of this user, or 0 if they're a guest.
      */
     public function getMemberId () :int
     {
