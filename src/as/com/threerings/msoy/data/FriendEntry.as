@@ -6,6 +6,8 @@ import com.threerings.util.Hashable;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.ObjectInputStream;
 
+import com.threerings.msoy.web.data.MemberName;
+
 import com.threerings.presents.dobj.DSet_Entry;
 
 public class FriendEntry

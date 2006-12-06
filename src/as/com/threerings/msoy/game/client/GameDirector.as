@@ -11,7 +11,8 @@ import com.threerings.parlor.client.InvitationResponseObserver;
 import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MemberName;
+
+import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.game.data.GameCodes;
 

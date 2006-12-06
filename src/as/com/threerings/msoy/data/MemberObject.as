@@ -19,6 +19,8 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
+import com.threerings.msoy.web.data.MemberName;
+
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 
@@ -67,6 +69,9 @@ public class MemberObject extends BodyObject
 
     /** The field name of the <code>friends</code> field. */
     public static const FRIENDS :String = "friends";
+
+    /** The field name of the <code>groups</code> field. */
+    public static const GROUPS :String = "groups";
     // AUTO-GENERATED: FIELDS END
 
     /** The member name and id for this user. */
@@ -107,6 +112,9 @@ public class MemberObject extends BodyObject
 
     /** The buddies of this player. */
     public var friends :DSet;
+
+    /** The groups of this player. */
+    public var groups :DSet;
 
     /**
      * Return this member's unique id.
@@ -347,6 +355,7 @@ public class MemberObject extends BodyObject
         chatStyle = ins.readShort();
         chatPopStyle = ins.readShort();
         friends = (ins.readObject() as DSet);
+        groups = (ins.readObject() as DSet);
     }
 }
 }

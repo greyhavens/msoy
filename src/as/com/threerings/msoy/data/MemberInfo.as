@@ -7,6 +7,8 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.crowd.data.OccupantInfo;
 
+import com.threerings.msoy.web.data.MemberName;
+
 import com.threerings.msoy.item.web.MediaDesc;
 
 public class MemberInfo extends OccupantInfo

@@ -33,7 +33,8 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MemberName;
+
+import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.world.client.editor.EditorController;
 

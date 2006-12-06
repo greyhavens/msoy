@@ -22,9 +22,10 @@ import com.threerings.whirled.data.SceneObject;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
+
+import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.game.client.LobbyService;
 
@@ -142,6 +143,7 @@ public class MsoyController extends Controller
 
         // add the friends if present
         if (friends.length > 0) {
+            trace("friends text [" + Msgs.GENERAL.get("l.visit_friends") + "]");
             menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"),
                 children: friends });
         }

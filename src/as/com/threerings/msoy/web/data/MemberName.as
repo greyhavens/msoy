@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.data {
+package com.threerings.msoy.web.data {
 
 import com.threerings.util.Name;
 

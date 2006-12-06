@@ -10,7 +10,8 @@ import com.threerings.mx.events.CommandEvent;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.data.MemberName;
+
+import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
