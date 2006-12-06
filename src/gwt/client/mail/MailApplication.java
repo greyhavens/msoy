@@ -269,7 +269,7 @@ public class MailApplication extends DockPanel
                 col ++;
 
                 // next, the name of the sender
-                table.setText(row, col, headers.sender.memberName);
+                table.setText(row, col, headers.sender.toString());
                 cellFormatter.setStyleName(row, col, "mailRowSender");
                 col ++;
                 
@@ -373,7 +373,7 @@ public class MailApplication extends DockPanel
         // first some headers
         HeaderValueTable headers = new HeaderValueTable();
         headers.setStyleName("mailMessageHeaders");
-        headers.addRow("From", _message.headers.sender.memberName);
+        headers.addRow("From", _message.headers.sender.toString());
         headers.addRow("Date", _message.headers.sent.toString().substring(0, 21));
         headers.addRow("Subject", _message.headers.subject);
         messagePanel.add(headers);
@@ -412,7 +412,7 @@ public class MailApplication extends DockPanel
 
         // if there is a payload, display it!
         if (_message.payload != null) {
-            Widget widget = _ctx.creds.memberId == _message.headers.recipient.memberId ?
+            Widget widget = _ctx.creds.memberId == _message.headers.recipient.getMemberId() ?
                 _payloadDisplay.widgetForRecipient(this) : _payloadDisplay.widgetForOthers();
             if (widget != null) {
                 HorizontalPanel panel = new HorizontalPanel();

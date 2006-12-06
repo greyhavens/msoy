@@ -68,7 +68,7 @@ public class index extends MsoyEntryPoint
         super.didLogon(creds);
 
         // if we're not displaying someone elses member page, display our own
-        displayMemberPage(_memberId != -1 ? _memberId :_ctx.creds.memberId);
+        displayMemberPage(_memberId != -1 ? _memberId : _ctx.creds.memberId);
     }
 
     protected void displayMemberPage (int memberId)

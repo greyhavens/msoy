@@ -29,7 +29,6 @@ import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
@@ -39,9 +38,9 @@ import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.MemberGName;
-import com.threerings.msoy.web.data.NeighborGroup;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.NeighborFriend;
+import com.threerings.msoy.web.data.NeighborGroup;
 import com.threerings.msoy.web.data.Neighborhood;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.server.ServletWaiter;
@@ -115,9 +114,9 @@ public class MemberManager
 
                 // fake bits!
                 profile.photo = new Photo();
-                profile.photo.photoMedia =
-                    new MediaDesc(StringUtil.unhexlate(
-                                      "816cd5aebc2d9d228bf66cff193b81eba1a6ac85"), MediaDesc.IMAGE_JPEG);
+                profile.photo.photoMedia = new MediaDesc(
+                    StringUtil.unhexlate("816cd5aebc2d9d228bf66cff193b81eba1a6ac85"),
+                    MediaDesc.IMAGE_JPEG);
                 profile.headline = "Arr! Mateys, this here be me profile!";
                 profile.homePageURL = "http://www.puzzlepirates.com/";
                 profile.isMale = true;
@@ -135,13 +134,13 @@ public class MemberManager
     }
 
     /**
-     * Look up a member's record and construct a MemberGName from it.
+     * Look up a member's record and construct a MemberName from it.
      */
-    public void getName (final int memberId, ServletWaiter<MemberGName> waiter)
+    public void getName (final int memberId, ServletWaiter<MemberName> waiter)
     {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MemberGName>(waiter) {
-            public MemberGName invokePersistResult () throws PersistenceException {
-                return new MemberGName(_memberRepo.loadMember(memberId).name, memberId);
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MemberName>(waiter) {
+            public MemberName invokePersistResult () throws PersistenceException {
+                return _memberRepo.loadMember(memberId).getName();
             }
         });
     }
@@ -197,7 +196,7 @@ public class MemberManager
                     if (user != null) {
                         _userName = user.memberName;
                     } else {
-                        _userName = new MemberName(_memberRepo.loadMember(userId).name, userId);
+                        _userName = _memberRepo.loadMember(userId).getName();
                     }
                 } else {
                     _memberRepo.removeFriends(userId, friendId);
@@ -207,10 +206,10 @@ public class MemberManager
 
             public void handleSuccess () {
                 FriendEntry oldEntry = user != null ? user.friends.get(friendId) : null;
-                MemberName friendName = (oldEntry != null) ? oldEntry.name :
-                    (_entry != null ? _entry.name : null);
-                MemberObject friendObj = (friendName != null)
-                    ? MsoyServer.lookupMember(friendName) : null;
+                MemberName friendName = (oldEntry != null) ?
+                    oldEntry.name : (_entry != null ? _entry.name : null);
+                MemberObject friendObj = (friendName != null) ?
+                    MsoyServer.lookupMember(friendName) : null;
 
                 // update ourselves and the friend
                 if (!add || _entry == null) {
@@ -258,65 +257,50 @@ public class MemberManager
 
     // from interface MemberProvider
     public void getMemberHomeId (
-        ClientObject caller, final int memberId,
-        InvocationService.ResultListener listener)
-            throws InvocationException
+        ClientObject caller, final int memberId, InvocationService.ResultListener listener)
+        throws InvocationException
     {
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Integer>(
-                new ResultAdapter<Integer>(listener)) {
-                public Integer invokePersistResult ()
-                throws PersistenceException
-                {
-                    // load up their member info
-                    MemberRecord member = _memberRepo.loadMember(memberId);
-                    return (member == null) ? null : member.homeSceneId;
+            new RepositoryListenerUnit<Integer>(new ResultAdapter<Integer>(listener)) {
+            public Integer invokePersistResult () throws PersistenceException {
+                // load up their member info
+                MemberRecord member = _memberRepo.loadMember(memberId);
+                return (member == null) ? null : member.homeSceneId;
+            }
+            public void handleSuccess () {
+                if (_result == null) {
+                    handleFailure(new InvocationException("m.no_such_user"));
+                } else {
+                    super.handleSuccess();
                 }
-
-                public void handleSuccess ()
-                {
-                    if (_result == null) {
-                        handleFailure(
-                            new InvocationException("m.no_such_user"));
-                    } else {
-                        super.handleSuccess();
-                    }
-                }
+            }
         });
     }
 
     // from interface MemberProvider
     public void setAvatar (
-        ClientObject caller, int avatarItemId,
-        final InvocationService.InvocationListener listener)
+        ClientObject caller, int avatarItemId, final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
 
-        MsoyServer.itemMan.getItem(new ItemIdent(Item.AVATAR, avatarItemId),
-            new ResultListener<Item>() {
-            public void requestCompleted (Item item)
-            {
+        MsoyServer.itemMan.getItem(
+            new ItemIdent(Item.AVATAR, avatarItemId), new ResultListener<Item>() {
+            public void requestCompleted (Item item) {
                 Avatar avatar = (Avatar) item;
                 finishSetAvatar(user, avatar, listener);
             }
-
-            public void requestFailed (Exception cause)
-            {
-                log.log(Level.WARNING,
-                    "Unable to retrieve user's avatar " +
-                    "[cause=" + cause + "].",
-                    cause);
+            public void requestFailed (Exception cause) {
+                log.log(Level.WARNING, "Unable to retrieve user's avatar.", cause);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
     }
 
     // from interface MemberProvider
-    public void setDisplayName (
-        ClientObject caller, final String name,
-        final InvocationService.InvocationListener listener)
+    public void setDisplayName (ClientObject caller, final String name,
+                                final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -325,31 +309,23 @@ public class MemberManager
         // TODO: verify entered string
 
         MsoyServer.invoker.postUnit(new RepositoryUnit("setDisplayName") {
-            public void invokePersist ()
-                throws PersistenceException
-            {
+            public void invokePersist () throws PersistenceException {
                 _memberRepo.configureDisplayName(user.getMemberId(), name);
             }
-
-            public void handleSuccess ()
-            {
+            public void handleSuccess () {
                 user.setMemberName(new MemberName(name, user.getMemberId()));
                 updateOccupantInfo(user);
             }
-
-            public void handleFailure (Exception pe)
-            {
-                log.warning("Unable to set display name " +
-                    "[user=" + user.which() + ", name='" + name + "', " +
-                    "error=" + pe + "].");
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to set display name [user=" + user.which() +
+                            ", name='" + name + "', error=" + pe + "].");
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
     }
 
     // from interface MemberProvider
-    public void purchaseRoom (
-        ClientObject caller, final InvocationService.ConfirmListener listener)
+    public void purchaseRoom (ClientObject caller, final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -360,34 +336,24 @@ public class MemberManager
         // TODO: charge some flow
 
         MsoyServer.invoker.postUnit(new RepositoryUnit("purchaseRoom") {
-            public void invokePersist ()
-                throws PersistenceException
-            {
-                _newRoomId =
-                    MsoyServer.sceneRepo.createBlankRoom(memberId, roomName);
+            public void invokePersist () throws PersistenceException {
+                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(memberId, roomName);
             }
-
-            public void handleSuccess ()
-            {
-                user.addToOwnedScenes(
-                    new SceneBookmarkEntry(_newRoomId, roomName, 0));
+            public void handleSuccess () {
+                user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
                 listener.requestProcessed();
             }
-
-            public void handleFailure (Exception pe)
-            {
-                log.warning("Unable to create a new room " +
-                    "[user=" + user.which() + "error=" + pe + "].");
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to create a new room [user=" + user.which() +
+                            ", error=" + pe + "].");
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
-
             protected int _newRoomId;
         });
     }
 
     /**
-     * Convenience method to ensure that the specified caller is not
-     * a guest.
+     * Convenience method to ensure that the specified caller is not a guest.
      */
     protected void ensureNotGuest (MemberObject caller)
         throws InvocationException
@@ -550,13 +516,13 @@ public class MemberManager
                 MemberRecord mRec = _memberRepo.loadMember(gRec.creatorId);
                 // set up the detail
                 GroupDetail detail = new GroupDetail();
-                detail.creator = new MemberGName(mRec.name, mRec.memberId);
+                detail.creator = mRec.getName();
                 detail.group = gRec.toWebObject();
-                HashMap<MemberGName, Byte> members = new HashMap<MemberGName, Byte>();
+                HashMap<MemberName, Byte> members = new HashMap<MemberName, Byte>();
                 detail.members = members;
                 for (GroupMembershipRecord gmRec : _groupRepo.getMembers(groupId)) {
                     mRec = _memberRepo.loadMember(gmRec.memberId);
-                    members.put(new MemberGName(mRec.name, mRec.memberId), gmRec.rank);
+                    members.put(mRec.getName(), gmRec.rank);
                 }
                 return detail;
             }
@@ -584,7 +550,7 @@ public class MemberManager
                         continue;
                     }
                     GroupMembership gm = new GroupMembership();
-                    gm.member = new MemberGName(mRec.name, mRec.memberId);
+                    gm.member = mRec.getName();
                     gm.groupId = gmRec.groupId;
                     gm.groupName = gRec.name;
                     result.add(gm);
@@ -659,7 +625,7 @@ public class MemberManager
                 Neighborhood hood = new Neighborhood();
                 // first load the center member data
                 MemberRecord mRec = _memberRepo.loadMember(memberId);
-                hood.member = new MemberGName(mRec.name, mRec.memberId);
+                hood.member = mRec.getName();
 
                 // then all the data for the groups
                 Collection<GroupMembershipRecord> gmRecs = _groupRepo.getMemberships(memberId);
@@ -682,7 +648,7 @@ public class MemberManager
                 List<NeighborFriend> members = new ArrayList<NeighborFriend>();
                 for (NeighborFriendRecord fRec : _memberRepo.getNeighborhoodFriends(memberId)) {
                     NeighborFriend nFriend = new NeighborFriend();
-                    nFriend.member = new MemberGName(fRec.name, fRec.memberId);
+                    nFriend.member = new MemberName(fRec.name, fRec.memberId);
                     nFriend.created = new Date(fRec.created.getTime());
                     nFriend.flow = fRec.flow;
                     nFriend.lastSession = fRec.lastSession;
@@ -697,7 +663,7 @@ public class MemberManager
             // after we finish, have main thread go through and set online status for friends
             public void handleSuccess () {
                 for (NeighborFriend friend : _result.neighborFriends) {
-                    friend.isOnline = MsoyServer.lookupMember(friend.member.memberId) != null;
+                    friend.isOnline = MsoyServer.lookupMember(friend.member.getMemberId()) != null;
                 }
                 _listener.requestCompleted(_result);
             }

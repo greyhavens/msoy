@@ -6,7 +6,7 @@ package com.threerings.msoy.item.web;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
-import com.threerings.msoy.web.data.MemberGName;
+import com.threerings.msoy.web.data.MemberName;
 
 /**
  * This class supplies detailed information for an item, some of which is
@@ -23,10 +23,10 @@ public class ItemDetail implements Streamable, IsSerializable
     public Item item;
     
     /** A display-friendly expansion of Item.creatorId. */
-    public MemberGName creator; 
+    public MemberName creator; 
     
     /** A display-friendly expansion of Item.ownerId, or null. */
-    public MemberGName owner;
+    public MemberName owner;
 
     /** The item's rating given by the member specified in the request. */
     public byte memberRating;

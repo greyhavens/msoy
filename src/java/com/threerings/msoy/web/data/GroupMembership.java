@@ -18,7 +18,7 @@ public class GroupMembership
     public static final byte RANK_MANAGER = 2;
     
     /** The name and id of the member of the group. */
-    public MemberGName member;
+    public MemberName member;
 
     /** The group's id. */
     public int groupId;

@@ -18,8 +18,8 @@ public class GroupDetail
     public Group group;
 
     /** The person who created the group. */
-    public MemberGName creator;
+    public MemberName creator;
 
-    /** The members of this group, mapped from {@link MemberGName} to rank, as a Byte. */
+    /** The members of this group, mapped from {@link MemberName} to rank, as a Byte. */
     public Map members;
 }

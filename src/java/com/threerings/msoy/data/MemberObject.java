@@ -20,6 +20,8 @@ import com.threerings.parlor.game.data.GameObject;
 
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
+import com.threerings.msoy.web.data.MemberName;
+
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;

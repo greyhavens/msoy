@@ -8,7 +8,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.data.MemberGName;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.Neighborhood;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
@@ -20,11 +20,11 @@ public class MemberServlet extends RemoteServiceServlet
     implements MemberService
 {
     // from MemberService
-    public MemberGName getName (int memberId)
+    public MemberName getName (int memberId)
         throws ServiceException
     {
-        ServletWaiter<MemberGName> waiter =
-            new ServletWaiter<MemberGName>("getName[" + memberId + "]");
+        ServletWaiter<MemberName> waiter =
+            new ServletWaiter<MemberName>("getName[" + memberId + "]");
         MsoyServer.memberMan.getName(memberId, waiter);
         return waiter.waitForResult();
     }

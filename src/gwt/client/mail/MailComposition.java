@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.client.WebContext;
-import com.threerings.msoy.web.data.MemberGName;
+import com.threerings.msoy.web.data.MemberName;
 
 /**
  * A mail composition popup.
@@ -26,7 +26,7 @@ public class MailComposition extends PopupPanel
     /**
      * Initializes a new composer when we already have the full name.
      */
-    public MailComposition (WebContext ctx, MemberGName recipient, String subject,
+    public MailComposition (WebContext ctx, MemberName recipient, String subject,
                             MailPayloadComposer bodyObjectComposer, String bodyText)
     {
         super(false);
@@ -44,12 +44,12 @@ public class MailComposition extends PopupPanel
     public MailComposition (WebContext ctx, int recipientId, String subject,
                             MailPayloadComposer factory, String bodyText)
     {
-        this(ctx, new MemberGName("Member #" + recipientId, recipientId),
+        this(ctx, new MemberName("Member #" + recipientId, recipientId),
              subject, factory, bodyText);
         _ctx.membersvc.getName(recipientId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _recipient = (MemberGName) result;
-                _recipientBox.setText(_recipient.memberName);
+                _recipient = (MemberName) result;
+                _recipientBox.setText(_recipient.toString());
             }
             public void onFailure (Throwable caught) {
                 // let's ignore this error, it's just a display thing
@@ -68,7 +68,7 @@ public class MailComposition extends PopupPanel
         // build the headers
         HeaderValueTable headers = new HeaderValueTable();
         headers.setStyleName("mailCompositionHeaders");
-        _recipientBox = new Label(_recipient.memberName);
+        _recipientBox = new Label(_recipient.toString());
         headers.addRow("To", _recipientBox);
         _subjectBox = new TextBox();
         _subjectBox.setText(subject);
@@ -150,14 +150,14 @@ public class MailComposition extends PopupPanel
                 popup.show();
             }
         };
-        _ctx.mailsvc.deliverMessage(_ctx.creds, _recipient.memberId, _subjectBox.getText(),
+        _ctx.mailsvc.deliverMessage(_ctx.creds, _recipient.getMemberId(), _subjectBox.getText(),
                                     _messageBox.getText(), (_bodyObjectComposer == null) ?
                                     null : _bodyObjectComposer.getComposedPayload(), callback);
     }
 
     protected WebContext _ctx;
     protected int _senderId;
-    protected MemberGName _recipient;
+    protected MemberName _recipient;
     protected MailPayloadComposer _bodyObjectComposer;
     protected TextBox _subjectBox;
     protected Label _recipientBox;

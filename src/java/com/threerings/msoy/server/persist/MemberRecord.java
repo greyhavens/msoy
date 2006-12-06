@@ -10,7 +10,7 @@ import java.sql.Date;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.MemberName;
+import com.threerings.msoy.web.data.MemberName;
 
 /**
  * Contains persistent data stored for every member of MetaSOY.

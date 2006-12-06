@@ -15,7 +15,7 @@ public class NeighborFriend
     implements IsSerializable, Streamable, Cloneable
 {
     /** The member's id/name. */
-    public MemberGName member;
+    public MemberName member;
 
     /** Whether or not this member is currently online. */
     public boolean isOnline;

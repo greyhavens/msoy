@@ -93,7 +93,7 @@ public class ItemView extends PopupPanel
         if (_item.ownerId == _ctx.creds.memberId) {
             owner = "You";
         } else if (_itemDetail.owner != null) {
-            owner = _itemDetail.owner.memberName;
+            owner = _itemDetail.owner.toString();
         } else if (_item.parentId == -1) {
             owner = "<catalog>";
         } else {
@@ -101,7 +101,7 @@ public class ItemView extends PopupPanel
             // which is probably an admin function?
             owner = "Member #" + _item.ownerId;
         }
-        _table.addRow("Owner", owner, "Creator", _itemDetail.creator.memberName);
+        _table.addRow("Owner", owner, "Creator", _itemDetail.creator.toString());
 
         Widget thumbWidget = _item.thumbMedia == null ?
             new Label("(default)") :
@@ -279,7 +279,7 @@ public class ItemView extends PopupPanel
                 Iterator i = ((Collection) result).iterator();
                 while (i.hasNext()) {
                     TagHistory history = (TagHistory) i.next();
-                    if (history.member.memberId == _ctx.creds.memberId) {
+                    if (history.member.getMemberId() == _ctx.creds.memberId) {
                         if (history.tag != null) {
                             _historicalTags.addItem(history.tag);
                         }
@@ -345,7 +345,7 @@ public class ItemView extends PopupPanel
                     // Fri Sep 29 2006 12:46:12
                     date = date.substring(0, 23);
                     _tagHistory.setText(tRow, 0, date);
-                    _tagHistory.setText(tRow, 1, history.member.memberName);
+                    _tagHistory.setText(tRow, 1, history.member.toString());
                     String actionString;
                     switch(history.action) {
                     case TagHistory.ACTION_ADDED:

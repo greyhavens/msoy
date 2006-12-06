@@ -45,11 +45,11 @@ import com.threerings.whirled.util.SceneFactory;
 
 import com.threerings.toybox.server.ToyBoxManager;
 
-import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.game.server.LobbyRegistry;
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.person.server.PersonPageManager;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.data.RoomConfig;
 

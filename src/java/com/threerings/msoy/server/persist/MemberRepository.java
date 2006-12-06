@@ -30,7 +30,7 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.FriendEntry;
-import com.threerings.msoy.data.MemberName;
+import com.threerings.msoy.web.data.MemberName;
 
 import static com.threerings.msoy.Log.log;
 

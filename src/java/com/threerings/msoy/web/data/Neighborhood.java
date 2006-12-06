@@ -15,7 +15,7 @@ public class Neighborhood
     implements IsSerializable, Streamable, Cloneable
 {
     /** The member around whom this query is centered. */
-    public MemberGName member;
+    public MemberName member;
 
     /** An array of {@link NeighborGroup} objects for the member's memberships. */
     public NeighborGroup[] neighborGroups;

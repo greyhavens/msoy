@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.web.data.MemberGName;
+import com.threerings.msoy.web.data.MemberName;
 
 /**
  * Represents a catalog listing of an item.
@@ -24,7 +24,7 @@ public class CatalogListing
     public Date listedDate;
 
     /** The creator of the item. */
-    public MemberGName creator;
+    public MemberName creator;
 
     /** The current price of the item. */
     public int price;

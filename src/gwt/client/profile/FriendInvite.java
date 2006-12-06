@@ -13,9 +13,9 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.FriendInviteObject;
-import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailMessage;
-import com.threerings.msoy.web.data.MemberGName;
+import com.threerings.msoy.web.data.MailPayload;
+import com.threerings.msoy.web.data.MemberName;
 
 import client.mail.MailPayloadComposer;
 import client.mail.MailPayloadDisplay;
@@ -38,9 +38,9 @@ public abstract class FriendInvite
         }
 
         // @Override
-        public void messageSent (WebContext ctx, MemberGName recipient)
+        public void messageSent (WebContext ctx, MemberName recipient)
         {
-            ctx.membersvc.inviteFriend(ctx.creds, recipient.memberId, new AsyncCallback() {
+            ctx.membersvc.inviteFriend(ctx.creds, recipient.getMemberId(), new AsyncCallback() {
                 public void onSuccess (Object result) {
                     // good -- nothing to do here
                 }
@@ -128,7 +128,7 @@ public abstract class FriendInvite
                         // TODO: error handling ...
                     }
                 };
-                int senderId = _message.headers.sender.memberId;
+                int senderId = _message.headers.sender.getMemberId();
                 if (accepted) {
                     _ctx.membersvc.acceptFriend(_ctx.creds, senderId, callback);
                 } else {
@@ -138,20 +138,19 @@ public abstract class FriendInvite
 
             protected void mailResponse (boolean accepted)
             {
-                MemberGName inviter = _message.headers.sender;
-                MemberGName invitee = _message.headers.recipient;
+                MemberName inviter = _message.headers.sender;
+                MemberName invitee = _message.headers.recipient;
                 String subject, body;
                 if (accepted) {
                     subject = "Your friend invitation was accepted!";
-                    body = "Your invitation to " + invitee.memberName +
-                           "was accepted! They are now a friend of yours.";
+                    body = "Your invitation to " + invitee + "was accepted! " +
+                        "They are now a friend of yours.";
                 } else {
                     subject = "Your friends invitation has been declined.";
-                    body = "Your invitation to " + invitee.memberName +
-                           "was declined. Alas!";
+                    body = "Your invitation to " + invitee + "was declined. Alas!";
                 }
                 _ctx.mailsvc.deliverMessage(
-                    _ctx.creds, inviter.memberId, subject, body, null, new AsyncCallback() {
+                    _ctx.creds, inviter.getMemberId(), subject, body, null, new AsyncCallback() {
                         public void onSuccess (Object result) {
                             // Well that's nice.
                         }

@@ -49,7 +49,7 @@ public class ItemContainer extends VerticalPanel
         descrip.setStyleName("itemDescrip");
         add(descrip);
 
-        Label creator = new Label("by " + listing.creator.memberName);
+        Label creator = new Label("by " + listing.creator);
         creator.setStyleName("itemCreator");
         add(creator);
 

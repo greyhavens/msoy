@@ -6,6 +6,7 @@ package com.threerings.msoy.data;
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.web.data.FriendInfo;
+import com.threerings.msoy.web.data.MemberName;
 
 /**
  * Represents a friend connection.

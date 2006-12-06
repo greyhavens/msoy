@@ -13,7 +13,7 @@ import com.samskivert.jdbc.depot.annotation.Transient;
 
 import com.threerings.io.Streamable;
 import com.threerings.msoy.item.web.CatalogListing;
-import com.threerings.msoy.web.data.MemberGName;
+import com.threerings.msoy.web.data.MemberName;
 
 /**
  * Represents a catalog listing of an item.
@@ -58,7 +58,7 @@ public abstract class CatalogRecord<T extends ItemRecord>
         CatalogListing listing = new CatalogListing();
         listing.item = item.toItem();
         listing.listedDate = new Date(listedDate.getTime());
-        listing.creator = new MemberGName("Mystery Person", item.creatorId); // TODO
+        listing.creator = new MemberName("Mystery Person", item.creatorId); // TODO
         listing.price = 0; // TODO
         return listing;
     }

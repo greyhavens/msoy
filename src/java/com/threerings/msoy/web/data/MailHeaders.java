@@ -25,10 +25,10 @@ final public class MailHeaders
     public int ownerId;
 
     /** The message sender. */
-    public MemberGName sender;
+    public MemberName sender;
 
     /** The message recipient. */
-    public MemberGName recipient;
+    public MemberName recipient;
 
     /** The subject of this message. */
     public String subject;

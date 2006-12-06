@@ -30,10 +30,10 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.FriendEntry;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;

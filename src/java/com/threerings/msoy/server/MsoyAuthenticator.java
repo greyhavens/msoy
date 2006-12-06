@@ -19,12 +19,12 @@ import com.threerings.presents.server.net.AuthingConnection;
 
 import com.threerings.crowd.data.TokenRing;
 
-import com.threerings.msoy.data.MemberName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.LogonException;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.WebCreds;
 
 import static com.threerings.msoy.Log.log;

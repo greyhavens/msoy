@@ -24,7 +24,7 @@ import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.MemberGName;
+import com.threerings.msoy.web.data.MemberName;
 
 import client.shell.MsoyEntryPoint;
 import client.util.HeaderValueTable;
@@ -70,7 +70,7 @@ public class GroupView extends DockPanel
                 Byte myRank = null;
                 if (_ctx.creds != null) {
                     // TODO: Is this too ugly?
-                    myRank = (Byte) _detail.members.get(new MemberGName("", _ctx.creds.memberId));
+                    myRank = (Byte) _detail.members.get(new MemberName("", _ctx.creds.memberId));
                 }
                 _amAdmin = (myRank != null) ?
                     myRank.byteValue() == GroupMembership.RANK_MANAGER : false;
@@ -125,7 +125,7 @@ public class GroupView extends DockPanel
         String path = _group.logo == null ? "/msoy/images/default_logo.png" :
             MsoyEntryPoint.toMediaPath(_group.logo.getMediaPath());
         _table.addRow("Policy", policyString, "Logo", new Image(path));
-        _table.addRow("Created by", _detail.creator.memberName,
+        _table.addRow("Created by", _detail.creator.toString(),
                "Created on", _group.creationDate.toString().substring(0, 20));
 
         // TODO: the member display is very simplistic at the moment, and probably needs the
@@ -137,21 +137,21 @@ public class GroupView extends DockPanel
         while (i.hasNext()) {
             Entry e = (Entry) i.next();
             byte rank = ((Byte) e.getValue()).byteValue();
-            final MemberGName name = (MemberGName) e.getKey();
+            final MemberName name = (MemberName) e.getKey();
             if (first) {
                 first = false;
             } else {
                 memberFlow.add(new InlineLabel(" . "));
             }
             // TODO: popup view of member? a popup menu with possible actions on a member?
-            memberFlow.add(new InlineLabel(name.memberName));
+            memberFlow.add(new InlineLabel(name.toString()));
             // if we're an admin, we can remove non-admins from non-public groups
             if (_amAdmin && rank != GroupMembership.RANK_MANAGER &&
                 _group.policy != Group.POLICY_PUBLIC) {
                 Label removeLabel = new InlineLabel("(-)");
                 removeLabel.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
-                        removeMember(name.memberId);
+                        removeMember(name.getMemberId());
                     }
                 });
                 memberFlow.add(removeLabel);

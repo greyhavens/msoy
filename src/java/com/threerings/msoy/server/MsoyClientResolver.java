@@ -9,21 +9,21 @@ import com.samskivert.util.ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MemberName;
-import com.threerings.msoy.data.SceneBookmarkEntry;
-
 import com.threerings.crowd.server.CrowdClientResolver;
 
 import com.threerings.msoy.data.FriendEntry;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 
-import com.threerings.msoy.web.data.MemberGName;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 
@@ -74,7 +74,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.setHomeSceneId(member.homeSceneId);
         userObj.setOwnedScenes(new DSet<SceneBookmarkEntry>(
             MsoyServer.sceneRepo.getOwnedScenes(member.memberId).iterator()));
-        MemberGName name = new MemberGName(member.name, member.memberId);
+        MemberName name = member.getName();
         for (GroupMembershipRecord record : MsoyServer.groupRepo.getMemberships(member.memberId)) {
             GroupMembership membership = new GroupMembership();
             membership.member = name;

@@ -31,7 +31,9 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.web.data.MemberGName;
+
+import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.world.data.FurniData;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Avatar;
@@ -54,8 +56,6 @@ import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.TagHistoryRecord;
 import com.threerings.msoy.item.server.persist.TagNameRecord;
 import com.threerings.msoy.item.server.persist.TagPopularityRecord;
-
-import com.threerings.msoy.world.data.FurniData;
 
 import static com.threerings.msoy.Log.log;
 
@@ -380,10 +380,10 @@ public class ItemManager
                 RatingRecord<ItemRecord> rr = repo.getRating(ident.itemId, memberId);
                 detail.memberRating = (rr == null) ? 0 : rr.rating;
                 MemberRecord memRec = MsoyServer.memberRepo.loadMember(record.creatorId);
-                detail.creator = new MemberGName(memRec.name, memRec.memberId);
+                detail.creator = memRec.getName();
                 if (record.ownerId != -1) {
                     memRec = MsoyServer.memberRepo.loadMember(record.ownerId);
-                    detail.owner = new MemberGName(memRec.name, memRec.memberId);
+                    detail.owner = memRec.getName();
                 } else {
                     detail.owner = null;
                 }
@@ -688,7 +688,7 @@ public class ItemManager
                     TagNameRecord tag = repo.getTag(record.tagId);
                     TagHistory history = new TagHistory();
                     history.item = new ItemIdent(ident.type, ident.itemId);
-                    history.member = new MemberGName(memRec.name, memRec.memberId);
+                    history.member = memRec.getName();
                     history.tag = tag.tag;
                     history.action = record.action;
                     history.time = new Date(record.time.getTime());
@@ -708,13 +708,13 @@ public class ItemManager
             public Collection<TagHistory> invokePersistResult ()
                 throws PersistenceException {
                 MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
-                MemberGName memName = new MemberGName(memRec.name, memRec.memberId);
+                MemberName memName = memRec.getName();
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
                 for (Entry<Byte, ItemRepository<ItemRecord>> entry : _repos.entrySet()) {
                     byte type = entry.getKey();
                     ItemRepository<ItemRecord> repo = entry.getValue();
                     for (TagHistoryRecord<ItemRecord> record :
-                            repo.getTagHistoryByMember(memberId)) {
+                             repo.getTagHistoryByMember(memberId)) {
                         TagNameRecord tag = record.tagId == -1 ? null : repo.getTag(record.tagId);
                         TagHistory history = new TagHistory();
                         history.item = new ItemIdent(type, record.itemId);
@@ -876,11 +876,11 @@ public class ItemManager
                     repo.untagItem(originalId, tag.tagId, taggerId, now);
                 if (historyRecord != null) {
                     // look up the member
-                    MemberRecord member = MsoyServer.memberRepo.loadMember(taggerId);
+                    MemberRecord mrec = MsoyServer.memberRepo.loadMember(taggerId);
                     // and create the return value
                     TagHistory history = new TagHistory();
                     history.item = new ItemIdent(ident.type, originalId);
-                    history.member = new MemberGName(member.name, member.memberId);
+                    history.member = mrec.getName();
                     history.tag = tag.tag;
                     history.action = historyRecord.action;
                     history.time = new Date(historyRecord.time.getTime());

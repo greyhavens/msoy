@@ -12,16 +12,18 @@ import java.util.Map;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ResultListener;
+
+import com.threerings.msoy.web.data.MailFolder;
+import com.threerings.msoy.web.data.MailHeaders;
+import com.threerings.msoy.web.data.MailMessage;
+import com.threerings.msoy.web.data.MailPayload;
+import com.threerings.msoy.web.data.MemberName;
+
 import com.threerings.msoy.server.persist.MailFolderRecord;
 import com.threerings.msoy.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.data.MailPayload;
-import com.threerings.msoy.web.data.MailFolder;
-import com.threerings.msoy.web.data.MailHeaders;
-import com.threerings.msoy.web.data.MailMessage;
-import com.threerings.msoy.web.data.MemberGName;
 
 /**
  * Manage msoy mail.
@@ -262,10 +264,10 @@ public class MailManager
         headers.unread = record.unread;
         
         MemberRecord memRec = _memberRepo.loadMember(record.senderId);
-        headers.sender = new MemberGName(memRec.name, memRec.memberId);
+        headers.sender = new MemberName(memRec.name, memRec.memberId);
 
         memRec = _memberRepo.loadMember(record.recipientId);
-        headers.recipient = new MemberGName(memRec.name, memRec.memberId);
+        headers.recipient = new MemberName(memRec.name, memRec.memberId);
         return headers;
     }
     

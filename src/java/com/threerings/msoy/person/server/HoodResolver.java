@@ -43,8 +43,8 @@ public class HoodResolver extends BlurbResolver
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("name", hood.member.memberName);
-        obj.put("id", hood.member.memberId);
+        obj.put("name", hood.member.toString());
+        obj.put("id", hood.member.getMemberId());
         JSONArray jArr = new JSONArray();
         for (NeighborFriend friend : hood.neighborFriends) {
             jArr.put(toJSON(friend));
@@ -62,8 +62,8 @@ public class HoodResolver extends BlurbResolver
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("name", friend.member.memberName);
-        obj.put("id", friend.member.memberId);
+        obj.put("name", friend.member.toString());
+        obj.put("id", friend.member.getMemberId());
         obj.put("isOnline", friend.isOnline);
         return obj;
     }
