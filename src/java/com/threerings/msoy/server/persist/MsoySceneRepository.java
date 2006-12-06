@@ -222,7 +222,7 @@ public class MsoySceneRepository extends SimpleRepository
         // TEMP: can be removed after all servers past 2006-12-05
         if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "OWNER_TYPE")) {
             JDBCUtil.addColumn(conn, "SCENES", "OWNER_TYPE",
-                "tinyint not null", "TYPE"); 
+                "tinyint not null", "SCENE_ID"); 
         }
         // END: temp
     }
@@ -487,19 +487,18 @@ public class MsoySceneRepository extends SimpleRepository
             {
                 PreparedStatement stmt = conn.prepareStatement(
                     "update SCENES " +
-                    "set NAME=?, TYPE=?, OWNER_TYPE=?, DEPTH=?, WIDTH=?, HORIZON=?, " +
+                    "set NAME=?, TYPE=?, DEPTH=?, WIDTH=?, HORIZON=?, " +
                     "ENTRANCE_X=?, ENTRANCE_Y=?, ENTRANCE_Z=? " +
                     "where SCENE_ID=" + mmodel.sceneId);
                 try {
                     stmt.setString(1, update.name);
                     stmt.setByte(2, update.type);
-                    stmt.setByte(3, update.ownerType);
-                    stmt.setInt(4, update.depth);
-                    stmt.setInt(5, update.width);
-                    stmt.setFloat(6, update.horizon);
-                    stmt.setFloat(7, update.entrance.x);
-                    stmt.setFloat(8, update.entrance.y);
-                    stmt.setFloat(9, update.entrance.z);
+                    stmt.setInt(3, update.depth);
+                    stmt.setInt(4, update.width);
+                    stmt.setFloat(5, update.horizon);
+                    stmt.setFloat(6, update.entrance.x);
+                    stmt.setFloat(7, update.entrance.y);
+                    stmt.setFloat(8, update.entrance.z);
 
                     JDBCUtil.checkedUpdate(stmt, 1);
                 } finally {
@@ -749,11 +748,11 @@ public class MsoySceneRepository extends SimpleRepository
     {
         JDBCUtil.createTableIfMissing(conn, "SCENES", new String[] {
             "SCENE_ID integer not null auto_increment",
+            "OWNER_TYPE tinyint not null",
             "OWNER_ID integer not null",
             "VERSION integer not null",
             "NAME varchar(255) not null",
             "TYPE tinyint not null",
-            "OWNER_TYPE tinyint not null",
             "DEPTH integer not null",
             "WIDTH integer not null",
             "HORIZON float not null",
