@@ -79,7 +79,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             groups.add(record.toGroupMembership(
                            MsoyServer.groupRepo.loadGroup(record.groupId), null));
         }
-        userObj.groups = new DSet<GroupMembership>(groups.iterator());
+        userObj.setGroups(new DSet<GroupMembership>(groups.iterator()));
 
         // TODO
         userObj.setTokens(new MsoyTokenRing());
