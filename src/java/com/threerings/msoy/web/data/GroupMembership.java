@@ -17,7 +17,8 @@ public class GroupMembership
     public static final byte RANK_MEMBER = 1;
     public static final byte RANK_MANAGER = 2;
     
-    /** The name and id of the member of the group. */
+    /** The name and id of the member of the group. <em>Note:</em> this will be null in the records
+     * maintained in a member's MemberObject. */
     public MemberName member;
 
     /** The group's id. */
