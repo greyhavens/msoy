@@ -162,7 +162,7 @@ public abstract class ItemEditor extends PopupPanel
     {
         String title = "Furniture Image";
         _furniUploader = createUploader(
-            FURNI_ID, title, ItemContainer.FURNI_HEIGHT, new MediaUpdater() {
+            Item.FURNI_ID, title, ItemContainer.FURNI_HEIGHT, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
                     return "Furniture must be an web-viewable image type.";
@@ -175,13 +175,11 @@ public abstract class ItemEditor extends PopupPanel
         });
 
         title = "Thumbnail Image";
-        _thumbUploader = createUploader(
-            THUMB_ID, title, ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
+        _thumbUploader = createUploader(Item.THUMB_ID, title, -1, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
                     return "Thumbnails must be an image type.";
                 }
-
                 _item.thumbMedia = desc;
                 recenter(true);
                 return null;
@@ -229,8 +227,7 @@ public abstract class ItemEditor extends PopupPanel
      */
     protected void configureMainUploader (String title, MediaUpdater updater)
     {
-        _mainUploader = createUploader(
-            MAIN_ID, title, ItemContainer.MAIN_HEIGHT, updater);
+        _mainUploader = createUploader(Item.MAIN_ID, title, ItemContainer.MAIN_HEIGHT, updater);
     }
 
     /**
@@ -263,13 +260,13 @@ public abstract class ItemEditor extends PopupPanel
      */
     protected MediaUploader getUploader (String id)
     {
-        if (FURNI_ID.equals(id)) {
+        if (Item.FURNI_ID.equals(id)) {
             return _furniUploader;
 
-        } else if (THUMB_ID.equals(id)) {
+        } else if (Item.THUMB_ID.equals(id)) {
             return _thumbUploader;
 
-        } else if (MAIN_ID.equals(id)) {
+        } else if (Item.MAIN_ID.equals(id)) {
             return _mainUploader; // could be null...
 
         } else {
@@ -281,7 +278,8 @@ public abstract class ItemEditor extends PopupPanel
      * Configures this item editor with the hash value for media that it is
      * about to upload.
      */
-    protected void setHash (String id, String mediaHash, int mimeType)
+    protected void setHash (String id, String mediaHash, int mimeType, int constraint,
+                            String thumbMediaHash, int thumbMimeType)
     {
         MediaUploader mu = getUploader(id);
         if (mu == null) {
@@ -289,18 +287,24 @@ public abstract class ItemEditor extends PopupPanel
         }
 
         // set the new media in preview and in the item
-        mu.setUploadedMedia(new MediaDesc(
-            MediaDesc.stringToHash(mediaHash), (byte) mimeType));
+        mu.setUploadedMedia(new MediaDesc(MediaDesc.stringToHash(mediaHash), (byte) mimeType));
+
+        // if we got thumbnail media back from this upload, use that as well
+        // TODO: avoid overwriting custom thumbnail, sigh
+        if (thumbMediaHash != null) {
+            _item.thumbMedia =
+                new MediaDesc(MediaDesc.stringToHash(thumbMediaHash), (byte)thumbMimeType);
+        }
 
         // have the item re-validate that no media ids are duplicated
         // unnecessarily
         _item.checkConsolidateMedia();
 
         // re-check the other two, as they may have changed
-        if (!THUMB_ID.equals(id)) {
+        if (!Item.THUMB_ID.equals(id)) {
             recheckThumbMedia();
         }
-        if (!FURNI_ID.equals(id)) {
+        if (!Item.FURNI_ID.equals(id)) {
             recheckFurniMedia();
         }
 
@@ -334,9 +338,10 @@ public abstract class ItemEditor extends PopupPanel
      * This is called from our magical JavaScript method by JavaScript code
      * received from the server as a response to our file upload POST request.
      */
-    protected static void callBridge (String id, String mediaHash, int mimeType)
+    protected static void callBridge (String id, String mediaHash, int mimeType, int constraint,
+                                      String thumbMediaHash, int thumbMimeType)
     {
-        _singleton.setHash(id, mediaHash, mimeType);
+        _singleton.setHash(id, mediaHash, mimeType, constraint, thumbMediaHash, thumbMimeType);
     }
 
     /**
@@ -408,8 +413,8 @@ public abstract class ItemEditor extends PopupPanel
      * JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
-        $wnd.setHash = function (id, hash, type) {
-           @client.inventory.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;I)(id, hash, type);
+        $wnd.setHash = function (id, hash, type, constraint, thash, ttype) {
+           @client.inventory.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;I)(id, hash, type, constraint, thash, ttype);
         };
     }-*/; 
 
@@ -428,8 +433,4 @@ public abstract class ItemEditor extends PopupPanel
     protected MediaUploader _thumbUploader;
     protected MediaUploader _furniUploader;
     protected MediaUploader _mainUploader;
-
-    protected static final String FURNI_ID = "furni";
-    protected static final String THUMB_ID = "thumb";
-    protected static final String MAIN_ID = "main";
 }

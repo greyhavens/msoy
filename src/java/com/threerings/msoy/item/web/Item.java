@@ -45,6 +45,27 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
      * as an avatar. */
     public static final byte USED_AS_AVATAR = (byte) 2;
 
+    /** Defines the maximum visible width of a thumbnail preview image. */
+    public static final int THUMBNAIL_WIDTH = 160;
+
+    /** Defines the maximum visible height of a thumbnail preview image. */
+    public static final int THUMBNAIL_HEIGHT = 120;
+
+    /** Defines the maximum visible width of a an item preview visualization. */
+    public static final int PREVIEW_WIDTH = 640;
+
+    /** Defines the maximum visible height of a an item preview visualization. */
+    public static final int PREVIEW_HEIGHT = 480;
+
+    /** An identifier used to coordinate with the server when uploading media. */
+    public static final String FURNI_ID = "furni";
+
+    /** An identifier used to coordinate with the server when uploading media. */
+    public static final String THUMB_ID = "thumb";
+
+    /** An identifier used to coordinate with the server when uploading media. */
+    public static final String MAIN_ID = "main";
+
     // == Instance variables follow =========================================
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not

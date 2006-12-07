@@ -45,9 +45,8 @@ public class MediaUploader extends FlexTable
      * @param updater the updater that knows how to set the media hash on
      * the item.
      */
-    public MediaUploader (
-        String id, String title, int previewHeight,
-        ItemEditor.MediaUpdater updater)
+    public MediaUploader (String id, String title, int previewHeight,
+                          ItemEditor.MediaUpdater updater)
     {
         _previewHeight = previewHeight;
         _updater = updater;

@@ -48,6 +48,18 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The MIME type for Java JAR files. */
     public static final byte APPLICATION_JAVA_ARCHIVE = 41;
 
+    /** A constant used to indicate that an image does not exceed our target size in either
+     * dimension. */
+    public static final byte NOT_CONSTRAINED = 0;
+
+    /** A constant used to indicate that an image exceeds our target size proportionally more in
+     * the horizontal dimension. */
+    public static final byte HORIZONTALLY_CONSTRAINED = 1;
+
+    /** A constant used to indicate that an image exceeds our target size proportionally more in
+     * the vertical dimension. */
+    public static final byte VERTICALLY_CONSTRAINED = 2;
+
     /** The SHA-1 hash of this media's data. */
     public byte[] hash;
 
@@ -111,7 +123,7 @@ public class MediaDesc implements Streamable, IsSerializable
      * Maps the supplied string representation of a mime type to our internal
      * integer code. Returns -1 if the mime type is unknown.
      */
-    public static int stringToMimeType (String mimeType)
+    public static byte stringToMimeType (String mimeType)
     {
         mimeType = mimeType.toLowerCase();
         if (mimeType.equals("text/plain")) {
@@ -147,7 +159,7 @@ public class MediaDesc implements Streamable, IsSerializable
      * Maps the supplied filename suffix to a mime type. Returns -1 if the
      * suffix is unknown.
      */
-    public static int suffixToMimeType (String filename)
+    public static byte suffixToMimeType (String filename)
     {
         filename = filename.toLowerCase();
         if (filename.endsWith(".txt")) {
@@ -183,7 +195,7 @@ public class MediaDesc implements Streamable, IsSerializable
      * Returns a file suffix for use with the specified mime tpye or .dat if
      * mime type is unknown.
      */
-    public static String mimeTypeToSuffix (int mimeType)
+    public static String mimeTypeToSuffix (byte mimeType)
     {
         switch (mimeType) {
         case TEXT_PLAIN: return ".txt";
@@ -199,6 +211,63 @@ public class MediaDesc implements Streamable, IsSerializable
         case APPLICATION_SHOCKWAVE_FLASH: return ".swf";
         case APPLICATION_JAVA_ARCHIVE: return ".jar";
         default: return ".dat";
+        }
+    }
+
+    /**
+     * Maps the supplied integer representation of a mime type to the standard string
+     * representation. Returns "application/octet-stream".
+     */
+    public static String mimeTypeToString (byte mimeType)
+    {
+        switch (mimeType) {
+        case TEXT_PLAIN: return "text/plain";
+        case IMAGE_PNG: return "image/png";
+        case IMAGE_JPEG: return "image/jpeg";
+        case IMAGE_GIF: return "image/gif";
+        case AUDIO_MPEG: return "audio/mpeg";
+//        case AUDIO_WAV: return "audo/wav";
+        case VIDEO_FLASH: return "video/flash";
+        case VIDEO_MPEG: return "video/mpeg";
+        case VIDEO_QUICKTIME: return "video/quicktime";
+        case VIDEO_MSVIDEO: return "video/msvideo";
+        case APPLICATION_SHOCKWAVE_FLASH: return "application/x-shockwave-flash";
+        case APPLICATION_JAVA_ARCHIVE: return "application/java-archive";
+        default: return "application/octet-stream";
+        }
+    }
+
+    /**
+     * Returns true if the supplied mime type is a supported image type.
+     */
+    public static boolean isImage (byte mimeType)
+    {
+        switch (mimeType) {
+        case IMAGE_PNG:
+        case IMAGE_JPEG:
+        case IMAGE_GIF:
+            return true;
+
+        default:
+            return false;
+        }
+    }
+
+    /**
+     * Computes the constraining dimension for an image (if any) based on the supplied target and
+     * actual dimensions.
+     */
+    public static byte computeConstraint (int targetWidth, int targetHeight,
+                                          int actualWidth, int actualHeight)
+    {
+        float wfactor = (float)targetWidth / actualWidth;
+        float hfactor = (float)targetHeight / actualHeight;
+        if (wfactor > 1 && hfactor > 1) {
+            return NOT_CONSTRAINED;
+        } else if (wfactor < hfactor) {
+            return HORIZONTALLY_CONSTRAINED;
+        } else {
+            return VERTICALLY_CONSTRAINED;
         }
     }
 
@@ -256,15 +325,7 @@ public class MediaDesc implements Streamable, IsSerializable
      */
     public boolean isImage ()
     {
-        switch (mimeType) {
-        case IMAGE_PNG:
-        case IMAGE_JPEG:
-        case IMAGE_GIF:
-            return true;
-
-        default:
-            return false;
-        }
+        return isImage(mimeType);
     }
 
     /**
