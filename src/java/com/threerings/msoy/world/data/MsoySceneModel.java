@@ -38,14 +38,14 @@ public class MsoySceneModel extends SceneModel
     /** Constant for Group room owners **/
     public static final byte OWNER_TYPE_GROUP = 2;
 
-    /** The type of scene that this is. Determines how it is rendered. */
-    public byte sceneType;
-
     /** The type of owner that owns this scene. */
     public byte ownerType;
 
     /** The id of the owner of this scene, interpreted using ownerType. */
     public int ownerId;
+
+    /** The type of scene that this is. Determines how it is rendered. */
+    public byte sceneType;
 
     /** The "pixel" depth of the room. */
     public short depth;
