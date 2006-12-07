@@ -25,7 +25,7 @@ public interface GroupService extends RemoteService
     /**
      * Look up a group by id and return the id of its home scene.
      */
-    public Integer getGroupHomeId (WebCreds creds, int memberId)
+    public Integer getGroupHomeId (WebCreds creds, int groupId)
         throws ServiceException;
 
     /**

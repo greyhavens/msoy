@@ -20,7 +20,7 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#getGroupHomeId}
      */
-    public void getGroupHomeId (WebCreds creds, int memberId, AsyncCallback callback);
+    public void getGroupHomeId (WebCreds creds, int groupId, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link GroupService#getMembershipGroups}
