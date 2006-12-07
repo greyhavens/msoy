@@ -90,30 +90,6 @@ public class MsoySceneRepository extends SimpleRepository
             "DATA blob not null",
             "primary key (SCENE_ID, SCENE_VERSION)" }, "");
 
-        // TEMP: removable after all servers are past the date specified...
-        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061107",
-            new TransitionRepository.Transition() {
-                public void run ()
-                    throws PersistenceException
-                {
-                    executeUpdate(new Operation<Void>() {
-                        public Void invoke (Connection conn,
-                            DatabaseLiaison liaison)
-                            throws SQLException, PersistenceException
-                        {
-                            Statement stmt = conn.createStatement();
-                            try {
-                                stmt.executeUpdate("delete from SCENE_UPDATES");
-                            } finally {
-                                JDBCUtil.close(stmt);
-                            }
-                            return null;
-                        }
-                    });
-                }
-            });
-        // END: temp
-
         // TEMP: can be removed after all servers past 2006-10-23
         if (!JDBCUtil.tableContainsColumn(conn, "FURNI", "LAYOUT_INFO")) {
             JDBCUtil.addColumn(conn, "FURNI", "LAYOUT_INFO",
@@ -144,6 +120,30 @@ public class MsoySceneRepository extends SimpleRepository
                 JDBCUtil.close(stmt);
             }
         }
+        // END: temp
+
+        // TEMP: removable after all servers are past the date specified...
+        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061207",
+            new TransitionRepository.Transition() {
+                public void run ()
+                    throws PersistenceException
+                {
+                    executeUpdate(new Operation<Void>() {
+                        public Void invoke (Connection conn,
+                            DatabaseLiaison liaison)
+                            throws SQLException, PersistenceException
+                        {
+                            Statement stmt = conn.createStatement();
+                            try {
+                                stmt.executeUpdate("delete from SCENE_UPDATES");
+                            } finally {
+                                JDBCUtil.close(stmt);
+                            }
+                            return null;
+                        }
+                    });
+                }
+            });
         // END: temp
     }
 
