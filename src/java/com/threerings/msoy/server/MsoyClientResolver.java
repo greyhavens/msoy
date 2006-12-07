@@ -74,10 +74,12 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.setHomeSceneId(member.homeSceneId);
         userObj.setOwnedScenes(new DSet<SceneBookmarkEntry>(
             MsoyServer.sceneRepo.getOwnedScenes(member.memberId).iterator()));
+        ArrayList<GroupMembership> groups = new ArrayList<GroupMembership>();
         for (GroupMembershipRecord record : MsoyServer.groupRepo.getMemberships(member.memberId)) {
-            userObj.addToGroups(record.toGroupMembership(
-                                    MsoyServer.groupRepo.loadGroup(record.groupId), null));
+            groups.add(record.toGroupMembership(
+                           MsoyServer.groupRepo.loadGroup(record.groupId), null));
         }
+        userObj.groups = new DSet<GroupMembership>(groups.iterator());
 
         // TODO
         userObj.setTokens(new MsoyTokenRing());

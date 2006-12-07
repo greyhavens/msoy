@@ -128,7 +128,7 @@ public class MemberObject extends BodyObject
     public DSet<FriendEntry> friends = new DSet<FriendEntry>();
 
     /** The groups of this player. */
-    public DSet<GroupMembership> groups  = new DSet<GroupMembership>();
+    public DSet<GroupMembership> groups;
 
     /**
      * Returns this member's unique id.
