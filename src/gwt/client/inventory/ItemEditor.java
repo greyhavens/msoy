@@ -288,7 +288,7 @@ public abstract class ItemEditor extends PopupPanel
 
         // if we got thumbnail media back from this upload, use that as well
         // TODO: avoid overwriting custom thumbnail, sigh
-        if (thumbMediaHash != null) {
+        if (thumbMediaHash.length() > 0) {
             _item.thumbMedia =
                 new MediaDesc(MediaDesc.stringToHash(thumbMediaHash), (byte)thumbMimeType);
         }

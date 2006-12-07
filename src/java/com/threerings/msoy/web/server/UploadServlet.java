@@ -104,7 +104,7 @@ public class UploadServlet extends HttpServlet
         try {
             out.println("<html>");
             out.println("<head></head>");
-            String thash = (info[1] == null) ? null : info[1].hash;
+            String thash = (info[1] == null) ? "" : info[1].hash;
             int tmime = (info[1] == null) ? 0 : info[1].mimeType;
             String script = "parent.setHash('" + mediaId + "', '" +
                 info[0].hash + "', " + info[0].mimeType + ", " + info[0].constraint + ", '" +
