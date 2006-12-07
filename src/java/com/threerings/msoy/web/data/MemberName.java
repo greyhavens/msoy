@@ -80,7 +80,12 @@ public class MemberName extends Name
 
         // return 0 if diff is the same (they have the same memberId) UNLESS the memberId is 0, in
         // which case they're a guest and we compare by name
-        return (_memberId != GUEST_ID) ? 0 : BY_DISPLAY_NAME.compare(this, that);
+        return (_memberId != GUEST_ID) ? 0 :
+            // This next line should be BY_DISPLAY_NAME.compare(this, that),
+            // but then Javac complains about the uncheckedness, and if
+            // we add the annotation to ignore unchecked then GWT dies.
+            // Until GWT can ignore annotations we have to duplicate this code.
+            toString().toLowerCase().compareTo(that.toString().toLowerCase());
     }
 
     // @Override
