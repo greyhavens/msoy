@@ -23,7 +23,7 @@ import com.threerings.msoy.web.data.Group;
 public class GroupRecord
     implements Cloneable
 {
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     public static final String GROUP_ID = "groupId";
     public static final String NAME = "name";
@@ -31,6 +31,7 @@ public class GroupRecord
     public static final String LOGO_MIME_TYPE = "logoMimeType";
     public static final String LOGO_MEDIA_HASH = "logoMediaHash";
     public static final String CREATOR_ID = "creatorId";
+    public static final String HOME_SCENE_ID = "homeSceneId";
     public static final String CREATION_DATE = "creationDate";
     public static final String POLICY = "policy";
 
@@ -58,8 +59,7 @@ public class GroupRecord
     public int creatorId;
 
     /** The home scene of this group. */
-    // TODO: someone fill this in, make it non-transient
-    public transient int homeSceneId;
+    public int homeSceneId;
     
     /** The date and time this group was created. */
     public Timestamp creationDate;

@@ -77,8 +77,9 @@ public class GroupRepository extends DepotRepository
         }
         insert(record);
 
-        MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_GROUP, record.groupId,
-            /* TODO */ "Group " + record.name + "'s room");
+        int sceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_GROUP, 
+            record.groupId, /* TODO */ "Group " + record.name + "'s room");
+        updateGroup(record.groupId, GroupRecord.HOME_SCENE_ID, sceneId);
 
         return record.groupId;
     }
