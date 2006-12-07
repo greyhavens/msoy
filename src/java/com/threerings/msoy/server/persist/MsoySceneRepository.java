@@ -311,19 +311,21 @@ public class MsoySceneRepository extends SimpleRepository
                 try {
                     // Load: basic scene data
                     ResultSet rs = stmt.executeQuery("select " +
-                        "OWNER_ID, VERSION, NAME, SCENE_TYPE, DEPTH, WIDTH, " +
+                        "OWNER_TYPE, OWNER_ID, VERSION, " +
+                        "NAME, SCENE_TYPE, DEPTH, WIDTH, " +
                         "HORIZON, ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z " +
                         "from SCENES where SCENE_ID=" + sceneId);
                     if (rs.next()) {
-                        model.ownerId = rs.getInt(1);
-                        model.version = rs.getInt(2);
-                        model.name = rs.getString(3).intern();
-                        model.sceneType = rs.getByte(4);
-                        model.depth = rs.getShort(5);
-                        model.width = rs.getShort(6);
-                        model.horizon = rs.getFloat(7);
+                        model.ownerType = rs.getByte(1);
+                        model.ownerId = rs.getInt(2);
+                        model.version = rs.getInt(3);
+                        model.name = rs.getString(4).intern();
+                        model.sceneType = rs.getByte(5);
+                        model.depth = rs.getShort(6);
+                        model.width = rs.getShort(7);
+                        model.horizon = rs.getFloat(8);
                         model.entrance = new MsoyLocation(
-                            rs.getFloat(8), rs.getFloat(9), rs.getFloat(10),
+                            rs.getFloat(9), rs.getFloat(10), rs.getFloat(11),
                             180);
 
                     } else {
@@ -485,8 +487,9 @@ public class MsoySceneRepository extends SimpleRepository
         throws SQLException, PersistenceException
     {
         PreparedStatement stmt = conn.prepareStatement("insert into SCENES " +
-            "(OWNER_TYPE, OWNER_ID, VERSION, NAME, SCENE_TYPE, DEPTH, WIDTH, HORIZON, " +
-            " ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z) " +
+            "(OWNER_TYPE, OWNER_ID, VERSION, NAME, " +
+            "SCENE_TYPE, DEPTH, WIDTH, HORIZON, " +
+            "ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z) " +
             "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setByte(1, model.ownerType);
