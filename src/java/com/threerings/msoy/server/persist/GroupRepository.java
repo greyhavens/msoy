@@ -15,6 +15,9 @@ import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 
+import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.world.data.MsoySceneModel;
+
 /**
  * Manages the persistent store of group data.
  */
@@ -62,7 +65,8 @@ public class GroupRepository extends DepotRepository
 
     /**
      * Creates a new group, defined by a {@link GroupRecord}. The key of the record must
-     * be null -- it will be filled in through the insertion, and returned.
+     * be null -- it will be filled in through the insertion, and returned.  A blank room is 
+     * also created that is owned by the group.
      */
     public int createGroup (GroupRecord record)
         throws PersistenceException
@@ -72,6 +76,10 @@ public class GroupRepository extends DepotRepository
                 "Group record must have a null id for creation " + record);
         }
         insert(record);
+
+        MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_GROUP, record.groupId,
+            /* TODO */ "Group " + record.name + "'s room");
+
         return record.groupId;
     }
 
