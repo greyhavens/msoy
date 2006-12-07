@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -32,19 +33,31 @@ import client.shell.MsoyEntryPoint;
 public class ItemContainer extends VerticalPanel
 {
     /**
-     * Create a container to hold the media in the specified path.
+     * Create a container to hold the supplied media.
      */
-    public static Widget createContainer (String path)
+    public static Widget createContainer (MediaDesc desc, boolean thumbnail)
     {
+        String path = MsoyEntryPoint.toMediaPath(desc.getMediaPath());
+        int width = thumbnail ? Item.THUMBNAIL_WIDTH : Item.PREVIEW_WIDTH;
+        int height = thumbnail ? Item.THUMBNAIL_HEIGHT : Item.PREVIEW_HEIGHT;
         switch (MediaDesc.suffixToMimeType(path)) {
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
-            return WidgetUtil.createFlashContainer(
-                "", path, Item.THUMBNAIL_WIDTH, Item.THUMBNAIL_HEIGHT, null);
+            return WidgetUtil.createFlashContainer("", path, width, height, null);
 
         case MediaDesc.IMAGE_PNG:
         case MediaDesc.IMAGE_JPEG:
-        case MediaDesc.IMAGE_GIF:
-            return new Image(path);
+        case MediaDesc.IMAGE_GIF: {
+            Image image = new Image(path);
+            switch (desc.constraint) {
+            case MediaDesc.HORIZONTALLY_CONSTRAINED:
+                image.setWidth(width + "px");
+                break;
+            case MediaDesc.VERTICALLY_CONSTRAINED:
+                image.setHeight(height + "px");
+                break;
+            }
+            return image;
+        }
 
         default:
             return new Label(path);
@@ -86,8 +99,7 @@ public class ItemContainer extends VerticalPanel
      */
     protected Widget createContainer (Item item)
     {
-        String thumbPath = MsoyEntryPoint.toMediaPath(item.getThumbnailPath());
-        return createContainer(thumbPath);
+        return createContainer(item.getThumbnailMedia(), true);
     }
 
     /**

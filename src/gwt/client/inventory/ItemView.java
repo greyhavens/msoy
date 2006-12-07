@@ -105,13 +105,9 @@ public class ItemView extends PopupPanel
         _table.addRow("Owner", owner, "Creator", _itemDetail.creator.toString());
 
         Widget thumbWidget = _item.thumbMedia == null ?
-            new Label("(default)") :
-            ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
-                _item.getThumbnailMedia().getMediaPath()));
+            new Label("(default)") : ItemContainer.createContainer(_item.getThumbnailMedia(), true);
         Widget furniWidget = _item.furniMedia == null ?
-            new Label("(default)") :
-            ItemContainer.createContainer(MsoyEntryPoint.toMediaPath(
-                _item.getFurniMedia().getMediaPath()));
+            new Label("(default)") : ItemContainer.createContainer(_item.getFurniMedia(), false);
         _table.addRow("Thumbnail", thumbWidget, "Furniture", furniWidget);
 
         // TODO: Maybe merge ItemDetail and ItemEditor, so we could put these
@@ -146,8 +142,7 @@ public class ItemView extends PopupPanel
             _table.addHeader("Photo Information");
             MediaDesc photoMedia = ((Photo)_item).photoMedia;
             Widget photoContainer;
-            photoContainer = ItemContainer.createContainer(
-                MsoyEntryPoint.toMediaPath(photoMedia.getMediaPath()));
+            photoContainer = ItemContainer.createContainer(photoMedia, false);
             _table.addRow("Photo", photoContainer);
             _table.addRow("Caption", ((Photo)_item).caption);
 
@@ -166,8 +161,7 @@ public class ItemView extends PopupPanel
             _table.addHeader("Audio Information");
             MediaDesc audioMedia = ((Audio)_item).audioMedia;
             Widget audioContainer;
-            audioContainer = ItemContainer.createContainer(
-                MsoyEntryPoint.toMediaPath(audioMedia.getMediaPath()));
+            audioContainer = ItemContainer.createContainer(audioMedia, false);
             _table.addRow("Description", ((Audio)_item).description);
             _table.addRow("Audio", audioContainer);
 

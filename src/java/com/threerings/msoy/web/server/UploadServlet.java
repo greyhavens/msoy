@@ -182,24 +182,26 @@ public class UploadServlet extends HttpServlet
 
         // if the user is uploading a thumbnail image, we want to use the scaled version and
         // abandon their original
-        if (mediaId.equals(Item.THUMB_ID)) {
+        if (tinfo != null && mediaId.equals(Item.THUMB_ID)) {
             info = tinfo;
             tinfo = null;
-        }
+            if (!output.delete()) {
+                log.warning("Unable to delete unscaled thumnail image '" + output + "'.");
+            }
 
-        // now name it using the hash value and the suffix
-        // TODO: turn XXXXXXX... into XX/XX/XXXX... to avoid freaking out the file system with the
-        // amazing four hundred billion files
-        String name = info.hash + MediaDesc.mimeTypeToSuffix(info.mimeType);
-        File target = new File(ServerConfig.mediaDir, name);
-        if (!output.renameTo(target)) {
-            log.warning("Unable to rename uploaded file [temp=" + output +
-                        ", perm=" + target + "].");
-            return null;
-        }
+        } else {
+            // now name it using the hash value and the suffix
+            String name = info.hash + MediaDesc.mimeTypeToSuffix(info.mimeType);
+            File target = getMediaFilePath(name);
+            if (!output.renameTo(target)) {
+                log.warning("Unable to rename uploaded file [temp=" + output +
+                            ", perm=" + target + "].");
+                return null;
+            }
 
-        // publish this file to S3 if desired
-        publishFile(target, name, info);
+            // publish this file to S3 if desired
+            publishFile(target, name, info);
+        }
 
         return new MediaInfo[] { info, tinfo };
     }
@@ -277,16 +279,26 @@ public class UploadServlet extends HttpServlet
 
             // finally write the bytes to the file system
             String tname = tinfo.hash + MediaDesc.mimeTypeToSuffix(tinfo.mimeType);
-            File target = new File(ServerConfig.mediaDir, tname);
+            File target = getMediaFilePath(tname);
             FileOutputStream fout = new FileOutputStream(target);
             fout.write(bout.toByteArray());
             fout.close();
+
+            log.info("Generated thumbnail [file=" + tname + ", width=" + twidth +
+                     ", height=" + theight + "].");
 
             // publish this file to S3 if desired
             publishFile(target, tname, tinfo);
         }
 
         return tinfo;
+    }
+
+    protected File getMediaFilePath (String name)
+    {
+        // TODO: turn XXXXXXX... into XX/XX/XXXX... to avoid freaking out the file system with the
+        // amazing four hundred billion files
+        return new File(ServerConfig.mediaDir, name);
     }
 
     protected static class MediaInfo

@@ -111,7 +111,7 @@ public class MediaUploader extends FlexTable
     public void setMedia (MediaDesc desc)
     {
         if (desc != null) {
-            Widget w = ItemContainer.createContainer(desc.getMediaPath());
+            Widget w = ItemContainer.createContainer(desc, _thumbnail);
             int twidth = _thumbnail ? Item.THUMBNAIL_WIDTH : Item.PREVIEW_WIDTH;
             int theight = _thumbnail ? Item.THUMBNAIL_HEIGHT : Item.PREVIEW_HEIGHT;
             switch (desc.constraint) {

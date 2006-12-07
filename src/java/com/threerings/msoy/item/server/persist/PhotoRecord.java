@@ -64,8 +64,8 @@ public class PhotoRecord extends ItemRecord
     protected Item createItem ()
     {
         Photo object = new Photo();
-        object.photoMedia = photoMediaHash == null ? null :
-            new MediaDesc(photoMediaHash, photoMimeType);
+        object.photoMedia = (photoMediaHash == null) ?
+            null : new MediaDesc(photoMediaHash, photoMimeType, photoConstraint);
         object.caption = caption;
         return object;
     }

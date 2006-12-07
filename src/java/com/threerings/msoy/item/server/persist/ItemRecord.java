@@ -178,10 +178,10 @@ public abstract class ItemRecord implements Streamable, Cloneable
         item.location = location;
         item.creatorId = creatorId;
         item.flags = flags;
-        item.furniMedia = furniMediaHash == null ? null :
-            new MediaDesc(furniMediaHash, furniMimeType);
-        item.thumbMedia = thumbMediaHash == null ? null :
-            new MediaDesc(thumbMediaHash, thumbMimeType);
+        item.furniMedia = (furniMediaHash == null) ?
+            null : new MediaDesc(furniMediaHash, furniMimeType, furniConstraint);
+        item.thumbMedia = (thumbMediaHash == null) ?
+            null : new MediaDesc(thumbMediaHash, thumbMimeType);
         return item;
     }
 
