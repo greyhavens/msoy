@@ -456,27 +456,22 @@ public class MemberManager
                 gRec.creatorId = groupDef.creatorId;
                 gRec.creationDate = new Timestamp(groupDef.creationDate.getTime());
                 gRec.policy = groupDef.policy;
-                _groupRepo.createGroup(gRec);
 
+                // create the group and then add the creator to it
+                _groupRepo.createGroup(gRec);
                 _groupId = gRec.groupId;
                 _groupRepo.joinGroup(_groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
     
                 return gRec.toWebObject();
             }
+
             public void handleSuccess () {
                 super.handleSuccess();
 
-                // data made it to the db, let the dobj know
-                MemberObject member = MsoyServer.lookupMember(groupDef.creatorId);
-                if (member != null) {
-                    GroupMembership membership = new GroupMembership();
-                    membership.groupId = _groupId;
-                    membership.groupName = groupDef.name;
-                    membership.member = member.memberName;
-                    membership.rank = GroupMembership.RANK_MANAGER;
-                    member.addToGroups(membership);
-                }
+                updateMemberGroup(groupDef.creatorId, _groupId, groupDef.name, 
+                    GroupMembership.RANK_MANAGER);
             }
+
             protected int _groupId;
         });
     }
@@ -582,10 +577,11 @@ public class MemberManager
                 _groupRepo.leaveGroup(groupId, memberId);
                 return null;
             }
+
             public void handleSuccess () {
                 super.handleSuccess();
 
-                // data made it to the db, let the dobj know
+                // data made it to the db, update their member object if they're online
                 MemberObject member = MsoyServer.lookupMember(memberId);
                 if (member != null) {
                     member.removeFromGroups(groupId);
@@ -606,20 +602,13 @@ public class MemberManager
                 _groupName = MsoyServer.groupRepo.loadGroup(groupId).name;
                 return null;
             }
+
             public void handleSuccess () {
                 super.handleSuccess();
 
-                // data made it to the db, let the dobj know
-                MemberObject member = MsoyServer.lookupMember(memberId);
-                if (member != null) {
-                    GroupMembership membership = new GroupMembership();
-                    membership.groupId = groupId;
-                    membership.groupName = _groupName;
-                    membership.member = member.memberName;
-                    membership.rank = rank;
-                    member.addToGroups(membership);
-                }
+                updateMemberGroup(memberId, groupId, _groupName, rank);
             }
+
             protected String _groupName;
         });        
     }
@@ -706,6 +695,34 @@ public class MemberManager
             }
         });
     }
+
+    /**
+     * Updates or Adds to the groups set on the given member's object, as appropriate.
+     */
+    protected void updateMemberGroup (int memberId, int groupId, String groupName, 
+        byte groupRank)
+    {
+        MemberObject mobj = MsoyServer.lookupMember(memberId);
+        if (mobj == null) {
+            return; // no need to update anything
+        }
+
+        // see if we're just updating their rank
+        GroupMembership gm = mobj.groups.get(groupId);
+        if (gm != null) {
+            gm.rank = groupRank;
+            mobj.updateGroups(gm);
+            return;
+        }
+
+        // otherwise they are newly joined
+        gm = new GroupMembership();
+        // gm.member specifically left null
+        gm.groupId = groupId;
+        gm.groupName = groupName;
+        gm.rank = groupRank;
+        mobj.addToGroups(gm);
+    } 
 
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
