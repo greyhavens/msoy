@@ -17,6 +17,11 @@ public interface MemberServiceAsync
     public void getName (int memberId, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link MemberService#getMemberHomeId}.
+     */
+    public void getMemberHomeId (int memberId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link MemberService#acceptFriend}.
      */
     public void acceptFriend (WebCreds creds, int friendId, AsyncCallback callback);

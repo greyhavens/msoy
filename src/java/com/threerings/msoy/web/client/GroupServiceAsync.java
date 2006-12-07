@@ -18,6 +18,11 @@ public interface GroupServiceAsync
     public void getGroups (WebCreds creds, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link GroupService#getGroupHomeId}
+     */
+    public void getGroupHomeId (WebCreds creds, int memberId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link GroupService#getMembershipGroups}
      */
     public void getMembershipGroups (WebCreds creds, int memberId, boolean canInvite,

@@ -153,8 +153,7 @@ public class MemberManager
     {
         PlaceManager pmgr = MsoyServer.plreg.getPlaceManager(user.location);
         if (pmgr != null) {
-            pmgr.updateOccupantInfo(
-                user.createOccupantInfo(pmgr.getPlaceObject()));
+            pmgr.updateOccupantInfo(user.createOccupantInfo(pmgr.getPlaceObject()));
         }
     }
 
@@ -258,13 +257,28 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getHomeId (
-        ClientObject caller, final byte ownerType, final int ownerId,
-        InvocationService.ResultListener listener)
+    public void getHomeId (ClientObject caller, byte ownerType, int ownerId,
+                          final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Integer>(new ResultAdapter<Integer>(listener)) {
+        ResultListener<Integer> rl = new ResultListener<Integer>() {
+            public void requestCompleted (Integer result) {
+                listener.requestProcessed(result);
+            }
+            public void requestFailed (Exception cause) {
+                listener.requestFailed(cause.getMessage());
+            }
+        };
+        getHomeId(ownerType, ownerId, rl);
+    }
+
+    /**
+     * Fetch the home ID for a member and return it.
+     */
+    public void getHomeId (final byte ownerType, final int ownerId,
+                           ResultListener<Integer> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Integer>(listener) {
             public Integer invokePersistResult () throws PersistenceException {
                 switch (ownerType) {
                 case MsoySceneModel.OWNER_TYPE_MEMBER:

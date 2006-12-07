@@ -23,6 +23,12 @@ public interface GroupService extends RemoteService
         throws ServiceException;
     
     /**
+     * Look up a group by id and return the id of its home scene.
+     */
+    public Integer getGroupHomeId (WebCreds creds, int memberId)
+        throws ServiceException;
+
+    /**
      * Fetch a list of {@link GroupMembership} records, one for each group memberId
      * is a member of. If canInvite is true, only include groups to which the member
      * can invite.
