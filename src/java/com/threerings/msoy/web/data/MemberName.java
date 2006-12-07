@@ -18,7 +18,7 @@ public class MemberName extends Name
     /** A comparator for sorting Names by their display portion, case insensitively. */
     public static final Comparator BY_DISPLAY_NAME = new Comparator() {
         public int compare (Object o1, Object o2) {
-            return o1.toString().toLowerCase().compareTo(o2.toString().toLowerCase());
+            return compare((MemberName)o1, (MemberName)o2);
         }
     };
 
@@ -80,18 +80,21 @@ public class MemberName extends Name
 
         // return 0 if diff is the same (they have the same memberId) UNLESS the memberId is 0, in
         // which case they're a guest and we compare by name
-        return (_memberId != GUEST_ID) ? 0 :
-            // This next line should be BY_DISPLAY_NAME.compare(this, that),
-            // but then Javac complains about the uncheckedness, and if
-            // we add the annotation to ignore unchecked then GWT dies.
-            // Until GWT can ignore annotations we have to duplicate this code.
-            toString().toLowerCase().compareTo(that.toString().toLowerCase());
+        return (_memberId != GUEST_ID) ? 0 : compare(this, that);
     }
 
     // @Override
     protected String normalize (String name)
     {
         return name; // do not adjust
+    }
+
+    /**
+     * Compares two member name records case insensitively.
+     */
+    protected static int compare (MemberName m1, MemberName m2)
+    {
+        return m1.toString().toLowerCase().compareTo(m2.toString().toLowerCase());
     }
 
     /** The member id of the member we represent. */
