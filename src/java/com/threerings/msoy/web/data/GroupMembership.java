@@ -14,6 +14,11 @@ import com.threerings.presents.dobj.DSet;
 public class GroupMembership
     implements Streamable, IsSerializable, DSet.Entry
 {
+    /** Not ever stored in a GroupMembership record, but useful for methods
+     * that return a user's rank as a byte. */
+    public static final byte RANK_NON_MEMBER = 0;
+
+    /** Membership ranks. */
     public static final byte RANK_MEMBER = 1;
     public static final byte RANK_MANAGER = 2;
     
@@ -30,7 +35,9 @@ public class GroupMembership
     /** The member's rank in the group. */
     public byte rank; 
 
-    public Comparable getKey () {
+    // from DSet.Entry
+    public Comparable getKey ()
+    {
         // autoboxing makes GWT angry.  
         return new Integer(groupId);
     }
