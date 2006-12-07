@@ -555,17 +555,17 @@ public class MemberManager
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<GroupMembership>>(listener) {
             public List<GroupMembership> invokePersistResult () throws PersistenceException {
-                MemberRecord mRec = _memberRepo.loadMember(memberId);
+                MemberName mName = _memberRepo.loadMember(memberId).getName();
                 List<GroupMembership> result = new ArrayList<GroupMembership>();
                 for (GroupMembershipRecord gmRec : _groupRepo.getMemberships(memberId)) {
                     GroupRecord gRec = _groupRepo.loadGroup(gmRec.groupId);
-                    // if we're only including groups we can invite to, strip out exclusive
-                    // groups of which we're not managers
+                    // if we're only including groups we can invite to, strip out exclusive groups
+                    // of which we're not managers
                     if (canInvite && gRec.policy == Group.POLICY_EXCLUSIVE &&
-                            gmRec.rank != GroupMembership.RANK_MANAGER) {
+                        gmRec.rank != GroupMembership.RANK_MANAGER) {
                         continue;
                     }
-                    result.add(gmRec.toGroupMembership(gRec, mRec));
+                    result.add(gmRec.toGroupMembership(gRec, mName));
                 }
                 return result;
             }

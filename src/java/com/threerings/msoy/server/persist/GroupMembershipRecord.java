@@ -10,6 +10,7 @@ import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.web.data.GroupMembership;
+import com.threerings.msoy.web.data.MemberName;
 
 /**
  * Contains the details of person's membership in a group.
@@ -38,10 +39,10 @@ public class GroupMembershipRecord
     /** 
      * Converts this persistent record to a runtime record.
      */
-    public GroupMembership toGroupMembership (GroupRecord group, MemberRecord member)
+    public GroupMembership toGroupMembership (GroupRecord group, MemberName member)
     {
         GroupMembership gm = new GroupMembership();
-        gm.member = member.getName();
+        gm.member = member;
         gm.groupId = groupId;
         gm.groupName = group.name;
         gm.rank = rank;

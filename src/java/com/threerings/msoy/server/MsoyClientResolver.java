@@ -77,7 +77,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         MemberName name = member.getName();
         for (GroupMembershipRecord record : MsoyServer.groupRepo.getMemberships(member.memberId)) {
             userObj.addToGroups(record.toGroupMembership(
-                MsoyServer.groupRepo.loadGroup(record.groupId), member));
+                                    MsoyServer.groupRepo.loadGroup(record.groupId), name));
         }
 
         // TODO
