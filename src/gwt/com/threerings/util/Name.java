@@ -3,10 +3,12 @@
 
 package com.threerings.util;
 
+import com.threerings.io.SimpleStreamableObject;
+
 /**
  * An impostor for the real Name class that exists to allow MemberName to work in GWT.
  */
-public class Name
+public class Name extends SimpleStreamableObject
     implements Comparable
 {
     public Name ()
