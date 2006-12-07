@@ -79,33 +79,6 @@ public class ItemPanel extends VerticalPanel
         }
     }
 
-    protected void listItem (ItemIdent item)
-    {
-        _ctx.catalogsvc.listItem(_ctx.creds, item, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                setStatus("Item listed.");
-            }
-            public void onFailure (Throwable caught) {
-                String reason = caught.getMessage();
-                setStatus("Item listing failed: " + reason);
-            }
-        });
-    }
-
-    protected void remixItem (ItemIdent item)
-    {
-        _ctx.itemsvc.remixItem(_ctx.creds, item, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                // TODO: update display
-                setStatus("Item remixed.");
-            }
-            public void onFailure (Throwable caught) {
-                String reason = caught.getMessage();
-                setStatus("Item remixing failed: " + reason);
-            }
-        });
-    }
-
     protected void createNewItem ()
     {
         ItemEditor editor = createItemEditor(_type);

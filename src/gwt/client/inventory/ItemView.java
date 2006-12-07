@@ -50,12 +50,13 @@ import com.threerings.msoy.web.client.WebContext;
 
 public class ItemView extends PopupPanel
 {
-    public ItemView (WebContext ctx, Item item)
+    public ItemView (WebContext ctx, Item item, ItemPanel parent)
     {
         super(true);
         _item = item;
         _ctx = ctx;
         _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
+        _parent = parent;
         setStyleName("itemPopup");
         setWidget(_content = new DockPanel());
 
@@ -74,7 +75,7 @@ public class ItemView extends PopupPanel
             public void onFailure (Throwable caught) {
                 GWT.log("loadInventory failed", caught);
                 // TODO: if ServiceException, translate
-                addError("Failed to load item detail.");
+                addError("Failed to load item detail: " + caught);
             }
         });
     }
@@ -251,6 +252,45 @@ public class ItemView extends PopupPanel
         });
         _table.addRow("Tagging History", button);
 
+        _table.addHeader("Item Actions");
+
+        HorizontalPanel buttons = new HorizontalPanel();
+        buttons.setSpacing(5);
+        _table.addRow(buttons);
+
+        if (_item.parentId == -1) {
+            button = new Button("List in Catalog ...");
+            button.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    listItem(_item.getIdent());
+                }
+            });
+
+        } else {
+            button = new Button("Remix ...");
+            button.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    remixItem(_item.getIdent());
+                }
+            });
+        }
+        buttons.add(button);
+
+        if (_item.parentId == -1) {
+            button = new Button("Edit ...");
+            button.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    ItemEditor editor = _parent.createItemEditor(_item.getType());
+                    editor.setItem(_item);
+                    editor.show();
+                }
+            });
+            buttons.add(button);
+        }
+
+        // add a status label
+        _table.addRow(_status = new Label(""));
+
         recenter(false);
     }
 
@@ -319,7 +359,7 @@ public class ItemView extends PopupPanel
     }
 
 
-    private void toggleTagHistory ()
+    protected void toggleTagHistory ()
     {
         if (_tagHistory != null) {
             if (_content.getWidgetDirection(_tagHistory) == null) {
@@ -377,6 +417,33 @@ public class ItemView extends PopupPanel
         });
     }
 
+    protected void listItem (ItemIdent item)
+    {
+        _ctx.catalogsvc.listItem(_ctx.creds, item, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _status.setText("Item listed.");
+            }
+            public void onFailure (Throwable caught) {
+                String reason = caught.getMessage();
+                _status.setText("Item listing failed: " + reason);
+            }
+        });
+    }
+
+    protected void remixItem (ItemIdent item)
+    {
+        _ctx.itemsvc.remixItem(_ctx.creds, item, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                // TODO: update display
+                _status.setText("Item remixed.");
+            }
+            public void onFailure (Throwable caught) {
+                String reason = caught.getMessage();
+                _status.setText("Item remixing failed: " + reason);
+            }
+        });
+    }
+
     protected void addError (String error)
     {
         _errorContainer.add(new Label(error));
@@ -392,6 +459,7 @@ public class ItemView extends PopupPanel
     protected Item _item;
     protected ItemDetail _itemDetail;
 
+    protected ItemPanel _parent;
     protected HeaderValueTable _table;
 
     protected DockPanel _content;
@@ -401,4 +469,5 @@ public class ItemView extends PopupPanel
 
     protected FlexTable _tagHistory;
     protected ItemRating _ratingImage;
+    protected Label _status;
 }

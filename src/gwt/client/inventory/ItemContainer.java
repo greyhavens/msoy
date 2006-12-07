@@ -86,50 +86,10 @@ public class ItemContainer extends VerticalPanel
         label.setStyleName("itemThumbText");
         label.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                new ItemView(_panel._ctx, _item).show();
+                new ItemView(_panel._ctx, _item, _panel).show();
             }
         });
         add(label);
-
-//         HorizontalPanel buttons = new HorizontalPanel();
-//         buttons.setSpacing(5);
-//         add(buttons);
-
-//         Button button;
-//         if (item.parentId == -1) {
-//             button = new Button("List in Catalog ...");
-//             button.addClickListener(new ClickListener() {
-//                 public void onClick (Widget sender) {
-//                     _panel.listItem(_item.getIdent());
-//                 }
-//             });
-
-//         } else {
-//             button = new Button("Remix ...");
-//             button.addClickListener(new ClickListener() {
-//                 public void onClick (Widget sender) {
-//                     _panel.remixItem(_item.getIdent());
-//                 }
-//             });
-//         }
-//         buttons.add(button);
-
-//         // TODO: all these buttons have to go soon
-//         button = new Button("Details ...");
-//         buttons.add(button);
-
-//         if (item.parentId == -1) {
-//             button = new Button("Edit ...");
-//             button.addClickListener(new ClickListener() {
-//                 public void onClick (Widget sender) {
-//                     ItemEditor editor =
-//                         _panel.createItemEditor(_item.getType());
-//                     editor.setItem(_item);
-//                     editor.show();
-//                 }
-//             });
-//             buttons.add(button);
-//         }
     }
 
     /**

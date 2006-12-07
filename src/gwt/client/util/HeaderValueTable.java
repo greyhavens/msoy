@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.util;
 
 import com.google.gwt.user.client.ui.FlexTable;
@@ -62,6 +65,16 @@ public class HeaderValueTable extends FlexTable
         getRowFormatter().setStyleName(row, "dataRow");
         formatter.setAlignment(row, 0, HasAlignment.ALIGN_RIGHT, HasAlignment.ALIGN_MIDDLE);
         formatter.setAlignment(row, 1, HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_MIDDLE);
+    }
+
+    public void addRow (Widget val)
+    {
+        int row = getRowCount();
+        FlexCellFormatter formatter = getFlexCellFormatter();
+        setWidget(row, 0, val);
+        getFlexCellFormatter().setColSpan(row, 1, 4);
+        getRowFormatter().setStyleName(row, "dataRow");
+        formatter.setAlignment(row, 0, HasAlignment.ALIGN_CENTER, HasAlignment.ALIGN_MIDDLE);
     }
 
     public void addHeader (String header)
