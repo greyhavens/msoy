@@ -58,11 +58,26 @@ public class MediaDesc
     /** The MIME type for Java JAR files. */
     public static const APPLICATION_JAVA_ARCHIVE :int = 41;
 
+    /** A constant used to indicate that an image does not exceed our
+     * target size in either dimension. */
+    public static const NOT_CONSTRAINED :int = 0;
+
+    /** A constant used to indicate that an image exceeds our
+     * target size proportionally more in the horizontal dimension. */
+    public static const HORIZONTALLY_CONSTRAINED :int = 1;
+    
+    /** A constant used to indicate that an image exceeds our
+     * target size proportionally more in the vertical dimension. */
+    public static const VERTICALLY_CONSTRAINED :int = 2;
+
     /** A hash code identifying this media. */
     public var hash :ByteArray;
 
     /** The MIME type of this media. */
     public var mimeType :int;
+
+    /** The size constraint on this media, if any. */
+    public var constraint :int;
 
     /**
      * Convert the specified media hash into a String
@@ -299,6 +314,7 @@ public class MediaDesc
     {
         out.writeField(hash);
         out.writeByte(mimeType);
+        out.writeByte(constraint);
     }
 
     // documentation inherited from interface Streamable
@@ -306,6 +322,7 @@ public class MediaDesc
     {
         hash = (ins.readField(ByteArray) as ByteArray);
         mimeType = ins.readByte();
+        constraint = ins.readByte();
     }
 }
 }
