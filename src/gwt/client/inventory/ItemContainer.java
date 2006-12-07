@@ -39,8 +39,7 @@ public class ItemContainer extends VerticalPanel
         switch (MediaDesc.suffixToMimeType(path)) {
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
             return WidgetUtil.createFlashContainer(
-                // TODO: allow passing -1 for width
-                "", path, THUMB_HEIGHT, THUMB_HEIGHT, null);
+                "", path, Item.THUMBNAIL_WIDTH, Item.THUMBNAIL_HEIGHT, null);
 
         case MediaDesc.IMAGE_PNG:
         case MediaDesc.IMAGE_JPEG:
@@ -51,15 +50,6 @@ public class ItemContainer extends VerticalPanel
             return new Label(path);
         }
     }
-
-    /** So arbitrary. TODO. */
-    public static final int MAIN_HEIGHT = 200;
-
-    /** So arbitrary. TODO. */
-    public static final int FURNI_HEIGHT = 100;
-
-    /** So arbitrary. TODO. */
-    public static final int THUMB_HEIGHT = 100;
 
     public ItemContainer (ItemPanel panel, Item item)
     {
@@ -79,7 +69,6 @@ public class ItemContainer extends VerticalPanel
 
         Widget disp = createContainer(item);
         disp.setStyleName("itemThumbImage");
-        disp.setHeight(THUMB_HEIGHT + "px");
         add(disp);
 
         Label label = new Label(truncateDescription(item.getDescription()));

@@ -161,8 +161,7 @@ public abstract class ItemEditor extends PopupPanel
     protected void createEditorInterface ()
     {
         String title = "Furniture Image";
-        _furniUploader = createUploader(
-            Item.FURNI_ID, title, ItemContainer.FURNI_HEIGHT, new MediaUpdater() {
+        _furniUploader = createUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
                     return "Furniture must be an web-viewable image type.";
@@ -175,7 +174,7 @@ public abstract class ItemEditor extends PopupPanel
         });
 
         title = "Thumbnail Image";
-        _thumbUploader = createUploader(Item.THUMB_ID, title, -1, new MediaUpdater() {
+        _thumbUploader = createUploader(Item.THUMB_ID, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
                     return "Thumbnails must be an image type.";
@@ -227,19 +226,17 @@ public abstract class ItemEditor extends PopupPanel
      */
     protected void configureMainUploader (String title, MediaUpdater updater)
     {
-        _mainUploader = createUploader(Item.MAIN_ID, title, ItemContainer.MAIN_HEIGHT, updater);
+        _mainUploader = createUploader(Item.MAIN_ID, title, false, updater);
     }
 
     /**
      * Create and add an uploader to the interface.
      */
     protected MediaUploader createUploader (
-        String name, String title, int previewHeight, MediaUpdater updater)
+        String name, String title, boolean thumbnail, MediaUpdater updater)
     {
-        MediaUploader mu = new MediaUploader(
-            name, title, previewHeight, updater);
-        FlexTable.FlexCellFormatter cellFormatter =
-            _content.getFlexCellFormatter();
+        MediaUploader mu = new MediaUploader(name, title, thumbnail, updater);
+        FlexTable.FlexCellFormatter cellFormatter = _content.getFlexCellFormatter();
         int row = _content.getRowCount();
         _content.setWidget(row, 0, mu);
         cellFormatter.setColSpan(row, 0, 2);

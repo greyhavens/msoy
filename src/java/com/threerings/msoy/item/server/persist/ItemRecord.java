@@ -29,7 +29,7 @@ import com.threerings.msoy.item.web.Photo;
 @Table
 public abstract class ItemRecord implements Streamable, Cloneable
 {
-    public static final int BASE_SCHEMA_VERSION = 3;
+    public static final int BASE_SCHEMA_VERSION = 4;
 
     public static final String ITEM_ID = "itemId";
     public static final String PARENT_ID = "parentId";
@@ -111,8 +111,11 @@ public abstract class ItemRecord implements Streamable, Cloneable
     @Column(nullable=true)
     public byte[] furniMediaHash;
 
-    /** The MIME type of the  {@link #furniMediaHash}  media. */
+    /** The MIME type of the {@link #furniMediaHash} media. */
     public byte furniMimeType;
+
+    /** The size constraint on the {@link #furniMediaHash} media. */
+    public byte furniConstraint;
 
     public ItemRecord ()
     {
@@ -138,6 +141,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
         if (item.furniMedia != null) {
             furniMediaHash = item.furniMedia.hash;
             furniMimeType = item.furniMedia.mimeType;
+            furniConstraint = item.furniMedia.constraint;
         }
     }
 

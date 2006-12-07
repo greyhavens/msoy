@@ -51,17 +51,16 @@ public class GameEditor extends ItemEditor
         });
 
         String title = "Table image";
-        _tableUploader = createUploader(
-            TABLE_ID, title, ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
-                public String updateMedia (MediaDesc desc) {
-                    if (!desc.isImage()) {
-                        return "Table images must be an image type.";
-                    }
-                    _game.tableMedia = desc;
-                    recenter(true);
-                    return null;
+        _tableUploader = createUploader(TABLE_ID, title, false, new MediaUpdater() {
+            public String updateMedia (MediaDesc desc) {
+                if (!desc.isImage()) {
+                    return "Table images must be an image type.";
                 }
-            });
+                _game.tableMedia = desc;
+                recenter(true);
+                return null;
+            }
+        });
 
         super.createEditorInterface();
 

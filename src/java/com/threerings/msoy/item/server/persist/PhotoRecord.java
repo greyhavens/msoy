@@ -20,7 +20,7 @@ import com.threerings.msoy.item.web.Photo;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="PHOTO")
 public class PhotoRecord extends ItemRecord
 {
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 2;
 
     public static final String PHOTO_MEDIA_HASH = "photoMediaHash";
     public static final String PHOTO_MIME_TYPE = "photoMimeType";
@@ -30,6 +30,9 @@ public class PhotoRecord extends ItemRecord
 
     /** The MIME type of the {@link #photoMediaHash} media. */
     public byte photoMimeType;
+
+    /** The size constraint on the {@link #photoMediaHash} media. */
+    public byte photoConstraint;
 
     /** A caption for this photo (max length 255 characters). */
     public String caption;
@@ -46,6 +49,7 @@ public class PhotoRecord extends ItemRecord
         if (photo.photoMedia != null) {
             photoMediaHash = photo.photoMedia.hash;
             photoMimeType = photo.photoMedia.mimeType;
+            photoConstraint = photo.photoMedia.constraint;
         }
         caption = photo.caption;
     }

@@ -25,8 +25,7 @@ public class AvatarEditor extends ItemEditor
     {
         super.setItem(item);
         _avatar = (Avatar)item;
-        _description.setText((_avatar.description == null)
-            ? "" : _avatar.description);
+        _description.setText((_avatar.description == null) ? "" : _avatar.description);
         _mainUploader.setMedia(_avatar.avatarMedia);
         _headShotUploader.setMedia(_avatar.getHeadShotMedia());
     }
@@ -39,7 +38,6 @@ public class AvatarEditor extends ItemEditor
                 if (!desc.hasFlashVisual()) {
                     return "Avatars must be a web-viewable media.";
                 }
-
                 _avatar.avatarMedia = desc;
                 recenter(true);
                 return null;
@@ -47,18 +45,16 @@ public class AvatarEditor extends ItemEditor
         });
 
         String title = "Head shot";
-        _headShotUploader = createUploader(
-            HEADSHOT_ID, title, ItemContainer.THUMB_HEIGHT, new MediaUpdater() {
-                public String updateMedia (MediaDesc desc) {
-                    if (!desc.isImage()) {
-                        return "Head shots must be an image type.";
-                    }
-
-                    _avatar.headShotMedia = desc;
-                    recenter(true);
-                    return null;
+        _headShotUploader = createUploader(HEADSHOT_ID, title, true, new MediaUpdater() {
+            public String updateMedia (MediaDesc desc) {
+                if (!desc.isImage()) {
+                    return "Head shots must be an image type.";
                 }
-            });
+                _avatar.headShotMedia = desc;
+                recenter(true);
+                return null;
+            }
+        });
 
         super.createEditorInterface();
 
@@ -81,7 +77,6 @@ public class AvatarEditor extends ItemEditor
     {
         if (HEADSHOT_ID.equals(id)) {
             return _headShotUploader;
-
         } else {
             return super.getUploader(id);
         }
@@ -89,7 +84,6 @@ public class AvatarEditor extends ItemEditor
 
     protected Avatar _avatar;
     protected TextBox _description;
-
     protected MediaUploader _headShotUploader;
 
     protected static final String HEADSHOT_ID = "headshot";

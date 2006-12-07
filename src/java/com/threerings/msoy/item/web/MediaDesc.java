@@ -66,7 +66,8 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The MIME type of the media associated with this item. */
     public byte mimeType;
 
-    // more to come?
+    /** The size constraint on this media, if any. See {@link #computeConstraint}. */
+    public byte constraint;
 
     /**
      * Get the path of the URL for the media specified.
@@ -276,11 +277,22 @@ public class MediaDesc implements Streamable, IsSerializable
     {
     }
 
-    /** Creates a media descriptor from the supplied data. */
+    /**
+     * Creates a media descriptor from the supplied configuration.
+     */
     public MediaDesc (byte[] hash, byte mimeType)
+    {
+        this(hash, mimeType, NOT_CONSTRAINED);
+    }
+
+    /**
+     * Creates a media descriptor from the supplied configuration.
+     */
+    public MediaDesc (byte[] hash, byte mimeType, byte constraint)
     {
         this.hash = hash;
         this.mimeType = mimeType;
+        this.constraint = constraint;
     }
 
     /**
@@ -289,8 +301,8 @@ public class MediaDesc implements Streamable, IsSerializable
      */
     public MediaDesc (String filename)
     {
-        hash = stringToHash(filename.substring(0, filename.indexOf('.')));
-        mimeType = (byte) suffixToMimeType(filename);
+        this(stringToHash(filename.substring(0, filename.indexOf('.'))),
+             (byte) suffixToMimeType(filename));
     }
 
     /**

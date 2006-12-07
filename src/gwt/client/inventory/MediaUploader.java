@@ -28,8 +28,8 @@ import org.gwtwidgets.client.ui.FormPanel;
 
 import com.threerings.gwt.ui.SubmitField;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.StaticMediaDesc;
 
 /**
  * Helper class, used in ItemEditor.
@@ -41,14 +41,15 @@ public class MediaUploader extends FlexTable
      * passed to the bridge to identify the hash/mimeType returned by the
      * server.
      * @param title A title to be displayed to the user.
-     * @param previewHeight the maximum height of the preview, or -1.
+     * @param thumbnail if true the preview will be thumbnail sized, false it will be preview
+     * sized.
      * @param updater the updater that knows how to set the media hash on
      * the item.
      */
-    public MediaUploader (String id, String title, int previewHeight,
+    public MediaUploader (String id, String title, boolean thumbnail,
                           ItemEditor.MediaUpdater updater)
     {
-        _previewHeight = previewHeight;
+        _thumbnail = thumbnail;
         _updater = updater;
 
         _panel = new FormPanel(new FlowPanel());
@@ -111,14 +112,15 @@ public class MediaUploader extends FlexTable
     {
         if (desc != null) {
             Widget w = ItemContainer.createContainer(desc.getMediaPath());
-            if (_previewHeight != -1) {
-                // TODO: setting the height alone should preserve scale,
-                // but it's still not good enough.
-                // We want to leave the image alone if it's small enough,
-                // or scale it (preserving proportions) if it's too big.
-                // I think we need to do this javascript that examines an
-                // image's native size while it's loading.
-                w.setHeight(_previewHeight + "px");
+            int twidth = _thumbnail ? Item.THUMBNAIL_WIDTH : Item.PREVIEW_WIDTH;
+            int theight = _thumbnail ? Item.THUMBNAIL_HEIGHT : Item.PREVIEW_HEIGHT;
+            switch (desc.constraint) {
+            case MediaDesc.HORIZONTALLY_CONSTRAINED:
+                w.setWidth(twidth + "px");
+                break;
+            case MediaDesc.VERTICALLY_CONSTRAINED:
+                w.setHeight(theight + "px");
+                break;
             }
             // update our preview
             _out.setText("Preview:");
@@ -145,5 +147,5 @@ public class MediaUploader extends FlexTable
     protected FormPanel _panel;
     protected Label _out;
     protected int _previewRow;
-    protected int _previewHeight;
+    protected boolean _thumbnail;
 }
