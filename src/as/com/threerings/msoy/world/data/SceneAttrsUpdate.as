@@ -20,7 +20,7 @@ public class SceneAttrsUpdate extends SceneUpdate
     public var name :String;
 
     /** The new type. */
-    public var type :int;
+    public var sceneType :int;
 
     /** The new depth. */
     public var depth :int;
@@ -40,7 +40,7 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         var mmodel :MsoySceneModel = (model as MsoySceneModel);
         mmodel.name = name;
-        mmodel.type = type;
+        mmodel.sceneType = sceneType;
         mmodel.depth = depth;
         mmodel.width = width;
         mmodel.horizon = horizon;
@@ -52,7 +52,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.writeObject(out);
 
         out.writeField(name);
-        out.writeByte(type);
+        out.writeByte(sceneType);
         out.writeShort(depth);
         out.writeShort(width);
         out.writeFloat(horizon);
@@ -64,7 +64,7 @@ public class SceneAttrsUpdate extends SceneUpdate
         super.readObject(ins);
 
         name = (ins.readField(String) as String);
-        type = ins.readByte();
+        sceneType = ins.readByte();
         depth = ins.readShort();
         width = ins.readShort();
         horizon = ins.readFloat();

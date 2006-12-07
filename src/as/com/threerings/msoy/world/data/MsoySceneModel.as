@@ -31,7 +31,7 @@ public class MsoySceneModel extends SceneModel
     public static const TYPE_COUNT :int = 2;
 
     /** The type of scene. */
-    public var type :int;
+    public var sceneType :int;
 
     /** The type of owner that owns this scene. */
     public var ownerType :int;
@@ -189,7 +189,7 @@ public class MsoySceneModel extends SceneModel
     {
         var model :MsoySceneModel = (super.clone() as MsoySceneModel);
 
-        model.type = type;
+        model.sceneType = sceneType;
         model.ownerId = ownerId;
         model.depth = depth;
         model.width = width;
@@ -205,7 +205,7 @@ public class MsoySceneModel extends SceneModel
     {
         super.writeObject(out);
 
-        out.writeByte(type);
+        out.writeByte(sceneType);
         out.writeByte(ownerType);
         out.writeInt(ownerId);
         out.writeShort(depth);
@@ -220,7 +220,7 @@ public class MsoySceneModel extends SceneModel
     {
         super.readObject(ins);
 
-        type = ins.readByte();
+        sceneType = ins.readByte();
         ownerType = ins.readByte();
         ownerId = ins.readInt();
         depth = ins.readShort();
@@ -233,7 +233,7 @@ public class MsoySceneModel extends SceneModel
     override public function toString () :String
     {
         return "MsoySceneModel[\"" + name + "\" (" + sceneId + ")" +
-            ", version=" + version + ", type=" + type + "]";
+            ", version=" + version + ", sceneType=" + sceneType + "]";
     }
 
     /** Cached portal info. Not streamed. */

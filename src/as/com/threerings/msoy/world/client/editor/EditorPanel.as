@@ -286,7 +286,7 @@ public class EditorPanel extends VBox
      */
     public function updateInputFields () :void
     {
-        _type.selectedIndex = _sceneModel.type;
+        _type.selectedIndex = _sceneModel.sceneType;
         _name.text = _sceneModel.name;
         _width.text = String(_sceneModel.width);
         _depth.text = String(_sceneModel.depth);
@@ -306,7 +306,7 @@ public class EditorPanel extends VBox
         updateInputFields();
 
         BindingUtils.bindSetter(function (o :Object) :void {
-            _sceneModel.type = int(o.data);
+            _sceneModel.sceneType = int(o.data);
             _ctrl.sceneModelUpdated();
         }, _type, "selectedItem");
 
@@ -341,7 +341,7 @@ public class EditorPanel extends VBox
     {
         var bgItem :Item = _backgroundImage.getSelectedItem();
 
-        _sceneModel.type = (bgItem == null) ? MsoySceneModel.DRAWN_ROOM
+        _sceneModel.sceneType = (bgItem == null) ? MsoySceneModel.DRAWN_ROOM
                                             : MsoySceneModel.IMAGE_OVERLAY;
 
         //var bgFurni :FurniData = MsoyS

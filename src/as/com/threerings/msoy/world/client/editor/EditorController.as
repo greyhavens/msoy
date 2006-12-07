@@ -140,7 +140,7 @@ public class EditorController extends Controller
                 (_ctx.getSceneDirector().getScene().getSceneModel()
                     as MsoySceneModel);
             if (!Util.equals(editModel.name, origModel.name) ||
-                    (editModel.type != origModel.type) ||
+                    (editModel.sceneType != origModel.sceneType) ||
                     (editModel.depth != origModel.depth) ||
                     (editModel.width != origModel.width) ||
                     (editModel.horizon != origModel.horizon) ||
@@ -149,7 +149,7 @@ public class EditorController extends Controller
                 attrUpdate.init(sceneId, version++);
 
                 attrUpdate.name = editModel.name;
-                attrUpdate.type = editModel.type;
+                attrUpdate.sceneType = editModel.sceneType;
                 attrUpdate.depth = editModel.depth;
                 attrUpdate.width = editModel.width;
                 attrUpdate.horizon = editModel.horizon;
