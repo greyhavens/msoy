@@ -203,6 +203,45 @@ public class MemberObject extends BodyObject
     }
 
     /**
+     * Is this user a membrer of the specified group?
+     */
+    public boolean isGroupMember (int groupId)
+    {
+        return isGroupRank(groupId, GroupMembership.RANK_MEMBER);
+    }
+
+    /**
+     * Is this user a manager in the specified group?
+     */
+    public boolean isGroupManager (int groupId)
+    {
+        return isGroupRank(groupId, GroupMembership.RANK_MANAGER);
+    }
+
+    /**
+     * @return true if the user has at least the specified rank in the
+     * specified group.
+     */
+    public boolean isGroupRank (int groupId, byte requiredRank)
+    {
+        return getGroupRank(groupId) >= requiredRank;
+    }
+
+    /**
+     * Get the user's rank in the specified group.
+     */
+    public byte getGroupRank (int groupId)
+    {
+        if (groups != null) {
+            GroupMembership membInfo = groups.get(groupId);
+            if (membInfo != null) {
+                return membInfo.rank;
+            }
+        }
+        return GroupMembership.RANK_NON_MEMBER;
+    }
+
+    /**
      * Return true if the specified item type has been loaded.
      */
     public boolean isInventoryLoaded (byte itemType)

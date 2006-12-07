@@ -30,6 +30,12 @@ public class MsoySceneModel extends SceneModel
     /** The number of type constants. */
     public static const TYPE_COUNT :int = 2;
 
+    /** Constant for Member room owners **/
+    public static const OWNER_TYPE_MEMBER :int = 1;
+
+    /** Constant for Group room owners **/
+    public static const OWNER_TYPE_GROUP :int = 2;
+
     /** The type of scene. */
     public var sceneType :int;
 

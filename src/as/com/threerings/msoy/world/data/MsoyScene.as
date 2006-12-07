@@ -32,8 +32,21 @@ public class MsoyScene extends SceneImpl
      */
     public function canEdit (member :MemberObject) :Boolean
     {
-        return member.getTokens().isAdmin() ||
-            (!member.isGuest() && (getOwnerId() == member.getMemberId()));
+        if (member.getTokens().isAdmin()) {
+            return true;
+        }
+
+        var ownerId :int = getOwnerId();
+        switch (_msoyModel.ownerType) {
+        case MsoySceneModel.OWNER_TYPE_MEMBER:
+            return (ownerId == member.getMemberId());
+
+        case MsoySceneModel.OWNER_TYPE_GROUP:
+            return member.isGroupManager(ownerId);
+
+        default:
+            return false;
+        }
     }
 
     /**

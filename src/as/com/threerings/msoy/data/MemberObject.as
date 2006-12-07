@@ -19,6 +19,7 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
+import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.item.web.Avatar;
@@ -178,6 +179,46 @@ public class MemberObject extends BodyObject
     override public function getVisibleName () :Name
     {
         return memberName;
+    }
+
+    /**
+     * Is this user a membrer of the specified group?
+     */
+    public function isGroupMember (groupId :int) :Boolean
+    {
+        return isGroupRank(groupId, GroupMembership.RANK_MEMBER);
+    }
+
+    /**
+     * Is this user a manager in the specified group?
+     */
+    public function isGroupManager (groupId :int) :Boolean
+    {
+        return isGroupRank(groupId, GroupMembership.RANK_MANAGER);
+    }
+
+    /**
+     * @return true if the user has at least the specified rank in the
+     * specified group.
+     */
+    public function isGroupRank (groupId :int, requiredRank :int) :Boolean
+    {
+        return getGroupRank(groupId) >= requiredRank;
+    }
+
+    /**
+     * Get the user's rank in the specified group.
+     */
+    public function getGroupRank (groupId :int) :int
+    {
+        if (groups != null) {
+            var membInfo :GroupMembership =
+                (groups.get(groupId) as GroupMembership);
+            if (membInfo != null) {
+                return membInfo.rank;
+            }
+        }
+        return GroupMembership.RANK_NON_MEMBER;
     }
 
     /**

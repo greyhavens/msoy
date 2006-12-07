@@ -61,3 +61,4 @@ public class GroupMembership
 //        out.writeByte(rank);
     }
 }
+}

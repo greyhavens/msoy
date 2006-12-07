@@ -35,8 +35,21 @@ public class MsoyScene extends SceneImpl
      */
     public boolean canEdit (MemberObject member)
     {
-        return member.getTokens().isAdmin() ||
-            (!member.isGuest() && (getOwnerId() == member.getMemberId()));
+        if (member.getTokens().isAdmin()) {
+            return true;
+        }
+
+        int ownerId = getOwnerId();
+        switch (_model.ownerType) {
+        case MsoySceneModel.OWNER_TYPE_MEMBER:
+            return (ownerId == member.getMemberId());
+
+        case MsoySceneModel.OWNER_TYPE_GROUP:
+            return member.isGroupManager(ownerId);
+
+        default:
+            return false;
+        }
     }
 
     /**
