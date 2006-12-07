@@ -90,104 +90,6 @@ public class MsoySceneRepository extends SimpleRepository
             "DATA blob not null",
             "primary key (SCENE_ID, SCENE_VERSION)" }, "");
 
-        // TEMP: removeable after all servers have been updated past 2006-09-22
-        if (JDBCUtil.tableContainsColumn(conn, "FURNI", "ACTION")) {
-            JDBCUtil.dropColumn(conn, "FURNI", "ACTION");
-            JDBCUtil.addColumn(conn, "FURNI", "ACTION_TYPE",
-                "tinyint not null", "SCALE_Y");
-            JDBCUtil.addColumn(conn, "FURNI", "ACTION_DATA",
-                "varchar(255)", "ACTION_TYPE");
-        }
-
-        // TEMP: can be removed after all servers updated past 2006-09-30
-        if (JDBCUtil.tableContainsColumn(conn, "SCENES", "BACKGROUND_HASH")) {
-            JDBCUtil.dropColumn(conn, "SCENES", "MUSIC_TYPE");
-            JDBCUtil.dropColumn(conn, "SCENES", "MUSIC_HASH");
-            JDBCUtil.dropColumn(conn, "SCENES", "BACKGROUND_TYPE");
-            JDBCUtil.dropColumn(conn, "SCENES", "BACKGROUND_HASH");
-        }
-        // END: temp
-
-        // TEMP: can be removed after all servers updated past 2006-10-10
-        if (!JDBCUtil.tableContainsColumn(conn, "FURNI", "ITEM_TYPE")) {
-            JDBCUtil.addColumn(conn, "FURNI", "ITEM_TYPE",
-                "tinyint not null", "FURNI_ID");
-            JDBCUtil.addColumn(conn, "FURNI", "ITEM_ID",
-                "integer not null", "ITEM_TYPE");
-        } // END: temp
-
-        // TEMP: portal update, can be removed when all servers past 2006-10-12
-        if (JDBCUtil.tableExists(conn, "PORTALS")) {
-            Statement stmt = conn.createStatement();
-            try {
-                ResultSet rs = stmt.executeQuery("select " +
-                    "SCENE_ID, PORTAL_ID, TARGET_PORTAL_ID, TARGET_SCENE_ID, " +
-                    "MEDIA_HASH, MEDIA_TYPE, X, Y, Z, SCALE_X, SCALE_Y " +
-                    "from PORTALS");
-                // convert each portal into... furni!
-                while (rs.next()) {
-                    FurniData furni = new FurniData();
-                    int sceneId = rs.getInt(1);
-                    furni.id = (short) (50 + rs.getShort(2));
-                    furni.actionType = FurniData.ACTION_PORTAL;
-                    furni.actionData = rs.getInt(4) + ":" +
-                        (50 + rs.getShort(3));
-                    furni.media = createMediaDesc(
-                        rs.getBytes(5), rs.getByte(6));
-                    furni.loc = new MsoyLocation(
-                        rs.getFloat(7), rs.getFloat(8), rs.getFloat(9), 0);
-                    furni.scaleX = rs.getFloat(10);
-                    furni.scaleY = rs.getFloat(11);
-
-                    insertFurni(conn, liaison, sceneId,
-                        new FurniData[] { furni });
-                }
-
-                // then, delete the table
-                stmt.executeUpdate("drop table PORTALS");
-
-            } finally {
-                JDBCUtil.close(stmt);
-            }
-        }
-        // END: temp
-
-        // TEMP: portal update, can be removed when all servers past 2006-10-12
-        if (Types.INTEGER ==
-                JDBCUtil.getColumnType(conn, "FURNI", "FURNI_ID")) {
-            JDBCUtil.changeColumn(conn, "FURNI", "FURNI_ID",
-                "FURNI_ID smallint not null");
-        }
-
-        // TEMP: add an index on OWNER_ID in SCENES, (2006-10-17)
-        if (!JDBCUtil.tableContainsIndex(conn, "SCENES", "OWNER_ID", null)) {
-            JDBCUtil.addIndexToTable(conn, "SCENES", "OWNER_ID", null);
-        }
-
-        // TEMP: can be removed after all servers past 2006-10-18
-        if (JDBCUtil.tableContainsColumn(conn, "SCENES", "DEF_PORTAL_ID")) {
-            JDBCUtil.dropColumn(conn, "SCENES", "DEF_PORTAL_ID");
-        }
-
-        // TEMP: can be removed after all servers past 2006-10-23
-        if (!JDBCUtil.tableContainsColumn(conn, "SCENES", "ENTRANCE_X")) {
-            JDBCUtil.addColumn(conn, "SCENES", "ENTRANCE_X",
-                "float not null", "HORIZON");
-            JDBCUtil.addColumn(conn, "SCENES", "ENTRANCE_Y",
-                "float not null", "ENTRANCE_X");
-            JDBCUtil.addColumn(conn, "SCENES", "ENTRANCE_Z",
-                "float not null", "ENTRANCE_Y");
-
-            // set some default values on those new columns
-            Statement stmt = conn.createStatement();
-            try {
-                stmt.executeUpdate("update SCENES set ENTRANCE_X = 0.5, " +
-                    "ENTRANCE_Z = 0.5");
-            } finally {
-                JDBCUtil.close(stmt);
-            }
-        }
-
         // TEMP: removable after all servers are past the date specified...
         MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061107",
             new TransitionRepository.Transition() {
@@ -229,6 +131,18 @@ public class MsoySceneRepository extends SimpleRepository
         // TEMP: can be removed after all servers past 2006-12-06
         if (JDBCUtil.tableContainsColumn(conn, "SCENES", "TYPE")) {
             JDBCUtil.changeColumn(conn, "SCENES", "TYPE", "SCENE_TYPE tinyint not null");
+        }
+        // END: temp
+
+        // TEMP: can be removed after all servers past 2006-12-07
+        if (true) {
+            Statement stmt = conn.createStatement();
+            try {
+                stmt.executeUpdate("update SCENES set OWNER_TYPE=1 " +
+                    "where OWNER_TYPE=0");
+            } finally {
+                JDBCUtil.close(stmt);
+            }
         }
         // END: temp
     }
