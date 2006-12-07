@@ -32,6 +32,12 @@ public class MsoySceneModel extends SceneModel
     /** The number of type constants. */
     public static final int TYPE_COUNT = 2;
 
+    /** Constant for Member room owners **/
+    public static final byte OWNER_TYPE_MEMBER = 1;
+
+    /** Constant for Group room owners **/
+    public static final byte OWNER_TYPE_GROUP = 2;
+
     /** The type of scene that this is. Determines how it is rendered. */
     public byte sceneType;
 

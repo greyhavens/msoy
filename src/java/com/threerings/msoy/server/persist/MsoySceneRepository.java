@@ -520,12 +520,13 @@ public class MsoySceneRepository extends SimpleRepository
      *
      * @return the scene id of the newly created room.
      */
-    public int createBlankRoom (int ownerMemberId, String roomName)
+    public int createBlankRoom (byte ownerType, int ownerId, String roomName)
         throws PersistenceException
     {
         // TODO: we'll clone a starter room
         final MsoySceneModel model = MsoySceneModel.blankMsoySceneModel();
-        model.ownerId = ownerMemberId;
+        model.ownerType = ownerType;
+        model.ownerId = ownerId;
         model.version = 1;
         model.name = roomName;
 
@@ -570,20 +571,21 @@ public class MsoySceneRepository extends SimpleRepository
         throws SQLException, PersistenceException
     {
         PreparedStatement stmt = conn.prepareStatement("insert into SCENES " +
-            "(OWNER_ID, VERSION, NAME, SCENE_TYPE, DEPTH, WIDTH, HORIZON, " +
+            "(OWNER_TYPE, OWNER_ID, VERSION, NAME, SCENE_TYPE, DEPTH, WIDTH, HORIZON, " +
             " ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
-            stmt.setInt(1, model.ownerId);
-            stmt.setInt(2, model.version);
-            stmt.setString(3, model.name);
-            stmt.setByte(4, model.sceneType);
-            stmt.setShort(5, model.depth);
-            stmt.setShort(6, model.width);
-            stmt.setFloat(7, model.horizon);
-            stmt.setFloat(8, model.entrance.x);
-            stmt.setFloat(9, model.entrance.y);
-            stmt.setFloat(10, model.entrance.z);
+            stmt.setByte(1, model.ownerType);
+            stmt.setInt(2, model.ownerId);
+            stmt.setInt(3, model.version);
+            stmt.setString(4, model.name);
+            stmt.setByte(5, model.sceneType);
+            stmt.setShort(6, model.depth);
+            stmt.setShort(7, model.width);
+            stmt.setFloat(8, model.horizon);
+            stmt.setFloat(9, model.entrance.x);
+            stmt.setFloat(10, model.entrance.y);
+            stmt.setFloat(11, model.entrance.z);
             JDBCUtil.checkedUpdate(stmt, 1);
             return liaison.lastInsertedId(conn);
 

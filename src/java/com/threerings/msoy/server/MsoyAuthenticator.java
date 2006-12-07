@@ -27,6 +27,8 @@ import com.threerings.msoy.web.data.LogonException;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.WebCreds;
 
+import com.threerings.msoy.world.data.MsoySceneModel;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -388,7 +390,7 @@ public class MsoyAuthenticator extends Authenticator
         MsoyServer.memberRepo.insertMember(mrec);
 
         // create a blank room for them, store it
-        mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(
+        mrec.homeSceneId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
             mrec.memberId, /* TODO: */ mrec.name + "'s room");
         MsoyServer.memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 

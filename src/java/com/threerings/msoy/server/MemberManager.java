@@ -45,6 +45,8 @@ import com.threerings.msoy.web.data.Neighborhood;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.server.ServletWaiter;
 
+import com.threerings.msoy.world.data.MsoySceneModel;
+
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
@@ -337,7 +339,8 @@ public class MemberManager
 
         MsoyServer.invoker.postUnit(new RepositoryUnit("purchaseRoom") {
             public void invokePersist () throws PersistenceException {
-                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(memberId, roomName);
+                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
+                    memberId, roomName);
             }
             public void handleSuccess () {
                 user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
