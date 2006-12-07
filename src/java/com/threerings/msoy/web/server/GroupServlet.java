@@ -16,6 +16,7 @@ import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.world.data.MsoySceneModel;
 
 /**
  * Provides the server implementation of {@link ItemService}.
@@ -31,6 +32,15 @@ public class GroupServlet extends RemoteServiceServlet
         ServletWaiter<GroupDetail> waiter =
             new ServletWaiter<GroupDetail>("getGroupDetail[" + groupId + "]");
         MsoyServer.memberMan.getGroupDetail(groupId, waiter);
+        return waiter.waitForResult();
+    }
+
+    // from GroupService
+    public Integer getGroupHomeId (WebCreds creds, int groupId)
+        throws ServiceException
+    {
+        ServletWaiter<Integer> waiter =new ServletWaiter<Integer>("getHomeId[" + groupId + "]");
+        MsoyServer.memberMan.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId, waiter);
         return waiter.waitForResult();
     }
 

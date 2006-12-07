@@ -31,20 +31,11 @@ public class MemberServlet extends RemoteServiceServlet
     }
 
     // from MemberService
-    public Integer getMemberHomeId (int memberId)
+    public Integer getMemberHomeId (WebCreds creds, int memberId)
         throws ServiceException
     {
         ServletWaiter<Integer> waiter =new ServletWaiter<Integer>("getHomeId[" + memberId + "]");
         MsoyServer.memberMan.getHomeId(MsoySceneModel.OWNER_TYPE_MEMBER, memberId, waiter);
-        return waiter.waitForResult();
-    }
-
-    // from MemberService
-    public Integer getGroupHomeId (int groupId)
-        throws ServiceException
-    {
-        ServletWaiter<Integer> waiter =new ServletWaiter<Integer>("getHomeId[" + groupId + "]");
-        MsoyServer.memberMan.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId, waiter);
         return waiter.waitForResult();
     }
 

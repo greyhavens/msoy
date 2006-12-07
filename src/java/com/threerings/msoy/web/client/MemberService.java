@@ -24,7 +24,7 @@ public interface MemberService extends RemoteService
     /**
      * Look up a member by id and return the id of their home scene.
      */
-    public Integer getMemberHomeId (int memberId)
+    public Integer getMemberHomeId (WebCreds creds, int memberId)
         throws ServiceException;
 
     /**
