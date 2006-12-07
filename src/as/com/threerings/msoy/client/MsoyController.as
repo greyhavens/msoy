@@ -54,8 +54,11 @@ public class MsoyController extends Controller
     /** Command to go to a particular scene. */
     public static const GO_SCENE :String = "GoScene";
 
-    /** Command to go to a friend's home scene. */
+    /** Command to go to a member's home scene. */
     public static const GO_MEMBER_HOME :String = "GoMemberHome";
+
+    /** Command to go to a group's home scene. */
+    public static const GO_GROUP_HOME :String = "GoGroupHome";
 
     /** Command to go to a game lobby. */
     public static const GO_GAME_LOBBY :String = "GoGameLobby";
@@ -313,6 +316,14 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Handle the GO_GROUP_HOME command.
+     */
+    public function handleGoGroupHome (groupId :int) :void
+    {
+        _ctx.getMemberDirector().goToGroupHome(groupId);
+    }
+
+    /**
      * Handle the GO_GAME_LOBBY command.
      */
     public function handleGoGameLobby (gameId :int) :void
@@ -450,6 +461,9 @@ public class MsoyController extends Controller
         // first, see if we should hit a specific scene
         if (null != params["memberHome"]) {
             handleGoMemberHome(int(params["memberHome"]));
+
+        } else if (null != params["groupHome"]) {
+            handleGoGroupHome(int(params["groupHome"]));
 
         } else if (null != params["gameLobby"]) {
             moveToGameLobby(int(params["gameLobby"]));

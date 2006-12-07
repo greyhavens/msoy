@@ -36,13 +36,12 @@ public class MsoyScene extends SceneImpl
             return true;
         }
 
-        var ownerId :int = getOwnerId();
         switch (_msoyModel.ownerType) {
         case MsoySceneModel.OWNER_TYPE_MEMBER:
-            return (ownerId == member.getMemberId());
+            return (_msoyModel.ownerId == member.getMemberId());
 
         case MsoySceneModel.OWNER_TYPE_GROUP:
-            return member.isGroupManager(ownerId);
+            return member.isGroupManager(_msoyModel.ownerId);
 
         default:
             return false;
@@ -52,17 +51,9 @@ public class MsoyScene extends SceneImpl
     /**
      * Returns the scene type.
      */
-    public function getType () :int
+    public function getSceneType () :int
     {
         return _msoyModel.sceneType;
-    }
-
-    /**
-     * Returns the owner id.
-     */
-    public function getOwnerId () :int
-    {
-        return _msoyModel.ownerId;
     }
 
     /**

@@ -21,6 +21,8 @@ import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 
+import com.threerings.msoy.world.data.MsoySceneModel;
+
 public class MemberDirector extends BasicDirector
     implements SetListener
 {
@@ -37,13 +39,15 @@ public class MemberDirector extends BasicDirector
      */
     public function goToMemberHome (memberId :int) :void
     {
-        _msvc.getMemberHomeId(_mctx.getClient(), memberId, new ResultWrapper(
-            function (cause :String) :void {
-                log.warning("Unable to go to friend's home: " + cause);
-            }, 
-            function (sceneId :int) :void {
-                _mctx.getSceneDirector().moveTo(sceneId);
-            }));
+        goToHome(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
+    }
+
+    /**
+     * Request to move to the specified group's home.
+     */
+    public function goToGroupHome (groupId :int) :void
+    {
+        goToHome(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
     }
 
     /**
@@ -157,6 +161,20 @@ public class MemberDirector extends BasicDirector
         super.fetchServices(client);
 
         _msvc = (client.requireService(MemberService) as MemberService);
+    }
+
+    /**
+     * Request to go to the home of the specified entity.
+     */
+    protected function goToHome (ownerType :int, ownerId :int) :void
+    {
+        _msvc.getHomeId(_mctx.getClient(), ownerType, ownerId, new ResultWrapper(
+            function (cause :String) :void {
+                log.warning("Unable to go to home: " + cause);
+            }, 
+            function (sceneId :int) :void {
+                _mctx.getSceneDirector().moveTo(sceneId);
+            }));
     }
 
     /**

@@ -56,6 +56,10 @@ public class GroupRecord
 
     /** The member id of the person who created the group. */
     public int creatorId;
+
+    /** The home scene of this group. */
+    // TODO: someone fill this in, make it non-transient
+    public transient int homeSceneId;
     
     /** The date and time this group was created. */
     public Timestamp creationDate;

@@ -182,7 +182,7 @@ public class MemberObject extends BodyObject
     }
 
     /**
-     * Is this user a membrer of the specified group?
+     * Is this user a member of the specified group?
      */
     public function isGroupMember (groupId :int) :Boolean
     {

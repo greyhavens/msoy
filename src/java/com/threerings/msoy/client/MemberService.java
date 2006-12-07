@@ -21,10 +21,10 @@ public interface MemberService extends InvocationService
         InvocationListener listener);
 
     /**
-     * Request to know the home scene id for the specified friend.
+     * Request to know the home scene id for the specified owner.
      */
-    public void getMemberHomeId (
-        Client client, int memberId, ResultListener listener);
+    public void getHomeId (
+        Client client, byte ownerType, int ownerId, ResultListener listener);
 
     /**
      * Set the avatar in use by this user.

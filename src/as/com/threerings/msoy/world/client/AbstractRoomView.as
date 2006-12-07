@@ -599,7 +599,8 @@ public class AbstractRoomView extends Canvas
             _bkgGraphics = null;
         }
 
-        var drawWalls :Boolean = (_scene.getType() == MsoySceneModel.DRAWN_ROOM);
+        var drawWalls :Boolean =
+            (_scene.getSceneType() == MsoySceneModel.DRAWN_ROOM);
         var drawEdges :Boolean = drawWalls || _editing;
 
         if (!drawEdges) {

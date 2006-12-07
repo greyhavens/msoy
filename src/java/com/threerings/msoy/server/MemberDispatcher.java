@@ -45,10 +45,10 @@ public class MemberDispatcher extends InvocationDispatcher
             );
             return;
 
-        case MemberMarshaller.GET_MEMBER_HOME_ID:
-            ((MemberProvider)provider).getMemberHomeId(
+        case MemberMarshaller.GET_HOME_ID:
+            ((MemberProvider)provider).getHomeId(
                 source,
-                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+                ((Byte)args[0]).byteValue(), ((Integer)args[1]).intValue(), (InvocationService.ResultListener)args[2]
             );
             return;
 

@@ -22,7 +22,7 @@ public interface MemberService extends InvocationService
     function alterFriend (arg1 :Client, arg2 :int, arg3 :Boolean, arg4 :InvocationService_InvocationListener) :void;
 
     // from Java interface MemberService
-    function getMemberHomeId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
     function purchaseRoom (arg1 :Client, arg2 :InvocationService_ConfirmListener) :void;

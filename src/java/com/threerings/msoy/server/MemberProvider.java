@@ -22,9 +22,9 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link MemberService#getMemberHomeId} request.
+     * Handles a {@link MemberService#getHomeId} request.
      */
-    public void getMemberHomeId (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+    public void getHomeId (ClientObject caller, byte arg1, int arg2, InvocationService.ResultListener arg3)
         throws InvocationException;
 
     /**

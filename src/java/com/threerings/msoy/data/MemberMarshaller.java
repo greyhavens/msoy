@@ -32,16 +32,16 @@ public class MemberMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #getMemberHomeId} requests. */
-    public static final int GET_MEMBER_HOME_ID = 2;
+    /** The method id used to dispatch {@link #getHomeId} requests. */
+    public static final int GET_HOME_ID = 2;
 
     // from interface MemberService
-    public void getMemberHomeId (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    public void getHomeId (Client arg1, byte arg2, int arg3, InvocationService.ResultListener arg4)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_MEMBER_HOME_ID, new Object[] {
-            Integer.valueOf(arg2), listener3
+        InvocationMarshaller.ResultMarshaller listener4 = new InvocationMarshaller.ResultMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, GET_HOME_ID, new Object[] {
+            Byte.valueOf(arg2), Integer.valueOf(arg3), listener4
         });
     }
 

@@ -39,13 +39,12 @@ public class MsoyScene extends SceneImpl
             return true;
         }
 
-        int ownerId = getOwnerId();
         switch (_model.ownerType) {
         case MsoySceneModel.OWNER_TYPE_MEMBER:
-            return (ownerId == member.getMemberId());
+            return (_model.ownerId == member.getMemberId());
 
         case MsoySceneModel.OWNER_TYPE_GROUP:
-            return member.isGroupManager(ownerId);
+            return member.isGroupManager(_model.ownerId);
 
         default:
             return false;
@@ -55,17 +54,9 @@ public class MsoyScene extends SceneImpl
     /**
      * Returns the type of the scene.
      */
-    public byte getType ()
+    public byte getSceneType ()
     {
         return _model.sceneType;
-    }
-
-    /**
-     * Get the memberId of the owner of this scene.
-     */
-    public int getOwnerId ()
-    {
-        return _model.ownerId;
     }
 
     /**

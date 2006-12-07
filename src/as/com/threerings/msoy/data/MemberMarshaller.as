@@ -39,16 +39,16 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #getMemberHomeId} requests. */
-    public static const GET_MEMBER_HOME_ID :int = 2;
+    /** The method id used to dispatch {@link #getHomeId} requests. */
+    public static const GET_HOME_ID :int = 2;
 
     // from interface MemberService
-    public function getMemberHomeId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_MEMBER_HOME_ID, [
-            Integer.valueOf(arg2), listener3
+        var listener4 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, GET_HOME_ID, [
+            Byte.valueOf(arg2), Integer.valueOf(arg3), listener4
         ]);
     }
 

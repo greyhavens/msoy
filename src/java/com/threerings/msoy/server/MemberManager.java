@@ -258,16 +258,29 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getMemberHomeId (
-        ClientObject caller, final int memberId, InvocationService.ResultListener listener)
+    public void getHomeId (
+        ClientObject caller, final byte ownerType, final int ownerId,
+        InvocationService.ResultListener listener)
         throws InvocationException
     {
         MsoyServer.invoker.postUnit(
             new RepositoryListenerUnit<Integer>(new ResultAdapter<Integer>(listener)) {
             public Integer invokePersistResult () throws PersistenceException {
-                // load up their member info
-                MemberRecord member = _memberRepo.loadMember(memberId);
-                return (member == null) ? null : member.homeSceneId;
+                switch (ownerType) {
+                case MsoySceneModel.OWNER_TYPE_MEMBER:
+                    MemberRecord member = _memberRepo.loadMember(ownerId);
+                    return (member == null) ? null : member.homeSceneId;
+
+                case MsoySceneModel.OWNER_TYPE_GROUP:
+                    GroupRecord group = _groupRepo.loadGroup(ownerId);
+                    return (group == null) ? null : group.homeSceneId;
+
+                default:
+                    log.warning("Unknown ownerType provided to getHomeId " +
+                        "[ownerType=" + ownerType +
+                        ", ownerId=" + ownerId + "].");
+                    return null;
+                }
             }
             public void handleSuccess () {
                 if (_result == null) {
