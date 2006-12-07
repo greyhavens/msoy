@@ -54,8 +54,6 @@ public class RoomController extends SceneController
     public static const FURNI_CLICKED :String = "FurniClicked";
     public static const AVATAR_CLICKED :String = "AvatarClicked";
 
-    public static const TELL :String = "Tell";
-
     public static const TEMP_CLEAR_SCENE_CACHE :String = "clrScenes";
 
     // documentation inherited
@@ -218,7 +216,7 @@ public class RoomController extends SceneController
             var isGuest :Boolean = (memId == MemberName.GUEST_ID);
             var isFriend :Boolean = us.friends.containsKey(memId);
             menuItems.push({ label: Msgs.GENERAL.get("b.tell"),
-                command: TELL, arg: memId });
+                command: MsoyController.TELL, arg: memId });
 
             if (!isGuest) {
                 menuItems.push(

@@ -48,6 +48,9 @@ public class MsoyController extends Controller
     /** Command to display the prefs. */
     public static const POP_PREFS_MENU :String = "PopPrefsMenu"
 
+    /** Command to display the friends menu. */
+    public static const POP_FRIENDS_MENU :String = "PopFriendsMenu";
+
     /** Command to go to a particular scene. */
     public static const GO_SCENE :String = "GoScene";
 
@@ -59,6 +62,9 @@ public class MsoyController extends Controller
 
     /** Command to add/remove friends. */
     public static const ALTER_FRIEND :String = "AlterFriend";
+
+    /** Command to initiate private conversation with the specified user. */
+    public static const TELL :String = "Tell";
 
     /** Command to edit preferences. */
     public static const EDIT_PREFS :String = "EditPrefs";
@@ -92,6 +98,62 @@ public class MsoyController extends Controller
     public function handleShowFriends (show :Boolean) :void
     {
         _topPanel.showFriends(show);
+    }
+
+    /**
+     * Handle the TELL command.
+     */
+    public function handleTell (user :MemberName) :void
+    {
+        _ctx.displayFeedback(null, "~Sorry, Tell is not yet working!" +
+            " (Poor " + user + " will never know your true feelings.)");
+        log.warning("TODO: Tell(" + user + ")");
+    }
+
+    /**
+     * Handle the POP_FRIENDS_MENU command.
+     */
+    public function handlePopFriendsMenu (trigger :Button) :void
+    {
+        var friends :Array =
+            _ctx.getClientObject().getSortedEstablishedFriends();
+        friends = friends.map(
+            function (fe :FriendEntry, index :int, array :Array) :Object {
+                return {
+                    label: fe.name.toString(),
+                    command: TELL,
+                    arg: fe.name
+                };
+            });
+
+        if (friends.length == 0) {
+            friends.push({ label: Msgs.GENERAL.get("m.no_friends") });
+        }
+
+        var chatters :Array = _ctx.getChatDirector().getChatters();
+        chatters = chatters.map(
+            function (name :MemberName, index :int, array :Array) :Object {
+                return {
+                    label: name.toString(),
+                    command: TELL,
+                    arg: name
+                };
+            });
+
+        if (chatters.length == 0) {
+            chatters.push({ label: Msgs.GENERAL.get("m.no_chatters") });
+        }
+
+        var menuData :Array = [
+            { label: Msgs.GENERAL.get("l.recent_chatters"),
+              children: chatters },
+            { label: Msgs.GENERAL.get("l.friends"),
+              children: friends }
+        ];
+
+        var menu :CommandMenu =
+            CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
+        menu.popUp(trigger);
     }
 
     /**
@@ -143,7 +205,6 @@ public class MsoyController extends Controller
 
         // add the friends if present
         if (friends.length > 0) {
-            trace("friends text [" + Msgs.GENERAL.get("l.visit_friends") + "]");
             menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"),
                 children: friends });
         }

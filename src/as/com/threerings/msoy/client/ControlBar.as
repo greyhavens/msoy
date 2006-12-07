@@ -106,7 +106,18 @@ public class ControlBar extends Canvas
             // TODO: dynamic layout?
             friendsBtn.x = 585;
             friendsBtn.y = 0;
-            friendsBtn.width = 38;
+            friendsBtn.width = 19;
+            friendsBtn.height = HEIGHT;
+            addChild(friendsBtn);
+
+            // a second friends button, for now
+            friendsBtn = new CommandButton();
+            friendsBtn.styleName = BUTTON_STYLE;
+            friendsBtn.setCommand(MsoyController.POP_FRIENDS_MENU, friendsBtn);
+
+            friendsBtn.x = 585 + 19;
+            friendsBtn.y = 0;
+            friendsBtn.width = 19;
             friendsBtn.height = HEIGHT;
             addChild(friendsBtn);
 
