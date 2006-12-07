@@ -33,7 +33,7 @@ public class MsoySceneModel extends SceneModel
     public static final int TYPE_COUNT = 2;
 
     /** The type of scene that this is. Determines how it is rendered. */
-    public byte type;
+    public byte sceneType;
 
     /** The type of owner that owns this scene. */
     public byte ownerType;

@@ -44,7 +44,7 @@ public class MsoyScene extends SceneImpl
      */
     public byte getType ()
     {
-        return _model.type;
+        return _model.sceneType;
     }
 
     /**

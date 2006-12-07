@@ -225,6 +225,12 @@ public class MsoySceneRepository extends SimpleRepository
                 "tinyint not null", "SCENE_ID"); 
         }
         // END: temp
+        
+        // TEMP: can be removed after all servers past 2006-12-06
+        if (JDBCUtil.tableContainsColumn(conn, "SCENES", "TYPE")) {
+            JDBCUtil.changeColumn(conn, "SCENES", "TYPE", "SCENE_TYPE tinyint not null");
+        }
+        // END: temp
     }
 
     /**
@@ -391,14 +397,14 @@ public class MsoySceneRepository extends SimpleRepository
                 try {
                     // Load: basic scene data
                     ResultSet rs = stmt.executeQuery("select " +
-                        "OWNER_ID, VERSION, NAME, TYPE, DEPTH, WIDTH, " +
+                        "OWNER_ID, VERSION, NAME, SCENE_TYPE, DEPTH, WIDTH, " +
                         "HORIZON, ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z " +
                         "from SCENES where SCENE_ID=" + sceneId);
                     if (rs.next()) {
                         model.ownerId = rs.getInt(1);
                         model.version = rs.getInt(2);
                         model.name = rs.getString(3).intern();
-                        model.type = rs.getByte(4);
+                        model.sceneType = rs.getByte(4);
                         model.depth = rs.getShort(5);
                         model.width = rs.getShort(6);
                         model.horizon = rs.getFloat(7);
@@ -487,12 +493,12 @@ public class MsoySceneRepository extends SimpleRepository
             {
                 PreparedStatement stmt = conn.prepareStatement(
                     "update SCENES " +
-                    "set NAME=?, TYPE=?, DEPTH=?, WIDTH=?, HORIZON=?, " +
+                    "set NAME=?, SCENE_TYPE=?, DEPTH=?, WIDTH=?, HORIZON=?, " +
                     "ENTRANCE_X=?, ENTRANCE_Y=?, ENTRANCE_Z=? " +
                     "where SCENE_ID=" + mmodel.sceneId);
                 try {
                     stmt.setString(1, update.name);
-                    stmt.setByte(2, update.type);
+                    stmt.setByte(2, update.sceneType);
                     stmt.setInt(3, update.depth);
                     stmt.setInt(4, update.width);
                     stmt.setFloat(5, update.horizon);
@@ -564,14 +570,14 @@ public class MsoySceneRepository extends SimpleRepository
         throws SQLException, PersistenceException
     {
         PreparedStatement stmt = conn.prepareStatement("insert into SCENES " +
-            "(OWNER_ID, VERSION, NAME, TYPE, DEPTH, WIDTH, HORIZON, " +
+            "(OWNER_ID, VERSION, NAME, SCENE_TYPE, DEPTH, WIDTH, HORIZON, " +
             " ENTRANCE_X, ENTRANCE_Y, ENTRANCE_Z) " +
             "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setInt(1, model.ownerId);
             stmt.setInt(2, model.version);
             stmt.setString(3, model.name);
-            stmt.setByte(4, model.type);
+            stmt.setByte(4, model.sceneType);
             stmt.setShort(5, model.depth);
             stmt.setShort(6, model.width);
             stmt.setFloat(7, model.horizon);
@@ -752,7 +758,7 @@ public class MsoySceneRepository extends SimpleRepository
             "OWNER_ID integer not null",
             "VERSION integer not null",
             "NAME varchar(255) not null",
-            "TYPE tinyint not null",
+            "SCENE_TYPE tinyint not null",
             "DEPTH integer not null",
             "WIDTH integer not null",
             "HORIZON float not null",
@@ -806,7 +812,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         if (sceneId == 1) {
             // crayon room
-            model.type = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
             model.width = 1600;
 
             portal.loc = new MsoyLocation(0, 0, .3, 0);
@@ -902,7 +908,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 2) {
             // alley
-            model.type = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
 
             portal.loc = new MsoyLocation(0, .1, .53, 180);
             portal.actionData = "1:-1";
@@ -934,7 +940,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 3) {
             // cliff
-            model.type = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
             model.width = 800;
 
             portal.loc = new MsoyLocation(.5, 0, .5, 0);
@@ -966,7 +972,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 4) {
             // fans
-            model.type = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
             model.width = 800;
 
             portal.loc = new MsoyLocation(0, 0, .8, 0);
@@ -1031,7 +1037,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 5) {
             // faucet
-            model.type = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
             model.width = 1600;
 
             portal.loc = new MsoyLocation(.3125, .71, 0, 0);
@@ -1049,7 +1055,7 @@ public class MsoySceneRepository extends SimpleRepository
 
         } else if (sceneId == 6) {
             // comic
-            model.type = MsoySceneModel.IMAGE_OVERLAY;
+            model.sceneType = MsoySceneModel.IMAGE_OVERLAY;
             model.width = 1600;
 
             portal.loc = new MsoyLocation(0, 0, .5, 0);

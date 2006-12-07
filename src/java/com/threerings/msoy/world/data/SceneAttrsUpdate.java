@@ -20,7 +20,7 @@ public class SceneAttrsUpdate extends SceneUpdate
     public String name;
 
     /** The new type. */
-    public byte type;
+    public byte sceneType;
 
     /** The new depth. */
     public short depth;
@@ -41,7 +41,7 @@ public class SceneAttrsUpdate extends SceneUpdate
 
         MsoySceneModel mmodel = (MsoySceneModel) model;
         mmodel.name = name;
-        mmodel.type = type;
+        mmodel.sceneType = sceneType;
         mmodel.depth = depth;
         mmodel.width = width;
         mmodel.horizon = horizon;
