@@ -12,12 +12,9 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.WidgetUtil;
-
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
 
-import client.shell.MsoyEntryPoint;
+import client.item.ItemUtil;
 
 /**
  * Displays a thumbnail version of an item.
@@ -32,38 +29,6 @@ import client.shell.MsoyEntryPoint;
  */
 public class ItemContainer extends VerticalPanel
 {
-    /**
-     * Create a container to hold the supplied media.
-     */
-    public static Widget createContainer (MediaDesc desc, boolean thumbnail)
-    {
-        String path = MsoyEntryPoint.toMediaPath(desc.getMediaPath());
-        int width = thumbnail ? Item.THUMBNAIL_WIDTH : Item.PREVIEW_WIDTH;
-        int height = thumbnail ? Item.THUMBNAIL_HEIGHT : Item.PREVIEW_HEIGHT;
-        switch (MediaDesc.suffixToMimeType(path)) {
-        case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
-            return WidgetUtil.createFlashContainer("", path, width, height, null);
-
-        case MediaDesc.IMAGE_PNG:
-        case MediaDesc.IMAGE_JPEG:
-        case MediaDesc.IMAGE_GIF: {
-            Image image = new Image(path);
-            switch (desc.constraint) {
-            case MediaDesc.HORIZONTALLY_CONSTRAINED:
-                image.setWidth(width + "px");
-                break;
-            case MediaDesc.VERTICALLY_CONSTRAINED:
-                image.setHeight(height + "px");
-                break;
-            }
-            return image;
-        }
-
-        default:
-            return new Label(path);
-        }
-    }
-
     public ItemContainer (ItemPanel panel, Item item)
     {
         _panel = panel;
@@ -80,9 +45,7 @@ public class ItemContainer extends VerticalPanel
         // clear out our old UI, and we'll create it anew
         clear();
 
-        Widget disp = createContainer(item);
-        disp.setStyleName("itemThumbImage");
-        add(disp);
+        add(createContainer(item));
 
         Label label = new Label(truncateDescription(item.getDescription()));
         label.setStyleName("itemThumbText");
@@ -99,7 +62,7 @@ public class ItemContainer extends VerticalPanel
      */
     protected Widget createContainer (Item item)
     {
-        return createContainer(item.getThumbnailMedia(), true);
+        return ItemUtil.createMediaView(item.getThumbnailMedia(), true);
     }
 
     /**

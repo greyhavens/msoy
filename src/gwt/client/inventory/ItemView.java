@@ -6,10 +6,6 @@ package client.inventory;
 import java.util.Collection;
 import java.util.Iterator;
 
-import client.item.ItemRating;
-import client.shell.MsoyEntryPoint;
-import client.util.HeaderValueTable;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Command;
@@ -47,6 +43,11 @@ import com.threerings.msoy.item.web.Pet;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.web.client.WebContext;
+
+import client.item.ItemRating;
+import client.item.ItemUtil;
+import client.shell.MsoyEntryPoint;
+import client.util.HeaderValueTable;
 
 public class ItemView extends PopupPanel
 {
@@ -105,9 +106,9 @@ public class ItemView extends PopupPanel
         _table.addRow("Owner", owner, "Creator", _itemDetail.creator.toString());
 
         Widget thumbWidget = _item.thumbMedia == null ?
-            new Label("(default)") : ItemContainer.createContainer(_item.getThumbnailMedia(), true);
+            new Label("(default)") : ItemUtil.createMediaView(_item.getThumbnailMedia(), true);
         Widget furniWidget = _item.furniMedia == null ?
-            new Label("(default)") : ItemContainer.createContainer(_item.getFurniMedia(), false);
+            new Label("(default)") : ItemUtil.createMediaView(_item.getFurniMedia(), false);
         _table.addRow("Thumbnail", thumbWidget, "Furniture", furniWidget);
 
         // TODO: Maybe merge ItemDetail and ItemEditor, so we could put these
@@ -141,8 +142,7 @@ public class ItemView extends PopupPanel
         } else if (_item instanceof Photo) {
             _table.addHeader("Photo Information");
             MediaDesc photoMedia = ((Photo)_item).photoMedia;
-            Widget photoContainer;
-            photoContainer = ItemContainer.createContainer(photoMedia, false);
+            Widget photoContainer = ItemUtil.createMediaView(photoMedia, false);
             _table.addRow("Photo", photoContainer);
             _table.addRow("Caption", ((Photo)_item).caption);
 
@@ -160,8 +160,7 @@ public class ItemView extends PopupPanel
         } else if (_item instanceof Audio) {
             _table.addHeader("Audio Information");
             MediaDesc audioMedia = ((Audio)_item).audioMedia;
-            Widget audioContainer;
-            audioContainer = ItemContainer.createContainer(audioMedia, false);
+            Widget audioContainer = ItemUtil.createMediaView(audioMedia, false);
             _table.addRow("Description", ((Audio)_item).description);
             _table.addRow("Audio", audioContainer);
 

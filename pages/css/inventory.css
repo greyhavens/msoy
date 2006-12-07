@@ -12,11 +12,6 @@
    width: 800px;
 }
 
-.itemThumbImage {
-  border: 1px solid;
-  padding: 5px;
-}
-
 .itemThumbText {
   text-decoration: underline;
   font-size: small;

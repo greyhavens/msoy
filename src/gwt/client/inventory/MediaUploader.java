@@ -31,6 +31,8 @@ import com.threerings.gwt.ui.SubmitField;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
+import client.item.ItemUtil;
+
 /**
  * Helper class, used in ItemEditor.
  */
@@ -111,20 +113,9 @@ public class MediaUploader extends FlexTable
     public void setMedia (MediaDesc desc)
     {
         if (desc != null) {
-            Widget w = ItemContainer.createContainer(desc, _thumbnail);
-            int twidth = _thumbnail ? Item.THUMBNAIL_WIDTH : Item.PREVIEW_WIDTH;
-            int theight = _thumbnail ? Item.THUMBNAIL_HEIGHT : Item.PREVIEW_HEIGHT;
-            switch (desc.constraint) {
-            case MediaDesc.HORIZONTALLY_CONSTRAINED:
-                w.setWidth(twidth + "px");
-                break;
-            case MediaDesc.VERTICALLY_CONSTRAINED:
-                w.setHeight(theight + "px");
-                break;
-            }
             // update our preview
             _out.setText("Preview:");
-            setWidget(_previewRow, 0, w);
+            setWidget(_previewRow, 0, ItemUtil.createMediaView(desc, _thumbnail));
         }
     }
 

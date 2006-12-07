@@ -14,14 +14,11 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
 
-import client.shell.MsoyEntryPoint;
+import client.item.ItemUtil;
 
 /**
  * Displays a catalog listing.
- *
- * TODO: Refactor relative to inventory.ItemContainer
  *
  * <p> Styles:
  * <ul>
@@ -40,10 +37,7 @@ public class ItemContainer extends VerticalPanel
     {
         final Item item = listing.item;
 
-        Widget disp = createContainer(item);
-        disp.setStyleName("itemThumbImage");
-        disp.setHeight(THUMB_HEIGHT + "px");
-        add(disp);
+        add(ItemUtil.createMediaView(item.getThumbnailMedia(), true));
 
         Label descrip = new Label(truncateDescription(item.getDescription()));
         descrip.setStyleName("itemDescrip");
@@ -60,24 +54,6 @@ public class ItemContainer extends VerticalPanel
             }
         });
         add(button);
-    }
-
-    /**
-     * Helper method to create the container widget.
-     */
-    protected Widget createContainer (Item item)
-    {
-        String thumbPath = MsoyEntryPoint.toMediaPath(item.getThumbnailPath());
-        switch (MediaDesc.suffixToMimeType(thumbPath)) {
-        case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
-            String ident = String.valueOf(item.itemId);
-            return WidgetUtil.createFlashContainer(
-                // TODO: allow passing -1 for width
-                ident, thumbPath, THUMB_HEIGHT, THUMB_HEIGHT, null);
-
-        default:
-            return new Image(thumbPath);
-        }
     }
 
     /**
