@@ -53,6 +53,7 @@ public class MsoyContext
         _occDir = new OccupantDirector(this);
         _chatDir = new ChatDirector(this, _msgMgr, "general");
         _chatDir.setChatterValidator(_helper);
+        _chatDir.addChatFilter(new CurseFilter(this));
         _sceneRepo = new SharedObjectSceneRepository()
         _sceneDir = new SceneDirector(this, _locDir, _sceneRepo,
             new MsoySceneFactory());
