@@ -80,8 +80,7 @@ public class MemberName extends Name
 
         // return 0 if diff is the same (they have the same memberId) UNLESS the memberId is 0, in
         // which case they're a guest and we compare by name
-        return (_memberId != GUEST_ID) ? 0 :
-            toString().toLowerCase().compareTo(that.toString().toLowerCase());
+        return (_memberId != GUEST_ID) ? 0 : BY_DISPLAY_NAME.compare(this, that);
     }
 
     // @Override
