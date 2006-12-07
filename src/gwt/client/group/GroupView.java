@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
@@ -157,7 +158,8 @@ public class GroupView extends DockPanel
                 memberFlow.add(removeLabel);
             }
         }
-        _table.addRow("Members", memberFlow);
+        _table.addRow("Members", memberFlow, "Scenes", new HTML("<a href='/world/index.html#g" + 
+            _group.groupId + "'>Home</a>"));
     }
 
     /**
