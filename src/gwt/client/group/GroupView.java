@@ -147,21 +147,10 @@ public class GroupView extends DockPanel
             Label memberLabel = new InlineLabel(name.toString());
             memberLabel.addClickListener(new ClickListener() {
                 public void onClick (Widget widget) {
-                    new MemberView(_ctx, name.getMemberId()).show();
+                    new MemberView(_ctx, name.getMemberId(), _amAdmin).show();
                 }
             });
             memberFlow.add(memberLabel);
-            // if we're an admin, we can remove non-admins from non-public groups
-            //if (_amAdmin && rank != GroupMembership.RANK_MANAGER &&
-                //_group.policy != Group.POLICY_PUBLIC) {
-                //Label removeLabel = new InlineLabel("(-)");
-                //removeLabel.addClickListener(new ClickListener() {
-                    //public void onClick (Widget sender) {
-                        //removeMember(name.getMemberId());
-                    //}
-                //});
-                //memberFlow.add(removeLabel);
-            //}
         }
         _table.addRow("Members", memberFlow, "Scenes", new HTML("<a href='/world/index.html#g" + 
             _group.groupId + "'>Home</a>"));

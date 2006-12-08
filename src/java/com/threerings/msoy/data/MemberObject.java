@@ -33,6 +33,7 @@ import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 
 import com.threerings.msoy.web.data.GroupMembership;
+import com.threerings.msoy.web.data.GroupName;
 
 /**
  * Represents a connected msoy user.
@@ -233,7 +234,9 @@ public class MemberObject extends BodyObject
     public byte getGroupRank (int groupId)
     {
         if (groups != null) {
-            GroupMembership membInfo = groups.get(groupId);
+            GroupName group = new GroupName();
+            group.groupId = groupId;
+            GroupMembership membInfo = groups.get(group);
             if (membInfo != null) {
                 return membInfo.rank;
             }

@@ -5,8 +5,13 @@ package client.group;
 
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.HTML;
 
 import client.util.HeaderValueTable;
+
+import client.shell.MsoyEntryPoint;
 
 import com.threerings.msoy.web.client.WebContext;
 
@@ -17,11 +22,14 @@ import com.threerings.msoy.web.client.WebContext;
  */
 public class MemberView extends PopupPanel
 {
-    public MemberView (WebContext ctx, int memberId)
+    public MemberView (WebContext ctx, int memberId, boolean amAdmin)
     {
         super(true);
         _ctx = ctx;
         _memberId = memberId;
+        // TODO: a boolean is not sufficient, because it will need to be known if this is a Manager
+        // that is superior to this member (who might also be a manager).
+        _amAdmin = amAdmin;
         setStyleName("memberPopup");
 
         _content = new DockPanel();
@@ -30,12 +38,42 @@ public class MemberView extends PopupPanel
         _table = new HeaderValueTable();
         _content.add(_table, DockPanel.CENTER);
 
+        _errorContainer = new VerticalPanel();
+        _errorContainer.setStyleName("memberViewErrors");
+        _content.add(_errorContainer, DockPanel.NORTH);
+
         _table.addHeader("Viewing Member " + memberId);
+
+        _table.addRow(new HTML("<a href='" + MsoyEntryPoint.memberViewPath(memberId) + 
+            "'>Profile</a>"));
+        
+        // TODO: bring in enough info to resolve this correctly
+        /*if (_amAdmin && rank != GroupMembership.RANK_MANAGER &&
+            _group.policy != Group.POLICY_PUBLIC) {
+            Label removeLabel = new InlineLabel("Remove Member");
+            removeLabel.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    removeMember(name.getMemberId());
+                }
+            });
+        }*/
+    }
+
+    protected void addError (String error)
+    {
+        _errorContainer.add(new Label(error));
+    }
+
+    protected void clearErrors ()
+    {
+        _errorContainer.clear();
     }
 
     protected WebContext _ctx;
     protected int _memberId;
+    protected boolean _amAdmin;
 
     protected DockPanel _content;
     protected HeaderValueTable _table;
+    protected VerticalPanel _errorContainer;
 }

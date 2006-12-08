@@ -11,6 +11,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.web.data.GroupName;
 
 /**
  * Contains the details of person's membership in a group.
@@ -43,8 +44,9 @@ public class GroupMembershipRecord
     {
         GroupMembership gm = new GroupMembership();
         gm.member = member;
-        gm.groupId = groupId;
-        gm.groupName = group.name;
+        gm.group = new GroupName();
+        gm.group.groupId = groupId;
+        gm.group.groupName = group.name;
         gm.rank = rank;
         return gm;
     }

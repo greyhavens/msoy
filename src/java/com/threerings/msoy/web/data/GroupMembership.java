@@ -26,11 +26,8 @@ public class GroupMembership
      * maintained in a member's MemberObject. */
     public MemberName member;
 
-    /** The group's id. */
-    public int groupId;
-
-    /** The group's name. */
-    public String groupName;
+    /** The group's identity. */
+    public GroupName group;
 
     /** The member's rank in the group. */
     public byte rank; 
@@ -39,6 +36,6 @@ public class GroupMembership
     public Comparable getKey ()
     {
         // autoboxing makes GWT angry.  
-        return new Integer(groupId);
+        return group;
     }
 }

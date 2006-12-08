@@ -77,7 +77,7 @@ public abstract class GroupInvite
                 add(new InlineLabel(" the group "));
                 _groupBox = new ListBox();
                 for (int ii = 0; ii < _groups.size(); ii ++) {
-                    _groupBox.addItem(((GroupMembership) _groups.get(ii)).groupName);
+                    _groupBox.addItem(((GroupMembership) _groups.get(ii)).group.groupName);
                 }
                 _groupBox.addChangeListener(new ChangeListener() {
                     public void onChange (Widget sender) {
@@ -85,7 +85,7 @@ public abstract class GroupInvite
                         if (ix == -1) {
                             return;
                         }
-                        _selectedGroupId = ((GroupMembership)_groups.get(ix)).groupId;
+                        _selectedGroupId = ((GroupMembership)_groups.get(ix)).group.groupId;
                         Window.alert("groupId now = " + _selectedGroupId);
                     }
                 });

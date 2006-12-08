@@ -43,6 +43,7 @@ import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
+import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.NeighborFriend;
 import com.threerings.msoy.web.data.NeighborGroup;
@@ -814,8 +815,9 @@ public class MemberManager
         // otherwise they are newly joined
         gm = new GroupMembership();
         // gm.member specifically left null
-        gm.groupId = groupId;
-        gm.groupName = groupName;
+        gm.group = new GroupName();
+        gm.group.groupId = groupId;
+        gm.group.groupName = groupName;
         gm.rank = groupRank;
         mobj.addToGroups(gm);
     } 

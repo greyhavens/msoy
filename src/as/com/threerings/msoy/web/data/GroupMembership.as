@@ -27,11 +27,8 @@ public class GroupMembership
      * maintained in a member's MemberObject. */
     public var member :MemberName;
 
-    /** The group's id. */
-    public var groupId :int;
-
-    /** The group's name. */
-    public var groupName :String;
+    /** The group's identity. */
+    public var group :GroupName;
 
     /** The member's rank in the group. */
     public var rank :int; 
@@ -39,15 +36,14 @@ public class GroupMembership
     // from DSet_Entry
     public function getKey () :Object
     {
-        return groupId;
+        return group;
     }
 
     // from Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
         member = (ins.readObject() as MemberName);
-        groupId = ins.readInt();
-        groupName = (ins.readField(String) as String);
+        group = (ins.readObject() as GroupName);
         rank = ins.readByte();
     }
 
@@ -56,8 +52,7 @@ public class GroupMembership
     {
         throw new Error("abstract");
 //        out.writeObject(member);
-//        out.writeInt(groupId);
-//        out.writeField(groupName);
+//        out.writeObject(group);
 //        out.writeByte(rank);
     }
 }

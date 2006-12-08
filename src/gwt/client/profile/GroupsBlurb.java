@@ -45,8 +45,8 @@ public class GroupsBlurb extends Blurb
         } else {
             for (int ii = 0, ll = blurbGroups.size(); ii < ll; ii++) {
                 GroupMembership group = (GroupMembership)blurbGroups.get(ii);
-                HTML link = new HTML("<a href='" + MsoyEntryPoint.groupViewPath(group.groupId) +
-                                     ">" + group.groupName + "</a>");
+                HTML link = new HTML("<a href='" + MsoyEntryPoint.groupViewPath(
+                    group.group.groupId) + ">" + group.group.groupName + "</a>");
                 _content.setWidget(ii, 0, link);
             }
         }

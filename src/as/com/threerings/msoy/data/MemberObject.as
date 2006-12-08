@@ -20,6 +20,7 @@ import com.threerings.crowd.data.TokenRing;
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
 import com.threerings.msoy.web.data.GroupMembership;
+import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.item.web.Avatar;
@@ -212,8 +213,10 @@ public class MemberObject extends BodyObject
     public function getGroupRank (groupId :int) :int
     {
         if (groups != null) {
+            var group :GroupName = new GroupName();
+            group.groupId = groupId;
             var membInfo :GroupMembership =
-                (groups.get(groupId) as GroupMembership);
+                (groups.get(group) as GroupMembership);
             if (membInfo != null) {
                 return membInfo.rank;
             }
