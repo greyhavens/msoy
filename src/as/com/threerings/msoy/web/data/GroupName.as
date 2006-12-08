@@ -47,7 +47,7 @@ public class GroupName
         return groupId;
     }
 
-    // from Comparable
+    // from Equalable (by way of Hashable)
     public function equals (other :Object) :Boolean
     {
         return (other is GroupName) &&
