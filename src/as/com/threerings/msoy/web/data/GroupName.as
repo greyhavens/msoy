@@ -22,16 +22,16 @@ public class GroupName
     // from Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        groupId = ins.readInt();
         groupName = (ins.readField(String) as String);
+        groupId = ins.readInt();
     }
 
     // from Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
         throw new Error("abstract");
-//        out.writeInt(groupId);
 //        out.writeField(groupName);
+//        out.writeInt(groupId);
     }
 
     // from Comparable
