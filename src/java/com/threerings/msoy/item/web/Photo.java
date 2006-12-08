@@ -35,6 +35,12 @@ public class Photo extends Item
     }
 
     // @Override // from Item
+    public MediaDesc getPreviewMedia ()
+    {
+        return photoMedia;
+    }
+
+    // @Override // from Item
     protected MediaDesc getDefaultThumbnailMedia ()
     {
         if (photoMedia != null && photoMedia.isImage()) {

@@ -32,4 +32,10 @@ public class Audio extends Item
         return super.isConsistent() && (audioMedia != null) &&
             audioMedia.isAudio() && nonBlank(description);
     }
+
+    // @Override // from Item
+    public MediaDesc getPreviewMedia ()
+    {
+        return getThumbnailMedia(); // TODO: support album art?
+    }
 }

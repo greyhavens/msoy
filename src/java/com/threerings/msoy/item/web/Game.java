@@ -41,6 +41,12 @@ public class Game extends Item
         return name;
     }
 
+    // @Override // from Item
+    public MediaDesc getPreviewMedia ()
+    {
+        return getFurniMedia(); // TODO: support logos?
+    }
+
     /**
      * Returns a media descriptor for the media to be used
      * as a table background image.

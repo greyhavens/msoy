@@ -31,4 +31,10 @@ public class Document extends Item
     {
         return super.isConsistent() && (docMedia != null) && nonBlank(title);
     }
+
+    // @Override // from Item
+    public MediaDesc getPreviewMedia ()
+    {
+        return getThumbnailMedia();
+    }
 }

@@ -40,6 +40,12 @@ public class Avatar extends Item
     }
 
     // @Override // from Item
+    public MediaDesc getPreviewMedia ()
+    {
+        return getFurniMedia();
+    }
+
+    // @Override // from Item
     public boolean isConsistent ()
     {
         return super.isConsistent() && (avatarMedia != null) &&

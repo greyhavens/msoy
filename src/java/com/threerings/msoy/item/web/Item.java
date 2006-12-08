@@ -183,6 +183,11 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     }
 
     /**
+     * Returns the media that should be shown when previewing this item.
+     */
+    public abstract MediaDesc getPreviewMedia ();
+
+    /**
      * Returns a media descriptor for the media that should be used to display
      * our thumbnail representation.
      */

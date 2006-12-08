@@ -44,6 +44,7 @@ import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.web.client.WebContext;
 
+import client.item.BaseItemDetailPanel;
 import client.item.ItemRating;
 import client.item.ItemUtil;
 import client.shell.MsoyEntryPoint;
@@ -59,26 +60,59 @@ public class ItemView extends PopupPanel
         _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
         _parent = parent;
         setStyleName("itemPopup");
-        setWidget(_content = new DockPanel());
 
-        _table = new HeaderValueTable();
-        _content.add(_table, DockPanel.CENTER);
+        setWidget(new ItemDetailPanel(ctx, item));
 
-        _errorContainer = new VerticalPanel();
-        _errorContainer.setStyleName("itemDetailErrors");
-        _content.add(_errorContainer, DockPanel.NORTH);
+//         _table = new HeaderValueTable();
+//         _content.add(_table, DockPanel.CENTER);
 
-        _ctx.itemsvc.loadItemDetail(_ctx.creds, _itemId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _itemDetail = (com.threerings.msoy.item.web.ItemDetail) result;
-                buildUI();
+//         _errorContainer = new VerticalPanel();
+//         _errorContainer.setStyleName("itemDetailErrors");
+//         _content.add(_errorContainer, DockPanel.NORTH);
+
+        recenter(true);
+    }
+
+    protected class ItemDetailPanel extends BaseItemDetailPanel
+    {
+        public ItemDetailPanel (WebContext ctx, Item item) {
+            super(ctx, item);
+        }
+
+        protected void createDetailsInterface (VerticalPanel details) {
+            super.createDetailsInterface(details);
+
+            Button button;
+            if (_item.parentId == -1) {
+                button = new Button("List in Catalog ...");
+                button.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        listItem(_item.getIdent());
+                    }
+                });
+
+            } else {
+                button = new Button("Remix ...");
+                button.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        remixItem(_item.getIdent());
+                    }
+                });
             }
-            public void onFailure (Throwable caught) {
-                GWT.log("loadInventory failed", caught);
-                // TODO: if ServiceException, translate
-                addError("Failed to load item detail: " + caught);
+            details.add(button);
+
+            if (_item.parentId == -1) {
+                button = new Button("Edit ...");
+                button.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        ItemEditor editor = _parent.createItemEditor(_item.getType());
+                        editor.setItem(_item);
+                        editor.show();
+                    }
+                });
+                details.add(button);
             }
-        });
+        }
     }
 
     protected void buildUI () {
@@ -250,36 +284,6 @@ public class ItemView extends PopupPanel
         HorizontalPanel buttons = new HorizontalPanel();
         buttons.setSpacing(5);
         _table.addRow(buttons);
-
-        if (_item.parentId == -1) {
-            button = new Button("List in Catalog ...");
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    listItem(_item.getIdent());
-                }
-            });
-
-        } else {
-            button = new Button("Remix ...");
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    remixItem(_item.getIdent());
-                }
-            });
-        }
-        buttons.add(button);
-
-        if (_item.parentId == -1) {
-            button = new Button("Edit ...");
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    ItemEditor editor = _parent.createItemEditor(_item.getType());
-                    editor.setItem(_item);
-                    editor.show();
-                }
-            });
-            buttons.add(button);
-        }
 
         // add a status label
         _table.addRow(_status = new Label(""));
