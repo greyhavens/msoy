@@ -22,6 +22,7 @@ import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
+import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -51,6 +52,14 @@ public class MsoyClient extends WhirledClient
         super.sessionWillStart();
 
         _memobj = (MemberObject) _clobj;
+
+        MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account) _authdata;
+        if (acct != null) {
+            _memobj.setTokens(acct.tokens);
+        } else {
+            _memobj.setTokens(new MsoyTokenRing());
+        }
+
         MsoyServer.registerMember(_memobj);
 
         _memobj.setAccessController(new AccessController() {

@@ -17,11 +17,10 @@ import com.threerings.presents.net.AuthResponseData;
 import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
-import com.threerings.crowd.data.TokenRing;
-
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.LogonException;
 import com.threerings.msoy.web.data.MemberName;
@@ -49,7 +48,7 @@ public class MsoyAuthenticator extends Authenticator
         public String accountName;
 
         /** The access privileges conferred to this account. */
-        public TokenRing tokens;
+        public MsoyTokenRing tokens;
     }
 
     /** Provides authentication information for a particular partner. */
@@ -267,10 +266,8 @@ public class MsoyAuthenticator extends Authenticator
 //                 throw new LogonException(UNDER_MAINTENANCE);
 //             }
 
-//             rsp.authdata = new MsoyTokenRing(tokens);
-
             // log.info("User logged on [user=" + user.username + "].");
-            rsp.authdata = account.accountName;
+            rsp.authdata = account;
             rdata.code = MsoyAuthResponseData.SUCCESS;
 
 //             // pass their user record to the client resolver for retrieval
@@ -287,8 +284,9 @@ public class MsoyAuthenticator extends Authenticator
             if (creds != null) {
                 // we must assign their starting username
                 if (rsp.authdata != null) {
+                    Account act = (Account) rsp.authdata;
                     // for members, we set it to their auth username
-                    creds.setUsername(new Name((String) rsp.authdata));
+                    creds.setUsername(new Name((String) act.accountName));
 
                 } else {
                     // for guests, we use the same Name object as their

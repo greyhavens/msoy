@@ -13,7 +13,6 @@ import com.threerings.crowd.server.CrowdClientResolver;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -89,10 +88,6 @@ public class MsoyClientResolver extends CrowdClientResolver
             groups.add(record.toGroupMembership(group, null));
         }
         userObj.setGroups(new DSet<GroupMembership>(groups.iterator()));
-
-        // TODO
-        userObj.setTokens(new MsoyTokenRing());
-        // TODO: etc..
     }
 
     /**
@@ -101,8 +96,6 @@ public class MsoyClientResolver extends CrowdClientResolver
     protected void resolveGuest (MemberObject userObj)
         throws Exception
     {
-        userObj.setTokens(new MsoyTokenRing());
-        // TODO: make a proper guest display name
         userObj.setMemberName((MemberName) _username);
     }
 
