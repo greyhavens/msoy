@@ -471,6 +471,10 @@ public class MsoyController extends Controller
         } else if (null != params["location"]) {
             _ctx.getLocationDirector().moveTo(int(params["location"]));
 
+        } else if (null != params["noplace"]) {
+            // go to no place- we just want to chat with our friends
+            _ctx.getTopPanel().setPlaceView(new NoPlaceView(_ctx));
+
         } else {
             var starterSceneId :int = int(params["sceneId"]);
             if (starterSceneId == 0) {
