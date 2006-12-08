@@ -51,7 +51,7 @@ public class ItemContainer extends VerticalPanel
         label.setStyleName("itemThumbText");
         label.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                new ItemView(_panel._ctx, _item, _panel).show();
+                new ItemDetailPopup(_panel._ctx, _item, _panel).show();
             }
         });
         add(label);

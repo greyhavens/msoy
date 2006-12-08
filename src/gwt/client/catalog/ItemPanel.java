@@ -65,19 +65,6 @@ public class ItemPanel extends DockPanel
         });
     }
 
-    protected void purchaseItem (ItemIdent item)
-    {
-        _ctx.catalogsvc.purchaseItem(_ctx.creds, item, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                setStatus("Item purchased.");
-            }
-            public void onFailure (Throwable caught) {
-                String reason = caught.getMessage();
-                setStatus("Item creation failed: " + reason);
-            }
-        });
-    }
-
     /**
      * Displays a status message to the user, may be called by item editors.
      */

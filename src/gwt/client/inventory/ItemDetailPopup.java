@@ -25,18 +25,21 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.client.WebContext;
 
-import client.item.BaseItemDetailPanel;
+import client.item.BaseItemDetailPopup;
 import client.shell.MsoyEntryPoint;
 
-public class ItemView extends BaseItemDetailPanel
+/**
+ * Displays a popup detail view of an item from the user's inventory.
+ */
+public class ItemDetailPopup extends BaseItemDetailPopup
 {
-    public ItemView (WebContext ctx, Item item, ItemPanel parent)
+    public ItemDetailPopup (WebContext ctx, Item item, ItemPanel parent)
     {
         super(ctx, item);
         _parent = parent;
-        recenter(true);
     }
 
+    // @Override // BaseItemDetailPopup
     protected Widget createPreview (Item item)
     {
         // TODO: maybe ItemUtil should handle this
@@ -51,6 +54,7 @@ public class ItemView extends BaseItemDetailPanel
         }
     }
 
+    // @Override // BaseItemDetailPopup
     protected void createInterface (VerticalPanel details, VerticalPanel controls)
     {
         super.createInterface(details, controls);

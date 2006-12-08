@@ -4,6 +4,9 @@
 }
 
 .itemDescrip {
+  text-decoration: underline;
+  cursor: pointer;
+  cursor: hand;
   font-size: 14px;
 }
 

@@ -21,12 +21,11 @@ import com.threerings.msoy.web.client.WebContext;
 import client.shell.BorderedPopup;
 
 /**
- * Defines the base item detail panel from which we derive an inventory item detail and a catalog
- * item detail.
+ * Defines the base item detail popup from which we derive an inventory and catalog item detail.
  */
-public class BaseItemDetailPanel extends BorderedPopup
+public class BaseItemDetailPopup extends BorderedPopup
 {
-    protected BaseItemDetailPanel (WebContext ctx, Item item)
+    protected BaseItemDetailPopup (WebContext ctx, Item item)
     {
         super(true);
         _ctx = ctx;
@@ -74,12 +73,15 @@ public class BaseItemDetailPanel extends BorderedPopup
         _ctx.itemsvc.loadItemDetail(_ctx.creds, _item.getIdent(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 gotDetail(_detail = (ItemDetail)result);
+                recenter(false);
             }
             public void onFailure (Throwable caught) {
                 // TODO: translate, unhack
                 _description.setText("Failed to load item details: " + caught);
             }
         });
+
+        recenter(false);
     }
 
     /**

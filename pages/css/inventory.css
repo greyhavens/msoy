@@ -14,5 +14,7 @@
 
 .itemThumbText {
   text-decoration: underline;
+  cursor: pointer;
+  cursor: hand;
   font-size: small;
 }
