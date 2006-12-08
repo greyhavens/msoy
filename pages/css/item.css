@@ -106,15 +106,13 @@
 }
 
 .itemMediaView {
-  border: 1px solid;
-  padding: 5px;
 }
 
 .itemDetailPanel { 
+  width: 550px;
 }
 
 .itemDetailTitle {
-  background: #FFCC99;
 }
 
 .itemDetailTitle td {
@@ -132,6 +130,7 @@
 
 .itemDetailContent {
   background-image: url(/images/item/detail_content_bg.png);
+  background-position: bottom left;
   padding: 10px;
 }
 

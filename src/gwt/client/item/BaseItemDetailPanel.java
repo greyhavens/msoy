@@ -3,6 +3,7 @@
 
 package client.item;
 
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -28,12 +29,14 @@ public class BaseItemDetailPanel extends VerticalPanel
 
         // create our user interface
         HorizontalPanel title = new HorizontalPanel();
-        title.setVerticalAlignment(ALIGN_BOTTOM);
         title.setStyleName("itemDetailTitle");
         title.add(_name = new Label(item.getDescription()));
         _name.setStyleName("itemDetailName");
         title.add(_creator = new Label(""));
         _creator.setStyleName("itemDetailCreator");
+        // this is a goddamned hack, but GWT doesn't support valign=baseline, dooh!
+        DOM.setStyleAttribute(DOM.getParent(_name.getElement()), "verticalAlign", "baseline");
+        DOM.setStyleAttribute(DOM.getParent(_creator.getElement()), "verticalAlign", "baseline");
         // TODO: add a close box
         add(title);
 
@@ -72,7 +75,10 @@ public class BaseItemDetailPanel extends VerticalPanel
 
     protected void createInterface (VerticalPanel details, VerticalPanel controls)
     {
-        details.add(_description = new Label("..."));
+        details.add(_description = new Label("This would be the item's description, but we " +
+                                             "have no notion of description now. Or rather, " +
+                                             "what we call description is actually being used " +
+                                             "for name. So some fiddling will be needed."));
     }
 
     protected void gotDetail (ItemDetail detail)
