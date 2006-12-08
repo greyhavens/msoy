@@ -47,10 +47,11 @@ import com.threerings.msoy.web.client.WebContext;
 import client.item.BaseItemDetailPanel;
 import client.item.ItemRating;
 import client.item.ItemUtil;
+import client.shell.BorderedPopup;
 import client.shell.MsoyEntryPoint;
 import client.util.HeaderValueTable;
 
-public class ItemView extends PopupPanel
+public class ItemView extends BorderedPopup
 {
     public ItemView (WebContext ctx, Item item, ItemPanel parent)
     {
@@ -59,7 +60,6 @@ public class ItemView extends PopupPanel
         _ctx = ctx;
         _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
         _parent = parent;
-        setStyleName("itemPopup");
 
         setWidget(new ItemDetailPanel(ctx, item));
 
@@ -79,8 +79,8 @@ public class ItemView extends PopupPanel
             super(ctx, item);
         }
 
-        protected void createDetailsInterface (VerticalPanel details) {
-            super.createDetailsInterface(details);
+        protected void createInterface (VerticalPanel details, VerticalPanel controls) {
+            super.createInterface(details, controls);
 
             Button button;
             if (_item.parentId == -1) {
@@ -99,7 +99,7 @@ public class ItemView extends PopupPanel
                     }
                 });
             }
-            details.add(button);
+            controls.add(button);
 
             if (_item.parentId == -1) {
                 button = new Button("Edit ...");
@@ -110,7 +110,7 @@ public class ItemView extends PopupPanel
                         editor.show();
                     }
                 });
-                details.add(button);
+                controls.add(button);
             }
         }
     }

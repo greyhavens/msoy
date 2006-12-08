@@ -52,10 +52,10 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     public static final int THUMBNAIL_HEIGHT = 120;
 
     /** Defines the maximum visible width of a an item preview visualization. */
-    public static final int PREVIEW_WIDTH = 640;
+    public static final int PREVIEW_WIDTH = 320;
 
     /** Defines the maximum visible height of a an item preview visualization. */
-    public static final int PREVIEW_HEIGHT = 480;
+    public static final int PREVIEW_HEIGHT = 240;
 
     /** An identifier used to coordinate with the server when uploading media. */
     public static final String FURNI_ID = "furni";

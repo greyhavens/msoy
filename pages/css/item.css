@@ -109,3 +109,46 @@
   border: 1px solid;
   padding: 5px;
 }
+
+.itemDetailPanel { 
+}
+
+.itemDetailTitle {
+  background: #FFCC99;
+}
+
+.itemDetailTitle td {
+  padding: 10px;
+}
+
+.itemDetailName {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.itemDetailCreator {
+  font-size: 12px;
+}
+
+.itemDetailContent {
+  background-image: url(/images/item/detail_content_bg.png);
+  padding: 10px;
+}
+
+.itemDetailPreview {
+  border: 4px solid #FFFFFF;
+  background-image: url(/images/item/detail_preview_bg.png);
+  padding: 10px;
+}
+
+.itemDetailSide {
+  padding: 10px;
+}
+
+.itemDetailDetails td {
+  padding: 5px;
+}
+
+.itemDetailControls td {
+  padding: 5px;
+}
