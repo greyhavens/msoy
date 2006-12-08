@@ -37,7 +37,7 @@ public interface MemberServiceAsync
     public void declineFriend (WebCreds creds, int friendId, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link MemberService#getNeighborhood}.
+     * The asynchronous version of {@link MemberService#serializeNeighborhood}.
      */
-    public void getNeighborhood (WebCreds creds, int memberId, AsyncCallback callback);
+    public void serializeNeighborhood (WebCreds creds, int memberId, AsyncCallback callback);
 }

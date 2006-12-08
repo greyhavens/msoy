@@ -67,12 +67,12 @@ public class MemberServlet extends RemoteServiceServlet
     }
     
     // from MemberService
-    public Neighborhood getNeighborhood (WebCreds creds, int memberId)
+    public String serializeNeighborhood (WebCreds creds, int memberId)
         throws ServiceException
     {
-        ServletWaiter<Neighborhood> waiter =
-            new ServletWaiter<Neighborhood>("getNeighborhood[" + memberId + "]");
-        MsoyServer.memberMan.getNeighborhood(memberId, waiter);
+        ServletWaiter<String> waiter =
+            new ServletWaiter<String>("serializeNeighborhood[" + memberId + "]");
+        MsoyServer.memberMan.serializeNeighborhood(memberId, waiter);
         return waiter.waitForResult();
     }
 }

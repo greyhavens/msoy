@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server;
 
+import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import java.util.logging.Level;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
@@ -672,6 +677,28 @@ public class MemberManager
     }
     
     /**
+     * Constructs and returns the serialization of a {@link Neighborhood} record
+     * for a given member.
+     */
+    public void serializeNeighborhood (final int memberId, final ResultListener<String> listener)
+    {
+        getNeighborhood(memberId, new ResultListener<Neighborhood>() {
+            public void requestCompleted (Neighborhood result) {
+                try {
+                    listener.requestCompleted(
+                        URLEncoder.encode(toJSON(result).toString(), "UTF-8"));
+                } catch (Exception e) {
+                    listener.requestFailed(e);
+                }
+            }
+            public void requestFailed (Exception cause) {
+                listener.requestFailed(cause);
+            }
+        });
+    }
+    
+
+    /**
      * Constructs and returns a {@link Neighborhood} record for a given member.
      */
     public void getNeighborhood (final int memberId, ResultListener<Neighborhood> listener)
@@ -724,6 +751,45 @@ public class MemberManager
                 _listener.requestCompleted(_result);
             }
         });
+    }
+    // handcrafted JSON serialization, to minimize the overhead
+    protected JSONObject toJSON (Neighborhood hood)
+        throws JSONException
+    {
+        JSONObject obj = new JSONObject();
+        obj.put("name", hood.member.toString());
+        obj.put("id", hood.member.getMemberId());
+        JSONArray jArr = new JSONArray();
+        for (NeighborFriend friend : hood.neighborFriends) {
+            jArr.put(toJSON(friend));
+        }
+        obj.put("friends", jArr);
+        jArr = new JSONArray();
+        for (NeighborGroup group : hood.neighborGroups) {
+            jArr.put(toJSON(group));
+        }
+        obj.put("groups", jArr);
+        return obj;
+    }
+    
+    protected JSONObject toJSON (NeighborFriend friend)
+        throws JSONException
+    {
+        JSONObject obj = new JSONObject();
+        obj.put("name", friend.member.toString());
+        obj.put("id", friend.member.getMemberId());
+        obj.put("isOnline", friend.isOnline);
+        return obj;
+    }
+
+    protected JSONObject toJSON (NeighborGroup group)
+        throws JSONException
+    {
+        JSONObject obj = new JSONObject();
+        obj.put("name", group.groupName);
+        obj.put("id", group.groupId);
+        obj.put("members", group.members);
+        return obj;
     }
 
     /**

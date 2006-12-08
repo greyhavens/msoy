@@ -48,6 +48,6 @@ public interface MemberService extends RemoteService
     /**
      * Fetch neighborhood data for a given member.
      */
-    public Neighborhood getNeighborhood (WebCreds creds, int memberId)
+    public String serializeNeighborhood (WebCreds creds, int memberId)
         throws ServiceException;
 }
