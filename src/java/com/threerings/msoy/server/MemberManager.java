@@ -805,7 +805,9 @@ public class MemberManager
         }
 
         // see if we're just updating their rank
-        GroupMembership gm = mobj.groups.get(groupId);
+        GroupName group = new GroupName();
+        group.groupId = groupId;
+        GroupMembership gm = mobj.groups.get(group);
         if (gm != null) {
             gm.rank = groupRank;
             mobj.updateGroups(gm);
