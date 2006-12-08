@@ -7,6 +7,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -30,6 +31,8 @@ import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.WebCreds;
+
+import client.util.FlashClients;
 
 /**
  * Handles some standard services for a top-level MetaSOY web application
@@ -132,6 +135,13 @@ public abstract class MsoyEntryPoint
     protected void setContent (Widget content)
     {
         RootPanel.get("content").clear();
+        String id = getPageId();
+        if ((id != "world") && (id != "game")) {
+            if (_chat == null) {
+                _chat = FlashClients.createChatClient();
+            }
+            RootPanel.get("content").add(_chat);
+        }
         RootPanel.get("content").add(content);
     }
 
@@ -176,4 +186,6 @@ public abstract class MsoyEntryPoint
 
     protected WebContext _ctx;
     protected LogonPanel _logon;
+
+    protected HTML _chat;
 }

@@ -17,6 +17,8 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
 
+import client.util.FlashClients;
+
 /**
  * Handles the MetaSOY inventory application.
  */
@@ -52,7 +54,7 @@ public class index extends MsoyEntryPoint
             if (_inventory == null) {
                 _inventory = new InventoryPanel(_ctx);
             }
-            RootPanel.get("content").add(_inventory);
+            setContent(_inventory);
         }
     }
 

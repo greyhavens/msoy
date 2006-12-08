@@ -16,6 +16,8 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
 
+import client.util.FlashClients;
+
 /**
  * Handles the MetaSOY main page.
  */
@@ -41,9 +43,7 @@ public class index extends MsoyEntryPoint
             // don't show the flash client in the GWT shell
             if (GWT.isScript()) {
                 if (_client == null) {
-                    _client = WidgetUtil.createFlashContainer(
-                        // TODO: fix height arg to be 100% (doesn't currently work)
-                        "asclient", "/clients/game-client.swf", "90%", "550", null);
+                    _client = FlashClients.createWorldClient(null);
                 }
                 RootPanel.get("content").add(_client);
             }

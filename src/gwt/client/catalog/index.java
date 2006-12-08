@@ -44,7 +44,7 @@ public class index extends MsoyEntryPoint
     protected void onPageLoad ()
     {
         _catalog = new CatalogPanel(_ctx);
-        RootPanel.get("content").add(_catalog);
+        setContent(_catalog);
 
         History.addHistoryListener(this);
         String initToken = History.getToken();

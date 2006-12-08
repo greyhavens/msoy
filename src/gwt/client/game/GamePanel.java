@@ -12,6 +12,8 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.LaunchConfig;
 
+import client.util.FlashClients;
+
 /**
  * Displays the client interface for a particular game.
  */
@@ -25,10 +27,7 @@ public class GamePanel extends VerticalPanel
         Widget display = null;
         switch (config.type) {
         case LaunchConfig.FLASH_LOBBIED: {
-            display = WidgetUtil.createFlashContainer(
-               // TODO: separate SWF for the lobby client
-               "aslobby", "/clients/game-client.swf", "800", "600",
-               "gameLobby=" + config.gameId);
+            display = FlashClients.createLobbyClient(config.gameId);
             break;
         }
 
