@@ -43,7 +43,7 @@ public class BaseItemDetailPanel extends VerticalPanel
         FlexTable middle = new FlexTable();
         middle.setStyleName("itemDetailContent");
         // a place for the item's preview visualization
-        Widget preview = ItemUtil.createMediaView(item.getPreviewMedia(), false);
+        Widget preview = createPreview(item);
         middle.setWidget(0, 0, preview);
         middle.getFlexCellFormatter().setStyleName(0, 0, "itemDetailPreview");
         middle.getFlexCellFormatter().setRowSpan(0, 0, 2);
@@ -71,6 +71,11 @@ public class BaseItemDetailPanel extends VerticalPanel
                 _description.setText("Failed to load item details: " + caught);
             }
         });
+    }
+
+    protected Widget createPreview (Item item)
+    {
+        return ItemUtil.createMediaView(item.getPreviewMedia(), false);
     }
 
     protected void createInterface (VerticalPanel details, VerticalPanel controls)

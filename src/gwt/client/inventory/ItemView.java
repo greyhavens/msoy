@@ -79,8 +79,38 @@ public class ItemView extends BorderedPopup
             super(ctx, item);
         }
 
+        protected Widget createPreview (Item item)
+        {
+            // TODO: maybe ItemUtil should handle this
+            if (item instanceof Avatar) {
+                MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
+                String path = MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath());
+                return WidgetUtil.createFlashContainer(
+                    "avatarViewer", "/clients/avatarviewer.swf", 300, 500,
+                    "avatar=" + URL.encodeComponent(path));
+            } else {
+                return super.createPreview(item);
+            }
+        }
+
         protected void createInterface (VerticalPanel details, VerticalPanel controls) {
             super.createInterface(details, controls);
+
+            if (_item instanceof Furniture) {
+                // TODO: "Action", ((Furniture)_item).action
+
+            } else if (_item instanceof Game) {
+                // TODO: ((Game)_item).name,
+                // TODO: "# Players (Desired)", String.valueOf(((Game)_item).desiredPlayers));
+                // TODO: "# Players (Minimum)", String.valueOf(((Game)_item).minPlayers),
+                // TODO: "# Players (Maximum)", String.valueOf(((Game)_item).maxPlayers));
+
+                int gameId = _item.getProgenitorId();
+                controls.add(new HTML("<a href=\"/game/index.html#" + gameId + "\">Play!</a>"));
+
+            } else if (_item instanceof Photo) {
+                // TODO: "Caption", ((Photo)_item).caption);
+            }
 
             Button button;
             if (_item.parentId == -1) {

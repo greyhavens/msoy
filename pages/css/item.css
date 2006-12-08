@@ -137,6 +137,9 @@
 .itemDetailPreview {
   border: 4px solid #FFFFFF;
   background-image: url(/images/item/detail_preview_bg.png);
+  text-align: center;
+  width: 240px;
+  height: 240px;
   padding: 10px;
 }
 
