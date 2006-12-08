@@ -8,9 +8,10 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
 import com.threerings.util.Comparable;
+import com.threerings.util.Hashable;
 
 public class GroupName
-    implements Streamable, Comparable
+    implements Streamable, Comparable, Hashable
 {
     /** the group's name. */
     public var groupName :String;
@@ -38,6 +39,19 @@ public class GroupName
     {
         var that :GroupName = (other as GroupName);
         return this.groupId - that.groupId;
+    }
+
+    // from Hashable
+    public function hashCode () :int
+    {
+        return groupId;
+    }
+
+    // from Comparable
+    public function equals (other :Object) :Boolean
+    {
+        return (other is GroupName) &&
+            ((other as GroupName).groupId == groupId);
     }
 }
 }
