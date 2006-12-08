@@ -27,6 +27,8 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 
+import com.threerings.msoy.world.data.MsoySceneModel;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -73,7 +75,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.setMemberName(new MemberName(member.name, member.memberId));
         userObj.setHomeSceneId(member.homeSceneId);
         userObj.setOwnedScenes(new DSet<SceneBookmarkEntry>(
-            MsoyServer.sceneRepo.getOwnedScenes(member.memberId).iterator()));
+            MsoyServer.sceneRepo.getOwnedScenes(
+                MsoySceneModel.OWNER_TYPE_MEMBER, member.memberId).iterator()));
         ArrayList<GroupMembership> groups = new ArrayList<GroupMembership>();
         for (GroupMembershipRecord record : MsoyServer.groupRepo.getMemberships(member.memberId)) {
             groups.add(record.toGroupMembership(

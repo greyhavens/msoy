@@ -150,7 +150,8 @@ public class MsoySceneRepository extends SimpleRepository
     /**
      * Retrieve a list of all the scenes that the user directly owns.
      */
-    public ArrayList<SceneBookmarkEntry> getOwnedScenes (final int memberId)
+    public ArrayList<SceneBookmarkEntry> getOwnedScenes (
+        final byte ownerType, final int memberId)
         throws PersistenceException
     {
         return execute(new Operation<ArrayList<SceneBookmarkEntry>>() {
@@ -164,7 +165,8 @@ public class MsoySceneRepository extends SimpleRepository
                 try {
                     ResultSet rs = stmt.executeQuery("select " +
                         "SCENE_ID, NAME from SCENES " +
-                        "where OWNER_ID = " + memberId);
+                        "where OWNER_TYPE = " + ownerType + " " +
+                        "and OWNER_ID = " + memberId);
                     while (rs.next()) {
                         list.add(new SceneBookmarkEntry(
                             rs.getInt(1), rs.getString(2), 0L));
