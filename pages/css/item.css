@@ -149,8 +149,14 @@
 
 .itemDetailDetails td {
   padding: 5px;
+  font-size: 12px;
 }
 
 .itemDetailControls td {
   padding: 5px;
+}
+
+.tagDetailPanel {
+  padding: 10px;
+  font-size: 12px;
 }

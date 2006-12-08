@@ -213,6 +213,7 @@ body {
 .itemRating {
   background: #FFFFFF;
   border: 1px solid black;
+  width: 100px;
 }
 
 .groupLogoPopup {

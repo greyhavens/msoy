@@ -3,7 +3,10 @@
 
 package client.item;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -15,17 +18,23 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.web.client.WebContext;
 
+import client.shell.BorderedPopup;
+
 /**
  * Defines the base item detail panel from which we derive an inventory item detail and a catalog
  * item detail.
  */
-public class BaseItemDetailPanel extends VerticalPanel
+public class BaseItemDetailPanel extends BorderedPopup
 {
     protected BaseItemDetailPanel (WebContext ctx, Item item)
     {
-        setStyleName("itemDetailPanel");
+        super(true);
         _ctx = ctx;
         _item = item;
+
+        VerticalPanel contents = new VerticalPanel();
+        contents.setStyleName("itemDetailPanel");
+        setWidget(contents);
 
         // create our user interface
         HorizontalPanel title = new HorizontalPanel();
@@ -38,7 +47,7 @@ public class BaseItemDetailPanel extends VerticalPanel
         DOM.setStyleAttribute(DOM.getParent(_name.getElement()), "verticalAlign", "baseline");
         DOM.setStyleAttribute(DOM.getParent(_creator.getElement()), "verticalAlign", "baseline");
         // TODO: add a close box
-        add(title);
+        contents.add(title);
 
         FlexTable middle = new FlexTable();
         middle.setStyleName("itemDetailContent");
@@ -49,17 +58,17 @@ public class BaseItemDetailPanel extends VerticalPanel
         middle.getFlexCellFormatter().setRowSpan(0, 0, 2);
         // a place for details
         middle.setWidget(0, 1, _details = new VerticalPanel());
-        middle.getFlexCellFormatter().setVerticalAlignment(0, 1, ALIGN_TOP);
+        middle.getFlexCellFormatter().setVerticalAlignment(0, 1, VerticalPanel.ALIGN_TOP);
         _details.setStyleName("itemDetailDetails");
         // a place for controls
         middle.setWidget(1, 0, _controls = new VerticalPanel());
-        middle.getFlexCellFormatter().setVerticalAlignment(1, 0, ALIGN_BOTTOM);
+        middle.getFlexCellFormatter().setVerticalAlignment(1, 0, VerticalPanel.ALIGN_BOTTOM);
         _controls.setStyleName("itemDetailControls");
         // allow derived classes to add their own nefarious bits
         createInterface(_details, _controls);
-        add(middle);
+        contents.add(middle);
 
-        // TODO: add tag stuff
+        contents.add(new TagDetailPanel(ctx, item));
 
         // load up the item details
         _ctx.itemsvc.loadItemDetail(_ctx.creds, _item.getIdent(), new AsyncCallback() {
@@ -71,6 +80,23 @@ public class BaseItemDetailPanel extends VerticalPanel
                 _description.setText("Failed to load item details: " + caught);
             }
         });
+    }
+
+    /**
+     * Recenters our popup.
+     */
+    protected void recenter (boolean defer)
+    {
+        if (defer) {
+            DeferredCommand.add(new Command() {
+                public void execute () {
+                    recenter(false);
+                }
+            });
+        } else {
+            setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
+                             (Window.getClientHeight() - getOffsetHeight()) / 2);
+        }
     }
 
     protected Widget createPreview (Item item)
@@ -89,6 +115,7 @@ public class BaseItemDetailPanel extends VerticalPanel
     protected void gotDetail (ItemDetail detail)
     {
         _creator.setText("by " + detail.creator.toString());
+        _details.add(new ItemRating(_ctx, detail.item, detail.memberRating));
     }
 
     protected WebContext _ctx;
