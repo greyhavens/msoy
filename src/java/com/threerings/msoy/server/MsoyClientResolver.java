@@ -23,10 +23,11 @@ import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 
-import com.threerings.msoy.web.data.MemberName;
-import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.server.persist.GroupRecord;
 
+import com.threerings.msoy.web.data.GroupMembership;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import static com.threerings.msoy.Log.log;
@@ -79,8 +80,13 @@ public class MsoyClientResolver extends CrowdClientResolver
                 MsoySceneModel.OWNER_TYPE_MEMBER, member.memberId).iterator()));
         ArrayList<GroupMembership> groups = new ArrayList<GroupMembership>();
         for (GroupMembershipRecord record : MsoyServer.groupRepo.getMemberships(member.memberId)) {
-            groups.add(record.toGroupMembership(
-                           MsoyServer.groupRepo.loadGroup(record.groupId), null));
+            GroupRecord group = MsoyServer.groupRepo.loadGroup(record.groupId);
+            if (group == null) {
+                log.warning("User member of non-existent group?! [who=" + member.accountName +
+                            ", groupId=" + record.groupId + "].");
+                continue;
+            }
+            groups.add(record.toGroupMembership(group, null));
         }
         userObj.setGroups(new DSet<GroupMembership>(groups.iterator()));
 
