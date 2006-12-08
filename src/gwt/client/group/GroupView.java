@@ -144,19 +144,24 @@ public class GroupView extends DockPanel
             } else {
                 memberFlow.add(new InlineLabel(" . "));
             }
-            // TODO: popup view of member? a popup menu with possible actions on a member?
-            memberFlow.add(new InlineLabel(name.toString()));
+            Label memberLabel = new InlineLabel(name.toString());
+            memberLabel.addClickListener(new ClickListener() {
+                public void onClick (Widget widget) {
+                    new MemberView(_ctx, name.getMemberId()).show();
+                }
+            });
+            memberFlow.add(memberLabel);
             // if we're an admin, we can remove non-admins from non-public groups
-            if (_amAdmin && rank != GroupMembership.RANK_MANAGER &&
-                _group.policy != Group.POLICY_PUBLIC) {
-                Label removeLabel = new InlineLabel("(-)");
-                removeLabel.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        removeMember(name.getMemberId());
-                    }
-                });
-                memberFlow.add(removeLabel);
-            }
+            //if (_amAdmin && rank != GroupMembership.RANK_MANAGER &&
+                //_group.policy != Group.POLICY_PUBLIC) {
+                //Label removeLabel = new InlineLabel("(-)");
+                //removeLabel.addClickListener(new ClickListener() {
+                    //public void onClick (Widget sender) {
+                        //removeMember(name.getMemberId());
+                    //}
+                //});
+                //memberFlow.add(removeLabel);
+            //}
         }
         _table.addRow("Members", memberFlow, "Scenes", new HTML("<a href='/world/index.html#g" + 
             _group.groupId + "'>Home</a>"));
