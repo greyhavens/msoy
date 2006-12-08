@@ -128,6 +128,53 @@ body {
    padding: 5px;
 }
 
+/** Configuration for our bordered popup window */
+.borderedPopup {
+   background: #FFFFFF;
+}
+
+.borderedPopup .UpperLeft {
+   background-image: url(/images/ui/popup/top_left.png);
+   width: 4px;
+   height: 4px;
+}
+.borderedPopup .Upper {
+   background-image: url(/images/ui/popup/horiz.png);
+   height: 4px;
+}
+.borderedPopup .UpperRight {
+   background-image: url(/images/ui/popup/top_right.png);
+   width: 4px;
+   height: 4px;
+}
+.borderedPopup .Left {
+   background-image: url(/images/ui/popup/vert.png);
+   width: 4px;
+}
+.borderedPopup .Right {
+   background-image: url(/images/ui/popup/vert.png);
+   width: 4px;
+}
+.borderedPopup .LowerLeft {
+   background-image: url(/images/ui/popup/bottom_left.png);
+   width: 4px;
+   height: 4px;
+}
+.borderedPopup .Lower {
+   background-image: url(/images/ui/popup/horiz.png);
+   height: 4px;
+}
+.borderedPopup .LowerRight {
+   background-image: url(/images/ui/popup/bottom_right.png);
+   width: 4px;
+   height: 4px;
+}
+
+.separatorLine {
+  background-image: url(/images/ui/separator.png)
+  width: 100%;
+}
+
 /** General UI styles. */
 .inline {
    display: inline;
