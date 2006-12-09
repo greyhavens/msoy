@@ -75,7 +75,7 @@ public class MemberRecord
     public int avatarId;
 
     /** The time at which this player was created (when they first starting
-     * playing  this particular game). */
+     * playing this particular game). */
     public Date created;
 
     /** The number of sessions this player has played. */

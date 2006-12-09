@@ -8,16 +8,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
+
+import sun.text.IntHashtable;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SoftCache;
@@ -30,6 +37,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.MemberName;
@@ -451,9 +459,24 @@ public class ItemManager
         // and load the catalog
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<CatalogListing>>(listener) {
             public List<CatalogListing> invokePersistResult () throws PersistenceException {
+                IntSet members = new ArrayIntSet();
                 List<CatalogListing> list = new ArrayList<CatalogListing>();
+                // fetch catalog records and loop over them
                 for (CatalogRecord record : repo.loadCatalog()) {
+                    // convert them to listings
                     list.add(record.toListing());
+                    // and keep track of which member names we need to look up
+                    members.add(record.item.creatorId);
+                }
+                IntMap<MemberName> map = new HashIntMap<MemberName>();
+                int[] idArr = members.toIntArray();
+                // now look up the names and build a map of memberId -> MemberName
+                for (MemberNameRecord record: MsoyServer.memberRepo.loadMemberNames(idArr)) {
+                    map.put(record.memberId, new MemberName(record.name, record.memberId));
+                }
+                // finally fill in the listings using the map
+                for (CatalogListing listing : list) {
+                    listing.creator = map.get(listing.creator.getMemberId());
                 }
                 return list;
             }

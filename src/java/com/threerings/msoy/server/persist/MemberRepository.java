@@ -24,9 +24,11 @@ import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
+import com.samskivert.util.IntListUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.FriendEntry;
@@ -65,6 +67,36 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MemberRecord.class, memberId);
+    }
+
+    /**
+     * Looks up a member's name by id. Returns null if no member exists with the
+     * specified id.
+     */
+    public MemberNameRecord loadMemberName (int memberId)
+        throws PersistenceException
+    {
+        Collection<MemberNameRecord> result = loadMemberNames(new int[] { memberId });
+        if (result.size() > 0) {
+            return result.iterator().next();
+        }
+        return null;
+    }
+
+    /**
+     * Looks up some members' names by id.
+     * TODO: Implement findAll(Persistent.class, Comparable... keys) or the like,
+     *       as per MDB's suggestion, say so we can cache properly.
+     */
+    public Collection<MemberNameRecord> loadMemberNames (int[] memberIds)
+        throws PersistenceException
+    {
+        Comparable[] idArr = IntListUtil.box(memberIds);
+        return findAll(MemberNameRecord.class,
+                       new FromOverride(MemberRecord.class),
+                       new Where(new In(MemberRecord.MEMBER_ID_C, idArr)),
+                       new FieldOverride(MemberNameRecord.MEMBER_ID, MemberRecord.MEMBER_ID_C),
+                       new FieldOverride(MemberNameRecord.NAME, MemberRecord.NAME_C));
     }
 
     /**

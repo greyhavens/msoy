@@ -58,7 +58,8 @@ public abstract class CatalogRecord<T extends ItemRecord>
         CatalogListing listing = new CatalogListing();
         listing.item = item.toItem();
         listing.listedDate = new Date(listedDate.getTime());
-        listing.creator = new MemberName("Mystery Person", item.creatorId); // TODO
+        // the name part of the MemberName is filled in by ItemManager
+        listing.creator = new MemberName(null, item.creatorId);
         listing.price = 0; // TODO
         return listing;
     }
