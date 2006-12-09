@@ -33,6 +33,7 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.util.IntListUtil;
 import com.threerings.msoy.item.web.TagHistory;
 
 /**
@@ -134,10 +135,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (itemIds.length == 0) {
             return new ArrayList<T>();
         }
-        Comparable[] idArr = new Comparable[itemIds.length];
-        for (int ii = 0; ii < itemIds.length; ii ++) {
-            idArr[ii] = new Integer(itemIds[ii]);
-        }
+        Comparable[] idArr = IntListUtil.box(itemIds);
         Where inClause = new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr));
         Collection<T> items = findAll(
             getItemClass(), inClause,
