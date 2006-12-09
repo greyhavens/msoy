@@ -29,6 +29,7 @@ import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.game.client.LobbyService;
 
+import com.threerings.msoy.chat.client.ChatControl;
 import com.threerings.msoy.chat.client.ReportingListener;
 
 public class MsoyController extends Controller
@@ -108,9 +109,7 @@ public class MsoyController extends Controller
      */
     public function handleTell (user :MemberName) :void
     {
-        _ctx.displayFeedback(null, "~Sorry, Tell is not yet working!" +
-            " (Poor " + user + " will never know your true feelings.)");
-        log.warning("TODO: Tell(" + user + ")");
+        ChatControl.initiateTell(user);
     }
 
     /**

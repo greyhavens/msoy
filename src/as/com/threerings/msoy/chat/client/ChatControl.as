@@ -73,6 +73,26 @@ public class ChatControl extends HBox
         updateTarget();
     }
 
+    /**
+     * Called by various entities to start doing a Tell on someone.
+     */
+    public static function initiateTell (name :MemberName) :void
+    {
+        for each (var control :ChatControl in _controls) {
+            control.initiateTell(name);
+        }
+    }
+
+    /**
+     * Initiate a tell to the specified user.
+     */
+    public function initiateTell (name :MemberName) :void
+    {
+        _ctx.getChatDirector().addChatter(name);
+        _target = name;
+        updateTarget();
+    }
+
     override public function parentChanged (p :DisplayObjectContainer) :void
     {
         super.parentChanged(p);
@@ -92,12 +112,17 @@ public class ChatControl extends HBox
             });
 
             _ctx.getLocationDirector().addLocationObserver(_locObs);
+            _controls.push(this);
 
         } else {
             showTip(false);
             _curLine = _txt.text;
 
             _ctx.getLocationDirector().removeLocationObserver(_locObs);
+            var idx :int = _controls.indexOf(this);
+            if (idx != -1) {
+                _controls.splice(idx, 1);
+            }
         }
     }
 
@@ -377,6 +402,9 @@ public class ChatControl extends HBox
 
     /** Are we showing the text entry tip? */
     protected var _showingTip :Boolean = false;
+
+    /** An array of the currently shown-controls. */
+    protected static var _controls :Array = [];
 
     /** The preserved current line of text when traversing history or
      * carried between instances of ChatControl. */
