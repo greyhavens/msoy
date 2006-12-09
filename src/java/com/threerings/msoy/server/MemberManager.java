@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import java.util.logging.Level;
@@ -587,11 +586,15 @@ public class MemberManager
                 GroupDetail detail = new GroupDetail();
                 detail.creator = mRec.getName();
                 detail.group = gRec.toWebObject();
-                HashMap<MemberName, Byte> members = new HashMap<MemberName, Byte>();
+                ArrayList<GroupMembership> members = new ArrayList<GroupMembership>();
                 detail.members = members;
                 for (GroupMembershipRecord gmRec : _groupRepo.getMembers(groupId)) {
                     mRec = _memberRepo.loadMember(gmRec.memberId);
-                    members.put(mRec.getName(), gmRec.rank);
+                    GroupMembership membership = new GroupMembership();
+                    // membership.group left null intentionally 
+                    membership.member = mRec.getName();
+                    membership.rank = gmRec.rank;
+                    members.add(membership);
                 }
                 return detail;
             }

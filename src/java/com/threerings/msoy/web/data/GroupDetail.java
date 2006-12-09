@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.web.data;
 
-import java.util.Map;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
@@ -20,6 +20,6 @@ public class GroupDetail
     /** The person who created the group. */
     public MemberName creator;
 
-    /** The members of this group, mapped from {@link MemberName} to rank, as a Byte. */
-    public Map members;
+    /** The members of this group, expressed as a Set of GroupMembership(s) */
+    public List members;
 }

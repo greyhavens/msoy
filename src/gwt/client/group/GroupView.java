@@ -4,7 +4,7 @@
 package client.group;
 
 import java.util.Iterator;
-import java.util.Map.Entry;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -70,8 +70,10 @@ public class GroupView extends DockPanel
                 _group = _detail.group;
                 Byte myRank = null;
                 if (_ctx.creds != null) {
-                    // TODO: Is this too ugly?
-                    myRank = (Byte) _detail.members.get(new MemberName("", _ctx.creds.memberId));
+                    GroupMembership me = GroupView.findMember(_detail.members, _ctx.creds.memberId);
+                    if (me != null) {
+                        myRank = new Byte(me.rank);
+                    }
                 }
                 _amAdmin = (myRank != null) ?
                     myRank.byteValue() == GroupMembership.RANK_MANAGER : false;
@@ -133,12 +135,11 @@ public class GroupView extends DockPanel
         // TODO: most work, both aesthetically and functionality-wise.
 
         FlowPanel memberFlow = new FlowPanel();
-        Iterator i = _detail.members.entrySet().iterator();
+        Iterator i = _detail.members.iterator();
         boolean first = true;
         while (i.hasNext()) {
-            Entry e = (Entry) i.next();
-            byte rank = ((Byte) e.getValue()).byteValue();
-            final MemberName name = (MemberName) e.getKey();
+            final GroupMembership membership = (GroupMembership) i.next();
+            final MemberName name = (MemberName) membership.member;
             if (first) {
                 first = false;
             } else {
@@ -147,7 +148,7 @@ public class GroupView extends DockPanel
             Label memberLabel = new InlineLabel(name.toString());
             memberLabel.addClickListener(new ClickListener() {
                 public void onClick (Widget widget) {
-                    new MemberView(_ctx, name.getMemberId(), _amAdmin).show();
+                    new MemberView(_ctx, membership, _amAdmin).show();
                 }
             });
             memberFlow.add(memberLabel);
@@ -171,6 +172,20 @@ public class GroupView extends DockPanel
                 addError("Failed to remove member: " + caught.getMessage());
             }
         });
+    }
+
+    /**
+     * performs a simple scan of the list of GroupMembership objects to find and return the 
+     * first GroupMembership to refers to the requested memberId.
+     */
+    static protected GroupMembership findMember (List members, int memberId) 
+    {
+        Iterator i = members.iterator();
+        GroupMembership member = null;
+        while ((member == null || member.member.getMemberId() != memberId) && i.hasNext()) {
+            member = (GroupMembership)i.next();
+        }
+        return member;
     }
 
     protected void addError (String error)
