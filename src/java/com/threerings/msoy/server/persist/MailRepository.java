@@ -19,6 +19,7 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ValueExp;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.util.IntListUtil;
 
 /**
  * Manages the persistent store of mail and mailboxes.
@@ -118,15 +119,12 @@ public class MailRepository extends DepotRepository
      }
      
      /**
-      * Move a message from one folder to another. TODO: Bulk move, see deleteMessage.
+      * Move a message from one folder to another.
       */
-     public void moveMessage (int ownerId, int folderId, int newFolderId, int... messageIds)
+     public void moveMessage (int ownerId, int folderId, int newFolderId, int[] messageIds)
          throws PersistenceException
      {
-         Comparable[] idArr = new Comparable[messageIds.length];
-         for (int ii = 0; ii < messageIds.length; ii ++) {
-             idArr[ii] = new Integer(messageIds[ii]);
-         }
+         Integer[] idArr = IntListUtil.box(messageIds);
          int newId = claimMessageId(ownerId, newFolderId, 1);
          updatePartial(MailMessageRecord.class,
              new Where(new And(
@@ -146,10 +144,7 @@ public class MailRepository extends DepotRepository
          if (messageIds.length == 0) {
              return;
          }
-         Comparable[] idArr = new Comparable[messageIds.length];
-         for (int ii = 0; ii < messageIds.length; ii ++) {
-             idArr[ii] = new Integer(messageIds[ii]);
-         }
+         Comparable[] idArr = IntListUtil.box(messageIds);
          deleteAll(MailMessageRecord.class,
              new Where(new And(
                  new Equals(MailMessageRecord.OWNER_ID_C, new ValueExp(ownerId)),

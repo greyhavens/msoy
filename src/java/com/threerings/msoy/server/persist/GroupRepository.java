@@ -14,6 +14,8 @@ import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.util.IntListUtil;
+import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -52,10 +54,7 @@ public class GroupRepository extends DepotRepository
     public Collection<GroupRecord> loadGroups (int[] groupIds)
         throws PersistenceException
     {
-        Comparable[] idArr = new Integer[groupIds.length];
-        for (int ii = 0; ii < idArr.length; ii ++) {
-            idArr[ii] = Integer.valueOf(groupIds[ii]);
-        }
+        Comparable[] idArr = IntListUtil.box(groupIds);
         if (idArr.length == 0) {
             return new ArrayList<GroupRecord>();
         }

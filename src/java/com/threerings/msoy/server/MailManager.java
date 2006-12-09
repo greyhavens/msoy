@@ -179,17 +179,13 @@ public class MailManager
 
     /**
      * Move some messages from one folder to another.
-     * 
-     * TODO: We should not need to iterate here.
      */
     public void moveMessages (final int memberId, final int folderId, final int[] msgIdArr,
                               final int newFolderId, ResultListener<Void> waiter)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
-                for (int msgId : msgIdArr) {
-                    _mailRepo.moveMessage(memberId, folderId, msgId, newFolderId);
-                }
+                _mailRepo.moveMessage(memberId, folderId, newFolderId, msgIdArr);
                 return null;
             }
         });
