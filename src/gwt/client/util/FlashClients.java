@@ -15,7 +15,7 @@ public class FlashClients
     public static HTML createWorldClient (String flashVars)
     {
         return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/game-client.swf", "100%", "550",
+            "asclient", "/clients/game-client.swf", "90%", "550",
             flashVars);
     }
 
