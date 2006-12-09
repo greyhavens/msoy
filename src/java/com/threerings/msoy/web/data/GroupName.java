@@ -20,9 +20,8 @@ public class GroupName
     public int groupId;
 
     // from Comparable
-    public int compareTo(Object o) 
+    public int compareTo (Object o) 
     {
-        GroupName that = (GroupName)o;
-        return new Integer(groupId).compareTo(new Integer(that.groupId));
+        return groupId - ((GroupName) o).groupId;
     }
 }
