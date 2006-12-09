@@ -9,6 +9,7 @@ import flash.external.ExternalInterface;
 
 import mx.core.SoundAsset;
 
+import com.threerings.msoy.hood.Neighbor;
 import com.threerings.msoy.hood.Neighborhood;
 import com.threerings.msoy.hood.NeighborGroup;
 import com.threerings.msoy.hood.NeighborFriend;
@@ -19,8 +20,8 @@ public class HoodViz extends Sprite
 {
     public function HoodViz ()
     {
-        var paramObj:Object = LoaderInfo(this.root.loaderInfo).parameters;
-        var json:String;
+        var paramObj :Object = LoaderInfo(this.root.loaderInfo).parameters;
+        var json :String;
         if (paramObj == null || paramObj.data == null) {
             // debug fun
             json = "{\"groups\":[{\"id\":3,\"members\":1,\"name\":\"Spud Muffins\"},{\"id\":2,\"members\":1,\"name\":\"Madison Bird Fondlers (MBF)\"},{\"id\":4,\"members\":1,\"name\":\"sdfsdf\"},{\"id\":5,\"members\":1,\"name\":\"Spam Spam Spam\"},{\"id\":6,\"members\":1,\"name\":\"A B C\"},{\"id\":3,\"members\":1,\"name\":\"Spud Muffins\"},{\"id\":2,\"members\":1,\"name\":\"Madison Bird Fondlers (MBF)\"},{\"id\":4,\"members\":1,\"name\":\"sdfsdf\"},{\"id\":5,\"members\":1,\"name\":\"Spam Spam Spam\"},{\"id\":6,\"members\":1,\"name\":\"A B C\"}],\"id\":1,\"friends\":[{\"id\":2,\"isOnline\":false,\"name\":\"elvis\"}, {\"id\":3,\"isOnline\":false,\"name\":\"santa\"},{\"id\":2,\"isOnline\":false,\"name\":\"elvis\"}, {\"id\":3,\"isOnline\":false,\"name\":\"santa\"},{\"id\":2,\"isOnline\":false,\"name\":\"elvis\"}, {\"id\":3,\"isOnline\":false,\"name\":\"santa\"}],\"name\":\"Zell\"}";
@@ -36,46 +37,55 @@ public class HoodViz extends Sprite
         addBit(_myHouse, 1, 0, false, null);
 
         // compute a very rough bounding rectangle for the visible houses
-        var radius:int = 3 + Math.ceil(Math.sqrt(Math.max(_hood.groups.length, _hood.friends.length)));
+        var radius :int = 3 + Math.ceil(Math.sqrt(Math.max(_hood.groups.length, _hood.friends.length)));
 
-        var distances:Array = new Array();
+        var distances :Array = new Array();
         // draw the grid, building a metric mapping at the same time
-        for (var y:int = -radius; y <= radius; y ++) {
+        for (var y :int = -radius; y <= radius; y ++) {
             if ((y % 2) == 0) {
                 addBit(_roadNS, 0, y, false, null);
             } else {
                 addBit(_road4Way, 0, y, false, null);
             }
-            for (var x:int = radius; x >= -radius; x --) {
+            for (var x :int = radius; x >= -radius; x --) {
                 if (x == 0 || (y == 0 && x == 1)) {
                     continue;
                 }
 
                 if ((y % 2) == 0) {
-                    var d:Number = (x-1)*(x-1) + y*y;
+                    var d :Number = (x-1)*(x-1) + y*y;
                     distances.push({ x:x, y:y, dist:d });
                 } else {
                     addBit(_roadWE, x, y, false, null);
                 }
             }
         }
+
         // sort the metric according to distance
         distances.sortOn([ "dist", "x", "y" ], Array.NUMERIC);
 
-        var nextFriend:int = 0;
-        var nextGroup:int = 0;
-        for each (var tile:Object in distances) {
+        // then go through houses in order of radial distance and register friends and groups
+        var drawables :Array = new Array();
+        var nextFriend :int = 0;
+        var nextGroup :int = 0;
+        for each (var tile :Object in distances) {
             if (tile.y < 0) {
                 if (nextGroup < _hood.groups.length) {
-                    var group:NeighborGroup = _hood.groups[nextGroup ++];
-                    addBit(_group, tile.x, tile.y, true,
-                           group.groupName + "\n" + "Members: " + group.members);
+                    var group :NeighborGroup = _hood.groups[nextGroup ++];
+                    drawables.push({ bit: _group, x: tile.x, y: tile.y, neighbor: group });
                 }
             } else if (nextFriend < _hood.friends.length) {
-                var friend:NeighborFriend = _hood.friends[nextFriend ++];
-                addBit(_friend, tile.x, tile.y, true,
-                       friend.memberName + " (" + (friend.isOnline ? "Online": "Offline") + ")");
+                var friend :NeighborFriend = _hood.friends[nextFriend ++];
+                drawables.push({ bit: _group, x: tile.x, y: tile.y, neighbor: friend });
             }
+        }
+
+        // now sort the actual friends and groups by x for draw order to be correct
+        drawables.sortOn([ "x", "y" ], Array.NUMERIC | Array.DESCENDING);
+
+        // and finally draw'em all
+        for each (var drawable :Object in drawables) {
+            addBit(drawable.bit, drawable.x, drawable.y, true, drawable.neighbor);
         }
         var scale :Number = Math.min(640 / (_bound.x.max - _bound.x.min),
                                      480 / (_bound.y.max - _bound.y.min));
@@ -86,17 +96,17 @@ public class HoodViz extends Sprite
     }
 
     protected function addBit (bitType :Class, x :Number, y :Number, update:Boolean,
-                               toolTip:String) :void
+                               neighbor: Neighbor) :void
     {
-        var bit:MovieClip = new bitType();
+        var bit :MovieClip = new bitType();
         bit.width = 256;
         bit.height = 224;
         var bitHolder :ToolTipSprite = new ToolTipSprite();
         bitHolder.addChild(bit);
         bitHolder.x = y * 82 + x * 175;
         bitHolder.y = y * 156 - x * 69;
-        if (toolTip != null) {
-            bitHolder.toolTip = toolTip;
+        if (neighbor != null) {
+            bitHolder.neighbor = neighbor;
             bitHolder.addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
             bitHolder.addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
         }
@@ -112,7 +122,17 @@ public class HoodViz extends Sprite
 
     public function rollOverHandler (event :MouseEvent) :void
     {
-        var text :String = (event.target as ToolTipSprite).toolTip;
+
+        var neighbor :Neighbor = (event.target as ToolTipSprite).neighbor;
+        var text :String;
+        if (neighbor is NeighborFriend) {
+            var friend :NeighborFriend = neighbor as NeighborFriend;
+            text = friend.memberName + " (" + (friend.isOnline ? "Online": "Offline") + ")";
+        } else {
+            var group :NeighborGroup = neighbor as NeighborGroup;
+            text = group.groupName + "\n" + "Members: " + group.members;
+        }
+
         _tip = new Sprite();
         with (_tip.graphics) {
             clear();

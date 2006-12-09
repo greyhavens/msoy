@@ -1,14 +1,13 @@
 package {
 
 import flash.display.*;
+import com.threerings.msoy.hood.Neighbor;
 
 /**
- * A Sprite that holds an extra String for our use.
- *
- * TODO: Should be a Neighbor, and the string computed dynamically.
+ * A Sprite that holds a Neighbor reference, too.
  */
 public class ToolTipSprite extends Sprite
 {
-    public var toolTip :String;
+    public var neighbor: Neighbor;
 }
 }
