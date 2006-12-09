@@ -3,20 +3,16 @@
 
 package client.world;
 
+import client.shell.MsoyEntryPoint;
+import client.util.FlashClients;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-
-import com.threerings.gwt.ui.WidgetUtil;
-
 import com.threerings.msoy.web.data.WebCreds;
-
-import client.shell.MsoyEntryPoint;
-
-import client.util.FlashClients;
 
 /**
  * Handles the MetaSOY main page.
@@ -38,25 +34,66 @@ public class index extends MsoyEntryPoint
     public void onHistoryChanged (String token)
     {
         RootPanel.get("content").clear();
-
-        if ("home".equals(token)) {
-            // don't show the flash client in the GWT shell
-            if (GWT.isScript()) {
-                if (_client == null) {
-                    _client = FlashClients.createWorldClient(null);
-                }
-                RootPanel.get("content").add(_client);
-            }
-
-        } else {
-            // if we have a client around, log if off
-            if (_client != null) {
-                clientLogoff();
-                _client = null;
-            }
-
-            RootPanel.get("content").add(new Label("Unknown page: " + token));
+        // don't show the flash client in the GWT shell
+        if (!GWT.isScript()) {
+            return;
         }
+        try {
+            if (token.startsWith("g")) {
+                world("groupHome=" + id(token, 1));
+                return;
+            }
+            if (token.startsWith("m")) {
+                world("memberHome=" + id(token, 1));
+                return;
+            }
+            if (token.startsWith("ng")) {
+                // TODO: get group neighborhood, not member :)
+                _ctx.membersvc.serializeNeighborhood(_ctx.creds, id(token, 2), new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        neighborhood((String) result);
+                    }
+                    public void onFailure (Throwable caught) {
+
+                    }
+                });
+                return;
+            }
+            if (token.startsWith("nm")) {
+                _ctx.membersvc.serializeNeighborhood(_ctx.creds, id(token, 2), new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        neighborhood((String) result);
+                    }
+                    public void onFailure (Throwable caught) {
+
+                    }
+                });
+                return;
+            }
+        } catch (NumberFormatException e) {
+            // fall through
+        }
+        world(null);
+    }
+
+    protected void neighborhood (String hood)
+    {
+        if (_client != null) {
+            clientLogoff();
+        }
+        _client = FlashClients.createNeighborhood(hood);
+        RootPanel.get("content").add(_client);
+    }
+
+    protected void world (String flashVar)
+    {
+        _client = FlashClients.createWorldClient(flashVar);
+        RootPanel.get("content").add(_client);
+    }
+
+    protected int id (String token, int index)
+    {
+        return Integer.valueOf(token.substring(index)).intValue();
     }
 
     // @Override // from MsoyEntryPoint

@@ -32,4 +32,10 @@ public class FlashClients
             "aslobby", "/clients/game-client.swf", "800", "600",
             "gameLobby=" + gameId);
     }
+
+    public static HTML createNeighborhood (String hoodData)
+    {
+        return WidgetUtil.createFlashContainer(
+            "hood","/media/static/HoodViz.swf", "100%", "550", "data=" + hoodData);
+    }
 }
