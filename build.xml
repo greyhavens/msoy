@@ -193,17 +193,9 @@
   <!-- builds our Flash library -->
   <target name="aslib" unless="aslib_is_up_to_date" depends="checkaslib">
     <java jar="lib/as-compiler/lib/compc.jar" fork="true" failonerror="true">
-      <arg value="-locale"/>
-      <arg value="en_US"/>
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.external-library-path"/>
-      <arg value="lib/as-compiler/frameworks/libs"/>
-      <arg value="lib/as-compiler/frameworks/locale/en_US"/>
       <arg value="-load-config"/>
-      <arg value="lib/as-compiler/frameworks/flex-config.xml"/>
-      <arg value="-compiler.warn-class-is-sealed=true"/>
-      <arg value="-compiler.warn-constructor-returns-value=true"/>
-      <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
+      <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
+      <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=projects/narya/src/as/"/>
       <arg value="-compiler.source-path=projects/vilya/src/as/"/>
       <arg value="-compiler.source-path=projects/toybox/src/as/"/>
@@ -224,20 +216,9 @@
   <!-- builds our Flash library -->
   <target name="exportlib" unless="exportlib_is_up_to_date" depends="checkexportlib">
     <java jar="lib/as-compiler/lib/compc.jar" fork="true" failonerror="true">
-      <arg value="-locale"/>
-      <arg value="en_US"/>
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.external-library-path"/>
-      <arg value="lib/as-compiler/frameworks/libs"/>
-      <arg value="lib/as-compiler/frameworks/locale/en_US"/>
-      <arg value="-link-report"/>
-      <arg value="/tmp/link-report.txt"/>
       <arg value="-load-config"/>
-      <arg value="lib/as-compiler/frameworks/flex-config.xml"/>
-      <arg value="-compiler.warn-class-is-sealed=true"/>
-      <arg value="-compiler.warn-constructor-returns-value=true"/>
-      <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
-      <!--<arg value="-compiler.source-path=src/as/com/threerings/msoy/export/"/>-->
+      <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
+      <arg value="-compiler.optimize"/>
       <arg value="-include-sources=src/as/com/threerings/msoy/export/"/>
       <arg value="-output"/>
       <arg value="lib/msoy-export.swc"/>
@@ -247,23 +228,9 @@
   <!-- builds our Flash client -->
   <target name="asclient" depends="asprepare,aslib,exportlib">
     <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
-      <arg value="-locale"/>
-      <arg value="en_US"/>
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.library-path"/>
-      <arg value="lib"/>
-      <arg value="lib/as-compiler/frameworks/libs"/>
-      <arg value="lib/as-compiler/frameworks/locale/en_US"/>
       <arg value="-load-config"/>
-      <arg value="lib/as-compiler/frameworks/flex-config.xml"/>
-      <arg value="-link-report"/>
-      <arg value="/tmp/link-report.txt"/>
-      <arg value="-resource-bundle-list"/>
-      <arg value="/tmp/bundles.list"/>
-      <!--<arg value="-compiler.keep-all-type-selectors=true"/>-->
-      <arg value="-compiler.warn-class-is-sealed=true"/>
-      <arg value="-compiler.warn-constructor-returns-value=true"/>
-      <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
+      <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
+      <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
@@ -277,23 +244,10 @@
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare,aslib,exportlib">
     <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
-      <arg value="-locale"/>
-      <arg value="en_US"/>
+      <arg value="-load-config"/>
+      <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
       <arg value="-compiler.debug"/>
       <arg value="-compiler.verbose-stacktraces=true"/>
-      <arg value="-compiler.library-path"/>
-      <arg value="lib"/>
-      <arg value="lib/as-compiler/frameworks/libs"/>
-      <arg value="lib/as-compiler/frameworks/locale/en_US"/>
-      <arg value="-load-config"/>
-      <arg value="lib/as-compiler/frameworks/flex-config.xml"/>
-      <arg value="-link-report"/>
-      <arg value="/tmp/link-report.txt"/>
-      <arg value="-resource-bundle-list"/>
-      <arg value="/tmp/bundles.list"/>
-      <arg value="-compiler.warn-class-is-sealed=true"/>
-      <arg value="-compiler.warn-constructor-returns-value=true"/>
-      <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
@@ -307,22 +261,9 @@
   <!-- builds our avatar viewer thingy -->
   <target name="avatarviewer" depends="asprepare,aslib">
     <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
-      <arg value="-locale"/>
-      <arg value="en_US"/>
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.library-path"/>
-      <arg value="lib"/>
-      <arg value="lib/as-compiler/frameworks/libs"/>
-      <arg value="lib/as-compiler/frameworks/locale/en_US"/>
       <arg value="-load-config"/>
-      <arg value="lib/as-compiler/frameworks/flex-config.xml"/>
-      <arg value="-link-report"/>
-      <arg value="/tmp/link-report.txt"/>
-      <arg value="-resource-bundle-list"/>
-      <arg value="/tmp/bundles.list"/>
-      <arg value="-compiler.warn-class-is-sealed=true"/>
-      <arg value="-compiler.warn-constructor-returns-value=true"/>
-      <arg value="-compiler.fonts.local-fonts-snapshot=lib/as-compiler/frameworks/localFonts.ser"/>
+      <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
+      <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
