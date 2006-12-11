@@ -3,10 +3,10 @@ package com.threerings.msoy.hood {
 import com.adobe.serialization.json.*;
 
 /**
- * Represents a single friend in a neighborhood: their name and id, and whether or not
+ * Represents a single member in a neighborhood: their name and id, and whether or not
  * they are online. This class will most likely fill in with more data soon.
  */
-public class NeighborFriend
+public class NeighborMember
     implements Neighbor
 {
     /** The member's name. */
@@ -17,18 +17,18 @@ public class NeighborFriend
     public var isOnline:Boolean;
 
     /**
-     * Instantiate and populate a {@link NeighborFriend} give a JSON configuration.
+     * Instantiate and populate a {@link NeighborMember} give a JSON configuration.
      */
-    public static function fromJSON(JSON: Object) :NeighborFriend
+    public static function fromJSON(JSON: Object) :NeighborMember
     {
-        var friend:NeighborFriend = new NeighborFriend();
+        var member:NeighborMember = new NeighborMember();
         if (JSON.name == null || JSON.id == null) {
             throw new Error("Missing name/id in JSON");
         }
-        friend.memberName = JSON.name;
-        friend.memberId = JSON.id;
-        friend.isOnline = JSON.isOnline;
-        return friend;
+        member.memberName = JSON.name;
+        member.memberId = JSON.id;
+        member.isOnline = JSON.isOnline;
+        return member;
     }
 }
 }
