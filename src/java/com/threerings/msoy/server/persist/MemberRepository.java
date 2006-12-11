@@ -91,6 +91,9 @@ public class MemberRepository extends DepotRepository
     public Collection<MemberNameRecord> loadMemberNames (int[] memberIds)
         throws PersistenceException
     {
+        if (memberIds.length == 0) {
+            return new ArrayList<MemberNameRecord>();
+        }
         Comparable[] idArr = IntListUtil.box(memberIds);
         return findAll(MemberNameRecord.class,
                        new FromOverride(MemberRecord.class),
