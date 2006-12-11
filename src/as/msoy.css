@@ -12,6 +12,26 @@
     themeColor: #FF00A0;
 }
 
+.chatTargetButton
+{
+    borderColor: #000000;
+    fontWeight: "bold";
+    fillAlphas: 1, 1;
+    fillColors: #E6EEEE, #FFFFFF;
+}
+
+.TODOchatTargetButton
+{
+    upSkin: ClassReference("mx.core.SpriteAsset");
+    downSkin: ClassReference("mx.core.SpriteAsset");
+    overSkin: ClassReference("mx.core.SpriteAsset");
+    disabledSkin: ClassReference("mx.core.SpriteAsset");
+    selectedUpSkin: ClassReference("mx.core.SpriteAsset");
+    selectedDownSkin: ClassReference("mx.core.SpriteAsset");
+    selectedOverSkin: ClassReference("mx.core.SpriteAsset");
+    selectedDisabledSkin: ClassReference("mx.core.SpriteAsset");
+}
+
 Application {
   backgroundSize: "100%";
   backgroundColor: #b98c3b;

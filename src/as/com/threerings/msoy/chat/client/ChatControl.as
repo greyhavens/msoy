@@ -50,6 +50,7 @@ public class ChatControl extends HBox
         _locObs = new LocationAdapter(null, locationDidChange);
 
         _targetBtn = new Button();
+        _targetBtn.styleName = "chatTargetButton";
         _targetBtn.minWidth = 130;
         _targetBtn.maxWidth = 130;
         _targetBtn.addEventListener(MouseEvent.CLICK, handleTargetClicked);
