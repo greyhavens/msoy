@@ -815,6 +815,10 @@ public class MemberManager
         obj.put("name", friend.member.toString());
         obj.put("id", friend.member.getMemberId());
         obj.put("isOnline", friend.isOnline);
+        obj.put("created", friend.created.getTime());
+        obj.put("sNum", friend.sessions);
+        obj.put("sMin", friend.sessionMinutes);
+        obj.put("lastSess", friend.lastSession.getTime()); 
         return obj;
     }
 

@@ -76,7 +76,7 @@ public class HoodViz extends Sprite
                 }
             } else if (nextFriend < _hood.friends.length) {
                 var friend :NeighborMember = _hood.friends[nextFriend ++];
-                drawables.push({ bit: _group, x: tile.x, y: tile.y, neighbor: friend });
+                drawables.push({ bit: _friend, x: tile.x, y: tile.y, neighbor: friend });
             }
         }
 
@@ -127,7 +127,13 @@ public class HoodViz extends Sprite
         var text :String;
         if (neighbor is NeighborMember) {
             var friend :NeighborMember = neighbor as NeighborMember;
-            text = friend.memberName + " (" + (friend.isOnline ? "Online": "Offline") + ")";
+            text = friend.memberName + " (" + (friend.isOnline ? "online": "offline") + ")";
+            if (friend.created != null) {
+                text += "\n\n" + "Created: " + friend.created.toLocaleDateString();
+            }
+            if (friend.lastSession != null) {
+                text += "\n" + "Last on: " + friend.lastSession.toLocaleDateString();
+            }
         } else {
             var group :NeighborGroup = neighbor as NeighborGroup;
             text = group.groupName + "\n" + "Members: " + group.members;
@@ -137,10 +143,10 @@ public class HoodViz extends Sprite
         with (_tip.graphics) {
             clear();
             beginFill(0xFFFFFF);
-            drawRoundRect(0, 0, 120, 60, 10, 10);
+            drawRoundRect(0, 0, 180, 80, 10, 10);
             endFill();
             lineStyle(2, 0x000000);
-            drawRoundRect(0, 0, 120, 60, 10, 10);
+            drawRoundRect(0, 0, 180, 80, 10, 10);
         }
         _tip.x = event.stageX - 20;
         _tip.y = event.stageY - 20 - _tip.height;
@@ -148,7 +154,7 @@ public class HoodViz extends Sprite
         var tipText :TextField = new TextField();
         tipText.text = text;
         tipText.autoSize = TextFieldAutoSize.CENTER;
-        tipText.wordWrap = true;
+        tipText.wordWrap = false;
         _tip.addChild(tipText);
         tipText.y = (_tip.height - tipText.height)/2;
         tipText.x = (_tip.width - tipText.width)/2;

@@ -24,9 +24,6 @@ public class Neighborhood
      */
     public static function fromLoaderInfo(info :LoaderInfo) :Neighborhood
     {
-        if (info == null || info.parameters == null) {
-            return fromJSON(new JSONDecoder("{\"groups\":[{\"members\":1,\"name\":\"Spud Muffins\",\"id\":3},{\"members\":1,\"name\":\"Madison Bird Fondlers (MBF)\",\"id\":2},{\"members\":1,\"name\":\"sdfsdf\",\"id\":4},{\"members\":1,\"name\":\"Spam Is Good\",\"id\":5},{\"members\":1,\"name\":\"A B C\",\"id\":6}],\"friends\":[],\"member\":{\"name\":\"Zell\",\"id\":1}}").getObject());
-        }
         return fromJSON(new JSONDecoder(info.parameters.neighborhood).getObject());
     }
 

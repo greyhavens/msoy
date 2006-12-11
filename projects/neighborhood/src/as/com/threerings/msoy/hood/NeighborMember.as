@@ -10,11 +10,19 @@ public class NeighborMember
     implements Neighbor
 {
     /** The member's name. */
-    public var memberName:String;
+    public var memberName :String;
     /** The member's id. */
-    public var memberId:Number;
+    public var memberId :Number;
     /** Whether or not the member is currently online. */
-    public var isOnline:Boolean;
+    public var isOnline :Boolean;
+    /** When this member was created. */
+    public var created :Date;
+    /** The number of sessions this member has had. */
+    public var sessions :int;
+    /** The total number of minutes of this member's online sessions. */
+    public var sessionMinutes :int;
+    /** The last time this member was logged on. */
+    public var lastSession :Date;
 
     /**
      * Instantiate and populate a {@link NeighborMember} give a JSON configuration.
@@ -28,6 +36,16 @@ public class NeighborMember
         member.memberName = JSON.name;
         member.memberId = JSON.id;
         member.isOnline = JSON.isOnline;
+        if (JSON.created != null) {
+            member.created = new Date();
+            member.created.time = JSON.created;
+        }
+        member.sessions = JSON.sNum;
+        member.sessionMinutes = JSON.sMin;
+        if (JSON.lastSess != null) {
+            member.lastSession = new Date();
+            member.lastSession.time = JSON.lastSess;
+        }
         return member;
     }
 }
