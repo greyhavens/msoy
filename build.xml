@@ -233,6 +233,7 @@
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
+      <arg value="-incremental=true"/>
       <arg value="-output"/>
       <arg value="dist/game-client.swf"/>
       <arg value="-file-specs"/>
