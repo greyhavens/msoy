@@ -3,19 +3,27 @@
 
 package client.group;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.ClickListener;
 
+import com.threerings.gwt.ui.InlineLabel;
 import client.util.HeaderValueTable;
 
 import client.shell.MsoyEntryPoint;
 
 import com.threerings.msoy.web.client.WebContext;
 
+import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupMembership;
+
+import client.group.GroupEdit.GroupSubmissionListener;
 
 /**
  * Display the details of a group member.  Right now this means a link to their profile, and their
@@ -24,41 +32,58 @@ import com.threerings.msoy.web.data.GroupMembership;
  */
 public class MemberView extends PopupPanel
 {
-    public MemberView (WebContext ctx, GroupMembership membership, boolean amAdmin)
+    public MemberView (WebContext ctx, final GroupMembership membership, Group group, 
+        boolean amAdmin, GroupSubmissionListener listener)
     {
         super(true);
         _ctx = ctx;
-        _membership = membership;
-        // TODO: a boolean is not sufficient, because it will need to be known if this is a Manager
-        // that is superior to this member (who might also be a manager).
-        _amAdmin = amAdmin;
+        _group = group;
+        _listener = listener;
         setStyleName("memberPopup");
 
-        _content = new DockPanel();
-        setWidget(_content);
+        DockPanel content = new DockPanel();
+        setWidget(content);
 
-        _table = new HeaderValueTable();
-        _content.add(_table, DockPanel.CENTER);
+        HeaderValueTable table = new HeaderValueTable();
+        content.add(table, DockPanel.CENTER);
 
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("memberViewErrors");
-        _content.add(_errorContainer, DockPanel.NORTH);
+        content.add(_errorContainer, DockPanel.NORTH);
 
-        _table.addHeader("" + _membership.member);
+        table.addHeader("" + membership.member);
 
-        _table.addRow(new HTML("<a href='" + MsoyEntryPoint.memberViewPath(
-            _membership.member.getMemberId()) + "'>Profile</a>"));
+        table.addRow(new HTML("<a href='" + MsoyEntryPoint.memberViewPath(
+            membership.member.getMemberId()) + "'>Profile</a>"));
+        table.addRow("Rank", Byte.toString(membership.rank));
         
-        // TODO: bring in enough info to resolve this correctly
-        /*if (_amAdmin && rank != GroupMembership.RANK_MANAGER &&
+        if (amAdmin && membership.rank != GroupMembership.RANK_MANAGER &&
             _group.policy != Group.POLICY_PUBLIC) {
             Label removeLabel = new InlineLabel("Remove Member");
             removeLabel.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    removeMember(name.getMemberId());
+                    removeMember(membership.member.getMemberId());
                 }
             });
-        }*/
+            table.addRow(removeLabel);
+        }
+    }
+
+    /**
+     * Removes a member from the group, and then trigger a reload/UI rebuild.
+     */
+    protected void removeMember (final int memberId)
+    {
+        _ctx.groupsvc.leaveGroup(_ctx.creds, _group.groupId, memberId, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _listener.groupSubmitted(_group);
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("Failed to remove member [groupId=" + _group.groupId +
+                        ", memberId=" + memberId + "]", caught);
+                addError("Failed to remove member: " + caught.getMessage());
+            }
+        });
     }
 
     protected void addError (String error)
@@ -72,10 +97,8 @@ public class MemberView extends PopupPanel
     }
 
     protected WebContext _ctx;
-    protected GroupMembership _membership;
-    protected boolean _amAdmin;
+    protected Group _group;
+    protected GroupSubmissionListener _listener;
 
-    protected DockPanel _content;
-    protected HeaderValueTable _table;
     protected VerticalPanel _errorContainer;
 }

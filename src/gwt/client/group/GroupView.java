@@ -148,7 +148,7 @@ public class GroupView extends DockPanel
             Label memberLabel = new InlineLabel(name.toString());
             memberLabel.addClickListener(new ClickListener() {
                 public void onClick (Widget widget) {
-                    new MemberView(_ctx, membership, _amAdmin).show();
+                    new MemberView(_ctx, membership, _group, _amAdmin, GroupView.this).show();
                 }
             });
             memberFlow.add(memberLabel);
@@ -158,25 +158,8 @@ public class GroupView extends DockPanel
     }
 
     /**
-     * Removes a member from the group, and then trigger a reload/UI rebuild.
-     */
-    protected void removeMember (final int memberId)
-    {
-        _ctx.groupsvc.leaveGroup(_ctx.creds, _group.groupId, memberId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                loadGroup(_group.groupId);
-            }
-            public void onFailure (Throwable caught) {
-                GWT.log("Failed to remove member [groupId=" + _group.groupId +
-                        ", memberId=" + memberId + "]", caught);
-                addError("Failed to remove member: " + caught.getMessage());
-            }
-        });
-    }
-
-    /**
      * performs a simple scan of the list of GroupMembership objects to find and return the 
-     * first GroupMembership to refers to the requested memberId.
+     * first GroupMembership that refers to the requested memberId.
      */
     static protected GroupMembership findMember (List members, int memberId) 
     {
