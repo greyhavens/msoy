@@ -1,0 +1,11 @@
+# msoy-pages.dwb vi:ts=4:sw=4:expandtab:
+# MetaSOY Web Pages Dweeb Configuration File
+
+<Package>
+    Name        msoy-pages
+    Version     @VERSION@
+    Maintainer  MetaSOY Developers <msoy-dev@threerings.net>
+    Section     pages
+    Architecture    all
+    Description Web pages for rolling around in tofu.
+</Package>
