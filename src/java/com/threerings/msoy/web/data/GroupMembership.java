@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.data;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
@@ -26,16 +28,19 @@ public class GroupMembership
      * maintained in a member's MemberObject. */
     public MemberName member;
 
-    /** The group's identity. */
+    /** The group's identity. <em>Note:</em> this will be null in the records contained in a 
+     * GroupDetail.members list.*/
     public GroupName group;
 
     /** The member's rank in the group. */
     public byte rank; 
 
+    /** The date this member's rank was assigned, as represented by java.util.Date.getTime() */
+    public long rankAssignedDate;
+
     // from DSet.Entry
     public Comparable getKey ()
     {
-        // autoboxing makes GWT angry.  
         return group;
     }
 }

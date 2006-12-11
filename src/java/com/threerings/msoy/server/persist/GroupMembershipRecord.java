@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.sql.Timestamp;
+
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
@@ -22,7 +24,7 @@ import com.threerings.msoy.web.data.GroupName;
 public class GroupMembershipRecord
     implements Cloneable
 {
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     public static final String MEMBER_ID = "memberId";
     public static final String GROUP_ID = "groupId";
@@ -37,6 +39,9 @@ public class GroupMembershipRecord
     /** The rank of the member in the group, defined in {@link GroupMembership}. */
     public byte rank;
 
+    /** The date that this rank was assigned on.  Used to decide rank seniority. */
+    public Timestamp rankAssigned;
+
     /** 
      * Converts this persistent record to a runtime record.
      */
@@ -48,6 +53,7 @@ public class GroupMembershipRecord
         gm.group.groupId = groupId;
         gm.group.groupName = group.name;
         gm.rank = rank;
+        gm.rankAssignedDate = rankAssigned.getTime();
         return gm;
     }
     

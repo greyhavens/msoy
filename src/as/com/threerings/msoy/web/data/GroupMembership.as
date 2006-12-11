@@ -45,6 +45,10 @@ public class GroupMembership
         member = (ins.readObject() as MemberName);
         group = (ins.readObject() as GroupName);
         rank = ins.readByte();
+        // TODO: this hackery to discard the (long) rankAssigned field from the Java side should
+        // become something more meaningful.
+        ins.readInt();
+        ins.readInt();
     }
 
     // from Streamable
