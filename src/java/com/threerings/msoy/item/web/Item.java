@@ -131,14 +131,16 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
         // at class initialization time).
         if (type == PHOTO) {
             return "photo";
+        } else if (type == DOCUMENT) {
+            return "document";
         } else if (type == AVATAR) {
             return "avatar";
+        } else if (type == FURNITURE) {
+            return "furniture";
         } else if (type == GAME) {
             return "game";
         } else if (type == PHOTO) {
             return "photo";
-        } else if (type == DOCUMENT) {
-            return "document";
         } else if (type == PET) {
             return "pet";
         } else if (type == AUDIO) {
