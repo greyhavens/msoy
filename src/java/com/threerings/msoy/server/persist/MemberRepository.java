@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.samskivert.io.PersistenceException;
@@ -92,7 +93,7 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         if (memberIds.length == 0) {
-            return new ArrayList<MemberNameRecord>();
+            return Collections.emptyList();
         }
         Comparable[] idArr = IntListUtil.box(memberIds);
         return findAll(MemberNameRecord.class,
