@@ -3,6 +3,8 @@
 
 package client.profile;
 
+import client.util.FlashClients;
+
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -24,7 +26,7 @@ public class HoodBlurb extends Blurb
     {
         setHeader("Neighborhood");
         _content.setWidget(WidgetUtil.createFlashContainer(
-            "hood","/media/static/HoodViz.swf", 480, 360, "data=" + (String) blurbData));
+            "hood","/media/static/HoodViz.swf", 480, 360, "neighborhood=" + (String) blurbData));
     }
 
     // @Override // from Blurb

@@ -12,7 +12,7 @@ import mx.core.SoundAsset;
 import com.threerings.msoy.hood.Neighbor;
 import com.threerings.msoy.hood.Neighborhood;
 import com.threerings.msoy.hood.NeighborGroup;
-import com.threerings.msoy.hood.NeighborFriend;
+import com.threerings.msoy.hood.NeighborMember;
 import com.adobe.serialization.json.JSONDecoder;
 
 [SWF(width="640", height="480")]
@@ -20,24 +20,21 @@ public class HoodViz extends Sprite
 {
     public function HoodViz ()
     {
-        var paramObj :Object = LoaderInfo(this.root.loaderInfo).parameters;
-        var json :String;
-        if (paramObj == null || paramObj.data == null) {
-            // debug fun
-            json = "{\"groups\":[{\"id\":3,\"members\":1,\"name\":\"Spud Muffins\"},{\"id\":2,\"members\":1,\"name\":\"Madison Bird Fondlers (MBF)\"},{\"id\":4,\"members\":1,\"name\":\"sdfsdf\"},{\"id\":5,\"members\":1,\"name\":\"Spam Spam Spam\"},{\"id\":6,\"members\":1,\"name\":\"A B C\"},{\"id\":3,\"members\":1,\"name\":\"Spud Muffins\"},{\"id\":2,\"members\":1,\"name\":\"Madison Bird Fondlers (MBF)\"},{\"id\":4,\"members\":1,\"name\":\"sdfsdf\"},{\"id\":5,\"members\":1,\"name\":\"Spam Spam Spam\"},{\"id\":6,\"members\":1,\"name\":\"A B C\"}],\"id\":1,\"friends\":[{\"id\":2,\"isOnline\":false,\"name\":\"elvis\"}, {\"id\":3,\"isOnline\":false,\"name\":\"santa\"},{\"id\":2,\"isOnline\":false,\"name\":\"elvis\"}, {\"id\":3,\"isOnline\":false,\"name\":\"santa\"},{\"id\":2,\"isOnline\":false,\"name\":\"elvis\"}, {\"id\":3,\"isOnline\":false,\"name\":\"santa\"}],\"name\":\"Zell\"}";
-        } else {
-            json = paramObj.data;
-        }
-
-        _hood = Neighborhood.fromJSON(new JSONDecoder(json).getObject());
+        _hood = Neighborhood.fromLoaderInfo(this.root.loaderInfo);
 
         _canvas = new Sprite();
         this.addChild(_canvas);
 
-        addBit(_myHouse, 1, 0, false, null);
+        if (_hood.centralMember != null) {
+            addBit(_myHouse, 1, 0, false, _hood.centralMember);
+        }
+        if (_hood.centralGroup != null) {
+            addBit(_myHouse, -1, 0, false, _hood.centralGroup);
+        }
 
         // compute a very rough bounding rectangle for the visible houses
-        var radius :int = 3 + Math.ceil(Math.sqrt(Math.max(_hood.groups.length, _hood.friends.length)));
+        var radius :int =
+            3 + Math.ceil(Math.sqrt(Math.max(_hood.groups.length, _hood.friends.length)));
 
         var distances :Array = new Array();
         // draw the grid, building a metric mapping at the same time
@@ -48,10 +45,13 @@ public class HoodViz extends Sprite
                 addBit(_road4Way, 0, y, false, null);
             }
             for (var x :int = radius; x >= -radius; x --) {
-                if (x == 0 || (y == 0 && x == 1)) {
+                if (x == 0) {
                     continue;
                 }
-
+                if (y == 0 && (_hood.centralMember != null && x == 1) ||
+                              (_hood.centralGroup != null && x == -1)) {
+                    continue;
+                }
                 if ((y % 2) == 0) {
                     var d :Number = (x-1)*(x-1) + y*y;
                     distances.push({ x:x, y:y, dist:d });
@@ -75,7 +75,7 @@ public class HoodViz extends Sprite
                     drawables.push({ bit: _group, x: tile.x, y: tile.y, neighbor: group });
                 }
             } else if (nextFriend < _hood.friends.length) {
-                var friend :NeighborFriend = _hood.friends[nextFriend ++];
+                var friend :NeighborMember = _hood.friends[nextFriend ++];
                 drawables.push({ bit: _group, x: tile.x, y: tile.y, neighbor: friend });
             }
         }
@@ -125,8 +125,8 @@ public class HoodViz extends Sprite
 
         var neighbor :Neighbor = (event.target as ToolTipSprite).neighbor;
         var text :String;
-        if (neighbor is NeighborFriend) {
-            var friend :NeighborFriend = neighbor as NeighborFriend;
+        if (neighbor is NeighborMember) {
+            var friend :NeighborMember = neighbor as NeighborMember;
             text = friend.memberName + " (" + (friend.isOnline ? "Online": "Offline") + ")";
         } else {
             var group :NeighborGroup = neighbor as NeighborGroup;

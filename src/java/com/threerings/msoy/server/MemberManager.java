@@ -783,8 +783,18 @@ public class MemberManager
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("name", hood.member.toString());
-        obj.put("id", hood.member.getMemberId());
+        if (hood.member != null) {
+            JSONObject member = new JSONObject();
+            member.put("name", hood.member.toString());
+            member.put("id", hood.member.getMemberId());
+            obj.put("member", member);
+        }
+        if (hood.group != null) {
+            JSONObject group= new JSONObject();
+            group.put("name", hood.group.groupName);
+            group.put("id", hood.group.groupId);
+            obj.put("group", group);
+        }
         JSONArray jArr = new JSONArray();
         for (NeighborFriend friend : hood.neighborFriends) {
             jArr.put(toJSON(friend));

@@ -14,8 +14,11 @@ import com.threerings.io.Streamable;
 public class Neighborhood 
     implements IsSerializable, Streamable, Cloneable
 {
-    /** The member around whom this query is centered. */
+    /** The member around whom this query is centered, or null. */
     public MemberName member;
+
+    /** The group around which this query is centered, or null. */
+    public GroupName group;
 
     /** An array of {@link NeighborGroup} objects for the member's memberships. */
     public NeighborGroup[] neighborGroups;

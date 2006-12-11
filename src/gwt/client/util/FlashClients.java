@@ -36,6 +36,6 @@ public class FlashClients
     public static HTML createNeighborhood (String hoodData)
     {
         return WidgetUtil.createFlashContainer(
-            "hood","/media/static/HoodViz.swf", "100%", "550", "data=" + hoodData);
+            "hood","/media/static/HoodViz.swf", "100%", "550", "neighborhood=" + hoodData);
     }
 }
