@@ -5,6 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
@@ -54,10 +55,10 @@ public class GroupRepository extends DepotRepository
     public Collection<GroupRecord> loadGroups (int[] groupIds)
         throws PersistenceException
     {
-        Comparable[] idArr = IntListUtil.box(groupIds);
-        if (idArr.length == 0) {
-            return new ArrayList<GroupRecord>();
+        if (groupIds.length == 0) {
+            return Collections.emptyList();
         }
+        Comparable[] idArr = IntListUtil.box(groupIds);
         return findAll(GroupRecord.class,
                        new Where(new In(GroupRecord.class, GroupRecord.GROUP_ID, idArr)));
     }

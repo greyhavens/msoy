@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -133,7 +134,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         throws PersistenceException
     {
         if (itemIds.length == 0) {
-            return new ArrayList<T>();
+            return Collections.emptyList();
         }
         Comparable[] idArr = IntListUtil.box(itemIds);
         Where inClause = new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr));
