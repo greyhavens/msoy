@@ -146,7 +146,7 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
         } else if (type == AUDIO) {
             return "audio";
         } else {
-            return null;
+            return "unknown:" + type;
         }
     }
 
