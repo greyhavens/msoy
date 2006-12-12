@@ -38,24 +38,7 @@ public class index extends MsoyEntryPoint
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
-        RootPanel.get("content").clear();
-
-        // if we have no creds, just display a message saying login
-        if (_ctx.creds == null) {
-            RootPanel.get("content").add(
-                new Label("Log in above to access your inventory."));
-            return;
-        }
-
-        if (token.equals("upload")) {
-            // TODO
-
-        } else { // "inventory" or hacked URL
-            if (_inventory == null) {
-                _inventory = new InventoryPanel(_ctx);
-            }
-            setContent(_inventory);
-        }
+        updateInterface(token);
     }
 
     // @Override // from MsoyEntryPoint
@@ -68,28 +51,37 @@ public class index extends MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
-        String initToken = History.getToken();
-        if (initToken.length() > 0) {
-            onHistoryChanged(initToken);
-        } else {
-            // default to the user's inventory
-            onHistoryChanged("inventory");
-        }
+        updateInterface(History.getToken());
     }
 
     // @Override from MsoyEntryPoint
     protected void didLogon (WebCreds creds)
     {
         super.didLogon(creds);
-        onHistoryChanged("inventory");
+        updateInterface(null);
     }
 
     // @Override from MsoyEntryPoint
     protected void didLogoff ()
     {
         super.didLogoff();
-        _inventory = null;
-        onHistoryChanged("inventory");
+        updateInterface(null);
+    }
+
+    protected void updateInterface (String historyToken)
+    {
+        if (_ctx.creds == null) {
+            // if we have no creds, just display a message saying login
+            setContent(new Label("Log in above to access your inventory."));
+            _inventory = null;
+
+        } else {
+            if (_inventory == null) {
+                _inventory = new InventoryPanel(_ctx);
+                setContent(_inventory);
+            }
+            // TODO: set page based on history token
+        }
     }
 
     protected InventoryPanel _inventory;

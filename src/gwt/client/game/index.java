@@ -59,16 +59,10 @@ public class index extends MsoyEntryPoint
         }
     }
 
-    // @Override // from MsoyEntryPoint
-    protected void didLogon (WebCreds creds)
-    {
-        super.didLogon(creds);
-
-        // TODO: pass credentials to game if appropriate
-    }
-
     protected void displayGamePage (int gameId)
     {
+        // TODO: pass credentials to game if appropriate
+
         // load up the information needed to launch the game
         _ctx.gamesvc.loadLaunchConfig(_ctx.creds, gameId, new AsyncCallback() {
             public void onSuccess (Object result) {

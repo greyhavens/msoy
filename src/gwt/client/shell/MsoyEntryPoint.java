@@ -107,11 +107,11 @@ public abstract class MsoyEntryPoint
         // create our standard logon panel
         RootPanel.get("logon").add(_logon = new LogonPanel(_ctx, this));
 
+        // initialize the logon panel
+        _logon.init();
+
         // initialize the rest of the application
         onPageLoad();
-
-        // and now potentially trigger a call to didLogon()
-        _logon.init();
     }
 
     /**

@@ -33,12 +33,15 @@ public class index extends MsoyEntryPoint
             setContent(new Label("Log in above to access your mail."));
             return;
         }
+
         // initialize the application, if necessary
         if (_mainView == null) {
             _mainView = new MailApplication(_ctx);
         }
         // make sure we're displaying the application
-        setContent(_mainView);
+        if (!_mainView.isShowing()) {
+            setContent(_mainView);
+        }
 
         // set defaults to use in liu of sane URL contents
         int folderId = MailFolder.INBOX_FOLDER_ID;

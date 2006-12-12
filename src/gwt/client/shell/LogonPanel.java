@@ -61,7 +61,7 @@ public class LogonPanel extends FlexTable
         if (_creds == null) {
             logout();
         } else {
-            didLogon(_creds);
+            didLogon(_creds, false);
         }
     }
 
@@ -87,12 +87,14 @@ public class LogonPanel extends FlexTable
         _action.setText("Go");
     }
 
-    protected void didLogon (WebCreds creds)
+    protected void didLogon (WebCreds creds, boolean notifyApp)
     {
         _creds = creds;
         setCookie("creds", _creds.toCookie());
         setCookie("who", _who);
-        _app.didLogon(_creds);
+        if (notifyApp) {
+            _app.didLogon(_creds);
+        }
 
         _top.setText("Welcome");
         _main.setText(_who);
@@ -102,7 +104,8 @@ public class LogonPanel extends FlexTable
     protected void didLogonFromFlash (String displayName, WebCreds creds)
     {
         _who = displayName;
-        didLogon(creds);
+        didLogon(creds, true); // TODO: distinguish between "came to page already logged in" and
+                               // "took action to logon on this page" in our Flash/GWT bridge
     }
 
     protected void actionClicked ()
@@ -186,7 +189,7 @@ public class LogonPanel extends FlexTable
         public void onSuccess (Object result)
         {
             hide();
-            didLogon((WebCreds)result);
+            didLogon((WebCreds)result, true);
         }
 
         // from interface AsyncCallback

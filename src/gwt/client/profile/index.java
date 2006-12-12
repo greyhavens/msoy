@@ -54,21 +54,17 @@ public class index extends MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
+
         String initToken = History.getToken();
         if (initToken.length() > 0) {
             onHistoryChanged(initToken);
+        } else if (_ctx.creds == null) {
+            // TODO: display member search interface
+            setContent(new Label("Log in to view your profile."));
         } else {
-            setContent(new Label("Log in to view your member page."));
+            // if we're logged on and not displaying someone elses member page, display our own
+            displayMemberPage(_ctx.creds.memberId);
         }
-    }
-
-    // @Override // from MsoyEntryPoint
-    protected void didLogon (WebCreds creds)
-    {
-        super.didLogon(creds);
-
-        // if we're not displaying someone elses member page, display our own
-        displayMemberPage(_memberId != -1 ? _memberId : _ctx.creds.memberId);
     }
 
     protected void displayMemberPage (int memberId)
