@@ -1,0 +1,6 @@
+#!/bin/sh
+
+ROOT=`dirname $0`
+ROOT=`cd $ROOT/.. ; pwd`
+
+java -jar $ROOT/lib/as-compiler/lib/fdb.jar
