@@ -5,4 +5,4 @@
 # Command line launcher for the Msoy standalone world client
 
 BINDIR=`dirname $0`
-$BINDIR/gflashplayer http://`grep server_host $BINDIR/../dist/server.properties | awk '{print $3}'`:8080/clients/game-client.swf
+$BINDIR/gflashplayer http://`grep server_host $BINDIR/../dist/server.properties | awk '{print $3}'`:8080/clients/game-client.swf?$1
