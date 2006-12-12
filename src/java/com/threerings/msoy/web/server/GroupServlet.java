@@ -104,4 +104,15 @@ public class GroupServlet extends RemoteServiceServlet
         MsoyServer.memberMan.joinGroup(groupId, memberId, GroupMembership.RANK_MEMBER, waiter);
         waiter.waitForResult();
     }
+
+    // from interface GroupService
+    public void updateMemberRank (WebCreds creds, int groupId, int memberId, byte newRank) 
+        throws ServiceException
+    {
+        // TODO: validate creds
+        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+            "createGroup[" + groupId + ", " + memberId + "]");
+        MsoyServer.memberMan.setRank(groupId, memberId, newRank, waiter);
+        waiter.waitForResult();
+    }
 }

@@ -594,6 +594,7 @@ public class MemberManager
                     // membership.group left null intentionally 
                     membership.member = mRec.getName();
                     membership.rank = gmRec.rank;
+                    membership.rankAssignedDate = gmRec.rankAssigned.getTime();
                     members.add(membership);
                 }
                 return detail;

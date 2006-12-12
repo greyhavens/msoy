@@ -33,7 +33,7 @@ import client.group.GroupEdit.GroupSubmissionListener;
 public class MemberView extends PopupPanel
 {
     public MemberView (WebContext ctx, final GroupMembership membership, Group group, 
-        boolean amAdmin, GroupSubmissionListener listener)
+        GroupMembership me, GroupSubmissionListener listener)
     {
         super(true);
         _ctx = ctx;
@@ -57,15 +57,49 @@ public class MemberView extends PopupPanel
             membership.member.getMemberId()) + "'>Profile</a>"));
         table.addRow("Rank", Byte.toString(membership.rank));
         
-        if (amAdmin && membership.rank != GroupMembership.RANK_MANAGER &&
-            _group.policy != Group.POLICY_PUBLIC) {
-            Label removeLabel = new InlineLabel("Remove Member");
-            removeLabel.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    removeMember(membership.member.getMemberId());
-                }
-            });
-            table.addRow(removeLabel);
+        if (isSenior(me, membership)) { 
+            if (membership.rank == GroupMembership.RANK_MEMBER) {
+                Label promoteLabel = new InlineLabel("Promote Member", false);
+                promoteLabel.addClickListener(new ClickListener() {
+                    public void onClick(Widget sender) {
+                        updateMemberRank(membership.member.getMemberId(), 
+                            GroupMembership.RANK_MANAGER);
+                    }
+                });
+                table.addRow(promoteLabel);
+            } else {
+                Label demoteLabel = new InlineLabel("Demote Member", false);
+                demoteLabel.addClickListener(new ClickListener() {
+                    public void onClick(Widget sender) {
+                        updateMemberRank(membership.member.getMemberId(),
+                            GroupMembership.RANK_MEMBER);
+                    }
+                });
+                table.addRow(demoteLabel);
+            }
+            if (_group.policy != Group.POLICY_PUBLIC) {
+                Label removeLabel = new InlineLabel("Remove Member", false);
+                removeLabel.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        removeMember(membership.member.getMemberId());
+                    }
+                });
+                table.addRow(removeLabel);
+            }
+        }
+    }
+
+    /**
+     * Decide if member1 is senior to member2.
+     */
+    public boolean isSenior (GroupMembership member1, GroupMembership member2) 
+    {
+        if (member1.rank == GroupMembership.RANK_MANAGER && 
+            (member2.rank == GroupMembership.RANK_MEMBER || 
+            member1.rankAssignedDate < member2.rankAssignedDate)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -77,11 +111,31 @@ public class MemberView extends PopupPanel
         _ctx.groupsvc.leaveGroup(_ctx.creds, _group.groupId, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _listener.groupSubmitted(_group);
+                MemberView.this.hide();
             }
             public void onFailure (Throwable caught) {
                 GWT.log("Failed to remove member [groupId=" + _group.groupId +
                         ", memberId=" + memberId + "]", caught);
                 addError("Failed to remove member: " + caught.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Updates the member's rank, which does not currently require a UI rebuild.
+     */
+    protected void updateMemberRank (final int memberId, final byte rank) 
+    {
+        _ctx.groupsvc.updateMemberRank(_ctx.creds, _group.groupId, memberId, rank,
+            new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _listener.groupSubmitted(_group);
+                MemberView.this.hide();
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("Failed to update member rank [groupId=" + _group.groupId +
+                    ", memberId=" + memberId + ", newRank=" + rank + "]", caught);
+                addError("Failed to update member rank: " + caught.getMessage());
             }
         });
     }

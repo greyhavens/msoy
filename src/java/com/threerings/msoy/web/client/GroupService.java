@@ -65,4 +65,10 @@ public interface GroupService extends RemoteService
      */
     public void joinGroup (WebCreds creds, int groupId, int memberId)
         throws ServiceException;
+
+    /**
+     * Update the rank of a group member.
+     */
+    public void updateMemberRank (WebCreds creds, int groupId, int memberId, byte newRank)
+        throws ServiceException;
 }

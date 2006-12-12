@@ -53,4 +53,9 @@ public interface GroupServiceAsync
      */
     public void joinGroup (WebCreds creds, int groupId, int memberId, AsyncCallback callback);
 
+    /**
+     * The asynchronous version of {@link GroupService.updateMemberRank}
+     */
+    public void updateMemberRank (WebCreds creds, int groupId, int memberId, byte newRank,
+        AsyncCallback callback);
 }

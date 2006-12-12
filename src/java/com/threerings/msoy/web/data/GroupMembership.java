@@ -38,6 +38,14 @@ public class GroupMembership
     /** The date this member's rank was assigned, as represented by java.util.Date.getTime() */
     public long rankAssignedDate;
 
+    /** 
+     * Get the date this member's rank was assigned on as a Date object.
+     */
+    public Date getRankAssignedDate () 
+    {
+        return new Date(rankAssignedDate);
+    }
+
     // from DSet.Entry
     public Comparable getKey ()
     {

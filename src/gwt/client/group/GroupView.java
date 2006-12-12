@@ -68,15 +68,12 @@ public class GroupView extends DockPanel
             public void onSuccess (Object result) {
                 _detail = (GroupDetail) result;
                 _group = _detail.group;
-                Byte myRank = null;
+                // in case this object is used more than once, make sure that _me is at least 
+                // not stale
+                _me = null;
                 if (_ctx.creds != null) {
-                    GroupMembership me = GroupView.findMember(_detail.members, _ctx.creds.memberId);
-                    if (me != null) {
-                        myRank = new Byte(me.rank);
-                    }
+                    _me = GroupView.findMember(_detail.members, _ctx.creds.memberId);
                 }
-                _amAdmin = (myRank != null) ?
-                    myRank.byteValue() == GroupMembership.RANK_MANAGER : false;
                 buildUI();
             }
             public void onFailure (Throwable caught) {
@@ -99,8 +96,8 @@ public class GroupView extends DockPanel
         _buttonPanel = new HorizontalPanel();
         add(_buttonPanel, DockPanel.SOUTH);
 
-        // admins can pop up the group editor
-        if (_amAdmin) {
+        // RANK_MANAGERs can pop up the group editor
+        if (_me != null && _me.rank == GroupMembership.RANK_MANAGER) {
             Button editButton = new Button("Edit");
             _buttonPanel.add(editButton);
             editButton.setStyleName("groupEditorButton");
@@ -148,7 +145,7 @@ public class GroupView extends DockPanel
             Label memberLabel = new InlineLabel(name.toString());
             memberLabel.addClickListener(new ClickListener() {
                 public void onClick (Widget widget) {
-                    new MemberView(_ctx, membership, _group, _amAdmin, GroupView.this).show();
+                    new MemberView(_ctx, membership, _group, _me, GroupView.this).show();
                 }
             });
             memberFlow.add(memberLabel);
@@ -184,7 +181,7 @@ public class GroupView extends DockPanel
     protected WebContext _ctx;
     protected Group _group;
     protected GroupDetail _detail;
-    protected boolean _amAdmin;
+    protected GroupMembership _me;
 
     protected HeaderValueTable _table;
     protected HorizontalPanel _buttonPanel;
