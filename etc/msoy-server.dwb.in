@@ -1,0 +1,11 @@
+# msoy-server.dwb vi:ts=4:sw=4:expandtab:
+# MetaSOY Server Dweeb Configuration File
+
+<Package>
+    Name        msoy-server
+    Version     @VERSION@
+    Maintainer  MetaSoy Developers <msoy-dev@threerings.net>
+    Section     servers
+    Architecture    all
+    Description Come, roll around in the tofu with me.
+</Package>
