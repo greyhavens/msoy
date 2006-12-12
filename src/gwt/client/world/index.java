@@ -34,6 +34,35 @@ public class index extends MsoyEntryPoint
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
+        updateInterface(token);
+    }
+    
+
+    // @Override // from MsoyEntryPoint
+    protected void onPageLoad ()
+    {
+        History.addHistoryListener(this);
+        updateInterface(History.getToken());
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void didLogon (WebCreds creds)
+    {
+        super.didLogon(creds);
+        updateInterface(History.getToken());
+        clientLogon(creds.memberId, creds.token);
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void didLogoff ()
+    {
+        super.didLogoff();
+        clientLogoff();
+        updateInterface(History.getToken());
+    }
+
+    protected void updateInterface (String token)
+    {
         RootPanel.get("content").clear();
         _entryCounter ++;
         
@@ -130,29 +159,6 @@ public class index extends MsoyEntryPoint
     protected String getPageId ()
     {
         return "world";
-    }
-
-    // @Override // from MsoyEntryPoint
-    protected void onPageLoad ()
-    {
-        History.addHistoryListener(this);
-        onHistoryChanged(History.getToken());
-    }
-
-    // @Override // from MsoyEntryPoint
-    protected void didLogon (WebCreds creds)
-    {
-        super.didLogon(creds);
-        onHistoryChanged(History.getToken());
-        clientLogon(creds.memberId, creds.token);
-    }
-
-    // @Override // from MsoyEntryPoint
-    protected void didLogoff ()
-    {
-        super.didLogoff();
-        clientLogoff();
-        onHistoryChanged(History.getToken());
     }
 
     /**
