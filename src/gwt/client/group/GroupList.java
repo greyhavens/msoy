@@ -93,6 +93,8 @@ public class GroupList extends DockPanel
         while (iterator.hasNext()) {
             Group group = (Group)iterator.next();
 
+            // TODO: innerText in Hyperlinks needs to be escaped properly, as the GWT doesn't
+            // seem to be doing it automatically (i.e. create a group named "<foo> bar")
             // first column: the group's name
             _table.setWidget(row, 0, new Hyperlink(group.name, Integer.toString(group.groupId)));
 
