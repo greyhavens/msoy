@@ -9,7 +9,6 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.data.MemberName;
-import com.threerings.msoy.web.data.Neighborhood;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -28,6 +27,13 @@ public class MemberServlet extends RemoteServiceServlet
             new ServletWaiter<MemberName>("getName[" + memberId + "]");
         MsoyServer.memberMan.getName(memberId, waiter);
         return waiter.waitForResult();
+    }
+
+    // from MemberService
+    public boolean isOnline (int memberId)
+        throws ServiceException
+    {
+        return MsoyServer.lookupMember(memberId) != null;
     }
 
     // from MemberService
@@ -73,6 +79,16 @@ public class MemberServlet extends RemoteServiceServlet
         ServletWaiter<String> waiter =
             new ServletWaiter<String>("serializeNeighborhood[" + memberId + "]");
         MsoyServer.memberMan.serializeNeighborhood(memberId, waiter);
+        return waiter.waitForResult();
+    }
+
+    // from MemberService
+    public String serializePopularPlaces (WebCreds creds, int n)
+        throws ServiceException
+    {
+        ServletWaiter<String> waiter =
+            new ServletWaiter<String>("serializePopularPlaces[" + n + "]");
+        MsoyServer.memberMan.serializePopularPlaces(n, waiter);
         return waiter.waitForResult();
     }
 }

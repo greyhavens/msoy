@@ -25,7 +25,31 @@ public class ItemRating extends Image
     /** Display average rating, or user's on mouse-over, with updates. */
     public static final int MODE_BOTH = 3;
 
+    /**
+     * Construct a read-only rating that doesn't need a WebContext. 
+     */
+    public ItemRating (Item item)
+    {
+        this(null, item, (byte) -1, MODE_READ);
+    }
+
+    /**
+     * Construct a new display for the given item with member's previous rating of the
+     * item, automatically figuring out read-only or read/write display mode.
+     */
     public ItemRating (WebContext ctx, Item item, byte memberRating)
+    {
+        // we can rate this item if it's a clone, or if it's listed, and we have a context
+        this(ctx, item, memberRating,
+            (ctx != null && (item.parentId != -1 || item.ownerId == -1)) ?
+                ItemRating.MODE_BOTH : ItemRating.MODE_READ);
+    }
+
+    /**
+     * Construct a new display for the given item with member's previous rating of the
+     * item and a specified display mode.
+     */
+    public ItemRating (WebContext ctx, Item item, byte memberRating, int mode)
     {
         setStyleName("itemRating");
         addMouseListener(this);
@@ -34,9 +58,15 @@ public class ItemRating extends Image
         _item = item;
         _memberRating = memberRating;
         _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
-        // we can rate this item if it's a clone, or if it's listed
-        _mode = (_item.parentId != -1 || _item.ownerId == -1) ?
-            ItemRating.MODE_BOTH : ItemRating.MODE_READ;
+        if (mode != MODE_READ) {
+            if (ctx == null) {
+                throw new IllegalArgumentException("Need non-null webcontext [mode=" + mode + "]");
+            }
+            if (_item.parentId != -1 || _item.ownerId == -1) {
+                throw new IllegalArgumentException("Can only rate clones and listed items.");
+            }
+        }
+        _mode = mode;
 
         update();
     }

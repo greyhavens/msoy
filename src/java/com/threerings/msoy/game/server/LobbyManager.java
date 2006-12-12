@@ -51,6 +51,14 @@ public class LobbyManager extends PlaceManager
         super.shutdown();
     }
 
+    /**
+     * Return the ID of the game for which we're the lobby.
+     */
+    public int getGameId ()
+    {
+        return _gameId;
+    }
+    
     @Override
     protected PlaceObject createPlaceObject ()
     {

@@ -7,7 +7,10 @@ import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import java.util.logging.Level;
@@ -27,13 +30,14 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.SceneBookmarkEntry;
+import com.threerings.msoy.game.data.LobbyConfig;
+import com.threerings.msoy.game.server.LobbyManager;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
@@ -47,10 +51,14 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.NeighborFriend;
 import com.threerings.msoy.web.data.NeighborGroup;
 import com.threerings.msoy.web.data.Neighborhood;
+import com.threerings.msoy.web.data.PopularPlace;
+import com.threerings.msoy.web.data.PopularPlace.*;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.server.ServletWaiter;
 
+import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
@@ -707,6 +715,57 @@ public class MemberManager
                 return null;
             }
         });
+    }
+    
+    /**
+     * Return a JSON-serialized version of the Popular Places.
+     */
+    public void serializePopularPlaces (int n, ResultListener<String> listener)
+    {
+        try {
+            JSONArray result = new JSONArray();
+            for (PopularPlace place : getPopularPlaces(n)) {
+                JSONObject obj = new JSONObject();
+                obj.put("name", place.name);
+                obj.put("pop", place.population);
+                if (place instanceof PopularGamePlace) {
+                    obj.put("gameId", ((PopularGamePlace) place).gameId);
+                } else {
+                    obj.put("sceneId", ((PopularScenePlace) place).sceneId);
+                }
+                result.put(obj);
+            }
+            listener.requestCompleted(result.toString());
+        } catch (JSONException e) {
+            listener.requestFailed(e);
+        }
+    }
+
+    /**
+     * Find the n most popular rooms and games in the world at the moment.
+     */
+    public List<PopularPlace> getPopularPlaces (int n)
+    {
+        List<PopularPlace> result = new ArrayList<PopularPlace>();
+        Iterator<?> i = MsoyServer.plreg.enumeratePlaceManagers();
+        while (i.hasNext()) {
+            PlaceManager plMgr = (PlaceManager) i.next();
+            int count = plMgr.getPlaceObject().occupantInfo.size();
+            if (plMgr instanceof RoomManager) { 
+                MsoyScene scene = (MsoyScene) ((RoomManager) plMgr).getScene();
+                result.add(new PopularScenePlace(scene.getName(), scene.getId(), count));
+            } else if (plMgr instanceof LobbyManager) {
+                LobbyConfig config = (LobbyConfig) plMgr.getConfig();
+                LobbyManager lMgr = (LobbyManager) plMgr;
+                result.add(new PopularScenePlace(config.game.name, lMgr.getGameId(), count));
+            }
+        }
+        Collections.sort(result, new Comparator<PopularPlace>() {
+            public int compare (PopularPlace o1, PopularPlace o2) {
+                return o1.population < o2.population ? -1 : o1.population == o2.population ? 0 : 1;
+            }
+        });
+        return result.subList(0, n < result.size() ? n : result.size());
     }
     
     /**

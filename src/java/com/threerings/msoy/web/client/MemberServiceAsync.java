@@ -17,6 +17,11 @@ public interface MemberServiceAsync
     public void getName (int memberId, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link MemberService#isOnline}.
+     */
+    public void isOnline (int memberId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link MemberService#getMemberHomeId}.
      */
     public void getMemberHomeId (WebCreds creds, int memberId, AsyncCallback callback);
@@ -40,4 +45,9 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#serializeNeighborhood}.
      */
     public void serializeNeighborhood (WebCreds creds, int memberId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link MemberService#serializePopularPlaces}.
+     */
+    public void serializePopularPlaces (WebCreds creds, int n, AsyncCallback callback);
 }

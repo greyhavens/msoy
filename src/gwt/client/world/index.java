@@ -11,6 +11,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -34,6 +35,8 @@ public class index extends MsoyEntryPoint
     public void onHistoryChanged (String token)
     {
         RootPanel.get("content").clear();
+        _entryCounter ++;
+        
         // don't show the flash client in the GWT shell
         if (!GWT.isScript()) {
             return;
@@ -49,23 +52,31 @@ public class index extends MsoyEntryPoint
             }
             if (token.startsWith("ng")) {
                 // TODO: get group neighborhood, not member :)
+                final int requestEntryCount = _entryCounter;
                 _ctx.membersvc.serializeNeighborhood(_ctx.creds, id(token, 2), new AsyncCallback() {
                     public void onSuccess (Object result) {
-                        neighborhood((String) result);
+                        if (requestEntryCount == _entryCounter) {
+                            neighborhood((String) result);
+                        }
                     }
                     public void onFailure (Throwable caught) {
-
+                        if (requestEntryCount == _entryCounter) {
+                        }
                     }
                 });
                 return;
             }
             if (token.startsWith("nm")) {
+                final int requestEntryCount = _entryCounter;
                 _ctx.membersvc.serializeNeighborhood(_ctx.creds, id(token, 2), new AsyncCallback() {
                     public void onSuccess (Object result) {
-                        neighborhood((String) result);
+                        if (requestEntryCount == _entryCounter) {
+                            neighborhood((String) result);
+                        }
                     }
                     public void onFailure (Throwable caught) {
-
+                        if (requestEntryCount == _entryCounter) {
+                        }
                     }
                 });
                 return;
@@ -73,7 +84,28 @@ public class index extends MsoyEntryPoint
         } catch (NumberFormatException e) {
             // fall through
         }
-        world(null);
+        // if we got crud in the URL, let's rewrite it (and trigger another call to ourselves)
+        if (token.length() > 0) {
+            History.newItem("");
+            return;
+        }
+        if (_ctx.creds != null) {
+            world(null);
+            return;
+        }
+        final int requestEntryCount = _entryCounter;
+        _ctx.membersvc.serializePopularPlaces(_ctx.creds, 20, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                if (requestEntryCount == _entryCounter) {
+                    setContent(new Label("Popular places: " + (String) result));
+                }
+            }
+            public void onFailure (Throwable caught) {
+                if (requestEntryCount == _entryCounter) {
+                    setContent(new Label("Failed to fetch poular places: " + caught.getMessage()));
+                }
+            }
+        });
     }
 
     protected void neighborhood (String hood)
@@ -81,14 +113,12 @@ public class index extends MsoyEntryPoint
         if (_client != null) {
             clientLogoff();
         }
-        _client = FlashClients.createNeighborhood(hood);
-        RootPanel.get("content").add(_client);
+        setContent(_client = FlashClients.createNeighborhood(hood));
     }
 
     protected void world (String flashVar)
     {
-        _client = FlashClients.createWorldClient(flashVar);
-        RootPanel.get("content").add(_client);
+        setContent(_client = FlashClients.createWorldClient(flashVar));
     }
 
     protected int id (String token, int index)
@@ -99,25 +129,21 @@ public class index extends MsoyEntryPoint
     // @Override // from MsoyEntryPoint
     protected String getPageId ()
     {
-        return "index";
+        return "world";
     }
 
     // @Override // from MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
-        String initToken = History.getToken();
-        if (initToken.length() > 0) {
-            onHistoryChanged(initToken);
-        } else {
-            onHistoryChanged("home");
-        }
+        onHistoryChanged(History.getToken());
     }
 
     // @Override // from MsoyEntryPoint
     protected void didLogon (WebCreds creds)
     {
         super.didLogon(creds);
+        onHistoryChanged(History.getToken());
         clientLogon(creds.memberId, creds.token);
     }
 
@@ -126,6 +152,7 @@ public class index extends MsoyEntryPoint
     {
         super.didLogoff();
         clientLogoff();
+        onHistoryChanged(History.getToken());
     }
 
     /**
@@ -159,5 +186,7 @@ public class index extends MsoyEntryPoint
         }
     }-*/;
 
+    /** A counter to help asynchronous callbacks to figure out if they've been obsoleted. */
+    protected int _entryCounter;
     protected HTML _client;
 }
