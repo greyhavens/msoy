@@ -345,7 +345,13 @@ public class MemberManager
             new ItemIdent(Item.AVATAR, avatarItemId), new ResultListener<Item>() {
             public void requestCompleted (Item item) {
                 Avatar avatar = (Avatar) item;
-                finishSetAvatar(user, avatar, listener);
+                // ensure that they own it!
+                if (user.getMemberId() != avatar.ownerId) {
+                    requestFailed(new Exception("An avatar that the user " +
+                        "does not own was specified!"));
+                } else {
+                    finishSetAvatar(user, avatar, listener);
+                }
             }
             public void requestFailed (Exception cause) {
                 log.log(Level.WARNING, "Unable to retrieve user's avatar.", cause);

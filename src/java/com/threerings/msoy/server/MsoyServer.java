@@ -140,6 +140,10 @@ public class MsoyServer extends WhirledServer
      */
     public static MemberObject lookupMember (int memberId)
     {
+        // We can't look up guests this way, as they all have the same memberId
+        if (memberId == MemberName.GUEST_ID) {
+            return null;
+        }
         // MemberName.equals and hashCode only depend on the id
         return lookupMember(new MemberName(null, memberId));
     }

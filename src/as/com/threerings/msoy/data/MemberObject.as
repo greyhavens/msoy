@@ -51,6 +51,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>inventory</code> field. */
     public static const INVENTORY :String = "inventory";
 
+    /** The field name of the <code>resolvingInventory</code> field. */
+    public static const RESOLVING_INVENTORY :String = "resolvingInventory";
+
     /** The field name of the <code>loadedInventory</code> field. */
     public static const LOADED_INVENTORY :String = "loadedInventory";
 
@@ -93,6 +96,9 @@ public class MemberObject extends BodyObject
 
     /** Our inventory, lazy-initialized. */
     public var inventory :DSet;
+
+    /** A bitmas of the item types that are currently being resolved. */
+    public var resolvingInventory :int;
 
     /** A bitmask of the item types that have been loaded into inventory. */
     public var loadedInventory :int;
@@ -222,6 +228,14 @@ public class MemberObject extends BodyObject
             }
         }
         return GroupMembership.RANK_NON_MEMBER;
+    }
+
+    /**
+     * Return true if the specified item type is being resolved.
+     */
+    public function isInventoryResolving (itemType :int) :Boolean
+    {
+        return (0 != ((1 << itemType) & resolvingInventory));
     }
 
     /**
@@ -392,6 +406,7 @@ public class MemberObject extends BodyObject
         recentScenes = (ins.readObject() as DSet);
         ownedScenes = (ins.readObject() as DSet);
         inventory = (ins.readObject() as DSet);
+        resolvingInventory = ins.readInt();
         loadedInventory = ins.readInt();
         tokens = (ins.readObject() as MsoyTokenRing);
         homeSceneId = ins.readInt();

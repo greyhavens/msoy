@@ -16,8 +16,6 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import sun.text.IntHashtable;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
@@ -192,10 +190,13 @@ public class ItemManager
     /**
      * Update usage of the specified items.
      *
+     * This method assumes that the specified avatars are both valid
+     * and owned by the user in question.
+     *
      * The supplied listener will be notified of success with null.
      */
     public void updateItemUsage (
-        final int memberId, Avatar oldAvatar, Avatar newAvatar,
+        final int memberId, final Avatar oldAvatar, final Avatar newAvatar,
         final ResultListener<?> listener)
     {
         if (ObjectUtil.equals(oldAvatar, newAvatar)) {
@@ -227,6 +228,19 @@ public class ItemManager
                         Item.USED_AS_AVATAR, memberId);
                 }
                 return null;
+            }
+
+            @Override
+            public void handleSuccess ()
+            {
+                super.handleSuccess();
+
+                oldAvatar.used = Item.UNUSED;
+                oldAvatar.location = 0;
+                newAvatar.used = Item.USED_AS_AVATAR;
+                newAvatar.location = memberId;
+                updateUserCache(oldAvatar);
+                updateUserCache(newAvatar);
             }
         });
     }
@@ -294,6 +308,32 @@ public class ItemManager
                         Item.USED_AS_FURNITURE, sceneId);
                 }
                 return null;
+            }
+
+            @Override
+            public void handleSuccess ()
+            {
+                super.handleSuccess();
+
+                // TODO: crap, the edited items may be ones we don't own.
+//                for (Tuple<Byte, int[]> tup : unused.typeIterator()) {
+//                    updateUserCache(TODO:ownerId, tup.left, tup.right,
+//                        new ItemUpdateOp() {
+//                            public void update (Item item) {
+//                                item.used = Item.UNUSED;
+//                                item.location = 0;
+//                            }
+//                        });
+//                }
+//                for (Tuple<Byte, int[]> tup : scenes.typeIterator()) {
+//                    updateUserCache(TODO:ownerId, tup.left, tup.right,
+//                        new ItemUpdateOp() {
+//                            public void update (Item item) {
+//                                item.used = Item.USED_AS_FURNITURE;
+//                                item.location = sceneId;
+//                            }
+//                        });
+//                }
             }
         });
     }
@@ -407,18 +447,6 @@ public class ItemManager
     public void loadInventory (final int memberId, byte type,
                                ResultListener<ArrayList<Item>> listener)
     {
-//        // first check the cache
-//        final Tuple<Integer, Byte> key = new Tuple<Integer, Byte>(memberId, type);
-//        Collection<ItemRecord> items = _itemCache.get(key);
-//        if (items != null) {
-//            ArrayList<Item> list = new ArrayList<Item>();
-//            for (ItemRecord record : items) {
-//                list.add(record.toItem());
-//            }
-//            listener.requestCompleted(list);
-//            return;
-//        }
-
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = getRepository(type, listener);
         if (repo == null) {
@@ -436,12 +464,6 @@ public class ItemManager
                 }
                 return newList;
             }
-
-// TODO: The cache needs some rethinking, I figure.
-//             public void handleSuccess () {
-//                 _itemCache.put(key, _result);
-//                 super.handleSuccess();
-//             }
         });
     }
 
@@ -516,6 +538,14 @@ public class ItemManager
                 item.itemId = cloneId;
                 return item.toItem();
             }
+
+            @Override
+            public void handleSuccess ()
+            {
+                super.handleSuccess();
+
+                updateUserCache(_result);
+            }
         });
     }
 
@@ -579,37 +609,35 @@ public class ItemManager
             public Item invokePersistResult () throws PersistenceException
             {
                 // load a copy of the clone to modify
-                _item = repo.loadClone(ident.itemId);
-                if (_item == null) {
+                ItemRecord item = repo.loadClone(ident.itemId);
+                if (item == null) {
                     throw new PersistenceException(
                         "Can't find item [item=" + ident + "]");
                 }
                 // TODO: make sure we should not use the original creator here
                 // make it ours
-                _item.creatorId = _item.ownerId;
+                item.creatorId = item.ownerId;
                 // let the object forget whence it came
-                int originalId = _item.parentId;
-                _item.parentId = -1;
+                int originalId = item.parentId;
+                item.parentId = -1;
                 // insert it as a genuinely new item
-                _item.itemId = 0;
-                repo.insertOriginalItem(_item);
+                item.itemId = 0;
+                repo.insertOriginalItem(item);
                 // delete the old clone
                 repo.deleteClone(ident.itemId);
                 // copy tags from the original to the new item
                 repo.copyTags(
-                    originalId, _item.itemId, _item.ownerId,
+                    originalId, item.itemId, item.ownerId,
                     System.currentTimeMillis());
-                return _item.toItem();
+                return item.toItem();
             }
 
             public void handleSuccess ()
             {
                 super.handleSuccess();
-                // add the item to the user's cached inventory
-//                updateUserCache(_item);
+                // update the item in the user's cached inventory
+                updateUserCache(_result);
             }
-
-            protected ItemRecord _item;
         });
 
     }
@@ -824,10 +852,16 @@ public class ItemManager
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
 
-        if (memberObj.isInventoryLoaded(type)) {
-            // already loaded!
-            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
+        if (memberObj.isInventoryResolving(type)) {
+            // already loaded/resolving!
+            return; // this is not an error condition, we expect that
+            // some other entity is loading and the user will notice soon
+            // enough.
         }
+
+        // mark the item type as resolving
+        memberObj.setResolvingInventory(
+            memberObj.resolvingInventory | (1 << type));
 
         // then, load that type
         loadInventory(memberObj.getMemberId(), type, new ResultListener<ArrayList<Item>>() {
@@ -851,6 +885,10 @@ public class ItemManager
             {
                 log.warning("Unable to retrieve inventory [cause=" + cause + "].");
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+
+                // we're not resolving anymore.. oops
+                memberObj.setResolvingInventory(
+                    memberObj.resolvingInventory & ~(1 << type));
             }
         });
     }
@@ -915,17 +953,81 @@ public class ItemManager
     }
 
     /**
-     * Called when an item is newly created and should be inserted into the
-     * owning user's inventory cache.
+     * Called when an item is updated or created and we should ensure
+     * that the user's MemberObject cache of their inventory is up-to-date.
      */
-    protected void updateUserCache (ItemRecord item)
+    protected void updateUserCache (ItemRecord rec)
     {
-//        byte type = item.getType();
-//        Collection<ItemRecord> items =
-//            _itemCache.get(new Tuple<Integer, Byte>(item.ownerId, type));
-//        if (items != null) {
-//            items.add(item);
-//        }
+        updateUserCache(rec, null);
+    }
+
+    /**
+     * Called when an item is updated or created and we should ensure
+     * that the user's MemberObject cache of their inventory is up-to-date.
+     */
+    protected void updateUserCache (Item item)
+    {
+        updateUserCache(null, item);
+    }
+
+    /**
+     * Internal cache-updatey method that takes a record or an item.
+     */
+    protected void updateUserCache (ItemRecord rec, Item item)
+    {
+        // first locate the owner
+        int ownerId;
+        byte type;
+        if (item == null) {
+            ownerId = rec.ownerId;
+            type = rec.getType();
+        } else {
+            ownerId = item.ownerId;
+            type = item.getType();
+        }
+        MemberObject memObj = MsoyServer.lookupMember(ownerId);
+
+        // if found and this item's inventory type is loaded or resolving,
+        // update or add it. (If we're resolving, we might be the first
+        // adding the item. That's ok, nothing should think it's
+        // actually loaded until the inventoryLoaded flag is set.
+        if (memObj != null && memObj.isInventoryResolving(type)) {
+            if (item == null) {
+                item = rec.toItem(); // lazy-create when we need it.
+            }
+            if (memObj.inventory.contains(item)) {
+                memObj.updateInventory(item);
+            } else {
+                memObj.addToInventory(item);
+            }
+        }
+    }
+
+    /**
+     * Update changed items that are already loaded in a user's inventory.
+     */
+    protected void updateUserCache (int ownerId, byte type,
+        int[] ids, ItemUpdateOp op)
+    {
+        MemberObject memObj = MsoyServer.lookupMember(ownerId);
+        if (memObj != null && memObj.isInventoryLoaded(type)) {
+            memObj.startTransaction();
+            try {
+                for (int id : ids) {
+                    Item item = memObj.inventory.get(new ItemIdent(type, id));
+                    if (item == null) {
+                        // TODO: this possibly a bigger error and we should
+                        // maybe throw an exception
+                        log.warning("Unable to update missing item: " + item);
+                        continue;
+                    }
+                    op.updateItem(item);
+                    memObj.updateInventory(item);
+                }
+            } finally {
+                memObj.commitTransaction();
+            }
+        }
     }
 
     /**
@@ -995,7 +1097,7 @@ public class ItemManager
         {
             LookupType lt = _byType.get(itemType);
             if (lt == null) {
-                lt = new LookupType(getRepository(itemType));
+                lt = new LookupType(itemType, getRepository(itemType));
                 _byType.put(itemType, lt);
             }
             lt.addItemId(itemId);
@@ -1033,16 +1135,43 @@ public class ItemManager
             };
         }
 
+        public Iterator<Tuple<Byte, int[]>> typeIterator ()
+        {
+            final Iterator<LookupType> itr = _byType.values().iterator();
+            return new Iterator<Tuple<Byte, int[]>>() {
+                public boolean hasNext ()
+                {
+                    return itr.hasNext();
+                }
+
+                public Tuple<Byte, int[]> next ()
+                {
+                    LookupType lookup = itr.next();
+                    return new Tuple<Byte, int[]>(
+                        lookup.type, lookup.getItemIds());
+                }
+
+                public void remove ()
+                {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+
         protected class LookupType
         {
+            /** The item type associated with this list. */
+            public byte type;
+
             /** The repository associated with this list. */
             public ItemRepository<ItemRecord> repo;
 
             /**
              * Create a new LookupType for the specified repository.
              */
-            public LookupType (ItemRepository<ItemRecord> repo)
+            public LookupType (byte type, ItemRepository<ItemRecord> repo)
             {
+                this.type = type;
                 this.repo = repo;
             }
 
@@ -1075,6 +1204,17 @@ public class ItemManager
             new HashMap<Byte, LookupType>();
     } /* End: class LookupList. */
 
+    /**
+     * An interface for updating an item in a user's cache.
+     */
+    protected interface ItemUpdateOp
+    {
+        /**
+         * Update the specified item.
+         */
+        public void updateItem (Item item);
+    }
+
     /** A regexp pattern to validate tags. */
     protected static final Pattern validTag =
         Pattern.compile("[a-z](_?[a-z0-9]){2,18}");
@@ -1082,9 +1222,4 @@ public class ItemManager
     /** Maps byte type ids to repository for all digital item types. */
     protected HashMap<Byte, ItemRepository<ItemRecord>> _repos =
         new HashMap<Byte, ItemRepository<ItemRecord>>();
-
-    /** A soft reference cache of item list indexed on (user,type). */
-//    protected SoftCache<Tuple<Integer, Byte>, Collection<ItemRecord>>
-//        _itemCache =
-//        new SoftCache<Tuple<Integer, Byte>, Collection<ItemRecord>>();
 }

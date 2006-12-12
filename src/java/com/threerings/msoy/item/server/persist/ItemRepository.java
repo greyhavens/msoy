@@ -162,15 +162,20 @@ public abstract class ItemRepository<T extends ItemRecord>
         Integer loc = Integer.valueOf(location);
 
         for (int itemId : itemIds) {
-            if (0 == updatePartial(iclass, itemId,
-                                   ItemRecord.USED, utype, ItemRecord.LOCATION, loc)) {
-                // if the item didn't update, try the clone
-                if (0 == updatePartial(cclass, itemId,
-                                       ItemRecord.USED, utype, ItemRecord.LOCATION, loc)) {
-                    Log.warning("Unable to find item to mark usage " +
-                                "[itemId=" + itemId + ", usageType=" + usageType +
-                                ", location=" + location + "].");
-                }
+            int result;
+            if (itemId > 0) {
+                result = updatePartial(iclass, itemId, ItemRecord.USED, utype,
+                    ItemRecord.LOCATION, loc);
+
+            } else {
+                result = updatePartial(cclass, itemId, ItemRecord.USED, utype,
+                    ItemRecord.LOCATION, loc);
+            }
+            // if the item didn't update, freak out.
+            if (0 == result) {
+                Log.warning("Unable to find item to mark usage " +
+                            "[itemId=" + itemId + ", usageType=" + usageType +
+                            ", location=" + location + "].");
             }
         }
     }

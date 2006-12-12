@@ -60,6 +60,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>inventory</code> field. */
     public static final String INVENTORY = "inventory";
 
+    /** The field name of the <code>resolvingInventory</code> field. */
+    public static final String RESOLVING_INVENTORY = "resolvingInventory";
+
     /** The field name of the <code>loadedInventory</code> field. */
     public static final String LOADED_INVENTORY = "loadedInventory";
 
@@ -105,8 +108,11 @@ public class MemberObject extends BodyObject
     /** The user's inventory, lazy-initialized. */
     public DSet<Item> inventory = new DSet<Item>();
 
+    /** A bitmask of the item types currently loading or loaded. */
+    public int resolvingInventory;
+
     /** A bitmask of the item types that have been loaded into inventory.
-     * Use TODO and TODO to access.
+     * Use isInventoryLoaded() and getItems() to access.
      */
     public int loadedInventory;
 
@@ -242,6 +248,14 @@ public class MemberObject extends BodyObject
             }
         }
         return GroupMembership.RANK_NON_MEMBER;
+    }
+
+    /**
+     * Return true if the specified item type is currently being loaded.
+     */
+    public boolean isInventoryResolving (byte itemType)
+    {
+        return (0 != ((1 << itemType) & resolvingInventory));
     }
 
     /**
@@ -519,6 +533,22 @@ public class MemberObject extends BodyObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.item.web.Item> clone =
             (value == null) ? null : value.typedClone();
         this.inventory = clone;
+    }
+
+    /**
+     * Requests that the <code>resolvingInventory</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setResolvingInventory (int value)
+    {
+        int ovalue = this.resolvingInventory;
+        requestAttributeChange(
+            RESOLVING_INVENTORY, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.resolvingInventory = value;
     }
 
     /**
