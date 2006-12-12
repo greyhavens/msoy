@@ -136,6 +136,9 @@ public class RoomController extends SceneController
     override public function handleAction (cmd :String, arg :Object) :Boolean
     {
         if (cmd == EDIT_SCENE) {
+            if (_editor != null) {
+                return true; // handled: we're editing
+            }
             _roomObj.roomService.editRoom(_mctx.getClient(),
                 new ResultWrapper(
                     function (cause :String) :void {
@@ -383,6 +386,10 @@ public class RoomController extends SceneController
 
         if (keyDown) {
             switch (event.charCode) {
+//            case 101: case 69:  // E and e
+//                handleAction(EDIT_SCENE, null);
+//                break;
+//
             case 91: // '['
                 _roomView.scrollViewBy(-ROOM_SCROLL_INCREMENT);
                 break;
@@ -402,6 +409,10 @@ public class RoomController extends SceneController
 
             case Keyboard.F3:
                 frob = MemberObject.CHAT_POP_STYLE;
+                break;
+
+            case Keyboard.F1:
+                handleAction(EDIT_SCENE, null);
                 break;
             }
 
