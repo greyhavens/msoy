@@ -463,4 +463,7 @@
     <delete><fileset dir="rsrc" includes="**/*.jar"/></delete>
   </target>
 
+  <!-- install project specific server code into ${destroot} -->
+  <target name="install-server-extra"/>
+
 </project>
