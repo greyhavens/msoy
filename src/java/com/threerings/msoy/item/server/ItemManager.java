@@ -251,6 +251,7 @@ public class ItemManager
      * The supplied listener will be notified of success with null.
      */
     public void updateItemUsage (
+        final int editorMemberId,
         final int sceneId, FurniData[] removedFurni, FurniData[] addedFurni,
         ResultListener<?> listener)
     {
@@ -315,25 +316,38 @@ public class ItemManager
             {
                 super.handleSuccess();
 
-                // TODO: crap, the edited items may be ones we don't own.
-//                for (Tuple<Byte, int[]> tup : unused.typeIterator()) {
-//                    updateUserCache(TODO:ownerId, tup.left, tup.right,
-//                        new ItemUpdateOp() {
-//                            public void update (Item item) {
-//                                item.used = Item.UNUSED;
-//                                item.location = 0;
-//                            }
-//                        });
-//                }
-//                for (Tuple<Byte, int[]> tup : scenes.typeIterator()) {
-//                    updateUserCache(TODO:ownerId, tup.left, tup.right,
-//                        new ItemUpdateOp() {
-//                            public void update (Item item) {
-//                                item.used = Item.USED_AS_FURNITURE;
-//                                item.location = sceneId;
-//                            }
-//                        });
-//                }
+                // TODO: known problem.
+                // There are 4 types of furniture updates, actually:
+                // 1) added furni (by definition, owned by us)
+                // 2) moved furni
+                // 3) removed furni owned by us
+                // 4) removed furni owned by others
+                // #1 & #3 will be handled by the below code (awkwardly)
+                // #2 needs no actual usage updates
+                // #4 is currently unhandled- we don't know who the
+                // owner of those items is without reading that out of the DB.
+                Iterator<Tuple<Byte, int[]>> itr = unused.typeIterator();
+                while (itr.hasNext()) {
+                    Tuple<Byte, int[]> tup = itr.next();
+                    updateUserCache(editorMemberId, tup.left, tup.right,
+                        new ItemUpdateOp() {
+                            public void update (Item item) {
+                                item.used = Item.UNUSED;
+                                item.location = 0;
+                            }
+                        }, false);
+                }
+                itr = scened.typeIterator();
+                while (itr.hasNext()) {
+                    Tuple<Byte, int[]> tup = itr.next();
+                    updateUserCache(editorMemberId, tup.left, tup.right,
+                        new ItemUpdateOp() {
+                            public void update (Item item) {
+                                item.used = Item.USED_AS_FURNITURE;
+                                item.location = sceneId;
+                            }
+                        }, false);
+                }
             }
         });
     }
@@ -1007,7 +1021,7 @@ public class ItemManager
      * Update changed items that are already loaded in a user's inventory.
      */
     protected void updateUserCache (int ownerId, byte type,
-        int[] ids, ItemUpdateOp op)
+        int[] ids, ItemUpdateOp op, boolean warnIfMissing)
     {
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
         if (memObj != null && memObj.isInventoryLoaded(type)) {
@@ -1016,12 +1030,15 @@ public class ItemManager
                 for (int id : ids) {
                     Item item = memObj.inventory.get(new ItemIdent(type, id));
                     if (item == null) {
-                        // TODO: this possibly a bigger error and we should
-                        // maybe throw an exception
-                        log.warning("Unable to update missing item: " + item);
+                        if (warnIfMissing) {
+                            // TODO: this possibly a bigger error and we should
+                            // maybe throw an exception
+                            log.warning("Unable to update missing item: " +
+                                item);
+                        }
                         continue;
                     }
-                    op.updateItem(item);
+                    op.update(item);
                     memObj.updateInventory(item);
                 }
             } finally {
@@ -1212,7 +1229,7 @@ public class ItemManager
         /**
          * Update the specified item.
          */
-        public void updateItem (Item item);
+        public void update (Item item);
     }
 
     /** A regexp pattern to validate tags. */

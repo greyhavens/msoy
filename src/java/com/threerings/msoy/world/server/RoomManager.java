@@ -140,8 +140,8 @@ public class RoomManager extends SpotSceneManager
             // furniture modification updates require us to mark item usage
             if (update instanceof ModifyFurniUpdate) {
                 ModifyFurniUpdate mfu = (ModifyFurniUpdate) update;
-                MsoyServer.itemMan.updateItemUsage(_scene.getId(),
-                    mfu.furniRemoved, mfu.furniAdded,
+                MsoyServer.itemMan.updateItemUsage(user.getMemberId(),
+                    _scene.getId(), mfu.furniRemoved, mfu.furniAdded,
                     new ResultListener() {
                         public void requestCompleted (Object result) {}
                         public void requestFailed (Exception cause) {
@@ -249,17 +249,6 @@ public class RoomManager extends SpotSceneManager
     {
         for (SceneUpdate update : updates) {
             recordUpdate(update);
-        }
-
-        // TODO: remove this
-        // FOR NOW, since we don't update item usage properly at the end of
-        // scene editing, we zap everything out of the user's inventory
-        user.startTransaction();
-        try {
-            user.setInventory(new DSet<Item>());
-            user.setLoadedInventory(0);
-        } finally {
-            user.commitTransaction();
         }
     }
 
