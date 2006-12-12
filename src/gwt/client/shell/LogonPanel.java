@@ -92,10 +92,9 @@ public class LogonPanel extends FlexTable
         _creds = creds;
         setCookie("creds", _creds.toCookie());
         setCookie("who", _who);
-        if (notifyApp) {
-            _app.didLogon(_creds);
-        }
 
+        _app.didLogon(_creds, notifyApp);
+        
         _top.setText("Welcome");
         _main.setText(_who);
         _action.setText("Logoff");

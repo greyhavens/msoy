@@ -146,12 +146,23 @@ public abstract class MsoyEntryPoint
     }
 
     /**
-     * Called by our logon panel when the player logs on (or if we show up on
-     * the page with valid credentials).
+     * Called when we the player logs on after the page is loaded.
      */
     protected void didLogon (WebCreds creds)
     {
+        // do nothing
+    }
+
+    /**
+     * Called by our logon panel when the player logs on. You probably want to
+     * override didLogon() instead.
+     */
+    protected void didLogon (WebCreds creds, boolean notify)
+    {
         _ctx.creds = creds;
+        if (notify) {
+            didLogon(creds);
+        }
     }
 
     /**
