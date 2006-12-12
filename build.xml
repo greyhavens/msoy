@@ -463,7 +463,11 @@
     <delete><fileset dir="rsrc" includes="**/*.jar"/></delete>
   </target>
 
-  <!-- install project specific server code into ${destroot.server} -->
-  <target name="prepare-server-extra"/>
+  <!-- prepare ${destroot} for all the packages being built -->
+  <target name="preppkg">
+    <antcall target="prepare-server"/>
+    <antcall target="prepare-webapps"/>
+    <antcall target="prepare-pages"/>
+  </target>
 
 </project>
