@@ -45,6 +45,7 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
+import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ChatPopper;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.MsoyContext;
@@ -64,6 +65,8 @@ public class RoomView extends AbstractRoomView
     {
         super(ctx);
         _ctrl = ctrl;
+
+        _overlay = new ChatOverlay(ctx);
     }
 
     override protected function updateComplete (evt :FlexEvent) :void
@@ -437,6 +440,7 @@ public class RoomView extends AbstractRoomView
         _roomObj.addListener(this);
 
         _ctx.getChatDirector().addChatDisplay(this);
+        _overlay.setTarget(_ctx.getTopPanel());
 
         addAllOccupants();
 
@@ -452,6 +456,7 @@ public class RoomView extends AbstractRoomView
 
         _ctx.getChatDirector().removeChatDisplay(this);
         ChatPopper.popAllDown();
+        _overlay.setTarget(null);
 
         shutdownMusic();
         removeAllOccupants();
@@ -610,6 +615,8 @@ public class RoomView extends AbstractRoomView
 
     /** The background music in the scene. */
     protected var _music :SoundPlayer;
+
+    protected var _overlay :ChatOverlay;
 
     /** A map of bodyOid -> AvatarSprite. */
     protected var _avatars :HashMap = new HashMap();

@@ -101,7 +101,6 @@ public class ChatControl extends HBox
         if (p != null) {
             // set up any already-configured text
             _txt.text = _curLine;
-//            _histIdx = -1;
             var willShowTip :Boolean = StringUtil.isBlank(_curLine);
 
             // request focus
@@ -152,7 +151,6 @@ public class ChatControl extends HBox
         // if there was no error, clear the entry area in prep
         // for the next entry event
         _txt.text = "";
-//        _histIdx = -1;
     }
 
     protected function keyEvent (event :KeyboardEvent) :void
@@ -167,28 +165,6 @@ public class ChatControl extends HBox
             break;
         }
     }
-
-// History-related business. Probably not going to be used.
-//    /**
-//     * Sets the chat input text to the next or previous command
-//     * in the cached historical chat commands.
-//     */
-//    protected function scrollHistory (next :Boolean) :void
-//    {
-//        var size :int = _ctx.getChatDirector().getCommandHistorySize();
-//        if ((_histIdx == -1) || (_histIdx == size)) {
-//            _curLine = _txt.text;
-//            _histIdx = size;
-//        }
-//
-//        _histIdx = next ? Math.min(_histIdx + 1, size)
-//                        : Math.max(_histIdx - 1, 0);
-//        var text :String = (_histIdx == size) ? _curLine :
-//            _ctx.getChatDirector().getCommandHistory(_histIdx);
-//        _txt.text = text;
-//        // and position the caret at the end of the entry
-//        _txt.setSelection(text.length, text.length);
-//    }
 
     protected function showTip (show :Boolean) :void
     {
@@ -397,9 +373,6 @@ public class ChatControl extends HBox
 
     /** The place where the user may enter chat. */
     protected var _txt :TextInput;
-
-//    /** The current index in the chat command history. */
-//    protected var _histIdx :int = -1;
 
     /** Are we showing the text entry tip? */
     protected var _showingTip :Boolean = false;
