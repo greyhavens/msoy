@@ -39,7 +39,7 @@ public class index extends MsoyEntryPoint
             _mainView = new MailApplication(_ctx);
         }
         // make sure we're displaying the application
-        if (!_mainView.isShowing()) {
+        if (!_mainView.isAttached()) {
             setContent(_mainView);
         }
 
