@@ -104,6 +104,11 @@ public class GroupServlet extends RemoteServiceServlet
     public Group createGroup (WebCreds creds, final Group group) throws ServiceException
     {
         // TODO: validate creds
+
+        if(!isValidName(group.name)) {
+            throw new ServiceException("group", "m.invalid_group_name");
+        }
+
         final ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
         group.creationDate = new Date(System.currentTimeMillis());
         group.creatorId = creds.memberId;
@@ -119,6 +124,11 @@ public class GroupServlet extends RemoteServiceServlet
     public void updateGroup (WebCreds creds, final Group group) throws ServiceException
     {
         // TODO: validate creds
+        
+        if(!isValidName(group.name)) {
+            throw new ServiceException("group", "m.invalid_group_name");
+        }
+
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>("createGroup[" + group + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
@@ -174,5 +184,10 @@ public class GroupServlet extends RemoteServiceServlet
             }
         });
         waiter.waitForResult();
+    }
+
+    protected static boolean isValidName (String name) 
+    {
+        return Character.isLetter(name.charAt(0)) || Character.isDigit(name.charAt(0));
     }
 }

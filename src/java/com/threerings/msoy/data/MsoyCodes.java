@@ -10,4 +10,5 @@ import com.threerings.presents.data.InvocationCodes;
  */
 public interface MsoyCodes extends InvocationCodes
 {
+    public static final String GROUP_MSGS = "group";
 }

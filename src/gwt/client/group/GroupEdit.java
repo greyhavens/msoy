@@ -6,7 +6,9 @@ package client.group;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -143,6 +145,13 @@ public class GroupEdit extends PopupPanel
     // submit a modified group, and notify listeners
     protected void commitEdit ()
     {
+        // check if the group name is valid.
+        if (!Character.isLetter(_group.name.charAt(0)) &&
+            !Character.isDigit(_group.name.charAt(0))) {
+            Window.alert("The group name must start with a character or number!");
+            return;
+        }
+        
         AsyncCallback callback = new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (_listener != null) {
