@@ -29,7 +29,7 @@ public class CatalogServlet extends RemoteServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public List loadCatalog (WebCreds creds, byte type)
+    public List loadCatalog (WebCreds creds, final byte type)
         throws ServiceException
     {
         // TODO: validate this user's creds
@@ -42,45 +42,57 @@ public class CatalogServlet extends RemoteServiceServlet
         }
 
         // load their catalog via the catalog manager
-        ServletWaiter<List<CatalogListing>> waiter =
+        final ServletWaiter<List<CatalogListing>> waiter =
             new ServletWaiter<List<CatalogListing>>("loadCatalog[" + type + "]");
-        MsoyServer.itemMan.loadCatalog(type, waiter);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.loadCatalog(type, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface CatalogService
-    public Item purchaseItem (WebCreds creds, ItemIdent item)
+    public Item purchaseItem (final WebCreds creds, final ItemIdent ident)
         throws ServiceException
     {
         // TODO: validate this user's creds
-
-        ItemIdent ident = ItemServlet.toIdent(creds, item, "purchaseItem");
-        ServletWaiter<Item> waiter = new ServletWaiter<Item>(
-            "purchaseItem[" + creds.memberId + ", " + item + "]");
-        MsoyServer.itemMan.purchaseItem(creds.memberId, ident, waiter);
+        final ServletWaiter<Item> waiter = new ServletWaiter<Item>(
+            "purchaseItem[" + creds.memberId + ", " + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.purchaseItem(creds.memberId, ident, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface CatalogService
-    public CatalogListing listItem (WebCreds creds, ItemIdent item)
+    public CatalogListing listItem (WebCreds creds, final ItemIdent ident)
         throws ServiceException
     {
         // TODO: validate this user's creds
-
-        ItemIdent ident = ItemServlet.toIdent(creds, item, "listItem");
-        ServletWaiter<CatalogListing> waiter =
-            new ServletWaiter<CatalogListing>("listItem[" + item + "]");
-        MsoyServer.itemMan.listItem(ident, waiter);
+        final ServletWaiter<CatalogListing> waiter = new ServletWaiter<CatalogListing>(
+            "listItem[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.listItem(ident, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public Map<String, Integer> getPopularTags (WebCreds creds, byte type, int rows)
+    public Map<String, Integer> getPopularTags (WebCreds creds, final byte type, final int rows)
         throws ServiceException
     {
-        ServletWaiter<Map<String, Integer>> waiter =
-            new ServletWaiter<Map<String, Integer>>("getPopularTags[" + type + "]");
-        MsoyServer.itemMan.getPopularTags(type, rows, waiter);
+        final ServletWaiter<Map<String, Integer>> waiter = new ServletWaiter<Map<String, Integer>>(
+            "getPopularTags[" + type + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.getPopularTags(type, rows, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 }

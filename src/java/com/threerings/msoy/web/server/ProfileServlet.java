@@ -30,12 +30,12 @@ public class ProfileServlet extends RemoteServiceServlet
         WebCreds creds, String displayName, String homePageURL, String headline)
     {
         try {
-            // TODO: this is super hack, we're on the servlet thread and not
-            // doing anything properly
+            // TODO: this is super hack, we're on the servlet thread and not doing anything
+            // properly
             log.info("Updating display name " + creds.memberId +
                 " to '" + displayName + "'.");
-            MsoyServer.memberRepo.configureDisplayName(
-                creds.memberId, displayName);
+            MsoyServer.memberRepo.configureDisplayName(creds.memberId, displayName);
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update member's display name " +
                 "[mid=" + creds.memberId + ", name=" + displayName + "].", pe);

@@ -31,22 +31,31 @@ public class GroupServlet extends RemoteServiceServlet
     implements GroupService
 {
     // from interface GroupService
-    public GroupDetail getGroupDetail (WebCreds creds, int groupId)
+    public GroupDetail getGroupDetail (WebCreds creds, final int groupId)
         throws ServiceException
     {
         // TODO: validate creds
-        ServletWaiter<GroupDetail> waiter =
+        final ServletWaiter<GroupDetail> waiter =
             new ServletWaiter<GroupDetail>("getGroupDetail[" + groupId + "]");
-        MsoyServer.memberMan.getGroupDetail(groupId, waiter);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.getGroupDetail(groupId, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from GroupService
-    public Integer getGroupHomeId (WebCreds creds, int groupId)
+    public Integer getGroupHomeId (WebCreds creds, final int groupId)
         throws ServiceException
     {
-        ServletWaiter<Integer> waiter =new ServletWaiter<Integer>("getHomeId[" + groupId + "]");
-        MsoyServer.memberMan.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId, waiter);
+        final ServletWaiter<Integer> waiter =new ServletWaiter<Integer>(
+            "getHomeId[" + groupId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
@@ -66,71 +75,103 @@ public class GroupServlet extends RemoteServiceServlet
     public List<Group> getGroups (WebCreds creds)
         throws ServiceException
     {
-        ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("getGroups[]");
-        MsoyServer.memberMan.getGroups(waiter);
+        final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("getGroups[]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.getGroups(waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface GroupService
-    public List<GroupMembership> getMembershipGroups (WebCreds creds, int memberId,
-                                                      boolean canInvite)
+    public List<GroupMembership> getMembershipGroups (WebCreds creds, final int memberId,
+                                                      final boolean canInvite)
         throws ServiceException
     {
-        ServletWaiter<List<GroupMembership>> waiter =
+        final ServletWaiter<List<GroupMembership>> waiter =
             new ServletWaiter<List<GroupMembership>>("getMembershipGroups[]");
-        MsoyServer.memberMan.getMembershipGroups(memberId, canInvite, waiter);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.getMembershipGroups(memberId, canInvite, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface GroupService
-    public Group createGroup (WebCreds creds, Group group) throws ServiceException
+    public Group createGroup (WebCreds creds, final Group group) throws ServiceException
     {
         // TODO: validate creds
-        ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
+        final ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
         group.creationDate = new Date(System.currentTimeMillis());
         group.creatorId = creds.memberId;
-        MsoyServer.memberMan.createGroup(group, waiter);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.createGroup(group, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface GroupService
-    public void updateGroup (WebCreds creds, Group group) throws ServiceException
+    public void updateGroup (WebCreds creds, final Group group) throws ServiceException
     {
         // TODO: validate creds
-        ServletWaiter<Void> waiter = new ServletWaiter<Void>("createGroup[" + group + "]");
-        MsoyServer.memberMan.updateGroup(group.groupId, group.name, group.charter,
-                                         group.logo, group.policy, waiter);
+        final ServletWaiter<Void> waiter = new ServletWaiter<Void>("createGroup[" + group + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.updateGroup(
+                    group.groupId, group.name, group.charter, group.logo, group.policy, waiter);
+            }
+        });
         waiter.waitForResult();
     }
 
     // from interface GroupService
-    public void leaveGroup (WebCreds creds, int groupId, int memberId) throws ServiceException
-    {
-        // TODO: validate creds
-        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-                "createGroup[" + groupId + ", " + memberId + "]");
-        MsoyServer.memberMan.leaveGroup(groupId, memberId, waiter);
-        waiter.waitForResult();
-    }
-
-    // from interface GroupService
-    public void joinGroup (WebCreds creds, int groupId, int memberId) throws ServiceException
-    {
-        // TODO: validate creds
-        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
-                "createGroup[" + groupId + ", " + memberId + "]");
-        MsoyServer.memberMan.joinGroup(groupId, memberId, GroupMembership.RANK_MEMBER, waiter);
-        waiter.waitForResult();
-    }
-
-    // from interface GroupService
-    public void updateMemberRank (WebCreds creds, int groupId, int memberId, byte newRank) 
+    public void leaveGroup (WebCreds creds, final int groupId, final int memberId)
         throws ServiceException
     {
         // TODO: validate creds
-        ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "createGroup[" + groupId + ", " + memberId + "]");
-        MsoyServer.memberMan.setRank(groupId, memberId, newRank, waiter);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.leaveGroup(groupId, memberId, waiter);
+            }
+        });
+        waiter.waitForResult();
+    }
+
+    // from interface GroupService
+    public void joinGroup (WebCreds creds, final int groupId, final int memberId)
+        throws ServiceException
+    {
+        // TODO: validate creds
+        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+            "createGroup[" + groupId + ", " + memberId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.joinGroup(
+                    groupId, memberId, GroupMembership.RANK_MEMBER, waiter);
+            }
+        });
+        waiter.waitForResult();
+    }
+
+    // from interface GroupService
+    public void updateMemberRank (WebCreds creds, final int groupId, final int memberId,
+                                  final byte newRank) 
+        throws ServiceException
+    {
+        // TODO: validate creds
+        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+            "createGroup[" + groupId + ", " + memberId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.setRank(groupId, memberId, newRank, waiter);
+            }
+        });
         waiter.waitForResult();
     }
 }

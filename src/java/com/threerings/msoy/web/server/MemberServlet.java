@@ -37,48 +37,72 @@ public class MemberServlet extends RemoteServiceServlet
     }
 
     // from MemberService
-    public Integer getMemberHomeId (WebCreds creds, int memberId)
+    public Integer getMemberHomeId (WebCreds creds, final int memberId)
         throws ServiceException
     {
-        ServletWaiter<Integer> waiter =new ServletWaiter<Integer>("getHomeId[" + memberId + "]");
-        MsoyServer.memberMan.getHomeId(MsoySceneModel.OWNER_TYPE_MEMBER, memberId, waiter);
+        final ServletWaiter<Integer> waiter =
+            new ServletWaiter<Integer>("getHomeId[" + memberId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.getHomeId(MsoySceneModel.OWNER_TYPE_MEMBER, memberId, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from MemberService
-    public void inviteFriend (WebCreds creds, int friendId)
+    public void inviteFriend (final WebCreds creds, final int friendId)
         throws ServiceException
     {
-        ServletWaiter<Void> waiter = new ServletWaiter<Void>("inviteFriend[" + friendId + "]");
-        MsoyServer.memberMan.alterFriend(creds.memberId, friendId, true, waiter);
+        final ServletWaiter<Void> waiter =
+            new ServletWaiter<Void>("inviteFriend[" + friendId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.alterFriend(creds.memberId, friendId, true, waiter);
+            }
+        });
         waiter.waitForResult();
     }
 
     // from MemberService
-    public void acceptFriend (WebCreds creds, int friendId)
+    public void acceptFriend (final WebCreds creds, final int friendId)
         throws ServiceException
     {
-        ServletWaiter<Void> waiter = new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
-        MsoyServer.memberMan.alterFriend(creds.memberId, friendId, true, waiter);
+        final ServletWaiter<Void> waiter =
+            new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.alterFriend(creds.memberId, friendId, true, waiter);
+            }
+        });
         waiter.waitForResult();
     }
 
     // from MemberService
-    public void declineFriend (WebCreds creds, int friendId)
+    public void declineFriend (final WebCreds creds, final int friendId)
         throws ServiceException
     {
-        ServletWaiter<Void> waiter = new ServletWaiter<Void>("declineFriend[" + friendId + "]");
-        MsoyServer.memberMan.alterFriend(creds.memberId, friendId, false, waiter);
+        final ServletWaiter<Void> waiter =
+            new ServletWaiter<Void>("declineFriend[" + friendId + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.alterFriend(creds.memberId, friendId, false, waiter);
+            }
+        });
         waiter.waitForResult();
     }
     
     // from MemberService
-    public String serializeNeighborhood (WebCreds creds, int memberId)
+    public String serializeNeighborhood (WebCreds creds, final int memberId)
         throws ServiceException
     {
-        ServletWaiter<String> waiter =
+        final ServletWaiter<String> waiter =
             new ServletWaiter<String>("serializeNeighborhood[" + memberId + "]");
-        MsoyServer.memberMan.serializeNeighborhood(memberId, waiter);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.serializeNeighborhood(memberId, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 

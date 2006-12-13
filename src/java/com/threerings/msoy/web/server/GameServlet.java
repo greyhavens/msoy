@@ -33,10 +33,14 @@ public class GameServlet extends RemoteServiceServlet
         // TODO: validate this user's creds
 
         // load up the metadata for this game
-        ItemIdent ident = new ItemIdent(Item.GAME, gameId);
-        ServletWaiter<Item> waiter =
-            new ServletWaiter<Item>("loadItem[" + ident + "]");
-        MsoyServer.itemMan.getItem(ident, waiter);
+        final ItemIdent ident = new ItemIdent(Item.GAME, gameId);
+        final ServletWaiter<Item> waiter = new ServletWaiter<Item>("loadItem[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.getItem(ident, waiter);
+            }
+        });
+
         Game game = (Game)waiter.waitForResult();
         if (game == null) {
             return null;

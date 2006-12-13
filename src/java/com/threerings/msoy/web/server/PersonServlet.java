@@ -19,13 +19,16 @@ public class PersonServlet extends RemoteServiceServlet
     implements PersonService
 {
     // from interface PersonService
-    public ArrayList loadBlurbs (int memberId)
+    public ArrayList loadBlurbs (final int memberId)
         throws ServiceException
     {
-        // load up their bits
-        ServletWaiter<ArrayList<Object>> waiter =
+        final ServletWaiter<ArrayList<Object>> waiter =
             new ServletWaiter<ArrayList<Object>>("loadPersonPage[" + memberId + "]");
-        MsoyServer.ppageMan.loadPersonPage(memberId, waiter);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.ppageMan.loadPersonPage(memberId, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 }

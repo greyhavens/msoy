@@ -28,7 +28,7 @@ public class ItemServlet extends RemoteServiceServlet
     implements ItemService
 {
     // from interface ItemService
-    public int createItem (WebCreds creds, Item item)
+    public int createItem (WebCreds creds, final Item item)
         throws ServiceException
     {
         // TODO: validate this user's creds
@@ -46,14 +46,18 @@ public class ItemServlet extends RemoteServiceServlet
         item.ownerId = creds.memberId;
 
         // pass the buck to the item manager to do the dirty work
-        ServletWaiter<Item> waiter = new ServletWaiter<Item>(
+        final ServletWaiter<Item> waiter = new ServletWaiter<Item>(
             "insertItem[" + creds + ", " + item + "]");
-        MsoyServer.itemMan.insertItem(item, waiter);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.insertItem(item, waiter);
+            }
+        });
         return waiter.waitForResult().itemId;
     }
 
     // from interface ItemService
-    public void updateItem (WebCreds creds, Item item)
+    public void updateItem (WebCreds creds, final Item item)
         throws ServiceException
     {
         // TODO: validate this user's creds
@@ -67,14 +71,18 @@ public class ItemServlet extends RemoteServiceServlet
         // TODO: validate anything else?
 
         // pass the buck to the item manager to do the dirty work
-        ServletWaiter<Item> waiter = new ServletWaiter<Item>(
+        final ServletWaiter<Item> waiter = new ServletWaiter<Item>(
             "updateItem[" + creds + ", " + item + "]");
-        MsoyServer.itemMan.updateItem(item, waiter);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.updateItem(item, waiter);
+            }
+        });
         waiter.waitForResult();
     }
 
     // from interface ItemService
-    public ArrayList loadInventory (WebCreds creds, byte type)
+    public ArrayList loadInventory (final WebCreds creds, final byte type)
         throws ServiceException
     {
         // TODO: validate this user's creds
@@ -87,123 +95,149 @@ public class ItemServlet extends RemoteServiceServlet
         }
 
         // load their inventory via the item manager
-        ServletWaiter<ArrayList<Item>> waiter =
-            new ServletWaiter<ArrayList<Item>>(
-                "loadInventory[" + creds.memberId + ", " + type + "]");
-        MsoyServer.itemMan.loadInventory(creds.memberId, type, waiter);
+        final ServletWaiter<ArrayList<Item>> waiter = new ServletWaiter<ArrayList<Item>>(
+            "loadInventory[" + creds.memberId + ", " + type + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.loadInventory(creds.memberId, type, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public Item loadItem (WebCreds creds, ItemIdent item)
+    public Item loadItem (WebCreds creds, final ItemIdent ident)
         throws ServiceException
     {
-        ItemIdent ident = toIdent(creds, item, "loadItem");
-        ServletWaiter<Item> waiter = new ServletWaiter<Item>("loadItem[" + item + "]");
-        MsoyServer.itemMan.getItem(ident, waiter);
+        final ServletWaiter<Item> waiter = new ServletWaiter<Item>("loadItem[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.getItem(ident, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public ItemDetail loadItemDetail (WebCreds creds, ItemIdent item)
+    public ItemDetail loadItemDetail (final WebCreds creds, final ItemIdent ident)
         throws ServiceException
     {
-        ItemIdent ident = toIdent(creds, item, "loadItemDetail");
-        ServletWaiter<ItemDetail> waiter = new ServletWaiter<ItemDetail>("loadItem[" + item + "]");
-        MsoyServer.itemMan.getItemDetail(ident, creds.memberId, waiter);
+        final ServletWaiter<ItemDetail> waiter = new ServletWaiter<ItemDetail>(
+            "loadItem[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.getItemDetail(ident, creds.memberId, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public Item remixItem (WebCreds creds, ItemIdent item)
+    public Item remixItem (WebCreds creds, final ItemIdent ident)
         throws ServiceException
     {
-        ItemIdent ident = toIdent(creds, item, "remixItem");
-        ServletWaiter<Item> waiter = new ServletWaiter<Item>("remixItem[" + item + "]");
-        MsoyServer.itemMan.remixItem(ident, waiter);
+        final ServletWaiter<Item> waiter = new ServletWaiter<Item>("remixItem[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.remixItem(ident, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public byte getRating (WebCreds creds, ItemIdent item, int memberId)
+    public byte getRating (WebCreds creds, final ItemIdent ident, final int memberId)
         throws ServiceException
     {
-        ItemIdent ident = toIdent(creds, item, "getRating");
-        ServletWaiter<Byte> waiter = new ServletWaiter<Byte>("getRating[" + item + "]");
-        MsoyServer.itemMan.getRating(ident, memberId, waiter);
+        final ServletWaiter<Byte> waiter = new ServletWaiter<Byte>("getRating[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.getRating(ident, memberId, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public float rateItem (WebCreds creds, ItemIdent item, byte rating)
+    public float rateItem (final WebCreds creds, final ItemIdent ident, final byte rating)
         throws ServiceException
     {
-        ItemIdent ident = toIdent(creds, item, "rateItem");
-        ServletWaiter<Float> waiter = new ServletWaiter<Float>("rateItem[" + item + "]");
-        MsoyServer.itemMan.rateItem(ident, creds.memberId, rating, waiter);
+        final ServletWaiter<Float> waiter = new ServletWaiter<Float>("rateItem[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.rateItem(ident, creds.memberId, rating, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public Collection<String> getTags (WebCreds creds, ItemIdent item)
+    public Collection<String> getTags (WebCreds creds, final ItemIdent ident)
         throws ServiceException
     {
-        ItemIdent ident = toIdent(creds, item, "getTagHistory");
-        ServletWaiter<Collection<String>> waiter =
-            new ServletWaiter<Collection<String>>("getTags[" + item + "]");
-        MsoyServer.itemMan.getTags(ident, waiter);
+        final ServletWaiter<Collection<String>> waiter =
+            new ServletWaiter<Collection<String>>("getTags[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.getTags(ident, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public Collection<TagHistory> getTagHistory (WebCreds creds, ItemIdent item)
+    public Collection<TagHistory> getTagHistory (WebCreds creds, final ItemIdent ident)
         throws ServiceException
     {
-        ItemIdent ident = toIdent(creds, item, "getTagHistory");
-        ServletWaiter<Collection<TagHistory>> waiter =
-            new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + item + "]");
-        MsoyServer.itemMan.getTagHistory(ident, waiter);
+        final ServletWaiter<Collection<TagHistory>> waiter =
+            new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.getTagHistory(ident, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public Collection<TagHistory> getTagHistory (WebCreds creds, int memberId)
+    public Collection<TagHistory> getTagHistory (WebCreds creds, final int memberId)
         throws ServiceException
     {
-        ServletWaiter<Collection<TagHistory>> waiter =
+        final ServletWaiter<Collection<TagHistory>> waiter =
             new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + memberId + "]");
-        MsoyServer.itemMan.getTagHistory(memberId, waiter);
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.getTagHistory(memberId, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public TagHistory tagItem (WebCreds creds, ItemIdent item, String tag)
+    public TagHistory tagItem (final WebCreds creds, final ItemIdent ident, final String tag)
         throws ServiceException
     {
-        ItemIdent ident = toIdent(creds, item, "tagItem");
-        ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>("tagItem[" + item + "]");
-        MsoyServer.itemMan.tagItem(ident, creds.memberId, tag, waiter);
+        final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
+            "tagItem[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.tagItem(ident, creds.memberId, tag, waiter);
+            }
+        });
         return waiter.waitForResult();
     }
 
     // from interface ItemService
-    public TagHistory untagItem (WebCreds creds, ItemIdent item, String tag)
+    public TagHistory untagItem (final WebCreds creds, final ItemIdent ident, final String tag)
         throws ServiceException
     {
-        ItemIdent ident = toIdent(creds, item, "untagItem");
-        ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>("untagItem[" + item + "]");
-        MsoyServer.itemMan.untagItem(ident, creds.memberId, tag, waiter);
+        final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
+            "untagItem[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.untagItem(ident, creds.memberId, tag, waiter);
+            }
+        });
         return waiter.waitForResult();
-    }
-
-    protected static ItemIdent toIdent (WebCreds creds, ItemIdent item, String where)
-        throws ServiceException
-    {
-        if (Item.getClassForType(item.type) == null) {
-            log.warning("Rejecting invalid item type [where=" + where +
-                        ", who=" + creds + ", type=" + item.type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
-        }
-        return new ItemIdent(item.type, item.itemId);
     }
 }
