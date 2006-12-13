@@ -34,28 +34,28 @@
   <property name="bin.list" value="msoy,msoyrespawn,msoyserver,msoyjava,msoyrestart,runmsoy"/>
 
   <!-- declare the libraries needed by the MSOY runtime -->
-  <fileset dir="." id="dist.libs">
-    <include name="${extlib.dir}/ant.jar"/>
-    <include name="${extlib.dir}/commons-codec.jar"/>
-    <include name="${extlib.dir}/commons-collections.jar"/>
-    <include name="${extlib.dir}/commons-digester.jar"/>
-    <include name="${extlib.dir}/commons-fileupload.jar"/>
-    <include name="${extlib.dir}/commons-httpclient.jar"/>
-    <include name="${extlib.dir}/commons-io.jar"/>
-    <include name="${extlib.dir}/commons-lang.jar"/>
-    <include name="${extlib.dir}/commons-logging.jar"/>
-    <include name="${extlib.dir}/getdown.jar"/>
-    <include name="${extlib.dir}/gwt-user.jar"/>
-    <include name="${extlib.dir}/junit-3.7.jar"/>
-    <include name="${extlib.dir}/jetty/lib/org.mortbay.jetty.jar"/>
-    <include name="${extlib.dir}/mail.jar"/>
-    <include name="${extlib.dir}/mysql-connector-java-3.1.12-bin.jar"/>
-    <include name="${extlib.dir}/proguard.jar"/>
-    <include name="${extlib.dir}/servlet-2.3.jar"/>
-    <include name="${extlib.dir}/velocity-1.5-dev.jar"/>
-    <include name="lib/gwt-widgets-0.1.1.jar"/>
-    <include name="lib/json.jar"/>
-  </fileset>
+  <filelist dir="." id="dist.libs">
+    <file name="${extlib.dir}/ant.jar"/>
+    <file name="${extlib.dir}/commons-codec.jar"/>
+    <file name="${extlib.dir}/commons-collections.jar"/>
+    <file name="${extlib.dir}/commons-digester.jar"/>
+    <file name="${extlib.dir}/commons-fileupload.jar"/>
+    <file name="${extlib.dir}/commons-httpclient.jar"/>
+    <file name="${extlib.dir}/commons-io.jar"/>
+    <file name="${extlib.dir}/commons-lang.jar"/>
+    <file name="${extlib.dir}/commons-logging.jar"/>
+    <file name="${extlib.dir}/getdown.jar"/>
+    <file name="${extlib.dir}/gwt-user.jar"/>
+    <file name="${extlib.dir}/junit-3.7.jar"/>
+    <file name="${extlib.dir}/jetty/lib/org.mortbay.jetty.jar"/>
+    <file name="${extlib.dir}/mail.jar"/>
+    <file name="${extlib.dir}/mysql-connector-java-3.1.12-bin.jar"/>
+    <file name="${extlib.dir}/proguard.jar"/>
+    <file name="${extlib.dir}/servlet-2.3.jar"/>
+    <file name="${extlib.dir}/velocity-1.5-dev.jar"/>
+    <file name="lib/gwt-widgets-0.1.1.jar"/>
+    <file name="lib/json.jar"/>
+  </filelist>
 
   <!-- declare our classpath -->
   <path id="classpath">
