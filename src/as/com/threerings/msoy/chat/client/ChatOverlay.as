@@ -5,11 +5,14 @@ package com.threerings.msoy.chat.client {
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
+import flash.display.Sprite;
 
-import flash.display.Bitmap;
-import flash.display.BitmapData;
+//import flash.display.Bitmap;
+//import flash.display.BitmapData;
 
-import flash.geom.Matrix;
+//import flash.geom.Matrix;
+import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import mx.core.IRawChildrenContainer;
 
@@ -24,6 +27,7 @@ import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.whirled.spot.data.SpotCodes;
 
+import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;
 
 public class ChatOverlay
@@ -51,24 +55,15 @@ public class ChatOverlay
             } else {
                 _target.removeChild(_overlay);
             }
-            _overlayData.dispose();
-            _overlayData = null;
             _overlay = null;
         }
 
         _target = disp;
 
         if (_target != null) {
-            var w :int = disp.width;
-            if (w < 100) {
-                w = 800;
-            }
-            var h :int = disp.height;
-            if (h < 100) {
-                h = 300;
-            }
-            _overlayData = new BitmapData(w, h, true, 0);
-            _overlay = new Bitmap(_overlayData);
+            _overlay = new Sprite();
+            _overlay.x = PAD;
+            _overlay.y = PAD;
             if (_target is IRawChildrenContainer) {
                 (_target as IRawChildrenContainer).rawChildren.addChild(_overlay);
             } else {
@@ -82,7 +77,15 @@ public class ChatOverlay
     // from ChatDisplay
     public function clear () :void
     {
-        _overlayData.fillRect(_overlayData.rect, 0x00000000);
+        if (_overlay != null) {
+            // remove all children
+            for (var dex :int = _overlay.numChildren - 1; dex >= 0; dex--) {
+                _overlay.removeChildAt(dex);
+            }
+        }
+
+        // clear the list of showing sprites
+        _subtitles.length = 0;
     }
 
     // from ChatDisplay
@@ -124,16 +127,11 @@ public class ChatOverlay
     {
         var height :int = glyph.height;
 
-        _overlayData.lock();
-        try {
-            scrollUpSubtitles(-height - getSubtitleSpacing(glyph.getType()));
-            var matrix :Matrix = new Matrix();
-            matrix.translate(0, -height);
-            _overlayData.draw(glyph, matrix);
-
-        } finally {
-            _overlayData.unlock();
-        }
+        scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
+        glyph.x = 0;
+        glyph.y = getTargetHeight() - height;
+        _subtitles.push(glyph);
+        _overlay.addChild(glyph);
     }
 
     protected function createSubtitle (
@@ -142,6 +140,22 @@ public class ChatOverlay
         var text :String = msg.message;
 
         return new SubtitleGlyph(this, type, text);
+    }
+
+    public function getTargetHeight () :int
+    {
+        var h :int = _target.height;
+        h -= (PAD * 2);
+        // TODO: temp: since we overwrite the control bar now
+        h -= ControlBar.HEIGHT;
+        return h;
+    }
+
+    public function getTargetWidth () :int
+    {
+        var w :int = _target.width;
+        w -= (PAD * 2);
+        return w;
     }
 
     protected function getOutlineColor (type :int) :uint
@@ -172,6 +186,7 @@ public class ChatOverlay
             background = ColorUtil.blend(WHITE, outline, .8);
         }
 
+        // TODO (right now they all get the same sausage)
         g.clear();
         g.beginFill(background);
         g.drawRoundRect(0, 0, width, height, 5, 5);
@@ -191,11 +206,6 @@ public class ChatOverlay
     internal function historyUpdated (adjustment :int) :void
     {
         // TODO
-    }
-
-    internal function getOverlayWidth () :int
-    {
-        return _target.width;
     }
 
     /**
@@ -288,8 +298,18 @@ public class ChatOverlay
 
     protected function scrollUpSubtitles (dy :int) :void
     {
-        // TODO: will change, oh yes
-        _overlayData.scroll(0, dy);
+        for (var ii :int = 0; ii < _subtitles.length; ii++) {
+            var glyph :ChatGlyph = (_subtitles[ii] as ChatGlyph);
+            var newY :int = glyph.y - dy;
+            if (newY + glyph.height < 0) {
+                _overlay.removeChild(glyph);
+                _subtitles.splice(ii, 1);
+                ii--;
+
+            } else {
+                glyph.y = newY;
+            }
+        }
     }
 
     /**
@@ -311,13 +331,15 @@ public class ChatOverlay
     /** The light of our life. */
     protected var _ctx :MsoyContext;
 
-    /** The overlay we place on top of our target. */
-    protected var _overlay :Bitmap;
+    /** The overlay we place on top of our target that contains
+     * all the chat glyphs. */
+    protected var _overlay :Sprite;
 
-    /** The place where we draw. */
-    protected var _overlayData :BitmapData;
-
+    /** The target container over which we're overlaying chat. TODO. */
     protected var _target :DisplayObjectContainer;
+
+    /** The currently displayed list of subtitles. */
+    protected var _subtitles :Array = [];
 
     /* The shared history used by all overlays. */
     protected static var _history :HistoryList;
@@ -368,6 +390,9 @@ public class ChatOverlay
 
     /** Our internal code for a chat type we will ignore. */
     protected static const IGNORECHAT :int = -1;
+
+    /** Pixel padding surrounding most things. */
+    protected static const PAD :int = 10;
 
     // used to color chat bubbles
     protected static const BROADCAST_COLOR :uint = 0x990000;

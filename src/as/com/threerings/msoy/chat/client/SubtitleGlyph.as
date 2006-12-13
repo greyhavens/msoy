@@ -15,7 +15,7 @@ public class SubtitleGlyph extends ChatGlyph
 
         var txt :TextField = new TextField();
         txt.multiline = true;
-        txt.width = overlay.getOverlayWidth();
+        txt.width = overlay.getTargetWidth();
         txt.autoSize = TextFieldAutoSize.LEFT;
         txt.text = text;
 
