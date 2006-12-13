@@ -466,7 +466,6 @@
   <!-- prepare ${destroot} for all the packages being built -->
   <target name="preppkg">
     <antcall target="prepare-server"/>
-    <antcall target="prepare-webapps"/>
     <antcall target="prepare-pages"/>
   </target>
 
