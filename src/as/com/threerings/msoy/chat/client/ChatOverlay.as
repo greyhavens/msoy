@@ -14,6 +14,8 @@ import flash.display.Sprite;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import flash.text.TextFormat;
+
 import mx.core.IRawChildrenContainer;
 
 import com.threerings.util.ArrayUtil;
@@ -40,6 +42,26 @@ public class ChatOverlay
     public function ChatOverlay (ctx :MsoyContext)
     {
         _ctx = ctx;
+
+        // NOTE: Any null values in the override formats will use the
+        // value from the default, so if a property is added to the default
+        // then it should be explicitely negated if not desired in an override.
+        _defaultFmt = new TextFormat();
+        _defaultFmt.size = 14;
+        _defaultFmt.color = 0x006666;
+        _defaultFmt.bold = true;
+
+        _userSpeakFmt = new TextFormat();
+        _userSpeakFmt.size = 16;
+        _userSpeakFmt.color = 0x000000;
+        _userSpeakFmt.bold = false;
+
+        _linkFmt = new TextFormat();
+        _linkFmt.size = 18;
+        _linkFmt.underline = true;
+        _linkFmt.color = 0xFF0000;
+        _linkFmt.bold = false;
+
 
         if (_history == null) {
             _history = new HistoryList();
@@ -144,28 +166,60 @@ public class ChatOverlay
     protected function createSubtitle (
         msg :ChatMessage, type :int, expires :Boolean) :ChatGlyph
     {
-        var text :String = msg.message;
+        var texts :Array = parseLinks(msg.message);
 
         var format :String = formatOf(type);
         if (format != null) {
             var umsg :UserMessage = (msg as UserMessage);
-            text = _ctx.xlate(null, format,
-                umsg.getSpeakerDisplayName(), text);
+            var prefix :String = _ctx.xlate(null, format,
+                umsg.getSpeakerDisplayName()) + " ";
+
+            if (useQuotes(type)) {
+                prefix += "\"";
+                texts.push("\"");
+            }
+            texts.unshift(prefix);
         }
-        var expireDuration :int;
+        var lifetime :int = int.MAX_VALUE;
         if (expires) {
-            expireDuration = getChatExpire(msg.timestamp, text);
-        } else {
-            expireDuration = int.MAX_VALUE;
+            lifetime = getChatExpire(msg.timestamp, msg.message) - msg.timestamp;
         }
 
-        return new SubtitleGlyph(this, type, text, expireDuration);
+        return new SubtitleGlyph(this, type, lifetime, _defaultFmt, texts);
     }
 
-    protected function getChatExpire (stamp :int, text :String) :int
+    /**
+     * Return an array of text strings, with any string needing
+     * special formatting preceeded by that format.
+     */
+    protected function parseLinks (text :String) :Array
     {
         // TODO
-        return 15000;
+        // for now, just return their text with the speakformat prepended
+        return [ _userSpeakFmt, text ];
+    }
+
+    /**
+     * Get the expire time for the specified chat.
+     */
+    protected function getChatExpire (stamp :int, text :String) :int
+    {
+        var durations :Array =
+            (DISPLAY_DURATION_PARAMS[getDisplayDurationIndex()] as Array);
+
+        // start the computation from the maximum of the timestamp
+        // or our last expire time.
+        var start :int = Math.max(stamp, _lastExpire);
+
+        // set the next expire to a time proportional to the text length.
+        _lastExpire = start + Math.min(text.length * int(durations[0]),
+                                       int(durations[2]));
+
+        // but don't let it be longer than the maximum display time.
+        _lastExpire = Math.min(stamp + int(durations[2]), _lastExpire);
+
+        // and be sure to pop up the returned time so that it is above the min.
+        return Math.max(stamp + int(durations[1]), _lastExpire);
     }
 
     /**
@@ -187,6 +241,14 @@ public class ChatOverlay
         }
 
         return null; // no formatting
+    }
+
+    /**
+     * Should we be using quotes with the specified format?
+     */
+    protected function useQuotes (type :int) :Boolean
+    {
+        return (modeOf(type) != EMOTE);
     }
 
     public function getTargetHeight () :int
@@ -402,6 +464,15 @@ public class ChatOverlay
         return (type & ~0xF);
     }
 
+    protected function getDisplayDurationIndex () :int
+    {
+        // by default we add one, because it's assumed that we're in
+        // subtitle-only view.
+        // TODO
+        // return Prefs.getChatDecay() + 1;
+        return 1;
+    }
+
     /** The light of our life. */
     protected var _ctx :MsoyContext;
 
@@ -415,8 +486,34 @@ public class ChatOverlay
     /** The currently displayed list of subtitles. */
     protected var _subtitles :Array = [];
 
+    /** The unbounded expire time of teh last chat glyph displayed. */
+    protected var _lastExpire :int;
+
+    /** The default text format to be applied to subtitles. */
+    protected var _defaultFmt :TextFormat;
+
+    /** The format for user-entered text. */
+    protected var _userSpeakFmt :TextFormat;
+
+    /** The format for hyperlinks. */
+    protected var _linkFmt :TextFormat;
+
     /* The shared history used by all overlays. */
     protected static var _history :HistoryList;
+
+    /**
+     * Times to display chat.
+     * { (time per character), (min time), (max time) }
+     *
+     * Groups 0/1/2 are short/medium/long for chat bubbles,
+     * and groups 1/2/3 are short/medium/long for subtitles.
+     */
+    protected static const DISPLAY_DURATION_PARAMS :Array = [
+        [ 125, 10000, 30000 ],
+        [ 200, 15000, 40000 ],
+        [ 275, 20000, 50000 ],
+        [ 350, 25000, 60000 ]
+    ];
 
     /** Type mode code for default chat type (speaking). */
     protected static const SPEAK :int = 0;

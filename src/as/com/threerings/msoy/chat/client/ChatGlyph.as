@@ -16,14 +16,14 @@ import flash.utils.getTimer; // function import
 public class ChatGlyph extends Sprite
 {
     public function ChatGlyph (
-        overlay :ChatOverlay, type :int, expireDuration :int)
+        overlay :ChatOverlay, type :int, lifetime :int)
     {
         _overlay = overlay;
         _type = type;
 
         // set up an expire timer, if needed
-        if (expireDuration != int.MAX_VALUE) {
-            var timer :Timer = new Timer(expireDuration, 1);
+        if (lifetime != int.MAX_VALUE) {
+            var timer :Timer = new Timer(lifetime, 1);
             timer.addEventListener(
                 TimerEvent.TIMER, handleStartExpire, false, 0, true);
             timer.start();
