@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.Anchor;
+
 import com.threerings.msoy.web.data.Profile;
 
 import client.shell.MsoyEntryPoint;

@@ -3,11 +3,18 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
@@ -192,5 +199,37 @@ public class GroupRepository extends DepotRepository
     {
         return findAll(GroupMembershipRecord.class,
                        new Key(GroupMembershipRecord.MEMBER_ID, memberId));
+    }
+
+    /**
+     * Fetches a list of the characters that start group names.
+     */
+    public List<Character> getCharacters () 
+        throws PersistenceException
+    {
+        // force the creation of a GroupRecrod table if necessary
+        _ctx.getMarshaller(GroupRecord.class);
+    
+        // only one query of this type is ever performed, so the Comparable key is not important
+        Key key = new Key("GroupNamePrefix", 0);
+        return _ctx.invoke(new CollectionQuery<List<Character>>(_ctx, GroupRecord.class, key) {
+            public List<Character> invoke (Connection conn)
+                throws SQLException
+            {
+                String query = "select substring(name,1,1) as letter from GroupRecord " +
+                    "group by letter";
+                ArrayList<Character> characters = new ArrayList<Character>();
+                Statement stmt = conn.createStatement();
+                try {
+                    ResultSet rs = stmt.executeQuery(query);
+                    while (rs.next()) {
+                        characters.add(rs.getString(1).charAt(0));
+                    }
+                    return characters;
+                } finally {
+                    JDBCUtil.close(stmt);
+                }
+            }
+        });
     }
 }

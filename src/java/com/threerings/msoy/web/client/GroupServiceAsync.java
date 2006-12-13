@@ -13,6 +13,11 @@ import com.threerings.msoy.web.data.WebCreds;
 public interface GroupServiceAsync
 {
     /**
+     * The asynchronous version of {@link GroupService#getCharacters}
+     */
+    public void getCharacters (WebCreds creds, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link GroupService#getGroups}
      */
     public void getGroups (WebCreds creds, AsyncCallback callback);

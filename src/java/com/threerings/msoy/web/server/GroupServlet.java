@@ -6,7 +6,11 @@ package com.threerings.msoy.web.server;
 import java.util.Date;
 import java.util.List;
 
+import java.util.logging.Level;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.server.MsoyServer;
 
@@ -17,6 +21,8 @@ import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.world.data.MsoySceneModel;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link ItemService}.
@@ -42,6 +48,18 @@ public class GroupServlet extends RemoteServiceServlet
         ServletWaiter<Integer> waiter =new ServletWaiter<Integer>("getHomeId[" + groupId + "]");
         MsoyServer.memberMan.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId, waiter);
         return waiter.waitForResult();
+    }
+
+    // from interface GroupService
+    public List<Character> getCharacters (WebCreds creds)
+        throws ServiceException
+    {
+        try {
+            return MsoyServer.groupRepo.getCharacters();
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to fetch the list of group name prefixes.", pe);
+            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+        }
     }
 
     // from interface GroupService

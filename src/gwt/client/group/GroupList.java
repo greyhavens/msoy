@@ -5,6 +5,7 @@ package client.group;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collections;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -16,6 +17,7 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.client.WebContext;
@@ -36,6 +38,9 @@ public class GroupList extends DockPanel
     {
         super();
         _ctx = ctx;
+
+        _characters = new HorizontalPanel();
+        add(_characters, DockPanel.NORTH);
         
         _table = new FlexTable();
         _table.setStyleName("groupList");
@@ -53,6 +58,7 @@ public class GroupList extends DockPanel
             }
         });
         
+        loadCharacterList();
         loadGroups();
     }
 
@@ -61,6 +67,24 @@ public class GroupList extends DockPanel
     {
         // just refresh the whole view
         loadGroups();
+    }
+
+    // fill in the list of characters that begin list names
+    protected void loadCharacterList ()
+    {
+        _ctx.groupsvc.getCharacters(_ctx.creds, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                Collections.sort((List)result);
+                Iterator i = ((List)result).iterator();
+                _characters.clear();
+                while(i.hasNext()) {
+                    _characters.add(new Label(i.next().toString()));
+                }
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("loadCharacterList failed", caught);
+            }
+        });
     }
 
     // refetch the data and trigger a UI rebuild
@@ -114,5 +138,6 @@ public class GroupList extends DockPanel
     }
 
     protected WebContext _ctx;
+    protected HorizontalPanel _characters;
     protected FlexTable _table;
 }

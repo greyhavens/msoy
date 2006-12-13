@@ -17,6 +17,12 @@ import com.threerings.msoy.web.data.WebCreds;
 public interface GroupService extends RemoteService
 {
     /**
+     * Fetch the list of characters that start group names.  
+     */
+    public List getCharacters (WebCreds creds)
+        throws ServiceException;
+
+    /**
      * Fetch all the groups in the system. Will need to be a pager sooner or later.
      */
     public List getGroups (WebCreds creds)
