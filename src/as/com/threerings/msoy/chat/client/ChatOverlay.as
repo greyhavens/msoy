@@ -16,7 +16,9 @@ import flash.geom.Rectangle;
 
 import mx.core.IRawChildrenContainer;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.ColorUtil;
+import com.threerings.util.MessageBundle;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -144,7 +146,47 @@ public class ChatOverlay
     {
         var text :String = msg.message;
 
-        return new SubtitleGlyph(this, type, text);
+        var format :String = formatOf(type);
+        if (format != null) {
+            var umsg :UserMessage = (msg as UserMessage);
+            text = _ctx.xlate(null, format,
+                umsg.getSpeakerDisplayName(), text);
+        }
+        var expireDuration :int;
+        if (expires) {
+            expireDuration = getChatExpire(msg.timestamp, text);
+        } else {
+            expireDuration = int.MAX_VALUE;
+        }
+
+        return new SubtitleGlyph(this, type, text, expireDuration);
+    }
+
+    protected function getChatExpire (stamp :int, text :String) :int
+    {
+        // TODO
+        return 15000;
+    }
+
+    /**
+     * Return the translation key we should use for formatting a message
+     * of the specified type.
+     */
+    protected function formatOf (type :int) :String
+    {
+        switch (placeOf(type)) {
+        case TELL: return "m.tell_format";
+        case BROADCAST: return "m.broadcast_format";
+        case PLACE: case GAME: 
+            switch (modeOf(type)) {
+            case SPEAK: return "m.speak_format";
+            case SHOUT: return "m.shout_format";
+            case EMOTE: return "m.emote_format";
+            case THINK: return "m.think_format";
+            }
+        }
+
+        return null; // no formatting
     }
 
     public function getTargetHeight () :int
@@ -160,7 +202,6 @@ public class ChatOverlay
     {
         var w :int = _target.width;
         w -= (PAD * 2);
-        trace("Target width: " + w);
         return w;
     }
 
@@ -198,11 +239,11 @@ public class ChatOverlay
         // TODO (right now they all get the same sausage)
         g.clear();
         g.beginFill(background);
-        g.drawRoundRect(xx, 0, width, height, 5, 5);
+        g.drawRoundRect(xx, 0, width, height, 10, 10);
         g.endFill();
 
         g.lineStyle(1, outline);
-        g.drawRoundRect(xx, 0, width, height, 5, 5);
+        g.drawRoundRect(xx, 0, width, height, 10, 10);
     }
 
     /**
@@ -215,6 +256,12 @@ public class ChatOverlay
     internal function historyUpdated (adjustment :int) :void
     {
         // TODO
+    }
+
+    internal function glyphExpired (glyph :ChatGlyph) :void
+    {
+        ArrayUtil.removeFirst(_subtitles, glyph);
+        _overlay.removeChild(glyph);
     }
 
     /**
