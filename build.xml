@@ -33,9 +33,6 @@
   <!-- declare the files from bin needed in the package -->
   <property name="bin.list" value="msoy,msoyrespawn,msoyserver,msoyjava,msoyrestart,runmsoy"/>
 
-  <!-- this project has pages/ that need packaging -->
-  <property name="package.pages" value="true"/>
-
   <!-- declare the libraries needed by the MSOY runtime -->
   <fileset dir="." id="dist.libs">
     <include name="${extlib.dir}/ant.jar"/>
