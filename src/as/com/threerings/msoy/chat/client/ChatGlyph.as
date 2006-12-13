@@ -48,6 +48,7 @@ public class ChatGlyph extends Sprite
             alpha = (left / FADE_DURATION);
 
         } else {
+            removeEventListener(Event.ENTER_FRAME, handleFadeStep);
             _overlay.glyphExpired(this);
         }
     }
