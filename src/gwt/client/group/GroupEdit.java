@@ -44,8 +44,6 @@ public class GroupEdit extends PopupPanel
         public void groupSubmitted(Group group);
     }
     
-    public static int LOGO_SIZE = 100;
-
     public GroupEdit (WebContext ctx, Group group, GroupSubmissionListener listener)
     {
         super();
@@ -205,7 +203,7 @@ public class GroupEdit extends PopupPanel
                 // set up a listener to pick an image for the logo, hide the popup, and update
                 final ClickListener logoChanger = new ClickListener() {
                     public void onClick (Widget sender) {
-                        _group.logo = ((PhotoImage) sender).photo.photoMedia;
+                        _group.logo = ((PhotoThumbnailImage) sender).photo.getThumbnailMedia();
                         popup.hide();
                         updateLogoBox();
                     }
@@ -214,9 +212,7 @@ public class GroupEdit extends PopupPanel
                 // iterate over all our photos and fill the popup panel
                 Iterator i = photos.iterator();
                 while (i.hasNext()) {
-                    Image image = new PhotoImage(((Photo) i.next()));
-                    image.setStyleName("groupLogoThumbnail");
-                    image.setHeight(LOGO_SIZE + "px");
+                    Image image = new PhotoThumbnailImage(((Photo) i.next()));
                     image.addClickListener(logoChanger);
                     itemPanel.add(image);
                 }
@@ -246,11 +242,11 @@ public class GroupEdit extends PopupPanel
     /**
      * A tiny helper class that carries a Photo in a Widget.
      */
-    protected static class PhotoImage extends Image {
+    protected static class PhotoThumbnailImage extends Image {
         public Photo photo;
-        protected PhotoImage (Photo photo)
+        protected PhotoThumbnailImage (Photo photo)
         {
-            super(MsoyEntryPoint.toMediaPath(photo.photoMedia.getMediaPath()));
+            super(MsoyEntryPoint.toMediaPath(photo.getThumbnailPath()));
             this.photo = photo;
         }
     }
