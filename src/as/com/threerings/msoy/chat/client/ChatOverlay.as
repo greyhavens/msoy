@@ -63,7 +63,7 @@ public class ChatOverlay
         if (_target != null) {
             _overlay = new Sprite();
             _overlay.x = PAD;
-            _overlay.y = PAD;
+            _overlay.y = PAD + ControlBar.HEIGHT; // TEMP:hack
             if (_target is IRawChildrenContainer) {
                 (_target as IRawChildrenContainer).rawChildren.addChild(_overlay);
             } else {
@@ -127,9 +127,14 @@ public class ChatOverlay
     {
         var height :int = glyph.height;
 
-        scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
         glyph.x = 0;
-        glyph.y = getTargetHeight() - height;
+        if (false) {
+            glyph.y = getTargetHeight() - height;
+            scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
+        } else {
+            glyph.y = 0;
+            scrollDownSubtitles(height + getSubtitleSpacing(glyph.getType()));
+        }
         _subtitles.push(glyph);
         _overlay.addChild(glyph);
     }
@@ -155,6 +160,7 @@ public class ChatOverlay
     {
         var w :int = _target.width;
         w -= (PAD * 2);
+        trace("Target width: " + w);
         return w;
     }
 
@@ -185,15 +191,18 @@ public class ChatOverlay
         } else {
             background = ColorUtil.blend(WHITE, outline, .8);
         }
+        width += PAD;
+        height += 2;
+        var xx :int = PAD/-2;
 
         // TODO (right now they all get the same sausage)
         g.clear();
         g.beginFill(background);
-        g.drawRoundRect(0, 0, width, height, 5, 5);
+        g.drawRoundRect(xx, 0, width, height, 5, 5);
         g.endFill();
 
         g.lineStyle(1, outline);
-        g.drawRoundRect(0, 0, width, height, 5, 5);
+        g.drawRoundRect(xx, 0, width, height, 5, 5);
     }
 
     /**
@@ -302,6 +311,24 @@ public class ChatOverlay
             var glyph :ChatGlyph = (_subtitles[ii] as ChatGlyph);
             var newY :int = glyph.y - dy;
             if (newY + glyph.height < 0) {
+                _overlay.removeChild(glyph);
+                _subtitles.splice(ii, 1);
+                ii--;
+
+            } else {
+                glyph.y = newY;
+            }
+        }
+    }
+
+    protected function scrollDownSubtitles (dy :int) :void
+    {
+        var maxH :int = getTargetHeight();
+
+        for (var ii :int = 0; ii < _subtitles.length; ii++) {
+            var glyph :ChatGlyph = (_subtitles[ii] as ChatGlyph);
+            var newY :int = glyph.y + dy;
+            if (newY > maxH) {
                 _overlay.removeChild(glyph);
                 _subtitles.splice(ii, 1);
                 ii--;
