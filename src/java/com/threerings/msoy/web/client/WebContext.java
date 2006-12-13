@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
+import com.google.gwt.core.client.GWT;
+
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
@@ -41,4 +43,32 @@ public class WebContext
     /** Provides game-related services. */
     public GameServiceAsync gamesvc;
 
+    /** Reports a log message to the console. */
+    public void log (String message)
+    {
+        // TODO: disable this in production
+        if (GWT.isScript()) {
+            consoleLog(message);
+        } else {
+            GWT.log(message, null);
+        }
+    }
+
+    /** Reports a log message and exception stack trace to the console. */
+    public void log (String message, Exception error)
+    {
+        // TODO: disable this in production
+        if (GWT.isScript()) {
+            consoleLog(message + ": " + error); // TODO: log stack trace?
+        } else {
+            GWT.log(message, error);
+        }
+    }
+
+    /**
+     * Records a log message to the JavaScript console.
+     */
+    protected static native void consoleLog (String message) /*-{
+        $wnd.console.log(message);
+    }-*/;
 }
