@@ -8,7 +8,13 @@ import com.samskivert.jdbc.ConnectionProvider;
 /**
  * Manages the persistent store of {@link Pet} items.
  */
-public class PetRepository extends ItemRepository<PetRecord>
+public class PetRepository extends ItemRepository<
+    PetRecord,
+    PetCloneRecord,
+    PetCatalogRecord,
+    PetTagRecord,
+    PetTagHistoryRecord,
+    PetRatingRecord>
 {
     public PetRepository (ConnectionProvider provider)
     {
@@ -21,31 +27,31 @@ public class PetRepository extends ItemRepository<PetRecord>
     }
     
     @Override
-    protected Class<? extends CatalogRecord<PetRecord>> getCatalogClass ()
+    protected Class<PetCatalogRecord> getCatalogClass ()
     {
         return PetCatalogRecord.class;
     }
 
     @Override
-    protected Class<? extends CloneRecord<PetRecord>> getCloneClass ()
+    protected Class<PetCloneRecord> getCloneClass ()
     {
         return PetCloneRecord.class;
     }
 
     @Override
-    protected Class<? extends TagRecord<PetRecord>> getTagClass ()
+    protected Class<PetTagRecord> getTagClass ()
     {
         return PetTagRecord.class;
     }
 
     @Override
-    protected Class<? extends TagHistoryRecord<PetRecord>> getTagHistoryClass ()
+    protected Class<PetTagHistoryRecord> getTagHistoryClass ()
     {
         return PetTagHistoryRecord.class;
     }
     
     @Override
-    protected Class<? extends RatingRecord<PetRecord>> getRatingClass ()
+    protected Class<PetRatingRecord> getRatingClass ()
     {
         return PetRatingRecord.class;
     }

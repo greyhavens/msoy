@@ -8,7 +8,13 @@ import com.samskivert.jdbc.ConnectionProvider;
 /**
  * Manages the persistent store of {@link PhotoRecord} items.
  */
-public class PhotoRepository extends ItemRepository<PhotoRecord>
+public class PhotoRepository extends ItemRepository<
+    PhotoRecord,
+    PhotoCloneRecord,
+    PhotoCatalogRecord,
+    PhotoTagRecord,
+    PhotoTagHistoryRecord,
+    PhotoRatingRecord>
 {
     public PhotoRepository (ConnectionProvider provider)
     {
@@ -21,31 +27,31 @@ public class PhotoRepository extends ItemRepository<PhotoRecord>
     }
     
     @Override
-    protected Class<? extends CatalogRecord<PhotoRecord>> getCatalogClass ()
+    protected Class<PhotoCatalogRecord> getCatalogClass ()
     {
         return PhotoCatalogRecord.class;
     }
 
     @Override
-    protected Class<? extends CloneRecord<PhotoRecord>> getCloneClass ()
+    protected Class<PhotoCloneRecord> getCloneClass ()
     {
         return PhotoCloneRecord.class;
     }
 
     @Override
-    protected Class<? extends TagRecord<PhotoRecord>> getTagClass ()
+    protected Class<PhotoTagRecord> getTagClass ()
     {
         return PhotoTagRecord.class;
     }
 
     @Override
-    protected Class<? extends TagHistoryRecord<PhotoRecord>> getTagHistoryClass ()
+    protected Class<PhotoTagHistoryRecord> getTagHistoryClass ()
     {
         return PhotoTagHistoryRecord.class;
     }
 
     @Override
-    protected Class<? extends RatingRecord<PhotoRecord>> getRatingClass ()
+    protected Class<PhotoRatingRecord> getRatingClass ()
     {
         return PhotoRatingRecord.class;
     }

@@ -8,7 +8,13 @@ import com.samskivert.jdbc.ConnectionProvider;
 /**
  * Manages the persistent store of {@link Document} items.
  */
-public class DocumentRepository extends ItemRepository<DocumentRecord>
+public class DocumentRepository extends ItemRepository<
+    DocumentRecord,
+    DocumentCloneRecord,
+    DocumentCatalogRecord,
+    DocumentTagRecord,
+    DocumentTagHistoryRecord,
+    DocumentRatingRecord>
 {
     public DocumentRepository (ConnectionProvider provider)
     {
@@ -21,31 +27,31 @@ public class DocumentRepository extends ItemRepository<DocumentRecord>
     }
     
     @Override
-    protected Class<? extends CatalogRecord<DocumentRecord>> getCatalogClass ()
+    protected Class<DocumentCatalogRecord> getCatalogClass ()
     {
         return DocumentCatalogRecord.class;
     }
 
     @Override
-    protected Class<? extends CloneRecord<DocumentRecord>> getCloneClass ()
+    protected Class<DocumentCloneRecord> getCloneClass ()
     {
         return DocumentCloneRecord.class;
     }
 
     @Override
-    protected Class<? extends TagRecord<DocumentRecord>> getTagClass ()
+    protected Class<DocumentTagRecord> getTagClass ()
     {
         return DocumentTagRecord.class;
     }
 
     @Override
-    protected Class<? extends TagHistoryRecord<DocumentRecord>> getTagHistoryClass ()
+    protected Class<DocumentTagHistoryRecord> getTagHistoryClass ()
     {
         return DocumentTagHistoryRecord.class;
     }
 
     @Override
-    protected Class<? extends RatingRecord<DocumentRecord>> getRatingClass ()
+    protected Class<DocumentRatingRecord> getRatingClass ()
     {
         return DocumentRatingRecord.class;
     }

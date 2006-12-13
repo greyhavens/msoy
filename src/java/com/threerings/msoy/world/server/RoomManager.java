@@ -142,7 +142,7 @@ public class RoomManager extends SpotSceneManager
                 ModifyFurniUpdate mfu = (ModifyFurniUpdate) update;
                 MsoyServer.itemMan.updateItemUsage(user.getMemberId(),
                     _scene.getId(), mfu.furniRemoved, mfu.furniAdded,
-                    new ResultListener() {
+                    new ResultListener<Object>() {
                         public void requestCompleted (Object result) {}
                         public void requestFailed (Exception cause) {
                             log.warning("Unable to update item usage " +

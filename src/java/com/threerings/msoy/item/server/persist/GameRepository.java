@@ -16,7 +16,13 @@ import com.threerings.msoy.item.web.MediaDesc;
 /**
  * Manages the persistent store of {@link Game} items.
  */
-public class GameRepository extends ItemRepository<GameRecord>
+public class GameRepository extends ItemRepository<
+        GameRecord,
+        GameCloneRecord,
+        GameCatalogRecord,
+        GameTagRecord,
+        GameTagHistoryRecord,
+        GameRatingRecord>
     implements ToyBoxManager.GameRepository
 {
     public GameRepository (ConnectionProvider provider)
@@ -76,31 +82,31 @@ public class GameRepository extends ItemRepository<GameRecord>
     }
     
     @Override
-    protected Class<? extends CatalogRecord<GameRecord>> getCatalogClass ()
+    protected Class<GameCatalogRecord> getCatalogClass ()
     {
         return GameCatalogRecord.class;
     }
 
     @Override
-    protected Class<? extends CloneRecord<GameRecord>> getCloneClass ()
+    protected Class<GameCloneRecord> getCloneClass ()
     {
         return GameCloneRecord.class;
     }
 
     @Override
-    protected Class<? extends TagRecord<GameRecord>> getTagClass ()
+    protected Class<GameTagRecord> getTagClass ()
     {
         return GameTagRecord.class;
     }
 
     @Override
-    protected Class<? extends TagHistoryRecord<GameRecord>> getTagHistoryClass ()
+    protected Class<GameTagHistoryRecord> getTagHistoryClass ()
     {
         return GameTagHistoryRecord.class;
     }
     
     @Override
-    protected Class<? extends RatingRecord<GameRecord>> getRatingClass ()
+    protected Class<GameRatingRecord> getRatingClass ()
     {
         return GameRatingRecord.class;
     }

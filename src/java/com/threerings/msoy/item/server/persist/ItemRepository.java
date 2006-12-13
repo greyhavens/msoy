@@ -7,7 +7,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,9 +28,7 @@ import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.OrderBy;
-import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.IntListUtil;
@@ -40,7 +37,13 @@ import com.threerings.msoy.item.web.TagHistory;
 /**
  * Manages a repository of digital items of a particular type.
  */
-public abstract class ItemRepository<T extends ItemRecord>
+public abstract class ItemRepository<
+        T extends ItemRecord,
+        CLT extends CloneRecord<T>,
+        CAT extends CatalogRecord<T>,
+        TT extends TagRecord<T>,
+        THT extends TagHistoryRecord<T>,
+        RT extends RatingRecord<T>>
     extends DepotRepository
 {
     @Computed @Entity
@@ -81,7 +84,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public T loadClone (int cloneId) throws PersistenceException
     {
-        CloneRecord<?> cloneRecord = load(getCloneClass(), cloneId);
+        CLT cloneRecord = load(getCloneClass(), cloneId);
         if (cloneRecord == null) {
             return null;
         }
@@ -157,7 +160,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         throws PersistenceException
     {
         Class<T> iclass = getItemClass();
-        Class<? extends CloneRecord<T>> cclass = getCloneClass();
+        Class<CLT> cclass = getCloneClass();
         Byte utype = Byte.valueOf(usageType);
         Integer loc = Integer.valueOf(location);
 
@@ -188,11 +191,11 @@ public abstract class ItemRepository<T extends ItemRecord>
      * TODO: Ideally this would be a single join.
      * TODO: need a powerful way to supply search criteria.
      */
-    public Collection<? extends CatalogRecord<T>> loadCatalog ()
+    public Collection<CAT> loadCatalog ()
         throws PersistenceException
     {
         // fetch all the catalog records of interest
-        Collection<? extends CatalogRecord<T>> records = findAll(getCatalogClass());
+        Collection<CAT> records = findAll(getCatalogClass());
         if (records.size() == 0) {
             return records;
         }
@@ -205,7 +208,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         // load those items and map item ID's to items
-        Collection<? extends T> items = findAll(
+        Collection<T> items = findAll(
             getItemClass(), new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr)));
         Map<Integer, T> map = new HashMap<Integer, T>();
         for (T iRec : items) {
@@ -277,7 +280,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     public int insertClone (int itemId, int newOwnerId)
         throws PersistenceException
     {
-        CloneRecord<?> record;
+        CLT record;
         try {
             record = getCloneClass().newInstance();
         } catch (Exception e) {
@@ -369,7 +372,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Loads all the tag history records for a given item.
      */
-    public Iterable<? extends TagHistoryRecord<T>> getTagHistoryByItem (int itemId)
+    public Iterable<THT> getTagHistoryByItem (int itemId)
         throws PersistenceException
     {
         return findAll(getTagHistoryClass(), new Key(TagHistoryRecord.ITEM_ID, itemId));
@@ -378,7 +381,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Loads all the tag history records for a given member.
      */
-    public Iterable<? extends TagHistoryRecord<T>> getTagHistoryByMember (int memberId)
+    public Iterable<THT> getTagHistoryByMember (int memberId)
         throws PersistenceException
     {
         return findAll(getTagHistoryClass(), new Key(TagHistoryRecord.MEMBER_ID, memberId));
@@ -542,29 +545,29 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Specific item repositories override this method and indicate their item's clone persistent
      * record class.
      */
-    protected abstract Class<? extends CloneRecord<T>> getCloneClass ();
+    protected abstract Class<CLT> getCloneClass ();
 
     /**
      * Specific item repositories override this method and indicate their item's catalog persistent
      * record class.
      */
-    protected abstract Class<? extends CatalogRecord<T>> getCatalogClass ();
+    protected abstract Class<CAT> getCatalogClass ();
 
     /**
      * Specific item repositories override this method and indicate their item's tag persistent
      * record class.
      */
-    protected abstract Class<? extends TagRecord<T>> getTagClass ();
+    protected abstract Class<TT> getTagClass ();
 
     /**
      * Specific item repositories override this method and indicate their item's tag history
      * persistent record class.
      */
-    protected abstract Class<? extends TagHistoryRecord<T>> getTagHistoryClass ();
+    protected abstract Class<THT> getTagHistoryClass ();
 
     /**
      * Specific item repositories override this method and indicate their item's rating persistent
      * record class.
      */
-    protected abstract Class<? extends RatingRecord<T>> getRatingClass ();
+    protected abstract Class<RT> getRatingClass ();
 }

@@ -468,7 +468,7 @@ public class MemberManager
             public void handleSuccess ()
             {
                 MsoyServer.itemMan.updateItemUsage(user.getMemberId(),
-                    user.avatar, avatar, new ResultListener() {
+                    user.avatar, avatar, new ResultListener<Object>() {
                         public void requestCompleted (Object result) {}
                         public void requestFailed (Exception cause) {
                             log.warning("Unable to update usage from an avatar change.");

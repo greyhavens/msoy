@@ -8,7 +8,13 @@ import com.samskivert.jdbc.ConnectionProvider;
 /**
  * Manages the persistent store of {@link Furniture} items.
  */
-public class FurnitureRepository extends ItemRepository<FurnitureRecord>
+public class FurnitureRepository extends ItemRepository<
+    FurnitureRecord,
+    FurnitureCloneRecord,
+    FurnitureCatalogRecord,
+    FurnitureTagRecord,
+    FurnitureTagHistoryRecord,
+    FurnitureRatingRecord>
 {
     public FurnitureRepository (ConnectionProvider provider)
     {
@@ -21,31 +27,31 @@ public class FurnitureRepository extends ItemRepository<FurnitureRecord>
     }
     
     @Override
-    protected Class<? extends CatalogRecord<FurnitureRecord>> getCatalogClass ()
+    protected Class<FurnitureCatalogRecord> getCatalogClass ()
     {
         return FurnitureCatalogRecord.class;
     }
 
     @Override
-    protected Class<? extends CloneRecord<FurnitureRecord>> getCloneClass ()
+    protected Class<FurnitureCloneRecord> getCloneClass ()
     {
         return FurnitureCloneRecord.class;
     }
 
     @Override
-    protected Class<? extends TagRecord<FurnitureRecord>> getTagClass ()
+    protected Class<FurnitureTagRecord> getTagClass ()
     {
         return FurnitureTagRecord.class;
     }
 
     @Override
-    protected Class<? extends TagHistoryRecord<FurnitureRecord>> getTagHistoryClass ()
+    protected Class<FurnitureTagHistoryRecord> getTagHistoryClass ()
     {
         return FurnitureTagHistoryRecord.class;
     }
     
     @Override
-    protected Class<? extends RatingRecord<FurnitureRecord>> getRatingClass ()
+    protected Class<FurnitureRatingRecord> getRatingClass ()
     {
         return FurnitureRatingRecord.class;
     }
