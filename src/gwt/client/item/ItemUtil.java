@@ -27,9 +27,20 @@ public class ItemUtil
      */
     public static Widget createMediaView (MediaDesc desc, boolean thumbnail)
     {
-        String path = MsoyEntryPoint.toMediaPath(desc.getMediaPath());
         int width = thumbnail ? Item.THUMBNAIL_WIDTH : Item.PREVIEW_WIDTH;
         int height = thumbnail ? Item.THUMBNAIL_HEIGHT : Item.PREVIEW_HEIGHT;
+        return createMediaView(desc, width, height);
+    }
+
+    /**
+     * Create a widget to display the supplied media. The media will be configured to scale
+     * properly to constraint it to the indicated size. The supplied target width and height which
+     * must be in the same ratio as the ratio between {@link Item#THUMBNAIL_WIDTH} and {@link
+     * Item#THUMBNAIL_HEIGHT}.
+     */
+    public static Widget createMediaView (MediaDesc desc, int width, int height)
+    {
+        String path = MsoyEntryPoint.toMediaPath(desc.getMediaPath());
         Widget view;
 
         switch (MediaDesc.suffixToMimeType(path)) {
