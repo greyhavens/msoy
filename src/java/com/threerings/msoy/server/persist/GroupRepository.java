@@ -202,9 +202,11 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Fetches a list of the characters that start group names.
+     * Fetches a list of the characters that start group names.  This method returns a 
+     * List&lt;String&gt; instead of List&lt;Character&gt; because in GWT, java.lang.Character
+     * is not Comparable.
      */
-    public List<Character> getCharacters () 
+    public List<String> getCharacters () 
         throws PersistenceException
     {
         // force the creation of a GroupRecrod table if necessary
@@ -212,18 +214,18 @@ public class GroupRepository extends DepotRepository
     
         // only one query of this type is ever performed, so the Comparable key is not important
         Key key = new Key("GroupNamePrefix", 0);
-        return _ctx.invoke(new CollectionQuery<List<Character>>(_ctx, GroupRecord.class, key) {
-            public List<Character> invoke (Connection conn)
+        return _ctx.invoke(new CollectionQuery<List<String>>(_ctx, GroupRecord.class, key) {
+            public List<String> invoke (Connection conn)
                 throws SQLException
             {
                 String query = "select substring(name,1,1) as letter from GroupRecord " +
                     "group by letter";
-                ArrayList<Character> characters = new ArrayList<Character>();
+                ArrayList<String> characters = new ArrayList<String>();
                 Statement stmt = conn.createStatement();
                 try {
                     ResultSet rs = stmt.executeQuery(query);
                     while (rs.next()) {
-                        characters.add(rs.getString(1).charAt(0));
+                        characters.add(rs.getString(1));
                     }
                     return characters;
                 } finally {

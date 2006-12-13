@@ -5,6 +5,7 @@ package client.group;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import com.google.gwt.core.client.GWT;
@@ -78,7 +79,7 @@ public class GroupList extends DockPanel
                 Iterator i = ((List)result).iterator();
                 _characters.clear();
                 while(i.hasNext()) {
-                    _characters.add(new Label(i.next().toString()));
+                    _characters.add(new Label((String)i.next()));
                 }
             }
             public void onFailure (Throwable caught) {

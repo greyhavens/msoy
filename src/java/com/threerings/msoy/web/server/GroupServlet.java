@@ -60,7 +60,8 @@ public class GroupServlet extends RemoteServiceServlet
     }
 
     // from interface GroupService
-    public List<Character> getCharacters (WebCreds creds)
+    // java.lang.Character is not Comparable in GWT.
+    public List<String> getCharacters (WebCreds creds)
         throws ServiceException
     {
         try {
