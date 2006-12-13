@@ -8,4 +8,10 @@
     Section     pages
     Architecture    all
     Description Web pages for rolling around in tofu.
+    # Maintainer Scripts
+    # See http://www.debian.org/doc/debian-policy/ch-maintainerscripts.html
+    PreInstall      @SCRIPTPATH@/msoy-pages-preinst
+    # PostInstall     @SCRIPTPATH@/pages-postinst
+    # PreUninstall    path/to/preuninstall/script
+    # PostUninstall   @SCRIPTPATH@/pages-postrm
 </Package>
