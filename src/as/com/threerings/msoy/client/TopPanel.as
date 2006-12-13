@@ -42,10 +42,10 @@ public class TopPanel extends Canvas
 
         _placeBox = new Canvas();
         _placeBox.includeInLayout = false;
-        _placeBox.setStyle("top", 0);
+        _placeBox.setStyle("top", ControlBar.HEIGHT);
         _placeBox.setStyle("left", _sideAttachment);
         _placeBox.setStyle("right", 0);
-        _placeBox.setStyle("bottom", ControlBar.HEIGHT);
+        _placeBox.setStyle("bottom", 0);
         addChild(_placeBox);
 
         // set up a mask on the placebox
@@ -56,7 +56,7 @@ public class TopPanel extends Canvas
         // set up the control bar
         controlBar = new ControlBar(ctx);
         controlBar.includeInLayout = false;
-        controlBar.setStyle("bottom", 0);
+        controlBar.setStyle("top", 0);
         controlBar.setStyle("left", 0);
         addChild(controlBar);
 
@@ -71,7 +71,7 @@ public class TopPanel extends Canvas
             _buildStamp.setStyle("color", "#F7069A");
             _buildStamp.setStyle("fontSize", 12);
             _buildStamp.setStyle("fontWeight", "bold");
-            _buildStamp.setStyle("bottom", -1);
+            _buildStamp.setStyle("top", 41);
             addChild(_buildStamp);
         }
 
@@ -122,8 +122,8 @@ public class TopPanel extends Canvas
         setSideAttachment(SIDE_PANEL_WIDTH);
 //        _sidePanel.addEventListener(ResizeEvent.RESIZE, sideResized);
 
-        _sidePanel.setStyle("top", 0);
-        _sidePanel.setStyle("bottom", ControlBar.HEIGHT);
+        _sidePanel.setStyle("top", ControlBar.HEIGHT);
+        _sidePanel.setStyle("bottom", 0);
         _sidePanel.setStyle("left", 0);
         _sidePanel.setStyle("right", unscaledWidth - SIDE_PANEL_WIDTH);
 
