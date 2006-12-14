@@ -10,7 +10,6 @@ DESC="MetaSOY game server"
 
 MSOY_HOME=`dirname $0 | sed s:/bin$::`
 MSOY_USER=www-data
-TOOLS_HOME=/export/tools
 
 LOGFILE=$MSOY_HOME/log/stdout.log
 LOG_EMAIL=nightly-logs@threerings.net
@@ -86,12 +85,12 @@ EXIT_CODE=$?
 
 # Mail out some reports
 HOSTNAME=`hostname`
-# cat $LOGFILE | /export/tools/bin/sum_invokers | \
+# cat $LOGFILE | $MSOY_HOME/projects/tools/bin/sum_invokers | \
 #     $MAIL -s "$HOSTNAME: $MSOY_HOME invoker summary" $LOG_EMAIL
-# cat $LOGFILE | /export/tools/bin/lfilter | \
+# cat $LOGFILE | $MSOY_HOME/projects/tools/bin/lfilter | \
 #     grep -v "Invoker unit" | grep ' ! ' | cut -c 25-80 | sort | uniq -c | \
 #     sort -nr | $MAIL -s "$HOSTNAME: $MSOY_HOME error summary" $LOG_EMAIL
-cat $LOGFILE | /export/tools/bin/lfilter | \
+cat $LOGFILE | $MSOY_HOME/projects/tools/bin/lfilter | \
     $MAIL -s "$HOSTNAME: $MSOY_HOME filtered log" $LOG_EMAIL
 
 # Archive the server log
