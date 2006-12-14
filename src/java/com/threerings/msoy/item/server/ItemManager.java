@@ -578,8 +578,7 @@ public class ItemManager
         if (!list) {
             MsoyServer.invoker.postUnit(new RepositoryListenerUnit<CatalogListing>(listener) {
                 public CatalogListing invokePersistResult () throws PersistenceException {
-                    CatalogRecord record = repo.removeListing(ident.itemId);
-                    return (record == null) ? null : new CatalogListing();
+                    return repo.removeListing(ident.itemId) ? new CatalogListing() : null;
                 }
             });
         }

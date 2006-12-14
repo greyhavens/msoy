@@ -274,17 +274,13 @@ public abstract class ItemRepository<
     }
 
     /**
-     * Removes the listing for the specified item from the catalog, returning the removed listing
-     * or null if there was no such listing in the first place.
+     * Removes the listing for the specified item from the catalog, returns true if a listing was
+     * found and removed, false otherwise.
      */
-    public CatalogRecord removeListing  (int itemId)
+    public boolean removeListing  (int itemId)
         throws PersistenceException
     {
-        CatalogRecord record = load(getCatalogClass(), itemId);
-        if (record != null) {
-            delete(getCatalogClass(), itemId);
-        }
-        return record;
+        return delete(getCatalogClass(), itemId) > 0;
     }
 
     /**
