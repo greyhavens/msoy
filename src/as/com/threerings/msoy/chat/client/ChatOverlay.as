@@ -51,11 +51,13 @@ public class ChatOverlay
         _defaultFmt.size = 14;
         _defaultFmt.color = 0x006666;
         _defaultFmt.bold = true;
+        _defaultFmt.underline = false;
 
         _userSpeakFmt = new TextFormat();
         _userSpeakFmt.size = 16;
         _userSpeakFmt.color = 0x000000;
         _userSpeakFmt.bold = false;
+        _userSpeakFmt.underline = false;
 
         if (_history == null) {
             _history = new HistoryList();
@@ -73,6 +75,8 @@ public class ChatOverlay
             } else {
                 _target.removeChild(_overlay);
             }
+            // clear all subtitles, blow away the overlay
+            _subtitles.length = 0;
             _overlay = null;
         }
 
@@ -80,6 +84,9 @@ public class ChatOverlay
 
         if (_target != null) {
             _overlay = new Sprite();
+            _overlay.mouseChildren = false;
+            _overlay.mouseEnabled = false;
+            _overlay.alpha = ALPHA;
             _overlay.x = PAD;
             _overlay.y = PAD + ControlBar.HEIGHT; // TEMP:hack
             if (_target is IRawChildrenContainer) {
@@ -590,5 +597,8 @@ public class ChatOverlay
     protected static const GAME_COLOR :uint = 0x777777;
     protected static const BLACK :uint = 0x000000;
     protected static const WHITE :uint = 0xFFFFFF;
+
+    /** The normal alpha value for bubbles on the overlay. */
+    protected static const ALPHA :Number = .8;
 }
 }

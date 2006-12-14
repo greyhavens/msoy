@@ -59,7 +59,7 @@ public class ChatGlyph extends Sprite
 
     /** The time to die, fully. Used during fade. */
     protected var _deathStamp :int;
-    
+
     protected static const FADE_DURATION :int = 600;
 }
 }
