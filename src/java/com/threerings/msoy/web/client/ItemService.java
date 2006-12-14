@@ -99,14 +99,8 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Associates a tag with an item.
+     * Associates or disassociates a tag with an item.
      */
-    public TagHistory tagItem (WebCreds creds, ItemIdent item, String tag)
-        throws ServiceException;
-
-    /**
-     * Disassociates a tag with an item.
-     */
-    public TagHistory untagItem (WebCreds creds, ItemIdent item, String tag)
+    public TagHistory tagItem (WebCreds creds, ItemIdent item, String tag, boolean set)
         throws ServiceException;
 }

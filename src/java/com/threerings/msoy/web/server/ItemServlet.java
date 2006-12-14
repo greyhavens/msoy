@@ -214,28 +214,15 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
-    public TagHistory tagItem (final WebCreds creds, final ItemIdent ident, final String tag)
+    public TagHistory tagItem (final WebCreds creds, final ItemIdent ident, final String tag,
+                               final boolean set)
         throws ServiceException
     {
         final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
-            "tagItem[" + ident + "]");
+            "tagItem[" + ident + ", " + set + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.tagItem(ident, creds.memberId, tag, waiter);
-            }
-        });
-        return waiter.waitForResult();
-    }
-
-    // from interface ItemService
-    public TagHistory untagItem (final WebCreds creds, final ItemIdent ident, final String tag)
-        throws ServiceException
-    {
-        final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
-            "untagItem[" + ident + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.untagItem(ident, creds.memberId, tag, waiter);
+                MsoyServer.itemMan.tagItem(ident, creds.memberId, tag, set, waiter);
             }
         });
         return waiter.waitForResult();

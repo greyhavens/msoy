@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -560,8 +559,8 @@ public class ItemManager
     }
 
     /**
-     * Lists the given item in the catalog by creating a new item row and
-     * a new catalog row and returning the immutable form of the item.
+     * Lists the given item in the catalog by creating a new item row and a new catalog row and
+     * returning the immutable form of the item.
      */
     public void listItem (final ItemIdent ident,
                           ResultListener<CatalogListing> listener)
@@ -573,20 +572,17 @@ public class ItemManager
         }
 
         // and perform the listing
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<CatalogListing>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<CatalogListing>(listener) {
             public CatalogListing invokePersistResult ()
                 throws PersistenceException
             {
                 // load a copy of the original item
                 ItemRecord listItem = repo.loadOriginalItem(ident.itemId);
                 if (listItem == null) {
-                    throw new PersistenceException(
-                        "Can't find object to list [item= " + ident + "]");
+                    throw new PersistenceException("Can't find item to list [item= " + ident + "]");
                 }
                 if (listItem.ownerId == -1) {
-                    throw new PersistenceException(
-                        "Object is already listed [item=" + ident + "]");
+                    throw new PersistenceException("Item is already listed [item=" + ident + "]");
                 }
                 // reset the owner
                 listItem.ownerId = -1;
@@ -595,8 +591,7 @@ public class ItemManager
                 // then insert it as the immutable copy we list
                 repo.insertOriginalItem(listItem);
                 // and finally create & insert the catalog record
-                CatalogRecord record = repo.insertListing(
-                    listItem, new Timestamp(System.currentTimeMillis()));
+                CatalogRecord record = repo.insertListing(listItem, System.currentTimeMillis());
                 return record.toListing();
             }
         });
@@ -832,23 +827,61 @@ public class ItemManager
     }
 
     /**
-     * Add the specified tag to the specified item. Return a tag history object
-     * if the tag did not already exist.
+     * Add the specified tag to the specified item or remove it. Return a tag history object if the
+     * tag did not already exist.
      */
-    public void tagItem (ItemIdent ident, int taggerId, String tagName,
-                         ResultListener<TagHistory> listener)
+    public void tagItem (final ItemIdent ident, final int taggerId, String rawTagName,
+                         final boolean doTag, ResultListener<TagHistory> listener)
     {
-        itemTagging(ident, taggerId, tagName, listener, true);
-    }
+        // sanitize the tag name
+        final String tagName = rawTagName.trim().toLowerCase();
 
-    /**
-     * Remove the specified tag from the specified item. Return a tag history
-     * object if the tag existed.
-     */
-    public void untagItem (ItemIdent ident, int taggerId, String tagName,
-                           ResultListener<TagHistory> listener)
-    {
-        itemTagging(ident, taggerId, tagName, listener, false);
+        if (!validTag.matcher(tagName).matches()) {
+            listener.requestFailed(
+                new IllegalArgumentException("Invalid tag [tag=" + tagName + "]"));
+            return;
+        }
+
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        if (repo == null) {
+            return;
+        }
+
+        // and perform the remixing
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<TagHistory>(listener) {
+            public TagHistory invokePersistResult () throws PersistenceException {
+                long now = System.currentTimeMillis();
+
+                ItemRecord item = repo.loadItem(ident.itemId);
+                if (item == null) {
+                    throw new PersistenceException(
+                        "Can't find item [item=" + ident + "]");
+                }
+                int originalId = item.parentId != -1 ? item.parentId : ident.itemId;
+
+                // map tag to tag id
+                TagNameRecord tag = repo.getTag(tagName);
+
+                // and do the actual work
+                TagHistoryRecord<ItemRecord> historyRecord = doTag ?
+                    repo.tagItem(originalId, tag.tagId, taggerId, now) :
+                    repo.untagItem(originalId, tag.tagId, taggerId, now);
+                if (historyRecord != null) {
+                    // look up the member
+                    MemberRecord mrec = MsoyServer.memberRepo.loadMember(taggerId);
+                    // and create the return value
+                    TagHistory history = new TagHistory();
+                    history.item = new ItemIdent(ident.type, originalId);
+                    history.member = mrec.getName();
+                    history.tag = tag.tag;
+                    history.action = historyRecord.action;
+                    history.time = new Date(historyRecord.time.getTime());
+                    return history;
+                }
+                return null;
+            }
+        });
     }
 
     // from ItemProvider
@@ -899,65 +932,6 @@ public class ItemManager
                 // we're not resolving anymore.. oops
                 memberObj.setResolvingInventory(
                     memberObj.resolvingInventory & ~(1 << type));
-            }
-        });
-    }
-
-    /**
-     * Does the facade work for tagging.
-     */
-    protected void itemTagging (
-        final ItemIdent ident, final int taggerId, final String rawTagName,
-        ResultListener<TagHistory> listener, final boolean doTag)
-    {
-        // sanitize the tag name
-        final String tagName = rawTagName.trim().toLowerCase();
-
-        if (!validTag.matcher(tagName).matches()) {
-            listener.requestFailed(new IllegalArgumentException(
-                "Invalid tag [tag=" + tagName + "]"));
-            return;
-        }
-
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
-        if (repo == null) {
-            return;
-        }
-
-        // and perform the remixing
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<TagHistory>(listener) {
-            public TagHistory invokePersistResult () throws PersistenceException {
-                long now = System.currentTimeMillis();
-
-                ItemRecord item = repo.loadItem(ident.itemId);
-                if (item == null) {
-                    throw new PersistenceException(
-                        "Can't find item [item=" + ident + "]");
-                }
-                int originalId = item.parentId != -1 ? item.parentId : ident.itemId;
-
-                // map tag to tag id
-                TagNameRecord tag = repo.getTag(tagName);
-
-                // and do the actual work
-                TagHistoryRecord<ItemRecord> historyRecord = doTag ?
-                    repo.tagItem(originalId, tag.tagId, taggerId, now) :
-                    repo.untagItem(originalId, tag.tagId, taggerId, now);
-                if (historyRecord != null) {
-                    // look up the member
-                    MemberRecord mrec = MsoyServer.memberRepo.loadMember(taggerId);
-                    // and create the return value
-                    TagHistory history = new TagHistory();
-                    history.item = new ItemIdent(ident.type, originalId);
-                    history.member = mrec.getName();
-                    history.tag = tag.tag;
-                    history.action = historyRecord.action;
-                    history.time = new Date(historyRecord.time.getTime());
-                    return history;
-                }
-                return null;
             }
         });
     }

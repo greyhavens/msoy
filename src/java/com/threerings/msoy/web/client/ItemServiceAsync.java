@@ -84,11 +84,5 @@ public interface ItemServiceAsync
      * The asynchronous version of {@link ItemService#tagItem}.
      */
     public void tagItem (
-        WebCreds creds, ItemIdent item, String tag, AsyncCallback callback);
-
-    /**
-     * The asynchronous version of {@link ItemService#untagItem}.
-     */
-    public void untagItem (
-        WebCreds creds, ItemIdent item, String tag, AsyncCallback callback);
+        WebCreds creds, ItemIdent item, String tag, boolean set, AsyncCallback callback);
 }

@@ -22,11 +22,11 @@ public interface CatalogService extends RemoteService
     /** Loads all catalogue items of the specified type. */
     public List loadCatalog (WebCreds creds, byte type)
         throws ServiceException;
-    
+
     /** Purchases the item of the specified id and type. */
     public Item purchaseItem (WebCreds creds, ItemIdent item)
         throws ServiceException;
-    
+
     /** Lists the specified item in the catalog. */
     public CatalogListing listItem (WebCreds creds, ItemIdent item)
         throws ServiceException;
@@ -36,4 +36,4 @@ public interface CatalogService extends RemoteService
      */
     public Map getPopularTags (WebCreds creds, byte type, int rows)
         throws ServiceException;
-} 
+}

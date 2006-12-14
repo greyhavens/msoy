@@ -251,7 +251,7 @@ public abstract class ItemRepository<
      *
      * TODO: this method modifies the input value, totally unintuitive!
      */
-    public CatalogRecord insertListing (ItemRecord listItem, Timestamp listedDate)
+    public CatalogRecord insertListing (ItemRecord listItem, long listingTime)
         throws PersistenceException
     {
         if (listItem.ownerId != -1) {
@@ -267,7 +267,7 @@ public abstract class ItemRepository<
         }
         record.item = listItem;
         record.itemId = listItem.itemId;
-        record.listedDate = listedDate;
+        record.listedDate = new Timestamp(listingTime);
         // and insert it - done!
         insert(record);
         return record;
