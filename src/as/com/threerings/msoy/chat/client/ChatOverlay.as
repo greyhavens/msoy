@@ -146,7 +146,7 @@ public class ChatOverlay
         var height :int = glyph.height;
 
         glyph.x = 0;
-        if (false) {
+        if (true) {
             glyph.y = getTargetHeight() - height;
             scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
         } else {
