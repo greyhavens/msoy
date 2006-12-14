@@ -3,21 +3,13 @@
 
 package client.inventory;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
 
-import com.threerings.msoy.item.web.Document;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
-
-import client.util.FlashClients;
 
 /**
  * Handles the MetaSOY inventory application.

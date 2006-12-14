@@ -20,12 +20,6 @@ import com.threerings.msoy.web.client.WebContext;
  */
 public class TagCloud extends FlowPanel
 {
-    /** The number of columns of items to display. */
-    public static final int COLUMNS = 4;
-
-    /** The number of rows of items to display. */
-    public static final int ROWS = 3;
-
     public TagCloud (WebContext ctx, byte type)
     {
         _ctx = ctx;
