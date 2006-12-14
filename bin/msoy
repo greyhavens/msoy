@@ -30,7 +30,7 @@ ulimit -n 4096
 ulimit -d 1572864
 
 DAEMON=$MSOY_HOME/bin/msoyrespawn
-PIDFILE=/var/run/msoyrespawn.pid
+PIDFILE=$MSOY_HOME/run/msoyrespawn.pid
 
 # See how we were called
 case "$1" in
