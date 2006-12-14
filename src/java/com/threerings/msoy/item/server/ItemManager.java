@@ -559,10 +559,13 @@ public class ItemManager
     }
 
     /**
-     * Lists the given item in the catalog by creating a new item row and a new catalog row and
-     * returning the immutable form of the item.
+     * Lists or delists the given item in the catalog. Listing will creating a new immutable item
+     * and creating and returning a {@link CatalogListing} record for the item. Delisting will
+     * load, destroy the {@link CatalogListing} record and return a stub listing record to indicate
+     * success. The original item maintained by the destroyed listing will be preserved as it must
+     * because it may have clones in the wild.
      */
-    public void listItem (final ItemIdent ident,
+    public void listItem (final ItemIdent ident, boolean list,
                           ResultListener<CatalogListing> listener)
     {
         // locate the appropriate repository
@@ -571,11 +574,19 @@ public class ItemManager
             return;
         }
 
-        // and perform the listing
+        // if we're delisting do that
+        if (!list) {
+            MsoyServer.invoker.postUnit(new RepositoryListenerUnit<CatalogListing>(listener) {
+                public CatalogListing invokePersistResult () throws PersistenceException {
+                    CatalogRecord record = repo.removeListing(ident.itemId);
+                    return (record == null) ? null : new CatalogListing();
+                }
+            });
+        }
+
+        // otherwise we're listing, so do that more complicated business
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<CatalogListing>(listener) {
-            public CatalogListing invokePersistResult ()
-                throws PersistenceException
-            {
+            public CatalogListing invokePersistResult () throws PersistenceException {
                 // load a copy of the original item
                 ItemRecord listItem = repo.loadOriginalItem(ident.itemId);
                 if (listItem == null) {

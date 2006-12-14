@@ -274,6 +274,20 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Removes the listing for the specified item from the catalog, returning the removed listing
+     * or null if there was no such listing in the first place.
+     */
+    public CatalogRecord removeListing  (int itemId)
+        throws PersistenceException
+    {
+        CatalogRecord record = load(getCatalogClass(), itemId);
+        if (record != null) {
+            delete(getCatalogClass(), itemId);
+        }
+        return record;
+    }
+
+    /**
      * Insert an item clone into the database with the given owner.  This fills itemId with the
      * next available unique ID and ownerId with the supplied value for the new owner.
      */

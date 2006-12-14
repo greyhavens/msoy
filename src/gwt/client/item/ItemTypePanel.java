@@ -21,12 +21,13 @@ import com.threerings.msoy.item.web.Item;
 public class ItemTypePanel extends FlexTable
     implements SourcesTabEvents
 {
-    public ItemTypePanel ()
+    public ItemTypePanel (TabListener listener)
     {
         setStyleName("itemTypePanel");
         setCellPadding(0);
         setCellSpacing(0);
         _selectedType = -1;
+        addTabListener(listener);
         redrawPanel();
     }
 
@@ -71,13 +72,13 @@ public class ItemTypePanel extends FlexTable
         clear();
         _column = 0;
         _rightBit = null;
-        addTab(Item.PHOTO, "Photos");
-        addTab(Item.DOCUMENT, "Documents");
-        addTab(Item.FURNITURE, "Furniture");
-        addTab(Item.GAME, "Games");
         addTab(Item.AVATAR, "Avatars");
+        addTab(Item.FURNITURE, "Furniture");
         addTab(Item.PET, "Pets");
-        addTab(Item.AUDIO, "Audio");
+        addTab(Item.GAME, "Games");
+        addTab(Item.PHOTO, "Pictures");
+        addTab(Item.AUDIO, "Music");
+        addTab(Item.DOCUMENT, "Stories");
         getFlexCellFormatter().setStyleName(0, _column++, _rightBit);
         getFlexCellFormatter().setStyleName(0, _column++, "Line");
         setVisible(true);

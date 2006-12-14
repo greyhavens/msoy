@@ -33,14 +33,13 @@ public class CatalogPanel extends VerticalPanel
         _tagCloudContainer = new SimplePanel();
         topRow.add(_tagCloudContainer);
 
-        ItemTypePanel itemTabs = new ItemTypePanel();
-        itemTabs.addTabListener(this);
+        ItemTypePanel itemTabs = new ItemTypePanel(this);
         topRow.add(itemTabs);
-
         add(topRow);
+
         add(_itemPaneContainer = new SimplePanel());
 
-        itemTabs.selectTab(Item.PHOTO);
+        itemTabs.selectTab(Item.AVATAR);
     }
 
     // from TabListener
@@ -59,7 +58,7 @@ public class CatalogPanel extends VerticalPanel
             _tagClouds.put(new Integer(tabIndex), cloud);
         }
         _tagCloudContainer.setWidget(cloud);
-}
+    }
 
     // from TabListener
     public boolean onBeforeTabSelected (SourcesTabEvents sender, int tabIndex)

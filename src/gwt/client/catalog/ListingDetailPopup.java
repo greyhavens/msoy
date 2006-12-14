@@ -3,28 +3,29 @@
 
 package client.catalog;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.web.client.WebContext;
 
 import client.item.BaseItemDetailPopup;
+import client.util.ClickCallback;
 
 /**
  * Displays a popup detail view of an item from the catalog.
  */
 public class ListingDetailPopup extends BaseItemDetailPopup
 {
-    public ListingDetailPopup (WebContext ctx, CatalogListing listing)
+    public ListingDetailPopup (WebContext ctx, CatalogListing listing, ItemPanel panel)
     {
         super(ctx, listing.item);
         _listing = listing;
+        _panel = panel;
     }
 
     // @Override // BaseItemDetailPopup
@@ -34,33 +35,52 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
         // TODO: add cost
 
-        _purchase = new Button("Buy!");
-        _purchase.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                _purchase.setEnabled(false);
-                purchaseItem();
+        controls.add(_purchase = new Button("Buy!"));
+        new ClickCallback(_ctx, _purchase, _status) {
+            public boolean callService () {
+                _ctx.catalogsvc.purchaseItem(_ctx.creds, _item.getIdent(), this);
+                return true;
             }
-        });
-        controls.add(_purchase);
+            public boolean gotResult (Object result) {
+                _status.setText("Item purchased.");
+                return false; // don't reenable purchase
+            }
+        };
 
         controls.add(_status = new Label(""));
     }
 
-    protected void purchaseItem ()
+    // @Override // from BaseItemDetailPopup
+    protected void gotDetail (ItemDetail detail)
     {
-        _ctx.catalogsvc.purchaseItem(_ctx.creds, _item.getIdent(), new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _status.setText("Item purchased.");
-            }
-            public void onFailure (Throwable caught) {
-                String reason = caught.getMessage();
-                _status.setText("Item purchase failed: " + reason);
-                _purchase.setEnabled(true);
-            }
-        });
+        super.gotDetail(detail);
+
+        // if we are the creator (lister) of this item, allow us to delist it
+        if (_listing.creator.getMemberId() == _ctx.creds.memberId) {
+            Button delist = new Button("Delist Item");
+            new ClickCallback(_ctx, delist, _status) {
+                public boolean callService () {
+                    _ctx.catalogsvc.listItem(_ctx.creds, _item.getIdent(), false, this);
+                    return true;
+                }
+                public boolean gotResult (Object result) {
+                    if (result != null) {
+                        _status.setText("Item delisted.");
+                        _panel.itemDelisted(_listing);
+                        return false; // don't reenable delist
+                    } else {
+                        _status.setText("Unable to find catalog listing to delist.");
+                        return true;
+                    }
+                }
+            };
+            _controls.insert(delist, 0);
+        }
     }
 
     protected CatalogListing _listing;
+    protected ItemPanel _panel;
+
     protected Button _purchase;
     protected Label _status;
 }

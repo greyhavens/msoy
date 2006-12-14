@@ -62,8 +62,9 @@ public class ItemRating extends Image
             if (ctx == null) {
                 throw new IllegalArgumentException("Need non-null webcontext [mode=" + mode + "]");
             }
-            if (_item.parentId != -1 || _item.ownerId == -1) {
-                throw new IllegalArgumentException("Can only rate clones and listed items.");
+            if (!_item.isRatable()) {
+                throw new IllegalArgumentException(
+                    "Can only rate clones and listed items " + _item);
             }
         }
         _mode = mode;

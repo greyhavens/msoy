@@ -23,7 +23,7 @@ import com.threerings.msoy.web.data.WebCreds;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Provides the server implementation of {@link ItemService}.
+ * Provides the server implementation of {@link CatalogService}.
  */
 public class CatalogServlet extends RemoteServiceServlet
     implements CatalogService
@@ -68,21 +68,21 @@ public class CatalogServlet extends RemoteServiceServlet
     }
 
     // from interface CatalogService
-    public CatalogListing listItem (WebCreds creds, final ItemIdent ident)
+    public CatalogListing listItem (WebCreds creds, final ItemIdent ident, final boolean list)
         throws ServiceException
     {
         // TODO: validate this user's creds
         final ServletWaiter<CatalogListing> waiter = new ServletWaiter<CatalogListing>(
-            "listItem[" + ident + "]");
+            "listItem[" + ident + ", " + list + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.listItem(ident, waiter);
+                MsoyServer.itemMan.listItem(ident, list, waiter);
             }
         });
         return waiter.waitForResult();
     }
 
-    // from interface ItemService
+    // from interface CatalogService
     public Map<String, Integer> getPopularTags (WebCreds creds, final byte type, final int rows)
         throws ServiceException
     {

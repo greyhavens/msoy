@@ -111,7 +111,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
 
     protected void listItem (Item item)
     {
-        _ctx.catalogsvc.listItem(_ctx.creds, item.getIdent(), new AsyncCallback() {
+        _ctx.catalogsvc.listItem(_ctx.creds, item.getIdent(), true, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _status.setText("Item listed.");
             }

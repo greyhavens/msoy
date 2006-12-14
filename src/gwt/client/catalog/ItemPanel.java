@@ -49,6 +49,14 @@ public class ItemPanel extends DockPanel
         updateListings();
     }
 
+    /**
+     * Called by the {@link ListingDetailPopup} if the owner requests to delist an item.
+     */
+    public void itemDelisted (CatalogListing listing)
+    {
+        _items.removeItem(listing);
+    }
+
     protected void updateListings ()
     {
         setStatus("Loading...");
@@ -65,9 +73,6 @@ public class ItemPanel extends DockPanel
         });
     }
 
-    /**
-     * Displays a status message to the user, may be called by item editors.
-     */
     protected void setStatus (String status)
     {
         _status.setText(status);

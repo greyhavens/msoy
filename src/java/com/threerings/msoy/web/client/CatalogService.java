@@ -19,16 +19,22 @@ import com.threerings.msoy.web.data.WebCreds;
  */
 public interface CatalogService extends RemoteService
 {
-    /** Loads all catalogue items of the specified type. */
+    /**
+     * Loads all catalogue items of the specified type.
+     */
     public List loadCatalog (WebCreds creds, byte type)
         throws ServiceException;
 
-    /** Purchases the item of the specified id and type. */
+    /**
+     * Purchases the item of the specified id and type.
+     */
     public Item purchaseItem (WebCreds creds, ItemIdent item)
         throws ServiceException;
 
-    /** Lists the specified item in the catalog. */
-    public CatalogListing listItem (WebCreds creds, ItemIdent item)
+    /**
+     * Lists or delists the specified item in the catalog.
+     */
+    public CatalogListing listItem (WebCreds creds, ItemIdent item, boolean list)
         throws ServiceException;
 
     /**

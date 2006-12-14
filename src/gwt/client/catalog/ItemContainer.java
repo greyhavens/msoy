@@ -26,7 +26,7 @@ public class ItemContainer extends VerticalPanel
         descrip.setStyleName("itemDescrip");
         descrip.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                new ListingDetailPopup(panel._ctx, listing).show();
+                new ListingDetailPopup(panel._ctx, listing, panel).show();
             }
         });
         add(descrip);
