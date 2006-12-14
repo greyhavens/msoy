@@ -44,7 +44,9 @@ public class SubtitleGlyph extends ChatGlyph
                 if (fmt == null) {
                     fmt = defaultFmt;
                 }
-                txt.setTextFormat(fmt, length, newLength);
+                if (length != newLength) {
+                    txt.setTextFormat(fmt, length, newLength);
+                }
                 fmt = null;
                 length = newLength;
             }
