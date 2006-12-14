@@ -13,6 +13,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -30,7 +32,6 @@ import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberName;
 
 import client.shell.MsoyEntryPoint;
-import client.util.HeaderValueTable;
 
 import client.group.GroupEdit.GroupSubmissionListener;
 
@@ -48,7 +49,6 @@ public class GroupView extends DockPanel
 
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
-        add(_errorContainer, DockPanel.NORTH);
 
         loadGroup(groupId);
     }
@@ -99,7 +99,9 @@ public class GroupView extends DockPanel
             MsoyEntryPoint.toMediaPath(_group.logo.getMediaPath());
         logoPanel.add(new Image(path));
         HorizontalPanel links = new HorizontalPanel();
-        links.add(new Anchor("", "Hall"));
+        links.setSpacing(5);
+        links.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        links.add(new Anchor("/world/index.html#g" +  _group.groupId, "Hall"));
         links.add(new Anchor("", "Forum"));
         if (_group.homepageUrl != null) {
             links.add(new Anchor(_group.homepageUrl, "Homepage"));
@@ -115,25 +117,22 @@ public class GroupView extends DockPanel
             links.add(edit);
         }
         logoPanel.add(links);
-        add(logoPanel, DockPanel.WEST);
 
         // All the info that describes the group: name, date, blurb, profile, etc.
         // TODO: There is no earthly reason why these should all be Labels - this is only 
         // priliminary.  This probably won't be a simple FlowPanel either...
-        FlowPanel description = new FlowPanel();
-        description.add(new Label(_group.name));
-        description.add(new Label(_group.creationDate.toLocaleString()));
-        description.add(new Label("by " + _detail.creator.toString()));
-        description.add(new Label(_group.blurb));
-        description.add(new Label(_group.charter));
+        HTML description = new HTML("<span class='name'>" + _group.name + "</span><br />" +
+            "<span class='blurb'>" + _group.blurb + "</span><br />" + 
+            "<p class='charter'>" + _group.charter + "</p>");
+        //description.add(new Label(_group.creationDate.toLocaleString()));
+        //description.add(new Label("by " + _detail.creator.toString()));
         add(description, DockPanel.CENTER);
 
-        HeaderValueTable people = new HeaderValueTable();
-        add(people, DockPanel.SOUTH);
-        FlowPanel managers = new FlowPanel();
-        people.addRow("Managers", managers);
-        FlowPanel members = new FlowPanel();
-        people.addRow("Members", members);
+        FlexTable people = new FlexTable();
+        people.setText(0, 0, "Managers:");
+        people.setText(1, 0, "Members:");
+        String managers = new String();
+        String members = new String();
         Iterator i = _detail.members.iterator();
         boolean firstManager = true;
         boolean firstMember = true;
@@ -144,18 +143,25 @@ public class GroupView extends DockPanel
                 if (firstManager) {
                     firstManager = false;
                 } else {
-                    managers.add(new InlineLabel(", "));
+                    managers += ", ";
                 }
-                managers.add(new InlineLabel(name.toString()));
+                managers += name;
             } else {
                 if (firstMember) {
                     firstMember = false;
                 } else {
-                    members.add(new InlineLabel(", "));
+                    members += ", ";
                 }
-                members.add(new InlineLabel(name.toString()));
+                members += name;
             }
         }
+        people.setWidget(0, 1, new HTML(managers));
+        people.setWidget(1, 1, new HTML(members));
+
+        // SOUTH must be added before WEST for the colspan to be set correctly... 
+        add(_errorContainer, DockPanel.NORTH);
+        add(people, DockPanel.SOUTH);
+        add(logoPanel, DockPanel.WEST);
     }
 
     /**

@@ -125,6 +125,8 @@ public class GroupEdit extends DialogBox
 
         // charter field
         final TextArea charterArea = new TextArea();
+        charterArea.setCharacterWidth(80);
+        charterArea.setVisibleLines(10);
         charterArea.setText(group.charter != null ? group.charter : "");
         charterArea.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
