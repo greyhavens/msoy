@@ -136,12 +136,12 @@ public abstract class MsoyEntryPoint
     {
         RootPanel.get("content").clear();
         String id = getPageId();
-        if ((id != "world") && (id != "game")) {
-            if (_chat == null) {
-                _chat = FlashClients.createChatClient();
-            }
-            RootPanel.get("content").add(_chat);
-        }
+//         if ((id != "world") && (id != "game")) {
+//             if (_chat == null) {
+//                 _chat = FlashClients.createChatClient();
+//             }
+//             RootPanel.get("content").add(_chat);
+//         }
         RootPanel.get("content").add(content);
     }
 
