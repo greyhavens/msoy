@@ -101,7 +101,9 @@ public class GroupView extends DockPanel
         HorizontalPanel links = new HorizontalPanel();
         links.add(new Anchor("", "Hall"));
         links.add(new Anchor("", "Forum"));
-        links.add(new Anchor("", "Homepage"));
+        if (_group.homepageUrl != null) {
+            links.add(new Anchor(_group.homepageUrl, "Homepage"));
+        }
         if (amManager) {
             Hyperlink edit = new Hyperlink();
             edit.setText("Edit Group");
@@ -167,7 +169,7 @@ public class GroupView extends DockPanel
         while ((member == null || member.member.getMemberId() != memberId) && i.hasNext()) {
             member = (GroupMembership)i.next();
         }
-        return member;
+        return member != null && member.member.getMemberId() == memberId ? member : null;
     }
 
     protected void addError (String error)
