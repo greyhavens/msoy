@@ -46,7 +46,7 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
-import com.threerings.msoy.chat.client.ChatPopper;
+//import com.threerings.msoy.chat.client.ChatPopper;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
@@ -71,7 +71,7 @@ public class RoomView extends AbstractRoomView
 
     override protected function updateComplete (evt :FlexEvent) :void
     {
-        ChatPopper.setChatView(this);
+//        ChatPopper.setChatView(this);
         super.updateComplete(evt);
     }
 
@@ -439,7 +439,7 @@ public class RoomView extends AbstractRoomView
 
         _roomObj.addListener(this);
 
-        _ctx.getChatDirector().addChatDisplay(this);
+//        _ctx.getChatDirector().addChatDisplay(this);
         _overlay.setTarget(_ctx.getTopPanel());
 
         addAllOccupants();
@@ -454,8 +454,8 @@ public class RoomView extends AbstractRoomView
     {
         _roomObj.removeListener(this);
 
-        _ctx.getChatDirector().removeChatDisplay(this);
-        ChatPopper.popAllDown();
+//        _ctx.getChatDirector().removeChatDisplay(this);
+//        ChatPopper.popAllDown();
         _overlay.setTarget(null);
 
         shutdownMusic();
@@ -568,7 +568,7 @@ public class RoomView extends AbstractRoomView
     // documentation inherited from interface ChatDisplay
     public function clear () :void
     {
-        ChatPopper.popAllDown();
+//        ChatPopper.popAllDown();
     }
 
     // documentation inherited from interface ChatDisplay
@@ -584,7 +584,7 @@ public class RoomView extends AbstractRoomView
             }
         }
 
-        ChatPopper.popUp(msg, avatar);
+//        ChatPopper.popUp(msg, avatar);
         if (avatar != null) {
             avatar.performAvatarSpoke();
         }
