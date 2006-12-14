@@ -23,10 +23,11 @@ import com.threerings.msoy.web.data.Group;
 public class GroupRecord
     implements Cloneable
 {
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     public static final String GROUP_ID = "groupId";
     public static final String NAME = "name";
+    public static final String HOMEPAGE_URL = "homepageUrl";
     public static final String BLURB = "blurb";
     public static final String CHARTER = "charter";
     public static final String LOGO_MIME_TYPE = "logoMimeType";
@@ -44,6 +45,10 @@ public class GroupRecord
     /** The name of the group. */
     @Column(unique=true)
     public String name;
+
+    /** The URL for the grou's homepage. */
+    @Column(nullable=true)
+    public String homepageUrl;
 
     /** The blurb for the group. */
     @Column(length=80, nullable=true)
@@ -80,6 +85,7 @@ public class GroupRecord
         Group group = new Group();
         group.groupId = groupId;
         group.name = name;
+        group.homepageUrl = homepageUrl;
         group.blurb = blurb;
         group.charter = charter;
         group.logo = logoMediaHash != null ?

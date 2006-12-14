@@ -129,12 +129,12 @@ public class GroupServlet extends RemoteServiceServlet
             throw new ServiceException("group", "m.invalid_group_name");
         }
 
-        final ServletWaiter<Void> waiter = new ServletWaiter<Void>("createGroup[" + group + "]");
+        final ServletWaiter<Void> waiter = new ServletWaiter<Void>("updateGroup[" + group + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.memberMan.updateGroup(
-                    group.groupId, group.name, group.blurb, group.charter, group.logo, 
-                    group.policy, waiter);
+                    group.groupId, group.name, group.homepageUrl, group.blurb, group.charter, 
+                    group.logo, group.policy, waiter);
             }
         });
         waiter.waitForResult();

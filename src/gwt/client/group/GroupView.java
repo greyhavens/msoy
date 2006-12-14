@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -90,6 +91,7 @@ public class GroupView extends DockPanel
      */
     protected void buildUI ()
     {
+        clear();
         boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
 
         VerticalPanel logoPanel = new VerticalPanel();
@@ -99,8 +101,17 @@ public class GroupView extends DockPanel
         HorizontalPanel links = new HorizontalPanel();
         links.add(new Anchor("", "Hall"));
         links.add(new Anchor("", "Forum"));
-        links.add(new Anchor("", "Wiki"));
-        if (amManager) links.add(new Anchor("", "Edit Group"));
+        links.add(new Anchor("", "Homepage"));
+        if (amManager) {
+            Hyperlink edit = new Hyperlink();
+            edit.setText("Edit Group");
+            edit.addClickListener(new ClickListener() {
+                public void onClick(Widget sender) {
+                    new GroupEdit(_ctx, _group, GroupView.this).show();
+                }
+            });
+            links.add(edit);
+        }
         logoPanel.add(links);
         add(logoPanel, DockPanel.WEST);
 

@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -35,7 +36,7 @@ import client.util.HeaderValueTable;
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
  */
-public class GroupEdit extends PopupPanel
+public class GroupEdit extends DialogBox
 {
     /**
      * A callback interface for classes that want to know when a group successfully committed.
@@ -47,6 +48,8 @@ public class GroupEdit extends PopupPanel
     public GroupEdit (WebContext ctx, Group group, GroupSubmissionListener listener)
     {
         super();
+        setPopupPosition(30, 30);
+        setText("Group Editor");
         _ctx = ctx;
         _group = group;
         _listener = listener;
@@ -96,10 +99,22 @@ public class GroupEdit extends PopupPanel
         });
         _table.addRow("Name", nameBox);
 
+        // homepage url field
+        final TextBox urlBox = new TextBox();
+        urlBox.setMaxLength(255);
+        urlBox.setText(group.homepageUrl != null ? group.homepageUrl : "");
+        urlBox.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                _group.homepageUrl = urlBox.getText().trim();
+                updateSubmittable();
+            }
+        });
+        _table.addRow("Homepage URL", urlBox);
+
         // blurb field
         final TextBox blurbBox = new TextBox();
         blurbBox.setMaxLength(80);
-        blurbBox.setText(group.blurb != null ? group.name : "");
+        blurbBox.setText(group.blurb != null ? group.blurb : "");
         blurbBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
                 _group.blurb = blurbBox.getText().trim();
