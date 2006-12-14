@@ -21,6 +21,7 @@ import mx.core.IRawChildrenContainer;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ColorUtil;
 import com.threerings.util.MessageBundle;
+import com.threerings.util.StringUtil;
 
 import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -55,13 +56,6 @@ public class ChatOverlay
         _userSpeakFmt.size = 16;
         _userSpeakFmt.color = 0x000000;
         _userSpeakFmt.bold = false;
-
-        _linkFmt = new TextFormat();
-        _linkFmt.size = 18;
-        _linkFmt.underline = true;
-        _linkFmt.color = 0xFF0000;
-        _linkFmt.bold = false;
-
 
         if (_history == null) {
             _history = new HistoryList();
@@ -194,10 +188,34 @@ public class ChatOverlay
      */
     protected function parseLinks (text :String) :Array
     {
-        // TODO
-        // for now, just return their text with the speakformat prepended
-        return [ _userSpeakFmt, text ];
+        // parse the text into an array with urls at odd elements
+        var array :Array = StringUtil.parseURLs(text);
+
+        // insert the appropriate format before each element
+        for (var ii :int = array.length - 1; ii >= 0; ii--) {
+            if (ii % 2 == 0) {
+                array.splice(ii, 0, _userSpeakFmt);
+            } else {
+                array.splice(ii, 0, createLinkFormat(String(array[ii])));
+            }
+        }
+        return array;
     }
+
+    /**
+     * Create a link format for the specified link text.
+     */
+    protected function createLinkFormat (url :String) :TextFormat
+    {
+        var fmt :TextFormat = new TextFormat();
+        fmt.size = 18;
+        fmt.underline = true;
+        fmt.color = 0xFF0000;
+        fmt.bold = false;
+        fmt.url = "event:" + url;
+        return fmt;
+    }
+
 
     /**
      * Get the expire time for the specified chat.
@@ -494,9 +512,6 @@ public class ChatOverlay
 
     /** The format for user-entered text. */
     protected var _userSpeakFmt :TextFormat;
-
-    /** The format for hyperlinks. */
-    protected var _linkFmt :TextFormat;
 
     /* The shared history used by all overlays. */
     protected static var _history :HistoryList;

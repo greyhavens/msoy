@@ -1,5 +1,8 @@
 package com.threerings.msoy.client {
 
+import flash.events.IEventDispatcher;
+import flash.events.TextEvent;
+
 import flash.system.Capabilities;
 
 import mx.controls.Button;
@@ -507,6 +510,28 @@ public class MsoyController extends Controller
     {
         var pt :String = Capabilities.playerType;
         return (pt !== "StandAlone") && (pt !== "External")
+    }
+
+    override protected function setControlledPanel (
+        panel :IEventDispatcher) :void
+    {
+        // in addition to listening for command events, let's listen
+        // for LINK events and handle them all here.
+        if (_controlledPanel != null) {
+            _controlledPanel.removeEventListener(TextEvent.LINK, handleLink);
+        }
+        super.setControlledPanel(panel);
+        if (_controlledPanel != null) {
+            _controlledPanel.addEventListener(TextEvent.LINK, handleLink);
+        }
+    }
+
+    /**
+     * Handle a TextEvent.LINK event.
+     */
+    protected function handleLink (evt :TextEvent) :void
+    {
+        showExternalURL(evt.text);
     }
 
     /** Provides access to client-side directors and services. */
