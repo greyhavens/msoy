@@ -24,6 +24,9 @@ public class Group
 
     /** The name of the group. */
     public String name;
+   
+    /** The blurb for the group. */
+    public String blurb;
 
     /** The group's charter, or null if one has yet to be set. */
     public String charter;

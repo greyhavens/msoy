@@ -96,6 +96,18 @@ public class GroupEdit extends PopupPanel
         });
         _table.addRow("Name", nameBox);
 
+        // blurb field
+        final TextBox blurbBox = new TextBox();
+        blurbBox.setMaxLength(80);
+        blurbBox.setText(group.blurb != null ? group.name : "");
+        blurbBox.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                _group.blurb = blurbBox.getText().trim();
+                updateSubmittable();
+            }
+        });
+        _table.addRow("Blurb", blurbBox);
+
         // charter field
         final TextArea charterArea = new TextArea();
         charterArea.setText(group.charter != null ? group.charter : "");

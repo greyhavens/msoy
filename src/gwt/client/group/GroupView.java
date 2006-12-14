@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.web.client.WebContext;
@@ -89,69 +90,59 @@ public class GroupView extends DockPanel
      */
     protected void buildUI ()
     {
-        // the button panel
-        if (_buttonPanel != null) {
-            remove(_buttonPanel);
-        }
-        _buttonPanel = new HorizontalPanel();
-        add(_buttonPanel, DockPanel.SOUTH);
+        boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
 
-        // RANK_MANAGERs can pop up the group editor
-        if (_me != null && _me.rank == GroupMembership.RANK_MANAGER) {
-            Button editButton = new Button("Edit");
-            _buttonPanel.add(editButton);
-            editButton.setStyleName("groupEditorButton");
-            editButton.addClickListener(new ClickListener() {
-                public void onClick (Widget widget) {
-                    new GroupEdit(_ctx, _group, GroupView.this).show();
-                }
-            });
-        }
-
-        // the group data
-        if (_table != null) {
-            remove(_table);
-        }
-        _table = new HeaderValueTable();
-        add(_table, DockPanel.CENTER);
-
-        _table.addHeader("Group Information");
-        _table.addRow("Group ID", String.valueOf(_group.groupId), "Name", _group.name);
-        _table.addRow("Charter", _group.charter != null ? _group.charter : "(none written)");
-        String policyString = _group.policy == Group.POLICY_PUBLIC ? "Public" :
-            _group.policy == Group.POLICY_EXCLUSIVE ? "Exclusive" : "Invitation Only";
-
-        // TODO: the logo's dimensions should be constrained, and/or we should show a thumb here
-        String path = _group.logo == null ? "/msoy/images/default_logo.png" :
+        VerticalPanel logoPanel = new VerticalPanel();
+        String path = _group.logo == null ? "/msoy/images/default_logo.png" : 
             MsoyEntryPoint.toMediaPath(_group.logo.getMediaPath());
-        _table.addRow("Policy", policyString, "Logo", new Image(path));
-        _table.addRow("Created by", _detail.creator.toString(),
-               "Created on", _group.creationDate.toString().substring(0, 20));
+        logoPanel.add(new Image(path));
+        HorizontalPanel links = new HorizontalPanel();
+        links.add(new Anchor("", "Hall"));
+        links.add(new Anchor("", "Forum"));
+        links.add(new Anchor("", "Wiki"));
+        if (amManager) links.add(new Anchor("", "Edit Group"));
+        logoPanel.add(links);
+        add(logoPanel, DockPanel.WEST);
 
-        // TODO: the member display is very simplistic at the moment, and probably needs the
-        // TODO: most work, both aesthetically and functionality-wise.
+        // All the info that describes the group: name, date, blurb, profile, etc.
+        // TODO: There is no earthly reason why these should all be Labels - this is only 
+        // priliminary.  This probably won't be a simple FlowPanel either...
+        FlowPanel description = new FlowPanel();
+        description.add(new Label(_group.name));
+        description.add(new Label(_group.creationDate.toLocaleString()));
+        description.add(new Label("by " + _detail.creator.toString()));
+        description.add(new Label(_group.blurb));
+        description.add(new Label(_group.charter));
+        add(description, DockPanel.CENTER);
 
-        FlowPanel memberFlow = new FlowPanel();
+        HeaderValueTable people = new HeaderValueTable();
+        add(people, DockPanel.SOUTH);
+        FlowPanel managers = new FlowPanel();
+        people.addRow("Managers", managers);
+        FlowPanel members = new FlowPanel();
+        people.addRow("Members", members);
         Iterator i = _detail.members.iterator();
-        boolean first = true;
+        boolean firstManager = true;
+        boolean firstMember = true;
         while (i.hasNext()) {
             final GroupMembership membership = (GroupMembership) i.next();
             final MemberName name = (MemberName) membership.member;
-            if (first) {
-                first = false;
-            } else {
-                memberFlow.add(new InlineLabel(" . "));
-            }
-            Label memberLabel = new InlineLabel(name.toString());
-            memberLabel.addClickListener(new ClickListener() {
-                public void onClick (Widget widget) {
-                    new MemberView(_ctx, membership, _group, _me, GroupView.this).show();
+            if (membership.rank == GroupMembership.RANK_MANAGER) {
+                if (firstManager) {
+                    firstManager = false;
+                } else {
+                    managers.add(new InlineLabel(", "));
                 }
-            });
-            memberFlow.add(memberLabel);
+                managers.add(new InlineLabel(name.toString()));
+            } else {
+                if (firstMember) {
+                    firstMember = false;
+                } else {
+                    members.add(new InlineLabel(", "));
+                }
+                members.add(new InlineLabel(name.toString()));
+            }
         }
-        _table.addRow("Members", memberFlow, "Scenes", new HTML("<a href='/world/index.html#g" + 
-            _group.groupId + "'>Home</a>"));
     }
 
     /**
@@ -183,8 +174,5 @@ public class GroupView extends DockPanel
     protected GroupDetail _detail;
     protected GroupMembership _me;
 
-    protected HeaderValueTable _table;
-    protected HorizontalPanel _buttonPanel;
     protected VerticalPanel _errorContainer;
-    protected FlowPanel _memberContainer;
 }

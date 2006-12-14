@@ -519,6 +519,7 @@ public class MemberManager
             public Group invokePersistResult () throws PersistenceException {
                 GroupRecord gRec = new GroupRecord();
                 gRec.name = groupDef.name;
+                gRec.blurb = groupDef.blurb;
                 gRec.charter = groupDef.charter;
                 if (groupDef.logo != null) {
                     gRec.logoMimeType = groupDef.logo.mimeType;
@@ -552,8 +553,8 @@ public class MemberManager
      * are used for the update, and data is not read back from the database. This is a low-level
      * method without privilige checks; it's up to the callers to secure it.
      */
-    public void updateGroup (final int groupId, final String name, final String charter,
-                             final MediaDesc logo, final byte policy,
+    public void updateGroup (final int groupId, final String name, final String blurb, 
+                             final String charter, final MediaDesc logo, final byte policy,
                              ResultListener<Void> listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
@@ -562,6 +563,10 @@ public class MemberManager
                 if (name != null) {
                     argList.add(GroupRecord.NAME);
                     argList.add(name);
+                }
+                if (blurb != null) {
+                    argList.add(GroupRecord.BLURB);
+                    argList.add(blurb);
                 }
                 if (charter != null) {
                     argList.add(GroupRecord.CHARTER);

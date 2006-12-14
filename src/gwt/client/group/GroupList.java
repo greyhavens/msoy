@@ -112,6 +112,7 @@ public class GroupList extends DockPanel
         _table.setText(row, 0, "Name");
         _table.setText(row, 1, "Logo");
         _table.setText(row, 2, "Policy");
+        _table.setText(row, 3, "Blurb");
         row ++;
         
         Iterator iterator = groups.iterator();
@@ -132,6 +133,9 @@ public class GroupList extends DockPanel
             // third column: the policy
             _table.setText(row, 2, group.policy == Group.POLICY_PUBLIC ? "Public" :
                     group.policy == Group.POLICY_EXCLUSIVE ? "Exclusive" : "Invitation Only");
+
+            _table.setText(row, 3, group.blurb);
+
             _table.getRowFormatter().setVerticalAlign(row, HasAlignment.ALIGN_TOP);
 
             row ++;

@@ -133,7 +133,8 @@ public class GroupServlet extends RemoteServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.memberMan.updateGroup(
-                    group.groupId, group.name, group.charter, group.logo, group.policy, waiter);
+                    group.groupId, group.name, group.blurb, group.charter, group.logo, 
+                    group.policy, waiter);
             }
         });
         waiter.waitForResult();
