@@ -77,6 +77,9 @@ import static com.threerings.msoy.Log.log;
 public class MemberManager
     implements MemberProvider
 {
+    /** Cache popular place computations for five seconds while we're debugging. */
+    public static final long POPULAR_PLACES_CACHE_LIFE = 5*1000;
+
     /**
      * Prepares our member manager for operation.
      */
@@ -723,24 +726,31 @@ public class MemberManager
     }
     
     /**
-     * Return a JSON-serialized version of the Popular Places.
+     * Return a JSON-serialized version of the Popular Places. This value is cached
+     * for {@link POPULAR_PLACES_CACHE_LIFE} milliseconds.
      */
     public void serializePopularPlaces (int n, ResultListener<String> listener)
     {
         try {
-            JSONArray result = new JSONArray();
-            for (PopularPlace place : getPopularPlaces(n)) {
-                JSONObject obj = new JSONObject();
-                obj.put("name", place.name);
-                obj.put("pop", place.population);
-                if (place instanceof PopularGamePlace) {
-                    obj.put("gameId", ((PopularGamePlace) place).gameId);
-                } else {
-                    obj.put("sceneId", ((PopularScenePlace) place).sceneId);
+            // see if cache is empty or outdated
+            if (System.currentTimeMillis() - _popularPlaceStamp > POPULAR_PLACES_CACHE_LIFE ||
+                _popularPlaceResult == null) {
+                JSONArray result = new JSONArray();
+                for (PopularPlace place : getPopularPlaces(n)) {
+                    JSONObject obj = new JSONObject();
+                    obj.put("name", place.name);
+                    obj.put("pop", place.population);
+                    if (place instanceof PopularGamePlace) {
+                        obj.put("gameId", ((PopularGamePlace) place).gameId);
+                    } else {
+                        obj.put("sceneId", ((PopularScenePlace) place).sceneId);
+                    }
+                    result.put(obj);
                 }
-                result.put(obj);
+                _popularPlaceResult = result.toString();
+                _popularPlaceStamp = System.currentTimeMillis();
             }
-            listener.requestCompleted(result.toString());
+            listener.requestCompleted(_popularPlaceResult);
         } catch (JSONException e) {
             listener.requestFailed(e);
         }
@@ -749,7 +759,7 @@ public class MemberManager
     /**
      * Find the n most popular rooms and games in the world at the moment.
      */
-    public List<PopularPlace> getPopularPlaces (int n)
+    protected List<PopularPlace> getPopularPlaces (int n)
     {
         List<PopularPlace> result = new ArrayList<PopularPlace>();
         Iterator<?> i = MsoyServer.plreg.enumeratePlaceManagers();
@@ -934,6 +944,11 @@ public class MemberManager
         mobj.addToGroups(gm);
     } 
 
+    /** The cached value of a Popular Place serialization query. */
+    protected String _popularPlaceResult;
+    /** The time when the cached value was last calculated. */
+    protected long _popularPlaceStamp;
+    
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
 
