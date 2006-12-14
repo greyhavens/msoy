@@ -11,7 +11,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.web.client.WebContext;
+
+import client.util.WebContext;
 
 public class ItemRating extends Image
     implements MouseListener

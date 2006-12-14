@@ -21,11 +21,6 @@ public class PetRecord extends ItemRecord
 {
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;
 
-    public static final String DESCRIPTION = "description";
-
-    /** A description of this pet (max length 255 characters). */
-    public String description;
-
     public PetRecord ()
     {
         super();
@@ -48,7 +43,6 @@ public class PetRecord extends ItemRecord
     protected Item createItem ()
     {
         Pet object = new Pet();
-        object.description = description;
         return object;
     }
 }

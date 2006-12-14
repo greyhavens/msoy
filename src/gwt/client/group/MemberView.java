@@ -14,14 +14,13 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ClickListener;
 
 import com.threerings.gwt.ui.InlineLabel;
-import client.util.HeaderValueTable;
-
-import client.shell.MsoyEntryPoint;
-
-import com.threerings.msoy.web.client.WebContext;
 
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupMembership;
+
+import client.shell.MsoyEntryPoint;
+import client.util.HeaderValueTable;
+import client.util.WebContext;
 
 import client.group.GroupEdit.GroupSubmissionListener;
 

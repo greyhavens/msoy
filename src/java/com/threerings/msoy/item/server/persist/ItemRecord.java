@@ -29,7 +29,7 @@ import com.threerings.msoy.item.web.Photo;
 @Table
 public abstract class ItemRecord implements Streamable, Cloneable
 {
-    public static final int BASE_SCHEMA_VERSION = 4;
+    public static final int BASE_SCHEMA_VERSION = 5;
 
     public static final String ITEM_ID = "itemId";
     public static final String PARENT_ID = "parentId";
@@ -98,6 +98,12 @@ public abstract class ItemRecord implements Streamable, Cloneable
     /** Where it's being used. */
     public int location;
 
+    /** A user supplied name for this item. */
+    public String name;
+
+    /** A user supplied description for this item. */
+    public String description;
+
     /** A hash code identifying the media used to display this item's thumbnail
      * representation. */
     @Column(nullable=true)
@@ -134,6 +140,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
         flags = item.flags;
         used = item.used;
         location = item.location;
+        name = (item.name == null) ? "" : item.name;
+        description = (item.description == null) ? "" : item.description;
         if (item.thumbMedia != null) {
             thumbMediaHash = item.thumbMedia.hash;
             thumbMimeType = item.thumbMedia.mimeType;
@@ -176,6 +184,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
         item.rating = rating;
         item.used = used;
         item.location = location;
+        item.name = name;
+        item.description = description;
         item.creatorId = creatorId;
         item.flags = flags;
         item.furniMedia = (furniMediaHash == null) ?

@@ -14,26 +14,16 @@ public class Furniture extends Item
      * characters). */
     public String action = "";
 
-    /** A description of this piece of furniture (max length 255 characters). */
-    public String description;
-
     // @Override from Item
     public byte getType ()
     {
         return FURNITURE;
     }
 
-    // @Override from Item
-    public String getDescription ()
-    {
-        return description;
-    }
-
     // @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (furniMedia != null) &&
-            nonBlank(description);
+        return super.isConsistent() && (furniMedia != null);
     }
 
     // @Override // from Item

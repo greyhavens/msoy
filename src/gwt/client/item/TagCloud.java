@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 
-import com.threerings.msoy.web.client.WebContext;
+import client.util.WebContext;
 
 /**
  * Fetches and displays the tag cloud for a given item type.

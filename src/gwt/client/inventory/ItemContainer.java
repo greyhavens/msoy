@@ -47,7 +47,7 @@ public class ItemContainer extends VerticalPanel
 
         add(createContainer(item));
 
-        Label label = new Label(truncateDescription(item.getDescription()));
+        Label label = new Label(ItemUtil.getName(_panel._ctx, item, true));
         label.setStyleName("itemThumbText");
         label.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -63,14 +63,6 @@ public class ItemContainer extends VerticalPanel
     protected Widget createContainer (Item item)
     {
         return ItemUtil.createMediaView(item.getThumbnailMedia(), true);
-    }
-
-    /**
-     * Convenience method to truncate the specified description to fit.
-     */
-    protected String truncateDescription (String text)
-    {
-        return (text.length() <= 32) ? text : (text.substring(0, 29) + "...");
     }
 
     protected ItemPanel _panel;

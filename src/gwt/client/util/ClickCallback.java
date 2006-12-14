@@ -9,8 +9,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.client.WebContext;
-
 /**
  * Allows one to wire up a button, a status label and a service call into one concisely specified
  * little chunk of code. Be sure to call <code>super.onSuccess()</code> and

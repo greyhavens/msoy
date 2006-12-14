@@ -6,7 +6,7 @@ package client.shell;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 
-import com.threerings.msoy.web.client.WebContext;
+import client.util.WebContext;
 
 /**
  * Displays our navigation headers.

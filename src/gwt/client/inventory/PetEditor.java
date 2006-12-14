@@ -3,16 +3,7 @@
 
 package client.inventory;
 
-import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.Command;
-
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Pet;
@@ -28,21 +19,25 @@ public class PetEditor extends ItemEditor
     {
         super.setItem(item);
         _pet = (Pet)item;
-        _descrip.setText((_pet.description == null) ? "" :
-                         _pet.description);
     }
 
     // @Override from ItemEditor
-    protected void createEditorInterface ()
+    protected void createMainInterface (VerticalPanel main)
     {
-        super.createEditorInterface();
+        super.createMainInterface(main);
 
-        addRow("Description", _descrip = new TextBox());
-        bind(_descrip, new Binder() {
-            public void textUpdated (String text) {
-                _pet.description = text;
+        // pets are special; their furni media are their primary media
+        String title = "Pet Image";
+        main.add(_furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
+            public String updateMedia (MediaDesc desc) {
+                if (!desc.hasFlashVisual()) {
+                    return "Furniture must be a web-viewable image type.";
+                }
+                _item.furniMedia = desc;
+                recenter(true);
+                return null;
             }
-        });
+        }));
     }
 
     // @Override from ItemEditor
@@ -52,5 +47,4 @@ public class PetEditor extends ItemEditor
     }
 
     protected Pet _pet;
-    protected TextBox _descrip;
 }

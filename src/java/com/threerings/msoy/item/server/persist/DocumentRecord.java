@@ -23,16 +23,12 @@ public class DocumentRecord extends ItemRecord
 
     public static final String DOC_MEDIA_HASH = "docMediaHash";
     public static final String DOC_MIME_TYPE = "docMimeType";
-    public static final String TITLE = "title";
 
     /** A hash code identifying the document media. */
     public byte[] docMediaHash;
 
     /** The MIME type of the {@link #docMediaHash} media. */
     public byte docMimeType;
-
-    /** The title of this document (max length 255 characters). */
-    public String title;
 
     public DocumentRecord ()
     {
@@ -47,7 +43,6 @@ public class DocumentRecord extends ItemRecord
             docMediaHash = document.docMedia.hash;
             docMimeType = document.docMedia.mimeType;
         }
-        title = document.title;
     }
 
     @Override // from ItemRecord
@@ -62,7 +57,6 @@ public class DocumentRecord extends ItemRecord
         Document object = new Document();
         object.docMedia = docMediaHash == null ? null :
             new MediaDesc(docMediaHash, docMimeType);
-        object.title = title;
         return object;
     }
 }

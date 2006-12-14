@@ -14,19 +14,10 @@ public class Avatar extends Item
     /** The headshot media. */
     public MediaDesc headShotMedia;
 
-    /** A description for this avatar (max length 255 characters). */
-    public String description;
-
     // @Override // from Item
     public byte getType ()
     {
         return AVATAR;
-    }
-
-    // @Override // from Item
-    public String getDescription ()
-    {
-        return description;
     }
 
     /**
@@ -48,8 +39,7 @@ public class Avatar extends Item
     // @Override // from Item
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (avatarMedia != null) &&
-            nonBlank(description);
+        return super.isConsistent() && (avatarMedia != null);
     }
 
     // @Override // from Item

@@ -3,13 +3,7 @@
 
 package client.inventory;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
@@ -25,15 +19,16 @@ public class AvatarEditor extends ItemEditor
     {
         super.setItem(item);
         _avatar = (Avatar)item;
-        _description.setText((_avatar.description == null) ? "" : _avatar.description);
         _mainUploader.setMedia(_avatar.avatarMedia);
         _headShotUploader.setMedia(_avatar.getHeadShotMedia());
     }
 
     // @Override from ItemEditor
-    protected void createEditorInterface ()
+    protected void createMainInterface (VerticalPanel main)
     {
-        configureMainUploader("Upload your avatar.", new MediaUpdater() {
+        super.createMainInterface(main);
+
+        main.add(createMainUploader("Upload your avatar.", new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
                     return "Avatars must be a web-viewable media.";
@@ -42,10 +37,10 @@ public class AvatarEditor extends ItemEditor
                 recenter(true);
                 return null;
             }
-        });
+        }));
 
         String title = "Head shot";
-        _headShotUploader = createUploader(HEADSHOT_ID, title, true, new MediaUpdater() {
+        _headShotUploader = new MediaUploader(HEADSHOT_ID, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
                     return "Head shots must be an image type.";
@@ -55,15 +50,7 @@ public class AvatarEditor extends ItemEditor
                 return null;
             }
         });
-
-        super.createEditorInterface();
-
-        addRow("Description", _description = new TextBox());
-        bind(_description, new Binder() {
-            public void textUpdated (String text) {
-                _avatar.description = text;
-            }
-        });
+        main.add(_headShotUploader);
     }
 
     // @Override from ItemEditor
@@ -83,7 +70,6 @@ public class AvatarEditor extends ItemEditor
     }
 
     protected Avatar _avatar;
-    protected TextBox _description;
     protected MediaUploader _headShotUploader;
 
     protected static final String HEADSHOT_ID = "headshot";

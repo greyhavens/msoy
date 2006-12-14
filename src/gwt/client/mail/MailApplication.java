@@ -30,12 +30,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
 
 import client.util.HeaderValueTable;
+import client.util.WebContext;
 
 /**
  * A mail reading application, with a sidebar listing available folders, the upper

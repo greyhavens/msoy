@@ -24,7 +24,8 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.TagHistory;
-import com.threerings.msoy.web.client.WebContext;
+
+import client.util.WebContext;
 
 /**
  * Displays tagging information for a particular item.

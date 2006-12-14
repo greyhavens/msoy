@@ -180,6 +180,11 @@ body {
    display: inline;
 }   
 
+.rowPanelCell {
+  padding-right: 10px;
+  vertical-align: bottom;
+}
+
 .infoPopup {
    border: 1px solid #0066FF;
    background: #6699CC;

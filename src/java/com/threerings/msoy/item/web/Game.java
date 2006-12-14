@@ -8,9 +8,6 @@ package com.threerings.msoy.item.web;
  */
 public class Game extends Item
 {
-    /** The name of the game. */
-    public String name;
-
     /** The minimum number of players. */
     public short minPlayers;
 
@@ -35,12 +32,6 @@ public class Game extends Item
         return GAME;
     }
 
-    // @Override from Item
-    public String getDescription ()
-    {
-        return name;
-    }
-
     // @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
@@ -60,12 +51,11 @@ public class Game extends Item
     // @Override
     public boolean isConsistent ()
     {
-        if (!super.isConsistent()) {
+        if (!super.isConsistent() || !nonBlank(name)) {
             return false;
         }
         if (minPlayers < 1 || minPlayers > maxPlayers ||
-                desiredPlayers < minPlayers ||
-                desiredPlayers > maxPlayers) {
+            desiredPlayers < minPlayers || desiredPlayers > maxPlayers) {
             return false;
         }
         return (gameMedia != null);

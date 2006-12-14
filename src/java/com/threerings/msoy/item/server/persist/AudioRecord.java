@@ -30,9 +30,6 @@ public class AudioRecord extends ItemRecord
     /** The MIME type of the {@link #audioMediaHash} media. */
     public byte audioMimeType;
 
-    /** A description of this audio (max length 255 characters). */
-    public String description;
-
     public AudioRecord ()
     {
         super();
@@ -46,7 +43,6 @@ public class AudioRecord extends ItemRecord
             audioMediaHash = audio.audioMedia.hash;
             audioMimeType = audio.audioMedia.mimeType;
         }
-        description = audio.description;
     }
 
     @Override // from ItemRecord
@@ -61,7 +57,6 @@ public class AudioRecord extends ItemRecord
         Audio object = new Audio();
         object.audioMedia = audioMediaHash == null ? null :
             new MediaDesc(audioMediaHash, audioMimeType);
-        object.description = description;
         return object;
     }
 }

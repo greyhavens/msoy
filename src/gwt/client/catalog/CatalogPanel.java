@@ -16,7 +16,8 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.web.client.WebContext;
+
+import client.util.WebContext;
 
 /**
  * Displays a tabbed panel containing the catalog.

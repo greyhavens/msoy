@@ -27,12 +27,12 @@ import com.threerings.msoy.web.client.PersonService;
 import com.threerings.msoy.web.client.PersonServiceAsync;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.client.ProfileServiceAsync;
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.FlashClients;
+import client.util.WebContext;
 
 /**
  * Handles some standard services for a top-level MetaSOY web application

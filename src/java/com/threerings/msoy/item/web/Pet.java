@@ -8,26 +8,16 @@ package com.threerings.msoy.item.web;
  */
 public class Pet extends Item
 {
-    /** A description of this pet (max length 255 characters). */
-    public String description;
-
     // @Override from Item
     public byte getType ()
     {
         return PET;
     }
 
-    // @Override from Item
-    public String getDescription ()
-    {
-        return description;
-    }
-
     // @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (furniMedia != null) &&
-            nonBlank(description);
+        return super.isConsistent() && (furniMedia != null) && !nonBlank(name);
     }
 
     // @Override // from Item

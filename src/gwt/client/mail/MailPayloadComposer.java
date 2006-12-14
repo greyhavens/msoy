@@ -4,9 +4,10 @@
 package client.mail;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MemberName;
+
+import client.util.WebContext;
 
 /**
  * Assist the {@link MailComposition} UI in configuring the state of a {@link MailPayload}.

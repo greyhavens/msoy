@@ -11,11 +11,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MemberName;
+
+import client.util.WebContext;
 
 import client.mail.MailPayloadComposer;
 import client.mail.MailPayloadDisplay;

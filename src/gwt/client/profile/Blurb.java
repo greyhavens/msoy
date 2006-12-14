@@ -9,8 +9,9 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.BlurbData;
+
+import client.util.WebContext;
 
 /**
  * Contains a chunk of content that a user would want to display on their

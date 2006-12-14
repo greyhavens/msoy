@@ -3,13 +3,7 @@
 
 package client.inventory;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.item.web.Item;
@@ -25,34 +19,24 @@ public class AudioEditor extends ItemEditor
     {
         super.setItem(item);
         _audio = (Audio)item;
-        _description.setText(
-            (_audio.description == null) ? "" : _audio.description);
         _mainUploader.setMedia(_audio.audioMedia);
     }
 
     // @Override from ItemEditor
-    protected void createEditorInterface ()
+    protected void createMainInterface (VerticalPanel main)
     {
-        configureMainUploader("Upload your audio.", new MediaUpdater() {
+        super.createMainInterface(main);
+
+        main.add(createMainUploader("Upload your audio.", new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isAudio()) {
                     return "Audio data must be audio!";
                 }
-
                 _audio.audioMedia = desc;
                 recenter(true);
                 return null;
             }
-        });
-
-        super.createEditorInterface();
-
-        addRow("Description", _description = new TextBox());
-        bind(_description, new Binder() {
-            public void textUpdated (String text) {
-                _audio.description = text;
-            }
-        });
+        }));
     }
 
     // @Override from ItemEditor
@@ -62,5 +46,4 @@ public class AudioEditor extends ItemEditor
     }
 
     protected Audio _audio;
-    protected TextBox _description;
 }

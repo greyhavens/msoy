@@ -23,10 +23,10 @@ import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
-import com.threerings.msoy.web.client.WebContext;
 
 import client.item.BaseItemDetailPopup;
 import client.shell.MsoyEntryPoint;
+import client.util.WebContext;
 
 /**
  * Displays a popup detail view of an item from the user's inventory.

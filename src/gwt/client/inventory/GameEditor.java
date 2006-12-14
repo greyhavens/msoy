@@ -3,18 +3,9 @@
 
 package client.inventory;
 
-import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
-
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Game;
@@ -39,19 +30,21 @@ public class GameEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createEditorInterface ()
+    protected void createMainInterface (VerticalPanel main)
     {
+        super.createMainInterface(main);
+
         // configure the main uploader first
-        configureMainUploader("Game Media", new MediaUpdater() {
+        main.add(createMainUploader("Game Media", new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 // TODO: validate media type
                 _game.gameMedia = desc;
                 return null;
             }
-        });
+        }));
 
         String title = "Table image";
-        _tableUploader = createUploader(TABLE_ID, title, false, new MediaUpdater() {
+        main.add(_tableUploader = new MediaUploader(TABLE_ID, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
                     return "Table images must be an image type.";
@@ -60,48 +53,40 @@ public class GameEditor extends ItemEditor
                 recenter(true);
                 return null;
             }
-        });
+        }));
 
-        super.createEditorInterface();
-
-        addRow("Name", _name = new TextBox());
-        bind(_name, new Binder() {
+        main.add(createRow("Name", bind(_name = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.name = text;
             }
-        });
+        })));
 
-        // TODO: it'd be nice to force-format this text field for integers,
-        // or something.
-        addRow("Minimum players", _minPlayers = new TextBox());
-        bind(_minPlayers, new Binder() {
+        // TODO: it'd be nice to force-format this text field for integers, or something.
+        main.add(createRow("Minimum players", bind(_minPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.minPlayers = asShort(text);
             }
-        });
+        })));
 
-        addRow("Maximum players", _maxPlayers = new TextBox());
-        bind(_maxPlayers, new Binder() {
+        main.add(createRow("Maximum players", bind(_maxPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.maxPlayers = asShort(text);
             }
-        });
+        })));
 
-        addRow("Desired players", _desiredPlayers = new TextBox());
-        bind(_desiredPlayers, new Binder() {
+        main.add(createRow("Desired players", bind(_desiredPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.desiredPlayers = asShort(text);
             }
-        });
+        })));
 
-        addRow("Game definition", _gamedef = new TextArea());
-        _gamedef.setCharacterWidth(80);
-        _gamedef.setVisibleLines(5);
-        bind(_gamedef, new Binder() {
+        main.add(createRow("Game definition", bind(_gamedef = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _game.config = text;
             }
-        });
+        })));
+        _gamedef.setCharacterWidth(80);
+        _gamedef.setVisibleLines(5);
     }
 
     // @Override from ItemEditor

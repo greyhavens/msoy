@@ -16,7 +16,8 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.web.client.WebContext;
+
+import client.util.WebContext;
 
 /**
  * Displays all items of a particular type in the catalog.

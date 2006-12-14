@@ -21,10 +21,10 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.Group;
 
 import client.shell.MsoyEntryPoint;
+import client.util.WebContext;
 
 import client.group.GroupEdit.GroupSubmissionListener;
 

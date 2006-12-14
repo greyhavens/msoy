@@ -22,7 +22,7 @@ public class ItemContainer extends VerticalPanel
     {
         add(ItemUtil.createMediaView(listing.item.getThumbnailMedia(), true));
 
-        Label descrip = new Label(truncateDescription(listing.item.getDescription()));
+        Label descrip = new Label(ItemUtil.getName(panel._ctx, listing.item, true));
         descrip.setStyleName("itemDescrip");
         descrip.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -34,13 +34,5 @@ public class ItemContainer extends VerticalPanel
         Label creator = new Label("by " + listing.creator);
         creator.setStyleName("itemCreator");
         add(creator);
-    }
-
-    /**
-     * Convenience method to truncate the specified description to fit.
-     */
-    protected String truncateDescription (String text)
-    {
-        return (text.length() <= 32) ? text : (text.substring(0, 29) + "...");
     }
 }

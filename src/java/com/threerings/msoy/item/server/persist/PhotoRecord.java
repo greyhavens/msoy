@@ -34,9 +34,6 @@ public class PhotoRecord extends ItemRecord
     /** The size constraint on the {@link #photoMediaHash} media. */
     public byte photoConstraint;
 
-    /** A caption for this photo (max length 255 characters). */
-    public String caption;
-
     public PhotoRecord ()
     {
         super();
@@ -51,7 +48,6 @@ public class PhotoRecord extends ItemRecord
             photoMimeType = photo.photoMedia.mimeType;
             photoConstraint = photo.photoMedia.constraint;
         }
-        caption = photo.caption;
     }
 
     @Override // from ItemRecord
@@ -66,7 +62,6 @@ public class PhotoRecord extends ItemRecord
         Photo object = new Photo();
         object.photoMedia = (photoMediaHash == null) ?
             null : new MediaDesc(photoMediaHash, photoMimeType, photoConstraint);
-        object.caption = caption;
         return object;
     }
 }

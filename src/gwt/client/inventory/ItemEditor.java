@@ -19,8 +19,10 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.ui.FileUploadField;
@@ -28,19 +30,16 @@ import org.gwtwidgets.client.ui.FormPanel;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.web.client.WebContext;
+
+import client.shell.BorderedPopup;
+import client.util.MsoyUI;
+import client.util.RowPanel;
+import client.util.WebContext;
 
 /**
  * The base class for an interface for creating and editing digital items.
- *
- * <p> Styles:
- * <ul>
- * <li> item_editor - the style of the main editor
- * <li> item_editor_title - the style of the title label
- * <li> item_editor_submit - the style of the submit button
- * </ul>
  */
-public abstract class ItemEditor extends PopupPanel
+public abstract class ItemEditor extends BorderedPopup
 {
     public static interface Binder
     {
@@ -59,52 +58,47 @@ public abstract class ItemEditor extends PopupPanel
     public ItemEditor ()
     {
         super(false);
-        setStyleName("itemPopup");
 
-        setWidget(_content = new FlexTable());
-        _content.setCellSpacing(5);
-        _content.setWidget(0, 0, _etitle = new Label("title"));
-        _etitle.setStyleName("item_editor_title");
+        VerticalPanel content = new VerticalPanel();
+        content.setStyleName("itemEditor");
+        content.add(_etitle = MsoyUI.createLabel("title", "Title"));
+        TabPanel tabs;
+        content.add(tabs = new TabPanel());
 
-        FlexTable.FlexCellFormatter cellFormatter =
-            _content.getFlexCellFormatter();
+        // the main tab will contain the base metadata and primary media uploader
+        VerticalPanel main = new VerticalPanel();
+        main.setStyleName("Tab");
+        createMainInterface(main);
+        tabs.add(main, "Main");
 
-        // have the child do its business
-        createEditorInterface();
+        // the extra tab will contain the furni and thumbnail media and description
+        VerticalPanel extra = new VerticalPanel();
+        extra.setStyleName("Tab");
+        createExtraInterface(extra);
+        tabs.add(extra, "Extra");
 
-        // compute our widest row so we can set our colspans
-        int rows = _content.getRowCount(), cols = 0;
-        for (int ii = 0; ii < rows; ii++) {
-            cols = Math.max(cols, _content.getCellCount(ii));
-        }
-        cellFormatter.setColSpan(0, 0, cols);
+        // start with main selected
+        tabs.selectTab(0);
 
-        HorizontalPanel bpanel = new HorizontalPanel();
-        bpanel.setSpacing(5);
-        int butrow = _content.getRowCount();
-        _content.setWidget(butrow, 0, bpanel);
-        cellFormatter.setHorizontalAlignment(
-            0, butrow, HasAlignment.ALIGN_RIGHT);
-        cellFormatter.setColSpan(0, butrow, cols);
-
-        bpanel.add(_esubmit = new Button("submit"));
-        _esubmit.setStyleName("item_editor_button");
+        RowPanel buttons = new RowPanel();
+        buttons.add(_esubmit = new Button("submit"));
         _esubmit.setEnabled(false);
         _esubmit.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 commitEdit();
             }
         });
-
         Button ecancel;
-        bpanel.add(ecancel = new Button("Cancel"));
-        ecancel.setStyleName("item_editor_button");
+        buttons.add(ecancel = new Button("Cancel"));
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 _parent.editComplete(null);
                 hide();
             }
         });
+        content.add(buttons);
+
+        setWidget(content);
     }
 
     /**
@@ -126,6 +120,8 @@ public abstract class ItemEditor extends PopupPanel
         _item = item;
         _etitle.setText((item.itemId <= 0) ? "Create" : "Edit");
         _esubmit.setText((item.itemId <= 0) ? "Create" : "Update");
+
+        _name.setText(_item.name);
 
         recheckFurniMedia();
         recheckThumbMedia();
@@ -155,26 +151,45 @@ public abstract class ItemEditor extends PopupPanel
     }
 
     /**
-     * Derived classes should create and add their interface components in this
-     * method.
+     * Derived classes can add editors to the main tab by overriding this method.
      */
-    protected void createEditorInterface ()
+    protected void createMainInterface (VerticalPanel main)
+    {
+        // we have to do this wacky singleton crap because GWT and/or JavaScript doesn't seem to
+        // cope with our trying to create an anonymous function that calls an instance method on a
+        // JavaScript object
+        _singleton = this;
+
+        // create a name entry field
+        main.add(createRow("Name:", bind(_name = new TextBox(), new Binder() {
+            public void textUpdated (String text) {
+                _item.name = text;
+            }
+        })));
+    }
+
+    /**
+     * Derived classes can add editors to the main tab by overriding this method.
+     */
+    protected void createExtraInterface (VerticalPanel extra)
     {
         String title = "Furniture Image";
-        _furniUploader = createUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
-                if (!desc.hasFlashVisual()) {
-                    return "Furniture must be an web-viewable image type.";
+        if (_furniUploader == null) {
+            _furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
+                public String updateMedia (MediaDesc desc) {
+                    if (!desc.hasFlashVisual()) {
+                        return "Furniture must be an web-viewable image type.";
+                    }
+                    _item.furniMedia = desc;
+                    recenter(true);
+                    return null;
                 }
-
-                _item.furniMedia = desc;
-                recenter(true);
-                return null;
-            }
-        });
+            });
+            extra.add(_furniUploader);
+        }
 
         title = "Thumbnail Image";
-        _thumbUploader = createUploader(Item.THUMB_ID, title, true, new MediaUpdater() {
+        _thumbUploader = new MediaUploader(Item.THUMB_ID, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
                     return "Thumbnails must be an image type.";
@@ -184,27 +199,19 @@ public abstract class ItemEditor extends PopupPanel
                 return null;
             }
         });
-
-        // we have to do this wacky singleton crap because GWT and/or
-        // JavaScript doesn't seem to cope with our trying to create an
-        // anonymous function that calls an instance method on a JavaScript
-        // object
-        _singleton = this;
+        extra.add(_thumbUploader);
     }
 
-    /**
-     * Adds a label and widget to the row of editable fields.
-     */
-    protected void addRow (String title, Widget widget)
+    protected RowPanel createRow (String label, Widget widget)
     {
-        int row = _content.getRowCount();
-        _content.setText(row, 0, title);
-        _content.setWidget(row, 1, widget);
+        RowPanel row = new RowPanel();
+        row.add(new Label(label));
+        row.add(widget);
+        return row;
     }
 
     /**
-     * Recenters our popup. This should be called when media previews are
-     * changed.
+     * Recenters our popup. This should be called when media previews are changed.
      */
     protected void recenter (boolean defer)
     {
@@ -224,23 +231,9 @@ public abstract class ItemEditor extends PopupPanel
      * This should be called by item editors that are used for editing
      * media that has a 'main' piece of media.
      */
-    protected void configureMainUploader (String title, MediaUpdater updater)
+    protected MediaUploader createMainUploader (String title, MediaUpdater updater)
     {
-        _mainUploader = createUploader(Item.MAIN_ID, title, false, updater);
-    }
-
-    /**
-     * Create and add an uploader to the interface.
-     */
-    protected MediaUploader createUploader (
-        String name, String title, boolean thumbnail, MediaUpdater updater)
-    {
-        MediaUploader mu = new MediaUploader(name, title, thumbnail, updater);
-        FlexTable.FlexCellFormatter cellFormatter = _content.getFlexCellFormatter();
-        int row = _content.getRowCount();
-        _content.setWidget(row, 0, mu);
-        cellFormatter.setColSpan(row, 0, 2);
-        return mu;
+        return (_mainUploader = new MediaUploader(Item.MAIN_ID, title, false, updater));
     }
 
     /**
@@ -284,13 +277,14 @@ public abstract class ItemEditor extends PopupPanel
         }
 
         // set the new media in preview and in the item
-        mu.setUploadedMedia(new MediaDesc(MediaDesc.stringToHash(mediaHash), (byte) mimeType));
+        mu.setUploadedMedia(
+            new MediaDesc(MediaDesc.stringToHash(mediaHash), (byte)mimeType, (byte)constraint));
 
         // if we got thumbnail media back from this upload, use that as well
         // TODO: avoid overwriting custom thumbnail, sigh
         if (thumbMediaHash.length() > 0) {
-            _item.thumbMedia =
-                new MediaDesc(MediaDesc.stringToHash(thumbMediaHash), (byte)thumbMimeType);
+            _item.thumbMedia = new MediaDesc(
+                MediaDesc.stringToHash(thumbMediaHash), (byte)thumbMimeType);
         }
 
         // have the item re-validate that no media ids are duplicated
@@ -389,7 +383,7 @@ public abstract class ItemEditor extends PopupPanel
      *
      * TODO: If you paste text into the field, this doesn't detect it.
      */
-    protected void bind (final TextBoxBase textbox, final Binder binder)
+    protected TextBoxBase bind (final TextBoxBase textbox, final Binder binder)
     {
         textbox.addKeyboardListener(new KeyboardListenerAdapter() {
             public void onKeyPress (Widget sender, char keyCode, int mods) {
@@ -403,6 +397,7 @@ public abstract class ItemEditor extends PopupPanel
                 }
             }
         });
+        return textbox;
     }
 
     /**
@@ -419,10 +414,11 @@ public abstract class ItemEditor extends PopupPanel
     protected ItemPanel _parent;
 
     protected Item _item;
-    protected int _previewRow = -1;
 
-    protected FlexTable _content;
+    protected VerticalPanel _content;
+
     protected Label _etitle;
+    protected TextBox _name;
     protected Button _esubmit;
 
     protected static ItemEditor _singleton;

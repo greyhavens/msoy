@@ -124,6 +124,16 @@
     </java>
   </target>
 
+  <!-- regenerates our i18n messages classes -->
+  <target name="gmsgs">
+    <java classpathref="gwt.classpath" fork="true" classname="com.google.gwt.i18n.tools.I18NSync">
+      <arg value="-createMessages"/>
+      <arg value="-out"/>
+      <arg value="src/gwt"/>
+      <arg value="client.util.GlobalMessages"/>
+    </java>
+  </target>
+
   <property name="gclient.buildstamp" value="${deploy.dir}/tmp/gclient.buildstamp"/>
   <target name="checkgclient">
     <uptodate property="gclient_is_up_to_date" targetfile="${gclient.buildstamp}">
@@ -147,7 +157,8 @@
       <echo>Compiling @{page} module...</echo>
       <delete dir="pages/@{page}"/>
       <mkdir dir="pages/@{page}"/>
-      <java fork="true" maxmemory="128M" classname="com.google.gwt.dev.GWTCompiler" failonerror="true">
+      <java fork="true" maxmemory="128M" failonerror="true"
+            classname="com.google.gwt.dev.GWTCompiler">
         <classpath>
           <pathelement location="${deploy.dir}/classes"/>
           <fileset dir="${extlib.dir}" includes="gwt*.jar"/>
@@ -363,6 +374,16 @@
       <fileset dir="src/java" includes="**/*Receiver.java"
         excludes="**/InvocationReceiver.java"/>
     </receiver>
+  </target>
+
+  <!-- generates ActionScript versions of our Streamable classes -->
+  <target name="genascript">
+    <taskdef name="genscript" classpathref="classpath"
+             classname="com.threerings.presents.tools.GenActionScriptTask"/>
+    <!-- now generate the associated files -->
+    <genscript header="lib/SOURCE_HEADER" asroot="src/as">
+      <fileset dir="src/java" includes="**/data/*.java"/>
+    </genscript>
   </target>
 
   <!-- creates the serialized color repository config -->

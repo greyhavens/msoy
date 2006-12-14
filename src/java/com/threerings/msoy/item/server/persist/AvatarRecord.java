@@ -30,9 +30,6 @@ public class AvatarRecord extends ItemRecord
     /** The MIME type of the {@link #avatarMediaHash} media. */
     public byte avatarMimeType;
 
-    /** A description for this avatar (max length 255 characters). */
-    public String description;
-
     public AvatarRecord ()
     {
         super();
@@ -46,7 +43,6 @@ public class AvatarRecord extends ItemRecord
             avatarMediaHash = avatar.avatarMedia.hash;
             avatarMimeType = avatar.avatarMedia.mimeType;
         }
-        description = avatar.description;
     }
 
     @Override // from ItemRecord
@@ -61,7 +57,6 @@ public class AvatarRecord extends ItemRecord
         Avatar object = new Avatar();
         object.avatarMedia = avatarMediaHash == null ? null :
             new MediaDesc(avatarMediaHash, avatarMimeType);
-        object.description = description;
         return object;
     }
 }

@@ -11,10 +11,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
-import com.threerings.msoy.web.client.WebContext;
 
 import client.item.BaseItemDetailPopup;
 import client.util.ClickCallback;
+import client.util.WebContext;
 
 /**
  * Displays a popup detail view of an item from the catalog.

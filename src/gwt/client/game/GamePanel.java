@@ -9,10 +9,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.LaunchConfig;
 
 import client.util.FlashClients;
+import client.util.WebContext;
 
 /**
  * Displays the client interface for a particular game.

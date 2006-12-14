@@ -29,9 +29,6 @@ public class GameRecord extends ItemRecord
     public static final String GAME_MEDIA_HASH = "gameMediaHash";
     public static final String GAME_MIME_TYPE = "gameMimeType";
 
-    /** The name of the game. */
-    public String name;
-
     /** The minimum number of players. */
     public short minPlayers;
 
@@ -60,7 +57,6 @@ public class GameRecord extends ItemRecord
     {
         super(game);
 
-        name = game.name;
         minPlayers = game.minPlayers;
         maxPlayers = game.maxPlayers;
         desiredPlayers = game.desiredPlayers;
@@ -81,7 +77,6 @@ public class GameRecord extends ItemRecord
     protected Item createItem ()
     {
         Game object = new Game();
-        object.name = name;
         object.minPlayers = minPlayers;
         object.maxPlayers = maxPlayers;
         object.desiredPlayers = desiredPlayers;

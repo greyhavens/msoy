@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.GroupInviteObject;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MailMessage;
@@ -28,6 +27,7 @@ import com.threerings.msoy.web.data.MemberName;
 import client.mail.MailPayloadComposer;
 import client.mail.MailPayloadDisplay;
 import client.mail.MailUpdateListener;
+import client.util.WebContext;
 
 public abstract class GroupInvite
 {

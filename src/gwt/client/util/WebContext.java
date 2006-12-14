@@ -1,9 +1,19 @@
 //
 // $Id$
 
-package com.threerings.msoy.web.client;
+package client.util;
 
 import com.google.gwt.core.client.GWT;
+
+import com.threerings.msoy.web.client.CatalogServiceAsync;
+import com.threerings.msoy.web.client.GameServiceAsync;
+import com.threerings.msoy.web.client.GroupServiceAsync;
+import com.threerings.msoy.web.client.ItemServiceAsync;
+import com.threerings.msoy.web.client.MailServiceAsync;
+import com.threerings.msoy.web.client.MemberServiceAsync;
+import com.threerings.msoy.web.client.PersonServiceAsync;
+import com.threerings.msoy.web.client.ProfileServiceAsync;
+import com.threerings.msoy.web.client.WebUserServiceAsync;
 
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -43,10 +53,15 @@ public class WebContext
     /** Provides game-related services. */
     public GameServiceAsync gamesvc;
 
+    /** Messages shared by all client interfaces. */
+    public GlobalMessages gmsgs;
+
+    /** Contains translations for server-supplied messages. */
+    public ServerMessages smsgs;
+
     /** Reports a log message to the console. */
     public void log (String message)
     {
-        // TODO: disable this in production
         if (GWT.isScript()) {
             consoleLog(message);
         } else {
@@ -57,7 +72,6 @@ public class WebContext
     /** Reports a log message and exception stack trace to the console. */
     public void log (String message, Exception error)
     {
-        // TODO: disable this in production
         if (GWT.isScript()) {
             consoleLog(message + ": " + error); // TODO: log stack trace?
         } else {
@@ -69,6 +83,8 @@ public class WebContext
      * Records a log message to the JavaScript console.
      */
     protected static native void consoleLog (String message) /*-{
-        $wnd.console.log(message);
+        if ($wnd.console) {
+            $wnd.console.log(message);
+        }
     }-*/;
 }

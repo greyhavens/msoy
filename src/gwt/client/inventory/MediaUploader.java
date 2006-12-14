@@ -4,23 +4,15 @@
 package client.inventory;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.DeferredCommand;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
 import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
-import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.ui.FileUploadField;
@@ -32,29 +24,36 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import client.item.ItemUtil;
+import client.util.RowPanel;
 
 /**
  * Helper class, used in ItemEditor.
  */
-public class MediaUploader extends FlexTable
+public class MediaUploader extends VerticalPanel
 {
     /**
-     * @param id the id of the uploader to create. This value is later
-     * passed to the bridge to identify the hash/mimeType returned by the
-     * server.
+     * @param id the id of the uploader to create. This value is later passed to the bridge to
+     * identify the hash/mimeType returned by the server.
      * @param title A title to be displayed to the user.
      * @param thumbnail if true the preview will be thumbnail sized, false it will be preview
      * sized.
-     * @param updater the updater that knows how to set the media hash on
-     * the item.
+     * @param updater the updater that knows how to set the media hash on the item.
      */
     public MediaUploader (String id, String title, boolean thumbnail,
                           ItemEditor.MediaUpdater updater)
     {
+        setStyleName("mediaUploader");
+
         _thumbnail = thumbnail;
         _updater = updater;
 
-        _panel = new FormPanel(new FlowPanel());
+        add(_status = new Label(title));
+
+        add(_target = new HorizontalPanel());
+        _target.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+        _target.setStyleName(_thumbnail ? "Thumbnail" : "Preview");
+
+        _panel = new FormPanel(new RowPanel());
         if (GWT.isScript()) {
             _panel.setAction("/uploadsvc");
         } else {
@@ -89,22 +88,7 @@ public class MediaUploader extends FlexTable
             });
             _panel.add(submit);
         }
-
-        int row = getRowCount();
-        FlexCellFormatter cellFormatter = getFlexCellFormatter();
-
-        setText(row, 0, title);
-        setWidget(row, 1, _panel);
-        row++;
-
-        _out = new Label("Browse and upload and we'll show a preview here.");
-        setWidget(row, 0, _out);
-        cellFormatter.setColSpan(row, 0, 2);
-        row++;
-
-        _previewRow = row;
-        prepareCell(_previewRow, 0);
-        cellFormatter.setColSpan(_previewRow, 0, 2);
+        add(_panel);
     }
 
     /**
@@ -113,9 +97,9 @@ public class MediaUploader extends FlexTable
     public void setMedia (MediaDesc desc)
     {
         if (desc != null) {
-            // update our preview
-            _out.setText("Preview:");
-            setWidget(_previewRow, 0, ItemUtil.createMediaView(desc, _thumbnail));
+            _status.setText("Preview:");
+            _target.clear();
+            _target.add(ItemUtil.createMediaView(desc, _thumbnail));
         }
     }
 
@@ -127,16 +111,16 @@ public class MediaUploader extends FlexTable
         String result = _updater.updateMedia(desc);
         if (result == null) {
             setMedia(desc);
-
         } else {
-            _out.setText(result);
+            _status.setText(result);
         }
     }
 
     protected ItemEditor.MediaUpdater _updater;
 
+    protected Label _status;
+    protected HorizontalPanel _target;
     protected FormPanel _panel;
-    protected Label _out;
-    protected int _previewRow;
+
     protected boolean _thumbnail;
 }

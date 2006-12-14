@@ -16,9 +16,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
-import com.threerings.msoy.web.client.WebContext;
 
 import client.shell.BorderedPopup;
+import client.util.WebContext;
 
 /**
  * Defines the base item detail popup from which we derive an inventory and catalog item detail.
@@ -38,7 +38,7 @@ public class BaseItemDetailPopup extends BorderedPopup
         // create our user interface
         HorizontalPanel title = new HorizontalPanel();
         title.setStyleName("itemDetailTitle");
-        title.add(_name = new Label(item.getDescription()));
+        title.add(_name = new Label(item.name));
         _name.setStyleName("itemDetailName");
         title.add(_creator = new Label(""));
         _creator.setStyleName("itemDetailCreator");
@@ -108,10 +108,7 @@ public class BaseItemDetailPopup extends BorderedPopup
 
     protected void createInterface (VerticalPanel details, VerticalPanel controls)
     {
-        details.add(_description = new Label("This would be the item's description, but we " +
-                                             "have no notion of description now. Or rather, " +
-                                             "what we call description is actually being used " +
-                                             "for name. So some fiddling will be needed."));
+        details.add(_description = new Label(ItemUtil.getDescription(_ctx, _item)));
     }
 
     protected void gotDetail (ItemDetail detail)

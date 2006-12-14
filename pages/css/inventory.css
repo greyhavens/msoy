@@ -1,8 +1,8 @@
-.item_editor_title {
-   font-weight: bold;
+.itemEditor {
+  padding: 10px;
 }
 
-.item_editor_button {
+.itemEditor .Title {
    font-weight: bold;
 }
 

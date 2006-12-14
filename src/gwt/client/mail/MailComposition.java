@@ -3,8 +3,6 @@
 
 package client.mail;
 
-import client.util.HeaderValueTable;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -15,8 +13,11 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.msoy.web.client.WebContext;
+
 import com.threerings.msoy.web.data.MemberName;
+
+import client.util.HeaderValueTable;
+import client.util.WebContext;
 
 /**
  * A mail composition popup.

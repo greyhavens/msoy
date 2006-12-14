@@ -27,11 +27,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Photo;
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.Group;
 
 import client.shell.MsoyEntryPoint;
 import client.util.HeaderValueTable;
+import client.util.WebContext;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.

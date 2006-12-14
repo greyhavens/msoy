@@ -20,8 +20,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.util.CookieUtil;
 
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.WebCreds;
+
+import client.util.WebContext;
 
 /**
  * Displays an interface for logging on, or a user's current credentials.

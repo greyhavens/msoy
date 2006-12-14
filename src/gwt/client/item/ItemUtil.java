@@ -3,6 +3,7 @@
 
 package client.item;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
@@ -13,12 +14,45 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.MsoyEntryPoint;
+import client.util.WebContext;
 
 /**
  * Contains utility methods for item related user interface business.
  */
 public class ItemUtil
 {
+    /**
+     * Returns the name of this item or a properly translated string indicating that it has no
+     * name.
+     */
+    public static String getName (WebContext ctx, Item item)
+    {
+        return getName(ctx, item, false);
+    }
+
+    /**
+     * Returns the truncated name of this item or a properly translated string indicating that it
+     * has no name.
+     */
+    public static String getName (WebContext ctx, Item item, boolean truncate)
+    {
+        String name = (item.name.trim().length() == 0) ? "<no name>" : item.name;
+        if (name.length() > 32 && truncate) {
+            name = name.substring(0, 29) + "...";
+        }
+        return name;
+    }
+
+    /**
+     * Returns the description of this item or a properly translated string indicating that it has
+     * no description.
+     */
+    public static String getDescription (WebContext ctx, Item item)
+    {
+        return (item.description.trim().length() == 0) ?
+            "No description provided for this item." : item.description;
+    }
+
     /**
      * Create a widget to display the supplied media.
      *

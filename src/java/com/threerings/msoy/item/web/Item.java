@@ -94,6 +94,12 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
      * being used. */
     public int location;
 
+    /** The user provided name for this item. */
+    public String name;
+
+    /** The user provided description for this item. */
+    public String description;
+
     /** The media used to display this item's thumbnail representation. */
     public MediaDesc thumbMedia;
 
@@ -157,11 +163,6 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
      * Gets the type code for this item.
      */
     public abstract byte getType ();
-
-    /**
-     * Gets a textual description of this item.
-     */
-    public abstract String getDescription ();
 
     /**
      * Returns the parentId, or the itemId if this item is not a clone.
@@ -237,7 +238,7 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     }
 
     /**
-     * Verify that all the required fields in this particular Item subclass are filled in, make
+     * Verifise that all the required fields in this particular Item subclass are filled in, make
      * sense, and are consistent with each other. This is used to verify the data being edited by a
      * user during item creation, and also that the final uploaded item isn't hacked.
      */

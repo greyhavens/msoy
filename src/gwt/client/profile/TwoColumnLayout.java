@@ -7,9 +7,10 @@ import java.util.ArrayList;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.msoy.web.client.WebContext;
 import com.threerings.msoy.web.data.BlurbData;
 import com.threerings.msoy.web.data.PersonLayout;
+
+import client.util.WebContext;
 
 /**
  * Lays out a person page in two columns.

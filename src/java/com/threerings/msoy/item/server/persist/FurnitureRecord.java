@@ -29,9 +29,6 @@ public class FurnitureRecord extends ItemRecord
      * characters). */
     public String action = "";
 
-    /** A description of this piece of furniture (max length 255 characters). */
-    public String description;
-
     public FurnitureRecord ()
     {
         super();
@@ -42,7 +39,6 @@ public class FurnitureRecord extends ItemRecord
         super(furniture);
 
         action = furniture.action;
-        description = furniture.description;
     }
 
     @Override // from Item
@@ -56,7 +52,6 @@ public class FurnitureRecord extends ItemRecord
     {
         Furniture object = new Furniture();
         object.action = action;
-        object.description = description;
         return object;
     }
 }
