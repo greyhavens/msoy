@@ -61,7 +61,8 @@ public class TagDetailPanel extends FlexTable
                     _status.setText("Invalid tag: use letters, numbers, and underscore.");
                     return;
                 }
-                _ctx.itemsvc.tagItem(_ctx.creds, _item.getIdent(), tagName, new AsyncCallback() {
+                _ctx.itemsvc.tagItem(
+                    _ctx.creds, _item.getIdent(), tagName, true, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         updateTags();
                     }
@@ -81,7 +82,8 @@ public class TagDetailPanel extends FlexTable
             public void onChange (Widget sender) {
                 ListBox box = (ListBox) sender;
                 String value = box.getValue(box.getSelectedIndex());
-                _ctx.itemsvc.tagItem(_ctx.creds, _item.getIdent(), value, new AsyncCallback() {
+                _ctx.itemsvc.tagItem(
+                    _ctx.creds, _item.getIdent(), value, true, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         updateTags();
                     }
