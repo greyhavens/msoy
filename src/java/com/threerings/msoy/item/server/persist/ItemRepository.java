@@ -27,11 +27,15 @@ import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
+import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.util.IntListUtil;
+import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.TagHistory;
 
 /**
@@ -186,16 +190,40 @@ public abstract class ItemRepository<
     /**
      * Loads all items in the catalog.
      *
-     * TODO: As soon as we're out of the prototyping stage, this will need to turn into a paging
-     * method; int offset, int rows perhaps?
-     * TODO: Ideally this would be a single join.
-     * TODO: need a powerful way to supply search criteria.
+     * TODO: This method currently fetches CatalogRecords through a join against ItemRecord,
+     *       and then executes a second query against ItemRecord only. This really really has
+     *       to be a single join in a sane universe, but it makes significant demands on the
+     *       Depot code that we don't know how to handle yet (or possibly some fiddling with
+     *       the Item vs Catalog class hierarchies). 
      */
-    public Collection<CAT> loadCatalog ()
+    public Collection<CAT> loadCatalog (byte sortBy, int offset, int rows)
         throws PersistenceException
     {
+        SQLExpression sortExp;
+        
+        switch(sortBy) {
+        case CatalogListing.SORT_BY_LIST_DATE:
+            sortExp = new ColumnExp(getCatalogClass(), CatalogRecord.LISTED_DATE);
+            break;
+        case CatalogListing.SORT_BY_RATING:
+            String tableName = _ctx.getMarshaller(getItemClass()).getTableName();
+            // TODO: we need operator and function SQLExpressions to do this quite right
+//            sortExp = new LiteralExp("floor(" + tableName + "." + ItemRecord.RATING + ")/2");
+            sortExp = new ColumnExp(getItemClass(), ItemRecord.RATING);
+            break;
+        default:
+            throw new IllegalArgumentException(
+                "Sort method not implemented [sortBy=" + sortBy + "]");
+        }
+
         // fetch all the catalog records of interest
-        Collection<CAT> records = findAll(getCatalogClass());
+        Collection<CAT> records =
+            findAll(getCatalogClass(),
+                    new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                             getItemClass(), ItemRecord.ITEM_ID),
+                    OrderBy.descending(sortExp),
+                    new Limit(offset, rows));
+
         if (records.size() == 0) {
             return records;
         }

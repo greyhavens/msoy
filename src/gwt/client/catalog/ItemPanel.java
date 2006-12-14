@@ -60,16 +60,18 @@ public class ItemPanel extends DockPanel
     protected void updateListings ()
     {
         setStatus("Loading...");
-        _ctx.catalogsvc.loadCatalog(_ctx.creds, _type, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _items.setItems((ArrayList)result);
-                setStatus("");
-            }
-            public void onFailure (Throwable caught) {
-                GWT.log("loadCatalog failed", caught);
-                // TODO: if ServiceException, translate
-                setStatus("Failed to load catalog: " + caught);
-            }
+        _ctx.catalogsvc.loadCatalog(
+            // TODO: Refactor PagedGrid to request rows when required.
+            _ctx.creds, _type, CatalogListing.SORT_BY_RATING, 0, 1000, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    _items.setItems((ArrayList)result);
+                    setStatus("");
+                }
+                public void onFailure (Throwable caught) {
+                    GWT.log("loadCatalog failed", caught);
+                    // TODO: if ServiceException, translate
+                    setStatus("Failed to load catalog: " + caught);
+                }
         });
     }
 

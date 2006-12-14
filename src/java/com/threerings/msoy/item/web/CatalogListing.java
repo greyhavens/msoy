@@ -17,6 +17,11 @@ import com.threerings.msoy.web.data.MemberName;
 public class CatalogListing
     implements Streamable, IsSerializable
 {
+    public static final byte SORT_BY_RATING = 1;
+    public static final byte SORT_BY_LIST_DATE = 2;
+    public static final byte SORT_BY_SATISFACTION = 3;
+    public static final byte SORT_BY_PRICE = 4;
+    
     /** The item being listed. */
     public Item item;
 
