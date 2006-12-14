@@ -169,7 +169,7 @@ public class GroupView extends DockPanel
         while ((member == null || member.member.getMemberId() != memberId) && i.hasNext()) {
             member = (GroupMembership)i.next();
         }
-        return member != null && member.member.getMemberId() == memberId ? member : null;
+        return (member != null && member.member.getMemberId() == memberId) ? member : null;
     }
 
     protected void addError (String error)
