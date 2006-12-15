@@ -46,8 +46,9 @@ public class MediaUploader extends VerticalPanel
 
         _thumbnail = thumbnail;
         _updater = updater;
+        _title = title;
 
-        add(_status = MsoyUI.createLabel(title, "Status"));
+        add(_status = MsoyUI.createLabel(_title, "Status"));
 
         add(_target = new HorizontalPanel());
         _target.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
@@ -98,10 +99,10 @@ public class MediaUploader extends VerticalPanel
      */
     public void setMedia (MediaDesc desc)
     {
+        _target.clear();
         if (desc != null) {
-            _status.setText("Preview:");
-            _target.clear();
             _target.add(ItemUtil.createMediaView(desc, _thumbnail));
+            _status.setText(_title);
         }
     }
 
@@ -120,6 +121,7 @@ public class MediaUploader extends VerticalPanel
 
     protected ItemEditor.MediaUpdater _updater;
 
+    protected String _title;
     protected Label _status;
     protected HorizontalPanel _target;
     protected FormPanel _panel;

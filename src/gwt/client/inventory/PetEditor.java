@@ -27,7 +27,7 @@ public class PetEditor extends ItemEditor
         super.createMainInterface(main);
 
         // pets are special; their furni media are their primary media
-        String title = "Pet Image";
+        String title = "Main Pet media";
         main.add(_furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {

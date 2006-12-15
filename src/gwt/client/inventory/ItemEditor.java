@@ -179,7 +179,7 @@ public abstract class ItemEditor extends BorderedPopup
         _singleton = this;
 
         // create a name entry field
-        main.add(createRow("Name:", bind(_name = new TextBox(), new Binder() {
+        main.add(createRow("Item Name:", bind(_name = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _item.name = text;
             }
@@ -199,7 +199,7 @@ public abstract class ItemEditor extends BorderedPopup
         _description.setCharacterWidth(40);
         _description.setVisibleLines(3);
 
-        String title = "Furniture Image";
+        String title = "Image shown when placed in the World as Furniture";
         if (_furniUploader == null) {
             _furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
                 public String updateMedia (MediaDesc desc) {
@@ -214,7 +214,7 @@ public abstract class ItemEditor extends BorderedPopup
             extra.add(_furniUploader);
         }
 
-        title = "Thumbnail Image";
+        title = "Image shown in Inventory and Catalog";
         _thumbUploader = new MediaUploader(Item.THUMB_ID, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {

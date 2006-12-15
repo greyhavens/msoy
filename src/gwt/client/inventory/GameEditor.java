@@ -35,7 +35,8 @@ public class GameEditor extends ItemEditor
         super.createMainInterface(main);
 
         // configure the main uploader first
-        main.add(createMainUploader("Game Media", new MediaUpdater() {
+        String title = "Main Game media";
+        main.add(createMainUploader(title, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 // TODO: validate media type
                 _game.gameMedia = desc;
@@ -43,7 +44,7 @@ public class GameEditor extends ItemEditor
             }
         }));
 
-        String title = "Table image";
+        title = "Game Lobby Table background image";
         main.add(_tableUploader = new MediaUploader(TABLE_ID, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {

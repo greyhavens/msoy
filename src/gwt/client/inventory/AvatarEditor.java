@@ -28,7 +28,8 @@ public class AvatarEditor extends ItemEditor
     {
         super.createMainInterface(main);
 
-        main.add(createMainUploader("Upload your avatar.", new MediaUpdater() {
+        String title = "Main Avatar media";
+        main.add(createMainUploader(title, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
                     return "Avatars must be a web-viewable media.";
@@ -39,7 +40,7 @@ public class AvatarEditor extends ItemEditor
             }
         }));
 
-        String title = "Head shot";
+        title = "Image show in a Game Lobby";
         _headShotUploader = new MediaUploader(HEADSHOT_ID, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
