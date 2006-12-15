@@ -175,6 +175,17 @@ body {
   width: 100%;
 }
 
+.borderedDialog .Title {
+}
+
+.borderedDialog .Title td {
+  padding: 10px;
+}
+
+.borderedDialog .Controls {
+  padding: 10px;
+}
+
 /** General UI styles. */
 .inline {
    display: inline;

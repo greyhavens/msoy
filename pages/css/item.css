@@ -114,13 +114,6 @@
   width: 550px;
 }
 
-.itemDetailTitle {
-}
-
-.itemDetailTitle td {
-  padding: 10px;
-}
-
 .itemDetailName {
   font-size: 24px;
   font-weight: bold;
@@ -159,6 +152,5 @@
 }
 
 .tagDetailPanel {
-  padding: 10px;
   font-size: 12px;
 }

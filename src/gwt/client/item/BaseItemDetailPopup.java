@@ -17,13 +17,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 
-import client.shell.BorderedPopup;
 import client.util.WebContext;
+import client.util.BorderedDialog;
 
 /**
  * Defines the base item detail popup from which we derive an inventory and catalog item detail.
  */
-public class BaseItemDetailPopup extends BorderedPopup
+public class BaseItemDetailPopup extends BorderedDialog
 {
     protected BaseItemDetailPopup (WebContext ctx, Item item)
     {
@@ -31,43 +31,24 @@ public class BaseItemDetailPopup extends BorderedPopup
         _ctx = ctx;
         _item = item;
 
-        VerticalPanel contents = new VerticalPanel();
-        contents.setStyleName("itemDetailPanel");
-        setWidget(contents);
-
         // create our user interface
-        HorizontalPanel title = new HorizontalPanel();
-        title.setStyleName("itemDetailTitle");
-        title.add(_name = new Label(item.name));
+        _header.add(_name = new Label(item.name));
         _name.setStyleName("itemDetailName");
-        title.add(_creator = new Label(""));
+        _header.add(_creator = new Label(""));
         _creator.setStyleName("itemDetailCreator");
         // this is a goddamned hack, but GWT doesn't support valign=baseline, dooh!
         DOM.setStyleAttribute(DOM.getParent(_name.getElement()), "verticalAlign", "baseline");
         DOM.setStyleAttribute(DOM.getParent(_creator.getElement()), "verticalAlign", "baseline");
         // TODO: add a close box
-        contents.add(title);
 
-        FlexTable middle = new FlexTable();
-        middle.setStyleName("itemDetailContent");
-        // a place for the item's preview visualization
-        Widget preview = createPreview(item);
-        middle.setWidget(0, 0, preview);
-        middle.getFlexCellFormatter().setStyleName(0, 0, "itemDetailPreview");
-        middle.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        // a place for details
-        middle.setWidget(0, 1, _details = new VerticalPanel());
-        middle.getFlexCellFormatter().setVerticalAlignment(0, 1, VerticalPanel.ALIGN_TOP);
-        _details.setStyleName("itemDetailDetails");
-        // a place for controls
-        middle.setWidget(1, 0, _controls = new VerticalPanel());
-        middle.getFlexCellFormatter().setVerticalAlignment(1, 0, VerticalPanel.ALIGN_BOTTOM);
-        _controls.setStyleName("itemDetailControls");
+        // configure our item preview
+        ((FlexTable)_contents).setWidget(0, 0, createPreview(item));
+
         // allow derived classes to add their own nefarious bits
         createInterface(_details, _controls);
-        contents.add(middle);
 
-        contents.add(new TagDetailPanel(ctx, item));
+        // add our tag business at the bottom
+        _footer.add(new TagDetailPanel(ctx, item));
 
         // load up the item details
         _ctx.itemsvc.loadItemDetail(_ctx.creds, _item.getIdent(), new AsyncCallback() {
@@ -84,21 +65,25 @@ public class BaseItemDetailPopup extends BorderedPopup
         recenter(false);
     }
 
-    /**
-     * Recenters our popup.
-     */
-    protected void recenter (boolean defer)
+    protected Widget createContents ()
     {
-        if (defer) {
-            DeferredCommand.add(new Command() {
-                public void execute () {
-                    recenter(false);
-                }
-            });
-        } else {
-            setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
-                             (Window.getClientHeight() - getOffsetHeight()) / 2);
-        }
+        FlexTable middle = new FlexTable();
+        middle.setStyleName("itemDetailContent");
+
+        // a place for the item's preview visualization
+        middle.getFlexCellFormatter().setStyleName(0, 0, "itemDetailPreview");
+        middle.getFlexCellFormatter().setRowSpan(0, 0, 2);
+
+        // a place for details
+        middle.setWidget(0, 1, _details = new VerticalPanel());
+        middle.getFlexCellFormatter().setVerticalAlignment(0, 1, VerticalPanel.ALIGN_TOP);
+        _details.setStyleName("itemDetailDetails");
+
+        // a place for controls
+        middle.setWidget(1, 0, _controls = new VerticalPanel());
+        middle.getFlexCellFormatter().setVerticalAlignment(1, 0, VerticalPanel.ALIGN_BOTTOM);
+        _controls.setStyleName("itemDetailControls");
+        return middle;
     }
 
     protected Widget createPreview (Item item)

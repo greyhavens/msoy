@@ -1,9 +1,12 @@
 //
 // $Id$
 
-package client.shell;
+package client.util;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -40,6 +43,32 @@ public class BorderedPopup extends PopupPanel
     public void setWidget (Widget contents)
     {
         _outer.setWidget(1, 1, contents);
+    }
+
+    // @Override // from PopupPanel
+    public void show ()
+    {
+        // start somewhere that we won't booch the window size when we first open
+        setPopupPosition(0, Window.getClientHeight() / 2);
+        super.show();
+        recenter(false);
+    }
+
+    /**
+     * Recenters our popup.
+     */
+    protected void recenter (boolean defer)
+    {
+        if (defer) {
+            DeferredCommand.add(new Command() {
+                public void execute () {
+                    recenter(false);
+                }
+            });
+        } else {
+            setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
+                             (Window.getClientHeight() - getOffsetHeight()) / 2);
+        }
     }
 
     protected FlexTable _outer;

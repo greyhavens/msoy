@@ -32,7 +32,7 @@ import org.gwtwidgets.client.ui.FormPanel;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.shell.BorderedPopup;
+import client.util.BorderedPopup;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 import client.util.WebContext;
