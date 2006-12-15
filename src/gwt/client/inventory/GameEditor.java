@@ -89,7 +89,7 @@ public class GameEditor extends ItemEditor
             }
         }));
         bits.getFlexCellFormatter().setColSpan(row++, 0, 2);
-        _gamedef.setCharacterWidth(60);
+        _gamedef.setCharacterWidth(80);
         _gamedef.setVisibleLines(5);
 
         super.createInterface(contents, tabs);

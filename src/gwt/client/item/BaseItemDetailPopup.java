@@ -98,7 +98,9 @@ public class BaseItemDetailPopup extends BorderedDialog
     protected void gotDetail (ItemDetail detail)
     {
         _creator.setText("by " + detail.creator.toString());
-        _details.add(new ItemRating(_ctx, detail.item, detail.memberRating));
+        if (_item.isRatable()) {
+            _details.add(new ItemRating(_ctx, detail.item, detail.memberRating));
+        }
     }
 
     protected WebContext _ctx;
