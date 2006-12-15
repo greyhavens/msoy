@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Audio;
@@ -23,11 +24,9 @@ public class AudioEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createMainInterface (VerticalPanel main)
+    protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        super.createMainInterface(main);
-
-        main.add(createMainUploader("Upload your audio.", new MediaUpdater() {
+        tabs.add(createMainUploader("Upload your audio.", new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isAudio()) {
                     return "Audio data must be audio!";
@@ -36,7 +35,9 @@ public class AudioEditor extends ItemEditor
                 recenter(true);
                 return null;
             }
-        }));
+        }), "Audio Media");
+
+        super.createInterface(contents, tabs);
     }
 
     // @Override from ItemEditor

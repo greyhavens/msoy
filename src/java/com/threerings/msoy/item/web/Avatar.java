@@ -21,8 +21,8 @@ public class Avatar extends Item
     }
 
     /**
-     * Returns a media descriptor for the media that should be used
-     * to display our headshot representation.
+     * Returns a media descriptor for the media that should be used to display our headshot
+     * representation.
      */
     public MediaDesc getHeadShotMedia ()
     {
@@ -45,8 +45,8 @@ public class Avatar extends Item
     // @Override // from Item
     protected MediaDesc getDefaultThumbnailMedia ()
     {
-        if (avatarMedia != null && avatarMedia.isImage()) {
-            return avatarMedia;
+        if (headShotMedia != null && headShotMedia.isImage()) {
+            return headShotMedia;
         }
         return super.getDefaultThumbnailMedia();
     }

@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -21,7 +22,6 @@ public class GameEditor extends ItemEditor
     {
         super.setItem(item);
         _game = (Game)item;
-        _name.setText((_game.name == null) ? "" : _game.name);
         _minPlayers.setText("" + _game.minPlayers);
         _maxPlayers.setText("" + _game.maxPlayers);
         _desiredPlayers.setText("" + _game.desiredPlayers);
@@ -30,22 +30,20 @@ public class GameEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createMainInterface (VerticalPanel main)
+    protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        super.createMainInterface(main);
-
         // configure the main uploader first
         String title = "Main Game media";
-        main.add(createMainUploader(title, new MediaUpdater() {
+        tabs.add(createMainUploader(title, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 // TODO: validate media type
                 _game.gameMedia = desc;
                 return null;
             }
-        }));
+        }), "Game Media");
 
         title = "Game Lobby Table background image";
-        main.add(_tableUploader = new MediaUploader(TABLE_ID, title, false, new MediaUpdater() {
+        tabs.add(_tableUploader = new MediaUploader(TABLE_ID, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
                     return "Table images must be an image type.";
@@ -54,39 +52,36 @@ public class GameEditor extends ItemEditor
                 recenter(true);
                 return null;
             }
-        }));
+        }), "Lobby Table Background");
 
-        main.add(createRow("Name", bind(_name = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _game.name = text;
-            }
-        })));
+        super.createInterface(contents, tabs);
 
         // TODO: it'd be nice to force-format this text field for integers, or something.
-        main.add(createRow("Minimum players", bind(_minPlayers = new TextBox(), new Binder() {
+        contents.add(createRow("Minimum players", bind(_minPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.minPlayers = asShort(text);
             }
         })));
 
-        main.add(createRow("Maximum players", bind(_maxPlayers = new TextBox(), new Binder() {
+        contents.add(createRow("Maximum players", bind(_maxPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.maxPlayers = asShort(text);
             }
         })));
 
-        main.add(createRow("Desired players", bind(_desiredPlayers = new TextBox(), new Binder() {
+        contents.add(createRow("Desired players",
+                               bind(_desiredPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.desiredPlayers = asShort(text);
             }
         })));
 
-        main.add(createRow("Game definition", bind(_gamedef = new TextArea(), new Binder() {
+        contents.add(createRow("Game definition", bind(_gamedef = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _game.config = text;
             }
         })));
-        _gamedef.setCharacterWidth(80);
+        _gamedef.setCharacterWidth(40);
         _gamedef.setVisibleLines(5);
     }
 
@@ -117,7 +112,6 @@ public class GameEditor extends ItemEditor
     }
 
     protected Game _game;
-    protected TextBox _name;
 
     protected TextBox _minPlayers, _maxPlayers, _desiredPlayers;
     protected TextArea _gamedef;

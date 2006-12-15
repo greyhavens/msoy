@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Item;
@@ -22,22 +23,11 @@ public class FurnitureEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createMainInterface (VerticalPanel main)
+    protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        super.createMainInterface(main);
+        super.createInterface(contents, tabs);
 
-        // furni is special; the furni media is its primary media
-        String title = "Furniture Image";
-        main.add(_furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
-                if (!desc.hasFlashVisual()) {
-                    return "Furniture must be a web-viewable image type.";
-                }
-                _item.furniMedia = desc;
-                recenter(true);
-                return null;
-            }
-        }));
+        // currently nothing to do here
     }
 
     // @Override from ItemEditor

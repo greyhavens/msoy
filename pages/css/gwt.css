@@ -176,14 +176,10 @@ body {
 }
 
 .borderedDialog .Title {
-}
-
-.borderedDialog .Title td {
-  padding: 10px;
+  font-size: 24px;
 }
 
 .borderedDialog .Controls {
-  padding: 10px;
 }
 
 .borderedDialog .CloseBox {

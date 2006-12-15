@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Document;
@@ -22,17 +23,17 @@ public class DocumentEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createMainInterface (VerticalPanel main)
+    protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        super.createMainInterface(main);
-
-        main.add(createMainUploader("Upload your document.", new MediaUpdater() {
+        tabs.add(createMainUploader("Main Document media", new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 // TODO: validate media type
                 _doc.docMedia = desc;
                 return null;
             }
-        }));
+        }), "Document Media");
+
+        super.createInterface(contents, tabs);
     }
 
     // @Override from ItemEditor

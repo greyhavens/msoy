@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Item;
@@ -23,11 +24,9 @@ public class PhotoEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createMainInterface (VerticalPanel main)
+    protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        super.createMainInterface(main);
-
-        main.add(createMainUploader("Upload your photo.", new MediaUpdater() {
+        tabs.add(createMainUploader("Main Photo image", new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
                     return "Photos must be a web-viewable image type.";
@@ -36,7 +35,9 @@ public class PhotoEditor extends ItemEditor
                 recenter(true);
                 return null;
             }
-        }));
+        }), "Photo Media");
+
+        super.createInterface(contents, tabs);
     }
 
     // @Override from ItemEditor

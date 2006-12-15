@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Item;
@@ -22,22 +23,22 @@ public class PetEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createMainInterface (VerticalPanel main)
+    protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        super.createMainInterface(main);
-
         // pets are special; their furni media are their primary media
-        String title = "Main Pet media";
-        main.add(_furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
+        String title = "Pet as seen in the World";
+        tabs.add(_furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
-                    return "Furniture must be a web-viewable image type.";
+                    return "Pets must be a web-viewable image type.";
                 }
                 _item.furniMedia = desc;
                 recenter(true);
                 return null;
             }
-        }));
+        }), "Pet Media");
+
+        super.createInterface(contents, tabs);
     }
 
     // @Override from ItemEditor

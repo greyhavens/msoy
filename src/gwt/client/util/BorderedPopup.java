@@ -8,6 +8,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -37,6 +38,13 @@ public class BorderedPopup extends PopupPanel
         _outer.getFlexCellFormatter().setStyleName(2, 0, "LowerLeft");
         _outer.getFlexCellFormatter().setStyleName(2, 1, "Lower");
         _outer.getFlexCellFormatter().setStyleName(2, 2, "LowerRight");
+
+        // listen for our own closes and export that in a handy calldown method
+        addPopupListener(new PopupListener() {
+            public void onPopupClosed (PopupPanel panel, boolean autoClosed) {
+                onClosed(autoClosed);
+            }
+        });
     }
 
     // @Override // from SimplePanel
@@ -69,6 +77,13 @@ public class BorderedPopup extends PopupPanel
             setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
                              (Window.getClientHeight() - getOffsetHeight()) / 2);
         }
+    }
+
+    /**
+     * Called when this popup is dismissed.
+     */
+    protected void onClosed (boolean autoClosed)
+    {
     }
 
     protected FlexTable _outer;

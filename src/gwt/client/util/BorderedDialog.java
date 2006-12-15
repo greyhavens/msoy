@@ -21,7 +21,7 @@ public abstract class BorderedDialog extends BorderedPopup
 
     public BorderedDialog (boolean autoHide)
     {
-        this(false, false);
+        this(autoHide, false);
     }
 
     public BorderedDialog (boolean autoHide, boolean omitCloseBox)
@@ -33,6 +33,7 @@ public abstract class BorderedDialog extends BorderedPopup
         setWidget(_main);
 
         _main.add(_header = new HorizontalPanel());
+        _header.setSpacing(10);
         _header.setStyleName("Title");
         if (!omitCloseBox) {
             _header.add(MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
@@ -42,7 +43,9 @@ public abstract class BorderedDialog extends BorderedPopup
             }));
         }
         _main.add(_contents = createContents());
+        _main.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT); // right align the footer
         _main.add(_footer = new HorizontalPanel());
+        _footer.setSpacing(10);
         _footer.setStyleName("Controls");
     }
 

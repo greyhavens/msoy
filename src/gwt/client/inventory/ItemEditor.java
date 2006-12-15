@@ -32,7 +32,7 @@ import org.gwtwidgets.client.ui.FormPanel;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.util.BorderedPopup;
+import client.util.BorderedDialog;
 import client.util.MsoyUI;
 import client.util.RowPanel;
 import client.util.WebContext;
@@ -40,7 +40,7 @@ import client.util.WebContext;
 /**
  * The base class for an interface for creating and editing digital items.
  */
-public abstract class ItemEditor extends BorderedPopup
+public abstract class ItemEditor extends BorderedDialog
 {
     public static interface Binder
     {
@@ -60,32 +60,51 @@ public abstract class ItemEditor extends BorderedPopup
     {
         super(false);
 
-        VerticalPanel content = new VerticalPanel();
-        content.setStyleName("itemEditor");
-        content.add(_etitle = MsoyUI.createLabel("title", "Title"));
+        // we have to do this wacky singleton crap because GWT and/or JavaScript doesn't seem to
+        // cope with our trying to create an anonymous function that calls an instance method on a
+        // JavaScript object
+        _singleton = this;
 
-        TabPanel tabs;
-        content.add(tabs = new TabPanel());
-        tabs.setStyleName("Tabs");
+        _header.add(_etitle = MsoyUI.createLabel("title", "Title"));
 
-        // the main tab will contain the base metadata and primary media uploader
-        VerticalPanel main = new VerticalPanel();
-        main.setStyleName("Tab");
-        createMainInterface(main);
-        tabs.add(main, "Main");
+        VerticalPanel contents = (VerticalPanel)_contents;
+        contents.setSpacing(10);
+        TabPanel mediaTabs = new TabPanel();
+        mediaTabs.setStyleName("Tabs");
 
-        // the extra tab will contain the furni and thumbnail media and description
-        VerticalPanel extra = new VerticalPanel();
-        extra.setStyleName("Tab");
-        createExtraInterface(extra);
-        tabs.add(extra, "Extra");
+        // create a name entry field
+        contents.add(createRow("Item Name", bind(_name = new TextBox(), new Binder() {
+            public void textUpdated (String text) {
+                _item.name = text;
+            }
+        })));
+
+        contents.add(createRow("Description", bind(_description = new TextArea(), new Binder() {
+            public void textUpdated (String text) {
+                _item.description = text;
+            }
+        })));
+        _description.setCharacterWidth(40);
+        _description.setVisibleLines(3);
+
+        createInterface(contents, mediaTabs);
 
         // start with main selected
-        tabs.selectTab(0);
+        mediaTabs.selectTab(0);
 
-        RowPanel buttons = new RowPanel();
-        buttons.setStyleName("Buttons");
-        buttons.add(_esubmit = new Button("submit"));
+//         // the main tab will contain the base metadata and primary media uploader
+//         VerticalPanel main = new VerticalPanel();
+//         main.setStyleName("Tab");
+//         createMainInterface(main);
+//         tabs.add(main, "Main");
+
+//         // the extra tab will contain the furni and thumbnail media and description
+//         VerticalPanel extra = new VerticalPanel();
+//         extra.setStyleName("Tab");
+//         createExtraInterface(extra);
+//         tabs.add(extra, "Extra");
+
+        _footer.add(_esubmit = new Button("submit"));
         _esubmit.setEnabled(false);
         _esubmit.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
@@ -93,17 +112,19 @@ public abstract class ItemEditor extends BorderedPopup
             }
         });
         Button ecancel;
-        buttons.add(ecancel = new Button("Cancel"));
+        _footer.add(ecancel = new Button("Cancel"));
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                _parent.editComplete(null);
                 hide();
             }
         });
-        content.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-        content.add(buttons);
+    }
 
-        setWidget(content);
+    // @Override // from BorderedPopup
+    protected void onClosed (boolean autoClosed)
+    {
+        super.onClosed(autoClosed);
+        _parent.editComplete(_updatedItem);
     }
 
     /**
@@ -168,40 +189,27 @@ public abstract class ItemEditor extends BorderedPopup
         recenter(true);
     }
 
-    /**
-     * Derived classes can add editors to the main tab by overriding this method.
-     */
-    protected void createMainInterface (VerticalPanel main)
+    // @Override // from BorderedDialog
+    protected Widget createContents ()
     {
-        // we have to do this wacky singleton crap because GWT and/or JavaScript doesn't seem to
-        // cope with our trying to create an anonymous function that calls an instance method on a
-        // JavaScript object
-        _singleton = this;
-
-        // create a name entry field
-        main.add(createRow("Item Name:", bind(_name = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _item.name = text;
-            }
-        })));
+        VerticalPanel contents = new VerticalPanel();
+        contents.setStyleName("itemEditor");
+        return contents;
     }
 
     /**
-     * Derived classes can add editors to the main tab by overriding this method.
+     * Derived classes can add additional editable components to the main display or as tabs by
+     * overriding this method. Anything added before the call to super will go above the tabs in
+     * the contents and before the furniture and thumbnail tabs. Anything added after will go
+     * after.
      */
-    protected void createExtraInterface (VerticalPanel extra)
+    protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        extra.add(createRow("Description", bind(_description = new TextArea(), new Binder() {
-            public void textUpdated (String text) {
-                _item.description = text;
-            }
-        })));
-        _description.setCharacterWidth(40);
-        _description.setVisibleLines(3);
+        contents.add(tabs);
 
-        String title = "Image shown when placed in the World as Furniture";
+        String title = "Image shown when Item is placed in the World as Furniture";
         if (_furniUploader == null) {
-            _furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
+            _furniUploader = new MediaUploader(Item.FURNI_ID, title, false, new MediaUpdater() {
                 public String updateMedia (MediaDesc desc) {
                     if (!desc.hasFlashVisual()) {
                         return "Furniture must be an web-viewable image type.";
@@ -211,10 +219,10 @@ public abstract class ItemEditor extends BorderedPopup
                     return null;
                 }
             });
-            extra.add(_furniUploader);
+            tabs.add(_furniUploader, "Furniture Media");
         }
 
-        title = "Image shown in Inventory and Catalog";
+        title = "Image shown for Item in Inventory and Catalog";
         _thumbUploader = new MediaUploader(Item.THUMB_ID, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
@@ -225,7 +233,14 @@ public abstract class ItemEditor extends BorderedPopup
                 return null;
             }
         });
-        extra.add(_thumbUploader);
+        tabs.add(_thumbUploader, "Thumbnail Media");
+    }
+
+    /**
+     * Derived classes can add editors to the main tab by overriding this method.
+     */
+    protected void createExtraInterface (VerticalPanel extra)
+    {
     }
 
     protected RowPanel createRow (String label, Widget widget)
@@ -379,13 +394,12 @@ public abstract class ItemEditor extends BorderedPopup
     {
         AsyncCallback cb = new AsyncCallback() {
             public void onSuccess (Object result) {
-                _parent.setStatus(_item.itemId == 0 ?
-                                  "Item created." : "Item updated.");
-                _parent.editComplete(_item);
+                _parent.setStatus(_item.itemId == 0 ? "Item created." : "Item updated.");
+                _updatedItem = _item; // this will be passed to our parent in onClosed()
+                hide();
                 if (_reinspectOnUpdate) {
                     new ItemDetailPopup(_ctx, _item, _parent).show();
                 }
-                hide();
             }
             public void onFailure (Throwable caught) {
                 String reason = caught.getMessage();
@@ -442,7 +456,7 @@ public abstract class ItemEditor extends BorderedPopup
     protected WebContext _ctx;
     protected ItemPanel _parent;
 
-    protected Item _item;
+    protected Item _item, _updatedItem;
     protected boolean _reinspectOnUpdate;
 
     protected VerticalPanel _content;

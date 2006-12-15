@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Avatar;
@@ -24,12 +25,10 @@ public class AvatarEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createMainInterface (VerticalPanel main)
+    protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        super.createMainInterface(main);
-
-        String title = "Main Avatar media";
-        main.add(createMainUploader(title, new MediaUpdater() {
+        String title = "Avatar as seen in the World";
+        tabs.add(createMainUploader(title, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
                     return "Avatars must be a web-viewable media.";
@@ -38,7 +37,7 @@ public class AvatarEditor extends ItemEditor
                 recenter(true);
                 return null;
             }
-        }));
+        }), "Avatar Media");
 
         title = "Image show in a Game Lobby";
         _headShotUploader = new MediaUploader(HEADSHOT_ID, title, true, new MediaUpdater() {
@@ -51,7 +50,9 @@ public class AvatarEditor extends ItemEditor
                 return null;
             }
         });
-        main.add(_headShotUploader);
+        tabs.add(_headShotUploader, "Face Media");
+
+        super.createInterface(contents, tabs);
     }
 
     // @Override from ItemEditor
