@@ -24,6 +24,8 @@ public class FurnitureEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createMainInterface (VerticalPanel main)
     {
+        super.createMainInterface(main);
+
         // furni is special; the furni media is its primary media
         String title = "Furniture Image";
         main.add(_furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
