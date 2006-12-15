@@ -33,6 +33,9 @@ public class ListingDetailPopup extends BaseItemDetailPopup
     {
         super.createInterface(details, controls);
 
+        // we need to create this here so we can pass it to our click callback
+        _status = new Label("");
+
         // TODO: add cost
 
         controls.add(_purchase = new Button("Buy!"));
@@ -47,7 +50,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
             }
         };
 
-        controls.add(_status = new Label(""));
+        controls.add(_status);
     }
 
     // @Override // from BaseItemDetailPopup

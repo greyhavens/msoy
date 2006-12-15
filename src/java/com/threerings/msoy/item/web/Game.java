@@ -35,7 +35,7 @@ public class Game extends Item
     // @Override // from Item
     public MediaDesc getPreviewMedia ()
     {
-        return getFurniMedia(); // TODO: support logos?
+        return getThumbnailMedia(); // TODO: support logos?
     }
 
     /**
