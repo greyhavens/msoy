@@ -8,17 +8,23 @@ import java.util.List;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.HTML;
@@ -139,9 +145,14 @@ public class GroupView extends DockPanel
 
         ScrollPanel description = new ScrollPanel();
         description.setStyleName("descriptionPanel");
-        description.add(new HTML("<span class='name'>" + _group.name + "</span><br />" +
-            "<span class='blurb'>" + _group.blurb + "</span><br />" + 
-            "<p class='charter'>" + _group.charter + "</p>"));
+        String descriptionHtml = "<span class='name'>" + _group.name + "</span><br />";
+        if (_group.blurb != null) {
+            descriptionHtml += "<span class='blurb'>" + _group.blurb + "</span><br />";
+        }
+        if (_group.charter != null) {
+            descriptionHtml += "<p class='charter'>" + _group.charter + "</p>";
+        }
+        description.add(new HTML(descriptionHtml));
         add(description, DockPanel.CENTER);
 
         FlexTable people = new FlexTable();
@@ -156,21 +167,54 @@ public class GroupView extends DockPanel
         while (i.hasNext()) {
             final GroupMembership membership = (GroupMembership) i.next();
             final MemberName name = (MemberName) membership.member;
+            FlowPanel peoplePanel;
             if (membership.rank == GroupMembership.RANK_MANAGER) {
                 if (firstManager) {
                     firstManager = false;
                 } else {
                     managers.add(new InlineLabel(", "));
                 }
-                managers.add(new Anchor(MsoyEntryPoint.memberViewPath(
-                    name.getMemberId()), name.toString()));
+                peoplePanel = managers;
             } else {
                 if (firstMember) {
                     firstMember = false;
                 } else {
                     members.add(new InlineLabel(", "));
                 }
-                members.add(new Anchor(MsoyEntryPoint.memberViewPath(
+                peoplePanel = members;
+            }
+            if (amManager) {
+                // TODO: these are temporary menus for proof-of-concept
+                MenuBar menu = new MenuBar(true);
+                menu.addItem(new MenuItem("Hello", new Command() {
+                    public void execute() {
+                        Window.alert("Hello, " + name);
+                    }
+                }));
+                menu.addItem(new MenuItem("Goodbye", new Command() {
+                    public void execute() {
+                        Window.alert("Goodbye, " + name);
+                    }
+                }));
+                final PopupPanel personMenuPanel = new PopupPanel(true);
+                personMenuPanel.add(menu);
+                InlineLabel person = new InlineLabel(name.toString());
+                person.addStyleName("labelLink");
+                // use a MouseListener instead of ClickListener so we can get at the mouse (x,y)
+                person.addMouseListener(new MouseListener() {
+                    public void onMouseDown (Widget sender, int x, int y) { 
+                        personMenuPanel.setPopupPosition(person.getAbsoluteLeft() + x, 
+                            person.getAbsoluteTop() + y);
+                        personMenuPanel.show();
+                    }
+                    public void onMouseLeave (Widget sender) { }
+                    public void onMouseUp (Widget sender, int x, int y) { }
+                    public void onMouseEnter (Widget sender) { }
+                    public void onMouseMove (Widget sender, int x, int y) { }
+                });
+                peoplePanel.add(person);
+            } else {
+                peoplePanel.add(new Anchor(MsoyEntryPoint.memberViewPath(
                     name.getMemberId()), name.toString()));
             }
         }
