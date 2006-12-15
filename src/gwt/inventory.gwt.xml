@@ -1,6 +1,5 @@
 <module>
   <inherits name='shell'/>
-  <set-property name="user.agent" value="gecko"/>
   <entry-point class='client.inventory.index'/>
   <public path="public/inventory"/>
   <source path="client/item"/>
