@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ -z "$1" ]; then
+    echo "Usage: $0 src/gwt/module.gwt.xml"
+    exit 255
+fi
+
+head -2 $1.in > $1
+echo "  <set-property name=\"user.agent\" value=\"gecko\"/>" >> $1
+tail -n +3 $1.in >> $1

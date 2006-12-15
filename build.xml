@@ -157,6 +157,14 @@
       <echo>Compiling @{page} module...</echo>
       <delete dir="pages/@{page}"/>
       <mkdir dir="pages/@{page}"/>
+      <if><isset property="full"/><then>
+         <copy file="src/gwt/@{page}.gwt.xml.in" tofile="src/gwt/@{page}.gwt.xml" overwrite="true"/>
+      </then><else>
+         <echo>Doing Gecko-only compile...</echo>
+         <exec executable="bin/quickify">
+           <arg value="src/gwt/@{page}.gwt.xml"/>
+         </exec>
+      </else></if>
       <java fork="true" maxmemory="128M" failonerror="true"
             classname="com.google.gwt.dev.GWTCompiler">
         <classpath>
@@ -472,8 +480,11 @@
           depends="asclient,avatarviewer"/>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall"
-          depends="prepare,distprojects,dist,flashapps,gclient,jclient"/>
+  <target name="distall"><!-- depends="prepare,distprojects,dist,flashapps,jclient">-->
+    <antcall target="gclient">
+      <param name="full" value="true"/>
+    </antcall>
+  </target>
 
   <!-- fully cleans out the installed application and all subprojects -->
   <target name="cleanall" depends="cleanprojects">
