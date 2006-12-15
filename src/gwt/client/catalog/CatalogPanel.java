@@ -36,8 +36,8 @@ public class CatalogPanel extends VerticalPanel
         topRow.add(_tagCloudContainer);
         
         VerticalPanel uiBits = new VerticalPanel();
-        ItemTypePanel itemTypePanel = new ItemTypePanel(this);
-        uiBits.add(itemTypePanel);
+        _typeTabs = new ItemTypePanel(this);
+        uiBits.add(_typeTabs);
         uiBits.add(new ItemSearchSortPanel( this,
             new String[] { "Rating", "List Date" },
             new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE },
@@ -48,9 +48,11 @@ public class CatalogPanel extends VerticalPanel
         add(topRow);
 
         add(_itemPaneContainer = new SimplePanel());
+    }
 
-        // when everything is nicely set up, select a tab
-        itemTypePanel.selectTab(Item.AVATAR);
+    public void selectType (byte itemType)
+    {
+        _typeTabs.selectTab(itemType);
     }
 
     // from TabListener
@@ -108,6 +110,7 @@ public class CatalogPanel extends VerticalPanel
     protected byte _sortBy;
     protected String _search;
     protected byte _tabIndex;
+    protected ItemTypePanel _typeTabs;
     protected Map _itemPanes = new HashMap();
     protected Map _tagClouds = new HashMap();
     protected SimplePanel _itemPaneContainer;

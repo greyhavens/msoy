@@ -27,10 +27,13 @@ public class InventoryPanel extends VerticalPanel
         setStyleName("inventory");
         _ctx = ctx;
 
-        ItemTypePanel itemTabs = new ItemTypePanel(this);
-        add(itemTabs);
+        add(_itemTabs = new ItemTypePanel(this));
         add(_itemPaneContainer = new SimplePanel());
-        itemTabs.selectTab(Item.AVATAR);
+    }
+
+    public void selectType (byte itemType)
+    {
+        _itemTabs.selectTab(itemType);
     }
 
     // from TabListener
@@ -52,6 +55,7 @@ public class InventoryPanel extends VerticalPanel
     }
 
     protected WebContext _ctx;
+    protected ItemTypePanel _itemTabs;
     protected HashMap _itemPanes = new HashMap();
     protected SimplePanel _itemPaneContainer;
 }

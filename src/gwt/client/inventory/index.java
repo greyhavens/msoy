@@ -7,6 +7,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Label;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
@@ -69,10 +70,17 @@ public class index extends MsoyEntryPoint
 
         } else {
             if (_inventory == null) {
-                _inventory = new InventoryPanel(_ctx);
-                setContent(_inventory);
+                setContent(_inventory = new InventoryPanel(_ctx));
             }
-            // TODO: set page based on history token
+            byte type = Item.AVATAR;
+            try {
+                if (historyToken != null) {
+                    type = Byte.parseByte(historyToken);
+                }
+            } catch (Exception e) {
+                // whatever, just show the default
+            }
+            _inventory.selectType(type);
         }
     }
 

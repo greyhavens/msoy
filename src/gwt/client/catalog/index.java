@@ -8,6 +8,7 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
@@ -29,9 +30,18 @@ public class index extends MsoyEntryPoint
     }
 
     // from interface HistoryListener
-    public void onHistoryChanged (String token)
+    public void onHistoryChanged (String historyToken)
     {
-        // TODO: anything?
+        byte type = Item.AVATAR;
+        try {
+            if (historyToken != null) {
+                type = Byte.parseByte(historyToken);
+            }
+        } catch (Exception e) {
+            // whatever, just show the default
+        }
+        _catalog.selectType(type);
+        _ctx.log("Setting type " + type);
     }
 
     // @Override // from MsoyEntryPoint
@@ -43,16 +53,9 @@ public class index extends MsoyEntryPoint
     // @Override from MsoyEntryPoint
     protected void onPageLoad ()
     {
-        _catalog = new CatalogPanel(_ctx);
-        setContent(_catalog);
-
+        setContent(_catalog = new CatalogPanel(_ctx));
         History.addHistoryListener(this);
-        String initToken = History.getToken();
-        if (initToken.length() > 0) {
-            onHistoryChanged(initToken);
-        } else {
-            onHistoryChanged("catalog");
-        }
+        onHistoryChanged(History.getToken());
     }
 
     protected CatalogPanel _catalog;

@@ -8,15 +8,17 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
-import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.msoy.item.web.Item;
 
 /**
- * Displays an item type selection tab bar.
+ * Displays an item type selection tab bar. The tabs are designed to work with the history system,
+ * meaning they use {@link Hyperlink} to switch the browser's URL and expect the containing
+ * application to turn around and call {@link #selectTab} with the newly arrived history token.
  */
 public class ItemTypePanel extends FlexTable
     implements SourcesTabEvents
@@ -53,7 +55,7 @@ public class ItemTypePanel extends FlexTable
         redrawPanel();
         return true;
     }
-    
+
     // from SourcesTabEvents
     public void addTabListener (TabListener listener)
     {
@@ -65,7 +67,7 @@ public class ItemTypePanel extends FlexTable
     {
         _listeners.remove(listener);
     }
-    
+
     protected void redrawPanel ()
     {
         setVisible(false);
@@ -98,18 +100,13 @@ public class ItemTypePanel extends FlexTable
                 getFlexCellFormatter().setStyleName(0, _column++, _rightBit);
             }
         }
-        Button button = new Button(name);
+        Hyperlink button = new Hyperlink(name, ""+itemType);
         button.setStyleName("Button");
-        button.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                selectTab(itemType);
-            }
-        });
         getFlexCellFormatter().setStyleName(0, _column, prefix + "Tab");
         setWidget(0, _column++, button);
         _rightBit = prefix + "Right";
     }
-    
+
     /** A list of objects that want to know about our tab events. */
     protected List _listeners = new ArrayList();
     /** The previous tab's right-hand bit, deferred so selected tabs can eat them. */

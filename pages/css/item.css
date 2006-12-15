@@ -55,15 +55,23 @@
   padding: 0px;
 }
 
-.itemTypePanel .Tab Button {
-  background-image: url(/images/ui/sub_tab_dark_middle.png);
-  background-repeat: repeat-x;
+.itemTypePanel a {
+  text-decoration: none;
   font-family: Arial, Verdana, Helvetica, sans-serif;
   font-size: 12px;
-  text-decoration: none;
-  color: #606060;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.itemTypePanel .Tab .Button {
+  background-image: url(/images/ui/sub_tab_dark_middle.png);
+  background-repeat: repeat-x;
   border: 0px;
   height: 21px;
+}
+
+.itemTypePanel .Tab .Button a {
+  color: #606060;
 }
 
 .itemTypePanel .Right {
@@ -82,15 +90,15 @@
   padding: 0px;
 }
 
-.itemTypePanel .SelTab Button {
+.itemTypePanel .SelTab .Button {
   background-image: url(/images/ui/sub_tab_middle.png);
   background-repeat: repeat-x;
-  font-family: Arial, Verdana, Helvetica, sans-serif;
-  font-size: 12px;
-  text-decoration: none;
-  color: black;
   border: 0px;
   height: 21px;
+}
+
+.itemTypePanel .SelTab .Button a {
+  color: black;
 }
 
 .itemTypePanel .SelRight {
