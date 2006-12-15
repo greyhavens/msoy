@@ -79,14 +79,6 @@ public abstract class ItemEditor extends BorderedDialog
             }
         })));
 
-        contents.add(createRow("Description", bind(_description = new TextArea(), new Binder() {
-            public void textUpdated (String text) {
-                _item.description = text;
-            }
-        })));
-        _description.setCharacterWidth(40);
-        _description.setVisibleLines(3);
-
         createInterface(contents, mediaTabs);
 
         // start with main selected
@@ -234,6 +226,28 @@ public abstract class ItemEditor extends BorderedDialog
             }
         });
         tabs.add(_thumbUploader, "Thumbnail Media");
+
+        VerticalPanel extras = new VerticalPanel();
+        extras.setSpacing(10);
+        populateExtrasTab(extras);
+        tabs.add(extras, "Extra Info");
+    }
+
+    /**
+     * All items have an "extra information" tab which by default contains the item description but
+     * can be extended by overriding this method.
+     */
+    protected void populateExtrasTab (VerticalPanel extras)
+    {
+        extras.add(new Label("Enter a Description to be shown if you list your Item in " +
+                             "the Catalog (optional)"));
+        extras.add(bind(_description = new TextArea(), new Binder() {
+            public void textUpdated (String text) {
+                _item.description = text;
+            }
+        }));
+        _description.setCharacterWidth(40);
+        _description.setVisibleLines(3);
     }
 
     /**

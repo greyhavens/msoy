@@ -3,6 +3,8 @@
 
 package client.inventory;
 
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -52,37 +54,45 @@ public class GameEditor extends ItemEditor
                 recenter(true);
                 return null;
             }
-        }), "Lobby Table Background");
+        }), "Lobby Table");
 
-        super.createInterface(contents, tabs);
+        FlexTable bits = new FlexTable();
+        tabs.add(bits, "Configuration");
 
         // TODO: it'd be nice to force-format this text field for integers, or something.
-        contents.add(createRow("Minimum players", bind(_minPlayers = new TextBox(), new Binder() {
+        int row = 0;
+        bits.setText(row, 0, "Minimum players");
+        bits.setWidget(row++, 1, bind(_minPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.minPlayers = asShort(text);
             }
-        })));
+        }));
 
-        contents.add(createRow("Maximum players", bind(_maxPlayers = new TextBox(), new Binder() {
+        bits.setText(row, 0, "Maximum players");
+        bits.setWidget(row++, 1, bind(_maxPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.maxPlayers = asShort(text);
             }
-        })));
+        }));
 
-        contents.add(createRow("Desired players",
-                               bind(_desiredPlayers = new TextBox(), new Binder() {
+        bits.setText(row, 0, "Desired players");
+        bits.setWidget(row++, 1, bind(_desiredPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.desiredPlayers = asShort(text);
             }
-        })));
+        }));
 
-        contents.add(createRow("Game definition", bind(_gamedef = new TextArea(), new Binder() {
+        bits.setText(row++, 0, "Game Definition");
+        bits.setWidget(row, 0, bind(_gamedef = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _game.config = text;
             }
-        })));
-        _gamedef.setCharacterWidth(40);
+        }));
+        bits.getFlexCellFormatter().setColSpan(row++, 0, 2);
+        _gamedef.setCharacterWidth(60);
         _gamedef.setVisibleLines(5);
+
+        super.createInterface(contents, tabs);
     }
 
     // @Override from ItemEditor
