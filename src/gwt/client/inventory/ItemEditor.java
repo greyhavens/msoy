@@ -126,7 +126,12 @@ public abstract class ItemEditor extends BorderedPopup
         _etitle.setText((item.itemId <= 0) ? "Upload a New Item" : "Edit an Item");
         _esubmit.setText((item.itemId <= 0) ? "Upload" : "Update");
 
-        _name.setText(_item.name);
+        if (_item.name != null) {
+            _name.setText(_item.name);
+        }
+        if (_item.description != null) {
+            _description.setText(_item.description);
+        }
 
         recheckFurniMedia();
         recheckThumbMedia();
