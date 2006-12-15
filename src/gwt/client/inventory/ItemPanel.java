@@ -4,20 +4,20 @@
 package client.inventory;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemIdent;
 
 import client.util.WebContext;
 
@@ -65,19 +65,16 @@ public class ItemPanel extends VerticalPanel
     // the user's whole inventory, even in one category.)
     protected void onLoad ()
     {
-        // load the users inventory if we have no already
-        if (!_contents.hasItems()) {
-            _ctx.itemsvc.loadInventory(_ctx.creds, _type, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    _contents.setItems((ArrayList)result);
-                }
-                public void onFailure (Throwable caught) {
-                    GWT.log("loadInventory failed", caught);
-                    // TODO: if ServiceException, translate
-                    add(new Label("Failed to load inventory: " + caught));
-                }
-            });
-        }
+        _ctx.itemsvc.loadInventory(_ctx.creds, _type, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _contents.setModel(new SimpleDataModel((List)result));
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("loadInventory failed", caught);
+                // TODO: if ServiceException, translate
+                add(new Label("Failed to load inventory: " + caught));
+            }
+        });
     }
 
     protected void createNewItem ()
@@ -134,7 +131,6 @@ public class ItemPanel extends VerticalPanel
         if (item != null) {
             // we really need to re-fetch the item from the database to get
             // things like itemId set. just refresh the entire list for now.
-            _contents.setItems(null);
             onLoad();
         }
     }

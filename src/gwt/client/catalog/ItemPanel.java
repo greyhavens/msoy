@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
@@ -29,7 +30,7 @@ public class ItemPanel extends DockPanel
     /** The number of rows of items to display. */
     public static final int ROWS = 3;
 
-    public ItemPanel (WebContext ctx, byte type, byte sortBy)
+    public ItemPanel (WebContext ctx, final byte type, final byte sortBy)
     {
         // setStyleName("inventory_item");
         _ctx = ctx;
@@ -46,7 +47,25 @@ public class ItemPanel extends DockPanel
         _items.setStyleName("catalogContents");
         add(_items, DockPanel.CENTER);
         add(_status = new Label(""), DockPanel.SOUTH);
-        updateListings(sortBy);
+        
+        // last of all, initialize the item view with its data model
+        _items.setModel(new DataModel() {
+            public void doFetchRows (int start, int count, final AsyncCallback callback) {
+                setStatus("Loading...");
+                _ctx.catalogsvc.loadCatalog(
+                    _ctx.creds, type, sortBy, start, count, new AsyncCallback() {
+                        public void onSuccess (Object result) {
+                            setStatus("");
+                            callback.onSuccess(result);
+                        }
+                        public void onFailure (Throwable caught) {
+                            GWT.log("loadCatalog failed", caught);
+                            // TODO: if ServiceException, translate
+                            setStatus("Failed to load catalog: " + caught);
+                        }
+                    });
+            }
+        });
     }
 
     /**
@@ -55,24 +74,6 @@ public class ItemPanel extends DockPanel
     public void itemDelisted (CatalogListing listing)
     {
         _items.removeItem(listing);
-    }
-
-    protected void updateListings (byte sortBy)
-    {
-        setStatus("Loading...");
-        _ctx.catalogsvc.loadCatalog(
-            // TODO: Refactor PagedGrid to request rows when required.
-            _ctx.creds, _type, sortBy, 0, 1000, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    _items.setItems((ArrayList)result);
-                    setStatus("");
-                }
-                public void onFailure (Throwable caught) {
-                    GWT.log("loadCatalog failed", caught);
-                    // TODO: if ServiceException, translate
-                    setStatus("Failed to load catalog: " + caught);
-                }
-        });
     }
 
     protected void setStatus (String status)
