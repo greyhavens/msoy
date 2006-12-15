@@ -6,13 +6,18 @@ package client.catalog;
 import java.util.HashMap;
 import java.util.Map;
 
+import client.item.ItemSearchSortPanel;
 import client.item.ItemTypePanel;
 import client.item.TagCloud;
 
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Item;
@@ -23,7 +28,7 @@ import client.util.WebContext;
  * Displays a tabbed panel containing the catalog.
  */
 public class CatalogPanel extends VerticalPanel
-    implements TabListener
+    implements TabListener, ItemSearchSortPanel.Listener
 {
     public CatalogPanel (WebContext ctx)
     {
@@ -33,14 +38,16 @@ public class CatalogPanel extends VerticalPanel
         HorizontalPanel topRow = new HorizontalPanel();
         _tagCloudContainer = new SimplePanel();
         topRow.add(_tagCloudContainer);
-
-        ItemTypePanel itemTabs = new ItemTypePanel(this);
-        topRow.add(itemTabs);
+        
+        VerticalPanel uiBits = new VerticalPanel();
+        uiBits.add(new ItemTypePanel(this));
+        uiBits.add(new ItemSearchSortPanel(this));
+        topRow.add(uiBits);
         add(topRow);
 
         add(_itemPaneContainer = new SimplePanel());
 
-        itemTabs.selectTab(Item.AVATAR);
+        new ItemTypePanel(this).selectTab(Item.AVATAR);
     }
 
     // from TabListener
@@ -67,7 +74,21 @@ public class CatalogPanel extends VerticalPanel
         // always allow any item type selection 
         return true;
     }
-    
+
+    //from ItemSearchSortPanel.Listener
+    public void searchStringUpdated (String newText)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    // from ItemSearchSortPanel.Listener
+    public void sortCriteriumUpdated (byte newCriterium)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
     protected WebContext _ctx;
     protected Map _itemPanes = new HashMap();
     protected Map _tagClouds = new HashMap();
