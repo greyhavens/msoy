@@ -40,6 +40,7 @@ import com.threerings.msoy.web.data.MemberName;
 
 import client.shell.MsoyEntryPoint;
 import client.util.WebContext;
+import client.util.PromptPopup;
 
 import client.group.GroupEdit.GroupSubmissionListener;
 
@@ -184,18 +185,7 @@ public class GroupView extends DockPanel
                 peoplePanel = members;
             }
             if (amManager) {
-                // TODO: these are temporary menus for proof-of-concept
-                MenuBar menu = new MenuBar(true);
-                menu.addItem(new MenuItem("Hello", new Command() {
-                    public void execute() {
-                        Window.alert("Hello, " + name);
-                    }
-                }));
-                menu.addItem(new MenuItem("Goodbye", new Command() {
-                    public void execute() {
-                        Window.alert("Goodbye, " + name);
-                    }
-                }));
+                MenuBar menu = getManagerMenuBar(membership);
                 final PopupPanel personMenuPanel = new PopupPanel(true);
                 personMenuPanel.add(menu);
                 final InlineLabel person = new InlineLabel(name.toString());
@@ -279,6 +269,31 @@ public class GroupView extends DockPanel
         default: policyName = "Undefined";
         }
         return policyName;
+    }
+
+    /**
+     * Get the menus for use by managers when perusing the members of their group.
+     */
+    protected MenuBar getManagerMenuBar(final GroupMembership membership) 
+    {
+        // MenuBar(true) creates a vertical menu
+        MenuBar menu = new MenuBar(true);
+        menu.addItem("<a href='" + MsoyEntryPoint.memberViewPath(
+            membership.member.getMemberId()) + "'>View Profile</a>", true, (Command)null);
+        menu.addItem("Promote", new Command() {
+            public void execute() {
+                (new PromptPopup("Are you sure you wish to promote " + 
+                    membership.member.toString() + "?") {
+                    public void onAffirmative () {
+                        Window.alert("You clicked Yes!");
+                    }
+                    public void onNegative () {
+                        Window.alert("You clicked No!");
+                    }
+                }).prompt();
+            }
+        });
+        return menu;
     }
 
     protected void addError (String error)
