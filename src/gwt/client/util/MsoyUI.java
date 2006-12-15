@@ -22,6 +22,30 @@ public class MsoyUI
         return label;
     }
 
+    /**
+     * Creates a label that triggers an action using the supplied text and listener.
+     */
+    public static Label createActionLabel (String text, ClickListener listener)
+    {
+        return createActionLabel(text, null, listener);
+    }
+
+    /**
+     * Creates a label that triggers an action using the supplied text and listener. The label will
+     * be styled as specified with an additional style that configures the mouse pointer and adds
+     * underline to the text.
+     */
+    public static Label createActionLabel (String text, String styleName, ClickListener listener)
+    {
+        Label label = new Label(text);
+        if (styleName != null) {
+            label.setStyleName(styleName);
+        }
+        label.addStyleName("actionLabel");
+        label.addClickListener(listener);
+        return label;
+    }
+
 //     /**
 //      * Creates a pair of submit and cancel buttons in a horizontal row.
 //      */

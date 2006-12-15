@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -18,9 +19,14 @@ public abstract class BorderedDialog extends BorderedPopup
         this(false);
     }
 
-    public BorderedDialog (boolean autohide)
+    public BorderedDialog (boolean autoHide)
     {
-        super(autohide);
+        this(false, false);
+    }
+
+    public BorderedDialog (boolean autoHide, boolean omitCloseBox)
+    {
+        super(autoHide);
 
         _main = new VerticalPanel();
         _main.setStyleName("borderedDialog");
@@ -28,6 +34,13 @@ public abstract class BorderedDialog extends BorderedPopup
 
         _main.add(_header = new HorizontalPanel());
         _header.setStyleName("Title");
+        if (!omitCloseBox) {
+            _header.add(MsoyUI.createActionLabel("", "CloseBox", new ClickListener() {
+                public void onClick (Widget sender) {
+                    hide();
+                }
+            }));
+        }
         _main.add(_contents = createContents());
         _main.add(_footer = new HorizontalPanel());
         _footer.setStyleName("Controls");

@@ -186,10 +186,25 @@ body {
   padding: 10px;
 }
 
+.borderedDialog .CloseBox {
+  background-image: url(/images/ui/close_button.png);
+  width: 13px;
+  height: 13px;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+
 /** General UI styles. */
 .inline {
    display: inline;
 }   
+
+.actionLabel {
+  text-decoration: underline;
+  cursor: pointer;
+  cursor: hand;
+}
 
 .rowPanelCell {
   padding-right: 10px;

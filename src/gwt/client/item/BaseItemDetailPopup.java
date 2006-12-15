@@ -39,7 +39,6 @@ public class BaseItemDetailPopup extends BorderedDialog
         // this is a goddamned hack, but GWT doesn't support valign=baseline, dooh!
         DOM.setStyleAttribute(DOM.getParent(_name.getElement()), "verticalAlign", "baseline");
         DOM.setStyleAttribute(DOM.getParent(_creator.getElement()), "verticalAlign", "baseline");
-        // TODO: add a close box
 
         // configure our item preview
         ((FlexTable)_contents).setWidget(0, 0, createPreview(item));
