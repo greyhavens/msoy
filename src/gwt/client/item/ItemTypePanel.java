@@ -37,7 +37,7 @@ public class ItemTypePanel extends FlexTable
      */
     public boolean selectTab (byte itemType)
     {
-        Iterator i = listeners.iterator();
+        Iterator i = _listeners.iterator();
         while (i.hasNext()) {
             TabListener listener = ((TabListener) i.next());
             if (!listener.onBeforeTabSelected(ItemTypePanel.this, itemType)) {
@@ -46,7 +46,7 @@ public class ItemTypePanel extends FlexTable
             }
         }
         _selectedType = itemType;
-        i = listeners.iterator();
+        i = _listeners.iterator();
         while (i.hasNext()) {
             ((TabListener) i.next()).onTabSelected(ItemTypePanel.this, itemType);
         }
@@ -57,13 +57,13 @@ public class ItemTypePanel extends FlexTable
     // from SourcesTabEvents
     public void addTabListener (TabListener listener)
     {
-        listeners.add(listener);
+        _listeners.add(listener);
     }
 
     // from SourcesTabEvents
     public void removeTabListener (TabListener listener)
     {
-        listeners.remove(listener);
+        _listeners.remove(listener);
     }
     
     protected void redrawPanel ()
@@ -111,7 +111,7 @@ public class ItemTypePanel extends FlexTable
     }
     
     /** A list of objects that want to know about our tab events. */
-    protected List listeners = new ArrayList();
+    protected List _listeners = new ArrayList();
     /** The previous tab's right-hand bit, deferred so selected tabs can eat them. */
     protected String _rightBit;
     /** An index into the table we're using for layout. */
