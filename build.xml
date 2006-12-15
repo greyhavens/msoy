@@ -480,7 +480,7 @@
           depends="asclient,avatarviewer"/>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall"><!-- depends="prepare,distprojects,dist,flashapps,jclient">-->
+  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclient">
     <antcall target="gclient">
       <param name="full" value="true"/>
     </antcall>
