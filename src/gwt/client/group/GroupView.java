@@ -198,7 +198,7 @@ public class GroupView extends DockPanel
                 }));
                 final PopupPanel personMenuPanel = new PopupPanel(true);
                 personMenuPanel.add(menu);
-                InlineLabel person = new InlineLabel(name.toString());
+                final InlineLabel person = new InlineLabel(name.toString());
                 person.addStyleName("labelLink");
                 // use a MouseListener instead of ClickListener so we can get at the mouse (x,y)
                 person.addMouseListener(new MouseListener() {
