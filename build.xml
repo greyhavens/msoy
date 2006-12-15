@@ -161,7 +161,7 @@
          <copy file="src/gwt/@{page}.gwt.xml.in" tofile="src/gwt/@{page}.gwt.xml" overwrite="true"/>
       </then><else>
          <echo>Doing Gecko-only compile...</echo>
-         <exec executable="bin/quickify">
+         <exec executable="bin/quickify" failonerror="true">
            <arg value="src/gwt/@{page}.gwt.xml"/>
          </exec>
       </else></if>

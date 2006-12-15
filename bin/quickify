@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ -z "$1" ]; then
+if [ -z "$1" -o ! -f "$1.in" ]; then
     echo "Usage: $0 src/gwt/module.gwt.xml"
     exit 255
 fi
