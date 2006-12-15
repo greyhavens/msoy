@@ -41,7 +41,6 @@ public class index extends MsoyEntryPoint
             // whatever, just show the default
         }
         _catalog.selectType(type);
-        _ctx.log("Setting type " + type);
     }
 
     // @Override // from MsoyEntryPoint
