@@ -486,11 +486,17 @@
     </antcall>
   </target>
 
-  <!-- fully cleans out the installed application and all subprojects -->
-  <target name="cleanall" depends="cleanprojects">
+  <!-- fully cleans out the application -->
+  <target name="distclean">
     <delete dir="${deploy.dir}"/>
     <delete><fileset dir="rsrc" includes="**/*.jar"/></delete>
   </target>
+
+  <!-- cleans out the application and all subprojects -->
+  <target name="cleanall" depends="cleanprojects,clean"/>
+
+  <!-- fully cleans out the application and all subprojects -->
+  <target name="distcleanall" depends="distcleanprojects,distclean"/>
 
   <!-- prepare ${destroot} for all the packages being built -->
   <target name="preppkg">
