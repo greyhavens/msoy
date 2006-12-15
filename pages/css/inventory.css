@@ -1,15 +1,35 @@
+/** Inventory module styles. ($Id$) */
+
 .itemEditor {
-  padding: 10px;
 }
 
 .itemEditor .Title {
-   font-weight: bold;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 10px;
+  width: 100%;
+}
+
+.itemEditor .Buttons {
+  padding: 10px;
+}
+
+.itemEditor .Buttons td {
+  text-align: right;
+}
+
+.itemEditor .Tab {
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+  background-image: url(/images/item/detail_content_bg.png);
+  background-position: bottom left;
+  padding: 10px;
 }
 
 .inventoryContents {
-   padding: 10px;
-   margin-bottom: 10px;
-   width: 800px;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 800px;
 }
 
 .itemThumbText {
@@ -17,4 +37,25 @@
   cursor: pointer;
   cursor: hand;
   font-size: small;
+}
+
+.mediaUploader {
+}
+
+.mediaUploader td {
+  padding: 2px;
+}
+
+.mediaUploader .Preview {
+  width: 320px;
+  height: 240px;
+  border: 1px solid;
+  background-image: url(/images/item/detail_preview_bg.png);
+}
+
+.mediaUploader .Thumbnail {
+  width: 160px;
+  height: 120px;
+  border: 1px solid;
+  background-image: url(/images/item/detail_preview_bg.png);
 }

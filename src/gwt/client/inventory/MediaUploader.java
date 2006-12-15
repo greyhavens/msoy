@@ -24,7 +24,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import client.item.ItemUtil;
-import client.util.RowPanel;
+import client.util.MsoyUI;
 
 /**
  * Helper class, used in ItemEditor.
@@ -47,13 +47,15 @@ public class MediaUploader extends VerticalPanel
         _thumbnail = thumbnail;
         _updater = updater;
 
-        add(_status = new Label(title));
+        add(_status = MsoyUI.createLabel(title, "Status"));
 
         add(_target = new HorizontalPanel());
         _target.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
+        _target.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         _target.setStyleName(_thumbnail ? "Thumbnail" : "Preview");
 
-        _panel = new FormPanel(new RowPanel());
+        _panel = new FormPanel(new HorizontalPanel());
+        _panel.setStyleName("Controls");
         if (GWT.isScript()) {
             _panel.setAction("/uploadsvc");
         } else {

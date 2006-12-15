@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -62,8 +63,10 @@ public abstract class ItemEditor extends BorderedPopup
         VerticalPanel content = new VerticalPanel();
         content.setStyleName("itemEditor");
         content.add(_etitle = MsoyUI.createLabel("title", "Title"));
+
         TabPanel tabs;
         content.add(tabs = new TabPanel());
+        tabs.setStyleName("Tabs");
 
         // the main tab will contain the base metadata and primary media uploader
         VerticalPanel main = new VerticalPanel();
@@ -81,6 +84,7 @@ public abstract class ItemEditor extends BorderedPopup
         tabs.selectTab(0);
 
         RowPanel buttons = new RowPanel();
+        buttons.setStyleName("Buttons");
         buttons.add(_esubmit = new Button("submit"));
         _esubmit.setEnabled(false);
         _esubmit.addClickListener(new ClickListener() {
@@ -96,6 +100,7 @@ public abstract class ItemEditor extends BorderedPopup
                 hide();
             }
         });
+        content.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
         content.add(buttons);
 
         setWidget(content);
@@ -118,8 +123,8 @@ public abstract class ItemEditor extends BorderedPopup
     public void setItem (Item item)
     {
         _item = item;
-        _etitle.setText((item.itemId <= 0) ? "Create" : "Edit");
-        _esubmit.setText((item.itemId <= 0) ? "Create" : "Update");
+        _etitle.setText((item.itemId <= 0) ? "Upload a New Item" : "Edit an Item");
+        _esubmit.setText((item.itemId <= 0) ? "Upload" : "Update");
 
         _name.setText(_item.name);
 
@@ -135,6 +140,14 @@ public abstract class ItemEditor extends BorderedPopup
     public Item getItem ()
     {
         return _item;
+    }
+
+    /**
+     * Instructs this editor to reopen the item inspector if the item is updated.
+     */
+    public void reinspectOnUpdate (boolean reinspectOnUpdate)
+    {
+        _reinspectOnUpdate = reinspectOnUpdate;
     }
 
     // @Override // from Widget
@@ -173,6 +186,14 @@ public abstract class ItemEditor extends BorderedPopup
      */
     protected void createExtraInterface (VerticalPanel extra)
     {
+        extra.add(createRow("Description", bind(_description = new TextArea(), new Binder() {
+            public void textUpdated (String text) {
+                _item.description = text;
+            }
+        })));
+        _description.setCharacterWidth(40);
+        _description.setVisibleLines(3);
+
         String title = "Furniture Image";
         if (_furniUploader == null) {
             _furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
@@ -356,6 +377,9 @@ public abstract class ItemEditor extends BorderedPopup
                 _parent.setStatus(_item.itemId == 0 ?
                                   "Item created." : "Item updated.");
                 _parent.editComplete(_item);
+                if (_reinspectOnUpdate) {
+                    new ItemDetailPopup(_ctx, _item, _parent).show();
+                }
                 hide();
             }
             public void onFailure (Throwable caught) {
@@ -414,11 +438,13 @@ public abstract class ItemEditor extends BorderedPopup
     protected ItemPanel _parent;
 
     protected Item _item;
+    protected boolean _reinspectOnUpdate;
 
     protected VerticalPanel _content;
 
     protected Label _etitle;
     protected TextBox _name;
+    protected TextArea _description;
     protected Button _esubmit;
 
     protected static ItemEditor _singleton;

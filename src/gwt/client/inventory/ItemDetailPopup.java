@@ -80,6 +80,17 @@ public class ItemDetailPopup extends BaseItemDetailPopup
             button = new Button("List in Catalog ...");
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
+                    // make sure the item is kosher; TODO: make this less of a hack
+                    if (_item.name.trim().length() == 0) {
+                        _status.setText("Please configure the name of this item. " +
+                                        "Click Edit above to do so.");
+                        return;
+                    }
+                    if (_item.description.trim().length() == 0) {
+                        _status.setText("Please configure a description for this item. " +
+                                        "Click Edit above to do so.");
+                        return;
+                    }
                     listItem(_item);
                 }
             });
@@ -100,7 +111,9 @@ public class ItemDetailPopup extends BaseItemDetailPopup
                 public void onClick (Widget sender) {
                     ItemEditor editor = _parent.createItemEditor(_item.getType());
                     editor.setItem(_item);
+                    editor.reinspectOnUpdate(true);
                     editor.show();
+                    hide();
                 }
             });
             controls.add(button);
