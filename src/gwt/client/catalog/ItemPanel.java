@@ -30,7 +30,7 @@ public class ItemPanel extends DockPanel
     /** The number of rows of items to display. */
     public static final int ROWS = 3;
 
-    public ItemPanel (WebContext ctx, final byte type, final byte sortBy)
+    public ItemPanel (WebContext ctx, final byte type, final byte sortBy, final String search)
     {
         // setStyleName("inventory_item");
         _ctx = ctx;
@@ -53,7 +53,7 @@ public class ItemPanel extends DockPanel
             public void doFetchRows (int start, int count, final AsyncCallback callback) {
                 setStatus("Loading...");
                 _ctx.catalogsvc.loadCatalog(
-                    _ctx.creds, type, sortBy, start, count, new AsyncCallback() {
+                    _ctx.creds, type, sortBy, search, start, count, new AsyncCallback() {
                         public void onSuccess (Object result) {
                             setStatus("");
                             callback.onSuccess(result);

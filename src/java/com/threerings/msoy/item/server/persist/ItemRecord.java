@@ -39,6 +39,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
     public static final String RATING = "rating";
     public static final String USED = "used";
     public static final String LOCATION = "location";
+    public static final String NAME = "name";
+    public static final String DESCRIPTION = "description";
     public static final String THUMB_MEDIA_HASH = "thumbMediaHash";
     public static final String THUMB_MIME_TYPE = "thumbMimeType";
     public static final String FURNI_MEDIA_HASH = "furniMediaHash";

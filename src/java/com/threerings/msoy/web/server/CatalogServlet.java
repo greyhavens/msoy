@@ -27,7 +27,7 @@ public class CatalogServlet extends RemoteServiceServlet
 {
     // from interface CatalogService
     public List loadCatalog (WebCreds creds, final byte type, final byte sortBy,
-                             final int offset, final int rows)
+                             final String search, final int offset, final int rows)
         throws ServiceException
     {
         // TODO: validate this user's creds
@@ -44,7 +44,7 @@ public class CatalogServlet extends RemoteServiceServlet
                 "loadCatalog[" + type + ", " + sortBy + ", " + offset + ", " + rows + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.loadCatalog(type, sortBy, offset, rows, waiter);
+                MsoyServer.itemMan.loadCatalog(type, sortBy, search, offset, rows, waiter);
             }
         });
         return waiter.waitForResult();

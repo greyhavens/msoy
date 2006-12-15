@@ -479,8 +479,8 @@ public class ItemManager
     /**
      * Fetches the entire catalog of listed items of the given type.
      */
-    public void loadCatalog (byte type, final byte sortBy, final int offset, final int rows,
-                             ResultListener<List<CatalogListing>> listener)
+    public void loadCatalog (byte type, final byte sortBy, final String search, final int offset,
+                             final int rows, ResultListener<List<CatalogListing>> listener)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(type, listener);
@@ -494,7 +494,7 @@ public class ItemManager
                 IntSet members = new ArrayIntSet();
                 List<CatalogListing> list = new ArrayList<CatalogListing>();
                 // fetch catalog records and loop over them
-                for (CatalogRecord record : repo.loadCatalog(sortBy, offset, rows)) {
+                for (CatalogRecord record : repo.loadCatalog(sortBy, search, offset, rows)) {
                     // convert them to listings
                     list.add(record.toListing());
                     // and keep track of which member names we need to look up

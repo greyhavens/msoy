@@ -22,7 +22,8 @@ public interface CatalogService extends RemoteService
     /**
      * Loads all catalogue items of the specified type.
      */
-    public List loadCatalog (WebCreds creds, byte type, byte sortBy, int offset, int rows)
+    public List loadCatalog (WebCreds creds, byte type, byte sortBy, String search, 
+                             int offset, int rows)
         throws ServiceException;
 
     /**

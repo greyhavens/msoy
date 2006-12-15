@@ -71,7 +71,8 @@ public class CatalogPanel extends VerticalPanel
     //from ItemSearchSortPanel.Listener
     public void search (ItemSearchSortPanel panel)
     {
-        Window.alert("I would search for: " + panel.search);
+        _search = panel.search;
+        getItemPanel(true);
     }
 
     // from ItemSearchSortPanel.Listener
@@ -86,7 +87,7 @@ public class CatalogPanel extends VerticalPanel
         Byte tabKey = new Byte(_tabIndex);
         ItemPanel panel = ignoreCache ? null : (ItemPanel) _itemPanes.get(tabKey);
         if (panel == null) {
-            panel = new ItemPanel(_ctx, _tabIndex, _sortBy);
+            panel = new ItemPanel(_ctx, _tabIndex, _sortBy, _search);
             _itemPanes.put(tabKey, panel);
         }
         _itemPaneContainer.setWidget(panel);
@@ -105,6 +106,7 @@ public class CatalogPanel extends VerticalPanel
 
     protected WebContext _ctx;
     protected byte _sortBy;
+    protected String _search;
     protected byte _tabIndex;
     protected Map _itemPanes = new HashMap();
     protected Map _tagClouds = new HashMap();

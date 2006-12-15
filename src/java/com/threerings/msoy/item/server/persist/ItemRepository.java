@@ -23,17 +23,23 @@ import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.jdbc.depot.Query;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
+import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.operator.SQLOperator;
+import com.samskivert.jdbc.depot.operator.Arithmetic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntListUtil;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.TagHistory;
@@ -196,33 +202,47 @@ public abstract class ItemRepository<
      *       Depot code that we don't know how to handle yet (or possibly some fiddling with
      *       the Item vs Catalog class hierarchies). 
      */
-    public Collection<CAT> loadCatalog (byte sortBy, int offset, int rows)
+    public Collection<CAT> loadCatalog (byte sortBy, String search, int offset, int rows)
         throws PersistenceException
     {
         SQLExpression sortExp;
-        
+
         switch(sortBy) {
         case CatalogListing.SORT_BY_LIST_DATE:
             sortExp = new ColumnExp(getCatalogClass(), CatalogRecord.LISTED_DATE);
             break;
         case CatalogListing.SORT_BY_RATING:
-            String tableName = _ctx.getMarshaller(getItemClass()).getTableName();
-            // TODO: we need operator and function SQLExpressions to do this quite right
-//            sortExp = new LiteralExp("floor(" + tableName + "." + ItemRecord.RATING + ")/2");
-            sortExp = new ColumnExp(getItemClass(), ItemRecord.RATING);
+            ColumnExp ratingCol = new ColumnExp(getItemClass(), ItemRecord.RATING);
+            sortExp = new Div(new FunctionExp("floor", ratingCol), 2);
             break;
         default:
             throw new IllegalArgumentException(
                 "Sort method not implemented [sortBy=" + sortBy + "]");
         }
 
+        QueryClause[] clauses = new QueryClause[] {
+            new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                getItemClass(), ItemRecord.ITEM_ID),
+            OrderBy.descending(sortExp),
+            new Limit(offset, rows)
+        };
+        
+        if (search != null && search.length() > 0) {
+            // TODO: We should have a Like() operator in Depot.
+            SQLOperator searchExp = new SQLOperator.BinaryOperator(
+                new ColumnExp(getItemClass(), ItemRecord.NAME),"%" + search + "%")
+            {
+                @Override
+                protected String operator ()
+                {
+                    return " like ";
+                }
+            };
+            clauses = ArrayUtil.append(clauses, new Where(searchExp));
+        };
+
         // fetch all the catalog records of interest
-        Collection<CAT> records =
-            findAll(getCatalogClass(),
-                    new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
-                             getItemClass(), ItemRecord.ITEM_ID),
-                    OrderBy.descending(sortExp),
-                    new Limit(offset, rows));
+        Collection<CAT> records = findAll(getCatalogClass(), clauses);
 
         if (records.size() == 0) {
             return records;
