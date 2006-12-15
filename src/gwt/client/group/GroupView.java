@@ -5,6 +5,7 @@ package client.group;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -14,6 +15,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -92,21 +94,24 @@ public class GroupView extends DockPanel
     protected void buildUI ()
     {
         clear();
+        setStyleName("groupView");
         boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
 
         VerticalPanel logoPanel = new VerticalPanel();
+        logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        logoPanel.setStyleName("logoPanel");
         String path = _group.logo == null ? "/msoy/images/default_logo.png" : 
             MsoyEntryPoint.toMediaPath(_group.logo.getMediaPath());
         logoPanel.add(new Image(path));
         HorizontalPanel links = new HorizontalPanel();
-        links.setSpacing(5);
-        links.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        links.setStyleName("links");
+        links.setSpacing(8);
         links.add(new Anchor("/world/index.html#g" +  _group.groupId, "Hall"));
         links.add(new Anchor("", "Forum"));
         if (_group.homepageUrl != null) {
             links.add(new Anchor(_group.homepageUrl, "Homepage"));
         }
-        if (amManager) {
+        /*if (amManager) {
             Hyperlink edit = new Hyperlink();
             edit.setText("Edit Group");
             edit.addClickListener(new ClickListener() {
@@ -115,24 +120,36 @@ public class GroupView extends DockPanel
                 }
             });
             links.add(edit);
-        }
+        }*/
         logoPanel.add(links);
+        VerticalPanel established = new VerticalPanel();
+        established.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        established.setStyleName("established");
+        // Date.toLocaleString cannot be made to only print the date (sans time of day).
+        // This has got to be the biggest waste of code ever.  Get with the Date formatting
+        // program, GWT!
+        established.add(new HTML("Est. " + getMonthName(_group.creationDate.getMonth()) + " " + 
+            _group.creationDate.getDay() + ", " + (_group.creationDate.getYear() + 1900)));
+        established.add(new HTML("by <a href='" + MsoyEntryPoint.memberViewPath(
+            _detail.creator.getMemberId()) + "'>" + _detail.creator + "</a>"));
+        logoPanel.add(established);
+        HTML policy = new HTML(getPolicyName(_group.policy));
+        policy.setStyleName("policy");
+        logoPanel.add(policy);
 
-        // All the info that describes the group: name, date, blurb, profile, etc.
-        // TODO: There is no earthly reason why these should all be Labels - this is only 
-        // priliminary.  This probably won't be a simple FlowPanel either...
-        HTML description = new HTML("<span class='name'>" + _group.name + "</span><br />" +
+        ScrollPanel description = new ScrollPanel();
+        description.setStyleName("descriptionPanel");
+        description.add(new HTML("<span class='name'>" + _group.name + "</span><br />" +
             "<span class='blurb'>" + _group.blurb + "</span><br />" + 
-            "<p class='charter'>" + _group.charter + "</p>");
-        //description.add(new Label(_group.creationDate.toLocaleString()));
-        //description.add(new Label("by " + _detail.creator.toString()));
+            "<p class='charter'>" + _group.charter + "</p>"));
         add(description, DockPanel.CENTER);
 
         FlexTable people = new FlexTable();
+        people.setStyleName("peoplePanel");
         people.setText(0, 0, "Managers:");
         people.setText(1, 0, "Members:");
-        String managers = new String();
-        String members = new String();
+        FlowPanel managers = new FlowPanel();
+        FlowPanel members = new FlowPanel();
         Iterator i = _detail.members.iterator();
         boolean firstManager = true;
         boolean firstMember = true;
@@ -143,20 +160,22 @@ public class GroupView extends DockPanel
                 if (firstManager) {
                     firstManager = false;
                 } else {
-                    managers += ", ";
+                    managers.add(new InlineLabel(", "));
                 }
-                managers += name;
+                managers.add(new Anchor(MsoyEntryPoint.memberViewPath(
+                    name.getMemberId()), name.toString()));
             } else {
                 if (firstMember) {
                     firstMember = false;
                 } else {
-                    members += ", ";
+                    members.add(new InlineLabel(", "));
                 }
-                members += name;
+                members.add(new Anchor(MsoyEntryPoint.memberViewPath(
+                    name.getMemberId()), name.toString()));
             }
         }
-        people.setWidget(0, 1, new HTML(managers));
-        people.setWidget(1, 1, new HTML(members));
+        people.setWidget(0, 1, managers);
+        people.setWidget(1, 1, members);
 
         // SOUTH must be added before WEST for the colspan to be set correctly... 
         add(_errorContainer, DockPanel.NORTH);
@@ -176,6 +195,46 @@ public class GroupView extends DockPanel
             member = (GroupMembership)i.next();
         }
         return (member != null && member.member.getMemberId() == memberId) ? member : null;
+    }
+
+    /**
+     * returns the month name of the given month number, indexed from 0-11.
+     */
+    static protected String getMonthName (int month) 
+    {
+        // TODO: localize these strings
+        String monthName;
+        switch(month) {
+        case 0:  monthName = "January"; break;
+        case 1:  monthName = "February"; break;
+        case 2:  monthName = "March"; break;
+        case 3:  monthName = "April"; break;
+        case 4:  monthName = "May"; break;
+        case 5:  monthName = "June"; break;
+        case 6:  monthName = "July"; break;
+        case 7:  monthName = "August"; break;
+        case 8:  monthName = "September"; break;
+        case 9:  monthName = "October"; break;
+        case 10: monthName = "November"; break;
+        case 11: monthName = "December"; break;
+        default: monthName = "ERROR";
+        }
+        return monthName;
+    }
+
+    /**
+     * 100% Temporary!  This will be replaced with m.policy0, m.policy1, etc.
+     */
+    static protected String getPolicyName (int policy)
+    {
+        String policyName;
+        switch(policy) {
+        case Group.POLICY_PUBLIC: policyName = "Public"; break;
+        case Group.POLICY_INVITE_ONLY: policyName = "Invitation Only"; break;
+        case Group.POLICY_EXCLUSIVE: policyName = "Exclusive"; break;
+        default: policyName = "Undefined";
+        }
+        return policyName;
     }
 
     protected void addError (String error)

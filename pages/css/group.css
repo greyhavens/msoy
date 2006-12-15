@@ -1,1 +1,46 @@
-# empty
+#content {
+    text-align: center;
+}
+
+.groupView {
+    /*width: 620px;*/
+    margin: auto;
+}
+
+.groupView .name {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.groupView .blurb, .groupView .charter, .groupView .peoplePanel {
+    font-size: 11px;
+}
+
+.groupView .descriptionPanel {
+    padding: 15px;
+    padding-top: 10px;
+    margin: 0px;
+    /*height: 275px;*/
+}
+
+.groupView .logoPanel {
+    margin: 0px;
+    width: 160px;
+    font-size: 11px;
+}
+
+.groupView .logoPanel .links {
+    font-weight: 600;
+}
+
+.groupView .logoPanel .established, .groupView .logoPanel .policy {
+    font-style: italic;
+}
+
+.groupView .logoPanel .policy {
+    margin: 7px;
+}
+
+.groupView .logoPanel .established a {
+    font-style: normal;
+}
