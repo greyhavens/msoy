@@ -15,7 +15,6 @@ import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemIdent;
 
 import client.util.WebContext;
 
@@ -30,7 +29,7 @@ public class ItemPanel extends DockPanel
     /** The number of rows of items to display. */
     public static final int ROWS = 3;
 
-    public ItemPanel (WebContext ctx, byte type)
+    public ItemPanel (WebContext ctx, byte type, byte sortBy)
     {
         // setStyleName("inventory_item");
         _ctx = ctx;
@@ -47,7 +46,7 @@ public class ItemPanel extends DockPanel
         _items.setStyleName("catalogContents");
         add(_items, DockPanel.CENTER);
         add(_status = new Label(""), DockPanel.SOUTH);
-        updateListings();
+        updateListings(sortBy);
     }
 
     /**
@@ -58,12 +57,12 @@ public class ItemPanel extends DockPanel
         _items.removeItem(listing);
     }
 
-    protected void updateListings ()
+    protected void updateListings (byte sortBy)
     {
         setStatus("Loading...");
         _ctx.catalogsvc.loadCatalog(
             // TODO: Refactor PagedGrid to request rows when required.
-            _ctx.creds, _type, CatalogListing.SORT_BY_RATING, 0, 1000, new AsyncCallback() {
+            _ctx.creds, _type, sortBy, 0, 1000, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _items.setItems((ArrayList)result);
                     setStatus("");

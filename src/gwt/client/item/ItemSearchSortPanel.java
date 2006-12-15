@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
-import com.threerings.msoy.item.web.CatalogListing;
 
 public class ItemSearchSortPanel extends HorizontalPanel
 {
@@ -35,7 +34,8 @@ public class ItemSearchSortPanel extends HorizontalPanel
     public byte sortBy;
 
 
-    public ItemSearchSortPanel (Listener listener, String[] sortNames, byte[] sortValues)
+    public ItemSearchSortPanel (Listener listener, String[] sortNames, byte[] sortValues,
+                                int selectedSortIndex)
     {
         _listener = listener;
         
@@ -60,7 +60,7 @@ public class ItemSearchSortPanel extends HorizontalPanel
         Button searchButton = new Button("search");
         searchButton.addClickListener(clickListener);
         add(searchButton);
-        
+
         Label sortLabel = new Label("Sort by:");
         sortLabel.setStyleName("itemSortLabel");
         add(sortLabel);
@@ -70,6 +70,7 @@ public class ItemSearchSortPanel extends HorizontalPanel
         for (int ii = 0; ii < sortNames.length; ii ++) {
             sortBox.addItem(sortNames[ii], String.valueOf(sortValues[ii]));
         }
+        sortBox.setSelectedIndex(selectedSortIndex);
         sortBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 ListBox box = (ListBox) widget;

@@ -36,41 +36,35 @@ public class CatalogPanel extends VerticalPanel
         topRow.add(_tagCloudContainer);
         
         VerticalPanel uiBits = new VerticalPanel();
-        uiBits.add(new ItemTypePanel(this));
+        ItemTypePanel itemTypePanel = new ItemTypePanel(this);
+        uiBits.add(itemTypePanel);
         uiBits.add(new ItemSearchSortPanel( this,
             new String[] { "Rating", "List Date" },
-            new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE }));
+            new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE },
+            0));
+        _sortBy = CatalogListing.SORT_BY_RATING;
 
         topRow.add(uiBits);
         add(topRow);
 
         add(_itemPaneContainer = new SimplePanel());
 
-        new ItemTypePanel(this).selectTab(Item.AVATAR);
+        // when everything is nicely set up, select a tab
+        itemTypePanel.selectTab(Item.AVATAR);
     }
 
     // from TabListener
     public void onTabSelected (SourcesTabEvents sender, int tabIndex)
     {
-        ItemPanel panel = (ItemPanel) _itemPanes.get(new Integer(tabIndex));
-        if (panel == null) {
-            panel = new ItemPanel(_ctx, (byte) tabIndex);
-            _itemPanes.put(new Integer(tabIndex), panel);
-        }
-        _itemPaneContainer.setWidget(panel);
-
-        TagCloud cloud = (TagCloud) _tagClouds.get(new Integer(tabIndex));
-        if (cloud == null) {
-            cloud = new TagCloud(_ctx, (byte) tabIndex);
-            _tagClouds.put(new Integer(tabIndex), cloud);
-        }
-        _tagCloudContainer.setWidget(cloud);
+        _tabIndex = (byte) tabIndex;
+        getItemPanel(false);
+        getTagCloud(false);
     }
 
     // from TabListener
     public boolean onBeforeTabSelected (SourcesTabEvents sender, int tabIndex)
     {
-        // always allow any item type selection 
+        // always allow any item type selection
         return true;
     }
 
@@ -83,10 +77,35 @@ public class CatalogPanel extends VerticalPanel
     // from ItemSearchSortPanel.Listener
     public void sort (ItemSearchSortPanel panel)
     {
-        Window.alert("I would search by criterium number: " + panel.sortBy);
+        _sortBy = panel.sortBy;
+        getItemPanel(true);
+    }
+
+    protected void getItemPanel (boolean ignoreCache)
+    {
+        Byte tabKey = new Byte(_tabIndex);
+        ItemPanel panel = ignoreCache ? null : (ItemPanel) _itemPanes.get(tabKey);
+        if (panel == null) {
+            panel = new ItemPanel(_ctx, _tabIndex, _sortBy);
+            _itemPanes.put(tabKey, panel);
+        }
+        _itemPaneContainer.setWidget(panel);
+    }
+
+    protected void getTagCloud (boolean ignoreCache)
+    {
+        Byte tabKey = new Byte(_tabIndex);
+        TagCloud cloud = ignoreCache ? null : (TagCloud) _tagClouds.get(tabKey);
+        if (cloud == null) {
+            cloud = new TagCloud(_ctx, _tabIndex);
+            _tagClouds.put(tabKey, cloud);
+        }
+        _tagCloudContainer.setWidget(cloud);
     }
 
     protected WebContext _ctx;
+    protected byte _sortBy;
+    protected byte _tabIndex;
     protected Map _itemPanes = new HashMap();
     protected Map _tagClouds = new HashMap();
     protected SimplePanel _itemPaneContainer;
