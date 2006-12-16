@@ -49,9 +49,7 @@ public class GroupMembershipRecord
     {
         GroupMembership gm = new GroupMembership();
         gm.member = member;
-        gm.group = new GroupName();
-        gm.group.groupId = groupId;
-        gm.group.groupName = group.name;
+        gm.group = new GroupName(group.name, groupId);
         gm.rank = rank;
         gm.rankAssignedDate = rankAssigned.getTime();
         return gm;

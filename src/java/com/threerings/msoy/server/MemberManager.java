@@ -673,7 +673,7 @@ public class MemberManager
                 // data made it to the db, update their member object if they're online
                 MemberObject member = MsoyServer.lookupMember(memberId);
                 if (member != null) {
-                    member.removeFromGroups(groupId);
+                    member.removeFromGroups(GroupName.makeKey(groupId));
                 }
             }
         });
@@ -930,9 +930,7 @@ public class MemberManager
         }
 
         // see if we're just updating their rank
-        GroupName group = new GroupName();
-        group.groupId = groupId;
-        GroupMembership gm = mobj.groups.get(group);
+        GroupMembership gm = mobj.groups.get(GroupName.makeKey(groupId));
         if (gm != null) {
             gm.rank = groupRank;
             mobj.updateGroups(gm);
@@ -942,9 +940,7 @@ public class MemberManager
         // otherwise they are newly joined
         gm = new GroupMembership();
         // gm.member specifically left null
-        gm.group = new GroupName();
-        gm.group.groupId = groupId;
-        gm.group.groupName = groupName;
+        gm.group = new GroupName(groupName, groupId);
         gm.rank = groupRank;
         mobj.addToGroups(gm);
     } 

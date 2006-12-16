@@ -239,9 +239,7 @@ public class MemberObject extends BodyObject
     public byte getGroupRank (int groupId)
     {
         if (groups != null) {
-            GroupName group = new GroupName();
-            group.groupId = groupId;
-            GroupMembership membInfo = groups.get(group);
+            GroupMembership membInfo = groups.get(GroupName.makeKey(groupId));
             if (membInfo != null) {
                 return membInfo.rank;
             }
