@@ -110,12 +110,7 @@ public class GroupView extends DockPanel
         VerticalPanel logoPanel = new VerticalPanel();
         logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         logoPanel.setStyleName("logoPanel");
-        if (_group.logo != null) {  
-            logoPanel.add(ItemUtil.createMediaView(_group.logo, 160, 120));
-        } else {
-            logoPanel.add(ItemUtil.createMediaView(new StaticMediaDesc(StaticMediaDesc.IMAGE_PNG,
-                Item.PHOTO, "group_logo"), 160, 120));
-        }
+        logoPanel.add(ItemUtil.createMediaView(_group.logo, 160, 120));
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("links");
         links.setSpacing(8);

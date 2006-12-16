@@ -57,7 +57,7 @@ public class GroupRecord
     /** The group's charter, or null if one has yet to be set. */
     @Column(length=2048, nullable=true)
     public String charter;
-    
+
     /** The MIME type of this group's logo. */
     public byte logoMimeType;
 
@@ -70,13 +70,13 @@ public class GroupRecord
 
     /** The home scene of this group. */
     public int homeSceneId;
-    
+
     /** The date and time this group was created. */
     public Timestamp creationDate;
 
     /** The group may be public, invite-only or exclusive as per {@link Group}. */
     public byte policy;
-    
+
     /**
      * CreateS a web-safe version of this group.
      */
@@ -88,8 +88,8 @@ public class GroupRecord
         group.homepageUrl = homepageUrl;
         group.blurb = blurb;
         group.charter = charter;
-        group.logo = logoMediaHash != null ?
-            new MediaDesc(logoMediaHash.clone(), logoMimeType) : null;
+        group.logo = logoMediaHash == null ? Group.getDefaultGroupLogoMedia() :
+            new MediaDesc(logoMediaHash.clone(), logoMimeType);
         group.creatorId = creatorId;
         group.creationDate = new Date(creationDate.getTime());
         group.policy = policy;

@@ -6,8 +6,12 @@ package com.threerings.msoy.web.data;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.io.Streamable;
+
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 
 /**
  * Contains the basic data of a group.
@@ -43,4 +47,12 @@ public class Group
     public Date creationDate;
 
     public byte policy;
+
+    /**
+     * Creates a default logo for use with groups that have no logo.
+     */
+    public static MediaDesc getDefaultGroupLogoMedia ()
+    {
+        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "group_logo");
+    }
 }
