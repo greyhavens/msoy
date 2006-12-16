@@ -37,8 +37,6 @@ import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberName;
-import com.threerings.msoy.item.web.StaticMediaDesc;
-import com.threerings.msoy.item.web.Item;
 
 import client.shell.MsoyEntryPoint;
 import client.util.WebContext;
