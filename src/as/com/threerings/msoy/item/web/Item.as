@@ -49,6 +49,12 @@ public /*abstract*/ class Item
      * as an avatar. */
     public static const USED_AS_AVATAR :int = 2;
 
+    /** Identifies our thumbnail media. */
+    public static const THUMB_MEDIA :String = "thumb";
+
+    /** Identifies our furniture media. */
+    public static const FURNI_MEDIA :String = "furni";
+
     // == Instance variables follow =========================================
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not
@@ -142,6 +148,24 @@ public /*abstract*/ class Item
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns a {@link MediaDesc} configured to display the default furniture media for items of
+     * the specified type.
+     */
+    public static function getDefaultFurniMediaFor (itemType :int) :MediaDesc
+    {
+        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, itemType, FURNI_MEDIA);
+    }
+
+    /**
+     * Returns a {@link MediaDesc} configured to display the default thumbnaiul media for items of
+     * the specified type.
+     */
+    public static function getDefaultThumbnailMediaFor (itemType :int) :MediaDesc
+    {
+        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, itemType, THUMB_MEDIA);
     }
 
     /**
@@ -266,7 +290,7 @@ public /*abstract*/ class Item
      */
     protected function getDefaultThumbnailMedia () :MediaDesc
     {
-        return new StaticMediaDesc(StaticMediaDesc.THUMBNAIL, getType());
+        return getDefaultThumbnailMediaFor(getType());
     }
 
     /**
@@ -275,7 +299,7 @@ public /*abstract*/ class Item
      */
     protected function getDefaultFurniMedia () :MediaDesc
     {
-        return new StaticMediaDesc(StaticMediaDesc.FURNI, getType());
+        return getDefaultFurniMediaFor(getType());
     }
 
     private static function registerItemType (iclass :Class, itype :int) :int

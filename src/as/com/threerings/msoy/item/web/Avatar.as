@@ -11,11 +11,22 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class Avatar extends Item
 {
+    /** Identifies our headshot media. */
+    public static const HEADSHOT_MEDIA :String = "headshot";
+
     /** The avatar media. */
     public var avatarMedia :MediaDesc;
 
     /** The headshot media. */
     public var headShotMedia :MediaDesc;
+
+    /**
+     * Returns a {@link MediaDesc} configured to display our default headshot media.
+     */
+    public static function getDefaultHeadshotMedia () :MediaDesc
+    {
+        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, AVATAR, HEADSHOT_MEDIA);
+    }
 
     // from Item
     override public function getType () :int
@@ -29,8 +40,7 @@ public class Avatar extends Item
      */
     public function getHeadShotMedia () :MediaDesc
     {
-        return (headShotMedia != null) ? headShotMedia :
-            new StaticMediaDesc(StaticMediaDesc.HEADSHOT, AVATAR);
+        return (headShotMedia != null) ? headShotMedia : getDefaultHeadshotMedia();
     }
 
     override protected function getDefaultThumbnailMedia () :MediaDesc

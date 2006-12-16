@@ -13,53 +13,37 @@ import com.threerings.msoy.client.DeploymentConfig;
  */
 public class StaticMediaDesc extends MediaDesc
 {
-    /** Identifies stock thumbnail images. */
-    public static const THUMBNAIL :String = "thumbnails";
-
-    /** Identifies stock furniture visualizations. */
-    public static const FURNI :String = "furni";
-
-    /** Identifies stock headshot visualization. */
-    public static const HEADSHOT :String = "headshot";
-
-    /** Identifies stock table visualization. */
-    public static const TABLE :String = "table";
-
-    public function StaticMediaDesc (type :String = null, itemType :int = 0)
+    public function StaticMediaDesc (mimeType :int, itemType :int, mediaType :String)
     {
-        _type = type;
+        super(null, mimeType);
         _itemType = itemType;
-        mimeType = IMAGE_PNG;
+        _mediaType = mediaType;
     }
 
     // from MediaDesc
     override public function getMediaPath () :String
     {
         return URLUtil.getFullURL(DeploymentConfig.mediaURL,
-            "/media/static/" + _type + "/" +
-            Item.getTypeName(_itemType) + ".png");
+            "/media/static/" + Item.getTypeName(_itemType) + "/" + _mediaType + ".png");
     }
 
     // documentation inherited from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-
-        out.writeField(_type);
         out.writeByte(_itemType);
+        out.writeField(_mediaType);
     }
 
     // documentation inherited from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-
-        _type = (ins.readField(String) as String);
         _itemType = ins.readByte();
-        mimeType = IMAGE_PNG;
+        _mediaType = (ins.readField(String) as String);
     }
 
-    protected var _type :String;
     protected var _itemType :int;
+    protected var _mediaType :String;
 }
 }

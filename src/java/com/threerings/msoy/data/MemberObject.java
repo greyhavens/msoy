@@ -25,7 +25,6 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.StaticMediaDesc;
 
 import com.threerings.msoy.game.data.GameMemberInfo;
 
@@ -162,7 +161,7 @@ public class MemberObject extends BodyObject
         if (avatar != null) {
             return avatar.getHeadShotMedia();
         }
-        return new StaticMediaDesc(StaticMediaDesc.HEADSHOT, Item.AVATAR);
+        return Avatar.getDefaultHeadshotMedia();
     }
 
     // documentation inherited from superinterface ScenedBodyObject

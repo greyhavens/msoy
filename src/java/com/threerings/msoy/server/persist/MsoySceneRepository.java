@@ -36,6 +36,7 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.StaticMediaDesc;
 
@@ -624,17 +625,15 @@ public class MsoySceneRepository extends SimpleRepository
     }
 
     /**
-     * Creates a {@link MediaDesc} of the appropriate type (possibly a {@link
-     * StaticMediaDesc} based on the supplied hash and mime type. The hash
-     * should previously have been created by calling {@link #flattenMediaDesc}
-     * on a media descriptor.
+     * Creates a {@link MediaDesc} of the appropriate type based on the supplied hash and mime
+     * type. The hash should previously have been created by calling {@link #flattenMediaDesc} on a
+     * media descriptor.
      */
     protected MediaDesc createMediaDesc (byte[] mediaHash, byte mimeType)
     {
         if (mediaHash.length == 4) {
-            int type = ByteBuffer.wrap(mediaHash).asIntBuffer().get();
-            return new StaticMediaDesc(
-                StaticMediaDesc.FURNI, (byte) type);
+            byte itemType = (byte)ByteBuffer.wrap(mediaHash).asIntBuffer().get();
+            return Item.getDefaultFurniMediaFor(itemType);
         } else {
             return new MediaDesc(mediaHash, mimeType);
         }
@@ -650,10 +649,9 @@ public class MsoySceneRepository extends SimpleRepository
         if (desc instanceof StaticMediaDesc) {
             StaticMediaDesc sdesc = (StaticMediaDesc)desc;
 
-            // sanity check; if we later need to flatten other static types
-            // than furni, we can have the type constant map to an integer and
-            // stuff that into the byte array as well
-            if (!sdesc.getType().equals(StaticMediaDesc.FURNI)) {
+            // sanity check; if we later need to flatten other static types than furni, we can have
+            // the type constant map to an integer and stuff that into the byte array as well
+            if (!sdesc.getMediaType().equals(Item.FURNI_MEDIA)) {
                 throw new IllegalArgumentException(
                     "Cannot flatten non-furni static media " + desc + ".");
             }

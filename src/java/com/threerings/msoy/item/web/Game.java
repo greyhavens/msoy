@@ -8,6 +8,9 @@ package com.threerings.msoy.item.web;
  */
 public class Game extends Item
 {
+    /** Identifies our lobby background table media. */
+    public static final String TABLE_MEDIA = "table";
+
     /** The minimum number of players. */
     public short minPlayers;
 
@@ -45,7 +48,7 @@ public class Game extends Item
     public MediaDesc getTableMedia ()
     {
         return (tableMedia != null) ? tableMedia :
-            new StaticMediaDesc(StaticMediaDesc.TABLE, GAME);
+            new StaticMediaDesc(MediaDesc.IMAGE_PNG, GAME, TABLE_MEDIA);
     }
 
     // @Override

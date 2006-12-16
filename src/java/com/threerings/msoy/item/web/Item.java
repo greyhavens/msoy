@@ -56,13 +56,13 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     public static final int PREVIEW_HEIGHT = 240;
 
     /** An identifier used to coordinate with the server when uploading media. */
-    public static final String FURNI_ID = "furni";
+    public static final String FURNI_MEDIA = "furni";
 
     /** An identifier used to coordinate with the server when uploading media. */
-    public static final String THUMB_ID = "thumb";
+    public static final String THUMB_MEDIA = "thumb";
 
     /** An identifier used to coordinate with the server when uploading media. */
-    public static final String MAIN_ID = "main";
+    public static final String MAIN_MEDIA = "main";
 
     // == Instance variables follow =========================================
 
@@ -105,6 +105,24 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
 
     /** The media used to display this item's furniture representation. */
     public MediaDesc furniMedia;
+
+    /**
+     * Returns a {@link MediaDesc} configured to display the default furniture media for items of
+     * the specified type.
+     */
+    public static MediaDesc getDefaultFurniMediaFor (byte itemType)
+    {
+        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, itemType, FURNI_MEDIA);
+    }
+
+    /**
+     * Returns a {@link MediaDesc} configured to display the default thumbnaiul media for items of
+     * the specified type.
+     */
+    public static MediaDesc getDefaultThumbnailMediaFor (byte itemType)
+    {
+        return new StaticMediaDesc(MediaDesc.IMAGE_PNG, itemType, THUMB_MEDIA);
+    }
 
     /**
      * Gets the class for the specified item type.
@@ -275,7 +293,7 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
      */
     protected MediaDesc getDefaultThumbnailMedia ()
     {
-        return new StaticMediaDesc(StaticMediaDesc.THUMBNAIL, getType());
+        return getDefaultThumbnailMediaFor(getType());
     }
 
     /**
@@ -283,7 +301,7 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
      */
     protected MediaDesc getDefaultFurniMedia ()
     {
-        return new StaticMediaDesc(StaticMediaDesc.FURNI, getType());
+        return getDefaultFurniMediaFor(getType());
     }
 
     /**

@@ -182,7 +182,7 @@ public class UploadServlet extends HttpServlet
 
         // if the user is uploading a thumbnail image, we want to use the scaled version and
         // abandon their original
-        if (tinfo != null && mediaId.equals(Item.THUMB_ID)) {
+        if (tinfo != null && mediaId.equals(Item.THUMB_MEDIA)) {
             info = tinfo;
             tinfo = null;
             if (!output.delete()) {

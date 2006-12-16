@@ -9,21 +9,7 @@ package com.threerings.msoy.item.web;
  */
 public class StaticMediaDesc extends MediaDesc
 {
-    /** Identifies stock thumbnail images. */
-    public static final String THUMBNAIL = "thumbnails";
-
-    /** Identifies stock furniture visualizations. */
-    public static final String FURNI = "furni";
-
-    /** Identifies stock headshot visualizations. */
-    public static final String HEADSHOT = "headshot";
-
-    /** Identifies stock table visualization. */
-    public static final String TABLE = "table";
-
-    /**
-     * Used for unserialization.
-     */
+    /** Used for unserialization. */
     public StaticMediaDesc ()
     {
     }
@@ -31,20 +17,11 @@ public class StaticMediaDesc extends MediaDesc
     /**
      * Creates a configured static media descriptor.
      */
-    public StaticMediaDesc (String type, byte itemType)
+    public StaticMediaDesc (byte mimeType, byte itemType, String mediaType)
     {
-        _type = type;
+        super(null, mimeType);
         _itemType = itemType;
-        mimeType = MediaDesc.IMAGE_PNG;
-    }
-
-    /**
-     * Returns the type of static media to which this descriptor refers.
-     * Currently one of {@link #THUMBNAIL} or {@link #FURNI}.
-     */
-    public String getType ()
-    {
-        return _type;
+        _mediaType = mediaType;
     }
 
     /**
@@ -55,13 +32,22 @@ public class StaticMediaDesc extends MediaDesc
         return _itemType;
     }
 
+    /**
+     * Returns the media type for which we're obtaining the static default. For example {@link
+     * Item#MAIN_MEDIA}.
+     */
+    public String getMediaType ()
+    {
+        return _mediaType;
+    }
+
     // @Override // from MediaDesc
     public String getMediaPath ()
     {
-        return "/media/static/" + _type + "/" +
-            Item.getTypeName(_itemType) + ".png";
+        return "/media/static/" + Item.getTypeName(_itemType) + "/" + _mediaType + "." +
+            mimeTypeToSuffix(mimeType);
     }
 
-    protected String _type;
     protected byte _itemType;
+    protected String _mediaType;
 }

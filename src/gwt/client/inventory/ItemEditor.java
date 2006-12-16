@@ -201,7 +201,7 @@ public abstract class ItemEditor extends BorderedDialog
 
         String title = "Image shown when Item is placed in the World as Furniture";
         if (_furniUploader == null) {
-            _furniUploader = new MediaUploader(Item.FURNI_ID, title, false, new MediaUpdater() {
+            _furniUploader = new MediaUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
                 public String updateMedia (MediaDesc desc) {
                     if (!desc.hasFlashVisual()) {
                         return "Furniture must be an web-viewable image type.";
@@ -215,7 +215,7 @@ public abstract class ItemEditor extends BorderedDialog
         }
 
         title = "Image shown for Item in Inventory and Catalog";
-        _thumbUploader = new MediaUploader(Item.THUMB_ID, title, true, new MediaUpdater() {
+        _thumbUploader = new MediaUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
                     return "Thumbnails must be an image type.";
@@ -288,7 +288,7 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected MediaUploader createMainUploader (String title, MediaUpdater updater)
     {
-        return (_mainUploader = new MediaUploader(Item.MAIN_ID, title, false, updater));
+        return (_mainUploader = new MediaUploader(Item.MAIN_MEDIA, title, false, updater));
     }
 
     /**
@@ -305,13 +305,13 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected MediaUploader getUploader (String id)
     {
-        if (Item.FURNI_ID.equals(id)) {
+        if (Item.FURNI_MEDIA.equals(id)) {
             return _furniUploader;
 
-        } else if (Item.THUMB_ID.equals(id)) {
+        } else if (Item.THUMB_MEDIA.equals(id)) {
             return _thumbUploader;
 
-        } else if (Item.MAIN_ID.equals(id)) {
+        } else if (Item.MAIN_MEDIA.equals(id)) {
             return _mainUploader; // could be null...
 
         } else {
@@ -347,10 +347,10 @@ public abstract class ItemEditor extends BorderedDialog
         _item.checkConsolidateMedia();
 
         // re-check the other two, as they may have changed
-        if (!Item.THUMB_ID.equals(id)) {
+        if (!Item.THUMB_MEDIA.equals(id)) {
             recheckThumbMedia();
         }
-        if (!Item.FURNI_ID.equals(id)) {
+        if (!Item.FURNI_MEDIA.equals(id)) {
             recheckFurniMedia();
         }
 

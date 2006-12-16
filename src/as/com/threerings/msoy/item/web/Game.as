@@ -8,6 +8,9 @@ import com.threerings.io.ObjectOutputStream;
 
 public class Game extends Item
 {
+    /** Identifies our lobby table background media. */
+    public static const TABLE_MEDIA :String = "table";
+
     /** The minimum number of players. */
     public var minPlayers :int;
 
@@ -38,7 +41,7 @@ public class Game extends Item
     public function getTableMedia () :MediaDesc
     {
         return (tableMedia != null) ? tableMedia :
-            new StaticMediaDesc(StaticMediaDesc.TABLE, GAME);
+            new StaticMediaDesc(MediaDesc.IMAGE_PNG, GAME, TABLE_MEDIA);
     }
 
     override public function writeObject (out :ObjectOutputStream) :void

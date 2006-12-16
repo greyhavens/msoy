@@ -27,7 +27,7 @@ public class PetEditor extends ItemEditor
     {
         // pets are special; their furni media are their primary media
         String title = "Pet as seen in the World";
-        tabs.add(_furniUploader = new MediaUploader(Item.FURNI_ID, title, true, new MediaUpdater() {
+        _furniUploader = new MediaUploader(Item.FURNI_MEDIA, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
                     return "Pets must be a web-viewable image type.";
@@ -36,7 +36,8 @@ public class PetEditor extends ItemEditor
                 recenter(true);
                 return null;
             }
-        }), "Pet Media");
+        });
+        tabs.add(_furniUploader, "Pet Media");
 
         super.createInterface(contents, tabs);
     }
