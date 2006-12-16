@@ -580,6 +580,7 @@ public class ItemManager
                     return repo.removeListing(ident.itemId) ? new CatalogListing() : null;
                 }
             });
+            return;
         }
 
         // otherwise we're listing, so do that more complicated business
