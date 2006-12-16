@@ -13,7 +13,7 @@ import com.threerings.msoy.client.DeploymentConfig;
  */
 public class StaticMediaDesc extends MediaDesc
 {
-    public function StaticMediaDesc (mimeType :int, itemType :int, mediaType :String)
+    public function StaticMediaDesc (mimeType :int = 0, itemType :int = 0, mediaType :String = null)
     {
         super(null, mimeType);
         _itemType = itemType;
