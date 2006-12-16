@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
@@ -26,6 +25,7 @@ import com.threerings.msoy.item.web.Photo;
 
 import client.item.BaseItemDetailPopup;
 import client.shell.MsoyEntryPoint;
+import client.util.ClickCallback;
 import client.util.WebContext;
 
 /**
@@ -78,30 +78,41 @@ public class ItemDetailPopup extends BaseItemDetailPopup
         Button button;
         if (_item.parentId == -1) {
             button = new Button("List in Catalog ...");
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
+            new ClickCallback(_ctx, button, _status) {
+                public boolean callService () {
                     // make sure the item is kosher; TODO: make this less of a hack
                     if (_item.name.trim().length() == 0) {
                         _status.setText("Please configure the name of this item. " +
                                         "Click Edit above to do so.");
-                        return;
+                        return false;
                     }
                     if (_item.description.trim().length() == 0) {
                         _status.setText("Please configure a description for this item. " +
                                         "Click Edit above to do so.");
-                        return;
+                        return false;
                     }
-                    listItem(_item);
+                    _ctx.catalogsvc.listItem(_ctx.creds, _item.getIdent(), true, this);
+                    return true;
                 }
-            });
+                public boolean gotResult (Object result) {
+                    _status.setText("Item listed.");
+                    return false; // don't reenable list button
+                }
+            };
 
         } else {
             button = new Button("Remix ...");
-            button.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    remixItem(_item);
+            new ClickCallback(_ctx, button, _status) {
+                public boolean callService () {
+                    _ctx.itemsvc.remixItem(_ctx.creds, _item.getIdent(), this);
+                    return true;
                 }
-            });
+                public boolean gotResult (Object result) {
+                    // TODO: update item panel
+                    _status.setText("Item remixed.");
+                    return false; // don't reenable remix button
+                }
+            };
         }
         controls.add(button);
 
@@ -111,7 +122,6 @@ public class ItemDetailPopup extends BaseItemDetailPopup
                 public void onClick (Widget sender) {
                     ItemEditor editor = _parent.createItemEditor(_item.getType());
                     editor.setItem(_item);
-                    editor.reinspectOnUpdate(true);
                     editor.show();
                     hide();
                 }
@@ -120,33 +130,6 @@ public class ItemDetailPopup extends BaseItemDetailPopup
         }
 
         controls.add(_status = new Label(""));
-    }
-
-    protected void listItem (Item item)
-    {
-        _ctx.catalogsvc.listItem(_ctx.creds, item.getIdent(), true, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _status.setText("Item listed.");
-            }
-            public void onFailure (Throwable caught) {
-                String reason = caught.getMessage();
-                _status.setText("Item listing failed: " + reason);
-            }
-        });
-    }
-
-    protected void remixItem (Item item)
-    {
-        _ctx.itemsvc.remixItem(_ctx.creds, item.getIdent(), new AsyncCallback() {
-            public void onSuccess (Object result) {
-                // TODO: update display
-                _status.setText("Item remixed.");
-            }
-            public void onFailure (Throwable caught) {
-                String reason = caught.getMessage();
-                _status.setText("Item remixing failed: " + reason);
-            }
-        });
     }
 
     protected ItemPanel _parent;

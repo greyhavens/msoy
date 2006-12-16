@@ -160,14 +160,6 @@ public abstract class ItemEditor extends BorderedDialog
         return _item;
     }
 
-    /**
-     * Instructs this editor to reopen the item inspector if the item is updated.
-     */
-    public void reinspectOnUpdate (boolean reinspectOnUpdate)
-    {
-        _reinspectOnUpdate = reinspectOnUpdate;
-    }
-
     // @Override // from Widget
     protected void onLoad ()
     {
@@ -411,9 +403,6 @@ public abstract class ItemEditor extends BorderedDialog
                 _parent.setStatus(_item.itemId == 0 ? "Item created." : "Item updated.");
                 _updatedItem = _item; // this will be passed to our parent in onClosed()
                 hide();
-                if (_reinspectOnUpdate) {
-                    new ItemDetailPopup(_ctx, _item, _parent).show();
-                }
             }
             public void onFailure (Throwable caught) {
                 String reason = caught.getMessage();
@@ -471,7 +460,6 @@ public abstract class ItemEditor extends BorderedDialog
     protected ItemPanel _parent;
 
     protected Item _item, _updatedItem;
-    protected boolean _reinspectOnUpdate;
 
     protected VerticalPanel _content;
 
