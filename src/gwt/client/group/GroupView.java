@@ -41,6 +41,7 @@ import com.threerings.msoy.web.data.MemberName;
 import client.shell.MsoyEntryPoint;
 import client.util.WebContext;
 import client.util.PromptPopup;
+import client.item.ItemUtil;
 
 import client.group.GroupEdit.GroupSubmissionListener;
 
@@ -107,9 +108,7 @@ public class GroupView extends DockPanel
         VerticalPanel logoPanel = new VerticalPanel();
         logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         logoPanel.setStyleName("logoPanel");
-        String path = _group.logo == null ? "/msoy/images/default_logo.png" : 
-            MsoyEntryPoint.toMediaPath(_group.logo.getMediaPath());
-        logoPanel.add(new Image(path));
+        logoPanel.add(ItemUtil.createMediaView(_group.logo, 160, 120));
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("links");
         links.setSpacing(8);
