@@ -41,6 +41,10 @@
     color: blue;
 }
 
+.groupView .logoPanel .gwt-Button {
+    margin-bottom: 9px;
+}
+
 /* MenuBar stuff... annoyingly they aren't even contained in the page's #content div... 
  * never mind the .groupView div.  When things get customized and fancy, these menus should have 
  * a custom classname as well. */

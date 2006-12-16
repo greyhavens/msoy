@@ -118,16 +118,6 @@ public class GroupView extends DockPanel
         if (_group.homepageUrl != null) {
             links.add(new Anchor(_group.homepageUrl, "Homepage"));
         }
-        /*if (amManager) {
-            Hyperlink edit = new Hyperlink();
-            edit.setText("Edit Group");
-            edit.addClickListener(new ClickListener() {
-                public void onClick(Widget sender) {
-                    new GroupEdit(_ctx, _group, GroupView.this).show();
-                }
-            });
-            links.add(edit);
-        }*/
         logoPanel.add(links);
         VerticalPanel established = new VerticalPanel();
         established.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -143,10 +133,16 @@ public class GroupView extends DockPanel
         HTML policy = new HTML(getPolicyName(_group.policy));
         policy.setStyleName("policy");
         logoPanel.add(policy);
+        if (amManager) {
+            logoPanel.add(new Button("Edit Group", new ClickListener() {
+                public void onClick (Widget sender) {
+                    new GroupEdit(_ctx, _group, GroupView.this).show();
+                }
+            }));
+        }
         if (_me != null) {
-            Button leaveButton = new Button("Leave Group", new ClickListener() {
-                public void onClick (Widget sender) 
-                {
+            logoPanel.add(new Button("Leave Group", new ClickListener() {
+                public void onClick (Widget sender) {
                     (new PromptPopup("Are you sure you wish to leave " + _group.name + "?") {
                         public void onAffirmative () {
                             removeMember(_me.member.getMemberId());
@@ -154,8 +150,7 @@ public class GroupView extends DockPanel
                         public void onNegative () { }
                     }).prompt();
                 }
-            });
-            logoPanel.add(leaveButton);
+            }));
         }
 
         ScrollPanel description = new ScrollPanel();
