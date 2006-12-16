@@ -17,19 +17,10 @@ public class Avatar extends Item
     /** The headshot media. */
     public var headShotMedia :MediaDesc;
 
-    /** A description for this avatar (max length 255 characters). */
-    public var description :String;
-
     // from Item
     override public function getType () :int
     {
         return AVATAR;
-    }
-
-    // from Item
-    override public function getDescription () :String
-    {
-        return description;
     }
 
     /**
@@ -61,7 +52,6 @@ public class Avatar extends Item
 
         out.writeObject(avatarMedia);
         out.writeObject(headShotMedia);
-        out.writeField(description);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -70,7 +60,6 @@ public class Avatar extends Item
 
         avatarMedia = (ins.readObject() as MediaDesc);
         headShotMedia = (ins.readObject() as MediaDesc);
-        description = (ins.readField(String) as String);
     }
 }
 }

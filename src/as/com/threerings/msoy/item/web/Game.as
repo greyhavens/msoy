@@ -8,9 +8,6 @@ import com.threerings.io.ObjectOutputStream;
 
 public class Game extends Item
 {
-    /** The name of the game. */
-    public var name :String;
-
     /** The minimum number of players. */
     public var minPlayers :int;
 
@@ -34,11 +31,6 @@ public class Game extends Item
         return GAME;
     }
 
-    override public function getDescription () :String
-    {
-        return name;
-    }
-
     /**
      * Returns a media descriptor for the media to be used
      * as a table background image.
@@ -53,7 +45,6 @@ public class Game extends Item
     {
         super.writeObject(out);
 
-        out.writeField(name);
         out.writeShort(minPlayers);
         out.writeShort(maxPlayers);
         out.writeShort(desiredPlayers);
@@ -66,7 +57,6 @@ public class Game extends Item
     {
         super.readObject(ins);
 
-        name = (ins.readField(String) as String);
         minPlayers = ins.readShort();
         maxPlayers = ins.readShort();
         desiredPlayers = ins.readShort();

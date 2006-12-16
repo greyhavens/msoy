@@ -17,19 +17,10 @@ public class Furniture extends Item
      * characters). */
     public var action :String = "";
 
-    /** A description of this piece of furniture (max length 255 characters). */
-    public var description :String;
-
     // from Item
     override public function getType () :int
     {
         return FURNITURE;
-    }
-
-    // from Item
-    override public function getDescription () :String
-    {
-        return description;
     }
 
     override protected function getDefaultThumbnailMedia () :MediaDesc
@@ -50,7 +41,6 @@ public class Furniture extends Item
         super.writeObject(out);
 
         out.writeField(action);
-        out.writeField(description);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -58,7 +48,6 @@ public class Furniture extends Item
         super.readObject(ins);
 
         action = (ins.readField(String) as String);
-        description = (ins.readField(String) as String);
     }
 }
 }

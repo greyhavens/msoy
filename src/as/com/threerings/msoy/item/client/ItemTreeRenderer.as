@@ -48,7 +48,7 @@ public class ItemTreeRenderer extends TreeItemRenderer
         var node :Object = TreeListData(listData).item;
         if (node is Item) {
             var item :Item = Item(node);
-            label.text = item.getDescription();
+            label.text = item.name;
             icon = _media;
             addChild(_media);
         }

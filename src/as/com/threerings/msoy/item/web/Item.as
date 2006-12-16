@@ -81,6 +81,12 @@ public /*abstract*/ class Item
      * location at which this item is being used. */
     public var location :int;
 
+    /** The name of this item (max length 255 characters). */
+    public var name :String;
+
+    /** A description for this item (max length 255 characters). */
+    public var description :String;
+
     /** The media used to display this item's thumbnail representation. */
     public var thumbMedia :MediaDesc;
 
@@ -150,15 +156,6 @@ public /*abstract*/ class Item
      * Get the type code for this item's type.
      */
     public function getType () :int
-    {
-        throw new Error("abstract");
-    }
-
-    /**
-     * Returns the text that should be displayed under the thumbnail image
-     * shown in a player's inventory.
-     */
-    public function getDescription () :String
     {
         throw new Error("abstract");
     }
@@ -240,6 +237,8 @@ public /*abstract*/ class Item
         out.writeFloat(rating);
         out.writeByte(used);
         out.writeInt(location);
+        out.writeField(name);
+        out.writeField(description);
         out.writeObject(thumbMedia);
         out.writeObject(furniMedia);
     }
@@ -255,6 +254,8 @@ public /*abstract*/ class Item
         rating = ins.readFloat();
         used = ins.readByte();
         location = ins.readInt();
+        name = (ins.readField(String) as String);
+        description = (ins.readField(String) as String);
         thumbMedia = (ins.readObject() as MediaDesc);
         furniMedia = (ins.readObject() as MediaDesc);
     }

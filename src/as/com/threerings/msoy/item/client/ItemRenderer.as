@@ -53,7 +53,7 @@ public class ItemRenderer extends HBox
                 _item = item;
 
                 _container.setMedia(_item.getThumbnailPath());
-                _label.text = _item.getDescription();
+                _label.text = _item.name;
             }
 
         } else {

@@ -11,19 +11,10 @@ import com.threerings.io.ObjectOutputStream;
  */
 public class Pet extends Item
 {
-    /** A description of this pet (max length 255 characters). */
-    public var description :String;
-
     // from Item
     override public function getType () :int
     {
         return PET;
-    }
-
-    // from Item
-    override public function getDescription () :String
-    {
-        return description;
     }
 
     override protected function getDefaultThumbnailMedia () :MediaDesc
@@ -43,14 +34,14 @@ public class Pet extends Item
     {
         super.writeObject(out);
 
-        out.writeField(description);
+        // nada for now
     }
 
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 
-        description = (ins.readField(String) as String);
+        // nada for now
     }
 }
 }
