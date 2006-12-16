@@ -44,7 +44,7 @@ public class StaticMediaDesc extends MediaDesc
     // @Override // from MediaDesc
     public String getMediaPath ()
     {
-        return "/media/static/" + Item.getTypeName(_itemType) + "/" + _mediaType + "." +
+        return "/media/static/" + Item.getTypeName(_itemType) + "/" + _mediaType +
             mimeTypeToSuffix(mimeType);
     }
 

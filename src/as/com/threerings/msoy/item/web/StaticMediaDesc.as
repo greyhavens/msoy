@@ -24,7 +24,8 @@ public class StaticMediaDesc extends MediaDesc
     override public function getMediaPath () :String
     {
         return URLUtil.getFullURL(DeploymentConfig.mediaURL,
-            "/media/static/" + Item.getTypeName(_itemType) + "/" + _mediaType + ".png");
+            "/media/static/" + Item.getTypeName(_itemType) + "/" + _mediaType +
+            mimeTypeToSuffix(mimeType));
     }
 
     // documentation inherited from interface Streamable
