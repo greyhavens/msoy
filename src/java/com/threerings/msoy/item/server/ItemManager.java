@@ -207,16 +207,12 @@ public class ItemManager
         if (repo == null) {
             return;
         }
-
         final int oldId = (oldAvatar == null) ? 0 : oldAvatar.itemId;
         final int newId = (newAvatar == null) ? 0 : newAvatar.itemId;
 
         ResultListener<Object> rlo = listener;
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Object>(rlo) {
-            public Object invokePersistResult ()
-                throws PersistenceException
-            {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>(rlo) {
+            public Object invokePersistResult () throws PersistenceException {
                 if (oldId != 0) {
                     repo.markItemUsage(new int[] { oldId }, Item.UNUSED, 0);
                 }
@@ -226,17 +222,18 @@ public class ItemManager
                 return null;
             }
 
-            @Override
-            public void handleSuccess ()
-            {
+            public void handleSuccess () {
                 super.handleSuccess();
-
-                oldAvatar.used = Item.UNUSED;
-                oldAvatar.location = 0;
-                newAvatar.used = Item.USED_AS_AVATAR;
-                newAvatar.location = memberId;
-                updateUserCache(oldAvatar);
-                updateUserCache(newAvatar);
+                if (oldAvatar != null) {
+                    oldAvatar.used = Item.UNUSED;
+                    oldAvatar.location = 0;
+                    updateUserCache(oldAvatar);
+                }
+                if (newAvatar != null) {
+                    newAvatar.used = Item.USED_AS_AVATAR;
+                    newAvatar.location = memberId;
+                    updateUserCache(newAvatar);
+                }
             }
         });
     }
