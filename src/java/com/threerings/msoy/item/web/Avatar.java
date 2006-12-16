@@ -20,7 +20,7 @@ public class Avatar extends Item
     /**
      * Returns a {@link MediaDesc} configured to display the default non-guest avatar.
      */
-    public static MediaDesc getDefaultAvatarMedia ()
+    public static MediaDesc getDefaultMemberAvatarMedia ()
     {
         return new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "member");
     }
