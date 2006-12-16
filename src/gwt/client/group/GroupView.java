@@ -185,8 +185,8 @@ public class GroupView extends DockPanel
                 peoplePanel = members;
             }
             if (amManager) {
-                MenuBar menu = getManagerMenuBar(membership);
                 final PopupPanel personMenuPanel = new PopupPanel(true);
+                MenuBar menu = getManagerMenuBar(membership, personMenuPanel);
                 personMenuPanel.add(menu);
                 final InlineLabel person = new InlineLabel(name.toString());
                 person.addStyleName("labelLink");
@@ -274,26 +274,113 @@ public class GroupView extends DockPanel
     /**
      * Get the menus for use by managers when perusing the members of their group.
      */
-    protected MenuBar getManagerMenuBar(final GroupMembership membership) 
+    protected MenuBar getManagerMenuBar(final GroupMembership membership, final PopupPanel parent) 
     {
         // MenuBar(true) creates a vertical menu
         MenuBar menu = new MenuBar(true);
         menu.addItem("<a href='" + MsoyEntryPoint.memberViewPath(
             membership.member.getMemberId()) + "'>View Profile</a>", true, (Command)null);
-        menu.addItem("Promote", new Command() {
+        MenuItem promote = new MenuItem("Promote", new Command() {
             public void execute() {
                 (new PromptPopup("Are you sure you wish to promote " + 
                     membership.member.toString() + "?") {
                     public void onAffirmative () {
-                        Window.alert("You clicked Yes!");
+                        parent.hide();
+                        updateMemberRank(membership.member.getMemberId(),
+                            GroupMembership.RANK_MANAGER);
                     }
-                    public void onNegative () {
-                        Window.alert("You clicked No!");
-                    }
+                    public void onNegative () { }
                 }).prompt();
             }
         });
+        MenuItem demote = new MenuItem("Demote", new Command() {
+            public void execute() {
+                (new PromptPopup("Are you sure you wish to demote " + 
+                    membership.member.toString() + "?") {
+                    public void onAffirmative () {
+                        parent.hide();
+                        updateMemberRank(membership.member.getMemberId(),
+                            GroupMembership.RANK_MEMBER);
+                    }
+                    public void onNegative () { }
+                }).prompt();
+            }
+        });
+        MenuItem remove = new MenuItem("Remove", new Command() {
+            public void execute() {
+                (new PromptPopup("Are you sure you wish to remove " + 
+                    membership.member.toString() + " from " + 
+                    _group.name + "?") {
+                    public void onAffirmative () {
+                        parent.hide();
+                        removeMember(membership.member.getMemberId());
+                    }
+                    public void onNegative () { }
+                }).prompt();
+            }
+        });
+
+        // show actions that we don't have permission to take, but make sure they are
+        // disabled
+        if (!isSenior(_me, membership)) {
+            // you can't do jack!
+            promote.setCommand(null);
+            promote.addStyleName("disabled");
+            demote.setCommand(null);
+            demote.addStyleName("disabled");
+            remove.setCommand(null);
+            remove.addStyleName("disabled");
+        } else if (membership.rank == GroupMembership.RANK_MANAGER) {
+            promote.setCommand(null);
+            promote.addStyleName("disabled");
+        } else {
+            demote.setCommand(null);
+            demote.addStyleName("disabled");
+        }
+        menu.addItem(promote);
+        menu.addItem(demote);
+        menu.addItem(remove);
         return menu;
+    }
+
+    public boolean isSenior (GroupMembership member1, GroupMembership member2) 
+    {
+        if (member1.rank == GroupMembership.RANK_MANAGER && 
+            (member2.rank == GroupMembership.RANK_MEMBER || 
+            member1.rankAssignedDate < member2.rankAssignedDate)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected void updateMemberRank (final int memberId, final byte rank) 
+    {
+        _ctx.groupsvc.updateMemberRank(_ctx.creds, _group.groupId, memberId, rank,
+            new AsyncCallback() {
+            public void onSuccess (Object result) {
+                loadGroup(_group.groupId);
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("Failed to update member rank [groupId=" + _group.groupId +
+                    ", memberId=" + memberId + ", newRank=" + rank + "]", caught);
+                addError("Failed to update member rank: " + caught.getMessage());
+            }
+        });
+    }
+
+    protected void removeMember (final int memberId)
+    {
+        _ctx.groupsvc.leaveGroup(_ctx.creds, _group.groupId, memberId, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                loadGroup(_group.groupId);
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("Failed to remove member [groupId=" + _group.groupId +
+                        ", memberId=" + memberId + "]", caught);
+                addError("Failed to remove member: " + caught.getMessage());
+            }
+        });
     }
 
     protected void addError (String error)
