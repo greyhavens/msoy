@@ -143,6 +143,20 @@ public class GroupView extends DockPanel
         HTML policy = new HTML(getPolicyName(_group.policy));
         policy.setStyleName("policy");
         logoPanel.add(policy);
+        if (_me != null) {
+            Button leaveButton = new Button("Leave Group", new ClickListener() {
+                public void onClick (Widget sender) 
+                {
+                    (new PromptPopup("Are you sure you wish to leave " + _group.name + "?") {
+                        public void onAffirmative () {
+                            removeMember(_me.member.getMemberId());
+                        }
+                        public void onNegative () { }
+                    }).prompt();
+                }
+            });
+            logoPanel.add(leaveButton);
+        }
 
         ScrollPanel description = new ScrollPanel();
         description.setStyleName("descriptionPanel");
