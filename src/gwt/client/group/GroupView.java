@@ -37,6 +37,8 @@ import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.item.web.StaticMediaDesc;
+import com.threerings.msoy.item.web.Item;
 
 import client.shell.MsoyEntryPoint;
 import client.util.WebContext;
@@ -108,7 +110,12 @@ public class GroupView extends DockPanel
         VerticalPanel logoPanel = new VerticalPanel();
         logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         logoPanel.setStyleName("logoPanel");
-        logoPanel.add(ItemUtil.createMediaView(_group.logo, 160, 120));
+        if (_group.logo != null) {  
+            logoPanel.add(ItemUtil.createMediaView(_group.logo, 160, 120));
+        } else {
+            logoPanel.add(ItemUtil.createMediaView(new StaticMediaDesc(StaticMediaDesc.IMAGE_PNG,
+                Item.PHOTO, "group_logo"), 160, 120));
+        }
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("links");
         links.setSpacing(8);
