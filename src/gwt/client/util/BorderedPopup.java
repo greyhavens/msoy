@@ -6,6 +6,7 @@ package client.util;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.PopupListener;
@@ -56,27 +57,23 @@ public class BorderedPopup extends PopupPanel
     // @Override // from PopupPanel
     public void show ()
     {
-        // start somewhere that we won't booch the window size when we first open
-        setPopupPosition(0, Window.getClientHeight() / 2);
+        // start off screen so that we are not visible until we can compute our proper location and
+        // center ourselves; we'd call setPopupPosition() but that foolishly bounds our position to
+        // greater than zero, to protect us from ourselves no doubt
+        Element elem = getElement();
+        DOM.setStyleAttribute(elem, "left", "-5000px");
+        DOM.setStyleAttribute(elem, "top", "-5000px");
         super.show();
-        recenter(false);
+        recenter();
     }
 
     /**
      * Recenters our popup.
      */
-    protected void recenter (boolean defer)
+    protected void recenter ()
     {
-        if (defer) {
-            DeferredCommand.add(new Command() {
-                public void execute () {
-                    recenter(false);
-                }
-            });
-        } else {
-            setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
-                             (Window.getClientHeight() - getOffsetHeight()) / 2);
-        }
+        setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
+                         (Window.getClientHeight() - getOffsetHeight()) / 2);
     }
 
     /**

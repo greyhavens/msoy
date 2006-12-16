@@ -60,7 +60,7 @@ public class WebContext
     public ServerMessages smsgs;
 
     /** Reports a log message to the console. */
-    public void log (String message)
+    public static void log (String message)
     {
         if (GWT.isScript()) {
             consoleLog(message);
@@ -70,7 +70,7 @@ public class WebContext
     }
 
     /** Reports a log message and exception stack trace to the console. */
-    public void log (String message, Exception error)
+    public static void log (String message, Exception error)
     {
         if (GWT.isScript()) {
             consoleLog(message + ": " + error); // TODO: log stack trace?

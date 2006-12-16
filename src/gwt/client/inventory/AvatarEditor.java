@@ -34,7 +34,6 @@ public class AvatarEditor extends ItemEditor
                     return "Avatars must be a web-viewable media.";
                 }
                 _avatar.avatarMedia = desc;
-                recenter(true);
                 return null;
             }
         }), "Avatar Media");
@@ -46,7 +45,6 @@ public class AvatarEditor extends ItemEditor
                     return "Head shots must be an image type.";
                 }
                 _avatar.headShotMedia = desc;
-                recenter(true);
                 return null;
             }
         });

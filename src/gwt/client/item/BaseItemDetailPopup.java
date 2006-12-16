@@ -53,15 +53,13 @@ public class BaseItemDetailPopup extends BorderedDialog
         _ctx.itemsvc.loadItemDetail(_ctx.creds, _item.getIdent(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 gotDetail(_detail = (ItemDetail)result);
-                recenter(false);
+                recenter();
             }
             public void onFailure (Throwable caught) {
                 // TODO: translate, unhack
                 _description.setText("Failed to load item details: " + caught);
             }
         });
-
-        recenter(false);
     }
 
     protected Widget createContents ()

@@ -32,7 +32,6 @@ public class PhotoEditor extends ItemEditor
                     return "Photos must be a web-viewable image type.";
                 }
                 _photo.photoMedia = desc;
-                recenter(true);
                 return null;
             }
         }), "Photo Media");

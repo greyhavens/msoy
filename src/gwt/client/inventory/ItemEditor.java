@@ -165,12 +165,6 @@ public abstract class ItemEditor extends BorderedDialog
     {
         super.onLoad();
         configureBridge();
-
-        // recenter immediately and then do it again in a deferred command;
-        // TODO: figure out how to trigger on an image being fully loaded and
-        // have that result in calls to recenter(); yay for asynchronous layout
-        recenter(false);
-        recenter(true);
     }
 
     // @Override // from BorderedDialog
@@ -199,7 +193,6 @@ public abstract class ItemEditor extends BorderedDialog
                         return "Furniture must be an web-viewable image type.";
                     }
                     _item.furniMedia = desc;
-                    recenter(true);
                     return null;
                 }
             });
@@ -213,7 +206,6 @@ public abstract class ItemEditor extends BorderedDialog
                     return "Thumbnails must be an image type.";
                 }
                 _item.thumbMedia = desc;
-                recenter(true);
                 return null;
             }
         });
@@ -255,23 +247,6 @@ public abstract class ItemEditor extends BorderedDialog
         row.add(new Label(label));
         row.add(widget);
         return row;
-    }
-
-    /**
-     * Recenters our popup. This should be called when media previews are changed.
-     */
-    protected void recenter (boolean defer)
-    {
-        if (defer) {
-            DeferredCommand.add(new Command() {
-                public void execute () {
-                    recenter(false);
-                }
-            });
-        } else {
-            setPopupPosition((Window.getClientWidth() - getOffsetWidth()) / 2,
-                             (Window.getClientHeight() - getOffsetHeight()) / 2);
-        }
     }
 
     /**

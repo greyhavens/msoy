@@ -32,7 +32,6 @@ public class AudioEditor extends ItemEditor
                     return "Audio data must be audio!";
                 }
                 _audio.audioMedia = desc;
-                recenter(true);
                 return null;
             }
         }), "Audio Media");

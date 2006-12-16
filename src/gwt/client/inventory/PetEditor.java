@@ -33,7 +33,6 @@ public class PetEditor extends ItemEditor
                     return "Pets must be a web-viewable image type.";
                 }
                 _item.furniMedia = desc;
-                recenter(true);
                 return null;
             }
         });

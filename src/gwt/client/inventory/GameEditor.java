@@ -51,7 +51,6 @@ public class GameEditor extends ItemEditor
                     return "Table images must be an image type.";
                 }
                 _game.tableMedia = desc;
-                recenter(true);
                 return null;
             }
         }), "Lobby Table");
