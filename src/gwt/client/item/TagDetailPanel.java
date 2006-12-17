@@ -65,7 +65,7 @@ public class TagDetailPanel extends FlexTable
                 _ctx.itemsvc.tagItem(
                     _ctx.creds, _item.getIdent(), tagName, true, new AsyncCallback() {
                     public void onSuccess (Object result) {
-                        updateTags();
+                        refreshTags();
                     }
                     public void onFailure (Throwable caught) {
                         GWT.log("tagItem failed", caught);
@@ -86,7 +86,7 @@ public class TagDetailPanel extends FlexTable
                 _ctx.itemsvc.tagItem(
                     _ctx.creds, _item.getIdent(), value, true, new AsyncCallback() {
                     public void onSuccess (Object result) {
-                        updateTags();
+                        refreshTags();
                     }
                     public void onFailure (Throwable caught) {
                         GWT.log("tagItem failed", caught);
@@ -102,7 +102,7 @@ public class TagDetailPanel extends FlexTable
         getFlexCellFormatter().setColSpan(0, 0, getCellCount(1));
         getFlexCellFormatter().setColSpan(2, 0, getCellCount(1));
 
-        updateTags();
+        refreshTags();
     }
 
     protected void toggleTagHistory ()
@@ -162,27 +162,29 @@ public class TagDetailPanel extends FlexTable
 //         });
     }
 
-    protected void updateTags ()
+    protected void refreshTags ()
     {
-        _ctx.itemsvc.getTagHistory(_ctx.creds, _ctx.creds.memberId, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _historicalTags.clear();
-                Iterator i = ((Collection) result).iterator();
-                while (i.hasNext()) {
-                    TagHistory history = (TagHistory) i.next();
-                    if (history.member.getMemberId() == _ctx.creds.memberId) {
-                        if (history.tag != null) {
-                            _historicalTags.addItem(history.tag);
+        if (_ctx.creds != null) {
+            _ctx.itemsvc.getRecentTags(_ctx.creds, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    _historicalTags.clear();
+                    Iterator i = ((Collection) result).iterator();
+                    while (i.hasNext()) {
+                        TagHistory history = (TagHistory) i.next();
+                        if (history.member.getMemberId() == _ctx.creds.memberId) {
+                            if (history.tag != null) {
+                                _historicalTags.addItem(history.tag);
+                            }
                         }
                     }
+                    _historicalTags.setVisible(_historicalTags.getItemCount() > 0);
                 }
-                _historicalTags.setVisible(_historicalTags.getItemCount() > 0);
-            }
-            public void onFailure (Throwable caught) {
-                GWT.log("getTagHistory failed", caught);
-                _status.setText("Internal error fetching tag history: " + caught.getMessage());
-            }
-        });
+                public void onFailure (Throwable caught) {
+                    GWT.log("getTagHistory failed", caught);
+                    _status.setText("Internal error fetching tag history: " + caught.getMessage());
+                }
+            });
+        }
 
         _ctx.itemsvc.getTags(_ctx.creds, _item.getIdent(), new AsyncCallback() {
             public void onSuccess (Object result) {

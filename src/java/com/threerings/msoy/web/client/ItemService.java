@@ -93,9 +93,9 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetches the tagging history for a given member.
+     * Fetches the recently used tags for the calling member.
      */
-    public Collection getTagHistory (WebCreds creds, int memberId)
+    public Collection getRecentTags (WebCreds creds)
         throws ServiceException;
 
     /**

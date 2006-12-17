@@ -59,7 +59,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         super.gotDetail(detail);
 
         // if we are the creator (lister) of this item, allow us to delist it
-        if (_listing.creator.getMemberId() == _ctx.creds.memberId) {
+        if (_ctx.creds != null && _listing.creator.getMemberId() == _ctx.creds.memberId) {
             Button delist = new Button("Delist Item");
             new ClickCallback(_ctx, delist, _status) {
                 public boolean callService () {

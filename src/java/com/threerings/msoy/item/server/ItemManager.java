@@ -765,18 +765,19 @@ public class ItemManager
         });
     }
 
-    /** Fetch the tagging history for any item by  a given member. */
-    public void getTagHistory (final int memberId,
-                               ResultListener<Collection<TagHistory>> listener)
+    /**
+     * Fetch the list of recently assigned tags for the specified member.
+     */
+    public void getRecentTags (final int memberId, ResultListener<Collection<TagHistory>> listener)
     {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Collection<TagHistory>>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<TagHistory>>(listener) {
             public Collection<TagHistory> invokePersistResult ()
                 throws PersistenceException {
                 MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
                 MemberName memName = memRec.getName();
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
-                for (Entry<Byte, ItemRepository<ItemRecord, ?, ?, ?, ?, ?>> entry : _repos.entrySet()) {
+                for (Entry<Byte, ItemRepository<ItemRecord, ?, ?, ?, ?, ?>> entry :
+                         _repos.entrySet()) {
                     byte type = entry.getKey();
                     ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = entry.getValue();
                     for (TagHistoryRecord<ItemRecord> record :
