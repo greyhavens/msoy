@@ -11,7 +11,7 @@ import com.samskivert.util.StringUtil;
 
 /**
  * Contains derived data from {@link FriendRecord} and {@link MemberRecord} tailored
- * to the construction of a {@link NeighborFriend} object.
+ * to the construction of a {@link NeighborMember} object.
  */
 @Computed
 @Entity

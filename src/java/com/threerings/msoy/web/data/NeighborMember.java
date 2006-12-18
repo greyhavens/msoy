@@ -11,7 +11,7 @@ import com.threerings.io.Streamable;
 /**
  * Represents data for a single member in a neighborhood query result.
  */
-public class NeighborFriend 
+public class NeighborMember 
     implements IsSerializable, Streamable, Cloneable
 {
     /** The member's id/name. */

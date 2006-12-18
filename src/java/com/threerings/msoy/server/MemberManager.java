@@ -48,7 +48,7 @@ import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.MemberName;
-import com.threerings.msoy.web.data.NeighborFriend;
+import com.threerings.msoy.web.data.NeighborMember;
 import com.threerings.msoy.web.data.NeighborGroup;
 import com.threerings.msoy.web.data.Neighborhood;
 import com.threerings.msoy.web.data.PopularPlace;
@@ -865,9 +865,9 @@ public class MemberManager
                 hood.neighborGroups = nGroups.toArray(new NeighborGroup[0]);
 
                 // finally the friends
-                List<NeighborFriend> members = new ArrayList<NeighborFriend>();
+                List<NeighborMember> members = new ArrayList<NeighborMember>();
                 for (NeighborFriendRecord fRec : _memberRepo.getNeighborhoodFriends(memberId)) {
-                    NeighborFriend nFriend = new NeighborFriend();
+                    NeighborMember nFriend = new NeighborMember();
                     nFriend.member = new MemberName(fRec.name, fRec.memberId);
                     nFriend.created = new Date(fRec.created.getTime());
                     nFriend.flow = fRec.flow;
@@ -876,13 +876,13 @@ public class MemberManager
                     nFriend.sessions = fRec.sessions;
                     members.add(nFriend);
                 }
-                hood.neighborFriends = members.toArray(new NeighborFriend[0]);
+                hood.neighborMembers = members.toArray(new NeighborMember[0]);
                 return hood;
             }
             
             // after we finish, have main thread go through and set online status for friends
             public void handleSuccess () {
-                for (NeighborFriend friend : _result.neighborFriends) {
+                for (NeighborMember friend : _result.neighborMembers) {
                     friend.isOnline = MsoyServer.lookupMember(friend.member.getMemberId()) != null;
                 }
                 _listener.requestCompleted(_result);
@@ -907,7 +907,7 @@ public class MemberManager
             obj.put("group", group);
         }
         JSONArray jArr = new JSONArray();
-        for (NeighborFriend friend : hood.neighborFriends) {
+        for (NeighborMember friend : hood.neighborMembers) {
             jArr.put(toJSON(friend));
         }
         obj.put("friends", jArr);
@@ -919,7 +919,7 @@ public class MemberManager
         return obj;
     }
     
-    protected JSONObject toJSON (NeighborFriend friend)
+    protected JSONObject toJSON (NeighborMember friend)
         throws JSONException
     {
         JSONObject obj = new JSONObject();

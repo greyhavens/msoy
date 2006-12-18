@@ -9,7 +9,7 @@ import com.threerings.io.Streamable;
 /**
  * Represents all the data returned for a neighborhood query: an array of {@link NeighborGroup}
  * objects corresponding to the groups of which the member is a member, and an array of
- * {@link NeighborFriend} objects corresponding to their friends.
+ * {@link NeighborMember} objects corresponding to their friends.
  */
 public class Neighborhood 
     implements IsSerializable, Streamable, Cloneable
@@ -24,7 +24,7 @@ public class Neighborhood
     public NeighborGroup[] neighborGroups;
     
     /** The friends of the member. */
-    public NeighborFriend[] neighborFriends;
+    public NeighborMember[] neighborMembers;
 
     /** Constructor for unserializing. */
     public Neighborhood ()
