@@ -24,7 +24,9 @@ public class index extends MsoyEntryPoint
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
-        if (token.length() > 0) {
+        // "list" is used as a token to get to the GroupList, because you can't give GWT an
+        // empty token string for either a Hyperlink or History.newItem()
+        if (token.length() > 0 && !token.equals("list")) {
             try {
                 setContent(new GroupView(_ctx, Integer.parseInt(token)));
             } catch (Exception e) {

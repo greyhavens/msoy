@@ -10,6 +10,7 @@ import java.util.Date;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -144,7 +145,7 @@ public class GroupView extends DockPanel
                 public void onClick (Widget sender) {
                     (new PromptPopup("Are you sure you wish to leave " + _group.name + "?") {
                         public void onAffirmative () {
-                            removeMember(_me.member.getMemberId());
+                            removeMember(_me.member.getMemberId(), false);
                         }
                         public void onNegative () { }
                     }).prompt();
@@ -321,7 +322,7 @@ public class GroupView extends DockPanel
                     _group.name + "?") {
                     public void onAffirmative () {
                         parent.hide();
-                        removeMember(membership.member.getMemberId());
+                        removeMember(membership.member.getMemberId(), true);
                     }
                     public void onNegative () { }
                 }).prompt();
@@ -377,11 +378,23 @@ public class GroupView extends DockPanel
         });
     }
 
-    protected void removeMember (final int memberId)
+    /**
+     * remove the indicated member from this group. 
+     *
+     * @param memberId The member to remove.
+     * @param refresh if <code>true</code>, this page info is refreshed, otherwise the GroupList 
+     * page is loaded.
+     */
+    protected void removeMember (final int memberId, final boolean reload)
     {
         _ctx.groupsvc.leaveGroup(_ctx.creds, _group.groupId, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                loadGroup(_group.groupId);
+                if (reload) {
+                    loadGroup(_group.groupId);
+                } else { 
+                    // will reload the GroupList page
+                    History.newItem("list");
+                }
             }
             public void onFailure (Throwable caught) {
                 GWT.log("Failed to remove member [groupId=" + _group.groupId +

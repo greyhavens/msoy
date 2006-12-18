@@ -664,6 +664,12 @@ public class MemberManager
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
             public Void invokePersistResult() throws PersistenceException {
                 _groupRepo.leaveGroup(groupId, memberId);
+                // remove groups with 0 memebers left
+                if (_groupRepo.countMembers(groupId) == 0) {
+                    GroupRecord group = new GroupRecord();
+                    group.groupId = groupId;
+                    _groupRepo.deleteGroup(group);
+                }
                 return null;
             }
 

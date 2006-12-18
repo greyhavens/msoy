@@ -106,6 +106,16 @@ public class GroupRepository extends DepotRepository
                 "Couldn't find group to modify [groupId=" + groupId + "]");
         }
     }
+
+    /** 
+     * Deletes the specified group from the repository.  This is generally only done when the
+     * last member of a group leaves.
+     */
+    public void deleteGroup (GroupRecord group) 
+        throws PersistenceException
+    {
+        delete(group);
+    }
     
     /**
      * Makes a given person a member of a given group.
