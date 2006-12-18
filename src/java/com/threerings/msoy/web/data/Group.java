@@ -41,6 +41,15 @@ public class Group
     /** The group's logo. */
     public MediaDesc logo;
 
+    /** The tiled background image for the info area. */
+    public MediaDesc infoBackground;
+
+    /** The tiled background image for the detail area. */
+    public MediaDesc detailBackground;
+    
+    /** The tiled background image for the people area. */
+    public MediaDesc peopleBackground;
+
     /** The id of the person who created the group. */
     public int creatorId;
 

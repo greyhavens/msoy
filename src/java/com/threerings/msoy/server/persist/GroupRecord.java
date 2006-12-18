@@ -23,7 +23,7 @@ import com.threerings.msoy.web.data.Group;
 public class GroupRecord
     implements Cloneable
 {
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     public static final String GROUP_ID = "groupId";
     public static final String NAME = "name";
@@ -32,6 +32,12 @@ public class GroupRecord
     public static final String CHARTER = "charter";
     public static final String LOGO_MIME_TYPE = "logoMimeType";
     public static final String LOGO_MEDIA_HASH = "logoMediaHash";
+    public static final String INFO_BACKGROUND_MIME_TYPE = "infoBackgroundMimeType";
+    public static final String INFO_BACKGROUND_HASH = "infoBackgroundHash";
+    public static final String DETAIL_BACKGROUND_MIME_TYPE = "detailBackgroundMimeType";
+    public static final String DETAIL_BACKGROUND_HASH = "detailBackgroundHash";
+    public static final String PEOPLE_BACKGROUND_MIME_TYPE = "peopleBackgroundMimeType";
+    public static final String PEOPLE_BACKGROUND_HASH = "peopleBackgroundHash";
     public static final String CREATOR_ID = "creatorId";
     public static final String HOME_SCENE_ID = "homeSceneId";
     public static final String CREATION_DATE = "creationDate";
@@ -65,6 +71,27 @@ public class GroupRecord
     @Column(nullable=true)
     public byte[] logoMediaHash;
 
+    /** The MIME type for the background of the info area. */
+    public byte infoBackgroundMimeType;
+
+    /** A hash code identifying the media for the background of the info area. */
+    @Column(nullable=true)
+    public byte[] infoBackgroundHash;
+
+    /** The MIME type for the background of the detail area. */
+    public byte detailBackgroundMimeType;
+
+    /** A hash code identifying the media for the background of the detail area. */
+    @Column(nullable=true)
+    public byte[] detailBackgroundHash;
+
+    /** The MIME type for the background of the people area. */
+    public byte peopleBackgroundMimeType;
+
+    /** A hash code identifying the media for the background of the people area. */
+    @Column(nullable=true)
+    public byte[] peopleBackgroundHash;
+
     /** The member id of the person who created the group. */
     public int creatorId;
 
@@ -90,6 +117,13 @@ public class GroupRecord
         group.charter = charter;
         group.logo = logoMediaHash == null ? Group.getDefaultGroupLogoMedia() :
             new MediaDesc(logoMediaHash.clone(), logoMimeType);
+        // with null backgrounds, there is not default image - just don't try to tile anything
+        group.infoBackground = infoBackgroundHash == null ? null :
+            new MediaDesc(infoBackgroundHash.clone(), infoBackgroundMimeType);
+        group.detailBackground = detailBackgroundHash == null ? null :
+            new MediaDesc(detailBackgroundHash, detailBackgroundMimeType);
+        group.peopleBackground = peopleBackgroundHash == null ? null :
+            new MediaDesc(peopleBackgroundHash, peopleBackgroundMimeType);
         group.creatorId = creatorId;
         group.creationDate = new Date(creationDate.getTime());
         group.policy = policy;

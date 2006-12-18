@@ -529,6 +529,18 @@ public class MemberManager
                     gRec.logoMimeType = groupDef.logo.mimeType;
                     gRec.logoMediaHash = groupDef.logo.hash;
                 }
+                if (groupDef.infoBackground != null) {
+                    gRec.infoBackgroundMimeType = groupDef.infoBackground.mimeType;
+                    gRec.infoBackgroundHash = groupDef.infoBackground.hash;
+                }
+                if (groupDef.detailBackground != null) { 
+                    gRec.detailBackgroundMimeType = groupDef.detailBackground.mimeType;
+                    gRec.detailBackgroundHash = groupDef.detailBackground.hash;
+                }
+                if (groupDef.peopleBackground != null) {
+                    gRec.peopleBackgroundMimeType = groupDef.peopleBackground.mimeType;
+                    gRec.peopleBackgroundHash = groupDef.peopleBackground.hash;
+                }
                 gRec.creatorId = groupDef.creatorId;
                 gRec.creationDate = new Timestamp(groupDef.creationDate.getTime());
                 gRec.policy = groupDef.policy;
@@ -557,40 +569,47 @@ public class MemberManager
      * are used for the update, and data is not read back from the database. This is a low-level
      * method without privilige checks; it's up to the callers to secure it.
      */
-    public void updateGroup (final int groupId, final String name, final String homepageUrl,
-        final String blurb, final String charter, final MediaDesc logo, final byte policy,
-        ResultListener<Void> listener)
+    public void updateGroup (final Group groupDef, ResultListener<Void> listener) 
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
             public Void invokePersistResult () throws PersistenceException {
                 List<Object> argList = new ArrayList<Object>();
-                if (name != null) {
+                if (groupDef.name != null) {
                     argList.add(GroupRecord.NAME);
-                    argList.add(name);
+                    argList.add(groupDef.name);
                 }
-                if (homepageUrl != null) {
+                if (groupDef.homepageUrl != null) {
                     argList.add(GroupRecord.HOMEPAGE_URL);
-                    argList.add(homepageUrl);
+                    argList.add(groupDef.homepageUrl);
                 }
-                if (blurb != null) {
+                if (groupDef.blurb != null) {
                     argList.add(GroupRecord.BLURB);
-                    argList.add(blurb);
+                    argList.add(groupDef.blurb);
                 }
-                if (charter != null) {
+                if (groupDef.charter != null) {
                     argList.add(GroupRecord.CHARTER);
-                    argList.add(charter);
+                    argList.add(groupDef.charter);
                 }
-                if (logo != null) {
-                    argList.add(GroupRecord.LOGO_MIME_TYPE);
-                    argList.add(logo.mimeType);
-                    argList.add(GroupRecord.LOGO_MEDIA_HASH);
-                    argList.add(logo.hash);
+                MediaDesc medias[] = { groupDef.logo, groupDef.infoBackground,
+                    groupDef.detailBackground, groupDef.peopleBackground };
+                String fields[][] = { { GroupRecord.LOGO_MIME_TYPE, GroupRecord.LOGO_MEDIA_HASH }, 
+                    { GroupRecord.INFO_BACKGROUND_MIME_TYPE, GroupRecord.INFO_BACKGROUND_HASH },
+                    { GroupRecord.DETAIL_BACKGROUND_MIME_TYPE, GroupRecord.DETAIL_BACKGROUND_HASH },
+                    { GroupRecord.PEOPLE_BACKGROUND_MIME_TYPE, 
+                        GroupRecord.PEOPLE_BACKGROUND_HASH } };
+                for (int i = 0; i < medias.length; i++) {
+                    if (medias[i] != null) {
+                        argList.add(fields[i][0]);
+                        argList.add(medias[i].mimeType);
+                        argList.add(fields[i][1]);
+                        argList.add(medias[i].hash);
+                    }
                 }
-                if (policy > 0) {
+                if (groupDef.policy > 0) {
                     argList.add(GroupRecord.POLICY);
-                    argList.add(policy);
+                    argList.add(groupDef.policy);
                 }
-                _groupRepo.updateGroup(groupId, argList.toArray());
+                _groupRepo.updateGroup(groupDef.groupId, argList.toArray());
                 return null;
             }
         });
