@@ -1,0 +1,45 @@
+<!-- build configuration -->
+<project name="neighborhood" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"         value="HotSpots"/>
+  <property name="root.path"        value="../.."/>
+
+  <!-- builds our Flash game -->
+  <target name="compile">
+    <java jar="${root.path}/lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-compiler.optimize"/>
+      <arg value="-compiler.library-path"/>
+      <arg value="${root.path}/lib/as-compiler/frameworks/libs"/>
+      <arg value="${root.path}/lib/as-compiler/frameworks/locale/en_US"/>
+      <arg value="-load-config"/>
+      <arg value="${root.path}/lib/as-compiler/frameworks/flex-config.xml"/>
+      <arg value="-link-report"/>
+      <arg value="/tmp/link-report.txt"/>
+      <arg value="-resource-bundle-list"/>
+      <arg value="/tmp/bundles.list"/>
+      <arg value="-compiler.warn-class-is-sealed=true"/>
+      <arg value="-compiler.warn-constructor-returns-value=true"/>
+      <arg value="-compiler.fonts.local-fonts-snapshot=${root.path}/lib/as-compiler/frameworks/localFonts.ser"/>
+      <arg value="-compiler.source-path=src/as"/>
+      <arg value="-externs"/>
+      <arg value="-file-specs"/>
+      <arg value="src/as/${app.name}.as"/>
+      <arg value="-output"/>
+      <arg value="HotSpots.swf"/>
+    </java>
+  </target>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+    </delete>
+  </target>
+
+  <target name="dist" depends="compile">
+    <copy file="HotSpots.swf" todir="/export/msoy/pages/media/static/"/>
+  </target>
+
+
+</project>
