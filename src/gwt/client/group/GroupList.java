@@ -53,7 +53,7 @@ public class GroupList extends VerticalPanel
         leftPanel.add(_popularTagsContainer);
         _featuredGroupsContainer = new VerticalPanel();
         _featuredGroupsContainer.setStyleName("featuredGroups");
-        DOM.setAttribute(_featuredGroupsContainer.getElement(), "width", "100%");
+        DOM.setStyleAttribute(_featuredGroupsContainer.getElement(), "width", "100%");
         leftPanel.add(_featuredGroupsContainer);
         table.setWidget(0, 0, leftPanel);
         table.getFlexCellFormatter().setRowSpan(0, 0, 3);
@@ -67,17 +67,17 @@ public class GroupList extends VerticalPanel
         search.setWidget(0, 0, searchInput);
         search.setWidget(0, 1, new Button("Search"));
         search.setWidget(0, 3, new Button("Form New Group"));
-        DOM.setAttribute(search.getFlexCellFormatter().getElement(0, 2), "width", "100%");
+        DOM.setStyleAttribute(search.getFlexCellFormatter().getElement(0, 2), "width", "100%");
         table.setWidget(0, 1, search);
         // This is a nasty place to set a static height in pixels, but for some reason I cannot
         // fathom, the height of this cell is defaulting to way too large.
-        DOM.setAttribute(table.getFlexCellFormatter().getElement(0, 1), "height", "10px");
+        DOM.setStyleAttribute(table.getFlexCellFormatter().getElement(0, 1), "height", "10px");
         
         _characterListContainer = new FlowPanel();
         _characterListContainer.setStyleName("characterList");
         table.setWidget(1, 0, _characterListContainer);
         // and again with the ridiculous height
-        DOM.setAttribute(table.getFlexCellFormatter().getElement(1, 0), "height", "10px");
+        DOM.setStyleAttribute(table.getFlexCellFormatter().getElement(1, 0), "height", "10px");
 
         _groupListContainer = new VerticalPanel();
         _groupListContainer.setStyleName("groups");
