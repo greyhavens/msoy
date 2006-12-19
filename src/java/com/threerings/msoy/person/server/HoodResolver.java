@@ -14,7 +14,7 @@ public class HoodResolver extends BlurbResolver
     @Override // from BlurbResolver
     protected void resolve ()
     {
-        MsoyServer.memberMan.serializeNeighborhood(_memberId, new ResultListener<String>() {
+        MsoyServer.memberMan.serializeNeighborhood(_memberId, false, new ResultListener<String>() {
             public void requestCompleted (String hood) {
                 resolutionCompleted(hood);
             }

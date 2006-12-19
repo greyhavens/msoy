@@ -38,4 +38,10 @@ public class FlashClients
         return WidgetUtil.createFlashContainer(
             "hood","/media/static/HoodViz.swf", "100%", "550", "neighborhood=" + hoodData);
     }
+
+    public static HTML createPopularPlaces (String hotspotData)
+    {
+        return WidgetUtil.createFlashContainer(
+            "hotspots","/media/static/HotSpots.swf", "100%", "550", "hotspots=" + hotspotData);
+    }
 }

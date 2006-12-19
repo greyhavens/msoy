@@ -80,34 +80,35 @@ public class index extends MsoyEntryPoint
                 return;
             }
             if (token.startsWith("ng")) {
-                // TODO: get group neighborhood, not member :)
                 final int requestEntryCount = _entryCounter;
-                _ctx.membersvc.serializeNeighborhood(_ctx.creds, id(token, 2), new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        if (requestEntryCount == _entryCounter) {
-                            neighborhood((String) result);
+                _ctx.membersvc.serializeNeighborhood(
+                    _ctx.creds, id(token, 2), true, new AsyncCallback() {
+                        public void onSuccess (Object result) {
+                            if (requestEntryCount == _entryCounter) {
+                                neighborhood((String) result);
+                            }
                         }
-                    }
-                    public void onFailure (Throwable caught) {
-                        if (requestEntryCount == _entryCounter) {
+                        public void onFailure (Throwable caught) {
+                            if (requestEntryCount == _entryCounter) {
+                            }
                         }
-                    }
-                });
+                    });
                 return;
             }
             if (token.startsWith("nm")) {
                 final int requestEntryCount = _entryCounter;
-                _ctx.membersvc.serializeNeighborhood(_ctx.creds, id(token, 2), new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        if (requestEntryCount == _entryCounter) {
-                            neighborhood((String) result);
+                _ctx.membersvc.serializeNeighborhood(
+                    _ctx.creds, id(token, 2), false, new AsyncCallback() {
+                        public void onSuccess (Object result) {
+                            if (requestEntryCount == _entryCounter) {
+                                neighborhood((String) result);
+                            }
                         }
-                    }
-                    public void onFailure (Throwable caught) {
-                        if (requestEntryCount == _entryCounter) {
+                        public void onFailure (Throwable caught) {
+                            if (requestEntryCount == _entryCounter) {
+                            }
                         }
-                    }
-                });
+                    });
                 return;
             }
         } catch (NumberFormatException e) {
@@ -126,7 +127,7 @@ public class index extends MsoyEntryPoint
         _ctx.membersvc.serializePopularPlaces(_ctx.creds, 20, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (requestEntryCount == _entryCounter) {
-                    setContent(new Label("Popular places: " + (String) result));
+                    hotSpots((String) result);
                 }
             }
             public void onFailure (Throwable caught) {
@@ -143,6 +144,14 @@ public class index extends MsoyEntryPoint
             clientLogoff();
         }
         setContent(_client = FlashClients.createNeighborhood(hood));
+    }
+
+    protected void hotSpots (String hotSpots)
+    {
+        if (_client != null) {
+            clientLogoff();
+        }
+        setContent(_client = FlashClients.createPopularPlaces(hotSpots));
     }
 
     protected void world (String flashVar)

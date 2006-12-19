@@ -780,8 +780,8 @@ public class MemberManager
                 _popularPlaceResult = result.toString();
                 _popularPlaceStamp = System.currentTimeMillis();
             }
-            listener.requestCompleted(_popularPlaceResult);
-        } catch (JSONException e) {
+            listener.requestCompleted(URLEncoder.encode(_popularPlaceResult, "UTF-8"));
+        } catch (Exception e) {
             listener.requestFailed(e);
         }
     }
@@ -815,11 +815,12 @@ public class MemberManager
     
     /**
      * Constructs and returns the serialization of a {@link Neighborhood} record
-     * for a given member.
+     * for a given member or group.
      */
-    public void serializeNeighborhood (final int memberId, final ResultListener<String> listener)
+    public void serializeNeighborhood (final int id, final boolean forGroup,
+                                       final ResultListener<String> listener)
     {
-        getNeighborhood(memberId, new ResultListener<Neighborhood>() {
+        ResultListener<Neighborhood> newListener = new ResultListener<Neighborhood>() {
             public void requestCompleted (Neighborhood result) {
                 try {
                     listener.requestCompleted(
@@ -831,14 +832,19 @@ public class MemberManager
             public void requestFailed (Exception cause) {
                 listener.requestFailed(cause);
             }
-        });
+        };
+        if (forGroup) {
+            getGroupNeighborhood(id, newListener);
+        } else {
+            getMemberNeighborhood(id, newListener);
+        }
     }
     
 
     /**
      * Constructs and returns a {@link Neighborhood} record for a given member.
      */
-    public void getNeighborhood (final int memberId, ResultListener<Neighborhood> listener)
+    public void getMemberNeighborhood (final int memberId, ResultListener<Neighborhood> listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Neighborhood>(listener) {
             public Neighborhood invokePersistResult() throws PersistenceException {
@@ -846,7 +852,7 @@ public class MemberManager
                 // first load the center member data
                 MemberRecord mRec = _memberRepo.loadMember(memberId);
                 hood.member = mRec.getName();
-
+    
                 // then all the data for the groups
                 Collection<GroupMembershipRecord> gmRecs = _groupRepo.getMemberships(memberId);
                 int[] groupIds = new int[gmRecs.size()];
@@ -863,18 +869,52 @@ public class MemberManager
                     nGroups.add(nGroup);
                 }
                 hood.neighborGroups = nGroups.toArray(new NeighborGroup[0]);
-
+    
                 // finally the friends
                 List<NeighborMember> members = new ArrayList<NeighborMember>();
                 for (NeighborFriendRecord fRec : _memberRepo.getNeighborhoodFriends(memberId)) {
-                    NeighborMember nFriend = new NeighborMember();
-                    nFriend.member = new MemberName(fRec.name, fRec.memberId);
-                    nFriend.created = new Date(fRec.created.getTime());
-                    nFriend.flow = fRec.flow;
-                    nFriend.lastSession = fRec.lastSession;
-                    nFriend.sessionMinutes = fRec.sessionMinutes;
-                    nFriend.sessions = fRec.sessions;
-                    members.add(nFriend);
+                    members.add(makeNeighborMember(fRec));
+                }
+                hood.neighborMembers = members.toArray(new NeighborMember[0]);
+                return hood;
+            }
+
+            // after we finish, have main thread go through and set online status for friends
+            public void handleSuccess () {
+                for (NeighborMember friend : _result.neighborMembers) {
+                    friend.isOnline = MsoyServer.lookupMember(friend.member.getMemberId()) != null;
+                }
+                _listener.requestCompleted(_result);
+            }
+        });
+    }
+
+    /**
+     * Constructs and returns a {@link Neighborhood} record for a given group.
+     */
+    public void getGroupNeighborhood (final int groupId, ResultListener<Neighborhood> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Neighborhood>(listener) {
+            public Neighborhood invokePersistResult() throws PersistenceException {
+                Neighborhood hood = new Neighborhood();
+                // first load the center group data
+                GroupRecord gRec = _groupRepo.loadGroup(groupId);
+                hood.group = new GroupName(gRec.name, groupId);
+
+                // we have no groups
+                hood.neighborGroups = new NeighborGroup[0];
+
+                // but we're including all the group's members, so load'em
+                Collection<GroupMembershipRecord> gmRecs = _groupRepo.getMembers(groupId);
+                int[] memberIds = new int[gmRecs.size()];
+                int ii = 0;
+                for (GroupMembershipRecord gmRec : gmRecs) {
+                    memberIds[ii ++] = gmRec.memberId;
+                }
+
+                List<NeighborMember> members = new ArrayList<NeighborMember>();
+                for (NeighborFriendRecord fRec : _memberRepo.getNeighborhoodMembers(memberIds)) {
+                    members.add(makeNeighborMember(fRec));
                 }
                 hood.neighborMembers = members.toArray(new NeighborMember[0]);
                 return hood;
@@ -889,6 +929,20 @@ public class MemberManager
             }
         });
     }
+
+    // convert a {@link NeighborFriendRecord} to a {@link NeighborMember}.
+    protected NeighborMember makeNeighborMember (NeighborFriendRecord fRec)
+    {
+        NeighborMember nFriend = new NeighborMember();
+        nFriend.member = new MemberName(fRec.name, fRec.memberId);
+        nFriend.created = new Date(fRec.created.getTime());
+        nFriend.flow = fRec.flow;
+        nFriend.lastSession = fRec.lastSession;
+        nFriend.sessionMinutes = fRec.sessionMinutes;
+        nFriend.sessions = fRec.sessions;
+        return nFriend;
+    }
+
     // handcrafted JSON serialization, to minimize the overhead
     protected JSONObject toJSON (Neighborhood hood)
         throws JSONException

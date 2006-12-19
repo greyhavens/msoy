@@ -44,7 +44,8 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#serializeNeighborhood}.
      */
-    public void serializeNeighborhood (WebCreds creds, int memberId, AsyncCallback callback);
+    public void serializeNeighborhood (WebCreds creds, int memberId, boolean forGroup,
+                                       AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link MemberService#serializePopularPlaces}.

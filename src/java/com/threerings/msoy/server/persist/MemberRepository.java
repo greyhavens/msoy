@@ -318,6 +318,31 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Returns the NeighborFriendRecords for all the given members.
+     */
+    public Collection<NeighborFriendRecord> getNeighborhoodMembers (final int[] memberIds)
+        throws PersistenceException
+    {
+        if (memberIds.length == 0) {
+            return Collections.emptyList();
+        }
+        Comparable[] idArr = IntListUtil.box(memberIds);
+        // OK, we definitely need some kind of default class for computed classes...
+        return findAll(
+            NeighborFriendRecord.class,
+            new FromOverride(MemberRecord.class),
+            new Join(FriendRecord.class, new In(MemberRecord.MEMBER_ID_C, idArr)),
+            new Where(new Equals(FriendRecord.STATUS_C, true)),
+            new FieldOverride(NeighborFriendRecord.CREATED, MemberRecord.CREATED_C),
+            new FieldOverride(NeighborFriendRecord.FLOW, MemberRecord.FLOW_C),
+            new FieldOverride(NeighborFriendRecord.LAST_SESSION, MemberRecord.LAST_SESSION_C),
+            new FieldOverride(NeighborFriendRecord.MEMBER_ID, MemberRecord.MEMBER_ID_C),
+            new FieldOverride(NeighborFriendRecord.NAME, MemberRecord.NAME_C),
+            new FieldOverride(NeighborFriendRecord.SESSION_MINUTES, MemberRecord.SESSION_MINUTES_C),
+            new FieldOverride(NeighborFriendRecord.SESSIONS, MemberRecord.SESSIONS_C));
+    }
+
+    /**
      * Get the FriendEntry record for all friends (pending, too) of the
      * specified memberId. The online status of each friend will be false.
      */
