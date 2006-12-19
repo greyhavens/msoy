@@ -1,3 +1,7 @@
+.groupView td {
+    vertical-align: top;
+}
+
 .groupView .name {
     font-size: 22px;
     font-weight: bold;
