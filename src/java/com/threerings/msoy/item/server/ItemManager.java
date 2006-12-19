@@ -594,10 +594,8 @@ public class ItemManager
                 if (listItem.ownerId == -1) {
                     throw new PersistenceException("Item is already listed [item=" + ident + "]");
                 }
-                // reset the owner
-                listItem.ownerId = -1;
-                // and the iD
-                listItem.itemId = 0;
+                // reset any important bits
+                listItem.clearForListing();
                 // then insert it as the immutable copy we list
                 repo.insertOriginalItem(listItem);
                 // and finally create & insert the catalog record

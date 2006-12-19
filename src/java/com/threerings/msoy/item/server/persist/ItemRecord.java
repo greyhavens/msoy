@@ -72,11 +72,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
     @GeneratedValue(generator="itemId", strategy=GenerationType.TABLE)
     public int itemId;
 
-    /**
-     * The item ID from which this object was cloned, or -1 if this is not
-     * a clone. This field is not persisted to the database, but set when
-     * we load a clone.
-     */
+    /** The item ID from which this object was cloned, or -1 if this is not a clone. This field is
+     * not persisted to the database, but set when we load a clone. */
     @Computed(required=false)
     public int parentId = -1;
 
@@ -175,6 +172,17 @@ public abstract class ItemRecord implements Streamable, Cloneable
             return (itemId == that.itemId) && (getType() == that.getType());
         }
         return false;
+    }
+
+    /**
+     * Clears out any fields that should be reset when listing this item in the catalog.
+     */
+    public void clearForListing ()
+    {
+        ownerId = -1;
+        itemId = 0;
+        used = 0;
+        location = 0;
     }
 
     public Item toItem ()

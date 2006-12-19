@@ -137,7 +137,9 @@ public abstract class ItemRepository<
                      getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID),
             new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID),
             new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID),
-            new FieldOverride(ItemRecord.OWNER_ID, cloneOwner));
+            new FieldOverride(ItemRecord.OWNER_ID, cloneOwner),
+            new FieldOverride(ItemRecord.LOCATION, getItemClass(), ItemRecord.ITEM_ID),
+            new FieldOverride(ItemRecord.USED, getItemClass(), ItemRecord.ITEM_ID));
     }
 
     /**
