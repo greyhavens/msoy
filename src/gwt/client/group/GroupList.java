@@ -70,16 +70,18 @@ public class GroupList extends VerticalPanel
         search.setWidget(0, 3, new Button("Form New Group"));
         DOM.setAttribute(search.getFlexCellFormatter().getElement(0, 2), "width", "100%");
         table.setWidget(0, 1, search);
+        // This is a nasty place to set a static height in pixels, but for some reason I cannot
+        // fathom, the height of this cell is defaulting to way too large.
+        DOM.setAttribute(table.getFlexCellFormatter().getElement(0, 1), "height", "10px");
         
         _characterListContainer = new FlowPanel();
         table.setWidget(1, 0, _characterListContainer);
 
         _groupListContainer = new VerticalPanel();
+        _groupListContainer.setStyleName("groups");
         _groupListContainer.add(new HTML("Click a letter above to browse groups that start " +
             "with that character, or complete a search above."));
         table.setWidget(2, 0, _groupListContainer);
-        DOM.setAttribute(DOM.getParent(table.getFlexCellFormatter().getElement(2, 0)),
-            "height", "100%");
 
         loadPopularTags();
         loadFeaturedGroups();

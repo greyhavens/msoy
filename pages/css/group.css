@@ -80,8 +80,13 @@
     font-size: 11px;
 }
 
+.groupList tr {
+    vertical-align: top;
+}
+
 .groupList .leftColumn {
-    width: 210px;
+    width: 200px;
+    padding-right: 10px;
 }
 
 .groupList .leftColumn .popularTags {
