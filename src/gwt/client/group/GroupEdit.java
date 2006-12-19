@@ -214,7 +214,7 @@ public class GroupEdit extends DialogBox
         case IMAGE_INFO_BACKGROUND: media = _group.infoBackground; break;
         case IMAGE_DETAIL_BACKGROUND: media = _group.detailBackground; break;
         case IMAGE_PEOPLE_BACKGROUND: media = _group.peopleBackground; break;
-        default: addError("Internal Error! Unknown image type: " + type);
+        default: addError("Internal Error! Unknown image type: " + type); return;
         }
 
         box.clear();

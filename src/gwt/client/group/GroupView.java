@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -109,6 +109,10 @@ public class GroupView extends DockPanel
         VerticalPanel logoPanel = new VerticalPanel();
         logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         logoPanel.setStyleName("logoPanel");
+        if (_group.infoBackground != null) {
+            DOM.setStyleAttribute(logoPanel.getElement(), "backgroundImage", "url(" + 
+                MsoyEntryPoint.toMediaPath(_group.infoBackground.getMediaPath()) + ")");
+        }
         logoPanel.add(ItemUtil.createMediaView(_group.logo, 160, 120));
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("links");
@@ -155,6 +159,10 @@ public class GroupView extends DockPanel
 
         ScrollPanel description = new ScrollPanel();
         description.setStyleName("descriptionPanel");
+        if (_group.detailBackground != null) {
+            DOM.setStyleAttribute(description.getElement(), "backgroundImage", "url(" + 
+                MsoyEntryPoint.toMediaPath(_group.detailBackground.getMediaPath()) + ")");
+        }
         String descriptionHtml = "<span class='name'>" + _group.name + "</span><br />";
         if (_group.blurb != null) {
             descriptionHtml += "<span class='blurb'>" + _group.blurb + "</span><br />";
@@ -167,6 +175,10 @@ public class GroupView extends DockPanel
 
         FlexTable people = new FlexTable();
         people.setStyleName("peoplePanel");
+        if (_group.peopleBackground != null) {
+            DOM.setStyleAttribute(people.getElement(), "backgroundImage", "url(" + 
+                MsoyEntryPoint.toMediaPath(_group.peopleBackground.getMediaPath()) + ")");
+        }
         people.setText(0, 0, "Managers:");
         people.setText(1, 0, "Members:");
         FlowPanel managers = new FlowPanel();
