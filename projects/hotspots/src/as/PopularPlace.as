@@ -33,7 +33,6 @@ public class PopularPlace
         var jArr :Array = JSON as Array;
         var result :Array = new Array();
         for (var i :int = 0; i < jArr.length; i ++) {
-            // var jPlace :Object = jArr[i] as Object;
             var place :PopularPlace;
             if (jArr[i].gameId) {
                 place = PopularGame.fromJSON(jArr[i]);
@@ -54,7 +53,7 @@ public class PopularPlace
             throw new Error("Missing name/pop in JSON");
         }
         place.name = JSON.name;
-        place.population = Math.random() * 100;
+        place.population = JSON.pop;
     }
 }
 }

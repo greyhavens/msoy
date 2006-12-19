@@ -30,12 +30,15 @@ public class HotSpots extends Sprite
             labelText.autoSize = TextFieldAutoSize.CENTER;
             labelText.wordWrap = false;
 
-            var label :Sprite = new Sprite();
+            var bgColor :int = (_places[i] is PopularGame) ? 0xDA70D6 : 0xBF5FFF;
+
+            var label :ToolTipSprite = new ToolTipSprite();
+            label.place = _places[i];
             label.addEventListener(MouseEvent.CLICK, clickHandler);
             label.addChild(labelText);
             with (label.graphics) {
                 clear();
-                beginFill(0xFFFFFF);
+                beginFill(bgColor);
                 drawRoundRect(0, 0, labelText.width + 20, labelText.height, 10, 10);
                 endFill();
                 lineStyle(2, 0x000000);
@@ -53,7 +56,13 @@ public class HotSpots extends Sprite
 
     public function clickHandler (event :MouseEvent) :void
     {
-        var url :String = "/world/#TODO";
+        var place :PopularPlace = (event.currentTarget as ToolTipSprite).place;
+        var url :String;
+        if (place is PopularGame) {
+            url = "/game/#" + (place as PopularGame).gameId;
+        } else {
+            url = "/world/#s" + (place as PopularScene).sceneId;
+        }
         navigateToURL(new URLRequest(url), "_self");
     }
 
