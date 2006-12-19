@@ -3,6 +3,7 @@ package {
 import flash.display.*;
 import flash.text.*;
 import flash.events.*;
+import flash.net.*;
 import flash.ui.*;
 import flash.utils.*;
 import flash.external.ExternalInterface;
@@ -26,10 +27,10 @@ public class HoodViz extends Sprite
         this.addChild(_canvas);
 
         if (_hood.centralMember != null) {
-            addBit(_myHouse, 1, 0, false, _hood.centralMember);
+            addBit(_myHouse, 1, 0, true, _hood.centralMember);
         }
         if (_hood.centralGroup != null) {
-            addBit(_myHouse, -1, 0, false, _hood.centralGroup);
+            addBit(_myHouse, -1, 0, true, _hood.centralGroup);
         }
 
         // compute a very rough bounding rectangle for the visible houses
@@ -109,6 +110,7 @@ public class HoodViz extends Sprite
             bitHolder.neighbor = neighbor;
             bitHolder.addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
             bitHolder.addEventListener(MouseEvent.ROLL_OUT, rollOutHandler);
+            bitHolder.addEventListener(MouseEvent.CLICK, clickHandler);
         }
         _canvas.addChild(bitHolder);
 
@@ -118,6 +120,34 @@ public class HoodViz extends Sprite
             _bound.y.min = Math.min(_bound.y.min, bitHolder.y);
             _bound.y.max = Math.max(_bound.y.max, bitHolder.y + bit.height);
         }
+    }
+
+    public function clickHandler (event :MouseEvent) :void
+    {
+        var neighbor :Neighbor = (event.currentTarget as ToolTipSprite).neighbor;
+        var url :String = "/world/#";
+        if (neighbor is NeighborMember) {
+            var friend :NeighborMember = neighbor as NeighborMember;
+            if (_hood.centralMember != null &&
+                _hood.centralMember.memberId == friend.memberId) {
+                // clicking on the centre member takes us to their profile page
+                url += "m" + friend.memberId;
+            } else {
+                // clicking on another member just goes to -their- neighborhood
+                url += "nm" + friend.memberId;
+            }
+        } else {
+            var group :NeighborGroup = neighbor as NeighborGroup;
+            if (_hood.centralGroup != null &&
+                _hood.centralGroup.groupId == group.groupId) {
+                // clicking on the centre group takes us to their profile page
+                url += "g" + group.groupId;
+            } else {
+                // clicking on another group just goes to -their- neighborhood
+                url += "ng" + group.groupId;
+            }
+        }
+        navigateToURL(new URLRequest(url), "_self");
     }
 
     public function rollOverHandler (event :MouseEvent) :void
