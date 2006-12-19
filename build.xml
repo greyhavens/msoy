@@ -489,7 +489,18 @@
   <!-- fully cleans out the application -->
   <target name="distclean">
     <delete dir="${deploy.dir}"/>
-    <delete><fileset dir="rsrc" includes="**/*.jar"/></delete>
+    <delete dir=".gwt-cache"/>
+    <delete file="lib/msoy-export.swc"/>
+    <delete file="lib/naryavilya.swc"/>
+    <for list="${pages}" param="page">
+      <sequential>
+        <delete dir="pages/@{page}"/>
+        <delete file="src/gwt/@{page}.gwt.xml"/>
+      </sequential>
+    </for>
+    <delete dir="pages/clients"/>
+    <delete><fileset dir="src/as" includes="Msoy_*.cache"/></delete>
+    <delete file="src/as/com/threerings/msoy/client/DeploymentConfig.as"/>
   </target>
 
   <!-- cleans out the application and all subprojects -->
