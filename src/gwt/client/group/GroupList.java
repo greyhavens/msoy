@@ -9,15 +9,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -26,123 +26,100 @@ import com.threerings.msoy.web.data.Group;
 import client.shell.MsoyEntryPoint;
 import client.util.WebContext;
 
-import client.group.GroupEdit.GroupSubmissionListener;
-
 /**
- * Display all existing groups in a simple list format. This will change when
- * there is a non-trivial number of groups.
-  */
-public class GroupList extends DockPanel
-    implements GroupSubmissionListener
+ * Display the public groups in a sensical manner, including a sorted list of characters that
+ * start the groups, allowing people to select a subset of the public groups to view.
+ */
+public class GroupList extends VerticalPanel
 {
     public GroupList(WebContext ctx)
     {
         super();
         _ctx = ctx;
 
-        _characters = new HorizontalPanel();
-        add(_characters, DockPanel.NORTH);
+        _errorContainer = new VerticalPanel();
+        _errorContainer.setStyleName("groupListErrors");
+        add(_errorContainer);
+
+        FlexTable table = new FlexTable();
+        add(table);
+
+        VerticalPanel leftPanel = new VerticalPanel();
+        _popularTagsContainer = new FlowPanel();
+        leftPanel.add(_popularTagsContainer);
+        _featuredGroupsContainer = new VerticalPanel();
+        leftPanel.add(_featuredGroupsContainer);
+        table.setWidget(0, 0, leftPanel);
+        table.getFlexCellFormatter().setRowSpan(0, 0, 3);
         
-        _table = new FlexTable();
-        _table.setStyleName("groupList");
-        add(_table, DockPanel.CENTER);
-
-        HorizontalPanel bpanel = new HorizontalPanel();
-        add(bpanel, DockPanel.SOUTH);
-
-        Button editButton = new Button("Create New");
-        bpanel.add(editButton);
-        editButton.setStyleName("groupEditorButton");
-        editButton.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                new GroupEdit(_ctx, new Group(), GroupList.this).show();
-            }
-        });
+        MyFlexTable search = new MyFlexTable();
+        TextBox searchInput = new TextBox();
+        searchInput.setMaxLength(255);
+        searchInput.setVisibleLength(20);
+        DOM.setAttribute(searchInput.getElement(), "id", "searchInput");
+        search.setWidget(0, 0, searchInput);
+        search.setWidget(0, 1, new Button("Search"));
+        search.setWidget(0, 3, new Button("Form New Group"));
+        // have the empty cell hog as much space as it can, pushing the from group button to the 
+        // right.
+        search.getMyFlexCellFormatter().setWidth(0, 2, "100%");
+        table.setWidget(0, 1, search);
         
-        loadCharacterList();
-        loadGroups();
+        _characterListContainer = new FlowPanel();
+        table.setWidget(1, 1, _characterListContainer);
+
+        _groupListContainer = new VerticalPanel();
+        _groupListContainer.add(new HTML("Click a letter above to browse groups that start " +
+            "with that character, or complete a search above."));
+        table.setWidget(2, 1, _groupListContainer);
+
+        fillPopularTags();
+        fillFeaturedGroups();
+        fillCharacterList();
     }
 
-    // callback from {@link GroupEditor}
-    public void groupSubmitted (Group group)
+    protected void fillCharacterList ()
     {
-        // just refresh the whole view
-        loadGroups();
     }
 
-    // fill in the list of characters that begin list names
-    protected void loadCharacterList ()
+    protected void fillPopularTags ()
     {
-        _ctx.groupsvc.getCharacters(_ctx.creds, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                Collections.sort((List)result);
-                Iterator i = ((List)result).iterator();
-                _characters.clear();
-                while(i.hasNext()) {
-                    _characters.add(new Label((String)i.next()));
-                }
-            }
-            public void onFailure (Throwable caught) {
-                GWT.log("loadCharacterList failed", caught);
-            }
-        });
     }
 
-    // refetch the data and trigger a UI rebuild
-    protected void loadGroups ()
+    protected void fillFeaturedGroups ()
     {
-        _ctx.groupsvc.getGroups(_ctx.creds, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                populateTable((List) result);
-            }
-            public void onFailure (Throwable caught) {
-                GWT.log("loadGroups failed", caught);
-                // TODO: if ServiceException, translate
-                // TODO: error report
-            }
-        });
     }
 
-    // (re)build the group list from scratch
-    protected void populateTable (List groups)
+    protected void addError (String error) 
     {
-        _table.clear();
-        int row = 0;
+        _errorContainer.add(new Label(error));
+    }
 
-        _table.setText(row, 0, "Name");
-        _table.setText(row, 1, "Logo");
-        _table.setText(row, 2, "Policy");
-        _table.setText(row, 3, "Blurb");
-        row ++;
-        
-        Iterator iterator = groups.iterator();
-        while (iterator.hasNext()) {
-            Group group = (Group)iterator.next();
+    protected void clearErrors ()
+    {
+        _errorContainer.clear();
+    }
 
-            // TODO: innerText in Hyperlinks needs to be escaped properly, as the GWT doesn't
-            // seem to be doing it automatically (i.e. create a group named "<foo> bar")
-            // first column: the group's name
-            _table.setWidget(row, 0, new Hyperlink(group.name, Integer.toString(group.groupId)));
+    protected class MyFlexTable extends FlexTable {
+        public class MyFlexCellFormatter extends FlexTable.FlexCellFormatter {
+            public void fillWidth (int row, int column) {
+                DOM.setStyleAttribute(getElement(row, column), "width", "100%");
+            }
+        }
 
-            // second column: the logo
-            Image logo = new Image(group.logo == null ? "/msoy/images/default_logo.png" :
-                MsoyEntryPoint.toMediaPath(group.logo.getMediaPath()));
-            logo.setStyleName("groupLogoThumbnail");
-            _table.setWidget(row, 1, logo);
+        public MyFlexTable () {
+            setCellFormatter(new MyFlexCellFormatter());
+        }
 
-            // third column: the policy
-            _table.setText(row, 2, group.policy == Group.POLICY_PUBLIC ? "Public" :
-                    group.policy == Group.POLICY_EXCLUSIVE ? "Exclusive" : "Invitation Only");
-
-            _table.setText(row, 3, group.blurb);
-
-            _table.getRowFormatter().setVerticalAlign(row, HasAlignment.ALIGN_TOP);
-
-            row ++;
+        public MyFlexCellFormatter getMyFlexCellFormatter() {
+            return (MyFlexCellFormatter)getCellFormatter();
         }
     }
 
     protected WebContext _ctx;
-    protected HorizontalPanel _characters;
-    protected FlexTable _table;
+    protected VerticalPanel _errorContainer;
+    protected FlowPanel _characterListContainer;
+    protected FlowPanel _popularTagsContainer;
+    protected VerticalPanel _featuredGroupsContainer;
+    protected VerticalPanel _groupListContainer;
 }
