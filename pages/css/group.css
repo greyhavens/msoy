@@ -1,3 +1,4 @@
+/* GroupView specific formatting */
 .groupView td {
     vertical-align: top;
 }
@@ -71,4 +72,45 @@
 
 .gwt-MenuBar .disabled {
     color: gray;
+}
+
+
+/* GroupList specific formattting */
+.groupList {
+    font-size: 11px;
+}
+
+.groupList .leftColumn {
+    width: 210px;
+}
+
+.groupList .leftColumn .popularTags {
+    margin-bottom: 10px;
+}
+
+.groupList .leftColumn .popularTags a, .groupList .leftColumn .popularTags {
+    font-style: italic;
+    color: #696969;
+}
+
+.groupList .leftColumn .popularTags .popularTagsLabel {
+    font-style: normal;
+    color: black;
+    font-weight: 600;
+}
+
+.groupList .leftColumn .popularTags #moreLink {
+    color: #CD853F;
+}
+
+.groupList .leftColumn .featuredGroups {
+    border: 1px solid #696969;
+}
+
+.groupList .leftColumn .featuredGroups .featuredGroupsTitle {
+    font-size: 15px;
+    color: white;
+    font-weight: 600;
+    background-color: #696969;
+    padding: 3px;
 }

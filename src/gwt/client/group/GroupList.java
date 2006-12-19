@@ -23,6 +23,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.Group;
 
+import com.threerings.gwt.ui.Anchor;
+import com.threerings.gwt.ui.InlineLabel;
+
 import client.shell.MsoyEntryPoint;
 import client.util.WebContext;
 
@@ -35,6 +38,7 @@ public class GroupList extends VerticalPanel
     public GroupList(WebContext ctx)
     {
         super();
+        setStyleName("groupList");
         _ctx = ctx;
 
         _errorContainer = new VerticalPanel();
@@ -46,13 +50,17 @@ public class GroupList extends VerticalPanel
 
         VerticalPanel leftPanel = new VerticalPanel();
         _popularTagsContainer = new FlowPanel();
+        _popularTagsContainer.setStyleName("popularTags");
         leftPanel.add(_popularTagsContainer);
         _featuredGroupsContainer = new VerticalPanel();
+        _featuredGroupsContainer.setStyleName("featuredGroups");
+        DOM.setAttribute(_featuredGroupsContainer.getElement(), "width", "100%");
         leftPanel.add(_featuredGroupsContainer);
         table.setWidget(0, 0, leftPanel);
         table.getFlexCellFormatter().setRowSpan(0, 0, 3);
+        table.getFlexCellFormatter().setStyleName(0, 0, "leftColumn");
         
-        MyFlexTable search = new MyFlexTable();
+        FlexTable search = new FlexTable();
         TextBox searchInput = new TextBox();
         searchInput.setMaxLength(255);
         searchInput.setVisibleLength(20);
@@ -60,34 +68,53 @@ public class GroupList extends VerticalPanel
         search.setWidget(0, 0, searchInput);
         search.setWidget(0, 1, new Button("Search"));
         search.setWidget(0, 3, new Button("Form New Group"));
-        // have the empty cell hog as much space as it can, pushing the from group button to the 
-        // right.
-        search.getMyFlexCellFormatter().setWidth(0, 2, "100%");
+        DOM.setAttribute(search.getFlexCellFormatter().getElement(0, 2), "width", "100%");
         table.setWidget(0, 1, search);
         
         _characterListContainer = new FlowPanel();
-        table.setWidget(1, 1, _characterListContainer);
+        table.setWidget(1, 0, _characterListContainer);
 
         _groupListContainer = new VerticalPanel();
         _groupListContainer.add(new HTML("Click a letter above to browse groups that start " +
             "with that character, or complete a search above."));
-        table.setWidget(2, 1, _groupListContainer);
+        table.setWidget(2, 0, _groupListContainer);
+        DOM.setAttribute(DOM.getParent(table.getFlexCellFormatter().getElement(2, 0)),
+            "height", "100%");
 
-        fillPopularTags();
-        fillFeaturedGroups();
-        fillCharacterList();
+        loadPopularTags();
+        loadFeaturedGroups();
+        loadCharacterList();
     }
 
-    protected void fillCharacterList ()
+    protected void loadCharacterList ()
     {
     }
 
-    protected void fillPopularTags ()
+    protected void loadPopularTags ()
     {
+        _popularTagsContainer.clear();
+        InlineLabel popularTagsLabel = new InlineLabel("Popular Tags: ");;
+        popularTagsLabel.addStyleName("popularTagsLabel");
+        _popularTagsContainer.add(popularTagsLabel);
+        // TODO: this is dummy data until tags get figured out
+        String dummytags[] = { "Muppet", "cute", "scary", "Halloween", "fuzzy", "furry", 
+            "legs", "horns", "haunted", "spaghetti", "flying" };
+        for (int i = 0; i < dummytags.length; i++) {
+            _popularTagsContainer.add(new Anchor("", dummytags[i]));
+            _popularTagsContainer.add(new InlineLabel(", "));
+        }
+        Anchor moreLink = new Anchor("", "more...");
+        DOM.setAttribute(moreLink.getElement(), "id", "moreLink");
+        _popularTagsContainer.add(moreLink);
     }
 
-    protected void fillFeaturedGroups ()
+    protected void loadFeaturedGroups ()
     {
+        _featuredGroupsContainer.clear();
+        Label featuredGroupsLabel = new Label("Featured Groups:");
+        featuredGroupsLabel.setStyleName("featuredGroupsTitle");
+        _featuredGroupsContainer.add(featuredGroupsLabel);
+        _featuredGroupsContainer.add(new HTML("<h1>TODO</h1>"));
     }
 
     protected void addError (String error) 
@@ -98,22 +125,6 @@ public class GroupList extends VerticalPanel
     protected void clearErrors ()
     {
         _errorContainer.clear();
-    }
-
-    protected class MyFlexTable extends FlexTable {
-        public class MyFlexCellFormatter extends FlexTable.FlexCellFormatter {
-            public void fillWidth (int row, int column) {
-                DOM.setStyleAttribute(getElement(row, column), "width", "100%");
-            }
-        }
-
-        public MyFlexTable () {
-            setCellFormatter(new MyFlexCellFormatter());
-        }
-
-        public MyFlexCellFormatter getMyFlexCellFormatter() {
-            return (MyFlexCellFormatter)getCellFormatter();
-        }
     }
 
     protected WebContext _ctx;
