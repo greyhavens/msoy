@@ -19,7 +19,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.Group;
 
@@ -75,7 +74,10 @@ public class GroupList extends VerticalPanel
         DOM.setAttribute(table.getFlexCellFormatter().getElement(0, 1), "height", "10px");
         
         _characterListContainer = new FlowPanel();
+        _characterListContainer.setStyleName("characterList");
         table.setWidget(1, 0, _characterListContainer);
+        // and again with the ridiculous height
+        DOM.setAttribute(table.getFlexCellFormatter().getElement(1, 0), "height", "10px");
 
         _groupListContainer = new VerticalPanel();
         _groupListContainer.setStyleName("groups");
@@ -90,6 +92,26 @@ public class GroupList extends VerticalPanel
 
     protected void loadCharacterList ()
     {
+        _characterListContainer.clear();
+        _ctx.groupsvc.getCharacters(_ctx.creds, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                List characters = (List)result;
+                boolean firstCharacter = true;
+                Iterator charIter = characters.iterator();
+                while (charIter.hasNext()) {
+                    if (firstCharacter) {
+                        firstCharacter = false;
+                    } else {
+                        _characterListContainer.add(new InlineLabel(" | "));
+                    }
+                    _characterListContainer.add(new InlineLabel((String)charIter.next()));
+                }
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("getCharacters failed", caught);
+                addError("Failed to get group prefix characters.");
+            }
+        });
     }
 
     protected void loadPopularTags ()

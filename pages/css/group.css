@@ -119,3 +119,7 @@
     background-color: #696969;
     padding: 3px;
 }
+ 
+.groupList .characterList {
+    font-weight: 600;
+}
