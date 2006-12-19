@@ -22,11 +22,13 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Group;
 
 import client.shell.MsoyEntryPoint;
@@ -153,10 +155,17 @@ public class GroupEdit extends DialogBox
         });
         _table.addRow("Policy", policyBox);
 
-        // logo field
-        _logoBox = new VerticalPanel();
-        _table.addRow("Logo", _logoBox); 
-        updateLogoBox();
+        // image fields
+        HorizontalPanel imagePanel = new HorizontalPanel();
+        _table.addRow("Images", imagePanel);
+        int types[] = { IMAGE_LOGO, IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND, 
+            IMAGE_PEOPLE_BACKGROUND };
+        String labels[] = { "Logo", "Info Background", "Detail Background", "People Background" };
+        for (int i = 0; i < types.length; i++) {
+            VerticalPanel imageBox = new VerticalPanel();
+            imagePanel.add(imageBox);
+            updateImageBox(imageBox, types[i], "Set " + labels[i]);
+        }
     }
 
     // called when a group's name is changed, to determine the enabled-ness of the submit button
@@ -196,66 +205,96 @@ public class GroupEdit extends DialogBox
         }
     }
     
-    // update the contents of the logo box, e.g. after the image has been changed
-    protected void updateLogoBox ()
+    // update the contents of the image box, e.g. after the image has been changed
+    protected void updateImageBox (final CellPanel box, final int type, final String buttonLabel)
     {
-        _logoBox.clear();
-        if (_group.logo != null) {
-            _logoBox.add(new Image(MsoyEntryPoint.toMediaPath(_group.logo.getMediaPath())));
+        MediaDesc media = null;
+        switch (type) {
+        case IMAGE_LOGO: media = _group.logo; break;
+        case IMAGE_INFO_BACKGROUND: media = _group.infoBackground; break;
+        case IMAGE_DETAIL_BACKGROUND: media = _group.detailBackground; break;
+        case IMAGE_PEOPLE_BACKGROUND: media = _group.peopleBackground; break;
+        default: addError("Internal Error! Unknown image type: " + type);
         }
-        Button changeButton = new Button("Set Logo");
+
+        box.clear();
+        if (media != null) {
+            box.add(new Image(MsoyEntryPoint.toMediaPath(media.getMediaPath())));
+        }
+        Button changeButton = new Button(buttonLabel);
         changeButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                popupLogoChooser();
+                popupImageChooser(box, type, buttonLabel);
             }
         });
-        _logoBox.add(changeButton);
+        box.add(changeButton);
     }
 
     // pop up a scrollable horizontal list of photo items from which to choose a logo
-    protected void popupLogoChooser ()
+    protected void popupImageChooser (final CellPanel box, final int type, final String buttonLabel)
     {
-        _ctx.itemsvc.loadInventory(_ctx.creds, Item.PHOTO, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                List photos = (List) result;
-                if (photos.size() == 0) {
-                    addError("Upload some photos to your inventory to choose a logo.");
-                    return;
+        // the list of images is cached for this object
+        if (_images == null) {
+            _ctx.itemsvc.loadInventory(_ctx.creds, Item.PHOTO, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    _images = (List) result;
+                    // will use the cached results this time.
+                    popupImageChooser(box, type, buttonLabel);
                 }
-                // create the popup and its nested panels
-                HorizontalPanel itemPanel = new HorizontalPanel();
-                ScrollPanel chooser = new ScrollPanel(itemPanel);
-                final PopupPanel popup = new PopupPanel(true);
-                popup.setStyleName("groupLogoPopup");
-                popup.setWidget(chooser);
+                public void onFailure (Throwable caught) {
+                    GWT.log("loadInventory failed", caught);
+                    // TODO: if ServiceException, translate
+                    addError("Failed to load photo inventory for logo selection.");
+                }
+            });
+        } else {
+            if (_images.size() == 0) {
+                addError("Upload some photos to your inventory to choose an image.");
+                return;
+            }
+            // create the popup and its nested panels
+            HorizontalPanel itemPanel = new HorizontalPanel();
+            ScrollPanel chooser = new ScrollPanel(itemPanel);
+            final PopupPanel popup = new PopupPanel(true);
+            popup.setStyleName("groupLogoPopup");
+            popup.setWidget(chooser);
 
-                // set up a listener to pick an image for the logo, hide the popup, and update
-                final ClickListener logoChanger = new ClickListener() {
-                    public void onClick (Widget sender) {
-                        _group.logo = ((PhotoThumbnailImage) sender).photo.getThumbnailMedia();
-                        popup.hide();
-                        updateLogoBox();
+            // set up a listener to pick an image for the logo, hide the popup, and update
+            final ClickListener logoChanger = new ClickListener() {
+                public void onClick (Widget sender) {
+                    Photo photo = ((PhotoThumbnailImage) sender).photo;
+                    switch(type) {
+                    case IMAGE_LOGO: 
+                        _group.logo = photo.getThumbnailMedia();
+                        break;
+                    case IMAGE_INFO_BACKGROUND:
+                        _group.infoBackground = photo.photoMedia;
+                        break;
+                    case IMAGE_DETAIL_BACKGROUND:
+                        _group.detailBackground = photo.photoMedia;
+                        break;
+                    case IMAGE_PEOPLE_BACKGROUND:
+                        _group.peopleBackground = photo.photoMedia;
+                        break;
+                    default:
+                        addError("Internal Error! Unkown image type: " + type);
                     }
-                };
-
-                // iterate over all our photos and fill the popup panel
-                Iterator i = photos.iterator();
-                while (i.hasNext()) {
-                    Image image = new PhotoThumbnailImage(((Photo) i.next()));
-                    image.addClickListener(logoChanger);
-                    itemPanel.add(image);
+                    popup.hide();
+                    updateImageBox(box, type, buttonLabel);
                 }
+            };
 
-                // finally show the popup
-                popup.show();
+            // iterate over all our photos and fill the popup panel
+            Iterator i = _images.iterator();
+            while (i.hasNext()) {
+                Image image = new PhotoThumbnailImage(((Photo) i.next()));
+                image.addClickListener(logoChanger);
+                itemPanel.add(image);
             }
-            public void onFailure (Throwable caught) {
-                GWT.log("loadInventory failed", caught);
-                // TODO: if ServiceException, translate
-                addError("Failed to load photo inventory for logo selection.");
-            }
-        });
 
+            // finally show the popup
+            popup.show();
+        }
     }
     
     protected void addError (String error)
@@ -283,10 +322,16 @@ public class GroupEdit extends DialogBox
     protected WebContext _ctx;
     protected Group _group;
     protected GroupSubmissionListener _listener;
-    protected Button _esubmit;
+    protected Button _esubmit;  
+    protected List _images;
     
     protected DockPanel _content;
     protected HeaderValueTable _table;
-    protected VerticalPanel _logoBox;
     protected VerticalPanel _errorContainer;
+
+    // static final fields used to decide which image we're working with.
+    protected static final int IMAGE_LOGO = 1;
+    protected static final int IMAGE_INFO_BACKGROUND = 2;
+    protected static final int IMAGE_DETAIL_BACKGROUND = 3;
+    protected static final int IMAGE_PEOPLE_BACKGROUND = 4;
 }
