@@ -1,5 +1,10 @@
 /** Inventory module styles. ($Id$) */
 
+.itemDetailStatus {
+  width: 125px;
+  font-size: 12px;
+}
+
 .itemEditor {
   border-top: 1px solid;
   border-bottom: 1px solid;

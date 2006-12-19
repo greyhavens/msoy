@@ -77,6 +77,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
 
         // we'll need this now so that we can pass it to our click callbacks
         _status = new Label("");
+        _status.setStyleName("itemDetailStatus");
 
         Button button;
         if (_item.parentId == -1) {
