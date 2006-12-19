@@ -143,7 +143,20 @@ public class GroupView extends VerticalPanel
                 }
             }));
         }
-        if (_me != null) {
+        if (_me == null) {
+            if (_group.policy == Group.POLICY_PUBLIC) {
+                logoPanel.add(new Button("Join Group", new ClickListener() {
+                    public void onClick (Widget sender) {
+                        (new PromptPopup("Join " + _group.name + "?") {
+                            public void onAffirmative () {
+                                joinGroup();
+                            }
+                            public void onNegative () { }
+                        }).prompt();
+                    }
+                }));
+            }
+        } else {
             logoPanel.add(new Button("Leave Group", new ClickListener() {
                 public void onClick (Widget sender) {
                     (new PromptPopup("Are you sure you wish to leave " + _group.name + "?") {
@@ -154,7 +167,7 @@ public class GroupView extends VerticalPanel
                     }).prompt();
                 }
             }));
-        }
+        } 
         _table.setWidget(0, 0, logoPanel);
         if (_group.infoBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(0, 0, 
@@ -176,6 +189,7 @@ public class GroupView extends VerticalPanel
             _table.getMyFlexCellFormatter().setBackgroundImage(0, 1, 
                 MsoyEntryPoint.toMediaPath(_group.detailBackground.getMediaPath()));
         }
+        _table.getMyFlexCellFormatter().fillWidth(0, 1);
 
         FlexTable people = new FlexTable();
         people.setStyleName("peoplePanel");
@@ -417,6 +431,21 @@ public class GroupView extends VerticalPanel
         });
     }
 
+    protected void joinGroup () 
+    {
+        _ctx.groupsvc.joinGroup(
+            _ctx.creds, _group.groupId, _ctx.creds.memberId, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    loadGroup(_group.groupId);
+                }
+                public void onFailure (Throwable caught) {
+                    GWT.log("Failed to join group [groupId=" + _group.groupId +
+                        ", memberId=" + _ctx.creds.memberId + "]", caught);
+                    addError("Failed to join group: " + caught.getMessage());
+                }
+        });
+    }
+
     protected void addError (String error)
     {
         _errorContainer.add(new Label(error));
@@ -432,7 +461,9 @@ public class GroupView extends VerticalPanel
             public void setBackgroundImage (int row, int column, String url) {
                 DOM.setStyleAttribute(getElement(row, column), "backgroundImage", "url(" + url + 
                     ")");
-                setStyleName(row, column, "foo");
+            }
+            public void fillWidth (int row, int column) {
+                DOM.setStyleAttribute(getElement(row, column), "width", "100%");
             }
         }
 
