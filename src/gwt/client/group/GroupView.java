@@ -15,7 +15,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.MouseListener;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -50,7 +49,7 @@ import client.group.GroupEdit.GroupSubmissionListener;
  * Display the details of a group, including all its members, and let managers remove other members
  * (unless the group's policy is PUBLIC) and pop up the group editor.
  */
-public class GroupView extends DockPanel
+public class GroupView extends VerticalPanel
     implements GroupSubmissionListener
 {
     public GroupView (WebContext ctx, int groupId)
@@ -60,6 +59,10 @@ public class GroupView extends DockPanel
 
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
+        add(_errorContainer);
+
+        _table = new MyFlexTable();
+        add(_table);
 
         loadGroup(groupId);
     }
@@ -102,17 +105,13 @@ public class GroupView extends DockPanel
      */
     protected void buildUI ()
     {
-        clear();
-        setStyleName("groupView");
+        _table.clear();
+        _table.setStyleName("groupView");
         boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
 
         VerticalPanel logoPanel = new VerticalPanel();
         logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         logoPanel.setStyleName("logoPanel");
-        if (_group.infoBackground != null) {
-            DOM.setStyleAttribute(logoPanel.getElement(), "backgroundImage", "url(" + 
-                MsoyEntryPoint.toMediaPath(_group.infoBackground.getMediaPath()) + ")");
-        }
         logoPanel.add(ItemUtil.createMediaView(_group.logo, 160, 120));
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("links");
@@ -156,13 +155,14 @@ public class GroupView extends DockPanel
                 }
             }));
         }
+        _table.setWidget(0, 0, logoPanel);
+        if (_group.infoBackground != null) {
+            _table.getMyFlexCellFormatter().setBackgroundImage(0, 0, 
+                MsoyEntryPoint.toMediaPath(_group.infoBackground.getMediaPath()));
+        }
 
         ScrollPanel description = new ScrollPanel();
         description.setStyleName("descriptionPanel");
-        if (_group.detailBackground != null) {
-            DOM.setStyleAttribute(description.getElement(), "backgroundImage", "url(" + 
-                MsoyEntryPoint.toMediaPath(_group.detailBackground.getMediaPath()) + ")");
-        }
         String descriptionHtml = "<span class='name'>" + _group.name + "</span><br />";
         if (_group.blurb != null) {
             descriptionHtml += "<span class='blurb'>" + _group.blurb + "</span><br />";
@@ -171,14 +171,14 @@ public class GroupView extends DockPanel
             descriptionHtml += "<p class='charter'>" + _group.charter + "</p>";
         }
         description.add(new HTML(descriptionHtml));
-        add(description, DockPanel.CENTER);
+        _table.setWidget(0, 1, description);
+        if (_group.detailBackground != null) {
+            _table.getMyFlexCellFormatter().setBackgroundImage(0, 1, 
+                MsoyEntryPoint.toMediaPath(_group.detailBackground.getMediaPath()));
+        }
 
         FlexTable people = new FlexTable();
         people.setStyleName("peoplePanel");
-        if (_group.peopleBackground != null) {
-            DOM.setStyleAttribute(people.getElement(), "backgroundImage", "url(" + 
-                MsoyEntryPoint.toMediaPath(_group.peopleBackground.getMediaPath()) + ")");
-        }
         people.setText(0, 0, "Managers:");
         people.setText(1, 0, "Members:");
         FlowPanel managers = new FlowPanel();
@@ -231,11 +231,12 @@ public class GroupView extends DockPanel
         }
         people.setWidget(0, 1, managers);
         people.setWidget(1, 1, members);
-
-        // SOUTH must be added before WEST for the colspan to be set correctly... 
-        add(_errorContainer, DockPanel.NORTH);
-        add(people, DockPanel.SOUTH);
-        add(logoPanel, DockPanel.WEST);
+        _table.setWidget(1, 0, people);
+        _table.getFlexCellFormatter().setColSpan(1, 0, 2);
+        if (_group.peopleBackground != null) {
+            _table.getMyFlexCellFormatter().setBackgroundImage(1, 0, 
+                MsoyEntryPoint.toMediaPath(_group.peopleBackground.getMediaPath()));
+        }
     }
 
     /**
@@ -426,10 +427,29 @@ public class GroupView extends DockPanel
         _errorContainer.clear();
     }
 
+    protected class MyFlexTable extends FlexTable {
+        public class MyFlexCellFormatter extends FlexTable.FlexCellFormatter {
+            public void setBackgroundImage (int row, int column, String url) {
+                DOM.setStyleAttribute(getElement(row, column), "backgroundImage", "url(" + url + 
+                    ")");
+                setStyleName(row, column, "foo");
+            }
+        }
+
+        public MyFlexTable () {
+            setCellFormatter(new MyFlexCellFormatter());
+        }
+
+        public MyFlexCellFormatter getMyFlexCellFormatter() {
+            return (MyFlexCellFormatter)getCellFormatter();
+        }
+    }
+
     protected WebContext _ctx;
     protected Group _group;
     protected GroupDetail _detail;
     protected GroupMembership _me;
 
+    protected MyFlexTable _table;
     protected VerticalPanel _errorContainer;
 }
