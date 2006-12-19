@@ -798,11 +798,11 @@ public class MemberManager
             int count = plMgr.getPlaceObject().occupantInfo.size();
             if (plMgr instanceof RoomManager) { 
                 MsoyScene scene = (MsoyScene) ((RoomManager) plMgr).getScene();
-                result.add(new PopularScenePlace(scene.getName(), scene.getId(), count));
+                result.add(new PopularScenePlace(scene.getName(), count, scene.getId()));
             } else if (plMgr instanceof LobbyManager) {
                 LobbyConfig config = (LobbyConfig) plMgr.getConfig();
                 LobbyManager lMgr = (LobbyManager) plMgr;
-                result.add(new PopularScenePlace(config.game.name, lMgr.getGameId(), count));
+                result.add(new PopularScenePlace(config.game.name, count, lMgr.getGameId()));
             }
         }
         Collections.sort(result, new Comparator<PopularPlace>() {
