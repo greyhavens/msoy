@@ -27,6 +27,7 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.web.data.Group;
 
 /**
  * Manages the persistent store of group data.
@@ -229,7 +230,7 @@ public class GroupRepository extends DepotRepository
                 throws SQLException
             {
                 String query = "select substring(name,1,1) as letter from GroupRecord " +
-                    "group by letter";
+                    "where policy=" + Group.POLICY_PUBLIC + " group by letter";
                 ArrayList<String> characters = new ArrayList<String>();
                 Statement stmt = conn.createStatement();
                 try {
