@@ -71,6 +71,10 @@ public class index extends MsoyEntryPoint
             return;
         }
         try {
+            if (token.startsWith("s")) {
+                world("sceneId=" + id(token, 1));
+                return;
+            }
             if (token.startsWith("g")) {
                 world("groupHome=" + id(token, 1));
                 return;
