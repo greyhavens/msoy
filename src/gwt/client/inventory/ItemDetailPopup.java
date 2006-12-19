@@ -75,6 +75,9 @@ public class ItemDetailPopup extends BaseItemDetailPopup
             // TODO: "Caption", ((Photo)_item).caption);
         }
 
+        // we'll need this now so that we can pass it to our click callbacks
+        _status = new Label("");
+
         Button button;
         if (_item.parentId == -1) {
             button = new Button("List in Catalog ...");
@@ -129,7 +132,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
             controls.add(button);
         }
 
-        controls.add(_status = new Label(""));
+        controls.add(_status);
     }
 
     protected ItemPanel _parent;
