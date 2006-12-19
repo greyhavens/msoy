@@ -2,6 +2,7 @@ package {
 
 import flash.display.*;
 import flash.text.*;
+import flash.net.*;
 import flash.events.*;
 import flash.ui.*;
 import flash.utils.*;
@@ -30,6 +31,7 @@ public class HotSpots extends Sprite
             labelText.wordWrap = false;
 
             var label :Sprite = new Sprite();
+            label.addEventListener(MouseEvent.CLICK, clickHandler);
             label.addChild(labelText);
             with (label.graphics) {
                 clear();
@@ -49,15 +51,11 @@ public class HotSpots extends Sprite
         }
     }
 
-        var ureq :URLRequest = new URLRequest(url);
-        if (preferSameWindowOrTab) {
-            try {
-                flash.net.navigateToURL(ureq, "_self");
-                return true;
-            } catch (err :SecurityError) {
-                // ignore; fall back to using a blank window, below...
-            }
-        }
+    public function clickHandler (event :MouseEvent) :void
+    {
+        var url :String = "/world/#TODO";
+        navigateToURL(new URLRequest(url), "_self");
+    }
 
     protected var _places :Array;
 }

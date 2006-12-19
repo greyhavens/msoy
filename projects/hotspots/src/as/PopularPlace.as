@@ -19,10 +19,6 @@ public class PopularPlace
      */
     public static function fromLoaderInfo(info :LoaderInfo) :Array
     {
-        if (info == null || info.parameters == null || info.parameters.hotspots == null) {
-          var JSON :String = "[{\"sceneId\":0,\"pop\":8,\"name\":\"Zell's room\"}, {\"sceneId\":0,\"pop\":8,\"name\":\"Zell's room\"}, {\"sceneId\":0,\"pop\":8,\"name\":\"Zell's room\"}, {\"sceneId\":0,\"pop\":8,\"name\":\"Zell's room\"}, {\"sceneId\":0,\"pop\":8,\"name\":\"Zell's room\"}, {\"sceneId\":0,\"pop\":8,\"name\":\"Zell's room\"}, {\"sceneId\":0,\"pop\":8,\"name\":\"Zell's room\"}, {\"sceneId\":0,\"pop\":8,\"name\":\"Zell's room\"}, {\"sceneId\":0,\"pop\":8,\"name\":\"Zell's room\"}, {\"sceneId\":0,\"pop\":8,\"name\":\"Zell's room\"}]";
-            return arrayFromJSON(new JSONDecoder(JSON).getObject());
-        }
         return arrayFromJSON(new JSONDecoder(info.parameters.hotspots).getObject());
     }
 
