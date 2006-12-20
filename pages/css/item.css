@@ -185,3 +185,15 @@
 .itemSortBox {
   width: 116px;
 }
+
+.itemRating {
+  background: #FFFFFF;
+  border: 1px solid black;
+}
+
+.itemRating td {
+  padding: 0px;
+  height: 16px;
+  width: 8px;
+}
+

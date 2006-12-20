@@ -5,6 +5,7 @@ package client.item;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.Widget;
@@ -14,8 +15,7 @@ import com.threerings.msoy.item.web.ItemIdent;
 
 import client.util.WebContext;
 
-public class ItemRating extends Image
-    implements MouseListener
+public class ItemRating extends FlexTable
 {
     /** Display only the item's average rating. Allow no updates. */
     public static final int MODE_READ = 1;
@@ -42,13 +42,13 @@ public class ItemRating extends Image
      */
     public ItemRating (WebContext ctx, Item item, byte memberRating, int mode)
     {
-        setStyleName("itemRating");
-        addMouseListener(this);
-
         // sanity check
         if (mode != MODE_READ && !item.isRatable()) {
             throw new IllegalArgumentException("Can only rate clones and listed items " + _item);
         }
+        setStyleName("itemRating");
+        setCellSpacing(0);
+        setCellPadding(0);
 
         _ctx = ctx;
         _item = item;
@@ -57,83 +57,95 @@ public class ItemRating extends Image
         // if we're not logged in, force MODE_READ
         _mode = (_ctx.creds == null) ? MODE_READ : mode;
 
-        update();
-    }
-
-    // from interface MouseListener
-    public void onMouseEnter (Widget sender)
-    {
-        // we act on mouseMove
-    }
-
-    // from interface MouseListener
-    public void onMouseLeave (Widget sender)
-    {
-        update();
-    }
-
-    // from interface MouseListener
-    public void onMouseMove (Widget sender, int x, int y)
-    {
-        update(x, sender.getOffsetWidth());
-    }
-
-    // from interface MouseListener
-    public void onMouseDown (Widget sender, int x, int y)
-    {
-        // we act on mouseUp
-    }
-
-    // from interface MouseListener
-    public void onMouseUp (Widget sender, int x, int y)
-    {
-        // make sure we're still on the widget when we unclick
-        if (_mode != MODE_READ &&
-            x >= 0 && x < sender.getOffsetWidth() &&
-            y >= 0 && y < sender.getOffsetHeight()) {
-            rateItem((byte) (1 + ((x * 5) / sender.getOffsetWidth())));
+        // add the 10 images whose src url's we mercilessly mutate throughout this widget
+        for (int i = 0; i < 10; i ++) {
+            Image halfStar = new Image();
+            halfStar.addMouseListener(new RatingMouseListener(i/2+1));
+            halfStar.setStyleName("itemRatingStar");
+            setWidget(0, i, halfStar);
         }
+        // and initialize the stars
+        update();
     }
 
+    // each half star gets a listener that knows which rating it translates to
+    protected class RatingMouseListener implements MouseListener
+    {
+        public RatingMouseListener (int starIx)
+        {
+            _ratingInterval = starIx;
+
+        }
+        // from interface MouseListener
+        public void onMouseEnter (Widget sender)
+        {
+            // we act on mouseMove
+        }
+
+        // from interface MouseListener
+        public void onMouseLeave (Widget sender)
+        {
+            update();
+        }
+
+        // from interface MouseListener
+        public void onMouseMove (Widget sender, int x, int y)
+        {
+            update(_ratingInterval);
+        }
+
+        // from interface MouseListener
+        public void onMouseDown (Widget sender, int x, int y)
+        {
+            // we act on mouseUp
+        }
+
+        // from interface MouseListener
+        public void onMouseUp (Widget sender, int x, int y)
+        {
+            if (_mode != MODE_READ) {
+                rateItem((byte) _ratingInterval);
+            }
+        }
+        
+        protected int _ratingInterval;
+    }
+    
     // called to update image when we're not over the widget
     protected void update ()
     {
-        setUrl("/msoy/stars/" + getRatingImage(-1, -1) + ".gif");
+        // show average rating unless we're in write-only mode
+        if (_mode == MODE_WRITE) {
+            updateStarImages(_memberRating, true);
+        } else {
+            updateStarImages(_item.rating, false);
+        }
     }
 
     // called when we are over the widget
-    protected void update (int pos, int width)
+    protected void update (double rating)
     {
-        // a little sanity check -- this is the web we're dealing with
-        if (pos >= 0 && pos < width) {
-            setUrl("/msoy/stars/" + getRatingImage(pos, width) + ".gif");
+        // show the changing user rating as user hovers over widget, unless we're read-only
+        if (_mode == MODE_READ) {
+            updateStarImages(_memberRating, true);
+        } else {
+            updateStarImages(rating, true);
         }
     }
 
-    // calculate the right image to display for this situation
-    protected String getRatingImage (int pos, int width)
+    // update the 10 half-star image elements to point to the right actual images
+    protected void updateStarImages (double ratingToDisplay, boolean isUserRating)
     {
-        // if we're off the widget, or in read-only mode, show fixed # of stars
-        if (pos == -1 || _mode == MODE_READ) {
-            String imgBase = "stars_";
-            float ratingToDisplay;
-            if (_mode == MODE_WRITE || pos != -1) {
-                ratingToDisplay = _memberRating;
-                imgBase += "2";
-            } else {
-                ratingToDisplay = _item.rating;
-                if (ratingToDisplay == 0.0) {
-                    return "stars_2_0";
-                }
-                imgBase += "1";
-            }
-            // translate [1.0, 5.0] to (10, 15, ..., 50)
-            return imgBase + "_" + ((int) (_item.rating * 2)) * 5;
+        int filledStars = (int) (ratingToDisplay * 2);
+        String filledUrl = "/images/ui/star_" + (isUserRating ? "user" : "average");
+        for (int i = 0; i < filledStars; i ++) {
+            ((Image) getWidget(0, i)).setUrl(
+                filledUrl + "_" + ((i % 2) == 0 ? "lhalf" : "rhalf") + ".png");
         }
-
-        // if we're mousing over the widget and are configured to update the
-        // user's rating, vary the # of stars depending on pointer's position
-        return "stars_2_" + (10 + ((pos * 5) / width) * 10);
+        for (int i = filledStars; i < 10; i ++) {
+            ((Image) getWidget(0, i)).setUrl(
+                "/images/ui/star_empty_" + ((i % 2) == 0 ? "lhalf" : "rhalf") + ".png");
+        }
     }
 
     /**
