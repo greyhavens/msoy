@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import java.util.logging.Level;
 
@@ -582,8 +583,10 @@ public class MemberManager
                     throw new PersistenceException("Group not found! [id=" + groupDef.groupId + 
                         "]");
                 }
-                MsoyServer.groupRepo.updateGroup(groupDef.groupId,
-                    gRec.findUpdates(groupDef, extrasDef));
+                Map<String, Object> updates = gRec.findUpdates(groupDef, extrasDef);
+                if (updates.size() > 0) {
+                    MsoyServer.groupRepo.updateGroup(groupDef.groupId, updates);
+                }
                 return null;
             }
         });
