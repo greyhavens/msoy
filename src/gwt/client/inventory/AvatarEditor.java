@@ -21,7 +21,6 @@ public class AvatarEditor extends ItemEditor
         super.setItem(item);
         _avatar = (Avatar)item;
         _mainUploader.setMedia(_avatar.avatarMedia);
-        _headShotUploader.setMedia(_avatar.getHeadShotMedia());
     }
 
     // @Override from ItemEditor
@@ -38,18 +37,6 @@ public class AvatarEditor extends ItemEditor
             }
         }), "Avatar Media");
 
-        title = "Image show in a Game Lobby";
-        _headShotUploader = new MediaUploader(HEADSHOT_ID, title, true, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
-                if (!desc.isImage()) {
-                    return "Head shots must be an image type.";
-                }
-                _avatar.headShotMedia = desc;
-                return null;
-            }
-        });
-        tabs.add(_headShotUploader, "Face Media");
-
         super.createInterface(contents, tabs);
     }
 
@@ -59,18 +46,5 @@ public class AvatarEditor extends ItemEditor
         return new Avatar();
     }
 
-    // @Override from ItemEditor
-    protected MediaUploader getUploader (String id)
-    {
-        if (HEADSHOT_ID.equals(id)) {
-            return _headShotUploader;
-        } else {
-            return super.getUploader(id);
-        }
-    }
-
     protected Avatar _avatar;
-    protected MediaUploader _headShotUploader;
-
-    protected static final String HEADSHOT_ID = "headshot";
 }

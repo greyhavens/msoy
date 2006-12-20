@@ -154,9 +154,9 @@ public class MemberObject extends BodyObject
     public MediaDesc getHeadShotMedia ()
     {
         if (avatar != null) {
-            return avatar.getHeadShotMedia();
+            return avatar.getThumbnailMedia();
         }
-        return Avatar.getDefaultHeadshotMedia();
+        return Avatar.getDefaultThumbnailMediaFor(Item.AVATAR);
     }
 
     // documentation inherited from superinterface ScenedBodyObject
