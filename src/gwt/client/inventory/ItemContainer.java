@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -33,6 +34,7 @@ public class ItemContainer extends VerticalPanel
     public ItemContainer (ItemPanel panel, Item item)
     {
         _panel = panel;
+        setStyleName("itemContainer");
         setItem(item);
     }
 
@@ -46,10 +48,13 @@ public class ItemContainer extends VerticalPanel
         // clear out our old UI, and we'll create it anew
         clear();
 
-        add(createContainer(item));
+        SimplePanel wrapper = new SimplePanel();
+        wrapper.setStyleName("Preview");
+        wrapper.add(createContainer(item));
+        add(wrapper);
 
         Label label = new Label(ItemUtil.getName(_panel._ctx, item, true));
-        label.setStyleName("itemThumbText");
+        label.setStyleName("ThumbText");
         label.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 new ItemDetailPopup(_panel._ctx, _item, _panel).show();

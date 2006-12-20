@@ -91,7 +91,7 @@ public class ItemUtil
                 }
                 break;
             case MediaDesc.HALF_VERTICALLY_CONSTRAINED:
-                if (width < MediaDesc.THUMBNAIL_HEIGHT) {
+                if (height < MediaDesc.THUMBNAIL_HEIGHT) {
                     view.setHeight(height + "px");
                 }
                 break;
@@ -109,7 +109,6 @@ public class ItemUtil
             break;
         }
 
-        view.setStyleName("itemMediaView");
         return view;
     }
 }
