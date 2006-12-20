@@ -23,9 +23,9 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetch all the groups in the system. Will need to be a pager sooner or later.
+     * Fetch all the groups in the system that start with the given character.
      */
-    public List getGroups (WebCreds creds)
+    public List getGroups (WebCreds creds, String startingCharacter)
         throws ServiceException;
     
     /**

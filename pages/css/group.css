@@ -119,8 +119,26 @@
     background-color: #696969;
     padding: 3px;
 }
- 
+
 .groupList .characterList {
     font-weight: 600;
     padding-bottom: 15px;
+}
+
+.groupList .characterList .characterLabel {
+    cursor: pointer;
+}
+
+.groupList .groupWidget .establishedDate {
+    margin: 5px;
+}
+
+.groupList .groupWidget {
+    font-size: 13px;
+}
+
+.groupList .groupWidget .title {
+    display: inline;
+    color: black;
+    font-weight: 600;
 }

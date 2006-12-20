@@ -16,9 +16,13 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
+
+import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.msoy.web.data.Group;
 
@@ -27,6 +31,7 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import client.shell.MsoyEntryPoint;
 import client.util.WebContext;
+import client.item.ItemUtil;
 
 /**
  * Display the public groups in a sensical manner, including a sorted list of characters that
@@ -38,6 +43,7 @@ public class GroupList extends VerticalPanel
     {
         super();
         setStyleName("groupList");
+        DOM.setStyleAttribute(getElement(), "width", "100%");
         _ctx = ctx;
 
         _errorContainer = new VerticalPanel();
@@ -45,6 +51,7 @@ public class GroupList extends VerticalPanel
         add(_errorContainer);
 
         FlexTable table = new FlexTable();
+        DOM.setStyleAttribute(table.getElement(), "width", "100%");
         add(table);
 
         VerticalPanel leftPanel = new VerticalPanel();
@@ -104,7 +111,15 @@ public class GroupList extends VerticalPanel
                     } else {
                         _characterListContainer.add(new InlineLabel(" | "));
                     }
-                    _characterListContainer.add(new InlineLabel((String)charIter.next()));
+                    final String character = (String)charIter.next();
+                    InlineLabel characterLabel = new InlineLabel(character);
+                    characterLabel.addStyleName("characterLabel");
+                    characterLabel.addClickListener(new ClickListener() {
+                        public void onClick (Widget sender) {
+                            loadGroups(character);
+                        }
+                    });
+                    _characterListContainer.add(characterLabel);
                 }
             }
             public void onFailure (Throwable caught) {
@@ -141,6 +156,23 @@ public class GroupList extends VerticalPanel
         _featuredGroupsContainer.add(new HTML("<h1>TODO</h1>"));
     }
 
+    protected void loadGroups (final String startingCharacter) 
+    {
+        _groupListContainer.clear();
+        _ctx.groupsvc.getGroups(_ctx.creds, startingCharacter, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                Iterator groupIter = ((List)result).iterator();
+                while (groupIter.hasNext()) {
+                    _groupListContainer.add(new GroupWidget((Group)groupIter.next()));
+                }
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("loadGroups failed", caught);
+                addError("Failed to get groups starting with " + startingCharacter);
+            }
+        });
+    }
+
     protected void addError (String error) 
     {
         _errorContainer.add(new Label(error));
@@ -149,6 +181,39 @@ public class GroupList extends VerticalPanel
     protected void clearErrors ()
     {
         _errorContainer.clear();
+    }
+
+    protected class GroupWidget extends FlexTable
+    {
+        GroupWidget (Group group) 
+        {
+            super();
+            setStyleName("groupWidget");
+            
+            Widget logo = ItemUtil.createMediaView(group.logo, 80, 60);
+            logo.setStyleName("logo");
+            setWidget(0, 0, logo);
+            getFlexCellFormatter().setRowSpan(0, 0, 2);
+            
+            FlowPanel titleLine = new FlowPanel();
+            Hyperlink title = new Hyperlink(group.name, "" + group.groupId);
+            title.addStyleName("title");
+            titleLine.add(title);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
+            InlineLabel establishedDate = new InlineLabel("Est. " + 
+                dateFormat.format(group.creationDate));
+            establishedDate.addStyleName("establishedDate");
+            titleLine.add(establishedDate);
+            // TODO: fill in real member count when its been added to GroupRecord and Group
+            InlineLabel memberCount = new InlineLabel("42 members");
+            memberCount.addStyleName("memberCount");
+            titleLine.add(memberCount);
+            setWidget(0, 1, titleLine);
+
+            InlineLabel blurb = new InlineLabel(group.blurb);
+            blurb.setStyleName("blurb");
+            setWidget(1, 0, blurb);
+        }
     }
 
     protected WebContext _ctx;

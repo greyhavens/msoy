@@ -497,12 +497,12 @@ public class MemberManager
      * This method will most likely become a pager in the near future, or we
      * will be returning some kind of summary object.
      */
-    public void getGroups (ResultListener<List<Group>> listener)
+    public void getGroups (final String startingCharacter, ResultListener<List<Group>> listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Group>>(listener) {
             public List<Group> invokePersistResult () throws PersistenceException {
                 List<Group> groups = new ArrayList<Group>();
-                for (GroupRecord gRec : _groupRepo.findGroups()) {
+                for (GroupRecord gRec : _groupRepo.findGroups(startingCharacter)) {
                     groups.add(gRec.toWebObject());
                 }
                 return groups;

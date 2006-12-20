@@ -22,6 +22,7 @@ import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntSet;
 
@@ -40,12 +41,13 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Fetches all groups. This will be a pager soon.
+     * Fetches all groups who's name starts with the given character.
      */
-    public Collection<GroupRecord> findGroups ()
+    public Collection<GroupRecord> findGroups (String startingCharacter)
         throws PersistenceException
     {
-        return findAll(GroupRecord.class);
+        return findAll(GroupRecord.class,
+            new Where(new Equals(new LiteralExp("substring(name,1,1)"), startingCharacter)));
     }
 
     /**
@@ -220,7 +222,7 @@ public class GroupRepository extends DepotRepository
     public List<String> getCharacters () 
         throws PersistenceException
     {
-        // force the creation of a GroupRecrod table if necessary
+        // force the creation of a GroupRecord table if necessary
         _ctx.getMarshaller(GroupRecord.class);
     
         // only one query of this type is ever performed, so the Comparable key is not important
