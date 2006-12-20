@@ -112,6 +112,9 @@ public abstract class ItemRecord implements Streamable, Cloneable
     /** The MIME type of the {@link #thumbMediaHash} media. */
     public byte thumbMimeType;
 
+    /** The size constraint on the {@link #thumbMediaHash} media. */
+    public byte thumbConstraint;
+
     /** A hash code identifying the media used to display this item's furniture
      * representation. */
     @Column(nullable=true)
@@ -145,6 +148,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
         if (item.thumbMedia != null) {
             thumbMediaHash = item.thumbMedia.hash;
             thumbMimeType = item.thumbMedia.mimeType;
+            thumbConstraint = item.thumbMedia.constraint;
         }
         if (item.furniMedia != null) {
             furniMediaHash = item.furniMedia.hash;
@@ -202,7 +206,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
         item.furniMedia = (furniMediaHash == null) ?
             null : new MediaDesc(furniMediaHash, furniMimeType, furniConstraint);
         item.thumbMedia = (thumbMediaHash == null) ?
-            null : new MediaDesc(thumbMediaHash, thumbMimeType);
+            null : new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
         return item;
     }
 
