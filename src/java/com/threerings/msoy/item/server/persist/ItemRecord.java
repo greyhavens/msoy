@@ -10,6 +10,7 @@ import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.io.Streamable;
 import com.threerings.msoy.item.web.Audio;
@@ -203,6 +204,12 @@ public abstract class ItemRecord implements Streamable, Cloneable
         item.thumbMedia = (thumbMediaHash == null) ?
             null : new MediaDesc(thumbMediaHash, thumbMimeType);
         return item;
+    }
+
+    @Override // from Object
+    public String toString ()
+    {
+        return StringUtil.fieldsToString(this);
     }
 
     protected abstract Item createItem ();

@@ -444,7 +444,10 @@ public class ItemManager
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<Item>>(listener) {
             public ArrayList<Item> invokePersistResult () throws PersistenceException {
                 Collection<ItemRecord> list = repo.loadOriginalItems(memberId);
-                list.addAll(repo.loadClonedItems(memberId));
+                log.info("Originals " + com.samskivert.util.StringUtil.toString(list));
+                Collection<ItemRecord> clones = repo.loadClonedItems(memberId);
+                log.info("Clones " + com.samskivert.util.StringUtil.toString(clones));
+                list.addAll(clones);
                 ArrayList<Item> newList = new ArrayList<Item>();
                 for (ItemRecord record : list) {
                     newList.add(record.toItem());

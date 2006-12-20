@@ -11,7 +11,7 @@ import com.samskivert.jdbc.depot.annotation.TableGenerator;
 @Entity
 @Table
 @TableGenerator(name="cloneId", allocationSize=-1,
-                initialValue=-1, pkColumnValue="DOCUMENT_CLNE")
+                initialValue=-1, pkColumnValue="DOCUMENT_CLONE")
 public class DocumentCloneRecord extends CloneRecord<DocumentRecord>
 {
 }

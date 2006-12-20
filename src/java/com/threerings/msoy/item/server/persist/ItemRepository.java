@@ -127,17 +127,8 @@ public abstract class ItemRepository<
     public Collection<T> loadClonedItems (int ownerId)
         throws PersistenceException
     {
-        ColumnExp cloneOwner = new ColumnExp(getCloneClass(), CloneRecord.OWNER_ID);
-        return findAll(
-            getItemClass(),
-            new Key(cloneOwner, ownerId),
-            new Join(getItemClass(), ItemRecord.ITEM_ID,
-                     getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID),
-            new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID),
-            new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID),
-            new FieldOverride(ItemRecord.OWNER_ID, cloneOwner),
-            new FieldOverride(ItemRecord.LOCATION, getItemClass(), ItemRecord.ITEM_ID),
-            new FieldOverride(ItemRecord.USED, getItemClass(), ItemRecord.ITEM_ID));
+        return loadClonedItems(
+            new Key(new ColumnExp(getCloneClass(), CloneRecord.OWNER_ID), ownerId));
     }
 
     /**
@@ -151,14 +142,7 @@ public abstract class ItemRepository<
         }
         Comparable[] idArr = IntListUtil.box(itemIds);
         Where inClause = new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr));
-        Collection<T> items = findAll(
-            getItemClass(), inClause,
-            new Join(getItemClass(), ItemRecord.ITEM_ID,
-                     getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID),
-            new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID),
-            new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID),
-            new FieldOverride(ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID));
-
+        Collection<T> items = loadClonedItems(inClause);
         items.addAll(findAll(getItemClass(), inClause));
         return items;
     }
@@ -591,6 +575,23 @@ public abstract class ItemRepository<
         history.time = new Timestamp(now);
         insert(history);
         return rows;
+    }
+
+    /**
+     * Performs the necessary join to load cloned items matching the supplied where clause.
+     */
+    protected Collection<T> loadClonedItems (Where where)
+        throws PersistenceException
+    {
+        return findAll(
+            getItemClass(), where,
+            new Join(getItemClass(), ItemRecord.ITEM_ID,
+                     getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID),
+            new FieldOverride(ItemRecord.ITEM_ID, getCloneClass(), CloneRecord.ITEM_ID),
+            new FieldOverride(ItemRecord.PARENT_ID, getItemClass(), ItemRecord.ITEM_ID),
+            new FieldOverride(ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID),
+            new FieldOverride(ItemRecord.LOCATION, getItemClass(), CloneRecord.LOCATION),
+            new FieldOverride(ItemRecord.USED, getItemClass(), CloneRecord.USED));
     }
 
     /**
