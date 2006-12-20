@@ -29,8 +29,7 @@ import client.util.WebContext;
 public class TagDetailPanel extends FlexTable
 {
     public static final String[] GLOBAL_TAGS = {
-        "sexual",
-        "violent",
+        "mature",
         "offensive",
         "copyright"
     };
