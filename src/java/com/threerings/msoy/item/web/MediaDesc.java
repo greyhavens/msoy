@@ -397,7 +397,7 @@ public class MediaDesc implements Streamable, IsSerializable
     {
         if (other instanceof MediaDesc) {
             MediaDesc that = (MediaDesc) other;
-            return (this.mimeType == that.mimeType) &&
+            return (this.mimeType == that.mimeType) && (this.constraint == that.constraint) &&
                 arraysEqual(this.hash, that.hash);
         }
         return false;
