@@ -10,8 +10,6 @@ import com.threerings.msoy.data.MemberObject;
 // TODO: stop listening at the end?
 public class LoggingTargets
 {
-    private static const LOG_TO_CHAT :Boolean = false;
-
     public static function configureLogging (ctx :MsoyContext) :void
     {
         var userObj :MemberObject = ctx.getClientObject();
@@ -19,8 +17,7 @@ public class LoggingTargets
         // for now, everything logs to the FireBug console
         try {
             if (_bugTarget == null && ExternalInterface.available) {
-                ExternalInterface.call("console.debug",
-                        "Msoy console logging enabled");
+                ExternalInterface.call("console.debug", "Msoy console logging enabled");
                 _bugTarget = new FireBugTarget();
                 mx.logging.Log.addTarget(_bugTarget);
             }
@@ -28,8 +25,7 @@ public class LoggingTargets
             // oh well!
         }
 
-        if ((null != ctx.getRootPanel().loaderInfo.parameters["test"]) ||
-                LOG_TO_CHAT) {
+        if ((null != ctx.getRootPanel().loaderInfo.parameters["test"]) || Prefs.getLogToChat()) {
             if (_chatTarget == null) {
                 _chatTarget = new ChatTarget(ctx);
                 mx.logging.Log.addTarget(_chatTarget);

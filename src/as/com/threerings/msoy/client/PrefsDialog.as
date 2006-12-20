@@ -6,8 +6,10 @@ package com.threerings.msoy.client {
 import flash.display.DisplayObjectContainer;
 
 import flash.events.DataEvent;
+import flash.events.MouseEvent;
 
 import mx.controls.Button;
+import mx.controls.CheckBox;
 import mx.controls.TextInput;
 import mx.controls.Tree;
 
@@ -82,6 +84,13 @@ public class PrefsDialog extends FloatingPanel
             _name = new TextInput());
         _name.text = memberObj.memberName.toString();
 
+        grid.addRow(MsoyUI.createLabel(Msgs.GENERAL.get("l.log_to_chat")),
+                    _logToChat = new CheckBox());
+        _logToChat.selected = Prefs.getLogToChat();
+        _logToChat.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
+            Prefs.setLogToChat(_logToChat.selected);
+        });
+
         addChild(grid);
 
         _avatars.percentWidth = 100;
@@ -139,6 +148,9 @@ public class PrefsDialog extends FloatingPanel
 
     /** The field for editing the user's display name. */
     protected var _name :TextInput;
+
+    /** Whether or not we route log messages to chat for easy debugging. */
+    protected var _logToChat :CheckBox;
 
     /** The list of our avatars. */
     protected var _avatars :InventoryPicker;

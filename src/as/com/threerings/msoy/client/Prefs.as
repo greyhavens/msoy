@@ -56,11 +56,22 @@ public class Prefs
         config.setValue(VOLUME, vol);
     }
 
+    public static function getLogToChat () :Boolean
+    {
+        return (config.getValue(LOG_TO_CHAT, false) as Boolean);
+    }
+
+    public static function setLogToChat (logToChat :Boolean) :void
+    {
+        config.setValue(LOG_TO_CHAT, logToChat);
+    }
+
     /** Key constants. */
     private static const USERNAME :String = "username";
     private static const SESSION_TOKEN :String = "sessionTok";
     private static const MACHINE_IDENT :String = "machIdent";
     private static const VOLUME :String = "volume";
+    private static const LOG_TO_CHAT :String = "logToChat";
 
     /**
      * Internal function to create a media position key.
