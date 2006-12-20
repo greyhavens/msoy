@@ -22,14 +22,6 @@ public class FurnitureEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected void createInterface (VerticalPanel contents, TabPanel tabs)
-    {
-        super.createInterface(contents, tabs);
-
-        // currently nothing to do here
-    }
-
-    // @Override from ItemEditor
     protected Item createBlankItem ()
     {
         return new Furniture();

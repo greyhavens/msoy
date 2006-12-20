@@ -41,6 +41,22 @@ public class AvatarEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
+    protected void createThumbUploader (TabPanel tabs)
+    {
+        String title = "Image show in a Game Lobby";
+        _thumbUploader = new MediaUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
+            public String updateMedia (MediaDesc desc) {
+                if (!desc.isImage()) {
+                    return "Head Shots must be an image type.";
+                }
+                _item.thumbMedia = desc;
+                return null;
+            }
+        });
+        tabs.add(_thumbUploader, "Head Shot Media");
+    }
+
+    // @Override from ItemEditor
     protected Item createBlankItem ()
     {
         return new Avatar();

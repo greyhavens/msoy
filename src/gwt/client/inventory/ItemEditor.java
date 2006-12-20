@@ -173,21 +173,33 @@ public abstract class ItemEditor extends BorderedDialog
     {
         contents.add(tabs);
 
-        String title = "Image shown when Item is placed in the World as Furniture";
-        if (_furniUploader == null) {
-            _furniUploader = new MediaUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
-                public String updateMedia (MediaDesc desc) {
-                    if (!desc.hasFlashVisual()) {
-                        return "Furniture must be an web-viewable image type.";
-                    }
-                    _item.furniMedia = desc;
-                    return null;
-                }
-            });
-            tabs.add(_furniUploader, "Furniture Media");
-        }
+        createFurniUploader(tabs);
+        createThumbUploader(tabs);
 
-        title = "Image shown for Item in Inventory and Catalog";
+        VerticalPanel extras = new VerticalPanel();
+        extras.setSpacing(10);
+        populateExtrasTab(extras);
+        tabs.add(extras, "Extra Info");
+    }
+
+    protected void createFurniUploader (TabPanel tabs)
+    {
+        String title = "Image shown when Item is placed in the World as Furniture";
+        _furniUploader = new MediaUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
+            public String updateMedia (MediaDesc desc) {
+                if (!desc.hasFlashVisual()) {
+                    return "Furniture must be an web-viewable image type.";
+                }
+                _item.furniMedia = desc;
+                return null;
+            }
+        });
+        tabs.add(_furniUploader, "Furniture Media");
+    }
+
+    protected void createThumbUploader (TabPanel tabs)
+    {
+        String title = "Image shown for Item in Inventory and Catalog";
         _thumbUploader = new MediaUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
@@ -198,11 +210,6 @@ public abstract class ItemEditor extends BorderedDialog
             }
         });
         tabs.add(_thumbUploader, "Thumbnail Media");
-
-        VerticalPanel extras = new VerticalPanel();
-        extras.setSpacing(10);
-        populateExtrasTab(extras);
-        tabs.add(extras, "Extra Info");
     }
 
     /**
@@ -279,7 +286,7 @@ public abstract class ItemEditor extends BorderedDialog
      * about to upload.
      */
     protected void setHash (String id, String mediaHash, int mimeType, int constraint,
-                            String thumbMediaHash, int thumbMimeType)
+                            String thumbMediaHash, int thumbMimeType, int thumbConstraint)
     {
         MediaUploader mu = getUploader(id);
         if (mu == null) {
@@ -294,7 +301,7 @@ public abstract class ItemEditor extends BorderedDialog
         // TODO: avoid overwriting custom thumbnail, sigh
         if (thumbMediaHash.length() > 0) {
             _item.thumbMedia = new MediaDesc(
-                MediaDesc.stringToHash(thumbMediaHash), (byte)thumbMimeType);
+                MediaDesc.stringToHash(thumbMediaHash), (byte)thumbMimeType, (byte)thumbConstraint);
         }
 
         // have the item re-validate that no media ids are duplicated
@@ -414,8 +421,8 @@ public abstract class ItemEditor extends BorderedDialog
      * JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
-        $wnd.setHash = function (id, hash, type, constraint, thash, ttype) {
-           @client.inventory.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;I)(id, hash, type, constraint, thash, ttype);
+        $wnd.setHash = function (id, hash, type, constraint, thash, ttype, tconstraint) {
+           @client.inventory.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;I)(id, hash, type, constraint, thash, ttype, tconstraint);
         };
     }-*/; 
 
