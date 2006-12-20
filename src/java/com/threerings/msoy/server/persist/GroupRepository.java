@@ -111,7 +111,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Updates the specified group record with supplied field/value mapping.
      */
-    public void updateGroup (int groupId, Map<Object, String> updates)
+    public void updateGroup (int groupId, Map<String, Object> updates)
         throws PersistenceException
     {
         int rows = updatePartial(GroupRecord.class, groupId, updates);

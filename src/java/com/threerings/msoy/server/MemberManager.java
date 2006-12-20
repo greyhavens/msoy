@@ -44,6 +44,7 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.GroupName;
@@ -503,7 +504,7 @@ public class MemberManager
             public List<Group> invokePersistResult () throws PersistenceException {
                 List<Group> groups = new ArrayList<Group>();
                 for (GroupRecord gRec : _groupRepo.findGroups(startingCharacter)) {
-                    groups.add(gRec.toWebObject());
+                    groups.add(gRec.toGroupObject());
                 }
                 return groups;
             }
@@ -516,41 +517,43 @@ public class MemberManager
      * 
      * TODO: Sanity checks on group name.
      */
-    public void createGroup (final Group groupDef, ResultListener<Group> listener)
+    public void createGroup (final Group groupDef, final GroupExtras extrasDef,    
+        ResultListener<Group> listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Group>(listener) {
             public Group invokePersistResult () throws PersistenceException {
                 GroupRecord gRec = new GroupRecord();
                 gRec.name = groupDef.name;
-                gRec.homepageUrl = groupDef.homepageUrl;
                 gRec.blurb = groupDef.blurb;
-                gRec.charter = groupDef.charter;
-                if (groupDef.logo != null) {
-                    gRec.logoMimeType = groupDef.logo.mimeType;
-                    gRec.logoMediaHash = groupDef.logo.hash;
-                }
-                if (groupDef.infoBackground != null) {
-                    gRec.infoBackgroundMimeType = groupDef.infoBackground.mimeType;
-                    gRec.infoBackgroundHash = groupDef.infoBackground.hash;
-                }
-                if (groupDef.detailBackground != null) { 
-                    gRec.detailBackgroundMimeType = groupDef.detailBackground.mimeType;
-                    gRec.detailBackgroundHash = groupDef.detailBackground.hash;
-                }
-                if (groupDef.peopleBackground != null) {
-                    gRec.peopleBackgroundMimeType = groupDef.peopleBackground.mimeType;
-                    gRec.peopleBackgroundHash = groupDef.peopleBackground.hash;
-                }
                 gRec.creatorId = groupDef.creatorId;
                 gRec.creationDate = new Timestamp(groupDef.creationDate.getTime());
                 gRec.policy = groupDef.policy;
+                if (groupDef.logo != null) {
+                    gRec.logoMimeType = groupDef.logo.mimeType;
+                    gRec.logoMediaHash = groupDef.logo.hash;
+                    gRec.logoMediaConstraint = groupDef.logo.constraint;
+                }
+                gRec.homepageUrl = extrasDef.homepageUrl;
+                gRec.charter = extrasDef.charter;
+                if (extrasDef.infoBackground != null) {
+                    gRec.infoBackgroundMimeType = extrasDef.infoBackground.mimeType;
+                    gRec.infoBackgroundHash = extrasDef.infoBackground.hash;
+                }
+                if (extrasDef.detailBackground != null) { 
+                    gRec.detailBackgroundMimeType = extrasDef.detailBackground.mimeType;
+                    gRec.detailBackgroundHash = extrasDef.detailBackground.hash;
+                }
+                if (extrasDef.peopleBackground != null) {
+                    gRec.peopleBackgroundMimeType = extrasDef.peopleBackground.mimeType;
+                    gRec.peopleBackgroundHash = extrasDef.peopleBackground.hash;
+                }
 
                 // create the group and then add the creator to it
                 _groupRepo.createGroup(gRec);
                 _groupId = gRec.groupId;
                 _groupRepo.joinGroup(_groupId, gRec.creatorId, GroupMembership.RANK_MANAGER);
     
-                return gRec.toWebObject();
+                return gRec.toGroupObject();
             }
 
             public void handleSuccess () {
@@ -569,47 +572,18 @@ public class MemberManager
      * are used for the update, and data is not read back from the database. This is a low-level
      * method without privilige checks; it's up to the callers to secure it.
      */
-    public void updateGroup (final Group groupDef, ResultListener<Void> listener) 
+    public void updateGroup (final Group groupDef, final GroupExtras extrasDef, 
+        ResultListener<Void> listener) 
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
             public Void invokePersistResult () throws PersistenceException {
-                List<Object> argList = new ArrayList<Object>();
-                if (groupDef.name != null) {
-                    argList.add(GroupRecord.NAME);
-                    argList.add(groupDef.name);
+                GroupRecord gRec = MsoyServer.groupRepo.loadGroup(groupDef.groupId);
+                if (gRec == null) {
+                    throw new PersistenceException("Group not found! [id=" + groupDef.groupId + 
+                        "]");
                 }
-                if (groupDef.homepageUrl != null) {
-                    argList.add(GroupRecord.HOMEPAGE_URL);
-                    argList.add(groupDef.homepageUrl);
-                }
-                if (groupDef.blurb != null) {
-                    argList.add(GroupRecord.BLURB);
-                    argList.add(groupDef.blurb);
-                }
-                if (groupDef.charter != null) {
-                    argList.add(GroupRecord.CHARTER);
-                    argList.add(groupDef.charter);
-                }
-                MediaDesc medias[] = { groupDef.logo, groupDef.infoBackground,
-                    groupDef.detailBackground, groupDef.peopleBackground };
-                String fields[][] = { { GroupRecord.LOGO_MIME_TYPE, GroupRecord.LOGO_MEDIA_HASH }, 
-                    { GroupRecord.INFO_BACKGROUND_MIME_TYPE, GroupRecord.INFO_BACKGROUND_HASH },
-                    { GroupRecord.DETAIL_BACKGROUND_MIME_TYPE, GroupRecord.DETAIL_BACKGROUND_HASH },
-                    { GroupRecord.PEOPLE_BACKGROUND_MIME_TYPE, 
-                        GroupRecord.PEOPLE_BACKGROUND_HASH } };
-                for (int i = 0; i < medias.length; i++) {
-                    if (medias[i] != null) {
-                        argList.add(fields[i][0]);
-                        argList.add(medias[i].mimeType);
-                        argList.add(fields[i][1]);
-                        argList.add(medias[i].hash);
-                    }
-                }
-                if (groupDef.policy > 0) {
-                    argList.add(GroupRecord.POLICY);
-                    argList.add(groupDef.policy);
-                }
-                _groupRepo.updateGroup(groupDef.groupId, argList.toArray());
+                MsoyServer.groupRepo.updateGroup(groupDef.groupId,
+                    gRec.findUpdates(groupDef, extrasDef));
                 return null;
             }
         });
@@ -631,7 +605,8 @@ public class MemberManager
                 // set up the detail
                 GroupDetail detail = new GroupDetail();
                 detail.creator = mRec.getName();
-                detail.group = gRec.toWebObject();
+                detail.group = gRec.toGroupObject();
+                detail.extras = gRec.toExtrasObject();
                 ArrayList<GroupMembership> members = new ArrayList<GroupMembership>();
                 detail.members = members;
                 for (GroupMembershipRecord gmRec : _groupRepo.getMembers(groupId)) {

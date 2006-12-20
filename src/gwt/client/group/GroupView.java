@@ -33,6 +33,7 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberName;
@@ -83,6 +84,7 @@ public class GroupView extends VerticalPanel
             public void onSuccess (Object result) {
                 _detail = (GroupDetail) result;
                 _group = _detail.group;
+                _extras = _detail.extras;
                 // in case this object is used more than once, make sure that _me is at least 
                 // not stale
                 _me = null;
@@ -117,8 +119,8 @@ public class GroupView extends VerticalPanel
         links.setSpacing(8);
         links.add(new Anchor("/world/index.html#g" +  _group.groupId, "Hall"));
         links.add(new Anchor("", "Forum"));
-        if (_group.homepageUrl != null) {
-            links.add(new Anchor(_group.homepageUrl, "Homepage"));
+        if (_extras.homepageUrl != null) {
+            links.add(new Anchor(_extras.homepageUrl, "Homepage"));
         }
         logoPanel.add(links);
         VerticalPanel established = new VerticalPanel();
@@ -135,7 +137,7 @@ public class GroupView extends VerticalPanel
         if (amManager) {
             logoPanel.add(new Button("Edit Group", new ClickListener() {
                 public void onClick (Widget sender) {
-                    new GroupEdit(_ctx, _group, GroupView.this).show();
+                    new GroupEdit(_ctx, _group, _extras, GroupView.this).show();
                 }
             }));
         }
@@ -165,9 +167,9 @@ public class GroupView extends VerticalPanel
             }));
         } 
         _table.setWidget(0, 0, logoPanel);
-        if (_group.infoBackground != null) {
+        if (_extras.infoBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(0, 0, 
-                MsoyEntryPoint.toMediaPath(_group.infoBackground.getMediaPath()));
+                MsoyEntryPoint.toMediaPath(_extras.infoBackground.getMediaPath()));
         }
 
         ScrollPanel description = new ScrollPanel();
@@ -176,14 +178,14 @@ public class GroupView extends VerticalPanel
         if (_group.blurb != null) {
             descriptionHtml += "<span class='blurb'>" + _group.blurb + "</span><br />";
         }
-        if (_group.charter != null) {
-            descriptionHtml += "<p class='charter'>" + _group.charter + "</p>";
+        if (_extras.charter != null) {
+            descriptionHtml += "<p class='charter'>" + _extras.charter + "</p>";
         }
         description.add(new HTML(descriptionHtml));
         _table.setWidget(0, 1, description);
-        if (_group.detailBackground != null) {
+        if (_extras.detailBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(0, 1, 
-                MsoyEntryPoint.toMediaPath(_group.detailBackground.getMediaPath()));
+                MsoyEntryPoint.toMediaPath(_extras.detailBackground.getMediaPath()));
         }
         _table.getMyFlexCellFormatter().fillWidth(0, 1);
 
@@ -243,9 +245,9 @@ public class GroupView extends VerticalPanel
         people.setWidget(1, 1, members);
         _table.setWidget(1, 0, people);
         _table.getFlexCellFormatter().setColSpan(1, 0, 2);
-        if (_group.peopleBackground != null) {
+        if (_extras.peopleBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(1, 0, 
-                MsoyEntryPoint.toMediaPath(_group.peopleBackground.getMediaPath()));
+                MsoyEntryPoint.toMediaPath(_extras.peopleBackground.getMediaPath()));
         }
     }
 
@@ -261,31 +263,6 @@ public class GroupView extends VerticalPanel
             member = (GroupMembership)i.next();
         }
         return (member != null && member.member.getMemberId() == memberId) ? member : null;
-    }
-
-    /**
-     * returns the month name of the given month number, indexed from 0-11.
-     */
-    static protected String getMonthName (int month) 
-    {
-        // TODO: localize these strings
-        String monthName;
-        switch(month) {
-        case 0:  monthName = "January"; break;
-        case 1:  monthName = "February"; break;
-        case 2:  monthName = "March"; break;
-        case 3:  monthName = "April"; break;
-        case 4:  monthName = "May"; break;
-        case 5:  monthName = "June"; break;
-        case 6:  monthName = "July"; break;
-        case 7:  monthName = "August"; break;
-        case 8:  monthName = "September"; break;
-        case 9:  monthName = "October"; break;
-        case 10: monthName = "November"; break;
-        case 11: monthName = "December"; break;
-        default: monthName = "ERROR";
-        }
-        return monthName;
     }
 
     /**
@@ -474,6 +451,7 @@ public class GroupView extends VerticalPanel
 
     protected WebContext _ctx;
     protected Group _group;
+    protected GroupExtras _extras;
     protected GroupDetail _detail;
     protected GroupMembership _me;
 

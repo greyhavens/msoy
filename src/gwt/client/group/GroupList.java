@@ -28,6 +28,7 @@ import com.threerings.gwt.ui.InlineLabel;
 
 import client.util.WebContext;
 import client.item.ItemUtil;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Display the public groups in a sensical manner, including a sorted list of characters that
@@ -186,9 +187,9 @@ public class GroupList extends VerticalPanel
             super();
             setStyleName("groupWidget");
             
-            Widget logo = ItemUtil.createMediaView(group.logo, 80, 60);
-            logo.setStyleName("logo");
+            Widget logo = ItemUtil.createMediaView(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE);
             setWidget(0, 0, logo);
+            getFlexCellFormatter().setStyleName(0, 0, "logo");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
             
             FlowPanel titleLine = new FlowPanel();

@@ -5,6 +5,7 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
@@ -41,12 +42,14 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService.updateGroup} 
      */
-    public void updateGroup (WebCreds creds, Group _group, AsyncCallback callback);
+    public void updateGroup (WebCreds creds, Group group, GroupExtras extras, 
+        AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link GroupService.createGroup} 
      */
-    public void createGroup (WebCreds creds, Group _group, AsyncCallback callback);
+    public void createGroup (WebCreds creds, Group group, GroupExtras extras, 
+        AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link GroupService.leaveGroup} 

@@ -30,6 +30,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupExtras;
 
 import client.shell.MsoyEntryPoint;
 import client.util.HeaderValueTable;
@@ -47,13 +48,15 @@ public class GroupEdit extends DialogBox
         public void groupSubmitted(Group group);
     }
     
-    public GroupEdit (WebContext ctx, Group group, GroupSubmissionListener listener)
+    public GroupEdit (WebContext ctx, Group group, GroupExtras extras,  
+        GroupSubmissionListener listener)
     {
         super();
         setPopupPosition(30, 30);
         setText("Group Editor");
         _ctx = ctx;
         _group = group;
+        _extras = extras;
         _listener = listener;
         setStyleName("groupPopup");
 
@@ -104,10 +107,10 @@ public class GroupEdit extends DialogBox
         // homepage url field
         final TextBox urlBox = new TextBox();
         urlBox.setMaxLength(255);
-        urlBox.setText(group.homepageUrl != null ? group.homepageUrl : "");
+        urlBox.setText(_extras.homepageUrl != null ? _extras.homepageUrl : "");
         urlBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
-                _group.homepageUrl = urlBox.getText().trim();
+                _extras.homepageUrl = urlBox.getText().trim();
                 updateSubmittable();
             }
         });
@@ -129,10 +132,10 @@ public class GroupEdit extends DialogBox
         final TextArea charterArea = new TextArea();
         charterArea.setCharacterWidth(80);
         charterArea.setVisibleLines(10);
-        charterArea.setText(group.charter != null ? group.charter : "");
+        charterArea.setText(_extras.charter != null ? _extras.charter : "");
         charterArea.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
-                _group.charter = charterArea.getText().trim();
+                _extras.charter = charterArea.getText().trim();
             }
         });
         _table.addRow("Charter", charterArea);
@@ -199,9 +202,9 @@ public class GroupEdit extends DialogBox
             }
         };
         if (_group.groupId > 0) {
-            _ctx.groupsvc.updateGroup(_ctx.creds, _group, callback);
+            _ctx.groupsvc.updateGroup(_ctx.creds, _group, _extras, callback);
         } else {
-            _ctx.groupsvc.createGroup(_ctx.creds, _group, callback);
+            _ctx.groupsvc.createGroup(_ctx.creds, _group, _extras, callback);
         }
     }
     
@@ -211,9 +214,9 @@ public class GroupEdit extends DialogBox
         MediaDesc media = null;
         switch (type) {
         case IMAGE_LOGO: media = _group.logo; break;
-        case IMAGE_INFO_BACKGROUND: media = _group.infoBackground; break;
-        case IMAGE_DETAIL_BACKGROUND: media = _group.detailBackground; break;
-        case IMAGE_PEOPLE_BACKGROUND: media = _group.peopleBackground; break;
+        case IMAGE_INFO_BACKGROUND: media = _extras.infoBackground; break;
+        case IMAGE_DETAIL_BACKGROUND: media = _extras.detailBackground; break;
+        case IMAGE_PEOPLE_BACKGROUND: media = _extras.peopleBackground; break;
         default: addError("Internal Error! Unknown image type: " + type); return;
         }
 
@@ -268,13 +271,13 @@ public class GroupEdit extends DialogBox
                         _group.logo = photo.getThumbnailMedia();
                         break;
                     case IMAGE_INFO_BACKGROUND:
-                        _group.infoBackground = photo.photoMedia;
+                        _extras.infoBackground = photo.photoMedia;
                         break;
                     case IMAGE_DETAIL_BACKGROUND:
-                        _group.detailBackground = photo.photoMedia;
+                        _extras.detailBackground = photo.photoMedia;
                         break;
                     case IMAGE_PEOPLE_BACKGROUND:
-                        _group.peopleBackground = photo.photoMedia;
+                        _extras.peopleBackground = photo.photoMedia;
                         break;
                     default:
                         addError("Internal Error! Unkown image type: " + type);
@@ -321,6 +324,7 @@ public class GroupEdit extends DialogBox
 
     protected WebContext _ctx;
     protected Group _group;
+    protected GroupExtras _extras;
     protected GroupSubmissionListener _listener;
     protected Button _esubmit;  
     protected List _images;

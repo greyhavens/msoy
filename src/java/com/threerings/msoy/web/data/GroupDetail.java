@@ -17,6 +17,9 @@ public class GroupDetail
     /** The group whose details we contain. */
     public Group group;
 
+    /** The extra details that are needed on the GroupView page. */
+    public GroupExtras extras;
+
     /** The person who created the group. */
     public MemberName creator;
 

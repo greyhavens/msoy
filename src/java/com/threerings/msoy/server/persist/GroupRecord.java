@@ -5,16 +5,21 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
 
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.io.PersistenceException;
 
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupExtras;
+import com.threerings.msoy.server.MsoyServer;
 
 /**
  * Contains the details of a group.
@@ -23,7 +28,7 @@ import com.threerings.msoy.web.data.Group;
 public class GroupRecord
     implements Cloneable
 {
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     public static final String GROUP_ID = "groupId";
     public static final String NAME = "name";
@@ -32,6 +37,7 @@ public class GroupRecord
     public static final String CHARTER = "charter";
     public static final String LOGO_MIME_TYPE = "logoMimeType";
     public static final String LOGO_MEDIA_HASH = "logoMediaHash";
+    public static final String LOGO_MEDIA_CONSTRAINT = "logoMediaConstraint";
     public static final String INFO_BACKGROUND_MIME_TYPE = "infoBackgroundMimeType";
     public static final String INFO_BACKGROUND_HASH = "infoBackgroundHash";
     public static final String DETAIL_BACKGROUND_MIME_TYPE = "detailBackgroundMimeType";
@@ -64,12 +70,15 @@ public class GroupRecord
     @Column(length=2048, nullable=true)
     public String charter;
 
-    /** The MIME type of this group's logo. */
-    public byte logoMimeType;
-
     /** A hash code identifying the media for this group's logo. */
     @Column(nullable=true)
     public byte[] logoMediaHash;
+
+    /** The MIME type of this group's logo. */
+    public byte logoMimeType;
+
+    /** The constraint for the logo image. */
+    public byte logoMediaConstraint;
 
     /** The MIME type for the background of the info area. */
     public byte infoBackgroundMimeType;
@@ -105,29 +114,90 @@ public class GroupRecord
     public byte policy;
 
     /**
-     * CreateS a web-safe version of this group.
+     * Creates a web-safe version of this group.
      */
-    public Group toWebObject ()
+    public Group toGroupObject ()
     {
         Group group = new Group();
         group.groupId = groupId;
         group.name = name;
-        group.homepageUrl = homepageUrl;
         group.blurb = blurb;
-        group.charter = charter;
         group.logo = logoMediaHash == null ? Group.getDefaultGroupLogoMedia() :
-            new MediaDesc(logoMediaHash.clone(), logoMimeType);
-        // with null backgrounds, there is not default image - just don't try to tile anything
-        group.infoBackground = infoBackgroundHash == null ? null :
-            new MediaDesc(infoBackgroundHash.clone(), infoBackgroundMimeType);
-        group.detailBackground = detailBackgroundHash == null ? null :
-            new MediaDesc(detailBackgroundHash, detailBackgroundMimeType);
-        group.peopleBackground = peopleBackgroundHash == null ? null :
-            new MediaDesc(peopleBackgroundHash, peopleBackgroundMimeType);
+            new MediaDesc(logoMediaHash.clone(), logoMimeType, logoMediaConstraint);
         group.creatorId = creatorId;
         group.creationDate = new Date(creationDate.getTime());
         group.policy = policy;
         return group;
+    }
+
+    /**
+     * Creates a web-safe version of the extras in this group.
+     */
+    public GroupExtras toExtrasObject ()
+    {
+        GroupExtras extras = new GroupExtras();
+        extras.infoBackground = infoBackgroundHash == null ? null :
+            new MediaDesc(infoBackgroundHash.clone(), infoBackgroundMimeType);
+        extras.detailBackground = detailBackgroundHash == null ? null :
+            new MediaDesc(detailBackgroundHash.clone(), detailBackgroundMimeType);
+        extras.peopleBackground = peopleBackgroundHash == null ? null :
+            new MediaDesc(peopleBackgroundHash.clone(), peopleBackgroundMimeType);
+        extras.charter = charter;
+        extras.homepageUrl = homepageUrl;
+        return extras;
+    }
+
+    /**
+     * Checks over the object definitions and will return a map of field, value pairs that contains
+     * all of the entries that are not null, and are different from what's in this object
+     * currently.  Returns null if the group is not found.
+     */
+    public Map<String, Object> findUpdates (Group groupDef, GroupExtras extrasDef) 
+        throws PersistenceException
+    {
+        HashMap<String, Object> updates = new HashMap<String, Object>();
+        if (groupDef.name != null && !groupDef.name.equals(name)) {
+            updates.put(NAME, groupDef.name);
+        }
+        if (groupDef.blurb != null && !groupDef.blurb.equals(blurb)) {
+            updates.put(BLURB, groupDef.blurb);
+        }
+        if (groupDef.logo != null && (logoMediaHash == null || 
+            !groupDef.logo.equals(new MediaDesc(logoMediaHash, logoMimeType, 
+            logoMediaConstraint)))) {
+            updates.put(LOGO_MEDIA_HASH, groupDef.logo.hash);
+            updates.put(LOGO_MIME_TYPE, groupDef.logo.mimeType);
+            updates.put(LOGO_MEDIA_CONSTRAINT, groupDef.logo.constraint);
+        }
+        if (groupDef.policy != policy) {
+            updates.put(POLICY, groupDef.policy);
+        }
+        if (extrasDef.infoBackground != null && (infoBackgroundHash == null ||
+            !extrasDef.infoBackground.equals(new MediaDesc(infoBackgroundHash, 
+            infoBackgroundMimeType)))) {
+            updates.put(INFO_BACKGROUND_HASH, extrasDef.infoBackground.hash);
+            updates.put(INFO_BACKGROUND_MIME_TYPE, extrasDef.infoBackground.mimeType);
+        }
+        if (extrasDef.detailBackground != null && (detailBackgroundHash == null ||
+            !extrasDef.detailBackground.equals(new MediaDesc(detailBackgroundHash,
+            detailBackgroundMimeType)))) {
+            updates.put(DETAIL_BACKGROUND_HASH, extrasDef.detailBackground.hash);
+            updates.put(DETAIL_BACKGROUND_MIME_TYPE, extrasDef.detailBackground.mimeType);
+        }
+        if (extrasDef.peopleBackground != null && (peopleBackgroundHash == null ||
+            !extrasDef.peopleBackground.equals(new MediaDesc(peopleBackgroundHash,
+            peopleBackgroundMimeType)))) {
+            updates.put(PEOPLE_BACKGROUND_HASH, extrasDef.peopleBackground.hash);
+            updates.put(PEOPLE_BACKGROUND_MIME_TYPE, extrasDef.peopleBackground.mimeType);
+        }
+        if (extrasDef.charter != null && !extrasDef.charter.equals(charter)) {
+            updates.put(CHARTER, extrasDef.charter);
+        }
+        if (extrasDef.homepageUrl != null && !extrasDef.homepageUrl.equals(homepageUrl)) {
+            updates.put(HOMEPAGE_URL, extrasDef.homepageUrl);
+        }
+    
+        return updates;
     }
 
     /**
@@ -140,5 +210,4 @@ public class GroupRecord
         StringUtil.fieldsToString(buf, this);
         return buf.append("]").toString();
     }
-
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
@@ -51,13 +52,13 @@ public interface GroupService extends RemoteService
     /**
      * Create a new group in the system, with data supplied in the {@link Group} argument.
      */
-    public Group createGroup (WebCreds creds, Group group)
+    public Group createGroup (WebCreds creds, Group group, GroupExtras extras)
         throws ServiceException;
     
     /**
      * Update the data for a group according to the supplied {@link Group} argument.
      */
-    public void updateGroup (WebCreds creds, Group group)
+    public void updateGroup (WebCreds creds, Group group, GroupExtras extras)
         throws ServiceException;
     
     /**

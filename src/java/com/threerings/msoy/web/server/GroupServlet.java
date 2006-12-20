@@ -16,6 +16,7 @@ import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.ServiceException;
@@ -101,7 +102,8 @@ public class GroupServlet extends RemoteServiceServlet
     }
 
     // from interface GroupService
-    public Group createGroup (WebCreds creds, final Group group) throws ServiceException
+    public Group createGroup (WebCreds creds, final Group group, final GroupExtras extras) 
+        throws ServiceException
     {
         // TODO: validate creds
 
@@ -114,14 +116,15 @@ public class GroupServlet extends RemoteServiceServlet
         group.creatorId = creds.memberId;
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.createGroup(group, waiter);
+                MsoyServer.memberMan.createGroup(group, extras, waiter);
             }
         });
         return waiter.waitForResult();
     }
 
     // from interface GroupService
-    public void updateGroup (WebCreds creds, final Group group) throws ServiceException
+    public void updateGroup (WebCreds creds, final Group group, final GroupExtras extras) 
+        throws ServiceException
     {
         // TODO: validate creds
         
@@ -132,7 +135,7 @@ public class GroupServlet extends RemoteServiceServlet
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>("updateGroup[" + group + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.updateGroup(group, waiter);
+                MsoyServer.memberMan.updateGroup(group, extras, waiter);
             }
         });
         waiter.waitForResult();
