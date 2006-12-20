@@ -85,6 +85,16 @@ public class ItemUtil
         case MediaDesc.IMAGE_GIF:
             view = new Image(path);
             switch (desc.constraint) {
+            case MediaDesc.HALF_HORIZONTALLY_CONSTRAINED:
+                if (width < MediaDesc.THUMBNAIL_WIDTH) {
+                    view.setWidth(width + "px");
+                }
+                break;
+            case MediaDesc.HALF_VERTICALLY_CONSTRAINED:
+                if (width < MediaDesc.THUMBNAIL_HEIGHT) {
+                    view.setHeight(height + "px");
+                }
+                break;
             case MediaDesc.HORIZONTALLY_CONSTRAINED:
                 view.setWidth(width + "px");
                 break;

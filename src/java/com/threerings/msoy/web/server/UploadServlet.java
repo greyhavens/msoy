@@ -246,7 +246,9 @@ public class UploadServlet extends HttpServlet
         MediaInfo tinfo = new MediaInfo();
         tinfo.constraint = MediaDesc.computeConstraint(
             MediaDesc.THUMBNAIL_SIZE, image.getWidth(), image.getHeight());
-        if (tinfo.constraint == MediaDesc.NOT_CONSTRAINED) {
+        if (tinfo.constraint == MediaDesc.NOT_CONSTRAINED ||
+            tinfo.constraint == MediaDesc.HALF_HORIZONTALLY_CONSTRAINED ||
+            tinfo.constraint == MediaDesc.HALF_VERTICALLY_CONSTRAINED) {
             // if it's really small, we can use the original as the thumbnail
             tinfo.hash = info.hash;
             tinfo.mimeType = info.mimeType;

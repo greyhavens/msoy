@@ -424,7 +424,7 @@ public class MediaDesc implements Streamable, IsSerializable
      * Helper function for {@link #equals} because we must work in JavaScript
      * land.
      */
-    public static boolean arraysEqual (byte[] left, byte[] right)
+    protected static boolean arraysEqual (byte[] left, byte[] right)
     {
         if (left == right) {
             return true;
