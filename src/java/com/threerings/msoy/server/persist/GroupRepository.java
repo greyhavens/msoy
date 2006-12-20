@@ -3,10 +3,11 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -103,8 +104,19 @@ public class GroupRepository extends DepotRepository
     {
         int rows = updatePartial(GroupRecord.class, groupId, fieldValues);
         if (rows == 0) {
-            throw new PersistenceException(
-                "Couldn't find group to modify [groupId=" + groupId + "]");
+            throw new PersistenceException("Couldn't find group for update [id=" + groupId + "]");
+        }
+    }
+
+    /**
+     * Updates the specified group record with supplied field/value mapping.
+     */
+    public void updateGroup (int groupId, Map<Object, String> updates)
+        throws PersistenceException
+    {
+        int rows = updatePartial(GroupRecord.class, groupId, updates);
+        if (rows == 0) {
+            throw new PersistenceException("Couldn't find group for update [id=" + groupId + "]");
         }
     }
 
