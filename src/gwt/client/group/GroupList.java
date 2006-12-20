@@ -5,9 +5,6 @@ package client.group;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -29,7 +26,6 @@ import com.threerings.msoy.web.data.Group;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
 
-import client.shell.MsoyEntryPoint;
 import client.util.WebContext;
 import client.item.ItemUtil;
 

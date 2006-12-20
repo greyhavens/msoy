@@ -3,9 +3,6 @@
 
 package client.inventory;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;

@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Furniture;
-import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * A class for creating and editing {@link Furniture} digital items.

@@ -7,9 +7,6 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FormHandler;
-import com.google.gwt.user.client.ui.FormSubmitEvent;
-import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -20,7 +17,6 @@ import org.gwtwidgets.client.ui.FormPanel;
 
 import com.threerings.gwt.ui.SubmitField;
 
-import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import client.item.ItemUtil;

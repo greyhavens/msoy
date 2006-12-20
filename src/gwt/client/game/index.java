@@ -9,8 +9,6 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.LaunchConfig;
-import com.threerings.msoy.web.data.WebCreds;
-
 import client.shell.MsoyEntryPoint;
 
 /**

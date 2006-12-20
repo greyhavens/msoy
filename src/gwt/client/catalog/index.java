@@ -5,12 +5,7 @@ package client.catalog;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.web.data.WebCreds;
-
 import client.shell.MsoyEntryPoint;
 
 /**

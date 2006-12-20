@@ -10,11 +10,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-
 import com.threerings.msoy.web.data.PersonLayout;
-import com.threerings.msoy.web.data.WebCreds;
-
 import client.shell.MsoyEntryPoint;
 
 /**

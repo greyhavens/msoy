@@ -5,7 +5,6 @@ package client.util;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
  * Contains useful user interface related methods.

@@ -8,10 +8,7 @@ import java.util.HashMap;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import com.threerings.msoy.item.web.Item;
 
 import client.item.ItemTypePanel;
 import client.util.WebContext;

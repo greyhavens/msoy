@@ -11,14 +11,12 @@ import client.item.ItemTypePanel;
 import client.item.TagCloud;
 import client.util.WebContext;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.msoy.item.web.CatalogListing;
-import com.threerings.msoy.item.web.Item;
 
 /**
  * Displays a tabbed panel containing the catalog.
