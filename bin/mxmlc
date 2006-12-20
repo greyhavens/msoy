@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# $Id$
+#
+# Runs the Flash compiler and greps out all the bullshit dependency output
+
+java -jar lib/as-compiler/lib/mxmlc.jar "$@" | egrep -v "^(Reason|Recompile):"

@@ -246,7 +246,7 @@
 
   <!-- builds our Flash client -->
   <target name="asclient" depends="asprepare,aslib,exportlib">
-    <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
+    <exec executable="bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
@@ -257,13 +257,13 @@
       <arg value="dist/game-client.swf"/>
       <arg value="-file-specs"/>
       <arg value="src/as/Msoy.mxml"/>
-    </java>
+    </exec>
     <copy file="dist/game-client.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare,aslib,exportlib">
-    <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
+    <exec executable="bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
       <arg value="-compiler.debug"/>
@@ -274,13 +274,13 @@
       <arg value="dist/game-client.swf"/>
       <arg value="-file-specs"/>
       <arg value="src/as/Msoy.mxml"/>
-    </java>
+    </exec>
     <copy file="dist/game-client.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds our avatar viewer thingy -->
   <target name="avatarviewer" depends="asprepare,aslib">
-    <java jar="lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
+    <exec executable="bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
@@ -290,7 +290,7 @@
       <arg value="dist/avatarviewer.swf"/>
       <arg value="-file-specs"/>
       <arg value="src/as/AvatarViewer.mxml"/>
-    </java>
+    </exec>
     <copy file="dist/avatarviewer.swf" todir="pages/clients"/>
   </target>
 
