@@ -28,6 +28,13 @@ import client.util.WebContext;
  */
 public class TagDetailPanel extends FlexTable
 {
+    public static final String[] GLOBAL_TAGS = {
+        "sexual",
+        "violent",
+        "offensive",
+        "copyright"
+    };
+    
     public TagDetailPanel (WebContext ctx, Item item)
     {
         setStyleName("tagDetailPanel");
@@ -74,8 +81,8 @@ public class TagDetailPanel extends FlexTable
         setWidget(1, 1, newTagBox);
 
         setWidget(1, 2, new Label("Quick add:"));
-        _historicalTags = new ListBox();
-        _historicalTags.addChangeListener(new ChangeListener() {
+        _quickTags = new ListBox();
+        _quickTags.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
                 ListBox box = (ListBox) sender;
                 String value = box.getValue(box.getSelectedIndex());
@@ -91,7 +98,7 @@ public class TagDetailPanel extends FlexTable
                 });
             }
         });
-        setWidget(1, 3, _historicalTags);
+        setWidget(1, 3, _quickTags);
 
         setWidget(2, 0, _status = new Label(""));
 
@@ -163,17 +170,20 @@ public class TagDetailPanel extends FlexTable
         if (_ctx.creds != null) {
             _ctx.itemsvc.getRecentTags(_ctx.creds, new AsyncCallback() {
                 public void onSuccess (Object result) {
-                    _historicalTags.clear();
+                    _quickTags.clear();
+                    for (int i = 0; i < GLOBAL_TAGS.length; i ++) {
+                        _quickTags.addItem(GLOBAL_TAGS[i]);
+                    }
                     Iterator i = ((Collection) result).iterator();
                     while (i.hasNext()) {
                         TagHistory history = (TagHistory) i.next();
                         if (history.member.getMemberId() == _ctx.creds.memberId) {
                             if (history.tag != null) {
-                                _historicalTags.addItem(history.tag);
+                                _quickTags.addItem(history.tag);
                             }
                         }
                     }
-                    _historicalTags.setVisible(_historicalTags.getItemCount() > 0);
+                    _quickTags.setVisible(_quickTags.getItemCount() > 0);
                 }
                 public void onFailure (Throwable caught) {
                     GWT.log("getTagHistory failed", caught);
@@ -207,6 +217,6 @@ public class TagDetailPanel extends FlexTable
     protected Item _item;
 
     protected Label _tags, _status;
-    protected ListBox _historicalTags;
+    protected ListBox _quickTags;
     protected FlexTable _tagHistory;
 }
