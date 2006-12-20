@@ -11,8 +11,6 @@ import com.threerings.presents.dobj.Subscriber;
 
 import com.threerings.crowd.server.CrowdObjectAccess;
 
-import com.threerings.parlor.game.server.GameManager;
-
 /**
  * Contains standard access controllers for msoy.
  */

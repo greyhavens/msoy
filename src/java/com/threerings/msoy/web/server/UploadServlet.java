@@ -18,7 +18,6 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,12 +27,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.servlet.ServletRequestContext;
-
 import com.samskivert.io.StreamUtil;
 import com.samskivert.util.StringUtil;
-import com.samskivert.util.Tuple;
-
 import com.threerings.s3.AWSAuthConnection;
 import com.threerings.s3.S3FileObject;
 import com.threerings.s3.S3Exception;

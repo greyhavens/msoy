@@ -8,8 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
-
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
@@ -18,7 +16,6 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
-import com.samskivert.jdbc.JORARepository;
 import com.samskivert.jdbc.SimpleRepository;
 import com.samskivert.jdbc.TransitionRepository;
 

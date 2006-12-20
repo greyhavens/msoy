@@ -3,11 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
-import java.util.Map;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.web.data.MailPayload;
-import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**

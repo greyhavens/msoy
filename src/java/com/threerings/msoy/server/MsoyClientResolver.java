@@ -26,7 +26,6 @@ import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 
 import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.world.data.MsoySceneModel;
 
 import static com.threerings.msoy.Log.log;

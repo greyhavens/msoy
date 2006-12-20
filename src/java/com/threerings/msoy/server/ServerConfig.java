@@ -10,8 +10,6 @@ import java.util.Properties;
 import java.util.logging.Level;
 
 import com.samskivert.util.Config;
-import com.samskivert.util.StringUtil;
-
 import com.threerings.presents.client.Client;
 
 import static com.threerings.msoy.Log.log;

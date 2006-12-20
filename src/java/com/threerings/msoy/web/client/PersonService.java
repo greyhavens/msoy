@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
 
 /**
  * Defines "person page" services available to the GWT/AJAX web client.

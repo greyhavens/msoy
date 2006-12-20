@@ -24,8 +24,6 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.util.IntListUtil;
-import com.samskivert.util.IntSet;
-
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.web.data.Group;

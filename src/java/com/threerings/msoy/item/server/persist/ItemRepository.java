@@ -23,7 +23,6 @@ import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.Query;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
@@ -37,7 +36,6 @@ import com.samskivert.jdbc.depot.operator.Arithmetic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
-import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntListUtil;
@@ -228,7 +226,7 @@ public abstract class ItemRepository<
             OrderBy.descending(sortExp),
             new Limit(offset, rows)
         };
-        
+
         if (search != null && search.length() > 0) {
             // TODO: We should have a Like() operator in Depot.
             SQLOperator searchExp = new SQLOperator.BinaryOperator(

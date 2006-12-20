@@ -3,9 +3,7 @@
 
 package com.threerings.msoy.server;
 
-import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.MemberMarshaller;
-import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;

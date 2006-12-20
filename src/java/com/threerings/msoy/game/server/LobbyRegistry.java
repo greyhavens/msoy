@@ -13,13 +13,8 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 
-import com.threerings.presents.dobj.ObjectDeathListener;
-import com.threerings.presents.dobj.ObjectDestroyedEvent;
-
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
-
-import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.msoy.server.MsoyServer;
 

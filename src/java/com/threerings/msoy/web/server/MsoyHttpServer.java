@@ -4,7 +4,6 @@
 package com.threerings.msoy.web.server;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Enumeration;
 
 import java.util.logging.Level;
@@ -15,14 +14,7 @@ import org.mortbay.http.HttpContext;
 import org.mortbay.http.HttpServer;
 import org.mortbay.http.handler.ResourceHandler;
 import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.log.LogFactory;
-import org.mortbay.log.LogImpl;
-
-import com.samskivert.util.StringUtil;
-
 import com.threerings.msoy.server.ServerConfig;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other

@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import com.threerings.util.Name;
-
-import com.threerings.presents.data.ClientObject;
-
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
@@ -23,9 +19,6 @@ import com.threerings.whirled.server.WhirledClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.web.data.MemberName;
-
-import com.threerings.msoy.server.persist.MemberRecord;
 
 /**
  * Represents an attached Msoy client on the server-side.

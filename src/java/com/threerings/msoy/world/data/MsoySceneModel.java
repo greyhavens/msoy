@@ -13,8 +13,6 @@ import com.threerings.whirled.data.SceneModel;
 
 import com.threerings.whirled.spot.data.Portal;
 
-import com.threerings.msoy.item.web.MediaDesc;
-
 /**
  * Extends basic scene model with scene type.
  */

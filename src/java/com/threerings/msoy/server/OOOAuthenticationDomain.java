@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import java.util.logging.Level;
-
 import com.samskivert.io.PersistenceException;
 
 import com.threerings.user.OOOUser;
@@ -14,8 +12,6 @@ import com.threerings.user.OOOUserRepository;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.web.data.LogonException;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Implements account authentication against the OOO global user database.

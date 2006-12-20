@@ -5,7 +5,6 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**

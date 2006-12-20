@@ -5,7 +5,6 @@ package com.threerings.msoy.data;
 
 import java.util.Iterator;
 
-import com.samskivert.util.ListUtil;
 import com.samskivert.util.Predicate;
 
 import com.threerings.presents.dobj.DSet;
@@ -16,8 +15,6 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
-import com.threerings.parlor.game.data.GameObject;
-
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
 import com.threerings.msoy.web.data.MemberName;
@@ -25,8 +22,6 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
-
-import com.threerings.msoy.game.data.GameMemberInfo;
 
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.WorldMemberInfo;

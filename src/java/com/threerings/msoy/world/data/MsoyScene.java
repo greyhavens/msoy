@@ -11,12 +11,8 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneImpl;
-import com.threerings.whirled.data.SceneUpdate;
-
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;
-
-import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Implementation of the Msoy scene interface.

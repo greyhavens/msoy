@@ -5,8 +5,6 @@ package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.logging.Level;
-
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.item.web.Item;

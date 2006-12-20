@@ -6,9 +6,6 @@ package com.threerings.msoy.server;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.Invoker;
-import com.samskivert.util.StringUtil;
-import com.threerings.util.IdentUtil;
 import com.threerings.util.Name;
 
 import com.threerings.presents.net.AuthRequest;

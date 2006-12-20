@@ -28,8 +28,6 @@ import com.threerings.presents.server.PresentsClient;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
-import com.threerings.crowd.data.PlaceObject;
-import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.ezgame.server.GameCookieManager;
@@ -51,8 +49,6 @@ import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.person.server.PersonPageManager;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.server.MsoyHttpServer;
-import com.threerings.msoy.world.data.RoomConfig;
-
 import com.threerings.msoy.person.server.persist.PersonPageRepository;
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MailRepository;

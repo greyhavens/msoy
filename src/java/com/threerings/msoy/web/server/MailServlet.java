@@ -4,8 +4,6 @@
 package com.threerings.msoy.web.server;
 
 import java.util.List;
-import java.util.Map;
-
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.server.MsoyServer;

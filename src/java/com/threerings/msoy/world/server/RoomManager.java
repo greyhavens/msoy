@@ -4,19 +4,15 @@
 package com.threerings.msoy.world.server;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.RepositoryUnit;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.RandomUtil;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ResultAdapter;
@@ -30,11 +26,8 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
-import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.web.data.MemberName;
-
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 

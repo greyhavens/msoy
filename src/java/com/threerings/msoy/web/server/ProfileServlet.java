@@ -9,12 +9,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.samskivert.io.PersistenceException;
 
-import com.threerings.util.Name;
-
-import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.WebCreds;
 
 import static com.threerings.msoy.Log.log;

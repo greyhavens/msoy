@@ -6,8 +6,6 @@ package com.threerings.msoy.world.data;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.item.web.MediaDesc;
-
 /**
  * Encodes a scene update that updates the attributes in the MsoySceneModel.
  * Note that this contains all attributes, even ones that have not changed.

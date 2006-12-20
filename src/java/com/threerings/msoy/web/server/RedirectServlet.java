@@ -18,11 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.CopyUtils;
 
 import com.samskivert.io.StreamUtil;
-import com.samskivert.util.StringUtil;
-
 import com.threerings.msoy.server.ServerConfig;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Hackery to pass POST requests through the GWT shell and on to the actual
