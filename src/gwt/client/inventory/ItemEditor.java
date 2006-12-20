@@ -347,9 +347,10 @@ public abstract class ItemEditor extends BorderedDialog
      * received from the server as a response to our file upload POST request.
      */
     protected static void callBridge (String id, String mediaHash, int mimeType, int constraint,
-                                      String thumbMediaHash, int thumbMimeType)
+                                      String thumbMediaHash, int thumbMimeType, int thumbConstraint)
     {
-        _singleton.setHash(id, mediaHash, mimeType, constraint, thumbMediaHash, thumbMimeType);
+        _singleton.setHash(id, mediaHash, mimeType, constraint,
+                           thumbMediaHash, thumbMimeType, thumbConstraint);
     }
 
     /**
@@ -422,7 +423,7 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected static native void configureBridge () /*-{
         $wnd.setHash = function (id, hash, type, constraint, thash, ttype, tconstraint) {
-           @client.inventory.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;I)(id, hash, type, constraint, thash, ttype, tconstraint);
+           @client.inventory.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;II)(id, hash, type, constraint, thash, ttype, tconstraint);
         };
     }-*/; 
 
