@@ -26,6 +26,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
 
@@ -122,11 +124,8 @@ public class GroupView extends VerticalPanel
         VerticalPanel established = new VerticalPanel();
         established.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         established.setStyleName("established");
-        // Date.toLocaleString cannot be made to only print the date (sans time of day).
-        // This has got to be the biggest waste of code ever.  Get with the Date formatting
-        // program, GWT!
-        established.add(new HTML("Est. " + getMonthName(_group.creationDate.getMonth()) + " " + 
-            _group.creationDate.getDay() + ", " + (_group.creationDate.getYear() + 1900)));
+        established.add(new HTML("Est. " + 
+            (new SimpleDateFormat("MMM dd, yyyy")).format(_group.creationDate)));
         established.add(new HTML("by <a href='" + MsoyEntryPoint.memberViewPath(
             _detail.creator.getMemberId()) + "'>" + _detail.creator + "</a>"));
         logoPanel.add(established);
