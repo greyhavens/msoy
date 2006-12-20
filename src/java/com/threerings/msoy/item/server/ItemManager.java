@@ -9,8 +9,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import com.samskivert.io.PersistenceException;
@@ -79,8 +80,8 @@ public class ItemManager
     } /* End: static class MissingRepositoryException. */
 
     /**
-     * Initializes the item manager, which will establish database connections
-     * for all of its item repositories.
+     * Initializes the item manager, which will establish database connections for all of its item
+     * repositories.
      */
     @SuppressWarnings("unchecked")
     public void init (ConnectionProvider conProv) throws PersistenceException
@@ -107,8 +108,8 @@ public class ItemManager
     }
 
     /**
-     * Provides a reference to the {@link GameRepository} which is used for
-     * nefarious ToyBox purposes.
+     * Provides a reference to the {@link GameRepository} which is used for nefarious ToyBox
+     * purposes.
      */
     public GameRepository getGameRepository ()
     {
@@ -127,15 +128,12 @@ public class ItemManager
 
         // TODO: do we have to check cloned items as well?
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
-            public Item invokePersistResult ()
-                throws PersistenceException
-            {
+            public Item invokePersistResult () throws PersistenceException {
                 ItemRecord rec = repo.loadItem(ident.itemId);
                 return (rec != null) ? rec.toItem() : null;
             }
 
-            public void handleSuccess ()
-            {
+            public void handleSuccess () {
                 if (_result != null) {
                     super.handleSuccess();
                 } else {
@@ -146,12 +144,10 @@ public class ItemManager
     }
 
     /**
-     * Mass-load the specified items. If any type is invalid, none are
-     * returned. If specific itemIds are invalid, they are omitted from
-     * the result list.
+     * Mass-load the specified items. If any type is invalid, none are returned. If specific
+     * itemIds are invalid, they are omitted from the result list.
      */
-    public void getItems (
-        Collection<ItemIdent> ids, ResultListener<ArrayList<Item>> listener)
+    public void getItems (Collection<ItemIdent> ids, ResultListener<ArrayList<Item>> listener)
     {
         final LookupList list = new LookupList();
         try {
@@ -170,14 +166,12 @@ public class ItemManager
                 public ArrayList<Item> invokePersistResult () throws PersistenceException {
                     // create a list to hold the results
                     ArrayList<Item> items = new ArrayList<Item>();
-
                     // mass-lookup items, a repo at a time
                     for (Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]> tup : list) {
                         for (ItemRecord rec : tup.left.loadItems(tup.right)) {
                             items.add(rec.toItem());
                         }
                     }
-
                     return items;
                 }
             });
@@ -186,14 +180,11 @@ public class ItemManager
     /**
      * Update usage of the specified items.
      *
-     * This method assumes that the specified avatars are both valid
-     * and owned by the user in question.
-     *
-     * The supplied listener will be notified of success with null.
+     * This method assumes that the specified avatars are both valid and owned by the user in
+     * question. The supplied listener will be notified of success with null.
      */
-    public void updateItemUsage (
-        final int memberId, final Avatar oldAvatar, final Avatar newAvatar,
-        final ResultListener<Object> listener)
+    public void updateItemUsage (final int memberId, final Avatar oldAvatar, final Avatar newAvatar,
+                                 final ResultListener<Object> listener)
     {
         if (ObjectUtil.equals(oldAvatar, newAvatar)) {
             listener.requestCompleted(null); // mr. no-op
@@ -240,10 +231,9 @@ public class ItemManager
      *
      * The supplied listener will be notified of success with null.
      */
-    public void updateItemUsage (
-        final int editorMemberId,
-        final int sceneId, FurniData[] removedFurni, FurniData[] addedFurni,
-        ResultListener<Object> listener)
+    public void updateItemUsage (final int editorMemberId, final int sceneId,
+                                 FurniData[] removedFurni, FurniData[] addedFurni,
+                                 ResultListener<Object> listener)
     {
         final LookupList unused = new LookupList();
         final LookupList scened = new LookupList();
@@ -263,13 +253,14 @@ public class ItemManager
                     unused.addItem(furni.itemType, furni.itemId);
                 }
             }
+
             if (addedFurni != null) {
                 for (FurniData furni :addedFurni) {
                     if (furni.itemType == Item.NOT_A_TYPE) {
                         // it's only legal to add props that were already there
                         if (props == null || !props.contains(furni.id)) {
-                            listener.requestFailed(new Exception("Furni " +
-                                "added with invalid item source."));
+                            listener.requestFailed(
+                                new Exception("Furni added with invalid item source."));
                             return;
                         }
                         continue;
@@ -285,11 +276,8 @@ public class ItemManager
         }
 
         ResultListener<Object> rlo = listener;
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Object>(rlo) {
-            public Object invokePersistResult ()
-                throws PersistenceException
-            {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>(rlo) {
+            public Object invokePersistResult () throws PersistenceException {
                 for (Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]> tup : unused) {
                     tup.left.markItemUsage(tup.right, Item.UNUSED, 0);
                 }
@@ -300,9 +288,7 @@ public class ItemManager
                 return null;
             }
 
-            @Override
-            public void handleSuccess ()
-            {
+            public void handleSuccess () {
                 super.handleSuccess();
 
                 // TODO: known problem.
@@ -318,34 +304,31 @@ public class ItemManager
                 Iterator<Tuple<Byte, int[]>> itr = unused.typeIterator();
                 while (itr.hasNext()) {
                     Tuple<Byte, int[]> tup = itr.next();
-                    updateUserCache(editorMemberId, tup.left, tup.right,
-                        new ItemUpdateOp() {
-                            public void update (Item item) {
-                                item.used = Item.UNUSED;
-                                item.location = 0;
-                            }
-                        }, false);
+                    updateUserCache(editorMemberId, tup.left, tup.right, new ItemUpdateOp() {
+                        public void update (Item item) {
+                            item.used = Item.UNUSED;
+                            item.location = 0;
+                        }
+                    }, false);
                 }
                 itr = scened.typeIterator();
                 while (itr.hasNext()) {
                     Tuple<Byte, int[]> tup = itr.next();
-                    updateUserCache(editorMemberId, tup.left, tup.right,
-                        new ItemUpdateOp() {
-                            public void update (Item item) {
-                                item.used = Item.USED_AS_FURNITURE;
-                                item.location = sceneId;
-                            }
-                        }, false);
+                    updateUserCache(editorMemberId, tup.left, tup.right, new ItemUpdateOp() {
+                        public void update (Item item) {
+                            item.used = Item.USED_AS_FURNITURE;
+                            item.location = sceneId;
+                        }
+                    }, false);
                 }
             }
         });
     }
 
     /**
-     * Inserts the supplied item into the system. The item should be fully
-     * configured, and an item id will be assigned during the insertion
-     * process. Success or failure will be communicated to the supplied result
-     * listener.
+     * Inserts the supplied item into the system. The item should be fully configured, and an item
+     * id will be assigned during the insertion process. Success or failure will be communicated to
+     * the supplied result listener.
      */
     public void insertItem (final Item item, ResultListener<Item> listener)
     {
@@ -365,6 +348,7 @@ public class ItemManager
                 item.itemId = record.itemId;
                 return item;
             }
+
             public void handleSuccess () {
                 super.handleSuccess();
                 // add the item to the user's cached inventory
@@ -374,9 +358,8 @@ public class ItemManager
     }
 
     /**
-     * Updates the supplied item. The item should have previously been checked
-     * for validity. Success or failure will be communicated to the supplied
-     * result listener.
+     * Updates the supplied item. The item should have previously been checked for
+     * validity. Success or failure will be communicated to the supplied result listener.
      */
     public void updateItem (final Item item, ResultListener<Item> listener)
     {
@@ -395,6 +378,7 @@ public class ItemManager
                 repo.updateOriginalItem(record);
                 return item;
             }
+
             public void handleSuccess () {
                 super.handleSuccess();
                 // add the item to the user's cached inventory
@@ -445,8 +429,7 @@ public class ItemManager
     }
 
     /**
-     * Loads up the inventory of items of the specified type for the specified
-     * member.
+     * Loads up the inventory of items of the specified type for the specified member.
      */
     public void loadInventory (final int memberId, byte type,
                                ResultListener<ArrayList<Item>> listener)
@@ -511,8 +494,8 @@ public class ItemManager
     }
 
     /**
-     * Purchases a given item for a given member from the catalog by
-     * creating a new clone row in the appropriate database table.
+     * Purchases a given item for a given member from the catalog by creating a new clone row in
+     * the appropriate database table.
      */
     public void purchaseItem (final int memberId, final ItemIdent ident,
                               ResultListener<Item> listener)
@@ -525,15 +508,13 @@ public class ItemManager
 
         // and perform the purchase
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
-            public Item invokePersistResult () throws PersistenceException
-            {
+            public Item invokePersistResult () throws PersistenceException {
                 // load the item being purchased
                 ItemRecord item = repo.loadOriginalItem(ident.itemId);
                 // sanity check it
                 if (item.ownerId != -1) {
                     throw new PersistenceException(
-                        "Can only clone listed items [itemId=" +
-                        item.itemId + "]");
+                        "Can only clone listed items [id=" + ident + "]");
                 }
                 // create the clone row in the database!
                 int cloneId = repo.insertClone(item.itemId, memberId);
@@ -544,11 +525,8 @@ public class ItemManager
                 return item.toItem();
             }
 
-            @Override
-            public void handleSuccess ()
-            {
+            public void handleSuccess () {
                 super.handleSuccess();
-
                 updateUserCache(_result);
             }
         });
@@ -614,18 +592,14 @@ public class ItemManager
         }
 
         // and perform the remixing
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Item>(listener) {
-            public Item invokePersistResult () throws PersistenceException
-            {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
+            public Item invokePersistResult () throws PersistenceException {
                 // load a copy of the clone to modify
                 ItemRecord item = repo.loadClone(ident.itemId);
                 if (item == null) {
-                    throw new PersistenceException(
-                        "Can't find item [item=" + ident + "]");
+                    throw new PersistenceException("Can't find item [item=" + ident + "]");
                 }
-                // TODO: make sure we should not use the original creator here
-                // make it ours
+                // TODO: make sure we should not use the original creator here make it ours
                 item.creatorId = item.ownerId;
                 // let the object forget whence it came
                 int originalId = item.parentId;
@@ -636,16 +610,12 @@ public class ItemManager
                 // delete the old clone
                 repo.deleteClone(ident.itemId);
                 // copy tags from the original to the new item
-                repo.copyTags(
-                    originalId, item.itemId, item.ownerId,
-                    System.currentTimeMillis());
+                repo.copyTags(originalId, item.itemId, item.ownerId, System.currentTimeMillis());
                 return item.toItem();
             }
 
-            public void handleSuccess ()
-            {
+            public void handleSuccess () {
                 super.handleSuccess();
-                // update the item in the user's cached inventory
                 updateUserCache(_result);
             }
         });
@@ -653,8 +623,7 @@ public class ItemManager
     }
 
     /** Fetch the rating a user has given an item, or 0. */
-    public void getRating (final ItemIdent ident, final int memberId,
-                           ResultListener<Byte> listener)
+    public void getRating (final ItemIdent ident, final int memberId, ResultListener<Byte> listener)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
@@ -662,20 +631,17 @@ public class ItemManager
             return;
         }
 
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Byte>(listener) {
-                public Byte invokePersistResult () throws PersistenceException {
-                    RatingRecord<ItemRecord> record =
-                        repo.getRating(ident.itemId, memberId);
-                    return record != null ? record.rating : 0;
-                }
-            });
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Byte>(listener) {
+            public Byte invokePersistResult () throws PersistenceException {
+                RatingRecord<ItemRecord> record = repo.getRating(ident.itemId, memberId);
+                return record != null ? record.rating : 0;
+            }
+        });
     }
 
     /** Fetch the most popular tags across all items. */
-    public void getPopularTags (
-        byte type, final int rows,
-        ResultListener<Map<String, Integer>> listener)
+    public void getPopularTags (byte type, final int rows,
+                                ResultListener<Map<String, Integer>> listener)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(type, listener);
@@ -683,22 +649,19 @@ public class ItemManager
             return;
         }
 
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Map<String, Integer>>(listener) {
-                public Map<String, Integer> invokePersistResult () throws PersistenceException {
-                    Map<String, Integer> result = new HashMap<String, Integer>();
-                    for (TagPopularityRecord record : repo.getPopularTags(rows)) {
-                        result.put(record.tag, record.count);
-                    }
-                    return result;
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Map<String, Integer>>(listener) {
+            public Map<String, Integer> invokePersistResult () throws PersistenceException {
+                Map<String, Integer> result = new HashMap<String, Integer>();
+                for (TagPopularityRecord record : repo.getPopularTags(rows)) {
+                    result.put(record.tag, record.count);
                 }
-            });
-
+                return result;
+            }
+        });
     }
 
     /** Fetch the tags for a given item. */
-    public void getTags (final ItemIdent ident,
-                         ResultListener<Collection<String>> listener)
+    public void getTags (final ItemIdent ident, ResultListener<Collection<String>> listener)
     {
         // locate the appropriate repository
         final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
@@ -706,19 +669,16 @@ public class ItemManager
             return;
         }
 
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Collection<String>>(listener) {
-                public Collection<String> invokePersistResult ()
-                        throws PersistenceException {
-                    ArrayList<String> result = new ArrayList<String>();
-                    for (TagNameRecord tagName : repo.getTags(ident.itemId)) {
-                        result.add(tagName.tag);
-                    }
-                    return result;
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<String>>(listener) {
+            public Collection<String> invokePersistResult () throws PersistenceException {
+                ArrayList<String> result = new ArrayList<String>();
+                for (TagNameRecord tagName : repo.getTags(ident.itemId)) {
+                    result.add(tagName.tag);
                 }
-            });
+                return result;
+            }
+        });
     }
-
 
     /**
      * Fetch the tagging history for a given item.
@@ -732,13 +692,11 @@ public class ItemManager
             return;
         }
 
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Collection<TagHistory>>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<TagHistory>>(listener) {
             public Collection<TagHistory> invokePersistResult () throws PersistenceException {
                 Map<Integer, MemberRecord> memberCache = new HashMap<Integer, MemberRecord>();
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
-                for (TagHistoryRecord<ItemRecord> record :
-                        repo.getTagHistoryByItem(ident.itemId)) {
+                for (TagHistoryRecord<ItemRecord> record : repo.getTagHistoryByItem(ident.itemId)) {
                     // TODO: we should probably cache in MemberRepository
                     MemberRecord memRec = memberCache.get(record.memberId);
                     if (memRec == null) {
@@ -861,8 +819,7 @@ public class ItemManager
 
                 ItemRecord item = repo.loadItem(ident.itemId);
                 if (item == null) {
-                    throw new PersistenceException(
-                        "Can't find item [item=" + ident + "]");
+                    throw new PersistenceException("Missing item for tagItem [item=" + ident + "]");
                 }
                 int originalId = item.parentId != -1 ? item.parentId : ident.itemId;
 
@@ -891,60 +848,53 @@ public class ItemManager
     }
 
     // from ItemProvider
-    public void getInventory (
-        ClientObject caller, final byte type,
-        final InvocationService.InvocationListener listener)
+    public void getInventory (ClientObject caller, final byte type,
+                              final InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        final MemberObject memberObj = (MemberObject) caller;
-        if (memberObj.isGuest()) {
+        final MemberObject user = (MemberObject) caller;
+        if (user.isGuest()) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
 
-        if (memberObj.isInventoryResolving(type)) {
+        if (user.isInventoryResolving(type)) {
             // already loaded/resolving!
-            return; // this is not an error condition, we expect that
-            // some other entity is loading and the user will notice soon
-            // enough.
+            return; // this is not an error condition, we expect that some other entity is loading
+            // and the user will notice soon enough.
         }
 
         // mark the item type as resolving
-        memberObj.setResolvingInventory(
-            memberObj.resolvingInventory | (1 << type));
+        user.setResolvingInventory(user.resolvingInventory | (1 << type));
 
         // then, load that type
-        loadInventory(memberObj.getMemberId(), type, new ResultListener<ArrayList<Item>>() {
-            public void requestCompleted (ArrayList<Item> result)
-            {
+        loadInventory(user.getMemberId(), type, new ResultListener<ArrayList<Item>>() {
+            public void requestCompleted (ArrayList<Item> result) {
                 // apply the changes
-                memberObj.startTransaction();
+                user.startTransaction();
                 try {
                     for (Item item : result) {
-                        memberObj.addToInventory(item);
+                        user.addToInventory(item);
                     }
-                    memberObj.setLoadedInventory(
-                        memberObj.loadedInventory | (1 << type));
-
+                    user.setLoadedInventory(user.loadedInventory | (1 << type));
                 } finally {
-                    memberObj.commitTransaction();
+                    user.commitTransaction();
                 }
             }
 
-            public void requestFailed (Exception cause)
-            {
-                log.warning("Unable to retrieve inventory [cause=" + cause + "].");
+            public void requestFailed (Exception cause) {
+                log.log(Level.WARNING, "Unable to retrieve inventory [who=" + user.who() + "].",
+                        cause);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
 
                 // we're not resolving anymore.. oops
-                memberObj.setResolvingInventory(
-                    memberObj.resolvingInventory & ~(1 << type));
+                user.setResolvingInventory(user.resolvingInventory & ~(1 << type));
             }
         });
     }
 
     /**
-     * Called when an item is updated or created and we should ensure
-     * that the user's MemberObject cache of their inventory is up-to-date.
+     * Called when an item is updated or created and we should ensure that the user's MemberObject
+     * cache of their inventory is up-to-date.
      */
     protected void updateUserCache (ItemRecord rec)
     {
@@ -952,8 +902,8 @@ public class ItemManager
     }
 
     /**
-     * Called when an item is updated or created and we should ensure
-     * that the user's MemberObject cache of their inventory is up-to-date.
+     * Called when an item is updated or created and we should ensure that the user's MemberObject
+     * cache of their inventory is up-to-date.
      */
     protected void updateUserCache (Item item)
     {
@@ -977,10 +927,9 @@ public class ItemManager
         }
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
 
-        // if found and this item's inventory type is loaded or resolving,
-        // update or add it. (If we're resolving, we might be the first
-        // adding the item. That's ok, nothing should think it's
-        // actually loaded until the inventoryLoaded flag is set.
+        // if found and this item's inventory type is loaded or resolving, update or add it. (If
+        // we're resolving, we might be the first adding the item. That's ok, nothing should think
+        // it's actually loaded until the inventoryLoaded flag is set.
         if (memObj != null && memObj.isInventoryResolving(type)) {
             if (item == null) {
                 item = rec.toItem(); // lazy-create when we need it.
@@ -996,8 +945,8 @@ public class ItemManager
     /**
      * Update changed items that are already loaded in a user's inventory.
      */
-    protected void updateUserCache (int ownerId, byte type,
-        int[] ids, ItemUpdateOp op, boolean warnIfMissing)
+    protected void updateUserCache (int ownerId, byte type, int[] ids, ItemUpdateOp op,
+                                    boolean warnIfMissing)
     {
         MemberObject memObj = MsoyServer.lookupMember(ownerId);
         if (memObj != null && memObj.isInventoryLoaded(type)) {
@@ -1007,10 +956,9 @@ public class ItemManager
                     Item item = memObj.inventory.get(new ItemIdent(type, id));
                     if (item == null) {
                         if (warnIfMissing) {
-                            // TODO: this possibly a bigger error and we should
-                            // maybe throw an exception
-                            log.warning("Unable to update missing item: " +
-                                item);
+                            // TODO: this possibly a bigger error and we should maybe throw an
+                            // exception
+                            log.warning("Unable to update missing item: " + item);
                         }
                         continue;
                     }
@@ -1040,7 +988,6 @@ public class ItemManager
     {
         try {
             return getRepository(type);
-
         } catch (MissingRepositoryException mre) {
             listener.requestFailed(mre);
             return null;
@@ -1060,15 +1007,9 @@ public class ItemManager
         return repo;
     }
 
-
-    /** Contains a reference to our game repository. We'd just look this up
-     * from the table but we can't downcast an ItemRepository to a
-     * GameRepository, annoyingly. */
-    protected GameRepository _gameRepo;
-
     /**
-     *  A class that helps manage loading or storing a bunch of items
-     *  that may be spread in difference repositories.
+     * A class that helps manage loading or storing a bunch of items that may be spread in
+     * difference repositories.
      */
     protected class LookupList
         implements Iterable<Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]>>
@@ -1109,20 +1050,15 @@ public class ItemManager
         {
             final Iterator<LookupType> itr = _byType.values().iterator();
             return new Iterator<Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]>>() {
-                public boolean hasNext ()
-                {
+                public boolean hasNext () {
                     return itr.hasNext();
                 }
-
-                public Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]> next ()
-                {
+                public Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]> next () {
                     LookupType lookup = itr.next();
                     return new Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]>(
                         lookup.repo, lookup.getItemIds());
                 }
-
-                public void remove ()
-                {
+                public void remove () {
                     throw new UnsupportedOperationException();
                 }
             };
@@ -1132,20 +1068,14 @@ public class ItemManager
         {
             final Iterator<LookupType> itr = _byType.values().iterator();
             return new Iterator<Tuple<Byte, int[]>>() {
-                public boolean hasNext ()
-                {
+                public boolean hasNext () {
                     return itr.hasNext();
                 }
-
-                public Tuple<Byte, int[]> next ()
-                {
+                public Tuple<Byte, int[]> next () {
                     LookupType lookup = itr.next();
-                    return new Tuple<Byte, int[]>(
-                        lookup.type, lookup.getItemIds());
+                    return new Tuple<Byte, int[]>(lookup.type, lookup.getItemIds());
                 }
-
-                public void remove ()
-                {
+                public void remove () {
                     throw new UnsupportedOperationException();
                 }
             };
@@ -1193,8 +1123,7 @@ public class ItemManager
         }
 
         /** A mapping of item type to LookupType record of repo / ids. */
-        protected HashMap<Byte, LookupType> _byType =
-            new HashMap<Byte, LookupType>();
+        protected HashMap<Byte, LookupType> _byType = new HashMap<Byte, LookupType>();
     } /* End: class LookupList. */
 
     /**
@@ -1207,6 +1136,10 @@ public class ItemManager
          */
         public void update (Item item);
     }
+
+    /** Contains a reference to our game repository. We'd just look this up from the table but we
+     * can't downcast an ItemRepository to a GameRepository, annoyingly. */
+    protected GameRepository _gameRepo;
 
     /** A regexp pattern to validate tags. */
     protected static final Pattern validTag =
