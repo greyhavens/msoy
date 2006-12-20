@@ -30,7 +30,7 @@ import com.threerings.msoy.item.web.Photo;
 @Table
 public abstract class ItemRecord implements Streamable, Cloneable
 {
-    public static final int BASE_SCHEMA_VERSION = 5;
+    public static final int BASE_SCHEMA_VERSION = 6;
 
     public static final String ITEM_ID = "itemId";
     public static final String PARENT_ID = "parentId";
