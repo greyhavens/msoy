@@ -240,12 +240,12 @@ public class UploadServlet extends HttpServlet
 
         // determine whether this image is width or height constrained
         info.constraint =  MediaDesc.computeConstraint(
-            Item.PREVIEW_WIDTH, Item.PREVIEW_HEIGHT, image.getWidth(), image.getHeight());
+            MediaDesc.PREVIEW_SIZE, image.getWidth(), image.getHeight());
 
         // generate a thumbnail for this image
         MediaInfo tinfo = new MediaInfo();
         tinfo.constraint = MediaDesc.computeConstraint(
-            Item.THUMBNAIL_WIDTH, Item.THUMBNAIL_HEIGHT, image.getWidth(), image.getHeight());
+            MediaDesc.THUMBNAIL_SIZE, image.getWidth(), image.getHeight());
         if (tinfo.constraint == MediaDesc.NOT_CONSTRAINED) {
             // if it's really small, we can use the original as the thumbnail
             tinfo.hash = info.hash;
@@ -254,8 +254,8 @@ public class UploadServlet extends HttpServlet
         } else {
             // scale the image to thumbnail size
             float scale = (tinfo.constraint == MediaDesc.HORIZONTALLY_CONSTRAINED) ?
-                (float)Item.THUMBNAIL_WIDTH / image.getWidth()  : 
-                (float)Item.THUMBNAIL_HEIGHT / image.getHeight();
+                (float)MediaDesc.THUMBNAIL_WIDTH / image.getWidth()  : 
+                (float)MediaDesc.THUMBNAIL_HEIGHT / image.getHeight();
             int twidth =  Math.round(scale * image.getWidth());
             int theight =  Math.round(scale * image.getHeight());
             BufferedImage timage = new BufferedImage(twidth, theight, BufferedImage.TYPE_INT_ARGB);

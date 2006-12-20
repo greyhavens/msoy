@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaDesc;
 
 import client.item.ItemUtil;
 
@@ -62,7 +63,7 @@ public class ItemContainer extends VerticalPanel
      */
     protected Widget createContainer (Item item)
     {
-        return ItemUtil.createMediaView(item.getThumbnailMedia(), true);
+        return ItemUtil.createMediaView(item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
     }
 
     protected ItemPanel _panel;

@@ -48,17 +48,47 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The MIME type for Java JAR files. */
     public static final byte APPLICATION_JAVA_ARCHIVE = 41;
 
-    /** A constant used to indicate that an image does not exceed our target size in either
+    /** Identifies that a "half thumbnail" sized image is desired. */
+    public static final int HALF_THUMBNAIL_SIZE = 0;
+
+    /** Identifies that a thumbnail sized image is desired. */
+    public static final int THUMBNAIL_SIZE = 1;
+
+    /** Identifies that a preview sized image is desired. */
+    public static final int PREVIEW_SIZE = 2;
+
+    /** The thumbnail image width.  */
+    public static final int THUMBNAIL_WIDTH = 160;
+
+    /** The thumbnail image height.  */
+    public static final int THUMBNAIL_HEIGHT = 120;
+
+    /** Defines the dimensions of our various image sizes. */
+    public static final int[] DIMENSIONS = {
+        THUMBNAIL_WIDTH/2, THUMBNAIL_HEIGHT/2, // half thumbnail size
+        THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
+        THUMBNAIL_WIDTH*2, THUMBNAIL_HEIGHT*2, // preview size
+    };
+
+    /** A constant used to indicate that an image does not exceed half thumbnail size in either
      * dimension. */
     public static final byte NOT_CONSTRAINED = 0;
 
-    /** A constant used to indicate that an image exceeds our target size proportionally more in
-     * the horizontal dimension. */
+    /** A constant used to indicate that an image exceeds thumbnail size proportionally more in the
+     * horizontal dimension. */
     public static final byte HORIZONTALLY_CONSTRAINED = 1;
 
-    /** A constant used to indicate that an image exceeds our target size proportionally more in
-     * the vertical dimension. */
+    /** A constant used to indicate that an image exceeds thumbnail size proportionally more in the
+     * vertical dimension. */
     public static final byte VERTICALLY_CONSTRAINED = 2;
+
+    /** A constant used to indicate that an image exceeds half thumbnail size proportionally more
+     * in the horizontal dimension but does not exceed thumbnail size in either dimension. */
+    public static final byte HALF_HORIZONTALLY_CONSTRAINED = 3;
+
+    /** A constant used to indicate that an image exceeds half thumbnail size proportionally more
+     * in the vertical dimension but does not exceed thumbnail size in either dimension. */
+    public static final byte HALF_VERTICALLY_CONSTRAINED = 4;
 
     /** The SHA-1 hash of this media's data. */
     public byte[] hash;
@@ -258,17 +288,24 @@ public class MediaDesc implements Streamable, IsSerializable
      * Computes the constraining dimension for an image (if any) based on the supplied target and
      * actual dimensions.
      */
-    public static byte computeConstraint (int targetWidth, int targetHeight,
-                                          int actualWidth, int actualHeight)
+    public static byte computeConstraint (int size, int actualWidth, int actualHeight)
     {
-        float wfactor = (float)targetWidth / actualWidth;
-        float hfactor = (float)targetHeight / actualHeight;
+        float wfactor = (float)DIMENSIONS[2*size] / actualWidth;
+        float hfactor = (float)DIMENSIONS[2*size+1] / actualHeight;
         if (wfactor > 1 && hfactor > 1) {
-            return NOT_CONSTRAINED;
+            // if we're computing the size of a thumbnail image, see if it is constrained at half
+            // size or still unconstrained
+            if (size == THUMBNAIL_SIZE) {
+                return computeConstraint(HALF_THUMBNAIL_SIZE, actualWidth, actualHeight);
+            } else {
+                return NOT_CONSTRAINED;
+            }
         } else if (wfactor < hfactor) {
-            return HORIZONTALLY_CONSTRAINED;
+            return (size == HALF_THUMBNAIL_SIZE) ?
+                HALF_HORIZONTALLY_CONSTRAINED : HORIZONTALLY_CONSTRAINED;
         } else {
-            return VERTICALLY_CONSTRAINED;
+            return (size == HALF_THUMBNAIL_SIZE) ?
+                HALF_VERTICALLY_CONSTRAINED : VERTICALLY_CONSTRAINED;
         }
     }
 

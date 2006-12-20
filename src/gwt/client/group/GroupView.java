@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.InlineLabel;
 
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
@@ -112,7 +113,7 @@ public class GroupView extends VerticalPanel
         VerticalPanel logoPanel = new VerticalPanel();
         logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         logoPanel.setStyleName("logoPanel");
-        logoPanel.add(ItemUtil.createMediaView(_group.logo, 160, 120));
+        logoPanel.add(ItemUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE));
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("links");
         links.setSpacing(8);

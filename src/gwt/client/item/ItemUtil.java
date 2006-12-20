@@ -56,14 +56,12 @@ public class ItemUtil
     /**
      * Create a widget to display the supplied media.
      *
-     * @param thumbnail if true the media will be scaled to the thumbnail size, if false it will be
-     * scaled to the preview size.
+     * @param size either {@link MediaDesc#HALF_THUMBNAIL_SIZE}, {@link MediaDesc#THUMBNAIL_SIZE}
+     * or {@link MediaDesc#PREVIEW_SIZE}.
      */
-    public static Widget createMediaView (MediaDesc desc, boolean thumbnail)
+    public static Widget createMediaView (MediaDesc desc, int size)
     {
-        int width = thumbnail ? Item.THUMBNAIL_WIDTH : Item.PREVIEW_WIDTH;
-        int height = thumbnail ? Item.THUMBNAIL_HEIGHT : Item.PREVIEW_HEIGHT;
-        return createMediaView(desc, width, height);
+        return createMediaView(desc, MediaDesc.DIMENSIONS[2*size], MediaDesc.DIMENSIONS[2*size+1]);
     }
 
     /**

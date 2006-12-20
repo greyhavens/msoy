@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
+import com.threerings.msoy.item.web.MediaDesc;
 
 import client.util.WebContext;
 import client.util.BorderedDialog;
@@ -85,7 +86,7 @@ public class BaseItemDetailPopup extends BorderedDialog
 
     protected Widget createPreview (Item item)
     {
-        return ItemUtil.createMediaView(item.getPreviewMedia(), false);
+        return ItemUtil.createMediaView(item.getPreviewMedia(), MediaDesc.PREVIEW_SIZE);
     }
 
     protected void createInterface (VerticalPanel details, VerticalPanel controls)

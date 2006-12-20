@@ -101,7 +101,8 @@ public class MediaUploader extends VerticalPanel
     {
         _target.clear();
         if (desc != null) {
-            _target.add(ItemUtil.createMediaView(desc, _thumbnail));
+            int size = _thumbnail ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;
+            _target.add(ItemUtil.createMediaView(desc, size));
             _status.setText(_title);
         }
     }

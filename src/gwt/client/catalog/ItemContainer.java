@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.MediaDesc;
 
 import client.item.ItemUtil;
 
@@ -20,7 +21,7 @@ public class ItemContainer extends VerticalPanel
 {
     public ItemContainer (final CatalogListing listing, final ItemPanel panel)
     {
-        add(ItemUtil.createMediaView(listing.item.getThumbnailMedia(), true));
+        add(ItemUtil.createMediaView(listing.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE));
 
         Label descrip = new Label(ItemUtil.getName(panel._ctx, listing.item, true));
         descrip.setStyleName("itemDescrip");
