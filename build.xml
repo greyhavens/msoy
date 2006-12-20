@@ -244,8 +244,8 @@
     </java>
   </target>
 
-  <!-- builds our Flash client -->
-  <target name="asclient" depends="asprepare,aslib,exportlib">
+  <!-- just rebuilds the Flash client, assumes nothing has changed -->
+  <target name="asquick">
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
@@ -260,6 +260,9 @@
     </exec>
     <copy file="dist/game-client.swf" todir="pages/clients"/>
   </target>
+
+  <!-- builds our Flash client -->
+  <target name="asclient" depends="asprepare,aslib,exportlib,asquick"/>
 
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare,aslib,exportlib">
