@@ -45,6 +45,11 @@ public interface ItemServiceAsync
     public void remixItem (WebCreds creds, ItemIdent item, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link ItemService#deleteItem}.
+     */
+    public void deleteItem (WebCreds creds, ItemIdent item, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link ItemService#getRating}.
      */
     public void getRating (WebCreds creds, ItemIdent item, int memberId, AsyncCallback callback);

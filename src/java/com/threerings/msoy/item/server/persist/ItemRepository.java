@@ -334,13 +334,30 @@ public abstract class ItemRepository<
         return record.itemId;
     }
 
-    /** Delete an item clone from the database */
-    public void deleteClone (int cloneId)
+    /**
+     * Deletes an item from the repository and all associated data (ratings, tags, tag history).
+     * This method does not perform any checking to determine whether it is safe to delete the item
+     * so do not call it unless you know the item is not listed in the catalog or otherwise in use.
+     */
+    public void deleteItem (int itemId)
         throws PersistenceException
     {
-        delete(getCloneClass(), cloneId);
+        if (itemId < 0) {
+            delete(getCloneClass(), itemId);
+
+        } else {
+            // delete the item in question
+            delete(getItemClass(), itemId);
+            // delete rating, tag and tag history records for this item
+            deleteAll(getRatingClass(), new Key(RatingRecord.ITEM_ID, itemId));
+            deleteAll(getTagClass(), new Key(TagRecord.ITEM_ID, itemId));
+            deleteAll(getTagHistoryClass(), new Key(TagHistoryRecord.ITEM_ID, itemId));
+        }
     }
 
+    /**
+     * Returns the rating given to the specified item by the specified member.
+     */
     public RatingRecord<T> getRating (int itemId, int memberId)
         throws PersistenceException
     {

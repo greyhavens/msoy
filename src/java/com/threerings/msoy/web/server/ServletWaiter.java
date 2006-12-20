@@ -7,6 +7,8 @@ import java.util.logging.Level;
 
 import com.samskivert.servlet.util.ServiceWaiter;
 
+import com.threerings.presents.server.InvocationException;
+
 import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;
@@ -44,6 +46,11 @@ public class ServletWaiter<T> extends ServiceWaiter<T>
             } else {
                 throw getError();
             }
+
+        } catch (InvocationException ie) {
+            // pass these through without a fuss
+            throw new ServiceException("", ie.getMessage());
+
         } catch (Exception e) {
             log.log(Level.WARNING, _ident + " failed.", e);
             throw new ServiceException("", ServiceException.INTERNAL_ERROR);

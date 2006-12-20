@@ -23,11 +23,11 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberObject;
@@ -38,12 +38,14 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.world.data.FurniData;
 
-import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Avatar;
+import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
+
+import com.threerings.msoy.item.data.ItemCodes;
 
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
@@ -608,7 +610,7 @@ public class ItemManager
                 item.itemId = 0;
                 repo.insertOriginalItem(item);
                 // delete the old clone
-                repo.deleteClone(ident.itemId);
+                repo.deleteItem(ident.itemId);
                 // copy tags from the original to the new item
                 repo.copyTags(originalId, item.itemId, item.ownerId, System.currentTimeMillis());
                 return item.toItem();
@@ -620,6 +622,39 @@ public class ItemManager
             }
         });
 
+    }
+
+    /**
+     * Deletes an item from the specified member's inventory. If the item is successfully deleted,
+     * null will be returned to the listener. If the item cannot be deleted due to access or other
+     * restrictions, an {@link InvocationException} will be delivered to the listener.
+     */
+    public void deleteItemFor (final int memberId, final ItemIdent ident,
+                               ResultListener<Void> listener)
+    {
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        if (repo == null) {
+            return;
+        }
+
+        log.info("Deleting " + ident + " for " + memberId + ".");
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
+            public Void invokePersistResult () throws Exception {
+                ItemRecord item = repo.loadItem(ident.itemId);
+                if (item == null) {
+                    throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
+                }
+                if (item.ownerId != memberId) {
+                    throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
+                }
+                if (item.used != 0) {
+                    throw new InvocationException(ItemCodes.E_ITEM_IN_USE);
+                }
+                repo.deleteItem(ident.itemId);
+                return null;
+            }
+        });
     }
 
     /** Fetch the rating a user has given an item, or 0. */
@@ -854,7 +889,7 @@ public class ItemManager
     {
         final MemberObject user = (MemberObject) caller;
         if (user.isGuest()) {
-            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+            throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
         }
 
         if (user.isInventoryResolving(type)) {
@@ -884,7 +919,7 @@ public class ItemManager
             public void requestFailed (Exception cause) {
                 log.log(Level.WARNING, "Unable to retrieve inventory [who=" + user.who() + "].",
                         cause);
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+                listener.requestFailed(ItemCodes.E_INTERNAL_ERROR);
 
                 // we're not resolving anymore.. oops
                 user.setResolvingInventory(user.resolvingInventory & ~(1 << type));

@@ -67,6 +67,12 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
+     * Deletes an item from the caller's inventory.
+     */
+    public void deleteItem (WebCreds creds, ItemIdent item)
+        throws ServiceException;
+
+    /**
      * Fetches the rating somebody gave something, or 0.
      */
     public byte getRating (WebCreds creds, ItemIdent item, int memberId)

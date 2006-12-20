@@ -145,6 +145,19 @@ public class ItemServlet extends RemoteServiceServlet
     }
 
     // from interface ItemService
+    public void deleteItem (final WebCreds creds, final ItemIdent ident)
+        throws ServiceException
+    {
+        final ServletWaiter<Void> waiter = new ServletWaiter<Void>("deleteItem[" + ident + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.deleteItemFor(creds.memberId, ident, waiter);
+            }
+        });
+        waiter.waitForResult();
+    }
+
+    // from interface ItemService
     public byte getRating (WebCreds creds, final ItemIdent ident, final int memberId)
         throws ServiceException
     {
