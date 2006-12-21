@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
@@ -126,12 +125,18 @@ public class GroupView extends VerticalPanel
         VerticalPanel established = new VerticalPanel();
         established.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         established.setStyleName("Established");
-        established.add(new HTML("Est. " + 
+        established.add(new InlineLabel("Est. " + 
             (new SimpleDateFormat("MMM dd, yyyy")).format(_group.creationDate)));
-        established.add(new HTML("by <a href='" + MsoyEntryPoint.memberViewPath(
-            _detail.creator.getMemberId()) + "'>" + _detail.creator + "</a>"));
+        HorizontalPanel creatorPanel = new HorizontalPanel();
+        // this inline div is not letting space display to the right of it, and we need a space.
+        InlineLabel byLabel = new InlineLabel("by");
+        DOM.setStyleAttribute(byLabel.getElement(), "marginRight", "3px");
+        creatorPanel.add(byLabel);
+        creatorPanel.add(new Anchor(MsoyEntryPoint.memberViewPath(  
+            _detail.creator.getMemberId()), _detail.creator.toString()));
+        established.add(creatorPanel);
         logoPanel.add(established);
-        HTML policy = new HTML(getPolicyName(_group.policy));
+        InlineLabel policy = new InlineLabel(getPolicyName(_group.policy));
         policy.setStyleName("Policy");
         logoPanel.add(policy);
         if (amManager) {
@@ -172,16 +177,21 @@ public class GroupView extends VerticalPanel
                 MsoyEntryPoint.toMediaPath(_extras.infoBackground.getMediaPath()));
         }
 
-        ScrollPanel description = new ScrollPanel();
+        VerticalPanel description = new VerticalPanel();
         description.setStyleName("DescriptionPanel");
-        String descriptionHtml = "<span class='Name'>" + _group.name + "</span><br />";
+        Label nameLabel = new Label(_group.name);
+        nameLabel.setStyleName("Name");
+        description.add(nameLabel);
         if (_group.blurb != null) {
-            descriptionHtml += "<span class='Blurb'>" + _group.blurb + "</span><br />";
+            Label blurbLabel = new Label(_group.blurb);
+            blurbLabel.setStyleName("Blurb");
+            description.add(blurbLabel);
         }
         if (_extras.charter != null) {
-            descriptionHtml += "<p class='Charter'>" + _extras.charter + "</p>";
+            Label charterLabel = new Label(_extras.charter);
+            charterLabel.setStyleName("Charter");
+            description.add(charterLabel);
         }
-        description.add(new HTML(descriptionHtml));
         _table.setWidget(0, 1, description);
         if (_extras.detailBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(0, 1, 

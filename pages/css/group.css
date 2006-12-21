@@ -12,6 +12,10 @@
     font-size: 11px;
 }
 
+.groupView .Blurb {
+    margin-bottom: 15px;
+}
+
 .groupView .DescriptionPanel {
     padding: 15px;
     padding-top: 10px;
