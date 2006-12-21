@@ -3,50 +3,50 @@
     vertical-align: top;
 }
 
-.groupView .name {
+.groupView .Name {
     font-size: 22px;
     font-weight: bold;
 }
 
-.groupView .blurb, .groupView .charter, .groupView .peoplePanel {
+.groupView .Blurb, .groupView .Charter, .groupView .PeoplePanel {
     font-size: 11px;
 }
 
-.groupView .descriptionPanel {
+.groupView .DescriptionPanel {
     padding: 15px;
     padding-top: 10px;
     margin: 0px;
 }
 
-.groupView .logoPanel {
+.groupView .LogoPanel {
     margin: 0px;
     width: 160px;
     font-size: 11px;
 }
 
-.groupView .logoPanel .links {
+.groupView .LogoPanel .Links {
     font-weight: 600;
 }
 
-.groupView .logoPanel .established, .groupView .logoPanel .policy {
+.groupView .LogoPanel .Established, .groupView .LogoPanel .Policy {
     font-style: italic;
 }
 
-.groupView .logoPanel .policy {
+.groupView .LogoPanel .Policy {
     margin: 7px;
 }
 
-.groupView .logoPanel .established a {
+.groupView .LogoPanel .Established a {
     font-style: normal;
 }
 
-.groupView .labelLink {
+.groupView .LabelLink {
     cursor: pointer;
     text-decoration: underline;
     color: blue;
 }
 
-.groupView .logoPanel .gwt-Button {
+.groupView .LogoPanel .gwt-Button {
     margin-bottom: 9px;
 }
 
@@ -84,35 +84,35 @@
     vertical-align: top;
 }
 
-.groupList .leftColumn {
+.groupList .LeftColumn {
     width: 200px;
     padding-right: 10px;
 }
 
-.groupList .leftColumn .popularTags {
+.groupList .LeftColumn .PopularTags {
     margin-bottom: 10px;
 }
 
-.groupList .leftColumn .popularTags a, .groupList .leftColumn .popularTags {
+.groupList .LeftColumn .PopularTags a, .GroupList .LeftColumn .PopularTags {
     font-style: italic;
     color: #696969;
 }
 
-.groupList .leftColumn .popularTags .popularTagsLabel {
+.groupList .LeftColumn .PopularTags .PopularTagsLabel {
     font-style: normal;
     color: black;
     font-weight: 600;
 }
 
-.groupList .leftColumn .popularTags #moreLink {
+.groupList .LeftColumn .PopularTags #moreLink {
     color: #CD853F;
 }
 
-.groupList .leftColumn .featuredGroups {
+.groupList .LeftColumn .FeaturedGroups {
     border: 1px solid #696969;
 }
 
-.groupList .leftColumn .featuredGroups .featuredGroupsTitle {
+.groupList .LeftColumn .FeaturedGroups .FeaturedGroupsTitle {
     font-size: 15px;
     color: white;
     font-weight: 600;
@@ -120,32 +120,39 @@
     padding: 3px;
 }
 
-.groupList .characterList {
+.groupList .CharacterList {
     font-weight: 600;
     padding-bottom: 15px;
 }
 
-.groupList .characterList .characterLabel {
+.groupList .CharacterList .CharacterLabel {
     cursor: pointer;
 }
 
-.groupList .groupWidget .establishedDate {
+.groupList .GroupWidget .EstablishedDate {
     margin: 5px;
 }
 
-.groupList .groupWidget {
+.groupList .GroupWidget {
     font-size: 13px;
 }
 
-.groupList .groupWidget .title {
+.groupList .GroupWidget .Title {
     display: inline;
 }
 
-.groupList .groupWidget .title a {
+.groupList .GroupWidget .Title a {
     color: black;
     font-weight: 600;
 }
 
-.groupList .groupWidget .establishedDate, .groupList .groupWidget .memberCount {
+.groupList .GroupWidget .EstablishedDate, .GroupList .GroupWidget .MemberCount {
     font-style: italic;
+}
+
+.groupList .GroupWidget .Logo {
+    width: 80px;
+    height: 60px;
+    text-align: center;
+    vertical-align: middle;
 }

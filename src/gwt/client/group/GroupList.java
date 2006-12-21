@@ -6,6 +6,7 @@ package client.group;
 import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Collections;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
@@ -48,7 +49,7 @@ public class GroupList extends VerticalPanel
         _groupLists = new HashMap(); 
 
         _errorContainer = new VerticalPanel();
-        _errorContainer.setStyleName("groupListErrors");
+        _errorContainer.setStyleName("GroupListErrors");
         add(_errorContainer);
 
         FlexTable table = new FlexTable();
@@ -57,15 +58,15 @@ public class GroupList extends VerticalPanel
 
         VerticalPanel leftPanel = new VerticalPanel();
         _popularTagsContainer = new FlowPanel();
-        _popularTagsContainer.setStyleName("popularTags");
+        _popularTagsContainer.setStyleName("PopularTags");
         leftPanel.add(_popularTagsContainer);
         _featuredGroupsContainer = new VerticalPanel();
-        _featuredGroupsContainer.setStyleName("featuredGroups");
+        _featuredGroupsContainer.setStyleName("FeaturedGroups");
         DOM.setStyleAttribute(_featuredGroupsContainer.getElement(), "width", "100%");
         leftPanel.add(_featuredGroupsContainer);
         table.setWidget(0, 0, leftPanel);
         table.getFlexCellFormatter().setRowSpan(0, 0, 3);
-        table.getFlexCellFormatter().setStyleName(0, 0, "leftColumn");
+        table.getFlexCellFormatter().setStyleName(0, 0, "LeftColumn");
         
         FlexTable search = new FlexTable();
         TextBox searchInput = new TextBox();
@@ -82,13 +83,13 @@ public class GroupList extends VerticalPanel
         DOM.setStyleAttribute(table.getFlexCellFormatter().getElement(0, 1), "height", "10px");
         
         _characterListContainer = new FlowPanel();
-        _characterListContainer.setStyleName("characterList");
+        _characterListContainer.setStyleName("CharacterList");
         table.setWidget(1, 0, _characterListContainer);
         // and again with the ridiculous height
         DOM.setStyleAttribute(table.getFlexCellFormatter().getElement(1, 0), "height", "10px");
 
         _groupListContainer = new VerticalPanel();
-        _groupListContainer.setStyleName("groups");
+        _groupListContainer.setStyleName("Groups");
         _groupListContainer.add(new HTML("Click a letter above to browse groups that start " +
             "with that character, or complete a search above."));
         table.setWidget(2, 0, _groupListContainer);
@@ -104,6 +105,7 @@ public class GroupList extends VerticalPanel
         _ctx.groupsvc.getCharacters(_ctx.creds, new AsyncCallback() {
             public void onSuccess (Object result) {
                 List characters = (List)result;
+                Collections.sort(characters);
                 boolean firstCharacter = true;
                 Iterator charIter = characters.iterator();
                 while (charIter.hasNext()) {
@@ -114,7 +116,7 @@ public class GroupList extends VerticalPanel
                     }
                     final String character = (String)charIter.next();
                     InlineLabel characterLabel = new InlineLabel(character);
-                    characterLabel.addStyleName("characterLabel");
+                    characterLabel.addStyleName("CharacterLabel");
                     characterLabel.addClickListener(new ClickListener() {
                         public void onClick (Widget sender) {
                             loadGroups(character);
@@ -134,7 +136,7 @@ public class GroupList extends VerticalPanel
     {
         _popularTagsContainer.clear();
         InlineLabel popularTagsLabel = new InlineLabel("Popular Tags: ");;
-        popularTagsLabel.addStyleName("popularTagsLabel");
+        popularTagsLabel.addStyleName("PopularTagsLabel");
         _popularTagsContainer.add(popularTagsLabel);
         // TODO: this is dummy data until tags get figured out
         String dummytags[] = { "Muppet", "cute", "scary", "Halloween", "fuzzy", "furry", 
@@ -152,7 +154,7 @@ public class GroupList extends VerticalPanel
     {
         _featuredGroupsContainer.clear();
         Label featuredGroupsLabel = new Label("Featured Groups:");
-        featuredGroupsLabel.setStyleName("featuredGroupsTitle");
+        featuredGroupsLabel.setStyleName("FeaturedGroupsTitle");
         _featuredGroupsContainer.add(featuredGroupsLabel);
         _featuredGroupsContainer.add(new HTML("<h1>TODO</h1>"));
     }
@@ -163,8 +165,10 @@ public class GroupList extends VerticalPanel
         if (groups == null) {
             _ctx.groupsvc.getGroups(_ctx.creds, startingCharacter, new AsyncCallback() {
                 public void onSuccess (Object result) {
-                    _groupLists.put(startingCharacter, result);
-                    displayGroups((List)result);
+                    List groups = (List)result;
+                    Collections.sort(groups);
+                    _groupLists.put(startingCharacter, groups);
+                    displayGroups(groups);
                 }
                 public void onFailure (Throwable caught) {
                     GWT.log("loadGroups failed", caught);
@@ -200,29 +204,29 @@ public class GroupList extends VerticalPanel
         GroupWidget (Group group) 
         {
             super();
-            setStyleName("groupWidget");
+            setStyleName("GroupWidget");
             
             Widget logo = ItemUtil.createMediaView(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE);
             setWidget(0, 0, logo);
-            getFlexCellFormatter().setStyleName(0, 0, "logo");
+            getFlexCellFormatter().setStyleName(0, 0, "Logo");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
             
             FlowPanel titleLine = new FlowPanel();
             Hyperlink title = new Hyperlink(group.name, "" + group.groupId);
-            title.addStyleName("title");
+            title.addStyleName("Title");
             titleLine.add(title);
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
             InlineLabel establishedDate = new InlineLabel("Est. " + 
                 dateFormat.format(group.creationDate) + ",");
-            establishedDate.addStyleName("establishedDate");
+            establishedDate.addStyleName("EstablishedDate");
             titleLine.add(establishedDate);
             InlineLabel memberCount = new InlineLabel("" + group.memberCount + " members");
-            memberCount.addStyleName("memberCount");
+            memberCount.addStyleName("MemberCount");
             titleLine.add(memberCount);
             setWidget(0, 1, titleLine);
 
             InlineLabel blurb = new InlineLabel(group.blurb);
-            blurb.setStyleName("blurb");
+            blurb.setStyleName("Blurb");
             setWidget(1, 0, blurb);
         }
     }

@@ -112,10 +112,10 @@ public class GroupView extends VerticalPanel
 
         VerticalPanel logoPanel = new VerticalPanel();
         logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        logoPanel.setStyleName("logoPanel");
+        logoPanel.setStyleName("LogoPanel");
         logoPanel.add(ItemUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE));
         HorizontalPanel links = new HorizontalPanel();
-        links.setStyleName("links");
+        links.setStyleName("Links");
         links.setSpacing(8);
         links.add(new Anchor("/world/index.html#g" +  _group.groupId, "Hall"));
         links.add(new Anchor("", "Forum"));
@@ -125,14 +125,14 @@ public class GroupView extends VerticalPanel
         logoPanel.add(links);
         VerticalPanel established = new VerticalPanel();
         established.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        established.setStyleName("established");
+        established.setStyleName("Established");
         established.add(new HTML("Est. " + 
             (new SimpleDateFormat("MMM dd, yyyy")).format(_group.creationDate)));
         established.add(new HTML("by <a href='" + MsoyEntryPoint.memberViewPath(
             _detail.creator.getMemberId()) + "'>" + _detail.creator + "</a>"));
         logoPanel.add(established);
         HTML policy = new HTML(getPolicyName(_group.policy));
-        policy.setStyleName("policy");
+        policy.setStyleName("Policy");
         logoPanel.add(policy);
         if (amManager) {
             logoPanel.add(new Button("Edit Group", new ClickListener() {
@@ -173,13 +173,13 @@ public class GroupView extends VerticalPanel
         }
 
         ScrollPanel description = new ScrollPanel();
-        description.setStyleName("descriptionPanel");
-        String descriptionHtml = "<span class='name'>" + _group.name + "</span><br />";
+        description.setStyleName("DescriptionPanel");
+        String descriptionHtml = "<span class='Name'>" + _group.name + "</span><br />";
         if (_group.blurb != null) {
-            descriptionHtml += "<span class='blurb'>" + _group.blurb + "</span><br />";
+            descriptionHtml += "<span class='Blurb'>" + _group.blurb + "</span><br />";
         }
         if (_extras.charter != null) {
-            descriptionHtml += "<p class='charter'>" + _extras.charter + "</p>";
+            descriptionHtml += "<p class='Charter'>" + _extras.charter + "</p>";
         }
         description.add(new HTML(descriptionHtml));
         _table.setWidget(0, 1, description);
@@ -190,7 +190,7 @@ public class GroupView extends VerticalPanel
         _table.getMyFlexCellFormatter().fillWidth(0, 1);
 
         FlexTable people = new FlexTable();
-        people.setStyleName("peoplePanel");
+        people.setStyleName("PeoplePanel");
         people.setText(0, 0, "Managers:");
         people.setText(1, 0, "Members:");
         FlowPanel managers = new FlowPanel();
@@ -222,7 +222,7 @@ public class GroupView extends VerticalPanel
                 MenuBar menu = getManagerMenuBar(membership, personMenuPanel);
                 personMenuPanel.add(menu);
                 final InlineLabel person = new InlineLabel(name.toString());
-                person.addStyleName("labelLink");
+                person.addStyleName("LabelLink");
                 // use a MouseListener instead of ClickListener so we can get at the mouse (x,y)
                 person.addMouseListener(new MouseListener() {
                     public void onMouseDown (Widget sender, int x, int y) { 
@@ -334,17 +334,17 @@ public class GroupView extends VerticalPanel
         if (!isSenior(_me, membership)) {
             // you can't do jack!
             promote.setCommand(null);
-            promote.addStyleName("disabled");
+            promote.addStyleName("Disabled");
             demote.setCommand(null);
-            demote.addStyleName("disabled");
+            demote.addStyleName("Disabled");
             remove.setCommand(null);
-            remove.addStyleName("disabled");
+            remove.addStyleName("Disabled");
         } else if (membership.rank == GroupMembership.RANK_MANAGER) {
             promote.setCommand(null);
-            promote.addStyleName("disabled");
+            promote.addStyleName("Disabled");
         } else {
             demote.setCommand(null);
-            demote.addStyleName("disabled");
+            demote.addStyleName("Disabled");
         }
         menu.addItem(promote);
         menu.addItem(demote);

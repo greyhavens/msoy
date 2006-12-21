@@ -17,7 +17,7 @@ import com.threerings.msoy.item.web.StaticMediaDesc;
  * Contains the basic data of a group.
  */
 public class Group
-    implements Streamable, IsSerializable
+    implements Streamable, IsSerializable, Comparable
 {
     public static final byte POLICY_PUBLIC = 1;
     public static final byte POLICY_INVITE_ONLY = 2;
@@ -50,5 +50,21 @@ public class Group
     public static MediaDesc getDefaultGroupLogoMedia ()
     {
         return new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "group_logo");
+    }
+
+    // from Comparable
+    public int compareTo (Object o) 
+    {
+        // The compareTo contract allows ClassCastException
+        Group other = (Group)o;
+
+        // this is used to sort groups on the GroupList page, so sort by group name first, then 
+        // by groupId if necessary.
+        int nameComparison = name.compareTo(other.name);
+        if (nameComparison == 0) {
+            return groupId == other.groupId ? 0 : (groupId < other.groupId ? -1 : 1);
+        } else {
+            return nameComparison;
+        }
     }
 }
