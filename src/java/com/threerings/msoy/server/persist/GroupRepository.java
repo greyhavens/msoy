@@ -142,6 +142,7 @@ public class GroupRepository extends DepotRepository
         record.memberId = memberId;
         record.rank = rank;
         insert(record);
+        updateMemberCount(groupId);
         return record;
     }
     
@@ -184,6 +185,7 @@ public class GroupRepository extends DepotRepository
         int rows = deleteAll(GroupMembershipRecord.class,
                              new Key(GroupMembershipRecord.GROUP_ID, groupId,
                                      GroupMembershipRecord.MEMBER_ID, memberId));
+        updateMemberCount(groupId);
         return rows > 0;
     }
 
@@ -256,5 +258,12 @@ public class GroupRepository extends DepotRepository
                 }
             }
         });
+    }
+
+    protected void updateMemberCount (int groupId) 
+        throws PersistenceException
+    {
+        updateLiteral(GroupRecord.class, groupId, "memberCount", 
+            "(select count(*) from GroupMembershipRecord where groupId=" + groupId + ")");
     }
 }

@@ -198,11 +198,10 @@ public class GroupList extends VerticalPanel
             titleLine.add(title);
             SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
             InlineLabel establishedDate = new InlineLabel("Est. " + 
-                dateFormat.format(group.creationDate));
+                dateFormat.format(group.creationDate) + ",");
             establishedDate.addStyleName("establishedDate");
             titleLine.add(establishedDate);
-            // TODO: fill in real member count when its been added to GroupRecord and Group
-            InlineLabel memberCount = new InlineLabel("42 members");
+            InlineLabel memberCount = new InlineLabel("" + group.memberCount + " members");
             memberCount.addStyleName("memberCount");
             titleLine.add(memberCount);
             setWidget(0, 1, titleLine);

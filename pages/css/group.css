@@ -139,6 +139,13 @@
 
 .groupList .groupWidget .title {
     display: inline;
+}
+
+.groupList .groupWidget .title a {
     color: black;
     font-weight: 600;
+}
+
+.groupList .groupWidget .establishedDate, .groupList .groupWidget .memberCount {
+    font-style: italic;
 }

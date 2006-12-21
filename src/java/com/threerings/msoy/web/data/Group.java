@@ -42,6 +42,8 @@ public class Group
 
     public byte policy;
 
+    public int memberCount;
+
     /**
      * Creates a default logo for use with groups that have no logo.
      */

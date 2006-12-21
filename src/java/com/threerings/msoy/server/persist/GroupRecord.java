@@ -28,7 +28,7 @@ import com.threerings.msoy.server.MsoyServer;
 public class GroupRecord
     implements Cloneable
 {
-    public static final int SCHEMA_VERSION = 6;
+    public static final int SCHEMA_VERSION = 7;
 
     public static final String GROUP_ID = "groupId";
     public static final String NAME = "name";
@@ -113,6 +113,9 @@ public class GroupRecord
     /** The group may be public, invite-only or exclusive as per {@link Group}. */
     public byte policy;
 
+    /** The number of people that are currently members of this group. */
+    public int memberCount;
+
     /**
      * Creates a web-safe version of this group.
      */
@@ -127,6 +130,7 @@ public class GroupRecord
         group.creatorId = creatorId;
         group.creationDate = new Date(creationDate.getTime());
         group.policy = policy;
+        group.memberCount = memberCount;
         return group;
     }
 
