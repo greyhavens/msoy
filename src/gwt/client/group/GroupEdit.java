@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -46,6 +47,14 @@ public class GroupEdit extends DialogBox
      */
     public static interface GroupSubmissionListener {
         public void groupSubmitted(Group group);
+    }
+
+    /**
+     * This constructor is for creating new Groups.  
+     */
+    public GroupEdit (WebContext ctx) 
+    {
+        this(ctx, new Group(), new GroupExtras(), null);
     }
     
     public GroupEdit (WebContext ctx, Group group, GroupExtras extras,  
@@ -192,10 +201,14 @@ public class GroupEdit extends DialogBox
         
         AsyncCallback callback = new AsyncCallback() {
             public void onSuccess (Object result) {
+                hide();
                 if (_listener != null) {
                     _listener.groupSubmitted(_group);
+                } else if (_group.groupId == 0) {
+                    // new group created - go to the new group view page
+                    Group newGroup = (Group)result;
+                    History.newItem("" + newGroup.groupId);
                 }
-                hide();
             }
             public void onFailure (Throwable caught) {
                 addError("Failed to commit group: " + caught.getMessage());

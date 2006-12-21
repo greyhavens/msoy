@@ -75,7 +75,12 @@ public class GroupList extends VerticalPanel
         DOM.setAttribute(searchInput.getElement(), "id", "searchInput");
         search.setWidget(0, 0, searchInput);
         search.setWidget(0, 1, new Button("Search"));
-        search.setWidget(0, 3, new Button("Form New Group"));
+        search.setWidget(0, 3, new Button("Form New Group", new ClickListener() { 
+            public void onClick (Widget sender) 
+            {
+                new GroupEdit(_ctx).show();
+            }
+        }));
         DOM.setStyleAttribute(search.getFlexCellFormatter().getElement(0, 2), "width", "100%");
         table.setWidget(0, 1, search);
         // This is a nasty place to set a static height in pixels, but for some reason I cannot
