@@ -27,7 +27,6 @@ import com.threerings.msoy.web.data.Group;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.Hyperlink;
-//import com.google.gwt.user.client.ui.Hyperlink;
 import com.threerings.gwt.ui.InlineLabel;
 
 import client.util.WebContext;
