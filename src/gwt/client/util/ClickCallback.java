@@ -71,6 +71,8 @@ public abstract class ClickCallback
         _trigger.setEnabled(true);
         if (_status != null) {
             _status.setText(cause.getMessage()); // TODO: decode and translate
+        } else {
+            _ctx.log("Callback failure [for=" + _trigger.getText() + "]", cause);
         }
     }
 

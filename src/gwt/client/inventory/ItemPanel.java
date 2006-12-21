@@ -136,6 +136,16 @@ public class ItemPanel extends VerticalPanel
     }
 
     /**
+     * Called by an active {@link ItemDetailPopup} to let us know that an item has been deleted
+     * from our inventory.
+     */
+    protected void itemDeleted (Item item)
+    {
+        _contents.removeItem(item);
+        setStatus("Item deleted.");
+    }
+
+    /**
      * Displays a status message to the user, may be called by item editors.
      */
     protected void setStatus (String status)

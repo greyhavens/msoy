@@ -117,6 +117,20 @@ public class ItemDetailPopup extends BaseItemDetailPopup
         }
         controls.add(button);
 
+        button = new Button("Delete");
+        new ClickCallback(_ctx, button, _status) {
+            public boolean callService () {
+                _ctx.itemsvc.deleteItem(_ctx.creds, _item.getIdent(), this);
+                return true;
+            }
+            public boolean gotResult (Object result) {
+                _parent.itemDeleted(_item);
+                hide();
+                return false;
+            }
+        };
+        controls.add(button);
+
         if (_item.parentId == -1) {
             button = new Button("Edit ...");
             button.addClickListener(new ClickListener() {

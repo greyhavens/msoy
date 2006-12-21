@@ -70,7 +70,7 @@ public class WebContext
     }
 
     /** Reports a log message and exception stack trace to the console. */
-    public static void log (String message, Exception error)
+    public static void log (String message, Throwable error)
     {
         if (GWT.isScript()) {
             consoleLog(message + ": " + error); // TODO: log stack trace?
