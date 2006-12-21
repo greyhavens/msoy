@@ -5,6 +5,8 @@ package client.group;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -42,6 +44,8 @@ public class GroupList extends VerticalPanel
         setStyleName("groupList");
         DOM.setStyleAttribute(getElement(), "width", "100%");
         _ctx = ctx;
+
+        _groupLists = new HashMap(); 
 
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupListErrors");
@@ -155,19 +159,30 @@ public class GroupList extends VerticalPanel
 
     protected void loadGroups (final String startingCharacter) 
     {
-        _groupListContainer.clear();
-        _ctx.groupsvc.getGroups(_ctx.creds, startingCharacter, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                Iterator groupIter = ((List)result).iterator();
-                while (groupIter.hasNext()) {
-                    _groupListContainer.add(new GroupWidget((Group)groupIter.next()));
+        List groups = (List)_groupLists.get(startingCharacter);
+        if (groups == null) {
+            _ctx.groupsvc.getGroups(_ctx.creds, startingCharacter, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    _groupLists.put(startingCharacter, result);
+                    displayGroups((List)result);
                 }
-            }
-            public void onFailure (Throwable caught) {
-                GWT.log("loadGroups failed", caught);
-                addError("Failed to get groups starting with " + startingCharacter);
-            }
-        });
+                public void onFailure (Throwable caught) {
+                    GWT.log("loadGroups failed", caught);
+                    addError("Failed to get groups starting with " + startingCharacter);
+                }
+            });
+        } else {
+            displayGroups(groups);
+        }
+    }
+
+    protected void displayGroups(List groups) 
+    {
+        _groupListContainer.clear();
+        Iterator groupIter = groups.iterator();
+        while (groupIter.hasNext()) {
+            _groupListContainer.add(new GroupWidget((Group)groupIter.next()));
+        }
     }
 
     protected void addError (String error) 
@@ -218,4 +233,6 @@ public class GroupList extends VerticalPanel
     protected FlowPanel _popularTagsContainer;
     protected VerticalPanel _featuredGroupsContainer;
     protected VerticalPanel _groupListContainer;
+
+    protected HashMap _groupLists;
 }
