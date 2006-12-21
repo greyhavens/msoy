@@ -2,6 +2,7 @@ package {
 
 import flash.display.*;
 import flash.text.*;
+import flash.geom.*;
 import flash.events.*;
 import flash.net.*;
 import flash.ui.*;
@@ -30,7 +31,7 @@ public class HoodViz extends Sprite
             addBit(_myHouse, 1, 0, true, _hood.centralMember);
         }
         if (_hood.centralGroup != null) {
-            addBit(_myHouse, -1, 0, true, _hood.centralGroup);
+            addBit(_group, -1, 0, true, _hood.centralGroup);
         }
 
         // compute a very rough bounding rectangle for the visible houses
@@ -96,16 +97,46 @@ public class HoodViz extends Sprite
         _canvas.scaleY = scale * 0.9;
     }
 
+
+    // funkily skews, scales, and translates the loaded logo into the billboard
+    public function logoLoaded(event: Event) :void
+    {
+        var content: DisplayObject = event.target.content;
+        // scale depending on which dimension is constrained
+        var scale :Number = Math.min(50 / content.width, 45/content.height);
+        // center vertically
+        var zOff :Number = (45 - scale*content.height)/2;
+        // center horizontally (the 175 is the scale imposed by skewX() et al)
+        var xOff :Number = (50 - scale*content.width)/2/175;
+        // map the ground coordinates to skewed display coordinates
+        var p: Point = skew(0.058 + xOff, 0.94);
+        // then simply apply the matrix, with -0.38 being the skew constant. note that
+        // the zOffset is added raw; it's not a skewed coordinate
+        content.transform.matrix = new Matrix(scale, -scale*0.38, 0, scale, p.x, p.y + zOff);
+    }
+
     protected function addBit (bitType :Class, x :Number, y :Number, update:Boolean,
                                neighbor: Neighbor) :void
     {
         var bit :MovieClip = new bitType();
         bit.width = 256;
         bit.height = 224;
+
+        if (bitType == _group) {
+            // dynamically load the group's logo
+            var loader :Loader = new Loader();
+            var url :String = "/media/static/photo/group_logo.png";
+            loader.load(new URLRequest(url));
+            // we want to know when the logo is loaded so we can do our magic
+            loader.contentLoaderInfo.addEventListener(Event.COMPLETE, logoLoaded);
+            bit.addChild(loader);
+        }
+
         var bitHolder :ToolTipSprite = new ToolTipSprite();
         bitHolder.addChild(bit);
-        bitHolder.x = y * 82 + x * 175;
-        bitHolder.y = y * 156 - x * 69;
+        var p :Point = skew(x, y);
+        bitHolder.x = p.x;
+        bitHolder.y = p.y;
         if (neighbor != null) {
             bitHolder.neighbor = neighbor;
             bitHolder.addEventListener(MouseEvent.ROLL_OVER, rollOverHandler);
@@ -120,6 +151,11 @@ public class HoodViz extends Sprite
             _bound.y.min = Math.min(_bound.y.min, bitHolder.y);
             _bound.y.max = Math.max(_bound.y.max, bitHolder.y + bit.height);
         }
+    }
+
+    protected function skew(x :Number, y :Number) :Point
+    {
+        return new Point(x*175 + y*82, -x*69 + y*156);
     }
 
     public function clickHandler (event :MouseEvent) :void
