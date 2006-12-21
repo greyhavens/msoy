@@ -72,11 +72,9 @@ public class ServerConfig
     }
 
     /**
-     * Configures the install config with the path to our installation
-     * properties file. This method is called automatically.
+     * Configures server bits when this class is resolved.
      */
-    protected static void init (String propPath)
-    {
+    static {
         // fill in our standard properties
         serverName = config.getValue("server_name", "msoy");
         serverRoot = new File(config.getValue("server_root", "/tmp"));
