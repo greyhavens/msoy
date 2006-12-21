@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -24,11 +25,13 @@ import com.threerings.msoy.server.MsoyServer;
 /**
  * Contains the details of a group.
  */
-@Entity
+@Entity(indices={
+    @Index(name="searchIndex", type="fulltext", columns={"name", "blurb", "charter"})
+})
 public class GroupRecord
     implements Cloneable
 {
-    public static final int SCHEMA_VERSION = 7;
+    public static final int SCHEMA_VERSION = 8;
 
     public static final String GROUP_ID = "groupId";
     public static final String NAME = "name";
