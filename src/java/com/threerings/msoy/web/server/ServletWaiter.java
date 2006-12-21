@@ -49,7 +49,7 @@ public class ServletWaiter<T> extends ServiceWaiter<T>
 
         } catch (InvocationException ie) {
             // pass these through without a fuss
-            throw new ServiceException("", ie.getMessage());
+            throw new ServiceException(ie.getMessage());
 
         } catch (Exception e) {
             log.log(Level.WARNING, _ident + " failed.", e);

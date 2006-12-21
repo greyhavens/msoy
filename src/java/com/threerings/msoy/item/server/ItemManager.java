@@ -621,7 +621,6 @@ public class ItemManager
                 updateUserCache(_result);
             }
         });
-
     }
 
     /**
