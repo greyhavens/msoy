@@ -10,11 +10,13 @@ public class NeighborGroup
     implements Neighbor
 {
     /** The group's name. */
-    public var groupName:String;
+    public var groupName :String;
     /** The group's id. */
-    public var groupId:Number;
+    public var groupId :Number;
+    /** The hash of the group's logo, if any. */
+    public var groupLogo :String;
     /** The number of members in this group. */
-    public var members:Number;
+    public var members :Number;
 
     /**
      * Instantiate and populate a {@link NeighborGroup} give a JSON configuration.
@@ -27,6 +29,7 @@ public class NeighborGroup
         }
         group.groupName = JSON.name;
         group.groupId = JSON.id;
+        group.groupLogo = JSON.logo;
         group.members = JSON.members;
         return group;
     }

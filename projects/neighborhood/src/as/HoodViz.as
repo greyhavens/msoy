@@ -122,14 +122,16 @@ public class HoodViz extends Sprite
         bit.width = 256;
         bit.height = 224;
 
-        if (bitType == _group) {
-            // dynamically load the group's logo
-            var loader :Loader = new Loader();
-            var url :String = "/media/static/photo/group_logo.png";
-            loader.load(new URLRequest(url));
-            // we want to know when the logo is loaded so we can do our magic
-            loader.contentLoaderInfo.addEventListener(Event.COMPLETE, logoLoaded);
-            bit.addChild(loader);
+        if (neighbor is NeighborGroup) {
+            var logo :String = (neighbor as NeighborGroup).groupLogo;
+            if (logo != null) {
+                // dynamically load the group's logo
+                var loader :Loader = new Loader();
+                loader.load(new URLRequest("/media/" + logo));
+                // we want to know when the logo is loaded so we can do our magic
+                loader.contentLoaderInfo.addEventListener(Event.COMPLETE, logoLoaded);
+                bit.addChild(loader);
+            }
         }
 
         var bitHolder :ToolTipSprite = new ToolTipSprite();
