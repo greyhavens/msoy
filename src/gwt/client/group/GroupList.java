@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -27,6 +26,8 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.threerings.msoy.web.data.Group;
 
 import com.threerings.gwt.ui.Anchor;
+import com.threerings.gwt.ui.Hyperlink;
+//import com.google.gwt.user.client.ui.Hyperlink;
 import com.threerings.gwt.ui.InlineLabel;
 
 import client.util.WebContext;
