@@ -15,10 +15,10 @@ public class Neighborhood
     implements IsSerializable, Streamable, Cloneable
 {
     /** The member around whom this query is centered, or null. */
-    public MemberName member;
+    public NeighborMember member;
 
     /** The group around which this query is centered, or null. */
-    public GroupName group;
+    public NeighborGroup group;
 
     /** An array of {@link NeighborGroup} objects for the member's memberships. */
     public NeighborGroup[] neighborGroups;

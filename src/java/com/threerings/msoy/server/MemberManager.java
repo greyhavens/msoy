@@ -829,8 +829,9 @@ public class MemberManager
                 Neighborhood hood = new Neighborhood();
                 // first load the center member data
                 MemberRecord mRec = _memberRepo.loadMember(memberId);
-                hood.member = mRec.getName();
-    
+                hood.member = new NeighborMember();
+                hood.member.member = mRec.getName();
+
                 // then all the data for the groups
                 Collection<GroupMembershipRecord> gmRecs = _groupRepo.getMemberships(memberId);
                 int[] groupIds = new int[gmRecs.size()];
@@ -843,6 +844,9 @@ public class MemberManager
                     NeighborGroup nGroup = new NeighborGroup();
                     nGroup.groupId = gRec.groupId;
                     nGroup.groupName = gRec.name;
+                    if (gRec.logoMediaHash != null) { 
+                        nGroup.logo = new MediaDesc(gRec.logoMediaHash, gRec.logoMimeType);
+                    }
                     nGroup.members = _groupRepo.countMembers(gRec.groupId);
                     nGroups.add(nGroup);
                 }
@@ -877,9 +881,13 @@ public class MemberManager
                 Neighborhood hood = new Neighborhood();
                 // first load the center group data
                 GroupRecord gRec = _groupRepo.loadGroup(groupId);
-                hood.group = new GroupName(gRec.name, groupId);
+                hood.group = new NeighborGroup();
+                hood.group.groupId = groupId;
+                hood.group.groupName = gRec.name;
+                hood.group.logo = new MediaDesc(gRec.logoMediaHash, gRec.logoMimeType);
+                hood.group.members = _groupRepo.countMembers(groupId);
 
-                // we have no groups
+                // we have no other groups
                 hood.neighborGroups = new NeighborGroup[0];
 
                 // but we're including all the group's members, so load'em
@@ -927,16 +935,10 @@ public class MemberManager
     {
         JSONObject obj = new JSONObject();
         if (hood.member != null) {
-            JSONObject member = new JSONObject();
-            member.put("name", hood.member.toString());
-            member.put("id", hood.member.getMemberId());
-            obj.put("member", member);
+            obj.put("member", toJSON(hood.member));
         }
         if (hood.group != null) {
-            JSONObject group= new JSONObject();
-            group.put("name", hood.group.groupName);
-            group.put("id", hood.group.groupId);
-            obj.put("group", group);
+            obj.put("group", toJSON(hood.group));
         }
         JSONArray jArr = new JSONArray();
         for (NeighborMember friend : hood.neighborMembers) {
@@ -951,17 +953,20 @@ public class MemberManager
         return obj;
     }
     
-    protected JSONObject toJSON (NeighborMember friend)
+    protected JSONObject toJSON (NeighborMember member)
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("name", friend.member.toString());
-        obj.put("id", friend.member.getMemberId());
-        obj.put("isOnline", friend.isOnline);
-        obj.put("created", friend.created.getTime());
-        obj.put("sNum", friend.sessions);
-        obj.put("sMin", friend.sessionMinutes);
-        obj.put("lastSess", friend.lastSession.getTime()); 
+        obj.put("name", member.member.toString());
+        obj.put("id", member.member.getMemberId());
+        obj.put("isOnline", member.isOnline);
+        // if this is just a member stub, skip the complicated bits
+        if (member.created != null) {
+            obj.put("created", member.created.getTime());
+            obj.put("sNum", member.sessions);
+            obj.put("sMin", member.sessionMinutes);
+            obj.put("lastSess", member.lastSession.getTime());
+        }
         return obj;
     }
 
@@ -972,6 +977,9 @@ public class MemberManager
         obj.put("name", group.groupName);
         obj.put("id", group.groupId);
         obj.put("members", group.members);
+        if (group.logo != null) {
+            obj.put("logo", group.logo.toString());
+        }
         return obj;
     }
 
