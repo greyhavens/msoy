@@ -50,7 +50,7 @@ public class ServerConfig
 
     /** Provides access to our config properties. <em>Do not</em> modify
      * these properties! */
-    public static Config config = new Config("server");;
+    public static Config config = new Config("server");
 
     /**
      * Returns the JDBC configuration.
