@@ -17,7 +17,6 @@ fi
 
 # set up our java arguments
 JAVA_ARGS="-Dno_unpack_resources=true \
-    -Dmsoy.home=$MSOY_HOME \
     -Dresource_dir=$MSOY_HOME/rsrc \
     -Drsrc_cache_dir=/tmp"
 

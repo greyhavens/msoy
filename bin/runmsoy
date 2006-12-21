@@ -33,7 +33,6 @@ fi
 
 CLASS=com.threerings.msoy.server.MsoyServer
 JAVA_ARGS="-server -mx$SERVER_MEMORY \
-    -Dmsoy.home=$MSOY_HOME \
     -Dresource_dir=$MSOY_HOME/rsrc \
     -Drsrc_cache_dir=/tmp -Dlog_level=$LOGLEVEL"
 
@@ -63,7 +62,7 @@ done
 
 # Add the deployment directory to the CLASSPATH (so that $MSOY_HOME/rsrc
 # is accessible)
-CLASSPATH=$MSOY_HOME:$CLASSPATH
+CLASSPATH=$MSOY_HOME/dist:$CLASSPATH
 export CLASSPATH
 
 # Set up the LD_LIBRARY_PATH to include our shared libraries

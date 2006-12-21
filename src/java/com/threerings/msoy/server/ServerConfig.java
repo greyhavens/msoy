@@ -50,7 +50,7 @@ public class ServerConfig
 
     /** Provides access to our config properties. <em>Do not</em> modify
      * these properties! */
-    public static Config config;
+    public static Config config = new Config("server");;
 
     /**
      * Returns the JDBC configuration.
@@ -77,28 +77,6 @@ public class ServerConfig
      */
     protected static void init (String propPath)
     {
-        Properties props = new Properties();
-        try {
-            if (propPath != null) {
-                propPath = propPath + File.separator + "server.properties";
-                props.load(new FileInputStream(propPath));
-            } else {
-                propPath = "server.properties";
-                InputStream in = ServerConfig.class.getClassLoader().
-                    getResourceAsStream(propPath);
-                if (in == null) {
-                    log.warning("Failed to locate server.properties " +
-                                "on the classpath.");
-                } else {
-                    props.load(in);
-                }
-            }
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Failed to load install properties " +
-                    "[path=" + propPath + "].", e);
-        }
-        config = new Config("server", props);
-
         // fill in our standard properties
         serverName = config.getValue("server_name", "msoy");
         serverRoot = new File(config.getValue("server_root", "/tmp"));
@@ -112,7 +90,4 @@ public class ServerConfig
             "server_ports", Client.DEFAULT_SERVER_PORTS);
     }
 
-    static {
-        init(System.getProperty("msoy.home"));
-    }
 }

@@ -7,8 +7,8 @@
 
 my $root = `dirname $0 | sed s:/bin\$::`; chomp($root);
 my $LOG;
-if (!open($LOG, ">/tmp/msoyrespawn.log")) {
-    warn "Unable to log to /tmp/msoyrespawn.log: $!\n";
+if (!open($LOG, ">$root/log/msoyrespawn.log")) {
+    warn "Unable to log to $root/log/msoyrespawn.log: $!\n";
     $LOG = STDERR;
 }
 
