@@ -63,6 +63,9 @@ public class ItemPanel extends DockPanel
                         }
                     });
             }
+            public void removeItem (Object item) {
+                // currently we do no internal caching, no problem!
+            }
         });
     }
 
