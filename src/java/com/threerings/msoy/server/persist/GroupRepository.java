@@ -56,8 +56,10 @@ public class GroupRepository extends DepotRepository
     public Collection<GroupRecord> searchGroups (String searchString) 
         throws PersistenceException
     {
+        // for now, always operate with boolean searching enabled, without query expansion
         return findAll(GroupRecord.class, 
-            new Where(new Match(searchString, "name", "blurb", "charter")));
+            new Where(new Match(searchString, Match.Mode.BOOLEAN, false, "name", "blurb", 
+            "charter")));
     }
 
     /**
