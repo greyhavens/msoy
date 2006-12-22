@@ -69,12 +69,17 @@ public class GroupList extends VerticalPanel
         table.getFlexCellFormatter().setStyleName(0, 0, "LeftColumn");
         
         FlexTable search = new FlexTable();
-        TextBox searchInput = new TextBox();
+        final TextBox searchInput = new TextBox();
         searchInput.setMaxLength(255);
         searchInput.setVisibleLength(20);
         DOM.setAttribute(searchInput.getElement(), "id", "searchInput");
         search.setWidget(0, 0, searchInput);
-        search.setWidget(0, 1, new Button("Search"));
+        search.setWidget(0, 1, new Button("Search", new ClickListener() {
+            public void onClick (Widget sender)
+            {
+                performSearch(searchInput.getText());
+            }
+        }));
         search.setWidget(0, 3, new Button("Form New Group", new ClickListener() { 
             public void onClick (Widget sender) 
             {
@@ -185,13 +190,26 @@ public class GroupList extends VerticalPanel
         }
     }
 
-    protected void displayGroups(List groups) 
+    protected void displayGroups (List groups) 
     {
         _groupListContainer.clear();
         Iterator groupIter = groups.iterator();
         while (groupIter.hasNext()) {
             _groupListContainer.add(new GroupWidget((Group)groupIter.next()));
         }
+    }
+
+    protected void performSearch (final String searchString) 
+    {
+        _ctx.groupsvc.searchGroups(_ctx.creds, searchString, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                displayGroups((List)result);
+            }
+            public void onFailure (Throwable caught) {
+                GWT.log("searchGroups failed", caught);
+                addError("Failed performing search with search string: " + searchString);
+            }
+        });
     }
 
     protected void addError (String error) 

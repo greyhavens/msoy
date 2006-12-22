@@ -24,6 +24,11 @@ public interface GroupServiceAsync
     public void getGroups (WebCreds creds, String startingCharacter, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link GroupService#searchGroups}
+     */
+    public void searchGroups (WebCreds creds, String searchString, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link GroupService#getGroupHomeId}
      */
     public void getGroupHomeId (WebCreds creds, int groupId, AsyncCallback callback);

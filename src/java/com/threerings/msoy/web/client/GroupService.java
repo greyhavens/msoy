@@ -28,6 +28,12 @@ public interface GroupService extends RemoteService
      */
     public List getGroups (WebCreds creds, String startingCharacter)
         throws ServiceException;
+
+    /**
+     * performs a search against the name, blurb and charter fields.
+     */
+    public List searchGroups (WebCreds creds, String searchString)
+        throws ServiceException;
     
     /**
      * Look up a group by id and return the id of its home scene.

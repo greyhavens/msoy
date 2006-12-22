@@ -77,10 +77,25 @@ public class GroupServlet extends RemoteServiceServlet
     public List<Group> getGroups (WebCreds creds, final String startingCharacter)
         throws ServiceException
     {
-        final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("getGroups[]");
+        final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("getGroups[" +
+            startingCharacter + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.memberMan.getGroups(startingCharacter, waiter);
+            }
+        });
+        return waiter.waitForResult();
+    }
+
+    // from interface GroupService
+    public List<Group> searchGroups (WebCreds creds, final String searchString) 
+        throws ServiceException
+    {
+        final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("searchGroups[" +
+            searchString + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.memberMan.searchGroups(searchString, waiter);
             }
         });
         return waiter.waitForResult();

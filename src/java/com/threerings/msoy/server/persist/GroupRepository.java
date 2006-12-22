@@ -50,6 +50,17 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Searches all groups for the search string against the indexed blurb, charter and name 
+     * fields.  Results are returned in order of relevance.
+     */
+    public Collection<GroupRecord> searchGroups (String searchString) 
+        throws PersistenceException
+    {
+        return findAll(GroupRecord.class, 
+            new Where(new Match(searchString, "name", "blurb", "charter")));
+    }
+
+    /**
      * Fetches a single group, by id. Returns null if there's no such group.
      */
     public GroupRecord loadGroup (int groupId)
