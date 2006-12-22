@@ -49,6 +49,10 @@ public abstract class BorderedDialog extends BorderedPopup
         _footer.setStyleName("Controls");
     }
 
+    /**
+     * Creates the Widget that will contain the contents of this dialog. Do not populate that
+     * widget here, just created it.
+     */
     protected abstract Widget createContents ();
 
     protected VerticalPanel _main;
