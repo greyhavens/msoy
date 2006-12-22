@@ -79,17 +79,7 @@ public class GroupEdit extends BorderedDialog
 
         _errorContainer = new HorizontalPanel();
         contents.add(_errorContainer);
-
-        HorizontalPanel nameField = new HorizontalPanel();
-        nameField.add(new InlineLabel("Group Name"));
-        TextBox nameBox = new TextBox();
-        nameBox.setMaxLength(GroupName.LENGTH_MAX);
-        nameBox.setVisibleLength(20);
-        if (_group.name != null) {
-            nameBox.setText(_group.name);
-        }
-        nameField.add(nameBox);
-        contents.add(nameField);
+        contents.add(createTextEntryField("Group Name", GroupName.LENGTH_MAX, 20, _group.name));
 
         TabPanel groupTabs = new TabPanel();
         groupTabs.setStyleName("Tabs");
@@ -111,17 +101,78 @@ public class GroupEdit extends BorderedDialog
 
     protected Panel createInfoPanel ()
     {
-        return new VerticalPanel();
+        VerticalPanel infoPanel = new VerticalPanel();
+        infoPanel.add(createTextEntryField("Homepage URL", 255, 20, _extras.homepageUrl));
+
+        byte selectedPolicy = _group.policy != 0 ? _group.policy : Group.POLICY_PUBLIC;
+        HorizontalPanel policyPanel = new HorizontalPanel();
+        policyPanel.add(new InlineLabel("Group Policy"));
+        ListBox policyBox = new ListBox();
+        policyBox.addItem("Public", "" + Group.POLICY_PUBLIC);
+        policyBox.addItem("Invitation Only", "" + Group.POLICY_INVITE_ONLY);
+        policyBox.addItem("Exclusive", "" + Group.POLICY_EXCLUSIVE);
+        switch(selectedPolicy) {
+        case Group.POLICY_PUBLIC: policyBox.setSelectedIndex(0); break;
+        case Group.POLICY_INVITE_ONLY: policyBox.setSelectedIndex(1); break;
+        case Group.POLICY_EXCLUSIVE: policyBox.setSelectedIndex(2); break;
+        default: addError("Internal Error! Unknown policy type: " + selectedPolicy);
+        }
+        policyPanel.add(policyBox);
+        infoPanel.add(policyPanel);
+
+        VerticalPanel logoBox = new VerticalPanel();
+        infoPanel.add(logoBox);
+        updateImageBox(logoBox, IMAGE_LOGO, "Set Logo");
+
+        return infoPanel;
     }
 
     protected Panel createDescriptionPanel ()
     {
-        return new VerticalPanel();
+        VerticalPanel descriptionPanel = new VerticalPanel();
+        descriptionPanel.add(createTextEntryField("Blurb", 80, 20, _group.blurb));
+
+        HorizontalPanel charterPanel = new HorizontalPanel();
+        charterPanel.add(new InlineLabel("Charter"));
+        TextArea charterText = new TextArea();
+        charterText.setCharacterWidth(50);
+        charterText.setVisibleLines(10);
+        if (_extras.charter != null) {
+            charterText.setText(_extras.charter);
+        }
+        charterPanel.add(charterText);
+        descriptionPanel.add(charterPanel);
+
+        return descriptionPanel;
     }
 
     protected Panel createBackgroundsPanel ()
     {
-        return new VerticalPanel();
+        HorizontalPanel backgroundsPanel = new HorizontalPanel();
+        int types[] = { IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND, 
+            IMAGE_PEOPLE_BACKGROUND };
+        String labels[] = { "Info Background", "Detail Background", "People Background" };
+        for (int i = 0; i < types.length; i++) {
+            VerticalPanel imageBox = new VerticalPanel();
+            backgroundsPanel.add(imageBox);
+            updateImageBox(imageBox, types[i], "Set " + labels[i]);
+        }
+        return backgroundsPanel;
+    }
+
+    protected Widget createTextEntryField(String label, int maxLength, int visibleLength,
+        String startingText)
+    {
+        HorizontalPanel textEntryField = new HorizontalPanel();
+        textEntryField.add(new InlineLabel(label));
+        TextBox textEntryBox = new TextBox();
+        textEntryBox.setMaxLength(maxLength);
+        textEntryBox.setVisibleLength(visibleLength);
+        textEntryField.add(textEntryBox);
+        if (startingText != null) {
+            textEntryBox.setText(startingText);
+        }
+        return textEntryField;
     }
 
     // submit a modified group, and notify listeners
@@ -156,7 +207,7 @@ public class GroupEdit extends BorderedDialog
         }
     }
     
-    /*// update the contents of the image box, e.g. after the image has been changed
+    // update the contents of the image box, e.g. after the image has been changed
     protected void updateImageBox (final CellPanel box, final int type, final String buttonLabel)
     {
         MediaDesc media = null;
@@ -246,7 +297,7 @@ public class GroupEdit extends BorderedDialog
             // finally show the popup
             popup.show();
         }
-    }*/
+    }
     
     protected void addError (String error)
     {
