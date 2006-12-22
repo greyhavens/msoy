@@ -20,6 +20,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormHandler;
+import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormSubmitEvent;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
@@ -68,16 +72,26 @@ public class GroupList extends VerticalPanel
         table.getFlexCellFormatter().setRowSpan(0, 0, 3);
         table.getFlexCellFormatter().setStyleName(0, 0, "LeftColumn");
         
-        FlexTable search = new FlexTable();
         final TextBox searchInput = new TextBox();
         searchInput.setMaxLength(255);
         searchInput.setVisibleLength(20);
         DOM.setAttribute(searchInput.getElement(), "id", "searchInput");
-        search.setWidget(0, 0, searchInput);
+        FlexTable search = new FlexTable();
+        final FormPanel searchForm = new FormPanel(); 
+        searchForm.addFormHandler(new FormHandler() {
+            public void onSubmitComplete (FormSubmitCompleteEvent event) { }
+            public void onSubmit (FormSubmitEvent event) {
+                performSearch(searchInput.getText());
+                // never perform any real browser action
+                event.setCancelled(true);
+            }
+        });
+        searchForm.add(searchInput);
+        search.setWidget(0, 0, searchForm);
         search.setWidget(0, 1, new Button("Search", new ClickListener() {
             public void onClick (Widget sender)
             {
-                performSearch(searchInput.getText());
+                searchForm.submit();
             }
         }));
         search.setWidget(0, 3, new Button("Form New Group", new ClickListener() { 
