@@ -26,21 +26,28 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.Panel;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Group;
+import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.GroupExtras;
+
+import com.threerings.gwt.ui.InlineLabel;
 
 import client.shell.MsoyEntryPoint;
 import client.util.HeaderValueTable;
 import client.util.WebContext;
+import client.util.BorderedDialog;
+import client.util.MsoyUI;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
  */
-public class GroupEdit extends DialogBox
+public class GroupEdit extends BorderedDialog
 {
     /**
      * A callback interface for classes that want to know when a group successfully committed.
@@ -61,134 +68,62 @@ public class GroupEdit extends DialogBox
         GroupSubmissionListener listener)
     {
         super();
-        setPopupPosition(30, 30);
-        setText("Group Editor");
         _ctx = ctx;
         _group = group;
         _extras = extras;
         _listener = listener;
-        setStyleName("groupPopup");
+       
+        _header.add(MsoyUI.createLabel(_group.groupId == 0 ? "Create new group" :
+            "Edit group", "GroupTitle"));
+        VerticalPanel contents = (VerticalPanel)_contents;
 
-        _content = new DockPanel();
-        setWidget(_content);
-        
-        _table = new HeaderValueTable();
-        _content.add(_table, DockPanel.CENTER);
+        _errorContainer = new HorizontalPanel();
+        contents.add(_errorContainer);
 
-        _errorContainer = new VerticalPanel();
-        _errorContainer.setStyleName("groupDetailErrors");
-        _content.add(_errorContainer, DockPanel.NORTH);
-
-        HorizontalPanel bpanel = new HorizontalPanel();
-        _content.add(bpanel, DockPanel.SOUTH);
-
-        bpanel.add(_esubmit = new Button(group.groupId == 0 ? "Create" : "Commit"));
-        _esubmit.setStyleName("groupEditorButton");
-        _esubmit.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                commitEdit();
-            }
-        });
-        updateSubmittable();
-        
-        Button ecancel = new Button("Cancel");
-        bpanel.add(ecancel);
-        ecancel.setStyleName("groupEditorButton");
-        ecancel.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                hide();
-            }
-        });
-
-        _table.addHeader((group.groupId == 0 ? "Creating" : "Editing") + " Group");
-
-        // name field
-        final TextBox nameBox = new TextBox();
-        nameBox.setText(group.name != null ? group.name : "");
-        nameBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                _group.name = nameBox.getText().trim();
-                updateSubmittable();
-            }
-        });
-        _table.addRow("Name", nameBox);
-
-        // homepage url field
-        final TextBox urlBox = new TextBox();
-        urlBox.setMaxLength(255);
-        urlBox.setText(_extras.homepageUrl != null ? _extras.homepageUrl : "");
-        urlBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                _extras.homepageUrl = urlBox.getText().trim();
-                updateSubmittable();
-            }
-        });
-        _table.addRow("Homepage URL", urlBox);
-
-        // blurb field
-        final TextBox blurbBox = new TextBox();
-        blurbBox.setMaxLength(80);
-        blurbBox.setText(group.blurb != null ? group.blurb : "");
-        blurbBox.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                _group.blurb = blurbBox.getText().trim();
-                updateSubmittable();
-            }
-        });
-        _table.addRow("Blurb", blurbBox);
-
-        // charter field
-        final TextArea charterArea = new TextArea();
-        charterArea.setCharacterWidth(80);
-        charterArea.setVisibleLines(10);
-        charterArea.setText(_extras.charter != null ? _extras.charter : "");
-        charterArea.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                _extras.charter = charterArea.getText().trim();
-            }
-        });
-        _table.addRow("Charter", charterArea);
-
-        // policy field
-        final ListBox policyBox = new ListBox();
-        policyBox.addItem("Public");
-        policyBox.addItem("Invitation Only");
-        policyBox.addItem("Exclusive");
-        policyBox.setSelectedIndex(_group.policy == Group.POLICY_PUBLIC ? 0 :
-                                   _group.policy == Group.POLICY_INVITE_ONLY ? 1 : 2);
-        policyBox.addChangeListener(new ChangeListener() {
-           public void onChange (Widget sender) {
-               switch(policyBox.getSelectedIndex()) {
-               case 0: _group.policy = Group.POLICY_PUBLIC; break;
-               case 1: _group.policy = Group.POLICY_INVITE_ONLY; break;
-               case 2: _group.policy = Group.POLICY_EXCLUSIVE; break;
-               }
-           }
-        });
-        _table.addRow("Policy", policyBox);
-
-        // image fields
-        HorizontalPanel imagePanel = new HorizontalPanel();
-        _table.addRow("Images", imagePanel);
-        int types[] = { IMAGE_LOGO, IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND, 
-            IMAGE_PEOPLE_BACKGROUND };
-        String labels[] = { "Logo", "Info Background", "Detail Background", "People Background" };
-        for (int i = 0; i < types.length; i++) {
-            VerticalPanel imageBox = new VerticalPanel();
-            imagePanel.add(imageBox);
-            updateImageBox(imageBox, types[i], "Set " + labels[i]);
+        HorizontalPanel nameField = new HorizontalPanel();
+        nameField.add(new InlineLabel("Group Name"));
+        TextBox nameBox = new TextBox();
+        nameBox.setMaxLength(GroupName.LENGTH_MAX);
+        nameBox.setVisibleLength(20);
+        if (_group.name != null) {
+            nameBox.setText(_group.name);
         }
+        nameField.add(nameBox);
+        contents.add(nameField);
+
+        TabPanel groupTabs = new TabPanel();
+        groupTabs.setStyleName("Tabs");
+        groupTabs.add(createInfoPanel(), "Information");
+        groupTabs.add(createDescriptionPanel(), "Description");
+        groupTabs.add(createBackgroundsPanel(), "Background Images");
+        groupTabs.selectTab(0);
+        contents.add(groupTabs);
     }
 
-    // called when a group's name is changed, to determine the enabled-ness of the submit button
-    protected void updateSubmittable ()
+    // from BorderedDialog.  This is called in the super constructor, so no UI components
+    // that depend on members that are set in this object's constructor can be used here.
+    public Widget createContents () 
     {
-        // TODO: formalize sanity check(s)
-        if (_group.name != null && _group.name.length() > 3 && _group.name.length() < 24) {
-            _esubmit.setEnabled(true);
-        }
+        VerticalPanel contents = new VerticalPanel();
+        contents.setStyleName("groupEditor");
+        return contents;
     }
-    
+
+    protected Panel createInfoPanel ()
+    {
+        return new VerticalPanel();
+    }
+
+    protected Panel createDescriptionPanel ()
+    {
+        return new VerticalPanel();
+    }
+
+    protected Panel createBackgroundsPanel ()
+    {
+        return new VerticalPanel();
+    }
+
     // submit a modified group, and notify listeners
     protected void commitEdit ()
     {
@@ -221,7 +156,7 @@ public class GroupEdit extends DialogBox
         }
     }
     
-    // update the contents of the image box, e.g. after the image has been changed
+    /*// update the contents of the image box, e.g. after the image has been changed
     protected void updateImageBox (final CellPanel box, final int type, final String buttonLabel)
     {
         MediaDesc media = null;
@@ -311,7 +246,7 @@ public class GroupEdit extends DialogBox
             // finally show the popup
             popup.show();
         }
-    }
+    }*/
     
     protected void addError (String error)
     {
@@ -339,12 +274,9 @@ public class GroupEdit extends DialogBox
     protected Group _group;
     protected GroupExtras _extras;
     protected GroupSubmissionListener _listener;
-    protected Button _esubmit;  
     protected List _images;
-    
-    protected DockPanel _content;
-    protected HeaderValueTable _table;
-    protected VerticalPanel _errorContainer;
+
+    protected HorizontalPanel _errorContainer;
 
     // static final fields used to decide which image we're working with.
     protected static final int IMAGE_LOGO = 1;

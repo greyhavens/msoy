@@ -13,6 +13,12 @@ import com.threerings.io.Streamable;
 public class GroupName
     implements Streamable, IsSerializable, Comparable
 {
+    /** The maximum length of a group name */
+    public static final int LENGTH_MAX = 24;
+
+    /** The minimum length of a group name */
+    public static final int LENGTH_MIN = 3;
+
     /** The group's name. */
     public String groupName;
 
