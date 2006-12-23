@@ -33,7 +33,7 @@ webapp_dir = /export/threerings/webapps
 
 #
 # Defines the directory into which uploaded media will be stored (if S3 is not
-# enabled.
+# enabled).
 
 media_dir = /export/msoy/pages/media
 
