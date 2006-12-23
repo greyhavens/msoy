@@ -2,7 +2,14 @@
 #
 # $Id$
 #
-# Command line launcher for the Msoy standalone world client
+# Command line launcher for the Msoy standalone client
 
 BINDIR=`dirname $0`
-$BINDIR/gflashplayer-`uname` http://`egrep ^server_host $BINDIR/../server.properties | awk '{print $3}'`:8080/clients/game-client.swf?$1
+HOST=`egrep ^server_host $BINDIR/../server.properties | awk '{print $3}'`
+
+PLAYER="flashplayer"
+if [ "$1" = "-debug" ]; then
+    PLAYER="flashplayer-debug"
+    shift
+fi
+$BINDIR/`uname`/$PLAYER http://$HOST:8080/clients/game-client.swf?$1
