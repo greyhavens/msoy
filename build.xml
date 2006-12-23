@@ -6,8 +6,6 @@
 
   <!-- define some basic project parameters -->
   <property name="app.name"     value="msoy"/>
-  <property name="doc.packages" value="com.threerings.msoy.*"/>
-  <property name="copy.holder"  value="Three Rings Design, Inc."/>
 
   <!-- things you probably don't want to change -->
   <property name="src.dir"       value="src/java"/>
@@ -437,15 +435,17 @@
 
   <!-- build the javadoc documentation -->
   <target name="javadoc" depends="prepare">
-    <javadoc sourcepath="${src.dir}"
-             packagenames="${doc.packages}"
-             windowtitle="${app.name} API"
+    <property name="copy.holder"  value="Three Rings Design, Inc."/>
+    <javadoc windowtitle="${app.name} API"
              doctitle="${app.name} API"
-             bottom="Copyright &#169; 2005 ${copy.holder}. All Rights Reserved."
+             bottom="Copyright &#169; 2006-2007 ${copy.holder}. All Rights Reserved."
              destdir="${javadoc.dir}"
              additionalparam="-breakiterator">
       <classpath refid="classpath"/>
       <link href="http://java.sun.com/j2se/1.5/docs/api/"/>
+      <link href="http://samskivert.com/code/samskivert/samskivert/docs/api"/>
+      <fileset dir="src/java" includes="**/*.java"/>
+      <fileset dir="src/gwt" includes="client/**/*.java"/>
     </javadoc>
   </target>
 
