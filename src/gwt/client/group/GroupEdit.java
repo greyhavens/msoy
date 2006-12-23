@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -43,6 +44,7 @@ import client.util.HeaderValueTable;
 import client.util.WebContext;
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
+import client.item.ItemUtil;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
@@ -79,7 +81,13 @@ public class GroupEdit extends BorderedDialog
 
         _errorContainer = new HorizontalPanel();
         contents.add(_errorContainer);
-        contents.add(createTextEntryField("Group Name", GroupName.LENGTH_MAX, 20, _group.name));
+        contents.add(createTextEntryField("Group Name", GroupName.LENGTH_MAX, 20, _group.name,
+            new ChangeListener() {
+                public void onChange (Widget sender) {
+                    _group.name = ((TextBox)sender).getText().trim();
+                    updateSubmitButton();
+                }
+            }));
 
         TabPanel groupTabs = new TabPanel();
         groupTabs.setStyleName("Tabs");
@@ -88,6 +96,22 @@ public class GroupEdit extends BorderedDialog
         groupTabs.add(createBackgroundsPanel(), "Background Images");
         groupTabs.selectTab(0);
         contents.add(groupTabs);
+
+        _submitButton = new Button("Submit");
+        updateSubmitButton();
+        _submitButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                commitEdit();
+            }
+        });
+        _footer.add(_submitButton);
+        Button cancelButton = new Button("Cancel");
+        cancelButton.addClickListener(new ClickListener() { 
+            public void onClick (Widget sender) {
+                hide();
+            }
+        });
+        _footer.add(cancelButton);
     }
 
     // from BorderedDialog.  This is called in the super constructor, so no UI components
@@ -102,21 +126,37 @@ public class GroupEdit extends BorderedDialog
     protected Panel createInfoPanel ()
     {
         VerticalPanel infoPanel = new VerticalPanel();
-        infoPanel.add(createTextEntryField("Homepage URL", 255, 20, _extras.homepageUrl));
+        infoPanel.add(createTextEntryField("Homepage URL", 255, 20, _extras.homepageUrl,
+            new ChangeListener() {
+                public void onChange (Widget sender) {
+                    _extras.homepageUrl = ((TextBox)sender).getText().trim();
+                }
+            }));
 
         byte selectedPolicy = _group.policy != 0 ? _group.policy : Group.POLICY_PUBLIC;
         HorizontalPanel policyPanel = new HorizontalPanel();
         policyPanel.add(new InlineLabel("Group Policy"));
-        ListBox policyBox = new ListBox();
-        policyBox.addItem("Public", "" + Group.POLICY_PUBLIC);
-        policyBox.addItem("Invitation Only", "" + Group.POLICY_INVITE_ONLY);
-        policyBox.addItem("Exclusive", "" + Group.POLICY_EXCLUSIVE);
+        final ListBox policyBox = new ListBox();
+        policyBox.addItem("Public");
+        policyBox.addItem("Invitation Only");
+        policyBox.addItem("Exclusive");
         switch(selectedPolicy) {
         case Group.POLICY_PUBLIC: policyBox.setSelectedIndex(0); break;
         case Group.POLICY_INVITE_ONLY: policyBox.setSelectedIndex(1); break;
         case Group.POLICY_EXCLUSIVE: policyBox.setSelectedIndex(2); break;
         default: addError("Internal Error! Unknown policy type: " + selectedPolicy);
         }
+        policyBox.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                switch(policyBox.getSelectedIndex()) {
+                case 0: _group.policy = Group.POLICY_PUBLIC; break;
+                case 1: _group.policy = Group.POLICY_INVITE_ONLY; break;
+                case 2: _group.policy = Group.POLICY_EXCLUSIVE; break;
+                default: addError("Internal Error! Unknown policy list index: " +
+                    policyBox.getSelectedIndex());
+                }
+            }
+        });
         policyPanel.add(policyBox);
         infoPanel.add(policyPanel);
 
@@ -130,7 +170,12 @@ public class GroupEdit extends BorderedDialog
     protected Panel createDescriptionPanel ()
     {
         VerticalPanel descriptionPanel = new VerticalPanel();
-        descriptionPanel.add(createTextEntryField("Blurb", 80, 20, _group.blurb));
+        descriptionPanel.add(createTextEntryField("Blurb", 80, 20, _group.blurb, 
+            new ChangeListener() {
+                public void onChange (Widget sender) {
+                    _group.blurb = ((TextBox)sender).getText().trim();
+                }
+            }));
 
         HorizontalPanel charterPanel = new HorizontalPanel();
         charterPanel.add(new InlineLabel("Charter"));
@@ -140,6 +185,11 @@ public class GroupEdit extends BorderedDialog
         if (_extras.charter != null) {
             charterText.setText(_extras.charter);
         }
+        charterText.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                _extras.charter = ((TextArea)sender).getText().trim();
+            }
+        });
         charterPanel.add(charterText);
         descriptionPanel.add(charterPanel);
 
@@ -161,17 +211,20 @@ public class GroupEdit extends BorderedDialog
     }
 
     protected Widget createTextEntryField(String label, int maxLength, int visibleLength,
-        String startingText)
+        String startingText, ChangeListener listener)
     {
         HorizontalPanel textEntryField = new HorizontalPanel();
         textEntryField.add(new InlineLabel(label));
         TextBox textEntryBox = new TextBox();
         textEntryBox.setMaxLength(maxLength);
         textEntryBox.setVisibleLength(visibleLength);
-        textEntryField.add(textEntryBox);
         if (startingText != null) {
             textEntryBox.setText(startingText);
         }
+        if (listener != null) {
+            textEntryBox.addChangeListener(listener);
+        }
+        textEntryField.add(textEntryBox);
         return textEntryField;
     }
 
@@ -221,7 +274,7 @@ public class GroupEdit extends BorderedDialog
 
         box.clear();
         if (media != null) {
-            box.add(new Image(MsoyEntryPoint.toMediaPath(media.getMediaPath())));
+            box.add(ItemUtil.createMediaView(media, MediaDesc.THUMBNAIL_SIZE));
         }
         Button changeButton = new Button(buttonLabel);
         changeButton.addClickListener(new ClickListener() {
@@ -298,6 +351,13 @@ public class GroupEdit extends BorderedDialog
             popup.show();
         }
     }
+
+    protected void updateSubmitButton ()
+    {
+        _submitButton.setEnabled(_group.name != null && 
+            _group.name.length() >= GroupName.LENGTH_MIN && 
+            _group.name.length()  <= GroupName.LENGTH_MAX);
+    }
     
     protected void addError (String error)
     {
@@ -328,6 +388,7 @@ public class GroupEdit extends BorderedDialog
     protected List _images;
 
     protected HorizontalPanel _errorContainer;
+    protected Button _submitButton;
 
     // static final fields used to decide which image we're working with.
     protected static final int IMAGE_LOGO = 1;
