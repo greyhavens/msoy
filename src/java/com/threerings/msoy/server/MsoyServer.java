@@ -69,6 +69,9 @@ public class MsoyServer extends WhirledServer
     /** Our runtime member manager. */
     public static MemberManager memberMan = new MemberManager();
 
+    /** Our runtime group manager. */
+    public static GroupManager groupMan = new GroupManager();
+
     /** Our runtime mail manager. */
     public static MailManager mailMan = new MailManager();
 
@@ -216,6 +219,7 @@ public class MsoyServer extends WhirledServer
         parlorMan.init(invmgr, plreg);
         sceneRepo = (MsoySceneRepository) _screp;
         memberMan.init(memberRepo, profileRepo, groupRepo);
+        groupMan.init(groupRepo, memberRepo);
         mailMan.init(mailRepo, memberRepo);
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);

@@ -18,7 +18,7 @@ public class GroupsResolver extends BlurbResolver
     @Override // from BlurbResolver
     protected void resolve ()
     {
-        MsoyServer.memberMan.getMembershipGroups(
+        MsoyServer.groupMan.getMembershipGroups(
             _memberId, false, new ResultListener<List<GroupMembership>>() {
                 public void requestCompleted (List<GroupMembership> groups) {
                     resolutionCompleted(groups);

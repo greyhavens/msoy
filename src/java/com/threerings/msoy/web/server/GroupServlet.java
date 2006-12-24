@@ -40,7 +40,7 @@ public class GroupServlet extends RemoteServiceServlet
             new ServletWaiter<GroupDetail>("getGroupDetail[" + groupId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.getGroupDetail(groupId, waiter);
+                MsoyServer.groupMan.getGroupDetail(groupId, waiter);
             }
         });
         return waiter.waitForResult();
@@ -81,7 +81,7 @@ public class GroupServlet extends RemoteServiceServlet
             startingCharacter + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.getGroups(startingCharacter, waiter);
+                MsoyServer.groupMan.getGroups(startingCharacter, waiter);
             }
         });
         return waiter.waitForResult();
@@ -95,7 +95,7 @@ public class GroupServlet extends RemoteServiceServlet
             searchString + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.searchGroups(searchString, waiter);
+                MsoyServer.groupMan.searchGroups(searchString, waiter);
             }
         });
         return waiter.waitForResult();
@@ -110,7 +110,7 @@ public class GroupServlet extends RemoteServiceServlet
             new ServletWaiter<List<GroupMembership>>("getMembershipGroups[]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.getMembershipGroups(memberId, canInvite, waiter);
+                MsoyServer.groupMan.getMembershipGroups(memberId, canInvite, waiter);
             }
         });
         return waiter.waitForResult();
@@ -131,7 +131,7 @@ public class GroupServlet extends RemoteServiceServlet
         group.creatorId = creds.memberId;
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.createGroup(group, extras, waiter);
+                MsoyServer.groupMan.createGroup(group, extras, waiter);
             }
         });
         return waiter.waitForResult();
@@ -150,7 +150,7 @@ public class GroupServlet extends RemoteServiceServlet
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>("updateGroup[" + group + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.updateGroup(group, extras, waiter);
+                MsoyServer.groupMan.updateGroup(group, extras, waiter);
             }
         });
         waiter.waitForResult();
@@ -165,7 +165,7 @@ public class GroupServlet extends RemoteServiceServlet
             "leaveGroup[" + groupId + ", " + memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.leaveGroup(groupId, memberId, waiter);
+                MsoyServer.groupMan.leaveGroup(groupId, memberId, waiter);
             }
         });
         waiter.waitForResult();
@@ -180,7 +180,7 @@ public class GroupServlet extends RemoteServiceServlet
             "joinGroup[" + groupId + ", " + memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.joinGroup(
+                MsoyServer.groupMan.joinGroup(
                     groupId, memberId, GroupMembership.RANK_MEMBER, waiter);
             }
         });
@@ -197,7 +197,7 @@ public class GroupServlet extends RemoteServiceServlet
             "updateMemberRank[" + groupId + ", " + memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.setRank(groupId, memberId, newRank, waiter);
+                MsoyServer.groupMan.setRank(groupId, memberId, newRank, waiter);
             }
         });
         waiter.waitForResult();
