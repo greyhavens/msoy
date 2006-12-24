@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.net.URLEncoder;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,7 +11,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import java.util.logging.Level;
 
@@ -44,11 +42,6 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
-import com.threerings.msoy.web.data.Group;
-import com.threerings.msoy.web.data.GroupExtras;
-import com.threerings.msoy.web.data.GroupDetail;
-import com.threerings.msoy.web.data.GroupMembership;
-import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.NeighborMember;
 import com.threerings.msoy.web.data.NeighborGroup;
