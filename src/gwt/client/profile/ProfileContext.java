@@ -10,4 +10,6 @@ import client.msgs.MsgsContext;
  */
 public class ProfileContext extends MsgsContext
 {
+    /** Messages used by the profile interfaces. */
+    public ProfileMessages msgs;
 }

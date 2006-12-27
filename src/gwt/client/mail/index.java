@@ -3,6 +3,7 @@
 
 package client.mail;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Label;
@@ -78,6 +79,15 @@ public class index extends MsgsEntryPoint
     protected ShellContext createContext ()
     {
         return _ctx = new MailContext();
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void initContext ()
+    {
+        super.initContext();
+
+        // load up our translation dictionaries
+        _ctx.msgs = (MailMessages)GWT.create(MailMessages.class);
     }
 
     // @Override // from MsoyEntryPoint

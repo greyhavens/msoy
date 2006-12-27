@@ -10,4 +10,6 @@ import client.shell.ShellContext;
  */
 public class WorldContext extends ShellContext
 {
+    /** Messages used by the world interfaces. */
+    public WorldMessages msgs;
 }

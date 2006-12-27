@@ -66,7 +66,7 @@ public class MailApplication extends DockPanel
         sideBar.setSpacing(5);
 
         // with a button to compose a new mail
-        Button composeButton = new Button("Compose (For Testing)");
+        Button composeButton = new Button(_ctx.msgs.appCompose());
         composeButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 // TODO: The hard-coded memberId is for testing only :)

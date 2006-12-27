@@ -53,6 +53,15 @@ public class index extends MsoyEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
+    protected void initContext ()
+    {
+        super.initContext();
+
+        // load up our translation dictionaries
+        _ctx.msgs = (WorldMessages)GWT.create(WorldMessages.class);
+    }
+
+    // @Override // from MsoyEntryPoint
     protected void didLogon (WebCreds creds)
     {
         super.didLogon(creds);
@@ -143,7 +152,7 @@ public class index extends MsoyEntryPoint
             }
             public void onFailure (Throwable caught) {
                 if (requestEntryCount == _entryCounter) {
-                    setContent(new Label("Failed to fetch poular places: " + caught.getMessage()));
+                    setContent(new Label(_ctx.serverError(caught)));
                 }
             }
         });

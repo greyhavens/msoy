@@ -10,4 +10,6 @@ import client.msgs.MsgsContext;
  */
 public class MailContext extends MsgsContext
 {
+    /** Messages used by the mail interfaces. */
+    public MailMessages msgs;
 }

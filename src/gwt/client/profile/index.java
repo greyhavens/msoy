@@ -56,6 +56,15 @@ public class index extends MsgsEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
+    protected void initContext ()
+    {
+        super.initContext();
+
+        // load up our translation dictionaries
+        _ctx.msgs = (ProfileMessages)GWT.create(ProfileMessages.class);
+    }
+
+    // @Override // from MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
@@ -65,7 +74,7 @@ public class index extends MsgsEntryPoint
             onHistoryChanged(initToken);
         } else if (_ctx.creds == null) {
             // TODO: display member search interface
-            setContent(new Label("Log in to view your profile."));
+            setContent(new Label(_ctx.msgs.indexLogon()));
         } else {
             // if we're logged on and not displaying someone elses member page, display our own
             displayMemberPage(_ctx.creds.memberId);
@@ -94,7 +103,7 @@ public class index extends MsgsEntryPoint
 
             public void onFailure (Throwable cause) {
                 // TODO: display friendly error
-                GWT.log("Failed to load blurbs", cause);
+                _ctx.log("Failed to load blurbs", cause);
             }
         });
     }
