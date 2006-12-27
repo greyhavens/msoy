@@ -1,10 +1,7 @@
 //
 // $Id$
 
-package client.mail;
-
-import client.group.GroupInvite;
-import client.profile.FriendInvite;
+package client.msgs;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -12,11 +9,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailMessage;
 
-import client.util.WebContext;
-
 /**
  * Base class for payload visualizers. Concrete subclasses of this object are configured
- * with a {@link WebContext} and a {@link MailMessage}, and will be asked to hand out Widgets
+ * with a {@link MsgsContext} and a {@link MailMessage}, and will be asked to hand out Widgets
  * to be displayed in mail messages in the GTW Mail system through the functions
  * {@link #widgetForRecipient()} and {@link #widgetForOthers()).
  */
@@ -26,7 +21,7 @@ public abstract class MailPayloadDisplay
      * Constructs and retursn the appropriate {@link MailPayloadDisplay} for the 
      * given mail message (presuming it has a payload).
      */
-    public static MailPayloadDisplay getDisplay (WebContext ctx, MailMessage message)
+    public static MailPayloadDisplay getDisplay (MsgsContext ctx, MailMessage message)
     {
         if (message.payload == null) {
             return null;
@@ -41,7 +36,7 @@ public abstract class MailPayloadDisplay
             "Unknown payload requested [type=" + message.payload.getType() + "]");
     }
 
-    public MailPayloadDisplay (WebContext ctx, MailMessage message)
+    public MailPayloadDisplay (MsgsContext ctx, MailMessage message)
     {
         _ctx = ctx;
         _message = message;
@@ -83,6 +78,6 @@ public abstract class MailPayloadDisplay
                                    _message.headers.messageId, payload, callback);
     }
 
-    protected WebContext _ctx;
+    protected MsgsContext _ctx;
     protected MailMessage _message;
 }

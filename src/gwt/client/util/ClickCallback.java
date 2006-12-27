@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 
+import client.shell.ShellContext;
+
 /**
  * Allows one to wire up a button, a status label and a service call into one concisely specified
  * little chunk of code. Be sure to call <code>super.onSuccess()</code> and
@@ -22,7 +24,7 @@ public abstract class ClickCallback
      * Creates a callback for the supplied trigger (the constructor will automatically add this
      * callback to the trigger as a click listener).
      */
-    public ClickCallback (WebContext ctx, Button trigger)
+    public ClickCallback (ShellContext ctx, Button trigger)
     {
         this(ctx, trigger, null);
     }
@@ -32,9 +34,9 @@ public abstract class ClickCallback
      * callback to the trigger as a click listener). Failure will automatically be reported to the
      * supplied status label.
      */
-    public ClickCallback (WebContext ctx, Button trigger, Label status)
+    public ClickCallback (ShellContext ctx, Button trigger, Label status)
     {
-        _ctx = ctx;
+        _cctx = ctx;
         _trigger = trigger;
         _status = status;
         _trigger.addClickListener(new ClickListener() {
@@ -70,13 +72,13 @@ public abstract class ClickCallback
     {
         _trigger.setEnabled(true);
         if (_status != null) {
-            _status.setText(cause.getMessage()); // TODO: decode and translate
+            _status.setText(_cctx.serverError(cause));
         } else {
-            _ctx.log("Callback failure [for=" + _trigger.getText() + "]", cause);
+            _cctx.log("Callback failure [for=" + _trigger.getText() + "]", cause);
         }
     }
 
-    protected WebContext _ctx;
+    protected ShellContext _cctx;
     protected Button _trigger;
     protected Label _status;
 }

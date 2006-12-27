@@ -23,7 +23,6 @@ import com.threerings.msoy.item.web.MediaDesc;
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
 import client.util.RowPanel;
-import client.util.WebContext;
 
 /**
  * The base class for an interface for creating and editing digital items.
@@ -61,7 +60,7 @@ public abstract class ItemEditor extends BorderedDialog
         mediaTabs.setStyleName("Tabs");
 
         // create a name entry field
-        contents.add(createRow("Item Name", bind(_name = new TextBox(), new Binder() {
+        contents.add(createRow(_ctx.imsgs.editorName(), bind(_name = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _item.name = text;
             }
@@ -92,7 +91,7 @@ public abstract class ItemEditor extends BorderedDialog
             }
         });
         Button ecancel;
-        _footer.add(ecancel = new Button("Cancel"));
+        _footer.add(ecancel = new Button(_ctx.cmsgs.cancel()));
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 hide();
@@ -111,7 +110,7 @@ public abstract class ItemEditor extends BorderedDialog
      * Configures this editor with a reference to the item service and its item
      * panel parent.
      */
-    public void init (WebContext ctx, ItemPanel parent)
+    public void init (InventoryContext ctx, ItemPanel parent)
     {
         _ctx = ctx;
         _parent = parent;
@@ -124,8 +123,10 @@ public abstract class ItemEditor extends BorderedDialog
     public void setItem (Item item)
     {
         _item = item;
-        _etitle.setText((item.itemId <= 0) ? "Upload a New Item" : "Edit an Item");
-        _esubmit.setText((item.itemId <= 0) ? "Upload" : "Update");
+        _etitle.setText((item.itemId <= 0) ?
+                        _ctx.imsgs.editorUploadTitle() : _ctx.imsgs.editorEditTitle());
+        _esubmit.setText((item.itemId <= 0) ?
+                         _ctx.imsgs.editorUpload() : _ctx.imsgs.editorUpdate());
 
         if (_item.name != null) {
             _name.setText(_item.name);
@@ -179,37 +180,37 @@ public abstract class ItemEditor extends BorderedDialog
         VerticalPanel extras = new VerticalPanel();
         extras.setSpacing(10);
         populateExtrasTab(extras);
-        tabs.add(extras, "Extra Info");
+        tabs.add(extras, _ctx.imsgs.editorExtraTab());
     }
 
     protected void createFurniUploader (TabPanel tabs)
     {
-        String title = "Image shown when Item is placed in the World as Furniture";
-        _furniUploader = new MediaUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
+        String title = _ctx.imsgs.editorFurniTitle();
+        _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
-                    return "Furniture must be an web-viewable image type.";
+                    return _ctx.imsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
         });
-        tabs.add(_furniUploader, "Furniture Media");
+        tabs.add(_furniUploader, _ctx.imsgs.editorFurniTab());
     }
 
     protected void createThumbUploader (TabPanel tabs)
     {
-        String title = "Image shown for Item in Inventory and Catalog";
-        _thumbUploader = new MediaUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
+        String title = _ctx.imsgs.editorThumbTitle();
+        _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
-                    return "Thumbnails must be an image type.";
+                    return _ctx.imsgs.errThumbNotImage();
                 }
                 _item.thumbMedia = desc;
                 return null;
             }
         });
-        tabs.add(_thumbUploader, "Thumbnail Media");
+        tabs.add(_thumbUploader, _ctx.imsgs.editorThumbTab());
     }
 
     /**
@@ -218,8 +219,7 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected void populateExtrasTab (VerticalPanel extras)
     {
-        extras.add(new Label("Enter a Description to be shown if you list your Item in " +
-                             "the Catalog (optional)"));
+        extras.add(new Label(_ctx.imsgs.editorDescripTitle()));
         extras.add(bind(_description = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _item.description = text;
@@ -245,12 +245,21 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * This should be called by item editors that are used for editing
-     * media that has a 'main' piece of media.
+     * This should be called by item editors that are used for editing media that has a 'main'
+     * piece of media.
      */
     protected MediaUploader createMainUploader (String title, MediaUpdater updater)
     {
-        return (_mainUploader = new MediaUploader(Item.MAIN_MEDIA, title, false, updater));
+        return (_mainUploader = createUploader(Item.MAIN_MEDIA, title, false, updater));
+    }
+
+    /**
+     * Creates and configures a media uploader.
+     */
+    protected MediaUploader createUploader (
+        String id, String title, boolean thumbnail, MediaUpdater updater)
+    {
+        return new MediaUploader(_ctx, id, title, thumbnail, updater);
     }
 
     /**
@@ -371,15 +380,13 @@ public abstract class ItemEditor extends BorderedDialog
     {
         AsyncCallback cb = new AsyncCallback() {
             public void onSuccess (Object result) {
-                _parent.setStatus(_item.itemId == 0 ? "Item created." : "Item updated.");
+                _parent.setStatus(_item.itemId == 0 ?
+                                  _ctx.imsgs.msgItemCreated() : _ctx.imsgs.msgItemUpdated());
                 _updatedItem = _item; // this will be passed to our parent in onClosed()
                 hide();
             }
             public void onFailure (Throwable caught) {
-                String reason = caught.getMessage();
-                _parent.setStatus(_item.itemId == 0 ?
-                                  "Item creation failed: " + reason :
-                                  "Item update failed: " + reason);
+                _parent.setStatus(_ctx.serverError(caught));
             }
         };
         if (_item.itemId == 0) {
@@ -395,8 +402,7 @@ public abstract class ItemEditor extends BorderedDialog
     protected abstract Item createBlankItem ();
 
     /**
-     * A convenience method for attaching a textbox directly to a field in the
-     * item to be edited.
+     * A convenience method for attaching a textbox directly to a field in the item to be edited.
      *
      * TODO: If you paste text into the field, this doesn't detect it.
      */
@@ -418,8 +424,7 @@ public abstract class ItemEditor extends BorderedDialog
     }
 
     /**
-     * This wires up a sensibly named function that our POST response
-     * JavaScript code can call.
+     * This wires up a sensibly named function that our POST response JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
         $wnd.setHash = function (id, hash, type, constraint, thash, ttype, tconstraint) {
@@ -427,7 +432,7 @@ public abstract class ItemEditor extends BorderedDialog
         };
     }-*/; 
 
-    protected WebContext _ctx;
+    protected InventoryContext _ctx;
     protected ItemPanel _parent;
 
     protected Item _item, _updatedItem;

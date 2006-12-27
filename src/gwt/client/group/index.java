@@ -7,6 +7,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 
 import client.shell.MsoyEntryPoint;
+import client.shell.ShellContext;
 
 public class index extends MsoyEntryPoint
     implements HistoryListener
@@ -44,9 +45,17 @@ public class index extends MsoyEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
+    protected ShellContext createContext ()
+    {
+        return _ctx = new GroupContext();
+    }
+
+    // @Override // from MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
         onHistoryChanged(History.getToken());
     }
+
+    protected GroupContext _ctx;
 }

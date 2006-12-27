@@ -11,6 +11,7 @@ import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
+import client.shell.ShellContext;
 
 public class index extends MsoyEntryPoint
     implements HistoryListener
@@ -73,6 +74,12 @@ public class index extends MsoyEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
+    protected ShellContext createContext ()
+    {
+        return _ctx = new MailContext();
+    }
+
+    // @Override // from MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
@@ -94,5 +101,6 @@ public class index extends MsoyEntryPoint
         onHistoryChanged(null);
     }
 
+    protected MailContext _ctx;
     protected MailApplication _mainView;
 }

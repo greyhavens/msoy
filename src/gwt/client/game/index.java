@@ -7,9 +7,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
+import com.threerings.msoy.web.client.GameService;
+import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.data.LaunchConfig;
+
 import client.shell.MsoyEntryPoint;
+import client.shell.ShellContext;
 
 /**
  * Displays a page that allows a player to play a particular game. If it's
@@ -46,6 +51,20 @@ public class index extends MsoyEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
+    protected ShellContext createContext ()
+    {
+        return _ctx = new GameContext();
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void initContext ()
+    {
+        super.initContext();
+        _ctx.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
+        ((ServiceDefTarget)_ctx.gamesvc).setServiceEntryPoint("/gamesvc");
+    }
+
+    // @Override // from MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
@@ -73,4 +92,6 @@ public class index extends MsoyEntryPoint
             }
         });
     }
+
+    protected GameContext _ctx;
 }

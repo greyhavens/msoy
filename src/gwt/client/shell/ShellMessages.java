@@ -1,11 +1,11 @@
-package client.util;
+package client.shell;
 
 
 /**
  * Interface to represent the messages contained in resource  bundle:
- * 	/export/msoy/src/gwt/client/util/GlobalMessages.properties'.
+ * 	/export/msoy/src/gwt/client/shell/ShellMessages.properties'.
  */
-public interface GlobalMessages extends com.google.gwt.i18n.client.Messages {
+public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
    * Translated "Submit".

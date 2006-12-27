@@ -11,8 +11,8 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 /**
- *  * A class for creating and editing {@link Photo} digital items.
- *   */
+ * A class for creating and editing {@link Photo} digital items.
+ */
 public class AudioEditor extends ItemEditor
 {
     // @Override from ItemEditor
@@ -26,15 +26,15 @@ public class AudioEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader("Upload your audio.", new MediaUpdater() {
+        tabs.add(createMainUploader(_ctx.imsgs.audioMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isAudio()) {
-                    return "Audio data must be audio!";
+                    return _ctx.imsgs.errAudioNotAudio();
                 }
                 _audio.audioMedia = desc;
                 return null;
             }
-        }), "Audio Media");
+        }), _ctx.imsgs.audioMainTab());
 
         super.createInterface(contents, tabs);
     }

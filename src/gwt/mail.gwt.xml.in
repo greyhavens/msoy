@@ -2,8 +2,6 @@
   <inherits name='shell'/>
   <entry-point class='client.mail.index'/>
   <public path="public/mail"/>
-  <source path="client/item"/>
+  <source path="client/msgs"/>
   <source path="client/mail"/>
-  <source path="client/group"/>
-  <source path="client/profile"/>
 </module>

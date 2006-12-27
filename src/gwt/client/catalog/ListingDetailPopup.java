@@ -11,14 +11,13 @@ import com.threerings.msoy.item.web.ItemDetail;
 
 import client.item.BaseItemDetailPopup;
 import client.util.ClickCallback;
-import client.util.WebContext;
 
 /**
  * Displays a popup detail view of an item from the catalog.
  */
 public class ListingDetailPopup extends BaseItemDetailPopup
 {
-    public ListingDetailPopup (WebContext ctx, CatalogListing listing, ItemPanel panel)
+    public ListingDetailPopup (CatalogContext ctx, CatalogListing listing, ItemPanel panel)
     {
         super(ctx, listing.item);
         _listing = listing;

@@ -25,13 +25,13 @@ public class DocumentEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader("Main Document media", new MediaUpdater() {
+        tabs.add(createMainUploader(_ctx.imsgs.documentMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 // TODO: validate media type
                 _doc.docMedia = desc;
                 return null;
             }
-        }), "Document Media");
+        }), _ctx.imsgs.documentMainTab());
 
         super.createInterface(contents, tabs);
     }

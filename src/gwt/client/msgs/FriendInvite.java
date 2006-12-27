@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.profile;
+package client.msgs;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -16,18 +16,12 @@ import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MemberName;
 
-import client.util.WebContext;
-
-import client.mail.MailPayloadComposer;
-import client.mail.MailPayloadDisplay;
-import client.mail.MailUpdateListener;
-
 public abstract class FriendInvite
 {
     public static class Composer
         implements MailPayloadComposer
     {
-        public Widget widgetForComposition (WebContext ctx)
+        public Widget widgetForComposition (MsgsContext ctx)
         {
             return new InvitationWidget();
         }
@@ -39,7 +33,7 @@ public abstract class FriendInvite
         }
 
         // @Override
-        public void messageSent (WebContext ctx, MemberName recipient)
+        public void messageSent (MsgsContext ctx, MemberName recipient)
         {
             ctx.membersvc.inviteFriend(ctx.creds, recipient.getMemberId(), new AsyncCallback() {
                 public void onSuccess (Object result) {
@@ -75,7 +69,7 @@ public abstract class FriendInvite
 
     public static class Display extends MailPayloadDisplay
     {
-        public Display (WebContext ctx, MailMessage message)
+        public Display (MsgsContext ctx, MailMessage message)
         {
             super(ctx, message);
         }

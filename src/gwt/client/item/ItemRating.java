@@ -13,8 +13,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 
-import client.util.WebContext;
-
 public class ItemRating extends FlexTable
 {
     /** Display only the item's average rating. Allow no updates. */
@@ -30,7 +28,7 @@ public class ItemRating extends FlexTable
      * Construct a new display for the given item with member's previous rating of the item,
      * automatically figuring out read-only or read/write display mode.
      */
-    public ItemRating (WebContext ctx, Item item, byte memberRating)
+    public ItemRating (ItemContext ctx, Item item, byte memberRating)
     {
         this(ctx, item, memberRating,
              item.isRatable() ? ItemRating.MODE_BOTH : ItemRating.MODE_READ);
@@ -40,7 +38,7 @@ public class ItemRating extends FlexTable
      * Construct a new display for the given item with member's previous rating of the item and a
      * specified display mode.
      */
-    public ItemRating (WebContext ctx, Item item, byte memberRating, int mode)
+    public ItemRating (ItemContext ctx, Item item, byte memberRating, int mode)
     {
         // sanity check
         if (mode != MODE_READ && !item.isRatable()) {
@@ -167,7 +165,7 @@ public class ItemRating extends FlexTable
         });
     }
 
-    protected WebContext _ctx;
+    protected ItemContext _ctx;
     protected Item _item;
     protected ItemIdent _itemId;
     protected int _mode;

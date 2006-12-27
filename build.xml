@@ -44,14 +44,14 @@
     <file name="${extlib.dir}/commons-logging.jar"/>
     <file name="${extlib.dir}/getdown.jar"/>
     <file name="${extlib.dir}/gwt-user.jar"/>
-    <file name="${extlib.dir}/junit-3.7.jar"/>
+    <file name="${extlib.dir}/gwt-widgets-0.1.1.jar"/>
     <file name="${extlib.dir}/jetty/lib/org.mortbay.jetty.jar"/>
+    <file name="${extlib.dir}/junit-3.7.jar"/>
     <file name="${extlib.dir}/mail.jar"/>
     <file name="${extlib.dir}/mysql-connector-java-3.1.12-bin.jar"/>
     <file name="${extlib.dir}/proguard.jar"/>
     <file name="${extlib.dir}/servlet-2.3.jar"/>
     <file name="${extlib.dir}/velocity-1.5-dev.jar"/>
-    <file name="lib/gwt-widgets-0.1.1.jar"/>
     <file name="lib/json.jar"/>
   </filelist>
 
@@ -121,14 +121,24 @@
     </java>
   </target>
 
-  <!-- regenerates our i18n messages classes -->
-  <target name="gmsgs">
-    <java classpathref="gwt.classpath" fork="true" classname="com.google.gwt.i18n.tools.I18NSync">
+  <!-- regenerates a single i18n messages class -->
+  <target name="gmsg">
+    <java fork="true" classname="com.google.gwt.i18n.tools.I18NSync">
+      <classpath>
+        <fileset dir="${extlib.dir}" includes="gwt*.jar"/>
+        <pathelement location="src/gwt"/>
+      </classpath>
       <arg value="-createMessages"/>
       <arg value="-out"/>
       <arg value="src/gwt"/>
-      <arg value="client.util.GlobalMessages"/>
+      <arg value="client.${which}Messages"/>
     </java>
+  </target>
+
+  <!-- regenerates our i18n messages classes -->
+  <target name="gmsgs">
+    <antcall target="gmsg"><param name="which" value="shell.Shell"/></antcall>
+    <antcall target="gmsg"><param name="which" value="inventory.Inventory"/></antcall>
   </target>
 
   <property name="gclient.buildstamp" value="${deploy.dir}/tmp/gclient.buildstamp"/>
@@ -148,7 +158,7 @@
 
   <!-- builds our GWT web client -->
   <property name="pages" value="catalog,game,group,inventory,mail,profile,world"/>
-  <target name="gclient" depends="prepare">
+  <target name="gclient" depends="prepare,gmsgs">
     <delete file="${gclient.buildstamp}"/>
     <for list="${pages}" param="page"><sequential>
       <echo>Compiling @{page} module...</echo>

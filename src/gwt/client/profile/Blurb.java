@@ -11,8 +11,6 @@ import com.google.gwt.user.client.ui.Panel;
 
 import com.threerings.msoy.web.data.BlurbData;
 
-import client.util.WebContext;
-
 /**
  * Contains a chunk of content that a user would want to display on their
  * personal page.
@@ -43,7 +41,7 @@ public abstract class Blurb extends DockPanel
      * displaying content.
      */
     public void init (
-        WebContext ctx, int memberId, int blurbId, Object blurbData)
+        ProfileContext ctx, int memberId, int blurbId, Object blurbData)
     {
         _ctx = ctx;
         _memberId = memberId;
@@ -88,7 +86,7 @@ public abstract class Blurb extends DockPanel
      */
     protected abstract void didFail (String cause);
 
-    protected WebContext _ctx;
+    protected ProfileContext _ctx;
     protected int _memberId;
     protected int _blurbId;
     protected Label _header;

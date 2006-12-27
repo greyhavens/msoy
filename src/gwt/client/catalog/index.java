@@ -6,7 +6,9 @@ package client.catalog;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.threerings.msoy.item.web.Item;
+
 import client.shell.MsoyEntryPoint;
+import client.shell.ShellContext;
 
 /**
  * Handles the MetaSOY inventory application.
@@ -44,6 +46,12 @@ public class index extends MsoyEntryPoint
         return "catalog";
     }
 
+    // @Override // from MsoyEntryPoint
+    protected ShellContext createContext ()
+    {
+        return _ctx = new CatalogContext();
+    }
+
     // @Override from MsoyEntryPoint
     protected void onPageLoad ()
     {
@@ -52,5 +60,6 @@ public class index extends MsoyEntryPoint
         onHistoryChanged(History.getToken());
     }
 
+    protected CatalogContext _ctx;
     protected CatalogPanel _catalog;
 }

@@ -3,9 +3,6 @@
 
 package client.world;
 
-import client.shell.MsoyEntryPoint;
-import client.util.FlashClients;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
@@ -14,6 +11,10 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.threerings.msoy.web.data.WebCreds;
+
+import client.shell.MsoyEntryPoint;
+import client.shell.ShellContext;
+import client.util.FlashClients;
 
 /**
  * Handles the MetaSOY main page.
@@ -43,6 +44,12 @@ public class index extends MsoyEntryPoint
     {
         History.addHistoryListener(this);
         updateInterface(History.getToken());
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected ShellContext createContext ()
+    {
+        return _ctx = new WorldContext();
     }
 
     // @Override // from MsoyEntryPoint
@@ -205,7 +212,10 @@ public class index extends MsoyEntryPoint
         }
     }-*/;
 
+    protected WorldContext _ctx;
+
     /** A counter to help asynchronous callbacks to figure out if they've been obsoleted. */
     protected int _entryCounter;
+
     protected HTML _client;
 }

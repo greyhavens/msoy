@@ -40,11 +40,10 @@ import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.gwt.ui.InlineLabel;
 
 import client.shell.MsoyEntryPoint;
-import client.util.HeaderValueTable;
-import client.util.WebContext;
 import client.util.BorderedDialog;
+import client.util.HeaderValueTable;
+import client.util.MediaUtil;
 import client.util.MsoyUI;
-import client.item.ItemUtil;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
@@ -61,12 +60,12 @@ public class GroupEdit extends BorderedDialog
     /**
      * This constructor is for creating new Groups.  
      */
-    public GroupEdit (WebContext ctx) 
+    public GroupEdit (GroupContext ctx) 
     {
         this(ctx, new Group(), new GroupExtras(), null);
     }
     
-    public GroupEdit (WebContext ctx, Group group, GroupExtras extras,  
+    public GroupEdit (GroupContext ctx, Group group, GroupExtras extras,  
         GroupSubmissionListener listener)
     {
         super();
@@ -274,7 +273,7 @@ public class GroupEdit extends BorderedDialog
 
         box.clear();
         if (media != null) {
-            box.add(ItemUtil.createMediaView(media, MediaDesc.THUMBNAIL_SIZE));
+            box.add(MediaUtil.createMediaView(media, MediaDesc.THUMBNAIL_SIZE));
         }
         Button changeButton = new Button(buttonLabel);
         changeButton.addClickListener(new ClickListener() {
@@ -381,7 +380,7 @@ public class GroupEdit extends BorderedDialog
         }
     }
 
-    protected WebContext _ctx;
+    protected GroupContext _ctx;
     protected Group _group;
     protected GroupExtras _extras;
     protected GroupSubmissionListener _listener;

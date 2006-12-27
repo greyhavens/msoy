@@ -21,8 +21,6 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.TagHistory;
 
-import client.util.WebContext;
-
 /**
  * Displays tagging information for a particular item.
  */
@@ -34,7 +32,7 @@ public class TagDetailPanel extends FlexTable
         "copyright"
     };
     
-    public TagDetailPanel (WebContext ctx, Item item)
+    public TagDetailPanel (ItemContext ctx, Item item)
     {
         setStyleName("tagDetailPanel");
         _ctx = ctx;
@@ -212,7 +210,7 @@ public class TagDetailPanel extends FlexTable
         });
     }
 
-    protected WebContext _ctx;
+    protected ItemContext _ctx;
     protected Item _item;
 
     protected Label _tags, _status;

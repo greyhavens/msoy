@@ -13,17 +13,10 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import client.item.ItemUtil;
+import client.util.MediaUtil;
 
 /**
  * Displays a thumbnail version of an item.
- *
- * <p> Styles:
- * <ul>
- * <li> item_image - the style of a full-size item image
- * <li> item_text - the style for "full-size" text
- * <li> item_thumb_image - the style of item thumbnail image
- * <li> item_thumb_text - the style of item thumbnail text
- * </ul>
  */
 public class ItemContainer extends VerticalPanel
 {
@@ -64,7 +57,7 @@ public class ItemContainer extends VerticalPanel
      */
     protected Widget createContainer (Item item)
     {
-        return ItemUtil.createMediaView(item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
+        return MediaUtil.createMediaView(item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
     }
 
     protected ItemPanel _panel;

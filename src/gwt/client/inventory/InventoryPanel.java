@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.TabListener;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import client.item.ItemTypePanel;
-import client.util.WebContext;
 
 /**
  * Displays a tabbed panel containing a player's inventory.
@@ -19,7 +18,7 @@ import client.util.WebContext;
 public class InventoryPanel extends VerticalPanel
     implements TabListener
 {
-    public InventoryPanel (WebContext ctx)
+    public InventoryPanel (InventoryContext ctx)
     {
         setStyleName("inventory");
         _ctx = ctx;
@@ -51,7 +50,7 @@ public class InventoryPanel extends VerticalPanel
         return true;
     }
 
-    protected WebContext _ctx;
+    protected InventoryContext _ctx;
     protected ItemTypePanel _itemTabs;
     protected HashMap _itemPanes = new HashMap();
     protected SimplePanel _itemPaneContainer;

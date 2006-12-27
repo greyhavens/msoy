@@ -9,7 +9,6 @@ import java.util.Map;
 import client.item.ItemSearchSortPanel;
 import client.item.ItemTypePanel;
 import client.item.TagCloud;
-import client.util.WebContext;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -24,7 +23,7 @@ import com.threerings.msoy.item.web.CatalogListing;
 public class CatalogPanel extends VerticalPanel
     implements TabListener, ItemSearchSortPanel.Listener
 {
-    public CatalogPanel (WebContext ctx)
+    public CatalogPanel (CatalogContext ctx)
     {
         _ctx = ctx;
         setStyleName("catalog");
@@ -104,7 +103,7 @@ public class CatalogPanel extends VerticalPanel
         _tagCloudContainer.setWidget(cloud);
     }
 
-    protected WebContext _ctx;
+    protected CatalogContext _ctx;
     protected byte _sortBy;
     protected String _search;
     protected byte _tabIndex;

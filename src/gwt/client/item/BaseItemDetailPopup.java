@@ -14,15 +14,15 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.util.WebContext;
 import client.util.BorderedDialog;
+import client.util.MediaUtil;
 
 /**
  * Defines the base item detail popup from which we derive an inventory and catalog item detail.
  */
 public class BaseItemDetailPopup extends BorderedDialog
 {
-    protected BaseItemDetailPopup (WebContext ctx, Item item)
+    protected BaseItemDetailPopup (ItemContext ctx, Item item)
     {
         super(true);
         _ctx = ctx;
@@ -82,7 +82,7 @@ public class BaseItemDetailPopup extends BorderedDialog
 
     protected Widget createPreview (Item item)
     {
-        return ItemUtil.createMediaView(item.getPreviewMedia(), MediaDesc.PREVIEW_SIZE);
+        return MediaUtil.createMediaView(item.getPreviewMedia(), MediaDesc.PREVIEW_SIZE);
     }
 
     protected void createInterface (VerticalPanel details, VerticalPanel controls)
@@ -98,7 +98,7 @@ public class BaseItemDetailPopup extends BorderedDialog
         }
     }
 
-    protected WebContext _ctx;
+    protected ItemContext _ctx;
     protected Item _item;
     protected ItemDetail _detail;
 

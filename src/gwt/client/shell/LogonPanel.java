@@ -20,14 +20,12 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.util.WebContext;
-
 /**
  * Displays an interface for logging on, or a user's current credentials.
  */
 public class LogonPanel extends FlexTable
 {
-    public LogonPanel (WebContext ctx, MsoyEntryPoint app)
+    public LogonPanel (ShellContext ctx, MsoyEntryPoint app)
     {
         setStyleName("logonPanel");
         setCellPadding(0);
@@ -201,7 +199,7 @@ public class LogonPanel extends FlexTable
         protected Label _status;
     }
 
-    protected WebContext _ctx;
+    protected ShellContext _ctx;
     protected MsoyEntryPoint _app;
 
     protected String _who;

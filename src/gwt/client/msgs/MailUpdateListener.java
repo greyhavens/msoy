@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.mail;
+package client.msgs;
 
 /**
  *  Used by an object to notify another object that a mail message has changed, and

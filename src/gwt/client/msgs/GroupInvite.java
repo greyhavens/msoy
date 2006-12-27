@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.group;
+package client.msgs;
 
 import java.util.List;
 import com.google.gwt.user.client.Window;
@@ -21,17 +21,11 @@ import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MemberName;
 
-import client.mail.MailPayloadComposer;
-import client.mail.MailPayloadDisplay;
-import client.mail.MailUpdateListener;
-import client.util.WebContext;
-
 public abstract class GroupInvite
 {
-
-    public static void getInvitationGroups (WebContext _ctx, AsyncCallback callback)
+    public static void getInvitationGroups (MsgsContext ctx, AsyncCallback callback)
     {
-        _ctx.groupsvc.getMembershipGroups(_ctx.creds, _ctx.creds.memberId, true, callback);
+        ctx.groupsvc.getMembershipGroups(ctx.creds, ctx.creds.memberId, true, callback);
     }
 
     public static final class Composer
@@ -49,20 +43,20 @@ public abstract class GroupInvite
         }
 
         // @Override
-        public Widget widgetForComposition (WebContext ctx)
+        public Widget widgetForComposition (MsgsContext ctx)
         {
             return new CompositionWidget(ctx);
         }
 
         // @Override
-        public void messageSent (WebContext ctx, MemberName recipient)
+        public void messageSent (MsgsContext ctx, MemberName recipient)
         {
             // TODO: if we implement backend tracking of group invites, do something here.
         }
 
         protected class CompositionWidget extends HorizontalPanel
         {
-            public CompositionWidget (WebContext ctx)
+            public CompositionWidget (MsgsContext ctx)
             {
                 super();
                 _ctx = ctx;
@@ -88,30 +82,29 @@ public abstract class GroupInvite
                 });
                 add(_groupBox);
             }
-            protected WebContext _ctx;
+            protected MsgsContext _ctx;
             protected ListBox _groupBox;
         }
-        
+
         protected List _groups;
         protected int _selectedGroupId = -1;
     }
-    
+
     public static final class Display extends MailPayloadDisplay
     {
-        public Display (WebContext ctx, MailMessage message)
+        public Display (MsgsContext ctx, MailMessage message)
         {
             super(ctx, message);
             // no sanity checks: if anything breaks here, it's already a disaster
             _inviteObject = (GroupInviteObject) message.payload;
         }
-        
+
         // @Override
         public Widget widgetForRecipient (MailUpdateListener listener)
         {
             _listener = listener;
             return new DisplayWidget(_inviteObject.responded == false);
         }
-
 
         // @Override
         public Widget widgetForOthers ()
@@ -135,7 +128,7 @@ public abstract class GroupInvite
                 add(joinButton);
                 add(new InlineLabel(" the group #" + _inviteObject.groupId + "."));
             }
-            
+
             protected void joinGroup ()
             {
                 _ctx.groupsvc.joinGroup(
@@ -162,8 +155,10 @@ public abstract class GroupInvite
                         }
                 });
             }
+
             protected ListBox _groupBox;
         }
+
         protected GroupInviteObject _inviteObject;
         protected MailUpdateListener _listener;
     }

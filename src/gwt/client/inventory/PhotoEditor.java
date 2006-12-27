@@ -26,15 +26,15 @@ public class PhotoEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader("Main Photo image", new MediaUpdater() {
+        tabs.add(createMainUploader(_ctx.imsgs.photoMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
-                    return "Photos must be a web-viewable image type.";
+                    return _ctx.imsgs.errPhotoNotFlash();
                 }
                 _photo.photoMedia = desc;
                 return null;
             }
-        }), "Photo Media");
+        }), _ctx.imsgs.photoMainTab());
 
         super.createInterface(contents, tabs);
     }

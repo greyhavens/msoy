@@ -38,9 +38,8 @@ import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.MemberName;
 
 import client.shell.MsoyEntryPoint;
-import client.util.WebContext;
+import client.util.MediaUtil;
 import client.util.PromptPopup;
-import client.item.ItemUtil;
 
 import client.group.GroupEdit.GroupSubmissionListener;
 
@@ -51,7 +50,7 @@ import client.group.GroupEdit.GroupSubmissionListener;
 public class GroupView extends VerticalPanel
     implements GroupSubmissionListener
 {
-    public GroupView (WebContext ctx, int groupId)
+    public GroupView (GroupContext ctx, int groupId)
     {
         super();
         _ctx = ctx;
@@ -112,7 +111,7 @@ public class GroupView extends VerticalPanel
         VerticalPanel logoPanel = new VerticalPanel();
         logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         logoPanel.setStyleName("LogoPanel");
-        logoPanel.add(ItemUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE));
+        logoPanel.add(MediaUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE));
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("Links");
         links.setSpacing(8);
@@ -459,7 +458,7 @@ public class GroupView extends VerticalPanel
         }
     }
 
-    protected WebContext _ctx;
+    protected GroupContext _ctx;
     protected Group _group;
     protected GroupExtras _extras;
     protected GroupDetail _detail;

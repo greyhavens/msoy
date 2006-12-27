@@ -11,7 +11,9 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.msoy.web.data.PersonLayout;
+
 import client.shell.MsoyEntryPoint;
+import client.shell.ShellContext;
 
 /**
  * Displays a person's "portal" page with their profile information, friends,
@@ -44,6 +46,12 @@ public class index extends MsoyEntryPoint
     protected String getPageId ()
     {
         return "profile";
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected ShellContext createContext ()
+    {
+        return _ctx = new ProfileContext();
     }
 
     // @Override // from MsoyEntryPoint
@@ -90,5 +98,6 @@ public class index extends MsoyEntryPoint
         });
     }
 
+    protected ProfileContext _ctx;
     protected int _memberId = -1;
 }

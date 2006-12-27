@@ -13,13 +13,13 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.Anchor;
+
 import com.threerings.msoy.web.data.GroupMembership;
 
-import client.group.GroupInvite;
-import client.mail.MailComposition;
+import client.msgs.GroupInvite;
+import client.msgs.MailComposition;
 import client.shell.MsoyEntryPoint;
-
-import com.threerings.gwt.ui.Anchor;
 
 /**
  * Displays a list of the groups of which a person is a member.

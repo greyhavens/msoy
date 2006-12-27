@@ -26,17 +26,17 @@ public class PetEditor extends ItemEditor
     protected void createFurniUploader (TabPanel tabs)
     {
         // pets are special; their furni media are their primary media
-        String title = "Pet as seen in the World";
-        _furniUploader = new MediaUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
+        String title = _ctx.imsgs.petMainTitle();
+        _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
-                    return "Pets must be a web-viewable image type.";
+                    return _ctx.imsgs.errPetNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
         });
-        tabs.add(_furniUploader, "Pet Media");
+        tabs.add(_furniUploader, _ctx.imsgs.petMainTab());
     }
 
     // @Override from ItemEditor

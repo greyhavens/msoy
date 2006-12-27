@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.util;
+package client.shell;
 
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 

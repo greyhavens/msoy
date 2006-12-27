@@ -26,16 +26,15 @@ public class AvatarEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        String title = "Avatar as seen in the World";
-        tabs.add(createMainUploader(title, new MediaUpdater() {
+        tabs.add(createMainUploader(_ctx.imsgs.avatarMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
-                    return "Avatars must be a web-viewable media.";
+                    return _ctx.imsgs.errAvatarNotFlash();
                 }
                 _avatar.avatarMedia = desc;
                 return null;
             }
-        }), "Avatar Media");
+        }), _ctx.imsgs.avatarMainTab());
 
         super.createInterface(contents, tabs);
     }
@@ -43,17 +42,17 @@ public class AvatarEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createThumbUploader (TabPanel tabs)
     {
-        String title = "Image show in a Game Lobby";
-        _thumbUploader = new MediaUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
+        String title = _ctx.imsgs.avatarThumbTitle();
+        _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
-                    return "Head Shots must be an image type.";
+                    return _ctx.imsgs.errThumbNotImage();
                 }
                 _item.thumbMedia = desc;
                 return null;
             }
         });
-        tabs.add(_thumbUploader, "Head Shot Media");
+        tabs.add(_thumbUploader, _ctx.imsgs.avatarThumbTab());
     }
 
     // @Override from ItemEditor

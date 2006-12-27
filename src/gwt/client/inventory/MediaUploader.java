@@ -19,7 +19,7 @@ import com.threerings.gwt.ui.SubmitField;
 
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.item.ItemUtil;
+import client.util.MediaUtil;
 import client.util.MsoyUI;
 
 /**
@@ -35,7 +35,7 @@ public class MediaUploader extends VerticalPanel
      * sized.
      * @param updater the updater that knows how to set the media hash on the item.
      */
-    public MediaUploader (String id, String title, boolean thumbnail,
+    public MediaUploader (InventoryContext ctx, String id, String title, boolean thumbnail,
                           ItemEditor.MediaUpdater updater)
     {
         setStyleName("mediaUploader");
@@ -77,9 +77,9 @@ public class MediaUploader extends VerticalPanel
         _panel.addField(new FileUploadField(id), id);
 
         if (GWT.isScript()) {
-            _panel.addField(new SubmitField("submit", "Upload"), "submit");
+            _panel.addField(new SubmitField("submit", ctx.imsgs.upload()), "submit");
         } else {
-            Button submit = new Button("Upload");
+            Button submit = new Button(ctx.imsgs.upload());
             submit.addClickListener(new ClickListener() {
                 public void onClick (Widget widget) {
                     _panel.submit();
@@ -98,7 +98,7 @@ public class MediaUploader extends VerticalPanel
         _target.clear();
         if (desc != null) {
             int size = _thumbnail ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;
-            _target.add(ItemUtil.createMediaView(desc, size));
+            _target.add(MediaUtil.createMediaView(desc, size));
             _status.setText(_title);
         }
     }

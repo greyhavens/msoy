@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.mail;
+package client.msgs;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.web.data.MemberName;
 
 import client.util.HeaderValueTable;
-import client.util.WebContext;
 
 /**
  * A mail composition popup.
@@ -27,7 +26,7 @@ public class MailComposition extends PopupPanel
     /**
      * Initializes a new composer when we already have the full name.
      */
-    public MailComposition (WebContext ctx, MemberName recipient, String subject,
+    public MailComposition (MsgsContext ctx, MemberName recipient, String subject,
                             MailPayloadComposer bodyObjectComposer, String bodyText)
     {
         super(false);
@@ -42,7 +41,7 @@ public class MailComposition extends PopupPanel
      * Initializes a new composer with a recipient id; we do a backend request to look
      * up the recipient's current name, and inject the name into the right UI element.
      */ 
-    public MailComposition (WebContext ctx, int recipientId, String subject,
+    public MailComposition (MsgsContext ctx, int recipientId, String subject,
                             MailPayloadComposer factory, String bodyText)
     {
         this(ctx, new MemberName("Member #" + recipientId, recipientId),
@@ -156,7 +155,7 @@ public class MailComposition extends PopupPanel
                                     null : _bodyObjectComposer.getComposedPayload(), callback);
     }
 
-    protected WebContext _ctx;
+    protected MsgsContext _ctx;
     protected int _senderId;
     protected MemberName _recipient;
     protected MailPayloadComposer _bodyObjectComposer;

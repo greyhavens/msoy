@@ -6,6 +6,8 @@ package client.util;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 
+import client.shell.ShellContext;
+
 /**
  * Contains useful user interface related methods.
  */
@@ -49,7 +51,7 @@ public class MsoyUI
 //      * Creates a pair of submit and cancel buttons in a horizontal row.
 //      */
 //     public static RowPanel createSubmitCancel (
-//         WebContext ctx, PopupPanel popup, ClickListener onSubmit)
+//         ShellContext ctx, PopupPanel popup, ClickListener onSubmit)
 //     {
 //         RowPanel buttons = new RowPanel();
 //         buttons.add(new Button(ctx.cmsgs.submit(), onSubmit));

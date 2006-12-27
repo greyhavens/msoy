@@ -34,53 +34,52 @@ public class GameEditor extends ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
         // configure the main uploader first
-        String title = "Main Game media";
-        tabs.add(createMainUploader(title, new MediaUpdater() {
+        tabs.add(createMainUploader(_ctx.imsgs.gameMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 // TODO: validate media type
                 _game.gameMedia = desc;
                 return null;
             }
-        }), "Game Media");
+        }), _ctx.imsgs.gameMainTab());
 
-        title = "Game Lobby Table background image";
-        tabs.add(_tableUploader = new MediaUploader(TABLE_ID, title, false, new MediaUpdater() {
+        String title = _ctx.imsgs.gameTableTitle();
+        tabs.add(_tableUploader = createUploader(TABLE_ID, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
-                    return "Table images must be an image type.";
+                    return _ctx.imsgs.errTableNotImage();
                 }
                 _game.tableMedia = desc;
                 return null;
             }
-        }), "Lobby Table");
+        }), _ctx.imsgs.gameTableTab());
 
         FlexTable bits = new FlexTable();
-        tabs.add(bits, "Configuration");
+        tabs.add(bits, _ctx.imsgs.gameConfigTab());
 
         // TODO: it'd be nice to force-format this text field for integers, or something.
         int row = 0;
-        bits.setText(row, 0, "Minimum players");
+        bits.setText(row, 0, _ctx.imsgs.gameMinPlayers());
         bits.setWidget(row++, 1, bind(_minPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.minPlayers = asShort(text);
             }
         }));
 
-        bits.setText(row, 0, "Maximum players");
+        bits.setText(row, 0, _ctx.imsgs.gameMaxPlayers());
         bits.setWidget(row++, 1, bind(_maxPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.maxPlayers = asShort(text);
             }
         }));
 
-        bits.setText(row, 0, "Desired players");
+        bits.setText(row, 0, _ctx.imsgs.gameDesiredPlayers());
         bits.setWidget(row++, 1, bind(_desiredPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.desiredPlayers = asShort(text);
             }
         }));
 
-        bits.setText(row++, 0, "Game Definition");
+        bits.setText(row++, 0, _ctx.imsgs.gameDefinition());
         bits.setWidget(row, 0, bind(_gamedef = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _game.config = text;

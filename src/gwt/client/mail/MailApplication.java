@@ -34,8 +34,10 @@ import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
 
+import client.msgs.MailComposition;
+import client.msgs.MailPayloadDisplay;
+import client.msgs.MailUpdateListener;
 import client.util.HeaderValueTable;
-import client.util.WebContext;
 
 /**
  * A mail reading application, with a sidebar listing available folders, the upper
@@ -51,7 +53,7 @@ public class MailApplication extends DockPanel
     /**
      * Initialize ths application and build the UI framework.
      */
-    public MailApplication (WebContext ctx)
+    public MailApplication (MailContext ctx)
     {
         super();
         _ctx = ctx;
@@ -566,7 +568,7 @@ public class MailApplication extends DockPanel
         _errorContainer.clear();
     }
 
-    protected WebContext _ctx;
+    protected MailContext _ctx;
 
     protected List _folders;
     protected List _headers;

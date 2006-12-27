@@ -1,12 +1,13 @@
 //
 // $Id$
 
-package client.util;
+package client.shell;
+
+import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.web.client.CatalogServiceAsync;
-import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.client.GroupServiceAsync;
 import com.threerings.msoy.web.client.ItemServiceAsync;
 import com.threerings.msoy.web.client.MailServiceAsync;
@@ -15,13 +16,14 @@ import com.threerings.msoy.web.client.PersonServiceAsync;
 import com.threerings.msoy.web.client.ProfileServiceAsync;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 
+import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
  * Contains a reference to the various bits that we're likely to need in the
  * web client interface.
  */
-public class WebContext
+public class ShellContext
 {
     /** Our credentials or null if we are not logged in. */
     public WebCreds creds;
@@ -50,14 +52,33 @@ public class WebContext
     /** Provides catalog-related services. */
     public CatalogServiceAsync catalogsvc;
 
-    /** Provides game-related services. */
-    public GameServiceAsync gamesvc;
-
     /** Messages shared by all client interfaces. */
-    public GlobalMessages gmsgs;
+    public ShellMessages cmsgs;
 
     /** Contains translations for server-supplied messages. */
     public ServerMessages smsgs;
+
+    /**
+     * Looks up the appropriate response message for the supplied server-generated error.
+     */
+    public String serverError (Throwable error)
+    {
+        if (error instanceof ServiceException) {
+            String msg = error.getMessage();
+            // ConstantsWithLookup can't handle things that don't look like method names, yay!
+            if (msg.startsWith("m.")) {
+                msg = msg.substring(2);
+            }
+            try {
+                return smsgs.getString(msg);
+            } catch (MissingResourceException e) {
+                // looking up a missing translation message throws an exception, yay!
+                return "[" + msg + "]";
+            }
+        } else {
+            return smsgs.getString("internal_error");
+        }
+    }
 
     /** Reports a log message to the console. */
     public static void log (String message)

@@ -11,15 +11,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.msoy.web.data.BlurbData;
 import com.threerings.msoy.web.data.PersonLayout;
 
-import client.util.WebContext;
-
 /**
  * Lays out a person page in one column.
  */
 public class OneColumnLayout extends VerticalPanel
 {
     public OneColumnLayout (
-        WebContext ctx, int memberId, PersonLayout layout, ArrayList blurbs)
+        ProfileContext ctx, int memberId, PersonLayout layout, ArrayList blurbs)
     {
         for (int ii = 0; ii < layout.blurbs.size(); ii++) {
             BlurbData bdata = (BlurbData)layout.blurbs.get(ii);

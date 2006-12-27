@@ -6,7 +6,6 @@ package client.inventory;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -19,8 +18,6 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.web.Item;
 
-import client.util.WebContext;
-
 /**
  * Displays all items of a particular type in a player's inventory.
  */
@@ -32,7 +29,7 @@ public class ItemPanel extends VerticalPanel
     /** The number of rows of items to display. */
     public static final int ROWS = 3;
 
-    public ItemPanel (WebContext ctx, byte type)
+    public ItemPanel (InventoryContext ctx, byte type)
     {
         _ctx = ctx;
         _type = type;
@@ -43,13 +40,13 @@ public class ItemPanel extends VerticalPanel
                 return new ItemContainer(ItemPanel.this, (Item)item);
             }
             protected String getEmptyMessage () {
-                return "You have no " + Item.getTypeName(_type) + " items.";
+                return _ctx.imsgs.panelNoItems(Item.getTypeName(_type));
             }
         });
         _contents.setStyleName("inventoryContents");
 
         // this will allow us to create new items
-        add(_create = new Button("Create new..."));
+        add(_create = new Button(_ctx.imsgs.panelCreateNew()));
         _create.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 createNewItem();
@@ -58,11 +55,9 @@ public class ItemPanel extends VerticalPanel
         add(_status = new Label(""));
     }
 
-    // TODO: each ItemPanel is currently loading everything up when
-    // the inventory panel loads.
-    // We should only load a category when it's made visible.
-    // (In addition to only loading inventory in chunks. We cannot show
-    // the user's whole inventory, even in one category.)
+    // TODO: each ItemPanel is currently loading everything up when the inventory panel loads.  We
+    // should only load a category when it's made visible. (In addition to only loading inventory
+    // in chunks. We cannot show the user's whole inventory, even in one category.)
     protected void onLoad ()
     {
         _ctx.itemsvc.loadInventory(_ctx.creds, _type, new AsyncCallback() {
@@ -70,9 +65,8 @@ public class ItemPanel extends VerticalPanel
                 _contents.setModel(new SimpleDataModel((List)result));
             }
             public void onFailure (Throwable caught) {
-                GWT.log("loadInventory failed", caught);
-                // TODO: if ServiceException, translate
-                add(new Label("Failed to load inventory: " + caught));
+                _ctx.log("loadInventory failed", caught);
+                add(new Label(_ctx.serverError(caught)));
             }
         });
     }
@@ -83,15 +77,14 @@ public class ItemPanel extends VerticalPanel
         if (editor != null) {
             _create.setEnabled(false);
             editor.setItem(editor.createBlankItem());
-            editor.setPopupPosition(
-                _create.getAbsoluteLeft()+20, _create.getAbsoluteTop()-200);
+            editor.setPopupPosition(_create.getAbsoluteLeft()+20, _create.getAbsoluteTop()-200);
             editor.show();
         }
     }
 
     /**
-     * Creates an item editor interface for items of the specified type.
-     * Returns null if the type is unknown.
+     * Creates an item editor interface for items of the specified type.  Returns null if the type
+     * is unknown.
      */
     protected ItemEditor createItemEditor (int type)
     {
@@ -118,19 +111,19 @@ public class ItemPanel extends VerticalPanel
     }
 
     /**
-     * Called by an active {@link ItemEditor} when it is ready to go away
-     * (either the editing is done or the user canceled).
+     * Called by an active {@link ItemEditor} when it is ready to go away (either the editing is
+     * done or the user canceled).
      *
-     * @param item if the editor was creating a new item, the new item should
-     * be passed to this method so that it can be added to the display.
+     * @param item if the editor was creating a new item, the new item should be passed to this
+     * method so that it can be added to the display.
      */
     protected void editComplete (Item item)
     {
         _create.setEnabled(true);
 
         if (item != null) {
-            // we really need to re-fetch the item from the database to get
-            // things like itemId set. just refresh the entire list for now.
+            // we really need to re-fetch the item from the database to get things like itemId
+            // set. just refresh the entire list for now.
             onLoad();
         }
     }
@@ -142,7 +135,7 @@ public class ItemPanel extends VerticalPanel
     protected void itemDeleted (Item item)
     {
         _contents.removeItem(item);
-        setStatus("Item deleted.");
+        setStatus(_ctx.imsgs.msgItemDeleted());
     }
 
     /**
@@ -153,7 +146,7 @@ public class ItemPanel extends VerticalPanel
         _status.setText(status);
     }
 
-    protected WebContext _ctx;
+    protected InventoryContext _ctx;
 
     protected PagedGrid _contents;
     protected Button _create, _next, _prev;

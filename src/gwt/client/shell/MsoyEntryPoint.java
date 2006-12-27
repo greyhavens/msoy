@@ -31,8 +31,6 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.util.WebContext;
-
 /**
  * Handles some standard services for a top-level MetaSOY web application
  * "entry point".
@@ -76,35 +74,17 @@ public abstract class MsoyEntryPoint
         // First, set up the callback that flash can call when it logs in
         configureLogonCallback(this);
 
-        // create our web context
-        _ctx = new WebContext();
+        // create our client context
+        _gctx = createContext();
 
-        String prefix = /* GWT.isScript() ? */ "/" /* : GWT.getModuleBaseURL() */;
-        _ctx.usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
-        ((ServiceDefTarget)_ctx.usersvc).setServiceEntryPoint(prefix + "usersvc");
-        _ctx.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
-        ((ServiceDefTarget)_ctx.itemsvc).setServiceEntryPoint(prefix + "itemsvc");
-        _ctx.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
-        ((ServiceDefTarget)_ctx.profilesvc).setServiceEntryPoint(prefix + "profilesvc");
-        _ctx.membersvc = (MemberServiceAsync)GWT.create(MemberService.class);
-        ((ServiceDefTarget)_ctx.membersvc).setServiceEntryPoint(prefix + "membersvc");
-        _ctx.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
-        ((ServiceDefTarget)_ctx.personsvc).setServiceEntryPoint(prefix + "personsvc");
-        _ctx.mailsvc = (MailServiceAsync)GWT.create(MailService.class);
-        ((ServiceDefTarget)_ctx.mailsvc).setServiceEntryPoint(prefix + "mailsvc");
-        _ctx.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);
-        ((ServiceDefTarget)_ctx.groupsvc).setServiceEntryPoint(prefix + "groupsvc");
-        _ctx.catalogsvc = (CatalogServiceAsync)GWT.create(CatalogService.class);
-        ((ServiceDefTarget)_ctx.catalogsvc).setServiceEntryPoint(prefix + "catalogsvc");
-        _ctx.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
-        ((ServiceDefTarget)_ctx.gamesvc).setServiceEntryPoint(prefix + "gamesvc");
+        initContext();
 
 
         // create our standard navigation panel
-        RootPanel.get("navigation").add(new NaviPanel(_ctx, getPageId()));
+        RootPanel.get("navigation").add(new NaviPanel(_gctx, getPageId()));
 
         // create our standard logon panel
-        RootPanel.get("logon").add(_logon = new LogonPanel(_ctx, this));
+        RootPanel.get("logon").add(_logon = new LogonPanel(_gctx, this));
 
         // initialize the logon panel
         _logon.init();
@@ -126,6 +106,43 @@ public abstract class MsoyEntryPoint
      * class's onModuleLoad will <em>not</em> have been called yet.
      */
     protected abstract void onPageLoad ();
+
+    /**
+     * Creates the web context to be used by this page. Must extend {@link ShellContext}.
+     */
+    protected ShellContext createContext ()
+    {
+        return new ShellContext();
+    }
+
+    /**
+     * Called after the context is created to initialize it. It is assumed that the derived class
+     * maintained a casted reference to its context from @{link #createContext}.
+     */
+    protected void initContext ()
+    {
+        // wire up our remote services
+        _gctx.usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
+        ((ServiceDefTarget)_gctx.usersvc).setServiceEntryPoint("/usersvc");
+        _gctx.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
+        ((ServiceDefTarget)_gctx.itemsvc).setServiceEntryPoint("/itemsvc");
+        _gctx.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
+        ((ServiceDefTarget)_gctx.profilesvc).setServiceEntryPoint("/profilesvc");
+        _gctx.membersvc = (MemberServiceAsync)GWT.create(MemberService.class);
+        ((ServiceDefTarget)_gctx.membersvc).setServiceEntryPoint("/membersvc");
+        _gctx.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
+        ((ServiceDefTarget)_gctx.personsvc).setServiceEntryPoint("/personsvc");
+        _gctx.mailsvc = (MailServiceAsync)GWT.create(MailService.class);
+        ((ServiceDefTarget)_gctx.mailsvc).setServiceEntryPoint("/mailsvc");
+        _gctx.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);
+        ((ServiceDefTarget)_gctx.groupsvc).setServiceEntryPoint("/groupsvc");
+        _gctx.catalogsvc = (CatalogServiceAsync)GWT.create(CatalogService.class);
+        ((ServiceDefTarget)_gctx.catalogsvc).setServiceEntryPoint("/catalogsvc");
+
+        // load up our translation dictionaries
+        _gctx.cmsgs = (ShellMessages)GWT.create(ShellMessages.class);
+        _gctx.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
+    }
 
     /**
      * Clears out any existing content and sets the specified widget as the
@@ -158,7 +175,7 @@ public abstract class MsoyEntryPoint
      */
     protected void didLogon (WebCreds creds, boolean notify)
     {
-        _ctx.creds = creds;
+        _gctx.creds = creds;
         if (notify) {
             didLogon(creds);
         }
@@ -181,7 +198,7 @@ public abstract class MsoyEntryPoint
      */
     protected void didLogoff ()
     {
-        _ctx.creds = null;
+        _gctx.creds = null;
     }
 
     /**
@@ -194,7 +211,7 @@ public abstract class MsoyEntryPoint
        };
     }-*/;
 
-    protected WebContext _ctx;
+    protected ShellContext _gctx;
     protected LogonPanel _logon;
 
     protected HTML _chat;

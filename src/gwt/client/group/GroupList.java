@@ -23,16 +23,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
-import com.threerings.msoy.web.data.Group;
-
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.Hyperlink;
 import com.threerings.gwt.ui.InlineLabel;
 
-import client.util.WebContext;
-import client.item.ItemUtil;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.web.data.Group;
+
+import client.util.MediaUtil;
 
 /**
  * Display the public groups in a sensical manner, including a sorted list of characters that
@@ -40,7 +39,7 @@ import com.threerings.msoy.item.web.MediaDesc;
  */
 public class GroupList extends VerticalPanel
 {
-    public GroupList(WebContext ctx)
+    public GroupList(GroupContext ctx)
     {
         super();
         setStyleName("groupList");
@@ -230,7 +229,7 @@ public class GroupList extends VerticalPanel
             super();
             setStyleName("GroupWidget");
 
-            Widget logo = ItemUtil.createMediaView(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE);
+            Widget logo = MediaUtil.createMediaView(group.logo, MediaDesc.HALF_THUMBNAIL_SIZE);
             setWidget(0, 0, logo);
             getFlexCellFormatter().setStyleName(0, 0, "Logo");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
@@ -255,7 +254,7 @@ public class GroupList extends VerticalPanel
         }
     }
 
-    protected WebContext _ctx;
+    protected GroupContext _ctx;
     protected VerticalPanel _errorContainer;
     protected FlowPanel _characterListContainer;
     protected FlowPanel _popularTagsContainer;

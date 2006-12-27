@@ -5,8 +5,6 @@ package client.profile;
 
 import java.util.ArrayList;
 
-import client.mail.MailComposition;
-
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -15,6 +13,9 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.FriendInfo;
+
+import client.msgs.MailComposition;
+import client.msgs.FriendInvite;
 
 /**
  * Displays a person's friends list.

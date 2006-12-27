@@ -3,6 +3,7 @@
 
 package client.inventory;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Label;
@@ -11,6 +12,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
+import client.shell.ShellContext;
 
 /**
  * Handles the MetaSOY inventory application.
@@ -45,6 +47,21 @@ public class index extends MsoyEntryPoint
     {
         History.addHistoryListener(this);
         updateInterface(History.getToken());
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected ShellContext createContext ()
+    {
+        return _ctx = new InventoryContext();
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void initContext ()
+    {
+        super.initContext();
+
+        // load up our translation dictionaries
+        _ctx.imsgs = (InventoryMessages)GWT.create(InventoryMessages.class);
     }
 
     // @Override from MsoyEntryPoint
@@ -84,5 +101,6 @@ public class index extends MsoyEntryPoint
         }
     }
 
+    protected InventoryContext _ctx;
     protected InventoryPanel _inventory;
 }

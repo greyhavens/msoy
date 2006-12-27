@@ -12,6 +12,7 @@ import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import client.item.ItemUtil;
+import client.util.MediaUtil;
 
 /**
  * Displays a catalog listing.
@@ -20,7 +21,7 @@ public class ItemContainer extends VerticalPanel
 {
     public ItemContainer (final CatalogListing listing, final ItemPanel panel)
     {
-        add(ItemUtil.createMediaView(listing.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE));
+        add(MediaUtil.createMediaView(listing.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE));
 
         Label descrip = new Label(ItemUtil.getName(panel._ctx, listing.item, true));
         descrip.setStyleName("itemDescrip");

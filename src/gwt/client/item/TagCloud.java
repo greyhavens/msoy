@@ -13,14 +13,12 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 
-import client.util.WebContext;
-
 /**
  * Fetches and displays the tag cloud for a given item type.
  */
 public class TagCloud extends FlowPanel
 {
-    public TagCloud (WebContext ctx, byte type)
+    public TagCloud (ItemContext ctx, byte type)
     {
         _ctx = ctx;
         _type = type;
@@ -75,6 +73,6 @@ public class TagCloud extends FlowPanel
         }
     }
 
-    protected WebContext _ctx;
+    protected ItemContext _ctx;
     protected byte _type;
 }

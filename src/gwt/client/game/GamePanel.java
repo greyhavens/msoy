@@ -12,14 +12,13 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.data.LaunchConfig;
 
 import client.util.FlashClients;
-import client.util.WebContext;
 
 /**
  * Displays the client interface for a particular game.
  */
 public class GamePanel extends VerticalPanel
 {
-    public GamePanel (WebContext ctx, LaunchConfig config)
+    public GamePanel (GameContext ctx, LaunchConfig config)
     {
         add(new Label(config.name));
 

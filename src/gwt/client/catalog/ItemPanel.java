@@ -15,8 +15,6 @@ import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 
-import client.util.WebContext;
-
 /**
  * Displays all items of a particular type in the catalog.
  */
@@ -28,7 +26,7 @@ public class ItemPanel extends DockPanel
     /** The number of rows of items to display. */
     public static final int ROWS = 3;
 
-    public ItemPanel (WebContext ctx, final byte type, final byte sortBy, final String search)
+    public ItemPanel (CatalogContext ctx, final byte type, final byte sortBy, final String search)
     {
         // setStyleName("inventory_item");
         _ctx = ctx;
@@ -82,7 +80,7 @@ public class ItemPanel extends DockPanel
         _status.setText(status);
     }
 
-    protected WebContext _ctx;
+    protected CatalogContext _ctx;
     protected byte _type;
 
     protected PagedGrid _items;
