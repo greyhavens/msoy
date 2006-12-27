@@ -69,7 +69,7 @@ public class GroupServlet extends RemoteServiceServlet
             return MsoyServer.groupRepo.getCharacters();
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to fetch the list of group name prefixes.", pe);
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }
 
@@ -123,7 +123,7 @@ public class GroupServlet extends RemoteServiceServlet
         // TODO: validate creds
 
         if(!isValidName(group.name)) {
-            throw new ServiceException("group", "m.invalid_group_name");
+            throw new ServiceException("m.invalid_group_name");
         }
 
         final ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
@@ -144,7 +144,7 @@ public class GroupServlet extends RemoteServiceServlet
         // TODO: validate creds
         
         if(!isValidName(group.name)) {
-            throw new ServiceException("group", "m.invalid_group_name");
+            throw new ServiceException("m.invalid_group_name");
         }
 
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>("updateGroup[" + group + "]");

@@ -36,7 +36,7 @@ public class CatalogServlet extends RemoteServiceServlet
         if (Item.getClassForType(type) == null) {
             log.warning("Requested to load catalog for invalid item type " +
                         "[who=" + creds + ", type=" + type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         // load their catalog via the catalog manager

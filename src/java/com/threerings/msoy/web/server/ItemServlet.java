@@ -34,7 +34,7 @@ public class ItemServlet extends RemoteServiceServlet
         // validate the item
         if (!item.isConsistent()) {
             // TODO?
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         // TODO: validate anything else?
@@ -63,7 +63,7 @@ public class ItemServlet extends RemoteServiceServlet
         // validate the item
         if (!item.isConsistent()) {
             // TODO?
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         // TODO: validate anything else?
@@ -89,7 +89,7 @@ public class ItemServlet extends RemoteServiceServlet
         if (Item.getClassForType(type) == null) {
             log.warning("Requested to load inventory for invalid item type " +
                         "[who=" + creds + ", type=" + type + "].");
-            throw new ServiceException("", ServiceException.INTERNAL_ERROR);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
         // load their inventory via the item manager
