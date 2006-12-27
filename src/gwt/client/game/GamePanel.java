@@ -54,7 +54,7 @@ public class GamePanel extends VerticalPanel
         }
 
         default:
-            add(new Label("Zoiks! Uknown game type " + config.type + "."));
+            add(new Label(ctx.msgs.errUnknownGameType("" + config.type)));
             break;
         }
 

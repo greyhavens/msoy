@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.client;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.MemberName;
@@ -19,13 +21,13 @@ public interface MemberService extends RemoteService
      */
     public MemberName getName (int memberId)
         throws ServiceException;
-    
+
     /**
      * Figure out whether or not a given member is online.
      */
     public boolean isOnline (int memberId)
         throws ServiceException;
-    
+
     /**
      * Look up a member by id and return the id of their home scene.
      */
@@ -49,7 +51,13 @@ public interface MemberService extends RemoteService
      */
     public void declineFriend (WebCreds creds, int friendId)
         throws ServiceException;
-    
+
+    /**
+     * Loads all items in a player's inventory of the specified type.
+     */
+    public ArrayList loadInventory (WebCreds creds, byte type)
+        throws ServiceException;
+
     /**
      * Fetch neighborhood data for a given member in JSON-serialized form.
      */

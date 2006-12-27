@@ -25,9 +25,9 @@ public class ItemUtil
      */
     public static String getName (ItemContext ctx, Item item, boolean truncate)
     {
-        String name = (item.name.trim().length() == 0) ? "<no name>" : item.name;
+        String name = (item.name.trim().length() == 0) ? ctx.imsgs.noName() : item.name;
         if (name.length() > 32 && truncate) {
-            name = name.substring(0, 29) + "...";
+            name = ctx.imsgs.truncName(name.substring(0, 29));
         }
         return name;
     }
@@ -38,7 +38,6 @@ public class ItemUtil
      */
     public static String getDescription (ItemContext ctx, Item item)
     {
-        return (item.description.trim().length() == 0) ?
-            "No description provided for this item." : item.description;
+        return (item.description.trim().length() == 0) ? ctx.imsgs.noDescrip() : item.description;
     }
 }

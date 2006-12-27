@@ -10,10 +10,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
 import client.shell.ShellContext;
 
-public class index extends MsoyEntryPoint
+public class index extends MsgsEntryPoint
     implements HistoryListener
 {
     /** Required to map this entry point to a page. */

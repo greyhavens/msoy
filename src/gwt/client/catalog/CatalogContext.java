@@ -10,4 +10,6 @@ import client.item.ItemContext;
  */
 public class CatalogContext extends ItemContext
 {
+    /** Messages used by the catalog interfaces. */
+    public CatalogMessages msgs;
 }

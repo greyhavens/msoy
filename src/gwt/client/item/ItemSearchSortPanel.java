@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package client.item;
 
@@ -11,36 +11,34 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.EnterClickAdapter;
 
 public class ItemSearchSortPanel extends HorizontalPanel
 {
     /** An interface to use for instantiating an ItemSearchSortPanel. */
-    public static interface Listener {
-        /**
-         * This method is called when the user hits enters while on the search
-         * field, or clicks the search button.
-         */
+    public static interface Listener
+    {
+        /** This method is called when the user hits enters while on the search field, or clicks
+         * the search button. */
         public void search (ItemSearchSortPanel panel);
-        /**
-         * This method is called when the user selects a sort criterium.
-         */
+
+        /** This method is called when the user selects a sort criterium. */
         public void sort (ItemSearchSortPanel panel);
     }
-    
+
     /** The text in the search field. */
     public String search;
+
     /** The current sort order. */
     public byte sortBy;
 
-
-    public ItemSearchSortPanel (Listener listener, String[] sortNames, byte[] sortValues,
-                                int selectedSortIndex)
+    public ItemSearchSortPanel (ItemContext ctx, Listener listener, String[] sortNames,
+                                byte[] sortValues, int selectedSortIndex)
     {
-        _listener = listener;
-        
         setStyleName("itemSearchPanel");
-        
+        _listener = listener;
+
         TextBox searchBox = new TextBox();
         searchBox.setStyleName("itemSearchBox");
         searchBox.addChangeListener(new ChangeListener() {
@@ -57,14 +55,13 @@ public class ItemSearchSortPanel extends HorizontalPanel
         searchBox.addKeyboardListener(new EnterClickAdapter(clickListener));
         add(searchBox);
 
-        Button searchButton = new Button("search");
+        Button searchButton = new Button(ctx.imsgs.searchSearch());
         searchButton.addClickListener(clickListener);
         add(searchButton);
-
-        Label sortLabel = new Label("Sort by:");
+        Label sortLabel = new Label(ctx.imsgs.searchSortBy());
         sortLabel.setStyleName("itemSortLabel");
         add(sortLabel);
-        
+
         ListBox sortBox = new ListBox();
         sortBox.setStyleName("itemSortBox");
         for (int ii = 0; ii < sortNames.length; ii ++) {
@@ -80,7 +77,7 @@ public class ItemSearchSortPanel extends HorizontalPanel
         });
         add(sortBox);
     }
-    
+
     protected Listener _listener;
 
 }

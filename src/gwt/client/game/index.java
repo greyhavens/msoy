@@ -60,8 +60,13 @@ public class index extends MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
+
+        // wire up our remote services
         _ctx.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
         ((ServiceDefTarget)_ctx.gamesvc).setServiceEntryPoint("/gamesvc");
+
+        // load up our translation dictionaries
+        _ctx.msgs = (GameMessages)GWT.create(GameMessages.class);
     }
 
     // @Override // from MsoyEntryPoint
@@ -85,10 +90,8 @@ public class index extends MsoyEntryPoint
             public void onSuccess (Object result) {
                 setContent(new GamePanel(_ctx, (LaunchConfig)result));
             }
-
             public void onFailure (Throwable cause) {
-                // TODO: display friendly error
-                GWT.log("Failed to load game", cause);
+                _ctx.serverError(cause);
             }
         });
     }

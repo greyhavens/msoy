@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Collections;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -80,8 +79,8 @@ public class GroupList extends VerticalPanel
         };
         searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
         search.setWidget(0, 0, searchInput);
-        search.setWidget(0, 1, new Button("Search", doSearch));
-        search.setWidget(0, 3, new Button("Form New Group", new ClickListener() {
+        search.setWidget(0, 1, new Button(_ctx.msgs.listSearch(), doSearch));
+        search.setWidget(0, 3, new Button(_ctx.msgs.listNewGroup(), new ClickListener() {
             public void onClick (Widget sender) {
                 new GroupEdit(_ctx).show();
             }
@@ -100,8 +99,7 @@ public class GroupList extends VerticalPanel
 
         _groupListContainer = new VerticalPanel();
         _groupListContainer.setStyleName("Groups");
-        _groupListContainer.add(new HTML("Click a letter above to browse groups that start " +
-            "with that character, or complete a search above."));
+        _groupListContainer.add(new HTML(_ctx.msgs.listBrowseTip()));
         table.setWidget(2, 0, _groupListContainer);
 
         loadPopularTags();
@@ -136,8 +134,8 @@ public class GroupList extends VerticalPanel
                 }
             }
             public void onFailure (Throwable caught) {
-                GWT.log("getCharacters failed", caught);
-                addError("Failed to get group prefix characters.");
+                _ctx.log("getCharacters failed", caught);
+                addError(_ctx.serverError(caught));
             }
         });
     }
@@ -145,7 +143,7 @@ public class GroupList extends VerticalPanel
     protected void loadPopularTags ()
     {
         _popularTagsContainer.clear();
-        InlineLabel popularTagsLabel = new InlineLabel("Popular Tags: ");;
+        InlineLabel popularTagsLabel = new InlineLabel(_ctx.msgs.listPopularTags() + " ");
         popularTagsLabel.addStyleName("PopularTagsLabel");
         _popularTagsContainer.add(popularTagsLabel);
         // TODO: this is dummy data until tags get figured out
@@ -155,7 +153,7 @@ public class GroupList extends VerticalPanel
             _popularTagsContainer.add(new Anchor("", dummytags[i]));
             _popularTagsContainer.add(new InlineLabel(", "));
         }
-        Anchor moreLink = new Anchor("", "more...");
+        Anchor moreLink = new Anchor("", _ctx.msgs.listMore());
         DOM.setAttribute(moreLink.getElement(), "id", "moreLink");
         _popularTagsContainer.add(moreLink);
     }
@@ -163,7 +161,7 @@ public class GroupList extends VerticalPanel
     protected void loadFeaturedGroups ()
     {
         _featuredGroupsContainer.clear();
-        Label featuredGroupsLabel = new Label("Featured Groups:");
+        Label featuredGroupsLabel = new Label(_ctx.msgs.listFeatured());
         featuredGroupsLabel.setStyleName("FeaturedGroupsTitle");
         _featuredGroupsContainer.add(featuredGroupsLabel);
         _featuredGroupsContainer.add(new HTML("<h1>TODO</h1>"));
@@ -181,8 +179,8 @@ public class GroupList extends VerticalPanel
                     displayGroups(groups);
                 }
                 public void onFailure (Throwable caught) {
-                    GWT.log("loadGroups failed", caught);
-                    addError("Failed to get groups starting with " + startingCharacter);
+                    _ctx.log("loadGroups(" + startingCharacter + ") failed", caught);
+                    addError(_ctx.serverError(caught));
                 }
             });
         } else {
@@ -206,8 +204,8 @@ public class GroupList extends VerticalPanel
                 displayGroups((List)result);
             }
             public void onFailure (Throwable caught) {
-                GWT.log("searchGroups failed", caught);
-                addError("Failed performing search with search string: " + searchString);
+                _ctx.log("searchGroups(" + searchString + ") failed", caught);
+                addError(_ctx.serverError(caught));
             }
         });
     }
@@ -243,7 +241,8 @@ public class GroupList extends VerticalPanel
                 dateFormat.format(group.creationDate) + ",");
             establishedDate.addStyleName("EstablishedDate");
             titleLine.add(establishedDate);
-            InlineLabel memberCount = new InlineLabel("" + group.memberCount + " members");
+            InlineLabel memberCount = new InlineLabel(
+                _ctx.msgs.listMemberCount("" + group.memberCount));
             memberCount.addStyleName("MemberCount");
             titleLine.add(memberCount);
             setWidget(0, 1, titleLine);

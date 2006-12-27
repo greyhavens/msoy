@@ -34,7 +34,7 @@ public class ItemPanel extends DockPanel
 
         _items = new PagedGrid(ROWS, COLUMNS) {
             protected Widget createWidget (Object item) {
-                return new ItemContainer((CatalogListing)item, ItemPanel.this);
+                return new ItemContainer(_ctx, (CatalogListing)item, ItemPanel.this);
             }
             protected String getEmptyMessage () {
                 return "There are no " + Item.getTypeName(_type) + " items listed.";

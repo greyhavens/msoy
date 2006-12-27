@@ -3,17 +3,19 @@
 
 package client.catalog;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.threerings.msoy.item.web.Item;
 
+import client.item.ItemEntryPoint;
 import client.shell.MsoyEntryPoint;
 import client.shell.ShellContext;
 
 /**
  * Handles the MetaSOY inventory application.
  */
-public class index extends MsoyEntryPoint
+public class index extends ItemEntryPoint
     implements HistoryListener
 {
     /** Required to map this entry point to a page. */
@@ -50,6 +52,15 @@ public class index extends MsoyEntryPoint
     protected ShellContext createContext ()
     {
         return _ctx = new CatalogContext();
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void initContext ()
+    {
+        super.initContext();
+
+        // load up our translation dictionaries
+        _ctx.msgs = (CatalogMessages)GWT.create(CatalogMessages.class);
     }
 
     // @Override from MsoyEntryPoint

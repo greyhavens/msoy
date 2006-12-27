@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.server.MsoyServer;
@@ -11,7 +13,11 @@ import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.world.data.MsoySceneModel;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link MemberService}.
@@ -90,6 +96,30 @@ public class MemberServlet extends RemoteServiceServlet
             }
         });
         waiter.waitForResult();
+    }
+
+    // from interface MemberService
+    public ArrayList loadInventory (final WebCreds creds, final byte type)
+        throws ServiceException
+    {
+        // TODO: validate this user's creds
+
+        // convert the string they supplied to an item enumeration
+        if (Item.getClassForType(type) == null) {
+            log.warning("Requested to load inventory for invalid item type " +
+                        "[who=" + creds + ", type=" + type + "].");
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        // load their inventory via the item manager
+        final ServletWaiter<ArrayList<Item>> waiter = new ServletWaiter<ArrayList<Item>>(
+            "loadInventory[" + creds.memberId + ", " + type + "]");
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.itemMan.loadInventory(creds.memberId, type, waiter);
+            }
+        });
+        return waiter.waitForResult();
     }
     
     // from MemberService

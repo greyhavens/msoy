@@ -20,6 +20,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
     public ListingDetailPopup (CatalogContext ctx, CatalogListing listing, ItemPanel panel)
     {
         super(ctx, listing.item);
+        _ctx = ctx;
         _listing = listing;
         _panel = panel;
     }
@@ -34,14 +35,14 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
         // TODO: add cost
 
-        controls.add(_purchase = new Button("Buy!"));
+        controls.add(_purchase = new Button(_ctx.msgs.listingBuy()));
         new ClickCallback(_ctx, _purchase, _status) {
             public boolean callService () {
                 _ctx.catalogsvc.purchaseItem(_ctx.creds, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Object result) {
-                _status.setText("Item purchased.");
+                _status.setText(_ctx.msgs.msgListingBought());
                 return false; // don't reenable purchase
             }
         };
@@ -56,7 +57,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_ctx.creds != null && _listing.creator.getMemberId() == _ctx.creds.memberId) {
-            Button delist = new Button("Delist Item");
+            Button delist = new Button(_ctx.msgs.listingDelist());
             new ClickCallback(_ctx, delist, _status) {
                 public boolean callService () {
                     _ctx.catalogsvc.listItem(_ctx.creds, _item.getIdent(), false, this);
@@ -64,11 +65,11 @@ public class ListingDetailPopup extends BaseItemDetailPopup
                 }
                 public boolean gotResult (Object result) {
                     if (result != null) {
-                        _status.setText("Item delisted.");
+                        _status.setText(_ctx.msgs.msgListingDelisted());
                         _panel.itemDelisted(_listing);
                         return false; // don't reenable delist
                     } else {
-                        _status.setText("Unable to find catalog listing to delist.");
+                        _status.setText(_ctx.msgs.errListingNotFound());
                         return true;
                     }
                 }
@@ -77,6 +78,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         }
     }
 
+    protected CatalogContext _ctx;
     protected CatalogListing _listing;
     protected ItemPanel _panel;
 

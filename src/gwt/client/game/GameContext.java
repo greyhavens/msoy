@@ -14,4 +14,7 @@ public class GameContext extends ShellContext
 {
     /** Provides game-related services. */
     public GameServiceAsync gamesvc;
+
+    /** Messages used by the game interfaces. */
+    public GameMessages msgs;
 }

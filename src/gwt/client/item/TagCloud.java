@@ -25,13 +25,13 @@ public class TagCloud extends FlowPanel
         setStyleName("tagContents");
         _ctx.catalogsvc.getPopularTags(_ctx.creds, _type, 20, new TagCallback());
     }
-    
+
     protected class TagCallback implements AsyncCallback
     {
         public void onSuccess (Object result) {
             HashMap _tagMap = (HashMap) result;
             if (_tagMap.size() == 0) {
-                add(new Label("No tags in use."));
+                add(new Label(_ctx.imsgs.msgNoTags()));
                 return;
             }
 
@@ -62,14 +62,13 @@ public class TagCloud extends FlowPanel
                 buf.append(tag);
                 buf.append("</span>");
             }
-            add(new HTML("Common tags: " + buf.toString()));
+            add(new HTML(_ctx.imsgs.cloudCommonTags(buf.toString())));
         }
 
         public void onFailure (Throwable caught) {
-            GWT.log("getPopularTags failed", caught);
-            // TODO: if ServiceException, translate
+            _ctx.log("getPopularTags failed", caught);
             clear();
-            add(new Label("Failed to get popular tags."));
+            add(new Label(_ctx.serverError(caught)));
         }
     }
 

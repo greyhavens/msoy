@@ -42,6 +42,11 @@ public interface MemberServiceAsync
     public void declineFriend (WebCreds creds, int friendId, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link MemberService#loadInventory}.
+     */
+    public void loadInventory (WebCreds creds, byte type, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link MemberService#serializeNeighborhood}.
      */
     public void serializeNeighborhood (WebCreds creds, int memberId, boolean forGroup,

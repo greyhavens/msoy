@@ -43,12 +43,6 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads all items in a player's inventory of the specified type.
-     */
-    public ArrayList loadInventory (WebCreds creds, byte type)
-        throws ServiceException;
-
-    /**
      * Loads the details of a particular item.
      */
     public Item loadItem (WebCreds creds, ItemIdent item)

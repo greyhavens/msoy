@@ -11,22 +11,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.client.CatalogService;
-import com.threerings.msoy.web.client.CatalogServiceAsync;
-import com.threerings.msoy.web.client.GameService;
-import com.threerings.msoy.web.client.GameServiceAsync;
-import com.threerings.msoy.web.client.GroupService;
-import com.threerings.msoy.web.client.GroupServiceAsync;
-import com.threerings.msoy.web.client.ItemService;
-import com.threerings.msoy.web.client.ItemServiceAsync;
-import com.threerings.msoy.web.client.MailService;
-import com.threerings.msoy.web.client.MailServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
-import com.threerings.msoy.web.client.PersonService;
-import com.threerings.msoy.web.client.PersonServiceAsync;
-import com.threerings.msoy.web.client.ProfileService;
-import com.threerings.msoy.web.client.ProfileServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.WebCreds;
@@ -77,8 +63,8 @@ public abstract class MsoyEntryPoint
         // create our client context
         _gctx = createContext();
 
+        // initialize our services and translations
         initContext();
-
 
         // create our standard navigation panel
         RootPanel.get("navigation").add(new NaviPanel(_gctx, getPageId()));
@@ -124,20 +110,8 @@ public abstract class MsoyEntryPoint
         // wire up our remote services
         _gctx.usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
         ((ServiceDefTarget)_gctx.usersvc).setServiceEntryPoint("/usersvc");
-        _gctx.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
-        ((ServiceDefTarget)_gctx.itemsvc).setServiceEntryPoint("/itemsvc");
-        _gctx.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
-        ((ServiceDefTarget)_gctx.profilesvc).setServiceEntryPoint("/profilesvc");
         _gctx.membersvc = (MemberServiceAsync)GWT.create(MemberService.class);
         ((ServiceDefTarget)_gctx.membersvc).setServiceEntryPoint("/membersvc");
-        _gctx.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
-        ((ServiceDefTarget)_gctx.personsvc).setServiceEntryPoint("/personsvc");
-        _gctx.mailsvc = (MailServiceAsync)GWT.create(MailService.class);
-        ((ServiceDefTarget)_gctx.mailsvc).setServiceEntryPoint("/mailsvc");
-        _gctx.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);
-        ((ServiceDefTarget)_gctx.groupsvc).setServiceEntryPoint("/groupsvc");
-        _gctx.catalogsvc = (CatalogServiceAsync)GWT.create(CatalogService.class);
-        ((ServiceDefTarget)_gctx.catalogsvc).setServiceEntryPoint("/catalogsvc");
 
         // load up our translation dictionaries
         _gctx.cmsgs = (ShellMessages)GWT.create(ShellMessages.class);

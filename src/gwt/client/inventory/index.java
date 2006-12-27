@@ -11,13 +11,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.item.ItemEntryPoint;
 import client.shell.MsoyEntryPoint;
 import client.shell.ShellContext;
 
 /**
  * Handles the MetaSOY inventory application.
  */
-public class index extends MsoyEntryPoint
+public class index extends ItemEntryPoint
     implements HistoryListener
 {
     /** Required to map this entry point to a page. */

@@ -35,8 +35,8 @@ public class CatalogPanel extends VerticalPanel
         VerticalPanel uiBits = new VerticalPanel();
         _typeTabs = new ItemTypePanel(this);
         uiBits.add(_typeTabs);
-        uiBits.add(new ItemSearchSortPanel( this,
-            new String[] { "Rating", "List Date" },
+        uiBits.add(new ItemSearchSortPanel(ctx, this,
+            new String[] { _ctx.msgs.sortByRating(), _ctx.msgs.sortByListDate() },
             new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE },
             0));
         _sortBy = CatalogListing.SORT_BY_RATING;

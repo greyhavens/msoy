@@ -7,13 +7,7 @@ import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.web.client.CatalogServiceAsync;
-import com.threerings.msoy.web.client.GroupServiceAsync;
-import com.threerings.msoy.web.client.ItemServiceAsync;
-import com.threerings.msoy.web.client.MailServiceAsync;
 import com.threerings.msoy.web.client.MemberServiceAsync;
-import com.threerings.msoy.web.client.PersonServiceAsync;
-import com.threerings.msoy.web.client.ProfileServiceAsync;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 
 import com.threerings.msoy.web.data.ServiceException;
@@ -31,26 +25,8 @@ public class ShellContext
     /** Provides user-related services. */
     public WebUserServiceAsync usersvc;
 
-    /** Provides item-related services. */
-    public ItemServiceAsync itemsvc;
-
-    /** Provides profile-related services. */
-    public ProfileServiceAsync profilesvc;
-
-    /** Provides person-related services. */
-    public PersonServiceAsync personsvc;
-
     /** Provides member-related service. */
     public MemberServiceAsync membersvc;
-
-    /** Provides group-related services. */
-    public GroupServiceAsync groupsvc;
-
-    /** Provides mail-related services. */
-    public MailServiceAsync mailsvc;
-
-    /** Provides catalog-related services. */
-    public CatalogServiceAsync catalogsvc;
 
     /** Messages shared by all client interfaces. */
     public ShellMessages cmsgs;

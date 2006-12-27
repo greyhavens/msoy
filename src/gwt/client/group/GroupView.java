@@ -5,7 +5,7 @@ package client.group;
 
 import java.util.Iterator;
 import java.util.List;
-import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
@@ -92,9 +92,8 @@ public class GroupView extends VerticalPanel
                 buildUI();
             }
             public void onFailure (Throwable caught) {
-                GWT.log("loadGroup failed", caught);
-                // TODO: if ServiceException, translate
-                addError("Failed to load group.");
+                _ctx.log("loadGroup failed", caught);
+                addError(_ctx.serverError(caught));
             }
         });
     }
@@ -380,9 +379,9 @@ public class GroupView extends VerticalPanel
                 loadGroup(_group.groupId);
             }
             public void onFailure (Throwable caught) {
-                GWT.log("Failed to update member rank [groupId=" + _group.groupId +
-                    ", memberId=" + memberId + ", newRank=" + rank + "]", caught);
-                addError("Failed to update member rank: " + caught.getMessage());
+                _ctx.log("Failed to update member rank [groupId=" + _group.groupId +
+                         ", memberId=" + memberId + ", newRank=" + rank + "]", caught);
+                addError(_ctx.serverError(caught));
             }
         });
     }
@@ -406,9 +405,9 @@ public class GroupView extends VerticalPanel
                 }
             }
             public void onFailure (Throwable caught) {
-                GWT.log("Failed to remove member [groupId=" + _group.groupId +
-                        ", memberId=" + memberId + "]", caught);
-                addError("Failed to remove member: " + caught.getMessage());
+                _ctx.log("Failed to remove member [groupId=" + _group.groupId +
+                         ", memberId=" + memberId + "]", caught);
+                addError(_ctx.serverError(caught));
             }
         });
     }
@@ -421,9 +420,9 @@ public class GroupView extends VerticalPanel
                     loadGroup(_group.groupId);
                 }
                 public void onFailure (Throwable caught) {
-                    GWT.log("Failed to join group [groupId=" + _group.groupId +
-                        ", memberId=" + _ctx.creds.memberId + "]", caught);
-                    addError("Failed to join group: " + caught.getMessage());
+                    _ctx.log("Failed to join group [groupId=" + _group.groupId +
+                             ", memberId=" + _ctx.creds.memberId + "]", caught);
+                    addError(_ctx.serverError(caught));
                 }
         });
     }

@@ -3,13 +3,15 @@
 
 package client.group;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 
+import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
 import client.shell.ShellContext;
 
-public class index extends MsoyEntryPoint
+public class index extends MsgsEntryPoint
     implements HistoryListener
 {
     /** Required to map this entry point to a page. */
@@ -48,6 +50,15 @@ public class index extends MsoyEntryPoint
     protected ShellContext createContext ()
     {
         return _ctx = new GroupContext();
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void initContext ()
+    {
+        super.initContext();
+
+        // load up our translation dictionaries
+        _ctx.msgs = (GroupMessages)GWT.create(GroupMessages.class);
     }
 
     // @Override // from MsoyEntryPoint

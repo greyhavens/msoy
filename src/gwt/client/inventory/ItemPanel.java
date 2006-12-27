@@ -60,7 +60,7 @@ public class ItemPanel extends VerticalPanel
     // in chunks. We cannot show the user's whole inventory, even in one category.)
     protected void onLoad ()
     {
-        _ctx.itemsvc.loadInventory(_ctx.creds, _type, new AsyncCallback() {
+        _ctx.membersvc.loadInventory(_ctx.creds, _type, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _contents.setModel(new SimpleDataModel((List)result));
             }

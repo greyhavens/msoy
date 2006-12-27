@@ -138,7 +138,15 @@
   <!-- regenerates our i18n messages classes -->
   <target name="gmsgs">
     <antcall target="gmsg"><param name="which" value="shell.Shell"/></antcall>
+    <antcall target="gmsg"><param name="which" value="catalog.Catalog"/></antcall>
+    <antcall target="gmsg"><param name="which" value="game.Game"/></antcall>
+    <antcall target="gmsg"><param name="which" value="group.Group"/></antcall>
     <antcall target="gmsg"><param name="which" value="inventory.Inventory"/></antcall>
+    <antcall target="gmsg"><param name="which" value="item.Item"/></antcall>
+    <antcall target="gmsg"><param name="which" value="mail.Mail"/></antcall>
+    <antcall target="gmsg"><param name="which" value="msgs.Msgs"/></antcall>
+    <antcall target="gmsg"><param name="which" value="profile.Profile"/></antcall>
+    <antcall target="gmsg"><param name="which" value="world.World"/></antcall>
   </target>
 
   <property name="gclient.buildstamp" value="${deploy.dir}/tmp/gclient.buildstamp"/>

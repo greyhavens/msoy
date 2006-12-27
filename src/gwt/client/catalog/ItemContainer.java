@@ -19,7 +19,8 @@ import client.util.MediaUtil;
  */
 public class ItemContainer extends VerticalPanel
 {
-    public ItemContainer (final CatalogListing listing, final ItemPanel panel)
+    public ItemContainer (final CatalogContext ctx, final CatalogListing listing,
+                          final ItemPanel panel)
     {
         add(MediaUtil.createMediaView(listing.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE));
 
@@ -27,12 +28,12 @@ public class ItemContainer extends VerticalPanel
         descrip.setStyleName("itemDescrip");
         descrip.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                new ListingDetailPopup(panel._ctx, listing, panel).show();
+                new ListingDetailPopup(ctx, listing, panel).show();
             }
         });
         add(descrip);
 
-        Label creator = new Label("by " + listing.creator);
+        Label creator = new Label(ctx.msgs.itemBy(listing.creator.toString()));
         creator.setStyleName("itemCreator");
         add(creator);
     }

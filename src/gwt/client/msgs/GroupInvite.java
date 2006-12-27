@@ -61,11 +61,11 @@ public abstract class GroupInvite
                 super();
                 _ctx = ctx;
                 setWidth("100%");
-                add(new InlineLabel("Click to "));
-                Button joinButton = new Button("join");
+                add(new InlineLabel(ctx.mmsgs.groupClick()));
+                Button joinButton = new Button(ctx.mmsgs.groupJoin());
                 joinButton.setEnabled(false);
                 add(joinButton);
-                add(new InlineLabel(" the group "));
+                add(new InlineLabel(ctx.mmsgs.groupThe()));
                 _groupBox = new ListBox();
                 for (int ii = 0; ii < _groups.size(); ii ++) {
                     _groupBox.addItem(((GroupMembership) _groups.get(ii)).group.groupName);

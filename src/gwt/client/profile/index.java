@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.msoy.web.data.PersonLayout;
 
+import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
 import client.shell.ShellContext;
 
@@ -19,7 +20,7 @@ import client.shell.ShellContext;
  * Displays a person's "portal" page with their profile information, friends,
  * and whatever else they want showing on their page.
  */
-public class index extends MsoyEntryPoint
+public class index extends MsgsEntryPoint
     implements HistoryListener
 {
     /** Required to map this entry point to a page. */

@@ -3,7 +3,6 @@
 
 package client.item;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
@@ -159,7 +158,7 @@ public class ItemRating extends FlexTable
                 update();
             }
             public void onFailure (Throwable caught) {
-                GWT.log("rateItem failed", caught);
+                _ctx.log("rateItem failed", caught);
                 // TODO: Error image?
             }
         });

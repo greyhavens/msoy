@@ -25,11 +25,6 @@ public interface ItemServiceAsync
     public void updateItem (WebCreds creds, Item item, AsyncCallback callback);
 
     /**
-     * The asynchronous version of {@link ItemService#loadInventory}.
-     */
-    public void loadInventory (WebCreds creds, byte type, AsyncCallback callback);
-
-    /**
      * Loads the details of a particular item.
      */
     public void loadItem (WebCreds creds, ItemIdent item, AsyncCallback callback);

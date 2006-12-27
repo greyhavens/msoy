@@ -53,8 +53,7 @@ public class BaseItemDetailPopup extends BorderedDialog
                 recenter();
             }
             public void onFailure (Throwable caught) {
-                // TODO: translate, unhack
-                _description.setText("Failed to load item details: " + caught);
+                _description.setText(_ctx.serverError(caught));
             }
         });
     }
@@ -92,7 +91,7 @@ public class BaseItemDetailPopup extends BorderedDialog
 
     protected void gotDetail (ItemDetail detail)
     {
-        _creator.setText("by " + detail.creator.toString());
+        _creator.setText(_ctx.imsgs.detailBy(detail.creator.toString()));
         if (_item.isRatable()) {
             _details.add(new ItemRating(_ctx, detail.item, detail.memberRating));
         }
