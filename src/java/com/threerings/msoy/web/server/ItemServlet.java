@@ -5,7 +5,6 @@ package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
@@ -22,7 +21,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Provides the server implementation of {@link ItemService}.
  */
-public class ItemServlet extends RemoteServiceServlet
+public class ItemServlet extends MsoyServiceServlet
     implements ItemService
 {
     // from interface ItemService

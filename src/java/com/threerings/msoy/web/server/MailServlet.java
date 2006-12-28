@@ -4,7 +4,6 @@
 package com.threerings.msoy.web.server;
 
 import java.util.List;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import com.threerings.msoy.server.MsoyServer;
 
@@ -19,7 +18,7 @@ import com.threerings.msoy.web.data.WebCreds;
 /**
  * Provides the server implementation of {@link ItemService}.
  */
-public class MailServlet extends RemoteServiceServlet
+public class MailServlet extends MsoyServiceServlet
     implements MailService
 {
     // from MailService

@@ -177,7 +177,7 @@ public class LogonPanel extends FlexTable
             String password = _password.getText();
             if (_who.length() > 0 && password.length() > 0) {
                 _status.setText("Logging in...");
-                _ctx.usersvc.login(_who, md5hex(password), false, this);
+                _ctx.usersvc.login(_who, md5hex(password), 1, this);
             }
         }
 

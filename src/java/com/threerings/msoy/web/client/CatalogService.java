@@ -22,8 +22,7 @@ public interface CatalogService extends RemoteService
     /**
      * Loads all catalogue items of the specified type.
      */
-    public List loadCatalog (WebCreds creds, byte type, byte sortBy, String search, 
-                             int offset, int rows)
+    public List loadCatalog (byte type, byte sortBy, String search, int offset, int rows)
         throws ServiceException;
 
     /**
@@ -41,6 +40,6 @@ public interface CatalogService extends RemoteService
     /**
      * Fetches the N most-used tags for a given item type.
      */
-    public Map getPopularTags (WebCreds creds, byte type, int rows)
+    public Map getPopularTags (byte type, int rows)
         throws ServiceException;
 }

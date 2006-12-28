@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -23,7 +21,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Provides the server implementation of {@link GameService}.
  */
-public class GameServlet extends RemoteServiceServlet
+public class GameServlet extends MsoyServiceServlet
     implements GameService
 {
     // from interface GameService

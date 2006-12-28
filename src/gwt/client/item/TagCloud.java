@@ -23,7 +23,7 @@ public class TagCloud extends FlowPanel
         _ctx = ctx;
         _type = type;
         setStyleName("tagContents");
-        _ctx.catalogsvc.getPopularTags(_ctx.creds, _type, 20, new TagCallback());
+        _ctx.catalogsvc.getPopularTags(_type, 20, new TagCallback());
     }
 
     protected class TagCallback implements AsyncCallback

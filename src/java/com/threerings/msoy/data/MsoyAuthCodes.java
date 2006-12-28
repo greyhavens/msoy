@@ -39,4 +39,7 @@ public interface MsoyAuthCodes extends AuthCodes
      * the server which generally means we're in the middle of updating the
      * game. */
     public static final String NEWER_VERSION = "m.newer_version";
+
+    /** A code indicating that a client's web session has expired. */
+    public static final String SESSION_EXPIRED = "m.session_expired";
 }

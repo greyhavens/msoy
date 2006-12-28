@@ -1,16 +1,17 @@
-.blurb_box {
+.blurbBox {
    background: #99CCFF;
+   width: 100%;
 }
 
-.blurb_header {
+.blurbBox .Header {
    border: 1px solid;
    font-weight: bold;
 }
 
-.profile_name {
+.profileBlurb .Name {
    font-weight: bold;
 }
 
-.profile_headline {
+.profileBlurb .Headline {
    font-style: italic;
 }

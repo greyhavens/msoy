@@ -8,8 +8,6 @@ import java.util.List;
 
 import java.util.logging.Level;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.server.MsoyServer;
@@ -28,7 +26,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Provides the server implementation of {@link ItemService}.
  */
-public class GroupServlet extends RemoteServiceServlet
+public class GroupServlet extends MsoyServiceServlet
     implements GroupService
 {
     // from interface GroupService

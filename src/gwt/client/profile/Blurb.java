@@ -40,8 +40,7 @@ public abstract class Blurb extends DockPanel
      * Configures this blurb with a context and the member id for whom it is
      * displaying content.
      */
-    public void init (
-        ProfileContext ctx, int memberId, int blurbId, Object blurbData)
+    public void init (ProfileContext ctx, int memberId, int blurbId, Object blurbData)
     {
         _ctx = ctx;
         _memberId = memberId;
@@ -55,9 +54,9 @@ public abstract class Blurb extends DockPanel
 
     protected Blurb ()
     {
-        setStyleName("blurb_box");
+        setStyleName("blurbBox");
         add(_header = new Label("Header"), NORTH);
-        _header.setStyleName("blurb_header");
+        _header.setStyleName("Header");
         add(createContent(), CENTER);
     }
 

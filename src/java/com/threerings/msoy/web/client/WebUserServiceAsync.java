@@ -13,6 +13,10 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#login}.
      */
-    public void login (String username, String password, boolean persist,
-                       AsyncCallback callback);
+    public void login (String username, String password, int expireDays, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link WebUserService#validateSession}.
+     */
+    public void validateSession (String authtok, int expireDays, AsyncCallback callback);
 }

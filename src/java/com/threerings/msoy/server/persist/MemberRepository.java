@@ -45,21 +45,19 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads up the member record associated with the specified account.
-     * Returns null if no matching record could be found. The record will be
-     * fetched from the cache if possible and cached if not.
+     * Loads up the member record associated with the specified account.  Returns null if no
+     * matching record could be found. The record will be fetched from the cache if possible and
+     * cached if not.
      */
     public MemberRecord loadMember (String accountName)
         throws PersistenceException
     {
-        return load(MemberRecord.class,
-                    new Key(MemberRecord.ACCOUNT_NAME_C, accountName));
+        return load(MemberRecord.class, new Key(MemberRecord.ACCOUNT_NAME_C, accountName));
     }
 
     /**
-     * Loads up a member record by id. Returns null if no member exists with
-     * the specified id. The record will be fetched from the cache if possible
-     * and cached if not.
+     * Loads up a member record by id. Returns null if no member exists with the specified id. The
+     * record will be fetched from the cache if possible and cached if not.
      */
     public MemberRecord loadMember (int memberId)
         throws PersistenceException
@@ -68,8 +66,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Looks up a member's name by id. Returns null if no member exists with the
-     * specified id.
+     * Looks up a member's name by id. Returns null if no member exists with the specified id.
      */
     public MemberNameRecord loadMemberName (int memberId)
         throws PersistenceException
@@ -83,6 +80,7 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Looks up some members' names by id.
+     *
      * TODO: Implement findAll(Persistent.class, Comparable... keys) or the like,
      *       as per MDB's suggestion, say so we can cache properly.
      */
@@ -101,8 +99,8 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Loads up the member associated with the supplied session token. Returns
-     * null if the session has expired or is not valid.
+     * Loads up the member associated with the supplied session token. Returns null if the session
+     * has expired or is not valid.
      */
     public MemberRecord loadMemberForSession (String sessionToken)
         throws PersistenceException
@@ -113,37 +111,30 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Creates a mapping from the supplied memberId to a session token (or
-     * reuses an existing mapping). The member is assumed to have provided
-     * valid credentials and we will allow anyone who presents the returned
-     * session token access as the specified member. If an existing session is
-     * reused, its expiration date will be adjusted as if the session was newly
-     * created as of now (using the supplied <code>persist</code> setting).
-     *
-     * @param persist if true the session will be set to expire in one month,
-     * if false it will be set to expire in one day.
+     * Creates a mapping from the supplied memberId to a session token (or reuses an existing
+     * mapping). The member is assumed to have provided valid credentials and we will allow anyone
+     * who presents the returned session token access as the specified member. If an existing
+     * session is reused, its expiration date will be adjusted as if the session was newly created
+     * as of now (using the supplied <code>persist</code> setting).
      */
-    public String startOrJoinSession (int memberId, boolean persist)
+    public String startOrJoinSession (int memberId, int expireDays)
         throws PersistenceException
     {
         // create a new session record for this member
         SessionRecord nsess = new SessionRecord();
 	Calendar cal = Calendar.getInstance();
         long now = cal.getTimeInMillis();
-	cal.add(Calendar.DATE, persist ? 30 : 1);
+	cal.add(Calendar.DATE, expireDays);
         nsess.expires = new Date(cal.getTimeInMillis());
         nsess.memberId = memberId;
-        nsess.token = StringUtil.md5hex(
-            "" + memberId + now + Math.random());
+        nsess.token = StringUtil.md5hex("" + memberId + now + Math.random());
 
         try {
             insert(nsess);
         } catch (DuplicateKeyException dke) {
-            // if that fails with a duplicate key, reuse the old record but
-            // adjust its expiration
+            // if that fails with a duplicate key, reuse the old record but adjust its expiration
             SessionRecord esess = load(
-                SessionRecord.class,
-                new Key(SessionRecord.MEMBER_ID, memberId));
+                SessionRecord.class, new Key(SessionRecord.MEMBER_ID, memberId));
             esess.expires = nsess.expires;
             update(esess, SessionRecord.EXPIRES);
 
@@ -155,8 +146,28 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Clears out a session to member id mapping. This should be called when a
-     * user logs off.
+     * Refreshes a session using the supplied authentication token.
+     *
+     * @return the member associated with the session if it is valid and was refreshed, null if the
+     * session has expired.
+     */
+    public MemberRecord refreshSession (String token, int expireDays)
+        throws PersistenceException
+    {
+        SessionRecord sess = load(SessionRecord.class, token);
+        if (sess == null) {
+            return null;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, expireDays);
+        sess.expires = new Date(cal.getTimeInMillis());
+        update(sess);
+        return loadMember(sess.memberId);
+    }
+
+    /**
+     * Clears out a session to member id mapping. This should be called when a user logs off.
      */
     public void clearSession (String sessionToken)
         throws PersistenceException
@@ -165,9 +176,9 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Insert a new member record into the repository and assigns them a unique
-     * member id in the process. The {@link MemberRecord#created} field will be
-     * filled in by this method if it is not already.
+     * Insert a new member record into the repository and assigns them a unique member id in the
+     * process. The {@link MemberRecord#created} field will be filled in by this method if it is
+     * not already.
      */
     public void insertMember (MemberRecord member)
         throws PersistenceException
@@ -207,8 +218,7 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Deducts the specified amount of flow from the specified member's
-     * account.
+     * Deducts the specified amount of flow from the specified member's account.
      */
     public void spendFlow (int memberId, int amount)
         throws PersistenceException
@@ -226,8 +236,8 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * <em>Do not use this method!</em> It exists only because we must work
-     * with the coin system which tracks members by username rather than id.
+     * <em>Do not use this method!</em> It exists only because we must work with the coin system
+     * which tracks members by username rather than id.
      */
     public void grantFlow (String accountName, int amount)
         throws PersistenceException
@@ -245,10 +255,9 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Mimics the disabling of deleted members by renaming them to an
-     * invalid value that we do in our member management system. This is
-     * triggered by us receiving a member action indicating that the
-     * member was deleted.
+     * Mimics the disabling of deleted members by renaming them to an invalid value that we do in
+     * our member management system. This is triggered by us receiving a member action indicating
+     * that the member was deleted.
      */
     public void disableMember (String accountName, String disabledName)
         throws PersistenceException
@@ -263,21 +272,20 @@ public class MemberRepository extends DepotRepository
 
         case 1:
             log.info("Disabled deleted member [oname=" + accountName +
-                ", dname=" + disabledName + "].");
+                     ", dname=" + disabledName + "].");
             break;
 
         default:
-            log.warning("Attempt to disable member account resulted in " +
-                "weirdness [aname=" + accountName +
-                ", dname=" + disabledName + ", mods=" + mods + "].");
+            log.warning("Attempt to disable member account resulted in weirdness " +
+                        "[aname=" + accountName + ", dname=" + disabledName +
+                        ", mods=" + mods + "].");
             break;
         }
     }
 
     /**
-     * Note that a member's session has ended: increment their sessions, add in
-     * the number of minutes spent online, and set their last session time to
-     * now.
+     * Note that a member's session has ended: increment their sessions, add in the number of
+     * minutes spent online, and set their last session time to now.
      */
     public void noteSessionEnded (int memberId, int minutes)
         throws PersistenceException
@@ -287,9 +295,10 @@ public class MemberRepository extends DepotRepository
             MemberRecord.SESSION_MINUTES, "sessionMinutes + " + minutes,
             MemberRecord.LAST_SESSION, "NOW()");
     }
+
     /**
-     * Returns the NeighborFriendRecords for all the established friends of a given member,
-     * through an inner join between {@link MemberRecord} and {@link FriendRecord}.
+     * Returns the NeighborFriendRecords for all the established friends of a given member, through
+     * an inner join between {@link MemberRecord} and {@link FriendRecord}.
      */
     public Collection<NeighborFriendRecord> getNeighborhoodFriends (final int memberId)
         throws PersistenceException
@@ -340,8 +349,8 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Get the FriendEntry record for all friends (pending, too) of the
-     * specified memberId. The online status of each friend will be false.
+     * Get the FriendEntry record for all friends (pending, too) of the specified memberId. The
+     * online status of each friend will be false.
      */
     public ArrayList<FriendEntry> getFriends (final int memberId)
         throws PersistenceException
@@ -388,8 +397,8 @@ public class MemberRepository extends DepotRepository
      * @param memberId The id of the member performing this action.
      * @param otherId The id of the other member.
      *
-     * @return the new FriendEntry record for this friendship (modulo online
-     * information), or null if there was an error finding the friend.
+     * @return the new FriendEntry record for this friendship (modulo online information), or null
+     * if there was an error finding the friend.
      */
     public FriendEntry inviteOrApproveFriend (int memberId,  int otherId)
         throws PersistenceException
@@ -419,13 +428,12 @@ public class MemberRepository extends DepotRepository
                 // we're responding to an invite
                 rec.status = true;
                 update(rec);
-                return new FriendEntry(
-                    other.getName(), false, FriendEntry.FRIEND);
+                return new FriendEntry(other.getName(), false, FriendEntry.FRIEND);
 
             } else {
                 // we've already done all we can
-                return new FriendEntry(other.getName(), false, rec.status ?
-                    FriendEntry.FRIEND : FriendEntry.PENDING_THEIR_APPROVAL);
+                return new FriendEntry(other.getName(), false, rec.status ? FriendEntry.FRIEND :
+                                       FriendEntry.PENDING_THEIR_APPROVAL);
             }
 
         } else {
@@ -434,8 +442,7 @@ public class MemberRepository extends DepotRepository
             rec.inviterId = memberId;
             rec.inviteeId = otherId;
             insert(rec);
-            return new FriendEntry(other.getName(), false,
-                FriendEntry.PENDING_THEIR_APPROVAL);
+            return new FriendEntry(other.getName(), false, FriendEntry.PENDING_THEIR_APPROVAL);
         }
     }
 
@@ -446,51 +453,44 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         // TODO: update or invalidate "FriendsCache" for both parties
-        deleteAll(FriendRecord.class,
-                  new Key(FriendRecord.INVITER_ID, memberId,
-                          FriendRecord.INVITEE_ID, otherId));
-        deleteAll(FriendRecord.class,
-                  new Key(FriendRecord.INVITER_ID, otherId,
-                          FriendRecord.INVITEE_ID, memberId));
+        deleteAll(FriendRecord.class, new Key(FriendRecord.INVITER_ID, memberId,
+                                              FriendRecord.INVITEE_ID, otherId));
+        deleteAll(FriendRecord.class, new Key(FriendRecord.INVITER_ID, otherId,
+                                              FriendRecord.INVITEE_ID, memberId));
     }
 
     /**
-     * Delete all the friend relations involving the specified memberId,
-     * usually because that member is being deleted.
+     * Delete all the friend relations involving the specified memberId, usually because that
+     * member is being deleted.
      */
     public void deleteAllFriends (int memberId)
         throws PersistenceException
     {
         // TODO: update or invalidate "FriendsCache"
-        deleteAll(FriendRecord.class,
-                  new Key(FriendRecord.INVITER_ID, memberId));
-        deleteAll(FriendRecord.class,
-                  new Key(FriendRecord.INVITEE_ID, memberId));
+        deleteAll(FriendRecord.class, new Key(FriendRecord.INVITER_ID, memberId));
+        deleteAll(FriendRecord.class, new Key(FriendRecord.INVITEE_ID, memberId));
     }
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
-    protected void updateFlow (
-        String index, Comparable key, int amount, String type)
+    protected void updateFlow (String index, Comparable key, int amount, String type)
         throws PersistenceException
     {
         if (amount <= 0) {
             throw new PersistenceException(
-                "Illegal flow " + type + " [index=" + index +
-                ", amount=" + amount + "]");
+                "Illegal flow " + type + " [index=" + index + ", amount=" + amount + "]");
         }
 
         String op = type.equals("grant") ? "+" : "-";
-        int mods = updateLiteral(
-            MemberRecord.class, new Key(index, key),
-            MemberRecord.FLOW, MemberRecord.FLOW + op + amount);
+        int mods = updateLiteral(MemberRecord.class, new Key(index, key),
+                                 MemberRecord.FLOW, MemberRecord.FLOW + op + amount);
         if (mods == 0) {
             throw new PersistenceException(
                 "Flow " + type + " modified zero rows " +
                 "[where=" + index + "=" + key + ", amount=" + amount + "]");
         } else if (mods > 1) {
             log.warning("Flow " + type + " modified multiple rows " +
-                "[where=" + index + "=" + key + ", amount=" + amount +
-                ", mods=" + mods + "].");
+                        "[where=" + index + "=" + key + ", amount=" + amount +
+                        ", mods=" + mods + "].");
         }
     }
 }

@@ -49,17 +49,16 @@ public class ItemPanel extends DockPanel
             public void doFetchRows (int start, int count, final AsyncCallback callback) {
                 setStatus("Loading...");
                 _ctx.catalogsvc.loadCatalog(
-                    _ctx.creds, type, sortBy, search, start, count, new AsyncCallback() {
-                        public void onSuccess (Object result) {
-                            setStatus("");
-                            callback.onSuccess(result);
-                        }
-                        public void onFailure (Throwable caught) {
-                            GWT.log("loadCatalog failed", caught);
-                            // TODO: if ServiceException, translate
-                            setStatus("Failed to load catalog: " + caught);
-                        }
-                    });
+                    type, sortBy, search, start, count, new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        setStatus("");
+                        callback.onSuccess(result);
+                    }
+                    public void onFailure (Throwable caught) {
+                        _ctx.log("loadCatalog failed", caught);
+                        setStatus(_ctx.serverError(caught));
+                    }
+                });
             }
             public void removeItem (Object item) {
                 // currently we do no internal caching, no problem!

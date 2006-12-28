@@ -5,6 +5,8 @@ package client.profile;
 
 import java.util.ArrayList;
 
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.web.data.BlurbData;
@@ -13,17 +15,17 @@ import com.threerings.msoy.web.data.PersonLayout;
 /**
  * Lays out a person page in two columns.
  */
-public class TwoColumnLayout extends VerticalPanel
+public class TwoColumnLayout extends FlexTable
 {
-    public TwoColumnLayout (
-        ProfileContext ctx, int memberId, PersonLayout layout, ArrayList blurbs)
+    public TwoColumnLayout (ProfileContext ctx, int memberId, PersonLayout layout, ArrayList blurbs)
     {
-        // TODO: actually do two columns...
+        setCellPadding(5);
         for (int ii = 0; ii < layout.blurbs.size(); ii++) {
             BlurbData bdata = (BlurbData)layout.blurbs.get(ii);
             Blurb blurb = Blurb.createBlurb(bdata.type);
             blurb.init(ctx, memberId, bdata.blurbId, blurbs.get(ii));
-            add(blurb);
+            setWidget(ii/2, ii%2, blurb);
+            getFlexCellFormatter().setVerticalAlignment(ii/2, ii%2, HasAlignment.ALIGN_TOP);
         }
     }
 }

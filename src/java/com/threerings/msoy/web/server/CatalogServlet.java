@@ -3,94 +3,153 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntSet;
 
+import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MemberNameRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.msoy.web.client.CatalogService;
+import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.WebCreds;
+
+import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.TagPopularityRecord;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.server.MsoyServer;
-
-import com.threerings.msoy.web.client.CatalogService;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
 
 import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link CatalogService}.
  */
-public class CatalogServlet extends RemoteServiceServlet
+public class CatalogServlet extends MsoyServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public List loadCatalog (WebCreds creds, final byte type, final byte sortBy,
-                             final String search, final int offset, final int rows)
+    public List loadCatalog (byte type, byte sortBy, String search, int offset, int rows)
         throws ServiceException
     {
-        // TODO: validate this user's creds
+        ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
 
-        // convert the string they supplied to an item enumeration
-        if (Item.getClassForType(type) == null) {
-            log.warning("Requested to load catalog for invalid item type " +
-                        "[who=" + creds + ", type=" + type + "].");
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        List<CatalogListing> list = new ArrayList<CatalogListing>();
+        try {
+            // fetch catalog records and loop over them
+            IntSet members = new ArrayIntSet();
+            for (CatalogRecord record : repo.loadCatalog(sortBy, search, offset, rows)) {
+                // convert them to listings
+                list.add(record.toListing());
+                // and keep track of which member names we need to look up
+                members.add(record.item.creatorId);
+            }
+
+            // now look up the names and build a map of memberId -> MemberName
+            IntMap<MemberName> map = new HashIntMap<MemberName>();
+            int[] idArr = members.toIntArray();
+            for (MemberNameRecord record: MsoyServer.memberRepo.loadMemberNames(idArr)) {
+                map.put(record.memberId, new MemberName(record.name, record.memberId));
+            }
+
+            // finally fill in the listings using the map
+            for (CatalogListing listing : list) {
+                listing.creator = map.get(listing.creator.getMemberId());
+            }
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Failed to load catalog [type=" + type + ", sort=" + sortBy +
+                    ", search=" + search + ", offset=" + offset + ", rows=" + rows + "].", pe);
         }
-
-        // load their catalog via the catalog manager
-        final ServletWaiter<List<CatalogListing>> waiter = new ServletWaiter<List<CatalogListing>>(
-                "loadCatalog[" + type + ", " + sortBy + ", " + offset + ", " + rows + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.loadCatalog(type, sortBy, search, offset, rows, waiter);
-            }
-        });
-        return waiter.waitForResult();
+        return list;
     }
 
     // from interface CatalogService
-    public Item purchaseItem (final WebCreds creds, final ItemIdent ident)
+    public Item purchaseItem (WebCreds creds, final ItemIdent ident)
         throws ServiceException
     {
-        // TODO: validate this user's creds
+        final MemberRecord mrec = requireAuthedUser(creds);
         final ServletWaiter<Item> waiter = new ServletWaiter<Item>(
-            "purchaseItem[" + creds.memberId + ", " + ident + "]");
+            "purchaseItem[" + mrec.memberId + ", " + ident + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.purchaseItem(creds.memberId, ident, waiter);
+                MsoyServer.itemMan.purchaseItem(mrec.memberId, ident, waiter);
             }
         });
         return waiter.waitForResult();
     }
 
     // from interface CatalogService
-    public CatalogListing listItem (WebCreds creds, final ItemIdent ident, final boolean list)
+    public CatalogListing listItem (WebCreds creds, ItemIdent ident, boolean list)
         throws ServiceException
     {
-        // TODO: validate this user's creds
-        final ServletWaiter<CatalogListing> waiter = new ServletWaiter<CatalogListing>(
-            "listItem[" + ident + ", " + list + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.listItem(ident, list, waiter);
+        final MemberRecord mrec = requireAuthedUser(creds);
+
+        // locate the appropriate repository
+        ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo =
+            MsoyServer.itemMan.getRepository(ident.type);
+
+        try {
+            if (list) {
+                // load a copy of the original item
+                ItemRecord listItem = repo.loadOriginalItem(ident.itemId);
+                if (listItem == null) {
+                    log.warning("Can't find item to list [item= " + ident + "]");
+                    throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+                }
+                if (listItem.ownerId == -1) {
+                    log.warning("Item is already listed [item=" + ident + "]");
+                    throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+                } else if (listItem.ownerId != mrec.memberId) {
+                    log.warning("Member requested to list unowned item [who=" + mrec.accountName +
+                                ", ident="+ ident + "].");
+                    throw new ServiceException(ItemCodes.ACCESS_DENIED);
+                }
+
+                // reset any important bits
+                listItem.clearForListing();
+                // then insert it as the immutable copy we list
+                repo.insertOriginalItem(listItem);
+                // and finally create & insert the catalog record
+                return repo.insertListing(listItem, System.currentTimeMillis()).toListing();
+
+            } else {
+                // TODO: validate ownership
+                return repo.removeListing(ident.itemId) ? new CatalogListing() : null;
             }
-        });
-        return waiter.waitForResult();
+
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "List failed [item=" + ident + ", list=" + list + "].", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     // from interface CatalogService
-    public Map<String, Integer> getPopularTags (WebCreds creds, final byte type, final int rows)
+    public Map<String, Integer> getPopularTags (byte type, int rows)
         throws ServiceException
     {
-        final ServletWaiter<Map<String, Integer>> waiter = new ServletWaiter<Map<String, Integer>>(
-            "getPopularTags[" + type + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.getPopularTags(type, rows, waiter);
+        ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        Map<String, Integer> result = new HashMap<String, Integer>();
+        try {
+            for (TagPopularityRecord record : repo.getPopularTags(rows)) {
+                result.put(record.tag, record.count);
             }
-        });
-        return waiter.waitForResult();
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Load popular tags failed [type=" + type + "].", pe);
+        }
+        return result;
     }
 }

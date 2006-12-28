@@ -5,8 +5,6 @@ package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.MemberService;
@@ -22,7 +20,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Provides the server implementation of {@link MemberService}.
  */
-public class MemberServlet extends RemoteServiceServlet
+public class MemberServlet extends MsoyServiceServlet
     implements MemberService
 {
     // from MemberService

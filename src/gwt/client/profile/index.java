@@ -72,9 +72,11 @@ public class index extends MsgsEntryPoint
         String initToken = History.getToken();
         if (initToken.length() > 0) {
             onHistoryChanged(initToken);
+
         } else if (_ctx.creds == null) {
             // TODO: display member search interface
             setContent(new Label(_ctx.msgs.indexLogon()));
+
         } else {
             // if we're logged on and not displaying someone elses member page, display our own
             displayMemberPage(_ctx.creds.memberId);
@@ -91,18 +93,16 @@ public class index extends MsgsEntryPoint
                 switch (layout.layout) {
                 default:
                 case PersonLayout.ONE_COLUMN_LAYOUT:
-                    setContent(
-                        new OneColumnLayout(_ctx, _memberId, layout, data));
+                    setContent(new OneColumnLayout(_ctx, _memberId, layout, data));
                     break;
                 case PersonLayout.TWO_COLUMN_LAYOUT:
-                    setContent(
-                        new TwoColumnLayout(_ctx, _memberId, layout, data));
+                    setContent(new TwoColumnLayout(_ctx, _memberId, layout, data));
                     break;
                 }
             }
 
             public void onFailure (Throwable cause) {
-                // TODO: display friendly error
+                setContent(new Label(_ctx.serverError(cause)));
                 _ctx.log("Failed to load blurbs", cause);
             }
         });

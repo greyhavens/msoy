@@ -51,7 +51,7 @@ public class PersonPageManager
 
         // for now fake it
         layout = new PersonLayout();
-        layout.layout = PersonLayout.ONE_COLUMN_LAYOUT;
+        layout.layout = PersonLayout.TWO_COLUMN_LAYOUT;
 
         ArrayList<BlurbData> blurbs = new ArrayList<BlurbData>();
         BlurbData blurb = new BlurbData();

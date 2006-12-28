@@ -36,6 +36,7 @@ import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.world.data.FurniData;
 
 import com.threerings.msoy.item.web.Avatar;
@@ -116,6 +117,44 @@ public class ItemManager
     public GameRepository getGameRepository ()
     {
         return _gameRepo;
+    }
+
+    /**
+     * Returns the repository used to manage items of the specified type.
+     */
+    public ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepository (
+        ItemIdent ident, ResultListener<?> listener)
+    {
+        return getRepository(ident.type, listener);
+    }
+
+    /**
+     * Returns the repository used to manage items of the specified type.
+     */
+    public ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepository (
+        byte type, ResultListener<?> listener)
+    {
+        try {
+            return getRepositoryFor(type);
+        } catch (MissingRepositoryException mre) {
+            listener.requestFailed(mre);
+            return null;
+        }
+    }
+
+    /**
+     * Returns the repository used to manage items of the specified type. Throws a service
+     * exception if the supplied type is invalid.
+     */
+    public ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepository (byte type)
+        throws ServiceException
+    {
+        try {
+            return getRepositoryFor(type);
+        } catch (MissingRepositoryException mre) {
+            log.warning("Requested invalid repository type " + type + ".");
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     /**
@@ -457,45 +496,6 @@ public class ItemManager
     }
 
     /**
-     * Fetches the entire catalog of listed items of the given type.
-     */
-    public void loadCatalog (byte type, final byte sortBy, final String search, final int offset,
-                             final int rows, ResultListener<List<CatalogListing>> listener)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(type, listener);
-        if (repo == null) {
-            return;
-        }
-
-        // and load the catalog
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<CatalogListing>>(listener) {
-            public List<CatalogListing> invokePersistResult () throws PersistenceException {
-                IntSet members = new ArrayIntSet();
-                List<CatalogListing> list = new ArrayList<CatalogListing>();
-                // fetch catalog records and loop over them
-                for (CatalogRecord record : repo.loadCatalog(sortBy, search, offset, rows)) {
-                    // convert them to listings
-                    list.add(record.toListing());
-                    // and keep track of which member names we need to look up
-                    members.add(record.item.creatorId);
-                }
-                IntMap<MemberName> map = new HashIntMap<MemberName>();
-                int[] idArr = members.toIntArray();
-                // now look up the names and build a map of memberId -> MemberName
-                for (MemberNameRecord record: MsoyServer.memberRepo.loadMemberNames(idArr)) {
-                    map.put(record.memberId, new MemberName(record.name, record.memberId));
-                }
-                // finally fill in the listings using the map
-                for (CatalogListing listing : list) {
-                    listing.creator = map.get(listing.creator.getMemberId());
-                }
-                return list;
-            }
-        });
-    }
-
-    /**
      * Purchases a given item for a given member from the catalog by creating a new clone row in
      * the appropriate database table.
      */
@@ -530,54 +530,6 @@ public class ItemManager
             public void handleSuccess () {
                 super.handleSuccess();
                 updateUserCache(_result);
-            }
-        });
-    }
-
-    /**
-     * Lists or delists the given item in the catalog. Listing will creating a new immutable item
-     * and creating and returning a {@link CatalogListing} record for the item. Delisting will
-     * load, destroy the {@link CatalogListing} record and return a stub listing record to indicate
-     * success. The original item maintained by the destroyed listing will be preserved as it must
-     * because it may have clones in the wild.
-     */
-    public void listItem (final ItemIdent ident, boolean list,
-                          ResultListener<CatalogListing> listener)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
-        if (repo == null) {
-            return;
-        }
-
-        // if we're delisting do that
-        if (!list) {
-            MsoyServer.invoker.postUnit(new RepositoryListenerUnit<CatalogListing>(listener) {
-                public CatalogListing invokePersistResult () throws PersistenceException {
-                    return repo.removeListing(ident.itemId) ? new CatalogListing() : null;
-                }
-            });
-            return;
-        }
-
-        // otherwise we're listing, so do that more complicated business
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<CatalogListing>(listener) {
-            public CatalogListing invokePersistResult () throws PersistenceException {
-                // load a copy of the original item
-                ItemRecord listItem = repo.loadOriginalItem(ident.itemId);
-                if (listItem == null) {
-                    throw new PersistenceException("Can't find item to list [item= " + ident + "]");
-                }
-                if (listItem.ownerId == -1) {
-                    throw new PersistenceException("Item is already listed [item=" + ident + "]");
-                }
-                // reset any important bits
-                listItem.clearForListing();
-                // then insert it as the immutable copy we list
-                repo.insertOriginalItem(listItem);
-                // and finally create & insert the catalog record
-                CatalogRecord record = repo.insertListing(listItem, System.currentTimeMillis());
-                return record.toListing();
             }
         });
     }
@@ -669,27 +621,6 @@ public class ItemManager
             public Byte invokePersistResult () throws PersistenceException {
                 RatingRecord<ItemRecord> record = repo.getRating(ident.itemId, memberId);
                 return record != null ? record.rating : 0;
-            }
-        });
-    }
-
-    /** Fetch the most popular tags across all items. */
-    public void getPopularTags (byte type, final int rows,
-                                ResultListener<Map<String, Integer>> listener)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(type, listener);
-        if (repo == null) {
-            return;
-        }
-
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Map<String, Integer>>(listener) {
-            public Map<String, Integer> invokePersistResult () throws PersistenceException {
-                Map<String, Integer> result = new HashMap<String, Integer>();
-                for (TagPopularityRecord record : repo.getPopularTags(rows)) {
-                    result.put(record.tag, record.count);
-                }
-                return result;
             }
         });
     }
@@ -1006,32 +937,11 @@ public class ItemManager
     }
 
     /**
-     * Helper function for mapping ident to repository.
+     * Get the specified ItemRepository. This method is called both from the dobj thread and the
+     * servlet handler threads but need not be synchronized because the repositories table is
+     * created at server startup time and never modified.
      */
-    protected ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepository (
-        ItemIdent ident, ResultListener<?> listener)
-    {
-        return getRepository(ident.type, listener);
-    }
-
-    /**
-     * Helper function for mapping ident to repository.
-     */
-    protected ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepository (
-        byte type, ResultListener<?> listener)
-    {
-        try {
-            return getRepository(type);
-        } catch (MissingRepositoryException mre) {
-            listener.requestFailed(mre);
-            return null;
-        }
-    }
-
-    /**
-     * Get the specified ItemRepository.
-     */
-    protected ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepository (byte type)
+    protected ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepositoryFor (byte type)
         throws MissingRepositoryException
     {
         ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = _repos.get(type);
@@ -1065,7 +975,7 @@ public class ItemManager
         {
             LookupType lt = _byType.get(itemType);
             if (lt == null) {
-                lt = new LookupType(itemType, getRepository(itemType));
+                lt = new LookupType(itemType, getRepositoryFor(itemType));
                 _byType.put(itemType, lt);
             }
             lt.addItemId(itemId);

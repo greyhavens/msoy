@@ -5,6 +5,7 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
@@ -13,16 +14,7 @@ import com.threerings.msoy.web.data.WebCreds;
 public interface ProfileServiceAsync
 {
     /**
-     * The asynchronous version of {@link ProfileService#updateProfileHeader}.
+     * The asynchronous version of {@link ProfileService#updateProfile}.
      */
-    public void updateProfileHeader (WebCreds creds, String displayName,
-                                     String homePageURL, String headline,
-                                     AsyncCallback callback);
-
-    /**
-     * The asynchronous version of {@link ProfileService#updateProfileDetails}.
-     */
-    public void updateProfileDetails (WebCreds creds, boolean isMale,
-                                      long birthday, String location,
-                                      AsyncCallback callback);
+    public void updateProfile (WebCreds creds, Profile profile, AsyncCallback callback);
 }

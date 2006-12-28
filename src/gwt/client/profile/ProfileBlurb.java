@@ -28,15 +28,16 @@ public class ProfileBlurb extends Blurb
     protected Panel createContent ()
     {
         _content = new FlexTable();
+       _content.setStyleName("profileBlurb");
 
         _content.setWidget(0, 0, _photo = new Image());
         _content.getFlexCellFormatter().setRowSpan(0, 0, 4);
 
         _content.setWidget(0, 1, _name = new Label("name"));
-        _name.setStyleName("profile_name");
+        _name.setStyleName("Name");
         _content.getFlexCellFormatter().setColSpan(0, 1, 2);
         _content.setWidget(1, 1, _headline = new Label("headline"));
-        _headline.setStyleName("profile_headline");
+        _headline.setStyleName("Headline");
         _content.setWidget(2, 1, _homepage = new HTML("homepage"));
         _content.setWidget(3, 1, _laston = new Label("..."));
 

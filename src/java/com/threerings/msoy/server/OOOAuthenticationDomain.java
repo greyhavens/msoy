@@ -11,7 +11,7 @@ import com.threerings.user.OOOUserRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.web.data.LogonException;
+import com.threerings.msoy.web.data.ServiceException;
 
 /**
  * Implements account authentication against the OOO global user database.
@@ -25,31 +25,28 @@ public class OOOAuthenticationDomain
     {
         // we get our user manager configuration from the ocean config
         _usermgr = new OOOUserManager(
-            ServerConfig.config.getSubProperties("oooauth"),
-            MsoyServer.conProv);
+            ServerConfig.config.getSubProperties("oooauth"), MsoyServer.conProv);
         _authrep = (OOOUserRepository)_usermgr.getRepository();
     }
 
     // from interface MsoyAuthenticator.Domain
-    public MsoyAuthenticator.Account authenticateAccount (
-        String accountName, String password)
-        throws LogonException, PersistenceException
+    public MsoyAuthenticator.Account authenticateAccount (String accountName, String password)
+        throws ServiceException, PersistenceException
     {
         // load up their user account record
         OOOUser user = _authrep.loadUser(accountName, true);
         if (user == null) {
-            throw new LogonException(MsoyAuthCodes.NO_SUCH_USER);
+            throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
         }
 
         // now check their password
         if (PASSWORD_BYPASS != password && !user.password.equals(password)) {
-            throw new LogonException(MsoyAuthCodes.INVALID_PASSWORD);
+            throw new ServiceException(MsoyAuthCodes.INVALID_PASSWORD);
         }
 
         // configure their access tokens
         int tokens = 0;
-        if (user.holdsToken(OOOUser.ADMIN) ||
-            user.holdsToken(OOOUser.MAINTAINER)) {
+        if (user.holdsToken(OOOUser.ADMIN) || user.holdsToken(OOOUser.MAINTAINER)) {
             tokens |= MsoyTokenRing.ADMIN;
             tokens |= MsoyTokenRing.SUPPORT;
         }
@@ -66,29 +63,29 @@ public class OOOAuthenticationDomain
     }
 
     // from interface MsoyAuthenticator.Domain
-    public void validateAccount (MsoyAuthenticator.Account account,
-                                 String machIdent, boolean firstLogon)
-        throws LogonException, PersistenceException
+    public void validateAccount (
+        MsoyAuthenticator.Account account, String machIdent, boolean firstLogon)
+        throws ServiceException, PersistenceException
     {
         OOOAccount oooacc = (OOOAccount)account;
         int rv = _authrep.validateUser(
             OOOUser.METASOY_SITE_ID, oooacc.record, machIdent, firstLogon);
         switch (rv) {
         case OOOUserRepository.ACCOUNT_BANNED:
-            throw new LogonException(MsoyAuthCodes.BANNED);
+            throw new ServiceException(MsoyAuthCodes.BANNED);
         case OOOUserRepository.NEW_ACCOUNT_TAINTED:
-            throw new LogonException(MsoyAuthCodes.MACHINE_TAINTED);
+            throw new ServiceException(MsoyAuthCodes.MACHINE_TAINTED);
         }
         // TODO: do we care about other badness like DEADBEAT?
     }
 
     // from interface MsoyAuthenticator.Domain
     public void validateAccount (MsoyAuthenticator.Account account)
-        throws LogonException, PersistenceException
+        throws ServiceException, PersistenceException
     {
         OOOAccount oooacc = (OOOAccount)account;
         if (oooacc.record.isBanned(OOOUser.METASOY_SITE_ID)) {
-            throw new LogonException(MsoyAuthCodes.BANNED);
+            throw new ServiceException(MsoyAuthCodes.BANNED);
         }
         // TODO: do we care about other badness like DEADBEAT?
     }
