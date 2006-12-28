@@ -132,9 +132,7 @@ public class ProfileBlurb extends Blurb
         _profile.headline = _eheadline.getText();
         _profile.homePageURL = _ehomepage.getText();
 
-        _ctx.profilesvc.updateProfileHeader(
-            _ctx.creds, _profile.displayName, _profile.homePageURL,
-            _profile.headline, new AsyncCallback() {
+        _ctx.profilesvc.updateProfile(_ctx.creds, _profile, new AsyncCallback() {
             public void onSuccess (Object result) {
                 GWT.log("Yay!", null);
                 displayProfile();
