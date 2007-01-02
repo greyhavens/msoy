@@ -226,9 +226,9 @@
 
   <!-- builds our Flash library -->
   <target name="aslib" unless="aslib_is_up_to_date" depends="checkaslib">
-    <java jar="lib/as-compiler/lib/compc.jar" fork="true" failonerror="true">
+    <java jar="projects/tools/extern/flex_sdk/lib/compc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
-      <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
+      <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=projects/narya/src/as/"/>
       <arg value="-compiler.source-path=projects/vilya/src/as/"/>
@@ -237,7 +237,7 @@
       <arg value="-include-sources=projects/vilya/src/as/"/>
       <arg value="-include-sources=projects/toybox/src/as/"/>
       <arg value="-output"/>
-      <arg value="lib/naryavilya.swc"/>
+      <arg value="dist/naryavilya.swc"/>
     </java>
   </target>
 
@@ -249,21 +249,21 @@
 
   <!-- builds our Flash library -->
   <target name="exportlib" unless="exportlib_is_up_to_date" depends="checkexportlib">
-    <java jar="lib/as-compiler/lib/compc.jar" fork="true" failonerror="true">
+    <java jar="projects/tools/extern/flex_sdk/lib/compc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
-      <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
+      <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
       <arg value="-include-sources=src/as/com/threerings/msoy/export/"/>
       <arg value="-output"/>
-      <arg value="lib/msoy-export.swc"/>
+      <arg value="dist/msoy-export.swc"/>
     </java>
   </target>
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
   <target name="asquick">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
+    <exec executable="${basedir}/projects/tools/extern/flex_sdk/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
-      <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
+      <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
@@ -281,9 +281,9 @@
 
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare,aslib,exportlib">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
+    <exec executable="${basedir}/projects/tools/extern/flex_sdk/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
-      <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
+      <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.debug"/>
       <arg value="-compiler.verbose-stacktraces=true"/>
       <arg value="-compiler.source-path=src/as/"/>
@@ -298,9 +298,9 @@
 
   <!-- builds our avatar viewer thingy -->
   <target name="avatarviewer" depends="asprepare,aslib">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
+    <exec executable="${basedir}/projects/tools/extern/flex_sdk/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
-      <arg value="lib/as-compiler/frameworks/msoy-config.xml"/>
+      <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
