@@ -56,6 +56,22 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String errNoPhotos();
 
   /**
+   * Translated "by".
+   * 
+   * @return translated "by"
+   * @gwt.key viewBy
+   */
+  String viewBy();
+
+  /**
+   * Translated "Homepage".
+   * 
+   * @return translated "Homepage"
+   * @gwt.key viewHomepage
+   */
+  String viewHomepage();
+
+  /**
    * Translated "Public".
    * 
    * @return translated "Public"
@@ -70,6 +86,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key listMemberCount
    */
   String listMemberCount(String arg0);
+
+  /**
+   * Translated "Join Group".
+   * 
+   * @return translated "Join Group"
+   * @gwt.key viewJoin
+   */
+  String viewJoin();
 
   /**
    * Translated "Search".
@@ -144,6 +168,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editPolicy();
 
   /**
+   * Translated "Hall".
+   * 
+   * @return translated "Hall"
+   * @gwt.key viewHall
+   */
+  String viewHall();
+
+  /**
    * Translated "Homepage URL".
    * 
    * @return translated "Homepage URL"
@@ -160,12 +192,28 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editImagesTab();
 
   /**
+   * Translated "Edit Group".
+   * 
+   * @return translated "Edit Group"
+   * @gwt.key viewEdit
+   */
+  String viewEdit();
+
+  /**
    * Translated "Information".
    * 
    * @return translated "Information"
    * @gwt.key editInfoTab
    */
   String editInfoTab();
+
+  /**
+   * Translated "Est. ".
+   * 
+   * @return translated "Est. "
+   * @gwt.key viewEstablishedAbbreviated
+   */
+  String viewEstablishedAbbreviated();
 
   /**
    * Translated "Blurb".
@@ -200,6 +248,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editCreateTitle();
 
   /**
+   * Translated "Forum".
+   * 
+   * @return translated "Forum"
+   * @gwt.key viewForum
+   */
+  String viewForum();
+
+  /**
    * Translated "more...".
    * 
    * @return translated "more..."
@@ -214,6 +270,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editPeopleBG
    */
   String editPeopleBG();
+
+  /**
+   * Translated "Join {0}?".
+   * 
+   * @return translated "Join {0}?"
+   * @gwt.key viewJoinPrompt
+   */
+  String viewJoinPrompt(String arg0);
 
   /**
    * Translated "Featured Groups:".

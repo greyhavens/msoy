@@ -114,20 +114,20 @@ public class GroupView extends VerticalPanel
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("Links");
         links.setSpacing(8);
-        links.add(new Anchor("/world/index.html#g" +  _group.groupId, "Hall"));
-        links.add(new Anchor("", "Forum"));
+        links.add(new Anchor("/world/index.html#g" +  _group.groupId, _ctx.msgs.viewHall()));
+        links.add(new Anchor("", _ctx.msgs.viewForum()));
         if (_extras.homepageUrl != null) {
-            links.add(new Anchor(_extras.homepageUrl, "Homepage"));
+            links.add(new Anchor(_extras.homepageUrl, _ctx.msgs.viewHomepage()));
         }
         logoPanel.add(links);
         VerticalPanel established = new VerticalPanel();
         established.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         established.setStyleName("Established");
-        established.add(new InlineLabel("Est. " + 
+        established.add(new InlineLabel(_ctx.msgs.viewEstablishedAbbreviated() + 
             (new SimpleDateFormat("MMM dd, yyyy")).format(_group.creationDate)));
         HorizontalPanel creatorPanel = new HorizontalPanel();
         // this inline div is not letting space display to the right of it, and we need a space.
-        InlineLabel byLabel = new InlineLabel("by");
+        InlineLabel byLabel = new InlineLabel(_ctx.msgs.viewBy());
         DOM.setStyleAttribute(byLabel.getElement(), "marginRight", "3px");
         creatorPanel.add(byLabel);
         creatorPanel.add(new Anchor(MsoyEntryPoint.memberViewPath(  
@@ -138,7 +138,7 @@ public class GroupView extends VerticalPanel
         policy.setStyleName("Policy");
         logoPanel.add(policy);
         if (amManager) {
-            logoPanel.add(new Button("Edit Group", new ClickListener() {
+            logoPanel.add(new Button(_ctx.msgs.viewEdit(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new GroupEdit(_ctx, _group, _extras, GroupView.this).show();
                 }
@@ -146,9 +146,9 @@ public class GroupView extends VerticalPanel
         }
         if (_me == null) {
             if (_group.policy == Group.POLICY_PUBLIC) {
-                logoPanel.add(new Button("Join Group", new ClickListener() {
+                logoPanel.add(new Button(_ctx.msgs.viewJoin(), new ClickListener() {
                     public void onClick (Widget sender) {
-                        (new PromptPopup("Join " + _group.name + "?") {
+                        (new PromptPopup(_ctx.msgs.viewJoinPrompt(_group.name)) {
                             public void onAffirmative () {
                                 joinGroup();
                             }
