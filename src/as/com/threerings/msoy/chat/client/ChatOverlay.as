@@ -255,6 +255,7 @@ public class ChatOverlay
     {
         switch (placeOf(type)) {
         case TELL: return "m.tell_format";
+        case TELLFEEDBACK: return "m.told_format";
         case BROADCAST: return "m.broadcast_format";
         case PLACE: case GAME: 
             switch (modeOf(type)) {
@@ -348,7 +349,9 @@ public class ChatOverlay
     internal function glyphExpired (glyph :ChatGlyph) :void
     {
         ArrayUtil.removeFirst(_subtitles, glyph);
-        _overlay.removeChild(glyph);
+        if (_overlay != null) {
+            _overlay.removeChild(glyph);
+        }
     }
 
     /**
@@ -358,7 +361,10 @@ public class ChatOverlay
     {
         var localtype :String = msg.localtype;
 
-        if (msg is UserMessage) {
+        if (msg is TellFeedbackMessage) {
+            return (history || isApprovedLocalType(localtype)) ? TELLFEEDBACK
+                                                               : IGNORECHAT;
+        } else if (msg is UserMessage) {
             var type :int = 0;
 
             if (ChatCodes.USER_CHAT_TYPE == localtype) {
@@ -389,10 +395,6 @@ public class ChatOverlay
                     return BROADCAST; // broadcast always looks like broadcast
                 }
             }
-
-        } else if (msg is TellFeedbackMessage) {
-            return (history || isApprovedLocalType(localtype)) ? TELLFEEDBACK
-                                                               : IGNORECHAT;
 
         } else if (msg is SystemMessage) {
             if (history || isApprovedLocalType(localtype)) {
