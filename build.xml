@@ -510,8 +510,6 @@
   <target name="distclean">
     <delete dir="${deploy.dir}"/>
     <delete dir=".gwt-cache"/>
-    <delete file="lib/msoy-export.swc"/>
-    <delete file="lib/naryavilya.swc"/>
     <for list="${pages}" param="page">
       <sequential>
         <delete dir="pages/@{page}"/>
