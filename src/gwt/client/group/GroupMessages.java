@@ -48,6 +48,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String errPhotoLoadFailed(String arg0);
 
   /**
+   * Translated "Promote".
+   * 
+   * @return translated "Promote"
+   * @gwt.key viewPromote
+   */
+  String viewPromote();
+
+  /**
    * Translated "Upload some photos to your inventory to choose an image.".
    * 
    * @return translated "Upload some photos to your inventory to choose an image."
@@ -72,6 +80,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String viewHomepage();
 
   /**
+   * Translated "Leave Group".
+   * 
+   * @return translated "Leave Group"
+   * @gwt.key viewLeave
+   */
+  String viewLeave();
+
+  /**
    * Translated "Public".
    * 
    * @return translated "Public"
@@ -86,6 +102,22 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key listMemberCount
    */
   String listMemberCount(String arg0);
+
+  /**
+   * Translated "Are you sure you wish to remove {0} from {1}?".
+   * 
+   * @return translated "Are you sure you wish to remove {0} from {1}?"
+   * @gwt.key viewRemovePrompt
+   */
+  String viewRemovePrompt(String arg0,  String arg1);
+
+  /**
+   * Translated "Area you sure you wish to demote {0}?".
+   * 
+   * @return translated "Area you sure you wish to demote {0}?"
+   * @gwt.key viewDemotePrompt
+   */
+  String viewDemotePrompt(String arg0);
 
   /**
    * Translated "Join Group".
@@ -192,6 +224,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editImagesTab();
 
   /**
+   * Translated "View Profile".
+   * 
+   * @return translated "View Profile"
+   * @gwt.key viewViewProfile
+   */
+  String viewViewProfile();
+
+  /**
    * Translated "Edit Group".
    * 
    * @return translated "Edit Group"
@@ -208,6 +248,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editInfoTab();
 
   /**
+   * Translated "Area you sure you wish to promote {0}?".
+   * 
+   * @return translated "Area you sure you wish to promote {0}?"
+   * @gwt.key viewPromotePrompt
+   */
+  String viewPromotePrompt(String arg0);
+
+  /**
    * Translated "Est. ".
    * 
    * @return translated "Est. "
@@ -216,12 +264,12 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String viewEstablishedAbbreviated();
 
   /**
-   * Translated "Blurb".
+   * Translated "Remove".
    * 
-   * @return translated "Blurb"
-   * @gwt.key editBlurb
+   * @return translated "Remove"
+   * @gwt.key viewRemove
    */
-  String editBlurb();
+  String viewRemove();
 
   /**
    * Translated "Exclusive".
@@ -232,6 +280,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String policyExclusive();
 
   /**
+   * Translated "Blurb".
+   * 
+   * @return translated "Blurb"
+   * @gwt.key editBlurb
+   */
+  String editBlurb();
+
+  /**
    * Translated "Charter".
    * 
    * @return translated "Charter"
@@ -240,12 +296,28 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editCharter();
 
   /**
+   * Translated "Demote".
+   * 
+   * @return translated "Demote"
+   * @gwt.key viewDemote
+   */
+  String viewDemote();
+
+  /**
    * Translated "Create new group".
    * 
    * @return translated "Create new group"
    * @gwt.key editCreateTitle
    */
   String editCreateTitle();
+
+  /**
+   * Translated "Area you sure you wish to leave {0}?".
+   * 
+   * @return translated "Area you sure you wish to leave {0}?"
+   * @gwt.key viewLeavePrompt
+   */
+  String viewLeavePrompt(String arg0);
 
   /**
    * Translated "Forum".

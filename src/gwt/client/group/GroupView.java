@@ -158,9 +158,9 @@ public class GroupView extends VerticalPanel
                 }));
             }
         } else {
-            logoPanel.add(new Button("Leave Group", new ClickListener() {
+            logoPanel.add(new Button(_ctx.msgs.viewLeave(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    (new PromptPopup("Are you sure you wish to leave " + _group.name + "?") {
+                    (new PromptPopup(_ctx.msgs.viewLeavePrompt(_group.name)) {
                         public void onAffirmative () {
                             removeMember(_me.member.getMemberId(), false);
                         }
@@ -273,17 +273,14 @@ public class GroupView extends VerticalPanel
         return (member != null && member.member.getMemberId() == memberId) ? member : null;
     }
 
-    /**
-     * 100% Temporary!  This will be replaced with m.policy0, m.policy1, etc.
-     */
-    static protected String getPolicyName (int policy)
+    protected String getPolicyName (int policy)
     {
         String policyName;
         switch(policy) {
-        case Group.POLICY_PUBLIC: policyName = "Public"; break;
-        case Group.POLICY_INVITE_ONLY: policyName = "Invitation Only"; break;
-        case Group.POLICY_EXCLUSIVE: policyName = "Exclusive"; break;
-        default: policyName = "Undefined";
+        case Group.POLICY_PUBLIC: policyName = _ctx.msgs.policyPublic(); break;
+        case Group.POLICY_INVITE_ONLY: policyName = _ctx.msgs.policyInvite(); break;
+        case Group.POLICY_EXCLUSIVE: policyName = _ctx.msgs.policyExclusive(); break;
+        default: policyName = policyName = _ctx.msgs.errUnknownPolicy(Integer.toString(policy));
         }
         return policyName;
     }
@@ -296,11 +293,11 @@ public class GroupView extends VerticalPanel
         // MenuBar(true) creates a vertical menu
         MenuBar menu = new MenuBar(true);
         menu.addItem("<a href='" + MsoyEntryPoint.memberViewPath(
-            membership.member.getMemberId()) + "'>View Profile</a>", true, (Command)null);
-        MenuItem promote = new MenuItem("Promote", new Command() {
+            membership.member.getMemberId()) + "'>" + _ctx.msgs.viewViewProfile() + "</a>", true, 
+            (Command)null);
+        MenuItem promote = new MenuItem(_ctx.msgs.viewPromote(), new Command() {
             public void execute() {
-                (new PromptPopup("Are you sure you wish to promote " + 
-                    membership.member.toString() + "?") {
+                (new PromptPopup(_ctx.msgs.viewPromotePrompt(membership.member.toString())) {
                     public void onAffirmative () {
                         parent.hide();
                         updateMemberRank(membership.member.getMemberId(),
@@ -310,10 +307,9 @@ public class GroupView extends VerticalPanel
                 }).prompt();
             }
         });
-        MenuItem demote = new MenuItem("Demote", new Command() {
+        MenuItem demote = new MenuItem(_ctx.msgs.viewDemote(), new Command() {
             public void execute() {
-                (new PromptPopup("Are you sure you wish to demote " + 
-                    membership.member.toString() + "?") {
+                (new PromptPopup(_ctx.msgs.viewPromotePrompt(membership.member.toString())) {
                     public void onAffirmative () {
                         parent.hide();
                         updateMemberRank(membership.member.getMemberId(),
@@ -323,11 +319,10 @@ public class GroupView extends VerticalPanel
                 }).prompt();
             }
         });
-        MenuItem remove = new MenuItem("Remove", new Command() {
+        MenuItem remove = new MenuItem(_ctx.msgs.viewRemove(), new Command() {
             public void execute() {
-                (new PromptPopup("Are you sure you wish to remove " + 
-                    membership.member.toString() + " from " + 
-                    _group.name + "?") {
+                (new PromptPopup(_ctx.msgs.viewRemovePrompt(membership.member.toString(), 
+                    _group.name)) { 
                     public void onAffirmative () {
                         parent.hide();
                         removeMember(membership.member.getMemberId(), true);
