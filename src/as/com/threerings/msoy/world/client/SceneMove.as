@@ -1,6 +1,6 @@
 package com.threerings.msoy.world.client {
 
-import mx.effects.EffectInstance;
+import mx.effects.IEffectInstance;
 import mx.effects.TweenEffect;
 import mx.effects.easing.Linear;
 
@@ -68,7 +68,7 @@ public class SceneMove extends TweenEffect
     }
 
     // documentation inherited
-    override protected function initInstance (instance :EffectInstance) :void
+    override protected function initInstance (instance :IEffectInstance) :void
     {
         super.initInstance(instance);
 
