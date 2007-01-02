@@ -169,7 +169,7 @@ public class ChatOverlay
     {
         var texts :Array = parseLinks(msg.message);
 
-        var format :String = formatOf(type);
+        var format :String = msg.getFormat();
         if (format != null) {
             var umsg :UserMessage = (msg as UserMessage);
             var prefix :String = _ctx.xlate(null, format,
@@ -245,28 +245,6 @@ public class ChatOverlay
 
         // and be sure to pop up the returned time so that it is above the min.
         return Math.max(stamp + int(durations[1]), _lastExpire);
-    }
-
-    /**
-     * Return the translation key we should use for formatting a message
-     * of the specified type.
-     */
-    protected function formatOf (type :int) :String
-    {
-        switch (placeOf(type)) {
-        case TELL: return "m.tell_format";
-        case TELLFEEDBACK: return "m.told_format";
-        case BROADCAST: return "m.broadcast_format";
-        case PLACE: case GAME: 
-            switch (modeOf(type)) {
-            case SPEAK: return "m.speak_format";
-            case SHOUT: return "m.shout_format";
-            case EMOTE: return "m.emote_format";
-            case THINK: return "m.think_format";
-            }
-        }
-
-        return null; // no formatting
     }
 
     /**
