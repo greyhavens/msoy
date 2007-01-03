@@ -4,24 +4,13 @@
   <!-- define some basic project parameters -->
   <property name="app.name"         value="TruckOrTreat"/>
   <property name="root.path"        value="../../.."/>
+  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
 
   <!-- builds our Flash game -->
   <target name="compile">
-    <java jar="${root.path}/lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.library-path"/>
-      <arg value="${root.path}"/>
-      <arg value="${root.path}/lib/as-compiler/frameworks/libs"/>
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
-      <arg value="${root.path}/lib/as-compiler/frameworks/flex-config.xml"/>
-      <arg value="-link-report"/>
-      <arg value="/tmp/link-report.txt"/>
-      <arg value="-resource-bundle-list"/>
-      <arg value="/tmp/bundles.list"/>
-      <arg value="-compiler.warn-class-is-sealed=true"/>
-      <arg value="-compiler.warn-constructor-returns-value=true"/>
-      <arg value="-compiler.fonts.local-fonts-snapshot=${root.path}/lib/as-compiler/frameworks/localFonts.ser"/>
-      <arg value="-compiler.source-path=${root.path}/projects/vilya/src/as/"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=."/>
       <arg value="-externs"/>
       <arg value="com.threerings.ezgame:EZGame"/>
@@ -40,9 +29,10 @@
        <fileset file="${app.name}.swf"/>
     </delete>
   </target>
-
+  
+  <!-- copy swf over my uploaded one so I don't have to re-upload -->
   <target name="dist" depends="compile">
-    <copy file="TruckOrTreat.swf" tofile="/export/msoy/pages/media/438889e2bd839eafeffe8d1c751a991c5da5c269.swf"/>
+    <copy file="TruckOrTreat.swf" tofile="/Users/snb/svn/msoy/pages/media/72cf9002ba473686e14a90f5722218e834560eac.swf"/>
   </target>
 
 </project>
