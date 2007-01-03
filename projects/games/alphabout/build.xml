@@ -4,23 +4,24 @@
   <!-- define some basic project parameters -->
   <property name="app.name"         value="AlphaBout"/>
   <property name="root.path"        value="../../.."/>
+  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
 
   <!-- builds our Flash game -->
   <target name="compile">
-    <java jar="${root.path}/lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.library-path"/>
       <arg value="${root.path}"/>
-      <arg value="${root.path}/lib/as-compiler/frameworks/libs"/>
+      <arg value="${flex.path}/frameworks/libs"/>
       <arg value="-load-config"/>
-      <arg value="${root.path}/lib/as-compiler/frameworks/flex-config.xml"/>
+      <arg value="${flex.path}/frameworks/flex-config.xml"/>
       <arg value="-link-report"/>
       <arg value="/tmp/link-report.txt"/>
       <arg value="-resource-bundle-list"/>
       <arg value="/tmp/bundles.list"/>
       <arg value="-compiler.warn-class-is-sealed=true"/>
       <arg value="-compiler.warn-constructor-returns-value=true"/>
-      <arg value="-compiler.fonts.local-fonts-snapshot=${root.path}/lib/as-compiler/frameworks/localFonts.ser"/>
+      <arg value="-compiler.fonts.local-fonts-snapshot=${flex.path}/frameworks/localFonts.ser"/>
       <arg value="-compiler.source-path=${root.path}/projects/vilya/src/as/"/>
       <arg value="-compiler.source-path=."/>
       <arg value="-externs"/>
