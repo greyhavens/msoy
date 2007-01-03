@@ -55,6 +55,7 @@ import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
+import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 
@@ -132,7 +133,8 @@ public class RoomView extends AbstractRoomView
         super.locationUpdated(sprite);
 
         // if we moved the _centerSprite, possibly update the scroll position
-        if (sprite == _centerSprite) {
+        if (sprite == _centerSprite && ((sprite != _bkg) ||
+                _scene.getSceneType() != MsoySceneModel.FIXED_IMAGE)) {
             scrollView();
         }
     }
@@ -272,6 +274,7 @@ public class RoomView extends AbstractRoomView
 
         // assign the new scrolling rectangle
         scrollRect = rect;
+        scrollRectUpdated();
         _suppressAutoScroll = true;
     }
 

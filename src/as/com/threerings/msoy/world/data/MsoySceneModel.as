@@ -27,8 +27,11 @@ public class MsoySceneModel extends SceneModel
      * that the background image IS the scene to the viewer. */
     public static const IMAGE_OVERLAY :int = 1;
 
+    /** A type constant indicating a background image that does not scroll. */
+    public static const FIXED_IMAGE :int = 2;
+
     /** The number of type constants. */
-    public static const TYPE_COUNT :int = 2;
+    public static const TYPE_COUNT :int = 3;
 
     /** Constant for Member room owners **/
     public static const OWNER_TYPE_MEMBER :int = 1;

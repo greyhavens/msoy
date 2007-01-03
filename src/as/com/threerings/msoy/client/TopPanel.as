@@ -177,7 +177,8 @@ public class TopPanel extends Canvas
     {
         _placeMask.graphics.clear();
         _placeMask.graphics.beginFill(0xFFFFFF);
-        _placeMask.graphics.drawRect(0, 0, stage.stageWidth - _sideAttachment,
+        _placeMask.graphics.drawRect(0, 0,
+            stage.stageWidth - _sideAttachment,
             stage.stageHeight - ControlBar.HEIGHT);
         _placeMask.graphics.endFill();
     }

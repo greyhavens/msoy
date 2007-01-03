@@ -312,9 +312,18 @@ public class AbstractRoomView extends Canvas
         var bounds :Rectangle = getScrollBounds();
         rect.x = Math.min(bounds.x + bounds.width - rect.width,
             Math.max(bounds.x, rect.x + xpixels));
-        //rect.topLeft = DisplayUtil.fitRectInRect(rect, getScrollBounds());
         scrollRect = rect;
+        scrollRectUpdated();
         return true;
+    }
+
+    /**
+     * Get the current scroll value.
+     */
+    public function getScrollOffset () :Number
+    {
+        var r :Rectangle = scrollRect;
+        return (r == null) ? 0 : r.x;
     }
 
     /**
@@ -353,6 +362,14 @@ public class AbstractRoomView extends Canvas
         removeSprite(sprite);
     }
 
+    protected function scrollRectUpdated () :void
+    {
+        if (_bkg != null &&
+                _scene.getSceneType() == MsoySceneModel.FIXED_IMAGE) {
+            locationUpdated(_bkg);
+        }
+    }
+
     /**
      * Calculate the scale and x/y position of the specified media
      * according to its logical coordinates.
@@ -368,6 +385,11 @@ public class AbstractRoomView extends Canvas
 
         var p :Point = projectedLocation(scale, loc.x, loc.y);
         var hotSpot :Point = sprite.getLayoutHotSpot();
+        if (sprite == _bkg &&
+                _scene.getSceneType() == MsoySceneModel.FIXED_IMAGE) {
+            // adjust the background image
+            p.x += getScrollOffset();
+        }
         sprite.x = p.x - hotSpot.x;
         sprite.y = p.y - hotSpot.y;
     }
@@ -530,6 +552,7 @@ public class AbstractRoomView extends Canvas
         if (sprite != null) {
             sprite.update(_ctx, furni);
             checkIsBackground(sprite);
+
         } else {
             addFurni(furni);
         }
@@ -541,6 +564,7 @@ public class AbstractRoomView extends Canvas
             _bkg = sprite;
             setChildIndex(_bkg, 0);
             locationUpdated(sprite);
+
         } else if (sprite == _bkg) {
             _bkg = null;
         }

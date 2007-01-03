@@ -27,8 +27,11 @@ public class MsoySceneModel extends SceneModel
      * that the background image IS the scene to the viewer. */
     public static final byte IMAGE_OVERLAY = 1;
 
+    /** A type constant indicating a image that does not scroll. */
+    public static final byte FIXED_IMAGE = 2;
+
     /** The number of type constants. */
-    public static final int TYPE_COUNT = 2;
+    public static final int TYPE_COUNT = 3;
 
     /** Constant for Member room owners **/
     public static final byte OWNER_TYPE_MEMBER = 1;
