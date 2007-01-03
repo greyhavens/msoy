@@ -9,20 +9,8 @@
   <!-- builds our Flash game -->
   <target name="compile">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.library-path"/>
-      <arg value="${root.path}"/>
-      <arg value="${flex.path}/frameworks/libs"/>
       <arg value="-load-config"/>
-      <arg value="${flex.path}/frameworks/flex-config.xml"/>
-      <arg value="-link-report"/>
-      <arg value="/tmp/link-report.txt"/>
-      <arg value="-resource-bundle-list"/>
-      <arg value="/tmp/bundles.list"/>
-      <arg value="-compiler.warn-class-is-sealed=true"/>
-      <arg value="-compiler.warn-constructor-returns-value=true"/>
-      <arg value="-compiler.fonts.local-fonts-snapshot=${flex.path}/frameworks/localFonts.ser"/>
-      <arg value="-compiler.source-path=${root.path}/projects/vilya/src/as/"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=."/>
       <arg value="-externs"/>
       <arg value="com.threerings.ezgame:EZGame"/>
