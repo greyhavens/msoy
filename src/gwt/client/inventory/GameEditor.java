@@ -95,7 +95,9 @@ public class GameEditor extends ItemEditor
     // @Override from ItemEditor
     protected Item createBlankItem ()
     {
-        return new Game();
+        Game game = new Game();
+        game.config = "";
+        return game;
     }
 
     // @Override from ItemEditor
