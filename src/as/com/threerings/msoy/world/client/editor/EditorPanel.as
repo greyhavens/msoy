@@ -70,6 +70,8 @@ public class EditorPanel extends VBox
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
         itemList = new ItemList(_ctx, FurniItemRenderer);
+        itemList.percentWidth = 100;
+        itemList.percentHeight = 100;
         itemList.addItems(items);
 
         // add all props to the list of items in the room
@@ -228,9 +230,11 @@ public class EditorPanel extends VBox
         addChild(butBox);
     }
 
-    protected function createRoomPanel () :VBox
+    protected function createRoomPanel () :UIComponent
     {
         var box :VBox = new VBox();
+        box.percentWidth = 100;
+        box.percentHeight = 100;
         box.label = Msgs.EDITING.get("t.room_props");
 
         // add a grid of controls for the room
@@ -268,10 +272,12 @@ public class EditorPanel extends VBox
             _backgroundImage = new SingleItemSelector(_ctx));
         _backgroundImage.selectionChanged = newBackgroundImageSelected;
 
+/*
         grid.addRow(
             MsoyUI.createLabel(Msgs.EDITING.get("l.background_audio")),
             _backgroundAudio = new SingleItemSelector(_ctx, Item.AUDIO));
         _backgroundAudio.selectionChanged = newBackgroundAudioSelected;
+        */
 
         grid.addRow(
             new RoomViewScrollBox(_roomView, 200, 100), [2, 1]);
