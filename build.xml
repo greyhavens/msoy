@@ -217,7 +217,7 @@
   </target>
 
   <target name="checkaslib">
-    <uptodate property="aslib_is_up_to_date" targetfile="dist/naryavilya.swc">
+    <uptodate property="aslib_is_up_to_date" targetfile="${deploy.dir}/naryavilya.swc">
       <srcfiles dir="projects/narya/src/as" includes="**/*.as"/>
       <srcfiles dir="projects/vilya/src/as" includes="**/*.as"/>
       <srcfiles dir="projects/toybox/src/as" includes="**/*.as"/>
@@ -237,12 +237,12 @@
       <arg value="-include-sources=projects/vilya/src/as/"/>
       <arg value="-include-sources=projects/toybox/src/as/"/>
       <arg value="-output"/>
-      <arg value="dist/naryavilya.swc"/>
+      <arg value="${deploy.dir}/naryavilya.swc"/>
     </java>
   </target>
 
   <target name="checkexportlib">
-    <uptodate property="exportlib_is_up_to_date" targetfile="dist/msoy-export.swc">
+    <uptodate property="exportlib_is_up_to_date" targetfile="${deploy.dir}/msoy-export.swc">
       <srcfiles dir="src/as/com/threerings/msoy/export" includes="**/*.as"/>
     </uptodate>
   </target>
@@ -255,7 +255,7 @@
       <arg value="-compiler.optimize"/>
       <arg value="-include-sources=src/as/com/threerings/msoy/export/"/>
       <arg value="-output"/>
-      <arg value="dist/msoy-export.swc"/>
+      <arg value="${deploy.dir}/msoy-export.swc"/>
     </java>
   </target>
 
@@ -269,11 +269,11 @@
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-incremental=true"/>
       <arg value="-output"/>
-      <arg value="dist/game-client.swf"/>
+      <arg value="${deploy.dir}/game-client.swf"/>
       <arg value="-file-specs"/>
       <arg value="src/as/Msoy.mxml"/>
     </exec>
-    <copy file="dist/game-client.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/game-client.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds our Flash client -->
@@ -289,11 +289,11 @@
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
-      <arg value="dist/game-client.swf"/>
+      <arg value="${deploy.dir}/game-client.swf"/>
       <arg value="-file-specs"/>
       <arg value="src/as/Msoy.mxml"/>
     </exec>
-    <copy file="dist/game-client.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/game-client.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds our avatar viewer thingy -->
@@ -305,11 +305,11 @@
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
-      <arg value="dist/avatarviewer.swf"/>
+      <arg value="${deploy.dir}/avatarviewer.swf"/>
       <arg value="-file-specs"/>
       <arg value="src/as/AvatarViewer.mxml"/>
     </exec>
-    <copy file="dist/avatarviewer.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds and signs our Java game client -->
@@ -447,7 +447,7 @@
     </javac>
     <!-- copy native libraries into dist/lib -->
     <copy todir="${deploy.dir}/lib">
-      <fileset dir="projects/narya/dist/lib" includes="**/libsignal.so"/>
+      <fileset dir="projects/narya/${deploy.dir}/lib" includes="**/libsignal.so"/>
     </copy>
   </target>
 
