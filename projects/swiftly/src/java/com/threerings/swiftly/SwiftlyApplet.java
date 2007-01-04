@@ -1,10 +1,14 @@
 package com.threerings.swiftly;
 
-import java.awt.*; 
-import java.applet.*;
+import javax.swing.JApplet;
+import javax.swing.JTextPane;
+import javax.swing.JScrollPane;
 
-public class SwiftlyApplet extends Applet {
+public class SwiftlyApplet extends JApplet {
     public void init() {
-        add(new TextArea(35, 85));
+        JTextPane textPane = new JTextPane();
+        JScrollPane scroller = new JScrollPane(textPane);
+        scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        add(scroller);
   }
 } 
