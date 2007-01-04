@@ -8,15 +8,15 @@ import java.util.List;
 
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.web.client.SwfEditorService;
+import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
  * Provides the server implementation of {@link ItemService}.
  */
-public class SwfEditorServlet extends MsoyServiceServlet
-    implements SwfEditorService
+public class SwiftlyServlet extends MsoyServiceServlet
+    implements SwiftlyService
 {
     public List<String> getFiles (WebCreds creds)
         throws ServiceException

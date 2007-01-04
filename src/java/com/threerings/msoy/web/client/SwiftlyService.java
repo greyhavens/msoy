@@ -11,7 +11,7 @@ import com.threerings.msoy.web.data.WebCreds;
 /**
  * Defines Swiftly Editor services available to the java web client.
  */
-public interface SwfEditorService extends RemoteService
+public interface SwiftlyService extends RemoteService
 {
     public List getFiles (WebCreds creds)
         throws ServiceException;
