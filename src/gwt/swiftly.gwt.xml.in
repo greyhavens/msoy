@@ -1,0 +1,6 @@
+<module>
+  <inherits name='shell'/>
+  <entry-point class='client.swiftly.index'/>
+  <public path="public/swiftly"/>
+  <source path="client/swiftly"/>
+</module>

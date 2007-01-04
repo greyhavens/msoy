@@ -110,15 +110,33 @@
     <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
           unless="gwt.present"/>
 
-    <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
-          classname="com.google.gwt.dev.GWTShell">
-      <arg value="-noserver"/>
-      <arg value="-port"/>
-      <arg value="${http_port}"/>
-      <arg value="-out"/>
-      <arg value="${gwtout.dir}"/>
-      <arg value="${page}/index.html"/>
-    </java>
+      <if>
+      <equals arg1="${platform.darwin}" arg2="true"/>
+      <then>
+        <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
+              classname="com.google.gwt.dev.GWTShell">
+          <jvmarg value="-XstartOnFirstThread"/>
+          <arg value="-noserver"/>
+          <arg value="-port"/>
+          <arg value="${http_port}"/>
+          <arg value="-out"/>
+          <arg value="${gwtout.dir}"/>
+          <arg value="${page}/index.html"/>
+        </java>
+      </then>
+      <else>
+        <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
+              classname="com.google.gwt.dev.GWTShell">
+          <arg value="-noserver"/>
+          <arg value="-port"/>
+          <arg value="${http_port}"/>
+          <arg value="-out"/>
+          <arg value="${gwtout.dir}"/>
+          <arg value="${page}/index.html"/>
+        </java>
+      </else>
+    </if>
+
   </target>
 
   <!-- regenerates a single i18n messages class -->
@@ -146,6 +164,7 @@
     <antcall target="gmsg"><param name="which" value="mail.Mail"/></antcall>
     <antcall target="gmsg"><param name="which" value="msgs.Msgs"/></antcall>
     <antcall target="gmsg"><param name="which" value="profile.Profile"/></antcall>
+    <antcall target="gmsg"><param name="which" value="swiftly.Swiftly"/></antcall>
     <antcall target="gmsg"><param name="which" value="world.World"/></antcall>
   </target>
 
@@ -165,7 +184,7 @@
   </target>
 
   <!-- builds our GWT web client -->
-  <property name="pages" value="catalog,game,group,inventory,mail,profile,world"/>
+  <property name="pages" value="catalog,game,group,inventory,mail,profile,swiftly,world"/>
   <target name="gclient" depends="prepare">
     <delete file="${gclient.buildstamp}"/>
     <for list="${pages}" param="page"><sequential>
@@ -316,20 +335,13 @@
   <target name="jclient" depends="dist">
     <taskdef resource="proguard/ant/task.properties"
              classpath="${extlib.dir}/proguard.jar"/>
-    <!-- On Mac OS X, rt.jar is cleverly renamed classes.jar -->
-    <condition property="isDarwin">
-      <and>
-        <os family="mac"/>
-        <os family="unix"/>
-      </and>
-    </condition>
     <condition property="rtClasses"
                value="${java.home}/../Classes/classes.jar">
-      <istrue value="${isDarwin}"/>
+      <istrue value="${platform.darwin}"/>
     </condition>
     <condition property="rtClasses"
                value="${java.home}/lib/rt.jar">
-      <isfalse value="${isDarwin}"/>
+      <isfalse value="${platform.darwin}"/>
     </condition>
     <mkdir dir="${deploy.dir}"/>
     <proguard configuration="etc/game-client.pro">
