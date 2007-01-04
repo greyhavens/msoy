@@ -5,7 +5,7 @@ import flash.display.Sprite;
 
 import flash.media.Sound;
 
-import com.threerings.msoy.export.AvatarInterface;
+import com.threerings.msoy.export.AvatarControl;
 
 [SWF(width="50", height="50")]
 public class Ballhead extends Sprite
@@ -14,19 +14,19 @@ public class Ballhead extends Sprite
     {
         _speakSound = Sound(new SPEAK_SOUND());
 
-        _iface = new AvatarInterface(this);
-        _iface.avatarChanged = setupVisual;
-        _iface.avatarSpoke = spoke;
-        _iface.addAction("start blushing", startBlushing);
-        _iface.addAction("stop blushing", stopBlushing);
+        _ctrl = new AvatarControl(this);
+        _ctrl.avatarChanged = setupVisual;
+        _ctrl.avatarSpoke = spoke;
+        _ctrl.addAction("start blushing", startBlushing);
+        _ctrl.addAction("stop blushing", stopBlushing);
 
         setupVisual();
     }
 
     protected function setupVisual () :void
     {
-        var orient :Number = _iface.getOrientation();
-        var walking :Boolean = _iface.isWalking();
+        var orient :Number = _ctrl.getOrientation();
+        var walking :Boolean = _ctrl.isWalking();
 
         graphics.clear();
 
@@ -65,7 +65,7 @@ public class Ballhead extends Sprite
 
     protected var _speakSound :Sound;
 
-    protected var _iface :AvatarInterface;
+    protected var _ctrl :AvatarControl;
 
     protected var _blushing :Boolean;
 
