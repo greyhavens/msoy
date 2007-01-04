@@ -42,10 +42,10 @@
   <target name="dist" depends="prepare,compile">
     <jar file="${deploy.dir}/swiftly-applet.jar"
          basedir="${deploy.dir}/classes" includes="**"/>
-    <copy todir="${deploy.dir}" file="src/xhtml/index.html" overwrite="true"/>
+    <copy todir="${deploy.dir}" file="src/xhtml/index.html"/>
   </target>
 
-  <target name="view">
+  <target name="view" depends="dist">
     <exec executable="appletviewer" failonerror="true">
       <arg line="${deploy.dir}/index.html"/>
     </exec>
