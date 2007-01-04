@@ -26,7 +26,10 @@ public class SwiftlyEditor extends JTabbedPane {
         public void setPage(String url) {
             try {
                 textPane.setPage(url);
-            } catch (IOException ie) {            
+            } catch (IOException ie) {
+                String errorMessage = "This page could not be loaded.\n" + "URL: " + url + "\n" +
+                    "Reason: " + ie;
+                textPane.setText(errorMessage);
             }
         }       
     }
@@ -41,7 +44,7 @@ public class SwiftlyEditor extends JTabbedPane {
 
         addTab(tabName, scroller);
         int tabIndex = getTabCount() - 1;
-        // ALT+tabIndex selects this tab. TODO don't less this go beyond 10.
+        // ALT+tabIndex selects this tab. TODO don't let this go beyond 10.
         setMnemonicAt(tabIndex, KeyEvent.VK_1 + tabIndex);
         setTabPage(tabIndex, url);
     }

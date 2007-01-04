@@ -1,5 +1,7 @@
 package com.threerings.msoy.swiftly.client;
 
+import java.awt.BorderLayout;
+
 import javax.swing.JApplet;
 import javax.swing.UIManager;
 
@@ -12,13 +14,17 @@ public class SwiftlyApplet extends JApplet {
             // this should just fall back on a working theme
         }
         editor = new SwiftlyEditor();
-        setContentPane(editor);
-        editor.setSize(800, 600);
+        toolbar = new SwiftlyToolbar();
 
-        // XXX temp. add a new example tabs local to my machine
-        editor.addEditorTab("file #1", "http://salton-billing.puzzlepirates.com/billing");
-        editor.addEditorTab("file #2", "http://salton-billing.banghowdy.com/billing");
+        add(toolbar, BorderLayout.PAGE_START);
+        add(editor, BorderLayout.CENTER);
+        setSize(800, 600);
+
+        // XXX temp. add a few example tabs
+        editor.addEditorTab("file #1", "http://localhost:8080/swiftly/index.html");
+        editor.addEditorTab("file #2", "http://localhost:8080/catalog/index.html");
     }
 
     protected SwiftlyEditor editor;
+    protected SwiftlyToolbar toolbar;
 } 
