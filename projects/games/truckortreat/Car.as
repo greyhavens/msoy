@@ -32,10 +32,10 @@ public class Car extends BaseSprite
     public function tick () :void
     {
         y += _speed * _direction;
-        if (y > _boardHeight) {
+        if (y > _boardHeight - _height) {
             y = Board.HORIZON - _height;
         } else if (y < Board.HORIZON - _height) {
-            y = _boardHeight;
+            y = _boardHeight - _height;
         }
     }
     
