@@ -26,12 +26,13 @@ public class TruckOrTreat extends Sprite
         // Create board and put a kid and some cars on it.
         _board = new Board();
         addChild(_board);
-        _kid = new Kid(180, 200, Kid.IMAGE_GHOST, _board);
-        addChild(_kid);
-        var car :Car = new Car(275, 150, Car.DOWN, _board);
+        var kid :Kid = new Kid(180, 200, Kid.IMAGE_GHOST, _board);
+        addChild(kid);
+        _kids[0] = kid;
+        var car :Car = new Car(275, 150, 10, Car.DOWN, _board);
         _cars[0] = car;
         addChild(car);
-        car = new Car(555, _board.getHeight(), Car.UP, _board);
+        car = new Car(555, _board.getHeight(), 5, Car.UP, _board);
         _cars[1] = car;
         addChild(car);
         
@@ -41,8 +42,8 @@ public class TruckOrTreat extends Sprite
         gameTimer.start();
         
         // Listen for keys being pressed and released.
-        stage.addEventListener(KeyboardEvent.KEY_DOWN, _kid.keyDownHandler);
-        stage.addEventListener(KeyboardEvent.KEY_UP, _kid.keyUpHandler);
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, kid.keyDownHandler);
+        stage.addEventListener(KeyboardEvent.KEY_UP, kid.keyUpHandler);
     }
     
     public static function log (msg :String) :void
@@ -56,7 +57,10 @@ public class TruckOrTreat extends Sprite
         for (var i :int = 0; i < _cars.length; i++) {
             _cars[i].tick();
         }
-        _kid.tick();
+        
+        for (var j :int = 0; j < _kids.length; j++) {
+            _kids[i].tick();
+        }
     }
     
     /** The game object. */
@@ -65,8 +69,8 @@ public class TruckOrTreat extends Sprite
     /** Game board. */
     protected var _board :Board;
     
-    /** The player's kid character. */
-    protected var _kid :Kid;
+    /** A list of characters, one for each player. */
+    protected var _kids :Array = [];
     
     /** A list of cars on the board. */
     protected var _cars :Array = [];

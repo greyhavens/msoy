@@ -4,18 +4,15 @@ import flash.display.Bitmap;
 
 public class Car extends BaseSprite
 {   
-    /** Default number of pixels car can move per tick. */
-    public static const DEFAULT_SPEED :int = 10;
-    
     /** Constants to keep track of whether car is going up or down. */
     public static const UP :int = -1;
     public static const DOWN :int = 1;
     
     /** Create a new Car object at the coordinates on the board given. */
-    public function Car (startX :int, startY :int, direction :int, board :Board)
+    public function Car (startX :int, startY :int, speed :int, direction :int, board :Board)
     {
         _boardHeight = board.getHeight();
-        _speed = DEFAULT_SPEED;
+        _speed = speed;
         var bitmap :Bitmap;
         // Set image based on direction we're driving.
         if (direction == UP) {
