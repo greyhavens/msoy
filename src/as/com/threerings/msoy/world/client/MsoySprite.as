@@ -173,7 +173,7 @@ public class MsoySprite extends MediaContainer
 
         // then, grab a reference to the shared event dispatcher
         Loader(_media).contentLoaderInfo.sharedEvents.addEventListener(
-            "msoyQuery", handleInterfaceQuery);
+            "msoyQuery", handleUserCodeQuery);
     }
 
     /**
@@ -193,7 +193,7 @@ public class MsoySprite extends MediaContainer
         // clean up
         if (_media is Loader) {
             Loader(_media).contentLoaderInfo.sharedEvents.removeEventListener(
-                "msoyQuery", handleInterfaceQuery);
+                "msoyQuery", handleUserCodeQuery);
         }
 
         super.shutdown(completely);
@@ -620,19 +620,17 @@ public class MsoySprite extends MediaContainer
     /**
      * Handle a query from our usercode content.
      */
-    protected function handleInterfaceQuery (evt :Object) :void
+    protected function handleUserCodeQuery (evt :Object) :void
     {
         // copy down the user functions
-        setUserFunctions(evt.functions);
+        setUserProperties(evt.userProps);
         // pass back ours
-        evt.functions = new Object();
-        populateInterfaceFunctions(evt.functions);
+        evt.msoyProps = new Object();
+        populateControlProperties(evt.msoyProps);
     }
 
-    protected function setUserFunctions (o :Object) :void
+    protected function setUserProperties (o :Object) :void
     {
-        _functions = o;
-
 //        // prototype for backwards compatability:
 //        var oldFunc :Function = (o["avatarChanged_v1"] as Function);
 //        if (oldFunc != null) {
@@ -643,9 +641,15 @@ public class MsoySprite extends MediaContainer
 //                    oldFunc(moving, orient);
 //                };
 //        }
+
+        // then, simply save the properties
+        _props = o;
     }
 
-    protected function populateInterfaceFunctions (o :Object) :void
+    /**
+     * Populate the properties we pass back to user-code.
+     */
+    protected function populateControlProperties (o :Object) :void
     {
         // nothing in the base class
     }
@@ -655,9 +659,9 @@ public class MsoySprite extends MediaContainer
      */
     protected function callUserCode (name :String, ... args) :*
     {
-        if (_functions != null) {
+        if (_props != null) {
             try {
-                var func :Function = (_functions[name] as Function);
+                var func :Function = (_props[name] as Function);
                 if (func != null) {
                     return func.apply(null, args);
                 }
@@ -680,8 +684,8 @@ public class MsoySprite extends MediaContainer
     /** Are we being edited? */
     protected var _editing :Boolean;
 
-    /** User functions. */
-    protected var _functions :Object;
+    /** Properties populated by *Control usercode. */
+    protected var _props :Object;
 
     /** The glow effect used for mouse hovering. */
     protected var _glow :Glow;

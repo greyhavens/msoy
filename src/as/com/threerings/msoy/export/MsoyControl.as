@@ -20,19 +20,19 @@ public class MsoyControl
         }
 
         var event :DynEvent = new DynEvent();
-        event.functions = new Object();
-        populateFunctions(event.functions);
+        event.userProps = new Object();
+        populateProperties(event.userProps);
         disp.root.loaderInfo.sharedEvents.dispatchEvent(event);
-        _functions = event.functions;
+        _props = event.msoyProps;
 
         disp.root.loaderInfo.addEventListener(
             Event.UNLOAD, handleUnload, false, 0, true);
     }
 
     /**
-     * Populate any functions that we provide back to metasoy.
+     * Populate any properties that we provide back to metasoy.
      */
-    protected function populateFunctions (o :Object) :void
+    protected function populateProperties (o :Object) :void
     {
         // nothing in base
     }
@@ -50,19 +50,21 @@ public class MsoyControl
      */
     protected function callMsoyCode (name :String, ... args) :*
     {
-        try {
-            var func :Function = (_functions[name] as Function);
-            if (func != null) {
-                return func.apply(null, args);
-            }
+        if (_props != null) {
+            try {
+                var func :Function = (_props[name] as Function);
+                if (func != null) {
+                    return func.apply(null, args);
+                }
 
-        } catch (err :Error) {
-            trace("Unable to call msoy code: " + err);
+            } catch (err :Error) {
+                trace("Unable to call msoy code: " + err);
+            }
         }
     }
 
-    /** The functions given us by metasoy. */
-    protected var _functions :Object;
+    /** The properties given us by metasoy. */
+    protected var _props :Object;
 }
 }
 

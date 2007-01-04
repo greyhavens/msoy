@@ -58,9 +58,9 @@ public class AvatarControl extends MsoyControl
         return _isWalking;
     }
 
-    override protected function populateFunctions (o :Object) :void
+    override protected function populateProperties (o :Object) :void
     {
-        super.populateFunctions(o);
+        super.populateProperties(o);
 
         o["avatarChanged_v1"] = avatarChanged_v1;
         o["avatarSpoke_v1"] = avatarSpoke_v1;

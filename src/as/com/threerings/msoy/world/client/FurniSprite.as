@@ -342,9 +342,10 @@ public class FurniSprite extends MsoySprite
         }
     }
 
-    override protected function populateInterfaceFunctions (o :Object) :void
+    override protected function populateControlProperties (o :Object) :void
     {
-        super.populateInterfaceFunctions(o);
+        super.populateControlProperties(o);
+
         o["getLocation_v1"] = getLocation_v1;
         o["setLocation_v1"] = setLocation_v1;
     }
