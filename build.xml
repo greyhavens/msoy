@@ -345,6 +345,14 @@
     <copy file="${deploy.dir}/game-client.jar" todir="pages/clients"/>
   </target>
 
+  <!-- builds our Swiftly applet -->
+  <target name="swiftlyclient" depends="dist">
+    <jar file="pages/clients/swiftly-applet.jar"
+         basedir="${deploy.dir}/classes">
+      <include name="com/threerings/msoy/swiftly/client/**"/>
+    </jar>
+  </target>
+
   <!-- generates additional methods for distributed object classes -->
   <target name="gendobj" depends="prepare">
     <taskdef name="dobj"
