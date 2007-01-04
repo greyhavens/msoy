@@ -280,7 +280,7 @@
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
   <target name="asquick">
-    <exec executable="${basedir}/projects/tools/extern/flex_sdk/bin/mxmlc" failonerror="true">
+    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
@@ -300,7 +300,7 @@
 
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare,aslib,exportlib">
-    <exec executable="${basedir}/projects/tools/extern/flex_sdk/bin/mxmlc" failonerror="true">
+    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.debug"/>
@@ -317,7 +317,7 @@
 
   <!-- builds our avatar viewer thingy -->
   <target name="avatarviewer" depends="asprepare,aslib">
-    <exec executable="${basedir}/projects/tools/extern/flex_sdk/bin/mxmlc" failonerror="true">
+    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>

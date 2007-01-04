@@ -4,4 +4,6 @@
 #
 # Runs the Flash compiler and greps out all the bullshit dependency output
 
-java -jar projects/tools/extern/flex_sdk/lib/mxmlc.jar "$@" | egrep -v "^(Reason|Recompile):"
+`dirname $0`/../projects/tools/extern/flex_sdk/bin/mxmlc "$@" | \
+    egrep -v "^(Reason|Recompile):" | \
+    egrep -v " was not processed,"
