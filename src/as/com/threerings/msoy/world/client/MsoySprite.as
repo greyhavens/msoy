@@ -458,11 +458,14 @@ public class MsoySprite extends MediaContainer
         (x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
         try {
-            if (_media is Loader && Loader(_media).content is Bitmap) {
-                var b :Bitmap = Bitmap(Loader(_media).content);
-                var p :Point = b.globalToLocal(new Point(x, y));
-                return b.bitmapData.hitTest(new Point(0, 0), 0xFF, p);
-            }
+// TODO: merely accessing contentLoaderInfo causes SecurityWarnings. Wahh???!
+//            if (_media is Loader &&
+//                    Loader(_media).contentLoaderInfo.childAllowsParent &&
+//                    (Loader(_media).content is Bitmap)) {
+//                var b :Bitmap = Bitmap(Loader(_media).content);
+//                var p :Point = b.globalToLocal(new Point(x, y));
+//                return b.bitmapData.hitTest(new Point(0, 0), 0xFF, p);
+//            }
         } catch (err :Error) {
             // nada
         }
