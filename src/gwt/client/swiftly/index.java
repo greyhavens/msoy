@@ -34,7 +34,7 @@ public class index extends MsoyEntryPoint
     public void onHistoryChanged (String token)
     {
         try {
-            // TODO: something
+            // TODO: Open editor to a specific project
         } catch (Exception e) {
             // TODO: display error
         }
@@ -68,9 +68,10 @@ public class index extends MsoyEntryPoint
         History.addHistoryListener(this);
         String initToken = History.getToken();
         if (initToken.length() > 0) {
+            // TODO: Load a specific project
             onHistoryChanged(initToken);
         } else {
-            // TODO: display a list of this player's projects
+            setContent(new SwiftlyPanel(_ctx));
         }
     }
 

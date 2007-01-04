@@ -359,7 +359,7 @@
 
   <!-- builds our Swiftly applet -->
   <target name="swiftlyclient" depends="dist">
-    <jar file="pages/clients/swiftly-applet.jar"
+    <jar file="pages/clients/swiftly-client.jar"
          basedir="${deploy.dir}/classes">
       <include name="com/threerings/msoy/swiftly/client/**"/>
     </jar>
