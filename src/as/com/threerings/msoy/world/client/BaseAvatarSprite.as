@@ -63,7 +63,7 @@ public class BaseAvatarSprite extends MsoySprite
 
     public function performAvatarSpoke () :void
     {
-        sendMessage("avatarSpoke", null);
+        callUserCode("avatarSpoke_v1");
     }
 
     /**
@@ -71,7 +71,7 @@ public class BaseAvatarSprite extends MsoySprite
      */
     public function getAvatarActions () :Array
     {
-        var arr :Array = (sendMessage("getActions", null) as Array);
+        var arr :Array = (callUserCode("getActions_v1") as Array);
         if (arr == null) {
             arr = [];
         }
@@ -84,7 +84,7 @@ public class BaseAvatarSprite extends MsoySprite
      */
     public function performAvatarAction (actionName :String) :void
     {
-        sendMessage("action", actionName);
+        callUserCode("action_v1", actionName);
     }
     
     /**
@@ -93,7 +93,7 @@ public class BaseAvatarSprite extends MsoySprite
      */
     protected function stanceDidChange () :void
     {
-        sendMessage("avatarChanged", [ isMoving(), loc.orient ]);
+        callUserCode("avatarChanged_v1", isMoving(), loc.orient);
     }
 }
 }

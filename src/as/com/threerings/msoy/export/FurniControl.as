@@ -10,13 +10,13 @@ import flash.events.TextEvent;
  * This file should be included by furniture, so that it can communicate
  * with the metasoy world.
  */
-public class FurniInterface extends MsoyInterface
+public class FurniControl extends MsoyControl
 {
     /**
      * Create a furni interface. The display object is your piece
      * of furni.
      */
-    public function FurniInterface (disp :DisplayObject)
+    public function FurniControl (disp :DisplayObject)
     {
         super(disp);
     }
@@ -31,7 +31,7 @@ public class FurniInterface extends MsoyInterface
      */
     public function getLocation () :Array
     {
-        return (dispatch("getLocation") as Array);
+        return (callMsoyCode("getLocation_v1") as Array);
     }
 
     /**
@@ -39,7 +39,7 @@ public class FurniInterface extends MsoyInterface
      */
     public function setLocation (loc :Array) :void
     {
-        dispatch("setLocation", loc);
+        callMsoyCode("setLocation_v1", loc);
     }
 }
 }

@@ -172,8 +172,8 @@ public class MsoySprite extends MediaContainer
         super.setupSwfOrImage(url);
 
         // then, grab a reference to the shared event dispatcher
-        _dispatch = (_media as Loader).contentLoaderInfo.sharedEvents;
-        _dispatch.addEventListener("msoyQuery", handleInterfaceQuery);
+        Loader(_media).contentLoaderInfo.sharedEvents.addEventListener(
+            "msoyQuery", handleInterfaceQuery);
     }
 
     /**
@@ -190,17 +190,13 @@ public class MsoySprite extends MediaContainer
                 MediaDesc.hashToString(_desc.hash), vid.playheadTime);
         }
 
-        super.shutdown(completely);
-
         // clean up
-        if (completely) {
-            // shut down the dispatch
-            if (_dispatch != null) {
-                _dispatch.removeEventListener("msoyQuery",
-                    handleInterfaceQuery);
-                _dispatch = null;
-            }
+        if (_media is Loader) {
+            Loader(_media).contentLoaderInfo.sharedEvents.removeEventListener(
+                "msoyQuery", handleInterfaceQuery);
         }
+
+        super.shutdown(completely);
     }
 
     /**
@@ -331,44 +327,44 @@ public class MsoySprite extends MediaContainer
         return _desc;
     }
 
-    /**
-     * Send a message to the client swf that we're representing.
-     */
-    protected function sendMessage (name :String, value :Object) :Object
-    {
-//        trace("sending [" + type + "=" + msg + "]");
-
-
-// Note:
-// I'm thinking that we just do not support old swfs with our interaction
-// API. This makes this AVM1 nonsense just go away.
-// If it turns out that this isn't possible, then perhaps we should
-// assign a different mimetype to old swfs so that we know as part of the
-// MediaDesc that it's AVM1
-
-        // do it both ways for now
-
-//        // old way
-//        if (_oldDispatch == null) {
-//            _oldDispatch = new LocalConnection();
-//            _oldDispatch.allowDomain("*");
-//            _oldDispatch.addEventListener(
-//                StatusEvent.STATUS, onLocalConnStatus);
-//        }
-//        try {
-//            _oldDispatch.send("_msoy" + _id, type, vals.join(";"));
-//        } catch (e :Error) {
-//            // nada
-//        }
-
-        // and the new way
-        // simply post an event across the security boundary
-        var de :DynamicEvent = new DynamicEvent("msoyMessage", false, false);
-        de.msoyName = name;
-        de.msoyValue = value;
-        _dispatch.dispatchEvent(de);
-        return de.msoyResponse;
-    }
+//    /**
+//     * Send a message to the client swf that we're representing.
+//     */
+//    protected function sendMessage (name :String, value :Object) :Object
+//    {
+////        trace("sending [" + type + "=" + msg + "]");
+//
+//
+//// Note:
+//// I'm thinking that we just do not support old swfs with our interaction
+//// API. This makes this AVM1 nonsense just go away.
+//// If it turns out that this isn't possible, then perhaps we should
+//// assign a different mimetype to old swfs so that we know as part of the
+//// MediaDesc that it's AVM1
+//
+//        // do it both ways for now
+//
+////        // old way
+////        if (_oldDispatch == null) {
+////            _oldDispatch = new LocalConnection();
+////            _oldDispatch.allowDomain("*");
+////            _oldDispatch.addEventListener(
+////                StatusEvent.STATUS, onLocalConnStatus);
+////        }
+////        try {
+////            _oldDispatch.send("_msoy" + _id, type, vals.join(";"));
+////        } catch (e :Error) {
+////            // nada
+////        }
+//
+//        // and the new way
+//        // simply post an event across the security boundary
+//        var de :DynamicEvent = new DynamicEvent("msoyMessage", false, false);
+//        de.msoyName = name;
+//        de.msoyValue = value;
+//        _dispatch.dispatchEvent(de);
+//        return de.msoyResponse;
+//    }
 
     /**
      * A callback called when there is a status event from using
@@ -626,40 +622,53 @@ public class MsoySprite extends MediaContainer
      */
     protected function handleInterfaceQuery (evt :Object) :void
     {
-        var name :String;
-        var val :Object;
-        var result :Object;
-        try {
-            name = String(evt.msoyName);
-            val = evt.msoyValue;
-        } catch (err :ReferenceError) {
-            // we don't understand, fail...
-            return;
-        }
+        // copy down the user functions
+        setUserFunctions(evt.functions);
+        // pass back ours
+        evt.functions = new Object();
+        populateInterfaceFunctions(evt.functions);
+    }
 
-        // handle the query
-        result = handleQuery(name, val);
+    protected function setUserFunctions (o :Object) :void
+    {
+        _functions = o;
 
-        try {
-            evt.msoyResponse = result;
-        } catch (err :ReferenceError) {
-            // silently fail
-        }
+//        // prototype for backwards compatability:
+//        var oldFunc :Function = (o["avatarChanged_v1"] as Function);
+//        if (oldFunc != null) {
+//            // make a new function that adapts to the old one
+//            o["avatarChanged_v2"] =
+//                function (moving :Boolean, orient :Number, newParam :String)
+//                :void {
+//                    oldFunc(moving, orient);
+//                };
+//        }
+    }
+
+    protected function populateInterfaceFunctions (o :Object) :void
+    {
+        // nothing in the base class
     }
 
     /**
-     * Handle a query from the sprite, using some of our interface code.
+     * Call an exposed function in usercode.
      */
-    protected function handleQuery (name :String, val :Object) :Object
+    protected function callUserCode (name :String, ... args) :*
     {
-        log.warning("Unknown query from usercode [name=" + name +
-            ", value=" + val + "].");
-        return null;
-    }
+        if (_functions != null) {
+            try {
+                var func :Function = (_functions[name] as Function);
+                if (func != null) {
+                    return func.apply(null, args);
+                }
 
-//    /** An id (hopefully unique on this machine) used to communicate with
-//     * AVM1 swfs over a LocalConnection. */
-//    protected var _id :String;
+            } catch (err :Error) {
+                log.warning("Error in user-code: " + err);
+                log.logStackTrace(err);
+            }
+        }
+        return undefined;
+    }
 
     /** Our Media descripter. */
     protected var _desc :MediaDesc;
@@ -671,14 +680,11 @@ public class MsoySprite extends MediaContainer
     /** Are we being edited? */
     protected var _editing :Boolean;
 
-    /** Used to dispatch events down to the swf we contain. */
-    protected var _dispatch :EventDispatcher;
+    /** User functions. */
+    protected var _functions :Object;
 
     /** The glow effect used for mouse hovering. */
     protected var _glow :Glow;
-
-//    /** A single LocalConnection used to communicate with all AVM1 media. */
-//    protected static var _oldDispatch :LocalConnection;
 
     [Embed(source="../../../../../../../rsrc/media/indian_h.png")]
     protected static const _loadingImgClass :Class;

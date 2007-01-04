@@ -4,11 +4,9 @@ import flash.display.DisplayObject;
 
 import flash.errors.IllegalOperationError;
 
-import flash.events.Event;
-
 /**
  */
-public class AvatarInterface extends MsoyInterface
+public class AvatarControl extends MsoyControl
 {
     /**
      * A place where you can attach a function that will get called
@@ -23,7 +21,7 @@ public class AvatarInterface extends MsoyInterface
 
     /**
      */
-    public function AvatarInterface (disp :DisplayObject)
+    public function AvatarControl (disp :DisplayObject)
     {
         super(disp);
     }
@@ -60,39 +58,36 @@ public class AvatarInterface extends MsoyInterface
         return _isWalking;
     }
 
-    override protected function handleQuery (name :String, val :Object) :Object
+    override protected function populateFunctions (o :Object) :void
     {
-        switch (name) {
-        case "avatarChanged":
-            _isWalking = Boolean(val[0]);
-            _orient = Number(val[1]);
-            if (avatarChanged != null) {
-                avatarChanged();
-            }
-            return null;
+        super.populateFunctions(o);
 
-        case "avatarSpoke":
-            if (avatarSpoke != null) {
-                avatarSpoke();
-            }
-            return null;
+        o["avatarChanged_v1"] = avatarChanged_v1;
+        o["avatarSpoke_v1"] = avatarSpoke_v1;
+        o["action_v1"] = doAction_v1;
+        o["getActions_v1"] = getActions_v1;
+    }
 
-        case "action":
-            doAction(val as String);
-            return null;
+    protected function avatarChanged_v1 (walking :Boolean, orient :Number) :void
+    {
+        _isWalking = walking;
+        _orient = orient;
+        if (avatarChanged != null) {
+            avatarChanged();
+        }
+    }
 
-        case "getActions":
-            return getActions();
-
-        default:
-            return super.handleQuery(name, val);
+    protected function avatarSpoke_v1 () :void
+    {
+        if (avatarSpoke != null) {
+            avatarSpoke();
         }
     }
 
     /** 
      * Get the names of all the current actions.
      */
-    protected function getActions () :Array
+    protected function getActions_v1 () :Array
     {
         var actions :Array = [];
         for (var name :String in _actions) {
@@ -104,7 +99,7 @@ public class AvatarInterface extends MsoyInterface
     /**
      * Have an avatar do the action.
      */
-    protected function doAction (name :String) :void
+    protected function doAction_v1 (name :String) :void
     {
         // try invoking the callback function for the action.
         try {

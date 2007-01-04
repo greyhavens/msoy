@@ -97,7 +97,7 @@ public class FurniSprite extends MsoySprite
     public function wasTraversed (entering :Boolean) :void
     {
         // TODO: figure out which messages we want to send to doors
-        sendMessage("action", entering ? "bodyEntered" : "bodyLeft");
+        callUserCode("action_v1", entering ? "bodyEntered" : "bodyLeft");
     }
 
     protected function checkPerspective () :void 
@@ -342,31 +342,23 @@ public class FurniSprite extends MsoySprite
         }
     }
 
-    override protected function handleQuery (name :String, val :Object) :Object
+    override protected function populateInterfaceFunctions (o :Object) :void
     {
-        switch (name) {
-        case "getLocation":
-            return [ loc.x, loc.y, loc.z, loc.orient ];
-
-        case "setLocation":
-            handleSetLocation(val);
-            return null;
-
-        default:
-            return super.handleQuery(name, val);
-        }
+        super.populateInterfaceFunctions(o);
+        o["getLocation_v1"] = getLocation_v1;
+        o["setLocation_v1"] = setLocation_v1;
     }
 
-    /**
-     * Helper method for our handleQuery, to ensure that the location
-     * we get from usercode is proper, etc.
-     */
-    protected function handleSetLocation (val :Object) :void
+    protected function getLocation_v1 () :Array
+    {
+        return [ loc.x, loc.y, loc.z, loc.orient ];
+    }
+
+    protected function setLocation_v1 (loc :Array) :void
     {
         if (_editing) {
             return; // do not allow movement during editing
         }
-        var loc :Array = (val as Array);
         if (loc == null || loc.length < 3) {
             return; // don't fuck up
         }
