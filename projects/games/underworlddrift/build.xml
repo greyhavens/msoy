@@ -31,7 +31,7 @@
   </target>
 
   <target name="dist" depends="compile">
-    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/7426dc0cbfbf6e214a219b9fbc05c16f81756b57.swf" />
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/e7747aa7e977cd4325bb7c7cad2448e3b83675d3.swf" />
   </target>
 
 </project>
