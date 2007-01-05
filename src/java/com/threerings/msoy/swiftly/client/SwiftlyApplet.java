@@ -34,8 +34,9 @@ public class SwiftlyApplet extends JApplet {
         }
 
         // XXX temp. add a few example tabs
-        _editor.addEditorTab("file #1", "http://localhost:8080/swiftly/index.html");
-        _editor.addEditorTab("file #2", "http://localhost:8080/catalog/index.html");
+        URL base = getDocumentBase();
+        _editor.addEditorTab("file #1", base + "index.html");
+        _editor.addEditorTab("file #2", base + "index.html");
 
         setStatus("Welcome to Swiftly!");
     }
