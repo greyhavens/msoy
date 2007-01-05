@@ -19,7 +19,7 @@ public class SwiftlyTextPane extends JTextPane {
     protected RedoAction redoAction = new RedoAction();
 
     protected class UndoHandler implements UndoableEditListener {
-        public void undoableEditHappened(UndoableEditEvent e) {
+        public void undoableEditHappened (UndoableEditEvent e) {
             _undo.addEdit(e.getEdit());
             undoAction.update();
             redoAction.update();
@@ -27,12 +27,12 @@ public class SwiftlyTextPane extends JTextPane {
     }
 
     protected class UndoAction extends AbstractAction {
-        public UndoAction() {
+        public UndoAction () {
             super("Undo");
             setEnabled(false);
         }
 
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed (ActionEvent e) {
             try {
                 _undo.undo();
             } catch (CannotUndoException ex) {
@@ -43,7 +43,7 @@ public class SwiftlyTextPane extends JTextPane {
             redoAction.update();
         }
 
-        protected void update() {
+        protected void update () {
             if(_undo.canUndo()) {
                 setEnabled(true);
                 putValue(Action.NAME, _undo.getUndoPresentationName());
@@ -56,12 +56,12 @@ public class SwiftlyTextPane extends JTextPane {
     }
 
     protected class RedoAction extends AbstractAction {
-        public RedoAction() {
+        public RedoAction () {
             super("Redo");
             setEnabled(false);
         }
 
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed (ActionEvent e) {
             try {
                 _undo.redo();
             } catch (CannotRedoException ex) {
@@ -72,7 +72,7 @@ public class SwiftlyTextPane extends JTextPane {
             undoAction.update();
         }
 
-        protected void update() {
+        protected void update () {
             if(_undo.canRedo()) {
                 setEnabled(true);
                 putValue(Action.NAME, _undo.getRedoPresentationName());

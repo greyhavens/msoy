@@ -6,17 +6,24 @@ import javax.swing.JToolBar;
 public class SwiftlyToolbar extends JToolBar {
     public SwiftlyToolbar (SwiftlyApplet applet) {
         _applet = applet;
-        JButton button = new JButton("Save");
-        add(button);
-        button = new JButton("Compile");
-        add(button);
-        button = new JButton("Play");
-        add(button);
-        button = new JButton("Undo");
-        add(button);
-        button = new JButton("Redo");
-        add(button);
+        setupToolbar();
+    }
+
+    protected void setupToolbar () {
+        addButton("Save");
+        addButton("Compile");
+        addButton("Play");
+        addButton("Undo");
+        addButton("Redo");
+        // TODO let's try to get close buttons on the tabs
+        addButton("Close");
         setFloatable(false);
+    }
+
+    protected JButton addButton (String title) {
+        JButton button = new JButton(title);
+        add(button);
+        return button;
     }
 
     protected SwiftlyApplet _applet;

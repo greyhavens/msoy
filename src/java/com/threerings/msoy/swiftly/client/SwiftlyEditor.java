@@ -11,7 +11,7 @@ import javax.swing.JScrollPane;
 
 public class SwiftlyEditor extends JTabbedPane {
 
-    public SwiftlyEditor(SwiftlyApplet applet) {
+    public SwiftlyEditor (SwiftlyApplet applet) {
         super();
         _applet = applet;
     }
@@ -23,11 +23,11 @@ public class SwiftlyEditor extends JTabbedPane {
             _textPane = pane;
         }
         
-        public JTextPane getTextPane() {
+        public JTextPane getTextPane () {
             return _textPane; 
         }       
 
-        public void setPage(String url) {
+        public void setPage (String url) {
             try {
                 _textPane.setPage(url);
             } catch (IOException ie) {
@@ -40,7 +40,7 @@ public class SwiftlyEditor extends JTabbedPane {
         protected JTextPane _textPane;
     }
 
-    public void addEditorTab(String tabName, String url) {
+    public void addEditorTab (String tabName, String url) {
         SwiftlyTextPane textPane = new SwiftlyTextPane();
         // TODO make these colors setable by the user?
         textPane.setForeground(Color.white);
@@ -54,7 +54,7 @@ public class SwiftlyEditor extends JTabbedPane {
         setTabPage(tabIndex, url);
     }
 
-    public void setTabPage(int tabIndex, String url) {
+    public void setTabPage (int tabIndex, String url) {
         SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getComponentAt(tabIndex);
         pane.setPage(url);
     }

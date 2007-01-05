@@ -9,7 +9,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class SwiftlyProjectPanel extends JPanel {
 
-    public SwiftlyProjectPanel(SwiftlyApplet applet) {
+    public SwiftlyProjectPanel (SwiftlyApplet applet) {
         super(new BorderLayout());
         _applet = applet;
         DefaultMutableTreeNode top = new DefaultMutableTreeNode("My Awesome Project");

@@ -32,13 +32,19 @@ public class SwiftlyApplet extends JApplet {
         } catch (Exception e) {
             System.err.println("createGUI didn't successfully complete");
         }
+
+        // XXX temp. add a few example tabs
+        _editor.addEditorTab("file #1", "http://localhost:8080/swiftly/index.html");
+        _editor.addEditorTab("file #2", "http://localhost:8080/catalog/index.html");
+
+        setStatus("Welcome to Swiftly!");
     }
 
-    public void setStatus(String msg) {
+    public void setStatus (String msg) {
         _statusbar.setLabel(msg);
     }
 
-    protected void createGUI() {
+    protected void createGUI () {
         // setup the components
         _editor = new SwiftlyEditor(this);
         _editor.setMinimumSize(new Dimension(400, 0));
@@ -55,12 +61,6 @@ public class SwiftlyApplet extends JApplet {
         _contentPane.add(_toolbar, BorderLayout.PAGE_START);
         _contentPane.add(_splitPane, BorderLayout.CENTER);
         _contentPane.add(_statusbar, BorderLayout.SOUTH);
-
-        // XXX temp. add a few example tabs
-        _editor.addEditorTab("file #1", "http://localhost:8080/swiftly/index.html");
-        _editor.addEditorTab("file #2", "http://localhost:8080/catalog/index.html");
-
-        setStatus("Welcome to Swiftly!");
     }
 
     protected Container _contentPane;
