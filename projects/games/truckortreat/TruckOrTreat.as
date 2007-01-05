@@ -24,7 +24,7 @@ public class TruckOrTreat extends Sprite
     {
         _gameObj = gameObj;
         // Create board. This will create the cars and kids, too.
-        addChild(_board = new Board());
+        addChild(_board = new Board(_gameObj));
         _kids = _board.getKids();
         
         // Set up a ticker that will control movement and new candy placement.

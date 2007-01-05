@@ -16,24 +16,23 @@ public class Kid extends BaseSprite
         _boardWidth = board.width;
         _boardHeight = board.height;
         _speed = DEFAULT_SPEED;
-        _health = STARTING_HEALTH;
+        _lives = STARTING_LIVES;
         super(startX, startY, getBitmap(image));
     }
     
-    public function isDead () :Boolean
+    /** Decrement number of lives and return the number remaining. */
+    public function die () :int
     {
-        if (_health <= 0) {
-            return true;
-        } else {
-            return false;
-        }
+        --_lives;
+        trace("Oh nos, death! " + _lives + " lives left.");
+        return _lives;
     }
     
     /** 
      * Set variables determining direction of motion appropriately when a key
      * is pressed.
      */
-    public function keyDownHandler(event :KeyboardEvent) :void
+    public function keyDownHandler (event :KeyboardEvent) :void
     {
         switch (event.keyCode) {
         case Keyboard.UP:
@@ -54,7 +53,7 @@ public class Kid extends BaseSprite
     }
     
     /** Stop motion in given direction when the key is released. */
-    public function keyUpHandler(event :KeyboardEvent) :void
+    public function keyUpHandler (event :KeyboardEvent) :void
     {
         if (event.keyCode == Keyboard.UP || Keyboard.DOWN) {
             _moveY = 0;
@@ -79,13 +78,20 @@ public class Kid extends BaseSprite
     }
     
     /** Set the kid's speed to a new value. */
-    public function setSpeed(newSpeed :int) :void
+    public function setSpeed (newSpeed :int) :void
     {
         _speed = newSpeed;
     }
     
+    /** Immediately move to the specified coordinates. */
+    public function respawn (startX :int, startY :int) :void
+    {
+        x = startX;
+        y = startY;
+    }
+    
     /** Get the bitmap used to draw the kid. */
-    protected function getBitmap(image :int) :Bitmap
+    protected function getBitmap (image :int) :Bitmap
     {
         switch (image) {
           case IMAGE_VAMPIRE:
@@ -107,15 +113,15 @@ public class Kid extends BaseSprite
     /** Current speed (in pixels per tick). */
     protected var _speed :int;
 
-    /** Kid's health level. */
-    protected var _health :int;
+    /** Number of lives. */
+    protected var _lives :int;
     
     /** Dimensions of board we're drawn on. */
     protected var _boardHeight :int;
     protected var _boardWidth :int;
     
-    /** Initial health level. */
-    protected static const STARTING_HEALTH :int = 3;
+    /** Initial number of lives. */
+    protected static const STARTING_LIVES :int = 3;
     
     /** Default number of pixels kid can move per tick. */
     protected static const DEFAULT_SPEED :int = 5;

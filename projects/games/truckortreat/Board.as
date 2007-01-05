@@ -3,6 +3,9 @@ package {
 import flash.display.Bitmap;
 import flash.events.TimerEvent;
 
+import com.threerings.ezgame.Game;
+import com.threerings.ezgame.EZGame;
+
 public class Board extends BaseSprite
 {   
     /** Lists of sidewalk coordinates. These are safe spots to start on. */
@@ -12,9 +15,11 @@ public class Board extends BaseSprite
     /** The y coordinate of the horizon line. */
     public static const HORIZON :int = 157;
     
-    public function Board ()
+    public function Board (gameObj :EZGame)
     {
         super(0, 0, Bitmap(new backgroundAsset()));
+        
+        _gameObj = gameObj;
         
         // Add kids and cars.
         var kid :Kid = new Kid(180, 200, Kid.IMAGE_GHOST, this);
@@ -46,7 +51,17 @@ public class Board extends BaseSprite
             // cars so if a player gets a health power up at the same time as 
             // a death dealing hit by a car, he or she will survive.
             for each (car in _cars) {
-                
+                if (kid.hitTestObject(car)) {
+                    if (kid.die() <= 0) {
+                        // TODO: endGame() takes one or more winning player 
+                        // indices. Since we only have one player currently, 
+                        // make that one the winner despite having just died.
+                        _gameObj.endGame.(0);
+                    } else {
+                        // TODO: randomize respawn location
+                        kid.respawn(180, 200);
+                    }
+                }
             }
         }
     }
@@ -56,6 +71,9 @@ public class Board extends BaseSprite
     {
         return _kids;
     }
+    
+    /** The game object. */
+    protected var _gameObj :EZGame;
     
     /** A list of characters, one for each player. */
     protected var _kids :Array = [];

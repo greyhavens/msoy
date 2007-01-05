@@ -2,7 +2,6 @@ package {
 
 import flash.display.Sprite;
 import flash.display.Bitmap;
-import flash.display.BitmapData;
 
 /** This class should be considered abstract. */
 
