@@ -1,9 +1,12 @@
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.net.URL;
 
 import javax.swing.JApplet;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 public class SwiftlyApplet extends JApplet {
@@ -13,24 +16,45 @@ public class SwiftlyApplet extends JApplet {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             // this should just fall back on a working theme
+            // TODO perhaps we should setup another try block and set this explicitly
+            // UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         }
+
+        // Execute a job on the event-dispatching thread: creating this applet's GUI.
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
+                    createGUI();
+                }
+            });
+        } catch (Exception e) {
+            System.err.println("createGUI didn't successfully complete");
+        }
+    }
+
+    protected void createGUI() {
+        // setup the components
         _editor = new SwiftlyEditor();
-        // TODO _editor.setMinimumSize(minimumSize);
+        _editor.setMinimumSize(new Dimension(400, 0));
         _projectPanel = new SwiftlyProjectPanel();
+        _projectPanel.setMinimumSize(new Dimension(0, 0));
         _toolbar = new SwiftlyToolbar();
         _statusbar = new SwiftlyStatusBar();
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _editor, _projectPanel);
+        // TODO apparently GTK does not have the graphic for this. What to do?
         _splitPane.setOneTouchExpandable(true);
         _splitPane.setDividerLocation(650);
 
-        add(_toolbar, BorderLayout.PAGE_START);
-        add(_splitPane, BorderLayout.CENTER);
-        add(_statusbar, BorderLayout.SOUTH);
-        setSize(800, 600);
+        // layout the window
+        getContentPane().add(_toolbar, BorderLayout.PAGE_START);
+        getContentPane().add(_splitPane, BorderLayout.CENTER);
+        getContentPane().add(_statusbar, BorderLayout.SOUTH);
 
         // XXX temp. add a few example tabs
-        _editor.addEditorTab("file #1", "http://localhost:8080/swiftly/index.html");
-        _editor.addEditorTab("file #2", "http://localhost:8080/catalog/index.html");
+        URL codeBase = getCodeBase();
+        System.out.println(codeBase);
+        _editor.addEditorTab("file #1", codeBase + "/swiftly/index.html");
+        _editor.addEditorTab("file #2", codeBase + "/catalog/index.html");
 
         _statusbar.setLabel("Welcome to Swiftly!");
     }

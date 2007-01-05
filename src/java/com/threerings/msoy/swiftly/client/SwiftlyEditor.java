@@ -1,5 +1,6 @@
 package com.threerings.msoy.swiftly.client;
 
+import java.awt.Color;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -34,12 +35,11 @@ public class SwiftlyEditor extends JTabbedPane {
         protected JTextPane _textPane;
     }
 
-    public class SwiftlyTextPane extends JTextPane {
-        // TODO this class is going to have all our syntax highlighting bits
-    }
-
     public void addEditorTab(String tabName, String url) {
         SwiftlyTextPane textPane = new SwiftlyTextPane();
+        // TODO make these colors setable by the user?
+        textPane.setForeground(Color.white);
+        textPane.setBackground(Color.black);
         SwiftlyEditorScrollPane scroller = new SwiftlyEditorScrollPane(textPane);
 
         addTab(tabName, scroller);
