@@ -5,7 +5,6 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 public class SwiftlyStatusBar extends JPanel {
 
