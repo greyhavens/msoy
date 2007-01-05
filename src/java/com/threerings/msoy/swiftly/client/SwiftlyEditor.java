@@ -11,6 +11,11 @@ import javax.swing.JScrollPane;
 
 public class SwiftlyEditor extends JTabbedPane {
 
+    public SwiftlyEditor(SwiftlyApplet applet) {
+        super();
+        _applet = applet;
+    }
+
     public class SwiftlyEditorScrollPane extends JScrollPane {
         public SwiftlyEditorScrollPane(SwiftlyTextPane pane) {
             super(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
@@ -53,4 +58,6 @@ public class SwiftlyEditor extends JTabbedPane {
         SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getComponentAt(tabIndex);
         pane.setPage(url);
     }
+
+    protected SwiftlyApplet _applet;
 }

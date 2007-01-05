@@ -9,8 +9,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 public class SwiftlyProjectPanel extends JPanel {
 
-    public SwiftlyProjectPanel() {
+    public SwiftlyProjectPanel(SwiftlyApplet applet) {
         super(new BorderLayout());
+        _applet = applet;
         DefaultMutableTreeNode top = new DefaultMutableTreeNode("My Awesome Project");
         top.add(new DefaultMutableTreeNode("File 1"));
         top.add(new DefaultMutableTreeNode("File 2"));
@@ -19,6 +20,7 @@ public class SwiftlyProjectPanel extends JPanel {
         add(_scrollPane);
     }
 
+    protected SwiftlyApplet _applet;
     protected JTree _tree;
     protected JScrollPane _scrollPane;
 }

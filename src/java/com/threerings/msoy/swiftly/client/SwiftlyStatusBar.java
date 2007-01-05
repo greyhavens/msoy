@@ -8,8 +8,9 @@ import javax.swing.border.BevelBorder;
 
 public class SwiftlyStatusBar extends JPanel {
 
-    public SwiftlyStatusBar() {
+    public SwiftlyStatusBar(SwiftlyApplet applet) {
         super(new BorderLayout());
+        _applet = applet;
         _label = new JLabel();
         add(_label, BorderLayout.CENTER);
         setBorder(new BevelBorder(BevelBorder.LOWERED));
@@ -19,5 +20,6 @@ public class SwiftlyStatusBar extends JPanel {
         _label.setText(message);
     }
 
+    protected SwiftlyApplet _applet;
     protected JLabel _label;
 }

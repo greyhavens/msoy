@@ -4,7 +4,8 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 public class SwiftlyToolbar extends JToolBar {
-    public SwiftlyToolbar () {
+    public SwiftlyToolbar (SwiftlyApplet applet) {
+        _applet = applet;
         JButton button = new JButton("Save");
         add(button);
         button = new JButton("Compile");
@@ -17,4 +18,6 @@ public class SwiftlyToolbar extends JToolBar {
         add(button);
         setFloatable(false);
     }
+
+    protected SwiftlyApplet _applet;
 }
