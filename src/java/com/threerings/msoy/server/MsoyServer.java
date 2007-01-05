@@ -55,6 +55,10 @@ import com.threerings.msoy.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.persist.ProfileRepository;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
+import com.threerings.msoy.swiftly.server.SwiftlyManager;
+
+
 
 import static com.threerings.msoy.Log.log;
 
@@ -95,6 +99,9 @@ public class MsoyServer extends WhirledServer
 
     /** The parlor manager in operation on this server. */
     public static ParlorManager parlorMan = new ParlorManager();
+
+    /** Our runtime swiftly editor manager. */
+    public static SwiftlyManager swiftMan = new SwiftlyManager();
 
     /** The lobby registry for this server. */
     public static LobbyRegistry lobbyReg = new LobbyRegistry();
@@ -212,6 +219,7 @@ public class MsoyServer extends WhirledServer
         ProfileRepository profileRepo = new ProfileRepository(conProv);
         groupRepo = new GroupRepository(conProv);
         MailRepository mailRepo = new MailRepository(conProv);
+        SwiftlyProjectRepository swiftRepo = new SwiftlyProjectRepository(conProv);
 
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);
@@ -223,6 +231,7 @@ public class MsoyServer extends WhirledServer
         mailMan.init(mailRepo, memberRepo);
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
+        swiftMan.init(swiftRepo);
         lobbyReg.init(invmgr);
         GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {
             public int getUserId (ClientObject cliObj)
