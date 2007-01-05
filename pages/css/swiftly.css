@@ -1,0 +1,13 @@
+/* Swiftly specific formatting */
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+}
+
+.swiftlyPanel {
+  border: 1px solid;
+  width: 100%;
+  height: 100%;
+}

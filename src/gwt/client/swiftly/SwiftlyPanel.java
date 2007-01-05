@@ -16,14 +16,16 @@ public class SwiftlyPanel extends VerticalPanel
 {
     public SwiftlyPanel (SwiftlyContext ctx)
     {
-        Widget display;
-        setWidth("100%");        
+        setStyleName("swiftlyPanel");
+
         add(new Label("Sunrise, sunset, swiftly flow the days"));
-        display = WidgetUtil.createApplet(
+
+        Widget display = WidgetUtil.createApplet(
             "swiftly", "/clients/swiftly-client.jar",
             "com.threerings.msoy.swiftly.client.SwiftlyApplet", "100%", "100%",
             new String[] {});
-
+        display.setHeight("100%");
         add(display);
+        setCellHeight(display, "100%");
     }
 }
