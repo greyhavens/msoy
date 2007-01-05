@@ -62,6 +62,12 @@ public class SwiftlyApplet extends JApplet {
         _contentPane.add(_toolbar, BorderLayout.PAGE_START);
         _contentPane.add(_splitPane, BorderLayout.CENTER);
         _contentPane.add(_statusbar, BorderLayout.SOUTH);
+
+        // popup the project selection window
+        // TODO don't popup if we already know our project
+        // XXX TEMP list of projects
+        String[] projectList = {"project1", "project2", "project3"};
+        _projectWindow = new SwiftlyProjectWindow(projectList);
     }
 
     protected Container _contentPane;
@@ -69,5 +75,6 @@ public class SwiftlyApplet extends JApplet {
     protected SwiftlyToolbar _toolbar;
     protected SwiftlyStatusBar _statusbar;
     protected SwiftlyProjectPanel _projectPanel;
+    protected SwiftlyProjectWindow _projectWindow;
     protected JSplitPane _splitPane;
 } 
