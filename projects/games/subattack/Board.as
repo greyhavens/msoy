@@ -2,18 +2,18 @@ package {
 
 import flash.events.Event;
 
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
 public class Board
 {
-    public function Board (gameObj :EZGame, seaDisplay :SeaDisplay)
+    public function Board (gameCtrl :EZGameControl, seaDisplay :SeaDisplay)
     {
-        _gameObj = gameObj;
+        _gameCtrl = gameCtrl;
         _seaDisplay = seaDisplay;
 
-        var playerCount :int = _gameObj.getPlayerCount();
+        var playerCount :int = _gameCtrl.getPlayerCount();
         _width = int(DIMENSIONS[playerCount][0]);
         _height = int(DIMENSIONS[playerCount][1]);
 
@@ -25,14 +25,14 @@ public class Board
         }
 
         // create a submarine for each player
-        var names :Array = gameObj.getPlayerNames();
+        var names :Array = gameCtrl.getPlayerNames();
         var sub :Submarine;
         for (ii = 0; ii < names.length; ii++) {
             var xx :int = getStartingX(ii);
             var yy :int = getStartingY(ii);
 
             sub = new Submarine(ii, String(names[ii]), xx, yy, this);
-            _gameObj.getUserCookie(ii, sub.gotPlayerCookie);
+            _gameCtrl.getUserCookie(ii, sub.gotPlayerCookie);
             _seaDisplay.addChild(sub);
             _subs[ii] = sub;
 
@@ -42,7 +42,7 @@ public class Board
 
         // if we're a player, put our submarine last, so that it
         // shows up always on top of other submarines
-        var myIndex :int = gameObj.getMyIndex();
+        var myIndex :int = gameCtrl.getMyIndex();
         if (myIndex != -1) {
             sub = (_subs[myIndex] as Submarine);
             _seaDisplay.setChildIndex(sub, _seaDisplay.numChildren - 1);
@@ -51,13 +51,13 @@ public class Board
 
         _seaDisplay.addEventListener(Event.ENTER_FRAME, enterFrame);
 
-        _gameObj.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
-        if (gameObj.isInPlay()) {
+        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        if (gameCtrl.isInPlay()) {
             gameDidStart(null);
         } else {
-            _gameObj.addEventListener(StateChangedEvent.GAME_STARTED,
+            _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED,
                 gameDidStart);
-            _gameObj.addEventListener(StateChangedEvent.GAME_ENDED,
+            _gameCtrl.addEventListener(StateChangedEvent.GAME_ENDED,
                 gameDidEnd);
         }
     }
@@ -170,7 +170,7 @@ public class Board
                 killCount++;
                 _totalDeaths++;
 
-                _gameObj.localChat(killer.getPlayerName() + " has shot " +
+                _gameCtrl.localChat(killer.getPlayerName() + " has shot " +
                     sub.getPlayerName());
             }
         }
@@ -215,16 +215,16 @@ public class Board
     protected function gameDidStart (event :StateChangedEvent) :void
     {
         // player 0 starts the ticker
-        if (_gameObj.getMyIndex() == 0) {
-            _gameObj.startTicker("tick", 100);
+        if (_gameCtrl.getMyIndex() == 0) {
+            _gameCtrl.startTicker("tick", 100);
         }
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
-        var mydex :int = _gameObj.getMyIndex();
+        var mydex :int = _gameCtrl.getMyIndex();
         if (mydex >= 0) {
-            _gameObj.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
+            _gameCtrl.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
         }
     }
 
@@ -298,8 +298,8 @@ public class Board
 
         // maybe end the game and declare them winners
         if (hiScore >= 5 ||
-                _totalDeaths >= (_gameObj.getPlayerCount() * 5)) {
-            _gameObj.endGame.apply(null, winners);
+                _totalDeaths >= (_gameCtrl.getPlayerCount() * 5)) {
+            _gameCtrl.endGame.apply(null, winners);
         }
     }
 
@@ -422,8 +422,8 @@ public class Board
         }
     }
 
-    /** The game object. */
-    protected var _gameObj :EZGame;
+    /** The game Control. */
+    protected var _gameCtrl :EZGameControl;
 
     /** The 'sea' where everything lives. */
     protected var _seaDisplay :SeaDisplay;

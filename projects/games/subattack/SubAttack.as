@@ -5,15 +5,17 @@ import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.FocusEvent;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
+
+import flash.text.TextField;
 
 import flash.ui.Keyboard;
 
 import flash.utils.getTimer; // function import
 
-import com.threerings.ezgame.Game;
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
@@ -23,7 +25,6 @@ import com.threerings.ezgame.MessageReceivedListener;
 
 [SWF(width="416", height="416")]
 public class SubAttack extends Sprite
-    implements Game
 {
     /** How many tiles does our vision extend past our tile? */
     public static const VISION_TILES :int = 6;
@@ -42,17 +43,15 @@ public class SubAttack extends Sprite
         masker.graphics.endFill();
         this.mask = masker;
         addChild(masker); // the mask must be added to the display
-    }
 
-    // from Game
-    public function setGameObject (gameObj :EZGame) :void
-    {
-        _gameObj = gameObj;
-        _board = new Board(gameObj, _seaDisplay);
-        _myIndex = _gameObj.getMyIndex();
+        _gameCtrl = new EZGameControl(this);
+        _board = new Board(_gameCtrl, _seaDisplay);
+        _myIndex = _gameCtrl.getMyIndex();
 
         if (_myIndex != -1) {
-            stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+            // for focusability
+            addChild(new TextField());
+            addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
 
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
@@ -78,7 +77,7 @@ public class SubAttack extends Sprite
                     _queued = [ action ];
 
                 } else {
-                    _gameObj.sendMessage("sub" + _myIndex, [ action ]);
+                    _gameCtrl.sendMessage("sub" + _myIndex, [ action ]);
                     _lastSent = now;
                 }
             }
@@ -91,7 +90,7 @@ public class SubAttack extends Sprite
         if (_queued != null) {
             var now :int = getTimer();
             if ((now - _lastSent) >= SEND_THROTTLE) {
-                _gameObj.sendMessage("sub" + _myIndex, _queued);
+                _gameCtrl.sendMessage("sub" + _myIndex, _queued);
                 _lastSent = now;
                 _queued = null;
             }
@@ -127,8 +126,8 @@ public class SubAttack extends Sprite
         }
     }
 
-    /** The game object. */
-    protected var _gameObj :EZGame;
+    /** The game control. */
+    protected var _gameCtrl :EZGameControl;
 
     /** Represents our board. */
     protected var _board :Board;
