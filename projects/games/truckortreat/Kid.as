@@ -13,7 +13,8 @@ public class Kid extends BaseSprite
     /** Create a new Kid object at the coordinates on the board given. */
     public function Kid (startX :int, startY :int, image :int, board :Board)
     {
-        _boardWidth = board.getWidth(); _boardHeight = board.getHeight();
+        _boardWidth = board.width;
+        _boardHeight = board.height;
         _speed = DEFAULT_SPEED;
         _health = STARTING_HEALTH;
         super(startX, startY, getBitmap(image));
@@ -68,11 +69,11 @@ public class Kid extends BaseSprite
     {
         var deltaX :int = _speed * _moveX;
         var deltaY :int = _speed * _moveY;
-        if (0 <= x + deltaX && x + deltaX + _width <= _boardWidth) {
+        if (0 <= x + deltaX && x + deltaX + width <= _boardWidth) {
             x += deltaX;
         }
-        if (Board.HORIZON - _height <= y + deltaY && 
-            y + deltaY + _height <= _boardHeight) {
+        if (Board.HORIZON - height <= y + deltaY && 
+            y + deltaY + height <= _boardHeight) {
             y += deltaY;
         }
     }

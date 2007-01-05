@@ -11,7 +11,7 @@ public class Car extends BaseSprite
     /** Create a new Car object at the coordinates on the board given. */
     public function Car (startX :int, startY :int, speed :int, direction :int, board :Board)
     {
-        _boardHeight = board.getHeight();
+        _boardHeight = board.height;
         _speed = speed;
         var bitmap :Bitmap;
         // Set image based on direction we're driving.
@@ -32,10 +32,10 @@ public class Car extends BaseSprite
     public function tick () :void
     {
         y += _speed * _direction;
-        if (y > _boardHeight - _height) {
-            y = Board.HORIZON - _height;
-        } else if (y < Board.HORIZON - _height) {
-            y = _boardHeight - _height;
+        if (y > _boardHeight - height) {
+            y = Board.HORIZON - height;
+        } else if (y < Board.HORIZON - height) {
+            y = _boardHeight - height;
         }
     }
     
