@@ -50,7 +50,10 @@ public class SubAttack extends Sprite
 
         if (_myIndex != -1) {
             // for focusability
-            addChild(new TextField());
+            var focusField :TextField = new TextField();
+            focusField.width = maskSize;
+            focusField.height = maskSize;
+            addChild(focusField);
             addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
 
             addEventListener(Event.ENTER_FRAME, enterFrame);
