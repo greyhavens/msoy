@@ -9,7 +9,7 @@ import flash.geom.Rectangle;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.MessageReceivedEvent;
 
 public class Board extends Sprite
@@ -17,9 +17,9 @@ public class Board extends Sprite
     /** The color of the background. */
     public static const BACKGROUND_COLOR :int = 0x000000;
     
-    public function Board (gameObj :EZGame)
+    public function Board (gameCtrl :EZGameControl)
     {
-        _gameObj = gameObj;
+        _gameCtrl = gameCtrl;
         
         // draw the background
         graphics.beginFill(BACKGROUND_COLOR);
@@ -30,14 +30,14 @@ public class Board extends Sprite
         
         // add the paddle and ball objects (which will respond to UI and
         // network events)
-        addChild(_bricks = new Bricks(gameObj, this));
-        addChild(_ownPaddle = new Paddle(gameObj, this, true, OWN_COLOR));
-        addChild(_oppPaddle = new Paddle(gameObj, this, false, OPP_COLOR));
-        addChild(_ownBall = new Ball(gameObj, this, true, OWN_COLOR));
-        addChild(_oppBall = new Ball(gameObj, this, false, OPP_COLOR));
+        addChild(_bricks = new Bricks(gameCtrl, this));
+        addChild(_ownPaddle = new Paddle(gameCtrl, this, true, OWN_COLOR));
+        addChild(_oppPaddle = new Paddle(gameCtrl, this, false, OPP_COLOR));
+        addChild(_ownBall = new Ball(gameCtrl, this, true, OWN_COLOR));
+        addChild(_oppBall = new Ball(gameCtrl, this, false, OPP_COLOR));
         
         // subscribe for pings and pongs
-        _gameObj.addEventListener(MessageReceivedEvent.TYPE,
+        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE,
             messageReceivedHandler);
         
         // create the ping timer
@@ -68,14 +68,14 @@ public class Board extends Sprite
     
     protected function timerHandler (event :TimerEvent) :void
     {
-        _gameObj.sendMessage(PING, getTimer(), 1 - _gameObj.getMyIndex());
+        _gameCtrl.sendMessage(PING, getTimer(), 1 - _gameCtrl.getMyIndex());
     }
     
     protected function messageReceivedHandler (
         event :MessageReceivedEvent) :void
     {
         if (event.name == PING) {
-            _gameObj.sendMessage(PONG, event.value, 1 - _gameObj.getMyIndex());
+            _gameCtrl.sendMessage(PONG, event.value, 1 - _gameCtrl.getMyIndex());
         } else if (event.name == PONG) {
             var delay :int = (getTimer() - int(event.value)) / 2;
             if (_latency == 0) {
@@ -86,7 +86,7 @@ public class Board extends Sprite
         }
     }
     
-    protected var _gameObj :EZGame;
+    protected var _gameCtrl :EZGameControl;
     
     /** The paddles, balls, and bricks on the board. */
     protected var _ownPaddle :Paddle, _oppPaddle :Paddle;

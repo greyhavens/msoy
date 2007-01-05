@@ -11,7 +11,7 @@ import flash.geom.Matrix;
 
 import flash.utils.getTimer;
 
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.PropertyChangedEvent;
 
 public class Ball extends Shape
@@ -20,9 +20,9 @@ public class Ball extends Shape
     public static const RADIUS :int = 5;
     
     public function Ball (
-        gameObj :EZGame, board :Board, own :Boolean, color :uint)
+        gameCtrl :EZGameControl, board :Board, own :Boolean, color :uint)
     {
-        _gameObj = gameObj;
+        _gameCtrl = gameCtrl;
         _board = board;
         _own = own;
         
@@ -34,8 +34,8 @@ public class Ball extends Shape
         graphics.drawCircle(RADIUS, RADIUS, RADIUS);
         
         // make sure the states are initialized
-        if (gameObj.get(BALL_STATES) == null) {
-            gameObj.set(BALL_STATES,
+        if (gameCtrl.get(BALL_STATES) == null) {
+            gameCtrl.set(BALL_STATES,
                 new Array(createState(0), createState(1)));
         }
         _paddle = (_own ? _board.ownPaddle : _board.oppPaddle);
@@ -43,7 +43,7 @@ public class Ball extends Shape
         // listen for events
         board.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownHandler);
         board.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
-        gameObj.addEventListener(PropertyChangedEvent.TYPE, propChanged);
+        gameCtrl.addEventListener(PropertyChangedEvent.TYPE, propChanged);
     }
     
     protected function mouseDownHandler (event :MouseEvent) :void
@@ -105,8 +105,8 @@ public class Ball extends Shape
                 }
                 if (dy > 0 && _path == null) { // reattach
                     _paddle = _board.ownPaddle;
-                    _gameObj.set(BALL_STATES,
-                        createState(_gameObj.getMyIndex()), getIndex());
+                    _gameCtrl.set(BALL_STATES,
+                        createState(_gameCtrl.getMyIndex()), getIndex());
                 }
                 return;
             }
@@ -120,7 +120,7 @@ public class Ball extends Shape
             return;
         }
         var state :Object = event.newValue;
-        if (state.pidx == _gameObj.getMyIndex()) {
+        if (state.pidx == _gameCtrl.getMyIndex()) {
             return; // it came from us
         }
         // if the path is null, it's attached to the opponent's paddle
@@ -139,8 +139,8 @@ public class Ball extends Shape
         var angle :Number = _own ? LAUNCH_ANGLE : (Math.PI - LAUNCH_ANGLE);
         
         // fire the ball and announce the update
-        _gameObj.set(BALL_STATES,
-            createState(_gameObj.getMyIndex(), followNewPath(_x, angle)),
+        _gameCtrl.set(BALL_STATES,
+            createState(_gameCtrl.getMyIndex(), followNewPath(_x, angle)),
             getIndex());
     }
     
@@ -158,8 +158,8 @@ public class Ball extends Shape
             MAX_REFLECTION_ANGLE);
         
         // fire the ball and announce the update
-        _gameObj.set(BALL_STATES,
-            createState(_gameObj.getMyIndex(),
+        _gameCtrl.set(BALL_STATES,
+            createState(_gameCtrl.getMyIndex(),
                 followNewPath(hx, reflection, penetration)),
             getIndex());
     }
@@ -267,7 +267,7 @@ public class Ball extends Shape
     
     protected function getIndex () :int
     {
-        var pidx :int = _gameObj.getMyIndex();
+        var pidx :int = _gameCtrl.getMyIndex();
         return _own ? pidx : (1 - pidx);
     }
     
@@ -282,7 +282,7 @@ public class Ball extends Shape
         return {pidx: pidx, path: path};
     }
     
-    protected var _gameObj :EZGame;
+    protected var _gameCtrl :EZGameControl;
     protected var _board :Board;
     protected var _own :Boolean;
     

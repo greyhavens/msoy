@@ -11,7 +11,7 @@ import flash.geom.Matrix;
 
 import flash.utils.getTimer;
 
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.PropertyChangedEvent;
 
 public class Paddle extends Shape
@@ -29,9 +29,9 @@ public class Paddle extends Shape
         Math.pow(RADIUS_OF_CURVATURE, 2) - Math.pow(WIDTH / 2, 2));
     
     public function Paddle (
-        gameObj :EZGame, board :Board, own :Boolean, color :uint)
+        gameCtrl :EZGameControl, board :Board, own :Boolean, color :uint)
     {
-        _gameObj = gameObj;
+        _gameCtrl = gameCtrl;
         _board = board;
         _own = own;
         
@@ -46,8 +46,8 @@ public class Paddle extends Shape
         position = board.width / 2;
         
         // make sure the position property is initialized
-        if (gameObj.get(PADDLE_STATES) == null) {
-            gameObj.set(PADDLE_STATES, new Array(
+        if (gameCtrl.get(PADDLE_STATES) == null) {
+            gameCtrl.set(PADDLE_STATES, new Array(
                 createState(board.width/2), createState(board.width/2)));
         }
         _lastPos = _framePos = _position;
@@ -62,7 +62,7 @@ public class Paddle extends Shape
         // move our opponents' paddle in response to property changes
         } else {
             y = 0;
-            gameObj.addEventListener(PropertyChangedEvent.TYPE, propChanged);
+            gameCtrl.addEventListener(PropertyChangedEvent.TYPE, propChanged);
         }
         _board.addEventListener(Event.ENTER_FRAME, enterFrameHandler);
     }
@@ -89,7 +89,7 @@ public class Paddle extends Shape
     protected function propChanged (event :PropertyChangedEvent) :void
     {
         if (event.name != PADDLE_STATES ||
-            event.index != (1 - _gameObj.getMyIndex())) {
+            event.index != (1 - _gameCtrl.getMyIndex())) {
             return;
         }
         // converge towards the new state
@@ -137,8 +137,8 @@ public class Paddle extends Shape
             if (_stimes.length > UPDATE_LIMIT) {
                 _stimes.shift();
             }
-            _gameObj.set(PADDLE_STATES, createState(_position, _speed),
-                _gameObj.getMyIndex());
+            _gameCtrl.set(PADDLE_STATES, createState(_position, _speed),
+                _gameCtrl.getMyIndex());
             _lastPos = _position;
             
         } else {
@@ -153,7 +153,7 @@ public class Paddle extends Shape
         return {pos: pos, speed: speed};
     }
     
-    protected var _gameObj :EZGame;
+    protected var _gameCtrl :EZGameControl;
     protected var _board :Board;
     protected var _own :Boolean;
     

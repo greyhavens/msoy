@@ -5,16 +5,16 @@ import flash.display.Shape;
 
 import flash.geom.Matrix;
 
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 
 public class Bricks extends Shape
 {
     /** The number of layers of bricks. */
     public static const LAYERS :int = 10;
     
-    public function Bricks (gameObj :EZGame, board :Board)
+    public function Bricks (gameCtrl :EZGameControl, board :Board)
     {
-        _gameObj = gameObj;
+        _gameCtrl = gameCtrl;
         _board = board;
         
         // center the bricks on the board
@@ -159,7 +159,7 @@ public class Bricks extends Shape
         return Math.min(Math.max(v, min), max);
     }
     
-    protected var _gameObj :EZGame;
+    protected var _gameCtrl :EZGameControl;
     protected var _board :Board;
     
     /** The number of columns of bricks. */
