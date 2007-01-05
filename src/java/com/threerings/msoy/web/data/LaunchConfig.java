@@ -11,17 +11,20 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class LaunchConfig
     implements IsSerializable
 {
+    /** A constant used to denote in-world Flash games. */
+    public static final int FLASH_IN_WORLD = 0;
+    
     /** A constant used to denote lobbied Flash games. */
-    public static final int FLASH_LOBBIED = 0;
+    public static final int FLASH_LOBBIED = 1;
 
     /** A constant used to denote single player Flash games. */
-    public static final int FLASH_SOLO = 1;
+    public static final int FLASH_SOLO = 2;
 
     /** A constant used to denote lobbied Java games. */
-    public static final int JAVA_LOBBIED = 2;
+    public static final int JAVA_LOBBIED = 3;
 
     /** A constant used to denote single player Java games. */
-    public static final int JAVA_SOLO = 3;
+    public static final int JAVA_SOLO = 4;
 
     /** The unique identifier for the game in question. */
     public int gameId;

@@ -25,6 +25,11 @@ public class GamePanel extends VerticalPanel
         String authtoken = (ctx.creds == null) ? "" : ctx.creds.token;
         Widget display = null;
         switch (config.type) {
+        case LaunchConfig.FLASH_IN_WORLD: {
+            display = FlashClients.createWorldClient("worldGame=" + config.gameId);
+            break;
+        }
+        
         case LaunchConfig.FLASH_LOBBIED: {
             display = FlashClients.createLobbyClient(config.gameId);
             break;

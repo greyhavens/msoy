@@ -18,6 +18,7 @@ import com.threerings.mx.controls.CommandMenu;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
+import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.whirled.data.Scene;
@@ -31,6 +32,7 @@ import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.game.client.LobbyService;
+import com.threerings.msoy.game.client.WorldGameService;
 
 import com.threerings.msoy.chat.client.ChatControl;
 import com.threerings.msoy.chat.client.ReportingListener;
@@ -67,6 +69,9 @@ public class MsoyController extends Controller
     /** Command to go to a game lobby. */
     public static const GO_GAME_LOBBY :String = "GoGameLobby";
 
+    /** Command to join an in-world game. */
+    public static const JOIN_WORLD_GAME :String = "JoinWorldGame";
+    
     /** Command to add/remove friends. */
     public static const ALTER_FRIEND :String = "AlterFriend";
 
@@ -358,6 +363,19 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Handle JOIN_WORLD_GAME.
+     */
+    public function handleJoinWorldGame (gameId :int) :void
+    {
+        var wgsvc :WorldGameService =
+            (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
+        wgsvc.joinWorldGame(_ctx.getClient(), gameId,
+            new InvocationAdapter(function (cause :String) :void {
+                log.warning("Ack: " + cause);
+            }));
+    }
+    
+    /**
      * Handles ALTER_FRIEND.
      */
     public function handleAlterFriend (args :Array) :void
@@ -486,6 +504,11 @@ public class MsoyController extends Controller
                 }
             }
             _ctx.getSceneDirector().moveTo(starterSceneId);
+        }
+        
+        // see if we should join a world game
+        if (null != params["worldGame"]) {
+            handleJoinWorldGame(int(params["worldGame"]));
         }
     }
 

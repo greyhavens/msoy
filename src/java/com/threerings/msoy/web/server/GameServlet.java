@@ -48,13 +48,14 @@ public class GameServlet extends MsoyServiceServlet
         LaunchConfig config = new LaunchConfig();
         config.gameId = game.itemId;
 
-        // TODO: support single player games
         switch (game.gameMedia.mimeType) {
         case MediaDesc.APPLICATION_SHOCKWAVE_FLASH:
-            config.type = LaunchConfig.FLASH_LOBBIED;
+            config.type = (game.isInWorld() ? LaunchConfig.FLASH_IN_WORLD :
+                (game.maxPlayers == 1 ? LaunchConfig.FLASH_SOLO : LaunchConfig.FLASH_LOBBIED));
             break;
         case MediaDesc.APPLICATION_JAVA_ARCHIVE:
-            config.type = LaunchConfig.JAVA_LOBBIED;
+            config.type = (game.maxPlayers == 1 ?
+                LaunchConfig.JAVA_SOLO : LaunchConfig.JAVA_LOBBIED);
             break;
         default:
             log.warning("Requested config for game of unknown media type " +

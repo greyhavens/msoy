@@ -526,7 +526,8 @@ try {
     {
         if (item is Game) {
             var game :Game = (item as Game);
-            furni.actionType = FurniData.ACTION_GAME;
+            furni.actionType = game.isInWorld() ?
+                FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
             furni.actionData = String(game.getProgenitorId()) + ":" + game.name;
         }
     }

@@ -45,6 +45,7 @@ import com.threerings.toybox.server.ToyBoxManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.game.server.LobbyRegistry;
+import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.person.server.PersonPageManager;
 import com.threerings.msoy.web.data.MemberName;
@@ -106,6 +107,9 @@ public class MsoyServer extends WhirledServer
     /** The lobby registry for this server. */
     public static LobbyRegistry lobbyReg = new LobbyRegistry();
 
+    /** The in-world game registry for this server. */
+    public static WorldGameRegistry worldGameReg = new WorldGameRegistry();
+    
     /** Our transition repository. */
     public static TransitionRepository transitRepo;
 
@@ -233,6 +237,7 @@ public class MsoyServer extends WhirledServer
         ppageMan.init(ppageRepo);
         swiftMan.init(swiftRepo);
         lobbyReg.init(invmgr);
+        worldGameReg.init(invmgr);
         GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {
             public int getUserId (ClientObject cliObj)
             {

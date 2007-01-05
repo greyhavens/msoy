@@ -42,6 +42,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>clusterOid</code> field. */
     public static const CLUSTER_OID :String = "clusterOid";
 
+    /** The field name of the <code>inWorldGame</code> field. */
+    public static const IN_WORLD_GAME :String = "inWorldGame";
+    
     /** The field name of the <code>recentScenes</code> field. */
     public static const RECENT_SCENES :String = "recentScenes";
 
@@ -88,6 +91,9 @@ public class MemberObject extends BodyObject
     /** The object ID of the user's cluster. */
     public var clusterOid :int;
 
+    /** The object ID of the in-world game that the user is in, if any. */
+    public var inWorldGame :int;
+    
     /** The recent scenes we've been through. */
     public var recentScenes :DSet;
     
@@ -403,6 +409,7 @@ public class MemberObject extends BodyObject
         memberName = (ins.readObject() as MemberName);
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
+        inWorldGame = ins.readInt();
         recentScenes = (ins.readObject() as DSet);
         ownedScenes = (ins.readObject() as DSet);
         inventory = (ins.readObject() as DSet);

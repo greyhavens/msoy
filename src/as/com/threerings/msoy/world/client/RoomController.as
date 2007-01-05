@@ -168,12 +168,14 @@ public class RoomController extends SceneController
             NetUtil.navigateToURL(furni.actionData);
             return;
 
-        case FurniData.ACTION_GAME:
+        case FurniData.ACTION_LOBBY_GAME:
+        case FurniData.ACTION_WORLD_GAME:
             var actionData :Array = furni.splitActionData();
             var gameId :int = int(actionData[0]);
-            postAction(MsoyController.GO_GAME_LOBBY, gameId);
+            postAction(furni.actionType == FurniData.ACTION_LOBBY_GAME ?
+                MsoyController.GO_GAME_LOBBY : MsoyController.JOIN_WORLD_GAME, gameId);
             return;
-
+            
         case FurniData.ACTION_PORTAL:
             _mctx.getSpotSceneDirector().traversePortal(furni.id);
             return;

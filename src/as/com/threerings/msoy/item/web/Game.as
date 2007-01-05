@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.web {
 
+import com.threerings.util.StringUtil;
+
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
@@ -34,6 +36,15 @@ public class Game extends Item
         return GAME;
     }
 
+    /**
+     * Checks whether this game is an in-world, as opposed to lobbied, game.
+     */
+    public function isInWorld () :Boolean
+    {
+        // TODO: parse configuration as XML
+        return StringUtil.trim(config) == "avrg";
+    }
+    
     /**
      * Returns a media descriptor for the media to be used
      * as a table background image.

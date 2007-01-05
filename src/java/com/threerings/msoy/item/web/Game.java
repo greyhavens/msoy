@@ -42,6 +42,15 @@ public class Game extends Item
     }
 
     /**
+     * Checks whether this game is an in-world, as opposed to lobbied, game.
+     */
+    public boolean isInWorld ()
+    {
+        // TODO: parse configuration as XML
+        return config.trim().equals("avrg");
+    }
+    
+    /**
      * Returns a media descriptor for the media to be used
      * as a table background image.
      */

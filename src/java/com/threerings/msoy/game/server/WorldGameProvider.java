@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.game.server;
 
-import com.threerings.msoy.game.client.LobbyService;
+import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -11,13 +11,13 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
 
 /**
- * Defines the server-side of the {@link LobbyService}.
+ * Defines the server-side of the {@link WorldGameService}.
  */
-public interface LobbyProvider extends InvocationProvider
+public interface WorldGameProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link LobbyService#identifyLobby} request.
+     * Handles a {@link WorldGameService#joinWorldGame} request.
      */
-    public void identifyLobby (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+    public void joinWorldGame (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
 }

@@ -152,8 +152,10 @@ public class FurniPanel extends SpritePanel
               data: FurniData.ACTION_NONE },
             { label: Msgs.EDITING.get("l.background"),
               data: FurniData.BACKGROUND },
-            { label: Msgs.EDITING.get("l.action_game"),
-              data: FurniData.ACTION_GAME },
+            { label: Msgs.EDITING.get("l.action_lobby_game"),
+              data: FurniData.ACTION_LOBBY_GAME },
+            { label: Msgs.EDITING.get("l.action_world_game"),
+              data: FurniData.ACTION_WORLD_GAME },
             { label: Msgs.EDITING.get("l.action_url"),
               data: FurniData.ACTION_URL },
             { label: Msgs.EDITING.get("l.action_portal"),
@@ -163,7 +165,8 @@ public class FurniPanel extends SpritePanel
         _actionPanels = new ViewStack();
         _actionPanels.addChild(new VBox()); // ACTION_NONE
         _actionPanels.addChild(createBackgroundEditor()); // BACKGROUND
-        _actionPanels.addChild(new VBox()); // ACTION_GAME (nothing to edit)
+        _actionPanels.addChild(new VBox()); // ACTION_LOBBY_GAME (nothing to edit)
+        _actionPanels.addChild(new VBox()); // ACTION_WORLD_GAME
         _actionPanels.addChild(createURLEditor()); // ACTION_URL
         _actionPanels.addChild(createPortalEditor()); // ACTION_PORTAL
         addRow(_actionPanels, [2, 1]);

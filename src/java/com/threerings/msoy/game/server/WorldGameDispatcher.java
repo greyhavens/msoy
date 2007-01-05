@@ -1,28 +1,27 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.server;
+package com.threerings.msoy.game.server;
 
-import com.threerings.msoy.world.client.RoomService;
-import com.threerings.msoy.world.data.RoomMarshaller;
+import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.game.data.WorldGameMarshaller;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.whirled.data.SceneUpdate;
 
 /**
- * Dispatches requests to the {@link RoomProvider}.
+ * Dispatches requests to the {@link WorldGameProvider}.
  */
-public class RoomDispatcher extends InvocationDispatcher
+public class WorldGameDispatcher extends InvocationDispatcher
 {
     /**
      * Creates a dispatcher that may be registered to dispatch invocation
      * service requests for the specified provider.
      */
-    public RoomDispatcher (RoomProvider provider)
+    public WorldGameDispatcher (WorldGameProvider provider)
     {
         this.provider = provider;
     }
@@ -30,7 +29,7 @@ public class RoomDispatcher extends InvocationDispatcher
     // from InvocationDispatcher
     public InvocationMarshaller createMarshaller ()
     {
-        return new RoomMarshaller();
+        return new WorldGameMarshaller();
     }
 
     @SuppressWarnings("unchecked") // from InvocationDispatcher
@@ -39,17 +38,10 @@ public class RoomDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
-        case RoomMarshaller.EDIT_ROOM:
-            ((RoomProvider)provider).editRoom(
+        case WorldGameMarshaller.JOIN_WORLD_GAME:
+            ((WorldGameProvider)provider).joinWorldGame(
                 source,
-                (InvocationService.ResultListener)args[0]
-            );
-            return;
-
-        case RoomMarshaller.UPDATE_ROOM:
-            ((RoomProvider)provider).updateRoom(
-                source,
-                (SceneUpdate[])args[0], (InvocationService.InvocationListener)args[1]
+                ((Integer)args[0]).intValue(), (InvocationService.InvocationListener)args[1]
             );
             return;
 

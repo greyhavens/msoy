@@ -28,14 +28,18 @@ public class FurniData extends SimpleStreamableObject
         actionData = "<url>" */
     public static final byte ACTION_URL = 1;
 
-    /** An actionType indicating that actionData is a game item id.
+    /** An actionType indicating that actionData is a lobby game item id.
         actionData = "<gameId>:<gameName>" */
-    public static final byte ACTION_GAME = 2;
+    public static final byte ACTION_LOBBY_GAME = 2;
 
     /** An actionType indicating that we're a portal.
         actionData = "<targetSceneId>:<targetSceneName>" */
     public static final byte ACTION_PORTAL = 3;
 
+    /** An actionType indicating that actionData is a world game item id.
+        actionData = "<gameId>:<gameName>" */
+    public static final byte ACTION_WORLD_GAME = 4;
+    
     /** The id of this piece of furni. */
     public short id;
 

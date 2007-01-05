@@ -326,7 +326,8 @@ public class FurniSprite extends MsoySprite
             toolTip = _furni.actionData;
             break;
 
-        case FurniData.ACTION_GAME:
+        case FurniData.ACTION_LOBBY_GAME:
+        case FurniData.ACTION_WORLD_GAME:
             toolTip = Msgs.GENERAL.get("i.play_game", String(actionData[1]));
             break;
 

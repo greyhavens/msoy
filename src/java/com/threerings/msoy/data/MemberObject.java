@@ -45,6 +45,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>clusterOid</code> field. */
     public static final String CLUSTER_OID = "clusterOid";
 
+    /** The field name of the <code>inWorldGame</code> field. */
+    public static final String IN_WORLD_GAME = "inWorldGame";
+
     /** The field name of the <code>recentScenes</code> field. */
     public static final String RECENT_SCENES = "recentScenes";
 
@@ -91,6 +94,9 @@ public class MemberObject extends BodyObject
     /** The object ID of the user's cluster. */
     public int clusterOid;
 
+    /** The object ID of the in-world game that the user is in, if any. */
+    public int inWorldGame;
+    
     /** The recent scenes we've been through. */
     public DSet<SceneBookmarkEntry> recentScenes =
         new DSet<SceneBookmarkEntry>();
@@ -381,6 +387,22 @@ public class MemberObject extends BodyObject
         requestAttributeChange(
             CLUSTER_OID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.clusterOid = value;
+    }
+
+    /**
+     * Requests that the <code>inWorldGame</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setInWorldGame (int value)
+    {
+        int ovalue = this.inWorldGame;
+        requestAttributeChange(
+            IN_WORLD_GAME, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.inWorldGame = value;
     }
 
     /**

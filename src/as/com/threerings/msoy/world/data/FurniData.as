@@ -27,14 +27,18 @@ public class FurniData
         actionData = "<url>" */
     public static const ACTION_URL :int = 1;
 
-    /** An actionType indicating that actionData is a game item id.
+    /** An actionType indicating that actionData is a lobby game item id.
         actionData = "<gameId>:<gameName>" */
-    public static const ACTION_GAME :int = 2;
+    public static const ACTION_LOBBY_GAME :int = 2;
 
     /** An actionType indicating that we're a portal.
         actionData = "<targetSceneId>:<targetSceneName>" */
     public static const ACTION_PORTAL :int = 3;
 
+    /** An actionType indicating that actionData is a world game item id.
+        actionData = "<gameId>:<gameName>" */
+    public static const ACTION_WORLD_GAME :int = 4;
+    
     /** The id of this piece of furni. */
     public var id :int;
 

@@ -3,31 +3,31 @@
 
 package com.threerings.msoy.game.data;
 
-import com.threerings.msoy.game.client.LobbyService;
+import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
 
 /**
- * Provides the implementation of the {@link LobbyService} interface
+ * Provides the implementation of the {@link WorldGameService} interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
-public class LobbyMarshaller extends InvocationMarshaller
-    implements LobbyService
+public class WorldGameMarshaller extends InvocationMarshaller
+    implements WorldGameService
 {
-    /** The method id used to dispatch {@link #identifyLobby} requests. */
-    public static final int IDENTIFY_LOBBY = 1;
+    /** The method id used to dispatch {@link #joinWorldGame} requests. */
+    public static final int JOIN_WORLD_GAME = 1;
 
-    // from interface LobbyService
-    public void identifyLobby (Client arg1, int arg2, InvocationService.ResultListener arg3)
+    // from interface WorldGameService
+    public void joinWorldGame (Client arg1, int arg2, InvocationService.InvocationListener arg3)
     {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
+        ListenerMarshaller listener3 = new ListenerMarshaller();
         listener3.listener = arg3;
-        sendRequest(arg1, IDENTIFY_LOBBY, new Object[] {
+        sendRequest(arg1, JOIN_WORLD_GAME, new Object[] {
             Integer.valueOf(arg2), listener3
         });
     }
