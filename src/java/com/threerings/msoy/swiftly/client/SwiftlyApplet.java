@@ -1,5 +1,6 @@
 package com.threerings.msoy.swiftly.client;
 
+import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.net.URL;
@@ -19,6 +20,9 @@ public class SwiftlyApplet extends JApplet {
             // TODO perhaps we should setup another try block and set this explicitly
             // UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         }
+
+        // Save the root content pane
+        _contentPane = getContentPane();
 
         // Execute a job on the event-dispatching thread: creating this applet's GUI.
         try {
@@ -46,19 +50,18 @@ public class SwiftlyApplet extends JApplet {
         _splitPane.setDividerLocation(650);
 
         // layout the window
-        getContentPane().add(_toolbar, BorderLayout.PAGE_START);
-        getContentPane().add(_splitPane, BorderLayout.CENTER);
-        getContentPane().add(_statusbar, BorderLayout.SOUTH);
+        _contentPane.add(_toolbar, BorderLayout.PAGE_START);
+        _contentPane.add(_splitPane, BorderLayout.CENTER);
+        _contentPane.add(_statusbar, BorderLayout.SOUTH);
 
         // XXX temp. add a few example tabs
-        URL codeBase = getCodeBase();
-        System.out.println(codeBase);
-        _editor.addEditorTab("file #1", codeBase + "/swiftly/index.html");
-        _editor.addEditorTab("file #2", codeBase + "/catalog/index.html");
+        _editor.addEditorTab("file #1", "http://localhost:8080/swiftly/index.html");
+        _editor.addEditorTab("file #2", "http://localhost:8080/catalog/index.html");
 
         _statusbar.setLabel("Welcome to Swiftly!");
     }
 
+    protected Container _contentPane;
     protected SwiftlyEditor _editor;
     protected SwiftlyToolbar _toolbar;
     protected SwiftlyStatusBar _statusbar;
