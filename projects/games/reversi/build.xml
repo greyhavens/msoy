@@ -12,12 +12,6 @@
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=."/>
-      <arg value="-externs"/>
-      <arg value="com.threerings.ezgame:EZGame"/>
-      <arg value="com.threerings.ezgame:Game"/>
-      <arg value="com.threerings.ezgame:MessageReceivedEvent"/>
-      <arg value="com.threerings.ezgame:PropertyChangedEvent"/>
-      <arg value="com.threerings.ezgame:StateChangedEvent"/>
       <arg value="-file-specs"/>
       <arg value="${app.name}.as"/>
     </java>
@@ -30,5 +24,8 @@
     </delete>
   </target>
 
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/c0414d407a3fd503850ad9133f52b774a558729d.swf"/>
+  </target>
 
 </project>

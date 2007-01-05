@@ -3,8 +3,7 @@ package {
 import flash.display.Sprite;
 import flash.display.MovieClip;
 
-import com.threerings.ezgame.Game;
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -14,7 +13,7 @@ import com.threerings.ezgame.StateChangedListener;
 
 [SWF(width="400", height="400")]
 public class Reversi extends Sprite
-    implements Game, PropertyChangedListener, StateChangedListener
+    implements PropertyChangedListener, StateChangedListener
 {
     public function Reversi ()
     {
@@ -25,12 +24,11 @@ public class Reversi extends Sprite
         players.x = Piece.SIZE * BOARD_SIZE + 10;
         players.y = 0;
         addChild(players);
-    }
 
-    // from Game
-    public function setGameObject (gameObj :EZGame) :void
-    {
-        _gameObject = gameObj;
+        _gameCtrl = new EZGameControl(this);
+        _gameCtrl.registerListener(this);
+
+        players.setGameControl(_gameCtrl);
     }
 
     /**
@@ -71,9 +69,9 @@ public class Reversi extends Sprite
     public function pieceClicked (pieceIndex :int) :void
     {
         // enact the play
-        var myIdx :int = _gameObject.getMyIndex();
+        var myIdx :int = _gameCtrl.getMyIndex();
         _board.playPiece(pieceIndex, myIdx);
-        _gameObject.endTurn();
+        _gameCtrl.endTurn();
 
         // display something so that the player knows they clicked
         readBoard();
@@ -86,7 +84,7 @@ public class Reversi extends Sprite
         for (var ii :int = 0; ii < _pieces.length; ii++) {
             var piece :Piece = (_pieces[ii] as Piece);
             piece.setDisplay(_board.getPiece(ii));
-            if (_gameObject.data["lastMove"] === ii) {
+            if (_gameCtrl.data["lastMove"] === ii) {
                 piece.showLast(true);
             }
         }
@@ -96,8 +94,8 @@ public class Reversi extends Sprite
     {
         readBoard();
 
-        var turnHolder :int = _gameObject.getTurnHolderIndex();
-        var myTurn :Boolean = _gameObject.isMyTurn();
+        var turnHolder :int = _gameCtrl.getTurnHolderIndex();
+        var myTurn :Boolean = _gameCtrl.isMyTurn();
 
         var moves :Array = _board.getMoves(turnHolder);
         for each (var index :int in moves) {
@@ -110,19 +108,19 @@ public class Reversi extends Sprite
             if (_board.getMoves(1 - turnHolder).length == 0) {
                 // ah, but they can't move either, so the game is over
                 var winner :int = _board.getWinner();
-                _gameObject.endGame(winner);
+                _gameCtrl.endGame(winner);
                 if (winner == -1) {
-                    _gameObject.sendChat("The game was a tie!");
+                    _gameCtrl.sendChat("The game was a tie!");
                 } else {
-                    _gameObject.sendChat(
-                        _gameObject.getPlayerNames()[winner] + " has won!");
+                    _gameCtrl.sendChat(
+                        _gameCtrl.getPlayerNames()[winner] + " has won!");
                 }
 
             } else {
-                _gameObject.sendChat(
-                    _gameObject.getPlayerNames()[turnHolder] +
+                _gameCtrl.sendChat(
+                    _gameCtrl.getPlayerNames()[turnHolder] +
                     " cannot play and so loses a turn.");
-                _gameObject.endTurn();
+                _gameCtrl.endTurn();
             }
         }
     }
@@ -134,9 +132,9 @@ public class Reversi extends Sprite
             if (_pieces == null) {
                 // if we're the first player, we take care of setting up the
                 // board
-                if (_gameObject.isMyTurn()) {
+                if (_gameCtrl.isMyTurn()) {
                     _board.initialize();
-                    _gameObject.set("startGame", true);
+                    _gameCtrl.set("startGame", true);
                     setUpPieces();
                 }
 
@@ -145,13 +143,13 @@ public class Reversi extends Sprite
             }
 
         } else if (event.type == StateChangedEvent.GAME_STARTED) {
-            _gameObject.localChat("Reversi superchallenge: go!");
+            _gameCtrl.localChat("Reversi superchallenge: go!");
 
             // configure the board
-            _board = new Board(_gameObject, BOARD_SIZE);
+            _board = new Board(_gameCtrl, BOARD_SIZE);
 
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
-            _gameObject.localChat("Thank you for playing Reversi!");
+            _gameCtrl.localChat("Thank you for playing Reversi!");
 
         }
     }
@@ -178,7 +176,7 @@ public class Reversi extends Sprite
 
     protected var _board :Board;
 
-    /** Our game object. */
-    protected var _gameObject :EZGame;
+    /** Our game control object. */
+    protected var _gameCtrl :EZGameControl;
 }
 }

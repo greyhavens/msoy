@@ -1,6 +1,6 @@
 package {
 
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 
 public class Board
 {
@@ -8,9 +8,9 @@ public class Board
     public static const WHITE_IDX :int = 0;
     public static const BLACK_IDX :int = 1;
 
-    public function Board (gameObj :EZGame, lengthOfSide :int = 8)
+    public function Board (gameCtrl :EZGameControl, lengthOfSide :int = 8)
     {
-        _gameObj = gameObj;
+        _gameCtrl = gameCtrl;
         _lengthOfSide = lengthOfSide;
     }
 
@@ -32,7 +32,7 @@ public class Board
         data[coordsToIdx(half + 1, half + 1)] = WHITE_IDX;
 
         // assign it to the game object
-        _gameObj.set("board", data);
+        _gameCtrl.set("board", data);
     }
 
     /**
@@ -43,7 +43,7 @@ public class Board
     public function getPiece (index :int) :int
     {
         checkIndex(index);
-        return int(_gameObj.get("board")[index]);
+        return int(_gameCtrl.get("board")[index]);
     }
 
     public function getPieceByCoords (x :int, y :int) :int
@@ -89,7 +89,7 @@ public class Board
 
         // finally, place the new piece
         setPiece(x, y, playerIdx);
-        _gameObj.set("lastMove", index);
+        _gameCtrl.set("lastMove", index);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Board
     {
         var whiteCount :int = 0;
         var blackCount :int = 0;
-        for each (var piece :int in _gameObj.data["board"]) {
+        for each (var piece :int in _gameCtrl.data["board"]) {
             if (piece == WHITE_IDX) {
                 whiteCount++;
 
@@ -155,7 +155,7 @@ public class Board
 
     protected function setPiece (x :int, y :int, playerIdx :int) :void
     {
-        _gameObj.set("board", playerIdx, coordsToIdx(x, y));
+        _gameCtrl.set("board", playerIdx, coordsToIdx(x, y));
     }
 
     /**
@@ -275,6 +275,6 @@ public class Board
 
     /** An array representing the current state of the board.
      * Each element is -1, 0, or 1. */
-    protected var _gameObj :EZGame;
+    protected var _gameCtrl :EZGameControl;
 }
 }
