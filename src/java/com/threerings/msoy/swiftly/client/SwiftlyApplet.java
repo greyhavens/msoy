@@ -18,21 +18,26 @@ public class SwiftlyApplet extends JApplet {
         // TODO _editor.setMinimumSize(minimumSize);
         _projectPanel = new SwiftlyProjectPanel();
         _toolbar = new SwiftlyToolbar();
+        _statusbar = new SwiftlyStatusBar();
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _editor, _projectPanel);
         _splitPane.setOneTouchExpandable(true);
         _splitPane.setDividerLocation(650);
 
         add(_toolbar, BorderLayout.PAGE_START);
         add(_splitPane, BorderLayout.CENTER);
+        add(_statusbar, BorderLayout.SOUTH);
         setSize(800, 600);
 
         // XXX temp. add a few example tabs
         _editor.addEditorTab("file #1", "http://localhost:8080/swiftly/index.html");
         _editor.addEditorTab("file #2", "http://localhost:8080/catalog/index.html");
+
+        _statusbar.setLabel("Welcome to Swiftly!");
     }
 
     protected SwiftlyEditor _editor;
     protected SwiftlyToolbar _toolbar;
+    protected SwiftlyStatusBar _statusbar;
     protected SwiftlyProjectPanel _projectPanel;
     protected JSplitPane _splitPane;
 } 
