@@ -10,28 +10,28 @@ import javax.swing.JScrollPane;
 
 public class SwiftlyEditor extends JTabbedPane {
 
-    public class SwiftlyScrollPane extends JScrollPane {
-        protected JTextPane textPane;
-
-        public SwiftlyScrollPane(SwiftlyTextPane pane) {
+    public class SwiftlyEditorScrollPane extends JScrollPane {
+        public SwiftlyEditorScrollPane(SwiftlyTextPane pane) {
             super(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
                   JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-            textPane = pane;
+            _textPane = pane;
         }
         
         public JTextPane getTextPane() {
-            return textPane; 
+            return _textPane; 
         }       
 
         public void setPage(String url) {
             try {
-                textPane.setPage(url);
+                _textPane.setPage(url);
             } catch (IOException ie) {
                 String errorMessage = "This page could not be loaded.\n" + "URL: " + url + "\n" +
                     "Reason: " + ie;
-                textPane.setText(errorMessage);
+                _textPane.setText(errorMessage);
             }
         }       
+
+        protected JTextPane _textPane;
     }
 
     public class SwiftlyTextPane extends JTextPane {
@@ -40,7 +40,7 @@ public class SwiftlyEditor extends JTabbedPane {
 
     public void addEditorTab(String tabName, String url) {
         SwiftlyTextPane textPane = new SwiftlyTextPane();
-        SwiftlyScrollPane scroller = new SwiftlyScrollPane(textPane);
+        SwiftlyEditorScrollPane scroller = new SwiftlyEditorScrollPane(textPane);
 
         addTab(tabName, scroller);
         int tabIndex = getTabCount() - 1;
@@ -50,7 +50,7 @@ public class SwiftlyEditor extends JTabbedPane {
     }
 
     public void setTabPage(int tabIndex, String url) {
-        SwiftlyScrollPane pane = (SwiftlyScrollPane)getComponentAt(tabIndex);
+        SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getComponentAt(tabIndex);
         pane.setPage(url);
     }
 }
