@@ -4,6 +4,7 @@ import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.JApplet;
 import javax.swing.JSplitPane;
@@ -52,8 +53,13 @@ public class SwiftlyApplet extends JApplet {
         // setup the components
         _editor = new SwiftlyEditor(this);
         _editor.setMinimumSize(new Dimension(400, 0));
-        _projectPanel = new SwiftlyProjectPanel(this);
+
+        ArrayList<String> fileList = new ArrayList<String>();
+        fileList.add("File 1");
+        fileList.add("File 2");
+        _projectPanel = new SwiftlyProjectPanel(this, "My cool project", fileList);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
+
         _toolbar = new SwiftlyToolbar(this);
         _statusbar = new SwiftlyStatusBar(this);
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _editor, _projectPanel);
