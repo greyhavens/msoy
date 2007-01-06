@@ -15,14 +15,14 @@ public class SwiftlyProjectPanel extends JPanel
     implements TreeSelectionListener
 {
     public SwiftlyProjectPanel (SwiftlyApplet applet, String projectName,
-                                ArrayList<String> fileList) 
+                                ArrayList<SwiftlyDocument> fileList) 
     {
         super(new BorderLayout());
         _applet = applet;
 
         DefaultMutableTreeNode top = new DefaultMutableTreeNode(projectName);
-        for (String fileName : fileList) {
-            top.add(new DefaultMutableTreeNode(fileName));
+        for (SwiftlyDocument doc : fileList) {
+            top.add(new DefaultMutableTreeNode(doc));
         }
 
         _tree = new JTree(top);
@@ -40,9 +40,8 @@ public class SwiftlyProjectPanel extends JPanel
 
         Object nodeInfo = node.getUserObject();
         if (node.isLeaf()) {
-            _applet.editor.addEditorTab(
-                "file #3", _applet.getDocumentBase() + "swiftly.nocache.html");
-        } else {
+            SwiftlyDocument doc = (SwiftlyDocument)nodeInfo;
+            _applet.editor.addEditorTab(doc);
         }
     }
 

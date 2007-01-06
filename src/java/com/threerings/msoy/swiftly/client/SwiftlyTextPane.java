@@ -19,9 +19,10 @@ import javax.swing.undo.UndoManager;
 
 public class SwiftlyTextPane extends JTextPane
 {
-    public SwiftlyTextPane (SwiftlyEditor editor)
+    public SwiftlyTextPane (SwiftlyEditor editor, SwiftlyDocument document)
     {
         _editor = editor;
+        _document = document;
         keyBindings();
     }
 
@@ -115,7 +116,7 @@ public class SwiftlyTextPane extends JTextPane
     protected class CloseTabAction extends AbstractAction
     {
         public void actionPerformed (ActionEvent e) {
-            _editor.closeEditorTab(getPage().toString());
+            _editor.closeEditorTab(_document);
         }
     }
     
@@ -124,5 +125,6 @@ public class SwiftlyTextPane extends JTextPane
     protected UndoAction undoAction = new UndoAction();
     protected RedoAction redoAction = new RedoAction();
     protected SwiftlyEditor _editor;
+    protected SwiftlyDocument _document;
 }
 

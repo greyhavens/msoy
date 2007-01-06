@@ -41,11 +41,6 @@ public class SwiftlyApplet extends JApplet
         }
 
         setStatus("Welcome to Swiftly!");
-
-        // XXX temp. add a few example tabs
-        URL base = getDocumentBase();
-        editor.addEditorTab("file #1", base + "index.html");
-        editor.addEditorTab("file #2", base + "history.html");
     }
 
     public void setStatus (String msg)
@@ -59,9 +54,9 @@ public class SwiftlyApplet extends JApplet
         editor = new SwiftlyEditor(this);
         editor.setMinimumSize(new Dimension(400, 0));
 
-        ArrayList<String> fileList = new ArrayList<String>();
-        fileList.add("File 1");
-        fileList.add("File 2");
+        ArrayList<SwiftlyDocument> fileList = new ArrayList<SwiftlyDocument>();
+        fileList.add(new SwiftlyDocument("file #1", "Example text"));
+        fileList.add(new SwiftlyDocument("file #2", "Example text more"));
         _projectPanel = new SwiftlyProjectPanel(this, "My cool project", fileList);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
 

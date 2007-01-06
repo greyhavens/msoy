@@ -9,6 +9,8 @@ import java.util.HashMap;
 
 import javax.swing.JTextPane;
 import javax.swing.JTabbedPane;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.BadLocationException;
 
 public class SwiftlyEditor extends JTabbedPane
 {
@@ -18,23 +20,18 @@ public class SwiftlyEditor extends JTabbedPane
         _applet = applet;
     }
 
-    public void addEditorTab (String tabName, String url) 
+    public void addEditorTab (SwiftlyDocument document)
     {
-        if (_tabList.containsKey(url)) {
-            setSelectedComponent(_tabList.get(url));
+        if (_tabList.containsKey(document)) {
+            setSelectedComponent(_tabList.get(document));
             return;
         }
 
-        SwiftlyTextPane textPane = new SwiftlyTextPane(this);
-
-        // load the url into the textpane
+        SwiftlyTextPane textPane = new SwiftlyTextPane(this, document);
+        StyledDocument styledDoc = textPane.getStyledDocument();
         try {
-            textPane.setPage(url);
-        } catch (IOException ie) {
-            String errorMessage = "This page could not be loaded. " + "URL: " + url;
-            _applet.setStatus(errorMessage);
-            // TODO do something more intelligent here
-            return;
+            styledDoc.insertString(0, document.getText(), null);
+        } catch (BadLocationException e) {
         }
 
         // TODO make these colors setable by the user?
@@ -42,28 +39,29 @@ public class SwiftlyEditor extends JTabbedPane
         textPane.setBackground(Color.black);
         SwiftlyEditorScrollPane scroller = new SwiftlyEditorScrollPane(textPane);
 
-        addTab(tabName, scroller);
+        addTab(document.getFilename(), scroller);
         int tabIndex = getTabCount() - 1;
         // ALT+tabIndex selects this tab. TODO don't let this go beyond 10.
         setMnemonicAt(tabIndex, KeyEvent.VK_1 + tabIndex);
 
         // add the scroller, which is the main component, to the tabList
-        _tabList.put(url, scroller);
+        _tabList.put(document, scroller);
 
         // select the newly opened tab
         setSelectedComponent(scroller);
     }
 
-    public void closeEditorTab (String url) 
+    public void closeEditorTab (SwiftlyDocument document) 
     {
-        Container container = _tabList.get(url);
+        Container container = _tabList.get(document);
         remove(container);
-        _tabList.remove(url);
+        _tabList.remove(document);
     }
 
     protected SwiftlyApplet _applet;
 
     // maps the url of the loaded file to the componenet (scroller) holding that textpane
-    protected HashMap<String,SwiftlyEditorScrollPane> _tabList =
-        new HashMap<String,SwiftlyEditorScrollPane>();
+    // TODO this needs to map SwiftlyDocuments to scrollers, IF a document has been opened
+    protected HashMap<SwiftlyDocument,SwiftlyEditorScrollPane> _tabList =
+        new HashMap<SwiftlyDocument,SwiftlyEditorScrollPane>();
 }
