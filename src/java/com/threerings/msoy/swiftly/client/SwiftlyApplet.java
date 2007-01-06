@@ -13,6 +13,8 @@ import javax.swing.UIManager;
 
 public class SwiftlyApplet extends JApplet
 {
+    public SwiftlyEditor editor;
+
     public void init()
     {
         try {
@@ -42,8 +44,8 @@ public class SwiftlyApplet extends JApplet
 
         // XXX temp. add a few example tabs
         URL base = getDocumentBase();
-        _editor.addEditorTab("file #1", base + "index.html");
-        _editor.addEditorTab("file #2", base + "history.html");
+        editor.addEditorTab("file #1", base + "index.html");
+        editor.addEditorTab("file #2", base + "history.html");
     }
 
     public void setStatus (String msg)
@@ -54,8 +56,8 @@ public class SwiftlyApplet extends JApplet
     protected void createGUI ()
     {
         // setup the components
-        _editor = new SwiftlyEditor(this);
-        _editor.setMinimumSize(new Dimension(400, 0));
+        editor = new SwiftlyEditor(this);
+        editor.setMinimumSize(new Dimension(400, 0));
 
         ArrayList<String> fileList = new ArrayList<String>();
         fileList.add("File 1");
@@ -65,7 +67,7 @@ public class SwiftlyApplet extends JApplet
 
         _toolbar = new SwiftlyToolbar(this);
         _statusbar = new SwiftlyStatusBar(this);
-        _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _editor, _projectPanel);
+        _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, editor, _projectPanel);
         // TODO apparently GTK does not have the graphic for this. What to do?
         _splitPane.setOneTouchExpandable(true);
         _splitPane.setDividerLocation(650);
@@ -85,7 +87,6 @@ public class SwiftlyApplet extends JApplet
     }
 
     protected Container _contentPane;
-    protected SwiftlyEditor _editor;
     protected SwiftlyToolbar _toolbar;
     protected SwiftlyStatusBar _statusbar;
     protected SwiftlyProjectPanel _projectPanel;

@@ -14,6 +14,7 @@ public class SwiftlyToolbar extends JToolBar
 
     protected void setupToolbar ()
     {
+        addButton("New", null);
         addButton("Save", null);
         addButton("Compile", null);
         addButton("Play", null);
