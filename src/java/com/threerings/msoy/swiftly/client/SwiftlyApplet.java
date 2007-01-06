@@ -22,6 +22,9 @@ public class SwiftlyApplet extends JApplet {
         // Save the root content pane
         _contentPane = getContentPane();
 
+        // TODO do we want this?
+        // setDefaultCloseOperation(EXIT_ON_CLOSE);
+
         // Execute a job on the event-dispatching thread: creating this applet's GUI.
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
@@ -36,7 +39,7 @@ public class SwiftlyApplet extends JApplet {
         // XXX temp. add a few example tabs
         URL base = getDocumentBase();
         _editor.addEditorTab("file #1", base + "index.html");
-        _editor.addEditorTab("file #2", base + "index.html");
+        _editor.addEditorTab("file #2", base + "history.html");
 
         setStatus("Welcome to Swiftly!");
     }
