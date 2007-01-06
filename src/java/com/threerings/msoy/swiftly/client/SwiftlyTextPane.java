@@ -1,5 +1,6 @@
 package com.threerings.msoy.swiftly.client;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
@@ -32,6 +33,12 @@ public class SwiftlyTextPane extends JTextPane
         } catch (BadLocationException e) {
         }
         styledDoc.addUndoableEditListener(new UndoHandler());
+
+        // setup some default colors
+        // TODO make setable by the user?
+        setForeground(Color.white);
+        setBackground(Color.black);
+        setCaretColor(Color.white);
     }
 
     protected void keyBindings ()

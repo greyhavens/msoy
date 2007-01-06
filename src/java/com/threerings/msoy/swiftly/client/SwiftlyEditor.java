@@ -1,6 +1,5 @@
 package com.threerings.msoy.swiftly.client;
 
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
@@ -26,10 +25,6 @@ public class SwiftlyEditor extends JTabbedPane
         }
 
         SwiftlyTextPane textPane = new SwiftlyTextPane(this, document);
-
-        // TODO make these colors setable by the user?
-        textPane.setForeground(Color.white);
-        textPane.setBackground(Color.black);
         SwiftlyEditorScrollPane scroller = new SwiftlyEditorScrollPane(textPane);
 
         addTab(document.getFilename(), scroller);
