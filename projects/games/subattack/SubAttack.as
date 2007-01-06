@@ -49,12 +49,7 @@ public class SubAttack extends Sprite
         _myIndex = _gameCtrl.getMyIndex();
 
         if (_myIndex != -1) {
-            // for focusability
-            var focusField :TextField = new TextField();
-            focusField.width = maskSize;
-            focusField.height = maskSize;
-            addChild(focusField);
-            addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
 
             addEventListener(Event.ENTER_FRAME, enterFrame);
         }
