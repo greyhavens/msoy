@@ -36,12 +36,12 @@ public class SwiftlyApplet extends JApplet {
             System.err.println("createGUI didn't successfully complete");
         }
 
+        setStatus("Welcome to Swiftly!");
+
         // XXX temp. add a few example tabs
         URL base = getDocumentBase();
         _editor.addEditorTab("file #1", base + "index.html");
         _editor.addEditorTab("file #2", base + "history.html");
-
-        setStatus("Welcome to Swiftly!");
     }
 
     public void setStatus (String msg) {

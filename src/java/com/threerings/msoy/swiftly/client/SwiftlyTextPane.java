@@ -19,9 +19,8 @@ import javax.swing.undo.UndoManager;
 
 public class SwiftlyTextPane extends JTextPane {
 
-    public SwiftlyTextPane (SwiftlyEditor editor, String url) {
+    public SwiftlyTextPane (SwiftlyEditor editor) {
         _editor = editor;
-        _url = url;
         keyBindings();
     }
 
@@ -102,7 +101,7 @@ public class SwiftlyTextPane extends JTextPane {
         }
 
         public void actionPerformed (ActionEvent e) {
-            _editor.closeEditorTab(_url);
+            _editor.closeEditorTab(getPage().toString());
         }
 
         protected Container _container;
@@ -120,6 +119,5 @@ public class SwiftlyTextPane extends JTextPane {
     }
 
     protected SwiftlyEditor _editor;
-    protected String _url;
 }
 

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.JTextPane;
@@ -22,7 +23,18 @@ public class SwiftlyEditor extends JTabbedPane {
             return;
         }
 
-        SwiftlyTextPane textPane = new SwiftlyTextPane(this, url);
+        SwiftlyTextPane textPane = new SwiftlyTextPane(this);
+
+        // load the url into the textpane
+        try {
+            textPane.setPage(url);
+        } catch (IOException ie) {
+            String errorMessage = "This page could not be loaded. " + "URL: " + url;
+            _applet.setStatus(errorMessage);
+            // TODO do something more intelligent here
+            return;
+        }
+
         // TODO make these colors setable by the user?
         textPane.setForeground(Color.white);
         textPane.setBackground(Color.black);
@@ -32,7 +44,6 @@ public class SwiftlyEditor extends JTabbedPane {
         int tabIndex = getTabCount() - 1;
         // ALT+tabIndex selects this tab. TODO don't let this go beyond 10.
         setMnemonicAt(tabIndex, KeyEvent.VK_1 + tabIndex);
-        setTabPage(tabIndex, url);
 
         // add the scroller, which is the main component, to the tabList
         _tabList.put(url, scroller);
@@ -44,11 +55,7 @@ public class SwiftlyEditor extends JTabbedPane {
     public void closeEditorTab (String url) {
         Container container = _tabList.get(url);
         remove(container);
-    }
-
-    public void setTabPage (int tabIndex, String url) {
-        SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getComponentAt(tabIndex);
-        pane.setPage(url);
+        _tabList.remove(url);
     }
 
     protected SwiftlyApplet _applet;
