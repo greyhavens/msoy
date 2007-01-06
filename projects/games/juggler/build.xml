@@ -1,0 +1,38 @@
+<!-- build configuration -->
+<project name="juggler" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"         value="Juggler"/>
+  <property name="root.path"        value="../../.."/>
+  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
+
+  <!-- builds our Flash game -->
+  <target name="compile">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-externs"/>
+      <arg value="com.threerings.ezgame:EZGame"/>
+      <arg value="com.threerings.ezgame:Game"/>
+      <arg value="com.threerings.ezgame:MessageReceivedEvent"/>
+      <arg value="com.threerings.ezgame:PropertyChangedEvent"/>
+      <arg value="com.threerings.ezgame:StateChangedEvent"/>
+      <arg value="-file-specs"/>
+      <arg value="${app.name}.as"/>
+    </java>
+  </target>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+    </delete>
+  </target>
+
+  <!-- copy swf over my uploaded one so I don't have to re-upload -->
+  <target name="dist" depends="compile">
+    <copy file="Juggler.swf" tofile="/export/msoy/pages/media/6121ddbbdd9935a1b4b31e4fd5c8f50fd29ab197.swf"/>
+  </target>
+
+</project>
