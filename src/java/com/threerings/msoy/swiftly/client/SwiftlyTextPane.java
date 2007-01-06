@@ -6,9 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.Action;
-import javax.swing.ActionMap;
 import javax.swing.AbstractAction;
-import javax.swing.InputMap;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.event.UndoableEditEvent;
@@ -28,14 +26,18 @@ public class SwiftlyTextPane extends JTextPane
 
     protected void keyBindings ()
     {
-        // TODO getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW); vs. WHEN_FOCUSED
-        InputMap inputMap = getInputMap();
-        ActionMap actionMap = getActionMap();
+        // ctrl-w closes the tab
+        addKeyAction(new CloseTabAction(), KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK));
 
-        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK);
-        Action action = new CloseTabAction();
-        inputMap.put(key, action);
-        actionMap.put(action, action);
+        // ctrl-z undos the action
+        addKeyAction(new UndoAction(), KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK));
+    }
+
+    protected void addKeyAction (Action action, KeyStroke key)
+    {
+        // TODO getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW); vs. WHEN_FOCUSED
+        getInputMap().put(key, action);
+        getActionMap().put(action, action);
     }
 
     protected class UndoHandler implements UndoableEditListener
