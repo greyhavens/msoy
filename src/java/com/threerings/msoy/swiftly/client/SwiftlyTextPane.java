@@ -41,6 +41,9 @@ public class SwiftlyTextPane extends JTextPane
 
         // ctrl-z undos the action
         addKeyAction(_undoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK));
+
+        // ctrl-y redoes the action
+        addKeyAction(_redoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Y, Event.CTRL_MASK));
     }
 
     protected void addKeyAction (Action action, KeyStroke key)
