@@ -48,18 +48,18 @@ import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.person.server.PersonPageManager;
+import com.threerings.msoy.person.server.persist.PersonPageRepository;
+import com.threerings.msoy.swiftly.server.SwiftlyManager;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.server.MsoyHttpServer;
-import com.threerings.msoy.person.server.persist.PersonPageRepository;
+import com.threerings.msoy.world.server.persist.MemoryRepository;
+
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.persist.ProfileRepository;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
-import com.threerings.msoy.swiftly.server.SwiftlyManager;
-
-
 
 import static com.threerings.msoy.Log.log;
 
@@ -88,6 +88,9 @@ public class MsoyServer extends WhirledServer
 
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
+
+    /** Maintains "smart" digital item memories. */
+    public static MemoryRepository memoryRepo;
 
     /** The Msoy item manager. */
     public static ItemManager itemMan = new ItemManager();
@@ -224,6 +227,7 @@ public class MsoyServer extends WhirledServer
         groupRepo = new GroupRepository(conProv);
         MailRepository mailRepo = new MailRepository(conProv);
         SwiftlyProjectRepository swiftRepo = new SwiftlyProjectRepository(conProv);
+        memoryRepo = new MemoryRepository(conProv);
 
         // intialize various services
         spotProv = new SpotProvider(omgr, plreg, screg);

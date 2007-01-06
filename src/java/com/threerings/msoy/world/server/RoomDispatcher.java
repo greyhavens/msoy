@@ -4,6 +4,8 @@
 package com.threerings.msoy.world.server;
 
 import com.threerings.msoy.world.client.RoomService;
+import com.threerings.msoy.world.data.EntityIdent;
+import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.RoomMarshaller;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -43,6 +45,20 @@ public class RoomDispatcher extends InvocationDispatcher
             ((RoomProvider)provider).editRoom(
                 source,
                 (InvocationService.ResultListener)args[0]
+            );
+            return;
+
+        case RoomMarshaller.TRIGGER_EVENT:
+            ((RoomProvider)provider).triggerEvent(
+                source,
+                (EntityIdent)args[0], (String)args[1]
+            );
+            return;
+
+        case RoomMarshaller.UPDATE_MEMORY:
+            ((RoomProvider)provider).updateMemory(
+                source,
+                (MemoryEntry)args[0]
             );
             return;
 
