@@ -17,33 +17,45 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
-public class SwiftlyTextPane extends JTextPane {
-
-    public SwiftlyTextPane (SwiftlyEditor editor) {
+public class SwiftlyTextPane extends JTextPane
+{
+    public SwiftlyTextPane (SwiftlyEditor editor)
+    {
         _editor = editor;
         keyBindings();
     }
 
-    protected UndoManager _undo = new UndoManager();
-    protected UndoableEditListener undoHandler = new UndoHandler();
-    protected UndoAction undoAction = new UndoAction();
-    protected RedoAction redoAction = new RedoAction();
+    protected void keyBindings ()
+    {
+        // TODO getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW); vs. WHEN_FOCUSED
+        InputMap inputMap = getInputMap();
+        ActionMap actionMap = getActionMap();
 
-    protected class UndoHandler implements UndoableEditListener {
-        public void undoableEditHappened (UndoableEditEvent e) {
+        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK);
+        Action action = new CloseTabAction();
+        inputMap.put(key, action);
+        actionMap.put(action, action);
+    }
+
+    protected class UndoHandler implements UndoableEditListener
+    {
+        public void undoableEditHappened (UndoableEditEvent e)
+        {
             _undo.addEdit(e.getEdit());
             undoAction.update();
             redoAction.update();
         }
     }
 
-    protected class UndoAction extends AbstractAction {
+    protected class UndoAction extends AbstractAction
+    {
         public UndoAction () {
             super("Undo");
             setEnabled(false);
         }
 
-        public void actionPerformed (ActionEvent e) {
+        public void actionPerformed (ActionEvent e)
+        {
             try {
                 _undo.undo();
             } catch (CannotUndoException ex) {
@@ -54,7 +66,8 @@ public class SwiftlyTextPane extends JTextPane {
             redoAction.update();
         }
 
-        protected void update () {
+        protected void update ()
+        {
             if(_undo.canUndo()) {
                 setEnabled(true);
                 putValue(Action.NAME, _undo.getUndoPresentationName());
@@ -66,13 +79,16 @@ public class SwiftlyTextPane extends JTextPane {
         }
     }
 
-    protected class RedoAction extends AbstractAction {
-        public RedoAction () {
+    protected class RedoAction extends AbstractAction
+    {
+        public RedoAction ()
+        {
             super("Redo");
             setEnabled(false);
         }
 
-        public void actionPerformed (ActionEvent e) {
+        public void actionPerformed (ActionEvent e)
+        {
             try {
                 _undo.redo();
             } catch (CannotRedoException ex) {
@@ -83,7 +99,8 @@ public class SwiftlyTextPane extends JTextPane {
             undoAction.update();
         }
 
-        protected void update () {
+        protected void update ()
+        {
             if(_undo.canRedo()) {
                 setEnabled(true);
                 putValue(Action.NAME, _undo.getRedoPresentationName());
@@ -95,29 +112,17 @@ public class SwiftlyTextPane extends JTextPane {
         }
     }
 
-    protected class CloseTabAction extends AbstractAction {
-        public CloseTabAction (Container container) {
-            _container = container;
-        }
-
+    protected class CloseTabAction extends AbstractAction
+    {
         public void actionPerformed (ActionEvent e) {
             _editor.closeEditorTab(getPage().toString());
         }
-
-        protected Container _container;
     }
     
-    protected void keyBindings () {
-        // TODO getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW); vs. WHEN_FOCUSED
-        InputMap inputMap = getInputMap();
-        ActionMap actionMap = getActionMap();
-
-        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK);
-        Action action = new CloseTabAction(this);
-        inputMap.put(key, action);
-        actionMap.put(action, action);
-    }
-
+    protected UndoManager _undo = new UndoManager();
+    protected UndoableEditListener undoHandler = new UndoHandler();
+    protected UndoAction undoAction = new UndoAction();
+    protected RedoAction redoAction = new RedoAction();
     protected SwiftlyEditor _editor;
 }
 

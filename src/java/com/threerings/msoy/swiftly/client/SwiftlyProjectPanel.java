@@ -8,7 +8,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
-public class SwiftlyProjectPanel extends JPanel {
+public class SwiftlyProjectPanel extends JPanel
+{
 
     public SwiftlyProjectPanel (SwiftlyApplet applet, String projectName,
                                 ArrayList<String> fileList) 

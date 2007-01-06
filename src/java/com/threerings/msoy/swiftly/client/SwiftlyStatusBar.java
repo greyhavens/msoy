@@ -6,9 +6,10 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.border.BevelBorder;
 
-public class SwiftlyStatusBar extends JPanel {
-
-    public SwiftlyStatusBar (SwiftlyApplet applet) {
+public class SwiftlyStatusBar extends JPanel
+{
+    public SwiftlyStatusBar (SwiftlyApplet applet)
+    {
         super(new BorderLayout());
         _applet = applet;
         _label = new JLabel();
@@ -16,7 +17,8 @@ public class SwiftlyStatusBar extends JPanel {
         setBorder(new BevelBorder(BevelBorder.LOWERED));
     }
 
-    public void setLabel (String message) {
+    public void setLabel (String message)
+    {
         _label.setText(message);
     }
 

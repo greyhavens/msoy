@@ -11,9 +11,10 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-public class SwiftlyApplet extends JApplet {
-
-    public void init() {
+public class SwiftlyApplet extends JApplet
+{
+    public void init()
+    {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -45,11 +46,13 @@ public class SwiftlyApplet extends JApplet {
         _editor.addEditorTab("file #2", base + "history.html");
     }
 
-    public void setStatus (String msg) {
+    public void setStatus (String msg)
+    {
         _statusbar.setLabel(msg);
     }
 
-    protected void createGUI () {
+    protected void createGUI ()
+    {
         // setup the components
         _editor = new SwiftlyEditor(this);
         _editor.setMinimumSize(new Dimension(400, 0));
@@ -74,9 +77,11 @@ public class SwiftlyApplet extends JApplet {
 
         // popup the project selection window
         // TODO don't popup if we already know our project
-        // XXX TEMP list of projects
+        // XXX TEMP disable while I work on other bits
+        /*
         String[] projectList = {"project1", "project2", "project3"};
         _projectWindow = new SwiftlyProjectWindow(projectList);
+        */
     }
 
     protected Container _contentPane;

@@ -10,14 +10,16 @@ import java.util.HashMap;
 import javax.swing.JTextPane;
 import javax.swing.JTabbedPane;
 
-public class SwiftlyEditor extends JTabbedPane {
-
-    public SwiftlyEditor (SwiftlyApplet applet) {
+public class SwiftlyEditor extends JTabbedPane
+{
+    public SwiftlyEditor (SwiftlyApplet applet) 
+    {
         super();
         _applet = applet;
     }
 
-    public void addEditorTab (String tabName, String url) {
+    public void addEditorTab (String tabName, String url) 
+    {
         if (_tabList.containsKey(url)) {
             setSelectedComponent(_tabList.get(url));
             return;
@@ -52,7 +54,8 @@ public class SwiftlyEditor extends JTabbedPane {
         setSelectedComponent(scroller);
     }
 
-    public void closeEditorTab (String url) {
+    public void closeEditorTab (String url) 
+    {
         Container container = _tabList.get(url);
         remove(container);
         _tabList.remove(url);

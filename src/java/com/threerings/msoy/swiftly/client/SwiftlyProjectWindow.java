@@ -6,11 +6,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
-public class SwiftlyProjectWindow extends JFrame {
-
+public class SwiftlyProjectWindow extends JFrame
+{
     public static final String WINDOW_TITLE = "Project selection";
 
-    public SwiftlyProjectWindow (Object[] projectList) {
+    public SwiftlyProjectWindow (Object[] projectList)
+    {
         super(WINDOW_TITLE);
         _list = new JList(projectList);
         _label = new JLabel("Choose the project to work on:");
