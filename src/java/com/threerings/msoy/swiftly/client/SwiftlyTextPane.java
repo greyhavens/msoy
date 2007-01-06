@@ -14,6 +14,8 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.BadLocationException;
 
 public class SwiftlyTextPane extends JTextPane
 {
@@ -22,6 +24,14 @@ public class SwiftlyTextPane extends JTextPane
         _editor = editor;
         _document = document;
         keyBindings();
+
+        // load the document text and undo listener
+        StyledDocument styledDoc = getStyledDocument();
+        try {
+            styledDoc.insertString(0, document.getText(), null);
+        } catch (BadLocationException e) {
+        }
+        styledDoc.addUndoableEditListener(new UndoHandler());
     }
 
     protected void keyBindings ()
@@ -30,7 +40,7 @@ public class SwiftlyTextPane extends JTextPane
         addKeyAction(new CloseTabAction(), KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK));
 
         // ctrl-z undos the action
-        addKeyAction(new UndoAction(), KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK));
+        addKeyAction(_undoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK));
     }
 
     protected void addKeyAction (Action action, KeyStroke key)
@@ -45,8 +55,8 @@ public class SwiftlyTextPane extends JTextPane
         public void undoableEditHappened (UndoableEditEvent e)
         {
             _undo.addEdit(e.getEdit());
-            undoAction.update();
-            redoAction.update();
+            _undoAction.update();
+            _redoAction.update();
         }
     }
 
@@ -62,11 +72,10 @@ public class SwiftlyTextPane extends JTextPane
             try {
                 _undo.undo();
             } catch (CannotUndoException ex) {
-                // TODO this should probably display in the statusbar
-                System.out.println("Unable to undo: " + ex);
+                _editor.getApplet().setStatus("Unable to undo.");
             }
             update();
-            redoAction.update();
+            _redoAction.update();
         }
 
         protected void update ()
@@ -95,11 +104,10 @@ public class SwiftlyTextPane extends JTextPane
             try {
                 _undo.redo();
             } catch (CannotRedoException ex) {
-                // TODO this should probably display in the statusbar
-                System.out.println("Unable to redo: " + ex);
+                _editor.getApplet().setStatus("Unable to redo.");
             }
             update();
-            undoAction.update();
+            _undoAction.update();
         }
 
         protected void update ()
@@ -123,9 +131,9 @@ public class SwiftlyTextPane extends JTextPane
     }
     
     protected UndoManager _undo = new UndoManager();
-    protected UndoableEditListener undoHandler = new UndoHandler();
-    protected UndoAction undoAction = new UndoAction();
-    protected RedoAction redoAction = new RedoAction();
+    protected UndoableEditListener _undoHandler = new UndoHandler();
+    protected UndoAction _undoAction = new UndoAction();
+    protected RedoAction _redoAction = new RedoAction();
     protected SwiftlyEditor _editor;
     protected SwiftlyDocument _document;
 }

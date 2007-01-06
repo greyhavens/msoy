@@ -9,8 +9,6 @@ import java.util.HashMap;
 
 import javax.swing.JTextPane;
 import javax.swing.JTabbedPane;
-import javax.swing.text.StyledDocument;
-import javax.swing.text.BadLocationException;
 
 public class SwiftlyEditor extends JTabbedPane
 {
@@ -28,11 +26,6 @@ public class SwiftlyEditor extends JTabbedPane
         }
 
         SwiftlyTextPane textPane = new SwiftlyTextPane(this, document);
-        StyledDocument styledDoc = textPane.getStyledDocument();
-        try {
-            styledDoc.insertString(0, document.getText(), null);
-        } catch (BadLocationException e) {
-        }
 
         // TODO make these colors setable by the user?
         textPane.setForeground(Color.white);
@@ -56,6 +49,11 @@ public class SwiftlyEditor extends JTabbedPane
         Container container = _tabList.get(document);
         remove(container);
         _tabList.remove(document);
+    }
+
+    public SwiftlyApplet getApplet ()
+    {
+        return _applet;
     }
 
     protected SwiftlyApplet _applet;
