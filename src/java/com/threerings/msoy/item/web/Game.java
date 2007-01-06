@@ -66,8 +66,8 @@ public class Game extends Item
         if (!super.isConsistent() || !nonBlank(name)) {
             return false;
         }
-        if (minPlayers < 1 || minPlayers > maxPlayers ||
-            desiredPlayers < minPlayers || desiredPlayers > maxPlayers) {
+        if (!isInWorld() && (minPlayers < 1 || minPlayers > maxPlayers ||
+            desiredPlayers < minPlayers || desiredPlayers > maxPlayers)) {
             return false;
         }
         return (gameMedia != null);
