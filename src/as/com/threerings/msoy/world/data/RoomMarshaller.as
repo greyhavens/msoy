@@ -7,6 +7,8 @@ import flash.utils.ByteArray;
 import com.threerings.util.*; // for Float, Integer, etc.
 
 import com.threerings.msoy.world.client.RoomService;
+import com.threerings.msoy.world.data.EntityIdent;
+import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
@@ -38,8 +40,30 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #triggerEvent} requests. */
+    public static const TRIGGER_EVENT :int = 2;
+
+    // from interface RoomService
+    public function triggerEvent (arg1 :Client, arg2 :EntityIdent, arg3 :String) :void
+    {
+        sendRequest(arg1, TRIGGER_EVENT, [
+            arg2, arg3
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #updateMemory} requests. */
+    public static const UPDATE_MEMORY :int = 3;
+
+    // from interface RoomService
+    public function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void
+    {
+        sendRequest(arg1, UPDATE_MEMORY, [
+            arg2
+        ]);
+    }
+
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static const UPDATE_ROOM :int = 2;
+    public static const UPDATE_ROOM :int = 4;
 
     // from interface RoomService
     public function updateRoom (arg1 :Client, arg2 :Array, arg3 :InvocationService_InvocationListener) :void
