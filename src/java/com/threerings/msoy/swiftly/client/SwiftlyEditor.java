@@ -1,13 +1,12 @@
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 
 import javax.swing.JTextPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JScrollPane;
 
 public class SwiftlyEditor extends JTabbedPane {
 
@@ -16,32 +15,8 @@ public class SwiftlyEditor extends JTabbedPane {
         _applet = applet;
     }
 
-    public class SwiftlyEditorScrollPane extends JScrollPane {
-        public SwiftlyEditorScrollPane(SwiftlyTextPane pane) {
-            super(pane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-                  JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-            _textPane = pane;
-        }
-        
-        public JTextPane getTextPane () {
-            return _textPane; 
-        }       
-
-        public void setPage (String url) {
-            try {
-                _textPane.setPage(url);
-            } catch (IOException ie) {
-                String errorMessage = "This page could not be loaded.\n" + "URL: " + url + "\n" +
-                    "Reason: " + ie;
-                _textPane.setText(errorMessage);
-            }
-        }       
-
-        protected JTextPane _textPane;
-    }
-
     public void addEditorTab (String tabName, String url) {
-        SwiftlyTextPane textPane = new SwiftlyTextPane();
+        SwiftlyTextPane textPane = new SwiftlyTextPane(this);
         // TODO make these colors setable by the user?
         textPane.setForeground(Color.white);
         textPane.setBackground(Color.black);
@@ -52,6 +27,10 @@ public class SwiftlyEditor extends JTabbedPane {
         // ALT+tabIndex selects this tab. TODO don't let this go beyond 10.
         setMnemonicAt(tabIndex, KeyEvent.VK_1 + tabIndex);
         setTabPage(tabIndex, url);
+    }
+
+    public void closeEditorTab (Container container) {
+        remove(container);
     }
 
     public void setTabPage (int tabIndex, String url) {

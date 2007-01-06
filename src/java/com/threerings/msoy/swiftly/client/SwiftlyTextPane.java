@@ -1,10 +1,16 @@
 package com.threerings.msoy.swiftly.client;
 
+import java.awt.Container;
+import java.awt.Event;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.AbstractAction;
+import javax.swing.InputMap;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.CannotRedoException;
@@ -12,6 +18,11 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
 public class SwiftlyTextPane extends JTextPane {
+
+    public SwiftlyTextPane (SwiftlyEditor editor) {
+        _editor = editor;
+        keyBindings();
+    }
 
     protected UndoManager _undo = new UndoManager();
     protected UndoableEditListener undoHandler = new UndoHandler();
@@ -83,5 +94,31 @@ public class SwiftlyTextPane extends JTextPane {
             }
         }
     }
+
+    protected class CloseTabAction extends AbstractAction {
+        public CloseTabAction (Container container) {
+            _container = container;
+        }
+
+        public void actionPerformed (ActionEvent e) {
+            // TextPane -> ViewPort -> ScrollPane
+            _editor.closeEditorTab(_container.getParent().getParent());
+        }
+
+        protected Container _container;
+    }
+    
+    protected void keyBindings () {
+        // TODO getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW); vs. WHEN_FOCUSED
+        InputMap inputMap = getInputMap();
+        ActionMap actionMap = getActionMap();
+
+        KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK);
+        Action action = new CloseTabAction(this);
+        inputMap.put(key, action);
+        actionMap.put(action, action);
+    }
+
+    protected SwiftlyEditor _editor;
 }
 
