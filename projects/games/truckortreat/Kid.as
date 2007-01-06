@@ -17,15 +17,18 @@ public class Kid extends BaseSprite
         _boardHeight = board.height;
         _speed = DEFAULT_SPEED;
         _lives = STARTING_LIVES;
+        _dead = false;
         super(startX, startY, getBitmap(image));
     }
     
-    /** Decrement number of lives and return the number remaining. */
-    public function die () :int
+    /** Handle being killed. */
+    public function wasKilled () :void
     {
-        --_lives;
+        _dead = true;
+        _lives--;
+        // TODO: this is where we have some nice kid being squashed animation.
         trace("Oh nos, death! " + _lives + " lives left.");
-        return _lives;
+        _respawnTicks = AUTO_RESPAWN_TICKS;
     }
     
     /** 
@@ -34,6 +37,7 @@ public class Kid extends BaseSprite
      */
     public function keyDownHandler (event :KeyboardEvent) :void
     {
+        trace("got a key down press");
         switch (event.keyCode) {
         case Keyboard.UP:
             _moveY = -1;
@@ -66,15 +70,35 @@ public class Kid extends BaseSprite
     /** Called to move kid at each clock tick. */
     public function tick () :void
     {
-        var deltaX :int = _speed * _moveX;
-        var deltaY :int = _speed * _moveY;
-        if (0 <= x + deltaX && x + deltaX + width <= _boardWidth) {
-            x += deltaX;
+        if (_dead) {
+            _respawnTicks--;
+            if (_respawnTicks == 0) {
+                respawn();
+            }
+        } else {
+            // Only move if we're not dead.
+            var deltaX :int = _speed * _moveX;
+            var deltaY :int = _speed * _moveY;
+            if (0 <= x + deltaX && x + deltaX + width <= _boardWidth) {
+                x += deltaX;
+            }
+            if (Board.HORIZON - height <= y + deltaY && 
+                y + deltaY + height <= _boardHeight) {
+                y += deltaY;
+            }
         }
-        if (Board.HORIZON - height <= y + deltaY && 
-            y + deltaY + height <= _boardHeight) {
-            y += deltaY;
-        }
+    }
+    
+    /** Return true if we're not dead, false if we are. */
+    public function isAlive() :Boolean
+    {
+        return !_dead;
+    }
+    
+    /** Return the number of remaining lives. */
+    public function livesLeft() :int
+    {
+        return _lives;
     }
     
     /** Set the kid's speed to a new value. */
@@ -83,11 +107,13 @@ public class Kid extends BaseSprite
         _speed = newSpeed;
     }
     
-    /** Immediately move to the specified coordinates. */
-    public function respawn (startX :int, startY :int) :void
+    /** Respawn at a random sidewalk location. */
+    protected function respawn () :void
     {
-        x = startX;
-        y = startY;
+        _dead = false;
+        // TODO: set these to some actually randomized coordinates
+        x = 180;
+        y = 200;
     }
     
     /** Get the bitmap used to draw the kid. */
@@ -113,8 +139,14 @@ public class Kid extends BaseSprite
     /** Current speed (in pixels per tick). */
     protected var _speed :int;
 
+    /** Are we dead? */
+    protected var _dead :Boolean;
+
     /** Number of lives. */
     protected var _lives :int;
+    
+    /** A count of how long until we respawn. */
+    protected var _respawnTicks :int;
     
     /** Dimensions of board we're drawn on. */
     protected var _boardHeight :int;
@@ -124,7 +156,10 @@ public class Kid extends BaseSprite
     protected static const STARTING_LIVES :int = 3;
     
     /** Default number of pixels kid can move per tick. */
-    protected static const DEFAULT_SPEED :int = 5;
+    protected static const DEFAULT_SPEED :int = 8;
+    
+    /** The number of ticks that may elapse before we're auto-respawned. */
+    protected static const AUTO_RESPAWN_TICKS :int = 20;
     
     /** Images for kid. */
     [Embed(source="rsrc/vampire.png")]
