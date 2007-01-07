@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 import javax.swing.JTextPane;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class SwiftlyEditor extends JTabbedPane
 {
@@ -15,6 +17,7 @@ public class SwiftlyEditor extends JTabbedPane
     {
         super();
         _applet = applet;
+        addChangeListener(new TabChangedListener());
     }
 
     public void addEditorTab ()
@@ -94,6 +97,14 @@ public class SwiftlyEditor extends JTabbedPane
     public SwiftlyApplet getApplet ()
     {
         return _applet;
+    }
+
+    protected class TabChangedListener implements ChangeListener
+    {
+        public void stateChanged(ChangeEvent evt) {
+            // clear the statusbar whenever a different tab is selected
+            _applet.clearStatus();
+        }
     }
 
     protected SwiftlyApplet _applet;

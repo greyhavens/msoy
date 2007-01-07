@@ -50,6 +50,12 @@ public class SwiftlyApplet extends JApplet
         _statusbar.setLabel(msg);
     }
 
+    public void clearStatus ()
+    {
+        // a null string makes the label disappear
+        _statusbar.setLabel(" ");
+    }
+
     protected void createGUI ()
     {
         // setup the components

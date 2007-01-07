@@ -277,6 +277,8 @@ public class SwiftlyTextPane extends JTextPane
                   false,  //maximizable
                   false); //iconifiable
             setVisible(true);
+            // TODO determine this location relatively
+            setLocation(60,60);
             add(new JLabel("Document has unsaved changes."), BorderLayout.PAGE_START);
             add(new JButton("Save"), BorderLayout.WEST);
             add(new JButton("Close without saving"), BorderLayout.EAST);
