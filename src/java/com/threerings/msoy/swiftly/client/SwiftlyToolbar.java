@@ -24,7 +24,7 @@ public class SwiftlyToolbar extends JToolBar
         addButton("Undo", null);
         addButton("Redo", null);
         // TODO let's try to get close buttons on the tabs
-        addButton("Close", null);
+        addButton("Close", new CloseDocumentAction());
         setFloatable(false);
     }
 
@@ -42,6 +42,13 @@ public class SwiftlyToolbar extends JToolBar
     {
         public void actionPerformed (ActionEvent e) {
             _applet.editor.addEditorTab();
+        }
+    }
+
+    protected class CloseDocumentAction extends AbstractAction
+    {
+        public void actionPerformed (ActionEvent e) {
+            _applet.editor.closeCurrentTab();
         }
     }
 

@@ -12,11 +12,11 @@ public class SwiftlyEditorScrollPane extends JScrollPane
         _textPane = pane;
     }
     
-    public JTextPane getTextPane ()
+    public SwiftlyTextPane getTextPane ()
     {
         return _textPane; 
     }       
 
-    protected JTextPane _textPane;
+    protected SwiftlyTextPane _textPane;
 }
 

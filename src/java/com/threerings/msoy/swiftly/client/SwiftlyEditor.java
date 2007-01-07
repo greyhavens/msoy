@@ -44,10 +44,15 @@ public class SwiftlyEditor extends JTabbedPane
         setSelectedComponent(scroller);
     }
 
+    public void closeCurrentTab () 
+    {
+        SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
+        closeEditorTab(pane.getTextPane().getSwiftlyDocument());
+    }
+
     public void closeEditorTab (SwiftlyDocument document) 
     {
-        Container container = _tabList.get(document);
-        remove(container);
+        remove(_tabList.get(document));
         _tabList.remove(document);
     }
 

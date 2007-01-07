@@ -50,6 +50,11 @@ public class SwiftlyTextPane extends JTextPane
         setCaretColor(Color.white);
     }
 
+    public SwiftlyDocument getSwiftlyDocument ()
+    {
+        return _document;
+    }
+
     protected void addKeyBindings ()
     {
         // ctrl-w closes the tab
