@@ -16,6 +16,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.CannotRedoException;
@@ -42,6 +44,7 @@ public class SwiftlyTextPane extends JTextPane
         } catch (BadLocationException e) {
         }
         styledDoc.addUndoableEditListener(new UndoHandler());
+        styledDoc.addDocumentListener(new SwiftlyDocumentListener());
 
         // setup some default colors
         // TODO make setable by the user?
@@ -53,6 +56,17 @@ public class SwiftlyTextPane extends JTextPane
     public SwiftlyDocument getSwiftlyDocument ()
     {
         return _document;
+    }
+
+    // Save the document if needed. Return true if save happened/worked
+    public boolean saveDocument ()
+    {
+        if (_documentChanged) {
+            // TODO save the document into the internets
+            _documentChanged = false;
+            return true;
+        }
+        return false;
     }
 
     protected void addKeyBindings ()
@@ -214,6 +228,23 @@ public class SwiftlyTextPane extends JTextPane
         }
     }
 
+    class SwiftlyDocumentListener implements DocumentListener {
+        public void insertUpdate(DocumentEvent e) {
+            if (!_documentChanged) {
+                _editor.setTabTitleChanged(true);
+                _documentChanged = true;
+            }
+        }
+
+        public void removeUpdate(DocumentEvent e) {
+            // nada
+        }
+
+        public void changedUpdate(DocumentEvent e) {
+            // nada
+        }
+    }
+
     protected class CloseTabAction extends AbstractAction
     {
         public void actionPerformed (ActionEvent e) {
@@ -229,5 +260,6 @@ public class SwiftlyTextPane extends JTextPane
     protected SwiftlyEditor _editor;
     protected SwiftlyDocument _document;
     protected HashMap<String,Action> _actions = new HashMap<String,Action>();
+    protected boolean _documentChanged;
 }
 

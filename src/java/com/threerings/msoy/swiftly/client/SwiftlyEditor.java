@@ -44,6 +44,36 @@ public class SwiftlyEditor extends JTabbedPane
         setSelectedComponent(scroller);
     }
 
+    public void saveCurrentTab () 
+    {
+        SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
+        // TODO show a progress bar in the status bar while Saving...
+        if (pane.getTextPane().saveDocument()) {
+            setTabTitleChanged(false);
+            // TODO show the filename that just saved
+            _applet.setStatus("Document saved.");
+        }
+    }
+
+    public void setTabTitleChanged (boolean changed)
+    {
+        int tabIndex = getSelectedIndex();
+        String title = getTitleAt(tabIndex);
+
+        boolean hasAsterisk = false;
+        if (title.charAt(0) == '*') {
+            hasAsterisk = true;
+        }
+
+        if (changed && !hasAsterisk) {
+            title = "*" + title;
+            setTitleAt(tabIndex, title);
+        } else if (hasAsterisk) {
+            title = title.substring(1);
+            setTitleAt(tabIndex, title);
+        }
+    }
+
     public void closeCurrentTab () 
     {
         SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();

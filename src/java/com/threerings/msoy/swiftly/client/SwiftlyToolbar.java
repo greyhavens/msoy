@@ -18,7 +18,7 @@ public class SwiftlyToolbar extends JToolBar
     protected void setupToolbar ()
     {
         addButton("New", new NewDocumentAction());
-        addButton("Save", null);
+        addButton("Save", new SaveDocumentAction());
         addButton("Compile", null);
         addButton("Play", null);
         addButton("Undo", null);
@@ -42,6 +42,13 @@ public class SwiftlyToolbar extends JToolBar
     {
         public void actionPerformed (ActionEvent e) {
             _applet.editor.addEditorTab();
+        }
+    }
+
+    protected class SaveDocumentAction extends AbstractAction
+    {
+        public void actionPerformed (ActionEvent e) {
+            _applet.editor.saveCurrentTab();
         }
     }
 
