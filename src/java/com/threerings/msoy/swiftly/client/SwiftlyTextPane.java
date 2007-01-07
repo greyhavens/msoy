@@ -1,5 +1,6 @@
 package com.threerings.msoy.swiftly.client;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Event;
@@ -12,6 +13,9 @@ import java.util.HashMap;
 
 import javax.swing.Action;
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextPane;
@@ -67,6 +71,17 @@ public class SwiftlyTextPane extends JTextPane
             return true;
         }
         return false;
+    }
+
+    public boolean hasUnsavedChanges ()
+    {
+        return _documentChanged;
+    }
+
+    // Throws up a close tab dialog internal frame
+    public void closeTabDialog()
+    {
+        add(new CloseTabDialog());
     }
 
     protected void addKeyBindings ()
@@ -248,7 +263,24 @@ public class SwiftlyTextPane extends JTextPane
     protected class CloseTabAction extends AbstractAction
     {
         public void actionPerformed (ActionEvent e) {
-            _editor.closeEditorTab(_document);
+            _editor.closeCurrentTab();
+        }
+    }
+
+    protected class CloseTabDialog extends JInternalFrame
+    {
+        public CloseTabDialog ()
+        {
+            super("Unsaved changes.", 
+                  false,  //resizable
+                  true,  //closable TODO should be false
+                  false,  //maximizable
+                  false); //iconifiable
+            setVisible(true);
+            add(new JLabel("Document has unsaved changes."), BorderLayout.PAGE_START);
+            add(new JButton("Save"), BorderLayout.WEST);
+            add(new JButton("Close without saving"), BorderLayout.EAST);
+            pack();
         }
     }
     

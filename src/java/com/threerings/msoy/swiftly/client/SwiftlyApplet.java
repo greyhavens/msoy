@@ -18,7 +18,9 @@ public class SwiftlyApplet extends JApplet
     public void init()
     {
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // TODO the gtk L&F breaks some bits. Just use the default L&F for now.
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
             // this should just fall back on a working theme
         }

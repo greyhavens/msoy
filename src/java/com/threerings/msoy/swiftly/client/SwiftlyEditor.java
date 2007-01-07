@@ -77,11 +77,12 @@ public class SwiftlyEditor extends JTabbedPane
     public void closeCurrentTab () 
     {
         SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
-        closeEditorTab(pane.getTextPane().getSwiftlyDocument());
-    }
-
-    public void closeEditorTab (SwiftlyDocument document) 
-    {
+        SwiftlyTextPane textPane = pane.getTextPane();
+        if (textPane.hasUnsavedChanges()) {
+            textPane.closeTabDialog();
+            return;
+        }
+        SwiftlyDocument document = textPane.getSwiftlyDocument();
         remove(_tabList.get(document));
         _tabList.remove(document);
     }
@@ -93,7 +94,7 @@ public class SwiftlyEditor extends JTabbedPane
 
     protected SwiftlyApplet _applet;
 
-    // maps the url of the loaded file to the componenet (scroller) holding that textpane
+    // maps the document of the loaded file to the componenet (scroller) holding that textpane
     // TODO this needs to map SwiftlyDocuments to scrollers, IF a document has been opened
     protected HashMap<SwiftlyDocument,SwiftlyEditorScrollPane> _tabList =
         new HashMap<SwiftlyDocument,SwiftlyEditorScrollPane>();
