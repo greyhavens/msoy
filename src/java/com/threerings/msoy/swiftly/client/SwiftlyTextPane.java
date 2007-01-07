@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 
 import javax.swing.Action;
 import javax.swing.AbstractAction;
@@ -30,6 +31,7 @@ public class SwiftlyTextPane extends JTextPane
     {
         _editor = editor;
         _document = document;
+        createActionTable();
         addKeyBindings();
         addPopupMenu();
 
@@ -66,18 +68,31 @@ public class SwiftlyTextPane extends JTextPane
 
         // Cut
         JMenuItem menuItem = new JMenuItem("Cut");
-        Action action = new DefaultEditorKit.CutAction();
-        menuItem.addActionListener(action);
+        menuItem.addActionListener(getActionByName(DefaultEditorKit.cutAction));
         _popup.add(menuItem);
         // Copy
         menuItem = new JMenuItem("Copy");
-        action = new DefaultEditorKit.CopyAction();
-        menuItem.addActionListener(action);
+        menuItem.addActionListener(getActionByName(DefaultEditorKit.copyAction));
         _popup.add(menuItem);
         // Paste
         menuItem = new JMenuItem("Paste");
-        action = new DefaultEditorKit.PasteAction();
-        menuItem.addActionListener(action);
+        menuItem.addActionListener(getActionByName(DefaultEditorKit.pasteAction));
+        _popup.add(menuItem);
+        // Seperator
+        _popup.addSeparator();
+        // Select All
+        menuItem = new JMenuItem("Select All");
+        menuItem.addActionListener(getActionByName(DefaultEditorKit.selectAllAction));
+        _popup.add(menuItem);
+        // Seperator
+        _popup.addSeparator();
+        // Undo
+        menuItem = new JMenuItem("Undo");
+        menuItem.addActionListener(_undoAction);
+        _popup.add(menuItem);
+        // Redo
+        menuItem = new JMenuItem("Redo");
+        menuItem.addActionListener(_redoAction);
         _popup.add(menuItem);
 
         MouseListener popupListener = new PopupListener();
@@ -90,6 +105,18 @@ public class SwiftlyTextPane extends JTextPane
         // TODO getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW); vs. WHEN_FOCUSED
         getInputMap().put(key, action);
         getActionMap().put(action, action);
+    }
+
+    // Create the action lookup table
+    protected void createActionTable() {
+        for (Action action : getStyledEditorKit().getActions()) {
+            _actions.put((String)action.getValue(Action.NAME), action);
+        }
+    }
+
+    // Lookup an action by name
+    protected Action getActionByName(String name) {
+        return (Action)(_actions.get(name));
     }
 
     protected class PopupListener extends MouseAdapter {
@@ -195,5 +222,6 @@ public class SwiftlyTextPane extends JTextPane
     protected RedoAction _redoAction = new RedoAction();
     protected SwiftlyEditor _editor;
     protected SwiftlyDocument _document;
+    protected HashMap<String,Action> _actions = new HashMap<String,Action>();
 }
 
