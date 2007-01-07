@@ -76,6 +76,10 @@ public class SwiftlyEditor extends JTabbedPane
 
     public void closeCurrentTab () 
     {
+        // Don't try to remove a tab if we have none.
+        if (getTabCount() == 0) {
+            return;
+        }
         SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
         SwiftlyTextPane textPane = pane.getTextPane();
         if (textPane.hasUnsavedChanges()) {
