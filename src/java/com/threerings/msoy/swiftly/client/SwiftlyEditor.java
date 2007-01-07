@@ -18,6 +18,8 @@ public class SwiftlyEditor extends JTabbedPane
         super();
         _applet = applet;
         addChangeListener(new TabChangedListener());
+
+        setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
     public void addEditorTab ()

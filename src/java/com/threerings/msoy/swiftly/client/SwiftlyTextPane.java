@@ -273,7 +273,7 @@ public class SwiftlyTextPane extends JTextPane
         {
             super("Unsaved changes.", 
                   false,  //resizable
-                  true,  //closable TODO should be false
+                  true,   //closable TODO should be false
                   false,  //maximizable
                   false); //iconifiable
             setVisible(true);
