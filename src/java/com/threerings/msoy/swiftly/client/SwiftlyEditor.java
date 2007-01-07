@@ -17,6 +17,11 @@ public class SwiftlyEditor extends JTabbedPane
         _applet = applet;
     }
 
+    public void addEditorTab ()
+    {
+        addEditorTab (new SwiftlyDocument("new file", "This is a new file"));
+    }
+
     public void addEditorTab (SwiftlyDocument document)
     {
         if (_tabList.containsKey(document)) {

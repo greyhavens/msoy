@@ -66,6 +66,7 @@ public class SwiftlyTextPane extends JTextPane
     {
         _popup = new JPopupMenu();
 
+        // TODO is there a cross platform way to show what the keybindings are for these actions?
         // Cut
         JMenuItem menuItem = new JMenuItem("Cut");
         menuItem.addActionListener(getActionByName(DefaultEditorKit.cutAction));

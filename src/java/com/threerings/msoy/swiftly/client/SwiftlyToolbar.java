@@ -1,5 +1,8 @@
 package com.threerings.msoy.swiftly.client;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
@@ -14,7 +17,7 @@ public class SwiftlyToolbar extends JToolBar
 
     protected void setupToolbar ()
     {
-        addButton("New", null);
+        addButton("New", new NewDocumentAction());
         addButton("Save", null);
         addButton("Compile", null);
         addButton("Play", null);
@@ -29,11 +32,17 @@ public class SwiftlyToolbar extends JToolBar
     {
         JButton button = new JButton(title);
         if (action != null) {
-            // TODO
-            // button.addActionListener(action);
+            button.addActionListener(action);
         }
         add(button);
         return button;
+    }
+
+    protected class NewDocumentAction extends AbstractAction
+    {
+        public void actionPerformed (ActionEvent e) {
+            _applet.editor.addEditorTab();
+        }
     }
 
     protected SwiftlyApplet _applet;
