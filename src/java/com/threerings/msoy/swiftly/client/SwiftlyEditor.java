@@ -36,9 +36,7 @@ public class SwiftlyEditor extends JTabbedPane
         SwiftlyEditorScrollPane scroller = new SwiftlyEditorScrollPane(textPane);
 
         addTab(document.getFilename(), scroller);
-        int tabIndex = getTabCount() - 1;
-        // ALT+tabIndex selects this tab. TODO don't let this go beyond 10.
-        setMnemonicAt(tabIndex, KeyEvent.VK_1 + tabIndex);
+        assignTabKeys();
 
         // add the scroller, which is the main component, to the tabList
         _tabList.put(document, scroller);
@@ -92,11 +90,22 @@ public class SwiftlyEditor extends JTabbedPane
         SwiftlyDocument document = textPane.getSwiftlyDocument();
         remove(_tabList.get(document));
         _tabList.remove(document);
+        assignTabKeys();
     }
 
     public SwiftlyApplet getApplet ()
     {
         return _applet;
+    }
+
+    protected void assignTabKeys ()
+    {
+        for (int tabIndex = 0; tabIndex < getTabCount(); tabIndex++) {
+            // ALT+tabIndex selects this tab for the first 9 tabs
+            if (tabIndex < 9) {
+                setMnemonicAt(tabIndex, KeyEvent.VK_1 + tabIndex);
+            }
+        }
     }
 
     protected class TabChangedListener implements ChangeListener
