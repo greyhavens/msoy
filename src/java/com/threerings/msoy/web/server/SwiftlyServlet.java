@@ -3,28 +3,22 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import com.threerings.msoy.server.MsoyServer;
-
-import com.threerings.msoy.web.client.SwiftlyService;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebCreds;
+import org.apache.xmlrpc.server.PropertyHandlerMapping;
+import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
+import org.apache.xmlrpc.webserver.XmlRpcServlet;
 
 /**
  * Provides the server implementation of {@link ItemService}.
  */
-public class SwiftlyServlet extends MsoyServiceServlet
-    implements SwiftlyService
+public class SwiftlyServlet extends XmlRpcServlet
 {
-    public List<String> getFiles (WebCreds creds)
-        throws ServiceException
-    {
-        // TODO: Implement
-        ArrayList<String> files = new ArrayList<String>();
-
-        files.add("Testing");
-        return files;
+    /**
+     * Provides the Xml-Rpc method handler mapping.
+     */
+    protected XmlRpcHandlerMapping newXmlRpcHandlerMapping() {
+        PropertyHandlerMapping phm = new PropertyHandlerMapping();
+        // TODO Map to classes
+        return phm;
     }
 }

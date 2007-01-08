@@ -7,4 +7,11 @@ package client.swiftly;
  */
 public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   
+  /**
+   * Translated "Log in to view your Swiftly projects.".
+   * 
+   * @return translated "Log in to view your Swiftly projects."
+   * @gwt.key indexLogon
+   */
+  String indexLogon();
 }

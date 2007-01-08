@@ -8,8 +8,9 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
+import com.google.gwt.user.client.ui.Label;
 
-import com.threerings.msoy.web.data.LaunchConfig;
+import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
 import client.shell.ShellContext;
@@ -33,11 +34,7 @@ public class index extends MsoyEntryPoint
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
-        try {
-            // TODO: Open editor to a specific project
-        } catch (Exception e) {
-            // TODO: display error
-        }
+        updateInterface(History.getToken());
     }
 
     // @Override // from MsoyEntryPoint
@@ -62,14 +59,32 @@ public class index extends MsoyEntryPoint
         _ctx.msgs = (SwiftlyMessages)GWT.create(SwiftlyMessages.class);
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override from MsoyEntryPoint
+    protected void didLogon (WebCreds creds)
+    {
+        super.didLogon(creds);
+        updateInterface(null);
+    }
+
+    // @Override from MsoyEntryPoint
+    protected void didLogoff ()
+    {
+        super.didLogoff();
+        updateInterface(null);
+    }
+
+    // @Override from MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
-        String initToken = History.getToken();
-        if (initToken.length() > 0) {
-            // TODO: Load a specific project
-            onHistoryChanged(initToken);
+        updateInterface(History.getToken());
+    }
+
+    protected void updateInterface (String historyToken)
+    {
+        if (_ctx.creds == null) {
+            // if we have no creds, just display a message saying login
+            setContent(new Label(_ctx.msgs.indexLogon()));
         } else {
             setContent(new SwiftlyPanel(_ctx));
         }

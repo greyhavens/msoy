@@ -51,6 +51,9 @@
     <file name="${extlib.dir}/mysql-connector-java-3.1.12-bin.jar"/>
     <file name="${extlib.dir}/proguard.jar"/>
     <file name="${extlib.dir}/servlet-2.3.jar"/>
+    <file name="${extlib.dir}/ws-commons-util-1.0.1.jar"/>
+    <file name="${extlib.dir}/xmlrpc-common-3.0.jar"/>
+    <file name="${extlib.dir}/xmlrpc-server-3.0.jar"/>
     <file name="${extlib.dir}/velocity-1.5-dev.jar"/>
     <file name="lib/json.jar"/>
   </filelist>
@@ -359,6 +362,11 @@
     <jar file="pages/clients/swiftly-client.jar"
          basedir="${deploy.dir}/classes">
       <include name="com/threerings/msoy/swiftly/client/**"/>
+      <zipgroupfileset dir="${extlib.dir}">
+        <file name="${extlib.dir}/ws-commons-util-1.0.1.jar"/>
+        <file name="${extlib.dir}/xmlrpc-common-3.0.jar"/>
+        <file name="${extlib.dir}/xmlrpc-server-3.0.jar"/>
+      </zipgroupfileset>
     </jar>
   </target>
 
