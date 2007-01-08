@@ -14,6 +14,7 @@ import org.mortbay.http.HttpContext;
 import org.mortbay.http.HttpServer;
 import org.mortbay.http.handler.ResourceHandler;
 import org.mortbay.jetty.servlet.ServletHandler;
+import org.mortbay.jetty.servlet.ServletHolder;
 import com.threerings.msoy.server.ServerConfig;
 
 /**
@@ -41,6 +42,11 @@ public class MsoyHttpServer extends HttpServer
             handler.addServlet(name, "/msoy/" + name, SERVLETS[ii+1]);
             handler.addServlet(name, "/" + name, SERVLETS[ii+1]);
         }
+        
+        // wire up our single XML-RPC servlet, with XML-RPC extensions enabled
+        ServletHolder holder = handler.addServlet("swiftlysvc", SwiftlyServlet.class.getName());
+        holder.setInitParameter("enabledForExtensions", "true");
+
         context.addHandler(handler);
 
         // tone down the default verbose logging; unfortunately some creates a
@@ -68,6 +74,7 @@ public class MsoyHttpServer extends HttpServer
         start();
     }
 
+    /** GWT Servlets */
     protected static final String[] SERVLETS = {
         "usersvc", WebUserServlet.class.getName(),
         "itemsvc", ItemServlet.class.getName(),
@@ -78,7 +85,6 @@ public class MsoyHttpServer extends HttpServer
         "groupsvc", GroupServlet.class.getName(),
         "mailsvc", MailServlet.class.getName(),
         "uploadsvc", UploadServlet.class.getName(),
-        "gamesvc", GameServlet.class.getName(),
-        "swiftlysvc", SwiftlyServlet.class.getName()
+        "gamesvc", GameServlet.class.getName()
     };
 }
