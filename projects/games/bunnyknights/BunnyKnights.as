@@ -14,7 +14,7 @@ import flash.utils.getTimer;
 import com.threerings.util.Random;
 
 import com.threerings.ezgame.Game;
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -24,9 +24,14 @@ import com.threerings.ezgame.StateChangedListener;
 
 [SWF(width="640", height="480")]
 public class BunnyKnights extends Sprite
-    implements Game, PropertyChangedListener, StateChangedListener, 
+    implements PropertyChangedListener, StateChangedListener, 
             MessageReceivedListener
 {
+    public static function log (msg :String) :void
+    {
+        ExternalInterface.call("console.debug", msg);
+    }
+
     public function BunnyKnights ()
     {
         var square :Sprite = new Sprite();
@@ -35,20 +40,13 @@ public class BunnyKnights extends Sprite
         square.graphics.endFill();
         addChild(square);
 
+        _gameCtrl = new EZGameControl(this);
+        _gameCtrl.registerListener(this);
+
         mask = square;
-    }
 
-    public static function log (msg :String) :void
-    {
-        ExternalInterface.call("console.debug", msg);
-    }
-
-    // from Game
-    public function setGameObject (gameObj :EZGame) :void
-    {
-        _gameObj = gameObj;
-        _myIndex = _gameObj.getMyIndex();
-        _numPlayers = _gameObj.getPlayerCount();
+        _myIndex = _gameCtrl.getMyIndex();
+        _numPlayers = _gameCtrl.getPlayerCount();
 
         _world = new Sprite();
         _world.scaleX = 2;
@@ -65,7 +63,7 @@ public class BunnyKnights extends Sprite
         }
 
         if (_myIndex == 0) {
-            _gameObj.sendMessage("rseed", getTimer());
+            _gameCtrl.sendMessage("rseed", getTimer());
         }
         startGame();
     }
@@ -157,8 +155,8 @@ public class BunnyKnights extends Sprite
             }
         }
         recenter();
-        stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-        stage.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyUpHandler);
 
         _moveTimer = new Timer(10);
         _moveTimer.addEventListener(TimerEvent.TIMER, bunnyTick);
@@ -215,7 +213,7 @@ public class BunnyKnights extends Sprite
     {
         var msg :String = "off";
         if (on) msg = "on";
-        _gameObj.sendMessage(msg, String(x) + "," + y + "," + idx);    
+        _gameCtrl.sendMessage(msg, String(x) + "," + y + "," + idx);    
     }
 
     protected function keyUpHandler (event :KeyboardEvent) :void
@@ -270,7 +268,7 @@ public class BunnyKnights extends Sprite
         var now :int = getTimer();
         var delta :int = int((now - _tick) / 50 * 6);
         _tick = now - (now % 50);
-        if (_keysDown != 1) {
+        if (_keysDown != 1 && _bunny != null) {
             _bunny.idle();
         }
         if (delta == 0) {
@@ -295,14 +293,17 @@ public class BunnyKnights extends Sprite
             }
             recenter();
         }
-        if (getTimer() - _messageTick > 110) {
-            _bunny.sendStore(_gameObj, _myIndex);
+        if (getTimer() - _messageTick > 110 && _bunny != null) {
+            _bunny.sendStore(_gameCtrl, _myIndex);
             _messageTick = now;
         }
     }
 
     public function recenter () :void
     {
+        if (_bunny == null) {
+            return;
+        }
         var bx :int = _bunny.getBX()*2;
         var by :int = _bunny.getBY()*2;
         if (bx + _world.x > 400) {
@@ -317,8 +318,8 @@ public class BunnyKnights extends Sprite
         }
     }
 
-    /** Out game object. */
-    protected var _gameObj :EZGame;
+    /** Our game contro. */
+    protected var _gameCtrl :EZGameControl;
 
     protected var _bunny :Bunny;
     protected var _bunnies :Array;

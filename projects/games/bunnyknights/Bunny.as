@@ -10,7 +10,7 @@ import flash.utils.Timer;
 import mx.core.BitmapAsset;
 import mx.core.MovieClipAsset;
 
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 
 public class Bunny extends Sprite
 {
@@ -141,7 +141,7 @@ public class Bunny extends Sprite
         _moveStore.push(String(deltaY));
     }
 
-    public function sendStore (gameObj :EZGame, index :int) :void
+    public function sendStore (gameCtrl :EZGameControl, index :int) :void
     {
         if (_moveStore.length == 0) {
             return;
@@ -150,7 +150,7 @@ public class Bunny extends Sprite
         while (_moveStore.length > 0) {
             deltas += "," + _moveStore.shift();
         }
-        gameObj.sendMessage("bunny" + index, deltas);
+        gameCtrl.sendMessage("bunny" + index, deltas);
     }
 
     public function remote (queue :String) :void
