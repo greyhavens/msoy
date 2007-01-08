@@ -8,6 +8,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 
 public class SwiftlyProjectWindow extends JFrame
 {
@@ -18,6 +19,8 @@ public class SwiftlyProjectWindow extends JFrame
         super(WINDOW_TITLE);
         _applet = applet;
         _list = new JList(projectList);
+        _list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         // Add the double click listener
         MouseListener mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -27,6 +30,7 @@ public class SwiftlyProjectWindow extends JFrame
             }
         };
         _list.addMouseListener(mouseListener);
+
         _label = new JLabel("Choose the project to work on:");
         getContentPane().add(_label, BorderLayout.PAGE_START);
         getContentPane().add(_list, BorderLayout.CENTER);
