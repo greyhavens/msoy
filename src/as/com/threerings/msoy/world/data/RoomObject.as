@@ -5,6 +5,7 @@ package com.threerings.msoy.world.data {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+import com.threerings.presents.dobj.DSet;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
@@ -16,10 +17,16 @@ public class RoomObject extends SpotSceneObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>roomService</code> field. */
     public static const ROOM_SERVICE :String = "roomService";
+
+    /** The field name of the <code>memories</code> field. */
+    public static const MEMORIES :String = "memories";
     // AUTO-GENERATED: FIELDS END
 
     /** Our room service marshaller. */
     public var roomService :RoomMarshaller;
+
+    /** Contains the memories for all entities in this room. */
+    public var memories :DSet;
 
 //    // AUTO-GENERATED: METHODS START
 //    /**
@@ -51,6 +58,7 @@ public class RoomObject extends SpotSceneObject
         super.readObject(ins);
 
         roomService = (ins.readObject() as RoomMarshaller);
+        memories = (ins.readObject as DSet);
     }
 }
 }

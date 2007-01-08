@@ -11,10 +11,6 @@ import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
-import com.samskivert.jdbc.depot.operator.Logic.And;
-import com.samskivert.util.IntSet;
-
-import com.threerings.msoy.world.data.EntityIdent;
 
 /**
  * Manages "smart" digital item memory.
@@ -29,22 +25,19 @@ public class MemoryRepository extends DepotRepository
     /**
      * Loads the memory for the specified entity.
      */
-    public Collection<MemoryRecord> loadMemory (EntityIdent ident)
+    public Collection<MemoryRecord> loadMemory (int memoryId)
         throws PersistenceException
     {
-        return findAll(MemoryRecord.class, MemoryRecord.makeKey(ident));
+        return findAll(MemoryRecord.class, new Where(new Equals(MemoryRecord.MEMORY_ID, memoryId)));
     }
 
     /**
      * Loads up the all memory records for all entities of the specified type.
      */
-    public Collection<MemoryRecord> loadMemories (byte type, IntSet entityIds)
+    public Collection<MemoryRecord> loadMemories (Collection<Integer> memoryIds)
         throws PersistenceException
     {
-        Integer[] idvec = entityIds.toArray(new Integer[entityIds.size()]);
-        return findAll(MemoryRecord.class,
-                       new Where(new And(new Equals(MemoryRecord.TYPE, type),
-                                         new In(MemoryRecord.ENTITY_ID, idvec))));
+        return findAll(MemoryRecord.class, new Where(new In(MemoryRecord.MEMORY_ID, memoryIds)));
     }
 
     /**
@@ -56,6 +49,20 @@ public class MemoryRepository extends DepotRepository
         // we assume that most of the time we'll be updating, so optimize for that
         if (update(record) == 0) {
             insert(record);
+        }
+    }
+
+    /**
+     * Updates all supplied memory records. The records are all assumed to already exist in the
+     * database.
+     */
+    public void updateMemories (Collection<MemoryRecord> records)
+        throws PersistenceException
+    {
+        // TODO: if one update() fails, should we catch that error, keep going, then consolidate
+        // the errors and throw a single error?
+        for (MemoryRecord record : records) {
+            update(record);
         }
     }
 }

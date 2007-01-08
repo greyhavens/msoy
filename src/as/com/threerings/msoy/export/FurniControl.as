@@ -20,26 +20,5 @@ public class FurniControl extends MsoyControl
     {
         super(disp);
     }
-
-    /**
-     * Get our current location in the room.
-     *
-     * @return an array containing [ x, y, z, orient ]. x, y, and z are
-     * Numbers between 0 and 1, orient is an int between 0 and 360.
-     *
-     * @return null if our location is unknown.
-     */
-    public function getLocation () :Array
-    {
-        return (callMsoyCode("getLocation_v1") as Array);
-    }
-
-    /**
-     * Request to update our location.
-     */
-    public function setLocation (loc :Array) :void
-    {
-        callMsoyCode("setLocation_v1", loc);
-    }
 }
 }

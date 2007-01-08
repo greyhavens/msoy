@@ -4,6 +4,7 @@
 package com.threerings.msoy.world.server;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -107,6 +108,9 @@ public class RoomManager extends SpotSceneManager
             throw new InvocationException(ACCESS_DENIED);
         }
 
+        // TODO: if an item is removed from the room, remove any memories from the room object and
+        // flush any modifications to the database
+
         ArrayIntSet scenesToId = null;
         for (SceneUpdate update : updates) {
             // TODO: complicated verification of changes, including verifying that the user owns
@@ -158,23 +162,15 @@ public class RoomManager extends SpotSceneManager
         // TODO: verify that the caller is in the scene with this entity, that the memory does not
         // exdeed legal size, other entity specific restrictions
 
-        final MemoryRecord record = new MemoryRecord(entry.entity, entry.key, entry.value);
-        MsoyServer.invoker.postUnit(new Invoker.Unit() {
-            public boolean invoke () {
-                try {
-                    MsoyServer.memoryRepo.storeMemory(record);
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to store memory " + record + ".", pe);
-                }
-                return true;
-            }
-
-            public void handleResult () {
-                // now update it in the room object
-                entry.modified = true;
-                _roomObj.updateMemories(entry);
-            }
-        });
+        if (_roomObj.memories.contains(entry)) {
+            // mark it as modified and update it in the room object ; we'll save it when we unload
+            // the room
+            entry.modified = true;
+            _roomObj.updateMemories(entry);
+        } else {
+            // TODO: if this entity does not yet have a memory, assign them a new memory id, update
+            // their Item and FurniData records and store the new memory
+        }
     }
 
     @Override // from PlaceManager
@@ -192,7 +188,16 @@ public class RoomManager extends SpotSceneManager
         _roomObj.setRoomService((RoomMarshaller) MsoyServer.invmgr.registerDispatcher(
                                     new RoomDispatcher(this), false));
 
-        // TODO: load up memories for all entities in this room that have them
+        // determine which (if any) items in this room have a memories and load them up
+        ArrayIntSet memIds = new ArrayIntSet();
+        for (FurniData furni : ((MsoyScene) _scene).getFurni()) {
+            if (furni.memoryId != 0) {
+                memIds.add(furni.memoryId);
+            }
+        }
+        if (memIds.size() > 0) {
+            resolveMemories(memIds);
+        }
 
         // TODO: load up any pets that are "let out" in this room
     }
@@ -219,7 +224,26 @@ public class RoomManager extends SpotSceneManager
         MsoyServer.invmgr.clearDispatcher(_roomObj.roomService);
         super.didShutdown();
 
-        // TODO: flush any modified memories to the database
+        // flush any modified memory records to the database
+        final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
+        for (MemoryEntry entry : _roomObj.memories) {
+            if (entry.modified) {
+                memrecs.add(new MemoryRecord(entry));
+            }
+        }
+        if (memrecs.size() > 0) {
+            MsoyServer.invoker.postUnit(new Invoker.Unit() {
+                public boolean invoke () {
+                    try {
+                        MsoyServer.memoryRepo.updateMemories(memrecs);
+                    } catch (PersistenceException pe) {
+                        log.log(Level.WARNING, "Failed to update memories [where=" + where() +
+                                ", memrecs=" + memrecs + "].", pe);
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     @Override // documentation inherited
@@ -297,6 +321,38 @@ public class RoomManager extends SpotSceneManager
         for (SceneUpdate update : updates) {
             recordUpdate(update);
         }
+    }
+
+    /**
+     * Loads up all specified memories and places them into the room object.
+     */
+    protected void resolveMemories (final ArrayIntSet memIds)
+    {
+        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    _mems = MsoyServer.memoryRepo.loadMemories(memIds);
+                    return true;
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to load memories [where=" + where() +
+                            ", memIds=" + memIds + "].", pe);
+                    return false;
+                }
+            };
+
+            public void handleResult () {
+                _roomObj.startTransaction();
+                try {
+                    for (MemoryRecord mrec : _mems) {
+                        _roomObj.addToMemories(mrec.toEntry());
+                    }
+                } finally {
+                    _roomObj.commitTransaction();
+                }
+            }
+
+            protected Collection<MemoryRecord> _mems;
+        });
     }
 
     /** The room object. */

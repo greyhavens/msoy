@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.world.data;
 
+import com.samskivert.util.Comparators;
+
 import com.threerings.presents.dobj.DSet;
 
 /**
@@ -11,8 +13,8 @@ import com.threerings.presents.dobj.DSet;
 public class MemoryEntry
     implements DSet.Entry, Comparable<MemoryEntry>
 {
-    /** The entity with which this memory is associated. */
-    public EntityIdent entity;
+    /** The memory id with which this datum is associated. */
+    public int memoryId;
 
     /** The key for this memory datum. */
     public String key;
@@ -33,7 +35,7 @@ public class MemoryEntry
     // from interface Comparable<MemoryEntry>
     public int compareTo (MemoryEntry other)
     {
-        int rv = entity.compareTo(other.entity);
+        int rv = Comparators.compare(memoryId, other.memoryId);
         return (rv != 0) ? rv : key.compareTo(other.key);
     }
 }

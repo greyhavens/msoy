@@ -458,7 +458,7 @@ public class ItemManager
                 detail.memberRating = (rr == null) ? 0 : rr.rating;
                 MemberRecord memRec = MsoyServer.memberRepo.loadMember(record.creatorId);
                 detail.creator = memRec.getName();
-                if (record.ownerId != -1) {
+                if (record.ownerId != 0) {
                     memRec = MsoyServer.memberRepo.loadMember(record.ownerId);
                     detail.owner = memRec.getName();
                 } else {
@@ -514,7 +514,7 @@ public class ItemManager
                 // load the item being purchased
                 ItemRecord item = repo.loadOriginalItem(ident.itemId);
                 // sanity check it
-                if (item.ownerId != -1) {
+                if (item.ownerId != 0) {
                     throw new PersistenceException(
                         "Can only clone listed items [id=" + ident + "]");
                 }
@@ -557,7 +557,7 @@ public class ItemManager
                 item.creatorId = item.ownerId;
                 // let the object forget whence it came
                 int originalId = item.parentId;
-                item.parentId = -1;
+                item.parentId = 0;
                 // insert it as a genuinely new item
                 item.itemId = 0;
                 repo.insertOriginalItem(item);
@@ -736,12 +736,12 @@ public class ItemManager
                 }
 
                 int originalId;
-                if (item.parentId != -1) {
+                if (item.parentId != 0) {
                     // it's a clone: use the parent ID
                     originalId = item.parentId;
                 } else {
                     // not a clone; make sure we're not trying to rate a mutable
-                    if (item.ownerId != -1) {
+                    if (item.ownerId != 0) {
                         throw new PersistenceException(
                             "Can't rate mutable object [item=" + ident + "]");
                     }
@@ -786,7 +786,7 @@ public class ItemManager
                 if (item == null) {
                     throw new PersistenceException("Missing item for tagItem [item=" + ident + "]");
                 }
-                int originalId = item.parentId != -1 ? item.parentId : ident.itemId;
+                int originalId = item.parentId != 0 ? item.parentId : ident.itemId;
 
                 // map tag to tag id
                 TagNameRecord tag = repo.getTag(tagName);

@@ -110,7 +110,7 @@ public class CatalogServlet extends MsoyServiceServlet
                     log.warning("Can't find item to list [item= " + ident + "]");
                     throw new ServiceException(ItemCodes.INTERNAL_ERROR);
                 }
-                if (listItem.ownerId == -1) {
+                if (listItem.ownerId == 0) {
                     log.warning("Item is already listed [item=" + ident + "]");
                     throw new ServiceException(ItemCodes.INTERNAL_ERROR);
                 } else if (listItem.ownerId != mrec.memberId) {

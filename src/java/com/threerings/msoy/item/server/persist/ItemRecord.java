@@ -37,6 +37,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
     public static final String FLAGS = "flags";
     public static final String CREATOR_ID = "creatorId";
     public static final String OWNER_ID = "ownerId";
+    public static final String MEMORY_ID = "memoryId";
     public static final String RATING = "rating";
     public static final String USED = "used";
     public static final String LOCATION = "location";
@@ -73,10 +74,10 @@ public abstract class ItemRecord implements Streamable, Cloneable
     @GeneratedValue(generator="itemId", strategy=GenerationType.TABLE)
     public int itemId;
 
-    /** The item ID from which this object was cloned, or -1 if this is not a clone. This field is
+    /** The item ID from which this object was cloned, or 0 if this is not a clone. This field is
      * not persisted to the database, but set when we load a clone. */
     @Computed(required=false)
-    public int parentId = -1;
+    public int parentId = 0;
 
     /** A bit-mask of flags that we need to know about every digital item
      * without doing further database lookups or network requests. */
@@ -85,9 +86,12 @@ public abstract class ItemRecord implements Streamable, Cloneable
     /** The member id of the member that created this item. */
     public int creatorId;
 
-    /** The member id of the member that owns this item, or -1 if the item
-     * is an immutable catalog listing. */
+    /** The member id of the member that owns this item, or 0 if the item is an immutable catalog
+     * listing. */
     public int ownerId;
+
+    /** If this item maintains a memory, this will be filled in with its id. Zero otherwise. */
+    public int memoryId;
 
     /** The current rating of this item, from 1 to 5. */
     public float rating;
@@ -137,6 +141,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
 
         itemId = item.itemId;
         ownerId = item.ownerId;
+        memoryId = item.memoryId;
         parentId = item.parentId;
         rating = item.rating;
         creatorId = item.creatorId;
@@ -184,7 +189,8 @@ public abstract class ItemRecord implements Streamable, Cloneable
      */
     public void clearForListing ()
     {
-        ownerId = -1;
+        ownerId = 0;
+        memoryId = 0;
         itemId = 0;
         used = 0;
         location = 0;
@@ -195,6 +201,7 @@ public abstract class ItemRecord implements Streamable, Cloneable
         Item item = createItem();
         item.itemId = itemId;
         item.ownerId = ownerId;
+        item.memoryId = memoryId;
         item.parentId = parentId;
         item.rating = rating;
         item.used = used;

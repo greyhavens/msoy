@@ -286,7 +286,7 @@ public abstract class ItemRepository<
     public CatalogRecord insertListing (ItemRecord listItem, long listingTime)
         throws PersistenceException
     {
-        if (listItem.ownerId != -1) {
+        if (listItem.ownerId != 0) {
             throw new PersistenceException(
                 "Can't list item with owner [itemId=" + listItem.itemId + "]");
         }

@@ -121,9 +121,7 @@ public class MsoySprite extends MediaContainer
         _desc = desc;
 
         setMedia(desc.getMediaPath());
-
         scaleUpdated();
-
         setEditing(false);
     }
 
@@ -651,7 +649,15 @@ public class MsoySprite extends MediaContainer
      */
     protected function populateControlProperties (o :Object) :void
     {
-        // nothing in the base class
+        o["triggerEvent_v1"] = triggerEvent_v1;
+    }
+
+    /**
+     * Called by {@link MsoyControl} to trigger an event on this sprite in all clients.
+     */
+    protected function triggerEvent_v1 (event :String) :void
+    {
+        // TODO:
     }
 
     /**

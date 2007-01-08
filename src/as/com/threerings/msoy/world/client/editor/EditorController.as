@@ -482,6 +482,7 @@ try {
         furni.id = getNextFurniId();
         furni.itemType = item.getType();
         furni.itemId = item.itemId;
+        furni.memoryId = item.memoryId;
         furni.loc = loc;
         configureFurniMedia(furni, item);
         configureFurniAction(furni, item);

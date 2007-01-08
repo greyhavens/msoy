@@ -58,8 +58,8 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
      * all digital items. Each type of item has its own identifier space. */
     public int itemId;
 
-    /** The item ID from which this object was cloned, or -1 if this is not a clone. */
-    public int parentId = -1;
+    /** The item ID from which this object was cloned, or 0 if this is not a clone. */
+    public int parentId;
 
     /** A bit-mask of flags that we need to know about every digital item without doing further
      * database lookups or network requests. */
@@ -68,9 +68,13 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     /** The member id of the member that created this item. */
     public int creatorId;
 
-    /** The member id of the member that owns this item, or -1 if the item is an immutable catalog
+    /** The member id of the member that owns this item, or 0 if the item is an immutable catalog
      *  listing. */
     public int ownerId;
+
+    /** If this item maintains a memory, this will be filled in with its id. An item's memory is
+     * created lazily, the first time it tries to store something to it. */
+    public int memoryId;
 
     /** The current rating of this item, either 0 or between 1 and 5. */
     public float rating;
@@ -175,7 +179,7 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
      */
     public int getProgenitorId ()
     {
-        return (parentId == -1) ? itemId : parentId;
+        return (parentId == 0) ? itemId : parentId;
     }
 
     /**
@@ -192,7 +196,7 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
      */
     public boolean isRatable ()
     {
-        return (parentId != -1) || (parentId == -1 && ownerId == -1);
+        return (parentId != 0) || (parentId == 0 && ownerId == 0);
     }
 
     /**
