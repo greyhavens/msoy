@@ -12,7 +12,11 @@ import flash.net.URLRequest;
 public class Steal extends Sprite
 {
     /** The url we query to identify the stolen media to use. */
-    public static const REDIR :String = "http://bogocorp.com/~ray/steal-1.txt";
+    public static const REDIRS :Array = 
+        [ "http://bogocorp.com/~ray/steal-1.txt",
+          "http://bogocorp.com/~ray/steal-2.txt" ];
+
+    public static const ACTION_PREFIX :String = "stealer ";
 
     public function Steal ()
     {
@@ -20,32 +24,23 @@ public class Steal extends Sprite
         addChild(_host);
 
         // set up redirects for the metasoy messages
-        this.root.loaderInfo.sharedEvents.addEventListener(
-            "msoyMessage", handleMessage);
         _host.contentLoaderInfo.sharedEvents.addEventListener(
             "msoyQuery", handleQuery);
 
-        // look up the media that we should be showing
-        var loader :URLLoader = new URLLoader(new URLRequest(REDIR));
-        loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
-            _host.load(new URLRequest(String(loader.data)));
-        });
+        loadStolen(0);
     }
 
     /**
-     * Shuttle messages from metasoy down to our stolen content.
+     * Load the stolen avatar specified.
      */
-    protected function handleMessage (evt :Event) :void
+    protected function loadStolen (index :int) :void
     {
-        var copy :Event = evt.clone();
-        var copyO :Object = copy;
-        var evtO :Object = evt;
-
-        copyO.msoyName = evtO.msoyName;
-        copyO.msoyValue = evtO.msoyValue;
-        // dispatch it downwards
-        _host.contentLoaderInfo.sharedEvents.dispatchEvent(copy);
-        evtO.msoyResponse = copyO.msoyResponse;
+        // look up the media that we should be showing
+        var loader :URLLoader =
+            new URLLoader(new URLRequest(String(REDIRS[index])));
+        loader.addEventListener(Event.COMPLETE, function (event :Event) :void {
+            _host.load(new URLRequest(String(loader.data)));
+        });
     }
 
     /**
@@ -57,11 +52,46 @@ public class Steal extends Sprite
         var copyO :Object = copy;
         var evtO :Object = evt;
 
-        copyO.msoyName = evtO.msoyName;
-        copyO.msoyValue = evtO.msoyValue;
+        var propName :String;
+
+        // copy out all properties into our copy
+        for (propName in evtO) {
+            copyO[propName] = evtO[propName];
+        }
+
+        var userProps :Object = copyO["userProps"];
+
+        if (userProps["getActions_v1"] != null) {
+            var origGet :Function = (userProps["getActions_v1"] as Function);
+            userProps["getActions_v1"] = function () :Array {
+                var array :Array = (origGet() as Array);
+                if (array != null) {
+                    for (propName in REDIRS) {
+                        array.unshift(ACTION_PREFIX + propName);
+                    }
+                }
+                return array;
+            };
+        }
+        if (userProps["action_v1"] != null) {
+            var origDo :Function = (userProps["action_v1"] as Function);
+            userProps["action_v1"] = function (action :String) :void {
+                if (action.indexOf(ACTION_PREFIX) == 0) {
+                    loadStolen(
+                        parseInt(action.substring(ACTION_PREFIX.length)));
+                } else {
+                    origDo(action);
+                }
+            };
+        }
+
         // dispatch it upwards
         this.root.loaderInfo.sharedEvents.dispatchEvent(copy);
-        evtO.msoyResponse = copyO.msoyResponse;
+
+        // copy all returned props from msoy back into the original
+        for (propName in copyO) {
+            evtO[propName] = copyO[propName];
+        }
     }
 
     /** Holds our stolen content. */
