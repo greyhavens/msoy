@@ -232,6 +232,11 @@ public class SwiftlyTextPane extends JTextPane
             }
             else {
                 setEnabled(false);
+                // We have undone to the previous save
+                if (_documentChanged) {
+                    _documentChanged = false;
+                    _editor.setTabTitleChanged(false);
+                }
                 putValue(Action.NAME, "Undo");
             }
         }
