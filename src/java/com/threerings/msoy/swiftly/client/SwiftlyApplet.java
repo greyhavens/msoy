@@ -3,9 +3,11 @@ package com.threerings.msoy.swiftly.client;
 import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
 import javax.swing.JApplet;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
@@ -54,16 +56,19 @@ public class SwiftlyApplet extends JApplet
         _statusbar.setLabel(" ");
     }
 
+    public ShowProjectWindowAction createShowProjectWindowAction ()
+    {
+        return new ShowProjectWindowAction();
+    }
+
+
     protected void createGUI ()
     {
         // setup the components
         editor = new SwiftlyEditor(this);
         editor.setMinimumSize(new Dimension(400, 0));
 
-        ArrayList<SwiftlyDocument> fileList = new ArrayList<SwiftlyDocument>();
-        fileList.add(new SwiftlyDocument("file #1", "Example text"));
-        fileList.add(new SwiftlyDocument("file #2", "Example text more"));
-        _projectPanel = new SwiftlyProjectPanel(this, "My cool project", fileList);
+        _projectPanel = new SwiftlyProjectPanel(this);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
 
         _toolbar = new SwiftlyToolbar(this);
@@ -80,11 +85,43 @@ public class SwiftlyApplet extends JApplet
 
         // popup the project selection window
         // TODO don't popup if we already know our project
-        // XXX TEMP disable while I work on other bits
-        /*
-        String[] projectList = {"project1", "project2", "project3"};
-        _projectWindow = new SwiftlyProjectWindow(projectList);
-        */
+        if (_loadedProject == null) {
+            _projectWindow = new SwiftlyProjectWindow(this, getProjects());
+        }
+    }
+
+    protected SwiftlyProject[] getProjects ()
+    {
+        // TODO this will need to load the projects from the server
+        ArrayList<SwiftlyDocument> fileList = new ArrayList<SwiftlyDocument>();
+        fileList.add(new SwiftlyDocument("file #1", "Example text"));
+        fileList.add(new SwiftlyDocument("file #2", "Example text more"));
+        SwiftlyProject project = new SwiftlyProject("project1", fileList);
+
+        ArrayList<SwiftlyDocument> fileList2 = new ArrayList<SwiftlyDocument>();
+        fileList2.add(new SwiftlyDocument("file #3", "Example text"));
+        fileList2.add(new SwiftlyDocument("file #4", "Example text more"));
+        SwiftlyProject project2 = new SwiftlyProject("project2", fileList2);
+
+        SwiftlyProject[] projectList = {project, project2};
+        return projectList;
+    }
+
+    protected void loadProject (SwiftlyProject project)
+    {
+        _loadedProject = project;
+        editor.removeTabs();
+        _projectPanel.loadProject(project);
+        _projectWindow.setVisible(false);
+    }
+
+    protected class ShowProjectWindowAction extends AbstractAction
+    {
+        // from AbstractAction
+        public void actionPerformed (ActionEvent e) {
+            // TODO need to refresh the contents of the window
+            _projectWindow.setVisible(true);
+        }
     }
 
     protected Container _contentPane;
@@ -92,5 +129,6 @@ public class SwiftlyApplet extends JApplet
     protected SwiftlyStatusBar _statusbar;
     protected SwiftlyProjectPanel _projectPanel;
     protected SwiftlyProjectWindow _projectWindow;
+    protected SwiftlyProject _loadedProject;
     protected JSplitPane _splitPane;
 } 

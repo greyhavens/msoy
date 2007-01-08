@@ -14,26 +14,35 @@ import javax.swing.tree.TreeSelectionModel;
 public class SwiftlyProjectPanel extends JPanel
     implements TreeSelectionListener
 {
-    public SwiftlyProjectPanel (SwiftlyApplet applet, String projectName,
-                                ArrayList<SwiftlyDocument> fileList) 
+    public SwiftlyProjectPanel (SwiftlyApplet applet)
     {
         super(new BorderLayout());
         _applet = applet;
 
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode(projectName);
-        for (SwiftlyDocument doc : fileList) {
-            top.add(new DefaultMutableTreeNode(doc));
-        }
-
-        _tree = new JTree(top);
-        _tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        _tree.addTreeSelectionListener(this);
-        _scrollPane = new JScrollPane(_tree);
+        _scrollPane = new JScrollPane();
         add(_scrollPane);
     }
 
+    public void loadProject (SwiftlyProject project)
+    {
+        _project = project;
+
+        DefaultMutableTreeNode top = new DefaultMutableTreeNode(project.getName());
+        for (SwiftlyDocument doc : project.getFiles()) {
+            top.add(new DefaultMutableTreeNode(doc));
+        }
+        // TODO GC the old tree?
+        _tree = new JTree(top);
+        _tree.setDragEnabled(true);
+        _tree.setEditable(true);
+        _tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        _tree.addTreeSelectionListener(this);
+
+        _scrollPane.getViewport().setView(_tree);
+    }
+
     // from interface TreeSelectionListener
-    public void valueChanged(TreeSelectionEvent e)
+    public void valueChanged (TreeSelectionEvent e)
     {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
 
@@ -47,6 +56,7 @@ public class SwiftlyProjectPanel extends JPanel
     }
 
     protected SwiftlyApplet _applet;
+    protected SwiftlyProject _project;
     protected JTree _tree;
     protected JScrollPane _scrollPane;
 }

@@ -101,6 +101,13 @@ public class SwiftlyEditor extends JTabbedPane
         closeCurrentTab(false);
     }
 
+    public void removeTabs ()
+    {
+        // TODO Will want to make sure everything is saved first
+        removeAll();
+        _tabList.clear();
+    }
+
     public NewTabAction createNewTabAction ()
     {
         return new NewTabAction();
@@ -119,61 +126,6 @@ public class SwiftlyEditor extends JTabbedPane
     public CloseCurrentTabAction createCloseCurrentTabAction ()
     {
         return new CloseCurrentTabAction();
-    }
-
-    public ForceCloseCurrentTabAction createForceCloseCurrentTabAction ()
-    {
-        return new ForceCloseCurrentTabAction();
-    }
-
-    public class NewTabAction extends AbstractAction
-    {
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            addEditorTab();
-        }
-    }
-
-    public class SaveCurrentTabAction extends AbstractAction
-    {
-        public SaveCurrentTabAction ()
-        {
-            super("Save");
-        }
-
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            saveCurrentTab();
-        }
-    }
-
-    public class SaveAndCloseCurrentTabAction extends SaveCurrentTabAction
-    {
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            saveAndCloseCurrentTab();
-        }
-    }
-
-    public class CloseCurrentTabAction extends AbstractAction
-    {
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            closeCurrentTab();
-        }
-    }
-
-    public class ForceCloseCurrentTabAction extends AbstractAction
-    {
-        public ForceCloseCurrentTabAction ()
-        {
-            super("Close without saving");
-        }
-
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            forceCloseCurrentTab();
-        }
     }
 
     // close the current tab. if force is set, close even if unsaved changes
@@ -202,6 +154,61 @@ public class SwiftlyEditor extends JTabbedPane
             if (tabIndex < 9) {
                 setMnemonicAt(tabIndex, KeyEvent.VK_1 + tabIndex);
             }
+        }
+    }
+
+    public ForceCloseCurrentTabAction createForceCloseCurrentTabAction ()
+    {
+        return new ForceCloseCurrentTabAction();
+    }
+
+    protected class NewTabAction extends AbstractAction
+    {
+        // from AbstractAction
+        public void actionPerformed (ActionEvent e) {
+            addEditorTab();
+        }
+    }
+
+    protected class SaveCurrentTabAction extends AbstractAction
+    {
+        public SaveCurrentTabAction ()
+        {
+            super("Save");
+        }
+
+        // from AbstractAction
+        public void actionPerformed (ActionEvent e) {
+            saveCurrentTab();
+        }
+    }
+
+    protected class SaveAndCloseCurrentTabAction extends SaveCurrentTabAction
+    {
+        // from AbstractAction
+        public void actionPerformed (ActionEvent e) {
+            saveAndCloseCurrentTab();
+        }
+    }
+
+    protected class CloseCurrentTabAction extends AbstractAction
+    {
+        // from AbstractAction
+        public void actionPerformed (ActionEvent e) {
+            closeCurrentTab();
+        }
+    }
+
+    protected class ForceCloseCurrentTabAction extends AbstractAction
+    {
+        public ForceCloseCurrentTabAction ()
+        {
+            super("Close without saving");
+        }
+
+        // from AbstractAction
+        public void actionPerformed (ActionEvent e) {
+            forceCloseCurrentTab();
         }
     }
 

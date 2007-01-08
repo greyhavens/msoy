@@ -18,6 +18,7 @@ public class SwiftlyToolbar extends JToolBar
     protected void setupToolbar ()
     {
         addButton("New", _applet.editor.createNewTabAction());
+        addButton("Open Project", _applet.createShowProjectWindowAction());
         addButton("Save", _applet.editor.createSaveCurrentTabAction());
         addButton("Compile", null);
         addButton("Play", null);
