@@ -1,14 +1,5 @@
 package com.threerings.msoy.swiftly.client;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
-
-import com.threerings.msoy.web.client.SwiftlyService;
-import com.threerings.msoy.web.client.SwiftlyServiceAsync;
-
 import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -34,9 +25,6 @@ public class SwiftlyApplet extends JApplet
         } catch (Exception e) {
             // this should just fall back on a working theme
         }
-
-        // Initialize the service
-        _swiftService = (SwiftlyServiceAsync)GWT.create(SwiftlyService.class);
 
         // Save the root content pane
         _contentPane = getContentPane();
@@ -105,5 +93,4 @@ public class SwiftlyApplet extends JApplet
     protected SwiftlyProjectPanel _projectPanel;
     protected SwiftlyProjectWindow _projectWindow;
     protected JSplitPane _splitPane;
-    protected SwiftlyServiceAsync _swiftService;
 } 
