@@ -66,6 +66,7 @@ public class SwiftlyEditor extends JTabbedPane
         }
     }
 
+    // TODO need to remove the * if all of the undoable events have been undone
     public void setTabTitleChanged (boolean changed)
     {
         int tabIndex = getSelectedIndex();

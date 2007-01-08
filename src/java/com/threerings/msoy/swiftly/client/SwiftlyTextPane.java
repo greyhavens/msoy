@@ -14,6 +14,7 @@ import java.util.HashMap;
 import javax.swing.Action;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -149,8 +150,8 @@ public class SwiftlyTextPane extends JTextPane
 
     protected void addKeyAction (Action action, KeyStroke key)
     {
-        // TODO getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW); vs. WHEN_FOCUSED
-        getInputMap().put(key, action);
+        // key bindings work even if the textpane doesn't have focus
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key, action);
         getActionMap().put(action, action);
     }
 
