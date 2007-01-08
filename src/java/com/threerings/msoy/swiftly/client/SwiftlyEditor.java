@@ -2,10 +2,12 @@ package com.threerings.msoy.swiftly.client;
 
 import java.awt.Container;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.HashMap;
 
+import javax.swing.AbstractAction;
 import javax.swing.JTextPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -77,7 +79,76 @@ public class SwiftlyEditor extends JTabbedPane
         }
     }
 
-    public void closeCurrentTab () 
+    public SwiftlyApplet getApplet ()
+    {
+        return _applet;
+    }
+
+    public void forceCloseCurrentTab ()
+    {
+        closeCurrentTab(true);
+    }
+
+    public void closeCurrentTab ()
+    {
+        closeCurrentTab(false);
+    }
+
+    public NewDocumentAction createNewDocumentAction ()
+    {
+        return new NewDocumentAction();
+    }
+
+    public SaveDocumentAction createSaveDocumentAction ()
+    {
+        return new SaveDocumentAction();
+    }
+
+    public CloseCurrentTabAction createCloseCurrentTabAction ()
+    {
+        return new CloseCurrentTabAction();
+    }
+
+    public ForceCloseCurrentTabAction createForceCloseCurrentTabAction ()
+    {
+        return new ForceCloseCurrentTabAction();
+    }
+
+    public class NewDocumentAction extends AbstractAction
+    {
+        public void actionPerformed (ActionEvent e) {
+            addEditorTab();
+        }
+    }
+
+    public class SaveDocumentAction extends AbstractAction
+    {
+        public void actionPerformed (ActionEvent e) {
+            saveCurrentTab();
+        }
+    }
+
+    public class CloseCurrentTabAction extends AbstractAction
+    {
+        public void actionPerformed (ActionEvent e) {
+            closeCurrentTab();
+        }
+    }
+
+    public class ForceCloseCurrentTabAction extends AbstractAction
+    {
+        public ForceCloseCurrentTabAction ()
+        {
+            super("Close without saving");
+        }
+
+        public void actionPerformed (ActionEvent e) {
+            forceCloseCurrentTab();
+        }
+    }
+
+    // close the current tab. if force is set, close even if unsaved changes
+    protected void closeCurrentTab (boolean force)
     {
         // Don't try to remove a tab if we have none.
         if (getTabCount() == 0) {
@@ -85,7 +156,7 @@ public class SwiftlyEditor extends JTabbedPane
         }
         SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
         SwiftlyTextPane textPane = pane.getTextPane();
-        if (textPane.hasUnsavedChanges()) {
+        if (textPane.hasUnsavedChanges() && !force) {
             textPane.closeTabDialog();
             return;
         }
@@ -93,11 +164,6 @@ public class SwiftlyEditor extends JTabbedPane
         remove(_tabList.get(document));
         _tabList.remove(document);
         assignTabKeys();
-    }
-
-    public SwiftlyApplet getApplet ()
-    {
-        return _applet;
     }
 
     protected void assignTabKeys ()

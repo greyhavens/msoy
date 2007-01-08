@@ -37,6 +37,7 @@ public class SwiftlyTextPane extends JTextPane
     {
         _editor = editor;
         _document = document;
+
         createActionTable();
         addKeyBindings();
         addPopupMenu();
@@ -81,13 +82,24 @@ public class SwiftlyTextPane extends JTextPane
     // Throws up a close tab dialog internal frame
     public void closeTabDialog()
     {
+        // TODO only ever have one of these dialogs in a pane
+        // TODO figure out how to select the dialog when it pops up
         add(new CloseTabDialog());
     }
 
     protected void addKeyBindings ()
     {
+        // ctrl-n opens a new tab
+        addKeyAction(_editor.createNewDocumentAction(),
+                     KeyStroke.getKeyStroke(KeyEvent.VK_N, Event.CTRL_MASK));
+
+        // ctrl-s saves the current document
+        addKeyAction(_editor.createSaveDocumentAction(),
+                     KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK));
+
         // ctrl-w closes the tab
-        addKeyAction(new CloseTabAction(), KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK));
+        addKeyAction(_editor.createCloseCurrentTabAction(),
+                     KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK));
 
         // ctrl-z undos the action
         addKeyAction(_undoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK));
@@ -260,13 +272,6 @@ public class SwiftlyTextPane extends JTextPane
         }
     }
 
-    protected class CloseTabAction extends AbstractAction
-    {
-        public void actionPerformed (ActionEvent e) {
-            _editor.closeCurrentTab();
-        }
-    }
-
     protected class CloseTabDialog extends JInternalFrame
     {
         public CloseTabDialog ()
@@ -281,7 +286,7 @@ public class SwiftlyTextPane extends JTextPane
             setLocation(60,60);
             add(new JLabel("Document has unsaved changes."), BorderLayout.PAGE_START);
             add(new JButton("Save"), BorderLayout.WEST);
-            add(new JButton("Close without saving"), BorderLayout.EAST);
+            add(new JButton(_editor.createForceCloseCurrentTabAction()), BorderLayout.EAST);
             pack();
         }
     }
