@@ -9,6 +9,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashMap;
 
 import javax.swing.Action;
@@ -28,9 +30,8 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.StyledDocument;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 
 public class SwiftlyTextPane extends JTextPane
 {
@@ -43,20 +44,32 @@ public class SwiftlyTextPane extends JTextPane
         addKeyBindings();
         addPopupMenu();
 
-        // load the document text and undo listener
-        StyledDocument styledDoc = getStyledDocument();
+        // TODO SwiftlyDocument should provide a reader
+        StringReader reader = new StringReader(document.getText());
+        ActionScriptEditorKit kit = new ActionScriptEditorKit();
+        setEditorKit(kit);
+        ActionScriptStyledDocument styledDoc = new ActionScriptStyledDocument();
+        setDocument(styledDoc);
+        // setContentType("text/actionscript");
+
+        // load the document text
         try {
-            styledDoc.insertString(0, document.getText(), null);
-        } catch (BadLocationException e) {
+            // styledDoc.insertString(0, document.getText(), null);
+            kit.read(reader, styledDoc, 0);
+        } catch (IOException io) {
+            return;
+        } catch (BadLocationException be) {
+            return;
         }
+
+        // add listeners
         styledDoc.addUndoableEditListener(new UndoHandler());
         styledDoc.addDocumentListener(new SwiftlyDocumentListener());
 
         // setup some default colors
         // TODO make setable by the user?
-        setForeground(Color.white);
-        setBackground(Color.black);
-        setCaretColor(Color.white);
+        setForeground(Color.black);
+        setBackground(Color.white);
     }
 
     public SwiftlyDocument getSwiftlyDocument ()
