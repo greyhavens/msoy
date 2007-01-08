@@ -211,7 +211,6 @@ public class SwiftlyEditor extends JTabbedPane
     protected SwiftlyApplet _applet;
 
     // maps the document of the loaded file to the componenet (scroller) holding that textpane
-    // TODO this needs to map SwiftlyDocuments to scrollers, IF a document has been opened
     protected HashMap<SwiftlyDocument,SwiftlyEditorScrollPane> _tabList =
         new HashMap<SwiftlyDocument,SwiftlyEditorScrollPane>();
 }

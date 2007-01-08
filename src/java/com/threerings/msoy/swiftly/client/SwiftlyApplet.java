@@ -28,9 +28,6 @@ public class SwiftlyApplet extends JApplet
         // Save the root content pane
         _contentPane = getContentPane();
 
-        // TODO do we want this?
-        // setDefaultCloseOperation(EXIT_ON_CLOSE);
-
         // Execute a job on the event-dispatching thread: creating this applet's GUI.
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
@@ -52,7 +49,7 @@ public class SwiftlyApplet extends JApplet
 
     public void clearStatus ()
     {
-        // a null string makes the label disappear
+        // a zero length string makes the label disappear
         _statusbar.setLabel(" ");
     }
 
