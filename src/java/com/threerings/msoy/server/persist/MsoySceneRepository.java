@@ -143,6 +143,10 @@ public class MsoySceneRepository extends SimpleRepository
                 }
             });
         // END: temp
+
+        // TEMP: migration; this so needs to be Depot-ed
+        JDBCUtil.addColumn(conn, "FURNI", "MEMORY_ID", "integer not null", "ITEM_ID");
+        // END TEMP
     }
 
     /**
@@ -702,10 +706,6 @@ public class MsoySceneRepository extends SimpleRepository
             "ACTION_TYPE tinyint not null",
             "ACTION_DATA varchar(255)",
             "primary key (SCENE_ID, FURNI_ID)" }, "");
-
-        // TEMP: migration; this so needs to be Depot-ed
-        JDBCUtil.addColumn(conn, "FURNI", "MEMORY_ID", "integer not null", "ITEM_ID");
-        // END TEMP
 
         // populate some starting scenes
         for (int sceneId = 1; sceneId < 8; sceneId++) {
