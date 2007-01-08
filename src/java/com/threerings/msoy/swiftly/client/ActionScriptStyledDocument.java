@@ -19,6 +19,7 @@ public class ActionScriptStyledDocument extends DefaultStyledDocument
         initializeAttributes();
     }
 
+    @Override // from DefaultStyledDocument
     public void insertString(int offset, String string, AttributeSet set)
         throws BadLocationException
     {
@@ -26,7 +27,7 @@ public class ActionScriptStyledDocument extends DefaultStyledDocument
         processChanges(offset, string.length());
     }
 
-        
+    @Override // from DefaultStyledDocument
     public void remove(int offset, int length)
         throws BadLocationException
     {
@@ -54,6 +55,7 @@ public class ActionScriptStyledDocument extends DefaultStyledDocument
         }
 
         // clear any attributes 
+        // TODO this is an undoable action so we need to hide it from undo
         setCharacterAttributes(0, line.length(), _normal, true);
 
         StringTokenizer tokens = new StringTokenizer(line, _separators, true);

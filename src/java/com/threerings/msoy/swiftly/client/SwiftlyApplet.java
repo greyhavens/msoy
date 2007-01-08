@@ -15,6 +15,7 @@ public class SwiftlyApplet extends JApplet
 {
     public SwiftlyEditor editor;
 
+    @Override // from JApplet
     public void init()
     {
         try {

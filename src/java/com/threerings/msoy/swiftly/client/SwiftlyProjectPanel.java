@@ -32,6 +32,7 @@ public class SwiftlyProjectPanel extends JPanel
         add(_scrollPane);
     }
 
+    // from interface TreeSelectionListener
     public void valueChanged(TreeSelectionEvent e)
     {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();

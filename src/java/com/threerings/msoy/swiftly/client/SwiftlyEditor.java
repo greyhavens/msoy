@@ -128,6 +128,7 @@ public class SwiftlyEditor extends JTabbedPane
 
     public class NewTabAction extends AbstractAction
     {
+        // from AbstractAction
         public void actionPerformed (ActionEvent e) {
             addEditorTab();
         }
@@ -140,6 +141,7 @@ public class SwiftlyEditor extends JTabbedPane
             super("Save");
         }
 
+        // from AbstractAction
         public void actionPerformed (ActionEvent e) {
             saveCurrentTab();
         }
@@ -147,6 +149,7 @@ public class SwiftlyEditor extends JTabbedPane
 
     public class SaveAndCloseCurrentTabAction extends SaveCurrentTabAction
     {
+        // from AbstractAction
         public void actionPerformed (ActionEvent e) {
             saveAndCloseCurrentTab();
         }
@@ -154,6 +157,7 @@ public class SwiftlyEditor extends JTabbedPane
 
     public class CloseCurrentTabAction extends AbstractAction
     {
+        // from AbstractAction
         public void actionPerformed (ActionEvent e) {
             closeCurrentTab();
         }
@@ -166,6 +170,7 @@ public class SwiftlyEditor extends JTabbedPane
             super("Close without saving");
         }
 
+        // from AbstractAction
         public void actionPerformed (ActionEvent e) {
             forceCloseCurrentTab();
         }
@@ -202,6 +207,7 @@ public class SwiftlyEditor extends JTabbedPane
 
     protected class TabChangedListener implements ChangeListener
     {
+        // from interface ChangeListener
         public void stateChanged(ChangeEvent evt) {
             // clear the statusbar whenever a different tab is selected
             _applet.clearStatus();

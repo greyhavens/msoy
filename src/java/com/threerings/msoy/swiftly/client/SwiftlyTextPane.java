@@ -139,13 +139,13 @@ public class SwiftlyTextPane extends JTextPane
         menuItem = new JMenuItem("Paste");
         menuItem.addActionListener(getActionByName(DefaultEditorKit.pasteAction));
         _popup.add(menuItem);
-        // Seperator
+        // Separator
         _popup.addSeparator();
         // Select All
         menuItem = new JMenuItem("Select All");
         menuItem.addActionListener(getActionByName(DefaultEditorKit.selectAllAction));
         _popup.add(menuItem);
-        // Seperator
+        // Separator
         _popup.addSeparator();
         // Undo
         menuItem = new JMenuItem("Undo");
@@ -181,15 +181,17 @@ public class SwiftlyTextPane extends JTextPane
     }
 
     protected class PopupListener extends MouseAdapter {
+        @Override // from MouseAdapter
         public void mousePressed(MouseEvent e) {
             maybeShowPopup(e);
         }
 
+        @Override // from MouseAdapter
         public void mouseReleased(MouseEvent e) {
             maybeShowPopup(e);
         }
 
-        private void maybeShowPopup(MouseEvent e) {
+        protected void maybeShowPopup(MouseEvent e) {
             if (e.isPopupTrigger()) {
                 _popup.show(e.getComponent(), e.getX(), e.getY());
             }
@@ -198,6 +200,7 @@ public class SwiftlyTextPane extends JTextPane
 
     protected class UndoHandler implements UndoableEditListener
     {
+        // from interface UndoableEditListener
         public void undoableEditHappened (UndoableEditEvent e)
         {
             _undo.addEdit(e.getEdit());
@@ -213,6 +216,7 @@ public class SwiftlyTextPane extends JTextPane
             setEnabled(false);
         }
 
+        // from AbstractAction
         public void actionPerformed (ActionEvent e)
         {
             try {
@@ -250,6 +254,7 @@ public class SwiftlyTextPane extends JTextPane
             setEnabled(false);
         }
 
+        // from AbstractAction
         public void actionPerformed (ActionEvent e)
         {
             try {
@@ -275,6 +280,7 @@ public class SwiftlyTextPane extends JTextPane
     }
 
     class SwiftlyDocumentListener implements DocumentListener {
+        // from interface DocumentListener
         public void insertUpdate(DocumentEvent e) {
             if (!_documentChanged) {
                 _editor.setTabTitleChanged(true);
@@ -282,10 +288,12 @@ public class SwiftlyTextPane extends JTextPane
             }
         }
 
+        // from interface DocumentListener
         public void removeUpdate(DocumentEvent e) {
             // nada
         }
 
+        // from interface DocumentListener
         public void changedUpdate(DocumentEvent e) {
             // nada
         }
@@ -320,4 +328,3 @@ public class SwiftlyTextPane extends JTextPane
     protected HashMap<String,Action> _actions = new HashMap<String,Action>();
     protected boolean _documentChanged;
 }
-
