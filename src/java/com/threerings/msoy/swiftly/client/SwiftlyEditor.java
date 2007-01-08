@@ -49,6 +49,12 @@ public class SwiftlyEditor extends JTabbedPane
         setSelectedComponent(scroller);
     }
 
+    public void saveAndCloseCurrentTab ()
+    {
+        saveCurrentTab();
+        forceCloseCurrentTab();
+    }
+
     public void saveCurrentTab () 
     {
         SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
@@ -94,14 +100,19 @@ public class SwiftlyEditor extends JTabbedPane
         closeCurrentTab(false);
     }
 
-    public NewDocumentAction createNewDocumentAction ()
+    public NewTabAction createNewTabAction ()
     {
-        return new NewDocumentAction();
+        return new NewTabAction();
     }
 
-    public SaveDocumentAction createSaveDocumentAction ()
+    public SaveCurrentTabAction createSaveCurrentTabAction ()
     {
-        return new SaveDocumentAction();
+        return new SaveCurrentTabAction();
+    }
+
+    public SaveAndCloseCurrentTabAction createSaveAndCloseCurrentTabAction ()
+    {
+        return new SaveAndCloseCurrentTabAction();
     }
 
     public CloseCurrentTabAction createCloseCurrentTabAction ()
@@ -114,17 +125,29 @@ public class SwiftlyEditor extends JTabbedPane
         return new ForceCloseCurrentTabAction();
     }
 
-    public class NewDocumentAction extends AbstractAction
+    public class NewTabAction extends AbstractAction
     {
         public void actionPerformed (ActionEvent e) {
             addEditorTab();
         }
     }
 
-    public class SaveDocumentAction extends AbstractAction
+    public class SaveCurrentTabAction extends AbstractAction
     {
+        public SaveCurrentTabAction ()
+        {
+            super("Save");
+        }
+
         public void actionPerformed (ActionEvent e) {
             saveCurrentTab();
+        }
+    }
+
+    public class SaveAndCloseCurrentTabAction extends SaveCurrentTabAction
+    {
+        public void actionPerformed (ActionEvent e) {
+            saveAndCloseCurrentTab();
         }
     }
 

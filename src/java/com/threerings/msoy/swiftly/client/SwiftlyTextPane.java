@@ -90,11 +90,11 @@ public class SwiftlyTextPane extends JTextPane
     protected void addKeyBindings ()
     {
         // ctrl-n opens a new tab
-        addKeyAction(_editor.createNewDocumentAction(),
+        addKeyAction(_editor.createNewTabAction(),
                      KeyStroke.getKeyStroke(KeyEvent.VK_N, Event.CTRL_MASK));
 
         // ctrl-s saves the current document
-        addKeyAction(_editor.createSaveDocumentAction(),
+        addKeyAction(_editor.createSaveCurrentTabAction(),
                      KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK));
 
         // ctrl-w closes the tab
@@ -285,7 +285,7 @@ public class SwiftlyTextPane extends JTextPane
             // TODO determine this location relatively
             setLocation(60,60);
             add(new JLabel("Document has unsaved changes."), BorderLayout.PAGE_START);
-            add(new JButton("Save"), BorderLayout.WEST);
+            add(new JButton(_editor.createSaveAndCloseCurrentTabAction()), BorderLayout.WEST);
             add(new JButton(_editor.createForceCloseCurrentTabAction()), BorderLayout.EAST);
             pack();
         }
