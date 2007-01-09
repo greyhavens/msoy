@@ -35,7 +35,8 @@ public class UnderworldDrift extends Sprite
         colorBackground.graphics.endFill();
         addChild(colorBackground);
 
-        var ground :Ground = new Ground();
+        var ground :Ground = new Ground(DISPLAY_WIDTH, DISPLAY_HEIGHT / 2);
+        ground.y = DISPLAY_HEIGHT / 2;
         addChild(ground);
     }
 }

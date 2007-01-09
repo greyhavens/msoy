@@ -9,7 +9,7 @@ import flash.geom.Matrix;
 
 public class Ground extends Sprite
 {
-    public function Ground ()
+    public function Ground (width :int, height :int)
     {
         var imageSize :int = 1024;
         var halfImageSize :int = imageSize / 2;
@@ -32,25 +32,25 @@ public class Ground extends Sprite
         var stripHeightCeiling :int;
         var stripWidth :Number = 0;
         // align the vector so that the the display area is centered
-        var xShift :Number = halfImageSize - (imageSize - UnderworldDrift.DISPLAY_WIDTH) / 2;
+        var xShift :Number = halfImageSize - (imageSize - width) / 2;
         // align the bottom of the vector with the top of the display area.
         var yShift :Number = 0 - halfImageSize;
-        for (var strip :int = 0; totalHeight <= UnderworldDrift.DISPLAY_HEIGHT / 2; strip++,
+        for (var strip :int = 0; totalHeight <= height; strip++,
             stripHeight = (stripHeight - scaleFactor) > 1 ? stripHeight - scaleFactor : 1) {
             stripHeightCeiling = Math.round(stripHeight + 0.49);
             totalHeight += stripHeightCeiling;
-            sliceData = new BitmapData(UnderworldDrift.DISPLAY_WIDTH, stripHeightCeiling, true, 
+            sliceData = new BitmapData(width, stripHeightCeiling, true, 
                 0x000000);
             // TODO: figure out why this only works if we scale-x, translate both, then scale-y
             transform.identity();
-            transform.scale(
-                xScale * (1 - totalHeight / (UnderworldDrift.DISPLAY_HEIGHT / 2) * 0.9), 1);
+            transform.scale(xScale * (1 - (totalHeight / height) * 0.9), 1);
             transform.translate(xShift, yShift + strip * thisHeight + thisHeight);
             transform.scale(1, stripHeightCeiling / thisHeight);
             sliceData.draw(background, transform);
             sliceData.draw(trackVector, transform);
             sliceImg = new Bitmap(sliceData);
-            sliceImg.y = UnderworldDrift.DISPLAY_HEIGHT - totalHeight;
+            // draw from the bottom up
+            sliceImg.y = height - totalHeight;
             addChild(sliceImg);
         }
     }
