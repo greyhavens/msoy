@@ -144,6 +144,7 @@ public class SwiftlyApplet extends JApplet
 
     protected SwiftlyProject createProject (String name)
     {
+        // TODO do some business on the server
         ArrayList<SwiftlyDocument> emptyFileList = new ArrayList<SwiftlyDocument>();
         SwiftlyProject project = new SwiftlyProject(name, emptyFileList);
         _projectList.add(project);
@@ -162,9 +163,7 @@ public class SwiftlyApplet extends JApplet
         SwiftlyProject project = (SwiftlyProject)JOptionPane.showInternalInputDialog(
             _contentPane, "Select a project:", "Project selection", JOptionPane.QUESTION_MESSAGE,
             null, getProjects().toArray(), null);
-        if (project != null) {
-            loadProject(project);
-        }
+        loadProject(project);
     }
 
     protected void showNewProjectDialog ()
