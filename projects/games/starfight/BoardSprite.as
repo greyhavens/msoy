@@ -2,12 +2,11 @@ package {
 
 import flash.display.Sprite;
 import flash.display.Shape;
+import flash.display.Bitmap;
 
 import flash.events.Event;
 
 import flash.geom.Point;
-
-import mx.core.MovieClipAsset;
 
 public class BoardSprite extends Sprite
 {
@@ -211,9 +210,8 @@ public class BoardSprite extends Sprite
         mask.graphics.endFill();
         this.mask = mask;
 
-        _spaceMovie = MovieClipAsset(new spaceAnim());
-        _spaceMovie.gotoAndStop(1);
-        addChild(_spaceMovie);
+        // Our background.
+        addChild(Bitmap(new spaceBg()));
 
         for each (var obs :Obstacle in _obstacles) {
             addChild(obs);
@@ -231,10 +229,8 @@ public class BoardSprite extends Sprite
     /** Reference to the array of powerups we know about. */
     protected var _powerups :Array;
 
-    /** Our ship animation. */
-    protected var _spaceMovie :MovieClipAsset;
-
-    [Embed(source="rsrc/space.swf")]
-    protected var spaceAnim :Class;
+    /** Add in the spacey background image. */
+    [Embed(source="rsrc/space_bg.png")]
+    protected var spaceBg :Class;
 }
 }
