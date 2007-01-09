@@ -268,22 +268,18 @@ public class ShipSprite extends Sprite
         var rads :Number = rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
+
+        var shotX :Number = cos * SHOT_SPD + xVel;
+        var shotY :Number = sin * SHOT_SPD + yVel;
+
+        var shotVel :Number = Math.sqrt(shotX*shotX + shotY*shotY);
+        var shotAngle :Number = Math.atan2(shotY, shotX);
+
+        var type :int = (powerups & SPREAD_MASK) ? ShotSprite.SPREAD :
+            ShotSprite.NORMAL;
+
         _game.fireShot(boardX + cos, boardY + sin,
-            cos * SHOT_SPD + xVel, sin * SHOT_SPD + yVel, shipId);
-
-        if (powerups & SPREAD_MASK) {
-            rads += 0.1;
-            cos = Math.cos(rads);
-            sin = Math.sin(rads);
-            _game.fireShot(boardX + cos, boardY + sin,
-                cos * SHOT_SPD + xVel, sin * SHOT_SPD + yVel, shipId);
-
-            rads -= 0.2;
-            cos = Math.cos(rads);
-            sin = Math.sin(rads);
-            _game.fireShot(boardX + cos, boardY + sin,
-                cos * SHOT_SPD + xVel, sin * SHOT_SPD + yVel, shipId);
-        }
+            shotVel, shotAngle, shipId, type);
 
         _ticksToFire = TICKS_PER_SHOT - 1;
     }
@@ -364,7 +360,7 @@ public class ShipSprite extends Sprite
     protected static const BACKWARD_ACCEL :Number = -0.01;
     protected static const FRICTION :Number = 0.95;
     protected static const SHOT_SPD :Number = 0.5;
-    protected static const TICKS_PER_SHOT :int = 6;
+    protected static const TICKS_PER_SHOT :int = 8;
     protected static const HIT_POWER :Number = 0.25;
 
     /** Our ship animation. */

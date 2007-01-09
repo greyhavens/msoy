@@ -285,15 +285,28 @@ public class StarFight extends Sprite
     {
         if (event.name == "shot") {
             var val :Array = (event.value as Array);
-            var shot :ShotSprite =
-                new ShotSprite(val[0], val[1], val[2], val[3], val[4], this);
-            _shots.push(shot);
-            shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
-            _shotLayer.addChild(shot);
+            addShot(new ShotSprite(val[0], val[1], val[2], val[3], val[4],
+                        this));
+            
+            if (val[5] == ShotSprite.SPREAD) {
+                addShot(new ShotSprite(val[0], val[1], val[2],
+                            val[3] + ShotSprite.SPREAD_FACT, val[4],
+                            this));
+                addShot(new ShotSprite(val[0], val[1], val[2],
+                            val[3] - ShotSprite.SPREAD_FACT, val[4],
+                            this));
+            }
         } else if (event.name == "explode") {
             var arr :Array = (event.value as Array);
             _board.explode(arr[0], arr[1], arr[2], false);
         }
+    }
+
+    protected function addShot (shot :ShotSprite) :void
+    {
+        _shots.push(shot);
+        shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
+        _shotLayer.addChild(shot);
     }
 
     /**
@@ -330,14 +343,15 @@ public class StarFight extends Sprite
      * Send a message to the server about our shot.
      */
     public function fireShot (x :Number, y :Number,
-        xVel :Number, yVel :Number, shipId :int) :void
+        vel :Number, angle :Number, shipId :int, type :int) :void
     {
         var args :Array = new Array(5);
         args[0] = x;
         args[1] = y;
-        args[2] = xVel;
-        args[3] = yVel;
+        args[2] = vel;
+        args[3] = angle;
         args[4] = shipId;
+        args[5] = type;
         _gameCtrl.sendMessage("shot", args);
     }
 
