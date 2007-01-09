@@ -7,6 +7,8 @@ import flash.display.MovieClip;
 import flash.external.ExternalInterface;
 import flash.events.TimerEvent;
 import flash.utils.Timer;
+import flash.events.KeyboardEvent;
+import flash.ui.Keyboard;
 
 import com.threerings.ezgame.Game;
 import com.threerings.ezgame.EZGame;
@@ -17,7 +19,7 @@ import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
     
-[SWF(width="700", height="700")]
+[SWF(width="600", height="600")]
 public class Juggler extends Sprite 
     implements Game, PropertyChangedListener, StateChangedListener
 {
@@ -28,38 +30,43 @@ public class Juggler extends Sprite
         
     protected function setUpBalls () :void
     {
-        log("setting up space");
-        _space = new Space(0,0, 500,500, 50);        
+        _space = new Space(0,0, 600,600, 50);                
+        _collider = new Collider(this);
+        _actors = new Array();
         
-        log("setting up collider");
-        _collider = new Collider();
-        
-        log("setting up ball");        
-        _balls = new Array();
+        _body = new Body(this, _space);
+        _body.x = 300;
+        _body.y = 500;
         
         for (var i:int = 0; i<NUM_BALLS; i++) {
             var ball : Ball = new Ball(this, _space);
-            ball.x = (Math.random() * _space.width()) + _space.left;
-            ball.y = (Math.random() * _space.height()) + _space.top
-            ball.dx = (Math.random() * 16) - 8;
-            ball.dy =  (Math.random() * 16) - 8;
-            
-            _balls.push(ball);
-            addChild(ball);
-            _collider.addBody(ball);
+            ball.randomizePosition();
+            ball.setLabel("ball "+i);
         }
+        
+        log("registered "+_collider.activeBodies()+" bodies for collision detection.");
+    }
+
+    public function registerAsActor(actor:Actor) :void
+    {
+        _actors.push(actor);
+    }
+
+    public function registerForCollisions(body:CanCollide) :void
+    {
+        _collider.addBody(body);
     }
 
     public function tick(event :TimerEvent) : void 
     {
         event.updateAfterEvent();
         _collider.detectCollisions();
-        _balls.forEach(nextFrame);
+        _actors.forEach(nextFrame);
     }
 
-    private function nextFrame(ball :Ball, index:Number, balls:Array) :void 
+    private function nextFrame(actor :Actor, index:Number, balls:Array) :void 
     {
-        ball.nextFrame();
+        actor.nextFrame();
     }
 
     public function setGameObject (gameObj : EZGame) :void
@@ -71,7 +78,47 @@ public class Juggler extends Sprite
         var frameTimer :Timer = new Timer(_space.frameDuration, 0);
         frameTimer.addEventListener(TimerEvent.TIMER, tick);
         frameTimer.start();
+        
+        stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+        stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
+        
         log("started frame events");    
+    }
+    
+    public function keyUp(event: KeyboardEvent) :void
+    {
+        switch (event.keyCode)
+        {
+            case KEY_Q:
+                _body.leftHandLeftUp();
+                break;
+            case KEY_W:
+                _body.leftHandRightUp();
+                break;
+            case KEY_O:
+                _body.rightHandLeftUp();
+                break;
+            case KEY_P:
+                _body.rightHandRightUp();
+        }    
+    }
+    
+    public function keyDown(event :KeyboardEvent) :void
+    {
+        switch (event.keyCode)
+        {
+            case KEY_Q:
+                _body.leftHandLeft();
+                break;
+            case KEY_W:
+                _body.leftHandRight();
+                break;
+            case KEY_O:
+                _body.rightHandLeft();
+                break;
+            case KEY_P:
+                _body.rightHandRight();
+        }
     }
     
     public function stateChanged (event: StateChangedEvent) :void
@@ -89,8 +136,10 @@ public class Juggler extends Sprite
         trace(msg);
         //ExternalInterface.call("console.debug", msg);
     }
+    
+    protected var _body :Body;
 
-    protected var _balls :Array;
+    protected var _actors :Array;
 
     protected var _space :Space;
             
@@ -99,6 +148,14 @@ public class Juggler extends Sprite
     /** The game object for this event. */
     protected var _ezgame :EZGame;
                 
-    protected static const NUM_BALLS :int = 5;
+    protected static const NUM_BALLS :int = 3;
+    
+    protected static const KEY_Q:uint = 81;
+    
+    protected static const KEY_W:uint = 87;
+    
+    protected static const KEY_O:uint = 79;
+    
+    protected static const KEY_P:uint = 80;
 } 
 }

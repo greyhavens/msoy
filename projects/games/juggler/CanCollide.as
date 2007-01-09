@@ -1,4 +1,7 @@
 package {
+
+import flash.display.DisplayObjectContainer;
+    
 public interface CanCollide {
     function leftProjection() :Number;
     
@@ -17,5 +20,17 @@ public interface CanCollide {
     function setVelocity(v:Array) :void;
     
     function getMass() :Number;
+        
+    function collisionWith(other:CanCollide) :void;
+    
+    function getLabel() :String;
+
+    function getX() :int;
+    
+    function getY() :int;
+
+    function getNormalizedBounds(target:DisplayObjectContainer) :NormalizedBounds;
+    
+    function getParent():DisplayObjectContainer;
 }
 }

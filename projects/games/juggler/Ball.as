@@ -1,53 +1,101 @@
 package {
     
+import flash.display.DisplayObjectContainer;    
 import flash.display.Sprite;
 import Math;
 
 public class Ball extends Sprite
-    implements CanCollide
-{
-    
+    implements Actor, CanCollide
+{    
     public function Ball (juggler :Juggler, space :Space) 
     {
         _juggler = juggler;
         _space = space;
+                
+        _juggler.addChild(this);
+        _juggler.registerAsActor(this);
+        _juggler.registerForCollisions(this);
+        
         draw();
     }
     
     /** draw the ball in it's regular color **/
     public function draw () :void
     {
-//        Juggler.log("drawing ball normal color.");
-        graphics.clear();
-        graphics.beginFill(REGULAR_COLOR);
-        graphics.drawCircle(0,0, _ballRadius);
-        graphics.endFill();
+        redraw(REGULAR_COLOR);
     }
-    
+        
     /** highlight this particular ball for debugging purposes **/
     public function highlight () :void
     {
-//        Juggler.log("drawing ball, highlight color");
+        redraw(HIGHLIGHT_COLOR);
+        _highlightFrames = 2;
+    }
+    
+    private function redraw (color:uint) :void
+    {
         graphics.clear();
-        graphics.beginFill(HIGHLIGHT_COLOR);
+        graphics.beginFill(color);
         graphics.drawCircle(0,0, _ballRadius);
         graphics.endFill();
         
-        _highlightFrames = 2;
+    }
+    
+    public function randomizePosition() :void
+    {
+        x = (Math.random() * _space.width()) + _space.left;
+        y = (Math.random() * _space.height()) + _space.top
+        dx = (Math.random() * 16) - 8;
+        dy =  (Math.random() * 16) - 8;
+    }    
+    
+    public function caughtBy(hand:Hand) :void
+    {
+        _hand = hand;
+        _motion = caught;
+        _catchFrames = 3;
     }
     
     public function nextFrame() : void
     {
-        advance();
-        
         // if the ball is highlighted, check whether it should 
         // be set back to normal
         if (_highlightFrames > 0) {
             _highlightFrames -= 1;
             if (_highlightFrames == 0) {
-                draw ();
+                draw();
             }
         }
+        
+        _motion();
+    }
+        
+    /** define the motion of a ball when it's caught **/
+    private function caught() :void
+    {
+        var bounds:NormalizedBounds = _hand.getNormalizedBounds(_juggler);
+                
+        if(_catchFrames > 0) 
+        {
+            _catchFrames -=1;
+            
+            var targetX:int = bounds.getX();
+            var targetY:int = bounds.topProjection() - _ballRadius;
+            
+            x += (targetX - x) / 2
+            y += (targetY - y) / 2
+        } 
+        else
+        {
+            x = bounds.getX();
+            y = bounds.topProjection() - _ballRadius;
+        }
+    }
+        
+    /** define the motion of the ball when it's free **/
+    private function free() :void
+    {
+        advance();
         
         // deal with elastic collision with floor or walls;
         if (x > _space.right) {
@@ -60,7 +108,8 @@ public class Ball extends Sprite
             dy = Math.abs(dy) * _elasticity;
         } else if (y > _space.bottom) {
             dy = -Math.abs(dy) * _elasticity;
-            y = _space.bottom; // if you don't do this then gravity forces the ball through the floor!
+            y = _space.bottom;  // if you don't do this then gravity forces the ball 
+                                //through the floor!
         }
         
         // update velocity based on constants;
@@ -70,9 +119,9 @@ public class Ball extends Sprite
         dy += (dy>0) ? -_space.frictionPerFrame : _space.frictionPerFrame;
         
         // gravity is always in one direction
-        dy += _space.gravityPerFrame;    
+        dy += _space.gravityPerFrame;            
     }
-    
+        
     private function advance () :void
     {
         // update positions based on velocity;
@@ -120,28 +169,91 @@ public class Ball extends Sprite
         dx = v[0];
         dy = v[1];
     }
+     
+    public function collisionWith(other:CanCollide) :void
+    {
+        if (other is Ball)
+        {        
+            var results:Array = _elasticCollision.collide( 
+                this.getPosition(), this.getVelocity(), this.getMass(),
+                other.getPosition(), other.getVelocity(), other.getMass()
+            );
+        
+            this.setVelocity(results[0]);
+            other.setVelocity(results[1]);
+        }
+        else if (other is Hand) 
+        {
+            Hand(other).touchBall(this);
+        }
+    }
+        
+    public function setLabel(label:String) :void
+    {
+        _label = label;        
+    }
+
+    public function getLabel() :String
+    {
+        return _label;
+    }
     
+    public function getParent() : DisplayObjectContainer
+    {
+        return parent;
+    }
+    
+    public function getX() :int
+    {
+        return x;
+    }
+    
+    public function getY() :int
+    {
+        return y;
+    }
+    
+    public function getNormalizedBounds(target:DisplayObjectContainer) :NormalizedBounds
+    {
+        if (_normalizedBounds==null || _normalizedBounds.target != target) {
+            _normalizedBounds = new NormalizedBounds(target, this);
+        } 
+        
+        return _normalizedBounds;
+    }
+    
+    private static var _elasticCollision :ElasticCollision = new ElasticCollision();
+    
+    private var _normalizedBounds:NormalizedBounds;
     
     /** vertical component of velocity **/
-    public var dy :Number;
+    private var dy :Number;
     
     /** horizontal component of velocity **/
-    public var dx :Number;
+    private var dx :Number;
         
-    protected static var HIGHLIGHT_COLOR :uint = 0xFF0000;
+    private static var HIGHLIGHT_COLOR :uint = 0xFF0000;
     
-    protected static var REGULAR_COLOR :uint = 0x000080;
+    private static var REGULAR_COLOR :uint = 0x000080;
         
-    protected static var _ballRadius :int = 30;
+    private static var _ballRadius :int = 30;
         
-    protected static var _elasticity :Number = 0.975;
+    private static var _elasticity :Number = 0.975;
     
-    protected var _mass :Number = 1;
+    private var _label:String = "a ball";
     
-    protected var _juggler :Juggler;
+    private var _mass :Number = 1;
     
-    protected var _space :Space;
+    private var _juggler :Juggler;
     
-    protected var _highlightFrames :int = 0;
+    private var _space :Space;
+    
+    private var _highlightFrames :int = 0;
+    
+    private var _motion:Function = free;
+    
+    private var _hand:Hand; 
+    
+    private var _catchFrames:int;
 }
 }
