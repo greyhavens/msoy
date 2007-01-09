@@ -44,6 +44,9 @@ public class Clock extends Sprite
         updateDisplayedTime();
     }
 
+    /**
+     * Configure the clock face and hands.
+     */
     protected function configureContent () :void
     {
         var centerX :int = 0;
@@ -74,6 +77,9 @@ public class Clock extends Sprite
         _smoothSeconds = Boolean(content.smoothSeconds);
     }
 
+    /**
+     * Update the time. Called every frame.
+     */
     protected function updateDisplayedTime () :void
     {
         var d :Date = new Date();
@@ -95,12 +101,19 @@ public class Clock extends Sprite
         }
     }
 
+    /**
+     * Update the rotation of the specified hand.
+     */
     protected function updateHand (
         hand :DisplayObject, current :Number, total :Number) :void
     {
         hand.rotation = (current * 360) / total;
     }
 
+    /**
+     * Get an instance of DisplayObject specified by the class with the
+     * specified name in the content pack.
+     */
     protected function getDisplayResource (name :String) :DisplayObject
     {
         var c :Class = (content[name] as Class);
@@ -110,6 +123,9 @@ public class Clock extends Sprite
         return null;
     }
 
+    /**
+     * Find and configure the specified hand's display object.
+     */
     protected function configureHand (
         name :String, x :int, y :int, optional :Boolean = false) :DisplayObject
     {
@@ -140,12 +156,16 @@ public class Clock extends Sprite
         return null;
     }
 
+    /** The hours hand. */
     protected var _hourHand :DisplayObject;
 
+    /** The minutes hand. */
     protected var _minuteHand :DisplayObject;
 
+    /** The seconds hand. */
     protected var _secondHand :DisplayObject;
 
+    /** Whether we're smoothing the second hand, or ticking it. */
     protected var _smoothSeconds :Boolean;
 }
 }
