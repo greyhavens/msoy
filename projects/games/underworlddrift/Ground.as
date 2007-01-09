@@ -39,8 +39,7 @@ public class Ground extends Sprite
             stripHeight = (stripHeight - scaleFactor) > 1 ? stripHeight - scaleFactor : 1) {
             stripHeightCeiling = Math.round(stripHeight + 0.49);
             totalHeight += stripHeightCeiling;
-            sliceData = new BitmapData(width, stripHeightCeiling, true, 
-                0x000000);
+            sliceData = new BitmapData(width, stripHeightCeiling, false);
             // TODO: figure out why this only works if we scale-x, translate both, then scale-y
             transform.identity();
             transform.scale(xScale * (1 - (totalHeight / height) * 0.9), 1);
