@@ -47,6 +47,23 @@ public class Ground extends Sprite
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
+    public function moveForward () :void 
+    {
+        translateTransforms(0, 1);
+    }
+
+    public function moveBackward () :void
+    {
+        translateTransforms(0, -1);
+    }
+
+    protected function translateTransforms(x :Number, y :Number) :void
+    {
+        for (var i :int = 0; i < _transforms.length; i++) {
+            _transforms[i].translate(x, y);
+        }
+    }
+
     /**
      * Handles Event.ENTER_FRAME.
      */

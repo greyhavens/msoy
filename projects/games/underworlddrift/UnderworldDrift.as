@@ -3,6 +3,10 @@ package {
 import flash.display.Sprite;
 import flash.display.Shape;
 
+import flash.events.KeyboardEvent;
+
+import flash.ui.Keyboard;
+
 import com.threerings.ezgame.EZGameControl;
 
 [SWF(width="400", height="400")]
@@ -30,9 +34,54 @@ public class UnderworldDrift extends Sprite
         colorBackground.graphics.endFill();
         addChild(colorBackground);
 
-        var ground :Ground = new Ground();
-        ground.y = DISPLAY_HEIGHT / 2;
-        addChild(ground);
+        _ground = new Ground();
+        _ground.y = DISPLAY_HEIGHT / 2;
+        addChild(_ground);
+
+        _gameCtrl = new EZGameControl(this);
+        if (_gameCtrl.getMyIndex() != -1) {
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+        }
     }
+
+    /** 
+     * Handles KEY_DOWN. 
+     */
+    protected function keyEvent(event :KeyboardEvent) :void
+    {
+        var action :int = getActionForKey(event.keyCode);
+        switch (action) {
+        case Action.NONE: break;
+
+        case Action.FORWARD: 
+            _ground.moveForward();
+            break;
+
+        case Action.BACKWARD:
+            _ground.moveBackward();
+            break;
+
+        default:
+            // do nothing
+        }
+    }
+
+    /**
+     * Get the action that corresponds to the specified key.
+     */
+    protected function getActionForKey (keyCode :int) :int
+    {
+        switch (keyCode) {
+        case Keyboard.UP: return Action.FORWARD;
+        case Keyboard.DOWN: return Action.BACKWARD;
+        default: return Action.NONE;
+        }
+    }
+
+    /** the game control. */
+    protected var _gameCtrl :EZGameControl;
+
+    /** The ground. */
+    protected var _ground :Ground;
 }
 }
