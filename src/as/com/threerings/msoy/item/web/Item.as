@@ -193,7 +193,7 @@ public /*abstract*/ class Item
      */
     public function getProgenitorId () :int
     {
-        return (parentId == -1) ? itemId : parentId;
+        return (parentId == 0) ? itemId : parentId;
     }
 
     /**
