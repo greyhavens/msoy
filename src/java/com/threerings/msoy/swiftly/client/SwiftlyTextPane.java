@@ -225,6 +225,9 @@ public class SwiftlyTextPane extends JTextPane
         // from interface UndoableEditListener
         public void undoableEditHappened (UndoableEditEvent e)
         {
+            if (e.getEdit().getPresentationName().equals("style change")) {
+                return;
+            }
             _undo.addEdit(e.getEdit());
             _undoAction.update();
             _redoAction.update();
