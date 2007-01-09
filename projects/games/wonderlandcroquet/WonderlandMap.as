@@ -21,6 +21,7 @@ public class WonderlandMap
     {
         background = new Sprite();
         foreground = new Sprite();
+        foreground.mouseChildren = false;
         particles = [];
     }
 
