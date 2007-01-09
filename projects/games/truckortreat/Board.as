@@ -90,7 +90,8 @@ public class Board extends BaseSprite
                 for each (car in _cars) {
                     // We only need to look for collisions if the kid's feet 
                     // intersect with the bottom half of the car. 
-                    if (Math.abs((car.y + car.height) - (kid.y + kid.height)) < car.height / 2) {
+                    if (car.y + car.height > kid.y + kid.height && 
+                        kid.y + kid.height > car.y + car.height/2) {
                         if (kid.hitTestObject(car)) {
                             kid.wasKilled();
                             if (kid.livesLeft() <= 0) {
