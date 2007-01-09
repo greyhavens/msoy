@@ -77,10 +77,6 @@ public /*abstract*/ class Item
      *  is an immutable catalog listing. */
     public var ownerId :int;
 
-    /** If this item maintains a memory, this will be filled in with its id. An item's memory is
-     * created lazily, the first time it tries to store something to it. */
-    public var memoryId :int;
-
     /** The current rating of this item, either 0 or between 1 and 5. */
     public var rating :Number;
 
@@ -262,7 +258,6 @@ public /*abstract*/ class Item
         out.writeByte(flags);
         out.writeInt(creatorId);
         out.writeInt(ownerId);
-        out.writeInt(memoryId);
         out.writeFloat(rating);
         out.writeByte(used);
         out.writeInt(location);
@@ -280,7 +275,6 @@ public /*abstract*/ class Item
         flags = ins.readByte();
         creatorId = ins.readInt();
         ownerId = ins.readInt();
-        memoryId = ins.readInt();
         rating = ins.readFloat();
         used = ins.readByte();
         location = ins.readInt();

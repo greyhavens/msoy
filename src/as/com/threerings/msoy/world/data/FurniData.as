@@ -49,9 +49,6 @@ public class FurniData
     /** Identifies the id of the item that was used to create this. */
     public var itemId :int;
 
-    /** If the item that created this furniture has a memory, this holds its id. */
-    public var memoryId :int;
-
     /** Info about the media that represents this piece of furni. */
     public var media :MediaDesc;
 
@@ -132,7 +129,6 @@ public class FurniData
         return (this.id == that.id) &&
             (this.itemType == that.itemType) &&
             (this.itemId == that.itemId) &&
-            (this.memoryId == that.memoryId) &&
             this.media.equals(that.media) &&
             this.loc.equals(that.loc) &&
             (this.layoutInfo == that.layoutInfo) &&
@@ -165,7 +161,6 @@ public class FurniData
         that.id = this.id;
         that.itemType = this.itemType;
         that.itemId = this.itemId;
-        that.memoryId = this.memoryId;
         that.media = this.media;
         that.loc = this.loc;
         that.layoutInfo = this.layoutInfo;
@@ -182,7 +177,6 @@ public class FurniData
         out.writeShort(id);
         out.writeByte(itemType);
         out.writeInt(itemId);
-        out.writeInt(memoryId);
         out.writeObject(media);
         out.writeObject(loc);
         out.writeByte(layoutInfo);
@@ -198,7 +192,6 @@ public class FurniData
         id = ins.readShort();
         itemType = ins.readByte();
         itemId = ins.readInt();
-        memoryId = ins.readInt();
         media = (ins.readObject() as MediaDesc);
         loc = (ins.readObject() as MsoyLocation);
         layoutInfo = ins.readByte();
