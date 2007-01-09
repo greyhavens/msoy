@@ -120,8 +120,12 @@ public class MsoySceneRepository extends SimpleRepository
         }
         // END: temp
 
+        // TEMP: migration; this so needs to be Depot-ed
+        JDBCUtil.addColumn(conn, "FURNI", "MEMORY_ID", "integer not null", "ITEM_ID");
+        // END TEMP
+
         // TEMP: removable after all servers are past the date specified...
-        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20061207",
+        MsoyServer.transitRepo.transition(getClass(), "delUpdates_20070108",
             new TransitionRepository.Transition() {
                 public void run ()
                     throws PersistenceException
@@ -143,10 +147,6 @@ public class MsoySceneRepository extends SimpleRepository
                 }
             });
         // END: temp
-
-        // TEMP: migration; this so needs to be Depot-ed
-        JDBCUtil.addColumn(conn, "FURNI", "MEMORY_ID", "integer not null", "ITEM_ID");
-        // END TEMP
     }
 
     /**
