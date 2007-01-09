@@ -1,0 +1,39 @@
+<!-- build configuration -->
+<project name="wonderlandcroquet" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"         value="WonderlandCroquet"/>
+  <property name="root.path"        value="../../.."/>
+  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
+  <property name="installed.name"   value="c5d79063e0153e50ca494ae7d8f072a74be6a37e"/>
+
+  <!-- builds our Flash game -->
+  <target name="compile">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-externs"/>
+      <arg value="com.threerings.ezgame:EZGame"/>
+      <arg value="com.threerings.ezgame:Game"/>
+      <arg value="com.threerings.ezgame:MessageReceivedEvent"/>
+      <arg value="com.threerings.ezgame:PropertyChangedEvent"/>
+      <arg value="com.threerings.ezgame:StateChangedEvent"/>
+      <arg value="-file-specs"/>
+      <arg value="${app.name}.as"/>
+    </java>
+  </target>
+
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+    </delete>
+  </target>
+
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/${installed.name}.swf"/>
+  </target>
+
+</project>
