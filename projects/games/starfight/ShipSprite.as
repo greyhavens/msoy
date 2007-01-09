@@ -406,11 +406,11 @@ public class ShipSprite extends Sprite
     protected var _ticksToFire :int;
 
     /** Ship performance characteristics. */
-    protected static const TURN_ACCEL_RATE :Number = 1.0;
+    protected static const TURN_ACCEL_RATE :Number = 2.0;
     protected static const FORWARD_ACCEL :Number = 0.02;
     protected static const BACKWARD_ACCEL :Number = -0.01;
     protected static const FRICTION :Number = 0.95;
-    protected static const TURN_FRICTION :Number = 0.8;
+    protected static const TURN_FRICTION :Number = 0.75;
     protected static const SHOT_SPD :Number = 0.5;
     protected static const TICKS_PER_SHOT :int = 8;
     protected static const HIT_POWER :Number = 0.25;
