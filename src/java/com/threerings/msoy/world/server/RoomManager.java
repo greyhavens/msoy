@@ -192,13 +192,16 @@ public class RoomManager extends SpotSceneManager
                                     new RoomDispatcher(this), false));
 
         // determine which (if any) items in this room have a memories and load them up
+        HashIntMap<ArrayIntSet> furniIds = new HashIntMap<ArrayIntSet>();
         for (FurniData furni : ((MsoyScene) _scene).getFurni()) {
-            if (furni.memoryId != 0) {
-                _rememberers.put(furni.memoryId, furni.getIdent());
+            ArrayIntSet ids = furniIds.get(furni.itemType);
+            if (ids == null) {
+                furniIds.put(furni.itemType, ids = new ArrayIntSet());
             }
+            ids.add(furni.itemId);
         }
-        if (_rememberers.size() > 0) {
-            resolveMemories();
+        if (furniIds.size() > 0) {
+            resolveMemories(furniIds);
         }
 
         // TODO: load up any pets that are "let out" in this room
@@ -226,21 +229,11 @@ public class RoomManager extends SpotSceneManager
         MsoyServer.invmgr.clearDispatcher(_roomObj.roomService);
         super.didShutdown();
 
-        // create a reverse mapping for the purposes of flushing modified memories
-        HashMap<ItemIdent, Integer> revmap = new HashMap<ItemIdent, Integer>();
-        for (IntMap.IntEntry<ItemIdent> entry : _rememberers.intEntrySet()) {
-            revmap.put(entry.getValue(), entry.getKey());
-        }
-
         // flush any modified memory records to the database
         final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
         for (MemoryEntry entry : _roomObj.memories) {
             if (entry.modified) {
-                Integer memId = revmap.get(entry.item);
-                if (memId != null) {
-                    memrecs.add(new MemoryRecord(memId, entry));
-                } else {
-                }
+                memrecs.add(new MemoryRecord(entry));
             }
         }
         if (memrecs.size() > 0) {
@@ -338,38 +331,37 @@ public class RoomManager extends SpotSceneManager
     /**
      * Loads up all specified memories and places them into the room object.
      */
-    protected void resolveMemories ()
+    protected void resolveMemories (final HashIntMap<ArrayIntSet> furniIds)
     {
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
-                try {
-                    _mems = MsoyServer.memoryRepo.loadMemories(_rememberers.keySet());
-                    return true;
-                } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to load memories [where=" + where() +
-                            ", memIds=" + _rememberers.keySet() + "].", pe);
-                    return false;
+                for (IntMap.IntEntry<ArrayIntSet> entry : furniIds.intEntrySet()) {
+                    byte type = (byte)entry.getIntKey();
+                    try {
+                        _mems.addAll(MsoyServer.memoryRepo.loadMemories(type, entry.getValue()));
+                    } catch (PersistenceException pe) {
+                        log.log(Level.WARNING, "Failed to load memories [where=" + where() +
+                                ", type=" + type + ", ids=" + entry.getValue() + "].", pe);
+                    }
                 }
+                return true;
             };
 
             public void handleResult () {
                 _roomObj.startTransaction();
                 try {
                     for (MemoryRecord mrec : _mems) {
-                        _roomObj.addToMemories(mrec.toEntry(_rememberers));
+                        _roomObj.addToMemories(mrec.toEntry());
                     }
                 } finally {
                     _roomObj.commitTransaction();
                 }
             }
 
-            protected Collection<MemoryRecord> _mems;
+            protected ArrayList<MemoryRecord> _mems = new ArrayList<MemoryRecord>();
         });
     }
 
     /** The room object. */
     protected RoomObject _roomObj;
-
-    /** Used to map memory ids to the items with which they are associated. */
-    protected HashIntMap<ItemIdent> _rememberers = new HashIntMap<ItemIdent>();
 }

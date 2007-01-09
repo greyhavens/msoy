@@ -121,7 +121,7 @@ public class MsoySceneRepository extends SimpleRepository
         // END: temp
 
         // TEMP: migration; this so needs to be Depot-ed
-        JDBCUtil.addColumn(conn, "FURNI", "MEMORY_ID", "integer not null", "ITEM_ID");
+        JDBCUtil.dropColumn(conn, "FURNI", "MEMORY_ID");
         // END TEMP
 
         // TEMP: removable after all servers are past the date specified...
@@ -338,7 +338,7 @@ public class MsoySceneRepository extends SimpleRepository
 
                     // Load: furni
                     rs = stmt.executeQuery("select " +
-                        "FURNI_ID, ITEM_TYPE, ITEM_ID, MEMORY_ID, " +
+                        "FURNI_ID, ITEM_TYPE, ITEM_ID, " +
                         "MEDIA_HASH, MEDIA_TYPE, X, Y, Z, LAYOUT_INFO, " +
                         "SCALE_X, SCALE_Y, ACTION_TYPE, ACTION_DATA " +
                         "from FURNI where SCENE_ID=" + sceneId);
@@ -348,15 +348,14 @@ public class MsoySceneRepository extends SimpleRepository
                         furni.id = rs.getShort(1);
                         furni.itemType = rs.getByte(2);
                         furni.itemId = rs.getInt(3);
-                        furni.memoryId = rs.getInt(4);
-                        furni.media = createMediaDesc(rs.getBytes(5), rs.getByte(6));
+                        furni.media = createMediaDesc(rs.getBytes(4), rs.getByte(5));
                         furni.loc = new MsoyLocation(
-                            rs.getFloat(7), rs.getFloat(8), rs.getFloat(9), 0);
-                        furni.layoutInfo = rs.getByte(10);
-                        furni.scaleX = rs.getFloat(11);
-                        furni.scaleY = rs.getFloat(12);
-                        furni.actionType = rs.getByte(13);
-                        furni.actionData = rs.getString(14);
+                            rs.getFloat(6), rs.getFloat(7), rs.getFloat(8), 0);
+                        furni.layoutInfo = rs.getByte(9);
+                        furni.scaleX = rs.getFloat(10);
+                        furni.scaleY = rs.getFloat(11);
+                        furni.actionType = rs.getByte(12);
+                        furni.actionData = rs.getString(13);
                         flist.add(furni);
                     }
                     model.furnis = new FurniData[flist.size()];
@@ -524,10 +523,10 @@ public class MsoySceneRepository extends SimpleRepository
         throws SQLException, PersistenceException
     {
         PreparedStatement stmt = conn.prepareStatement("insert into FURNI " +
-            "(SCENE_ID, FURNI_ID, ITEM_TYPE, ITEM_ID, MEMORY_ID, " +
+            "(SCENE_ID, FURNI_ID, ITEM_TYPE, ITEM_ID, " +
             " MEDIA_HASH, MEDIA_TYPE, X, Y, Z, LAYOUT_INFO, " +
             " SCALE_X, SCALE_Y, ACTION_TYPE, ACTION_DATA) " +
-            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         try {
             stmt.setInt(1, sceneId);
 
@@ -535,17 +534,16 @@ public class MsoySceneRepository extends SimpleRepository
                 stmt.setShort(2, f.id);
                 stmt.setByte(3, f.itemType);
                 stmt.setInt(4, f.itemId);
-                stmt.setInt(5, f.memoryId);
-                stmt.setBytes(6, flattenMediaDesc(f.media));
-                stmt.setByte(7, f.media.mimeType);
-                stmt.setFloat(8, f.loc.x);
-                stmt.setFloat(9, f.loc.y);
-                stmt.setFloat(10, f.loc.z);
-                stmt.setByte(11, f.layoutInfo);
-                stmt.setFloat(12, f.scaleX);
-                stmt.setFloat(13, f.scaleY);
-                stmt.setByte(14, f.actionType);
-                stmt.setString(15, f.actionData);
+                stmt.setBytes(5, flattenMediaDesc(f.media));
+                stmt.setByte(6, f.media.mimeType);
+                stmt.setFloat(7, f.loc.x);
+                stmt.setFloat(8, f.loc.y);
+                stmt.setFloat(9, f.loc.z);
+                stmt.setByte(10, f.layoutInfo);
+                stmt.setFloat(11, f.scaleX);
+                stmt.setFloat(12, f.scaleY);
+                stmt.setByte(13, f.actionType);
+                stmt.setString(14, f.actionData);
                 JDBCUtil.checkedUpdate(stmt, 1);
             }
         } finally {
@@ -694,7 +692,6 @@ public class MsoySceneRepository extends SimpleRepository
             "FURNI_ID smallint not null",
             "ITEM_TYPE tinyint not null",
             "ITEM_ID integer not null",
-            "MEMORY_ID integer not null",
             "MEDIA_HASH tinyblob not null",
             "MEDIA_TYPE tinyint not null",
             "X float not null",

@@ -8,9 +8,11 @@ import java.util.Collection;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
+import com.samskivert.jdbc.depot.operator.Logic.And;
 
 /**
  * Manages "smart" digital item memory.
@@ -23,21 +25,24 @@ public class MemoryRepository extends DepotRepository
     }
 
     /**
-     * Loads the memory for the specified entity.
+     * Loads the memory for the specified item.
      */
-    public Collection<MemoryRecord> loadMemory (int memoryId)
+    public Collection<MemoryRecord> loadMemory (byte itemType, int itemId)
         throws PersistenceException
     {
-        return findAll(MemoryRecord.class, new Where(new Equals(MemoryRecord.MEMORY_ID, memoryId)));
+        return findAll(MemoryRecord.class, new Key(MemoryRecord.ITEM_TYPE, itemType,
+                                                   MemoryRecord.ITEM_ID, itemId));
     }
 
     /**
-     * Loads up the all memory records for all entities of the specified type.
+     * Loads up the all memory records for all items with the specified type and ids.
      */
-    public Collection<MemoryRecord> loadMemories (Collection<Integer> memoryIds)
+    public Collection<MemoryRecord> loadMemories (byte itemType, Collection<Integer> itemIds)
         throws PersistenceException
     {
-        return findAll(MemoryRecord.class, new Where(new In(MemoryRecord.MEMORY_ID, memoryIds)));
+        return findAll(MemoryRecord.class,
+                       new Where(new And(new Equals(MemoryRecord.ITEM_TYPE, itemType),
+                                         new In(MemoryRecord.ITEM_ID, itemIds))));
     }
 
     /**

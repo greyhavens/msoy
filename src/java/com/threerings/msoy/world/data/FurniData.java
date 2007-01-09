@@ -51,9 +51,6 @@ public class FurniData extends SimpleStreamableObject
     /** Identifies the id of the item that was used to create this. */
     public int itemId;
 
-    /** If the item that created this furniture has a memory, this holds its id. */
-    public int memoryId;
-
     /** Info about the media that represents this piece of furni. */
     public MediaDesc media;
 

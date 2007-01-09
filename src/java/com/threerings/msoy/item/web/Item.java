@@ -72,10 +72,6 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
      *  listing. */
     public int ownerId;
 
-    /** If this item maintains a memory, this will be filled in with its id. An item's memory is
-     * created lazily, the first time it tries to store something to it. */
-    public int memoryId;
-
     /** The current rating of this item, either 0 or between 1 and 5. */
     public float rating;
 

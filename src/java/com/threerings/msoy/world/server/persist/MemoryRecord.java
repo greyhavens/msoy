@@ -6,7 +6,6 @@ package com.threerings.msoy.world.server.persist;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
-import com.samskivert.util.HashIntMap;
 
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.world.data.MemoryEntry;
@@ -17,11 +16,21 @@ import com.threerings.msoy.world.data.MemoryEntry;
 @Entity
 public class MemoryRecord
 {
-    /** Used when using {@link #memoryId} in a query. */
-    public static final String MEMORY_ID = "memoryId";
+    /** Increment this value if you modify the definition of this persistent
+     * object in a way that will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 1;
 
-    /** The entity-specific unique identifier for our entity. */
-    @Id public int memoryId;
+    /** Used when using {@link #itemType} in a query. */
+    public static final String ITEM_TYPE = "itemType";
+
+    /** Used when using {@link #itemId} in a query. */
+    public static final String ITEM_ID = "itemId";
+
+    /** The type of the item for which we're storing a memory datum. */
+    @Id public byte itemType;
+
+    /** The id of the item for which we're storing a memory datum. */
+    @Id public int itemId;
 
     /** The key that identifies this memory datum. */
     @Id public String key;
@@ -37,9 +46,10 @@ public class MemoryRecord
     /**
      * Creates a memory record from the supplied memory information.
      */
-    public MemoryRecord (int memoryId, MemoryEntry entry)
+    public MemoryRecord (MemoryEntry entry)
     {
-        this.memoryId = memoryId;
+        this.itemType = entry.item.type;
+        this.itemId = entry.item.itemId;
         this.key = entry.key;
         this.value = entry.value;
     }
@@ -47,10 +57,10 @@ public class MemoryRecord
     /**
      * Converts this persistent record to a runtime record.
      */
-    public MemoryEntry toEntry (HashIntMap<ItemIdent> items)
+    public MemoryEntry toEntry ()
     {
         MemoryEntry entry = new MemoryEntry();
-        entry.item = items.get(memoryId);
+        entry.item = new ItemIdent(itemType, itemId);
         entry.key = key;
         entry.value = value;
         return entry;
