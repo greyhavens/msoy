@@ -20,6 +20,7 @@ import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
@@ -96,9 +97,15 @@ public class SwiftlyTextPane extends JTextPane
     // Throws up a close tab dialog internal frame
     public void closeTabDialog()
     {
-        // TODO only ever have one of these dialogs in a pane
-        // TODO figure out how to select the dialog when it pops up
-        add(new CloseTabDialog());
+        int response = JOptionPane.showInternalConfirmDialog(
+            _editor.getApplet().getContentPane(), "Save changes?");
+        if (response == JOptionPane.YES_OPTION) {
+            _editor.saveAndCloseCurrentTab();
+        } else if (response == JOptionPane.NO_OPTION) {
+            _editor.forceCloseCurrentTab();
+        } else {
+            // Cancel closes window
+        }
     }
 
     protected void addKeyBindings ()
@@ -299,25 +306,6 @@ public class SwiftlyTextPane extends JTextPane
         }
     }
 
-    protected class CloseTabDialog extends JInternalFrame
-    {
-        public CloseTabDialog ()
-        {
-            super("Unsaved changes.", 
-                  false,  //resizable
-                  false,  //closable
-                  false,  //maximizable
-                  false); //iconifiable
-            setVisible(true);
-            // TODO determine this location relatively
-            setLocation(60,60);
-            add(new JLabel("Document has unsaved changes."), BorderLayout.PAGE_START);
-            add(new JButton(_editor.createSaveAndCloseCurrentTabAction()), BorderLayout.WEST);
-            add(new JButton(_editor.createForceCloseCurrentTabAction()), BorderLayout.EAST);
-            pack();
-        }
-    }
-    
     protected JPopupMenu _popup;
     protected UndoManager _undo = new UndoManager();
     protected UndoableEditListener _undoHandler = new UndoHandler();
