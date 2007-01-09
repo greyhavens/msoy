@@ -51,7 +51,7 @@ public class SwiftlyProjectPanel extends JPanel
         Object nodeInfo = node.getUserObject();
         if (node.isLeaf()) {
             SwiftlyDocument doc = (SwiftlyDocument)nodeInfo;
-            _applet.editor.addEditorTab(doc);
+            _applet.getEditor().addEditorTab(doc);
         }
     }
 

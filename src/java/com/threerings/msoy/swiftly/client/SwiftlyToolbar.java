@@ -15,15 +15,24 @@ public class SwiftlyToolbar extends JToolBar
         setupToolbar();
     }
 
+    public void updateUndoRedoAction()
+    {
+        SwiftlyTextPane textPane =  _applet.getEditor().getCurrentTextPane();
+        if (textPane != null) {
+            _undoButton.setAction(textPane.getUndoAction());
+            _redoButton.setAction(textPane.getRedoAction());
+        }
+    }
+
     protected void setupToolbar ()
     {
         // TODO replace as many of these with icons as makes sense
         addButton("Switch Project", _applet.createShowProjectDialogAction());
         addButton("Create Project", _applet.createNewProjectDialogAction());
-        addButton("New Tab", _applet.editor.createNewTabAction());
-        addButton("Save Document", _applet.editor.createSaveCurrentTabAction());
+        addButton("New Tab", _applet.getEditor().createNewTabAction());
+        addButton("Save Document", _applet.getEditor().createSaveCurrentTabAction());
         // TODO let's try to get close buttons on the tabs
-        addButton("Close Tab", _applet.editor.createCloseCurrentTabAction());
+        addButton("Close Tab", _applet.getEditor().createCloseCurrentTabAction());
 
         addSeparator();
         addButton("Compile", null);
@@ -34,8 +43,9 @@ public class SwiftlyToolbar extends JToolBar
         addButton("Cut", null);
         addButton("Copy", null);
         addButton("Paste", null);
-        addButton("Undo", null);
-        addButton("Redo", null);
+        // These actions get set by updateUndoRedoAction()
+        _undoButton = addButton("Undo", null);
+        _redoButton = addButton("Redo", null);
 
         setFloatable(false);
     }
@@ -51,4 +61,6 @@ public class SwiftlyToolbar extends JToolBar
     }
 
     protected SwiftlyApplet _applet;
+    protected JButton _undoButton;
+    protected JButton _redoButton;
 }

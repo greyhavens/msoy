@@ -92,6 +92,16 @@ public class SwiftlyTextPane extends JTextPane
         return _documentChanged;
     }
 
+    public AbstractAction getUndoAction ()
+    {
+        return _undoAction;
+    }
+
+    public AbstractAction getRedoAction ()
+    {
+        return _redoAction;
+    }
+
     protected void addKeyBindings ()
     {
         // ctrl-n opens a new tab

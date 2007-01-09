@@ -52,7 +52,7 @@ public class SwiftlyEditor extends JTabbedPane
 
     public void saveCurrentTab () 
     {
-        SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
+        SwiftlyEditorScrollPane pane = getCurrentPane();
         if (pane == null) {
             return; 
         }
@@ -89,6 +89,20 @@ public class SwiftlyEditor extends JTabbedPane
         return _applet;
     }
 
+    public SwiftlyEditorScrollPane getCurrentPane ()
+    {
+        return (SwiftlyEditorScrollPane)getSelectedComponent();
+    }
+
+    public SwiftlyTextPane getCurrentTextPane ()
+    {
+        SwiftlyEditorScrollPane pane = getCurrentPane();
+        if (pane != null) {
+            return getCurrentPane().getTextPane();
+        }
+        return null;
+    }
+
     // returns the JOptionPane option the user picked
     public int closeCurrentTab ()
     {
@@ -97,8 +111,7 @@ public class SwiftlyEditor extends JTabbedPane
             // We're doing nothing which is the same as picking cancel
             return JOptionPane.CANCEL_OPTION;
         }
-        SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
-        SwiftlyTextPane textPane = pane.getTextPane();
+        SwiftlyTextPane textPane = getCurrentTextPane();
 
         int response = -1;
         if (textPane.hasUnsavedChanges()) {
@@ -121,7 +134,6 @@ public class SwiftlyEditor extends JTabbedPane
         assignTabKeys();
         return response;
     }
-
 
     public void removeTabs ()
     {
@@ -180,6 +192,7 @@ public class SwiftlyEditor extends JTabbedPane
     {
         // from interface ChangeListener
         public void stateChanged(ChangeEvent evt) {
+            _applet.getToolbar().updateUndoRedoAction();
             // clear the statusbar whenever a different tab is selected
             _applet.clearStatus();
         }
