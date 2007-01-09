@@ -192,13 +192,11 @@ public class RoomManager extends SpotSceneManager
                                     new RoomDispatcher(this), false));
 
         // determine which (if any) items in this room have a memories and load them up
-        HashIntMap<ArrayIntSet> furniIds = new HashIntMap<ArrayIntSet>();
+        ArrayIntSet furniIds = new ArrayIntSet();
         for (FurniData furni : ((MsoyScene) _scene).getFurni()) {
-            ArrayIntSet ids = furniIds.get(furni.itemType);
-            if (ids == null) {
-                furniIds.put(furni.itemType, ids = new ArrayIntSet());
+            if (furni.itemType == Item.FURNITURE) {
+                furniIds.add(furni.itemId);
             }
-            ids.add(furni.itemId);
         }
         if (furniIds.size() > 0) {
             resolveMemories(furniIds);
@@ -331,20 +329,18 @@ public class RoomManager extends SpotSceneManager
     /**
      * Loads up all specified memories and places them into the room object.
      */
-    protected void resolveMemories (final HashIntMap<ArrayIntSet> furniIds)
+    protected void resolveMemories (final ArrayIntSet furniIds)
     {
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
-                for (IntMap.IntEntry<ArrayIntSet> entry : furniIds.intEntrySet()) {
-                    byte type = (byte)entry.getIntKey();
-                    try {
-                        _mems.addAll(MsoyServer.memoryRepo.loadMemories(type, entry.getValue()));
-                    } catch (PersistenceException pe) {
-                        log.log(Level.WARNING, "Failed to load memories [where=" + where() +
-                                ", type=" + type + ", ids=" + entry.getValue() + "].", pe);
-                    }
+                try {
+                    _mems = MsoyServer.memoryRepo.loadMemories(Item.FURNITURE, furniIds);
+                    return true;
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to load memories [where=" + where() +
+                            ", ids=" + furniIds + "].", pe);
+                    return false;
                 }
-                return true;
             };
 
             public void handleResult () {
@@ -358,7 +354,7 @@ public class RoomManager extends SpotSceneManager
                 }
             }
 
-            protected ArrayList<MemoryRecord> _mems = new ArrayList<MemoryRecord>();
+            protected Collection<MemoryRecord> _mems;
         });
     }
 
