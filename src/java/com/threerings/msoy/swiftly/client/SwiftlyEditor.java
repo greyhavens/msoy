@@ -53,6 +53,10 @@ public class SwiftlyEditor extends JTabbedPane
     public void saveCurrentTab () 
     {
         SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
+        if (pane == null) {
+            return; 
+        }
+
         // TODO show a progress bar in the status bar while Saving...
         if (pane.getTextPane().saveDocument()) {
             setTabTitleChanged(false);
@@ -106,7 +110,7 @@ public class SwiftlyEditor extends JTabbedPane
             } else if (response == JOptionPane.NO_OPTION) {
                 // continue on with the tab closing
             } else {
-                // return cancel so something calling this knows to stop
+                // return cancel so something calling this method knows to stop
                 return response;
             }
         }
