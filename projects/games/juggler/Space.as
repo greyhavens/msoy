@@ -37,7 +37,7 @@ public class Space {
     
     public var bottom: Number;
     
-    private var gravity :Number = 10; // units/sec/sec
+    private var gravity :Number = 500; // pixels/sec/sec
     
     public var gravityPerFrame :Number;
     

@@ -45,8 +45,8 @@ public class Ball extends Sprite
     {
         x = (Math.random() * _space.width()) + _space.left;
         y = (Math.random() * _space.height()) + _space.top
-        dx = (Math.random() * 16) - 8;
-        dy =  (Math.random() * 16) - 8;
+        dx = (Math.random() * 16) - 8 * _space.frameRate;
+        dy =  (Math.random() * 16) - 8 * _space.frameRate;
     }    
     
     public function caughtBy(hand:Hand) :void
@@ -88,13 +88,22 @@ public class Ball extends Sprite
         else
         {
             x = bounds.getX();
-            y = bounds.topProjection() - _ballRadius;
+            y = bounds.topProjection() -_ballRadius;
         }
+        
+        nextX = x
+        nextY = y;
     }
         
     /** define the motion of the ball when it's free **/
     private function free() :void
     {
+        if (_velocityChanged) 
+        {
+            _velocityChanged = false;
+            project();
+        }
+        
         advance();
         
         // deal with elastic collision with floor or walls;
@@ -119,34 +128,42 @@ public class Ball extends Sprite
         dy += (dy>0) ? -_space.frictionPerFrame : _space.frictionPerFrame;
         
         // gravity is always in one direction
-        dy += _space.gravityPerFrame;            
+        dy += _space.gravityPerFrame;
+        
+        project();      
+    }
+        
+    /** calculate the expected position next frame **/
+    private function project () :void
+    {
+        nextX = x + (dx / _space.frameRate);
+        nextY = y + (dy / _space.frameRate);
     }
         
     private function advance () :void
     {
-        // update positions based on velocity;
-        x = x+dx;
-        y = y+dy;
+        x = nextX;
+        y = nextY;
     }
         
     public function leftProjection() :Number
     {
-        return x + dx - _ballRadius;
+        return nextX - _ballRadius;
     }
     
     public function rightProjection() :Number
     {
-        return x + dx + _ballRadius;
+        return nextX + _ballRadius;
     }
     
     public function topProjection() :Number
     {
-        return y + dy - _ballRadius;
+        return nextY - _ballRadius;
     }
     
     public function bottomProjection() :Number
     {
-        return y + dy + _ballRadius;
+        return nextY + _ballRadius;
     }
     
     public function getMass() :Number
@@ -168,6 +185,7 @@ public class Ball extends Sprite
     {
         dx = v[0];
         dy = v[1];
+        _velocityChanged = true;
     }
      
     public function collisionWith(other:CanCollide) :void
@@ -227,11 +245,17 @@ public class Ball extends Sprite
     private var _normalizedBounds:NormalizedBounds;
     
     /** vertical component of velocity **/
-    private var dy :Number;
+    private var dy :Number; // pixels per second
     
     /** horizontal component of velocity **/
-    private var dx :Number;
+    private var dx :Number; // pixels per second
         
+    /** position at next frame assuming no collision **/
+    private var nextX :Number; 
+    
+    /** position at next frame assuming no collision **/
+    private var nextY :Number;
+            
     private static var HIGHLIGHT_COLOR :uint = 0xFF0000;
     
     private static var REGULAR_COLOR :uint = 0x000080;
@@ -255,5 +279,7 @@ public class Ball extends Sprite
     private var _hand:Hand; 
     
     private var _catchFrames:int;
+    
+    private var _velocityChanged:Boolean = true;
 }
 }
