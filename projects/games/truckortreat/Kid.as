@@ -10,24 +10,42 @@ public class Kid extends BaseSprite
     public static const IMAGE_VAMPIRE :int = 0;
     public static const IMAGE_GHOST :int = 1;
     
+    /** Movement direction constants. */
+    public static const UP :int = 0;
+    public static const DOWN :int = 1;
+    public static const LEFT :int = 2;
+    public static const RIGHT :int = 3;
+    
     /** Create a new Kid object at the coordinates on the board given. */
-    public function Kid (startX :int, startY :int, image :int, board :Board)
+    public function Kid (startX :int, startY :int, image :int, playerName :String, board :Board)
     {
-        _boardWidth = board.width;
-        _boardHeight = board.height;
+        _board = board;
+        _playerName = playerName;
         _speed = DEFAULT_SPEED;
         _lives = STARTING_LIVES;
         _dead = false;
         super(startX, startY, getBitmap(image));
+        
+        // Print player's name above the kid.
+        _nameLabel = new TextField();
+        _nameLabel.autoSize = TextFieldAutoSize.CENTER;
+        _nameLabel.selectable = false;
+        _nameLabel.text = _playerName;
+        _nameLabel.textColor = uint(0x33CC33);
+        // Center the label above us.
+        _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
+        _nameLabel.x = (width - _nameLabel.textWidth) / 2;
+        addChild(_nameLabel);
     }
     
     /** Handle being killed. */
     public function wasKilled () :void
     {
+        removeChild(_nameLabel);
         _dead = true;
         _lives--;
         // TODO: this is where we have some nice kid being squashed animation.
-        trace("Oh nos, death! " + _lives + " lives left.");
+        trace("Oh nos, " + _playerName + " died. " + _lives + " lives left.");
         _respawnTicks = AUTO_RESPAWN_TICKS;
     }
     
@@ -43,11 +61,11 @@ public class Kid extends BaseSprite
             // Only move if we're not dead.
             var deltaX :int = _speed * _moveX;
             var deltaY :int = _speed * _moveY;
-            if (0 <= x + deltaX && x + deltaX + width <= _boardWidth) {
+            if (0 <= x + deltaX && x + deltaX + width <= _board.width) {
                 x += deltaX;
             }
-            if (Board.HORIZON - height <= y + deltaY && 
-                y + deltaY + height <= _boardHeight) {
+            if (Board.HORIZON - (height - _nameLabel.height) <= y + deltaY && 
+                y + deltaY + (height - _nameLabel.height) <= _board.height) {
                 y += deltaY;
             }
         }
@@ -79,16 +97,16 @@ public class Kid extends BaseSprite
     public function setMove (direction :int) :void
     {
         switch (direction) {
-        case Direction.UP:
+        case UP:
             _moveY = -1;
             break;
-        case Direction.DOWN:
+        case DOWN:
             _moveY = 1;
             break;
-        case Direction.LEFT:
+        case LEFT:
             _moveX = -1;
             break;
-        case Direction.RIGHT:
+        case RIGHT:
             _moveX = 1;
             break;
         default:
@@ -100,9 +118,9 @@ public class Kid extends BaseSprite
     protected function respawn () :void
     {
         _dead = false;
-        // TODO: set these to some actually randomized coordinates
-        x = 180;
-        y = 200;
+        x = _board.getSidewalkX();
+        y = _board.getSidewalkY() - height;
+        addChild(_nameLabel);
     }
     
     /** Get the bitmap used to draw the kid. */
@@ -137,9 +155,14 @@ public class Kid extends BaseSprite
     /** A count of how long until we respawn. */
     protected var _respawnTicks :int;
     
-    /** Dimensions of board we're drawn on. */
-    protected var _boardHeight :int;
-    protected var _boardWidth :int;
+    /** The player's name. */
+    protected var _playerName :String;
+    
+    /** Label to display the player's name above his/her character. */
+    protected var _nameLabel :TextField;
+    
+    /** The game board. */
+    protected var _board :Board;
     
     /** Initial number of lives. */
     protected static const STARTING_LIVES :int = 3;
@@ -149,6 +172,9 @@ public class Kid extends BaseSprite
     
     /** The number of ticks that may elapse before we're auto-respawned. */
     protected static const AUTO_RESPAWN_TICKS :int = 20;
+    
+    /** The number of pixels to raise the name above the sprite. */
+    protected static const NAME_PADDING :int = 3;
     
     /** Images for kid. */
     [Embed(source="rsrc/vampire.png")]

@@ -8,13 +8,13 @@ import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
 public class Board extends BaseSprite
-{   
-    /** Lists of sidewalk coordinates. These are safe spots to start on. */
-    public static const SIDEWALK_X :Array = [];
-    public static const SIDEWALK_Y :Array = [];
-    
+{
     /** The y coordinate of the horizon line. */
     public static const HORIZON :int = 157;
+    
+    /** X coordinate of left side of each sidewalk. */
+    public static const LEFT_SIDEWALK :int = 180;
+    public static const RIGHT_SIDEWALK :int = 634;
     
     public function Board (gameCtrl :EZGameControl)
     {
@@ -23,12 +23,21 @@ public class Board extends BaseSprite
         _gameCtrl = gameCtrl;
         
         // Add kids and cars.
-        var kid :Kid = new Kid(180, 200, Kid.IMAGE_GHOST, this);
-        addChild(kid);
-        _kids[0] = kid;
-        kid = new Kid(180, 300, Kid.IMAGE_VAMPIRE, this);
-        addChild(kid);
-        _kids[1] = kid;
+        var names :Array = gameCtrl.getPlayerNames();
+        var kid :Kid;
+        var i :int;
+        for (i = 0; i < names.length; i++) {
+            // TODO: the height we are using to adjust the starting y 
+            // coordinate is just made up here for now. Need to find a good way 
+            // of determining the actual height of the bitmap before the kid 
+            // sprite is instantiated.
+            // Also, we want to let the player choose the image to use rather 
+            // than just grabbing one corresponding to his/her index.
+            kid = new Kid(getSidewalkX(), getSidewalkY() - 45, i, names[i], this);
+            _kids[i] = kid;
+            addChild(kid);
+        }
+        // TODO non-hard coded car creation.
         var car :Car = new Car(275, HORIZON + 10, 10, Car.DOWN, this);
         _cars[0] = car;
         addChild(car);
@@ -36,12 +45,28 @@ public class Board extends BaseSprite
         _cars[1] = car;
         addChild(car);
         
-        _gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
+        gameCtrl.addEventListener(MessageReceivedEvent.TYPE, msgReceived);
         if (gameCtrl.isInPlay()) {
             gameDidStart(null);
         } else {
-            _gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
+            gameCtrl.addEventListener(StateChangedEvent.GAME_STARTED, gameDidStart);
         }
+    }
+    
+    /** Returns the X coordinate of the left side of a random sidewalk. */
+    public function getSidewalkX () :int
+    {
+        if (Math.random() < 0.5) {
+            return LEFT_SIDEWALK;
+        } else {
+            return RIGHT_SIDEWALK;
+        }
+    }
+    
+    /** Returns a random Y coordinate of a point on a sidewalk. */
+    public function getSidewalkY () :int
+    {
+        return int(Math.random() * (height - HORIZON)) + HORIZON;
     }
     
     /** Do whatever needs to be done on each clock tick. */
@@ -63,13 +88,17 @@ public class Board extends BaseSprite
                 // cars so if a player gets a health power up at the same time as 
                 // a death dealing hit by a car, he or she will survive.
                 for each (car in _cars) {
-                    if (kid.hitTestObject(car)) {
-                        kid.wasKilled();
-                        if (kid.livesLeft() <= 0) {
-                            // TODO: endGame() takes one or more winning player 
-                            // indices. Since we only have one player currently, 
-                            // make that one the winner despite having just died.
-                            //_gameCtrl.endGame.(0);
+                    // We only need to look for collisions if the kid's feet 
+                    // intersect with the bottom half of the car. 
+                    if (Math.abs((car.y + car.height) - (kid.y + kid.height)) < car.height / 2) {
+                        if (kid.hitTestObject(car)) {
+                            kid.wasKilled();
+                            if (kid.livesLeft() <= 0) {
+                                // TODO: endGame() takes one or more winning player 
+                                // indices. Since we only have one player currently, 
+                                // make that one the winner despite having just died.
+                                //_gameCtrl.endGame.(0);
+                            }
                         }
                     }
                 }

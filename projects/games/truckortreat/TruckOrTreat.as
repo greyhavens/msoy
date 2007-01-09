@@ -35,16 +35,16 @@ public class TruckOrTreat extends Sprite
     {
         switch (event.keyCode) {
         case Keyboard.UP:
-            _gameCtrl.sendMessage("kid" + _myIndex, Direction.UP);
+            _gameCtrl.sendMessage("kid" + _myIndex, Kid.UP);
             break;
         case Keyboard.DOWN:
-            _gameCtrl.sendMessage("kid" + _myIndex, Direction.DOWN);
+            _gameCtrl.sendMessage("kid" + _myIndex, Kid.DOWN);
             break;
         case Keyboard.LEFT:
-            _gameCtrl.sendMessage("kid" + _myIndex, Direction.LEFT);
+            _gameCtrl.sendMessage("kid" + _myIndex, Kid.LEFT);
             break;
         case Keyboard.RIGHT:
-            _gameCtrl.sendMessage("kid" + _myIndex, Direction.RIGHT);
+            _gameCtrl.sendMessage("kid" + _myIndex, Kid.RIGHT);
             break;
         default:
             return;
