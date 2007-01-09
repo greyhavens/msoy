@@ -1,8 +1,8 @@
 package {
 
 import flash.display.Bitmap;
-import flash.events.KeyboardEvent;
-import flash.ui.Keyboard;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 
 public class Kid extends BaseSprite
 {   
@@ -31,42 +31,6 @@ public class Kid extends BaseSprite
         _respawnTicks = AUTO_RESPAWN_TICKS;
     }
     
-    /** 
-     * Set variables determining direction of motion appropriately when a key
-     * is pressed.
-     */
-    public function keyDownHandler (event :KeyboardEvent) :void
-    {
-        trace("got a key down press");
-        switch (event.keyCode) {
-        case Keyboard.UP:
-            _moveY = -1;
-            break;
-        case Keyboard.DOWN:
-            _moveY = 1;
-            break;
-        case Keyboard.LEFT:
-            _moveX = -1;
-            break;
-        case Keyboard.RIGHT:
-            _moveX = 1;
-            break;
-        default:
-            return;
-        }
-    }
-    
-    /** Stop motion in given direction when the key is released. */
-    public function keyUpHandler (event :KeyboardEvent) :void
-    {
-        if (event.keyCode == Keyboard.UP || Keyboard.DOWN) {
-            _moveY = 0;
-        }
-        if (event.keyCode == Keyboard.LEFT || Keyboard.RIGHT) {
-            _moveX = 0;
-        }
-    }
-    
     /** Called to move kid at each clock tick. */
     public function tick () :void
     {
@@ -87,6 +51,10 @@ public class Kid extends BaseSprite
                 y += deltaY;
             }
         }
+        // Reset _moveX and _moveY to zero so we don't move until we get more
+        // keyboard events telling us to do so.
+        _moveX = 0;
+        _moveY = 0;
     }
     
     /** Return true if we're not dead, false if we are. */
@@ -105,6 +73,27 @@ public class Kid extends BaseSprite
     public function setSpeed (newSpeed :int) :void
     {
         _speed = newSpeed;
+    }
+    
+    /** Set direction(s) to move. */
+    public function setMove (direction :int) :void
+    {
+        switch (direction) {
+        case Direction.UP:
+            _moveY = -1;
+            break;
+        case Direction.DOWN:
+            _moveY = 1;
+            break;
+        case Direction.LEFT:
+            _moveX = -1;
+            break;
+        case Direction.RIGHT:
+            _moveX = 1;
+            break;
+        default:
+            return;
+        }
     }
     
     /** Respawn at a random sidewalk location. */
@@ -130,7 +119,7 @@ public class Kid extends BaseSprite
     }
     
     /** 
-     * Direction we're moving in a given tick. If zero, not moving on this
+     * Direction we're moving at the moment. If zero, not moving on this
      * axis. If -1, moving up or left. If 1, moving down or right. 
      */
     protected var _moveY :int = 0;

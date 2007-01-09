@@ -44,12 +44,6 @@ public class Board extends BaseSprite
         }
     }
     
-    /** Get the kid for the specified player index. */
-    public function getKid (index :int) :Kid 
-    {
-        return _kids[index];
-    }
-    
     /** Do whatever needs to be done on each clock tick. */
     protected function doTick () :void
     {
@@ -95,9 +89,12 @@ public class Board extends BaseSprite
     /** Handles MessageReceivedEvents. */
     protected function msgReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == "tick")
-        {
+        if (event.name == "tick") {
             doTick();
+        } else if (event.name.indexOf("kid") == 0) {
+            var kidIndex :int = int(event.name.substring(3));
+            var kid :Kid = Kid(_kids[kidIndex]);
+            kid.setMove(event.value as int);
         }
     }
     
