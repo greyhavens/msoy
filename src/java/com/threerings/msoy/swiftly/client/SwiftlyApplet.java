@@ -1,9 +1,14 @@
 package com.threerings.msoy.swiftly.client;
 
+import org.apache.xmlrpc.client.XmlRpcClient;
+import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+
 import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -29,6 +34,26 @@ public class SwiftlyApplet extends JApplet
 
         // Save the root content pane
         _contentPane = getContentPane();
+
+        // Load the authentication token and configure the XML-RPC connection
+        _authtoken = getParameter("authtoken");
+
+        // XML-RPC Anonymous Client
+        XmlRpcClientConfigImpl xmlRpcConfig = new XmlRpcClientConfigImpl();
+        URL rpcURL;
+        try {
+            System.out.println(getParameter("rpcURL"));
+            rpcURL = new URL(getParameter("rpcURL"));
+        } catch (MalformedURLException e) {
+            // TODO: Useful error handling
+            System.err.println("GWT Application provided a bum URL");
+            return;
+        }
+        xmlRpcConfig.setServerURL(rpcURL);
+        xmlRpcConfig.setEnabledForExtensions(true);
+
+        _swiftlyRpc = new XmlRpcClient();
+        _swiftlyRpc.setConfig(xmlRpcConfig);
 
         // XXX TEMP
         initializeProjects();
@@ -182,4 +207,10 @@ public class SwiftlyApplet extends JApplet
     protected SwiftlyProject _loadedProject;
     protected JSplitPane _splitPane;
     protected ArrayList<SwiftlyProject> _projectList = new ArrayList<SwiftlyProject>();
+    
+    /** Swiftly XML-RPC Connection. */
+    protected XmlRpcClient _swiftlyRpc;
+    
+    /** Cached msoy authentication token. */
+    protected String _authtoken;
 }

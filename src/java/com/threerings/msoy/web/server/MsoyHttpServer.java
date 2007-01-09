@@ -44,7 +44,7 @@ public class MsoyHttpServer extends HttpServer
         }
         
         // wire up our single XML-RPC servlet, with XML-RPC extensions enabled
-        ServletHolder holder = handler.addServlet("swiftlysvc", SwiftlyServlet.class.getName());
+        ServletHolder holder = handler.addServlet(SwiftlyEditorServlet.SVC_PATH, SwiftlyEditorServlet.class.getName());
         holder.setInitParameter("enabledForExtensions", "true");
 
         context.addHandler(handler);
@@ -85,6 +85,7 @@ public class MsoyHttpServer extends HttpServer
         "groupsvc", GroupServlet.class.getName(),
         "mailsvc", MailServlet.class.getName(),
         "uploadsvc", UploadServlet.class.getName(),
-        "gamesvc", GameServlet.class.getName()
+        "gamesvc", GameServlet.class.getName(),
+        "swiftlysvc", SwiftlyServlet.class.getName()
     };
 }

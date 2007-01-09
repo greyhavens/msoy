@@ -10,6 +10,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.Label;
 
+import com.threerings.msoy.web.client.SwiftlyService;
+import com.threerings.msoy.web.client.SwiftlyServiceAsync;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
@@ -53,7 +55,10 @@ public class index extends MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
-        // TODO: Wire up our services
+
+        // wire up our remote services
+        _ctx.swiftlysvc = (SwiftlyServiceAsync)GWT.create(SwiftlyService.class);
+        ((ServiceDefTarget)_ctx.swiftlysvc).setServiceEntryPoint("/swiftlysvc");
 
         // load up our translation dictionaries
         _ctx.msgs = (SwiftlyMessages)GWT.create(SwiftlyMessages.class);
