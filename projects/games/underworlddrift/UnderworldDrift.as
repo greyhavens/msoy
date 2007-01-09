@@ -17,7 +17,8 @@ public class UnderworldDrift extends Sprite
 {
     public function UnderworldDrift ()
     {
-        var imageSize :int = 2880;
+        var imageSize :int = 1024;
+        var halfImageSize :int = imageSize / 2;
         // inspired by 16:9 widescreen ratio
         var displayWidth :int = 711; 
         var displayHeight :int = 400;
@@ -28,63 +29,60 @@ public class UnderworldDrift extends Sprite
         this.mask = masker;
         addChild(masker);
 
+        // "sky"
         var colorBackground :Shape = new Shape();
         colorBackground.graphics.beginFill(0x8888FF);
-        colorBackground.graphics.drawRect(0, 0, displayWidth, displayHeight);
+        colorBackground.graphics.drawRect(0, 0, displayWidth, displayHeight / 2);
         colorBackground.graphics.endFill();
         addChild(colorBackground);
+
+        // "ground"
+        var background :Shape = new Shape();
+        background.graphics.beginBitmapFill((new _backgroundImage() as Bitmap).bitmapData);
+        // draw over the same coordinates as road tiles, so that the same transform applies
+        background.graphics.drawRect(-halfImageSize, -halfImageSize, imageSize, imageSize);
+        background.graphics.endFill();
         
         var trackVector :IBitmapDrawable = new _trackImage();
         var transform :Matrix = new Matrix();
-        /*transform.tx = transform.ty = imageSize / 2;
-        transform.a = transform.d = imageSize / 1024;
-        var fullTrackData :BitmapData = new BitmapData(imageSize, imageSize);
-        fullTrackData.draw(new _trackImage(), transform);*/
-        imageSize = 1024;
         var sliceData :BitmapData; 
         var sliceImg :Bitmap;
-        var xScale :Number = 6;
-        var thisHeight :Number = 20;
-        var scaleFactor :Number = 0.007;
+        var xScale :Number = 7;
+        var thisHeight :Number = 9;
+        var scaleFactor :Number = 0.05;
         var totalHeight :Number = 0;
-        var stripHeight :Number = 2;
+        var stripHeight :Number = 4;
         var stripHeightCeiling :int;
-        var xShift :Number = (imageSize - displayWidth) / 2;
+        var stripWidth :Number = 0;
+        // align the vector so that the the display area is centered
+        var xShift :Number = halfImageSize - (imageSize - displayWidth) / 2;
+        // align the bottom of the vector with the top of the display area.
+        var yShift :Number = 0 - halfImageSize;
         for (var strip :int = 0; totalHeight <= displayHeight / 2; strip++,
             stripHeight = (stripHeight - scaleFactor) > 1 ? stripHeight - scaleFactor : 1) {
-            stripHeightCeiling = Math.round(stripHeight + 0.5);
+            stripHeightCeiling = Math.round(stripHeight + 0.49);
             totalHeight += stripHeightCeiling;
-            sliceData = new BitmapData(displayWidth, stripHeightCeiling);
+            sliceData = new BitmapData(displayWidth, stripHeightCeiling, true, 0x000000);
+            // TODO: figure out why this only works if we scale-x, translate both, then scale-y
             transform.identity();
-            transform.scale((1 - totalHeight / (displayHeight / 2) * 0.9) * xScale, 
-                1);
-            transform.translate(imageSize / 2 - ((imageSize - displayWidth) / 4), 
-                imageSize / 2 - (imageSize - totalHeight + stripHeight));
+            transform.scale(xScale * (1 - totalHeight / (displayHeight / 2) * 0.9), 1);
+            transform.translate(xShift, yShift + strip * thisHeight + thisHeight);
+            transform.scale(1, stripHeightCeiling / thisHeight);
+            sliceData.draw(background, transform);
             sliceData.draw(trackVector, transform);
             sliceImg = new Bitmap(sliceData);
-            sliceImg.y = displayHeight - totalHeight + thisHeight;
+            sliceImg.y = displayHeight - totalHeight;
             addChild(sliceImg);
         }
-        /*for (var strip :int = 0; totalHeight <= displayHeight/2; strip++,
-            stripHeight = (stripHeight - scaleFactor) > 1 ? stripHeight - scaleFactor : 1) {
-            totalHeight += stripHeight;
-            Log.testing("strip: " + stripHeight + ", total: " + totalHeight);
-            sliceData = new BitmapData(imageSize, thisHeight);
-            sliceData.copyPixels(fullTrackData,
-                new Rectangle(0, imageSize - strip * thisHeight, imageSize, thisHeight),  
-                new Point(0, 0));
-            sliceImg = new Bitmap(sliceData);
-            sliceImg.y = displayHeight - totalHeight + thisHeight;
-            sliceImg.height = Math.round(stripHeight+0.5);
-            Log.testing("y: " + sliceImg.y + ", height: " + sliceImg.height);
-            sliceImg.scaleX = (1 - (totalHeight / (displayHeight / 2)) * 0.9) * xScale;
-            sliceImg.x = (imageSize - sliceImg.width) / 2 - xShift;
-            addChild(sliceImg);
-        }*/
     }
 
     /** track image */
-    [Embed(source='rsrc/test_track.swf#test')]
+    //[Embed(source='rsrc/test_track.swf#test')]
+    [Embed(source='rsrc/track.swf#track3')]
     protected var _trackImage :Class;
+
+    /** test background tile image */
+    [Embed(source='rsrc/pixel_magma.png')]
+    protected var _backgroundImage :Class;
 }
 }
