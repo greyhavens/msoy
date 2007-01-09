@@ -57,10 +57,33 @@ public class Ground extends Sprite
         translateTransforms(0, -1);
     }
 
+    public function turnLeft () :void
+    {
+        rotateTransforms(0.03725);
+    }
+
+    public function turnRight () :void
+    {
+        rotateTransforms(-0.03725);
+    }
+
     protected function translateTransforms(x :Number, y :Number) :void
     {
         for (var i :int = 0; i < _transforms.length; i++) {
             _transforms[i].translate(x, y);
+        }
+    }
+
+    protected function rotateTransforms(angle :Number) :void
+    {
+        var preTransform :Matrix;
+        for (var i :int = 0; i < _transforms.length; i++) {
+            preTransform = new Matrix();
+            preTransform.translate(0, -(IMAGE_SIZE / 2));
+            preTransform.rotate(angle);
+            preTransform.translate(0, IMAGE_SIZE / 2);
+            preTransform.concat(_transforms[i]);
+            _transforms[i] = preTransform;
         }
     }
 

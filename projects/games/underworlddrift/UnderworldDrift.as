@@ -61,6 +61,14 @@ public class UnderworldDrift extends Sprite
             _ground.moveBackward();
             break;
 
+        case Action.LEFT:
+            _ground.turnLeft();
+            break;
+
+        case Action.RIGHT:
+            _ground.turnRight();
+            break;
+
         default:
             // do nothing
         }
@@ -74,6 +82,8 @@ public class UnderworldDrift extends Sprite
         switch (keyCode) {
         case Keyboard.UP: return Action.FORWARD;
         case Keyboard.DOWN: return Action.BACKWARD;
+        case Keyboard.LEFT: return Action.LEFT;
+        case Keyboard.RIGHT: return Action.RIGHT;
         default: return Action.NONE;
         }
     }
