@@ -102,6 +102,26 @@ public class SwiftlyTextPane extends JTextPane
         return _redoAction;
     }
 
+    public Action getCutAction ()
+    {
+        return getActionByName(DefaultEditorKit.cutAction);
+    }
+
+    public Action getCopyAction ()
+    {
+        return getActionByName(DefaultEditorKit.copyAction);
+    }
+
+    public Action getPasteAction ()
+    {
+        return getActionByName(DefaultEditorKit.pasteAction);
+    }
+
+    public Action getSelectAllAction ()
+    {
+        return getActionByName(DefaultEditorKit.selectAllAction);
+    }
+
     protected void addKeyBindings ()
     {
         // ctrl-n opens a new tab
@@ -130,24 +150,25 @@ public class SwiftlyTextPane extends JTextPane
         // TODO is there a cross platform way to show what the keybindings are for these actions?
         // Cut
         JMenuItem menuItem = new JMenuItem("Cut");
-        menuItem.addActionListener(getActionByName(DefaultEditorKit.cutAction));
+        menuItem.addActionListener(getCutAction());
         _popup.add(menuItem);
         // Copy
         menuItem = new JMenuItem("Copy");
-        menuItem.addActionListener(getActionByName(DefaultEditorKit.copyAction));
+        menuItem.addActionListener(getCopyAction());
         _popup.add(menuItem);
         // Paste
         menuItem = new JMenuItem("Paste");
-        menuItem.addActionListener(getActionByName(DefaultEditorKit.pasteAction));
+        menuItem.addActionListener(getPasteAction());
         _popup.add(menuItem);
         // Separator
         _popup.addSeparator();
         // Select All
         menuItem = new JMenuItem("Select All");
-        menuItem.addActionListener(getActionByName(DefaultEditorKit.selectAllAction));
+        menuItem.addActionListener(getSelectAllAction());
         _popup.add(menuItem);
         // Separator
         _popup.addSeparator();
+        // TODO undo and redo should be grayed out if possible.. possibly using a changelistener
         // Undo
         menuItem = new JMenuItem("Undo");
         menuItem.addActionListener(_undoAction);

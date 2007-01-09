@@ -15,10 +15,14 @@ public class SwiftlyToolbar extends JToolBar
         setupToolbar();
     }
 
-    public void updateUndoRedoAction()
+    public void updateEditorActions()
     {
         SwiftlyTextPane textPane =  _applet.getEditor().getCurrentTextPane();
         if (textPane != null) {
+            _cutButton.setAction(textPane.getCutAction());
+            _copyButton.setAction(textPane.getCopyAction());
+            _pasteButton.setAction(textPane.getPasteAction());
+            _selectAllButton.setAction(textPane.getSelectAllAction());
             _undoButton.setAction(textPane.getUndoAction());
             _redoButton.setAction(textPane.getRedoAction());
         }
@@ -39,11 +43,12 @@ public class SwiftlyToolbar extends JToolBar
         addButton("Play", null);
 
         addSeparator();
-        // TODO add icons for these, along with cut/copy/paste that at tiny but in the toolbar
-        addButton("Cut", null);
-        addButton("Copy", null);
-        addButton("Paste", null);
-        // These actions get set by updateUndoRedoAction()
+        // TODO add mini icons for these + tooltips with keyboard shortcuts
+        // These actions get set by updateEditorActions()
+        _cutButton = addButton("Cut", null);
+        _copyButton = addButton("Copy", null);
+        _pasteButton = addButton("Paste", null);
+        _selectAllButton = addButton("Select All", null);
         _undoButton = addButton("Undo", null);
         _redoButton = addButton("Redo", null);
 
@@ -61,6 +66,10 @@ public class SwiftlyToolbar extends JToolBar
     }
 
     protected SwiftlyApplet _applet;
+    protected JButton _cutButton;
+    protected JButton _copyButton;
+    protected JButton _pasteButton;
+    protected JButton _selectAllButton;
     protected JButton _undoButton;
     protected JButton _redoButton;
 }

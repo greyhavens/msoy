@@ -192,7 +192,7 @@ public class SwiftlyEditor extends JTabbedPane
     {
         // from interface ChangeListener
         public void stateChanged(ChangeEvent evt) {
-            _applet.getToolbar().updateUndoRedoAction();
+            _applet.getToolbar().updateEditorActions();
             // clear the statusbar whenever a different tab is selected
             _applet.clearStatus();
         }
