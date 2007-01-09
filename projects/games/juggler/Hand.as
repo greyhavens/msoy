@@ -203,6 +203,8 @@ public class Hand extends Sprite
 
     private static var HIGHLIGHT_COLOR:uint = 0xFF0000;
 
+    private static var _ballisticTrajectory:BallisticTrajectory = new BallisticTrajectory();
+
     private var _holding:Ball;
 
     private var _normalizedBounds:NormalizedBounds;
