@@ -120,7 +120,9 @@ public class SwiftlyApplet extends JApplet
         SwiftlyProject project = (SwiftlyProject)JOptionPane.showInternalInputDialog(
             _contentPane, "Select a project:", "Project Selection", JOptionPane.QUESTION_MESSAGE,
             null, getProjects(), null);
-        loadProject(project);
+        if (project != null) {
+            loadProject(project);
+        }
     }
 
     protected class ShowProjectDialogAction extends AbstractAction
