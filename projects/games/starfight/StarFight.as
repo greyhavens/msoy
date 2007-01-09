@@ -99,7 +99,7 @@ public class StarFight extends Sprite
         //  initial ship array too.
         if ((boardObj == null) && (_gameCtrl.getMyIndex() == 0)) {
             boardObj = new Board(50, 50, true);
-            _gameCtrl.set("ship", new Array(2));
+            _gameCtrl.set("ship", new Array(_gameCtrl.getPlayerCount()));
             _gameCtrl.set("powerup", new Array(MAX_POWERUPS));
             _gameCtrl.set("board", boardObj.writeTo(new ByteArray()));
         }
@@ -466,9 +466,9 @@ public class StarFight extends Sprite
 
     /** Constants to control update frequency. */
     protected static const REFRESH_RATE :int = 50;
-    protected static const FRAMES_PER_UPDATE :int = 2;
+    protected static const FRAMES_PER_UPDATE :int = 3;
 
-    /** This oughta be more dynamic, but ah well. */
+    /** This could be more dynamic. */
     protected static const MAX_POWERUPS :int = 10;
 
     /** Color constants. */
