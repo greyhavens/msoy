@@ -4,8 +4,8 @@ import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.JApplet;
@@ -31,6 +31,9 @@ public class SwiftlyApplet extends JApplet
 
         // Save the root content pane
         _contentPane = getContentPane();
+
+        // XXX TEMP
+        initializeProjects();
 
         // Execute a job on the event-dispatching thread: creating this applet's GUI.
         try {
@@ -62,6 +65,10 @@ public class SwiftlyApplet extends JApplet
         return new ShowProjectDialogAction();
     }
 
+    public NewProjectDialogAction createNewProjectDialogAction ()
+    {
+        return new NewProjectDialogAction();
+    }
 
     protected void createGUI ()
     {
@@ -85,27 +92,46 @@ public class SwiftlyApplet extends JApplet
         _contentPane.add(_statusbar, BorderLayout.SOUTH);
 
         // popup the project selection window
-        // TODO don't popup if we already know our project
         if (_loadedProject == null) {
-            showProjectDialog();
+            if (getProjects().isEmpty()) {
+                showNewProjectDialog();
+            } else {
+                showProjectDialog();
+            }
+        } else {
+            // TODO this would come in as a parameter to the applet
+            loadProject(_loadedProject);
         }
     }
 
-    protected SwiftlyProject[] getProjects ()
+    protected ArrayList<SwiftlyProject> getProjects ()
     {
         // TODO this will need to load the projects from the server
+        return _projectList;
+    }
+
+    // XXX TEMP
+    protected void initializeProjects ()
+    {
         ArrayList<SwiftlyDocument> fileList = new ArrayList<SwiftlyDocument>();
         fileList.add(new SwiftlyDocument("file #1", "Example text"));
         fileList.add(new SwiftlyDocument("file #2", "Example text more"));
         SwiftlyProject project = new SwiftlyProject("project1", fileList);
+        _projectList.add(project);
 
-        ArrayList<SwiftlyDocument> fileList2 = new ArrayList<SwiftlyDocument>();
-        fileList2.add(new SwiftlyDocument("file #3", "Example text"));
-        fileList2.add(new SwiftlyDocument("file #4", "Example text more"));
-        SwiftlyProject project2 = new SwiftlyProject("project2", fileList2);
+        fileList = new ArrayList<SwiftlyDocument>();
+        fileList.add(new SwiftlyDocument("file #3", "Example text"));
+        fileList.add(new SwiftlyDocument("file #4", "Example text more"));
+        project = new SwiftlyProject("project2", fileList);
+        _projectList.add(project);
+    }
 
-        SwiftlyProject[] projectList = {project, project2};
-        return projectList;
+    protected SwiftlyProject createProject (String name)
+    {
+        ArrayList<SwiftlyDocument> emptyFileList = new ArrayList<SwiftlyDocument>();
+        SwiftlyProject project = new SwiftlyProject(name, emptyFileList);
+        _projectList.add(project);
+        return project;
     }
 
     protected void loadProject (SwiftlyProject project)
@@ -118,11 +144,19 @@ public class SwiftlyApplet extends JApplet
     protected void showProjectDialog ()
     {
         SwiftlyProject project = (SwiftlyProject)JOptionPane.showInternalInputDialog(
-            _contentPane, "Select a project:", "Project Selection", JOptionPane.QUESTION_MESSAGE,
-            null, getProjects(), null);
+            _contentPane, "Select a project:", "Project selection", JOptionPane.QUESTION_MESSAGE,
+            null, getProjects().toArray(), null);
         if (project != null) {
             loadProject(project);
         }
+    }
+
+    protected void showNewProjectDialog ()
+    {
+        String projectName = JOptionPane.showInternalInputDialog(
+            _contentPane, "Enter the project name", "Create a new project.",
+            JOptionPane.INFORMATION_MESSAGE);
+        loadProject(createProject(projectName));
     }
 
     protected class ShowProjectDialogAction extends AbstractAction
@@ -133,10 +167,19 @@ public class SwiftlyApplet extends JApplet
         }
     }
 
+    protected class NewProjectDialogAction extends AbstractAction
+    {
+        // from AbstractAction
+        public void actionPerformed (ActionEvent e) {
+            showNewProjectDialog();
+        }
+    }
+
     protected Container _contentPane;
     protected SwiftlyToolbar _toolbar;
     protected SwiftlyStatusBar _statusbar;
     protected SwiftlyProjectPanel _projectPanel;
     protected SwiftlyProject _loadedProject;
     protected JSplitPane _splitPane;
+    protected ArrayList<SwiftlyProject> _projectList = new ArrayList<SwiftlyProject>();
 }
