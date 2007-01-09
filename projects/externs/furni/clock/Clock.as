@@ -8,9 +8,6 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
-import flash.geom.Matrix;
-import flash.geom.Transform;
-
 [SWF(width="200", height="200")]
 public class Clock extends Sprite
 {
