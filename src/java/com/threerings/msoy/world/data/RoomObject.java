@@ -24,7 +24,7 @@ public class RoomObject extends SpotSceneObject
     public RoomMarshaller roomService;
 
     /** Contains the memories for all entities in this room. */
-    public DSet<MemoryEntry> memories;
+    public DSet<MemoryEntry> memories = new DSet<MemoryEntry>();
 
     // AUTO-GENERATED: METHODS START
     /**
