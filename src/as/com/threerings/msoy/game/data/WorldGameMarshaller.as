@@ -34,5 +34,18 @@ public class WorldGameMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), listener3
         ]);
     }
+
+    /** The method id used to dispatch {@link #leaveWorldGame} requests. */
+    public static const LEAVE_WORLD_GAME :int = 2;
+
+    // from interface WorldGameService
+    public function leaveWorldGame (arg1 :Client, arg2 :InvocationService_InvocationListener) :void
+    {
+        var listener2 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, LEAVE_WORLD_GAME, [
+            listener2
+        ]);
+    }
 }
 }

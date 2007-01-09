@@ -21,11 +21,12 @@ public class GamePanel extends VerticalPanel
     public GamePanel (GameContext ctx, LaunchConfig config)
     {
         add(new Label(config.name));
-
+        
         String authtoken = (ctx.creds == null) ? "" : ctx.creds.token;
         Widget display = null;
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD: {
+            setWidth("100%");
             display = FlashClients.createWorldClient("worldGame=" + config.gameId);
             break;
         }

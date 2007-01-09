@@ -18,4 +18,11 @@ public interface WorldGameService extends InvocationService
      * @param listener a listener to notify on failure
      */
     public void joinWorldGame (Client client, int gameId, InvocationListener listener);
+    
+    /**
+     * Requests to leave the current in-world game.
+     *
+     * @param listener a listener to notify on failure
+     */
+    public void leaveWorldGame (Client client, InvocationListener listener);
 }

@@ -31,4 +31,17 @@ public class WorldGameMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), listener3
         });
     }
+
+    /** The method id used to dispatch {@link #leaveWorldGame} requests. */
+    public static final int LEAVE_WORLD_GAME = 2;
+
+    // from interface WorldGameService
+    public void leaveWorldGame (Client arg1, InvocationService.InvocationListener arg2)
+    {
+        ListenerMarshaller listener2 = new ListenerMarshaller();
+        listener2.listener = arg2;
+        sendRequest(arg1, LEAVE_WORLD_GAME, new Object[] {
+            listener2
+        });
+    }
 }

@@ -10,7 +10,9 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.net.BootstrapData;
+import com.threerings.presents.server.InvocationException;
 
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.CrowdObjectAccess;
 import com.threerings.crowd.server.PlaceManager;
 
@@ -99,6 +101,17 @@ public class MsoyClient extends WhirledClient
         }
     }
 
+    @Override // from CrowdClient
+    protected void clearLocation (BodyObject bobj)
+    {
+        super.clearLocation(bobj);
+        try {
+            MsoyServer.worldGameReg.leaveWorldGame((MemberObject)bobj);
+        } catch (InvocationException e) {
+            // a warning will have already been logged
+        }
+    }
+    
     /** A casted reference to the userobject. */
     protected MemberObject _memobj;
 }

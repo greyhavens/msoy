@@ -45,6 +45,13 @@ public class WorldGameDispatcher extends InvocationDispatcher
             );
             return;
 
+        case WorldGameMarshaller.LEAVE_WORLD_GAME:
+            ((WorldGameProvider)provider).leaveWorldGame(
+                source,
+                (InvocationService.InvocationListener)args[0]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

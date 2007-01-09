@@ -16,5 +16,8 @@ public interface WorldGameService extends InvocationService
 {
     // from Java interface WorldGameService
     function joinWorldGame (arg1 :Client, arg2 :int, arg3 :InvocationService_InvocationListener) :void;
+
+    // from Java interface WorldGameService
+    function leaveWorldGame (arg1 :Client, arg2 :InvocationService_InvocationListener) :void;
 }
 }

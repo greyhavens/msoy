@@ -20,10 +20,10 @@ public class WorldGameObject extends EZGameObject
     /** The game configuration. */
     public var config :WorldGameConfig;
 
-    override public function readObject (ins :ObjectInputStream) :void
+    override protected function readDefaultFields (ins :ObjectInputStream) :void
     {
-        super.readObject(ins);
-
+        super.readDefaultFields(ins);
+        
         config = (ins.readObject() as WorldGameConfig);
     }
 }

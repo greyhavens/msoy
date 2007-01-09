@@ -42,10 +42,6 @@ public class TopPanel extends Canvas
 
         _placeBox = new Canvas();
         _placeBox.includeInLayout = false;
-        _placeBox.setStyle("top", ControlBar.HEIGHT);
-        _placeBox.setStyle("left", _sideAttachment);
-        _placeBox.setStyle("right", 0);
-        _placeBox.setStyle("bottom", 0);
         addChild(_placeBox);
 
         // set up a mask on the placebox
@@ -79,14 +75,14 @@ public class TopPanel extends Canvas
         var app :Application = Application(Application.application);
         app.removeAllChildren();
         app.addChild(this);
-        adjustPlaceMask();
+        layoutPanels();
 
         app.stage.addEventListener(Event.RESIZE, stageResized);
     }
 
     protected function stageResized (event :Event) :void
     {
-        adjustPlaceMask();
+        layoutPanels();
     }
 
     public function setPlaceView (view :PlaceView) :void
@@ -118,16 +114,10 @@ public class TopPanel extends Canvas
         clearSidePanel(null);
         _sidePanel = side;
         _sidePanel.includeInLayout = false;
-
-        setSideAttachment(SIDE_PANEL_WIDTH);
-//        _sidePanel.addEventListener(ResizeEvent.RESIZE, sideResized);
-
-        _sidePanel.setStyle("top", ControlBar.HEIGHT);
-        _sidePanel.setStyle("bottom", 0);
-        _sidePanel.setStyle("left", 0);
-        _sidePanel.setStyle("right", unscaledWidth - SIDE_PANEL_WIDTH);
+//        _sidePanel.addEventListener(ResizeEvent.RESIZE, panelResized);
 
         addChild(_sidePanel); // add to end
+        layoutPanels();
     }
 
     /**
@@ -137,12 +127,33 @@ public class TopPanel extends Canvas
     {
         if ((_sidePanel != null) && (side == null || side == _sidePanel)) {
             removeChild(_sidePanel);
-//            _sidePanel.removeEventListener(ResizeEvent.RESIZE, sideResized);
+//            _sidePanel.removeEventListener(ResizeEvent.RESIZE, panelResized);
             _sidePanel = null;
-            setSideAttachment(0);
+            layoutPanels();
         }
     }
 
+    public function setBottomPanel (bottom :UIComponent) :void
+    {
+        clearBottomPanel(null);
+        _bottomPanel = bottom;
+        _bottomPanel.includeInLayout = false;
+//        _bottomPanel.addEventListener(ResizeEvent.RESIZE, panelResized);
+
+        addChild(_bottomPanel); // add to end
+        layoutPanels();
+    }
+    
+    public function clearBottomPanel (bottom :UIComponent) :void
+    {
+        if ((_bottomPanel != null) && (bottom == null || bottom == _bottomPanel)) {
+            removeChild(_bottomPanel);
+//            _bottomPanel.removeEventListener(ResizeEvent.RESIZE, panelResized);
+            _bottomPanel = null;
+            layoutPanels();
+        }
+    }
+    
     public function showFriends (show :Boolean) :void
     {
         if (show) {
@@ -160,16 +171,36 @@ public class TopPanel extends Canvas
         }
     }
 
-// TODO: doesn't work, we're using a hardcoded sidebar size now
-//    protected function sideResized (event :ResizeEvent) :void
+// TODO: doesn't work, we're using hardcoded panel sizes now
+//    protected function panelResized (event :ResizeEvent) :void
 //    {
-//        setSideAttachment(_sidePanel.width);
+//        layoutPanels();
 //    }
 
-    protected function setSideAttachment (rightSpace :int) :void
+    protected function layoutPanels () :void
     {
-        _sideAttachment = rightSpace;
-        _placeBox.setStyle("left", _sideAttachment);
+        var sidePanelWidth :int = getSidePanelWidth(),
+            bottomPanelHeight :int = getBottomPanelHeight();
+            
+        _placeBox.setStyle("top", ControlBar.HEIGHT);
+        _placeBox.setStyle("bottom", bottomPanelHeight);
+        _placeBox.setStyle("left", sidePanelWidth);
+        _placeBox.setStyle("right", 0);
+        
+        if (_sidePanel != null) {
+            _sidePanel.setStyle("top", ControlBar.HEIGHT);
+            _sidePanel.setStyle("bottom", bottomPanelHeight);
+            _sidePanel.setStyle("left", 0);
+            _sidePanel.setStyle("right", unscaledWidth - sidePanelWidth);
+        }
+        
+        if (_bottomPanel != null) {    
+            _bottomPanel.setStyle("top", unscaledHeight - bottomPanelHeight);
+            _bottomPanel.setStyle("bottom", 0);
+            _bottomPanel.setStyle("left", 0);
+            _bottomPanel.setStyle("right", unscaledWidth - ControlBar.WIDTH);
+        }
+            
         adjustPlaceMask();
     }
 
@@ -178,11 +209,21 @@ public class TopPanel extends Canvas
         _placeMask.graphics.clear();
         _placeMask.graphics.beginFill(0xFFFFFF);
         _placeMask.graphics.drawRect(0, 0,
-            stage.stageWidth - _sideAttachment,
-            stage.stageHeight - ControlBar.HEIGHT);
+            stage.stageWidth - getSidePanelWidth(),
+            stage.stageHeight - ControlBar.HEIGHT - getBottomPanelHeight());
         _placeMask.graphics.endFill();
     }
 
+    protected function getSidePanelWidth () :int
+    {
+        return (_sidePanel == null ? 0 : SIDE_PANEL_WIDTH);
+    }
+    
+    protected function getBottomPanelHeight () :int
+    {
+        return (_bottomPanel == null ? 0 : BOTTOM_PANEL_HEIGHT);
+    }
+        
     /** The giver of life. */
     protected var _ctx :MsoyContext;
 
@@ -199,9 +240,9 @@ public class TopPanel extends Canvas
     /** The current side panel component. */
     protected var _sidePanel :UIComponent;
 
-    /** The current size of the sidepanel. */
-    protected var _sideAttachment :int = 0;
-
+    /** The current bottom panel component. */
+    protected var _bottomPanel :UIComponent;
+    
     /** The list of our friends. */
     protected var _friendsList :FriendsList;
     
@@ -209,5 +250,7 @@ public class TopPanel extends Canvas
     protected var _buildStamp :Label;
 
     protected static const SIDE_PANEL_WIDTH :int = 350;
+    
+    protected static const BOTTOM_PANEL_HEIGHT :int = 50;
 }
 }

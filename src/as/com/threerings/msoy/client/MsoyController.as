@@ -72,6 +72,9 @@ public class MsoyController extends Controller
     /** Command to join an in-world game. */
     public static const JOIN_WORLD_GAME :String = "JoinWorldGame";
     
+    /** Command to leave the in-world game. */
+    public static const LEAVE_WORLD_GAME :String = "LeaveWorldGame";
+    
     /** Command to add/remove friends. */
     public static const ALTER_FRIEND :String = "AlterFriend";
 
@@ -370,6 +373,19 @@ public class MsoyController extends Controller
         var wgsvc :WorldGameService =
             (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
         wgsvc.joinWorldGame(_ctx.getClient(), gameId,
+            new InvocationAdapter(function (cause :String) :void {
+                log.warning("Ack: " + cause);
+            }));
+    }
+    
+    /**
+     * Handle LEAVE_WORLD_GAME.
+     */
+    public function handleLeaveWorldGame () :void
+    {
+        var wgsvc :WorldGameService =
+            (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
+        wgsvc.leaveWorldGame(_ctx.getClient(),
             new InvocationAdapter(function (cause :String) :void {
                 log.warning("Ack: " + cause);
             }));

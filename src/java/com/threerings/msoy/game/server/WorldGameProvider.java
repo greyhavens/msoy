@@ -20,4 +20,10 @@ public interface WorldGameProvider extends InvocationProvider
      */
     public void joinWorldGame (ClientObject caller, int arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
+
+    /**
+     * Handles a {@link WorldGameService#leaveWorldGame} request.
+     */
+    public void leaveWorldGame (ClientObject caller, InvocationService.InvocationListener arg1)
+        throws InvocationException;
 }
