@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.world.data;
 
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
-import com.threerings.msoy.world.data.EntityIdent;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -39,7 +39,7 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int TRIGGER_EVENT = 2;
 
     // from interface RoomService
-    public void triggerEvent (Client arg1, EntityIdent arg2, String arg3)
+    public void triggerEvent (Client arg1, ItemIdent arg2, String arg3)
     {
         sendRequest(arg1, TRIGGER_EVENT, new Object[] {
             arg2, arg3

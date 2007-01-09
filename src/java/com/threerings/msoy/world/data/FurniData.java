@@ -8,6 +8,7 @@ import com.samskivert.util.ObjectUtil;
 import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
 /**
@@ -73,6 +74,14 @@ public class FurniData extends SimpleStreamableObject
 
     /** The action, interpreted using actionType. */
     public String actionData;
+
+    /**
+     * Returns the identifier for the item for which we're presenting a visualization.
+     */
+    public ItemIdent getIdent ()
+    {
+        return new ItemIdent(itemType, itemId);
+    }
 
     /**
      * Return the actionData as two strings, split after the first colon.

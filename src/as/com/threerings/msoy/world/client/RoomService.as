@@ -4,8 +4,8 @@
 package com.threerings.msoy.world.client {
 
 import flash.utils.ByteArray;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
-import com.threerings.msoy.world.data.EntityIdent;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -23,7 +23,7 @@ public interface RoomService extends InvocationService
     function editRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface RoomService
-    function triggerEvent (arg1 :Client, arg2 :EntityIdent, arg3 :String) :void;
+    function triggerEvent (arg1 :Client, arg2 :ItemIdent, arg3 :String) :void;
 
     // from Java interface RoomService
     function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void;

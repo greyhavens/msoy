@@ -661,6 +661,25 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
+     * Called by {@link MsoyControl} to locate the value bound to a particular key in the item's
+     * memory.
+     */
+    protected function lookupMemory_v1 (key :String) :Object
+    {
+        return null; // TODO
+    }
+
+    /**
+     * Called by {@link MsoyControl} to update a memory datum.
+     */
+    protected function updateMemory_v1 (key :String, value: Object) :void
+    {
+        if (parent is RoomView) {
+            // TODO
+        }
+    }
+
+    /**
      * Call an exposed function in usercode.
      */
     protected function callUserCode (name :String, ... args) :*

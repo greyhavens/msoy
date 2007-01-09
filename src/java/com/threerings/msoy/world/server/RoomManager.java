@@ -5,6 +5,7 @@ package com.threerings.msoy.world.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -12,6 +13,7 @@ import com.samskivert.jdbc.RepositoryUnit;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
@@ -35,7 +37,6 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.server.MsoyServer;
 
-import com.threerings.msoy.world.data.EntityIdent;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -56,26 +57,27 @@ public class RoomManager extends SpotSceneManager
     implements RoomProvider
 {
     // documentation inherited from RoomProvider
-    public void triggerEvent (ClientObject caller, EntityIdent entity, String event)
+    public void triggerEvent (ClientObject caller, ItemIdent item, String event)
     {
         // make sure the caller is in the room
         MemberObject who = (MemberObject)caller;
         if (_roomObj.occupants.contains(who.getOid())) {
             log.warning("Rejecting event trigger request by non-occupant [who=" + who.who() +
-                        ", entity=" + entity + ", event=" + event + "].");
+                        ", item=" + item + ", event=" + event + "].");
             return;
         }
 
-        // if this is an avatar trigger, make sure it's dispatched by the avatar's owner
-        if (entity.type == EntityIdent.AVATAR && entity.entityId != who.getOid()) {
-            log.warning("Rejecting avatar trigger by non-owner [who=" + who.who() +
-                        ", tgt=" + _roomObj.occupantInfo.get(entity.entityId) +
-                        " (" + entity + ")].");
-            return;
-        }
+        // TODO: avatar access controls
+//         // if this is an avatar trigger, make sure it's dispatched by the avatar's owner
+//         if (item.type == Item.AVATAR && item.itemId != who.getOid()) {
+//             log.warning("Rejecting avatar trigger by non-owner [who=" + who.who() +
+//                         ", tgt=" + _roomObj.occupantInfo.get(item.itemId) +
+//                         " (" + item + ")].");
+//             return;
+//         }
 
         // dispatch this as a simple MessageEvent
-        _roomObj.postMessage(RoomCodes.TRIGGER_EVENT, entity, event);
+        _roomObj.postMessage(RoomCodes.TRIGGER_EVENT, item, event);
     }
 
     // documentation inherited from RoomProvider
@@ -159,16 +161,17 @@ public class RoomManager extends SpotSceneManager
     // documentation inherited from RoomProvider
     public void updateMemory (ClientObject caller, final MemoryEntry entry)
     {
-        // TODO: verify that the caller is in the scene with this entity, that the memory does not
-        // exdeed legal size, other entity specific restrictions
+        // TODO: verify that the caller is in the scene with this item, that the memory does not
+        // exdeed legal size, other item specific restrictions
 
         if (_roomObj.memories.contains(entry)) {
             // mark it as modified and update it in the room object ; we'll save it when we unload
             // the room
             entry.modified = true;
             _roomObj.updateMemories(entry);
+
         } else {
-            // TODO: if this entity does not yet have a memory, assign them a new memory id, update
+            // TODO: if this item does not yet have a memory, assign them a new memory id, update
             // their Item and FurniData records and store the new memory
         }
     }
@@ -189,14 +192,13 @@ public class RoomManager extends SpotSceneManager
                                     new RoomDispatcher(this), false));
 
         // determine which (if any) items in this room have a memories and load them up
-        ArrayIntSet memIds = new ArrayIntSet();
         for (FurniData furni : ((MsoyScene) _scene).getFurni()) {
             if (furni.memoryId != 0) {
-                memIds.add(furni.memoryId);
+                _rememberers.put(furni.memoryId, furni.getIdent());
             }
         }
-        if (memIds.size() > 0) {
-            resolveMemories(memIds);
+        if (_rememberers.size() > 0) {
+            resolveMemories();
         }
 
         // TODO: load up any pets that are "let out" in this room
@@ -224,11 +226,21 @@ public class RoomManager extends SpotSceneManager
         MsoyServer.invmgr.clearDispatcher(_roomObj.roomService);
         super.didShutdown();
 
+        // create a reverse mapping for the purposes of flushing modified memories
+        HashMap<ItemIdent, Integer> revmap = new HashMap<ItemIdent, Integer>();
+        for (IntMap.IntEntry<ItemIdent> entry : _rememberers.intEntrySet()) {
+            revmap.put(entry.getValue(), entry.getKey());
+        }
+
         // flush any modified memory records to the database
         final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
         for (MemoryEntry entry : _roomObj.memories) {
             if (entry.modified) {
-                memrecs.add(new MemoryRecord(entry));
+                Integer memId = revmap.get(entry.item);
+                if (memId != null) {
+                    memrecs.add(new MemoryRecord(memId, entry));
+                } else {
+                }
             }
         }
         if (memrecs.size() > 0) {
@@ -326,16 +338,16 @@ public class RoomManager extends SpotSceneManager
     /**
      * Loads up all specified memories and places them into the room object.
      */
-    protected void resolveMemories (final ArrayIntSet memIds)
+    protected void resolveMemories ()
     {
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
-                    _mems = MsoyServer.memoryRepo.loadMemories(memIds);
+                    _mems = MsoyServer.memoryRepo.loadMemories(_rememberers.keySet());
                     return true;
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to load memories [where=" + where() +
-                            ", memIds=" + memIds + "].", pe);
+                            ", memIds=" + _rememberers.keySet() + "].", pe);
                     return false;
                 }
             };
@@ -344,7 +356,7 @@ public class RoomManager extends SpotSceneManager
                 _roomObj.startTransaction();
                 try {
                     for (MemoryRecord mrec : _mems) {
-                        _roomObj.addToMemories(mrec.toEntry());
+                        _roomObj.addToMemories(mrec.toEntry(_rememberers));
                     }
                 } finally {
                     _roomObj.commitTransaction();
@@ -357,4 +369,7 @@ public class RoomManager extends SpotSceneManager
 
     /** The room object. */
     protected RoomObject _roomObj;
+
+    /** Used to map memory ids to the items with which they are associated. */
+    protected HashIntMap<ItemIdent> _rememberers = new HashIntMap<ItemIdent>();
 }

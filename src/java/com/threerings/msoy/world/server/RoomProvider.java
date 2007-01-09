@@ -3,8 +3,8 @@
 
 package com.threerings.msoy.world.server;
 
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
-import com.threerings.msoy.world.data.EntityIdent;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -27,7 +27,7 @@ public interface RoomProvider extends InvocationProvider
     /**
      * Handles a {@link RoomService#triggerEvent} request.
      */
-    public void triggerEvent (ClientObject caller, EntityIdent arg1, String arg2);
+    public void triggerEvent (ClientObject caller, ItemIdent arg1, String arg2);
 
     /**
      * Handles a {@link RoomService#updateMemory} request.

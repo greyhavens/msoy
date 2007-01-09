@@ -6,7 +6,9 @@ package com.threerings.msoy.world.server.persist;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.util.HashIntMap;
 
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.world.data.MemoryEntry;
 
 /**
@@ -35,9 +37,9 @@ public class MemoryRecord
     /**
      * Creates a memory record from the supplied memory information.
      */
-    public MemoryRecord (MemoryEntry entry)
+    public MemoryRecord (int memoryId, MemoryEntry entry)
     {
-        this.memoryId = entry.memoryId;
+        this.memoryId = memoryId;
         this.key = entry.key;
         this.value = entry.value;
     }
@@ -45,10 +47,10 @@ public class MemoryRecord
     /**
      * Converts this persistent record to a runtime record.
      */
-    public MemoryEntry toEntry ()
+    public MemoryEntry toEntry (HashIntMap<ItemIdent> items)
     {
         MemoryEntry entry = new MemoryEntry();
-        entry.memoryId = memoryId;
+        entry.item = items.get(memoryId);
         entry.key = key;
         entry.value = value;
         return entry;

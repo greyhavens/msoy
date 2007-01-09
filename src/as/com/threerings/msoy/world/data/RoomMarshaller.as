@@ -6,8 +6,8 @@ package com.threerings.msoy.world.data {
 import flash.utils.ByteArray;
 import com.threerings.util.*; // for Float, Integer, etc.
 
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
-import com.threerings.msoy.world.data.EntityIdent;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_InvocationListener;
@@ -44,7 +44,7 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const TRIGGER_EVENT :int = 2;
 
     // from interface RoomService
-    public function triggerEvent (arg1 :Client, arg2 :EntityIdent, arg3 :String) :void
+    public function triggerEvent (arg1 :Client, arg2 :ItemIdent, arg3 :String) :void
     {
         sendRequest(arg1, TRIGGER_EVENT, [
             arg2, arg3

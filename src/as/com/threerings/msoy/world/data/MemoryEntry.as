@@ -7,18 +7,22 @@ import flash.utils.ByteArray;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
-import com.threerings.util.Comparable;
+import com.threerings.util.Equalable;
+import com.threerings.util.Hashable;
+import com.threerings.util.Util;
 
 import com.threerings.presents.dobj.DSet_Entry;
 
+import com.threerings.msoy.item.web.ItemIdent;
+
 /**
- * Contains a single memory datum for a scene entity.
+ * Contains a single memory datum for a "smart" item in a scene.
  */
 public class MemoryEntry
-    implements DSet_Entry, Comparable
+    implements DSet_Entry, Hashable
 {
-    /** The entity with which this memory is associated. */
-    public var entity :EntityIdent;
+    /** The item with which this memory datum is associated. */
+    public var item :ItemIdent;
 
     /** The key for this memory datum. */
     public var key :String;
@@ -34,12 +38,18 @@ public class MemoryEntry
     {
     }
 
-    // from interface Comparable
-    public function compareTo (other :Object) :int
+    // from Hashable
+    public function hashCode () :int
     {
+        return item.hashCode() /* ^ key.hashCode() */; // TODO: add Util.hashCode(String)?
+    }
+
+    // from Equalable
+    public function equals (other :Object) :Boolean
+    {
+        // equality is based on key only
         var oentry :MemoryEntry = (other as MemoryEntry);
-        var rv :int = entity.compareTo(oentry.entity);
-        return (rv != 0) ? rv : key.localeCompare(oentry.key);
+        return item.equals(oentry.item) && Util.equals(key, oentry.key);
     }
 
     // from interface DSet_Entry
@@ -51,7 +61,7 @@ public class MemoryEntry
     // from interface Streamable
     public function readObject (ins :ObjectInputStream) :void
     {
-        entity = (ins.readObject() as EntityIdent);
+        item = (ins.readObject() as ItemIdent);
         key = (ins.readField(String) as String);
         value = (ins.readObject() as ByteArray);
     }
@@ -59,7 +69,7 @@ public class MemoryEntry
     // from interface Streamable
     public function writeObject (out :ObjectOutputStream) :void
     {
-        out.writeObject(entity);
+        out.writeObject(item);
         out.writeField(key);
         out.writeObject(value);
     }
