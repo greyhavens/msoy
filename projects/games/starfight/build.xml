@@ -2,43 +2,31 @@
 <project name="starfight" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name"         value="starfight"/>
-  <property name="app.main"         value="StarFight.as"/>
+  <property name="app.name"         value="StarFight"/>
   <property name="root.path"        value="../../.."/>
+  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
 
   <!-- builds our Flash game -->
   <target name="compile">
-    <java jar="${root.path}/lib/as-compiler/lib/mxmlc.jar" fork="true" failonerror="true">
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.debug"/>
-      <arg value="-compiler.verbose-stacktraces=true"/>
-      <arg value="-compiler.library-path"/>
-      <arg value="${root.path}"/>
-      <arg value="${root.path}/lib/as-compiler/frameworks/libs"/>
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
-      <arg value="${root.path}/lib/as-compiler/frameworks/flex-config.xml"/>
-      <arg value="-link-report"/>
-      <arg value="/tmp/link-report.txt"/>
-      <arg value="-resource-bundle-list"/>
-      <arg value="/tmp/bundles.list"/>
-      <arg value="-compiler.warn-class-is-sealed=true"/>
-      <arg value="-compiler.warn-constructor-returns-value=true"/>
-      <arg value="-compiler.fonts.local-fonts-snapshot=${root.path}/lib/as-compiler/frameworks/localFonts.ser"/>
-      <arg value="-compiler.source-path=${root.path}/projects/vilya/src/as/"/>
-      <arg value="-compiler.source-path=${root.path}/projects/games/${app.name}/"/>
-      <arg value="-externs"/>
-      <arg value="com.threerings.ezgame:EZGame"/>
-      <arg value="com.threerings.ezgame:Game"/>
-      <arg value="com.threerings.ezgame:MessageReceivedEvent"/>
-      <arg value="com.threerings.ezgame:PropertyChangedEvent"/>
-      <arg value="com.threerings.ezgame:StateChangedEvent"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
       <arg value="-file-specs"/>
-      <arg value="${root.path}/projects/games/${app.name}/${app.main}"/>
+      <arg value="${app.name}.as"/>
     </java>
-    <copy file="StarFight.swf" tofile="/export/msoy/pages/media/4d5ea5245f88f720ea8ce07640d76df113996756.swf"/>
-    <copy file="StarFight.swf" tofile="/export/msoy/pages/media/d77bc63d81815657797672f39e26486eb06c76f4.swf"/>
-    <copy file="StarFight.swf" tofile="/export/msoy/pages/media/1d0006d1acb1589f63c3568dc8f67ef96e235864.swf"/>
-    <copy file="StarFight.swf" tofile="/export/msoy/pages/media/d0e381ea6c5476bb2fdad6a3c85416e053cce621.swf"/>
   </target>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+    </delete>
+  </target>
+
+  <target name="dist" depends="compile">
+    <copy file="StarFight.swf" tofile="/export/msoy/pages/media/97765e69cd2e1e2e935890c2ec0d00f09c1774a4.swf"/>
+  </target>
+
 
 </project>
