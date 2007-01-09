@@ -17,7 +17,6 @@ import javax.swing.Action;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -95,6 +94,9 @@ public class SwiftlyTextPane extends JTextPane
     }
 
     // Throws up a close tab dialog internal frame
+    // TODO is it possible to have this happen whenever the component is removed if there
+    // are unsaved changes? Alternatively, when we switch projects we need to iterator over every
+    // tab and if there are unsaved changes call this method
     public void closeTabDialog()
     {
         int response = JOptionPane.showInternalConfirmDialog(

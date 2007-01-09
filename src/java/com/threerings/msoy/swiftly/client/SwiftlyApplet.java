@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JApplet;
+import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -56,9 +57,9 @@ public class SwiftlyApplet extends JApplet
         _statusbar.setLabel(" ");
     }
 
-    public ShowProjectWindowAction createShowProjectWindowAction ()
+    public ShowProjectDialogAction createShowProjectDialogAction ()
     {
-        return new ShowProjectWindowAction();
+        return new ShowProjectDialogAction();
     }
 
 
@@ -86,7 +87,7 @@ public class SwiftlyApplet extends JApplet
         // popup the project selection window
         // TODO don't popup if we already know our project
         if (_loadedProject == null) {
-            _projectWindow = new SwiftlyProjectWindow(this, getProjects());
+            showProjectDialog();
         }
     }
 
@@ -112,15 +113,21 @@ public class SwiftlyApplet extends JApplet
         _loadedProject = project;
         editor.removeTabs();
         _projectPanel.loadProject(project);
-        _projectWindow.setVisible(false);
     }
 
-    protected class ShowProjectWindowAction extends AbstractAction
+    protected void showProjectDialog ()
+    {
+        SwiftlyProject project = (SwiftlyProject)JOptionPane.showInternalInputDialog(
+            _contentPane, "Select a project:", "Project Selection", JOptionPane.QUESTION_MESSAGE,
+            null, getProjects(), null);
+        loadProject(project);
+    }
+
+    protected class ShowProjectDialogAction extends AbstractAction
     {
         // from AbstractAction
         public void actionPerformed (ActionEvent e) {
-            // TODO need to refresh the contents of the window
-            _projectWindow.setVisible(true);
+            showProjectDialog();
         }
     }
 
@@ -128,7 +135,6 @@ public class SwiftlyApplet extends JApplet
     protected SwiftlyToolbar _toolbar;
     protected SwiftlyStatusBar _statusbar;
     protected SwiftlyProjectPanel _projectPanel;
-    protected SwiftlyProjectWindow _projectWindow;
     protected SwiftlyProject _loadedProject;
     protected JSplitPane _splitPane;
-} 
+}

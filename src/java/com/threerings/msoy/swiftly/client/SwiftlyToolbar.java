@@ -18,7 +18,7 @@ public class SwiftlyToolbar extends JToolBar
     protected void setupToolbar ()
     {
         // TODO replace as many of these with icons as makes sense
-        addButton("Switch Project", _applet.createShowProjectWindowAction());
+        addButton("Switch Project", _applet.createShowProjectDialogAction());
         addButton("New Tab", _applet.editor.createNewTabAction());
         addButton("Save Document", _applet.editor.createSaveCurrentTabAction());
         // TODO let's try to get close buttons on the tabs
