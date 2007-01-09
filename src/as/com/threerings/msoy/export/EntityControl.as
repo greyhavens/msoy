@@ -98,7 +98,7 @@ public class EntityControl extends MsoyControl
     protected var _location :Array;
 
     /** Our current orientation, or 0. */
-    protected var _orient :Number;
+    protected var _orient :Number = 0;
 
     /** Indicates whether or not we're currently moving. */
     protected var _isMoving :Boolean;

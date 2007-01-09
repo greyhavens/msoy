@@ -113,7 +113,7 @@ public class AvatarControl extends MsoyControl
     protected var _isWalking :Boolean;
 
     /** Our current orientation, or 0. */
-    protected var _orient :Number;
+    protected var _orient :Number = 0;
 
     /** An associative hash of callback functions, indexed by action name. */
     protected var _actions :Object = new Object();
