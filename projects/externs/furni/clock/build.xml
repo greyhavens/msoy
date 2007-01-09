@@ -9,12 +9,25 @@
   <property name="root.path"        value="../../../.."/>
   <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
 
+  <target name="pack">
+    <java jar="${flex.path}/lib/compc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-include-sources=ContentPack.as"/>
+      <arg value="-output"/>
+      <arg value="content_pack.swc"/>
+    </java>
+  </target>
+
   <!-- builds our Flash game -->
-  <target name="compile">
+  <target name="compile" depends="pack">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=."/>
+      <arg value="-library-path"/>
+      <arg value="content_pack.swc"/>
       <arg value="-file-specs"/>
       <arg value="${app.name}.as"/>
     </java>
@@ -27,10 +40,8 @@
     </delete>
   </target>
 
-<!--
   <target name="dist" depends="compile">
     <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/3477172fe915dbf57158dc392da2fa955bfb8b66.swf"/>
   </target>
--->
 
 </project>
