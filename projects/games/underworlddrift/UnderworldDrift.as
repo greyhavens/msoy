@@ -1,12 +1,7 @@
 package {
 
 import flash.display.Sprite;
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.display.IBitmapDrawable;
 import flash.display.Shape;
-
-import flash.geom.Matrix;
 
 import com.threerings.ezgame.EZGameControl;
 
@@ -35,7 +30,7 @@ public class UnderworldDrift extends Sprite
         colorBackground.graphics.endFill();
         addChild(colorBackground);
 
-        var ground :Ground = new Ground(DISPLAY_WIDTH, DISPLAY_HEIGHT / 2);
+        var ground :Ground = new Ground();
         ground.y = DISPLAY_HEIGHT / 2;
         addChild(ground);
     }
