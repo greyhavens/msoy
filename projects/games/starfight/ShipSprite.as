@@ -97,7 +97,7 @@ public class ShipSprite extends Sprite
         _shieldMovie.y = -58/2;
         _shieldMovie.rotation = 90;
         addChild(_shieldMovie);
-        
+
     }
 
     /**
@@ -161,11 +161,11 @@ public class ShipSprite extends Sprite
     /**
      * Registers that the ship was hit.
      */
-    public function hit () :void
+    public function hit (shooterId :int) :void
     {
         power -= ((powerups & SHIELDS_MASK) ? HIT_POWER/2 : HIT_POWER);
         if (power <= 0.0) {
-            _game.explode(boardX, boardY, rotation);
+            _game.explode(boardX, boardY, rotation, shooterId);
             power = 1.0; //full
             powerups = 0;
             var pt :Point = _board.getStartingPos();
@@ -190,7 +190,7 @@ public class ShipSprite extends Sprite
     public function tick (time :Number) :void
     {
         var turnFriction :Number = Math.pow(TURN_FRICTION, time);
-        
+
         turnRate = turnRate * turnFriction + turnAccelRate;
         turn(turnRate*time);
 
@@ -308,6 +308,9 @@ public class ShipSprite extends Sprite
         }
     }
 
+    /**
+     * Give a powerup to the ship.
+     */
     public function awardPowerup (type :int) :void
     {
         powerups |= (1 << type);
@@ -339,10 +342,10 @@ public class ShipSprite extends Sprite
         accel = report.accel;
         xVel = report.xVel;
         yVel = report.yVel;
-        
+
         // Maybe let boardX float if we're not too far off.
         var dX :Number = report.boardX - boardX;
-        
+
         Logger.log("dX: " + dX);
 
         if (Math.abs(dX) < 0.5) {

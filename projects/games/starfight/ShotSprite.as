@@ -57,7 +57,7 @@ public class ShotSprite extends Sprite {
             if (coll.hit is ShipSprite) {
                 var ship :ShipSprite = ShipSprite(coll.hit);
                 _game.hitShip(ship, boardX + (xVel*coll.time*time),
-                    boardY + (yVel*coll.time*time));
+                    boardY + (yVel*coll.time*time), shipId);
 
             } else {
                 var obs :Obstacle = Obstacle(coll.hit);

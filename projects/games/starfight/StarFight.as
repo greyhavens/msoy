@@ -291,7 +291,7 @@ public class StarFight extends Sprite
             var val :Array = (event.value as Array);
             addShot(new ShotSprite(val[0], val[1], val[2], val[3], val[4],
                         this));
-            
+
             if (val[5] == ShotSprite.SPREAD) {
                 addShot(new ShotSprite(val[0], val[1], val[2],
                             val[3] + ShotSprite.SPREAD_FACT, val[4],
@@ -303,6 +303,9 @@ public class StarFight extends Sprite
         } else if (event.name == "explode") {
             var arr :Array = (event.value as Array);
             _board.explode(arr[0], arr[1], arr[2], false);
+            if (arr[3] == _ownShip.shipId) {
+                _status.addScore(KILL_PTS);
+            }
         }
     }
 
@@ -316,12 +319,16 @@ public class StarFight extends Sprite
     /**
      * Register that a ship was hit at the location.
      */
-    public function hitShip (ship :ShipSprite, x :Number, y :Number) :void
+    public function hitShip (ship :ShipSprite, x :Number, y :Number,
+        shooterId :int) :void
     {
         _board.explode(x, y, 0, true);
         if (ship == _ownShip) {
-            ship.hit();
+            ship.hit(shooterId);
             _status.setPower(ship.power);
+        } else if (shooterId == _ownShip.shipId) {
+            // We hit someone!  Give us some points.
+            _status.addScore(HIT_PTS);
         }
     }
 
@@ -362,12 +369,14 @@ public class StarFight extends Sprite
     /**
      * Register a big ole' explosion at the location.
      */
-    public function explode (x :Number, y :Number, rot :int) :void
+    public function explode (x :Number, y :Number, rot :int,
+        shooterId :int) :void
     {
         var args :Array = new Array(3);
         args[0] = x;
         args[1] = y;
         args[2] = rot;
+        args[3] = shooterId;
         _gameCtrl.sendMessage("explode", args);
     }
 
@@ -400,6 +409,7 @@ public class StarFight extends Sprite
             _ownShip.boardX, _ownShip.boardY, ShipSprite.COLLISION_RAD);
         while (powIdx != -1) {
             _ownShip.awardPowerup(_powerups[powIdx].type);
+            _status.addScore(POWERUP_PTS);
             removePowerup(powIdx);
 
             powIdx = _board.getPowerupIdx(ownOldX, ownOldY,
@@ -474,5 +484,9 @@ public class StarFight extends Sprite
     /** This could be more dynamic. */
     protected static const MAX_POWERUPS :int = 10;
 
+    /** Points for various things in the game. */
+    protected static const POWERUP_PTS :int = 25;
+    protected static const HIT_PTS :int = 10;
+    protected static const KILL_PTS :int = 50;
 }
 }

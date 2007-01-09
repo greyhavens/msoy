@@ -4,6 +4,10 @@ import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.Bitmap;
 
+import flash.text.TextField;
+import flash.text.TextFormat;
+import flash.text.TextFieldAutoSize;
+
 public class StatusOverlay extends Sprite
 {
     public function StatusOverlay() :void
@@ -29,6 +33,25 @@ public class StatusOverlay extends Sprite
         addChild(_shields = (Bitmap(new shieldsAsset())));
         _shields.x = 758;
         _shields.y = 63;
+
+        _score = 0;
+        _scoreText = new TextField();
+        _scoreText.autoSize = TextFieldAutoSize.RIGHT;
+        _scoreText.selectable = false;
+        //_scoreText.textColor = Codes.CYAN;
+        // center the label above us
+        _scoreText.x = 775;
+        _scoreText.y = 5;
+
+        var format:TextFormat = new TextFormat();
+        format.font = "Verdana";
+        format.color = Codes.CYAN;
+        format.size = 16;
+        format.bold = true;
+        _scoreText.defaultTextFormat = format;
+        _scoreText.text = String(_score);
+
+        addChild(_scoreText);
     }
 
     /**
@@ -53,6 +76,15 @@ public class StatusOverlay extends Sprite
         mask.graphics.endFill();
     }
 
+    /**
+     * Add some points to our score.
+     */
+    public function addScore(score :Number) :void
+    {
+        _score += score;
+        _scoreText.text = String(_score);
+    }
+
     [Embed(source="rsrc/status.png")]
     protected var frameAsset :Class;
 
@@ -73,6 +105,9 @@ public class StatusOverlay extends Sprite
     /** HP bar. */
     protected var _power :Sprite;
 
+    /** Score readout. */
+    protected var _score :int;
+    protected var _scoreText :TextField;
 
     protected static const POW_WIDTH :int = 85;
     protected static const POW_HEIGHT :int = 8;
