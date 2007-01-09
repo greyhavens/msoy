@@ -14,8 +14,8 @@ $MIRROR dist/*.jar dist/lib/*.jar dist/lib/*/lib*.so
 
 # mirror the configuration files
 echo "** Mirroring configuration files..."
-$MIRROR server.conf *.properties build.xml log/README
+$MIRROR server.conf dist/*.properties log/README
 
 # mirror the server scripts
 echo "** Mirroring scripts..."
-$MIRROR `find bin -perm 0775 -a -type f`
+$MIRROR bin/msoy* bin/runmsoy
