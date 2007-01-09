@@ -17,8 +17,6 @@ public class Powerup extends Sprite
 
     public function Powerup (type :int, boardX :int, boardY :int) :void
     {
-        Logger.log("Powerup: " + type +", x: " + boardX + ", y: "+ boardY);
-
         this.type = type;
         this.boardX = boardX;
         this.boardY = boardY;

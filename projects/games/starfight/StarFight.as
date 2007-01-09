@@ -34,6 +34,9 @@ public class StarFight extends Sprite
     public static const WIDTH :int = 800;
     public static const HEIGHT :int = 530;
 
+    /** How often we send updates to the server. */
+    public static const FRAMES_PER_UPDATE :int = 3;
+
     /**
      * Constructs our main view area for the game.
      */
@@ -59,7 +62,7 @@ public class StarFight extends Sprite
         mask.graphics.endFill();
         this.mask = mask;
 
-        graphics.beginFill(BLACK);
+        graphics.beginFill(Codes.BLACK);
         graphics.drawRect(0, 0, StarFight.WIDTH, StarFight.HEIGHT);
 
         _lastTickTime = getTimer();
@@ -253,7 +256,9 @@ public class StarFight extends Sprite
                 }
                 var bytes :ByteArray = ByteArray(event.newValue);
                 bytes.position = 0;
-                ship.readFrom(bytes);
+                var sentShip :ShipSprite = new ShipSprite(_board, this, true, event.index);
+                sentShip.readFrom(bytes);
+                ship.updateForReport(sentShip);
             }
         } else if ((name =="powerup") && (event.index >= 0)) {
             if (_powerups != null) {
@@ -270,7 +275,6 @@ public class StarFight extends Sprite
                 if (pow == null) {
                     _powerups[event.index] =
                         pow = new Powerup(0, 0, 0);
-                    Logger.log("Adding powerup child");
                     _board.powerupLayer.addChild(pow);
                 }
                 var pBytes :ByteArray = ByteArray(event.newValue);
@@ -466,13 +470,9 @@ public class StarFight extends Sprite
 
     /** Constants to control update frequency. */
     protected static const REFRESH_RATE :int = 50;
-    protected static const FRAMES_PER_UPDATE :int = 3;
 
     /** This could be more dynamic. */
     protected static const MAX_POWERUPS :int = 10;
-
-    /** Color constants. */
-    protected static const BLACK :uint = uint(0x000000);
 
 }
 }

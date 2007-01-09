@@ -86,9 +86,6 @@ public class Obstacle extends Sprite
         return bytes;
     }
 
-    /** Color constants. */
-    protected static const GREY :uint = uint(0x808080);
-
     [Embed(source="rsrc/obstacle.swf#obstacles_movie")]
     protected var obstacleAnim :Class;
 }

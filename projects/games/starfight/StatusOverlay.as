@@ -9,7 +9,7 @@ public class StatusOverlay extends Sprite
     public function StatusOverlay() :void
     {
         addChild(_power = new Sprite());
-        _power.graphics.beginFill(CYAN);
+        _power.graphics.beginFill(Codes.CYAN);
         _power.graphics.drawRoundRect(0, 0, POW_WIDTH, POW_HEIGHT, 2.0, 2.0);
         _power.x = 697;
         _power.y = 38;
@@ -73,7 +73,6 @@ public class StatusOverlay extends Sprite
     /** HP bar. */
     protected var _power :Sprite;
 
-    protected static const CYAN :uint = uint(0x00FFFF); 
 
     protected static const POW_WIDTH :int = 85;
     protected static const POW_HEIGHT :int = 8;

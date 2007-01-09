@@ -46,6 +46,9 @@ public class ShipSprite extends Sprite
     /** How fast are we currently turning. */
     public var turnRate :Number;
 
+    /** How fast are we changing our turn rate. */
+    public var turnAccelRate :Number;
+
     /** Our current health */
     public var power :Number;
 
@@ -64,6 +67,7 @@ public class ShipSprite extends Sprite
     {
         accel = 0.0;
         turnRate = 0.0;
+        turnAccelRate = 0.0;
         xVel = 0.0;
         yVel = 0.0;
         power = 1.0; // full
@@ -176,7 +180,7 @@ public class ShipSprite extends Sprite
      */
     public function getFriction () :Number
     {
-        // TODO: Make this different per ship.
+        // Maybe make this different per ship type.
         return FRICTION;
     }
 
@@ -185,6 +189,9 @@ public class ShipSprite extends Sprite
      */
     public function tick (time :Number) :void
     {
+        var turnFriction :Number = Math.pow(TURN_FRICTION, time);
+        
+        turnRate = turnRate * turnFriction + turnAccelRate;
         turn(turnRate*time);
 
         move(time);
@@ -245,9 +252,9 @@ public class ShipSprite extends Sprite
     public function keyPressed (event :KeyboardEvent) :void
     {
         if (event.keyCode == KV_LEFT) {
-            turnRate = -TURN_RATE;
+            turnAccelRate = -TURN_ACCEL_RATE;
         } else if (event.keyCode == KV_RIGHT) {
-            turnRate = TURN_RATE;
+            turnAccelRate = TURN_ACCEL_RATE;
         } else if (event.keyCode == KV_UP) {
             accel = ((powerups & SPEED_MASK) ? FORWARD_ACCEL*1.3 :
                 FORWARD_ACCEL);
@@ -255,7 +262,6 @@ public class ShipSprite extends Sprite
             accel = ((powerups & SPEED_MASK) ? BACKWARD_ACCEL*1.3 :
                 BACKWARD_ACCEL);
         } else if (event.keyCode == KV_SPACE) {
-            // TODO : firing mode rather than instantaneous.
             if (_ticksToFire <= 0) {
                 fire();
             }
@@ -290,9 +296,9 @@ public class ShipSprite extends Sprite
     public function keyReleased (event :KeyboardEvent) :void
     {
         if (event.keyCode == KV_LEFT) {
-            turnRate = Math.max(turnRate, 0);
+            turnAccelRate = Math.max(turnAccelRate, 0);
         } else if (event.keyCode == KV_RIGHT) {
-            turnRate = Math.min(turnRate, 0);
+            turnAccelRate = Math.min(turnAccelRate, 0);
         } else if (event.keyCode == KV_UP) {
             accel = Math.min(accel, 0);
         } else if (event.keyCode == KV_DOWN) {
@@ -318,9 +324,54 @@ public class ShipSprite extends Sprite
         boardX = bytes.readFloat();
         boardY = bytes.readFloat();
         turnRate = bytes.readFloat();
+        turnAccelRate = bytes.readFloat();
         rotation = bytes.readShort();
         power = bytes.readFloat();
         powerups = bytes.readInt();
+    }
+
+    /**
+     * Update our ship to the reported position, BUT if possible try to
+     *  set ourselves up to make up for any discrepancy smoothly.
+     */
+    public function updateForReport (report :ShipSprite) :void
+    {
+        accel = report.accel;
+        xVel = report.xVel;
+        yVel = report.yVel;
+        
+        // Maybe let boardX float if we're not too far off.
+        var dX :Number = report.boardX - boardX;
+        
+        Logger.log("dX: " + dX);
+
+        if (Math.abs(dX) < 0.5) {
+            xVel += dX/(StarFight.FRAMES_PER_UPDATE*2);
+        } else {
+            boardX = report.boardX;
+        }
+
+        // Maybe let boardY float if we're not too far off.
+        var dY :Number = report.boardY - boardY;
+        if (Math.abs(dY) < 0.5) {
+            yVel += dY/(StarFight.FRAMES_PER_UPDATE*2);
+        } else {
+            boardY = report.boardY;
+        }
+
+        turnRate = report.turnRate;
+
+        // Maybe let rotation float if we're not too far off.
+        var dTheta :Number = report.rotation - rotation;
+        if (Math.abs(dTheta) < 45) {
+            turnRate += dTheta/(StarFight.FRAMES_PER_UPDATE*2);
+        } else {
+            rotation = report.rotation;
+        }
+
+        // These we always update exactly as reported.
+        power = report.power;
+        powerups = report.powerups;
     }
 
     /**
@@ -334,6 +385,7 @@ public class ShipSprite extends Sprite
         bytes.writeFloat(boardX);
         bytes.writeFloat(boardY);
         bytes.writeFloat(turnRate);
+        bytes.writeFloat(turnAccelRate);
         bytes.writeShort(rotation);
         bytes.writeFloat(power);
         bytes.writeInt(powerups);
@@ -350,15 +402,12 @@ public class ShipSprite extends Sprite
     protected var _firing :Boolean;
     protected var _ticksToFire :int;
 
-    /** Various UI constants. */
-    protected static const RED :uint = uint(0xFF0000);
-    protected static const BLACK :uint = uint(0x000000);
-
     /** Ship performance characteristics. */
-    protected static const TURN_RATE :Number = 7.0;
+    protected static const TURN_ACCEL_RATE :Number = 1.0;
     protected static const FORWARD_ACCEL :Number = 0.02;
     protected static const BACKWARD_ACCEL :Number = -0.01;
     protected static const FRICTION :Number = 0.95;
+    protected static const TURN_FRICTION :Number = 0.8;
     protected static const SHOT_SPD :Number = 0.5;
     protected static const TICKS_PER_SHOT :int = 8;
     protected static const HIT_POWER :Number = 0.25;
