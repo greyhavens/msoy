@@ -60,14 +60,24 @@ public class SwiftlyApplet extends JApplet
         _statusbar.setLabel(" ");
     }
 
-    public ShowProjectDialogAction createShowProjectDialogAction ()
+    public AbstractAction createShowProjectDialogAction ()
     {
-        return new ShowProjectDialogAction();
+        return new AbstractAction() {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                showProjectDialog();
+            }
+        };
     }
 
-    public NewProjectDialogAction createNewProjectDialogAction ()
+    public AbstractAction createNewProjectDialogAction ()
     {
-        return new NewProjectDialogAction();
+        return new AbstractAction() {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                showNewProjectDialog();
+            }
+        };
     }
 
     protected void createGUI ()
@@ -157,22 +167,6 @@ public class SwiftlyApplet extends JApplet
             _contentPane, "Enter the project name", "Create a new project.",
             JOptionPane.INFORMATION_MESSAGE);
         loadProject(createProject(projectName));
-    }
-
-    protected class ShowProjectDialogAction extends AbstractAction
-    {
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            showProjectDialog();
-        }
-    }
-
-    protected class NewProjectDialogAction extends AbstractAction
-    {
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            showNewProjectDialog();
-        }
     }
 
     protected Container _contentPane;

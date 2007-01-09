@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import javax.swing.JTextPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -49,12 +50,6 @@ public class SwiftlyEditor extends JTabbedPane
         setSelectedComponent(scroller);
     }
 
-    public void saveAndCloseCurrentTab ()
-    {
-        saveCurrentTab();
-        forceCloseCurrentTab();
-    }
-
     public void saveCurrentTab () 
     {
         SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
@@ -66,7 +61,6 @@ public class SwiftlyEditor extends JTabbedPane
         }
     }
 
-    // TODO need to remove the * if all of the undoable events have been undone
     public void setTabTitleChanged (boolean changed)
     {
         int tabIndex = getSelectedIndex();
@@ -91,60 +85,81 @@ public class SwiftlyEditor extends JTabbedPane
         return _applet;
     }
 
-    public void forceCloseCurrentTab ()
-    {
-        closeCurrentTab(true);
-    }
-
-    public void closeCurrentTab ()
-    {
-        closeCurrentTab(false);
-    }
-
-    public void removeTabs ()
-    {
-        // TODO Will want to make sure everything is saved first
-        removeAll();
-        _tabList.clear();
-    }
-
-    public NewTabAction createNewTabAction ()
-    {
-        return new NewTabAction();
-    }
-
-    public SaveCurrentTabAction createSaveCurrentTabAction ()
-    {
-        return new SaveCurrentTabAction();
-    }
-
-    public SaveAndCloseCurrentTabAction createSaveAndCloseCurrentTabAction ()
-    {
-        return new SaveAndCloseCurrentTabAction();
-    }
-
-    public CloseCurrentTabAction createCloseCurrentTabAction ()
-    {
-        return new CloseCurrentTabAction();
-    }
-
-    // close the current tab. if force is set, close even if unsaved changes
-    protected void closeCurrentTab (boolean force)
+    // returns the JOptionPane option the user picked
+    public int closeCurrentTab ()
     {
         // Don't try to remove a tab if we have none.
         if (getTabCount() == 0) {
-            return;
+            // We're doing nothing which is the same as picking cancel
+            return JOptionPane.CANCEL_OPTION;
         }
         SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getSelectedComponent();
         SwiftlyTextPane textPane = pane.getTextPane();
-        if (textPane.hasUnsavedChanges() && !force) {
-            textPane.closeTabDialog();
-            return;
+
+        int response = -1;
+        if (textPane.hasUnsavedChanges()) {
+            response = JOptionPane.showInternalConfirmDialog(_applet.getContentPane(),
+                "Save changes?");
+            // Choosing Cancel will return at this point and do nothing
+            if (response == JOptionPane.YES_OPTION) {
+                textPane.saveDocument();
+            } else if (response == JOptionPane.NO_OPTION) {
+                // continue on with the tab closing
+            } else {
+                // return cancel so something calling this knows to stop
+                return response;
+            }
         }
+
         SwiftlyDocument document = textPane.getSwiftlyDocument();
         remove(_tabList.get(document));
         _tabList.remove(document);
         assignTabKeys();
+        return response;
+    }
+
+
+    public void removeTabs ()
+    {
+        int tabCount = getTabCount();
+        for (int count = 0; count < tabCount; count++) {
+            setSelectedIndex(0);
+            int response = closeCurrentTab();
+            if (response == JOptionPane.CANCEL_OPTION) {
+                // do nothing more if the user picks cancel
+                return;
+            }
+        }
+    }
+
+    public AbstractAction createNewTabAction ()
+    {
+        return new AbstractAction() {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                addEditorTab();
+            }
+        };
+    }
+
+    public AbstractAction createSaveCurrentTabAction ()
+    {
+        return new AbstractAction("Save") {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                saveCurrentTab();
+            }
+        };
+    }
+
+    public AbstractAction createCloseCurrentTabAction ()
+    {
+        return new AbstractAction() {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                closeCurrentTab();
+            }
+        };
     }
 
     protected void assignTabKeys ()
@@ -154,61 +169,6 @@ public class SwiftlyEditor extends JTabbedPane
             if (tabIndex < 9) {
                 setMnemonicAt(tabIndex, KeyEvent.VK_1 + tabIndex);
             }
-        }
-    }
-
-    public ForceCloseCurrentTabAction createForceCloseCurrentTabAction ()
-    {
-        return new ForceCloseCurrentTabAction();
-    }
-
-    protected class NewTabAction extends AbstractAction
-    {
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            addEditorTab();
-        }
-    }
-
-    protected class SaveCurrentTabAction extends AbstractAction
-    {
-        public SaveCurrentTabAction ()
-        {
-            super("Save");
-        }
-
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            saveCurrentTab();
-        }
-    }
-
-    protected class SaveAndCloseCurrentTabAction extends SaveCurrentTabAction
-    {
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            saveAndCloseCurrentTab();
-        }
-    }
-
-    protected class CloseCurrentTabAction extends AbstractAction
-    {
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            closeCurrentTab();
-        }
-    }
-
-    protected class ForceCloseCurrentTabAction extends AbstractAction
-    {
-        public ForceCloseCurrentTabAction ()
-        {
-            super("Close without saving");
-        }
-
-        // from AbstractAction
-        public void actionPerformed (ActionEvent e) {
-            forceCloseCurrentTab();
         }
     }
 
