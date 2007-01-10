@@ -25,6 +25,7 @@ public class BallParticle extends CircleParticle
         ball.y = y;
     }
 
+    // documentation inherited
     override public function paint() :void
     {
         if (ball.x == px && ball.y == py) {

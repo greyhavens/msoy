@@ -29,11 +29,12 @@ public class Ball extends Sprite
 
         addChild(_ballAnimation);
 
-        // FIXME: this shouldn't be needed
-        
         addEventListener(MouseEvent.CLICK, mouseClick);
     }
 
+    /**
+     * Tell the ball to stop its spinning animation.
+     */
     public function stop () :void
     {
         if (_playing) {
@@ -42,6 +43,9 @@ public class Ball extends Sprite
         }
     }
 
+    /**
+     * Tell the ball to start its spinning animation.
+     */
     public function play () :void
     {
         if (!_playing) {
@@ -50,6 +54,9 @@ public class Ball extends Sprite
         }
     }
 
+    /**
+     * Hit the ball, with the cursor pulled back to the specified point.
+     */
     public function hitBall (p :Point) :void
     {
         if (_flamingo == null) {
@@ -63,15 +70,21 @@ public class Ball extends Sprite
         particle.addHitForce(p);
     }
 
+    /**
+     * Mouse click handler, adds/removes a flamingo.
+     */
     protected function mouseClick (event :MouseEvent) :void
     {
         if (_flamingo != null) {
+            removeChild(_flamingo);
+            _flamingo = null;
             return;
         }
         _flamingo = new WonderlandFlamingo(this);
         addChild(_flamingo);
     }
 
+    // Our flamingo we're using for aiming.
     protected var _flamingo :WonderlandFlamingo;
 
     // The player that controls this ball.
@@ -91,6 +104,7 @@ public class Ball extends Sprite
     protected static const MODIFIER_TINY     :int = 0x1 << 1;
     protected static const MODIFIER_PAINTED  :int = 0x1 << 2;
 
+    // The ball artwork.
     [Embed(source="rsrc/ball.swf#hedgehog")]
     protected var ballAnimationClass :Class;
 }

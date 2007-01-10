@@ -89,6 +89,10 @@ public class WonderlandMap
         return false;
     }
 
+    /**
+     * Adds thick, bunker walls surrounding the board, defining the play area as a rectangle
+     * with the specified dimensions.
+     */
     protected function addWalls (width :int, height :int) :void
     {
         particles.push(new RectangleParticle(
@@ -103,6 +107,10 @@ public class WonderlandMap
 
     }
 
+    /**
+     * Adds a planter box at the specified coordinate and rotation. Can optionally also place
+     * a bush in it for you.
+     */
     protected function addPlanter (x :Number, y :Number, rotation :Number = 0, 
         bush :Boolean = false, bushRotation :Number = 0) :void
     {
@@ -114,7 +122,7 @@ public class WonderlandMap
         background.addChild(planter);
 
         var particle :RectangleParticle = new RectangleParticle(
-            x, y, 104, 104, rotation * Math.PI / 180, true);
+            x, y, PLANTER_WIDTH, PLANTER_HEIGHT, rotation * Math.PI / 180, true);
         particles.push(particle);
 
         if (bush) {
@@ -122,6 +130,9 @@ public class WonderlandMap
         }
     }
 
+    /**
+     * Adds a bush at the specified coordinate and rotation.
+     */
     protected function addBush (x :Number, y :Number, rotation :Number) :void
     {
         var bush :SpriteAsset = new bushClass();
@@ -132,18 +143,26 @@ public class WonderlandMap
         foreground.addChild(bush);
     }
 
+    // Friction constants for the various terrain types
     protected static const FRICTION_GRASS :Number = 3;
     protected static const FRICTION_STONE :Number = 0;
     protected static const FRICTION_ROUGH :Number = 7;
 
+    // A 0,0 vector for convenience
     protected static const STOPPED_VECTOR :Vector = new Vector(0, 0);
 
     // How thick to make our walls
     protected static const WALL_WIDTH :int = 100;
 
+    // Dimensions for planters
+    protected static const PLANTER_WIDTH :int = 104;
+    protected static const PLANTER_HEIGHT :int = 104;
+
+    // Artwork for the standard planter boxes
     [Embed (source="rsrc/objects.swf#physplanterbox")]
     protected static var planterClass :Class;
 
+    // Artwork for the standard bushes
     [Embed (source="rsrc/objects.swf#bush")]
     protected static var bushClass :Class;
 }

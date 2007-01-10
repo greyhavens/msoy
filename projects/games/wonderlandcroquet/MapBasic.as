@@ -17,18 +17,6 @@ public class MapBasic extends WonderlandMap
         _stone = SpriteAsset(new stoneClass());
     }
 
-    override public function getModifierForce (x :Number, y :Number, velocity :Vector) :Vector
-    {
-        // TODO: inspect terrain
-        return null;
-    }
-
-    override public function getFriction (x :Number, y :Number) :Number
-    {
-        // TODO: inspect terrain
-        return 0;
-    }
-
     // Adds various boxes and whatnot around the scene
     protected function addObjects () :void
     {
