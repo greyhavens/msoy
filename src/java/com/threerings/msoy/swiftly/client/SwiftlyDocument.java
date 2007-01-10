@@ -5,10 +5,19 @@ import java.io.StringReader;
 
 public class SwiftlyDocument
 {
+    public SwiftlyDocument ()
+    {
+    }
+
     public SwiftlyDocument (String filename, String text)
     {
         _filename = filename;
         _text = text;
+    }
+
+    public boolean hasBeenSaved ()
+    {
+        return (_filename.length() > 0);
     }
 
     public Reader getReader ()
@@ -25,6 +34,11 @@ public class SwiftlyDocument
     public String getFilename ()
     {
         return _filename;
+    }
+
+    public void setFilename (String filename)
+    {
+        _filename = filename;
     }
 
     public String toString ()

@@ -71,6 +71,12 @@ public class SwiftlyTextPane extends JTextPane
         // TODO show a progress bar in the status bar while Saving...
         if (hasUnsavedChanges()) {
             // TODO save the document into the internets
+            if (!_document.hasBeenSaved()) {
+                _editor.getApplet().showSelectFilenameDialog(_document);
+                _editor.setCurrentTabTitle(_document.getFilename());
+                // add the document to the project panel
+                _editor.getApplet().getProjectPanel().addDocument(_document);
+            }
             setDocumentChanged(false);
             _editor.getApplet().setStatus("Saving " + _document);
             return true;
@@ -231,6 +237,7 @@ public class SwiftlyTextPane extends JTextPane
             setEnabled(false);
         }
 
+        // from interface AbstractAction
         public void actionPerformed (ActionEvent e) {
             if (hasUnsavedChanges()) {
                 saveDocument();

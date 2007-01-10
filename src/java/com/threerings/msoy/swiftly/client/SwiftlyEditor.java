@@ -23,7 +23,7 @@ public class SwiftlyEditor extends JTabbedPane
 
     public void addEditorTab ()
     {
-        addEditorTab (new SwiftlyDocument("new file", "This is a new file"));
+        addEditorTab (new SwiftlyDocument());
     }
 
     public void addEditorTab (SwiftlyDocument document)
@@ -36,7 +36,11 @@ public class SwiftlyEditor extends JTabbedPane
         SwiftlyTextPane textPane = new SwiftlyTextPane(this, document);
         SwiftlyEditorScrollPane scroller = new SwiftlyEditorScrollPane(textPane);
 
-        addTab(document.getFilename(), scroller);
+        if (document.hasBeenSaved()) {
+            addTab(document.getFilename(), scroller);
+        } else {
+            addTab("Unsaved document", scroller);
+        }
         assignTabKeys();
 
         // add the scroller, which is the main component, to the tabList
@@ -82,6 +86,11 @@ public class SwiftlyEditor extends JTabbedPane
             return getCurrentPane().getTextPane();
         }
         return null;
+    }
+
+    public void setCurrentTabTitle (String title)
+    {
+        setTitleAt(getSelectedIndex(), title);    
     }
 
     // returns the JOptionPane option the user picked

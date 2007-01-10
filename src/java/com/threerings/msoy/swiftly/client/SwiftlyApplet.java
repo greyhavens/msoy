@@ -89,12 +89,27 @@ public class SwiftlyApplet extends JApplet
         };
     }
 
-    public SwiftlyEditor getEditor() {
+    public void showSelectFilenameDialog (SwiftlyDocument document)
+    {
+        String filename = JOptionPane.showInternalInputDialog(
+            _contentPane, "Select a filename.", "Enter the filename.",
+            JOptionPane.INFORMATION_MESSAGE);
+        document.setFilename(filename);
+    }
+
+    public SwiftlyEditor getEditor()
+    {
         return _editor;
     }
 
-    public SwiftlyToolbar getToolbar() {
+    public SwiftlyToolbar getToolbar()
+    {
         return _toolbar;
+    }
+
+    public SwiftlyProjectPanel getProjectPanel ()
+    {
+        return _projectPanel;
     }
 
     protected void createGUI ()

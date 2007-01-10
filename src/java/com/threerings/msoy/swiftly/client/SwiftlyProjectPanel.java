@@ -19,24 +19,31 @@ public class SwiftlyProjectPanel extends JPanel
 
         _scrollPane = new JScrollPane();
         add(_scrollPane);
+
+        add(new JPanel());
     }
 
     public void loadProject (SwiftlyProject project)
     {
         _project = project;
 
-        DefaultMutableTreeNode top = new DefaultMutableTreeNode(project.getName());
+        _top = new DefaultMutableTreeNode(project.getName());
         for (SwiftlyDocument doc : project.getFiles()) {
-            top.add(new DefaultMutableTreeNode(doc));
+            addDocument(doc);
         }
         // TODO GC the old tree?
-        _tree = new JTree(top);
+        _tree = new JTree(_top);
         _tree.setDragEnabled(true);
         _tree.setEditable(true);
         _tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         _tree.addTreeSelectionListener(this);
 
         _scrollPane.getViewport().setView(_tree);
+    }
+
+    public void addDocument (SwiftlyDocument document)
+    {
+        _top.add(new DefaultMutableTreeNode(document));
     }
 
     // from interface TreeSelectionListener
@@ -55,6 +62,7 @@ public class SwiftlyProjectPanel extends JPanel
 
     protected SwiftlyApplet _applet;
     protected SwiftlyProject _project;
+    protected DefaultMutableTreeNode _top;
     protected JTree _tree;
     protected JScrollPane _scrollPane;
 }
