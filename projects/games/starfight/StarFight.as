@@ -98,7 +98,7 @@ public class StarFight extends Sprite
         // We don't already have a board and we're the host?  Create it and our
         //  initial ship array too.
         if ((boardObj == null) && (_gameCtrl.getMyIndex() == 0)) {
-            boardObj = new Board(140, 50, true);
+            boardObj = new Board(50, 50, true);
             _gameCtrl.set("ship", new Array(_gameCtrl.getPlayerCount()));
 
             var maxPowerups :int = Math.max(1,
@@ -205,7 +205,7 @@ public class StarFight extends Sprite
             if (_powerups[ii] == null) {
                 var x :int = Math.random() * _board.boardWidth;
                 var y :int = Math.random() * _board.boardHeight;
-                
+
                 while (_board.getObstacleAt(x, y) ||
                     (_board.getPowerupIdx(x+0.5, y+0.5, x+0.5, y+0.5,
                         0.1) != -1)) {

@@ -69,6 +69,15 @@ public class ShotSprite extends Sprite {
             return;
         }
 
+        // See if we're already inside an obstacle, since we could potentially have
+        //  been shot just inside the edge of one - if so, explode immediately.
+        var inObs :Obstacle = board.getObstacleAt(int(boardX), int(boardY));
+        if (inObs != null) {
+            _game.hitObs(inObs, boardX,boardY);
+            complete = true;
+            return;
+        }
+
         var coll :Collision = board.getCollision(boardX, boardY,
             boardX + xVel*time, boardY + yVel*time, COLLISION_RAD, shipId);
         if (coll == null) {
@@ -115,6 +124,5 @@ public class ShotSprite extends Sprite {
 
     /** Our game. */
     protected var _game :StarFight;
-
 }
 }

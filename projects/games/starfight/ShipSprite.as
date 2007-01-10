@@ -313,7 +313,7 @@ public class ShipSprite extends Sprite
         var type :int = (powerups & SPREAD_MASK) ? ShotSprite.SPREAD :
             ShotSprite.NORMAL;
 
-        _game.fireShot(boardX + cos, boardY + sin,
+        _game.fireShot(boardX + cos * COLLISION_RAD, boardY + sin * COLLISION_RAD,
             shotVel, shotAngle, shipId, shipType, type);
 
         _ticksToFire = TICKS_PER_SHOT - 1;
