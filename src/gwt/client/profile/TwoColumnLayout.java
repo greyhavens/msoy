@@ -7,8 +7,6 @@ import java.util.ArrayList;
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import com.threerings.msoy.web.data.BlurbData;
 import com.threerings.msoy.web.data.PersonLayout;
 

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import com.threerings.msoy.item.web.Item;
@@ -15,8 +14,6 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link ItemService}.

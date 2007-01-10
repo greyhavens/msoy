@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Map;
 import java.util.logging.Level;
@@ -18,12 +17,8 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 
 import com.threerings.presents.client.InvocationService;
@@ -32,7 +27,6 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.MemberName;
@@ -40,7 +34,6 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.world.data.FurniData;
 
 import com.threerings.msoy.item.web.Avatar;
-import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
@@ -50,7 +43,6 @@ import com.threerings.msoy.item.data.ItemCodes;
 
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -61,8 +53,6 @@ import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.server.persist.TagHistoryRecord;
 import com.threerings.msoy.item.server.persist.TagNameRecord;
-import com.threerings.msoy.item.server.persist.TagPopularityRecord;
-
 import static com.threerings.msoy.Log.log;
 
 /**

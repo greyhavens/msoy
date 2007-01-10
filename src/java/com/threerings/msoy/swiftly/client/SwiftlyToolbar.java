@@ -1,9 +1,5 @@
 package com.threerings.msoy.swiftly.client;
 
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 

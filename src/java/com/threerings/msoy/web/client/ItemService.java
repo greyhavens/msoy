@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.web.client;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.RemoteService;

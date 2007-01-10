@@ -9,7 +9,6 @@ import java.util.Map;
 import java.sql.Timestamp;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ResultListener;
 
@@ -26,8 +25,6 @@ import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manage msoy groups.

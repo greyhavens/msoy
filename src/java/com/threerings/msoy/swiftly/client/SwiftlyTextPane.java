@@ -1,22 +1,15 @@
 package com.threerings.msoy.swiftly.client;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashMap;
-
 import javax.swing.Action;
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextPane;
@@ -29,7 +22,6 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultEditorKit;
 
 public class SwiftlyTextPane extends JTextPane
 {

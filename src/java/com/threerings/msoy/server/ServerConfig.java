@@ -4,15 +4,9 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.Level;
-
 import com.samskivert.util.Config;
 import com.threerings.presents.client.Client;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Provides access to installation specific configuration. Properties that

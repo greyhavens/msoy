@@ -3,9 +3,6 @@
 
 package client.inventory;
 
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Furniture;
 

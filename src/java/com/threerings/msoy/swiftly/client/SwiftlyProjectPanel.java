@@ -1,8 +1,6 @@
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
-
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;

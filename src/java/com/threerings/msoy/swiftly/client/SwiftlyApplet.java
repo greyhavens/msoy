@@ -10,8 +10,6 @@ import java.awt.event.ActionEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import javax.swing.AbstractAction;
 import javax.swing.JApplet;
 import javax.swing.JOptionPane;

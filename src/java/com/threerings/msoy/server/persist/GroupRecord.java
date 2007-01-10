@@ -20,7 +20,6 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Group;
 import com.threerings.msoy.web.data.GroupExtras;
-import com.threerings.msoy.server.MsoyServer;
 
 /**
  * Contains the details of a group.

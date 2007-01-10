@@ -10,7 +10,6 @@ import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.world.data.MemoryEntry;
-import com.threerings.msoy.world.data.RoomCodes;
 
 /**
  * Service requests for rooms.

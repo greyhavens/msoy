@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.world.data;
 
-import com.samskivert.util.Comparators;
-
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.msoy.item.web.ItemIdent;

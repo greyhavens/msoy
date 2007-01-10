@@ -6,8 +6,6 @@ package client.util;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 
-import client.shell.ShellContext;
-
 /**
  * Contains useful user interface related methods.
  */

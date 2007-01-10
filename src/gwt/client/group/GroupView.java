@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -280,7 +279,7 @@ public class GroupView extends VerticalPanel
         case Group.POLICY_PUBLIC: policyName = _ctx.msgs.policyPublic(); break;
         case Group.POLICY_INVITE_ONLY: policyName = _ctx.msgs.policyInvite(); break;
         case Group.POLICY_EXCLUSIVE: policyName = _ctx.msgs.policyExclusive(); break;
-        default: policyName = policyName = _ctx.msgs.errUnknownPolicy(Integer.toString(policy));
+        default: policyName = _ctx.msgs.errUnknownPolicy(Integer.toString(policy));
         }
         return policyName;
     }

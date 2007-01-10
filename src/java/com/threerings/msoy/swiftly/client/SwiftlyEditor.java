@@ -1,15 +1,11 @@
 package com.threerings.msoy.swiftly.client;
 
-import java.awt.Container;
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
-import javax.swing.JTextPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
