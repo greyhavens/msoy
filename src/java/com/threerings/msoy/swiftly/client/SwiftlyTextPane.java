@@ -102,22 +102,22 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action getCutAction ()
     {
-        return getActionMap().get(DefaultEditorKit.cutAction);
+        return _cutAction;
     }
 
     public Action getCopyAction ()
     {
-        return getActionMap().get(DefaultEditorKit.copyAction);
+        return _copyAction;
     }
 
     public Action getPasteAction ()
     {
-        return getActionMap().get(DefaultEditorKit.pasteAction);
+        return _pasteAction;
     }
 
     public Action getSelectAllAction ()
     {
-        return getActionMap().get(DefaultEditorKit.selectAllAction);
+        return _selectAllAction;
     }
 
     protected void addKeyBindings ()
@@ -211,6 +211,58 @@ public class SwiftlyTextPane extends JTextPane
             _undo.addEdit(e.getEdit());
             _undoAction.update();
             _redoAction.update();
+        }
+    }
+
+    protected class CutAction extends AbstractAction
+    {
+        public CutAction ()
+        {
+            super("Cut");
+        }
+
+        public void actionPerformed (ActionEvent e)
+        {
+            cut();
+        }
+    }
+
+    protected class CopyAction extends AbstractAction
+    {
+        public CopyAction ()
+        {
+            super("Copy");
+        }
+
+        public void actionPerformed (ActionEvent e)
+        {
+            copy();
+        }
+    }
+
+    protected class PasteAction extends AbstractAction
+    {
+        public PasteAction ()
+        {
+            super("Paste");
+        }
+
+        public void actionPerformed (ActionEvent e)
+        {
+            paste();
+        }
+    }
+
+    protected class SelectAllAction extends AbstractAction
+    {
+        public SelectAllAction ()
+        {
+            super("Select All");
+        }
+
+        public void actionPerformed (ActionEvent e)
+        {
+            selectAll();
         }
     }
 
@@ -310,6 +362,10 @@ public class SwiftlyTextPane extends JTextPane
     protected UndoableEditListener _undoHandler = new UndoHandler();
     protected SwiftlyEditor _editor;
     protected SwiftlyDocument _document;
+    protected CutAction _cutAction = new CutAction();
+    protected CopyAction _copyAction = new CopyAction();
+    protected PasteAction _pasteAction = new PasteAction();
+    protected SelectAllAction _selectAllAction = new SelectAllAction();
     protected UndoAction _undoAction = new UndoAction();
     protected RedoAction _redoAction = new RedoAction();
     protected boolean _documentChanged;

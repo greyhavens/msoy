@@ -27,7 +27,7 @@ public class SwiftlyToolbar extends JToolBar
             _redoButton.setAction(textPane.getRedoAction());
         }
 
-        // Override the DefaultEditorKit action names e.g. cut-to-keyboard
+        // Override the DefaultEditorKit action names e.g. cut-to-clipboard
         _cutButton.setText("Cut");
         _copyButton.setText("Copy");
         _pasteButton.setText("Paste");
