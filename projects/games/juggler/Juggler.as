@@ -37,13 +37,7 @@ public class Juggler extends Sprite
         _body = new Body(this, _space);
         _body.x = 300;
         _body.y = 500;
-        
-        for (var i:int = 0; i<NUM_BALLS; i++) {
-            var ball : Ball = new Ball(this, _space);
-            ball.randomizePosition();
-            ball.setLabel("ball "+i);
-        }
-        
+                
         log("registered "+_collider.activeBodies()+" bodies for collision detection.");
     }
 
@@ -90,16 +84,16 @@ public class Juggler extends Sprite
         switch (event.keyCode)
         {
             case KEY_Q:
-                _body.leftHandLeftUp();
+                Qdown = false;
                 break;
             case KEY_W:
-                _body.leftHandRightUp();
+                Wdown = false;
                 break;
             case KEY_O:
-                _body.rightHandLeftUp();
+                Odown = false;
                 break;
             case KEY_P:
-                _body.rightHandRightUp();
+                Pdown = false;
         }    
     }
     
@@ -108,17 +102,44 @@ public class Juggler extends Sprite
         switch (event.keyCode)
         {
             case KEY_Q:
+                Qdown = true;
                 _body.leftHandLeft();
                 break;
             case KEY_W:
+                Wdown = true;
                 _body.leftHandRight();
                 break;
             case KEY_O:
+                Odown = true;
                 _body.rightHandLeft();
                 break;
             case KEY_P:
+                Pdown = true;
                 _body.rightHandRight();
+                break;
+            case KEY_SPACE:
+                addBall();
         }
+    }
+    
+    public function addBall() :void
+    {
+        if (_ballsPlayed < NUM_BALLS) 
+        {
+            if (_body.addBall()) {
+                _ballsPlayed += 1;
+            }
+        }
+    }
+    
+    public function leftDown() :Boolean 
+    {
+        return (Qdown || Wdown);
+    }
+    
+    public function rightDown() :Boolean
+    {
+        return (Odown || Pdown);
     }
     
     public function stateChanged (event: StateChangedEvent) :void
@@ -148,14 +169,26 @@ public class Juggler extends Sprite
     /** The game object for this event. */
     protected var _ezgame :EZGame;
                 
-    protected static const NUM_BALLS :int = 3;
+    private var _ballsPlayed:int = 0;
+                
+    private static const NUM_BALLS :int = 3;
     
-    protected static const KEY_Q:uint = 81;
+    private static const KEY_Q:uint = 81;
     
-    protected static const KEY_W:uint = 87;
+    private static const KEY_W:uint = 87;
     
-    protected static const KEY_O:uint = 79;
+    private static const KEY_O:uint = 79;
     
-    protected static const KEY_P:uint = 80;
+    private static const KEY_P:uint = 80;
+    
+    private static const KEY_SPACE:uint = 32;
+    
+    private var Qdown:Boolean = false;
+    
+    private var Wdown:Boolean = false;
+    
+    private var Odown:Boolean = false;
+
+    private var Pdown:Boolean = false;   
 } 
 }

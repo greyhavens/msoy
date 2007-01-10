@@ -9,8 +9,8 @@ public class Body extends Sprite
     public function Body (juggler:Juggler, space:Space) :void {
        _juggler = juggler;
        _space = space;
-       _hands[LEFT] = new Hand(juggler, space, this);
-       _hands[RIGHT] = new Hand(juggler, space, this);
+       _hands[LEFT] = new Hand(juggler, space, this, LEFT);
+       _hands[RIGHT] = new Hand(juggler, space, this, RIGHT);
              
        _positions[LEFT] = new Array(-200, -100);
        _positions[RIGHT] = new Array(100, 200);
@@ -24,7 +24,7 @@ public class Body extends Sprite
        juggler.addChild(this);
        juggler.registerAsActor(this);
        
-       draw();
+//      draw();
     }
 
     private function draw() :void 
@@ -42,57 +42,80 @@ public class Body extends Sprite
         _hands[RIGHT].nextFrame();
     }
     
-    public function moveHand(hand:Hand, pos:int) :void
+    private function moveHand(which:int, where:int) :void
     {
-        hand.moveTo(pos);
+        if (_addBall && _hands[which]._holding == null)
+        {
+            _hands[which].addBall();
+            _addBall = false;
+        }
+        
+        _hands[which].moveTo(_positions[which][where]);
     }
     
+    public function addBall() :Boolean
+    {
+        if (_addBall) {
+            return false;
+        }
+        
+        _addBall = true;
+        return true;
+    }
+        
     /** command to move the left hand one position to the left **/
     public function leftHandLeft() :void 
     {
-        _hands[LEFT].catchKeys++;
-        moveHand(_hands[LEFT], _positions[LEFT][LEFT]);
-    }
-
-    public function leftHandLeftUp() :void
-    {
-        _hands[LEFT].catchKeys--;
+        moveHand(LEFT, LEFT);
     }
 
     /** command to move the left hand one position to the right **/
     public function leftHandRight() :void
     {
-        _hands[LEFT].catchKeys++;
-        moveHand(_hands[LEFT], _positions[LEFT][RIGHT]);
-    }
-
-    public function leftHandRightUp() :void
-    {
-        _hands[LEFT].catchKeys--;
+        moveHand(LEFT, RIGHT);
     }
 
     /** command to move the right hand one position to the left **/
     public function rightHandLeft() :void
     {
-        _hands[RIGHT].catchKeys++;
-        moveHand(_hands[RIGHT], _positions[RIGHT][LEFT]);
-    }
-
-    public function rightHandLeftUp() :void
-    {
-        _hands[RIGHT].catchKeys--;
+        moveHand(RIGHT, LEFT);
     }
 
     /** command to move the right hand one position to the right **/
     public function rightHandRight() :void
     {
-        _hands[RIGHT].catchKeys++;
-        moveHand(_hands[RIGHT], _positions[RIGHT][RIGHT]);
+        moveHand(RIGHT, RIGHT);
     }
 
-    public function rightHandRightUp() :void
+    public function isCatching(id:int) :Boolean
     {
-        _hands[RIGHT].catchKeys--;
+        switch (id)
+        {
+            case LEFT:
+                return _juggler.leftDown();
+            case RIGHT:
+                return _juggler.rightDown();
+        }
+        
+        return false;
+    }
+
+    public function computeReleaseVelocity(hand:Hand, ball:Ball, strength:Number) :void
+    {
+        switch (hand._id)
+        {
+            case LEFT:
+                ball.setVelocity( new Array(
+                    200 * strength,
+                    -700 * strength
+                ));
+                break;
+            case RIGHT:
+                ball.setVelocity( new Array(
+                    -200 * strength,
+                    -700 * strength
+                ));            
+        }
     }
 
     private static const LEFT:int = 0;
@@ -108,5 +131,7 @@ public class Body extends Sprite
     private var _hands:Array = new Array()
 
     private var _positions:Array = new Array();
+    
+    private var _addBall:Boolean = false;
 }
 }

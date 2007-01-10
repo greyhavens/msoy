@@ -6,13 +6,15 @@ import flash.display.DisplayObjectContainer;
 public class Hand extends Sprite 
     implements Actor, CanCollide
 {
-    public function Hand(juggler:Juggler, space:Space, body:Body) :void 
+    public function Hand(juggler:Juggler, space:Space, body:Body, id:int) :void 
     {
+        _id = id;
         _juggler = juggler;
         _space = space;
         _body = body;
         
         y = Body.HAND_LEVEL;        
+        _maximumPullback = y + MAXIMUM_PULLBACK;
         
         body.addChild(this);
         Juggler.log("hand registering for collisions");
@@ -49,7 +51,7 @@ public class Hand extends Sprite
     public function moveTo(x:int) :void
     {
         targetX = x;
-        targetFrames = 3;
+        targetFrames = MOVE_FRAMES;
         _motion = converge;
     } 
     
@@ -69,10 +71,28 @@ public class Hand extends Sprite
         Juggler.log("moving "+_label+" to "+x);
     }
     
+    /** function defining the throwing motion 
+     */
+    public function throwBall() :void
+    {
+        Juggler.log("throw in motion...");
+        if (targetFrames == 0) {
+            y = Body.HAND_LEVEL;
+            _motion = stationary;
+            releaseBall();
+        } 
+        else 
+        {
+            y += (Body.HAND_LEVEL - y) / targetFrames;
+            targetFrames -=1;
+        }
+    } 
+    
     /** function definition a 'stationary' hand.
      */
     public function stationary() :void
     {
+        // don't move!
     }
     
     public function collisionWith(other:CanCollide) :void 
@@ -84,6 +104,14 @@ public class Hand extends Sprite
         }
     }
     
+    /** release the ball we're holding **/
+    private function releaseBall() :void
+    {
+        Juggler.log("releasing ball")
+        _body.computeReleaseVelocity(this, _holding, _releaseStrength)
+        _holding.release();
+        _holding = null;
+    }
     
     /* a is in contact with us */
     public function touchBall(ball:Ball) :void
@@ -101,9 +129,9 @@ public class Hand extends Sprite
     }
 
     /** return true if we're trying to catch the next ball **/
-    public function catching() :Boolean
+    private function catching() :Boolean
     {
-        return catchKeys>0;
+        return _body.isCatching(_id);
     }
     
     public function nextFrame() :void
@@ -119,6 +147,43 @@ public class Hand extends Sprite
         
         // call whatever the current motion function is
         _motion();
+        
+        if (_motion != throwBall) 
+        // if we're throwing, we don't care about pulling back or
+        // letting go.
+        {
+            // decide what to do if we're holding a ball
+            if (_holding != null)
+            {            
+                if (catching()) // if we're still 'catching' then pull back
+                {
+                    pullback();
+                }
+                else // otherwise let go.
+                {   
+                    targetFrames = THROW_FRAMES;
+                    _releaseStrength = (y-Body.HAND_LEVEL) / (_maximumPullback-Body.HAND_LEVEL);
+                    _motion = throwBall;
+                }
+            }
+        }
+    }
+    
+    // pull the hand back a bit more, ready for a throw
+    public function pullback() :void
+    {
+        if (y < _maximumPullback) 
+        {
+            y += (_maximumPullback - y) / 3;
+        }
+    }
+    
+    // add a ball starting at this hand
+    public function addBall() :void
+    {
+        var ball:Ball = new Ball(_juggler, _space);
+        _holding = ball;
+        ball.caughtBy(this);
     }
     
     public function topProjection() :Number 
@@ -202,10 +267,16 @@ public class Hand extends Sprite
     private static var NORMAL_COLOR:uint = 0x008000;
 
     private static var HIGHLIGHT_COLOR:uint = 0xFF0000;
+    
+    private static var MAXIMUM_PULLBACK:int = 100;
+    
+    private static var MOVE_FRAMES:int = 6;
+    
+    private static var THROW_FRAMES:int = 3;
 
     private static var _ballisticTrajectory:BallisticTrajectory = new BallisticTrajectory();
 
-    private var _holding:Ball;
+    public var _holding:Ball;
 
     private var _normalizedBounds:NormalizedBounds;
 
@@ -231,6 +302,11 @@ public class Hand extends Sprite
         
     private var _label:String = " a hand";
     
-    public var catchKeys:int = 0;
+    private var _maximumPullback:int;
+ 
+    private var _releaseStrength:Number;
+ 
+    public var _id:int;
+    
 }
 }

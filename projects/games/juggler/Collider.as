@@ -21,8 +21,8 @@ public class Collider {
         // 1: sort the bodies by the center of their x component of velocity
         _bodies.sort(byLeftProjection);
         
- //       Juggler.log("dumping collision data:");
-        _bodies.forEach(dumpProjections);
+//       Juggler.log("dumping collision data:");
+//      _bodies.forEach(dumpProjections);
         
         // 2: go each of them in turn looking for possible collisions on the x axis
         for (var i:int = 0; i<_bodies.length; i++) 
@@ -56,7 +56,7 @@ public class Collider {
         if (collisions.length>0)
         {
             collisions.forEach(highlight);
-            collisions.forEach(dumpPair);
+            //collisions.forEach(dumpPair);
             collisions.forEach(handleCollision);
         }     
     }
