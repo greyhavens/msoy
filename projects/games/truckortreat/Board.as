@@ -90,28 +90,25 @@ public class Board extends BaseSprite
             car.tick();
         }
         
-        // Now call tick() on each kid to move them, and look for collisions.
-        var kid :Kid;
-        for each (kid in _kids) {
-            kid.tick();
-            
-            if (kid.isAlive()) {
-                // TODO: look for collisions with candy too, perhaps before the 
-                // cars so if a player gets a health power up at the same time as 
-                // a death dealing hit by a car, he or she will survive.
-                for each (car in _cars) {
-                    // We only need to look for collisions if the kid's feet 
-                    // intersect with the bottom half of the car. 
-                    if (car.y + car.height > kid.y + kid.height && 
-                        kid.y + kid.height > car.y + car.height/2) {
-                        if (kid.hitTestObject(car)) {
-                            kid.wasKilled();
-                            if (kid.livesLeft() <= 0) {
-                                // TODO: endGame() takes one or more winning player 
-                                // indices. Since we only have one player currently, 
-                                // make that one the winner despite having just died.
-                                //_gameCtrl.endGame.(0);
-                            }
+        // Call tick() on this player's kid to move it, and look for collisions.
+        var kid :Kid = _kids[_myIndex];
+        kid.tick();
+        if (kid.isAlive()) {
+            // TODO: look for collisions with candy too, perhaps before the 
+            // cars so if a player gets a health power up at the same time as 
+            // a death dealing hit by a car, he or she will survive.
+            for each (car in _cars) {
+                // We only need to look for collisions if the kid's feet 
+                // intersect with the bottom half of the car. 
+                if (car.y + car.height > kid.y + kid.height && 
+                    kid.y + kid.height > car.y + car.height/2) {
+                    if (kid.hitTestObject(car)) {
+                        kid.wasKilled();
+                        if (kid.livesLeft() <= 0) {
+                            // TODO: endGame() takes one or more winning player 
+                            // indices. Since we only have one player currently, 
+                            // make that one the winner despite having just died.
+                            //_gameCtrl.endGame.(0);
                         }
                     }
                 }
@@ -146,7 +143,6 @@ public class Board extends BaseSprite
                 kid.y = coords[1];
             }
         } else if (name.indexOf("newkid") == 0) {
-            trace("got new kid event");
             kidIndex = int(event.name.substring(6));
             // Again, only add the Kid if it's not ours.
             if (kidIndex != _myIndex) {

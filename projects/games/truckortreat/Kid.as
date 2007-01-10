@@ -39,7 +39,6 @@ public class Kid extends BaseSprite
     /** Handle being killed. */
     public function wasKilled () :void
     {
-        removeChild(_nameLabel);
         _dead = true;
         _lives--;
         // TODO: this is where we have some nice kid being squashed animation.
@@ -134,7 +133,6 @@ public class Kid extends BaseSprite
         _dead = false;
         x = _board.getSidewalkX();
         y = _board.getSidewalkY() - height;
-        addChild(_nameLabel);
         _board.setMyKidLocation(x, y);
     }
     
