@@ -24,7 +24,7 @@ public class BoardSprite extends Sprite
         _obstacles = board.obstacles;
         _ships = ships;
         _powerups = powerups;
-        paint();
+        setupGraphics();
     }
 
     /**
@@ -199,34 +199,8 @@ public class BoardSprite extends Sprite
     /**
      * Draw the board.
      */
-    public function paint () :void
+    public function setupGraphics () :void
     {
-        var mask :Shape = new Shape();
-        addChild(mask);
-        mask.graphics.clear();
-        mask.graphics.beginFill(0xFFFFFF);
-        mask.graphics.drawRect(0, 0, boardWidth*Codes.PIXELS_PER_TILE,
-            boardHeight*Codes.PIXELS_PER_TILE);
-        mask.graphics.endFill();
-        this.mask = mask;
-
-        // Our background, tiled
-        var tmpBmp :Bitmap = Bitmap(new spaceBg());
-
-        var xRep :Number =
-            Math.ceil(boardWidth*Codes.PIXELS_PER_TILE/tmpBmp.width);
-        var yRep :Number =
-            Math.ceil(boardHeight*Codes.PIXELS_PER_TILE/tmpBmp.height);
-
-        for (var x :int = 0; x < xRep; x++) {
-            for (var y :int = 0; y < yRep; y++) {
-                var bmp :Bitmap = Bitmap(new spaceBg());
-                bmp.x = x*tmpBmp.width;
-                bmp.y = y*tmpBmp.height;
-                addChild(bmp);
-            }
-        }
-
         for each (var obs :Obstacle in _obstacles) {
             addChild(obs);
         }
@@ -242,9 +216,5 @@ public class BoardSprite extends Sprite
 
     /** Reference to the array of powerups we know about. */
     protected var _powerups :Array;
-
-    /** Add in the spacey background image. */
-    [Embed(source="rsrc/space_bg.png")]
-    protected var spaceBg :Class;
 }
 }

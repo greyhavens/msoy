@@ -101,7 +101,7 @@ public class StarFight extends Sprite
         // We don't already have a board and we're the host?  Create it and our
         //  initial ship array too.
         if ((boardObj == null) && (_gameCtrl.getMyIndex() == 0)) {
-            boardObj = new Board(100, 100, true);
+            boardObj = new Board(140, 50, true);
             _gameCtrl.set("ship", new Array(_gameCtrl.getPlayerCount()));
             _gameCtrl.set("powerup", new Array(MAX_POWERUPS));
             _gameCtrl.set("board", boardObj.writeTo(new ByteArray()));
@@ -123,6 +123,8 @@ public class StarFight extends Sprite
         _shots = [];
         _powerups = [];
 
+        _bg = new BgSprite(boardObj);
+        _boardLayer.addChild(_bg);
         _board = new BoardSprite(boardObj, _ships, _powerups);
         _boardLayer.addChild(_board);
 
@@ -130,6 +132,7 @@ public class StarFight extends Sprite
         _ownShip = new ShipSprite(_board, this, false, _gameCtrl.getMyIndex());
         _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+        _bg.setAsCenter(_ownShip.boardX, _ownShip.boardY);
         _shipLayer.addChild(_ownShip);
 
         // Add ourselves to the ship array.
@@ -422,6 +425,7 @@ public class StarFight extends Sprite
 
         // Recenter the board on our ship.
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
+        _bg.setAsCenter(_ownShip.boardX, _ownShip.boardY);
         _status.setPowerups(_ownShip.powerups);
 
         // Update all live shots.
@@ -468,6 +472,9 @@ public class StarFight extends Sprite
 
     /** The board with all its obstacles. */
     protected var _board :BoardSprite;
+
+    /** The background graphics. */
+    protected var _bg :BgSprite;
 
     /** Status info. */
     protected var _status :StatusOverlay;
