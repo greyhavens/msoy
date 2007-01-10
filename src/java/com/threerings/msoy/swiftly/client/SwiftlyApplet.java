@@ -1,8 +1,5 @@
 package com.threerings.msoy.swiftly.client;
 
-import org.apache.xmlrpc.client.XmlRpcClient;
-import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
-
 import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -34,24 +31,18 @@ public class SwiftlyApplet extends JApplet
         _contentPane = getContentPane();
 
         // Load the authentication token and configure the XML-RPC connection
-        _authtoken = getParameter("authtoken");
+        String authtoken = getParameter("authtoken");
 
-        // XML-RPC Anonymous Client
-        XmlRpcClientConfigImpl xmlRpcConfig = new XmlRpcClientConfigImpl();
+        // Configure RPC
         URL rpcURL;
         try {
-            System.out.println(getParameter("rpcURL"));
             rpcURL = new URL(getParameter("rpcURL"));
         } catch (MalformedURLException e) {
             // TODO: Useful error handling
             System.err.println("GWT Application provided a bum URL");
             return;
         }
-        xmlRpcConfig.setServerURL(rpcURL);
-        xmlRpcConfig.setEnabledForExtensions(true);
-
-        _swiftlyRpc = new XmlRpcClient();
-        _swiftlyRpc.setConfig(xmlRpcConfig);
+        _swiftlyRpc = new SwiftlyClientRpc(rpcURL, authtoken);
 
         // Execute a job on the event-dispatching thread: creating this applet's GUI.
         try {
@@ -142,36 +133,18 @@ public class SwiftlyApplet extends JApplet
 
     protected ArrayList<SwiftlyProject> getProjects ()
     {
-        Object[] result;
-        Object[] arguments = { _authtoken };
-
-        try {
-            result = (Object[]) _swiftlyRpc.execute("project.getProjects",
-                arguments);
-            for (Object projectName : result) {
-                // TODO -- load the files for the project
-                ArrayList<SwiftlyDocument> fileList = new ArrayList<SwiftlyDocument>();
-                fileList.add(new SwiftlyDocument("file #1", "Example text"));
-                fileList.add(new SwiftlyDocument("file #2", "Example text more"));
-                SwiftlyProject project = new SwiftlyProject((String)projectName, fileList);
-                _projectList.add(project);
-            }
-        } catch (Exception e) {
-            System.err.println("There was a problem: " + e);
-            e.printStackTrace();
-        }
-
-        // TODO this will need to load the projects from the server
-        return _projectList;
+        // Fetch the list of projects from the server
+        return _swiftlyRpc.getProjects();
     }
 
     protected SwiftlyProject createProject (String name)
     {
         // TODO do some business on the server
-        ArrayList<SwiftlyDocument> emptyFileList = new ArrayList<SwiftlyDocument>();
-        SwiftlyProject project = new SwiftlyProject(name, emptyFileList);
-        _projectList.add(project);
-        return project;
+        // ArrayList<SwiftlyDocument> emptyFileList = new ArrayList<SwiftlyDocument>();
+        // SwiftlyProject project = new SwiftlyProject(name, emptyFileList);
+        // _projectList.add(project);
+        // return project;
+        return null;
     }
 
     protected void loadProject (SwiftlyProject project)
@@ -204,11 +177,7 @@ public class SwiftlyApplet extends JApplet
     protected SwiftlyProjectPanel _projectPanel;
     protected SwiftlyProject _loadedProject;
     protected JSplitPane _splitPane;
-    protected ArrayList<SwiftlyProject> _projectList = new ArrayList<SwiftlyProject>();
-    
-    /** Swiftly XML-RPC Connection. */
-    protected XmlRpcClient _swiftlyRpc;
-    
-    /** Cached msoy authentication token. */
-    protected String _authtoken;
+
+    /** Swiftly RPC Connection. */
+    SwiftlyClientRpc _swiftlyRpc;
 }
