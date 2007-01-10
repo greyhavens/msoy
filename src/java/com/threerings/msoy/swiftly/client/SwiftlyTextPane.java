@@ -68,9 +68,11 @@ public class SwiftlyTextPane extends JTextPane
     // Save the document if needed. Return true if save happened/worked
     public boolean saveDocument ()
     {
+        // TODO show a progress bar in the status bar while Saving...
         if (hasUnsavedChanges()) {
             // TODO save the document into the internets
             setDocumentChanged(false);
+            _editor.getApplet().setStatus("Saving " + _document);
             return true;
         }
         return false;
@@ -148,7 +150,7 @@ public class SwiftlyTextPane extends JTextPane
                      KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 
         // ctrl-s saves the current document
-        addKeyAction(_editor.createSaveCurrentTabAction(),
+        addKeyAction(getSaveAction(),
                      KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 
         // ctrl-w closes the tab
@@ -230,13 +232,10 @@ public class SwiftlyTextPane extends JTextPane
         }
 
         public void actionPerformed (ActionEvent e) {
-            // TODO show a progress bar in the status bar while Saving...
             if (hasUnsavedChanges()) {
                 saveDocument();
                 _editor.setTabTitleChanged(false);
             }
-            // TODO show the filename that just saved
-            _editor.getApplet().setStatus("Saving " + _document);
         }
     }
 

@@ -46,21 +46,6 @@ public class SwiftlyEditor extends JTabbedPane
         setSelectedComponent(scroller);
     }
 
-    public void saveCurrentTab () 
-    {
-        SwiftlyEditorScrollPane pane = getCurrentPane();
-        if (pane == null) {
-            return; 
-        }
-
-        // TODO show a progress bar in the status bar while Saving...
-        if (pane.getTextPane().saveDocument()) {
-            setTabTitleChanged(false);
-            // TODO show the filename that just saved
-            _applet.setStatus("Document saved.");
-        }
-    }
-
     public void setTabTitleChanged (boolean changed)
     {
         int tabIndex = getSelectedIndex();
@@ -150,16 +135,6 @@ public class SwiftlyEditor extends JTabbedPane
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 addEditorTab();
-            }
-        };
-    }
-
-    public AbstractAction createSaveCurrentTabAction ()
-    {
-        return new AbstractAction("Save") {
-            // from AbstractAction
-            public void actionPerformed (ActionEvent e) {
-                saveCurrentTab();
             }
         };
     }
