@@ -210,8 +210,22 @@ public class BoardSprite extends Sprite
         mask.graphics.endFill();
         this.mask = mask;
 
-        // Our background.
-        addChild(Bitmap(new spaceBg()));
+        // Our background, tiled
+        var tmpBmp :Bitmap = Bitmap(new spaceBg());
+
+        var xRep :Number =
+            Math.ceil(boardWidth*Codes.PIXELS_PER_TILE/tmpBmp.width);
+        var yRep :Number =
+            Math.ceil(boardHeight*Codes.PIXELS_PER_TILE/tmpBmp.height);
+
+        for (var x :int = 0; x < xRep; x++) {
+            for (var y :int = 0; y < yRep; y++) {
+                var bmp :Bitmap = Bitmap(new spaceBg());
+                bmp.x = x*tmpBmp.width;
+                bmp.y = y*tmpBmp.height;
+                addChild(bmp);
+            }
+        }
 
         for each (var obs :Obstacle in _obstacles) {
             addChild(obs);

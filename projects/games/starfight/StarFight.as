@@ -101,7 +101,7 @@ public class StarFight extends Sprite
         // We don't already have a board and we're the host?  Create it and our
         //  initial ship array too.
         if ((boardObj == null) && (_gameCtrl.getMyIndex() == 0)) {
-            boardObj = new Board(50, 50, true);
+            boardObj = new Board(100, 100, true);
             _gameCtrl.set("ship", new Array(_gameCtrl.getPlayerCount()));
             _gameCtrl.set("powerup", new Array(MAX_POWERUPS));
             _gameCtrl.set("board", boardObj.writeTo(new ByteArray()));
