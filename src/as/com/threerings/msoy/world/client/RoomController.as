@@ -86,7 +86,7 @@ public class RoomController extends SceneController
         }
 
         // serialize datum (TODO: move this to somewhere more general purpose)
-        var data : ByteArray = (EZObjectMarshaller.encode(value) as ByteArray);
+        var data :ByteArray = (EZObjectMarshaller.encode(value) as ByteArray);
 
         // TODO: total up item's used memory, ensure it doesn't exceed the allowed limit
 

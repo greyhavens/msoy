@@ -67,7 +67,7 @@ public class MemoryEntry
     {
         item = (ins.readObject() as ItemIdent);
         key = (ins.readField(String) as String);
-        value = (ins.readObject() as ByteArray);
+        value = (ins.readField(ByteArray) as ByteArray);
     }
 
     // from interface Streamable
@@ -75,7 +75,7 @@ public class MemoryEntry
     {
         out.writeObject(item);
         out.writeField(key);
-        out.writeObject(value);
+        out.writeField(value);
     }
 }
 }

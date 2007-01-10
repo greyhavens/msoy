@@ -162,15 +162,12 @@ public class RoomManager extends SpotSceneManager
         // TODO: verify that the caller is in the scene with this item, that the memory does not
         // exdeed legal size, other item specific restrictions
 
+        // mark it as modified and update the room object; we'll save it when we unload the room
+        entry.modified = true;
         if (_roomObj.memories.contains(entry)) {
-            // mark it as modified and update it in the room object ; we'll save it when we unload
-            // the room
-            entry.modified = true;
             _roomObj.updateMemories(entry);
-
         } else {
-            // TODO: if this item does not yet have a memory, assign them a new memory id, update
-            // their Item and FurniData records and store the new memory
+            _roomObj.addToMemories(entry);
         }
     }
 

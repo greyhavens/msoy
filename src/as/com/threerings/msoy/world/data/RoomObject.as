@@ -26,7 +26,7 @@ public class RoomObject extends SpotSceneObject
     public var roomService :RoomMarshaller;
 
     /** Contains the memories for all entities in this room. */
-    public var memories :DSet;
+    public var memories :DSet = new DSet();
 
 //    // AUTO-GENERATED: METHODS START
 //    /**
@@ -58,7 +58,7 @@ public class RoomObject extends SpotSceneObject
         super.readObject(ins);
 
         roomService = (ins.readObject() as RoomMarshaller);
-        memories = (ins.readObject as DSet);
+        memories = (ins.readObject() as DSet);
     }
 }
 }
