@@ -45,11 +45,11 @@ public class WonderlandMap
 
         if (isRough(ball.px, ball.py)) {
             force.multEquals(Math.min(speed, FRICTION_ROUGH));
-            force = rotateFriction (force, ball.velocity, Math.PI);
+            //force = rotateFriction (force, ball.velocity, Math.PI);
 
         } else if (isStone(ball.px, ball.py)) {
             force.multEquals(Math.min(speed, FRICTION_STONE));
-            force = rotateFriction (force, ball.velocity, Math.PI/1.25);
+            //force = rotateFriction (force, ball.velocity, Math.PI/1.25);
 
         } else {
             force.multEquals(Math.min(speed, FRICTION_GRASS));
@@ -145,7 +145,7 @@ public class WonderlandMap
 
     // Friction constants for the various terrain types
     protected static const FRICTION_GRASS :Number = 3;
-    protected static const FRICTION_STONE :Number = 0;
+    protected static const FRICTION_STONE :Number = 1.5;
     protected static const FRICTION_ROUGH :Number = 7;
 
     // A 0,0 vector for convenience

@@ -39,10 +39,10 @@ public class MapBasic extends WonderlandMap
     protected var _stone :SpriteAsset;
 
     [Embed (source="rsrc/terrain_06.swf")]
-    protected var backgroundClass :Class;
+    protected static var backgroundClass :Class;
     [Embed (source="rsrc/terrain_06.swf#rough")]
-    protected var roughClass :Class;
+    protected static var roughClass :Class;
     [Embed (source="rsrc/terrain_06.swf#paving")]
-    protected var stoneClass :Class;
+    protected static var stoneClass :Class;
 }
 }

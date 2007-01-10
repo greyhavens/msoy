@@ -19,12 +19,14 @@ public class Ball extends Sprite
     // The particle representing this ball
     public var particle :BallParticle;
 
-    public function Ball (particle :BallParticle, color :int = 0xff0000)
+    public function Ball (particle :BallParticle, color :int = 1)
     {
         this.particle = particle;
         _flamingo = null;
 
-        _ballAnimation = MovieClipAsset(new ballAnimationClass());
+
+        _ballAnimation = MovieClipAsset(new BallAnimations[color]);
+
         _playing = true;
 
         addChild(_ballAnimation);
@@ -104,9 +106,29 @@ public class Ball extends Sprite
     protected static const MODIFIER_TINY     :int = 0x1 << 1;
     protected static const MODIFIER_PAINTED  :int = 0x1 << 2;
 
+
     // The ball artwork.
-    [Embed(source="rsrc/ball.swf#hedgehog")]
-    protected var ballAnimationClass :Class;
+    [Embed(source="rsrc/ball.swf#ball1")]
+    protected static var ballAnimation1Class :Class;
+    [Embed(source="rsrc/ball.swf#ball2")]
+    protected static var ballAnimation2Class :Class;
+    [Embed(source="rsrc/ball.swf#ball3")]
+    protected static var ballAnimation3Class :Class;
+    [Embed(source="rsrc/ball.swf#ball4")]
+    protected static var ballAnimation4Class :Class;
+    [Embed(source="rsrc/ball.swf#ball5")]
+    protected static var ballAnimation5Class :Class;
+    [Embed(source="rsrc/ball.swf#ball6")]
+    protected static var ballAnimation6Class :Class;
+
+    protected static var BallAnimations :Array = [
+        ballAnimation1Class,
+        ballAnimation2Class,
+        ballAnimation3Class,
+        ballAnimation4Class,
+        ballAnimation5Class,
+        ballAnimation6Class,
+    ];
 }
 
 }

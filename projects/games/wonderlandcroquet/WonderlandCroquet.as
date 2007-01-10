@@ -29,7 +29,6 @@ public class WonderlandCroquet extends Sprite
         _gameCtrl = new EZGameControl(this);
         _gameCtrl.registerListener(this);
 
-
         _spr = new Sprite();
         addEventListener(Event.ENTER_FRAME, run);
 
@@ -64,29 +63,11 @@ public class WonderlandCroquet extends Sprite
      */
     protected function addRandomBalls () :void
     {
-        var colors :Array = [
-            0x000000,
-            0xff0000,
-            0x00ff00,
-            0x0000ff,
-            0xffff00,
-            0xff00ff,
-            0x00ffff,
-            0xffffff,
-            0x440000,
-            0x004400,
-            0x000044,
-            0x444400,
-            0x440044,
-            0x004444,
-            0x444444,
-        ];
-
-        for each (var color :int in colors) {
+        for (var ii: int = 0; ii < 6; ii++) {
             var ball: BallParticle = new BallParticle(
                 Ball.RADIUS + (Math.random() * (800 - (2 * Ball.RADIUS))), 
                 Ball.RADIUS + (Math.random() * (600 - (2 * Ball.RADIUS))), 
-                Ball.RADIUS, color, false);
+                Ball.RADIUS, ii, false);
 
             APEngine.addParticle(ball);
             _spr.addChild(ball.ball);
@@ -164,6 +145,8 @@ public class WonderlandCroquet extends Sprite
     protected var _spr :Sprite;
 
     protected var _paintQueue :Array;
+
+    protected var _board :WonderlandBoard;
 
     /** Our game control object. */
     protected var _gameCtrl :EZGameControl;

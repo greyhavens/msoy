@@ -77,10 +77,10 @@ public class MapFancy extends WonderlandMap
     protected var _stone :SpriteAsset;
 
     [Embed (source="rsrc/course.swf")]
-    protected var backgroundClass :Class;
+    protected static var backgroundClass :Class;
     [Embed (source="rsrc/course.swf#rough")]
-    protected var roughClass :Class;
+    protected static var roughClass :Class;
     [Embed (source="rsrc/course.swf#paving")]
-    protected var stoneClass :Class;
+    protected static var stoneClass :Class;
 }
 }
