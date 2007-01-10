@@ -36,7 +36,7 @@ public class AvatarSprite extends BaseAvatarSprite
 {
     public function AvatarSprite (ctx :MsoyContext, occInfo :WorldMemberInfo)
     {
-        super(null, null);
+        super(null, occInfo.getAvatarIdent());
 
         _label = new Label();
         _label.includeInLayout = false;
@@ -56,19 +56,11 @@ public class AvatarSprite extends BaseAvatarSprite
         _occInfo = occInfo;
 
         if (!_occInfo.avatar.equals(_desc)) {
-            setup(_occInfo.avatar, _ident);
+            setup(_occInfo.avatar, occInfo.getAvatarIdent());
         }
 
         _label.setStyle("color", getStatusColor(_occInfo.status));
         _label.text = occInfo.username.toString();
-    }
-
-    /**
-     * Configures this avatar sprite with its item identifier. This is only done for ourself.
-     */
-    public function setItemIdent (ident :ItemIdent) :void
-    {
-        _ident = ident;
     }
 
     /**

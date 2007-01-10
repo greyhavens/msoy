@@ -29,7 +29,6 @@ public class MediaDirector extends BasicDirector
     {
         var isOurs :Boolean = (occInfo.bodyOid == _ctx.getClient().getClientOid());
         if (isOurs && _ourAvatar != null) {
-            _ourAvatar.setItemIdent(_mctx.getClientObject().avatar.getIdent());
             _ourAvatar.setOccupantInfo(_mctx, occInfo);
             return _ourAvatar;
         }
@@ -37,7 +36,6 @@ public class MediaDirector extends BasicDirector
         var avatar :AvatarSprite = new AvatarSprite(_mctx, occInfo);
         if (isOurs) {
             _ourAvatar = avatar;
-            _ourAvatar.setItemIdent(_mctx.getClientObject().avatar.getIdent());
         }
         return avatar;
     }

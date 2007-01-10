@@ -20,6 +20,7 @@ import com.threerings.presents.dobj.DSet;
 public abstract class Item implements Streamable, IsSerializable, DSet.Entry
 {
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
+    public static final byte OCCUPANT = (byte) -1; // runtime only
     public static final byte NOT_A_TYPE = (byte) 0;
     public static final byte PHOTO = registerItemType(Photo.class, 1);
     public static final byte DOCUMENT = registerItemType(Document.class, 2);

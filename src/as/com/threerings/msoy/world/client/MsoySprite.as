@@ -116,18 +116,14 @@ public class MsoySprite extends MediaContainer
         return getContentHeight() * _locScale;
     }
 
-    protected function setup (desc :MediaDesc, ident :ItemIdent) :void
+    public function isInteractive () :Boolean
     {
-        if (Util.equals(desc, _desc)) {
-            return;
-        }
+        return _desc.isInteractive();
+    }
 
-        _desc = desc;
-        _ident = ident;
-
-        setMedia(desc.getMediaPath());
-        scaleUpdated();
-        setEditing(false);
+    public function hasAction () :Boolean
+    {
+        return false;
     }
 
     public function setEditing (editing :Boolean) :void
@@ -161,45 +157,6 @@ public class MsoySprite extends MediaContainer
                 mouseChildren = false;
             }
         }
-    }
-
-    override protected function setupSwfOrImage (url :String) :void
-    {
-//        if (_desc.mimeType == MediaDesc.APPLICATION_SHOCKWAVE_FLASH) {
-//            // create a unique id for the media
-//            _id = String(getTimer()) + int(Math.random() * int.MAX_VALUE);
-//
-//            // TODO
-//            url += "?oid=" + _id;
-//        }
-        super.setupSwfOrImage(url);
-
-        // then, grab a reference to the shared event dispatcher
-        Loader(_media).contentLoaderInfo.sharedEvents.addEventListener(
-            "msoyQuery", handleUserCodeQuery);
-    }
-
-    /**
-     * Unload the media we're displaying, clean up any resources.
-     *
-     * @param completely if true, we're going away and should stop
-     * everything. Otherwise, we're just loading up new media.
-     */
-    override public function shutdown (completely :Boolean = true) :void
-    {
-        if (_media is VideoDisplay) {
-            var vid :VideoDisplay = (_media as VideoDisplay);
-            Prefs.setMediaPosition(
-                MediaDesc.hashToString(_desc.hash), vid.playheadTime);
-        }
-
-        // clean up
-        if (_media is Loader) {
-            Loader(_media).contentLoaderInfo.sharedEvents.removeEventListener(
-                "msoyQuery", handleUserCodeQuery);
-        }
-
-        super.shutdown(completely);
     }
 
     /**
@@ -256,45 +213,6 @@ public class MsoySprite extends MediaContainer
         locationUpdated();
     }
 
-    /**
-     * An internal convenience method to recompute our screen
-     * position when our size, location, or anything like that has
-     * been updated.
-     */
-    protected function locationUpdated () :void
-    {
-        if (parent is AbstractRoomView) {
-            (parent as AbstractRoomView).locationUpdated(this);
-        }
-    }
-
-    protected function scaleUpdated () :void
-    {
-        if (!(_media is Perspectivizer)) {
-            _media.scaleX = _locScale * getMediaScaleX();
-            _media.scaleY = _locScale * getMediaScaleY();
-        }
-
-        updateMediaPosition();
-    }
-
-    /**
-     * Should be called when the media scale or size changes to ensure
-     * that the media is positioned correctly.
-     */
-    protected function updateMediaPosition () :void
-    {
-        // if scale is negative, the image is flipped and we need to move
-        // the origin
-        var xscale :Number = getMediaScaleX();
-        var yscale :Number = getMediaScaleY();
-        _media.x = (xscale >= 0) ? 0 : Math.abs(_w * xscale);
-        _media.y = (yscale >= 0) ? 0 : Math.abs(_h * yscale);
-
-        // we may need to be repositioned
-        locationUpdated();
-    }
-
     /** A callback from the move. */
     public function moveCompleted (orient :Number) :void
     {
@@ -328,6 +246,109 @@ public class MsoySprite extends MediaContainer
     public function getDesc () :MediaDesc
     {
         return _desc;
+    }
+
+    /**
+     * Turn on or off the glow surrounding this sprite.
+     */
+    public function setGlow (doGlow :Boolean) :void
+    {
+        // if things are already in the proper state, do nothing
+        if (doGlow == (_glow != null)) {
+            return;
+        }
+
+        // otherwise, enable or disable the glow
+        if (doGlow) {
+            _glow = new Glow(this);
+            _glow.alphaFrom = 0;
+            _glow.alphaTo = 1;
+            _glow.blurXFrom = 0;
+            _glow.blurXTo = 20;
+            _glow.blurYFrom = 0;
+            _glow.blurYTo = 20;
+            _glow.color = getHoverColor();
+            _glow.duration = 200;
+            _glow.play();
+
+        } else {
+            _glow.end();
+            _glow = null;
+
+            // remove the GlowFilter that is added
+            // TODO: maybe ensure there are no other filters that
+            // need preserving
+            filters = new Array();
+        }
+    }
+
+    /**
+     * Callback function.
+     */
+    public function mouseClick (event :MouseEvent) :void
+    {
+        // nada
+    }
+
+    /**
+     * Called when a trigger event is received for this sprite.
+     */
+    public function eventTriggered (event: String) :void
+    {
+        callUserCode("eventTriggered_v1", event);
+    }
+
+    /**
+     * Called when a datum in the this sprite's entity's memory changes.
+     */
+    public function memoryChanged (key :String, value: Object) :void
+    {
+        callUserCode("memoryChanged_v1", key, value);
+    }
+
+    // TODO: this isn't really needed, because this method is
+    // not used for our mouseOver hittesting.
+    // But: it boggles my mind that the standard hitTestPoint() on a 
+    // Bitmap doesn't seem to actually test the pixels in its BitmapData!!
+    override public function hitTestPoint (
+        x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
+    {
+        try {
+// TODO: merely accessing contentLoaderInfo causes SecurityWarnings. Wahh???!
+//            if (_media is Loader &&
+//                    Loader(_media).contentLoaderInfo.childAllowsParent &&
+//                    (Loader(_media).content is Bitmap)) {
+//                var b :Bitmap = Bitmap(Loader(_media).content);
+//                var p :Point = b.globalToLocal(new Point(x, y));
+//                return b.bitmapData.hitTest(new Point(0, 0), 0xFF, p);
+//            }
+        } catch (err :Error) {
+            // nada
+        }
+        return super.hitTestPoint(x, y, shapeFlag);
+    }
+
+    /**
+     * Unload the media we're displaying, clean up any resources.
+     *
+     * @param completely if true, we're going away and should stop
+     * everything. Otherwise, we're just loading up new media.
+     */
+    override public function shutdown (completely :Boolean = true) :void
+    {
+        if (_media is VideoDisplay) {
+            var vid :VideoDisplay = (_media as VideoDisplay);
+            Prefs.setMediaPosition(
+                MediaDesc.hashToString(_desc.hash), vid.playheadTime);
+        }
+
+        // clean up
+        if (_media is Loader) {
+            Loader(_media).contentLoaderInfo.sharedEvents.removeEventListener(
+                "msoyQuery", handleUserCodeQuery);
+        }
+
+        super.shutdown(completely);
     }
 
 //    /**
@@ -368,6 +389,75 @@ public class MsoySprite extends MediaContainer
 //        _dispatch.dispatchEvent(de);
 //        return de.msoyResponse;
 //    }
+
+    protected function setup (desc :MediaDesc, ident :ItemIdent) :void
+    {
+        if (Util.equals(desc, _desc)) {
+            return;
+        }
+
+        _desc = desc;
+        _ident = ident;
+
+        setMedia(desc.getMediaPath());
+        scaleUpdated();
+        setEditing(false);
+    }
+
+    override protected function setupSwfOrImage (url :String) :void
+    {
+//        if (_desc.mimeType == MediaDesc.APPLICATION_SHOCKWAVE_FLASH) {
+//            // create a unique id for the media
+//            _id = String(getTimer()) + int(Math.random() * int.MAX_VALUE);
+//
+//            // TODO
+//            url += "?oid=" + _id;
+//        }
+        super.setupSwfOrImage(url);
+
+        // then, grab a reference to the shared event dispatcher
+        Loader(_media).contentLoaderInfo.sharedEvents.addEventListener(
+            "msoyQuery", handleUserCodeQuery);
+    }
+
+    /**
+     * An internal convenience method to recompute our screen
+     * position when our size, location, or anything like that has
+     * been updated.
+     */
+    protected function locationUpdated () :void
+    {
+        if (parent is AbstractRoomView) {
+            (parent as AbstractRoomView).locationUpdated(this);
+        }
+    }
+
+    protected function scaleUpdated () :void
+    {
+        if (!(_media is Perspectivizer)) {
+            _media.scaleX = _locScale * getMediaScaleX();
+            _media.scaleY = _locScale * getMediaScaleY();
+        }
+
+        updateMediaPosition();
+    }
+
+    /**
+     * Should be called when the media scale or size changes to ensure
+     * that the media is positioned correctly.
+     */
+    protected function updateMediaPosition () :void
+    {
+        // if scale is negative, the image is flipped and we need to move
+        // the origin
+        var xscale :Number = getMediaScaleX();
+        var yscale :Number = getMediaScaleY();
+        _media.x = (xscale >= 0) ? 0 : Math.abs(_w * xscale);
+        _media.y = (yscale >= 0) ? 0 : Math.abs(_h * yscale);
+
+        // we may need to be repositioned
+        locationUpdated();
+    }
 
     /**
      * A callback called when there is a status event from using
@@ -434,41 +524,9 @@ public class MsoySprite extends MediaContainer
         */
     }
 
-    public function isInteractive () :Boolean
-    {
-        return _desc.isInteractive();
-    }
-
-    public function hasAction () :Boolean
-    {
-        return false;
-    }
-
     protected function getHoverColor () :uint
     {
         return 0x40e0e0;
-    }
-
-    // TODO: this isn't really needed, because this method is
-    // not used for our mouseOver hittesting.
-    // But: it boggles my mind that the standard hitTestPoint() on a 
-    // Bitmap doesn't seem to actually test the pixels in its BitmapData!!
-    override public function hitTestPoint
-        (x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
-    {
-        try {
-// TODO: merely accessing contentLoaderInfo causes SecurityWarnings. Wahh???!
-//            if (_media is Loader &&
-//                    Loader(_media).contentLoaderInfo.childAllowsParent &&
-//                    (Loader(_media).content is Bitmap)) {
-//                var b :Bitmap = Bitmap(Loader(_media).content);
-//                var p :Point = b.globalToLocal(new Point(x, y));
-//                return b.bitmapData.hitTest(new Point(0, 0), 0xFF, p);
-//            }
-        } catch (err :Error) {
-            // nada
-        }
-        return super.hitTestPoint(x, y, shapeFlag);
     }
 
     /**
@@ -524,48 +582,6 @@ public class MsoySprite extends MediaContainer
     protected function mouseOut (event :MouseEvent) :void
     {
         setGlow(false);
-    }
-
-    /**
-     * Turn on or off the glow surrounding this sprite.
-     */
-    public function setGlow (doGlow :Boolean) :void
-    {
-        // if things are already in the proper state, do nothing
-        if (doGlow == (_glow != null)) {
-            return;
-        }
-
-        // otherwise, enable or disable the glow
-        if (doGlow) {
-            _glow = new Glow(this);
-            _glow.alphaFrom = 0;
-            _glow.alphaTo = 1;
-            _glow.blurXFrom = 0;
-            _glow.blurXTo = 20;
-            _glow.blurYFrom = 0;
-            _glow.blurYTo = 20;
-            _glow.color = getHoverColor();
-            _glow.duration = 200;
-            _glow.play();
-
-        } else {
-            _glow.end();
-            _glow = null;
-
-            // remove the GlowFilter that is added
-            // TODO: maybe ensure there are no other filters that
-            // need preserving
-            filters = new Array();
-        }
-    }
-
-    /**
-     * Callback function.
-     */
-    public function mouseClick (event :MouseEvent) :void
-    {
-        // nada
     }
 
      /*

@@ -27,6 +27,7 @@ public /*abstract*/ class Item
     implements Hashable, Streamable, DSet_Entry
 {
     // DON'T EVER CHANGE THE MAGIC NUMBERS ASSIGNED TO EACH CLASS
+    public static const OCCUPANT :int = -1; // only used at runtime
     public static const NOT_A_TYPE :int = 0;
     public static const PHOTO :int = 1; //registerItemType(Photo, 1);
     public static const DOCUMENT :int = 2; //registerItemType(Document, 2);

@@ -116,7 +116,7 @@ public class AbstractRoomView extends Canvas
             updateAllFurni();
         }
     }
-    
+
     /**
      * Turn the screen coordinate into a MsoyLocation, with the
      * orient field set to 0.
@@ -576,15 +576,14 @@ public class AbstractRoomView extends Canvas
         map.clear();
     }
 
-    protected function addFurni (furni :FurniData) :void
+    protected function addFurni (furni :FurniData) :FurniSprite
     {
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
         addChild(sprite);
         sprite.setLocation(furni.loc);
-
         _furni.put(furni.id, sprite);
-
         checkIsBackground(sprite);
+        return sprite;
     }
 
     protected function updateFurni (furni :FurniData) :void
@@ -739,7 +738,7 @@ public class AbstractRoomView extends Canvas
 
     /** A hand-drawn background to look like a room. */
     protected var _bkgGraphics :UIComponent;
-    
+
     /** A map of id -> Furni. */
     protected var _furni :HashMap = new HashMap();
 

@@ -73,7 +73,7 @@ class ViewerAvatarSprite extends BaseAvatarSprite
 {
     public function ViewerAvatarSprite (url :String)
     {
-        super(null);
+        super(null, null);
         setMedia(url);
 
         // add the event listener, because we don't do it ourselves anymore

@@ -45,6 +45,8 @@ import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
+import com.threerings.ezgame.util.EZObjectMarshaller;
+
 import com.threerings.msoy.chat.client.ChatOverlay;
 // import com.threerings.msoy.chat.client.ChatPopper;
 import com.threerings.msoy.client.ContextMenuProvider;
@@ -53,10 +55,12 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 
@@ -255,6 +259,148 @@ public class RoomView extends AbstractRoomView
             isNonInteractiveTarget(clickTarget, _avatars)*/;
     }
 
+    // from interface SetListener
+    public function entryAdded (event :EntryAddedEvent) :void
+    {
+        var name :String = event.getName();
+
+        if (PlaceObject.OCCUPANT_INFO == name) {
+            addBody((event.getEntry() as WorldMemberInfo).getBodyOid());
+
+        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
+            var sceneLoc :SceneLocation = (event.getEntry() as SceneLocation);
+            portalTraversed(sceneLoc.loc, true);
+
+        } else if (RoomObject.MEMORIES == name) {
+            dispatchMemoryChanged(event.getEntry() as MemoryEntry);
+        }
+    }
+
+    // from interface SetListener
+    public function entryUpdated (event :EntryUpdatedEvent) :void
+    {
+        var name :String = event.getName();
+
+        if (PlaceObject.OCCUPANT_INFO == name) {
+            updateBody(event.getEntry() as WorldMemberInfo);
+
+        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
+            moveBody((event.getEntry() as SceneLocation).bodyOid);
+
+        } else if (RoomObject.MEMORIES == name) {
+            dispatchMemoryChanged(event.getEntry() as MemoryEntry);
+        }
+    }
+
+    // from interface SetListener
+    public function entryRemoved (event :EntryRemovedEvent) :void
+    {
+        var name :String = event.getName();
+
+        if (PlaceObject.OCCUPANT_INFO == name) {
+            removeBody((event.getOldEntry() as WorldMemberInfo).getBodyOid());
+        }
+    }
+
+    // fro interface MessageListener
+    public function messageReceived (event :MessageEvent) :void
+    {
+        var args :Array = event.getArgs();
+        switch (event.getName()) {
+        case "avAction":
+            performAvatarAction(int(args[0]), (args[1] as String));
+            break;
+
+        case "triggerEvent": // TODO: RoomCodes.TRIGGER_EVENT
+            dispatchTriggerEvent((args[0] as ItemIdent), (args[1] as String));
+            break;
+        }
+    }
+
+    // from interface ChatDisplay
+    public function clear () :void
+    {
+//        ChatPopper.popAllDown();
+    }
+
+    // from interface ChatDisplay
+    public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
+    {
+        var avatar :AvatarSprite = null;
+        if (msg is UserMessage) {
+            var umsg :UserMessage = (msg as UserMessage);
+            var occInfo :OccupantInfo = _roomObj.getOccupantInfo(umsg.speaker);
+            if (occInfo != null) {
+                avatar = (_avatars.get(occInfo.bodyOid) as AvatarSprite);
+            }
+        }
+
+//        ChatPopper.popUp(msg, avatar);
+        if (avatar != null) {
+            avatar.performAvatarSpoke();
+        }
+        return true;
+    }
+
+    // from interface PlaceView
+    override public function willEnterPlace (plobj :PlaceObject) :void
+    {
+        super.willEnterPlace(plobj);
+
+        _roomObj.addListener(this);
+
+//        _ctx.getChatDirector().addChatDisplay(this);
+        _overlay.setTarget(_ctx.getTopPanel());
+
+        addAllOccupants();
+
+        // and animate ourselves entering the room (everyone already in the
+        // (room will also have seen it)
+        portalTraversed(getMyCurrentLocation(), true);
+    }
+
+    // from interface PlaceView
+    override public function didLeavePlace (plobj :PlaceObject) :void
+    {
+        _roomObj.removeListener(this);
+
+//        _ctx.getChatDirector().removeChatDisplay(this);
+//        ChatPopper.popAllDown();
+        _overlay.setTarget(null);
+
+        shutdownMusic();
+        removeAllOccupants();
+
+        super.didLeavePlace(plobj);
+    }
+
+    // from AbstractRoomView
+    override public function updateAllFurni () :void
+    {
+        super.updateAllFurni();
+
+        var music :FurniData = _scene.getMusic();
+        if (music != null) {
+            // maybe shutdown old music
+            if (_music != null && !_music.getMedia().equals(music.media)) {
+                shutdownMusic(); // will set _music = null
+            }
+            // set up the new music
+            if (_music == null) {
+                _music = new SoundPlayer(music.media);
+                _music.loop();
+                //var pos :Number = Prefs.getMediaPosition(music.getMediaId());
+                //_music.loop(pos);
+                // NOTE: the position argument has been disabled because
+                // it causes the flash player to crash, and also seems to booch
+                // proper looping.
+            }
+            // set the volume, even if we're just re-setting it on
+            // already-playing music
+            _music.setVolume(Number(music.actionData));
+        }
+    }
+
     override public function locationUpdated (sprite :MsoySprite) :void
     {
         super.locationUpdated(sprite);
@@ -376,6 +522,9 @@ public class RoomView extends AbstractRoomView
             _avatars.put(bodyOid, avatar);
             avatar.moveTo(loc, _scene);
         }
+
+        // map the avatar sprite in the entities table
+        _entities.put(occInfo.getAvatarIdent(), avatar);
     }
 
     protected function removeBody (bodyOid :int) :void
@@ -419,7 +568,21 @@ public class RoomView extends AbstractRoomView
      */
     protected function dispatchTriggerEvent (item :ItemIdent, event :String) :void
     {
-        // TODO: ...
+        var sprite :MsoySprite = (_entities.get(item) as MsoySprite);
+        if (sprite != null) {
+            sprite.eventTriggered(event);
+        }
+    }
+
+    /**
+     * Called when a memory entry is added or updated in the room object.
+     */
+    protected function dispatchMemoryChanged (entry :MemoryEntry) :void
+    {
+        var sprite :MsoySprite = (_entities.get(entry.item) as MsoySprite);
+        if (sprite != null) {
+            sprite.memoryChanged(entry.key, EZObjectMarshaller.decode(entry.value));
+        }
     }
 
     /**
@@ -452,64 +615,6 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    // documentation inherited from interface PlaceView
-    override public function willEnterPlace (plobj :PlaceObject) :void
-    {
-        super.willEnterPlace(plobj);
-
-        _roomObj.addListener(this);
-
-//        _ctx.getChatDirector().addChatDisplay(this);
-        _overlay.setTarget(_ctx.getTopPanel());
-
-        addAllOccupants();
-
-        // and animate ourselves entering the room (everyone already in the
-        // (room will also have seen it)
-        portalTraversed(getMyCurrentLocation(), true);
-    }
-
-    // documentation inherited from interface PlaceView
-    override public function didLeavePlace (plobj :PlaceObject) :void
-    {
-        _roomObj.removeListener(this);
-
-//        _ctx.getChatDirector().removeChatDisplay(this);
-//        ChatPopper.popAllDown();
-        _overlay.setTarget(null);
-
-        shutdownMusic();
-        removeAllOccupants();
-
-        super.didLeavePlace(plobj);
-    }
-
-    override public function updateAllFurni () :void
-    {
-        super.updateAllFurni();
-
-        var music :FurniData = _scene.getMusic();
-        if (music != null) {
-            // maybe shutdown old music
-            if (_music != null && !_music.getMedia().equals(music.media)) {
-                shutdownMusic(); // will set _music = null
-            }
-            // set up the new music
-            if (_music == null) {
-                _music = new SoundPlayer(music.media);
-                _music.loop();
-                //var pos :Number = Prefs.getMediaPosition(music.getMediaId());
-                //_music.loop(pos);
-                // NOTE: the position argument has been disabled because
-                // it causes the flash player to crash, and also seems to booch
-                // proper looping.
-            }
-            // set the volume, even if we're just re-setting it on
-            // already-playing music
-            _music.setVolume(Number(music.actionData));
-        }
-    }
-
     /**
      * Shut-down the background music in the room.
      */
@@ -537,84 +642,6 @@ public class RoomView extends AbstractRoomView
         removeAll(_pendingRemoveAvatars);
     }
 
-    // documentation inherited from interface SetListener
-    public function entryAdded (event :EntryAddedEvent) :void
-    {
-        var name :String = event.getName();
-
-        if (PlaceObject.OCCUPANT_INFO == name) {
-            addBody((event.getEntry() as WorldMemberInfo).getBodyOid());
-
-        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
-            var sceneLoc :SceneLocation = (event.getEntry() as SceneLocation);
-            portalTraversed(sceneLoc.loc, true);
-        }
-    }
-
-    // documentation inherited from interface SetListener
-    public function entryUpdated (event :EntryUpdatedEvent) :void
-    {
-        var name :String = event.getName();
-
-        if (PlaceObject.OCCUPANT_INFO == name) {
-            updateBody(event.getEntry() as WorldMemberInfo);
-
-        } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
-            moveBody((event.getEntry() as SceneLocation).bodyOid);
-        }
-    }
-
-    // documentation inherited from interface SetListener
-    public function entryRemoved (event :EntryRemovedEvent) :void
-    {
-        var name :String = event.getName();
-
-        if (PlaceObject.OCCUPANT_INFO == name) {
-            removeBody((event.getOldEntry() as WorldMemberInfo).getBodyOid());
-        }
-    }
-
-    // fro interface MessageListener
-    public function messageReceived (event :MessageEvent) :void
-    {
-        var args :Array = event.getArgs();
-        switch (event.getName()) {
-        case "avAction":
-            performAvatarAction(int(args[0]), (args[1] as String));
-            break;
-
-        case "triggerEvent": // TODO: RoomCodes.TRIGGER_EVENT
-            dispatchTriggerEvent((args[0] as ItemIdent), (args[1] as String));
-            break;
-        }
-    }
-
-    // documentation inherited from interface ChatDisplay
-    public function clear () :void
-    {
-//        ChatPopper.popAllDown();
-    }
-
-    // documentation inherited from interface ChatDisplay
-    public function displayMessage (
-        msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
-    {
-        var avatar :AvatarSprite = null;
-        if (msg is UserMessage) {
-            var umsg :UserMessage = (msg as UserMessage);
-            var occInfo :OccupantInfo = _roomObj.getOccupantInfo(umsg.speaker);
-            if (occInfo != null) {
-                avatar = (_avatars.get(occInfo.bodyOid) as AvatarSprite);
-            }
-        }
-
-//        ChatPopper.popUp(msg, avatar);
-        if (avatar != null) {
-            avatar.performAvatarSpoke();
-        }
-        return true;
-    }
-
     /**
      * Make that avatar dance, or whatever.
      */
@@ -626,12 +653,21 @@ public class RoomView extends AbstractRoomView
         }
     }
 
+    // from AbstractRoomView
+    override protected function addFurni (furni :FurniData) :FurniSprite
+    {
+        var fsprite :FurniSprite = super.addFurni(furni);
+        _entities.put(furni.getItemIdent(), fsprite);
+        return fsprite;
+    }
+
     protected function removeFurni (furni :FurniData) :void
     {
         var sprite :FurniSprite = (_furni.remove(furni.id) as FurniSprite);
         if (sprite != null) {
             removeSprite(sprite);
         }
+        _entities.remove(furni.getItemIdent());
     }
 
     /** Our controller. */
@@ -640,10 +676,14 @@ public class RoomView extends AbstractRoomView
     /** The background music in the scene. */
     protected var _music :SoundPlayer;
 
+    /** Displays chat over the world view. */
     protected var _overlay :ChatOverlay;
 
     /** A map of bodyOid -> AvatarSprite. */
     protected var _avatars :HashMap = new HashMap();
+
+    /** Maps ItemIdent -> MsoySprite for entities (furni, avatars, pets). */
+    protected var _entities :HashMap = new HashMap();
 
     /** The sprite we should center on. */
     protected var _centerSprite :MsoySprite;

@@ -75,7 +75,7 @@ public class FurniData extends SimpleStreamableObject
     /**
      * Returns the identifier for the item for which we're presenting a visualization.
      */
-    public ItemIdent getIdent ()
+    public ItemIdent getItemIdent ()
     {
         return new ItemIdent(itemType, itemId);
     }
