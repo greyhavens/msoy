@@ -24,27 +24,20 @@ import org.cove.ape.*;
 public class WonderlandCroquet extends Sprite
     implements PropertyChangedListener, StateChangedListener
 {
-    /** Size of our viewing area. */
-    public static const WIDTH :int = 750;
-    public static const HEIGHT :int = 508;
-
-
     public function WonderlandCroquet ()
     {
         _gameCtrl = new EZGameControl(this);
         _gameCtrl.registerListener(this);
 
 
-        var spr :Sprite = new Sprite();
+        _spr = new Sprite();
         addEventListener(Event.ENTER_FRAME, run);
 
-        addChild(spr);
-
-        _drawArea = spr.graphics;
+        addChild(_spr);
 
         //_map = new MapBasic();
         _map = new MapFancy();
-        spr.addChild(_map.background);
+        _spr.addChild(_map.background);
 
         APEngine.init(1/3);
         APEngine.defaultContainer = this;
@@ -54,6 +47,23 @@ public class WonderlandCroquet extends Sprite
         }
 
         // Add some balls
+        addRandomBalls();
+
+        _paintQueue = APEngine.getAll();
+
+        _spr.addChild(_map.foreground);
+
+        _scroller = new WonderlandScroller(_spr);
+        addChild(_scroller);
+        _scroller.x = 30;
+        _scroller.y = 30;
+    }
+
+    /**
+     * Add some random balls.
+     */
+    protected function addRandomBalls () :void
+    {
         var colors :Array = [
             0x000000,
             0xff0000,
@@ -74,22 +84,13 @@ public class WonderlandCroquet extends Sprite
 
         for each (var color :int in colors) {
             var ball: BallParticle = new BallParticle(
-                Ball.RADIUS + (Math.random() * (WIDTH - (2 * Ball.RADIUS))), 
-                Ball.RADIUS + (Math.random() * (HEIGHT - (2 * Ball.RADIUS))), 
+                Ball.RADIUS + (Math.random() * (800 - (2 * Ball.RADIUS))), 
+                Ball.RADIUS + (Math.random() * (600 - (2 * Ball.RADIUS))), 
                 Ball.RADIUS, color, false);
 
             APEngine.addParticle(ball);
-            spr.addChild(ball.ball);
+            _spr.addChild(ball.ball);
         }
-
-        _paintQueue = APEngine.getAll();
-
-        spr.addChild(_map.foreground);
-
-        _scroller = new WonderlandScroller(spr);
-        addChild(_scroller);
-        _scroller.x = 30;
-        _scroller.y = 30;
     }
 
     protected function run (evt :Event) :void
@@ -156,12 +157,11 @@ public class WonderlandCroquet extends Sprite
         }
     }
 
-
     protected var _map :WonderlandMap;
 
     protected var _scroller :WonderlandScroller;
 
-    protected var _drawArea :Graphics;
+    protected var _spr :Sprite;
 
     protected var _paintQueue :Array;
 

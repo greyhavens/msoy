@@ -4,6 +4,7 @@ import mx.core.MovieClipAsset;
 import mx.core.SpriteAsset;
 import org.cove.ape.Vector;
 import flash.display.Sprite;
+import flash.geom.Point;
 
 public class MapFancy extends WonderlandMap
 {
@@ -11,25 +12,34 @@ public class MapFancy extends WonderlandMap
     {
         super();
 
+        _rough = SpriteAsset(new roughClass());
+        _stone = SpriteAsset(new stoneClass());
         _background = MovieClipAsset(new backgroundClass());
+
+        background.addChild(_rough);
+        background.addChild(_stone);
         background.addChild(_background);
 
         addWalls(_background.width, _background.height);
 
         addObjects();
 
-        _rough = SpriteAsset(new roughClass());
-        _stone = SpriteAsset(new stoneClass());
     }
 
     override protected function isRough (x :Number, y :Number) :Boolean
     {
-        return _rough.hitTestPoint(x, y, true);
+        return hitTestSprite(x, y, _rough);
     }
 
     override protected function isStone (x :Number, y :Number) :Boolean
     {
-        return _stone.hitTestPoint(x, y, true);
+        return hitTestSprite(x, y, _stone);
+    }
+
+    protected function hitTestSprite (x :Number, y :Number, spr :Sprite) :Boolean
+    {
+        var p :Point = spr.globalToLocal(new Point(x, y));
+        return spr.hitTestPoint(x, y, true);
     }
 
     // Adds various boxes and whatnot around the scene
