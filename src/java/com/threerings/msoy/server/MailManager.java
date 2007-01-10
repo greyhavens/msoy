@@ -201,9 +201,7 @@ public class MailManager
     {
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
-                for (int msgId : msgIdArr) {
-                    _mailRepo.deleteMessage(memberId, folderId, msgIdArr);
-                }
+            	_mailRepo.deleteMessage(memberId, folderId, msgIdArr);
                 return null;
             }
         });
