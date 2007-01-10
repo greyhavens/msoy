@@ -24,10 +24,10 @@ public class Powerup extends Sprite
         x = boardX * Codes.PIXELS_PER_TILE;
         y = boardY * Codes.PIXELS_PER_TILE;
 
-        paint();
+        setupGraphics();
     }
 
-    protected function paint () :void
+    protected function setupGraphics () :void
     {
         var powMovie :MovieClipAsset = MovieClipAsset(new powerupAnim());
         powMovie.gotoAndStop(type);
@@ -45,7 +45,7 @@ public class Powerup extends Sprite
         boardX = x / Codes.PIXELS_PER_TILE;
         boardY = y / Codes.PIXELS_PER_TILE; 
 
-        paint();
+        setupGraphics();
     }
 
     /**

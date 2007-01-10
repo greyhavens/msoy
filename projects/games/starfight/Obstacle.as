@@ -39,12 +39,12 @@ public class Obstacle extends Sprite
         bY = y;
 
         if (anim) {
-            paint();
+            setupGraphics();
         }
 
     }
 
-    protected function paint () :void
+    protected function setupGraphics () :void
     {
         var obsMovie :MovieClipAsset = MovieClipAsset(new obstacleAnim);
         obsMovie.gotoAndStop(type);
@@ -71,7 +71,7 @@ public class Obstacle extends Sprite
         bX = x / Codes.PIXELS_PER_TILE;
         bY = y / Codes.PIXELS_PER_TILE; 
 
-        paint();
+        setupGraphics();
     }
 
     /**
