@@ -55,9 +55,6 @@ public class SwiftlyApplet extends JApplet
         _swiftlyRpc = new XmlRpcClient();
         _swiftlyRpc.setConfig(xmlRpcConfig);
 
-        // XXX TEMP
-        initializeProjects();
-
         // Execute a job on the event-dispatching thread: creating this applet's GUI.
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
@@ -147,24 +144,27 @@ public class SwiftlyApplet extends JApplet
 
     protected ArrayList<SwiftlyProject> getProjects ()
     {
+        Object[] result;
+        Object[] arguments = { _authtoken };
+
+        try {
+            result = (Object[]) _swiftlyRpc.execute("project.getProjects",
+                arguments);
+            for (Object projectName : result) {
+                // TODO -- load the files for the project
+                ArrayList<SwiftlyDocument> fileList = new ArrayList<SwiftlyDocument>();
+                fileList.add(new SwiftlyDocument("file #1", "Example text"));
+                fileList.add(new SwiftlyDocument("file #2", "Example text more"));
+                SwiftlyProject project = new SwiftlyProject((String)projectName, fileList);
+                _projectList.add(project);
+            }
+        } catch (Exception e) {
+            System.err.println("There was a problem: " + e);
+            e.printStackTrace();
+        }
+
         // TODO this will need to load the projects from the server
         return _projectList;
-    }
-
-    // XXX TEMP
-    protected void initializeProjects ()
-    {
-        ArrayList<SwiftlyDocument> fileList = new ArrayList<SwiftlyDocument>();
-        fileList.add(new SwiftlyDocument("file #1", "Example text"));
-        fileList.add(new SwiftlyDocument("file #2", "Example text more"));
-        SwiftlyProject project = new SwiftlyProject("project1", fileList);
-        _projectList.add(project);
-
-        fileList = new ArrayList<SwiftlyDocument>();
-        fileList.add(new SwiftlyDocument("file #3", "Example text"));
-        fileList.add(new SwiftlyDocument("file #4", "Example text more"));
-        project = new SwiftlyProject("project2", fileList);
-        _projectList.add(project);
     }
 
     protected SwiftlyProject createProject (String name)

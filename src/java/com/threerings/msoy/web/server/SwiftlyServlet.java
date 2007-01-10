@@ -20,6 +20,6 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public String getRpcURL()
     {
         return "http://" + ServerConfig.serverHost + ":" + ServerConfig.getHttpPort() + "/" +
-            SwiftlyEditorServlet.SVC_PATH + "/";
+            SwiftlyEditorServlet.SVC_PATH;
     }
 }
