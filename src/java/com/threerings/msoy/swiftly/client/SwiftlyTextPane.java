@@ -3,7 +3,6 @@ package com.threerings.msoy.swiftly.client;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Event;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -142,21 +141,21 @@ public class SwiftlyTextPane extends JTextPane
     {
         // ctrl-n opens a new tab
         addKeyAction(_editor.createNewTabAction(),
-                     KeyStroke.getKeyStroke(KeyEvent.VK_N, Event.CTRL_MASK));
+                     KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 
         // ctrl-s saves the current document
         addKeyAction(_editor.createSaveCurrentTabAction(),
-                     KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK));
+                     KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 
         // ctrl-w closes the tab
         addKeyAction(_editor.createCloseCurrentTabAction(),
-                     KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK));
+                     KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
 
         // ctrl-z undos the action
-        addKeyAction(_undoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK));
+        addKeyAction(_undoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
 
         // ctrl-y redoes the action
-        addKeyAction(_redoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Y, Event.CTRL_MASK));
+        addKeyAction(_redoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
     }
 
     protected void addPopupMenu ()
