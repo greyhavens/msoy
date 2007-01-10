@@ -87,43 +87,39 @@ public class BoardSprite extends Sprite
 
         // Check each obstacle and figure out which one we hit first.
         for each (var obs :Obstacle in _obstacles) {
-            // TODO: This check shouldn't be necessary - and it causes shots to
-            //  sometimes go through an obstacle - but removing it causes
-            //  further problems.
-            if ((obs.bX <= (newX + rad)) &&
-                ((obs.bX+1.0) >= (newX - rad)) &&
-                (obs.bY <= (newY + rad)) &&
-                ((obs.bY+1.0) >= (newY - rad))) {
+            
+            // Find how long it is til our X coords collide.
+            var timeToX :Number;
+            if (dx > 0.0) {
+                timeToX = (obs.bX - (oldX+rad))/dx;
+            } else if (dx < 0.0) {
+                timeToX = ((obs.bX+1.0) - (oldX-rad))/dx;
+            } else if ((oldX+rad >= obs.bX) && (oldX-rad <= obs.bX+1.0)) {
+                timeToX = -1.0; // already there.
+            } else {
+                timeToX = 2.0; // doesn't hit.
+            }
+            
+            // Find how long it is til our Y coords collide.
+            var timeToY :Number;
+            if (dy > 0.0) {
+                timeToY = (obs.bY - (oldY+rad))/dy;
+            } else if (dy < 0.0) {
+                timeToY = ((obs.bY+1.0) - (oldY-rad))/dy;
+            } else if ((oldY+rad >= obs.bY) && (oldY-rad <= obs.bY+1.0)) {
+                timeToY = -1.0; // already there.
+            } else {
+                timeToY = 2.0; // doesn't hit.
+            }
 
-                // Find how long it is til our X coords collide.
-                var timeToX :Number;
-                if (dx > 0.0) {
-                    timeToX = (obs.bX - (oldX+rad))/dx;
-                } else if (dx < 0.0) {
-                    timeToX = ((obs.bX+1.0) - (oldX-rad))/dx;
-                } else if ((oldX+rad >= obs.bX) && (oldX-rad <= obs.bX+1.0)) {
-                    timeToX = -1.0; // already there.
-                } else {
-                    timeToX = 2.0; // doesn't hit.
-                }
-
-                // Find how long it is til our Y coords collide.
-                var timeToY :Number;
-                if (dy > 0.0) {
-                    timeToY = (obs.bY - (oldY+rad))/dy;
-                } else if (dy < 0.0) {
-                    timeToY = ((obs.bY+1.0) - (oldY-rad))/dy;
-                } else if ((oldY+rad >= obs.bY) && (oldY-rad <= obs.bY+1.0)) {
-                    timeToY = -1.0; // already there.
-                } else {
-                    timeToY = 2.0; // doesn't hit.
-                }
-
-                var time :Number = Math.max(timeToX, timeToY);
-                if (time >= 0.0 && time <= 1.0 && time < bestTime) {
-                    bestTime = time;
-                    bestHit = new Collision(obs, time, timeToX > timeToY);
-                }
+            // Update our bestTime if this is a legitimate collision and is before any
+            //  others we've found.
+            var time :Number = Math.max(timeToX, timeToY);
+            if (time >= 0.0 && time <= 1.0 && time < bestTime &&
+                ((timeToX >= 0.0 || (oldX+rad >= obs.bX) && (oldX-rad <= obs.bX+1.0))) &&
+                ((timeToY >= 0.0 || (oldY+rad >= obs.bY) && (oldY-rad <= obs.bY+1.0)))){
+                bestTime = time;
+                bestHit = new Collision(obs, time, timeToX > timeToY);
             }
         }
         return bestHit;
