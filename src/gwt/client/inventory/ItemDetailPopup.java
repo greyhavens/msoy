@@ -78,7 +78,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
         _status.setStyleName("itemDetailStatus");
 
         Button button;
-        if (_item.parentId == -1) {
+        if (_item.parentId == 0) {
             button = new Button(_ctx.imsgs.detailList());
             new ClickCallback(_ctx, button, _status) {
                 public boolean callService () {
@@ -130,7 +130,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
         };
         controls.add(button);
 
-        if (_item.parentId == -1) {
+        if (_item.parentId == 0) {
             button = new Button(_ctx.imsgs.detailEdit());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
