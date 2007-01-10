@@ -14,6 +14,7 @@ import com.threerings.crowd.client.OccupantObserver;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.ezgame.client.GameControlBackend;
@@ -40,6 +41,9 @@ public class WorldGameControlBackend extends GameControlBackend
         
         // will be null if not a room
         _roomObj = (_mctx.getLocationDirector().getPlaceObject() as RoomObject);
+        if (_roomObj != null) {
+            _roomObj.addListener(_movelist);
+        }
     }
     
     // from LocationObserver
@@ -145,8 +149,9 @@ public class WorldGameControlBackend extends GameControlBackend
     protected function getOccupantLocation_v1 (occupantId :int) :Array
     {
         if (_roomObj != null) {
-            var loc :MsoyLocation = (_roomObj.occupantLocs.get(occupantId) as MsoyLocation);
-            if (loc != null) {
+            var sloc :SceneLocation = (_roomObj.occupantLocs.get(occupantId) as SceneLocation);
+            if (sloc != null) {
+                var loc :MsoyLocation = (sloc.loc as MsoyLocation);
                 return [loc.x, loc.y, loc.z];
             }
         }

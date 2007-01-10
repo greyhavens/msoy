@@ -77,7 +77,7 @@ public class WorldGameControl extends EZGameControl
      */
     public function getOccupantLocation (occupantId :int) :Array
     {
-        return (callEZCode("getOccupantLocation_v1") as Array);
+        return (callEZCode("getOccupantLocation_v1", occupantId) as Array);
     }
     
     /**
@@ -85,7 +85,7 @@ public class WorldGameControl extends EZGameControl
      */
     public function getOccupantName (occupantId :int) :String
     {
-        return (callEZCode("getOccupantName_v1") as String);
+        return (callEZCode("getOccupantName_v1", occupantId) as String);
     }
     
     // from EZGameControl

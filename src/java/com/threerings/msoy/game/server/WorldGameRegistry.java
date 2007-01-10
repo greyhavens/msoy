@@ -182,6 +182,11 @@ public class WorldGameRegistry
     protected void joinWorldGame (MemberObject member, int gameOid)
         throws InvocationException
     {
+        // make sure they're not already in the game
+        if (member.inWorldGame == gameOid) {
+            return;
+        }
+        
         // make sure the game object exists
         WorldGameObject wgobj = getWorldGameObject(member, gameOid);
         
