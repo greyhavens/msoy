@@ -77,25 +77,12 @@ public class AbstractRoomView extends Canvas
         return _furni.values();
     }
 
-    protected function updateComplete (evt :FlexEvent) :void
+    /**
+     * Returns the room distributed object.
+     */
+    public function getRoomObject () :RoomObject
     {
-        removeEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
-
-        relayout();
-    }
-
-    override public function setActualSize (w :Number, h :Number) :void
-    {
-        var scale :Number = (h / TARGET_HEIGHT);
-
-        scaleX = scale;
-        scaleY = scale;
-        super.setActualSize(w, h);
-    }
-
-    protected function didResize (event :ResizeEvent) :void
-    {
-        relayout();
+        return _roomObj;
     }
 
     /**
@@ -115,24 +102,6 @@ public class AbstractRoomView extends Canvas
     }
 
     /**
-     * Layout everything.
-     */
-    protected function relayout () :void
-    {
-        configureScrollRect();
-
-        var sprite :MsoySprite;
-        for each (sprite in _furni.values()) {
-            locationUpdated(sprite);
-        }
-        for each (sprite in _otherSprites) {
-            locationUpdated(sprite);
-        }
-
-        validateNow();
-    }
-
-    /**
      * Enable or disable editing. Called by the EditRoomController.
      */
     public function setEditing (
@@ -146,27 +115,6 @@ public class AbstractRoomView extends Canvas
         } else {
             updateAllFurni();
         }
-    }
-
-    /**
-     * Configure the rectangle used to select a portion of the view
-     * that's showing.
-     */
-    protected function configureScrollRect () :void
-    {
-        var bounds :Rectangle = getScrollBounds();
-        if (bounds.width > unscaledWidth) {
-            scrollRect = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
-
-        } else {
-            scrollRect = null;
-        }
-    }
-
-    protected function computeMinScale () :Number
-    {
-        var sceneDepth :int = _scene.getDepth();
-        return (sceneDepth == 0) ? 0 : (FOCAL / (FOCAL + sceneDepth));
     }
     
     /**
@@ -362,6 +310,148 @@ public class AbstractRoomView extends Canvas
         removeSprite(sprite);
     }
 
+    /**
+     * Calculate the info needed to perspectivize a piece of furni.
+     */
+    public function getPerspInfo (
+        sprite :MsoySprite, contentWidth :int, contentHeight :int,
+        loc :MsoyLocation) :PerspInfo
+    {
+        var hotSpot :Point = sprite.getMediaHotSpot();
+        var mediaScaleX :Number = Math.abs(sprite.getMediaScaleX());
+        var mediaScaleY :Number = Math.abs(sprite.getMediaScaleY());
+
+        // below, 0 refers to the right side of the source sprite
+        // N refers to the left side, and H refers to the location
+        // of the hotspot
+
+        // the scale of the object is determined by the z coordinate
+        var distH :Number = FOCAL + (_scene.getDepth() * loc.z);
+        var dist0 :Number = (hotSpot.x * mediaScaleX);
+        var distN :Number = (contentWidth - hotSpot.x) * mediaScaleX;
+        if (loc.x < .5) {
+            dist0 *= -1;
+        } else {
+            distN *= -1;
+        }
+
+        var scale0 :Number = FOCAL / (distH + dist0);
+        var scaleH :Number = FOCAL / distH;
+        var scaleN :Number = FOCAL / (distH + distN);
+
+        var logicalY :Number = loc.y +
+            ((contentHeight * mediaScaleY) / TARGET_HEIGHT);
+
+        var p0 :Point = projectedLocation(scale0, loc.x, logicalY);
+        var pH :Point = projectedLocation(scaleH, loc.x, loc.y);
+        var pN :Point = projectedLocation(scaleN, loc.x, logicalY);
+
+        var height0 :Number = contentHeight * scale0 * mediaScaleY;
+        var heightN :Number = contentHeight * scaleN * mediaScaleY;
+
+        // min/max don't account for the hotspot location
+        var minX :Number = Math.min(p0.x, pN.x);
+        var minY :Number = Math.min(p0.y, pN.y);
+        p0.offset(-minX, -minY);
+        pN.offset(-minX, -minY);
+        pH.offset(-minX, -minY);
+
+        return new PerspInfo(p0, height0, pN, heightN, pH);
+    }
+
+    // documentation inherited from interface PlaceView
+    public function willEnterPlace (plobj :PlaceObject) :void
+    {
+        // save our scene object
+        _roomObj = (plobj as RoomObject);
+
+        // get the specifics on the current scene from the scene director
+        _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
+
+        configureScrollRect();
+        updateDrawnRoom();
+        updateAllFurni();
+    }
+
+    public function updateAllFurni () :void
+    {
+        // set up any furniture
+        for each (var furni :FurniData in _scene.getFurni()) {
+            if (!furni.media.isAudio()) {
+                updateFurni(furni);
+            }
+        }
+    }
+
+    // documentation inherited from interface PlaceView
+    public function didLeavePlace (plobj :PlaceObject) :void
+    {
+        removeAll(_furni);
+
+        _roomObj = null;
+        _scene = null;
+    }
+
+    protected function updateComplete (evt :FlexEvent) :void
+    {
+        removeEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
+
+        relayout();
+    }
+
+    override public function setActualSize (w :Number, h :Number) :void
+    {
+        var scale :Number = (h / TARGET_HEIGHT);
+
+        scaleX = scale;
+        scaleY = scale;
+        super.setActualSize(w, h);
+    }
+
+    protected function didResize (event :ResizeEvent) :void
+    {
+        relayout();
+    }
+
+    /**
+     * Layout everything.
+     */
+    protected function relayout () :void
+    {
+        configureScrollRect();
+
+        var sprite :MsoySprite;
+        for each (sprite in _furni.values()) {
+            locationUpdated(sprite);
+        }
+        for each (sprite in _otherSprites) {
+            locationUpdated(sprite);
+        }
+
+        validateNow();
+    }
+
+    /**
+     * Configure the rectangle used to select a portion of the view
+     * that's showing.
+     */
+    protected function configureScrollRect () :void
+    {
+        var bounds :Rectangle = getScrollBounds();
+        if (bounds.width > unscaledWidth) {
+            scrollRect = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
+
+        } else {
+            scrollRect = null;
+        }
+    }
+
+    protected function computeMinScale () :Number
+    {
+        var sceneDepth :int = _scene.getDepth();
+        return (sceneDepth == 0) ? 0 : (FOCAL / (FOCAL + sceneDepth));
+    }
+
     protected function scrollRectUpdated () :void
     {
         if (_bkg != null &&
@@ -416,55 +506,6 @@ public class AbstractRoomView extends Canvas
         return new Point(floorInset + (x * floorWidth),
             horizonY +
             ((TARGET_HEIGHT - horizonY) - (y * TARGET_HEIGHT)) * scale);
-    }
-
-    /**
-     * Calculate the info needed to perspectivize a piece of furni.
-     */
-    public function getPerspInfo (
-        sprite :MsoySprite, contentWidth :int, contentHeight :int,
-        loc :MsoyLocation) :PerspInfo
-    {
-        var hotSpot :Point = sprite.getMediaHotSpot();
-        var mediaScaleX :Number = Math.abs(sprite.getMediaScaleX());
-        var mediaScaleY :Number = Math.abs(sprite.getMediaScaleY());
-
-        // below, 0 refers to the right side of the source sprite
-        // N refers to the left side, and H refers to the location
-        // of the hotspot
-
-        // the scale of the object is determined by the z coordinate
-        var distH :Number = FOCAL + (_scene.getDepth() * loc.z);
-        var dist0 :Number = (hotSpot.x * mediaScaleX);
-        var distN :Number = (contentWidth - hotSpot.x) * mediaScaleX;
-        if (loc.x < .5) {
-            dist0 *= -1;
-        } else {
-            distN *= -1;
-        }
-
-        var scale0 :Number = FOCAL / (distH + dist0);
-        var scaleH :Number = FOCAL / distH;
-        var scaleN :Number = FOCAL / (distH + distN);
-
-        var logicalY :Number = loc.y +
-            ((contentHeight * mediaScaleY) / TARGET_HEIGHT);
-
-        var p0 :Point = projectedLocation(scale0, loc.x, logicalY);
-        var pH :Point = projectedLocation(scaleH, loc.x, loc.y);
-        var pN :Point = projectedLocation(scaleN, loc.x, logicalY);
-
-        var height0 :Number = contentHeight * scale0 * mediaScaleY;
-        var heightN :Number = contentHeight * scaleN * mediaScaleY;
-
-        // min/max don't account for the hotspot location
-        var minX :Number = Math.min(p0.x, pN.x);
-        var minY :Number = Math.min(p0.y, pN.y);
-        p0.offset(-minX, -minY);
-        pN.offset(-minX, -minY);
-        pH.offset(-minX, -minY);
-
-        return new PerspInfo(p0, height0, pN, heightN, pH);
     }
 
     /**
@@ -581,39 +622,6 @@ public class AbstractRoomView extends Canvas
         if (sprite == _bkg) {
             _bkg = null;
         }
-    }
-
-    // documentation inherited from interface PlaceView
-    public function willEnterPlace (plobj :PlaceObject) :void
-    {
-        // save our scene object
-        _roomObj = (plobj as RoomObject);
-
-        // get the specifics on the current scene from the scene director
-        _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
-
-        configureScrollRect();
-        updateDrawnRoom();
-        updateAllFurni();
-    }
-
-    public function updateAllFurni () :void
-    {
-        // set up any furniture
-        for each (var furni :FurniData in _scene.getFurni()) {
-            if (!furni.media.isAudio()) {
-                updateFurni(furni);
-            }
-        }
-    }
-
-    // documentation inherited from interface PlaceView
-    public function didLeavePlace (plobj :PlaceObject) :void
-    {
-        removeAll(_furni);
-
-        _roomObj = null;
-        _scene = null;
     }
 
     protected function updateDrawnRoom () :void
