@@ -27,6 +27,8 @@ public class ShotSprite extends Sprite {
 
     public var complete :Boolean;
 
+    public var ttl :Number;
+
     public function ShotSprite (x :Number, y :Number,
         vel :Number, angle :Number, shipId :int, shipType :int,
         game :StarFight) :void
@@ -36,6 +38,8 @@ public class ShotSprite extends Sprite {
         this.xVel = vel * Math.cos(angle);
         this.yVel = vel * Math.sin(angle);
         this.shipId = shipId;
+
+        ttl = TIME_TO_LIVE * 1000.0 / Codes.REFRESH_RATE;
 
         complete = false;
 
@@ -53,8 +57,18 @@ public class ShotSprite extends Sprite {
         addChild(_shotMovie);
     }
 
+    /**
+     * Allow our shot to update itself.
+     */
     public function tick (board :BoardSprite, time :Number) :void
     {
+        // Update our time to live and destroy if appropriate.
+        ttl -= time;
+        if (ttl < 0) {
+            complete = true;
+            return;
+        }
+
         var coll :Collision = board.getCollision(boardX, boardY,
             boardX + xVel*time, boardY + yVel*time, COLLISION_RAD, shipId);
         if (coll == null) {
@@ -86,6 +100,9 @@ public class ShotSprite extends Sprite {
     }
 
     protected static const COLLISION_RAD :Number = 0.1;
+
+    /** Time to live in seconds. */
+    protected static const TIME_TO_LIVE :Number = 5.0;
 
     /** Our shot animation. */
     protected var _shotMovie :MovieClipAsset;

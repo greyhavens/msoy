@@ -34,9 +34,6 @@ public class StarFight extends Sprite
     public static const WIDTH :int = 800;
     public static const HEIGHT :int = 530;
 
-    /** How often we send updates to the server. */
-    public static const FRAMES_PER_UPDATE :int = 3;
-
     /**
      * Constructs our main view area for the game.
      */
@@ -191,7 +188,7 @@ public class StarFight extends Sprite
         _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, _ownShip.keyReleased);
 
         // Set up our ticker that will control movement.
-        var screenTimer :Timer = new Timer(REFRESH_RATE, 0); // As fast as possible.
+        var screenTimer :Timer = new Timer(Codes.REFRESH_RATE, 0); // As fast as possible.
         screenTimer.addEventListener(TimerEvent.TIMER, tick);
         screenTimer.start();
     }
@@ -393,7 +390,7 @@ public class StarFight extends Sprite
     public function tick (event :TimerEvent) :void
     {
         var now :int = getTimer();
-        var time :Number = (now - _lastTickTime)/REFRESH_RATE;
+        var time :Number = (now - _lastTickTime)/Codes.REFRESH_RATE;
 
         var ownOldX :Number = _ownShip.boardX;
         var ownOldY :Number = _ownShip.boardY;
@@ -447,7 +444,7 @@ public class StarFight extends Sprite
         }
 
         // Every few frames, broadcast our status to everyone else.
-        if (_updateCount++ % FRAMES_PER_UPDATE == 0) {
+        if (_updateCount++ % Codes.FRAMES_PER_UPDATE == 0) {
             _gameCtrl.set("ship", _ownShip.writeTo(new ByteArray()),
                 _gameCtrl.getMyIndex());
         }
@@ -488,9 +485,6 @@ public class StarFight extends Sprite
     protected var _shipLayer :Sprite;
     protected var _shotLayer :Sprite;
     protected var _statusLayer :Sprite;
-
-    /** Constants to control update frequency. */
-    protected static const REFRESH_RATE :int = 50;
 
     /** This could be more dynamic. */
     protected static const MAX_POWERUPS :int = 10;

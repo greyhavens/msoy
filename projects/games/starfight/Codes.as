@@ -15,5 +15,11 @@ public class Codes {
     public static const SHIP_1 :int = 0;
     public static const SHIP_2 :int = 1;
     public static const NUM_SHIPS :int = 2;
+
+    /** millis between screen refreshes. */
+    public static const REFRESH_RATE :int = 50;
+
+    /** How often we send updates to the server. */
+    public static const FRAMES_PER_UPDATE :int = 3;
 }
 }

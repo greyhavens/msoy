@@ -379,7 +379,7 @@ public class ShipSprite extends Sprite
         Logger.log("dX: " + dX);
 
         if (Math.abs(dX) < 0.5) {
-            xVel += dX/(StarFight.FRAMES_PER_UPDATE*2);
+            xVel += dX/(Codes.FRAMES_PER_UPDATE*2);
         } else {
             boardX = report.boardX;
         }
@@ -387,7 +387,7 @@ public class ShipSprite extends Sprite
         // Maybe let boardY float if we're not too far off.
         var dY :Number = report.boardY - boardY;
         if (Math.abs(dY) < 0.5) {
-            yVel += dY/(StarFight.FRAMES_PER_UPDATE*2);
+            yVel += dY/(Codes.FRAMES_PER_UPDATE*2);
         } else {
             boardY = report.boardY;
         }
@@ -397,7 +397,7 @@ public class ShipSprite extends Sprite
         // Maybe let rotation float if we're not too far off.
         var dTheta :Number = report.rotation - rotation;
         if (Math.abs(dTheta) < 45) {
-            turnRate += dTheta/(StarFight.FRAMES_PER_UPDATE*2);
+            turnRate += dTheta/(Codes.FRAMES_PER_UPDATE*2);
         } else {
             rotation = report.rotation;
         }
