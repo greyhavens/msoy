@@ -18,10 +18,10 @@ public class SwiftlyToolbar extends JToolBar
     public void updateEditorActions()
     {
         SwiftlyTextPane textPane =  _applet.getEditor().getCurrentTextPane();
-        _cutButton.setAction(textPane.getCutAction());
-        _copyButton.setAction(textPane.getCopyAction());
-        _pasteButton.setAction(textPane.getPasteAction());
-        _selectAllButton.setAction(textPane.getSelectAllAction());
+        _cutButton.setAction(textPane.createCutAction());
+        _copyButton.setAction(textPane.createCopyAction());
+        _pasteButton.setAction(textPane.createPasteAction());
+        _selectAllButton.setAction(textPane.createSelectAllAction());
         _undoButton.setAction(textPane.getUndoAction());
         _redoButton.setAction(textPane.getRedoAction());
     }

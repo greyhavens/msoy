@@ -100,7 +100,7 @@ public class SwiftlyTextPane extends JTextPane
         return _redoAction;
     }
 
-    public Action getCutAction ()
+    public Action createCutAction ()
     {
         return new AbstractAction("Cut") {
             public void actionPerformed (ActionEvent e) {
@@ -109,7 +109,7 @@ public class SwiftlyTextPane extends JTextPane
         };
     }
 
-    public Action getCopyAction ()
+    public Action createCopyAction ()
     {
         return new AbstractAction("Copy") {
             public void actionPerformed (ActionEvent e) {
@@ -118,7 +118,7 @@ public class SwiftlyTextPane extends JTextPane
         };
     }
 
-    public Action getPasteAction ()
+    public Action createPasteAction ()
     {
         return new AbstractAction("Paste") {
             public void actionPerformed (ActionEvent e) {
@@ -129,7 +129,7 @@ public class SwiftlyTextPane extends JTextPane
 
     // TODO select all when called from the toolbar isn't showing the selected text, despite
     // having actually selected it. Fix this.
-    public Action getSelectAllAction ()
+    public Action createSelectAllAction ()
     {
         return new AbstractAction("Select All") {
             public void actionPerformed (ActionEvent e) {
@@ -165,15 +165,15 @@ public class SwiftlyTextPane extends JTextPane
 
         // TODO is there a cross platform way to show what the keybindings are for these actions?
         // Cut
-        _popup.add(createMenuItem("Cut", getCutAction()));
+        _popup.add(createMenuItem("Cut", createCutAction()));
         // Copy
-        _popup.add(createMenuItem("Copy", getCopyAction()));
+        _popup.add(createMenuItem("Copy", createCopyAction()));
         // Paste
-        _popup.add(createMenuItem("Paste", getPasteAction()));
+        _popup.add(createMenuItem("Paste", createPasteAction()));
         // Separator
         _popup.addSeparator();
         // Select All
-        _popup.add(createMenuItem("Select All", getSelectAllAction()));
+        _popup.add(createMenuItem("Select All", createSelectAllAction()));
         // Separator
         _popup.addSeparator();
         // Undo
