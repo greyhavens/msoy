@@ -3,6 +3,7 @@ package {
 import flash.display.Scene;
 import flash.display.Sprite;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 
 import mx.core.MovieClipAsset;
 import mx.utils.ObjectUtil;
@@ -21,6 +22,7 @@ public class Ball extends Sprite
     public function Ball (particle :BallParticle, color :int = 0xff0000)
     {
         this.particle = particle;
+        _flamingo = null;
 
         _ballAnimation = MovieClipAsset(new ballAnimationClass());
         _playing = true;
@@ -48,12 +50,29 @@ public class Ball extends Sprite
         }
     }
 
-    protected function mouseClick (event :MouseEvent) :void
+    public function hitBall (p :Point) :void
     {
-        particle.addRandomForce();
+        if (_flamingo == null) {
+            // Hit without a flamingo? Wacky
+            return;
+        }
+
+        removeChild(_flamingo);
+        _flamingo = null;
+
+        particle.addHitForce(p);
     }
 
-    protected var _dragging :Boolean;
+    protected function mouseClick (event :MouseEvent) :void
+    {
+        if (_flamingo != null) {
+            return;
+        }
+        _flamingo = new WonderlandFlamingo(this);
+        addChild(_flamingo);
+    }
+
+    protected var _flamingo :WonderlandFlamingo;
 
     // The player that controls this ball.
     protected var _playerId :int;

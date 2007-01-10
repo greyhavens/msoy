@@ -1,6 +1,7 @@
 package {
 
 import flash.display.Sprite;
+import flash.geom.Point;
 import org.cove.ape.CircleParticle;
 import org.cove.ape.Vector;
 
@@ -66,6 +67,26 @@ public class BallParticle extends CircleParticle
         var angle :Number = Math.random() * 2 * Math.PI;
         
         addMasslessForce(new Vector(Math.cos(angle) * oompf, Math.sin(angle) * oompf));
+    }
+
+    /**
+     * Applies a force based on a hit to this ball.
+     */
+    public function addHitForce (p :Point) :void
+    {
+        var angle :Number = Math.PI + Math.atan(p.y / p.x);
+        var strength :Number = Math.sqrt(p.x*p.x + p.y*p.y) * 2;
+
+        strength = Math.min(strength, 200);
+
+        if (p.x < 0) {
+            angle += Math.PI;
+        }
+
+        angle += ball.rotation * Math.PI/180;
+        
+        addMasslessForce(new Vector(Math.cos(angle) * strength, 
+                                    Math.sin(angle) * strength));
     }
 }
 
