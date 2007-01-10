@@ -80,7 +80,7 @@ public class BoardSprite extends Sprite
                             bestTime = u;
                             bestHit = new Collision(ship, u, false);
                         }
-                    }                    
+                    }
                 }
             }
         }
@@ -139,7 +139,7 @@ public class BoardSprite extends Sprite
 
         var dx :Number = newX - oldX;
         var dy :Number = newY - oldY;
-        
+
         // Check each powerup and figure out which one we hit first.
         for (var ii :int; ii < _powerups.length; ii++) {
             var pow :Powerup = _powerups[ii];
@@ -154,7 +154,7 @@ public class BoardSprite extends Sprite
             var b :Number = 2*(dx*(oldX-bX) + dy*(oldY-bY));
             var c :Number = bX*bX + bY*bY + oldX*oldX + oldY*oldY -
                 2*(bX*oldX + bY*oldY) - r*r;
-            
+
             var determ :Number = b*b - 4*a*c;
             if (determ >= 0.0) {
                 var u :Number = (-b - Math.sqrt(determ))/(2*a);
@@ -163,7 +163,7 @@ public class BoardSprite extends Sprite
                         bestTime = u;
                         bestHit = ii;
                     }
-                }                    
+                }
             }
         }
         return bestHit;
@@ -189,10 +189,10 @@ public class BoardSprite extends Sprite
     }
 
     public function explode (x :Number, y :Number, rot :int,
-        isSmall :Boolean) :void
+        isSmall :Boolean, shipType :int) :void
     {
         var exp :Explosion = new Explosion(x * Codes.PIXELS_PER_TILE,
-            y * Codes.PIXELS_PER_TILE, rot, isSmall, this);
+            y * Codes.PIXELS_PER_TILE, rot, isSmall, shipType, this);
         addChild(exp);
     }
 

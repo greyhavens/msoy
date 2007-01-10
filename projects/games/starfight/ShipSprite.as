@@ -21,6 +21,7 @@ public class ShipSprite extends Sprite
     public static const KV_RIGHT :uint = 39;
     public static const KV_DOWN :uint = 40;
     public static const KV_SPACE :uint = 32;
+    public static const KV_ENTER :uint = 13;
 
     /** The size of the ship. */
     public static const WIDTH :int = 40;
@@ -58,6 +59,9 @@ public class ShipSprite extends Sprite
     /** our id. */
     public var shipId :int;
 
+    /** Type of ship we're using. */
+    public var shipType :int;
+
     /**
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
@@ -73,6 +77,7 @@ public class ShipSprite extends Sprite
         power = 1.0; // full
         powerups = 0;
         this.shipId = shipId;
+        shipType = Codes.SHIP_1;
 
         if (!skipStartingPos) {
             var pt :Point = board.getStartingPos();
@@ -83,21 +88,7 @@ public class ShipSprite extends Sprite
         _board = board;
         _game = game;
 
-        // Set up our animation.
-        _shipMovie = MovieClipAsset(new shipAnim());
-        setAnimMode(IDLE);
-        _shipMovie.x = WIDTH/2;
-        _shipMovie.y = -HEIGHT/2;
-        _shipMovie.rotation = 90;
-        addChild(_shipMovie);
-
-        _shieldMovie = MovieClipAsset(new shieldAnim());
-        _shieldMovie.gotoAndStop(1);
-        _shieldMovie.x = 55/2;
-        _shieldMovie.y = -58/2;
-        _shieldMovie.rotation = 90;
-        addChild(_shieldMovie);
-
+        setShipType(shipType);
     }
 
     /**
@@ -165,7 +156,7 @@ public class ShipSprite extends Sprite
     {
         power -= ((powerups & SHIELDS_MASK) ? HIT_POWER/2 : HIT_POWER);
         if (power <= 0.0) {
-            _game.explode(boardX, boardY, rotation, shooterId);
+            _game.explode(boardX, boardY, rotation, shooterId, shipType);
             power = 1.0; //full
             powerups = 0;
             var pt :Point = _board.getStartingPos();
@@ -266,6 +257,44 @@ public class ShipSprite extends Sprite
                 fire();
             }
             _firing = true;
+        } else if (event.keyCode == KV_ENTER) {
+            setShipType((shipType+1)%Codes.NUM_SHIPS);
+        }
+    }
+
+    /**
+     * Sets up our sprites and such for our given shiptype.
+     */
+    protected function setShipType (type :int) :void
+    {
+        if (type != shipType || _shipMovie == null) {
+            shipType = type;
+
+            // Remove any old movies of other types of ship.
+            if (_shipMovie != null) {
+                removeChild(_shipMovie);
+                removeChild(_shieldMovie);
+            }
+
+            // Set up our animation.
+            if (shipType == Codes.SHIP_1) {
+                _shipMovie = MovieClipAsset(new shipAnim());
+                _shieldMovie = MovieClipAsset(new shieldAnim());
+            } else {
+                _shipMovie = MovieClipAsset(new ship2Anim());
+                _shieldMovie = MovieClipAsset(new shield2Anim());
+            }
+            setAnimMode(IDLE);
+            _shipMovie.x = WIDTH/2;
+            _shipMovie.y = -HEIGHT/2;
+            _shipMovie.rotation = 90;
+            addChild(_shipMovie);
+
+            _shieldMovie.gotoAndStop(1);
+            _shieldMovie.x = 55/2;
+            _shieldMovie.y = -58/2;
+            _shieldMovie.rotation = 90;
+            addChild(_shieldMovie);
         }
     }
 
@@ -285,7 +314,7 @@ public class ShipSprite extends Sprite
             ShotSprite.NORMAL;
 
         _game.fireShot(boardX + cos, boardY + sin,
-            shotVel, shotAngle, shipId, type);
+            shotVel, shotAngle, shipId, shipType, type);
 
         _ticksToFire = TICKS_PER_SHOT - 1;
     }
@@ -331,6 +360,7 @@ public class ShipSprite extends Sprite
         rotation = bytes.readShort();
         power = bytes.readFloat();
         powerups = bytes.readInt();
+        setShipType(bytes.readInt());
     }
 
     /**
@@ -375,6 +405,7 @@ public class ShipSprite extends Sprite
         // These we always update exactly as reported.
         power = report.power;
         powerups = report.powerups;
+        setShipType(report.shipType);
     }
 
     /**
@@ -392,6 +423,7 @@ public class ShipSprite extends Sprite
         bytes.writeShort(rotation);
         bytes.writeFloat(power);
         bytes.writeInt(powerups);
+        bytes.writeInt(shipType);
 
         return bytes;
     }
@@ -424,6 +456,12 @@ public class ShipSprite extends Sprite
 
     [Embed(source="rsrc/ship_shield.swf")]
     protected var shieldAnim :Class;
+
+    [Embed(source="rsrc/ship2.swf#ship_movie_01_alt")]
+    protected var ship2Anim :Class;
+
+    [Embed(source="rsrc/ship2_shield.swf")]
+    protected var shield2Anim :Class;
 
     /** "frames" within the actionscript for movement animations. */
     protected static const IDLE :int = 1;

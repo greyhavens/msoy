@@ -23,10 +23,13 @@ public class ShotSprite extends Sprite {
     /** the ships that fired us. */
     public var shipId :int;
 
+    public var shipType :int;
+
     public var complete :Boolean;
 
     public function ShotSprite (x :Number, y :Number,
-        vel :Number, angle :Number, shipId :int, game :StarFight) :void
+        vel :Number, angle :Number, shipId :int, shipType :int,
+        game :StarFight) :void
     {
         boardX = x;
         boardY = y;
@@ -38,7 +41,11 @@ public class ShotSprite extends Sprite {
 
         _game = game;
 
-        _shotMovie = MovieClipAsset(new shotAnim());
+        if (shipType == Codes.SHIP_1) {
+            _shotMovie = MovieClipAsset(new shotAnim());
+        } else {
+            _shotMovie = MovieClipAsset(new shot2Anim());
+        }
         _shotMovie.gotoAndStop(1);
         _shotMovie.x = -_shotMovie.width/2;
         _shotMovie.y = 0;
@@ -85,6 +92,9 @@ public class ShotSprite extends Sprite {
 
     [Embed(source="rsrc/beam.swf")]
     protected var shotAnim :Class;
+
+    [Embed(source="rsrc/beam2.swf")]
+    protected var shot2Anim :Class;
 
     /** Our game. */
     protected var _game :StarFight;

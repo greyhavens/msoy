@@ -290,19 +290,20 @@ public class StarFight extends Sprite
         if (event.name == "shot") {
             var val :Array = (event.value as Array);
             addShot(new ShotSprite(val[0], val[1], val[2], val[3], val[4],
-                        this));
+                        val[5], this));
 
-            if (val[5] == ShotSprite.SPREAD) {
+            if (val[6] == ShotSprite.SPREAD) {
                 addShot(new ShotSprite(val[0], val[1], val[2],
-                            val[3] + ShotSprite.SPREAD_FACT, val[4],
+                            val[3] + ShotSprite.SPREAD_FACT, val[4], val[5],
                             this));
                 addShot(new ShotSprite(val[0], val[1], val[2],
-                            val[3] - ShotSprite.SPREAD_FACT, val[4],
+                            val[3] - ShotSprite.SPREAD_FACT, val[4], val[5],
                             this));
             }
         } else if (event.name == "explode") {
             var arr :Array = (event.value as Array);
-            _board.explode(arr[0], arr[1], arr[2], false);
+
+            _board.explode(arr[0], arr[1], arr[2], false, arr[4]);
             if (arr[3] == _ownShip.shipId) {
                 _status.addScore(KILL_PTS);
             }
@@ -322,7 +323,7 @@ public class StarFight extends Sprite
     public function hitShip (ship :ShipSprite, x :Number, y :Number,
         shooterId :int) :void
     {
-        _board.explode(x, y, 0, true);
+        _board.explode(x, y, 0, true, 0);
         if (ship == _ownShip) {
             ship.hit(shooterId);
             _status.setPower(ship.power);
@@ -337,7 +338,7 @@ public class StarFight extends Sprite
      */
     public function hitObs (obs :Obstacle, x :Number, y :Number) :void
     {
-        _board.explode(x, y, 0, true);
+        _board.explode(x, y, 0, true, 0);
     }
 
 
@@ -354,7 +355,8 @@ public class StarFight extends Sprite
      * Send a message to the server about our shot.
      */
     public function fireShot (x :Number, y :Number,
-        vel :Number, angle :Number, shipId :int, type :int) :void
+        vel :Number, angle :Number, shipId :int, shipType :int,
+        type :int) :void
     {
         var args :Array = new Array(5);
         args[0] = x;
@@ -362,7 +364,8 @@ public class StarFight extends Sprite
         args[2] = vel;
         args[3] = angle;
         args[4] = shipId;
-        args[5] = type;
+        args[5] = shipType;
+        args[6] = type;
         _gameCtrl.sendMessage("shot", args);
     }
 
@@ -370,13 +373,14 @@ public class StarFight extends Sprite
      * Register a big ole' explosion at the location.
      */
     public function explode (x :Number, y :Number, rot :int,
-        shooterId :int) :void
+        shooterId :int, shipType :int) :void
     {
         var args :Array = new Array(3);
         args[0] = x;
         args[1] = y;
         args[2] = rot;
         args[3] = shooterId;
+        args[4] = shipType;
         _gameCtrl.sendMessage("explode", args);
     }
 

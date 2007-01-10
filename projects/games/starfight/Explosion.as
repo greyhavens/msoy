@@ -9,7 +9,7 @@ import mx.core.MovieClipAsset;
 public class Explosion extends Sprite
 {
     public function Explosion (x :int, y :int, rot :int, isSmall :Boolean,
-        parent :BoardSprite)
+        shipType :int, parent :BoardSprite)
     {
         _parent = parent;
         _isSmall = isSmall;
@@ -17,7 +17,11 @@ public class Explosion extends Sprite
         if (isSmall) {
             _explodeMovie = MovieClipAsset(new smExplodeAnim());
         } else {
-            _explodeMovie = MovieClipAsset(new explodeAnim());
+            if (shipType == Codes.SHIP_1) {
+                _explodeMovie = MovieClipAsset(new explodeAnim());
+            } else {
+                _explodeMovie = MovieClipAsset(new explode2Anim());
+            }
         }
         _explodeMovie.x = _explodeMovie.width/2;
         _explodeMovie.y = -_explodeMovie.height/2;
@@ -52,6 +56,9 @@ public class Explosion extends Sprite
 
     [Embed(source="rsrc/ship_explosion_big.swf")]
     protected var explodeAnim :Class;
+
+    [Embed(source="rsrc/ship2_explosion_big.swf")]
+    protected var explode2Anim :Class;
 
     [Embed(source="rsrc/ship_explosion_small.swf")]
     protected var smExplodeAnim :Class;

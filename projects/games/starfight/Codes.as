@@ -8,6 +8,11 @@ public class Codes {
 
     /** Color constants. */
     public static const BLACK :uint = uint(0x000000);
-    public static const CYAN :uint = uint(0x00FFFF); 
+    public static const CYAN :uint = uint(0x00FFFF);
+
+    /** Ship types. */
+    public static const SHIP_1 :int = 0;
+    public static const SHIP_2 :int = 1;
+    public static const NUM_SHIPS :int = 2;
 }
 }
