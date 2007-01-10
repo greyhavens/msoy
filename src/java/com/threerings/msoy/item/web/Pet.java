@@ -17,7 +17,7 @@ public class Pet extends Item
     // @Override
     public boolean isConsistent ()
     {
-        return super.isConsistent() && (furniMedia != null) && !nonBlank(name);
+        return super.isConsistent() && (furniMedia != null) && nonBlank(name);
     }
 
     // @Override // from Item
