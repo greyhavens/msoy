@@ -124,7 +124,7 @@ public class Juggler extends Sprite
     
     public function addBall() :void
     {
-        if (_ballsPlayed < NUM_BALLS) 
+        if (_ballsPlayed <= NUM_BALLS) 
         {
             if (_body.addBall()) {
                 _ballsPlayed += 1;
@@ -171,7 +171,7 @@ public class Juggler extends Sprite
                 
     private var _ballsPlayed:int = 0;
                 
-    private static const NUM_BALLS :int = 3;
+    private static const NUM_BALLS :int = 5;
     
     private static const KEY_Q:uint = 81;
     

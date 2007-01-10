@@ -277,7 +277,7 @@ public class Ball extends Sprite
         
     private static var _ballRadius :int = 30;
         
-    private static var _elasticity :Number = 0.975;
+    private static var _elasticity :Number = 0.95;
     
     private var _label:String = "a ball";
     

@@ -6,7 +6,8 @@ public class Body extends Sprite
     implements Actor
 {
 
-    public function Body (juggler:Juggler, space:Space) :void {
+    public function Body (juggler:Juggler, space:Space) :void 
+    {
        _juggler = juggler;
        _space = space;
        _hands[LEFT] = new Hand(juggler, space, this, LEFT);
@@ -37,7 +38,8 @@ public class Body extends Sprite
         graphics.endFill();
     }
 
-    public function nextFrame() :void {
+    public function nextFrame() :void 
+    {
         _hands[LEFT].nextFrame();
         _hands[RIGHT].nextFrame();
     }
@@ -116,6 +118,46 @@ public class Body extends Sprite
                     -700 * strength
                 ));            
         }
+    }   
+
+    public function ballisticReleaseVelocity(fromHand:Hand, ball:Ball, strength:Number) :void
+    {
+        var toHand:int = (fromHand._id == LEFT) ? RIGHT : LEFT;
+        
+        Juggler.log("throwing from "+fromHand.getLabel()+" to "+_hands[toHand].getLabel());
+        
+        var toPosition:int = 
+            (Math.abs(fromHand.x-_positions[fromHand._id][LEFT]) < 
+                Math.abs(fromHand.x-_positions[fromHand._id][RIGHT])) ?
+            LEFT : RIGHT;    
+        
+        var v:Array = _ballisticTrajectory.initialVector(
+            new Array( ball.x, ball.y ),
+            new Array( _positions[toHand][toPosition] + x, 
+                y + HAND_LEVEL + (_hands[toHand]._height/2)),
+            Hand.MAX_SPEED * strength,
+            _space.gravity );
+        
+        if (v==null) // the throw wasn't strong enough - so we'll throw at 45 degrees
+        {
+            var unit:Number = Math.sqrt((Hand.MAX_SPEED * strength * Hand.MAX_SPEED * strength)
+                                / 2);
+            v = new Array( unit, unit );
+        }
+        
+        
+        // make sure the vector is pointing in the direction we expect
+        v[0] = v[0] < 0 ?
+            // ball is going left already
+            (toHand==LEFT ? v[0] : -v[0]) :
+            // ball is going right already
+            (toHand==LEFT ? -v[0] : v[0]);
+        
+        // switch up for down if necessary
+        v[1] = v[1] > 0 ? -v[1] : v[1]; 
+            
+        ball.setVelocity( v );
+        
     }
 
     private static const LEFT:int = 0;
@@ -123,6 +165,8 @@ public class Body extends Sprite
     private static const RIGHT:int = 1;
 
     public static const HAND_LEVEL:int = 0;
+
+    private static var _ballisticTrajectory:BallisticTrajectory = new BallisticTrajectory();
 
     private var _juggler:Juggler;
 

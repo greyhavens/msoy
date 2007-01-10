@@ -39,6 +39,8 @@ public class BallisticTrajectory {
     
     public function initialVector(start:Array, end:Array, speed:Number, gravity:Number) :Array
     {
+        Juggler.log(" calculating throw from: "+start+" to: "+end+" speed: "+speed+" gravity: "+gravity);
+        
         var angles:Array = initialAngle(start, end, speed, gravity);    
         
         if (angles==null) // the speed wasn't greate enough.
@@ -46,18 +48,38 @@ public class BallisticTrajectory {
             return null;
         }
         
-        // if one of the angles is upwards, use it.
-        if (angles[0] > Math.PI) 
-        {
-            return polarToVector( angles[0], speed );
-        }         
-        else if (angles[1] > Math.PI)
-        {
-            return polarToVector( angles[1], speed );
-        }
+        Juggler.log("angles of throw: "+degrees(angles[0])+", "+degrees(angles[1]));
+        
+        var v1:Array = polarToVector( angles[0], speed );
+
+        return v1;
+
+//        if (v1[1] > 1) 
+//        {
+//            v1[1] = -v1[1];
+//            Juggler.log("returning vector: "+v1);
+//            return v1;
+//        } else
+//        {
+//            return v1;
+//        }
+        
+//        var v2:Array = polarToVector( angles[1], speed );
+        
+//        if (v2[1] > 1) 
+//        {
+//            v2[1] = -v2[1];
+//            Juggler.log("returning vector: "+v2);
+//            return v2;
+//        }
         
         // didn't have a usable angle
-        return null;
+//        return null;
+    }
+    
+    private function degrees(r:Number) :int
+    {
+        return r / Math.PI * 180;
     }
     
     private function polarToVector(theta:Number, speed:Number) :Array

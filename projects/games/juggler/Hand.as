@@ -108,7 +108,7 @@ public class Hand extends Sprite
     private function releaseBall() :void
     {
         Juggler.log("releasing ball")
-        _body.computeReleaseVelocity(this, _holding, _releaseStrength)
+        _body.ballisticReleaseVelocity(this, _holding, _releaseStrength)
         _holding.release();
         _holding = null;
     }
@@ -174,7 +174,7 @@ public class Hand extends Sprite
     {
         if (y < _maximumPullback) 
         {
-            y += (_maximumPullback - y) / 3;
+            y += (_maximumPullback - y) / PULLBACK_RATE;
         }
     }
     
@@ -274,7 +274,9 @@ public class Hand extends Sprite
     
     private static var THROW_FRAMES:int = 3;
 
-    private static var _ballisticTrajectory:BallisticTrajectory = new BallisticTrajectory();
+    private static var PULLBACK_RATE:int = 5;
+
+    public static const MAX_SPEED:int = 1100;
 
     public var _holding:Ball;
 
@@ -282,9 +284,9 @@ public class Hand extends Sprite
 
     private var _highlightFrames:int = 0;
 
-    private var _width:Number = 100;
+    public var _width:Number = 100;
     
-    private var _height:Number = 20;
+    public var _height:Number = 20;
     
     private var _mass:Number = 3; // metal bat!
     
