@@ -107,8 +107,7 @@ public class MsoyControl
             if (_tickInterval > 0) {
                 _ticker.delay = _tickInterval;
             } else {
-                _ticker.stop();
-                _ticker = null;
+                stopTicker();
             }
         }
     }
@@ -133,6 +132,8 @@ public class MsoyControl
     {
         o["eventTriggered_v1"] = eventTriggered_v1;
         o["memoryChanged_v1"] = memoryChanged_v1;
+        o["clientReceivedControl_v1"] = clientReceivedControl_v1;
+        o["clientLostControl_v1"] = clientLostControl_v1;
     }
 
     /**
@@ -174,16 +175,21 @@ public class MsoyControl
      */
     protected function clientLostControl_v1 () :void
     {
-        if (_ticker != null) {
-            _ticker.stop();
-            _ticker = null;
-        }
+        stopTicker();
     }
 
     /**
      * Handle any shutdown required.
      */
     protected function handleUnload (evt :Event) :void
+    {
+        stopTicker();
+    }
+
+    /**
+     * Stops our AI ticker.
+     */
+    protected function stopTicker () :void
     {
         if (_ticker != null) {
             _ticker.stop();
