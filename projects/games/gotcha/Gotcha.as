@@ -28,8 +28,6 @@ public class Gotcha extends Sprite
         
         // listen for property changes
         _gameCtrl.addEventListener(PropertyChangedEvent.TYPE, propChanged);
-        
-        trace(_gameCtrl.getMyOccupantId());
     }
     
     protected function enteredRoom () :void
@@ -50,7 +48,7 @@ public class Gotcha extends Sprite
     protected function updateItProperty () :void
     {
         var myIdx :int = _gameCtrl.getMyIndex();
-        if (myIdx != _gameCtrl.get(IT_INDEX)) {
+        if (myIdx != int(_gameCtrl.get(IT_INDEX))) {
             return; // only "it" tags others
         }
         var ownId :int = _gameCtrl.getMyOccupantId(),
@@ -77,7 +75,7 @@ public class Gotcha extends Sprite
     
     protected function updateItLabel () :void
     {
-        var itIndex :int = (_gameCtrl.get(IT_INDEX) as int);
+        var itIndex :int = int(_gameCtrl.get(IT_INDEX));
         _itLabel.text = _gameCtrl.getPlayerNames()[itIndex] + " is it.";
     }
     
@@ -101,6 +99,6 @@ public class Gotcha extends Sprite
     protected static const IT_INDEX :String = "itIndex";
     
     /** The distance at which we can tag other players. */
-    protected static const TAG_DISTANCE :Number = 0.01;
+    protected static const TAG_DISTANCE :Number = 0.1;
 }
 }
