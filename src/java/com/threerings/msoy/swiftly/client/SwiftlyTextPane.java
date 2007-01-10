@@ -31,7 +31,6 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
-import javax.swing.text.StyledEditorKit;
 
 public class SwiftlyTextPane extends JTextPane
 {
@@ -40,27 +39,25 @@ public class SwiftlyTextPane extends JTextPane
         _editor = editor;
         _document = document;
 
-        setupActions();
-        addKeyBindings();
-        addPopupMenu();
-
-        // TODO SwiftlyDocument should provide a reader
-        StringReader reader = new StringReader(document.getText());
         _kit = new ActionScriptEditorKit();
         setEditorKit(_kit);
         ActionScriptStyledDocument styledDoc = new ActionScriptStyledDocument();
         setDocument(styledDoc);
+
         // setContentType("text/actionscript");
 
         // load the document text
         try {
             // styledDoc.insertString(0, document.getText(), null);
-            _kit.read(reader, styledDoc, 0);
+            _kit.read(document.getReader(), styledDoc, 0);
         } catch (IOException io) {
             return;
         } catch (BadLocationException be) {
             return;
         }
+
+        addKeyBindings();
+        addPopupMenu();
 
         // add listeners
         styledDoc.addUndoableEditListener(new UndoHandler());
@@ -105,41 +102,22 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action getCutAction ()
     {
-        return _cutAction;
+        return getActionMap().get(DefaultEditorKit.cutAction);
     }
 
     public Action getCopyAction ()
     {
-        return _copyAction;
+        return getActionMap().get(DefaultEditorKit.copyAction);
     }
 
     public Action getPasteAction ()
     {
-        return _pasteAction;
+        return getActionMap().get(DefaultEditorKit.pasteAction);
     }
 
     public Action getSelectAllAction ()
     {
-        return _selectAllAction;
-    }
-
-    // setup our actions with friendly names etc.
-    protected void setupActions ()
-    {
-        _cutAction = getActionMap().get(DefaultEditorKit.cutAction);
-        _cutAction.putValue(Action.NAME, "Cut");
-
-        _copyAction = getActionMap().get(DefaultEditorKit.copyAction);
-        _copyAction.putValue(Action.NAME, "Copy");
-
-        _pasteAction = getActionMap().get(DefaultEditorKit.pasteAction);
-        _pasteAction.putValue(Action.NAME, "Paste");
-
-        _selectAllAction = getActionMap().get(DefaultEditorKit.selectAllAction);
-        _selectAllAction.putValue(Action.NAME, "Select All");
-
-        _undoAction = new UndoAction();
-        _redoAction = new RedoAction();
+        return getActionMap().get(DefaultEditorKit.selectAllAction);
     }
 
     protected void addKeyBindings ()
@@ -169,28 +147,21 @@ public class SwiftlyTextPane extends JTextPane
 
         // TODO is there a cross platform way to show what the keybindings are for these actions?
         // Cut
-        JMenuItem menuItem = new JMenuItem(getCutAction());
-        _popup.add(menuItem);
+        _popup.add(getCutAction());
         // Copy
-        menuItem = new JMenuItem(getCopyAction());
-        _popup.add(menuItem);
+        _popup.add(getCopyAction());
         // Paste
-        menuItem = new JMenuItem(getPasteAction());
-        _popup.add(menuItem);
+        _popup.add(getPasteAction());
         // Separator
         _popup.addSeparator();
         // Select All
-        menuItem = new JMenuItem(getSelectAllAction());
-        _popup.add(menuItem);
+        _popup.add(getSelectAllAction());
         // Separator
         _popup.addSeparator();
-        // TODO undo and redo should be grayed out if possible.. possibly using a changelistener
         // Undo
-        menuItem = new JMenuItem(_undoAction);
-        _popup.add(menuItem);
+        _popup.add(_undoAction);
         // Redo
-        menuItem = new JMenuItem(_redoAction);
-        _popup.add(menuItem);
+        _popup.add(_redoAction);
 
         MouseListener popupListener = new PopupListener();
         // add popupListener to the textpane
@@ -332,12 +303,7 @@ public class SwiftlyTextPane extends JTextPane
     protected UndoableEditListener _undoHandler = new UndoHandler();
     protected SwiftlyEditor _editor;
     protected SwiftlyDocument _document;
-    protected HashMap<String,Action> _actions = new HashMap<String,Action>();
-    protected UndoAction _undoAction;
-    protected RedoAction _redoAction;
-    protected Action _cutAction;
-    protected Action _copyAction;
-    protected Action _pasteAction;
-    protected Action _selectAllAction;
+    protected UndoAction _undoAction = new UndoAction();
+    protected RedoAction _redoAction = new RedoAction();
     protected boolean _documentChanged;
 }

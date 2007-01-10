@@ -85,7 +85,7 @@ public class SwiftlyApplet extends JApplet
 
     public AbstractAction createShowProjectDialogAction ()
     {
-        return new AbstractAction() {
+        return new AbstractAction("Switch Project") {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 showProjectDialog();
@@ -95,7 +95,7 @@ public class SwiftlyApplet extends JApplet
 
     public AbstractAction createNewProjectDialogAction ()
     {
-        return new AbstractAction() {
+        return new AbstractAction("Create Project") {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 showNewProjectDialog();

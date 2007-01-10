@@ -150,7 +150,7 @@ public class SwiftlyEditor extends JTabbedPane
 
     public AbstractAction createNewTabAction ()
     {
-        return new AbstractAction() {
+        return new AbstractAction("New Tab") {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 addEditorTab();
@@ -170,7 +170,7 @@ public class SwiftlyEditor extends JTabbedPane
 
     public AbstractAction createCloseCurrentTabAction ()
     {
-        return new AbstractAction() {
+        return new AbstractAction("Close Tab") {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 closeCurrentTab();

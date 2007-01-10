@@ -31,38 +31,27 @@ public class SwiftlyToolbar extends JToolBar
     protected void setupToolbar ()
     {
         // TODO replace as many of these with icons as makes sense
-        addButton("Switch Project", _applet.createShowProjectDialogAction());
-        addButton("Create Project", _applet.createNewProjectDialogAction());
-        addButton("New Tab", _applet.getEditor().createNewTabAction());
-        addButton("Save Document", _applet.getEditor().createSaveCurrentTabAction());
-        // TODO let's try to get close buttons on the tabs
-        addButton("Close Tab", _applet.getEditor().createCloseCurrentTabAction());
+        add(_applet.createShowProjectDialogAction());
+        add(_applet.createNewProjectDialogAction());
+        add(_applet.getEditor().createNewTabAction());
+        add(_applet.getEditor().createSaveCurrentTabAction());
+        add(_applet.getEditor().createCloseCurrentTabAction());
 
         addSeparator();
-        addButton("Compile", null);
-        addButton("Play", null);
+        add(new JButton("Compile"));
+        add(new JButton("Play"));
 
         addSeparator();
         // TODO add mini icons for these + tooltips with keyboard shortcuts
         // These actions get set by updateEditorActions()
-        _cutButton = addButton("Cut", null);
-        _copyButton = addButton("Copy", null);
-        _pasteButton = addButton("Paste", null);
-        _selectAllButton = addButton("Select All", null);
-        _undoButton = addButton("Undo", null);
-        _redoButton = addButton("Redo", null);
+        _cutButton = (JButton)add(new JButton("Cut"));
+        _copyButton = (JButton)add(new JButton("Copy"));
+        _pasteButton = (JButton)add(new JButton("Paste"));
+        _selectAllButton = (JButton)add(new JButton("Select All"));
+        _undoButton = (JButton)add(new JButton("Undo"));
+        _redoButton = (JButton)add(new JButton("Redo"));
 
         setFloatable(false);
-    }
-
-    protected JButton addButton (String title, Action action)
-    {
-        JButton button = new JButton(title);
-        if (action != null) {
-            button.addActionListener(action);
-        }
-        add(button);
-        return button;
     }
 
     protected SwiftlyApplet _applet;

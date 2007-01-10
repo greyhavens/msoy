@@ -1,11 +1,20 @@
 package com.threerings.msoy.swiftly.client;
 
+import java.io.Reader;
+import java.io.StringReader;
+
 public class SwiftlyDocument
 {
     public SwiftlyDocument (String filename, String text)
     {
         _filename = filename;
         _text = text;
+    }
+
+    public Reader getReader ()
+    {
+        return (Reader)new StringReader(getText());
+
     }
 
     public String getText ()
