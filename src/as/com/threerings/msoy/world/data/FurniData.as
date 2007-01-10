@@ -10,6 +10,7 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.Streamable;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
 public class FurniData
@@ -69,6 +70,14 @@ public class FurniData
 
     /** The action, interpreted using actionType. */
     public var actionData :String;
+
+    /**
+     * Returns the identifier for the item for which we're presenting a visualization.
+     */
+    public function getIdent () :ItemIdent
+    {
+        return new ItemIdent(itemType, itemId);
+    }
 
     /**
      * Return the actionData as two strings, split after the first colon.

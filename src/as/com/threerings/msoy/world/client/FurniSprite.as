@@ -35,7 +35,7 @@ public class FurniSprite extends MsoySprite
     public function FurniSprite (ctx :MsoyContext, furni :FurniData)
     {
         _furni = furni;
-        super(furni.media);
+        super(furni.media, furni.getIdent());
         checkBackground();
         checkPerspective();
 
@@ -72,7 +72,7 @@ public class FurniSprite extends MsoySprite
     public function update (ctx :MsoyContext, furni :FurniData) :void
     {
         _furni = furni;
-        setup(furni.media);
+        setup(furni.media, furni.getIdent());
         checkBackground();
         checkPerspective();
         scaleUpdated();

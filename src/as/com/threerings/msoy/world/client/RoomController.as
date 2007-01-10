@@ -7,6 +7,7 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
+import flash.utils.ByteArray;
 
 import mx.managers.ToolTipManager;
 
@@ -27,6 +28,8 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.SceneUpdate;
 
+import com.threerings.ezgame.util.EZObjectMarshaller;
+
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
@@ -34,11 +37,13 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.world.client.editor.EditorController;
 
 import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomObject;
@@ -55,6 +60,40 @@ public class RoomController extends SceneController
     public static const AVATAR_CLICKED :String = "AvatarClicked";
 
     public static const TEMP_CLEAR_SCENE_CACHE :String = "clrScenes";
+
+    /**
+     * Handles a request by an item in our room to trigger an event.
+     */
+    public function triggerEvent (ident :ItemIdent, event :String) :void
+    {
+        if (_roomObj == null) {
+            log.warning("Can't trigger event, have no room object [ident=" + ident +
+                        ", event=" + event + "].");
+        } else {
+            _roomObj.roomService.triggerEvent(_mctx.getClient(), ident, event);
+        }
+    }
+
+    /**
+     * Handles a request by an item in our room to update its memory.
+     */
+    public function updateMemory (ident :ItemIdent, key :String, value: Object) :Boolean
+    {
+        if (_roomObj == null) {
+            log.warning("Can't update memory, have no room object [ident=" + ident +
+                        ", key=" + key + "].");
+            return false;
+        }
+
+        // serialize datum (TODO: move this to somewhere more general purpose)
+        var data : ByteArray = (EZObjectMarshaller.encode(value) as ByteArray);
+
+        // TODO: total up item's used memory, ensure it doesn't exceed the allowed limit
+
+        // ship the update request off to the server
+        _roomObj.roomService.updateMemory(_mctx.getClient(), new MemoryEntry(ident, key, data));
+        return true;
+    }
 
     // documentation inherited
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void

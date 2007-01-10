@@ -1,8 +1,12 @@
+//
+// $Id$
+
 package com.threerings.msoy.client {
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.ClientEvent;
 
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
@@ -19,14 +23,13 @@ public class MediaDirector extends BasicDirector
     }
 
     /**
-     * Get an avatar sprite for the specified occupant info,
-     * caching as appropriate.
+     * Get an avatar sprite for the specified occupant info, caching as appropriate.
      */
     public function getAvatar (occInfo :WorldMemberInfo) :AvatarSprite
     {
-        var isOurs :Boolean =
-            (occInfo.bodyOid == _ctx.getClient().getClientOid());
+        var isOurs :Boolean = (occInfo.bodyOid == _ctx.getClient().getClientOid());
         if (isOurs && _ourAvatar != null) {
+            _ourAvatar.setItemIdent(_mctx.getClientObject().avatar.getIdent());
             _ourAvatar.setOccupantInfo(_mctx, occInfo);
             return _ourAvatar;
         }
@@ -34,13 +37,13 @@ public class MediaDirector extends BasicDirector
         var avatar :AvatarSprite = new AvatarSprite(_mctx, occInfo);
         if (isOurs) {
             _ourAvatar = avatar;
+            _ourAvatar.setItemIdent(_mctx.getClientObject().avatar.getIdent());
         }
         return avatar;
     }
 
     /**
-     * Get a Furni sprite for the specified furni data, caching as
-     * appropriate.
+     * Get a Furni sprite for the specified furni data, caching as appropriate.
      */
     public function getFurni (furni :FurniData) :FurniSprite
     {

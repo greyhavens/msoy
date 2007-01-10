@@ -54,10 +54,14 @@ import mx.events.VideoEvent;
 import com.threerings.util.Util;
 import com.threerings.util.MediaContainer;
 
+import com.threerings.ezgame.util.EZObjectMarshaller;
+
 import com.threerings.msoy.client.Prefs;
 
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
+import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 
 import com.threerings.util.HashMap;
@@ -74,11 +78,11 @@ public class MsoySprite extends MediaContainer
     /**
      * Constructor.
      */
-    public function MsoySprite (desc :MediaDesc)
+    public function MsoySprite (desc :MediaDesc, ident :ItemIdent)
     {
         super(null);
         autoLayout = false;
-        setup(desc);
+        setup(desc, ident);
         setStyle("backgroundSize", "100%");
         setStyle("backgroundImage", _loadingImgClass);
     }
@@ -112,13 +116,14 @@ public class MsoySprite extends MediaContainer
         return getContentHeight() * _locScale;
     }
 
-    protected function setup (desc :MediaDesc) :void
+    protected function setup (desc :MediaDesc, ident :ItemIdent) :void
     {
         if (Util.equals(desc, _desc)) {
             return;
         }
 
         _desc = desc;
+        _ident = ident;
 
         setMedia(desc.getMediaPath());
         scaleUpdated();
@@ -650,6 +655,8 @@ public class MsoySprite extends MediaContainer
     protected function populateControlProperties (o :Object) :void
     {
         o["triggerEvent_v1"] = triggerEvent_v1;
+        o["lookupMemory_v1"] = lookupMemory_v1;
+        o["updateMemory_v1"] = updateMemory_v1;
     }
 
     /**
@@ -657,7 +664,9 @@ public class MsoySprite extends MediaContainer
      */
     protected function triggerEvent_v1 (event :String) :void
     {
-        // TODO:
+        if (_ident != null && parent is RoomView) {
+            (parent as RoomView).getRoomController().triggerEvent(_ident, event);
+        }
     }
 
     /**
@@ -666,16 +675,23 @@ public class MsoySprite extends MediaContainer
      */
     protected function lookupMemory_v1 (key :String) :Object
     {
-        return null; // TODO
+        if (_ident != null && parent is RoomView) {
+            var mkey :MemoryEntry = new MemoryEntry(_ident, key, null);
+            return EZObjectMarshaller.decode(
+                (parent as RoomView).getRoomObject().memories.get(mkey));
+        }
+        return null;
     }
 
     /**
      * Called by {@link MsoyControl} to update a memory datum.
      */
-    protected function updateMemory_v1 (key :String, value: Object) :void
+    protected function updateMemory_v1 (key :String, value: Object) :Boolean
     {
-        if (parent is RoomView) {
-            // TODO
+        if (_ident != null && parent is RoomView) {
+            return (parent as RoomView).getRoomController().updateMemory(_ident, key, value);
+        } else {
+            return false;
         }
     }
 
@@ -699,8 +715,12 @@ public class MsoySprite extends MediaContainer
         return undefined;
     }
 
-    /** Our Media descripter. */
+    /** Our Media descriptor. */
     protected var _desc :MediaDesc;
+
+    /** Identifies the item we are visualizing. All furniture will have an ident, but only our
+     * avatar sprite will know its ident (and only we can update our avatar's memory, etc.).  */
+    protected var _ident :ItemIdent;
 
     /** The 'location' scale of the media: the scaling that is the result of
      * emulating perspective while we move around the room. */

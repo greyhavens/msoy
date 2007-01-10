@@ -10,7 +10,7 @@ public class EntranceSprite extends MsoySprite
 
     public function EntranceSprite ()
     {
-        super(null);
+        super(null, null);
         setMediaClass(MEDIA_CLASS);
     }
 }

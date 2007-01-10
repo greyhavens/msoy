@@ -46,10 +46,11 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
-//import com.threerings.msoy.chat.client.ChatPopper;
+// import com.threerings.msoy.chat.client.ChatPopper;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -68,6 +69,14 @@ public class RoomView extends AbstractRoomView
         _ctrl = ctrl;
 
         _overlay = new ChatOverlay(ctx);
+    }
+
+    /**
+     * Returns the room controller.
+     */
+    public function getRoomController () :RoomController
+    {
+        return _ctrl;
     }
 
     override protected function updateComplete (evt :FlexEvent) :void
@@ -126,17 +135,6 @@ public class RoomView extends AbstractRoomView
         _scene = scene;
         updateDrawnRoom();
         relayout();
-    }
-
-    override public function locationUpdated (sprite :MsoySprite) :void
-    {
-        super.locationUpdated(sprite);
-
-        // if we moved the _centerSprite, possibly update the scroll position
-        if (sprite == _centerSprite && ((sprite != _bkg) ||
-                _scene.getSceneType() != MsoySceneModel.FIXED_IMAGE)) {
-            scrollView();
-        }
     }
 
     /**
@@ -225,6 +223,49 @@ public class RoomView extends AbstractRoomView
         updateAllFurni();
     }
 
+    public function getMyAvatar () :AvatarSprite
+    {
+        var oid :int = _ctx.getClient().getClientOid();
+        var avatar :AvatarSprite = (_avatars.get(oid) as AvatarSprite);
+        if (avatar == null) {
+            avatar = (_pendingRemoveAvatars.get(oid) as AvatarSprite);
+        }
+        return avatar;
+    }
+
+    /**
+     * Return the current location of the avatar that represents our body.
+     */
+    public function getMyCurrentLocation () :MsoyLocation
+    {
+        return getMyAvatar().loc;
+    }
+
+    /**
+     * @return true if the specified click target should trigger
+     * location movements.
+     */
+    public function isLocationTarget (clickTarget :DisplayObject) :Boolean
+    {
+        return (clickTarget == this) || (clickTarget == _bkgGraphics) ||
+            (_bkg != null && _bkg.contains(clickTarget)) ||
+            // scan through the media and see if it was non-interactive
+            isNonInteractiveTarget(clickTarget, _furni) /*||
+            isNonInteractiveTarget(clickTarget, _portals) ||
+            isNonInteractiveTarget(clickTarget, _avatars)*/;
+    }
+
+    override public function locationUpdated (sprite :MsoySprite) :void
+    {
+        super.locationUpdated(sprite);
+
+        // if we moved the _centerSprite, possibly update the scroll position
+        if (sprite == _centerSprite && ((sprite != _bkg) ||
+                _scene.getSceneType() != MsoySceneModel.FIXED_IMAGE)) {
+            scrollView();
+        }
+    }
+
     override public function scrollViewBy (xpixels :int) :Boolean
     {
         var canScroll :Boolean = super.scrollViewBy(xpixels);
@@ -293,38 +334,6 @@ public class RoomView extends AbstractRoomView
         // and finally, we want ensure it can happen on the next frame if
         // our avatar doesn't move
         _suppressAutoScroll = false;
-    }
-
-    public function getMyAvatar () :AvatarSprite
-    {
-        var oid :int = _ctx.getClient().getClientOid();
-        var avatar :AvatarSprite = (_avatars.get(oid) as AvatarSprite);
-        if (avatar == null) {
-            avatar = (_pendingRemoveAvatars.get(oid) as AvatarSprite);
-        }
-        return avatar;
-    }
-
-    /**
-     * Return the current location of the avatar that represents our body.
-     */
-    public function getMyCurrentLocation () :MsoyLocation
-    {
-        return getMyAvatar().loc;
-    }
-
-    /**
-     * @return true if the specified click target should trigger
-     * location movements.
-     */
-    public function isLocationTarget (clickTarget :DisplayObject) :Boolean
-    {
-        return (clickTarget == this) || (clickTarget == _bkgGraphics) ||
-            (_bkg != null && _bkg.contains(clickTarget)) ||
-            // scan through the media and see if it was non-interactive
-            isNonInteractiveTarget(clickTarget, _furni) /*||
-            isNonInteractiveTarget(clickTarget, _portals) ||
-            isNonInteractiveTarget(clickTarget, _avatars)*/;
     }
 
     protected function isNonInteractiveTarget (
@@ -403,6 +412,14 @@ public class RoomView extends AbstractRoomView
             return;
         }
         avatar.setOccupantInfo(_ctx, occInfo);
+    }
+
+    /**
+     * Called when a trigger event arrives on the room object.
+     */
+    protected function dispatchTriggerEvent (item :ItemIdent, event :String) :void
+    {
+        // TODO: ...
     }
 
     /**
@@ -564,6 +581,10 @@ public class RoomView extends AbstractRoomView
         switch (event.getName()) {
         case "avAction":
             performAvatarAction(int(args[0]), (args[1] as String));
+            break;
+
+        case "triggerEvent": // TODO: RoomCodes.TRIGGER_EVENT
+            dispatchTriggerEvent((args[0] as ItemIdent), (args[1] as String));
             break;
         }
     }

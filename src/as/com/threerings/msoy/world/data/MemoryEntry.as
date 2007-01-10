@@ -34,8 +34,12 @@ public class MemoryEntry
      * unloaded. */
     public var modified :Boolean;
 
-    public function MemoryEntry ()
+    public function MemoryEntry (item :ItemIdent = null, key: String = null,
+                                 value :ByteArray = null)
     {
+        this.item = item;
+        this.key = key;
+        this.value = value;
     }
 
     // from Hashable

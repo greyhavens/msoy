@@ -24,6 +24,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 
 import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -35,7 +36,7 @@ public class AvatarSprite extends BaseAvatarSprite
 {
     public function AvatarSprite (ctx :MsoyContext, occInfo :WorldMemberInfo)
     {
-        super(null);
+        super(null, null);
 
         _label = new Label();
         _label.includeInLayout = false;
@@ -50,17 +51,24 @@ public class AvatarSprite extends BaseAvatarSprite
     /**
      * Update the occupant info.
      */
-    public function setOccupantInfo (
-        ctx :MsoyContext, occInfo :WorldMemberInfo) :void
+    public function setOccupantInfo (ctx :MsoyContext, occInfo :WorldMemberInfo) :void
     {
         _occInfo = occInfo;
 
         if (!_occInfo.avatar.equals(_desc)) {
-            setup(_occInfo.avatar);
+            setup(_occInfo.avatar, _ident);
         }
 
         _label.setStyle("color", getStatusColor(_occInfo.status));
         _label.text = occInfo.username.toString();
+    }
+
+    /**
+     * Configures this avatar sprite with its item identifier. This is only done for ourself.
+     */
+    public function setItemIdent (ident :ItemIdent) :void
+    {
+        _ident = ident;
     }
 
     /**

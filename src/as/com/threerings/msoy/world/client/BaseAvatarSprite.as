@@ -1,5 +1,6 @@
 package com.threerings.msoy.world.client {
 
+import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -12,9 +13,9 @@ public class BaseAvatarSprite extends MsoySprite
     /** The maximum height of an avatar sprite. */
     public static const MAX_HEIGHT :int = 400;
 
-    public function BaseAvatarSprite (desc :MediaDesc)
+    public function BaseAvatarSprite (desc :MediaDesc, ident :ItemIdent)
     {
-        super(desc);
+        super(desc, ident);
     }
 
     /**
