@@ -100,7 +100,10 @@ public class StarFight extends Sprite
         if ((boardObj == null) && (_gameCtrl.getMyIndex() == 0)) {
             boardObj = new Board(140, 50, true);
             _gameCtrl.set("ship", new Array(_gameCtrl.getPlayerCount()));
-            _gameCtrl.set("powerup", new Array(MAX_POWERUPS));
+
+            var maxPowerups :int = Math.max(1,
+                boardObj.width*boardObj.height/MIN_TILES_PER_POWERUP);
+            _gameCtrl.set("powerup", new Array(maxPowerups));
             _gameCtrl.set("board", boardObj.writeTo(new ByteArray()));
         }
 
@@ -198,13 +201,12 @@ public class StarFight extends Sprite
      */
     public function addPowerup (event :TimerEvent) :void
     {
-        for (var ii :int = 0; ii < MAX_POWERUPS; ii++) {
+        for (var ii :int = 0; ii < _powerups.length; ii++) {
             if (_powerups[ii] == null) {
                 var x :int = Math.random() * _board.boardWidth;
                 var y :int = Math.random() * _board.boardHeight;
-
-                while (_board.getCollision(x+0.5, y+0.5, x+0.5, y+0.5,
-                           0.1, -1) ||
+                
+                while (_board.getObstacleAt(x, y) ||
                     (_board.getPowerupIdx(x+0.5, y+0.5, x+0.5, y+0.5,
                         0.1) != -1)) {
                     x = Math.random() * _board.boardWidth;
@@ -215,7 +217,6 @@ public class StarFight extends Sprite
 
                 _gameCtrl.set("powerup", _powerups[ii].writeTo(new ByteArray()),
                     ii);
-                Logger.log("Adding powerup child");
                 _board.powerupLayer.addChild(_powerups[ii]);
                 return;
             }
@@ -487,7 +488,7 @@ public class StarFight extends Sprite
     protected var _statusLayer :Sprite;
 
     /** This could be more dynamic. */
-    protected static const MAX_POWERUPS :int = 10;
+    protected static const MIN_TILES_PER_POWERUP :int = 250;
 
     /** Points for various things in the game. */
     protected static const POWERUP_PTS :int = 25;

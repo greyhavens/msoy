@@ -129,6 +129,19 @@ public class BoardSprite extends Sprite
         return bestHit;
     }
 
+    /** Returns any obstacle at the specified board location. */
+    public function getObstacleAt (boardX :int, boardY :int) :Obstacle
+    {
+        // Check each obstacle and figure out which one we hit first.
+        for each (var obs :Obstacle in _obstacles) {
+            if (obs.bX == boardX && obs.bY == boardY) {
+                return obs;
+            }
+        }
+        
+        return null;
+    }
+
     public function getPowerupIdx (oldX :Number, oldY :Number,
         newX :Number, newY :Number, rad :Number) :int
     {
@@ -146,8 +159,8 @@ public class BoardSprite extends Sprite
             if (pow == null) {
                 continue;
             }
-            var bX :Number = pow.boardX;
-            var bY :Number = pow.boardY;
+            var bX :Number = pow.boardX + 0.5;
+            var bY :Number = pow.boardY + 0.5;
             var r :Number = rad + 0.5; // Our radius...
             // We approximate a powerup as a circle for this...
             var a :Number = dx*dx + dy*dy;
