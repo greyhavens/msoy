@@ -31,6 +31,7 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.StyledEditorKit;
 
 public class SwiftlyTextPane extends JTextPane
 {
@@ -39,14 +40,14 @@ public class SwiftlyTextPane extends JTextPane
         _editor = editor;
         _document = document;
 
-        createActionTable();
+        setupActions();
         addKeyBindings();
         addPopupMenu();
 
         // TODO SwiftlyDocument should provide a reader
         StringReader reader = new StringReader(document.getText());
-        ActionScriptEditorKit kit = new ActionScriptEditorKit();
-        setEditorKit(kit);
+        _kit = new ActionScriptEditorKit();
+        setEditorKit(_kit);
         ActionScriptStyledDocument styledDoc = new ActionScriptStyledDocument();
         setDocument(styledDoc);
         // setContentType("text/actionscript");
@@ -54,7 +55,7 @@ public class SwiftlyTextPane extends JTextPane
         // load the document text
         try {
             // styledDoc.insertString(0, document.getText(), null);
-            kit.read(reader, styledDoc, 0);
+            _kit.read(reader, styledDoc, 0);
         } catch (IOException io) {
             return;
         } catch (BadLocationException be) {
@@ -104,22 +105,41 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action getCutAction ()
     {
-        return getActionByName(DefaultEditorKit.cutAction);
+        return _cutAction;
     }
 
     public Action getCopyAction ()
     {
-        return getActionByName(DefaultEditorKit.copyAction);
+        return _copyAction;
     }
 
     public Action getPasteAction ()
     {
-        return getActionByName(DefaultEditorKit.pasteAction);
+        return _pasteAction;
     }
 
     public Action getSelectAllAction ()
     {
-        return getActionByName(DefaultEditorKit.selectAllAction);
+        return _selectAllAction;
+    }
+
+    // setup our actions with friendly names etc.
+    protected void setupActions ()
+    {
+        _cutAction = getActionMap().get(DefaultEditorKit.cutAction);
+        _cutAction.putValue(Action.NAME, "Cut");
+
+        _copyAction = getActionMap().get(DefaultEditorKit.copyAction);
+        _copyAction.putValue(Action.NAME, "Copy");
+
+        _pasteAction = getActionMap().get(DefaultEditorKit.pasteAction);
+        _pasteAction.putValue(Action.NAME, "Paste");
+
+        _selectAllAction = getActionMap().get(DefaultEditorKit.selectAllAction);
+        _selectAllAction.putValue(Action.NAME, "Select All");
+
+        _undoAction = new UndoAction();
+        _redoAction = new RedoAction();
     }
 
     protected void addKeyBindings ()
@@ -149,33 +169,27 @@ public class SwiftlyTextPane extends JTextPane
 
         // TODO is there a cross platform way to show what the keybindings are for these actions?
         // Cut
-        JMenuItem menuItem = new JMenuItem("Cut");
-        menuItem.addActionListener(getCutAction());
+        JMenuItem menuItem = new JMenuItem(getCutAction());
         _popup.add(menuItem);
         // Copy
-        menuItem = new JMenuItem("Copy");
-        menuItem.addActionListener(getCopyAction());
+        menuItem = new JMenuItem(getCopyAction());
         _popup.add(menuItem);
         // Paste
-        menuItem = new JMenuItem("Paste");
-        menuItem.addActionListener(getPasteAction());
+        menuItem = new JMenuItem(getPasteAction());
         _popup.add(menuItem);
         // Separator
         _popup.addSeparator();
         // Select All
-        menuItem = new JMenuItem("Select All");
-        menuItem.addActionListener(getSelectAllAction());
+        menuItem = new JMenuItem(getSelectAllAction());
         _popup.add(menuItem);
         // Separator
         _popup.addSeparator();
         // TODO undo and redo should be grayed out if possible.. possibly using a changelistener
         // Undo
-        menuItem = new JMenuItem("Undo");
-        menuItem.addActionListener(_undoAction);
+        menuItem = new JMenuItem(_undoAction);
         _popup.add(menuItem);
         // Redo
-        menuItem = new JMenuItem("Redo");
-        menuItem.addActionListener(_redoAction);
+        menuItem = new JMenuItem(_redoAction);
         _popup.add(menuItem);
 
         MouseListener popupListener = new PopupListener();
@@ -188,18 +202,6 @@ public class SwiftlyTextPane extends JTextPane
         // key bindings work even if the textpane doesn't have focus
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key, action);
         getActionMap().put(action, action);
-    }
-
-    // Create the action lookup table
-    protected void createActionTable() {
-        for (Action action : getStyledEditorKit().getActions()) {
-            _actions.put((String)action.getValue(Action.NAME), action);
-        }
-    }
-
-    // Lookup an action by name
-    protected Action getActionByName(String name) {
-        return (Action)(_actions.get(name));
     }
 
     protected class PopupListener extends MouseAdapter {
@@ -324,13 +326,18 @@ public class SwiftlyTextPane extends JTextPane
         }
     }
 
+    protected ActionScriptEditorKit _kit;
     protected JPopupMenu _popup;
     protected UndoManager _undo = new UndoManager();
     protected UndoableEditListener _undoHandler = new UndoHandler();
-    protected UndoAction _undoAction = new UndoAction();
-    protected RedoAction _redoAction = new RedoAction();
     protected SwiftlyEditor _editor;
     protected SwiftlyDocument _document;
     protected HashMap<String,Action> _actions = new HashMap<String,Action>();
+    protected UndoAction _undoAction;
+    protected RedoAction _redoAction;
+    protected Action _cutAction;
+    protected Action _copyAction;
+    protected Action _pasteAction;
+    protected Action _selectAllAction;
     protected boolean _documentChanged;
 }
