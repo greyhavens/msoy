@@ -11,14 +11,9 @@ public class SwiftlyToolbar extends JToolBar
         setupToolbar();
     }
 
-    public void updateEditorActions()
+    public void updateEditorActions(SwiftlyTextPane textPane)
     {
-        SwiftlyTextPane textPane =  _applet.getEditor().getCurrentTextPane();
-        // If the change event was called because of the tab being removed, textPane will be null
-        if (textPane == null) {
-            return;
-        }
-
+        _saveButton.setAction(textPane.getSaveAction());
         _cutButton.setAction(textPane.createCutAction());
         _copyButton.setAction(textPane.createCopyAction());
         _pasteButton.setAction(textPane.createPasteAction());
@@ -33,7 +28,7 @@ public class SwiftlyToolbar extends JToolBar
         add(_applet.createShowProjectDialogAction());
         add(_applet.createNewProjectDialogAction());
         add(_applet.getEditor().createNewTabAction());
-        add(_applet.getEditor().createSaveCurrentTabAction());
+        add(_saveButton);
         add(_applet.getEditor().createCloseCurrentTabAction());
 
         addSeparator();
@@ -54,6 +49,7 @@ public class SwiftlyToolbar extends JToolBar
     }
 
     protected SwiftlyApplet _applet;
+    protected JButton _saveButton = new JButton("Save");
     protected JButton _cutButton = new JButton("Cut");
     protected JButton _copyButton = new JButton("Copy");
     protected JButton _pasteButton = new JButton("Paste");

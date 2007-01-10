@@ -188,7 +188,11 @@ public class SwiftlyEditor extends JTabbedPane
     {
         // from interface ChangeListener
         public void stateChanged(ChangeEvent evt) {
-            _applet.getToolbar().updateEditorActions();
+            SwiftlyTextPane textPane = getCurrentTextPane();
+            if (textPane != null) {
+                _applet.getToolbar().updateEditorActions(textPane);
+            }
+
             // clear the statusbar whenever a different tab is selected
             _applet.clearStatus();
         }

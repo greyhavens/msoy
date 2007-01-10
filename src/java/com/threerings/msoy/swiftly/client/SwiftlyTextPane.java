@@ -68,12 +68,19 @@ public class SwiftlyTextPane extends JTextPane
     // Save the document if needed. Return true if save happened/worked
     public boolean saveDocument ()
     {
-        if (_documentChanged) {
+        if (hasUnsavedChanges()) {
             // TODO save the document into the internets
-            _documentChanged = false;
+            setDocumentChanged(false);
             return true;
         }
         return false;
+    }
+
+    public void setDocumentChanged (boolean value)
+    {
+        _documentChanged = value;
+        _editor.setTabTitleChanged(value);
+        _saveAction.setEnabled(value);
     }
 
     public boolean hasUnsavedChanges ()
@@ -89,6 +96,11 @@ public class SwiftlyTextPane extends JTextPane
     public AbstractAction getRedoAction ()
     {
         return _redoAction;
+    }
+
+    public Action getSaveAction ()
+    {
+        return _saveAction;
     }
 
     public Action createCutAction ()
@@ -209,6 +221,25 @@ public class SwiftlyTextPane extends JTextPane
         }
     }
 
+    protected class SaveAction extends AbstractAction
+    {
+        public SaveAction ()
+        {
+            super("Save");
+            setEnabled(false);
+        }
+
+        public void actionPerformed (ActionEvent e) {
+            // TODO show a progress bar in the status bar while Saving...
+            if (hasUnsavedChanges()) {
+                saveDocument();
+                _editor.setTabTitleChanged(false);
+            }
+            // TODO show the filename that just saved
+            _editor.getApplet().setStatus("Saving " + _document);
+        }
+    }
+
     protected class UndoHandler implements UndoableEditListener
     {
         // from interface UndoableEditListener
@@ -251,9 +282,8 @@ public class SwiftlyTextPane extends JTextPane
             else {
                 setEnabled(false);
                 // We have undone to the previous save
-                if (_documentChanged) {
-                    _documentChanged = false;
-                    _editor.setTabTitleChanged(false);
+                if (hasUnsavedChanges()) {
+                    setDocumentChanged(false);
                 }
                 putValue(Action.NAME, "Undo");
             }
@@ -296,9 +326,8 @@ public class SwiftlyTextPane extends JTextPane
     class SwiftlyDocumentListener implements DocumentListener {
         // from interface DocumentListener
         public void insertUpdate(DocumentEvent e) {
-            if (!_documentChanged) {
-                _editor.setTabTitleChanged(true);
-                _documentChanged = true;
+            if (!hasUnsavedChanges()) {
+                setDocumentChanged(true);
             }
         }
 
@@ -321,5 +350,6 @@ public class SwiftlyTextPane extends JTextPane
     protected SwiftlyDocument _document;
     protected UndoAction _undoAction = new UndoAction();
     protected RedoAction _redoAction = new RedoAction();
-    protected boolean _documentChanged;
+    protected SaveAction _saveAction = new SaveAction();
+    protected boolean _documentChanged = false;
 }
