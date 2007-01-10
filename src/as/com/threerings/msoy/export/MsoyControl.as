@@ -70,13 +70,15 @@ public class MsoyControl
     }
 
     /**
-     * Returns the value associated with the supplied key in this entity's memory.
+     * Returns the value associated with the supplied key in this entity's memory. If no value is
+     * mapped in the entity's memory, the supplied default value will be returned.
      *
-     * @return a dynamic object that contains entity specific properties.
+     * @return the value for the specified key from this entity's memory or the supplied default.
      */
-    public function lookupMemory (key :String) :Object
+    public function lookupMemory (key :String, defval :Object) :Object
     {
-        return callMsoyCode("getMemory_v1", key);
+        var value :Object = callMsoyCode("getMemory_v1", key);
+        return (value == null) ? defval : value;
     }
 
     /**
