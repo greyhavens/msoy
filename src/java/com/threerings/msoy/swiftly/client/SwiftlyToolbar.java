@@ -26,6 +26,14 @@ public class SwiftlyToolbar extends JToolBar
             _undoButton.setAction(textPane.getUndoAction());
             _redoButton.setAction(textPane.getRedoAction());
         }
+
+        // Override the DefaultEditorKit action names e.g. cut-to-keyboard
+        _cutButton.setText("Cut");
+        _copyButton.setText("Copy");
+        _pasteButton.setText("Paste");
+        _selectAllButton.setText("Select All");
+        _undoButton.setText("Undo");
+        _redoButton.setText("Redo");
     }
 
     protected void setupToolbar ()
@@ -44,21 +52,22 @@ public class SwiftlyToolbar extends JToolBar
         addSeparator();
         // TODO add mini icons for these + tooltips with keyboard shortcuts
         // These actions get set by updateEditorActions()
-        _cutButton = (JButton)add(new JButton("Cut"));
-        _copyButton = (JButton)add(new JButton("Copy"));
-        _pasteButton = (JButton)add(new JButton("Paste"));
-        _selectAllButton = (JButton)add(new JButton("Select All"));
-        _undoButton = (JButton)add(new JButton("Undo"));
-        _redoButton = (JButton)add(new JButton("Redo"));
+        add(_cutButton);
+        add(_copyButton);
+        add(_pasteButton);
+        add(_selectAllButton);
+        add(_undoButton);
+        add(_redoButton);
+        updateEditorActions();
 
         setFloatable(false);
     }
 
     protected SwiftlyApplet _applet;
-    protected JButton _cutButton;
-    protected JButton _copyButton;
-    protected JButton _pasteButton;
-    protected JButton _selectAllButton;
-    protected JButton _undoButton;
-    protected JButton _redoButton;
+    protected JButton _cutButton = new JButton();
+    protected JButton _copyButton = new JButton();
+    protected JButton _pasteButton = new JButton();
+    protected JButton _selectAllButton = new JButton();
+    protected JButton _undoButton = new JButton();
+    protected JButton _redoButton = new JButton();
 }

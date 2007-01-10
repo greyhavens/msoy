@@ -147,15 +147,15 @@ public class SwiftlyTextPane extends JTextPane
 
         // TODO is there a cross platform way to show what the keybindings are for these actions?
         // Cut
-        _popup.add(getCutAction());
+        _popup.add(createMenuItem("Cut", getCutAction()));
         // Copy
-        _popup.add(getCopyAction());
+        _popup.add(createMenuItem("Copy", getCopyAction()));
         // Paste
-        _popup.add(getPasteAction());
+        _popup.add(createMenuItem("Paste", getPasteAction()));
         // Separator
         _popup.addSeparator();
         // Select All
-        _popup.add(getSelectAllAction());
+        _popup.add(createMenuItem("Select All", getSelectAllAction()));
         // Separator
         _popup.addSeparator();
         // Undo
@@ -166,6 +166,13 @@ public class SwiftlyTextPane extends JTextPane
         MouseListener popupListener = new PopupListener();
         // add popupListener to the textpane
         addMouseListener(popupListener);
+    }
+
+    protected JMenuItem createMenuItem (String text, Action action)
+    {
+        JMenuItem item = new JMenuItem(action);
+        item.setText(text);
+        return item;
     }
 
     protected void addKeyAction (Action action, KeyStroke key)
