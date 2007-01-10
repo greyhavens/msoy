@@ -44,9 +44,20 @@ public class MsoyControl
         event.userProps = new Object();
         populateProperties(event.userProps);
         disp.root.loaderInfo.sharedEvents.dispatchEvent(event);
-        _props = event.msoyProps;
+        if ("msoyProps" in event) {
+            _props = event.msoyProps;
+        }
 
         disp.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload, false, 0, true);
+    }
+
+    /**
+     * Are we connected and running inside the metasoy world, or are we
+     * merely being displayed standalone?
+     */
+    public function isConnected () :Boolean
+    {
+        return (_props != null);
     }
 
     /**
