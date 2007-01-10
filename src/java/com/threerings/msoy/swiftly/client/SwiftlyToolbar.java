@@ -14,6 +14,11 @@ public class SwiftlyToolbar extends JToolBar
     public void updateEditorActions()
     {
         SwiftlyTextPane textPane =  _applet.getEditor().getCurrentTextPane();
+        // If the change event was called because of the tab being removed, textPane will be null
+        if (textPane == null) {
+            return;
+        }
+
         _cutButton.setAction(textPane.createCutAction());
         _copyButton.setAction(textPane.createCopyAction());
         _pasteButton.setAction(textPane.createPasteAction());
