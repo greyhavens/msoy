@@ -102,22 +102,40 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action getCutAction ()
     {
-        return _cutAction;
+        return new AbstractAction("Cut") {
+            public void actionPerformed (ActionEvent e) {
+                cut();
+            }
+        };
     }
 
     public Action getCopyAction ()
     {
-        return _copyAction;
+        return new AbstractAction("Copy") {
+            public void actionPerformed (ActionEvent e) {
+                copy();
+            }
+        };
     }
 
     public Action getPasteAction ()
     {
-        return _pasteAction;
+        return new AbstractAction("Paste") {
+            public void actionPerformed (ActionEvent e) {
+                paste();
+            }
+        };
     }
 
+    // TODO select all when called from the toolbar isn't showing the selected text, despite
+    // having actually selected it. Fix this.
     public Action getSelectAllAction ()
     {
-        return _selectAllAction;
+        return new AbstractAction("Select All") {
+            public void actionPerformed (ActionEvent e) {
+                selectAll();
+            }
+        };
     }
 
     protected void addKeyBindings ()
@@ -211,58 +229,6 @@ public class SwiftlyTextPane extends JTextPane
             _undo.addEdit(e.getEdit());
             _undoAction.update();
             _redoAction.update();
-        }
-    }
-
-    protected class CutAction extends AbstractAction
-    {
-        public CutAction ()
-        {
-            super("Cut");
-        }
-
-        public void actionPerformed (ActionEvent e)
-        {
-            cut();
-        }
-    }
-
-    protected class CopyAction extends AbstractAction
-    {
-        public CopyAction ()
-        {
-            super("Copy");
-        }
-
-        public void actionPerformed (ActionEvent e)
-        {
-            copy();
-        }
-    }
-
-    protected class PasteAction extends AbstractAction
-    {
-        public PasteAction ()
-        {
-            super("Paste");
-        }
-
-        public void actionPerformed (ActionEvent e)
-        {
-            paste();
-        }
-    }
-
-    protected class SelectAllAction extends AbstractAction
-    {
-        public SelectAllAction ()
-        {
-            super("Select All");
-        }
-
-        public void actionPerformed (ActionEvent e)
-        {
-            selectAll();
         }
     }
 
@@ -362,10 +328,6 @@ public class SwiftlyTextPane extends JTextPane
     protected UndoableEditListener _undoHandler = new UndoHandler();
     protected SwiftlyEditor _editor;
     protected SwiftlyDocument _document;
-    protected CutAction _cutAction = new CutAction();
-    protected CopyAction _copyAction = new CopyAction();
-    protected PasteAction _pasteAction = new PasteAction();
-    protected SelectAllAction _selectAllAction = new SelectAllAction();
     protected UndoAction _undoAction = new UndoAction();
     protected RedoAction _redoAction = new RedoAction();
     protected boolean _documentChanged;

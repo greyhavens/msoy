@@ -18,22 +18,12 @@ public class SwiftlyToolbar extends JToolBar
     public void updateEditorActions()
     {
         SwiftlyTextPane textPane =  _applet.getEditor().getCurrentTextPane();
-        if (textPane != null) {
-            _cutButton.setAction(textPane.getCutAction());
-            _copyButton.setAction(textPane.getCopyAction());
-            _pasteButton.setAction(textPane.getPasteAction());
-            _selectAllButton.setAction(textPane.getSelectAllAction());
-            _undoButton.setAction(textPane.getUndoAction());
-            _redoButton.setAction(textPane.getRedoAction());
-        }
-
-        // Override the DefaultEditorKit action names e.g. cut-to-clipboard
-        _cutButton.setText("Cut");
-        _copyButton.setText("Copy");
-        _pasteButton.setText("Paste");
-        _selectAllButton.setText("Select All");
-        _undoButton.setText("Undo");
-        _redoButton.setText("Redo");
+        _cutButton.setAction(textPane.getCutAction());
+        _copyButton.setAction(textPane.getCopyAction());
+        _pasteButton.setAction(textPane.getPasteAction());
+        _selectAllButton.setAction(textPane.getSelectAllAction());
+        _undoButton.setAction(textPane.getUndoAction());
+        _redoButton.setAction(textPane.getRedoAction());
     }
 
     protected void setupToolbar ()
@@ -58,16 +48,15 @@ public class SwiftlyToolbar extends JToolBar
         add(_selectAllButton);
         add(_undoButton);
         add(_redoButton);
-        updateEditorActions();
 
         setFloatable(false);
     }
 
     protected SwiftlyApplet _applet;
-    protected JButton _cutButton = new JButton();
-    protected JButton _copyButton = new JButton();
-    protected JButton _pasteButton = new JButton();
-    protected JButton _selectAllButton = new JButton();
-    protected JButton _undoButton = new JButton();
-    protected JButton _redoButton = new JButton();
+    protected JButton _cutButton = new JButton("Cut");
+    protected JButton _copyButton = new JButton("Copy");
+    protected JButton _pasteButton = new JButton("Paste");
+    protected JButton _selectAllButton = new JButton("Select All");
+    protected JButton _undoButton = new JButton("Undo");
+    protected JButton _redoButton = new JButton("Redo");
 }
