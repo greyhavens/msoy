@@ -21,22 +21,22 @@ public class Board extends BaseSprite
         super(0, 0, Bitmap(new backgroundAsset()));
         
         _gameCtrl = gameCtrl;
+        _myIndex = gameCtrl.getMyIndex();
         
-        // Add kids and cars.
-        var names :Array = gameCtrl.getPlayerNames();
+        // Add my own kid, and tell other players about it.
         var kid :Kid;
-        var i :int;
-        for (i = 0; i < names.length; i++) {
-            // TODO: the height we are using to adjust the starting y 
-            // coordinate is just made up here for now. Need to find a good way 
-            // of determining the actual height of the bitmap before the kid 
-            // sprite is instantiated.
-            // Also, we want to let the player choose the image to use rather 
-            // than just grabbing one corresponding to his/her index.
-            kid = new Kid(getSidewalkX(), getSidewalkY() - 45, i, names[i], this);
-            _kids[i] = kid;
-            addChild(kid);
-        }
+        var playerName :String = gameCtrl.getPlayerNames()[_myIndex];
+        var startX :int = getSidewalkX();
+        // TODO: need to replace this hard-coded 45 with something reflecting 
+        // the actual height of the kid bitmap.
+        var startY :int = getSidewalkY() - 45;
+        // TODO: we want to let the player choose the image to use rather 
+        // than just grabbing one corresponding to his/her index.
+        kid = new Kid(startX, startY, _myIndex, playerName, this);
+        _kids[_myIndex] = kid;
+        addChild(kid);
+        _gameCtrl.sendMessage("newkid" + _myIndex, new Array(startX, startY, _myIndex, playerName));
+
         // TODO non-hard coded car creation.
         var car :Car = new Car(275, HORIZON + 10, 10, Car.DOWN, this);
         _cars[0] = car;
@@ -67,6 +67,18 @@ public class Board extends BaseSprite
     public function getSidewalkY () :int
     {
         return int(Math.random() * (height - HORIZON)) + HORIZON;
+    }
+    
+    /** Return the Kid object for the specified player. */
+    public function getKid (playerIndex :int) :Kid
+    {
+        return _kids[playerIndex];
+    }
+    
+    /** Tell all other players about this player's current location. */
+    public function setMyKidLocation (newX :int, newY :int) :void
+    {
+        _gameCtrl.sendMessage("kidmoved" + _myIndex, new Array(newX, newY));
     }
     
     /** Do whatever needs to be done on each clock tick. */
@@ -119,13 +131,38 @@ public class Board extends BaseSprite
     /** Handles MessageReceivedEvents. */
     protected function msgReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == "tick") {
+        var name :String = event.name;
+        var kid :Kid;
+        var kidIndex :int;
+        if (name == "tick") {
             doTick();
-        } else if (event.name.indexOf("kid") == 0) {
-            var kidIndex :int = int(event.name.substring(3));
-            var kid :Kid = Kid(_kids[kidIndex]);
-            kid.setMove(event.value as int);
+        } else if (name.indexOf("kidmoved") == 0) {
+            kidIndex = int(event.name.substring(8));
+            // Only care if it's not our own kid that moved.
+            if (kidIndex != _myIndex) {
+                kid = Kid(_kids[kidIndex]);
+                var coords :Array = event.value as Array;
+                kid.x = coords[0];
+                kid.y = coords[1];
+            }
+        } else if (name.indexOf("newkid") == 0) {
+            trace("got new kid event");
+            kidIndex = int(event.name.substring(6));
+            // Again, only add the Kid if it's not ours.
+            if (kidIndex != _myIndex) {
+                // TODO: Wow this is horribly ugly. Perhaps we should serialize
+                // when creating kid and unserialize as a ByteArray here.
+                var kidArray :Array = event.value as Array;
+                kid = new Kid(kidArray[0], kidArray[1], kidArray[2], kidArray[3], this);
+                addChild(kid);
+                _kids[kidIndex] = kid;
+            }
         }
+    }
+    
+    protected function addKid (kid :Kid, playerIndex :int) :void
+    {
+        _gameCtrl.sendMessage("newkid" + playerIndex, kid);
     }
     
     /** The game controller object. */
@@ -136,6 +173,9 @@ public class Board extends BaseSprite
     
     /** A list of cars on the board. */
     protected var _cars :Array = [];
+    
+    /** Our player index, or -1 if we're not a player. */
+    protected var _myIndex :int;
     
     /** Background image. */
     [Embed(source="rsrc/background.png")]

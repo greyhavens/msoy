@@ -3,18 +3,16 @@ package {
 import flash.display.Bitmap;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
+import flash.events.KeyboardEvent;
+import flash.ui.Keyboard;
+
+import com.threerings.ezgame.EZGameControl;
 
 public class Kid extends BaseSprite
 {   
     /** Images that can be used for kid. */
     public static const IMAGE_VAMPIRE :int = 0;
     public static const IMAGE_GHOST :int = 1;
-    
-    /** Movement direction constants. */
-    public static const UP :int = 0;
-    public static const DOWN :int = 1;
-    public static const LEFT :int = 2;
-    public static const RIGHT :int = 3;
     
     /** Create a new Kid object at the coordinates on the board given. */
     public function Kid (startX :int, startY :int, image :int, playerName :String, board :Board)
@@ -58,6 +56,8 @@ public class Kid extends BaseSprite
                 respawn();
             }
         } else {
+            var oldX :int = x;
+            var oldY :int = y;
             // Only move if we're not dead.
             var deltaX :int = _speed * _moveX;
             var deltaY :int = _speed * _moveY;
@@ -68,11 +68,46 @@ public class Kid extends BaseSprite
                 y + deltaY + (height - _nameLabel.height) <= _board.height) {
                 y += deltaY;
             }
+            // If we moved, tell the other players.
+            if (x != oldX || y != oldY) {
+                _board.setMyKidLocation(x, y);
+            }
         }
-        // Reset _moveX and _moveY to zero so we don't move until we get more
-        // keyboard events telling us to do so.
-        _moveX = 0;
-        _moveY = 0;
+    }
+    
+    /** 
+     * Set variables determining direction of motion appropriately when a key
+     * is pressed.
+     */
+    public function keyDownHandler (event :KeyboardEvent) :void
+    {
+        switch (event.keyCode) {
+        case Keyboard.UP:
+            _moveY = -1;
+            break;
+        case Keyboard.DOWN:
+            _moveY = 1;
+            break;
+        case Keyboard.LEFT:
+            _moveX = -1;
+            break;
+        case Keyboard.RIGHT:
+            _moveX = 1;
+            break;
+        default:
+            return;
+        }
+    }
+    
+    /** Stop motion in given direction when the key is released. */
+    public function keyUpHandler (event :KeyboardEvent) :void
+    {
+        if (event.keyCode == Keyboard.UP || Keyboard.DOWN) {
+            _moveY = 0;
+        }
+        if (event.keyCode == Keyboard.LEFT || Keyboard.RIGHT) {
+            _moveX = 0;
+        }
     }
     
     /** Return true if we're not dead, false if we are. */
@@ -92,28 +127,7 @@ public class Kid extends BaseSprite
     {
         _speed = newSpeed;
     }
-    
-    /** Set direction(s) to move. */
-    public function setMove (direction :int) :void
-    {
-        switch (direction) {
-        case UP:
-            _moveY = -1;
-            break;
-        case DOWN:
-            _moveY = 1;
-            break;
-        case LEFT:
-            _moveX = -1;
-            break;
-        case RIGHT:
-            _moveX = 1;
-            break;
-        default:
-            return;
-        }
-    }
-    
+        
     /** Respawn at a random sidewalk location. */
     protected function respawn () :void
     {
@@ -121,6 +135,7 @@ public class Kid extends BaseSprite
         x = _board.getSidewalkX();
         y = _board.getSidewalkY() - height;
         addChild(_nameLabel);
+        _board.setMyKidLocation(x, y);
     }
     
     /** Get the bitmap used to draw the kid. */

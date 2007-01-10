@@ -4,7 +4,6 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.FocusEvent;
 import flash.events.KeyboardEvent;
-import flash.ui.Keyboard;
 
 import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -23,31 +22,9 @@ public class TruckOrTreat extends Sprite
         
         if (_myIndex != -1) {
             // Listen for keys being pressed.
-            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
-        }
-    }
-    
-    /** 
-     * Send message indicating what direction(s) to move when a given key is 
-     * being pressed or held down.
-     */
-    protected function keyDownHandler (event :KeyboardEvent) :void
-    {
-        switch (event.keyCode) {
-        case Keyboard.UP:
-            _gameCtrl.sendMessage("kid" + _myIndex, Kid.UP);
-            break;
-        case Keyboard.DOWN:
-            _gameCtrl.sendMessage("kid" + _myIndex, Kid.DOWN);
-            break;
-        case Keyboard.LEFT:
-            _gameCtrl.sendMessage("kid" + _myIndex, Kid.LEFT);
-            break;
-        case Keyboard.RIGHT:
-            _gameCtrl.sendMessage("kid" + _myIndex, Kid.RIGHT);
-            break;
-        default:
-            return;
+            var _myKid :Kid = _board.getKid(_myIndex);
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, _myKid.keyDownHandler);
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, _myKid.keyUpHandler);
         }
     }
     
