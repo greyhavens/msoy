@@ -32,10 +32,10 @@ public class MemoryRecord
     @Id public int itemId;
 
     /** The key that identifies this memory datum. */
-    @Id public String key;
+    @Id public String datumKey;
 
     /** A serialized representation of this datum's value. */
-    public byte[] value;
+    public byte[] datumValue;
 
     /** Used when loading instances from the repository. */
     public MemoryRecord ()
@@ -49,8 +49,8 @@ public class MemoryRecord
     {
         this.itemType = entry.item.type;
         this.itemId = entry.item.itemId;
-        this.key = entry.key;
-        this.value = entry.value;
+        this.datumKey = entry.key;
+        this.datumValue = entry.value;
     }
 
     /**
@@ -60,8 +60,8 @@ public class MemoryRecord
     {
         MemoryEntry entry = new MemoryEntry();
         entry.item = new ItemIdent(itemType, itemId);
-        entry.key = key;
-        entry.value = value;
+        entry.key = datumKey;
+        entry.value = datumValue;
         return entry;
     }
 }
