@@ -15,6 +15,7 @@ public class SwiftlyClientRpc
     {
         _authtoken = authtoken;
 
+        // Configure our RPC Connection
         XmlRpcClientConfigImpl xmlRpcConfig = new XmlRpcClientConfigImpl();
 
         xmlRpcConfig.setServerURL(rpcURL);
