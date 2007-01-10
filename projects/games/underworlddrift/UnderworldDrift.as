@@ -40,33 +40,31 @@ public class UnderworldDrift extends Sprite
 
         _gameCtrl = new EZGameControl(this);
         if (_gameCtrl.getMyIndex() != -1) {
-            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyUpEvent);
         }
     }
 
     /** 
      * Handles KEY_DOWN. 
      */
-    protected function keyEvent(event :KeyboardEvent) :void
+    protected function keyDownEvent(event :KeyboardEvent) :void
     {
-        var action :int = getActionForKey(event.keyCode);
-        switch (action) {
-        case Action.NONE: break;
-
-        case Action.FORWARD: 
-            _ground.moveForward();
+        switch (event.keyCode) {
+        case Keyboard.UP:
+            _ground.moveForward(true);
             break;
 
-        case Action.BACKWARD:
-            _ground.moveBackward();
+        case Keyboard.DOWN:
+            _ground.moveBackward(true);
             break;
 
-        case Action.LEFT:
-            _ground.turnLeft();
+        case Keyboard.LEFT:
+            _ground.turnLeft(true);
             break;
 
-        case Action.RIGHT:
-            _ground.turnRight();
+        case Keyboard.RIGHT:
+            _ground.turnRight(true);
             break;
 
         default:
@@ -74,19 +72,30 @@ public class UnderworldDrift extends Sprite
         }
     }
 
-    /**
-     * Get the action that corresponds to the specified key.
-     */
-    protected function getActionForKey (keyCode :int) :int
+    protected function keyUpEvent(event :KeyboardEvent) :void
     {
-        switch (keyCode) {
-        case Keyboard.UP: return Action.FORWARD;
-        case Keyboard.DOWN: return Action.BACKWARD;
-        case Keyboard.LEFT: return Action.LEFT;
-        case Keyboard.RIGHT: return Action.RIGHT;
-        default: return Action.NONE;
+        switch (event.keyCode) {
+        case Keyboard.UP:
+            _ground.moveForward(false);
+            break;
+
+        case Keyboard.DOWN:
+            _ground.moveBackward(false);
+            break;
+
+        case Keyboard.LEFT:
+            _ground.turnLeft(false);
+            break;
+
+        case Keyboard.RIGHT:
+            _ground.turnRight(false);
+            break;
+
+        default:
+            // do nothing
         }
     }
+
 
     /** the game control. */
     protected var _gameCtrl :EZGameControl;

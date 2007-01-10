@@ -23,24 +23,22 @@ public class Ground extends Sprite
         
         // set up the ground objects
         _trackVector = new TRACK_IMAGE();
-        _transforms = new Array();
         _strips = new Array();
         var stripImage :Bitmap;
         var stripHeight :Number = BEGINNING_STRIP_HEIGHT;
         var stripHeightCeiling :int = 0;
         var totalHeight :Number = 0;
-        for (var strip :int = 0; totalHeight <= HEIGHT; strip++,
-            stripHeight = (stripHeight - SCALE_FACTOR) > 1 ? stripHeight - SCALE_FACTOR : 1) {
-            // find the ceiling for this value, but don't let ceiling(1) = 2
-            stripHeightCeiling = Math.round(stripHeight + 0.49);
-            totalHeight += stripHeightCeiling;
-            _transforms[strip] = new Matrix();
-            _transforms[strip].translate(X_SHIFT, Y_SHIFT + strip * SOURCE_HEIGHT + SOURCE_HEIGHT);
-            _transforms[strip].scale(
-                X_SCALE * (1 - (totalHeight / HEIGHT) * WIDTH_PERCENT_SCALE), 1);
-            _transforms[strip].scale(1, stripHeightCeiling / SOURCE_HEIGHT);
+        var currentRegion :Number = 1;
+        for (var strip :int = 0; totalHeight <= HEIGHT; strip++) {
+            // split the image area into equal-height regions, from the beginning height to 1
+            if ((totalHeight / HEIGHT) >= currentRegion / BEGINNING_STRIP_HEIGHT) {
+                // avoid boundary condition resulting in stripHeight = 0
+                stripHeight = stripHeight > 1 ? stripHeight - 1 : 1;
+                currentRegion += 1;
+            }
+            totalHeight += stripHeight;
             // draw from the bottom up
-            _strips[strip] = new BitmapData(WIDTH, stripHeightCeiling, false);
+            _strips[strip] = new BitmapData(WIDTH, stripHeight, false);
             stripImage = new Bitmap(_strips[strip]);
             stripImage.y = HEIGHT - totalHeight;
             addChild(stripImage);
@@ -49,28 +47,24 @@ public class Ground extends Sprite
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
-    public function moveForward () :void 
-    {
-        var rotation :Matrix = new Matrix();
-        rotation.rotate(_cameraAngle);
-        _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, -5)));
+    public function moveForward (moving :Boolean) :void 
+    { 
+        _movingForward = moving;
     }
 
-    public function moveBackward () :void
+    public function moveBackward (moving :Boolean) :void
     {
-        var rotation :Matrix = new Matrix();
-        rotation.rotate(_cameraAngle);
-        _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, 5)));
+        _movingBackward = moving;
     }
 
-    public function turnLeft () :void
+    public function turnLeft (turning :Boolean) :void
     {
-        _cameraAngle -= 0.03725;
+        _turningLeft = turning;
     }
 
-    public function turnRight () :void
+    public function turnRight (turning :Boolean) :void
     {
-        _cameraAngle += 0.03725;
+        _turningRight = turning
     }
 
     /**
@@ -78,41 +72,45 @@ public class Ground extends Sprite
      */
     protected function enterFrame (event :Event) :void
     {
-        /*var preTransform :Matrix = new Matrix();
-        preTransform.translate(0, -HALF_IMAGE_SIZE);
-        preTransform.rotate(_rotationAngle);
-        preTransform.translate(0, HALF_IMAGE_SIZE);
+        // TODO: base these speeds on something fairer than enterFrame.  Using this method,
+        // the person with the fastest computer (higher framerate) gets to drive more quickly.
+        // rotate camera
+        if (_turningRight) {
+            _cameraAngle += 0.0745;
+        } else if (_turningLeft) {
+            _cameraAngle -= 0.0745;
+        }
+
+        // move camera
+        var rotation :Matrix;
+        if (_movingForward) {
+            rotation = new Matrix();
+            rotation.rotate(_cameraAngle);
+            _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, -10)));
+        } else if (_movingBackward) {
+            rotation = new Matrix();
+            rotation.rotate(_cameraAngle);
+            _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, 10)));
+        }
+
         var thisTransform :Matrix;
-        for (var strip :int = 0; strip < _strips.length; strip++) {
-            thisTransform = preTransform.clone();
-            thisTransform.concat(_transforms[strip]);
-            _strips[strip].draw(new BitmapData(WIDTH, HEIGHT));
-            _strips[strip].draw(_background, thisTransform);
-            _strips[strip].draw(_trackVector, thisTransform);
-        }*/
-        var stripHeight :Number = BEGINNING_STRIP_HEIGHT;
-        var stripHeightCeiling :int = 0;
         var totalHeight :Number = 0;
-        var thisTransform :Matrix;
-        for (var strip :int = 0; strip < _strips.length; strip++, 
-            stripHeight = (stripHeight - SCALE_FACTOR) > 1 ? stripHeight - SCALE_FACTOR : 1) {
-            stripHeightCeiling = Math.round(stripHeight + 0.49);
-            totalHeight += stripHeightCeiling;
+        var thisHeight :Number = 0;
+        for (var strip :int = 0; strip < _strips.length; strip++) {
+            thisHeight = _strips[strip].height;
+            totalHeight += thisHeight;
             thisTransform = new Matrix();
-            // get the camera to (0,0)
+            // get the camera to the origin
             thisTransform.translate(0 - _cameraPosition.x, 0 - _cameraPosition.y);
             // rotate
             thisTransform.rotate(0 - _cameraAngle);
-            // move this strip to the bottom
-            thisTransform.translate(0, strip * SOURCE_HEIGHT + SOURCE_HEIGHT);
-            // scale 
-            thisTransform.scale(X_SCALE * (1 - (totalHeight/HEIGHT) * WIDTH_PERCENT_SCALE),
-                stripHeightCeiling/SOURCE_HEIGHT);
-            // move (0,0) to the center of the display
-            thisTransform.translate(WIDTH / 2, 0); //HEIGHT / 2);
+            // scale
+            var scaleFactor :Number = (_cameraHeight + HEIGHT - totalHeight) / _cameraHeight;
+            thisTransform.scale(scaleFactor,scaleFactor);
+            // move transformed space to view space
+            thisTransform.translate(WIDTH / 2,  _cameraDistance + thisHeight);
             // blank out display
             _strips[strip].draw(new BitmapData(WIDTH, HEIGHT));
-            // draw TODO: add clipping rectangle
             _strips[strip].draw(_background, thisTransform);
             _strips[strip].draw(_trackVector, thisTransform);
         }
@@ -127,21 +125,36 @@ public class Ground extends Sprite
     /** strips */
     protected var _strips :Array;
 
-    /** transforms */
-    protected var _transforms :Array;
-
     /** angle of camera */
     protected var _cameraAngle :Number = 0;
 
     /** position of camera */
     protected var _cameraPosition :Point = new Point(0, HALF_IMAGE_SIZE);
 
+    /** height of the camera */
+    protected var _cameraHeight :Number = 10;
+
+    /** distance from the camera to the projection plane */
+    protected var _cameraDistance :Number = 800;
+
+    /** flag to indicate forward movement */
+    protected var _movingForward :Boolean = false;
+
+    /** flag to indicate backward movement */
+    protected var _movingBackward :Boolean = false;
+
+    /** flag to indicate rotation to the right */
+    protected var _turningRight :Boolean = false;
+
+    /** flag to indicate rotation to the left */
+    protected var _turningLeft :Boolean = false;
+
     /** track image */
     [Embed(source='rsrc/track.swf#track3')]
     protected static const TRACK_IMAGE :Class;
 
     /** test background tile image */
-    [Embed(source='rsrc/pixel_magma.png')]
+    [Embed(source='rsrc/blue_ground.png')]
     protected static const BACKGROUND_IMAGE :Class;
 
     /** The length and width of the track image tiles (they are square) */
@@ -156,27 +169,7 @@ public class Ground extends Sprite
     /** width of the ground in display pixels */
     protected static const WIDTH :int = UnderworldDrift.DISPLAY_WIDTH;
 
-    /** align the vector so that the the display area is centered */
-    protected static const X_SHIFT :Number = HALF_IMAGE_SIZE - (IMAGE_SIZE - WIDTH) / 2;
-
-    /** align the bottom of the vector with the top of the display area. */
-    protected static const Y_SHIFT :Number = 0 - HALF_IMAGE_SIZE;
-
-    /** The amount to stretch the X direction at the bottom of the image */
-    protected static const X_SCALE :Number = 7;
-
-    /** The number of pixels from the source image in the y direction to scale into a single 
-     * strip */
-    protected static const SOURCE_HEIGHT :int = 30;
-
-    /** The amount to reduce the size of the strip by per row. */
-    protected static const SCALE_FACTOR :Number = 0.05;
-
-    /** Reduce the effect of the calculation that determines how fast the width is reduced for
-     * perspective. */
-    protected static const WIDTH_PERCENT_SCALE :Number = 0.2;
-
     /** The height of the largest strip, at the bottom of the image. */
-    protected static const BEGINNING_STRIP_HEIGHT :int = 4;
+    protected static const BEGINNING_STRIP_HEIGHT :int = 10;
 }
 }
