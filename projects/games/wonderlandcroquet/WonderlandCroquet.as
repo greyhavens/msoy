@@ -30,10 +30,12 @@ public class WonderlandCroquet extends Sprite
         _gameCtrl.registerListener(this);
 
         _spr = new Sprite();
-        addEventListener(Event.ENTER_FRAME, run);
+        addEventListener(Event.ENTER_FRAME, tick);
 
         addChild(_spr);
 
+        // TODO: support better map loading, choice at table time,
+        // or maybe just pick one randomly
         //_map = new MapBasic();
         _map = new MapFancy();
         _spr.addChild(_map.background);
@@ -47,6 +49,12 @@ public class WonderlandCroquet extends Sprite
 
         // Add some balls
         addRandomBalls();
+
+        // And a wicket
+        for (var ii :int = 1; ii <= 10; ii++) {
+            var wicket :Wicket = new Wicket(ii, 200, 200, 33);
+            _spr.addChild(wicket);
+        }
 
         _paintQueue = APEngine.getAll();
 
@@ -64,9 +72,12 @@ public class WonderlandCroquet extends Sprite
     protected function addRandomBalls () :void
     {
         for (var ii: int = 0; ii < 6; ii++) {
+            var r :Number = Math.random() * (100 - Ball.RADIUS);
+            var angle :Number = Math.random() * 2 * Math.PI;
+
             var ball: BallParticle = new BallParticle(
-                Ball.RADIUS + (Math.random() * (800 - (2 * Ball.RADIUS))), 
-                Ball.RADIUS + (Math.random() * (600 - (2 * Ball.RADIUS))), 
+                _map.startPoint.x + (Math.cos(angle) * r),
+                _map.startPoint.y + (Math.sin(angle) * r),
                 Ball.RADIUS, ii, false);
 
             APEngine.addParticle(ball);
@@ -74,7 +85,7 @@ public class WonderlandCroquet extends Sprite
         }
     }
 
-    protected function run (evt :Event) :void
+    protected function tick (evt :Event) :void
     {
         var ii :int;
        
@@ -111,13 +122,13 @@ public class WonderlandCroquet extends Sprite
 
 */
         } else if (event.type == StateChangedEvent.GAME_STARTED) {
-            _gameCtrl.localChat("Reversi superchallenge: go!");
+            _gameCtrl.localChat("Wonderland Croquet!");
 
             // configure the board
             //_board = new Board(_gameCtrl, BOARD_SIZE);
 
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
-            _gameCtrl.localChat("Thank you for playing Reversi!");
+            _gameCtrl.localChat("Off with your head!");
 
         }
     }
@@ -147,6 +158,7 @@ public class WonderlandCroquet extends Sprite
     protected var _paintQueue :Array;
 
     protected var _board :WonderlandBoard;
+    protected var _wickets :Array;
 
     /** Our game control object. */
     protected var _gameCtrl :EZGameControl;

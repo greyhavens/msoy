@@ -25,7 +25,7 @@ public class Ball extends Sprite
         _flamingo = null;
 
 
-        _ballAnimation = MovieClipAsset(new BallAnimations[color]);
+        _ballAnimation = MovieClipAsset(new ballAnimations[color]);
 
         _playing = true;
 
@@ -109,25 +109,25 @@ public class Ball extends Sprite
 
     // The ball artwork.
     [Embed(source="rsrc/ball.swf#ball1")]
-    protected static var ballAnimation1Class :Class;
+    protected static var BallAnimation1 :Class;
     [Embed(source="rsrc/ball.swf#ball2")]
-    protected static var ballAnimation2Class :Class;
+    protected static var BallAnimation2 :Class;
     [Embed(source="rsrc/ball.swf#ball3")]
-    protected static var ballAnimation3Class :Class;
+    protected static var BallAnimation3 :Class;
     [Embed(source="rsrc/ball.swf#ball4")]
-    protected static var ballAnimation4Class :Class;
+    protected static var BallAnimation4 :Class;
     [Embed(source="rsrc/ball.swf#ball5")]
-    protected static var ballAnimation5Class :Class;
+    protected static var BallAnimation5 :Class;
     [Embed(source="rsrc/ball.swf#ball6")]
-    protected static var ballAnimation6Class :Class;
+    protected static var BallAnimation6 :Class;
 
-    protected static var BallAnimations :Array = [
-        ballAnimation1Class,
-        ballAnimation2Class,
-        ballAnimation3Class,
-        ballAnimation4Class,
-        ballAnimation5Class,
-        ballAnimation6Class,
+    protected static var ballAnimations :Array = [
+        BallAnimation1,
+        BallAnimation2,
+        BallAnimation3,
+        BallAnimation4,
+        BallAnimation5,
+        BallAnimation6,
     ];
 }
 

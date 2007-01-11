@@ -76,9 +76,9 @@ public class BallParticle extends CircleParticle
     public function addHitForce (p :Point) :void
     {
         var angle :Number = Math.PI + Math.atan(p.y / p.x);
-        var strength :Number = Math.sqrt(p.x*p.x + p.y*p.y) * 2;
+        var strength :Number = Math.sqrt(p.x*p.x + p.y*p.y) * HIT_STRENGTH_MULTIPLIER;
 
-        strength = Math.min(strength, 200);
+        strength = Math.min(strength, MAX_HIT_STRENGTH);
 
         if (p.x < 0) {
             angle += Math.PI;
@@ -89,6 +89,12 @@ public class BallParticle extends CircleParticle
         addMasslessForce(new Vector(Math.cos(angle) * strength, 
                                     Math.sin(angle) * strength));
     }
+
+    // Multiplier applied to the length of the vector they've drawn for hit strength.
+    protected static const HIT_STRENGTH_MULTIPLIER :int = 2;
+
+    // The hardest anyone is allowed to hit a ball
+    protected static const MAX_HIT_STRENGTH :int = 300;
 }
 
 }

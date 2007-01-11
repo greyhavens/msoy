@@ -12,9 +12,12 @@ public class MapFancy extends WonderlandMap
     {
         super();
 
-        _rough = SpriteAsset(new roughClass());
-        _stone = SpriteAsset(new stoneClass());
-        _background = MovieClipAsset(new backgroundClass());
+        startPoint.x = 900;
+        startPoint.y = 1600;
+
+        _rough = SpriteAsset(new Rough());
+        _stone = SpriteAsset(new Stone());
+        _background = MovieClipAsset(new Background());
 
         background.addChild(_rough);
         background.addChild(_stone);
@@ -77,10 +80,10 @@ public class MapFancy extends WonderlandMap
     protected var _stone :SpriteAsset;
 
     [Embed (source="rsrc/course.swf")]
-    protected static var backgroundClass :Class;
+    protected static var Background :Class;
     [Embed (source="rsrc/course.swf#rough")]
-    protected static var roughClass :Class;
+    protected static var Rough :Class;
     [Embed (source="rsrc/course.swf#paving")]
-    protected static var stoneClass :Class;
+    protected static var Stone :Class;
 }
 }

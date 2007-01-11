@@ -1,6 +1,8 @@
 package {
 
 import flash.display.Sprite;
+import flash.geom.Point;
+
 import org.cove.ape.Vector;
 import org.cove.ape.RectangleParticle;
 
@@ -8,6 +10,9 @@ import mx.core.SpriteAsset;
 
 public class WonderlandMap
 {
+    // Where we should spawn new croquet balls at the beginning of the game
+    public var startPoint :Point;
+
     // Our background
     public var background :Sprite;
 
@@ -19,9 +24,11 @@ public class WonderlandMap
 
     public function WonderlandMap ()
     {
+        startPoint = new Point(0, 0);
         background = new Sprite();
         foreground = new Sprite();
         foreground.mouseChildren = false;
+        foreground.mouseEnabled = false;
         particles = [];
     }
 
@@ -114,7 +121,7 @@ public class WonderlandMap
     protected function addPlanter (x :Number, y :Number, rotation :Number = 0, 
         bush :Boolean = false, bushRotation :Number = 0) :void
     {
-        var planter :SpriteAsset = new planterClass();
+        var planter :SpriteAsset = new Planter();
         planter.x = x;
         planter.y = y;
         planter.rotation = rotation;
@@ -135,7 +142,7 @@ public class WonderlandMap
      */
     protected function addBush (x :Number, y :Number, rotation :Number) :void
     {
-        var bush :SpriteAsset = new bushClass();
+        var bush :SpriteAsset = new Bush();
         bush.x = x;
         bush.y = y;
         bush.rotation = rotation;
@@ -160,10 +167,10 @@ public class WonderlandMap
 
     // Artwork for the standard planter boxes
     [Embed (source="rsrc/objects.swf#physplanterbox")]
-    protected static var planterClass :Class;
+    protected static var Planter :Class;
 
     // Artwork for the standard bushes
     [Embed (source="rsrc/objects.swf#bush")]
-    protected static var bushClass :Class;
+    protected static var Bush :Class;
 }
 }

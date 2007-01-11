@@ -9,12 +9,12 @@ public class MapBasic extends WonderlandMap
 {
     public function MapBasic ()
     {
-        background.addChild(new backgroundClass());
+        background.addChild(new Background());
 
         addObjects();
 
-        _rough = SpriteAsset(new roughClass());
-        _stone = SpriteAsset(new stoneClass());
+        _rough = SpriteAsset(new Rough());
+        _stone = SpriteAsset(new Stone());
     }
 
     // Adds various boxes and whatnot around the scene
@@ -39,10 +39,10 @@ public class MapBasic extends WonderlandMap
     protected var _stone :SpriteAsset;
 
     [Embed (source="rsrc/terrain_06.swf")]
-    protected static var backgroundClass :Class;
+    protected static var Background :Class;
     [Embed (source="rsrc/terrain_06.swf#rough")]
-    protected static var roughClass :Class;
+    protected static var Rough :Class;
     [Embed (source="rsrc/terrain_06.swf#paving")]
-    protected static var stoneClass :Class;
+    protected static var Stone :Class;
 }
 }
