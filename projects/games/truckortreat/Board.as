@@ -150,7 +150,9 @@ public class Board extends BaseSprite
                 // when creating kid and unserialize as a ByteArray here.
                 var kidArray :Array = event.value as Array;
                 kid = new Kid(kidArray[0], kidArray[1], kidArray[2], kidArray[3], this);
-                addChild(kid);
+                // Put under car and this player's layers. We want it on top of
+                // the background image, though.
+                addChildAt(kid, 1);
                 _kids[kidIndex] = kid;
             }
         }
