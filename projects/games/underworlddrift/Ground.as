@@ -90,16 +90,24 @@ public class Ground extends Sprite
             _cameraAngle -= 0.0745;
         }
 
-        // move camera
+        // move camera TODO: do something better than dual booleans
         var rotation :Matrix;
-        if (_movingForward) {
-            rotation = new Matrix();
-            rotation.rotate(_cameraAngle);
-            _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, -10)));
-        } else if (_movingBackward) {
-            rotation = new Matrix();
-            rotation.rotate(_cameraAngle);
-            _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, 10)));
+        if (_movingForward || _movingBackward) {
+            if (_movingForward) {
+                rotation = new Matrix();
+                rotation.rotate(_cameraAngle);
+                _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, -10)));
+            } else if (_movingBackward) {
+                rotation = new Matrix();
+                rotation.rotate(_cameraAngle);
+                _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, 10)));
+            }
+
+            // move to next image
+            if (_cameraPosition.y < -HALF_IMAGE_SIZE) {
+                _track.moveTrackForward();
+                _cameraPosition.y += IMAGE_SIZE;
+            }
         }
 
         var thisTransform :Matrix;

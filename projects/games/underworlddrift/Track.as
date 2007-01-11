@@ -26,37 +26,48 @@ public class Track extends Sprite
             }
         }
 
-        setBehindTrack(new TRACKS[0]());
-        setCurrentTrack(new TRACKS[1]());
-        setFrontTrack(new TRACKS[2]());
+        setBehindTrack(0);
+        setCurrentTrack(1);
+        setFrontTrack(2);
     }
 
-    protected function setBehindTrack (newTrack :DisplayObject) :void
+    public function moveTrackForward () :void
+    {
+        setBehindTrack(_trackCurrentIndex);
+        setCurrentTrack(_trackFrontIndex);
+        setFrontTrack(_currentIndex);
+        _currentIndex = (_currentIndex + 1) % 3;
+    }
+
+    protected function setBehindTrack (newTrack :int) :void
     {
         if (_trackBehind != null) {
             removeChild(_trackBehind);
         }
-        _trackBehind = newTrack;
+        _trackBehindIndex = newTrack;
+        _trackBehind = new TRACKS[newTrack]();
         _trackBehind.y = Ground.IMAGE_SIZE;
         addChild(_trackBehind);
     }
 
-    protected function setFrontTrack (newTrack :DisplayObject) :void
+    protected function setFrontTrack (newTrack :int) :void
     {
         if (_trackFront != null) {
             removeChild(_trackFront);
         }
-        _trackFront = newTrack;
+        _trackFrontIndex = newTrack;
+        _trackFront = new TRACKS[newTrack]();
         _trackFront.y = -Ground.IMAGE_SIZE;
         addChild(_trackFront);
     }
 
-    protected function setCurrentTrack (newTrack :DisplayObject) :void
+    protected function setCurrentTrack (newTrack :int) :void
     {
         if (_trackCurrent != null) {
             removeChild(_trackCurrent);
         }
-        _trackCurrent = newTrack;
+        _trackCurrentIndex = newTrack;
+        _trackCurrent = new TRACKS[newTrack]();
         addChild(_trackCurrent);
     }
 
@@ -75,8 +86,17 @@ public class Track extends Sprite
     [Embed(source='rsrc/blue_ground.png')]
     protected static const BACKGROUND_IMAGE :Class;
 
+    /** Tracks surrounding the current position */
     protected var _trackBehind :DisplayObject;
     protected var _trackCurrent :DisplayObject;
     protected var _trackFront :DisplayObject;
+
+    /** Index in the tracks array for the current tracks */
+    protected var _trackBehindIndex :int;
+    protected var _trackCurrentIndex :int;
+    protected var _trackFrontIndex :int;
+
+    /** temporary!  Will be replaced by seedable random number generator */
+    protected var _currentIndex :int = 0;
 }
 }
