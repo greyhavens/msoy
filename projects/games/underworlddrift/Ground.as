@@ -22,7 +22,8 @@ public class Ground extends Sprite
         _background.graphics.endFill();
         
         // set up the ground objects
-        _trackVector = new TRACK_IMAGE();
+        //_trackVector = new TRACK_IMAGE();
+        _trackVector = new Track();
         _strips = new Array();
         var stripImage :Bitmap;
         var stripHeight :Number = BEGINNING_STRIP_HEIGHT;
