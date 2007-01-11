@@ -5,6 +5,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.events.KeyboardEvent;
 import flash.ui.Keyboard;
+import flash.media.Sound;
 
 import com.threerings.ezgame.EZGameControl;
 
@@ -14,6 +15,16 @@ public class Kid extends BaseSprite
     public static const IMAGE_VAMPIRE :int = 0;
     public static const IMAGE_GHOST :int = 1;
     
+    /** 
+     * Directions kid may be facing or moving. These are only useful for 
+     * differentiating between directions on a single axis! For the sake of 
+     * these constants, LEFT == UP and RIGHT == DOWN.
+     */
+    public static const LEFT :int = -1;
+    public static const RIGHT :int = 1;
+    public static const UP :int = -1;
+    public static const DOWN :int = 1;
+    
     /** Create a new Kid object at the coordinates on the board given. */
     public function Kid (startX :int, startY :int, image :int, playerName :String, board :Board)
     {
@@ -22,6 +33,7 @@ public class Kid extends BaseSprite
         _speed = DEFAULT_SPEED;
         _lives = STARTING_LIVES;
         _dead = false;
+        _facing = RIGHT; // TODO: this actually will probably depend on the image
         super(startX, startY, getBitmap(image));
         
         // Print player's name above the kid.
@@ -34,6 +46,9 @@ public class Kid extends BaseSprite
         _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
         _nameLabel.x = (width - _nameLabel.textWidth) / 2;
         addChild(_nameLabel);
+        
+        // Sound for when we get smashed by a road-rage filled driver.
+        _squishSound = Sound(new SQUISH_SOUND());
     }
     
     /** Handle being killed. */
@@ -41,9 +56,14 @@ public class Kid extends BaseSprite
     {
         _dead = true;
         _lives--;
-        // TODO: this is where we have some nice kid being squashed animation.
+        _squishSound.play();
+        if (_lives == 0) {
+            // TODO: here we do the final squish animation
+        } else {
+            // TODO: this is where we have some nice kid being squashed animation.
+            _respawnTicks = AUTO_RESPAWN_TICKS;
+        }
         trace("Oh nos, " + _playerName + " died. " + _lives + " lives left.");
-        _respawnTicks = AUTO_RESPAWN_TICKS;
     }
     
     /** Called to move kid at each clock tick. */
@@ -55,8 +75,6 @@ public class Kid extends BaseSprite
                 respawn();
             }
         } else {
-            var oldX :int = x;
-            var oldY :int = y;
             // Only move if we're not dead.
             var deltaX :int = _speed * _moveX;
             var deltaY :int = _speed * _moveY;
@@ -68,8 +86,10 @@ public class Kid extends BaseSprite
                 y += deltaY;
             }
             // If we moved, tell the other players.
-            if (x != oldX || y != oldY) {
+            if (_moveX != 0 && _moveY != 0) {
                 _board.setMyKidLocation(x, y);
+                // TODO: stop movement animation and set to static image. Should
+                // get an image that is consistent with _facing.
             }
         }
     }
@@ -82,20 +102,23 @@ public class Kid extends BaseSprite
     {
         switch (event.keyCode) {
         case Keyboard.UP:
-            _moveY = -1;
+            _moveY = UP;
             break;
         case Keyboard.DOWN:
-            _moveY = 1;
+            _moveY = DOWN;
             break;
         case Keyboard.LEFT:
-            _moveX = -1;
+            _moveX = LEFT;
+            _facing = LEFT;
             break;
         case Keyboard.RIGHT:
-            _moveX = 1;
+            _moveX = RIGHT;
+            _facing = RIGHT;
             break;
         default:
             return;
         }
+        // TODO: start animation that is dependent on _facing
     }
     
     /** Stop motion in given direction when the key is released. */
@@ -177,6 +200,12 @@ public class Kid extends BaseSprite
     /** The game board. */
     protected var _board :Board;
     
+    /** Direction kid is facing at the moment. */
+    protected var _facing :int;
+    
+    /** Sound for squishy death. */
+    protected var _squishSound :Sound;
+    
     /** Initial number of lives. */
     protected static const STARTING_LIVES :int = 3;
     
@@ -195,5 +224,9 @@ public class Kid extends BaseSprite
     
     [Embed(source="rsrc/ghost.png")]
     protected static const ghostAsset :Class;
+    
+    /** Squishy sound. */
+    [Embed(source="rsrc/squish.mp3")]
+    protected static const SQUISH_SOUND :Class;
 }
 }
