@@ -15,6 +15,7 @@ import flash.events.TimerEvent;
 
 import flash.net.URLRequest;
 
+import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
 import flash.ui.Keyboard;
@@ -57,16 +58,29 @@ public class PhotoBox extends Sprite
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
         // set up the UI
+        var prompt :TextField = new TextField();
+        prompt.autoSize = TextFieldAutoSize.LEFT;
+        prompt.background = true;
+        prompt.backgroundColor = 0xCCFFFF;
+        prompt.wordWrap = true;
+        prompt.width = 175;
+        var format :TextFormat = new TextFormat();
+        format.size = 16;
+        format.bold = true;
+        prompt.defaultTextFormat = format;
+        prompt.text = "Enter Flickr tags\nseparated by commas:";
+        addChild(prompt);
+
         _tagField = new TextField();
         _tagField.type = TextFieldType.INPUT;
         _tagField.background = true;
-        _tagField.backgroundColor = 0xCCFFFF;
-        _tagField.height = 50;
-        _tagField.width = 500;
+        _tagField.backgroundColor = 0xFFFFFF;
+        _tagField.x = prompt.textWidth + 15;
+        _tagField.height = prompt.height;
+        _tagField.width = 500 - _tagField.x;
         addChild(_tagField);
         _tagField.addEventListener(KeyboardEvent.KEY_DOWN, handleKey);
-
-        var format :TextFormat = new TextFormat();
+        format = new TextFormat();
         format.size = 36;
         _tagField.defaultTextFormat = format;
 
