@@ -132,7 +132,7 @@ public class StarFight extends Sprite
         _boardLayer.addChild(_board);
 
         // Create our local ship and center the board on it.
-        _ownShip = new ShipSprite(_board, this, false, _gameCtrl.getMyIndex());
+        _ownShip = new ShipSprite(_board, this, false, _gameCtrl.getMyIndex(), true);
         _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
         _bg.setAsCenter(_ownShip.boardX, _ownShip.boardY);
@@ -152,7 +152,7 @@ public class StarFight extends Sprite
                 if (gameShips[ii] == null) {
                     _ships[ii] = null;
                 } else if (ii != _gameCtrl.getMyIndex()) {
-                    _ships[ii] = new ShipSprite(_board, this, true, ii);
+                    _ships[ii] = new ShipSprite(_board, this, true, ii, false);
                     gameShips[ii].position = 0;
                     _ships[ii].readFrom(gameShips[ii]);
                     _shipLayer.addChild(_ships[ii]);
@@ -173,7 +173,6 @@ public class StarFight extends Sprite
                     _powerups[pp] = new Powerup(0, 0, 0);
                     gamePows[pp].position = 0;
                     _powerups[pp].readFrom(gamePows[pp]);
-                    Logger.log("Adding powerup child");
                     _board.powerupLayer.addChild(_powerups[pp]);
                 }
             }
@@ -255,12 +254,12 @@ public class StarFight extends Sprite
                 var ship :ShipSprite = _ships[event.index];
                 if (ship == null) {
                     _ships[event.index] =
-                        ship = new ShipSprite(_board, this, true, event.index);
+                        ship = new ShipSprite(_board, this, true, event.index, false);
                     _shipLayer.addChild(ship);
                 }
                 var bytes :ByteArray = ByteArray(event.newValue);
                 bytes.position = 0;
-                var sentShip :ShipSprite = new ShipSprite(_board, this, true, event.index);
+                var sentShip :ShipSprite = new ShipSprite(_board, this, true, event.index, false);
                 sentShip.readFrom(bytes);
                 ship.updateForReport(sentShip);
             }
@@ -362,7 +361,7 @@ public class StarFight extends Sprite
     public function hitObs (obs :Obstacle, x :Number, y :Number) :void
     {
         _board.explode(x, y, 0, true, 0);
-        
+
         var sound :Sound;
         switch (obs.type) {
         case Obstacle.ASTEROID_1:

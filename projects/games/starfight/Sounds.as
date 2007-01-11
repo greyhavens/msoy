@@ -69,5 +69,34 @@ public class Sounds {
 
     public static const POWERUP :Sound = Sound(new powerupSound());
 
+    // Looping sounds
+    [Embed(source="rsrc/engine.mp3")]
+    protected static var engineSound :Class;
+
+    public static const ENGINE :Sound = Sound(new engineSound());
+
+    // Looping sounds
+    [Embed(source="rsrc/engine2.mp3")]
+    protected static var engine2Sound :Class;
+
+    public static const ENGINE2 :Sound = Sound(new engine2Sound());
+
+    [Embed(source="rsrc/shields.mp3")]
+    protected static var shieldsSound :Class;
+
+    public static const SHIELDS :Sound = Sound(new shieldsSound());
+
+    [Embed(source="rsrc/thruster.mp3")]
+    protected static var thrusterSound :Class;
+
+    public static const THRUSTER :Sound = Sound(new thrusterSound());
+
+    [Embed(source="rsrc/thruster_retro.mp3")]
+    protected static var thrusterRetroSound :Class;
+
+    public static const THRUSTER_RETRO :Sound = Sound(new thrusterRetroSound());
+
+
+
 }
 }

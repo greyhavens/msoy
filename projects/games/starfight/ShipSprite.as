@@ -8,6 +8,8 @@ import flash.geom.Point;
 
 import flash.utils.ByteArray;
 
+import flash.media.SoundChannel;
+
 import mx.core.MovieClipAsset;
 
 /**
@@ -67,7 +69,7 @@ public class ShipSprite extends Sprite
      *  empty space to start in.
      */
     public function ShipSprite (board :BoardSprite, game :StarFight,
-        skipStartingPos :Boolean, shipId :int)
+        skipStartingPos :Boolean, shipId :int, isOwnShip :Boolean)
     {
         accel = 0.0;
         turnRate = 0.0;
@@ -76,7 +78,12 @@ public class ShipSprite extends Sprite
         yVel = 0.0;
         power = 1.0; // full
         powerups = 0;
+        if (_isOwnShip && _shieldSound != null) {
+            _shieldSound.stop();
+            _shieldSound = null;
+        }
         this.shipId = shipId;
+        _isOwnShip = isOwnShip;
         shipType = Codes.SHIP_1;
 
         if (!skipStartingPos) {
@@ -249,9 +256,37 @@ public class ShipSprite extends Sprite
         } else if (event.keyCode == KV_UP) {
             accel = ((powerups & SPEED_MASK) ? FORWARD_ACCEL*1.3 :
                 FORWARD_ACCEL);
+
+            if (_isOwnShip) {
+                // Play the thruster sound, stop any old thrustering.
+                if (_thrusterSound != null && _thrusterRev) {
+                    _thrusterSound.stop();
+                    _thrusterSound = null;
+                }
+                if (_thrusterSound == null) {
+                    _thrusterRev = false;
+                    _thrusterSound = Sounds.THRUSTER.play(0, int.MAX_VALUE);
+                }
+            }
+
         } else if (event.keyCode == KV_DOWN) {
             accel = ((powerups & SPEED_MASK) ? BACKWARD_ACCEL*1.3 :
                 BACKWARD_ACCEL);
+
+            if (_isOwnShip) {
+                // Play the thruster sound, stop any old thrustering.
+                if (_thrusterSound != null && !_thrusterRev) {
+                    _thrusterSound.stop();
+                    _thrusterSound = null;
+                }
+
+                if (_thrusterSound == null) {
+                    _thrusterRev = true;
+                    _thrusterSound =
+                        Sounds.THRUSTER_RETRO.play(0, int.MAX_VALUE);
+                }
+            }
+
         } else if (event.keyCode == KV_SPACE) {
             if (_ticksToFire <= 0) {
                 fire();
@@ -295,6 +330,22 @@ public class ShipSprite extends Sprite
             _shieldMovie.y = -58/2;
             _shieldMovie.rotation = 90;
             addChild(_shieldMovie);
+
+            if (_isOwnShip) {
+                // Start the engine sound...
+                if (_engineSound != null) {
+                    _engineSound.stop();
+                }
+
+                // Play the engine sound forever til we stop.  Well, not quite
+                //  forever, but if the player's still in after 2 billion
+                //  loops, they can expect some weirdness.
+                if(shipType == Codes.SHIP_1) {
+                    _engineSound = Sounds.ENGINE.play(0, int.MAX_VALUE);
+                } else {
+                    _engineSound = Sounds.ENGINE2.play(0, int.MAX_VALUE);
+                }
+            }
         }
     }
 
@@ -330,8 +381,20 @@ public class ShipSprite extends Sprite
             turnAccelRate = Math.min(turnAccelRate, 0);
         } else if (event.keyCode == KV_UP) {
             accel = Math.min(accel, 0);
+
+            // Stop our sound if appropriate.
+            if (_isOwnShip && _thrusterSound != null && !_thrusterRev) {
+                _thrusterSound.stop();
+                _thrusterSound = null;
+            }
         } else if (event.keyCode == KV_DOWN) {
             accel = Math.max(accel, 0);
+
+            // Stop our sound if appropriate.
+            if (_isOwnShip && _thrusterSound != null && _thrusterRev) {
+                _thrusterSound.stop();
+                _thrusterSound = null;
+            }
         } else if (event.keyCode == KV_SPACE) {
             _firing = false;
         }
@@ -343,6 +406,10 @@ public class ShipSprite extends Sprite
     public function awardPowerup (type :int) :void
     {
         powerups |= (1 << type);
+
+        if (_isOwnShip && type == Powerup.SHIELDS && _shieldSound == null) {
+            _shieldSound = Sounds.SHIELDS.play(0, int.MAX_VALUE);
+        }
     }
 
     /**
@@ -375,8 +442,6 @@ public class ShipSprite extends Sprite
 
         // Maybe let boardX float if we're not too far off.
         var dX :Number = report.boardX - boardX;
-
-        Logger.log("dX: " + dX);
 
         if (Math.abs(dX) < 0.5) {
             xVel += dX/(Codes.FRAMES_PER_UPDATE*2);
@@ -439,9 +504,9 @@ public class ShipSprite extends Sprite
 
     /** Ship performance characteristics. */
     protected static const TURN_ACCEL_RATE :Number = 2.0;
-    protected static const FORWARD_ACCEL :Number = 0.02;
-    protected static const BACKWARD_ACCEL :Number = -0.01;
-    protected static const FRICTION :Number = 0.95;
+    protected static const FORWARD_ACCEL :Number = 0.014;
+    protected static const BACKWARD_ACCEL :Number = -0.007;
+    protected static const FRICTION :Number = 0.975;
     protected static const TURN_FRICTION :Number = 0.75;
     protected static const SHOT_SPD :Number = 0.5;
     protected static const TICKS_PER_SHOT :int = 8;
@@ -467,5 +532,16 @@ public class ShipSprite extends Sprite
     protected static const IDLE :int = 1;
     protected static const FORWARD :int = 3;
     protected static const REVERSE :int = 2;
+
+    /** Sounds currently being played - only play sounds for ownship. */
+    protected var _engineSound :SoundChannel;
+    protected var _thrusterSound :SoundChannel;
+    protected var _shieldSound :SoundChannel;
+
+    /** State of thurster sounds. */
+    protected var _thrusterRev :Boolean;
+
+    /** Whether this is ourselves. */
+    protected var _isOwnShip :Boolean;
 }
 }
