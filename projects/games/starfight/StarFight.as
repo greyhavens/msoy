@@ -303,17 +303,31 @@ public class StarFight extends Sprite
                 addShot(new ShotSprite(val[0], val[1], val[2],
                             val[3] - ShotSprite.SPREAD_FACT, val[4], val[5],
                             this));
+            } else {
+
             }
+
+            // Shooting sound.
+            var sound :Sound = (val[6] == ShotSprite.SPREAD) ?
+                ((val[5] == Codes.SHIP_1) ? Sounds.TRI_BEAM : Sounds.TRI_BEAM2) :
+                ((val[5] == Codes.SHIP_1) ? Sounds.BEAM : Sounds.BEAM2);
+            playSoundAt(sound, val[0], val[1]);
+
         } else if (event.name == "explode") {
             var arr :Array = (event.value as Array);
 
             _board.explode(arr[0], arr[1], arr[2], false, arr[4]);
+            playSoundAt(Sounds.SHIP_EXPLODE, arr[0], arr[1]);
+
             if (arr[3] == _ownShip.shipId) {
                 _status.addScore(KILL_PTS);
             }
         }
     }
 
+    /**
+     * Adds a shot to the game and gets its sprite going.
+     */
     protected function addShot (shot :ShotSprite) :void
     {
         _shots.push(shot);
@@ -328,7 +342,7 @@ public class StarFight extends Sprite
         shooterId :int) :void
     {
         _board.explode(x, y, 0, true, 0);
-        playSoundAt(SHIP_HIT, x, y);
+        playSoundAt(Sounds.SHIP_HIT, x, y);
 
         if (ship == _ownShip) {
             ship.hit(shooterId);
@@ -350,11 +364,11 @@ public class StarFight extends Sprite
         switch (obs.type) {
         case Obstacle.ASTEROID_1:
         case Obstacle.ASTEROID_2:
-            sound = ASTEROID_HIT;
+            sound = Sounds.ASTEROID_HIT;
             break;
         case Obstacle.WALL:
         default:
-            sound = METAL_HIT;
+            sound = Sounds.METAL_HIT;
             break;
         }
         playSoundAt(sound, x, y);
@@ -446,6 +460,8 @@ public class StarFight extends Sprite
             _ownShip.boardX, _ownShip.boardY, ShipSprite.COLLISION_RAD);
         while (powIdx != -1) {
             _ownShip.awardPowerup(_powerups[powIdx].type);
+            playSoundAt(Sounds.POWERUP, _powerups[powIdx].boardX,
+                _powerups[powIdx].boardY);
             _status.addScore(POWERUP_PTS);
             removePowerup(powIdx);
 
@@ -526,27 +542,5 @@ public class StarFight extends Sprite
     protected static const POWERUP_PTS :int = 25;
     protected static const HIT_PTS :int = 10;
     protected static const KILL_PTS :int = 50;
-
-    // Sound stuff...
-    [Embed(source="rsrc/ship_hit.mp3")]
-    protected static var shipHitSound :Class;
-
-    protected static const SHIP_HIT :Sound = Sound(new shipHitSound());
-
-    [Embed(source="rsrc/asteroid_hit.mp3")]
-    protected static var asteroidHitSound :Class;
-
-    protected static const ASTEROID_HIT :Sound = Sound(new asteroidHitSound());
-
-    [Embed(source="rsrc/metal_hit.mp3")]
-    protected static var metalHitSound :Class;
-
-    protected static const METAL_HIT :Sound = Sound(new metalHitSound());
-
-    [Embed(source="rsrc/junk_hit.mp3")]
-    protected static var junkHitSound :Class;
-
-    protected static const JUNK_HIT :Sound = Sound(new junkHitSound());
-
 }
 }
