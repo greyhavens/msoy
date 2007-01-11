@@ -16,6 +16,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ResultAdapter;
@@ -169,6 +170,13 @@ public class RoomManager extends SpotSceneManager
         } else {
             _roomObj.addToMemories(entry);
         }
+    }
+
+    @Override // from PlaceManager
+    public void messageReceived (MessageEvent event)
+    {
+        // we want to explicitly disable the standard method calling by name that we allow in more
+        // trusted environments
     }
 
     @Override // from PlaceManager
