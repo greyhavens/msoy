@@ -139,9 +139,15 @@ public class SwiftlyApplet extends JApplet
         return _projectPanel;
     }
 
-    public void deleteDocument (SwiftlyDocument document)
+    public void deleteFileElement (FileElement element)
     {
-        // TODO delete the document
+        // TODO delete the file element on the backend
+    }
+
+    public void renameFileElement (FileElement element, String newName)
+    {
+        // TODO rename the element on the backend
+        element.setName(newName);
     }
 
     protected void createGUI ()

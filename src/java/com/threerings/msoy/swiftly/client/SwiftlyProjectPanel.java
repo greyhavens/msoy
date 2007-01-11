@@ -157,8 +157,7 @@ public class SwiftlyProjectPanel extends JPanel
 
         // grab the new name
         String newName = (String)node.getUserObject();
-        _selectedNode.setName(newName);
-        // TODO need to save the file element to the server
+        _applet.renameFileElement(_selectedNode, newName);
         node.setUserObject(_selectedNode);
         if (_selectedNode.getType() == FileElement.DOCUMENT) {
             _applet.getEditor().updateTabTitleAt((SwiftlyDocument)_selectedNode);
@@ -220,41 +219,48 @@ public class SwiftlyProjectPanel extends JPanel
     protected void openNewDocument ()
     {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
-
         if (node == null) return;
 
-        Object nodeInfo = node.getUserObject();
-        FileElement element = (FileElement)nodeInfo;
+        FileElement element = (FileElement)node.getUserObject();
         SwiftlyDocument doc = new SwiftlyDocument("", "", element.getParent());
         _applet.showSelectFileElementNameDialog(doc);
-        _applet.getEditor().addEditorTab(doc);
         addNode(doc);
+        if (_selectedNode.getType() == FileElement.DOCUMENT) {
+            _applet.getEditor().addEditorTab(doc);
+        }
     }
 
     protected void deleteDocument ()
     {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
-
         if (node == null) return;
 
-        Object nodeInfo = node.getUserObject();
-        // TODO this is almost certainly not right.
-        if (node.isLeaf()) {
-            SwiftlyDocument doc = (SwiftlyDocument)nodeInfo;
-            _applet.deleteDocument(doc);
+        // TODO throw up a Are you sure yes/no dialog
+
+        FileElement element = (FileElement)node.getUserObject();
+
+        // TODO We're probably going to put this in a try/catch block
+        _applet.deleteFileElement(element);
+
+        // XXX we know the tab was selected in order for delete to work. This might be dangerous.
+        // we also know the tab was open.. hmmm
+        if (element.getType() == FileElement.DOCUMENT) {
             _applet.getEditor().closeCurrentTab();
-            removeCurrentNode();
+        } else if (element.getType() == FileElement.DIRECTORY) {
+            // TODO oh god we have to remove all the tabs associated with this directory
+            // soo.. every tab that has a common getParent() ?
+        } else {
+            // TODO you're trying to remove the project itself? Does Homey play that?
         }
+        removeCurrentNode();
     }
 
     protected void addDirectory ()
     {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
-
         if (node == null) return;
 
-        Object nodeInfo = node.getUserObject();
-        FileElement element = (FileElement)nodeInfo;
+        FileElement element = (FileElement)node.getUserObject();
         ProjectDirectory dir = new ProjectDirectory("", element.getParent());
         _applet.showSelectFileElementNameDialog(dir);
         addNode(dir);
