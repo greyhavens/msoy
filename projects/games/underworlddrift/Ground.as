@@ -136,7 +136,7 @@ public class Ground extends Sprite
     protected var _cameraAngle :Number = 0;
 
     /** position of camera */
-    public var _cameraPosition :Point = new Point(0, HALF_IMAGE_SIZE + 100);
+    protected var _cameraPosition :Point = new Point(0, HALF_IMAGE_SIZE + 100);
 
     /** height of the camera */
     protected var _cameraHeight :Number = 30;
