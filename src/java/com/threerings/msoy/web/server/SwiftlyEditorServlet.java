@@ -3,7 +3,8 @@
 
 package com.threerings.msoy.web.server;
 
-import com.threerings.msoy.swiftly.server.SwiftlyProjectRpc;
+import com.threerings.msoy.swiftly.client.SwiftlyProjectRpc;
+import com.threerings.msoy.swiftly.server.SwiftlyProjectRpcImpl;
 
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
 import org.apache.xmlrpc.server.XmlRpcHandlerMapping;
@@ -23,7 +24,7 @@ public class SwiftlyEditorServlet extends XmlRpcServlet
         throws XmlRpcException
     {
         PropertyHandlerMapping phm = new PropertyHandlerMapping();
-        phm.addHandler("project", SwiftlyProjectRpc.class);
+        phm.addHandler(SwiftlyProjectRpc.class.getName(), SwiftlyProjectRpcImpl.class);
         return phm;
     }
 

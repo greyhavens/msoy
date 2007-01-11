@@ -52,7 +52,10 @@ public class SwiftlyApplet extends JApplet
                 }
             });
         } catch (Exception e) {
-            System.err.println("createGUI didn't successfully complete");
+            System.err.println("createGUI didn't successfully complete.");
+            Exception ee = (Exception) e.getCause();
+            ee.printStackTrace();
+            System.out.println("Foo: " + ee);
         }
 
         setStatus("Welcome to Swiftly!");

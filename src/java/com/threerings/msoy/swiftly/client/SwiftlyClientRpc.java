@@ -2,7 +2,10 @@ package com.threerings.msoy.swiftly.client;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.xmlrpc.client.util.ClientFactory;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
@@ -13,50 +16,53 @@ public class SwiftlyClientRpc
 {
     public SwiftlyClientRpc (URL rpcURL, String authtoken)
     {
+        XmlRpcClientConfigImpl config;
+        XmlRpcClient client;
+        ClientFactory factory;
+
+        // Cache the authtoken
         _authtoken = authtoken;
 
-        // Configure our RPC Connection
-        XmlRpcClientConfigImpl xmlRpcConfig = new XmlRpcClientConfigImpl();
+        // Set up the client configuration
+        config = new XmlRpcClientConfigImpl();
+        config.setServerURL(rpcURL);
+        config.setEnabledForExtensions(true);        
 
-        xmlRpcConfig.setServerURL(rpcURL);
-        xmlRpcConfig.setEnabledForExtensions(true);
 
-        _xmlrpc = new XmlRpcClient();
-        _xmlrpc.setConfig(xmlRpcConfig);
+        // Configure a new client
+        client = new XmlRpcClient();
+        client.setConfig(config);
+
+        // Instantiate our proxies
+        factory = new ClientFactory(client);
+        _project = (SwiftlyProjectRpc) factory.newInstance(SwiftlyProjectRpc.class);
     }
 
     public ArrayList<SwiftlyProject> getProjects () {
-        Object[] result;
-        Object[] arguments = { _authtoken };
-        ArrayList<SwiftlyProject> projectList = new ArrayList<SwiftlyProject>();
+        ArrayList<SwiftlyProject> projectList;
+        List<Map<String,Object>> result;
 
-        // TODO -- load the files for the project
+        // XXX -- load the files for the project
         ArrayList<SwiftlyDocument> fileList = new ArrayList<SwiftlyDocument>();
         fileList.add(new SwiftlyDocument("file #1", "Example text"));
         fileList.add(new SwiftlyDocument("file #2", "Example text more"));
+        // XXX
+        
 
-        try {
-            result = (Object[]) _xmlrpc.execute(RPC_GET_PROJECTS,
-                arguments);
-            for (Object projectName : result) {
-                SwiftlyProject project = new SwiftlyProject((String)projectName, fileList);
-                projectList.add(project);
-            }
-        } catch (Exception e) {
-            System.err.println("There was a problem: " + e);
-            e.printStackTrace();
+        result = _project.getProjects(_authtoken);
+        projectList = new ArrayList<SwiftlyProject>();
+
+        for (Map<String,Object> struct : result) {
+            SwiftlyProject project = new SwiftlyProject((String)struct.get(SwiftlyProjectRpc.PROJECT_NAME), fileList);
+            projectList.add(project);
         }
 
         return projectList;
     }
 
     /** Swiftly XML-RPC Connection. */
-    protected XmlRpcClient _xmlrpc;
+    protected SwiftlyProjectRpc _project;
 
     /** Cached authorization token. */
     protected String _authtoken;
-
-    // RPC Methods
-    /** Get a list of projects. */
-    protected static final String RPC_GET_PROJECTS = "project.getProjects";
 }
