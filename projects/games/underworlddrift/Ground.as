@@ -13,17 +13,16 @@ import flash.events.Event;
 
 public class Ground extends Sprite
 {
+    /** The length and width of the track image tiles (they are square) */
+    public static const IMAGE_SIZE :int = 1024;
+
+    /** half the image size - used in a few calculations */
+    public static const HALF_IMAGE_SIZE :int = IMAGE_SIZE / 2;
+
     public function Ground ()
     {
-        _background = new Shape();
-        _background.graphics.beginBitmapFill((new BACKGROUND_IMAGE() as Bitmap).bitmapData);
-        // draw over the same coordinates as road tiles, so that the same transform applies
-        _background.graphics.drawRect(-HALF_IMAGE_SIZE, -HALF_IMAGE_SIZE, IMAGE_SIZE, IMAGE_SIZE);
-        _background.graphics.endFill();
-        
         // set up the ground objects
-        //_trackVector = new TRACK_IMAGE();
-        _trackVector = new Track();
+        _track = new Track();
         _strips = new Array();
         var stripImage :Bitmap;
         var stripHeight :Number = BEGINNING_STRIP_HEIGHT;
@@ -123,16 +122,12 @@ public class Ground extends Sprite
             _strips[strip].draw(new BitmapData(WIDTH, thisHeight));
             // draw the background, then track using the calculated transform and a clipping rect
             var clipping :Rectangle = new Rectangle(0, 0, WIDTH, thisHeight);
-            _strips[strip].draw(_background, thisTransform, null, null, clipping);
-            _strips[strip].draw(_trackVector, thisTransform, null, null, clipping);
+            _strips[strip].draw(_track, thisTransform, null, null, clipping);
         }
     }
 
-    /** background shape instance */
-    protected var _background :Shape;
-
-    /** track tile instance */
-    protected var _trackVector :IBitmapDrawable;
+    /** track instance */
+    protected var _track :Track;
 
     /** strips */
     protected var _strips :Array;
@@ -141,7 +136,7 @@ public class Ground extends Sprite
     protected var _cameraAngle :Number = 0;
 
     /** position of camera */
-    protected var _cameraPosition :Point = new Point(0, HALF_IMAGE_SIZE + 100);
+    public var _cameraPosition :Point = new Point(0, HALF_IMAGE_SIZE + 100);
 
     /** height of the camera */
     protected var _cameraHeight :Number = 30;
@@ -161,23 +156,9 @@ public class Ground extends Sprite
     /** flag to indicate rotation to the left */
     protected var _turningLeft :Boolean = false;
 
-    /** track image */
-    [Embed(source='rsrc/track.swf#track3')]
-    protected static const TRACK_IMAGE :Class;
-
-    /** test background tile image */
-    [Embed(source='rsrc/blue_ground.png')]
-    protected static const BACKGROUND_IMAGE :Class;
-
     /** Bowser! */
     [Embed(source='rsrc/bowser.swf#bowser_center')]
     protected static const KART :Class;
-
-    /** The length and width of the track image tiles (they are square) */
-    protected static const IMAGE_SIZE :int = 1024;
-
-    /** half the image size - used in a few calculations */
-    protected static const HALF_IMAGE_SIZE :int = IMAGE_SIZE / 2;
 
     /** height of the ground in display pixels */
     protected static const HEIGHT :int = 3 * UnderworldDrift.DISPLAY_HEIGHT / 4;
