@@ -15,6 +15,8 @@ import flash.events.TimerEvent;
 
 import flash.net.URLRequest;
 
+import flash.text.TextFormat;
+
 import flash.ui.Keyboard;
 
 import flash.utils.Timer;
@@ -63,6 +65,10 @@ public class PhotoBox extends Sprite
         _tagField.width = 500;
         addChild(_tagField);
         _tagField.addEventListener(KeyboardEvent.KEY_DOWN, handleKey);
+
+        var format :TextFormat = new TextFormat();
+        format.size = 36;
+        _tagField.defaultTextFormat = format;
 
         _loader = new Loader();
         _loader.y = 50;
