@@ -71,9 +71,8 @@ public class SwiftlyTextPane extends JTextPane
      */
     public boolean saveDocument ()
     {
-        // TODO show a progress bar in the status bar while Saving...
         if (hasUnsavedChanges()) {
-            // TODO save the document into the internets
+            _editor.getApplet().saveFileElement(_document);
             setDocumentChanged(false);
             _editor.getApplet().setStatus("Saving " + _document);
             return true;
@@ -164,7 +163,7 @@ public class SwiftlyTextPane extends JTextPane
         addKeyAction(_editor.createCloseCurrentTabAction(),
                      KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
 
-        // ctrl-z undos the action
+        // ctrl-z undoes the action
         addKeyAction(_undoAction, KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
 
         // ctrl-y redoes the action

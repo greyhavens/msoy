@@ -113,7 +113,7 @@ public class SwiftlyApplet extends JApplet
         default:
             prompt = "Enter the name: ";
         }
-            
+
         String name = JOptionPane.showInternalInputDialog(_contentPane, prompt);
 
         // do nothing more if the user picks cancel
@@ -139,11 +139,29 @@ public class SwiftlyApplet extends JApplet
         return _projectPanel;
     }
 
+    /**
+     * Saves a file element on the backend. Creates the element if it doesn't already exist. 
+     * @param element the {@link FileElement} to save.
+     */
+    public void saveFileElement (FileElement element)
+    {
+        // TODO save the file element on the backend
+        // TODO show a progress bar in the status bar while Saving...
+    }
+
+    /**
+     * Deletes a file element on the backend.
+     * @param element the {@link FileElement} to delete.
+     */
     public void deleteFileElement (FileElement element)
     {
         // TODO delete the file element on the backend
     }
 
+    /**
+     * Renames a file element on the backend.
+     * @param element the {@link FileElement} to rename.
+     */
     public void renameFileElement (FileElement element, String newName)
     {
         // TODO rename the element on the backend
