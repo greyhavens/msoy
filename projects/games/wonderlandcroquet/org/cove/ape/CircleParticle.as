@@ -75,7 +75,7 @@ package org.cove.ape {
 		 * class you can define your own custom painting method.
 		 */
 		public function paint():void {
-			
+        /*
 			if (dc == null) dc = getDefaultContainer();
 			
 			dc.graphics.clear();
@@ -83,6 +83,7 @@ package org.cove.ape {
 			
 			dc.graphics.lineStyle(0, 0x666666, 100);
 			dc.graphics.drawCircle(curr.x, curr.y, radius);
+        */
 		}
 	
 	

@@ -34,6 +34,15 @@ public class WonderlandMap
         foreground.mouseEnabled = false;
         particles = [];
         wickets = [];
+
+        addObjects();
+        addWickets();
+
+        // FIXME: This is all very cludgy and awkward, and will need to get revamped
+        // when we have fancier things than just planters and wickets...
+        for each (var wicket :Wicket in wickets) {
+            particles = particles.concat(wicket.particles);
+        }
     }
 
     /**
@@ -98,6 +107,22 @@ public class WonderlandMap
     protected function isStone (x :Number, y :Number) :Boolean
     {
         return false;
+    }
+
+    /**
+     * Add physical obsticles to the map.
+     */
+    protected function addObjects () :void
+    {
+        // default one has no objects
+    }
+
+    /**
+     * Add the wickets to the map.
+     */
+    protected function addWickets () :void
+    {
+        // default one has no wickets
     }
 
     /**

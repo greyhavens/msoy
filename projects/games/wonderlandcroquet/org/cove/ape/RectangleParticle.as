@@ -170,7 +170,6 @@ package org.cove.ape {
 		 */
 		public function paint():void {
         /*
-			
 			if (dc == null) dc = getDefaultContainer();
 			
 			dc.graphics.clear();

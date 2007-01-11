@@ -4,7 +4,10 @@ import flash.display.Sprite;
 import flash.events.Event;
 import mx.utils.ObjectUtil;
 import mx.core.MovieClipAsset;
+import org.cove.ape.AbstractParticle;
+import org.cove.ape.CircleParticle;
 import org.cove.ape.RectangleParticle;
+import org.cove.ape.Vector;
 
 /**
  * A Wicket.
@@ -26,7 +29,21 @@ public class Wicket extends Sprite
         _animation.addEventListener(Event.ENTER_FRAME, endAnimation);
         addChild(_animation);
 
-        // TODO: add particles
+        var rad :Number = rotation * Math.PI/180;
+        particles.push(new RectangleParticle(0.1, -48.5, 113, 10, rad, true));
+        particles.push(new RectangleParticle(0.1, 60, 113, 10, rad, true));
+        particles.push(new CircleParticle(0.6, -72.7, 26, true));
+
+        // And now rotate/translate its potition
+        for each (var particle :AbstractParticle in particles) {
+            var p :Vector = particle.position;
+            p = new Vector(
+                Math.cos(rad)*p.x - Math.sin(rad)*p.y,
+                Math.cos(rad)*p.y + Math.sin(rad)*p.x);
+
+            p.plusEquals(new Vector(x, y));
+            particle.position = p;
+        }
     }
 
     protected function endAnimation (event :Event) :void

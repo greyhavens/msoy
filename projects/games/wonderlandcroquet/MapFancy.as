@@ -19,15 +19,11 @@ public class MapFancy extends WonderlandMap
         _stone = SpriteAsset(new Stone());
         _background = MovieClipAsset(new Background());
 
-        background.addChild(_rough);
-        background.addChild(_stone);
-        background.addChild(_background);
+        background.addChildAt(_background, 0);
+        background.addChildAt(_rough, 0);
+        background.addChildAt(_stone, 0);
 
         addWalls(_background.width, _background.height);
-
-        addObjects();
-
-        addWickets();
     }
 
     override protected function isRough (x :Number, y :Number) :Boolean
@@ -46,8 +42,8 @@ public class MapFancy extends WonderlandMap
         return spr.hitTestPoint(x, y, true);
     }
 
-    // Adds various boxes and whatnot around the scene
-    protected function addObjects () :void
+    // documentation inherited
+    override protected function addObjects () :void
     {
         addPlanter(400, 730, 0, true, 11);
         addPlanter(400, 1070, 0, true, 337);
@@ -71,8 +67,8 @@ public class MapFancy extends WonderlandMap
         addBush(900, 900, 337);
     }
 
-    // Position our wickets
-    protected function addWickets () :void
+    // documentation inherited
+    override protected function addWickets () :void
     {
         wickets = [
             new Wicket(1,  900,  1400, -90),
