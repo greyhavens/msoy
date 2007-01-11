@@ -50,7 +50,7 @@ public class SwiftlyProjectPanel extends JPanel
         TreePath currentSelection = _tree.getSelectionPath();
         if (currentSelection != null) {
             DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)
-                         (currentSelection.getLastPathComponent());
+                 (currentSelection.getLastPathComponent());
             MutableTreeNode parent = (MutableTreeNode)(currentNode.getParent());
             if (parent != null) {
                 _treeModel.removeNodeFromParent(currentNode);
@@ -130,14 +130,11 @@ public class SwiftlyProjectPanel extends JPanel
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
 
         if (node == null) return;
-        _plusButton.setEnabled(true);
-        _minusButton.setEnabled(true);
-        _addDirectoryButton.setEnabled(true);
+        enableToolbar();
 
-        Object nodeInfo = node.getUserObject();
-        if (node.isLeaf()) {
-            SwiftlyDocument doc = (SwiftlyDocument)nodeInfo;
-            _applet.getEditor().addEditorTab(doc);
+        _selectedNode = (FileElement)node.getUserObject();
+        if (_selectedNode.getType() == FileElement.DOCUMENT) {
+            _applet.getEditor().addEditorTab((SwiftlyDocument)_selectedNode);
         }
     }
 
@@ -157,9 +154,15 @@ public class SwiftlyProjectPanel extends JPanel
             int index = e.getChildIndices()[0];
             node = (DefaultMutableTreeNode) (node.getChildAt(index));
         } catch (NullPointerException exc) {}
-        // TODO this gives us a String after the user has edited a node. Need to swap this
-        // back to SwiftlyDocument somehow
-        //_applet.getEditor().updateTabTitleAt((SwiftlyDocument)node.getUserObject());
+
+        // grab the new name
+        String newName = (String)node.getUserObject();
+        _selectedNode.setName(newName);
+        // TODO need to save the file element to the server
+        node.setUserObject(_selectedNode);
+        if (_selectedNode.getType() == FileElement.DOCUMENT) {
+            _applet.getEditor().updateTabTitleAt((SwiftlyDocument)_selectedNode);
+        }
     }
 
     // from interface TreeModelListener
@@ -272,15 +275,26 @@ public class SwiftlyProjectPanel extends JPanel
         disableToolbar();
     }
 
+    protected void enableToolbar ()
+    {
+        setToolbarEnabled(true);
+    }
+
     protected void disableToolbar ()
     {
-        _plusButton.setEnabled(false);
-        _minusButton.setEnabled(false);
-        _addDirectoryButton.setEnabled(false);
+        setToolbarEnabled(false);
+    }
+
+    protected void setToolbarEnabled (boolean value)
+    {
+        _plusButton.setEnabled(value);
+        _minusButton.setEnabled(value);
+        _addDirectoryButton.setEnabled(value);
     }
 
     protected SwiftlyApplet _applet;
     protected SwiftlyProject _project;
+    protected FileElement _selectedNode;
     protected DefaultMutableTreeNode _top;
     protected DefaultTreeModel _treeModel;
     protected JTree _tree;

@@ -114,8 +114,7 @@ public class SwiftlyApplet extends JApplet
             prompt = "Enter the name: ";
         }
             
-        String name = JOptionPane.showInternalInputDialog(
-            _contentPane, prompt);
+        String name = JOptionPane.showInternalInputDialog(_contentPane, prompt);
 
         // do nothing more if the user picks cancel
         if (name != null) {
