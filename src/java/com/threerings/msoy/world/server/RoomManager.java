@@ -56,7 +56,7 @@ public class RoomManager extends SpotSceneManager
     implements RoomProvider
 {
     // documentation inherited from RoomProvider
-    public void triggerEvent (ClientObject caller, ItemIdent item, String event)
+    public void triggerEvent (ClientObject caller, ItemIdent item, String event, byte[] arg)
     {
         // make sure the caller is in the room
         MemberObject who = (MemberObject)caller;
@@ -76,7 +76,7 @@ public class RoomManager extends SpotSceneManager
 //         }
 
         // dispatch this as a simple MessageEvent
-        _roomObj.postMessage(RoomCodes.TRIGGER_EVENT, item, event);
+        _roomObj.postMessage(RoomCodes.TRIGGER_EVENT, item, event, arg);
     }
 
     // documentation inherited from RoomProvider

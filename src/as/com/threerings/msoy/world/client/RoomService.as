@@ -23,7 +23,7 @@ public interface RoomService extends InvocationService
     function editRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface RoomService
-    function triggerEvent (arg1 :Client, arg2 :ItemIdent, arg3 :String) :void;
+    function triggerEvent (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray) :void;
 
     // from Java interface RoomService
     function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void;

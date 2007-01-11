@@ -44,10 +44,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const TRIGGER_EVENT :int = 2;
 
     // from interface RoomService
-    public function triggerEvent (arg1 :Client, arg2 :ItemIdent, arg3 :String) :void
+    public function triggerEvent (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray) :void
     {
         sendRequest(arg1, TRIGGER_EVENT, [
-            arg2, arg3
+            arg2, arg3, arg4
         ]);
     }
 

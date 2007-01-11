@@ -64,13 +64,14 @@ public class RoomController extends SceneController
     /**
      * Handles a request by an item in our room to trigger an event.
      */
-    public function triggerEvent (ident :ItemIdent, event :String) :void
+    public function triggerEvent (ident :ItemIdent, event :String, arg :Object) :void
     {
         if (_roomObj == null) {
             log.warning("Can't trigger event, have no room object [ident=" + ident +
                         ", event=" + event + "].");
         } else {
-            _roomObj.roomService.triggerEvent(_mctx.getClient(), ident, event);
+            var data :ByteArray = (EZObjectMarshaller.encode(arg, false) as ByteArray);
+            _roomObj.roomService.triggerEvent(_mctx.getClient(), ident, event, data);
         }
     }
 
@@ -86,7 +87,7 @@ public class RoomController extends SceneController
         }
 
         // serialize datum (TODO: move this to somewhere more general purpose)
-        var data :ByteArray = (EZObjectMarshaller.encode(value) as ByteArray);
+        var data :ByteArray = (EZObjectMarshaller.encode(value, false) as ByteArray);
 
         // TODO: total up item's used memory, ensure it doesn't exceed the allowed limit
 

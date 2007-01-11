@@ -9,6 +9,7 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.dobj.InvocationResponseEvent;
 import com.threerings.whirled.data.SceneUpdate;
 
 /**
@@ -38,10 +39,10 @@ public class RoomMarshaller extends InvocationMarshaller
     public static final int TRIGGER_EVENT = 2;
 
     // from interface RoomService
-    public void triggerEvent (Client arg1, ItemIdent arg2, String arg3)
+    public void triggerEvent (Client arg1, ItemIdent arg2, String arg3, byte[] arg4)
     {
         sendRequest(arg1, TRIGGER_EVENT, new Object[] {
-            arg2, arg3
+            arg2, arg3, arg4
         });
     }
 

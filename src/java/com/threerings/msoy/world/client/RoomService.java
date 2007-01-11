@@ -23,7 +23,7 @@ public interface RoomService extends InvocationService
      * be delivered to all items.
      * @param event the event to trigger.
      */
-    public void triggerEvent (Client client, ItemIdent item, String event);
+    public void triggerEvent (Client client, ItemIdent item, String event, byte[] arg);
 
     /**
      * Requests to edit the client's current room.

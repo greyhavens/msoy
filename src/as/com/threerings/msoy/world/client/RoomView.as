@@ -9,6 +9,7 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.utils.getTimer; // function import
+import flash.utils.ByteArray;
 
 import mx.containers.Canvas;
 
@@ -312,7 +313,7 @@ public class RoomView extends AbstractRoomView
             break;
 
         case "triggerEvent": // TODO: RoomCodes.TRIGGER_EVENT
-            dispatchTriggerEvent((args[0] as ItemIdent), (args[1] as String));
+            dispatchTriggerEvent((args[0] as ItemIdent), (args[1] as String), (args[2] as ByteArray));
             break;
         }
     }
@@ -566,11 +567,11 @@ public class RoomView extends AbstractRoomView
     /**
      * Called when a trigger event arrives on the room object.
      */
-    protected function dispatchTriggerEvent (item :ItemIdent, event :String) :void
+    protected function dispatchTriggerEvent (item :ItemIdent, event :String, arg :ByteArray) :void
     {
         var sprite :MsoySprite = (_entities.get(item) as MsoySprite);
         if (sprite != null) {
-            sprite.eventTriggered(event);
+            sprite.eventTriggered(event, EZObjectMarshaller.decode(arg));
         }
     }
 

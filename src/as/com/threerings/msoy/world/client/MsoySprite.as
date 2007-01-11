@@ -153,8 +153,12 @@ public class MsoySprite extends MediaContainer
                 }
 
             } else {
+            /*
                 mouseEnabled = false;
                 mouseChildren = false;
+                */
+                mouseEnabled = true;
+                mouseChildren = true;
             }
         }
     }
@@ -293,9 +297,9 @@ public class MsoySprite extends MediaContainer
     /**
      * Called when a trigger event is received for this sprite.
      */
-    public function eventTriggered (event: String) :void
+    public function eventTriggered (event: String, arg :Object) :void
     {
-        callUserCode("eventTriggered_v1", event);
+        callUserCode("eventTriggered_v1", event, arg);
     }
 
     /**
@@ -678,10 +682,10 @@ public class MsoySprite extends MediaContainer
     /**
      * Called by {@link MsoyControl} to trigger an event on this sprite in all clients.
      */
-    protected function triggerEvent_v1 (event :String) :void
+    protected function triggerEvent_v1 (event :String, arg :Object = null) :void
     {
         if (_ident != null && parent is RoomView) {
-            (parent as RoomView).getRoomController().triggerEvent(_ident, event);
+            (parent as RoomView).getRoomController().triggerEvent(_ident, event, arg);
         }
     }
 

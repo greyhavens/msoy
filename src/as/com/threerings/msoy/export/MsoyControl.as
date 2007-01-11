@@ -18,6 +18,8 @@ public class MsoyControl
 {
     /**
      * A function that will get called when an event is triggered on this scene object.
+     * Signature:
+     * <pre>function (eventName :String, arg :Object) :void</pre>
      */
     public var eventTriggered :Function;
 
@@ -25,7 +27,7 @@ public class MsoyControl
      * A function that is called when an item's memory has changed. It should have the following
      * signature:
      *
-     * <pre>public function memoryChanged (key :String, value :Object) :void</pre>
+     * <pre>function (key :String, value :Object) :void</pre>
      * 
      * <code>key</code> will be the key that was modified or null if we have just been initialized
      * and we are being provided with our memory for the first time. <code>value</code> will be the
@@ -76,9 +78,9 @@ public class MsoyControl
      * Triggers an event on this scene object. The event will be properly distributed to the object
      * running in every client in the scene, resulting in a call to {@link #eventTriggered}.
      */
-    public function triggerEvent (event :String) :void
+    public function triggerEvent (event :String, arg :Object = null) :void
     {
-        callMsoyCode("triggerEvent_v1", event);
+        callMsoyCode("triggerEvent_v1", event, arg);
     }
 
     /**
@@ -139,10 +141,10 @@ public class MsoyControl
     /**
      * Called when an event is triggered on this scene object.
      */
-    protected function eventTriggered_v1 (event :String) :void
+    protected function eventTriggered_v1 (event :String, arg :Object) :void
     {
         if (eventTriggered != null) {
-            eventTriggered(event);
+            eventTriggered(event, arg);
         }
     }
 
