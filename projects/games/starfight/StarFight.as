@@ -4,6 +4,9 @@ import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.MovieClip;
 
+import flash.media.Sound;
+import flash.media.SoundTransform;
+
 import mx.core.MovieClipAsset;
 
 import flash.utils.ByteArray;
@@ -325,6 +328,8 @@ public class StarFight extends Sprite
         shooterId :int) :void
     {
         _board.explode(x, y, 0, true, 0);
+        playSoundAt(SHIP_HIT, x, y);
+
         if (ship == _ownShip) {
             ship.hit(shooterId);
             _status.setPower(ship.power);
@@ -340,8 +345,35 @@ public class StarFight extends Sprite
     public function hitObs (obs :Obstacle, x :Number, y :Number) :void
     {
         _board.explode(x, y, 0, true, 0);
+        
+        var sound :Sound;
+        switch (obs.type) {
+        case Obstacle.ASTEROID_1:
+        case Obstacle.ASTEROID_2:
+            sound = ASTEROID_HIT;
+            break;
+        case Obstacle.WALL:
+        default:
+            sound = METAL_HIT;
+            break;
+        }
+        playSoundAt(sound, x, y);
     }
 
+    /**
+     * Play a sound appropriately for the position it's at (which might be not at all...)
+     */
+    protected function playSoundAt (sound :Sound, x :Number, y :Number) :void
+    {
+        var dx :Number = _ownShip.boardX - x;
+        var dy :Number = _ownShip.boardY - y;
+        var dist :Number = Math.sqrt(dx*dx + dy*dy);
+
+        var vol :Number = 1.0 - (dist/25.0);
+        if (vol > 0.0) {
+            sound.play(0, 0, new SoundTransform(vol));
+        }
+    }
 
     /**
      * The game has started - do our initial startup.
@@ -494,5 +526,27 @@ public class StarFight extends Sprite
     protected static const POWERUP_PTS :int = 25;
     protected static const HIT_PTS :int = 10;
     protected static const KILL_PTS :int = 50;
+
+    // Sound stuff...
+    [Embed(source="rsrc/ship_hit.mp3")]
+    protected static var shipHitSound :Class;
+
+    protected static const SHIP_HIT :Sound = Sound(new shipHitSound());
+
+    [Embed(source="rsrc/asteroid_hit.mp3")]
+    protected static var asteroidHitSound :Class;
+
+    protected static const ASTEROID_HIT :Sound = Sound(new asteroidHitSound());
+
+    [Embed(source="rsrc/metal_hit.mp3")]
+    protected static var metalHitSound :Class;
+
+    protected static const METAL_HIT :Sound = Sound(new metalHitSound());
+
+    [Embed(source="rsrc/junk_hit.mp3")]
+    protected static var junkHitSound :Class;
+
+    protected static const JUNK_HIT :Sound = Sound(new junkHitSound());
+
 }
 }

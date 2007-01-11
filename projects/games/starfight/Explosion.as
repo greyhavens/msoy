@@ -65,6 +65,6 @@ public class Explosion extends Sprite
 
     /** Why do we freaking need this crap??? No way to tell when we finish. */
     protected static const EXPLODE_FRAMES :int = 8;
-    protected static const SM_EXPLODE_FRAMES :int = 4;
+    protected static const SM_EXPLODE_FRAMES :int = 6;
 }
 }
