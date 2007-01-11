@@ -35,7 +35,7 @@ public class UnderworldDrift extends Sprite
         addChild(colorBackground);
 
         _ground = new Ground();
-        _ground.y = DISPLAY_HEIGHT / 2;
+        _ground.y = DISPLAY_HEIGHT / 4;
         addChild(_ground);
 
         _gameCtrl = new EZGameControl(this);

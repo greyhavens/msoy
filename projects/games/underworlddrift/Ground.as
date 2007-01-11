@@ -118,10 +118,12 @@ public class Ground extends Sprite
             thisTransform.scale(scaleFactor,scaleFactor);
             // move transformed space to view space
             thisTransform.translate(WIDTH / 2,  _cameraDistance + thisHeight);
-            // blank out display
-            _strips[strip].draw(new BitmapData(WIDTH, HEIGHT));
-            _strips[strip].draw(_background, thisTransform);
-            _strips[strip].draw(_trackVector, thisTransform);
+            // blank out this strip
+            _strips[strip].draw(new BitmapData(WIDTH, thisHeight));
+            // draw the background, then track using the calculated transform and a clipping rect
+            var clipping :Rectangle = new Rectangle(0, 0, WIDTH, thisHeight);
+            _strips[strip].draw(_background, thisTransform, null, null, clipping);
+            _strips[strip].draw(_trackVector, thisTransform, null, null, clipping);
         }
     }
 
@@ -138,7 +140,7 @@ public class Ground extends Sprite
     protected var _cameraAngle :Number = 0;
 
     /** position of camera */
-    protected var _cameraPosition :Point = new Point(0, HALF_IMAGE_SIZE);
+    protected var _cameraPosition :Point = new Point(0, HALF_IMAGE_SIZE + 100);
 
     /** height of the camera */
     protected var _cameraHeight :Number = 30;
@@ -177,7 +179,7 @@ public class Ground extends Sprite
     protected static const HALF_IMAGE_SIZE :int = IMAGE_SIZE / 2;
 
     /** height of the ground in display pixels */
-    protected static const HEIGHT :int = UnderworldDrift.DISPLAY_HEIGHT / 2;
+    protected static const HEIGHT :int = 3 * UnderworldDrift.DISPLAY_HEIGHT / 4;
 
     /** width of the ground in display pixels */
     protected static const WIDTH :int = UnderworldDrift.DISPLAY_WIDTH;
