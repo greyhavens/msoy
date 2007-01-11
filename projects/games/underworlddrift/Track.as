@@ -29,7 +29,7 @@ public class Track extends Sprite
         }
 
         // this will eventually feature a seed distributed to each client
-        _trackGenerator = new Random(42);
+        _trackGenerator = new Random();
 
         setBehindTrack(_trackGenerator.nextInt(TRACKS.length));
         setCurrentTrack(_trackGenerator.nextInt(TRACKS.length));
