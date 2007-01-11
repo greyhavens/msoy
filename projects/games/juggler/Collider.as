@@ -12,6 +12,11 @@ public class Collider {
         _bodies.push(body);
     }
     
+    public function removeBody(body:CanCollide) :void
+    {
+        Util.removeFromArray(_bodies, body);
+    }
+    
     public function detectCollisions() :void
     {
         //Juggler.log("detecting collisions...");

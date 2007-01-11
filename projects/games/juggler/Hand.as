@@ -108,7 +108,8 @@ public class Hand extends Sprite
     private function releaseBall() :void
     {
         Juggler.log("releasing ball")
-        _body.ballisticReleaseVelocity(this, _holding, _releaseStrength)
+//        _body.ballisticReleaseVelocity(this, _holding, _releaseStrength);
+        _body.ballisticReleaseVelocity(this, _holding, .75);
         _holding.release();
         _holding = null;
     }
@@ -260,9 +261,9 @@ public class Hand extends Sprite
         return _normalizedBounds;
     }
 
-    private static var CORNER_WIDTH:int = 10;
+    private static var CORNER_WIDTH:int = 20;
     
-    private static var CORNER_HEIGHT:int = 10;
+    private static var CORNER_HEIGHT:int = 20;
 
     private static var NORMAL_COLOR:uint = 0x008000;
 
@@ -284,9 +285,9 @@ public class Hand extends Sprite
 
     private var _highlightFrames:int = 0;
 
-    public var _width:Number = 100;
+    public var _width:Number = 75;
     
-    public var _height:Number = 20;
+    public var _height:Number = 40;
     
     private var _mass:Number = 3; // metal bat!
     

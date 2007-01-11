@@ -32,10 +32,10 @@ public class Ball extends Sprite
         _highlightFrames = 2;
     }
     
-    private function redraw (color:uint) :void
+    private function redraw (color:uint, alpha:Number = 1.0) :void
     {
         graphics.clear();
-        graphics.beginFill(color);
+        graphics.beginFill(color, alpha);
         graphics.drawCircle(0,0, _ballRadius);
         graphics.endFill();
         
@@ -128,9 +128,15 @@ public class Ball extends Sprite
         if (y < _space.top) {
             dy = Math.abs(dy) * _elasticity;
         } else if (y > _space.bottom) {
-            dy = -Math.abs(dy) * _elasticity;
-            y = _space.bottom;  // if you don't do this then gravity forces the ball 
+            if (_fadeFrames < 0) {
+                dy = DEATH_BOUNCE;
+                y = _space.bottom;  // if you don't do this then gravity forces the ball 
                                 //through the floor!
+                startFading();
+            } else {
+                dy = - Math.abs(dy) * _elasticity;
+                y = _space.bottom;
+            }
         }
         
         // update velocity based on constants;
@@ -143,6 +149,27 @@ public class Ball extends Sprite
         dy += _space.gravityPerFrame;
         
         project();      
+    }
+        
+    /** start fading out this ball **/
+    private function startFading() :void
+    {
+        _juggler.deregisterForCollisions(this);
+        _fadeFrames = FADE_DURATION;
+        _motion = fading;
+    }
+        
+    private function fading() :void
+    {
+        _fadeFrames -= 1;
+        free();
+        var alpha:Number = _fadeFrames / FADE_DURATION;
+        redraw(REGULAR_COLOR, alpha * alpha);
+        
+        if (_fadeFrames <= 0)
+        {
+            _juggler.deregisterAsActor(this);
+        }
     }
         
     /** calculate the expected position next frame **/
@@ -274,8 +301,12 @@ public class Ball extends Sprite
     private static var HIGHLIGHT_COLOR :uint = 0xFF0000;
     
     private static var REGULAR_COLOR :uint = 0x000080;
+    
+    private static var FADE_DURATION:int = 100;
         
-    private static var _ballRadius :int = 30;
+    private static var DEATH_BOUNCE:Number = -200;
+        
+    private static var _ballRadius :int = 20;
         
     private static var _elasticity :Number = 0.95;
     
@@ -296,5 +327,7 @@ public class Ball extends Sprite
     private var _catchFrames:int;
     
     private var _velocityChanged:Boolean = true;
+        
+    private var _fadeFrames:int = -1;
 }
 }

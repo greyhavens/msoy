@@ -46,9 +46,19 @@ public class Juggler extends Sprite
         _actors.push(actor);
     }
 
+    public function deregisterAsActor(target:Actor) :void
+    {
+        Util.removeFromArray(_actors, target);
+    }
+
     public function registerForCollisions(body:CanCollide) :void
     {
         _collider.addBody(body);
+    }
+
+    public function deregisterForCollisions(body:CanCollide) :void
+    {
+        _collider.removeBody(body);
     }
 
     public function tick(event :TimerEvent) : void 
@@ -60,7 +70,7 @@ public class Juggler extends Sprite
 
     private function nextFrame(actor :Actor, index:Number, balls:Array) :void 
     {
-        actor.nextFrame();
+        if (actor!=null) actor.nextFrame();
     }
 
     public function setGameObject (gameObj : EZGame) :void
@@ -154,7 +164,7 @@ public class Juggler extends Sprite
     
     public static function log (msg :String) :void
     {
-        trace(msg);
+//        trace(msg);
         //ExternalInterface.call("console.debug", msg);
     }
     
@@ -171,7 +181,7 @@ public class Juggler extends Sprite
                 
     private var _ballsPlayed:int = 0;
                 
-    private static const NUM_BALLS :int = 5;
+    private static const NUM_BALLS :int = 100;
     
     private static const KEY_Q:uint = 81;
     
