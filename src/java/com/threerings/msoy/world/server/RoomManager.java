@@ -59,7 +59,7 @@ public class RoomManager extends SpotSceneManager
     {
         // make sure the caller is in the room
         MemberObject who = (MemberObject)caller;
-        if (_roomObj.occupants.contains(who.getOid())) {
+        if (!_roomObj.occupants.contains(who.getOid())) {
             log.warning("Rejecting event trigger request by non-occupant [who=" + who.who() +
                         ", item=" + item + ", event=" + event + "].");
             return;
