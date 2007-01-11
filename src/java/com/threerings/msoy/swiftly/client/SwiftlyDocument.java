@@ -7,8 +7,7 @@ public class SwiftlyDocument extends FileElement
 {
     public SwiftlyDocument (String filename, String text, FileElement parent)
     {
-        super(parent);
-        _filename = filename;
+        super(filename, parent);
         _text = text;
     }
 
@@ -22,23 +21,7 @@ public class SwiftlyDocument extends FileElement
         return _text;
     }
 
-    public String getFilename ()
-    {
-        return _filename;
-    }
-
-    public void setFilename (String filename)
-    {
-        _filename = filename;
-    }
-
-    public String toString ()
-    {
-        return _filename;
-    }
-
     protected String _text;
-    protected String _filename;
 
     // TODO probably need a HashCode here?
 }

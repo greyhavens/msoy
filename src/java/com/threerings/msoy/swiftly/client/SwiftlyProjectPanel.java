@@ -16,10 +16,15 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 public class SwiftlyProjectPanel extends JPanel
-    implements TreeSelectionListener
+    implements TreeSelectionListener, TreeModelListener
 {
     public SwiftlyProjectPanel (SwiftlyApplet applet)
     {
@@ -32,25 +37,87 @@ public class SwiftlyProjectPanel extends JPanel
         add(_toolbar, BorderLayout.PAGE_END);
     }
 
+    /** Remove all nodes except the root node. */
+    public void clear ()
+    {
+        _top.removeAllChildren();
+        _treeModel.reload();
+    }
+
+    /** Remove the currently selected node. */
+    public void removeCurrentNode ()
+    {
+        TreePath currentSelection = _tree.getSelectionPath();
+        if (currentSelection != null) {
+            DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)
+                         (currentSelection.getLastPathComponent());
+            MutableTreeNode parent = (MutableTreeNode)(currentNode.getParent());
+            if (parent != null) {
+                _treeModel.removeNodeFromParent(currentNode);
+                return;
+            }
+        } 
+    }
+
+    /** Add child to the currently selected nodes parent. */
+    public DefaultMutableTreeNode addNode (Object child)
+    {
+        DefaultMutableTreeNode parentNode = null;
+        TreePath parentPath = _tree.getSelectionPath();
+
+        if (parentPath == null) {
+            parentNode = _top;
+        } else {
+            parentNode = (DefaultMutableTreeNode)(parentPath.getLastPathComponent());
+        }
+
+        return addNode(parentNode, child, true);
+    }
+
+    public DefaultMutableTreeNode addNode (DefaultMutableTreeNode parent, Object child)
+    {
+        return addNode(parent, child, false);
+    }
+
+    public DefaultMutableTreeNode addNode (DefaultMutableTreeNode parent, Object child, 
+                                            boolean shouldBeVisible)
+    {
+        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child);
+
+        if (parent == null) {
+            parent = _top;
+        }
+
+        _treeModel.insertNodeInto(childNode, parent, parent.getChildCount());
+
+        if (shouldBeVisible) {
+            _tree.scrollPathToVisible(new TreePath(childNode.getPath()));
+        }
+        return childNode;
+    }
+
     public void loadProject (SwiftlyProject project)
     {
         _project = project;
 
         _top = new DefaultMutableTreeNode(project);
+        _treeModel = new DefaultTreeModel(_top);
+        _treeModel.addTreeModelListener(this);
+
         for (SwiftlyDocument doc : project.getFiles()) {
             addDocumentToTree(doc);
         }
 
-        _tree = new JTree(_top);
+        _tree = new JTree(_treeModel);
         _tree.setDragEnabled(true);
         _tree.setEditable(true);
+        _tree.setShowsRootHandles(true);
         _tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         _tree.addTreeSelectionListener(this);
 
         _scrollPane.getViewport().setView(_tree);
     }
 
-    // TODO this is not adding new documents correctly.
     public void addDocumentToTree (SwiftlyDocument document)
     {
         _top.add(new DefaultMutableTreeNode(document));
@@ -70,6 +137,46 @@ public class SwiftlyProjectPanel extends JPanel
             SwiftlyDocument doc = (SwiftlyDocument)nodeInfo;
             _applet.getEditor().addEditorTab(doc);
         }
+    }
+
+    // from interface TreeModelListener
+    public void treeNodesChanged (TreeModelEvent e)
+    {
+        DefaultMutableTreeNode node;
+        node = (DefaultMutableTreeNode) (e.getTreePath().getLastPathComponent());
+
+        /*
+         * If the event lists children, then the changed
+         * node is the child of the node we've already
+         * gotten.  Otherwise, the changed node and the
+         * specified node are the same.
+         */
+        try {
+            int index = e.getChildIndices()[0];
+            node = (DefaultMutableTreeNode)
+                   (node.getChildAt(index));
+        } catch (NullPointerException exc) {}
+        // TODO this gives us a String after the user has edited a node. Need to swap this
+        // back to SwiftlyDocument somehow
+        //_applet.getEditor().updateTabTitleAt((SwiftlyDocument)node.getUserObject());
+    }
+
+    // from interface TreeModelListener
+    public void treeNodesInserted (TreeModelEvent e)
+    {
+        // nada
+    }
+
+    // from interface TreeModelListener
+    public void treeNodesRemoved (TreeModelEvent e)
+    {
+        // nada
+    }
+
+    // from interface TreeModelListener
+    public void treeStructureChanged (TreeModelEvent e)
+    {
+        // nada
     }
 
     protected Action createPlusButtonAction ()
@@ -94,6 +201,17 @@ public class SwiftlyProjectPanel extends JPanel
         };
     }
 
+    protected Action createAddDirectoryAction ()
+    {
+        // TODO need icon
+        return new AbstractAction("+Dir") {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                addDirectory();
+            }
+        };
+    }
+
     // Opens a new, unsaved document in a tab.
     protected void openNewDocument ()
     {
@@ -104,9 +222,9 @@ public class SwiftlyProjectPanel extends JPanel
         Object nodeInfo = node.getUserObject();
         FileElement element = (FileElement)nodeInfo;
         SwiftlyDocument doc = new SwiftlyDocument("", "", element.getParent());
-        _applet.showSelectFilenameDialog(doc);
-        addDocumentToTree(doc);
+        _applet.showSelectFileElementNameDialog(doc);
         _applet.getEditor().addEditorTab(doc);
+        addNode(doc);
     }
 
     protected void deleteDocument ()
@@ -120,7 +238,22 @@ public class SwiftlyProjectPanel extends JPanel
         if (node.isLeaf()) {
             SwiftlyDocument doc = (SwiftlyDocument)nodeInfo;
             _applet.deleteDocument(doc);
+            _applet.getEditor().closeCurrentTab();
+            removeCurrentNode();
         }
+    }
+
+    protected void addDirectory ()
+    {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
+
+        if (node == null) return;
+
+        Object nodeInfo = node.getUserObject();
+        FileElement element = (FileElement)nodeInfo;
+        ProjectDirectory dir = new ProjectDirectory("", element.getParent());
+        _applet.showSelectFileElementNameDialog(dir);
+        addNode(dir);
     }
 
     protected void setupToolbar ()
@@ -140,6 +273,7 @@ public class SwiftlyProjectPanel extends JPanel
     protected SwiftlyApplet _applet;
     protected SwiftlyProject _project;
     protected DefaultMutableTreeNode _top;
+    protected DefaultTreeModel _treeModel;
     protected JTree _tree;
     protected JToolBar _toolbar = new JToolBar();
     protected JButton _plusButton;

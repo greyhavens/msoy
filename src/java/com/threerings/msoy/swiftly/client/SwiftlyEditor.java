@@ -54,42 +54,43 @@ public class SwiftlyEditor extends JTabbedPane
         return _applet;
     }
 
+
     /**
-     * Gets the {@link SwiftlyEditorScrollPane} from the currently selected tab.
+     * Update the title on a tab, using the supplied {@link SwiftlyDocument} as the index.
+     * @param doc the SwiftlyDocument to use as an index into the tabList
      */
-    public SwiftlyEditorScrollPane getCurrentPane ()
+    public void updateTabTitleAt (SwiftlyDocument document)
     {
-        return (SwiftlyEditorScrollPane)getSelectedComponent();
+        updateTabTitleAt(indexOfComponent(_tabList.get(document)));
     }
 
     /**
-     * Gets the {@link SwiftlyTextPane} from the currently selected tab.
+     * Update the title of the currently selected tab.
      */
-    public SwiftlyTextPane getCurrentTextPane ()
+    public void updateCurrentTabTitle ()
     {
-        SwiftlyEditorScrollPane pane = getCurrentPane();
-        if (pane != null) {
-            return getCurrentPane().getTextPane();
-        }
-        return null;
+        updateTabTitleAt(getSelectedIndex());
     }
 
     /**
      * Adds an indicator(*) to the current tab showing if an unsaved change has occurred.
+     * @param tabIndex the tab title needing updating
      */
-    public void updateCurrentTabTitle ()
+    protected void updateTabTitleAt (int tabIndex)
     {
-        SwiftlyTextPane pane = getCurrentTextPane();
-        String title = pane.getSwiftlyDocument().getFilename();
+        SwiftlyEditorScrollPane pane = (SwiftlyEditorScrollPane)getComponentAt(tabIndex);
+        SwiftlyTextPane textPane = pane.getTextPane();
+        String title = textPane.getSwiftlyDocument().getName();
+
         if (title.length() == 0) {
             title = "Untitled document";
         }
 
-        if (pane.hasUnsavedChanges()) {
+        if (textPane.hasUnsavedChanges()) {
             title = "*" + title;
         }
 
-        setTitleAt(getSelectedIndex(), title);
+        setTitleAt(tabIndex, title);
     }
 
     /**
@@ -164,6 +165,26 @@ public class SwiftlyEditor extends JTabbedPane
                 setMnemonicAt(tabIndex, KeyEvent.VK_1 + tabIndex);
             }
         }
+    }
+
+    /**
+     * Gets the {@link SwiftlyEditorScrollPane} from the currently selected tab.
+     */
+    protected SwiftlyEditorScrollPane getCurrentPane ()
+    {
+        return (SwiftlyEditorScrollPane)getSelectedComponent();
+    }
+
+    /**
+     * Gets the {@link SwiftlyTextPane} from the currently selected tab.
+     */
+    protected SwiftlyTextPane getCurrentTextPane ()
+    {
+        SwiftlyEditorScrollPane pane = getCurrentPane();
+        if (pane != null) {
+            return getCurrentPane().getTextPane();
+        }
+        return null;
     }
 
     protected class TabChangedListener implements ChangeListener

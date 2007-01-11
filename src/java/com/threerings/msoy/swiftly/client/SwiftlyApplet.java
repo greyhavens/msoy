@@ -93,19 +93,19 @@ public class SwiftlyApplet extends JApplet
     }
 
     /**
-     * Shows a modal, internal frame dialog prompting the user for a filename.
-     * @param document the document to name
-     * @return true if the user picked a filename, false if they picked cancel
+     * Shows a modal, internal frame dialog prompting the user to name a {@link FileElement}
+     * @param element the {@link FileElement} to name
+     * @return true if the user picked a name, false if they clicked cancel
      */
-    public boolean showSelectFilenameDialog (SwiftlyDocument document)
+    public boolean showSelectFileElementNameDialog (FileElement element)
     {
-        String filename = JOptionPane.showInternalInputDialog(
+        String name = JOptionPane.showInternalInputDialog(
             _contentPane, "Select a filename.", "Enter the filename.",
             JOptionPane.INFORMATION_MESSAGE);
 
         // do nothing more if the user picks cancel
-        if (filename != null) {
-            document.setFilename(filename);
+        if (name != null) {
+            element.setName(name);
             return true;
         }
         return false;

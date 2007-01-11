@@ -6,20 +6,8 @@ public class SwiftlyProject extends FileElement
 {
     public SwiftlyProject (String name, ArrayList<SwiftlyDocument> files, FileElement parent)
     {
-        super(parent);
-        _name = name;
+        super(name, parent);
         _files = files;
-    }
-
-    public String getName ()
-    {
-        return _name;
-
-    }
-
-    public void setName (String name)
-    {
-        _name = name;
     }
 
     public ArrayList<SwiftlyDocument> getFiles ()
@@ -33,11 +21,5 @@ public class SwiftlyProject extends FileElement
         _files = files;
     }
 
-    public String toString ()
-    {
-        return _name;
-    }
-
-    protected String _name;
     protected ArrayList<SwiftlyDocument> _files;
 }
