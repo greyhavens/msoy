@@ -30,49 +30,33 @@ public class Track extends Sprite
 
         // this will eventually feature a seed distributed to each client
         _trackGenerator = new Random();
+        _trackIndices[3] = _trackGenerator.nextInt(TRACKS.length);
 
-        setBehindTrack(_trackGenerator.nextInt(TRACKS.length));
-        setCurrentTrack(_trackGenerator.nextInt(TRACKS.length));
-        setFrontTrack(_trackGenerator.nextInt(TRACKS.length));
+        // generate all three tracks, and align them properly
+        moveTrackForward();
+        moveTrackForward();
+        moveTrackForward();
     }
 
     public function moveTrackForward () :void
     {
-        setBehindTrack(_trackCurrentIndex);
-        setCurrentTrack(_trackFrontIndex);
-        setFrontTrack(_trackGenerator.nextInt(TRACKS.length));
-    }
-
-    protected function setBehindTrack (newTrack :int) :void
-    {
-        if (_trackBehind != null) {
-            removeChild(_trackBehind);
+        for (var i :int = 0; i < 3; i++) {
+            if (_tracks[i] != null) {
+                removeChild(_tracks[i]);
+            }
+            _trackIndices[i] = _trackIndices[i+1];
+            if (_trackIndices[i] != -1) {
+                _tracks[i] = new TRACKS[_trackIndices[i]];
+                if (i == 0) {
+                    _tracks[i].y = Ground.IMAGE_SIZE;
+                } else if (i == 2) {
+                    _tracks[i].y = -Ground.IMAGE_SIZE;
+                }
+                addChild(_tracks[i]);
+            }
         }
-        _trackBehindIndex = newTrack;
-        _trackBehind = new TRACKS[newTrack]();
-        _trackBehind.y = Ground.IMAGE_SIZE;
-        addChild(_trackBehind);
-    }
-
-    protected function setFrontTrack (newTrack :int) :void
-    {
-        if (_trackFront != null) {
-            removeChild(_trackFront);
-        }
-        _trackFrontIndex = newTrack;
-        _trackFront = new TRACKS[newTrack]();
-        _trackFront.y = -Ground.IMAGE_SIZE;
-        addChild(_trackFront);
-    }
-
-    protected function setCurrentTrack (newTrack :int) :void
-    {
-        if (_trackCurrent != null) {
-            removeChild(_trackCurrent);
-        }
-        _trackCurrentIndex = newTrack;
-        _trackCurrent = new TRACKS[newTrack]();
-        addChild(_trackCurrent);
+        // next track
+        _trackIndices[3] = _trackGenerator.nextInt(TRACKS.length);
     }
 
     [Embed(source='rsrc/track.swf#track1')]
@@ -84,23 +68,16 @@ public class Track extends Sprite
     [Embed(source='rsrc/track.swf#track3')]
     protected static const TRACK_3 :Class;
 
-    protected static const TRACKS :Array = [
-        TRACK_1, TRACK_2, TRACK_3 ];
+    protected static const TRACKS :Array = [TRACK_1, TRACK_2, TRACK_3 ];
 
     [Embed(source='rsrc/blue_ground.png')]
     protected static const BACKGROUND_IMAGE :Class;
 
-    /** Tracks surrounding the current position */
-    protected var _trackBehind :DisplayObject;
-    protected var _trackCurrent :DisplayObject;
-    protected var _trackFront :DisplayObject;
+    /** Track data */
+    protected var _tracks :Array = new Array(3);
+    protected var _trackIndices :Array = [-1, -1, -1, -1];
 
-    /** Index in the tracks array for the current tracks */
-    protected var _trackBehindIndex :int;
-    protected var _trackCurrentIndex :int;
-    protected var _trackFrontIndex :int;
-
-    /** temporary!  Will be replaced by seedable random number generator */
+    /** Seedable random number generator.  The seed will be distributed to all clients. */
     protected var _trackGenerator :Random;
 }
 }
