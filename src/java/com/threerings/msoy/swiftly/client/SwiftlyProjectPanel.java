@@ -62,6 +62,8 @@ public class SwiftlyProjectPanel extends JPanel
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
 
         if (node == null) return;
+        _plusButton.setEnabled(true);
+        _minusButton.setEnabled(true);
 
         Object nodeInfo = node.getUserObject();
         if (node.isLeaf()) {
@@ -123,8 +125,13 @@ public class SwiftlyProjectPanel extends JPanel
 
     protected void setupToolbar ()
     {
-        _toolbar.add(new JButton(createPlusButtonAction()));
-        _toolbar.add(new JButton(createMinusButtonAction()));
+        _plusButton = new JButton(createPlusButtonAction());
+        _plusButton.setEnabled(false);
+        _toolbar.add(_plusButton);
+
+        _minusButton = new JButton(createMinusButtonAction());
+        _minusButton.setEnabled(false);
+        _toolbar.add(_minusButton);
         _toolbar.add(new JButton("Foo"));
 
         _toolbar.setFloatable(false);
@@ -135,5 +142,7 @@ public class SwiftlyProjectPanel extends JPanel
     protected DefaultMutableTreeNode _top;
     protected JTree _tree;
     protected JToolBar _toolbar = new JToolBar();
+    protected JButton _plusButton;
+    protected JButton _minusButton;
     protected JScrollPane _scrollPane = new JScrollPane();
 }
