@@ -116,6 +116,7 @@ public class SwiftlyProjectPanel extends JPanel
         _tree.addTreeSelectionListener(this);
 
         _scrollPane.getViewport().setView(_tree);
+        disableToolbar();
     }
 
     public void addDocumentToTree (SwiftlyDocument document)
@@ -131,6 +132,7 @@ public class SwiftlyProjectPanel extends JPanel
         if (node == null) return;
         _plusButton.setEnabled(true);
         _minusButton.setEnabled(true);
+        _addDirectoryButton.setEnabled(true);
 
         Object nodeInfo = node.getUserObject();
         if (node.isLeaf()) {
@@ -153,8 +155,7 @@ public class SwiftlyProjectPanel extends JPanel
          */
         try {
             int index = e.getChildIndices()[0];
-            node = (DefaultMutableTreeNode)
-                   (node.getChildAt(index));
+            node = (DefaultMutableTreeNode) (node.getChildAt(index));
         } catch (NullPointerException exc) {}
         // TODO this gives us a String after the user has edited a node. Need to swap this
         // back to SwiftlyDocument somehow
@@ -259,15 +260,23 @@ public class SwiftlyProjectPanel extends JPanel
     protected void setupToolbar ()
     {
         _plusButton = new JButton(createPlusButtonAction());
-        _plusButton.setEnabled(false);
         _toolbar.add(_plusButton);
 
         _minusButton = new JButton(createMinusButtonAction());
-        _minusButton.setEnabled(false);
         _toolbar.add(_minusButton);
-        _toolbar.add(new JButton("Foo"));
+
+        _addDirectoryButton = new JButton(createAddDirectoryAction());
+        _toolbar.add(_addDirectoryButton);
 
         _toolbar.setFloatable(false);
+        disableToolbar();
+    }
+
+    protected void disableToolbar ()
+    {
+        _plusButton.setEnabled(false);
+        _minusButton.setEnabled(false);
+        _addDirectoryButton.setEnabled(false);
     }
 
     protected SwiftlyApplet _applet;
@@ -278,5 +287,6 @@ public class SwiftlyProjectPanel extends JPanel
     protected JToolBar _toolbar = new JToolBar();
     protected JButton _plusButton;
     protected JButton _minusButton;
+    protected JButton _addDirectoryButton;
     protected JScrollPane _scrollPane = new JScrollPane();
 }

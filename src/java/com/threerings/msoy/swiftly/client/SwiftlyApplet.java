@@ -77,7 +77,7 @@ public class SwiftlyApplet extends JApplet
         return new AbstractAction("Switch Project") {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
-                showProjectDialog();
+                showProjectSelectionDialog();
             }
         };
     }
@@ -87,7 +87,7 @@ public class SwiftlyApplet extends JApplet
         return new AbstractAction("Create Project") {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
-                showNewProjectDialog();
+                createProject();
             }
         };
     }
@@ -99,9 +99,23 @@ public class SwiftlyApplet extends JApplet
      */
     public boolean showSelectFileElementNameDialog (FileElement element)
     {
+        String prompt;
+        switch (element.getType()) {
+        case FileElement.PROJECT:
+            prompt = "Enter the project name: ";
+            break;
+        case FileElement.DIRECTORY:
+            prompt = "Enter the directory name: ";
+            break;
+        case FileElement.DOCUMENT:
+            prompt = "Enter the file name: ";
+            break;
+        default:
+            prompt = "Enter the name: ";
+        }
+            
         String name = JOptionPane.showInternalInputDialog(
-            _contentPane, "Select a filename.", "Enter the filename.",
-            JOptionPane.INFORMATION_MESSAGE);
+            _contentPane, prompt);
 
         // do nothing more if the user picks cancel
         if (name != null) {
@@ -155,9 +169,9 @@ public class SwiftlyApplet extends JApplet
         // popup the project selection window
         if (_loadedProject == null) {
             if (getProjects().isEmpty()) {
-                showNewProjectDialog();
+                createProject();
             } else {
-                showProjectDialog();
+                showProjectSelectionDialog();
             }
         } else {
             // TODO this would come in as a parameter to the applet
@@ -171,14 +185,14 @@ public class SwiftlyApplet extends JApplet
         return _swiftlyRpc.getProjects();
     }
 
-    protected SwiftlyProject createProject (String name)
+    protected void createProject ()
     {
         // TODO do some business on the server
-        // ArrayList<SwiftlyDocument> emptyFileList = new ArrayList<SwiftlyDocument>();
-        // SwiftlyProject project = new SwiftlyProject(name, emptyFileList);
+        ArrayList<SwiftlyDocument> emptyFileList = new ArrayList<SwiftlyDocument>();
+        SwiftlyProject project = new SwiftlyProject("", emptyFileList);
+        showSelectFileElementNameDialog(project);
         // _projectList.add(project);
-        // return project;
-        return null;
+        loadProject(project);
     }
 
     protected void loadProject (SwiftlyProject project)
@@ -188,20 +202,12 @@ public class SwiftlyApplet extends JApplet
         _projectPanel.loadProject(project);
     }
 
-    protected void showProjectDialog ()
+    protected void showProjectSelectionDialog ()
     {
         SwiftlyProject project = (SwiftlyProject)JOptionPane.showInternalInputDialog(
             _contentPane, "Select a project:", "Project selection", JOptionPane.QUESTION_MESSAGE,
             null, getProjects().toArray(), null);
         loadProject(project);
-    }
-
-    protected void showNewProjectDialog ()
-    {
-        String projectName = JOptionPane.showInternalInputDialog(
-            _contentPane, "Enter the project name", "Create a new project.",
-            JOptionPane.INFORMATION_MESSAGE);
-        loadProject(createProject(projectName));
     }
 
     protected Container _contentPane;

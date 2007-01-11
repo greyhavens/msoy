@@ -9,6 +9,7 @@ public class SwiftlyDocument extends FileElement
     {
         super(filename, parent);
         _text = text;
+        _type = FileElement.DOCUMENT;
     }
 
     public Reader getReader ()

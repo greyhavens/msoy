@@ -4,10 +4,12 @@ import java.util.ArrayList;
 
 public class SwiftlyProject extends FileElement
 {
-    public SwiftlyProject (String name, ArrayList<SwiftlyDocument> files, FileElement parent)
+    public SwiftlyProject (String name, ArrayList<SwiftlyDocument> files)
     {
-        super(name, parent);
+        // projects are roots and have no parent
+        super(name, null);
         _files = files;
+        _type = FileElement.PROJECT;
     }
 
     public ArrayList<SwiftlyDocument> getFiles ()

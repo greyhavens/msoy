@@ -53,7 +53,7 @@ public class SwiftlyClientRpc
         projectList = new ArrayList<SwiftlyProject>();
 
         for (Map<String,Object> struct : result) {
-            SwiftlyProject project = new SwiftlyProject((String)struct.get(SwiftlyProjectRpc.PROJECT_NAME), fileList, null);
+            SwiftlyProject project = new SwiftlyProject((String)struct.get(SwiftlyProjectRpc.PROJECT_NAME), fileList);
             projectList.add(project);
         }
 
