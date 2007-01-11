@@ -19,8 +19,6 @@ public class SwiftlyProjectPanel extends JPanel
 
         _scrollPane = new JScrollPane();
         add(_scrollPane);
-
-        add(new JPanel());
     }
 
     public void loadProject (SwiftlyProject project)
