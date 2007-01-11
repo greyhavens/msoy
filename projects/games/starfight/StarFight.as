@@ -342,7 +342,10 @@ public class StarFight extends Sprite
         shooterId :int) :void
     {
         _board.explode(x, y, 0, true, 0);
-        playSoundAt(Sounds.SHIP_HIT, x, y);
+
+        var sound :Sound = (ship.powerups & ShipSprite.SHIELDS_MASK) ?
+            Sounds.SHIELDS_HIT : Sounds.SHIP_HIT;
+        playSoundAt(sound, x, y);
 
         if (ship == _ownShip) {
             ship.hit(shooterId);

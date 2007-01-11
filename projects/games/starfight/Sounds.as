@@ -37,6 +37,11 @@ public class Sounds {
 
     public static const SHIP_HIT :Sound = Sound(new shipHitSound());
 
+    [Embed(source="rsrc/shields_hit.mp3")]
+    protected static var shieldsHitSound :Class;
+
+    public static const SHIELDS_HIT :Sound = Sound(new shieldsHitSound());
+
     [Embed(source="rsrc/asteroid_hit.mp3")]
     protected static var asteroidHitSound :Class;
 
