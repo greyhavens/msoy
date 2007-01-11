@@ -50,12 +50,6 @@ public class WonderlandCroquet extends Sprite
         // Add some balls
         addRandomBalls();
 
-        // And a wicket
-        for (var ii :int = 1; ii <= 10; ii++) {
-            var wicket :Wicket = new Wicket(ii, 200, 200, 33);
-            _spr.addChild(wicket);
-        }
-
         _paintQueue = APEngine.getAll();
 
         _spr.addChild(_map.foreground);

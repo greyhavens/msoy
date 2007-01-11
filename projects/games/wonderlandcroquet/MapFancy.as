@@ -27,6 +27,7 @@ public class MapFancy extends WonderlandMap
 
         addObjects();
 
+        addWickets();
     }
 
     override protected function isRough (x :Number, y :Number) :Boolean
@@ -68,6 +69,27 @@ public class MapFancy extends WonderlandMap
         addPlanter(900, 970);
 
         addBush(900, 900, 337);
+    }
+
+    // Position our wickets
+    protected function addWickets () :void
+    {
+        wickets = [
+            new Wicket(1,  900,  1400, -90),
+            new Wicket(2,  1200, 1200,  50),
+            new Wicket(3,  1470, 1600, -145),
+            new Wicket(4,  1550, 1000,   45),
+            new Wicket(5,  1030,  700,  -75),
+            new Wicket(6,  1100,  200,   90),
+            new Wicket(7,   540,  400,   45),
+            new Wicket(8,   200,  900,    0),
+            new Wicket(9,   620,  800, -110),
+            new Wicket(10,  555, 1400,   15),
+        ];
+
+        for each (var wicket :Wicket in wickets) {
+           foreground.addChild(wicket);
+        }
     }
 
     // Our background movie

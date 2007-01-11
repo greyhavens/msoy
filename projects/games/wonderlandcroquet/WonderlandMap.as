@@ -22,6 +22,9 @@ public class WonderlandMap
     // A list of all the particles in our map
     public var particles :Array;
 
+    // Our wickets
+    public var wickets :Array;
+
     public function WonderlandMap ()
     {
         startPoint = new Point(0, 0);
@@ -30,6 +33,7 @@ public class WonderlandMap
         foreground.mouseChildren = false;
         foreground.mouseEnabled = false;
         particles = [];
+        wickets = [];
     }
 
     /**
