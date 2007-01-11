@@ -13,19 +13,19 @@ public class Track extends Sprite
     public function Track ()
     {
         var backgroundImage :Shape;
-        for (var i :int = 0; i < 3; i++) {
+        for (var i :int = 0; i < 4; i++) {
             backgroundImage = new Shape();
             backgroundImage.graphics.beginBitmapFill((new BACKGROUND_IMAGE() as Bitmap).bitmapData);
-            backgroundImage.graphics.drawRect(-Ground.IMAGE_SIZE, -Ground.IMAGE_SIZE,
-                Ground.IMAGE_SIZE * 2, Ground.IMAGE_SIZE * 2);
+            backgroundImage.graphics.drawRect(0, 0, Ground.IMAGE_SIZE * 1.5, 
+                Ground.IMAGE_SIZE * 1.5);
             backgroundImage.graphics.endFill();
-            addChild(backgroundImage);
-
-            if (i == 1) {
-                backgroundImage.y = -Ground.IMAGE_SIZE * 2;
-            } else if (i == 2) {
-                backgroundImage.y = Ground.IMAGE_SIZE * 2;
+            if (i > 1) {
+                backgroundImage.x = -Ground.IMAGE_SIZE * 1.5;
+            } 
+            if (i == 1 || i == 3) {
+                backgroundImage.y = -Ground.IMAGE_SIZE * 1.5;
             }
+            addChild(backgroundImage);
         }
 
         // this will eventually feature a seed distributed to each client
@@ -38,6 +38,10 @@ public class Track extends Sprite
         moveTrackForward();
     }
 
+    /**
+     * Rotates tracks from front to back, bringing in the next randomly generated track to the
+     * front position.
+     */
     public function moveTrackForward () :void
     {
         for (var i :int = 0; i < 3; i++) {
