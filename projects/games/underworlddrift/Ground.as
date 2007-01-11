@@ -44,6 +44,15 @@ public class Ground extends Sprite
             addChild(stripImage);
         }
 
+        var kart :BitmapData = new BitmapData(64, 64, true, 0x00000000);
+        var trans :Matrix = new Matrix();
+        trans.translate(32, 32);
+        kart.draw(new KART(), trans);
+        var kartImage :Bitmap = new Bitmap(kart);
+        kartImage.x = 323;
+        kartImage.y = 100;
+        addChild(kartImage);
+
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
@@ -132,7 +141,7 @@ public class Ground extends Sprite
     protected var _cameraPosition :Point = new Point(0, HALF_IMAGE_SIZE);
 
     /** height of the camera */
-    protected var _cameraHeight :Number = 10;
+    protected var _cameraHeight :Number = 30;
 
     /** distance from the camera to the projection plane */
     protected var _cameraDistance :Number = 800;
@@ -156,6 +165,10 @@ public class Ground extends Sprite
     /** test background tile image */
     [Embed(source='rsrc/blue_ground.png')]
     protected static const BACKGROUND_IMAGE :Class;
+
+    /** Bowser! */
+    [Embed(source='rsrc/bowser.swf#bowser_center')]
+    protected static const KART :Class;
 
     /** The length and width of the track image tiles (they are square) */
     protected static const IMAGE_SIZE :int = 1024;
