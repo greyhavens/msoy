@@ -5,6 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
+import java.io.Serializable;
 import java.lang.String;
 
 import java.sql.Date;
@@ -15,6 +16,7 @@ import java.sql.Date;
  */
 @Entity
 public class SessionRecord
+    implements Serializable
 {
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */

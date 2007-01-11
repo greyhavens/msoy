@@ -3,11 +3,14 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.io.Serializable;
+
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
 @Entity
 @Table
 public abstract class CloneRecord<T extends ItemRecord>
+    implements Serializable
 {
     public static final int SCHEMA_VERSION = 2;
 

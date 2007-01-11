@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -26,7 +27,7 @@ import com.samskivert.util.StringUtil;
 @Entity
 @Table
 public class MailMessageRecord
-    implements Cloneable
+    implements Cloneable, Serializable
 {
     public static final int SCHEMA_VERSION = 3;
 
@@ -63,7 +64,7 @@ public class MailMessageRecord
     public static final String PAYLOAD_STATE = "payloadState";
     public static final ColumnExp PAYLOAD_STATE_C =
         new ColumnExp(MailMessageRecord.class, PAYLOAD_STATE);
-    
+
     /** The id of this message, unique within its current folder. */
     @Id
     public int messageId;

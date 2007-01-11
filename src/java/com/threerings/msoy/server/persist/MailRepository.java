@@ -11,6 +11,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.MultiKey;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.ForUpdate;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -38,10 +39,10 @@ public class MailRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MailFolderRecord.class,
-                    new Key(MailFolderRecord.OWNER_ID_C, memberId,
-                            MailFolderRecord.FOLDER_ID_C, folderId));
+                    MailFolderRecord.OWNER_ID, memberId,
+                    MailFolderRecord.FOLDER_ID, folderId);
     }
-    
+
     /**
      * Count the number of read/unread messages in a given folder.
      */
@@ -49,26 +50,26 @@ public class MailRepository extends DepotRepository
         throws PersistenceException
     {
         Map<Boolean, Integer> map = new HashMap<Boolean, Integer>();
-        for (MailCountRecord record :
-            findAll(MailCountRecord.class,
-                    new Key(MailMessageRecord.OWNER_ID_C, memberId,
-                            MailMessageRecord.FOLDER_ID_C, folderId),
-                    new FromOverride(MailMessageRecord.class),
-                    new FieldOverride(MailCountRecord.UNREAD, MailMessageRecord.UNREAD_C),
-                    new FieldOverride(MailCountRecord.COUNT, "count(*)"),
-                    new GroupBy(MailMessageRecord.UNREAD_C))) {
+        for (MailCountRecord record : findAll(
+                 MailCountRecord.class,
+                 new Where(MailMessageRecord.OWNER_ID_C, memberId,
+                           MailMessageRecord.FOLDER_ID_C, folderId),
+                 new FromOverride(MailMessageRecord.class),
+                 new FieldOverride(MailCountRecord.UNREAD, MailMessageRecord.UNREAD_C),
+                 new FieldOverride(MailCountRecord.COUNT, "count(*)"),
+                 new GroupBy(MailMessageRecord.UNREAD_C))) {
             map.put(record.unread, record.count);
         }
         return map;
     }
-    
+
     /**
      * Fetch and return all folder records for a given member.
      */
     public Collection<MailFolderRecord> getFolders (int memberId)
         throws PersistenceException
     {
-        return findAll(MailFolderRecord.class, new Key(MailFolderRecord.OWNER_ID, memberId));
+        return findAll(MailFolderRecord.class, new Where(MailFolderRecord.OWNER_ID, memberId));
     }
 
     /**
@@ -78,21 +79,21 @@ public class MailRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MailMessageRecord.class,
-                    new Key(MailMessageRecord.OWNER_ID_C, memberId,
-                            MailMessageRecord.FOLDER_ID_C, folderId,
-                            MailMessageRecord.MESSAGE_ID_C, messageId));
+                    MailMessageRecord.OWNER_ID, memberId,
+                    MailMessageRecord.FOLDER_ID, folderId,
+                    MailMessageRecord.MESSAGE_ID, messageId);
     }
-    
+
     /**
      * Fetch and return all message records in a given folder of a given member.
-     * 
+     *
      * TODO: If messages end up being non-trivial in size, separate into own table.
      */
      public Collection<MailMessageRecord> getMessages (int memberId, int folderId)
          throws PersistenceException
      {
          return findAll(MailMessageRecord.class,
-                        new Key(MailMessageRecord.OWNER_ID_C, memberId,
+                        new Where(MailMessageRecord.OWNER_ID_C, memberId,
                                 MailMessageRecord.FOLDER_ID_C, folderId));
      }
 
@@ -105,7 +106,7 @@ public class MailRepository extends DepotRepository
          insert(record);
          return record;
      }
-     
+
      /**
       * Insert a message into the database, for a given member and folder. This method
       * fills in the messageId field with a new value that's unique within the folder.
@@ -117,26 +118,27 @@ public class MailRepository extends DepotRepository
          insert(record);
          return record;
      }
-     
+
      /**
       * Move a message from one folder to another.
       */
      public void moveMessage (int ownerId, int folderId, int newFolderId, int[] messageIds)
          throws PersistenceException
      {
-         Integer[] idArr = IntListUtil.box(messageIds);
+         Comparable[] idArr = IntListUtil.box(messageIds);
          int newId = claimMessageId(ownerId, newFolderId, 1);
-         updatePartial(MailMessageRecord.class,
-             new Where(new And(
-                 new Equals(MailMessageRecord.OWNER_ID_C, new ValueExp(ownerId)),
-                 new Equals(MailMessageRecord.FOLDER_ID_C, new ValueExp(folderId)),
-                 new In(MailMessageRecord.MESSAGE_ID_C, idArr))),
-                 MailMessageRecord.FOLDER_ID, newFolderId,
-                 MailMessageRecord.MESSAGE_ID, newId);
+         MultiKey<MailMessageRecord> key = new MultiKey<MailMessageRecord>(
+                 MailMessageRecord.class,
+                 MailMessageRecord.OWNER_ID, ownerId,
+                 MailMessageRecord.FOLDER_ID, folderId,
+                 MailMessageRecord.MESSAGE_ID, idArr);
+         updatePartial(MailMessageRecord.class, key, key,
+                       MailMessageRecord.FOLDER_ID, newFolderId,
+                       MailMessageRecord.MESSAGE_ID, newId);
      }
 
      /**
-      * Delete a message record.
+      * Delete one or more message records.
       */
      public void deleteMessage (int ownerId, int folderId, int... messageIds)
          throws PersistenceException
@@ -145,11 +147,12 @@ public class MailRepository extends DepotRepository
              return;
          }
          Comparable[] idArr = IntListUtil.box(messageIds);
-         deleteAll(MailMessageRecord.class,
-             new Where(new And(
-                 new Equals(MailMessageRecord.OWNER_ID_C, new ValueExp(ownerId)),
-                 new Equals(MailMessageRecord.FOLDER_ID_C, new ValueExp(folderId)),
-                 new In(MailMessageRecord.MESSAGE_ID_C, idArr))));
+         MultiKey<MailMessageRecord> key = new MultiKey<MailMessageRecord>(
+                 MailMessageRecord.class,
+                 MailMessageRecord.OWNER_ID, ownerId,
+                 MailMessageRecord.FOLDER_ID, folderId,
+                 MailMessageRecord.MESSAGE_ID, idArr);
+         deleteAll(MailMessageRecord.class, key, key);
      }
 
      /**
@@ -158,24 +161,26 @@ public class MailRepository extends DepotRepository
      public void setPayloadState (int ownerId, int folderId, int messageId, byte[] state)
          throws PersistenceException
      {
-         updatePartial(MailMessageRecord.class,
-             new Key(MailMessageRecord.OWNER_ID_C, ownerId,
-                     MailMessageRecord.FOLDER_ID_C, folderId,
-                     MailMessageRecord.MESSAGE_ID_C, messageId),
-             MailMessageRecord.PAYLOAD_STATE, state);
+         Key<MailMessageRecord> key =
+             new Key<MailMessageRecord>(MailMessageRecord.class,
+                     MailMessageRecord.OWNER_ID, ownerId,
+                     MailMessageRecord.FOLDER_ID, folderId,
+                     MailMessageRecord.MESSAGE_ID, messageId);
+         updatePartial(MailMessageRecord.class, key, key, MailMessageRecord.PAYLOAD_STATE, state);
      }
-     
+
     /**
      * Flag a message as being unread (or not).
      */
      public void setUnread (int ownerId, int folderId, int messageId, boolean unread)
          throws PersistenceException
      {
-         updatePartial(MailMessageRecord.class,
-                       new Key(MailMessageRecord.OWNER_ID_C, ownerId,
-                               MailMessageRecord.FOLDER_ID_C, folderId,
-                               MailMessageRecord.MESSAGE_ID_C, messageId),
-                       MailMessageRecord.UNREAD, unread);
+         Key<MailMessageRecord> key =
+             new Key<MailMessageRecord>(MailMessageRecord.class,
+                     MailMessageRecord.OWNER_ID, ownerId,
+                     MailMessageRecord.FOLDER_ID, folderId,
+                     MailMessageRecord.MESSAGE_ID, messageId);
+         updatePartial(MailMessageRecord.class, key, key, MailMessageRecord.UNREAD, unread);
      }
 
 
@@ -184,8 +189,8 @@ public class MailRepository extends DepotRepository
          throws PersistenceException
      {
          MailFolderRecord record = load(MailFolderRecord.class,
-                                        new Key(MailFolderRecord.OWNER_ID_C, memberId,
-                                                MailFolderRecord.FOLDER_ID_C, folderId),
+                                        MailFolderRecord.OWNER_ID, memberId,
+                                        MailFolderRecord.FOLDER_ID, folderId,
                                         new ForUpdate());
          int firstId = record.nextMessageId;
          record.nextMessageId += idCount;

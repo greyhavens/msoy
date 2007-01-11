@@ -5,6 +5,7 @@ package com.threerings.msoy.server.persist;
 
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
+import java.io.Serializable;
 import java.sql.Date;
 
 import com.samskivert.util.StringUtil;
@@ -16,7 +17,7 @@ import com.samskivert.util.StringUtil;
 @Computed
 @Entity
 public class NeighborFriendRecord
-    implements Cloneable
+    implements Cloneable, Serializable
 {
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */

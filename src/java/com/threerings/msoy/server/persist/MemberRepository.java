@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -13,21 +14,30 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.IntListUtil;
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.JDBCUtil;
+import com.samskivert.jdbc.depot.CacheInvalidator;
+import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
+import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
+import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
-import com.samskivert.util.IntListUtil;
-import com.samskivert.util.StringUtil;
+import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
@@ -39,9 +49,21 @@ import static com.threerings.msoy.Log.log;
  */
 public class MemberRepository extends DepotRepository
 {
+    /** The cache identifier for the friends-of-a-member collection query. */
+    public static final String FRIENDS_CACHE_ID = "FriendsCache";
+
     public MemberRepository (ConnectionProvider conprov)
     {
         super(conprov);
+
+        // add a cache invalidator that listens to single FriendRecord updates
+        _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
+            public void entryModified (CacheKey key, FriendRecord friend) {
+                // member modified: invalidate the dependent FriendsCache entries
+                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviterId);
+                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviteeId);
+            }
+        });
     }
 
     /**
@@ -52,7 +74,7 @@ public class MemberRepository extends DepotRepository
     public MemberRecord loadMember (String accountName)
         throws PersistenceException
     {
-        return load(MemberRecord.class, new Key(MemberRecord.ACCOUNT_NAME_C, accountName));
+        return load(MemberRecord.class, MemberRecord.ACCOUNT_NAME, accountName);
     }
 
     /**
@@ -133,8 +155,7 @@ public class MemberRepository extends DepotRepository
             insert(nsess);
         } catch (DuplicateKeyException dke) {
             // if that fails with a duplicate key, reuse the old record but adjust its expiration
-            SessionRecord esess = load(
-                SessionRecord.class, new Key(SessionRecord.MEMBER_ID, memberId));
+            SessionRecord esess = load(SessionRecord.class, SessionRecord.MEMBER_ID, memberId);
             esess.expires = nsess.expires;
             update(esess, SessionRecord.EXPIRES);
 
@@ -262,8 +283,9 @@ public class MemberRepository extends DepotRepository
     public void disableMember (String accountName, String disabledName)
         throws PersistenceException
     {
+        // TODO: Cache Invalidation
         int mods = updatePartial(
-            MemberRecord.class, new Key(MemberRecord.ACCOUNT_NAME, accountName),
+            MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME, accountName), null,
             MemberRecord.ACCOUNT_NAME, disabledName);
         switch (mods) {
         case 0:
@@ -352,16 +374,15 @@ public class MemberRepository extends DepotRepository
      * Get the FriendEntry record for all friends (pending, too) of the specified memberId. The
      * online status of each friend will be false.
      */
-    public ArrayList<FriendEntry> getFriends (final int memberId)
+    public List<FriendEntry> getFriends (final int memberId)
         throws PersistenceException
     {
         // force the creation of the FriendRecord table if necessary
         _ctx.getMarshaller(FriendRecord.class);
 
-        Key key = new Key("FriendsCache", memberId);
-        return _ctx.invoke(
-            new CollectionQuery<ArrayList<FriendEntry>>(_ctx, FriendRecord.class, key) {
-            public ArrayList<FriendEntry> invoke (Connection conn)
+        CacheKey key = new SimpleCacheKey(FRIENDS_CACHE_ID, memberId);
+        return _ctx.invoke(new CollectionQuery<List<FriendEntry>>(key) {
+            public List<FriendEntry> invoke (Connection conn)
                 throws SQLException
             {
                 String query = "select name, memberId, inviterId, status " +
@@ -414,13 +435,15 @@ public class MemberRepository extends DepotRepository
         // see if there is already a connection, either way
         ArrayList<FriendRecord> existing = new ArrayList<FriendRecord>();
         existing.addAll(findAll(FriendRecord.class,
-                                new Key(FriendRecord.INVITER_ID, memberId,
-                                        FriendRecord.INVITEE_ID, otherId)));
+                                new Where(FriendRecord.INVITER_ID, memberId,
+                                          FriendRecord.INVITEE_ID, otherId)));
         existing.addAll(findAll(FriendRecord.class,
-                                new Key(FriendRecord.INVITER_ID, otherId,
-                                        FriendRecord.INVITEE_ID, memberId)));
+                                new Where(FriendRecord.INVITER_ID, otherId,
+                                          FriendRecord.INVITEE_ID, memberId)));
 
-        // TODO: update or invalidate "FriendsCache" for both parties
+        // invalidate the FriendsCache for both members
+        _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
+        _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, otherId));
 
         if (existing.size() > 0) {
             FriendRecord rec = existing.get(0);
@@ -449,26 +472,57 @@ public class MemberRepository extends DepotRepository
     /**
      * Remove a friend mapping from the database.
      */
-    public void removeFriends (int memberId, int otherId)
+    public void removeFriends (final int memberId, final int otherId)
         throws PersistenceException
     {
-        // TODO: update or invalidate "FriendsCache" for both parties
-        deleteAll(FriendRecord.class, new Key(FriendRecord.INVITER_ID, memberId,
-                                              FriendRecord.INVITEE_ID, otherId));
-        deleteAll(FriendRecord.class, new Key(FriendRecord.INVITER_ID, otherId,
-                                              FriendRecord.INVITEE_ID, memberId));
+        _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
+        _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, otherId));
+
+        Key<FriendRecord> key = new Key<FriendRecord>(
+                FriendRecord.class,
+                FriendRecord.INVITER_ID, memberId,
+                FriendRecord.INVITEE_ID, otherId);
+        deleteAll(FriendRecord.class, key, key);
+
+        key = new Key<FriendRecord>(
+                FriendRecord.class,
+                FriendRecord.INVITER_ID, otherId,
+                FriendRecord.INVITEE_ID, memberId);
+        deleteAll(FriendRecord.class, key, key);
     }
 
     /**
      * Delete all the friend relations involving the specified memberId, usually because that
      * member is being deleted.
      */
-    public void deleteAllFriends (int memberId)
+    public void deleteAllFriends (final int memberId)
         throws PersistenceException
     {
-        // TODO: update or invalidate "FriendsCache"
-        deleteAll(FriendRecord.class, new Key(FriendRecord.INVITER_ID, memberId));
-        deleteAll(FriendRecord.class, new Key(FriendRecord.INVITEE_ID, memberId));
+        CacheInvalidator invalidator = new CacheInvalidator() {
+            public void invalidate (PersistenceContext ctx) {
+                // remove the FriendsCache entry for the member
+                ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
+
+                // then remove both FriendRecord and FriendsCache entries for all related members
+                ctx.cacheTraverse(FriendRecord.class, new CacheTraverser<FriendRecord> () {
+                    public void visitCacheEntry (PersistenceContext ctx, String cacheId,
+                        Serializable key, FriendRecord record) {
+                        if (record.inviteeId == memberId) {
+                            ctx.cacheInvalidate(FRIENDS_CACHE_ID, record.inviterId);
+                            ctx.cacheInvalidate(FriendRecord.class, record.inviterId);
+                        } else if (record.inviterId == memberId) {
+                            ctx.cacheInvalidate(FRIENDS_CACHE_ID, record.inviterId);
+                            ctx.cacheInvalidate(FriendRecord.class, record.inviterId);
+                        }
+                    }
+                });
+            }
+        };
+
+        deleteAll(FriendRecord.class,
+                  new Where(new Or(new Equals(FriendRecord.INVITER_ID, memberId),
+                                   new Equals(FriendRecord.INVITEE_ID, memberId))),
+                  invalidator);
     }
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
@@ -481,7 +535,8 @@ public class MemberRepository extends DepotRepository
         }
 
         String op = type.equals("grant") ? "+" : "-";
-        int mods = updateLiteral(MemberRecord.class, new Key(index, key),
+        // TODO: Cache Invalidation
+        int mods = updateLiteral(MemberRecord.class, new Where(index, key), null,
                                  MemberRecord.FLOW, MemberRecord.FLOW + op + amount);
         if (mods == 0) {
             throw new PersistenceException(

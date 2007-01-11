@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.io.Serializable;
+
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
@@ -18,7 +20,7 @@ import com.samskivert.util.StringUtil;
 @Table(uniqueConstraints={
     @UniqueConstraint(columnNames={MailFolderRecord.OWNER_ID, MailFolderRecord.NAME })})
 public class MailFolderRecord
-    implements Cloneable
+    implements Cloneable, Serializable
 {
     public static final int SCHEMA_VERSION = 1;
 

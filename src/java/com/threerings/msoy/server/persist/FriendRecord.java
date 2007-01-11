@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.io.Serializable;
+
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -13,6 +15,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 @Table(uniqueConstraints =
        {@UniqueConstraint(columnNames={"inviterId", "inviteeId"})})
 public class FriendRecord
+    implements Serializable
 {
     public static final int SCHEMA_VERSION = 1;
     

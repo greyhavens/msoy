@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -21,7 +22,7 @@ import com.threerings.msoy.web.data.MemberName;
 @Entity
 @Table
 public abstract class CatalogRecord<T extends ItemRecord>
-    implements Streamable
+    implements Streamable, Serializable
 {
     public static final int SCHEMA_VERSION = 1;
 

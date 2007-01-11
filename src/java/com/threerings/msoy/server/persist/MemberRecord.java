@@ -6,6 +6,7 @@ package com.threerings.msoy.server.persist;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 import com.samskivert.util.StringUtil;
@@ -17,7 +18,7 @@ import com.threerings.msoy.web.data.MemberName;
  */
 @Entity
 public class MemberRecord
-    implements Cloneable
+    implements Cloneable, Serializable
 {
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */

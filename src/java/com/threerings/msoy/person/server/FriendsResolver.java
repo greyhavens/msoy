@@ -4,6 +4,7 @@
 package com.threerings.msoy.person.server;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.samskivert.util.ResultListener;
 
@@ -20,8 +21,8 @@ public class FriendsResolver extends BlurbResolver
     protected void resolve ()
     {
         MsoyServer.memberMan.loadFriends(
-            _memberId, new ResultListener<ArrayList<FriendEntry>>() {
-            public void requestCompleted (ArrayList<FriendEntry> friends) {
+            _memberId, new ResultListener<List<FriendEntry>>() {
+            public void requestCompleted (List<FriendEntry> friends) {
                 ArrayList<FriendInfo> info = new ArrayList<FriendInfo>();
                 for (FriendEntry entry : friends) {
                     info.add(entry.toInfo());

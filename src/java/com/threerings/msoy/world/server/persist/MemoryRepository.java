@@ -30,8 +30,9 @@ public class MemoryRepository extends DepotRepository
     public Collection<MemoryRecord> loadMemory (byte itemType, int itemId)
         throws PersistenceException
     {
-        return findAll(MemoryRecord.class, new Key(MemoryRecord.ITEM_TYPE, itemType,
-                                                   MemoryRecord.ITEM_ID, itemId));
+        return findAll(MemoryRecord.class, new Key<MemoryRecord>(
+                           MemoryRecord.class, MemoryRecord.ITEM_TYPE, itemType,
+                           MemoryRecord.ITEM_ID, itemId));
     }
 
     /**

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.io.Serializable;
+
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -12,7 +14,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 @Computed
 @Entity
 public class MemberNameRecord
-    implements Cloneable
+    implements Cloneable, Serializable
 {
     public static final String MEMBER_ID = "memberId";
     public static final ColumnExp MEMBER_ID_C =

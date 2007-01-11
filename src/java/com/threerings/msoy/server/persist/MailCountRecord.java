@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.io.Serializable;
+
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -13,14 +15,14 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 @Computed
 @Entity
 public class MailCountRecord
-    implements Cloneable
+    implements Cloneable, Serializable
 {
     public static final String UNREAD = "unread";
     public static final String COUNT = "count";
 
     /** Whether this count is an unread count or a read count. */
     public boolean unread;
-    
+
     /** The number of messages that are unread (or read). */
     public int count;
 }

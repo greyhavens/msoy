@@ -95,11 +95,11 @@ public class MemberManager
      * elsewhere.
      */
     public void loadFriends (
-        final int memberId, ResultListener<ArrayList<FriendEntry>> listener)
+        final int memberId, ResultListener<List<FriendEntry>> listener)
     {
         MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<ArrayList<FriendEntry>>(listener) {
-            public ArrayList<FriendEntry> invokePersistResult ()
+            new RepositoryListenerUnit<List<FriendEntry>>(listener) {
+            public List<FriendEntry> invokePersistResult ()
                 throws PersistenceException {
                 return _memberRepo.getFriends(memberId);
             }

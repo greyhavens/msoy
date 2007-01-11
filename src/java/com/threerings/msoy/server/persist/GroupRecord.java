@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
@@ -28,7 +29,7 @@ import com.threerings.msoy.web.data.GroupExtras;
     @Index(name="searchIndex", type="fulltext", columns={"name", "blurb", "charter"})
 })
 public class GroupRecord
-    implements Cloneable
+    implements Cloneable, Serializable
 {
     public static final int SCHEMA_VERSION = 8;
 

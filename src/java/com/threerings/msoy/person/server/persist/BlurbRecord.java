@@ -3,26 +3,31 @@
 
 package com.threerings.msoy.person.server.persist;
 
+import java.io.Serializable;
+
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
 /**
  * Contains metadata for a particular blurb contained on a player's person
  * page.
  */
-@Entity public class BlurbRecord
+@Entity
+public class BlurbRecord
+    implements Serializable
 {
     /** A unique identifier assigned to all blurbs. */
-    @Id public int blurbId;
+    @Id
+    public int blurbId;
 
     /** The member with which this blurb is associated. */
-    // @NotNull
+    @Column(nullable=false)
     public int memberId;
 
     /** The type of blurb in question. */
-    // @NotNull
+    @Column(nullable=false)
     public int type;
 
     /** Arbitrary layout information interpreted by the layout code. */
-    // @NotNull
+    @Column(nullable=false)
     public String layoutData;
 }

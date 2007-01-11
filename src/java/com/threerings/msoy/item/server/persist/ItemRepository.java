@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -19,8 +20,9 @@ import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
+import com.samskivert.jdbc.depot.PersistenceContext.CacheEvictionFilter;
+import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
@@ -117,7 +119,7 @@ public abstract class ItemRepository<
     public Collection<T> loadOriginalItems (int ownerId)
         throws PersistenceException
     {
-        return findAll(getItemClass(), new Key(ItemRecord.OWNER_ID, ownerId),
+        return findAll(getItemClass(), new Where(ItemRecord.OWNER_ID, ownerId),
                        OrderBy.descending(ItemRecord.RATING));
     }
 
@@ -128,7 +130,7 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         return loadClonedItems(
-            new Key(new ColumnExp(getCloneClass(), CloneRecord.OWNER_ID), ownerId));
+            new Where(new ColumnExp(getCloneClass(), CloneRecord.OWNER_ID), ownerId));
     }
 
     /**
@@ -339,7 +341,7 @@ public abstract class ItemRepository<
      * This method does not perform any checking to determine whether it is safe to delete the item
      * so do not call it unless you know the item is not listed in the catalog or otherwise in use.
      */
-    public void deleteItem (int itemId)
+    public void deleteItem (final int itemId)
         throws PersistenceException
     {
         if (itemId < 0) {
@@ -348,10 +350,44 @@ public abstract class ItemRepository<
         } else {
             // delete the item in question
             delete(getItemClass(), itemId);
-            // delete rating, tag and tag history records for this item
-            deleteAll(getRatingClass(), new Key(RatingRecord.ITEM_ID, itemId));
-            deleteAll(getTagClass(), new Key(TagRecord.ITEM_ID, itemId));
-            deleteAll(getTagHistoryClass(), new Key(TagHistoryRecord.ITEM_ID, itemId));
+
+            // invalidate and delete rating records for this item
+            CacheInvalidator inv = new CacheInvalidator() {
+                public void invalidate (PersistenceContext ctx) {
+                    // invalidate and delete rating records for this item
+                    ctx.cacheTraverse(getRatingClass().getName(), new CacheEvictionFilter<RT>() {
+                        public boolean testForEviction (Serializable key, RT record) {
+                            return record.itemId == itemId;
+                        }                
+                    });
+                }
+            };
+            deleteAll(getRatingClass(), new Where(RatingRecord.ITEM_ID, itemId), inv);
+
+            // invalidate and delete tag records for this item
+            inv = new CacheInvalidator() {
+                public void invalidate (PersistenceContext ctx) {
+                    ctx.cacheTraverse(getTagClass().getName(), new CacheEvictionFilter<TT>() {
+                        public boolean testForEviction (Serializable key, TT record) {
+                            return record.itemId == itemId;
+                        }                
+                    });
+                }
+            };
+            deleteAll(getTagClass(), new Where(TagRecord.ITEM_ID, itemId), inv);
+
+            // invalidate and delete tag history records for this item
+            inv = new CacheInvalidator() {
+                public void invalidate (PersistenceContext ctx) {
+                    String cacheName = getTagHistoryClass().getName();
+                    ctx.cacheTraverse(cacheName, new CacheEvictionFilter<THT>() {
+                        public boolean testForEviction (Serializable key, THT record) {
+                            return record.itemId == itemId;
+                        }                
+                    });
+                }
+            };
+            deleteAll(getTagHistoryClass(), new Where(TagHistoryRecord.ITEM_ID, itemId), inv);
         }
     }
 
@@ -361,8 +397,9 @@ public abstract class ItemRepository<
     public RatingRecord<T> getRating (int itemId, int memberId)
         throws PersistenceException
     {
-        return load(getRatingClass(), new Key(RatingRecord.ITEM_ID, itemId,
-                                              RatingRecord.MEMBER_ID, memberId));
+        return load(getRatingClass(),
+                    RatingRecord.ITEM_ID, itemId,
+                    RatingRecord.MEMBER_ID, memberId);
     }
 
     /**
@@ -423,7 +460,7 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         return findAll(TagNameRecord.class,
-                       new Key(TagRecord.ITEM_ID, itemId),
+                       new Where(TagRecord.ITEM_ID, itemId),
                        new Join(TagNameRecord.TAG_ID_C,
                                 new ColumnExp(getTagClass(), TagRecord.TAG_ID)));
     }
@@ -434,7 +471,7 @@ public abstract class ItemRepository<
     public Iterable<THT> getTagHistoryByItem (int itemId)
         throws PersistenceException
     {
-        return findAll(getTagHistoryClass(), new Key(TagHistoryRecord.ITEM_ID, itemId));
+        return findAll(getTagHistoryClass(), new Where(TagHistoryRecord.ITEM_ID, itemId));
     }
 
     /**
@@ -443,7 +480,7 @@ public abstract class ItemRepository<
     public Iterable<THT> getTagHistoryByMember (int memberId)
         throws PersistenceException
     {
-        return findAll(getTagHistoryClass(), new Key(TagHistoryRecord.MEMBER_ID, memberId));
+        return findAll(getTagHistoryClass(), new Where(TagHistoryRecord.MEMBER_ID, memberId));
     }
 
     /**
@@ -453,7 +490,7 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         // load the tag, if it exists
-        TagNameRecord record = load(TagNameRecord.class, new Key(TagNameRecord.TAG, tagName));
+        TagNameRecord record = load(TagNameRecord.class, TagNameRecord.TAG, tagName);
         if (record == null) {
             // if it doesn't, create it on the fly
             record = new TagNameRecord();
@@ -469,7 +506,7 @@ public abstract class ItemRepository<
     public TagNameRecord getTag (int tagId)
         throws PersistenceException
     {
-        return load(TagNameRecord.class, new Key(TagNameRecord.TAG_ID, tagId));
+        return load(TagNameRecord.class, tagId);
     }
 
     /**
@@ -479,9 +516,7 @@ public abstract class ItemRepository<
     public TagHistoryRecord<T> tagItem (int itemId, int tagId, int taggerId, long now)
         throws PersistenceException
     {
-        TagRecord<T> tag = load(
-            getTagClass(),
-            new Key(TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId));
+        TagRecord<T> tag = load(getTagClass(), TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId);
         if (tag != null) {
             return null;
         }
@@ -519,9 +554,7 @@ public abstract class ItemRepository<
     public TagHistoryRecord<T> untagItem (int itemId, int tagId, int taggerId, long now)
         throws PersistenceException
     {
-        TagRecord<T> tag = load(
-            getTagClass(),
-            new Key(TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId));
+        TagRecord<T> tag = load(getTagClass(), TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId);
         if (tag == null) {
             return null;
         }
@@ -557,7 +590,7 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         final String tagTable = _ctx.getMarshaller(getTagClass()).getTableName();
-        int rows = _ctx.invoke(new Modifier(null) {
+        int rows = _ctx.invoke(new Modifier() {
             public int invoke (Connection conn) throws SQLException {
                 PreparedStatement stmt = null;
                 try {

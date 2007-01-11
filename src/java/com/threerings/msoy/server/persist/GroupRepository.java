@@ -17,7 +17,10 @@ import java.sql.SQLException;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.CacheKey;
+import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -37,10 +40,16 @@ public class GroupRepository extends DepotRepository
     public GroupRepository (ConnectionProvider conprov)
     {
         super(conprov);
+        _ctx.addCacheListener(GroupRecord.class, new CacheListener<GroupRecord>() {
+            public void entryModified (CacheKey key, GroupRecord entry) {
+                // invalidate group names on any group record modifications
+                _ctx.cacheInvalidate(_groupNamePrefixKey);
+            }
+        });
     }
 
     /**
-     * Fetches all groups who's name starts with the given character.
+     * Fetches all groups whose name starts with the given character.
      */
     public Collection<GroupRecord> findGroups (String startingCharacter)
         throws PersistenceException
@@ -165,9 +174,11 @@ public class GroupRepository extends DepotRepository
     public void setRank (int groupId, int memberId, byte newRank)
         throws PersistenceException
     {
-        int rows = updatePartial(GroupMembershipRecord.class,
-                                 new Key(GroupMembershipRecord.GROUP_ID, groupId,
-                                         GroupMembershipRecord.MEMBER_ID, memberId),
+        Key<GroupMembershipRecord> key = new Key<GroupMembershipRecord>(
+                GroupMembershipRecord.class,
+                GroupMembershipRecord.GROUP_ID, groupId,
+                GroupMembershipRecord.MEMBER_ID, memberId);
+        int rows = updatePartial(GroupMembershipRecord.class, key, key,
                                  GroupMembershipRecord.RANK, newRank);
         if (rows == 0) {
             throw new PersistenceException(
@@ -184,8 +195,8 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         return load(GroupMembershipRecord.class,
-                    new Key(GroupMembershipRecord.GROUP_ID, groupId,
-                            GroupMembershipRecord.MEMBER_ID, memberId));
+                    GroupMembershipRecord.GROUP_ID, groupId,
+                    GroupMembershipRecord.MEMBER_ID, memberId);
     }
 
     /**
@@ -195,9 +206,11 @@ public class GroupRepository extends DepotRepository
     public boolean leaveGroup (int groupId, int memberId)
         throws PersistenceException
     {
-        int rows = deleteAll(GroupMembershipRecord.class,
-                             new Key(GroupMembershipRecord.GROUP_ID, groupId,
-                                     GroupMembershipRecord.MEMBER_ID, memberId));
+        Key<GroupMembershipRecord> key = new Key<GroupMembershipRecord>(
+                GroupMembershipRecord.class,
+                GroupMembershipRecord.GROUP_ID, groupId,
+                GroupMembershipRecord.MEMBER_ID, memberId);
+        int rows = deleteAll(GroupMembershipRecord.class, key, key);
         updateMemberCount(groupId);
         return rows > 0;
     }
@@ -209,9 +222,8 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         GroupMembershipCount count =
-            load(GroupMembershipCount.class,
+            load(GroupMembershipCount.class, GroupMembershipRecord.GROUP_ID, groupId,
                  new FieldOverride(GroupMembershipCount.COUNT, "count(*)"),
-                 new Key(GroupMembershipRecord.GROUP_ID, groupId),
                  new FromOverride(GroupMembershipRecord.class));
         if (count == null) {
             throw new PersistenceException("Group not found [groupId=" + groupId + "]");
@@ -226,7 +238,7 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(GroupMembershipRecord.class,
-                       new Key(GroupMembershipRecord.GROUP_ID, groupId));
+                       new Where(GroupMembershipRecord.GROUP_ID, groupId));
     }
 
     /**
@@ -236,7 +248,7 @@ public class GroupRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(GroupMembershipRecord.class,
-                       new Key(GroupMembershipRecord.MEMBER_ID, memberId));
+                       new Where(GroupMembershipRecord.MEMBER_ID, memberId));
     }
 
     /**
@@ -250,9 +262,7 @@ public class GroupRepository extends DepotRepository
         // force the creation of a GroupRecord table if necessary
         _ctx.getMarshaller(GroupRecord.class);
     
-        // only one query of this type is ever performed, so the Comparable key is not important
-        Key key = new Key("GroupNamePrefix", 0);
-        return _ctx.invoke(new CollectionQuery<List<String>>(_ctx, GroupRecord.class, key) {
+        return _ctx.invoke(new CollectionQuery<List<String>>(_groupNamePrefixKey) {
             public List<String> invoke (Connection conn)
                 throws SQLException
             {
@@ -279,4 +289,8 @@ public class GroupRepository extends DepotRepository
         updateLiteral(GroupRecord.class, groupId, "memberCount", 
             "(select count(*) from GroupMembershipRecord where groupId=" + groupId + ")");
     }
+
+    protected CacheKey _groupNamePrefixKey = new SimpleCacheKey(GROUP_NAME_PREFIX);
+
+    protected static final String GROUP_NAME_PREFIX = "GroupNamePrefix";
 }

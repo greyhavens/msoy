@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.samskivert.util.ResultListener;
 import com.threerings.presents.data.ClientObject;
@@ -108,8 +109,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         // load up their friend info
         if (!user.isGuest()) {
             MsoyServer.memberMan.loadFriends(user.getMemberId(),
-                new ResultListener<ArrayList<FriendEntry>>() {
-                public void requestCompleted (ArrayList<FriendEntry> friends) {
+                new ResultListener<List<FriendEntry>>() {
+                public void requestCompleted (List<FriendEntry> friends) {
                     for (FriendEntry entry : friends) {
                         MemberObject friendObj =
                             MsoyServer.lookupMember(entry.name);

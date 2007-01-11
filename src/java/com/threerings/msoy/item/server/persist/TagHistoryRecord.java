@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -16,7 +17,7 @@ import com.threerings.io.Streamable;
 @Entity
 @Table
 public abstract class TagHistoryRecord<T extends ItemRecord>
-    implements Streamable
+    implements Streamable, Serializable
 {
     public static final int SCHEMA_VERSION = 1;
 
