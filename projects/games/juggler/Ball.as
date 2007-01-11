@@ -1,13 +1,14 @@
 package {
     
 import flash.display.DisplayObjectContainer;    
+import flash.display.DisplayObject;    
 import flash.display.Sprite;
 import Math;
 
 public class Ball extends Sprite
     implements Actor, CanCollide
 {    
-    public function Ball (juggler :Juggler, space :Space) 
+    public function Ball (juggler :Juggler, space :Space, art:Object = null) 
     {
         _juggler = juggler;
         _space = space;
@@ -15,6 +16,11 @@ public class Ball extends Sprite
         _juggler.addChild(this);
         _juggler.registerAsActor(this);
         _juggler.registerForCollisions(this);
+        
+        if (art!=null)
+        {
+            addChild(art as DisplayObject);
+        }
         
         draw();
     }
@@ -34,10 +40,10 @@ public class Ball extends Sprite
     
     private function redraw (color:uint, alpha:Number = 1.0) :void
     {
-        graphics.clear();
-        graphics.beginFill(color, alpha);
-        graphics.drawCircle(0,0, _ballRadius);
-        graphics.endFill();
+        //graphics.clear();
+        //graphics.beginFill(color, alpha);
+        //graphics.drawCircle(0,0, _ballRadius);
+        //graphics.endFill();
         
     }
     
@@ -128,11 +134,8 @@ public class Ball extends Sprite
         if (y < _space.top) {
             dy = Math.abs(dy) * _elasticity;
         } else if (y > _space.bottom) {
-            if (_fadeFrames < 0) {
-                dy = DEATH_BOUNCE;
-                y = _space.bottom;  // if you don't do this then gravity forces the ball 
-                                //through the floor!
-                startFading();
+            if (! _dropped) {
+                drop();
             } else {
                 dy = - Math.abs(dy) * _elasticity;
                 y = _space.bottom;
@@ -149,6 +152,16 @@ public class Ball extends Sprite
         dy += _space.gravityPerFrame;
         
         project();      
+    }
+     
+    private function drop() :void
+    {
+        dy = DEATH_BOUNCE;
+        y = _space.bottom;  // if you don't do this then gravity forces the ball 
+                    //through the floor!
+        startFading();
+        _dropped = true;
+        _juggler.scoreCard.ballDropped();
     }
         
     /** start fading out this ball **/
@@ -169,6 +182,7 @@ public class Ball extends Sprite
         if (_fadeFrames <= 0)
         {
             _juggler.deregisterAsActor(this);
+            _juggler.removeChild(this);
         }
     }
         
@@ -329,5 +343,7 @@ public class Ball extends Sprite
     private var _velocityChanged:Boolean = true;
         
     private var _fadeFrames:int = -1;
+    
+    private var _dropped:Boolean = false;
 }
 }

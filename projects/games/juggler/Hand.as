@@ -118,10 +118,10 @@ public class Hand extends Sprite
         
         if (_releaseStrength > .90)
         {
-            _body.ballisticReleaseVelocity(this, _holding, .70);
+            _body.ballisticReleaseVelocity(this, _holding, .75);
         } else
         {
-            _body.ballisticReleaseVelocity(this, _holding, .60);
+            _body.ballisticReleaseVelocity(this, _holding, .65);
         }
         _holding.release();
         _holding = null;
@@ -137,6 +137,7 @@ public class Hand extends Sprite
             if (catching()) 
             {
                 _holding = ball;
+                _juggler.scoreCard.ballCaught();
                 ball.caughtBy(this);
             }
         }
@@ -195,8 +196,10 @@ public class Hand extends Sprite
     // add a ball starting at this hand
     public function addBall() :void
     {
-        var ball:Ball = new Ball(_juggler, _space);
+        var ball:Ball = _juggler.ballBox.provideBall();
+//        var ball:Ball = new Ball(_juggler, _space);
         _holding = ball;
+        _juggler.scoreCard.ballAdded();
         ball.caughtBy(this);
     }
     

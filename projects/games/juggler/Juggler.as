@@ -21,7 +21,7 @@ import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
     
-[SWF(width="600", height="600")]
+[SWF(width="700", height="500")]
 public class Juggler extends Sprite 
     implements Game, PropertyChangedListener, StateChangedListener
 {
@@ -29,19 +29,17 @@ public class Juggler extends Sprite
     {
         log("juggler v0.03 constructed");
         addChild(new backgroundClass());
-    }
-        
-    protected function setUpBalls () :void
-    {
-        _space = new Space(0,0, 600,600, 50);                
+
+        _space = new Space(0,0, 700,500, 50);                
         _collider = new Collider(this);
         _actors = new Array();
-        
+                
         _body = new Body(this, _space);
         _body.x = 337;
         _body.y = 530;
-                
-        log("registered "+_collider.activeBodies()+" bodies for collision detection.");
+        
+        ballBox = new BallBox(this, _space);        
+        scoreCard = new ScoreCard();
     }
 
     public function registerAsActor(actor:Actor) :void
@@ -80,7 +78,6 @@ public class Juggler extends Sprite
     {
         log("set game object called");
         _ezgame = gameObj;
-        setUpBalls();
         
         var frameTimer :Timer = new Timer(_space.frameDuration, 0);
         frameTimer.addEventListener(TimerEvent.TIMER, tick);
@@ -214,8 +211,12 @@ public class Juggler extends Sprite
     
     public var SpaceDown:Boolean = false;
      
+    public var ballBox:BallBox;
+     
+    public var scoreCard:ScoreCard; 
+     
     [Bindable]
-    [Embed(source="background.swf")]
+    [Embed(source="bg_tent.swf")]
     private var backgroundClass:Class;
    
 } 
