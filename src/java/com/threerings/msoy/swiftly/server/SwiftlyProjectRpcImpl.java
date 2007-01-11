@@ -10,6 +10,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.WebCreds;
 
 import com.threerings.msoy.swiftly.client.SwiftlyProjectRpc;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,11 +45,15 @@ public class SwiftlyProjectRpcImpl
         }
 
         // TODO: Projects for this user
-        HashMap<String,Object> project = new HashMap<String,Object>();
-        project.put(SwiftlyProjectRpc.PROJECT_NAME, "Best Game Ever");
-        project.put(SwiftlyProjectRpc.PROJECT_ID, "1");
-        
-        projects.add(project);
+        for (SwiftlyProjectRecord record : MsoyServer.swiftlyMan.findProjects(mrec)) {
+            HashMap<String,Object> project = new HashMap<String,Object>();
+
+            project.put(SwiftlyProjectRpc.PROJECT_NAME, record.projectName);
+            project.put(SwiftlyProjectRpc.PROJECT_ID, record.projectId);
+            projects.add(project);
+        }
+
+
         return projects;
     }
 
@@ -56,8 +61,28 @@ public class SwiftlyProjectRpcImpl
     /**
      * Create a project for the user.
      */
-    public String createProject (String authtoken, String projectName) {
+    public boolean createProject (String authtoken, String projectName) {
+        MemberRecord mrec = null;
+
+        try {
+            mrec = MsoyServer.memberRepo.loadMemberForSession(authtoken);
+        } catch (PersistenceException e) {
+            // TODO: Return an auth denied error
+        }
+
+        if (mrec == null) {
+            // TODO: Session has expired.
+            return false;
+        }
+
         // TODO: Do some stuff
-        return null;
+        try {
+            MsoyServer.swiftlyMan.createProject(mrec, projectName);
+        } catch (PersistenceException e) {
+            // TODO: Return a retry error
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

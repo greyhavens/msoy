@@ -38,7 +38,8 @@ public class SwiftlyClientRpc
         _project = (SwiftlyProjectRpc) factory.newInstance(SwiftlyProjectRpc.class);
     }
 
-    public ArrayList<SwiftlyProject> getProjects () {
+    public ArrayList<SwiftlyProject> getProjects ()
+    {
         ArrayList<SwiftlyProject> projectList;
         List<Map<String,Object>> result;
 
@@ -58,6 +59,11 @@ public class SwiftlyClientRpc
         }
 
         return projectList;
+    }
+
+    public void createProject (String projectName)
+    {
+        _project.createProject(_authtoken, projectName);
     }
 
     /** Swiftly XML-RPC Connection. */

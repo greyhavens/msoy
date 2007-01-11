@@ -105,7 +105,7 @@ public class MsoyServer extends WhirledServer
     public static ParlorManager parlorMan = new ParlorManager();
 
     /** Our runtime swiftly editor manager. */
-    public static SwiftlyManager swiftMan = new SwiftlyManager();
+    public static SwiftlyManager swiftlyMan = new SwiftlyManager();
 
     /** The lobby registry for this server. */
     public static LobbyRegistry lobbyReg = new LobbyRegistry();
@@ -226,7 +226,7 @@ public class MsoyServer extends WhirledServer
         ProfileRepository profileRepo = new ProfileRepository(conProv);
         groupRepo = new GroupRepository(conProv);
         MailRepository mailRepo = new MailRepository(conProv);
-        SwiftlyProjectRepository swiftRepo = new SwiftlyProjectRepository(conProv);
+        SwiftlyProjectRepository swiftlyRepo = new SwiftlyProjectRepository(conProv);
         memoryRepo = new MemoryRepository(conProv);
 
         // intialize various services
@@ -239,7 +239,7 @@ public class MsoyServer extends WhirledServer
         mailMan.init(mailRepo, memberRepo);
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
-        swiftMan.init(swiftRepo);
+        swiftlyMan.init(swiftlyRepo);
         lobbyReg.init(invmgr);
         worldGameReg.init(invmgr);
         GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {

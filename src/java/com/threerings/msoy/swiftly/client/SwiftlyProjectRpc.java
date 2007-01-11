@@ -19,7 +19,7 @@ public interface SwiftlyProjectRpc
     /**
      * Create a project for the user.
      */
-    public String createProject (String authtoken, String projectName);
+    public boolean createProject (String authtoken, String projectName);
 
     // Java implements XML-RPC structs as hashmaps, which is a bummer. So, we provide keys into those dictionaries.
     /** Project struct, name string element. */

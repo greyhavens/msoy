@@ -214,7 +214,7 @@ public class SwiftlyApplet extends JApplet
         ArrayList<SwiftlyDocument> emptyFileList = new ArrayList<SwiftlyDocument>();
         SwiftlyProject project = new SwiftlyProject("", emptyFileList);
         showSelectFileElementNameDialog(project);
-        // _projectList.add(project);
+        _swiftlyRpc.createProject(project.getName());
         loadProject(project);
     }
 
