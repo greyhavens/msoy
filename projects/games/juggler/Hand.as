@@ -2,41 +2,47 @@ package {
 
 import flash.display.Sprite;
 import flash.display.DisplayObjectContainer;
+import flash.display.DisplayObject;
     
 public class Hand extends Sprite 
     implements Actor, CanCollide
 {
-    public function Hand(juggler:Juggler, space:Space, body:Body, id:int) :void 
+    public function Hand(juggler:Juggler, space:Space, body:Body, id:int, artwork:Class) :void 
     {
         _id = id;
         _juggler = juggler;
         _space = space;
         _body = body;
-        
+            
         y = Body.HAND_LEVEL;        
         _maximumPullback = y + MAXIMUM_PULLBACK;
         
         body.addChild(this);
         Juggler.log("hand registering for collisions");
         juggler.registerForCollisions(this);
-        draw();
+        
+        var art:Object = new artwork();
+        art.x = -17;
+        art.y = -17;
+        addChild(art as DisplayObject);
+//        draw();
     }
 
     public function draw() :void
     {
-        Juggler.log("drawing hand normally");
-        redraw(NORMAL_COLOR);
+//        Juggler.log("drawing hand normally");
+//        redraw(NORMAL_COLOR);
     }
 
     private function redraw(color:uint) :void
     {
-        graphics.clear();
-        graphics.beginFill(color);
-        var x:int = -_width/2;
-        var y:int = -_height/2;
-        graphics.drawRoundRect(x, y, _width, _height, 
-            CORNER_WIDTH, CORNER_HEIGHT);
-        graphics.endFill();
+//        graphics.clear();
+//        graphics.beginFill(color);
+//       var x:int = -_width/2;
+//        var y:int = -_height/2;
+//        graphics.drawRoundRect(x, y, _width, _height, 
+//            CORNER_WIDTH, CORNER_HEIGHT);
+//        graphics.endFill();
     }
 
     public function highlight() :void
@@ -109,7 +115,14 @@ public class Hand extends Sprite
     {
         Juggler.log("releasing ball")
 //        _body.ballisticReleaseVelocity(this, _holding, _releaseStrength);
-        _body.ballisticReleaseVelocity(this, _holding, .75);
+        
+        if (_releaseStrength > .90)
+        {
+            _body.ballisticReleaseVelocity(this, _holding, .70);
+        } else
+        {
+            _body.ballisticReleaseVelocity(this, _holding, .60);
+        }
         _holding.release();
         _holding = null;
     }
@@ -269,13 +282,13 @@ public class Hand extends Sprite
 
     private static var HIGHLIGHT_COLOR:uint = 0xFF0000;
     
-    private static var MAXIMUM_PULLBACK:int = 100;
+    private static var MAXIMUM_PULLBACK:int = 50;
     
     private static var MOVE_FRAMES:int = 6;
     
     private static var THROW_FRAMES:int = 3;
-
-    private static var PULLBACK_RATE:int = 5;
+ 
+    private static var PULLBACK_RATE:int = 6;
 
     public static const MAX_SPEED:int = 1100;
 
@@ -285,7 +298,7 @@ public class Hand extends Sprite
 
     private var _highlightFrames:int = 0;
 
-    public var _width:Number = 75;
+    public var _width:Number = 45;
     
     public var _height:Number = 40;
     
@@ -310,6 +323,5 @@ public class Hand extends Sprite
     private var _releaseStrength:Number;
  
     public var _id:int;
-    
-}
+ }
 }

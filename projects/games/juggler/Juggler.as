@@ -2,6 +2,8 @@ package {
 
 import Math;
 
+import mx.core.SpriteAsset;
+
 import flash.display.Sprite;
 import flash.display.MovieClip;
 import flash.external.ExternalInterface;
@@ -26,6 +28,7 @@ public class Juggler extends Sprite
     public function Juggler ()
     {
         log("juggler v0.03 constructed");
+        addChild(new backgroundClass());
     }
         
     protected function setUpBalls () :void
@@ -35,8 +38,8 @@ public class Juggler extends Sprite
         _actors = new Array();
         
         _body = new Body(this, _space);
-        _body.x = 300;
-        _body.y = 500;
+        _body.x = 337;
+        _body.y = 530;
                 
         log("registered "+_collider.activeBodies()+" bodies for collision detection.");
     }
@@ -104,6 +107,9 @@ public class Juggler extends Sprite
                 break;
             case KEY_P:
                 Pdown = false;
+                break
+            case KEY_SPACE:
+                SpaceDown = false;
         }    
     }
     
@@ -128,18 +134,19 @@ public class Juggler extends Sprite
                 _body.rightHandRight();
                 break;
             case KEY_SPACE:
+                SpaceDown = true;
                 addBall();
         }
     }
     
     public function addBall() :void
     {
-        if (_ballsPlayed <= NUM_BALLS) 
-        {
+//        if (_ballsPlayed <= NUM_BALLS) 
+//        {
             if (_body.addBall()) {
                 _ballsPlayed += 1;
             }
-        }
+//        }
     }
     
     public function leftDown() :Boolean 
@@ -193,12 +200,23 @@ public class Juggler extends Sprite
     
     private static const KEY_SPACE:uint = 32;
     
+    private static const KEY_One:uint = 49;
+
+    private static const KEY_Return:uint = 13;
+    
     private var Qdown:Boolean = false;
     
     private var Wdown:Boolean = false;
     
     private var Odown:Boolean = false;
 
-    private var Pdown:Boolean = false;   
+    private var Pdown:Boolean = false;  
+    
+    public var SpaceDown:Boolean = false;
+     
+    [Bindable]
+    [Embed(source="background.swf")]
+    private var backgroundClass:Class;
+   
 } 
 }

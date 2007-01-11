@@ -10,11 +10,11 @@ public class Body extends Sprite
     {
        _juggler = juggler;
        _space = space;
-       _hands[LEFT] = new Hand(juggler, space, this, LEFT);
-       _hands[RIGHT] = new Hand(juggler, space, this, RIGHT);
+       _hands[LEFT] = new Hand(juggler, space, this, LEFT, leftHand);
+       _hands[RIGHT] = new Hand(juggler, space, this, RIGHT, leftHand);
              
-       _positions[LEFT] = new Array(-200, -100);
-       _positions[RIGHT] = new Array(100, 200);
+       _positions[LEFT] = new Array(-150, -80);
+       _positions[RIGHT] = new Array(80, 150);
    
         _hands[LEFT].x = _positions[LEFT][LEFT];
         _hands[RIGHT].x = _positions[RIGHT][RIGHT];   
@@ -164,7 +164,7 @@ public class Body extends Sprite
 
     private static const RIGHT:int = 1;
 
-    public static const HAND_LEVEL:int = 0;
+    public static const HAND_LEVEL:int = -130;
 
     private static var _ballisticTrajectory:BallisticTrajectory = new BallisticTrajectory();
 
@@ -177,5 +177,13 @@ public class Body extends Sprite
     private var _positions:Array = new Array();
     
     private var _addBall:Boolean = false;
+    
+    [Bindable]
+    [Embed(source="hand_left.swf")]
+    private var leftHand:Class;
+    
+    [Bindable]
+    [Embed(source="hand_right.swf")]
+    private var rightHand:Class;
 }
 }

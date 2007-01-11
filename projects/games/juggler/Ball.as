@@ -306,7 +306,7 @@ public class Ball extends Sprite
         
     private static var DEATH_BOUNCE:Number = -200;
         
-    private static var _ballRadius :int = 20;
+    private static var _ballRadius :int = 15;
         
     private static var _elasticity :Number = 0.95;
     
