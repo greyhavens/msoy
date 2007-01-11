@@ -6,6 +6,8 @@ import flash.display.DisplayObject;
 
 import mx.core.MovieClipLoaderAsset;
 
+import com.threerings.util.Random;
+
 public class Track extends Sprite 
 {
     public function Track ()
@@ -26,17 +28,19 @@ public class Track extends Sprite
             }
         }
 
-        setBehindTrack(0);
-        setCurrentTrack(1);
-        setFrontTrack(2);
+        // this will eventually feature a seed distributed to each client
+        _trackGenerator = new Random(42);
+
+        setBehindTrack(_trackGenerator.nextInt(TRACKS.length));
+        setCurrentTrack(_trackGenerator.nextInt(TRACKS.length));
+        setFrontTrack(_trackGenerator.nextInt(TRACKS.length));
     }
 
     public function moveTrackForward () :void
     {
         setBehindTrack(_trackCurrentIndex);
         setCurrentTrack(_trackFrontIndex);
-        setFrontTrack(_currentIndex);
-        _currentIndex = (_currentIndex + 1) % 3;
+        setFrontTrack(_trackGenerator.nextInt(TRACKS.length));
     }
 
     protected function setBehindTrack (newTrack :int) :void
@@ -97,6 +101,6 @@ public class Track extends Sprite
     protected var _trackFrontIndex :int;
 
     /** temporary!  Will be replaced by seedable random number generator */
-    protected var _currentIndex :int = 0;
+    protected var _trackGenerator :Random;
 }
 }
