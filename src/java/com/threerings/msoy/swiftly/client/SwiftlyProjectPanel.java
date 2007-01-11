@@ -59,41 +59,28 @@ public class SwiftlyProjectPanel extends JPanel
         } 
     }
 
-    /** Add child to the currently selected nodes parent. */
-    public DefaultMutableTreeNode addNode (Object child)
+    /** Add a file element to the right spot based on the current selected node. */
+    public DefaultMutableTreeNode addNode (FileElement element)
     {
-        DefaultMutableTreeNode parentNode = null;
-        TreePath parentPath = _tree.getSelectionPath();
+        // DefaultMutableTreeNode parentNode = null;
+        // TreePath parentPath = _tree.getSelectionPath();
+        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)_selectedNode.getParent();
 
-        if (parentPath == null) {
+        if (parentNode == null) {
             parentNode = _top;
-        } else {
-            parentNode = (DefaultMutableTreeNode)(parentPath.getLastPathComponent());
         }
 
-        return addNode(parentNode, child, true);
-    }
-
-    public DefaultMutableTreeNode addNode (DefaultMutableTreeNode parent, Object child)
-    {
-        return addNode(parent, child, false);
-    }
-
-    public DefaultMutableTreeNode addNode (DefaultMutableTreeNode parent, Object child, 
-                                            boolean shouldBeVisible)
-    {
-        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(child);
-
-        if (parent == null) {
-            parent = _top;
+        // special case for adding the first document to a directory
+        if (getSelectedFileElement().getType() == FileElement.DIRECTORY) {
+            parentNode = _selectedNode;
         }
 
-        _treeModel.insertNodeInto(childNode, parent, parent.getChildCount());
+        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(element);
+        _treeModel.insertNodeInto(newNode, parentNode, parentNode.getChildCount());
 
-        if (shouldBeVisible) {
-            _tree.scrollPathToVisible(new TreePath(childNode.getPath()));
-        }
-        return childNode;
+        // Open any directory drop downs that need to be and scroll to the new node
+        _tree.scrollPathToVisible(new TreePath(newNode.getPath()));
+        return newNode;
     }
 
     public void loadProject (SwiftlyProject project)
@@ -132,9 +119,11 @@ public class SwiftlyProjectPanel extends JPanel
         if (node == null) return;
         enableToolbar();
 
-        _selectedNode = (FileElement)node.getUserObject();
-        if (_selectedNode.getType() == FileElement.DOCUMENT) {
-            _applet.getEditor().addEditorTab((SwiftlyDocument)_selectedNode);
+        _selectedNode = node;
+        FileElement element = getSelectedFileElement();
+
+        if (element.getType() == FileElement.DOCUMENT) {
+            _applet.getEditor().addEditorTab((SwiftlyDocument)element);
         }
     }
 
@@ -157,10 +146,12 @@ public class SwiftlyProjectPanel extends JPanel
 
         // grab the new name
         String newName = (String)node.getUserObject();
-        _applet.renameFileElement(_selectedNode, newName);
-        node.setUserObject(_selectedNode);
-        if (_selectedNode.getType() == FileElement.DOCUMENT) {
-            _applet.getEditor().updateTabTitleAt((SwiftlyDocument)_selectedNode);
+
+        FileElement element = getSelectedFileElement();
+        _applet.renameFileElement(element, newName);
+        node.setUserObject(element);
+        if (element.getType() == FileElement.DOCUMENT) {
+            _applet.getEditor().updateTabTitleAt((SwiftlyDocument)element);
         }
     }
 
@@ -225,7 +216,7 @@ public class SwiftlyProjectPanel extends JPanel
         SwiftlyDocument doc = new SwiftlyDocument("", "", element.getParent());
         _applet.showSelectFileElementNameDialog(doc);
         addNode(doc);
-        if (_selectedNode.getType() == FileElement.DOCUMENT) {
+        if (getSelectedFileElement().getType() == FileElement.DOCUMENT) {
             _applet.getEditor().addEditorTab(doc);
         }
     }
@@ -298,9 +289,14 @@ public class SwiftlyProjectPanel extends JPanel
         _addDirectoryButton.setEnabled(value);
     }
 
+    protected FileElement getSelectedFileElement ()
+    {
+        return (FileElement)_selectedNode.getUserObject();
+    }
+
     protected SwiftlyApplet _applet;
     protected SwiftlyProject _project;
-    protected FileElement _selectedNode;
+    protected DefaultMutableTreeNode _selectedNode;
     protected DefaultMutableTreeNode _top;
     protected DefaultTreeModel _treeModel;
     protected JTree _tree;
