@@ -2,6 +2,9 @@ package {
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.Bitmap;
+import flash.display.DisplayObject;
+
+import mx.core.MovieClipLoaderAsset;
 
 public class Track extends Sprite 
 {
@@ -23,13 +26,38 @@ public class Track extends Sprite
             }
         }
 
-        addChild(new TRACK_2());
-        var track3 :Sprite = new TRACK_3();
-        track3.y = -1024;
-        addChild(track3);
-        var track1 :Sprite = new TRACK_1();
-        track1.y = 1024;
-        addChild(track1);
+        setBehindTrack(new TRACKS[0]());
+        setCurrentTrack(new TRACKS[1]());
+        setFrontTrack(new TRACKS[2]());
+    }
+
+    protected function setBehindTrack (newTrack :DisplayObject) :void
+    {
+        if (_trackBehind != null) {
+            removeChild(_trackBehind);
+        }
+        _trackBehind = newTrack;
+        _trackBehind.y = Ground.IMAGE_SIZE;
+        addChild(_trackBehind);
+    }
+
+    protected function setFrontTrack (newTrack :DisplayObject) :void
+    {
+        if (_trackFront != null) {
+            removeChild(_trackFront);
+        }
+        _trackFront = newTrack;
+        _trackFront.y = -Ground.IMAGE_SIZE;
+        addChild(_trackFront);
+    }
+
+    protected function setCurrentTrack (newTrack :DisplayObject) :void
+    {
+        if (_trackCurrent != null) {
+            removeChild(_trackCurrent);
+        }
+        _trackCurrent = newTrack;
+        addChild(_trackCurrent);
     }
 
     [Embed(source='rsrc/track.swf#track1')]
@@ -41,7 +69,14 @@ public class Track extends Sprite
     [Embed(source='rsrc/track.swf#track3')]
     protected static const TRACK_3 :Class;
 
+    protected static const TRACKS :Array = [
+        TRACK_1, TRACK_2, TRACK_3 ];
+
     [Embed(source='rsrc/blue_ground.png')]
     protected static const BACKGROUND_IMAGE :Class;
+
+    protected var _trackBehind :DisplayObject;
+    protected var _trackCurrent :DisplayObject;
+    protected var _trackFront :DisplayObject;
 }
 }
