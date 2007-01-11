@@ -157,6 +157,12 @@ public class MsoySprite extends MediaContainer
                 mouseEnabled = false;
                 mouseChildren = false;
                 */
+                // TODO: Oh god, we have got to figure this shit out.
+                // It seems that things behave differently depending
+                // on whether the loaded content is an image or
+                // a SWF. Perhaps we need to check that and do the right
+                // thing in either case.
+                // Things may be broken in the currently checked-in state.
                 mouseEnabled = true;
                 mouseChildren = true;
             }
