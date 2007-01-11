@@ -44,14 +44,11 @@ public class Ground extends Sprite
             addChild(stripImage);
         }
 
-        var kart :BitmapData = new BitmapData(64, 64, true, 0x00000000);
-        var trans :Matrix = new Matrix();
-        trans.translate(32, 32);
-        kart.draw(new KART(), trans);
-        var kartImage :Bitmap = new Bitmap(kart);
-        kartImage.x = 323;
-        kartImage.y = 100;
-        addChild(kartImage);
+        _kartSprite = new Sprite();
+        _kartSprite.x = 355;
+        _kartSprite.y = 230;
+        _kartSprite.addChild(new KART());
+        addChild(_kartSprite);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
@@ -68,11 +65,25 @@ public class Ground extends Sprite
 
     public function turnLeft (turning :Boolean) :void
     {
+        _kartSprite.removeChildAt(0);
+        if (turning) {
+            _kartSprite.addChild(new KART_LEFT());
+        } else {
+            _kartSprite.addChild(new KART());
+        }
+
         _turningLeft = turning;
     }
 
     public function turnRight (turning :Boolean) :void
     {
+        _kartSprite.removeChildAt(0);
+        if (turning) {
+            _kartSprite.addChild(new KART_RIGHT());
+        } else {
+            _kartSprite.addChild(new KART());
+        }
+
         _turningRight = turning
     }
 
@@ -164,9 +175,20 @@ public class Ground extends Sprite
     /** flag to indicate rotation to the left */
     protected var _turningLeft :Boolean = false;
 
+    /** Current kart sprite */
+    protected var _kartSprite :Sprite;
+
     /** Bowser! */
-    [Embed(source='rsrc/bowser.swf#bowser_center')]
+    [Embed(source='rsrc/bowser.swf#bowser_centered')]
     protected static const KART :Class;
+
+    /** Bowser turning left */
+    [Embed(source='rsrc/bowser.swf#bowser_left')]
+    protected static const KART_LEFT :Class;
+
+    /** Bowser turning right */
+    [Embed(source='rsrc/bowser.swf#bowser_right')]
+    protected static const KART_RIGHT :Class;
 
     /** height of the ground in display pixels */
     protected static const HEIGHT :int = 3 * UnderworldDrift.DISPLAY_HEIGHT / 4;

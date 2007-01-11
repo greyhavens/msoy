@@ -2,9 +2,6 @@ package {
 import flash.display.Sprite;
 import flash.display.Shape;
 import flash.display.Bitmap;
-import flash.display.DisplayObject;
-
-import mx.core.MovieClipLoaderAsset;
 
 import com.threerings.util.Random;
 
@@ -39,7 +36,7 @@ public class Track extends Sprite
     }
 
     /**
-     * Rotates tracks from front to back, bringing in the next randomly generated track to the
+     * Cycles tracks from front to back, bringing in the next randomly generated track to the
      * front position.
      */
     public function moveTrackForward () :void
