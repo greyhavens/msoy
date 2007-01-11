@@ -44,8 +44,8 @@ public class SwiftlyClientRpc
 
         // XXX -- load the files for the project
         ArrayList<SwiftlyDocument> fileList = new ArrayList<SwiftlyDocument>();
-        fileList.add(new SwiftlyDocument("file #1", "Example text"));
-        fileList.add(new SwiftlyDocument("file #2", "Example text more"));
+        fileList.add(new SwiftlyDocument("file #1", "Example text", null)); 
+        fileList.add(new SwiftlyDocument("file #2", "Example text more", null));
         // XXX
         
 
@@ -53,7 +53,7 @@ public class SwiftlyClientRpc
         projectList = new ArrayList<SwiftlyProject>();
 
         for (Map<String,Object> struct : result) {
-            SwiftlyProject project = new SwiftlyProject((String)struct.get(SwiftlyProjectRpc.PROJECT_NAME), fileList);
+            SwiftlyProject project = new SwiftlyProject((String)struct.get(SwiftlyProjectRpc.PROJECT_NAME), fileList, null);
             projectList.add(project);
         }
 

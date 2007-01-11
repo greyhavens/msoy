@@ -74,19 +74,6 @@ public class SwiftlyTextPane extends JTextPane
         // TODO show a progress bar in the status bar while Saving...
         if (hasUnsavedChanges()) {
             // TODO save the document into the internets
-
-            // handle a few first time issues if this document hasn't been saved before
-            if (!_document.hasBeenSaved()) {
-                // if the user pressed cancel, abort here.
-                if (!_editor.getApplet().showSelectFilenameDialog(_document)) {
-                    return false;
-                }
-                // the filename has changed so update the title
-                _editor.updateCurrentTabTitle();
-                // add the document to the project panel
-                _editor.getApplet().getProjectPanel().addDocument(_document);
-            }
-
             setDocumentChanged(false);
             _editor.getApplet().setStatus("Saving " + _document);
             return true;
@@ -169,10 +156,6 @@ public class SwiftlyTextPane extends JTextPane
 
     protected void addKeyBindings ()
     {
-        // ctrl-n opens a new tab
-        addKeyAction(_editor.createNewTabAction(),
-                     KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-
         // ctrl-s saves the current document
         addKeyAction(getSaveAction(),
                      KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));

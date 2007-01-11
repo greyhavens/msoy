@@ -2,10 +2,11 @@ package com.threerings.msoy.swiftly.client;
 
 import java.util.ArrayList;
 
-public class SwiftlyProject
+public class SwiftlyProject extends FileElement
 {
-    public SwiftlyProject (String name, ArrayList<SwiftlyDocument> files)
+    public SwiftlyProject (String name, ArrayList<SwiftlyDocument> files, FileElement parent)
     {
+        super(parent);
         _name = name;
         _files = files;
     }

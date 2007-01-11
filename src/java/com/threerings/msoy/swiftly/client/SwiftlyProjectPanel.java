@@ -1,8 +1,17 @@
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -17,19 +26,21 @@ public class SwiftlyProjectPanel extends JPanel
         super(new BorderLayout());
         _applet = applet;
 
-        _scrollPane = new JScrollPane();
-        add(_scrollPane);
+        add(_scrollPane, BorderLayout.CENTER);
+
+        setupToolbar();
+        add(_toolbar, BorderLayout.PAGE_END);
     }
 
     public void loadProject (SwiftlyProject project)
     {
         _project = project;
 
-        _top = new DefaultMutableTreeNode(project.getName());
+        _top = new DefaultMutableTreeNode(project);
         for (SwiftlyDocument doc : project.getFiles()) {
-            addDocument(doc);
+            addDocumentToTree(doc);
         }
-        // TODO GC the old tree?
+
         _tree = new JTree(_top);
         _tree.setDragEnabled(true);
         _tree.setEditable(true);
@@ -39,7 +50,8 @@ public class SwiftlyProjectPanel extends JPanel
         _scrollPane.getViewport().setView(_tree);
     }
 
-    public void addDocument (SwiftlyDocument document)
+    // TODO this is not adding new documents correctly.
+    public void addDocumentToTree (SwiftlyDocument document)
     {
         _top.add(new DefaultMutableTreeNode(document));
     }
@@ -58,9 +70,70 @@ public class SwiftlyProjectPanel extends JPanel
         }
     }
 
+    protected Action createPlusButtonAction ()
+    {
+        // TODO need icon
+        return new AbstractAction("+") {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                openNewDocument();
+            }
+        };
+    }
+
+    protected Action createMinusButtonAction ()
+    {
+        // TODO need icon
+        return new AbstractAction("-") {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                deleteDocument();
+            }
+        };
+    }
+
+    // Opens a new, unsaved document in a tab.
+    protected void openNewDocument ()
+    {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
+
+        if (node == null) return;
+
+        Object nodeInfo = node.getUserObject();
+        FileElement element = (FileElement)nodeInfo;
+        SwiftlyDocument doc = new SwiftlyDocument("", "", element.getParent());
+        _applet.showSelectFilenameDialog(doc);
+        addDocumentToTree(doc);
+        _applet.getEditor().addEditorTab(doc);
+    }
+
+    protected void deleteDocument ()
+    {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
+
+        if (node == null) return;
+
+        Object nodeInfo = node.getUserObject();
+        // TODO this is almost certainly not right.
+        if (node.isLeaf()) {
+            SwiftlyDocument doc = (SwiftlyDocument)nodeInfo;
+            _applet.deleteDocument(doc);
+        }
+    }
+
+    protected void setupToolbar ()
+    {
+        _toolbar.add(new JButton(createPlusButtonAction()));
+        _toolbar.add(new JButton(createMinusButtonAction()));
+        _toolbar.add(new JButton("Foo"));
+
+        _toolbar.setFloatable(false);
+    }
+
     protected SwiftlyApplet _applet;
     protected SwiftlyProject _project;
     protected DefaultMutableTreeNode _top;
     protected JTree _tree;
-    protected JScrollPane _scrollPane;
+    protected JToolBar _toolbar = new JToolBar();
+    protected JScrollPane _scrollPane = new JScrollPane();
 }

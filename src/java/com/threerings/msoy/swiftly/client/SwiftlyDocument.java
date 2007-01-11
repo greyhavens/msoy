@@ -3,27 +3,18 @@ package com.threerings.msoy.swiftly.client;
 import java.io.Reader;
 import java.io.StringReader;
 
-public class SwiftlyDocument
+public class SwiftlyDocument extends FileElement
 {
-    public SwiftlyDocument ()
+    public SwiftlyDocument (String filename, String text, FileElement parent)
     {
-    }
-
-    public SwiftlyDocument (String filename, String text)
-    {
+        super(parent);
         _filename = filename;
         _text = text;
-    }
-
-    public boolean hasBeenSaved ()
-    {
-        return (_filename.length() > 0);
     }
 
     public Reader getReader ()
     {
         return (Reader)new StringReader(getText());
-
     }
 
     public String getText ()
@@ -46,8 +37,8 @@ public class SwiftlyDocument
         return _filename;
     }
 
-    protected String _text = new String();
-    protected String _filename = new String();
+    protected String _text;
+    protected String _filename;
 
     // TODO probably need a HashCode here?
 }

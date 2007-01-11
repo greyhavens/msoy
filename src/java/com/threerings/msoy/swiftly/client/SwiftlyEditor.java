@@ -22,14 +22,6 @@ public class SwiftlyEditor extends JTabbedPane
     }
 
     /**
-     * Adds a {@link SwiftlyTextPane} to the tabbed panel with a blank, unsaved document.
-     */
-    public void addEditorTab ()
-    {
-        addEditorTab (new SwiftlyDocument());
-    }
-
-    /**
      * Adds a {@link SwiftlyTextPane} to the tabbed panel.
      * @param the {@link SwiftlyDocument} to load into the text panel.
      */
@@ -149,19 +141,6 @@ public class SwiftlyEditor extends JTabbedPane
                 return;
             }
         }
-    }
-
-    /**
-     * Creates and returns an action to add a name tab with a blank document.
-     */
-    public AbstractAction createNewTabAction ()
-    {
-        return new AbstractAction("New Tab") {
-            // from AbstractAction
-            public void actionPerformed (ActionEvent e) {
-                addEditorTab();
-            }
-        };
     }
 
     /**

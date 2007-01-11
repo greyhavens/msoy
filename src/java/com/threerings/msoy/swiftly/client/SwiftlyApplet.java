@@ -126,6 +126,11 @@ public class SwiftlyApplet extends JApplet
         return _projectPanel;
     }
 
+    public void deleteDocument (SwiftlyDocument document)
+    {
+        // TODO delete the document
+    }
+
     protected void createGUI ()
     {
         // setup the components

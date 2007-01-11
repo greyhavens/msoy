@@ -27,7 +27,6 @@ public class SwiftlyToolbar extends JToolBar
         // TODO replace as many of these with icons as makes sense
         add(_applet.createShowProjectDialogAction());
         add(_applet.createNewProjectDialogAction());
-        add(_applet.getEditor().createNewTabAction());
         add(_saveButton);
         add(_applet.getEditor().createCloseCurrentTabAction());
 
