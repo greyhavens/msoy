@@ -65,18 +65,28 @@ public class SwiftlyTextPane extends JTextPane
         return _document;
     }
 
-    // Save the document if needed. Return true if save happened/worked
+    /**
+     * Save the document if it contains unsaved changes.
+     * @return true if the save happened, false otherwise.
+     */
     public boolean saveDocument ()
     {
         // TODO show a progress bar in the status bar while Saving...
         if (hasUnsavedChanges()) {
             // TODO save the document into the internets
+
+            // handle a few first time issues if this document hasn't been saved before
             if (!_document.hasBeenSaved()) {
-                _editor.getApplet().showSelectFilenameDialog(_document);
-                _editor.setCurrentTabTitle(_document.getFilename());
+                // if the user pressed cancel, abort here.
+                if (!_editor.getApplet().showSelectFilenameDialog(_document)) {
+                    return false;
+                }
+                // the filename has changed so update the title
+                _editor.updateCurrentTabTitle();
                 // add the document to the project panel
                 _editor.getApplet().getProjectPanel().addDocument(_document);
             }
+
             setDocumentChanged(false);
             _editor.getApplet().setStatus("Saving " + _document);
             return true;
@@ -84,13 +94,21 @@ public class SwiftlyTextPane extends JTextPane
         return false;
     }
 
+    /**
+     * Sets the value of _documentChanged, as well as handling a number of other bits of business
+     * that need to change whenever _documentChanged does. This should always be used instead of 
+     * setting _documentChanged directly.
+     */
     public void setDocumentChanged (boolean value)
     {
         _documentChanged = value;
-        _editor.setTabTitleChanged(value);
+        _editor.updateCurrentTabTitle();
         _saveAction.setEnabled(value);
     }
 
+    /**
+     * Returns true if the document has unsaved changes, false otherwise.
+     */
     public boolean hasUnsavedChanges ()
     {
         return _documentChanged;
@@ -241,7 +259,6 @@ public class SwiftlyTextPane extends JTextPane
         public void actionPerformed (ActionEvent e) {
             if (hasUnsavedChanges()) {
                 saveDocument();
-                _editor.setTabTitleChanged(false);
             }
         }
     }
@@ -339,7 +356,9 @@ public class SwiftlyTextPane extends JTextPane
 
         // from interface DocumentListener
         public void removeUpdate(DocumentEvent e) {
-            // nada
+            if (!hasUnsavedChanges()) {
+                setDocumentChanged(true);
+            }
         }
 
         // from interface DocumentListener

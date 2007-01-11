@@ -21,11 +21,18 @@ public class SwiftlyEditor extends JTabbedPane
         setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
+    /**
+     * Adds a {@link SwiftlyTextPane} to the tabbed panel with a blank, unsaved document.
+     */
     public void addEditorTab ()
     {
         addEditorTab (new SwiftlyDocument());
     }
 
+    /**
+     * Adds a {@link SwiftlyTextPane} to the tabbed panel.
+     * @param the {@link SwiftlyDocument} to load into the text panel.
+     */
     public void addEditorTab (SwiftlyDocument document)
     {
         if (_tabList.containsKey(document)) {
@@ -36,37 +43,18 @@ public class SwiftlyEditor extends JTabbedPane
         SwiftlyTextPane textPane = new SwiftlyTextPane(this, document);
         SwiftlyEditorScrollPane scroller = new SwiftlyEditorScrollPane(textPane);
 
-        if (document.hasBeenSaved()) {
-            addTab(document.getFilename(), scroller);
-        } else {
-            addTab("Unsaved document", scroller);
-        }
+        // add the tab
+        add(scroller);
+        // select the newly opened tab
+        setSelectedComponent(scroller);
+
+        // set the title
+        updateCurrentTabTitle();
+        // assign the mnemonic
         assignTabKeys();
 
         // add the scroller, which is the main component, to the tabList
         _tabList.put(document, scroller);
-
-        // select the newly opened tab
-        setSelectedComponent(scroller);
-    }
-
-    public void setTabTitleChanged (boolean changed)
-    {
-        int tabIndex = getSelectedIndex();
-        String title = getTitleAt(tabIndex);
-
-        boolean hasAsterisk = false;
-        if (title.charAt(0) == '*') {
-            hasAsterisk = true;
-        }
-
-        if (changed && !hasAsterisk) {
-            title = "*" + title;
-            setTitleAt(tabIndex, title);
-        } else if (hasAsterisk) {
-            title = title.substring(1);
-            setTitleAt(tabIndex, title);
-        }
     }
 
     public SwiftlyApplet getApplet ()
@@ -74,11 +62,17 @@ public class SwiftlyEditor extends JTabbedPane
         return _applet;
     }
 
+    /**
+     * Gets the {@link SwiftlyEditorScrollPane} from the currently selected tab.
+     */
     public SwiftlyEditorScrollPane getCurrentPane ()
     {
         return (SwiftlyEditorScrollPane)getSelectedComponent();
     }
 
+    /**
+     * Gets the {@link SwiftlyTextPane} from the currently selected tab.
+     */
     public SwiftlyTextPane getCurrentTextPane ()
     {
         SwiftlyEditorScrollPane pane = getCurrentPane();
@@ -88,12 +82,28 @@ public class SwiftlyEditor extends JTabbedPane
         return null;
     }
 
-    public void setCurrentTabTitle (String title)
+    /**
+     * Adds an indicator(*) to the current tab showing if an unsaved change has occurred.
+     */
+    public void updateCurrentTabTitle ()
     {
-        setTitleAt(getSelectedIndex(), title);    
+        SwiftlyTextPane pane = getCurrentTextPane();
+        String title = pane.getSwiftlyDocument().getFilename();
+        if (title.length() == 0) {
+            title = "Untitled document";
+        }
+
+        if (pane.hasUnsavedChanges()) {
+            title = "*" + title;
+        }
+
+        setTitleAt(getSelectedIndex(), title);
     }
 
-    // returns the JOptionPane option the user picked
+    /**
+     * Closes the current tab. If the tab contains unsaved changes, display a dialog box.
+     * @return the {@link JOptionPane} constant selected if a dialog was used.
+     */
     public int closeCurrentTab ()
     {
         // Don't try to remove a tab if we have none.
@@ -125,6 +135,9 @@ public class SwiftlyEditor extends JTabbedPane
         return response;
     }
 
+    /**
+     * Removes all the tabs from the editor tab panel.
+     */
     public void removeTabs ()
     {
         int tabCount = getTabCount();
@@ -138,6 +151,9 @@ public class SwiftlyEditor extends JTabbedPane
         }
     }
 
+    /**
+     * Creates and returns an action to add a name tab with a blank document.
+     */
     public AbstractAction createNewTabAction ()
     {
         return new AbstractAction("New Tab") {
@@ -148,6 +164,9 @@ public class SwiftlyEditor extends JTabbedPane
         };
     }
 
+    /**
+     * Creates and returns an action to close the current tab.
+     */
     public AbstractAction createCloseCurrentTabAction ()
     {
         return new AbstractAction("Close Tab") {
