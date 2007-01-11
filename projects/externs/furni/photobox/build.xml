@@ -28,7 +28,7 @@
   </target>
 
   <target name="dist" depends="compile">
-    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/delete_me.swf"/>
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/25ba7eb66feca2d48472faa7051a8c611f7850aa.swf"/>
   </target>
 
 </project>
