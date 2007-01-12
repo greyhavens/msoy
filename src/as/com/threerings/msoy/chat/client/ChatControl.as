@@ -353,7 +353,7 @@ public class ChatControl extends HBox
     /**
      * A callback that's called when a new chat target is selected.
      */
-    protected function targetChosen (name :MemberName) :void
+    protected function targetChosen (name :MemberName = null) :void
     {
         _target = name;
         updateTarget();
