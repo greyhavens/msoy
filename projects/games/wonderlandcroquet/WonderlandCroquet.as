@@ -39,6 +39,8 @@ public class WonderlandCroquet extends Sprite
         //_map = new MapBasic();
         _map = new MapFancy();
         _spr.addChild(_map.background);
+        _map.background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+        _map.background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 
         _spr.addChild(_ballLayer);
 
@@ -53,8 +55,18 @@ public class WonderlandCroquet extends Sprite
 
         _scroller = new WonderlandScroller(_spr);
         addChild(_scroller);
-        _scroller.x = 30;
-        _scroller.y = 30;
+        _scroller.x = _scroller.width / 2 + 5;
+        _scroller.y = _scroller.height / 2 + 5;
+    }
+
+    protected function mouseDown (event :MouseEvent) :void
+    {
+       _spr.startDrag();
+    }
+
+    protected function mouseUp (event :MouseEvent) :void
+    {
+       _spr.stopDrag();
     }
 
     /**
