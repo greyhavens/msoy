@@ -2,6 +2,7 @@ package com.threerings.msoy.swiftly.client;
 
 import javax.swing.JApplet;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 public class SwiftlyApplet extends JApplet
 {
@@ -65,6 +66,14 @@ public class SwiftlyApplet extends JApplet
 
     protected void createGUI (SwiftlyProject project)
     {
+        try {
+            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // TODO the gtk L&F breaks some bits. Just use the default L&F for now.
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            // this should just fall back on a working theme
+        }
+
         _editor = new SwiftlyEditor(project);
         setContentPane(_editor);
     }

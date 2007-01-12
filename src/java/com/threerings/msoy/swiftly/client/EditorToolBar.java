@@ -22,7 +22,7 @@ public class EditorToolBar extends JToolBar
     {
         // TODO replace as many of these with icons as makes sense
         add(_saveButton);
-        // add(_applet.getEditor().createCloseCurrentTabAction());
+        add(_editor.createCloseCurrentTabAction());
 
         addSeparator();
         add(new JButton("Compile"));

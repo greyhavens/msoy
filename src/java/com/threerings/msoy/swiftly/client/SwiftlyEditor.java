@@ -9,7 +9,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.UIManager;
 
 public class SwiftlyEditor extends JPanel
 {
@@ -17,14 +16,6 @@ public class SwiftlyEditor extends JPanel
     {
         super(new BorderLayout());
         _project = project;
-
-        try {
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            // TODO the gtk L&F breaks some bits. Just use the default L&F for now.
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception e) {
-            // this should just fall back on a working theme
-        }
 
         // setup the components
         _tabs = new TabbedEditor(this);
