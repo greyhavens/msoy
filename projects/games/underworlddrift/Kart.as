@@ -50,14 +50,35 @@ public class Kart extends Sprite
 
         var rotation :Matrix;
         if (_movement & MOVEMENT_FORWARD) {
-            rotation = new Matrix();
-            rotation.rotate(_camera.angle);
-            _camera.position = _camera.position.add(rotation.transformPoint(new Point(0, -10)));
+            if (_currentSpeed >= 0) {
+                _currentSpeed = (_currentSpeed >= SPEED_MAX) ? SPEED_MAX : 
+                    _currentSpeed + ACCELERATION_GAS;
+            } else { 
+                _currentSpeed += ACCELERATION_BRAKE;
+            }
         } else if (_movement & MOVEMENT_BACKWARD) {
-            rotation = new Matrix();
-            rotation.rotate(_camera.angle);
-            _camera.position = _camera.position.add(rotation.transformPoint(new Point(0, 10)));
+            if (_currentSpeed <= 0) {
+                _currentSpeed = (_currentSpeed <= SPEED_MIN) ? SPEED_MIN : 
+                    _currentSpeed - ACCELERATION_GAS;
+            } else {
+                _currentSpeed -= ACCELERATION_BRAKE;
+            }
+        } else {
+            if ((_currentSpeed > ACCELERATION_COAST && _currentSpeed > 0) || 
+                (_currentSpeed < ACCELERATION_COAST && _currentSpeed < 0)) {
+                if (_currentSpeed > 0) {
+                    _currentSpeed -= ACCELERATION_COAST;
+                } else {
+                    _currentSpeed += ACCELERATION_COAST;
+                }
+            } else {
+                _currentSpeed = 0;
+            }
         }
+        rotation = new Matrix();
+        rotation.rotate(_camera.angle);
+        _camera.position = _camera.position.add(rotation.transformPoint(new Point(0, 
+            -_currentSpeed)));
     }
 
     protected function keyAction (inMotion :Boolean, flag :int) :void
@@ -79,7 +100,7 @@ public class Kart extends Sprite
     protected var _currentKart :Sprite;
 
     /** Kart's current speed */
-    protected var _currentSpeed :Sprite;
+    protected var _currentSpeed :Number = 0;
 
     /** Bowser Kart TODO: switch swf to a single movie, with all the frames embedded */
     [Embed(source='rsrc/bowser.swf#bowser_centered')]
@@ -91,7 +112,9 @@ public class Kart extends Sprite
 
     protected static const SPEED_MAX :int = 20;
     protected static const SPEED_MIN :int = -5;
-    protected static const ACCELERATION :Number = 0.5;
+    protected static const ACCELERATION_GAS :Number = 0.5;
+    protected static const ACCELERATION_BRAKE :Number = 0.7;
+    protected static const ACCELERATION_COAST :Number = 0.1;
 
     protected static const MOVEMENT_FORWARD :int = 0x01;
     protected static const MOVEMENT_BACKWARD :int = 0x02;
