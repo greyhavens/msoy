@@ -114,9 +114,9 @@ public class Ground extends Sprite
                 _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, 10)));
             }
 
-            // move to next image
+            // shift along with the track
             if (_cameraPosition.y < -HALF_IMAGE_SIZE) {
-                _track.moveTrackForward();
+                _cameraPosition.x += _track.moveTrackForward();
                 _cameraPosition.y += IMAGE_SIZE;
             }
         }
