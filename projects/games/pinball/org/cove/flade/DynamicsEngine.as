@@ -60,12 +60,18 @@ public class DynamicsEngine {
 		coeffDamp = 0.99; 	// global damping
 	}
 	
-	
 	public function addPrimitive(p:Particle):void {
                 sprite.addChild(p);
 		primitives.push(p);
 	}
 
+        public function removePrimitive(p:Particle):void {
+                sprite.removeChild(p);
+                var ix :int = primitives.indexOf(p);
+                if (ix >= 0) {
+                    primitives.splice(ix, 1);
+                }
+        }
 
 	public function addSurface(s:Surface):void {
                 sprite.addChild(s as AbstractTile);
@@ -73,6 +79,14 @@ public class DynamicsEngine {
 	}
 
 	
+        public function removeSurface(s:Surface):void {
+                sprite.removeChild(s as AbstractTile);
+                var ix :int = surfaces.indexOf(s);
+                if (ix >= 0) {
+                    surfaces.splice(ix, 1);
+                }
+        }
+
 	public function addConstraint(c:Constraint):void {
                 if (c is SpringConstraint) {
                         sprite.addChild(c as SpringConstraint);
@@ -80,6 +94,13 @@ public class DynamicsEngine {
 		constraints.push(c);
 	}
 	
+        public function removeConstraint(c:Constraint):void {
+                var ix :int = constraints.indexOf(c);
+                if (ix >= 0) {
+                    constraints.splice(ix, 1);
+                }
+        }
+
 	
 	public function paintSurfaces():void {
 		for (var j:Number = 0; j < surfaces.length; j++) {

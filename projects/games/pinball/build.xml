@@ -42,7 +42,7 @@
   </target>
 
   <target name="dist" depends="compile">
-    <copy file="CarExample.swf" tofile="/export/msoy/pages/media/9b99416ee2f946f95595a1cfed57a9d243680763.swf"/>
+    <copy file="SiegePinball.swf" tofile="/export/msoy/pages/media/69d5d46f0d3f1e7fd12c6a6ef315367efd2d26ea.swf"/>
   </target>
 
 

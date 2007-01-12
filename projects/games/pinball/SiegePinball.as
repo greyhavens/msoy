@@ -74,9 +74,7 @@ public class SiegePinball extends Sprite
             }
         }
         engine.paintSurfaces();
-
-        // TODO
-        setGameObject(null);
+        cow = new Cow(engine, 580, 380);
     }
 
     // from PropertyChangedListener
@@ -98,7 +96,7 @@ public class SiegePinball extends Sprite
         this.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
         this.stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
 
-        newCow();
+        resetCow();
     }
 
     public function enterFrame (event:Event) :void {
@@ -137,12 +135,8 @@ public class SiegePinball extends Sprite
         }
     }
 
-    protected function newCow () :void
+    protected function resetCow () :void
     {
-        if (cow != null) {
-            // cow.remove();
-        }
-        cow = new Cow(engine, 580, 380);
         cowAngle = 0;
         backLegAngle = 0;
         frontLegAngle = 0;
@@ -154,7 +148,7 @@ public class SiegePinball extends Sprite
             this.addChild(cowBackLeg);
             cowFrontLeg = new _cowFrontLeg();
             this.addChild(cowFrontLeg);
-          var scale :Number =
+            var scale :Number =
                 cow.p1.curr.distance(cow.p0.curr) / cowPicture.bitmapData.width;
             cowPicture.scaleX = scale;
             cowPicture.scaleY = scale;
@@ -178,8 +172,7 @@ public class SiegePinball extends Sprite
 
     public function run () :void {
         if (cow.p0.curr.y > 500) {
-            newCow();
-            return;
+            resetCow();
         }
         if (leftKey) {
             cowAngle += 0.03;
