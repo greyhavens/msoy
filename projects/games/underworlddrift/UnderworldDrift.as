@@ -34,9 +34,17 @@ public class UnderworldDrift extends Sprite
         colorBackground.graphics.endFill();
         addChild(colorBackground);
 
-        _ground = new Ground();
+        var camera :Camera = new Camera();
+
+        _ground = new Ground(camera);
         _ground.y = DISPLAY_HEIGHT / 4;
         addChild(_ground);
+
+        // create ground and position with some magic numbers
+        _kart = new Kart(camera);
+        _kart.x = 355;
+        _kart.y = 300;
+        addChild(_kart);
 
         _gameCtrl = new EZGameControl(this);
         if (_gameCtrl.getMyIndex() != -1) {
@@ -52,19 +60,19 @@ public class UnderworldDrift extends Sprite
     {
         switch (event.keyCode) {
         case Keyboard.UP:
-            _ground.moveForward(true);
+            _kart.moveForward(true);
             break;
 
         case Keyboard.DOWN:
-            _ground.moveBackward(true);
+            _kart.moveBackward(true);
             break;
 
         case Keyboard.LEFT:
-            _ground.turnLeft(true);
+            _kart.turnLeft(true);
             break;
 
         case Keyboard.RIGHT:
-            _ground.turnRight(true);
+            _kart.turnRight(true);
             break;
 
         default:
@@ -76,19 +84,19 @@ public class UnderworldDrift extends Sprite
     {
         switch (event.keyCode) {
         case Keyboard.UP:
-            _ground.moveForward(false);
+            _kart.moveForward(false);
             break;
 
         case Keyboard.DOWN:
-            _ground.moveBackward(false);
+            _kart.moveBackward(false);
             break;
 
         case Keyboard.LEFT:
-            _ground.turnLeft(false);
+            _kart.turnLeft(false);
             break;
 
         case Keyboard.RIGHT:
-            _ground.turnRight(false);
+            _kart.turnRight(false);
             break;
 
         default:
@@ -102,5 +110,8 @@ public class UnderworldDrift extends Sprite
 
     /** The ground. */
     protected var _ground :Ground;
+
+    /** The kart. */
+    protected var _kart :Kart;
 }
 }

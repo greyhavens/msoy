@@ -19,8 +19,10 @@ public class Ground extends Sprite
     /** half the image size - used in a few calculations */
     public static const HALF_IMAGE_SIZE :int = IMAGE_SIZE / 2;
 
-    public function Ground ()
+    public function Ground (camera :Camera)
     {
+        _camera = camera;
+
         // set up the ground objects
         _track = new Track();
         _strips = new Array();
@@ -44,47 +46,7 @@ public class Ground extends Sprite
             addChild(stripImage);
         }
 
-        _kartSprite = new Sprite();
-        _kartSprite.x = 355;
-        _kartSprite.y = 200;
-        _kartSprite.addChild(new KART());
-        addChild(_kartSprite);
-
         addEventListener(Event.ENTER_FRAME, enterFrame);
-    }
-
-    public function moveForward (moving :Boolean) :void 
-    { 
-        _movingForward = moving;
-    }
-
-    public function moveBackward (moving :Boolean) :void
-    {
-        _movingBackward = moving;
-    }
-
-    public function turnLeft (turning :Boolean) :void
-    {
-        _kartSprite.removeChildAt(0);
-        if (turning) {
-            _kartSprite.addChild(new KART_LEFT());
-        } else {
-            _kartSprite.addChild(new KART());
-        }
-
-        _turningLeft = turning;
-    }
-
-    public function turnRight (turning :Boolean) :void
-    {
-        _kartSprite.removeChildAt(0);
-        if (turning) {
-            _kartSprite.addChild(new KART_RIGHT());
-        } else {
-            _kartSprite.addChild(new KART());
-        }
-
-        _turningRight = turning
     }
 
     /**
@@ -92,35 +54,12 @@ public class Ground extends Sprite
      */
     protected function enterFrame (event :Event) :void
     {
-        // TODO: base these speeds on something fairer than enterFrame.  Using this method,
-        // the person with the fastest computer (higher framerate) gets to drive more quickly.
-        // rotate camera
-        if (_turningRight) {
-            _cameraAngle += 0.0745;
-        } else if (_turningLeft) {
-            _cameraAngle -= 0.0745;
+        // shift along with the track
+        if (_camera.position.y < -HALF_IMAGE_SIZE) {
+            _camera.position.x += _track.moveTrackForward();
+            _camera.position.y += IMAGE_SIZE;
         }
-
-        // move camera TODO: do something better than dual booleans
-        var rotation :Matrix;
-        if (_movingForward || _movingBackward) {
-            if (_movingForward) {
-                rotation = new Matrix();
-                rotation.rotate(_cameraAngle);
-                _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, -10)));
-            } else if (_movingBackward) {
-                rotation = new Matrix();
-                rotation.rotate(_cameraAngle);
-                _cameraPosition = _cameraPosition.add(rotation.transformPoint(new Point(0, 10)));
-            }
-
-            // shift along with the track
-            if (_cameraPosition.y < -HALF_IMAGE_SIZE) {
-                _cameraPosition.x += _track.moveTrackForward();
-                _cameraPosition.y += IMAGE_SIZE;
-            }
-        }
-
+ 
         var thisTransform :Matrix;
         var totalHeight :Number = 0;
         var thisHeight :Number = 0;
@@ -129,14 +68,14 @@ public class Ground extends Sprite
             totalHeight += thisHeight;
             thisTransform = new Matrix();
             // get the camera to the origin
-            thisTransform.translate(0 - _cameraPosition.x, 0 - _cameraPosition.y);
+            thisTransform.translate(0 - _camera.position.x, 0 - _camera.position.y);
             // rotate
-            thisTransform.rotate(0 - _cameraAngle);
+            thisTransform.rotate(0 - _camera.angle);
             // scale
-            var scaleFactor :Number = (_cameraHeight + HEIGHT - totalHeight) / _cameraHeight;
+            var scaleFactor :Number = (_camera.height + HEIGHT - totalHeight) / _camera.height;
             thisTransform.scale(scaleFactor,scaleFactor);
             // move transformed space to view space
-            thisTransform.translate(WIDTH / 2,  _cameraDistance + thisHeight);
+            thisTransform.translate(WIDTH / 2,  _camera.distance + thisHeight);
             // blank out this strip
             _strips[strip].draw(new BitmapData(WIDTH, thisHeight));
             // draw the background, then track using the calculated transform and a clipping rect
@@ -151,44 +90,8 @@ public class Ground extends Sprite
     /** strips */
     protected var _strips :Array;
 
-    /** angle of camera */
-    protected var _cameraAngle :Number = 0;
-
-    /** position of camera */
-    protected var _cameraPosition :Point = new Point(0, HALF_IMAGE_SIZE + 100);
-
-    /** height of the camera */
-    protected var _cameraHeight :Number = 20;
-
-    /** distance from the camera to the projection plane */
-    protected var _cameraDistance :Number = 800;
-
-    /** flag to indicate forward movement */
-    protected var _movingForward :Boolean = false;
-
-    /** flag to indicate backward movement */
-    protected var _movingBackward :Boolean = false;
-
-    /** flag to indicate rotation to the right */
-    protected var _turningRight :Boolean = false;
-
-    /** flag to indicate rotation to the left */
-    protected var _turningLeft :Boolean = false;
-
-    /** Current kart sprite */
-    protected var _kartSprite :Sprite;
-
-    /** Bowser! */
-    [Embed(source='rsrc/bowser.swf#bowser_centered')]
-    protected static const KART :Class;
-
-    /** Bowser turning left */
-    [Embed(source='rsrc/bowser.swf#bowser_left')]
-    protected static const KART_LEFT :Class;
-
-    /** Bowser turning right */
-    [Embed(source='rsrc/bowser.swf#bowser_right')]
-    protected static const KART_RIGHT :Class;
+    /** camera instance */
+    protected var _camera :Camera;
 
     /** height of the ground in display pixels */
     protected static const HEIGHT :int = 3 * UnderworldDrift.DISPLAY_HEIGHT / 4;
