@@ -27,6 +27,11 @@ public class Kart extends Sprite
 
     public function moveBackward (moving :Boolean) :void
     {
+        if (moving && _currentSpeed > 0) {
+            _braking = true;
+        } else if (!moving && _braking) {
+            _braking = false;
+        }
         keyAction(moving, MOVEMENT_BACKWARD);
     }
 
@@ -45,6 +50,8 @@ public class Kart extends Sprite
         // TODO: base these speeds on something fairer than enterFrame.  Using this method,
         // the person with the fastest computer (higher framerate) gets to drive more quickly.
         // rotate camera
+
+        // alter camera angle
         if (_movement & (MOVEMENT_RIGHT | MOVEMENT_LEFT)) {
             _currentAngle = Math.min(MAX_TURN_ANGLE, _currentAngle + TURN_ACCELERATION);
 
@@ -60,9 +67,9 @@ public class Kart extends Sprite
 
             var frame :int = Math.ceil((_currentAngle / MAX_TURN_ANGLE) * FRAMES_PER_TURN) - 1;
             if (_movement & MOVEMENT_RIGHT) {
-                frame+= RIGHT_TURN_FRAME_OFFSET;
+                frame += RIGHT_TURN_FRAME_OFFSET;
             } else {
-                frame+= LEFT_TURN_FRAME_OFFSET;
+                frame += LEFT_TURN_FRAME_OFFSET;
             }
             if (_kart.currentFrame != frame) {
                 _kart.gotoAndStop(frame);
@@ -74,6 +81,7 @@ public class Kart extends Sprite
             }
         }
 
+        // alter camera location
         var rotation :Matrix;
         if (_movement & MOVEMENT_FORWARD) {
             if (_currentSpeed >= 0) {
@@ -82,10 +90,10 @@ public class Kart extends Sprite
                 _currentSpeed += ACCELERATION_BRAKE;
             }
         } else if (_movement & MOVEMENT_BACKWARD) {
-            if (_currentSpeed <= 0) {
+            if (_currentSpeed <= 0 && !_braking) {
                 _currentSpeed = Math.max(SPEED_MIN, _currentSpeed - ACCELERATION_GAS);
             } else {
-                _currentSpeed -= ACCELERATION_BRAKE;
+                _currentSpeed = Math.max(0, _currentSpeed - ACCELERATION_BRAKE);
             }
         } else {
             if ((_currentSpeed > ACCELERATION_COAST && _currentSpeed > 0) || 
@@ -116,6 +124,9 @@ public class Kart extends Sprite
 
     /** Bit flags to indicate which movement keys are pressed */
     protected var _movement :int = 0;
+    
+    /** a user must lift their finger and re-apply in order to go backwards after braking */
+    protected var _braking :Boolean = false;
 
     /** reference to ground object */
     protected var _camera :Camera;
