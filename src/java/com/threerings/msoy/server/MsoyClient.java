@@ -91,6 +91,17 @@ public class MsoyClient extends WhirledClient
     }
 
     @Override // from PresentsClient
+    protected void sessionConnectionClosed ()
+    {
+        super.sessionConnectionClosed();
+
+        // if we're a guest, end our session now, there's no way to reconnect
+        if (_memobj == null || _memobj.isGuest()) {
+            safeEndSession();
+        }
+    }
+
+    @Override // from PresentsClient
     protected void sessionDidEnd ()
     {
         super.sessionDidEnd();
