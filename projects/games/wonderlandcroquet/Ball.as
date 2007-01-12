@@ -19,15 +19,19 @@ public class Ball extends Sprite
     // The particle representing this ball
     public var particle :BallParticle;
 
-    public function Ball (particle :BallParticle, color :int = 1)
+    // The index of the player that owns this ball 
+    public var playerIdx :int;
+
+    public function Ball (particle :BallParticle, playerIdx :int = 0)
     {
         this.particle = particle;
+        this.playerIdx = playerIdx;
         _flamingo = null;
 
-
-        _ballAnimation = MovieClipAsset(new ballAnimations[color]);
+        _ballAnimation = MovieClipAsset(new ballAnimations[playerIdx]);
 
         _playing = true;
+        stop();
 
         addChild(_ballAnimation);
 
@@ -69,7 +73,19 @@ public class Ball extends Sprite
         removeChild(_flamingo);
         _flamingo = null;
 
-        particle.addHitForce(p);
+        var angle :Number = Math.PI + Math.atan(p.y / p.x);
+        var strength :Number = Math.sqrt(p.x*p.x + p.y*p.y) * HIT_STRENGTH_MULTIPLIER;
+
+        strength = Math.min(strength, MAX_HIT_STRENGTH);
+
+        if (p.x < 0) {
+            angle += Math.PI;
+        }
+
+        angle += rotation * Math.PI/180;
+        
+        particle.gameCtrl.set("lastHit", 
+            [playerIdx, Math.cos(angle) * strength, Math.sin(angle) * strength]);
     }
 
     /**
@@ -77,6 +93,12 @@ public class Ball extends Sprite
      */
     protected function mouseClick (event :MouseEvent) :void
     {
+        if (particle.gameCtrl == null || !particle.gameCtrl.isMyTurn() ||
+            particle.velocity.magnitude() != 0) {
+            // Not ours/not our turn/moving
+            return;
+        }
+
         if (_flamingo != null) {
             removeChild(_flamingo);
             _flamingo = null;
@@ -106,6 +128,11 @@ public class Ball extends Sprite
     protected static const MODIFIER_TINY     :int = 0x1 << 1;
     protected static const MODIFIER_PAINTED  :int = 0x1 << 2;
 
+    // Multiplier applied to the length of the vector they've drawn for hit strength.
+    protected static const HIT_STRENGTH_MULTIPLIER :int = 2;
+
+    // The hardest anyone is allowed to hit a ball
+    protected static const MAX_HIT_STRENGTH :int = 300;
 
     // The ball artwork.
     [Embed(source="rsrc/ball.swf#ball1")]

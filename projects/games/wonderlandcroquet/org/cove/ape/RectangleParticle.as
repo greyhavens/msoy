@@ -169,7 +169,6 @@ package org.cove.ape {
 		 * painting method.
 		 */
 		public function paint():void {
-        /*
 			if (dc == null) dc = getDefaultContainer();
 			
 			dc.graphics.clear();
@@ -188,7 +187,6 @@ package org.cove.ape {
 					}
 				}
 			}
-        */
 		}
 
 

@@ -15,17 +15,20 @@ public class MapFancy extends WonderlandMap
         startPoint.x = 900;
         startPoint.y = 1600;
 
-        _rough = SpriteAsset(new Rough());
-        _stone = SpriteAsset(new Stone());
         _background = MovieClipAsset(new Background());
 
         background.addChildAt(_background, 0);
+        /*
+        _rough = SpriteAsset(new Rough());
+        _stone = SpriteAsset(new Stone());
         background.addChildAt(_rough, 0);
         background.addChildAt(_stone, 0);
+        */
 
         addWalls(_background.width, _background.height);
     }
 
+/*
     override protected function isRough (x :Number, y :Number) :Boolean
     {
         return hitTestSprite(x, y, _rough);
@@ -41,7 +44,7 @@ public class MapFancy extends WonderlandMap
         var p :Point = spr.globalToLocal(new Point(x, y));
         return spr.hitTestPoint(x, y, true);
     }
-
+*/
     // documentation inherited
     override protected function addObjects () :void
     {

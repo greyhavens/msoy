@@ -14,7 +14,6 @@ import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 
-
 import mx.core.*;
 import mx.utils.ObjectUtil;
 
@@ -30,6 +29,7 @@ public class WonderlandCroquet extends Sprite
         _gameCtrl.registerListener(this);
 
         _spr = new Sprite();
+        _ballLayer = new Sprite();
         addEventListener(Event.ENTER_FRAME, tick);
 
         addChild(_spr);
@@ -40,17 +40,14 @@ public class WonderlandCroquet extends Sprite
         _map = new MapFancy();
         _spr.addChild(_map.background);
 
+        _spr.addChild(_ballLayer);
+
         APEngine.init(1/3);
         APEngine.defaultContainer = this;
 
         for each (var particle :AbstractParticle in _map.particles) {
             APEngine.addParticle(particle);
         }
-
-        // Add some balls
-        addRandomBalls();
-
-        _paintQueue = APEngine.getAll();
 
         _spr.addChild(_map.foreground);
 
@@ -75,24 +72,37 @@ public class WonderlandCroquet extends Sprite
                 Ball.RADIUS, ii, false);
 
             APEngine.addParticle(ball);
-            _spr.addChild(ball.ball);
+            _ballLayer.addChild(ball.ball);
         }
     }
 
     protected function tick (evt :Event) :void
     {
-        var ii :int;
-       
-        for (ii = 0; ii < _paintQueue.length; ii++) {
-            if (_paintQueue[ii] is BallParticle) {
-                _map.applyModifierForce(BallParticle(_paintQueue[ii]));
+        var particle :AbstractParticle;
+        var particles :Array = APEngine.getAll();
+
+        var doneMoving :Boolean = true;
+
+        for each (particle in particles) {
+            if (particle is BallParticle) {
+                _map.applyModifierForce(BallParticle(particle));
             }
         }
 
         APEngine.step();
 
-        for (ii = 0; ii < _paintQueue.length; ii++) {
-            _paintQueue[ii].paint();
+        trace("TICK");
+
+        for each (particle in particles) {
+            if (particle is BallParticle) {
+                if (BallParticle(particle).tick()) {
+                    doneMoving = false;
+                }
+            }
+        }
+
+        if (_haveMoved && doneMoving && _gameCtrl.isMyTurn()) {
+            _gameCtrl.endTurn();
         }
     }
 
@@ -100,26 +110,25 @@ public class WonderlandCroquet extends Sprite
     public function stateChanged (event :StateChangedEvent) :void
     {
         if (event.type == StateChangedEvent.TURN_CHANGED) {
-        /*
-            if (_pieces == null) {
-                // if we're the first player, we take care of setting up the
-                // board
-                if (_gameCtrl.isMyTurn()) {
-                    //_board.initialize();
-                    _gameCtrl.set("startGame", true);
-                    //setUpPieces();
+            if (_gameCtrl.isMyTurn()) {
+                if(_myBall == null) {
+                    // It's the first time I've gone, so add my ball at the start
+                    if (_gameCtrl.get("balls") == null) {
+                        // And apparently I'm the first up, so I need to nudge this quickly
+                        _gameCtrl.set("balls", []);
+                    }
+
+                    _gameCtrl.set("balls", [_map.startPoint.x, _map.startPoint.y], 
+                                  _gameCtrl.getMyIndex());
                 }
 
-            } else {
-                //showMoves();
-            }
+                _haveMoved = false;
 
-*/
+            }
         } else if (event.type == StateChangedEvent.GAME_STARTED) {
             _gameCtrl.localChat("Wonderland Croquet!");
 
-            // configure the board
-            //_board = new Board(_gameCtrl, BOARD_SIZE);
+            _balls = [];
 
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
             _gameCtrl.localChat("Off with your head!");
@@ -131,17 +140,38 @@ public class WonderlandCroquet extends Sprite
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
         var name :String = event.name;
-        if (name == "board") {
-            if (event.index != -1) {
-                // read the change
-                //readBoard();
+        var index :int;
+        if (name == "balls") {
+            index = event.index;
+            if (index != -1 && _balls[index] == null) {
 
-            //} else if (_pieces == null) {
-                // the other player has initialized the game
-                //setUpPieces();
+                trace("Inserting ball at " + index);
+                _balls[index] = new BallParticle(event.newValue[0], event.newValue[1],
+                    Ball.RADIUS, index, false);
+                    
+                APEngine.addParticle(_balls[index]);
+                _ballLayer.addChild(_balls[index].ball);
+
+                if (index == _gameCtrl.getMyIndex()) {
+                    _myBall = _balls[index];
+                    _myBall.gameCtrl = _gameCtrl;
+                }
+
+            }
+        } else if (name == "lastHit") {
+            index = event.newValue[0];
+            var x :Number = event.newValue[1];
+            var y :Number = event.newValue[2];
+
+            BallParticle(_balls[index]).addHitForce(x, y);
+
+            if (_gameCtrl.isMyTurn()) {
+                _haveMoved = true;
             }
         }
     }
+
+    protected var _haveMoved :Boolean;
 
     protected var _map :WonderlandMap;
 
@@ -149,13 +179,17 @@ public class WonderlandCroquet extends Sprite
 
     protected var _spr :Sprite;
 
-    protected var _paintQueue :Array;
+    protected var _ballLayer :Sprite;
 
     protected var _board :WonderlandBoard;
+
     protected var _wickets :Array;
+
+    protected var _balls :Array;
+
+    protected var _myBall :BallParticle;
 
     /** Our game control object. */
     protected var _gameCtrl :EZGameControl;
-
 }
 }

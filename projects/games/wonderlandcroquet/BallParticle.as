@@ -5,6 +5,8 @@ import flash.geom.Point;
 import org.cove.ape.CircleParticle;
 import org.cove.ape.Vector;
 
+import com.threerings.ezgame.EZGameControl;
+
 /**
  * A particle type that acts like a circle, but moves around a sprite rather 
  * than drawing a boring circle.
@@ -13,6 +15,10 @@ public class BallParticle extends CircleParticle
 {
     /** The sprite representing this ball. */
     public var ball :Ball;
+
+    /** Our game controller, or null if this ball doesn't belong to the local player. */
+    public var gameCtrl :EZGameControl;
+
 
     public function BallParticle (x:Number, y:Number, radius:Number, color:int,
         fixed:Boolean, mass:Number = 1, elasticity:Number = 0.3, friction:Number = 0)
@@ -25,13 +31,16 @@ public class BallParticle extends CircleParticle
         ball.y = y;
     }
 
-    // documentation inherited
-    override public function paint() :void
+    /**
+     * Updates our sprite to match our position. Returns true if we move, false
+     * if we don't.
+     */
+    public function tick() :Boolean
     {
         if (ball.x == px && ball.y == py) {
             // If I'm in the same place, chances are my angle hasn't changed either, so I shouldn't
             // bother doing anything
-            return;
+            return false;
         }
 
         // Just move our sprite to the new location
@@ -40,9 +49,10 @@ public class BallParticle extends CircleParticle
         var speed :Number = velocity.magnitude();
 
         if (speed < 0.01) {
+            velocity = new Vector(0, 0);
             // We don't really care
             ball.stop();
-            return;
+            return false;
         }
 
         ball.play();
@@ -58,6 +68,7 @@ public class BallParticle extends CircleParticle
 
         // TODO: tell the ball about our velocity so the animation can switch 
         // to an appropriate speed
+        return true;
     }
 
     /**
@@ -73,28 +84,10 @@ public class BallParticle extends CircleParticle
     /**
      * Applies a force based on a hit to this ball.
      */
-    public function addHitForce (p :Point) :void
+    public function addHitForce (x :Number, y :Number) :void
     {
-        var angle :Number = Math.PI + Math.atan(p.y / p.x);
-        var strength :Number = Math.sqrt(p.x*p.x + p.y*p.y) * HIT_STRENGTH_MULTIPLIER;
-
-        strength = Math.min(strength, MAX_HIT_STRENGTH);
-
-        if (p.x < 0) {
-            angle += Math.PI;
-        }
-
-        angle += ball.rotation * Math.PI/180;
-        
-        addMasslessForce(new Vector(Math.cos(angle) * strength, 
-                                    Math.sin(angle) * strength));
+        addMasslessForce(new Vector(x, y));
     }
-
-    // Multiplier applied to the length of the vector they've drawn for hit strength.
-    protected static const HIT_STRENGTH_MULTIPLIER :int = 2;
-
-    // The hardest anyone is allowed to hit a ball
-    protected static const MAX_HIT_STRENGTH :int = 300;
 }
 
 }
