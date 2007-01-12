@@ -49,9 +49,11 @@ public class Kart extends Sprite
             _currentAngle = Math.min(MAX_TURN_ANGLE, _currentAngle + TURN_ACCELERATION);
 
             if (_currentSpeed != 0) {
-                if (_movement & MOVEMENT_RIGHT) {
+                if ((_movement & MOVEMENT_RIGHT) && _currentSpeed > 0 ||
+                    (_movement & MOVEMENT_LEFT) && _currentSpeed < 0) {
                     _camera.angle += _currentAngle
-                } else if (_movement & MOVEMENT_LEFT) {
+                } else if ((_movement & MOVEMENT_LEFT) && _currentSpeed > 0 ||
+                    (_movement & MOVEMENT_RIGHT) && _currentSpeed < 0) {
                     _camera.angle -= _currentAngle
                 }
             }
@@ -75,15 +77,13 @@ public class Kart extends Sprite
         var rotation :Matrix;
         if (_movement & MOVEMENT_FORWARD) {
             if (_currentSpeed >= 0) {
-                _currentSpeed = (_currentSpeed >= SPEED_MAX) ? SPEED_MAX : 
-                    _currentSpeed + ACCELERATION_GAS;
+                _currentSpeed = Math.min(SPEED_MAX, _currentSpeed + ACCELERATION_GAS);
             } else { 
                 _currentSpeed += ACCELERATION_BRAKE;
             }
         } else if (_movement & MOVEMENT_BACKWARD) {
             if (_currentSpeed <= 0) {
-                _currentSpeed = (_currentSpeed <= SPEED_MIN) ? SPEED_MIN : 
-                    _currentSpeed - ACCELERATION_GAS;
+                _currentSpeed = Math.max(SPEED_MIN, _currentSpeed - ACCELERATION_GAS);
             } else {
                 _currentSpeed -= ACCELERATION_BRAKE;
             }
