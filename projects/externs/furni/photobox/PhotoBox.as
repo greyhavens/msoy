@@ -3,6 +3,7 @@
 
 package {
 
+import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.Sprite;
 
@@ -31,9 +32,6 @@ import com.adobe.webapis.flickr.events.FlickrResultEvent;
 
 import com.threerings.msoy.export.FurniControl;
 
-// TODO: This doesn't presently work because youtube has changed their
-// crossdomain.xml file to prevent the youtube flash API from working at all.
-//
 [SWF(width="500", height="550")]
 public class PhotoBox extends Sprite
 {
@@ -57,26 +55,37 @@ public class PhotoBox extends Sprite
 
         root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload);
 
-        // set up the UI
+        configureUI();
+    }
+
+    /**
+     * Configure the UI. Called from the constructor.
+     */
+    protected function configureUI () :void
+    {
+        var logo :DisplayObject = new FlickrLogo_Asset();
+        addChild(logo);
+
         var prompt :TextField = new TextField();
         prompt.autoSize = TextFieldAutoSize.LEFT;
         prompt.background = true;
-        prompt.backgroundColor = 0xCCFFFF;
-        prompt.wordWrap = true;
-        prompt.width = 175;
+        prompt.backgroundColor = 0xFFFFFF;
         var format :TextFormat = new TextFormat();
         format.size = 16;
         format.bold = true;
         prompt.defaultTextFormat = format;
-        prompt.text = "Enter Flickr tags\nseparated by commas:";
+        prompt.text = "Enter tags:";
+        prompt.y = logo.height;
+        prompt.autoSize = TextFieldAutoSize.NONE;
+        prompt.width = Math.max(prompt.width, logo.width);
         addChild(prompt);
 
         _tagField = new TextField();
         _tagField.type = TextFieldType.INPUT;
         _tagField.background = true;
-        _tagField.backgroundColor = 0xFFFFFF;
-        _tagField.x = prompt.textWidth + 15;
-        _tagField.height = prompt.height;
+        _tagField.backgroundColor = 0xCCFFFF;
+        _tagField.x = Math.max(prompt.width, logo.width);
+        _tagField.height = prompt.height + logo.height;
         _tagField.width = 500 - _tagField.x;
         addChild(_tagField);
         _tagField.addEventListener(KeyboardEvent.KEY_DOWN, handleKey);
@@ -89,6 +98,9 @@ public class PhotoBox extends Sprite
         addChild(_loader);
     }
 
+    /**
+     * Handle the results of a tag search.
+     */
     protected function handlePhotoSearch (evt :FlickrResultEvent) :void
     {
         if (!evt.success) {
@@ -101,6 +113,10 @@ public class PhotoBox extends Sprite
         loadNextPhoto();
     }
 
+    /**
+     * Load the next photo in the photo list maintained by this
+     * photobox.
+     */
     protected function loadNextPhoto () :void
     {
         if (_photos == null || _photos.length == 0) {
@@ -128,6 +144,9 @@ public class PhotoBox extends Sprite
 //        }
 //    }
 
+    /**
+     * Handle data arriving as a result of a getSizes() request.
+     */
     protected function handlePhotoSizes (evt :FlickrResultEvent) :void
     {
         if (!evt.success) {
@@ -154,20 +173,35 @@ public class PhotoBox extends Sprite
         }
     }
 
+    /**
+     * Handle a user-generated keypress.
+     */
     protected function handleKey (event :KeyboardEvent) :void
     {
         if (event.keyCode == Keyboard.ENTER) {
             var tags :String = _tagField.text;
             _tagField.text = "";
-            _flickr.photos.search("", tags);
+
+            tags = tags.replace(/\s+/g, ","); // replace spaces with commas
+            tags = tags.replace(/,+/g, ","); // prune consecutive commas
+            tags = tags.replace(/^,/, ""); // remove spurious comma at start
+            tags = tags.replace(/,$/, ""); // remove spurious comma at end
+            _flickr.photos.search("", tags, "all");
         }
     }
 
+    /**
+     * Handle the timer expiring.
+     */
     protected function handleTimer (event :TimerEvent) :void
     {
         loadNextPhoto();
     }
 
+    /**
+     * Handle a "trigger" event from other instances of this photobox
+     * running on other clients.
+     */
     protected function handleMsoyEvent (event :String, arg :Object) :void
     {
         if (event == "show") {
@@ -196,6 +230,7 @@ public class PhotoBox extends Sprite
     protected function handleUnload (event :Event) :void
     {
         _timer.stop();
+        clearLoader();
     }
 
     /**
@@ -213,21 +248,46 @@ public class PhotoBox extends Sprite
         return null;
     }
 
+    /**
+     * Display the photo at the specified url.
+     */
     protected function displayPhoto (url :String) :void
     {
+        clearLoader();
         _loader.load(new URLRequest(url));
     }
 
+    /**
+     * Clear any resources from the loader and prepare it to load
+     * another photo, or be unloaded.
+     */
+    protected function clearLoader () :void
+    {
+        try {
+            _loader.close();
+        } catch (e :Error) {
+            // nada
+        }
+        _loader.unload();
+    }
+
+    /** The interface through which we make flickr API requests. */
     protected var _flickr :FlickrService;
 
+    /** The interface through which we communicate with metasoy. */
     protected var _furni :FurniControl;
 
+    /** Handles the countdown to showing the next photo. */
     protected var _timer :Timer;
 
+    /** The text entry area for tags. */
     protected var _tagField :TextField;
 
+    /** Loads up photos for display. */
     protected var _loader :Loader;
 
+    /** If this instance was used to do a tag search, this contains the
+     * resultant photos which are queued up for display on other instances.  */
     protected var _photos :Array;
 
     /** The 'control id' which determines which piece of furni is in control. */
