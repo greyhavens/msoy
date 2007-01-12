@@ -164,12 +164,7 @@ public class WorldGameRegistry
         }
         
         // make sure the entry refers to the game
-        if (entry.item.type != Item.GAME ||
-            entry.item.itemId != gameObj.config.game.getProgenitorId()) {
-            log.warning("Invalid world game memory [who=" + member.who() + ", game=" +
-                gameObj.which() + ", entry=" + entry + "].");
-            return;
-        }
+        entry.item = new ItemIdent(Item.GAME, gameObj.config.game.getProgenitorId());
         
         // TODO: verify that the memory does not exceed legal size
         
