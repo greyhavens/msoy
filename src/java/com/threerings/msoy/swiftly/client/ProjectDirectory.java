@@ -7,11 +7,4 @@ public class ProjectDirectory extends FileElement
         super(name, parent);
         _type = FileElement.DIRECTORY;
     }
-
-    @Override // from FileElement
-    // XXX TEMP until I wire up a different icon for directories
-    public String toString()
-    {
-        return "(" + getName() + ")";
-    }
 }

@@ -15,7 +15,6 @@ import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.event.TreeModelEvent;
@@ -49,7 +48,7 @@ public class SwiftlyProjectPanel extends JPanel
     {
         TreePath currentSelection = _tree.getSelectionPath();
         if (currentSelection != null) {
-            DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)
+            FileElementTreeNode currentNode = (FileElementTreeNode)
                  (currentSelection.getLastPathComponent());
             MutableTreeNode parent = (MutableTreeNode)(currentNode.getParent());
             if (parent != null) {
@@ -60,22 +59,21 @@ public class SwiftlyProjectPanel extends JPanel
     }
 
     /** Add a file element to the right spot based on the current selected node. */
-    public DefaultMutableTreeNode addNode (FileElement element)
+    public FileElementTreeNode addNode (FileElement element)
     {
-        // DefaultMutableTreeNode parentNode = null;
-        // TreePath parentPath = _tree.getSelectionPath();
-        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)getSelectedNode().getParent();
+        FileElementTreeNode parentNode = (FileElementTreeNode)getSelectedNode().getParent();
 
         if (parentNode == null) {
             parentNode = _top;
         }
 
-        // special case for adding the first document to a directory
+        // if the node selected is a directory, that's the parent
         if (getSelectedFileElement().getType() == FileElement.DIRECTORY) {
             parentNode = getSelectedNode();
         }
 
-        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(element);
+        FileElementTreeNode newNode = new FileElementTreeNode(element);
+        // TODO this needs to insert the node in a sorted manner
         _treeModel.insertNodeInto(newNode, parentNode, parentNode.getChildCount());
 
         // Open any directory drop downs that need to be and scroll to the new node
@@ -87,7 +85,7 @@ public class SwiftlyProjectPanel extends JPanel
     {
         _project = project;
 
-        _top = new DefaultMutableTreeNode(project);
+        _top = new FileElementTreeNode(project);
         _treeModel = new DefaultTreeModel(_top);
         _treeModel.addTreeModelListener(this);
 
@@ -108,13 +106,13 @@ public class SwiftlyProjectPanel extends JPanel
 
     public void addDocumentToTree (SwiftlyDocument document)
     {
-        _top.add(new DefaultMutableTreeNode(document));
+        _top.add(new FileElementTreeNode(document));
     }
 
     // from interface TreeSelectionListener
     public void valueChanged (TreeSelectionEvent e)
     {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
+        FileElementTreeNode node = (FileElementTreeNode) _tree.getLastSelectedPathComponent();
 
         if (node == null) return;
         enableToolbar();
@@ -131,8 +129,8 @@ public class SwiftlyProjectPanel extends JPanel
     public void treeNodesChanged (TreeModelEvent e)
     {
         // get the changed node
-        DefaultMutableTreeNode node =
-            (DefaultMutableTreeNode) e.getTreePath().getLastPathComponent();
+        FileElementTreeNode node =
+            (FileElementTreeNode) e.getTreePath().getLastPathComponent();
 
         /*
          * If the event lists children, then the changed
@@ -142,7 +140,7 @@ public class SwiftlyProjectPanel extends JPanel
          */
         try {
             int index = e.getChildIndices()[0];
-            node = (DefaultMutableTreeNode) (node.getChildAt(index));
+            node = (FileElementTreeNode) (node.getChildAt(index));
         } catch (NullPointerException exc) {}
 
         // grab the new name
@@ -213,7 +211,7 @@ public class SwiftlyProjectPanel extends JPanel
     // Opens a new, unsaved document in a tab.
     protected void openNewDocument ()
     {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
+        FileElementTreeNode node = (FileElementTreeNode) _tree.getLastSelectedPathComponent();
         if (node == null) return;
 
         FileElement element = (FileElement)node.getUserObject();
@@ -233,7 +231,7 @@ public class SwiftlyProjectPanel extends JPanel
 
     protected void deleteDocument ()
     {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
+        FileElementTreeNode node = (FileElementTreeNode) _tree.getLastSelectedPathComponent();
         if (node == null) return;
 
         // TODO throw up a Are you sure yes/no dialog
@@ -258,7 +256,7 @@ public class SwiftlyProjectPanel extends JPanel
 
     protected void addDirectory ()
     {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
+        FileElementTreeNode node = (FileElementTreeNode) _tree.getLastSelectedPathComponent();
         if (node == null) {
             return;
         }
@@ -314,12 +312,12 @@ public class SwiftlyProjectPanel extends JPanel
         return _selectedFileElement;
     }
 
-    protected DefaultMutableTreeNode getSelectedNode ()
+    protected FileElementTreeNode getSelectedNode ()
     {
         return _selectedNode;
     }
 
-    protected void setSelectedNode (DefaultMutableTreeNode node)
+    protected void setSelectedNode (FileElementTreeNode node)
     {
         _selectedNode = node;
         _selectedFileElement = (FileElement)node.getUserObject();
@@ -328,8 +326,8 @@ public class SwiftlyProjectPanel extends JPanel
     protected SwiftlyApplet _applet;
     protected SwiftlyProject _project;
     protected FileElement _selectedFileElement;
-    protected DefaultMutableTreeNode _selectedNode;
-    protected DefaultMutableTreeNode _top;
+    protected FileElementTreeNode _selectedNode;
+    protected FileElementTreeNode _top;
     protected DefaultTreeModel _treeModel;
     protected JTree _tree;
     protected JToolBar _toolbar = new JToolBar();
