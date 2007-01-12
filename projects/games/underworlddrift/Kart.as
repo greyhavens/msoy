@@ -210,7 +210,7 @@ public class Kart extends Sprite
     protected static const SPEED_MAX :int = 25;
     protected static const SPEED_MIN :int = -5;
     protected static const ACCELERATION_GAS :Number = 0.5;
-    protected static const ACCELERATION_BRAKE :Number = 1.5;
+    protected static const ACCELERATION_BRAKE :Number = 2;
     protected static const ACCELERATION_COAST :Number = 0.5;
     protected static const MAX_TURN_ANGLE :Number = 0.0524; // 3 degrees
     protected static const TURN_ACCELERATION :Number = 0.015;
