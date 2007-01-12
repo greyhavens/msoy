@@ -12,6 +12,10 @@ import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
 
+import flash.text.TextField;
+import flash.text.TextFormat;
+import flash.text.TextFieldAutoSize;
+
 import mx.core.MovieClipAsset;
 
 /**
@@ -66,12 +70,19 @@ public class ShipSprite extends Sprite
     /** Type of ship we're using. */
     public var shipType :int;
 
+    /** The player name for the ship. */
+    public var playerName :String;
+
+    /** The ship's current score. */
+    public var score :int;
+
     /**
      * Constructs a new ship.  If skipStartingPos, don't bother finding an
      *  empty space to start in.
      */
     public function ShipSprite (board :BoardSprite, game :StarFight,
-        skipStartingPos :Boolean, shipId :int, isOwnShip :Boolean)
+        skipStartingPos :Boolean, shipId :int, name :String,
+        isOwnShip :Boolean)
     {
         accel = 0.0;
         turnRate = 0.0;
@@ -80,11 +91,13 @@ public class ShipSprite extends Sprite
         yVel = 0.0;
         power = 1.0; // full
         powerups = 0;
+        score = 0;
         if (_isOwnShip && _shieldSound != null) {
             _shieldSound.soundTransform = Sounds.OFF;
             _shieldSound = null;
         }
         this.shipId = shipId;
+        playerName = name;
         _isOwnShip = isOwnShip;
         shipType = Codes.SHIP_1;
 
@@ -97,7 +110,26 @@ public class ShipSprite extends Sprite
         _board = board;
         _game = game;
 
+        /** Used to rotate our ship itself without touching associated info. */
+        _ship = new Sprite();
+        addChild(_ship);
+
         setShipType(shipType);
+
+        // Add our name as a textfield
+        var nameText :TextField = new TextField();
+        nameText.autoSize = TextFieldAutoSize.CENTER;
+        nameText.selectable = false;
+        nameText.x = 0;
+        nameText.y = WIDTH/2;
+
+        var format:TextFormat = new TextFormat();
+        format.font = "Verdana";
+        format.color = Codes.CYAN;
+        format.size = 12;
+        nameText.defaultTextFormat = format;
+        nameText.text = playerName;
+        addChild(nameText);
     }
 
     /**
@@ -108,8 +140,8 @@ public class ShipSprite extends Sprite
         var friction :Number = Math.pow(getFriction(), time);
         var accelFact :Number = accel * time;
 
-        xVel = xVel*friction + Math.cos(rotation*Codes.DEGS_TO_RADS)*accelFact;
-        yVel = yVel*friction + Math.sin(rotation*Codes.DEGS_TO_RADS)*accelFact;
+        xVel = xVel*friction + Math.cos(_ship.rotation*Codes.DEGS_TO_RADS)*accelFact;
+        yVel = yVel*friction + Math.sin(_ship.rotation*Codes.DEGS_TO_RADS)*accelFact;
 
         resolveMove(boardX, boardY, boardX + xVel*time, boardY + yVel*time);
     }
@@ -180,13 +212,13 @@ public class ShipSprite extends Sprite
     {
         power -= ((powerups & SHIELDS_MASK) ? HIT_POWER/2 : HIT_POWER);
         if (power <= 0.0) {
-            _game.explode(boardX, boardY, rotation, shooterId, shipType);
+            _game.explode(boardX, boardY, _ship.rotation, shooterId, shipType);
             power = 1.0; //full
             powerups = 0;
             var pt :Point = _board.getStartingPos();
             boardX = pt.x;
             boardY = pt.y;
-            rotation = 0;
+            _ship.rotation = 0;
         }
     }
 
@@ -248,7 +280,7 @@ public class ShipSprite extends Sprite
      */
     public function turn (degCW :Number) :void
     {
-        rotation += degCW;
+        _ship.rotation += degCW;
     }
 
     /**
@@ -328,8 +360,8 @@ public class ShipSprite extends Sprite
 
             // Remove any old movies of other types of ship.
             if (_shipMovie != null) {
-                removeChild(_shipMovie);
-                removeChild(_shieldMovie);
+                _ship.removeChild(_shipMovie);
+                _ship.removeChild(_shieldMovie);
             }
 
             // Set up our animation.
@@ -344,13 +376,13 @@ public class ShipSprite extends Sprite
             _shipMovie.x = WIDTH/2;
             _shipMovie.y = -HEIGHT/2;
             _shipMovie.rotation = 90;
-            addChild(_shipMovie);
+            _ship.addChild(_shipMovie);
 
             _shieldMovie.gotoAndStop(1);
             _shieldMovie.x = 55/2;
             _shieldMovie.y = -58/2;
             _shieldMovie.rotation = 90;
-            addChild(_shieldMovie);
+            _ship.addChild(_shieldMovie);
 
             if (_isOwnShip) {
                 // Start the engine sound...
@@ -373,7 +405,7 @@ public class ShipSprite extends Sprite
 
     public function fire () :void
     {
-        var rads :Number = rotation*Codes.DEGS_TO_RADS;
+        var rads :Number = _ship.rotation*Codes.DEGS_TO_RADS;
         var cos :Number = Math.cos(rads);
         var sin :Number = Math.sin(rads);
 
@@ -436,6 +468,14 @@ public class ShipSprite extends Sprite
     }
 
     /**
+     * Increase the ship's score.
+     */
+    public function addScore (score :int) :void
+    {
+        this.score += score;
+    }
+
+    /**
      * Unserialize our data from a byte array.
      */
     public function readFrom (bytes :ByteArray) :void
@@ -447,10 +487,11 @@ public class ShipSprite extends Sprite
         boardY = bytes.readFloat();
         turnRate = bytes.readFloat();
         turnAccelRate = bytes.readFloat();
-        rotation = bytes.readShort();
+        _ship.rotation = bytes.readShort();
         power = bytes.readFloat();
         powerups = bytes.readInt();
         setShipType(bytes.readInt());
+        score = bytes.readInt();
     }
 
     /**
@@ -483,17 +524,18 @@ public class ShipSprite extends Sprite
         turnRate = report.turnRate;
 
         // Maybe let rotation float if we're not too far off.
-        var dTheta :Number = report.rotation - rotation;
+        var dTheta :Number = report._ship.rotation - _ship.rotation;
         if (Math.abs(dTheta) < 45) {
             turnRate += dTheta/(Codes.FRAMES_PER_UPDATE*2);
         } else {
-            rotation = report.rotation;
+            _ship.rotation = report._ship.rotation;
         }
 
         // These we always update exactly as reported.
         power = report.power;
         powerups = report.powerups;
         setShipType(report.shipType);
+        score = report.score;
     }
 
     /**
@@ -508,10 +550,11 @@ public class ShipSprite extends Sprite
         bytes.writeFloat(boardY);
         bytes.writeFloat(turnRate);
         bytes.writeFloat(turnAccelRate);
-        bytes.writeShort(rotation);
+        bytes.writeShort(_ship.rotation);
         bytes.writeFloat(power);
         bytes.writeInt(powerups);
         bytes.writeInt(shipType);
+        bytes.writeInt(score);
 
         return bytes;
     }
@@ -521,6 +564,9 @@ public class ShipSprite extends Sprite
 
     /** The main game object. */
     protected var _game :StarFight;
+
+    /** The sprite with our ship graphics in it. */
+    protected var _ship :Sprite;
 
     protected var _firing :Boolean;
     protected var _ticksToFire :int;

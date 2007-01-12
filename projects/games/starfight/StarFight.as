@@ -134,8 +134,12 @@ public class StarFight extends Sprite
         _board = new BoardSprite(boardObj, _ships, _powerups);
         _boardLayer.addChild(_board);
 
+        var names :Array = _gameCtrl.getPlayerNames();
+        var myIdx :int = _gameCtrl.getMyIndex();
+
         // Create our local ship and center the board on it.
-        _ownShip = new ShipSprite(_board, this, false, _gameCtrl.getMyIndex(), true);
+        _ownShip = new ShipSprite(_board, this, false, myIdx, names[myIdx],
+            true);
         _ownShip.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         _board.setAsCenter(_ownShip.boardX, _ownShip.boardY);
         _bg.setAsCenter(_ownShip.boardX, _ownShip.boardY);
@@ -155,7 +159,8 @@ public class StarFight extends Sprite
                 if (gameShips[ii] == null) {
                     _ships[ii] = null;
                 } else if (ii != _gameCtrl.getMyIndex()) {
-                    _ships[ii] = new ShipSprite(_board, this, true, ii, false);
+                    _ships[ii] = new ShipSprite(_board, this, true, ii,
+                        names[ii], false);
                     gameShips[ii].position = 0;
                     _ships[ii].readFrom(gameShips[ii]);
                     _shipLayer.addChild(_ships[ii]);
@@ -252,19 +257,20 @@ public class StarFight extends Sprite
         } else if ((name == "ship") && (event.index >= 0)) {
             if (_ships != null && event.index != _gameCtrl.getMyIndex()) {
                 // Someone else's ship - update our sprite for em.
-                // TODO: Something to try to deal with latency and maybe smooth
-                //  any shifts that occur.
                 var ship :ShipSprite = _ships[event.index];
                 if (ship == null) {
                     _ships[event.index] =
-                        ship = new ShipSprite(_board, this, true, event.index, false);
+                        ship = new ShipSprite(_board, this, true, event.index,
+                            _gameCtrl.getPlayerNames()[event.index], false);
                     _shipLayer.addChild(ship);
                 }
                 var bytes :ByteArray = ByteArray(event.newValue);
                 bytes.position = 0;
-                var sentShip :ShipSprite = new ShipSprite(_board, this, true, event.index, false);
+                var sentShip :ShipSprite = new ShipSprite(_board, this, true,
+                    event.index, _gameCtrl.getPlayerNames()[event.index], false);
                 sentShip.readFrom(bytes);
                 ship.updateForReport(sentShip);
+                _status.checkHiScore(ship);
             }
         } else if ((name =="powerup") && (event.index >= 0)) {
             if (_powerups != null) {
@@ -322,7 +328,7 @@ public class StarFight extends Sprite
             playSoundAt(Sounds.SHIP_EXPLODE, arr[0], arr[1]);
 
             if (arr[3] == _ownShip.shipId) {
-                _status.addScore(KILL_PTS);
+                addScore(KILL_PTS);
             }
         }
     }
@@ -335,6 +341,16 @@ public class StarFight extends Sprite
         _shots.push(shot);
         shot.setPosRelTo(_ownShip.boardX, _ownShip.boardY);
         _shotLayer.addChild(shot);
+    }
+
+    /**
+     * Adds to our score.
+     */
+    protected function addScore (score :int) :void
+    {
+        _status.addScore(score);
+        _ownShip.addScore(score);
+        _status.checkHiScore(_ownShip);
     }
 
     /**
@@ -354,7 +370,7 @@ public class StarFight extends Sprite
             _status.setPower(ship.power);
         } else if (shooterId == _ownShip.shipId) {
             // We hit someone!  Give us some points.
-            _status.addScore(HIT_PTS);
+            addScore(HIT_PTS);
         }
     }
 
@@ -468,7 +484,7 @@ public class StarFight extends Sprite
             _ownShip.awardPowerup(_powerups[powIdx].type);
             playSoundAt(Sounds.POWERUP, _powerups[powIdx].boardX,
                 _powerups[powIdx].boardY);
-            _status.addScore(POWERUP_PTS);
+            addScore(POWERUP_PTS);
             removePowerup(powIdx);
 
             powIdx = _board.getPowerupIdx(ownOldX, ownOldY,

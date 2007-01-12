@@ -10,7 +10,7 @@ import flash.text.TextFieldAutoSize;
 
 public class StatusOverlay extends Sprite
 {
-    public function StatusOverlay() :void
+    public function StatusOverlay () :void
     {
         addChild(_power = new Sprite());
         _power.graphics.beginFill(Codes.CYAN);
@@ -34,6 +34,12 @@ public class StatusOverlay extends Sprite
         _shields.x = 758;
         _shields.y = 63;
 
+        var format:TextFormat = new TextFormat();
+        format.font = "Verdana";
+        format.color = Codes.CYAN;
+        format.size = 16;
+        format.bold = true;
+
         _score = 0;
         _scoreText = new TextField();
         _scoreText.autoSize = TextFieldAutoSize.RIGHT;
@@ -42,22 +48,34 @@ public class StatusOverlay extends Sprite
         // center the label above us
         _scoreText.x = 775;
         _scoreText.y = 5;
-
-        var format:TextFormat = new TextFormat();
-        format.font = "Verdana";
-        format.color = Codes.CYAN;
-        format.size = 16;
-        format.bold = true;
         _scoreText.defaultTextFormat = format;
         _scoreText.text = String(_score);
-
         addChild(_scoreText);
+
+        _hiScore = 0;
+        _hiScoreText = new TextField();
+        _hiScoreText.autoSize = TextFieldAutoSize.LEFT;
+        _hiScoreText.selectable = false;
+        _hiScoreText.x = 20;
+        _hiScoreText.y = 8;
+        _hiScoreText.defaultTextFormat = format;
+        addChild(_hiScoreText);
+
+        _hiNameText = new TextField();
+        _hiNameText.autoSize = TextFieldAutoSize.LEFT;
+        _hiNameText.selectable = false;
+        _hiNameText.x = 20;
+        _hiNameText.y = 28;
+        format.size = 10;
+        _hiNameText.defaultTextFormat = format;
+        addChild(_hiNameText);
+
     }
 
     /**
      * Shows the powerups held by the ship.
      */
-    public function setPowerups(powerups :int) :void
+    public function setPowerups (powerups :int) :void
     {
         _speed.alpha = ((powerups & ShipSprite.SPEED_MASK) ? 1.0 : 0.0);
         _spread.alpha = ((powerups & ShipSprite.SPREAD_MASK) ? 1.0 : 0.0);
@@ -67,7 +85,7 @@ public class StatusOverlay extends Sprite
     /**
      * Sets our power level.
      */
-    public function setPower(power :Number) :void
+    public function setPower (power :Number) :void
     {
         var mask :Shape = Shape(_power.mask);
         mask.graphics.clear();
@@ -79,10 +97,22 @@ public class StatusOverlay extends Sprite
     /**
      * Add some points to our score.
      */
-    public function addScore(score :Number) :void
+    public function addScore (score :Number) :void
     {
         _score += score;
         _scoreText.text = String(_score);
+    }
+
+    /**
+     * Sets the hi score readout.
+     */
+    public function checkHiScore (ship :ShipSprite) :void
+    {
+        if (ship.score > _hiScore) {
+            _hiScoreText.text = String(ship.score);
+            _hiNameText.text = ship.playerName;
+            _hiScore = ship.score;
+        }
     }
 
     [Embed(source="rsrc/status.png")]
@@ -107,7 +137,10 @@ public class StatusOverlay extends Sprite
 
     /** Score readout. */
     protected var _score :int;
+    protected var _hiScore :int;
     protected var _scoreText :TextField;
+    protected var _hiScoreText :TextField;
+    protected var _hiNameText :TextField;
 
     protected static const POW_WIDTH :int = 85;
     protected static const POW_HEIGHT :int = 8;
