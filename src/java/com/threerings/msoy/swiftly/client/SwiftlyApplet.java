@@ -61,7 +61,7 @@ public class SwiftlyApplet extends JApplet
         // if we managed to load a project, show the gui, otherwise show an error
         if (_loadedProject != null) {
             showComponents(true);
-            // this only works after the page is drawn
+            // TODO this actually seems to work at random intervals. Fix.
             _splitPane.setDividerLocation(0.8);
 
             setStatus("Welcome to Swiftly!");
@@ -177,7 +177,6 @@ public class SwiftlyApplet extends JApplet
     public void renameFileElement (FileElement element, String newName)
     {
         // TODO rename the element on the backend
-        element.setName(newName);
     }
 
     protected void createGUI ()

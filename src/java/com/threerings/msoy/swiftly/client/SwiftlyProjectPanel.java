@@ -150,7 +150,9 @@ public class SwiftlyProjectPanel extends JPanel
 
         // the renamed node has a string user object. set it back to the file element.
         FileElement element = getSelectedFileElement();
+        // TODO try/catch block here
         _applet.renameFileElement(element, newName);
+        element.setName(newName);
         node.setUserObject(element);
         if (element.getType() == FileElement.DOCUMENT) {
             _applet.getEditor().updateTabTitleAt((SwiftlyDocument)element);
