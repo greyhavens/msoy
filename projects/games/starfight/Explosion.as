@@ -17,11 +17,8 @@ public class Explosion extends Sprite
         if (isSmall) {
             _explodeMovie = MovieClipAsset(new smExplodeAnim());
         } else {
-            if (shipType == Codes.SHIP_1) {
-                _explodeMovie = MovieClipAsset(new explodeAnim());
-            } else {
-                _explodeMovie = MovieClipAsset(new explode2Anim());
-            }
+            _explodeMovie =
+                MovieClipAsset(new Codes.SHIP_TYPES[shipType].EXPLODE_ANIM);
         }
         _explodeMovie.x = _explodeMovie.width/2;
         _explodeMovie.y = -_explodeMovie.height/2;
@@ -53,12 +50,6 @@ public class Explosion extends Sprite
     protected var _frameCount :int = 0;
 
     protected var _isSmall :Boolean;
-
-    [Embed(source="rsrc/ship_explosion_big.swf")]
-    protected var explodeAnim :Class;
-
-    [Embed(source="rsrc/ship2_explosion_big.swf")]
-    protected var explode2Anim :Class;
 
     [Embed(source="rsrc/ship_explosion_small.swf")]
     protected var smExplodeAnim :Class;

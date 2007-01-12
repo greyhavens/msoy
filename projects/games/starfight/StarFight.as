@@ -325,8 +325,9 @@ public class StarFight extends Sprite
 
             // Shooting sound.
             var sound :Sound = (val[6] == ShotSprite.SPREAD) ?
-                ((val[5] == Codes.SHIP_1) ? Sounds.TRI_BEAM : Sounds.TRI_BEAM2) :
-                ((val[5] == Codes.SHIP_1) ? Sounds.BEAM : Sounds.BEAM2);
+                Codes.SHIP_TYPES[val[5]].TRI_BEAM :
+                Codes.SHIP_TYPES[val[5]].BEAM;
+
             playSoundAt(sound, val[0], val[1]);
 
         } else if (event.name == "explode") {
@@ -365,7 +366,7 @@ public class StarFight extends Sprite
      * Register that a ship was hit at the location.
      */
     public function hitShip (ship :ShipSprite, x :Number, y :Number,
-        shooterId :int) :void
+        shooterId :int, shooterType :int) :void
     {
         _board.explode(x, y, 0, true, 0);
 
@@ -374,13 +375,23 @@ public class StarFight extends Sprite
         playSoundAt(sound, x, y);
 
         if (ship == _ownShip) {
-            ship.hit(shooterId);
+            ship.hit(shooterId, shooterType);
             _status.setPower(ship.power);
         } else if (shooterId == _ownShip.shipId) {
             // We hit someone!  Give us some points.
             addScore(HIT_PTS);
         }
     }
+
+    /**
+     * Tell our overlay about our state.
+     */
+    public function forceStatusUpdate () :void
+    {
+        _status.setPower(_ownShip.power);
+        _status.setPowerups(_ownShip.powerups);
+    }
+
 
     /**
      * Register that an obstacle was hit.

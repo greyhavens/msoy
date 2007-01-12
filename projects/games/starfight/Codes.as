@@ -11,15 +11,17 @@ public class Codes {
     public static const BLACK :uint = uint(0x000000);
     public static const CYAN :uint = uint(0x00FFFF);
 
-    /** Ship types. */
-    public static const SHIP_1 :int = 0;
-    public static const SHIP_2 :int = 1;
-    public static const NUM_SHIPS :int = 2;
-
     /** millis between screen refreshes. */
     public static const REFRESH_RATE :int = 50;
 
     /** How often we send updates to the server. */
     public static const FRAMES_PER_UPDATE :int = 3;
+
+    /** The different available types of ships. */
+    public static const SHIP_TYPES :Array = [
+        new ViperShipType(),
+        new WarthogShipType()
+    ]
+
 }
 }

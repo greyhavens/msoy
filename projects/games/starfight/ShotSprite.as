@@ -45,11 +45,8 @@ public class ShotSprite extends Sprite {
 
         _game = game;
 
-        if (shipType == Codes.SHIP_1) {
-            _shotMovie = MovieClipAsset(new shotAnim());
-        } else {
-            _shotMovie = MovieClipAsset(new shot2Anim());
-        }
+        _shotMovie = MovieClipAsset(new Codes.SHIP_TYPES[shipType].SHOT_ANIM);
+
         _shotMovie.gotoAndStop(1);
         _shotMovie.x = -_shotMovie.width/2;
         _shotMovie.y = 0;
@@ -87,7 +84,7 @@ public class ShotSprite extends Sprite {
             if (coll.hit is ShipSprite) {
                 var ship :ShipSprite = ShipSprite(coll.hit);
                 _game.hitShip(ship, boardX + (xVel*coll.time*time),
-                    boardY + (yVel*coll.time*time), shipId);
+                    boardY + (yVel*coll.time*time), shipId, shipType);
 
             } else {
                 var obs :Obstacle = Obstacle(coll.hit);
@@ -115,12 +112,6 @@ public class ShotSprite extends Sprite {
 
     /** Our shot animation. */
     protected var _shotMovie :MovieClipAsset;
-
-    [Embed(source="rsrc/beam.swf")]
-    protected var shotAnim :Class;
-
-    [Embed(source="rsrc/beam2.swf")]
-    protected var shot2Anim :Class;
 
     /** Our game. */
     protected var _game :StarFight;

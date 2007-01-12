@@ -12,28 +12,6 @@ import mx.core.MovieClipAsset;
  */
 public class Sounds {
 
-    // Shooting sounds.
-    [Embed(source="rsrc/beam.mp3")]
-    protected static var beamSound :Class;
-
-    public static const BEAM :Sound = Sound(new beamSound());
-
-    [Embed(source="rsrc/beam_tri.mp3")]
-    protected static var triBeamSound :Class;
-
-    public static const TRI_BEAM :Sound = Sound(new triBeamSound());
-
-    // Shooting sounds.
-    [Embed(source="rsrc/beam2.mp3")]
-    protected static var beam2Sound :Class;
-
-    public static const BEAM2 :Sound = Sound(new beam2Sound());
-
-    [Embed(source="rsrc/beam2_tri.mp3")]
-    protected static var triBeam2Sound :Class;
-
-    public static const TRI_BEAM2 :Sound = Sound(new triBeam2Sound());
-
     // Various small explosions/blast hits.
     [Embed(source="rsrc/ship_hit.mp3")]
     protected static var shipHitSound :Class;
@@ -95,33 +73,10 @@ public class Sounds {
 
     public static const POWERUP :Sound = Sound(new powerupSound());
 
-    // Ship spawning
-    [Embed(source="rsrc/spawn.mp3")]
-    protected static var spawnSound :Class;
-
-    public static const SPAWN :Sound = Sound(new spawnSound());
-
-    [Embed(source="rsrc/spawn2.mp3")]
-    protected static var spawn2Sound :Class;
-
-    public static const SPAWN2 :Sound = Sound(new spawn2Sound());
-
     // Looping sounds - these are movieclips to make the looping work without
     //  hiccups.  This is pretty hacky - we can't control the looping sound
     //  appropriately, so we just manipulate the volume.  So, the sounds are
     //  always running, just sometimes really quietly.  Bleh.
-    [Embed(source="rsrc/engine_sound.swf")]
-    public static var engineSound :Class;
-
-    public static const ENGINE_MOV :MovieClipAsset =
-        MovieClipAsset(new engineSound());
-
-    [Embed(source="rsrc/engine2_sound.swf")]
-    public static var engine2Sound :Class;
-
-    public static const ENGINE2_MOV :MovieClipAsset =
-        MovieClipAsset(new engine2Sound());
-
     [Embed(source="rsrc/shields_sound.swf")]
     protected static var shieldsSound :Class;
 
@@ -142,8 +97,6 @@ public class Sounds {
 
     // Static initialization - make all of our looping sounds silent initially.
     {
-        ENGINE_MOV.soundTransform = Sounds.OFF;
-        ENGINE2_MOV.soundTransform = Sounds.OFF;
         SHIELDS_MOV.soundTransform = Sounds.OFF;
         THRUSTER_MOV.soundTransform = Sounds.OFF;
         THRUSTER_RETRO_MOV.soundTransform = Sounds.OFF;

@@ -9,7 +9,6 @@ import flash.geom.Point;
 import flash.utils.ByteArray;
 
 import flash.media.Sound;
-import flash.media.SoundChannel;
 import flash.media.SoundTransform;
 
 import flash.text.TextField;
@@ -103,7 +102,7 @@ public class ShipSprite extends Sprite
         this.shipId = shipId;
         playerName = name;
         _isOwnShip = isOwnShip;
-        shipType = Codes.SHIP_1;
+        shipType = 0;
 
         if (!skipStartingPos) {
             var pt :Point = board.getStartingPos();
@@ -121,8 +120,7 @@ public class ShipSprite extends Sprite
         setShipType(shipType);
 
         // Play the spawn sound.
-        var sound :Sound = (shipType == Codes.SHIP_1) ?
-            Sounds.SPAWN : Sounds.SPAWN2;
+        var sound :Sound = Codes.SHIP_TYPES[shipType].SPAWN;
         _game.playSoundAt(sound, boardX, boardY);
 
         // Add our name as a textfield
@@ -220,15 +218,18 @@ public class ShipSprite extends Sprite
     /**
      * Registers that the ship was hit.
      */
-    public function hit (shooterId :int) :void
+    public function hit (shooterId :int, shooterType :int) :void
     {
         // Already dead, don't bother.
-        if (power <= 0.0) {
+        if (power <= DEAD) {
             return;
         }
 
-        power -= ((powerups & SHIELDS_MASK) ? HIT_POWER/2 : HIT_POWER);
-        if (power <= 0.0) {
+        var hitPower :Number = Codes.SHIP_TYPES[shooterType].hitPower /
+            Codes.SHIP_TYPES[shipType].armor;
+
+        power -= ((powerups & SHIELDS_MASK) ? hitPower/2 : hitPower);
+        if (power <= DEAD) {
             _game.explode(boardX, boardY, _ship.rotation, shooterId, shipType);
 
             // Turn off sound loops.
@@ -272,6 +273,7 @@ public class ShipSprite extends Sprite
         _ship.rotation = 0;
 
         _engineSound.soundTransform = Sounds.ON;
+        _game.forceStatusUpdate();
         setVisible(true);
     }
 
@@ -281,8 +283,7 @@ public class ShipSprite extends Sprite
             this.visible = visible;
 
             if (visible) {
-                var sound :Sound = (shipType == Codes.SHIP_1) ?
-                    Sounds.SPAWN : Sounds.SPAWN2;
+                var sound :Sound = Codes.SHIP_TYPES[shipType].SPAWN;
                 _game.playSoundAt(sound, boardX, boardY);
             }
         }
@@ -294,7 +295,7 @@ public class ShipSprite extends Sprite
     public function getFriction () :Number
     {
         // Maybe make this different per ship type.
-        return FRICTION;
+        return Codes.SHIP_TYPES[shipType].friction;
     }
 
     /**
@@ -302,7 +303,8 @@ public class ShipSprite extends Sprite
      */
     public function tick (time :Number) :void
     {
-        var turnFriction :Number = Math.pow(TURN_FRICTION, time);
+        var turnFriction :Number =
+            Math.pow(Codes.SHIP_TYPES[shipType].turnFriction, time);
 
         turnRate = turnRate * turnFriction + turnAccelRate;
         turn(turnRate*time);
@@ -365,18 +367,18 @@ public class ShipSprite extends Sprite
     public function keyPressed (event :KeyboardEvent) :void
     {
         // Can't do squat while dead.
-        if (power <= 0.0) {
+        if (power <= DEAD) {
             return;
         }
 
         if (event.keyCode == KV_LEFT) {
-            turnAccelRate = -TURN_ACCEL_RATE;
+            turnAccelRate = -Codes.SHIP_TYPES[shipType].turnAccelRate;
         } else if (event.keyCode == KV_RIGHT) {
-            turnAccelRate = TURN_ACCEL_RATE;
+            turnAccelRate = Codes.SHIP_TYPES[shipType].turnAccelRate;
         } else if (event.keyCode == KV_UP) {
             accel = ((powerups & SPEED_MASK) ?
-                FORWARD_ACCEL*SPEED_BOOST_FACTOR :
-                FORWARD_ACCEL);
+                Codes.SHIP_TYPES[shipType].forwardAccel*SPEED_BOOST_FACTOR :
+                Codes.SHIP_TYPES[shipType].forwardAccel);
 
             if (_isOwnShip) {
                 // Play the thruster sound, stop any old thrustering.
@@ -393,8 +395,8 @@ public class ShipSprite extends Sprite
 
         } else if (event.keyCode == KV_DOWN) {
             accel = ((powerups & SPEED_MASK) ?
-                BACKWARD_ACCEL*SPEED_BOOST_FACTOR :
-                BACKWARD_ACCEL);
+                Codes.SHIP_TYPES[shipType].backwardAccel*SPEED_BOOST_FACTOR :
+                Codes.SHIP_TYPES[shipType].backwardAccel);
 
             if (_isOwnShip) {
                 // Play the thruster sound, stop any old thrustering.
@@ -417,7 +419,7 @@ public class ShipSprite extends Sprite
             }
             _firing = true;
         } else if (event.keyCode == KV_ENTER) {
-            setShipType((shipType+1)%Codes.NUM_SHIPS);
+            setShipType((shipType+1)%Codes.SHIP_TYPES.length);
         }
     }
 
@@ -436,13 +438,10 @@ public class ShipSprite extends Sprite
             }
 
             // Set up our animation.
-            if (shipType == Codes.SHIP_1) {
-                _shipMovie = MovieClipAsset(new shipAnim());
-                _shieldMovie = MovieClipAsset(new shieldAnim());
-            } else {
-                _shipMovie = MovieClipAsset(new ship2Anim());
-                _shieldMovie = MovieClipAsset(new shield2Anim());
-            }
+            _shipMovie = MovieClipAsset(new Codes.SHIP_TYPES[shipType].SHIP_ANIM());
+            _shieldMovie =
+                MovieClipAsset(new Codes.SHIP_TYPES[shipType].SHIELD_ANIM());
+
             setAnimMode(IDLE);
             _shipMovie.x = WIDTH/2;
             _shipMovie.y = -HEIGHT/2;
@@ -463,12 +462,7 @@ public class ShipSprite extends Sprite
                 }
 
                 // Play the engine sound forever til we stop.
-                if (shipType == Codes.SHIP_1) {
-                    _engineSound = Sounds.ENGINE_MOV;
-
-                } else {
-                    _engineSound = Sounds.ENGINE2_MOV;
-                }
+                _engineSound = Codes.SHIP_TYPES[shipType].ENGINE_MOV;
                 _engineSound.soundTransform = Sounds.ON;
             }
         }
@@ -501,7 +495,7 @@ public class ShipSprite extends Sprite
     public function keyReleased (event :KeyboardEvent) :void
     {
         // Can't do squat while dead.
-        if (power <= 0.0) {
+        if (power <= DEAD) {
             return;
         }
 
@@ -651,32 +645,11 @@ public class ShipSprite extends Sprite
     protected var _ticksToFire :int;
 
     /** Ship performance characteristics. */
-    protected static const TURN_ACCEL_RATE :Number = 2.0;
-    protected static const FORWARD_ACCEL :Number = 0.014;
-    protected static const BACKWARD_ACCEL :Number = -0.007;
-    protected static const FRICTION :Number = 0.975;
-    protected static const TURN_FRICTION :Number = 0.825;
     protected static const SHOT_SPD :Number = 0.5;
     protected static const TICKS_PER_SHOT :int = 8;
-    protected static const HIT_POWER :Number = 0.25;
     protected static const SPEED_BOOST_FACTOR :Number = 1.5;
     protected static const RESPAWN_DELAY :int = 3000;
-
-    /** Our ship animation. */
-    protected var _shipMovie :MovieClipAsset;
-    protected var _shieldMovie :MovieClipAsset;
-
-    [Embed(source="rsrc/ship.swf#ship_movie_01")]
-    protected var shipAnim :Class;
-
-    [Embed(source="rsrc/ship_shield.swf")]
-    protected var shieldAnim :Class;
-
-    [Embed(source="rsrc/ship2.swf#ship_movie_01_alt")]
-    protected var ship2Anim :Class;
-
-    [Embed(source="rsrc/ship2_shield.swf")]
-    protected var shield2Anim :Class;
+    protected static const DEAD :Number = 0.001;
 
     /** "frames" within the actionscript for movement animations. */
     protected static const IDLE :int = 1;
@@ -690,10 +663,15 @@ public class ShipSprite extends Sprite
     protected var _thrusterSound :MovieClipAsset;
     protected var _shieldSound :MovieClipAsset;
 
+    /** Animations. */
+    protected var _shipMovie :MovieClipAsset;
+    protected var _shieldMovie :MovieClipAsset;
+
     /** State of thurster sounds. */
     protected var _thrusterRev :Boolean;
 
     /** Whether this is ourselves. */
     protected var _isOwnShip :Boolean;
+
 }
 }
