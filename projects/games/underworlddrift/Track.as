@@ -35,10 +35,11 @@ public class Track extends Sprite
         Log.testing("total tracks: " + _totalTracks);
         _trackIndices[3] = Math.floor(Math.random() * _totalTracks);
 
-        // generate all three tracks, and align them properly
-        moveTrackForward();
-        moveTrackForward();
-        moveTrackForward();
+        // generate all three tracks
+        for (i = 0; i < 3; i++) {
+            moveTrackForward();
+            addChild(_tracks[2-i]);
+        }
     }
 
     /**
@@ -51,12 +52,9 @@ public class Track extends Sprite
     public function moveTrackForward () :int
     {
         for (var i :int = 0; i < 3; i++) {
-            if (_tracks[i] != null) {
-                removeChild(_tracks[i]);
-            }
             _trackIndices[i] = _trackIndices[i+1];
             if (_trackIndices[i] != -1) {
-                _tracks[i] = new TRACKS();
+                //_tracks[i] = new TRACKS();
                 _tracks[i].gotoAndStop(_trackIndices[i]);
                 if (i == 0) {
                     _tracks[i].y = Ground.IMAGE_SIZE;
@@ -68,7 +66,6 @@ public class Track extends Sprite
                 } else {
                     _tracks[i].x = _tracks[i+1].x;
                 }
-                addChild(_tracks[i]);
             }
         }
         // next track
@@ -118,7 +115,7 @@ public class Track extends Sprite
     protected static const BACKGROUND_IMAGE :Class;
 
     /** Track data - keep in vector form for decent scaling */
-    protected var _tracks :Array = new Array(3);
+    protected var _tracks :Array = [new TRACKS(), new TRACKS(), new TRACKS()];
 
     /** indices into the TRACKS array of available tracks */
     protected var _trackIndices :Array = [-1, -1, -1, -1];
