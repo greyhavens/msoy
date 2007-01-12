@@ -11,18 +11,10 @@ import flash.events.TimerEvent;
 import flash.utils.Timer;
 import flash.ui.Keyboard;
 
-import com.threerings.ezgame.Game;
-import com.threerings.ezgame.EZGame;
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.MessageReceivedListener;
-import com.threerings.ezgame.PropertyChangedEvent;
-import com.threerings.ezgame.PropertyChangedListener;
-import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.StateChangedListener;
+import com.threerings.ezgame.EZGameControl;
     
 [SWF(width="700", height="500")]
 public class Juggler extends Sprite 
-    implements Game, PropertyChangedListener, StateChangedListener
 {
     public function Juggler ()
     {
@@ -78,15 +70,13 @@ public class Juggler extends Sprite
         }
     }
 
-    public function setGameObject (gameObj : EZGame) :void
-    {
-        _ezgame = gameObj;
-        
+    private function startFrameAnimation () :void
+    {        
         const frameTimer :Timer = new Timer(_space.frameDuration, 0);
         frameTimer.addEventListener(TimerEvent.TIMER, tick);
         frameTimer.start();
         
-        _controller.eventSource = stage;
+        _controller.eventSource = _gameControl;
     }
         
     public function addBall() :void
@@ -95,18 +85,10 @@ public class Juggler extends Sprite
             _ballsPlayed += 1;
         }
     }
-    
-    public function stateChanged (event: StateChangedEvent) :void
-    {
-        // do nothing for now
-    }
-    
-    public function propertyChanged (event: PropertyChangedEvent) :void
-    {
-        // do nothing for now
-    }
         
     public static const DEBUG_GRAPHICS:Boolean = false;
+    
+    private const _gameControl = new EZGameControl(this);
     
     private var _body :Body;
 
@@ -118,9 +100,6 @@ public class Juggler extends Sprite
             
     private var _collider :Collider;
             
-    /** The game object for this event. */
-    private var _ezgame :EZGame;
-
     private var _display:ScoreDisplay;
                 
     private var _ballsPlayed:int = 0;
