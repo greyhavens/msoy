@@ -42,10 +42,17 @@ public class Kart extends Sprite
         // TODO: base these speeds on something fairer than enterFrame.  Using this method,
         // the person with the fastest computer (higher framerate) gets to drive more quickly.
         // rotate camera
-        if (_movement & MOVEMENT_RIGHT) {
-            _camera.angle += 0.0745;
-        } else if (_movement & MOVEMENT_LEFT) {
-            _camera.angle -= 0.0745;
+        if (_movement & (MOVEMENT_RIGHT | MOVEMENT_LEFT)) {
+            _currentAngle = Math.min(MAX_TURN_ANGLE, _currentAngle + TURN_ACCELERATION);
+            if (_currentSpeed != 0) {
+                if (_movement & MOVEMENT_RIGHT) {
+                    _camera.angle += _currentAngle
+                } else if (_movement & MOVEMENT_LEFT) {
+                    _camera.angle -= _currentAngle
+                }
+            }
+        } else {
+            _currentAngle = 0;
         }
 
         var rotation :Matrix;
@@ -102,6 +109,9 @@ public class Kart extends Sprite
     /** Kart's current speed */
     protected var _currentSpeed :Number = 0;
 
+    /** Kart's current turn angle */
+    protected var _currentAngle :Number = 0;
+
     /** Bowser Kart TODO: switch swf to a single movie, with all the frames embedded */
     [Embed(source='rsrc/bowser.swf#bowser_centered')]
     protected static const BOWSER_CENTERED :Class;
@@ -110,11 +120,14 @@ public class Kart extends Sprite
     [Embed(source='rsrc/bowser.swf#bowser_right')]
     protected static const BOWSER_RIGHT_TURN :Class;
 
-    protected static const SPEED_MAX :int = 20;
+    /** constants to control kart motion properties */
+    protected static const SPEED_MAX :int = 30;
     protected static const SPEED_MIN :int = -5;
     protected static const ACCELERATION_GAS :Number = 0.5;
-    protected static const ACCELERATION_BRAKE :Number = 0.7;
-    protected static const ACCELERATION_COAST :Number = 0.1;
+    protected static const ACCELERATION_BRAKE :Number = 1.5;
+    protected static const ACCELERATION_COAST :Number = 0.5;
+    protected static const MAX_TURN_ANGLE :Number = 0.0524; // 3 degrees
+    protected static const TURN_ACCELERATION :Number = 0.01;
 
     protected static const MOVEMENT_FORWARD :int = 0x01;
     protected static const MOVEMENT_BACKWARD :int = 0x02;
