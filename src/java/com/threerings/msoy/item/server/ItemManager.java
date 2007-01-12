@@ -450,7 +450,11 @@ public class ItemManager
                 detail.creator = memRec.getName();
                 if (record.ownerId != 0) {
                     memRec = MsoyServer.memberRepo.loadMember(record.ownerId);
-                    detail.owner = memRec.getName();
+                    if (memRec != null) {
+                        detail.owner = memRec.getName();
+                    } else {
+                        log.warning("Item missing owner " + record + ".");
+                    }
                 } else {
                     detail.owner = null;
                 }
