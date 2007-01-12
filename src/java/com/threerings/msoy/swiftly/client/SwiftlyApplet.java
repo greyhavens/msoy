@@ -66,7 +66,7 @@ public class SwiftlyApplet extends JApplet
 
             setStatus("Welcome to Swiftly!");
         } else {
-            // TODO show an error dialog
+            showErrorDialog("No project found to load.");
         }
     }
 
@@ -124,6 +124,16 @@ public class SwiftlyApplet extends JApplet
         }
 
         return JOptionPane.showInternalInputDialog(_contentPane, prompt);
+    }
+
+    /**
+     * Shows a modal, internal frame dialog reporting an error to the user.
+     * @param the error message to display
+     */
+    public void showErrorDialog (String message)
+    {
+        JOptionPane.showInternalMessageDialog(
+            _contentPane, message, "An error occurred", JOptionPane.ERROR_MESSAGE);
     }
 
     public SwiftlyEditor getEditor()
