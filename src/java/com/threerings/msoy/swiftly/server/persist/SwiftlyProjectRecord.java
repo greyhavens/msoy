@@ -31,10 +31,8 @@ public class SwiftlyProjectRecord
     public int projectId;
     
     /** The id of the project owner. */
-    // @NotNull
     public int ownerId;
 
     /** The project name. */
-    // @NotNull
     public String projectName;
 }
