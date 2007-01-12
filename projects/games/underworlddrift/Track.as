@@ -15,16 +15,16 @@ public class Track extends Sprite
     public function Track ()
     {
         var backgroundImage :Shape;
-        for (var i :int = 0; i < 4; i++) {
+        for (var ii :int = 0; ii < 4; ii++) {
             backgroundImage = new Shape();
             backgroundImage.graphics.beginBitmapFill((new BACKGROUND_IMAGE() as Bitmap).bitmapData);
             backgroundImage.graphics.drawRect(0, 0, Ground.IMAGE_SIZE * 1.5, 
                 Ground.IMAGE_SIZE * 1.5);
             backgroundImage.graphics.endFill();
-            if (i > 1) {
+            if (ii > 1) {
                 backgroundImage.x = -Ground.IMAGE_SIZE * 1.5;
             } 
-            if (i == 1 || i == 3) {
+            if (ii == 1 || ii == 3) {
                 backgroundImage.y = -Ground.IMAGE_SIZE * 1.5;
             }
             addChild(backgroundImage);
@@ -35,9 +35,9 @@ public class Track extends Sprite
         _trackIndices[3] = Math.floor(Math.random() * _totalTracks);
 
         // generate all three tracks
-        for (i = 0; i < 3; i++) {
+        for (ii = 0; ii < 3; ii++) {
             moveTrackForward();
-            addChild(_tracks[2-i]);
+            addChild(_tracks[2-ii]);
         }
         // center all tracks on the beginning of the middle track - only necessary at startup
         var tempBitmap :BitmapData = new BitmapData(Ground.IMAGE_SIZE, Ground.IMAGE_SIZE, true, 0);
@@ -52,8 +52,8 @@ public class Track extends Sprite
         for (; pointRight.x < Ground.IMAGE_SIZE; pointRight.x++) {
             if ((tempBitmap.getPixel32(pointRight.x, pointRight.y) & 0xFF00000) == 0) break;
         }
-        for (i = 0; i < 3; i++) {
-            _tracks[i].x -= (pointRight.x + pointLeft.x) / 2 - Ground.HALF_IMAGE_SIZE;
+        for (ii = 0; ii < 3; ii++) {
+            _tracks[ii].x -= (pointRight.x + pointLeft.x) / 2 - Ground.HALF_IMAGE_SIZE;
         }
     }
 
@@ -66,19 +66,19 @@ public class Track extends Sprite
      */
     public function moveTrackForward () :int
     {
-        for (var i :int = 0; i < 3; i++) {
-            _trackIndices[i] = _trackIndices[i+1];
-            if (_trackIndices[i] != -1) {
-                _tracks[i].gotoAndStop(_trackIndices[i]);
-                if (i == 0) {
-                    _tracks[i].y = Ground.IMAGE_SIZE;
-                } else if (i == 2) {
-                    _tracks[i].y = -Ground.IMAGE_SIZE;
+        for (var ii :int = 0; ii < 3; ii++) {
+            _trackIndices[ii] = _trackIndices[ii+1];
+            if (_trackIndices[ii] != -1) {
+                _tracks[ii].gotoAndStop(_trackIndices[ii]);
+                if (ii == 0) {
+                    _tracks[ii].y = Ground.IMAGE_SIZE;
+                } else if (ii == 2) {
+                    _tracks[ii].y = -Ground.IMAGE_SIZE;
                 } 
-                if (i == 2) {
-                    if (_trackIndices[i-1] != -1) alignTracks(_tracks[i-1], _tracks[i]);
+                if (ii == 2) {
+                    if (_trackIndices[ii-1] != -1) alignTracks(_tracks[ii-1], _tracks[ii]);
                 } else {
-                    _tracks[i].x = _tracks[i+1].x;
+                    _tracks[ii].x = _tracks[ii+1].x;
                 }
             }
         }
