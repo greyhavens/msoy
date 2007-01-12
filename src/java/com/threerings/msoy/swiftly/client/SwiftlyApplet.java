@@ -58,7 +58,16 @@ public class SwiftlyApplet extends JApplet
             System.out.println("Foo: " + ee);
         }
 
-        setStatus("Welcome to Swiftly!");
+        // if we managed to load a project, show the gui, otherwise show an error
+        if (_loadedProject != null) {
+            showComponents(true);
+            // this only works after the page is drawn
+            _splitPane.setDividerLocation(0.8);
+
+            setStatus("Welcome to Swiftly!");
+        } else {
+            // TODO show an error dialog
+        }
     }
 
     public void setStatus (String msg)
@@ -175,24 +184,34 @@ public class SwiftlyApplet extends JApplet
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _editor, _projectPanel);
         // TODO apparently GTK does not have the graphic for this. What to do?
         _splitPane.setOneTouchExpandable(true);
-        _splitPane.setDividerLocation(650);
+
+        // hides the components initially
+        showComponents(false);
 
         // layout the window
         _contentPane.add(_toolbar, BorderLayout.PAGE_START);
         _contentPane.add(_splitPane, BorderLayout.CENTER);
         _contentPane.add(_statusbar, BorderLayout.SOUTH);
 
-        // popup the project selection window
-        if (_loadedProject == null) {
-            if (getProjects().isEmpty()) {
-                showCreateProjectDialog();
-            } else {
-                showProjectSelectionDialog();
-            }
-        } else {
+        if (_loadedProject != null) {
             // TODO this would come in as a parameter to the applet
             loadProject(_loadedProject);
+        } else {
+            if (getProjects().isEmpty()) {
+                // if we have no projects on the server, pop up the create project dialog
+                showCreateProjectDialog();
+            } else {
+                // popup the project selection window
+                showProjectSelectionDialog();
+            }
         }
+    }
+
+    protected void showComponents(boolean value)
+    {
+        _toolbar.setVisible(value);
+        _splitPane.setVisible(value);
+        _statusbar.setVisible(value);
     }
 
     protected ArrayList<SwiftlyProject> getProjects ()
@@ -230,6 +249,11 @@ public class SwiftlyApplet extends JApplet
         SwiftlyProject project = (SwiftlyProject)JOptionPane.showInternalInputDialog(
             _contentPane, "Select a project:", "Project selection", JOptionPane.QUESTION_MESSAGE,
             null, getProjects().toArray(), null);
+
+        // if the user hit cancel do no more
+        if (project == null) {
+            return;
+        }
         loadProject(project);
     }
 
