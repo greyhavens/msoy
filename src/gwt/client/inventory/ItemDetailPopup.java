@@ -32,7 +32,6 @@ public class ItemDetailPopup extends BaseItemDetailPopup
     public ItemDetailPopup (InventoryContext ctx, Item item, ItemPanel parent)
     {
         super(ctx, item);
-        _ctx = ctx;
         _parent = parent;
     }
 
@@ -56,6 +55,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
     {
         super.createInterface(details, controls);
 
+        final InventoryContext ictx = (InventoryContext)_ctx;
         if (_item instanceof Furniture) {
             // TODO: "Action", ((Furniture)_item).action
 
@@ -67,7 +67,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
 
             int gameId = _item.getProgenitorId();
             controls.add(new HTML("<a href=\"/game/index.html#" + gameId + "\">" +
-                                  _ctx.imsgs.detailPlay() + "</a>"));
+                                  ictx.imsgs.detailPlay() + "</a>"));
 
         } else if (_item instanceof Photo) {
             // TODO: "Caption", ((Photo)_item).caption);
@@ -79,47 +79,47 @@ public class ItemDetailPopup extends BaseItemDetailPopup
 
         Button button;
         if (_item.parentId == 0) {
-            button = new Button(_ctx.imsgs.detailList());
-            new ClickCallback(_ctx, button, _status) {
+            button = new Button(ictx.imsgs.detailList());
+            new ClickCallback(ictx, button, _status) {
                 public boolean callService () {
                     // make sure the item is kosher; TODO: make this less of a hack
                     if (_item.name.trim().length() == 0) {
-                        _status.setText(_ctx.imsgs.errItemMissingName());
+                        _status.setText(ictx.imsgs.errItemMissingName());
                         return false;
                     }
                     if (_item.description.trim().length() == 0) {
-                        _status.setText(_ctx.imsgs.errItemMissingDescrip());
+                        _status.setText(ictx.imsgs.errItemMissingDescrip());
                         return false;
                     }
-                    _ctx.catalogsvc.listItem(_ctx.creds, _item.getIdent(), true, this);
+                    ictx.catalogsvc.listItem(ictx.creds, _item.getIdent(), true, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
-                    _status.setText(_ctx.imsgs.msgItemListed());
+                    _status.setText(ictx.imsgs.msgItemListed());
                     return false; // don't reenable list button
                 }
             };
 
         } else {
-            button = new Button(_ctx.imsgs.detailRemix());
-            new ClickCallback(_ctx, button, _status) {
+            button = new Button(ictx.imsgs.detailRemix());
+            new ClickCallback(ictx, button, _status) {
                 public boolean callService () {
-                    _ctx.itemsvc.remixItem(_ctx.creds, _item.getIdent(), this);
+                    ictx.itemsvc.remixItem(ictx.creds, _item.getIdent(), this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
                     // TODO: update item panel
-                    _status.setText(_ctx.imsgs.msgItemRemixed());
+                    _status.setText(ictx.imsgs.msgItemRemixed());
                     return false; // don't reenable remix button
                 }
             };
         }
         controls.add(button);
 
-        button = new Button(_ctx.imsgs.detailDelete());
-        new ClickCallback(_ctx, button, _status) {
+        button = new Button(ictx.imsgs.detailDelete());
+        new ClickCallback(ictx, button, _status) {
             public boolean callService () {
-                _ctx.itemsvc.deleteItem(_ctx.creds, _item.getIdent(), this);
+                ictx.itemsvc.deleteItem(ictx.creds, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Object result) {
@@ -131,7 +131,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
         controls.add(button);
 
         if (_item.parentId == 0) {
-            button = new Button(_ctx.imsgs.detailEdit());
+            button = new Button(ictx.imsgs.detailEdit());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     ItemEditor editor = _parent.createItemEditor(_item.getType());
@@ -146,7 +146,6 @@ public class ItemDetailPopup extends BaseItemDetailPopup
         controls.add(_status);
     }
 
-    protected InventoryContext _ctx;
     protected ItemPanel _parent;
     protected Label _status;
 }

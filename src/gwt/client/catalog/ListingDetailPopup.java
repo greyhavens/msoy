@@ -20,7 +20,6 @@ public class ListingDetailPopup extends BaseItemDetailPopup
     public ListingDetailPopup (CatalogContext ctx, CatalogListing listing, ItemPanel panel)
     {
         super(ctx, listing.item);
-        _ctx = ctx;
         _listing = listing;
         _panel = panel;
     }
@@ -35,14 +34,15 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
         // TODO: add cost
 
-        controls.add(_purchase = new Button(_ctx.msgs.listingBuy()));
-        new ClickCallback(_ctx, _purchase, _status) {
+        final CatalogContext cctx = (CatalogContext)_ctx;
+        controls.add(_purchase = new Button(cctx.msgs.listingBuy()));
+        new ClickCallback(cctx, _purchase, _status) {
             public boolean callService () {
-                _ctx.catalogsvc.purchaseItem(_ctx.creds, _item.getIdent(), this);
+                cctx.catalogsvc.purchaseItem(cctx.creds, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Object result) {
-                _status.setText(_ctx.msgs.msgListingBought());
+                _status.setText(cctx.msgs.msgListingBought());
                 return false; // don't reenable purchase
             }
         };
@@ -56,20 +56,21 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         super.gotDetail(detail);
 
         // if we are the creator (lister) of this item, allow us to delist it
-        if (_ctx.creds != null && _listing.creator.getMemberId() == _ctx.creds.memberId) {
-            Button delist = new Button(_ctx.msgs.listingDelist());
-            new ClickCallback(_ctx, delist, _status) {
+        final CatalogContext cctx = (CatalogContext)_ctx;
+        if (cctx.creds != null && _listing.creator.getMemberId() == cctx.creds.memberId) {
+            Button delist = new Button(cctx.msgs.listingDelist());
+            new ClickCallback(cctx, delist, _status) {
                 public boolean callService () {
-                    _ctx.catalogsvc.listItem(_ctx.creds, _item.getIdent(), false, this);
+                    cctx.catalogsvc.listItem(cctx.creds, _item.getIdent(), false, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
                     if (result != null) {
-                        _status.setText(_ctx.msgs.msgListingDelisted());
+                        _status.setText(cctx.msgs.msgListingDelisted());
                         _panel.itemDelisted(_listing);
                         return false; // don't reenable delist
                     } else {
-                        _status.setText(_ctx.msgs.errListingNotFound());
+                        _status.setText(cctx.msgs.errListingNotFound());
                         return true;
                     }
                 }
@@ -78,7 +79,6 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         }
     }
 
-    protected CatalogContext _ctx;
     protected CatalogListing _listing;
     protected ItemPanel _panel;
 
