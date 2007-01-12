@@ -37,6 +37,7 @@ public class WonderlandFlamingo extends Sprite
 
     protected function mouseMove (event :MouseEvent) :void
     {
+    /* Laser-sighting code disabled for now.
         var p :Point = _ball.globalToLocal(new Point(event.stageX, event.stageY));
         var slope :Number = p.y / p.x;
 
@@ -51,6 +52,7 @@ public class WonderlandFlamingo extends Sprite
         graphics.lineStyle(1, 0xff0000);
         graphics.moveTo(0, 0);
         graphics.lineTo(len, len * slope);
+    */
     }
 
     protected var _circle :Sprite;

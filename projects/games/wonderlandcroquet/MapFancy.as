@@ -63,15 +63,17 @@ public class MapFancy extends WonderlandMap
         addPlanter(730, 1400, 0, true, 343);
         addPlanter(1070, 1400, 0, true, 234);
 
+/*
         addPlanter(850, 850, 45, true, 143);
         addPlanter(850, 950, 45, true, 324);
         addPlanter(950, 850, 45, true, 224);
         addPlanter(950, 950, 45, true, 229);
+*/
 
-        addPlanter(830, 900);
-        addPlanter(900, 830);
-        addPlanter(970, 900);
-        addPlanter(900, 970);
+        addPlanter(830, 900, 0, true, 32);
+        addPlanter(900, 830, 0, true, 201);
+        addPlanter(970, 900, 0, true, 303);
+        addPlanter(900, 970, 0, true, 129);
 
         addBush(900, 900, 337);
     }
