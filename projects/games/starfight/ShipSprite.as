@@ -271,7 +271,8 @@ public class ShipSprite extends Sprite
         } else if (event.keyCode == KV_RIGHT) {
             turnAccelRate = TURN_ACCEL_RATE;
         } else if (event.keyCode == KV_UP) {
-            accel = ((powerups & SPEED_MASK) ? FORWARD_ACCEL*1.3 :
+            accel = ((powerups & SPEED_MASK) ?
+                FORWARD_ACCEL*SPEED_BOOST_FACTOR :
                 FORWARD_ACCEL);
 
             if (_isOwnShip) {
@@ -288,7 +289,8 @@ public class ShipSprite extends Sprite
             }
 
         } else if (event.keyCode == KV_DOWN) {
-            accel = ((powerups & SPEED_MASK) ? BACKWARD_ACCEL*1.3 :
+            accel = ((powerups & SPEED_MASK) ?
+                BACKWARD_ACCEL*SPEED_BOOST_FACTOR :
                 BACKWARD_ACCEL);
 
             if (_isOwnShip) {
@@ -528,10 +530,11 @@ public class ShipSprite extends Sprite
     protected static const FORWARD_ACCEL :Number = 0.014;
     protected static const BACKWARD_ACCEL :Number = -0.007;
     protected static const FRICTION :Number = 0.975;
-    protected static const TURN_FRICTION :Number = 0.75;
+    protected static const TURN_FRICTION :Number = 0.825;
     protected static const SHOT_SPD :Number = 0.5;
     protected static const TICKS_PER_SHOT :int = 8;
     protected static const HIT_POWER :Number = 0.25;
+    protected static const SPEED_BOOST_FACTOR :Number = 1.5;
 
     /** Our ship animation. */
     protected var _shipMovie :MovieClipAsset;

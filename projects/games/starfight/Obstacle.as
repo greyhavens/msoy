@@ -57,7 +57,7 @@ public class Obstacle extends Sprite
     public function getElasticity () :Number
     {
         // TODO: Something different for different obstacles.
-        return 1.0;
+        return 0.75;
     }
 
     /**
@@ -69,7 +69,7 @@ public class Obstacle extends Sprite
         x = bytes.readInt();
         y = bytes.readInt();
         bX = x / Codes.PIXELS_PER_TILE;
-        bY = y / Codes.PIXELS_PER_TILE; 
+        bY = y / Codes.PIXELS_PER_TILE;
 
         setupGraphics();
     }
