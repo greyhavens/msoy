@@ -409,11 +409,18 @@ public class StarFight extends Sprite
      */
     public function playSoundAt (sound :Sound, x :Number, y :Number) :void
     {
-        var dx :Number = _ownShip.boardX - x;
-        var dy :Number = _ownShip.boardY - y;
-        var dist :Number = Math.sqrt(dx*dx + dy*dy);
+        var vol :Number = 1.0;
 
-        var vol :Number = 1.0 - (dist/25.0);
+        // If we don't yet have an ownship, must be in the process of creating
+        //  it and thus ARE ownship.
+        if (_ownShip != null) {
+            var dx :Number = _ownShip.boardX - x;
+            var dy :Number = _ownShip.boardY - y;
+            var dist :Number = Math.sqrt(dx*dx + dy*dy);
+
+            vol = 1.0 - (dist/25.0);
+        }
+
         if (vol > 0.0) {
             sound.play(0, 0, new SoundTransform(vol));
         }

@@ -119,7 +119,11 @@ public class ShipSprite extends Sprite
         addChild(_ship);
 
         setShipType(shipType);
-        setVisible(true);
+
+        // Play the spawn sound.
+        var sound :Sound = (shipType == Codes.SHIP_1) ?
+            Sounds.SPAWN : Sounds.SPAWN2;
+        _game.playSoundAt(sound, boardX, boardY);
 
         // Add our name as a textfield
         var nameText :TextField = new TextField();
