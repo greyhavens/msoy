@@ -26,7 +26,6 @@ public class Juggler extends Sprite
 {
     public function Juggler ()
     {
-        log("juggler v0.03 constructed");
         addChild(new backgroundClass());
 
         _space = new Space(0,0, 700,500, 50);                
@@ -81,7 +80,6 @@ public class Juggler extends Sprite
 
     public function setGameObject (gameObj : EZGame) :void
     {
-        log("set game object called");
         _ezgame = gameObj;
         
         const frameTimer :Timer = new Timer(_space.frameDuration, 0);
@@ -89,8 +87,6 @@ public class Juggler extends Sprite
         frameTimer.start();
         
         _controller.eventSource = stage;
-                
-        log("started frame events");    
     }
         
     public function addBall() :void
@@ -109,13 +105,7 @@ public class Juggler extends Sprite
     {
         // do nothing for now
     }
-    
-    public static function log (msg :String) :void
-    {
-        //trace(msg);
-        //ExternalInterface.call("console.debug", msg);
-    }
-    
+        
     public static const DEBUG_GRAPHICS:Boolean = false;
     
     private var _body :Body;

@@ -18,7 +18,6 @@ public class Hand extends Sprite
         _maximumPullback = y + MAXIMUM_PULLBACK;
         
         body.addChild(this);
-        Juggler.log("hand registering for collisions");
         juggler.registerForCollisions(this);
         
         var art:Object = new artwork();
@@ -51,7 +50,6 @@ public class Hand extends Sprite
     public function highlight() :void
     {
         return;
-        Juggler.log("hightlighting hand");
         redraw(HIGHLIGHT_COLOR);
         _highlightFrames = 2;        
     }
@@ -75,16 +73,13 @@ public class Hand extends Sprite
         }
         
         targetFrames -=1;
-        x += (targetX - x) / 2
-        
-        Juggler.log("moving "+_label+" to "+x);
+        x += (targetX - x) / 2        
     }
     
     /** function defining the throwing motion 
      */
     public function throwBall() :void
     {
-        Juggler.log("throw in motion...");
         if (targetFrames == 0) {
             y = Body.HAND_LEVEL;
             _motion = stationary;
@@ -115,10 +110,7 @@ public class Hand extends Sprite
     
     /** release the ball we're holding **/
     private function releaseBall() :void
-    {
-        Juggler.log("releasing ball")
-//        _body.ballisticReleaseVelocity(this, _holding, _releaseStrength);
-        
+    {        
         if (_releaseStrength > .90)
         {
             _body.ballisticReleaseVelocity(this, _holding, .82);
@@ -233,7 +225,7 @@ public class Hand extends Sprite
 
     public function set velocity (v:Array) :void
     {
-        Juggler.log("attempt to set velocity of hand to "+v);
+        // hand doesn't change velocity
     }
 
     public function get velocity () :Array

@@ -17,9 +17,7 @@ public class BoundsInContext implements Bounds {
                 parent = parent.parent;
             }
             while(parent != context);
-        }
-        
-        Juggler.log("computed bounds in context of for "+body.label+" x="+x+", y="+y);
+        }        
     }
     
     public function get leftProjection() :Number

@@ -85,8 +85,6 @@ public class Ball extends Sprite
     /** define the motion of a ball when it's caught **/
     private function caught () :void
     {
-        Juggler.log(_label+" (pre caught) velocity : dx="+dx+", dy="+dy);
-        Juggler.log(_label+" x="+x+",y="+y);                
         const bounds:Bounds = _hand.boundsInContext(_juggler);
                 
         if(_catchFrames > 0) 
@@ -107,10 +105,6 @@ public class Ball extends Sprite
         
         nextX = x
         nextY = y;    
-        
-        Juggler.log(_label+" (caught) velocity : dx="+dx+", dy="+dy);
-        Juggler.log(_label+" x="+x+",y="+y);        
-            
     }
         
     /** define the motion of the ball when it's free **/
@@ -191,7 +185,6 @@ public class Ball extends Sprite
     {        
         nextX = x + (dx / _space.frameRate);
         nextY = y + (dy / _space.frameRate);
-//        Juggler.log(_label+" nextX="+nextX+",nextY="+nextY);
     }
         
     private function advance () :void
@@ -239,8 +232,6 @@ public class Ball extends Sprite
     {
         dx = v[0];
         dy = v[1];
-        Juggler.log(_label+" new velocity : dx="+dx+", dy="+dy);
-        Juggler.log(_label+" x="+x+",y="+y);        
         _velocityChanged = true;
     }
      

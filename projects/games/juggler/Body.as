@@ -124,9 +124,7 @@ public class Body extends Sprite
     public function ballisticReleaseVelocity(fromHand:Hand, ball:Ball, strength:Number) :void
     {
         var toHand:int = (fromHand._id == LEFT) ? RIGHT : LEFT;
-        
-        Juggler.log("throwing from "+fromHand.label+" to "+_hands[toHand].label);
-        
+                
         var toPosition:int = 
             (Math.abs(fromHand.x-_positions[fromHand._id][LEFT]) < 
                 Math.abs(fromHand.x-_positions[fromHand._id][RIGHT])) ?

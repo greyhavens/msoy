@@ -38,18 +38,14 @@ public class BallisticTrajectory {
     }
     
     public function initialVector(start:Array, end:Array, speed:Number, gravity:Number) :Array
-    {
-        Juggler.log(" calculating throw from: "+start+" to: "+end+" speed: "+speed+" gravity: "+gravity);
-        
+    {        
         const angles:Array = initialAngle(start, end, speed, gravity);    
         
         if (angles==null) // the speed wasn't greate enough.
         {
             return null;
         }
-        
-        Juggler.log("angles of throw: "+degrees(angles[0])+", "+degrees(angles[1]));
-        
+                
         const v1:Array = polarToVector( angles[0], speed );
 
         return v1;
