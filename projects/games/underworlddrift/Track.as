@@ -105,6 +105,7 @@ public class Track extends Sprite
         }
         // assume the bottom is or has been moved to 0
         top.x = bottomPoint.x - topPoint.x;
+        Log.testing("bottom: " + bottomPoint.x + ", top: " + topPoint.x);
     }
 
     [Embed(source='rsrc/track.swf#track')]

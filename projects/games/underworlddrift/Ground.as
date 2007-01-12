@@ -46,7 +46,7 @@ public class Ground extends Sprite
 
         _kartSprite = new Sprite();
         _kartSprite.x = 355;
-        _kartSprite.y = 230;
+        _kartSprite.y = 200;
         _kartSprite.addChild(new KART());
         addChild(_kartSprite);
 
@@ -158,7 +158,7 @@ public class Ground extends Sprite
     protected var _cameraPosition :Point = new Point(0, HALF_IMAGE_SIZE + 100);
 
     /** height of the camera */
-    protected var _cameraHeight :Number = 30;
+    protected var _cameraHeight :Number = 20;
 
     /** distance from the camera to the projection plane */
     protected var _cameraDistance :Number = 800;
