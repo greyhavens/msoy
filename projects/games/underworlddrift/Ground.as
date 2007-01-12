@@ -197,6 +197,6 @@ public class Ground extends Sprite
     protected static const WIDTH :int = UnderworldDrift.DISPLAY_WIDTH;
 
     /** The height of the largest strip, at the bottom of the image. */
-    protected static const BEGINNING_STRIP_HEIGHT :int = 10;
+    protected static const BEGINNING_STRIP_HEIGHT :int = 6;
 }
 }

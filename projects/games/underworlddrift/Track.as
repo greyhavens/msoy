@@ -40,6 +40,22 @@ public class Track extends Sprite
             moveTrackForward();
             addChild(_tracks[2-i]);
         }
+        // center all tracks on the beginning of the middle track - only necessary at startup
+        var tempBitmap :BitmapData = new BitmapData(Ground.IMAGE_SIZE, Ground.IMAGE_SIZE, true, 0);
+        var translate :Matrix = new Matrix();
+        translate.translate(Ground.HALF_IMAGE_SIZE, Ground.HALF_IMAGE_SIZE);
+        tempBitmap.draw(_tracks[1], translate);
+        var pointLeft :Point = new Point(0, Ground.IMAGE_SIZE - 1);
+        var pointRight :Point = new Point (0, Ground.IMAGE_SIZE - 1);
+        for (; pointLeft.x < Ground.IMAGE_SIZE; pointLeft.x++, pointRight.x++) {
+            if (tempBitmap.getPixel32(pointLeft.x, pointLeft.y) & 0xFF000000) break;
+        }
+        for (; pointRight.x < Ground.IMAGE_SIZE; pointRight.x++) {
+            if ((tempBitmap.getPixel32(pointRight.x, pointRight.y) & 0xFF00000) == 0) break;
+        }
+        for (i = 0; i < 3; i++) {
+            _tracks[i].x -= (pointRight.x + pointLeft.x) / 2 - Ground.HALF_IMAGE_SIZE;
+        }
     }
 
     /**
@@ -94,13 +110,13 @@ public class Track extends Sprite
         translate.translate(Ground.HALF_IMAGE_SIZE, Ground.HALF_IMAGE_SIZE);
         tempBitmap.draw(bottom, translate);
         var bottomPoint :Point = new Point(0, 0);
-        for (; bottomPoint.x < Ground.HALF_IMAGE_SIZE; bottomPoint.x++) {
+        for (; bottomPoint.x < Ground.IMAGE_SIZE; bottomPoint.x++) {
             if (tempBitmap.getPixel32(bottomPoint.x, bottomPoint.y) & 0xFF000000) break;
         }
         tempBitmap = new BitmapData(Ground.IMAGE_SIZE, Ground.IMAGE_SIZE, true, 0);
         tempBitmap.draw(top, translate);
         var topPoint :Point = new Point(0, Ground.IMAGE_SIZE - 1);
-        for (; topPoint.x < Ground.HALF_IMAGE_SIZE; topPoint.x++) {
+        for (; topPoint.x < Ground.IMAGE_SIZE; topPoint.x++) {
             if (tempBitmap.getPixel32(topPoint.x, topPoint.y) & 0xFF000000) break;
         }
         // assume the bottom is or has been moved to 0
