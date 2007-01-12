@@ -1,6 +1,9 @@
 package {
 
 import flash.media.Sound;
+import flash.media.SoundTransform;
+
+import mx.core.MovieClipAsset;
 
 /**
  * Contains all the sounds we want to play.
@@ -69,34 +72,51 @@ public class Sounds {
 
     public static const POWERUP :Sound = Sound(new powerupSound());
 
-    // Looping sounds
-    [Embed(source="rsrc/engine.mp3")]
-    protected static var engineSound :Class;
+    // Looping sounds - these are movieclips to make the looping work without
+    //  hiccups.  This is pretty hacky - we can't control the looping sound
+    //  appropriately, so we just manipulate the volume.  So, the sounds are
+    //  always running, just sometimes really quietly.  Bleh.
+    [Embed(source="rsrc/engine_sound.swf")]
+    public static var engineSound :Class;
 
-    public static const ENGINE :Sound = Sound(new engineSound());
+    public static const ENGINE_MOV :MovieClipAsset =
+        MovieClipAsset(new engineSound());
 
-    // Looping sounds
-    [Embed(source="rsrc/engine2.mp3")]
-    protected static var engine2Sound :Class;
+    [Embed(source="rsrc/engine2_sound.swf")]
+    public static var engine2Sound :Class;
 
-    public static const ENGINE2 :Sound = Sound(new engine2Sound());
+    public static const ENGINE2_MOV :MovieClipAsset =
+        MovieClipAsset(new engine2Sound());
 
-    [Embed(source="rsrc/shields.mp3")]
+    [Embed(source="rsrc/shields_sound.swf")]
     protected static var shieldsSound :Class;
 
-    public static const SHIELDS :Sound = Sound(new shieldsSound());
+    public static const SHIELDS_MOV :MovieClipAsset =
+        MovieClipAsset(new shieldsSound());
 
-    [Embed(source="rsrc/thruster.mp3")]
+    [Embed(source="rsrc/thruster_sound.swf")]
     protected static var thrusterSound :Class;
 
-    public static const THRUSTER :Sound = Sound(new thrusterSound());
+    public static const THRUSTER_MOV :MovieClipAsset =
+        MovieClipAsset(new thrusterSound());
 
-    [Embed(source="rsrc/thruster_retro.mp3")]
+    [Embed(source="rsrc/thruster_retro_sound.swf")]
     protected static var thrusterRetroSound :Class;
 
-    public static const THRUSTER_RETRO :Sound = Sound(new thrusterRetroSound());
+    public static const THRUSTER_RETRO_MOV :MovieClipAsset =
+        MovieClipAsset(new thrusterRetroSound());
 
+    // Static initialization - make all of our looping sounds silent initially.
+    {
+        ENGINE_MOV.soundTransform = Sounds.OFF;
+        ENGINE2_MOV.soundTransform = Sounds.OFF;
+        SHIELDS_MOV.soundTransform = Sounds.OFF;
+        THRUSTER_MOV.soundTransform = Sounds.OFF;
+        THRUSTER_RETRO_MOV.soundTransform = Sounds.OFF;
+    }
 
-
+    /** Volume constants - we use these to turn our looping sounds on/off. */
+    public static const OFF :SoundTransform = new SoundTransform(0);
+    public static const ON :SoundTransform = new SoundTransform(1);
 }
 }

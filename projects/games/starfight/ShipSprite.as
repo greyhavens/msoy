@@ -9,6 +9,7 @@ import flash.geom.Point;
 import flash.utils.ByteArray;
 
 import flash.media.SoundChannel;
+import flash.media.SoundTransform;
 
 import mx.core.MovieClipAsset;
 
@@ -79,7 +80,7 @@ public class ShipSprite extends Sprite
         power = 1.0; // full
         powerups = 0;
         if (_isOwnShip && _shieldSound != null) {
-            _shieldSound.stop();
+            _shieldSound.soundTransform = Sounds.OFF;
             _shieldSound = null;
         }
         this.shipId = shipId;
@@ -260,12 +261,13 @@ public class ShipSprite extends Sprite
             if (_isOwnShip) {
                 // Play the thruster sound, stop any old thrustering.
                 if (_thrusterSound != null && _thrusterRev) {
-                    _thrusterSound.stop();
+                    _thrusterSound.soundTransform = Sounds.OFF;
                     _thrusterSound = null;
                 }
                 if (_thrusterSound == null) {
                     _thrusterRev = false;
-                    _thrusterSound = Sounds.THRUSTER.play(0, int.MAX_VALUE);
+                    _thrusterSound = Sounds.THRUSTER_MOV;
+                    _thrusterSound.soundTransform = Sounds.ON;
                 }
             }
 
@@ -276,14 +278,15 @@ public class ShipSprite extends Sprite
             if (_isOwnShip) {
                 // Play the thruster sound, stop any old thrustering.
                 if (_thrusterSound != null && !_thrusterRev) {
-                    _thrusterSound.stop();
+                    _thrusterSound.soundTransform = Sounds.OFF;
                     _thrusterSound = null;
                 }
 
                 if (_thrusterSound == null) {
                     _thrusterRev = true;
-                    _thrusterSound =
-                        Sounds.THRUSTER_RETRO.play(0, int.MAX_VALUE);
+
+                    _thrusterSound = Sounds.THRUSTER_RETRO_MOV;
+                    _thrusterSound.soundTransform = Sounds.ON;
                 }
             }
 
@@ -334,17 +337,19 @@ public class ShipSprite extends Sprite
             if (_isOwnShip) {
                 // Start the engine sound...
                 if (_engineSound != null) {
-                    _engineSound.stop();
+                    _engineSound.soundTransform = Sounds.OFF;
+                    _engineSound = null;
+                    Logger.log("MST STOPPING Eng SOUND");
                 }
 
-                // Play the engine sound forever til we stop.  Well, not quite
-                //  forever, but if the player's still in after 2 billion
-                //  loops, they can expect some weirdness.
+                // Play the engine sound forever til we stop.
                 if(shipType == Codes.SHIP_1) {
-                    _engineSound = Sounds.ENGINE.play(0, int.MAX_VALUE);
+                    _engineSound = Sounds.ENGINE_MOV;
+                    
                 } else {
-                    _engineSound = Sounds.ENGINE2.play(0, int.MAX_VALUE);
+                    _engineSound = Sounds.ENGINE2_MOV;
                 }
+                _engineSound.soundTransform = Sounds.ON;
             }
         }
     }
@@ -384,7 +389,7 @@ public class ShipSprite extends Sprite
 
             // Stop our sound if appropriate.
             if (_isOwnShip && _thrusterSound != null && !_thrusterRev) {
-                _thrusterSound.stop();
+                _thrusterSound.soundTransform = Sounds.OFF;
                 _thrusterSound = null;
             }
         } else if (event.keyCode == KV_DOWN) {
@@ -392,7 +397,7 @@ public class ShipSprite extends Sprite
 
             // Stop our sound if appropriate.
             if (_isOwnShip && _thrusterSound != null && _thrusterRev) {
-                _thrusterSound.stop();
+                _thrusterSound.soundTransform = Sounds.OFF;
                 _thrusterSound = null;
             }
         } else if (event.keyCode == KV_SPACE) {
@@ -408,7 +413,8 @@ public class ShipSprite extends Sprite
         powerups |= (1 << type);
 
         if (_isOwnShip && type == Powerup.SHIELDS && _shieldSound == null) {
-            _shieldSound = Sounds.SHIELDS.play(0, int.MAX_VALUE);
+            _shieldSound = Sounds.SHIELDS_MOV;
+            _shieldSound.soundTransform = Sounds.ON;
         }
     }
 
@@ -533,10 +539,12 @@ public class ShipSprite extends Sprite
     protected static const FORWARD :int = 3;
     protected static const REVERSE :int = 2;
 
-    /** Sounds currently being played - only play sounds for ownship. */
-    protected var _engineSound :SoundChannel;
-    protected var _thrusterSound :SoundChannel;
-    protected var _shieldSound :SoundChannel;
+    /** Sounds currently being played - only play sounds for ownship. Note
+     * that due to stupid looping behavior these need to be MovieClips to keep
+     * from getting gaps between loops. */
+    protected var _engineSound :MovieClipAsset;
+    protected var _thrusterSound :MovieClipAsset;
+    protected var _shieldSound :MovieClipAsset;
 
     /** State of thurster sounds. */
     protected var _thrusterRev :Boolean;
