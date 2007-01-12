@@ -6,13 +6,16 @@ import flash.geom.Point;
 
 import flash.events.Event;
 
+import mx.core.MovieClipAsset;
+
 public class Kart extends Sprite
 {
     public function Kart (camera :Camera)
     {
         _camera = camera;
-        _currentKart = new BOWSER_CENTERED();
-        addChild(_currentKart);
+        _kart = new BOWSER();
+        _kart.gotoAndStop(1);
+        addChild(_kart);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
@@ -44,6 +47,7 @@ public class Kart extends Sprite
         // rotate camera
         if (_movement & (MOVEMENT_RIGHT | MOVEMENT_LEFT)) {
             _currentAngle = Math.min(MAX_TURN_ANGLE, _currentAngle + TURN_ACCELERATION);
+
             if (_currentSpeed != 0) {
                 if (_movement & MOVEMENT_RIGHT) {
                     _camera.angle += _currentAngle
@@ -51,8 +55,21 @@ public class Kart extends Sprite
                     _camera.angle -= _currentAngle
                 }
             }
+
+            var frame :int = Math.ceil((_currentAngle / MAX_TURN_ANGLE) * FRAMES_PER_TURN) - 1;
+            if (_movement & MOVEMENT_RIGHT) {
+                frame+= RIGHT_TURN_FRAME_OFFSET;
+            } else {
+                frame+= LEFT_TURN_FRAME_OFFSET;
+            }
+            if (_kart.currentFrame != frame) {
+                _kart.gotoAndStop(frame);
+            }
         } else {
             _currentAngle = 0;
+            if (_kart.currentFrame != 1) {
+                _kart.gotoAndStop(1);
+            }
         }
 
         var rotation :Matrix;
@@ -103,8 +120,8 @@ public class Kart extends Sprite
     /** reference to ground object */
     protected var _camera :Camera;
 
-    /** Embedded cart sprite */
-    protected var _currentKart :Sprite;
+    /** Embedded cart movie clip */
+    protected var _kart :MovieClipAsset;
 
     /** Kart's current speed */
     protected var _currentSpeed :Number = 0;
@@ -112,13 +129,16 @@ public class Kart extends Sprite
     /** Kart's current turn angle */
     protected var _currentAngle :Number = 0;
 
-    /** Bowser Kart TODO: switch swf to a single movie, with all the frames embedded */
-    [Embed(source='rsrc/bowser.swf#bowser_centered')]
-    protected static const BOWSER_CENTERED :Class;
-    [Embed(source='rsrc/bowser.swf#bowser_left')]
-    protected static const BOWSER_LEFT_TURN :Class;
-    [Embed(source='rsrc/bowser.swf#bowser_right')]
-    protected static const BOWSER_RIGHT_TURN :Class;
+    /** Bowser Kart */
+    [Embed(source='rsrc/bowser.swf#kart')]
+    protected static const BOWSER :Class;
+
+    /** The number of movie clip frames used for one of the turn directions */
+    protected static const FRAMES_PER_TURN :int = 3;
+
+    /** The offset into the movie clip for the frames for both turn types. */
+    protected static const RIGHT_TURN_FRAME_OFFSET :int = 2;
+    protected static const LEFT_TURN_FRAME_OFFSET :int = 5;
 
     /** constants to control kart motion properties */
     protected static const SPEED_MAX :int = 30;
@@ -129,6 +149,7 @@ public class Kart extends Sprite
     protected static const MAX_TURN_ANGLE :Number = 0.0524; // 3 degrees
     protected static const TURN_ACCELERATION :Number = 0.01;
 
+    /** flags for the _movement bit flag variable */
     protected static const MOVEMENT_FORWARD :int = 0x01;
     protected static const MOVEMENT_BACKWARD :int = 0x02;
     protected static const MOVEMENT_LEFT :int = 0x04;

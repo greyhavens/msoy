@@ -32,7 +32,7 @@ public class Track extends Sprite
 
         // this will eventually feature a seed distributed to each client
         _totalTracks = (new TRACKS() as MovieClipAsset).totalFrames;
-        _trackIndices[3] = Math.floor(Math.random() * _totalTracks);
+        _trackIndices[3] = Math.ceil(Math.random() * _totalTracks);
 
         // generate all three tracks
         for (ii = 0; ii < 3; ii++) {
@@ -83,7 +83,7 @@ public class Track extends Sprite
             }
         }
         // next track
-        _trackIndices[3] = Math.floor(Math.random() * _totalTracks);
+        _trackIndices[3] = Math.ceil(Math.random() * _totalTracks);
 
         var xShift :int = 0;
         if (_trackIndices[1] != -1) {
