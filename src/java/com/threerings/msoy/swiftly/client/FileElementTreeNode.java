@@ -9,6 +9,9 @@ public class FileElementTreeNode extends DefaultMutableTreeNode
         super(userObject);
     }
 
+    // TODO override setUserObject. If it is a string coming in set that to the name instead
+    // of overwriting the object. Do nothing if its not of FileElement class?
+
     @Override // from DefaultMutableTreeNode
     public boolean isLeaf ()
     {

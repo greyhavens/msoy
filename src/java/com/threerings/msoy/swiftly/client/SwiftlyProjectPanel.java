@@ -68,6 +68,8 @@ public class SwiftlyProjectPanel extends JPanel
         }
 
         // if the node selected is a directory, that's the parent
+        // TODO consider just using getAllowsChildren()
+
         if (getSelectedFileElement().getType() == FileElement.DIRECTORY) {
             parentNode = getSelectedNode();
         }
