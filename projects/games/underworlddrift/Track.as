@@ -54,7 +54,6 @@ public class Track extends Sprite
         for (var i :int = 0; i < 3; i++) {
             _trackIndices[i] = _trackIndices[i+1];
             if (_trackIndices[i] != -1) {
-                //_tracks[i] = new TRACKS();
                 _tracks[i].gotoAndStop(_trackIndices[i]);
                 if (i == 0) {
                     _tracks[i].y = Ground.IMAGE_SIZE;
