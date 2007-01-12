@@ -2,7 +2,6 @@ package {
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
-import flash.display.Bitmap;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.events.KeyboardEvent;
@@ -10,14 +9,44 @@ import flash.ui.Keyboard;
 import flash.media.Sound;
 
 import mx.core.MovieClipAsset;
+import mx.core.BitmapAsset;
 
 import com.threerings.ezgame.EZGameControl;
 
 public class Kid extends Sprite
 {   
-    /** Images that can be used for kid. */
-    public static const AVATAR_VAMPIRE :int = 0;
-    public static const AVATAR_GHOST :int = 1;
+    /** Offsets for each avatar. Offset + animation = animation to use. */
+    public static const VAMPIRE :int = 0;
+    public static const GHOST :int = 8;
+    
+    /** Animation types. */
+    public static const IDLE_RIGHT :int = 0;
+    public static const IDLE_LEFT :int = 1;
+    public static const WALK_RIGHT :int = 2;
+    public static const WALK_LEFT :int = 3;
+    public static const SQUISH_RIGHT :int = 4;
+    public static const SQUISH_LEFT :int = 5;
+    public static const FINAL_SQUISH_RIGHT :int = 6;
+    public static const FINAL_SQUISH_LEFT :int = 7;
+    
+    /** Specific animations for each avatar. */
+    public static const VAMPIRE_IDLE_RIGHT :int = 0;
+    public static const VAMPIRE_IDLE_LEFT :int = 1;
+    public static const VAMPIRE_WALK_RIGHT :int = 2;
+    public static const VAMPIRE_WALK_LEFT :int = 3;
+    public static const VAMPIRE_SQUISH_RIGHT :int = 4;
+    public static const VAMPIRE_SQUISH_LEFT :int = 5;
+    public static const VAMPIRE_FINAL_SQUISH_RIGHT :int = 6;
+    public static const VAMPIRE_FINAL_SQUISH_LEFT :int = 7;
+    
+    public static const GHOST_IDLE_RIGHT :int = 8;
+    public static const GHOST_IDLE_LEFT :int = 9;
+    public static const GHOST_WALK_RIGHT :int = 10;
+    public static const GHOST_WALK_LEFT :int = 11;
+    public static const GHOST_SQUISH_RIGHT :int = 12;
+    public static const GHOST_SQUISH_LEFT :int = 13;
+    public static const GHOST_FINAL_SQUISH_RIGHT :int = 14;
+    public static const GHOST_FINAL_SQUISH_LEFT :int = 15;
     
     /** 
      * Directions kid may be facing or moving. These are only useful for 
@@ -39,13 +68,14 @@ public class Kid extends Sprite
         _boardHeight = board.height;
         _boardWidth = board.width;
         _playerName = playerName;
+        _avatarType = avatarType;
         _speed = DEFAULT_SPEED;
         _lives = STARTING_LIVES;
         _dead = false;
-        _facing = RIGHT; // TODO: this actually will probably depend on the image
+        _facing = RIGHT;
         x = startX;
         y = startY;
-        setAvatar(avatarType);
+        setAnimation(avatarType + IDLE_RIGHT);
         
         // Print player's name above the kid.
         _nameLabel = new TextField();
@@ -69,9 +99,17 @@ public class Kid extends Sprite
         _lives--;
         _squishSound.play();
         if (_lives == 0) {
-            // TODO: here we do the final squish animation
+            if (_facing == LEFT) {
+                setAnimation(_avatarType + FINAL_SQUISH_LEFT);
+            } else {
+                setAnimation(_avatarType + FINAL_SQUISH_RIGHT);
+            }
         } else {
-            // TODO: this is where we have some nice kid being squashed animation.
+            if (_facing == LEFT) {
+                setAnimation(_avatarType + SQUISH_LEFT);
+            } else {
+                setAnimation(_avatarType + SQUISH_RIGHT);
+            }
             _respawnTicks = AUTO_RESPAWN_TICKS;
         }
         trace("Oh nos, " + _playerName + " died. " + _lives + " lives left.");
@@ -89,6 +127,7 @@ public class Kid extends Sprite
             // Only move if we're not dead.
             var deltaX :int = _speed * _moveX;
             var deltaY :int = _speed * _moveY;
+            
             if (0 <= x + deltaX && x + deltaX + _avatar.width <= _boardWidth) {
                 x += deltaX;
             }
@@ -99,8 +138,29 @@ public class Kid extends Sprite
             // If we moved, tell the other players.
             if (_moveX != 0 || _moveY != 0) {
                 _board.setMyKidLocation(x, y);
-                // TODO: stop movement animation and set to static image. Should
-                // get an image that is consistent with _facing.
+                // Set _facing if we moved left or right.
+                if (_moveX != 0) {
+                    _facing = _moveX;
+                }
+                // Update animation if necessary. NB: this is trick to check  
+                // class only works because we're casting the idle _avatars as 
+                // BitmapAssets. 
+                if (_avatar is BitmapAsset) {
+                    if (_facing == LEFT) {
+                        setAnimation(_avatarType + WALK_LEFT);
+                    } else {
+                        setAnimation(_avatarType + WALK_RIGHT);
+                    }
+                }
+            } else {
+                // Set animation to idle if it is currently a MovieClipAsset.
+                if (_avatar is MovieClipAsset) {
+                    if (_facing == LEFT) {
+                        setAnimation(_avatarType + IDLE_LEFT);
+                    } else {
+                        setAnimation(_avatarType + IDLE_RIGHT);
+                    }
+                }
             }
         }
     }
@@ -129,7 +189,6 @@ public class Kid extends Sprite
         default:
             return;
         }
-        // TODO: start animation that is dependent on _facing
     }
     
     /** Stop motion in given direction when the key is released. */
@@ -171,6 +230,70 @@ public class Kid extends Sprite
         return _avatar.height + _nameLabel.height;
     }
     
+    /** Set the kid's avatar animation/image to the given type. */
+    public function setAnimation (animationType :int) :void
+    {
+        if (_avatar != null) {
+            removeChild(_avatar);
+        }
+        // I really hope there is a better way to do this.
+        switch (animationType) {
+        case VAMPIRE_IDLE_RIGHT:
+            _avatar = BitmapAsset(new vampireIdleRightAsset());
+            break;
+        case VAMPIRE_IDLE_LEFT:
+            _avatar = BitmapAsset(new vampireIdleLeftAsset());
+            break;
+        case VAMPIRE_WALK_RIGHT:
+            _avatar = MovieClipAsset(new vampireWalkRightAsset());
+            break;
+        case VAMPIRE_WALK_LEFT:
+            _avatar = MovieClipAsset(new vampireWalkLeftAsset());
+            break;
+        case VAMPIRE_SQUISH_RIGHT:
+            _avatar = MovieClipAsset(new vampireSquishRightAsset());
+            break;
+        case VAMPIRE_SQUISH_LEFT:
+            _avatar = MovieClipAsset(new vampireSquishLeftAsset());
+            break;
+        case VAMPIRE_FINAL_SQUISH_RIGHT:
+            _avatar = MovieClipAsset(new vampireFinalSquishRightAsset());
+            break;
+        case VAMPIRE_FINAL_SQUISH_LEFT:
+            _avatar = MovieClipAsset(new vampireFinalSquishLeftAsset());
+            break;
+        case GHOST_IDLE_RIGHT:
+            _avatar = BitmapAsset(new ghostIdleRightAsset());
+            break;
+        case GHOST_IDLE_LEFT:
+            _avatar = BitmapAsset(new ghostIdleLeftAsset());
+            break;
+        case GHOST_WALK_RIGHT:
+            _avatar = MovieClipAsset(new ghostWalkRightAsset());
+            break;
+        case GHOST_WALK_LEFT:
+            _avatar = MovieClipAsset(new ghostWalkLeftAsset());
+            break;
+        case GHOST_SQUISH_RIGHT:
+            _avatar = MovieClipAsset(new ghostSquishRightAsset());
+            break;
+        case GHOST_SQUISH_LEFT:
+            _avatar = MovieClipAsset(new ghostSquishLeftAsset());
+            break;
+        case GHOST_FINAL_SQUISH_RIGHT:
+            _avatar = MovieClipAsset(new ghostFinalSquishRightAsset());
+            break;
+        case GHOST_FINAL_SQUISH_LEFT:
+            _avatar = MovieClipAsset(new ghostFinalSquishLeftAsset());
+            break;
+        default:
+            return;
+        }
+        // Replace _avatar and tell other players to do the same.
+        addChild(_avatar);
+        _board.setKidAnimation(animationType);
+    }
+    
     /** Respawn at a random sidewalk location. */
     protected function respawn () :void
     {
@@ -178,25 +301,8 @@ public class Kid extends Sprite
         x = _board.getSidewalkX();
         y = _board.getSidewalkY() - (_avatar.height + _nameLabel.height);
         _board.setMyKidLocation(x, y);
-    }
-    
-    /** Set the kid's avatar animation/image to the given type. */
-    protected function setAvatar (avatarType :int) :void
-    {
-        if (_avatar != null) {
-            removeChild(_avatar);
-        }
-        switch (avatarType) {
-        case AVATAR_VAMPIRE:
-            _avatar = MovieClipAsset(new vampireIdleRightAsset());
-            break;
-        case AVATAR_GHOST:
-            _avatar = Bitmap(new ghostAsset());
-            break;
-        default:
-            return;
-        }
-        addChild(_avatar);
+        _facing = RIGHT;
+        setAnimation(_avatarType + IDLE_RIGHT);
     }
     
     /** 
@@ -240,6 +346,9 @@ public class Kid extends Sprite
     /** The current movie clip or bitmap that the kid is using as an avatar. */
     protected var _avatar :DisplayObject;
     
+    /** The type of avatar. Ghost, vampire, etc. */
+    protected var _avatarType :int;
+    
     /** Initial number of lives. */
     protected static const STARTING_LIVES :int = 3;
     
@@ -251,16 +360,12 @@ public class Kid extends Sprite
     
     /** The number of pixels to raise the name above the sprite. */
     protected static const NAME_PADDING :int = 3;
-    
-    /** Image for ghost. */
-    [Embed(source="rsrc/ghost.png")]
-    protected static const ghostAsset :Class;
-    
+        
     /** Vampire animations. */
-    [Embed(source="rsrc/vampire/idle_right.swf")]
+    [Embed(source="rsrc/vampire/idle_right.png")]
     protected static const vampireIdleRightAsset :Class;
     
-    [Embed(source="rsrc/vampire/idle_left.swf")]
+    [Embed(source="rsrc/vampire/idle_left.png")]
     protected static const vampireIdleLeftAsset :Class;
     
     [Embed(source="rsrc/vampire/walk_right.swf")]
@@ -280,6 +385,31 @@ public class Kid extends Sprite
     
     [Embed(source="rsrc/vampire/final_squish_left.swf")]
     protected static const vampireFinalSquishLeftAsset :Class;
+    
+    /** Ghost animations. */
+    [Embed(source="rsrc/ghost/idle_right.png")]
+    protected static const ghostIdleRightAsset :Class;
+    
+    [Embed(source="rsrc/ghost/idle_left.png")]
+    protected static const ghostIdleLeftAsset :Class;
+    
+    [Embed(source="rsrc/ghost/walk_right.swf")]
+    protected static const ghostWalkRightAsset :Class;
+    
+    [Embed(source="rsrc/ghost/walk_left.swf")]
+    protected static const ghostWalkLeftAsset :Class;
+    
+    [Embed(source="rsrc/ghost/squish_right.swf")]
+    protected static const ghostSquishRightAsset :Class;
+    
+    [Embed(source="rsrc/ghost/squish_left.swf")]
+    protected static const ghostSquishLeftAsset :Class;
+    
+    [Embed(source="rsrc/ghost/final_squish_right.swf")]
+    protected static const ghostFinalSquishRightAsset :Class;
+    
+    [Embed(source="rsrc/ghost/final_squish_left.swf")]
+    protected static const ghostFinalSquishLeftAsset :Class;
     
     /** Squishy sound. */
     [Embed(source="rsrc/squish.mp3")]

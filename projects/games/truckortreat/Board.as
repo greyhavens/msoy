@@ -27,12 +27,12 @@ public class Board extends BaseSprite
         var kid :Kid;
         var playerName :String = gameCtrl.getPlayerNames()[_myIndex];
         var startX :int = getSidewalkX();
-        // TODO: need to replace this hard-coded 45 with something reflecting 
-        // the actual height of the kid bitmap.
-        var startY :int = getSidewalkY() - 45;
+        // TODO: The height of both kid bitmaps is 35, but having this be 
+        // hard coded is kind of lame.
+        var startY :int = getSidewalkY() - 35;
         // TODO: we want to let the player choose the image to use rather 
         // than just grabbing one corresponding to his/her index.
-        kid = new Kid(startX, startY, _myIndex, playerName, this);
+        kid = new Kid(startX, startY, _myIndex * 8, playerName, this);
         _kids[_myIndex] = kid;
         addChild(kid);
         _gameCtrl.sendMessage("newkid" + _myIndex, new Array(startX, startY, _myIndex, playerName));
@@ -79,6 +79,12 @@ public class Board extends BaseSprite
     public function setMyKidLocation (newX :int, newY :int) :void
     {
         _gameCtrl.sendMessage("kidmoved" + _myIndex, new Array(newX, newY));
+    }
+    
+    /** Tell other players that our avatar animation has changed. */
+    public function setKidAnimation (newAnimation :int) :void
+    {
+        _gameCtrl.sendMessage("setanim" + _myIndex, newAnimation);
     }
     
     /** Do whatever needs to be done on each clock tick. */
@@ -134,7 +140,7 @@ public class Board extends BaseSprite
         if (name == "tick") {
             doTick();
         } else if (name.indexOf("kidmoved") == 0) {
-            kidIndex = int(event.name.substring(8));
+            kidIndex = int(name.substring(8));
             // Only care if it's not our own kid that moved.
             if (kidIndex != _myIndex) {
                 kid = Kid(_kids[kidIndex]);
@@ -143,7 +149,7 @@ public class Board extends BaseSprite
                 kid.y = coords[1];
             }
         } else if (name.indexOf("newkid") == 0) {
-            kidIndex = int(event.name.substring(6));
+            kidIndex = int(name.substring(6));
             // Again, only add the Kid if it's not ours.
             if (kidIndex != _myIndex) {
                 // TODO: Wow this is horribly ugly. Perhaps we should serialize
@@ -154,6 +160,16 @@ public class Board extends BaseSprite
                 // the background image, though.
                 addChildAt(kid, 1);
                 _kids[kidIndex] = kid;
+            }
+        } else if (name.indexOf("setanim") == 0) {
+            kidIndex = int(name.substring(7));
+            if (kidIndex != _myIndex) {
+                kid = Kid(_kids[kidIndex]);
+                // Need to check this because we might get this message before 
+                // we've created this kid.
+                if (kid != null) {
+                    kid.setAnimation(event.value as int);
+                }
             }
         }
     }
