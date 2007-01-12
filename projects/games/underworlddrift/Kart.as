@@ -53,32 +53,35 @@ public class Kart extends Sprite
 
         // alter camera angle
         if (_movement & (MOVEMENT_RIGHT | MOVEMENT_LEFT)) {
-            _currentAngle = Math.min(MAX_TURN_ANGLE, _currentAngle + TURN_ACCELERATION);
-
-            if (_currentSpeed != 0) {
-                if ((_movement & MOVEMENT_RIGHT) && _currentSpeed > 0 ||
-                    (_movement & MOVEMENT_LEFT) && _currentSpeed < 0) {
-                    _camera.angle += _currentAngle
-                } else if ((_movement & MOVEMENT_LEFT) && _currentSpeed > 0 ||
-                    (_movement & MOVEMENT_RIGHT) && _currentSpeed < 0) {
-                    _camera.angle -= _currentAngle
-                }
-            }
-
-            var frame :int = Math.ceil((_currentAngle / MAX_TURN_ANGLE) * FRAMES_PER_TURN) - 1;
             if (_movement & MOVEMENT_RIGHT) {
-                frame += RIGHT_TURN_FRAME_OFFSET;
+                _currentAngle = Math.min(MAX_TURN_ANGLE, _currentAngle + TURN_ACCELERATION);
             } else {
-                frame += LEFT_TURN_FRAME_OFFSET;
-            }
-            if (_kart.currentFrame != frame) {
-                _kart.gotoAndStop(frame);
+                _currentAngle = Math.max(-MAX_TURN_ANGLE, _currentAngle - TURN_ACCELERATION);
             }
         } else {
-            _currentAngle = 0;
-            if (_kart.currentFrame != 1) {
-                _kart.gotoAndStop(1);
+            if (_currentAngle > 0) {
+                _currentAngle = Math.max (0, _currentAngle - TURN_ACCELERATION);
+            } else if (_currentAngle < 0) {
+                _currentAngle = Math.min (0, _currentAngle + TURN_ACCELERATION);
             }
+        }
+        if (_currentSpeed > 0) {
+            _camera.angle += _currentAngle;
+        } else if (_currentSpeed < 0) {
+            _camera.angle -= _currentAngle;
+        }
+        // update turn animation
+        var frame :int = Math.ceil((Math.abs(_currentAngle) / MAX_TURN_ANGLE) * 
+            FRAMES_PER_TURN) - 1;
+        if (_currentAngle > 0) {
+            frame += RIGHT_TURN_FRAME_OFFSET;
+        } else if (_currentAngle < 0) {
+            frame += LEFT_TURN_FRAME_OFFSET;
+        } else {
+            frame = 1;
+        }
+        if (_kart.currentFrame != frame) {
+            _kart.gotoAndStop(frame);
         }
 
         // alter camera location
@@ -158,7 +161,7 @@ public class Kart extends Sprite
     protected static const ACCELERATION_BRAKE :Number = 1.5;
     protected static const ACCELERATION_COAST :Number = 0.5;
     protected static const MAX_TURN_ANGLE :Number = 0.0524; // 3 degrees
-    protected static const TURN_ACCELERATION :Number = 0.01;
+    protected static const TURN_ACCELERATION :Number = 0.015;
 
     /** flags for the _movement bit flag variable */
     protected static const MOVEMENT_FORWARD :int = 0x01;
