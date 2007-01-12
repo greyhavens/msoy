@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
@@ -48,13 +51,16 @@ import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
+import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.item.web.MediaDesc;
+
 import com.threerings.msoy.chat.client.ChatOverlay;
 // import com.threerings.msoy.chat.client.ChatPopper;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.data.ActorInfo;
+
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -63,8 +69,10 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.SceneAttrsUpdate;
-import com.threerings.msoy.world.data.WorldMemberInfo;
 
+/**
+ * Displays a room or scene in the virtual world.
+ */
 public class RoomView extends AbstractRoomView
     implements ContextMenuProvider, SetListener, ChatDisplay, MessageListener
 {
@@ -72,7 +80,6 @@ public class RoomView extends AbstractRoomView
     {
         super(ctx);
         _ctrl = ctrl;
-
         _overlay = new ChatOverlay(ctx);
     }
 
@@ -84,27 +91,7 @@ public class RoomView extends AbstractRoomView
         return _ctrl;
     }
 
-    override protected function updateComplete (evt :FlexEvent) :void
-    {
-//        ChatPopper.setChatView(this);
-        super.updateComplete(evt);
-    }
-
-    override protected function relayout () :void
-    {
-        super.relayout();
-
-        var sprite :MsoySprite;
-        for each (sprite in _avatars.values()) {
-            locationUpdated(sprite);
-        }
-        for each (sprite in _pendingRemoveAvatars.values()) {
-            locationUpdated(sprite);
-        }
-    }
-
-    override public function setEditing (
-            editing :Boolean, spriteVisitFn :Function) :void
+    override public function setEditing (editing :Boolean, spriteVisitFn :Function) :void
     {
         super.setEditing(editing, spriteVisitFn);
 
@@ -143,12 +130,12 @@ public class RoomView extends AbstractRoomView
     }
 
     /**
-     * A callback from avatar sprites.
+     * A callback from actor sprites.
      */
-    public function moveFinished (avatar :AvatarSprite) :void
+    public function moveFinished (sprite :ActorSprite) :void
     {
-        if (null != _pendingRemoveAvatars.remove(avatar.getOid())) {
-            removeSprite(avatar);
+        if (null != _pendingRemovals.remove(sprite.getOid())) {
+            removeSprite(sprite);
         }
     }
 
@@ -171,8 +158,8 @@ public class RoomView extends AbstractRoomView
 
     public function dimAvatars (setDim :Boolean) :void
     {
-        setActive(_avatars, !setDim);
-        setActive(_pendingRemoveAvatars, !setDim);
+        setActive(_actors, !setDim);
+        setActive(_pendingRemovals, !setDim);
     }
 
     public function dimFurni (setDim :Boolean) :void
@@ -183,11 +170,10 @@ public class RoomView extends AbstractRoomView
     // from ContextMenuProvider
     public function populateContextMenu (menuItems :Array) :void
     {
-        // Holy flying fistfuck, batman, we're trying to get around some
-        // flash madness here. The context menu should pop up with the
-        // lowest-hitting object as the target but for some reason it doesn't.
-        // Currently the lowest target is this RoomView, so we do a service
-        // and check to see if any of our sprites are also ContextMenuProviders.
+        // Holy flying fistfuck, batman, we're trying to get around some flash madness here. The
+        // context menu should pop up with the lowest-hitting object as the target but for some
+        // reason it doesn't.  Currently the lowest target is this RoomView, so we do a service and
+        // check to see if any of our sprites are also ContextMenuProviders.
         var sx :Number = stage.mouseX;
         var sy :Number = stage.mouseY;
         for (var dex :int = numChildren - 1; dex >= 0; dex--) {
@@ -210,14 +196,12 @@ public class RoomView extends AbstractRoomView
     public function processUpdate (update :SceneUpdate) :void
     {
         if (update is ModifyFurniUpdate) {
-            for each (var furni :FurniData in
-                    (update as ModifyFurniUpdate).furniRemoved) {
+            for each (var furni :FurniData in (update as ModifyFurniUpdate).furniRemoved) {
                 removeFurni(furni);
             }
 
         } else if (update is SceneAttrsUpdate) {
-            // re-read our scene and that's it
-            rereadScene();
+            rereadScene(); // re-read our scene and that's it
             return;
 
         } else {
@@ -231,9 +215,9 @@ public class RoomView extends AbstractRoomView
     public function getMyAvatar () :AvatarSprite
     {
         var oid :int = _ctx.getClient().getClientOid();
-        var avatar :AvatarSprite = (_avatars.get(oid) as AvatarSprite);
+        var avatar :AvatarSprite = (_actors.get(oid) as AvatarSprite);
         if (avatar == null) {
-            avatar = (_pendingRemoveAvatars.get(oid) as AvatarSprite);
+            avatar = (_pendingRemovals.get(oid) as AvatarSprite);
         }
         return avatar;
     }
@@ -257,7 +241,7 @@ public class RoomView extends AbstractRoomView
             // scan through the media and see if it was non-interactive
             isNonInteractiveTarget(clickTarget, _furni) /*||
             isNonInteractiveTarget(clickTarget, _portals) ||
-            isNonInteractiveTarget(clickTarget, _avatars)*/;
+            isNonInteractiveTarget(clickTarget, _actors)*/;
     }
 
     // from interface SetListener
@@ -266,7 +250,7 @@ public class RoomView extends AbstractRoomView
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            addBody((event.getEntry() as WorldMemberInfo).getBodyOid());
+            addBody((event.getEntry() as ActorInfo).getBodyOid());
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
             var sceneLoc :SceneLocation = (event.getEntry() as SceneLocation);
@@ -283,7 +267,7 @@ public class RoomView extends AbstractRoomView
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            updateBody(event.getEntry() as WorldMemberInfo);
+            updateBody(event.getEntry() as ActorInfo);
 
         } else if (SpotSceneObject.OCCUPANT_LOCS == name) {
             moveBody((event.getEntry() as SceneLocation).bodyOid);
@@ -299,7 +283,7 @@ public class RoomView extends AbstractRoomView
         var name :String = event.getName();
 
         if (PlaceObject.OCCUPANT_INFO == name) {
-            removeBody((event.getOldEntry() as WorldMemberInfo).getBodyOid());
+            removeBody((event.getOldEntry() as ActorInfo).getBodyOid());
         }
     }
 
@@ -332,7 +316,7 @@ public class RoomView extends AbstractRoomView
             var umsg :UserMessage = (msg as UserMessage);
             var occInfo :OccupantInfo = _roomObj.getOccupantInfo(umsg.speaker);
             if (occInfo != null) {
-                avatar = (_avatars.get(occInfo.bodyOid) as AvatarSprite);
+                avatar = (_actors.get(occInfo.bodyOid) as AvatarSprite);
             }
         }
 
@@ -355,8 +339,8 @@ public class RoomView extends AbstractRoomView
 
         addAllOccupants();
 
-        // and animate ourselves entering the room (everyone already in the
-        // (room will also have seen it)
+        // and animate ourselves entering the room (everyone already in the (room will also have
+        // seen it)
         portalTraversed(getMyCurrentLocation(), true);
     }
 
@@ -407,8 +391,8 @@ public class RoomView extends AbstractRoomView
         super.locationUpdated(sprite);
 
         // if we moved the _centerSprite, possibly update the scroll position
-        if (sprite == _centerSprite && ((sprite != _bkg) ||
-                _scene.getSceneType() != MsoySceneModel.FIXED_IMAGE)) {
+        if (sprite == _centerSprite &&
+            ((sprite != _bkg) || _scene.getSceneType() != MsoySceneModel.FIXED_IMAGE)) {
             scrollView();
         }
     }
@@ -425,6 +409,25 @@ public class RoomView extends AbstractRoomView
         return canScroll;
     }
 
+    override protected function updateComplete (evt :FlexEvent) :void
+    {
+//        ChatPopper.setChatView(this);
+        super.updateComplete(evt);
+    }
+
+    override protected function relayout () :void
+    {
+        super.relayout();
+
+        var sprite :MsoySprite;
+        for each (sprite in _actors.values()) {
+            locationUpdated(sprite);
+        }
+        for each (sprite in _pendingRemovals.values()) {
+            locationUpdated(sprite);
+        }
+    }
+
     protected function scrollView () :void
     {
         if (_centerSprite == null) {
@@ -432,16 +435,13 @@ public class RoomView extends AbstractRoomView
         }
         var rect :Rectangle = scrollRect;
         if (rect == null) {
-            // return if there's nothing to scroll
-            return;
+            return; // return if there's nothing to scroll
         }
 
         var centerX :int = _centerSprite.x + _centerSprite.getLayoutHotSpot().x;
         var bounds :Rectangle = getScrollBounds();
-
         var newX :Number = centerX - rect.width/2;
-        newX = Math.min(bounds.x + bounds.width - rect.width,
-            Math.max(bounds.x, newX));
+        newX = Math.min(bounds.x + bounds.width - rect.width, Math.max(bounds.x, newX));
 
         if (_jumpScroll) {
             rect.x = newX;
@@ -496,72 +496,63 @@ public class RoomView extends AbstractRoomView
 
     protected function addBody (bodyOid :int) :void
     {
-        var occInfo :WorldMemberInfo =
-            (_roomObj.occupantInfo.get(bodyOid) as WorldMemberInfo);
-        var sloc :SceneLocation =
-            (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
+        var occInfo :ActorInfo = (_roomObj.occupantInfo.get(bodyOid) as ActorInfo);
+        var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
 
-        // see if the avatar was already created, pending removal
-        var avatar :AvatarSprite =
-            (_pendingRemoveAvatars.remove(bodyOid) as AvatarSprite);
+        // see if the actor was already created, pending removal
+        var actor :ActorSprite = (_pendingRemovals.remove(bodyOid) as ActorSprite);
 
-        if (avatar == null) {
-            avatar = _ctx.getMediaDirector().getAvatar(occInfo);
-            _avatars.put(bodyOid, avatar);
-            addChild(avatar);
-            avatar.setEntering(loc);
+        if (actor == null) {
+            actor = _ctx.getMediaDirector().getActor(occInfo);
+            _actors.put(bodyOid, actor);
+            addChild(actor);
+            actor.setEntering(loc);
 
             // if we ever add ourselves, we follow it
             if (bodyOid == _ctx.getClient().getClientOid()) {
                 setFastCentering(true);
-                setCenterSprite(avatar);
+                setCenterSprite(actor);
             }
 
         } else {
             // place the sprite back into the set of active sprites
-            _avatars.put(bodyOid, avatar);
-            avatar.moveTo(loc, _scene);
+            _actors.put(bodyOid, actor);
+            actor.moveTo(loc, _scene);
         }
 
-        // map the avatar sprite in the entities table
-        _entities.put(occInfo.getAvatarIdent(), avatar);
+        // map the actor sprite in the entities table
+        _entities.put(occInfo.getItemIdent(), actor);
     }
 
     protected function removeBody (bodyOid :int) :void
     {
-        var avatar :AvatarSprite = (_avatars.remove(bodyOid) as AvatarSprite);
-
-        if (avatar != null) {
-            if (avatar.isMoving()) {
-                _pendingRemoveAvatars.put(bodyOid, avatar);
-
+        var actor :ActorSprite = (_actors.remove(bodyOid) as ActorSprite);
+        if (actor != null) {
+            if (actor.isMoving()) {
+                _pendingRemovals.put(bodyOid, actor);
             } else {
-                removeSprite(avatar);
+                removeSprite(actor);
             }
         }
     }
 
     protected function moveBody (bodyOid :int) :void
     {
-        var avatar :AvatarSprite = (_avatars.get(bodyOid) as AvatarSprite);
-        var sloc :SceneLocation =
-            (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
+        var actor :ActorSprite = (_actors.get(bodyOid) as ActorSprite);
+        var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
-
-        avatar.moveTo(loc, _scene);
+        actor.moveTo(loc, _scene);
     }
 
-    protected function updateBody (occInfo :WorldMemberInfo) :void
+    protected function updateBody (occInfo :ActorInfo) :void
     {
-        var avatar :AvatarSprite =
-            (_avatars.get(occInfo.getBodyOid()) as AvatarSprite);
-        if (avatar == null) {
-            Log.getLog(this).warning("No avatar for updated occupantInfo? " +
-                "[occInfo=" + occInfo + "].");
+        var actor :ActorSprite = (_actors.get(occInfo.getBodyOid()) as ActorSprite);
+        if (actor == null) {
+            Log.getLog(this).warning("No actor for updated occupant? [info=" + occInfo + "].");
             return;
         }
-        avatar.setOccupantInfo(_ctx, occInfo);
+        actor.setActorInfo(occInfo);
     }
 
     /**
@@ -595,8 +586,7 @@ public class RoomView extends AbstractRoomView
         while (itr.hasNext()) {
             var portal :Portal = (itr.next() as Portal);
             if (loc.equals(portal.loc)) {
-                var sprite :FurniSprite =
-                    (_furni.get(portal.portalId) as FurniSprite);
+                var sprite :FurniSprite = (_furni.get(portal.portalId) as FurniSprite);
                 sprite.wasTraversed(entering);
                 return;
             }
@@ -607,9 +597,9 @@ public class RoomView extends AbstractRoomView
     {
         super.removeSprite(sprite);
 
-        if (sprite is AvatarSprite) {
-            var avatar :AvatarSprite = (sprite as AvatarSprite);
-            portalTraversed(avatar.loc, false);
+        if (sprite is ActorSprite) {
+            var actor :ActorSprite = (sprite as ActorSprite);
+            portalTraversed(actor.loc, false);
         }
         if (sprite == _centerSprite) {
             _centerSprite = null;
@@ -639,8 +629,8 @@ public class RoomView extends AbstractRoomView
 
     protected function removeAllOccupants () :void
     {
-        removeAll(_avatars);
-        removeAll(_pendingRemoveAvatars);
+        removeAll(_actors);
+        removeAll(_pendingRemovals);
     }
 
     /**
@@ -648,7 +638,7 @@ public class RoomView extends AbstractRoomView
      */
     protected function performAvatarAction (bodyOid :int, action :String) :void
     {
-        var avatar :AvatarSprite = (_avatars.get(bodyOid) as AvatarSprite);
+        var avatar :AvatarSprite = (_actors.get(bodyOid) as AvatarSprite);
         if (avatar != null) {
             avatar.performAvatarAction(action);
         }
@@ -680,8 +670,8 @@ public class RoomView extends AbstractRoomView
     /** Displays chat over the world view. */
     protected var _overlay :ChatOverlay;
 
-    /** A map of bodyOid -> AvatarSprite. */
-    protected var _avatars :HashMap = new HashMap();
+    /** A map of bodyOid -> ActorSprite. */
+    protected var _actors :HashMap = new HashMap();
 
     /** Maps ItemIdent -> MsoySprite for entities (furni, avatars, pets). */
     protected var _entities :HashMap = new HashMap();
@@ -689,9 +679,8 @@ public class RoomView extends AbstractRoomView
     /** The sprite we should center on. */
     protected var _centerSprite :MsoySprite;
 
-    /** A map of bodyOid -> AvatarSprite for those that we'll remove
-     * when they stop moving. */
-    protected var _pendingRemoveAvatars :HashMap = new HashMap();
+    /** A map of bodyOid -> ActorSprite for those that we'll remove when they stop moving. */
+    protected var _pendingRemovals :HashMap = new HashMap();
 
     /** If true, the scrolling should simply jump to the right position. */
     protected var _jumpScroll :Boolean = true;

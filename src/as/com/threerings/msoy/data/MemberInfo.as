@@ -3,19 +3,13 @@
 
 package com.threerings.msoy.data {
 
-import com.threerings.io.ObjectInputStream;
-
-import com.threerings.crowd.data.OccupantInfo;
-
 import com.threerings.msoy.web.data.MemberName;
 
-import com.threerings.msoy.item.web.MediaDesc;
-
-public class MemberInfo extends OccupantInfo
+/**
+ * Extends the default actor occupant info and provides member related functionality.
+ */
+public class MemberInfo extends ActorInfo
 {
-    /** The itemId of this user's avatar, or 0. */
-    public var avatarId :int;
-
     /**
      * Get the member id for this user, or 0 if they're a guest.
      */
@@ -30,14 +24,6 @@ public class MemberInfo extends OccupantInfo
     public function isGuest () :Boolean
     {
         return (MemberName.GUEST_ID == getMemberId());
-    }
-
-    // documentation inherited
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-
-        avatarId = ins.readInt();
     }
 }
 }

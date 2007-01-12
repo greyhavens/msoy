@@ -7,10 +7,13 @@ import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.msoy.item.web.ItemIdent;
+
+import com.threerings.msoy.data.ActorInfo;
+
+import com.threerings.msoy.world.client.ActorSprite;
 import com.threerings.msoy.world.client.AvatarSprite;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
-
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 
@@ -23,17 +26,17 @@ public class MediaDirector extends BasicDirector
     }
 
     /**
-     * Get an avatar sprite for the specified occupant info, caching as appropriate.
+     * Get an actor sprite for the specified occupant info, caching as appropriate.
      */
-    public function getAvatar (occInfo :WorldMemberInfo) :AvatarSprite
+    public function getActor (occInfo :ActorInfo) :ActorSprite
     {
         var isOurs :Boolean = (occInfo.bodyOid == _ctx.getClient().getClientOid());
         if (isOurs && _ourAvatar != null) {
-            _ourAvatar.setOccupantInfo(_mctx, occInfo);
+            _ourAvatar.setActorInfo(occInfo);
             return _ourAvatar;
         }
 
-        var avatar :AvatarSprite = new AvatarSprite(_mctx, occInfo);
+        var avatar :AvatarSprite = new AvatarSprite(occInfo);
         if (isOurs) {
             _ourAvatar = avatar;
         }

@@ -1,40 +1,30 @@
 //
-// $Id
+// $Id$
 
 package com.threerings.msoy.world.data {
 
 import com.threerings.io.ObjectInputStream;
 
-import com.threerings.msoy.data.MemberInfo;
-
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
+import com.threerings.msoy.data.ActorInfo;
+
 /**
- * Contains extra information for a member occupant when they are in the virtual world.
+ * Contains extra information for an occupant when they are in the virtual world.
  */
-public class WorldMemberInfo extends MemberInfo
+public class WorldActorInfo extends ActorInfo
     implements WorldOccupantInfo
 {
-    /** The style of chat bubble to use. */
-    public var chatStyle :int;
-
-    /** The style with which the chat bubble pops up. */
-    public var chatPopStyle :int;
-
     // from interface WorldOccupantInfo
     public function getMedia () :MediaDesc
     {
         return _media;
     }
 
-    // documentation inherited
+    // from ActorInfo
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        chatStyle = ins.readShort();
-        chatPopStyle = ins.readShort();
         _media = (ins.readObject() as MediaDesc);
     }
 

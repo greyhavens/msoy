@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 import mx.binding.utils.BindingUtils;
@@ -62,18 +65,15 @@ public class AvatarViewerComp extends Canvas
 }
 
 import flash.events.MouseEvent;
-
 import flash.geom.Point;
 
 import com.threerings.mx.controls.CommandMenu;
 
-import com.threerings.msoy.world.client.BaseAvatarSprite;
-
-class ViewerAvatarSprite extends BaseAvatarSprite
+class ViewerAvatarSprite extends ActorSprite
 {
     public function ViewerAvatarSprite (url :String)
     {
-        super(null, null);
+        super(null);
         setMedia(url);
 
         // add the event listener, because we don't do it ourselves anymore
@@ -84,13 +84,7 @@ class ViewerAvatarSprite extends BaseAvatarSprite
     public function setMoving (moving :Boolean) :void
     {
         _moving = moving;
-        stanceDidChange();
-    }
-
-    override public function setOrientation (orient :int) :void
-    {
-        super.setOrientation(orient);
-        stanceDidChange();
+        appearanceChanged();
     }
 
     override public function isMoving () :Boolean

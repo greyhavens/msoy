@@ -310,7 +310,7 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Called when a datum in the this sprite's entity's memory changes.
+     * Called when a datum in the this sprite's item's memory changes.
      */
     public function memoryChanged (key :String, value: Object) :void
     {

@@ -233,7 +233,7 @@ public class RoomController extends SceneController
      */
     public function handleAvatarClicked (avatar :AvatarSprite) :void
     {
-        var occInfo :MemberInfo = avatar.getOccupantInfo();
+        var occInfo :MemberInfo = (avatar.getActorInfo() as MemberInfo);
         var us :MemberObject = _mctx.getClientObject();
         var menuItems :Array = [];
         if (occInfo.bodyOid == us.getOid()) {

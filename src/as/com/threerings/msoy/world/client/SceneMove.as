@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 import mx.effects.IEffectInstance;
@@ -33,8 +36,7 @@ public class SceneMove extends TweenEffect
      * Class constructor
      */
     public function SceneMove (
-        target :MsoySprite, scene :MsoyScene, src :MsoyLocation,
-        dest :MsoyLocation)
+        target :MsoySprite, scene :MsoyScene, src :MsoyLocation, dest :MsoyLocation)
     {
         super(target);
         instanceClass = SceneMoveInstance;

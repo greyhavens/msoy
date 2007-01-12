@@ -14,9 +14,6 @@ import com.threerings.msoy.item.web.MediaDesc;
  */
 public class WorldMemberInfo extends MemberInfo
 {
-    /** The media that represents our avatar. */
-    public MediaDesc avatar;
-
     /** The style of chat bubble to use. */
     public short chatStyle;
 
@@ -35,15 +32,23 @@ public class WorldMemberInfo extends MemberInfo
     {
         super(user);
 
-        if (user.avatar != null) {
-            avatar = user.avatar.avatarMedia;
-        } else if (user.isGuest()) {
-            avatar = Avatar.getDefaultGuestAvatarMedia();
-        } else {
-            avatar = Avatar.getDefaultMemberAvatarMedia();
-        }
-
         chatStyle = user.chatStyle;
         chatPopStyle = user.chatPopStyle;
+
+        if (user.avatar != null) {
+            _media = user.avatar.avatarMedia;
+        } else if (user.isGuest()) {
+            _media = Avatar.getDefaultGuestAvatarMedia();
+        } else {
+            _media = Avatar.getDefaultMemberAvatarMedia();
+        }
     }
+
+    // from interface WorldOccupantInfo
+    public MediaDesc getMedia ()
+    {
+        return _media;
+    }
+
+    protected MediaDesc _media;
 }
