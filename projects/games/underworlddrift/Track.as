@@ -8,7 +8,7 @@ import flash.display.DisplayObject;
 import flash.geom.Point;
 import flash.geom.Matrix;
 
-import com.threerings.util.Random;
+import mx.core.MovieClipAsset;
 
 public class Track extends Sprite 
 {
@@ -31,8 +31,9 @@ public class Track extends Sprite
         }
 
         // this will eventually feature a seed distributed to each client
-        _trackGenerator = new Random();
-        _trackIndices[3] = _trackGenerator.nextInt(TRACKS.length);
+        _totalTracks = (new TRACKS() as MovieClipAsset).totalFrames;
+        Log.testing("total tracks: " + _totalTracks);
+        _trackIndices[3] = Math.floor(Math.random() * _totalTracks);
 
         // generate all three tracks, and align them properly
         moveTrackForward();
@@ -55,7 +56,8 @@ public class Track extends Sprite
             }
             _trackIndices[i] = _trackIndices[i+1];
             if (_trackIndices[i] != -1) {
-                _tracks[i] = new TRACKS[_trackIndices[i]];
+                _tracks[i] = new TRACKS();
+                _tracks[i].gotoAndStop(_trackIndices[i]);
                 if (i == 0) {
                     _tracks[i].y = Ground.IMAGE_SIZE;
                 } else if (i == 2) {
@@ -70,7 +72,8 @@ public class Track extends Sprite
             }
         }
         // next track
-        _trackIndices[3] = _trackGenerator.nextInt(TRACKS.length);
+        _trackIndices[3] = Math.floor(Math.random() * _totalTracks);
+        Log.testing("next track: " + _trackIndices[3]);
 
         var xShift :int = 0;
         if (_trackIndices[1] != -1) {
@@ -108,25 +111,19 @@ public class Track extends Sprite
         top.x = bottomPoint.x - topPoint.x;
     }
 
-    [Embed(source='rsrc/track.swf#track1')]
-    protected static const TRACK_1 :Class;
-
-    [Embed(source='rsrc/track.swf#track2')]
-    protected static const TRACK_2 :Class;
-
-    [Embed(source='rsrc/track.swf#track3')]
-    protected static const TRACK_3 :Class;
-
-    protected static const TRACKS :Array = [TRACK_1, TRACK_2, TRACK_3 ];
+    [Embed(source='rsrc/track.swf#track')]
+    protected static const TRACKS :Class;
 
     [Embed(source='rsrc/blue_ground.png')]
     protected static const BACKGROUND_IMAGE :Class;
 
-    /** Track data */
+    /** Track data - keep in vector form for decent scaling */
     protected var _tracks :Array = new Array(3);
+
+    /** indices into the TRACKS array of available tracks */
     protected var _trackIndices :Array = [-1, -1, -1, -1];
 
-    /** Seedable random number generator.  The seed will be distributed to all clients. */
-    protected var _trackGenerator :Random;
+    /** Number of tracks found in the track asset */
+    protected var _totalTracks :int;
 }
 }
