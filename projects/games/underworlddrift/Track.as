@@ -80,6 +80,10 @@ public class Track extends Sprite
                 } else {
                     _tracks[ii].x = _tracks[ii+1].x;
                 }
+                if (ii == 1) {
+                    var translate :Matrix = new Matrix();
+                    translate.translate(Ground.HALF_IMAGE_SIZE, Ground.HALF_IMAGE_SIZE);
+                }
             }
         }
         // next track

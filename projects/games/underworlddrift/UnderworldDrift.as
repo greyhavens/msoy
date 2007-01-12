@@ -39,6 +39,7 @@ public class UnderworldDrift extends Sprite
         _ground = new Ground(camera);
         _ground.y = DISPLAY_HEIGHT / 4;
         addChild(_ground);
+        camera.setGround(_ground);
 
         // create ground and position with some magic numbers
         _kart = new Kart(camera);

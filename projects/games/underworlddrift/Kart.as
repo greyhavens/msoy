@@ -95,26 +95,38 @@ public class Kart extends Sprite
         }
 
         // alter camera location
+        var gasAccel :Number = ACCELERATION_GAS;
+        var coastAccel :Number = ACCELERATION_COAST;
+        var brakeAccel :Number = ACCELERATION_BRAKE;
+        var minSpeed :Number = SPEED_MIN;
+        var maxSpeed :Number = SPEED_MAX;
+        if (_camera.drivingOnGrass()) {
+            gasAccel *= TERRAIN_SPEED_FACTOR;
+            coastAccel *= TERRAIN_SPEED_FACTOR;
+            brakeAccel *= TERRAIN_SPEED_FACTOR;
+            minSpeed *= TERRAIN_SPEED_FACTOR;
+            maxSpeed *= TERRAIN_SPEED_FACTOR;
+        }
         var rotation :Matrix;
         if (_movement & MOVEMENT_FORWARD) {
             if (_currentSpeed >= 0) {
-                _currentSpeed = Math.min(SPEED_MAX, _currentSpeed + ACCELERATION_GAS);
+                _currentSpeed = Math.min(maxSpeed, _currentSpeed + gasAccel);
             } else { 
-                _currentSpeed += ACCELERATION_BRAKE;
+                _currentSpeed += brakeAccel;
             }
         } else if (_movement & MOVEMENT_BACKWARD) {
             if (_currentSpeed <= 0 && !_braking) {
-                _currentSpeed = Math.max(SPEED_MIN, _currentSpeed - ACCELERATION_GAS);
+                _currentSpeed = Math.max(minSpeed, _currentSpeed - gasAccel);
             } else {
-                _currentSpeed = Math.max(0, _currentSpeed - ACCELERATION_BRAKE);
+                _currentSpeed = Math.max(0, _currentSpeed - gasAccel);
             }
         } else {
-            if ((_currentSpeed > ACCELERATION_COAST && _currentSpeed > 0) || 
-                (_currentSpeed < ACCELERATION_COAST && _currentSpeed < 0)) {
+            if ((_currentSpeed > coastAccel && _currentSpeed > 0) || 
+                (_currentSpeed < coastAccel && _currentSpeed < 0)) {
                 if (_currentSpeed > 0) {
-                    _currentSpeed -= ACCELERATION_COAST;
+                    _currentSpeed -= coastAccel;
                 } else {
-                    _currentSpeed += ACCELERATION_COAST;
+                    _currentSpeed += coastAccel;
                 }
             } else {
                 _currentSpeed = 0;
@@ -217,5 +229,8 @@ public class Kart extends Sprite
     /** values to control drifting */
     protected static const DRIFT_X_SPEED_FACTOR :Number = 0.2;
     protected static const DRIFT_Y_SPEED_FACTOR :Number = 0.5;
+
+    /** Factor to cut speed by when driving off-road */
+    protected static const TERRAIN_SPEED_FACTOR :Number = 0.5;
 }
 }
