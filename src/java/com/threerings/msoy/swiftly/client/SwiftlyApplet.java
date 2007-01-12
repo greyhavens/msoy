@@ -19,17 +19,6 @@ public class SwiftlyApplet extends JApplet
     @Override // from JApplet
     public void init()
     {
-        try {
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            // TODO the gtk L&F breaks some bits. Just use the default L&F for now.
-            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (Exception e) {
-            // this should just fall back on a working theme
-        }
-
-        // Save the root content pane
-        _contentPane = getContentPane();
-
         // Load the authentication token and configure the XML-RPC connection
         String authtoken = getParameter("authtoken");
 
@@ -170,6 +159,17 @@ public class SwiftlyApplet extends JApplet
 
     protected void createGUI ()
     {
+        try {
+            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            // TODO the gtk L&F breaks some bits. Just use the default L&F for now.
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            // this should just fall back on a working theme
+        }
+
+        // Save the root content pane
+        _contentPane = getContentPane();
+
         // setup the components
         _editor = new SwiftlyEditor(this);
         _editor.setMinimumSize(new Dimension(400, 0));
