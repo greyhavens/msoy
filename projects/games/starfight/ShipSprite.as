@@ -16,6 +16,10 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 import flash.text.TextFieldAutoSize;
 
+import flash.events.TimerEvent;
+
+import flash.utils.Timer;
+
 import mx.core.MovieClipAsset;
 
 /**
@@ -115,6 +119,7 @@ public class ShipSprite extends Sprite
         addChild(_ship);
 
         setShipType(shipType);
+        setVisible(true);
 
         // Add our name as a textfield
         var nameText :TextField = new TextField();
@@ -210,15 +215,69 @@ public class ShipSprite extends Sprite
      */
     public function hit (shooterId :int) :void
     {
+        // Already dead, don't bother.
+        if (power <= 0.0) {
+            return;
+        }
+
         power -= ((powerups & SHIELDS_MASK) ? HIT_POWER/2 : HIT_POWER);
         if (power <= 0.0) {
             _game.explode(boardX, boardY, _ship.rotation, shooterId, shipType);
-            power = 1.0; //full
-            powerups = 0;
-            var pt :Point = _board.getStartingPos();
-            boardX = pt.x;
-            boardY = pt.y;
-            _ship.rotation = 0;
+
+            // Turn off sound loops.
+            if (_thrusterSound != null) {
+                _thrusterSound.soundTransform = Sounds.OFF;
+                _thrusterSound = null;
+            }
+
+            if (_shieldSound != null) {
+                _shieldSound.soundTransform = Sounds.OFF;
+                _shieldSound = null;
+            }
+
+            _engineSound.soundTransform = Sounds.OFF;
+
+            setVisible(false);
+
+            // After a 5 second interval, reposition & reset.
+            var timer :Timer = new Timer(RESPAWN_DELAY, 1);
+            timer.addEventListener(TimerEvent.TIMER, restart);
+            timer.start();
+        }
+    }
+
+    /**
+     * Positions the ship at a brand new spot after exploding and resets its
+     *  dynamics.
+     */
+    public function restart (event :TimerEvent) :void
+    {
+        power = 1.0; //full
+        powerups = 0;
+        var pt :Point = _board.getStartingPos();
+        boardX = pt.x;
+        boardY = pt.y;
+        xVel = 0;
+        yVel = 0;
+        turnRate = 0;
+        accel = 0;
+        turnAccelRate = 0;
+        _ship.rotation = 0;
+
+        _engineSound.soundTransform = Sounds.ON;
+        setVisible(true);
+    }
+
+    protected function setVisible (visible :Boolean) :void
+    {
+        if (this.visible != visible) {
+            this.visible = visible;
+
+            if (visible) {
+                var sound :Sound = (shipType == Codes.SHIP_1) ?
+                    Sounds.SPAWN : Sounds.SPAWN2;
+                _game.playSoundAt(sound, boardX, boardY);
+            }
         }
     }
 
@@ -298,6 +357,11 @@ public class ShipSprite extends Sprite
      */
     public function keyPressed (event :KeyboardEvent) :void
     {
+        // Can't do squat while dead.
+        if (power <= 0.0) {
+            return;
+        }
+
         if (event.keyCode == KV_LEFT) {
             turnAccelRate = -TURN_ACCEL_RATE;
         } else if (event.keyCode == KV_RIGHT) {
@@ -429,6 +493,11 @@ public class ShipSprite extends Sprite
      */
     public function keyReleased (event :KeyboardEvent) :void
     {
+        // Can't do squat while dead.
+        if (power <= 0.0) {
+            return;
+        }
+
         if (event.keyCode == KV_LEFT) {
             turnAccelRate = Math.max(turnAccelRate, 0);
         } else if (event.keyCode == KV_RIGHT) {
@@ -492,6 +561,7 @@ public class ShipSprite extends Sprite
         powerups = bytes.readInt();
         setShipType(bytes.readInt());
         score = bytes.readInt();
+        setVisible(bytes.readBoolean());
     }
 
     /**
@@ -536,6 +606,7 @@ public class ShipSprite extends Sprite
         powerups = report.powerups;
         setShipType(report.shipType);
         score = report.score;
+        setVisible(report.visible);
     }
 
     /**
@@ -555,6 +626,7 @@ public class ShipSprite extends Sprite
         bytes.writeInt(powerups);
         bytes.writeInt(shipType);
         bytes.writeInt(score);
+        bytes.writeBoolean(visible);
 
         return bytes;
     }
@@ -581,6 +653,7 @@ public class ShipSprite extends Sprite
     protected static const TICKS_PER_SHOT :int = 8;
     protected static const HIT_POWER :Number = 0.25;
     protected static const SPEED_BOOST_FACTOR :Number = 1.5;
+    protected static const RESPAWN_DELAY :int = 3000;
 
     /** Our ship animation. */
     protected var _shipMovie :MovieClipAsset;

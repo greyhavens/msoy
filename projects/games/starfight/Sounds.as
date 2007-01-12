@@ -7,8 +7,8 @@ import mx.core.MovieClipAsset;
 
 /**
  * Contains all the sounds we want to play.
- *  A note on organization - bucking the normal to keep sounds with their associated
- *  embedded sound class.
+ *  A note on organization - bucking the normal to keep sounds with their
+ *  associated embedded sound class.
  */
 public class Sounds {
 
@@ -94,6 +94,17 @@ public class Sounds {
     protected static var powerupSound :Class;
 
     public static const POWERUP :Sound = Sound(new powerupSound());
+
+    // Ship spawning
+    [Embed(source="rsrc/spawn.mp3")]
+    protected static var spawnSound :Class;
+
+    public static const SPAWN :Sound = Sound(new spawnSound());
+
+    [Embed(source="rsrc/spawn2.mp3")]
+    protected static var spawn2Sound :Class;
+
+    public static const SPAWN2 :Sound = Sound(new spawn2Sound());
 
     // Looping sounds - these are movieclips to make the looping work without
     //  hiccups.  This is pretty hacky - we can't control the looping sound

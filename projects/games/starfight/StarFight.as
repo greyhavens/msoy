@@ -216,11 +216,19 @@ public class StarFight extends Sprite
                 var x :int = Math.random() * _board.boardWidth;
                 var y :int = Math.random() * _board.boardHeight;
 
+                var repCt :int = 0;
+
                 while (_board.getObstacleAt(x, y) ||
                     (_board.getPowerupIdx(x+0.5, y+0.5, x+0.5, y+0.5,
                         0.1) != -1)) {
                     x = Math.random() * _board.boardWidth;
                     y = Math.random() * _board.boardHeight;
+
+                    // Safety valve - if we can't find anything after 100
+                    //  tries, bail.
+                    if (repCt++ > 100) {
+                        return;
+                    }
                 }
 
                 _powerups[ii] = new Powerup(1+Math.random()*3, x, y);
