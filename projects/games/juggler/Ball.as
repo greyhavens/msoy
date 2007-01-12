@@ -47,7 +47,7 @@ public class Ball extends Sprite
         
     }
     
-    public function randomizePosition() :void
+    public function randomizePosition () :void
     {
         x = (Math.random() * _space.width()) + _space.left;
         y = (Math.random() * _space.height()) + _space.top
@@ -55,20 +55,20 @@ public class Ball extends Sprite
         dy =  (Math.random() * 16) - 8 * _space.frameRate;
     }    
     
-    public function caughtBy(hand:Hand) :void
+    public function caughtBy (hand:Hand) :void
     {
         _hand = hand;
         _motion = caught;
         _catchFrames = 3;
     }
     
-    public function release() :void
+    public function release () :void
     {
         _hand = null;
         _motion = free;
     }
     
-    public function nextFrame() : void
+    public function nextFrame () : void
     {
         // if the ball is highlighted, check whether it should 
         // be set back to normal
@@ -83,26 +83,26 @@ public class Ball extends Sprite
     }
         
     /** define the motion of a ball when it's caught **/
-    private function caught() :void
+    private function caught () :void
     {
         Juggler.log(_label+" (pre caught) velocity : dx="+dx+", dy="+dy);
         Juggler.log(_label+" x="+x+",y="+y);                
-        var bounds:NormalizedBounds = _hand.getNormalizedBounds(_juggler);
+        var bounds:NormalizedBounds = _hand.normalizedBoundsFor(_juggler);
                 
         if(_catchFrames > 0) 
         {
             _catchFrames -=1;
             
-            var targetX:int = bounds.getX();
-            var targetY:int = bounds.topProjection() - _ballRadius;
+            var targetX:int = bounds.x;
+            var targetY:int = bounds.topProjection - _ballRadius;
             
             x += (targetX - x) / 2
             y += (targetY - y) / 2
         } 
         else
         {
-            x = bounds.getX();
-            y = bounds.topProjection() -_ballRadius;
+            x = bounds.x;
+            y = bounds.topProjection -_ballRadius;
         }
         
         nextX = x
@@ -114,7 +114,7 @@ public class Ball extends Sprite
     }
         
     /** define the motion of the ball when it's free **/
-    private function free() :void
+    private function free () :void
     {
         if (_velocityChanged) 
         {
@@ -154,7 +154,7 @@ public class Ball extends Sprite
         project();      
     }
      
-    private function drop() :void
+    private function drop () :void
     {
         dy = DEATH_BOUNCE;
         y = _space.bottom;  // if you don't do this then gravity forces the ball 
@@ -165,14 +165,14 @@ public class Ball extends Sprite
     }
         
     /** start fading out this ball **/
-    private function startFading() :void
+    private function startFading () :void
     {
         _juggler.deregisterForCollisions(this);
         _fadeFrames = FADE_DURATION;
         _motion = fading;
     }
         
-    private function fading() :void
+    private function fading () :void
     {
         _fadeFrames -= 1;
         free();
@@ -200,42 +200,42 @@ public class Ball extends Sprite
         y = nextY;
     }
         
-    public function leftProjection() :Number
+    public function get leftProjection () :Number
     {
         return nextX - _ballRadius;
     }
     
-    public function rightProjection() :Number
+    public function get rightProjection () :Number
     {
         return nextX + _ballRadius;
     }
     
-    public function topProjection() :Number
+    public function get topProjection () :Number
     {
         return nextY - _ballRadius;
     }
     
-    public function bottomProjection() :Number
+    public function get bottomProjection () :Number
     {
         return nextY + _ballRadius;
     }
     
-    public function getMass() :Number
+    public function get mass() :Number
     {
         return _mass;
     }
     
-    public function getPosition() :Array
+    public function get position () :Array
     {
         return new Array(x, y);
     }
     
-    public function getVelocity() :Array
+    public function get velocity () :Array
     {
         return new Array(dx, dy);
     }
     
-    public function setVelocity(v: Array) :void
+    public function set velocity (v: Array) :void
     {
         dx = v[0];
         dy = v[1];
@@ -249,12 +249,12 @@ public class Ball extends Sprite
         if (other is Ball)
         {        
             var results:Array = _elasticCollision.collide( 
-                this.getPosition(), this.getVelocity(), this.getMass(),
-                other.getPosition(), other.getVelocity(), other.getMass()
+                this.position, this.velocity, this.mass,
+                other.position, other.velocity, this.mass
             );
         
-            this.setVelocity(results[0]);
-            other.setVelocity(results[1]);
+            this.velocity = results[0];
+            other.velocity = results[1];
         }
         else if (other is Hand) 
         {
@@ -262,32 +262,32 @@ public class Ball extends Sprite
         }
     }
         
-    public function setLabel(label:String) :void
+    public function set label (label:String) :void
     {
         _label = label;        
     }
 
-    public function getLabel() :String
+    public function get label () :String
     {
         return _label;
     }
     
-    public function getParent() : DisplayObjectContainer
-    {
-        return parent;
-    }
+//    public function get parent () : DisplayObjectContainer
+//    {
+//        return parent;
+//    }
     
-    public function getX() :int
-    {
-        return x;
-    }
+//    public function get x () :int
+//    {
+//        return x;
+//    }
     
-    public function getY() :int
-    {
-        return y;
-    }
+//    public function get y () :int
+//    {
+//        return y;
+//    }
     
-    public function getNormalizedBounds(target:DisplayObjectContainer) :NormalizedBounds
+    public function normalizedBoundsFor(target:DisplayObjectContainer) :NormalizedBounds
     {
         if (_normalizedBounds==null || _normalizedBounds.target != target) {
             _normalizedBounds = new NormalizedBounds(target, this);

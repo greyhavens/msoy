@@ -2,16 +2,16 @@ package{
 
 import flash.display.DisplayObjectContainer;
 
-public class NormalizedBounds {
+public class NormalizedBounds implements Bounds {
     
     public function NormalizedBounds(targetContainer:DisplayObjectContainer, body:CanCollide) {
         
         target = targetContainer;
         _body = body;
                 
-        if (body.getParent() != targetContainer)
+        if (body.parent != targetContainer)
         {
-            var parent:DisplayObjectContainer = body.getParent();
+            var parent:DisplayObjectContainer = body.parent;
             do {
                 _ancestors.push(parent);
                 parent = parent.parent;
@@ -19,30 +19,30 @@ public class NormalizedBounds {
             while(parent != targetContainer);
         }
         
-        Juggler.log("computed normalized bounds for "+body.getLabel()+" x="+getX()+", y="+getY());
+        Juggler.log("computed normalized bounds for "+body.label+" x="+x+", y="+y);
     }
     
-    public function leftProjection() :Number
+    public function get leftProjection() :Number
      {
-         return _body.leftProjection() + getXoffset();
+         return _body.leftProjection + Xoffset;
      }
 
-     public function rightProjection() :Number
+     public function get rightProjection() :Number
      {
-         return _body.rightProjection() + getXoffset();
+         return _body.rightProjection + Xoffset
      }
 
-     public function topProjection() :Number
+     public function get topProjection() :Number
      {
-         return _body.topProjection() + getYoffset();
+         return _body.topProjection + Yoffset;
      }
 
-     public function bottomProjection() :Number
+     public function get bottomProjection() :Number
      {
-         return _body.bottomProjection() + getYoffset();
+         return _body.bottomProjection + Yoffset;
      }
      
-     private function getXoffset() : int
+     private function get Xoffset() : int
      {
          var x:int = 0;
          for (var i:int = 0; i<_ancestors.length; i++)
@@ -52,7 +52,7 @@ public class NormalizedBounds {
          return x;
      }
      
-     private function getYoffset() : int
+     private function get Yoffset() : int
      {
          var y:int = 0;
          for (var i:int =0; i<_ancestors.length; i++)
@@ -62,14 +62,14 @@ public class NormalizedBounds {
          return y;
      }
      
-     public function getX() :int
+     public function get x() :Number
      {
-         return _body.getX() + getXoffset();
+         return _body.x + Xoffset;
      }
      
-     public function getY() :int
+     public function get y() :Number
      {
-         return _body.getY() + getYoffset();
+         return _body.y + Yoffset;
      }
      
      public var target:DisplayObjectContainer;

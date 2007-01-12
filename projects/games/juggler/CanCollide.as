@@ -2,35 +2,24 @@ package {
 
 import flash.display.DisplayObjectContainer;
     
-public interface CanCollide {
-    function leftProjection() :Number;
-    
-    function rightProjection() :Number;
-    
-    function topProjection() :Number;
-    
-    function bottomProjection() :Number;
-
+public interface CanCollide extends Bounds 
+{
     function highlight() :void;
     
-    function getPosition() :Array;
+    function get position() :Array;
     
-    function getVelocity() :Array;
+    function get velocity() :Array;
     
-    function setVelocity(v:Array) :void;
-    
-    function getMass() :Number;
+    function set velocity(v:Array) :void;
+                    
+    function get mass() :Number;
         
     function collisionWith(other:CanCollide) :void;
     
-    function getLabel() :String;
+    function get label() :String;
 
-    function getX() :int;
+    function normalizedBoundsFor(target:DisplayObjectContainer) :NormalizedBounds;
     
-    function getY() :int;
-
-    function getNormalizedBounds(target:DisplayObjectContainer) :NormalizedBounds;
-    
-    function getParent():DisplayObjectContainer;
+    function get parent() :DisplayObjectContainer;
 }
 }

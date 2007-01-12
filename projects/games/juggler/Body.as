@@ -20,8 +20,8 @@ public class Body extends Sprite
         _hands[LEFT].x = _positions[LEFT][LEFT];
         _hands[RIGHT].x = _positions[RIGHT][RIGHT];   
    
-        _hands[LEFT].setLabel("left hand");
-        _hands[RIGHT].setLabel("right hand");
+        _hands[LEFT].label = "left hand";
+        _hands[RIGHT].label = "right hand";
    
        juggler.addChild(this);
        juggler.registerAsActor(this);
@@ -113,16 +113,10 @@ public class Body extends Sprite
         switch (hand._id)
         {
             case LEFT:
-                ball.setVelocity( new Array(
-                    200 * strength,
-                    -700 * strength
-                ));
+                ball.velocity = new Array(200 * strength, -700 * strength);
                 break;
             case RIGHT:
-                ball.setVelocity( new Array(
-                    -200 * strength,
-                    -700 * strength
-                ));            
+                ball.velocity = new Array(-200 * strength, -700 * strength);            
         }
     }   
 
@@ -130,7 +124,7 @@ public class Body extends Sprite
     {
         var toHand:int = (fromHand._id == LEFT) ? RIGHT : LEFT;
         
-        Juggler.log("throwing from "+fromHand.getLabel()+" to "+_hands[toHand].getLabel());
+        Juggler.log("throwing from "+fromHand.label+" to "+_hands[toHand].label);
         
         var toPosition:int = 
             (Math.abs(fromHand.x-_positions[fromHand._id][LEFT]) < 
@@ -162,7 +156,7 @@ public class Body extends Sprite
         // switch up for down if necessary
         v[1] = v[1] > 0 ? -v[1] : v[1]; 
             
-        ball.setVelocity( v );
+        ball.velocity = v;
         
     }
 

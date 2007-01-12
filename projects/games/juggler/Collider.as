@@ -32,21 +32,21 @@ public class Collider {
         // 2: go each of them in turn looking for possible collisions on the x axis
         for (var i:int = 0; i<_bodies.length; i++) 
         {
-            var iBounds:NormalizedBounds = _bodies[i].getNormalizedBounds(_juggler);
+            var iBounds:NormalizedBounds = _bodies[i].normalizedBoundsFor(_juggler);
             for (var j:int = i+1; j<_bodies.length; j++)
             {
-                var jBounds:NormalizedBounds = _bodies[j].getNormalizedBounds(_juggler);;
-                if (iBounds.rightProjection() > jBounds.leftProjection())
+                var jBounds:NormalizedBounds = _bodies[j].normalizedBoundsFor(_juggler);;
+                if (iBounds.rightProjection > jBounds.leftProjection)
                 {
                     // 3: if we get an overlap on the x axis, check the y axis.
-                    if (iBounds.topProjection() > jBounds.topProjection())
+                    if (iBounds.topProjection > jBounds.topProjection)
                     {
-                        if(iBounds.topProjection() < jBounds.bottomProjection()) 
+                        if(iBounds.topProjection < jBounds.bottomProjection) 
                         {
                             collisions.push(new Array(_bodies[i], _bodies[j]));                            
                         }
                     } 
-                    else if (iBounds.bottomProjection() > jBounds.topProjection()) 
+                    else if (iBounds.bottomProjection > jBounds.topProjection) 
                     {
                         collisions.push(new Array(_bodies[i], _bodies[j]));                        
                     }                    
@@ -73,12 +73,12 @@ public class Collider {
         
     private function dumpProjections(a:CanCollide, index:Number, bodies:Array) :void
     {
-        var body:NormalizedBounds = a.getNormalizedBounds(_juggler);
-        Juggler.log(a.getLabel()+
-            " left:"+body.leftProjection()+
-            " right:"+body.rightProjection()+
-            " top:"+body.topProjection()+
-            " bottom:"+body.bottomProjection());
+        var body:NormalizedBounds = a.normalizedBoundsFor(_juggler);
+        Juggler.log(a.label+
+            " left:"+body.leftProjection+
+            " right:"+body.rightProjection+
+            " top:"+body.topProjection+
+            " bottom:"+body.bottomProjection);
     }
     
     private function handleCollision(pair:Array, index:Number, collisions:Array) :void
@@ -94,10 +94,10 @@ public class Collider {
      */
     private function byLeftProjection(a:CanCollide, b:CanCollide) :int
     {
-        var ab:NormalizedBounds = a.getNormalizedBounds(_juggler);
-        var bb:NormalizedBounds = b.getNormalizedBounds(_juggler);
-        var diff:Number = ab.leftProjection() - bb.leftProjection();
-        return (diff==0) ? 0 : ((ab.leftProjection() < bb.leftProjection()) ? -1 : 1);
+        var ab:NormalizedBounds = a.normalizedBoundsFor(_juggler);
+        var bb:NormalizedBounds = b.normalizedBoundsFor(_juggler);
+        var diff:Number = ab.leftProjection - bb.leftProjection;
+        return (diff==0) ? 0 : ((ab.leftProjection < bb.leftProjection) ? -1 : 1);
     }
     
     private function highlight(pair: Array, index: Number, collisions: Array) :void

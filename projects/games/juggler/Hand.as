@@ -25,13 +25,10 @@ public class Hand extends Sprite
         art.x = -17;
         art.y = -17;
         addChild(art as DisplayObject);
-//        draw();
     }
 
     public function draw() :void
     {
-//        Juggler.log("drawing hand normally");
-//        redraw(NORMAL_COLOR);
     }
 
     private function redraw(color:uint) :void
@@ -123,6 +120,7 @@ public class Hand extends Sprite
         {
             _body.ballisticReleaseVelocity(this, _holding, .65);
         }
+        
         _holding.release();
         _holding = null;
     }
@@ -197,78 +195,77 @@ public class Hand extends Sprite
     public function addBall() :void
     {
         var ball:Ball = _juggler.ballBox.provideBall();
-//        var ball:Ball = new Ball(_juggler, _space);
         _holding = ball;
         _juggler.scoreCard.ballAdded();
         ball.caughtBy(this);
     }
     
-    public function topProjection() :Number 
+    public function get topProjection () :Number 
     {
         return y - (_height/2);
     }
     
-    public function bottomProjection() :Number 
+    public function get bottomProjection () :Number 
     {
         return y + (_height/2);
     }
 
-    public function leftProjection() :Number 
+    public function get leftProjection () :Number 
     {
         return x - (_width/2);
     }
     
-    public function rightProjection() :Number 
+    public function get rightProjection () :Number 
     {
         return x + (_width/2);
     }
 
-    public function getPosition() :Array
+    public function get position () :Array
     {
         return new Array(x, y);
     }
 
-    public function setVelocity(v:Array) :void
+    public function set velocity (v:Array) :void
     {
         Juggler.log("attempt to set velocity of hand to "+v);
     }
 
-    public function getVelocity() :Array
+    public function get velocity () :Array
     {
         return new Array(0, 0);
     }
 
-    public function getMass() :Number
+    public function get mass() :Number
     {
         return _mass;
     }
 
-    public function setLabel(label:String) :void
+    public function set label (label:String) :void
     {
         _label = label;        
     }
 
-    public function getLabel() :String
+    public function get label() :String
     {
         return _label;
     }
 
-    public function getParent():DisplayObjectContainer 
-    {
-        return parent;
-    }
+//    public function get parent ():DisplayObjectContainer 
+//    {
+//        return parent;
+//    }
 
-    public function getX() :int
-    {
-        return x;
-    }
+//    public function getX() :int
+//    {
+//        return x;
+//    }
     
-    public function getY() :int
-    {
-        return y;
-    }
+//    public function getY() :int
+//    {
+//        return y;
+//    }
 
-    public function getNormalizedBounds(target:DisplayObjectContainer) :NormalizedBounds
+    public function normalizedBoundsFor(target:DisplayObjectContainer) :NormalizedBounds
     {
         if (_normalizedBounds==null || _normalizedBounds.target != target) {
             _normalizedBounds = new NormalizedBounds(target, this);

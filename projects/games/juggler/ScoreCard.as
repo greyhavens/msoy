@@ -8,6 +8,13 @@ public class ScoreCard {
         {
             peakSequentialCatches = sequentialCatches;
         }
+     
+        if (sequentialCatches > ballsInPlay && ballsInPlay > mostJuggled)
+        {
+            mostJuggled = ballsInPlay;
+        }
+        
+        score += (ballsInPlay * sequentialCatches);
     }
 
     public function ballAdded() :void
@@ -25,14 +32,16 @@ public class ScoreCard {
         ballsInPlay -= 1;
     }
 
-    private var score:int = 0;
+    public var score:int = 0;
     
-    private var ballsInPlay:int = 0;
+    public var ballsInPlay:int = 0;
     
-    private var peakBallsInPlay:int = 0;
+    public var peakBallsInPlay:int = 0;
     
-    private var sequentialCatches:int = 0;
+    public var sequentialCatches:int = 0;
     
-    private var peakSequentialCatches:int = 0;
+    public var peakSequentialCatches:int = 0;
+    
+    public var mostJuggled:int = 0;
 }
 }
