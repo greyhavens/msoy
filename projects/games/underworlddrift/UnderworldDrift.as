@@ -75,6 +75,10 @@ public class UnderworldDrift extends Sprite
             _kart.turnRight(true);
             break;
 
+        case Keyboard.SPACE:
+            _kart.jump();
+            break;
+
         default:
             // do nothing
         }
