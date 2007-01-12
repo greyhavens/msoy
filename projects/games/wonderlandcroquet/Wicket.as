@@ -44,6 +44,7 @@ public class Wicket extends Sprite
             p.plusEquals(new Vector(x, y));
             particle.position = p;
         }
+        alpha = 0.7;
     }
 
     protected function endAnimation (event :Event) :void

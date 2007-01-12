@@ -91,8 +91,6 @@ public class WonderlandCroquet extends Sprite
 
         APEngine.step();
 
-        trace("TICK");
-
         for each (particle in particles) {
             if (particle is BallParticle) {
                 if (BallParticle(particle).tick()) {
