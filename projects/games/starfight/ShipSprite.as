@@ -177,6 +177,9 @@ public class ShipSprite extends Sprite
             case Obstacle.ASTEROID_2:
                 sound = Sounds.ASTEROID_COLLIDE;
                 break;
+            case Obstacle.JUNK:
+                sound = Sounds.JUNK_COLLIDE;
+                break;
             case Obstacle.WALL:
             default:
                 sound = Sounds.METAL_COLLIDE;

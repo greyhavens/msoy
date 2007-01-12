@@ -16,6 +16,7 @@ public class Obstacle extends Sprite
     /** Constants for types of obstacles. */
     public static const ASTEROID_1 :int = 2;
     public static const ASTEROID_2 :int = 3;
+    public static const JUNK :int = 4;
     public static const WALL :int = 6;
 
     public static const LEFT :int = 0;

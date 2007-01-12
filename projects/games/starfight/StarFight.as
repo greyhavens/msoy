@@ -395,6 +395,9 @@ public class StarFight extends Sprite
         case Obstacle.ASTEROID_2:
             sound = Sounds.ASTEROID_HIT;
             break;
+        case Obstacle.JUNK:
+            sound = Sounds.JUNK_HIT;
+            break;
         case Obstacle.WALL:
         default:
             sound = Sounds.METAL_HIT;
