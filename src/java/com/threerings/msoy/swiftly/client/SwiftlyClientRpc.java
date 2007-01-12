@@ -43,27 +43,22 @@ public class SwiftlyClientRpc
         ArrayList<SwiftlyProject> projectList;
         List<Map<String,Object>> result;
 
-        // XXX -- load the files for the project
-        ArrayList<SwiftlyDocument> fileList = new ArrayList<SwiftlyDocument>();
-        fileList.add(new SwiftlyDocument("file #1", "Example text", null)); 
-        fileList.add(new SwiftlyDocument("file #2", "Example text more", null));
-        // XXX
-        
-
         result = _project.getProjects(_authtoken);
         projectList = new ArrayList<SwiftlyProject>();
 
         for (Map<String,Object> struct : result) {
-            SwiftlyProject project = new SwiftlyProject((String)struct.get(SwiftlyProjectRpc.PROJECT_NAME), fileList);
+            SwiftlyProject project = new SwiftlyProject((String)struct.get(SwiftlyProjectRpc.PROJECT_NAME));
             projectList.add(project);
         }
 
         return projectList;
     }
 
-    public void createProject (String projectName)
+    public SwiftlyProject createProject (String projectName)
     {
         _project.createProject(_authtoken, projectName);
+        // XXX dummy up a project
+        return(new SwiftlyProject(projectName));
     }
 
     /** Swiftly XML-RPC Connection. */

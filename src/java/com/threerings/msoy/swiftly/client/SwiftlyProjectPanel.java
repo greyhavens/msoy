@@ -139,10 +139,12 @@ public class SwiftlyProjectPanel extends JPanel
          * gotten.  Otherwise, the changed node and the
          * specified node are the same.
          */
+        /*
         try {
             int index = e.getChildIndices()[0];
             node = (DefaultMutableTreeNode) (node.getChildAt(index));
         } catch (NullPointerException exc) {}
+        */
 
         // grab the new name
         String newName = (String)node.getUserObject();
@@ -214,7 +216,13 @@ public class SwiftlyProjectPanel extends JPanel
 
         FileElement element = (FileElement)node.getUserObject();
         SwiftlyDocument doc = new SwiftlyDocument("", "", element.getParent());
-        _applet.showSelectFileElementNameDialog(doc);
+
+        // prompt the user for the file name
+        String name = _applet.showSelectFileElementNameDialog(FileElement.DOCUMENT);
+        // if the user hit cancel do no more
+        if (name == null) return;
+        doc.setName(name);
+
         addNode(doc);
         if (getSelectedFileElement().getType() == FileElement.DOCUMENT) {
             _applet.getEditor().addEditorTab(doc);
@@ -249,11 +257,21 @@ public class SwiftlyProjectPanel extends JPanel
     protected void addDirectory ()
     {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) _tree.getLastSelectedPathComponent();
-        if (node == null) return;
+        if (node == null) {
+            return;
+        }
 
         FileElement element = (FileElement)node.getUserObject();
         ProjectDirectory dir = new ProjectDirectory("", element.getParent());
-        _applet.showSelectFileElementNameDialog(dir);
+
+        // prompt the user for the directory name
+        String name = _applet.showSelectFileElementNameDialog(FileElement.DIRECTORY);
+        // if the user clicked cancel do no more
+        if (name == null) {
+            return;
+        }
+        dir.setName(name);
+
         addNode(dir);
     }
 

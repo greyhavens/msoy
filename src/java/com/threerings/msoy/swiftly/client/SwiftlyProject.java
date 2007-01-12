@@ -4,18 +4,16 @@ import java.util.ArrayList;
 
 public class SwiftlyProject extends FileElement
 {
-    public SwiftlyProject (String name, ArrayList<SwiftlyDocument> files)
+    public SwiftlyProject (String name)
     {
         // projects are roots and have no parent
         super(name, null);
-        _files = files;
         _type = FileElement.PROJECT;
     }
 
     public ArrayList<SwiftlyDocument> getFiles ()
     {
         return _files;
-
     }
 
     public void setFiles (ArrayList<SwiftlyDocument> files)
@@ -23,5 +21,5 @@ public class SwiftlyProject extends FileElement
         _files = files;
     }
 
-    protected ArrayList<SwiftlyDocument> _files;
+    protected ArrayList<SwiftlyDocument> _files = new ArrayList<SwiftlyDocument>();
 }

@@ -87,20 +87,20 @@ public class SwiftlyApplet extends JApplet
         return new AbstractAction("Create Project") {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
-                createProject();
+                showCreateProjectDialog();
             }
         };
     }
 
     /**
      * Shows a modal, internal frame dialog prompting the user to name a {@link FileElement}
-     * @param element the {@link FileElement} to name
+     * @param the type of {@link FileElement} to name
      * @return true if the user picked a name, false if they clicked cancel
      */
-    public boolean showSelectFileElementNameDialog (FileElement element)
+    public String showSelectFileElementNameDialog (int fileElementType)
     {
         String prompt;
-        switch (element.getType()) {
+        switch (fileElementType) {
         case FileElement.PROJECT:
             prompt = "Enter the project name: ";
             break;
@@ -114,14 +114,7 @@ public class SwiftlyApplet extends JApplet
             prompt = "Enter the name: ";
         }
 
-        String name = JOptionPane.showInternalInputDialog(_contentPane, prompt);
-
-        // do nothing more if the user picks cancel
-        if (name != null) {
-            element.setName(name);
-            return true;
-        }
-        return false;
+        return JOptionPane.showInternalInputDialog(_contentPane, prompt);
     }
 
     public SwiftlyEditor getEditor()
@@ -192,7 +185,7 @@ public class SwiftlyApplet extends JApplet
         // popup the project selection window
         if (_loadedProject == null) {
             if (getProjects().isEmpty()) {
-                createProject();
+                showCreateProjectDialog();
             } else {
                 showProjectSelectionDialog();
             }
@@ -208,14 +201,21 @@ public class SwiftlyApplet extends JApplet
         return _swiftlyRpc.getProjects();
     }
 
-    protected void createProject ()
+    protected void showCreateProjectDialog ()
     {
-        // TODO do some business on the server
-        ArrayList<SwiftlyDocument> emptyFileList = new ArrayList<SwiftlyDocument>();
-        SwiftlyProject project = new SwiftlyProject("", emptyFileList);
-        showSelectFileElementNameDialog(project);
-        _swiftlyRpc.createProject(project.getName());
-        loadProject(project);
+        // prompt the user for the project name
+        String name = showSelectFileElementNameDialog(FileElement.PROJECT);
+        // if the user hit cancel do no more
+        if (name == null) {
+            return;
+        }
+        createProject(name);
+    }
+
+    protected void createProject (String name)
+    {
+        // TODO this needs to be in a try/catch block
+        loadProject(_swiftlyRpc.createProject(name));
     }
 
     protected void loadProject (SwiftlyProject project)
