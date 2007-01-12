@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.export {
 
 import flash.display.DisplayObject;
@@ -5,15 +8,10 @@ import flash.display.DisplayObject;
 import flash.errors.IllegalOperationError;
 
 /**
+ * Defines the mechanism by which avatars interact with the world view.
  */
-public class AvatarControl extends MsoyControl
+public class AvatarControl extends ActorControl
 {
-    /**
-     * A place where you can attach a function that will get called
-     * should the avatar change.
-     */
-    public var avatarChanged :Function;
-
     /**
      * Called once when the avatar speaks.
      */
@@ -40,41 +38,13 @@ public class AvatarControl extends MsoyControl
         _actions[name] = callback;
     }
 
-    /**
-     * Get the current orientation of our avatar.
-     *
-     * @return a value between 0 - 360.
-     */
-    public function getOrientation () :Number
-    {
-        return _orient;
-    }
-
-    /**
-     * Is the avatar currently walking?
-     */
-    public function isWalking () :Boolean
-    {
-        return _isWalking;
-    }
-
     override protected function populateProperties (o :Object) :void
     {
         super.populateProperties(o);
 
-        o["avatarChanged_v1"] = avatarChanged_v1;
         o["avatarSpoke_v1"] = avatarSpoke_v1;
         o["action_v1"] = doAction_v1;
         o["getActions_v1"] = getActions_v1;
-    }
-
-    protected function avatarChanged_v1 (walking :Boolean, orient :Number) :void
-    {
-        _isWalking = walking;
-        _orient = orient;
-        if (avatarChanged != null) {
-            avatarChanged();
-        }
     }
 
     protected function avatarSpoke_v1 () :void
@@ -108,12 +78,6 @@ public class AvatarControl extends MsoyControl
             // cry not
         }
     }
-
-    /** Are we currently walking? */
-    protected var _isWalking :Boolean;
-
-    /** Our current orientation, or 0. */
-    protected var _orient :Number = 0;
 
     /** An associative hash of callback functions, indexed by action name. */
     protected var _actions :Object = new Object();

@@ -9,7 +9,7 @@ import flash.display.DisplayObject;
  * Defines actions, accessors and callbacks available to all in-world mobiles. An mobile is
  * something that has an orientation in the scene and can request to change locations.
  */
-public class MobileControl extends MsoyControl
+public class ActorControl extends MsoyControl
 {
     /**
      * A function that will get called when we start and stop moving and when our orientation
@@ -20,7 +20,7 @@ public class MobileControl extends MsoyControl
     /**
      * Creates a controller for a mobile. The display object is the mobile's visualization.
      */
-    public function MobileControl (disp :DisplayObject)
+    public function ActorControl (disp :DisplayObject)
     {
         super(disp);
     }
