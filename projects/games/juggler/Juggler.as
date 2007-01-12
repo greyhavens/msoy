@@ -12,12 +12,21 @@ import flash.utils.Timer;
 import flash.ui.Keyboard;
 
 import com.threerings.ezgame.EZGameControl;
-    
+import com.threerings.ezgame.MessageReceivedEvent;
+import com.threerings.ezgame.MessageReceivedListener;
+import com.threerings.ezgame.PropertyChangedEvent;
+import com.threerings.ezgame.PropertyChangedListener;
+import com.threerings.ezgame.StateChangedEvent;
+import com.threerings.ezgame.StateChangedListener;
+
 [SWF(width="700", height="500")]
 public class Juggler extends Sprite 
 {
     public function Juggler ()
     {
+        _gameControl = new EZGameControl(this);        
+        addListeners(_gameControl);
+        
         addChild(new backgroundClass());
 
         _space = new Space(0,0, 700,500, 50);                
@@ -30,13 +39,27 @@ public class Juggler extends Sprite
         
         _controller = new JugglingController(_body, this);
         _body.controller = _controller;
-                
+        _controller.eventSource = _gameControl;
+                        
         ballBox = new BallBox(this, _space);        
         
         _display = new ScoreDisplay(this);
 
         scoreCard = new ScoreCard();
         scoreCard.display = _display;
+        
+        startFrameAnimation();
+    }
+
+    private function addListeners(control:EZGameControl) :void
+    {
+        control.addEventListener(MessageReceivedEvent.TYPE, ignore);
+        control.addEventListener(StateChangedEvent.GAME_STARTED, ignore);
+    }
+
+    private function ignore(event:Object) :void
+    {
+        trace("ignoring message: "+event);
     }
 
     public function registerAsActor(actor:Actor) :void
@@ -74,9 +97,7 @@ public class Juggler extends Sprite
     {        
         const frameTimer :Timer = new Timer(_space.frameDuration, 0);
         frameTimer.addEventListener(TimerEvent.TIMER, tick);
-        frameTimer.start();
-        
-        _controller.eventSource = _gameControl;
+        frameTimer.start();        
     }
         
     public function addBall() :void
@@ -88,8 +109,8 @@ public class Juggler extends Sprite
         
     public static const DEBUG_GRAPHICS:Boolean = false;
     
-    private const _gameControl = new EZGameControl(this);
-    
+    private var _gameControl:EZGameControl;
+        
     private var _body :Body;
 
     private var _actors :Array;
