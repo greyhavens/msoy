@@ -452,6 +452,11 @@ public class ShipSprite extends Sprite
             _shieldMovie.x = 55/2;
             _shieldMovie.y = -58/2;
             _shieldMovie.rotation = 90;
+            if (powerups & SHIELDS_MASK) {
+                _shieldMovie.alpha = 1.0;
+            } else {
+                _shieldMovie.alpha = 0.0;
+            }
             _ship.addChild(_shieldMovie);
 
             if (_isOwnShip) {
