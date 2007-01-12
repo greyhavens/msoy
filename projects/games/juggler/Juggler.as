@@ -132,7 +132,7 @@ public class Juggler extends Sprite
     public var scoreCard:ScoreCard; 
      
     [Bindable]
-    [Embed(source="bg_tent.swf")]
+    [Embed(source="rsrc/bg_tent.swf")]
     private var backgroundClass:Class;
    
 } 

@@ -41,15 +41,15 @@ public class BallBox {
     private const balls:Array = new Array();
     
     [Bindable]
-    [Embed(source="ball_red.swf")]
+    [Embed(source="rsrc/ball_red.swf")]
     private var redBall:Class;
     
     [Bindable]
-    [Embed(source="ball_green.swf")]
+    [Embed(source="rsrc/ball_green.swf")]
     private var blueBall:Class;
     
     [Bindable]
-    [Embed(source="ball_blue.swf")]
+    [Embed(source="rsrc/ball_blue.swf")]
     private var greenBall:Class;    
 }
 }

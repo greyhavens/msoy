@@ -185,15 +185,15 @@ public class Body extends Sprite
     private var _addBall:Boolean = false;
 
     [Bindable]
-    [Embed(source="panda_body.swf")]
+    [Embed(source="rsrc/panda_body.swf")]
     private var pandaBody:Class;
 
     [Bindable]
-    [Embed(source="panda_hand_left.swf")]
+    [Embed(source="rsrc/panda_hand_left.swf")]
     private var leftHand:Class;
     
     [Bindable]
-    [Embed(source="panda_hand_right.swf")]
+    [Embed(source="rsrc/panda_hand_right.swf")]
     private var rightHand:Class;
 }
 }
