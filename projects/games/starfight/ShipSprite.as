@@ -8,6 +8,7 @@ import flash.geom.Point;
 
 import flash.utils.ByteArray;
 
+import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
 
@@ -128,6 +129,21 @@ public class ShipSprite extends Sprite
             var bounce :Number = obstacle.getElasticity();
             var dx :Number = endX - startX;
             var dy :Number = endY - startY;
+
+            var sound :Sound;
+            switch (obstacle.type) {
+            case Obstacle.ASTEROID_1:
+            case Obstacle.ASTEROID_2:
+                sound = Sounds.ASTEROID_COLLIDE;
+                break;
+            case Obstacle.WALL:
+            default:
+                sound = Sounds.METAL_COLLIDE;
+                break;
+            }
+            _game.playSoundAt(sound, startX + dx * coll.time,
+                startY + dy * coll.time);
+
             if (coll.isHoriz) {
                 xVel = -xVel * bounce;
                 if (coll.time < 0.1) {
@@ -339,13 +355,12 @@ public class ShipSprite extends Sprite
                 if (_engineSound != null) {
                     _engineSound.soundTransform = Sounds.OFF;
                     _engineSound = null;
-                    Logger.log("MST STOPPING Eng SOUND");
                 }
 
                 // Play the engine sound forever til we stop.
-                if(shipType == Codes.SHIP_1) {
+                if (shipType == Codes.SHIP_1) {
                     _engineSound = Sounds.ENGINE_MOV;
-                    
+
                 } else {
                     _engineSound = Sounds.ENGINE2_MOV;
                 }

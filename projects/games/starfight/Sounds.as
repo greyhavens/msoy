@@ -60,6 +60,29 @@ public class Sounds {
 
     public static const JUNK_HIT :Sound = Sound(new junkHitSound());
 
+    // Collisions
+    [Embed(source="rsrc/collision_junk.mp3")]
+    protected static var junkCollSound :Class;
+
+    public static const JUNK_COLLIDE :Sound = Sound(new junkCollSound());
+
+    [Embed(source="rsrc/collision_asteroid.mp3")]
+    protected static var asteroidCollSound :Class;
+
+    public static const ASTEROID_COLLIDE :Sound =
+        Sound(new asteroidCollSound());
+
+    [Embed(source="rsrc/collision_metal.mp3")]
+    protected static var metalCollSound :Class;
+
+    public static const METAL_COLLIDE :Sound = Sound(new metalCollSound());
+
+    [Embed(source="rsrc/collision_zappy.mp3")]
+    protected static var zappyCollSound :Class;
+
+    public static const ZAPPY_COLLIDE :Sound = Sound(new zappyCollSound());
+
+
     // Ship explosion
     [Embed(source="rsrc/explode.mp3")]
     protected static var explodeSound :Class;

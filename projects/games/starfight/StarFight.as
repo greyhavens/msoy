@@ -377,9 +377,10 @@ public class StarFight extends Sprite
     }
 
     /**
-     * Play a sound appropriately for the position it's at (which might be not at all...)
+     * Play a sound appropriately for the position it's at (which might be not
+     *  at all...)
      */
-    protected function playSoundAt (sound :Sound, x :Number, y :Number) :void
+    public function playSoundAt (sound :Sound, x :Number, y :Number) :void
     {
         var dx :Number = _ownShip.boardX - x;
         var dy :Number = _ownShip.boardY - y;
