@@ -22,28 +22,30 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-public class SwiftlyProjectPanel extends JPanel
+public class ProjectPanel extends JPanel
     implements TreeSelectionListener, TreeModelListener
 {
-    public SwiftlyProjectPanel (SwiftlyApplet applet)
+    public ProjectPanel (SwiftlyEditor editor, SwiftlyProject project)
     {
         super(new BorderLayout());
-        _applet = applet;
+        _editor = editor;
 
         add(_scrollPane, BorderLayout.CENTER);
 
         setupToolbar();
         add(_toolbar, BorderLayout.PAGE_END);
+
+        loadProject(project);
     }
 
-    /** Remove all nodes except the root node. */
+    // Remove all nodes except the root node.
     public void clear ()
     {
         _top.removeAllChildren();
         _treeModel.reload();
     }
 
-    /** Remove the currently selected node. */
+    // Remove the currently selected node.
     public void removeCurrentNode ()
     {
         TreePath currentSelection = _tree.getSelectionPath();
@@ -58,7 +60,7 @@ public class SwiftlyProjectPanel extends JPanel
         } 
     }
 
-    /** Add a file element to the right spot based on the current selected node. */
+    // Add a file element to the right spot based on the current selected node.
     public FileElementTreeNode addNode (FileElement element)
     {
         FileElementTreeNode parentNode = (FileElementTreeNode)getSelectedNode().getParent();
@@ -85,8 +87,6 @@ public class SwiftlyProjectPanel extends JPanel
 
     public void loadProject (SwiftlyProject project)
     {
-        _project = project;
-
         _top = new FileElementTreeNode(project);
         _treeModel = new DefaultTreeModel(_top);
         _treeModel.addTreeModelListener(this);
@@ -123,7 +123,7 @@ public class SwiftlyProjectPanel extends JPanel
         FileElement element = getSelectedFileElement();
 
         if (element.getType() == FileElement.DOCUMENT) {
-            _applet.getEditor().addEditorTab((SwiftlyDocument)element);
+            _editor.addEditorTab((SwiftlyDocument)element);
         }
     }
 
@@ -134,12 +134,8 @@ public class SwiftlyProjectPanel extends JPanel
         FileElementTreeNode node =
             (FileElementTreeNode) e.getTreePath().getLastPathComponent();
 
-        /*
-         * If the event lists children, then the changed
-         * node is the child of the node we've already
-         * gotten.  Otherwise, the changed node and the
-         * specified node are the same.
-         */
+         // If the event lists children, then the changed node is the child of the node we've
+         // already gotten.  Otherwise, the changed node and the specified node are the same.
         try {
             int index = e.getChildIndices()[0];
             node = (FileElementTreeNode) (node.getChildAt(index));
@@ -151,11 +147,11 @@ public class SwiftlyProjectPanel extends JPanel
         // the renamed node has a string user object. set it back to the file element.
         FileElement element = getSelectedFileElement();
         // TODO try/catch block here
-        _applet.renameFileElement(element, newName);
+        // _editor.renameFileElement(element, newName);
         element.setName(newName);
         node.setUserObject(element);
         if (element.getType() == FileElement.DOCUMENT) {
-            _applet.getEditor().updateTabTitleAt((SwiftlyDocument)element);
+            _editor.updateTabTitleAt((SwiftlyDocument)element);
         }
     }
 
@@ -220,14 +216,14 @@ public class SwiftlyProjectPanel extends JPanel
         SwiftlyDocument doc = new SwiftlyDocument("", "", element.getParent());
 
         // prompt the user for the file name
-        String name = _applet.showSelectFileElementNameDialog(FileElement.DOCUMENT);
+        String name = _editor.showSelectFileElementNameDialog(FileElement.DOCUMENT);
         // if the user hit cancel do no more
         if (name == null) return;
         doc.setName(name);
 
         addNode(doc);
         if (getSelectedFileElement().getType() == FileElement.DOCUMENT) {
-            _applet.getEditor().addEditorTab(doc);
+            _editor.addEditorTab(doc);
         }
     }
 
@@ -241,12 +237,12 @@ public class SwiftlyProjectPanel extends JPanel
         FileElement element = (FileElement)node.getUserObject();
 
         // TODO We're probably going to put this in a try/catch block
-        _applet.deleteFileElement(element);
+        // _editor.deleteFileElement(element);
 
         // XXX we know the tab was selected in order for delete to work. This might be dangerous.
         // we also know the tab was open.. hmmm
         if (element.getType() == FileElement.DOCUMENT) {
-            _applet.getEditor().closeCurrentTab();
+            _editor.closeCurrentTab();
         } else if (element.getType() == FileElement.DIRECTORY) {
             // TODO oh god we have to remove all the tabs associated with this directory
             // soo.. every tab that has a common getParent() ?
@@ -267,7 +263,7 @@ public class SwiftlyProjectPanel extends JPanel
         ProjectDirectory dir = new ProjectDirectory("", element.getParent());
 
         // prompt the user for the directory name
-        String name = _applet.showSelectFileElementNameDialog(FileElement.DIRECTORY);
+        String name = _editor.showSelectFileElementNameDialog(FileElement.DIRECTORY);
         // if the user clicked cancel do no more
         if (name == null) {
             return;
@@ -325,8 +321,7 @@ public class SwiftlyProjectPanel extends JPanel
         _selectedFileElement = (FileElement)node.getUserObject();
     }
 
-    protected SwiftlyApplet _applet;
-    protected SwiftlyProject _project;
+    protected SwiftlyEditor _editor;
     protected FileElement _selectedFileElement;
     protected FileElementTreeNode _selectedNode;
     protected FileElementTreeNode _top;

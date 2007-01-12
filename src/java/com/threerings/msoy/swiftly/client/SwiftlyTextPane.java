@@ -72,9 +72,9 @@ public class SwiftlyTextPane extends JTextPane
     public boolean saveDocument ()
     {
         if (hasUnsavedChanges()) {
-            _editor.getApplet().saveFileElement(_document);
+            // _editor.saveFileElement(_document);
             setDocumentChanged(false);
-            _editor.getApplet().setStatus("Saving " + _document);
+            _editor.setStatus("Saving " + _document);
             return true;
         }
         return false;
@@ -272,7 +272,7 @@ public class SwiftlyTextPane extends JTextPane
             try {
                 _undo.undo();
             } catch (CannotUndoException ex) {
-                _editor.getApplet().setStatus("Unable to undo.");
+                _editor.setStatus("Unable to undo.");
             }
             update();
             _redoAction.update();
@@ -309,7 +309,7 @@ public class SwiftlyTextPane extends JTextPane
             try {
                 _undo.redo();
             } catch (CannotRedoException ex) {
-                _editor.getApplet().setStatus("Unable to redo.");
+                _editor.setStatus("Unable to redo.");
             }
             update();
             _undoAction.update();
@@ -349,11 +349,11 @@ public class SwiftlyTextPane extends JTextPane
         }
     }
 
+    protected SwiftlyEditor _editor;
     protected ActionScriptEditorKit _kit;
     protected JPopupMenu _popup;
     protected UndoManager _undo = new UndoManager();
     protected UndoableEditListener _undoHandler = new UndoHandler();
-    protected SwiftlyEditor _editor;
     protected SwiftlyDocument _document;
     protected UndoAction _undoAction = new UndoAction();
     protected RedoAction _redoAction = new RedoAction();
