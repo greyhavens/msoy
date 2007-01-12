@@ -57,17 +57,6 @@ public class SwiftlyApplet extends JApplet
             ee.printStackTrace();
             System.out.println("Foo: " + ee);
         }
-
-        // if we managed to load a project, show the gui, otherwise show an error
-        if (_loadedProject != null) {
-            showComponents(true);
-            // TODO this actually seems to work at random intervals. Fix.
-            _splitPane.setDividerLocation(0.8);
-
-            setStatus("Welcome to Swiftly!");
-        } else {
-            showErrorDialog("No project found to load.");
-        }
     }
 
     public void setStatus (String msg)
@@ -213,6 +202,17 @@ public class SwiftlyApplet extends JApplet
                 // popup the project selection window
                 showProjectSelectionDialog();
             }
+        }
+
+        // if we managed to load a project, show the gui, otherwise show an error
+        if (_loadedProject != null) {
+            showComponents(true);
+            // TODO this actually seems to work at random intervals. Fix.
+            _splitPane.setDividerLocation(0.8);
+
+            setStatus("Welcome to Swiftly!");
+        } else {
+            showErrorDialog("No project found to load.");
         }
     }
 
