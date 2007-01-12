@@ -32,7 +32,6 @@ public class Track extends Sprite
 
         // this will eventually feature a seed distributed to each client
         _totalTracks = (new TRACKS() as MovieClipAsset).totalFrames;
-        Log.testing("total tracks: " + _totalTracks);
         _trackIndices[3] = Math.floor(Math.random() * _totalTracks);
 
         // generate all three tracks
@@ -85,7 +84,6 @@ public class Track extends Sprite
         }
         // next track
         _trackIndices[3] = Math.floor(Math.random() * _totalTracks);
-        Log.testing("next track: " + _trackIndices[3]);
 
         var xShift :int = 0;
         if (_trackIndices[1] != -1) {
@@ -121,7 +119,6 @@ public class Track extends Sprite
         }
         // assume the bottom is or has been moved to 0
         top.x = bottomPoint.x - topPoint.x;
-        Log.testing("bottom: " + bottomPoint.x + ", top: " + topPoint.x);
     }
 
     [Embed(source='rsrc/track.swf#track')]
