@@ -1,5 +1,7 @@
 package {
 
+import flash.display.DisplayObject;
+import flash.display.Sprite;
 import flash.display.Bitmap;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
@@ -7,13 +9,15 @@ import flash.events.KeyboardEvent;
 import flash.ui.Keyboard;
 import flash.media.Sound;
 
+import mx.core.MovieClipAsset;
+
 import com.threerings.ezgame.EZGameControl;
 
-public class Kid extends BaseSprite
+public class Kid extends Sprite
 {   
     /** Images that can be used for kid. */
-    public static const IMAGE_VAMPIRE :int = 0;
-    public static const IMAGE_GHOST :int = 1;
+    public static const AVATAR_VAMPIRE :int = 0;
+    public static const AVATAR_GHOST :int = 1;
     
     /** 
      * Directions kid may be facing or moving. These are only useful for 
@@ -26,15 +30,22 @@ public class Kid extends BaseSprite
     public static const DOWN :int = 1;
     
     /** Create a new Kid object at the coordinates on the board given. */
-    public function Kid (startX :int, startY :int, image :int, playerName :String, board :Board)
+    public function Kid (startX :int, startY :int, avatarType :int, playerName :String, board :Board)
     {
         _board = board;
+        // We need to keep track of what the dimensions of the board at game
+        // start time, because apparently the height at least can change if a 
+        // kid tries to move off of the bottom of the board.
+        _boardHeight = board.height;
+        _boardWidth = board.width;
         _playerName = playerName;
         _speed = DEFAULT_SPEED;
         _lives = STARTING_LIVES;
         _dead = false;
         _facing = RIGHT; // TODO: this actually will probably depend on the image
-        super(startX, startY, getBitmap(image));
+        x = startX;
+        y = startY;
+        setAvatar(avatarType);
         
         // Print player's name above the kid.
         _nameLabel = new TextField();
@@ -44,11 +55,11 @@ public class Kid extends BaseSprite
         _nameLabel.textColor = uint(0x33CC33);
         // Center the label above us.
         _nameLabel.y = -1 * (_nameLabel.textHeight + NAME_PADDING);
-        _nameLabel.x = (width - _nameLabel.textWidth) / 2;
+        _nameLabel.x = (_avatar.width - _nameLabel.textWidth) / 2;
         addChild(_nameLabel);
         
         // Sound for when we get smashed by a road-rage filled driver.
-        _squishSound = Sound(new SQUISH_SOUND());
+        _squishSound = Sound(new squishSoundAsset());
     }
     
     /** Handle being killed. */
@@ -78,15 +89,15 @@ public class Kid extends BaseSprite
             // Only move if we're not dead.
             var deltaX :int = _speed * _moveX;
             var deltaY :int = _speed * _moveY;
-            if (0 <= x + deltaX && x + deltaX + width <= _board.width) {
+            if (0 <= x + deltaX && x + deltaX + _avatar.width <= _boardWidth) {
                 x += deltaX;
             }
-            if (Board.HORIZON - (height - _nameLabel.height) <= y + deltaY && 
-                y + deltaY + (height - _nameLabel.height) <= _board.height) {
+            if (Board.HORIZON - (_avatar.height) <= y + deltaY && 
+                y + deltaY + (_avatar.height) <= _boardHeight) {
                 y += deltaY;
             }
             // If we moved, tell the other players.
-            if (_moveX != 0 && _moveY != 0) {
+            if (_moveX != 0 || _moveY != 0) {
                 _board.setMyKidLocation(x, y);
                 // TODO: stop movement animation and set to static image. Should
                 // get an image that is consistent with _facing.
@@ -149,27 +160,43 @@ public class Kid extends BaseSprite
     {
         _speed = newSpeed;
     }
-        
+    
+    /** 
+     * Return the total height of the kid avatar plus its name label. Note that 
+     * just the height parameter of the kid sprite does not always seem to be
+     * the same as this for some mysterious reason.
+     */
+    public function getHeight () :int
+    {
+        return _avatar.height + _nameLabel.height;
+    }
+    
     /** Respawn at a random sidewalk location. */
     protected function respawn () :void
     {
         _dead = false;
         x = _board.getSidewalkX();
-        y = _board.getSidewalkY() - height;
+        y = _board.getSidewalkY() - (_avatar.height + _nameLabel.height);
         _board.setMyKidLocation(x, y);
     }
     
-    /** Get the bitmap used to draw the kid. */
-    protected function getBitmap (image :int) :Bitmap
+    /** Set the kid's avatar animation/image to the given type. */
+    protected function setAvatar (avatarType :int) :void
     {
-        switch (image) {
-          case IMAGE_VAMPIRE:
-            return Bitmap(new vampireAsset());
-          case IMAGE_GHOST:
-            return Bitmap(new ghostAsset());
-          default:
-            return Bitmap(new vampireAsset());
+        if (_avatar != null) {
+            removeChild(_avatar);
         }
+        switch (avatarType) {
+        case AVATAR_VAMPIRE:
+            _avatar = MovieClipAsset(new vampireIdleRightAsset());
+            break;
+        case AVATAR_GHOST:
+            _avatar = Bitmap(new ghostAsset());
+            break;
+        default:
+            return;
+        }
+        addChild(_avatar);
     }
     
     /** 
@@ -200,11 +227,18 @@ public class Kid extends BaseSprite
     /** The game board. */
     protected var _board :Board;
     
+    /** Dimensions of board. */
+    protected var _boardHeight :int;
+    protected var _boardWidth :int;
+    
     /** Direction kid is facing at the moment. */
     protected var _facing :int;
     
     /** Sound for squishy death. */
     protected var _squishSound :Sound;
+    
+    /** The current movie clip or bitmap that the kid is using as an avatar. */
+    protected var _avatar :DisplayObject;
     
     /** Initial number of lives. */
     protected static const STARTING_LIVES :int = 3;
@@ -218,15 +252,37 @@ public class Kid extends BaseSprite
     /** The number of pixels to raise the name above the sprite. */
     protected static const NAME_PADDING :int = 3;
     
-    /** Images for kid. */
-    [Embed(source="rsrc/vampire.png")]
-    protected static const vampireAsset :Class;
-    
+    /** Image for ghost. */
     [Embed(source="rsrc/ghost.png")]
     protected static const ghostAsset :Class;
     
+    /** Vampire animations. */
+    [Embed(source="rsrc/vampire/idle_right.swf")]
+    protected static const vampireIdleRightAsset :Class;
+    
+    [Embed(source="rsrc/vampire/idle_left.swf")]
+    protected static const vampireIdleLeftAsset :Class;
+    
+    [Embed(source="rsrc/vampire/walk_right.swf")]
+    protected static const vampireWalkRightAsset :Class;
+    
+    [Embed(source="rsrc/vampire/walk_left.swf")]
+    protected static const vampireWalkLeftAsset :Class;
+    
+    [Embed(source="rsrc/vampire/squish_right.swf")]
+    protected static const vampireSquishRightAsset :Class;
+    
+    [Embed(source="rsrc/vampire/squish_left.swf")]
+    protected static const vampireSquishLeftAsset :Class;
+    
+    [Embed(source="rsrc/vampire/final_squish_right.swf")]
+    protected static const vampireFinalSquishRightAsset :Class;
+    
+    [Embed(source="rsrc/vampire/final_squish_left.swf")]
+    protected static const vampireFinalSquishLeftAsset :Class;
+    
     /** Squishy sound. */
     [Embed(source="rsrc/squish.mp3")]
-    protected static const SQUISH_SOUND :Class;
+    protected static const squishSoundAsset :Class;
 }
 }

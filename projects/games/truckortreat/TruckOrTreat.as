@@ -10,7 +10,7 @@ import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.StateChangedEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 
-[SWF(width="834", height="539")]
+[SWF(width="800", height="542")]
 public class TruckOrTreat extends Sprite
 {
     public function TruckOrTreat ()

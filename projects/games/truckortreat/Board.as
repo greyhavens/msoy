@@ -10,11 +10,11 @@ import com.threerings.ezgame.MessageReceivedEvent;
 public class Board extends BaseSprite
 {
     /** The y coordinate of the horizon line. */
-    public static const HORIZON :int = 157;
+    public static const HORIZON :int = 152;
     
     /** X coordinate of left side of each sidewalk. */
-    public static const LEFT_SIDEWALK :int = 180;
-    public static const RIGHT_SIDEWALK :int = 634;
+    public static const LEFT_SIDEWALK :int = 174;
+    public static const RIGHT_SIDEWALK :int = 612;
     
     public function Board (gameCtrl :EZGameControl)
     {
@@ -38,10 +38,10 @@ public class Board extends BaseSprite
         _gameCtrl.sendMessage("newkid" + _myIndex, new Array(startX, startY, _myIndex, playerName));
 
         // TODO non-hard coded car creation.
-        var car :Car = new Car(275, HORIZON + 10, 10, Car.DOWN, this);
+        var car :Car = new Car(280, HORIZON + 10, 10, Car.DOWN, this);
         _cars[0] = car;
         addChild(car);
-        car = new Car(555, height - 60, 5, Car.UP, this);
+        car = new Car(548, height - 60, 5, Car.UP, this);
         _cars[1] = car;
         addChild(car);
         
@@ -100,8 +100,8 @@ public class Board extends BaseSprite
             for each (car in _cars) {
                 // We only need to look for collisions if the kid's feet 
                 // intersect with the bottom half of the car. 
-                if (car.y + car.height > kid.y + kid.height && 
-                    kid.y + kid.height > car.y + car.height/2) {
+                if (car.y + car.height > kid.y + kid.getHeight() && 
+                    kid.y + kid.getHeight() > car.y + car.height/2) {
                     if (kid.hitTestObject(car)) {
                         kid.wasKilled();
                         if (kid.livesLeft() <= 0) {
