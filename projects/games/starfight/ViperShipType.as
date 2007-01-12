@@ -45,16 +45,16 @@ public class ViperShipType extends ShipType
 
     // Animations
     [Embed(source="rsrc/ships/viper/ship.swf#ship_movie_01")]
-    public var SHIP_ANIM :Class;
+    public const SHIP_ANIM :Class;
 
     [Embed(source="rsrc/ships/viper/ship_shield.swf")]
-    public var SHIELD_ANIM :Class;
+    public const SHIELD_ANIM :Class;
 
     [Embed(source="rsrc/ships/viper/ship_explosion_big.swf")]
-    public var EXPLODE_ANIM :Class;
+    public const EXPLODE_ANIM :Class;
 
     [Embed(source="rsrc/ships/viper/beam.swf")]
-    public var SHOT_ANIM :Class;
+    public const SHOT_ANIM :Class;
 
 }
 }
