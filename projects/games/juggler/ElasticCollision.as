@@ -13,36 +13,36 @@ public class ElasticCollision {
         p2:Array, v2: Array, m2: Number) :Array
     {
         // step 1:
-        var n:Array = new Array(p2[0] - p1[0], p2[1] - p1[1]);
-        var un:Array = div(n, abs(n));
-        var ut:Array = new Array(-un[1], un[0]);
+        const n:Array = new Array(p2[0] - p1[0], p2[1] - p1[1]);
+        const un:Array = div(n, abs(n));
+        const ut:Array = new Array(-un[1], un[0]);
         
         // step 2:
         //...already done
         
         // step 3:
-        var v1n:Number = dot(un, v1);
-        var v1t:Number = dot(ut, v1);
-        var v2n:Number = dot(un, v2);
-        var v2t:Number = dot(ut, v2);
+        const v1n:Number = dot(un, v1);
+        const v1t:Number = dot(ut, v1);
+        const v2n:Number = dot(un, v2);
+        const v2t:Number = dot(ut, v2);
         
         // step 4: - not needed -- see substitution in step 6
         //var v1tP:Number = v1t;
         //var v2tP:Number = v2t;
         
         // step 5:
-        var v1nP:Number = ((v1n * (m1 - m2)) + (2 * m2 * v2n)) / (m1 + m2);
-        var v2nP:Number = ((v2n * (m2 - m1)) + (2 * m1 * v1n)) / (m1 + m2);
+        const v1nP:Number = ((v1n * (m1 - m2)) + (2 * m2 * v2n)) / (m1 + m2);
+        const v2nP:Number = ((v2n * (m2 - m1)) + (2 * m1 * v1n)) / (m1 + m2);
         
         // step 6:
-        var v1nP_:Array = mul(v1nP, un);
-        var v1tP_:Array = mul(v1t, ut);
-        var v2nP_:Array = mul(v2nP, un);
-        var v2tP_:Array = mul(v2t, ut);
+        const v1nP_:Array = mul(v1nP, un);
+        const v1tP_:Array = mul(v1t, ut);
+        const v2nP_:Array = mul(v2nP, un);
+        const v2tP_:Array = mul(v2t, ut);
         
         // step 7:
-        var v1P_:Array = add(v1nP_, v1tP_);
-        var v2P_:Array = add(v2nP_, v2tP_);
+        const v1P_:Array = add(v1nP_, v1tP_);
+        const v2P_:Array = add(v2nP_, v2tP_);
         
         return new Array(v1P_, v2P_);
     }

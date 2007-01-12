@@ -32,10 +32,10 @@ public class Collider {
         // 2: go each of them in turn looking for possible collisions on the x axis
         for (var i:int = 0; i<_bodies.length; i++) 
         {
-            var iBounds:NormalizedBounds = _bodies[i].normalizedBoundsFor(_juggler);
+            var iBounds:Bounds = _bodies[i].boundsInContext(_juggler);
             for (var j:int = i+1; j<_bodies.length; j++)
             {
-                var jBounds:NormalizedBounds = _bodies[j].normalizedBoundsFor(_juggler);;
+                var jBounds:Bounds = _bodies[j].boundsInContext(_juggler);;
                 if (iBounds.rightProjection > jBounds.leftProjection)
                 {
                     // 3: if we get an overlap on the x axis, check the y axis.
@@ -58,12 +58,12 @@ public class Collider {
             }
         }
                 
-        if (collisions.length>0)
+        for each (var pair:Array in collisions)
         {
-            collisions.forEach(highlight);
-            //collisions.forEach(dumpPair);
-            collisions.forEach(handleCollision);
-        }     
+            pair[0].highlight();
+            pair[1].highlight();
+            pair[0].collisionWith(pair[1]);
+        }
     }
     
     private function dumpPair(pair:Array, index:Number, collisions:Array) :void
@@ -73,39 +73,25 @@ public class Collider {
         
     private function dumpProjections(a:CanCollide, index:Number, bodies:Array) :void
     {
-        var body:NormalizedBounds = a.normalizedBoundsFor(_juggler);
+        var body:Bounds = a.boundsInContext(_juggler);
         Juggler.log(a.label+
             " left:"+body.leftProjection+
             " right:"+body.rightProjection+
             " top:"+body.topProjection+
             " bottom:"+body.bottomProjection);
     }
-    
-    private function handleCollision(pair:Array, index:Number, collisions:Array) :void
-    {
-        var a:CanCollide = pair[0];
-        var b:CanCollide = pair[1];
-        
-        a.collisionWith(b);
-    }
-        
+            
     /** Sort by left extension (which is basically the center of the x
      * component of velocity - half the width of the object
      */
     private function byLeftProjection(a:CanCollide, b:CanCollide) :int
     {
-        var ab:NormalizedBounds = a.normalizedBoundsFor(_juggler);
-        var bb:NormalizedBounds = b.normalizedBoundsFor(_juggler);
+        var ab:Bounds = a.boundsInContext(_juggler);
+        var bb:Bounds = b.boundsInContext(_juggler);
         var diff:Number = ab.leftProjection - bb.leftProjection;
         return (diff==0) ? 0 : ((ab.leftProjection < bb.leftProjection) ? -1 : 1);
     }
-    
-    private function highlight(pair: Array, index: Number, collisions: Array) :void
-    {
-        pair[0].highlight();
-        pair[1].highlight();
-    }
-            
+        
     public function activeBodies() :int
     {
         return _bodies.length;

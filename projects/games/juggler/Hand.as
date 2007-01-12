@@ -22,24 +22,30 @@ public class Hand extends Sprite
         juggler.registerForCollisions(this);
         
         var art:Object = new artwork();
-        art.x = -17;
-        art.y = -17;
+        art.x = -27;
+        art.y = -23;
         addChild(art as DisplayObject);
+        
+        draw();
     }
 
     public function draw() :void
     {
+        redraw(NORMAL_COLOR);
     }
 
     private function redraw(color:uint) :void
     {
-//        graphics.clear();
-//        graphics.beginFill(color);
-//       var x:int = -_width/2;
-//        var y:int = -_height/2;
-//        graphics.drawRoundRect(x, y, _width, _height, 
-//            CORNER_WIDTH, CORNER_HEIGHT);
-//        graphics.endFill();
+        if (Juggler.DEBUG_GRAPHICS)
+        {
+            graphics.clear();
+            graphics.beginFill(color, 0.8);
+            const x:int = -_width/2;
+            const y:int = -_height/2;
+            graphics.drawRoundRect(x, y, _width, _height, 
+                CORNER_WIDTH, CORNER_HEIGHT);
+            graphics.endFill();
+        }
     }
 
     public function highlight() :void
@@ -115,10 +121,10 @@ public class Hand extends Sprite
         
         if (_releaseStrength > .90)
         {
-            _body.ballisticReleaseVelocity(this, _holding, .75);
+            _body.ballisticReleaseVelocity(this, _holding, .82);
         } else
         {
-            _body.ballisticReleaseVelocity(this, _holding, .65);
+            _body.ballisticReleaseVelocity(this, _holding, .70);
         }
         
         _holding.release();
@@ -250,59 +256,44 @@ public class Hand extends Sprite
         return _label;
     }
 
-//    public function get parent ():DisplayObjectContainer 
-//    {
-//        return parent;
-//    }
-
-//    public function getX() :int
-//    {
-//        return x;
-//    }
-    
-//    public function getY() :int
-//    {
-//        return y;
-//    }
-
-    public function normalizedBoundsFor(target:DisplayObjectContainer) :NormalizedBounds
+    public function boundsInContext(context:DisplayObjectContainer) :Bounds
     {
-        if (_normalizedBounds==null || _normalizedBounds.target != target) {
-            _normalizedBounds = new NormalizedBounds(target, this);
+        if (_boundsInContext==null || _boundsInContext.context != context) {
+            _boundsInContext = new BoundsInContext(context, this);
         } 
         
-        return _normalizedBounds;
+        return _boundsInContext;
     }
 
-    private static var CORNER_WIDTH:int = 20;
+    private static const CORNER_WIDTH:int = 20;
     
-    private static var CORNER_HEIGHT:int = 20;
+    private static const CORNER_HEIGHT:int = 20;
 
-    private static var NORMAL_COLOR:uint = 0x008000;
+    private static const NORMAL_COLOR:uint = 0x008000;
 
-    private static var HIGHLIGHT_COLOR:uint = 0xFF0000;
+    private static const HIGHLIGHT_COLOR:uint = 0xFF0000;
     
-    private static var MAXIMUM_PULLBACK:int = 50;
+    private static const MAXIMUM_PULLBACK:int = 50;
     
-    private static var MOVE_FRAMES:int = 6;
+    private static const MOVE_FRAMES:int = 6;
     
-    private static var THROW_FRAMES:int = 3;
+    private static const THROW_FRAMES:int = 3;
  
-    private static var PULLBACK_RATE:int = 6;
+    private static const PULLBACK_RATE:int = 6;
 
     public static const MAX_SPEED:int = 1100;
 
     public var _holding:Ball;
 
-    private var _normalizedBounds:NormalizedBounds;
+    private var _boundsInContext:BoundsInContext;
 
     private var _highlightFrames:int = 0;
 
-    public var _width:Number = 45;
+    public var _width:Number = 47;
     
     public var _height:Number = 40;
     
-    private var _mass:Number = 3; // metal bat!
+    private const _mass:Number = 3; // metal bat!
     
     private var _space:Space;
     

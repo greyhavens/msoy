@@ -38,12 +38,12 @@ public class Ball extends Sprite
         _highlightFrames = 2;
     }
     
-    private function redraw (color:uint, alpha:Number = 1.0) :void
+    private function redraw (color:uint, alpha:Number = 0.8) :void
     {
-        //graphics.clear();
-        //graphics.beginFill(color, alpha);
-        //graphics.drawCircle(0,0, _ballRadius);
-        //graphics.endFill();
+        graphics.clear();
+        graphics.beginFill(color, alpha);
+        graphics.drawCircle(0,0, _ballRadius);
+        graphics.endFill();
         
     }
     
@@ -87,14 +87,14 @@ public class Ball extends Sprite
     {
         Juggler.log(_label+" (pre caught) velocity : dx="+dx+", dy="+dy);
         Juggler.log(_label+" x="+x+",y="+y);                
-        var bounds:NormalizedBounds = _hand.normalizedBoundsFor(_juggler);
+        const bounds:Bounds = _hand.boundsInContext(_juggler);
                 
         if(_catchFrames > 0) 
         {
             _catchFrames -=1;
             
-            var targetX:int = bounds.x;
-            var targetY:int = bounds.topProjection - _ballRadius;
+            const targetX:int = bounds.x;
+            const targetY:int = bounds.topProjection - _ballRadius;
             
             x += (targetX - x) / 2
             y += (targetY - y) / 2
@@ -176,7 +176,7 @@ public class Ball extends Sprite
     {
         _fadeFrames -= 1;
         free();
-        var alpha:Number = _fadeFrames / FADE_DURATION;
+        const alpha:Number = _fadeFrames / FADE_DURATION;
         redraw(REGULAR_COLOR, alpha * alpha);
         
         if (_fadeFrames <= 0)
@@ -248,7 +248,7 @@ public class Ball extends Sprite
     {
         if (other is Ball)
         {        
-            var results:Array = _elasticCollision.collide( 
+            const results:Array = _elasticCollision.collide( 
                 this.position, this.velocity, this.mass,
                 other.position, other.velocity, this.mass
             );
@@ -271,34 +271,19 @@ public class Ball extends Sprite
     {
         return _label;
     }
-    
-//    public function get parent () : DisplayObjectContainer
-//    {
-//        return parent;
-//    }
-    
-//    public function get x () :int
-//    {
-//        return x;
-//    }
-    
-//    public function get y () :int
-//    {
-//        return y;
-//    }
-    
-    public function normalizedBoundsFor(target:DisplayObjectContainer) :NormalizedBounds
+        
+    public function boundsInContext(context:DisplayObjectContainer) :Bounds
     {
-        if (_normalizedBounds==null || _normalizedBounds.target != target) {
-            _normalizedBounds = new NormalizedBounds(target, this);
+        if (_boundsInContext==null || _boundsInContext.context != context) {
+            _boundsInContext = new BoundsInContext(context, this);
         } 
         
-        return _normalizedBounds;
+        return _boundsInContext;
     }
     
     private static var _elasticCollision :ElasticCollision = new ElasticCollision();
     
-    private var _normalizedBounds:NormalizedBounds;
+    private var _boundsInContext:BoundsInContext;
     
     /** vertical component of velocity **/
     private var dy :Number; // pixels per second
@@ -312,21 +297,21 @@ public class Ball extends Sprite
     /** position at next frame assuming no collision **/
     private var nextY :Number;
             
-    private static var HIGHLIGHT_COLOR :uint = 0xFF0000;
+    private static const HIGHLIGHT_COLOR :uint = 0xFF0000;
     
-    private static var REGULAR_COLOR :uint = 0x000080;
+    private static const REGULAR_COLOR :uint = 0x000080;
     
-    private static var FADE_DURATION:int = 100;
+    private static const FADE_DURATION:int = 100;
         
-    private static var DEATH_BOUNCE:Number = -200;
+    private static const DEATH_BOUNCE:Number = -200;
         
-    private static var _ballRadius :int = 15;
+    private static const _ballRadius :int = 15;
         
-    private static var _elasticity :Number = 0.95;
+    private static const _elasticity :Number = 0.95;
     
     private var _label:String = "a ball";
     
-    private var _mass :Number = 1;
+    private const _mass :Number = 1;
     
     private var _juggler :Juggler;
     

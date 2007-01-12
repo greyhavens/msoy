@@ -6,8 +6,7 @@ public class Space {
         left = l;
         top = t;
         right = r;
-        bottom = b;
-     
+        bottom = b;     
         setFrameRate(rate);                
     }
     
@@ -21,12 +20,17 @@ public class Space {
         return bottom - top;
     }
     
-    private function setFrameRate(rate :Number) :void
+    private function setFrameRate (rate :Number) :void
     {
-        frameRate = rate;
+        _frameRate = rate;
         frameDuration = (1/rate) * 1000;
-        gravityPerFrame = gravity / frameRate;
-        frictionPerFrame = friction / frameRate;
+        gravityPerFrame = gravity / _frameRate;
+        frictionPerFrame = friction / _frameRate;
+    }
+    
+    public function get frameRate () :Number
+    {
+        return _frameRate;
     }
     
     public var left :Number;
@@ -37,15 +41,15 @@ public class Space {
     
     public var bottom: Number;
     
-    public var gravity :Number = 1000; // pixels/sec/sec
+    public const gravity :Number = 1500; // pixels/sec/sec
     
     public var gravityPerFrame :Number;
     
-    private var friction :Number = 0.03; // units/sec/sec  
+    private const friction :Number = 0.03; // units/sec/sec  
     
     public var frictionPerFrame :Number;
     
-    public var frameRate :Number; // fps
+    private var _frameRate :Number; // fps
     
     public var frameDuration :Number; // ms per frame
 }

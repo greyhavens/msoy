@@ -2,24 +2,24 @@ package{
 
 import flash.display.DisplayObjectContainer;
 
-public class NormalizedBounds implements Bounds {
+public class BoundsInContext implements Bounds {
     
-    public function NormalizedBounds(targetContainer:DisplayObjectContainer, body:CanCollide) {
+    public function BoundsInContext(context:DisplayObjectContainer, body:CanCollide) {
         
-        target = targetContainer;
+        _context = context;
         _body = body;
                 
-        if (body.parent != targetContainer)
+        if (body.parent != context)
         {
             var parent:DisplayObjectContainer = body.parent;
             do {
                 _ancestors.push(parent);
                 parent = parent.parent;
             }
-            while(parent != targetContainer);
+            while(parent != context);
         }
         
-        Juggler.log("computed normalized bounds for "+body.label+" x="+x+", y="+y);
+        Juggler.log("computed bounds in context of for "+body.label+" x="+x+", y="+y);
     }
     
     public function get leftProjection() :Number
@@ -72,7 +72,12 @@ public class NormalizedBounds implements Bounds {
          return _body.y + Yoffset;
      }
      
-     public var target:DisplayObjectContainer;
+     public function get context() :DisplayObjectContainer
+     {
+         return _context;
+     }
+     
+     private var _context:DisplayObjectContainer;
      
      private var _body:CanCollide;
 

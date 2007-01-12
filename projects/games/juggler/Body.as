@@ -11,11 +11,12 @@ public class Body extends Sprite
     {
        _juggler = juggler;
        _space = space;
+       
        _hands[LEFT] = new Hand(juggler, space, this, LEFT, leftHand);
        _hands[RIGHT] = new Hand(juggler, space, this, RIGHT, rightHand);
              
-       _positions[LEFT] = new Array(-200, -100);
-       _positions[RIGHT] = new Array(100, 200);
+       _positions[LEFT] = new Array(-180, -100);
+       _positions[RIGHT] = new Array(100, 180);
    
         _hands[LEFT].x = _positions[LEFT][LEFT];
         _hands[RIGHT].x = _positions[RIGHT][RIGHT];   
@@ -100,9 +101,9 @@ public class Body extends Sprite
         switch (id)
         {
             case LEFT:
-                return _juggler.leftDown();
+                return _controller.leftDown();
             case RIGHT:
-                return _juggler.rightDown();
+                return _controller.rightDown();
         }
         
         return false;
@@ -160,6 +161,11 @@ public class Body extends Sprite
         
     }
 
+    public function set controller(controller:JugglingController) :void 
+    {
+        _controller = controller;
+    }
+
     private static const LEFT:int = 0;
 
     private static const RIGHT:int = 1;
@@ -171,6 +177,8 @@ public class Body extends Sprite
     private var _juggler:Juggler;
 
     private var _space:Space;
+    
+    private var _controller:JugglingController;
 
     private var _hands:Array = new Array()
 
