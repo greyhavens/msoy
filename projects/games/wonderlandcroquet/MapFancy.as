@@ -18,6 +18,9 @@ public class MapFancy extends WonderlandMap
         _background = MovieClipAsset(new Background());
 
         background.addChildAt(_background, 0);
+        // Temporarily rip out the terrain stuff; this gets broken depending
+        // on what's on screen or not. I'll have to figure out how to really
+        // do this...
         /*
         _rough = SpriteAsset(new Rough());
         _stone = SpriteAsset(new Stone());
@@ -28,6 +31,9 @@ public class MapFancy extends WonderlandMap
         addWalls(_background.width, _background.height);
     }
 
+// Temporarily rip out the terrain stuff; this gets broken depending
+// on what's on screen or not. I'll have to figure out how to really
+// do this...
 /*
     override protected function isRough (x :Number, y :Number) :Boolean
     {
