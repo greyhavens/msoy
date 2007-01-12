@@ -64,7 +64,7 @@ public class SwiftlyProjectPanel extends JPanel
     {
         // DefaultMutableTreeNode parentNode = null;
         // TreePath parentPath = _tree.getSelectionPath();
-        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)_selectedNode.getParent();
+        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)getSelectedNode().getParent();
 
         if (parentNode == null) {
             parentNode = _top;
@@ -72,7 +72,7 @@ public class SwiftlyProjectPanel extends JPanel
 
         // special case for adding the first document to a directory
         if (getSelectedFileElement().getType() == FileElement.DIRECTORY) {
-            parentNode = _selectedNode;
+            parentNode = getSelectedNode();
         }
 
         DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(element);
@@ -119,7 +119,7 @@ public class SwiftlyProjectPanel extends JPanel
         if (node == null) return;
         enableToolbar();
 
-        _selectedNode = node;
+        setSelectedNode(node);
         FileElement element = getSelectedFileElement();
 
         if (element.getType() == FileElement.DOCUMENT) {
@@ -130,8 +130,9 @@ public class SwiftlyProjectPanel extends JPanel
     // from interface TreeModelListener
     public void treeNodesChanged (TreeModelEvent e)
     {
-        DefaultMutableTreeNode node;
-        node = (DefaultMutableTreeNode) (e.getTreePath().getLastPathComponent());
+        // get the changed node
+        DefaultMutableTreeNode node =
+            (DefaultMutableTreeNode) e.getTreePath().getLastPathComponent();
 
         /*
          * If the event lists children, then the changed
@@ -139,16 +140,15 @@ public class SwiftlyProjectPanel extends JPanel
          * gotten.  Otherwise, the changed node and the
          * specified node are the same.
          */
-        /*
         try {
             int index = e.getChildIndices()[0];
             node = (DefaultMutableTreeNode) (node.getChildAt(index));
         } catch (NullPointerException exc) {}
-        */
 
         // grab the new name
         String newName = (String)node.getUserObject();
 
+        // the renamed node has a string user object. set it back to the file element.
         FileElement element = getSelectedFileElement();
         _applet.renameFileElement(element, newName);
         node.setUserObject(element);
@@ -309,11 +309,23 @@ public class SwiftlyProjectPanel extends JPanel
 
     protected FileElement getSelectedFileElement ()
     {
-        return (FileElement)_selectedNode.getUserObject();
+        return _selectedFileElement;
+    }
+
+    protected DefaultMutableTreeNode getSelectedNode ()
+    {
+        return _selectedNode;
+    }
+
+    protected void setSelectedNode (DefaultMutableTreeNode node)
+    {
+        _selectedNode = node;
+        _selectedFileElement = (FileElement)node.getUserObject();
     }
 
     protected SwiftlyApplet _applet;
     protected SwiftlyProject _project;
+    protected FileElement _selectedFileElement;
     protected DefaultMutableTreeNode _selectedNode;
     protected DefaultMutableTreeNode _top;
     protected DefaultTreeModel _treeModel;
