@@ -68,6 +68,7 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import com.threerings.mx.controls.CommandMenu;
+import com.threerings.msoy.world.client.ActorSprite;
 
 class ViewerAvatarSprite extends ActorSprite
 {
