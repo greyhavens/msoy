@@ -13,6 +13,18 @@ import com.threerings.ezgame.EZGameControl;
 public class WorldGameControl extends EZGameControl
 {
     /**
+     * A function that is called when the game's memory has changed. It should have the following
+     * signature:
+     *
+     * <pre>function (key :String, value :Object) :void</pre>
+     * 
+     * <code>key</code> will be the key that was modified or null if we have just been initialized
+     * and we are being provided with our memory for the first time. <code>value</code> will be the
+     * value associated with that key if key is non-null, or null.
+     */
+    public var memoryChanged :Function;
+    
+    /**
      * A function that will get called when the user enters a room.
      */
     public var enteredRoom :Function;
@@ -36,7 +48,7 @@ public class WorldGameControl extends EZGameControl
      * A function that will get called when an occupant moves to a new location.
      */
     public var occupantMoved :Function; /* (occupant :int) */
-    
+        
     /**
      * Create a world game interface. The display object is your world game.
      */
@@ -45,6 +57,31 @@ public class WorldGameControl extends EZGameControl
         super(disp);
     }
     
+    /**
+     * Returns the value associated with the supplied key in this game's memory. If no value is
+     * mapped in the game's memory, the supplied default value will be returned.
+     *
+     * @return the value for the specified key from this game's memory or the supplied default.
+     */
+    public function lookupMemory (key :String, defval :Object) :Object
+    {
+        var value :Object = callEZCode("lookupMemory_v1", key);
+        return (value == null) ? defval : value;
+    }
+    
+    /**
+     * Requests that this game's memory be updated with the supplied key/value pair. The supplied
+     * value must be a simple object (Integer, Number, String) or an Array of simple objects. The
+     * contents of the game's memory (keys and values) must not exceed 4096 bytes when AMF3 encoded.
+     *
+     * @return true if the memory was updated, false if the memory update could not be completed
+     * due to size restrictions.
+     */
+    public function updateMemory (key :String, value :Object) :Boolean
+    {
+        return callEZCode("updateMemory_v1", key, value);
+    }
+
     /**
      * Returns an array containing identifiers for each player in the game.
      */
@@ -92,6 +129,7 @@ public class WorldGameControl extends EZGameControl
     override protected function populateProperties (o :Object) :void
     {
         super.populateProperties(o);
+        o["memoryChanged_v1"] = memoryChanged_v1;
         o["enteredRoom_v1"] = enteredRoom_v1;
         o["leftRoom_v1"] = leftRoom_v1;
         o["occupantEntered_v1"] = occupantEntered_v1;
@@ -99,6 +137,16 @@ public class WorldGameControl extends EZGameControl
         o["occupantMoved_v1"] = occupantMoved_v1;
     }
 
+    /**
+     * Called when one of this item's memory entries has changed.
+     */
+    protected function memoryChanged_v1 (key :String, value :Object) :void
+    {
+        if (memoryChanged != null) {
+            memoryChanged(key, value);
+        }
+    }
+    
     /**
      * Called when the user enters a room.
      */

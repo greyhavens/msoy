@@ -47,6 +47,19 @@ public class MemoryRepository extends DepotRepository
     }
 
     /**
+     * Stores all supplied memory records.
+     */
+    public void storeMemories (Collection<MemoryRecord> records)
+        throws PersistenceException
+    {
+        // TODO: if one storeMemory() fails, should we catch that error, keep going, then
+        // consolidate the errors and throw a single error?
+        for (MemoryRecord record : records) {
+            storeMemory(record);
+        }
+    }
+    
+    /**
      * Stores a particular memory record in the repository.
      */
     public void storeMemory (MemoryRecord record)

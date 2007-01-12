@@ -63,6 +63,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.RoomObject;
 
 import com.threerings.util.HashMap;
 
@@ -702,9 +703,12 @@ public class MsoySprite extends MediaContainer
     protected function lookupMemory_v1 (key :String) :Object
     {
         if (_ident != null && parent is RoomView) {
-            var mkey :MemoryEntry = new MemoryEntry(_ident, key, null);
-            return EZObjectMarshaller.decode(
-                (parent as RoomView).getRoomObject().memories.get(mkey));
+            var mkey :MemoryEntry = new MemoryEntry(_ident, key, null),
+                roomObj :RoomObject = (parent as RoomView).getRoomObject(),
+                entry :MemoryEntry = roomObj.memories.get(mkey) as MemoryEntry;
+            if (entry != null) {
+                return EZObjectMarshaller.decode(entry.value);
+            }
         }
         return null;
     }

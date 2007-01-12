@@ -5,6 +5,7 @@ package com.threerings.msoy.game.server;
 
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
+import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -49,6 +50,13 @@ public class WorldGameDispatcher extends InvocationDispatcher
             ((WorldGameProvider)provider).leaveWorldGame(
                 source,
                 (InvocationService.InvocationListener)args[0]
+            );
+            return;
+
+        case WorldGameMarshaller.UPDATE_MEMORY:
+            ((WorldGameProvider)provider).updateMemory(
+                source,
+                (MemoryEntry)args[0]
             );
             return;
 

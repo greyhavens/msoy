@@ -3,6 +3,13 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.logging.Level;
+
+import com.samskivert.io.PersistenceException;
+import com.samskivert.util.Invoker;
+
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.ezgame.server.EZGameManager;
@@ -10,8 +17,15 @@ import com.threerings.ezgame.server.EZGameManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.item.web.Item;
+
+import com.threerings.msoy.world.data.MemoryEntry;
+import com.threerings.msoy.world.server.persist.MemoryRecord;
+
 import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.WorldGameObject;
+
+import static com.threerings.msoy.Log.*;
 
 /**
  * Manages an in-world game.
@@ -31,7 +45,7 @@ public class WorldGameManager extends EZGameManager
         MsoyServer.worldGameReg.gameShutdown(this);
         super.shutdown();
     }
-
+    
     /**
      * Returns the persistent game id.
      */
@@ -59,7 +73,37 @@ public class WorldGameManager extends EZGameManager
     protected void didStartup ()
     {
         super.didStartup();
-        ((WorldGameObject)_plobj).config = (WorldGameConfig)_config;
+        
+        WorldGameConfig wgconfig = (WorldGameConfig)_config;
+        ((WorldGameObject)_plobj).config = wgconfig;
+        
+        final int itemId = wgconfig.game.getProgenitorId();
+        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    _mems = MsoyServer.memoryRepo.loadMemory(Item.GAME, itemId);
+                    return true;
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to load memories [where=" + where() +
+                            ", id=" + itemId + "].", pe);
+                    return false;
+                }
+            };
+
+            public void handleResult () {
+                WorldGameObject worldGameObj = (WorldGameObject)_gameObj;
+                worldGameObj.startTransaction();
+                try {
+                    for (MemoryRecord mrec : _mems) {
+                        worldGameObj.addToMemories(mrec.toEntry());
+                    }
+                } finally {
+                    worldGameObj.commitTransaction();
+                }
+            }
+
+            protected Collection<MemoryRecord> _mems;
+        });
     }
     
     @Override // documentation inherited
@@ -84,6 +128,33 @@ public class WorldGameManager extends EZGameManager
         super.bodyLeft(bodyOid);
     }
     
+    @Override // documentation inherited
+    protected void didShutdown ()
+    {
+        super.didShutdown();
+        
+        // flush any modified memory records to the database
+        final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();
+        for (MemoryEntry entry : ((WorldGameObject)_gameObj).memories) {
+            if (entry.modified) {
+                memrecs.add(new MemoryRecord(entry));
+            }
+        }
+        if (memrecs.size() > 0) {
+            MsoyServer.invoker.postUnit(new Invoker.Unit() {
+                public boolean invoke () {
+                    try {
+                        MsoyServer.memoryRepo.storeMemories(memrecs);
+                    } catch (PersistenceException pe) {
+                        log.log(Level.WARNING, "Failed to update memories [where=" + where() +
+                                ", memrecs=" + memrecs + "].", pe);
+                    }
+                    return false;
+                }
+            });
+        }
+    }
+
     /** The id of the world game. */
     protected int _gameId;
 }

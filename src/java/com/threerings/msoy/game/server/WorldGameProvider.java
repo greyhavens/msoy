@@ -4,6 +4,7 @@
 package com.threerings.msoy.game.server;
 
 import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -26,4 +27,9 @@ public interface WorldGameProvider extends InvocationProvider
      */
     public void leaveWorldGame (ClientObject caller, InvocationService.InvocationListener arg1)
         throws InvocationException;
+
+    /**
+     * Handles a {@link WorldGameService#updateMemory} request.
+     */
+    public void updateMemory (ClientObject caller, MemoryEntry arg1);
 }

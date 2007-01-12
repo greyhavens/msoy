@@ -7,6 +7,7 @@ import flash.utils.ByteArray;
 import com.threerings.util.*; // for Float, Integer, etc.
 
 import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -45,6 +46,17 @@ public class WorldGameMarshaller extends InvocationMarshaller
         listener2.listener = arg2;
         sendRequest(arg1, LEAVE_WORLD_GAME, [
             listener2
+        ]);
+    }
+
+    /** The method id used to dispatch {@link #updateMemory} requests. */
+    public static const UPDATE_MEMORY :int = 3;
+
+    // from interface WorldGameService
+    public function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void
+    {
+        sendRequest(arg1, UPDATE_MEMORY, [
+            arg2
         ]);
     }
 }

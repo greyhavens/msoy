@@ -91,7 +91,7 @@ public class MsoyControl
      */
     public function lookupMemory (key :String, defval :Object) :Object
     {
-        var value :Object = callMsoyCode("getMemory_v1", key);
+        var value :Object = callMsoyCode("lookupMemory_v1", key);
         return (value == null) ? defval : value;
     }
 

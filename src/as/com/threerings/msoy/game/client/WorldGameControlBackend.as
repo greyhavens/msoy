@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.utils.ByteArray;
+
 import com.threerings.util.Name;
 
+import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.OidList;
 import com.threerings.presents.dobj.SetAdapter;
@@ -18,9 +21,14 @@ import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.ezgame.client.GameControlBackend;
+import com.threerings.ezgame.util.EZObjectMarshaller;
 
 import com.threerings.msoy.client.MsoyContext;
 
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.ItemIdent;
+
+import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomObject;
 
@@ -35,6 +43,9 @@ public class WorldGameControlBackend extends GameControlBackend
         super(ctx, worldGameObj);
         _mctx = ctx;
         _worldGameObj = worldGameObj;
+        _gameIdent = new ItemIdent(Item.GAME, worldGameObj.config.game.getProgenitorId());
+        
+        _worldGameObj.addListener(_memlist);
         
         _mctx.getLocationDirector().addLocationObserver(this);
         _mctx.getOccupantDirector().addOccupantObserver(this);
@@ -100,6 +111,8 @@ public class WorldGameControlBackend extends GameControlBackend
     {
         super.shutdown();
         
+        _worldGameObj.removeListener(_memlist);
+        
         _mctx.getLocationDirector().removeLocationObserver(this);
         _mctx.getOccupantDirector().removeOccupantObserver(this);
         
@@ -114,11 +127,29 @@ public class WorldGameControlBackend extends GameControlBackend
     {
         super.populateProperties(o);
         
+        o["lookupMemory_v1"] = lookupMemory_v1;
+        o["updateMemory_v1"] = updateMemory_v1;
         o["getPlayerOccupantIds_v1"] = getPlayerOccupantIds_v1;
         o["getMyOccupantId_v1"] = getMyOccupantId_v1;
         o["getRoomOccupantIds_v1"] = getRoomOccupantIds_v1;
         o["getOccupantName_v1"] = getOccupantName_v1;
         o["getOccupantLocation_v1"] = getOccupantLocation_v1;
+    }
+    
+    protected function lookupMemory_v1 (key :String) :Object
+    {
+        var mkey :MemoryEntry = new MemoryEntry(_gameIdent, key),
+            entry :MemoryEntry = _worldGameObj.memories.get(mkey) as MemoryEntry;
+        return (entry == null) ? null : EZObjectMarshaller.decode(entry.value);
+    }
+
+    protected function updateMemory_v1 (key :String, value: Object) :Boolean
+    {
+        var data :ByteArray = (EZObjectMarshaller.encode(value, false) as ByteArray);
+        var wgsvc :WorldGameService =
+            (_ctx.getClient().requireService(WorldGameService) as WorldGameService);
+        wgsvc.updateMemory(_ctx.getClient(), new MemoryEntry(_gameIdent, key, data));
+        return true;
     }
     
     protected function getPlayerOccupantIds_v1 () :Array
@@ -169,15 +200,33 @@ public class WorldGameControlBackend extends GameControlBackend
         return null;
     }
     
+    protected function callMemoryChanged (entry :MemoryEntry) :void
+    {
+        callUserCode("memoryChanged_v1", entry.key, EZObjectMarshaller.decode(entry.value));
+    }
+    
     protected var _mctx :MsoyContext;
     protected var _worldGameObj :WorldGameObject;
+    protected var _gameIdent :ItemIdent;
     protected var _roomObj :RoomObject;
     
     protected var _movelist :SetAdapter = new SetAdapter(null,
         function (event :EntryUpdatedEvent) :void {
-        if (event.getName() == SpotSceneObject.OCCUPANT_LOCS) {
-            callUserCode("occupantMoved_v1", int(event.getEntry().getKey()));
-        }
-    });
+            if (event.getName() == SpotSceneObject.OCCUPANT_LOCS) {
+                callUserCode("occupantMoved_v1", int(event.getEntry().getKey()));
+            }
+        });
+    
+    protected var _memlist :SetAdapter = new SetAdapter(
+        function (event :EntryAddedEvent) :void {
+            if (event.getName() == WorldGameObject.MEMORIES) {
+                callMemoryChanged(event.getEntry() as MemoryEntry);
+            }
+        },
+        function (event :EntryUpdatedEvent) :void {
+            if (event.getName() == WorldGameObject.MEMORIES) {
+                callMemoryChanged(event.getEntry() as MemoryEntry);
+            }
+        });
 }
 }

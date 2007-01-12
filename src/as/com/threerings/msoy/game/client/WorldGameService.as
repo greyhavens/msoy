@@ -5,6 +5,7 @@ package com.threerings.msoy.game.client {
 
 import flash.utils.ByteArray;
 import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
@@ -19,5 +20,8 @@ public interface WorldGameService extends InvocationService
 
     // from Java interface WorldGameService
     function leaveWorldGame (arg1 :Client, arg2 :InvocationService_InvocationListener) :void;
+
+    // from Java interface WorldGameService
+    function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void;
 }
 }

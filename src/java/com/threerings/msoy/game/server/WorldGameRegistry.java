@@ -23,6 +23,8 @@ import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 
+import com.threerings.msoy.world.data.MemoryEntry;
+
 import com.threerings.msoy.game.data.WorldGameConfig;
 import com.threerings.msoy.game.data.WorldGameObject;
 
@@ -146,6 +148,37 @@ public class WorldGameRegistry
             wgobj.removeFromOccupants(memberOid);
         } finally {
             wgobj.commitTransaction();
+        }
+    }
+
+    // from WorldGameProvider
+    public void updateMemory (ClientObject caller, MemoryEntry entry)
+    {
+        // get their game object
+        MemberObject member = (MemberObject)caller;
+        WorldGameObject gameObj = (WorldGameObject)MsoyServer.omgr.getObject(member.inWorldGame);
+        if (gameObj == null) {
+            log.warning("Received memory update request from user not in world game [who=" +
+                member.who() + "].");
+            return;
+        }
+        
+        // make sure the entry refers to the game
+        if (entry.item.type != Item.GAME ||
+            entry.item.itemId != gameObj.config.game.getProgenitorId()) {
+            log.warning("Invalid world game memory [who=" + member.who() + ", game=" +
+                gameObj.which() + ", entry=" + entry + "].");
+            return;
+        }
+        
+        // TODO: verify that the memory does not exceed legal size
+        
+        // mark it as modified and update the game object; we'll save it when we unload the game
+        entry.modified = true;
+        if (gameObj.memories.contains(entry)) {
+            gameObj.updateMemories(entry);
+        } else {
+            gameObj.addToMemories(entry);
         }
     }
     

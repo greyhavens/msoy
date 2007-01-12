@@ -241,7 +241,7 @@ public class RoomManager extends SpotSceneManager
             MsoyServer.invoker.postUnit(new Invoker.Unit() {
                 public boolean invoke () {
                     try {
-                        MsoyServer.memoryRepo.updateMemories(memrecs);
+                        MsoyServer.memoryRepo.storeMemories(memrecs);
                     } catch (PersistenceException pe) {
                         log.log(Level.WARNING, "Failed to update memories [where=" + where() +
                                 ", memrecs=" + memrecs + "].", pe);
