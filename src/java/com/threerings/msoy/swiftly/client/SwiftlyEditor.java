@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -42,6 +43,8 @@ public class SwiftlyEditor extends PlacePanel
 
         setLayout(new VGroupLayout(VGroupLayout.STRETCH, VGroupLayout.STRETCH, 5,
                                    VGroupLayout.TOP));
+        // let's not jam ourselves up against the edges of the window
+        setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // setup the components
         _tabs = new TabbedEditor(this);
@@ -65,11 +68,13 @@ public class SwiftlyEditor extends PlacePanel
             new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH, 5, HGroupLayout.LEFT));
         panel.setPreferredSize(new Dimension(0, 200));
         panel.add(new ChatPanel(_ctx));
-        panel.add(new OccupantList(_ctx), HGroupLayout.FIXED);
+        OccupantList ol;
+        panel.add(ol = new OccupantList(_ctx), HGroupLayout.FIXED);
+        ol.setPreferredSize(new Dimension(100, 0));
         add(panel, VGroupLayout.FIXED);
 
         _splitPane.setDividerLocation(0.8);
-        setStatus("Welcome to Swiftly!");
+        setStatus(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.welcome"));
     }
 
     public void setStatus (String msg)

@@ -511,6 +511,7 @@
          basedir="${deploy.dir}/classes">
       <include name="com/**"/>
       <include name="*.properties"/>
+      <include name="rsrc/**/*.properties"/>
     </jar>
     <!-- and all of our configuration and media in another -->
     <jar file="${deploy.dir}/${app.name}-media.jar"
