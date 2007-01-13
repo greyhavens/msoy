@@ -6,7 +6,7 @@ import flash.display.DisplayObject;
 public class Body extends Sprite
     implements Actor
 {
-    public function Body (juggler:Juggler, space:Space) :void 
+    public function Body (juggler:PlayField, space:Space) :void 
     {
        _juggler = juggler;
        _space = space;
@@ -172,7 +172,7 @@ public class Body extends Sprite
 
     private static var _ballisticTrajectory:BallisticTrajectory = new BallisticTrajectory();
 
-    private var _juggler:Juggler;
+    private var _juggler:PlayField;
 
     private var _space:Space;
     

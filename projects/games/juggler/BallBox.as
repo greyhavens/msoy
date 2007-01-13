@@ -6,7 +6,7 @@ import flash.display.DisplayObject;
 /* An infinite sized box of different colored balls */
 public class BallBox {
     
-    public function BallBox(juggler:Juggler, space:Space) :void
+    public function BallBox(juggler:PlayField, space:Space) :void
     {
         _juggler = juggler;
         _space = space;
@@ -32,7 +32,7 @@ public class BallBox {
         return new Ball(_juggler, _space, art, x, y);
     }
     
-    private var _juggler:Juggler;
+    private var _juggler:PlayField;
     
     private var _space:Space;
     

@@ -5,7 +5,7 @@ import flash.text.TextField;
 
 public class ScoreDisplay {
     
-    public function ScoreDisplay (juggler:Juggler)
+    public function ScoreDisplay (juggler:PlayField)
     {
         const labels:Array = 
             new Array(scoreLabel, ballsInPlayLabel, sequentialCatchesLabel, mostJuggledLabel,

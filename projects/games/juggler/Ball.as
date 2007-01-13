@@ -8,7 +8,7 @@ import Math;
 public class Ball extends Sprite
     implements Actor, CanCollide
 {    
-    public function Ball (juggler :Juggler, space :Space, art:Object, xpos:Number, ypos:Number) 
+    public function Ball (juggler :PlayField, space :Space, art:Object, xpos:Number, ypos:Number) 
     {
 		x = xpos;
 		y = ypos;
@@ -273,7 +273,7 @@ public class Ball extends Sprite
         return _label;
     }
         
-    public function boundsInContext(context:DisplayObjectContainer) :Bounds
+    public function boundsInContext(context:Positioned) :Bounds
     {
         if (_boundsInContext==null || _boundsInContext.context != context) {
             _boundsInContext = new BoundsInContext(context, this);
@@ -314,7 +314,7 @@ public class Ball extends Sprite
     
     private const _mass :Number = 1;
     
-    private var _juggler :Juggler;
+    private var _juggler :PlayField;
     
     private var _space :Space;
     

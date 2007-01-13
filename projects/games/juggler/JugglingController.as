@@ -3,7 +3,7 @@ package
     
 public class JugglingController extends KeyboardController
 {
-    public function JugglingController(body:Body, juggler:Juggler) :void 
+    public function JugglingController(body:Body, juggler:PlayField) :void 
     {
            action[KEY_Q] = body.leftHandLeft;
            action[KEY_W] = body.leftHandRight;

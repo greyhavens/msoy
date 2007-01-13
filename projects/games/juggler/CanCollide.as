@@ -18,7 +18,7 @@ public interface CanCollide extends Bounds
     
     function get label() :String;
 
-    function boundsInContext(context:DisplayObjectContainer) :Bounds;
+    function boundsInContext(context:Positioned) :Bounds;
     
     function get parent() :DisplayObjectContainer;
 }

@@ -4,7 +4,7 @@ import flash.display.DisplayObjectContainer;
 
 public class Collider {
     
-    public function Collider(context:DisplayObjectContainer) 
+    public function Collider(context:Positioned) 
     {
         _context = context;
         _bodies = new Array();
@@ -80,7 +80,7 @@ public class Collider {
         return _bodies.length;
     }
   
-    private var _context: DisplayObjectContainer;
+    private var _context: Positioned;
             
     private var _bodies :Array;    
 }

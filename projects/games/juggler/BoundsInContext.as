@@ -4,7 +4,7 @@ import flash.display.DisplayObjectContainer;
 
 public class BoundsInContext implements Bounds {
     
-    public function BoundsInContext(context:DisplayObjectContainer, body:CanCollide) {
+    public function BoundsInContext(context:Positioned, body:CanCollide) {
         
         _context = context;
         _body = body;
@@ -70,12 +70,12 @@ public class BoundsInContext implements Bounds {
          return _body.y + Yoffset;
      }
      
-     public function get context() :DisplayObjectContainer
+     public function get context() :Positioned
      {
          return _context;
      }
      
-     private var _context:DisplayObjectContainer;
+     private var _context:Positioned;
      
      private var _body:CanCollide;
 

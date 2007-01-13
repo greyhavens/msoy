@@ -9,8 +9,6 @@ public class ScoreCard {
             peakSequentialCatches = sequentialCatches;
         }
      
-        
-     
         if (sequentialCatches > ballsInPlay) 
         {
             currentJuggled = ballsInPlay;
@@ -20,8 +18,7 @@ public class ScoreCard {
                 mostJuggled = currentJuggled;
             }            
         } 
-        
-                        
+                                
         score += catchValue;
 
         updateCatchValue();

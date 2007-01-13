@@ -7,7 +7,7 @@ import flash.display.DisplayObject;
 public class Hand extends Sprite 
     implements Actor, CanCollide
 {
-    public function Hand(juggler:Juggler, space:Space, body:Body, id:int, artwork:Class) :void 
+    public function Hand(juggler:PlayField, space:Space, body:Body, id:int, artwork:Class) :void 
     {
         _id = id;
         _juggler = juggler;
@@ -252,7 +252,7 @@ public class Hand extends Sprite
         return _label;
     }
 
-    public function boundsInContext(context:DisplayObjectContainer) :Bounds
+    public function boundsInContext(context:Positioned) :Bounds
     {
         if (_boundsInContext==null || _boundsInContext.context != context) {
             _boundsInContext = new BoundsInContext(context, this);
@@ -293,7 +293,7 @@ public class Hand extends Sprite
     
     private var _space:Space;
     
-    private var _juggler:Juggler;
+    private var _juggler:PlayField;
 
     private var _body:Body;
     
