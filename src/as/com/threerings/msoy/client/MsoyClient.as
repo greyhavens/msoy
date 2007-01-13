@@ -302,6 +302,7 @@ public class MsoyClient extends Client
         c = WorldGameMarshaller;
         c = LobbyController;
         c = ToyBoxMarshaller;
+        c = SwiftlyMarshaller;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("global")]
