@@ -41,12 +41,12 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.parlor.data.ParlorMarshaller;
 import com.threerings.toybox.data.ToyBoxMarshaller;
 
+import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberMarshaller;
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.MemberInfo;
-import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.web.Document;
@@ -60,7 +60,6 @@ import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 import com.threerings.msoy.game.client.LobbyController;
 
-import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.msoy.swiftly.data.SwiftlyMarshaller;
 
 public class MsoyClient extends Client
