@@ -51,7 +51,7 @@ public class Kart extends Sprite
     {
         if (_jumpFrameCount == 0) {
             _jumpFrameCount = JUMP_DURATION;
-            _camera.height += JUMP_HEIGHT;
+            y -= JUMP_HEIGHT;
         }
     }
 
@@ -153,7 +153,7 @@ public class Kart extends Sprite
         if (_jumpFrameCount > 0) {
             _jumpFrameCount--;
             if (_jumpFrameCount == 0) {
-                _camera.height -= JUMP_HEIGHT;
+                y += JUMP_HEIGHT;
                 if (_movement & (MOVEMENT_RIGHT | MOVEMENT_LEFT)) {
                     keyAction(true, MOVEMENT_DRIFT);
                 }
