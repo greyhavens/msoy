@@ -6,6 +6,7 @@ package com.threerings.msoy.swiftly.data;
 import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
 
@@ -30,8 +31,32 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #buildProject} requests. */
+    public static final int BUILD_PROJECT = 2;
+
+    // from interface ProjectRoomService
+    public void buildProject (Client arg1)
+    {
+        sendRequest(arg1, BUILD_PROJECT, new Object[] {
+            
+        });
+    }
+
+    /** The method id used to dispatch {@link #commitProject} requests. */
+    public static final int COMMIT_PROJECT = 3;
+
+    // from interface ProjectRoomService
+    public void commitProject (Client arg1, String arg2, InvocationService.ConfirmListener arg3)
+    {
+        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, COMMIT_PROJECT, new Object[] {
+            arg2, listener3
+        });
+    }
+
     /** The method id used to dispatch {@link #deletePathElement} requests. */
-    public static final int DELETE_PATH_ELEMENT = 2;
+    public static final int DELETE_PATH_ELEMENT = 4;
 
     // from interface ProjectRoomService
     public void deletePathElement (Client arg1, int arg2)
@@ -42,7 +67,7 @@ public class ProjectRoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updatePathElement} requests. */
-    public static final int UPDATE_PATH_ELEMENT = 3;
+    public static final int UPDATE_PATH_ELEMENT = 5;
 
     // from interface ProjectRoomService
     public void updatePathElement (Client arg1, PathElement arg2)

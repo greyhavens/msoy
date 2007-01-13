@@ -7,6 +7,7 @@ import com.threerings.msoy.swiftly.client.ProjectRoomService;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
@@ -42,6 +43,19 @@ public class ProjectRoomDispatcher extends InvocationDispatcher
             ((ProjectRoomProvider)provider).addPathElement(
                 source,
                 (PathElement)args[0]
+            );
+            return;
+
+        case ProjectRoomMarshaller.BUILD_PROJECT:
+            ((ProjectRoomProvider)provider).buildProject(
+                source                
+            );
+            return;
+
+        case ProjectRoomMarshaller.COMMIT_PROJECT:
+            ((ProjectRoomProvider)provider).commitProject(
+                source,
+                (String)args[0], (InvocationService.ConfirmListener)args[1]
             );
             return;
 

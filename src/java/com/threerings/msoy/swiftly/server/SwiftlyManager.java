@@ -9,9 +9,9 @@ import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.util.SerialExecutor;
 
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
@@ -20,6 +20,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
 
@@ -31,6 +32,10 @@ import static com.threerings.msoy.Log.log;
 public class SwiftlyManager
     implements SwiftlyProvider
 {
+    /** This is used to execute potentially long running project actions (svn operations, builds)
+     * serially on a separate thread so that they do not interfere with normal server operation. */
+    public SerialExecutor executor;
+
     /**
      * Configures us with our repository.
      */
@@ -40,6 +45,9 @@ public class SwiftlyManager
 
         // register ourselves as handling the Swiftly invocation service
         invmgr.registerDispatcher(new SwiftlyDispatcher(this), true);
+
+        // create our executor
+        executor = new SerialExecutor(MsoyServer.omgr);
     }
 
     /**
@@ -92,7 +100,7 @@ public class SwiftlyManager
 
         } catch (Exception e) {
             log.log(Level.WARNING, "Failed to create project room [config=" + config + "].", e);
-            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
+            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
         }
     }
 

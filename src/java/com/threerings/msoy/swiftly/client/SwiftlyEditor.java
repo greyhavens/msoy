@@ -16,6 +16,10 @@ import javax.swing.JSplitPane;
 import com.samskivert.swing.HGroupLayout;
 import com.samskivert.swing.VGroupLayout;
 
+import com.threerings.presents.dobj.AttributeChangeListener;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+
+import com.threerings.crowd.client.PlacePanel;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
@@ -25,15 +29,19 @@ import com.threerings.micasa.client.OccupantList;
 import com.threerings.msoy.swiftly.data.DocumentElement;
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
-public class SwiftlyEditor extends JPanel
-    implements PlaceView
+public class SwiftlyEditor extends PlacePanel
+    implements AttributeChangeListener
 {
-    public SwiftlyEditor (SwiftlyContext ctx)
+    public SwiftlyEditor (ProjectRoomController ctrl, SwiftlyContext ctx)
     {
-        super(new VGroupLayout(VGroupLayout.STRETCH, VGroupLayout.STRETCH, 5, VGroupLayout.TOP));
+        super(ctrl);
         _ctx = ctx;
+
+        setLayout(new VGroupLayout(VGroupLayout.STRETCH, VGroupLayout.STRETCH, 5,
+                                   VGroupLayout.TOP));
 
         // setup the components
         _tabs = new TabbedEditor(this);
@@ -42,7 +50,7 @@ public class SwiftlyEditor extends JPanel
         _projectPanel = new ProjectPanel(_ctx);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
 
-        _toolbar = new EditorToolBar(this);
+        _toolbar = new EditorToolBar(ctrl, this);
         _statusbar = new EditorStatusBar();
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _tabs, _projectPanel);
         // TODO apparently GTK does not have the graphic for this. What to do?
@@ -149,17 +157,34 @@ public class SwiftlyEditor extends JPanel
             this, message, "An error occurred", JOptionPane.ERROR_MESSAGE);
     }
 
-    // from interface PlaceView
+    @Override // from PlacePanel
     public void willEnterPlace (PlaceObject plobj)
     {
         _roomObj = (ProjectRoomObject)plobj;
+        _roomObj.addListener(this);
+
+        // let our project panel know about all the roomy goodness
         _projectPanel.setProject(_roomObj);
     }
 
-    // from interface PlaceView
+    @Override // from PlacePanel
     public void didLeavePlace (PlaceObject plobj)
     {
-        // nada
+        if (_roomObj != null) {
+            _roomObj.removeListener(this);
+            _roomObj = null;
+        }
+
+        // TODO: shutdown the project panel?
+    }
+
+    // from interface AttributeChangeListener
+    public void attributeChanged (AttributeChangedEvent event)
+    {
+        if (event.getName().equals(ProjectRoomObject.CONSOLE)) {
+            // TODO: append this to a console instead of just jamming it into a status bar
+            _statusbar.setLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, _roomObj.console));
+        }
     }
 
     protected void saveDocumentElement (DocumentElement doc)

@@ -18,6 +18,7 @@ import com.samskivert.util.OneLineLogFormatter;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.IdentUtil;
+import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
 
 import com.threerings.presents.client.Client;
@@ -249,6 +250,11 @@ public class SwiftlyApplet extends JApplet
         }
         public SwiftlyEditor getEditor () {
             return _editor;
+        }
+
+        public String xlate (String bundle, String message) {
+            MessageBundle mb = getMessageManager().getBundle(bundle);
+            return (mb == null) ? message : mb.xlate(message);
         }
     }
 

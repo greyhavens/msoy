@@ -21,4 +21,10 @@ public interface ProjectRoomService extends InvocationService
 
     /** Requests that the specified path element be removed from the project. */
     public void deletePathElement (Client client, int elementId);
+
+    /** Requests that the project be build and the artifacts be published to the game object. */
+    public void buildProject (Client client);
+
+    /** Requests pending project modifications be committed. */
+    public void commitProject (Client client, String commitMsg, ConfirmListener listener);
 }

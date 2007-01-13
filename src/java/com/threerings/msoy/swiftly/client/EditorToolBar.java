@@ -5,8 +5,9 @@ import javax.swing.JToolBar;
 
 public class EditorToolBar extends JToolBar
 {
-    public EditorToolBar (SwiftlyEditor editor)
+    public EditorToolBar (ProjectRoomController ctrl, SwiftlyEditor editor)
     {
+        _ctrl = ctrl;
         _editor = editor;
         setupToolbar();
     }
@@ -25,7 +26,8 @@ public class EditorToolBar extends JToolBar
         add(_editor.createCloseCurrentTabAction());
 
         addSeparator();
-        add(new JButton("Compile"));
+        add(_buildButton);
+        _buildButton.setAction(_ctrl.buildAction);
         add(new JButton("Play"));
 
         addSeparator();
@@ -37,8 +39,11 @@ public class EditorToolBar extends JToolBar
         setFloatable(false);
     }
 
+    protected ProjectRoomController _ctrl;
     protected SwiftlyEditor _editor;
+
     protected JButton _saveButton = new JButton("Save");
     protected JButton _undoButton = new JButton("Undo");
     protected JButton _redoButton = new JButton("Redo");
+    protected JButton _buildButton = new JButton("Build");
 }
