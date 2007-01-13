@@ -427,6 +427,7 @@ public class MsoyController extends Controller
                 creds = new MsoyCredentials(null, null);
                 creds.ident = "";
             }
+            log.info("Logging on [creds=" + creds + "].");
             client.setCredentials(creds);
             client.logon();
         });

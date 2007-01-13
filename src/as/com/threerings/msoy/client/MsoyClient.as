@@ -245,6 +245,10 @@ public class MsoyClient extends Client
         if (sessionToken == null) {
             return;
         }
+
+        log.info("Logging on via external request " +
+                 "[id=" + memberId + ", token=" + sessionToken + "].");
+
         Prefs.setSessionToken(sessionToken);
 
         var co :MemberObject = _ctx.getClientObject();
@@ -259,6 +263,8 @@ public class MsoyClient extends Client
      */
     protected function externalClientLogoff (backAsGuest :Boolean = true) :void
     {
+        log.info("Logging off via external request [backAsGuest=" + backAsGuest + "].");
+
         if (backAsGuest) {
             // have the controller handle it
             // it will logoff, then back as a guest
