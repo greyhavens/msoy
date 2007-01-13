@@ -64,7 +64,6 @@
   <path id="classpath">
     <pathelement location="${deploy.dir}/classes"/>
     <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
-    <fileset dir="${deploy.dir}" includes="${app.name}-code.jar"/>
   </path>
 
   <!-- prepares the application directories -->
@@ -331,46 +330,46 @@
     <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients"/>
   </target>
 
-  <!-- builds and signs our Java game client -->
-  <target name="jclient" depends="dist">
-    <taskdef resource="proguard/ant/task.properties"
-             classpath="${extlib.dir}/proguard.jar"/>
-    <condition property="rtClasses"
-               value="${java.home}/../Classes/classes.jar">
+  <!-- builds, runs Proguard on and signs a Java client -->
+  <target name="proguard">
+    <!-- figure out where the Java rt.jar file lives -->
+    <condition property="rtClasses" value="${java.home}/../Classes/classes.jar">
       <istrue value="${platform.darwin}"/>
     </condition>
-    <condition property="rtClasses"
-               value="${java.home}/lib/rt.jar">
+    <condition property="rtClasses" value="${java.home}/lib/rt.jar">
       <isfalse value="${platform.darwin}"/>
     </condition>
     <mkdir dir="${deploy.dir}"/>
-    <proguard configuration="etc/game-client.pro">
+
+    <!-- run Proguard -->
+    <taskdef resource="proguard/ant/task.properties" classpath="${extlib.dir}/proguard.jar"/>
+    <proguard configuration="etc/${ident}-client.pro">
       <libraryjar name="${rtClasses}"/>
     </proguard>
 
-    <!-- read in our certificate properties -->
+    <!-- optionally sign the resulting jar file -->
     <if><isset property="cert_dir"/><then>
       <property file="${cert_dir}/certificate.properties"/>
       <signjar lazy="true" keystore="${cert_dir}/lib/keystore.dat"
         storepass="${sign.storepass}" alias="${sign.alias}">
-        <fileset dir="${deploy.dir}" includes="game-client.jar"/>
+        <fileset dir="${deploy.dir}" includes="${ident}-client.jar"/>
       </signjar>
-      <copy file="${deploy.dir}/game-client.jar" todir="pages/clients"/>
+      <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients"/>
     </then></if>
+  </target>
+
+  <!-- builds our Java game client -->
+  <target name="jclient" depends="dist">
+    <antcall target="proguard">
+      <param name="ident" value="game"/>
+    </antcall>
   </target>
 
   <!-- builds our Swiftly applet -->
   <target name="swiftlyclient" depends="dist">
-    <jar file="pages/clients/swiftly-client.jar"
-         basedir="${deploy.dir}/classes">
-      <include name="com/threerings/msoy/swiftly/client/**"/>
-      <zipgroupfileset dir="${extlib.dir}">
-        <include name="ws-commons-util-1.0.1.jar"/>
-        <include name="xmlrpc-client-3.0.jar"/>
-        <include name="xmlrpc-common-3.0.jar"/>
-        <include name="xmlrpc-server-3.0.jar"/>
-      </zipgroupfileset>
-    </jar>
+    <antcall target="proguard">
+      <param name="ident" value="swiftly"/>
+    </antcall>
   </target>
 
   <!-- generates additional methods for distributed object classes -->

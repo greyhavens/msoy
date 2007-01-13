@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.BorderLayout;
@@ -13,88 +16,76 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
+
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
+import com.threerings.msoy.swiftly.data.DocumentElement;
+import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.PathElementTreeNode;
+import com.threerings.msoy.swiftly.data.ProjectRoomObject;
+import com.threerings.msoy.swiftly.data.ProjectTreeModel;
+import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class ProjectPanel extends JPanel
     implements TreeSelectionListener, TreeModelListener
 {
-    public ProjectPanel (SwiftlyEditor editor, SwiftlyProject project)
+    public ProjectPanel (SwiftlyContext ctx)
     {
         super(new BorderLayout());
-        _editor = editor;
-
+        _ctx = ctx;
         add(_scrollPane, BorderLayout.CENTER);
-
         setupToolbar();
         add(_toolbar, BorderLayout.PAGE_END);
-
-        loadProject(project);
     }
 
-    // Remove all nodes except the root node.
-    public void clear ()
-    {
-        _top.removeAllChildren();
-        _treeModel.reload();
-    }
-
-    // Remove the currently selected node.
+    /**
+     * Removes the currently selected node.
+     */
     public void removeCurrentNode ()
     {
         TreePath currentSelection = _tree.getSelectionPath();
         if (currentSelection != null) {
-            FileElementTreeNode currentNode = (FileElementTreeNode)
-                 (currentSelection.getLastPathComponent());
+            PathElementTreeNode currentNode = (PathElementTreeNode)
+                (currentSelection.getLastPathComponent());
             MutableTreeNode parent = (MutableTreeNode)(currentNode.getParent());
             if (parent != null) {
                 _treeModel.removeNodeFromParent(currentNode);
                 return;
             }
-        } 
+        }
     }
 
-    // Add a file element to the right spot based on the current selected node.
-    public FileElementTreeNode addNode (FileElement element)
+    /**
+     * Add a file element to the right spot based on the current selected node.
+     */
+    public PathElementTreeNode addNode (PathElement element)
     {
-        FileElementTreeNode parentNode = (FileElementTreeNode)getSelectedNode().getParent();
+        PathElementTreeNode parent = (PathElementTreeNode)
+            ((getSelectedPathElement().getType() == PathElement.Type.FILE) ?
+             getSelectedNode().getParent() : getSelectedNode());
 
-        if (parentNode == null) {
-            parentNode = _top;
-        }
-
-        // if the node selected is a directory, that's the parent
-        // TODO consider just using getAllowsChildren()
-
-        if (getSelectedFileElement().getType() == FileElement.DIRECTORY) {
-            parentNode = getSelectedNode();
-        }
-
-        FileElementTreeNode newNode = new FileElementTreeNode(element);
         // TODO this needs to insert the node in a sorted manner
-        _treeModel.insertNodeInto(newNode, parentNode, parentNode.getChildCount());
+        PathElementTreeNode child = new PathElementTreeNode(element);
+        _treeModel.insertNodeInto(child, parent, parent.getChildCount());
 
         // Open any directory drop downs that need to be and scroll to the new node
-        _tree.scrollPathToVisible(new TreePath(newNode.getPath()));
-        return newNode;
+        _tree.scrollPathToVisible(new TreePath(child.getPath()));
+        return child;
     }
 
-    public void loadProject (SwiftlyProject project)
+    public void setProject (ProjectRoomObject roomObj)
     {
-        _top = new FileElementTreeNode(project);
-        _treeModel = new FileElementTreeModel(_top);
+        _roomObj = roomObj;
+        _treeModel = new ProjectTreeModel(roomObj);
         _treeModel.addTreeModelListener(this);
-
-        for (SwiftlyDocument doc : project.getFiles()) {
-            addDocumentToTree(doc);
-        }
 
         _tree = new JTree(_treeModel);
         _tree.setDragEnabled(true);
@@ -107,49 +98,31 @@ public class ProjectPanel extends JPanel
         disableToolbar();
     }
 
-    public void addDocumentToTree (SwiftlyDocument document)
-    {
-        _top.add(new FileElementTreeNode(document));
-    }
-
     // from interface TreeSelectionListener
     public void valueChanged (TreeSelectionEvent e)
     {
-        FileElementTreeNode node = (FileElementTreeNode) _tree.getLastSelectedPathComponent();
+        PathElementTreeNode node = (PathElementTreeNode) _tree.getLastSelectedPathComponent();
+        if (node == null) {
+            return;
+        }
 
-        if (node == null) return;
         enableToolbar();
-
         setSelectedNode(node);
-        FileElement element = getSelectedFileElement();
 
-        if (element.getType() == FileElement.DOCUMENT) {
-            _editor.addEditorTab((SwiftlyDocument)element);
+        PathElement element = getSelectedPathElement();
+        if (element instanceof DocumentElement) {
+            _ctx.getEditor().addEditorTab((DocumentElement)element);
         }
     }
 
     // from interface TreeModelListener
     public void treeNodesChanged (TreeModelEvent e)
     {
-        /* TODO keep this around for now
-        // get the changed node
-        FileElementTreeNode node =
-            (FileElementTreeNode) e.getTreePath().getLastPathComponent();
-
-        // If the event lists children, then the changed node is the child of the node we've
-        // already gotten.  Otherwise, the changed node and the specified node are the same.
-        try {
-            int index = e.getChildIndices()[0];
-            node = (FileElementTreeNode) (node.getChildAt(index));
-        } catch (NullPointerException exc) {}
-        */
-
-        FileElement element = getSelectedFileElement();
-        // TODO try/catch block here
-        // _editor.renameFileElement(element, newName);
-
-        if (element.getType() == FileElement.DOCUMENT) {
-            _editor.updateTabTitleAt((SwiftlyDocument)element);
+        PathElementTreeNode node = (PathElementTreeNode)e.getChildren()[0];
+        if (node.getElement() instanceof DocumentElement) {
+            _ctx.getEditor().updateTabTitleAt((DocumentElement)node.getElement());
+            // TODO: replace this with super sophisticated fine grained editing model
+            _ctx.getEditor().updateTabDocument((DocumentElement)node.getElement());
         }
     }
 
@@ -207,43 +180,39 @@ public class ProjectPanel extends JPanel
     // Opens a new, unsaved document in a tab.
     protected void openNewDocument ()
     {
-        FileElementTreeNode node = (FileElementTreeNode) _tree.getLastSelectedPathComponent();
-        if (node == null) return;
-
-        FileElement element = (FileElement)node.getUserObject();
-        SwiftlyDocument doc = new SwiftlyDocument("", "", element.getParent());
-
         // prompt the user for the file name
-        String name = _editor.showSelectFileElementNameDialog(FileElement.DOCUMENT);
-        // if the user hit cancel do no more
-        if (name == null) return;
-        doc.setName(name);
-
-        addNode(doc);
-        if (getSelectedFileElement().getType() == FileElement.DOCUMENT) {
-            _editor.addEditorTab(doc);
+        String name = _ctx.getEditor().showSelectPathElementNameDialog(PathElement.Type.FILE);
+        if (name == null) {
+            return; // if the user hit cancel do no more
         }
+
+        PathElement element = getSelectedPathElement();
+        int parentId = (element.getType() == PathElement.Type.FILE) ?
+            element.getParentId() : element.elementId;
+        DocumentElement doc = new DocumentElement(name, parentId, "");
+        _roomObj.service.addPathElement(_ctx.getClient(), doc);
+        _ctx.getEditor().addEditorTab(doc);
     }
 
     protected void deleteDocument ()
     {
-        FileElementTreeNode node = (FileElementTreeNode) _tree.getLastSelectedPathComponent();
+        PathElementTreeNode node = (PathElementTreeNode) _tree.getLastSelectedPathComponent();
         if (node == null) return;
 
         // TODO throw up a Are you sure yes/no dialog
 
-        FileElement element = (FileElement)node.getUserObject();
+        PathElement element = (PathElement)node.getUserObject();
 
         // TODO We're probably going to put this in a try/catch block
-        // _editor.deleteFileElement(element);
+        // _ctx.getEditor().deletePathElement(element);
 
         // XXX we know the tab was selected in order for delete to work. This might be dangerous.
         // we also know the tab was open.. hmmm
-        if (element.getType() == FileElement.DOCUMENT) {
-            _editor.closeCurrentTab();
-        } else if (element.getType() == FileElement.DIRECTORY) {
+        if (element instanceof DocumentElement) {
+            _ctx.getEditor().closeCurrentTab();
+        } else if (element.getType() == PathElement.Type.DIRECTORY) {
             // TODO oh god we have to remove all the tabs associated with this directory
-            // soo.. every tab that has a common getParent() ?
+            // soo.. every tab that has a common getParentId() ?
         } else {
             // TODO you're trying to remove the project itself? Does Homey play that?
         }
@@ -252,16 +221,16 @@ public class ProjectPanel extends JPanel
 
     protected void addDirectory ()
     {
-        FileElementTreeNode node = (FileElementTreeNode) _tree.getLastSelectedPathComponent();
+        PathElementTreeNode node = (PathElementTreeNode) _tree.getLastSelectedPathComponent();
         if (node == null) {
             return;
         }
 
-        FileElement element = (FileElement)node.getUserObject();
-        ProjectDirectory dir = new ProjectDirectory("", element.getParent());
+        PathElement element = (PathElement)node.getUserObject();
+        PathElement dir = PathElement.createDirectory("", element.getParentId());
 
         // prompt the user for the directory name
-        String name = _editor.showSelectFileElementNameDialog(FileElement.DIRECTORY);
+        String name = _ctx.getEditor().showSelectPathElementNameDialog(PathElement.Type.DIRECTORY);
         // if the user clicked cancel do no more
         if (name == null) {
             return;
@@ -303,44 +272,26 @@ public class ProjectPanel extends JPanel
         _addDirectoryButton.setEnabled(value);
     }
 
-    protected FileElement getSelectedFileElement ()
-    {
-        return _selectedFileElement;
-    }
-
-    protected FileElementTreeNode getSelectedNode ()
+    protected PathElementTreeNode getSelectedNode ()
     {
         return _selectedNode;
     }
 
-    protected void setSelectedNode (FileElementTreeNode node)
+    protected PathElement getSelectedPathElement ()
+    {
+        return _selectedNode == null ? null : (PathElement)_selectedNode.getUserObject();
+    }
+
+    protected void setSelectedNode (PathElementTreeNode node)
     {
         _selectedNode = node;
-        _selectedFileElement = (FileElement)node.getUserObject();
     }
 
-    protected class FileElementTreeModel extends DefaultTreeModel
-    {
-        public FileElementTreeModel (TreeNode root)
-        {
-            super(root);
-        }
+    protected SwiftlyContext _ctx;
+    protected ProjectRoomObject _roomObj;
+    protected ProjectTreeModel _treeModel;
+    protected PathElementTreeNode _selectedNode;
 
-        @Override // from DefaultTreeModel
-        public void valueForPathChanged(TreePath path, Object newValue)
-        {
-            FileElementTreeNode node = (FileElementTreeNode)path.getLastPathComponent();
-            FileElement element = (FileElement)node.getUserObject();
-            element.setName((String)newValue);
-            super.valueForPathChanged(path, element);
-        }
-    }
-
-    protected SwiftlyEditor _editor;
-    protected FileElement _selectedFileElement;
-    protected FileElementTreeNode _selectedNode;
-    protected FileElementTreeNode _top;
-    protected FileElementTreeModel _treeModel;
     protected JTree _tree;
     protected JToolBar _toolbar = new JToolBar();
     protected JButton _plusButton;

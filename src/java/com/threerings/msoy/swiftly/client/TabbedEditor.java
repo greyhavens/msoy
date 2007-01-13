@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.event.ActionEvent;
@@ -6,10 +9,12 @@ import java.util.HashMap;
 
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.threerings.msoy.swiftly.data.DocumentElement;
 
 public class TabbedEditor extends JTabbedPane
 {
@@ -23,9 +28,9 @@ public class TabbedEditor extends JTabbedPane
 
     /**
      * Adds a {@link SwiftlyTextPane} to the tabbed panel.
-     * @param the {@link SwiftlyDocument} to load into the text panel.
+     * @param the {@link DocumentElement} to load into the text panel.
      */
-    public void addEditorTab (SwiftlyDocument document)
+    public void addEditorTab (DocumentElement document)
     {
         if (_tabList.containsKey(document)) {
             setSelectedComponent(_tabList.get(document));
@@ -51,12 +56,29 @@ public class TabbedEditor extends JTabbedPane
     }
 
     /**
-     * Update the title on a tab, using the supplied {@link SwiftlyDocument} as the index.
-     * @param doc the SwiftlyDocument to use as an index into the tabList
+     * Update the title on a tab, using the supplied {@link DocumentElement} as the index.
+     * @param doc the DocumentElement to use as an index into the tabList
      */
-    public void updateTabTitleAt (SwiftlyDocument document)
+    public void updateTabTitleAt (DocumentElement document)
     {
-        updateTabTitleAt(indexOfComponent(_tabList.get(document)));
+        JScrollPane tab = _tabList.get(document);
+        if (tab != null) {
+            updateTabTitleAt(indexOfComponent(tab));
+        }
+    }
+
+    /**
+     * TEMP: Temporary method to completely overwrite document contents when update is received
+     * from server.
+     */
+    public void updateTabDocument (DocumentElement document)
+    {
+        JScrollPane tab = _tabList.get(document);
+        if (tab != null) {
+            SwiftlyTextPane textPane = (SwiftlyTextPane)tab.getViewport().getView();
+            textPane.setDocumentElement(document);
+            updateTabTitleAt(indexOfComponent(tab));
+        }
     }
 
     /**
@@ -64,7 +86,10 @@ public class TabbedEditor extends JTabbedPane
      */
     public void updateCurrentTabTitle ()
     {
-        updateTabTitleAt(getSelectedIndex());
+        int selidx = getSelectedIndex();
+        if (selidx >= 0) {
+            updateTabTitleAt(selidx);
+        }
     }
 
     /**
@@ -75,7 +100,7 @@ public class TabbedEditor extends JTabbedPane
     {
         JScrollPane pane = (JScrollPane)getComponentAt(tabIndex);
         SwiftlyTextPane textPane = (SwiftlyTextPane)pane.getViewport().getView();
-        String title = textPane.getSwiftlyDocument().getName();
+        String title = textPane.getDocumentElement().getName();
 
         if (title.length() == 0) {
             title = "Untitled document";
@@ -115,7 +140,7 @@ public class TabbedEditor extends JTabbedPane
             }
         }
 
-        SwiftlyDocument document = textPane.getSwiftlyDocument();
+        DocumentElement document = textPane.getDocumentElement();
         remove(_tabList.get(document));
         _tabList.remove(document);
         assignTabKeys();
@@ -198,6 +223,6 @@ public class TabbedEditor extends JTabbedPane
     protected SwiftlyEditor _editor;
 
     // maps the document of the loaded file to the componenet (scroller) holding that textpane
-    protected HashMap<SwiftlyDocument,JScrollPane> _tabList =
-        new HashMap<SwiftlyDocument,JScrollPane>();
+    protected HashMap<DocumentElement,JScrollPane> _tabList =
+        new HashMap<DocumentElement,JScrollPane>();
 }

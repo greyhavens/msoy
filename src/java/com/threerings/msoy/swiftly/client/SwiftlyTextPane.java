@@ -1,66 +1,77 @@
 package com.threerings.msoy.swiftly.client;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+
 import java.io.IOException;
-import javax.swing.Action;
+import java.io.StringReader;
+
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
-import javax.swing.event.DocumentListener;
+
 import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+
+import javax.swing.text.BadLocationException;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
-import javax.swing.text.BadLocationException;
+
+import com.threerings.msoy.swiftly.data.DocumentElement;
 
 public class SwiftlyTextPane extends JTextPane
 {
-    public SwiftlyTextPane (SwiftlyEditor editor, SwiftlyDocument document)
+    public SwiftlyTextPane (SwiftlyEditor editor, DocumentElement document)
     {
         _editor = editor;
         _document = document;
 
         _kit = new ActionScriptEditorKit();
         setEditorKit(_kit);
-        ActionScriptStyledDocument styledDoc = new ActionScriptStyledDocument();
-        setDocument(styledDoc);
 
         // setContentType("text/actionscript");
 
-        // load the document text
-        try {
-            // styledDoc.insertString(0, document.getText(), null);
-            _kit.read(document.getReader(), styledDoc, 0);
-        } catch (IOException io) {
-            return;
-        } catch (BadLocationException be) {
-            return;
-        }
-
         addKeyBindings();
         addPopupMenu();
-
-        // add listeners
-        styledDoc.addUndoableEditListener(new UndoHandler());
-        styledDoc.addDocumentListener(new SwiftlyDocumentListener());
 
         // setup some default colors
         // TODO make setable by the user?
         setForeground(Color.black);
         setBackground(Color.white);
+
+        setDocumentElement(document);
     }
 
-    public SwiftlyDocument getSwiftlyDocument ()
+    public void setDocumentElement (DocumentElement document)
+    {
+        ActionScriptStyledDocument styledDoc = new ActionScriptStyledDocument();
+        styledDoc.addUndoableEditListener(new UndoHandler());
+        styledDoc.addDocumentListener(new DocumentElementListener());
+
+        try {
+            _kit.read(new StringReader(document.getText()), styledDoc, 0);
+        } catch (IOException io) {
+            // TODO: complain?
+        } catch (BadLocationException be) {
+            // TODO: complain?
+        }
+
+        setDocument(styledDoc);
+        setDocumentChanged(false);
+    }
+
+    public DocumentElement getDocumentElement ()
     {
         return _document;
     }
@@ -72,10 +83,15 @@ public class SwiftlyTextPane extends JTextPane
     public boolean saveDocument ()
     {
         if (hasUnsavedChanges()) {
-            // _editor.saveFileElement(_document);
-            setDocumentChanged(false);
             _editor.setStatus("Saving " + _document);
-            return true;
+            try {
+                _document.setText(getDocument().getText(0, getDocument().getLength()));
+                _editor.saveDocumentElement(_document);
+                setDocumentChanged(false);
+                return true;
+            } catch (BadLocationException be) {
+                // TODO: warn
+            }
         }
         return false;
     }
@@ -326,7 +342,7 @@ public class SwiftlyTextPane extends JTextPane
         }
     }
 
-    class SwiftlyDocumentListener implements DocumentListener {
+    class DocumentElementListener implements DocumentListener {
         // from interface DocumentListener
         public void insertUpdate(DocumentEvent e) {
             if (!hasUnsavedChanges()) {
@@ -352,7 +368,7 @@ public class SwiftlyTextPane extends JTextPane
     protected JPopupMenu _popup;
     protected UndoManager _undo = new UndoManager();
     protected UndoableEditListener _undoHandler = new UndoHandler();
-    protected SwiftlyDocument _document;
+    protected DocumentElement _document;
     protected UndoAction _undoAction = new UndoAction();
     protected RedoAction _redoAction = new RedoAction();
     protected SaveAction _saveAction = new SaveAction();

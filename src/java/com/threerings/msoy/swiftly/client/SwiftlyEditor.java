@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.swiftly.client;        
 
 import java.awt.Container;
@@ -10,18 +13,33 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import com.samskivert.swing.HGroupLayout;
+import com.samskivert.swing.VGroupLayout;
+
+import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.micasa.client.ChatPanel;
+import com.threerings.micasa.client.OccupantList;
+
+import com.threerings.msoy.swiftly.data.DocumentElement;
+import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.ProjectRoomObject;
+import com.threerings.msoy.swiftly.util.SwiftlyContext;
+
 public class SwiftlyEditor extends JPanel
+    implements PlaceView
 {
-    public SwiftlyEditor (SwiftlyProject project)
+    public SwiftlyEditor (SwiftlyContext ctx)
     {
-        super(new BorderLayout());
-        _project = project;
+        super(new VGroupLayout(VGroupLayout.STRETCH, VGroupLayout.STRETCH, 5, VGroupLayout.TOP));
+        _ctx = ctx;
 
         // setup the components
         _tabs = new TabbedEditor(this);
         _tabs.setMinimumSize(new Dimension(400, 0));
 
-        _projectPanel = new ProjectPanel(this, project);
+        _projectPanel = new ProjectPanel(_ctx);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
 
         _toolbar = new EditorToolBar(this);
@@ -31,9 +49,16 @@ public class SwiftlyEditor extends JPanel
         _splitPane.setOneTouchExpandable(true);
 
         // layout the window
-        add(_toolbar, BorderLayout.PAGE_START);
-        add(_splitPane, BorderLayout.CENTER);
-        add(_statusbar, BorderLayout.SOUTH);
+        add(_toolbar, VGroupLayout.FIXED);
+        add(_splitPane);
+        add(_statusbar, VGroupLayout.FIXED);
+
+        JPanel panel = new JPanel(
+            new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH, 5, HGroupLayout.LEFT));
+        panel.setPreferredSize(new Dimension(0, 200));
+        panel.add(new ChatPanel(_ctx));
+        panel.add(new OccupantList(_ctx), HGroupLayout.FIXED);
+        add(panel, VGroupLayout.FIXED);
 
         _splitPane.setDividerLocation(0.8);
         setStatus("Welcome to Swiftly!");
@@ -50,14 +75,19 @@ public class SwiftlyEditor extends JPanel
         _statusbar.setLabel(" ");
     }
 
-    public void addEditorTab (SwiftlyDocument document)
+    public void addEditorTab (DocumentElement document)
     {
         _tabs.addEditorTab(document);
     }
 
-    public void updateTabTitleAt (SwiftlyDocument document)
+    public void updateTabTitleAt (DocumentElement document)
     {
         _tabs.updateTabTitleAt(document);
+    }
+
+    public void updateTabDocument (DocumentElement document)
+    {
+        _tabs.updateTabDocument(document);
     }
 
     public void updateCurrentTabTitle ()
@@ -90,23 +120,22 @@ public class SwiftlyEditor extends JPanel
      * @param the type of {@link FileElement} to name
      * @return true if the user picked a name, false if they clicked cancel
      */
-    public String showSelectFileElementNameDialog (int fileElementType)
+    public String showSelectPathElementNameDialog (PathElement.Type fileElementType)
     {
         String prompt;
         switch (fileElementType) {
-        case FileElement.PROJECT:
+        case ROOT:
             prompt = "Enter the project name: ";
             break;
-        case FileElement.DIRECTORY:
+        case DIRECTORY:
             prompt = "Enter the directory name: ";
             break;
-        case FileElement.DOCUMENT:
+        case FILE:
             prompt = "Enter the file name: ";
             break;
         default:
             prompt = "Enter the name: ";
         }
-
         return JOptionPane.showInternalInputDialog(this, prompt);
     }
 
@@ -120,10 +149,32 @@ public class SwiftlyEditor extends JPanel
             this, message, "An error occurred", JOptionPane.ERROR_MESSAGE);
     }
 
+    // from interface PlaceView
+    public void willEnterPlace (PlaceObject plobj)
+    {
+        _roomObj = (ProjectRoomObject)plobj;
+        _projectPanel.setProject(_roomObj);
+    }
+
+    // from interface PlaceView
+    public void didLeavePlace (PlaceObject plobj)
+    {
+        // nada
+    }
+
+    protected void saveDocumentElement (DocumentElement doc)
+    {
+        System.err.println("Saving... " + doc);
+        _roomObj.service.updatePathElement(_ctx.getClient(), doc);
+    }
+
+    protected SwiftlyContext _ctx;
+    protected ProjectRoomObject _roomObj;
+
     protected TabbedEditor _tabs;
     protected EditorToolBar _toolbar;
     protected EditorStatusBar _statusbar;
     protected ProjectPanel _projectPanel;
-    protected SwiftlyProject _project;
+    protected PathElement _project;
     protected JSplitPane _splitPane;
 }
