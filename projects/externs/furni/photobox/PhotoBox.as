@@ -11,6 +11,7 @@ import flash.text.TextField;
 import flash.text.TextFieldType;
 
 import flash.events.Event;
+import flash.events.FocusEvent;
 import flash.events.KeyboardEvent;
 import flash.events.TimerEvent;
 
@@ -47,8 +48,6 @@ public class PhotoBox extends Sprite
             handlePhotoSearch);
         _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_SIZES,
             handlePhotoSizes);
-//        _flickr.addEventListener(FlickrResultEvent.PHOTOS_GET_INFO,
-//            handlePhotoInfo);
 
         _timer = new Timer(7000, 1); // 7 seconds, fire once
         _timer.addEventListener(TimerEvent.TIMER, handleTimer);
@@ -80,18 +79,20 @@ public class PhotoBox extends Sprite
         prompt.width = Math.max(prompt.width, logo.width);
         addChild(prompt);
 
-        _tagField = new TextField();
-        _tagField.type = TextFieldType.INPUT;
-        _tagField.background = true;
-        _tagField.backgroundColor = 0xCCFFFF;
-        _tagField.x = Math.max(prompt.width, logo.width);
-        _tagField.height = prompt.height + logo.height;
-        _tagField.width = 500 - _tagField.x;
-        addChild(_tagField);
-        _tagField.addEventListener(KeyboardEvent.KEY_DOWN, handleKey);
+        _tagEntry = new TextField();
+        _tagEntry.type = TextFieldType.INPUT;
+        _tagEntry.background = true;
+        _tagEntry.backgroundColor = 0xCCFFFF;
+        _tagEntry.x = Math.max(prompt.width, logo.width);
+        _tagEntry.height = prompt.height + logo.height;
+        _tagEntry.width = 500 - _tagEntry.x;
+        addChild(_tagEntry);
+        _tagEntry.addEventListener(KeyboardEvent.KEY_DOWN, handleKey);
+        _tagEntry.addEventListener(FocusEvent.FOCUS_IN, handleTagFocus);
+        _tagEntry.addEventListener(FocusEvent.FOCUS_OUT, handleTagFocus);
         format = new TextFormat();
         format.size = 36;
-        _tagField.defaultTextFormat = format;
+        _tagEntry.defaultTextFormat = format;
 
         _loader = new Loader();
         _loader.y = 50;
@@ -125,24 +126,8 @@ public class PhotoBox extends Sprite
         }
 
         var photo :Photo = (_photos.shift() as Photo);
-        //_flickr.photos.getInfo(photo.id, photo.secret);
         _flickr.photos.getSizes(photo.id);
     }
-
-//    protected function handlePhotoInfo (evt :FlickrResultEvent) :void
-//    {
-//        if (!evt.success) {
-//            trace("Failure getting photo info " +
-//                "[" + evt.data.error.errorMessage + "]");
-//            return;
-//        }
-//        var photo :Photo = (evt.data.photo as Photo);
-//
-//        trace("photo.urls: " + photo.urls);
-//        for each (var url :PhotoUrl in photo.urls) {
-//            trace("url(" + url.type + "): " + url.url);
-//        }
-//    }
 
     /**
      * Handle data arriving as a result of a getSizes() request.
@@ -162,7 +147,7 @@ public class PhotoBox extends Sprite
             displayPhoto(url);
             // always broadcast if we can
             if (_furni.isConnected()) {
-                _furni.triggerEvent("show", [ _controlId, url ]);
+                _furni.triggerEvent("show", [ _controlId, url, _enteredTags ]);
             }
         }
 
@@ -174,19 +159,41 @@ public class PhotoBox extends Sprite
     }
 
     /**
+     * Handle focus changes to our tag entry area.
+     */
+    protected function handleTagFocus (event :FocusEvent) :void
+    {
+        if (event.type == FocusEvent.FOCUS_IN) {
+            _tagEntry.backgroundColor = 0xFFFFFF;
+            _tagEntry.text = "";
+            _hasFocus = true;
+
+        } else {
+            _tagEntry.backgroundColor = 0xCCFFFF;
+            _tagEntry.text = _displayedTags;
+            _hasFocus = false;
+        }
+    }
+
+    /**
      * Handle a user-generated keypress.
      */
     protected function handleKey (event :KeyboardEvent) :void
     {
         if (event.keyCode == Keyboard.ENTER) {
-            var tags :String = _tagField.text;
-            _tagField.text = "";
-
+            var tags :String = _tagEntry.text;
             tags = tags.replace(/\s+/g, ","); // replace spaces with commas
             tags = tags.replace(/,+/g, ","); // prune consecutive commas
             tags = tags.replace(/^,/, ""); // remove spurious comma at start
             tags = tags.replace(/,$/, ""); // remove spurious comma at end
+            _enteredTags = tags;
+            _displayedTags = tags;
+            _shownOwn = false;
             _flickr.photos.search("", tags, "all");
+
+            // unfocus the tag entry area
+            // (This seems to work even when we're in a security boundary)
+            stage.focus = null; // will trigger unfocus event
         }
     }
 
@@ -204,18 +211,41 @@ public class PhotoBox extends Sprite
      */
     protected function handleMsoyEvent (event :String, arg :Object) :void
     {
+        // ok, the problem is that if someone enters a room their
+        // photobox is controlId=0, all the other boxes have a higher id.
+        // until an event arrives from a higher box, the low box
+        // won't know that it's the new guy, so it may display up to 1
+        // photo incorrectly, only noticing when the new photo arrives
+        // from a higher box.
+
+        // also: sometimes when you start two at the same time, they both
+        // stop: WHY?
+
         if (event == "show") {
             var args :Array  = (arg as Array);
             var newId :int = int(args[0]);
             var url :String = String(args[1]);
-
+            var tags :String = String(args[2]);
             if (newId > _controlId) {
                 _controlId = newId;
                 _photos = null; // kill our own display of photos
+
+            } else if (newId == _controlId) {
+                if (tags == _enteredTags) {
+                    _shownOwn = true;
+
+                } else if (!_shownOwn) {
+                    // sorry charlie, we were second to try this controlId
+                    _photos = null;
+                }
             }
 
             if (_photos == null) {
                 displayPhoto(url);
+                _displayedTags = tags;
+                if (!_hasFocus) {
+                    _tagEntry.text = tags;
+                }
 
             } else {
                 // else, ignore our own events
@@ -281,7 +311,16 @@ public class PhotoBox extends Sprite
     protected var _timer :Timer;
 
     /** The text entry area for tags. */
-    protected var _tagField :TextField;
+    protected var _tagEntry :TextField;
+
+    protected var _hasFocus :Boolean;
+
+    protected var _displayedTags :String = "";
+
+    protected var _enteredTags :String;
+
+    /** Whether or not we've shown one of our own at the current controlId. */
+    protected var _shownOwn :Boolean;
 
     /** Loads up photos for display. */
     protected var _loader :Loader;
