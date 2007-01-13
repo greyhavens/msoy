@@ -44,6 +44,9 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     /** A 'used' constant value to indicate that the item is used as an avatar. */
     public static final byte USED_AS_AVATAR = (byte) 2;
 
+    /** A 'used' constant value to indicate that the item is used as a pet let out in a room. */
+    public static final byte USED_AS_PET = (byte) 3;
+
     /** An identifier used to coordinate with the server when uploading media. */
     public static final String FURNI_MEDIA = "furni";
 

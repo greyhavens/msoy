@@ -205,7 +205,8 @@ public class RoomManager extends SpotSceneManager
             resolveMemories(furniIds);
         }
 
-        // TODO: load up any pets that are "let out" in this room
+        // load up any pets that are "let out" in this room
+        MsoyServer.petMan.loadRoomPets(_roomObj.getOid());
     }
 
     @Override // from PlaceManager

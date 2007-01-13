@@ -11,10 +11,12 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.Table;
-import com.samskivert.util.StringUtil;
 
+import com.samskivert.util.StringUtil;
 import com.threerings.io.Streamable;
+
 import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Document;
@@ -28,8 +30,8 @@ import com.threerings.msoy.item.web.Photo;
 /**
  * The base class for all digital items in the MSOY system.
  */
-@Entity
 @Table
+@Entity(indices={ @Index(name="locationIndex", columns={"location"} )})
 public abstract class ItemRecord implements Streamable, Cloneable, Serializable
 {
     public static final int BASE_SCHEMA_VERSION = 8;
