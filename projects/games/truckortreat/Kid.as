@@ -75,7 +75,8 @@ public class Kid extends Sprite
         _facing = RIGHT;
         x = startX;
         y = startY;
-        setAnimation(avatarType + IDLE_RIGHT);
+        // Don't need to tell other players to update animation this time.
+        setAnimation(avatarType + IDLE_RIGHT, false);
         
         // Print player's name above the kid.
         _nameLabel = new TextField();
@@ -100,15 +101,15 @@ public class Kid extends Sprite
         _squishSound.play();
         if (_lives == 0) {
             if (_facing == LEFT) {
-                setAnimation(_avatarType + FINAL_SQUISH_LEFT);
+                setAnimation(_avatarType + FINAL_SQUISH_LEFT, true);
             } else {
-                setAnimation(_avatarType + FINAL_SQUISH_RIGHT);
+                setAnimation(_avatarType + FINAL_SQUISH_RIGHT, true);
             }
         } else {
             if (_facing == LEFT) {
-                setAnimation(_avatarType + SQUISH_LEFT);
+                setAnimation(_avatarType + SQUISH_LEFT, true);
             } else {
-                setAnimation(_avatarType + SQUISH_RIGHT);
+                setAnimation(_avatarType + SQUISH_RIGHT, true);
             }
             _respawnTicks = AUTO_RESPAWN_TICKS;
         }
@@ -147,18 +148,18 @@ public class Kid extends Sprite
                 // BitmapAssets. 
                 if (_avatar is BitmapAsset) {
                     if (_facing == LEFT) {
-                        setAnimation(_avatarType + WALK_LEFT);
+                        setAnimation(_avatarType + WALK_LEFT, true);
                     } else {
-                        setAnimation(_avatarType + WALK_RIGHT);
+                        setAnimation(_avatarType + WALK_RIGHT, true);
                     }
                 }
             } else {
                 // Set animation to idle if it is currently a MovieClipAsset.
                 if (_avatar is MovieClipAsset) {
                     if (_facing == LEFT) {
-                        setAnimation(_avatarType + IDLE_LEFT);
+                        setAnimation(_avatarType + IDLE_LEFT, true);
                     } else {
-                        setAnimation(_avatarType + IDLE_RIGHT);
+                        setAnimation(_avatarType + IDLE_RIGHT, true);
                     }
                 }
             }
@@ -180,11 +181,9 @@ public class Kid extends Sprite
             break;
         case Keyboard.LEFT:
             _moveX = LEFT;
-            _facing = LEFT;
             break;
         case Keyboard.RIGHT:
             _moveX = RIGHT;
-            _facing = RIGHT;
             break;
         default:
             return;
@@ -231,11 +230,12 @@ public class Kid extends Sprite
     }
     
     /** Set the kid's avatar animation/image to the given type. */
-    public function setAnimation (animationType :int) :void
+    public function setAnimation (animationType :int, tell :Boolean) :void
     {
         if (_avatar != null) {
             removeChild(_avatar);
         }
+        
         // I really hope there is a better way to do this.
         switch (animationType) {
         case VAMPIRE_IDLE_RIGHT:
@@ -289,9 +289,11 @@ public class Kid extends Sprite
         default:
             return;
         }
-        // Replace _avatar and tell other players to do the same.
+        // Replace _avatar and tell other players to do the same, if desired.
         addChild(_avatar);
-        _board.setKidAnimation(animationType);
+        if (tell) {
+            _board.setKidAnimation(animationType);
+        }
     }
     
     /** Respawn at a random sidewalk location. */
@@ -302,7 +304,7 @@ public class Kid extends Sprite
         y = _board.getSidewalkY() - (_avatar.height + _nameLabel.height);
         _board.setMyKidLocation(x, y);
         _facing = RIGHT;
-        setAnimation(_avatarType + IDLE_RIGHT);
+        setAnimation(_avatarType + IDLE_RIGHT, true);
     }
     
     /** 

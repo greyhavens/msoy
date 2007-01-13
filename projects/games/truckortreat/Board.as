@@ -23,6 +23,9 @@ public class Board extends BaseSprite
         _gameCtrl = gameCtrl;
         _myIndex = gameCtrl.getMyIndex();
         
+        _kids = new Array(gameCtrl.getPlayerCount());
+        // TODO: more hard coding that should go.
+        _cars = new Array(2);
         // Add my own kid, and tell other players about it.
         var kid :Kid;
         var playerName :String = gameCtrl.getPlayerNames()[_myIndex];
@@ -35,13 +38,13 @@ public class Board extends BaseSprite
         kid = new Kid(startX, startY, _myIndex * 8, playerName, this);
         _kids[_myIndex] = kid;
         addChild(kid);
-        _gameCtrl.sendMessage("newkid" + _myIndex, new Array(startX, startY, _myIndex, playerName));
+        _gameCtrl.sendMessage("newkid" + _myIndex, new Array(startX, startY, _myIndex * 8, playerName));
 
         // TODO non-hard coded car creation.
-        var car :Car = new Car(280, HORIZON + 10, 10, Car.DOWN, this);
+        var car :Car = new Car(280, HORIZON + 10, 15, Car.DOWN, this);
         _cars[0] = car;
         addChild(car);
-        car = new Car(548, height - 60, 5, Car.UP, this);
+        car = new Car(548, height - 60, 10, Car.UP, this);
         _cars[1] = car;
         addChild(car);
         
@@ -127,7 +130,7 @@ public class Board extends BaseSprite
     {
         // Player 0 starts the ticker.
         if (_gameCtrl.getMyIndex() == 0) {
-            _gameCtrl.startTicker("tick", 100);
+            _gameCtrl.startTicker("tick", 150);
         }
     }
     
@@ -145,8 +148,12 @@ public class Board extends BaseSprite
             if (kidIndex != _myIndex) {
                 kid = Kid(_kids[kidIndex]);
                 var coords :Array = event.value as Array;
-                kid.x = coords[0];
-                kid.y = coords[1];
+                // Need to check this because we might get this message before 
+                // we've created this kid.
+                if (kid != null) {
+                    kid.x = coords[0];
+                    kid.y = coords[1];
+                }
             }
         } else if (name.indexOf("newkid") == 0) {
             kidIndex = int(name.substring(6));
@@ -165,10 +172,10 @@ public class Board extends BaseSprite
             kidIndex = int(name.substring(7));
             if (kidIndex != _myIndex) {
                 kid = Kid(_kids[kidIndex]);
-                // Need to check this because we might get this message before 
-                // we've created this kid.
                 if (kid != null) {
-                    kid.setAnimation(event.value as int);
+                    // That false is important. Don't send more messages when 
+                    // updating animation!
+                    kid.setAnimation(event.value as int, false);
                 }
             }
         }
@@ -183,10 +190,10 @@ public class Board extends BaseSprite
     protected var _gameCtrl :EZGameControl;
     
     /** A list of characters, one for each player. */
-    protected var _kids :Array = [];
+    protected var _kids :Array;
     
     /** A list of cars on the board. */
-    protected var _cars :Array = [];
+    protected var _cars :Array;
     
     /** Our player index, or -1 if we're not a player. */
     protected var _myIndex :int;
