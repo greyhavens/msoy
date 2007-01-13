@@ -8,6 +8,7 @@ import flash.display.Sprite;
 import flash.display.MovieClip;
 import flash.external.ExternalInterface;
 import flash.events.TimerEvent;
+import flash.text.TextField;
 import flash.utils.Timer;
 import flash.ui.Keyboard;
 
@@ -39,7 +40,14 @@ public class Juggler extends Sprite
         
         _controller = new JugglingController(_body, this);
         _body.controller = _controller;
-        _controller.eventSource = _gameControl;
+
+        //_controller.eventSource = _gameControl;
+        var t :TextField = new TextField();
+        t.selectable = false;
+        t.width = 700;
+        t.height = 500;
+        addChild(t);
+        _controller.eventSource = t;
                         
         ballBox = new BallBox(this, _space);        
         
