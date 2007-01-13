@@ -7,13 +7,13 @@ import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.KeyboardEvent;
 
 [SWF(width="200", height="200")]
 public class Clock extends Sprite
 {
     /** The content pack. TODO. */
-    public var content :Object = new ContentPack();
-
+    public var content :Object = new Data().content;
 
     public function Clock ()
     {
@@ -68,6 +68,22 @@ public class Clock extends Sprite
             trace("No clock face provided");
         }
 
+        if ("size" in content && content.size is Array) {
+            var size :Array = (content.size as Array);
+            //width = int(size[0]);
+            //height = int(size[1]);
+        }
+
+        if ("facePosition" in content && content.facePosition is Array) {
+            var facePos :Array = (content.facePosition as Array);
+            var x :int = int(facePos[0]);
+            var y :int = int(facePos[1]);
+            face.x = x;
+            face.y = y;
+            centerX += x;
+            centerY += y;
+        }
+
         _hourHand = configureHand("hour", centerX, centerY);
         _minuteHand = configureHand("minute", centerX, centerY);
         _secondHand = configureHand("second", centerX, centerY);
@@ -113,8 +129,8 @@ public class Clock extends Sprite
      */
     protected function getDisplayResource (name :String) :DisplayObject
     {
-        var c :Class = (content[name] as Class);
-        if (c != null) {
+        if (name in content && content[name] is Class) {
+            var c :Class = (content[name] as Class);
             return (new c() as DisplayObject);
         }
         return null;

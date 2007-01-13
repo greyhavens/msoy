@@ -9,25 +9,33 @@
   <property name="root.path"        value="../../../.."/>
   <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
 
-  <target name="pack">
-    <java jar="${flex.path}/lib/compc.jar" fork="true" failonerror="true">
+  <target name="newpack">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
-      <arg value="-compiler.source-path=."/>
-      <arg value="-include-sources=ContentPack.as"/>
-      <arg value="-output"/>
-      <arg value="content_pack.swc"/>
+      <arg value="-file-specs"/>
+      <arg value="Data.as"/>
+      <arg value="-o"/>
+      <arg value="pack.swf"/>
     </java>
   </target>
 
-  <!-- builds our Flash game -->
-  <target name="compile" depends="pack">
+  <target name="tester">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=."/>
-      <arg value="-library-path"/>
-      <arg value="content_pack.swc"/>
+      <arg value="-file-specs"/>
+      <arg value="Tester.as"/>
+    </java>
+  </target>
+
+  <!-- builds our Flash game -->
+  <target name="compile">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
       <arg value="-file-specs"/>
       <arg value="${app.name}.as"/>
     </java>
