@@ -136,17 +136,21 @@ public class ProjectRoomManager extends PlaceManager
         // this is called on the executor thread and can go hog wild with the blocking
         public void executeTask () {
             try {
-                // TODO
-                throw new IOException("Building is not yet implemented.");
+                throw new IOException("Building is not yet implemented."); // TODO
 
-            } catch (Throwable t) {
-                _roomObj.setConsole(MessageBundle.tcompose("m.build_failed", t.getMessage()));
+            } catch (Throwable error) {
+                // we'll report this on resultReceived()
+                _error = error;
             }
         }
 
         // this is called back on the dobj thread and must only report results
         public void resultReceived () {
-            _roomObj.setConsole("m.build_complete");
+            if (_error != null) {
+                _roomObj.setConsole(MessageBundle.tcompose("m.build_failed", _error.getMessage()));
+            } else {
+                _roomObj.setConsole("m.build_complete");
+            }
         }
 
         // this is called back on the dobj thread and must only report failure
@@ -155,6 +159,7 @@ public class ProjectRoomManager extends PlaceManager
         }
 
         protected int _projectId;
+        protected Throwable _error;
     }
 
     protected ProjectRoomObject _roomObj;
