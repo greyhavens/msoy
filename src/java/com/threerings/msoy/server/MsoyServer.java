@@ -53,6 +53,7 @@ import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.server.MsoyHttpServer;
+import com.threerings.msoy.world.server.PetManager;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import com.threerings.msoy.server.persist.GroupRepository;
@@ -121,6 +122,9 @@ public class MsoyServer extends WhirledServer
 
     /** Handles sandboxed game server code. */
     public static ToyBoxManager toyMan = new ToyBoxManager();
+
+    /** Handles our cuddly little pets. */
+    public static PetManager petMan = new PetManager();
 
     /**
      * Creates an audit log with the specified name (which should not include
@@ -239,7 +243,8 @@ public class MsoyServer extends WhirledServer
         mailMan.init(mailRepo, memberRepo);
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
-        swiftlyMan.init(swiftlyRepo);
+        swiftlyMan.init(invmgr, swiftlyRepo);
+        // petMan.init(invmgr);
         lobbyReg.init(invmgr);
         worldGameReg.init(invmgr);
         GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {
