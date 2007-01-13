@@ -8,8 +8,11 @@ import Math;
 public class Ball extends Sprite
     implements Actor, CanCollide
 {    
-    public function Ball (juggler :Juggler, space :Space, art:Object = null) 
+    public function Ball (juggler :Juggler, space :Space, art:Object, xpos:Number, ypos:Number) 
     {
+		x = xpos;
+		y = ypos;
+	
         _juggler = juggler;
         _space = space;
                 
@@ -42,7 +45,7 @@ public class Ball extends Sprite
     {
         graphics.clear();
         graphics.beginFill(color, alpha);
-        graphics.drawCircle(0,0, _ballRadius);
+        graphics.drawCircle(0,0, BALL_RADIUS);
         graphics.endFill();
         
     }
@@ -54,6 +57,13 @@ public class Ball extends Sprite
         dx = (Math.random() * 16) - 8 * _space.frameRate;
         dy =  (Math.random() * 16) - 8 * _space.frameRate;
     }    
+    
+    public function placeInHand(hand:Hand) :void
+    {
+        _hand = hand;
+        _motion = caught;
+        _catchFrames = 0;
+    }
     
     public function caughtBy (hand:Hand) :void
     {
@@ -92,7 +102,7 @@ public class Ball extends Sprite
             _catchFrames -=1;
             
             const targetX:int = bounds.x;
-            const targetY:int = bounds.topProjection - _ballRadius;
+            const targetY:int = bounds.topProjection - BALL_RADIUS;
             
             x += (targetX - x) / 2
             y += (targetY - y) / 2
@@ -100,7 +110,7 @@ public class Ball extends Sprite
         else
         {
             x = bounds.x;
-            y = bounds.topProjection -_ballRadius;
+            y = bounds.topProjection -BALL_RADIUS;
         }
         
         nextX = x
@@ -195,22 +205,22 @@ public class Ball extends Sprite
         
     public function get leftProjection () :Number
     {
-        return nextX - _ballRadius;
+        return nextX - BALL_RADIUS;
     }
     
     public function get rightProjection () :Number
     {
-        return nextX + _ballRadius;
+        return nextX + BALL_RADIUS;
     }
     
     public function get topProjection () :Number
     {
-        return nextY - _ballRadius;
+        return nextY - BALL_RADIUS;
     }
     
     public function get bottomProjection () :Number
     {
-        return nextY + _ballRadius;
+        return nextY + BALL_RADIUS;
     }
     
     public function get mass() :Number
@@ -296,7 +306,7 @@ public class Ball extends Sprite
         
     private static const DEATH_BOUNCE:Number = -200;
         
-    private static const _ballRadius :int = 15;
+    public static const BALL_RADIUS :int = 15;
         
     private static const _elasticity :Number = 0.95;
     

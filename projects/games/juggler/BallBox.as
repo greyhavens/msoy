@@ -16,7 +16,7 @@ public class BallBox {
         balls.push(greenBall);
     }
     
-    public function provideBall() :Ball
+    public function provideBall(x:Number, y:Number) :Ball
     {
         const art:Object = new balls[_top]();
         
@@ -29,7 +29,7 @@ public class BallBox {
         (art as DisplayObject).x = -18;
         (art as DisplayObject).y = -18;
         
-        return new Ball(_juggler, _space, art);
+        return new Ball(_juggler, _space, art, x, y);
     }
     
     private var _juggler:Juggler;

@@ -9,7 +9,7 @@ public class JugglingController extends KeyboardController
            action[KEY_W] = body.leftHandRight;
            action[KEY_O] = body.rightHandLeft;
            action[KEY_P] = body.rightHandRight;
-           action[KEY_SPACE] = juggler.addBall;         
+           action[KEY_SPACE] = body.addBall;         
     }
     
     public function leftDown() :Boolean

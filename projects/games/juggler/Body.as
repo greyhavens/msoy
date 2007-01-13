@@ -6,7 +6,6 @@ import flash.display.DisplayObject;
 public class Body extends Sprite
     implements Actor
 {
-
     public function Body (juggler:Juggler, space:Space) :void 
     {
        _juggler = juggler;
@@ -17,6 +16,12 @@ public class Body extends Sprite
              
        _positions[LEFT] = new Array(-180, -100);
        _positions[RIGHT] = new Array(100, 180);
+   
+		// these are a hack - the targetting routine is innacurate
+		// and we use these as a way to adjust for that.  We really
+		// need to fix the targetting routine properly.
+        _target[LEFT] = new Array(-155, -85);
+        _target[RIGHT] = new Array(85, 155);
    
         _hands[LEFT].x = _positions[LEFT][LEFT];
         _hands[RIGHT].x = _positions[RIGHT][RIGHT];   
@@ -62,14 +67,9 @@ public class Body extends Sprite
         _hands[which].moveTo(_positions[which][where]);
     }
     
-    public function addBall() :Boolean
+    public function addBall() :void
     {
-        if (_addBall) {
-            return false;
-        }
-        
         _addBall = true;
-        return true;
     }
         
     /** command to move the left hand one position to the left **/
@@ -132,7 +132,7 @@ public class Body extends Sprite
         
         var v:Array = _ballisticTrajectory.initialVector(
             new Array( ball.x, ball.y ),
-            new Array( _positions[toHand][toPosition] + x, 
+            new Array( _target[toHand][toPosition] + x, 
                 y + HAND_LEVEL + (_hands[toHand]._height/2)),
             Hand.MAX_SPEED * strength,
             _space.gravity );
@@ -181,6 +181,8 @@ public class Body extends Sprite
     private var _hands:Array = new Array()
 
     private var _positions:Array = new Array();
+
+    private var _target:Array = new Array();
     
     private var _addBall:Boolean = false;
 

@@ -59,7 +59,7 @@ public class Juggler extends Sprite
 
     private function ignore(event:Object) :void
     {
-        trace("ignoring message: "+event);
+        // do nothing
     }
 
     public function registerAsActor(actor:Actor) :void
@@ -99,14 +99,7 @@ public class Juggler extends Sprite
         frameTimer.addEventListener(TimerEvent.TIMER, tick);
         frameTimer.start();        
     }
-        
-    public function addBall() :void
-    {
-        if (_body.addBall()) {
-            _ballsPlayed += 1;
-        }
-    }
-        
+                
     public static const DEBUG_GRAPHICS:Boolean = false;
     
     private var _gameControl:EZGameControl;

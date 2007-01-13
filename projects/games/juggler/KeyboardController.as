@@ -15,7 +15,6 @@ public class KeyboardController {
       */
     public function keyDown (event:KeyboardEvent) :void
     {
-        trace("received key down : "+event);
         _down[event.keyCode] = true;
                 
         if (_action[event.keyCode] is Function)
@@ -34,7 +33,6 @@ public class KeyboardController {
         
         if (source !== null)
         {
-            trace("registering for key events with "+source);
             source.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
             source.addEventListener(KeyboardEvent.KEY_UP, keyUp);  
         }  

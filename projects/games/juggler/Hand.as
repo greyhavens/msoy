@@ -113,10 +113,10 @@ public class Hand extends Sprite
     {        
         if (_releaseStrength > .90)
         {
-            _body.ballisticReleaseVelocity(this, _holding, .79);
+            _body.ballisticReleaseVelocity(this, _holding, .85);
         } else
         {
-            _body.ballisticReleaseVelocity(this, _holding, .68);
+            _body.ballisticReleaseVelocity(this, _holding, .73);
         }
         
         _holding.release();
@@ -192,10 +192,14 @@ public class Hand extends Sprite
     // add a ball starting at this hand
     public function addBall() :void
     {
-        var ball:Ball = _juggler.ballBox.provideBall();
+	 	const bounds:Bounds = boundsInContext(_juggler);
+        const targetX:int = bounds.x;
+        const targetY:int = bounds.topProjection - Ball.BALL_RADIUS;
+	
+        var ball:Ball = _juggler.ballBox.provideBall(targetX, targetY);
         _holding = ball;
         _juggler.scoreCard.ballAdded();
-        ball.caughtBy(this);
+        ball.placeInHand(this);
     }
     
     public function get topProjection () :Number 
