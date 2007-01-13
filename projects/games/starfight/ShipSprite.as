@@ -247,6 +247,14 @@ public class ShipSprite extends Sprite
 
             setVisible(false);
 
+            // Stop moving and firing.
+            xVel = 0;
+            yVel = 0;
+            turnRate = 0;
+            accel = 0;
+            turnAccelRate = 0;
+            _firing = false;
+
             // After a 5 second interval, reposition & reset.
             var timer :Timer = new Timer(RESPAWN_DELAY, 1);
             timer.addEventListener(TimerEvent.TIMER, restart);
