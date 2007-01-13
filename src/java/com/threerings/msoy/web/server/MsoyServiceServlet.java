@@ -29,9 +29,11 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     protected MemberRecord requireAuthedUser (WebCreds creds)
         throws ServiceException
     {
-        MemberRecord member = _members.get(creds.token);
-        if (member != null && member.memberId == creds.memberId) {
-            return member;
+        if (creds != null) {
+            MemberRecord member = _members.get(creds.token);
+            if (member != null && member.memberId == creds.memberId) {
+                return member;
+            }
         }
         throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
     }
