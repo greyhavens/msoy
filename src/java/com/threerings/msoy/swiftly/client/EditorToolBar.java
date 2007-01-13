@@ -26,8 +26,7 @@ public class EditorToolBar extends JToolBar
         add(_editor.createCloseCurrentTabAction());
 
         addSeparator();
-        add(_buildButton);
-        _buildButton.setAction(_ctrl.buildAction);
+        add(new JButton(_ctrl.buildAction));
         add(new JButton("Play"));
 
         addSeparator();
@@ -45,5 +44,4 @@ public class EditorToolBar extends JToolBar
     protected JButton _saveButton = new JButton("Save");
     protected JButton _undoButton = new JButton("Undo");
     protected JButton _redoButton = new JButton("Redo");
-    protected JButton _buildButton = new JButton("Build");
 }
