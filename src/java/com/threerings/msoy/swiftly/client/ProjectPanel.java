@@ -131,6 +131,19 @@ public class ProjectPanel extends JPanel
     // from interface TreeModelListener
     public void treeNodesChanged (TreeModelEvent e)
     {
+        /* TODO keep this around for now
+        // get the changed node
+        FileElementTreeNode node =
+            (FileElementTreeNode) e.getTreePath().getLastPathComponent();
+
+        // If the event lists children, then the changed node is the child of the node we've
+        // already gotten.  Otherwise, the changed node and the specified node are the same.
+        try {
+            int index = e.getChildIndices()[0];
+            node = (FileElementTreeNode) (node.getChildAt(index));
+        } catch (NullPointerException exc) {}
+        */
+
         FileElement element = getSelectedFileElement();
         // TODO try/catch block here
         // _editor.renameFileElement(element, newName);
