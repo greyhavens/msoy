@@ -60,6 +60,9 @@ import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 import com.threerings.msoy.game.client.LobbyController;
 
+import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
+import com.threerings.msoy.swiftly.data.SwiftlyMarshaller;
+
 public class MsoyClient extends Client
 {
     private static const log :Log = Log.getLog(MsoyClient);
