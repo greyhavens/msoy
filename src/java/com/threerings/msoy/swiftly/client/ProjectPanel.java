@@ -17,6 +17,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreePath;
@@ -88,7 +89,7 @@ public class ProjectPanel extends JPanel
     public void loadProject (SwiftlyProject project)
     {
         _top = new FileElementTreeNode(project);
-        _treeModel = new DefaultTreeModel(_top);
+        _treeModel = new FileElementTreeModel(_top);
         _treeModel.addTreeModelListener(this);
 
         for (SwiftlyDocument doc : project.getFiles()) {
@@ -130,26 +131,10 @@ public class ProjectPanel extends JPanel
     // from interface TreeModelListener
     public void treeNodesChanged (TreeModelEvent e)
     {
-        // get the changed node
-        FileElementTreeNode node =
-            (FileElementTreeNode) e.getTreePath().getLastPathComponent();
-
-         // If the event lists children, then the changed node is the child of the node we've
-         // already gotten.  Otherwise, the changed node and the specified node are the same.
-        try {
-            int index = e.getChildIndices()[0];
-            node = (FileElementTreeNode) (node.getChildAt(index));
-        } catch (NullPointerException exc) {}
-
-        // grab the new name
-        String newName = (String)node.getUserObject();
-
-        // the renamed node has a string user object. set it back to the file element.
         FileElement element = getSelectedFileElement();
         // TODO try/catch block here
         // _editor.renameFileElement(element, newName);
-        element.setName(newName);
-        node.setUserObject(element);
+
         if (element.getType() == FileElement.DOCUMENT) {
             _editor.updateTabTitleAt((SwiftlyDocument)element);
         }
@@ -321,11 +306,28 @@ public class ProjectPanel extends JPanel
         _selectedFileElement = (FileElement)node.getUserObject();
     }
 
+    protected class FileElementTreeModel extends DefaultTreeModel
+    {
+        public FileElementTreeModel (TreeNode root)
+        {
+            super(root);
+        }
+
+        @Override // from DefaultTreeModel
+        public void valueForPathChanged(TreePath path, Object newValue)
+        {
+            FileElementTreeNode node = (FileElementTreeNode)path.getLastPathComponent();
+            FileElement element = (FileElement)node.getUserObject();
+            element.setName((String)newValue);
+            super.valueForPathChanged(path, element);
+        }
+    }
+
     protected SwiftlyEditor _editor;
     protected FileElement _selectedFileElement;
     protected FileElementTreeNode _selectedNode;
     protected FileElementTreeNode _top;
-    protected DefaultTreeModel _treeModel;
+    protected FileElementTreeModel _treeModel;
     protected JTree _tree;
     protected JToolBar _toolbar = new JToolBar();
     protected JButton _plusButton;

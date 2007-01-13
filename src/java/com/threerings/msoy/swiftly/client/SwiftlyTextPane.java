@@ -142,8 +142,6 @@ public class SwiftlyTextPane extends JTextPane
         };
     }
 
-    // TODO select all when called from the toolbar isn't showing the selected text, despite
-    // having actually selected it. Fix this.
     public Action createSelectAllAction ()
     {
         return new AbstractAction("Select All") {
