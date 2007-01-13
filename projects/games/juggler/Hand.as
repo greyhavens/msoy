@@ -113,10 +113,10 @@ public class Hand extends Sprite
     {        
         if (_releaseStrength > .90)
         {
-            _body.ballisticReleaseVelocity(this, _holding, .82);
+            _body.ballisticReleaseVelocity(this, _holding, .79);
         } else
         {
-            _body.ballisticReleaseVelocity(this, _holding, .70);
+            _body.ballisticReleaseVelocity(this, _holding, .68);
         }
         
         _holding.release();

@@ -41,7 +41,7 @@ public class Space {
     
     public var bottom: Number;
     
-    public const gravity :Number = 1500; // pixels/sec/sec
+    public const gravity :Number = 1200; // pixels/sec/sec
     
     public var gravityPerFrame :Number;
     

@@ -28,7 +28,7 @@ public class Body extends Sprite
        juggler.registerAsActor(this);
        
        var art:Object = new pandaBody();
-       art.x = -137;
+       art.x = -150;
        art.y = -315;
        addChild(art as DisplayObject);
        

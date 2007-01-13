@@ -34,8 +34,8 @@ public class Juggler extends Sprite
         _actors = new Array();
                 
         _body = new Body(this, _space);
-        _body.x = 337;
-        _body.y = 530;
+        _body.x = 350;
+        _body.y = 520;
         
         _controller = new JugglingController(_body, this);
         _body.controller = _controller;
