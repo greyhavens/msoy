@@ -102,6 +102,20 @@ public class MailMessageRecord
     /** The low-level representation of the state of a {@link MailPayload} object. */
     @Column(length=16384, nullable=true)
     public byte[] payloadState;
+
+    @Override // from Object
+    public MailMessageRecord clone ()
+    {
+        try {
+            MailMessageRecord clone = (MailMessageRecord) super.clone();
+            clone.payloadState = payloadState != null ? payloadState.clone() : null;
+            clone.sent = sent != null ? (Timestamp) sent.clone() : null;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            // not actually going to happen
+            throw new RuntimeException(e);
+        }
+    }
     
     /**
      * Generates a string representation of this instance.

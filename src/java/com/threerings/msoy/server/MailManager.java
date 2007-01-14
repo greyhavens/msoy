@@ -166,8 +166,9 @@ public class MailManager
                 record.folderId = MailFolder.SENT_FOLDER_ID;
                 record.unread = false;
                 _mailRepo.fileMessage(record);
-                
-                // and one for the recipient (reusing the record object is safe)
+
+                // and make a copy for the recipient
+                record = record.clone();
                 record.ownerId = recipientId;
                 record.folderId = MailFolder.INBOX_FOLDER_ID;
                 record.unread = true;
@@ -214,15 +215,18 @@ public class MailManager
         if (_mailRepo.getFolders(memberId).size() == 0) {
             MailFolderRecord record = new MailFolderRecord();
             record.ownerId = memberId;
+            record.nextMessageId = 1;
 
             record.folderId = MailFolder.INBOX_FOLDER_ID;
             record.name = "Inbox";
             _mailRepo.createFolder(record);
-            
+
+            record = record.clone();
             record.folderId = MailFolder.TRASH_FOLDER_ID;
             record.name = "Trash";
             _mailRepo.createFolder(record);
 
+            record = record.clone();
             record.folderId = MailFolder.SENT_FOLDER_ID;
             record.name = "Sent";
             _mailRepo.createFolder(record);

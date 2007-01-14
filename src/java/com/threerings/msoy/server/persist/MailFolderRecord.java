@@ -4,6 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -51,6 +52,18 @@ public class MailFolderRecord
     /** The next available message id within this folder. */
     public int nextMessageId;
     
+    @Override // from Object
+    public MailFolderRecord clone ()
+    {
+        try {
+            MailFolderRecord clone = (MailFolderRecord) super.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            // not actually going to happen
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Generates a string representation of this instance.
      */
