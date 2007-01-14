@@ -51,15 +51,9 @@ public class ProjectPanel extends JPanel
      */
     public void removeCurrentNode ()
     {
-        TreePath currentSelection = _tree.getSelectionPath();
-        if (currentSelection != null) {
-            PathElementTreeNode currentNode = (PathElementTreeNode)
-                (currentSelection.getLastPathComponent());
-            MutableTreeNode parent = (MutableTreeNode)(currentNode.getParent());
-            if (parent != null) {
-                _treeModel.removeNodeFromParent(currentNode);
-                return;
-            }
+        PathElementTreeNode parent = (PathElementTreeNode)getSelectedNode().getParent();
+        if (parent != null) {
+            _treeModel.removeNodeFromParent(getSelectedNode());
         }
     }
 
@@ -172,22 +166,15 @@ public class ProjectPanel extends JPanel
         return new AbstractAction("-") {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
-                deleteDocument();
+                deletePathElement();
             }
         };
     }
 
-    protected void deleteDocument ()
+    protected void deletePathElement ()
     {
-        PathElementTreeNode node = (PathElementTreeNode) _tree.getLastSelectedPathComponent();
-        if (node == null) return;
-
         // TODO throw up a Are you sure yes/no dialog
-
-        PathElement element = (PathElement)node.getUserObject();
-
-        // TODO We're probably going to put this in a try/catch block
-        // _ctx.getEditor().deletePathElement(element);
+        PathElement element = getSelectedPathElement();
 
         // XXX we know the tab was selected in order for delete to work. This might be dangerous.
         // we also know the tab was open.. hmmm
@@ -198,7 +185,9 @@ public class ProjectPanel extends JPanel
             // soo.. every tab that has a common getParentId() ?
         } else {
             // TODO you're trying to remove the project itself? Does Homey play that?
+            return;
         }
+        // TODO _roomObj.service.deletePathElement(_ctx.getClient(), element);
         removeCurrentNode();
     }
 
