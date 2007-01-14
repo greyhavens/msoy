@@ -47,34 +47,9 @@ public class ProjectPanel extends JPanel
     }
 
     /**
-     * Removes the currently selected node.
+     * Initializes and adds the {@link ProjectTreeModel} to the panel.
+     * @param roomObj the {@link ProjectRoomObject} used as the root node.
      */
-    public void removeCurrentNode ()
-    {
-        PathElementTreeNode parent = (PathElementTreeNode)getSelectedNode().getParent();
-        if (parent != null) {
-            _treeModel.removeNodeFromParent(getSelectedNode());
-        }
-    }
-
-    /**
-     * Add a file element to the right spot based on the current selected node.
-     */
-    public PathElementTreeNode addNode (PathElement element)
-    {
-        PathElementTreeNode parent = (PathElementTreeNode)
-            ((getSelectedPathElement().getType() == PathElement.Type.FILE) ?
-             getSelectedNode().getParent() : getSelectedNode());
-
-        // TODO this needs to insert the node in a sorted manner
-        PathElementTreeNode child = new PathElementTreeNode(element);
-        _treeModel.insertNodeInto(child, parent, parent.getChildCount());
-
-        // Open any directory drop downs that need to be and scroll to the new node
-        _tree.scrollPathToVisible(new TreePath(child.getPath()));
-        return child;
-    }
-
     public void setProject (ProjectRoomObject roomObj)
     {
         _roomObj = roomObj;
@@ -100,7 +75,6 @@ public class ProjectPanel extends JPanel
             return;
         }
 
-        enableToolbar();
         setSelectedNode(node);
 
         PathElement element = getSelectedPathElement();
@@ -171,26 +145,9 @@ public class ProjectPanel extends JPanel
         };
     }
 
-    protected void deletePathElement ()
-    {
-        // TODO throw up a Are you sure yes/no dialog
-        PathElement element = getSelectedPathElement();
-
-        // XXX we know the tab was selected in order for delete to work. This might be dangerous.
-        // we also know the tab was open.. hmmm
-        if (element instanceof DocumentElement) {
-            _ctx.getEditor().closeCurrentTab();
-        } else if (element.getType() == PathElement.Type.DIRECTORY) {
-            // TODO oh god we have to remove all the tabs associated with this directory
-            // soo.. every tab that has a common getParentId() ?
-        } else {
-            // TODO you're trying to remove the project itself? Does Homey play that?
-            return;
-        }
-        // TODO _roomObj.service.deletePathElement(_ctx.getClient(), element);
-        removeCurrentNode();
-    }
-
+    /**
+     * Adds a {@link PathElement} to the tree and broadcasts that fact to the server.
+     */
     protected void addPathElement (PathElement.Type type)
     {
         // prompt the user for the directory name
@@ -217,6 +174,58 @@ public class ProjectPanel extends JPanel
         if (element != null) {
             _roomObj.service.addPathElement(_ctx.getClient(), element);
             addNode(element);
+        }
+    }
+
+    /**
+     * Add a {@link PathElement} to the right spot in the tree based on the current selected node.
+     */
+    protected PathElementTreeNode addNode (PathElement element)
+    {
+        PathElementTreeNode parent = (PathElementTreeNode)
+            ((getSelectedPathElement().getType() == PathElement.Type.FILE) ?
+             getSelectedNode().getParent() : getSelectedNode());
+
+        // TODO this needs to insert the node in a sorted manner
+        PathElementTreeNode child = new PathElementTreeNode(element);
+        _treeModel.insertNodeInto(child, parent, parent.getChildCount());
+
+        // Open any directory drop downs that need to be and scroll to the new node
+        _tree.scrollPathToVisible(new TreePath(child.getPath()));
+        return child;
+    }
+
+    /**
+     * Removes a {@link PathElement} and broadcasts that fact to the server.
+     */
+    protected void deletePathElement ()
+    {
+        // TODO throw up a Are you sure yes/no dialog
+        PathElement element = getSelectedPathElement();
+
+        // XXX we know the tab was selected in order for delete to work. This might be dangerous.
+        // we also know the tab was open.. hmmm
+        if (element instanceof DocumentElement) {
+            _ctx.getEditor().closeCurrentTab();
+        } else if (element.getType() == PathElement.Type.DIRECTORY) {
+            // TODO oh god we have to remove all the tabs associated with this directory
+            // soo.. every tab that has a common getParentId() ?
+        } else {
+            // TODO you're trying to remove the project itself? Does Homey play that?
+            return;
+        }
+        // TODO _roomObj.service.deletePathElement(_ctx.getClient(), element);
+        removeCurrentNode();
+    }
+
+    /**
+     * Removes the currently selected node from the tree.
+     */
+    protected void removeCurrentNode ()
+    {
+        PathElementTreeNode parent = (PathElementTreeNode)getSelectedNode().getParent();
+        if (parent != null) {
+            _treeModel.removeNodeFromParent(getSelectedNode());
         }
     }
 
@@ -264,6 +273,10 @@ public class ProjectPanel extends JPanel
 
     protected void setSelectedNode (PathElementTreeNode node)
     {
+        // if this is the first selection enable the buttons
+        if (_selectedNode == null) {
+            enableToolbar();
+        }
         _selectedNode = node;
     }
 
