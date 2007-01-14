@@ -150,7 +150,18 @@ public class ProjectPanel extends JPanel
         return new AbstractAction("+") {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
-                openNewDocument();
+                addPathElement(PathElement.Type.FILE);
+            }
+        };
+    }
+
+    protected Action createAddDirectoryAction ()
+    {
+        // TODO need icon
+        return new AbstractAction("+Dir") {
+            // from AbstractAction
+            public void actionPerformed (ActionEvent e) {
+                addPathElement(PathElement.Type.DIRECTORY);
             }
         };
     }
@@ -164,34 +175,6 @@ public class ProjectPanel extends JPanel
                 deleteDocument();
             }
         };
-    }
-
-    protected Action createAddDirectoryAction ()
-    {
-        // TODO need icon
-        return new AbstractAction("+Dir") {
-            // from AbstractAction
-            public void actionPerformed (ActionEvent e) {
-                addDirectory();
-            }
-        };
-    }
-
-    // Opens a new, unsaved document in a tab.
-    protected void openNewDocument ()
-    {
-        // prompt the user for the file name
-        String name = _ctx.getEditor().showSelectPathElementNameDialog(PathElement.Type.FILE);
-        if (name == null) {
-            return; // if the user hit cancel do no more
-        }
-
-        PathElement element = getSelectedPathElement();
-        int parentId = (element.getType() == PathElement.Type.FILE) ?
-            element.getParentId() : element.elementId;
-        DocumentElement doc = new DocumentElement(name, parentId, "");
-        _roomObj.service.addPathElement(_ctx.getClient(), doc);
-        _ctx.getEditor().addEditorTab(doc);
     }
 
     protected void deleteDocument ()
@@ -219,25 +202,33 @@ public class ProjectPanel extends JPanel
         removeCurrentNode();
     }
 
-    protected void addDirectory ()
+    protected void addPathElement (PathElement.Type type)
     {
-        PathElementTreeNode node = (PathElementTreeNode) _tree.getLastSelectedPathComponent();
-        if (node == null) {
-            return;
-        }
-
-        PathElement element = (PathElement)node.getUserObject();
-        PathElement dir = PathElement.createDirectory("", element.getParentId());
-
         // prompt the user for the directory name
-        String name = _ctx.getEditor().showSelectPathElementNameDialog(PathElement.Type.DIRECTORY);
-        // if the user clicked cancel do no more
+        String name = _ctx.getEditor().showSelectPathElementNameDialog(type);
         if (name == null) {
-            return;
+            return; // if the user hit cancel do no more
         }
-        dir.setName(name);
 
-        addNode(dir);
+        // the parent element is the directory or project the selected element is in, or if
+        // a project or directory is selected, that is the parent element
+        PathElement parentElement = getSelectedPathElement();
+        int parentId = (parentElement.getType() == PathElement.Type.FILE) ?
+            parentElement.getParentId() : parentElement.elementId;
+
+        PathElement element = null;
+        if (type == PathElement.Type.DIRECTORY) {
+            element = PathElement.createDirectory(name, parentId);
+        } else if (type == PathElement.Type.FILE) {
+            element = new DocumentElement(name, parentId, "");
+            _ctx.getEditor().addEditorTab((DocumentElement)element);
+        } else {
+            // other types not implemented
+        }
+        if (element != null) {
+            _roomObj.service.addPathElement(_ctx.getClient(), element);
+            addNode(element);
+        }
     }
 
     protected void setupToolbar ()
