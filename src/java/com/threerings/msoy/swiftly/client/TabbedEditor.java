@@ -102,10 +102,6 @@ public class TabbedEditor extends JTabbedPane
         SwiftlyTextPane textPane = (SwiftlyTextPane)pane.getViewport().getView();
         String title = textPane.getDocumentElement().getName();
 
-        if (title.length() == 0) {
-            title = "Untitled document";
-        }
-
         if (textPane.hasUnsavedChanges()) {
             title = "*" + title;
         }
