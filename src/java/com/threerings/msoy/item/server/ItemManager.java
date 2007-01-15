@@ -91,7 +91,7 @@ public class ItemManager
         _repos.put(Item.FURNITURE, repo);
         repo = (_gameRepo = new GameRepository(conProv));
         _repos.put(Item.GAME, repo);
-        repo = new PetRepository(conProv);
+        repo = (_petRepo = new PetRepository(conProv));
         _repos.put(Item.PET, repo);
         repo = new PhotoRepository(conProv);
         _repos.put(Item.PHOTO, repo);
@@ -107,6 +107,14 @@ public class ItemManager
     public GameRepository getGameRepository ()
     {
         return _gameRepo;
+    }
+
+    /**
+     * Provides a reference to the {@link PetRepository} which is used to load pets into rooms.
+     */
+    public PetRepository getPetRepository ()
+    {
+        return _petRepo;
     }
 
     /**
@@ -1078,6 +1086,9 @@ public class ItemManager
     /** Contains a reference to our game repository. We'd just look this up from the table but we
      * can't downcast an ItemRepository to a GameRepository, annoyingly. */
     protected GameRepository _gameRepo;
+
+    /** Contains a reference to our pet repository. See {@link #_gameRepository} for complaint. */
+    protected PetRepository _petRepo;
 
     /** A regexp pattern to validate tags. */
     protected static final Pattern validTag =

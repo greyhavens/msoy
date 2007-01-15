@@ -11,8 +11,7 @@ import com.threerings.msoy.item.web.Pet;
 import com.threerings.msoy.item.web.Item;
 
 /**
- * Represents a pet that a user can place into
- * a virtual world scene and potentially interact with.
+ * Represents a pet that a user can place into a virtual world scene and potentially interact with.
  */
 @Entity
 @Table

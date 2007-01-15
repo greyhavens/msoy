@@ -205,8 +205,8 @@ public class RoomManager extends SpotSceneManager
             resolveMemories(furniIds);
         }
 
-        // load up any pets that are "let out" in this room
-        MsoyServer.petMan.loadRoomPets(_roomObj.getOid());
+        // load up any pets that are "let out" in this room scene
+        MsoyServer.petMan.loadRoomPets(_roomObj, _scene.getId());
     }
 
     @Override // from PlaceManager
@@ -230,6 +230,9 @@ public class RoomManager extends SpotSceneManager
     {
         MsoyServer.invmgr.clearDispatcher(_roomObj.roomService);
         super.didShutdown();
+
+        // shut our pets down
+        MsoyServer.petMan.shutdownRoomPets(_roomObj);
 
         // flush any modified memory records to the database
         final ArrayList<MemoryRecord> memrecs = new ArrayList<MemoryRecord>();

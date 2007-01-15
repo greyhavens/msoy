@@ -150,6 +150,18 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Loads and returns all items (clones and originals) that are "in use" at the specified
+     * location.
+     */
+    public Collection<T> loadItemsByLocation (int location)
+        throws PersistenceException
+    {
+        Collection<T> items = loadClonedItems(new Where(CloneRecord.LOCATION, location));
+        items.addAll(findAll(getItemClass(), new Where(ItemRecord.LOCATION, location)));
+        return items;
+    }
+
+    /**
      * Mark the specified items as being used in the specified way.
      */
     public void markItemUsage (int[] itemIds, byte usageType, int location)
@@ -157,24 +169,20 @@ public abstract class ItemRepository<
     {
         Class<T> iclass = getItemClass();
         Class<CLT> cclass = getCloneClass();
-        Byte utype = Byte.valueOf(usageType);
-        Integer loc = Integer.valueOf(location);
 
         for (int itemId : itemIds) {
             int result;
             if (itemId > 0) {
-                result = updatePartial(iclass, itemId, ItemRecord.USED, utype,
-                    ItemRecord.LOCATION, loc);
-
+                result = updatePartial(
+                    iclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location);
             } else {
-                result = updatePartial(cclass, itemId, ItemRecord.USED, utype,
-                    ItemRecord.LOCATION, loc);
+                result = updatePartial(
+                    cclass, itemId, ItemRecord.USED, usageType, ItemRecord.LOCATION, location);
             }
             // if the item didn't update, freak out.
             if (0 == result) {
-                Log.warning("Unable to find item to mark usage " +
-                            "[itemId=" + itemId + ", usageType=" + usageType +
-                            ", location=" + location + "].");
+                Log.warning("Unable to find item to mark usage [itemId=" + itemId +
+                            ", usageType=" + usageType + ", location=" + location + "].");
             }
         }
     }

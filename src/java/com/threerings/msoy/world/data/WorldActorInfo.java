@@ -9,6 +9,7 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.data.ActorInfo;
+import com.threerings.msoy.data.PetObject;
 
 /**
  * Contains extra information for an occupant when they are in the virtual world.
@@ -22,13 +23,22 @@ public class WorldActorInfo extends ActorInfo
     }
 
     /**
-     * Creates a world actor info record for the specified actor. (TODO: create PetObject and
-     * MobObject versions).
+     * Creates a world actor info record for the specified actor. (TODO: create MobObject version,
+     * nix this version).
      */
     public WorldActorInfo (BodyObject body, ItemIdent ident, MediaDesc media)
     {
         super(body, ident);
         _media = media;
+    }
+
+    /**
+     * Creates a world actor info record for the supplied pet.
+     */
+    public WorldActorInfo (PetObject petobj)
+    {
+        super(petobj, petobj.pet.getIdent());
+        _media = petobj.pet.getFurniMedia();
     }
 
     // from interface WorldOccupantInfo
