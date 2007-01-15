@@ -48,8 +48,10 @@ public class MailComposition extends PopupPanel
              subject, factory, bodyText);
         _ctx.membersvc.getName(recipientId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _recipient = (MemberName) result;
-                _recipientBox.setText(_recipient.toString());
+                if (result != null) {
+                    _recipient = (MemberName) result;
+                    _recipientBox.setText(_recipient.toString());
+                }
             }
             public void onFailure (Throwable caught) {
                 // let's ignore this error, it's just a display thing
