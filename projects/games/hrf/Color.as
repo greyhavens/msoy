@@ -42,6 +42,14 @@ package
             this.b = factor * b;
 		}
 
+		public function setHSV (h :Number, s :Number, v :Number) :void
+		{
+            var rgb :Object = HSVtoRGB(h, s, v);
+			this.r = rgb.r;
+			this.g = rgb.g;
+			this.b = rgb.b;
+		}
+
 		public function addColor (other :Color, factor :Number = 1) :void
 		{
 			this.r += factor * other.r;
@@ -63,16 +71,26 @@ package
 			this.g += rgb.g;
 			this.b += rgb.b;
 		}
-		
-		public function multiply (other :Color) :void
+
+		public function multiplyColor (other :Color) :void
 		{
 		    this.r *= other.r;
 		    this.g *= other.g;
 		    this.b *= other.b;
 		}
 
+		public function multiply (factor :Number) :void
+		{
+		    this.r *= factor;
+		    this.g *= factor;
+		    this.b *= factor;
+		}
+
 		public function clamp () :uint
 		{
+//		    var rByte :uint = (uint) (Math.log(r) * 0xFF);
+//		    var gByte :uint = (uint) (Math.log(g) * 0xFF);
+//		    var bByte :uint = (uint) (Math.log(b) * 0xFF);
 			var rByte :uint = (uint) (Math.min(Math.max(0, r), 1) * 0xFF);
 			var gByte :uint = (uint) (Math.min(Math.max(0, g), 1) * 0xFF);
 			var bByte :uint = (uint) (Math.min(Math.max(0, b), 1) * 0xFF);

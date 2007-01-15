@@ -1,5 +1,8 @@
 package
 {
+	/**
+	 * This is Ken Perlin's improved noise algorithm, ported to ActionScript 3.0. It's magic.
+	 */
     public class ImprovedPerlin
     {
         public function ImprovedPerlin ()

@@ -37,7 +37,7 @@ package
             _nextBitmap.lock();
             _line = 0;
             
-   			viewAngle = 50*Math.PI/180;
+   			viewAngle = -50*Math.PI/180;
 			viewDistance = 1.1;
 			cs = Math.cos(viewAngle);
 			si = Math.sin(viewAngle);
@@ -50,12 +50,10 @@ package
 
 		public function renderNextLine () :Boolean
 		{
-//			trace("render() enter");
-
 			for (var x :int = 0; x < _nextBitmap.width; x ++) {
                 var y :int = _line;
 				var pX :Number = (x - _nextBitmap.width/2) * viewPlaneScale;
-				var pY :Number = (y - _nextBitmap.height/2) * viewPlaneScale;
+				var pY :Number = -(y - _nextBitmap.height/2) * viewPlaneScale;
 				pointDir.x = pX;
 				pointDir.y = pY*cs + viewDistance*si;
 				pointDir.z = -pY*si + viewDistance*cs;
@@ -95,55 +93,59 @@ package
 			return 0;
 		}
 		
-        protected var color :Color = new Color();
-        protected var work :Color = new Color();
-        
 		protected function renderHit (surface :Surface, eye :Vector, hit :Object) :uint
 		{
-			var x:Number = hit.x;
-			var z:Number = hit.z;
-
             color.setColor(AMBIENT_LIGHT);
-            color.multiply(hit.c);
+            color.multiplyColor(hit.c);
 
-			// calculate the eye vector
-			pointToEye.setVector(eye);
-			pointToEye.addXYZ(-x, 0, -z);
-			pointToEye.normalize();
+   			// calculate the eye vector
+   			pointToEye.setVector(eye);
+   			pointToEye.add(hit.p, -1);
+            var pDist :Number = pointToEye.dot(pointToEye);
+   			pointToEye.normalize();
 
-			for (var i :int = 0; i < _lights.length; i ++) {
-				var light :Light = _lights[i];
+            // the surface can return a null normal to imply fD=fS=0, e.g. a pure light source
+            if (hit.n != null) {
+    			var normal :Vector = hit.n;
 
-				// calculate the light vector
-				pointToLight.setVector(light.position);
-				pointToLight.addXYZ(-x, 0, -z);
-				var d2 :Number = pointToLight.dot(pointToLight);
+    			for (var i :int = 0; i < _lights.length; i ++) {
+    				var light :Light = _lights[i];
+    
+    				// calculate the light vector
+    				pointToLight.setVector(light.position);
+    				pointToLight.add(hit.p, -1);
+    				var d2 :Number = pointToLight.dot(pointToLight);
+    
+    				pointToLight.normalize();
+    
+    				// that's enough to calculate the diffuse term
+    				var diffuse :Number = Math.max(0, pointToLight.dot(normal));
+    
+    				// now the half-angle for Blinn specular
+    				halfAngle.setVector(pointToLight);
+    				halfAngle.add(pointToEye);
+    				halfAngle.multiply(0.5);
+    				halfAngle.normalize();
+    				var blinnDot :Number = Math.max(0, halfAngle.dot(normal));
+    				var specular :Number = Math.pow(blinnDot, 40);
+    
+    				// multiple colours term by term, RGB-wise
+                    work.setColor(light.color);
+                    work.multiplyColor(hit.c);
+                    // and add this light's contribution
+    				color.addColor(work, (hit.fD*diffuse + hit.fS*specular)/d2);
+    			}
+            }
+			// finally add the intrinsic glow
+			color.addColor(hit.c, hit.glow);
 
-				pointToLight.normalize();
-
-				// the normal vector
-				var normal :Vector = hit.n;
-
-				// that's enough to calculate the diffuse term
-				var diffuse :Number = Math.max(0, pointToLight.dot(normal));
-
-				// now the half-angle for Blinn specular
-				halfAngle.setVector(pointToLight);
-				halfAngle.add(pointToEye);
-				halfAngle.multiply(0.5);
-				halfAngle.normalize();
-				var blinnDot :Number = Math.max(0, halfAngle.dot(normal));
-				var specular :Number = Math.pow(blinnDot, 40);
-
-                work.setColor(light.color);
-                work.multiply(hit.c);
-				color.addColor(work, (hit.fD*diffuse + hit.fS*specular)/d2);
-			}
-			color.addColor(work, hit.glow/d2);
 			// use unclamped colour here; this is for simulation, not display
 			surface.finalColor(hit, color);
 			return color.clamp();
 		}
+
+        protected var color :Color = new Color();
+        protected var work :Color = new Color();
 
 		protected var pointToEye :Vector = new Vector();
 		protected var pointToLight :Vector = new Vector();

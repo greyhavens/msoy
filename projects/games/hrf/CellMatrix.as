@@ -47,17 +47,17 @@ package
             dst = tmp;
         }
 
-		/**
-		 * Input for CA algorithm:
-		 *  - light reaching cell
-		 *  - current configuration
-		 *  - immediate neighbour configurations
-		 *  - larger neighbourhood demographics
-		 * 
-		 * Cell configuration, then:
-		 *  - hue/saturation/value
-		 *  - luminescence/shinyness/roughness
-		 */
+        /**
+         * Input for CA algorithm:
+         *  - light reaching cell
+         *  - current configuration
+         *  - immediate neighbour configurations
+         *  - larger neighbourhood demographics?
+         * 
+         * Cell configuration, then:
+         *  - hue
+         *  - strength
+         */
         public function transformCell (c :Color, x :int, y :int, outCell :Cell) :void
         {
             // if we have immediate neighbours, let them spread by blending, for now
@@ -73,14 +73,11 @@ package
                 s2sum += s2;
                 outCell.hue += s2 * neighbor.hue;
             }
+            var lightLevel :Number = c.getHSV().val;
             if (outCell.strength > 0) {
-//                var lightLevel :Number = c.getHSV().val / 20;
                 outCell.hue /= s2sum;        // weighted average
-                outCell.strength = outCell.strength * 2 / neighbors.length;
-//                outCell.strength += (0.9 + Math.random()*0.2)*lightLevel;
-//                outCell.hue += lightLevel * ((c.getHSV().hue + 180) % 360);
-//                outCell.hue /= (lightLevel + 1);
-            } else if (Math.random() < Math.max(c.b, c.g, c.r) / 1000) {
+                outCell.strength = outCell.strength * 2 / neighbors.length / (1 + 3*lightLevel);
+            } else if (Math.random() < 1/2000) {
                 // on empty spots, there is a random chance of spontaneous growth
                 outCell.strength = .3;
                 outCell.hue = Math.random() * 360;
@@ -90,7 +87,7 @@ package
 
         public function getNeighbors (x :int, y :int) :Array
         {
-            var result :Array = new Array();
+          var result :Array = new Array();
             result.push(getCell(x, y));
             if (y > 0) {
                 result.push(getCell(x, y-1));
