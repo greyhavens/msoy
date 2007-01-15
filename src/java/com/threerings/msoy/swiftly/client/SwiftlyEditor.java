@@ -47,61 +47,74 @@ public class SwiftlyEditor extends PlacePanel
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // setup the components
-        _tabs = new TabbedEditor(_ctx, this);
-        _tabs.setMinimumSize(new Dimension(400, 0));
+        _editorTabs = new TabbedEditor(_ctx, this);
+        _editorTabs.setMinimumSize(new Dimension(400, 400));
+        _editorTabs.setPreferredSize(new Dimension(800, 800));
+
+        _consoleTabs = new TabbedConsole(_ctx, this);
+        _consoleTabs.setMinimumSize(new Dimension(0, 0));
+        _consoleTabs.setPreferredSize(new Dimension(0, 100));
 
         _projectPanel = new ProjectPanel(_ctx, this);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
+        _projectPanel.setPreferredSize(new Dimension(100, 0));
 
         _toolbar = new EditorToolBar(ctrl, _ctx, this);
-        _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _tabs, _projectPanel);
+
+        _vertSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, _editorTabs, _consoleTabs);
         // TODO apparently GTK does not have the graphic for this. What to do?
-        _splitPane.setOneTouchExpandable(true);
+        _vertSplitPane.setOneTouchExpandable(true);
+
+        _horizSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _vertSplitPane, _projectPanel);
+        _horizSplitPane.setOneTouchExpandable(true);
 
         // layout the window
         add(_toolbar, VGroupLayout.FIXED);
-        add(_splitPane);
+        add(_horizSplitPane);
 
-        JPanel panel = new JPanel(
-            new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH, 5, HGroupLayout.LEFT));
-        panel.setPreferredSize(new Dimension(0, 200));
-        panel.add(new ChatPanel(_ctx));
-        OccupantList ol;
-        panel.add(ol = new OccupantList(_ctx), HGroupLayout.FIXED);
-        ol.setPreferredSize(new Dimension(100, 0));
-        add(panel, VGroupLayout.FIXED);
+        // TODO this is an ideal way to layout the splits, but is not working. revisit
+        _vertSplitPane.setDividerLocation(0.8);
+        _horizSplitPane.setDividerLocation(0.8);
 
-        _splitPane.setDividerLocation(0.8);
+        consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.welcome"));
     }
 
     public void addEditorTab (DocumentElement document)
     {
-        _tabs.addEditorTab(document);
+        _editorTabs.addEditorTab(document);
     }
 
     public void updateTabTitleAt (DocumentElement document)
     {
-        _tabs.updateTabTitleAt(document);
+        _editorTabs.updateTabTitleAt(document);
     }
 
     public void updateTabDocument (DocumentElement document)
     {
-        _tabs.updateTabDocument(document);
+        _editorTabs.updateTabDocument(document);
     }
 
     public void updateCurrentTabTitle ()
     {
-        _tabs.updateCurrentTabTitle();
+        _editorTabs.updateCurrentTabTitle();
     }
 
     public void closeCurrentTab ()
     {
-        _tabs.closeCurrentTab();
+        _editorTabs.closeCurrentTab();
+    }
+
+    /**
+     * See {@link TabbedConsole} for documentation.
+     */
+    public void consoleMessage (String message)
+    {
+        _consoleTabs.consoleMessage(message);
     }
 
     public AbstractAction createCloseCurrentTabAction ()
     {
-        return _tabs.createCloseCurrentTabAction();
+        return _editorTabs.createCloseCurrentTabAction();
     }
 
     public EditorToolBar getToolbar()
@@ -162,8 +175,7 @@ public class SwiftlyEditor extends PlacePanel
     public void attributeChanged (AttributeChangedEvent event)
     {
         if (event.getName().equals(ProjectRoomObject.CONSOLE)) {
-            // TODO: append this to a console instead of just jamming it into a status bar
-            // _statusbar.setLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, _roomObj.console));
+            consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, _roomObj.console));
         }
     }
 
@@ -176,9 +188,11 @@ public class SwiftlyEditor extends PlacePanel
     protected SwiftlyContext _ctx;
     protected ProjectRoomObject _roomObj;
 
-    protected TabbedEditor _tabs;
+    protected TabbedEditor _editorTabs;
+    protected TabbedConsole _consoleTabs;
     protected EditorToolBar _toolbar;
     protected ProjectPanel _projectPanel;
     protected PathElement _project;
-    protected JSplitPane _splitPane;
+    protected JSplitPane _vertSplitPane;
+    protected JSplitPane _horizSplitPane;
 }
