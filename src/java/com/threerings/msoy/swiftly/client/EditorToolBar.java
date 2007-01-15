@@ -3,11 +3,15 @@ package com.threerings.msoy.swiftly.client;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
 
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.util.SwiftlyContext;
+
 public class EditorToolBar extends JToolBar
 {
-    public EditorToolBar (ProjectRoomController ctrl, SwiftlyEditor editor)
+    public EditorToolBar (ProjectRoomController ctrl, SwiftlyContext ctx, SwiftlyEditor editor)
     {
         _ctrl = ctrl;
+        _ctx = ctx;
         _editor = editor;
         setupToolbar();
     }
@@ -21,7 +25,8 @@ public class EditorToolBar extends JToolBar
 
     protected void setupToolbar ()
     {
-        // TODO replace as many of these with icons as makes sense
+        // TODO add mini icons for these + tooltips with keyboard shortcuts
+        _saveButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_save"));
         add(_saveButton);
         add(_editor.createCloseCurrentTabAction());
 
@@ -30,18 +35,20 @@ public class EditorToolBar extends JToolBar
         add(new JButton("Play"));
 
         addSeparator();
-        // TODO add mini icons for these + tooltips with keyboard shortcuts
         // These actions get set by updateEditorActions()
+        _undoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_undo"));
         add(_undoButton);
+        _redoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_redo"));
         add(_redoButton);
 
         setFloatable(false);
     }
 
     protected ProjectRoomController _ctrl;
+    protected SwiftlyContext _ctx;
     protected SwiftlyEditor _editor;
 
-    protected JButton _saveButton = new JButton("Save");
-    protected JButton _undoButton = new JButton("Undo");
-    protected JButton _redoButton = new JButton("Redo");
+    protected JButton _saveButton;
+    protected JButton _undoButton;
+    protected JButton _redoButton;
 }

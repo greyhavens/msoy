@@ -47,13 +47,13 @@ public class SwiftlyEditor extends PlacePanel
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // setup the components
-        _tabs = new TabbedEditor(this);
+        _tabs = new TabbedEditor(_ctx);
         _tabs.setMinimumSize(new Dimension(400, 0));
 
         _projectPanel = new ProjectPanel(_ctx);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
 
-        _toolbar = new EditorToolBar(ctrl, this);
+        _toolbar = new EditorToolBar(ctrl, _ctx, this);
         _statusbar = new EditorStatusBar();
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _tabs, _projectPanel);
         // TODO apparently GTK does not have the graphic for this. What to do?

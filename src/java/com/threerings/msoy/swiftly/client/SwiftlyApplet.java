@@ -86,7 +86,7 @@ public class SwiftlyApplet extends JApplet
         try {
             SwingUtilities.invokeAndWait(new Runnable() {
                 public void run() {
-                    createGUI(PathElement.createRoot("Coolest game ever"));
+                    createGUI();
                 }
             });
 
@@ -104,11 +104,6 @@ public class SwiftlyApplet extends JApplet
         super.destroy();
         // we need to cope with our threads being destroyed but our classes not being unloaded
         Interval.resetTimer();
-    }
-
-    public SwiftlyEditor getEditor()
-    {
-        return _editor;
     }
 
     /**
@@ -205,7 +200,7 @@ public class SwiftlyApplet extends JApplet
         // nada
     }
 
-    protected void createGUI (PathElement project)
+    protected void createGUI ()
     {
         try {
             // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

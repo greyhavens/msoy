@@ -15,12 +15,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.threerings.msoy.swiftly.data.DocumentElement;
+import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class TabbedEditor extends JTabbedPane
 {
-    public TabbedEditor (SwiftlyEditor editor) 
+    public TabbedEditor (SwiftlyContext ctx) 
     {
-        _editor = editor;
+        _ctx = ctx;
         addChangeListener(new TabChangedListener());
 
         setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -37,7 +38,7 @@ public class TabbedEditor extends JTabbedPane
             return;
         }
 
-        SwiftlyTextPane textPane = new SwiftlyTextPane(_editor, document);
+        SwiftlyTextPane textPane = new SwiftlyTextPane(_ctx, document);
         JScrollPane scroller = new JScrollPane(textPane, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
@@ -124,7 +125,7 @@ public class TabbedEditor extends JTabbedPane
 
         int response = -1;
         if (textPane.hasUnsavedChanges()) {
-            response = JOptionPane.showInternalConfirmDialog(_editor, "Save changes?");
+            response = JOptionPane.showInternalConfirmDialog(_ctx.getEditor(), "Save changes?");
             // Choosing Cancel will return at this point and do nothing
             if (response == JOptionPane.YES_OPTION) {
                 textPane.saveDocument();
@@ -208,15 +209,15 @@ public class TabbedEditor extends JTabbedPane
         public void stateChanged(ChangeEvent evt) {
             SwiftlyTextPane textPane = getCurrentTextPane();
             if (textPane != null) {
-                _editor.getToolbar().updateEditorActions(textPane);
+                _ctx.getEditor().getToolbar().updateEditorActions(textPane);
             }
 
             // clear the statusbar whenever a different tab is selected
-            _editor.clearStatus();
+            _ctx.getEditor().clearStatus();
         }
     }
 
-    protected SwiftlyEditor _editor;
+    protected SwiftlyContext _ctx;
 
     // maps the document of the loaded file to the componenet (scroller) holding that textpane
     protected HashMap<DocumentElement,JScrollPane> _tabList =

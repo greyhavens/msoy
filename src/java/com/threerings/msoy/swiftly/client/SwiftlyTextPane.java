@@ -29,18 +29,25 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
 import com.threerings.msoy.swiftly.data.DocumentElement;
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class SwiftlyTextPane extends JTextPane
 {
-    public SwiftlyTextPane (SwiftlyEditor editor, DocumentElement document)
+    public SwiftlyTextPane (SwiftlyContext ctx, DocumentElement document)
     {
-        _editor = editor;
+        _ctx = ctx;
         _document = document;
 
         _kit = new ActionScriptEditorKit();
         setEditorKit(_kit);
 
         // setContentType("text/actionscript");
+
+        // setup the actions
+        _undoAction = new UndoAction();
+        _redoAction = new RedoAction();
+        _saveAction = new SaveAction();
 
         addKeyBindings();
         addPopupMenu();
@@ -83,10 +90,10 @@ public class SwiftlyTextPane extends JTextPane
     public boolean saveDocument ()
     {
         if (hasUnsavedChanges()) {
-            _editor.setStatus("Saving " + _document);
+            _ctx.getEditor().setStatus("Saving " + _document);
             try {
                 _document.setText(getDocument().getText(0, getDocument().getLength()));
-                _editor.saveDocumentElement(_document);
+                _ctx.getEditor().saveDocumentElement(_document);
                 setDocumentChanged(false);
                 return true;
             } catch (BadLocationException be) {
@@ -104,7 +111,7 @@ public class SwiftlyTextPane extends JTextPane
     public void setDocumentChanged (boolean value)
     {
         _documentChanged = value;
-        _editor.updateCurrentTabTitle();
+        _ctx.getEditor().updateCurrentTabTitle();
         _saveAction.setEnabled(value);
     }
 
@@ -133,7 +140,7 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action createCutAction ()
     {
-        return new AbstractAction("Cut") {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_cut")) {
             public void actionPerformed (ActionEvent e) {
                 cut();
             }
@@ -142,7 +149,7 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action createCopyAction ()
     {
-        return new AbstractAction("Copy") {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_copy")) {
             public void actionPerformed (ActionEvent e) {
                 copy();
             }
@@ -151,7 +158,7 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action createPasteAction ()
     {
-        return new AbstractAction("Paste") {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_paste")) {
             public void actionPerformed (ActionEvent e) {
                 paste();
             }
@@ -160,7 +167,7 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action createSelectAllAction ()
     {
-        return new AbstractAction("Select All") {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_select_all")) {
             public void actionPerformed (ActionEvent e) {
                 selectAll();
             }
@@ -174,7 +181,7 @@ public class SwiftlyTextPane extends JTextPane
                      KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 
         // ctrl-w closes the tab
-        addKeyAction(_editor.createCloseCurrentTabAction(),
+        addKeyAction(_ctx.getEditor().createCloseCurrentTabAction(),
                      KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
 
         // ctrl-z undoes the action
@@ -189,33 +196,18 @@ public class SwiftlyTextPane extends JTextPane
         _popup = new JPopupMenu();
 
         // TODO is there a cross platform way to show what the keybindings are for these actions?
-        // Cut
-        _popup.add(createMenuItem("Cut", createCutAction()));
-        // Copy
-        _popup.add(createMenuItem("Copy", createCopyAction()));
-        // Paste
-        _popup.add(createMenuItem("Paste", createPasteAction()));
-        // Separator
+        _popup.add(createCutAction());
+        _popup.add(createCopyAction());
+        _popup.add(createPasteAction());
         _popup.addSeparator();
-        // Select All
-        _popup.add(createMenuItem("Select All", createSelectAllAction()));
-        // Separator
+        _popup.add(createSelectAllAction());
         _popup.addSeparator();
-        // Undo
         _popup.add(_undoAction);
-        // Redo
         _popup.add(_redoAction);
 
         MouseListener popupListener = new PopupListener();
         // add popupListener to the textpane
         addMouseListener(popupListener);
-    }
-
-    protected JMenuItem createMenuItem (String text, Action action)
-    {
-        JMenuItem item = new JMenuItem(action);
-        item.setText(text);
-        return item;
     }
 
     protected void addKeyAction (Action action, KeyStroke key)
@@ -247,7 +239,7 @@ public class SwiftlyTextPane extends JTextPane
     {
         public SaveAction ()
         {
-            super("Save");
+            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_save"));
             setEnabled(false);
         }
 
@@ -276,7 +268,7 @@ public class SwiftlyTextPane extends JTextPane
     protected class UndoAction extends AbstractAction
     {
         public UndoAction () {
-            super("Undo");
+            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_undo"));
             setEnabled(false);
         }
 
@@ -286,7 +278,7 @@ public class SwiftlyTextPane extends JTextPane
             try {
                 _undo.undo();
             } catch (CannotUndoException ex) {
-                _editor.setStatus("Unable to undo.");
+                // update() will set the action disabled
             }
             update();
             _redoAction.update();
@@ -296,7 +288,6 @@ public class SwiftlyTextPane extends JTextPane
         {
             if(_undo.canUndo()) {
                 setEnabled(true);
-                putValue(Action.NAME, _undo.getUndoPresentationName());
             }
             else {
                 setEnabled(false);
@@ -304,7 +295,6 @@ public class SwiftlyTextPane extends JTextPane
                 if (hasUnsavedChanges()) {
                     setDocumentChanged(false);
                 }
-                putValue(Action.NAME, "Undo");
             }
         }
     }
@@ -313,7 +303,7 @@ public class SwiftlyTextPane extends JTextPane
     {
         public RedoAction ()
         {
-            super("Redo");
+            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_redo"));
             setEnabled(false);
         }
 
@@ -323,7 +313,7 @@ public class SwiftlyTextPane extends JTextPane
             try {
                 _undo.redo();
             } catch (CannotRedoException ex) {
-                _editor.setStatus("Unable to redo.");
+                // update() will set the action disabled
             }
             update();
             _undoAction.update();
@@ -333,11 +323,9 @@ public class SwiftlyTextPane extends JTextPane
         {
             if(_undo.canRedo()) {
                 setEnabled(true);
-                putValue(Action.NAME, _undo.getRedoPresentationName());
             }
             else {
                 setEnabled(false);
-                putValue(Action.NAME, "Redo");
             }
         }
     }
@@ -363,14 +351,14 @@ public class SwiftlyTextPane extends JTextPane
         }
     }
 
-    protected SwiftlyEditor _editor;
+    protected SwiftlyContext _ctx;
     protected ActionScriptEditorKit _kit;
     protected JPopupMenu _popup;
     protected UndoManager _undo = new UndoManager();
     protected UndoableEditListener _undoHandler = new UndoHandler();
     protected DocumentElement _document;
-    protected UndoAction _undoAction = new UndoAction();
-    protected RedoAction _redoAction = new RedoAction();
-    protected SaveAction _saveAction = new SaveAction();
+    protected UndoAction _undoAction;
+    protected RedoAction _redoAction;
+    protected SaveAction _saveAction;
     protected boolean _documentChanged = false;
 }
