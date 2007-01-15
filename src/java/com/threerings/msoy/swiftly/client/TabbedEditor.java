@@ -15,6 +15,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.threerings.msoy.swiftly.data.DocumentElement;
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class TabbedEditor extends JTabbedPane
@@ -126,7 +127,8 @@ public class TabbedEditor extends JTabbedPane
 
         int response = -1;
         if (textPane.hasUnsavedChanges()) {
-            response = JOptionPane.showInternalConfirmDialog(_editor, "Save changes?");
+            response = JOptionPane.showInternalConfirmDialog(_editor,
+                _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.save_changes"));
             // Choosing Cancel will return at this point and do nothing
             if (response == JOptionPane.YES_OPTION) {
                 textPane.saveDocument();
@@ -166,7 +168,7 @@ public class TabbedEditor extends JTabbedPane
      */
     public AbstractAction createCloseCurrentTabAction ()
     {
-        return new AbstractAction("Close Tab") {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_close_tab")) {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 closeCurrentTab();
@@ -212,9 +214,6 @@ public class TabbedEditor extends JTabbedPane
             if (textPane != null) {
                 _editor.getToolbar().updateEditorActions(textPane);
             }
-
-            // clear the statusbar whenever a different tab is selected
-            _editor.clearStatus();
         }
     }
 

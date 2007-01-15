@@ -54,7 +54,6 @@ public class SwiftlyEditor extends PlacePanel
         _projectPanel.setMinimumSize(new Dimension(0, 0));
 
         _toolbar = new EditorToolBar(ctrl, _ctx, this);
-        _statusbar = new EditorStatusBar();
         _splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _tabs, _projectPanel);
         // TODO apparently GTK does not have the graphic for this. What to do?
         _splitPane.setOneTouchExpandable(true);
@@ -62,7 +61,6 @@ public class SwiftlyEditor extends PlacePanel
         // layout the window
         add(_toolbar, VGroupLayout.FIXED);
         add(_splitPane);
-        add(_statusbar, VGroupLayout.FIXED);
 
         JPanel panel = new JPanel(
             new HGroupLayout(HGroupLayout.STRETCH, HGroupLayout.STRETCH, 5, HGroupLayout.LEFT));
@@ -74,18 +72,6 @@ public class SwiftlyEditor extends PlacePanel
         add(panel, VGroupLayout.FIXED);
 
         _splitPane.setDividerLocation(0.8);
-        setStatus(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.welcome"));
-    }
-
-    public void setStatus (String msg)
-    {
-        _statusbar.setLabel(msg);
-    }
-
-    public void clearStatus ()
-    {
-        // a zero length string makes the label disappear
-        _statusbar.setLabel(" ");
     }
 
     public void addEditorTab (DocumentElement document)
@@ -136,7 +122,7 @@ public class SwiftlyEditor extends PlacePanel
     public String showSelectPathElementNameDialog (PathElement.Type fileElementType)
     {
         String prompt;
-        prompt = _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.select_name." + fileElementType);
+        prompt = _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.select_name." + fileElementType);
         return JOptionPane.showInternalInputDialog(this, prompt);
     }
 
@@ -146,8 +132,9 @@ public class SwiftlyEditor extends PlacePanel
      */
     public void showErrorDialog (String message)
     {
-        JOptionPane.showInternalMessageDialog(
-            this, message, "An error occurred", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showInternalMessageDialog(this, message,
+            _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.dialog.error.title"),
+            JOptionPane.ERROR_MESSAGE);
     }
 
     @Override // from PlacePanel
@@ -176,7 +163,7 @@ public class SwiftlyEditor extends PlacePanel
     {
         if (event.getName().equals(ProjectRoomObject.CONSOLE)) {
             // TODO: append this to a console instead of just jamming it into a status bar
-            _statusbar.setLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, _roomObj.console));
+            // _statusbar.setLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, _roomObj.console));
         }
     }
 
@@ -191,7 +178,6 @@ public class SwiftlyEditor extends PlacePanel
 
     protected TabbedEditor _tabs;
     protected EditorToolBar _toolbar;
-    protected EditorStatusBar _statusbar;
     protected ProjectPanel _projectPanel;
     protected PathElement _project;
     protected JSplitPane _splitPane;

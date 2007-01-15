@@ -91,7 +91,6 @@ public class SwiftlyTextPane extends JTextPane
     public boolean saveDocument ()
     {
         if (hasUnsavedChanges()) {
-            _editor.setStatus("Saving " + _document);
             try {
                 _document.setText(getDocument().getText(0, getDocument().getLength()));
                 _editor.saveDocumentElement(_document);

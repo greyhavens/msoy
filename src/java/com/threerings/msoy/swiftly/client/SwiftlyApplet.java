@@ -119,7 +119,6 @@ public class SwiftlyApplet extends JApplet
     public void saveElement (PathElement element)
     {
         // TODO save the file element on the backend
-        // TODO show a progress bar in the status bar while Saving...
     }
 
     /**
