@@ -32,7 +32,7 @@ public class ProjectRoomController extends PlaceController
         // createPlaceView which will create the whole UI which will want to wire up our actions
         _ctx = (SwiftlyContext)ctx;
 
-        buildAction = new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_build")) {
+        buildAction = new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.build")) {
             public void actionPerformed (ActionEvent e) {
                 buildProject();
             }

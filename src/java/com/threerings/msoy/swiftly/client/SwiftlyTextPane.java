@@ -140,7 +140,7 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action createCutAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_cut")) {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.cut")) {
             public void actionPerformed (ActionEvent e) {
                 cut();
             }
@@ -149,7 +149,7 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action createCopyAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_copy")) {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.copy")) {
             public void actionPerformed (ActionEvent e) {
                 copy();
             }
@@ -158,7 +158,7 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action createPasteAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_paste")) {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.paste")) {
             public void actionPerformed (ActionEvent e) {
                 paste();
             }
@@ -167,7 +167,7 @@ public class SwiftlyTextPane extends JTextPane
 
     public Action createSelectAllAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_select_all")) {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.select_all")) {
             public void actionPerformed (ActionEvent e) {
                 selectAll();
             }
@@ -239,7 +239,7 @@ public class SwiftlyTextPane extends JTextPane
     {
         public SaveAction ()
         {
-            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_save"));
+            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.save"));
             setEnabled(false);
         }
 
@@ -268,7 +268,7 @@ public class SwiftlyTextPane extends JTextPane
     protected class UndoAction extends AbstractAction
     {
         public UndoAction () {
-            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_undo"));
+            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.undo"));
             setEnabled(false);
         }
 
@@ -303,7 +303,7 @@ public class SwiftlyTextPane extends JTextPane
     {
         public RedoAction ()
         {
-            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_redo"));
+            super(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.redo"));
             setEnabled(false);
         }
 

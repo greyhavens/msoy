@@ -26,7 +26,7 @@ public class EditorToolBar extends JToolBar
     protected void setupToolbar ()
     {
         // TODO add mini icons for these + tooltips with keyboard shortcuts
-        _saveButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_save"));
+        _saveButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.save"));
         add(_saveButton);
         add(_editor.createCloseCurrentTabAction());
 
@@ -36,9 +36,9 @@ public class EditorToolBar extends JToolBar
 
         addSeparator();
         // These actions get set by updateEditorActions()
-        _undoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_undo"));
+        _undoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.undo"));
         add(_undoButton);
-        _redoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_redo"));
+        _redoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.redo"));
         add(_redoButton);
 
         setFloatable(false);

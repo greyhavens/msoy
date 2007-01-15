@@ -168,7 +168,7 @@ public class TabbedEditor extends JTabbedPane
      */
     public AbstractAction createCloseCurrentTabAction ()
     {
-        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action_close_tab")) {
+        return new AbstractAction(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.close_tab")) {
             // from AbstractAction
             public void actionPerformed (ActionEvent e) {
                 closeCurrentTab();
