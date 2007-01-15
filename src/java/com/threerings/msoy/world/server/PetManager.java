@@ -65,12 +65,14 @@ public class PetManager
                 }
 
                 // next load up their memories
-                for (MemoryRecord memrec : MsoyServer.memoryRepo.loadMemories(Pet.PET, mids)) {
-                    ArrayList<MemoryEntry> mems = _memories.get(memrec.itemId);
-                    if (mems == null) {
-                        _memories.put(memrec.itemId, mems = new ArrayList<MemoryEntry>());
+                if (mids.size() > 0) {
+                    for (MemoryRecord memrec : MsoyServer.memoryRepo.loadMemories(Pet.PET, mids)) {
+                        ArrayList<MemoryEntry> mems = _memories.get(memrec.itemId);
+                        if (mems == null) {
+                            _memories.put(memrec.itemId, mems = new ArrayList<MemoryEntry>());
+                        }
+                        mems.add(memrec.toEntry());
                     }
-                    mems.add(memrec.toEntry());
                 }
             }
 
@@ -107,10 +109,11 @@ public class PetManager
     }
 
     // from interface PetProvider
-    public void callPet (ClientObject caller, int petId, PetService.ConfirmListener listener)
+    public void callPet (ClientObject caller, final int petId,
+                         final PetService.ConfirmListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject)caller;
+        final MemberObject user = (MemberObject)caller;
 
         // first make sure this user owns the pet in question
         if (!user.isInventoryLoaded(Pet.PET)) {
@@ -126,12 +129,39 @@ public class PetManager
         // now check to see if the pet is already loaded
         PetHandler handler = _handlers.get(petId);
         if (handler != null) {
-            handler.moveToOwner(user);
+            handler.moveToOwner(user, null);
             listener.requestProcessed();
             return;
         }
 
-        // TODO: resolve pet, then move then to owner
+        // resolve the pet, then move them to their owner
+        MsoyServer.invoker.postUnit(new RepositoryUnit("callPet(" + petId + ")") {
+            public void invokePersist () throws Exception {
+                // load up the pet's record
+                PetRecord petrec = MsoyServer.itemMan.getPetRepository().loadItem(petId);
+                if (petrec == null) {
+                    throw new Exception("callPet() on non-existent pet");
+                }
+                _pet = (Pet)petrec.toItem();
+
+                // load up its memory
+                for (MemoryRecord memrec : MsoyServer.memoryRepo.loadMemory(Pet.PET, petId)) {
+                    _memory.add(memrec.toEntry());
+                }
+            }
+
+            public void handleSuccess () {
+                resolvePet(user, _pet, _memory);
+                listener.requestProcessed();
+            }
+            public void handleFailure (Exception e) {
+                log.log(Level.WARNING, "Failed to load pet [pet=" + petId + "].", e);
+                listener.requestFailed(PetCodes.E_INTERNAL_ERROR);
+            }
+
+            protected Pet _pet;
+            protected ArrayList<MemoryEntry> _memory = new ArrayList<MemoryEntry>();
+        });
     }
 
     // from interface PetProvider
@@ -166,10 +196,29 @@ public class PetManager
             if (_handlers.containsKey(pet.itemId)) {
                 continue;
             }
+
             // create a handler for this pet and start them in this room
             PetHandler handler = new PetHandler(this, pet);
             handler.enterRoom(roomObj, memories.get(pet.itemId));
         }
+    }
+
+    /**
+     * Finishes the resolution of a pet initiated by {@link #callPet}.
+     */
+    protected void resolvePet (MemberObject owner, Pet pet, ArrayList<MemoryEntry> memory)
+    {
+        // instead of doing a bunch of complicated prevention to avoid multiply resolving pets,
+        // we'll just get this far and abandon ship; it's not going to happen that often
+        if (_handlers.containsKey(pet.itemId)) {
+            log.info("resolvePet() ignoring repeat resolution request. [pet=" + pet.itemId + "].");
+            return;
+        }
+
+        // create a handler for this pet (which will register itself with us); then direct it
+        // immediately to the room occupied by its owner
+        PetHandler handler = new PetHandler(this, pet);
+        handler.moveToOwner(owner, memory);
     }
 
     protected void mapHandler (int itemId, PetHandler handler)

@@ -105,8 +105,12 @@ public class PetHandler
 
     /**
      * Places this pet in follow mode and moves them to the owner's room.
+     *
+     * @param memory if the pet was just resolved, this will contain its memory. Otherwise the pet
+     * will assume it is in a room already and will extract its memory from its current room before
+     * moving.
      */
-    public void moveToOwner (MemberObject owner)
+    public void moveToOwner (MemberObject owner, ArrayList<MemoryEntry> memory)
     {
         // TODO
     }
