@@ -32,6 +32,7 @@ import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.swiftly.data.PathElement;
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 import static com.threerings.msoy.Log.log;
@@ -181,7 +182,7 @@ public class SwiftlyApplet extends JApplet
     // from interface ClientObserver
     public void clientDidLogoff (Client client)
     {
-        setContentPane(new JLabel("You got logged the fuck off!"));
+        setContentPane(new JLabel(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.logged_off")));
         SwingUtil.refresh(getRootPane());
     }
 

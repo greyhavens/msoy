@@ -136,19 +136,7 @@ public class SwiftlyEditor extends PlacePanel
     public String showSelectPathElementNameDialog (PathElement.Type fileElementType)
     {
         String prompt;
-        switch (fileElementType) {
-        case ROOT:
-            prompt = "Enter the project name: ";
-            break;
-        case DIRECTORY:
-            prompt = "Enter the directory name: ";
-            break;
-        case FILE:
-            prompt = "Enter the file name: ";
-            break;
-        default:
-            prompt = "Enter the name: ";
-        }
+        prompt = _ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.select_name." + fileElementType);
         return JOptionPane.showInternalInputDialog(this, prompt);
     }
 
