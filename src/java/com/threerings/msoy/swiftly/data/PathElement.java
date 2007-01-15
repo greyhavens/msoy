@@ -85,11 +85,6 @@ public class PathElement
         return elementId;
     }
 
-    public int getElementId ()
-    {
-        return elementId;
-    }
-
     @Override // from Object
     public boolean equals (Object other)
     {

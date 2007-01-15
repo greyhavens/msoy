@@ -87,6 +87,7 @@ public class ProjectPanel extends JPanel
     // from interface TreeModelListener
     public void treeNodesChanged (TreeModelEvent e)
     {
+        // TODO we are in single selection mode so only one node will ever change [right?]
         PathElementTreeNode node = (PathElementTreeNode)e.getChildren()[0];
         if (node.getElement() instanceof DocumentElement) {
             _editor.updateTabTitleAt((DocumentElement)node.getElement());
@@ -106,7 +107,7 @@ public class ProjectPanel extends JPanel
     // from interface TreeModelListener
     public void treeNodesRemoved (TreeModelEvent e)
     {
-        // nada
+        // TODO iterate over every child and close any open tabs.
     }
 
     // from interface TreeModelListener
@@ -197,7 +198,7 @@ public class ProjectPanel extends JPanel
             // TODO you're trying to remove the project itself? Does Homey play that?
             return;
         }
-        _roomObj.service.deletePathElement(_ctx.getClient(), element.getElementId());
+        _roomObj.service.deletePathElement(_ctx.getClient(), element.elementId);
     }
 
     protected void setupToolbar ()
