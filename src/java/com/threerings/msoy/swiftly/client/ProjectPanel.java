@@ -194,7 +194,7 @@ public class ProjectPanel extends JPanel
         } else if (element.getType() == PathElement.Type.DIRECTORY) {
             // TODO oh god we have to remove all the tabs associated with this directory
             // soo.. every tab that has a common getParentId() ?
-        } else {
+        } else if (element.getType() == PathElement.Type.ROOT){
             // TODO you're trying to remove the project itself? Does Homey play that?
             return;
         }

@@ -55,7 +55,6 @@ public class ActionScriptStyledDocument extends DefaultStyledDocument
         }
 
         // clear any attributes 
-        // TODO this is an undoable action so we need to hide it from undo
         setCharacterAttributes(0, line.length(), _normal, true);
 
         StringTokenizer tokens = new StringTokenizer(line, _separators, true);
