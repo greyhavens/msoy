@@ -19,12 +19,12 @@ public class Pet extends Item
     /** Orders this pet to stop following the caller (who must be its owner). If the pet is bound
      * to a room, and that room is resolved, it will return to that room, otherwise it will be
      * unloaded. */
-    public static final int ORDER_GO_HOME = 2;
+    public static final int ORDER_GO_HOME = 3;
 
     /** Orders this pet to unbind from any room and unload itself. The pet's owner may issue this
      * order in any circumstance, alternatively a player with modification privileges on a room may
      * issue this order on any pet that is bound to that room. */
-    public static final int ORDER_SLEEP = 3;
+    public static final int ORDER_SLEEP = 4;
 
     // @Override from Item
     public byte getType ()
