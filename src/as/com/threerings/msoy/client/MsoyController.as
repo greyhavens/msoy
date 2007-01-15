@@ -57,6 +57,9 @@ public class MsoyController extends Controller
     /** Command to display the friends menu. */
     public static const POP_FRIENDS_MENU :String = "PopFriendsMenu";
 
+    /** Command to display the pets popup. */
+    public static const SHOW_PETS :String = "ShowPets";
+
     /** Command to go to a particular scene. */
     public static const GO_SCENE :String = "GoScene";
 
@@ -246,25 +249,28 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Handle the SHOW_PETS command.
+     */
+    public function handleShowPets (show :Boolean) :void
+    {
+        new PetsDialog(_ctx);
+    }
+
+    /**
      * Handle the POP_PREFS_MENU command.
      */
     public function handlePopPrefsMenu (trigger :Button) :void
     {
-        var memberObj :MemberObject = _ctx.getClientObject();
-
         var menuData :Array = [ ];
-
+        var memberObj :MemberObject = _ctx.getClientObject();
         if (!memberObj.isGuest()) {
             menuData.push(
-                { label: Msgs.GENERAL.get("b.relogon_guest"),
-                  command: LOGON },
+                { label: Msgs.GENERAL.get("b.relogon_guest"), command: LOGON },
                 { type: "separator" },
-                { label: Msgs.GENERAL.get("b.edit_prefs"),
-                  command: EDIT_PREFS});
+                { label: Msgs.GENERAL.get("b.edit_prefs"), command: EDIT_PREFS});
         }
 
-        var menu :CommandMenu =
-            CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
+        var menu :CommandMenu = CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
         menu.popUp(trigger);
     }
 

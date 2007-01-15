@@ -98,6 +98,16 @@ public class ControlBar extends Canvas
             addChild(chatControl);
 
             // set up buttons
+            var petsBtn :CommandButton = new CommandButton();
+            petsBtn.styleName = BUTTON_STYLE;
+            petsBtn.setCommand(MsoyController.SHOW_PETS);
+
+            petsBtn.x = 546;
+            petsBtn.y = 0;
+            petsBtn.width = 38;
+            petsBtn.height = HEIGHT;
+            addChild(petsBtn);
+
             var friendsBtn :CommandButton = new CommandButton();
             friendsBtn.styleName = BUTTON_STYLE;
             friendsBtn.setCommand(MsoyController.SHOW_FRIENDS);
