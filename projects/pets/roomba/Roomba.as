@@ -10,7 +10,7 @@ import flash.events.TimerEvent;;
 
 import flash.utils.Timer;
 
-import com.threerings.msoy.export.FurniInterface;
+import com.threerings.msoy.export.PetControl;
 
 /**
  * An extremely simple pet that moves randomly around the room.
@@ -43,12 +43,12 @@ public class Roomba extends Sprite
         scaleX = .25;
         scaleY = .25;
 
-        _iface = new FurniInterface(this);
+        _ctrl = new PetControl(this);
     }
 
     protected function updateLocation () :void
     {
-        var loc :Array = _iface.getLocation();
+        var loc :Array = _ctrl.getLocation();
         trace(_name + " got loc : " + loc);
 
         if (loc == null) {
@@ -66,7 +66,7 @@ public class Roomba extends Sprite
             loc[ii] = newVal;
         }
 
-        _iface.setLocation(loc);
+        _ctrl.setLocation(loc);
     }
 
     protected function enterFrame (event :Event) :void
@@ -80,9 +80,7 @@ public class Roomba extends Sprite
     }
 
     protected var _name :String;
-
-    protected var _iface :FurniInterface;
-
+    protected var _ctrl :PetControl;
     protected var _incs :Array = MOVEMENT_POWERS.concat(); // aka copy
 
     [Embed(source="roomba.png")]
