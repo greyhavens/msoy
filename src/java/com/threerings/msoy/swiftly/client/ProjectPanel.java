@@ -97,7 +97,9 @@ public class ProjectPanel extends JPanel
     // from interface TreeModelListener
     public void treeNodesInserted (TreeModelEvent e)
     {
-        // nada
+        // TODO is it clear this is what we want to happen?
+        PathElementTreeNode node = (PathElementTreeNode)e.getChildren()[0];
+        _tree.scrollPathToVisible(new TreePath(node.getPath()));
     }
 
     // from interface TreeModelListener
@@ -167,32 +169,12 @@ public class ProjectPanel extends JPanel
             element = PathElement.createDirectory(name, parentId);
         } else if (type == PathElement.Type.FILE) {
             element = new DocumentElement(name, parentId, "");
-            _ctx.getEditor().addEditorTab((DocumentElement)element);
         } else {
             // other types not implemented
         }
         if (element != null) {
             _roomObj.service.addPathElement(_ctx.getClient(), element);
-            addNode(element);
         }
-    }
-
-    /**
-     * Add a {@link PathElement} to the right spot in the tree based on the current selected node.
-     */
-    protected PathElementTreeNode addNode (PathElement element)
-    {
-        PathElementTreeNode parent = (PathElementTreeNode)
-            ((getSelectedPathElement().getType() == PathElement.Type.FILE) ?
-             getSelectedNode().getParent() : getSelectedNode());
-
-        // TODO this needs to insert the node in a sorted manner
-        PathElementTreeNode child = new PathElementTreeNode(element);
-        _treeModel.insertNodeInto(child, parent, parent.getChildCount());
-
-        // Open any directory drop downs that need to be and scroll to the new node
-        _tree.scrollPathToVisible(new TreePath(child.getPath()));
-        return child;
     }
 
     /**
