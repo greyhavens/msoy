@@ -47,10 +47,10 @@ public class SwiftlyEditor extends PlacePanel
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // setup the components
-        _tabs = new TabbedEditor(_ctx);
+        _tabs = new TabbedEditor(_ctx, this);
         _tabs.setMinimumSize(new Dimension(400, 0));
 
-        _projectPanel = new ProjectPanel(_ctx);
+        _projectPanel = new ProjectPanel(_ctx, this);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
 
         _toolbar = new EditorToolBar(ctrl, _ctx, this);

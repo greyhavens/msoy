@@ -37,10 +37,11 @@ import com.threerings.msoy.swiftly.util.SwiftlyContext;
 public class ProjectPanel extends JPanel
     implements TreeSelectionListener, TreeModelListener
 {
-    public ProjectPanel (SwiftlyContext ctx)
+    public ProjectPanel (SwiftlyContext ctx, SwiftlyEditor editor)
     {
         super(new BorderLayout());
         _ctx = ctx;
+        _editor = editor;
         add(_scrollPane, BorderLayout.CENTER);
         setupToolbar();
         add(_toolbar, BorderLayout.PAGE_END);
@@ -79,7 +80,7 @@ public class ProjectPanel extends JPanel
 
         PathElement element = getSelectedPathElement();
         if (element instanceof DocumentElement) {
-            _ctx.getEditor().addEditorTab((DocumentElement)element);
+            _editor.addEditorTab((DocumentElement)element);
         }
     }
 
@@ -88,9 +89,9 @@ public class ProjectPanel extends JPanel
     {
         PathElementTreeNode node = (PathElementTreeNode)e.getChildren()[0];
         if (node.getElement() instanceof DocumentElement) {
-            _ctx.getEditor().updateTabTitleAt((DocumentElement)node.getElement());
+            _editor.updateTabTitleAt((DocumentElement)node.getElement());
             // TODO: replace this with super sophisticated fine grained editing model
-            _ctx.getEditor().updateTabDocument((DocumentElement)node.getElement());
+            _editor.updateTabDocument((DocumentElement)node.getElement());
         }
     }
 
@@ -153,7 +154,7 @@ public class ProjectPanel extends JPanel
     protected void addPathElement (PathElement.Type type)
     {
         // prompt the user for the directory name
-        String name = _ctx.getEditor().showSelectPathElementNameDialog(type);
+        String name = _editor.showSelectPathElementNameDialog(type);
         if (name == null) {
             return; // if the user hit cancel do no more
         }
@@ -188,7 +189,7 @@ public class ProjectPanel extends JPanel
         // XXX we know the tab was selected in order for delete to work. This might be dangerous.
         // we also know the tab was open.. hmmm
         if (element instanceof DocumentElement) {
-            _ctx.getEditor().closeCurrentTab();
+            _editor.closeCurrentTab();
         } else if (element.getType() == PathElement.Type.DIRECTORY) {
             // TODO oh god we have to remove all the tabs associated with this directory
             // soo.. every tab that has a common getParentId() ?
@@ -263,6 +264,7 @@ public class ProjectPanel extends JPanel
     }
 
     protected SwiftlyContext _ctx;
+    protected SwiftlyEditor _editor;
     protected ProjectRoomObject _roomObj;
     protected ProjectTreeModel _treeModel;
     protected PathElementTreeNode _selectedNode;

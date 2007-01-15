@@ -34,9 +34,10 @@ import com.threerings.msoy.swiftly.util.SwiftlyContext;
 
 public class SwiftlyTextPane extends JTextPane
 {
-    public SwiftlyTextPane (SwiftlyContext ctx, DocumentElement document)
+    public SwiftlyTextPane (SwiftlyContext ctx, SwiftlyEditor editor, DocumentElement document)
     {
         _ctx = ctx;
+        _editor = editor;
         _document = document;
 
         _kit = new ActionScriptEditorKit();
@@ -90,10 +91,10 @@ public class SwiftlyTextPane extends JTextPane
     public boolean saveDocument ()
     {
         if (hasUnsavedChanges()) {
-            _ctx.getEditor().setStatus("Saving " + _document);
+            _editor.setStatus("Saving " + _document);
             try {
                 _document.setText(getDocument().getText(0, getDocument().getLength()));
-                _ctx.getEditor().saveDocumentElement(_document);
+                _editor.saveDocumentElement(_document);
                 setDocumentChanged(false);
                 return true;
             } catch (BadLocationException be) {
@@ -111,7 +112,7 @@ public class SwiftlyTextPane extends JTextPane
     public void setDocumentChanged (boolean value)
     {
         _documentChanged = value;
-        _ctx.getEditor().updateCurrentTabTitle();
+        _editor.updateCurrentTabTitle();
         _saveAction.setEnabled(value);
     }
 
@@ -181,7 +182,7 @@ public class SwiftlyTextPane extends JTextPane
                      KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
 
         // ctrl-w closes the tab
-        addKeyAction(_ctx.getEditor().createCloseCurrentTabAction(),
+        addKeyAction(_editor.createCloseCurrentTabAction(),
                      KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
 
         // ctrl-z undoes the action
@@ -352,11 +353,13 @@ public class SwiftlyTextPane extends JTextPane
     }
 
     protected SwiftlyContext _ctx;
+    protected SwiftlyEditor _editor;
+    protected DocumentElement _document;
+
     protected ActionScriptEditorKit _kit;
     protected JPopupMenu _popup;
     protected UndoManager _undo = new UndoManager();
     protected UndoableEditListener _undoHandler = new UndoHandler();
-    protected DocumentElement _document;
     protected UndoAction _undoAction;
     protected RedoAction _redoAction;
     protected SaveAction _saveAction;

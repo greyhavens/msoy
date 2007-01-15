@@ -106,6 +106,11 @@ public class SwiftlyApplet extends JApplet
         Interval.resetTimer();
     }
 
+    public SwiftlyEditor getEditor ()
+    {
+        return _editor;
+    }
+
     /**
      * Saves a file element on the backend. Creates the element if it doesn't already exist. 
      * @param element the {@link PathElement} to save.
@@ -242,9 +247,6 @@ public class SwiftlyApplet extends JApplet
 
         public MessageManager getMessageManager () {
             return _msgmgr;
-        }
-        public SwiftlyEditor getEditor () {
-            return _editor;
         }
 
         public String xlate (String bundle, String message) {

@@ -18,11 +18,6 @@ public interface SwiftlyContext extends CrowdContext
      */
     public MessageManager getMessageManager ();
 
-    /**
-     * Provides access to the main business.
-     */
-    public SwiftlyEditor getEditor ();
-
     /** Translates the specified message using the specified message bundle. */
     public String xlate (String bundle, String message);
 }
