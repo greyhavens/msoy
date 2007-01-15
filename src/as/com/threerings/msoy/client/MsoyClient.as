@@ -54,6 +54,7 @@ import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Photo;
 
+import com.threerings.msoy.world.data.PetMarshaller;
 import com.threerings.msoy.world.data.RoomConfig;
 
 import com.threerings.msoy.game.data.LobbyMarshaller;
@@ -305,6 +306,7 @@ public class MsoyClient extends Client
         c = LobbyController;
         c = ToyBoxMarshaller;
         c = SwiftlyMarshaller;
+        c = PetMarshaller;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("global")]
