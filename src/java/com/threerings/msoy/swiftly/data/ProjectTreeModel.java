@@ -83,7 +83,7 @@ public class ProjectTreeModel extends DefaultTreeModel
                     return node.getElement().elementId == elementId;
                 }
                 public void update (PathElementTreeNode node) {
-                    node.removeFromParent();
+                    removeNodeFromParent(node);
                 }
             });
         }

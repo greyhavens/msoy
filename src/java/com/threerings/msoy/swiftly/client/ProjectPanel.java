@@ -197,19 +197,7 @@ public class ProjectPanel extends JPanel
             // TODO you're trying to remove the project itself? Does Homey play that?
             return;
         }
-        // TODO _roomObj.service.deletePathElement(_ctx.getClient(), element);
-        removeCurrentNode();
-    }
-
-    /**
-     * Removes the currently selected node from the tree.
-     */
-    protected void removeCurrentNode ()
-    {
-        PathElementTreeNode parent = (PathElementTreeNode)getSelectedNode().getParent();
-        if (parent != null) {
-            _treeModel.removeNodeFromParent(getSelectedNode());
-        }
+        _roomObj.service.deletePathElement(_ctx.getClient(), element.getElementId());
     }
 
     protected void setupToolbar ()
