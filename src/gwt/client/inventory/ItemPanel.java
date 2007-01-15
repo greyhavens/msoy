@@ -76,7 +76,10 @@ public class ItemPanel extends VerticalPanel
         ItemEditor editor = createItemEditor(_type);
         if (editor != null) {
             _create.setEnabled(false);
-            editor.setItem(editor.createBlankItem());
+            Item item = editor.createBlankItem();
+            // TEMP: workaround null description problem
+            item.description = "";
+            editor.setItem(item);
             editor.setPopupPosition(_create.getAbsoluteLeft()+20, _create.getAbsoluteTop()-200);
             editor.show();
         }
