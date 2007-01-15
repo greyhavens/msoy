@@ -244,7 +244,7 @@ public class MsoyServer extends WhirledServer
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
         swiftlyMan.init(invmgr, swiftlyRepo);
-        // petMan.init(invmgr);
+        petMan.init(invmgr);
         lobbyReg.init(invmgr);
         worldGameReg.init(invmgr);
         GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {
