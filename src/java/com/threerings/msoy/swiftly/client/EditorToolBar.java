@@ -25,8 +25,10 @@ public class EditorToolBar extends JToolBar
 
     protected void setupToolbar ()
     {
+        // Save/undo/redo actions get set by updateEditorActions()
         // TODO add mini icons for these + tooltips with keyboard shortcuts
         _saveButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.save"));
+        _saveButton.setEnabled(false);
         add(_saveButton);
         add(_editor.createCloseCurrentTabAction());
 
@@ -35,7 +37,6 @@ public class EditorToolBar extends JToolBar
         add(new JButton("Play"));
 
         addSeparator();
-        // These actions get set by updateEditorActions()
         _undoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.undo"));
         add(_undoButton);
         _redoButton = new JButton(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.action.redo"));
