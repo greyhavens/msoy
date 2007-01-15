@@ -129,8 +129,7 @@ public abstract class ItemRepository<
     public Collection<T> loadClonedItems (int ownerId)
         throws PersistenceException
     {
-        return loadClonedItems(
-            new Where(new ColumnExp(getCloneClass(), CloneRecord.OWNER_ID), ownerId));
+        return loadClonedItems(new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId));
     }
 
     /**
@@ -156,8 +155,11 @@ public abstract class ItemRepository<
     public Collection<T> loadItemsByLocation (int location)
         throws PersistenceException
     {
-        Collection<T> items = loadClonedItems(new Where(CloneRecord.LOCATION, location));
-        items.addAll(findAll(getItemClass(), new Where(ItemRecord.LOCATION, location)));
+        Collection<T> items = loadClonedItems(
+            new Where(getCloneColumn(CloneRecord.LOCATION), location));
+        Collection<T> citems = findAll(
+            getItemClass(),new Where(getItemColumn(ItemRecord.LOCATION), location));
+        items.addAll(citems);
         return items;
     }
 
@@ -206,8 +208,7 @@ public abstract class ItemRepository<
             sortExp = new ColumnExp(getCatalogClass(), CatalogRecord.LISTED_DATE);
             break;
         case CatalogListing.SORT_BY_RATING:
-            ColumnExp ratingCol = new ColumnExp(getItemClass(), ItemRecord.RATING);
-            sortExp = new Div(new FunctionExp("floor", ratingCol), 2);
+            sortExp = new Div(new FunctionExp("floor", getItemColumn(ItemRecord.RATING)), 2);
             break;
         default:
             throw new IllegalArgumentException(
@@ -224,11 +225,8 @@ public abstract class ItemRepository<
         if (search != null && search.length() > 0) {
             // TODO: We should have a Like() operator in Depot.
             SQLOperator searchExp = new SQLOperator.BinaryOperator(
-                new ColumnExp(getItemClass(), ItemRecord.NAME),"%" + search + "%")
-            {
-                @Override
-                protected String operator ()
-                {
+                getItemColumn(ItemRecord.NAME),"%" + search + "%") {
+                @Override protected String operator () {
                     return " like ";
                 }
             };
@@ -650,6 +648,16 @@ public abstract class ItemRepository<
             new FieldOverride(ItemRecord.OWNER_ID, getCloneClass(), CloneRecord.OWNER_ID),
             new FieldOverride(ItemRecord.LOCATION, getItemClass(), CloneRecord.LOCATION),
             new FieldOverride(ItemRecord.USED, getItemClass(), CloneRecord.USED));
+    }
+
+    protected ColumnExp getItemColumn (String cname)
+    {
+        return new ColumnExp(getItemClass(), cname);
+    }
+
+    protected ColumnExp getCloneColumn (String cname)
+    {
+        return new ColumnExp(getCloneClass(), cname);
     }
 
     /**
