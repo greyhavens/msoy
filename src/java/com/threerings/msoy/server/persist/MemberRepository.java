@@ -373,6 +373,9 @@ public class MemberRepository extends DepotRepository
     /**
      * Get the FriendEntry record for all friends (pending, too) of the specified memberId. The
      * online status of each friend will be false.
+     * 
+     * The {@link FriendEntry} records returned by this method should be considered read-only,
+     * and must be cloned before they are modified or sent to untrusted code.
      */
     public List<FriendEntry> getFriends (final int memberId)
         throws PersistenceException
@@ -408,6 +411,13 @@ public class MemberRepository extends DepotRepository
                 } finally {
                     JDBCUtil.close(stmt);
                 }
+            }
+
+            // from Query
+            public List<FriendEntry> transformCacheHit (CacheKey key, List<FriendEntry> value) {
+                // we do not clone this result
+                return value;
+                
             }
         });
     }

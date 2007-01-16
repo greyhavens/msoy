@@ -3,8 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.io.Serializable;
-
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
@@ -16,8 +15,8 @@ import com.threerings.io.Streamable;
  */
 @Entity
 @Table
-public abstract class RatingRecord<T extends ItemRecord>
-    implements Streamable, Serializable
+public abstract class RatingRecord<T extends ItemRecord> extends PersistentRecord
+    implements Streamable
 {
     public static final int SCHEMA_VERSION = 1;
     

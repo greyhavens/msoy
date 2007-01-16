@@ -3,10 +3,8 @@
 
 package com.threerings.msoy.server.persist;
 
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
-
-import java.io.Serializable;
-import java.lang.String;
 
 import java.sql.Date;
 
@@ -15,8 +13,7 @@ import java.sql.Date;
  * authenticated session for some period of time.
  */
 @Entity
-public class SessionRecord
-    implements Serializable
+public class SessionRecord extends PersistentRecord
 {
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */

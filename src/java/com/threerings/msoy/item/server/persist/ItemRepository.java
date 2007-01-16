@@ -25,6 +25,7 @@ import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
@@ -57,7 +58,7 @@ public abstract class ItemRepository<
     extends DepotRepository
 {
     @Computed @Entity
-    public static class RatingAverageRecord {
+    public static class RatingAverageRecord extends PersistentRecord {
         public int count;
         public int sum;
     }
@@ -363,7 +364,7 @@ public abstract class ItemRepository<
                     // invalidate and delete rating records for this item
                     ctx.cacheTraverse(getRatingClass().getName(), new CacheEvictionFilter<RT>() {
                         public boolean testForEviction (Serializable key, RT record) {
-                            return record.itemId == itemId;
+                            return record != null && record.itemId == itemId;
                         }                
                     });
                 }
@@ -375,7 +376,7 @@ public abstract class ItemRepository<
                 public void invalidate (PersistenceContext ctx) {
                     ctx.cacheTraverse(getTagClass().getName(), new CacheEvictionFilter<TT>() {
                         public boolean testForEviction (Serializable key, TT record) {
-                            return record.itemId == itemId;
+                            return record != null && record.itemId == itemId;
                         }                
                     });
                 }
@@ -388,7 +389,7 @@ public abstract class ItemRepository<
                     String cacheName = getTagHistoryClass().getName();
                     ctx.cacheTraverse(cacheName, new CacheEvictionFilter<THT>() {
                         public boolean testForEviction (Serializable key, THT record) {
-                            return record.itemId == itemId;
+                            return record != null && record.itemId == itemId;
                         }                
                     });
                 }

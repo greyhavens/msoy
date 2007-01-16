@@ -168,7 +168,6 @@ public class MailManager
                 _mailRepo.fileMessage(record);
 
                 // and make a copy for the recipient
-                record = record.clone();
                 record.ownerId = recipientId;
                 record.folderId = MailFolder.INBOX_FOLDER_ID;
                 record.unread = true;
@@ -221,12 +220,10 @@ public class MailManager
             record.name = "Inbox";
             _mailRepo.createFolder(record);
 
-            record = record.clone();
             record.folderId = MailFolder.TRASH_FOLDER_ID;
             record.name = "Trash";
             _mailRepo.createFolder(record);
 
-            record = record.clone();
             record.folderId = MailFolder.SENT_FOLDER_ID;
             record.name = "Sent";
             _mailRepo.createFolder(record);

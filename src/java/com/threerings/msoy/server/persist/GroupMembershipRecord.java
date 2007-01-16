@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
@@ -22,8 +22,7 @@ import com.threerings.msoy.web.data.GroupName;
 @Entity
 @Table(uniqueConstraints=@UniqueConstraint(columnNames={
     GroupMembershipRecord.MEMBER_ID, GroupMembershipRecord.GROUP_ID }))
-public class GroupMembershipRecord
-    implements Cloneable, Serializable
+public class GroupMembershipRecord extends PersistentRecord
 {
     public static final int SCHEMA_VERSION = 2;
 

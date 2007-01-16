@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.swiftly.server.persist;
 
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -12,7 +13,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 @Entity
 @Table(uniqueConstraints =
        {@UniqueConstraint(columnNames={"ownerId", "projectName"})})
-public class SwiftlyProjectRecord
+public class SwiftlyProjectRecord extends PersistentRecord
 {
     public static final int SCHEMA_VERSION = 1;
     

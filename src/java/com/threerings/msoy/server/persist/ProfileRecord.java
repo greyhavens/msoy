@@ -3,16 +3,15 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.io.Serializable;
 import java.sql.Date;
 
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.threerings.msoy.web.data.Profile;
 
 /**
  * Contains a single row from the PROFILES table.
  */
-public class ProfileRecord
-    implements Serializable
+public class ProfileRecord extends PersistentRecord
 {
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */

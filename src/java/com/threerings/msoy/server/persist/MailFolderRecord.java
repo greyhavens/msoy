@@ -3,9 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.io.Serializable;
-import java.sql.Timestamp;
-
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
@@ -20,8 +18,7 @@ import com.samskivert.util.StringUtil;
 @Entity
 @Table(uniqueConstraints={
     @UniqueConstraint(columnNames={MailFolderRecord.OWNER_ID, MailFolderRecord.NAME })})
-public class MailFolderRecord
-    implements Cloneable, Serializable
+public class MailFolderRecord extends PersistentRecord
 {
     public static final int SCHEMA_VERSION = 1;
 
@@ -52,18 +49,6 @@ public class MailFolderRecord
     /** The next available message id within this folder. */
     public int nextMessageId;
     
-    @Override // from Object
-    public MailFolderRecord clone ()
-    {
-        try {
-            MailFolderRecord clone = (MailFolderRecord) super.clone();
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            // not actually going to happen
-            throw new RuntimeException(e);
-        }
-    }
-
     /**
      * Generates a string representation of this instance.
      */

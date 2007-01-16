@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.server.persist;
 
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 
@@ -13,7 +14,7 @@ import com.threerings.msoy.world.data.MemoryEntry;
  * Maintains memory information for "smart" digital items (furniture, pets, etc).
  */
 @Entity
-public class MemoryRecord
+public class MemoryRecord extends PersistentRecord
 {
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */

@@ -19,6 +19,7 @@ import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
+import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.Key;
@@ -279,6 +280,12 @@ public class GroupRepository extends DepotRepository
                 } finally {
                     JDBCUtil.close(stmt);
                 }
+            }
+
+            // from Query
+            public List<String> transformCacheHit (CacheKey key, List<String> value) {
+                // no need to clone this result
+                return value;
             }
         });
     }

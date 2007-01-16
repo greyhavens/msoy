@@ -3,8 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.io.Serializable;
-
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -14,8 +13,7 @@ import com.samskivert.jdbc.depot.annotation.Entity;
  */
 @Computed
 @Entity
-public class MailCountRecord
-    implements Cloneable, Serializable
+public class MailCountRecord extends PersistentRecord
 {
     public static final String UNREAD = "unread";
     public static final String COUNT = "count";

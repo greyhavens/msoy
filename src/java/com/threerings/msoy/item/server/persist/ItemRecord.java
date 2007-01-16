@@ -3,8 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.io.Serializable;
-
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -32,7 +31,7 @@ import com.threerings.msoy.item.web.Photo;
  */
 @Table
 @Entity(indices={ @Index(name="locationIndex", columns={"location"} )})
-public abstract class ItemRecord implements Streamable, Cloneable, Serializable
+public abstract class ItemRecord extends PersistentRecord implements Streamable
 {
     public static final int BASE_SCHEMA_VERSION = 8;
 

@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
@@ -21,8 +21,8 @@ import com.threerings.msoy.web.data.MemberName;
  */
 @Entity
 @Table
-public abstract class CatalogRecord<T extends ItemRecord>
-    implements Streamable, Serializable
+public abstract class CatalogRecord<T extends ItemRecord> extends PersistentRecord
+    implements Streamable
 {
     public static final int SCHEMA_VERSION = 1;
 

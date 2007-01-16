@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -13,7 +14,7 @@ import com.threerings.io.Streamable;
  */
 @Computed
 @Entity
-public class TagPopularityRecord
+public class TagPopularityRecord extends PersistentRecord
     implements Streamable
 {
     public static final String TAG_ID = "tagId";

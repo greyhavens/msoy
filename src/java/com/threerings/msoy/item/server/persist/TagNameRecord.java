@@ -3,8 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.io.Serializable;
-
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
@@ -19,8 +18,8 @@ import com.threerings.io.Streamable;
  */
 @Entity
 @Table
-public class TagNameRecord
-    implements Streamable, Serializable
+public class TagNameRecord extends PersistentRecord
+    implements Streamable
 {
     public static final int SCHEMA_VERSION = 1;
 

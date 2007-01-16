@@ -3,12 +3,12 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
 
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Index;
@@ -26,10 +26,9 @@ import com.threerings.msoy.web.data.GroupExtras;
  * Contains the details of a group.
  */
 @Entity(indices={
-    @Index(name="searchIndex", type="fulltext", columns={"name", "blurb", "charter"})
-})
-public class GroupRecord
-    implements Cloneable, Serializable
+    @Index(name="searchIndex", type="fulltext",
+           columns={GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })})
+public class GroupRecord extends PersistentRecord
 {
     public static final int SCHEMA_VERSION = 8;
 

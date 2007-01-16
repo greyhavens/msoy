@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -26,8 +26,7 @@ import com.samskivert.util.StringUtil;
  */
 @Entity
 @Table
-public class MailMessageRecord
-    implements Cloneable, Serializable
+public class MailMessageRecord extends PersistentRecord
 {
     public static final int SCHEMA_VERSION = 3;
 
@@ -103,18 +102,13 @@ public class MailMessageRecord
     @Column(length=16384, nullable=true)
     public byte[] payloadState;
 
-    @Override // from Object
+    @Override // from PersistentRecord
     public MailMessageRecord clone ()
     {
-        try {
-            MailMessageRecord clone = (MailMessageRecord) super.clone();
-            clone.payloadState = payloadState != null ? payloadState.clone() : null;
-            clone.sent = sent != null ? (Timestamp) sent.clone() : null;
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            // not actually going to happen
-            throw new RuntimeException(e);
-        }
+        MailMessageRecord clone = (MailMessageRecord) super.clone();
+        clone.payloadState = payloadState != null ? payloadState.clone() : null;
+        clone.sent = sent != null ? (Timestamp) sent.clone() : null;
+        return clone;
     }
     
     /**
