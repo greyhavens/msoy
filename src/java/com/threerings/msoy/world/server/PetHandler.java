@@ -18,6 +18,8 @@ import com.threerings.msoy.world.data.PetCodes;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.WorldPetInfo;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manages a Pet at runtime.
  */
@@ -27,6 +29,7 @@ public class PetHandler
     {
         _petobj = MsoyServer.omgr.registerObject(new PetObject());
         _petobj.pet = pet;
+        _petmgr = petmgr;
         _petmgr.mapHandler(pet.itemId, this);
     }
 
@@ -112,6 +115,7 @@ public class PetHandler
      */
     public void moveToOwner (MemberObject owner, ArrayList<MemoryEntry> memory)
     {
+        log.info("Sending " + _petobj.pet + " to " + owner.who() + "...");
         // TODO
     }
 

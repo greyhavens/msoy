@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client.editor {
 
 import flash.events.MouseEvent;
@@ -12,8 +15,6 @@ import flash.ui.Keyboard;
 
 import mx.events.DragEvent;
 
-import mx.managers.DragManager;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Iterator;
@@ -26,16 +27,18 @@ import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.MsoyContext;
 
+import com.threerings.msoy.item.client.InventoryPicker;
 import com.threerings.msoy.item.client.InventoryWindow;
 import com.threerings.msoy.item.web.Audio;
-import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Game;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.world.client.ClickLocation;
 import com.threerings.msoy.world.client.FurniSprite;
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.RoomController;
+import com.threerings.msoy.world.client.RoomDragHandler;
 import com.threerings.msoy.world.client.RoomView;
 
 import com.threerings.msoy.world.data.FurniData;
@@ -63,9 +66,8 @@ public class EditorController extends Controller
     /** Our editor log. */
     public const log :Log = Log.getLog(this);
 
-    public function EditorController (
-        ctx :MsoyContext, roomCtrl :RoomController, roomView :RoomView,
-        scene :MsoyScene, items :Array)
+    public function EditorController (ctx :MsoyContext, roomCtrl :RoomController,
+                                      roomView :RoomView, scene :MsoyScene, items :Array)
     {
         _ctx = ctx;
         _roomCtrl = roomCtrl;
@@ -73,8 +75,7 @@ public class EditorController extends Controller
         _scene = (scene.clone() as MsoyScene);
 
         // create a sprite for editing the scene location
-        var editModel :MsoySceneModel =
-            (_scene.getSceneModel() as MsoySceneModel);
+        var editModel :MsoySceneModel = (_scene.getSceneModel() as MsoySceneModel);
         _entranceSprite = new EntranceSprite();
         _entranceSprite.setLocation(editModel.entrance);
         enableEditingVisitor(null, _entranceSprite);
@@ -89,9 +90,7 @@ public class EditorController extends Controller
 
         // set it as our controlled panel
         setControlledPanel(_panel);
-        _roomView.addEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
-        _roomView.addEventListener(DragEvent.DRAG_EXIT, dragExitHandler);
-        _roomView.addEventListener(DragEvent.DRAG_OVER, dragOverHandler);
+        _roomDragger = new RoomDragHandler(_roomView);
         _roomView.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
         _roomView.addEventListener(MouseEvent.MOUSE_DOWN, roomPressed);
 
@@ -109,9 +108,8 @@ public class EditorController extends Controller
         _ctx.getTopPanel().clearSidePanel(_panel);
 
         // stop listening from drop events on the roomView
-        _roomView.removeEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
-        _roomView.removeEventListener(DragEvent.DRAG_EXIT, dragExitHandler);
-        _roomView.removeEventListener(DragEvent.DRAG_OVER, dragOverHandler);
+        _roomDragger.unbind();
+        _roomDragger = null;
         _roomView.removeEventListener(DragEvent.DRAG_DROP, dragDropHandler);
         _roomView.removeEventListener(MouseEvent.MOUSE_DOWN, roomPressed);
 
@@ -134,11 +132,9 @@ public class EditorController extends Controller
             edits = TypedArray.create(SceneUpdate);
 
             // configure a attrs updates, if needed
-            var editModel :MsoySceneModel =
-                (_scene.getSceneModel() as MsoySceneModel);
+            var editModel :MsoySceneModel = (_scene.getSceneModel() as MsoySceneModel);
             var origModel :MsoySceneModel =
-                (_ctx.getSceneDirector().getScene().getSceneModel()
-                    as MsoySceneModel);
+                (_ctx.getSceneDirector().getScene().getSceneModel() as MsoySceneModel);
             if (!Util.equals(editModel.name, origModel.name) ||
                     (editModel.sceneType != origModel.sceneType) ||
                     (editModel.depth != origModel.depth) ||
@@ -192,12 +188,10 @@ public class EditorController extends Controller
         } else if (obj is Item) {
             var item :Item = (obj as Item);
             // find the furni sprite with matching attrs
-            var allSprites :Array =
-                _addedSprites.concat(_roomView.getFurniSprites());
+            var allSprites :Array = _addedSprites.concat(_roomView.getFurniSprites());
             for each (fsprite in allSprites) {
                 furni = fsprite.getFurniData();
-                if (furni.itemType == item.getType() &&
-                        furni.itemId == item.itemId) {
+                if (furni.itemType == item.getType() && furni.itemId == item.itemId) {
                     selected = fsprite;
                     break;
                 }
@@ -205,8 +199,7 @@ public class EditorController extends Controller
             if (selected == null) {
                 // if the background music was selected, fake up a sprite
                 var bkg :FurniData = _scene.getMusic();
-                if (bkg != null && bkg.itemType == item.getType() &&
-                        bkg.itemId == item.itemId) {
+                if (bkg != null && bkg.itemType == item.getType() && bkg.itemId == item.itemId) {
                     selected = new FurniSprite(_ctx, bkg);
                 }
             }
@@ -252,8 +245,7 @@ public class EditorController extends Controller
     /**
      * Helper for methods that insert a new sprite into a scene.
      */
-    protected function insertSprite (
-        sprite :MsoySprite, loc :MsoyLocation) :void
+    protected function insertSprite (sprite :MsoySprite, loc :MsoyLocation) :void
     {
         _roomView.addChild(sprite);
         sprite.setLocation(loc);
@@ -307,9 +299,6 @@ try {
 
         _panel.itemList.removeItem(_panel.listedItemFromSprite(sprite));
 
-        var scene :MsoyScene =
-            (_ctx.getSceneDirector().getScene() as MsoyScene);
-
         if (sprite is FurniSprite) {
             var furni :FurniData = (sprite as FurniSprite).getFurniData();
 
@@ -318,6 +307,7 @@ try {
             ArrayUtil.removeAll(_addedFurni, furni);
 
             // find the original furni to remove (if any)
+            var scene :MsoyScene = (_ctx.getSceneDirector().getScene() as MsoyScene);
             for each (var f :FurniData in scene.getFurni()) {
                 if (furni.equals(f)) {
                     _removedFurni.push(f);
@@ -368,8 +358,7 @@ try {
             _editSprite.graphics.clear();
 
             // remove any listeners that might be hanging
-            _editSprite.removeEventListener(
-                MouseEvent.MOUSE_DOWN, editSpritePressed);
+            _editSprite.removeEventListener(MouseEvent.MOUSE_DOWN, editSpritePressed);
             addEditingListeners(_editSprite);
         }
 
@@ -393,7 +382,6 @@ try {
     {
         var sprite :MsoySprite = (value as MsoySprite);
         sprite.setEditing(true);
-
         addEditingListeners(sprite);
     }
 
@@ -421,52 +409,14 @@ try {
         sprite.addEventListener(MouseEvent.MOUSE_OUT, spriteRollOut);
     }
 
-    protected function dragEnterHandler (event :DragEvent) :void
-    {
-        if (event.isDefaultPrevented()) {
-            return;
-        }
-        if (null != dragItem(event)) {
-            DragManager.acceptDragDrop(_roomView);
-            DragManager.showFeedback(DragManager.MOVE);
-
-        } else {
-            DragManager.showFeedback(DragManager.NONE);
-        }
-    }
-
-    protected function dragOverHandler (event :DragEvent) :void
-    {
-        if (event.isDefaultPrevented()) {
-            return;
-        }
-
-        if (null != dragItem(event)) {
-            DragManager.showFeedback(DragManager.MOVE);
-
-        } else {
-            DragManager.showFeedback(DragManager.NONE);
-        }
-    }
-
-    protected function dragExitHandler (event :DragEvent) :void
-    {
-        if (event.isDefaultPrevented()) {
-            return;
-        }
-
-        DragManager.showFeedback(DragManager.NONE);
-    }
-
     protected function dragDropHandler (event :DragEvent) :void
     {
         if (event.isDefaultPrevented()) {
             return;
         }
 
-        var item :Item = dragItem(event);
-        var cloc :ClickLocation = _roomView.pointToLocation(
-            event.stageX, event.stageY);
+        var item :Item = InventoryPicker.dragItem(event);
+        var cloc :ClickLocation = _roomView.pointToLocation(event.stageX, event.stageY);
 
         // let's go ahead and create furni
         addFurni(item, cloc.loc);
@@ -492,30 +442,6 @@ try {
         // create a loose sprite to represent it, add it to the panel
         var sprite :FurniSprite = _ctx.getMediaDirector().getFurni(furni);
         insertSprite(sprite, loc);
-    }
-
-    /**
-     * A helper method for all my drag*Handlers.
-     * Return the Item being dragged, or null if not an item or 
-     * not the right kind of drag, or whatever.
-     */
-    protected function dragItem (event :DragEvent) :Item
-    {
-        // this is internal flex juju, not related to our items
-        for each (var format :String in ["items", "treeItems"]) {
-            if (event.dragSource.hasFormat(format)) {
-                var arr :Array =
-                    (event.dragSource.dataForFormat(format) as Array);
-                if ((arr.length == 1) && (arr[0] is Item)) {
-                    var item :Item = (arr[0] as Item);
-                    // we only accept drops of un-utilized items
-                    if (!item.isUsed()) {
-                        return item;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     /**
@@ -582,15 +508,13 @@ try {
     protected function editSpritePressed (event :MouseEvent) :void
     {
         event.stopPropagation();
-        _editSprite.removeEventListener(MouseEvent.MOUSE_DOWN,
-            editSpritePressed);
+        _editSprite.removeEventListener(MouseEvent.MOUSE_DOWN, editSpritePressed);
 
         // stop following the sprite
         _wasCentering = _centering;
         setCentering(false);
 
-        var hs :Point = _editSprite.localToGlobal(
-            _editSprite.getLayoutHotSpot());
+        var hs :Point = _editSprite.localToGlobal(_editSprite.getLayoutHotSpot());
 
 //        // determine whether we're going to adjust scaling or position
 //        var w :Number = _editSprite.getActualWidth();
@@ -623,10 +547,8 @@ try {
 
             _roomView.addEventListener(MouseEvent.MOUSE_MOVE, spritePositioning);
             _roomView.addEventListener(MouseEvent.MOUSE_UP, spritePositioned);
-            _roomView.stage.addEventListener(KeyboardEvent.KEY_UP,
-                spritePositioningKey);
-            _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN,
-                spritePositioningKey);
+            _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, spritePositioningKey);
+            _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, spritePositioningKey);
 
             if (event.shiftKey) {
                 recordMouseAnchor();
@@ -643,12 +565,10 @@ try {
      */
     protected function spritePositioning (event :MouseEvent) :void
     {
-        // _xoffset and _yoffset are the stage offsets from the sprite's
-        // hotspot to the initial click position, and we continue
-        // using those to adjust the mouse position. It's good enough.
-        // Ideally, we would solve for position and scale such that the
-        // initally clicked spot is always under the mouse pointer, but
-        // that's much harder to do.
+        // _xoffset and _yoffset are the stage offsets from the sprite's hotspot to the initial
+        // click position, and we continue using those to adjust the mouse position. It's good
+        // enough.  Ideally, we would solve for position and scale such that the initally clicked
+        // spot is always under the mouse pointer, but that's much harder to do.
 
         if (event.shiftKey) {
             // figure the distance from the anchor
@@ -658,8 +578,7 @@ try {
             _editSprite.setLocation(loc);
 
         } else {
-            var cloc :ClickLocation = _roomView.pointToLocation(
-                event.stageX, event.stageY);
+            var cloc :ClickLocation = _roomView.pointToLocation(event.stageX, event.stageY);
             if (cloc.click == ClickLocation.FLOOR) {
                 cloc.loc.y = _editSprite.loc.y;
             }
@@ -690,10 +609,8 @@ try {
     {
         _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, spritePositioning);
         _roomView.removeEventListener(MouseEvent.MOUSE_UP, spritePositioned);
-        _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP,
-            spritePositioningKey);
-        _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN,
-            spritePositioningKey);
+        _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, spritePositioningKey);
+        _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, spritePositioningKey);
 
         spriteUpdated(_editSprite);
         setCentering(_wasCentering);
@@ -709,12 +626,10 @@ try {
      */
     protected function spriteScaling (event :MouseEvent) :void
     {
-        // TODO: this will clean up more when I revamp the perspective
-        // math in the RoomView.
+        // TODO: this will clean up more when I revamp the perspective math in the RoomView.
         // Until then, there's no point in trying to make it less annoying.
 
-        var p :Point = _editSprite.globalToLocal(
-            new Point(event.stageX, event.stageY));
+        var p :Point = _editSprite.globalToLocal(new Point(event.stageX, event.stageY));
         var hs :Point = _editSprite.getLayoutHotSpot();
 
         if (_scalingX) {
@@ -862,12 +777,11 @@ try {
         if (!DRAW_EDITING) {
             return;
         }
-        var g :Graphics = sprite.graphics;
 
+        var g :Graphics = sprite.graphics;
         g.clear();
         g.lineStyle(2, 0x0033FF, 1, false, LineScaleMode.NONE);
-        g.drawRect(0, 0, sprite.getActualWidth() - 2,
-            sprite.getActualHeight() - 2);
+        g.drawRect(0, 0, sprite.getActualWidth() - 2, sprite.getActualHeight() - 2);
     }
 
     protected function drawEditing (sprite :MsoySprite) :void
@@ -875,12 +789,11 @@ try {
         if (!DRAW_EDITING) {
             return;
         }
-        var g :Graphics = sprite.graphics;
 
+        var g :Graphics = sprite.graphics;
         g.clear();
         g.lineStyle(2, 0xFF3300, 1, false, LineScaleMode.NONE);
-        g.drawRect(0, 0, sprite.getActualWidth() - 2,
-            sprite.getActualHeight() - 2);
+        g.drawRect(0, 0, sprite.getActualWidth() - 2, sprite.getActualHeight() - 2);
     }
 
     protected function drawScaling (sprite :MsoySprite) :void
@@ -888,13 +801,14 @@ try {
         if (!DRAW_EDITING) {
             return;
         }
+
         var w :Number = sprite.getActualWidth();
         var h :Number = sprite.getActualHeight();
         var wo :Number = SCALE_TARGET_LENGTHS;
         var ho :Number = SCALE_TARGET_LENGTHS;
         var g :Graphics = sprite.graphics;
-
         g.clear();
+
         for (var ii :int = 0; ii < 2; ii++) {
             if (ii == 0) {
                 g.lineStyle(3, 0xFFFFFF, 1, false, LineScaleMode.NONE);
@@ -941,11 +855,8 @@ try {
     }
 
     protected var _ctx :MsoyContext;
-
     protected var _scene :MsoyScene;
-
     protected var _panel :EditorPanel;
-
     protected var _roomCtrl :RoomController;
 
     /** The room view. */
@@ -983,6 +894,7 @@ try {
     protected var _scalingY :Boolean = false;
 
     protected var _editSprite :MsoySprite;
+    protected var _roomDragger :RoomDragHandler;
 
     protected static const SCALE_TARGET_LENGTHS :int = 15;
     protected static const SCALING_TRIGGER_AREA :int = 5;

@@ -4,14 +4,11 @@
 package com.threerings.msoy.item.client {
 
 import flash.display.DisplayObjectContainer;
-
 import flash.events.Event;
 
 import mx.binding.utils.BindingUtils;
-
-import mx.core.ClassFactory;
-
 import mx.containers.VBox;
+import mx.core.ClassFactory;
 
 import mx.controls.CheckBox;
 import mx.controls.Tree;
@@ -23,6 +20,7 @@ import mx.collections.Sort;
 
 import mx.core.ScrollPolicy;
 
+import mx.events.DragEvent;
 import mx.events.TreeEvent;
 
 import com.threerings.mx.events.CommandEvent
@@ -38,9 +36,31 @@ public class InventoryPicker extends VBox
      * is the Item instance, if any. */
     public static const ITEM_SELECTED :String = "InventoryItemSelected";
 
-    public function InventoryPicker (
-        ctx :MsoyContext, soleType :int = Item.NOT_A_TYPE,
-        showUsed :Boolean = false)
+    /**
+     * Returns the Item being dragged, or null if not an item or not the right kind of drag, or
+     * whatever.
+     */
+    public static function dragItem (event :DragEvent) :Item
+    {
+        // this is internal flex juju, not related to our items
+        for each (var format :String in ["items", "treeItems"]) {
+            if (event.dragSource.hasFormat(format)) {
+                var arr :Array =
+                    (event.dragSource.dataForFormat(format) as Array);
+                if ((arr.length == 1) && (arr[0] is Item)) {
+                    var item :Item = (arr[0] as Item);
+                    // we only accept drops of un-utilized items
+                    if (!item.isUsed()) {
+                        return item;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public function InventoryPicker (ctx :MsoyContext, soleType :int = Item.NOT_A_TYPE,
+                                     showUsed :Boolean = false)
     {
         _collection = new InventoryCollectionView(ctx, soleType, showUsed);
 

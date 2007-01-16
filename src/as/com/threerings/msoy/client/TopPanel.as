@@ -85,6 +85,11 @@ public class TopPanel extends Canvas
         layoutPanels();
     }
 
+    public function getPlaceView () :PlaceView
+    {
+        return _placeView;
+    }
+
     public function setPlaceView (view :PlaceView) :void
     {
         clearPlaceView(null);

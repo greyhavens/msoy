@@ -58,8 +58,8 @@ public class PrefsDialog extends FloatingPanel
         if (p != null) {
             var memberObject :MemberObject = _ctx.getClientObject();
             if (memberObject.isInventoryLoaded(Item.AVATAR)) {
-                // call later, twice, so that the picker has had time to
-                // set up the avatars. Kinda hacky, but what to do?
+                // call later, twice, so that the picker has had time to set up the avatars. Kinda
+                // hacky, but what to do?
                 callLater(callLater, [selectCurrentAvatar]);
 
             } else {
@@ -79,9 +79,8 @@ public class PrefsDialog extends FloatingPanel
         var memberObj :MemberObject = _ctx.getClientObject();
 
         var grid :Grid = new Grid();
-        grid.addRow(
-            MsoyUI.createLabel(Msgs.GENERAL.get("l.display_name")),
-            _name = new TextInput());
+        grid.addRow(MsoyUI.createLabel(Msgs.GENERAL.get("l.display_name")),
+                    _name = new TextInput());
         _name.text = memberObj.memberName.toString();
 
         grid.addRow(MsoyUI.createLabel(Msgs.GENERAL.get("l.log_to_chat")),
@@ -155,8 +154,7 @@ public class PrefsDialog extends FloatingPanel
     /** The list of our avatars. */
     protected var _avatars :InventoryPicker;
 
-    /** The member object of our player, while we're listening for
-     * avatars to be loaded. */
+    /** The member object of our player, while we're listening for avatars to be loaded. */
     protected var _memberObj :MemberObject;
 }
 }

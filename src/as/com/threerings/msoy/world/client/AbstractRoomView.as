@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
@@ -86,8 +89,7 @@ public class AbstractRoomView extends Canvas
     }
 
     /**
-     * Called by MsoySprite instances when they've had their location
-     * updated.
+     * Called by MsoySprite instances when they've had their location updated.
      */
     public function locationUpdated (sprite :MsoySprite) :void
     {
@@ -104,8 +106,7 @@ public class AbstractRoomView extends Canvas
     /**
      * Enable or disable editing. Called by the EditRoomController.
      */
-    public function setEditing (
-            editing :Boolean, spriteVisitFn :Function) :void
+    public function setEditing (editing :Boolean, spriteVisitFn :Function) :void
     {
         _editing = editing;
         _furni.forEach(spriteVisitFn);
@@ -118,13 +119,11 @@ public class AbstractRoomView extends Canvas
     }
 
     /**
-     * Turn the screen coordinate into a MsoyLocation, with the
-     * orient field set to 0.
+     * Turn the screen coordinate into a MsoyLocation, with the orient field set to 0.
      *
      * @return a ClickLocation object.
      */
-    public function pointToLocation (
-            globalX :Number, globalY :Number) :ClickLocation
+    public function pointToLocation (globalX :Number, globalY :Number) :ClickLocation
     {
         var p :Point = globalToLocal(new Point(globalX, globalY));
         var x :Number = p.x;
@@ -148,8 +147,7 @@ public class AbstractRoomView extends Canvas
         // do some partitioning depending on where the y lies
         if (y < backWallTop) {
             clickWall = ClickLocation.CEILING;
-            scale = minScale +
-                (backWallTop - y) / backWallTop * (MAX_SCALE - minScale);
+            scale = minScale + (backWallTop - y) / backWallTop * (MAX_SCALE - minScale);
 
         } else if (y < backWallBottom) {
             clickWall = ClickLocation.BACK_WALL;
@@ -157,8 +155,7 @@ public class AbstractRoomView extends Canvas
 
         } else {
             clickWall = ClickLocation.FLOOR;
-            scale = minScale +
-                (y - backWallBottom) / (TARGET_HEIGHT - backWallBottom) *
+            scale = minScale + (y - backWallBottom) / (TARGET_HEIGHT - backWallBottom) *
                 (MAX_SCALE - minScale);
         }
 
@@ -184,13 +181,11 @@ public class AbstractRoomView extends Canvas
 
             switch (clickWall) {
             case ClickLocation.LEFT_WALL:
-                scale = minScale +
-                    (x / floorInset) * (MAX_SCALE - minScale);
+                scale = minScale + (x / floorInset) * (MAX_SCALE - minScale);
                 break;
 
             case ClickLocation.RIGHT_WALL:
-                scale = minScale +
-                    ((sceneWidth - x) / floorInset) * (MAX_SCALE - minScale);
+                scale = minScale + ((sceneWidth - x) / floorInset) * (MAX_SCALE - minScale);
                 break;
 
             default:
@@ -200,10 +195,8 @@ public class AbstractRoomView extends Canvas
             // TODO: factor in horizon here
             var wallHeight :Number = (TARGET_HEIGHT * scale);
             var wallInset :Number = (TARGET_HEIGHT - wallHeight) / 2;
-            yy = MAX_COORD *
-                (1 - ((y - wallInset) / wallHeight));
-            zz = MAX_COORD *
-                ((scale - minScale) / (MAX_SCALE - minScale));
+            yy = MAX_COORD * (1 - ((y - wallInset) / wallHeight));
+            zz = MAX_COORD * ((scale - minScale) / (MAX_SCALE - minScale));
 
         } else {
             // normal case: the x coordinate is within the floor width
@@ -214,8 +207,7 @@ public class AbstractRoomView extends Canvas
             case ClickLocation.CEILING:
             case ClickLocation.FLOOR:
                 yy = (clickWall == ClickLocation.CEILING) ? MAX_COORD : 0;
-                zz = MAX_COORD *
-                    (1 - ((scale - minScale) / (MAX_SCALE - minScale)));
+                zz = MAX_COORD * (1 - ((scale - minScale) / (MAX_SCALE - minScale)));
                 break;
 
             case ClickLocation.BACK_WALL:
@@ -233,14 +225,12 @@ public class AbstractRoomView extends Canvas
     }
 
     /**
-     * Get the y distance represented by the specified number of pixels
-     * for the given z coordinate.
+     * Get the y distance represented by the specified number of pixels for the given z coordinate.
      */
     public function getYDistance (z :Number, pixels :int) :Number
     {
         var minScale :Number = computeMinScale();
-        var scale :Number = minScale +
-            ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - minScale);
+        var scale :Number = minScale + ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - minScale);
         var sheight :Number = (TARGET_HEIGHT * scale);
         return (pixels / sheight);
     }
@@ -259,7 +249,7 @@ public class AbstractRoomView extends Canvas
 
         var bounds :Rectangle = getScrollBounds();
         rect.x = Math.min(bounds.x + bounds.width - rect.width,
-            Math.max(bounds.x, rect.x + xpixels));
+                          Math.max(bounds.x, rect.x + xpixels));
         scrollRect = rect;
         scrollRectUpdated();
         return true;
@@ -283,8 +273,7 @@ public class AbstractRoomView extends Canvas
             return new Rectangle(0, 0, unscaledWidth, unscaledHeight);
         }
 
-        var r :Rectangle = new Rectangle(
-            0, 0, _scene.getWidth() * scaleX, unscaledHeight);
+        var r :Rectangle = new Rectangle(0, 0, _scene.getWidth() * scaleX, unscaledHeight);
         if (_editing) {
             r.inflate(unscaledWidth * 2 / 3, 0);
         }
@@ -313,9 +302,8 @@ public class AbstractRoomView extends Canvas
     /**
      * Calculate the info needed to perspectivize a piece of furni.
      */
-    public function getPerspInfo (
-        sprite :MsoySprite, contentWidth :int, contentHeight :int,
-        loc :MsoyLocation) :PerspInfo
+    public function getPerspInfo (sprite :MsoySprite, contentWidth :int, contentHeight :int,
+                                  loc :MsoyLocation) :PerspInfo
     {
         var hotSpot :Point = sprite.getMediaHotSpot();
         var mediaScaleX :Number = Math.abs(sprite.getMediaScaleX());
@@ -339,8 +327,7 @@ public class AbstractRoomView extends Canvas
         var scaleH :Number = FOCAL / distH;
         var scaleN :Number = FOCAL / (distH + distN);
 
-        var logicalY :Number = loc.y +
-            ((contentHeight * mediaScaleY) / TARGET_HEIGHT);
+        var logicalY :Number = loc.y + ((contentHeight * mediaScaleY) / TARGET_HEIGHT);
 
         var p0 :Point = projectedLocation(scale0, loc.x, logicalY);
         var pH :Point = projectedLocation(scaleH, loc.x, loc.y);
@@ -395,14 +382,12 @@ public class AbstractRoomView extends Canvas
     protected function updateComplete (evt :FlexEvent) :void
     {
         removeEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
-
         relayout();
     }
 
     override public function setActualSize (w :Number, h :Number) :void
     {
         var scale :Number = (h / TARGET_HEIGHT);
-
         scaleX = scale;
         scaleY = scale;
         super.setActualSize(w, h);
@@ -432,8 +417,7 @@ public class AbstractRoomView extends Canvas
     }
 
     /**
-     * Configure the rectangle used to select a portion of the view
-     * that's showing.
+     * Configure the rectangle used to select a portion of the view that's showing.
      */
     protected function configureScrollRect () :void
     {
@@ -454,29 +438,25 @@ public class AbstractRoomView extends Canvas
 
     protected function scrollRectUpdated () :void
     {
-        if (_bkg != null &&
-                _scene.getSceneType() == MsoySceneModel.FIXED_IMAGE) {
+        if (_bkg != null && _scene.getSceneType() == MsoySceneModel.FIXED_IMAGE) {
             locationUpdated(_bkg);
         }
     }
 
     /**
-     * Calculate the scale and x/y position of the specified media
-     * according to its logical coordinates.
+     * Calculate the scale and x/y position of the specified media according to its logical
+     * coordinates.
      */
-    protected function positionAndScale (
-            sprite :MsoySprite, loc :MsoyLocation) :void
+    protected function positionAndScale (sprite :MsoySprite, loc :MsoyLocation) :void
     {
         // the scale of the object is determined by the z coordinate
         var minScale :Number = computeMinScale();
-        var scale :Number = minScale +
-            ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - minScale);
+        var scale :Number = minScale + ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - minScale);
         sprite.setLocationScale(scale);
 
         var p :Point = projectedLocation(scale, loc.x, loc.y);
         var hotSpot :Point = sprite.getLayoutHotSpot();
-        if (sprite == _bkg &&
-                _scene.getSceneType() == MsoySceneModel.FIXED_IMAGE) {
+        if (sprite == _bkg && _scene.getSceneType() == MsoySceneModel.FIXED_IMAGE) {
             // adjust the background image
             p.x += getScrollOffset();
         }
@@ -490,8 +470,7 @@ public class AbstractRoomView extends Canvas
      * @param x the logical x coordinate (0 - 1)
      * @param y the logical y coordinate (0 - 1)
      */
-    protected function projectedLocation (
-        scale :Number, x :Number, y :Number) :Point
+    protected function projectedLocation (scale :Number, x :Number, y :Number) :Point
     {
         var sceneWidth :Number = _scene.getWidth();
 
@@ -504,16 +483,14 @@ public class AbstractRoomView extends Canvas
         var horizonY :Number = TARGET_HEIGHT * horizon;
 
         return new Point(floorInset + (x * floorWidth),
-            horizonY +
-            ((TARGET_HEIGHT - horizonY) - (y * TARGET_HEIGHT)) * scale);
+                         horizonY + ((TARGET_HEIGHT - horizonY) - (y * TARGET_HEIGHT)) * scale);
     }
 
     /**
-     * Adjust the z order of the specified sprite so that it is drawn
-     * according to its logical Z coordinate relative to other sprites.
+     * Adjust the z order of the specified sprite so that it is drawn according to its logical Z
+     * coordinate relative to other sprites.
      */
-    protected function adjustZOrder (
-             sprite :MsoySprite, loc :MsoyLocation) :void
+    protected function adjustZOrder (sprite :MsoySprite, loc :MsoyLocation) :void
     {
         var dex :int = getChildIndex(sprite);
         var newdex :int = dex;
@@ -541,8 +518,7 @@ public class AbstractRoomView extends Canvas
     }
 
     /**
-     * Convenience method to get the logical z coordinate of the child
-     * at the specified index.
+     * Convenience method to get the logical z coordinate of the child at the specified index.
      */
     protected function getZOfChildAt (index :int) :Number
     {
@@ -630,10 +606,8 @@ public class AbstractRoomView extends Canvas
             _bkgGraphics = null;
         }
 
-        var drawWalls :Boolean =
-            (_scene.getSceneType() == MsoySceneModel.DRAWN_ROOM);
+        var drawWalls :Boolean = (_scene.getSceneType() == MsoySceneModel.DRAWN_ROOM);
         var drawEdges :Boolean = drawWalls || _editing;
-
         if (!drawEdges) {
             return; // nothing to draw
         }
@@ -643,8 +617,8 @@ public class AbstractRoomView extends Canvas
         addChildAt(_bkgGraphics, 0);
 
         var g :Graphics = _bkgGraphics.graphics;
-
         g.clear();
+
         var sceneWidth :int = _scene.getWidth();
         var minScale :Number = computeMinScale();
         var backWallHeight :Number = TARGET_HEIGHT * minScale;
@@ -749,10 +723,9 @@ public class AbstractRoomView extends Canvas
     protected var _editing :Boolean = false;
 
     /** The focal length of our perspective rendering. */
-    // This value (488) was chosen so that the standard depth (400)
-    // causes layout nearly identical to the original perspective math.
-    // So, it's purely historical, but we could choose a new focal length
-    // and even a new standard scene depth.
+    // This value (488) was chosen so that the standard depth (400) causes layout nearly identical
+    // to the original perspective math.  So, it's purely historical, but we could choose a new
+    // focal length and even a new standard scene depth.
     // TODO
     private static const FOCAL :Number = 488;
 

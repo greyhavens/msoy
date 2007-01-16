@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.client {
 
 import flash.events.IEventDispatcher;
@@ -28,14 +31,14 @@ import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
-
 import com.threerings.msoy.web.data.MemberName;
-
-import com.threerings.msoy.game.client.LobbyService;
-import com.threerings.msoy.game.client.WorldGameService;
 
 import com.threerings.msoy.chat.client.ChatControl;
 import com.threerings.msoy.chat.client.ReportingListener;
+
+import com.threerings.msoy.game.client.LobbyService;
+import com.threerings.msoy.game.client.WorldGameService;
+import com.threerings.msoy.world.client.RoomView;
 
 public class MsoyController extends Controller
     implements ClientObserver
@@ -74,10 +77,10 @@ public class MsoyController extends Controller
 
     /** Command to join an in-world game. */
     public static const JOIN_WORLD_GAME :String = "JoinWorldGame";
-    
+
     /** Command to leave the in-world game. */
     public static const LEAVE_WORLD_GAME :String = "LeaveWorldGame";
-    
+
     /** Command to add/remove friends. */
     public static const ALTER_FRIEND :String = "AlterFriend";
 
@@ -131,8 +134,7 @@ public class MsoyController extends Controller
      */
     public function handlePopFriendsMenu (trigger :Button) :void
     {
-        var friends :Array =
-            _ctx.getClientObject().getSortedEstablishedFriends();
+        var friends :Array = _ctx.getClientObject().getSortedEstablishedFriends();
         friends = friends.map(
             function (fe :FriendEntry, index :int, array :Array) :Object {
                 return {
@@ -243,8 +245,7 @@ public class MsoyController extends Controller
                 });
         }
 
-        var menu :CommandMenu =
-            CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
+        var menu :CommandMenu = CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
         menu.popUp(trigger);
     }
 
@@ -253,7 +254,9 @@ public class MsoyController extends Controller
      */
     public function handleShowPets (show :Boolean) :void
     {
-        new PetsDialog(_ctx);
+        if (_topPanel.getPlaceView() is RoomView) {
+            new PetsDialog(_ctx, (_topPanel.getPlaceView() as RoomView));
+        }
     }
 
     /**
@@ -344,8 +347,7 @@ public class MsoyController extends Controller
      */
     public function handleGoGameLobby (gameId :int) :void
     {
-        if (!shouldLoadNewPages() ||
-                !NetUtil.navigateToURL("/game/index.html#" + gameId)) {
+        if (!shouldLoadNewPages() || !NetUtil.navigateToURL("/game/index.html#" + gameId)) {
             // if we shouldn't or couldn't load a new page then we
             // just load up the module inside this client
             // TODO
@@ -359,8 +361,7 @@ public class MsoyController extends Controller
     protected function moveToGameLobby (gameId :int) :void
     {
         // TODO: move to a game director?
-        var lsvc :LobbyService =
-            (_ctx.getClient().requireService(LobbyService) as LobbyService);
+        var lsvc :LobbyService = (_ctx.getClient().requireService(LobbyService) as LobbyService);
         lsvc.identifyLobby(_ctx.getClient(), gameId,
             new ResultWrapper(function (cause :String) :void {
                 log.warning("Ack: " + cause);
@@ -383,7 +384,7 @@ public class MsoyController extends Controller
                 log.warning("Ack: " + cause);
             }));
     }
-    
+
     /**
      * Handle LEAVE_WORLD_GAME.
      */
@@ -396,7 +397,7 @@ public class MsoyController extends Controller
                 log.warning("Ack: " + cause);
             }));
     }
-    
+
     /**
      * Handles ALTER_FRIEND.
      */
@@ -528,7 +529,7 @@ public class MsoyController extends Controller
             }
             _ctx.getSceneDirector().moveTo(starterSceneId);
         }
-        
+
         // see if we should join a world game
         if (null != params["worldGame"]) {
             handleJoinWorldGame(int(params["worldGame"]));
@@ -549,7 +550,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Return true if we should attempt to load sections of metasoy by 
+     * Return true if we should attempt to load sections of metasoy by
      * visiting a new page.
      */
     protected function shouldLoadNewPages () :Boolean

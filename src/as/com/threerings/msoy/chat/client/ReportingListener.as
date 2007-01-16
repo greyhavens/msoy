@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.chat.client {
 
 import com.threerings.util.MessageBundle;
@@ -10,8 +13,7 @@ public class ReportingListener
     implements InvocationService_ConfirmListener
 {
     public function ReportingListener (
-            ctx :MsoyContext, msgBundle :String = null, errWrap :String = null,
-            success :String = null)
+        ctx :MsoyContext, msgBundle :String = null, errWrap :String = null, success :String = null)
     {
         _ctx = ctx;
         _bundle = msgBundle;
@@ -30,8 +32,7 @@ public class ReportingListener
     // documentation inherited from ConfirmListener
     public function requestFailed (cause :String) :void
     {
-        Log.getLog(this).info("Reporting failure [bundle=" + _bundle +
-            ", reason=" + cause + "].");
+        Log.getLog(this).info("Reporting failure [bundle=" + _bundle + ", reason=" + cause + "].");
         if (_errWrap != null) {
             cause = MessageBundle.compose(_errWrap, cause);
         }

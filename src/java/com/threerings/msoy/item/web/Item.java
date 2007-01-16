@@ -263,13 +263,13 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
         return getIdent();
     }
 
-    // @Override
+    // @Override // from Object
     public int hashCode ()
     {
         return itemId;
     }
 
-    // @Override
+    // @Override // from Object
     public boolean equals (Object other)
     {
         if (other instanceof Item) {
@@ -278,6 +278,12 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
             return (this.itemId == that.itemId) && (this.getType() == that.getType());
         }
         return false;
+    }
+
+    // @Override // from Object
+    public String toString ()
+    {
+        return "[type=" + getTypeName(getType()) + ", id=" + itemId + ", name=" + name + "]";
     }
 
     /**
