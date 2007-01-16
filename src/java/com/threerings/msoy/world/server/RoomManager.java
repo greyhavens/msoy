@@ -259,9 +259,11 @@ public class RoomManager extends SpotSceneManager
     @Override // documentation inherited
     protected SceneLocation computeEnteringLocation (BodyObject body, Portal entry)
     {
-        // automatically add the room to their recent list
-        MemberObject memberObj = (MemberObject) body;
-        memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
+        if (body instanceof MemberObject) {
+            // automatically add the room to their recent list
+            MemberObject memberObj = (MemberObject) body;
+            memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
+        }
 
         if (entry != null) {
             return super.computeEnteringLocation(body, entry);

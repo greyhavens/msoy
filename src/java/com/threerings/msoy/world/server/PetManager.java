@@ -77,7 +77,7 @@ public class PetManager
             }
 
             public void handleSuccess () {
-                resolveRoomPets(roomObj, _pets, _memories);
+                resolveRoomPets(sceneId, roomObj, _pets, _memories);
             }
             public void handleFailure (Exception e) {
                 log.log(Level.WARNING, "Failed to load pets [scene=" + sceneId + "].", e);
@@ -187,7 +187,7 @@ public class PetManager
      * Called after {@link #loadRoomPets} has loaded our persistent pet data to finish the job of
      * pet resolution.
      */
-    protected void resolveRoomPets (RoomObject roomObj, ArrayList<Pet> pets,
+    protected void resolveRoomPets (int sceneId, RoomObject roomObj, ArrayList<Pet> pets,
                                     HashIntMap<ArrayList<MemoryEntry>> memories)
     {
         for (Pet pet : pets) {
@@ -199,7 +199,7 @@ public class PetManager
 
             // create a handler for this pet and start them in this room
             PetHandler handler = new PetHandler(this, pet);
-            handler.enterRoom(roomObj, memories.get(pet.itemId));
+            handler.enterRoom(sceneId, roomObj, memories.get(pet.itemId));
         }
     }
 

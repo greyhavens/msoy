@@ -5,7 +5,17 @@ package com.threerings.msoy.world.server;
 
 import java.util.ArrayList;
 
+import com.samskivert.util.StringUtil;
+import com.threerings.util.Name;
+
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
+
+import com.threerings.crowd.data.PlaceConfig;
+
+import com.threerings.whirled.client.SceneService.SceneMoveListener;
+import com.threerings.whirled.data.SceneModel;
+import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PetObject;
@@ -16,7 +26,6 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.PetCodes;
 import com.threerings.msoy.world.data.RoomObject;
-import com.threerings.msoy.world.data.WorldPetInfo;
 
 import static com.threerings.msoy.Log.log;
 
@@ -28,6 +37,7 @@ public class PetHandler
     public PetHandler (PetManager petmgr, Pet pet)
     {
         _petobj = MsoyServer.omgr.registerObject(new PetObject());
+        _petobj.setUsername(new Name(pet.name));
         _petobj.pet = pet;
         _petmgr = petmgr;
         _petmgr.mapHandler(pet.itemId, this);
@@ -56,12 +66,12 @@ public class PetHandler
      * Enters the pet into the supplied room. The supplied memory should come from having loaded
      * the pet for the first time or from extracting it from the room the pet just left.
      */
-    public void enterRoom (RoomObject roomObj, ArrayList<MemoryEntry> memories)
+    public void enterRoom (final int sceneId, RoomObject roomObj, ArrayList<MemoryEntry> memories)
     {
+        // add our memories to the room
         _roomObj = roomObj;
         try {
             _roomObj.startTransaction();
-            _roomObj.addToOccupantInfo(new WorldPetInfo(_petobj, false));
             if (memories != null) {
                 for (MemoryEntry entry : memories) {
                     _roomObj.addToMemories(entry);
@@ -70,6 +80,26 @@ public class PetHandler
         } finally {
             _roomObj.commitTransaction();
         }
+
+        // then enter the scene like a proper scene entity
+        MsoyServer.screg.sceneprov.moveTo(_petobj, sceneId, -1, new SceneMoveListener() {
+            public void moveSucceeded (int placeId, PlaceConfig config) {
+                // NOOP
+            }
+            public void moveSucceededWithUpdates (
+                int placeId, PlaceConfig config, SceneUpdate[] updates) {
+                // NOOPITY
+            }
+            public void moveSucceededWithScene (
+                int placeId, PlaceConfig config, SceneModel model) {
+                // NOOP NOOP NOOP
+            }
+            public void requestFailed (String reason) {
+                log.warning("Pet failed to enter scene [pet=" + _petobj.pet + ", scene=" + sceneId +
+                            ", reason=" + reason + "].");
+                // TODO: shutdown? freakout? call the Elite Beat Agents?
+            }
+        });
     }
 
     /**
@@ -90,10 +120,9 @@ public class PetHandler
             }
         }
 
-        // now remove those and our occupant info from the room
+        // now remove those from the room
         try {
             _roomObj.startTransaction();
-            _roomObj.removeFromOccupantInfo(_petobj.getOid());
             for (MemoryEntry entry : memories) {
                 _roomObj.removeFromMemories(entry.getKey());
             }
@@ -101,22 +130,48 @@ public class PetHandler
             _roomObj.commitTransaction();
         }
 
-        // clear out and clear out
+        // clear out, clear out and clear out
         _roomObj = null;
+        MsoyServer.screg.sceneprov.leaveOccupiedScene(_petobj);
         return memories;
     }
 
     /**
      * Places this pet in follow mode and moves them to the owner's room.
      *
-     * @param memory if the pet was just resolved, this will contain its memory. Otherwise the pet
-     * will assume it is in a room already and will extract its memory from its current room before
-     * moving.
+     * @param memory if the pet was just resolved, this should contain its memory. Otherwise the
+     * pet will assume it is in a room already and will extract its memory from its current room
+     * before moving.
      */
     public void moveToOwner (MemberObject owner, ArrayList<MemoryEntry> memory)
     {
-        log.info("Sending " + _petobj.pet + " to " + owner.who() + "...");
-        // TODO
+        // locate the room to which we are headed
+        DObject dobj = MsoyServer.omgr.getObject(owner.location);
+        if (!(dobj instanceof RoomObject)) {
+            log.warning("moveToOwner() found owner in non-RoomObject [pet=" + _petobj.pet +
+                        ", owner=" + owner.who() +
+                        ", location=" + StringUtil.shortClassName(dobj) + "].");
+            if (_roomObj == null) { // stay in the room we're in or unload if we're not in a room
+                shutdown(false);
+            }
+            return;
+        }
+
+        // leave any room we currently occupy
+        if (_roomObj != null) {
+            if (memory != null) {
+                log.warning("moveToOwner() provided with memory but we're already in a room " +
+                            "[pet=" + _petobj.pet + ", owner=" + owner.who() + "].");
+                // fall through and ignore the memory supplied by the caller
+            }
+            memory = leaveRoom();
+        }
+
+        // set ourselves to follow mode
+        _petobj.setFollowId(owner.getMemberId());
+
+        // head to our destination
+        enterRoom(owner.sceneId, (RoomObject)dobj, memory);
     }
 
     /**
