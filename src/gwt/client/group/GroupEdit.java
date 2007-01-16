@@ -128,18 +128,21 @@ public class GroupEdit extends BorderedDialog
                 }
             }));
 
-        byte selectedPolicy = _group.policy != 0 ? _group.policy : Group.POLICY_PUBLIC;
+        // make sure the group's configured policy is consistent with what's shown in the GUI
+        if (_group.policy == 0) {
+            _group.policy = Group.POLICY_PUBLIC;
+        }
         HorizontalPanel policyPanel = new HorizontalPanel();
         policyPanel.add(new InlineLabel(_ctx.msgs.editPolicy()));
         final ListBox policyBox = new ListBox();
         policyBox.addItem(_ctx.msgs.policyPublic());
         policyBox.addItem(_ctx.msgs.policyInvite());
         policyBox.addItem(_ctx.msgs.policyExclusive());
-        switch(selectedPolicy) {
+        switch(_group.policy) {
         case Group.POLICY_PUBLIC: policyBox.setSelectedIndex(0); break;
         case Group.POLICY_INVITE_ONLY: policyBox.setSelectedIndex(1); break;
         case Group.POLICY_EXCLUSIVE: policyBox.setSelectedIndex(2); break;
-        default: addError(_ctx.msgs.errUnknownPolicy("" + selectedPolicy));
+        default: addError(_ctx.msgs.errUnknownPolicy("" + _group.policy));
         }
         policyBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
