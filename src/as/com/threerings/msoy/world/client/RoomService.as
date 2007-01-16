@@ -13,12 +13,16 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.whirled.spot.data.Location;
 
 /**
  * An ActionScript version of the Java RoomService interface.
  */
 public interface RoomService extends InvocationService
 {
+    // from Java interface RoomService
+    function changeLocation (arg1 :Client, arg2 :ItemIdent, arg3 :Location) :void;
+
     // from Java interface RoomService
     function editRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 

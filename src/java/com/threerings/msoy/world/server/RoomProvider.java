@@ -12,12 +12,18 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;
 import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.whirled.spot.data.Location;
 
 /**
  * Defines the server-side of the {@link RoomService}.
  */
 public interface RoomProvider extends InvocationProvider
 {
+    /**
+     * Handles a {@link RoomService#changeLocation} request.
+     */
+    public void changeLocation (ClientObject caller, ItemIdent arg1, Location arg2);
+
     /**
      * Handles a {@link RoomService#editRoom} request.
      */

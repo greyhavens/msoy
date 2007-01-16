@@ -7,6 +7,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.whirled.spot.data.Location;
 
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.world.data.MemoryEntry;
@@ -42,4 +43,10 @@ public interface RoomService extends InvocationService
      * particular item).
      */
     public void updateMemory (Client client, MemoryEntry entry);
+
+    /**
+     * Issues a request to update the current scene location of the specified item. This is called
+     * by Pets and other MOBs that want to move around the room.
+     */
+    public void changeLocation (Client client, ItemIdent item, Location newloc);
 }

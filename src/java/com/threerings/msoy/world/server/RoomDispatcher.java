@@ -14,6 +14,7 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.whirled.spot.data.Location;
 
 /**
  * Dispatches requests to the {@link RoomProvider}.
@@ -41,6 +42,13 @@ public class RoomDispatcher extends InvocationDispatcher
         throws InvocationException
     {
         switch (methodId) {
+        case RoomMarshaller.CHANGE_LOCATION:
+            ((RoomProvider)provider).changeLocation(
+                source,
+                (ItemIdent)args[0], (Location)args[1]
+            );
+            return;
+
         case RoomMarshaller.EDIT_ROOM:
             ((RoomProvider)provider).editRoom(
                 source,

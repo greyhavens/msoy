@@ -11,6 +11,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
 import com.threerings.whirled.data.SceneUpdate;
+import com.threerings.whirled.spot.data.Location;
 
 /**
  * Provides the implementation of the {@link RoomService} interface
@@ -22,8 +23,19 @@ import com.threerings.whirled.data.SceneUpdate;
 public class RoomMarshaller extends InvocationMarshaller
     implements RoomService
 {
+    /** The method id used to dispatch {@link #changeLocation} requests. */
+    public static final int CHANGE_LOCATION = 1;
+
+    // from interface RoomService
+    public void changeLocation (Client arg1, ItemIdent arg2, Location arg3)
+    {
+        sendRequest(arg1, CHANGE_LOCATION, new Object[] {
+            arg2, arg3
+        });
+    }
+
     /** The method id used to dispatch {@link #editRoom} requests. */
-    public static final int EDIT_ROOM = 1;
+    public static final int EDIT_ROOM = 2;
 
     // from interface RoomService
     public void editRoom (Client arg1, InvocationService.ResultListener arg2)
@@ -36,7 +48,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #triggerEvent} requests. */
-    public static final int TRIGGER_EVENT = 2;
+    public static final int TRIGGER_EVENT = 3;
 
     // from interface RoomService
     public void triggerEvent (Client arg1, ItemIdent arg2, String arg3, byte[] arg4)
@@ -47,7 +59,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static final int UPDATE_MEMORY = 3;
+    public static final int UPDATE_MEMORY = 4;
 
     // from interface RoomService
     public void updateMemory (Client arg1, MemoryEntry arg2)
@@ -58,7 +70,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static final int UPDATE_ROOM = 4;
+    public static final int UPDATE_ROOM = 5;
 
     // from interface RoomService
     public void updateRoom (Client arg1, SceneUpdate[] arg2, InvocationService.InvocationListener arg3)

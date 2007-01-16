@@ -96,6 +96,23 @@ public class RoomController extends SceneController
         return true;
     }
 
+    /**
+     * Handles a request by an actor to change its location. Returns true if the request was
+     * dispatched, false if funny business prevented it.
+     */
+    public function requestMove (ident :ItemIdent, newloc :MsoyLocation) :Boolean
+    {
+        if (_roomObj == null) {
+            log.warning("Actor requested move but we've got no room object [ident=" + ident +
+                        ", newloc=" + newloc + "].");
+            return false;
+        }
+
+        // TODO: verify that we have control over this item
+        _roomObj.roomService.changeLocation(_mctx.getClient(), ident, newloc);
+        return true;
+    }
+
     // documentation inherited
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {

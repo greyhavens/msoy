@@ -179,6 +179,14 @@ public class ActorSprite extends MsoySprite
         appearanceChanged();
     }
 
+    override protected function populateControlProperties (o :Object) :void
+    {
+        super.populateControlProperties(o);
+
+        o["setLocation_v1"] = setLocation_v1;
+        o["setOrientation_v1"] = setOrientation_v1;
+    }
+
     /**
      * Called to make sure the label's width and position are correct.
      */
@@ -207,11 +215,30 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
+     * Called by user code when it wants to change the actor's scene location.
+     */
+    protected function setLocation_v1 (x :Number, y :Number, z: Number, orient :Number) :void
+    {
+        if (_ident != null && parent is RoomView) {
+            (parent as RoomView).getRoomController().requestMove(
+                _ident, new MsoyLocation(x, y, z, orient));
+        }
+    }
+
+    /**
+     * Called by user code when it wants to change the actor's scene orientation.
+     */
+    protected function setOrientation_v1 (orient :Number) :void
+    {
+        // TODO
+    }
+
+    /**
      * Called when the actor changes orientation or transitions between poses.
      */
     protected function appearanceChanged () :void
     {
-        callUserCode("appearanceChanged_v1", isMoving(), loc.orient);
+        callUserCode("appearanceChanged_v1", [ loc.x, loc.y, loc.z ], loc.orient, isMoving());
     }
 
     protected var _label :Label;

@@ -347,32 +347,7 @@ public class FurniSprite extends MsoySprite
     {
         super.populateControlProperties(o);
 
-        o["getLocation_v1"] = getLocation_v1;
-        o["setLocation_v1"] = setLocation_v1;
-    }
-
-    protected function getLocation_v1 () :Array
-    {
-        return [ loc.x, loc.y, loc.z, loc.orient ];
-    }
-
-    protected function setLocation_v1 (loc :Array) :void
-    {
-        if (_editing) {
-            return; // do not allow movement during editing
-        }
-        if (loc == null || loc.length < 3) {
-            return; // don't fuck up
-        }
-        loc.splice(3); // lop off any extra crap
-        loc = loc.map(function (item :*, index :int, array :Array) :Number {
-            var n :Number = Number(item);
-            if (isNaN(n)) {
-                return .5;
-            }
-            return Math.min(1, Math.max(0, n));
-        });
-        setLocation(loc);
+        // TODO: anything?
     }
 
     /** The furniture data for this piece of furni. */

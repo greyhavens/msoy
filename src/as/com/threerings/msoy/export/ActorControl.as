@@ -58,10 +58,13 @@ public class ActorControl extends MsoyControl
      * Requests that our location be updated. This will result in a call to {@link
      * #appearanceChanged} when the mobile starts moving and another when the mobile arrives at its
      * destination and stops moving.
+     *
+     * x, y, and z are Numbers between 0 and 1 indicating a percentage of the room's width, height
+     * and depth respectively.  orient is a number between 0 (facing straight ahead) and 359.
      */
-    public function setLocation (loc :Array) :void
+    public function setLocation (x :Number, y :Number, z: Number, orient :Number) :void
     {
-        callMsoyCode("setLocation_v1", loc);
+        callMsoyCode("setLocation_v1", x, y, z, orient);
     }
 
     /**

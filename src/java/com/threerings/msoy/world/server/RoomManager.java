@@ -27,10 +27,12 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.whirled.data.SceneUpdate;
 
+import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.server.SpotSceneManager;
 
+import com.threerings.msoy.data.ActorInfo;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
@@ -169,6 +171,19 @@ public class RoomManager extends SpotSceneManager
             _roomObj.updateMemories(entry);
         } else {
             _roomObj.addToMemories(entry);
+        }
+    }
+
+    // from interface RoomProvider
+    public void changeLocation (ClientObject caller, ItemIdent item, Location newloc)
+    {
+        // TODO: verify that the caller has control over the item in question
+
+        for (OccupantInfo info : _roomObj.occupantInfo) {
+            ActorInfo ainfo = (ActorInfo)info;
+            if (ainfo.getItemIdent().equals(item)) {
+                _roomObj.updateOccupantLocs(new SceneLocation(newloc, ainfo.getBodyOid()));
+            }
         }
     }
 
