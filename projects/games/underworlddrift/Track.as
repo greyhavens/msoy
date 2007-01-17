@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 
 import flash.geom.Point;
 import flash.geom.Matrix;
+import flash.geom.Rectangle;
 
 import mx.core.MovieClipAsset;
 
@@ -98,6 +99,29 @@ public class Track extends Sprite
             }
         }
         return xShift;
+    }
+
+    /**
+     * Returns true if the given point (in the local coordinates) is on the road surface.
+     */
+    public function isOnRoad (loc :Point) :Boolean
+    {
+        var track :DisplayObject;
+        if (loc.y >= Ground.HALF_IMAGE_SIZE) {
+            loc.y -= Ground.IMAGE_SIZE;
+            track = _tracks[0];
+        } else if (loc.y >= -Ground.HALF_IMAGE_SIZE) {
+            track = _tracks[1];
+        } else {
+            loc.y += Ground.IMAGE_SIZE;
+            track = _tracks[2];
+        }
+        loc.x -= track.x;
+        var imgData :BitmapData = new BitmapData(1, 1, true, 0);
+        var trans :Matrix = new Matrix();
+        trans.translate(-loc.x, -loc.y);
+        imgData.draw(track, trans);
+        return (imgData.getPixel32(0, 0) & 0xFF000000) != 0;
     }
 
     /**

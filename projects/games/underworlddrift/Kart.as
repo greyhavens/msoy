@@ -10,9 +10,10 @@ import mx.core.MovieClipAsset;
 
 public class Kart extends Sprite
 {
-    public function Kart (camera :Camera)
+    public function Kart (camera :Camera, ground :Ground)
     {
         _camera = camera;
+        _ground = ground;
         _kart = new BOWSER();
         _kart.gotoAndStop(1);
         addChild(_kart);
@@ -100,10 +101,10 @@ public class Kart extends Sprite
         var brakeAccel :Number = ACCELERATION_BRAKE;
         var minSpeed :Number = SPEED_MIN;
         var maxSpeed :Number = SPEED_MAX;
-        if (_camera.drivingOnGrass()) {
+        if (!_ground.drivingOnRoad()) {
             gasAccel *= TERRAIN_SPEED_FACTOR;
-            coastAccel *= TERRAIN_SPEED_FACTOR;
-            brakeAccel *= TERRAIN_SPEED_FACTOR;
+            coastAccel /= TERRAIN_SPEED_FACTOR;
+            brakeAccel /= TERRAIN_SPEED_FACTOR;
             minSpeed *= TERRAIN_SPEED_FACTOR;
             maxSpeed *= TERRAIN_SPEED_FACTOR;
         }
@@ -180,8 +181,11 @@ public class Kart extends Sprite
     /** a user must lift their finger and re-apply in order to go backwards after braking */
     protected var _braking :Boolean = false;
 
-    /** reference to ground object */
+    /** reference to the camera object */
     protected var _camera :Camera;
+
+    /** reference to the ground object */
+    protected var _ground :Ground;
 
     /** Embedded cart movie clip */
     protected var _kart :MovieClipAsset;
@@ -231,6 +235,6 @@ public class Kart extends Sprite
     protected static const DRIFT_Y_SPEED_FACTOR :Number = 0.5;
 
     /** Factor to cut speed by when driving off-road */
-    protected static const TERRAIN_SPEED_FACTOR :Number = 0.5;
+    protected static const TERRAIN_SPEED_FACTOR :Number = 0.2;
 }
 }

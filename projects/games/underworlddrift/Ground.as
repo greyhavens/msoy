@@ -43,10 +43,18 @@ public class Ground extends Sprite
             _strips[strip] = new BitmapData(WIDTH, stripHeight, false);
             stripImage = new Bitmap(_strips[strip]);
             stripImage.y = HEIGHT - totalHeight;
-            addChild(stripImage);
+            addChildAt(stripImage, strip);
         }
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
+    }
+
+    /**
+     * Returns true if the kart is currently driving on the road surface.
+     */
+    public function drivingOnRoad () :Boolean
+    {
+        return _drivingOnRoad;
     }
 
     /**
@@ -60,13 +68,13 @@ public class Ground extends Sprite
             _camera.position.y += IMAGE_SIZE;
         }
  
-        var thisTransform :Matrix;
+        var thisTransform :Matrix = new Matrix();
         var totalHeight :Number = 0;
         var thisHeight :Number = 0;
         for (var strip :int = 0; strip < _strips.length; strip++) {
             thisHeight = _strips[strip].height;
             totalHeight += thisHeight;
-            thisTransform = new Matrix();
+            thisTransform.identity();
             // get the camera to the origin
             thisTransform.translate(0 - _camera.position.x, 0 - _camera.position.y);
             // rotate
@@ -81,6 +89,14 @@ public class Ground extends Sprite
             // draw the background, then track using the calculated transform and a clipping rect
             var clipping :Rectangle = new Rectangle(0, 0, WIDTH, thisHeight);
             _strips[strip].draw(_track, thisTransform, null, null, clipping);
+            // update off road flag
+            var bitmap :Bitmap = getChildAt(strip) as Bitmap;
+            if (bitmap.y <= UnderworldDrift.KART_LOCATION.y && 
+                bitmap.y + bitmap.height > UnderworldDrift.KART_LOCATION.y) {
+                thisTransform.invert();
+                _drivingOnRoad = _track.isOnRoad(thisTransform.transformPoint(new Point(
+                    UnderworldDrift.KART_LOCATION.x, 0)));
+            }
         }
     }
 
@@ -92,6 +108,9 @@ public class Ground extends Sprite
 
     /** camera instance */
     protected var _camera :Camera;
+
+    /** flag to indicate that we're driving on the road */
+    protected var _drivingOnRoad :Boolean = true;
 
     /** height of the ground in display pixels */
     protected static const HEIGHT :int = 3 * UnderworldDrift.DISPLAY_HEIGHT / 4;

@@ -3,6 +3,8 @@ package {
 import flash.display.Sprite;
 import flash.display.Shape;
 
+import flash.geom.Point;
+
 import flash.events.KeyboardEvent;
 
 import flash.ui.Keyboard;
@@ -18,6 +20,12 @@ public class UnderworldDrift extends Sprite
     /** height of the masked display */
     public static const DISPLAY_HEIGHT :int = 400;
 
+    /** height of the sky */
+    public static const SKY_HEIGHT :int = 100;
+
+    /** Kart location, relative to the ground coordinates */
+    public static const KART_LOCATION :Point = new Point (355, 200);
+
     public function UnderworldDrift ()
     {
         var masker :Shape = new Shape();
@@ -30,21 +38,20 @@ public class UnderworldDrift extends Sprite
         // "sky"
         var colorBackground :Shape = new Shape();
         colorBackground.graphics.beginFill(0x8888FF);
-        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT / 2);
+        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, SKY_HEIGHT);
         colorBackground.graphics.endFill();
         addChild(colorBackground);
 
         var camera :Camera = new Camera();
 
         _ground = new Ground(camera);
-        _ground.y = DISPLAY_HEIGHT / 4;
+        _ground.y = SKY_HEIGHT;
         addChild(_ground);
-        camera.setGround(_ground);
 
-        // create ground and position with some magic numbers
-        _kart = new Kart(camera);
-        _kart.x = 355;
-        _kart.y = 300;
+        // create ground and position.
+        _kart = new Kart(camera, _ground);
+        _kart.x = KART_LOCATION.x;
+        _kart.y = KART_LOCATION.y + SKY_HEIGHT;
         addChild(_kart);
 
         _gameCtrl = new EZGameControl(this);
