@@ -45,6 +45,8 @@ public class Ground extends Sprite
             stripImage.y = HEIGHT - totalHeight;
             addChildAt(stripImage, strip);
         }
+        _scenery = new Scenery();
+        addChild(_scenery);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
@@ -64,6 +66,7 @@ public class Ground extends Sprite
     {
         // shift along with the track
         if (_camera.position.y < -HALF_IMAGE_SIZE) {
+            _scenery.moveSceneryForward();
             _camera.position.x += _track.moveTrackForward();
             _camera.position.y += IMAGE_SIZE;
         }
@@ -86,9 +89,11 @@ public class Ground extends Sprite
             thisTransform.translate(WIDTH / 2,  _camera.distance + thisHeight);
             // blank out this strip
             _strips[strip].draw(new BitmapData(WIDTH, thisHeight));
-            // draw the background, then track using the calculated transform and a clipping rect
+            // draw the track using the calculated transform and a clipping rect
             var clipping :Rectangle = new Rectangle(0, 0, WIDTH, thisHeight);
             _strips[strip].draw(_track, thisTransform, null, null, clipping);
+            // give the scenery a copy of this transform 
+            _scenery.setTransform(totalHeight - thisHeight, totalHeight, thisTransform.clone());
             // update off road flag
             var bitmap :Bitmap = getChildAt(strip) as Bitmap;
             if (bitmap.y <= UnderworldDrift.KART_LOCATION.y && 
@@ -102,6 +107,9 @@ public class Ground extends Sprite
 
     /** track instance */
     protected var _track :Track;
+
+    /** scenery instance */
+    protected var _scenery :Scenery;
 
     /** strips */
     protected var _strips :Array;
