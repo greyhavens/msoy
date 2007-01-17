@@ -5,6 +5,8 @@ package com.threerings.msoy.world.server;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
@@ -17,7 +19,6 @@ import com.samskivert.util.ResultListener;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.ResultAdapter;
 
@@ -38,6 +39,8 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.server.MsoyServer;
 
+import com.threerings.msoy.world.client.RoomService;
+import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -46,6 +49,7 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.RoomCodes;
 import com.threerings.msoy.world.data.RoomMarshaller;
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.data.WorldMemberInfo;
 
 import com.threerings.msoy.world.server.persist.MemoryRecord;
 
@@ -58,6 +62,27 @@ public class RoomManager extends SpotSceneManager
     implements RoomProvider
 {
     // documentation inherited from RoomProvider
+    public void requestController (ClientObject caller, ItemIdent item,
+                                   RoomService.ConfirmListener listener)
+        throws InvocationException
+    {
+        // if this entity already has a controller, no go
+        if (_roomObj.controllers.containsKey(item)) {
+            throw new InvocationException(RoomCodes.E_ALREADY_CONTROLLED);
+        }
+
+        // select a new controller for this item, publish a mapping and report success
+        if (assignControllers(Collections.singleton(item))) {
+            listener.requestProcessed();
+        } else {
+            // it should not be possible for a client to be interactively requesting control for an
+            // entity but for there to be no active clients available to handle the entity, but
+            // we'll throw this exception anyhow, so that it may float on the streams of ether
+            throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // documentation inherited from RoomProvider
     public void triggerEvent (ClientObject caller, ItemIdent item, String event, byte[] arg)
     {
         // make sure the caller is in the room
@@ -65,6 +90,12 @@ public class RoomManager extends SpotSceneManager
         if (!_roomObj.occupants.contains(who.getOid())) {
             log.warning("Rejecting event trigger request by non-occupant [who=" + who.who() +
                         ", item=" + item + ", event=" + event + "].");
+            return;
+        }
+
+        // if this client does not currently control this entity; ignore the request; if no one
+        // controls it, this will assign this client as controller
+        if (!checkAssignControl(who, item, "triggerEvent")) {
             return;
         }
 
@@ -82,11 +113,11 @@ public class RoomManager extends SpotSceneManager
     }
 
     // documentation inherited from RoomProvider
-    public void editRoom (ClientObject caller, InvocationService.ResultListener listener)
+    public void editRoom (ClientObject caller, RoomService.ResultListener listener)
         throws InvocationException
     {
         if (!((MsoyScene) _scene).canEdit((MemberObject) caller)) {
-            throw new InvocationException(ACCESS_DENIED);
+            throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
 
         // Create a list of all item ids
@@ -103,12 +134,12 @@ public class RoomManager extends SpotSceneManager
 
     // documentation inherited from RoomProvider
     public void updateRoom (ClientObject caller, SceneUpdate[] updates,
-                            InvocationService.InvocationListener listener)
+                            RoomService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
         if (!((MsoyScene) _scene).canEdit(user)) {
-            throw new InvocationException(ACCESS_DENIED);
+            throw new InvocationException(RoomCodes.E_ACCESS_DENIED);
         }
 
         // TODO: if an item is removed from the room, remove any memories from the room object and
@@ -162,6 +193,13 @@ public class RoomManager extends SpotSceneManager
     // documentation inherited from RoomProvider
     public void updateMemory (ClientObject caller, final MemoryEntry entry)
     {
+        // if this client does not currently control this entity; ignore the request; if no one
+        // controls it, this will assign this client as controller
+        MemberObject who = (MemberObject) caller;
+        if (!checkAssignControl(who, entry.item, "updateMemory")) {
+            return;
+        }
+
         // TODO: verify that the caller is in the scene with this item, that the memory does not
         // exdeed legal size, other item specific restrictions
 
@@ -177,7 +215,12 @@ public class RoomManager extends SpotSceneManager
     // from interface RoomProvider
     public void changeLocation (ClientObject caller, ItemIdent item, Location newloc)
     {
-        // TODO: verify that the caller has control over the item in question
+        // if this client does not currently control this entity; ignore the request; if no one
+        // controls it, this will assign this client as controller
+        MemberObject who = (MemberObject) caller;
+        if (!checkAssignControl(who, item, "changeLocation")) {
+            return;
+        }
 
         for (OccupantInfo info : _roomObj.occupantInfo) {
             ActorInfo ainfo = (ActorInfo)info;
@@ -229,7 +272,10 @@ public class RoomManager extends SpotSceneManager
     {
         super.bodyUpdated(info);
 
-        // TODO: if this occupant just disconnected, reassign their Pets
+        // if this occupant just disconnected, reassign their controlled entities
+        if (info.status == OccupantInfo.DISCONNECTED) {
+            reassignControllers(info.bodyOid);
+        }
     }
 
     @Override // from PlaceManager
@@ -237,7 +283,8 @@ public class RoomManager extends SpotSceneManager
     {
         super.bodyLeft(bodyOid);
 
-        // TODO: reassign this occupant's Pets
+        // reassign this occupant's controlled entities
+        reassignControllers(bodyOid);
     }
 
     @Override // from PlaceManager
@@ -380,6 +427,121 @@ public class RoomManager extends SpotSceneManager
 
             protected Collection<MemoryRecord> _mems;
         });
+    }
+
+    /**
+     * Checks to see if an item is being controlled by any client. If not, the calling client is
+     * assigned as the item's controller and true is returned. If the item is already being
+     * controlled by the calling client, true is returned. Otherwise false is returned (indicating
+     * that another client currently has control of the item).
+     */
+    protected boolean checkAssignControl (MemberObject who, ItemIdent item, String from)
+    {
+        EntityControl ctrl = _roomObj.controllers.get(item);
+        if (ctrl == null) {
+            log.info("Assigning control [item=" + item + ", to=" + who.who() + "].");
+            _roomObj.addToControllers(new EntityControl(item, who.getOid()));
+            return true;
+        }
+        return (ctrl.controllerOid == who.getOid());
+    }
+
+    /**
+     * Reassigns all scene entities controlled by the specified client to new controllers.
+     */
+    protected void reassignControllers (int bodyOid)
+    {
+        // determine which items were under the control of this user
+        ArrayList<ItemIdent> items = new ArrayList<ItemIdent>();
+        for (EntityControl ctrl : _roomObj.controllers) {
+            if (ctrl.controllerOid == bodyOid) {
+                items.add(ctrl.ident);
+            }
+        }
+        if (items.size() == 0) {
+            return;
+        }
+
+        // clear out the old controller mappings
+        try {
+            _roomObj.startTransaction();
+            for (ItemIdent item : items) {
+                _roomObj.removeFromControllers(item);
+            }
+        } finally {
+            _roomObj.commitTransaction();
+        }
+
+        // assign new mappings to remaining users
+        assignControllers(items);
+    }
+
+    /**
+     * Handles a request to select a controller for the supplied set of items.
+     */
+    protected boolean assignControllers (Collection<ItemIdent> items)
+    {
+        // determine the available controllers
+        HashIntMap<Controller> controllers = new HashIntMap<Controller>();
+        for (OccupantInfo info : _roomObj.occupantInfo) {
+            if (info instanceof WorldMemberInfo && info.status == OccupantInfo.ACTIVE) {
+                controllers.put(info.bodyOid, new Controller(info.bodyOid));
+            }
+        }
+
+        // if we have no potential controllers, the items will remain uncontrolled (which is much
+        // better than them being out of control :)
+        if (controllers.size() == 0) {
+            return false;
+        }
+
+        // note the current load of these controllers
+        for (EntityControl ctrl : _roomObj.controllers) {
+            Controller owner = controllers.get(ctrl.controllerOid);
+            if (owner != null) {
+                owner.items++;
+            }
+        }
+
+        // choose the least loaded controller, remove them from the set, assign them control of an
+        // item, add them back to the set, then move to the next item
+        try {
+            _roomObj.startTransaction();
+            TreeSet<Controller> set = new TreeSet<Controller>(controllers.values());
+            for (ItemIdent item : items) {
+                Controller ctrl = set.first();
+                set.remove(ctrl);
+                ctrl.items++;
+                log.info("Assigning control [item=" + item + ", to=" + ctrl.bodyOid + "].");
+                _roomObj.addToControllers(new EntityControl(item, ctrl.bodyOid));
+                set.add(ctrl);
+            }
+
+        } finally {
+            _roomObj.commitTransaction();
+        }
+        return true;
+    }
+
+    /** Used during the process of controller assignment. */
+    protected static class Controller implements Comparable<Controller>
+    {
+        public int bodyOid;
+        public int items;
+
+        public Controller (int bodyOid) {
+            this.bodyOid = bodyOid;
+        }
+
+        public boolean equals (Object other) {
+            return ((Controller)other).bodyOid == bodyOid;
+        }
+        public int hashCode () {
+            return bodyOid;
+        }
+        public int compareTo (Controller other) {
+            return (items - other.items);
+        }
     }
 
     /** The room object. */

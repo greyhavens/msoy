@@ -18,6 +18,14 @@ import com.threerings.msoy.world.data.MemoryEntry;
 public interface RoomService extends InvocationService
 {
     /**
+     * Requests that the specified item be assigned a controller. Other distributed state modifying
+     * services will automatically assign a controller to an uncontrolled item the first time they
+     * are requested, but if an entity simply wishes to start ticking itself locally, it must first
+     * request control to ensure that the right client handles the ticking.
+     */
+    public void requestController (Client client, ItemIdent item, ConfirmListener listener);
+
+    /**
      * Requests to trigger an event on the specified item or globally.
      *
      * @param item the identifier of the item on which to trigger the event, or null if it should

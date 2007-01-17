@@ -10,9 +10,11 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.whirled.data.SceneUpdate;
@@ -52,8 +54,21 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch {@link #requestController} requests. */
+    public static const REQUEST_CONTROLLER :int = 3;
+
+    // from interface RoomService
+    public function requestController (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ConfirmListener) :void
+    {
+        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener3.listener = arg3;
+        sendRequest(arg1, REQUEST_CONTROLLER, [
+            arg2, listener3
+        ]);
+    }
+
     /** The method id used to dispatch {@link #triggerEvent} requests. */
-    public static const TRIGGER_EVENT :int = 3;
+    public static const TRIGGER_EVENT :int = 4;
 
     // from interface RoomService
     public function triggerEvent (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray) :void
@@ -64,7 +79,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static const UPDATE_MEMORY :int = 4;
+    public static const UPDATE_MEMORY :int = 5;
 
     // from interface RoomService
     public function updateMemory (arg1 :Client, arg2 :MemoryEntry) :void
@@ -75,7 +90,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static const UPDATE_ROOM :int = 5;
+    public static const UPDATE_ROOM :int = 6;
 
     // from interface RoomService
     public function updateRoom (arg1 :Client, arg2 :Array, arg3 :InvocationService_InvocationListener) :void

@@ -18,6 +18,9 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>memories</code> field. */
     public static final String MEMORIES = "memories";
+
+    /** The field name of the <code>controllers</code> field. */
+    public static final String CONTROLLERS = "controllers";
     // AUTO-GENERATED: FIELDS END
 
     /** Our room service marshaller. */
@@ -25,6 +28,9 @@ public class RoomObject extends SpotSceneObject
 
     /** Contains the memories for all entities in this room. */
     public DSet<MemoryEntry> memories = new DSet<MemoryEntry>();
+
+    /** Contains mappings for all controlled entities in this room. */
+    public DSet<EntityControl> controllers = new DSet<EntityControl>();
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -89,6 +95,54 @@ public class RoomObject extends SpotSceneObject
         @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.MemoryEntry> clone =
             (value == null) ? null : value.typedClone();
         this.memories = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>controllers</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToControllers (EntityControl elem)
+    {
+        requestEntryAdd(CONTROLLERS, controllers, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>controllers</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromControllers (Comparable key)
+    {
+        requestEntryRemove(CONTROLLERS, controllers, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>controllers</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updateControllers (EntityControl elem)
+    {
+        requestEntryUpdate(CONTROLLERS, controllers, elem);
+    }
+
+    /**
+     * Requests that the <code>controllers</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setControllers (DSet<com.threerings.msoy.world.data.EntityControl> value)
+    {
+        requestAttributeChange(CONTROLLERS, value, this.controllers);
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.world.data.EntityControl> clone =
+            (value == null) ? null : value.typedClone();
+        this.controllers = clone;
     }
     // AUTO-GENERATED: METHODS END
 }

@@ -42,6 +42,7 @@ import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.world.client.editor.EditorController;
 
+import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
@@ -66,13 +67,13 @@ public class RoomController extends SceneController
      */
     public function triggerEvent (ident :ItemIdent, event :String, arg :Object) :void
     {
-        if (_roomObj == null) {
-            log.warning("Can't trigger event, have no room object [ident=" + ident +
-                        ", event=" + event + "].");
-        } else {
-            var data :ByteArray = (EZObjectMarshaller.encode(arg, false) as ByteArray);
-            _roomObj.roomService.triggerEvent(_mctx.getClient(), ident, event, data);
+        if (!checkCanRequest(ident, "triggerEvent")) {
+            return;
         }
+
+        // send the request off to the server
+        var data :ByteArray = (EZObjectMarshaller.encode(arg, false) as ByteArray);
+        _roomObj.roomService.triggerEvent(_mctx.getClient(), ident, event, data);
     }
 
     /**
@@ -80,9 +81,7 @@ public class RoomController extends SceneController
      */
     public function updateMemory (ident :ItemIdent, key :String, value: Object) :Boolean
     {
-        if (_roomObj == null) {
-            log.warning("Can't update memory, have no room object [ident=" + ident +
-                        ", key=" + key + "].");
+        if (!checkCanRequest(ident, "updateMemory")) {
             return false;
         }
 
@@ -102,13 +101,9 @@ public class RoomController extends SceneController
      */
     public function requestMove (ident :ItemIdent, newloc :MsoyLocation) :Boolean
     {
-        if (_roomObj == null) {
-            log.warning("Actor requested move but we've got no room object [ident=" + ident +
-                        ", newloc=" + newloc + "].");
+        if (!checkCanRequest(ident, "requestMove")) {
             return false;
         }
-
-        // TODO: verify that we have control over this item
         _roomObj.roomService.changeLocation(_mctx.getClient(), ident, newloc);
         return true;
     }
@@ -480,6 +475,30 @@ public class RoomController extends SceneController
                     "alterTEMP", [ frob ]);
             }
         }
+    }
+
+    /**
+     * Ensures that we can issue a request to update the distributed state of the specified item,
+     * returning true if so, false if we don't yet have a room object or are not in control of that
+     * item.
+     */
+    protected function checkCanRequest (ident :ItemIdent, from :String) :Boolean
+    {
+        if (_roomObj == null) {
+            log.warning("Cannot issue request for lack of room object [from=" + from +
+                        ", ident=" + ident + "].");
+            return false;
+        }
+
+        // make sure we are in control of this entity (or that no one has control)
+        var ctrl :EntityControl = (_roomObj.controllers.get(ident) as EntityControl);
+        if (ctrl != null && ctrl.controllerOid != _mctx.getClient().getClientObject().getOid()) {
+            log.info("Dropping request as we are not controller [from=" + from +
+                     ", item=" + ident + ", ctrl=" + ctrl.controllerOid + "].");
+            return false;
+        }
+
+        return true;
     }
 
     override protected function sceneUpdated (update :SceneUpdate) :void

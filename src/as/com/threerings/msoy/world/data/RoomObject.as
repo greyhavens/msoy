@@ -10,7 +10,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 /**
- * Room stuff.
+ * Contains the distributed state of a virtual world room.
  */
 public class RoomObject extends SpotSceneObject
 {
@@ -20,6 +20,9 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>memories</code> field. */
     public static const MEMORIES :String = "memories";
+
+    /** The field name of the <code>controllers</code> field. */
+    public static const CONTROLLERS :String = "controllers";
     // AUTO-GENERATED: FIELDS END
 
     /** Our room service marshaller. */
@@ -28,30 +31,8 @@ public class RoomObject extends SpotSceneObject
     /** Contains the memories for all entities in this room. */
     public var memories :DSet = new DSet();
 
-//    // AUTO-GENERATED: METHODS START
-//    /**
-//     * Requests that the <code>roomService</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public function setRoomService (value :RoomMarshaller) :void
-//    {
-//        var ovalue :RoomMarshaller = this.roomService;
-//        requestAttributeChange(
-//            ROOM_SERVICE, value, ovalue);
-//        this.roomService = value;
-//    }
-//    // AUTO-GENERATED: METHODS END
-//
-//    override public function writeObject (out :ObjectOutputStream) :void
-//    {
-//        super.writeObject(out);
-//
-//        out.writeObject(roomService);
-//    }
+    /** Contains mappings for all controlled entities in this room. */
+    public var controllers :DSet = new DSet();
 
     override public function readObject (ins :ObjectInputStream) :void
     {
@@ -59,6 +40,7 @@ public class RoomObject extends SpotSceneObject
 
         roomService = (ins.readObject() as RoomMarshaller);
         memories = (ins.readObject() as DSet);
+        controllers = (ins.readObject() as DSet);
     }
 }
 }

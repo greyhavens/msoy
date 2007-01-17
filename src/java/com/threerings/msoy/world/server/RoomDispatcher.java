@@ -56,6 +56,13 @@ public class RoomDispatcher extends InvocationDispatcher
             );
             return;
 
+        case RoomMarshaller.REQUEST_CONTROLLER:
+            ((RoomProvider)provider).requestController(
+                source,
+                (ItemIdent)args[0], (InvocationService.ConfirmListener)args[1]
+            );
+            return;
+
         case RoomMarshaller.TRIGGER_EVENT:
             ((RoomProvider)provider).triggerEvent(
                 source,
