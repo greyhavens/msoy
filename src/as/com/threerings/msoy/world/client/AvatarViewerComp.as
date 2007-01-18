@@ -48,7 +48,10 @@ public class AvatarViewerComp extends Canvas
         grid.addRow("Walking:", walking);
         grid.addRow("Facing angle:", rotation);
         grid.addRow(talking);
-        grid.addRow(_avatar, [2, 1]);
+
+        var holder :Canvas = new Canvas();
+        holder.rawChildren.addChild(_avatar);
+        grid.addRow(holder, [2, 1]);
         addChild(grid);
 
         BindingUtils.bindSetter(function (val :Number) :void {
@@ -103,7 +106,7 @@ class ViewerAvatarSprite extends AvatarSprite
                 arg: act });
         }
 
-        var menu :CommandMenu = CommandMenu.createMenu(this, menuItems);
+        var menu :CommandMenu = CommandMenu.createMenu(parent, menuItems);
         var p :Point = localToGlobal(new Point());
         menu.show(p.x, p.y);
     }

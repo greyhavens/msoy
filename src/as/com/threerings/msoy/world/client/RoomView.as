@@ -14,16 +14,6 @@ import flash.geom.Rectangle;
 import flash.utils.getTimer; // function import
 import flash.utils.ByteArray;
 
-import mx.containers.Canvas;
-
-import mx.controls.VideoDisplay;
-
-import mx.core.UIComponent;
-import mx.core.ScrollPolicy;
-
-import mx.events.FlexEvent;
-import mx.events.ResizeEvent;
-
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 
@@ -55,7 +45,6 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
-// import com.threerings.msoy.chat.client.ChatPopper;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
@@ -411,12 +400,6 @@ public class RoomView extends AbstractRoomView
             _jumpScroll = false;
         }
         return canScroll;
-    }
-
-    override protected function updateComplete (evt :FlexEvent) :void
-    {
-//        ChatPopper.setChatView(this);
-        super.updateComplete(evt);
     }
 
     override protected function relayout () :void

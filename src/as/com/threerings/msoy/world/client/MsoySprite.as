@@ -76,16 +76,22 @@ public class MsoySprite extends MediaContainer
     /** The current logical coordinate of this media. */
     public const loc :MsoyLocation = new MsoyLocation();
 
+    // TODO NOW
+    public var includeInLayout :Boolean = true;
+
+    // TODO NOW
+    public var toolTip :String;
+
     /**
      * Constructor.
      */
     public function MsoySprite (desc :MediaDesc, ident :ItemIdent)
     {
         super(null);
-        autoLayout = false;
         setup(desc, ident);
-        setStyle("backgroundSize", "100%");
-        setStyle("backgroundImage", _loadingImgClass);
+        // TODO NOW
+//        setStyle("backgroundSize", "100%");
+//        setStyle("backgroundImage", _loadingImgClass);
     }
 
     /**
@@ -493,17 +499,17 @@ public class MsoySprite extends MediaContainer
         }
     }
 
-    override protected function loadVideoReady (event :VideoEvent) :void
-    {
-        var vid :VideoDisplay = (event.currentTarget as VideoDisplay);
-
-        // TODO: this seems broken, check it
-        // set the position of the media to the specified timestamp
-        vid.playheadTime = Prefs.getMediaPosition(
-            MediaDesc.hashToString(_desc.hash));
-
-        super.loadVideoReady(event);
-    }
+//    override protected function loadVideoReady (event :VideoEvent) :void
+//    {
+//        var vid :VideoDisplay = (event.currentTarget as VideoDisplay);
+//
+//        // TODO: this seems broken, check it
+//        // set the position of the media to the specified timestamp
+//        vid.playheadTime = Prefs.getMediaPosition(
+//            MediaDesc.hashToString(_desc.hash));
+//
+//        super.loadVideoReady(event);
+//    }
 
     override protected function contentDimensionsUpdated () :void
     {
@@ -519,7 +525,8 @@ public class MsoySprite extends MediaContainer
     {
         var prog :Number = (total == 0) ? 0 : (soFar / total);
         if (prog >= 1) {
-            clearStyle("backgroundImage");
+        // TODO NOW
+//            clearStyle("backgroundImage");
         }
 
         /*

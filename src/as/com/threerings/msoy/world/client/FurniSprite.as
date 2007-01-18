@@ -14,8 +14,6 @@ import flash.filters.DisplacementMapFilterMode;
 
 import flash.geom.Point;
 
-import mx.core.UIComponent;
-
 import com.threerings.util.MenuUtil;
 
 import com.threerings.mx.events.CommandEvent;
@@ -111,11 +109,7 @@ public class FurniSprite extends MsoySprite
         }
 
         // remove any old component
-        if (_media is UIComponent) {
-            removeChild(_media);
-        } else {
-            rawChildren.removeChild(_media);
-        }
+        removeChild(_media);
 
         var mask :DisplayObject = _media.mask;
         _media.mask = null;
@@ -143,11 +137,7 @@ public class FurniSprite extends MsoySprite
 
         _media = newMedia;
         _media.mask = mask;
-        if (_media is UIComponent) {
-            addChild(_media);
-        } else {
-            rawChildren.addChild(_media);
-        }
+        addChild(_media);
     }
 
     override public function getLayoutHotSpot () :Point

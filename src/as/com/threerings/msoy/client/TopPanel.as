@@ -1,8 +1,11 @@
 package com.threerings.msoy.client {
 
+import flash.display.DisplayObject;
 import flash.display.Shape;
 
 import flash.events.Event;
+
+import flash.geom.Rectangle;
 
 import flash.system.Capabilities;
 
@@ -85,6 +88,16 @@ public class TopPanel extends Canvas
         layoutPanels();
     }
 
+    /**
+     * Get the flex container that is holding the PlaceView. This is useful
+     * if you want to overlay things over the placeview or register to
+     * receive flex-specific events.
+     */
+    public function getPlaceContainer () :Container
+    {
+        return _placeBox;
+    }
+
     public function getPlaceView () :PlaceView
     {
         return _placeView;
@@ -92,15 +105,19 @@ public class TopPanel extends Canvas
 
     public function setPlaceView (view :PlaceView) :void
     {
+        // throw an exception now if it's not a display object
+        var disp :DisplayObject = DisplayObject(view);
+
         clearPlaceView(null);
         _placeView = view;
 
-        var comp :UIComponent = (view as UIComponent);
-        comp.setStyle("left", 0);
-        comp.setStyle("top", 0);
-        comp.setStyle("right", 0);
-        comp.setStyle("bottom", 0);
-        _placeBox.addChild(comp);
+        if (disp is UIComponent) {
+            _placeBox.addChild(disp);
+        } else {
+            _placeBox.rawChildren.addChild(disp);
+        }
+
+        updatePlaceViewSize();
     }
 
     /**
@@ -109,7 +126,12 @@ public class TopPanel extends Canvas
     public function clearPlaceView (view :PlaceView) :void
     {
         if ((_placeView != null) && (view == null || view == _placeView)) {
-            _placeBox.removeChild(_placeView as UIComponent);
+            var disp :DisplayObject = DisplayObject(_placeView);
+            if (disp is UIComponent) {
+                _placeBox.removeChild(disp);
+            } else {
+                _placeBox.rawChildren.removeChild(disp);
+            }
             _placeView = null;
         }
     }
@@ -119,7 +141,6 @@ public class TopPanel extends Canvas
         clearSidePanel(null);
         _sidePanel = side;
         _sidePanel.includeInLayout = false;
-//        _sidePanel.addEventListener(ResizeEvent.RESIZE, panelResized);
 
         addChild(_sidePanel); // add to end
         layoutPanels();
@@ -132,7 +153,6 @@ public class TopPanel extends Canvas
     {
         if ((_sidePanel != null) && (side == null || side == _sidePanel)) {
             removeChild(_sidePanel);
-//            _sidePanel.removeEventListener(ResizeEvent.RESIZE, panelResized);
             _sidePanel = null;
             layoutPanels();
         }
@@ -143,7 +163,6 @@ public class TopPanel extends Canvas
         clearBottomPanel(null);
         _bottomPanel = bottom;
         _bottomPanel.includeInLayout = false;
-//        _bottomPanel.addEventListener(ResizeEvent.RESIZE, panelResized);
 
         addChild(_bottomPanel); // add to end
         layoutPanels();
@@ -153,7 +172,6 @@ public class TopPanel extends Canvas
     {
         if ((_bottomPanel != null) && (bottom == null || bottom == _bottomPanel)) {
             removeChild(_bottomPanel);
-//            _bottomPanel.removeEventListener(ResizeEvent.RESIZE, panelResized);
             _bottomPanel = null;
             layoutPanels();
         }
@@ -176,12 +194,6 @@ public class TopPanel extends Canvas
         }
     }
 
-// TODO: doesn't work, we're using hardcoded panel sizes now
-//    protected function panelResized (event :ResizeEvent) :void
-//    {
-//        layoutPanels();
-//    }
-
     protected function layoutPanels () :void
     {
         var sidePanelWidth :int = getSidePanelWidth(),
@@ -196,27 +208,42 @@ public class TopPanel extends Canvas
             _sidePanel.setStyle("top", ControlBar.HEIGHT);
             _sidePanel.setStyle("bottom", bottomPanelHeight);
             _sidePanel.setStyle("left", 0);
-            _sidePanel.setStyle("right", unscaledWidth - sidePanelWidth);
+            _sidePanel.width = SIDE_PANEL_WIDTH;
         }
         
         if (_bottomPanel != null) {    
-            _bottomPanel.setStyle("top", unscaledHeight - bottomPanelHeight);
             _bottomPanel.setStyle("bottom", 0);
             _bottomPanel.setStyle("left", 0);
-            _bottomPanel.setStyle("right", unscaledWidth - ControlBar.WIDTH);
+            _bottomPanel.width = ControlBar.WIDTH;
+            _bottomPanel.height = BOTTOM_PANEL_HEIGHT;
         }
             
-        adjustPlaceMask();
+        updatePlaceViewSize();
     }
 
-    protected function adjustPlaceMask () :void
+    protected function updatePlaceViewSize () :void
     {
+        var w :int = stage.stageWidth - getSidePanelWidth();
+        var h :int = stage.stageHeight - ControlBar.HEIGHT
+            - getBottomPanelHeight();
+
         _placeMask.graphics.clear();
         _placeMask.graphics.beginFill(0xFFFFFF);
-        _placeMask.graphics.drawRect(0, 0,
-            stage.stageWidth - getSidePanelWidth(),
-            stage.stageHeight - ControlBar.HEIGHT - getBottomPanelHeight());
+        _placeMask.graphics.drawRect(0, 0, w, h);
         _placeMask.graphics.endFill();
+
+        if (_placeView != null) {
+            if (_placeView is UIComponent) {
+                UIComponent(_placeView).setActualSize(w, h);
+
+            } else if (_placeView is MsoyPlaceView) {
+                MsoyPlaceView(_placeView).setPlaceSize(w, h);
+
+            } else {
+                Log.getLog(this).warning(
+                    "PlaceView is not a MsoyPlaceView or an UIComponent.");
+            }
+        }
     }
 
     protected function getSidePanelWidth () :int

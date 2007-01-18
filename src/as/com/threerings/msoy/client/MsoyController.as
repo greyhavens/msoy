@@ -255,7 +255,7 @@ public class MsoyController extends Controller
     public function handleShowPets (show :Boolean) :void
     {
         if (_topPanel.getPlaceView() is RoomView) {
-            new PetsDialog(_ctx, (_topPanel.getPlaceView() as RoomView));
+            new PetsDialog(_ctx);
         }
     }
 

@@ -6,6 +6,7 @@ package com.threerings.msoy.world.client {
 import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Shape;
+import flash.display.Sprite;
 
 import flash.events.Event;
 
@@ -13,17 +14,6 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.utils.getTimer; // function import
-
-import mx.containers.Canvas;
-
-import mx.controls.VideoDisplay;
-
-import mx.core.UIComponent;
-import mx.core.ScrollPolicy;
-import mx.core.mx_internal;
-
-import mx.events.FlexEvent;
-import mx.events.ResizeEvent;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.DisplayUtil;
@@ -35,13 +25,13 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.whirled.spot.data.Location;
 
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.data.FurniData;
@@ -50,8 +40,8 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.RoomObject;
 
-public class AbstractRoomView extends Canvas
-    implements PlaceView
+public class AbstractRoomView extends Sprite
+    implements MsoyPlaceView
 {
     public static const FLOOR :int = 0;
     public static const BACK_WALL :int = 1;
@@ -62,14 +52,19 @@ public class AbstractRoomView extends Canvas
     public function AbstractRoomView (ctx :MsoyContext)
     {
         _ctx = ctx;
-        clipContent = false; // needed because we scroll
-        includeInLayout = false;
+    }
 
-        verticalScrollPolicy = ScrollPolicy.OFF;
-        horizontalScrollPolicy = ScrollPolicy.OFF;
+    // from MsoyPlaceView
+    public function setPlaceSize (
+        unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        _actualWidth = unscaledWidth;
+        _actualHeight = unscaledHeight;
+        var scale :Number = (unscaledHeight / TARGET_HEIGHT);
+        scaleX = scale;
+        scaleY = scale;
 
-        addEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
-        addEventListener(ResizeEvent.RESIZE, didResize);
+        relayout();
     }
 
     /**
@@ -270,12 +265,12 @@ public class AbstractRoomView extends Canvas
     public function getScrollBounds () :Rectangle
     {
         if (_scene == null) {
-            return new Rectangle(0, 0, unscaledWidth, unscaledHeight);
+            return new Rectangle(0, 0, _actualWidth, _actualHeight);
         }
 
-        var r :Rectangle = new Rectangle(0, 0, _scene.getWidth() * scaleX, unscaledHeight);
+        var r :Rectangle = new Rectangle(0, 0, _scene.getWidth() * scaleX, _actualHeight);
         if (_editing) {
-            r.inflate(unscaledWidth * 2 / 3, 0);
+            r.inflate(_actualWidth * 2 / 3, 0);
         }
         return r;
     }
@@ -379,25 +374,6 @@ public class AbstractRoomView extends Canvas
         _scene = null;
     }
 
-    protected function updateComplete (evt :FlexEvent) :void
-    {
-        removeEventListener(FlexEvent.UPDATE_COMPLETE, updateComplete);
-        relayout();
-    }
-
-    override public function setActualSize (w :Number, h :Number) :void
-    {
-        var scale :Number = (h / TARGET_HEIGHT);
-        scaleX = scale;
-        scaleY = scale;
-        super.setActualSize(w, h);
-    }
-
-    protected function didResize (event :ResizeEvent) :void
-    {
-        relayout();
-    }
-
     /**
      * Layout everything.
      */
@@ -412,8 +388,6 @@ public class AbstractRoomView extends Canvas
         for each (sprite in _otherSprites) {
             locationUpdated(sprite);
         }
-
-        validateNow();
     }
 
     /**
@@ -422,8 +396,8 @@ public class AbstractRoomView extends Canvas
     protected function configureScrollRect () :void
     {
         var bounds :Rectangle = getScrollBounds();
-        if (bounds.width > unscaledWidth) {
-            scrollRect = new Rectangle(0, 0, unscaledWidth, unscaledHeight);
+        if (bounds.width > _actualWidth) {
+            scrollRect = new Rectangle(0, 0, _actualWidth, _actualHeight);
 
         } else {
             scrollRect = null;
@@ -523,11 +497,12 @@ public class AbstractRoomView extends Canvas
     protected function getZOfChildAt (index :int) :Number
     {
         var disp :DisplayObject = getChildAt(index);
-        if ((disp is UIComponent) && !(disp as UIComponent).includeInLayout) {
-            return NaN;
-        }
         if (disp is MsoySprite) {
-            return (disp as MsoySprite).loc.z;
+            var spr :MsoySprite = (disp as MsoySprite);
+            if (!spr.includeInLayout) {
+                return NaN;
+            }
+            return spr.loc.z;
         }
         return Number.MAX_VALUE;
     }
@@ -612,8 +587,7 @@ public class AbstractRoomView extends Canvas
             return; // nothing to draw
         }
 
-        _bkgGraphics = new UIComponent();
-        _bkgGraphics.includeInLayout = false;
+        _bkgGraphics = new Sprite();
         addChildAt(_bkgGraphics, 0);
 
         var g :Graphics = _bkgGraphics.graphics;
@@ -711,7 +685,7 @@ public class AbstractRoomView extends Canvas
     protected var _bkg :FurniSprite;
 
     /** A hand-drawn background to look like a room. */
-    protected var _bkgGraphics :UIComponent;
+    protected var _bkgGraphics :Sprite;
 
     /** A map of id -> Furni. */
     protected var _furni :HashMap = new HashMap();
@@ -721,6 +695,12 @@ public class AbstractRoomView extends Canvas
 
     /** Are we editing the scene? */
     protected var _editing :Boolean = false;
+
+    /** The actual screen width of this component. */
+    protected var _actualWidth :Number;
+
+    /** The actual screen height of this component. */
+    protected var _actualHeight :Number;
 
     /** The focal length of our perspective rendering. */
     // This value (488) was chosen so that the standard depth (400) causes layout nearly identical

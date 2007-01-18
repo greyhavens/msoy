@@ -13,7 +13,7 @@ import com.threerings.util.Util;
 
 import com.threerings.msoy.client.Msgs;
 
-import com.threerings.msoy.ui.ScalingMediaContainer;
+import com.threerings.msoy.ui.ScalingMediaBox;
 
 import com.threerings.msoy.item.web.Item;
 
@@ -82,7 +82,7 @@ public class ItemRenderer extends HBox
         addChild(scrollBox);
         scrollBox.addChild(_container = new MediaContainer());
 */
-        _container = new ScalingMediaContainer(100, 100);
+        _container = new ScalingMediaBox(100, 100);
         /*
         _container.maxWidth = 250;
         _container.maxHeight = 200;
@@ -97,7 +97,7 @@ public class ItemRenderer extends HBox
         }
     }
 
-    protected var _container :MediaContainer;
+    protected var _container :ScalingMediaBox;
     protected var _label :Label;
     protected var _item :Item;
 }

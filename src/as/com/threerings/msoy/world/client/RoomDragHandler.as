@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.world.client {
 
+import mx.core.Container;
 import mx.events.DragEvent;
 import mx.managers.DragManager;
 
@@ -13,19 +14,23 @@ import com.threerings.msoy.item.client.InventoryPicker;
  */
 public class RoomDragHandler
 {
-    public function RoomDragHandler (roomView :RoomView) :void
+    /**
+     * @param roomContainer The container holding the room, which
+     * may be obtained with ctx.getTopPanel().getPlaceContainer()
+     */
+    public function RoomDragHandler (roomContainer :Container) :void
     {
-        _roomView = roomView;
-        _roomView.addEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
-        _roomView.addEventListener(DragEvent.DRAG_EXIT, dragExitHandler);
-        _roomView.addEventListener(DragEvent.DRAG_OVER, dragOverHandler);
+        _container = roomContainer;
+        _container.addEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
+        _container.addEventListener(DragEvent.DRAG_EXIT, dragExitHandler);
+        _container.addEventListener(DragEvent.DRAG_OVER, dragOverHandler);
     }
 
     public function unbind () :void
     {
-        _roomView.removeEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
-        _roomView.removeEventListener(DragEvent.DRAG_EXIT, dragExitHandler);
-        _roomView.removeEventListener(DragEvent.DRAG_OVER, dragOverHandler);
+        _container.removeEventListener(DragEvent.DRAG_ENTER, dragEnterHandler);
+        _container.removeEventListener(DragEvent.DRAG_EXIT, dragExitHandler);
+        _container.removeEventListener(DragEvent.DRAG_OVER, dragOverHandler);
     }
 
     protected function dragEnterHandler (event :DragEvent) :void
@@ -35,7 +40,7 @@ public class RoomDragHandler
         }
 
         if (null != InventoryPicker.dragItem(event)) {
-            DragManager.acceptDragDrop(_roomView);
+            DragManager.acceptDragDrop(_container);
             DragManager.showFeedback(DragManager.MOVE);
         } else {
             DragManager.showFeedback(DragManager.NONE);
@@ -64,6 +69,6 @@ public class RoomDragHandler
         DragManager.showFeedback(DragManager.NONE);
     }
 
-    protected var _roomView :RoomView;
+    protected var _container :Container;
 }
 }

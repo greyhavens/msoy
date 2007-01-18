@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.world.client {
 
-import mx.controls.Label;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -35,12 +37,14 @@ public class ActorSprite extends MsoySprite
     {
         super(null, null);
 
-        _label = new Label();
-        _label.includeInLayout = false;
-        _label.setStyle("textAlign", "center");
-        _label.setStyle("fontWeight", "bold");
+        var labelFormat :TextFormat = new TextFormat();
+        labelFormat.size = 10;
+        labelFormat.bold = true;
+        _label = new TextField();
+        _label.autoSize = TextFieldAutoSize.CENTER;
+        _label.defaultTextFormat = labelFormat;
         addChild(_label);
-
+        
         if (occInfo != null) {
             setActorInfo(occInfo);
         }
@@ -66,8 +70,11 @@ public class ActorSprite extends MsoySprite
             setup(winfo.getMedia(), winfo.getItemIdent());
         }
 
-        _label.setStyle("color", getStatusColor(_occInfo.status));
+        _label.textColor = getStatusColor(_occInfo.status);
         _label.text = _occInfo.username.toString();
+        _label.y = -1 * _label.textHeight;
+        _label.width = _label.textWidth;
+        recheckLabel();
     }
 
     /**
@@ -188,16 +195,12 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Called to make sure the label's width and position are correct.
+     * Called to make sure the label's horizontal position is correct.
      */
     protected function recheckLabel () :void
     {
-        // make it the right size
-        _label.width = _w * _locScale;
-
-        // this can't be done until the text is set and the label is
-        // part of the hierarchy. We just recheck it often...
-        _label.y = -1 * _label.textHeight;
+        // note: may overflow the media area..
+        _label.x = ((_w * _locScale) - _label.textWidth) / 2;
     }
 
     protected function getStatusColor (status :int) :uint
@@ -241,7 +244,7 @@ public class ActorSprite extends MsoySprite
         callUserCode("appearanceChanged_v1", [ loc.x, loc.y, loc.z ], loc.orient, isMoving());
     }
 
-    protected var _label :Label;
+    protected var _label :TextField;
     protected var _occInfo :ActorInfo;
     protected var _move :SceneMove;
 }

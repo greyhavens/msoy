@@ -27,7 +27,8 @@ public class SceneMoveInstance extends TweenEffectInstance
     {
         super.play();
 
-        EffectManager.mx_internal::startVectorEffect(IUIComponent(target));
+// TODO NOW
+//        EffectManager.mx_internal::startVectorEffect(IUIComponent(target));
 
         tween = createTween(
             this,
@@ -57,7 +58,8 @@ public class SceneMoveInstance extends TweenEffectInstance
     // documentation inherited
     override public function onTweenEnd (value :Object) :void
     {
-        EffectManager.mx_internal::endVectorEffect(IUIComponent(target));
+// TODO NOW
+//        EffectManager.mx_internal::endVectorEffect(IUIComponent(target));
 
         // TODO: style, clipping omitted?
 

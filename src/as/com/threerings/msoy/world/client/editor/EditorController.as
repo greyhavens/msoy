@@ -15,6 +15,8 @@ import flash.ui.Keyboard;
 
 import mx.events.DragEvent;
 
+import mx.core.Container;
+
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Controller;
 import com.threerings.util.Iterator;
@@ -90,8 +92,10 @@ public class EditorController extends Controller
 
         // set it as our controlled panel
         setControlledPanel(_panel);
-        _roomDragger = new RoomDragHandler(_roomView);
-        _roomView.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
+
+        var roomContainer :Container = _ctx.getTopPanel().getPlaceContainer();
+        _roomDragger = new RoomDragHandler(roomContainer);
+        roomContainer.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
         _roomView.addEventListener(MouseEvent.MOUSE_DOWN, roomPressed);
 
         // add the panel to the sidepane
@@ -110,7 +114,8 @@ public class EditorController extends Controller
         // stop listening from drop events on the roomView
         _roomDragger.unbind();
         _roomDragger = null;
-        _roomView.removeEventListener(DragEvent.DRAG_DROP, dragDropHandler);
+        var roomContainer :Container = _ctx.getTopPanel().getPlaceContainer();
+        roomContainer.removeEventListener(DragEvent.DRAG_DROP, dragDropHandler);
         _roomView.removeEventListener(MouseEvent.MOUSE_DOWN, roomPressed);
 
         // remove all sprites we've added

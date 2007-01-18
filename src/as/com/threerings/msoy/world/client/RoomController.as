@@ -146,7 +146,7 @@ public class RoomController extends SceneController
         _scene = (_mctx.getSceneDirector().getScene() as MsoyScene);
 
         _walkTarget.visible = false;
-        _roomView.rawChildren.addChild(_walkTarget);
+        _roomView.addChild(_walkTarget);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
@@ -164,7 +164,7 @@ public class RoomController extends SceneController
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
-        _roomView.rawChildren.removeChild(_walkTarget);
+        _roomView.removeChild(_walkTarget);
 
         _scene = null;
         _roomObj = null;
@@ -384,7 +384,7 @@ public class RoomController extends SceneController
     {
         for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
             var disp :DisplayObject = _roomView.getChildAt(dex);
-            if (disp.hitTestPoint(stageX, stageY, true)) {
+            if (disp != _walkTarget && disp.hitTestPoint(stageX, stageY, true)) {
                 return disp;
             }
         }

@@ -17,44 +17,44 @@ public class HeadShotSprite extends MediaContainer
     {
         super(null);
 
-        _label = new Label();
-        _label.includeInLayout = false;
-        _label.setStyle("textAlign", "center");
-        _label.text = "|";
-        addChild(_label);
+//        _label = new Label();
+//        _label.includeInLayout = false;
+//        _label.setStyle("textAlign", "center");
+//        _label.text = "|";
+//        addChild(_label);
     }
 
-    override protected function measure () :void
-    {
-        measuredWidth = _w;
-        measuredHeight = _h + _label.textHeight;
-    }
+//    override protected function measure () :void
+//    {
+//        measuredWidth = _w;
+//        measuredHeight = _h + _label.textHeight;
+//    }
 
-    override public function validateDisplayList () :void
-    {
-        super.validateDisplayList();
-
-        _label.width = _w;
-        _label.y = _h;
-    }
+//    override public function validateDisplayList () :void
+//    {
+//        super.validateDisplayList();
+//
+//        _label.width = _w;
+//        _label.y = _h;
+//    }
 
     public function setUser (name :Name, desc :MediaDesc) :void
     {
         _name = name;
-        _label.text = name.toString();
+//        _label.text = name.toString();
         if (!Util.equals(desc, _desc)) {
             _desc = desc;
             setMedia(desc.getMediaPath());
         }
     }
 
-    override protected function contentDimensionsUpdated () :void
-    {
-        super.contentDimensionsUpdated();
-        invalidateSize();
-    }
+//    override protected function contentDimensionsUpdated () :void
+//    {
+//        super.contentDimensionsUpdated();
+//        invalidateSize();
+//    }
 
-    protected var _label :Label;
+//    protected var _label :Label;
 
     protected var _name :Name;
     protected var _desc :MediaDesc;

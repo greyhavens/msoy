@@ -5,6 +5,8 @@ package com.threerings.msoy.client {
 
 import mx.events.DragEvent;
 
+import mx.core.Container;
+
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
@@ -24,12 +26,13 @@ import com.threerings.msoy.client.MsoyContext;
  */
 public class PetsDialog extends FloatingPanel
 {
-    public function PetsDialog (ctx :MsoyContext, roomView :RoomView)
+    public function PetsDialog (ctx :MsoyContext)
     {
         super(ctx, Msgs.GENERAL.get("t.pets"));
-        _roomView = roomView;
-        _roomView.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
-        _roomDragger = new RoomDragHandler(_roomView);
+
+        _roomContainer = ctx.getTopPanel().getPlaceContainer();
+        _roomContainer.addEventListener(DragEvent.DRAG_DROP, dragDropHandler);
+        _roomDragger = new RoomDragHandler(_roomContainer);
         _pets = new InventoryPicker(_ctx, Item.PET, true);
         open(false);
     }
@@ -38,7 +41,7 @@ public class PetsDialog extends FloatingPanel
     override public function close () :void
     {
         super.close();
-        _roomView.removeEventListener(DragEvent.DRAG_DROP, dragDropHandler);
+        _roomContainer.removeEventListener(DragEvent.DRAG_DROP, dragDropHandler);
         _roomDragger.unbind();
     }
 
@@ -67,7 +70,7 @@ public class PetsDialog extends FloatingPanel
                     new ReportingListener(_ctx, "general", null, "m.pet_called"));
     }
 
-    protected var _roomView :RoomView;
+    protected var _roomContainer :Container;
     protected var _roomDragger :RoomDragHandler;
     protected var _pets :InventoryPicker;
 }

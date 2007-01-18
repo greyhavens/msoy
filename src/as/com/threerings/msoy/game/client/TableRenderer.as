@@ -43,7 +43,7 @@ public class TableRenderer extends HBox
             panel.controller.game.getTableMedia().getMediaPath());
         _background.mouseEnabled = false;
         _background.mouseChildren = false;
-        addChildAt(_background, 0);
+        rawChildren.addChildAt(_background, 0);
         _background.addEventListener(
             MediaContainer.SIZE_KNOWN, handleBkgSizeKnown, false, 0, true);
     }
@@ -75,15 +75,10 @@ public class TableRenderer extends HBox
         var childCount :int = numChildren; 
         var seats :int = (table == null) ? 0 : table.occupants.length;
         var ourName :Name = ctx.getClientObject().getVisibleName();
-        var childOffset :int = 0; 
-        if (childCount > 0 && getChildAt(0) == _background) {
-            childOffset++;
-            childCount--;
-        }
         var nn :int = Math.max(childCount, seats);
 
         for (var ii :int = 0; ii < nn; ii++) {
-            var displayIndex :int = ii + childOffset;
+            var displayIndex :int = ii;
             if (ii >= seats) {
                 removeChildAt(numChildren - 1);
                 continue;
