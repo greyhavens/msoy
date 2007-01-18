@@ -28,7 +28,9 @@
   !com/threerings/io/**)
 -injars ../dist/msoy-code.jar(
   **/msoy/web/data/**,
-  **/msoy/item/web/**
+  **/msoy/item/web/**,
+  **/msoy/world/data/PetMarshaller*,
+  **/msoy/world/client/PetService*
 )
 
 -dontskipnonpubliclibraryclasses
