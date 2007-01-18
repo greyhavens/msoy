@@ -25,6 +25,7 @@ public class Ground extends Sprite
 
         // set up the ground objects
         _track = new Track();
+        _scenery = new Scenery();
         _strips = new Array();
         var stripImage :Bitmap;
         var stripHeight :Number = BEGINNING_STRIP_HEIGHT;
@@ -45,8 +46,6 @@ public class Ground extends Sprite
             stripImage.y = HEIGHT - totalHeight;
             addChildAt(stripImage, strip);
         }
-        _scenery = new Scenery();
-        addChild(_scenery);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
@@ -66,10 +65,13 @@ public class Ground extends Sprite
     {
         // shift along with the track
         if (_camera.position.y < -HALF_IMAGE_SIZE) {
-            _scenery.moveSceneryForward();
-            _camera.position.x += _track.moveTrackForward();
+            var xShift :int = _track.moveTrackForward();
+            _scenery.moveSceneryForward(xShift);
+            _camera.position.x += xShift;
             _camera.position.y += IMAGE_SIZE;
         }
+
+        //_scenery.clearItems();
  
         var thisTransform :Matrix = new Matrix();
         var totalHeight :Number = 0;
@@ -92,8 +94,10 @@ public class Ground extends Sprite
             // draw the track using the calculated transform and a clipping rect
             var clipping :Rectangle = new Rectangle(0, 0, WIDTH, thisHeight);
             _strips[strip].draw(_track, thisTransform, null, null, clipping);
-            // give the scenery a copy of this transform 
-            _scenery.setTransform(totalHeight - thisHeight, totalHeight, thisTransform.clone());
+            // update scenery
+            //_scenery.setTransform(totalHeight - thisHeight, totalHeight, thisTransform, 
+                //scaleFactor);
+            _strips[strip].draw(_scenery, thisTransform, null, null, clipping);
             // update off road flag
             var bitmap :Bitmap = getChildAt(strip) as Bitmap;
             if (bitmap.y <= UnderworldDrift.KART_LOCATION.y && 
@@ -103,6 +107,8 @@ public class Ground extends Sprite
                     UnderworldDrift.KART_LOCATION.x, 0)));
             }
         }
+
+        //_scenery.updateItems();
     }
 
     /** track instance */
