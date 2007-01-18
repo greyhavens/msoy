@@ -4,14 +4,7 @@
 package {
 
 import flash.display.Bitmap;
-import flash.display.Graphics;
 import flash.display.Sprite;
-
-import flash.events.Event;
-import flash.events.TextEvent;
-import flash.events.TimerEvent;
-
-import flash.utils.Timer;
 
 import com.threerings.msoy.export.FurniControl;
 
@@ -30,19 +23,12 @@ public class Robert extends Sprite
 
     public function Robert ()
     {
-        var t :Timer = new Timer(1000);
-        t.addEventListener(TimerEvent.TIMER, tick, false, 0, true);
-        t.start();
-
-        this.root.loaderInfo.addEventListener(Event.UNLOAD, function (event :Event) :void {
-            t.stop();
-            t = null;
-        }, false, 0, true);
-
         // instantiate and wire up our control
         _ctrl = new FurniControl(this);
         _ctrl.eventTriggered = eventTriggered;
         _ctrl.memoryChanged = memoryChanged;
+        _ctrl.tick = tick;
+        _ctrl.setTickInterval(1000);
 
         // start out in the appropriate state
         updateState(_ctrl.lookupMemory("state", SMALL));
@@ -73,7 +59,7 @@ public class Robert extends Sprite
         }
     }
 
-    protected function tick (event :TimerEvent) :void
+    protected function tick () :void
     {
         _state = (_state + 1) % 3;
         _ctrl.updateMemory("state", _state);
