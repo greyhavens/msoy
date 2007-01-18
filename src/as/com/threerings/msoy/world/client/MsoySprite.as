@@ -23,6 +23,8 @@ import flash.events.SecurityErrorEvent;
 import flash.events.StatusEvent;
 import flash.events.TextEvent;
 
+import flash.filters.GlowFilter;
+
 import flash.geom.Point;
 
 import flash.media.Video;
@@ -39,17 +41,9 @@ import flash.net.URLRequest;
 
 import flash.utils.getTimer; // function import
 
-import mx.core.Container;
-import mx.core.UIComponent;
+//import mx.controls.VideoDisplay;
 
-import mx.containers.Box;
-import mx.controls.VideoDisplay;
-
-import mx.effects.Glow;
-
-import mx.events.DynamicEvent;
-import mx.events.EffectEvent;
-import mx.events.VideoEvent;
+//import mx.events.VideoEvent;
 
 import com.threerings.util.Util;
 import com.threerings.util.MediaContainer;
@@ -77,9 +71,6 @@ public class MsoySprite extends MediaContainer
     public const loc :MsoyLocation = new MsoyLocation();
 
     // TODO NOW
-    public var includeInLayout :Boolean = true;
-
-    // TODO NOW
     public var toolTip :String;
 
     /**
@@ -92,6 +83,14 @@ public class MsoySprite extends MediaContainer
         // TODO NOW
 //        setStyle("backgroundSize", "100%");
 //        setStyle("backgroundImage", _loadingImgClass);
+    }
+
+    /**
+     * Is this sprite included in standard layout in the RoomView?
+     */
+    public function isIncludedInLayout () :Boolean
+    {
+        return true;
     }
 
     /**
@@ -265,37 +264,54 @@ public class MsoySprite extends MediaContainer
         return _desc;
     }
 
+    protected function getGlowFilterIndex () :int
+    {
+        var ourFilters :Array = filters; // must make a copy
+        if (ourFilters != null) {
+        }
+        return -1;
+    }
+
     /**
      * Turn on or off the glow surrounding this sprite.
      */
     public function setGlow (doGlow :Boolean) :void
     {
+        var glowIndex :int = -1;
+        var ourFilters :Array = filters;
+        if (ourFilters != null) {
+            for (var ii :int = 0; ii < ourFilters.length; ii++) {
+                if (ourFilters[ii] is GlowFilter) {
+                    glowIndex = ii;
+                    break;
+                }
+            }
+        }
+
         // if things are already in the proper state, do nothing
-        if (doGlow == (_glow != null)) {
+        if (doGlow == (glowIndex != -1)) {
             return;
         }
 
         // otherwise, enable or disable the glow
         if (doGlow) {
-            _glow = new Glow(this);
-            _glow.alphaFrom = 0;
-            _glow.alphaTo = 1;
-            _glow.blurXFrom = 0;
-            _glow.blurXTo = 20;
-            _glow.blurYFrom = 0;
-            _glow.blurYTo = 20;
-            _glow.color = getHoverColor();
-            _glow.duration = 200;
-            _glow.play();
+            if (ourFilters == null) {
+                ourFilters = [];
+            }
+            // TODO: we used to use a flex GlowEffect to make the glow
+            // "grow-in" by adjusting the blur from 0 to 200 over the
+            // course of 200ms. We could easily write our own,
+            // but mostly I'm trying to de-flex this class, so maybe
+            // we could just have the roomview take care of applying
+            // and removing the glow filter...
+            var glow :GlowFilter = new GlowFilter(
+                getHoverColor(), 1, 20, 20);
+            ourFilters.push(glow);
+            filters = ourFilters;
 
         } else {
-            _glow.end();
-            _glow = null;
-
-            // remove the GlowFilter that is added
-            // TODO: maybe ensure there are no other filters that
-            // need preserving
-            filters = new Array();
+            ourFilters.splice(glowIndex, 1);
+            filters = ourFilters;
         }
     }
 
@@ -361,11 +377,11 @@ public class MsoySprite extends MediaContainer
      */
     override public function shutdown (completely :Boolean = true) :void
     {
-        if (_media is VideoDisplay) {
-            var vid :VideoDisplay = (_media as VideoDisplay);
-            Prefs.setMediaPosition(
-                MediaDesc.hashToString(_desc.hash), vid.playheadTime);
-        }
+//        if (_media is VideoDisplay) {
+//            var vid :VideoDisplay = (_media as VideoDisplay);
+//            Prefs.setMediaPosition(
+//                MediaDesc.hashToString(_desc.hash), vid.playheadTime);
+//        }
 
         // clean up
         if (_media is Loader) {
@@ -789,9 +805,6 @@ public class MsoySprite extends MediaContainer
 
     /** Properties populated by *Control usercode. */
     protected var _props :Object;
-
-    /** The glow effect used for mouse hovering. */
-    protected var _glow :Glow;
 
     [Embed(source="../../../../../../../rsrc/media/indian_h.png")]
     protected static const _loadingImgClass :Class;

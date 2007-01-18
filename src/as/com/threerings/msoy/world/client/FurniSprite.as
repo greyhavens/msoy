@@ -40,6 +40,11 @@ public class FurniSprite extends MsoySprite
         configureToolTip(ctx);
     }
 
+    override public function isIncludedInLayout () :Boolean
+    {
+        return !isBackground();
+    }
+
     public function getFurniData () :FurniData
     {
         return _furni;
@@ -293,7 +298,6 @@ public class FurniSprite extends MsoySprite
      */
     protected function checkBackground () :void
     {
-        includeInLayout = !isBackground();
         alpha = (_editing && isBackground()) ? .65 : 1;
     }
 

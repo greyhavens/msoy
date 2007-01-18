@@ -93,7 +93,7 @@ public class AbstractRoomView extends Sprite
         positionAndScale(sprite, loc);
 
         // then, possibly move the child up or down, depending on z order
-        if (sprite.includeInLayout) {
+        if (sprite.isIncludedInLayout()) {
             adjustZOrder(sprite, loc);
         }
     }
@@ -499,7 +499,7 @@ public class AbstractRoomView extends Sprite
         var disp :DisplayObject = getChildAt(index);
         if (disp is MsoySprite) {
             var spr :MsoySprite = (disp as MsoySprite);
-            if (!spr.includeInLayout) {
+            if (!spr.isIncludedInLayout()) {
                 return NaN;
             }
             return spr.loc.z;
