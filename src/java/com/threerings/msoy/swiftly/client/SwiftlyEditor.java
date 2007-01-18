@@ -64,9 +64,12 @@ public class SwiftlyEditor extends PlacePanel
         _vertSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, _editorTabs, _consoleTabs);
         // TODO apparently GTK does not have the graphic for this. What to do?
         _vertSplitPane.setOneTouchExpandable(true);
+        _vertSplitPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        _horizSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _vertSplitPane, _projectPanel);
+        _horizSplitPane =
+            new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, _vertSplitPane, _projectPanel);
         _horizSplitPane.setOneTouchExpandable(true);
+        _horizSplitPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         // layout the window
         add(_toolbar, VGroupLayout.FIXED);

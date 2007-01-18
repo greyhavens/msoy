@@ -10,6 +10,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.plaf.basic.BasicBorders;
 
 import com.samskivert.swing.util.SwingUtil;
 import com.samskivert.util.Config;
@@ -214,6 +215,10 @@ public class SwiftlyApplet extends JApplet
         } catch (Exception e) {
             // this should just fall back on a working theme
         }
+        // let's see how things look without every font being bold
+        UIManager.put("swing.boldMetal", Boolean.FALSE);
+        // remove the borders from the splitpane so we can add our own later
+        UIManager.put("SplitPaneDivider.border", new BasicBorders.MarginBorder());
     }
 
     protected class SwiftlyContextImpl implements SwiftlyContext
