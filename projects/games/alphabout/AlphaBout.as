@@ -43,10 +43,12 @@ public class AlphaBout extends Sprite
         addChild(players);
 
         _gameCtrl = new EZGameControl(this);
-        _gameCtrl.registerListener(this);
         players.setGameControl(_gameCtrl);
 
-        stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+        if (_gameCtrl.getMyIndex() != -1) {
+            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
+            _gameCtrl.registerListener(this);
+        }
     }
 
     // called from the letter sprite when a piece is dropped
