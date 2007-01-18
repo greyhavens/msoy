@@ -26,6 +26,7 @@ public class Ground extends Sprite
         // set up the ground objects
         _track = new Track();
         _scenery = new Scenery();
+        addChild(_scenery);
         _strips = new Array();
         var stripImage :Bitmap;
         var stripHeight :Number = BEGINNING_STRIP_HEIGHT;
@@ -71,7 +72,7 @@ public class Ground extends Sprite
             _camera.position.y += IMAGE_SIZE;
         }
 
-        //_scenery.clearItems();
+        _scenery.clearItems();
  
         var thisTransform :Matrix = new Matrix();
         var totalHeight :Number = 0;
@@ -95,9 +96,9 @@ public class Ground extends Sprite
             var clipping :Rectangle = new Rectangle(0, 0, WIDTH, thisHeight);
             _strips[strip].draw(_track, thisTransform, null, null, clipping);
             // update scenery
-            //_scenery.setTransform(totalHeight - thisHeight, totalHeight, thisTransform, 
-                //scaleFactor);
-            _strips[strip].draw(_scenery, thisTransform, null, null, clipping);
+            _scenery.setTransform(totalHeight - thisHeight, totalHeight, thisTransform, 
+                scaleFactor);
+            //_strips[strip].draw(_scenery, thisTransform, null, null, clipping);
             // update off road flag
             var bitmap :Bitmap = getChildAt(strip) as Bitmap;
             if (bitmap.y <= UnderworldDrift.KART_LOCATION.y && 
@@ -108,7 +109,7 @@ public class Ground extends Sprite
             }
         }
 
-        //_scenery.updateItems();
+        _scenery.updateItems();
     }
 
     /** track instance */

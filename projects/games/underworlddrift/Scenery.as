@@ -38,7 +38,7 @@ public class Scenery extends Sprite
     public function setTransform(minY :Number, maxY :Number, transform :Matrix, scale :Number) :void
     {
         // scale coming in is much too large - bring it down a notch
-        scale *= SCALE_REDUCTION;
+        //scale *= SCALE_REDUCTION;
         var cursor :IViewCursor = _items.createCursor();
         while (!cursor.afterLast) {
             var newLocation :Point = transform.transformPoint(cursor.current.origin);
@@ -60,10 +60,13 @@ public class Scenery extends Sprite
     {
         var cursor :IViewCursor = _items.createCursor();
         while (!cursor.afterLast) {
+            //cursor.current.sprite.x = 355;
+            //cursor.current.sprite.y = 100;
+            cursor.current.sprite.scaleX = cursor.current.sprite.scaleY = 1;
             cursor.current.sprite.x = cursor.current.screen.x;
             cursor.current.sprite.y = cursor.current.screen.y;
-            cursor.current.sprite.scaleX = cursor.current.scale;
-            cursor.current.sprite.scaleY = cursor.current.scale;
+            //cursor.current.sprite.scaleX = cursor.current.scale;
+            //cursor.current.sprite.scaleY = cursor.current.scale;
             cursor.moveNext();
         }
     }
@@ -83,8 +86,8 @@ public class Scenery extends Sprite
                 cursor.current.origin.y += Ground.IMAGE_SIZE;
                 cursor.current.origin.x += xShift;
                 // TEMP
-                cursor.current.sprite.y = cursor.current.origin.y;
-                cursor.current.sprite.x = cursor.current.origin.x;
+                //cursor.current.sprite.y = cursor.current.origin.y;
+                //cursor.current.sprite.x = cursor.current.origin.x;
                 cursor.moveNext();
             }
         }
@@ -101,9 +104,9 @@ public class Scenery extends Sprite
             item.origin.y = Math.floor(Math.random() * Ground.IMAGE_SIZE) -
                 Ground.HALF_IMAGE_SIZE - Ground.IMAGE_SIZE;
             // get that new sprite off the display, thank you
-            //item.sprite.x = item.sprite.y = -Ground.HALF_IMAGE_SIZE;
-            item.sprite.x = item.origin.x;
-            item.sprite.y = item.origin.y;
+            item.sprite.x = item.sprite.y = -Ground.HALF_IMAGE_SIZE;
+            //item.sprite.x = item.origin.x;
+            //item.sprite.y = item.origin.y;
             addChild(item.sprite);
             _items.addItem(item);
         }
