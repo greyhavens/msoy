@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.game.client {
 
-import mx.controls.Label;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.text.TextFormat;
 
 import com.threerings.util.MediaContainer;
 import com.threerings.util.Name;
@@ -17,44 +19,43 @@ public class HeadShotSprite extends MediaContainer
     {
         super(null);
 
-//        _label = new Label();
-//        _label.includeInLayout = false;
-//        _label.setStyle("textAlign", "center");
-//        _label.text = "|";
-//        addChild(_label);
+        var labelFormat :TextFormat = new TextFormat();
+        labelFormat.bold = true;
+        _label = new TextField();
+        _label.autoSize = TextFieldAutoSize.CENTER;
+        _label.defaultTextFormat = labelFormat;
+        addChild(_label);
     }
-
-//    override protected function measure () :void
-//    {
-//        measuredWidth = _w;
-//        measuredHeight = _h + _label.textHeight;
-//    }
-
-//    override public function validateDisplayList () :void
-//    {
-//        super.validateDisplayList();
-//
-//        _label.width = _w;
-//        _label.y = _h;
-//    }
 
     public function setUser (name :Name, desc :MediaDesc) :void
     {
         _name = name;
-//        _label.text = name.toString();
+        _label.text = name.toString();
+        _label.width = _label.textWidth;
         if (!Util.equals(desc, _desc)) {
             _desc = desc;
             setMedia(desc.getMediaPath());
         }
     }
 
-//    override protected function contentDimensionsUpdated () :void
-//    {
-//        super.contentDimensionsUpdated();
-//        invalidateSize();
-//    }
+    override public function getContentHeight () :int
+    {
+        return super.getContentHeight() + _label.textHeight;
+    }
 
-//    protected var _label :Label;
+    override protected function contentDimensionsUpdated () :void
+    {
+        super.contentDimensionsUpdated();
+        recheckLabel();
+    }
+
+    protected function recheckLabel () :void
+    {
+        _label.x = (_w - _label.textWidth) / 2;
+        _label.y = _h;
+    }
+
+    protected var _label :TextField;
 
     protected var _name :Name;
     protected var _desc :MediaDesc;

@@ -11,7 +11,8 @@ import mx.controls.treeClasses.TreeListData;
 
 import com.threerings.util.MediaContainer;
 
-import com.threerings.msoy.ui.ScalingMediaBox;
+import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.ScalingMediaContainer;
 
 import com.threerings.msoy.item.web.Item;
 
@@ -27,16 +28,21 @@ public class ItemTreeRenderer extends TreeItemRenderer
         TreeListData(value).icon = null;
         var node :Object = TreeListData(value).item;
         if (node is Item) {
-            if (_media == null) {
-                _media = new ScalingMediaBox(
+            var media :MediaContainer;
+            if (_wrapper == null) {
+                media = new ScalingMediaContainer(
                     MAX_MEDIA_WIDTH, MAX_MEDIA_HEIGHT);
+                _wrapper = new MediaWrapper(media, MAX_MEDIA_WIDTH, MAX_MEDIA_HEIGHT);
+
+            } else {
+                media = _wrapper.getMediaContainer();
             }
             var item :Item = Item(node);
-            _media.setMedia(item.getThumbnailPath());
+            media.setMedia(item.getThumbnailPath());
 
-        } else if (_media != null) {
-            _media.shutdown();
-            _media = null;
+        } else if (_wrapper != null) {
+            _wrapper.getMediaContainer().shutdown();
+            _wrapper = null;
         }
     }
 
@@ -51,12 +57,14 @@ public class ItemTreeRenderer extends TreeItemRenderer
         if (node is Item) {
             var item :Item = Item(node);
             label.text = item.name;
-            icon = _media;
-            addChild(_media);
+            icon = _wrapper;
+            addChild(_wrapper);
         }
     }
 
-    protected var _media :ScalingMediaBox;
+    protected var _wrapper :MediaWrapper;
+
+    //protected var _media :ScalingMediaBox;
 
     protected static const MAX_MEDIA_WIDTH :int = 120;
     protected static const MAX_MEDIA_HEIGHT :int = 100;

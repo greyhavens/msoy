@@ -15,6 +15,8 @@ import com.threerings.mx.controls.CommandButton;
 
 import com.threerings.msoy.client.MsoyContext;
 
+import com.threerings.msoy.ui.MediaWrapper;
+
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.game.data.MsoyTable;
@@ -43,6 +45,7 @@ public class TableRenderer extends HBox
             panel.controller.game.getTableMedia().getMediaPath());
         _background.mouseEnabled = false;
         _background.mouseChildren = false;
+        // TODO: goddammit, this should be behind!
         rawChildren.addChildAt(_background, 0);
         _background.addEventListener(
             MediaContainer.SIZE_KNOWN, handleBkgSizeKnown, false, 0, true);
@@ -112,14 +115,15 @@ public class TableRenderer extends HBox
 
             } else {
                 var lbl :HeadShotSprite;
-                if (comp is HeadShotSprite) {
-                    lbl = (comp as HeadShotSprite);
+                if (comp is MediaWrapper) {
+                    lbl = (MediaWrapper(comp).getMediaContainer() as HeadShotSprite);
                 } else {
                     if (comp != null) {
                         removeChildAt(displayIndex);
                     }
                     lbl = new HeadShotSprite();
-                    addChildAt(lbl, displayIndex);
+                    var wrap :MediaWrapper = new MediaWrapper(lbl);
+                    addChildAt(wrap, displayIndex);
                 }
                 lbl.setUser(occupant, table.headShots[ii] as MediaDesc);
             }
