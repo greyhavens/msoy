@@ -317,6 +317,14 @@ public class MsoySprite extends MediaContainer
         callUserCode("memoryChanged_v1", key, value);
     }
 
+    /**
+     * Called when this client is assigned control of this entity.
+     */
+    public function gotControl () :void
+    {
+        callUserCode("gotControl_v1");
+    }
+
     // TODO: this isn't really needed, because this method is
     // not used for our mouseOver hittesting.
     // But: it boggles my mind that the standard hitTestPoint() on a 
@@ -681,9 +689,22 @@ public class MsoySprite extends MediaContainer
      */
     protected function populateControlProperties (o :Object) :void
     {
+        o["requestControl_v1"] = requestControl_v1;
         o["triggerEvent_v1"] = triggerEvent_v1;
         o["lookupMemory_v1"] = lookupMemory_v1;
         o["updateMemory_v1"] = updateMemory_v1;
+    }
+
+    /**
+     * Explicitly requests control for this entity by this client. If this succeeds, a
+     * <code>gotControl_v1</code> notification will be dispatched when we hear back from the
+     * server.
+     */
+    protected function requestControl_v1 () :void
+    {
+        if (_ident != null && parent is RoomView) {
+            (parent as RoomView).getRoomController().requestControl(_ident);
+        }
     }
 
     /**

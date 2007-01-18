@@ -61,6 +61,7 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.ActorInfo;
 
+import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.ModifyFurniUpdate;
@@ -258,6 +259,9 @@ public class RoomView extends AbstractRoomView
 
         } else if (RoomObject.MEMORIES == name) {
             dispatchMemoryChanged(event.getEntry() as MemoryEntry);
+
+        } else if (RoomObject.CONTROLLERS == name) {
+            dispatchControlAssigned(event.getEntry() as EntityControl);
         }
     }
 
@@ -574,6 +578,19 @@ public class RoomView extends AbstractRoomView
         var sprite :MsoySprite = (_entities.get(entry.item) as MsoySprite);
         if (sprite != null) {
             sprite.memoryChanged(entry.key, EZObjectMarshaller.decode(entry.value));
+        }
+    }
+
+    /**
+     * Called when control of an entity is assigned to some client.
+     */
+    protected function dispatchControlAssigned (ctrl :EntityControl) :void
+    {
+        if (ctrl.controllerOid == _ctx.getClient().getClientObject().getOid()) {
+            var sprite :MsoySprite = (_entities.get(ctrl.ident) as MsoySprite);
+            if (sprite != null) {
+                sprite.gotControl();
+            }
         }
     }
 

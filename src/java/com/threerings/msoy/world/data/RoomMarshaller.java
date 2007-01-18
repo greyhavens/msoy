@@ -47,16 +47,14 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #requestController} requests. */
-    public static final int REQUEST_CONTROLLER = 3;
+    /** The method id used to dispatch {@link #requestControl} requests. */
+    public static final int REQUEST_CONTROL = 3;
 
     // from interface RoomService
-    public void requestController (Client arg1, ItemIdent arg2, InvocationService.ConfirmListener arg3)
+    public void requestControl (Client arg1, ItemIdent arg2)
     {
-        InvocationMarshaller.ConfirmMarshaller listener3 = new InvocationMarshaller.ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, REQUEST_CONTROLLER, new Object[] {
-            arg2, listener3
+        sendRequest(arg1, REQUEST_CONTROL, new Object[] {
+            arg2
         });
     }
 

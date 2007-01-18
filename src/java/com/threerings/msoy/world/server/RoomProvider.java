@@ -31,10 +31,9 @@ public interface RoomProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link RoomService#requestController} request.
+     * Handles a {@link RoomService#requestControl} request.
      */
-    public void requestController (ClientObject caller, ItemIdent arg1, InvocationService.ConfirmListener arg2)
-        throws InvocationException;
+    public void requestControl (ClientObject caller, ItemIdent arg1);
 
     /**
      * Handles a {@link RoomService#triggerEvent} request.

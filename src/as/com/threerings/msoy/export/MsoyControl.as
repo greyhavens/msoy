@@ -111,6 +111,8 @@ public class MsoyControl
             } else {
                 stopTicker();
             }
+        } else {
+            callMsoyCode("requestControl_v1");
         }
     }
 
@@ -134,8 +136,7 @@ public class MsoyControl
     {
         o["eventTriggered_v1"] = eventTriggered_v1;
         o["memoryChanged_v1"] = memoryChanged_v1;
-        o["clientReceivedControl_v1"] = clientReceivedControl_v1;
-        o["clientLostControl_v1"] = clientLostControl_v1;
+        o["gotControl_v1"] = gotControl_v1;
     }
 
     /**
@@ -161,23 +162,21 @@ public class MsoyControl
     /**
      * Called when this client has been assigned control of this pet.
      */
-    protected function clientReceivedControl_v1 () :void
+    protected function gotControl_v1 () :void
     {
-        _ticker = new Timer(_tickInterval, 0);
-        _ticker.addEventListener(TimerEvent.TIMER, function (evt :TimerEvent) :void {
-            if (tick != null) {
-                tick();
-            }
-        });
-        _ticker.start();
-    }
-
-    /**
-     * Called when this client has lost control of this pet. TODO: do we even need this?
-     */
-    protected function clientLostControl_v1 () :void
-    {
+        // stop any existing ticker (won't ever happen, but we want to be safe)
         stopTicker();
+
+        // start up a new one if desired
+        if (_tickInterval > 0) {
+            _ticker = new Timer(_tickInterval, 0);
+            _ticker.addEventListener(TimerEvent.TIMER, function (evt :TimerEvent) :void {
+                if (tick != null) {
+                    tick();
+                }
+            });
+            _ticker.start();
+        }
     }
 
     /**

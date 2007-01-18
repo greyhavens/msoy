@@ -23,7 +23,7 @@ public interface RoomService extends InvocationService
      * are requested, but if an entity simply wishes to start ticking itself locally, it must first
      * request control to ensure that the right client handles the ticking.
      */
-    public void requestController (Client client, ItemIdent item, ConfirmListener listener);
+    public void requestControl (Client client, ItemIdent item);
 
     /**
      * Requests to trigger an event on the specified item or globally.

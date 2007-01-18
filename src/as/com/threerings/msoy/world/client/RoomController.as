@@ -63,6 +63,18 @@ public class RoomController extends SceneController
     public static const TEMP_CLEAR_SCENE_CACHE :String = "clrScenes";
 
     /**
+     * Requests that this client be given control of the specified item.
+     */
+    public function requestControl (ident :ItemIdent) :void
+    {
+        if (_roomObj == null) {
+            log.warning("Cannot request entity control, no room object [ident=" + ident + "].");
+        } else {
+            _roomObj.roomService.requestControl(_mctx.getClient(), ident);
+        }
+    }
+
+    /**
      * Handles a request by an item in our room to trigger an event.
      */
     public function triggerEvent (ident :ItemIdent, event :String, arg :Object) :void

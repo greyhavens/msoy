@@ -62,24 +62,15 @@ public class RoomManager extends SpotSceneManager
     implements RoomProvider
 {
     // documentation inherited from RoomProvider
-    public void requestController (ClientObject caller, ItemIdent item,
-                                   RoomService.ConfirmListener listener)
-        throws InvocationException
+    public void requestControl (ClientObject caller, ItemIdent item)
     {
         // if this entity already has a controller, no go
         if (_roomObj.controllers.containsKey(item)) {
-            throw new InvocationException(RoomCodes.E_ALREADY_CONTROLLED);
+            return;
         }
 
-        // select a new controller for this item, publish a mapping and report success
-        if (assignControllers(Collections.singleton(item))) {
-            listener.requestProcessed();
-        } else {
-            // it should not be possible for a client to be interactively requesting control for an
-            // entity but for there to be no active clients available to handle the entity, but
-            // we'll throw this exception anyhow, so that it may float on the streams of ether
-            throw new InvocationException(RoomCodes.E_INTERNAL_ERROR);
-        }
+        // select a new controller for this item, and publish a mapping for it
+        assignControllers(Collections.singleton(item));
     }
 
     // documentation inherited from RoomProvider

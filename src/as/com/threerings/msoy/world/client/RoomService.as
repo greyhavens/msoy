@@ -9,10 +9,8 @@ import com.threerings.msoy.world.client.RoomService;
 import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
-import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
@@ -29,7 +27,7 @@ public interface RoomService extends InvocationService
     function editRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void;
 
     // from Java interface RoomService
-    function requestController (arg1 :Client, arg2 :ItemIdent, arg3 :InvocationService_ConfirmListener) :void;
+    function requestControl (arg1 :Client, arg2 :ItemIdent) :void;
 
     // from Java interface RoomService
     function triggerEvent (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray) :void;
