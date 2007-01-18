@@ -1,0 +1,10 @@
+/** 
+ * $Id$
+ *
+ * CSS styles for the Admin pages.
+ */
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+}
