@@ -15,7 +15,7 @@ public class Ballhead extends Sprite
         _speakSound = Sound(new SPEAK_SOUND());
 
         _ctrl = new AvatarControl(this);
-        _ctrl.avatarChanged = setupVisual;
+        _ctrl.appearanceChanged = setupVisual;
         _ctrl.avatarSpoke = spoke;
         _ctrl.addAction("start blushing", startBlushing);
         _ctrl.addAction("stop blushing", stopBlushing);
@@ -26,7 +26,7 @@ public class Ballhead extends Sprite
     protected function setupVisual () :void
     {
         var orient :Number = _ctrl.getOrientation();
-        var walking :Boolean = _ctrl.isWalking();
+        var walking :Boolean = _ctrl.isMoving();
 
         graphics.clear();
 
