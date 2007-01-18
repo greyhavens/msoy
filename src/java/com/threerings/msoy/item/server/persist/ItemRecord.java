@@ -50,6 +50,15 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final String FURNI_MEDIA_HASH = "furniMediaHash";
     public static final String FURNI_MIME_TYPE = "furniMimeType";
 
+    /** Indicates that somebody has flagged this item as mature content. */
+    public static final int FLAG_FLAGGED_MATURE = 0x1 << 0;
+    
+    /** Indicates that somebody has flagged this item as copyrighted content. */
+    public static final int FLAG_FLAGGED_COPYRIGHT= 0x1 << 1;
+    
+    /** Indicates that this item has been flagged by an administrator as mature content. */
+    public static final int FLAG_MATURED = 0x1 << 2;
+
     public static ItemRecord newRecord (Item item) {
         if (item instanceof Document) {
             return new DocumentRecord((Document) item);
@@ -181,6 +190,22 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         }
         return false;
     }
+    
+    /**
+     * Tests whether a given flag is set on this item.
+     */
+    public boolean isSet (byte flag)
+    {
+    	return (flags & flag) != 0;
+    }
+
+    /**
+     * Sets a given flag to on or off.
+     */
+    public void setFlag (byte flag, boolean value)
+    {
+        flags = (byte) (value ? flags | flag : flags ^ ~flag);
+    }
 
     /**
      * Clears out any fields that should be reset when listing this item in the catalog.
@@ -193,6 +218,9 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         location = 0;
     }
 
+    /**
+     * Build a POJO version of this Record, for use outside the persistence system.
+     */
     public Item toItem ()
     {
         Item item = createItem();

@@ -70,6 +70,9 @@ public class MemberRecord extends PersistentRecord
     /** A flag denoting this user as having admin privileges. */
     public static final int ADMIN_FLAG = 0x1 << 1;
 
+    /** A flag denoting this user has having elected to see mature content. */
+    public static final int FLAG_SHOW_MATURE = 0x1 << 2;
+
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int memberId;
@@ -131,10 +134,20 @@ public class MemberRecord extends PersistentRecord
         return creds;
     }
 
-    /** Returns true if the specified flag is set. */
+    /**
+     * Tests whether a given flag is set on this member.
+     */
     public boolean isSet (int flag)
     {
-        return (flags & flag) == flag;
+        return (flags & flag) != 0;
+    }
+
+    /**
+     * Sets a given flag to on or off.
+     */
+    public void setFlag (int flag, boolean value)
+    {
+        flags = value ? flags | flag : flags ^ ~flag;
     }
 
     /** Returns this member's name as a proper {@link Name} instance. */
