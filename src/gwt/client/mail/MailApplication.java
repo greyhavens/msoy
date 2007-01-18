@@ -414,7 +414,7 @@ public class MailApplication extends DockPanel
 
         // if there is a payload, display it!
         if (_message.payload != null) {
-            Widget widget = _ctx.creds.memberId == _message.headers.recipient.getMemberId() ?
+            Widget widget = _ctx.creds.getMemberId() == _message.headers.recipient.getMemberId() ?
                 _payloadDisplay.widgetForRecipient(this) : _payloadDisplay.widgetForOthers();
             if (widget != null) {
                 HorizontalPanel panel = new HorizontalPanel();

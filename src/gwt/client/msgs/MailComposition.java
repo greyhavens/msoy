@@ -31,7 +31,7 @@ public class MailComposition extends PopupPanel
     {
         super(false);
         _ctx = ctx;
-        _senderId = ctx.creds.memberId;
+        _senderId = ctx.creds.getMemberId();
         _recipient = recipient;
         _bodyObjectComposer = bodyObjectComposer;
         buildUI(subject, bodyText);

@@ -26,13 +26,13 @@ public class ProfileServlet extends MsoyServiceServlet
         try {
             // TODO: this is super hack, we're on the servlet thread and not doing anything
             // properly
-            log.info("Updating display name " + creds.memberId +
+            log.info("Updating display name " + creds.getMemberId() +
                 " to '" + profile.displayName + "'.");
-            MsoyServer.memberRepo.configureDisplayName(creds.memberId, profile.displayName);
+            MsoyServer.memberRepo.configureDisplayName(creds.getMemberId(), profile.displayName);
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update member's display name " +
-                "[mid=" + creds.memberId + ", name=" + profile.displayName + "].", pe);
+                "[mid=" + creds.getMemberId() + ", name=" + profile.displayName + "].", pe);
         }
     }
 }

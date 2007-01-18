@@ -62,7 +62,7 @@ public class MemberServlet extends MsoyServiceServlet
             new ServletWaiter<Void>("inviteFriend[" + friendId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.alterFriend(creds.memberId, friendId, true, waiter);
+                MsoyServer.memberMan.alterFriend(creds.getMemberId(), friendId, true, waiter);
             }
         });
         waiter.waitForResult();
@@ -76,7 +76,7 @@ public class MemberServlet extends MsoyServiceServlet
             new ServletWaiter<Void>("acceptFriend[" + friendId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.alterFriend(creds.memberId, friendId, true, waiter);
+                MsoyServer.memberMan.alterFriend(creds.getMemberId(), friendId, true, waiter);
             }
         });
         waiter.waitForResult();
@@ -90,7 +90,7 @@ public class MemberServlet extends MsoyServiceServlet
             new ServletWaiter<Void>("declineFriend[" + friendId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.memberMan.alterFriend(creds.memberId, friendId, false, waiter);
+                MsoyServer.memberMan.alterFriend(creds.getMemberId(), friendId, false, waiter);
             }
         });
         waiter.waitForResult();
@@ -111,10 +111,10 @@ public class MemberServlet extends MsoyServiceServlet
 
         // load their inventory via the item manager
         final ServletWaiter<ArrayList<Item>> waiter = new ServletWaiter<ArrayList<Item>>(
-            "loadInventory[" + creds.memberId + ", " + type + "]");
+            "loadInventory[" + creds.getMemberId() + ", " + type + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.loadInventory(creds.memberId, type, waiter);
+                MsoyServer.itemMan.loadInventory(creds.getMemberId(), type, waiter);
             }
         });
         return waiter.waitForResult();

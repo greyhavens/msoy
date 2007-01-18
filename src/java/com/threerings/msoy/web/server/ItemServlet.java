@@ -36,8 +36,8 @@ public class ItemServlet extends MsoyServiceServlet
         // TODO: validate anything else?
 
         // configure the item's creator and owner
-        item.creatorId = creds.memberId;
-        item.ownerId = creds.memberId;
+        item.creatorId = creds.getMemberId();
+        item.ownerId = creds.getMemberId();
 
         // pass the buck to the item manager to do the dirty work
         final ServletWaiter<Item> waiter = new ServletWaiter<Item>(
@@ -94,7 +94,7 @@ public class ItemServlet extends MsoyServiceServlet
     {
         final ServletWaiter<ItemDetail> waiter = new ServletWaiter<ItemDetail>(
             "loadItem[" + ident + "]");
-        final int memberId = (creds == null) ? -1 : creds.memberId;
+        final int memberId = (creds == null) ? -1 : creds.getMemberId();
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.itemMan.getItemDetail(ident, memberId, waiter);
@@ -123,7 +123,7 @@ public class ItemServlet extends MsoyServiceServlet
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>("deleteItem[" + ident + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.deleteItemFor(creds.memberId, ident, waiter);
+                MsoyServer.itemMan.deleteItemFor(creds.getMemberId(), ident, waiter);
             }
         });
         waiter.waitForResult();
@@ -149,7 +149,7 @@ public class ItemServlet extends MsoyServiceServlet
         final ServletWaiter<Float> waiter = new ServletWaiter<Float>("rateItem[" + ident + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.rateItem(ident, creds.memberId, rating, waiter);
+                MsoyServer.itemMan.rateItem(ident, creds.getMemberId(), rating, waiter);
             }
         });
         return waiter.waitForResult();
@@ -187,7 +187,7 @@ public class ItemServlet extends MsoyServiceServlet
     public Collection<TagHistory> getRecentTags (WebCreds creds)
         throws ServiceException
     {
-        final int memberId = creds.memberId;
+        final int memberId = creds.getMemberId();
         final ServletWaiter<Collection<TagHistory>> waiter =
             new ServletWaiter<Collection<TagHistory>>("getTagHistory[" + memberId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
@@ -207,7 +207,7 @@ public class ItemServlet extends MsoyServiceServlet
             "tagItem[" + ident + ", " + set + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.itemMan.tagItem(ident, creds.memberId, tag, set, waiter);
+                MsoyServer.itemMan.tagItem(ident, creds.getMemberId(), tag, set, waiter);
             }
         });
         return waiter.waitForResult();

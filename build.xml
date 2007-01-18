@@ -155,6 +155,7 @@
   <!-- regenerates our i18n messages classes -->
   <target name="gmsgs">
     <antcall target="gmsg"><param name="which" value="shell.Shell"/></antcall>
+    <antcall target="gmsg"><param name="which" value="admin.Admin"/></antcall>
     <antcall target="gmsg"><param name="which" value="catalog.Catalog"/></antcall>
     <antcall target="gmsg"><param name="which" value="game.Game"/></antcall>
     <antcall target="gmsg"><param name="which" value="group.Group"/></antcall>
@@ -183,7 +184,7 @@
   </target>
 
   <!-- builds our GWT web client -->
-  <property name="pages" value="catalog,game,group,inventory,mail,profile,swiftly,world"/>
+  <property name="pages" value="admin,catalog,game,group,inventory,mail,profile,swiftly,world"/>
   <target name="gclient" depends="prepare">
     <delete file="${gclient.buildstamp}"/>
     <for list="${pages}" param="page"><sequential>

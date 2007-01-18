@@ -35,9 +35,8 @@ public class WebUserServlet extends MsoyServiceServlet
 
         try {
             // if they made it through that gauntlet, create or update their session token
-            WebCreds creds = new WebCreds();
-            creds.memberId = mrec.memberId;
-            creds.token = MsoyServer.memberRepo.startOrJoinSession(mrec.memberId, expireDays);
+            WebCreds creds = mrec.toCreds(
+                MsoyServer.memberRepo.startOrJoinSession(mrec.memberId, expireDays));
             mapUser(creds, mrec);
             return creds;
 
@@ -58,9 +57,7 @@ public class WebUserServlet extends MsoyServiceServlet
                 return null;
             }
 
-            WebCreds creds = new WebCreds();
-            creds.token = authtok;
-            creds.memberId = mrec.memberId;
+            WebCreds creds = mrec.toCreds(authtok);
             mapUser(creds, mrec);
             return creds;
 

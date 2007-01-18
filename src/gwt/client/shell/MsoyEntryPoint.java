@@ -15,6 +15,7 @@ import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
@@ -85,11 +86,9 @@ public abstract class MsoyEntryPoint
     protected abstract String getPageId ();
 
     /**
-     * Called during {@link #onModuleLoad} to initialize the application. Entry
-     * points should override this method rather than onModuleLoad to set
-     * themselves up. When this call returns, a call may immediately follow to
-     * {@link #didLogon} if the user is already logged in, but the derived
-     * class's onModuleLoad will <em>not</em> have been called yet.
+     * Called during {@link #onModuleLoad} to initialize the application. Entry points should
+     * override this method rather than onModuleLoad to set themselves up. A call will soon follow
+     * to {@link #didLogon} if the user is already logged in (after a round trip to the server).
      */
     protected abstract void onPageLoad ();
 
@@ -119,8 +118,7 @@ public abstract class MsoyEntryPoint
     }
 
     /**
-     * Clears out any existing content and sets the specified widget as the
-     * main page content.
+     * Clears out any existing content and sets the specified widget as the main page content.
      */
     protected void setContent (Widget content)
     {
@@ -136,35 +134,21 @@ public abstract class MsoyEntryPoint
     }
 
     /**
-     * Called when we the player logs on after the page is loaded.
+     * Called when we the player logs on (or when our session is validated). This always happens
+     * after {@link #onPageLoad} as we don't know that our session is valid until we've heard back
+     * from the server.
      */
     protected void didLogon (WebCreds creds)
     {
-        // do nothing
-    }
-
-    /**
-     * Called by our logon panel when the player logs on. You probably want to
-     * override didLogon() instead.
-     */
-    protected void didLogon (WebCreds creds, boolean notify)
-    {
         _gctx.creds = creds;
-        if (notify) {
-            didLogon(creds);
-        }
     }
 
     /**
      * Called when the flash client has logged on.
      */
-    protected void didLogonFromFlash (
-        String displayName, int memberId, String token)
+    protected void didLogonFromFlash (String displayName, int memberId, String token)
     {
-        WebCreds creds = new WebCreds();
-        creds.memberId = memberId;
-        creds.token = token;
-        _logon.didLogonFromFlash(displayName, creds);
+        _logon.validateSession(token);
     }
 
     /**
@@ -176,8 +160,8 @@ public abstract class MsoyEntryPoint
     }
 
     /**
-     * Configure a top-level function (called flashDidLogon) that can be
-     * called by flash to route logon information to didLogonFromFlash, above.
+     * Configure a top-level function (called flashDidLogon) that can be called by flash to route
+     * logon information to didLogonFromFlash, above.
      */
     protected static native void configureLogonCallback (MsoyEntryPoint mep) /*-{
        $wnd.flashDidLogon = function (displayName, memberId, token) {

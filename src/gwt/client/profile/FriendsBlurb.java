@@ -35,7 +35,7 @@ public class FriendsBlurb extends Blurb
 
         ArrayList friends = (ArrayList)blurbData;
         if (friends.size() == 0) {
-            setStatus(_ctx.creds.memberId == _memberId ?
+            setStatus(_ctx.creds.getMemberId() == _memberId ?
                           "You have no friends. Boo hoo." :
                           "This person is not a member of any groups.");
 
@@ -47,7 +47,7 @@ public class FriendsBlurb extends Blurb
                 _content.setWidget(ii, 0, link);
             }
         }
-        if (_ctx.creds.memberId != _memberId) {
+        if (_ctx.creds.getMemberId() != _memberId) {
             Button inviteButton = new Button("Invite To Be Your Friend");
             inviteButton.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {

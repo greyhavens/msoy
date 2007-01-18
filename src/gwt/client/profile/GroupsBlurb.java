@@ -52,9 +52,9 @@ public class GroupsBlurb extends Blurb
         _invitationPanel = new SimplePanel();
         _content.setWidget(_content.getRowCount(), 0, _invitationPanel);
 
-        if (_ctx.creds.memberId != _memberId) {
+        if (_ctx.creds.getMemberId() != _memberId) {
             _ctx.groupsvc.getMembershipGroups(
-                _ctx.creds, _ctx.creds.memberId, true, new AsyncCallback() {
+                _ctx.creds, _ctx.creds.getMemberId(), true, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         final List inviteGroups = (List) result;
                         if (inviteGroups.size() == 0) {

@@ -12,6 +12,7 @@ import java.sql.Date;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.web.data.WebCreds;
 
 /**
  * Contains persistent data stored for every member of MetaSOY.
@@ -63,6 +64,12 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp LAST_SESSION_C =
         new ColumnExp(MemberRecord.class, LAST_SESSION);
 
+    /** A flag denoting this user as having support privileges. */
+    public static final int SUPPORT_FLAG = 0x1 << 0;
+
+    /** A flag denoting this user as having admin privileges. */
+    public static final int ADMIN_FLAG = 0x1 << 1;
+
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int memberId;
@@ -108,6 +115,20 @@ public class MemberRecord extends PersistentRecord
     public MemberRecord (String accountName)
     {
         this.accountName = accountName;
+    }
+
+    /**
+     * Creates web credentials for this member record.
+     */
+    public WebCreds toCreds (String authtok)
+    {
+        WebCreds creds = new WebCreds();
+        creds.token = authtok;
+        creds.accountName = accountName;
+        creds.name = getName();
+        creds.isSupport = isSet(SUPPORT_FLAG) || isSet(ADMIN_FLAG);
+        creds.isAdmin = isSet(ADMIN_FLAG);
+        return creds;
     }
 
     /** Returns true if the specified flag is set. */

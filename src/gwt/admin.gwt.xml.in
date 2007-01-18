@@ -1,0 +1,6 @@
+<module>
+  <inherits name='shell'/>
+  <entry-point class='client.admin.index'/>
+  <public path="public/admin"/>
+  <source path="client/admin"/>
+</module>

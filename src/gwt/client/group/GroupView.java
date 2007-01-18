@@ -86,7 +86,7 @@ public class GroupView extends VerticalPanel
                 // not stale
                 _me = null;
                 if (_ctx.creds != null) {
-                    _me = GroupView.findMember(_detail.members, _ctx.creds.memberId);
+                    _me = GroupView.findMember(_detail.members, _ctx.creds.getMemberId());
                 }
                 buildUI();
             }
@@ -409,13 +409,13 @@ public class GroupView extends VerticalPanel
     protected void joinGroup () 
     {
         _ctx.groupsvc.joinGroup(
-            _ctx.creds, _group.groupId, _ctx.creds.memberId, new AsyncCallback() {
+            _ctx.creds, _group.groupId, _ctx.creds.getMemberId(), new AsyncCallback() {
                 public void onSuccess (Object result) {
                     loadGroup(_group.groupId);
                 }
                 public void onFailure (Throwable caught) {
                     _ctx.log("Failed to join group [groupId=" + _group.groupId +
-                             ", memberId=" + _ctx.creds.memberId + "]", caught);
+                             ", memberId=" + _ctx.creds.getMemberId() + "]", caught);
                     addError(_ctx.serverError(caught));
                 }
         });

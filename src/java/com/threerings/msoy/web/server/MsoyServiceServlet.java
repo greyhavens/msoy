@@ -31,7 +31,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     {
         if (creds != null) {
             MemberRecord member = _members.get(creds.token);
-            if (member != null && member.memberId == creds.memberId) {
+            if (member != null && member.memberId == creds.getMemberId()) {
                 return member;
             }
         }

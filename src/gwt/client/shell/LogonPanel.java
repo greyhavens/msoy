@@ -48,18 +48,12 @@ public class LogonPanel extends FlexTable
     }
 
     /**
-     * Called once the rest of our application is set up. Checks to see if
-     * we're already logged on, in which case it triggers a call to didLogon().
+     * Called once the rest of our application is set up. Checks to see if we're already logged on,
+     * in which case it triggers a call to didLogon().
      */
     public void init ()
     {
-        _who = CookieUtil.get("who");
-        _creds = WebCreds.fromCookie(CookieUtil.get("creds"));
-        if (_creds == null) {
-            logout();
-        } else {
-            didLogon(_creds, false);
-        }
+        validateSession(CookieUtil.get("creds"));
     }
 
     /**
@@ -73,35 +67,47 @@ public class LogonPanel extends FlexTable
     /**
      * Clears out our credentials and displays the logon interface.
      */
-    public void logout ()
+    public void logoff (boolean notify)
     {
         _creds = null;
         clearCookie("creds");
-        _app.didLogoff();
+        if (notify) {
+            _app.didLogoff();
+        }
 
         _top.setText("Logon or");
         _main.setText("Join!");
         _action.setText("Go");
     }
 
-    protected void didLogon (WebCreds creds, boolean notifyApp)
+    protected void validateSession (String token)
     {
-        _creds = creds;
-        setCookie("creds", _creds.toCookie());
-        setCookie("who", _who);
+        if (token != null) {
+            // validate our session before considering ourselves logged on
+            _ctx.usersvc.validateSession(token, 1, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    _creds = (WebCreds)result;
+                    didLogon(_creds);
+                }
+                public void onFailure (Throwable t) {
+                    logoff(false);
+                }
+            });
 
-        _app.didLogon(_creds, notifyApp);
-        
-        _top.setText("Welcome");
-        _main.setText(_who);
-        _action.setText("Logoff");
+        } else {
+            logoff(false);
+        }
     }
 
-    protected void didLogonFromFlash (String displayName, WebCreds creds)
+    protected void didLogon (WebCreds creds)
     {
-        _who = displayName;
-        didLogon(creds, true); // TODO: distinguish between "came to page already logged in" and
-                               // "took action to logon on this page" in our Flash/GWT bridge
+        _creds = creds;
+        setCookie("creds", _creds.token);
+        _app.didLogon(_creds);
+
+        _top.setText("Welcome");
+        _main.setText(_creds.name.toString());
+        _action.setText("Logoff");
     }
 
     protected void actionClicked ()
@@ -109,10 +115,9 @@ public class LogonPanel extends FlexTable
         if (_creds == null) {
             LogonPopup popup = new LogonPopup();
             popup.show();
-            popup.setPopupPosition(
-                Window.getClientWidth() - popup.getOffsetWidth(), HEADER_HEIGHT);
+            popup.setPopupPosition(Window.getClientWidth() - popup.getOffsetWidth(), HEADER_HEIGHT);
         } else {
-            logout();
+            logoff(true);
         }
     }
 
@@ -131,7 +136,7 @@ public class LogonPanel extends FlexTable
     }-*/;
 
     protected class LogonPopup extends PopupPanel
-        implements ClickListener, AsyncCallback
+        implements ClickListener
     {
         public LogonPopup ()
         {
@@ -142,8 +147,8 @@ public class LogonPanel extends FlexTable
             setWidget(contents);
             contents.setText(0, 0, "Email:");
             contents.setWidget(0, 1, _email = new TextBox());
-            if (_who != null) {
-                _email.setText(_who);
+            if (_creds != null) {
+                _email.setText(_creds.accountName);
             }
             _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -173,25 +178,19 @@ public class LogonPanel extends FlexTable
         // from interface ClickListener
         public void onClick (Widget sender)
         {
-            _who = _email.getText();
-            String password = _password.getText();
-            if (_who.length() > 0 && password.length() > 0) {
+            String account = _email.getText(), password = _password.getText();
+            if (account.length() > 0 && password.length() > 0) {
                 _status.setText("Logging in...");
-                _ctx.usersvc.login(_who, md5hex(password), 1, this);
+                _ctx.usersvc.login(account, md5hex(password), 1, new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        hide();
+                        didLogon((WebCreds)result);
+                    }
+                    public void onFailure (Throwable caught) {
+                        _status.setText("Error: " + caught.getMessage());
+                    }
+                });
             }
-        }
-
-        // from interface AsyncCallback
-        public void onSuccess (Object result)
-        {
-            hide();
-            didLogon((WebCreds)result, true);
-        }
-
-        // from interface AsyncCallback
-        public void onFailure (Throwable caught)
-        {
-            _status.setText("Error: " + caught.getMessage());
         }
 
         protected TextBox _email;
@@ -202,7 +201,6 @@ public class LogonPanel extends FlexTable
     protected ShellContext _ctx;
     protected MsoyEntryPoint _app;
 
-    protected String _who;
     protected WebCreds _creds;
 
     protected Label _top, _main;

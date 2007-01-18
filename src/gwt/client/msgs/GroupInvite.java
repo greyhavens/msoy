@@ -25,7 +25,7 @@ public abstract class GroupInvite
 {
     public static void getInvitationGroups (MsgsContext ctx, AsyncCallback callback)
     {
-        ctx.groupsvc.getMembershipGroups(ctx.creds, ctx.creds.memberId, true, callback);
+        ctx.groupsvc.getMembershipGroups(ctx.creds, ctx.creds.getMemberId(), true, callback);
     }
 
     public static final class Composer
@@ -131,8 +131,8 @@ public abstract class GroupInvite
 
             protected void joinGroup ()
             {
-                _ctx.groupsvc.joinGroup(
-                    _ctx.creds, _inviteObject.groupId, _ctx.creds.memberId, new AsyncCallback() {
+                _ctx.groupsvc.joinGroup(_ctx.creds, _inviteObject.groupId, _ctx.creds.getMemberId(),
+                                        new AsyncCallback() {
                         // if joining the group succeeds, mark this invitation as accepted
                         public void onSuccess (Object result) {
                             _inviteObject.responded = true;

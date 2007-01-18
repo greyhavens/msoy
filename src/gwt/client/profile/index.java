@@ -11,6 +11,7 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.msoy.web.data.PersonLayout;
+import com.threerings.msoy.web.data.WebCreds;
 
 import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
@@ -79,7 +80,15 @@ public class index extends MsgsEntryPoint
 
         } else {
             // if we're logged on and not displaying someone elses member page, display our own
-            displayMemberPage(_ctx.creds.memberId);
+            displayMemberPage(_ctx.creds.getMemberId());
+        }
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void didLogon (WebCreds creds)
+    {
+        if (_memberId == -1) {
+            displayMemberPage(creds.getMemberId());
         }
     }
 

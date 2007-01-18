@@ -126,7 +126,7 @@ public class GroupServlet extends MsoyServiceServlet
 
         final ServletWaiter<Group> waiter = new ServletWaiter<Group>("createGroup[" + group + "]");
         group.creationDate = new Date(System.currentTimeMillis());
-        group.creatorId = creds.memberId;
+        group.creatorId = creds.getMemberId();
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.groupMan.createGroup(group, extras, waiter);

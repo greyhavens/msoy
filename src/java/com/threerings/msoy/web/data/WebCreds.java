@@ -5,46 +5,34 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.web.data.MemberName;
+
 /**
- * Contains information used to keep track of who we are in our GWT web
- * application.
+ * Contains information used to keep track of who we are in our GWT web application.
  */
 public class WebCreds implements IsSerializable
 {
-    /** Our member id. */
-    public int memberId;
-
     /** Our session token. */
     public String token;
 
-    /**
-     * Extracts our credential from a cookie string.
-     *
-     * @return null if the cookie was null or unparseable, a set of credentials
-     * if the cookie was valid.
-     */
-    public static WebCreds fromCookie (String cookie)
-    {
-        int peridx;
-        if (cookie == null || (peridx = cookie.indexOf(".")) == -1) {
-            return null;
-        }
-        try {
-            WebCreds creds = new WebCreds();
-            creds.memberId = Integer.parseInt(cookie.substring(0, peridx));
-            creds.token = cookie.substring(peridx+1);
-            return creds;
-        } catch (Exception e) {
-            return null;
-        }
-    }
+    /** The name used to authenticate this account. */
+    public String accountName;
+
+    /** Our member name and id. */
+    public MemberName name;
+
+    /** Indicates that the authenticated user has support (or admin) privileges. */
+    public boolean isSupport;
+
+    /** Indicates that the authenticated user has admin privileges. */
+    public boolean isAdmin;
 
     /**
-     * Converts these credentials to a string that can be stored in a cookie.
+     * Returns the member id for the user authenticated with these credentials.
      */
-    public String toCookie ()
+    public int getMemberId ()
     {
-        return memberId + "." + token;
+        return (name == null) ? 0 : name.getMemberId();
     }
 
     /**
@@ -52,6 +40,7 @@ public class WebCreds implements IsSerializable
      */
     public String toString ()
     {
-        return "[id=" + memberId + ", token=" + token + "]";
+        return "[auth=" + accountName + ", name=" + name + ", token=" + token +
+            ", privs=" + isSupport + ":" + isAdmin + "]";
     }
 }

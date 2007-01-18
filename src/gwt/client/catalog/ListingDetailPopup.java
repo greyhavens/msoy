@@ -57,7 +57,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
         // if we are the creator (lister) of this item, allow us to delist it
         final CatalogContext cctx = (CatalogContext)_ctx;
-        if (cctx.creds != null && _listing.creator.getMemberId() == cctx.creds.memberId) {
+        if (cctx.creds != null && _listing.creator.getMemberId() == cctx.creds.getMemberId()) {
             Button delist = new Button(cctx.msgs.listingDelist());
             new ClickCallback(cctx, delist, _status) {
                 public boolean callService () {

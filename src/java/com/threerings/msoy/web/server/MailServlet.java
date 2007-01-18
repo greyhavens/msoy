@@ -29,7 +29,7 @@ public class MailServlet extends MsoyServiceServlet
             "deleteMail[" + folderId + ", arr[" + msgIdArr.length + "]]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.mailMan.deleteMessages(creds.memberId, folderId, msgIdArr, waiter);
+                MsoyServer.mailMan.deleteMessages(creds.getMemberId(), folderId, msgIdArr, waiter);
             }
         });
         waiter.waitForResult();
@@ -45,7 +45,7 @@ public class MailServlet extends MsoyServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.mailMan.deliverMessage(
-                    creds.memberId, recipientId, subject, text, object, waiter);
+                    creds.getMemberId(), recipientId, subject, text, object, waiter);
             }
         });
         waiter.waitForResult();
@@ -61,7 +61,7 @@ public class MailServlet extends MsoyServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.mailMan.updatePayload(
-                    creds.memberId, folderId, messageId, payload, waiter);
+                    creds.getMemberId(), folderId, messageId, payload, waiter);
             }
         });
         waiter.waitForResult();
@@ -75,7 +75,7 @@ public class MailServlet extends MsoyServiceServlet
             "deliverMessage[" + folderId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.mailMan.getFolder(creds.memberId, folderId, waiter);
+                MsoyServer.mailMan.getFolder(creds.getMemberId(), folderId, waiter);
             }
         });
         return waiter.waitForResult();
@@ -89,7 +89,7 @@ public class MailServlet extends MsoyServiceServlet
             "getFolders[]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.mailMan.getFolders(creds.memberId, waiter);
+                MsoyServer.mailMan.getFolders(creds.getMemberId(), waiter);
             }
         });
         return waiter.waitForResult();
@@ -103,7 +103,7 @@ public class MailServlet extends MsoyServiceServlet
             "getHeaders[]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.mailMan.getHeaders(creds.memberId, folderId, waiter);
+                MsoyServer.mailMan.getHeaders(creds.getMemberId(), folderId, waiter);
             }
         });
         return waiter.waitForResult();
@@ -117,7 +117,8 @@ public class MailServlet extends MsoyServiceServlet
             "getMessage[" + folderId + ", " + messageId + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
-                MsoyServer.mailMan.getMessage(creds.memberId, folderId, messageId, true, waiter);
+                MsoyServer.mailMan.getMessage(
+                    creds.getMemberId(), folderId, messageId, true, waiter);
             }
         });
         return waiter.waitForResult();

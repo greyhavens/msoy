@@ -66,7 +66,7 @@ public class index extends MsoyEntryPoint
     {
         super.didLogon(creds);
         updateInterface(History.getToken());
-        clientLogon(creds.memberId, creds.token);
+        clientLogon(creds.getMemberId(), creds.token);
     }
 
     // @Override // from MsoyEntryPoint
