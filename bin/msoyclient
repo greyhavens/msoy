@@ -7,9 +7,9 @@
 BINDIR=`dirname $0`
 HOST=`egrep ^server_host $BINDIR/../server.properties | awk '{print $3}'`
 
-PLAYER="flashplayer"
-if [ "$1" = "-debug" ]; then
-    PLAYER="flashplayer-debug"
+PLAYER="flashplayer-debug"
+if [ "$1" = "-nodebug" ]; then
+    PLAYER="flashplayer"
     shift
 fi
 $BINDIR/`uname`/$PLAYER http://$HOST:8080/clients/game-client.swf?$1
