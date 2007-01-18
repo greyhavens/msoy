@@ -4,8 +4,7 @@ import flash.display.Sprite;
 import flash.events.KeyboardEvent;
 import flash.ui.Keyboard;
 
-import com.threerings.ezgame.Game;
-import com.threerings.ezgame.EZGame;
+import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -15,8 +14,7 @@ import com.threerings.ezgame.StateChangedListener;
 
 [SWF(width="530", height="530")]
 public class AlphaBout extends Sprite
-    implements Game, PropertyChangedListener, StateChangedListener,
-               MessageReceivedListener
+    implements PropertyChangedListener, StateChangedListener, MessageReceivedListener
 {
     // theme constants
     public static const NUMBER_OF_THEMES :int = 4;
@@ -43,12 +41,11 @@ public class AlphaBout extends Sprite
         // that only appears if every piece is in a word for NEXT!
         // which should also be mapped to the space bar
         addChild(players);
-    }
 
-    // from Game
-    public function setGameObject (gameObj :EZGame) :void
-    {
-        _gameObject = gameObj;
+        _gameCtrl = new EZGameControl(this);
+        _gameCtrl.registerListener(this);
+        players.setGameControl(_gameCtrl);
+
         stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);
     }
 
@@ -77,13 +74,13 @@ public class AlphaBout extends Sprite
     public function stateChanged (event :StateChangedEvent) :void
     {
         if (event.type == StateChangedEvent.GAME_STARTED) {
-            _gameObject.localChat("Begin your Alpha Bout!\n");
+            _gameCtrl.localChat("Begin your Alpha Bout!\n");
 
             // if we are the first player do some setup
-            if (_gameObject.getMyIndex() == 0) {
+            if (_gameCtrl.getMyIndex() == 0) {
                 setupPieceBag();
                 dealPlayersPieces(INITIAL_PIECES);
-                _gameObject.set("startGame", true);
+                _gameCtrl.set("startGame", true);
             }
             _pieces = new Array(_board.getSize() * _board.getSize());
             // initialize the board to have no letters
@@ -91,7 +88,7 @@ public class AlphaBout extends Sprite
                _pieces[ii] = new Piece(this, ii, Piece.NO_LETTER);
             }
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
-            _gameObject.localChat("Thank you for playing AlphaBout!\n");
+            _gameCtrl.localChat("Thank you for playing AlphaBout!\n");
         }
     }
 
@@ -110,7 +107,7 @@ public class AlphaBout extends Sprite
             // pieces I should be getting at the start and check that.
             /*
             if (valueArray.length == 0) {
-                _gameObject.endGame(_gameObject.getMyIndex());
+                _gameCtrl.endGame(_gameObject.getMyIndex());
             }
             */
             for each (var letterIndex :int in valueArray) {
@@ -172,7 +169,7 @@ public class AlphaBout extends Sprite
             if (_boardComplete) {
                 dealPlayersPieces();
             } else {
-                _gameObject.localChat("Your board is not complete.\n");
+                _gameCtrl.localChat("Your board is not complete.\n");
             }
             break;
         }
@@ -214,9 +211,9 @@ public class AlphaBout extends Sprite
     // deal pieces to players. by default, only one
     protected function dealPlayersPieces (count :int = 1) :void
     {
-        var playerNames :Array = _gameObject.getPlayerNames();
+        var playerNames :Array = _gameCtrl.getPlayerNames();
         for (var ii :int = 0; ii < playerNames.length; ii++) {
-            _gameObject.dealFromCollection(
+            _gameCtrl.dealFromCollection(
                 PIECE_BAG, count, NEW_PIECE, null, ii);
         }
     }
@@ -234,7 +231,7 @@ public class AlphaBout extends Sprite
                 ii++;
             }
         }
-        _gameObject.setCollection(PIECE_BAG, bag);
+        _gameCtrl.setCollection(PIECE_BAG, bag);
     }
 
     // find a square in _pieces towards the bottom that is empty
@@ -323,7 +320,7 @@ public class AlphaBout extends Sprite
             }
         }
 
-      _gameObject.localChat("Current score: " + _currentScore + "\n");
+      _gameCtrl.localChat("Current score: " + _currentScore + "\n");
      // TODO potentially set a value that says whether the whole board has been
      // completed.. maybe just return true or false from this method 
     }
@@ -426,6 +423,6 @@ public class AlphaBout extends Sprite
         /* W's */ 4, /* X's */ 8, /* Y's */ 4, /* Z's */ 10)
 
     /** Our game object. */
-    protected var _gameObject :EZGame;
+    protected var _gameCtrl :EZGameControl;
 }
 }
