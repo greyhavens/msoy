@@ -59,7 +59,6 @@ import com.threerings.msoy.world.data.MemoryEntry;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.RoomObject;
 
-import com.threerings.util.HashMap;
 
 /**
  * A base sprite that concerns itself with the mundane details of
@@ -190,12 +189,6 @@ public class MsoySprite extends MediaContainer
         }
 
         locationUpdated();
-    }
-
-    /** A callback from the move. */
-    public function moveCompleted (orient :Number) :void
-    {
-        // nada
     }
 
     public function setActive (active :Boolean) :void

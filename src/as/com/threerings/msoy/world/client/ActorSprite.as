@@ -120,8 +120,8 @@ public class ActorSprite extends MsoySprite
         // set the orientation towards the new location
         setOrientation(destLoc.orient, false);
 
-        _move = new SceneMove(this, scene, this.loc, destLoc);
-        _move.play();
+        _move = new SceneMover(this, scene, this.loc, destLoc);
+        _move.start();
         appearanceChanged();
     }
 
@@ -175,10 +175,11 @@ public class ActorSprite extends MsoySprite
         super.shutdown(completely);
     }
 
-    override public function moveCompleted (orient :Number) :void
+    /**
+     * A callback from our scene mover.
+     */
+    public function moveCompleted (orient :Number) :void
     {
-        super.moveCompleted(orient);
-
         _move = null;
         if (parent is RoomView) {
             (parent as RoomView).moveFinished(this);
@@ -246,6 +247,6 @@ public class ActorSprite extends MsoySprite
 
     protected var _label :TextField;
     protected var _occInfo :ActorInfo;
-    protected var _move :SceneMove;
+    protected var _move :SceneMover;
 }
 }
