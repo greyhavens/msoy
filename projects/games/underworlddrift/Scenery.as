@@ -22,12 +22,13 @@ public class Scenery extends Sprite
     /**
      * Called when the objects should be re-scaled for display in a new frame.
      */
-    public function updateItems (translateRotate :Matrix, distance :Number, maxScale :Number,
-        cameraHeight :Number, maxStripHeight :int) :void
+    public function updateItems (translateRotate :Matrix, distance :Number, minScale :Number,
+        maxScale :Number, cameraHeight :Number, maxStripHeight :int) :void
     {
         var thisTransform :Matrix = new Matrix();
-        var viewRect :Rectangle = new Rectangle(-distance / 2, -distance, distance, 
-            distance - distance / maxScale);
+        var maxDistance :Number = distance / minScale;
+        var viewRect :Rectangle = new Rectangle(-maxDistance / 2, -maxDistance, maxDistance, 
+            maxDistance - distance / maxScale);
         var transformedPoint :Point;
         var cursor :IViewCursor = _items.createCursor();
         while (!cursor.afterLast) {
@@ -38,17 +39,16 @@ public class Scenery extends Sprite
             // check if item's origin is in potential display area
             if (viewRect.containsPoint(transformedPoint)) {
                 // scale and translate origin to the display area
-                var rowScaleFactor :Number = 1 + (1 - (((-transformedPoint.y) - 
-                    distance/maxScale) / (distance - distance/maxScale))) * (maxScale - 1);
-                thisTransform.scale(rowScaleFactor, rowScaleFactor);
-                var thisHeight :Number = cameraHeight * (rowScaleFactor - 1);
-                thisTransform.translate(UnderworldDrift.DISPLAY_WIDTH / 2, distance + 300 - thisHeight);
+                var scaleFactor :Number = distance / (-transformedPoint.y);
+                var thisHeight :Number = ((-transformedPoint.y) / maxDistance) * 300;
+                thisTransform.scale(scaleFactor, scaleFactor);
+                thisTransform.translate(UnderworldDrift.DISPLAY_WIDTH / 2, distance);
                 transformedPoint = thisTransform.transformPoint(cursor.current.origin);
                 cursor.current.sprite.x = transformedPoint.x;
                 cursor.current.sprite.y = transformedPoint.y;
                 // scale item
-                cursor.current.sprite.width = cursor.current.startWidth * rowScaleFactor;
-                cursor.current.sprite.height = cursor.current.startHeight * rowScaleFactor;
+                cursor.current.sprite.width = cursor.current.startWidth * scaleFactor;
+                cursor.current.sprite.height = cursor.current.startHeight * scaleFactor;
             } else {
                 // make sure its off the display
                 cursor.current.sprite.x = cursor.current.sprite.y = -Ground.HALF_IMAGE_SIZE;

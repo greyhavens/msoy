@@ -102,8 +102,8 @@ public class Ground extends Sprite
                     UnderworldDrift.KART_LOCATION.x, 0)));
             }
         }
-        _scenery.updateItems(translateRotate, _camera.distance, 1 + HEIGHT / _camera.height,
-            _camera.height, BEGINNING_STRIP_HEIGHT);
+        _scenery.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
+            HEIGHT / _camera.height, _camera.height, BEGINNING_STRIP_HEIGHT);
     }
 
     /** track instance */
