@@ -38,7 +38,7 @@ public class UnderworldDrift extends Sprite
         // "sky"
         var colorBackground :Shape = new Shape();
         colorBackground.graphics.beginFill(0x8888FF);
-        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, SKY_HEIGHT);
+        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, SKY_HEIGHT + 5);
         colorBackground.graphics.endFill();
         addChild(colorBackground);
 

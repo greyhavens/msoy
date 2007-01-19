@@ -16,17 +16,20 @@ public class Track extends Sprite
     public function Track ()
     {
         var backgroundImage :Shape;
-        for (var ii :int = 0; ii < 4; ii++) {
+        for (var ii :int = 0; ii < 6; ii++) {
             backgroundImage = new Shape();
             backgroundImage.graphics.beginBitmapFill((new BACKGROUND_IMAGE() as Bitmap).bitmapData);
-            backgroundImage.graphics.drawRect(0, 0, Ground.IMAGE_SIZE * 1.5, 
-                Ground.IMAGE_SIZE * 1.5);
+            backgroundImage.graphics.drawRect(0, 0, Ground.IMAGE_SIZE * 2, Ground.IMAGE_SIZE * 2);
             backgroundImage.graphics.endFill();
-            if (ii > 1) {
-                backgroundImage.x = -Ground.IMAGE_SIZE * 1.5;
+            if (ii < 3) {
+                backgroundImage.x = -Ground.IMAGE_SIZE * 2;
             } 
-            if (ii == 1 || ii == 3) {
+            if ((ii % 3) == 0) {
+                backgroundImage.y = -Ground.IMAGE_SIZE * 3.5;
+            } else if ((ii % 3) == 1) {
                 backgroundImage.y = -Ground.IMAGE_SIZE * 1.5;
+            } else {
+                backgroundImage.y = Ground.IMAGE_SIZE * 0.5;
             }
             addChild(backgroundImage);
         }

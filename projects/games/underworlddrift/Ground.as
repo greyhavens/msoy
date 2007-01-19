@@ -33,7 +33,7 @@ public class Ground extends Sprite
         var stripHeightCeiling :int = 0;
         var totalHeight :Number = 0;
         var currentRegion :Number = 1;
-        for (var strip :int = 0; totalHeight <= HEIGHT; strip++) {
+        for (var strip :int = 0; totalHeight < HEIGHT - 1; strip++) {
             // split the image area into equal-height regions, from the beginning height to 1
             if ((totalHeight / HEIGHT) >= currentRegion / BEGINNING_STRIP_HEIGHT) {
                 // avoid boundary condition resulting in stripHeight = 0
@@ -42,7 +42,7 @@ public class Ground extends Sprite
             }
             totalHeight += stripHeight;
             // draw from the bottom up
-            _strips[strip] = new BitmapData(WIDTH, stripHeight, false);
+            _strips[strip] = new BitmapData(WIDTH, stripHeight, true, 0);
             stripImage = new Bitmap(_strips[strip]);
             stripImage.y = HEIGHT - totalHeight;
             addChildAt(stripImage, strip);
@@ -89,7 +89,7 @@ public class Ground extends Sprite
             // move transformed space to view space
             thisTransform.translate(WIDTH / 2,  _camera.distance + thisHeight);
             // blank out this strip
-            _strips[strip].draw(new BitmapData(WIDTH, thisHeight));
+            _strips[strip].draw(new BitmapData(WIDTH, thisHeight, true, 0));
             // draw the track using the calculated transform and a clipping rect
             var clipping :Rectangle = new Rectangle(0, 0, WIDTH, thisHeight);
             _strips[strip].draw(_track, thisTransform, null, null, clipping);
@@ -128,6 +128,6 @@ public class Ground extends Sprite
     protected static const WIDTH :int = UnderworldDrift.DISPLAY_WIDTH;
 
     /** The height of the largest strip, at the bottom of the image. */
-    protected static const BEGINNING_STRIP_HEIGHT :int = 6;
+    protected static const BEGINNING_STRIP_HEIGHT :int = 10;
 }
 }
