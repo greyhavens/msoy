@@ -1,19 +1,41 @@
 /** Make GWT display some sensible defaults. */
 .gwt-TabBar .gwt-TabBarItem {
-   border: 1px solid;
-   padding: 5px;
-   background: #CCCCFF;
+  border: 1px solid;
+  padding: 5px;
+  background: #CCCCFF;
 }
 
 .gwt-TabBar .gwt-TabBarItem-selected {
-   border: 2px solid;
-   background: #6699CC;
+  border: 2px solid;
+  background: #6699CC;
 }
 
 .gwt-TabPanel .Bottom { 
-   border: 1px solid;
-   background: #CCFF99;
-   padding: 5px;
+  border: 1px solid;
+  background: #CCFF99;
+  padding: 5px;
+}
+
+/* MenuBar styles */
+.gwt-MenuBar {
+  background-color: white;
+  border: 1px solid black; 
+  cursor: default;
+  font-size: 14px;
+}
+
+.gwt-MenuItem-selected {
+  background-color: lightblue;
+}
+
+.gwt-MenuBar a {
+  text-decoration: none;
+  color: black;
+  cursor: default;
+}
+
+.gwt-MenuBar .Disabled {
+  color: gray;
 }
 
 /** Form element styles. */
@@ -66,6 +88,13 @@ body {
   background-repeat: repeat;
   padding-left: 2px;
   padding-right: 2px;
+
+  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-size: 12px;
+  color: white;
+
+  cursor: pointer;
+  cursor: hand;
 }
 
 .naviPanel .Link a {
@@ -92,6 +121,13 @@ body {
   background-repeat: repeat;
   padding-left: 2px;
   padding-right: 2px;
+
+  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-size: 12px;
+  color: black;
+
+  cursor: pointer;
+  cursor: hand;
 }
 
 .naviPanel .SelLink a {

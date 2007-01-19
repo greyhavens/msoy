@@ -87,6 +87,8 @@ public class index extends MsgsEntryPoint
     // @Override // from MsoyEntryPoint
     protected void didLogon (WebCreds creds)
     {
+        super.didLogon(creds);
+
         if (_memberId == -1) {
             displayMemberPage(creds.getMemberId());
         }

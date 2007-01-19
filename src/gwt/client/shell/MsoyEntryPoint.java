@@ -67,11 +67,11 @@ public abstract class MsoyEntryPoint
         // initialize our services and translations
         initContext();
 
-        // create our standard navigation panel
-        RootPanel.get("navigation").add(new NaviPanel(_gctx, getPageId()));
-
         // create our standard logon panel
         RootPanel.get("logon").add(_logon = new LogonPanel(_gctx, this));
+
+        // create our standard navigation panel
+        RootPanel.get("navigation").add(_navi = new NaviPanel(_gctx, getPageId(), _logon));
 
         // initialize the logon panel
         _logon.init();
@@ -141,6 +141,7 @@ public abstract class MsoyEntryPoint
     protected void didLogon (WebCreds creds)
     {
         _gctx.creds = creds;
+        _navi.didLogon(creds);
     }
 
     /**
@@ -157,6 +158,7 @@ public abstract class MsoyEntryPoint
     protected void didLogoff ()
     {
         _gctx.creds = null;
+        _navi.didLogoff();
     }
 
     /**
@@ -170,6 +172,7 @@ public abstract class MsoyEntryPoint
     }-*/;
 
     protected ShellContext _gctx;
+    protected NaviPanel _navi;
     protected LogonPanel _logon;
 
     protected HTML _chat;

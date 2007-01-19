@@ -65,6 +65,16 @@ public class LogonPanel extends FlexTable
     }
 
     /**
+     * Requests that we display our logon popup.
+     */
+    public void showLogonPopup ()
+    {
+        LogonPopup popup = new LogonPopup();
+        popup.show();
+        popup.setPopupPosition(Window.getClientWidth() - popup.getOffsetWidth(), HEADER_HEIGHT);
+    }
+
+    /**
      * Clears out our credentials and displays the logon interface.
      */
     public void logoff (boolean notify)
@@ -113,9 +123,7 @@ public class LogonPanel extends FlexTable
     protected void actionClicked ()
     {
         if (_creds == null) {
-            LogonPopup popup = new LogonPopup();
-            popup.show();
-            popup.setPopupPosition(Window.getClientWidth() - popup.getOffsetWidth(), HEADER_HEIGHT);
+            showLogonPopup();
         } else {
             logoff(true);
         }

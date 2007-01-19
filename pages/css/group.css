@@ -60,31 +60,6 @@
     margin-bottom: 9px;
 }
 
-/* MenuBar stuff... annoyingly they aren't even contained in the page's #content div... 
- * never mind the .groupView div.  When things get customized and fancy, these menus should have 
- * a custom classname as well. */
-.gwt-MenuBar {
-    background-color: white; /* opaque-ness, yes please */
-    border: 1px solid black; 
-    cursor: default;
-    font-size: 11px;
-}
-
-.gwt-MenuItem-selected {
-    background-color: lightblue;
-}
-
-.gwt-MenuBar a {
-    text-decoration: none;
-    color: black;
-    cursor: default;
-}
-
-.gwt-MenuBar .Disabled {
-    color: gray;
-}
-
-
 /* GroupList specific formattting */
 .groupList {
     font-size: 11px;

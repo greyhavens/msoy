@@ -49,7 +49,7 @@ public interface MemberServiceAsync
     /**
      * The asynchronous version of {@link MemberService#serializeNeighborhood}.
      */
-    public void serializeNeighborhood (WebCreds creds, int memberId, boolean forGroup,
+    public void serializeNeighborhood (WebCreds creds, int entityId, boolean forGroup,
                                        AsyncCallback callback);
 
     /**

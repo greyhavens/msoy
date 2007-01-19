@@ -37,7 +37,7 @@ public class index extends MsoyEntryPoint
     {
         updateInterface(token);
     }
-    
+
 
     // @Override // from MsoyEntryPoint
     protected void onPageLoad ()
@@ -81,69 +81,70 @@ public class index extends MsoyEntryPoint
     {
         RootPanel.get("content").clear();
         _entryCounter ++;
-        
+
         // don't show the flash client in the GWT shell
         if (!GWT.isScript()) {
             return;
         }
+
         try {
             if (token.startsWith("s")) {
+                // go to a specific scene
                 world("sceneId=" + id(token, 1));
-                return;
-            }
-            if (token.startsWith("g")) {
+
+            } else if (token.startsWith("g")) {
+                // go to a specific group's scene group
                 world("groupHome=" + id(token, 1));
-                return;
-            }
-            if (token.startsWith("m")) {
+
+            } else if (token.startsWith("m")) {
+                // go to a specific member's home
                 world("memberHome=" + id(token, 1));
-                return;
+
+            } else if (token.startsWith("ng")) {
+                // go to the neighborhood around the specified group
+                displayNeighborhood(_entryCounter, id(token, 2), true);
+
+            } else if (token.startsWith("nm")) {
+                // go to the neighborhood around the specified member
+                displayNeighborhood(_entryCounter, id(token, 2), false);
+
+            } else if (token.startsWith("p")) {
+                // display popular places by request
+                displayHotSpots(_entryCounter);
+
+            } else if (_ctx.creds != null) {
+                // we're logged in, go to our home
+                world(null);
+
+            } else {
+                // we're not logged in, show popular places
+                displayHotSpots(_entryCounter);
             }
-            if (token.startsWith("ng")) {
-                final int requestEntryCount = _entryCounter;
-                _ctx.membersvc.serializeNeighborhood(
-                    _ctx.creds, id(token, 2), true, new AsyncCallback() {
-                        public void onSuccess (Object result) {
-                            if (requestEntryCount == _entryCounter) {
-                                neighborhood((String) result);
-                            }
-                        }
-                        public void onFailure (Throwable caught) {
-                            if (requestEntryCount == _entryCounter) {
-                            }
-                        }
-                    });
-                return;
-            }
-            if (token.startsWith("nm")) {
-                final int requestEntryCount = _entryCounter;
-                _ctx.membersvc.serializeNeighborhood(
-                    _ctx.creds, id(token, 2), false, new AsyncCallback() {
-                        public void onSuccess (Object result) {
-                            if (requestEntryCount == _entryCounter) {
-                                neighborhood((String) result);
-                            }
-                        }
-                        public void onFailure (Throwable caught) {
-                            if (requestEntryCount == _entryCounter) {
-                            }
-                        }
-                    });
-                return;
-            }
+
         } catch (NumberFormatException e) {
-            // fall through
+            // if all else fails, display popular places
+            displayHotSpots(_entryCounter);
         }
-        // if we got crud in the URL, let's rewrite it (and trigger another call to ourselves)
-        if (token.length() > 0) {
-            History.newItem("");
-            return;
-        }
-        if (_ctx.creds != null) {
-            world(null);
-            return;
-        }
-        final int requestEntryCount = _entryCounter;
+    }
+
+    protected void displayNeighborhood (final int requestEntryCount, int entityId, boolean isGroup)
+    {
+        _ctx.membersvc.serializeNeighborhood(_ctx.creds, entityId, isGroup, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                if (requestEntryCount == _entryCounter) {
+                    neighborhood((String) result);
+                }
+            }
+            public void onFailure (Throwable caught) {
+                if (requestEntryCount == _entryCounter) {
+                    setContent(new Label(_ctx.serverError(caught)));
+                }
+            }
+        });
+    }
+
+    protected void displayHotSpots (final int requestEntryCount)
+    {
         _ctx.membersvc.serializePopularPlaces(_ctx.creds, 20, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (requestEntryCount == _entryCounter) {

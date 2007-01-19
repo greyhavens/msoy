@@ -59,9 +59,9 @@ public interface MemberService extends RemoteService
         throws ServiceException;
 
     /**
-     * Fetch neighborhood data for a given member in JSON-serialized form.
+     * Fetch neighborhood data for a given member or group in JSON-serialized form.
      */
-    public String serializeNeighborhood (WebCreds creds, int memberId, boolean forGroup)
+    public String serializeNeighborhood (WebCreds creds, int entityId, boolean forGroup)
         throws ServiceException;
 
     /**

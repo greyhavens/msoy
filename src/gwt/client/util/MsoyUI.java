@@ -45,6 +45,17 @@ public class MsoyUI
         return label;
     }
 
+    /**
+     * Creates a label that triggers an action using the supplied text and listener. The label will
+     * not be specially styled.
+     */
+    public static Label createPlainActionLabel (String text, ClickListener listener)
+    {
+        Label label = new Label(text);
+        label.addClickListener(listener);
+        return label;
+    }
+
 //     /**
 //      * Creates a pair of submit and cancel buttons in a horizontal row.
 //      */
