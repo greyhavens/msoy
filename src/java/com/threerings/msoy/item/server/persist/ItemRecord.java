@@ -57,7 +57,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final int FLAG_FLAGGED_COPYRIGHT= 0x1 << 1;
     
     /** Indicates that this item has been flagged by an administrator as mature content. */
-    public static final int FLAG_MATURED = 0x1 << 2;
+    public static final int FLAG_MATURE = 0x1 << 2;
 
     public static ItemRecord newRecord (Item item) {
         if (item instanceof Document) {
