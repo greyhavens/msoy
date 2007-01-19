@@ -42,16 +42,25 @@ public class CatalogServlet extends MsoyServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public List loadCatalog (byte type, byte sortBy, String search, int offset, int rows)
+    public List loadCatalog (int memberId, byte type, byte sortBy, String search, int offset,
+                             int rows)
         throws ServiceException
     {
         ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
 
         List<CatalogListing> list = new ArrayList<CatalogListing>();
         try {
+            boolean mature = false;
+            if (memberId > 0) {
+                MemberRecord mRec = MsoyServer.memberRepo.loadMember(memberId);
+                if (mRec != null) {
+                    mature |= mRec.isSet(MemberRecord.FLAG_SHOW_MATURE);
+                }
+            }
+            
             // fetch catalog records and loop over them
             IntSet members = new ArrayIntSet();
-            for (CatalogRecord record : repo.loadCatalog(sortBy, search, offset, rows)) {
+            for (CatalogRecord record : repo.loadCatalog(sortBy, mature, search, offset, rows)) {
                 // convert them to listings
                 list.add(record.toListing());
                 // and keep track of which member names we need to look up

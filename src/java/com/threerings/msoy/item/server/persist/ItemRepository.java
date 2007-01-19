@@ -198,8 +198,10 @@ public abstract class ItemRepository<
      *       to be a single join in a sane universe, but it makes significant demands on the
      *       Depot code that we don't know how to handle yet (or possibly some fiddling with
      *       the Item vs Catalog class hierarchies). 
+     * @param mature 
      */
-    public Collection<CAT> loadCatalog (byte sortBy, String search, int offset, int rows)
+    public Collection<CAT> loadCatalog (byte sortBy, boolean mature, String search, int offset,
+                                        int rows)
         throws PersistenceException
     {
         SQLExpression sortExp;
@@ -218,7 +220,7 @@ public abstract class ItemRepository<
 
         QueryClause[] clauses = new QueryClause[] {
             new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
-                getItemClass(), ItemRecord.ITEM_ID),
+                     getItemClass(), ItemRecord.ITEM_ID),
             OrderBy.descending(sortExp),
             new Limit(offset, rows)
         };
@@ -233,6 +235,13 @@ public abstract class ItemRepository<
             };
             clauses = ArrayUtil.append(clauses, new Where(searchExp));
         };
+
+        if (!mature) {
+            // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
+            SQLOperator matureExp = new Equals(
+                    new BitAnd(ItemRecord.FLAGS, ItemRecord.FLAG_MATURE), 0);
+            clauses = ArrayUtil.append(clauses, new Where(matureExp));
+        }
 
         // fetch all the catalog records of interest
         Collection<CAT> records = findAll(getCatalogClass(), clauses);

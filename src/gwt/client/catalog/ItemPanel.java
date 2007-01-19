@@ -47,7 +47,7 @@ public class ItemPanel extends DockPanel
         _items.setModel(new DataModel() {
             public void doFetchRows (int start, int count, final AsyncCallback callback) {
                 setStatus("Loading...");
-                _ctx.catalogsvc.loadCatalog(
+                _ctx.catalogsvc.loadCatalog(_ctx.creds != null ? _ctx.creds.getMemberId() : 0,
                     type, sortBy, search, start, count, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         setStatus("");

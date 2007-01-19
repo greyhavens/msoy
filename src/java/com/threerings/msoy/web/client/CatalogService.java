@@ -20,9 +20,10 @@ import com.threerings.msoy.web.data.WebCreds;
 public interface CatalogService extends RemoteService
 {
     /**
-     * Loads all catalogue items of the specified type.
+     * Loads all catalogue items of the specified type. If memberId == 0, it's a guest request.
      */
-    public List loadCatalog (byte type, byte sortBy, String search, int offset, int rows)
+    public List loadCatalog (int memberId, byte type, byte sortBy, String search, int offset,
+                             int rows)
         throws ServiceException;
 
     /**
