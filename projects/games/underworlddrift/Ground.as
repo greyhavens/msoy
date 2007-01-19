@@ -83,12 +83,8 @@ public class Ground extends Sprite
             totalHeight += thisHeight;
             thisTransform.identity();
             thisTransform.concat(translateRotate);
-            // get the camera to the origin
-            //thisTransform.translate(0 - _camera.position.x, 0 - _camera.position.y);
-            // rotate
-            //thisTransform.rotate(0 - _camera.angle);
             // scale
-            var scaleFactor :Number = (_camera.height + HEIGHT - totalHeight) / _camera.height;
+            var scaleFactor :Number = (HEIGHT - totalHeight) / _camera.height;
             thisTransform.scale(scaleFactor,scaleFactor);
             // move transformed space to view space
             thisTransform.translate(WIDTH / 2,  _camera.distance + thisHeight);
