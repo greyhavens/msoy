@@ -102,4 +102,10 @@ public interface ItemService extends RemoteService
      */
     public TagHistory tagItem (WebCreds creds, ItemIdent item, String tag, boolean set)
         throws ServiceException;
+    
+    /**
+     * Atomically sets or clears one or more flags on an item.
+     */
+    public void setFlags (WebCreds creds, ItemIdent ident, byte mask, byte values)
+        throws ServiceException;
 }

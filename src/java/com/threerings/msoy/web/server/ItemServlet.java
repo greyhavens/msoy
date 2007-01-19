@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.util.Collection;
 
+import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
@@ -211,5 +212,24 @@ public class ItemServlet extends MsoyServiceServlet
             }
         });
         return waiter.waitForResult();
+    }
+    
+    // from interface ItemService
+    public void setFlags (final WebCreds creds, final ItemIdent ident, final byte mask,
+                          final byte value)
+        throws ServiceException
+    {
+        // only admins can flag an item as actually mature
+        if (!creds.isAdmin && (mask & Item.FLAG_MATURE) != 0) {
+            throw new ServiceException(ItemCodes.ACCESS_DENIED);
+        }
+        final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
+                "setFlags[" + ident + ", " + mask + ", " + value + "]");
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    MsoyServer.itemMan.setFlags(ident, mask, value, waiter);
+                }
+            });
+            waiter.waitForResult();
     }
 }

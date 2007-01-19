@@ -74,4 +74,9 @@ public interface ItemServiceAsync
      */
     public void tagItem (
         WebCreds creds, ItemIdent item, String tag, boolean set, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ItemService.setFlags}.
+     */
+    public void setFlags (WebCreds creds, ItemIdent ident, byte mask, byte values);
 }
