@@ -28,7 +28,7 @@ public class Scenery extends Sprite
         var thisTransform :Matrix = new Matrix();
         var maxDistance :Number = distance / minScale;
         var viewRect :Rectangle = new Rectangle(-maxDistance / 2, -maxDistance, maxDistance, 
-            maxDistance - distance / maxScale);
+            maxDistance);// - distance / maxScale);
         var transformedPoint :Point;
         var cursor :IViewCursor = _items.createCursor();
         while (!cursor.afterLast) {
