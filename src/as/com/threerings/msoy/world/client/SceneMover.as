@@ -26,7 +26,7 @@ public class SceneMover
         var dx :Number = scene.getWidth() * (dest.x - src.x);
         var dy :Number = 400 * (dest.y - src.y);
         var dz :Number = scene.getDepth() * (dest.z - src.z);
-        _duration = 2 * Math.sqrt(dx * dx + dy * dy + dz * dz);
+        _duration = int(2 * Math.sqrt(dx * dx + dy * dy + dz * dz));
     }
 
     /**
@@ -51,7 +51,7 @@ public class SceneMover
      */
     protected function doInterval () :void
     {
-        var currentTime :Number = _intervalTime - _startTime;
+        var currentTime :int = _intervalTime - _startTime;
         if (currentTime >= _duration) {
             // golly, we're done!
             _sprite.setLocation(_dest);
@@ -79,10 +79,10 @@ public class SceneMover
     protected var _dest :Array;
 
     /** The amount of time we'll spend moving. */
-    protected var _duration :Number;
+    protected var _duration :int;
 
     /** The time at which this event started. */
-    protected var _startTime :Number;
+    protected var _startTime :int;
 
     // END: instance methods and variables
     //======================================================================
@@ -104,7 +104,7 @@ public class SceneMover
         _timer.start();
 
         // set up the start
-        if (isNaN(_intervalTime)) {
+        if (_intervalTime == -1) {
             _intervalTime = getTimer();
         }
 
@@ -125,7 +125,7 @@ public class SceneMover
         }
 
         if (_movers.length == 0) {
-            _intervalTime = NaN;
+            _intervalTime = -1;
             _timer.reset();
         }
     }
@@ -148,7 +148,7 @@ public class SceneMover
      * The easing function we use to move objects around the scene.
      */
     protected static function moveFunction (
-        stamp :Number, initial :Number, delta :Number, duration :Number) :Number
+        stamp :int, initial :Number, delta :Number, duration :int) :Number
     {
         return (delta * stamp) / duration + initial;
     }
@@ -160,6 +160,6 @@ public class SceneMover
     protected static var _movers :Array = [];
 
     /** The time at which the last event was fired. */
-    protected static var _intervalTime :Number = NaN;
+    protected static var _intervalTime :int = -1;
 }
 }
