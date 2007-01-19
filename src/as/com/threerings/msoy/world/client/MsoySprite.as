@@ -135,44 +135,7 @@ public class MsoySprite extends MediaContainer
     public function setEditing (editing :Boolean) :void
     {
         _editing = editing;
-        if (editing) {
-            mouseEnabled = true;
-            mouseChildren = false;
-
-            // unlisten to any current mouse handlers
-//            removeEventListener(MouseEvent.ROLL_OVER, mouseOver);
-//            removeEventListener(MouseEvent.ROLL_OUT, mouseOut);
-//            removeEventListener(MouseEvent.CLICK, mouseClick);
-            //removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-
-        } else {
-            // set up mouse listeners
-            if (isInteractive()) {
-                mouseEnabled = false; //true;
-                mouseChildren = true;
-
-                if (hasAction()) {
-//                    addEventListener(MouseEvent.ROLL_OVER, mouseOver);
-//                    addEventListener(MouseEvent.ROLL_OUT, mouseOut);
-//                    addEventListener(MouseEvent.CLICK, mouseClick);
-                    //addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
-                }
-
-            } else {
-            /*
-                mouseEnabled = false;
-                mouseChildren = false;
-                */
-                // TODO: Oh god, we have got to figure this shit out.
-                // It seems that things behave differently depending
-                // on whether the loaded content is an image or
-                // a SWF. Perhaps we need to check that and do the right
-                // thing in either case.
-                // Things may be broken in the currently checked-in state.
-                mouseEnabled = true;
-                mouseChildren = true;
-            }
-        }
+        configureMouseProperties();
     }
 
     /**
@@ -239,8 +202,12 @@ public class MsoySprite extends MediaContainer
     {
         alpha = active ? 1.0 : 0.4;
         blendMode = active ? BlendMode.NORMAL : BlendMode.LAYER;
-        mouseEnabled = active && isInteractive();
-        mouseChildren = active && isInteractive();
+        if (active) {
+            configureMouseProperties();
+        } else {
+            mouseEnabled = false;
+            mouseChildren = false;
+        }
     }
 
     /**
@@ -347,22 +314,29 @@ public class MsoySprite extends MediaContainer
         callUserCode("gotControl_v1");
     }
 
-    // TODO: this isn't really needed, because this method is
-    // not used for our mouseOver hittesting.
-    // But: it boggles my mind that the standard hitTestPoint() on a 
-    // Bitmap doesn't seem to actually test the pixels in its BitmapData!!
+    /**
+     * This method is NOT used in normal mouseOver calculations.
+     * Normal mouseOver stuff seems to be completely broken for transparent
+     * images: the transparent portion is a 'hit'. I've (Ray) tried
+     * just about everything to fix this, more than once.
+     */
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
+        // if we're holding a bitmap, do something smarter than the
+        // flash built-in and actually check for *GASP* transparent pixels!
         try {
-// TODO: merely accessing contentLoaderInfo causes SecurityWarnings. Wahh???!
-//            if (_media is Loader &&
-//                    Loader(_media).contentLoaderInfo.childAllowsParent &&
-//                    (Loader(_media).content is Bitmap)) {
-//                var b :Bitmap = Bitmap(Loader(_media).content);
-//                var p :Point = b.globalToLocal(new Point(x, y));
-//                return b.bitmapData.hitTest(new Point(0, 0), 0xFF, p);
-//            }
+            if (_media is Loader && _desc.isImage() &&
+                    // the childAllowsParent check here causes a security
+                    // violation if it doesn't. WHAT THE FUCK. So we also
+                    // do the isImage() check above in addition to
+                    // try to head-off security errors at the pass
+                    Loader(_media).contentLoaderInfo.childAllowsParent &&
+                    (Loader(_media).content is Bitmap)) {
+                var b :Bitmap = Bitmap(Loader(_media).content);
+                var p :Point = b.globalToLocal(new Point(x, y));
+                return b.bitmapData.hitTest(new Point(0, 0), 0xFF, p);
+            }
         } catch (err :Error) {
             // nada
         }
@@ -392,45 +366,6 @@ public class MsoySprite extends MediaContainer
         super.shutdown(completely);
     }
 
-//    /**
-//     * Send a message to the client swf that we're representing.
-//     */
-//    protected function sendMessage (name :String, value :Object) :Object
-//    {
-////        trace("sending [" + type + "=" + msg + "]");
-//
-//
-//// Note:
-//// I'm thinking that we just do not support old swfs with our interaction
-//// API. This makes this AVM1 nonsense just go away.
-//// If it turns out that this isn't possible, then perhaps we should
-//// assign a different mimetype to old swfs so that we know as part of the
-//// MediaDesc that it's AVM1
-//
-//        // do it both ways for now
-//
-////        // old way
-////        if (_oldDispatch == null) {
-////            _oldDispatch = new LocalConnection();
-////            _oldDispatch.allowDomain("*");
-////            _oldDispatch.addEventListener(
-////                StatusEvent.STATUS, onLocalConnStatus);
-////        }
-////        try {
-////            _oldDispatch.send("_msoy" + _id, type, vals.join(";"));
-////        } catch (e :Error) {
-////            // nada
-////        }
-//
-//        // and the new way
-//        // simply post an event across the security boundary
-//        var de :DynamicEvent = new DynamicEvent("msoyMessage", false, false);
-//        de.msoyName = name;
-//        de.msoyValue = value;
-//        _dispatch.dispatchEvent(de);
-//        return de.msoyResponse;
-//    }
-
     protected function setup (desc :MediaDesc, ident :ItemIdent) :void
     {
         if (Util.equals(desc, _desc)) {
@@ -442,7 +377,7 @@ public class MsoySprite extends MediaContainer
 
         setMedia(desc.getMediaPath());
         scaleUpdated();
-        setEditing(false);
+        configureMouseProperties();
     }
 
     override protected function setupSwfOrImage (url :String) :void
@@ -459,6 +394,35 @@ public class MsoySprite extends MediaContainer
         // then, grab a reference to the shared event dispatcher
         Loader(_media).contentLoaderInfo.sharedEvents.addEventListener(
             "msoyQuery", handleUserCodeQuery);
+    }
+
+    protected function configureMouseProperties () :void
+    {
+        // TODO: Oh god, we have got to figure this shit out.
+        // It seems that things behave differently depending
+        // on whether the loaded content is an image or
+        // a SWF. Perhaps we need to check that and do the right
+        // thing in either case.
+        // Things may be broken in the currently checked-in state.
+
+        if (_editing) {
+            mouseEnabled = true;
+            mouseChildren = false;
+
+        } else {
+            if (isInteractive()) {
+                mouseEnabled = false; //true;
+                mouseChildren = true;
+
+            } else {
+            /*
+                mouseEnabled = false;
+                mouseChildren = false;
+                */
+                mouseEnabled = true;
+                mouseChildren = true;
+            }
+        }
     }
 
     /**
@@ -570,113 +534,6 @@ public class MsoySprite extends MediaContainer
     {
         return 0x40e0e0;
     }
-
-    /**
-     * Callback function.
-     */
-    protected function mouseOver (event :MouseEvent) :void
-    {
-        setGlow(true);
-    }
-
-    // TODO: remove. This was used as an alternate to mouseOver/mouseOut,
-    // to try to fix transparent pixels, but the problem is that even if
-    // we decide not to glow here, no other sprite will receive
-    // the same mouse event to make a decision about it
-    protected function mouseMoved (event :MouseEvent) :void
-    {
-        setGlow(hitTestPoint(event.stageX, event.stageY, true));
-    }
-
-/**
-  The following is attempting to make us only glow when the mouse is
-  over a non-transparent pixel. However, there seems to be a bug in
-  hitTestPoint that is either considering transparent pixels 'hit', or 
-  the shapeFlag paramter is being ignored.
-  Either way, I'm going to operate on the assumption that mouseOver is doing
-  proper hit-test stuff (since it seems to for swfs) and that the bug with
-  mouseOver triggering over transparent pixels is the same bug that is
-  preventing the following workaround to work. I'll leave everything simple
-  and hope that it just works correctly in the future when this bug is fixed.
-
-    protected function mouseMoved (event :MouseEvent) :void
-    {
-        var disp :DisplayObject = _media;
-        if (disp is Loader) {
-            try {
-                disp = (disp as Loader).content;
-                trace("Got happy disp : " + disp);
-            } catch (err :Error) {
-                trace("couldn't access content");
-            }
-        }
-
-        var hit :Boolean = disp.hitTestPoint(event.stageX, event.stageY, true);
-        trace("No shit, point (" + event.localX + ", " + event.localY +
-            ") hits " + hit);
-        setGlow(hit);
-    }
-*/
-
-    /**
-     * Callback function.
-     */
-    protected function mouseOut (event :MouseEvent) :void
-    {
-        setGlow(false);
-    }
-
-     /*
-    protected function mouseClickCap (event :MouseEvent) :void
-    {
-        if (!stopClicks) {
-            return;
-        }
-        trace("mouse clicked, will kibosh. target=" + event.target +
-            ", phase=" + event.eventPhase +
-            ", bubbles=" + event.bubbles);
-        event.stopImmediatePropagation();
-
-        var timer :Timer = new Timer(1000, 1);
-        timer.addEventListener(TimerEvent.TIMER, function (evt :Event) :void {
-            var mousey :MouseEvent = new MouseEvent(
-                MouseEvent.CLICK, event.bubbles, event.cancelable,
-                event.localX, event.localY, event.relatedObject);
-            trace("now dispatching alternate click");
-            var oldMouseChildren :Boolean = mouseChildren;
-            mouseChildren = true;
-            stopClicks = false;
-            (event.target as IEventDispatcher).dispatchEvent(mousey);
-            //_dispatch.dispatchEvent(mousey);
-            mousey = new MouseEvent(
-                MouseEvent.CLICK, true, false,
-                30, 30, _loader);
-            _loader.dispatchEvent(mousey);
-            //_loader.dispatchEvent(mousey);
-            stopClicks = true;
-            mouseChildren = oldMouseChildren;
-        });
-        timer.start();
-    }
-
-    var stopClicks :Boolean = true;
-    */
-
-/*
-    protected function tick (event :Event) :void
-    {
-        if (!mouseEnabled) {
-            trace("mouse was disabled on media: " + _desc.URL);
-            mouseEnabled = true;
-        }
-        if (mouseChildren) {
-            trace("mousechildren enabled on " + _desc.URL);
-            // setting this to false makes swfs not capture mouse input
-            // so that mouse hover, etc, work.
-            mouseChildren = false;
-        }
-    }
-*/
 
     /**
      * Handle a query from our usercode content.
