@@ -73,6 +73,7 @@ public class index extends MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
+
         String initToken = History.getToken();
         if (initToken.length() > 0) {
             onHistoryChanged(initToken);

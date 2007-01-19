@@ -69,19 +69,6 @@ public class index extends MsgsEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
-
-        String initToken = History.getToken();
-        if (initToken.length() > 0) {
-            onHistoryChanged(initToken);
-
-        } else if (_ctx.creds == null) {
-            // TODO: display member search interface
-            setContent(new Label(_ctx.msgs.indexLogon()));
-
-        } else {
-            // if we're logged on and not displaying someone elses member page, display our own
-            displayMemberPage(_ctx.creds.getMemberId());
-        }
     }
 
     // @Override // from MsoyEntryPoint
@@ -90,7 +77,28 @@ public class index extends MsgsEntryPoint
         super.didLogon(creds);
 
         if (_memberId == -1) {
-            displayMemberPage(creds.getMemberId());
+            String initToken = History.getToken();
+            if (initToken.length() > 0) {
+                onHistoryChanged(initToken);
+            } else {
+                displayMemberPage(creds.getMemberId());
+            }
+        }
+    }
+
+    // @Override // from MsoyEntryPoint
+    protected void didLogoff ()
+    {
+        super.didLogoff();
+
+        if (_memberId == -1) {
+            String initToken = History.getToken();
+            if (initToken.length() > 0) {
+                onHistoryChanged(initToken);
+            } else {
+                // TODO: display member search interface
+                setContent(new Label(_ctx.msgs.indexLogon()));
+            }
         }
     }
 

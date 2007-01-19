@@ -29,9 +29,6 @@ public class NaviPanel extends FlexTable
 
         _ctx = ctx;
         _logon = logon;
-
-        // start off with the logged off menus
-        didLogoff();
     }
 
     /**

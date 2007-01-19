@@ -7,6 +7,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 
+import com.threerings.msoy.web.data.WebCreds;
+
 import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
 import client.shell.ShellContext;
@@ -65,6 +67,19 @@ public class index extends MsgsEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
+    }
+
+    // @Override from MsoyEntryPoint
+    protected void didLogon (WebCreds creds)
+    {
+        super.didLogon(creds);
+        onHistoryChanged(History.getToken());
+    }
+
+    // @Override from MsoyEntryPoint
+    protected void didLogoff ()
+    {
+        super.didLogoff();
         onHistoryChanged(History.getToken());
     }
 

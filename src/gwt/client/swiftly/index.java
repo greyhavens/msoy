@@ -35,7 +35,7 @@ public class index extends MsoyEntryPoint
     // from interface HistoryListener
     public void onHistoryChanged (String token)
     {
-        updateInterface(History.getToken());
+        updateInterface(token);
     }
 
     // @Override // from MsoyEntryPoint
@@ -64,23 +64,22 @@ public class index extends MsoyEntryPoint
     }
 
     // @Override from MsoyEntryPoint
+    protected void onPageLoad ()
+    {
+        History.addHistoryListener(this);
+    }
+
+    // @Override from MsoyEntryPoint
     protected void didLogon (WebCreds creds)
     {
         super.didLogon(creds);
-        updateInterface(null);
+        updateInterface(History.getToken());
     }
 
     // @Override from MsoyEntryPoint
     protected void didLogoff ()
     {
         super.didLogoff();
-        updateInterface(null);
-    }
-
-    // @Override from MsoyEntryPoint
-    protected void onPageLoad ()
-    {
-        History.addHistoryListener(this);
         updateInterface(History.getToken());
     }
 

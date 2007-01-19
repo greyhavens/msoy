@@ -77,13 +77,11 @@ public class LogonPanel extends FlexTable
     /**
      * Clears out our credentials and displays the logon interface.
      */
-    public void logoff (boolean notify)
+    public void logoff ()
     {
         _creds = null;
         clearCookie("creds");
-        if (notify) {
-            _app.didLogoff();
-        }
+        _app.didLogoff();
 
         _top.setText("Logon or");
         _main.setText("Join!");
@@ -100,12 +98,12 @@ public class LogonPanel extends FlexTable
                     didLogon(_creds);
                 }
                 public void onFailure (Throwable t) {
-                    logoff(false);
+                    logoff();
                 }
             });
 
         } else {
-            logoff(false);
+            logoff();
         }
     }
 
@@ -125,7 +123,7 @@ public class LogonPanel extends FlexTable
         if (_creds == null) {
             showLogonPopup();
         } else {
-            logoff(true);
+            logoff();
         }
     }
 

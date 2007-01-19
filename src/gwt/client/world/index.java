@@ -43,7 +43,6 @@ public class index extends MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
-        updateInterface(History.getToken());
     }
 
     // @Override // from MsoyEntryPoint
@@ -65,8 +64,8 @@ public class index extends MsoyEntryPoint
     protected void didLogon (WebCreds creds)
     {
         super.didLogon(creds);
-        updateInterface(History.getToken());
         clientLogon(creds.getMemberId(), creds.token);
+        updateInterface(History.getToken());
     }
 
     // @Override // from MsoyEntryPoint

@@ -66,8 +66,8 @@ public class index extends ItemEntryPoint
     // @Override from MsoyEntryPoint
     protected void onPageLoad ()
     {
-        setContent(_catalog = new CatalogPanel(_ctx));
         History.addHistoryListener(this);
+        setContent(_catalog = new CatalogPanel(_ctx));
         onHistoryChanged(History.getToken());
     }
 

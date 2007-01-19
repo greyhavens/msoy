@@ -94,14 +94,13 @@ public class index extends MsgsEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
-        onHistoryChanged(History.getToken());
     }
 
     // @Override from MsoyEntryPoint
     protected void didLogon (WebCreds creds)
     {
         super.didLogon(creds);
-        onHistoryChanged(null);
+        onHistoryChanged(History.getToken());
     }
 
     // @Override from MsoyEntryPoint

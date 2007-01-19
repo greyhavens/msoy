@@ -52,11 +52,7 @@ public class index extends MsoyEntryPoint
     // @Override // from MsoyEntryPoint
     protected void onPageLoad ()
     {
-        if (_ctx.creds == null) {
-            setContent(new Label(_ctx.msgs.indexLogon()));
-        } else {
-            displayDashboard();
-        }
+        // nothing to do here
     }
 
     // @Override // from MsoyEntryPoint

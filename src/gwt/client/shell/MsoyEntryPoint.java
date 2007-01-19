@@ -88,7 +88,8 @@ public abstract class MsoyEntryPoint
     /**
      * Called during {@link #onModuleLoad} to initialize the application. Entry points should
      * override this method rather than onModuleLoad to set themselves up. A call will soon follow
-     * to {@link #didLogon} if the user is already logged in (after a round trip to the server).
+     * to either {@link #didLogon} if the user is already logged in or {@link #didLogoff} if the
+     * user is not logged in. Those methods should create the actual user interface.
      */
     protected abstract void onPageLoad ();
 
