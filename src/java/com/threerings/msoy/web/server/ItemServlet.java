@@ -11,6 +11,7 @@ import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.data.ServiceException;
@@ -219,8 +220,8 @@ public class ItemServlet extends MsoyServiceServlet
                           final byte value)
         throws ServiceException
     {
-        // only admins can flag an item as actually mature
-        if (!creds.isAdmin && (mask & Item.FLAG_MATURE) != 0) {
+        MemberRecord mRec = requireAuthedUser(creds);
+        if (!mRec.isSupport() && (mask & Item.FLAG_MATURE) != 0) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
