@@ -5,6 +5,7 @@ import flash.display.DisplayObject;
 
 import flash.geom.Matrix;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import mx.collections.ArrayCollection;
 import mx.collections.IViewCursor;
@@ -19,54 +20,44 @@ public class Scenery extends Sprite
     }
 
     /**
-     * Clears all the current scales and image locations, in prep for running a new frame.
+     * Called when the objects should be re-scaled for display in a new frame.
      */
-    public function clearItems () :void 
+    public function updateItems (translateRotate :Matrix, distance :Number, maxScale :Number,
+        cameraHeight :Number, maxStripHeight :int) :void
     {
+        var thisTransform :Matrix = new Matrix();
+        var viewRect :Rectangle = new Rectangle(-distance / 2, -distance, distance, 
+            distance - distance / maxScale);
+        var transformedPoint :Point;
         var cursor :IViewCursor = _items.createCursor();
         while (!cursor.afterLast) {
-            cursor.current.screen.x = -Ground.HALF_IMAGE_SIZE;
-            cursor.current.screen.y = -Ground.HALF_IMAGE_SIZE;
-            cursor.current.scale = 0;
-            cursor.moveNext();
-        }
-    }
-
-    /** 
-     * Sets a new transform for objects on a row of the display.  
-     */
-    public function setTransform(minY :Number, maxY :Number, transform :Matrix, scale :Number) :void
-    {
-        // scale coming in is much too large - bring it down a notch
-        //scale *= SCALE_REDUCTION;
-        var cursor :IViewCursor = _items.createCursor();
-        while (!cursor.afterLast) {
-            var newLocation :Point = transform.transformPoint(cursor.current.origin);
-            if (newLocation.y < maxY - minY && newLocation.y >= 0 &&
-                newLocation.x < UnderworldDrift.DISPLAY_WIDTH && newLocation.x >= 0) {
-                cursor.current.screen.x = newLocation.x;
-                cursor.current.screen.y = minY + newLocation.y;
-                cursor.current.scale = scale;
+            thisTransform.identity();
+            // translate and rotate item's origin
+            thisTransform.concat(translateRotate);
+            transformedPoint = thisTransform.transformPoint(cursor.current.origin);
+            // check if item's origin is in potential display area
+            if (viewRect.containsPoint(transformedPoint)) {
+                // scale and translate origin to the display area
+                var rowScaleFactor :Number = 1 + (1 - (((-transformedPoint.y) - 
+                    distance/maxScale) / (distance - distance/maxScale))) * (maxScale - 1);
+                var scaleFactor :Number = distance / (-transformedPoint.y);
+                thisTransform.scale(scaleFactor, scaleFactor);
+                var thisHeight :Number = cameraHeight * (rowScaleFactor - 1);
+                thisTransform.translate(UnderworldDrift.DISPLAY_WIDTH / 2, 
+                    distance + thisHeight);
+                transformedPoint = thisTransform.transformPoint(cursor.current.origin);
+                Log.testing("transformedPoint: " + transformedPoint);
+                cursor.current.sprite.x = transformedPoint.x;
+                cursor.current.sprite.y = transformedPoint.y;
+                // scale item
+                cursor.current.sprite.width = cursor.current.startWidth * scaleFactor * 0.1;
+                cursor.current.sprite.height = cursor.current.startHeight * scaleFactor * 0.1;
+            } else {
+                // make sure its off the display
+                cursor.current.sprite.x = cursor.current.sprite.y = -Ground.HALF_IMAGE_SIZE;
+                cursor.current.sprite.width = cursor.current.startWidth;
+                cursor.current.sprite.height = cursor.current.startHeight;
             }
-            cursor.moveNext();
-        }
-    }
-
-    /**
-     * Called when setting the correct scales and locations for this frame is complete, 
-     * indicating that the sprite's real locations should be updated.
-     */
-    public function updateItems () :void
-    {
-        var cursor :IViewCursor = _items.createCursor();
-        while (!cursor.afterLast) {
-            //cursor.current.sprite.x = 355;
-            //cursor.current.sprite.y = 100;
-            cursor.current.sprite.scaleX = cursor.current.sprite.scaleY = 1;
-            cursor.current.sprite.x = cursor.current.screen.x;
-            cursor.current.sprite.y = cursor.current.screen.y;
-            //cursor.current.sprite.scaleX = cursor.current.scale;
-            //cursor.current.sprite.scaleY = cursor.current.scale;
             cursor.moveNext();
         }
     }
@@ -85,9 +76,6 @@ public class Scenery extends Sprite
             } else {
                 cursor.current.origin.y += Ground.IMAGE_SIZE;
                 cursor.current.origin.x += xShift;
-                // TEMP
-                //cursor.current.sprite.y = cursor.current.origin.y;
-                //cursor.current.sprite.x = cursor.current.origin.x;
                 cursor.moveNext();
             }
         }
@@ -97,29 +85,25 @@ public class Scenery extends Sprite
     protected function generateBlock () :void
     {
         for (var ii :int = 0; ii < 10; ii++) {
-            var item :Object = {origin: new Point(), screen: new Point(), 
-                scale: 0, sprite :new SKULL()};
+            var item :Object = {origin: new Point(), sprite :new SKULL()};
             item.origin.x = Math.floor(Math.random() * Ground.IMAGE_SIZE) -
                 Ground.HALF_IMAGE_SIZE;
             item.origin.y = Math.floor(Math.random() * Ground.IMAGE_SIZE) -
                 Ground.HALF_IMAGE_SIZE - Ground.IMAGE_SIZE;
+            item.startWidth = item.sprite.width;
+            item.startHeight = item.sprite.height;
             // get that new sprite off the display, thank you
             item.sprite.x = item.sprite.y = -Ground.HALF_IMAGE_SIZE;
-            //item.sprite.x = item.origin.x;
-            //item.sprite.y = item.origin.y;
             addChild(item.sprite);
             _items.addItem(item);
         }
     }
 
-    /** Array of blocks of scenery objects */
+    /** Collection of scenery objects */
     protected var _items :ArrayCollection = new ArrayCollection();
 
     /** skull object */
     [Embed(source='rsrc/objects.swf#monster_skull')]
     protected static const SKULL :Class;
-
-    /** amount to reduce the scale brought in from the Ground */
-    protected static const SCALE_REDUCTION :Number = 0.1;
 }
 }

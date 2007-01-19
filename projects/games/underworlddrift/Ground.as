@@ -72,8 +72,9 @@ public class Ground extends Sprite
             _camera.position.y += IMAGE_SIZE;
         }
 
-        _scenery.clearItems();
- 
+        var translateRotate :Matrix = new Matrix();
+        translateRotate.translate(0 - _camera.position.x, 0 - _camera.position.y);
+        translateRotate.rotate(0 - _camera.angle);
         var thisTransform :Matrix = new Matrix();
         var totalHeight :Number = 0;
         var thisHeight :Number = 0;
@@ -81,10 +82,11 @@ public class Ground extends Sprite
             thisHeight = _strips[strip].height;
             totalHeight += thisHeight;
             thisTransform.identity();
+            thisTransform.concat(translateRotate);
             // get the camera to the origin
-            thisTransform.translate(0 - _camera.position.x, 0 - _camera.position.y);
+            //thisTransform.translate(0 - _camera.position.x, 0 - _camera.position.y);
             // rotate
-            thisTransform.rotate(0 - _camera.angle);
+            //thisTransform.rotate(0 - _camera.angle);
             // scale
             var scaleFactor :Number = (_camera.height + HEIGHT - totalHeight) / _camera.height;
             thisTransform.scale(scaleFactor,scaleFactor);
@@ -95,10 +97,6 @@ public class Ground extends Sprite
             // draw the track using the calculated transform and a clipping rect
             var clipping :Rectangle = new Rectangle(0, 0, WIDTH, thisHeight);
             _strips[strip].draw(_track, thisTransform, null, null, clipping);
-            // update scenery
-            _scenery.setTransform(totalHeight - thisHeight, totalHeight, thisTransform, 
-                scaleFactor);
-            //_strips[strip].draw(_scenery, thisTransform, null, null, clipping);
             // update off road flag
             var bitmap :Bitmap = getChildAt(strip) as Bitmap;
             if (bitmap.y <= UnderworldDrift.KART_LOCATION.y && 
@@ -108,8 +106,8 @@ public class Ground extends Sprite
                     UnderworldDrift.KART_LOCATION.x, 0)));
             }
         }
-
-        _scenery.updateItems();
+        _scenery.updateItems(translateRotate, _camera.distance, 1 + HEIGHT / _camera.height,
+            _camera.height, BEGINNING_STRIP_HEIGHT);
     }
 
     /** track instance */
