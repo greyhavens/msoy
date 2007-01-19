@@ -43,6 +43,7 @@ import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntListUtil;
 import com.threerings.msoy.item.web.CatalogListing;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.TagHistory;
 
 /**
@@ -239,7 +240,7 @@ public abstract class ItemRepository<
         if (!mature) {
             // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
             SQLOperator matureExp = new Equals(
-                    new BitAnd(ItemRecord.FLAGS, ItemRecord.FLAG_MATURE), 0);
+                    new BitAnd(ItemRecord.FLAGS, Item.FLAG_MATURE), 0);
             clauses = ArrayUtil.append(clauses, new Where(matureExp));
         }
 

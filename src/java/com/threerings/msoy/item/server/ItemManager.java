@@ -31,6 +31,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.server.ServletWaiter;
 import com.threerings.msoy.world.data.FurniData;
 
 import com.threerings.msoy.item.web.Avatar;
@@ -809,6 +810,32 @@ public class ItemManager
                     history.time = new Date(historyRecord.time.getTime());
                     return history;
                 }
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Atomically sets or clears one or more flags on an item.
+     * TODO: If things get really tight, this could use updatePartial() later.
+     */
+    public void setFlags (final ItemIdent ident, final byte mask, final byte value,
+                          ResultListener<Void> listener)
+    {
+        // locate the appropriate repository
+        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        if (repo == null) {
+            return;
+        }
+
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
+            public Void invokePersistResult () throws PersistenceException {
+                ItemRecord item = repo.loadItem(ident.itemId);
+                if (item == null) {
+                    throw new PersistenceException("Can't find item [item=" + ident + "]");
+                }
+                item.flags = (byte) ((item.flags & ~mask) | value);
+                repo.updateOriginalItem(item);
                 return null;
             }
         });

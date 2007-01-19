@@ -50,15 +50,6 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final String FURNI_MEDIA_HASH = "furniMediaHash";
     public static final String FURNI_MIME_TYPE = "furniMimeType";
 
-    /** Indicates that somebody has flagged this item as mature content. */
-    public static final int FLAG_FLAGGED_MATURE = 0x1 << 0;
-    
-    /** Indicates that somebody has flagged this item as copyrighted content. */
-    public static final int FLAG_FLAGGED_COPYRIGHT= 0x1 << 1;
-    
-    /** Indicates that this item has been flagged by an administrator as mature content. */
-    public static final int FLAG_MATURE = 0x1 << 2;
-
     public static ItemRecord newRecord (Item item) {
         if (item instanceof Document) {
             return new DocumentRecord((Document) item);
@@ -190,7 +181,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         }
         return false;
     }
-    
+
     /**
      * Tests whether a given flag is set on this item.
      */

@@ -56,6 +56,16 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     /** An identifier used to coordinate with the server when uploading media. */
     public static final String MAIN_MEDIA = "main";
 
+    /** Indicates that somebody has flagged this item as mature content. */
+    public static final byte FLAG_FLAGGED_MATURE = 0x1 << 0;
+    
+    /** Indicates that somebody has flagged this item as copyrighted content. */
+    public static final byte FLAG_FLAGGED_COPYRIGHT= 0x1 << 1;
+    
+    /** Indicates that this item has been flagged by an administrator as mature content. */
+    public static final byte FLAG_MATURE = 0x1 << 2;
+
+
     // == Instance variables follow =========================================
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
@@ -97,7 +107,7 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
 
     /** The media used to display this item's furniture representation. */
     public MediaDesc furniMedia;
-
+    
     /**
      * Returns a {@link MediaDesc} configured to display the default furniture media for items of
      * the specified type.
@@ -180,6 +190,22 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     public int getProgenitorId ()
     {
         return (parentId == 0) ? itemId : parentId;
+    }
+
+    /**
+     * Tests whether a given flag is set on this item.
+     */
+    public boolean isSet (byte flag)
+    {
+        return (flags & flag) != 0;
+    }
+
+    /**
+     * Sets a given flag to on or off.
+     */
+    public void setFlag (byte flag, boolean value)
+    {
+        flags = (byte) (value ? flags | flag : flags ^ ~flag);
     }
 
     /**
