@@ -129,9 +129,25 @@ public class MemberRecord extends PersistentRecord
         creds.token = authtok;
         creds.accountName = accountName;
         creds.name = getName();
-        creds.isSupport = isSet(SUPPORT_FLAG) || isSet(ADMIN_FLAG);
-        creds.isAdmin = isSet(ADMIN_FLAG);
+        creds.isSupport = isSupport();
+        creds.isAdmin = isAdmin();
         return creds;
+    }
+
+    /**
+     * Returns true if this member has support or higher privileges.
+     */
+    public boolean isSupport ()
+    {
+        return isSet(SUPPORT_FLAG) || isSet(ADMIN_FLAG);
+    }
+
+    /**
+     * Returns true if this member has admin or higher privileges.
+     */
+    public boolean isAdmin ()
+    {
+        return isSet(ADMIN_FLAG);
     }
 
     /**
