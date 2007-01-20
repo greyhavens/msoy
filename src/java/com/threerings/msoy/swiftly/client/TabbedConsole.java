@@ -28,6 +28,7 @@ public class TabbedConsole extends JTabbedPane
 {
     public TabbedConsole (SwiftlyContext ctx, SwiftlyEditor editor)
     {
+        super(JTabbedPane.BOTTOM);
         _ctx = ctx;
         _editor = editor;
 
