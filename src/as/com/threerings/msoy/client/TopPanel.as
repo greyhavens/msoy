@@ -112,9 +112,9 @@ public class TopPanel extends Canvas
         _placeView = view;
 
         if (disp is UIComponent) {
-            _placeBox.addChild(disp);
+            _placeBox.addChildAt(disp, 0);
         } else {
-            _placeBox.rawChildren.addChild(disp);
+            _placeBox.rawChildren.addChildAt(disp, 0);
         }
 
         updatePlaceViewSize();

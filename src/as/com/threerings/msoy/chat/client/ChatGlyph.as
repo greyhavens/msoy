@@ -15,6 +15,10 @@ import flash.utils.getTimer; // function import
 
 public class ChatGlyph extends Sprite
 {
+    /** The index of the ChatMessage corresponding to this glyph in the
+     * HistoryList. */
+    public var histIndex :int;
+
     public function ChatGlyph (
         overlay :ChatOverlay, type :int, lifetime :int)
     {
@@ -23,6 +27,8 @@ public class ChatGlyph extends Sprite
 
         // set up an expire timer, if needed
         if (lifetime != int.MAX_VALUE) {
+            // TODO: possibly have the overlay manage all this with
+            // just one Timer
             var timer :Timer = new Timer(lifetime, 1);
             timer.addEventListener(
                 TimerEvent.TIMER, handleStartExpire, false, 0, true);
@@ -37,8 +43,10 @@ public class ChatGlyph extends Sprite
 
     protected function handleStartExpire (evt :TimerEvent) :void
     {
-        _deathStamp = getTimer() + FADE_DURATION;
-        addEventListener(Event.ENTER_FRAME, handleFadeStep, false, 0, true);
+        if (parent) {
+            _deathStamp = getTimer() + FADE_DURATION;
+            addEventListener(Event.ENTER_FRAME, handleFadeStep, false, 0, true);
+        }
     }
 
     protected function handleFadeStep (evt :Event) :void

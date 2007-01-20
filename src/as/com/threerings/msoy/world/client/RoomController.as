@@ -351,6 +351,7 @@ public class RoomController extends SceneController
     {
         _walkTarget.visible = false;
         setHoverSprite(null);
+        _roomView.chatOverlay.setClickableGlyphs(false);
     }
 
     protected function mouseMoved (event :MouseEvent) :void
@@ -448,14 +449,14 @@ public class RoomController extends SceneController
         case Keyboard.F5:
             _roomView.dimFurni(keyDown);
             return;
+
+        case Keyboard.F6:
+            _roomView.chatOverlay.setClickableGlyphs(keyDown);
+            return;
         }
 
         if (keyDown) {
             switch (event.charCode) {
-//            case 101: case 69:  // E and e
-//                handleAction(EDIT_SCENE, null);
-//                break;
-//
             case 91: // '['
                 _roomView.scrollViewBy(-ROOM_SCROLL_INCREMENT);
                 break;
@@ -479,6 +480,11 @@ public class RoomController extends SceneController
 
             case Keyboard.F1:
                 handleAction(EDIT_SCENE, null);
+                break;
+
+            case Keyboard.F7:
+                _roomView.chatOverlay.setHistoryEnabled(
+                    !_roomView.chatOverlay.isHistoryMode());
                 break;
             }
 

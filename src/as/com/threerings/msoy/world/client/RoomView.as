@@ -16,6 +16,7 @@ import flash.utils.ByteArray;
 
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
+import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -28,7 +29,6 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
@@ -64,13 +64,19 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
  * Displays a room or scene in the virtual world.
  */
 public class RoomView extends AbstractRoomView
-    implements ContextMenuProvider, SetListener, ChatDisplay, MessageListener
+    implements ContextMenuProvider, SetListener, MessageListener
 {
+    /** The chat overlay. */
+    public var chatOverlay :ChatOverlay;
+
+    /**
+     * Create a roomview.
+     */
     public function RoomView (ctx :MsoyContext, ctrl :RoomController)
     {
         super(ctx);
         _ctrl = ctrl;
-        _overlay = new ChatOverlay(ctx);
+        chatOverlay = new ChatOverlay(ctx);
     }
 
     /**
@@ -295,29 +301,18 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    // from interface ChatDisplay
-    public function clear () :void
-    {
-//        ChatPopper.popAllDown();
-    }
+    /**
+     * Used for Comic chat overlay: identify the actor that spoke.
+     */
+     public function getSpeaker (speaker :Name) :ActorSprite
+     {
+        var occInfo :OccupantInfo = _roomObj.getOccupantInfo(speaker);
+        if (occInfo != null) {
+            return (_actors.get(occInfo.bodyOid) as ActorSprite);
 
-    // from interface ChatDisplay
-    public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
-    {
-        var avatar :AvatarSprite = null;
-        if (msg is UserMessage) {
-            var umsg :UserMessage = (msg as UserMessage);
-            var occInfo :OccupantInfo = _roomObj.getOccupantInfo(umsg.speaker);
-            if (occInfo != null) {
-                avatar = (_actors.get(occInfo.bodyOid) as AvatarSprite);
-            }
+        } else {
+            return null;
         }
-
-//        ChatPopper.popUp(msg, avatar);
-        if (avatar != null) {
-            avatar.performAvatarSpoke();
-        }
-        return true;
     }
 
     // from interface PlaceView
@@ -327,8 +322,7 @@ public class RoomView extends AbstractRoomView
 
         _roomObj.addListener(this);
 
-//        _ctx.getChatDirector().addChatDisplay(this);
-        _overlay.setTarget(_ctx.getTopPanel());
+        chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
 
         addAllOccupants();
 
@@ -342,9 +336,7 @@ public class RoomView extends AbstractRoomView
     {
         _roomObj.removeListener(this);
 
-//        _ctx.getChatDirector().removeChatDisplay(this);
-//        ChatPopper.popAllDown();
-        _overlay.setTarget(null);
+        chatOverlay.setTarget(null);
 
         shutdownMusic();
         removeAllOccupants();
@@ -666,9 +658,6 @@ public class RoomView extends AbstractRoomView
 
     /** The background music in the scene. */
     protected var _music :SoundPlayer;
-
-    /** Displays chat over the world view. */
-    protected var _overlay :ChatOverlay;
 
     /** A map of bodyOid -> ActorSprite. */
     protected var _actors :HashMap = new HashMap();

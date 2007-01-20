@@ -10,6 +10,9 @@ import flash.text.TextFormat;
 public class SubtitleGlyph extends ChatGlyph
 {
     /**
+     * @param texts A mixed array of String and TextFormat objects, with
+     * each String being rendered in the TextFormat preceding it, or the
+     * default format if not preceded by a TextFormat.
      */
     public function SubtitleGlyph (
         overlay :ChatOverlay, type :int, lifetime :int, defaultFmt :TextFormat,

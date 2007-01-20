@@ -7,16 +7,22 @@ import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
 
-//import flash.display.Bitmap;
-//import flash.display.BitmapData;
+import flash.events.Event;
 
-//import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.text.TextFormat;
 
+import flash.utils.getTimer; // function import
+
+import mx.events.ResizeEvent;
+import mx.events.ScrollEvent;
+
+import mx.core.Container;
 import mx.core.IRawChildrenContainer;
+
+import mx.controls.VScrollBar;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ColorUtil;
@@ -65,22 +71,27 @@ public class ChatOverlay
         }
     }
 
-    public function setTarget (disp :DisplayObjectContainer) :void
+    /**
+     * Set the target container where this chat should add its overlay.
+     */
+    public function setTarget (target :Container) :void
     {
         if (_target != null) {
             _ctx.getChatDirector().removeChatDisplay(this);
+            _target.rawChildren.removeChild(_overlay);
+            _target.removeEventListener(ResizeEvent.RESIZE, handleContainerResize);
+            _target.removeEventListener("childrenChanged", handleContainerPopulate);
 
-            if (_target is IRawChildrenContainer) {
-                (_target as IRawChildrenContainer).rawChildren.removeChild(_overlay);
-            } else {
-                _target.removeChild(_overlay);
-            }
+            _history.removeChatOverlay(this);
+
             // clear all subtitles, blow away the overlay
-            _subtitles.length = 0;
+            clearGlyphs(_subtitles);
+            clearGlyphs(_showingHistory);
+            setHistoryEnabled(false);
             _overlay = null;
         }
 
-        _target = disp;
+        _target = target;
 
         if (_target != null) {
             _overlay = new Sprite();
@@ -88,29 +99,33 @@ public class ChatOverlay
             _overlay.mouseEnabled = false;
             _overlay.alpha = ALPHA;
             _overlay.x = PAD;
-            _overlay.y = PAD + ControlBar.HEIGHT; // TEMP:hack
-            if (_target is IRawChildrenContainer) {
-                (_target as IRawChildrenContainer).rawChildren.addChild(_overlay);
-            } else {
-                _target.addChild(_overlay);
-            }
+            _overlay.y = PAD;
+            _target.rawChildren.addChildAt(_overlay,
+                _target.rawChildren.numChildren - 1);
+            _target.addEventListener(ResizeEvent.RESIZE, handleContainerResize);
+            _target.addEventListener("childrenChanged", handleContainerPopulate);
+            _history.addChatOverlay(this);
 
             _ctx.getChatDirector().addChatDisplay(this);
+
+            setHistoryEnabled(true);
+
+            layout();
         }
+    }
+
+    /**
+     * Are we currently showing chat history?
+     */
+    public function isHistoryMode () :Boolean
+    {
+        return (_historyBar != null);
     }
 
     // from ChatDisplay
     public function clear () :void
     {
-        if (_overlay != null) {
-            // remove all children
-            for (var dex :int = _overlay.numChildren - 1; dex >= 0; dex--) {
-                _overlay.removeChildAt(dex);
-            }
-        }
-
-        // clear the list of showing sprites
-        _subtitles.length = 0;
+        clearGlyphs(_subtitles);
     }
 
     // from ChatDisplay
@@ -125,13 +140,162 @@ public class ChatOverlay
     }
 
     /**
+     * Sets whether or not the glyphs are clickable.
+     */
+    public function setClickableGlyphs (clickable :Boolean) :void
+    {
+        _overlay.alpha = clickable ? 1 : ALPHA;
+        _overlay.mouseChildren = clickable;
+    }
+
+    /**
+     * Set the percentage of the bottom of the screen to use for subtitles.
+     * TODO: by pixel?
+     */
+    public function setSubtitlePercentage (perc :Number) :void
+    {
+        _subtitlePercentage = perc;
+    }
+
+    /**
+     * Set whether history is enabled or not.
+     */
+    public function setHistoryEnabled (historyEnabled :Boolean) :void
+    {
+        if (historyEnabled == (_historyBar != null)) {
+            return; // no change
+        }
+
+        var container :Container = _ctx.getTopPanel().getPlaceContainer();
+        if (historyEnabled) {
+            _historyBar = new VScrollBar();
+            _historyBar.addEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
+            _historyBar.includeInLayout = false;
+            configureHistoryBarSize();
+            container.addChild(_historyBar);
+            resetHistoryOffset();
+
+            // out with the subtitles
+            clearGlyphs(_subtitles);
+
+            // "scroll" down to the latest history entry
+            updateHistBar(_history.size() - 1);
+
+            // figure our history
+            figureCurrentHistory();
+
+        } else {
+            container.removeChild(_historyBar);
+            _historyBar.removeEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
+            _historyBar = null;
+
+            clearGlyphs(_showingHistory);
+        }
+    }
+
+    /**
+     * Layout.
+     */
+    protected function layout () :void
+    {
+        clearGlyphs(_subtitles);
+
+        // figure out the height of the subtitles
+        _subtitleHeight = getTargetHeight() * _subtitlePercentage;
+
+        // make a guess as to the extent of the history (how many avg
+        // sized subtitles will fit in the subtitle area
+        _historyExtent = _subtitleHeight / SUBTITLE_HEIGHT_GUESS;
+
+        var msg :ChatMessage;
+        var now :int = getTimer();
+        var histSize :int = _history.size();
+        var index :int = histSize - 1;
+        for ( ; index >= 0; index--) {
+            msg = _history.get(index);
+            _lastExpire = 0;
+            if (now > getChatExpire(msg.timestamp, msg.message)) {
+                break;
+            }
+        }
+
+        // now that we've found the message that's one too old, increment
+        // the index so that it points to the first message we should display
+        index++;
+        _lastExpire = 0;
+
+        // now dispatch from that point
+        for ( ; index < histSize; index++) {
+            msg = _history.get(index);
+            if (shouldShowFromHistory(msg, index)) {
+                displayMessage(msg, false);
+            }
+        }
+
+        // reset the history offset
+        resetHistoryOffset();
+
+        // finally, if we're in history mode, we should figure that out too
+        if (isHistoryMode()) {
+            updateHistBar(histSize - 1);
+            figureCurrentHistory();
+        }
+    }
+
+    /**
+     * We're looking through history to figure out which messages we should
+     * be showing, should we show the following?
+     */
+    protected function shouldShowFromHistory (msg :ChatMessage, index :int) :Boolean
+    {
+        return true; // all for subtitles
+    }
+
+    /**
+     * Update the history scrollbar with the specified value.
+     */
+    protected function updateHistBar (val :int) :void
+    {
+        // we may need to figure out the new history offset amount...
+        if (!_histOffsetFinal && (_history.size() > _histOffset)) {
+            figureHistoryOffset();
+        }
+
+        // then figure out the new value and range
+        var oldVal :int = Math.max(_histOffset, val);
+        var newMaxVal :int = Math.max(0, _history.size() - 1);
+        var newVal :int = (oldVal >= newMaxVal - 1) ? newMaxVal :oldVal;
+
+        // _settingBar protects us from reacting to our own change
+        _settingBar = true;
+        try {
+            // TODO: get the math right here..
+            _historyBar.setScrollProperties(_historyExtent, _histOffset,
+                newMaxVal); // + _historyExtent);
+            _historyBar.scrollPosition = newVal;
+        } finally {
+            _settingBar = false;
+        }
+    }
+
+    /**
+     * Reset the history offset so that it will be recalculated next time
+     * it is needed.
+     */
+    protected function resetHistoryOffset () :void
+    {
+        _histOffsetFinal = false;
+        _histOffset = 0;
+    }
+
+    /**
      * Display the specified message now, unless we are to ignore it.
      *
      * @return true if the message was displayed.
      */
     protected function displayMessageNow (msg :ChatMessage) :Boolean
     {
-        var type :int =  getType(msg, false);
+        var type :int = getType(msg, false);
         if (type == IGNORECHAT) {
             return false;
         }
@@ -139,31 +303,39 @@ public class ChatOverlay
         return displayTypedMessageNow(msg, type);
     }
 
+    /**
+     * Display a non-history message now.
+     */
     protected function displayTypedMessageNow (
         msg :ChatMessage, type :int) :Boolean
     {
-        // TODO: history mode check here
+        // if we're in history mode, this will show up in the history
+        // and we'll rebuild our subtitle list if and when history goes away
+        if (isHistoryMode()) {
+            return false;
+        }
 
         addSubtitle(createSubtitle(msg, type, true));
         return true;
     }
 
+    /**
+     * Add the specified subtitle glyph for immediate display.
+     */
     protected function addSubtitle (glyph :ChatGlyph) :void
     {
         var height :int = glyph.height;
 
         glyph.x = 0;
-        if (true) {
-            glyph.y = getTargetHeight() - height;
-            scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
-        } else {
-            glyph.y = 0;
-            scrollDownSubtitles(height + getSubtitleSpacing(glyph.getType()));
-        }
+        glyph.y = getTargetHeight() - height;
+        scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
         _subtitles.push(glyph);
         _overlay.addChild(glyph);
     }
 
+    /**
+     * Create a subtitle glyph.
+     */
     protected function createSubtitle (
         msg :ChatMessage, type :int, expires :Boolean) :ChatGlyph
     {
@@ -255,22 +427,23 @@ public class ChatOverlay
         return (modeOf(type) != EMOTE);
     }
 
-    public function getTargetHeight () :int
+    internal function getTargetHeight () :int
     {
         var h :int = _target.height;
         h -= (PAD * 2);
-        // TODO: temp: since we overwrite the control bar now
-        h -= ControlBar.HEIGHT;
         return h;
     }
 
-    public function getTargetWidth () :int
+    internal function getTargetWidth () :int
     {
         var w :int = _target.width;
         w -= (PAD * 2);
         return w;
     }
 
+    /**
+     * Get the outline color for the specified chat type.
+     */
     protected function getOutlineColor (type :int) :uint
     {
         switch (type) {
@@ -288,6 +461,9 @@ public class ChatOverlay
         }
     }
 
+    /**
+     * Used by ChatGlyphs to draw the shape on their Graphics.
+     */
     internal function drawSubtitleShape (
         g :Graphics, type :int, width :int, height :int) :void
     {
@@ -321,9 +497,36 @@ public class ChatOverlay
      */
     internal function historyUpdated (adjustment :int) :void
     {
-        // TODO
+        if (adjustment != 0) {
+            for each (var glyph :ChatGlyph in _showingHistory) {
+                glyph.histIndex -= adjustment;
+            }
+            // some history entries were deleted, we need to re-figure the
+            // history scrollbar action
+            resetHistoryOffset();
+        }
+
+        // TODO: there is a small bug here when the history is pruned
+        // and the scrollbar is either at the top or bottom of the track-
+        // nothing updates.
+        // To test, change HistoryList: MAX_HISTORY to 9, PRUNE to 1
+        if (_target != null && isHistoryMode()) {
+            var val :int = _historyBar.scrollPosition;
+            //trace("val is " + val + ", updateHistBar(" + (val - adjustment) + ")");
+            updateHistBar(val - adjustment);
+
+            //trace("scrollpos: " + _historyBar.scrollPosition);
+
+            // only refigure if needed
+            if ((val != _historyBar.scrollPosition) || !_histOffsetFinal) {
+                figureCurrentHistory();
+            }
+        }
     }
 
+    /**
+     * Callback from a ChatGlyph when it wants to be removed.
+     */
     internal function glyphExpired (glyph :ChatGlyph) :void
     {
         ArrayUtil.removeFirst(_subtitles, glyph);
@@ -411,6 +614,9 @@ public class ChatOverlay
         return true;
     }
 
+    /**
+     * Get the spacing above the specified subtitle type.
+     */
     protected function getSubtitleSpacing (type :int) :int
     {
         switch (placeOf(type)) {
@@ -419,30 +625,24 @@ public class ChatOverlay
         }
     }
 
+    /**
+     * Get the spacing for the specified type in history.
+     */
+    protected function getHistorySubtitleSpacing (index :int) :int
+    {
+        var msg :ChatMessage = _history.get(index);
+        return getSubtitleSpacing(getType(msg, true));
+    }
+
+    /**
+     * Scroll up all the subtitles by the specified amount.
+     */
     protected function scrollUpSubtitles (dy :int) :void
     {
         for (var ii :int = 0; ii < _subtitles.length; ii++) {
             var glyph :ChatGlyph = (_subtitles[ii] as ChatGlyph);
             var newY :int = glyph.y - dy;
             if (newY + glyph.height < 0) {
-                _overlay.removeChild(glyph);
-                _subtitles.splice(ii, 1);
-                ii--;
-
-            } else {
-                glyph.y = newY;
-            }
-        }
-    }
-
-    protected function scrollDownSubtitles (dy :int) :void
-    {
-        var maxH :int = getTargetHeight();
-
-        for (var ii :int = 0; ii < _subtitles.length; ii++) {
-            var glyph :ChatGlyph = (_subtitles[ii] as ChatGlyph);
-            var newY :int = glyph.y + dy;
-            if (newY > maxH) {
                 _overlay.removeChild(glyph);
                 _subtitles.splice(ii, 1);
                 ii--;
@@ -469,6 +669,9 @@ public class ChatOverlay
         return (type & ~0xF);
     }
 
+    /**
+     * Get the display duration parameters.
+     */
     protected function getDisplayDurationIndex () :int
     {
         // by default we add one, because it's assumed that we're in
@@ -478,6 +681,196 @@ public class ChatOverlay
         return 1;
     }
 
+    /**
+     * Remove all the glyphs in the specified list.
+     */
+    protected function clearGlyphs (glyphs :Array) :void
+    {
+        if (_overlay != null) {
+            for each (var glyph :ChatGlyph in glyphs) {
+                _overlay.removeChild(glyph);
+            }
+        }
+
+        glyphs.length = 0; // array truncation
+    }
+
+    /**
+     * React to the scrollbar being changed.
+     */
+    protected function handleHistoryScroll (event :ScrollEvent) :void
+    {
+        if (!_settingBar) {
+            figureCurrentHistory();
+        }
+    }
+
+    /**
+     * Handle a resize on the container hosting the overlay.
+     */
+    protected function handleContainerResize (event :ResizeEvent) :void
+    {
+        layout();
+        configureHistoryBarSize();
+    }
+
+    /**
+     * React to child changes in the container, ensure the overlay
+     * is the last thing visible.
+     */
+    protected function handleContainerPopulate (event :Event) :void
+    {
+        if (!_popping) {
+            // goddamn flash can't keep a child at a location anymore
+            popOverlayToFront();
+        }
+    }
+
+    /**
+     * Configure the history scrollbar size.
+     */
+    protected function configureHistoryBarSize () :void
+    {
+        _historyBar.setStyle("top", _target.height - _subtitleHeight);
+        _historyBar.setStyle("bottom", 0);
+        _historyBar.setStyle("right", 0);
+    }
+
+    /**
+     * Ensure that the overlay is the top-level component in the container.
+     */
+    protected function popOverlayToFront () :void
+    {
+        _popping = true;
+        try {
+            _target.rawChildren.setChildIndex(
+                _overlay, _target.rawChildren.numChildren - 1);
+
+        } finally {
+            _popping = false;
+        }
+    }
+
+    /**
+     * Figure out how many of the first history elements fit in our bounds
+     * such that we can set the bounds on the scrollbar correctly such
+     * that the scrolling to the smallest value just barely puts the first
+     * element onscreen.
+     */
+    protected function figureHistoryOffset () :void
+    {
+        if (_target == null) {
+            return;
+        }
+
+        var hei :int = 0;
+        var hsize :int = _history.size();
+        for (var ii :int = 0; ii < hsize; ii++) {
+            var glyph :ChatGlyph = getHistorySubtitle(ii);
+            hei += glyph.height;
+
+            // oop, we passed it, it was the last one
+            if (hei >= _subtitleHeight) {
+                _histOffset = Math.max(0, ii - 1);
+                _histOffsetFinal = true;
+                return;
+            }
+
+            hei += getHistorySubtitleSpacing(ii);
+        }
+
+        // basically, this means there isn't yet enough history to fill
+        // the first 'page' of the history scrollback
+        // so we set the offset to the max value but do not set
+        // histOffsetFinal to be true so that this will be recalculated
+        _histOffset = hsize - 1;
+    }
+
+    /**
+     * Figure out which ChatMessages in the history should currently appear
+     * in the showing history.
+     */
+    protected function figureCurrentHistory () :void
+    {
+        var first :int = _historyBar.scrollPosition;
+        var count :int = 0;
+        var glyph :ChatGlyph;
+        var ii :int;
+
+        if (_history.size() > 0) {
+            // start from the bottom...
+            var targHeight :int = getTargetHeight();
+            var ypos :int = targHeight;
+            var min :int = targHeight - _subtitleHeight;
+            for (ii = first; ii >= 0; ii--, count++) {
+                glyph = getHistorySubtitle(ii);
+
+                // see if it will fit
+                ypos -= glyph.height;
+                if ((count != 0) && ypos <= min) {
+                    break; // don't add that one
+                }
+
+                // position it
+                glyph.x = 0;
+                glyph.y = ypos;
+                ypos -= getHistorySubtitleSpacing(ii);
+            }
+        }
+
+        // finally, because we've been adding to the _showingHistory here
+        // we need to prune out the ChatGlyphs that aren't actually needed
+        // and make sure the ones that are are positioned on the screen correctly
+        for (ii = _showingHistory.length - 1; ii >= 0; ii--) {
+            glyph = (_showingHistory[ii] as ChatGlyph);
+            var managed :Boolean = (_overlay != null) && _overlay.contains(glyph);
+            if (glyph.histIndex <= first && glyph.histIndex > (first - count)) {
+                // it should be showing
+                if (!managed) {
+                    _overlay.addChild(glyph);
+                }
+            } else {
+                // it shouldn't be showing
+                if (managed) {
+                    _overlay.removeChild(glyph);
+                }
+                _showingHistory.splice(ii, 1);
+            }
+        }
+    }
+
+    /**
+     * Get the subtitle for the specified history index, creating if
+     * necessary.
+     */
+    protected function getHistorySubtitle (index :int) :ChatGlyph
+    {
+        var glyph :ChatGlyph;
+
+        // do a brute search (over a small set) for an already-created glyph
+        for each (glyph in _showingHistory) {
+            if (glyph.histIndex == index) {
+                return glyph;
+            }
+        }
+
+        // it looks like we've got to create a new one
+        glyph = createHistorySubtitle(index);
+        glyph.histIndex = index;
+        _showingHistory.push(glyph);
+        return glyph;
+    }
+
+    /**
+     * Create a new subtitle for use in history.
+     */
+    protected function createHistorySubtitle (index :int) :ChatGlyph
+    {
+        var msg :ChatMessage = _history.get(index);
+        var type :int = getType(msg, true);
+        return createSubtitle(msg, type, false);
+    }
+
     /** The light of our life. */
     protected var _ctx :MsoyContext;
 
@@ -485,13 +878,32 @@ public class ChatOverlay
      * all the chat glyphs. */
     protected var _overlay :Sprite;
 
-    /** The target container over which we're overlaying chat. TODO. */
-    protected var _target :DisplayObjectContainer;
+    /** The target container over which we're overlaying chat. */
+    protected var _target :Container;
 
     /** The currently displayed list of subtitles. */
     protected var _subtitles :Array = [];
 
-    /** The unbounded expire time of teh last chat glyph displayed. */
+    /** The currently displayed subtitles in history mode. */
+    protected var _showingHistory :Array = [];
+
+    protected var _subtitleHeight :int = SUBTITLE_HEIGHT_GUESS * 5;
+
+    /** The percent of the bottom of the screen to use for subtitles. */
+    protected var _subtitlePercentage :Number = .5;
+
+    /** The history offset (from 0) such that the history lines
+     * (0, _histOffset - 1) will all fit onscreen if the lowest scrollbar
+     * positon is _histOffset. */
+    protected var _histOffset :int = 0;
+
+    /** True if the histOffset does need to be recalculated. */
+    protected var _histOffsetFinal :Boolean = false;
+
+    /** A guess of how many history lines fit onscreen at a time. */
+    protected var _historyExtent :int;
+
+    /** The unbounded expire time of the last chat glyph displayed. */
     protected var _lastExpire :int;
 
     /** The default text format to be applied to subtitles. */
@@ -499,6 +911,19 @@ public class ChatOverlay
 
     /** The format for user-entered text. */
     protected var _userSpeakFmt :TextFormat;
+
+    /** The history scrollbar. */
+    protected var _historyBar :VScrollBar;
+
+    /** True while we're setting the position on the scrollbar, so that we
+     * know to ignore the event. */
+    protected var _settingBar :Boolean = false;
+
+    /** True while popping the overlay to the front. */
+    protected var _popping :Boolean = false;
+
+    /** Used to guess at the 'page size' for the scrollbar. */
+    protected static const SUBTITLE_HEIGHT_GUESS :int = 24;
 
     /* The shared history used by all overlays. */
     protected static var _history :HistoryList;
