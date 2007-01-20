@@ -351,8 +351,8 @@
     <!-- optionally sign the resulting jar file -->
     <if><isset property="cert_dir"/><then>
       <property file="${cert_dir}/certificate.properties"/>
-      <signjar lazy="true" keystore="${cert_dir}/lib/keystore.dat"
-        storepass="${sign.storepass}" alias="${sign.alias}">
+      <signjar lazy="true" keystore="${sign.keystore}" storepass="${sign.storepass}"
+               alias="${sign.alias}">
         <fileset dir="${deploy.dir}" includes="${ident}-client.jar"/>
       </signjar>
       <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients"/>
