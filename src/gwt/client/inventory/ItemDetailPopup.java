@@ -31,10 +31,10 @@ import client.util.ClickCallback;
  */
 public class ItemDetailPopup extends BaseItemDetailPopup
 {
-    public ItemDetailPopup (ItemContext ctx, Item item, ItemDetailHost parent)
+    public ItemDetailPopup (ItemContext ctx, Item item, ItemDetailHost host)
     {
         super(ctx, item);
-        _host = parent;
+        _host = host;
     }
 
     // @Override // BaseItemDetailPopup

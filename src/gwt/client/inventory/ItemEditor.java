@@ -111,10 +111,10 @@ public abstract class ItemEditor extends BorderedDialog
      * Configures this editor with a reference to the item service and its item
      * panel parent.
      */
-    public void init (InventoryContext ctx, ItemEditorHost parent)
+    public void init (InventoryContext ctx, ItemEditorHost host)
     {
         _ctx = ctx;
-        _host = parent;
+        _host = host;
     }
 
     /**
