@@ -23,12 +23,12 @@ public class Scenery extends Sprite
      * Called when the objects should be re-scaled for display in a new frame.
      */
     public function updateItems (translateRotate :Matrix, distance :Number, minScale :Number,
-        maxScale :Number, cameraHeight :Number, maxStripHeight :int) :void
+        cameraHeight :Number) :void
     {
         var thisTransform :Matrix = new Matrix();
         var maxDistance :Number = distance / minScale;
         var viewRect :Rectangle = new Rectangle(-maxDistance / 2, -maxDistance, maxDistance, 
-            maxDistance);// - distance / maxScale);
+            maxDistance);
         var transformedPoint :Point;
         var cursor :IViewCursor = _items.createCursor();
         while (!cursor.afterLast) {
@@ -40,10 +40,11 @@ public class Scenery extends Sprite
             if (viewRect.containsPoint(transformedPoint)) {
                 // scale and translate origin to the display area
                 var scaleFactor :Number = distance / (-transformedPoint.y);
-                var thisHeight :Number = ((-transformedPoint.y) / maxDistance) * 300;
+                var totalHeight :Number = scaleFactor * cameraHeight;
                 thisTransform.scale(scaleFactor, scaleFactor);
-                thisTransform.translate(UnderworldDrift.DISPLAY_WIDTH / 2, distance);
+                thisTransform.translate(UnderworldDrift.DISPLAY_WIDTH / 2, distance + totalHeight);
                 transformedPoint = thisTransform.transformPoint(cursor.current.origin);
+                // position item
                 cursor.current.sprite.x = transformedPoint.x;
                 cursor.current.sprite.y = transformedPoint.y;
                 // scale item
@@ -87,8 +88,8 @@ public class Scenery extends Sprite
                 Ground.HALF_IMAGE_SIZE;
             item.origin.y = Math.floor(Math.random() * Ground.IMAGE_SIZE) -
                 Ground.HALF_IMAGE_SIZE - Ground.IMAGE_SIZE;
-            item.startWidth = item.sprite.width * 0.1;
-            item.startHeight = item.sprite.height * 0.1;
+            item.startWidth = item.sprite.width * 0.2;
+            item.startHeight = item.sprite.height * 0.2;
             // get that new sprite off the display, thank you
             item.sprite.x = item.sprite.y = -Ground.HALF_IMAGE_SIZE;
             addChild(item.sprite);

@@ -103,7 +103,7 @@ public class Ground extends Sprite
             }
         }
         _scenery.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
-            HEIGHT / _camera.height, _camera.height, BEGINNING_STRIP_HEIGHT);
+            _camera.height);
     }
 
     /** track instance */
