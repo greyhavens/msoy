@@ -21,8 +21,6 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 
 import client.item.BaseItemDetailPopup;
-import client.item.ItemContext;
-import client.item.ItemDetailHost;
 import client.shell.MsoyEntryPoint;
 import client.util.ClickCallback;
 
@@ -31,10 +29,10 @@ import client.util.ClickCallback;
  */
 public class ItemDetailPopup extends BaseItemDetailPopup
 {
-    public ItemDetailPopup (ItemContext ctx, Item item, ItemDetailHost host)
+    public ItemDetailPopup (InventoryContext ctx, Item item, ItemPanel parent)
     {
         super(ctx, item);
-        _host = host;
+        _parent = parent;
     }
 
     // @Override // BaseItemDetailPopup
@@ -125,7 +123,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
                 return true;
             }
             public boolean gotResult (Object result) {
-                _host.itemDeleted(_item);
+                _parent.itemDeleted(_item);
                 hide();
                 return false;
             }
@@ -136,7 +134,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
             button = new Button(ictx.imsgs.detailEdit());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    ItemEditor editor = _host.createItemEditor(_item.getType());
+                    ItemEditor editor = _parent.createItemEditor(_item.getType());
                     editor.setItem(_item);
                     editor.show();
                     hide();
@@ -148,6 +146,6 @@ public class ItemDetailPopup extends BaseItemDetailPopup
         controls.add(_status);
     }
 
-    protected ItemDetailHost _host;
+    protected ItemPanel _parent;
     protected Label _status;
 }

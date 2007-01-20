@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import client.item.ItemEditorHost;
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
 import client.util.RowPanel;
@@ -104,17 +103,17 @@ public abstract class ItemEditor extends BorderedDialog
     protected void onClosed (boolean autoClosed)
     {
         super.onClosed(autoClosed);
-        _host.editComplete(_updatedItem);
+        _parent.editComplete(_updatedItem);
     }
 
     /**
      * Configures this editor with a reference to the item service and its item
      * panel parent.
      */
-    public void init (InventoryContext ctx, ItemEditorHost host)
+    public void init (InventoryContext ctx, ItemPanel parent)
     {
         _ctx = ctx;
-        _host = host;
+        _parent = parent;
     }
 
     /**
@@ -381,13 +380,13 @@ public abstract class ItemEditor extends BorderedDialog
     {
         AsyncCallback cb = new AsyncCallback() {
             public void onSuccess (Object result) {
-                _host.setStatus(_item.itemId == 0 ?
-                                _ctx.imsgs.msgItemCreated() : _ctx.imsgs.msgItemUpdated());
+                _parent.setStatus(_item.itemId == 0 ?
+                                  _ctx.imsgs.msgItemCreated() : _ctx.imsgs.msgItemUpdated());
                 _updatedItem = _item; // this will be passed to our parent in onClosed()
                 hide();
             }
             public void onFailure (Throwable caught) {
-                _host.setStatus(_ctx.serverError(caught));
+                _parent.setStatus(_ctx.serverError(caught));
             }
         };
         if (_item.itemId == 0) {
@@ -434,7 +433,7 @@ public abstract class ItemEditor extends BorderedDialog
     }-*/; 
 
     protected InventoryContext _ctx;
-    protected ItemEditorHost _host;
+    protected ItemPanel _parent;
 
     protected Item _item, _updatedItem;
 
