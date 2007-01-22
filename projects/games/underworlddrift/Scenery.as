@@ -7,9 +7,6 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import mx.collections.ArrayCollection;
-import mx.collections.IViewCursor;
-
 public class Scenery extends Sprite
 {
     public function Scenery () 
@@ -29,35 +26,36 @@ public class Scenery extends Sprite
         var maxDistance :Number = distance / minScale;
         var viewRect :Rectangle = new Rectangle(-maxDistance / 2, -maxDistance, maxDistance, 
             maxDistance);
-        var transformedPoint :Point;
-        var cursor :IViewCursor = _items.createCursor();
-        while (!cursor.afterLast) {
-            thisTransform.identity();
-            // translate and rotate item's origin
-            thisTransform.concat(translateRotate);
-            transformedPoint = thisTransform.transformPoint(cursor.current.origin);
-            // check if item's origin is in potential display area
-            if (viewRect.containsPoint(transformedPoint)) {
+        for (var ii :int = 0; ii < _items.length; ii++) {
+            _items[ii].transformedOrigin = translateRotate.transformPoint(_items[ii].origin);
+        }
+        // sort list so that closer items appear in the list first.
+        _items.sort(sortOnTransformedY);
+        for (ii = 0; ii < _items.length; ii++) {
+            if (viewRect.containsPoint(_items[ii].transformedOrigin)) {
                 // scale and translate origin to the display area
-                var scaleFactor :Number = distance / (-transformedPoint.y);
+                var scaleFactor :Number = distance / (-_items[ii].transformedOrigin.y);
                 var totalHeight :Number = scaleFactor * cameraHeight;
+                thisTransform.identity();
                 thisTransform.scale(scaleFactor, scaleFactor);
                 thisTransform.translate(UnderworldDrift.DISPLAY_WIDTH / 2, distance + totalHeight);
-                transformedPoint = thisTransform.transformPoint(cursor.current.origin);
+                _items[ii].transformedOrigin = thisTransform.transformPoint(
+                    _items[ii].transformedOrigin);
                 // position item
-                cursor.current.sprite.x = transformedPoint.x;
-                cursor.current.sprite.y = transformedPoint.y - 
-                    scaleFactor * cursor.current.startHeight / 2;
+                _items[ii].sprite.x = _items[ii].transformedOrigin.x;
+                _items[ii].sprite.y = _items[ii].transformedOrigin.y - 
+                    scaleFactor * _items[ii].startHeight / 2;
                 // scale item
-                cursor.current.sprite.width = cursor.current.startWidth * scaleFactor;
-                cursor.current.sprite.height = cursor.current.startHeight * scaleFactor;
+                _items[ii].sprite.width = _items[ii].startWidth * scaleFactor;
+                _items[ii].sprite.height = _items[ii].startHeight * scaleFactor;
+                // set correct index
+                setChildIndex(_items[ii].sprite, ii);
             } else {
                 // make sure its off the display
-                cursor.current.sprite.x = cursor.current.sprite.y = -Ground.HALF_IMAGE_SIZE;
-                cursor.current.sprite.width = cursor.current.startWidth;
-                cursor.current.sprite.height = cursor.current.startHeight;
+                _items[ii].sprite.x = _items[ii].sprite.y = -Ground.HALF_IMAGE_SIZE;
+                _items[ii].sprite.width = _items[ii].startWidth;
+                _items[ii].sprite.height = _items[ii].startHeight;
             }
-            cursor.moveNext();
         }
     }
 
@@ -67,16 +65,19 @@ public class Scenery extends Sprite
      */
     public function moveSceneryForward (xShift :int) :void
     {
-        var cursor :IViewCursor = _items.createCursor();
-        while (!cursor.afterLast) {
-            if (cursor.current.origin.y > Ground.HALF_IMAGE_SIZE) {
-                removeChild(cursor.current.sprite);
-                cursor.remove();
+        var newLength :int = -1;
+        _items.sort(sortOnOriginY);
+        for (var ii :int = 0; ii < _items.length; ii++) {
+            if (_items[ii].origin.y > Ground.HALF_IMAGE_SIZE) {
+                if (newLength == -1) newLength = ii;
+                removeChild(_items[ii].sprite);
             } else {
-                cursor.current.origin.y += Ground.IMAGE_SIZE;
-                cursor.current.origin.x += xShift;
-                cursor.moveNext();
+                _items[ii].origin.y += Ground.IMAGE_SIZE;
+                _items[ii].origin.x += xShift;
             }
+        }
+        if (newLength != -1) {
+            _items.length = newLength;
         }
         generateBlock();
     }
@@ -94,12 +95,23 @@ public class Scenery extends Sprite
             // get that new sprite off the display, thank you
             item.sprite.x = item.sprite.y = -Ground.HALF_IMAGE_SIZE;
             addChild(item.sprite);
-            _items.addItem(item);
+            _items.push(item);
         }
+    }
+    
+    protected function sortOnOriginY (obj1 :Object, obj2 :Object) :int
+    {
+        return obj1.origin.y < obj2.origin.y ? -1 : (obj2.origin.y < obj1.origin.y ? 1 : 0);
+    }
+
+    protected function sortOnTransformedY (obj1 :Object, obj2 :Object) :int
+    {
+        return obj1.transformedOrigin.y < obj2.transformedOrigin.y ? -1 : 
+            (obj2.transformedOrigin.y < obj1.transformedOrigin.y ? 1 : 0);
     }
 
     /** Collection of scenery objects */
-    protected var _items :ArrayCollection = new ArrayCollection();
+    protected var _items :Array = new Array();
 
     /** skull object */
     [Embed(source='rsrc/objects.swf#monster_skull')]
