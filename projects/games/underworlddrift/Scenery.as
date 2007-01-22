@@ -29,7 +29,7 @@ public class Scenery extends Sprite
         for (var ii :int = 0; ii < _items.length; ii++) {
             _items[ii].transformedOrigin = translateRotate.transformPoint(_items[ii].origin);
         }
-        // sort list so that closer items appear in the list first.
+        // sort list so that items that are farther away appear in the list first.
         _items.sort(sortOnTransformedY);
         for (ii = 0; ii < _items.length; ii++) {
             if (viewRect.containsPoint(_items[ii].transformedOrigin)) {
