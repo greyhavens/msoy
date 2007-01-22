@@ -530,6 +530,9 @@
     </antcall>
   </target>
 
+  <!-- rebuilds everything and extra bits for packaging -->
+  <target name="distpkg" depends="distall,javadoc"/>
+
   <!-- cleans out the compiled code -->
   <target name="clean">
     <delete dir="${deploy.dir}/classes/com"/>
