@@ -1,0 +1,11 @@
+# msoy-docs.dwb vi:ts=4:sw=4:expandtab:
+# Msoy Documentation Dweeb Configuration File
+
+<Package>
+    Name        msoy-docs
+    Version     @VERSION@
+    Maintainer  Msoy Developers <msoy-dev@threerings.net>
+    Section     docs
+    Architecture    all
+    Description Tofutastic documentation.
+</Package>
