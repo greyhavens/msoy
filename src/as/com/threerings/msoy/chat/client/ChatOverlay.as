@@ -78,9 +78,9 @@ public class ChatOverlay
     {
         if (_target != null) {
             _ctx.getChatDirector().removeChatDisplay(this);
-            _target.rawChildren.removeChild(_overlay);
-            _target.removeEventListener(ResizeEvent.RESIZE, handleContainerResize);
             _target.removeEventListener("childrenChanged", handleContainerPopulate);
+            _target.removeEventListener(ResizeEvent.RESIZE, handleContainerResize);
+            _target.rawChildren.removeChild(_overlay);
 
             _history.removeChatOverlay(this);
 
