@@ -46,7 +46,8 @@ public class Scenery extends Sprite
                 transformedPoint = thisTransform.transformPoint(cursor.current.origin);
                 // position item
                 cursor.current.sprite.x = transformedPoint.x;
-                cursor.current.sprite.y = transformedPoint.y;
+                cursor.current.sprite.y = transformedPoint.y - 
+                    scaleFactor * cursor.current.startHeight / 2;
                 // scale item
                 cursor.current.sprite.width = cursor.current.startWidth * scaleFactor;
                 cursor.current.sprite.height = cursor.current.startHeight * scaleFactor;
@@ -88,8 +89,8 @@ public class Scenery extends Sprite
                 Ground.HALF_IMAGE_SIZE;
             item.origin.y = Math.floor(Math.random() * Ground.IMAGE_SIZE) -
                 Ground.HALF_IMAGE_SIZE - Ground.IMAGE_SIZE;
-            item.startWidth = item.sprite.width * 0.2;
-            item.startHeight = item.sprite.height * 0.2;
+            item.startWidth = item.sprite.width * 0.1;
+            item.startHeight = item.sprite.height * 0.1;
             // get that new sprite off the display, thank you
             item.sprite.x = item.sprite.y = -Ground.HALF_IMAGE_SIZE;
             addChild(item.sprite);
