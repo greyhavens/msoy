@@ -241,12 +241,6 @@ public class ChatOverlay
             updateHistBar(histSize - 1);
             figureCurrentHistory();
         }
-
-        _overlay.graphics.clear();
-        _overlay.graphics.lineStyle(1, 0xFF0000);
-        var hei :int = _target.height - _subtitleHeight;
-        _overlay.graphics.moveTo(0, hei);
-        _overlay.graphics.lineTo(_target.width, hei);
     }
 
     /**
@@ -331,7 +325,7 @@ public class ChatOverlay
      */
     protected function addSubtitle (glyph :ChatGlyph) :void
     {
-        var height :int = glyph.height;
+        var height :int = int(glyph.height);
 
         glyph.x = PAD;
         glyph.y = getTargetHeight() - height - PAD;
@@ -643,8 +637,8 @@ public class ChatOverlay
     {
         for (var ii :int = 0; ii < _subtitles.length; ii++) {
             var glyph :ChatGlyph = (_subtitles[ii] as ChatGlyph);
-            var newY :int = glyph.y - dy;
-            if (newY + glyph.height < 0) {
+            var newY :int = int(glyph.y) - dy;
+            if (newY + int(glyph.height) < 0) {
                 _overlay.removeChild(glyph);
                 _subtitles.splice(ii, 1);
                 ii--;
@@ -770,7 +764,7 @@ public class ChatOverlay
         var min :int = (targHeight - _subtitleHeight);
         for (var ii :int = 0; ii < hsize; ii++) {
             var glyph :ChatGlyph = getHistorySubtitle(ii);
-            ypos -= glyph.height;
+            ypos -= int(glyph.height);
 
             // oop, we passed it, it was the last one
             if (ypos <= min) {
@@ -809,7 +803,7 @@ public class ChatOverlay
                 glyph = getHistorySubtitle(ii);
 
                 // see if it will fit
-                ypos -= glyph.height;
+                ypos -= int(glyph.height);
                 if ((count != 0) && ypos <= min) {
                     break; // don't add that one
                 }
