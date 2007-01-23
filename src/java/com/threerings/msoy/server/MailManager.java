@@ -266,10 +266,14 @@ public class MailManager
         headers.sent = new Date(record.sent.getTime());
         headers.unread = record.unread;
         
-        MemberRecord memRec = _memberRepo.loadMember(record.senderId);
-        headers.sender = new MemberName(memRec.name, memRec.memberId);
+        if (record.senderId != 0) {
+            MemberRecord memRec = _memberRepo.loadMember(record.senderId);
+            headers.sender = new MemberName(memRec.name, memRec.memberId);
+        } else {
+            headers.sender = new MemberName("System Administrators", 0);
+        }
 
-        memRec = _memberRepo.loadMember(record.recipientId);
+        MemberRecord memRec = _memberRepo.loadMember(record.recipientId);
         headers.recipient = new MemberName(memRec.name, memRec.memberId);
         return headers;
     }
