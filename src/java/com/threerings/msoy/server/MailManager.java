@@ -40,6 +40,14 @@ public class MailManager
     }
 
     /**
+     * Returns a reference to our repository.
+     */
+    public MailRepository getRepository ()
+    {
+        return _mailRepo;
+    }
+
+    /**
      * Fetch and return a single message from the database. 
      */
     public void getMessage (final int memberId, final int folderId, final int messageId,
@@ -318,5 +326,4 @@ public class MailManager
     
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
-
 }
