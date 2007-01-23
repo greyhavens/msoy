@@ -3,13 +3,12 @@
 
 package client.admin;
 
+import client.util.MsoyUI;
+
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import client.util.MsoyUI;
 
 /**
  * Displays the various services available to support and admin personnel.
@@ -27,6 +26,7 @@ public class DashboardPanel extends VerticalPanel
                 new ReviewPopup(_ctx).show();
             }
         });
+        add(reviewButton);
     }
 
     protected AdminContext _ctx;

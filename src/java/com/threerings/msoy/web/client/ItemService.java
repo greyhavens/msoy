@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.client;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
@@ -112,7 +113,7 @@ public interface ItemService extends RemoteService
     /**
      * Fetches the first 'count' items flagged as mature or copyright in the database.
      */
-    public void getFlaggedItems (WebCreds creds, int count)
+    public List getFlaggedItems (WebCreds creds, int count)
         throws ServiceException;
 
     /**

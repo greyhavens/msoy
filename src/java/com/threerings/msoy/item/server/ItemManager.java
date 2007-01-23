@@ -140,6 +140,15 @@ public class ItemManager
             return null;
         }
     }
+    
+    /**
+     * Returns an iterator of item types for which we have repositories.
+     */ 
+    public Iterable<Byte> getRepositoryTypes ()
+    {
+        return _repos.keySet();
+    }
+    
 
     /**
      * Returns the repository used to manage items of the specified type. Throws a service

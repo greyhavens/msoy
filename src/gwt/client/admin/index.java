@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.item.ItemEntryPoint;
 import client.shell.MsoyEntryPoint;
 import client.shell.ShellContext;
 
@@ -16,7 +17,7 @@ import client.shell.ShellContext;
  * Displays an admin dashboard with various server status information and administrative
  * functionality.
  */
-public class index extends MsoyEntryPoint
+public class index extends ItemEntryPoint
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()

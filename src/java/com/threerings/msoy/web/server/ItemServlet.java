@@ -6,30 +6,26 @@ package com.threerings.msoy.web.server;
 import static com.threerings.msoy.Log.log;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-import com.threerings.msoy.item.server.persist.TagPopularityRecord;
-import com.threerings.msoy.item.web.CatalogListing;
+import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
-import com.threerings.msoy.server.JSONMarshaller;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
-
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.ServiceException;
@@ -253,10 +249,46 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void getFlaggedItems (WebCreds creds, int count)
+    public List getFlaggedItems (WebCreds creds, int count)
         throws ServiceException
     {
-        throw new ServiceException("Not implemented.");
+        MemberRecord mRec = requireAuthedUser(creds);
+        if (!mRec.isSupport()) {
+            throw new ServiceException(ItemCodes.ACCESS_DENIED);
+        }
+        List<ItemDetail> items = new ArrayList<ItemDetail>();
+        // it'd be nice to round-robin the item types or something, so the first items in
+        // the queue aren't always from the same type... perhaps we'll just do something
+        // clever in the UI
+        try {
+            for (byte type : MsoyServer.itemMan.getRepositoryTypes()) {
+                ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo =
+                    MsoyServer.itemMan.getRepository(type);
+                byte mask = (byte) (Item.FLAG_FLAGGED_COPYRIGHT | Item.FLAG_FLAGGED_MATURE);
+                for (ItemRecord record : repo.loadItemsByFlag(mask, false, count)) {
+                    Item item = record.toItem();
+                    
+                    // get auxillary info and construct an ItemDetail
+                    ItemDetail detail = new ItemDetail();
+                    detail.item = item;
+                    detail.memberRating = 0; // not populated
+                    MemberRecord memRec = MsoyServer.memberRepo.loadMember(record.creatorId);
+                    detail.creator = memRec.getName();
+                    detail.owner = null; // not populated
+
+                    // add the detail to our result and see if we're done
+                    items.add(detail);
+                    if (items.size() == count) {
+                        return items;
+                    }
+                }
+            }
+            return items;
+            
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Getting flagged items failed.", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     // from interface ItemService
@@ -273,12 +305,8 @@ public class ItemServlet extends MsoyServiceServlet
             ItemRecord item = repo.loadOriginalItem(ident.itemId);
             IntSet owners = new ArrayIntSet();
 
-            if (item.ownerId != 0) {
-                owners.add(item.ownerId);
-
-            } else {
-                owners.add(item.creatorId);
-
+            owners.add(item.creatorId);
+            if (item.ownerId == 0) {
                 // if this is a listed item, unlist it
                 repo.removeListing(item.itemId);
 
@@ -293,13 +321,13 @@ public class ItemServlet extends MsoyServiceServlet
 
             // build a message record
             MailMessageRecord record = new MailMessageRecord();
-            record.senderId = -1;
+            record.senderId = 0;
             record.folderId = MailFolder.INBOX_FOLDER_ID;
             record.subject = subject;
             record.sent = new Timestamp(System.currentTimeMillis());
             record.bodyText = body;
             record.unread = true;
-            
+
             // and notify everybody
             for (int ownerId : owners) {
                 record.ownerId = ownerId;
@@ -308,6 +336,7 @@ public class ItemServlet extends MsoyServiceServlet
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Admin item delete failed [item=" + ident + "].", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
 }

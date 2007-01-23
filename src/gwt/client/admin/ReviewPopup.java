@@ -53,7 +53,7 @@ public class ReviewPopup extends BorderedDialog
     protected void populateUI (List list)
     {
         if (list.size() == 0) {
-            _dock.add(new Label(_ctx.msgs.reviewNoItems()));
+            _dock.add(new Label(_ctx.msgs.reviewNoItems()), DockPanel.CENTER);
             return;
         }
         FlexTable panel = new FlexTable();
@@ -82,7 +82,7 @@ public class ReviewPopup extends BorderedDialog
                 }
             });
             line.add(nameLabel);
-            line.add(new InlineLabel(" - " + itemDetail.creator.toString()));
+            line.add(new InlineLabel("&nbsp; - &nbsp; " + itemDetail.creator.toString()));
             itemData.add(line);
             
             itemData.add(new Label(item.description));
@@ -124,8 +124,6 @@ public class ReviewPopup extends BorderedDialog
                     }
                 };
                 line.add(button);
-
-                panel.setWidget(row, 1, itemData);
             }
 
             Button button = new Button("Delete");
@@ -135,13 +133,19 @@ public class ReviewPopup extends BorderedDialog
                 }
             });
             line.add(button);
+            itemData.add(line);
+            
+            panel.setWidget(row, 1, itemData);
+            row ++;
+
+            _dock.add(panel, DockPanel.CENTER);
         }
     }
 
     // @Override
     protected Widget createContents ()
     {
-        return _dock;
+        return _dock = new DockPanel();
     }
 
     protected class DeleteDialog extends BorderedPopup
@@ -222,7 +226,7 @@ public class ReviewPopup extends BorderedDialog
         protected Button _yesButton;
     }
 
-    protected DockPanel _dock = new DockPanel();
+    protected DockPanel _dock;
     protected AdminContext _ctx;
     protected Label _status;
 }

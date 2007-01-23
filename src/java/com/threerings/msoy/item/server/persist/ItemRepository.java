@@ -37,11 +37,13 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.samskivert.jdbc.depot.operator.Arithmetic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntListUtil;
+import com.sun.tools.corba.se.idl.constExpr.NotEqual;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.TagHistory;
@@ -151,13 +153,29 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Loads items whose flags match the given mask and bit values, limited to a given
+     * number of rows. This method can either require all flags to be set, or merely at
+     * least one of them.
+     */
+    public Collection<T> loadItemsByFlag (byte flagMask, boolean all, int count)
+        throws PersistenceException
+    {
+        return findAll(
+            getItemClass(),
+            new Where(all ?
+                      new Equals(new BitAnd(ItemRecord.FLAGS, flagMask), flagMask) :
+                      new GreaterThan(new BitAnd(ItemRecord.FLAGS, flagMask), 0)),
+            new Limit(0, count));
+    }
+    
+    /**
      * Loads all the raw clone records associated with a given original item id. This is
      * potentially a very large dataset.
      */
     public Collection<CLT> loadCloneRecords (int itemId)
         throws PersistenceException
     {
-        return findAll(getCloneClass(), new Where(CloneRecord.ITEM_ID, itemId));
+        return findAll(getCloneClass(), new Where(CloneRecord.ORIGINAL_ITEM_ID, itemId));
     }
 
     /**
