@@ -8,6 +8,7 @@ import flash.display.Graphics;
 import flash.display.Sprite;
 
 import flash.events.Event;
+import flash.events.MouseEvent;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -350,26 +351,37 @@ public class ChatOverlay
     protected function createSubtitle (
         msg :ChatMessage, type :int, expires :Boolean) :SubtitleGlyph
     {
+        var texts :Array = formatMessage(msg, type, true);
+        var lifetime :int = getLifetime(msg, expires);
+        return new SubtitleGlyph(this, type, lifetime, _defaultFmt, texts);
+    }
+
+    /**
+     * Return an array of Strings and TextFormats for creating a ChatGlyph.
+     */
+    protected function formatMessage (
+        msg :ChatMessage, type :int, forceSpeaker :Boolean) :Array
+    {
+        // first parse the message text into plain and links
         var texts :Array = parseLinks(msg.message);
 
-        var format :String = msg.getFormat();
-        if (format != null) {
-            var umsg :UserMessage = (msg as UserMessage);
-            var prefix :String = _ctx.xlate(null, format,
-                umsg.getSpeakerDisplayName()) + " ";
+        // possibly insert the formatting
+        if (forceSpeaker || alwaysUseSpeaker(type)) {
+            var format :String = msg.getFormat();
+            if (format != null) {
+                var umsg :UserMessage = (msg as UserMessage);
+                var prefix :String = _ctx.xlate(null, format,
+                    umsg.getSpeakerDisplayName()) + " ";
 
-            if (useQuotes(type)) {
-                prefix += "\"";
-                texts.push("\"");
+                if (useQuotes(type)) {
+                    prefix += "\"";
+                    texts.push("\"");
+                }
+                texts.unshift(prefix);
             }
-            texts.unshift(prefix);
-        }
-        var lifetime :int = int.MAX_VALUE;
-        if (expires) {
-            lifetime = getChatExpire(msg.timestamp, msg.message) - msg.timestamp;
         }
 
-        return new SubtitleGlyph(this, type, lifetime, _defaultFmt, texts);
+        return texts;
     }
 
     /**
@@ -384,8 +396,10 @@ public class ChatOverlay
         // insert the appropriate format before each element
         for (var ii :int = array.length - 1; ii >= 0; ii--) {
             if (ii % 2 == 0) {
+                // normal text at even-numbered elements...
                 array.splice(ii, 0, _userSpeakFmt);
             } else {
+                // links at the odd indexes
                 array.splice(ii, 0, createLinkFormat(String(array[ii])));
             }
         }
@@ -406,6 +420,16 @@ public class ChatOverlay
         return fmt;
     }
 
+    /**
+     * Get the lifetime, in milliseconds, of the specified chat message.
+     */
+    protected function getLifetime (msg :ChatMessage, expires :Boolean) :int
+    {
+        if (expires) {
+            return getChatExpire(msg.timestamp, msg.message) - msg.timestamp;
+        }
+        return int.MAX_VALUE;
+    }
 
     /**
      * Get the expire time for the specified chat.
@@ -438,19 +462,13 @@ public class ChatOverlay
         return (modeOf(type) != EMOTE);
     }
 
-    internal function getTargetHeight () :int
+    /**
+     * Should we force the use of the speaker in the formatting of
+     * the message?
+     */
+    protected function alwaysUseSpeaker (type :int) :Boolean
     {
-        return _target.height;
-    }
-
-    internal function getTargetWidth () :int
-    {
-        var w :int = _target.width;
-        if (_historyBar != null) {
-            w -= _historyBar.width;
-        }
-        w -= (PAD * 2);
-        return w;
+        return (modeOf(type) == EMOTE);
     }
 
     /**
@@ -876,6 +894,21 @@ public class ChatOverlay
         var msg :ChatMessage = _history.get(index);
         var type :int = getType(msg, true);
         return createSubtitle(msg, type, false);
+    }
+
+    internal function getTargetHeight () :int
+    {
+        return _target.height;
+    }
+
+    internal function getTargetWidth () :int
+    {
+        var w :int = _target.width;
+        if (_historyBar != null) {
+            w -= _historyBar.width;
+        }
+        w -= (PAD * 2);
+        return w;
     }
 
     /** The light of our life. */

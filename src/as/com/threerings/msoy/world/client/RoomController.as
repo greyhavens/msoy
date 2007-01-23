@@ -151,6 +151,7 @@ public class RoomController extends SceneController
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
         _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+        _roomView.stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheeled);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
     }
@@ -161,6 +162,7 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
         _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+        _roomView.stage.removeEventListener(MouseEvent.MOUSE_WHEEL, mouseWheeled);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
@@ -374,6 +376,12 @@ public class RoomController extends SceneController
 
         setHoverSprite(hitter as MsoySprite); // will pass null if hitter
         // is not a MsoySprite.
+    }
+
+    protected function mouseWheeled (event :MouseEvent) :void
+    {
+        trace("Mouse wheeled: " + event.delta);
+        _roomView.chatOverlay.scrollHistory(event.delta);
     }
 
     /**

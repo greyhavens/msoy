@@ -172,7 +172,7 @@ public class WorldGameControlBackend extends GameControlBackend
         var occs :Array = new Array();
         var occlist :OidList = plobj.occupants;
         for (var ii :int = 0, nn :int = occlist.size(); ii < nn; ii++) {
-            occs.push(occlist.getAt(ii));
+            occs.push(occlist.get(ii));
         }
         return occs;
     }

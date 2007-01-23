@@ -44,11 +44,14 @@ import com.threerings.ezgame.util.EZObjectMarshaller;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
-import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.ActorInfo;
+
+import com.threerings.msoy.chat.client.ChatInfoProvider;
+import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.chat.client.ComicOverlay;
 
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.FurniData;
@@ -64,9 +67,11 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
  * Displays a room or scene in the virtual world.
  */
 public class RoomView extends AbstractRoomView
-    implements ContextMenuProvider, SetListener, MessageListener
+    implements ContextMenuProvider, SetListener, MessageListener,
+               ChatInfoProvider
 {
     /** The chat overlay. */
+//    public var chatOverlay :ComicOverlay;
     public var chatOverlay :ChatOverlay;
 
     /**
@@ -76,7 +81,8 @@ public class RoomView extends AbstractRoomView
     {
         super(ctx);
         _ctrl = ctrl;
-        chatOverlay = new ChatOverlay(ctx);
+//        chatOverlay = new ComicOverlay(ctx);
+        chatOverlay =new ChatOverlay(ctx);
     }
 
     /**
@@ -301,17 +307,44 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    /**
-     * Used for Comic chat overlay: identify the actor that spoke.
-     */
-     public function getSpeaker (speaker :Name) :ActorSprite
-     {
+    // from ChatInfoProvider
+    public function getSpeaker (speaker :Name) :Rectangle
+    {
         var occInfo :OccupantInfo = _roomObj.getOccupantInfo(speaker);
         if (occInfo != null) {
-            return (_actors.get(occInfo.bodyOid) as ActorSprite);
+            var actor :ActorSprite =
+                (_actors.get(occInfo.bodyOid) as ActorSprite);
+            if (actor != null) {
+                // return the global screen coords
+                // TODO: check this rectangle
+                return actor.getRect(this.stage);
+            }
+        }
+        return null;
+    }
 
-        } else {
-            return null;
+    // from ChatInfoProvider
+    public function getAvoidables (speaker :Name, high :Array, low :Array) :void
+    {
+        // TODO: avoid any open dialog?
+        // TODO: avoid the speaker's cluster?
+
+        // iterate over occupants
+        var myOid :int = _ctx.getClient().getClientOid();
+        for (var ii :int = _roomObj.occupants.size() - 1; ii >= 0; ii--) {
+            var actor :ActorSprite =
+                (_actors.get(_roomObj.occupants.get(ii)) as ActorSprite);
+            if (actor == null) {
+                continue;
+            }
+            var actorInfo :ActorInfo = actor.getActorInfo();
+            if ((actorInfo.bodyOid == myOid) ||
+                    (speaker != null && speaker.equals(actorInfo.username))) {
+                high.push(actor.getRect(this.stage));
+
+            } else if (low != null) {
+                low.push(actor.getRect(this.stage));
+            }
         }
     }
 
@@ -323,6 +356,7 @@ public class RoomView extends AbstractRoomView
         _roomObj.addListener(this);
 
         chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
+//        chatOverlay.newPlaceEntered(this);
 
         addAllOccupants();
 
@@ -615,7 +649,7 @@ public class RoomView extends AbstractRoomView
     {
         // add all currently present occupants
         for (var ii :int = _roomObj.occupants.size() - 1; ii >= 0; ii--) {
-            addBody(_roomObj.occupants.getAt(ii));
+            addBody(_roomObj.occupants.get(ii));
         }
     }
 
