@@ -151,6 +151,16 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Loads all the raw clone records associated with a given original item id. This is
+     * potentially a very large dataset.
+     */
+    public Collection<CLT> loadCloneRecords (int itemId)
+        throws PersistenceException
+    {
+        return findAll(getCloneClass(), new Where(CloneRecord.ITEM_ID, itemId));
+    }
+
+    /**
      * Loads and returns all items (clones and originals) that are "in use" at the specified
      * location.
      */
@@ -199,7 +209,6 @@ public abstract class ItemRepository<
      *       to be a single join in a sane universe, but it makes significant demands on the
      *       Depot code that we don't know how to handle yet (or possibly some fiddling with
      *       the Item vs Catalog class hierarchies). 
-     * @param mature 
      */
     public Collection<CAT> loadCatalog (byte sortBy, boolean mature, String search, int offset,
                                         int rows)
@@ -208,6 +217,9 @@ public abstract class ItemRepository<
         SQLExpression sortExp;
 
         switch(sortBy) {
+        case CatalogListing.SORT_BY_NOTHING:
+            sortExp = null;
+            break;
         case CatalogListing.SORT_BY_LIST_DATE:
             sortExp = new ColumnExp(getCatalogClass(), CatalogRecord.LISTED_DATE);
             break;
@@ -222,11 +234,13 @@ public abstract class ItemRepository<
         QueryClause[] clauses = new QueryClause[] {
             new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
                      getItemClass(), ItemRecord.ITEM_ID),
-            OrderBy.descending(sortExp),
             new Limit(offset, rows)
         };
-
-        if (search != null && search.length() > 0) {
+        if (sortExp != null) {
+            clauses = ArrayUtil.append(clauses, OrderBy.descending(sortExp));
+        }
+	
+        if (search != null && search.length() > 0) {                
             // TODO: We should have a Like() operator in Depot.
             SQLOperator searchExp = new SQLOperator.BinaryOperator(
                 getItemColumn(ItemRecord.NAME),"%" + search + "%") {
