@@ -51,7 +51,6 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
 
         item = ItemRecord.newRecord(listing.item);
         listedDate = new Timestamp(listing.listedDate.getTime());
-
     }
 
     public CatalogListing toListing ()
