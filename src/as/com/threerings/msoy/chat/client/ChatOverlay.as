@@ -98,8 +98,8 @@ public class ChatOverlay
             _overlay.mouseChildren = false;
             _overlay.mouseEnabled = false;
             _overlay.alpha = ALPHA;
-            _overlay.x = PAD;
-            _overlay.y = PAD;
+            _overlay.x = 0;
+            _overlay.y = 0;
             _target.rawChildren.addChildAt(_overlay,
                 _target.rawChildren.numChildren - 1);
             _target.addEventListener(ResizeEvent.RESIZE, handleContainerResize);
@@ -201,11 +201,11 @@ public class ChatOverlay
         clearGlyphs(_subtitles);
 
         // figure out the height of the subtitles
-        _subtitleHeight = getTargetHeight() * _subtitlePercentage;
+        _subtitleHeight = (_target.height * _subtitlePercentage);
 
         // make a guess as to the extent of the history (how many avg
         // sized subtitles will fit in the subtitle area
-        _historyExtent = _subtitleHeight / SUBTITLE_HEIGHT_GUESS;
+        _historyExtent = (_subtitleHeight - PAD) / SUBTITLE_HEIGHT_GUESS;
 
         var msg :ChatMessage;
         var now :int = getTimer();
@@ -237,9 +237,16 @@ public class ChatOverlay
 
         // finally, if we're in history mode, we should figure that out too
         if (isHistoryMode()) {
+            configureHistoryBarSize();
             updateHistBar(histSize - 1);
             figureCurrentHistory();
         }
+
+        _overlay.graphics.clear();
+        _overlay.graphics.lineStyle(1, 0xFF0000);
+        var hei :int = _target.height - _subtitleHeight;
+        _overlay.graphics.moveTo(0, hei);
+        _overlay.graphics.lineTo(_target.width, hei);
     }
 
     /**
@@ -269,10 +276,10 @@ public class ChatOverlay
         // _settingBar protects us from reacting to our own change
         _settingBar = true;
         try {
-            // TODO: get the math right here..
             _historyBar.setScrollProperties(_historyExtent, _histOffset,
-                newMaxVal); // + _historyExtent);
+                newMaxVal);
             _historyBar.scrollPosition = newVal;
+
         } finally {
             _settingBar = false;
         }
@@ -326,8 +333,8 @@ public class ChatOverlay
     {
         var height :int = glyph.height;
 
-        glyph.x = 0;
-        glyph.y = getTargetHeight() - height;
+        glyph.x = PAD;
+        glyph.y = getTargetHeight() - height - PAD;
         scrollUpSubtitles(height + getSubtitleSpacing(glyph.getType()));
         _subtitles.push(glyph);
         _overlay.addChild(glyph);
@@ -429,14 +436,15 @@ public class ChatOverlay
 
     internal function getTargetHeight () :int
     {
-        var h :int = _target.height;
-        h -= (PAD * 2);
-        return h;
+        return _target.height;
     }
 
     internal function getTargetWidth () :int
     {
         var w :int = _target.width;
+        if (_historyBar != null) {
+            w -= _historyBar.width;
+        }
         w -= (PAD * 2);
         return w;
     }
@@ -506,19 +514,13 @@ public class ChatOverlay
             resetHistoryOffset();
         }
 
-        // TODO: there is a small bug here when the history is pruned
-        // and the scrollbar is either at the top or bottom of the track-
-        // nothing updates.
-        // To test, change HistoryList: MAX_HISTORY to 9, PRUNE to 1
         if (_target != null && isHistoryMode()) {
             var val :int = _historyBar.scrollPosition;
-            //trace("val is " + val + ", updateHistBar(" + (val - adjustment) + ")");
             updateHistBar(val - adjustment);
 
-            //trace("scrollpos: " + _historyBar.scrollPosition);
-
             // only refigure if needed
-            if ((val != _historyBar.scrollPosition) || !_histOffsetFinal) {
+            if ((val != _historyBar.scrollPosition) || (adjustment != 0) ||
+                    !_histOffsetFinal) {
                 figureCurrentHistory();
             }
         }
@@ -711,7 +713,6 @@ public class ChatOverlay
     protected function handleContainerResize (event :ResizeEvent) :void
     {
         layout();
-        configureHistoryBarSize();
     }
 
     /**
@@ -731,7 +732,7 @@ public class ChatOverlay
      */
     protected function configureHistoryBarSize () :void
     {
-        _historyBar.setStyle("top", _target.height - _subtitleHeight);
+        _historyBar.height = _subtitleHeight;
         _historyBar.setStyle("bottom", 0);
         _historyBar.setStyle("right", 0);
     }
@@ -763,20 +764,22 @@ public class ChatOverlay
             return;
         }
 
-        var hei :int = 0;
         var hsize :int = _history.size();
+        var targHeight :int = getTargetHeight();
+        var ypos :int = targHeight - PAD;
+        var min :int = (targHeight - _subtitleHeight);
         for (var ii :int = 0; ii < hsize; ii++) {
             var glyph :ChatGlyph = getHistorySubtitle(ii);
-            hei += glyph.height;
+            ypos -= glyph.height;
 
             // oop, we passed it, it was the last one
-            if (hei >= _subtitleHeight) {
+            if (ypos <= min) {
                 _histOffset = Math.max(0, ii - 1);
                 _histOffsetFinal = true;
                 return;
             }
 
-            hei += getHistorySubtitleSpacing(ii);
+            ypos -= getHistorySubtitleSpacing(ii);
         }
 
         // basically, this means there isn't yet enough history to fill
@@ -800,8 +803,8 @@ public class ChatOverlay
         if (_history.size() > 0) {
             // start from the bottom...
             var targHeight :int = getTargetHeight();
-            var ypos :int = targHeight;
-            var min :int = targHeight - _subtitleHeight;
+            var ypos :int = targHeight - PAD;
+            var min :int = (targHeight - _subtitleHeight);
             for (ii = first; ii >= 0; ii--, count++) {
                 glyph = getHistorySubtitle(ii);
 
@@ -812,7 +815,7 @@ public class ChatOverlay
                 }
 
                 // position it
-                glyph.x = 0;
+                glyph.x = PAD;
                 glyph.y = ypos;
                 ypos -= getHistorySubtitleSpacing(ii);
             }
@@ -887,10 +890,11 @@ public class ChatOverlay
     /** The currently displayed subtitles in history mode. */
     protected var _showingHistory :Array = [];
 
+    /** The height of the subtitle area, without any padding. */
     protected var _subtitleHeight :int = SUBTITLE_HEIGHT_GUESS * 5;
 
     /** The percent of the bottom of the screen to use for subtitles. */
-    protected var _subtitlePercentage :Number = .5;
+    protected var _subtitlePercentage :Number = .4;
 
     /** The history offset (from 0) such that the history lines
      * (0, _histOffset - 1) will all fit onscreen if the lowest scrollbar
@@ -923,7 +927,7 @@ public class ChatOverlay
     protected var _popping :Boolean = false;
 
     /** Used to guess at the 'page size' for the scrollbar. */
-    protected static const SUBTITLE_HEIGHT_GUESS :int = 24;
+    protected static const SUBTITLE_HEIGHT_GUESS :int = 26;
 
     /* The shared history used by all overlays. */
     protected static var _history :HistoryList;
