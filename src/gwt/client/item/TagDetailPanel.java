@@ -6,17 +6,26 @@ package client.item;
 import java.util.Collection;
 import java.util.Iterator;
 
+import client.shell.ShellContext;
+import client.util.PromptPopup;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
+import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.TagHistory;
@@ -26,12 +35,6 @@ import com.threerings.msoy.item.web.TagHistory;
  */
 public class TagDetailPanel extends FlexTable
 {
-    public static final String[] GLOBAL_TAGS = {
-        "mature",
-        "offensive",
-        "copyright"
-    };
-    
     public TagDetailPanel (ItemContext ctx, Item item)
     {
         setStyleName("tagDetailPanel");
@@ -97,6 +100,27 @@ public class TagDetailPanel extends FlexTable
         });
         setWidget(1, 3, _quickTags);
 
+        final PopupPanel menuPanel = new PopupPanel(true);
+        MenuBar menu = new MenuBar(true);
+        menu.addItem(getMenuItem("Mature", Item.FLAG_FLAGGED_MATURE, menuPanel));
+        menu.addItem(getMenuItem("Copyright Violation", Item.FLAG_FLAGGED_COPYRIGHT, menuPanel));
+        menuPanel.add(menu);
+        final InlineLabel flagLabel = new InlineLabel("Flag");
+        flagLabel.addStyleName("LabelLink");
+        // use a MouseListener instead of ClickListener so we can get at the mouse (x,y)
+        flagLabel.addMouseListener(new MouseListener() {
+            public void onMouseDown (Widget sender, int x, int y) { 
+                menuPanel.setPopupPosition(flagLabel.getAbsoluteLeft() + x, 
+                        flagLabel.getAbsoluteTop() + y);
+                menuPanel.show();
+            }
+            public void onMouseLeave (Widget sender) { }
+            public void onMouseUp (Widget sender, int x, int y) { }
+            public void onMouseEnter (Widget sender) { }
+            public void onMouseMove (Widget sender, int x, int y) { }
+        });
+        setWidget(1, 4, flagLabel);
+
         setWidget(2, 0, _status = new Label(""));
 
         getFlexCellFormatter().setColSpan(0, 0, getCellCount(1));
@@ -105,6 +129,44 @@ public class TagDetailPanel extends FlexTable
         refreshTags();
     }
 
+    protected MenuItem getMenuItem (final String menuLabel, final byte flag,
+                                    final PopupPanel parent)
+    {
+        // TODO: raw HTML is a bit yuck; maybe add more structure to PromptPopup 
+        final String text =
+            "<b>Flag item as " + menuLabel + "?</b><br>\n" +
+            "<hr>\n" +
+            "Blah blah blah blah.\n";
+
+        MenuItem mature = new MenuItem(menuLabel, new Command() {
+            public void execute() {
+                (new PromptPopup(text, "Flag", "Cancel") {
+                    public void onAffirmative () {
+                        parent.hide();
+                        updateItemFlags(flag);
+                    }
+                    public void onNegative () { }
+                }).prompt();
+            }
+        });
+        return mature;
+    }
+
+    protected void updateItemFlags (final byte flag)
+    {
+        _ctx.itemsvc.setFlags(_ctx.creds, _item.getIdent(), flag, flag, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _item.flags |= flag;
+            }
+            public void onFailure (Throwable caught) {
+                ShellContext.log("Failed to update item flags [item=" + _item.getIdent() +
+                                 ", flag=" + flag + "]", caught);
+                _status.setText("Internal error setting flag: " + caught.getMessage());
+            }
+        });
+
+    }
+    
     protected void toggleTagHistory ()
     {
 //         if (_tagHistory != null) {
@@ -168,9 +230,6 @@ public class TagDetailPanel extends FlexTable
             _ctx.itemsvc.getRecentTags(_ctx.creds, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _quickTags.clear();
-                    for (int i = 0; i < GLOBAL_TAGS.length; i ++) {
-                        _quickTags.addItem(GLOBAL_TAGS[i]);
-                    }
                     Iterator i = ((Collection) result).iterator();
                     while (i.hasNext()) {
                         TagHistory history = (TagHistory) i.next();

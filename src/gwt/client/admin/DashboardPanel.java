@@ -3,8 +3,11 @@
 
 package client.admin;
 
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import client.util.MsoyUI;
 
@@ -18,7 +21,12 @@ public class DashboardPanel extends VerticalPanel
         _ctx = ctx;
 
         add(MsoyUI.createLabel(_ctx.msgs.title(), "title"));
-        add(new Label(_ctx.msgs.todo()));
+        Button reviewButton = new Button(_ctx.msgs.reviewButton());
+        reviewButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                new ReviewPopup(_ctx).show();
+            }
+        });
     }
 
     protected AdminContext _ctx;

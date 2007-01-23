@@ -3,17 +3,35 @@
 
 package com.threerings.msoy.web.server;
 
-import java.util.Collection;
+import static com.threerings.msoy.Log.log;
 
+import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+
+import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntSet;
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.CloneRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.TagPopularityRecord;
+import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.TagHistory;
+import com.threerings.msoy.server.JSONMarshaller;
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MailMessageRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.ItemService;
+import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -232,5 +250,64 @@ public class ItemServlet extends MsoyServiceServlet
                 }
             });
             waiter.waitForResult();
+    }
+
+    // from interface ItemService
+    public void getFlaggedItems (WebCreds creds, int count)
+        throws ServiceException
+    {
+        throw new ServiceException("Not implemented.");
+    }
+
+    // from interface ItemService
+    public void deleteItemAdmin (WebCreds creds, ItemIdent ident, String subject, String body)
+        throws ServiceException
+    {
+        MemberRecord mRec = requireAuthedUser(creds);
+        if (!mRec.isSupport()) {
+            throw new ServiceException(ItemCodes.ACCESS_DENIED);
+        }
+        byte type = ident.type;
+        ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        try {
+            ItemRecord item = repo.loadOriginalItem(ident.itemId);
+            IntSet owners = new ArrayIntSet();
+
+            if (item.ownerId != 0) {
+                owners.add(item.ownerId);
+
+            } else {
+                owners.add(item.creatorId);
+
+                // if this is a listed item, unlist it
+                repo.removeListing(item.itemId);
+
+                // then delete all the clones
+                for (CloneRecord record : repo.loadCloneRecords(item.itemId)) {
+                    repo.deleteItem(record.itemId);
+                    owners.add(record.ownerId);
+                }
+            }
+            // finally delete the actual item
+            repo.deleteItem(item.itemId);
+
+            // build a message record
+            MailMessageRecord record = new MailMessageRecord();
+            record.senderId = -1;
+            record.folderId = MailFolder.INBOX_FOLDER_ID;
+            record.subject = subject;
+            record.sent = new Timestamp(System.currentTimeMillis());
+            record.bodyText = body;
+            record.unread = true;
+            
+            // and notify everybody
+            for (int ownerId : owners) {
+                record.ownerId = ownerId;
+                record.recipientId = ownerId;
+                MsoyServer.mailMan.getRepository().fileMessage(record);
+            }
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Admin item delete failed [item=" + ident + "].", pe);
+        }
     }
 }

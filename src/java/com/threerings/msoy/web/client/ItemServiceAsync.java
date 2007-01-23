@@ -80,4 +80,15 @@ public interface ItemServiceAsync
      */
     public void setFlags (WebCreds creds, ItemIdent ident, byte mask, byte values,
                           AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ItemService.getFlaggedItems}.
+     */
+    public void getFlaggedItems (WebCreds creds, int count, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ItemService.deleteItemAdmin}.
+     */
+    public void deleteItemAdmin (WebCreds creds, ItemIdent ident, String subject, String body,
+                                 AsyncCallback callback);
 }

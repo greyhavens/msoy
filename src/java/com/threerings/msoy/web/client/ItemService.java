@@ -108,4 +108,19 @@ public interface ItemService extends RemoteService
      */
     public void setFlags (WebCreds creds, ItemIdent ident, byte mask, byte values)
         throws ServiceException;
+
+    /**
+     * Fetches the first 'count' items flagged as mature or copyright in the database.
+     */
+    public void getFlaggedItems (WebCreds creds, int count)
+        throws ServiceException;
+
+    /**
+     * Deletes an item and notifies people who care with the given message.
+     * If the item is listed in the catalog, also delists it and deletes any clones.
+     * @throws ServiceException 
+     */
+    public void deleteItemAdmin (WebCreds creds, ItemIdent ident, String subject, String body)
+        throws ServiceException;
+
 }
