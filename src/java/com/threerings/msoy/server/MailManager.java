@@ -270,6 +270,7 @@ public class MailManager
             MemberRecord memRec = _memberRepo.loadMember(record.senderId);
             headers.sender = new MemberName(memRec.name, memRec.memberId);
         } else {
+            // TODO: This should not be hard-coded here.
             headers.sender = new MemberName("System Administrators", 0);
         }
 
