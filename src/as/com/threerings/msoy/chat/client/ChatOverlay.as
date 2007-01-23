@@ -140,6 +140,16 @@ public class ChatOverlay
     }
 
     /**
+     * Scroll the history up or down the specified number of lines.
+     */
+    public function scrollHistory (dy :int) :void
+    {
+        if (_historyBar != null) {
+            _historyBar.scrollPosition += dy;
+        }
+    }
+
+    /**
      * Sets whether or not the glyphs are clickable.
      */
     public function setClickableGlyphs (clickable :Boolean) :void
@@ -323,7 +333,7 @@ public class ChatOverlay
     /**
      * Add the specified subtitle glyph for immediate display.
      */
-    protected function addSubtitle (glyph :ChatGlyph) :void
+    protected function addSubtitle (glyph :SubtitleGlyph) :void
     {
         var height :int = int(glyph.height);
 
@@ -338,7 +348,7 @@ public class ChatOverlay
      * Create a subtitle glyph.
      */
     protected function createSubtitle (
-        msg :ChatMessage, type :int, expires :Boolean) :ChatGlyph
+        msg :ChatMessage, type :int, expires :Boolean) :SubtitleGlyph
     {
         var texts :Array = parseLinks(msg.message);
 
@@ -500,7 +510,7 @@ public class ChatOverlay
     internal function historyUpdated (adjustment :int) :void
     {
         if (adjustment != 0) {
-            for each (var glyph :ChatGlyph in _showingHistory) {
+            for each (var glyph :SubtitleGlyph in _showingHistory) {
                 glyph.histIndex -= adjustment;
             }
             // some history entries were deleted, we need to re-figure the
@@ -791,7 +801,7 @@ public class ChatOverlay
     {
         var first :int = _historyBar.scrollPosition;
         var count :int = 0;
-        var glyph :ChatGlyph;
+        var glyph :SubtitleGlyph;
         var ii :int;
 
         if (_history.size() > 0) {
@@ -819,7 +829,7 @@ public class ChatOverlay
         // we need to prune out the ChatGlyphs that aren't actually needed
         // and make sure the ones that are are positioned on the screen correctly
         for (ii = _showingHistory.length - 1; ii >= 0; ii--) {
-            glyph = (_showingHistory[ii] as ChatGlyph);
+            glyph = (_showingHistory[ii] as SubtitleGlyph);
             var managed :Boolean = (_overlay != null) && _overlay.contains(glyph);
             if (glyph.histIndex <= first && glyph.histIndex > (first - count)) {
                 // it should be showing
@@ -840,9 +850,9 @@ public class ChatOverlay
      * Get the subtitle for the specified history index, creating if
      * necessary.
      */
-    protected function getHistorySubtitle (index :int) :ChatGlyph
+    protected function getHistorySubtitle (index :int) :SubtitleGlyph
     {
-        var glyph :ChatGlyph;
+        var glyph :SubtitleGlyph;
 
         // do a brute search (over a small set) for an already-created glyph
         for each (glyph in _showingHistory) {
@@ -861,7 +871,7 @@ public class ChatOverlay
     /**
      * Create a new subtitle for use in history.
      */
-    protected function createHistorySubtitle (index :int) :ChatGlyph
+    protected function createHistorySubtitle (index :int) :SubtitleGlyph
     {
         var msg :ChatMessage = _history.get(index);
         var type :int = getType(msg, true);
@@ -988,7 +998,7 @@ public class ChatOverlay
     protected static const IGNORECHAT :int = -1;
 
     /** Pixel padding surrounding most things. */
-    protected static const PAD :int = 10;
+    public static const PAD :int = 10;
 
     // used to color chat bubbles
     protected static const BROADCAST_COLOR :uint = 0x990000;

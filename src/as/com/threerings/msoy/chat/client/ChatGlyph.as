@@ -9,16 +9,13 @@ import flash.events.Event;
 import flash.events.TimerEvent;
 
 import flash.text.TextField;
+import flash.text.TextFormat;
 
 import flash.utils.Timer;
 import flash.utils.getTimer; // function import
 
 public class ChatGlyph extends Sprite
 {
-    /** The index of the ChatMessage corresponding to this glyph in the
-     * HistoryList. */
-    public var histIndex :int;
-
     public function ChatGlyph (
         overlay :ChatOverlay, type :int, lifetime :int)
     {
@@ -39,6 +36,54 @@ public class ChatGlyph extends Sprite
     public function getType () :int
     {
         return _type;
+    }
+
+    /**
+     * Create the text field for holding the text.
+     */
+    protected function createTextField () :TextField
+    {
+        var txt :TextField = new TextField();
+        txt.multiline = true;
+        txt.wordWrap = true;
+        txt.selectable = true; // enable copy/paste
+        return txt;
+    }
+
+    /**
+     * Populate the TextField with the specified formatted strings.
+     *
+     * @param texts A mixed array of String and TextFormat objects, with
+     * each String being rendered in the TextFormat preceding it, or the
+     * default format if not preceded by a TextFormat.
+     */
+    protected function setText (
+        txt :TextField, defaultFmt :TextFormat, texts :Array) :void
+    {
+        var fmt :TextFormat = null;
+        var length :int = 0;
+        for each (var o :Object in texts) {
+            if (o is TextFormat) {
+                fmt = (o as TextFormat);
+
+            } else {
+                // Note: we should just be able to set the defaultFormat
+                // for the entire field and then format the different
+                // stretches, but SURPRISE! It doesn't quite work right,
+                // so we format every goddamn piece of the text by hand.
+                var append :String = String(o);
+                var newLength :int = length + append.length;
+                txt.appendText(append);
+                if (fmt == null) {
+                    fmt = defaultFmt;
+                }
+                if (length != newLength) {
+                    txt.setTextFormat(fmt, length, newLength);
+                }
+                fmt = null;
+                length = newLength;
+            }
+        }
     }
 
     protected function handleStartExpire (evt :TimerEvent) :void
