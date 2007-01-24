@@ -12,9 +12,10 @@ public class BubbleGlyph extends ChatGlyph
 {
     public function BubbleGlyph (
         overlay :ComicOverlay, type :int, lifetime :int,
-        defaultFmt :TextFormat, texts :Array)
+        speaker :Name, defaultFmt :TextFormat, texts :Array)
     {
         super(overlay, type, lifetime);
+        _speaker = speaker;
 
         var txt :TextField = createTextField();
         txt.width = 400; // TODO

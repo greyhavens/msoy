@@ -221,7 +221,7 @@ public class ComicOverlay extends ChatOverlay
         var ii :int;
         var texts :Array = formatMessage(msg, type, false);
         var lifetime :int = getLifetime(msg, true);
-        var bubble :BubbleGlyph = new BubbleGlyph(this, type, lifetime,
+        var bubble :BubbleGlyph = new BubbleGlyph(this, type, lifetime, speaker,
             _defaultFmt, texts);
 
         // get the size of the new bubble
@@ -431,7 +431,7 @@ public class ComicOverlay extends ChatOverlay
      */
     protected function getRectWithOlds (r :Rectangle, oldbubs :Array) :Rectangle
     {
-        var n :int = oldbubs.size();
+        var n :int = oldbubs.length;
         // if no old bubs, just return the new one.
         if (n == 0) {
             return r;
