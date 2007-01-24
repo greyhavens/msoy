@@ -78,8 +78,8 @@ public class ComicOverlay extends ChatOverlay
         for (var ii :int = _bubbles.length - 1; ii >= 0; ii--) {
             var rec :ChatGlyph = (_bubbles[ii] as ChatGlyph);
             if (all || isPlaceOrientedType(rec.getType())) {
-                _overlay.removeChild(rec);
                 _bubbles.splice(ii, 1);
+                removeGlyph(rec);
             }
         }
     }
@@ -123,7 +123,9 @@ public class ComicOverlay extends ChatOverlay
     {
         switch (placeOf(type)) {
         case INFO:
+        case FEEDBACK:
         case ATTENTION:
+        case BROADCAST:
             if (createBubble(msg, type, null, null)) {
                 return true; // EXIT;
             }
@@ -405,7 +407,9 @@ public class ComicOverlay extends ChatOverlay
         // otherwise we have different areas for different types
         switch (placeOf(type)) {
         case INFO:
+        case FEEDBACK:
         case ATTENTION:
+        case BROADCAST:
             // upper left
             r.x = BUBBLE_SPACING;
             r.y = BUBBLE_SPACING;
@@ -705,11 +709,11 @@ public class ComicOverlay extends ChatOverlay
         if (oldbubs.length >= MAX_BUBBLES_PER_USER) {
             bub = (oldbubs.shift() as BubbleGlyph);
             ArrayUtil.removeFirst(_bubbles, bub);
-            _target.removeChild(bub);
+            removeGlyph(bub);
 
             // or some other old bubble
         } else if (num >= MAX_BUBBLES) {
-            _target.removeChild(_bubbles.shift() as BubbleGlyph);
+            removeGlyph(_bubbles.shift() as BubbleGlyph);
         }
 
         // return the speaker's old bubbles

@@ -554,9 +554,20 @@ public class ChatOverlay
     internal function glyphExpired (glyph :ChatGlyph) :void
     {
         ArrayUtil.removeFirst(_subtitles, glyph);
-        if (_overlay != null) {
-            _overlay.removeChild(glyph);
+        // the glyph may have already been removed, but still expire
+        // TODO: possibly fix that, so that a removed glyph is 
+        if (_overlay != null && glyph.parent == _overlay) {
+            removeGlyph(glyph);
         }
+    }
+
+    /**
+     * Remove a glyph from the overlay.
+     */
+    protected function removeGlyph (glyph :ChatGlyph) :void
+    {
+        _overlay.removeChild(glyph);
+        glyph.wasRemoved();
     }
 
     /**
@@ -663,13 +674,14 @@ public class ChatOverlay
      */
     protected function scrollUpSubtitles (dy :int) :void
     {
+        var minY :int = getTargetHeight() - _subtitleHeight;
         for (var ii :int = 0; ii < _subtitles.length; ii++) {
             var glyph :ChatGlyph = (_subtitles[ii] as ChatGlyph);
             var newY :int = int(glyph.y) - dy;
-            if (newY + int(glyph.height) < 0) {
-                _overlay.removeChild(glyph);
+            if (newY <= minY) {
                 _subtitles.splice(ii, 1);
                 ii--;
+                removeGlyph(glyph);
 
             } else {
                 glyph.y = newY;
@@ -712,7 +724,7 @@ public class ChatOverlay
     {
         if (_overlay != null) {
             for each (var glyph :ChatGlyph in glyphs) {
-                _overlay.removeChild(glyph);
+                removeGlyph(glyph);
             }
         }
 
@@ -857,7 +869,7 @@ public class ChatOverlay
             } else {
                 // it shouldn't be showing
                 if (managed) {
-                    _overlay.removeChild(glyph);
+                    removeGlyph(glyph);
                 }
                 _showingHistory.splice(ii, 1);
             }

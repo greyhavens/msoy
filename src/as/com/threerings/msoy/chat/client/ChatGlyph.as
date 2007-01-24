@@ -39,6 +39,15 @@ public class ChatGlyph extends Sprite
     }
 
     /**
+     * Called back from the overlay if we were removed before our time.
+     */
+    internal function wasRemoved () :void
+    {
+        // in case we've started listening to this, stop
+        removeEventListener(Event.ENTER_FRAME, handleFadeStep);
+    }
+
+    /**
      * Create the text field for holding the text.
      */
     protected function createTextField () :TextField
