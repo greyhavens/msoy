@@ -163,6 +163,12 @@
   font-size: 12px;
 }
 
+.tagDetailPanel .LabelLink {
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+}
+
 .itemSearchPanel {
   padding-left: 20px;
   padding-top: 4px;

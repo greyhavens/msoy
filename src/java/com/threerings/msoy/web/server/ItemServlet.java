@@ -292,7 +292,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void deleteItemAdmin (WebCreds creds, ItemIdent ident, String subject, String body)
+    public Integer deleteItemAdmin (WebCreds creds, ItemIdent ident, String subject, String body)
         throws ServiceException
     {
         MemberRecord mRec = requireAuthedUser(creds);
@@ -305,6 +305,7 @@ public class ItemServlet extends MsoyServiceServlet
             ItemRecord item = repo.loadOriginalItem(ident.itemId);
             IntSet owners = new ArrayIntSet();
 
+            int deletionCount = 0;
             owners.add(item.creatorId);
             if (item.ownerId == 0) {
                 // if this is a listed item, unlist it
@@ -313,11 +314,13 @@ public class ItemServlet extends MsoyServiceServlet
                 // then delete all the clones
                 for (CloneRecord record : repo.loadCloneRecords(item.itemId)) {
                     repo.deleteItem(record.itemId);
+                    deletionCount ++;
                     owners.add(record.ownerId);
                 }
             }
             // finally delete the actual item
             repo.deleteItem(item.itemId);
+            deletionCount ++;
 
             // build a message record
             MailMessageRecord record = new MailMessageRecord();
@@ -334,6 +337,7 @@ public class ItemServlet extends MsoyServiceServlet
                 record.recipientId = ownerId;
                 MsoyServer.mailMan.getRepository().fileMessage(record);
             }
+            return Integer.valueOf(deletionCount);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Admin item delete failed [item=" + ident + "].", pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);

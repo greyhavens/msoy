@@ -121,7 +121,7 @@ public interface ItemService extends RemoteService
      * If the item is listed in the catalog, also delists it and deletes any clones.
      * @throws ServiceException 
      */
-    public void deleteItemAdmin (WebCreds creds, ItemIdent ident, String subject, String body)
+    public Integer deleteItemAdmin (WebCreds creds, ItemIdent ident, String subject, String body)
         throws ServiceException;
 
 }

@@ -8,12 +8,52 @@ package client.admin;
 public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "To delete this item, enter a message to be sent to the item's creator:".
+   * 
+   * @return translated "To delete this item, enter a message to be sent to the item's creator:"
+   * @gwt.key reviewDeletionPrompt
+   */
+  String reviewDeletionPrompt();
+
+  /**
+   * Translated "Successfully deleted {0} item(s) and notified owner(s).".
+   * 
+   * @return translated "Successfully deleted {0} item(s) and notified owner(s)."
+   * @gwt.key reviewDeletionSuccess
+   */
+  String reviewDeletionSuccess(String arg0);
+
+  /**
+   * Translated "Unable to find flagged items to display: {0}".
+   * 
+   * @return translated "Unable to find flagged items to display: {0}"
+   * @gwt.key reviewErrFlaggedItems
+   */
+  String reviewErrFlaggedItems(String arg0);
+
+  /**
+   * Translated "The item "{0}" has been deleted by the game administrators: {1}".
+   * 
+   * @return translated "The item "{0}" has been deleted by the game administrators: {1}"
+   * @gwt.key reviewDeletionMailMessage
+   */
+  String reviewDeletionMailMessage(String arg0,  String arg1);
+
+  /**
    * Translated "There are no flagged items to review.".
    * 
    * @return translated "There are no flagged items to review."
    * @gwt.key reviewNoItems
    */
   String reviewNoItems();
+
+  /**
+   * Translated "Delete All".
+   * 
+   * @return translated "Delete All"
+   * @gwt.key reviewDeleteAll
+   */
+  String reviewDeleteAll();
 
   /**
    * Translated "MetaSOY Dashboard".
@@ -30,14 +70,6 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key reviewDelisted
    */
   String reviewDelisted();
-
-  /**
-   * Translated "Delete All".
-   * 
-   * @return translated "Delete All"
-   * @gwt.key reviewDeleteAll
-   */
-  String reviewDeleteAll();
 
   /**
    * Translated "Lots of useful features coming soon.".
@@ -72,6 +104,22 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDelete();
 
   /**
+   * Translated "Failed to delete messages and/or notify owners: {0}".
+   * 
+   * @return translated "Failed to delete messages and/or notify owners: {0}"
+   * @gwt.key reviewErrDeletionFailed
+   */
+  String reviewErrDeletionFailed(String arg0);
+
+  /**
+   * Translated "Reload".
+   * 
+   * @return translated "Reload"
+   * @gwt.key reviewReload
+   */
+  String reviewReload();
+
+  /**
    * Translated "Delist".
    * 
    * @return translated "Delist"
@@ -88,12 +136,36 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDone();
 
   /**
+   * Translated "Dismiss".
+   * 
+   * @return translated "Dismiss"
+   * @gwt.key reviewDismiss
+   */
+  String reviewDismiss();
+
+  /**
    * Translated "Your account does not have the necessary privileges to view this page.".
    * 
    * @return translated "Your account does not have the necessary privileges to view this page."
    * @gwt.key lackPrivileges
    */
   String lackPrivileges();
+
+  /**
+   * Translated "Cancel".
+   * 
+   * @return translated "Cancel"
+   * @gwt.key reviewDeletionDont
+   */
+  String reviewDeletionDont();
+
+  /**
+   * Translated "Delete".
+   * 
+   * @return translated "Delete"
+   * @gwt.key reviewDeletionDo
+   */
+  String reviewDeletionDo();
 
   /**
    * Translated "Review flagged items".
@@ -104,12 +176,12 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewButton();
 
   /**
-   * Translated "Unable to find catalog listing to delist.".
+   * Translated "Item Deleted".
    * 
-   * @return translated "Unable to find catalog listing to delist."
-   * @gwt.key errListingNotFound
+   * @return translated "Item Deleted"
+   * @gwt.key reviewDeletionMailHeader
    */
-  String errListingNotFound();
+  String reviewDeletionMailHeader();
 
   /**
    * Translated "Log in to access admin services.".
