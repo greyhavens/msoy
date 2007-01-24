@@ -46,6 +46,12 @@ public class MsoyControl
     public var tick :Function;
 
     /**
+     * A callback called if a particular instance of this object has
+     * gained control.
+     */
+    public var gotControl :Function;
+
+    /**
      */
     public function MsoyControl (disp :DisplayObject)
     {
@@ -96,23 +102,42 @@ public class MsoyControl
     }
 
     /**
+     * Is this instance in control?
+     */
+    public function hasControl () :Boolean
+    {
+        return _hasControl;
+    }
+
+    /**
+     * Request to have this instance of the object control all the instances
+     * in the room. The other instances are the same item, running on
+     * other browsers.
+     */
+    public function requestControl () :void
+    {
+        callMsoyCode("requestControl_v1");
+    }
+
+    /**
      * Configures the interval on which this item is "ticked" in milliseconds. The tick interval
      * can be no smaller than 100ms to avoid bogging down the client. By calling this method with a
      * non-zero value, the item indicates that it wants to be ticked and the ticking mechanism will
      * be activated. If this method is not called, ticking will not be done. Calling this method
      * with a 0ms interval will deactivate ticking.
+     *
+     * Note: Setting the tickInterval implicitely requests control, as
+     * only the instance that is in control may tick.
      */
     public function setTickInterval (interval :Number) :void
     {
         _tickInterval = (interval > 100 || interval <= 0) ? interval : 100;
-        if (_ticker != null) {
-            if (_tickInterval > 0) {
-                _ticker.delay = _tickInterval;
-            } else {
-                stopTicker();
-            }
-        } else {
-            callMsoyCode("requestControl_v1");
+
+        if (_hasControl) {
+            recheckTicker();
+
+        } else if (_tickInterval > 0) {
+            requestControl();
         }
     }
 
@@ -160,23 +185,19 @@ public class MsoyControl
     }
 
     /**
-     * Called when this client has been assigned control of this pet.
+     * Called when this client has been assigned control of this object.
      */
     protected function gotControl_v1 () :void
     {
-        // stop any existing ticker (won't ever happen, but we want to be safe)
-        stopTicker();
+        _hasControl = true;
 
-        // start up a new one if desired
-        if (_tickInterval > 0) {
-            _ticker = new Timer(_tickInterval, 0);
-            _ticker.addEventListener(TimerEvent.TIMER, function (evt :TimerEvent) :void {
-                if (tick != null) {
-                    tick();
-                }
-            });
-            _ticker.start();
+        // dispatch to user code..
+        if (gotControl != null) {
+            gotControl();
         }
+
+        // possibly set up a ticker now
+        recheckTicker();
     }
 
     /**
@@ -184,7 +205,35 @@ public class MsoyControl
      */
     protected function handleUnload (evt :Event) :void
     {
+        _hasControl = false;
         stopTicker();
+    }
+
+    /**
+     * Check the status of the ticker, starting or stopping it as necessary.
+     */
+    protected function recheckTicker () :void
+    {
+        if (_hasControl && _tickInterval > 0) {
+            if (_ticker == null) {
+                // we may be creating the timer for the first time
+                _ticker = new Timer(_tickInterval);
+                _ticker.addEventListener(TimerEvent.TIMER,
+                    function (evt :TimerEvent) :void {
+                        if (tick != null) {
+                            tick();
+                        }
+                    });
+
+            } else {
+                // we may just be committing a new interval
+                _ticker.delay = _tickInterval;
+            }
+            _ticker.start(); // start if not already running
+
+        } else {
+            stopTicker();
+        }
     }
 
     /**
@@ -222,10 +271,13 @@ public class MsoyControl
     protected var _props :Object;
 
     /** Our desired tick interval (in milliseconds). */
-    protected var _tickInterval :Number;
+    protected var _tickInterval :Number = 0;
 
-    /** Used to tick this Pet when this client is running its AI. */
+    /** Used to tick this object when this client is running its AI. */
     protected var _ticker :Timer;
+
+    /** Whether this instance has control. */
+    protected var _hasControl :Boolean = false;
 }
 }
 
