@@ -72,9 +72,6 @@ public class MsoySprite extends MediaContainer
     /** The current logical coordinate of this media. */
     public const loc :MsoyLocation = new MsoyLocation();
 
-    // TODO NOW
-    public var toolTip :String;
-
     /**
      * Constructor.
      */
@@ -138,6 +135,14 @@ public class MsoySprite extends MediaContainer
     {
         _editing = editing;
         configureMouseProperties();
+    }
+
+    /**
+     * Return the tooltip text for this sprite, or null if none.
+     */
+    public function getToolTipText () :String
+    {
+        return null;
     }
 
     /**

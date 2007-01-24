@@ -30,14 +30,12 @@ import com.threerings.msoy.world.data.FurniData;
 public class FurniSprite extends MsoySprite
     implements ContextMenuProvider
 {
-    public function FurniSprite (ctx :MsoyContext, furni :FurniData)
+    public function FurniSprite (furni :FurniData)
     {
         _furni = furni;
         super(furni.media, furni.getItemIdent());
         checkBackground();
         checkPerspective();
-
-        configureToolTip(ctx);
     }
 
     override public function isIncludedInLayout () :Boolean
@@ -72,7 +70,7 @@ public class FurniSprite extends MsoySprite
         scaleUpdated();
     }
 
-    public function update (ctx :MsoyContext, furni :FurniData) :void
+    public function update (furni :FurniData) :void
     {
         _furni = furni;
         setup(furni.media, furni.getItemIdent());
@@ -80,7 +78,35 @@ public class FurniSprite extends MsoySprite
         checkPerspective();
         scaleUpdated();
         setLocation(furni.loc);
-        configureToolTip(ctx);
+    }
+
+    override public function getToolTipText () :String
+    {
+        // clear out any residuals from the last action
+        var actionData :Array = _furni.splitActionData();
+
+        switch (_furni.actionType) {
+        case FurniData.ACTION_NONE:
+        case FurniData.BACKGROUND:
+            // no tooltip
+            return null;
+
+        case FurniData.ACTION_URL:
+            return _furni.actionData;
+
+        case FurniData.ACTION_LOBBY_GAME:
+        case FurniData.ACTION_WORLD_GAME:
+            return Msgs.GENERAL.get("i.play_game", String(actionData[1]));
+
+        case FurniData.ACTION_PORTAL:
+            return Msgs.GENERAL.get("i.trav_portal", String(actionData[1]));
+
+        default:
+            log.warning("Tooltip requested for unhandled furni action type " +
+                "[actionType=" + _furni.actionType +
+                ", actionData=" + _furni.actionData + "].");
+            return null;
+        }
     }
 
     // from ContextMenuProvider
@@ -204,11 +230,6 @@ public class FurniSprite extends MsoySprite
         super.setEditing(editing);
 
         checkBackground();
-
-        if (editing) {
-            // we don't want a tooltip while editing
-            toolTip = null;
-        }
     }
 
     override public function getMediaScaleX () :Number
@@ -299,42 +320,6 @@ public class FurniSprite extends MsoySprite
     protected function checkBackground () :void
     {
         alpha = (_editing && isBackground()) ? .65 : 1;
-    }
-
-    /**
-     * Do any setup required for the furniture's tooltip.
-     */
-    protected function configureToolTip (ctx :MsoyContext) :void
-    {
-        // clear out any residuals from the last action
-        toolTip = null;
-        var actionData :Array = _furni.splitActionData();
-
-        switch (_furni.actionType) {
-        case FurniData.ACTION_NONE:
-        case FurniData.BACKGROUND:
-            // do nothing
-            break;
-
-        case FurniData.ACTION_URL:
-            toolTip = _furni.actionData;
-            break;
-
-        case FurniData.ACTION_LOBBY_GAME:
-        case FurniData.ACTION_WORLD_GAME:
-            toolTip = Msgs.GENERAL.get("i.play_game", String(actionData[1]));
-            break;
-
-        case FurniData.ACTION_PORTAL:
-            toolTip = Msgs.GENERAL.get("i.trav_portal", String(actionData[1]));
-            break;
-
-        default:
-            log.warning("Tooltip requested for unhandled furni action type " +
-                "[actionType=" + _furni.actionType +
-                ", actionData=" + _furni.actionData + "].");
-            break;
-        }
     }
 
     override protected function populateControlProperties (o :Object) :void

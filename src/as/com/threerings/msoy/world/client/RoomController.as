@@ -9,6 +9,7 @@ import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 
+import mx.core.IToolTip;
 import mx.managers.ToolTipManager;
 
 import com.threerings.util.MenuUtil;
@@ -355,7 +356,7 @@ public class RoomController extends SceneController
     protected function mouseLeft (event :MouseEvent) :void
     {
         _walkTarget.visible = false;
-        setHoverSprite(null);
+        setHoverSprite(null, event);
         _roomView.chatOverlay.setClickableGlyphs(false);
     }
 
@@ -377,7 +378,7 @@ public class RoomController extends SceneController
 
         _walkTarget.visible = (hitter == null);
 
-        setHoverSprite(hitter as MsoySprite); // will pass null if hitter
+        setHoverSprite(hitter as MsoySprite, event); // will pass null if hitter
         // is not a MsoySprite.
     }
 
@@ -404,16 +405,26 @@ public class RoomController extends SceneController
         return _roomView;
     }
 
-    protected function setHoverSprite (sprite :MsoySprite) :void
+    protected function setHoverSprite (sprite :MsoySprite, event :MouseEvent) :void
     {
         if (_hoverSprite != sprite) {
             if (_hoverSprite != null) {
                 _hoverSprite.setGlow(false);
                 _hoverSprite = null;
+                if (_hoverTip != null) {
+                    ToolTipManager.destroyToolTip(_hoverTip);
+                    _hoverTip = null;
+                }
             }
+
             if (sprite != null && sprite.hasAction()) {
                 sprite.setGlow(true);
                 _hoverSprite = sprite;
+                var tipText :String = sprite.getToolTipText();
+                if (tipText != null) {
+                    _hoverTip = ToolTipManager.createToolTip(tipText,
+                        event.stageX, event.stageY);
+                }
             }
         }
     }
@@ -554,6 +565,8 @@ public class RoomController extends SceneController
     protected var _roomObj :RoomObject;
 
     protected var _hoverSprite :MsoySprite;
+
+    protected var _hoverTip :IToolTip;
 
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;

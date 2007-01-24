@@ -59,7 +59,7 @@ public class MediaDirector extends BasicDirector
      */
     public function getFurni (furni :FurniData) :FurniSprite
     {
-        return new FurniSprite(_mctx, furni);
+        return new FurniSprite(furni);
     }
 
     /**

@@ -541,7 +541,7 @@ public class AbstractRoomView extends Sprite
     {
         var sprite :FurniSprite = (_furni.get(furni.id) as FurniSprite);
         if (sprite != null) {
-            sprite.update(_ctx, furni);
+            sprite.update(furni);
             checkIsBackground(sprite);
 
         } else {

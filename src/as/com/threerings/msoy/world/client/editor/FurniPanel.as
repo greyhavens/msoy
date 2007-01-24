@@ -242,7 +242,7 @@ public class FurniPanel extends SpritePanel
 
             // force the sprite to recheck props, so that it re-reads
             // whether it's a background
-            (_sprite as FurniSprite).update(_ctx, furni);
+            (_sprite as FurniSprite).update(furni);
 
             spritePropsUpdated();
         }, _actionType, "text");
