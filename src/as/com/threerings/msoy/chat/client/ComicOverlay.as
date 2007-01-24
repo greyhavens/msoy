@@ -78,7 +78,7 @@ public class ComicOverlay extends ChatOverlay
         for (var ii :int = _bubbles.length - 1; ii >= 0; ii--) {
             var rec :ChatGlyph = (_bubbles[ii] as ChatGlyph);
             if (all || isPlaceOrientedType(rec.getType())) {
-                _target.removeChild(rec);
+                _overlay.removeChild(rec);
                 _bubbles.splice(ii, 1);
             }
         }
@@ -171,7 +171,8 @@ public class ComicOverlay extends ChatOverlay
             }
             // else: turn into subtitle
             // TODO: continuations...
-        }
+            }
+            break;
         }
 
         // show the message as a subtitle instead
