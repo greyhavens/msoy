@@ -126,6 +126,9 @@ public class RoomController extends SceneController
         super.init(ctx, config);
 
         _mctx = (ctx as MsoyContext);
+
+        // initialize the instanceId for all sprites
+        MsoySprite.instanceId = _mctx.getClientObject().getOid();
     }
 
     // documentation inherited

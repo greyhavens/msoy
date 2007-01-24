@@ -142,6 +142,14 @@ public class MsoyControl
     }
 
     /**
+     * Get the instance id of this instance.
+     */
+    public function getInstanceId () :int
+    {
+        return int(callMsoyCode("getInstanceId_v1"));
+    }
+
+    /**
      * Requests that this item's memory be updated with the supplied key/value pair. The supplied
      * value must be a simple object (Integer, Number, String) or an Array of simple objects. The
      * contents of the Pet's memory (keys and values) must not exceed 4096 bytes when AMF3 encoded.

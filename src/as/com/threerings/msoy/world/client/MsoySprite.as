@@ -66,6 +66,9 @@ import com.threerings.msoy.world.data.RoomObject;
  */
 public class MsoySprite extends MediaContainer
 {
+    /** The 'instance id', which is our ClientObject's oid. */
+    public static var instanceId :int;
+
     /** The current logical coordinate of this media. */
     public const loc :MsoyLocation = new MsoyLocation();
 
@@ -566,6 +569,7 @@ public class MsoySprite extends MediaContainer
         o["triggerEvent_v1"] = triggerEvent_v1;
         o["lookupMemory_v1"] = lookupMemory_v1;
         o["updateMemory_v1"] = updateMemory_v1;
+        o["getInstanceId_v1"] = getInstanceId_v1;
     }
 
     /**
@@ -588,6 +592,14 @@ public class MsoySprite extends MediaContainer
         if (_ident != null && parent is RoomView) {
             (parent as RoomView).getRoomController().triggerEvent(_ident, event, arg);
         }
+    }
+
+    /**
+     * Called by {@link MsoyControl} to retrieve the instanceId for this item.
+     */
+    protected function getInstanceId_v1 () :int
+    {
+        return instanceId;
     }
 
     /**
