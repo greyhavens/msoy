@@ -55,7 +55,7 @@ public class TopPanel extends Canvas
         // set up the control bar
         controlBar = new ControlBar(ctx);
         controlBar.includeInLayout = false;
-        controlBar.setStyle("top", 0);
+        controlBar.setStyle("bottom", 0);
         controlBar.setStyle("left", 0);
         addChild(controlBar);
 
@@ -70,7 +70,7 @@ public class TopPanel extends Canvas
             _buildStamp.setStyle("color", "#F7069A");
             _buildStamp.setStyle("fontSize", 12);
             _buildStamp.setStyle("fontWeight", "bold");
-            _buildStamp.setStyle("top", 41);
+            _buildStamp.setStyle("bottom", -1);
             addChild(_buildStamp);
         }
 
@@ -199,20 +199,20 @@ public class TopPanel extends Canvas
         var sidePanelWidth :int = getSidePanelWidth(),
             bottomPanelHeight :int = getBottomPanelHeight();
             
-        _placeBox.setStyle("top", ControlBar.HEIGHT);
-        _placeBox.setStyle("bottom", bottomPanelHeight);
+        _placeBox.setStyle("top", 0);
+        _placeBox.setStyle("bottom", bottomPanelHeight + ControlBar.HEIGHT);
         _placeBox.setStyle("left", sidePanelWidth);
         _placeBox.setStyle("right", 0);
         
         if (_sidePanel != null) {
-            _sidePanel.setStyle("top", ControlBar.HEIGHT);
-            _sidePanel.setStyle("bottom", bottomPanelHeight);
+            _sidePanel.setStyle("top", 0);
+            _sidePanel.setStyle("bottom", bottomPanelHeight + ControlBar.HEIGHT);
             _sidePanel.setStyle("left", 0);
             _sidePanel.width = SIDE_PANEL_WIDTH;
         }
         
         if (_bottomPanel != null) {    
-            _bottomPanel.setStyle("bottom", 0);
+            _bottomPanel.setStyle("bottom", ControlBar.HEIGHT);
             _bottomPanel.setStyle("left", 0);
             _bottomPanel.width = ControlBar.WIDTH;
             _bottomPanel.height = BOTTOM_PANEL_HEIGHT;

@@ -347,7 +347,7 @@ public class ChatControl extends HBox
 
         var menu :CommandMenu =
             CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
-        menu.popUp(_targetBtn);
+        menu.popUp(_targetBtn, true);
     }
 
     /**

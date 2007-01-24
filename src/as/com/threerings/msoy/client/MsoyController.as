@@ -171,7 +171,7 @@ public class MsoyController extends Controller
 
         var menu :CommandMenu =
             CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
-        menu.popUp(trigger);
+        menu.popUp(trigger, true);
     }
 
     /**
@@ -246,7 +246,7 @@ public class MsoyController extends Controller
         }
 
         var menu :CommandMenu = CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
-        menu.popUp(trigger);
+        menu.popUp(trigger, true);
     }
 
     /**
@@ -274,7 +274,7 @@ public class MsoyController extends Controller
         }
 
         var menu :CommandMenu = CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
-        menu.popUp(trigger);
+        menu.popUp(trigger, true);
     }
 
     /**
