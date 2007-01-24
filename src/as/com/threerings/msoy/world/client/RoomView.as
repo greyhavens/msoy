@@ -71,8 +71,7 @@ public class RoomView extends AbstractRoomView
                ChatInfoProvider
 {
     /** The chat overlay. */
-//    public var chatOverlay :ComicOverlay;
-    public var chatOverlay :ChatOverlay;
+    public var chatOverlay :ComicOverlay;
 
     /**
      * Create a roomview.
@@ -81,8 +80,7 @@ public class RoomView extends AbstractRoomView
     {
         super(ctx);
         _ctrl = ctrl;
-//        chatOverlay = new ComicOverlay(ctx);
-        chatOverlay =new ChatOverlay(ctx);
+        chatOverlay = new ComicOverlay(ctx);
     }
 
     /**
@@ -356,7 +354,7 @@ public class RoomView extends AbstractRoomView
         _roomObj.addListener(this);
 
         chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
-//        chatOverlay.newPlaceEntered(this);
+        chatOverlay.newPlaceEntered(this);
 
         addAllOccupants();
 

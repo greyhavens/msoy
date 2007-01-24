@@ -121,7 +121,6 @@ public class ComicOverlay extends ChatOverlay
     override protected function displayTypedMessageNow (
         msg :ChatMessage, type :int) :Boolean
     {
-        trace("placeOf: " + placeOf(type));
         switch (placeOf(type)) {
         case INFO:
         case ATTENTION:
@@ -329,6 +328,29 @@ public class ComicOverlay extends ChatOverlay
     internal function drawBubbleShape (
         g :Graphics, type :int, txtWidth :int, txtHeight :int) :int
     {
+        // this little bit copied from superclass- if we keep: reuse
+        var outline :uint = getOutlineColor(type);
+        var background :uint;
+        if (BLACK == outline) {
+            background = WHITE;
+        } else {
+            background = ColorUtil.blend(WHITE, outline, .8);
+        }
+
+        var padding :int = getBubbleLabelOffset(type);
+        var width :int = txtWidth + padding * 2;
+        var height :int = txtHeight + padding * 2;
+
+        // TODO: more
+        g.clear();
+        g.beginFill(background);
+        g.drawRoundRect(0, 0, width, height, PAD, PAD);
+        g.endFill();
+
+        g.lineStyle(1, outline);
+        g.drawRoundRect(0, 0, width, height, PAD, PAD);
+
+
 //        // TODO: much
 //        Shape shape = getBubbleShape(type, r);
 //        Shape full = shape;
@@ -347,7 +369,7 @@ public class ComicOverlay extends ChatOverlay
 //        default: color = Color.BLACK; break;
 //        }
 
-        return getBubbleLabelOffset(type);
+        return padding;
     }
 
     /**
