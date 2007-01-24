@@ -248,6 +248,8 @@
     <java jar="projects/tools/extern/flex_sdk/lib/compc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
+      <arg value="-external-library-path"/>
+      <arg value="projects/tools/extern/flex_sdk/frameworks/libs"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=projects/narya/src/as/"/>
       <arg value="-compiler.source-path=projects/vilya/src/as/"/>
