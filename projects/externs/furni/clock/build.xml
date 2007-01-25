@@ -10,13 +10,55 @@
   <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
 
   <target name="newpack">
+    <java jar="${flex.path}/lib/compc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-include-sources"/>
+      <arg value="Data.as"/>
+      <arg value="-o"/>
+      <arg value="pack.swc"/>
+    </java>
+  </target>
+
+  <target name="superpack">
+    <java jar="${flex.path}/lib/compc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-include-file"/>
+      <arg value="minuteHand"/>
+      <arg value="minute.png"/>
+      <!--
+      <arg value="-include-sources"/>
+      <arg value="Data.as"/>
+      -->
+      <arg value="-o"/>
+      <arg value="superpack.swc"/>
+    </java>
+  </target>
+
+  <target name="supertester">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+
+      <!--
+      <arg value="-compiler.library-path"/>
+      <arg value="superpack.swc"/>
+      <arg value="-includes"/>
+      <arg value="minuteHand"/>
+      <arg value="Data"/>
+      -->
+
+      <arg value="-include-libraries"/>
+      <arg value="superpack.swc"/>
+      <arg value="-includes"/>
+      <arg value="file:minuteHand"/>
+
+      <arg value="-link-report"/>
+      <arg value="/tmp/link-report.txt"/>
       <arg value="-file-specs"/>
-      <arg value="Data.as"/>
-      <arg value="-o"/>
-      <arg value="pack.swf"/>
+      <arg value="BesterTester.as"/>
     </java>
   </target>
 
@@ -25,6 +67,10 @@
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=."/>
+      <arg value="-external-library-path"/>
+      <arg value="pack.swc"/>
+      <arg value="-runtime-shared-libraries"/>
+      <arg value="library.swf"/>
       <arg value="-file-specs"/>
       <arg value="Tester.as"/>
     </java>
@@ -38,6 +84,21 @@
       <arg value="-compiler.source-path=."/>
       <arg value="-file-specs"/>
       <arg value="${app.name}.as"/>
+    </java>
+  </target>
+
+  <target name="preloader">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-includes"/>
+      <arg value="Data"/>
+
+      <arg value="-link-report"/>
+      <arg value="/tmp/link-report.txt"/>
+      <arg value="-file-specs"/>
+      <arg value="PreLoader.as"/>
     </java>
   </target>
 

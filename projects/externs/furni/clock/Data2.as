@@ -11,8 +11,7 @@ import flash.utils.ByteArray;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
-[SWF]
-public class Data extends Sprite
+public class Data
 {
     public var content :Object = {
         faceCenter: [ 100, 100 ],
@@ -49,8 +48,7 @@ public class Data extends Sprite
         var bytes :ByteArray = (new clazz() as ByteArray);
 
         var l :Loader = new Loader();
-        l.loadBytes(bytes,
-            new LoaderContext(false, ApplicationDomain.currentDomain));
+        l.loadBytes(bytes);
         l.contentLoaderInfo.addEventListener(Event.COMPLETE,
             function (evt :Event) :void {
                 callback(l.content);

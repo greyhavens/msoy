@@ -11,15 +11,16 @@ import flash.utils.ByteArray;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
-[SWF]
-public class Data extends Sprite
+public class Data
 {
     public var content :Object = {
+        size: [ 300, 300 ],
+        facePosition: [ 50, 50 ],
         faceCenter: [ 100, 100 ],
-        hourPoint: [ 10, 50 ],
-        minutePoint: [ 10, 100 ],
-        secondPoint: [ 1, 100 ],
-        smoothSeconds: false
+        hourPoint: [ 40, 130 ],
+        minutePoint: [ 40, 130 ],
+        secondPoint: [ 40, 130 ],
+        smoothSeconds: true
 
         // to figure out:
         // swf: one instance
@@ -33,7 +34,6 @@ public class Data extends Sprite
         content["hourHand"] = hourHand__image;
         content["minuteHand"] = minuteHand__image;
         content["secondHand"] = secondHand__image;
-
    //     loadAsset("used_for_swfs");
     }
 
@@ -50,8 +50,7 @@ public class Data extends Sprite
         var bytes :ByteArray = (new clazz() as ByteArray);
 
         var l :Loader = new Loader();
-        l.loadBytes(bytes,
-            new LoaderContext(false, ApplicationDomain.currentDomain));
+        l.loadBytes(bytes);
         l.contentLoaderInfo.addEventListener(Event.COMPLETE,
             function (evt :Event) :void {
                 callback(l.content);
@@ -61,13 +60,13 @@ public class Data extends Sprite
     [Embed(source="face.png")]
     private var face__image :Class;
 
-    [Embed(source="hour_hand.png")]
+    [Embed(source="hour.png")]
     private var hourHand__image :Class;
 
-    [Embed(source="minute_hand.png")]
+    [Embed(source="minute.png")]
     private var minuteHand__image :Class;
 
-    [Embed(source="second_hand.png")]
+    [Embed(source="second.png")]
     private var secondHand__image :Class;
 
 //    [Embed(source="Clock.swf", mimeType="application/octet-stream")]
