@@ -18,10 +18,9 @@ import client.item.ItemTypePanel;
 public class InventoryPanel extends VerticalPanel
     implements TabListener
 {
-    public InventoryPanel (InventoryContext ctx)
+    public InventoryPanel ()
     {
         setStyleName("inventory");
-        _ctx = ctx;
 
         add(_itemTabs = new ItemTypePanel(this));
         add(_itemPaneContainer = new SimplePanel());
@@ -37,7 +36,7 @@ public class InventoryPanel extends VerticalPanel
     {
         ItemPanel panel = (ItemPanel) _itemPanes.get(new Integer(tabIndex));
         if (panel == null) {
-            panel = new ItemPanel(_ctx, (byte) tabIndex);
+            panel = new ItemPanel((byte) tabIndex);
             _itemPanes.put(new Integer(tabIndex), panel);
         }
         _itemPaneContainer.setWidget(panel);
@@ -50,7 +49,6 @@ public class InventoryPanel extends VerticalPanel
         return true;
     }
 
-    protected InventoryContext _ctx;
     protected ItemTypePanel _itemTabs;
     protected HashMap _itemPanes = new HashMap();
     protected SimplePanel _itemPaneContainer;

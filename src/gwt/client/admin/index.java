@@ -11,7 +11,6 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.item.ItemEntryPoint;
 import client.shell.MsoyEntryPoint;
-import client.shell.ShellContext;
 
 /**
  * Displays an admin dashboard with various server status information and administrative
@@ -36,18 +35,12 @@ public class index extends ItemEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected ShellContext createContext ()
-    {
-        return _ctx = new AdminContext();
-    }
-
-    // @Override // from MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
 
         // load up our translation dictionaries
-        _ctx.msgs = (AdminMessages)GWT.create(AdminMessages.class);
+        CAdmin.msgs = (AdminMessages)GWT.create(AdminMessages.class);
     }
 
     // @Override // from MsoyEntryPoint
@@ -67,17 +60,15 @@ public class index extends ItemEntryPoint
     protected void didLogoff ()
     {
         super.didLogoff();
-        setContent(new Label(_ctx.msgs.indexLogon()));
+        setContent(new Label(CAdmin.msgs.indexLogon()));
     }
 
     protected void displayDashboard ()
     {
-        if (_ctx.creds.isSupport) {
-            setContent(new DashboardPanel(_ctx));
+        if (CAdmin.creds.isSupport) {
+            setContent(new DashboardPanel());
         } else {
-            setContent(new Label(_ctx.msgs.lackPrivileges()));
+            setContent(new Label(CAdmin.msgs.lackPrivileges()));
         }
     }
-
-    protected AdminContext _ctx;
 }

@@ -15,7 +15,6 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
-import client.shell.ShellContext;
 
 /**
  * Displays a person's "portal" page with their profile information, friends,
@@ -51,18 +50,12 @@ public class index extends MsgsEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected ShellContext createContext ()
-    {
-        return _ctx = new ProfileContext();
-    }
-
-    // @Override // from MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
 
         // load up our translation dictionaries
-        _ctx.msgs = (ProfileMessages)GWT.create(ProfileMessages.class);
+        CProfile.msgs = (ProfileMessages)GWT.create(ProfileMessages.class);
     }
 
     // @Override // from MsoyEntryPoint
@@ -97,7 +90,7 @@ public class index extends MsgsEntryPoint
                 onHistoryChanged(initToken);
             } else {
                 // TODO: display member search interface
-                setContent(new Label(_ctx.msgs.indexLogon()));
+                setContent(new Label(CProfile.msgs.indexLogon()));
             }
         }
     }
@@ -105,28 +98,27 @@ public class index extends MsgsEntryPoint
     protected void displayMemberPage (int memberId)
     {
         // issue a request for this member's person page data
-        _ctx.personsvc.loadBlurbs(_memberId = memberId, new AsyncCallback() {
+        CProfile.personsvc.loadBlurbs(_memberId = memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 ArrayList data = (ArrayList)result;
                 PersonLayout layout = (PersonLayout)data.remove(0);
                 switch (layout.layout) {
                 default:
                 case PersonLayout.ONE_COLUMN_LAYOUT:
-                    setContent(new OneColumnLayout(_ctx, _memberId, layout, data));
+                    setContent(new OneColumnLayout(_memberId, layout, data));
                     break;
                 case PersonLayout.TWO_COLUMN_LAYOUT:
-                    setContent(new TwoColumnLayout(_ctx, _memberId, layout, data));
+                    setContent(new TwoColumnLayout(_memberId, layout, data));
                     break;
                 }
             }
 
             public void onFailure (Throwable cause) {
-                setContent(new Label(_ctx.serverError(cause)));
-                _ctx.log("Failed to load blurbs", cause);
+                setContent(new Label(CProfile.serverError(cause)));
+                CProfile.log("Failed to load blurbs", cause);
             }
         });
     }
 
-    protected ProfileContext _ctx;
     protected int _memberId = -1;
 }

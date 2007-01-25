@@ -14,7 +14,6 @@ import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.data.LaunchConfig;
 
 import client.shell.MsoyEntryPoint;
-import client.shell.ShellContext;
 
 /**
  * Displays a page that allows a player to play a particular game. If it's
@@ -51,22 +50,16 @@ public class index extends MsoyEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected ShellContext createContext ()
-    {
-        return _ctx = new GameContext();
-    }
-
-    // @Override // from MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
 
         // wire up our remote services
-        _ctx.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
-        ((ServiceDefTarget)_ctx.gamesvc).setServiceEntryPoint("/gamesvc");
+        CGame.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
+        ((ServiceDefTarget)CGame.gamesvc).setServiceEntryPoint("/gamesvc");
 
         // load up our translation dictionaries
-        _ctx.msgs = (GameMessages)GWT.create(GameMessages.class);
+        CGame.msgs = (GameMessages)GWT.create(GameMessages.class);
     }
 
     // @Override // from MsoyEntryPoint
@@ -87,15 +80,13 @@ public class index extends MsoyEntryPoint
         // TODO: pass credentials to game if appropriate
 
         // load up the information needed to launch the game
-        _ctx.gamesvc.loadLaunchConfig(_ctx.creds, gameId, new AsyncCallback() {
+        CGame.gamesvc.loadLaunchConfig(CGame.creds, gameId, new AsyncCallback() {
             public void onSuccess (Object result) {
-                setContent(new GamePanel(_ctx, (LaunchConfig)result));
+                setContent(new GamePanel((LaunchConfig)result));
             }
             public void onFailure (Throwable cause) {
-                _ctx.serverError(cause);
+                CGame.serverError(cause);
             }
         });
     }
-
-    protected GameContext _ctx;
 }

@@ -21,7 +21,7 @@ public abstract class FriendInvite
     public static class Composer
         implements MailPayloadComposer
     {
-        public Widget widgetForComposition (MsgsContext ctx)
+        public Widget widgetForComposition ()
         {
             return new InvitationWidget();
         }
@@ -33,9 +33,9 @@ public abstract class FriendInvite
         }
 
         // @Override
-        public void messageSent (MsgsContext ctx, MemberName recipient)
+        public void messageSent (MemberName recipient)
         {
-            ctx.membersvc.inviteFriend(ctx.creds, recipient.getMemberId(), new AsyncCallback() {
+            CMsgs.membersvc.inviteFriend(CMsgs.creds, recipient.getMemberId(), new AsyncCallback() {
                 public void onSuccess (Object result) {
                     // good -- nothing to do here
                 }
@@ -69,9 +69,9 @@ public abstract class FriendInvite
 
     public static class Display extends MailPayloadDisplay
     {
-        public Display (MsgsContext ctx, MailMessage message)
+        public Display (MailMessage message)
         {
-            super(ctx, message);
+            super(message);
         }
 
         // @Override
@@ -125,9 +125,9 @@ public abstract class FriendInvite
                 };
                 int senderId = _message.headers.sender.getMemberId();
                 if (accepted) {
-                    _ctx.membersvc.acceptFriend(_ctx.creds, senderId, callback);
+                    CMsgs.membersvc.acceptFriend(CMsgs.creds, senderId, callback);
                 } else {
-                    _ctx.membersvc.declineFriend(_ctx.creds, senderId, callback);
+                    CMsgs.membersvc.declineFriend(CMsgs.creds, senderId, callback);
                 }
             }
 
@@ -144,15 +144,15 @@ public abstract class FriendInvite
                     subject = "Your friends invitation has been declined.";
                     body = "Your invitation to " + invitee + "was declined. Alas!";
                 }
-                _ctx.mailsvc.deliverMessage(
-                    _ctx.creds, inviter.getMemberId(), subject, body, null, new AsyncCallback() {
-                        public void onSuccess (Object result) {
-                            // Well that's nice.
-                        }
-                        public void onFailure (Throwable caught) {
-                            // I am not sure anything useful can be done here.
-                        }
-                    });
+                CMsgs.mailsvc.deliverMessage(CMsgs.creds, inviter.getMemberId(), subject, body,
+                                             null, new AsyncCallback() {
+                    public void onSuccess (Object result) {
+                        // Well that's nice.
+                    }
+                    public void onFailure (Throwable caught) {
+                        // I am not sure anything useful can be done here.
+                    }
+                });
             }
         }
     }

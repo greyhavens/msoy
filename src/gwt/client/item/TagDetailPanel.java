@@ -6,7 +6,6 @@ package client.item;
 import java.util.Collection;
 import java.util.Iterator;
 
-import client.shell.ShellContext;
 import client.util.PromptPopup;
 
 import com.google.gwt.core.client.GWT;
@@ -35,10 +34,9 @@ import com.threerings.msoy.item.web.TagHistory;
  */
 public class TagDetailPanel extends FlexTable
 {
-    public TagDetailPanel (ItemContext ctx, Item item)
+    public TagDetailPanel (Item item)
     {
         setStyleName("tagDetailPanel");
-        _ctx = ctx;
         _item = item;
 
         setWidget(0, 0, _tags = new Label("Loading..."));
@@ -65,8 +63,8 @@ public class TagDetailPanel extends FlexTable
                     _status.setText("Invalid tag: use letters, numbers, and underscore.");
                     return;
                 }
-                _ctx.itemsvc.tagItem(
-                    _ctx.creds, _item.getIdent(), tagName, true, new AsyncCallback() {
+                CItem.itemsvc.tagItem(
+                    CItem.creds, _item.getIdent(), tagName, true, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         refreshTags();
                     }
@@ -86,8 +84,8 @@ public class TagDetailPanel extends FlexTable
             public void onChange (Widget sender) {
                 ListBox box = (ListBox) sender;
                 String value = box.getValue(box.getSelectedIndex());
-                _ctx.itemsvc.tagItem(
-                    _ctx.creds, _item.getIdent(), value, true, new AsyncCallback() {
+                CItem.itemsvc.tagItem(
+                    CItem.creds, _item.getIdent(), value, true, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         refreshTags();
                     }
@@ -154,13 +152,13 @@ public class TagDetailPanel extends FlexTable
 
     protected void updateItemFlags (final byte flag)
     {
-        _ctx.itemsvc.setFlags(_ctx.creds, _item.getIdent(), flag, flag, new AsyncCallback() {
+        CItem.itemsvc.setFlags(CItem.creds, _item.getIdent(), flag, flag, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _item.flags |= flag;
             }
             public void onFailure (Throwable caught) {
-                ShellContext.log("Failed to update item flags [item=" + _item.getIdent() +
-                                 ", flag=" + flag + "]", caught);
+                CItem.log("Failed to update item flags [item=" + _item.getIdent() +
+                          ", flag=" + flag + "]", caught);
                 _status.setText("Internal error setting flag: " + caught.getMessage());
             }
         });
@@ -178,7 +176,7 @@ public class TagDetailPanel extends FlexTable
 //             return;
 //         }
 
-//         _ctx.itemsvc.getTagHistory(_ctx.creds, _itemId, new AsyncCallback() {
+//         CItem.itemsvc.getTagHistory(CItem.creds, _itemId, new AsyncCallback() {
 //             public void onSuccess (Object result) {
 //                 _tagHistory = new FlexTable();
 //                 _tagHistory.setBorderWidth(0);
@@ -226,14 +224,14 @@ public class TagDetailPanel extends FlexTable
 
     protected void refreshTags ()
     {
-        if (_ctx.creds != null) {
-            _ctx.itemsvc.getRecentTags(_ctx.creds, new AsyncCallback() {
+        if (CItem.creds != null) {
+            CItem.itemsvc.getRecentTags(CItem.creds, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _quickTags.clear();
                     Iterator i = ((Collection) result).iterator();
                     while (i.hasNext()) {
                         TagHistory history = (TagHistory) i.next();
-                        if (history.member.getMemberId() == _ctx.creds.getMemberId()) {
+                        if (history.member.getMemberId() == CItem.creds.getMemberId()) {
                             if (history.tag != null) {
                                 _quickTags.addItem(history.tag);
                             }
@@ -248,7 +246,7 @@ public class TagDetailPanel extends FlexTable
             });
         }
 
-        _ctx.itemsvc.getTags(_ctx.creds, _item.getIdent(), new AsyncCallback() {
+        CItem.itemsvc.getTags(CItem.creds, _item.getIdent(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 boolean first = true;
                 Iterator i = ((Collection) result).iterator();
@@ -269,7 +267,6 @@ public class TagDetailPanel extends FlexTable
         });
     }
 
-    protected ItemContext _ctx;
     protected Item _item;
 
     protected Label _tags, _status;

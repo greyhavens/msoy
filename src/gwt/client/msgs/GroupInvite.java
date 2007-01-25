@@ -23,9 +23,9 @@ import com.threerings.msoy.web.data.MemberName;
 
 public abstract class GroupInvite
 {
-    public static void getInvitationGroups (MsgsContext ctx, AsyncCallback callback)
+    public static void getInvitationGroups (AsyncCallback callback)
     {
-        ctx.groupsvc.getMembershipGroups(ctx.creds, ctx.creds.getMemberId(), true, callback);
+        CMsgs.groupsvc.getMembershipGroups(CMsgs.creds, CMsgs.creds.getMemberId(), true, callback);
     }
 
     public static final class Composer
@@ -43,29 +43,28 @@ public abstract class GroupInvite
         }
 
         // @Override
-        public Widget widgetForComposition (MsgsContext ctx)
+        public Widget widgetForComposition ()
         {
-            return new CompositionWidget(ctx);
+            return new CompositionWidget();
         }
 
         // @Override
-        public void messageSent (MsgsContext ctx, MemberName recipient)
+        public void messageSent (MemberName recipient)
         {
             // TODO: if we implement backend tracking of group invites, do something here.
         }
 
         protected class CompositionWidget extends HorizontalPanel
         {
-            public CompositionWidget (MsgsContext ctx)
+            public CompositionWidget ()
             {
                 super();
-                _ctx = ctx;
                 setWidth("100%");
-                add(new InlineLabel(ctx.mmsgs.groupClick()));
-                Button joinButton = new Button(ctx.mmsgs.groupJoin());
+                add(new InlineLabel(CMsgs.mmsgs.groupClick()));
+                Button joinButton = new Button(CMsgs.mmsgs.groupJoin());
                 joinButton.setEnabled(false);
                 add(joinButton);
-                add(new InlineLabel(ctx.mmsgs.groupThe()));
+                add(new InlineLabel(CMsgs.mmsgs.groupThe()));
                 _groupBox = new ListBox();
                 for (int ii = 0; ii < _groups.size(); ii ++) {
                     _groupBox.addItem(((GroupMembership) _groups.get(ii)).group.groupName);
@@ -82,7 +81,6 @@ public abstract class GroupInvite
                 });
                 add(_groupBox);
             }
-            protected MsgsContext _ctx;
             protected ListBox _groupBox;
         }
 
@@ -92,9 +90,9 @@ public abstract class GroupInvite
 
     public static final class Display extends MailPayloadDisplay
     {
-        public Display (MsgsContext ctx, MailMessage message)
+        public Display (MailMessage message)
         {
-            super(ctx, message);
+            super(message);
             // no sanity checks: if anything breaks here, it's already a disaster
             _inviteObject = (GroupInviteObject) message.payload;
         }
@@ -131,28 +129,28 @@ public abstract class GroupInvite
 
             protected void joinGroup ()
             {
-                _ctx.groupsvc.joinGroup(_ctx.creds, _inviteObject.groupId, _ctx.creds.getMemberId(),
-                                        new AsyncCallback() {
-                        // if joining the group succeeds, mark this invitation as accepted
-                        public void onSuccess (Object result) {
-                            _inviteObject.responded = true;
-                            updateState(_inviteObject, new AsyncCallback() {
-                                // and if that succeded to, let the mail app know to refresh
-                                public void onSuccess (Object result) {
-                                    if (_listener != null) {
-                                        _listener.messageChanged(_message.headers.ownerId,
-                                                                 _message.headers.folderId,
-                                                                 _message.headers.messageId);
-                                    }
+                CMsgs.groupsvc.joinGroup(CMsgs.creds, _inviteObject.groupId,
+                                         CMsgs.creds.getMemberId(), new AsyncCallback() {
+                    // if joining the group succeeds, mark this invitation as accepted
+                    public void onSuccess (Object result) {
+                        _inviteObject.responded = true;
+                        updateState(_inviteObject, new AsyncCallback() {
+                            // and if that succeded to, let the mail app know to refresh
+                            public void onSuccess (Object result) {
+                                if (_listener != null) {
+                                    _listener.messageChanged(_message.headers.ownerId,
+                                                             _message.headers.folderId,
+                                                             _message.headers.messageId);
                                 }
-                                public void onFailure (Throwable caught) {
-                                    // TODO: General support for errors in the MailApplication API?
-                                }
-                            });
-                        }
-                        public void onFailure (Throwable caught) {
-                            // TODO: General support for errors in the MailApplication API?
-                        }
+                            }
+                            public void onFailure (Throwable caught) {
+                                // TODO: General support for errors in the MailApplication API?
+                            }
+                        });
+                    }
+                    public void onFailure (Throwable caught) {
+                        // TODO: General support for errors in the MailApplication API?
+                    }
                 });
             }
 

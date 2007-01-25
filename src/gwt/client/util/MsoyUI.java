@@ -60,11 +60,11 @@ public class MsoyUI
 //      * Creates a pair of submit and cancel buttons in a horizontal row.
 //      */
 //     public static RowPanel createSubmitCancel (
-//         ShellContext ctx, PopupPanel popup, ClickListener onSubmit)
+//         PopupPanel popup, ClickListener onSubmit)
 //     {
 //         RowPanel buttons = new RowPanel();
-//         buttons.add(new Button(ctx.cmsgs.submit(), onSubmit));
-//         buttons.add(new Button(ctx.cmsgs.cancel(), new ClickListener() {
+//         buttons.add(new Button(CShell.cmsgs.submit(), onSubmit));
+//         buttons.add(new Button(CShell.cmsgs.cancel(), new ClickListener() {
 //             public void onClick (Widget sender) {
 //                 box.hide();
 //             }

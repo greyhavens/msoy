@@ -3,22 +3,22 @@
 
 package client.item;
 
-import client.shell.ShellContext;
+import client.shell.CShell;
 
 import com.threerings.msoy.web.client.CatalogServiceAsync;
 import com.threerings.msoy.web.client.ItemServiceAsync;
 
 /**
- * Extends {@link ShellContext} and provides item-specific services.
+ * Extends {@link CShell} and provides item-specific services.
  */
-public class ItemContext extends ShellContext
+public class CItem extends CShell
 {
     /** Provides item-related services. */
-    public ItemServiceAsync itemsvc;
+    public static ItemServiceAsync itemsvc;
 
     /** Provides catalog-related services. */
-    public CatalogServiceAsync catalogsvc;
+    public static CatalogServiceAsync catalogsvc;
 
     /** Messages used by the item interfaces. */
-    public ItemMessages imsgs;
+    public static ItemMessages imsgs;
 }

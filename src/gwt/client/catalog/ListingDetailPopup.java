@@ -17,9 +17,9 @@ import client.util.ClickCallback;
  */
 public class ListingDetailPopup extends BaseItemDetailPopup
 {
-    public ListingDetailPopup (CatalogContext ctx, CatalogListing listing, ItemPanel panel)
+    public ListingDetailPopup (CatalogListing listing, ItemPanel panel)
     {
-        super(ctx, listing.item);
+        super(listing.item);
         _listing = listing;
         _panel = panel;
     }
@@ -34,15 +34,14 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
         // TODO: add cost
 
-        final CatalogContext cctx = (CatalogContext)_ctx;
-        controls.add(_purchase = new Button(cctx.msgs.listingBuy()));
-        new ClickCallback(cctx, _purchase, _status) {
+        controls.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
+        new ClickCallback(_purchase, _status) {
             public boolean callService () {
-                cctx.catalogsvc.purchaseItem(cctx.creds, _item.getIdent(), this);
+                CCatalog.catalogsvc.purchaseItem(CCatalog.creds, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Object result) {
-                _status.setText(cctx.msgs.msgListingBought());
+                _status.setText(CCatalog.msgs.msgListingBought());
                 return false; // don't reenable purchase
             }
         };
@@ -56,21 +55,20 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         super.gotDetail(detail);
 
         // if we are the creator (lister) of this item, allow us to delist it
-        final CatalogContext cctx = (CatalogContext)_ctx;
-        if (cctx.creds != null && _listing.creator.getMemberId() == cctx.creds.getMemberId()) {
-            Button delist = new Button(cctx.msgs.listingDelist());
-            new ClickCallback(cctx, delist, _status) {
+        if (_listing.creator.getMemberId() == CCatalog.getMemberId()) {
+            Button delist = new Button(CCatalog.msgs.listingDelist());
+            new ClickCallback(delist, _status) {
                 public boolean callService () {
-                    cctx.catalogsvc.listItem(cctx.creds, _item.getIdent(), false, this);
+                    CCatalog.catalogsvc.listItem(CCatalog.creds, _item.getIdent(), false, this);
                     return true;
                 }
                 public boolean gotResult (Object result) {
                     if (result != null) {
-                        _status.setText(cctx.msgs.msgListingDelisted());
+                        _status.setText(CCatalog.msgs.msgListingDelisted());
                         _panel.itemDelisted(_listing);
                         return false; // don't reenable delist
                     } else {
-                        _status.setText(cctx.msgs.errListingNotFound());
+                        _status.setText(CCatalog.msgs.errListingNotFound());
                         return true;
                     }
                 }

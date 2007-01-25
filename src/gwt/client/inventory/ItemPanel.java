@@ -40,9 +40,8 @@ public class ItemPanel extends VerticalPanel
     /** The number of rows of items to display. */
     public static final int ROWS = 3;
 
-    public ItemPanel (InventoryContext ctx, byte type)
+    public ItemPanel (byte type)
     {
-        _ctx = ctx;
         _type = type;
 
         // this will contain our items
@@ -51,13 +50,13 @@ public class ItemPanel extends VerticalPanel
                 return new ItemContainer(ItemPanel.this, (Item)item);
             }
             protected String getEmptyMessage () {
-                return _ctx.imsgs.panelNoItems(Item.getTypeName(_type));
+                return CInventory.msgs.panelNoItems(Item.getTypeName(_type));
             }
         });
         _contents.setStyleName("inventoryContents");
 
         // this will allow us to create new items
-        add(_create = new Button(_ctx.imsgs.panelCreateNew()));
+        add(_create = new Button(CInventory.msgs.panelCreateNew()));
         _create.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 createNewItem();
@@ -91,13 +90,13 @@ public class ItemPanel extends VerticalPanel
     // in chunks. We cannot show the user's whole inventory, even in one category.)
     protected void onLoad ()
     {
-        _ctx.membersvc.loadInventory(_ctx.creds, _type, new AsyncCallback() {
+        CInventory.membersvc.loadInventory(CInventory.creds, _type, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _contents.setModel(new SimpleDataModel((List)result));
             }
             public void onFailure (Throwable caught) {
-                _ctx.log("loadInventory failed", caught);
-                add(new Label(_ctx.serverError(caught)));
+                CInventory.log("loadInventory failed", caught);
+                add(new Label(CInventory.serverError(caught)));
             }
         });
     }
@@ -140,7 +139,7 @@ public class ItemPanel extends VerticalPanel
         } else {
             return null; // woe be the caller
         }
-        editor.init(_ctx, this);
+        editor.init(this);
         return editor;
     }
 
@@ -151,10 +150,8 @@ public class ItemPanel extends VerticalPanel
     protected void itemDeleted (Item item)
     {
         _contents.removeItem(item);
-        setStatus(_ctx.imsgs.msgItemDeleted());
+        setStatus(CInventory.msgs.msgItemDeleted());
     }
-
-    protected InventoryContext _ctx;
 
     protected PagedGrid _contents;
     protected Button _create, _next, _prev;

@@ -10,7 +10,6 @@ import com.threerings.msoy.item.web.Item;
 
 import client.item.ItemEntryPoint;
 import client.shell.MsoyEntryPoint;
-import client.shell.ShellContext;
 
 /**
  * Handles the MetaSOY inventory application.
@@ -49,28 +48,21 @@ public class index extends ItemEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected ShellContext createContext ()
-    {
-        return _ctx = new CatalogContext();
-    }
-
-    // @Override // from MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
 
         // load up our translation dictionaries
-        _ctx.msgs = (CatalogMessages)GWT.create(CatalogMessages.class);
+        CCatalog.msgs = (CatalogMessages)GWT.create(CatalogMessages.class);
     }
 
     // @Override from MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
-        setContent(_catalog = new CatalogPanel(_ctx));
+        setContent(_catalog = new CatalogPanel());
         onHistoryChanged(History.getToken());
     }
 
-    protected CatalogContext _ctx;
     protected CatalogPanel _catalog;
 }

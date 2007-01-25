@@ -14,7 +14,7 @@ import com.threerings.msoy.web.client.CatalogServiceAsync;
 import client.shell.MsoyEntryPoint;
 
 /**
- * Configures our {@link ItemContext} for item-derived pages.
+ * Configures {@link CItem} for item-derived pages.
  */
 public abstract class ItemEntryPoint extends MsoyEntryPoint
 {
@@ -22,15 +22,14 @@ public abstract class ItemEntryPoint extends MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
-        ItemContext ictx = (ItemContext)_gctx;
 
         // wire up our remote services
-        ictx.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
-        ((ServiceDefTarget)ictx.itemsvc).setServiceEntryPoint("/itemsvc");
-        ictx.catalogsvc = (CatalogServiceAsync)GWT.create(CatalogService.class);
-        ((ServiceDefTarget)ictx.catalogsvc).setServiceEntryPoint("/catalogsvc");
+        CItem.itemsvc = (ItemServiceAsync)GWT.create(ItemService.class);
+        ((ServiceDefTarget)CItem.itemsvc).setServiceEntryPoint("/itemsvc");
+        CItem.catalogsvc = (CatalogServiceAsync)GWT.create(CatalogService.class);
+        ((ServiceDefTarget)CItem.catalogsvc).setServiceEntryPoint("/catalogsvc");
 
         // load up our translation dictionaries
-        ictx.imsgs = (ItemMessages)GWT.create(ItemMessages.class);
+        CItem.imsgs = (ItemMessages)GWT.create(ItemMessages.class);
     }
 }

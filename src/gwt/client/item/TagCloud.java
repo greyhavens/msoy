@@ -17,12 +17,11 @@ import com.google.gwt.user.client.ui.Label;
  */
 public class TagCloud extends FlowPanel
 {
-    public TagCloud (ItemContext ctx, byte type)
+    public TagCloud (byte type)
     {
-        _ctx = ctx;
         _type = type;
         setStyleName("tagContents");
-        _ctx.catalogsvc.getPopularTags(_type, 20, new TagCallback());
+        CItem.catalogsvc.getPopularTags(_type, 20, new TagCallback());
     }
 
     protected class TagCallback implements AsyncCallback
@@ -30,7 +29,7 @@ public class TagCloud extends FlowPanel
         public void onSuccess (Object result) {
             HashMap _tagMap = (HashMap) result;
             if (_tagMap.size() == 0) {
-                add(new Label(_ctx.imsgs.msgNoTags()));
+                add(new Label(CItem.imsgs.msgNoTags()));
                 return;
             }
 
@@ -61,16 +60,15 @@ public class TagCloud extends FlowPanel
                 buf.append(tag);
                 buf.append("</span>");
             }
-            add(new HTML(_ctx.imsgs.cloudCommonTags(buf.toString())));
+            add(new HTML(CItem.imsgs.cloudCommonTags(buf.toString())));
         }
 
         public void onFailure (Throwable caught) {
-            _ctx.log("getPopularTags failed", caught);
+            CItem.log("getPopularTags failed", caught);
             clear();
-            add(new Label(_ctx.serverError(caught)));
+            add(new Label(CItem.serverError(caught)));
         }
     }
 
-    protected ItemContext _ctx;
     protected byte _type;
 }

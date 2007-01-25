@@ -32,15 +32,15 @@ public class AvatarEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(_ctx.emsgs.avatarMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CEditem.emsgs.avatarMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
-                    return _ctx.emsgs.errAvatarNotFlash();
+                    return CEditem.emsgs.errAvatarNotFlash();
                 }
                 _avatar.avatarMedia = desc;
                 return null;
             }
-        }), _ctx.emsgs.avatarMainTab());
+        }), CEditem.emsgs.avatarMainTab());
 
         super.createInterface(contents, tabs);
     }
@@ -48,17 +48,17 @@ public class AvatarEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createThumbUploader (TabPanel tabs)
     {
-        String title = _ctx.emsgs.avatarThumbTitle();
+        String title = CEditem.emsgs.avatarThumbTitle();
         _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
-                    return _ctx.emsgs.errThumbNotImage();
+                    return CEditem.emsgs.errThumbNotImage();
                 }
                 _item.thumbMedia = desc;
                 return null;
             }
         });
-        tabs.add(_thumbUploader, _ctx.emsgs.avatarThumbTab());
+        tabs.add(_thumbUploader, CEditem.emsgs.avatarThumbTab());
     }
 
     protected Avatar _avatar;

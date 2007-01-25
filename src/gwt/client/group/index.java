@@ -11,7 +11,6 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
-import client.shell.ShellContext;
 
 public class index extends MsgsEntryPoint
     implements HistoryListener
@@ -33,12 +32,12 @@ public class index extends MsgsEntryPoint
         // empty token string for either a Hyperlink or History.newItem()
         if (token.length() > 0 && !token.equals("list")) {
             try {
-                setContent(new GroupView(_ctx, Integer.parseInt(token)));
+                setContent(new GroupView(Integer.parseInt(token)));
             } catch (Exception e) {
                 // TODO: display error
             }
         } else {
-            setContent(new GroupList(_ctx));
+            setContent(new GroupList());
         }
     }
 
@@ -49,18 +48,12 @@ public class index extends MsgsEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected ShellContext createContext ()
-    {
-        return _ctx = new GroupContext();
-    }
-
-    // @Override // from MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
 
         // load up our translation dictionaries
-        _ctx.msgs = (GroupMessages)GWT.create(GroupMessages.class);
+        CGroup.msgs = (GroupMessages)GWT.create(GroupMessages.class);
     }
 
     // @Override // from MsoyEntryPoint
@@ -82,6 +75,4 @@ public class index extends MsgsEntryPoint
         super.didLogoff();
         onHistoryChanged(History.getToken());
     }
-
-    protected GroupContext _ctx;
 }

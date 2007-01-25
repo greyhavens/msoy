@@ -23,9 +23,8 @@ import com.threerings.msoy.item.web.CatalogListing;
 public class CatalogPanel extends VerticalPanel
     implements TabListener, ItemSearchSortPanel.Listener
 {
-    public CatalogPanel (CatalogContext ctx)
+    public CatalogPanel ()
     {
-        _ctx = ctx;
         setStyleName("catalog");
 
         HorizontalPanel topRow = new HorizontalPanel();
@@ -35,8 +34,8 @@ public class CatalogPanel extends VerticalPanel
         VerticalPanel uiBits = new VerticalPanel();
         _typeTabs = new ItemTypePanel(this);
         uiBits.add(_typeTabs);
-        uiBits.add(new ItemSearchSortPanel(ctx, this,
-            new String[] { _ctx.msgs.sortByRating(), _ctx.msgs.sortByListDate() },
+        uiBits.add(new ItemSearchSortPanel(this,
+            new String[] { CCatalog.msgs.sortByRating(), CCatalog.msgs.sortByListDate() },
             new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE },
             0));
         _sortBy = CatalogListing.SORT_BY_RATING;
@@ -86,8 +85,7 @@ public class CatalogPanel extends VerticalPanel
         Byte tabKey = new Byte(_tabIndex);
         ItemPanel panel = ignoreCache ? null : (ItemPanel) _itemPanes.get(tabKey);
         if (panel == null) {
-            panel = new ItemPanel(_ctx, _tabIndex, _sortBy, _search);
-            _itemPanes.put(tabKey, panel);
+            _itemPanes.put(tabKey, panel = new ItemPanel(_tabIndex, _sortBy, _search));
         }
         _itemPaneContainer.setWidget(panel);
     }
@@ -97,13 +95,11 @@ public class CatalogPanel extends VerticalPanel
         Byte tabKey = new Byte(_tabIndex);
         TagCloud cloud = ignoreCache ? null : (TagCloud) _tagClouds.get(tabKey);
         if (cloud == null) {
-            cloud = new TagCloud(_ctx, _tabIndex);
-            _tagClouds.put(tabKey, cloud);
+            _tagClouds.put(tabKey, cloud = new TagCloud(_tabIndex));
         }
         _tagCloudContainer.setWidget(cloud);
     }
 
-    protected CatalogContext _ctx;
     protected byte _sortBy;
     protected String _search;
     protected byte _tabIndex;

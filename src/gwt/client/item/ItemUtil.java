@@ -14,20 +14,20 @@ public class ItemUtil
      * Returns the name of this item or a properly translated string indicating that it has no
      * name.
      */
-    public static String getName (ItemContext ctx, Item item)
+    public static String getName (Item item)
     {
-        return getName(ctx, item, false);
+        return getName(item, false);
     }
 
     /**
      * Returns the truncated name of this item or a properly translated string indicating that it
      * has no name.
      */
-    public static String getName (ItemContext ctx, Item item, boolean truncate)
+    public static String getName (Item item, boolean truncate)
     {
-        String name = (item.name.trim().length() == 0) ? ctx.imsgs.noName() : item.name;
+        String name = (item.name.trim().length() == 0) ? CItem.imsgs.noName() : item.name;
         if (name.length() > 32 && truncate) {
-            name = ctx.imsgs.truncName(name.substring(0, 29));
+            name = CItem.imsgs.truncName(name.substring(0, 29));
         }
         return name;
     }
@@ -36,8 +36,8 @@ public class ItemUtil
      * Returns the description of this item or a properly translated string indicating that it has
      * no description.
      */
-    public static String getDescription (ItemContext ctx, Item item)
+    public static String getDescription (Item item)
     {
-        return (item.description.trim().length() == 0) ? ctx.imsgs.noDescrip() : item.description;
+        return (item.description.trim().length() == 0) ? CItem.imsgs.noDescrip() : item.description;
     }
 }

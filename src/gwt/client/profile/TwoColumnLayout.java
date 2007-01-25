@@ -15,13 +15,13 @@ import com.threerings.msoy.web.data.PersonLayout;
  */
 public class TwoColumnLayout extends FlexTable
 {
-    public TwoColumnLayout (ProfileContext ctx, int memberId, PersonLayout layout, ArrayList blurbs)
+    public TwoColumnLayout (int memberId, PersonLayout layout, ArrayList blurbs)
     {
         setCellPadding(5);
         for (int ii = 0; ii < layout.blurbs.size(); ii++) {
             BlurbData bdata = (BlurbData)layout.blurbs.get(ii);
             Blurb blurb = Blurb.createBlurb(bdata.type);
-            blurb.init(ctx, memberId, bdata.blurbId, blurbs.get(ii));
+            blurb.init(memberId, bdata.blurbId, blurbs.get(ii));
             setWidget(ii/2, ii%2, blurb);
             getFlexCellFormatter().setVerticalAlignment(ii/2, ii%2, HasAlignment.ALIGN_TOP);
         }

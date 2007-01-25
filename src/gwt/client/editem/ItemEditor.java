@@ -59,7 +59,7 @@ public abstract class ItemEditor extends BorderedDialog
         TabPanel mediaTabs = createTabs();
 
         // create a name entry field
-        contents.add(createRow(_ctx.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
+        contents.add(createRow(CEditem.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _item.name = text;
             }
@@ -90,7 +90,7 @@ public abstract class ItemEditor extends BorderedDialog
             }
         });
         Button ecancel;
-        _footer.add(ecancel = new Button(_ctx.cmsgs.cancel()));
+        _footer.add(ecancel = new Button(CEditem.cmsgs.cancel()));
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 hide();
@@ -109,9 +109,8 @@ public abstract class ItemEditor extends BorderedDialog
      * Configures this editor with a reference to the item service and its item
      * panel parent.
      */
-    public void init (EditemContext ctx, EditorHost parent)
+    public void init (EditorHost parent)
     {
-        _ctx = ctx;
         _parent = parent;
     }
 
@@ -123,9 +122,9 @@ public abstract class ItemEditor extends BorderedDialog
     {
         _item = item;
         _etitle.setText((item.itemId <= 0) ?
-                        _ctx.emsgs.editorUploadTitle() : _ctx.emsgs.editorEditTitle());
+                        CEditem.emsgs.editorUploadTitle() : CEditem.emsgs.editorEditTitle());
         _esubmit.setText((item.itemId <= 0) ?
-                         _ctx.emsgs.editorUpload() : _ctx.emsgs.editorUpdate());
+                         CEditem.emsgs.editorUpload() : CEditem.emsgs.editorUpdate());
 
         if (_item.name != null) {
             _name.setText(_item.name);
@@ -185,37 +184,37 @@ public abstract class ItemEditor extends BorderedDialog
         VerticalPanel extras = new VerticalPanel();
         extras.setSpacing(10);
         populateExtrasTab(extras);
-        tabs.add(extras, _ctx.emsgs.editorExtraTab());
+        tabs.add(extras, CEditem.emsgs.editorExtraTab());
     }
 
     protected void createFurniUploader (TabPanel tabs)
     {
-        String title = _ctx.emsgs.editorFurniTitle();
+        String title = CEditem.emsgs.editorFurniTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
-                    return _ctx.emsgs.errFurniNotFlash();
+                    return CEditem.emsgs.errFurniNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
         });
-        tabs.add(_furniUploader, _ctx.emsgs.editorFurniTab());
+        tabs.add(_furniUploader, CEditem.emsgs.editorFurniTab());
     }
 
     protected void createThumbUploader (TabPanel tabs)
     {
-        String title = _ctx.emsgs.editorThumbTitle();
+        String title = CEditem.emsgs.editorThumbTitle();
         _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
-                    return _ctx.emsgs.errThumbNotImage();
+                    return CEditem.emsgs.errThumbNotImage();
                 }
                 _item.thumbMedia = desc;
                 return null;
             }
         });
-        tabs.add(_thumbUploader, _ctx.emsgs.editorThumbTab());
+        tabs.add(_thumbUploader, CEditem.emsgs.editorThumbTab());
     }
 
     /**
@@ -224,7 +223,7 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected void populateExtrasTab (VerticalPanel extras)
     {
-        extras.add(new Label(_ctx.emsgs.editorDescripTitle()));
+        extras.add(new Label(CEditem.emsgs.editorDescripTitle()));
         extras.add(bind(_description = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _item.description = text;
@@ -264,7 +263,7 @@ public abstract class ItemEditor extends BorderedDialog
     protected MediaUploader createUploader (
         String id, String title, boolean thumbnail, MediaUpdater updater)
     {
-        return new MediaUploader(_ctx, id, title, thumbnail, updater);
+        return new MediaUploader(id, title, thumbnail, updater);
     }
 
     /**
@@ -386,18 +385,18 @@ public abstract class ItemEditor extends BorderedDialog
         AsyncCallback cb = new AsyncCallback() {
             public void onSuccess (Object result) {
                 _parent.setStatus(_item.itemId == 0 ?
-                                  _ctx.emsgs.msgItemCreated() : _ctx.emsgs.msgItemUpdated());
+                                  CEditem.emsgs.msgItemCreated() : CEditem.emsgs.msgItemUpdated());
                 _updatedItem = _item; // this will be passed to our parent in onClosed()
                 hide();
             }
             public void onFailure (Throwable caught) {
-                _parent.setStatus(_ctx.serverError(caught));
+                _parent.setStatus(CEditem.serverError(caught));
             }
         };
         if (_item.itemId == 0) {
-            _ctx.itemsvc.createItem(_ctx.creds, _item, cb);
+            CEditem.itemsvc.createItem(CEditem.creds, _item, cb);
         } else {
-            _ctx.itemsvc.updateItem(_ctx.creds, _item, cb);
+            CEditem.itemsvc.updateItem(CEditem.creds, _item, cb);
         }
     }
 
@@ -432,7 +431,6 @@ public abstract class ItemEditor extends BorderedDialog
         };
     }-*/; 
 
-    protected EditemContext _ctx;
     protected EditorHost _parent;
 
     protected Item _item, _updatedItem;

@@ -27,17 +27,16 @@ public class ItemRating extends FlexTable
      * Construct a new display for the given item with member's previous rating of the item,
      * automatically figuring out read-only or read/write display mode.
      */
-    public ItemRating (ItemContext ctx, Item item, byte memberRating)
+    public ItemRating (Item item, byte memberRating)
     {
-        this(ctx, item, memberRating,
-             item.isRatable() ? ItemRating.MODE_BOTH : ItemRating.MODE_READ);
+        this(item, memberRating, item.isRatable() ? ItemRating.MODE_BOTH : ItemRating.MODE_READ);
     }
 
     /**
      * Construct a new display for the given item with member's previous rating of the item and a
      * specified display mode.
      */
-    public ItemRating (ItemContext ctx, Item item, byte memberRating, int mode)
+    public ItemRating (Item item, byte memberRating, int mode)
     {
         // sanity check
         if (mode != MODE_READ && !item.isRatable()) {
@@ -47,12 +46,11 @@ public class ItemRating extends FlexTable
         setCellSpacing(0);
         setCellPadding(0);
 
-        _ctx = ctx;
         _item = item;
         _memberRating = memberRating;
         _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
         // if we're not logged in, force MODE_READ
-        _mode = (_ctx.creds == null) ? MODE_READ : mode;
+        _mode = (CItem.creds == null) ? MODE_READ : mode;
 
         // add the 10 images whose src url's we mercilessly mutate throughout this widget
         for (int i = 0; i < 10; i ++) {
@@ -151,20 +149,19 @@ public class ItemRating extends FlexTable
     protected void rateItem (byte newRating)
     {
         _memberRating = newRating;
-        _ctx.itemsvc.rateItem(_ctx.creds, _itemId, newRating, new AsyncCallback() {
+        CItem.itemsvc.rateItem(CItem.creds, _itemId, newRating, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _item.rating = ((Float)result).floatValue();
                 _mode = MODE_READ;
                 update();
             }
             public void onFailure (Throwable caught) {
-                _ctx.log("rateItem failed", caught);
+                CItem.log("rateItem failed", caught);
                 // TODO: Error image?
             }
         });
     }
 
-    protected ItemContext _ctx;
     protected Item _item;
     protected ItemIdent _itemId;
     protected int _mode;

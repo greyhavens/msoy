@@ -55,28 +55,26 @@ public class GroupEdit extends BorderedDialog
     /**
      * This constructor is for creating new Groups.
      */
-    public GroupEdit (GroupContext ctx)
+    public GroupEdit ()
     {
-        this(ctx, new Group(), new GroupExtras(), null);
+        this(new Group(), new GroupExtras(), null);
     }
 
-    public GroupEdit (GroupContext ctx, Group group, GroupExtras extras,
-        GroupSubmissionListener listener)
+    public GroupEdit (Group group, GroupExtras extras, GroupSubmissionListener listener)
     {
         super();
-        _ctx = ctx;
         _group = group;
         _extras = extras;
         _listener = listener;
 
         String title = _group.groupId == 0 ?
-            _ctx.msgs.editCreateTitle() : _group.name;
+            CGroup.msgs.editCreateTitle() : _group.name;
         _header.add(MsoyUI.createLabel(title, "GroupTitle"));
         VerticalPanel contents = (VerticalPanel)_contents;
 
         _errorContainer = new HorizontalPanel();
         contents.add(_errorContainer);
-        contents.add(createTextEntryField(_ctx.msgs.editName(), GroupName.LENGTH_MAX, 20,
+        contents.add(createTextEntryField(CGroup.msgs.editName(), GroupName.LENGTH_MAX, 20,
                                           _group.name, new ChangeListener() {
             public void onChange (Widget sender) {
                 _group.name = ((TextBox)sender).getText().trim();
@@ -85,13 +83,13 @@ public class GroupEdit extends BorderedDialog
         }));
 
         TabPanel groupTabs = createTabs();
-        groupTabs.add(createInfoPanel(), _ctx.msgs.editInfoTab());
-        groupTabs.add(createDescriptionPanel(), _ctx.msgs.editDescripTab());
-        groupTabs.add(createBackgroundsPanel(), _ctx.msgs.editImagesTab());
+        groupTabs.add(createInfoPanel(), CGroup.msgs.editInfoTab());
+        groupTabs.add(createDescriptionPanel(), CGroup.msgs.editDescripTab());
+        groupTabs.add(createBackgroundsPanel(), CGroup.msgs.editImagesTab());
         groupTabs.selectTab(0);
         contents.add(groupTabs);
 
-        _submitButton = new Button(_ctx.cmsgs.submit());
+        _submitButton = new Button(CGroup.cmsgs.submit());
         updateSubmitButton();
         _submitButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -120,7 +118,7 @@ public class GroupEdit extends BorderedDialog
     protected Panel createInfoPanel ()
     {
         VerticalPanel infoPanel = new VerticalPanel();
-        infoPanel.add(createTextEntryField(_ctx.msgs.editHomepage(), 255, 20, _extras.homepageUrl,
+        infoPanel.add(createTextEntryField(CGroup.msgs.editHomepage(), 255, 20, _extras.homepageUrl,
             new ChangeListener() {
                 public void onChange (Widget sender) {
                     _extras.homepageUrl = ((TextBox)sender).getText().trim();
@@ -132,16 +130,16 @@ public class GroupEdit extends BorderedDialog
             _group.policy = Group.POLICY_PUBLIC;
         }
         HorizontalPanel policyPanel = new HorizontalPanel();
-        policyPanel.add(new InlineLabel(_ctx.msgs.editPolicy()));
+        policyPanel.add(new InlineLabel(CGroup.msgs.editPolicy()));
         final ListBox policyBox = new ListBox();
-        policyBox.addItem(_ctx.msgs.policyPublic());
-        policyBox.addItem(_ctx.msgs.policyInvite());
-        policyBox.addItem(_ctx.msgs.policyExclusive());
+        policyBox.addItem(CGroup.msgs.policyPublic());
+        policyBox.addItem(CGroup.msgs.policyInvite());
+        policyBox.addItem(CGroup.msgs.policyExclusive());
         switch(_group.policy) {
         case Group.POLICY_PUBLIC: policyBox.setSelectedIndex(0); break;
         case Group.POLICY_INVITE_ONLY: policyBox.setSelectedIndex(1); break;
         case Group.POLICY_EXCLUSIVE: policyBox.setSelectedIndex(2); break;
-        default: addError(_ctx.msgs.errUnknownPolicy("" + _group.policy));
+        default: addError(CGroup.msgs.errUnknownPolicy("" + _group.policy));
         }
         policyBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
@@ -149,7 +147,7 @@ public class GroupEdit extends BorderedDialog
                 case 0: _group.policy = Group.POLICY_PUBLIC; break;
                 case 1: _group.policy = Group.POLICY_INVITE_ONLY; break;
                 case 2: _group.policy = Group.POLICY_EXCLUSIVE; break;
-                default: addError(_ctx.msgs.errUnknownPolicy("" + policyBox.getSelectedIndex()));
+                default: addError(CGroup.msgs.errUnknownPolicy("" + policyBox.getSelectedIndex()));
                 }
             }
         });
@@ -158,7 +156,7 @@ public class GroupEdit extends BorderedDialog
 
         VerticalPanel logoBox = new VerticalPanel();
         infoPanel.add(logoBox);
-        updateImageBox(logoBox, IMAGE_LOGO, _ctx.msgs.editSetLogo());
+        updateImageBox(logoBox, IMAGE_LOGO, CGroup.msgs.editSetLogo());
 
         return infoPanel;
     }
@@ -166,7 +164,7 @@ public class GroupEdit extends BorderedDialog
     protected Panel createDescriptionPanel ()
     {
         VerticalPanel descriptionPanel = new VerticalPanel();
-        descriptionPanel.add(createTextEntryField(_ctx.msgs.editBlurb(), 80, 20, _group.blurb,
+        descriptionPanel.add(createTextEntryField(CGroup.msgs.editBlurb(), 80, 20, _group.blurb,
             new ChangeListener() {
                 public void onChange (Widget sender) {
                     _group.blurb = ((TextBox)sender).getText().trim();
@@ -174,7 +172,7 @@ public class GroupEdit extends BorderedDialog
             }));
 
         HorizontalPanel charterPanel = new HorizontalPanel();
-        charterPanel.add(new InlineLabel(_ctx.msgs.editCharter()));
+        charterPanel.add(new InlineLabel(CGroup.msgs.editCharter()));
         TextArea charterText = new TextArea();
         charterText.setCharacterWidth(50);
         charterText.setVisibleLines(10);
@@ -197,12 +195,12 @@ public class GroupEdit extends BorderedDialog
         HorizontalPanel backgroundsPanel = new HorizontalPanel();
         int types[] = { IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND,
             IMAGE_PEOPLE_BACKGROUND };
-        String labels[] = { _ctx.msgs.editInfoBG(), _ctx.msgs.editDetailBG(),
-                            _ctx.msgs.editPeopleBG() };
+        String labels[] = { CGroup.msgs.editInfoBG(), CGroup.msgs.editDetailBG(),
+                            CGroup.msgs.editPeopleBG() };
         for (int i = 0; i < types.length; i++) {
             VerticalPanel imageBox = new VerticalPanel();
             backgroundsPanel.add(imageBox);
-            updateImageBox(imageBox, types[i], _ctx.msgs.editSetBG(labels[i]));
+            updateImageBox(imageBox, types[i], CGroup.msgs.editSetBG(labels[i]));
         }
         return backgroundsPanel;
     }
@@ -231,7 +229,7 @@ public class GroupEdit extends BorderedDialog
         // check if the group name is valid.
         if (!Character.isLetter(_group.name.charAt(0)) &&
             !Character.isDigit(_group.name.charAt(0))) {
-            Window.alert(_ctx.msgs.errInvalidGroupName());
+            Window.alert(CGroup.msgs.errInvalidGroupName());
             return;
         }
 
@@ -247,13 +245,13 @@ public class GroupEdit extends BorderedDialog
                 }
             }
             public void onFailure (Throwable caught) {
-                addError(_ctx.serverError(caught));
+                addError(CGroup.serverError(caught));
             }
         };
         if (_group.groupId > 0) {
-            _ctx.groupsvc.updateGroup(_ctx.creds, _group, _extras, callback);
+            CGroup.groupsvc.updateGroup(CGroup.creds, _group, _extras, callback);
         } else {
-            _ctx.groupsvc.createGroup(_ctx.creds, _group, _extras, callback);
+            CGroup.groupsvc.createGroup(CGroup.creds, _group, _extras, callback);
         }
     }
 
@@ -287,21 +285,21 @@ public class GroupEdit extends BorderedDialog
     {
         // the list of images is cached for this object
         if (_images == null) {
-            _ctx.membersvc.loadInventory(_ctx.creds, Item.PHOTO, new AsyncCallback() {
+            CGroup.membersvc.loadInventory(CGroup.creds, Item.PHOTO, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _images = (List) result;
                     // will use the cached results this time.
                     popupImageChooser(box, type, buttonLabel);
                 }
                 public void onFailure (Throwable caught) {
-                    _ctx.log("loadInventory failed", caught);
-                    addError(_ctx.msgs.errPhotoLoadFailed(_ctx.serverError(caught)));
+                    CGroup.log("loadInventory failed", caught);
+                    addError(CGroup.msgs.errPhotoLoadFailed(CGroup.serverError(caught)));
                 }
             });
 
         } else {
             if (_images.size() == 0) {
-                addError(_ctx.msgs.errNoPhotos());
+                addError(CGroup.msgs.errNoPhotos());
                 return;
             }
 
@@ -379,7 +377,6 @@ public class GroupEdit extends BorderedDialog
         }
     }
 
-    protected GroupContext _ctx;
     protected Group _group;
     protected GroupExtras _extras;
     protected GroupSubmissionListener _listener;

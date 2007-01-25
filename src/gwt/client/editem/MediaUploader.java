@@ -35,7 +35,7 @@ public class MediaUploader extends VerticalPanel
      * sized.
      * @param updater the updater that knows how to set the media hash on the item.
      */
-    public MediaUploader (EditemContext ctx, String id, String title, boolean thumbnail,
+    public MediaUploader (String id, String title, boolean thumbnail,
                           ItemEditor.MediaUpdater updater)
     {
         setStyleName("mediaUploader");
@@ -77,9 +77,9 @@ public class MediaUploader extends VerticalPanel
         _panel.addField(new FileUploadField(id), id);
 
         if (GWT.isScript()) {
-            _panel.addField(new SubmitField("submit", ctx.emsgs.upload()), "submit");
+            _panel.addField(new SubmitField("submit", CEditem.emsgs.upload()), "submit");
         } else {
-            Button submit = new Button(ctx.emsgs.upload());
+            Button submit = new Button(CEditem.emsgs.upload());
             submit.addClickListener(new ClickListener() {
                 public void onClick (Widget widget) {
                     _panel.submit();

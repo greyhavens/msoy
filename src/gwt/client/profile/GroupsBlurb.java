@@ -52,9 +52,9 @@ public class GroupsBlurb extends Blurb
         _invitationPanel = new SimplePanel();
         _content.setWidget(_content.getRowCount(), 0, _invitationPanel);
 
-        if (_ctx.creds.getMemberId() != _memberId) {
-            _ctx.groupsvc.getMembershipGroups(
-                _ctx.creds, _ctx.creds.getMemberId(), true, new AsyncCallback() {
+        if (CProfile.creds.getMemberId() != _memberId) {
+            CProfile.groupsvc.getMembershipGroups(
+                CProfile.creds, CProfile.creds.getMemberId(), true, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         final List inviteGroups = (List) result;
                         if (inviteGroups.size() == 0) {
@@ -63,7 +63,7 @@ public class GroupsBlurb extends Blurb
                         Button inviteButton = new Button("Invite To A Group");
                         inviteButton.addClickListener(new ClickListener() {
                             public void onClick (Widget sender) {
-                                new MailComposition(_ctx, _memberId, "Join this group!",
+                                new MailComposition(_memberId, "Join this group!",
                                                     new GroupInvite.Composer(inviteGroups),
                                                     "Check out this scrumptious group.").show();
                             }

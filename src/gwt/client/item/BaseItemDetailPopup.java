@@ -22,10 +22,9 @@ import client.util.MediaUtil;
  */
 public class BaseItemDetailPopup extends BorderedDialog
 {
-    protected BaseItemDetailPopup (ItemContext ctx, Item item)
+    protected BaseItemDetailPopup (Item item)
     {
         super(true);
-        _ctx = ctx;
         _item = item;
 
         // create our user interface
@@ -44,16 +43,16 @@ public class BaseItemDetailPopup extends BorderedDialog
         createInterface(_details, _controls);
 
         // add our tag business at the bottom
-        _footer.add(new TagDetailPanel(ctx, item));
+        _footer.add(new TagDetailPanel(item));
 
         // load up the item details
-        _ctx.itemsvc.loadItemDetail(_ctx.creds, _item.getIdent(), new AsyncCallback() {
+        CItem.itemsvc.loadItemDetail(CItem.creds, _item.getIdent(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 gotDetail(_detail = (ItemDetail)result);
                 recenter();
             }
             public void onFailure (Throwable caught) {
-                _description.setText(_ctx.serverError(caught));
+                _description.setText(CItem.serverError(caught));
             }
         });
     }
@@ -86,18 +85,17 @@ public class BaseItemDetailPopup extends BorderedDialog
 
     protected void createInterface (VerticalPanel details, VerticalPanel controls)
     {
-        details.add(_description = new Label(ItemUtil.getDescription(_ctx, _item)));
+        details.add(_description = new Label(ItemUtil.getDescription(_item)));
     }
 
     protected void gotDetail (ItemDetail detail)
     {
-        _creator.setText(_ctx.imsgs.detailBy(detail.creator.toString()));
+        _creator.setText(CItem.imsgs.detailBy(detail.creator.toString()));
         if (_item.isRatable()) {
-            _details.add(new ItemRating(_ctx, detail.item, detail.memberRating));
+            _details.add(new ItemRating(detail.item, detail.memberRating));
         }
     }
 
-    protected ItemContext _ctx;
     protected Item _item;
     protected ItemDetail _detail;
 

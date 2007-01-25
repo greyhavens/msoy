@@ -13,7 +13,6 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.item.ItemEntryPoint;
 import client.shell.MsoyEntryPoint;
-import client.shell.ShellContext;
 
 /**
  * Handles the MetaSOY inventory application.
@@ -50,18 +49,12 @@ public class index extends ItemEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected ShellContext createContext ()
-    {
-        return _ctx = new InventoryContext();
-    }
-
-    // @Override // from MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
 
         // load up our translation dictionaries
-        _ctx.imsgs = (InventoryMessages)GWT.create(InventoryMessages.class);
+        CInventory.msgs = (InventoryMessages)GWT.create(InventoryMessages.class);
     }
 
     // @Override from MsoyEntryPoint
@@ -80,14 +73,14 @@ public class index extends ItemEntryPoint
 
     protected void updateInterface (String historyToken)
     {
-        if (_ctx.creds == null) {
+        if (CInventory.creds == null) {
             // if we have no creds, just display a message saying login
             setContent(new Label("Log in above to access your inventory."));
             _inventory = null;
 
         } else {
             if (_inventory == null) {
-                setContent(_inventory = new InventoryPanel(_ctx));
+                setContent(_inventory = new InventoryPanel());
             }
             byte type = Item.AVATAR;
             try {
@@ -101,6 +94,5 @@ public class index extends ItemEntryPoint
         }
     }
 
-    protected InventoryContext _ctx;
     protected InventoryPanel _inventory;
 }

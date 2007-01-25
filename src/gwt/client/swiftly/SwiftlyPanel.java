@@ -15,27 +15,24 @@ import com.threerings.gwt.ui.WidgetUtil;
  */
 public class SwiftlyPanel extends VerticalPanel
 {
-    public SwiftlyPanel (SwiftlyContext ctx)
+    public SwiftlyPanel ()
     {
         setStyleName("swiftlyPanel");
 
-        // Work around GWT awesomeness.
-        final SwiftlyContext localCtx = ctx;
-
         // TODO: make this return server hostname and port
-        ctx.swiftlysvc.getRpcURL(new AsyncCallback() {
+        CSwiftly.swiftlysvc.getRpcURL(new AsyncCallback() {
             public void onSuccess (Object result) {
-                SwiftlyPanel.this.loadApplet(localCtx, (String)result);
+                SwiftlyPanel.this.loadApplet((String)result);
             }
             public void onFailure (Throwable cause) {
-                localCtx.serverError(cause);
+                CSwiftly.serverError(cause);
             }
         });
     }
 
-    public void loadApplet (SwiftlyContext ctx, String rpcURL)
+    public void loadApplet (String rpcURL)
     {
-        String authtoken = (ctx.creds == null) ? "" : ctx.creds.token;
+        String authtoken = (CSwiftly.creds == null) ? "" : CSwiftly.creds.token;
         add(new Label("Sunrise, sunset, swiftly flow the days"));
 
         Widget display = WidgetUtil.createApplet(

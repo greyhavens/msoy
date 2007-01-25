@@ -38,12 +38,11 @@ import client.util.MediaUtil;
  */
 public class GroupList extends VerticalPanel
 {
-    public GroupList(GroupContext ctx)
+    public GroupList ()
     {
         super();
         setStyleName("groupList");
         DOM.setStyleAttribute(getElement(), "width", "100%");
-        _ctx = ctx;
 
         _groupLists = new HashMap();
 
@@ -79,10 +78,10 @@ public class GroupList extends VerticalPanel
         };
         searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
         search.setWidget(0, 0, searchInput);
-        search.setWidget(0, 1, new Button(_ctx.msgs.listSearch(), doSearch));
-        search.setWidget(0, 3, new Button(_ctx.msgs.listNewGroup(), new ClickListener() {
+        search.setWidget(0, 1, new Button(CGroup.msgs.listSearch(), doSearch));
+        search.setWidget(0, 3, new Button(CGroup.msgs.listNewGroup(), new ClickListener() {
             public void onClick (Widget sender) {
-                new GroupEdit(_ctx).show();
+                new GroupEdit().show();
             }
         }));
         DOM.setStyleAttribute(search.getFlexCellFormatter().getElement(0, 2), "width", "100%");
@@ -99,7 +98,7 @@ public class GroupList extends VerticalPanel
 
         _groupListContainer = new VerticalPanel();
         _groupListContainer.setStyleName("Groups");
-        _groupListContainer.add(new HTML(_ctx.msgs.listBrowseTip()));
+        _groupListContainer.add(new HTML(CGroup.msgs.listBrowseTip()));
         table.setWidget(2, 0, _groupListContainer);
 
         loadPopularTags();
@@ -110,7 +109,7 @@ public class GroupList extends VerticalPanel
     protected void loadCharacterList ()
     {
         _characterListContainer.clear();
-        _ctx.groupsvc.getCharacters(_ctx.creds, new AsyncCallback() {
+        CGroup.groupsvc.getCharacters(CGroup.creds, new AsyncCallback() {
             public void onSuccess (Object result) {
                 List characters = (List)result;
                 Collections.sort(characters);
@@ -134,8 +133,8 @@ public class GroupList extends VerticalPanel
                 }
             }
             public void onFailure (Throwable caught) {
-                _ctx.log("getCharacters failed", caught);
-                addError(_ctx.serverError(caught));
+                CGroup.log("getCharacters failed", caught);
+                addError(CGroup.serverError(caught));
             }
         });
     }
@@ -143,7 +142,7 @@ public class GroupList extends VerticalPanel
     protected void loadPopularTags ()
     {
         _popularTagsContainer.clear();
-        InlineLabel popularTagsLabel = new InlineLabel(_ctx.msgs.listPopularTags() + " ");
+        InlineLabel popularTagsLabel = new InlineLabel(CGroup.msgs.listPopularTags() + " ");
         popularTagsLabel.addStyleName("PopularTagsLabel");
         _popularTagsContainer.add(popularTagsLabel);
         // TODO: this is dummy data until tags get figured out
@@ -153,7 +152,7 @@ public class GroupList extends VerticalPanel
             _popularTagsContainer.add(new Anchor("", dummytags[i]));
             _popularTagsContainer.add(new InlineLabel(", "));
         }
-        Anchor moreLink = new Anchor("", _ctx.msgs.listMore());
+        Anchor moreLink = new Anchor("", CGroup.msgs.listMore());
         DOM.setAttribute(moreLink.getElement(), "id", "moreLink");
         _popularTagsContainer.add(moreLink);
     }
@@ -161,7 +160,7 @@ public class GroupList extends VerticalPanel
     protected void loadFeaturedGroups ()
     {
         _featuredGroupsContainer.clear();
-        Label featuredGroupsLabel = new Label(_ctx.msgs.listFeatured());
+        Label featuredGroupsLabel = new Label(CGroup.msgs.listFeatured());
         featuredGroupsLabel.setStyleName("FeaturedGroupsTitle");
         _featuredGroupsContainer.add(featuredGroupsLabel);
         _featuredGroupsContainer.add(new HTML("<h1>TODO</h1>"));
@@ -171,7 +170,7 @@ public class GroupList extends VerticalPanel
     {
         List groups = (List)_groupLists.get(startingCharacter);
         if (groups == null) {
-            _ctx.groupsvc.getGroups(_ctx.creds, startingCharacter, new AsyncCallback() {
+            CGroup.groupsvc.getGroups(CGroup.creds, startingCharacter, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     List groups = (List)result;
                     Collections.sort(groups);
@@ -179,8 +178,8 @@ public class GroupList extends VerticalPanel
                     displayGroups(groups);
                 }
                 public void onFailure (Throwable caught) {
-                    _ctx.log("loadGroups(" + startingCharacter + ") failed", caught);
-                    addError(_ctx.serverError(caught));
+                    CGroup.log("loadGroups(" + startingCharacter + ") failed", caught);
+                    addError(CGroup.serverError(caught));
                 }
             });
         } else {
@@ -199,13 +198,13 @@ public class GroupList extends VerticalPanel
 
     protected void performSearch (final String searchString)
     {
-        _ctx.groupsvc.searchGroups(_ctx.creds, searchString, new AsyncCallback() {
+        CGroup.groupsvc.searchGroups(CGroup.creds, searchString, new AsyncCallback() {
             public void onSuccess (Object result) {
                 displayGroups((List)result);
             }
             public void onFailure (Throwable caught) {
-                _ctx.log("searchGroups(" + searchString + ") failed", caught);
-                addError(_ctx.serverError(caught));
+                CGroup.log("searchGroups(" + searchString + ") failed", caught);
+                addError(CGroup.serverError(caught));
             }
         });
     }
@@ -242,7 +241,7 @@ public class GroupList extends VerticalPanel
             establishedDate.addStyleName("EstablishedDate");
             titleLine.add(establishedDate);
             InlineLabel memberCount = new InlineLabel(
-                _ctx.msgs.listMemberCount("" + group.memberCount));
+                CGroup.msgs.listMemberCount("" + group.memberCount));
             memberCount.addStyleName("MemberCount");
             titleLine.add(memberCount);
             setWidget(0, 1, titleLine);
@@ -253,7 +252,6 @@ public class GroupList extends VerticalPanel
         }
     }
 
-    protected GroupContext _ctx;
     protected VerticalPanel _errorContainer;
     protected FlowPanel _characterListContainer;
     protected FlowPanel _popularTagsContainer;

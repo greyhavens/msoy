@@ -10,10 +10,10 @@ import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MailMessage;
 
 /**
- * Base class for payload visualizers. Concrete subclasses of this object are configured
- * with a {@link MsgsContext} and a {@link MailMessage}, and will be asked to hand out Widgets
- * to be displayed in mail messages in the GTW Mail system through the functions
- * {@link #widgetForRecipient()} and {@link #widgetForOthers()).
+ * Base class for payload visualizers. Concrete subclasses of this object are configured with a
+ * {@link MailMessage}, and will be asked to hand out Widgets to be displayed in mail messages in
+ * the GTW Mail system through the functions {@link #widgetForRecipient()} and {@link
+ * #widgetForOthers()).
  */
 public abstract class MailPayloadDisplay
 {
@@ -21,24 +21,23 @@ public abstract class MailPayloadDisplay
      * Constructs and retursn the appropriate {@link MailPayloadDisplay} for the 
      * given mail message (presuming it has a payload).
      */
-    public static MailPayloadDisplay getDisplay (MsgsContext ctx, MailMessage message)
+    public static MailPayloadDisplay getDisplay (MailMessage message)
     {
         if (message.payload == null) {
             return null;
         }
         switch (message.payload.getType()) {
         case MailPayload.TYPE_GROUP_INVITE:
-            return new GroupInvite.Display(ctx, message);
+            return new GroupInvite.Display(message);
         case MailPayload.TYPE_FRIEND_INVITE:
-            return new FriendInvite.Display(ctx, message);
+            return new FriendInvite.Display(message);
         }
         throw new IllegalArgumentException(
             "Unknown payload requested [type=" + message.payload.getType() + "]");
     }
 
-    public MailPayloadDisplay (MsgsContext ctx, MailMessage message)
+    public MailPayloadDisplay (MailMessage message)
     {
-        _ctx = ctx;
         _message = message;
     }
     
@@ -74,10 +73,9 @@ public abstract class MailPayloadDisplay
                 }
             };
         }
-        _ctx.mailsvc.updatePayload(_ctx.creds, _message.headers.folderId,
-                                   _message.headers.messageId, payload, callback);
+        CMsgs.mailsvc.updatePayload(CMsgs.creds, _message.headers.folderId,
+                                    _message.headers.messageId, payload, callback);
     }
 
-    protected MsgsContext _ctx;
     protected MailMessage _message;
 }

@@ -14,7 +14,6 @@ import com.threerings.msoy.web.client.SwiftlyServiceAsync;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
-import client.shell.ShellContext;
 
 /**
  * Displays a page that allows a player to launch swiftly for a given project.
@@ -45,22 +44,16 @@ public class index extends MsoyEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected ShellContext createContext ()
-    {
-        return _ctx = new SwiftlyContext();
-    }
-
-    // @Override // from MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
 
         // wire up our remote services
-        _ctx.swiftlysvc = (SwiftlyServiceAsync)GWT.create(SwiftlyService.class);
-        ((ServiceDefTarget)_ctx.swiftlysvc).setServiceEntryPoint("/swiftlysvc");
+        CSwiftly.swiftlysvc = (SwiftlyServiceAsync)GWT.create(SwiftlyService.class);
+        ((ServiceDefTarget)CSwiftly.swiftlysvc).setServiceEntryPoint("/swiftlysvc");
 
         // load up our translation dictionaries
-        _ctx.msgs = (SwiftlyMessages)GWT.create(SwiftlyMessages.class);
+        CSwiftly.msgs = (SwiftlyMessages)GWT.create(SwiftlyMessages.class);
     }
 
     // @Override from MsoyEntryPoint
@@ -85,13 +78,11 @@ public class index extends MsoyEntryPoint
 
     protected void updateInterface (String historyToken)
     {
-        if (_ctx.creds == null) {
+        if (CSwiftly.creds == null) {
             // if we have no creds, just display a message saying login
-            setContent(new Label(_ctx.msgs.indexLogon()));
+            setContent(new Label(CSwiftly.msgs.indexLogon()));
         } else {
-            setContent(new SwiftlyPanel(_ctx));
+            setContent(new SwiftlyPanel());
         }
     }
-
-    protected SwiftlyContext _ctx;
 }

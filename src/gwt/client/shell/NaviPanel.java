@@ -21,13 +21,12 @@ import client.util.MsoyUI;
  */
 public class NaviPanel extends FlexTable
 {
-    public NaviPanel (ShellContext ctx, String page, LogonPanel logon)
+    public NaviPanel (String page, LogonPanel logon)
     {
         setStyleName("naviPanel");
         setCellPadding(0);
         setCellSpacing(0);
 
-        _ctx = ctx;
         _logon = logon;
     }
 
@@ -38,7 +37,7 @@ public class NaviPanel extends FlexTable
     {
         // replace our logon menu item with the "me" menu item
         int menuidx = 0;
-        setMenu(menuidx++, _ctx.cmsgs.menuMe(), new ClickListener() {
+        setMenu(menuidx++, CShell.cmsgs.menuMe(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/profile/index.html", "Profile");
@@ -49,7 +48,7 @@ public class NaviPanel extends FlexTable
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, _ctx.cmsgs.menuPlaces(), new ClickListener() {
+        setMenu(menuidx++, CShell.cmsgs.menuPlaces(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/world/index.html#m" + creds.getMemberId(), "My Home");
@@ -59,14 +58,14 @@ public class NaviPanel extends FlexTable
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, _ctx.cmsgs.menuPeople(), new ClickListener() {
+        setMenu(menuidx++, CShell.cmsgs.menuPeople(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/group/index.html", "Groups");
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, _ctx.cmsgs.menuStuff(), new ClickListener() {
+        setMenu(menuidx++, CShell.cmsgs.menuStuff(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/inventory/index.html", "Inventory");
@@ -75,7 +74,7 @@ public class NaviPanel extends FlexTable
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, _ctx.cmsgs.menuGames(), new ClickListener() {
+        setMenu(menuidx++, CShell.cmsgs.menuGames(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/inventory/index.html#4", "My Games");
@@ -92,33 +91,33 @@ public class NaviPanel extends FlexTable
     public void didLogoff ()
     {
         int menuidx = 0;
-        setMenu(menuidx++, _ctx.cmsgs.menuLogon(), new ClickListener() {
+        setMenu(menuidx++, CShell.cmsgs.menuLogon(), new ClickListener() {
             public void onClick (Widget sender) {
                 _logon.showLogonPopup();
             }
         });
-        setMenu(menuidx++, _ctx.cmsgs.menuPlaces(), new ClickListener() {
+        setMenu(menuidx++, CShell.cmsgs.menuPlaces(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/world/index.html#p", "Popular Spots");
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, _ctx.cmsgs.menuPeople(), new ClickListener() {
+        setMenu(menuidx++, CShell.cmsgs.menuPeople(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/group/index.html", "Groups");
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, _ctx.cmsgs.menuStuff(), new ClickListener() {
+        setMenu(menuidx++, CShell.cmsgs.menuStuff(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/catalog/index.html", "Catalog");
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, _ctx.cmsgs.menuGames(), new ClickListener() {
+        setMenu(menuidx++, CShell.cmsgs.menuGames(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/catalog/index.html#4", "Browse");
@@ -156,7 +155,6 @@ public class NaviPanel extends FlexTable
         popup.show();
     }
 
-    protected ShellContext _ctx;
     protected LogonPanel _logon;
 
     protected Label _loglbl, _melbl;

@@ -13,7 +13,6 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
-import client.shell.ShellContext;
 
 public class index extends MsgsEntryPoint
     implements HistoryListener
@@ -32,14 +31,14 @@ public class index extends MsgsEntryPoint
     public void onHistoryChanged (String token)
     {
         // if we have no creds, just display a message saying login
-        if (_ctx.creds == null) {
+        if (CMail.creds == null) {
             setContent(new Label("Log in above to access your mail."));
             return;
         }
 
         // initialize the application, if necessary
         if (_mainView == null) {
-            _mainView = new MailApplication(_ctx);
+            _mainView = new MailApplication();
         }
         // make sure we're displaying the application
         if (!_mainView.isAttached()) {
@@ -76,18 +75,12 @@ public class index extends MsgsEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected ShellContext createContext ()
-    {
-        return _ctx = new MailContext();
-    }
-
-    // @Override // from MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
 
         // load up our translation dictionaries
-        _ctx.msgs = (MailMessages)GWT.create(MailMessages.class);
+        CMail.msgs = (MailMessages)GWT.create(MailMessages.class);
     }
 
     // @Override // from MsoyEntryPoint
@@ -111,6 +104,5 @@ public class index extends MsgsEntryPoint
         onHistoryChanged(null);
     }
 
-    protected MailContext _ctx;
     protected MailApplication _mainView;
 }

@@ -49,10 +49,9 @@ import client.group.GroupEdit.GroupSubmissionListener;
 public class GroupView extends VerticalPanel
     implements GroupSubmissionListener
 {
-    public GroupView (GroupContext ctx, int groupId)
+    public GroupView (int groupId)
     {
         super();
-        _ctx = ctx;
 
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
@@ -77,7 +76,7 @@ public class GroupView extends VerticalPanel
      */
     protected void loadGroup (int groupId)
     {
-        _ctx.groupsvc.getGroupDetail(_ctx.creds, groupId, new AsyncCallback() {
+        CGroup.groupsvc.getGroupDetail(CGroup.creds, groupId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _detail = (GroupDetail) result;
                 _group = _detail.group;
@@ -85,14 +84,14 @@ public class GroupView extends VerticalPanel
                 // in case this object is used more than once, make sure that _me is at least 
                 // not stale
                 _me = null;
-                if (_ctx.creds != null) {
-                    _me = GroupView.findMember(_detail.members, _ctx.creds.getMemberId());
+                if (CGroup.creds != null) {
+                    _me = GroupView.findMember(_detail.members, CGroup.creds.getMemberId());
                 }
                 buildUI();
             }
             public void onFailure (Throwable caught) {
-                _ctx.log("loadGroup failed", caught);
-                addError(_ctx.serverError(caught));
+                CGroup.log("loadGroup failed", caught);
+                addError(CGroup.serverError(caught));
             }
         });
     }
@@ -115,20 +114,20 @@ public class GroupView extends VerticalPanel
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("Links");
         links.setSpacing(8);
-        links.add(new Anchor("/world/index.html#g" +  _group.groupId, _ctx.msgs.viewHall()));
-        links.add(new Anchor("", _ctx.msgs.viewForum()));
+        links.add(new Anchor("/world/index.html#g" +  _group.groupId, CGroup.msgs.viewHall()));
+        links.add(new Anchor("", CGroup.msgs.viewForum()));
         if (_extras.homepageUrl != null) {
-            links.add(new Anchor(_extras.homepageUrl, _ctx.msgs.viewHomepage()));
+            links.add(new Anchor(_extras.homepageUrl, CGroup.msgs.viewHomepage()));
         }
         logoPanel.add(links);
         VerticalPanel established = new VerticalPanel();
         established.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         established.setStyleName("Established");
-        established.add(new InlineLabel(_ctx.msgs.viewEstablishedAbbreviated() + 
+        established.add(new InlineLabel(CGroup.msgs.viewEstablishedAbbreviated() + 
             (new SimpleDateFormat("MMM dd, yyyy")).format(_group.creationDate)));
         HorizontalPanel creatorPanel = new HorizontalPanel();
         // this inline div is not letting space display to the right of it, and we need a space.
-        InlineLabel byLabel = new InlineLabel(_ctx.msgs.viewBy());
+        InlineLabel byLabel = new InlineLabel(CGroup.msgs.viewBy());
         DOM.setStyleAttribute(byLabel.getElement(), "marginRight", "3px");
         creatorPanel.add(byLabel);
         creatorPanel.add(new Anchor(MsoyEntryPoint.memberViewPath(  
@@ -139,17 +138,17 @@ public class GroupView extends VerticalPanel
         policy.setStyleName("Policy");
         logoPanel.add(policy);
         if (amManager) {
-            logoPanel.add(new Button(_ctx.msgs.viewEdit(), new ClickListener() {
+            logoPanel.add(new Button(CGroup.msgs.viewEdit(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    new GroupEdit(_ctx, _group, _extras, GroupView.this).show();
+                    new GroupEdit(_group, _extras, GroupView.this).show();
                 }
             }));
         }
         if (_me == null) {
             if (_group.policy == Group.POLICY_PUBLIC) {
-                logoPanel.add(new Button(_ctx.msgs.viewJoin(), new ClickListener() {
+                logoPanel.add(new Button(CGroup.msgs.viewJoin(), new ClickListener() {
                     public void onClick (Widget sender) {
-                        (new PromptPopup(_ctx.msgs.viewJoinPrompt(_group.name)) {
+                        (new PromptPopup(CGroup.msgs.viewJoinPrompt(_group.name)) {
                             public void onAffirmative () {
                                 joinGroup();
                             }
@@ -159,9 +158,9 @@ public class GroupView extends VerticalPanel
                 }));
             }
         } else {
-            logoPanel.add(new Button(_ctx.msgs.viewLeave(), new ClickListener() {
+            logoPanel.add(new Button(CGroup.msgs.viewLeave(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    (new PromptPopup(_ctx.msgs.viewLeavePrompt(_group.name)) {
+                    (new PromptPopup(CGroup.msgs.viewLeavePrompt(_group.name)) {
                         public void onAffirmative () {
                             removeMember(_me.member.getMemberId(), false);
                         }
@@ -279,10 +278,10 @@ public class GroupView extends VerticalPanel
     {
         String policyName;
         switch(policy) {
-        case Group.POLICY_PUBLIC: policyName = _ctx.msgs.policyPublic(); break;
-        case Group.POLICY_INVITE_ONLY: policyName = _ctx.msgs.policyInvite(); break;
-        case Group.POLICY_EXCLUSIVE: policyName = _ctx.msgs.policyExclusive(); break;
-        default: policyName = _ctx.msgs.errUnknownPolicy(Integer.toString(policy));
+        case Group.POLICY_PUBLIC: policyName = CGroup.msgs.policyPublic(); break;
+        case Group.POLICY_INVITE_ONLY: policyName = CGroup.msgs.policyInvite(); break;
+        case Group.POLICY_EXCLUSIVE: policyName = CGroup.msgs.policyExclusive(); break;
+        default: policyName = CGroup.msgs.errUnknownPolicy(Integer.toString(policy));
         }
         return policyName;
     }
@@ -295,11 +294,11 @@ public class GroupView extends VerticalPanel
         // MenuBar(true) creates a vertical menu
         MenuBar menu = new MenuBar(true);
         menu.addItem("<a href='" + MsoyEntryPoint.memberViewPath(
-            membership.member.getMemberId()) + "'>" + _ctx.msgs.viewViewProfile() + "</a>", true, 
+            membership.member.getMemberId()) + "'>" + CGroup.msgs.viewViewProfile() + "</a>", true, 
             (Command)null);
-        MenuItem promote = new MenuItem(_ctx.msgs.viewPromote(), new Command() {
+        MenuItem promote = new MenuItem(CGroup.msgs.viewPromote(), new Command() {
             public void execute() {
-                (new PromptPopup(_ctx.msgs.viewPromotePrompt(membership.member.toString())) {
+                (new PromptPopup(CGroup.msgs.viewPromotePrompt(membership.member.toString())) {
                     public void onAffirmative () {
                         parent.hide();
                         updateMemberRank(membership.member.getMemberId(),
@@ -309,9 +308,9 @@ public class GroupView extends VerticalPanel
                 }).prompt();
             }
         });
-        MenuItem demote = new MenuItem(_ctx.msgs.viewDemote(), new Command() {
+        MenuItem demote = new MenuItem(CGroup.msgs.viewDemote(), new Command() {
             public void execute() {
-                (new PromptPopup(_ctx.msgs.viewPromotePrompt(membership.member.toString())) {
+                (new PromptPopup(CGroup.msgs.viewPromotePrompt(membership.member.toString())) {
                     public void onAffirmative () {
                         parent.hide();
                         updateMemberRank(membership.member.getMemberId(),
@@ -321,9 +320,9 @@ public class GroupView extends VerticalPanel
                 }).prompt();
             }
         });
-        MenuItem remove = new MenuItem(_ctx.msgs.viewRemove(), new Command() {
+        MenuItem remove = new MenuItem(CGroup.msgs.viewRemove(), new Command() {
             public void execute() {
-                (new PromptPopup(_ctx.msgs.viewRemovePrompt(membership.member.toString(), 
+                (new PromptPopup(CGroup.msgs.viewRemovePrompt(membership.member.toString(), 
                     _group.name)) { 
                     public void onAffirmative () {
                         parent.hide();
@@ -370,15 +369,15 @@ public class GroupView extends VerticalPanel
 
     protected void updateMemberRank (final int memberId, final byte rank) 
     {
-        _ctx.groupsvc.updateMemberRank(_ctx.creds, _group.groupId, memberId, rank,
+        CGroup.groupsvc.updateMemberRank(CGroup.creds, _group.groupId, memberId, rank,
             new AsyncCallback() {
             public void onSuccess (Object result) {
                 loadGroup(_group.groupId);
             }
             public void onFailure (Throwable caught) {
-                _ctx.log("Failed to update member rank [groupId=" + _group.groupId +
-                         ", memberId=" + memberId + ", newRank=" + rank + "]", caught);
-                addError(_ctx.serverError(caught));
+                CGroup.log("Failed to update member rank [groupId=" + _group.groupId +
+                           ", memberId=" + memberId + ", newRank=" + rank + "]", caught);
+                addError(CGroup.serverError(caught));
             }
         });
     }
@@ -392,7 +391,7 @@ public class GroupView extends VerticalPanel
      */
     protected void removeMember (final int memberId, final boolean reload)
     {
-        _ctx.groupsvc.leaveGroup(_ctx.creds, _group.groupId, memberId, new AsyncCallback() {
+        CGroup.groupsvc.leaveGroup(CGroup.creds, _group.groupId, memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (reload) {
                     loadGroup(_group.groupId);
@@ -402,24 +401,24 @@ public class GroupView extends VerticalPanel
                 }
             }
             public void onFailure (Throwable caught) {
-                _ctx.log("Failed to remove member [groupId=" + _group.groupId +
-                         ", memberId=" + memberId + "]", caught);
-                addError(_ctx.serverError(caught));
+                CGroup.log("Failed to remove member [groupId=" + _group.groupId +
+                           ", memberId=" + memberId + "]", caught);
+                addError(CGroup.serverError(caught));
             }
         });
     }
 
     protected void joinGroup () 
     {
-        _ctx.groupsvc.joinGroup(
-            _ctx.creds, _group.groupId, _ctx.creds.getMemberId(), new AsyncCallback() {
+        CGroup.groupsvc.joinGroup(
+            CGroup.creds, _group.groupId, CGroup.creds.getMemberId(), new AsyncCallback() {
                 public void onSuccess (Object result) {
                     loadGroup(_group.groupId);
                 }
                 public void onFailure (Throwable caught) {
-                    _ctx.log("Failed to join group [groupId=" + _group.groupId +
-                             ", memberId=" + _ctx.creds.getMemberId() + "]", caught);
-                    addError(_ctx.serverError(caught));
+                    CGroup.log("Failed to join group [groupId=" + _group.groupId +
+                               ", memberId=" + CGroup.creds.getMemberId() + "]", caught);
+                    addError(CGroup.serverError(caught));
                 }
         });
     }
@@ -454,7 +453,6 @@ public class GroupView extends VerticalPanel
         }
     }
 
-    protected GroupContext _ctx;
     protected Group _group;
     protected GroupExtras _extras;
     protected GroupDetail _detail;

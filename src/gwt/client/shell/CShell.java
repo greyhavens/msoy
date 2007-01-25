@@ -14,30 +14,37 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
 /**
- * Contains a reference to the various bits that we're likely to need in the
- * web client interface.
+ * Contains a reference to the various bits that we're likely to need in the web client interface.
  */
-public class ShellContext
+public class CShell
 {
     /** Our credentials or null if we are not logged in. */
-    public WebCreds creds;
+    public static WebCreds creds;
 
     /** Provides user-related services. */
-    public WebUserServiceAsync usersvc;
+    public static WebUserServiceAsync usersvc;
 
     /** Provides member-related service. */
-    public MemberServiceAsync membersvc;
+    public static MemberServiceAsync membersvc;
 
     /** Messages shared by all client interfaces. */
-    public ShellMessages cmsgs;
+    public static ShellMessages cmsgs;
 
     /** Contains translations for server-supplied messages. */
-    public ServerMessages smsgs;
+    public static ServerMessages smsgs;
+
+    /**
+     * Returns our member id if we're logged in, 0 if we are not.
+     */
+    public static int getMemberId ()
+    {
+        return (creds != null) ? creds.getMemberId() : 0;
+    }
 
     /**
      * Looks up the appropriate response message for the supplied server-generated error.
      */
-    public String serverError (Throwable error)
+    public static String serverError (Throwable error)
     {
         if (error instanceof ServiceException) {
             String msg = error.getMessage();

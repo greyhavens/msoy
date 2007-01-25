@@ -8,25 +8,25 @@ import com.threerings.msoy.web.client.MailServiceAsync;
 import com.threerings.msoy.web.client.PersonServiceAsync;
 import com.threerings.msoy.web.client.ProfileServiceAsync;
 
-import client.shell.ShellContext;
+import client.shell.CShell;
 
 /**
- * Extends {@link ShellContext} and provides mail-message-specific services.
+ * Extends {@link CShell} and provides mail-message-specific services.
  */
-public class MsgsContext extends ShellContext
+public class CMsgs extends CShell
 {
     /** Provides profile-related services. */
-    public ProfileServiceAsync profilesvc;
+    public static ProfileServiceAsync profilesvc;
 
     /** Provides group-related services. */
-    public GroupServiceAsync groupsvc;
+    public static GroupServiceAsync groupsvc;
 
     /** Provides mail-related services. */
-    public MailServiceAsync mailsvc;
+    public static MailServiceAsync mailsvc;
 
     /** Provides person-related services. */
-    public PersonServiceAsync personsvc;
+    public static PersonServiceAsync personsvc;
 
     /** Messages used by the msgs interfaces. */
-    public MsgsMessages mmsgs;
+    public static MsgsMessages mmsgs;
 }

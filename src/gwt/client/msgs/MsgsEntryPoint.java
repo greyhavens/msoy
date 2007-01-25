@@ -18,7 +18,7 @@ import com.threerings.msoy.web.client.ProfileServiceAsync;
 import client.shell.MsoyEntryPoint;
 
 /**
- * Configures our {@link MsgsContext} for msgs-derived pages.
+ * Configures our {@link CMsgs} for msgs-derived pages.
  */
 public abstract class MsgsEntryPoint extends MsoyEntryPoint
 {
@@ -26,19 +26,18 @@ public abstract class MsgsEntryPoint extends MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
-        MsgsContext mctx = (MsgsContext)_gctx;
 
         // wire up our remote services
-        mctx.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
-        ((ServiceDefTarget)mctx.profilesvc).setServiceEntryPoint("/profilesvc");
-        mctx.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
-        ((ServiceDefTarget)mctx.personsvc).setServiceEntryPoint("/personsvc");
-        mctx.mailsvc = (MailServiceAsync)GWT.create(MailService.class);
-        ((ServiceDefTarget)mctx.mailsvc).setServiceEntryPoint("/mailsvc");
-        mctx.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);
-        ((ServiceDefTarget)mctx.groupsvc).setServiceEntryPoint("/groupsvc");
+        CMsgs.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
+        ((ServiceDefTarget)CMsgs.profilesvc).setServiceEntryPoint("/profilesvc");
+        CMsgs.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
+        ((ServiceDefTarget)CMsgs.personsvc).setServiceEntryPoint("/personsvc");
+        CMsgs.mailsvc = (MailServiceAsync)GWT.create(MailService.class);
+        ((ServiceDefTarget)CMsgs.mailsvc).setServiceEntryPoint("/mailsvc");
+        CMsgs.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);
+        ((ServiceDefTarget)CMsgs.groupsvc).setServiceEntryPoint("/groupsvc");
 
         // load up our translation dictionaries
-        mctx.mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
+        CMsgs.mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
     }
 }

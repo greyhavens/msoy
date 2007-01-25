@@ -40,9 +40,8 @@ public abstract class Blurb extends DockPanel
      * Configures this blurb with a context and the member id for whom it is
      * displaying content.
      */
-    public void init (ProfileContext ctx, int memberId, int blurbId, Object blurbData)
+    public void init (int memberId, int blurbId, Object blurbData)
     {
-        _ctx = ctx;
         _memberId = memberId;
         _blurbId = blurbId;
         if (blurbData instanceof BlurbData.ResolutionFailure) {
@@ -85,7 +84,6 @@ public abstract class Blurb extends DockPanel
      */
     protected abstract void didFail (String cause);
 
-    protected ProfileContext _ctx;
     protected int _memberId;
     protected int _blurbId;
     protected Label _header;

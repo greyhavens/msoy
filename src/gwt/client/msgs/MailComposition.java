@@ -26,12 +26,11 @@ public class MailComposition extends PopupPanel
     /**
      * Initializes a new composer when we already have the full name.
      */
-    public MailComposition (MsgsContext ctx, MemberName recipient, String subject,
+    public MailComposition (MemberName recipient, String subject,
                             MailPayloadComposer bodyObjectComposer, String bodyText)
     {
         super(false);
-        _ctx = ctx;
-        _senderId = ctx.creds.getMemberId();
+        _senderId = CMsgs.creds.getMemberId();
         _recipient = recipient;
         _bodyObjectComposer = bodyObjectComposer;
         buildUI(subject, bodyText);
@@ -41,12 +40,11 @@ public class MailComposition extends PopupPanel
      * Initializes a new composer with a recipient id; we do a backend request to look
      * up the recipient's current name, and inject the name into the right UI element.
      */ 
-    public MailComposition (MsgsContext ctx, int recipientId, String subject,
-                            MailPayloadComposer factory, String bodyText)
+    public MailComposition (int recipientId, String subject, MailPayloadComposer factory,
+                            String bodyText)
     {
-        this(ctx, new MemberName("Member #" + recipientId, recipientId),
-             subject, factory, bodyText);
-        _ctx.membersvc.getName(recipientId, new AsyncCallback() {
+        this(new MemberName("Member #" + recipientId, recipientId), subject, factory, bodyText);
+        CMsgs.membersvc.getName(recipientId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (result != null) {
                     _recipient = (MemberName) result;
@@ -102,7 +100,7 @@ public class MailComposition extends PopupPanel
         panel.add(buttonBox);
 
         if (_bodyObjectComposer != null) {
-            Widget widget = _bodyObjectComposer.widgetForComposition(_ctx);
+            Widget widget = _bodyObjectComposer.widgetForComposition();
             if (widget != null) {
                 panel.add(widget);
             }
@@ -132,7 +130,7 @@ public class MailComposition extends PopupPanel
         AsyncCallback callback = new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (_bodyObjectComposer != null) {
-                    _bodyObjectComposer.messageSent(_ctx, _recipient);
+                    _bodyObjectComposer.messageSent(_recipient);
                 }
                 hide();
             }
@@ -152,12 +150,11 @@ public class MailComposition extends PopupPanel
                 popup.show();
             }
         };
-        _ctx.mailsvc.deliverMessage(_ctx.creds, _recipient.getMemberId(), _subjectBox.getText(),
-                                    _messageBox.getText(), (_bodyObjectComposer == null) ?
-                                    null : _bodyObjectComposer.getComposedPayload(), callback);
+        CMsgs.mailsvc.deliverMessage(CMsgs.creds, _recipient.getMemberId(), _subjectBox.getText(),
+                                     _messageBox.getText(), (_bodyObjectComposer == null) ?
+                                     null : _bodyObjectComposer.getComposedPayload(), callback);
     }
 
-    protected MsgsContext _ctx;
     protected int _senderId;
     protected MemberName _recipient;
     protected MailPayloadComposer _bodyObjectComposer;

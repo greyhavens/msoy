@@ -116,8 +116,8 @@ public class ProfileBlurb extends Blurb
         _content.setWidget(2, 1, _homepage);
 
         // display the edit button if this is our profile
-        _ctx.log("Creds " + _ctx.creds);
-        if (_profile.memberId == _ctx.creds.getMemberId()) {
+        CProfile.log("Creds " + CProfile.creds);
+        if (_profile.memberId == CProfile.creds.getMemberId()) {
             _content.setWidget(3, 2, _edit);
         }
     }
@@ -133,7 +133,7 @@ public class ProfileBlurb extends Blurb
         _profile.headline = _eheadline.getText();
         _profile.homePageURL = _ehomepage.getText();
 
-        _ctx.profilesvc.updateProfile(_ctx.creds, _profile, new AsyncCallback() {
+        CProfile.profilesvc.updateProfile(CProfile.creds, _profile, new AsyncCallback() {
             public void onSuccess (Object result) {
                 GWT.log("Yay!", null);
                 displayProfile();

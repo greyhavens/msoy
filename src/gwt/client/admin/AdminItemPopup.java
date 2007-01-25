@@ -19,9 +19,9 @@ import com.threerings.msoy.item.web.MediaDesc;
  */
 public class AdminItemPopup extends BaseItemDetailPopup
 {
-    public AdminItemPopup (AdminContext ctx, Item item, ReviewPopup parent)
+    public AdminItemPopup (Item item, ReviewPopup parent)
     {
-        super(ctx, item);
+        super(item);
         _parent = parent;
     }
 

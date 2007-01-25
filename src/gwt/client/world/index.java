@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
-import client.shell.ShellContext;
 import client.util.FlashClients;
 
 /**
@@ -46,18 +45,12 @@ public class index extends MsoyEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected ShellContext createContext ()
-    {
-        return _ctx = new WorldContext();
-    }
-
-    // @Override // from MsoyEntryPoint
     protected void initContext ()
     {
         super.initContext();
 
         // load up our translation dictionaries
-        _ctx.msgs = (WorldMessages)GWT.create(WorldMessages.class);
+        CWorld.msgs = (WorldMessages)GWT.create(WorldMessages.class);
     }
 
     // @Override // from MsoyEntryPoint
@@ -111,7 +104,7 @@ public class index extends MsoyEntryPoint
                 // display popular places by request
                 displayHotSpots(_entryCounter);
 
-            } else if (_ctx.creds != null) {
+            } else if (CWorld.creds != null) {
                 // we're logged in, go to our home
                 world(null);
 
@@ -128,7 +121,8 @@ public class index extends MsoyEntryPoint
 
     protected void displayNeighborhood (final int requestEntryCount, int entityId, boolean isGroup)
     {
-        _ctx.membersvc.serializeNeighborhood(_ctx.creds, entityId, isGroup, new AsyncCallback() {
+        CWorld.membersvc.serializeNeighborhood(
+            CWorld.creds, entityId, isGroup, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (requestEntryCount == _entryCounter) {
                     neighborhood((String) result);
@@ -136,7 +130,7 @@ public class index extends MsoyEntryPoint
             }
             public void onFailure (Throwable caught) {
                 if (requestEntryCount == _entryCounter) {
-                    setContent(new Label(_ctx.serverError(caught)));
+                    setContent(new Label(CWorld.serverError(caught)));
                 }
             }
         });
@@ -144,7 +138,7 @@ public class index extends MsoyEntryPoint
 
     protected void displayHotSpots (final int requestEntryCount)
     {
-        _ctx.membersvc.serializePopularPlaces(_ctx.creds, 20, new AsyncCallback() {
+        CWorld.membersvc.serializePopularPlaces(CWorld.creds, 20, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (requestEntryCount == _entryCounter) {
                     hotSpots((String) result);
@@ -152,7 +146,7 @@ public class index extends MsoyEntryPoint
             }
             public void onFailure (Throwable caught) {
                 if (requestEntryCount == _entryCounter) {
-                    setContent(new Label(_ctx.serverError(caught)));
+                    setContent(new Label(CWorld.serverError(caught)));
                 }
             }
         });
@@ -220,8 +214,6 @@ public class index extends MsoyEntryPoint
             // oh well
         }
     }-*/;
-
-    protected WorldContext _ctx;
 
     /** A counter to help asynchronous callbacks to figure out if they've been obsoleted. */
     protected int _entryCounter;

@@ -42,11 +42,11 @@ public class ItemContainer extends VerticalPanel
         wrapper.add(createContainer(item));
         add(wrapper);
 
-        Label label = new Label(ItemUtil.getName(_panel._ctx, item, true));
+        Label label = new Label(ItemUtil.getName(item, true));
         label.setStyleName("ThumbText");
         label.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                new ItemDetailPopup(_panel._ctx, _item, _panel).show();
+                new ItemDetailPopup(_item, _panel).show();
             }
         });
         add(label);

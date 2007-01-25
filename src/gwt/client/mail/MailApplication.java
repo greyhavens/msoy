@@ -53,10 +53,9 @@ public class MailApplication extends DockPanel
     /**
      * Initialize ths application and build the UI framework.
      */
-    public MailApplication (MailContext ctx)
+    public MailApplication ()
     {
         super();
-        _ctx = ctx;
         setStyleName("mailApp");
         setSpacing(5);
         
@@ -66,11 +65,11 @@ public class MailApplication extends DockPanel
         sideBar.setSpacing(5);
 
         // with a button to compose a new mail
-        Button composeButton = new Button(_ctx.msgs.appCompose());
+        Button composeButton = new Button(CMail.msgs.appCompose());
         composeButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 // TODO: The hard-coded memberId is for testing only :)
-                MailComposition composition = new MailComposition(_ctx, 2, "", null, "");
+                MailComposition composition = new MailComposition(2, "", null, "");
                 composition.addPopupListener(MailApplication.this);
                 composition.show();
             }
@@ -167,7 +166,7 @@ public class MailApplication extends DockPanel
     // fetch the folder list from the backend and trigger a display
     protected void loadFolders ()
     {
-        _ctx.mailsvc.getFolders(_ctx.creds, new AsyncCallback() {
+        CMail.mailsvc.getFolders(CMail.creds, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _folders = (List) result;
                 refreshFolderPanel();
@@ -206,7 +205,7 @@ public class MailApplication extends DockPanel
             addError("Internal error: asked to load headers, but no folder selected.");
             return;
         }
-        _ctx.mailsvc.getHeaders(_ctx.creds, _currentFolder, new AsyncCallback() {
+        CMail.mailsvc.getHeaders(CMail.creds, _currentFolder, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _headers = (List) result;
                 refreshHeaderPanel();
@@ -352,11 +351,11 @@ public class MailApplication extends DockPanel
         if (_currentMessage < 0) {
             return;
         }
-        _ctx.mailsvc.getMessage(_ctx.creds, _currentFolder, _currentMessage, new AsyncCallback() {
+        CMail.mailsvc.getMessage(CMail.creds, _currentFolder, _currentMessage, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _message = (MailMessage) result;
                 _payloadDisplay = _message.payload != null ?
-                    MailPayloadDisplay.getDisplay(_ctx, _message) : null;
+                    MailPayloadDisplay.getDisplay(_message) : null;
                 refreshMessagePanel();
             }
             public void onFailure (Throwable caught) {
@@ -394,7 +393,7 @@ public class MailApplication extends DockPanel
                     subject = "re: " + subject;
                 }
                 MailComposition composition =
-                    new MailComposition(_ctx, _message.headers.sender, subject, null, "");
+                    new MailComposition(_message.headers.sender, subject, null, "");
                 composition.addPopupListener(MailApplication.this);
                 composition.show();
             }
@@ -414,7 +413,7 @@ public class MailApplication extends DockPanel
 
         // if there is a payload, display it!
         if (_message.payload != null) {
-            Widget widget = _ctx.creds.getMemberId() == _message.headers.recipient.getMemberId() ?
+            Widget widget = CMail.creds.getMemberId() == _message.headers.recipient.getMemberId() ?
                 _payloadDisplay.widgetForRecipient(this) : _payloadDisplay.widgetForOthers();
             if (widget != null) {
                 HorizontalPanel panel = new HorizontalPanel();
@@ -456,7 +455,7 @@ public class MailApplication extends DockPanel
             msgIds[i] = ((MailHeaders) objects[i]).messageId;
         }
         // then send the deletion request off to the backend
-        _ctx.mailsvc.deleteMessages(_ctx.creds, folderId, msgIds, new AsyncCallback() {
+        CMail.mailsvc.deleteMessages(CMail.creds, folderId, msgIds, new AsyncCallback() {
             public void onSuccess (Object result) {
                 // if it went well, refresh the folder view and whatnot
                 refresh();
@@ -567,8 +566,6 @@ public class MailApplication extends DockPanel
     {
         _errorContainer.clear();
     }
-
-    protected MailContext _ctx;
 
     protected List _folders;
     protected List _headers;

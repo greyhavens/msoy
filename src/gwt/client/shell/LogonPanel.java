@@ -25,13 +25,12 @@ import com.threerings.msoy.web.data.WebCreds;
  */
 public class LogonPanel extends FlexTable
 {
-    public LogonPanel (ShellContext ctx, MsoyEntryPoint app)
+    public LogonPanel (MsoyEntryPoint app)
     {
         setStyleName("logonPanel");
         setCellPadding(0);
         setCellSpacing(0);
 
-        _ctx = ctx;
         _app = app;
 
         // create our interface elements
@@ -92,7 +91,7 @@ public class LogonPanel extends FlexTable
     {
         if (token != null) {
             // validate our session before considering ourselves logged on
-            _ctx.usersvc.validateSession(token, 1, new AsyncCallback() {
+            CShell.usersvc.validateSession(token, 1, new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _creds = (WebCreds)result;
                     didLogon(_creds);
@@ -187,7 +186,7 @@ public class LogonPanel extends FlexTable
             String account = _email.getText(), password = _password.getText();
             if (account.length() > 0 && password.length() > 0) {
                 _status.setText("Logging in...");
-                _ctx.usersvc.login(account, md5hex(password), 1, new AsyncCallback() {
+                CShell.usersvc.login(account, md5hex(password), 1, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         hide();
                         didLogon((WebCreds)result);
@@ -204,7 +203,6 @@ public class LogonPanel extends FlexTable
         protected Label _status;
     }
 
-    protected ShellContext _ctx;
     protected MsoyEntryPoint _app;
 
     protected WebCreds _creds;

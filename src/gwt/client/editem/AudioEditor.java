@@ -32,15 +32,15 @@ public class AudioEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(_ctx.emsgs.audioMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CEditem.emsgs.audioMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isAudio()) {
-                    return _ctx.emsgs.errAudioNotAudio();
+                    return CEditem.emsgs.errAudioNotAudio();
                 }
                 _audio.audioMedia = desc;
                 return null;
             }
-        }), _ctx.emsgs.audioMainTab());
+        }), CEditem.emsgs.audioMainTab());
 
         super.createInterface(contents, tabs);
     }

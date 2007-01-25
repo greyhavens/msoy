@@ -32,15 +32,15 @@ public class PhotoEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(_ctx.emsgs.photoMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CEditem.emsgs.photoMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
-                    return _ctx.emsgs.errPhotoNotFlash();
+                    return CEditem.emsgs.errPhotoNotFlash();
                 }
                 _photo.photoMedia = desc;
                 return null;
             }
-        }), _ctx.emsgs.photoMainTab());
+        }), CEditem.emsgs.photoMainTab());
 
         super.createInterface(contents, tabs);
     }

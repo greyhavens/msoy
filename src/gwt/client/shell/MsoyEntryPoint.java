@@ -61,17 +61,14 @@ public abstract class MsoyEntryPoint
         // First, set up the callback that flash can call when it logs in
         configureLogonCallback(this);
 
-        // create our client context
-        _gctx = createContext();
-
         // initialize our services and translations
         initContext();
 
         // create our standard logon panel
-        RootPanel.get("logon").add(_logon = new LogonPanel(_gctx, this));
+        RootPanel.get("logon").add(_logon = new LogonPanel(this));
 
         // create our standard navigation panel
-        RootPanel.get("navigation").add(_navi = new NaviPanel(_gctx, getPageId(), _logon));
+        RootPanel.get("navigation").add(_navi = new NaviPanel(getPageId(), _logon));
 
         // initialize the logon panel
         _logon.init();
@@ -94,28 +91,20 @@ public abstract class MsoyEntryPoint
     protected abstract void onPageLoad ();
 
     /**
-     * Creates the web context to be used by this page. Must extend {@link ShellContext}.
-     */
-    protected ShellContext createContext ()
-    {
-        return new ShellContext();
-    }
-
-    /**
-     * Called after the context is created to initialize it. It is assumed that the derived class
-     * maintained a casted reference to its context from @{link #createContext}.
+     * Called during initialization to give our entry point and derived classes a chance to
+     * initialize their respective context classes.
      */
     protected void initContext ()
     {
         // wire up our remote services
-        _gctx.usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
-        ((ServiceDefTarget)_gctx.usersvc).setServiceEntryPoint("/usersvc");
-        _gctx.membersvc = (MemberServiceAsync)GWT.create(MemberService.class);
-        ((ServiceDefTarget)_gctx.membersvc).setServiceEntryPoint("/membersvc");
+        CShell.usersvc = (WebUserServiceAsync)GWT.create(WebUserService.class);
+        ((ServiceDefTarget)CShell.usersvc).setServiceEntryPoint("/usersvc");
+        CShell.membersvc = (MemberServiceAsync)GWT.create(MemberService.class);
+        ((ServiceDefTarget)CShell.membersvc).setServiceEntryPoint("/membersvc");
 
         // load up our translation dictionaries
-        _gctx.cmsgs = (ShellMessages)GWT.create(ShellMessages.class);
-        _gctx.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
+        CShell.cmsgs = (ShellMessages)GWT.create(ShellMessages.class);
+        CShell.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
     }
 
     /**
@@ -141,7 +130,7 @@ public abstract class MsoyEntryPoint
      */
     protected void didLogon (WebCreds creds)
     {
-        _gctx.creds = creds;
+        CShell.creds = creds;
         _navi.didLogon(creds);
     }
 
@@ -158,7 +147,7 @@ public abstract class MsoyEntryPoint
      */
     protected void didLogoff ()
     {
-        _gctx.creds = null;
+        CShell.creds = null;
         _navi.didLogoff();
     }
 
@@ -172,7 +161,6 @@ public abstract class MsoyEntryPoint
        };
     }-*/;
 
-    protected ShellContext _gctx;
     protected NaviPanel _navi;
     protected LogonPanel _logon;
 

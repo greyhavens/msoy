@@ -30,17 +30,17 @@ public class PetEditor extends ItemEditor
     protected void createFurniUploader (TabPanel tabs)
     {
         // pets are special; their furni media are their primary media
-        String title = _ctx.emsgs.petMainTitle();
+        String title = CEditem.emsgs.petMainTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
-                    return _ctx.emsgs.errPetNotFlash();
+                    return CEditem.emsgs.errPetNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
         });
-        tabs.add(_furniUploader, _ctx.emsgs.petMainTab());
+        tabs.add(_furniUploader, CEditem.emsgs.petMainTab());
     }
 
     protected Pet _pet;

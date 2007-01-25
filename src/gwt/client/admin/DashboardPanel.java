@@ -15,19 +15,15 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class DashboardPanel extends VerticalPanel
 {
-    public DashboardPanel (AdminContext ctx)
+    public DashboardPanel ()
     {
-        _ctx = ctx;
-
-        add(MsoyUI.createLabel(_ctx.msgs.title(), "title"));
-        Button reviewButton = new Button(_ctx.msgs.reviewButton());
+        add(MsoyUI.createLabel(CAdmin.msgs.title(), "title"));
+        Button reviewButton = new Button(CAdmin.msgs.reviewButton());
         reviewButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                new ReviewPopup(_ctx).show();
+                new ReviewPopup().show();
             }
         });
         add(reviewButton);
     }
-
-    protected AdminContext _ctx;
 }

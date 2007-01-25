@@ -18,11 +18,11 @@ import client.util.FlashClients;
  */
 public class GamePanel extends VerticalPanel
 {
-    public GamePanel (GameContext ctx, LaunchConfig config)
+    public GamePanel (LaunchConfig config)
     {
         add(new Label(config.name));
         
-        String authtoken = (ctx.creds == null) ? "" : ctx.creds.token;
+        String authtoken = (CGame.creds == null) ? "" : CGame.creds.token;
         Widget display = null;
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD: {
@@ -60,7 +60,7 @@ public class GamePanel extends VerticalPanel
         }
 
         default:
-            add(new Label(ctx.msgs.errUnknownGameType("" + config.type)));
+            add(new Label(CGame.msgs.errUnknownGameType("" + config.type)));
             break;
         }
 

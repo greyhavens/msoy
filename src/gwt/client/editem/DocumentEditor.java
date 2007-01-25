@@ -31,13 +31,13 @@ public class DocumentEditor extends ItemEditor
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(_ctx.emsgs.documentMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(CEditem.emsgs.documentMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 // TODO: validate media type
                 _doc.docMedia = desc;
                 return null;
             }
-        }), _ctx.emsgs.documentMainTab());
+        }), CEditem.emsgs.documentMainTab());
 
         super.createInterface(contents, tabs);
     }

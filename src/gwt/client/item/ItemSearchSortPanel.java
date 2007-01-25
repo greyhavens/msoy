@@ -33,8 +33,8 @@ public class ItemSearchSortPanel extends HorizontalPanel
     /** The current sort order. */
     public byte sortBy;
 
-    public ItemSearchSortPanel (ItemContext ctx, Listener listener, String[] sortNames,
-                                byte[] sortValues, int selectedSortIndex)
+    public ItemSearchSortPanel (Listener listener, String[] sortNames, byte[] sortValues,
+                                int selectedSortIndex)
     {
         setStyleName("itemSearchPanel");
         _listener = listener;
@@ -55,10 +55,10 @@ public class ItemSearchSortPanel extends HorizontalPanel
         searchBox.addKeyboardListener(new EnterClickAdapter(clickListener));
         add(searchBox);
 
-        Button searchButton = new Button(ctx.imsgs.searchSearch());
+        Button searchButton = new Button(CItem.imsgs.searchSearch());
         searchButton.addClickListener(clickListener);
         add(searchButton);
-        Label sortLabel = new Label(ctx.imsgs.searchSortBy());
+        Label sortLabel = new Label(CItem.imsgs.searchSortBy());
         sortLabel.setStyleName("itemSortLabel");
         add(sortLabel);
 
