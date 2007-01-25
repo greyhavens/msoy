@@ -74,13 +74,15 @@ public class GroupEdit extends BorderedDialog
 
         _errorContainer = new HorizontalPanel();
         contents.add(_errorContainer);
-        contents.add(createTextEntryField(CGroup.msgs.editName(), GroupName.LENGTH_MAX, 20,
-                                          _group.name, new ChangeListener() {
+        Widget groupNameEdit = createTextEntryField(CGroup.msgs.editName(), GroupName.LENGTH_MAX, 
+            20, _group.name, new ChangeListener() {
             public void onChange (Widget sender) {
                 _group.name = ((TextBox)sender).getText().trim();
                 updateSubmitButton();
             }
-        }));
+        });
+        groupNameEdit.addStyleName("GroupNameEdit");
+        contents.add(groupNameEdit);
 
         TabPanel groupTabs = createTabs();
         groupTabs.add(createInfoPanel(), CGroup.msgs.editInfoTab());
@@ -97,7 +99,7 @@ public class GroupEdit extends BorderedDialog
             }
         });
         _footer.add(_submitButton);
-        Button cancelButton = new Button("Cancel");
+        Button cancelButton = new Button(CGroup.cmsgs.cancel());
         cancelButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 hide();
@@ -118,6 +120,7 @@ public class GroupEdit extends BorderedDialog
     protected Panel createInfoPanel ()
     {
         VerticalPanel infoPanel = new VerticalPanel();
+        infoPanel.setSpacing(10);
         infoPanel.add(createTextEntryField(CGroup.msgs.editHomepage(), 255, 20, _extras.homepageUrl,
             new ChangeListener() {
                 public void onChange (Widget sender) {
@@ -164,6 +167,7 @@ public class GroupEdit extends BorderedDialog
     protected Panel createDescriptionPanel ()
     {
         VerticalPanel descriptionPanel = new VerticalPanel();
+        descriptionPanel.setSpacing(10);
         descriptionPanel.add(createTextEntryField(CGroup.msgs.editBlurb(), 80, 20, _group.blurb,
             new ChangeListener() {
                 public void onChange (Widget sender) {
@@ -193,6 +197,7 @@ public class GroupEdit extends BorderedDialog
     protected Panel createBackgroundsPanel ()
     {
         HorizontalPanel backgroundsPanel = new HorizontalPanel();
+        backgroundsPanel.setSpacing(10);
         int types[] = { IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND,
             IMAGE_PEOPLE_BACKGROUND };
         String labels[] = { CGroup.msgs.editInfoBG(), CGroup.msgs.editDetailBG(),
@@ -205,7 +210,7 @@ public class GroupEdit extends BorderedDialog
         return backgroundsPanel;
     }
 
-    protected Widget createTextEntryField(String label, int maxLength, int visibleLength,
+    protected Widget createTextEntryField (String label, int maxLength, int visibleLength,
         String startingText, ChangeListener listener)
     {
         HorizontalPanel textEntryField = new HorizontalPanel();
