@@ -11,5 +11,5 @@ import client.editem.EditemContext;
 public class AdminContext extends EditemContext
 {
     /** Messages used by the admin interfaces. */
-    public AdminMessages amsgs;
+    public AdminMessages msgs;
 }

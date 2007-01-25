@@ -44,7 +44,7 @@ public class ReviewPopup extends BorderedDialog
         HorizontalPanel buttonRow = new HorizontalPanel();
         buttonRow.setSpacing(10);
         
-        Button reloadButton = new Button(_ctx.amsgs.reviewReload());
+        Button reloadButton = new Button(_ctx.msgs.reviewReload());
         reloadButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 refresh();
@@ -52,7 +52,7 @@ public class ReviewPopup extends BorderedDialog
         });
         buttonRow.add(reloadButton);
         
-        Button dismissButton = new Button(_ctx.amsgs.reviewDismiss());
+        Button dismissButton = new Button(_ctx.msgs.reviewDismiss());
         dismissButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 hide();
@@ -85,7 +85,7 @@ public class ReviewPopup extends BorderedDialog
                 populateUI((List) result);
             }
             public void onFailure (Throwable caught) {
-                _status.setText(_ctx.amsgs.reviewErrFlaggedItems(caught.getMessage()));
+                _status.setText(_ctx.msgs.reviewErrFlaggedItems(caught.getMessage()));
             }
         });
     }
@@ -95,7 +95,7 @@ public class ReviewPopup extends BorderedDialog
     {
         _centerContent.clear();
         if (list.size() == 0) {
-            _centerContent.setWidget(0, 0, new Label(_ctx.amsgs.reviewNoItems()));
+            _centerContent.setWidget(0, 0, new Label(_ctx.msgs.reviewNoItems()));
             return;
         }
         int row = 0;
@@ -165,7 +165,7 @@ public class ReviewPopup extends BorderedDialog
 
             // a button to mark someting as mature
             if (_item.isSet(Item.FLAG_FLAGGED_MATURE)) {
-                markButton = new Button(_ctx.amsgs.reviewMark());
+                markButton = new Button(_ctx.msgs.reviewMark());
                 new ClickCallback(_ctx, markButton, _status) {
                     public boolean callService () {
                         _status.setText("");
@@ -178,7 +178,7 @@ public class ReviewPopup extends BorderedDialog
                         return true;
                     }
                     public boolean gotResult (Object result) {
-                        _status.setText(_ctx.amsgs.reviewMarked());
+                        _status.setText(_ctx.msgs.reviewMarked());
                         return false; // don't reenable button
                     }
                 };
@@ -187,7 +187,7 @@ public class ReviewPopup extends BorderedDialog
 
             // a button to delete an item and possibly all its clones
             deleteButton = new Button(
-                _item.ownerId != 0 ? _ctx.amsgs.reviewDelete() : _ctx.amsgs.reviewDeleteAll());
+                _item.ownerId != 0 ? _ctx.msgs.reviewDelete() : _ctx.msgs.reviewDeleteAll());
             deleteButton.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     _status.setText("");
@@ -201,7 +201,7 @@ public class ReviewPopup extends BorderedDialog
             line.add(deleteButton);
 
             // a button to signal we're done
-            doneButton = new Button(_ctx.amsgs.reviewDone());
+            doneButton = new Button(_ctx.msgs.reviewDone());
             new ClickCallback(_ctx, doneButton, _status) {
                 public boolean callService () {
                     _status.setText("");
@@ -237,7 +237,7 @@ public class ReviewPopup extends BorderedDialog
                 VerticalPanel content = new VerticalPanel();
                 content.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
 
-                content.add(new Label(_ctx.amsgs.reviewDeletionPrompt()));
+                content.add(new Label(_ctx.msgs.reviewDeletionPrompt()));
 
                 _area = new TextArea();
                 _area.setCharacterWidth(60);
@@ -248,9 +248,9 @@ public class ReviewPopup extends BorderedDialog
                 _feedback = new Label();
                 content.add(_feedback);
 
-                _yesButton = new Button(_ctx.amsgs.reviewDeletionDo());
+                _yesButton = new Button(_ctx.msgs.reviewDeletionDo());
                 _yesButton.setEnabled(false);
-                final Button noButton = new Button(_ctx.amsgs.reviewDeletionDont());
+                final Button noButton = new Button(_ctx.msgs.reviewDeletionDont());
                 ClickListener listener = new ClickListener () {
                     public void onClick (Widget sender) {
                         if (sender == _yesButton) {
@@ -285,11 +285,11 @@ public class ReviewPopup extends BorderedDialog
                     return;
                 }
                 _ctx.itemsvc.deleteItemAdmin(
-                   _ctx.creds, _item.getIdent(), _ctx.amsgs.reviewDeletionMailHeader(),
-                   _ctx.amsgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
+                   _ctx.creds, _item.getIdent(), _ctx.msgs.reviewDeletionMailHeader(),
+                   _ctx.msgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
                    new AsyncCallback() {
                        public void onSuccess (Object result) {
-                           _status.setText(_ctx.amsgs.reviewDeletionSuccess(result.toString()));
+                           _status.setText(_ctx.msgs.reviewDeletionSuccess(result.toString()));
                            if (markButton != null) {
                                markButton.setEnabled(false);
                            }
@@ -299,7 +299,7 @@ public class ReviewPopup extends BorderedDialog
                        }
                        public void onFailure (Throwable caught) {
                            _feedback.setText(
-                               _ctx.amsgs.reviewErrDeletionFailed(caught.getMessage()));
+                               _ctx.msgs.reviewErrDeletionFailed(caught.getMessage()));
                            if (markButton != null) {
                                markButton.setEnabled(true);
                            }

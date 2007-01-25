@@ -47,7 +47,7 @@ public class index extends ItemEntryPoint
         super.initContext();
 
         // load up our translation dictionaries
-        _ctx.amsgs = (AdminMessages)GWT.create(AdminMessages.class);
+        _ctx.msgs = (AdminMessages)GWT.create(AdminMessages.class);
     }
 
     // @Override // from MsoyEntryPoint
@@ -67,7 +67,7 @@ public class index extends ItemEntryPoint
     protected void didLogoff ()
     {
         super.didLogoff();
-        setContent(new Label(_ctx.amsgs.indexLogon()));
+        setContent(new Label(_ctx.msgs.indexLogon()));
     }
 
     protected void displayDashboard ()
@@ -75,7 +75,7 @@ public class index extends ItemEntryPoint
         if (_ctx.creds.isSupport) {
             setContent(new DashboardPanel(_ctx));
         } else {
-            setContent(new Label(_ctx.amsgs.lackPrivileges()));
+            setContent(new Label(_ctx.msgs.lackPrivileges()));
         }
     }
 

@@ -19,8 +19,8 @@ public class DashboardPanel extends VerticalPanel
     {
         _ctx = ctx;
 
-        add(MsoyUI.createLabel(_ctx.amsgs.title(), "title"));
-        Button reviewButton = new Button(_ctx.amsgs.reviewButton());
+        add(MsoyUI.createLabel(_ctx.msgs.title(), "title"));
+        Button reviewButton = new Button(_ctx.msgs.reviewButton());
         reviewButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 new ReviewPopup(_ctx).show();
