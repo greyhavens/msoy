@@ -354,6 +354,7 @@ body {
 .Tabs .gwt-TabBar .gwt-TabBarItem {
   color: #CFDCE1;
   font-size: 11px;
+  cursor: default;
 }
 
 .Tabs .gwt-TabBar .gwt-TabBarItem .TabLeft {
