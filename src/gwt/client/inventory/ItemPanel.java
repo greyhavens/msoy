@@ -6,6 +6,16 @@ package client.inventory;
 import java.util.ArrayList;
 import java.util.List;
 
+import client.editem.AudioEditor;
+import client.editem.AvatarEditor;
+import client.editem.DocumentEditor;
+import client.editem.EditorHost;
+import client.editem.FurnitureEditor;
+import client.editem.GameEditor;
+import client.editem.ItemEditor;
+import client.editem.PetEditor;
+import client.editem.PhotoEditor;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -22,6 +32,7 @@ import com.threerings.msoy.item.web.Item;
  * Displays all items of a particular type in a player's inventory.
  */
 public class ItemPanel extends VerticalPanel
+    implements EditorHost
 {
     /** The number of columns of items to display. */
     public static final int COLUMNS = 4;
@@ -54,6 +65,26 @@ public class ItemPanel extends VerticalPanel
         });
         add(_status = new Label(""));
     }
+
+    // from EditorHost
+    public void setStatus (String status)
+    {
+        _status.setText(status);
+    }
+
+    // from EditorHost
+    public void editComplete (Item item)
+    {
+        _create.setEnabled(true);
+
+        if (item != null) {
+            // we really need to re-fetch the item from the database to get things like itemId
+            // set. just refresh the entire list for now.
+            onLoad();
+        }
+    }
+
+
 
     // TODO: each ItemPanel is currently loading everything up when the inventory panel loads.  We
     // should only load a category when it's made visible. (In addition to only loading inventory
@@ -114,24 +145,6 @@ public class ItemPanel extends VerticalPanel
     }
 
     /**
-     * Called by an active {@link ItemEditor} when it is ready to go away (either the editing is
-     * done or the user canceled).
-     *
-     * @param item if the editor was creating a new item, the new item should be passed to this
-     * method so that it can be added to the display.
-     */
-    protected void editComplete (Item item)
-    {
-        _create.setEnabled(true);
-
-        if (item != null) {
-            // we really need to re-fetch the item from the database to get things like itemId
-            // set. just refresh the entire list for now.
-            onLoad();
-        }
-    }
-
-    /**
      * Called by an active {@link ItemDetailPopup} to let us know that an item has been deleted
      * from our inventory.
      */
@@ -139,14 +152,6 @@ public class ItemPanel extends VerticalPanel
     {
         _contents.removeItem(item);
         setStatus(_ctx.imsgs.msgItemDeleted());
-    }
-
-    /**
-     * Displays a status message to the user, may be called by item editors.
-     */
-    protected void setStatus (String status)
-    {
-        _status.setText(status);
     }
 
     protected InventoryContext _ctx;

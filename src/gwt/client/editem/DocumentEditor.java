@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.inventory;
+package client.editem;
 
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -23,23 +23,23 @@ public class DocumentEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
+    public Item createBlankItem ()
+    {
+        return new Document();
+    }
+
+    // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(_ctx.imsgs.documentMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(_ctx.emsgs.documentMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 // TODO: validate media type
                 _doc.docMedia = desc;
                 return null;
             }
-        }), _ctx.imsgs.documentMainTab());
+        }), _ctx.emsgs.documentMainTab());
 
         super.createInterface(contents, tabs);
-    }
-
-    // @Override from ItemEditor
-    protected Item createBlankItem ()
-    {
-        return new Document();
     }
 
     protected Document _doc;

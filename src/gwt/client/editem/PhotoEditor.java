@@ -1,49 +1,49 @@
 //
 // $Id$
 
-package client.inventory;
+package client.editem;
 
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.Photo;
 
 /**
  * A class for creating and editing {@link Photo} digital items.
  */
-public class AudioEditor extends ItemEditor
+public class PhotoEditor extends ItemEditor
 {
     // @Override from ItemEditor
     public void setItem (Item item)
     {
         super.setItem(item);
-        _audio = (Audio)item;
-        _mainUploader.setMedia(_audio.audioMedia);
+        _photo = (Photo)item;
+        _mainUploader.setMedia(_photo.photoMedia);
+    }
+
+    // @Override from ItemEditor
+    public Item createBlankItem ()
+    {
+        return new Photo();
     }
 
     // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
-        tabs.add(createMainUploader(_ctx.imsgs.audioMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(_ctx.emsgs.photoMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
-                if (!desc.isAudio()) {
-                    return _ctx.imsgs.errAudioNotAudio();
+                if (!desc.hasFlashVisual()) {
+                    return _ctx.emsgs.errPhotoNotFlash();
                 }
-                _audio.audioMedia = desc;
+                _photo.photoMedia = desc;
                 return null;
             }
-        }), _ctx.imsgs.audioMainTab());
+        }), _ctx.emsgs.photoMainTab());
 
         super.createInterface(contents, tabs);
     }
 
-    // @Override from ItemEditor
-    protected Item createBlankItem ()
-    {
-        return new Audio();
-    }
-
-    protected Audio _audio;
+    protected Photo _photo;
 }

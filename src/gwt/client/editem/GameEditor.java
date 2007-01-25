@@ -1,7 +1,8 @@
 //
 // $Id$
 
-package client.inventory;
+package client.editem;
+
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -31,55 +32,63 @@ public class GameEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
+    public Item createBlankItem ()
+    {
+        Game game = new Game();
+        game.config = "";
+        return game;
+    }
+
+    // @Override from ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
         // configure the main uploader first
-        tabs.add(createMainUploader(_ctx.imsgs.gameMainTitle(), new MediaUpdater() {
+        tabs.add(createMainUploader(_ctx.emsgs.gameMainTitle(), new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 // TODO: validate media type
                 _game.gameMedia = desc;
                 return null;
             }
-        }), _ctx.imsgs.gameMainTab());
+        }), _ctx.emsgs.gameMainTab());
 
-        String title = _ctx.imsgs.gameTableTitle();
+        String title = _ctx.emsgs.gameTableTitle();
         tabs.add(_tableUploader = createUploader(TABLE_ID, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.isImage()) {
-                    return _ctx.imsgs.errTableNotImage();
+                    return _ctx.emsgs.errTableNotImage();
                 }
                 _game.tableMedia = desc;
                 return null;
             }
-        }), _ctx.imsgs.gameTableTab());
+        }), _ctx.emsgs.gameTableTab());
 
         FlexTable bits = new FlexTable();
-        tabs.add(bits, _ctx.imsgs.gameConfigTab());
+        tabs.add(bits, _ctx.emsgs.gameConfigTab());
 
         // TODO: it'd be nice to force-format this text field for integers, or something.
         int row = 0;
-        bits.setText(row, 0, _ctx.imsgs.gameMinPlayers());
+        bits.setText(row, 0, _ctx.emsgs.gameMinPlayers());
         bits.setWidget(row++, 1, bind(_minPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.minPlayers = asShort(text);
             }
         }));
 
-        bits.setText(row, 0, _ctx.imsgs.gameMaxPlayers());
+        bits.setText(row, 0, _ctx.emsgs.gameMaxPlayers());
         bits.setWidget(row++, 1, bind(_maxPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.maxPlayers = asShort(text);
             }
         }));
 
-        bits.setText(row, 0, _ctx.imsgs.gameDesiredPlayers());
+        bits.setText(row, 0, _ctx.emsgs.gameDesiredPlayers());
         bits.setWidget(row++, 1, bind(_desiredPlayers = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _game.desiredPlayers = asShort(text);
             }
         }));
 
-        bits.setText(row++, 0, _ctx.imsgs.gameDefinition());
+        bits.setText(row++, 0, _ctx.emsgs.gameDefinition());
         bits.setWidget(row, 0, bind(_gamedef = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _game.config = text;
@@ -90,14 +99,6 @@ public class GameEditor extends ItemEditor
         _gamedef.setVisibleLines(5);
 
         super.createInterface(contents, tabs);
-    }
-
-    // @Override from ItemEditor
-    protected Item createBlankItem ()
-    {
-        Game game = new Game();
-        game.config = "";
-        return game;
     }
 
     // @Override from ItemEditor

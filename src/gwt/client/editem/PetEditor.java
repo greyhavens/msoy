@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.inventory;
+package client.editem;
 
 import com.google.gwt.user.client.ui.TabPanel;
 import com.threerings.msoy.item.web.Item;
@@ -21,26 +21,26 @@ public class PetEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
+    public Item createBlankItem ()
+    {
+        return new Pet();
+    }
+
+    // @Override from ItemEditor
     protected void createFurniUploader (TabPanel tabs)
     {
         // pets are special; their furni media are their primary media
-        String title = _ctx.imsgs.petMainTitle();
+        String title = _ctx.emsgs.petMainTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
             public String updateMedia (MediaDesc desc) {
                 if (!desc.hasFlashVisual()) {
-                    return _ctx.imsgs.errPetNotFlash();
+                    return _ctx.emsgs.errPetNotFlash();
                 }
                 _item.furniMedia = desc;
                 return null;
             }
         });
-        tabs.add(_furniUploader, _ctx.imsgs.petMainTab());
-    }
-
-    // @Override from ItemEditor
-    protected Item createBlankItem ()
-    {
-        return new Pet();
+        tabs.add(_furniUploader, _ctx.emsgs.petMainTab());
     }
 
     protected Pet _pet;

@@ -20,6 +20,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 
+import client.editem.ItemEditor;
 import client.item.BaseItemDetailPopup;
 import client.shell.MsoyEntryPoint;
 import client.util.ClickCallback;

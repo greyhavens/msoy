@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.inventory;
+package client.editem;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Furniture;
@@ -19,7 +19,7 @@ public class FurnitureEditor extends ItemEditor
     }
 
     // @Override from ItemEditor
-    protected Item createBlankItem ()
+    public Item createBlankItem ()
     {
         return new Furniture();
     }
