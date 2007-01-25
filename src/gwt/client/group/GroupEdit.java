@@ -70,7 +70,7 @@ public class GroupEdit extends BorderedDialog
         _listener = listener;
 
         String title = _group.groupId == 0 ?
-            _ctx.msgs.editCreateTitle() : _ctx.msgs.editEditTitle();
+            _ctx.msgs.editCreateTitle() : _group.name;
         _header.add(MsoyUI.createLabel(title, "GroupTitle"));
         VerticalPanel contents = (VerticalPanel)_contents;
 
@@ -84,8 +84,7 @@ public class GroupEdit extends BorderedDialog
             }
         }));
 
-        TabPanel groupTabs = new TabPanel();
-        groupTabs.setStyleName("Tabs");
+        TabPanel groupTabs = createTabs();
         groupTabs.add(createInfoPanel(), _ctx.msgs.editInfoTab());
         groupTabs.add(createDescriptionPanel(), _ctx.msgs.editDescripTab());
         groupTabs.add(createBackgroundsPanel(), _ctx.msgs.editImagesTab());

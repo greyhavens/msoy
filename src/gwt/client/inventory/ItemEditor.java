@@ -56,8 +56,7 @@ public abstract class ItemEditor extends BorderedDialog
 
         VerticalPanel contents = (VerticalPanel)_contents;
         contents.setSpacing(10);
-        TabPanel mediaTabs = new TabPanel();
-        mediaTabs.setStyleName("Tabs");
+        TabPanel mediaTabs = createTabs();
 
         // create a name entry field
         contents.add(createRow(_ctx.imsgs.editorName(), bind(_name = new TextBox(), new Binder() {

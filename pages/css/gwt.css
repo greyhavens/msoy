@@ -211,8 +211,54 @@ body {
   width: 100%;
 }
 
-.borderedDialog .Title {
-  font-size: 24px;
+.borderedDialog .HeaderBackground {
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  border-width: 0px;
+}
+
+.borderedDialog .HeaderBackground td {
+  height: 33px;
+}
+
+.borderedDialog .HeaderBackground .HeaderLeft {
+  background-image: url(/images/ui/popup/header_left.png);
+  width: 75px;
+}
+
+.borderedDialog .HeaderBackground .HeaderRight {
+  background-image: url(/images/ui/popup/header_right.png);
+  width: 75px;
+}
+
+.borderedDialog .HeaderBackground .HeaderCenter {
+  background-image: url(/images/ui/popup/header_tile.png);
+}
+
+.borderedDialog .HeaderBackground .HeaderCenter .HeaderTitle .TitleLeft {
+  background-image: url(/images/ui/popup/header_star_left.png);
+  width: 50px;
+}
+
+.borderedDialog .HeaderBackground .HeaderCenter .HeaderTitle .TitleRight {
+  background-image: url(/images/ui/popup/header_star_right.png);
+  width: 50px;
+}
+
+.borderedDialog .HeaderBackground .HeaderCenter .HeaderTitle .TitleCenter {
+  background-image: url(/images/ui/popup/header_text_tile.png);
+}
+
+.borderedDialog .HeaderTitle img {
+  height: 29px;
+}
+
+.borderedDialog .Title div {
+  color: #EAEFF1;
+  font-size: 22px;
+  font-weight: bold;
+  white-space: nowrap;
 }
 
 .borderedDialog .Controls {
@@ -226,6 +272,7 @@ body {
   right: 5px;
   top: 5px;
 }
+
 
 /** General UI styles. */
 .inline {
@@ -282,4 +329,59 @@ body {
 .groupLogoThumbnail {
   border: 1px solid black;
   height: 50px;
+}
+
+.Tabs .gwt-TabBar {
+  background: url(/images/ui/popup/tab_anchor_tile.png) repeat-x bottom;
+}
+
+.Tabs .gwt-TabBar .inline {
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.Tabs .gwt-TabBar .gwt-TabBarItem, .Tabs .gwt-TabBar .gwt-TabBarItem-selected {
+  padding: 0px;
+  border-width: 0px;
+}
+
+.Tabs .gwt-TabBar .gwt-TabBarItem {
+  color: #CFDCE1;
+  font-size: 11px;
+}
+
+.Tabs .gwt-TabBar .gwt-TabBarItem .TabLeft {
+  background: url(/images/ui/popup/tab_left.png) no-repeat;
+  width: 3px;
+  height: 20px;
+}
+
+.Tabs .gwt-TabBar .gwt-TabBarItem .TabCenter {
+  background: url(/images/ui/popup/tab_tile.png);
+  height: 20px;
+}
+
+.Tabs .gwt-TabBar .gwt-TabBarItem .TabRight {
+  background: url(/images/ui/popup/tab_right.png) no-repeat;
+  width: 3px;
+  height: 20px;
+}
+
+.Tabs .gwt-TabBar .gwt-TabBarItem-selected {
+  color: black;
+}
+
+.Tabs .gwt-TabBar .gwt-TabBarItem-selected .TabLeft {
+  background: url(/images/ui/popup/tab_selected_left.png) no-repeat;
+}
+
+.Tabs .gwt-TabBar .gwt-TabBarItem-selected .TabCenter {
+  border-top: 1px solid black;
+  background: white;
+}
+
+.Tabs .gwt-TabBar .gwt-TabBarItem-selected .TabRight {
+  background: url(/images/ui/popup/tab_selected_right.png) no-repeat;
 }

@@ -152,14 +152,6 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editSetLogo();
 
   /**
-   * Translated "Edit group".
-   * 
-   * @return translated "Edit group"
-   * @gwt.key editEditTitle
-   */
-  String editEditTitle();
-
-  /**
    * Translated "Form New Group".
    * 
    * @return translated "Form New Group"
@@ -272,20 +264,20 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String viewRemove();
 
   /**
-   * Translated "Exclusive".
-   * 
-   * @return translated "Exclusive"
-   * @gwt.key policyExclusive
-   */
-  String policyExclusive();
-
-  /**
    * Translated "Blurb".
    * 
    * @return translated "Blurb"
    * @gwt.key editBlurb
    */
   String editBlurb();
+
+  /**
+   * Translated "Exclusive".
+   * 
+   * @return translated "Exclusive"
+   * @gwt.key policyExclusive
+   */
+  String policyExclusive();
 
   /**
    * Translated "Charter".
@@ -304,9 +296,9 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String viewDemote();
 
   /**
-   * Translated "Create new group".
+   * Translated "Create New Group".
    * 
-   * @return translated "Create new group"
+   * @return translated "Create New Group"
    * @gwt.key editCreateTitle
    */
   String editCreateTitle();
