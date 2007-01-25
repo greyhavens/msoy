@@ -30,6 +30,19 @@ import com.threerings.msoy.world.data.FurniData;
 public class FurniSprite extends MsoySprite
     implements ContextMenuProvider
 {
+    /**
+     * Set the LoadingWatcher that will be used to track whether any
+     * FurniSprites are currently loading.
+     */
+    public static function setLoadingWatcher (watcher :LoadingWatcher) :void
+    {
+        _loadingWatcher = watcher;
+        updateLoadingCount(0);
+    }
+
+    /**
+     * Construct a new FurniSprite.
+     */
     public function FurniSprite (furni :FurniData)
     {
         _furni = furni;
@@ -329,7 +342,34 @@ public class FurniSprite extends MsoySprite
         // TODO: anything?
     }
 
+    override protected function startedLoading () :void
+    {
+        updateLoadingCount(1);
+        super.startedLoading();
+    }
+
+    override protected function stoppedLoading () :void
+    {
+        updateLoadingCount(-1);
+        super.stoppedLoading();
+    }
+
+    /**
+     * Update the number of FurniSprites that are currently loading.
+     */
+    protected static function updateLoadingCount (delta :int) :void
+    {
+        _loadingCount += delta;
+        _loadingWatcher.setLoading(_loadingCount > 0);
+    }
+
     /** The furniture data for this piece of furni. */
     protected var _furni :FurniData;
+
+    /** The number of furni items currently loading. */
+    protected static var _loadingCount :int = 0;
+
+    /** The watcher for loading progress. */
+    protected static var _loadingWatcher :LoadingWatcher;
 }
 }

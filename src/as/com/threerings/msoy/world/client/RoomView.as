@@ -14,6 +14,8 @@ import flash.geom.Rectangle;
 import flash.utils.getTimer; // function import
 import flash.utils.ByteArray;
 
+import mx.core.Container;
+
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Name;
@@ -68,7 +70,7 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
  */
 public class RoomView extends AbstractRoomView
     implements ContextMenuProvider, SetListener, MessageListener,
-               ChatInfoProvider
+               ChatInfoProvider, LoadingWatcher
 {
     /** The chat overlay. */
     public var chatOverlay :ComicOverlay;
@@ -81,6 +83,11 @@ public class RoomView extends AbstractRoomView
         super(ctx);
         _ctrl = ctrl;
         chatOverlay = new ComicOverlay(ctx);
+
+        _loadingSpinner = DisplayObject(new LOADING_SPINNER());
+        _loadingSpinner.scaleX = .1;
+        _loadingSpinner.scaleY = .1;
+        FurniSprite.setLoadingWatcher(this);
     }
 
     /**
@@ -89,6 +96,21 @@ public class RoomView extends AbstractRoomView
     public function getRoomController () :RoomController
     {
         return _ctrl;
+    }
+
+    // from LoadingWatcher
+    public function setLoading (loading :Boolean) :void
+    {
+        if (loading == (_loadingSpinner.parent != null)) {
+            return;
+        }
+
+        var container :Container = _ctx.getTopPanel().getPlaceContainer();
+        if (loading) {
+            container.rawChildren.addChild(_loadingSpinner);
+        } else {
+            container.rawChildren.removeChild(_loadingSpinner);
+        }
     }
 
     override public function setEditing (editing :Boolean, spriteVisitFn :Function) :void
@@ -691,6 +713,9 @@ public class RoomView extends AbstractRoomView
     /** The background music in the scene. */
     protected var _music :SoundPlayer;
 
+    /** The spinner to show when we're loading room data. */
+    protected var _loadingSpinner :DisplayObject;
+
     /** A map of bodyOid -> ActorSprite. */
     protected var _actors :HashMap = new HashMap();
 
@@ -711,5 +736,8 @@ public class RoomView extends AbstractRoomView
 
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
+
+    [Embed(source="../../../../../../../rsrc/media/test_pattern.swf")]
+    protected static const LOADING_SPINNER :Class;
 }
 }

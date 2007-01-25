@@ -79,9 +79,6 @@ public class MsoySprite extends MediaContainer
     {
         super(null);
         setup(desc, ident);
-        // TODO NOW
-//        setStyle("backgroundSize", "100%");
-//        setStyle("backgroundImage", _loadingImgClass);
     }
 
     /**
@@ -505,30 +502,18 @@ public class MsoySprite extends MediaContainer
             soFar :Number, total :Number) :void
     {
         var prog :Number = (total == 0) ? 0 : (soFar / total);
-        if (prog >= 1) {
-        // TODO NOW
-//            clearStyle("backgroundImage");
-        }
 
-        /*
-        ** old style progress updating. We may want to do something like this
-        ** again to show progress
-        **
+        // always clear the old graphics
         graphics.clear();
-        if (prog >= 1) {
-            if (parent != null) {
-                (parent as Container).invalidateDisplayList();
-            }
-            return; // once we're 100% loaded, we display no progress biz
+
+        // and if we're still loading, draw a line showing progress
+        if (prog < 1) {
+            graphics.lineStyle(1, 0x00FF00);
+            graphics.moveTo(0, -1);
+            graphics.lineTo(prog * 100, -1);
+            graphics.lineStyle(1, 0xFF0000);
+            graphics.lineTo(100, -1);
         }
-
-        var radius :Number = .5 * Math.min(contentWidth, contentHeight);
-
-        graphics.beginFill(0x000000, .5);
-        graphics.drawCircle(radius, radius, radius);
-        graphics.beginFill(0xFFFFFF, .5);
-        graphics.drawCircle(radius, radius, radius * prog);
-        */
     }
 
     protected function getHoverColor () :uint
@@ -672,8 +657,5 @@ public class MsoySprite extends MediaContainer
 
     /** Properties populated by *Control usercode. */
     protected var _props :Object;
-
-    [Embed(source="../../../../../../../rsrc/media/indian_h.png")]
-    protected static const _loadingImgClass :Class;
 }
 }
