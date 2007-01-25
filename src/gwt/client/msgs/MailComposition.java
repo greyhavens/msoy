@@ -30,7 +30,7 @@ public class MailComposition extends PopupPanel
                             MailPayloadComposer bodyObjectComposer, String bodyText)
     {
         super(false);
-        _senderId = CMsgs.creds.getMemberId();
+        _senderId = CMsgs.getMemberId();
         _recipient = recipient;
         _bodyObjectComposer = bodyObjectComposer;
         buildUI(subject, bodyText);

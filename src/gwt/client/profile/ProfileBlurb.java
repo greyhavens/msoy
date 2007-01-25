@@ -116,8 +116,7 @@ public class ProfileBlurb extends Blurb
         _content.setWidget(2, 1, _homepage);
 
         // display the edit button if this is our profile
-        CProfile.log("Creds " + CProfile.creds);
-        if (_profile.memberId == CProfile.creds.getMemberId()) {
+        if (_profile.memberId == CProfile.getMemberId()) {
             _content.setWidget(3, 2, _edit);
         }
     }

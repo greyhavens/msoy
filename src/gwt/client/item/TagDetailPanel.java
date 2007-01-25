@@ -231,7 +231,7 @@ public class TagDetailPanel extends FlexTable
                     Iterator i = ((Collection) result).iterator();
                     while (i.hasNext()) {
                         TagHistory history = (TagHistory) i.next();
-                        if (history.member.getMemberId() == CItem.creds.getMemberId()) {
+                        if (history.member.getMemberId() == CItem.getMemberId()) {
                             if (history.tag != null) {
                                 _quickTags.addItem(history.tag);
                             }

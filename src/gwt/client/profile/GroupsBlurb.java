@@ -52,28 +52,28 @@ public class GroupsBlurb extends Blurb
         _invitationPanel = new SimplePanel();
         _content.setWidget(_content.getRowCount(), 0, _invitationPanel);
 
-        if (CProfile.creds.getMemberId() != _memberId) {
+        if (CProfile.getMemberId() != _memberId) {
             CProfile.groupsvc.getMembershipGroups(
-                CProfile.creds, CProfile.creds.getMemberId(), true, new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        final List inviteGroups = (List) result;
-                        if (inviteGroups.size() == 0) {
-                            return;
+                CProfile.creds, CProfile.getMemberId(), true, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    final List inviteGroups = (List) result;
+                    if (inviteGroups.size() == 0) {
+                        return;
+                    }
+                    Button inviteButton = new Button("Invite To A Group");
+                    inviteButton.addClickListener(new ClickListener() {
+                        public void onClick (Widget sender) {
+                            new MailComposition(_memberId, "Join this group!",
+                                                new GroupInvite.Composer(inviteGroups),
+                                                "Check out this scrumptious group.").show();
                         }
-                        Button inviteButton = new Button("Invite To A Group");
-                        inviteButton.addClickListener(new ClickListener() {
-                            public void onClick (Widget sender) {
-                                new MailComposition(_memberId, "Join this group!",
-                                                    new GroupInvite.Composer(inviteGroups),
-                                                    "Check out this scrumptious group.").show();
-                            }
-                        });
-                        _invitationPanel.setWidget(inviteButton);
-                    }
-                    public void onFailure (Throwable caught) {
-                        // TODO: silently ignore? need coherent error strategy.
-                    }
-                });
+                    });
+                    _invitationPanel.setWidget(inviteButton);
+                }
+                public void onFailure (Throwable caught) {
+                    // TODO: silently ignore? need coherent error strategy.
+                }
+            });
         }
     }
 
