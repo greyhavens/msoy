@@ -78,10 +78,19 @@ public abstract class BorderedDialog extends BorderedPopup
         }
         _main.add(_contents = createContents());
         _contents.setWidth("100%");
-        _main.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT); // right align the footer
-        _main.add(_footer = new HorizontalPanel());
+        Grid footerBackground = new Grid(1, 2);
+        footerBackground.setCellSpacing(0);
+        footerBackground.setCellPadding(0);
+        footerBackground.getCellFormatter().setStyleName(0, 0, "FooterImage");
+        footerBackground.getCellFormatter().setStyleName(0, 1, "FooterControl");
+        footerBackground.getCellFormatter().setHorizontalAlignment(0, 1, 
+            HorizontalPanel.ALIGN_RIGHT);
+        footerBackground.getCellFormatter().setVerticalAlignment(0, 1, VerticalPanel.ALIGN_MIDDLE);
+        footerBackground.setWidth("100%");
+        footerBackground.setWidget(0, 1, _footer = new HorizontalPanel());
         _footer.setSpacing(10);
         _footer.setStyleName("Controls");
+        _main.add(footerBackground);
     }
 
     /**

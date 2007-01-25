@@ -250,10 +250,6 @@ body {
   background-image: url(/images/ui/popup/header_text_tile.png);
 }
 
-.borderedDialog .HeaderTitle img {
-  height: 29px;
-}
-
 .borderedDialog .Title div {
   color: #EAEFF1;
   font-size: 22px;
@@ -261,7 +257,15 @@ body {
   white-space: nowrap;
 }
 
-.borderedDialog .Controls {
+.borderedDialog .FooterControl {
+  background-image: url(/images/ui/popup/footer_tile.png);
+  height: 50px;
+}
+
+.borderedDialog .FooterImage {
+  background-image: url(/images/ui/popup/footer_left.png);
+  height: 50px;
+  width: 200px;
 }
 
 .borderedDialog .CloseBox {
