@@ -498,24 +498,6 @@ public class MsoySprite extends MediaContainer
         updateMediaPosition();
     }
 
-    override protected function updateLoadingProgress (
-            soFar :Number, total :Number) :void
-    {
-        var prog :Number = (total == 0) ? 0 : (soFar / total);
-
-        // always clear the old graphics
-        graphics.clear();
-
-        // and if we're still loading, draw a line showing progress
-        if (prog < 1) {
-            graphics.lineStyle(1, 0x00FF00);
-            graphics.moveTo(0, -1);
-            graphics.lineTo(prog * 100, -1);
-            graphics.lineStyle(1, 0xFF0000);
-            graphics.lineTo(100, -1);
-        }
-    }
-
     protected function getHoverColor () :uint
     {
         return 0x40e0e0;
