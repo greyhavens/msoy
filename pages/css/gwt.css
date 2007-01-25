@@ -335,58 +335,58 @@ body {
   height: 50px;
 }
 
-.Tabs .gwt-TabBar {
+.StyledTabs .gwt-TabBar {
   background: url(/images/ui/popup/tab_anchor_tile.png) repeat-x bottom;
 }
 
-.Tabs .gwt-TabBar .inline {
+.StyledTabs .gwt-TabBar .inline {
   margin-right: 5px;
   margin-left: 5px;
   margin-top: 0px;
   margin-bottom: 0px;
 }
 
-.Tabs .gwt-TabBar .gwt-TabBarItem, .Tabs .gwt-TabBar .gwt-TabBarItem-selected {
+.StyledTabs .gwt-TabBar .gwt-TabBarItem, .StyledTabs .gwt-TabBar .gwt-TabBarItem-selected {
   padding: 0px;
   border-width: 0px;
 }
 
-.Tabs .gwt-TabBar .gwt-TabBarItem {
+.StyledTabs .gwt-TabBar .gwt-TabBarItem {
   color: #CFDCE1;
   font-size: 11px;
   cursor: default;
 }
 
-.Tabs .gwt-TabBar .gwt-TabBarItem .TabLeft {
+.StyledTabs .gwt-TabBar .gwt-TabBarItem .TabLeft {
   background: url(/images/ui/popup/tab_left.png) no-repeat;
   width: 3px;
   height: 20px;
 }
 
-.Tabs .gwt-TabBar .gwt-TabBarItem .TabCenter {
+.StyledTabs .gwt-TabBar .gwt-TabBarItem .TabCenter {
   background: url(/images/ui/popup/tab_tile.png);
   height: 20px;
 }
 
-.Tabs .gwt-TabBar .gwt-TabBarItem .TabRight {
+.StyledTabs .gwt-TabBar .gwt-TabBarItem .TabRight {
   background: url(/images/ui/popup/tab_right.png) no-repeat;
   width: 3px;
   height: 20px;
 }
 
-.Tabs .gwt-TabBar .gwt-TabBarItem-selected {
+.StyledTabs .gwt-TabBar .gwt-TabBarItem-selected {
   color: black;
 }
 
-.Tabs .gwt-TabBar .gwt-TabBarItem-selected .TabLeft {
+.StyledTabs .gwt-TabBar .gwt-TabBarItem-selected .TabLeft {
   background: url(/images/ui/popup/tab_selected_left.png) no-repeat;
 }
 
-.Tabs .gwt-TabBar .gwt-TabBarItem-selected .TabCenter {
+.StyledTabs .gwt-TabBar .gwt-TabBarItem-selected .TabCenter {
   border-top: 1px solid black;
   background: white;
 }
 
-.Tabs .gwt-TabBar .gwt-TabBarItem-selected .TabRight {
+.StyledTabs .gwt-TabBar .gwt-TabBarItem-selected .TabRight {
   background: url(/images/ui/popup/tab_selected_right.png) no-repeat;
 }

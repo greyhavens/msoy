@@ -19,7 +19,7 @@ public class StyledTabPanel extends TabPanel
     public StyledTabPanel () 
     {
         super();
-        setStyleName("Tabs");
+        setStyleName("StyledTabs");
         setWidth("100%");
     }
 
