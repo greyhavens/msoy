@@ -104,6 +104,8 @@ public class GroupView extends VerticalPanel
     {
         _table.clear();
         _table.setStyleName("groupView");
+        _table.setCellSpacing(0);
+        _table.setCellPadding(0);
         boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
 
         VerticalPanel logoPanel = new VerticalPanel();
@@ -176,6 +178,7 @@ public class GroupView extends VerticalPanel
 
         VerticalPanel description = new VerticalPanel();
         description.setStyleName("DescriptionPanel");
+        description.setSpacing(0);
         Label nameLabel = new Label(_group.name);
         nameLabel.setStyleName("Name");
         description.add(nameLabel);
