@@ -144,9 +144,9 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String policyInvite();
 
   /**
-   * Translated "Set Logo".
+   * Translated "Set Group Logo".
    * 
-   * @return translated "Set Logo"
+   * @return translated "Set Group Logo"
    * @gwt.key editSetLogo
    */
   String editSetLogo();
@@ -208,9 +208,9 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editHomepage();
 
   /**
-   * Translated "Background Images".
+   * Translated "Design".
    * 
-   * @return translated "Background Images"
+   * @return translated "Design"
    * @gwt.key editImagesTab
    */
   String editImagesTab();
@@ -232,9 +232,9 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String viewEdit();
 
   /**
-   * Translated "Information".
+   * Translated "Configure".
    * 
-   * @return translated "Information"
+   * @return translated "Configure"
    * @gwt.key editInfoTab
    */
   String editInfoTab();

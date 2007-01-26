@@ -74,14 +74,15 @@ public class GroupEdit extends BorderedDialog
 
         _errorContainer = new HorizontalPanel();
         contents.add(_errorContainer);
-        Widget groupNameEdit = createTextEntryField(CGroup.msgs.editName(), GroupName.LENGTH_MAX, 
-            20, _group.name, new ChangeListener() {
+        CellPanel groupNameEdit = createTextEntryField(CGroup.msgs.editName(), 
+            GroupName.LENGTH_MAX, 20, _group.name, new ChangeListener() {
             public void onChange (Widget sender) {
                 _group.name = ((TextBox)sender).getText().trim();
                 updateSubmitButton();
             }
         });
         groupNameEdit.addStyleName("GroupNameEdit");
+        groupNameEdit.setSpacing(5);
         contents.add(groupNameEdit);
 
         TabPanel groupTabs = createTabs();
@@ -119,21 +120,31 @@ public class GroupEdit extends BorderedDialog
 
     protected Panel createInfoPanel ()
     {
+        VerticalPanel containerPanel = new VerticalPanel();
         VerticalPanel infoPanel = new VerticalPanel();
-        infoPanel.setSpacing(10);
-        infoPanel.add(createTextEntryField(CGroup.msgs.editHomepage(), 255, 20, _extras.homepageUrl,
-            new ChangeListener() {
+        infoPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
+        infoPanel.setSpacing(3);
+        infoPanel.setStyleName("CurrentPanel");
+        CellPanel homepageEntry = createTextEntryField(CGroup.msgs.editHomepage(), 255, 17, 
+            _extras.homepageUrl, new ChangeListener() {
                 public void onChange (Widget sender) {
                     _extras.homepageUrl = ((TextBox)sender).getText().trim();
                 }
-            }));
+            });
+        homepageEntry.setSpacing(3);
+        infoPanel.add(homepageEntry);
 
         // make sure the group's configured policy is consistent with what's shown in the GUI
         if (_group.policy == 0) {
             _group.policy = Group.POLICY_PUBLIC;
         }
         HorizontalPanel policyPanel = new HorizontalPanel();
-        policyPanel.add(new InlineLabel(CGroup.msgs.editPolicy()));
+        policyPanel.setSpacing(3);
+        policyPanel.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        policyPanel.setWidth("100%");
+        InlineLabel policyLabel = new InlineLabel(CGroup.msgs.editPolicy());
+        policyPanel.add(policyLabel);
+        policyPanel.setCellWidth(policyLabel, "100%");
         final ListBox policyBox = new ListBox();
         policyBox.addItem(CGroup.msgs.policyPublic());
         policyBox.addItem(CGroup.msgs.policyInvite());
@@ -154,20 +165,26 @@ public class GroupEdit extends BorderedDialog
                 }
             }
         });
+        policyBox.setWidth("160px");
         policyPanel.add(policyBox);
         infoPanel.add(policyPanel);
 
         VerticalPanel logoBox = new VerticalPanel();
+        logoBox.setSpacing(3);
         infoPanel.add(logoBox);
         updateImageBox(logoBox, IMAGE_LOGO, CGroup.msgs.editSetLogo());
 
-        return infoPanel;
+        // containerPanel is only here so that infoPanel doesn't take up 100% width
+        containerPanel.add(infoPanel);
+
+        return containerPanel;
     }
 
     protected Panel createDescriptionPanel ()
     {
         VerticalPanel descriptionPanel = new VerticalPanel();
         descriptionPanel.setSpacing(10);
+        descriptionPanel.setStyleName("CurrentPanel");
         descriptionPanel.add(createTextEntryField(CGroup.msgs.editBlurb(), 80, 20, _group.blurb,
             new ChangeListener() {
                 public void onChange (Widget sender) {
@@ -198,6 +215,7 @@ public class GroupEdit extends BorderedDialog
     {
         HorizontalPanel backgroundsPanel = new HorizontalPanel();
         backgroundsPanel.setSpacing(10);
+        backgroundsPanel.setStyleName("CurrentPanel");
         int types[] = { IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND,
             IMAGE_PEOPLE_BACKGROUND };
         String labels[] = { CGroup.msgs.editInfoBG(), CGroup.msgs.editDetailBG(),
@@ -210,10 +228,11 @@ public class GroupEdit extends BorderedDialog
         return backgroundsPanel;
     }
 
-    protected Widget createTextEntryField (String label, int maxLength, int visibleLength,
+    protected CellPanel createTextEntryField (String label, int maxLength, int visibleLength,
         String startingText, ChangeListener listener)
     {
         HorizontalPanel textEntryField = new HorizontalPanel();
+        textEntryField.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
         textEntryField.add(new InlineLabel(label));
         TextBox textEntryBox = new TextBox();
         textEntryBox.setMaxLength(maxLength);
@@ -282,6 +301,7 @@ public class GroupEdit extends BorderedDialog
                 popupImageChooser(box, type, buttonLabel);
             }
         });
+        changeButton.setWidth("160px");
         box.add(changeButton);
     }
 
