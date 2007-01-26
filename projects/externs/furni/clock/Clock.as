@@ -9,7 +9,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 
-[SWF(width="200", height="200")]
+[SWF(width="193", height="300")]
 public class Clock extends Sprite
 {
     /** The content pack. TODO. */
