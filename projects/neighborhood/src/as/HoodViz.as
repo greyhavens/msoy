@@ -36,13 +36,6 @@ public class HoodViz extends Sprite
         _canvas = new Sprite();
         this.addChild(_canvas);
 
-        if (_hood.centralMember != null) {
-            addBit(_myHouse, 1, 0, true, _hood.centralMember);
-        }
-        if (_hood.centralGroup != null) {
-            addBit(_group, -1, 0, true, _hood.centralGroup);
-        }
-
         // compute a very rough bounding rectangle for the visible houses
         var radius :int =
             3 + Math.ceil(Math.sqrt(Math.max(_hood.groups.length, _hood.friends.length)));
