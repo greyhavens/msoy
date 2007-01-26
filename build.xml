@@ -79,7 +79,7 @@
        <include name="**/*"/>
       </fileset>
     </copy>
-    <!-- create our toybox properts from server.properties -->
+    <!-- create our toybox propertis from server.properties -->
     <exec executable="egrep">
       <arg line="^toybox\."/>
       <arg line="${deploy.dir}/server.properties"/>
@@ -160,6 +160,7 @@
     <antcall target="gmsg"><param name="which" value="game.Game"/></antcall>
     <antcall target="gmsg"><param name="which" value="group.Group"/></antcall>
     <antcall target="gmsg"><param name="which" value="inventory.Inventory"/></antcall>
+    <antcall target="gmsg"><param name="which" value="editem.Editem"/></antcall>
     <antcall target="gmsg"><param name="which" value="item.Item"/></antcall>
     <antcall target="gmsg"><param name="which" value="mail.Mail"/></antcall>
     <antcall target="gmsg"><param name="which" value="msgs.Msgs"/></antcall>
