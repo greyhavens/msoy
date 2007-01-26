@@ -182,17 +182,23 @@ public class GroupEdit extends BorderedDialog
 
     protected Panel createDescriptionPanel ()
     {
+        VerticalPanel containerPanel = new VerticalPanel();
         VerticalPanel descriptionPanel = new VerticalPanel();
         descriptionPanel.setSpacing(10);
         descriptionPanel.setStyleName("CurrentPanel");
-        descriptionPanel.add(createTextEntryField(CGroup.msgs.editBlurb(), 80, 20, _group.blurb,
+        CellPanel blurbEdit = createTextEntryField(CGroup.msgs.editBlurb(), 80, 43, _group.blurb,
             new ChangeListener() {
                 public void onChange (Widget sender) {
                     _group.blurb = ((TextBox)sender).getText().trim();
                 }
-            }));
+            });
+        blurbEdit.setSpacing(3);
+        blurbEdit.setWidth("100%");
+        blurbEdit.setCellWidth(((HorizontalPanel)blurbEdit).getWidget(0), "100%");
+        descriptionPanel.add(blurbEdit);
 
         HorizontalPanel charterPanel = new HorizontalPanel();
+        charterPanel.setSpacing(3);
         charterPanel.add(new InlineLabel(CGroup.msgs.editCharter()));
         TextArea charterText = new TextArea();
         charterText.setCharacterWidth(50);
@@ -208,7 +214,10 @@ public class GroupEdit extends BorderedDialog
         charterPanel.add(charterText);
         descriptionPanel.add(charterPanel);
 
-        return descriptionPanel;
+        // containerPanel is only here so that infoPanel doesn't take up 100% width
+        containerPanel.add(descriptionPanel);
+
+        return containerPanel;
     }
 
     protected Panel createBackgroundsPanel ()
