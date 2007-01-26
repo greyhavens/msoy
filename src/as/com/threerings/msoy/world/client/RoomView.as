@@ -117,6 +117,13 @@ public class RoomView extends AbstractRoomView
     {
         super.setEditing(editing, spriteVisitFn);
 
+        // if we haven't yet started loading sprites other than the background,
+        // start now
+        if (!_loadAllMedia) {
+            _loadAllMedia = true;
+            updateAllFurni();
+        }
+
         // we hide all avatars instead of visiting them.
         if (editing) {
             _roomObj.removeListener(this);
@@ -249,7 +256,12 @@ public class RoomView extends AbstractRoomView
      */
     public function getMyCurrentLocation () :MsoyLocation
     {
-        return getMyAvatar().loc;
+        var avatar :AvatarSprite = getMyAvatar();
+        if (avatar != null) {
+            return avatar.loc;
+        } else {
+            return new MsoyLocation(-1, -1, -1);
+        }
     }
 
     /**
@@ -371,6 +383,9 @@ public class RoomView extends AbstractRoomView
     // from interface PlaceView
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
+        // set load-all to false, as we're going to 
+        _loadAllMedia = false;
+
         super.willEnterPlace(plobj);
 
         _roomObj.addListener(this);
@@ -383,6 +398,14 @@ public class RoomView extends AbstractRoomView
         // and animate ourselves entering the room (everyone already in the (room will also have
         // seen it)
         portalTraversed(getMyCurrentLocation(), true);
+
+        // now load the background image first
+        var background :FurniData = _scene.getBackground();
+        if (background == null) {
+            backgroundFinishedLoading();
+        } else {
+            addFurni(background).setLoadedCallback(backgroundFinishedLoading);
+        }
     }
 
     // from interface PlaceView
@@ -448,6 +471,17 @@ public class RoomView extends AbstractRoomView
         return canScroll;
     }
 
+    /**
+     * Once the background image is finished, we want to load all the
+     * rest of the sprites.
+     */
+    protected function backgroundFinishedLoading () :void
+    {
+        _loadAllMedia = true;
+        updateAllFurni();
+        addAllOccupants();
+    }
+
     override protected function relayout () :void
     {
         super.relayout();
@@ -459,6 +493,11 @@ public class RoomView extends AbstractRoomView
         for each (sprite in _pendingRemovals.values()) {
             locationUpdated(sprite);
         }
+    }
+
+    override protected function shouldLoadAll () :Boolean
+    {
+        return _loadAllMedia;
     }
 
     protected function scrollView () :void
@@ -529,6 +568,10 @@ public class RoomView extends AbstractRoomView
 
     protected function addBody (bodyOid :int) :void
     {
+        if (!shouldLoadAll()) {
+            return;
+        }
+
         var occInfo :ActorInfo = (_roomObj.occupantInfo.get(bodyOid) as ActorInfo);
         var sloc :SceneLocation = (_roomObj.occupantLocs.get(bodyOid) as SceneLocation);
         var loc :MsoyLocation = (sloc.loc as MsoyLocation);
@@ -633,7 +676,9 @@ public class RoomView extends AbstractRoomView
             var portal :Portal = (itr.next() as Portal);
             if (loc.equals(portal.loc)) {
                 var sprite :FurniSprite = (_furni.get(portal.portalId) as FurniSprite);
-                sprite.wasTraversed(entering);
+                if (sprite != null) {
+                    sprite.wasTraversed(entering);
+                }
                 return;
             }
         }
@@ -667,9 +712,11 @@ public class RoomView extends AbstractRoomView
 
     protected function addAllOccupants () :void
     {
-        // add all currently present occupants
-        for (var ii :int = _roomObj.occupants.size() - 1; ii >= 0; ii--) {
-            addBody(_roomObj.occupants.get(ii));
+        if (shouldLoadAll()) {
+            // add all currently present occupants
+            for (var ii :int = _roomObj.occupants.size() - 1; ii >= 0; ii--) {
+                addBody(_roomObj.occupants.get(ii));
+            }
         }
     }
 
@@ -712,6 +759,9 @@ public class RoomView extends AbstractRoomView
 
     /** The background music in the scene. */
     protected var _music :SoundPlayer;
+
+    /** When we first enter the room, we only load the background (if any). */
+    protected var _loadAllMedia :Boolean = false;
 
     /** The spinner to show when we're loading room data. */
     protected var _loadingSpinner :DisplayObject;

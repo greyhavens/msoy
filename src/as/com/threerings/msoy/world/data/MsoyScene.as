@@ -82,6 +82,20 @@ public class MsoyScene extends SceneImpl
     }
 
     /**
+     * Retrieve the background image.
+     */
+    public function getBackground () :FurniData
+    {
+        for each (var furni :FurniData in getFurni()) {
+            if (furni.actionType == FurniData.BACKGROUND &&
+                    furni.media.hasFlashVisual()) {
+                return furni;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Retrieve the first background furni data that specifies music.
      */
     public function getMusic () :FurniData

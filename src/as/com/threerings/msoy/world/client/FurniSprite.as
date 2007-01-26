@@ -51,6 +51,14 @@ public class FurniSprite extends MsoySprite
         checkPerspective();
     }
 
+    /**
+     * Call the provided function when this particular sprite is done loading
+     */
+    public function setLoadedCallback (fn :Function) :void
+    {
+        _loadedCallback = fn;
+    }
+
     override public function isIncludedInLayout () :Boolean
     {
         return !isBackground();
@@ -350,6 +358,10 @@ public class FurniSprite extends MsoySprite
 
     override protected function stoppedLoading () :void
     {
+        if (_loadedCallback != null) {
+            _loadedCallback();
+        }
+
         updateLoadingCount(-1);
         super.stoppedLoading();
     }
@@ -365,6 +377,9 @@ public class FurniSprite extends MsoySprite
 
     /** The furniture data for this piece of furni. */
     protected var _furni :FurniData;
+
+    /** A function we call when we've finished loading. */
+    protected var _loadedCallback :Function;
 
     /** The number of furni items currently loading. */
     protected static var _loadingCount :int = 0;

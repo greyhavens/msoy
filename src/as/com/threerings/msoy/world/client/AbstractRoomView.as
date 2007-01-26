@@ -357,10 +357,12 @@ public class AbstractRoomView extends Sprite
 
     public function updateAllFurni () :void
     {
-        // set up any furniture
-        for each (var furni :FurniData in _scene.getFurni()) {
-            if (!furni.media.isAudio()) {
-                updateFurni(furni);
+        if (shouldLoadAll()) {
+            // set up any furniture
+            for each (var furni :FurniData in _scene.getFurni()) {
+                if (!furni.media.isAudio()) {
+                    updateFurni(furni);
+                }
             }
         }
     }
@@ -388,6 +390,16 @@ public class AbstractRoomView extends Sprite
         for each (sprite in _otherSprites) {
             locationUpdated(sprite);
         }
+    }
+
+    /**
+     * Should we load everything that we know how to?
+     * This is used by a subclass to restrict loading to certain things
+     * when the room is first entered.
+     */
+    protected function shouldLoadAll () :Boolean
+    {
+        return true;
     }
 
     /**
