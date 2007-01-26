@@ -18,8 +18,12 @@ public class PreLoader extends Sprite
         _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleComplete);
         _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
 
-        _loader.contentLoaderInfo.sharedEvents.addEventListener("msoyQuery",
-            msoyPassThrough);
+        _loader.contentLoaderInfo.sharedEvents.addEventListener("controlConnect",
+            controlPassThru);
+
+//        trace("Url: " + this.root.loaderInfo.url);
+//        trace("Url: " + this.loaderInfo.url);
+//        trace("Url: " + this.loaderInfo.url);
 
 //        var ourURL :String = this.root.loaderInfo.url;
 //        trace("ourURL: " + ourURL);
@@ -45,7 +49,7 @@ public class PreLoader extends Sprite
     /**
      * Pass-through the *Control hook-up stuff.
      */
-    protected function msoyPassThrough (evt :Event) :void
+    protected function controlPassThru (evt :Event) :void
     {
         this.root.loaderInfo.sharedEvents.dispatchEvent(evt.clone());
     }
