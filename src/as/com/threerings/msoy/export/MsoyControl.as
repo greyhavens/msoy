@@ -60,7 +60,7 @@ public class MsoyControl
                 "FurniInterface, AvatarInterface...");
         }
 
-        var event :DynEvent = new DynEvent();
+        var event :ControlEvent = new ControlEvent();
         event.userProps = new Object();
         populateProperties(event.userProps);
         disp.root.loaderInfo.sharedEvents.dispatchEvent(event);
@@ -292,17 +292,57 @@ public class MsoyControl
 import flash.events.Event;
 
 /**
- * A dynamic event we can use to pass info back to metasoy.
+ * A special event we can use to pass info back to metasoy.
  */
-dynamic class DynEvent extends Event
+class ControlEvent extends Event
 {
-    public function DynEvent ()
+    public function ControlEvent ()
     {
         super("msoyQuery", true, false);
     }
 
+    /** Setter: msoyProps */
+    public function set msoyProps (props :Object) :void
+    {
+        if (_parent != null) {
+            _parent.msoyProps = props;
+
+        } else {
+            _msoyProps = props;
+        }
+    }
+
+    /** Getter: msoyProps */
+    public function get msoyProps () :Object
+    {
+        return _msoyProps;
+    }
+
+    /** Setter: userProps */
+    public function set userProps (props :Object) :void
+    {
+        _userProps = props;
+    }
+
+    /** Getter: userProps */
+    public function get userProps () :Object
+    {
+        if (_parent != null) {
+            return _parent.userProps;
+        } else {
+            return _userProps;
+        }
+    }
+
     override public function clone () :Event
     {
-        return new DynEvent();
+        var clone :ControlEvent = new ControlEvent();
+        clone._parent = this;
+        return clone;
     }
+
+    protected var _parent :ControlEvent;
+
+    protected var _msoyProps :Object;
+    protected var _userProps :Object;
 }
