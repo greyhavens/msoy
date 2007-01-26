@@ -42,6 +42,35 @@ public abstract class ItemEditor extends BorderedDialog
          */
         public String updateMedia (MediaDesc desc);
     }
+    
+    /**
+     * Creates an item editor interface for items of the specified type.  Returns null if the type
+     * is unknown.
+     */
+    public static ItemEditor createItemEditor (int type, EditorHost host)
+    {
+        ItemEditor editor = null;
+        if (type == Item.PHOTO) {
+            editor = new PhotoEditor();
+        } else if (type == Item.DOCUMENT) {
+            editor = new DocumentEditor();
+        } else if (type == Item.FURNITURE) {
+            editor = new FurnitureEditor();
+        } else if (type == Item.GAME) {
+            editor = new GameEditor();
+        } else if (type == Item.AVATAR) {
+            editor = new AvatarEditor();
+        } else if (type == Item.PET) {
+            editor = new PetEditor();
+        } else if (type == Item.AUDIO) {
+            editor = new AudioEditor();
+        } else {
+            return null; // woe be the caller
+        }
+        editor.init(host);
+        return editor;
+    }
+
 
     public ItemEditor ()
     {

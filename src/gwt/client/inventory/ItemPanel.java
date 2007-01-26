@@ -103,7 +103,7 @@ public class ItemPanel extends VerticalPanel
 
     protected void createNewItem ()
     {
-        ItemEditor editor = createItemEditor(_type);
+        ItemEditor editor = ItemEditor.createItemEditor(_type, this);
         if (editor != null) {
             _create.setEnabled(false);
             Item item = editor.createBlankItem();
@@ -113,34 +113,6 @@ public class ItemPanel extends VerticalPanel
             editor.setPopupPosition(_create.getAbsoluteLeft()+20, _create.getAbsoluteTop()-200);
             editor.show();
         }
-    }
-
-    /**
-     * Creates an item editor interface for items of the specified type.  Returns null if the type
-     * is unknown.
-     */
-    protected ItemEditor createItemEditor (int type)
-    {
-        ItemEditor editor = null;
-        if (_type == Item.PHOTO) {
-            editor = new PhotoEditor();
-        } else if (_type == Item.DOCUMENT) {
-            editor = new DocumentEditor();
-        } else if (_type == Item.FURNITURE) {
-            editor = new FurnitureEditor();
-        } else if (_type == Item.GAME) {
-            editor = new GameEditor();
-        } else if (_type == Item.AVATAR) {
-            editor = new AvatarEditor();
-        } else if (_type == Item.PET) {
-            editor = new PetEditor();
-        } else if (_type == Item.AUDIO) {
-            editor = new AudioEditor();
-        } else {
-            return null; // woe be the caller
-        }
-        editor.init(this);
-        return editor;
     }
 
     /**

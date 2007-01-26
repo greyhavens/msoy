@@ -20,6 +20,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.MediaDesc;
 
+import client.editem.EditorHost;
 import client.util.BorderedDialog;
 import client.util.BorderedPopup;
 import client.util.ClickCallback;
@@ -30,6 +31,7 @@ import client.util.MediaUtil;
  * or delete them, or simply remove the flags.
  */
 public class ReviewPopup extends BorderedDialog
+    implements EditorHost
 {
     /**
      * Constructs a new {@link ReviewPopup}. 
@@ -66,6 +68,18 @@ public class ReviewPopup extends BorderedDialog
         _dock.add(_centerContent, DockPanel.CENTER);
 
         refresh();
+    }
+
+    // from EditorHost
+    public void editComplete (Item item)
+    {
+        // let's ignore this; I think a refresh() would be annoying
+    }
+
+    // from EditorHost
+    public void setStatus (String string)
+    {
+        _status.setText(string);
     }
 
     // @Override

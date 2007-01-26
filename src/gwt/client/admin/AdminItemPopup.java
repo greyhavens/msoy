@@ -3,11 +3,15 @@
 
 package client.admin;
 
+import client.editem.ItemEditor;
 import client.item.BaseItemDetailPopup;
 import client.shell.MsoyEntryPoint;
 
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.web.Avatar;
@@ -37,6 +41,26 @@ public class AdminItemPopup extends BaseItemDetailPopup
                 "avatar=" + URL.encodeComponent(path));
         } else {
             return super.createPreview(item);
+        }
+    }
+
+    // @Override // BaseItemDetailPopup
+    protected void createInterface (VerticalPanel details, VerticalPanel controls)
+    {
+        super.createInterface(details, controls);
+        
+        // if it's an original item, an admin can edit it
+        if (_item.parentId == 0) {
+            Button button = new Button(CAdmin.msgs.itemPopupEdit());
+            button.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _parent);
+                    editor.setItem(_item);
+                    editor.show();
+                    hide();
+                }
+            });
+            controls.add(button);
         }
     }
 

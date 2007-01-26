@@ -160,6 +160,14 @@ public interface AdminMessages extends com.google.gwt.i18n.client.Messages {
   String reviewDeletionDont();
 
   /**
+   * Translated "Edit".
+   * 
+   * @return translated "Edit"
+   * @gwt.key itemPopupEdit
+   */
+  String itemPopupEdit();
+
+  /**
    * Translated "Delete".
    * 
    * @return translated "Delete"

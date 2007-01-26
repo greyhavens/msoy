@@ -134,7 +134,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
             button = new Button(CInventory.msgs.detailEdit());
             button.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    ItemEditor editor = _parent.createItemEditor(_item.getType());
+                    ItemEditor editor = ItemEditor.createItemEditor(_item.getType(), _parent);
                     editor.setItem(_item);
                     editor.show();
                     hide();
