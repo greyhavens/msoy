@@ -4,19 +4,18 @@
 package client.admin;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.item.ItemEntryPoint;
+import client.editem.EditemEntryPoint;
 import client.shell.MsoyEntryPoint;
 
 /**
  * Displays an admin dashboard with various server status information and administrative
  * functionality.
  */
-public class index extends ItemEntryPoint
+public class index extends EditemEntryPoint
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
