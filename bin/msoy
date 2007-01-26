@@ -53,7 +53,7 @@ case "$1" in
             echo "% kill -KILL $RPIDS"
             echo ""
             echo "And then rerun this script."
-            exit -1
+            exit 255
         fi
         # Go ahead and start things up
         echo -n "Starting $DAEMON: "
