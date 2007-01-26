@@ -18,24 +18,36 @@ public class PreLoader extends Sprite
         _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleComplete);
         _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
 
+        _loader.contentLoaderInfo.sharedEvents.addEventListener("msoyQuery",
+            msoyPassThrough);
+
 //        var ourURL :String = this.root.loaderInfo.url;
 //        trace("ourURL: " + ourURL);
 //        var lastSlash :int = ourURL.lastIndexOf("/");
 //        var url :String = ourURL.substring(0, lastSlash + 1) + _contentURL;
-        var url :String = "http://tasman.sea.earth.threerings.net:8080/media/" +
+        var url :String =
+            //"http://tasman.sea.earth.threerings.net:8080/media/" +
+            "http://bogocorp.com/~ray/tempsoy/" +
             _contentURL;
         _loader.load(new URLRequest(url));
     }
 
     protected function handleComplete (event :Event) :void
     {
-        this.parent.addChild(_loader.content);
-        this.parent.removeChild(this);
+        addChild(_loader.content);
     }
 
     protected function handleError (event :IOErrorEvent) :void
     {
         // nada?
+    }
+
+    /**
+     * Pass-through the *Control hook-up stuff.
+     */
+    protected function msoyPassThrough (evt :Event) :void
+    {
+        this.root.loaderInfo.sharedEvents.dispatchEvent(evt.clone());
     }
 
     protected var _loader :Loader;
