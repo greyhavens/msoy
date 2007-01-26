@@ -1,0 +1,59 @@
+
+
+
+<!-- build configuration -->
+<project name="ImageFlipper" default="compile" basedir=".">
+
+  <!-- define some basic project parameters -->
+  <property name="app.name"         value="ImageFlipper"/>
+  <property name="root.path"        value="../../../.."/>
+  <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
+
+  <target name="useData1">
+    <copy file="Data1.as" tofile="Data.as"/>
+  </target>
+
+  <target name="useData2">
+    <copy file="Data2.as" tofile="Data.as"/>
+  </target>
+
+  <!-- builds our Flash game -->
+  <target name="compile" depends="useData1">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-file-specs"/>
+      <arg value="${app.name}.as"/>
+    </java>
+  </target>
+
+  <target name="preloader" depends="useData2">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-includes"/>
+      <arg value="Data"/>
+
+      <arg value="-link-report"/>
+      <arg value="/tmp/link-report.txt"/>
+      <arg value="-file-specs"/>
+      <arg value="PreLoader.as"/>
+    </java>
+  </target>
+
+  <target name="all" depends="compile, preloader"/>
+
+  <!-- cleans out the compiled code -->
+  <target name="clean">
+    <delete>
+       <fileset file="${app.name}.swf"/>
+    </delete>
+  </target>
+
+  <target name="dist" depends="compile">
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/3477172fe915dbf57158dc392da2fa955bfb8b66.swf"/>
+  </target>
+
+</project>
