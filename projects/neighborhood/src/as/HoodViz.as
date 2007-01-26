@@ -91,6 +91,13 @@ public class HoodViz extends Sprite
             }
         }
 
+        if (_hood.centralMember != null) {
+            drawables.push({ bit: _myHouse, x: 1, y: 0, neighbor: _hood.centralMember });
+        }
+        if (_hood.centralGroup != null) {
+            drawables.push({ bit: _group, x: -1, y: 0, neighbor: _hood.centralGroup });
+        }
+
         // now sort the actual friends and groups by x for draw order to be correct
         drawables.sortOn([ "x", "y" ], Array.NUMERIC | Array.DESCENDING);
 
