@@ -358,7 +358,7 @@ public class MsoySprite extends MediaContainer
         // clean up
         if (_media is Loader) {
             Loader(_media).contentLoaderInfo.sharedEvents.removeEventListener(
-                "msoyQuery", handleUserCodeQuery);
+                "controlConnect", handleUserCodeQuery);
         }
 
         super.shutdown(completely);
@@ -391,7 +391,7 @@ public class MsoySprite extends MediaContainer
 
         // then, grab a reference to the shared event dispatcher
         Loader(_media).contentLoaderInfo.sharedEvents.addEventListener(
-            "msoyQuery", handleUserCodeQuery);
+            "controlConnect", handleUserCodeQuery);
     }
 
     protected function configureMouseProperties () :void
@@ -511,9 +511,9 @@ public class MsoySprite extends MediaContainer
         // copy down the user functions
         setUserProperties(evt.userProps);
         // pass back ours
-        var msoyProps = new Object();
-        populateControlProperties(msoyProps);
-        evt.msoyProps = msoyProps;
+        var hostProps :Object = new Object();
+        populateControlProperties(hostProps);
+        evt.hostProps = hostProps;
     }
 
     protected function setUserProperties (o :Object) :void

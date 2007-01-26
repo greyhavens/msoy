@@ -61,12 +61,11 @@ public class MsoyControl
         }
 
         var event :ControlEvent = new ControlEvent();
-        event.userProps = new Object();
-        populateProperties(event.userProps);
+        var userProps :Object = new Object();
+        populateProperties(userProps);
+        event.userProps = userProps;
         disp.root.loaderInfo.sharedEvents.dispatchEvent(event);
-        if ("msoyProps" in event) {
-            _props = event.msoyProps;
-        }
+        _props = event.hostProps;
 
         disp.root.loaderInfo.addEventListener(Event.UNLOAD, handleUnload, false, 0, true);
     }
@@ -268,7 +267,7 @@ public class MsoyControl
                 }
 
             } catch (err :Error) {
-                trace("Unable to call msoy code: " + err);
+                trace("Unable to call host code: " + err);
             }
         }
 
@@ -298,24 +297,24 @@ class ControlEvent extends Event
 {
     public function ControlEvent ()
     {
-        super("msoyQuery", true, false);
+        super("controlConnect", true, false);
     }
 
-    /** Setter: msoyProps */
-    public function set msoyProps (props :Object) :void
+    /** Setter: hostProps */
+    public function set hostProps (props :Object) :void
     {
         if (_parent != null) {
-            _parent.msoyProps = props;
+            _parent.hostProps = props;
 
         } else {
-            _msoyProps = props;
+            _hostProps = props;
         }
     }
 
-    /** Getter: msoyProps */
-    public function get msoyProps () :Object
+    /** Getter: hostProps */
+    public function get hostProps () :Object
     {
-        return _msoyProps;
+        return _hostProps;
     }
 
     /** Setter: userProps */
@@ -343,6 +342,6 @@ class ControlEvent extends Event
 
     protected var _parent :ControlEvent;
 
-    protected var _msoyProps :Object;
+    protected var _hostProps :Object;
     protected var _userProps :Object;
 }
