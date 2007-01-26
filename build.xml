@@ -89,6 +89,9 @@
         </outputfilterchain>
       </redirector>
     </exec>
+    <!-- copy ehcache.xml to a classpath location -->
+    <copy todir="${deploy.dir}" file="etc/ehcache.xml" failonerror="false"
+          overwrite="true"/>
     <mkdir dir="${deploy.dir}/lib"/>
   </target>
 
