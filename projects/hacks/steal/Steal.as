@@ -25,7 +25,7 @@ public class Steal extends Sprite
 
         // set up redirects for the metasoy messages
         _host.contentLoaderInfo.sharedEvents.addEventListener(
-            "msoyQuery", handleQuery);
+            "controlConnect", controlPassThru);
 
         loadStolen(0);
     }
@@ -46,52 +46,40 @@ public class Steal extends Sprite
     /**
      * Shuttle messages from our stolen content up to metasoy.
      */
-    protected function handleQuery (evt :Event) :void
+    protected function controlPassThru (evt :Event) :void
     {
-        var copy :Event = evt.clone();
-        var copyO :Object = copy;
-        var evtO :Object = evt;
+        var userProps :Object = (evt as Object)["userProps"];
 
-        var propName :String;
-
-        // copy out all properties into our copy
-        for (propName in evtO) {
-            copyO[propName] = evtO[propName];
-        }
-
-        var userProps :Object = copyO["userProps"];
-
-        if (userProps["getActions_v1"] != null) {
+        if ("getActions_v1" in userProps) {
             var origGet :Function = (userProps["getActions_v1"] as Function);
-            userProps["getActions_v1"] = function () :Array {
-                var array :Array = (origGet() as Array);
-                if (array != null) {
-                    for (propName in REDIRS) {
-                        array.unshift(ACTION_PREFIX + propName);
+            if (origGet != null) {
+                userProps["getActions_v1"] = function () :Array {
+                    var array :Array = (origGet() as Array);
+                    if (array != null) {
+                        for (propName in REDIRS) {
+                            array.unshift(ACTION_PREFIX + propName);
+                        }
                     }
-                }
-                return array;
-            };
+                    return array;
+                };
+            }
         }
-        if (userProps["action_v1"] != null) {
+        if ("action_v1" in userProps) {
             var origDo :Function = (userProps["action_v1"] as Function);
-            userProps["action_v1"] = function (action :String) :void {
-                if (action.indexOf(ACTION_PREFIX) == 0) {
-                    loadStolen(
-                        parseInt(action.substring(ACTION_PREFIX.length)));
-                } else {
-                    origDo(action);
-                }
-            };
+            if (origDo != null) {
+                userProps["action_v1"] = function (action :String) :void {
+                    if (action.indexOf(ACTION_PREFIX) == 0) {
+                        loadStolen(
+                            parseInt(action.substring(ACTION_PREFIX.length)));
+                    } else {
+                        origDo(action);
+                    }
+                };
+            }
         }
 
         // dispatch it upwards
-        this.root.loaderInfo.sharedEvents.dispatchEvent(copy);
-
-        // copy all returned props from msoy back into the original
-        for (propName in copyO) {
-            evtO[propName] = copyO[propName];
-        }
+        this.root.loaderInfo.sharedEvents.dispatchEvent(evt.clone());
     }
 
     /** Holds our stolen content. */
