@@ -20,9 +20,18 @@ import com.adobe.serialization.json.JSONDecoder;
 [SWF(width="640", height="480")]
 public class HoodViz extends Sprite
 {
+    public static const DEBUGGING :Boolean = true;
+
     public function HoodViz ()
     {
-        _hood = Neighborhood.fromLoaderInfo(this.root.loaderInfo);
+        var data :Object;
+        if (this.root.loaderInfo != null) {
+            data = this.root.loaderInfo.parameters;
+        }
+        if (DEBUGGING && data == null) {
+            data = new DebugData();
+        }
+        _hood = Neighborhood.fromParameters(data);
 
         _canvas = new Sprite();
         this.addChild(_canvas);
@@ -155,9 +164,10 @@ public class HoodViz extends Sprite
         }
     }
 
+    // the magic numbers that describe the drawn tiles' geometry
     protected function skew(x :Number, y :Number) :Point
     {
-        return new Point(x*175 + y*82, -x*69 + y*156);
+        return new Point(x*174 + y*81, -x*69 + y*155);
     }
 
     public function clickHandler (event :MouseEvent) :void

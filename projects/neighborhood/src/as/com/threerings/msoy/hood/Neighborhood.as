@@ -22,9 +22,9 @@ public class Neighborhood
      * Instantiate and populate a {@link Neighborhood} from JSON configuration
      * extracted from the LoaderInfo FlashVars parameter 'neighborhood'.
      */
-    public static function fromLoaderInfo(info :LoaderInfo) :Neighborhood
+    public static function fromParameters(params :Object) :Neighborhood
     {
-        return fromJSON(new JSONDecoder(info.parameters.neighborhood).getObject());
+        return fromJSON(new JSONDecoder(params.neighborhood).getObject());
     }
 
     /**
