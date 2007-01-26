@@ -511,8 +511,9 @@ public class MsoySprite extends MediaContainer
         // copy down the user functions
         setUserProperties(evt.userProps);
         // pass back ours
-        evt.msoyProps = new Object();
-        populateControlProperties(evt.msoyProps);
+        var msoyProps = new Object();
+        populateControlProperties(msoyProps);
+        evt.msoyProps = msoyProps;
     }
 
     protected function setUserProperties (o :Object) :void
