@@ -9,7 +9,7 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 
-[SWF(width="193", height="300")]
+[SWF(width="193", height="400")]
 public class Clock extends Sprite
 {
     /** The content pack. TODO. */
@@ -88,6 +88,20 @@ public class Clock extends Sprite
         _minuteHand = configureHand("minute", centerX, centerY);
         _secondHand = configureHand("second", centerX, centerY);
         _smoothSeconds = Boolean(content.smoothSeconds);
+
+        var decor :DisplayObject = getDisplayResource("decoration");
+        if (decor != null) {
+            if ("decorationPoint" in content && content.decorationPoint is Array) {
+                var decorPos :Array = (content.decorationPoint as Array);
+                decor.x = int(decorPos[0]);
+                decor.y = int(decorPos[1]);
+
+            } else {
+                decor.x = centerX;
+                decor.y = centerY;
+            }
+            addChild(decor);
+        }
     }
 
     /**
@@ -129,9 +143,15 @@ public class Clock extends Sprite
      */
     protected function getDisplayResource (name :String) :DisplayObject
     {
-        if (name in content && content[name] is Class) {
-            var c :Class = (content[name] as Class);
-            return (new c() as DisplayObject);
+        if (name in content) {
+            var prop :Object = content[name];
+            if (prop is DisplayObject) {
+                return (prop as DisplayObject);
+
+            } else if (prop is Class) {
+                var c :Class = (prop as Class);
+                return (new c() as DisplayObject);
+            }
         }
         return null;
     }

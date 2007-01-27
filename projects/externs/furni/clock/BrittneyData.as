@@ -29,7 +29,7 @@ public class Data
         content["face"] = face__image;
         content["hourHand"] = hourHand__image;
         content["minuteHand"] = minuteHand__image;
-   //     loadAsset("used_for_swfs");
+//        loadAsset("face");
     }
 
     protected function loadAsset (name :String) :void
@@ -52,8 +52,8 @@ public class Data
             });
     }
 
-    [Embed(source="brit_face.png")]
-    private var face__image :Class;
+//    [Embed(source="brit_face.png")]
+//    private var face__image :Class;
 
     [Embed(source="brit_hour_hand.png")]
     private var hourHand__image :Class;
@@ -61,7 +61,10 @@ public class Data
     [Embed(source="brit_minute_hand.png")]
     private var minuteHand__image :Class;
 
-//    [Embed(source="Clock.swf", mimeType="application/octet-stream")]
-//    private var tits__bytes :Class;
+    [Embed(source="brit_face.swf")]
+    private var face__image :Class;
+
+//    [Embed(source="brit_face.swf", mimeType="application/octet-stream")]
+//    private var face__bytes :Class;
 }
 }
