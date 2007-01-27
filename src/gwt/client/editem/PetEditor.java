@@ -32,7 +32,7 @@ public class PetEditor extends ItemEditor
         // pets are special; their furni media are their primary media
         String title = CEditem.emsgs.petMainTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
+            public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CEditem.emsgs.errPetNotFlash();
                 }

@@ -37,10 +37,14 @@ public abstract class ItemEditor extends BorderedDialog
     public static interface MediaUpdater
     {
         /**
-         * Return null, or a message indicating why the specified media
-         * will not do.
+         * Return null, or a message indicating why the specified media will not do.
+         *
+         * @param width if the media is a (non-thumbnail) image this will contain the width of the
+         * image, otherwise zero.
+         * @param height if the media is a (non-thumbnail) image this will contain the height of
+         * the image, otherwise zero.
          */
-        public String updateMedia (MediaDesc desc);
+        public String updateMedia (MediaDesc desc, int width, int height);
     }
     
     /**
@@ -88,7 +92,8 @@ public abstract class ItemEditor extends BorderedDialog
         TabPanel mediaTabs = createTabs();
 
         // create a name entry field
-        contents.add(createRow(CEditem.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
+        contents.add(
+            createRow(CEditem.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _item.name = text;
             }
@@ -220,7 +225,7 @@ public abstract class ItemEditor extends BorderedDialog
     {
         String title = CEditem.emsgs.editorFurniTitle();
         _furniUploader = createUploader(Item.FURNI_MEDIA, title, false, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
+            public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CEditem.emsgs.errFurniNotFlash();
                 }
@@ -235,7 +240,7 @@ public abstract class ItemEditor extends BorderedDialog
     {
         String title = CEditem.emsgs.editorThumbTitle();
         _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
+            public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
                     return CEditem.emsgs.errThumbNotImage();
                 }
@@ -327,8 +332,9 @@ public abstract class ItemEditor extends BorderedDialog
      * Configures this item editor with the hash value for media that it is
      * about to upload.
      */
-    protected void setHash (String id, String mediaHash, int mimeType, int constraint,
-                            String thumbMediaHash, int thumbMimeType, int thumbConstraint)
+    protected void setHash (
+        String id, String mediaHash, int mimeType, int constraint, int width, int height,
+        String thumbMediaHash, int thumbMimeType, int thumbConstraint)
     {
         MediaUploader mu = getUploader(id);
         if (mu == null) {
@@ -336,8 +342,8 @@ public abstract class ItemEditor extends BorderedDialog
         }
 
         // set the new media in preview and in the item
-        mu.setUploadedMedia(
-            new MediaDesc(MediaDesc.stringToHash(mediaHash), (byte)mimeType, (byte)constraint));
+        mu.setUploadedMedia(new MediaDesc(MediaDesc.stringToHash(mediaHash), (byte)mimeType,
+                                          (byte)constraint), width, height);
 
         // if we got thumbnail media back from this upload, use that as well
         // TODO: avoid overwriting custom thumbnail, sigh
@@ -388,10 +394,11 @@ public abstract class ItemEditor extends BorderedDialog
      * This is called from our magical JavaScript method by JavaScript code
      * received from the server as a response to our file upload POST request.
      */
-    protected static void callBridge (String id, String mediaHash, int mimeType, int constraint,
-                                      String thumbMediaHash, int thumbMimeType, int thumbConstraint)
+    protected static void callBridge (
+        String id, String mediaHash, int mimeType, int constraint, int width, int height,
+        String thumbMediaHash, int thumbMimeType, int thumbConstraint)
     {
-        _singleton.setHash(id, mediaHash, mimeType, constraint,
+        _singleton.setHash(id, mediaHash, mimeType, constraint, width, height,
                            thumbMediaHash, thumbMimeType, thumbConstraint);
     }
 
@@ -455,8 +462,8 @@ public abstract class ItemEditor extends BorderedDialog
      * This wires up a sensibly named function that our POST response JavaScript code can call.
      */
     protected static native void configureBridge () /*-{
-        $wnd.setHash = function (id, hash, type, constraint, thash, ttype, tconstraint) {
-           @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IILjava/lang/String;II)(id, hash, type, constraint, thash, ttype, tconstraint);
+        $wnd.setHash = function (id, hash, type, constraint, width, height, thash, ttype, tconstraint) {
+           @client.editem.ItemEditor::callBridge(Ljava/lang/String;Ljava/lang/String;IIIILjava/lang/String;II)(id, hash, type, constraint, width, height, thash, ttype, tconstraint);
         };
     }-*/; 
 

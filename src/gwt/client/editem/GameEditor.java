@@ -44,7 +44,7 @@ public class GameEditor extends ItemEditor
     {
         // configure the main uploader first
         tabs.add(createMainUploader(CEditem.emsgs.gameMainTitle(), new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
+            public String updateMedia (MediaDesc desc, int width, int height) {
                 // TODO: validate media type
                 _game.gameMedia = desc;
                 return null;
@@ -53,7 +53,7 @@ public class GameEditor extends ItemEditor
 
         String title = CEditem.emsgs.gameTableTitle();
         tabs.add(_tableUploader = createUploader(TABLE_ID, title, false, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
+            public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
                     return CEditem.emsgs.errTableNotImage();
                 }

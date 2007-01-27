@@ -33,7 +33,7 @@ public class PhotoEditor extends ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
         tabs.add(createMainUploader(CEditem.emsgs.photoMainTitle(), new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
+            public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CEditem.emsgs.errPhotoNotFlash();
                 }

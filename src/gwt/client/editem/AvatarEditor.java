@@ -33,7 +33,7 @@ public class AvatarEditor extends ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
         tabs.add(createMainUploader(CEditem.emsgs.avatarMainTitle(), new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
+            public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.hasFlashVisual()) {
                     return CEditem.emsgs.errAvatarNotFlash();
                 }
@@ -50,7 +50,7 @@ public class AvatarEditor extends ItemEditor
     {
         String title = CEditem.emsgs.avatarThumbTitle();
         _thumbUploader = createUploader(Item.THUMB_MEDIA, title, true, new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
+            public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.isImage()) {
                     return CEditem.emsgs.errThumbNotImage();
                 }

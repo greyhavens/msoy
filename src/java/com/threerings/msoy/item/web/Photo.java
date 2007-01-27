@@ -12,6 +12,12 @@ public class Photo extends Item
     /** The photo media. */
     public MediaDesc photoMedia;
 
+    /** The width (in pixels) of the photo media. */
+    public int photoWidth;
+
+    /** The height (in pixels) of the photo media. */
+    public int photoHeight;
+
     // @Override // from Item
     public byte getType ()
     {

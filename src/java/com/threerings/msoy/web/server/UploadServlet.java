@@ -57,10 +57,9 @@ public class UploadServlet extends HttpServlet
             return;
         }
 
-        // TODO: create a custom file item factory that just puts items in the
-        // right place from the start and computes the SHA hash on the way
-        ServletFileUpload upload =
-            new ServletFileUpload(new DiskFileItemFactory());
+        // TODO: create a custom file item factory that just puts items in the right place from the
+        // start and computes the SHA hash on the way
+        ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
         MediaInfo[] info = null;
         String mediaId = null;
         try {
@@ -72,8 +71,7 @@ public class UploadServlet extends HttpServlet
                 } else {
                     // TODO: check that this is a supported content type
                     log.info("Receiving file [type: " + item.getContentType() +
-                             ", size=" + item.getSize() +
-                             ", id=" + item.getFieldName() + "].");
+                             ", size=" + item.getSize() + ", id=" + item.getFieldName() + "].");
                     mediaId = item.getFieldName();
                     info = handleFileItem(item, mediaId);
                 }
@@ -102,9 +100,10 @@ public class UploadServlet extends HttpServlet
             String thash = (info[1] == null) ? "" : info[1].hash;
             int tmime = (info[1] == null) ? 0 : info[1].mimeType;
             int tconstraint = (info[1] == null) ? 0 : info[1].constraint;
-            String script = "parent.setHash('" + mediaId + "', '" +
-                info[0].hash + "', " + info[0].mimeType + ", " + info[0].constraint + ", '" +
-                thash + "', " + tmime + ", " + tconstraint + ")";
+            String script = "parent.setHash('" + mediaId + "', " +
+                "'" + info[0].hash + "', " + info[0].mimeType + ", " + info[0].constraint + ", " +
+                info[0].width + ", " + info[0].height + ", " +
+                "'" + thash + "', " + tmime + ", " + tconstraint + ")";
             out.println("<body onLoad=\"" + script + "\"></body>");
             out.println("</html>");
         } finally {
@@ -235,8 +234,10 @@ public class UploadServlet extends HttpServlet
         BufferedImage image = ImageIO.read(output);
 
         // determine whether this image is width or height constrained
+        info.width = image.getWidth();
+        info.height = image.getHeight();
         info.constraint =  MediaDesc.computeConstraint(
-            MediaDesc.PREVIEW_SIZE, image.getWidth(), image.getHeight());
+            MediaDesc.PREVIEW_SIZE, info.width, info.height);
 
         // generate a thumbnail for this image
         MediaInfo tinfo = new MediaInfo();
@@ -304,6 +305,7 @@ public class UploadServlet extends HttpServlet
         public String hash;
         public byte mimeType;
         public byte constraint;
+        public int width, height;
     }
 
     /** Prevent Captain Insano from showing up to fill our drives. */

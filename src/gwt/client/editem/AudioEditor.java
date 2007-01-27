@@ -33,7 +33,7 @@ public class AudioEditor extends ItemEditor
     protected void createInterface (VerticalPanel contents, TabPanel tabs)
     {
         tabs.add(createMainUploader(CEditem.emsgs.audioMainTitle(), new MediaUpdater() {
-            public String updateMedia (MediaDesc desc) {
+            public String updateMedia (MediaDesc desc, int width, int height) {
                 if (!desc.isAudio()) {
                     return CEditem.emsgs.errAudioNotAudio();
                 }
