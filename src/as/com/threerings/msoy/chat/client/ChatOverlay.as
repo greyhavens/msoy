@@ -6,6 +6,7 @@ package com.threerings.msoy.chat.client {
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.display.Stage;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
@@ -142,16 +143,6 @@ public class ChatOverlay
     }
 
     /**
-     * Scroll the history up or down the specified number of lines.
-     */
-    public function scrollHistory (dy :int) :void
-    {
-        if (_historyBar != null) {
-            _historyBar.scrollPosition += dy;
-        }
-    }
-
-    /**
      * Sets whether or not the glyphs are clickable.
      */
     public function setClickableGlyphs (clickable :Boolean) :void
@@ -184,6 +175,7 @@ public class ChatOverlay
             _historyBar.includeInLayout = false;
             configureHistoryBarSize();
             _target.addChild(_historyBar);
+            _target.addEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
             resetHistoryOffset();
 
             // out with the subtitles
@@ -196,6 +188,7 @@ public class ChatOverlay
             figureCurrentHistory();
 
         } else {
+            _target.removeEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
             _target.removeChild(_historyBar);
             _historyBar.removeEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
             _historyBar = null;
@@ -738,6 +731,31 @@ public class ChatOverlay
     {
         if (!_settingBar) {
             figureCurrentHistory();
+        }
+    }
+
+    /**
+     * Handle mouse wheel events detected in our target container.
+     */
+    protected function handleMouseWheel (event :MouseEvent) :void
+    {
+        var subtitleY :Number = event.localY - (_target.height - _subtitleHeight);
+        if (subtitleY >= 0 && subtitleY < _subtitleHeight) {
+            // TODO: Remove this magic number. It seems delta is always
+            // a factor of three. I would like to find the constant that
+            // specifies this behavior.
+            var FACTOR :Number = -1 / 3;
+            var newPos :int = _historyBar.scrollPosition +
+                Math.round(event.delta * FACTOR);
+            newPos = Math.min(_historyBar.maxScrollPosition,
+                Math.max(_historyBar.minScrollPosition, newPos));
+
+            if (newPos != int(_historyBar.scrollPosition)) {
+                _historyBar.scrollPosition = newPos;
+                // Retardedly, as of Flex v2.0.1, setting the scroll position
+                // does not dispatch a scroll event, so we must fake it.
+                figureCurrentHistory();
+            }
         }
     }
 
