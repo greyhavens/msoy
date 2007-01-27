@@ -38,6 +38,8 @@ public class PhotoEditor extends ItemEditor
                     return CEditem.emsgs.errPhotoNotFlash();
                 }
                 _photo.photoMedia = desc;
+                _photo.photoWidth = width;
+                _photo.photoHeight = height;
                 return null;
             }
         }), CEditem.emsgs.photoMainTab());
