@@ -12,8 +12,6 @@ import mx.core.ClassFactory;
 
 import com.threerings.util.ArrayUtil;
 
-import com.threerings.mx.controls.ChatDisplayBox;
-
 import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.crowd.data.PlaceObject;
@@ -28,6 +26,8 @@ import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+
+import com.threerings.msoy.chat.client.ChatContainer;
 
 import com.threerings.msoy.ui.MsoyList;
 
@@ -150,7 +150,10 @@ public class LobbyPanel extends VBox
         addChild(butbar);
 
         // and a chat box
-        addChild(new ChatDisplayBox(_ctx));
+        var chatbox :ChatContainer = new ChatContainer(_ctx);
+        chatbox.percentWidth = 100;
+        chatbox.percentHeight = 100;
+        addChild(chatbox);
     }
 
     /** Buy one get one free. */

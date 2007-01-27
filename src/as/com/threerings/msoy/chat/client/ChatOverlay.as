@@ -23,6 +23,7 @@ import mx.events.ScrollEvent;
 import mx.core.Container;
 import mx.core.IRawChildrenContainer;
 
+import mx.controls.scrollClasses.ScrollBar;
 import mx.controls.VScrollBar;
 
 import com.threerings.util.ArrayUtil;
@@ -102,7 +103,7 @@ public class ChatOverlay
             _overlay.x = 0;
             _overlay.y = 0;
             _target.rawChildren.addChildAt(_overlay,
-                _target.rawChildren.numChildren - 1);
+                Math.max(0, _target.rawChildren.numChildren - 1));
             _target.addEventListener(ResizeEvent.RESIZE, handleContainerResize);
             _target.addEventListener("childrenChanged", handleContainerPopulate);
             _history.addChatOverlay(this);
@@ -177,13 +178,12 @@ public class ChatOverlay
             return; // no change
         }
 
-        var container :Container = _ctx.getTopPanel().getPlaceContainer();
         if (historyEnabled) {
             _historyBar = new VScrollBar();
             _historyBar.addEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
             _historyBar.includeInLayout = false;
             configureHistoryBarSize();
-            container.addChild(_historyBar);
+            _target.addChild(_historyBar);
             resetHistoryOffset();
 
             // out with the subtitles
@@ -196,7 +196,7 @@ public class ChatOverlay
             figureCurrentHistory();
 
         } else {
-            container.removeChild(_historyBar);
+            _target.removeChild(_historyBar);
             _historyBar.removeEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
             _historyBar = null;
 
@@ -767,8 +767,9 @@ public class ChatOverlay
     protected function configureHistoryBarSize () :void
     {
         _historyBar.height = _subtitleHeight;
-        _historyBar.setStyle("bottom", 0);
-        _historyBar.setStyle("right", 0);
+        _historyBar.move(
+            _target.width - ScrollBar.THICKNESS, //_historyBar.width;
+            _target.height - _subtitleHeight);
     }
 
     /**

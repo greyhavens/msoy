@@ -44,6 +44,7 @@ public class TopPanel extends Canvas
         horizontalScrollPolicy = ScrollPolicy.OFF;
 
         _placeBox = new Canvas();
+        _placeBox.autoLayout = false;
         _placeBox.includeInLayout = false;
         addChild(_placeBox);
 
