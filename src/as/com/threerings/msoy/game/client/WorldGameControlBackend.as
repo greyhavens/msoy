@@ -43,7 +43,8 @@ public class WorldGameControlBackend extends GameControlBackend
         super(ctx, worldGameObj);
         _mctx = ctx;
         _worldGameObj = worldGameObj;
-        _gameIdent = new ItemIdent(Item.GAME, worldGameObj.config.game.getProgenitorId());
+        // the gameIdent matches the prototype of the game
+        _gameIdent = new ItemIdent(Item.GAME, worldGameObj.config.persistentGameId);
         
         _worldGameObj.addListener(_memlist);
         

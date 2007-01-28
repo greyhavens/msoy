@@ -186,9 +186,9 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns the parentId, or the itemId if this item is not a clone.
+     * Returns the parentId, or this itemId if this item is not a clone.
      */
-    public function getProgenitorId () :int
+    public function getPrototypeId () :int
     {
         return (parentId == 0) ? itemId : parentId;
     }

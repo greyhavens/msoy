@@ -185,9 +185,9 @@ public abstract class Item implements Streamable, IsSerializable, DSet.Entry
     public abstract byte getType ();
 
     /**
-     * Returns the parentId, or the itemId if this item is not a clone.
+     * Returns the parentId, or this itemId if this item is not a clone.
      */
-    public int getProgenitorId ()
+    public int getPrototypeId ()
     {
         return (parentId == 0) ? itemId : parentId;
     }

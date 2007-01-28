@@ -459,7 +459,7 @@ try {
             var game :Game = (item as Game);
             furni.actionType = game.isInWorld() ?
                 FurniData.ACTION_WORLD_GAME : FurniData.ACTION_LOBBY_GAME;
-            furni.actionData = String(game.getProgenitorId()) + ":" + game.name;
+            furni.actionData = String(game.getPrototypeId()) + ":" + game.name;
         }
     }
 

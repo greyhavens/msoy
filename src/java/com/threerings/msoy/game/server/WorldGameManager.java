@@ -77,15 +77,15 @@ public class WorldGameManager extends EZGameManager
         WorldGameConfig wgconfig = (WorldGameConfig)_config;
         ((WorldGameObject)_plobj).config = wgconfig;
         
-        final int itemId = wgconfig.game.getProgenitorId();
+        final int prototypeId = wgconfig.persistentGameId;
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {
-                    _mems = MsoyServer.memoryRepo.loadMemory(Item.GAME, itemId);
+                    _mems = MsoyServer.memoryRepo.loadMemory(Item.GAME, prototypeId);
                     return true;
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to load memories [where=" + where() +
-                            ", id=" + itemId + "].", pe);
+                            ", id=" + prototypeId + "].", pe);
                     return false;
                 }
             };

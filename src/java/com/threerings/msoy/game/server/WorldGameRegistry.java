@@ -103,7 +103,7 @@ public class WorldGameRegistry
                     WorldGameConfig config = new WorldGameConfig();
                     config.game = (Game)item;
                     config.configData = config.game.gameMedia.getMediaPath();
-                    config.persistentGameId = config.game.getProgenitorId();
+                    config.persistentGameId = config.game.getPrototypeId();
                     config.players = new Name[config.game.maxPlayers];
                     
                     MsoyServer.plreg.createPlace(config);
@@ -164,7 +164,7 @@ public class WorldGameRegistry
         }
         
         // make sure the entry refers to the game
-        entry.item = new ItemIdent(Item.GAME, gameObj.config.game.getProgenitorId());
+        entry.item = new ItemIdent(Item.GAME, gameObj.config.game.getPrototypeId());
         
         // TODO: verify that the memory does not exceed legal size
         
