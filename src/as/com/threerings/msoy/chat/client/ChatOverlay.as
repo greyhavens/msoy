@@ -776,12 +776,10 @@ public class ChatOverlay
 
         var subtitleY :Number = p.y - (_target.height - _subtitleHeight);
         if (subtitleY >= 0 && subtitleY < _subtitleHeight) {
-            // TODO: Remove this magic number. It seems delta is always
-            // a factor of three. I would like to find the constant that
-            // specifies this behavior.
-            const FACTOR :Number = -1 / 3;
-            var newPos :int = _historyBar.scrollPosition +
-                Math.round(event.delta * FACTOR);
+            // It turns out that delta may move in increments of 1-3 depending
+            // on the OS. I suppose we could track deltas and keep track
+            // of the smallest absolute value we see and normalize that to 1...
+            var newPos :int = _historyBar.scrollPosition - event.delta;
             // Note: the scrollPosition setter function will ensure
             // the value is bounded by min/max for setting the position
             // of the thumb, but it does NOT bound the actual underlying
