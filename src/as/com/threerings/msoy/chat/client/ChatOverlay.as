@@ -54,6 +54,11 @@ public class ChatOverlay
     {
         _ctx = ctx;
 
+        _overlay = new Sprite();
+        _overlay.mouseChildren = false;
+        _overlay.mouseEnabled = false;
+        _overlay.alpha = ALPHA;
+
         // NOTE: Any null values in the override formats will use the
         // value from the default, so if a property is added to the default
         // then it should be explicitely negated if not desired in an override.
@@ -92,16 +97,11 @@ public class ChatOverlay
             clearGlyphs(_subtitles);
             clearGlyphs(_showingHistory);
             setHistoryEnabled(false);
-            _overlay = null;
         }
 
         _target = target;
 
         if (_target != null) {
-            _overlay = new Sprite();
-            _overlay.mouseChildren = false;
-            _overlay.mouseEnabled = false;
-            _overlay.alpha = ALPHA;
             _overlay.x = 0;
             _overlay.y = 0;
             _target.rawChildren.addChildAt(_overlay,
@@ -554,7 +554,7 @@ public class ChatOverlay
         ArrayUtil.removeFirst(_subtitles, glyph);
         // the glyph may have already been removed, but still expire
         // TODO: possibly fix that, so that a removed glyph is 
-        if (_overlay != null && glyph.parent == _overlay) {
+        if (glyph.parent == _overlay) {
             removeGlyph(glyph);
         }
     }
@@ -824,6 +824,8 @@ public class ChatOverlay
      */
     protected function configureHistoryBarSize () :void
     {
+        // TODO
+        trace("Configuring hist size " + _target.width + ", " + _target.height);
         _historyBar.height = _subtitleHeight;
         _historyBar.move(
             _target.width - ScrollBar.THICKNESS, //_historyBar.width;
@@ -919,7 +921,7 @@ public class ChatOverlay
         // and make sure the ones that are are positioned on the screen correctly
         for (ii = _showingHistory.length - 1; ii >= 0; ii--) {
             glyph = (_showingHistory[ii] as SubtitleGlyph);
-            var managed :Boolean = (_overlay != null) && _overlay.contains(glyph);
+            var managed :Boolean = _overlay.contains(glyph);
             if (glyph.histIndex <= first && glyph.histIndex > (first - count)) {
                 // it should be showing
                 if (!managed) {

@@ -15,6 +15,7 @@ public class ChatContainer extends Container
     {
         _overlay = new ChatOverlay(ctx);
         _overlay.setSubtitlePercentage(1);
+        _overlay.setClickableGlyphs(true);
     }
 
     override public function parentChanged (p :DisplayObjectContainer) :void
