@@ -48,7 +48,7 @@ public class ItemRating extends FlexTable
 
         _item = item;
         _memberRating = memberRating;
-        _itemId = new ItemIdent(_item.getType(), _item.getProgenitorId());
+        _itemId = new ItemIdent(_item.getType(), _item.getPrototypeId());
         // if we're not logged in, force MODE_READ
         _mode = (CItem.creds == null) ? MODE_READ : mode;
 

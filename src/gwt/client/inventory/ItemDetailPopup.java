@@ -65,7 +65,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
             // TODO: "# Players (Minimum)", String.valueOf(((Game)_item).minPlayers),
             // TODO: "# Players (Maximum)", String.valueOf(((Game)_item).maxPlayers));
 
-            int gameId = _item.getProgenitorId();
+            int gameId = _item.getPrototypeId();
             controls.add(new HTML("<a href=\"/game/index.html#" + gameId + "\">" +
                                   CInventory.msgs.detailPlay() + "</a>"));
 
