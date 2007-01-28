@@ -18,6 +18,7 @@ import flash.text.TextFormat;
 
 import flash.utils.getTimer; // function import
 
+import mx.events.FlexEvent;
 import mx.events.ResizeEvent;
 import mx.events.ScrollEvent;
 
@@ -175,7 +176,9 @@ public class ChatOverlay
             _historyBar.includeInLayout = false;
             configureHistoryBarSize();
             _target.addChild(_historyBar);
-            _target.addEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
+            _target.addEventListener(FlexEvent.ADD, handleTargetAdded);
+            _target.addEventListener(FlexEvent.REMOVE, handleTargetRemoved);
+            handleTargetAdded();
             resetHistoryOffset();
 
             // out with the subtitles
@@ -188,7 +191,9 @@ public class ChatOverlay
             figureCurrentHistory();
 
         } else {
-            _target.removeEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
+            _target.removeEventListener(FlexEvent.ADD, handleTargetAdded);
+            _target.removeEventListener(FlexEvent.REMOVE, handleTargetRemoved);
+            handleTargetRemoved();
             _target.removeChild(_historyBar);
             _historyBar.removeEventListener(ScrollEvent.SCROLL, handleHistoryScroll);
             _historyBar = null;
@@ -735,21 +740,58 @@ public class ChatOverlay
     }
 
     /**
+     * When we're in history mode, listen for our target being added
+     * to the hierarchy.
+     */
+    protected function handleTargetAdded (event :FlexEvent = null) :void
+    {
+        if (_target.stage) {
+            // we need to listen to the stage for mouse wheel events,
+            // otherwise we don't get them over many targets
+            _stage = _target.stage;
+            _stage.addEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
+        }
+    }
+
+    /**
+     * When in history mode, listen for our target being removed
+     * from the hierarchy.
+     */
+    protected function handleTargetRemoved (event :FlexEvent = null) :void
+    {
+        trace("target.stage: " + _target.stage);
+        if (_stage) {
+            _stage.removeEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
+            _stage = null;
+        }
+    }
+
+    /**
      * Handle mouse wheel events detected in our target container.
      */
     protected function handleMouseWheel (event :MouseEvent) :void
     {
-        var subtitleY :Number = event.localY - (_target.height - _subtitleHeight);
+        var p :Point = new Point(event.stageX, event.stageY);
+        p = _target.globalToLocal(p);
+
+        var subtitleY :Number = p.y - (_target.height - _subtitleHeight);
         if (subtitleY >= 0 && subtitleY < _subtitleHeight) {
             // TODO: Remove this magic number. It seems delta is always
             // a factor of three. I would like to find the constant that
             // specifies this behavior.
-            var FACTOR :Number = -1 / 3;
+            const FACTOR :Number = -1 / 3;
             var newPos :int = _historyBar.scrollPosition +
                 Math.round(event.delta * FACTOR);
+            // Note: the scrollPosition setter function will ensure
+            // the value is bounded by min/max for setting the position
+            // of the thumb, but it does NOT bound the actual underlying
+            // value. Thus, the scrollPosition can "go negative" and must
+            // climb back out again before the thumb starts to move from 0.
+            // It's retarded, and it means we have to bound the value ourselves.
             newPos = Math.min(_historyBar.maxScrollPosition,
                 Math.max(_historyBar.minScrollPosition, newPos));
 
+            // only update if changed
             if (newPos != int(_historyBar.scrollPosition)) {
                 _historyBar.scrollPosition = newPos;
                 // Retardedly, as of Flex v2.0.1, setting the scroll position
@@ -951,6 +993,9 @@ public class ChatOverlay
 
     /** The target container over which we're overlaying chat. */
     protected var _target :Container;
+
+    /** The stage of our target, while tracking mouseWheel in history mode. */
+    protected var _stage :Stage;
 
     /** The currently displayed list of subtitles. */
     protected var _subtitles :Array = [];

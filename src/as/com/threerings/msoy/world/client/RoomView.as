@@ -390,8 +390,8 @@ public class RoomView extends AbstractRoomView
 
         _roomObj.addListener(this);
 
-        chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
         chatOverlay.newPlaceEntered(this);
+        chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
 
         addAllOccupants();
 
