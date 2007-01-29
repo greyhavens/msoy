@@ -97,23 +97,17 @@ public class ChatGlyph extends Sprite
         }
 
         // restrain the size to the used size
-        // TODO: Research this more? As far as I can tell, everyone
-        // in the world just adds a fudge factor to the supposedly
-        // correct sizes. I tried figuring out where this value comes
-        // from, but all the formatting properties I'm using with the
-        // TextField have no indent/margin/etc.
-/*
-        o = txt.getTextFormat(); //txt.defaultTextFormat;
-        trace("default: " + o.align + ", " + o.blockIndent +
-            ", " + o.indent + ", " + o.kerning + ", " + o.leading + ", " +
-            o.leftMargin + ", " + o.rightMargin + ", " + o.letterSpacing);
-        txt.width = txt.textWidth;
-        txt.height = txt.textHeight;
-        */
         txt.autoSize = TextFieldAutoSize.NONE;
-        const FUDGE :int = 5;
-        txt.width = txt.textWidth + FUDGE;
-        txt.height = txt.textHeight + FUDGE;
+        // No shit, this is how you do it. These values are entirely
+        // missing from the public API anywhere. They are available
+        // in mx.controls.UITextField::mx_internal.TEXT_WIDTH_PADDING,
+        // but I'd like to not depend on that.
+        // This is so typical of the total lack of respect Adobe has
+        // for their developers: everyone is left to guess these on their own.
+        const FUDGE_X :int = 5;
+        const FUDGE_Y :int = 4;
+        txt.width = txt.textWidth + FUDGE_X;
+        txt.height = txt.textHeight + FUDGE_Y;
     }
 
     protected function handleStartExpire (evt :TimerEvent) :void
