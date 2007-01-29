@@ -23,11 +23,12 @@ public class BubbleGlyph extends ChatGlyph
 
         setText(txt, defaultFmt, texts);
         makeGolden(txt);
+        sizeFieldToText(txt);
 
         addChild(txt);
         _txt = txt;
         var offset :int = overlay.drawBubbleShape(
-            graphics, type, txt.textWidth, txt.textHeight);
+            graphics, type, txt.width, txt.height);
         txt.x = offset;
         txt.y = offset;
     }

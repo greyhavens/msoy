@@ -95,8 +95,16 @@ public class ChatGlyph extends Sprite
                 length = newLength;
             }
         }
+    }
 
-        // Restrain the size to the used size.
+    /**
+     * After the text is set and positioned, and any desired
+     * adjustments have been made, this "bakes-in" the text size
+     * into the TextField's width/height.
+     */
+    protected function sizeFieldToText (txt :TextField) :void
+    {
+        txt.autoSize = TextFieldAutoSize.NONE;
         // --> No shit, this is how you do it. These values are entirely
         // missing from the public API anywhere. They are available
         // in mx.controls.UITextField::mx_internal.TEXT_WIDTH_PADDING,
