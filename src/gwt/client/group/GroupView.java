@@ -39,6 +39,7 @@ import com.threerings.msoy.web.data.MemberName;
 import client.shell.MsoyEntryPoint;
 import client.util.MediaUtil;
 import client.util.PromptPopup;
+import client.util.PrettyTextPanel;
 
 import client.group.GroupEdit.GroupSubmissionListener;
 
@@ -187,9 +188,9 @@ public class GroupView extends VerticalPanel
             description.add(blurbLabel);
         }
         if (_extras.charter != null) {
-            Label charterLabel = new Label(_extras.charter);
-            charterLabel.setStyleName("Charter");
-            description.add(charterLabel);
+            PrettyTextPanel charter = new PrettyTextPanel(_extras.charter);
+            charter.setStyleName("Charter");
+            description.add(charter);
         }
         _table.setWidget(0, 1, description);
         if (_extras.detailBackground != null) {
