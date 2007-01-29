@@ -790,10 +790,15 @@ public class ChatOverlay
 
         var subtitleY :Number = p.y - (_target.height - _subtitleHeight);
         if (subtitleY >= 0 && subtitleY < _subtitleHeight) {
-            // It turns out that delta may move in increments of 1-3 depending
-            // on the OS. I suppose we could track deltas and keep track
-            // of the smallest absolute value we see and normalize that to 1...
-            var newPos :int = _historyBar.scrollPosition - event.delta;
+            // The delta factor is configurable per OS, and so may range
+            // from 1-3 or even higher. We normalize this based on observed
+            // values so that a single click of the mouse wheel always scrolls
+            // one line.
+            if (_wheelFactor > Math.abs(event.delta)) {
+                _wheelFactor = Math.abs(event.delta);
+            }
+            var newPos :int = _historyBar.scrollPosition -
+                int(event.delta / _wheelFactor);
             // Note: the scrollPosition setter function will ensure
             // the value is bounded by min/max for setting the position
             // of the thumb, but it does NOT bound the actual underlying
@@ -1043,6 +1048,9 @@ public class ChatOverlay
 
     /** The history scrollbar. */
     protected var _historyBar :VScrollBar;
+
+    /** The smallest absolute value seen for delta in a mouse wheel event. */
+    protected var _wheelFactor :int = int.MAX_VALUE;
 
     /** True while we're setting the position on the scrollbar, so that we
      * know to ignore the event. */
