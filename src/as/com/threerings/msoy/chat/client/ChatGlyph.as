@@ -96,9 +96,8 @@ public class ChatGlyph extends Sprite
             }
         }
 
-        // restrain the size to the used size
-        txt.autoSize = TextFieldAutoSize.NONE;
-        // No shit, this is how you do it. These values are entirely
+        // Restrain the size to the used size.
+        // --> No shit, this is how you do it. These values are entirely
         // missing from the public API anywhere. They are available
         // in mx.controls.UITextField::mx_internal.TEXT_WIDTH_PADDING,
         // but I'd like to not depend on that.
