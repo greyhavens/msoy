@@ -26,7 +26,10 @@ public class PrettyTextPanel extends Widget
         if (thisStage + 1 < pipeline.length) {
             pipeline[thisStage + 1].parse(plainText, parent, thisStage + 1);
         } else {
-            // end of the pipeline has been reached - create a div for this text
+            // end of the pipeline has been reached - GWT DOM access is a little deficient in that
+            // you cannot append a text node to an element.  This is a bit of a hack to get around
+            // that by creating an inline div and appending that (with the child text contained)
+            // instead.
             Element div = DOM.createDiv();
             DOM.setInnerText(div, plainText);
             DOM.setStyleAttribute(div, "display", "inline"); 
@@ -69,7 +72,29 @@ public class PrettyTextPanel extends Widget
         new Parser() {
             public void parse (String plainText, Element parent, int stage)
             {
-                passDownPipe(plainText, parent, stage);
+                // TODO: add sophistication.  This currently does a boring search for http: - 
+                // in the future it should recognize less formal URLs in text.  A super-awesome
+                // regex will probably be needed to make sure nobody is doing some tricky hackery
+                // in the URL (and to avoid snafu's like periods and tabs at the end of URLs).  
+                String parseText = plainText;
+                int ii = 0;
+                while (ii >= 0) {
+                    ii = parseText.indexOf("http:");
+                    if (ii >= 0) {
+                        passDownPipe(parseText.substring(0, ii), parent, stage);
+                        int nextSpace = parseText.indexOf(" ", ii);
+                        nextSpace = nextSpace == -1 ? parseText.length() : nextSpace;
+                        String URL = parseText.substring(ii, nextSpace);
+                        Element anchor = DOM.createAnchor();
+                        DOM.setAttribute(anchor, "href", URL);
+                        DOM.setInnerText(anchor, URL);
+                        DOM.appendChild(parent, anchor);
+                        parseText = parseText.substring(nextSpace);
+                    }
+                }
+                if (parseText.length() > 0) {
+                    passDownPipe(parseText, parent, stage);
+                }
             }
         }
     };
