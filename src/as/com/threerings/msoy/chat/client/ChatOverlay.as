@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.chat.client {
 
+import flash.display.BlendMode;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -58,6 +59,7 @@ public class ChatOverlay
         _overlay.mouseChildren = false;
         _overlay.mouseEnabled = false;
         _overlay.alpha = ALPHA;
+        _overlay.blendMode = BlendMode.LAYER;
 
         // NOTE: Any null values in the override formats will use the
         // value from the default, so if a property is added to the default
