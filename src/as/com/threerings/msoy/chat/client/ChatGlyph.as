@@ -9,6 +9,7 @@ import flash.events.Event;
 import flash.events.TimerEvent;
 
 import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
 import flash.utils.Timer;
@@ -56,6 +57,7 @@ public class ChatGlyph extends Sprite
         txt.multiline = true;
         txt.wordWrap = true;
         txt.selectable = true; // enable copy/paste
+        txt.alwaysShowSelection = true; // show selection even when not focused
         return txt;
     }
 
@@ -93,6 +95,25 @@ public class ChatGlyph extends Sprite
                 length = newLength;
             }
         }
+
+        // restrain the size to the used size
+        // TODO: Research this more? As far as I can tell, everyone
+        // in the world just adds a fudge factor to the supposedly
+        // correct sizes. I tried figuring out where this value comes
+        // from, but all the formatting properties I'm using with the
+        // TextField have no indent/margin/etc.
+/*
+        o = txt.getTextFormat(); //txt.defaultTextFormat;
+        trace("default: " + o.align + ", " + o.blockIndent +
+            ", " + o.indent + ", " + o.kerning + ", " + o.leading + ", " +
+            o.leftMargin + ", " + o.rightMargin + ", " + o.letterSpacing);
+        txt.width = txt.textWidth;
+        txt.height = txt.textHeight;
+        */
+        txt.autoSize = TextFieldAutoSize.NONE;
+        const FUDGE :int = 5;
+        txt.width = txt.textWidth + FUDGE;
+        txt.height = txt.textHeight + FUDGE;
     }
 
     protected function handleStartExpire (evt :TimerEvent) :void
