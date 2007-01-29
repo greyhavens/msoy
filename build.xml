@@ -203,7 +203,7 @@
            <arg value="src/gwt/@{page}.gwt.xml"/>
          </exec>
       </else></if>
-      <java fork="true" maxmemory="128M" failonerror="true"
+      <java fork="true" maxmemory="128M" failonerror="false" resultproperty="gwt.result"
             classname="com.google.gwt.dev.GWTCompiler">
         <classpath>
           <pathelement location="${deploy.dir}/classes"/>
@@ -217,7 +217,21 @@
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
         <arg value="@{page}"/>
+        <!-- gather all the compiler output into a property -->
+        <redirector outputproperty="redirector.out"/>
       </java>
+
+      <!-- until the GWT compiler does the right thing echo errors/warnings correctly -->
+      <if><contains string="${redirector.out}" substring="[ERROR]"/><then>
+        <echo level="error">${redirector.out}</echo>
+      </then><elseif><contains string="${redirector.out}" substring="[WARNING]"/><then>
+        <echo level="warning">${redirector.out}</echo>
+      </then></elseif><else>
+        <echo level="info">${redirector.out}</echo>
+      </else></if>
+
+      <!-- fail the build if the GWT compiler returned 1 -->
+      <fail><condition><equals arg1="${gwt.result}" arg2="1"/></condition></fail>
     </sequential></for>
     <touch file="${gclient.buildstamp}"/>
   </target> 
