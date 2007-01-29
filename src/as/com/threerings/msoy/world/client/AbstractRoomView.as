@@ -124,6 +124,7 @@ public class AbstractRoomView extends Sprite
         var x :Number = p.x;
         var y :Number = p.y;
 
+        // TODO NOW
         // TODO: much of this could be pre-computed, perhaps we store it in
         // a SceneMetrics class
         var sceneWidth :int = _scene.getWidth();
@@ -217,6 +218,11 @@ public class AbstractRoomView extends Sprite
         }
 
         return new ClickLocation(clickWall, new MsoyLocation(xx, yy, zz, 0));
+    }
+
+    protected function setBackWallBottom (bwb :Number) :void
+    {
+        // nada, overridden, will go away with a TODO, above
     }
 
     /**
@@ -593,6 +599,17 @@ public class AbstractRoomView extends Sprite
             _bkgGraphics = null;
         }
 
+        // TODO: this will move to metrics init method
+        var minScale :Number = computeMinScale();
+        var horizon :Number = 1 - _scene.getHorizon();
+        var sceneWidth :int = _scene.getWidth();
+        var backWallHeight :Number = TARGET_HEIGHT * minScale;
+
+        var horizonY :Number = TARGET_HEIGHT * horizon;
+        var backWallTop :Number = horizonY - (backWallHeight * horizon);
+        var backWallBottom :Number = backWallTop + backWallHeight;
+        setBackWallBottom(backWallBottom);
+
         var drawWalls :Boolean = (_scene.getSceneType() == MsoySceneModel.DRAWN_ROOM);
         var drawEdges :Boolean = drawWalls || _editing;
         if (!drawEdges) {
@@ -604,15 +621,6 @@ public class AbstractRoomView extends Sprite
 
         var g :Graphics = _bkgGraphics.graphics;
         g.clear();
-
-        var sceneWidth :int = _scene.getWidth();
-        var minScale :Number = computeMinScale();
-        var backWallHeight :Number = TARGET_HEIGHT * minScale;
-
-        var horizon :Number = 1 - _scene.getHorizon();
-        var horizonY :Number = TARGET_HEIGHT * horizon;
-        var backWallTop :Number = horizonY - (backWallHeight * horizon);
-        var backWallBottom :Number = backWallTop + backWallHeight;
 
         var floorWidth :Number = (sceneWidth * minScale);
         var floorInset :Number = (sceneWidth - floorWidth) / 2;
@@ -726,6 +734,6 @@ public class AbstractRoomView extends Sprite
     private static const PHI :Number = (1 + Math.sqrt(5)) / 2;
 
     private static const TARGET_WIDTH :Number = 800;
-    private static const TARGET_HEIGHT :Number = TARGET_WIDTH / PHI;
+    protected static const TARGET_HEIGHT :Number = TARGET_WIDTH / PHI;
 }
 }

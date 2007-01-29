@@ -18,16 +18,7 @@ public class FlashGamePanel extends EZGamePanel
     {
         super(ctx, ctrl);
 
-        // There is a bug in BoxLayout that causes children
-        // that should not be included in layout to be positioned anyway.
-        // So we turn off layout, which is probably a bad idea.
-        autoLayout = false;
-        // TODO: this panel reports a bogus size when the overlay is
-        // first setting up the history bar. It notices when the panel
-        // resizes if the user resizes the msoy window, but otherwise it
-        // doesn't. Fix.
         _chatOverlay = new ChatOverlay(ctx);
-        _chatOverlay.setSubtitlePercentage(1);
     }
 
     override public function willEnterPlace (plobj :PlaceObject) :void

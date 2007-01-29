@@ -14,7 +14,6 @@ public class ChatContainer extends Container
     public function ChatContainer (ctx :MsoyContext)
     {
         _overlay = new ChatOverlay(ctx);
-        _overlay.setSubtitlePercentage(1);
         _overlay.setClickableGlyphs(true);
     }
 

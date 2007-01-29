@@ -500,6 +500,11 @@ public class RoomView extends AbstractRoomView
         return _loadAllMedia;
     }
 
+    override protected function setBackWallBottom (bwb :Number) :void
+    {
+        chatOverlay.setSubtitlePercentage((TARGET_HEIGHT - bwb) / TARGET_HEIGHT);
+    }
+
     protected function scrollView () :void
     {
         if (_centerSprite == null) {

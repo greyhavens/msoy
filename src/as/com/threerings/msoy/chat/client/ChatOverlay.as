@@ -82,10 +82,15 @@ public class ChatOverlay
 
     /**
      * Set the target container where this chat should add its overlay.
+     *
+     * @param target the container to which a chat overlay should be added;
+     *               or null to release references and internal resources
+     *               associated with the previous target.
      */
     public function setTarget (target :Container) :void
     {
         if (_target != null) {
+            // Removing from the old
             _ctx.getChatDirector().removeChatDisplay(this);
             _target.removeEventListener("childrenChanged", handleContainerPopulate);
             _target.removeEventListener(ResizeEvent.RESIZE, handleContainerResize);
@@ -99,9 +104,11 @@ public class ChatOverlay
             setHistoryEnabled(false);
         }
 
+        //
         _target = target;
 
         if (_target != null) {
+            // Adding to the new
             _overlay.x = 0;
             _overlay.y = 0;
             _target.rawChildren.addChildAt(_overlay,
@@ -119,50 +126,8 @@ public class ChatOverlay
     }
 
     /**
-     * Are we currently showing chat history?
-     */
-    public function isHistoryMode () :Boolean
-    {
-        return (_historyBar != null);
-    }
-
-    // from ChatDisplay
-    public function clear () :void
-    {
-        clearGlyphs(_subtitles);
-    }
-
-    // from ChatDisplay
-    public function displayMessage (
-        msg :ChatMessage, alreadyDisp :Boolean) :Boolean
-    {
-        if (_target == null) {
-            return false;
-        }
-
-        return displayMessageNow(msg);
-    }
-
-    /**
-     * Sets whether or not the glyphs are clickable.
-     */
-    public function setClickableGlyphs (clickable :Boolean) :void
-    {
-        _overlay.alpha = clickable ? 1 : ALPHA;
-        _overlay.mouseChildren = clickable;
-    }
-
-    /**
-     * Set the percentage of the bottom of the screen to use for subtitles.
-     * TODO: by pixel?
-     */
-    public function setSubtitlePercentage (perc :Number) :void
-    {
-        _subtitlePercentage = perc;
-    }
-
-    /**
      * Set whether history is enabled or not.
+     * TODO: Prefs install defaults.
      */
     public function setHistoryEnabled (historyEnabled :Boolean) :void
     {
@@ -200,6 +165,54 @@ public class ChatOverlay
 
             clearGlyphs(_showingHistory);
         }
+    }
+
+    /**
+     * Are we currently showing chat history?
+     */
+    public function isHistoryMode () :Boolean
+    {
+        return (_historyBar != null);
+    }
+
+    /**
+     * Sets whether or not the glyphs are clickable.
+     */
+    public function setClickableGlyphs (clickable :Boolean) :void
+    {
+        _overlay.alpha = clickable ? 1 : ALPHA;
+        _overlay.mouseChildren = clickable;
+    }
+
+    /**
+     * Set the percentage of the bottom of the screen to use for subtitles.
+     * TODO: by pixel?
+     */
+    public function setSubtitlePercentage (perc :Number) :void
+    {
+        if (_subtitlePercentage != perc) {
+            _subtitlePercentage = perc;
+            if (_target) {
+                layout();
+            }
+        }
+    }
+
+    // from ChatDisplay
+    public function clear () :void
+    {
+        clearGlyphs(_subtitles);
+    }
+
+    // from ChatDisplay
+    public function displayMessage (
+        msg :ChatMessage, alreadyDisp :Boolean) :Boolean
+    {
+        if (_target == null) {
+            return false;
+        }
+
+        return displayMessageNow(msg);
     }
 
     /**
@@ -434,6 +447,7 @@ public class ChatOverlay
      */
     protected function getChatExpire (stamp :int, text :String) :int
     {
+        // load the configured durations
         var durations :Array =
             (DISPLAY_DURATION_PARAMS[getDisplayDurationIndex()] as Array);
 
@@ -824,8 +838,6 @@ public class ChatOverlay
      */
     protected function configureHistoryBarSize () :void
     {
-        // TODO
-        trace("Configuring hist size " + _target.width + ", " + _target.height);
         _historyBar.height = _subtitleHeight;
         _historyBar.move(
             _target.width - ScrollBar.THICKNESS, //_historyBar.width;
@@ -1007,7 +1019,7 @@ public class ChatOverlay
     protected var _subtitleHeight :int = SUBTITLE_HEIGHT_GUESS * 5;
 
     /** The percent of the bottom of the screen to use for subtitles. */
-    protected var _subtitlePercentage :Number = .4;
+    protected var _subtitlePercentage :Number = 1;
 
     /** The history offset (from 0) such that the history lines
      * (0, _histOffset - 1) will all fit onscreen if the lowest scrollbar
