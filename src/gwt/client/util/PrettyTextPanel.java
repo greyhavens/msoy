@@ -68,6 +68,69 @@ public class PrettyTextPanel extends Widget
             }
         },
 
+        // bold parser
+        new Parser() {
+            public void parse (String plainText, Element parent, int stage)
+            {
+                String[] bolds = plainText.split("\\[b\\]");
+                for (int ii = 0; ii < bolds.length; ii++) {
+                    // bold sections must have a cooresponding [/b]
+                    int end = bolds[ii].indexOf("[/b]");
+                    if (end >= 0) {
+                        Element b = DOM.createDiv();
+                        DOM.setStyleAttribute(b, "fontWeight", "bold");
+                        DOM.setStyleAttribute(b, "display", "inline");
+                        passDownPipe(bolds[ii].substring(0, end), b, stage);
+                        DOM.appendChild(parent, b);
+                        bolds[ii] = bolds[ii].substring(end + 4);
+                    }
+                    passDownPipe(bolds[ii], parent, stage);
+                }
+            }
+        },
+        
+        // italics parser
+        new Parser() {
+            public void parse (String plainText, Element parent, int stage)
+            {
+                String[] italics = plainText.split("\\[i\\]");
+                for (int ii = 0; ii < italics.length; ii++) {
+                    // bold sections must have a cooresponding [/i]
+                    int end = italics[ii].indexOf("[/i]");
+                    if (end >= 0) {
+                        Element i = DOM.createDiv();
+                        DOM.setStyleAttribute(i, "fontStyle", "italic");
+                        DOM.setStyleAttribute(i, "display", "inline");
+                        passDownPipe(italics[ii].substring(0, end), i, stage);
+                        DOM.appendChild(parent, i);
+                        italics[ii] = italics[ii].substring(end + 4);
+                    }
+                    passDownPipe(italics[ii], parent, stage);
+                }
+            }
+        },
+
+        // underline parser
+        new Parser() {
+            public void parse (String plainText, Element parent, int stage)
+            {
+                String[] underlines = plainText.split("\\[u\\]");
+                for (int ii = 0; ii < underlines.length; ii++) {
+                    // bold sections must have a cooresponding [/i]
+                    int end = underlines[ii].indexOf("[/u]");
+                    if (end >= 0) {
+                        Element u = DOM.createDiv();
+                        DOM.setStyleAttribute(u, "textDecoration", "underline");
+                        DOM.setStyleAttribute(u, "display", "inline");
+                        passDownPipe(underlines[ii].substring(0, end), u, stage);
+                        DOM.appendChild(parent, u);
+                        underlines[ii] = underlines[ii].substring(end + 4);
+                    }
+                    passDownPipe(underlines[ii], parent, stage);
+                }
+            }
+        },
+
         // link parser
         new Parser() {
             public void parse (String plainText, Element parent, int stage)
