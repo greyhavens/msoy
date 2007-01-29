@@ -454,58 +454,63 @@ public class RoomController extends SceneController
 
     protected function keyEvent (event :KeyboardEvent) :void
     {
-        var keyDown :Boolean = event.type == KeyboardEvent.KEY_DOWN;
-        switch (event.keyCode) {
-        case Keyboard.F4:
-            _roomView.dimAvatars(keyDown);
-            return;
-
-        case Keyboard.F5:
-            _roomView.dimFurni(keyDown);
-            return;
-
-        case Keyboard.F6:
-            _roomView.chatOverlay.setClickableGlyphs(keyDown);
-            return;
-        }
-
-        if (keyDown) {
-            switch (event.charCode) {
-            case 91: // '['
-                _roomView.scrollViewBy(-ROOM_SCROLL_INCREMENT);
-                break;
-
-            case 93: // ']'
-                _roomView.scrollViewBy(ROOM_SCROLL_INCREMENT);
-                break;
-            }
-        }
-
-        if (keyDown) {
-            var frob :String = null;
+        try {
+            var keyDown :Boolean = event.type == KeyboardEvent.KEY_DOWN;
             switch (event.keyCode) {
-            case Keyboard.F2:
-                frob = MemberObject.CHAT_STYLE;
-                break;
+            case Keyboard.F4:
+                _roomView.dimAvatars(keyDown);
+                return;
 
-            case Keyboard.F3:
-                frob = MemberObject.CHAT_POP_STYLE;
-                break;
+            case Keyboard.F5:
+                _roomView.dimFurni(keyDown);
+                return;
 
-            case Keyboard.F1:
-                handleAction(EDIT_SCENE, null);
-                break;
-
-            case Keyboard.F7:
-                _roomView.chatOverlay.setHistoryEnabled(
-                    !_roomView.chatOverlay.isHistoryMode());
-                break;
+            case Keyboard.F6:
+                _roomView.chatOverlay.setClickableGlyphs(keyDown);
+                return;
             }
 
-            if (frob != null) {
-                _mctx.getClient().getClientObject().postMessage(
-                    "alterTEMP", [ frob ]);
+            if (keyDown) {
+                switch (event.charCode) {
+                case 91: // '['
+                    _roomView.scrollViewBy(-ROOM_SCROLL_INCREMENT);
+                    break;
+
+                case 93: // ']'
+                    _roomView.scrollViewBy(ROOM_SCROLL_INCREMENT);
+                    break;
+                }
             }
+
+            if (keyDown) {
+                var frob :String = null;
+                switch (event.keyCode) {
+                case Keyboard.F2:
+                    frob = MemberObject.CHAT_STYLE;
+                    break;
+
+                case Keyboard.F3:
+                    frob = MemberObject.CHAT_POP_STYLE;
+                    break;
+
+                case Keyboard.F1:
+                    handleAction(EDIT_SCENE, null);
+                    break;
+
+                case Keyboard.F7:
+                    _roomView.chatOverlay.setHistoryEnabled(
+                        !_roomView.chatOverlay.isHistoryMode());
+                    break;
+                }
+
+                if (frob != null) {
+                    _mctx.getClient().getClientObject().postMessage(
+                        "alterTEMP", [ frob ]);
+                }
+            }
+
+        } finally {
+            event.updateAfterEvent();
         }
     }
 
