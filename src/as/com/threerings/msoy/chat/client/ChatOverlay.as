@@ -773,7 +773,6 @@ public class ChatOverlay
      */
     protected function handleTargetRemoved (event :FlexEvent = null) :void
     {
-        trace("target.stage: " + _target.stage);
         if (_stage) {
             _stage.removeEventListener(MouseEvent.MOUSE_WHEEL, handleMouseWheel);
             _stage = null;

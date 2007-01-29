@@ -348,8 +348,7 @@ public class RoomView extends AbstractRoomView
                 (_actors.get(occInfo.bodyOid) as ActorSprite);
             if (actor != null) {
                 // return the global screen coords
-                // TODO: check this rectangle
-                return actor.getRect(this.stage);
+                return actor.getStageRect();
             }
         }
         return null;
@@ -372,10 +371,10 @@ public class RoomView extends AbstractRoomView
             var actorInfo :ActorInfo = actor.getActorInfo();
             if ((actorInfo.bodyOid == myOid) ||
                     (speaker != null && speaker.equals(actorInfo.username))) {
-                high.push(actor.getRect(this.stage));
+                high.push(actor.getStageRect());
 
             } else if (low != null) {
-                low.push(actor.getRect(this.stage));
+                low.push(actor.getStageRect());
             }
         }
     }

@@ -252,8 +252,7 @@ public class ComicOverlay extends ChatOverlay
         // then look for a place nearby where it will fit
         // (making sure we only put it in the area above the subtitles)
         var vbounds :Rectangle = new Rectangle(
-            0, 0, _target.width, _target.height);
-        vbounds.height -= _subtitleHeight;
+            0, 0, _target.width, _target.height - _subtitleHeight);
         if (!DisplayUtil.positionRect(placer, vbounds, getAvoidList(speaker))) {
             // we couldn't fit the bubble!
             return false;

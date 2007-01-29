@@ -26,6 +26,7 @@ import flash.events.TextEvent;
 import flash.filters.GlowFilter;
 
 import flash.geom.Point;
+import flash.geom.Rectangle;
 
 import flash.media.Video;
 
@@ -116,6 +117,18 @@ public class MsoySprite extends MediaContainer
     public function getActualHeight () :Number
     {
         return getContentHeight() * _locScale;
+    }
+
+    /**
+     * Get the rectangle bounding this sprite on the stage.
+     */
+    public function getStageRect () :Rectangle
+    {
+        var botRight :Point = new Point(getActualWidth(), getActualHeight());
+        var r :Rectangle = new Rectangle();
+        r.topLeft = localToGlobal(new Point(0, 0));
+        r.bottomRight = localToGlobal(botRight);
+        return r;
     }
 
     public function isInteractive () :Boolean
@@ -227,14 +240,6 @@ public class MsoySprite extends MediaContainer
     public function getDesc () :MediaDesc
     {
         return _desc;
-    }
-
-    protected function getGlowFilterIndex () :int
-    {
-        var ourFilters :Array = filters; // must make a copy
-        if (ourFilters != null) {
-        }
-        return -1;
     }
 
     /**
