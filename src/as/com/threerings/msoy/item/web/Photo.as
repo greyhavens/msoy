@@ -15,6 +15,12 @@ public class Photo extends Item
     /** The photo media. */
     public var photoMedia :MediaDesc;
 
+    /** The width (in pixels) of the photo media. */
+    public var photoWidth :int;
+
+    /** The height (in pixels) of the photo media. */
+    public var photoHeight :int;
+
     // from Item
     override public function getType () :int
     {
@@ -39,6 +45,8 @@ public class Photo extends Item
         super.writeObject(out);
 
         out.writeObject(photoMedia);
+        out.writeInt(photoWidth);
+        out.writeInt(photoHeight);
     }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -46,6 +54,8 @@ public class Photo extends Item
         super.readObject(ins);
 
         photoMedia = (ins.readObject() as MediaDesc);
+        photoWidth = ins.readInt();
+        photoHeight = ins.readInt();
     }
 }
 }
