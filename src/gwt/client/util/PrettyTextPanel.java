@@ -7,6 +7,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.DOM;
 
+import client.shell.CShell;
+
 public class PrettyTextPanel extends Widget 
 {
     /**
@@ -68,69 +70,65 @@ public class PrettyTextPanel extends Widget
             }
         },
 
-        // bold parser
+        // style markup parser
         new Parser() {
             public void parse (String plainText, Element parent, int stage)
             {
-                String[] bolds = plainText.split("\\[b\\]");
-                for (int ii = 0; ii < bolds.length; ii++) {
-                    // bold sections must have a cooresponding [/b]
-                    int end = bolds[ii].indexOf("[/b]");
-                    if (end >= 0) {
-                        Element b = DOM.createDiv();
-                        DOM.setStyleAttribute(b, "fontWeight", "bold");
-                        DOM.setStyleAttribute(b, "display", "inline");
-                        passDownPipe(bolds[ii].substring(0, end), b, stage);
-                        DOM.appendChild(parent, b);
-                        bolds[ii] = bolds[ii].substring(end + 4);
+                String[] styles = { "i", "b", "u" };
+                String stylesRegex = "[ibu]";
+                CShell.log("searching for styles in: " + plainText);
+                if (plainText.matches(".*\\[" + stylesRegex + "\\].*\\[/" + stylesRegex + 
+                    "\\].*")) {
+                    CShell.log("matched!");
+                    int smallestIndex = plainText.length();
+                    int smallestIndexIndex = 0;
+                    for (int ii = 0; ii < styles.length; ii++) {
+                        int index = plainText.indexOf("[" + styles[ii] + "]");
+                        index = index == -1 ? plainText.length() : index;
+                        if (index < smallestIndex) {
+                            smallestIndexIndex = ii;
+                            smallestIndex = index;
+                        }
                     }
-                    passDownPipe(bolds[ii], parent, stage);
+                    String styleAttribute = "";
+                    String styleValue = "";
+                    String close = "";
+                    switch (smallestIndexIndex) {
+                    case 0: // italic
+                        styleAttribute = "fontStyle";
+                        styleValue = "italic";
+                        close = "[/i]";
+                        break;
+                    case 1: // bold
+                        styleAttribute = "fontWeight";
+                        styleValue = "bold";
+                        close = "[/b]";
+                        break;
+                    case 2: // underline
+                        styleAttribute = "textDecoration";
+                        styleValue = "underline";
+                        close = "[/u]";
+                        break;
+                    }
+                    CShell.log("smallestIndex: " + smallestIndex + ", indexindex: " + 
+                        smallestIndexIndex + ", styleAttr: " + styleAttribute);
+                    int end = plainText.lastIndexOf(close);
+                    passDownPipe(plainText.substring(0, smallestIndex), parent, stage);
+                    Element styled = DOM.createDiv();
+                    DOM.setStyleAttribute(styled, "display", "inline");
+                    DOM.setStyleAttribute(styled, styleAttribute, styleValue);
+                    // needs to pass through this parser again, in case styles are nested
+                    passDownPipe(plainText.substring(smallestIndex + close.length() - 1, end), 
+                        styled, stage - 1);
+                    DOM.appendChild(parent, styled);
+                    // might be more styles down the line as well
+                    passDownPipe(plainText.substring(end + close.length()), parent, stage - 1);
+                } else {
+                    passDownPipe(plainText, parent, stage);
                 }
             }
         },
         
-        // italics parser
-        new Parser() {
-            public void parse (String plainText, Element parent, int stage)
-            {
-                String[] italics = plainText.split("\\[i\\]");
-                for (int ii = 0; ii < italics.length; ii++) {
-                    // bold sections must have a cooresponding [/i]
-                    int end = italics[ii].indexOf("[/i]");
-                    if (end >= 0) {
-                        Element i = DOM.createDiv();
-                        DOM.setStyleAttribute(i, "fontStyle", "italic");
-                        DOM.setStyleAttribute(i, "display", "inline");
-                        passDownPipe(italics[ii].substring(0, end), i, stage);
-                        DOM.appendChild(parent, i);
-                        italics[ii] = italics[ii].substring(end + 4);
-                    }
-                    passDownPipe(italics[ii], parent, stage);
-                }
-            }
-        },
-
-        // underline parser
-        new Parser() {
-            public void parse (String plainText, Element parent, int stage)
-            {
-                String[] underlines = plainText.split("\\[u\\]");
-                for (int ii = 0; ii < underlines.length; ii++) {
-                    // bold sections must have a cooresponding [/i]
-                    int end = underlines[ii].indexOf("[/u]");
-                    if (end >= 0) {
-                        Element u = DOM.createDiv();
-                        DOM.setStyleAttribute(u, "textDecoration", "underline");
-                        DOM.setStyleAttribute(u, "display", "inline");
-                        passDownPipe(underlines[ii].substring(0, end), u, stage);
-                        DOM.appendChild(parent, u);
-                        underlines[ii] = underlines[ii].substring(end + 4);
-                    }
-                    passDownPipe(underlines[ii], parent, stage);
-                }
-            }
-        },
-
         // link parser
         new Parser() {
             public void parse (String plainText, Element parent, int stage)
