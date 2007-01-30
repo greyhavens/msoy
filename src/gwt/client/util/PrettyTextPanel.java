@@ -7,8 +7,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.DOM;
 
-import client.shell.CShell;
-
 public class PrettyTextPanel extends Widget 
 {
     /**
@@ -76,10 +74,8 @@ public class PrettyTextPanel extends Widget
             {
                 String[] styles = { "i", "b", "u" };
                 String stylesRegex = "[ibu]";
-                CShell.log("searching for styles in: " + plainText);
                 if (plainText.matches(".*\\[" + stylesRegex + "\\].*\\[/" + stylesRegex + 
                     "\\].*")) {
-                    CShell.log("matched!");
                     int smallestIndex = plainText.length();
                     int smallestIndexIndex = 0;
                     for (int ii = 0; ii < styles.length; ii++) {
@@ -90,29 +86,29 @@ public class PrettyTextPanel extends Widget
                             smallestIndex = index;
                         }
                     }
+                    String openRegex = "\\[" + styles[smallestIndexIndex] + "\\]";
+                    String open = "[" + styles[smallestIndexIndex] + "]";
+                    String closeRegex = "\\[/" + styles[smallestIndexIndex] + "\\]";
+                    String close = "[/" + styles[smallestIndexIndex] + "]";
                     String styleAttribute = "";
                     String styleValue = "";
-                    String close = "";
                     switch (smallestIndexIndex) {
                     case 0: // italic
                         styleAttribute = "fontStyle";
                         styleValue = "italic";
-                        close = "[/i]";
                         break;
                     case 1: // bold
                         styleAttribute = "fontWeight";
                         styleValue = "bold";
-                        close = "[/b]";
                         break;
                     case 2: // underline
                         styleAttribute = "textDecoration";
                         styleValue = "underline";
-                        close = "[/u]";
                         break;
                     }
-                    CShell.log("smallestIndex: " + smallestIndex + ", indexindex: " + 
-                        smallestIndexIndex + ", styleAttr: " + styleAttribute);
-                    int end = plainText.lastIndexOf(close);
+                    // this will make things look goofy if one style is nested in another instance
+                    // of itelf - but that shouldn't be done anyway.
+                    int end = plainText.indexOf(close, smallestIndex);
                     passDownPipe(plainText.substring(0, smallestIndex), parent, stage);
                     Element styled = DOM.createDiv();
                     DOM.setStyleAttribute(styled, "display", "inline");
