@@ -16,7 +16,7 @@ import com.threerings.io.ObjectOutputStream;
  * Does something extraordinary.
  */
 public class SceneBookmarkEntry
-    implements Comparable, Hashable, DSet_Entry
+    implements Comparable, DSet_Entry, Hashable
 {
     /** The scene id being represented. */
     public var sceneId :int;
@@ -35,8 +35,8 @@ public class SceneBookmarkEntry
     {
     }
 
-    // from DSet.Entry
-    public function getKey () :Object
+    // from Hashable
+    public function hashCode () :int
     {
         return sceneId;
     }
@@ -55,24 +55,15 @@ public class SceneBookmarkEntry
             (other as SceneBookmarkEntry).sceneId == this.sceneId;
     }
 
-    // from Hashable
-    public function hashCode () :int
-    {
-        return sceneId;
-    }
-
     public function toString () :String
     {
         return sceneName;
     }
 
-    // from superinterface Streamable
-    public function writeObject (out :ObjectOutputStream) :void
+    // from DSet.Entry
+    public function getKey () :Object
     {
-        out.writeInt(sceneId);
-        out.writeField(sceneName);
-        out.writeDouble(lastVisit);
-        out.writeShort(orderingId);
+        return sceneId;
     }
 
     // from superinterface Streamable
@@ -82,6 +73,15 @@ public class SceneBookmarkEntry
         sceneName = (ins.readField(String) as String);
         lastVisit = ins.readDouble();
         orderingId = ins.readShort();
+    }
+
+    // from superinterface Streamable
+    public function writeObject (out :ObjectOutputStream) :void
+    {
+        out.writeInt(sceneId);
+        out.writeField(sceneName);
+        out.writeDouble(lastVisit);
+        out.writeShort(orderingId);
     }
 }
 }
