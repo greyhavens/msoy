@@ -53,6 +53,7 @@ public class GroupView extends VerticalPanel
     public GroupView (int groupId)
     {
         super();
+        setWidth("100%");
 
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
