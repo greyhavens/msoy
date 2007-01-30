@@ -6,6 +6,7 @@ import flash.display.Sprite;
 import flash.media.Sound;
 
 import com.threerings.msoy.export.AvatarControl;
+import com.threerings.msoy.export.ControlEvent;
 
 [SWF(width="50", height="50")]
 public class Ballhead extends Sprite
@@ -15,15 +16,15 @@ public class Ballhead extends Sprite
         _speakSound = Sound(new SPEAK_SOUND());
 
         _ctrl = new AvatarControl(this);
-        _ctrl.appearanceChanged = setupVisual;
-        _ctrl.avatarSpoke = spoke;
-        _ctrl.addAction("start blushing", startBlushing);
-        _ctrl.addAction("stop blushing", stopBlushing);
+        _ctrl.addEventListener(ControlEvent.APPEARANCE_CHANGED, setupVisual);
+        _ctrl.addEventListener(ControlEvent.AVATAR_SPOKE, spoke);
+        _ctrl.addEventListener(ControlEvent.ACTION_TRIGGERED, handleAction);
+        _ctrl.setActions("start blushing", "stop blushing");
 
         setupVisual();
     }
 
-    protected function setupVisual () :void
+    protected function setupVisual (event :Object = null) :void
     {
         var orient :Number = _ctrl.getOrientation();
         var walking :Boolean = _ctrl.isMoving();
@@ -46,20 +47,14 @@ public class Ballhead extends Sprite
             Math.sin(radians) * -25 + 25);
     }
 
-    protected function spoke () :void
+    protected function spoke (event :Object = null) :void
     {
         _speakSound.play();
     }
 
-    protected function startBlushing () :void
+    protected function handleAction (event :ControlEvent) :void
     {
-        _blushing = true;
-        setupVisual();
-    }
-
-    protected function stopBlushing () :void
-    {
-        _blushing = false;
+        _blushing = (event.key === "start blushing");
         setupVisual();
     }
 
