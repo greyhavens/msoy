@@ -747,6 +747,7 @@ public class MemberManager
         obj.put("name", member.member.toString());
         obj.put("id", member.member.getMemberId());
         obj.put("isOnline", member.isOnline);
+        obj.put("pop", member.poulation);
         // if this is just a member stub, skip the complicated bits
         if (member.created != null) {
             obj.put("created", member.created.getTime());
@@ -764,6 +765,7 @@ public class MemberManager
         obj.put("name", group.groupName);
         obj.put("id", group.groupId);
         obj.put("members", group.members);
+        obj.put("pop", group.poulation);
         if (group.logo != null) {
             obj.put("logo", group.logo.toString());
         }
