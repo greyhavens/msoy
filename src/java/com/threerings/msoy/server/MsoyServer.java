@@ -47,6 +47,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.person.server.MailManager;
 import com.threerings.msoy.person.server.PersonPageManager;
 import com.threerings.msoy.person.server.persist.PersonPageRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
@@ -57,7 +58,6 @@ import com.threerings.msoy.world.server.PetManager;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import com.threerings.msoy.server.persist.GroupRepository;
-import com.threerings.msoy.server.persist.MailRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.persist.ProfileRepository;
@@ -229,7 +229,6 @@ public class MsoyServer extends WhirledServer
         memberRepo = new MemberRepository(conProv);
         ProfileRepository profileRepo = new ProfileRepository(conProv);
         groupRepo = new GroupRepository(conProv);
-        MailRepository mailRepo = new MailRepository(conProv);
         SwiftlyProjectRepository swiftlyRepo = new SwiftlyProjectRepository(conProv);
         memoryRepo = new MemoryRepository(conProv);
 
@@ -240,7 +239,7 @@ public class MsoyServer extends WhirledServer
         sceneRepo = (MsoySceneRepository) _screp;
         memberMan.init(memberRepo, profileRepo, groupRepo);
         groupMan.init(groupRepo, memberRepo);
-        mailMan.init(mailRepo, memberRepo);
+        mailMan.init(conProv, memberRepo);
         itemMan.init(conProv);
         ppageMan.init(ppageRepo);
         swiftlyMan.init(invmgr, swiftlyRepo);

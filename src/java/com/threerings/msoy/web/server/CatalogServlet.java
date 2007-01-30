@@ -28,10 +28,10 @@ import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-import com.threerings.msoy.item.server.persist.TagPopularityRecord;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
+import com.threerings.msoy.server.persist.TagPopularityRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -153,7 +153,7 @@ public class CatalogServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         Map<String, Integer> result = new HashMap<String, Integer>();
         try {
-            for (TagPopularityRecord record : repo.getPopularTags(rows)) {
+            for (TagPopularityRecord record : repo.getTagRepository().getPopularTags(rows)) {
                 result.put(record.tag, record.count);
             }
         } catch (PersistenceException pe) {

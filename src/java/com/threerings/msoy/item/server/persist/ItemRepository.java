@@ -4,28 +4,27 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.samskivert.jdbc.depot.annotation.Computed;
-import com.samskivert.jdbc.depot.annotation.Entity;
-
 import com.samskivert.Log;
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.IntListUtil;
+
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
-import com.samskivert.jdbc.depot.PersistenceContext.CacheEvictionFilter;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Modifier;
+import com.samskivert.jdbc.depot.PersistenceContext.CacheEvictionFilter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Computed;
+import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
@@ -34,16 +33,18 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.operator.SQLOperator;
-import com.samskivert.jdbc.depot.operator.Arithmetic.*;
-import com.samskivert.jdbc.depot.operator.Conditionals.*;
-import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
-import com.samskivert.util.ArrayUtil;
-import com.samskivert.util.IntListUtil;
-import com.sun.tools.corba.se.idl.constExpr.NotEqual;
+import com.samskivert.jdbc.depot.operator.Arithmetic.*;
+import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.jdbc.depot.operator.Logic.*;
+import com.samskivert.jdbc.depot.operator.SQLOperator;
+
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagRecord;
+import com.threerings.msoy.server.persist.TagRepository;
+
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.TagHistory;
@@ -52,12 +53,12 @@ import com.threerings.msoy.item.web.TagHistory;
  * Manages a repository of digital items of a particular type.
  */
 public abstract class ItemRepository<
-        T extends ItemRecord,
-        CLT extends CloneRecord<T>,
-        CAT extends CatalogRecord<T>,
-        TT extends TagRecord<T>,
-        THT extends TagHistoryRecord<T>,
-        RT extends RatingRecord<T>>
+    T extends ItemRecord,
+    CLT extends CloneRecord<T>,
+    CAT extends CatalogRecord<T>,
+    TT extends TagRecord,
+    THT extends TagHistoryRecord,
+    RT extends RatingRecord<T>>
     extends DepotRepository
 {
     @Computed @Entity
@@ -70,6 +71,15 @@ public abstract class ItemRepository<
     {
         // we'll be using one persistence context per ItemRecord type
         super(new PersistenceContext("itemdb", provider));
+        _tagRepo = new TagRepository<TT,THT>(provider, getTagClass(), getTagHistoryClass());
+    }
+
+    /**
+     * Returns the repository that manages tags for this item.
+     */
+    public TagRepository<TT,THT> getTagRepository ()
+    {
+        return _tagRepo;
     }
 
     /**
@@ -413,30 +423,30 @@ public abstract class ItemRepository<
             };
             deleteAll(getRatingClass(), new Where(RatingRecord.ITEM_ID, itemId), inv);
 
-            // invalidate and delete tag records for this item
-            inv = new CacheInvalidator() {
-                public void invalidate (PersistenceContext ctx) {
-                    ctx.cacheTraverse(getTagClass().getName(), new CacheEvictionFilter<TT>() {
-                        public boolean testForEviction (Serializable key, TT record) {
-                            return record != null && record.itemId == itemId;
-                        }                
-                    });
-                }
-            };
-            deleteAll(getTagClass(), new Where(TagRecord.ITEM_ID, itemId), inv);
+//             // invalidate and delete tag records for this item
+//             inv = new CacheInvalidator() {
+//                 public void invalidate (PersistenceContext ctx) {
+//                     ctx.cacheTraverse(getTagClass().getName(), new CacheEvictionFilter<TT>() {
+//                         public boolean testForEviction (Serializable key, TT record) {
+//                             return record != null && record.itemId == itemId;
+//                         }                
+//                     });
+//                 }
+//             };
+//             deleteAll(getTagClass(), new Where(TagRecord.ITEM_ID, itemId), inv);
 
-            // invalidate and delete tag history records for this item
-            inv = new CacheInvalidator() {
-                public void invalidate (PersistenceContext ctx) {
-                    String cacheName = getTagHistoryClass().getName();
-                    ctx.cacheTraverse(cacheName, new CacheEvictionFilter<THT>() {
-                        public boolean testForEviction (Serializable key, THT record) {
-                            return record != null && record.itemId == itemId;
-                        }                
-                    });
-                }
-            };
-            deleteAll(getTagHistoryClass(), new Where(TagHistoryRecord.ITEM_ID, itemId), inv);
+//             // invalidate and delete tag history records for this item
+//             inv = new CacheInvalidator() {
+//                 public void invalidate (PersistenceContext ctx) {
+//                     String cacheName = getTagHistoryClass().getName();
+//                     ctx.cacheTraverse(cacheName, new CacheEvictionFilter<THT>() {
+//                         public boolean testForEviction (Serializable key, THT record) {
+//                             return record != null && record.itemId == itemId;
+//                         }                
+//                     });
+//                 }
+//             };
+//             deleteAll(getTagHistoryClass(), new Where(TagHistoryRecord.ITEM_ID, itemId), inv);
         }
     }
 
@@ -483,197 +493,6 @@ public abstract class ItemRepository<
         // and then smack the new value into the item using yummy depot code
         updatePartial(getItemClass(), itemId, new Object[] { ItemRecord.RATING, newRating });
         return newRating;
-    }
-
-    /**
-     * Join TagNameRecord and TagRecord, group by tag, and count how many items
-     * reference each such tag.
-     */
-    public Collection<TagPopularityRecord> getPopularTags (int rows)
-        throws PersistenceException
-    {
-        return findAll(TagPopularityRecord.class,
-                       new FromOverride(getTagClass()),
-                       new Join(new ColumnExp(getTagClass(), TagRecord.TAG_ID),
-                                TagNameRecord.TAG_ID_C),
-                       new FieldOverride(TagPopularityRecord.TAG_ID, TagNameRecord.TAG_ID_C),
-                       new FieldOverride(TagPopularityRecord.TAG, TagNameRecord.TAG_C),
-                       new FieldOverride(TagPopularityRecord.COUNT, "count(*)"),
-                       new GroupBy(TagNameRecord.TAG_ID_C));
-    }
-
-    /**
-     * Loads all tag records for the given item, translated to tag names.
-     */
-    public Iterable<TagNameRecord> getTags (int itemId)
-        throws PersistenceException
-    {
-        return findAll(TagNameRecord.class,
-                       new Where(TagRecord.ITEM_ID, itemId),
-                       new Join(TagNameRecord.TAG_ID_C,
-                                new ColumnExp(getTagClass(), TagRecord.TAG_ID)));
-    }
-
-    /**
-     * Loads all the tag history records for a given item.
-     */
-    public Iterable<THT> getTagHistoryByItem (int itemId)
-        throws PersistenceException
-    {
-        return findAll(getTagHistoryClass(), new Where(TagHistoryRecord.ITEM_ID, itemId));
-    }
-
-    /**
-     * Loads all the tag history records for a given member.
-     */
-    public Iterable<THT> getTagHistoryByMember (int memberId)
-        throws PersistenceException
-    {
-        return findAll(getTagHistoryClass(), new Where(TagHistoryRecord.MEMBER_ID, memberId));
-    }
-
-    /**
-     * Finds the tag record for a certain tag, or create it.
-     */
-    public TagNameRecord getTag (String tagName)
-        throws PersistenceException
-    {
-        // load the tag, if it exists
-        TagNameRecord record = load(TagNameRecord.class, TagNameRecord.TAG, tagName);
-        if (record == null) {
-            // if it doesn't, create it on the fly
-            record = new TagNameRecord();
-            record.tag = tagName;
-            insert(record);
-        }
-        return record;
-    }
-
-    /**
-     * Find the tag record for a certain tag id, or create it.
-     */
-    public TagNameRecord getTag (int tagId)
-        throws PersistenceException
-    {
-        return load(TagNameRecord.class, tagId);
-    }
-
-    /**
-     * Add a tag to an item. If the tag already exists, return false and do nothing else. If it did
-     * not, create the tag and add a record in the history table.
-     */
-    public TagHistoryRecord<T> tagItem (int itemId, int tagId, int taggerId, long now)
-        throws PersistenceException
-    {
-        TagRecord<T> tag = load(getTagClass(), TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId);
-        if (tag != null) {
-            return null;
-        }
-
-        try {
-            tag = getTagClass().newInstance();
-        } catch (Exception e) {
-            throw new PersistenceException("Failed to create a new item tag record " +
-                                           "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
-        }
-        tag.itemId = itemId;
-        tag.tagId = tagId;
-        insert(tag);
-
-        TagHistoryRecord<T> history;
-        try {
-            history = getTagHistoryClass().newInstance();
-        } catch (Exception e) {
-            throw new PersistenceException("Failed to create a new item tag history tag record " +
-                                           "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
-        }
-        history.itemId = itemId;
-        history.tagId = tagId;
-        history.memberId = taggerId;
-        history.action = TagHistory.ACTION_ADDED;
-        history.time = new Timestamp(now);
-        insert(history);
-        return history;
-    }
-
-    /**
-     * Remove a tag from an item. If the tag didn't exist, return false and do nothing else. If it
-     * did, remove the tag and add a record in the history table.
-     */
-    public TagHistoryRecord<T> untagItem (int itemId, int tagId, int taggerId, long now)
-        throws PersistenceException
-    {
-        TagRecord<T> tag = load(getTagClass(), TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId);
-        if (tag == null) {
-            return null;
-        }
-        delete(tag);
-
-        TagHistoryRecord<T> history;
-        try {
-            history = getTagHistoryClass().newInstance();
-        } catch (Exception e) {
-            throw new PersistenceException(
-                "Failed to create a new item tag history tag record " +
-                "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
-        }
-        history.itemId = itemId;
-        history.tagId = tagId;
-        history.memberId = taggerId;
-        history.action = TagHistory.ACTION_REMOVED;
-        history.time = new Timestamp(now);
-        insert(history);
-        return history;
-    }
-
-    /**
-     * Copy all tags from one item to another. We have to resort to JDBC here, because we want to
-     * do the rather non-generic:
-     *
-     *   INSERT INTO PhotoTagRecord (itemId, tagId)
-     *        SELECT 153567, tagId
-     *          FROM PhotoTagRecord
-     *         WHERE itemId = 89736;
-     */
-    public int copyTags (final int fromItemId, final int toItemId, int ownerId, long now)
-        throws PersistenceException
-    {
-        final String tagTable = _ctx.getMarshaller(getTagClass()).getTableName();
-        int rows = _ctx.invoke(new Modifier() {
-            public int invoke (Connection conn) throws SQLException {
-                PreparedStatement stmt = null;
-                try {
-                    stmt = conn.prepareStatement(
-                        " INSERT INTO " + tagTable +
-                        " (" + TagRecord.ITEM_ID + ", " + TagRecord.TAG_ID + ")" +
-                        "      SELECT ?, " + TagRecord.TAG_ID +
-                        "        FROM " + tagTable +
-                        "       WHERE " + TagRecord.ITEM_ID + " = ?");
-                    stmt.setInt(1, toItemId);
-                    stmt.setInt(2, fromItemId);
-                    return stmt.executeUpdate();
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-        });
-
-        // add a single row to history for the copy
-        TagHistoryRecord<T> history;
-        try {
-            history = getTagHistoryClass().newInstance();
-        } catch (Exception e) {
-            throw new PersistenceException(
-                "Failed to create a new item tag history tag record " +
-                "[itemId=" + toItemId + "]", e);
-        }
-        history.itemId = toItemId;
-        history.tagId = -1;
-        history.memberId = ownerId;
-        history.action = TagHistory.ACTION_COPIED;
-        history.time = new Timestamp(now);
-        insert(history);
-        return rows;
     }
 
     /**
@@ -738,4 +557,7 @@ public abstract class ItemRepository<
      * record class.
      */
     protected abstract Class<RT> getRatingClass ();
+
+    /** Used to manage our item tags. */
+    protected TagRepository<TT,THT> _tagRepo;
 }

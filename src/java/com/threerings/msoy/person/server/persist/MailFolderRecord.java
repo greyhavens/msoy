@@ -1,15 +1,15 @@
 //
 // $Id$
 
-package com.threerings.msoy.server.persist;
+package com.threerings.msoy.person.server.persist;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
-
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+
 import com.samskivert.util.StringUtil;
 
 /**

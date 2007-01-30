@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.server.persist;
+package com.threerings.msoy.server.persist;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -13,7 +13,7 @@ import com.threerings.io.Streamable;
  * Represents which tags have been added to which items.
  */
 @Entity
-public abstract class TagRecord<T extends ItemRecord> extends PersistentRecord
+public abstract class TagRecord extends PersistentRecord
     implements Streamable
 {
     public static final int SCHEMA_VERSION = 1;

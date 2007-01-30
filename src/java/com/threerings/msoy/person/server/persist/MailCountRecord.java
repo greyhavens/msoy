@@ -1,12 +1,11 @@
 //
 // $Id$
 
-package com.threerings.msoy.server.persist;
+package com.threerings.msoy.person.server.persist;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
-
 
 /**
  * A computed entity that receives the count(*) results for read and unread messages in a folder.

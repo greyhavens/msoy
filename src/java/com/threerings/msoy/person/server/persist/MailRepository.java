@@ -1,13 +1,15 @@
 //
 // $Id$
 
-package com.threerings.msoy.server.persist;
+package com.threerings.msoy.person.server.persist;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.IntListUtil;
+
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
@@ -18,9 +20,8 @@ import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ValueExp;
-import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
-import com.samskivert.util.IntListUtil;
+import com.samskivert.jdbc.depot.operator.Logic.*;
 
 /**
  * Manages the persistent store of mail and mailboxes.

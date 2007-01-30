@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.server;
+package com.threerings.msoy.person.server;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ResultListener;
 
@@ -19,11 +20,14 @@ import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
 import com.threerings.msoy.web.data.MemberName;
 
-import com.threerings.msoy.server.persist.MailFolderRecord;
-import com.threerings.msoy.server.persist.MailMessageRecord;
-import com.threerings.msoy.server.persist.MailRepository;
+import com.threerings.msoy.server.JSONMarshaller;
+import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+
+import com.threerings.msoy.person.server.persist.MailFolderRecord;
+import com.threerings.msoy.person.server.persist.MailMessageRecord;
+import com.threerings.msoy.person.server.persist.MailRepository;
 
 /**
  * Manage msoy mail.
@@ -33,9 +37,9 @@ public class MailManager
     /**
      * Prepares our mail manager for operation.
      */
-    public void init (MailRepository mailRepo, MemberRepository memberRepo)
+    public void init (ConnectionProvider conProv, MemberRepository memberRepo)
     {
-        _mailRepo = mailRepo;
+        _mailRepo = new MailRepository(conProv);
         _memberRepo = memberRepo;
     }
 
@@ -53,8 +57,7 @@ public class MailManager
     public void getMessage (final int memberId, final int folderId, final int messageId,
                             final boolean flagAsRead, ResultListener<MailMessage> waiter)
     {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<MailMessage>(waiter) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<MailMessage>(waiter) {
             public MailMessage invokePersistResult () throws PersistenceException {
                 MailMessageRecord record = _mailRepo.getMessage(memberId, folderId, messageId);
                 if (record.unread && flagAsRead) {
@@ -71,8 +74,7 @@ public class MailManager
     public void getHeaders (final int memberId, final int folderId,
                              ResultListener<List<MailHeaders>> waiter)
     {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<List<MailHeaders>>(waiter) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<MailHeaders>>(waiter) {
             public List<MailHeaders> invokePersistResult () throws PersistenceException {
                 List<MailHeaders> result = new ArrayList<MailHeaders>();
                 for (MailMessageRecord record : _mailRepo.getMessages(memberId, folderId)) {
@@ -101,8 +103,7 @@ public class MailManager
      */
     public void getFolders (final int memberId, ResultListener<List<MailFolder>> waiter)
     {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<List<MailFolder>>(waiter) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<MailFolder>>(waiter) {
             public List<MailFolder> invokePersistResult () throws PersistenceException {
                 testFolders(memberId);
 
@@ -122,8 +123,7 @@ public class MailManager
     public void updatePayload (final int memberId, final int folderId, final int messageId,
                                final MailPayload payload, ResultListener<Void> waiter)
     {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Void>(waiter) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
                 try {
                     byte[] state =
@@ -145,8 +145,7 @@ public class MailManager
                                 final String text, final MailPayload payload,
                                 ResultListener<Void> waiter)
     {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Void>(waiter) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
             public Void invokePersistResult () throws PersistenceException {
                 testFolders(senderId);
                 testFolders(recipientId);

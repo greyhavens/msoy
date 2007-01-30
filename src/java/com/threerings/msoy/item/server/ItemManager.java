@@ -28,6 +28,8 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
@@ -52,8 +54,6 @@ import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PetRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.item.server.persist.RatingRecord;
-import com.threerings.msoy.item.server.persist.TagHistoryRecord;
-import com.threerings.msoy.item.server.persist.TagNameRecord;
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -576,7 +576,8 @@ public class ItemManager
                 // delete the old clone
                 repo.deleteItem(ident.itemId);
                 // copy tags from the original to the new item
-                repo.copyTags(originalId, item.itemId, item.ownerId, System.currentTimeMillis());
+                repo.getTagRepository().copyTags(
+                    originalId, item.itemId, item.ownerId, System.currentTimeMillis());
                 return item.toItem();
             }
 
@@ -649,7 +650,7 @@ public class ItemManager
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<String>>(listener) {
             public Collection<String> invokePersistResult () throws PersistenceException {
                 ArrayList<String> result = new ArrayList<String>();
-                for (TagNameRecord tagName : repo.getTags(ident.itemId)) {
+                for (TagNameRecord tagName : repo.getTagRepository().getTags(ident.itemId)) {
                     result.add(tagName.tag);
                 }
                 return result;
@@ -673,7 +674,8 @@ public class ItemManager
             public Collection<TagHistory> invokePersistResult () throws PersistenceException {
                 Map<Integer, MemberRecord> memberCache = new HashMap<Integer, MemberRecord>();
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
-                for (TagHistoryRecord<ItemRecord> record : repo.getTagHistoryByItem(ident.itemId)) {
+                for (TagHistoryRecord record :
+                         repo.getTagRepository().getTagHistoryByItem(ident.itemId)) {
                     // TODO: we should probably cache in MemberRepository
                     MemberRecord memRec = memberCache.get(record.memberId);
                     if (memRec == null) {
@@ -681,7 +683,7 @@ public class ItemManager
                         memberCache.put(record.memberId, memRec);
                     }
 
-                    TagNameRecord tag = repo.getTag(record.tagId);
+                    TagNameRecord tag = repo.getTagRepository().getTag(record.tagId);
                     TagHistory history = new TagHistory();
                     history.item = new ItemIdent(ident.type, ident.itemId);
                     history.member = memRec.getName();
@@ -710,9 +712,10 @@ public class ItemManager
                          _repos.entrySet()) {
                     byte type = entry.getKey();
                     ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = entry.getValue();
-                    for (TagHistoryRecord<ItemRecord> record :
-                             repo.getTagHistoryByMember(memberId)) {
-                        TagNameRecord tag = record.tagId == -1 ? null : repo.getTag(record.tagId);
+                    for (TagHistoryRecord record :
+                             repo.getTagRepository().getTagHistoryByMember(memberId)) {
+                        TagNameRecord tag = record.tagId == -1 ? null :
+                            repo.getTagRepository().getTag(record.tagId);
                         TagHistory history = new TagHistory();
                         history.item = new ItemIdent(type, record.itemId);
                         history.member = memName;
@@ -801,12 +804,12 @@ public class ItemManager
                 int originalId = item.parentId != 0 ? item.parentId : ident.itemId;
 
                 // map tag to tag id
-                TagNameRecord tag = repo.getTag(tagName);
+                TagNameRecord tag = repo.getTagRepository().getTag(tagName);
 
                 // and do the actual work
-                TagHistoryRecord<ItemRecord> historyRecord = doTag ?
-                    repo.tagItem(originalId, tag.tagId, taggerId, now) :
-                    repo.untagItem(originalId, tag.tagId, taggerId, now);
+                TagHistoryRecord historyRecord = doTag ?
+                    repo.getTagRepository().tagItem(originalId, tag.tagId, taggerId, now) :
+                    repo.getTagRepository().untagItem(originalId, tag.tagId, taggerId, now);
                 if (historyRecord != null) {
                     // look up the member
                     MemberRecord mrec = MsoyServer.memberRepo.loadMember(taggerId);

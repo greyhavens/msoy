@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.server.persist;
+package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 
@@ -16,7 +16,7 @@ import com.threerings.io.Streamable;
  */
 @Entity
 @Table
-public abstract class TagHistoryRecord<T extends ItemRecord> extends PersistentRecord
+public abstract class TagHistoryRecord extends PersistentRecord
     implements Streamable
 {
     public static final int SCHEMA_VERSION = 1;
