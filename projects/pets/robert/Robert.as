@@ -6,7 +6,10 @@ package {
 import flash.display.Bitmap;
 import flash.display.Sprite;
 
+import flash.events.TimerEvent;
+
 import com.threerings.msoy.export.FurniControl;
+import com.threerings.msoy.export.ControlEvent;
 
 /**
  * Robert is a plant. He likes sunshine and water.
@@ -25,9 +28,9 @@ public class Robert extends Sprite
     {
         // instantiate and wire up our control
         _ctrl = new FurniControl(this);
-        _ctrl.eventTriggered = eventTriggered;
-        _ctrl.memoryChanged = memoryChanged;
-        _ctrl.tick = tick;
+        _ctrl.addEventListener(ControlEvent.EVENT_TRIGGERED, eventTriggered);
+        _ctrl.addEventListener(ControlEvent.MEMORY_CHANGED, memoryChanged);
+        _ctrl.addEventListener(TimerEvent.TIMER, handleTick);
         _ctrl.setTickInterval(1000);
 
         // start out in the appropriate state
@@ -59,22 +62,22 @@ public class Robert extends Sprite
         }
     }
 
-    protected function tick () :void
+    protected function handleTick (event :Object = null) :void
     {
         _state = (_state + 1) % 3;
         _ctrl.updateMemory("state", _state);
     }
 
-    protected function eventTriggered (event :String) :void
+    protected function eventTriggered (event :ControlEvent) :void
     {
-        trace("event triggered: " + event);
+        trace("event triggered: " + event.key + ", arg: " + event.arg);
     }
 
-    protected function memoryChanged (key :String, value :Object) :void
+    protected function memoryChanged (event :ControlEvent) :void
     {
-        trace("memory changed: " + key + " -> " + value);
-        if (key == "state") {
-            updateState(value);
+        trace("memory changed: " + event.key + " -> " + event.arg);
+        if (event.key == "state") {
+            updateState(event.arg);
         }
     }
 
