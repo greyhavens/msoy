@@ -72,12 +72,6 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>avatar</code> field. */
     public static final String AVATAR = "avatar";
 
-    /** The field name of the <code>chatStyle</code> field. */
-    public static final String CHAT_STYLE = "chatStyle";
-
-    /** The field name of the <code>chatPopStyle</code> field. */
-    public static final String CHAT_POP_STYLE = "chatPopStyle";
-
     /** The field name of the <code>friends</code> field. */
     public static final String FRIENDS = "friends";
 
@@ -124,12 +118,6 @@ public class MemberObject extends BodyObject
 
     /** The avatar that the user has chosen, or null for guests. */
     public Avatar avatar;
-
-    /** The style of our chat. */
-    public short chatStyle;
-
-    /** The pop style of our chat. */
-    public short chatPopStyle;
 
     /** The friends of this player. */
     public DSet<FriendEntry> friends = new DSet<FriendEntry>();
@@ -286,27 +274,6 @@ public class MemberObject extends BodyObject
 
         // use the predicate to filter
         return pred.filter(inventory.iterator());
-    }
-
-    // TEMP: hackery
-    @Override
-    public void setOid (int oid)
-    {
-        super.setOid(oid);
-
-        chatStyle = (short) (oid % 2);
-        chatPopStyle = (short) (oid % 2);
-    }
-    // END
-
-    public void alter (String field)
-    {
-        if (CHAT_STYLE.equals(field)) {
-            setChatStyle((short) ((chatStyle + 1) % 2));
-
-        } else if (CHAT_POP_STYLE.equals(field)) {
-            setChatPopStyle((short) ((chatPopStyle + 1) % 2));
-        }
     }
 
     /**
@@ -627,38 +594,6 @@ public class MemberObject extends BodyObject
         requestAttributeChange(
             AVATAR, value, ovalue);
         this.avatar = value;
-    }
-
-    /**
-     * Requests that the <code>chatStyle</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setChatStyle (short value)
-    {
-        short ovalue = this.chatStyle;
-        requestAttributeChange(
-            CHAT_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
-        this.chatStyle = value;
-    }
-
-    /**
-     * Requests that the <code>chatPopStyle</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setChatPopStyle (short value)
-    {
-        short ovalue = this.chatPopStyle;
-        requestAttributeChange(
-            CHAT_POP_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
-        this.chatPopStyle = value;
     }
 
     /**

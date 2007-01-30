@@ -57,37 +57,7 @@ public class MsoyClient extends WhirledClient
 
         MsoyServer.registerMember(_memobj);
 
-        _memobj.setAccessController(new AccessController() {
-            public boolean allowSubscribe (DObject obj, Subscriber sub) {
-                return CrowdObjectAccess.USER.allowSubscribe(obj, sub);
-            }
-
-            public boolean allowDispatch (DObject obj, DEvent event) {
-                if ((event instanceof MessageEvent) &&
-                        "alterTEMP".equals(((MessageEvent) event).getName())) {
-                    return true;
-                }
-                return CrowdObjectAccess.USER.allowDispatch(obj, event);
-            }
-        });
-
-        // TEMP code to alter avatar/chat styles
-        _memobj.addListener(new MessageListener() {
-            public void messageReceived (MessageEvent event) {
-                if ("alterTEMP".equals(event.getName())) {
-                    String frob = (String) event.getArgs()[0];
-                    _memobj.alter(frob);
-
-                    PlaceManager plmgr = MsoyServer.plreg.getPlaceManager(
-                        _memobj.location);
-                    if (plmgr != null) {
-                        plmgr.updateOccupantInfo(
-                            _memobj.createOccupantInfo(plmgr.getPlaceObject()));
-                    }
-                }
-            }
-        });
-        // END TEMP
+        _memobj.setAccessController(CrowdObjectAccess.USER);
     }
 
     @Override // from PresentsClient

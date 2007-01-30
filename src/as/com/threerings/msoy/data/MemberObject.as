@@ -69,12 +69,6 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>avatar</code> field. */
     public static const AVATAR :String = "avatar";
 
-    /** The field name of the <code>chatStyle</code> field. */
-    public static const CHAT_STYLE :String = "chatStyle";
-
-    /** The field name of the <code>chatPopStyle</code> field. */
-    public static const CHAT_POP_STYLE :String = "chatPopStyle";
-
     /** The field name of the <code>friends</code> field. */
     public static const FRIENDS :String = "friends";
 
@@ -117,12 +111,6 @@ public class MemberObject extends BodyObject
 
     /** The avatar that the user has chosen, or null for guests. */
     public var avatar :Avatar;
-
-    /** The style of our chat. */
-    public var chatStyle :int;
-
-    /** The pop style of our chat. */
-    public var chatPopStyle :int;
 
     /** The buddies of this player. */
     public var friends :DSet;
@@ -352,38 +340,6 @@ public class MemberObject extends BodyObject
 //            AVATAR, value, ovalue);
 //        this.avatar = value;
 //    }
-//
-//    /**
-//     * Requests that the <code>chatStyle</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public function setChatStyle (value :int) :void
-//    {
-//        var ovalue :int = this.chatStyle;
-//        requestAttributeChange(
-//            CHAT_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
-//        this.chatStyle = value;
-//    }
-//
-//    /**
-//     * Requests that the <code>chatPopStyle</code> field be set to the
-//     * specified value. The local value will be updated immediately and an
-//     * event will be propagated through the system to notify all listeners
-//     * that the attribute did change. Proxied copies of this object (on
-//     * clients) will apply the value change when they received the
-//     * attribute changed notification.
-//     */
-//    public function setChatPopStyle (value :int) :void
-//    {
-//        var ovalue :int = this.chatPopStyle;
-//        requestAttributeChange(
-//            CHAT_POP_STYLE, Short.valueOf(value), Short.valueOf(ovalue));
-//        this.chatPopStyle = value;
-//    }
 //    // AUTO-GENERATED: METHODS END
 //
 //    override public function writeObject (out :ObjectOutputStream) :void
@@ -418,8 +374,6 @@ public class MemberObject extends BodyObject
         tokens = (ins.readObject() as MsoyTokenRing);
         homeSceneId = ins.readInt();
         avatar = (ins.readObject() as Avatar);
-        chatStyle = ins.readShort();
-        chatPopStyle = ins.readShort();
         friends = (ins.readObject() as DSet);
         groups = (ins.readObject() as DSet);
     }
