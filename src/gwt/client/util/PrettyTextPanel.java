@@ -3,6 +3,8 @@
 
 package client.util;
 
+import java.util.ArrayList;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.DOM;
@@ -57,24 +59,47 @@ public class PrettyTextPanel extends Widget
         new Parser() {
             public void parse (String plainText, Element parent, int stage) 
             {
-                Element list = null;
+                ArrayList lists = new ArrayList();
+                int depth = 0;
                 String[] paragraphs = plainText.split("\n");
                 for (int ii = 0; ii < paragraphs.length; ii++) {
-                    if (paragraphs[ii].trim().startsWith("*")) {
-                        if (list == null) {
-                            list = DOM.createElement("ul");
-                            DOM.appendChild(parent, list);
+                    paragraphs[ii] = paragraphs[ii].trim();
+                    // find the number of stars prepending this line
+                    for (depth = 0; paragraphs[ii].startsWith("*"); 
+                        paragraphs[ii] = paragraphs[ii].substring(1), depth++);
+                    // make sure the current list stack contains the right number of lists
+                    if (depth < lists.size()) {
+                        while (depth < lists.size()) {
+                            lists.remove(lists.size() - 1);
                         }
-                        Element item = DOM.createElement("li");
-                        DOM.appendChild(list, item);
-                        passDownPipe(paragraphs[ii].trim().substring(1), item, stage);
                     } else {
-                        list = null;
-                        if (paragraphs[ii].trim().length() > 0) {
-                            Element p = DOM.createElement("p");
-                            passDownPipe(paragraphs[ii].trim(), p, stage);
-                            DOM.appendChild(parent, p);
+                        while (depth > lists.size()) {
+                            Element newList = DOM.createElement("ul");
+                            if (lists.size() > 0) {
+                                Element list = (Element)lists.get(lists.size() - 1);
+                                Element item = null;
+                                if (DOM.getChildCount(list) == 0) {
+                                    item = DOM.createElement("li");
+                                    DOM.appendChild(list, item);
+                                } else {
+                                    item = DOM.getChild(list, DOM.getChildCount(list) - 1);
+                                }
+                                DOM.appendChild(item, newList);
+                            } else {
+                                DOM.appendChild(parent, newList);
+                            }
+                            lists.add(newList);
                         }
+                    }
+                    // if we're in a list, add to it - otherwise treat this as a paragraph
+                    if (depth != 0) {
+                        Element item = DOM.createElement("li");
+                        DOM.appendChild((Element)lists.get(lists.size() - 1), item);
+                        passDownPipe(paragraphs[ii], item, stage);
+                    } else if (paragraphs[ii].length() > 0) {
+                        Element p = DOM.createElement("p");
+                        passDownPipe(paragraphs[ii].trim(), p, stage);
+                        DOM.appendChild(parent, p);
                     }
                 }
             }
