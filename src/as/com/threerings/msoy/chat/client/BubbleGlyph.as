@@ -38,7 +38,7 @@ public class BubbleGlyph extends ChatGlyph
      */
     public function getTextSize () :Rectangle
     {
-        return new Rectangle(0, 0, _txt.textWidth, _txt.textHeight);
+        return new Rectangle(0, 0, _txt.width, _txt.height);
     }
 
     /**
@@ -68,9 +68,12 @@ public class BubbleGlyph extends ChatGlyph
         // TODO
     }
 
-    public function setAgeLevel (ageLevel :int) :void
+    public function setAgeLevel (overlay :ComicOverlay, ageLevel :int) :void
     {
-        // TODO
+        // re-draw the bubble with the new age level
+        // TODO: ?
+        overlay.drawBubbleShape(
+            graphics, _type, _txt.width, _txt.height, ageLevel);
     }
 
     /**

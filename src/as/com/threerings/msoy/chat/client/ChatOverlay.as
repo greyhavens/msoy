@@ -482,7 +482,7 @@ public class ChatOverlay
      */
     protected function alwaysUseSpeaker (type :int) :Boolean
     {
-        return (modeOf(type) == EMOTE);
+        return (modeOf(type) == EMOTE) || (placeOf(type) == BROADCAST);
     }
 
     /**
@@ -550,12 +550,19 @@ public class ChatOverlay
 
             case EMOTE:
                 return drawEmoteSubtitle;
+
+            case THINK:
+                return drawThinkSubtitle;
             }
         }
 
         case FEEDBACK:
             return drawFeedbackSubtitle;
 
+        case BROADCAST:
+        case CONTINUATION:
+        case INFO:
+        case ATTENTION:
         default:
             return drawRectangle;
         }
@@ -581,6 +588,28 @@ public class ChatOverlay
         g.curveTo(w - PAD, h / 2, w, h);
         g.lineTo(0, h);
         g.curveTo(PAD, h / 2, 0, 0);
+    }
+
+    /** Subtitle draw function. See getSubtitleShape() */
+    protected function drawThinkSubtitle (g :Graphics, w :int, h :int) :void
+    {
+        // thinky bubbles on the left and right
+        const DIA :int = 8;
+        g.moveTo(PAD/2, 0);
+        g.lineTo(w - PAD/2, 0);
+
+        var yy :int;
+        var ty :int;
+        for (yy = 0; yy < h; yy += DIA) {
+            ty = Math.min(h, yy + DIA);
+            g.curveTo(w, (yy + ty)/2, w - PAD/2, ty);
+        }
+
+        g.lineTo(PAD/2, h);
+        for (yy = h; yy > 0; yy -= DIA) {
+            ty = Math.max(0, yy - DIA);
+            g.curveTo(0, (yy + ty)/2, PAD/2, ty);
+        }
     }
 
     /** Subtitle draw function. See getSubtitleShape() */
@@ -1053,13 +1082,16 @@ public class ChatOverlay
         return _target.height;
     }
 
-    internal function getTargetWidth () :int
+    internal function getTargetTextWidth () :int
     {
         var w :int = _target.width;
         if (_historyBar != null) {
             w -= _historyBar.width;
         }
-        w -= (PAD * 2);
+        // there is PAD between the text and the edges of the bubble,
+        // and another PAD between the bubble and the container edges,
+        // on each side for a total of 4 pads.
+        w -= (PAD * 4);
         return w;
     }
 

@@ -22,14 +22,12 @@ import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
 /**
- * Implements comic chat in the yohoho client.
+ * Implements comic chat in the metasoy client.
  */
 public class ComicOverlay extends ChatOverlay
 {
     /**
      * Construct a comic chat overlay.
-     *
-     * @param subtitleHeight the amount of vertical space to use for subtitles.
      */
     public function ComicOverlay (ctx :MsoyContext)
     {
@@ -290,7 +288,7 @@ public class ComicOverlay extends ChatOverlay
         // be painted in slightly different colors
         var numbubs :int = _bubbles.length;
         for (ii = 0; ii < numbubs; ii++) {
-            (_bubbles[ii] as BubbleGlyph).setAgeLevel(numbubs - ii - 1);
+            (_bubbles[ii] as BubbleGlyph).setAgeLevel(this, numbubs - ii - 1);
         }
 
         return true; // success!
@@ -327,13 +325,17 @@ public class ComicOverlay extends ChatOverlay
      * @return the padding that should be applied to the bubble's label.
      */
     internal function drawBubbleShape (
-        g :Graphics, type :int, txtWidth :int, txtHeight :int) :int
+        g :Graphics, type :int, txtWidth :int, txtHeight :int,
+        ageLevel :int = 0) :int
     {
         // this little bit copied from superclass- if we keep: reuse
         var outline :uint = getOutlineColor(type);
         var background :uint;
         if (BLACK == outline) {
             background = WHITE;
+            if (ageLevel != 0) {
+                background = uint(BACKGROUNDS[ageLevel]);
+            }
         } else {
             background = ColorUtil.blend(WHITE, outline, .8);
         }
@@ -375,6 +377,9 @@ public class ComicOverlay extends ChatOverlay
 
         case EMOTE:
             return drawEmoteBubble;
+
+        case THINK:
+            return drawThinkBubble;
         }
 
         // fall back to subtitle shape
@@ -415,6 +420,39 @@ public class ComicOverlay extends ChatOverlay
         g.curveTo(w - (PAD * 2), hh, w, h);
         g.curveTo(hw, h - (PAD * 2), 0, h);
         g.curveTo(PAD * 2, hh, 0, 0);
+    }
+
+    /** Bubble draw function. See getBubbleShape() */
+    protected function drawThinkBubble (g :Graphics, w :int, h :int) :void
+    {
+        const V_DIA :int = 16;
+        const H_DIA :int = 12;
+
+        g.moveTo(PAD, PAD);
+
+        var yy :int;
+        var ty :int;
+        var xx :int;
+        var tx :int;
+        for (xx = PAD; xx < (w - PAD); xx += H_DIA) {
+            tx = Math.min(w - PAD, xx + H_DIA);
+            g.curveTo((xx + tx)/2, 0, tx, PAD);
+        }
+
+        for (yy = PAD; yy < (h - PAD); yy += V_DIA) {
+            ty = Math.min(h - PAD, yy + V_DIA);
+            g.curveTo(w, (yy + ty)/2, w - PAD, ty);
+        }
+
+        for (xx = (w - PAD); xx > 0; xx -= H_DIA) {
+            tx = Math.max(PAD, xx - H_DIA);
+            g.curveTo((xx + tx)/2, h, tx, h - PAD);
+        }
+
+        for (yy = (h - PAD); yy > 0; yy -= V_DIA) {
+            ty = Math.max(PAD, yy - V_DIA);
+            g.curveTo(0, (yy + ty)/2, PAD, ty);
+        }
     }
 
     /**
@@ -465,8 +503,8 @@ public class ComicOverlay extends ChatOverlay
 
         // put it in the center..
         log.debug("Unhandled chat type in getLocation() [type=" + type + "].");
-        r.x = (getTargetWidth() - r.width) / 2;
-        r.y = (getTargetHeight() - r.height) / 2;
+        r.x = (_target.width - r.width) / 2;
+        r.y = (_target.height - r.height) / 2;
     }
 
     /**
