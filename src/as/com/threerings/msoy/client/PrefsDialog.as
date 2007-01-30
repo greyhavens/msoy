@@ -112,9 +112,7 @@ public class PrefsDialog extends FloatingPanel
         grid.addRow(MsoyUI.createLabel(Msgs.GENERAL.get("l.log_to_chat")),
                     _logToChat = new CheckBox());
         _logToChat.selected = Prefs.getLogToChat();
-        _logToChat.addEventListener(MouseEvent.CLICK, function (evt :MouseEvent) :void {
-            Prefs.setLogToChat(_logToChat.selected);
-        });
+        BindingUtils.bindSetter(Prefs.setLogToChat, _logToChat, "selected");
 
         tainer.addChild(grid);
 
