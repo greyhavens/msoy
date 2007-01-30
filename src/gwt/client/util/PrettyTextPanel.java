@@ -53,16 +53,28 @@ public class PrettyTextPanel extends Widget
      * This action proceeds recursively, in order to make it easy to create HTML structures.  
      */
     protected static final Parser[] pipeline = {
-        // paragraph parser
+        // paragraph and indented list parser
         new Parser() {
             public void parse (String plainText, Element parent, int stage) 
             {
+                Element list = null;
                 String[] paragraphs = plainText.split("\n");
                 for (int ii = 0; ii < paragraphs.length; ii++) {
-                    if (paragraphs[ii].trim().length() > 0) {
-                        Element p = DOM.createElement("p");
-                        passDownPipe(paragraphs[ii].trim(), p, stage);
-                        DOM.appendChild(parent, p);
+                    if (paragraphs[ii].trim().startsWith("*")) {
+                        if (list == null) {
+                            list = DOM.createElement("ul");
+                            DOM.appendChild(parent, list);
+                        }
+                        Element item = DOM.createElement("li");
+                        DOM.appendChild(list, item);
+                        passDownPipe(paragraphs[ii].trim().substring(1), item, stage);
+                    } else {
+                        list = null;
+                        if (paragraphs[ii].trim().length() > 0) {
+                            Element p = DOM.createElement("p");
+                            passDownPipe(paragraphs[ii].trim(), p, stage);
+                            DOM.appendChild(parent, p);
+                        }
                     }
                 }
             }
