@@ -5,14 +5,10 @@ package com.threerings.msoy.web.data;
 
 import java.util.Date;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-import com.threerings.io.Streamable;
-
 /**
  * Represents data for a single member in a neighborhood query result.
  */
-public class NeighborMember 
-    implements IsSerializable, Streamable, Cloneable
+public class NeighborMember extends NeighborEntity
 {
     /** The member's id/name. */
     public MemberName member;

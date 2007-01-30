@@ -29,6 +29,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.whirled.server.SceneManager;
 
 import com.threerings.crowd.server.PlaceManager;
 
@@ -43,6 +44,7 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.MemberName;
+import com.threerings.msoy.web.data.NeighborEntity;
 import com.threerings.msoy.web.data.NeighborMember;
 import com.threerings.msoy.web.data.NeighborGroup;
 import com.threerings.msoy.web.data.Neighborhood;
@@ -585,6 +587,7 @@ public class MemberManager
                 MemberRecord mRec = _memberRepo.loadMember(memberId);
                 hood.member = new NeighborMember();
                 hood.member.member = mRec.getName();
+                hood.member.homeSceneId = mRec.homeSceneId;
 
                 // then all the data for the groups
                 Collection<GroupMembershipRecord> gmRecs = _groupRepo.getMemberships(memberId);
@@ -598,6 +601,7 @@ public class MemberManager
                     NeighborGroup nGroup = new NeighborGroup();
                     nGroup.groupId = gRec.groupId;
                     nGroup.groupName = gRec.name;
+                    nGroup.homeSceneId = gRec.homeSceneId;
                     if (gRec.logoMediaHash != null) { 
                         nGroup.logo = new MediaDesc(gRec.logoMediaHash, gRec.logoMimeType);
                     }
@@ -615,11 +619,14 @@ public class MemberManager
                 return hood;
             }
 
-            // after we finish, have main thread go through and set online status for friends
+            // after we finish, have main thread go through
             public void handleSuccess () {
+                // set online status for friends
                 for (NeighborMember friend : _result.neighborMembers) {
                     friend.isOnline = MsoyServer.lookupMember(friend.member.getMemberId()) != null;
                 }
+                // and figure out population
+                populateNeighborhood(_result);
                 _listener.requestCompleted(_result);
             }
         });
@@ -660,14 +667,39 @@ public class MemberManager
                 return hood;
             }
             
-            // after we finish, have main thread go through and set online status for friends
+            // after we finish, have main thread go through
             public void handleSuccess () {
+                // set online status for friends
                 for (NeighborMember friend : _result.neighborMembers) {
                     friend.isOnline = MsoyServer.lookupMember(friend.member.getMemberId()) != null;
                 }
+                // and figure out population
+                populateNeighborhood(_result);
                 _listener.requestCompleted(_result);
             }
         });
+    }
+
+    // Figure out the population of the various rooms associated with a neighborhood;
+    // a group's and a member's home scenes. This must be called on the dobj thread.
+    protected void populateNeighborhood (Neighborhood hood)
+    {
+        populateNeighborEntity(hood.member);
+        populateNeighborEntity(hood.group);
+        for (NeighborGroup group : hood.neighborGroups) {
+            populateNeighborEntity(group);
+        }
+        for (NeighborMember friend : hood.neighborMembers) {
+            populateNeighborEntity(friend);
+        }
+    }
+
+    protected void populateNeighborEntity (NeighborEntity entity)
+    {
+        if (entity != null) {
+            SceneManager homeMgr = MsoyServer.screg.getSceneManager(entity.homeSceneId);
+            entity.poulation = homeMgr != null ? homeMgr.getPlaceObject().occupantInfo.size() : 0;
+        }
     }
 
     // convert a {@link NeighborFriendRecord} to a {@link NeighborMember}.
@@ -677,6 +709,7 @@ public class MemberManager
         nFriend.member = new MemberName(fRec.name, fRec.memberId);
         nFriend.created = new Date(fRec.created.getTime());
         nFriend.flow = fRec.flow;
+        nFriend.homeSceneId = fRec.homeSceneId;
         nFriend.lastSession = fRec.lastSession;
         nFriend.sessionMinutes = fRec.sessionMinutes;
         nFriend.sessions = fRec.sessions;

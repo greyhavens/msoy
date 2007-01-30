@@ -3,15 +3,12 @@
 
 package com.threerings.msoy.web.data;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-import com.threerings.io.Streamable;
 import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Represents data for a {@link Group} in a neighborhood query result.
  */
-public class NeighborGroup 
-    implements IsSerializable, Streamable, Cloneable
+public class NeighborGroup extends NeighborEntity
 {
     /** The ID of the group. */
     public int groupId;

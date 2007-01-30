@@ -25,6 +25,7 @@ public class NeighborFriendRecord extends PersistentRecord
     public static final String MEMBER_ID = "memberId";
     public static final String NAME = "name";
     public static final String FLOW = "flow";
+    public static final String HOME_SCENE_ID = "homeSceneId";
     public static final String CREATED = "created";
     public static final String SESSIONS = "sessions";
     public static final String SESSION_MINUTES = "sessionMinutes";
@@ -40,6 +41,9 @@ public class NeighborFriendRecord extends PersistentRecord
     /** The quantity of flow possessed by this member. */
     public int flow;
 
+    /** The home scene for this member. */
+    public int homeSceneId;
+    
     /** The time at which this player was created. */
     public Date created;
 
