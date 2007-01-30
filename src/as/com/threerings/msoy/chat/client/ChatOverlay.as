@@ -509,7 +509,7 @@ public class ChatOverlay
      * Used by ChatGlyphs to draw the shape on their Graphics.
      */
     internal function drawSubtitleShape (
-        g :Graphics, type :int, width :int, height :int) :void
+        g :Graphics, type :int, width :int, height :int) :int
     {
         var outline :uint = getOutlineColor(type);
         var background :uint;
@@ -518,18 +518,79 @@ public class ChatOverlay
         } else {
             background = ColorUtil.blend(WHITE, outline, .8);
         }
-        width += PAD;
-        height += 2;
-        var xx :int = PAD/-2;
+        width += PAD * 2;
 
-        // TODO (right now they all get the same sausage)
+        var shapeFunction :Function = getSubtitleShape(type);
+
+        // clear any old graphics
         g.clear();
+        // fill the shape with the background color
         g.beginFill(background);
-        g.drawRoundRect(xx, 0, width, height, 10, 10);
+        shapeFunction(g, width, height);
         g.endFill();
-
+        // draw the shape with the outline color
         g.lineStyle(1, outline);
-        g.drawRoundRect(xx, 0, width, height, 10, 10);
+        shapeFunction(g, width, height);
+
+        return PAD;
+    }
+
+    /**
+     * Get the function that draws the subtitle shape for the
+     * specified type of subtitle.
+     */
+    protected function getSubtitleShape (type :int) :Function
+    {
+        switch (placeOf(type)) {
+        case PLACE: {
+            switch (modeOf(type)) {
+            case SPEAK:
+            default:
+                return drawRoundedSubtitle;
+
+            case EMOTE:
+                return drawEmoteSubtitle;
+            }
+        }
+
+        case FEEDBACK:
+            return drawFeedbackSubtitle;
+
+        default:
+            return drawRectangle;
+        }
+    }
+
+    /** Subtitle draw function. See getSubtitleShape() */
+    protected function drawRectangle (g :Graphics, w :int, h :int) :void
+    {
+        g.drawRect(0, 0, w, h);
+    }
+
+    /** Subtitle draw function. See getSubtitleShape() */
+    protected function drawRoundedSubtitle (g :Graphics, w :int, h :int) :void
+    {
+        g.drawRoundRect(0, 0, w, h, PAD * 2, PAD * 2);
+    }
+
+    /** Subtitle draw function. See getSubtitleShape() */
+    protected function drawEmoteSubtitle (g :Graphics, w :int, h :int) :void
+    {
+        g.moveTo(0, 0);
+        g.lineTo(w, 0);
+        g.curveTo(w - PAD, h / 2, w, h);
+        g.lineTo(0, h);
+        g.curveTo(PAD, h / 2, 0, 0);
+    }
+
+    /** Subtitle draw function. See getSubtitleShape() */
+    protected function drawFeedbackSubtitle (g :Graphics, w :int, h :int) :void
+    {
+        g.moveTo(PAD / 2, 0);
+        g.lineTo(w, 0);
+        g.lineTo(w - PAD / 2, h);
+        g.lineTo(0, h);
+        g.lineTo(PAD / 2, 0);
     }
 
     /**

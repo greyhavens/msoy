@@ -342,15 +342,44 @@ public class ComicOverlay extends ChatOverlay
         var width :int = txtWidth + padding * 2;
         var height :int = txtHeight + padding * 2;
 
-        // TODO: more
+        var shapeFunction :Function = getBubbleShape(type);
+
+        // clear any old graphics
         g.clear();
+        // fill the shape with the background color
         g.beginFill(background);
-        g.drawRoundRect(0, 0, width, height, PAD, PAD);
+        shapeFunction(g, width, height);
         g.endFill();
-
+        // draw the shape with the outline color
         g.lineStyle(1, outline);
-        g.drawRoundRect(0, 0, width, height, PAD, PAD);
+        shapeFunction(g, width, height);
 
+        return padding;
+    }
+
+    /**
+     * Get the function that draws the bubble shape for the
+     * specified type of bubble.
+     */
+    protected function getBubbleShape (type :int) :Function
+    {
+        switch (placeOf(type)) {
+        case INFO:
+        case ATTENTION:
+            return drawRectangle;
+        }
+
+        switch (modeOf(type)) {
+        case SPEAK:
+            return drawRoundedBubble;
+
+        case EMOTE:
+            return drawEmoteBubble;
+        }
+
+        // fall back to subtitle shape
+        return getSubtitleShape(type);
+    }
 
 //        // TODO: much
 //        Shape shape = getBubbleShape(type, r);
@@ -370,7 +399,22 @@ public class ComicOverlay extends ChatOverlay
 //        default: color = Color.BLACK; break;
 //        }
 
-        return padding;
+    /** Bubble draw function. See getBubbleShape() */
+    protected function drawRoundedBubble (g :Graphics, w :int, h :int) :void
+    {
+        g.drawRoundRect(0, 0, w, h, PAD * 4, PAD * 4);
+    }
+
+    /** Bubble draw function. See getBubbleShape() */
+    protected function drawEmoteBubble (g :Graphics, w :int, h :int) :void
+    {
+        var hw :Number = w / 2;
+        var hh :Number = h / 2;
+        g.moveTo(0, 0);
+        g.curveTo(hw, PAD * 2, w, 0);
+        g.curveTo(w - (PAD * 2), hh, w, h);
+        g.curveTo(hw, h - (PAD * 2), 0, h);
+        g.curveTo(PAD * 2, hh, 0, 0);
     }
 
     /**
