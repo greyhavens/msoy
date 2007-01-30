@@ -17,11 +17,11 @@ import com.threerings.msoy.item.web.MediaDesc;
 public class WorldMemberInfo extends MemberInfo
     implements WorldOccupantInfo
 {
-    /** The style of chat bubble to use. */
-    public var chatStyle :int;
-
-    /** The style with which the chat bubble pops up. */
-    public var chatPopStyle :int;
+//    /** The style of chat bubble to use. */
+//    public var chatStyle :int;
+//
+//    /** The style with which the chat bubble pops up. */
+//    public var chatPopStyle :int;
 
     // from interface WorldOccupantInfo
     public function getMedia () :MediaDesc
@@ -33,8 +33,8 @@ public class WorldMemberInfo extends MemberInfo
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        chatStyle = ins.readShort();
-        chatPopStyle = ins.readShort();
+//        chatStyle = ins.readShort();
+//        chatPopStyle = ins.readShort();
         _media = (ins.readObject() as MediaDesc);
     }
 

@@ -14,11 +14,11 @@ import com.threerings.msoy.item.web.MediaDesc;
  */
 public class WorldMemberInfo extends MemberInfo
 {
-    /** The style of chat bubble to use. */
-    public short chatStyle;
-
-    /** The style with which the chat bubble pops up. */
-    public short chatPopStyle;
+//    /** The style of chat bubble to use. */
+//    public short chatStyle;
+//
+//    /** The style with which the chat bubble pops up. */
+//    public short chatPopStyle;
 
     /** Suitable for unserialization. */
     public WorldMemberInfo ()
@@ -32,8 +32,8 @@ public class WorldMemberInfo extends MemberInfo
     {
         super(user);
 
-        chatStyle = user.chatStyle;
-        chatPopStyle = user.chatPopStyle;
+//        chatStyle = user.chatStyle;
+//        chatPopStyle = user.chatPopStyle;
 
         if (user.avatar != null) {
             _media = user.avatar.avatarMedia;

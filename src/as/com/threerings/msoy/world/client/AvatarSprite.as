@@ -39,21 +39,21 @@ public class AvatarSprite extends ActorSprite
         super(occInfo);
     }
 
-    /**
-     * Returns the style of chat bubble to use for this occupant.
-     */
-    public function getChatStyle () :int
-    {
-        return (_occInfo as WorldMemberInfo).chatStyle;
-    }
-
-    /**
-     * Returns the style with which to pop up a chat bubble for this avatar.
-     */
-    public function getChatPopStyle () :int
-    {
-        return (_occInfo as WorldMemberInfo).chatPopStyle;
-    }
+//    /**
+//     * Returns the style of chat bubble to use for this occupant.
+//     */
+//    public function getChatStyle () :int
+//    {
+//        return (_occInfo as WorldMemberInfo).chatStyle;
+//    }
+//
+//    /**
+//     * Returns the style with which to pop up a chat bubble for this avatar.
+//     */
+//    public function getChatPopStyle () :int
+//    {
+//        return (_occInfo as WorldMemberInfo).chatPopStyle;
+//    }
 
     /**
      * Get a list of the names of special actions that this avatar supports.
