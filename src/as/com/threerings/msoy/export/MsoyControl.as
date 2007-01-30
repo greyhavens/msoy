@@ -7,50 +7,15 @@ import flash.display.DisplayObject;
 import flash.utils.Timer;
 
 import flash.events.Event;
-import flash.events.IEventDispatcher;
+import flash.events.EventDispatcher;
 import flash.events.TimerEvent;
 
 /**
  * Handles services that are available to all digital items in a scene. This includes dispatching
  * trigger events and maintaining memory.
  */
-public class MsoyControl
+public class MsoyControl extends EventDispatcher
 {
-    /**
-     * A function that will get called when an event is triggered on this scene object.
-     * Signature:
-     * <pre>function (eventName :String, arg :Object) :void</pre>
-     */
-    public var eventTriggered :Function;
-
-    /**
-     * A function that is called when an item's memory has changed. It should have the following
-     * signature:
-     *
-     * <pre>function (key :String, value :Object) :void</pre>
-     * 
-     * <code>key</code> will be the key that was modified or null if we have just been initialized
-     * and we are being provided with our memory for the first time. <code>value</code> will be the
-     * value associated with that key if key is non-null, or null.
-     */
-    public var memoryChanged :Function;
-
-    /**
-     * A function that is called periodically (twice a second by default) to allow this item to do
-     * its "thinking", make any desired changes to its memory, trigger different animation events
-     * and generally execute behavior. This is where all AI code should run, rather than every
-     * frame (where only animation related code should run), to ensure that coordination is
-     * properly handled when multiple clients are viewing the same item. This is only called after
-     * a call to @{link #setTickInterval} is called to indicate that an item wishes to be ticked.
-     */
-    public var tick :Function;
-
-    /**
-     * A callback called if a particular instance of this object has
-     * gained control.
-     */
-    public var gotControl :Function;
-
     /**
      */
     public function MsoyControl (disp :DisplayObject)
@@ -60,7 +25,7 @@ public class MsoyControl
                 "FurniInterface, AvatarInterface...");
         }
 
-        var event :ControlEvent = new ControlEvent();
+        var event :ConnectEvent = new ConnectEvent();
         var userProps :Object = new Object();
         populateProperties(userProps);
         event.userProps = userProps;
@@ -176,9 +141,7 @@ public class MsoyControl
      */
     protected function eventTriggered_v1 (event :String, arg :Object) :void
     {
-        if (eventTriggered != null) {
-            eventTriggered(event, arg);
-        }
+        dispatchEvent(new ControlEvent(ControlEvent.EVENT_TRIGGERED, event, arg));
     }
 
     /**
@@ -186,9 +149,7 @@ public class MsoyControl
      */
     protected function memoryChanged_v1 (key :String, value :Object) :void
     {
-        if (memoryChanged != null) {
-            memoryChanged(key, value);
-        }
+        dispatchEvent(new ControlEvent(ControlEvent.MEMORY_CHANGED, key, value));
     }
 
     /**
@@ -199,9 +160,7 @@ public class MsoyControl
         _hasControl = true;
 
         // dispatch to user code..
-        if (gotControl != null) {
-            gotControl();
-        }
+        dispatchEvent(new ControlEvent(ControlEvent.GOT_CONTROL));
 
         // possibly set up a ticker now
         recheckTicker();
@@ -225,12 +184,8 @@ public class MsoyControl
             if (_ticker == null) {
                 // we may be creating the timer for the first time
                 _ticker = new Timer(_tickInterval);
-                _ticker.addEventListener(TimerEvent.TIMER,
-                    function (evt :TimerEvent) :void {
-                        if (tick != null) {
-                            tick();
-                        }
-                    });
+                // re-route it
+                _ticker.addEventListener(TimerEvent.TIMER, dispatchEvent);
 
             } else {
                 // we may just be committing a new interval
@@ -293,9 +248,9 @@ import flash.events.Event;
 /**
  * A special event we can use to pass info back to metasoy.
  */
-class ControlEvent extends Event
+class ConnectEvent extends Event
 {
-    public function ControlEvent ()
+    public function ConnectEvent ()
     {
         super("controlConnect", true, false);
     }
@@ -335,12 +290,12 @@ class ControlEvent extends Event
 
     override public function clone () :Event
     {
-        var clone :ControlEvent = new ControlEvent();
+        var clone :ConnectEvent = new ConnectEvent();
         clone._parent = this;
         return clone;
     }
 
-    protected var _parent :ControlEvent;
+    protected var _parent :ConnectEvent;
 
     protected var _hostProps :Object;
     protected var _userProps :Object;

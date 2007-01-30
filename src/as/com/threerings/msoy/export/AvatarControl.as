@@ -13,11 +13,6 @@ import flash.errors.IllegalOperationError;
 public class AvatarControl extends ActorControl
 {
     /**
-     * Called once when the avatar speaks.
-     */
-    public var avatarSpoke :Function;
-
-    /**
      */
     public function AvatarControl (disp :DisplayObject)
     {
@@ -25,17 +20,23 @@ public class AvatarControl extends ActorControl
     }
 
     /**
-     * Add named actions that can be used to animate this avatar.
+     * Set named actions that can be used to animate this avatar.
      */
-    // TODO: review this: perhaps we make it so that actions can
-    // only be added at construction time? What's to stop someone from making
-    // more than one AvatarInterface?
-    public function addAction (name :String, callback :Function) :void
+    public function setActions (actionName :String, ... moreActions) :void
     {
-        if (name == null || name.length > 20) {
-            throw new IllegalOperationError("Invalid name: null or too long.");
+        moreActions.unshift(actionName);
+        for (var ii :int = 0; ii < moreActions.length; ii++) {
+            if (!(moreActions[ii] is String)) {
+                throw new ArgumentError("All actions must be Strings.");
+            }
+            for (var jj :int = 0; jj < ii; jj++) {
+                if (moreActions[jj] === moreActions[ii]) {
+                    throw new ArgumentError("Duplicate action specified: " +
+                        moreActions[ii]);
+                }
+            }
         }
-        _actions[name] = callback;
+        _actions = moreActions;
     }
 
     override protected function populateProperties (o :Object) :void
@@ -49,9 +50,7 @@ public class AvatarControl extends ActorControl
 
     protected function avatarSpoke_v1 () :void
     {
-        if (avatarSpoke != null) {
-            avatarSpoke();
-        }
+        dispatchEvent(new ControlEvent(ControlEvent.AVATAR_SPOKE));
     }
 
     /** 
@@ -59,11 +58,7 @@ public class AvatarControl extends ActorControl
      */
     protected function getActions_v1 () :Array
     {
-        var actions :Array = [];
-        for (var name :String in _actions) {
-            actions.push(name);
-        }
-        return actions;
+        return _actions;
     }
 
     /**
@@ -71,15 +66,10 @@ public class AvatarControl extends ActorControl
      */
     protected function doAction_v1 (name :String) :void
     {
-        // try invoking the callback function for the action.
-        try {
-            _actions[name]();
-        } catch (e :Error) {
-            // cry not
-        }
+        dispatchEvent(new ControlEvent(ControlEvent.ACTION_TRIGGERED, name));
     }
 
-    /** An associative hash of callback functions, indexed by action name. */
-    protected var _actions :Object = new Object();
+    /** An array of all action names. */
+    protected var _actions :Array = [];
 }
 }

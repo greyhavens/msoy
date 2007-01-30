@@ -12,12 +12,6 @@ import flash.display.DisplayObject;
 public class ActorControl extends MsoyControl
 {
     /**
-     * A function that will get called when we start and stop moving and when our orientation
-     * changes.
-     */
-    public var appearanceChanged :Function;
-
-    /**
      * Creates a controller for a mobile. The display object is the mobile's visualization.
      */
     public function ActorControl (disp :DisplayObject)
@@ -92,9 +86,7 @@ public class ActorControl extends MsoyControl
         _location = location;
         _orient = orient;
         _isMoving = moving;
-        if (appearanceChanged != null) {
-            appearanceChanged();
-        }
+        dispatchEvent(new ControlEvent(ControlEvent.APPEARANCE_CHANGED));
     }
 
     /** Contains our current location in the scene [x, y, z], or null. */
