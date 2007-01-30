@@ -45,6 +45,7 @@ import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.Prefs;
 
 public class ChatOverlay
     implements ChatDisplay
@@ -816,9 +817,7 @@ public class ChatOverlay
     {
         // by default we add one, because it's assumed that we're in
         // subtitle-only view.
-        // TODO
-        // return Prefs.getChatDecay() + 1;
-        return 1;
+        return Prefs.getChatDecay() + 1;
     }
 
     /**

@@ -314,6 +314,7 @@ public class MsoyClient extends Client
         [ResourceBundle("game")]
         [ResourceBundle("editing")]
         [ResourceBundle("item")]
+        [ResourceBundle("prefs")]
         var rb :ResourceBundle; // this needs to be here for the above lines
     }
 

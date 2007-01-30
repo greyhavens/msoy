@@ -33,6 +33,12 @@ public class Msgs
         return _item;
     }
 
+    /** The prefs message bundle. */
+    public static function get PREFS () :MessageBundle
+    {
+        return _prefs;
+    }
+
     /**
      * Initialize the bundles.
      */
@@ -47,11 +53,13 @@ public class Msgs
         _editing = msgMgr.getBundle("editing");
         _game = msgMgr.getBundle("game");
         _item = msgMgr.getBundle("item");
+        _prefs = msgMgr.getBundle("prefs");
     }
 
     protected static var _general :MessageBundle;
     protected static var _editing :MessageBundle;
     protected static var _game :MessageBundle;
     protected static var _item :MessageBundle;
+    protected static var _prefs :MessageBundle;
 }
 }

@@ -8,10 +8,21 @@ import flash.display.DisplayObjectContainer;
 import flash.events.DataEvent;
 import flash.events.MouseEvent;
 
+import mx.binding.utils.BindingUtils;
+
+import mx.core.Container;
+
 import mx.controls.Button;
 import mx.controls.CheckBox;
+import mx.controls.ComboBox;
+import mx.controls.Label;
+import mx.controls.RadioButton;
+import mx.controls.RadioButtonGroup;
 import mx.controls.TextInput;
 import mx.controls.Tree;
+
+import mx.containers.TabNavigator;
+import mx.containers.VBox;
 
 import com.threerings.util.StringUtil;
 
@@ -76,6 +87,21 @@ public class PrefsDialog extends FloatingPanel
     {
         super.createChildren();
 
+        var tabs :TabNavigator = new TabNavigator();
+        tabs.resizeToContent = true;
+        tabs.addChild(createPrimaryTab());
+        tabs.addChild(createChatTab());
+
+        addChild(tabs);
+
+        addButtons(OK_BUTTON);
+    }
+
+    protected function createPrimaryTab () :Container
+    {
+        var tainer :VBox = new VBox();
+        tainer.label = Msgs.PREFS.get("t.general");
+
         var memberObj :MemberObject = _ctx.getClientObject();
 
         var grid :Grid = new Grid();
@@ -90,18 +116,58 @@ public class PrefsDialog extends FloatingPanel
             Prefs.setLogToChat(_logToChat.selected);
         });
 
-        addChild(grid);
+        tainer.addChild(grid);
 
         _avatars.percentWidth = 100;
         _avatars.tree.dragEnabled = false;
 
-        addChild(_avatars);
+        tainer.addChild(_avatars);
 
         var btn :CommandButton = new CommandButton(MsoyController.PURCHASE_ROOM);
         btn.label = Msgs.GENERAL.get("b.purchase_room");
-        addChild(btn);
+        tainer.addChild(btn);
 
-        addButtons(OK_BUTTON);
+        return tainer;
+    }
+
+    protected function createChatTab () :Container
+    {
+        var tainer :VBox = new VBox();
+        tainer.label = Msgs.PREFS.get("t.chat");
+
+        var ii :int;
+        var grid :Grid = new Grid();
+
+        var decay :ComboBox = new ComboBox();
+        var choices :Array = [];
+        for (ii = 0; ii < 3; ii++) {
+            choices.push(Msgs.PREFS.get("l.chat_decay" + ii));
+        }
+        decay.dataProvider = choices;
+        decay.selectedIndex = Prefs.getChatDecay();
+        BindingUtils.bindSetter(Prefs.setChatDecay, decay, "selectedIndex");
+        grid.addRow(Msgs.PREFS.get("l.chat_decay"), decay);
+
+        grid.addRow(Msgs.PREFS.get("l.chat_filter"), [2, 1]);
+        var filterGroup :RadioButtonGroup = new RadioButtonGroup();
+        var filterChoice :int = Prefs.getChatFilterLevel();
+        for (ii= 0; ii < 4; ii++) {
+            var but :RadioButton = new RadioButton();
+            but.label = Msgs.PREFS.get("l.chat_filter" + ii);
+            but.selected = (ii == filterChoice);
+            but.value = ii;
+            but.group = filterGroup;
+            grid.addRow(but, [2, 1]);
+        }
+        BindingUtils.bindSetter(Prefs.setChatFilterLevel, filterGroup, "selectedValue");
+
+        var lbl :Label = new Label();
+        lbl.text = Msgs.PREFS.get("m.chat_filter_note");
+        lbl.setStyle("fontSize", 8);
+        grid.addRow(lbl, [2, 1]);
+
+        tainer.addChild(grid);
+        return tainer;
     }
 
     override protected function buttonClicked (buttonId :int) :void

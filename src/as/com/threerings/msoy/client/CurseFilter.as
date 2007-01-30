@@ -14,7 +14,7 @@ public class CurseFilter extends com.threerings.crowd.chat.client.CurseFilter
 
     override public function getFilterMode () :int
     {
-        return VERNACULAR;
+        return Prefs.getChatFilterLevel();
     }
 }
 }
