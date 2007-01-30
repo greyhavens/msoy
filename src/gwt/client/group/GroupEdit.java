@@ -225,12 +225,14 @@ public class GroupEdit extends BorderedDialog
         HorizontalPanel backgroundsPanel = new HorizontalPanel();
         backgroundsPanel.setSpacing(10);
         backgroundsPanel.setStyleName("CurrentPanel");
+        backgroundsPanel.setVerticalAlignment(HorizontalPanel.ALIGN_BOTTOM);
         int types[] = { IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND,
             IMAGE_PEOPLE_BACKGROUND };
         String labels[] = { CGroup.msgs.editInfoBG(), CGroup.msgs.editDetailBG(),
                             CGroup.msgs.editPeopleBG() };
         for (int i = 0; i < types.length; i++) {
             VerticalPanel imageBox = new VerticalPanel();
+            imageBox.setSpacing(3);
             backgroundsPanel.add(imageBox);
             updateImageBox(imageBox, types[i], CGroup.msgs.editSetBG(labels[i]));
         }
@@ -302,7 +304,12 @@ public class GroupEdit extends BorderedDialog
 
         box.clear();
         if (media != null) {
-            box.add(MediaUtil.createMediaView(media, MediaDesc.THUMBNAIL_SIZE));
+            Widget w;
+            box.add(w = MediaUtil.createMediaView(media, MediaDesc.THUMBNAIL_SIZE));
+            box.setCellWidth(w, "160px");
+            box.setCellHeight(w, "120px");
+            box.setCellHorizontalAlignment(w, VerticalPanel.ALIGN_CENTER);
+            box.setCellVerticalAlignment(w, VerticalPanel.ALIGN_MIDDLE);
         }
         Button changeButton = new Button(buttonLabel);
         changeButton.addClickListener(new ClickListener() {
@@ -330,7 +337,6 @@ public class GroupEdit extends BorderedDialog
                     addError(CGroup.msgs.errPhotoLoadFailed(CGroup.serverError(caught)));
                 }
             });
-
         } else {
             if (_images.size() == 0) {
                 addError(CGroup.msgs.errNoPhotos());
@@ -354,12 +360,17 @@ public class GroupEdit extends BorderedDialog
                         break;
                     case IMAGE_INFO_BACKGROUND:
                         _extras.infoBackground = photo.photoMedia;
+                        // the background images store the thumbnail's constraint so that they can
+                        // be scaled properly in the edit dialog
+                        _extras.infoBackground.constraint = photo.thumbMedia.constraint;
                         break;
                     case IMAGE_DETAIL_BACKGROUND:
                         _extras.detailBackground = photo.photoMedia;
+                        _extras.detailBackground.constraint = photo.thumbMedia.constraint;
                         break;
                     case IMAGE_PEOPLE_BACKGROUND:
                         _extras.peopleBackground = photo.photoMedia;
+                        _extras.peopleBackground.constraint = photo.thumbMedia.constraint;
                         break;
                     default:
                         addError("Internal Error! Unkown image type: " + type);

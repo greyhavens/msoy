@@ -30,7 +30,7 @@ import com.threerings.msoy.web.data.GroupExtras;
            columns={GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })})
 public class GroupRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 8;
+    public static final int SCHEMA_VERSION = 9;
 
     public static final String GROUP_ID = "groupId";
     public static final String NAME = "name";
@@ -42,10 +42,15 @@ public class GroupRecord extends PersistentRecord
     public static final String LOGO_MEDIA_CONSTRAINT = "logoMediaConstraint";
     public static final String INFO_BACKGROUND_MIME_TYPE = "infoBackgroundMimeType";
     public static final String INFO_BACKGROUND_HASH = "infoBackgroundHash";
+    public static final String INFO_BACKGROUND_THUMB_CONSTRAINT = "infoBackgroundThumbConstraint";
     public static final String DETAIL_BACKGROUND_MIME_TYPE = "detailBackgroundMimeType";
     public static final String DETAIL_BACKGROUND_HASH = "detailBackgroundHash";
+    public static final String DETAIL_BACKGROUND_THUMB_CONSTRAINT = 
+        "detailBackgroundThumbConstraint";
     public static final String PEOPLE_BACKGROUND_MIME_TYPE = "peopleBackgroundMimeType";
     public static final String PEOPLE_BACKGROUND_HASH = "peopleBackgroundHash";
+    public static final String PEOPLE_BACKGROUND_THUMB_CONSTRAINT = 
+        "peopleBackgroundThumbConstraint";
     public static final String CREATOR_ID = "creatorId";
     public static final String HOME_SCENE_ID = "homeSceneId";
     public static final String CREATION_DATE = "creationDate";
@@ -89,6 +94,9 @@ public class GroupRecord extends PersistentRecord
     @Column(nullable=true)
     public byte[] infoBackgroundHash;
 
+    /** The constraint for the thumbnail of this image. */
+    public byte infoBackgroundThumbConstraint;
+
     /** The MIME type for the background of the detail area. */
     public byte detailBackgroundMimeType;
 
@@ -96,12 +104,18 @@ public class GroupRecord extends PersistentRecord
     @Column(nullable=true)
     public byte[] detailBackgroundHash;
 
+    /** The constraint for the thumbnail of this image. */
+    public byte detailBackgroundThumbConstraint;
+
     /** The MIME type for the background of the people area. */
     public byte peopleBackgroundMimeType;
 
     /** A hash code identifying the media for the background of the people area. */
     @Column(nullable=true)
     public byte[] peopleBackgroundHash;
+
+    /** The constraint for the thumbnail of this image. */
+    public byte peopleBackgroundThumbConstraint;
 
     /** The member id of the person who created the group. */
     public int creatorId;
@@ -143,11 +157,14 @@ public class GroupRecord extends PersistentRecord
     {
         GroupExtras extras = new GroupExtras();
         extras.infoBackground = infoBackgroundHash == null ? null :
-            new MediaDesc(infoBackgroundHash.clone(), infoBackgroundMimeType);
+            new MediaDesc(infoBackgroundHash.clone(), infoBackgroundMimeType,
+            infoBackgroundThumbConstraint);
         extras.detailBackground = detailBackgroundHash == null ? null :
-            new MediaDesc(detailBackgroundHash.clone(), detailBackgroundMimeType);
+            new MediaDesc(detailBackgroundHash.clone(), detailBackgroundMimeType,
+            detailBackgroundThumbConstraint);
         extras.peopleBackground = peopleBackgroundHash == null ? null :
-            new MediaDesc(peopleBackgroundHash.clone(), peopleBackgroundMimeType);
+            new MediaDesc(peopleBackgroundHash.clone(), peopleBackgroundMimeType,
+            peopleBackgroundThumbConstraint);
         extras.charter = charter;
         extras.homepageUrl = homepageUrl;
         return extras;
@@ -183,18 +200,23 @@ public class GroupRecord extends PersistentRecord
             infoBackgroundMimeType)))) {
             updates.put(INFO_BACKGROUND_HASH, extrasDef.infoBackground.hash);
             updates.put(INFO_BACKGROUND_MIME_TYPE, extrasDef.infoBackground.mimeType);
+            // the thumbnail constraint (instead of the photo constraint) is stored in these
+            // MediaDescs - see GroupEdit
+            updates.put(INFO_BACKGROUND_THUMB_CONSTRAINT, extrasDef.infoBackground.constraint);
         }
         if (extrasDef.detailBackground != null && (detailBackgroundHash == null ||
             !extrasDef.detailBackground.equals(new MediaDesc(detailBackgroundHash,
             detailBackgroundMimeType)))) {
             updates.put(DETAIL_BACKGROUND_HASH, extrasDef.detailBackground.hash);
             updates.put(DETAIL_BACKGROUND_MIME_TYPE, extrasDef.detailBackground.mimeType);
+            updates.put(DETAIL_BACKGROUND_THUMB_CONSTRAINT, extrasDef.detailBackground.constraint);
         }
         if (extrasDef.peopleBackground != null && (peopleBackgroundHash == null ||
             !extrasDef.peopleBackground.equals(new MediaDesc(peopleBackgroundHash,
             peopleBackgroundMimeType)))) {
             updates.put(PEOPLE_BACKGROUND_HASH, extrasDef.peopleBackground.hash);
             updates.put(PEOPLE_BACKGROUND_MIME_TYPE, extrasDef.peopleBackground.mimeType);
+            updates.put(PEOPLE_BACKGROUND_THUMB_CONSTRAINT, extrasDef.peopleBackground.constraint);
         }
         if (extrasDef.charter != null && !extrasDef.charter.equals(charter)) {
             updates.put(CHARTER, extrasDef.charter);
