@@ -10,7 +10,7 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.threerings.io.Streamable;
 
 /**
- * Maps a tag to a count of the items that reference it.
+ * Maps a tag to a count of the targets that reference it.
  */
 @Computed
 @Entity
@@ -27,6 +27,6 @@ public class TagPopularityRecord extends PersistentRecord
     /** The actual tag. */
     public String tag;
     
-    /** The number of item that reference this tag. */
+    /** The number of target that reference this tag. */
     public int count;
 }

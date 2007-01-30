@@ -56,8 +56,6 @@ public abstract class ItemRepository<
     T extends ItemRecord,
     CLT extends CloneRecord<T>,
     CAT extends CatalogRecord<T>,
-    TT extends TagRecord,
-    THT extends TagHistoryRecord,
     RT extends RatingRecord<T>>
     extends DepotRepository
 {
@@ -71,13 +69,20 @@ public abstract class ItemRepository<
     {
         // we'll be using one persistence context per ItemRecord type
         super(new PersistenceContext("itemdb", provider));
-        _tagRepo = new TagRepository<TT,THT>(provider, getTagClass(), getTagHistoryClass());
+        _tagRepo = new TagRepository(provider) {
+            protected TagRecord createTagRecord () {
+                return ItemRepository.this.createTagRecord();
+            }
+            protected TagHistoryRecord createTagHistoryRecord () {
+                return ItemRepository.this.createTagHistoryRecord();
+            }
+        };
     }
 
     /**
      * Returns the repository that manages tags for this item.
      */
-    public TagRepository<TT,THT> getTagRepository ()
+    public TagRepository getTagRepository ()
     {
         return _tagRepo;
     }
@@ -541,23 +546,23 @@ public abstract class ItemRepository<
     protected abstract Class<CAT> getCatalogClass ();
 
     /**
-     * Specific item repositories override this method and indicate their item's tag persistent
-     * record class.
-     */
-    protected abstract Class<TT> getTagClass ();
-
-    /**
-     * Specific item repositories override this method and indicate their item's tag history
-     * persistent record class.
-     */
-    protected abstract Class<THT> getTagHistoryClass ();
-
-    /**
      * Specific item repositories override this method and indicate their item's rating persistent
      * record class.
      */
     protected abstract Class<RT> getRatingClass ();
 
+    /**
+     * Specific item repositories override this method and indicate their item's tag persistent
+     * record class.
+     */
+    protected abstract TagRecord createTagRecord ();
+
+    /**
+     * Specific item repositories override this method and indicate their item's tag history
+     * persistent record class.
+     */
+    protected abstract TagHistoryRecord createTagHistoryRecord ();
+
     /** Used to manage our item tags. */
-    protected TagRepository<TT,THT> _tagRepo;
+    protected TagRepository _tagRepo;
 }

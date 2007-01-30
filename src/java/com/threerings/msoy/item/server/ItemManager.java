@@ -121,7 +121,7 @@ public class ItemManager
     /**
      * Returns the repository used to manage items of the specified type.
      */
-    public ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepository (
+    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (
         ItemIdent ident, ResultListener<?> listener)
     {
         return getRepository(ident.type, listener);
@@ -130,7 +130,7 @@ public class ItemManager
     /**
      * Returns the repository used to manage items of the specified type.
      */
-    public ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepository (
+    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (
         byte type, ResultListener<?> listener)
     {
         try {
@@ -154,7 +154,7 @@ public class ItemManager
      * Returns the repository used to manage items of the specified type. Throws a service
      * exception if the supplied type is invalid.
      */
-    public ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepository (byte type)
+    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (byte type)
         throws ServiceException
     {
         try {
@@ -170,7 +170,7 @@ public class ItemManager
      */
     public void getItem (final ItemIdent ident, ResultListener<Item> listener)
     {
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -216,7 +216,7 @@ public class ItemManager
                     // create a list to hold the results
                     ArrayList<Item> items = new ArrayList<Item>();
                     // mass-lookup items, a repo at a time
-                    for (Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]> tup : list) {
+                    for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : list) {
                         for (ItemRecord rec : tup.left.loadItems(tup.right)) {
                             items.add(rec.toItem());
                         }
@@ -240,7 +240,7 @@ public class ItemManager
             return;
         }
 
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(Item.AVATAR, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(Item.AVATAR, listener);
         if (repo == null) {
             return;
         }
@@ -327,10 +327,10 @@ public class ItemManager
         ResultListener<Object> rlo = listener;
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Object>(rlo) {
             public Object invokePersistResult () throws PersistenceException {
-                for (Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]> tup : unused) {
+                for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : unused) {
                     tup.left.markItemUsage(tup.right, Item.UNUSED, 0);
                 }
-                for (Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]> tup : scened) {
+                for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : scened) {
                     tup.left.markItemUsage(tup.right,
                         Item.USED_AS_FURNITURE, sceneId);
                 }
@@ -385,7 +385,7 @@ public class ItemManager
         byte type = record.getType();
 
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(type, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, listener);
         if (repo == null) {
             return;
         }
@@ -416,7 +416,7 @@ public class ItemManager
         byte type = record.getType();
 
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(type, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, listener);
         if (repo == null) {
             return;
         }
@@ -448,7 +448,7 @@ public class ItemManager
     public void getItemDetail (final ItemIdent ident, final int memberId,
                                ResultListener<ItemDetail> listener)
     {
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -488,7 +488,7 @@ public class ItemManager
                                ResultListener<ArrayList<Item>> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(type, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, listener);
         if (repo == null) {
             return;
         }
@@ -515,7 +515,7 @@ public class ItemManager
                               ResultListener<Item> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -552,7 +552,7 @@ public class ItemManager
     public void remixItem (final ItemIdent ident, ResultListener<Item> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -597,7 +597,7 @@ public class ItemManager
                                ResultListener<Void> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -625,7 +625,7 @@ public class ItemManager
     public void getRating (final ItemIdent ident, final int memberId, ResultListener<Byte> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -642,7 +642,7 @@ public class ItemManager
     public void getTags (final ItemIdent ident, ResultListener<Collection<String>> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -665,7 +665,7 @@ public class ItemManager
                                ResultListener<Collection<TagHistory>> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -675,7 +675,7 @@ public class ItemManager
                 Map<Integer, MemberRecord> memberCache = new HashMap<Integer, MemberRecord>();
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
                 for (TagHistoryRecord record :
-                         repo.getTagRepository().getTagHistoryByItem(ident.itemId)) {
+                         repo.getTagRepository().getTagHistoryByTarget(ident.itemId)) {
                     // TODO: we should probably cache in MemberRepository
                     MemberRecord memRec = memberCache.get(record.memberId);
                     if (memRec == null) {
@@ -708,16 +708,16 @@ public class ItemManager
                 MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
                 MemberName memName = memRec.getName();
                 ArrayList<TagHistory> list = new ArrayList<TagHistory>();
-                for (Entry<Byte, ItemRepository<ItemRecord, ?, ?, ?, ?, ?>> entry :
+                for (Entry<Byte, ItemRepository<ItemRecord, ?, ?, ?>> entry :
                          _repos.entrySet()) {
                     byte type = entry.getKey();
-                    ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = entry.getValue();
+                    ItemRepository<ItemRecord, ?, ?, ?> repo = entry.getValue();
                     for (TagHistoryRecord record :
                              repo.getTagRepository().getTagHistoryByMember(memberId)) {
                         TagNameRecord tag = record.tagId == -1 ? null :
                             repo.getTagRepository().getTag(record.tagId);
                         TagHistory history = new TagHistory();
-                        history.item = new ItemIdent(type, record.itemId);
+                        history.item = new ItemIdent(type, record.targetId);
                         history.member = memName;
                         history.tag = tag == null ? null : tag.tag;
                         history.action = record.action;
@@ -737,7 +737,7 @@ public class ItemManager
                           ResultListener<Float> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -787,7 +787,7 @@ public class ItemManager
         }
 
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -808,8 +808,8 @@ public class ItemManager
 
                 // and do the actual work
                 TagHistoryRecord historyRecord = doTag ?
-                    repo.getTagRepository().tagItem(originalId, tag.tagId, taggerId, now) :
-                    repo.getTagRepository().untagItem(originalId, tag.tagId, taggerId, now);
+                    repo.getTagRepository().tag(originalId, tag.tagId, taggerId, now) :
+                    repo.getTagRepository().untag(originalId, tag.tagId, taggerId, now);
                 if (historyRecord != null) {
                     // look up the member
                     MemberRecord mrec = MsoyServer.memberRepo.loadMember(taggerId);
@@ -835,7 +835,7 @@ public class ItemManager
                           ResultListener<Void> listener)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = getRepository(ident, listener);
+        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
         if (repo == null) {
             return;
         }
@@ -982,10 +982,10 @@ public class ItemManager
      * servlet handler threads but need not be synchronized because the repositories table is
      * created at server startup time and never modified.
      */
-    protected ItemRepository<ItemRecord, ?, ?, ?, ?, ?> getRepositoryFor (byte type)
+    protected ItemRepository<ItemRecord, ?, ?, ?> getRepositoryFor (byte type)
         throws MissingRepositoryException
     {
-        ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = _repos.get(type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = _repos.get(type);
         if (repo == null) {
             throw new MissingRepositoryException(type);
         }
@@ -997,7 +997,7 @@ public class ItemManager
      * difference repositories.
      */
     protected class LookupList
-        implements Iterable<Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]>>
+        implements Iterable<Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]>>
     {
         /**
          * Add the specified item id to the list.
@@ -1031,16 +1031,16 @@ public class ItemManager
         }
 
         // from Iterable
-        public Iterator<Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]>> iterator ()
+        public Iterator<Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]>> iterator ()
         {
             final Iterator<LookupType> itr = _byType.values().iterator();
-            return new Iterator<Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]>>() {
+            return new Iterator<Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]>>() {
                 public boolean hasNext () {
                     return itr.hasNext();
                 }
-                public Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]> next () {
+                public Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> next () {
                     LookupType lookup = itr.next();
-                    return new Tuple<ItemRepository<ItemRecord, ?, ?, ?, ?, ?>, int[]>(
+                    return new Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]>(
                         lookup.repo, lookup.getItemIds());
                 }
                 public void remove () {
@@ -1072,12 +1072,12 @@ public class ItemManager
             public byte type;
 
             /** The repository associated with this list. */
-            public ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo;
+            public ItemRepository<ItemRecord, ?, ?, ?> repo;
 
             /**
              * Create a new LookupType for the specified repository.
              */
-            public LookupType (byte type, ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo)
+            public LookupType (byte type, ItemRepository<ItemRecord, ?, ?, ?> repo)
             {
                 this.type = type;
                 this.repo = repo;
@@ -1134,6 +1134,6 @@ public class ItemManager
         Pattern.compile("[a-z](_?[a-z0-9]){2,18}");
 
     /** Maps byte type ids to repository for all digital item types. */
-    protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?, ?, ?>> _repos =
-        new HashMap<Byte, ItemRepository<ItemRecord, ?, ?, ?, ?, ?>>();
+    protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos =
+        new HashMap<Byte, ItemRepository<ItemRecord, ?, ?, ?>>();
 }

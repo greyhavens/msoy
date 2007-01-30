@@ -4,6 +4,10 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.annotation.Entity;
+
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagRecord;
 
 /**
  * Manages the persistent store of {@link PhotoRecord} items.
@@ -12,10 +16,18 @@ public class PhotoRepository extends ItemRepository<
     PhotoRecord,
     PhotoCloneRecord,
     PhotoCatalogRecord,
-    PhotoTagRecord,
-    PhotoTagHistoryRecord,
     PhotoRatingRecord>
 {
+    @Entity(name="PhotoTagRecord")
+    public static class PhotoTagRecord extends TagRecord
+    {
+    }
+
+    @Entity(name="PhotoTagHistoryRecord")
+    public static class PhotoTagHistoryRecord extends TagHistoryRecord
+    {
+    }
+
     public PhotoRepository (ConnectionProvider provider)
     {
         super(provider);
@@ -39,20 +51,20 @@ public class PhotoRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<PhotoTagRecord> getTagClass ()
-    {
-        return PhotoTagRecord.class;
-    }
-
-    @Override
-    protected Class<PhotoTagHistoryRecord> getTagHistoryClass ()
-    {
-        return PhotoTagHistoryRecord.class;
-    }
-
-    @Override
     protected Class<PhotoRatingRecord> getRatingClass ()
     {
         return PhotoRatingRecord.class;
+    }
+
+    @Override
+    protected TagRecord createTagRecord ()
+    {
+        return new PhotoTagRecord();
+    }
+
+    @Override
+    protected TagHistoryRecord createTagHistoryRecord ()
+    {
+        return new PhotoTagHistoryRecord();
     }
 }

@@ -265,8 +265,7 @@ public class ItemServlet extends MsoyServiceServlet
         // clever in the UI
         try {
             for (byte type : MsoyServer.itemMan.getRepositoryTypes()) {
-                ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo =
-                    MsoyServer.itemMan.getRepository(type);
+                ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
                 byte mask = (byte) (Item.FLAG_FLAGGED_COPYRIGHT | Item.FLAG_FLAGGED_MATURE);
                 for (ItemRecord record : repo.loadItemsByFlag(mask, false, count)) {
                     Item item = record.toItem();
@@ -303,7 +302,7 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
         byte type = ident.type;
-        ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         try {
             ItemRecord item = repo.loadOriginalItem(ident.itemId);
             IntSet owners = new ArrayIntSet();

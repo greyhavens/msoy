@@ -4,6 +4,10 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.annotation.Entity;
+
+import com.threerings.msoy.server.persist.TagRecord;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
 
 /**
  * Manages the persistent store of {@link Furniture} items.
@@ -12,10 +16,18 @@ public class FurnitureRepository extends ItemRepository<
     FurnitureRecord,
     FurnitureCloneRecord,
     FurnitureCatalogRecord,
-    FurnitureTagRecord,
-    FurnitureTagHistoryRecord,
     FurnitureRatingRecord>
 {
+    @Entity(name="FurnitureTagRecord")
+    public static class FurnitureTagRecord extends TagRecord
+    {
+    }
+
+    @Entity(name="FurnitureTagHistoryRecord")
+    public static class FurnitureTagHistoryRecord extends TagHistoryRecord
+    {
+    }
+
     public FurnitureRepository (ConnectionProvider provider)
     {
         super(provider);
@@ -37,22 +49,22 @@ public class FurnitureRepository extends ItemRepository<
     {
         return FurnitureCloneRecord.class;
     }
-
-    @Override
-    protected Class<FurnitureTagRecord> getTagClass ()
-    {
-        return FurnitureTagRecord.class;
-    }
-
-    @Override
-    protected Class<FurnitureTagHistoryRecord> getTagHistoryClass ()
-    {
-        return FurnitureTagHistoryRecord.class;
-    }
     
     @Override
     protected Class<FurnitureRatingRecord> getRatingClass ()
     {
         return FurnitureRatingRecord.class;
+    }
+
+    @Override
+    protected TagRecord createTagRecord ()
+    {
+        return new FurnitureTagRecord();
+    }
+
+    @Override
+    protected TagHistoryRecord createTagHistoryRecord ()
+    {
+        return new FurnitureTagHistoryRecord();
     }
 }

@@ -5,10 +5,14 @@ package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.annotation.Entity;
 
 import com.threerings.toybox.server.ToyBoxManager;
 import com.threerings.toybox.server.persist.Game;
 import com.threerings.toybox.xml.GameParser;
+
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagRecord;
 
 import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -20,11 +24,19 @@ public class GameRepository extends ItemRepository<
         GameRecord,
         GameCloneRecord,
         GameCatalogRecord,
-        GameTagRecord,
-        GameTagHistoryRecord,
         GameRatingRecord>
     implements ToyBoxManager.GameRepository
 {
+    @Entity(name="GameTagRecord")
+    public static class GameTagRecord extends TagRecord
+    {
+    }
+
+    @Entity(name="GameTagHistoryRecord")
+    public static class GameTagHistoryRecord extends TagHistoryRecord
+    {
+    }
+
     public GameRepository (ConnectionProvider provider)
     {
         super(provider);
@@ -92,22 +104,22 @@ public class GameRepository extends ItemRepository<
     {
         return GameCloneRecord.class;
     }
-
-    @Override
-    protected Class<GameTagRecord> getTagClass ()
-    {
-        return GameTagRecord.class;
-    }
-
-    @Override
-    protected Class<GameTagHistoryRecord> getTagHistoryClass ()
-    {
-        return GameTagHistoryRecord.class;
-    }
     
     @Override
     protected Class<GameRatingRecord> getRatingClass ()
     {
         return GameRatingRecord.class;
+    }
+
+    @Override
+    protected TagRecord createTagRecord ()
+    {
+        return new GameTagRecord();
+    }
+
+    @Override
+    protected TagHistoryRecord createTagHistoryRecord ()
+    {
+        return new GameTagHistoryRecord();
     }
 }

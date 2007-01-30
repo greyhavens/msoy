@@ -46,7 +46,7 @@ public class CatalogServlet extends MsoyServiceServlet
                              int rows)
         throws ServiceException
     {
-        ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
 
         List<CatalogListing> list = new ArrayList<CatalogListing>();
         try {
@@ -108,7 +108,7 @@ public class CatalogServlet extends MsoyServiceServlet
         final MemberRecord mrec = requireAuthedUser(creds);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo =
+        ItemRepository<ItemRecord, ?, ?, ?> repo =
             MsoyServer.itemMan.getRepository(ident.type);
 
         try {
@@ -150,7 +150,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public Map<String, Integer> getPopularTags (byte type, int rows)
         throws ServiceException
     {
-        ItemRepository<ItemRecord, ?, ?, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
+        ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
         Map<String, Integer> result = new HashMap<String, Integer>();
         try {
             for (TagPopularityRecord record : repo.getTagRepository().getPopularTags(rows)) {

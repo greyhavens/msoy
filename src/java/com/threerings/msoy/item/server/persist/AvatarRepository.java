@@ -4,6 +4,10 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.annotation.Entity;
+
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagRecord;
 
 /**
  * Manages the persistent store of {@link AvatarRecord} items.
@@ -12,10 +16,18 @@ public class AvatarRepository extends ItemRepository<
     AvatarRecord,
     AvatarCloneRecord,
     AvatarCatalogRecord,
-    AvatarTagRecord,
-    AvatarTagHistoryRecord,
     AvatarRatingRecord>
 {
+    @Entity(name="AvatarTagRecord")
+    public static class AvatarTagRecord extends TagRecord
+    {
+    }
+
+    @Entity(name="AvatarTagHistoryRecord")
+    public static class AvatarTagHistoryRecord extends TagHistoryRecord
+    {
+    }
+
     public AvatarRepository (ConnectionProvider provider)
     {
         super(provider);
@@ -39,20 +51,20 @@ public class AvatarRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<AvatarTagRecord> getTagClass ()
-    {
-        return AvatarTagRecord.class;
-    }
-
-    @Override
-    protected Class<AvatarTagHistoryRecord> getTagHistoryClass ()
-    {
-        return AvatarTagHistoryRecord.class;
-    }
-
-    @Override
     protected Class<AvatarRatingRecord> getRatingClass ()
     {
         return AvatarRatingRecord.class;
+    }
+
+    @Override
+    protected TagRecord createTagRecord ()
+    {
+        return new AvatarTagRecord();
+    }
+
+    @Override
+    protected TagHistoryRecord createTagHistoryRecord ()
+    {
+        return new AvatarTagHistoryRecord();
     }
 }

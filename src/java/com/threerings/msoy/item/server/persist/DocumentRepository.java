@@ -4,6 +4,10 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.annotation.Entity;
+
+import com.threerings.msoy.server.persist.TagRecord;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
 
 /**
  * Manages the persistent store of {@link Document} items.
@@ -12,10 +16,18 @@ public class DocumentRepository extends ItemRepository<
     DocumentRecord,
     DocumentCloneRecord,
     DocumentCatalogRecord,
-    DocumentTagRecord,
-    DocumentTagHistoryRecord,
     DocumentRatingRecord>
 {
+    @Entity(name="DocumentTagRecord")
+    public static class DocumentTagRecord extends TagRecord
+    {
+    }
+
+    @Entity(name="DocumentTagHistoryRecord")
+    public static class DocumentTagHistoryRecord extends TagHistoryRecord
+    {
+    }
+
     public DocumentRepository (ConnectionProvider provider)
     {
         super(provider);
@@ -39,20 +51,20 @@ public class DocumentRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<DocumentTagRecord> getTagClass ()
-    {
-        return DocumentTagRecord.class;
-    }
-
-    @Override
-    protected Class<DocumentTagHistoryRecord> getTagHistoryClass ()
-    {
-        return DocumentTagHistoryRecord.class;
-    }
-
-    @Override
     protected Class<DocumentRatingRecord> getRatingClass ()
     {
         return DocumentRatingRecord.class;
+    }
+
+    @Override
+    protected TagRecord createTagRecord ()
+    {
+        return new DocumentTagRecord();
+    }
+
+    @Override
+    protected TagHistoryRecord createTagHistoryRecord ()
+    {
+        return new DocumentTagHistoryRecord();
     }
 }

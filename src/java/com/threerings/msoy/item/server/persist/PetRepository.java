@@ -4,6 +4,10 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.ConnectionProvider;
+import com.samskivert.jdbc.depot.annotation.Entity;
+
+import com.threerings.msoy.server.persist.TagRecord;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
 
 /**
  * Manages the persistent store of {@link Pet} items.
@@ -12,10 +16,18 @@ public class PetRepository extends ItemRepository<
     PetRecord,
     PetCloneRecord,
     PetCatalogRecord,
-    PetTagRecord,
-    PetTagHistoryRecord,
     PetRatingRecord>
 {
+    @Entity(name="PetTagRecord")
+    public static class PetTagRecord extends TagRecord
+    {
+    }
+
+    @Entity(name="PetTagHistoryRecord")
+    public static class PetTagHistoryRecord extends TagHistoryRecord
+    {
+    }
+
     public PetRepository (ConnectionProvider provider)
     {
         super(provider);
@@ -37,22 +49,22 @@ public class PetRepository extends ItemRepository<
     {
         return PetCloneRecord.class;
     }
-
-    @Override
-    protected Class<PetTagRecord> getTagClass ()
-    {
-        return PetTagRecord.class;
-    }
-
-    @Override
-    protected Class<PetTagHistoryRecord> getTagHistoryClass ()
-    {
-        return PetTagHistoryRecord.class;
-    }
     
     @Override
     protected Class<PetRatingRecord> getRatingClass ()
     {
         return PetRatingRecord.class;
+    }
+
+    @Override
+    protected TagRecord createTagRecord ()
+    {
+        return new PetTagRecord();
+    }
+
+    @Override
+    protected TagHistoryRecord createTagHistoryRecord ()
+    {
+        return new PetTagHistoryRecord();
     }
 }

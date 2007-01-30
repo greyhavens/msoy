@@ -15,6 +15,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -29,22 +30,47 @@ import com.threerings.msoy.item.web.TagHistory;
  * Manages the persistent side of tagging of things in the MetaSOY system (right now items and
  * groups).
  */
-public class TagRepository<T extends TagRecord,HT extends TagHistoryRecord> extends DepotRepository
+public abstract class TagRepository extends DepotRepository
 {
     /**
      * Creates a tag repository for the supplied tag and tag history record classes.
      */
-    public TagRepository (ConnectionProvider conprov,
-                          Class<T> tagClass, Class<HT> tagHistoryClass)
+    public TagRepository (ConnectionProvider conprov)
     {
         super(conprov);
+        @SuppressWarnings("unchecked") Class<TagRecord> tagClass = (Class<TagRecord>)
+            createTagRecord().getClass();
         _tagClass = tagClass;
-        _tagHistoryClass = tagHistoryClass;
+        @SuppressWarnings("unchecked") Class<TagHistoryRecord> thClass = (Class<TagHistoryRecord>)
+            createTagHistoryRecord().getClass();
+        _tagHistoryClass = thClass;
+
+        // TEMP: migrations for new *TagRecord column names
+        _ctx.registerMigration(_tagClass, new EntityMigration.Rename(2, "itemId", "targetId"));
+        _ctx.registerMigration(_tagHistoryClass,
+                               new EntityMigration.Rename(2, "itemId", "targetId"));
+        // TEMP
     }
 
     /**
-     * Join TagNameRecord and TagRecord, group by tag, and count how many items
-     * reference each such tag.
+     * Creates a {@link TagRecord} derived instance the class for which defines a custom table name
+     * for our tag record class. For example:
+     * <pre>
+     * @Entity(name="PhotoTagRecord")
+     * public class PhotoTagRecord extends TagRecord {}
+     * </pre>
+     */
+    protected abstract TagRecord createTagRecord ();
+
+    /**
+     * Creates a {@link TagRecord} derived instance the class for which defines a custom table name
+     * for our tag record class. See {@link #createTagRecord}.
+     */
+    protected abstract TagHistoryRecord createTagHistoryRecord ();
+
+    /**
+     * Join TagNameRecord and TagRecord, group by tag, and count how many targets reference each
+     * such tag.
      */
     public Collection<TagPopularityRecord> getPopularTags (int rows)
         throws PersistenceException
@@ -59,30 +85,30 @@ public class TagRepository<T extends TagRecord,HT extends TagHistoryRecord> exte
     }
 
     /**
-     * Loads all tag records for the given item, translated to tag names.
+     * Loads all tag records for the given target, translated to tag names.
      */
-    public Collection<TagNameRecord> getTags (int itemId)
+    public Collection<TagNameRecord> getTags (int targetId)
         throws PersistenceException
     {
         return findAll(TagNameRecord.class,
-                       new Where(TagRecord.ITEM_ID, itemId),
+                       new Where(TagRecord.TARGET_ID, targetId),
                        new Join(TagNameRecord.TAG_ID_C,
                                 new ColumnExp(_tagClass, TagRecord.TAG_ID)));
     }
 
     /**
-     * Loads all the tag history records for a given item.
+     * Loads all the tag history records for a given target.
      */
-    public Collection<HT> getTagHistoryByItem (int itemId)
+    public Collection<TagHistoryRecord> getTagHistoryByTarget (int targetId)
         throws PersistenceException
     {
-        return findAll(_tagHistoryClass, new Where(TagHistoryRecord.ITEM_ID, itemId));
+        return findAll(_tagHistoryClass, new Where(TagHistoryRecord.TARGET_ID, targetId));
     }
 
     /**
      * Loads all the tag history records for a given member.
      */
-    public Collection<HT> getTagHistoryByMember (int memberId)
+    public Collection<TagHistoryRecord> getTagHistoryByMember (int memberId)
         throws PersistenceException
     {
         return findAll(_tagHistoryClass, new Where(TagHistoryRecord.MEMBER_ID, memberId));
@@ -115,35 +141,24 @@ public class TagRepository<T extends TagRecord,HT extends TagHistoryRecord> exte
     }
 
     /**
-     * Add a tag to an item. If the tag already exists, return false and do nothing else. If it did
-     * not, create the tag and add a record in the history table.
+     * Adds a tag to a target. If the tag already exists, returns false and do nothing else. If it
+     * did not, creates the tag and adds a record in the history table.
      */
-    public TagHistoryRecord tagItem (int itemId, int tagId, int taggerId, long now)
+    public TagHistoryRecord tag (int targetId, int tagId, int taggerId, long now)
         throws PersistenceException
     {
-        TagRecord tag = load(_tagClass, TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId);
+        TagRecord tag = load(_tagClass, TagRecord.TARGET_ID, targetId, TagRecord.TAG_ID, tagId);
         if (tag != null) {
             return null;
         }
 
-        try {
-            tag = _tagClass.newInstance();
-        } catch (Exception e) {
-            throw new PersistenceException("Failed to create a new item tag record " +
-                                           "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
-        }
-        tag.itemId = itemId;
+        tag = createTagRecord();
+        tag.targetId = targetId;
         tag.tagId = tagId;
         insert(tag);
 
-        TagHistoryRecord history;
-        try {
-            history = _tagHistoryClass.newInstance();
-        } catch (Exception e) {
-            throw new PersistenceException("Failed to create a new item tag history tag record " +
-                                           "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
-        }
-        history.itemId = itemId;
+        TagHistoryRecord history = createTagHistoryRecord();
+        history.targetId = targetId;
         history.tagId = tagId;
         history.memberId = taggerId;
         history.action = TagHistory.ACTION_ADDED;
@@ -153,26 +168,20 @@ public class TagRepository<T extends TagRecord,HT extends TagHistoryRecord> exte
     }
 
     /**
-     * Remove a tag from an item. If the tag didn't exist, return false and do nothing else. If it
-     * did, remove the tag and add a record in the history table.
+     * Removes a tag from a target. If the tag didn't exist, returns false and do nothing else. If
+     * it did, removes the tag and adds a record in the history table.
      */
-    public TagHistoryRecord untagItem (int itemId, int tagId, int taggerId, long now)
+    public TagHistoryRecord untag (int targetId, int tagId, int taggerId, long now)
         throws PersistenceException
     {
-        TagRecord tag = load(_tagClass, TagRecord.ITEM_ID, itemId, TagRecord.TAG_ID, tagId);
+        TagRecord tag = load(_tagClass, TagRecord.TARGET_ID, targetId, TagRecord.TAG_ID, tagId);
         if (tag == null) {
             return null;
         }
         delete(tag);
 
-        TagHistoryRecord history;
-        try {
-            history = _tagHistoryClass.newInstance();
-        } catch (Exception e) {
-            throw new PersistenceException("Failed to create a new item tag history tag record " +
-                                           "[itemId=" + itemId + ", tagId=" + tagId + "]", e);
-        }
-        history.itemId = itemId;
+        TagHistoryRecord history = createTagHistoryRecord();
+        history.targetId = targetId;
         history.tagId = tagId;
         history.memberId = taggerId;
         history.action = TagHistory.ACTION_REMOVED;
@@ -182,15 +191,15 @@ public class TagRepository<T extends TagRecord,HT extends TagHistoryRecord> exte
     }
 
     /**
-     * Copy all tags from one item to another. We have to resort to JDBC here, because we want to
+     * Copy all tags from one target to another. We have to resort to JDBC here, because we want to
      * do the rather non-generic:
      *
-     *   INSERT INTO PhotoTagRecord (itemId, tagId)
+     *   INSERT INTO PhotoTagRecord (targetId, tagId)
      *        SELECT 153567, tagId
      *          FROM PhotoTagRecord
-     *         WHERE itemId = 89736;
+     *         WHERE targetId = 89736;
      */
-    public int copyTags (final int fromItemId, final int toItemId, int ownerId, long now)
+    public int copyTags (final int fromTargetId, final int toTargetId, int ownerId, long now)
         throws PersistenceException
     {
         final String tagTable = _ctx.getMarshaller(_tagClass).getTableName();
@@ -200,12 +209,12 @@ public class TagRepository<T extends TagRecord,HT extends TagHistoryRecord> exte
                 try {
                     stmt = conn.prepareStatement(
                         " INSERT INTO " + tagTable +
-                        " (" + TagRecord.ITEM_ID + ", " + TagRecord.TAG_ID + ")" +
+                        " (" + TagRecord.TARGET_ID + ", " + TagRecord.TAG_ID + ")" +
                         "      SELECT ?, " + TagRecord.TAG_ID +
                         "        FROM " + tagTable +
-                        "       WHERE " + TagRecord.ITEM_ID + " = ?");
-                    stmt.setInt(1, toItemId);
-                    stmt.setInt(2, fromItemId);
+                        "       WHERE " + TagRecord.TARGET_ID + " = ?");
+                    stmt.setInt(1, toTargetId);
+                    stmt.setInt(2, fromTargetId);
                     return stmt.executeUpdate();
                 } finally {
                     JDBCUtil.close(stmt);
@@ -214,15 +223,8 @@ public class TagRepository<T extends TagRecord,HT extends TagHistoryRecord> exte
         });
 
         // add a single row to history for the copy
-        TagHistoryRecord history;
-        try {
-            history = _tagHistoryClass.newInstance();
-        } catch (Exception e) {
-            throw new PersistenceException(
-                "Failed to create a new item tag history tag record " +
-                "[itemId=" + toItemId + "]", e);
-        }
-        history.itemId = toItemId;
+        TagHistoryRecord history = createTagHistoryRecord();
+        history.targetId = toTargetId;
         history.tagId = -1;
         history.memberId = ownerId;
         history.action = TagHistory.ACTION_COPIED;
@@ -231,6 +233,6 @@ public class TagRepository<T extends TagRecord,HT extends TagHistoryRecord> exte
         return rows;
     }
 
-    protected Class<T> _tagClass;
-    protected Class<HT> _tagHistoryClass;
+    protected Class<TagRecord> _tagClass;
+    protected Class<TagHistoryRecord> _tagHistoryClass;
 }
