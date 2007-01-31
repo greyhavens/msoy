@@ -12,11 +12,11 @@ import java.util.Collection;
 
 import com.samskivert.io.PersistenceException;
 
-import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Modifier;
+import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
@@ -35,9 +35,9 @@ public abstract class TagRepository extends DepotRepository
     /**
      * Creates a tag repository for the supplied tag and tag history record classes.
      */
-    public TagRepository (ConnectionProvider conprov)
+    public TagRepository (PersistenceContext ctx)
     {
-        super(conprov);
+        super(ctx);
         @SuppressWarnings("unchecked") Class<TagRecord> tagClass = (Class<TagRecord>)
             createTagRecord().getClass();
         _tagClass = tagClass;

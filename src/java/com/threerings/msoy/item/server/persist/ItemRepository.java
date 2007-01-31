@@ -69,7 +69,7 @@ public abstract class ItemRepository<
     {
         // we'll be using one persistence context per ItemRecord type
         super(new PersistenceContext("itemdb", provider));
-        _tagRepo = new TagRepository(provider) {
+        _tagRepo = new TagRepository(_ctx) {
             protected TagRecord createTagRecord () {
                 return ItemRepository.this.createTagRecord();
             }
