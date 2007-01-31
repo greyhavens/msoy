@@ -312,11 +312,11 @@
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-incremental=true"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/game-client.swf"/>
+      <arg value="${deploy.dir}/world-client.swf"/>
       <arg value="-file-specs"/>
       <arg value="src/as/Msoy.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/game-client.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/world-client.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds our Flash client -->
@@ -332,11 +332,11 @@
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/game-client.swf"/>
+      <arg value="${deploy.dir}/world-client.swf"/>
       <arg value="-file-specs"/>
       <arg value="src/as/Msoy.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/game-client.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/world-client.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds our avatar viewer thingy -->
