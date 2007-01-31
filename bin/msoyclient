@@ -12,4 +12,4 @@ if [ "$1" = "-nodebug" ]; then
     PLAYER="flashplayer"
     shift
 fi
-$BINDIR/`uname`/$PLAYER http://$HOST:8080/clients/game-client.swf?$1
+$BINDIR/`uname`/$PLAYER http://$HOST:8080/clients/world-client.swf?$1
