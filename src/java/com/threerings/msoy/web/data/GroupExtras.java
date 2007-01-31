@@ -24,6 +24,9 @@ public class GroupExtras
 
     /** The tiled background image for the detail area. */
     public MediaDesc detailBackground;
+
+    /** the width of the detail background image - used when not tiling */
+    public int detailBackgroundWidth;
     
     /** The tiled background image for the people area. */
     public MediaDesc peopleBackground;

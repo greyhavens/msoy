@@ -381,6 +381,7 @@ public class GroupEdit extends BorderedDialog
                     case IMAGE_DETAIL_BACKGROUND:
                         _extras.detailBackground = photo.photoMedia;
                         _extras.detailBackground.constraint = photo.thumbMedia.constraint;
+                        _extras.detailBackgroundWidth = photo.photoWidth;
                         break;
                     case IMAGE_PEOPLE_BACKGROUND:
                         _extras.peopleBackground = photo.photoMedia;

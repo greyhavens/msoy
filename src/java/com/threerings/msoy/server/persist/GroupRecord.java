@@ -30,7 +30,7 @@ import com.threerings.msoy.web.data.GroupExtras;
            columns={GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })})
 public class GroupRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 10;
+    public static final int SCHEMA_VERSION = 11;
 
     public static final String GROUP_ID = "groupId";
     public static final String NAME = "name";
@@ -48,6 +48,7 @@ public class GroupRecord extends PersistentRecord
     public static final String DETAIL_BACKGROUND_HASH = "detailBackgroundHash";
     public static final String DETAIL_BACKGROUND_THUMB_CONSTRAINT = 
         "detailBackgroundThumbConstraint";
+    public static final String DETAIL_BACKGROUND_WIDTH = "detailBackgroundWidth";
     public static final String PEOPLE_BACKGROUND_MIME_TYPE = "peopleBackgroundMimeType";
     public static final String PEOPLE_BACKGROUND_HASH = "peopleBackgroundHash";
     public static final String PEOPLE_BACKGROUND_THUMB_CONSTRAINT = 
@@ -117,6 +118,9 @@ public class GroupRecord extends PersistentRecord
 
     /** The constraint for the thumbnail of this image. */
     public byte detailBackgroundThumbConstraint;
+
+    /** The width of the detail background image. */
+    public int detailBackgroundWidth;
 
     /** The MIME type for the background of the people area. */
     public byte peopleBackgroundMimeType;
@@ -194,6 +198,7 @@ public class GroupRecord extends PersistentRecord
         extras.detailBackground = detailBackgroundHash == null ? null :
             new MediaDesc(detailBackgroundHash.clone(), detailBackgroundMimeType,
             detailBackgroundThumbConstraint);
+        extras.detailBackgroundWidth = detailBackgroundWidth;
         extras.peopleBackground = peopleBackgroundHash == null ? null :
             new MediaDesc(peopleBackgroundHash.clone(), peopleBackgroundMimeType,
             peopleBackgroundThumbConstraint);
@@ -233,6 +238,9 @@ public class GroupRecord extends PersistentRecord
         if (groupDef.policy != policy) {
             updates.put(POLICY, groupDef.policy);
         }
+        if (extrasDef.tileBackgrounds != tileBackgrounds) {
+            updates.put(TILE_BACKGROUNDS, extrasDef.tileBackgrounds);
+        }
         if (extrasDef.infoBackground != null && (infoBackgroundHash == null ||
             !extrasDef.infoBackground.equals(new MediaDesc(infoBackgroundHash, 
             infoBackgroundMimeType, infoBackgroundThumbConstraint)))) {
@@ -248,6 +256,7 @@ public class GroupRecord extends PersistentRecord
             updates.put(DETAIL_BACKGROUND_HASH, extrasDef.detailBackground.hash);
             updates.put(DETAIL_BACKGROUND_MIME_TYPE, extrasDef.detailBackground.mimeType);
             updates.put(DETAIL_BACKGROUND_THUMB_CONSTRAINT, extrasDef.detailBackground.constraint);
+            updates.put(DETAIL_BACKGROUND_WIDTH, extrasDef.detailBackgroundWidth);
         }
         if (extrasDef.peopleBackground != null && (peopleBackgroundHash == null ||
             !extrasDef.peopleBackground.equals(new MediaDesc(peopleBackgroundHash,
