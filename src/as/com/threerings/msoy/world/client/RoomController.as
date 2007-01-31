@@ -268,19 +268,14 @@ public class RoomController extends SceneController
             // create a menu for clicking on ourselves
             var actions :Array = avatar.getAvatarActions();
             if (actions.length > 0) {
-                var localActions :Array = [];
                 var worldActions :Array = [];
-                var fn :Function = avatar.performAvatarAction;
                 for each (var act :String in actions) {
-                    localActions.push({ label: act, callback: fn, arg: act });
                     worldActions.push({ label: act,
                         callback: doWorldAvatarAction, arg: act });
                 }
 
-                menuItems.push({ label: Msgs.GENERAL.get("l.avAction_world"),
+                menuItems.push({ label: Msgs.GENERAL.get("l.avAction"),
                     children: worldActions });
-                menuItems.push({ label: Msgs.GENERAL.get("l.avAction_local"),
-                    children: localActions });
             }
 
         } else {
