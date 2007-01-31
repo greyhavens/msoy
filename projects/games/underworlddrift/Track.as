@@ -152,7 +152,8 @@ public class Track extends Sprite
         top.x = bottomPoint.x - topPoint.x;
     }
 
-    [Embed(source='rsrc/track.swf#track')]
+    /*[Embed(source='rsrc/track.swf#track')]*/
+    [Embed(source='rsrc/new_track.swf#track')]
     protected static const TRACKS :Class;
 
     [Embed(source='rsrc/blue_ground.png')]
