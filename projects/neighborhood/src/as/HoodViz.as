@@ -11,6 +11,7 @@ import flash.external.ExternalInterface;
 
 import mx.core.SoundAsset;
 
+import com.threerings.msoy.hood.Building;
 import com.threerings.msoy.hood.Neighbor;
 import com.threerings.msoy.hood.Neighborhood;
 import com.threerings.msoy.hood.NeighborGroup;
@@ -24,12 +25,15 @@ public class HoodViz extends Sprite
 
     public function HoodViz ()
     {
+        
+        _friend = new Building(_friendHouse, _friendPopulate, _soy);
+        this.stage.addChild(_friend);
+         
         var data :Object;
-        if (this.root.loaderInfo != null) {
-            data = this.root.loaderInfo.parameters;
-        }
-        if (DEBUGGING && data == null) {
+        if (DEBUGGING) {
             data = new DebugData();
+        } else {
+            data = this.root.loaderInfo.parameters;
         }
         _hood = Neighborhood.fromParameters(data);
 
@@ -124,10 +128,15 @@ public class HoodViz extends Sprite
         content.transform.matrix = new Matrix(scale, -scale*0.38, 0, scale, p.x, p.y + zOff);
     }
 
-    protected function addBit (bitType :Class, x :Number, y :Number, update:Boolean,
+    protected function addBit (bitType :Object, x :Number, y :Number, update:Boolean,
                                neighbor: Neighbor) :void
     {
-        var bit :MovieClip = new bitType();
+        var bit :MovieClip;
+        if (bitType is Class) {
+            bit = new bitType();
+        } else {
+            bit = (bitType as Building).getPopulatedTile(0, 5);
+        }
         bit.width = 256;
         bit.height = 224;
 
@@ -253,14 +262,25 @@ public class HoodViz extends Sprite
     protected var _canvas :Sprite;
     protected var _bound :Object = { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } };
 
+    protected var _friend :Building;
+
+
+
+    // [Embed(source="untitled.swf", mimeType="application/octet-stream")]
+//    protected const _friendAsset :Class;
+    [Embed(source="viz.swf#populate")]
+    protected const _friendHouse :Class;
+    [Embed(source="viz.swf#populate")]
+    protected const _friendPopulate :Class;
+
+    [Embed(source="viz.swf#soy")]
+    protected const _soy :Class;
+
     [Embed(source="myhouse.swf")]
     protected static const _myHouse :Class;
 
     [Embed(source="group.swf")]
     protected static const _group :Class;
-
-    [Embed(source="friend.swf")]
-    protected static const _friend :Class;
 
     [Embed(source="road_ns.swf")]
     protected static const _roadNS :Class;
