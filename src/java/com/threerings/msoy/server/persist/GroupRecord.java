@@ -51,6 +51,12 @@ public class GroupRecord extends PersistentRecord
     public static final String PEOPLE_BACKGROUND_HASH = "peopleBackgroundHash";
     public static final String PEOPLE_BACKGROUND_THUMB_CONSTRAINT = 
         "peopleBackgroundThumbConstraint";
+    public static final String PEOPLE_UPPER_CAP_MIME_TYPE = "peopleUpperCapMimeType";
+    public static final String PEOPLE_UPPER_CAP_HASH = "peopleUpperCapHash";
+    public static final String PEOPLE_UPPER_CAP_HEIGHT = "peopleUpperCapHeight";
+    public static final String PEOPLE_LOWER_CAP_MIME_TYPE = "peopleLowerCapMimeType";
+    public static final String PEOPLE_LOWER_CAP_HASH = "peopleLowerCapHash";
+    public static final String PEOPLE_LOWER_CAP_HEIGHT = "peopleLowerCapHeight";
     public static final String CREATOR_ID = "creatorId";
     public static final String HOME_SCENE_ID = "homeSceneId";
     public static final String CREATION_DATE = "creationDate";
@@ -117,6 +123,26 @@ public class GroupRecord extends PersistentRecord
     /** The constraint for the thumbnail of this image. */
     public byte peopleBackgroundThumbConstraint;
 
+    /** The mime type for the upper cap image on the people area */
+    public byte peopleUpperCapMimeType;
+    
+    /** The upper cap for the people area */
+    @Column(nullable=true)
+    public byte[] peopleUpperCapHash;
+
+    /** The height of the upper cap image */
+    public int peopleUpperCapHeight;
+
+    /** The mime type for the lower cap image on the people area */
+    public byte peopleLowerCapMimeType;
+
+    /** The lower cap for the people area */
+    @Column(nullable=true)
+    public byte[] peopleLowerCapHash;
+
+    /** the height of the lower cap image */
+    public int peopleLowerCapHeight;
+
     /** The member id of the person who created the group. */
     public int creatorId;
 
@@ -165,6 +191,12 @@ public class GroupRecord extends PersistentRecord
         extras.peopleBackground = peopleBackgroundHash == null ? null :
             new MediaDesc(peopleBackgroundHash.clone(), peopleBackgroundMimeType,
             peopleBackgroundThumbConstraint);
+        extras.peopleUpperCap = peopleUpperCapHash == null ? null :
+            new MediaDesc(peopleUpperCapHash.clone(), peopleUpperCapMimeType);
+        extras.peopleUpperCapHeight = peopleUpperCapHeight;
+        extras.peopleLowerCap = peopleLowerCapHash == null ? null :
+            new MediaDesc(peopleLowerCapHash.clone(), peopleLowerCapMimeType);
+        extras.peopleLowerCapHeight = peopleLowerCapHeight;
         extras.charter = charter;
         extras.homepageUrl = homepageUrl;
         return extras;
@@ -197,7 +229,7 @@ public class GroupRecord extends PersistentRecord
         }
         if (extrasDef.infoBackground != null && (infoBackgroundHash == null ||
             !extrasDef.infoBackground.equals(new MediaDesc(infoBackgroundHash, 
-            infoBackgroundMimeType)))) {
+            infoBackgroundMimeType, infoBackgroundThumbConstraint)))) {
             updates.put(INFO_BACKGROUND_HASH, extrasDef.infoBackground.hash);
             updates.put(INFO_BACKGROUND_MIME_TYPE, extrasDef.infoBackground.mimeType);
             // the thumbnail constraint (instead of the photo constraint) is stored in these
@@ -206,17 +238,31 @@ public class GroupRecord extends PersistentRecord
         }
         if (extrasDef.detailBackground != null && (detailBackgroundHash == null ||
             !extrasDef.detailBackground.equals(new MediaDesc(detailBackgroundHash,
-            detailBackgroundMimeType)))) {
+            detailBackgroundMimeType, detailBackgroundThumbConstraint)))) {
             updates.put(DETAIL_BACKGROUND_HASH, extrasDef.detailBackground.hash);
             updates.put(DETAIL_BACKGROUND_MIME_TYPE, extrasDef.detailBackground.mimeType);
             updates.put(DETAIL_BACKGROUND_THUMB_CONSTRAINT, extrasDef.detailBackground.constraint);
         }
         if (extrasDef.peopleBackground != null && (peopleBackgroundHash == null ||
             !extrasDef.peopleBackground.equals(new MediaDesc(peopleBackgroundHash,
-            peopleBackgroundMimeType)))) {
+            peopleBackgroundMimeType, peopleBackgroundThumbConstraint)))) {
             updates.put(PEOPLE_BACKGROUND_HASH, extrasDef.peopleBackground.hash);
             updates.put(PEOPLE_BACKGROUND_MIME_TYPE, extrasDef.peopleBackground.mimeType);
             updates.put(PEOPLE_BACKGROUND_THUMB_CONSTRAINT, extrasDef.peopleBackground.constraint);
+        }
+        if (extrasDef.peopleUpperCap != null && (peopleUpperCapHash == null || 
+            !extrasDef.peopleUpperCap.equals(new MediaDesc(peopleUpperCapHash,
+            peopleUpperCapMimeType)))) {
+            updates.put(PEOPLE_UPPER_CAP_HASH, extrasDef.peopleUpperCap.hash);
+            updates.put(PEOPLE_UPPER_CAP_MIME_TYPE, extrasDef.peopleUpperCap.mimeType);
+            updates.put(PEOPLE_UPPER_CAP_HEIGHT, extrasDef.peopleUpperCapHeight);
+        }
+        if (extrasDef.peopleLowerCap != null && (peopleLowerCapHash == null || 
+            !extrasDef.peopleLowerCap.equals(new MediaDesc(peopleLowerCapHash,
+            peopleLowerCapMimeType)))) {
+            updates.put(PEOPLE_LOWER_CAP_HASH, extrasDef.peopleLowerCap.hash);
+            updates.put(PEOPLE_LOWER_CAP_MIME_TYPE, extrasDef.peopleLowerCap.mimeType);
+            updates.put(PEOPLE_LOWER_CAP_HEIGHT, extrasDef.peopleLowerCapHeight);
         }
         if (extrasDef.charter != null && !extrasDef.charter.equals(charter)) {
             updates.put(CHARTER, extrasDef.charter);

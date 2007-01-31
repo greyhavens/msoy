@@ -25,6 +25,18 @@ public class GroupExtras
     /** The tiled background image for the people area. */
     public MediaDesc peopleBackground;
 
+    /** The upper cap on the tiled peopleBackground */
+    public MediaDesc peopleUpperCap;
+
+    /** The height of the upper cap */
+    public int peopleUpperCapHeight;
+
+    /** The lower cap on the tiled peopleBackground */
+    public MediaDesc peopleLowerCap;
+
+    /** The height of the lower cap. */
+    public int peopleLowerCapHeight;
+
     /** The group's charter, or null if one has yet to be set. */
     public String charter;
   

@@ -222,21 +222,33 @@ public class GroupEdit extends BorderedDialog
 
     protected Panel createBackgroundsPanel ()
     {
+        VerticalPanel imagesPanel = new VerticalPanel();
+        imagesPanel.setStyleName("CurrentPanel");
+        imagesPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
         HorizontalPanel backgroundsPanel = new HorizontalPanel();
         backgroundsPanel.setSpacing(10);
-        backgroundsPanel.setStyleName("CurrentPanel");
         backgroundsPanel.setVerticalAlignment(HorizontalPanel.ALIGN_BOTTOM);
+        HorizontalPanel capsPanel = new HorizontalPanel();
+        capsPanel.setSpacing(10);
+        capsPanel.setVerticalAlignment(HorizontalPanel.ALIGN_BOTTOM);
+        imagesPanel.add(backgroundsPanel);
+        imagesPanel.add(capsPanel);
         int types[] = { IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND,
-            IMAGE_PEOPLE_BACKGROUND };
+            IMAGE_PEOPLE_BACKGROUND, IMAGE_PEOPLE_UPPER_CAP, IMAGE_PEOPLE_LOWER_CAP };
         String labels[] = { CGroup.msgs.editInfoBG(), CGroup.msgs.editDetailBG(),
-                            CGroup.msgs.editPeopleBG() };
-        for (int i = 0; i < types.length; i++) {
+                            CGroup.msgs.editPeopleBG(), CGroup.msgs.editPeopleUpperCap(),
+                            CGroup.msgs.editPeopleLowerCap() };
+        for (int ii = 0; ii < types.length; ii++) {
             VerticalPanel imageBox = new VerticalPanel();
             imageBox.setSpacing(3);
-            backgroundsPanel.add(imageBox);
-            updateImageBox(imageBox, types[i], CGroup.msgs.editSetBG(labels[i]));
+            if (ii < 3) {
+                backgroundsPanel.add(imageBox);
+            } else {
+                capsPanel.add(imageBox);
+            }
+            updateImageBox(imageBox, types[ii], CGroup.msgs.editSetBG(labels[ii]));
         }
-        return backgroundsPanel;
+        return imagesPanel;
     }
 
     protected CellPanel createTextEntryField (String label, int maxLength, int visibleLength,
@@ -299,6 +311,8 @@ public class GroupEdit extends BorderedDialog
         case IMAGE_INFO_BACKGROUND: media = _extras.infoBackground; break;
         case IMAGE_DETAIL_BACKGROUND: media = _extras.detailBackground; break;
         case IMAGE_PEOPLE_BACKGROUND: media = _extras.peopleBackground; break;
+        case IMAGE_PEOPLE_UPPER_CAP: media = _extras.peopleUpperCap; break;
+        case IMAGE_PEOPLE_LOWER_CAP: media = _extras.peopleLowerCap; break;
         default: addError("Internal Error! Unknown image type: " + type); return;
         }
 
@@ -372,6 +386,12 @@ public class GroupEdit extends BorderedDialog
                         _extras.peopleBackground = photo.photoMedia;
                         _extras.peopleBackground.constraint = photo.thumbMedia.constraint;
                         break;
+                    case IMAGE_PEOPLE_UPPER_CAP:
+                        _extras.peopleUpperCap = photo.photoMedia;
+                        _extras.peopleUpperCapHeight = photo.photoHeight;
+                    case IMAGE_PEOPLE_LOWER_CAP:
+                        _extras.peopleLowerCap = photo.photoMedia;
+                        _extras.peopleLowerCapHeight = photo.photoHeight;
                     default:
                         addError("Internal Error! Unkown image type: " + type);
                     }
@@ -435,4 +455,6 @@ public class GroupEdit extends BorderedDialog
     protected static final int IMAGE_INFO_BACKGROUND = 2;
     protected static final int IMAGE_DETAIL_BACKGROUND = 3;
     protected static final int IMAGE_PEOPLE_BACKGROUND = 4;
+    protected static final int IMAGE_PEOPLE_UPPER_CAP = 5;
+    protected static final int IMAGE_PEOPLE_LOWER_CAP = 6;
 }

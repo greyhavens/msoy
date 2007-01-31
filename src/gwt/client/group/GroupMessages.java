@@ -16,6 +16,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editInfoBG();
 
   /**
+   * Translated "People Lower Cap".
+   * 
+   * @return translated "People Lower Cap"
+   * @gwt.key editPeopleLowerCap
+   */
+  String editPeopleLowerCap();
+
+  /**
    * Translated "Internal Error! Unknown policy type: {0}".
    * 
    * @return translated "Internal Error! Unknown policy type: {0}"
@@ -174,6 +182,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key listPopularTags
    */
   String listPopularTags();
+
+  /**
+   * Translated "People Upper Cap".
+   * 
+   * @return translated "People Upper Cap"
+   * @gwt.key editPeopleUpperCap
+   */
+  String editPeopleUpperCap();
 
   /**
    * Translated "Click a letter above to browse groups that start with that character, or complete a search above.".
