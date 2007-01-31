@@ -389,9 +389,11 @@ public class GroupEdit extends BorderedDialog
                     case IMAGE_PEOPLE_UPPER_CAP:
                         _extras.peopleUpperCap = photo.photoMedia;
                         _extras.peopleUpperCapHeight = photo.photoHeight;
+                        break;
                     case IMAGE_PEOPLE_LOWER_CAP:
                         _extras.peopleLowerCap = photo.photoMedia;
                         _extras.peopleLowerCapHeight = photo.photoHeight;
+                        break;
                     default:
                         addError("Internal Error! Unkown image type: " + type);
                     }

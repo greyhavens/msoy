@@ -16,6 +16,9 @@ import com.threerings.msoy.item.web.MediaDesc;
 public class GroupExtras
     implements Streamable, IsSerializable
 {
+    /** Whether to run with tiled backgrounds or not */
+    public boolean tileBackgrounds;
+
     /** The tiled background image for the info area. */
     public MediaDesc infoBackground;
 
