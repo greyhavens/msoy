@@ -253,8 +253,9 @@
   </target>
 
   <target name="checkaslib">
-    <uptodate property="aslib_is_up_to_date" targetfile="${deploy.dir}/naryavilya.swc">
+    <uptodate property="aslib_is_up_to_date" targetfile="${deploy.dir}/ooo.swc">
       <srcfiles dir="projects/narya/src/as" includes="**/*.as"/>
+      <srcfiles dir="projects/nenya/src/as" includes="**/*.as"/>
       <srcfiles dir="projects/vilya/src/as" includes="**/*.as"/>
       <srcfiles dir="projects/toybox/src/as" includes="**/*.as"/>
     </uptodate>
@@ -262,6 +263,8 @@
 
   <!-- builds our Flash library -->
   <target name="aslib" unless="aslib_is_up_to_date" depends="checkaslib">
+    <!-- TODO: temp: delete the old name of this library. -->
+    <delete file="${deploy.dir}/naryavilya.swc"/>
     <java jar="projects/tools/extern/flex_sdk/lib/compc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -269,13 +272,15 @@
       <arg value="projects/tools/extern/flex_sdk/frameworks/libs"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=projects/narya/src/as/"/>
+      <arg value="-compiler.source-path=projects/nenya/src/as/"/>
       <arg value="-compiler.source-path=projects/vilya/src/as/"/>
       <arg value="-compiler.source-path=projects/toybox/src/as/"/>
       <arg value="-include-sources=projects/narya/src/as/"/>
+      <arg value="-include-sources=projects/nenya/src/as/"/>
       <arg value="-include-sources=projects/vilya/src/as/"/>
       <arg value="-include-sources=projects/toybox/src/as/"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/naryavilya.swc"/>
+      <arg value="${deploy.dir}/ooo.swc"/>
     </java>
   </target>
 
