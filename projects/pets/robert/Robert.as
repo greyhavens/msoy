@@ -70,14 +70,14 @@ public class Robert extends Sprite
 
     protected function eventTriggered (event :ControlEvent) :void
     {
-        trace("event triggered: " + event.key + ", arg: " + event.arg);
+        trace("event triggered: " + event.name + ", value: " + event.value);
     }
 
     protected function memoryChanged (event :ControlEvent) :void
     {
-        trace("memory changed: " + event.key + " -> " + event.arg);
-        if (event.key == "state") {
-            updateState(event.arg);
+        trace("memory changed: " + event.name + " -> " + event.value);
+        if (event.name == "state") {
+            updateState(event.value);
         }
     }
 
