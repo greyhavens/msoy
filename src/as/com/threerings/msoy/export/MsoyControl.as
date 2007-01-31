@@ -11,6 +11,37 @@ import flash.events.EventDispatcher;
 import flash.events.TimerEvent;
 
 /**
+ * Dispatched when the instance in control sends a trigger event to
+ * all instances.
+ * 
+ * @eventType com.threerings.msoy.export.ControlEvent.EVENT_TRIGGERED
+ */
+[Event(name="eventTriggered", type="com.threerings.msoy.export.ControlEvent")]
+
+/**
+ * Dispatched when the instance in control updates the memory of this
+ * digital item.
+ *
+ * @eventType com.threerings.msoy.export.ControlEvent.MEMORY_CHANGED
+ */
+[Event(name="memoryChanged", type="com.threerings.msoy.export.ControlEvent")]
+
+/**
+ * Dispatched when this instance gains control.
+ *
+ * @eventType com.threerings.msoy.export.ControlEvent.GOT_CONTROL
+ */
+[Event(name="gotControl", type="com.threerings.msoy.export.ControlEvent")]
+
+/**
+ * Dispatched when this instance has control and a tick interval is
+ * registered.
+ * 
+ * @eventType flash.events.TimerEvent.TIMER
+ */
+[Event(name="timer", type="flash.events.TimerEvent")]
+
+/**
  * Handles services that are available to all digital items in a scene. This includes dispatching
  * trigger events and maintaining memory.
  */
@@ -141,7 +172,7 @@ public class MsoyControl extends EventDispatcher
      */
     protected function eventTriggered_v1 (event :String, arg :Object) :void
     {
-        dispatchEvent(new ControlEvent(ControlEvent.EVENT_TRIGGERED, event, arg));
+        dispatch(ControlEvent.EVENT_TRIGGERED, event, arg);
     }
 
     /**
@@ -149,7 +180,7 @@ public class MsoyControl extends EventDispatcher
      */
     protected function memoryChanged_v1 (key :String, value :Object) :void
     {
-        dispatchEvent(new ControlEvent(ControlEvent.MEMORY_CHANGED, key, value));
+        dispatch(ControlEvent.MEMORY_CHANGED, key, value);
     }
 
     /**
@@ -160,7 +191,7 @@ public class MsoyControl extends EventDispatcher
         _hasControl = true;
 
         // dispatch to user code..
-        dispatchEvent(new ControlEvent(ControlEvent.GOT_CONTROL));
+        dispatch(ControlEvent.GOT_CONTROL);
 
         // possibly set up a ticker now
         recheckTicker();
@@ -206,6 +237,17 @@ public class MsoyControl extends EventDispatcher
         if (_ticker != null) {
             _ticker.stop();
             _ticker = null;
+        }
+    }
+
+    /**
+     * Helper method to dispatch a ControlEvent, but only if there
+     * is an associated listener.
+     */
+    protected function dispatch (ctrlEvent :String, key :String = null, value :Object = null) :void
+    {
+        if (hasEventListener(ctrlEvent)) {
+            dispatchEvent(new ControlEvent(ctrlEvent, key, value));
         }
     }
 

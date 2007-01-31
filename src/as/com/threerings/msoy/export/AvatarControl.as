@@ -8,6 +8,21 @@ import flash.display.DisplayObject;
 import flash.errors.IllegalOperationError;
 
 /**
+ * Dispatched when the user controlling this avatar speaks. You may
+ * trigger a speak animation off of this event.
+ * 
+ * @eventType com.threerings.msoy.export.ControlEvent.AVATAR_SPOKE
+ */
+[Event(name="avatarSpoke", type="com.threerings.msoy.export.ControlEvent")]
+
+/**
+ * Dispatched when the user controlling this avatar triggers an action.
+ * 
+ * @eventType com.threerings.msoy.export.ControlEvent.ACTION_TRIGGERED
+ */
+[Event(name="actionTriggered", type="com.threerings.msoy.export.ControlEvent")]
+
+/**
  * Defines the mechanism by which avatars interact with the world view.
  */
 public class AvatarControl extends ActorControl
@@ -50,7 +65,7 @@ public class AvatarControl extends ActorControl
 
     protected function avatarSpoke_v1 () :void
     {
-        dispatchEvent(new ControlEvent(ControlEvent.AVATAR_SPOKE));
+        dispatch(ControlEvent.AVATAR_SPOKE);
     }
 
     /** 
@@ -66,7 +81,7 @@ public class AvatarControl extends ActorControl
      */
     protected function doAction_v1 (name :String) :void
     {
-        dispatchEvent(new ControlEvent(ControlEvent.ACTION_TRIGGERED, name));
+        dispatch(ControlEvent.ACTION_TRIGGERED, name);
     }
 
     /** An array of all action names. */

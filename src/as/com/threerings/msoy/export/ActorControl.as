@@ -6,6 +6,16 @@ package com.threerings.msoy.export {
 import flash.display.DisplayObject;
 
 /**
+ * Dispatched as notification that the actor's appearance has changed.
+ * getOrientation() and isMoving() should be re-queried to paint
+ * the correct visual for the actor in its current state.
+ *
+ * @eventType com.threerings.msoy.export.ControlEvent.APPEARANCE_CHANGED
+ */
+[Event(name="appearanceChanged", type="com.threerings.msoy.export.ControlEvent")]
+
+
+/**
  * Defines actions, accessors and callbacks available to all in-world mobiles. An mobile is
  * something that has an orientation in the scene and can request to change locations.
  */
@@ -86,7 +96,7 @@ public class ActorControl extends MsoyControl
         _location = location;
         _orient = orient;
         _isMoving = moving;
-        dispatchEvent(new ControlEvent(ControlEvent.APPEARANCE_CHANGED));
+        dispatch(ControlEvent.APPEARANCE_CHANGED);
     }
 
     /** Contains our current location in the scene [x, y, z], or null. */

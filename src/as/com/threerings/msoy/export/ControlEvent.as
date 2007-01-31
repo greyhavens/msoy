@@ -11,39 +11,39 @@ public class ControlEvent extends Event
      * changed. Your code should react to this event and possibly redraw
      * the actor, taking into account the orientation and whether the
      * actor is moving.
-     * key: unused
-     * arg: unused
+     * name: unused
+     * value: unused
      */
     public static const APPEARANCE_CHANGED :String = "appearanceChanged";
 
     /** An event type dispatched when an event is triggered.
-     * key: event name
-     * arg: unused
+     * name: The event name
+     * value: unused
      */
     public static const EVENT_TRIGGERED :String = "eventTriggered";
 
     /** An event type dispatched when this avatar speaks.
-     * key: unused
-     * arg: unused
+     * name: unused
+     * value: unused
      */
     public static const AVATAR_SPOKE :String = "avatarSpoke";
 
     /** An event type dispatched when this avatar is playing a custom action.
-     * key: action name
-     * arg: action argument
+     * name: action name
+     * value: action argument
      */
     public static const ACTION_TRIGGERED :String = "actionTriggered";
 
     /** An event type dispatched when this client-side instance of the item
      * has gained "control" over the other client-side instances.
-     * key: unused
-     * arg: unused
+     * name: unused
+     * value: unused
      */
     public static const GOT_CONTROL :String = "gotControl";
 
     /** An event type dispatched when the memory has changed.
-     * key: memory name
-     * arg: memory value
+     * name: memory name
+     * value: memory value
      */
     public static const MEMORY_CHANGED :String = "memoryChanged";
 
@@ -57,44 +57,44 @@ public class ControlEvent extends Event
     }
 
     /**
-     * Retrieve the 'key' for this event, which is a String value
+     * Retrieve the 'name' for this event, which is a String value
      * whose meaning is determined by the event type.
      */
-    public function get key () :String
+    public function get name () :String
     {
-        return _key;
+        return _name;
     }
 
     /**
-     * Retrieve the object 'arg' for this event, which is a value
+     * Retrieve the object 'value' for this event, which is a value
      * whose meaning is determined by the event type.
      */
-    public function get arg () :Object
+    public function get value () :Object
     {
-        return _arg;
+        return _value;
     }
 
     /**
      * Create a new ControlEvent.
      */
     public function ControlEvent (
-        type :String, key :String = null, arg :Object = null)
+        type :String, name :String = null, value :Object = null)
     {
         super(type);
-        _key = key;
-        _arg = arg;
+        _name = name;
+        _value = value;
     }
 
     // documentation inherited from Event
     override public function clone () :Event
     {
-        return new ControlEvent(type, _key, _arg);
+        return new ControlEvent(type, _name, _value);
     }
 
-    /** Internal storage for our key property. */
-    protected var _key :String;
+    /** Internal storage for our name property. */
+    protected var _name :String;
 
-    /** Internal storage for our arg property. */
-    protected var _arg :Object;
+    /** Internal storage for our value property. */
+    protected var _value :Object;
 }
 }
