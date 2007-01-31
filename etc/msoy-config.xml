@@ -205,10 +205,10 @@
    <use-network>true</use-network>
    <!-- Metadata added to SWFs via the SWF Metadata tag. -->
    <metadata>
-      <title>Adobe Flex 2 Application</title>
-      <description>http://www.adobe.com/products/flex</description>
-      <publisher>unknown</publisher>
-      <creator>unknown</creator>
+      <title>MetaSOY</title>
+      <description>http://www.metasoy.com/</description>
+      <publisher>Three Rings, Inc.</publisher>
+      <creator>Three Rings, Inc.</creator>
       <language>EN</language>
    </metadata>
 </flex-config>
