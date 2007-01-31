@@ -239,12 +239,12 @@ public abstract class ItemRepository<
      *
      * TODO: This method currently fetches CatalogRecords through a join against ItemRecord,
      *       and then executes a second query against ItemRecord only. This really really has
-     *       to be a single join in a sane universe, but it makes significant demands on the
+     *       to be a single join in a sane universe, but that makes significant demands on the
      *       Depot code that we don't know how to handle yet (or possibly some fiddling with
      *       the Item vs Catalog class hierarchies). 
      */
-    public Collection<CAT> loadCatalog (byte sortBy, boolean mature, String search, int offset,
-                                        int rows)
+    public Collection<CAT> loadCatalog (byte sortBy, boolean mature, String search, int tag,
+                                        int offset, int rows)
         throws PersistenceException
     {
         SQLExpression sortExp;
@@ -263,35 +263,45 @@ public abstract class ItemRepository<
             throw new IllegalArgumentException(
                 "Sort method not implemented [sortBy=" + sortBy + "]");
         }
-
+        // we collect separate query conditions in one array
+        SQLOperator[] whereBits = new SQLOperator[0];
+        // and actual clauses in another
         QueryClause[] clauses = new QueryClause[] {
             new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
                      getItemClass(), ItemRecord.ITEM_ID),
             new Limit(offset, rows)
         };
+        
         if (sortExp != null) {
             clauses = ArrayUtil.append(clauses, OrderBy.descending(sortExp));
         }
-	
-        if (search != null && search.length() > 0) {                
-            // TODO: We should have a Like() operator in Depot.
-            SQLOperator searchExp = new SQLOperator.BinaryOperator(
-                getItemColumn(ItemRecord.NAME),"%" + search + "%") {
-                @Override protected String operator () {
-                    return " like ";
-                }
-            };
-            clauses = ArrayUtil.append(clauses, new Where(searchExp));
+
+        if (search != null && search.length() > 0) {
+            whereBits = ArrayUtil.append(whereBits, new Like(ItemRecord.NAME, "%" + search + "%"));
         };
+
+        if (tag > 0) {
+            // join against TagRecord
+            clauses = ArrayUtil.append(
+                clauses,
+                new Join(getCatalogClass(), CatalogRecord.ITEM_ID,
+                         getTagRepository().getTagClass(), TagRecord.TARGET_ID));
+            // and add a condition
+            whereBits = ArrayUtil.append(whereBits, new Equals(TagRecord.TAG_ID, tag));
+        }
 
         if (!mature) {
             // add a check to make sure ItemRecord.FLAG_MATURE is not set on any returned items
-            SQLOperator matureExp = new Equals(
-                    new BitAnd(ItemRecord.FLAGS, Item.FLAG_MATURE), 0);
-            clauses = ArrayUtil.append(clauses, new Where(matureExp));
+            whereBits = ArrayUtil.append(
+                whereBits, new Equals(new BitAnd(ItemRecord.FLAGS, Item.FLAG_MATURE), 0));
         }
 
-        // fetch all the catalog records of interest
+        // see if there's any where bits to turn into an actual where clause
+        if (whereBits.length > 0) {
+            clauses = ArrayUtil.append(clauses, new Where(new And(whereBits)));
+        }
+        
+        // finally fetch all the catalog records of interest
         Collection<CAT> records = findAll(getCatalogClass(), clauses);
 
         if (records.size() == 0) {

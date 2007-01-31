@@ -18,6 +18,7 @@ import com.samskivert.util.IntSet;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.web.client.CatalogService;
 import com.threerings.msoy.web.data.MemberName;
@@ -42,8 +43,8 @@ public class CatalogServlet extends MsoyServiceServlet
     implements CatalogService
 {
     // from interface CatalogService
-    public List loadCatalog (int memberId, byte type, byte sortBy, String search, int offset,
-                             int rows)
+    public List loadCatalog (int memberId, byte type, byte sortBy, String search, String tag,
+                             int offset, int rows)
         throws ServiceException
     {
         ItemRepository<ItemRecord, ?, ?, ?> repo = MsoyServer.itemMan.getRepository(type);
@@ -57,10 +58,14 @@ public class CatalogServlet extends MsoyServiceServlet
                     mature |= mRec.isSet(MemberRecord.FLAG_SHOW_MATURE);
                 }
             }
-            
+
+            TagNameRecord tagRecord = tag != null ? repo.getTagRepository().getTag(tag) : null;
+            int tagId = tagRecord != null ? tagRecord.tagId : 0;
+
             // fetch catalog records and loop over them
             IntSet members = new ArrayIntSet();
-            for (CatalogRecord record : repo.loadCatalog(sortBy, mature, search, offset, rows)) {
+            for (CatalogRecord record : repo.loadCatalog(
+                sortBy, mature, search, tagId, offset, rows)) {
                 // convert them to listings
                 list.add(record.toListing());
                 // and keep track of which member names we need to look up

@@ -47,7 +47,7 @@ public class ItemPanel extends DockPanel
             public void doFetchRows (int start, int count, final AsyncCallback callback) {
                 setStatus("Loading...");
                 CCatalog.catalogsvc.loadCatalog(CCatalog.getMemberId(), type, sortBy, search,
-                                                start, count, new AsyncCallback() {
+                                                null, start, count, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         setStatus("");
                         callback.onSuccess(result);

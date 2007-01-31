@@ -69,6 +69,22 @@ public abstract class TagRepository extends DepotRepository
     protected abstract TagHistoryRecord createTagHistoryRecord ();
 
     /**
+     * Exports the specific tag class used by this repository, for joining purposes.
+     */
+    public Class<TagRecord> getTagClass ()
+    {
+        return _tagClass;
+    }
+
+    /**
+     * Exports the specific tag history class used by this repository, for joining purposes.
+     */
+    public Class<TagHistoryRecord> getTagHistoryClass ()
+    {
+        return _tagHistoryClass;
+    }
+
+    /**
      * Join TagNameRecord and TagRecord, group by tag, and count how many targets reference each
      * such tag.
      */
