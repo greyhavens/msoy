@@ -54,7 +54,7 @@ public class Ballhead extends Sprite
 
     protected function handleAction (event :ControlEvent) :void
     {
-        _blushing = (event.key === "start blushing");
+        _blushing = (event.name === "start blushing");
         setupVisual();
     }
 
