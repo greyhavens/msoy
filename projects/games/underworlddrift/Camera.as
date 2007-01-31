@@ -12,7 +12,7 @@ public class Camera
     {
         angle = 0;
         position = new Point(0, Ground.HALF_IMAGE_SIZE);
-        height = 10;
+        height = 20;
         distance = 300;
     }
 }
