@@ -106,9 +106,7 @@ class ViewerAvatarSprite extends AvatarSprite
                 arg: act });
         }
 
-        var menu :CommandMenu = CommandMenu.createMenu(parent, menuItems);
-        var p :Point = localToGlobal(new Point());
-        menu.show(p.x, p.y);
+        CommandMenu.createMenu(menuItems).show(event.stageX, event.stageY);
     }
 
     protected var _moving :Boolean = false;

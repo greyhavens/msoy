@@ -345,9 +345,7 @@ public class ChatControl extends HBox
         menuData.push({ label: Msgs.GENERAL.get("l.recent_people"),
                         children: recent });
 
-        var menu :CommandMenu =
-            CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
-        menu.popUp(_targetBtn, true);
+        CommandMenu.createMenu(menuData).popUp(_targetBtn, true);
     }
 
     /**

@@ -169,9 +169,7 @@ public class MsoyController extends Controller
               children: friends }
         ];
 
-        var menu :CommandMenu =
-            CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
-        menu.popUp(trigger, true);
+        CommandMenu.createMenu(menuData).popUp(trigger, true);
     }
 
     /**
@@ -245,8 +243,7 @@ public class MsoyController extends Controller
                 });
         }
 
-        var menu :CommandMenu = CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
-        menu.popUp(trigger, true);
+        CommandMenu.createMenu(menuData).popUp(trigger, true);
     }
 
     /**
@@ -273,8 +270,7 @@ public class MsoyController extends Controller
                 { label: Msgs.GENERAL.get("b.edit_prefs"), command: EDIT_PREFS});
         }
 
-        var menu :CommandMenu = CommandMenu.createMenu(_ctx.getRootPanel(), menuData);
-        menu.popUp(trigger, true);
+        CommandMenu.createMenu(menuData).popUp(trigger, true);
     }
 
     /**

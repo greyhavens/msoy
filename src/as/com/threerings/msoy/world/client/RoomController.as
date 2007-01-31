@@ -298,9 +298,8 @@ public class RoomController extends SceneController
             }
         }
 
-        var menu :CommandMenu = CommandMenu.createMenu(avatar, menuItems);
-        var p :Point = avatar.localToGlobal(new Point());
-        menu.show(p.x, p.y);
+        // pop up the menu where the mouse is
+        CommandMenu.createMenu(menuItems).show();
     }
 
     /**
