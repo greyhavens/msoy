@@ -11,7 +11,7 @@ import mx.core.UIComponent;
 import com.threerings.util.MediaContainer;
 import com.threerings.util.Name;
 
-import com.threerings.mx.controls.CommandButton;
+import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.MsoyContext;
 

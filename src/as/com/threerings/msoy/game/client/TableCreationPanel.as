@@ -1,6 +1,6 @@
 package com.threerings.msoy.game.client {
 
-import com.threerings.mx.events.CommandEvent;
+import com.threerings.util.CommandEvent;
 
 import com.threerings.parlor.data.TableConfig;
 

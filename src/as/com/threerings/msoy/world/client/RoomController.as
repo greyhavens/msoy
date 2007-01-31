@@ -17,7 +17,7 @@ import com.threerings.util.NetUtil;
 
 import com.threerings.io.TypedArray;
 
-import com.threerings.mx.controls.CommandMenu;
+import com.threerings.flex.CommandMenu;
 
 import com.threerings.presents.client.ResultWrapper;
 

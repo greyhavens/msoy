@@ -16,11 +16,11 @@ import mx.events.FlexEvent;
 
 import com.adobe.crypto.MD5;
 
+import com.threerings.util.CommandEvent;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
-import com.threerings.mx.controls.CommandButton;
-import com.threerings.mx.events.CommandEvent;
+import com.threerings.flex.CommandButton;
 
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;

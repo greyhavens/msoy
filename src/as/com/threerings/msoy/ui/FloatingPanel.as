@@ -13,8 +13,9 @@ import mx.events.CloseEvent;
 
 import mx.managers.PopUpManager;
 
-import com.threerings.mx.controls.CommandButton;
-import com.threerings.mx.events.CommandEvent;
+import com.threerings.util.CommandEvent;
+
+import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;

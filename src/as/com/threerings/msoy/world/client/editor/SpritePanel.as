@@ -9,7 +9,7 @@ import mx.containers.VBox;
 import mx.controls.CheckBox;
 import mx.controls.TextInput;
 
-import com.threerings.mx.events.CommandEvent;
+import com.threerings.util.CommandEvent;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;

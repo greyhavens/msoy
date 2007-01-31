@@ -14,8 +14,7 @@ import mx.containers.ViewStack;
 import mx.controls.ComboBox;
 
 import com.threerings.util.ArrayUtil;
-
-import com.threerings.mx.events.CommandEvent;
+import com.threerings.util.CommandEvent;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;

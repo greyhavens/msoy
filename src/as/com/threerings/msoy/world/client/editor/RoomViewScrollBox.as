@@ -5,7 +5,7 @@ package com.threerings.msoy.world.client.editor {
 
 import flash.geom.Rectangle;
 
-import com.threerings.mx.controls.ScrollBox;
+import com.threerings.flex.ScrollBox;
 
 import com.threerings.msoy.world.client.RoomView;
 

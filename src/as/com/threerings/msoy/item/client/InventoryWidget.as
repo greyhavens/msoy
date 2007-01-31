@@ -18,7 +18,7 @@ import mx.core.ScrollPolicy;
 
 import mx.events.TreeEvent;
 
-import com.threerings.mx.events.CommandEvent
+import com.threerings.util.CommandEvent
 
 import com.threerings.presents.client.ResultWrapper;
 

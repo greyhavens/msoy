@@ -5,8 +5,7 @@ package com.threerings.msoy.client {
 
 import mx.controls.Button;
 
-import com.threerings.mx.events.CommandEvent;
-
+import com.threerings.util.CommandEvent;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.client.MsoyContext;

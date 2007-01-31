@@ -16,7 +16,7 @@ import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.mx.controls.CommandButton;
+import com.threerings.flex.CommandButton;
 
 import com.threerings.parlor.client.SeatednessObserver;
 import com.threerings.parlor.client.TableDirector;

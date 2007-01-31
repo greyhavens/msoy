@@ -7,7 +7,7 @@ import flash.events.Event;
 
 import mx.containers.HBox;
 
-import com.threerings.mx.controls.CommandButton;
+import com.threerings.flex.CommandButton;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;

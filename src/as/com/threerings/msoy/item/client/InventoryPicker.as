@@ -23,7 +23,7 @@ import mx.core.ScrollPolicy;
 import mx.events.DragEvent;
 import mx.events.TreeEvent;
 
-import com.threerings.mx.events.CommandEvent
+import com.threerings.util.CommandEvent
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;

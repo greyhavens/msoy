@@ -2,7 +2,7 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObjectContainer;
 
-import com.threerings.mx.events.CommandEvent;
+import com.threerings.util.CommandEvent;
 
 import com.threerings.msoy.ui.MsoyList;
 

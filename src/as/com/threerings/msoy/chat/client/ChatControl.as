@@ -22,7 +22,7 @@ import mx.events.FlexEvent;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.StringUtil;
 
-import com.threerings.mx.controls.CommandMenu;
+import com.threerings.flex.CommandMenu;
 
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.data.PlaceObject;

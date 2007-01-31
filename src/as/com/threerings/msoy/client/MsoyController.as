@@ -16,7 +16,7 @@ import com.threerings.util.Name;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
 
-import com.threerings.mx.controls.CommandMenu;
+import com.threerings.flex.CommandMenu;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;

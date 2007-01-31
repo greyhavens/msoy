@@ -20,7 +20,7 @@ import mx.controls.TextInput;
 
 import com.threerings.util.ClassUtil;
 
-import com.threerings.mx.controls.CommandButton;
+import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;

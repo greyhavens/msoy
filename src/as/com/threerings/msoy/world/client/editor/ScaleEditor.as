@@ -8,7 +8,7 @@ import mx.controls.Button;
 import mx.controls.CheckBox;
 import mx.controls.HSlider;
 
-import com.threerings.mx.events.CommandEvent;
+import com.threerings.util.CommandEvent;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;

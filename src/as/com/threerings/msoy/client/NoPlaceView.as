@@ -8,7 +8,7 @@ import mx.containers.HBox;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.mx.controls.ChatDisplayBox;
+import com.threerings.flex.ChatDisplayBox;
 
 /**
  * A place view that isn't really. It merely contains a chatbox.

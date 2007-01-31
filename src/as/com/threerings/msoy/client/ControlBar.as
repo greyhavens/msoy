@@ -16,7 +16,7 @@ import mx.controls.HSlider;
 
 import mx.events.FlexEvent;
 
-import com.threerings.mx.controls.CommandButton;
+import com.threerings.flex.CommandButton;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientEvent;

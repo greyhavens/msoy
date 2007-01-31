@@ -26,7 +26,7 @@ import mx.containers.VBox;
 
 import com.threerings.util.StringUtil;
 
-import com.threerings.mx.controls.CommandButton;
+import com.threerings.flex.CommandButton;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;

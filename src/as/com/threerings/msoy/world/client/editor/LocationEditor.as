@@ -9,7 +9,7 @@ import mx.controls.VSlider;
 
 import mx.core.ScrollPolicy;
 
-import com.threerings.mx.events.CommandEvent;
+import com.threerings.util.CommandEvent;
 
 import com.threerings.msoy.client.MsoyContext;
 

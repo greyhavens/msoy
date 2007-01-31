@@ -70,7 +70,7 @@ public class AvatarViewerComp extends Canvas
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
-import com.threerings.mx.controls.CommandMenu;
+import com.threerings.flex.CommandMenu;
 import com.threerings.msoy.world.client.AvatarSprite;
 
 class ViewerAvatarSprite extends AvatarSprite
