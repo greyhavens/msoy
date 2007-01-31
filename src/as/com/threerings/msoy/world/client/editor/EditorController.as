@@ -109,8 +109,6 @@ public class EditorController extends Controller
     {
         setEditSprite(null);
 
-        _ctx.getTopPanel().clearSidePanel(_panel);
-
         // stop listening from drop events on the roomView
         _roomDragger.unbind();
         _roomDragger = null;
@@ -128,6 +126,8 @@ public class EditorController extends Controller
             _roomView.addChild(sprite);
         }
         _roomView.removeOtherSprite(_entranceSprite);
+
+        _ctx.getTopPanel().clearSidePanel(_panel);
 
         var edits :TypedArray = null;
         if (saveEdits) {

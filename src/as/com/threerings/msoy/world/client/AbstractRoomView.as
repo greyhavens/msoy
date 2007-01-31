@@ -484,6 +484,13 @@ public class AbstractRoomView extends Sprite
      */
     protected function adjustZOrder (sprite :MsoySprite, loc :MsoyLocation) :void
     {
+        if (!contains(sprite)) {
+            // this can happen if we're resized during editing as we
+            // try to reposition a sprite that's still in our data structures
+            // but that has been removed as a child.
+            return;
+        }
+
         var dex :int = getChildIndex(sprite);
         var newdex :int = dex;
         var z :Number;
