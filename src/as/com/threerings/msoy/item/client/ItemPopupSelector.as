@@ -70,7 +70,7 @@ class SelectorController extends Controller
     }
 
     /**
-     * Handle's the InventoryWidget's ITEM_SELECTED event.
+     * Handle's the InventoryPicker's ITEM_SELECTED event.
      */
     public function handleInventoryItemSelected (item :Item) :void
     {

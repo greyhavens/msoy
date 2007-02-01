@@ -37,7 +37,6 @@ import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.item.client.InventoryList;
 import com.threerings.msoy.item.client.InventoryPicker;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Avatar;

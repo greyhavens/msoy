@@ -30,7 +30,6 @@ import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.item.client.InventoryPicker;
-import com.threerings.msoy.item.client.InventoryWindow;
 import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
