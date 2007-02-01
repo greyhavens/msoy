@@ -278,7 +278,32 @@ public class GroupView extends VerticalPanel
         }
         people.setWidget(0, 1, managers);
         people.setWidget(1, 1, members);
-        _table.setWidget(1, 0, people);
+        if (!_extras.tileBackgrounds) {
+            VerticalPanel peoplePlusCaps = new VerticalPanel();
+            peoplePlusCaps.setSpacing(0);
+            final Element upperCap = DOM.createElement("div");
+            DOM.setStyleAttribute(upperCap, "backgroundImage", "url(" + MsoyEntryPoint.toMediaPath(
+                _extras.peopleUpperCap.getMediaPath()) + ")");
+            DOM.setStyleAttribute(upperCap, "height", _extras.peopleUpperCapHeight + "px");
+            peoplePlusCaps.add(new Widget () {
+                {
+                    setElement(upperCap);
+                }
+            });
+            peoplePlusCaps.add(people);
+            final Element lowerCap = DOM.createElement("div");
+            DOM.setStyleAttribute(lowerCap, "backgroundImage", "url(" + MsoyEntryPoint.toMediaPath(
+                _extras.peopleLowerCap.getMediaPath()) + ")");
+            DOM.setStyleAttribute(lowerCap, "height", _extras.peopleLowerCapHeight + "px");
+            peoplePlusCaps.add(new Widget () {
+                {
+                    setElement(lowerCap);
+                }
+            });
+            _table.setWidget(1, 0, peoplePlusCaps);
+        } else {
+            _table.setWidget(1, 0, people);
+        }
         _table.getFlexCellFormatter().setColSpan(1, 0, 2);
         if (_extras.peopleBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(1, 0, 
