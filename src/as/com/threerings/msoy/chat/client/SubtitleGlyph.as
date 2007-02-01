@@ -23,6 +23,7 @@ public class SubtitleGlyph extends ChatGlyph
         texts :Array)
     {
         super(overlay, type, lifetime);
+        alpha = .75;
 
         var txt :TextField = createTextField();
         // set it up to be as wide as it can, and to wrap around if it wants
