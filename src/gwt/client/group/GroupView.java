@@ -113,13 +113,13 @@ public class GroupView extends VerticalPanel
         }
         boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
 
-        VerticalPanel logoPanel = new VerticalPanel();
-        logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        logoPanel.setStyleName("LogoPanel");
-        if (!_extras.tileBackgrounds) {
-            logoPanel.setHeight("270px");
-        }
-        logoPanel.add(MediaUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE));
+        _table.getMyFlexCellFormatter().setHeight(0, 0, "120px");
+        _table.getMyFlexCellFormatter().setBackgroundImage(0, 0, MsoyEntryPoint.toMediaPath(
+            _group.logo.getMediaPath()));
+        VerticalPanel infoPanel = new VerticalPanel();
+        infoPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+        infoPanel.setStyleName("LogoPanel");
+        infoPanel.setSpacing(0);
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("Links");
         links.setSpacing(8);
@@ -128,7 +128,7 @@ public class GroupView extends VerticalPanel
         if (_extras.homepageUrl != null) {
             links.add(new Anchor(_extras.homepageUrl, CGroup.msgs.viewHomepage()));
         }
-        logoPanel.add(links);
+        infoPanel.add(links);
         VerticalPanel established = new VerticalPanel();
         established.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         established.setStyleName("Established");
@@ -142,12 +142,12 @@ public class GroupView extends VerticalPanel
         creatorPanel.add(new Anchor(MsoyEntryPoint.memberViewPath(  
             _detail.creator.getMemberId()), _detail.creator.toString()));
         established.add(creatorPanel);
-        logoPanel.add(established);
+        infoPanel.add(established);
         InlineLabel policy = new InlineLabel(getPolicyName(_group.policy));
         policy.setStyleName("Policy");
-        logoPanel.add(policy);
+        infoPanel.add(policy);
         if (amManager) {
-            logoPanel.add(new Button(CGroup.msgs.viewEdit(), new ClickListener() {
+            infoPanel.add(new Button(CGroup.msgs.viewEdit(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new GroupEdit(_group, _extras, GroupView.this).show();
                 }
@@ -155,7 +155,7 @@ public class GroupView extends VerticalPanel
         }
         if (_me == null) {
             if (_group.policy == Group.POLICY_PUBLIC) {
-                logoPanel.add(new Button(CGroup.msgs.viewJoin(), new ClickListener() {
+                infoPanel.add(new Button(CGroup.msgs.viewJoin(), new ClickListener() {
                     public void onClick (Widget sender) {
                         (new PromptPopup(CGroup.msgs.viewJoinPrompt(_group.name)) {
                             public void onAffirmative () {
@@ -167,7 +167,7 @@ public class GroupView extends VerticalPanel
                 }));
             }
         } else {
-            logoPanel.add(new Button(CGroup.msgs.viewLeave(), new ClickListener() {
+            infoPanel.add(new Button(CGroup.msgs.viewLeave(), new ClickListener() {
                 public void onClick (Widget sender) {
                     (new PromptPopup(CGroup.msgs.viewLeavePrompt(_group.name)) {
                         public void onAffirmative () {
@@ -178,10 +178,10 @@ public class GroupView extends VerticalPanel
                 }
             }));
         } 
-        _table.setWidget(0, 0, logoPanel);
+        _table.setWidget(1, 0, infoPanel);
         if (_extras.infoBackground != null) {
-            _table.getMyFlexCellFormatter().setBackgroundImage(0, 0, 
-                MsoyEntryPoint.toMediaPath(_extras.infoBackground.getMediaPath()));
+            _table.getMyFlexCellFormatter().setBackgroundImage(1, 0, MsoyEntryPoint.toMediaPath(
+                _extras.infoBackground.getMediaPath()));
         }
 
         VerticalPanel description = new VerticalPanel();
@@ -219,6 +219,7 @@ public class GroupView extends VerticalPanel
             _table.setWidget(0, 1, description);
             _table.getMyFlexCellFormatter().fillWidth(0, 1);
         }
+        _table.getMyFlexCellFormatter().setRowSpan(0, 1, 2);
         if (_extras.detailBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(0, 1, 
                 MsoyEntryPoint.toMediaPath(_extras.detailBackground.getMediaPath()));
@@ -300,13 +301,13 @@ public class GroupView extends VerticalPanel
                     setElement(lowerCap);
                 }
             });
-            _table.setWidget(1, 0, peoplePlusCaps);
+            _table.setWidget(2, 0, peoplePlusCaps);
         } else {
-            _table.setWidget(1, 0, people);
+            _table.setWidget(2, 0, people);
         }
-        _table.getFlexCellFormatter().setColSpan(1, 0, 2);
+        _table.getFlexCellFormatter().setColSpan(2, 0, 2);
         if (_extras.peopleBackground != null) {
-            _table.getMyFlexCellFormatter().setBackgroundImage(1, 0, 
+            _table.getMyFlexCellFormatter().setBackgroundImage(2, 0, 
                 MsoyEntryPoint.toMediaPath(_extras.peopleBackground.getMediaPath()));
         }
     }
@@ -492,9 +493,6 @@ public class GroupView extends VerticalPanel
             }
             public void fillWidth (int row, int column) {
                 DOM.setStyleAttribute(getElement(row, column), "width", "100%");
-            }
-            public void addScrollbar (int row, int column) {
-                DOM.setStyleAttribute(getElement(row, column), "overflow", "auto");
             }
         }
 
