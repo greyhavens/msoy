@@ -70,10 +70,13 @@ public class BubbleGlyph extends ChatGlyph
 
     public function setAgeLevel (overlay :ComicOverlay, ageLevel :int) :void
     {
-        // re-draw the bubble with the new age level
-        // TODO: ?
-        overlay.drawBubbleShape(
-            graphics, _type, _txt.width, _txt.height, ageLevel);
+        // TODO: if we keep, 7 is magic number from ComicOverlay.
+        alpha = .5 + (.5 * ((7 - ageLevel) / 7));
+        trace("ageLevel: " + ageLevel  + ", alpha: " + alpha)
+//        // re-draw the bubble with the new age level
+//        // TODO: ?
+//        overlay.drawBubbleShape(
+//            graphics, _type, _txt.width, _txt.height, ageLevel);
     }
 
     /**

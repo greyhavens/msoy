@@ -59,7 +59,7 @@ public class ChatOverlay
         _overlay = new Sprite();
         _overlay.mouseChildren = false;
         _overlay.mouseEnabled = false;
-        _overlay.alpha = ALPHA;
+//        _overlay.alpha = ALPHA;
         _overlay.blendMode = BlendMode.LAYER;
 
         // NOTE: Any null values in the override formats will use the
@@ -183,7 +183,7 @@ public class ChatOverlay
      */
     public function setClickableGlyphs (clickable :Boolean) :void
     {
-        _overlay.alpha = clickable ? 1 : ALPHA;
+//        _overlay.alpha = clickable ? 1 : ALPHA;
         _overlay.mouseChildren = clickable;
     }
 
