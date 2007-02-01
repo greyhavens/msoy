@@ -17,10 +17,9 @@ public class Letter extends Sprite
 {
     /** 
         Constructor takes the string to be displayed on the piece,
-        piece location (in board-local coordinates), and dimensions.
+        and piece location (in board-local coordinates).
      */
-    public function Letter (game : TangleWord, str : String,
-                            x : int, y : int, width : int, height : int)
+    public function Letter (game : TangleWord, str : String, x : int, y : int)
     {
         this.x = x;
         this.y = y;
@@ -31,7 +30,7 @@ public class Letter extends Sprite
         addChild (_background);
 
         // Make a new text label on top of the bitmap.
-        _text = makeNewLabel (width, height);
+        _text = makeNewLabel ();
         addChild (_text);
         setText (str);
     }
@@ -59,7 +58,7 @@ public class Letter extends Sprite
 
     // PRIVATE HELPER FUNCTIONS
 
-    private function makeNewLabel (width : int, height : int) : TextField
+    private function makeNewLabel () : TextField
     {
         // Create text format
         var format : TextFormat = new TextFormat();
@@ -74,8 +73,8 @@ public class Letter extends Sprite
         t.selectable = false;
         t.defaultTextFormat = format;
 
-        t.width = width;
-        t.height = height;
+        t.width = Properties.LETTER_SIZE;
+        t.height = Properties.LETTER_SIZE;
         
         return t;
     }

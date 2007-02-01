@@ -7,25 +7,13 @@ import mx.core.BitmapAsset;
 
 public class Board extends Sprite
 {
-    // PROPERTIES
-
-    /** Number of letters per side of the square board */
-    public static const LETTER_COUNT_PER_SIDE : int = 5;
-
-    /** Width and height of each letter cell, in pixels */
-    public static const LETTER_SIZE : int = 50;
-
-    /** Width and height of the square playing board, in pixels.
-        Letter cells will be centered inside this board. */
-    public static const BOARD_SIZE : int = 300;
-
 
     // PUBLIC FUNCTIONS
 
     /**
        Creates a new square board, based on the built-in constants.
     */
-    public function Board (game : TangleWord, count : int)
+    public function Board (game : TangleWord)
     {
         _game = game;
         _background = Resources.makeDefaultBoardImage ();
@@ -38,10 +26,29 @@ public class Board extends Sprite
 
         // Let's initialize what needs to be initialized
         addChild (_background);
-        initializeCells (LETTER_COUNT_PER_SIDE);
+        initializeCells (Properties.LETTER_COUNT_PER_SIDE);
         
     }
 
+    /**
+       Used by the game to populate the board with a new set of letters.
+       Expects an array of the same size as the total letter count. */
+    public function updateLetters (letters : Array) : void
+    {
+        // TODO: Assert here letters.length == Properties.
+
+        // Go through each letter and update its string.
+        for (var col : int = 0; col < Properties.LETTER_COUNT_PER_SIDE; col++)
+        {
+            for (var row : int = 0; row < Properties.LETTER_COUNT_PER_SIDE; row++)
+            {
+                var currentIndex : int = col * Properties.LETTER_COUNT_PER_SIDE + row;
+                var letter : String = letters[currentIndex];
+                _cells[col][row].setText (letter);
+            }
+        }
+    }
+        
 
 
     // PRIVATE HELPERS
@@ -50,8 +57,10 @@ public class Board extends Sprite
     private function initializeCells (count : int) : void
     {
         // Precompute some layout parameters
-        var borderSize : int = (BOARD_SIZE - (LETTER_SIZE * LETTER_COUNT_PER_SIDE)) / 2;
-
+        var letterBoxSize : int = Properties.LETTER_SIZE * Properties.LETTER_COUNT_PER_SIDE;
+        var xBorderSize : int = (Properties.BOARD.width - letterBoxSize) / 2;
+        var yBorderSize : int = (Properties.BOARD.height - letterBoxSize) / 2;
+    
         // Create cells
         _cells = new Array (count);
         for (var col : int = 0; col < count; col++)
@@ -60,9 +69,9 @@ public class Board extends Sprite
             for (var row : int = 0; row < count; row++)
             {
                 // Figure out cell position
-                var x : int = borderSize + col * LETTER_SIZE;
-                var y : int = borderSize + row * LETTER_SIZE; 
-                _cells[col][row] = new Letter (_game, "X", x, y, LETTER_SIZE, LETTER_SIZE);
+                var x : int = xBorderSize + col * Properties.LETTER_SIZE;
+                var y : int = yBorderSize + row * Properties.LETTER_SIZE; 
+                _cells[col][row] = new Letter (_game, "?", x, y);
                 addChild (_cells[col][row]);
             }
         }
@@ -74,6 +83,7 @@ public class Board extends Sprite
         return _cells[x][y].text;
     }
 
+    
     
     
     
