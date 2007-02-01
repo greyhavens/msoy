@@ -35,7 +35,9 @@ public class Board extends Sprite
        Expects an array of the same size as the total letter count. */
     public function updateLetters (letters : Array) : void
     {
-        // TODO: Assert here letters.length == Properties.
+        Assert.True (function () : Boolean {
+                        return letters.length == Properties.LETTER_COUNT_TOTAL; },
+                     "Something happened to the letters array! The size is all wrong.");
 
         // Go through each letter and update its string.
         for (var col : int = 0; col < Properties.LETTER_COUNT_PER_SIDE; col++)

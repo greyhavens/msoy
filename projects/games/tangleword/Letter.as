@@ -38,12 +38,8 @@ public class Letter extends Sprite
     /** Set the letter on this label. We figure out the new position based on mask size. */
     public function setText (str : String) : void
     {
-        // poor man's assert...
-        if (_background == null || _text == null)
-        {
-            Log.getLog(this).warning ("expected background and text to be initialized by now");
-            return;
-        }
+        Assert.True (function () : Boolean { return _background != null && _text != null },
+                     "I expected background and text to be initialized by now.");
                     
         _text.text = str;
 
