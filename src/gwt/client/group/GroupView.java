@@ -282,6 +282,7 @@ public class GroupView extends VerticalPanel
         if (!_extras.tileBackgrounds) {
             VerticalPanel peoplePlusCaps = new VerticalPanel();
             peoplePlusCaps.setSpacing(0);
+            peoplePlusCaps.setWidth("100%");
             final Element upperCap = DOM.createElement("div");
             DOM.setStyleAttribute(upperCap, "backgroundImage", "url(" + MsoyEntryPoint.toMediaPath(
                 _extras.peopleUpperCap.getMediaPath()) + ")");
@@ -292,6 +293,12 @@ public class GroupView extends VerticalPanel
                 }
             });
             peoplePlusCaps.add(people);
+            people.setWidth("100%");
+            if (_extras.peopleBackground != null) {
+                DOM.setStyleAttribute(people.getElement(), "backgroundImage", 
+                    "url(" + MsoyEntryPoint.toMediaPath(_extras.peopleBackground.getMediaPath()) + 
+                    ")");
+            }
             final Element lowerCap = DOM.createElement("div");
             DOM.setStyleAttribute(lowerCap, "backgroundImage", "url(" + MsoyEntryPoint.toMediaPath(
                 _extras.peopleLowerCap.getMediaPath()) + ")");
@@ -304,12 +311,13 @@ public class GroupView extends VerticalPanel
             _table.setWidget(2, 0, peoplePlusCaps);
         } else {
             _table.setWidget(2, 0, people);
+            if (_extras.peopleBackground != null) {
+                _table.getMyFlexCellFormatter().setBackgroundImage(2, 0, 
+                    MsoyEntryPoint.toMediaPath(_extras.peopleBackground.getMediaPath()));
+            }
         }
         _table.getFlexCellFormatter().setColSpan(2, 0, 2);
-        if (_extras.peopleBackground != null) {
-            _table.getMyFlexCellFormatter().setBackgroundImage(2, 0, 
-                MsoyEntryPoint.toMediaPath(_extras.peopleBackground.getMediaPath()));
-        }
+        _table.getMyFlexCellFormatter().fillWidth(2, 0);
     }
 
     /**
