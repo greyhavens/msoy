@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -107,11 +108,17 @@ public class GroupView extends VerticalPanel
         _table.setStyleName("groupView");
         _table.setCellSpacing(0);
         _table.setCellPadding(0);
+        if (!_extras.tileBackgrounds) {
+            _table.setWidth((160 + _extras.detailBackgroundWidth) + "px");
+        }
         boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
 
         VerticalPanel logoPanel = new VerticalPanel();
         logoPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         logoPanel.setStyleName("LogoPanel");
+        if (!_extras.tileBackgrounds) {
+            logoPanel.setHeight("270px");
+        }
         logoPanel.add(MediaUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE));
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("Links");
@@ -193,12 +200,29 @@ public class GroupView extends VerticalPanel
             charter.setStyleName("Charter");
             description.add(charter);
         }
-        _table.setWidget(0, 1, description);
+        if (!_extras.tileBackgrounds) {
+            final Element div = DOM.createElement("div");
+            DOM.setStyleAttribute(div, "width", _extras.detailBackgroundWidth + "px");
+            DOM.setStyleAttribute(div, "height", "270px");
+            // when not tiling, we need a sensible default for people that are in a foot-shooting 
+            // mood and create more text than fits on their background image.  Here we're creating
+            // a div to hold the table that will scrill when overflowing
+            DOM.setStyleAttribute(div, "overflow", "auto");
+            DOM.appendChild(div, description.getElement());
+            Widget descriptionWidget = new Widget() {
+                {
+                    setElement(div);
+                }
+            };
+            _table.setWidget(0, 1, descriptionWidget);
+        } else {
+            _table.setWidget(0, 1, description);
+            _table.getMyFlexCellFormatter().fillWidth(0, 1);
+        }
         if (_extras.detailBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(0, 1, 
                 MsoyEntryPoint.toMediaPath(_extras.detailBackground.getMediaPath()));
         }
-        _table.getMyFlexCellFormatter().fillWidth(0, 1);
 
         FlexTable people = new FlexTable();
         people.setStyleName("PeoplePanel");
@@ -443,6 +467,9 @@ public class GroupView extends VerticalPanel
             }
             public void fillWidth (int row, int column) {
                 DOM.setStyleAttribute(getElement(row, column), "width", "100%");
+            }
+            public void addScrollbar (int row, int column) {
+                DOM.setStyleAttribute(getElement(row, column), "overflow", "auto");
             }
         }
 
