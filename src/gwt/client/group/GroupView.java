@@ -206,7 +206,7 @@ public class GroupView extends VerticalPanel
             DOM.setStyleAttribute(div, "height", "270px");
             // when not tiling, we need a sensible default for people that are in a foot-shooting 
             // mood and create more text than fits on their background image.  Here we're creating
-            // a div to hold the table that will scrill when overflowing
+            // a div to hold the table that will scroll when overflowing
             DOM.setStyleAttribute(div, "overflow", "auto");
             DOM.appendChild(div, description.getElement());
             Widget descriptionWidget = new Widget() {
