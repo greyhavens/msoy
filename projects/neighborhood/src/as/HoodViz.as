@@ -25,10 +25,11 @@ public class HoodViz extends Sprite
 
     public function HoodViz ()
     {
-        
         _friend = new Building(_friendHouse, _friendPopulate, _soy);
         this.stage.addChild(_friend);
-         
+        _group = new Building(_groupHouse, _groupPopulate, _soy);
+        this.stage.addChild(_group);
+
         var data :Object;
         if (DEBUGGING) {
             data = new DebugData();
@@ -64,7 +65,7 @@ public class HoodViz extends Sprite
                     var d :Number = (x-1)*(x-1) + y*y;
                     distances.push({ x:x, y:y, dist:d });
                 } else {
-                    addBit(_roadWE, x, y, false, null);
+                    addBit(_roadEW, x, y, false, null);
                 }
             }
         }
@@ -89,10 +90,10 @@ public class HoodViz extends Sprite
         }
 
         if (_hood.centralMember != null) {
-            drawables.push({ bit: _myHouse, x: 1, y: 0, neighbor: _hood.centralMember });
+//            drawables.push({ bit: _myHouse, x: 1, y: 0, neighbor: _hood.centralMember });
         }
         if (_hood.centralGroup != null) {
-            drawables.push({ bit: _group, x: -1, y: 0, neighbor: _hood.centralGroup });
+//            drawables.push({ bit: _group, x: -1, y: 0, neighbor: _hood.centralGroup });
         }
 
         // now sort the actual friends and groups by x for draw order to be correct
@@ -102,10 +103,10 @@ public class HoodViz extends Sprite
         for each (var drawable :Object in drawables) {
             addBit(drawable.bit, drawable.x, drawable.y, true, drawable.neighbor);
         }
-        var scale :Number = Math.min(640 / (_bound.x.max - _bound.x.min),
-                                     480 / (_bound.y.max - _bound.y.min));
-        _canvas.x = -_bound.x.min * scale;
-        _canvas.y = -_bound.y.min * scale;
+        var scale :Number = Math.min(640 / (_bound.right - _bound.left),
+                                     480 / (_bound.bottom - _bound.top));
+        _canvas.x = -_bound.left * scale;
+        _canvas.y = -_bound.top * scale;
         _canvas.scaleX = scale * 0.9;
         _canvas.scaleY = scale * 0.9;
     }
@@ -131,14 +132,19 @@ public class HoodViz extends Sprite
     protected function addBit (bitType :Object, x :Number, y :Number, update:Boolean,
                                neighbor: Neighbor) :void
     {
+
         var bit :MovieClip;
         if (bitType is Class) {
             bit = new bitType();
+            bit.gotoAndStop(Math.random() * bit.totalFrames);
+//            trace("class bit: " + bit + " is (" + bit.width + ", " + bit.height + ")");
         } else {
-            bit = (bitType as Building).getPopulatedTile(0, 5);
+            var building :Building = (bitType as Building);
+            bit = building.getPopulatedTile(Math.random() * building.variationCount, 5);
+//            trace("building bit: " + bit + " is (" + bit.width + ", " + bit.height + ")");
         }
-        bit.width = 256;
-        bit.height = 224;
+//        bit.width = 256;
+//        bit.height = 224;
 
         if (neighbor is NeighborGroup) {
             var logo :String = (neighbor as NeighborGroup).groupLogo;
@@ -166,17 +172,16 @@ public class HoodViz extends Sprite
         _canvas.addChild(bitHolder);
 
         if (update) {
-            _bound.x.min = Math.min(_bound.x.min, bitHolder.x);
-            _bound.x.max = Math.max(_bound.x.max, bitHolder.x + bit.width);
-            _bound.y.min = Math.min(_bound.y.min, bitHolder.y);
-            _bound.y.max = Math.max(_bound.y.max, bitHolder.y + bit.height);
+            _bound = _bound.union(bitHolder.getBounds(_canvas));
+            trace("new bound: " + _bound);
         }
     }
 
     // the magic numbers that describe the drawn tiles' geometry
     protected function skew(x :Number, y :Number) :Point
     {
-        return new Point(x*174 + y*81, -x*69 + y*155);
+        var f :Number = 0.89;
+        return new Point(f*x*174 + f*y*81, -f*x*69 + f*y*155);
     }
 
     public function clickHandler (event :MouseEvent) :void
@@ -260,35 +265,39 @@ public class HoodViz extends Sprite
     protected var _tip :Sprite;
     protected var _hood :Neighborhood;
     protected var _canvas :Sprite;
-    protected var _bound :Object = { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } };
+//    protected var _bound :Object = { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } };
+    protected var _bound :Rectangle = new Rectangle();
 
     protected var _friend :Building;
+    protected var _group :Building;
 
-
-
-    // [Embed(source="untitled.swf", mimeType="application/octet-stream")]
-//    protected const _friendAsset :Class;
-    [Embed(source="viz.swf#populate")]
+    [Embed(source="viz.swf#house_tile")]
     protected const _friendHouse :Class;
-    [Embed(source="viz.swf#populate")]
+    [Embed(source="viz.swf#populate_house")]
     protected const _friendPopulate :Class;
 
-    [Embed(source="viz.swf#soy")]
-    protected const _soy :Class;
+    [Embed(source="viz.swf#group_tile")]
+    protected const _groupHouse :Class;
+    [Embed(source="viz.swf#populate_group")]
+    protected const _groupPopulate :Class;
 
-    [Embed(source="myhouse.swf")]
-    protected static const _myHouse :Class;
+    [Embed(source="viz.swf#soy_master")]
+    protected const _soy :Class;
 
     [Embed(source="group.swf")]
     protected static const _group :Class;
 
-    [Embed(source="road_ns.swf")]
+    [Embed(source="viz.swf#road_ns_tile")]
     protected static const _roadNS :Class;
 
-    [Embed(source="road_we.swf")]
-    protected static const _roadWE :Class;
+    [Embed(source="viz.swf#road_ew_tile")]
+    protected static const _roadEW :Class;
 
-    [Embed(source="road_4way.swf")]
+    [Embed(source="viz.swf#road_intersection_tile")]
     protected static const _road4Way :Class;
+
+//    [Embed(source="viz.swf#road_house_tile")]
+    [Embed(source="viz.swf#road_ns_tile")]
+    protected static const _roadHouse :Class;
 }
 }
