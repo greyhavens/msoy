@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.CheckBox;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Photo;
@@ -233,6 +234,17 @@ public class GroupEdit extends BorderedDialog
         capsPanel.setVerticalAlignment(HorizontalPanel.ALIGN_BOTTOM);
         imagesPanel.add(backgroundsPanel);
         imagesPanel.add(capsPanel);
+
+        final CheckBox tileBackgrounds = new CheckBox(CGroup.msgs.editTileBackgrounds());
+        tileBackgrounds.setChecked(_extras.tileBackgrounds);
+        tileBackgrounds.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                _extras.tileBackgrounds = tileBackgrounds.isChecked();
+            }
+        });
+        capsPanel.add(tileBackgrounds);
+        capsPanel.setCellVerticalAlignment(tileBackgrounds, VerticalPanel.ALIGN_MIDDLE);
+
         int types[] = { IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND,
             IMAGE_PEOPLE_BACKGROUND, IMAGE_PEOPLE_UPPER_CAP, IMAGE_PEOPLE_LOWER_CAP };
         String labels[] = { CGroup.msgs.editInfoBG(), CGroup.msgs.editDetailBG(),

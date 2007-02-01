@@ -208,6 +208,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editPolicy();
 
   /**
+   * Translated "Tile Backgrounds".
+   * 
+   * @return translated "Tile Backgrounds"
+   * @gwt.key editTileBackgrounds
+   */
+  String editTileBackgrounds();
+
+  /**
    * Translated "Hall".
    * 
    * @return translated "Hall"
