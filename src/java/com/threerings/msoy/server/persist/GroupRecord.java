@@ -30,7 +30,7 @@ import com.threerings.msoy.web.data.GroupExtras;
            columns={GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })})
 public class GroupRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 12;
+    public static final int SCHEMA_VERSION = 13;
 
     public static final String GROUP_ID = "groupId";
     public static final String NAME = "name";
@@ -40,7 +40,7 @@ public class GroupRecord extends PersistentRecord
     public static final String LOGO_MIME_TYPE = "logoMimeType";
     public static final String LOGO_MEDIA_HASH = "logoMediaHash";
     public static final String LOGO_MEDIA_CONSTRAINT = "logoMediaConstraint";
-    public static final String TILE_BACKGROUNDS = "tileBackgrounds";
+    public static final String BACKGROUND_CONTROL = "backgroundControl";
     public static final String INFO_BACKGROUND_MIME_TYPE = "infoBackgroundMimeType";
     public static final String INFO_BACKGROUND_HASH = "infoBackgroundHash";
     public static final String INFO_BACKGROUND_THUMB_CONSTRAINT = "infoBackgroundThumbConstraint";
@@ -96,9 +96,8 @@ public class GroupRecord extends PersistentRecord
     /** The constraint for the logo image. */
     public byte logoMediaConstraint;
 
-    /** Whether to run with tiled backgrounds or not */
-    @Column(columnDefinition="tileBackgrounds TINYINT NOT NULL DEFAULT 1")
-    public boolean tileBackgrounds;
+    /** Flag to indicate page flow control */
+    public int backgroundControl;
 
     /** The MIME type for the background of the info area. */
     public byte infoBackgroundMimeType;
@@ -195,7 +194,7 @@ public class GroupRecord extends PersistentRecord
     public GroupExtras toExtrasObject ()
     {
         GroupExtras extras = new GroupExtras();
-        extras.tileBackgrounds = tileBackgrounds;
+        extras.backgroundControl = backgroundControl;
         extras.infoBackground = infoBackgroundHash == null ? null :
             new MediaDesc(infoBackgroundHash.clone(), infoBackgroundMimeType,
             infoBackgroundThumbConstraint);
@@ -243,8 +242,8 @@ public class GroupRecord extends PersistentRecord
         if (groupDef.policy != policy) {
             updates.put(POLICY, groupDef.policy);
         }
-        if (extrasDef.tileBackgrounds != tileBackgrounds) {
-            updates.put(TILE_BACKGROUNDS, extrasDef.tileBackgrounds);
+        if (extrasDef.backgroundControl != backgroundControl) {
+            updates.put(BACKGROUND_CONTROL, extrasDef.backgroundControl);
         }
         if (extrasDef.infoBackground != null && (infoBackgroundHash == null ||
             !extrasDef.infoBackground.equals(new MediaDesc(infoBackgroundHash, 

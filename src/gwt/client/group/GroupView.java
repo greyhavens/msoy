@@ -108,7 +108,7 @@ public class GroupView extends VerticalPanel
         _table.setStyleName("groupView");
         _table.setCellSpacing(0);
         _table.setCellPadding(0);
-        if (!_extras.tileBackgrounds) {
+        if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE) {
             _table.setWidth((160 + _extras.detailBackgroundWidth) + "px");
         }
         boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
@@ -198,7 +198,7 @@ public class GroupView extends VerticalPanel
             charter.setStyleName("Charter");
             description.add(charter);
         }
-        if (!_extras.tileBackgrounds) {
+        if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE) {
             final Element div = DOM.createElement("div");
             DOM.setStyleAttribute(div, "width", _extras.detailBackgroundWidth + "px");
             DOM.setStyleAttribute(div, "height", (_extras.detailAreaHeight > 270 ? 
@@ -214,7 +214,7 @@ public class GroupView extends VerticalPanel
                 }
             };
             _table.setWidget(0, 1, descriptionWidget);
-        } else {
+        } else if (_extras.backgroundControl == GroupExtras.BACKGROUND_TILED) {
             _table.setWidget(0, 1, description);
             _table.getMyFlexCellFormatter().fillWidth(0, 1);
         }
@@ -277,7 +277,7 @@ public class GroupView extends VerticalPanel
         }
         people.setWidget(0, 1, managers);
         people.setWidget(1, 1, members);
-        if (!_extras.tileBackgrounds) {
+        if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE) {
             VerticalPanel peoplePlusCaps = new VerticalPanel();
             peoplePlusCaps.setSpacing(0);
             peoplePlusCaps.setWidth("100%");
@@ -307,7 +307,7 @@ public class GroupView extends VerticalPanel
                 }
             });
             _table.setWidget(1, 0, peoplePlusCaps);
-        } else {
+        } else if (_extras.backgroundControl == GroupExtras.BACKGROUND_TILED) {
             _table.setWidget(1, 0, people);
             if (_extras.peopleBackground != null) {
                 _table.getMyFlexCellFormatter().setBackgroundImage(1, 0, 

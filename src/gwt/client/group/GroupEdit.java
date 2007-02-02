@@ -6,6 +6,8 @@ package client.group;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -25,7 +27,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ComplexPanel;
+import com.google.gwt.user.client.ui.RadioButton;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Photo;
@@ -235,7 +238,49 @@ public class GroupEdit extends BorderedDialog
         imagesPanel.add(backgroundsPanel);
         imagesPanel.add(capsPanel);
 
-        final CheckBox tileBackgrounds = new CheckBox(CGroup.msgs.editTileBackgrounds());
+        Panel radiosFieldset = new ComplexPanel () { {
+                Element fieldset = DOM.createElement("fieldset");
+                DOM.setStyleAttribute(fieldset, "width", "175px");
+                Element legend = DOM.createElement("legend");
+                DOM.setInnerText(legend, CGroup.msgs.editBackgroundControlLegend());
+                DOM.appendChild(fieldset, legend);
+                setElement(fieldset);
+            }
+            public void add (Widget w) {
+                add(w, getElement());
+            }
+        };
+        // index of radio must match the value of that radio in the GroupExtras constants
+        final RadioButton radios[] = { new RadioButton("backgroundControl", CGroup.msgs.
+            editTileBackgrounds()), new RadioButton("backgroundControl", CGroup.msgs.
+            editAnchorBackgrounds()), new RadioButton("backgroundControl", CGroup.msgs.
+            editFitToImages()) };
+        ClickListener radioClickListener = new ClickListener () {
+            public void onClick (Widget sender) {
+                for (int ii = 0; ii < radios.length; ii++) {
+                    if (radios[ii].isChecked()) {
+                        _extras.backgroundControl = ii;
+                        break;
+                    }
+                }
+            }
+        };
+        for (int ii = 0; ii < radios.length; ii++) {
+            radios[ii].addClickListener(radioClickListener);
+            if (ii == _extras.backgroundControl) {
+                radios[ii].setChecked(true);
+            }
+            radiosFieldset.add(radios[ii]);
+            if (ii < radios.length - 1) {
+               radiosFieldset.add(new Widget () { {
+                   setElement(DOM.createElement("br"));
+               }});
+            }
+        }
+        capsPanel.add(radiosFieldset);
+        capsPanel.setCellVerticalAlignment(radiosFieldset, VerticalPanel.ALIGN_MIDDLE);
+
+        /*final CheckBox tileBackgrounds = new CheckBox(CGroup.msgs.editTileBackgrounds());
         tileBackgrounds.setChecked(_extras.tileBackgrounds);
         tileBackgrounds.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
@@ -243,7 +288,7 @@ public class GroupEdit extends BorderedDialog
             }
         });
         capsPanel.add(tileBackgrounds);
-        capsPanel.setCellVerticalAlignment(tileBackgrounds, VerticalPanel.ALIGN_MIDDLE);
+        capsPanel.setCellVerticalAlignment(tileBackgrounds, VerticalPanel.ALIGN_MIDDLE);*/
 
         int types[] = { IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND,
             IMAGE_PEOPLE_BACKGROUND, IMAGE_PEOPLE_UPPER_CAP, IMAGE_PEOPLE_LOWER_CAP };

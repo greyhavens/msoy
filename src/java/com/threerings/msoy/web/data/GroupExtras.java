@@ -16,8 +16,17 @@ import com.threerings.msoy.item.web.MediaDesc;
 public class GroupExtras
     implements Streamable, IsSerializable
 {
-    /** Whether to run with tiled backgrounds or not */
-    public boolean tileBackgrounds;
+    /** Tile the background images to the edge of the screen */
+    public static final int BACKGROUND_TILED = 0;
+
+    /** Do not tile the images, and do not constrain the size of the areas */
+    public static final int BACKGROUND_ANCHORED = 1;
+
+    /** Constrain area sizes to that of the images supplied */
+    public static final int BACKGROUND_FIT_TO_IMAGE = 2;
+
+    /** Flag to indicate how page flow is controlled */
+    public int backgroundControl;
 
     /** The tiled background image for the info area. */
     public MediaDesc infoBackground;
