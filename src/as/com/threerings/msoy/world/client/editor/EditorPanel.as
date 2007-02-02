@@ -9,6 +9,7 @@ import mx.core.UIComponent;
 
 import mx.collections.Sort;
 
+import mx.containers.Grid;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
@@ -21,11 +22,11 @@ import mx.controls.TextInput;
 import com.threerings.util.ClassUtil;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
-import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
 
@@ -241,7 +242,7 @@ public class EditorPanel extends VBox
         var grid :Grid = new Grid();
 
         // edit scene type
-        grid.addRow(
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.scene_type")),
             _type = new ComboBox());
         var types :Array = [];
@@ -251,35 +252,35 @@ public class EditorPanel extends VBox
         }
         _type.dataProvider = types;
 
-        grid.addRow(
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.scene_name")),
             _name = new TextInput());
-        grid.addRow(
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.scene_width")),
             _width = new TextInput());
-        grid.addRow(
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.scene_depth")),
             _depth = new TextInput());
-        grid.addRow(
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.horizon")),
             _horizon = new HSlider());
         _horizon.minimum = 0;
         _horizon.maximum = 1;
         _horizon.liveDragging = true;
 
-        grid.addRow(
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.background_image")),
             _backgroundImage = new SingleItemSelector(_ctx));
         _backgroundImage.selectionChanged = newBackgroundImageSelected;
 
 /*
-        grid.addRow(
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.background_audio")),
             _backgroundAudio = new SingleItemSelector(_ctx, Item.AUDIO));
         _backgroundAudio.selectionChanged = newBackgroundAudioSelected;
         */
 
-        grid.addRow(
+        GridUtil.addRow(grid,
             new RoomViewScrollBox(_roomView, 200, 100), [2, 1]);
 
         box.addChild(grid);

@@ -4,16 +4,19 @@ import flash.events.MouseEvent;
 
 import mx.binding.utils.BindingUtils;
 
+import mx.containers.Grid;
+
 import mx.controls.Button;
 import mx.controls.CheckBox;
 import mx.controls.HSlider;
 
 import com.threerings.util.CommandEvent;
 
+import com.threerings.flex.GridUtil;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
-import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.client.MsoyContext;
@@ -110,8 +113,8 @@ public class ScaleEditor extends Grid
         _reset.label = Msgs.EDITING.get("l.scale_reset");
         _reset.addEventListener(MouseEvent.CLICK, handleReset);
 
-        addRow(MsoyUI.createLabel(Msgs.EDITING.get("l.xscale")), _x, _locked);
-        addRow(MsoyUI.createLabel(Msgs.EDITING.get("l.yscale")), _y, _reset);
+        GridUtil.addRow(this, MsoyUI.createLabel(Msgs.EDITING.get("l.xscale")), _x, _locked);
+        GridUtil.addRow(this, MsoyUI.createLabel(Msgs.EDITING.get("l.yscale")), _y, _reset);
     }
 
     /**

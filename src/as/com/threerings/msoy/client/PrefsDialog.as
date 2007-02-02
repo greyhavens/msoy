@@ -21,18 +21,19 @@ import mx.controls.RadioButtonGroup;
 import mx.controls.TextInput;
 import mx.controls.Tree;
 
+import mx.containers.Grid;
 import mx.containers.TabNavigator;
 import mx.containers.VBox;
 
 import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.GridUtil;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
 
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.data.MemberObject;
@@ -104,12 +105,14 @@ public class PrefsDialog extends FloatingPanel
         var memberObj :MemberObject = _ctx.getClientObject();
 
         var grid :Grid = new Grid();
-        grid.addRow(MsoyUI.createLabel(Msgs.GENERAL.get("l.display_name")),
-                    _name = new TextInput());
+        GridUtil.addRow(grid,
+            MsoyUI.createLabel(Msgs.GENERAL.get("l.display_name")),
+            _name = new TextInput());
         _name.text = memberObj.memberName.toString();
 
-        grid.addRow(MsoyUI.createLabel(Msgs.GENERAL.get("l.log_to_chat")),
-                    _logToChat = new CheckBox());
+        GridUtil.addRow(grid,
+            MsoyUI.createLabel(Msgs.GENERAL.get("l.log_to_chat")),
+            _logToChat = new CheckBox());
         _logToChat.selected = Prefs.getLogToChat();
         BindingUtils.bindSetter(Prefs.setLogToChat, _logToChat, "selected");
 
@@ -143,9 +146,9 @@ public class PrefsDialog extends FloatingPanel
         decay.dataProvider = choices;
         decay.selectedIndex = Prefs.getChatDecay();
         BindingUtils.bindSetter(Prefs.setChatDecay, decay, "selectedIndex");
-        grid.addRow(Msgs.PREFS.get("l.chat_decay"), decay);
+        GridUtil.addRow(grid, Msgs.PREFS.get("l.chat_decay"), decay);
 
-        grid.addRow(Msgs.PREFS.get("l.chat_filter"), [2, 1]);
+        GridUtil.addRow(grid, Msgs.PREFS.get("l.chat_filter"), [2, 1]);
         var filterGroup :RadioButtonGroup = new RadioButtonGroup();
         var filterChoice :int = Prefs.getChatFilterLevel();
         for (ii= 0; ii < 4; ii++) {
@@ -154,14 +157,14 @@ public class PrefsDialog extends FloatingPanel
             but.selected = (ii == filterChoice);
             but.value = ii;
             but.group = filterGroup;
-            grid.addRow(but, [2, 1]);
+            GridUtil.addRow(grid, but, [2, 1]);
         }
         BindingUtils.bindSetter(Prefs.setChatFilterLevel, filterGroup, "selectedValue");
 
         var lbl :Label = new Label();
         lbl.text = Msgs.PREFS.get("m.chat_filter_note");
         lbl.setStyle("fontSize", 8);
-        grid.addRow(lbl, [2, 1]);
+        GridUtil.addRow(grid, lbl, [2, 1]);
 
         tainer.addChild(grid);
         return tainer;

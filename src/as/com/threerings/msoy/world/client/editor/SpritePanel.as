@@ -4,6 +4,7 @@ import mx.binding.utils.BindingUtils;
 
 import mx.core.UIComponent;
 
+import mx.containers.Grid;
 import mx.containers.VBox;
 
 import mx.controls.CheckBox;
@@ -11,10 +12,11 @@ import mx.controls.TextInput;
 
 import com.threerings.util.CommandEvent;
 
+import com.threerings.flex.GridUtil;
+
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
-import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.world.client.MsoySprite;
@@ -72,12 +74,12 @@ public class SpritePanel extends Grid
     {
         super.createChildren();
 
-        addRow(
+        GridUtil.addRow(this,
             MsoyUI.createLabel(Msgs.EDITING.get("l.center")),
             _centering = new CheckBox());
 
         // location: big controls
-        addRow(
+        GridUtil.addRow(this,
             MsoyUI.createLabel(Msgs.EDITING.get("l.loc")),
             _locEditor = new LocationEditor(_ctx));
     }

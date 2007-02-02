@@ -508,14 +508,29 @@ public class RoomController extends SceneController
         }
 
         // make sure we are in control of this entity (or that no one has control)
-        var ctrl :EntityControl = (_roomObj.controllers.get(ident) as EntityControl);
-        if (ctrl != null && ctrl.controllerOid != _mctx.getClient().getClientObject().getOid()) {
-            log.info("Dropping request as we are not controller [from=" + from +
-                     ", item=" + ident + ", ctrl=" + ctrl.controllerOid + "].");
-            return false;
+        if (hasEntityControl(ident, true)) {
+            return true;
         }
 
-        return true;
+        log.info("Dropping request as we are not controller [from=" + from +
+                 ", item=" + ident + "].");
+        return false;
+    }
+
+    /**
+     * Does this client have control over the specified entity?
+     *
+     * @param orNobody if true, claim that we have entity control when nobody
+     * yet has control.
+     */
+    protected function hasEntityControl (
+        ident :ItemIdent, orNobody :Boolean = false) :Boolean
+    {
+        var ctrl :EntityControl = (_roomObj.controllers.get(ident) as EntityControl);
+        if (ctrl == null) {
+            return orNobody;
+        }
+        return (ctrl.controllerOid == _mctx.getClientObject().getOid());
     }
 
     override protected function sceneUpdated (update :SceneUpdate) :void

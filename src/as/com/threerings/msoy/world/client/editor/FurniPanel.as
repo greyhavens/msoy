@@ -6,6 +6,7 @@ import mx.binding.utils.BindingUtils;
 
 import mx.collections.ListCollectionView;
 
+import mx.containers.Grid;
 import mx.containers.VBox;
 import mx.containers.ViewStack;
 
@@ -19,13 +20,14 @@ import mx.core.UIComponent;
 
 import com.threerings.util.ArrayUtil;
 
+import com.threerings.flex.GridUtil;
+
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.SceneBookmarkEntry;
 
-import com.threerings.msoy.ui.Grid;
 import com.threerings.msoy.ui.MsoyUI;
 
 import com.threerings.msoy.world.client.MsoySprite;
@@ -128,7 +130,7 @@ public class FurniPanel extends SpritePanel
         super.createChildren();
 
         // set up scale editing
-        addRow(
+        GridUtil.addRow(this,
             _scaleEditor = new ScaleEditor(_ctx), [2, 1]);
 
         // set up perspective editing
@@ -139,12 +141,12 @@ public class FurniPanel extends SpritePanel
                 furn.togglePerspective();
                 spritePropsUpdated();
             });
-        addRow(
+        GridUtil.addRow(this,
             MsoyUI.createLabel(Msgs.EDITING.get("l.perspective")),
             _perspective);
 
         // set up action editing
-        addRow(
+        GridUtil.addRow(this,
             MsoyUI.createLabel(Msgs.EDITING.get("l.action")),
             _actionType = new ComboBox());
         _actionType.dataProvider = [
@@ -169,7 +171,7 @@ public class FurniPanel extends SpritePanel
         _actionPanels.addChild(new VBox()); // ACTION_WORLD_GAME
         _actionPanels.addChild(createURLEditor()); // ACTION_URL
         _actionPanels.addChild(createPortalEditor()); // ACTION_PORTAL
-        addRow(_actionPanels, [2, 1]);
+        GridUtil.addRow(this, _actionPanels, [2, 1]);
 
         BindingUtils.bindProperty(_actionPanels, "selectedIndex",
             _actionType, "selectedIndex");
@@ -177,7 +179,7 @@ public class FurniPanel extends SpritePanel
         // BEGIN temporary controls
         // add an "expert control" for directly editing the action
         var lbl :Label;
-        addRow(
+        GridUtil.addRow(this,
             lbl = MsoyUI.createLabel(Msgs.EDITING.get("l.action")),
             _actionData = new TextInput());
         lbl.setStyle("color", 0xFF0000);
@@ -187,7 +189,7 @@ public class FurniPanel extends SpritePanel
     protected function createBackgroundEditor () :UIComponent
     {
         var grid :Grid = new Grid();
-        grid.addRow(
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.volume")),
             _volume = new HSlider());
         _volume.liveDragging = true;
@@ -199,7 +201,7 @@ public class FurniPanel extends SpritePanel
     protected function createURLEditor () :UIComponent
     {
         var grid :Grid = new Grid();
-        grid.addRow(
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.url")),
             _url = new TextInput());
         return grid;
@@ -208,7 +210,7 @@ public class FurniPanel extends SpritePanel
     protected function createPortalEditor () :UIComponent
     {
         var grid :Grid = new Grid();
-        grid.addRow(
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.dest_scene")),
             _destScene = new ComboBox());
         _destScene.editable = true;
@@ -224,7 +226,7 @@ public class FurniPanel extends SpritePanel
         }
         _destScene.dataProvider = scenes;
 
-//        grid.addRow(
+//        GridUtil.addRow(grid,
 //            MsoyUI.createLabel(Msgs.EDITING.get("l.dest_portal")),
 //            _destPortal = new TextInput());
 

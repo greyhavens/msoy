@@ -6,6 +6,8 @@ package com.threerings.msoy.world.client {
 import mx.binding.utils.BindingUtils;
 
 import mx.containers.Canvas;
+import mx.containers.Grid;
+
 import mx.controls.Button;
 import mx.controls.CheckBox;
 import mx.controls.ComboBox;
@@ -14,7 +16,7 @@ import mx.controls.Label;
 
 import mx.events.FlexEvent;
 
-import com.threerings.msoy.ui.Grid;
+import com.threerings.flex.GridUtil;
 
 public class AvatarViewerComp extends Canvas
 {
@@ -48,13 +50,13 @@ public class AvatarViewerComp extends Canvas
             });
 
         var grid :Grid = new Grid();
-        grid.addRow("Walking:", walking);
-        grid.addRow("Facing angle:", rotation);
-        grid.addRow(talking);
+        GridUtil.addRow(grid, "Walking:", walking);
+        GridUtil.addRow(grid, "Facing angle:", rotation);
+        GridUtil.addRow(grid, talking);
 
         var holder :Canvas = new Canvas();
         holder.rawChildren.addChild(_avatar);
-        grid.addRow(holder, [2, 1]);
+        GridUtil.addRow(grid, holder, [2, 1]);
         addChild(grid);
 
         BindingUtils.bindSetter(function (val :Number) :void {
