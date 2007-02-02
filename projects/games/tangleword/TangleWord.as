@@ -44,10 +44,10 @@ public class TangleWord extends Sprite
         var result : Boolean = _board.checkBoard (letters);
     }
 
-    // Happens when the player clicks on one of the letters
-    public function addLetter (letter : String) : void
+    // Happens when the player updates the letter selection
+    public function setText (text : String) : void
     {
-        _input.addLetter (letter);
+        _input.setText (text);
     }
 
     // PRIVATE HELPERS

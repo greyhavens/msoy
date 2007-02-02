@@ -16,6 +16,7 @@ public class Board extends Sprite
     */
     public function Board (game : TangleWord)
     {
+        selection = new Selection (this);
         _game = game;
         _background = Resources.makeDefaultBoardImage ();
         if (_background == null)
@@ -59,25 +60,35 @@ public class Board extends Sprite
     */
     public function checkBoard (letters : Array) : Boolean
     {
-        // Initialize a stack of Points, which will hold the previously traversed path.
-        var alreadyVisited : Array = new Array ();
-        for (var x : int = 0; x < Properties.LETTER_COUNT_PER_SIDE; x++)
+        var word : String = selectionAsString ();
+        var isValid : Boolean = DictionaryService.checkWord (0, word);
+        trace ((isValid ? "MATCH " : "FAIL ") + word);
+
+        // Depending on the result, we may want to update all of the selected letters
+        var getLetter : Function = function (p : Point, i : int, a : Array) : Letter
         {
-            for (var y : int = 0; y < Properties.LETTER_COUNT_PER_SIDE; y++)
-            {
-                var p : Point = new Point (x, y);
-                if (matchWord (p, letters, 0, new Array ()))
-                {
-                    // abort and report success!
-                    trace ("MATCH: " + letters.toString());
-                    return true;
-                }
-            }
+            return _cells[p.x][p.y];
+        }
+        var letterObjectArray : Array = selection.elements.map (getLetter);
+        var resultStatus : uint = isValid ? Status.MATCHING : Status.NORMAL;
+        for each (var letter : Letter in letterObjectArray)
+        {
+            letter.setStatus (resultStatus);
         }
 
-        return false;
+        // Now clean out the selection array
+        selection.elements = new Array ();  // why isn't there an Array.clear()?
+        updateDisplay();
+        
+        return isValid;
     }
 
+    /** Updates a text box with the current word */
+    public function updateDisplay () : void
+    {
+        var word : String = selectionAsString ();
+        _game.setText (word);
+    }
 
     
     // PRIVATE HELPERS
@@ -100,7 +111,7 @@ public class Board extends Sprite
                 // Figure out cell position
                 var x : int = xOffset + col * Properties.LETTER_SIZE;
                 var y : int = yOffset + row * Properties.LETTER_SIZE; 
-                _cells[col][row] = new Letter (this, _game, "?", x, y);
+                _cells[col][row] = new Letter (this, _game, "?", x, y, col, row);
                 addChild (_cells[col][row]);
             }
         }
@@ -112,82 +123,23 @@ public class Board extends Sprite
         return _cells[x][y].text;
     }
 
-    /**
-       Private helper that actually does the recursive search through the board.
-       At each step, consider the next remaining letter to be matched,
-       and try it against every neighbor that's not on the already visited list.
-       Whenever successful, keep recursing until we run out of letters.
-
-       /p/ is the location of the current cell.
-       /letters/ is an array of strings.
-       /current/ is the position of the letter being examined right now.
-       /alreadyVisited/ is an array of Points.
-    */
-    private function matchWord (p : Point, letters : Array,
-                                current: int, alreadyVisited : Array) : Boolean
+    /** Converts the selection point stack to a string */
+    private function selectionAsString () : String
     {
-        // Are we done? Hooray!
-        if (current == letters.length)
+        var getText : Function = function (p : Point, i : int, a : Array) : String
         {
-            return true;
+            return _cells[p.x][p.y].getText();
         }
-        
-        var thisLetter : String = _cells[p.x][p.y].getText ();
-        var candidateLetter : String = letters[current];
-
-        // trace (current + ": checking " + thisLetter + " at " + p.x + ", " + p.y);
-        
-        // If the letter doesn't match this cell, fail.
-        if (thisLetter != candidateLetter)
-        {
-            return false;
-        }
-
-        // If this position was visited before, fail.
-        var pointMatches : Function =
-            function (oldpoint : Point, index : int, array : Array) : Boolean
-            {
-                var samePoint : Boolean = (p.x == oldpoint.x && p.y == oldpoint.y);
-                return (samePoint);
-            }
-        if (alreadyVisited.some (pointMatches))
-        {
-            return false;
-        }
-
-        // So far, so good. Now let's remember where we are,
-        // and do the same check for each of the neighbors.
-        alreadyVisited.push (p);
-        var indices : Array = new Array (-1, 0, 1);
-        for each (var dx : int in indices) {
-            for each (var dy : int in indices) {
-                var newx : int = p.x + dx;
-                var newy : int = p.y + dy;
-                if (! (newx == p.x && newy == p.y) &&    // it's not this cell
-                    newx >= 0 && newx < Properties.LETTER_COUNT_PER_SIDE &&  // not out of bounds
-                    newy >= 0 && newy < Properties.LETTER_COUNT_PER_SIDE)
-                {
-                  var newp : Point = new Point (newx, newy);
-                    
-                    // Check if one of our neighbors leads to a match - if so, we're done!
-                    if (matchWord (newp, letters, current + 1, alreadyVisited))
-                    {
-                        return true;
-                    }
-                }
-                }
-            }
-
-        // Nothing matched. Clean up and quit.
-        var oldp : Point = alreadyVisited.pop ();
-        Assert.True (function () : Boolean { return oldp == p; },
-                     "Error in matchWord recursion!");
-
-        return false;
-
+        var word : String = selection.elements.map(getText).join("");
+        return word;
     }
     
     
+
+    // PUBLIC MEMBER FIELDS
+
+    /** Current selection */
+    public var selection : Selection;
     
     
 
@@ -200,11 +152,11 @@ public class Board extends Sprite
     private var _sidecount : int;
 
     /** Background of the board. */
-    private var _background : BitmapAsset = null;
+    private var _background : BitmapAsset;
 
     /** This 2D array contains letters on the board.
         The first index is the column, e.g. _cells[x][y] */
-    private var _cells : Array = null;
+    private var _cells : Array;
 
 
 }

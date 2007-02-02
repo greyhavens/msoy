@@ -64,6 +64,12 @@ public class InputField extends Sprite
         _input.appendText (letter);
     }
 
+    // Testing: set input
+    public function setText (text : String) : void
+    {
+        _input.text = text;
+    }
+
     // PRIVATE METHODS
 
     private function keypressHandler (event : KeyboardEvent) : void

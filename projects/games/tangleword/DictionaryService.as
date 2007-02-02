@@ -19,6 +19,13 @@ package
             return set;
         }
 
+        /** Checks if a word is in dictionary */
+        public static function checkWord (language_culture : int, word : String) : Boolean
+        {
+            return (Math.random() > 0.5); // testing only
+        }
+        
+
         private static function randomChar (language_culture : int) : int
         {
           var minChar : int = 0x41;  // inclusive min
@@ -28,6 +35,8 @@ package
             var result : int = minChar + randomInRange;
             return result;
         }
+
+        
             
     }
     
