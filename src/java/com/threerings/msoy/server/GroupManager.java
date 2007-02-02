@@ -203,7 +203,8 @@ public class GroupManager
                 for (GroupMembershipRecord gmRec : _groupRepo.getMemberships(memberId)) {
                     GroupRecord gRec = _groupRepo.loadGroup(gmRec.groupId);
                     if (gRec == null) {
-                        log.warning("Unknown group membership [groupId=" + gmRec.groupId + "]");
+                        log.warning("Unknown group membership [memberId=" + memberId +
+                                    ", groupId=" + gmRec.groupId + "]");
                         continue;
                     }
                     // if we're only including groups we can invite to, strip out exclusive groups
