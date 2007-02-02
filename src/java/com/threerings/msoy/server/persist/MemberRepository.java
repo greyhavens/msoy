@@ -362,8 +362,7 @@ public class MemberRepository extends DepotRepository
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
-            new Join(FriendRecord.class, new In(MemberRecord.MEMBER_ID_C, idArr)),
-            new Where(new Equals(FriendRecord.STATUS_C, true)),
+            new Where(new In(MemberRecord.MEMBER_ID_C, idArr)),
             new FieldOverride(NeighborFriendRecord.CREATED, MemberRecord.CREATED_C),
             new FieldOverride(NeighborFriendRecord.FLOW, MemberRecord.FLOW_C),
             new FieldOverride(NeighborFriendRecord.HOME_SCENE_ID, MemberRecord.HOME_SCENE_ID_C),
