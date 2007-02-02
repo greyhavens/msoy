@@ -17,35 +17,35 @@ import com.threerings.msoy.hood.Neighborhood;
 import com.threerings.msoy.hood.NeighborGroup;
 import com.threerings.msoy.hood.NeighborMember;
 import com.adobe.serialization.json.JSONDecoder;
-import com.threerings.util.EmbededClassLoader;
+import com.threerings.util.EmbeddedSwfLoader;
 
 [SWF(width="640", height="480")]
 public class HoodViz extends Sprite
 {
-    protected var _ecl :EmbededClassLoader;
+    protected var _esl :EmbeddedSwfLoader;
     public function HoodViz ()
     {
-        _ecl = new EmbededClassLoader();
-        _ecl.addEventListener(Event.COMPLETE, eclDone);
-        _ecl.load(new _viz());
+        _esl = new EmbeddedSwfLoader();
+        _esl.addEventListener(Event.COMPLETE, eclDone);
+        _esl.load(new _viz());
     }
     
     protected function eclDone(event :Event) :void
     {
-        var soy :Class = _ecl.getClass("soy_master");
+        var soy :Class = _esl.getClass("soy_master");
 
-        _friend = new Building(_ecl.getClass("house_tile"), _ecl.getClass("populate_house"), soy);
+        _friend = new Building(_esl.getClass("house_tile"), _esl.getClass("populate_house"), soy);
         this.stage.addChild(_friend);
-        _group = new Building(_ecl.getClass("group_tile"), _ecl.getClass("populate_group"), soy);
+        _group = new Building(_esl.getClass("group_tile"), _esl.getClass("populate_group"), soy);
         this.stage.addChild(_group);
 
-        _vacant = _ecl.getClass("vacant_tile");
-        _roadNS = _ecl.getClass("road_ns_tile");
-        _roadEW = _ecl.getClass("road_ew_tile");
-        _road4Way = _ecl.getClass("road_intersection_tile");
-        _roadHouse = _ecl.getClass("road_house_tile");
-        _roadHouseEndW = _ecl.getClass("road_end_w_tile");
-        _roadHouseEndE = _ecl.getClass("road_end_e_tile");
+        _vacant = _esl.getClass("vacant_tile");
+        _roadNS = _esl.getClass("road_ns_tile");
+        _roadEW = _esl.getClass("road_ew_tile");
+        _road4Way = _esl.getClass("road_intersection_tile");
+        _roadHouse = _esl.getClass("road_house_tile");
+        _roadHouseEndW = _esl.getClass("road_end_w_tile");
+        _roadHouseEndE = _esl.getClass("road_end_e_tile");
 
         var data :Object;
         if (false) {
@@ -198,9 +198,11 @@ public class HoodViz extends Sprite
             if (logo != null) {
                 // dynamically load the group's logo
                 var loader :Loader = new Loader();
-                loader.load(new URLRequest("/media/" + logo));
                 // we want to know when the logo is loaded so we can do our magic
                 loader.contentLoaderInfo.addEventListener(Event.COMPLETE, logoLoaded);
+                // and we'll swallow IO errors rather than burden the user with them
+                loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, logoError);
+                loader.load(new URLRequest("/media/" + logo));
                 bit.addChild(loader);
             }
         }
@@ -257,6 +259,12 @@ public class HoodViz extends Sprite
             }
         }
         navigateToURL(new URLRequest(url), "_self");
+    }
+
+    protected function logoError (event :IOErrorEvent) :void
+    {
+        trace("Error loading URL: " + event.text);
+        // do nothing else
     }
 
     public function rollOverHandler (event :MouseEvent) :void
