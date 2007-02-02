@@ -19,6 +19,9 @@ public class TangleWord extends Sprite
         _board = new Board (this);
         addChild (_board);
 
+        _input = new InputField (this);
+        addChild (_input);
+
         // Initialize mask based on the board
         var masker :Shape = new Shape();
         masker.graphics.beginFill (0xFFFFFF);
@@ -34,6 +37,19 @@ public class TangleWord extends Sprite
         
     }
 
+    // Happens when the player makes a guess - this checks the board,
+    // and will eventually do something
+    public function checkBoard (letters : Array) : void
+    {
+        var result : Boolean = _board.checkBoard (letters);
+    }
+
+    // Happens when the player clicks on one of the letters
+    public function addLetter (letter : String) : void
+    {
+        _input.addLetter (letter);
+    }
+
     // PRIVATE HELPERS
     private function populateBoard () : void
     {
@@ -42,6 +58,7 @@ public class TangleWord extends Sprite
     }
 
     private var _board : Board;
+    private var _input : InputField;
 
 }
 

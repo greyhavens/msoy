@@ -15,14 +15,21 @@ public class Properties
        status windows TBD. This display size is the bounding box
        of all these elements.
     */
-    public static const DISPLAY : Rectangle = new Rectangle (0, 0, 500, 300);
+    public static const DISPLAY : Rectangle = new Rectangle (0, 0, 500, 500);
 
     /**
        The board contains a collection of letters arranged in a square.
        This total dimension includes any margins between letters and the board border.
     */
-    public static const BOARD : Rectangle = new Rectangle (0, 0, 300, 300);
+    public static const BOARD : Rectangle = new Rectangle (50, 50, 250, 250);
 
+    /**
+       Player selects words by typing them into a text field (for now, at least).
+       This is the position of the text field control.
+    */
+    public static const INPUT : Rectangle = new Rectangle (350, 50, 100, 100);
+
+    
     /** Each letter is a simple square - but we want to know how big to draw them. :) */
     public static const LETTER_SIZE : int = 50;
 
