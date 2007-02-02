@@ -58,10 +58,6 @@ public class GroupList extends VerticalPanel
         _popularTagsContainer = new FlowPanel();
         _popularTagsContainer.setStyleName("PopularTags");
         leftPanel.add(_popularTagsContainer);
-        _featuredGroupsContainer = new VerticalPanel();
-        _featuredGroupsContainer.setStyleName("FeaturedGroups");
-        DOM.setStyleAttribute(_featuredGroupsContainer.getElement(), "width", "100%");
-        leftPanel.add(_featuredGroupsContainer);
         table.setWidget(0, 0, leftPanel);
         table.getFlexCellFormatter().setRowSpan(0, 0, 3);
         table.getFlexCellFormatter().setStyleName(0, 0, "LeftColumn");
@@ -102,7 +98,6 @@ public class GroupList extends VerticalPanel
         table.setWidget(2, 0, _groupListContainer);
 
         loadPopularTags();
-        loadFeaturedGroups();
         loadCharacterList();
     }
 
@@ -155,15 +150,6 @@ public class GroupList extends VerticalPanel
         Anchor moreLink = new Anchor("", CGroup.msgs.listMore());
         DOM.setAttribute(moreLink.getElement(), "id", "moreLink");
         _popularTagsContainer.add(moreLink);
-    }
-
-    protected void loadFeaturedGroups ()
-    {
-        _featuredGroupsContainer.clear();
-        Label featuredGroupsLabel = new Label(CGroup.msgs.listFeatured());
-        featuredGroupsLabel.setStyleName("FeaturedGroupsTitle");
-        _featuredGroupsContainer.add(featuredGroupsLabel);
-        _featuredGroupsContainer.add(new HTML("<h1>TODO</h1>"));
     }
 
     protected void loadGroups (final String startingCharacter)
@@ -255,7 +241,6 @@ public class GroupList extends VerticalPanel
     protected VerticalPanel _errorContainer;
     protected FlowPanel _characterListContainer;
     protected FlowPanel _popularTagsContainer;
-    protected VerticalPanel _featuredGroupsContainer;
     protected VerticalPanel _groupListContainer;
 
     protected HashMap _groupLists;
