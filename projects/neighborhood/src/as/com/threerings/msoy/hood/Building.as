@@ -21,7 +21,7 @@ public class Building extends Sprite
     public function Building (house :Class, populate :Class, soy :Class)
     {
         _houseClass = house;
-        _populate = new populate();
+        _populateClass = populate;
         _soyClass = soy;
 
         var houseClip :MovieClip = new house();
@@ -40,20 +40,17 @@ public class Building extends Sprite
         return clip;
     }
 
-    public function findRandomPopulatePoint (frame :int) :Point
+    public function findRandomPopulatePoint (populate :MovieClip) :Point
     {
-        this.addChild(_populate);
-        _populate.gotoAndStop(frame);
         var x :Number, y :Number;
-        var cnt :int = 1000;
+        var cnt :int = 10000;
         do {
-            x = Math.random() * _populate.width;
-            y = Math.random() * _populate.height;
+            x = -populate.width + Math.random() * populate.width * 2;
+            y = -populate.height + Math.random() * populate.height * 2;
             var p :Point = new Point(x, y);
-            p = _populate.localToGlobal(p);
-            if (_populate.hitTestPoint(p.x, p.y, true)) {
-                this.removeChild(_populate);
-                return new Point(x, y);
+            p = populate.localToGlobal(p);
+            if (populate.hitTestPoint(p.x, p.y, true)) {
+                return p;
             }
         } while (--cnt > 0);
         throw new Error("Couldn't find a spot to place a soy in 1,000 iterations!");
@@ -62,18 +59,26 @@ public class Building extends Sprite
     public function getPopulatedTile (frame :int, population :int) :MovieClip
     {
         var house :MovieClip = newHouse(frame);
+        var populate :MovieClip = new _populateClass();
+        this.addChild(populate);
+        house.gotoAndStop(frame);
+        populate.gotoAndStop(frame);
         while (--population >= 0) {
-            var p :Point = findRandomPopulatePoint(frame);
-            var soy :DisplayObject = new _soyClass();
-            house.addChild(soy);
-            soy.x = p.x;
-            soy.y = p.y;
+            var p :Point = findRandomPopulatePoint(populate);
+            if (p != null) {
+                var soy :MovieClip = new _soyClass();
+                soy.gotoAndPlay(1);
+                house.addChild(soy);
+                soy.x = p.x;
+                soy.y = p.y;
+            }
         }
+        this.removeChild(populate);
         return house;
     }
 
     protected var _houseClass :Class;
-    protected var _populate :MovieClip;
+    protected var _populateClass :Class;
     protected var _soyClass :Class;
 }
 }

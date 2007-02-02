@@ -17,18 +17,37 @@ import com.threerings.msoy.hood.Neighborhood;
 import com.threerings.msoy.hood.NeighborGroup;
 import com.threerings.msoy.hood.NeighborMember;
 import com.adobe.serialization.json.JSONDecoder;
+import com.threerings.util.EmbededClassLoader;
 
 [SWF(width="640", height="480")]
 public class HoodViz extends Sprite
 {
     public static const DEBUGGING :Boolean = true;
 
+    protected var _ecl :EmbededClassLoader;
     public function HoodViz ()
     {
-        _friend = new Building(_friendHouse, _friendPopulate, _soy);
+        _ecl = new EmbededClassLoader();
+        _ecl.addEventListener(Event.COMPLETE, eclDone);
+        _ecl.load(new _viz());
+    }
+    
+    protected function eclDone(event :Event) :void
+    {
+        var soy :Class = _ecl.getClass("soy_master");
+
+        _friend = new Building(_ecl.getClass("house_tile"), _ecl.getClass("populate_house"), soy);
         this.stage.addChild(_friend);
-        _group = new Building(_groupHouse, _groupPopulate, _soy);
+        _group = new Building(_ecl.getClass("group_tile"), _ecl.getClass("populate_group"), soy);
         this.stage.addChild(_group);
+
+        _vacant = _ecl.getClass("vacant_tile");
+        _roadNS = _ecl.getClass("road_ns_tile");
+        _roadEW = _ecl.getClass("road_ew_tile");
+        _road4Way = _ecl.getClass("road_intersection_tile");
+        _roadHouse = _ecl.getClass("road_house_tile");
+        _roadHouseEndW = _ecl.getClass("road_end_w_tile");
+        _roadHouseEndE = _ecl.getClass("road_end_e_tile");
 
         var data :Object;
         if (DEBUGGING) {
@@ -45,14 +64,11 @@ public class HoodViz extends Sprite
         var radius :int =
             3 + Math.ceil(Math.sqrt(Math.max(_hood.groups.length, _hood.friends.length)));
 
+        var drawables :Array = new Array();
         var distances :Array = new Array();
         // draw the grid, building a metric mapping at the same time
         for (var y :int = -radius; y <= radius; y ++) {
-            if ((y % 2) == 0) {
-                addBit(_roadNS, 0, y, false, null);
-            } else {
-                addBit(_road4Way, 0, y, false, null);
-            }
+            drawables[y] = new Array();
             for (var x :int = radius; x >= -radius; x --) {
                 if (x == 0) {
                     continue;
@@ -64,8 +80,6 @@ public class HoodViz extends Sprite
                 if ((y % 2) == 0) {
                     var d :Number = (x-1)*(x-1) + y*y;
                     distances.push({ x:x, y:y, dist:d });
-                } else {
-                    addBit(_roadEW, x, y, false, null);
                 }
             }
         }
@@ -74,39 +88,64 @@ public class HoodViz extends Sprite
         distances.sortOn([ "dist", "x", "y" ], Array.NUMERIC);
 
         // then go through houses in order of radial distance and register friends and groups
-        var drawables :Array = new Array();
         var nextFriend :int = 0;
         var nextGroup :int = 0;
         for each (var tile :Object in distances) {
             if (tile.y < 0) {
                 if (nextGroup < _hood.groups.length) {
-                    var group :NeighborGroup = _hood.groups[nextGroup ++];
-                    drawables.push({ bit: _group, x: tile.x, y: tile.y, neighbor: group });
+                    drawables[tile.y][tile.x] = _hood.groups[nextGroup ++];
                 }
             } else if (nextFriend < _hood.friends.length) {
-                var friend :NeighborMember = _hood.friends[nextFriend ++];
-                drawables.push({ bit: _friend, x: tile.x, y: tile.y, neighbor: friend });
+                drawables[tile.y][tile.x] = _hood.friends[nextFriend ++];
             }
         }
 
         if (_hood.centralMember != null) {
-//            drawables.push({ bit: _myHouse, x: 1, y: 0, neighbor: _hood.centralMember });
+            drawables[0][1] = _hood.centralMember;
         }
         if (_hood.centralGroup != null) {
-//            drawables.push({ bit: _group, x: -1, y: 0, neighbor: _hood.centralGroup });
+            drawables[0][-1] = _hood.centralGroup;
         }
 
-        // now sort the actual friends and groups by x for draw order to be correct
-        drawables.sortOn([ "x", "y" ], Array.NUMERIC | Array.DESCENDING);
-
-        // and finally draw'em all
-        for each (var drawable :Object in drawables) {
-            addBit(drawable.bit, drawable.x, drawable.y, true, drawable.neighbor);
+        for (y = -radius; y <= radius; y ++) {
+            if ((y % 2) == 0 || (drawables[y-1][-1] == null && drawables[y-1][1] == null)) {
+                addBit(_roadNS, 0, y, false, null);
+            } else {
+                addBit(_road4Way, 0, y, false, null);
+            }
+            for (x = radius; x >= -radius; x --) {
+                if (x == 0) {
+                    continue;
+                }
+                if ((y % 2) == 0) {
+                    if (drawables[y][x] is NeighborMember) {
+                        addBit(_friend, x, y, true, drawables[y][x]);
+                    } else if (drawables[y][x] is NeighborGroup) {
+                        addBit(_group, x, y, true, drawables[y][x]);
+                    } else {
+                        addBit(_vacant, x, y, false, null);
+                    }
+                } else {
+                    if (drawables[y-1][x] == null) {
+//                        this bit has no purpose until we interject empty plots
+//                        addBit(_roadEW, x, y, false, null);
+                        addBit(_vacant, x, y, false, null);
+                    } else if (x != 1 && drawables[y-1][x-1] == null) {
+                        addBit(_roadHouseEndW, x, y, true, null);
+                    } else if (x != -1 && drawables[y-1][x+1] == null) {
+                        addBit(_roadHouseEndE, x, y, true, null);
+                    } else {
+                        addBit(_roadHouse, x, y, true, null);
+                    }
+                }
+            }
         }
-        var scale :Number = Math.min(640 / (_bound.right - _bound.left),
-                                     480 / (_bound.bottom - _bound.top));
-        _canvas.x = -_bound.left * scale;
-        _canvas.y = -_bound.top * scale;
+
+        var xScale :Number = 640 / (_bound.right - _bound.left);
+        var yScale :Number = 480 / (_bound.bottom - _bound.top);
+        _canvas.x = -_bound.left * xScale;
+        _canvas.y = -_bound.top * yScale;
+        var scale :Number = Math.min(xScale, yScale);
         _canvas.scaleX = scale * 0.9;
         _canvas.scaleY = scale * 0.9;
     }
@@ -136,15 +175,11 @@ public class HoodViz extends Sprite
         var bit :MovieClip;
         if (bitType is Class) {
             bit = new bitType();
-            bit.gotoAndStop(Math.random() * bit.totalFrames);
-//            trace("class bit: " + bit + " is (" + bit.width + ", " + bit.height + ")");
+            bit.gotoAndStop((int) (Math.random() * bit.totalFrames));
         } else {
             var building :Building = (bitType as Building);
             bit = building.getPopulatedTile(Math.random() * building.variationCount, 5);
-//            trace("building bit: " + bit + " is (" + bit.width + ", " + bit.height + ")");
         }
-//        bit.width = 256;
-//        bit.height = 224;
 
         if (neighbor is NeighborGroup) {
             var logo :String = (neighbor as NeighborGroup).groupLogo;
@@ -180,7 +215,7 @@ public class HoodViz extends Sprite
     // the magic numbers that describe the drawn tiles' geometry
     protected function skew(x :Number, y :Number) :Point
     {
-        var f :Number = 0.89;
+        var f :Number = 0.88;
         return new Point(f*x*174 + f*y*81, -f*x*69 + f*y*155);
     }
 
@@ -265,39 +300,20 @@ public class HoodViz extends Sprite
     protected var _tip :Sprite;
     protected var _hood :Neighborhood;
     protected var _canvas :Sprite;
-//    protected var _bound :Object = { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } };
     protected var _bound :Rectangle = new Rectangle();
 
     protected var _friend :Building;
     protected var _group :Building;
 
-    [Embed(source="viz.swf#house_tile")]
-    protected const _friendHouse :Class;
-    [Embed(source="viz.swf#populate_house")]
-    protected const _friendPopulate :Class;
+    protected var _vacant :Class;
+    protected var _roadNS :Class;
+    protected var _roadEW :Class;
+    protected var _road4Way :Class;
+    protected var _roadHouse :Class;
+    protected var _roadHouseEndW :Class;
+    protected var _roadHouseEndE :Class;
 
-    [Embed(source="viz.swf#group_tile")]
-    protected const _groupHouse :Class;
-    [Embed(source="viz.swf#populate_group")]
-    protected const _groupPopulate :Class;
-
-    [Embed(source="viz.swf#soy_master")]
-    protected const _soy :Class;
-
-    [Embed(source="group.swf")]
-    protected static const _group :Class;
-
-    [Embed(source="viz.swf#road_ns_tile")]
-    protected static const _roadNS :Class;
-
-    [Embed(source="viz.swf#road_ew_tile")]
-    protected static const _roadEW :Class;
-
-    [Embed(source="viz.swf#road_intersection_tile")]
-    protected static const _road4Way :Class;
-
-//    [Embed(source="viz.swf#road_house_tile")]
-    [Embed(source="viz.swf#road_ns_tile")]
-    protected static const _roadHouse :Class;
+    [Embed(source="viz.swf", mimeType="application/octet-stream")]
+    protected const _viz:Class;
 }
 }
