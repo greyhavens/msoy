@@ -26,6 +26,8 @@ import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manage msoy groups.
  */
@@ -200,6 +202,10 @@ public class GroupManager
                 List<GroupMembership> result = new ArrayList<GroupMembership>();
                 for (GroupMembershipRecord gmRec : _groupRepo.getMemberships(memberId)) {
                     GroupRecord gRec = _groupRepo.loadGroup(gmRec.groupId);
+                    if (gRec == null) {
+                        log.warning("Unknown group membership [groupId=" + gmRec.groupId + "]");
+                        continue;
+                    }
                     // if we're only including groups we can invite to, strip out exclusive groups
                     // of which we're not managers
                     if (canInvite && gRec.policy == Group.POLICY_EXCLUSIVE &&
