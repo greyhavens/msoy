@@ -65,7 +65,7 @@ public class HoodViz extends Sprite
         var drawables :Array = new Array();
         var distances :Array = new Array();
         // draw the grid, building a metric mapping at the same time
-        for (var y :int = -radius; y <= radius; y ++) {
+        for (var y :int = -radius-1; y <= radius; y ++) {
             drawables[y] = new Array();
             for (var x :int = radius; x >= -radius; x --) {
                 if (x == 0) {
