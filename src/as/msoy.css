@@ -257,3 +257,9 @@ ListBase
   rollOverColor: #c8d0d3;
   selectionColor: #ff0099;
 }
+
+ToolTip
+{
+  fontSize: 12;
+  backgroundColor: #000000;
+}

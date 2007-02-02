@@ -264,20 +264,6 @@ public class RoomView extends AbstractRoomView
         }
     }
 
-    /**
-     * @return true if the specified click target should trigger
-     * location movements.
-     */
-    public function isLocationTarget (clickTarget :DisplayObject) :Boolean
-    {
-        return (clickTarget == this) || (clickTarget == _bkgGraphics) ||
-            (_bkg != null && _bkg.contains(clickTarget)) ||
-            // scan through the media and see if it was non-interactive
-            isNonInteractiveTarget(clickTarget, _furni) /*||
-            isNonInteractiveTarget(clickTarget, _portals) ||
-            isNonInteractiveTarget(clickTarget, _actors)*/;
-    }
-
     // from interface SetListener
     public function entryAdded (event :EntryAddedEvent) :void
     {
@@ -557,17 +543,6 @@ public class RoomView extends AbstractRoomView
         // and finally, we want ensure it can happen on the next frame if
         // our avatar doesn't move
         _suppressAutoScroll = false;
-    }
-
-    protected function isNonInteractiveTarget (
-            clickTarget :DisplayObject, map :HashMap) :Boolean
-    {
-        for each (var spr :MsoySprite in map.values()) {
-            if (!spr.isInteractive() && spr.contains(clickTarget)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     protected function addBody (bodyOid :int) :void

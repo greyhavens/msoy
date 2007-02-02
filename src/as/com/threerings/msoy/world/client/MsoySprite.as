@@ -503,7 +503,7 @@ public class MsoySprite extends MediaContainer
         updateMediaPosition();
     }
 
-    protected function getHoverColor () :uint
+    public function getHoverColor () :uint
     {
         return 0x40e0e0;
     }

@@ -10,6 +10,7 @@ import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 
 import mx.core.IToolTip;
+import mx.core.UIComponent;
 import mx.managers.ToolTipManager;
 
 import com.threerings.util.MenuUtil;
@@ -169,15 +170,10 @@ public class RoomController extends SceneController
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
         _roomView.removeChild(_walkTarget);
+        setHoverSprite(null, null);
 
         _scene = null;
         _roomObj = null;
-
-        // pop down any showing tip (come ON!)
-        // TODO: remove this, because I bet it won't be needed soon
-        if (ToolTipManager.currentToolTip != null) {
-            ToolTipManager.destroyToolTip(ToolTipManager.currentToolTip);
-        }
 
         super.didLeavePlace(plobj);
     }
@@ -356,41 +352,46 @@ public class RoomController extends SceneController
     {
         var sx :Number = event.stageX;
         var sy :Number = event.stageY;
-        var hitter :DisplayObject = getHitObject(sx, sy);
+        var hitter :MsoySprite = getHitSprite(sx, sy);
 
-        if (_roomView.isLocationTarget(hitter)) {
+        if (hitter == null) {
             var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
             if (cloc.click == ClickLocation.FLOOR) {
                 var p :Point = _roomView.globalToLocal(new Point(sx, sy));
                 _walkTarget.x = p.x;
                 _walkTarget.y = p.y;
-                hitter = null;
             }
         }
 
         _walkTarget.visible = (hitter == null);
 
-        setHoverSprite(hitter as MsoySprite, event); // will pass null if hitter
-        // is not a MsoySprite.
+        setHoverSprite(hitter, event);
     }
 
     /**
-     * Get the top-most object with a non-transparent pixel at the specified
-     * location.
+     * Get the top-most sprite with both an action and a non-transparent
+     * pixel at the specified location.
      */
-    protected function getHitObject (
-        stageX :Number, stageY :Number) :DisplayObject
+    protected function getHitSprite (
+        stageX :Number, stageY :Number) :MsoySprite
     {
+        // we search from last-drawn to first drawn to get the topmost...
         for (var dex :int = _roomView.numChildren - 1; dex >= 0; dex--) {
-            var disp :DisplayObject = _roomView.getChildAt(dex);
-            if (disp != _walkTarget && disp.hitTestPoint(stageX, stageY, true)) {
-                return disp;
+            var spr :MsoySprite = (_roomView.getChildAt(dex) as MsoySprite);
+            if ((spr != null) && spr.hasAction() &&
+                    spr.hitTestPoint(stageX, stageY, true)) {
+                return spr;
             }
         }
 
-        return _roomView;
+        return null;
     }
 
+    /**
+     * Set the sprite that the mouse is hovering over.
+     * @param event the associated mouse event, which may be used to
+     *        place a tooltip.
+     */
     protected function setHoverSprite (sprite :MsoySprite, event :MouseEvent) :void
     {
         if (_hoverSprite != sprite) {
@@ -403,13 +404,14 @@ public class RoomController extends SceneController
                 }
             }
 
-            if (sprite != null && sprite.hasAction()) {
+            if (sprite != null) {
                 sprite.setGlow(true);
                 _hoverSprite = sprite;
                 var tipText :String = sprite.getToolTipText();
                 if (tipText != null) {
                     _hoverTip = ToolTipManager.createToolTip(tipText,
                         event.stageX, event.stageY);
+                    (_hoverTip as UIComponent).setStyle("color", sprite.getHoverColor());
                 }
             }
         }
@@ -417,9 +419,12 @@ public class RoomController extends SceneController
 
     protected function mouseClicked (event :MouseEvent) :void
     {
-        var hitter :DisplayObject = getHitObject(event.stageX, event.stageY);
+        var hitter :MsoySprite = getHitSprite(event.stageX, event.stageY);
 
-        if (_roomView.isLocationTarget(hitter)) {
+        if (hitter != null) {
+            hitter.mouseClick(event);
+
+        } else {
             var curLoc :MsoyLocation = _roomView.getMyCurrentLocation();
             if (curLoc == null) {
                 return; // we've already left, ignore the click
@@ -436,12 +441,6 @@ public class RoomController extends SceneController
                 // we rotate so that 0 faces forward
                 newLoc.orient = (degrees + 90 + 360) % 360;
                 _mctx.getSpotSceneDirector().changeLocation(newLoc, null);
-            }
-
-        } else if (hitter is MsoySprite) {
-            var sprite :MsoySprite = (hitter as MsoySprite);
-            if (sprite.hasAction()) {
-                sprite.mouseClick(event);
             }
         }
     }

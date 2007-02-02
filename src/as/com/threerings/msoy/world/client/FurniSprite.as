@@ -316,11 +316,15 @@ public class FurniSprite extends MsoySprite
     }
 
     // documentation inherited
-    override protected function getHoverColor () :uint
+    override public function getHoverColor () :uint
     {
         switch (_furni.actionType) {
         case FurniData.ACTION_PORTAL:
             return 0xe04040; // red
+
+        case FurniData.ACTION_LOBBY_GAME:
+        case FurniData.ACTION_WORLD_GAME:
+            return 0x40e040; // green
 
         default:
             return 0xe0e040; // yellow
