@@ -29,11 +29,14 @@ public class AvatarViewerComp extends Canvas
         var params :Object = this.root.loaderInfo.parameters;
         _avatar = new ViewerAvatarSprite(String(params["avatar"]));
 
+        // TODO: replace slider with custom control
         var rotation :HSlider = new HSlider();
-        rotation.minimum = 0;
-        rotation.maximum = 360;
+        rotation.minimum = -180;
+        rotation.maximum = 180;
+        rotation.showDataTip = false;
         rotation.snapInterval = 1;
         rotation.liveDragging = true;
+        rotation.value = 0;
 
         var walking :CheckBox = new CheckBox();
 
@@ -55,12 +58,10 @@ public class AvatarViewerComp extends Canvas
         addChild(grid);
 
         BindingUtils.bindSetter(function (val :Number) :void {
-            _avatar.setOrientation(int(val));
+            _avatar.setOrientation(int(val + 360) % 360);
         }, rotation, "value");
 
-        BindingUtils.bindSetter(function (val :Boolean) :void {
-            _avatar.setMoving(val);
-        }, walking, "selected");
+        BindingUtils.bindSetter(_avatar.setMoving, walking, "selected");
     }
 
     protected var _avatar :ViewerAvatarSprite;
