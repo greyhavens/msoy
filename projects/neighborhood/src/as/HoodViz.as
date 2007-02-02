@@ -71,12 +71,12 @@ public class HoodViz extends Sprite
                 if (x == 0) {
                     continue;
                 }
-                if (y == 0 && (_hood.centralMember != null && x == 1) ||
-                              (_hood.centralGroup != null && x == -1)) {
+                if (y == 0 && ((_hood.centralMember != null && x == 1) ||
+                               (_hood.centralGroup != null && x == -1))) {
                     continue;
                 }
                 if ((y % 2) == 0) {
-                    var d :Number = (x-1)*(x-1) + y*y;
+                    var d :Number = x*x + y*y;
                     distances.push({ x: x, y: y, dist: d });
                 }
             }
