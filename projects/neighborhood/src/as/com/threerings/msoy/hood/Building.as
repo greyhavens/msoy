@@ -7,8 +7,6 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.utils.ByteArray;
 
-import com.threerings.util.EmbededClassLoader;
-
 
 /**
  * Manages the assets of a single building type.
