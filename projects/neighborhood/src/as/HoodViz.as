@@ -22,8 +22,6 @@ import com.threerings.util.EmbededClassLoader;
 [SWF(width="640", height="480")]
 public class HoodViz extends Sprite
 {
-    public static const DEBUGGING :Boolean = true;
-
     protected var _ecl :EmbededClassLoader;
     public function HoodViz ()
     {
@@ -50,7 +48,7 @@ public class HoodViz extends Sprite
         _roadHouseEndE = _ecl.getClass("road_end_e_tile");
 
         var data :Object;
-        if (DEBUGGING) {
+        if (false) {
             data = new DebugData();
         } else {
             data = this.root.loaderInfo.parameters;
@@ -187,7 +185,12 @@ public class HoodViz extends Sprite
             bit.gotoAndStop((int) (Math.random() * bit.totalFrames));
         } else {
             var building :Building = (bitType as Building);
-            bit = building.getPopulatedTile(Math.random() * building.variationCount, 5);
+            // let's illustrate the population of a place by the square root of its
+            // actual population in soy figures, lest we utterly overwhelm the map;
+            // thus 1 pop -> 1 soy, 25 pop -> 5 soys, 100 pop -> 10 soys.
+            bit = building.getPopulatedTile(
+                Math.random() * building.variationCount,
+                Math.round(Math.sqrt(neighbor.population)));
         }
 
         if (neighbor is NeighborGroup) {

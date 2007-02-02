@@ -6,8 +6,7 @@ import com.adobe.serialization.json.*;
  * Represents a single member in a neighborhood: their name and id, and whether or not
  * they are online. This class will most likely fill in with more data soon.
  */
-public class NeighborMember
-    implements Neighbor
+public class NeighborMember extends Neighbor
 {
     /** The member's name. */
     public var memberName :String;
@@ -33,6 +32,7 @@ public class NeighborMember
         if (JSON.name == null || JSON.id == null) {
             throw new Error("Missing name/id in JSON");
         }
+        member.population = JSON.pop;
         member.memberName = JSON.name;
         member.memberId = JSON.id;
         member.isOnline = JSON.isOnline;
