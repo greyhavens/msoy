@@ -79,14 +79,13 @@ public class HoodViz extends Sprite
                 }
                 if ((y % 2) == 0) {
                     var d :Number = (x-1)*(x-1) + y*y;
-                    var alpha :Number = Math.atan2(y, x);
-                    distances.push({ x: x, y: y, alha: alpha, dist: d });
+                    distances.push({ x: x, y: y, dist: d });
                 }
             }
         }
 
         // sort the metric according to distance
-        distances.sortOn([ "dist", "alpha" ], Array.NUMERIC);
+        distances.sortOn([ "dist", "x", "y" ], Array.NUMERIC);
 
         // then go through houses in order of radial distance and register friends and groups
         var nextFriend :int = 0;
