@@ -34,6 +34,7 @@ import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
@@ -334,6 +335,7 @@ public class MemberRepository extends DepotRepository
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
+            OrderBy.descending(MemberRecord.LAST_SESSION),
             new Join(FriendRecord.class, joinCondition),
             new Where(new Equals(FriendRecord.STATUS_C, true)),
             new FieldOverride(NeighborFriendRecord.CREATED, MemberRecord.CREATED_C),

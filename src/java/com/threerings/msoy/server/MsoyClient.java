@@ -3,24 +3,24 @@
 
 package com.threerings.msoy.server;
 
-import com.threerings.presents.dobj.AccessController;
-import com.threerings.presents.dobj.DEvent;
-import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.MessageListener;
-import com.threerings.presents.dobj.Subscriber;
+import java.util.logging.Level;
+
+import com.samskivert.util.Invoker;
+
 import com.threerings.presents.net.BootstrapData;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.CrowdObjectAccess;
-import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.whirled.server.WhirledClient;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.web.data.MemberName;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Represents an attached Msoy client on the server-side.
@@ -76,10 +76,36 @@ public class MsoyClient extends WhirledClient
     {
         super.sessionDidEnd();
 
-        if (_memobj != null) {
-            MsoyServer.clearMember(_memobj);
-            _memobj = null;
+        if (_memobj == null) {
+            return;
         }
+
+        // clean up logged-on data for this member
+        MsoyServer.clearMember(_memobj);
+
+        // nothing more needs doing for guests
+        if (_memobj.isGuest()) {
+            _memobj = null;
+            return;
+        }
+
+        final MemberName name = _memobj.memberName;
+        _memobj = null;
+
+        // update the member record in the database
+        MsoyServer.invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
+            public boolean invoke () {
+                try {
+                    // use a naive session length for now, ignoring web activity
+                    MsoyServer.memberRepo.noteSessionEnded(
+                        name.getMemberId(), Math.round(_connectTime / 60f));
+                } catch (Exception e) {
+                    log.log(Level.WARNING,
+                            "Failed to note ended session [member=" + name + "].", e);
+                }
+                return false;
+            }
+        });
     }
 
     @Override // from CrowdClient
