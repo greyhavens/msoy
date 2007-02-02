@@ -203,7 +203,8 @@ public class GroupView extends VerticalPanel
         if (!_extras.tileBackgrounds) {
             final Element div = DOM.createElement("div");
             DOM.setStyleAttribute(div, "width", _extras.detailBackgroundWidth + "px");
-            DOM.setStyleAttribute(div, "height", "270px");
+            DOM.setStyleAttribute(div, "height", (_extras.detailAreaHeight > 270 ? 
+                _extras.detailAreaHeight : 270) + "px");
             // when not tiling, we need a sensible default for people that are in a foot-shooting 
             // mood and create more text than fits on their background image.  Here we're creating
             // a div to hold the table that will scroll when overflowing

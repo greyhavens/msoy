@@ -30,7 +30,7 @@ import com.threerings.msoy.web.data.GroupExtras;
            columns={GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })})
 public class GroupRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 11;
+    public static final int SCHEMA_VERSION = 12;
 
     public static final String GROUP_ID = "groupId";
     public static final String NAME = "name";
@@ -49,6 +49,7 @@ public class GroupRecord extends PersistentRecord
     public static final String DETAIL_BACKGROUND_THUMB_CONSTRAINT = 
         "detailBackgroundThumbConstraint";
     public static final String DETAIL_BACKGROUND_WIDTH = "detailBackgroundWidth";
+    public static final String DETAIL_AREA_HEIGHT = "detailAreaHeight";
     public static final String PEOPLE_BACKGROUND_MIME_TYPE = "peopleBackgroundMimeType";
     public static final String PEOPLE_BACKGROUND_HASH = "peopleBackgroundHash";
     public static final String PEOPLE_BACKGROUND_THUMB_CONSTRAINT = 
@@ -121,6 +122,9 @@ public class GroupRecord extends PersistentRecord
 
     /** The width of the detail background image. */
     public int detailBackgroundWidth;
+
+    /** The height that the detail area should be forced to in the constrained mode. */
+    public int detailAreaHeight;
 
     /** The MIME type for the background of the people area. */
     public byte peopleBackgroundMimeType;
@@ -199,6 +203,7 @@ public class GroupRecord extends PersistentRecord
             new MediaDesc(detailBackgroundHash.clone(), detailBackgroundMimeType,
             detailBackgroundThumbConstraint);
         extras.detailBackgroundWidth = detailBackgroundWidth;
+        extras.detailAreaHeight = detailAreaHeight;
         extras.peopleBackground = peopleBackgroundHash == null ? null :
             new MediaDesc(peopleBackgroundHash.clone(), peopleBackgroundMimeType,
             peopleBackgroundThumbConstraint);
@@ -241,6 +246,7 @@ public class GroupRecord extends PersistentRecord
         if (extrasDef.tileBackgrounds != tileBackgrounds) {
             updates.put(TILE_BACKGROUNDS, extrasDef.tileBackgrounds);
         }
+        boolean setDetailAreaHeight = false;
         if (extrasDef.infoBackground != null && (infoBackgroundHash == null ||
             !extrasDef.infoBackground.equals(new MediaDesc(infoBackgroundHash, 
             infoBackgroundMimeType, infoBackgroundThumbConstraint)))) {
@@ -249,6 +255,8 @@ public class GroupRecord extends PersistentRecord
             // the thumbnail constraint (instead of the photo constraint) is stored in these
             // MediaDescs - see GroupEdit
             updates.put(INFO_BACKGROUND_THUMB_CONSTRAINT, extrasDef.infoBackground.constraint);
+            updates.put(DETAIL_AREA_HEIGHT, extrasDef.detailAreaHeight);
+            setDetailAreaHeight = true;
         }
         if (extrasDef.detailBackground != null && (detailBackgroundHash == null ||
             !extrasDef.detailBackground.equals(new MediaDesc(detailBackgroundHash,
@@ -257,6 +265,9 @@ public class GroupRecord extends PersistentRecord
             updates.put(DETAIL_BACKGROUND_MIME_TYPE, extrasDef.detailBackground.mimeType);
             updates.put(DETAIL_BACKGROUND_THUMB_CONSTRAINT, extrasDef.detailBackground.constraint);
             updates.put(DETAIL_BACKGROUND_WIDTH, extrasDef.detailBackgroundWidth);
+            if (!setDetailAreaHeight) {
+                updates.put(DETAIL_AREA_HEIGHT, extrasDef.detailAreaHeight);
+            }
         }
         if (extrasDef.peopleBackground != null && (peopleBackgroundHash == null ||
             !extrasDef.peopleBackground.equals(new MediaDesc(peopleBackgroundHash,
