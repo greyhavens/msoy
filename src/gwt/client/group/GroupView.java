@@ -113,13 +113,11 @@ public class GroupView extends VerticalPanel
         }
         boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
 
-        _table.getMyFlexCellFormatter().setHeight(0, 0, "120px");
-        _table.getMyFlexCellFormatter().setBackgroundImage(0, 0, MsoyEntryPoint.toMediaPath(
-            _group.logo.getMediaPath()));
         VerticalPanel infoPanel = new VerticalPanel();
         infoPanel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
         infoPanel.setStyleName("LogoPanel");
         infoPanel.setSpacing(0);
+        infoPanel.add(MediaUtil.createMediaView(_group.logo, MediaDesc.THUMBNAIL_SIZE));
         HorizontalPanel links = new HorizontalPanel();
         links.setStyleName("Links");
         links.setSpacing(8);
@@ -178,9 +176,9 @@ public class GroupView extends VerticalPanel
                 }
             }));
         } 
-        _table.setWidget(1, 0, infoPanel);
+        _table.setWidget(0, 0, infoPanel);
         if (_extras.infoBackground != null) {
-            _table.getMyFlexCellFormatter().setBackgroundImage(1, 0, MsoyEntryPoint.toMediaPath(
+            _table.getMyFlexCellFormatter().setBackgroundImage(0, 0, MsoyEntryPoint.toMediaPath(
                 _extras.infoBackground.getMediaPath()));
         }
 
@@ -220,7 +218,6 @@ public class GroupView extends VerticalPanel
             _table.setWidget(0, 1, description);
             _table.getMyFlexCellFormatter().fillWidth(0, 1);
         }
-        _table.getMyFlexCellFormatter().setRowSpan(0, 1, 2);
         if (_extras.detailBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(0, 1, 
                 MsoyEntryPoint.toMediaPath(_extras.detailBackground.getMediaPath()));
@@ -309,15 +306,15 @@ public class GroupView extends VerticalPanel
                     setElement(lowerCap);
                 }
             });
-            _table.setWidget(2, 0, peoplePlusCaps);
+            _table.setWidget(1, 0, peoplePlusCaps);
         } else {
-            _table.setWidget(2, 0, people);
+            _table.setWidget(1, 0, people);
             if (_extras.peopleBackground != null) {
-                _table.getMyFlexCellFormatter().setBackgroundImage(2, 0, 
+                _table.getMyFlexCellFormatter().setBackgroundImage(1, 0, 
                     MsoyEntryPoint.toMediaPath(_extras.peopleBackground.getMediaPath()));
             }
         }
-        _table.getFlexCellFormatter().setColSpan(2, 0, 2);
+        _table.getFlexCellFormatter().setColSpan(1, 0, 2);
         _table.getMyFlexCellFormatter().fillWidth(2, 0);
     }
 

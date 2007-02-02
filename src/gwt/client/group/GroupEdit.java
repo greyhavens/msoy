@@ -389,14 +389,12 @@ public class GroupEdit extends BorderedDialog
                         // the background images store the thumbnail's constraint so that they can
                         // be scaled properly in the edit dialog
                         _extras.infoBackground.constraint = photo.thumbMedia.constraint;
-                        // currently, the height of the detail area is determined by the height of
-                        // the info background, plus logo height
-                        _extras.detailAreaHeight = photo.photoHeight + 120;
                         break;
                     case IMAGE_DETAIL_BACKGROUND:
                         _extras.detailBackground = photo.photoMedia;
                         _extras.detailBackground.constraint = photo.thumbMedia.constraint;
                         _extras.detailBackgroundWidth = photo.photoWidth;
+                        _extras.detailAreaHeight = photo.photoHeight;
                         break;
                     case IMAGE_PEOPLE_BACKGROUND:
                         _extras.peopleBackground = photo.photoMedia;
