@@ -66,15 +66,15 @@ public class ChatOverlay
         // value from the default, so if a property is added to the default
         // then it should be explicitely negated if not desired in an override.
         _defaultFmt = new TextFormat();
-        _defaultFmt.size = 14;
-        _defaultFmt.color = 0x006666;
+        _defaultFmt.size = 12;
+        _defaultFmt.color = 0x000070;
         _defaultFmt.bold = true;
         _defaultFmt.underline = false;
 
         _userSpeakFmt = new TextFormat();
-        _userSpeakFmt.size = 16;
+        _userSpeakFmt.size = 14;
         _userSpeakFmt.color = 0x000000;
-        _userSpeakFmt.bold = false;
+        _userSpeakFmt.bold = true;
         _userSpeakFmt.underline = false;
 
         if (_history == null) {
@@ -426,10 +426,10 @@ public class ChatOverlay
     protected function createLinkFormat (url :String) :TextFormat
     {
         var fmt :TextFormat = new TextFormat();
-        fmt.size = 18;
+        fmt.size = 12;
         fmt.underline = true;
         fmt.color = 0xFF0000;
-        fmt.bold = false;
+        fmt.bold = true;
         fmt.url = "event:" + url;
         return fmt;
     }
