@@ -79,24 +79,35 @@ public class HoodViz extends Sprite
                 }
                 if ((y % 2) == 0) {
                     var d :Number = (x-1)*(x-1) + y*y;
-                    distances.push({ x:x, y:y, dist:d });
+                    var alpha :Number = Math.atan2(y, x);
+                    distances.push({ x: x, y: y, alha: alpha, dist: d });
                 }
             }
         }
 
         // sort the metric according to distance
-        distances.sortOn([ "dist", "x", "y" ], Array.NUMERIC);
+        distances.sortOn([ "dist", "alpha" ], Array.NUMERIC);
 
         // then go through houses in order of radial distance and register friends and groups
         var nextFriend :int = 0;
         var nextGroup :int = 0;
+
+        // use a zig-zag algorithm (there's probably a name for it) to sprinkle houses and groups
+        var selectionCount :Number = _hood.friends.length / 2;
         for each (var tile :Object in distances) {
-            if (tile.y < 0) {
+            if (selectionCount > _hood.friends.length) {
                 if (nextGroup < _hood.groups.length) {
                     drawables[tile.y][tile.x] = _hood.groups[nextGroup ++];
                 }
-            } else if (nextFriend < _hood.friends.length) {
-                drawables[tile.y][tile.x] = _hood.friends[nextFriend ++];
+                selectionCount -= _hood.friends.length;        
+            } else {
+                if (nextFriend < _hood.friends.length) {
+                    drawables[tile.y][tile.x] = _hood.friends[nextFriend ++];
+                }
+                selectionCount += _hood.groups.length;
+            }
+            if (nextGroup == _hood.groups.length && nextFriend == _hood.friends.length) {
+                break;
             }
         }
 
@@ -171,7 +182,6 @@ public class HoodViz extends Sprite
     protected function addBit (bitType :Object, x :Number, y :Number, update:Boolean,
                                neighbor: Neighbor) :void
     {
-
         var bit :MovieClip;
         if (bitType is Class) {
             bit = new bitType();
