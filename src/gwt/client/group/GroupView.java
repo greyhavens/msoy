@@ -180,6 +180,9 @@ public class GroupView extends VerticalPanel
         if (_extras.infoBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(0, 0, MsoyEntryPoint.toMediaPath(
                 _extras.infoBackground.getMediaPath()));
+            if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
+                _table.getMyFlexCellFormatter().setBackgroundNoRepeat(0, 0);
+            }
         }
 
         VerticalPanel description = new VerticalPanel();
@@ -214,13 +217,17 @@ public class GroupView extends VerticalPanel
                 }
             };
             _table.setWidget(0, 1, descriptionWidget);
-        } else if (_extras.backgroundControl == GroupExtras.BACKGROUND_TILED) {
+        } else if (_extras.backgroundControl == GroupExtras.BACKGROUND_TILED ||
+            _extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
             _table.setWidget(0, 1, description);
             _table.getMyFlexCellFormatter().fillWidth(0, 1);
         }
         if (_extras.detailBackground != null) {
             _table.getMyFlexCellFormatter().setBackgroundImage(0, 1, 
                 MsoyEntryPoint.toMediaPath(_extras.detailBackground.getMediaPath()));
+            if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
+                _table.getMyFlexCellFormatter().setBackgroundNoRepeat(0, 1);
+            }
         }
 
         FlexTable people = new FlexTable();
@@ -307,11 +314,15 @@ public class GroupView extends VerticalPanel
                 }
             });
             _table.setWidget(1, 0, peoplePlusCaps);
-        } else if (_extras.backgroundControl == GroupExtras.BACKGROUND_TILED) {
+        } else if (_extras.backgroundControl == GroupExtras.BACKGROUND_TILED ||
+            _extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
             _table.setWidget(1, 0, people);
             if (_extras.peopleBackground != null) {
                 _table.getMyFlexCellFormatter().setBackgroundImage(1, 0, 
                     MsoyEntryPoint.toMediaPath(_extras.peopleBackground.getMediaPath()));
+                if (_extras.backgroundControl == GroupExtras.BACKGROUND_ANCHORED) {
+                    _table.getMyFlexCellFormatter().setBackgroundNoRepeat(1, 0);
+                }
             }
         }
         _table.getFlexCellFormatter().setColSpan(1, 0, 2);
@@ -496,6 +507,12 @@ public class GroupView extends VerticalPanel
             public void setBackgroundImage (int row, int column, String url) {
                 DOM.setStyleAttribute(getElement(row, column), "backgroundImage", "url(" + url + 
                     ")");
+            }
+            public void setBackgroundRepeat (int row, int column, String repeat) {
+                DOM.setStyleAttribute(getElement(row, column), "backgroundRepeat", repeat);
+            }
+            public void setBackgroundNoRepeat (int row, int column) {
+                setBackgroundRepeat(row, column, "no-repeat");
             }
             public void fillWidth (int row, int column) {
                 DOM.setStyleAttribute(getElement(row, column), "width", "100%");
