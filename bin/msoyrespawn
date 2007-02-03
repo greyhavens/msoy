@@ -13,6 +13,7 @@ if (!open($LOG, ">$root/log/msoyrespawn.log")) {
 }
 
 my $pidfile = shift;
+my $server_pidfile = shift;
 if (defined $pidfile) {
     if (open(OUT, ">$pidfile")) {
         print OUT "$$\n";
@@ -30,7 +31,7 @@ while (1) {
 
     # actually run the server
     print $LOG "$now Running msoy server\n";
-    my $rcode = system("$root/bin/runmsoy");
+    my $rcode = system("$root/bin/runmsoy $server_pidfile");
 
     # note the time again
     my $finish = time();
