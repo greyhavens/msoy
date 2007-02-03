@@ -329,7 +329,7 @@ public class MsoySprite extends MediaContainer
         // if we're holding a bitmap, do something smarter than the
         // flash built-in and actually check for *GASP* transparent pixels!
         try {
-            if (_media is Loader && _desc.isImage() &&
+            if (shapeFlag && _media is Loader && _desc.isImage() &&
                     // the childAllowsParent check here causes a security
                     // violation if it doesn't. WHAT THE FUCK. So we also
                     // do the isImage() check above in addition to
