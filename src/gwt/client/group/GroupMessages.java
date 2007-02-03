@@ -304,14 +304,6 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String listPopularTags();
 
   /**
-   * Translated "Click a letter above to browse groups that start with that character, or complete a search above.".
-   * 
-   * @return translated "Click a letter above to browse groups that start with that character, or complete a search above."
-   * @gwt.key listBrowseTip
-   */
-  String listBrowseTip();
-
-  /**
    * Translated "Design".
    * 
    * @return translated "Design"
@@ -406,12 +398,4 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key errInvalidGroupName
    */
   String errInvalidGroupName();
-
-  /**
-   * Translated "Featured Groups:".
-   * 
-   * @return translated "Featured Groups:"
-   * @gwt.key listFeatured
-   */
-  String listFeatured();
 }

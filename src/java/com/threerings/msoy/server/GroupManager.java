@@ -38,25 +38,6 @@ public class GroupManager
         _groupRepo = groupRepo;
         _memberRepo = memberRepo;
     }
-   
-    /**
-     * Fetches all group records that start with the given character, and sends them back in web 
-     * object format.
-     * This method will most likely become a pager in the near future, or we
-     * will be returning some kind of summary object.
-     */
-    public void getGroups (final String startingCharacter, ResultListener<List<Group>> listener)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Group>>(listener) {
-            public List<Group> invokePersistResult () throws PersistenceException {
-                List<Group> groups = new ArrayList<Group>();
-                for (GroupRecord gRec : _groupRepo.findGroups(startingCharacter)) {
-                    groups.add(gRec.toGroupObject());
-                }
-                return groups;
-            }
-        });
-    }
 
     /**
      * Searches all group records and sends them back in web object format.

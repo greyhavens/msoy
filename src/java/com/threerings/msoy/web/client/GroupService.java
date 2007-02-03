@@ -17,18 +17,10 @@ import com.threerings.msoy.web.data.WebCreds;
  */
 public interface GroupService extends RemoteService
 {
-    /**
-     * Fetch the list of characters that start group names.  
+    /** 
+     * Get the list of all groups.
      */
-    public List getCharacters (WebCreds creds)
-        throws ServiceException;
-
-    /**
-     * Fetch all the groups in the system that start with the given character.
-     */
-    public List getGroups (WebCreds creds, String startingCharacter)
-        throws ServiceException;
-
+    public List getGroupsList (WebCreds creds) throws ServiceException;
     /**
      * performs a search against the name, blurb and charter fields.
      */

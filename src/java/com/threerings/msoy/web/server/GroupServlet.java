@@ -5,10 +5,12 @@ package com.threerings.msoy.web.server;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.threerings.msoy.server.MsoyServer;
 
@@ -20,6 +22,7 @@ import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.world.data.MsoySceneModel;
+import com.threerings.msoy.server.persist.GroupRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -29,6 +32,23 @@ import static com.threerings.msoy.Log.log;
 public class GroupServlet extends MsoyServiceServlet
     implements GroupService
 {
+    // from GroupService
+    public List<Group> getGroupsList (WebCreds creds)
+        throws ServiceException
+    {
+        final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("getGroupsList[]");
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Group>>(waiter) {
+            public List<Group> invokePersistResult () throws PersistenceException {
+                List<Group> groups = new ArrayList<Group>();
+                for (GroupRecord gRec : MsoyServer.groupRepo.getGroupsList()) {
+                    groups.add(gRec.toGroupObject());
+                }
+                return groups;
+            }
+        });
+        return waiter.waitForResult();
+    }
+
     // from interface GroupService
     public GroupDetail getGroupDetail (WebCreds creds, final int groupId)
         throws ServiceException
@@ -57,34 +77,7 @@ public class GroupServlet extends MsoyServiceServlet
         });
         return waiter.waitForResult();
     }
-
-    // from interface GroupService
-    // java.lang.Character is not Comparable in GWT.
-    public List<String> getCharacters (WebCreds creds)
-        throws ServiceException
-    {
-        try {
-            return MsoyServer.groupRepo.getCharacters();
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to fetch the list of group name prefixes.", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
-        }
-    }
-
-    // from interface GroupService
-    public List<Group> getGroups (WebCreds creds, final String startingCharacter)
-        throws ServiceException
-    {
-        final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("getGroups[" +
-            startingCharacter + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.groupMan.getGroups(startingCharacter, waiter);
-            }
-        });
-        return waiter.waitForResult();
-    }
-
+    
     // from interface GroupService
     public List<Group> searchGroups (WebCreds creds, final String searchString) 
         throws ServiceException

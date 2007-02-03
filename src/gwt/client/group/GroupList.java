@@ -86,52 +86,12 @@ public class GroupList extends VerticalPanel
         // fathom, the height of this cell is defaulting to way too large.
         DOM.setStyleAttribute(table.getFlexCellFormatter().getElement(0, 1), "height", "10px");
 
-        _characterListContainer = new FlowPanel();
-        _characterListContainer.setStyleName("CharacterList");
-        table.setWidget(1, 0, _characterListContainer);
-        // and again with the ridiculous height
-        DOM.setStyleAttribute(table.getFlexCellFormatter().getElement(1, 0), "height", "10px");
-
         _groupListContainer = new VerticalPanel();
         _groupListContainer.setStyleName("Groups");
-        _groupListContainer.add(new HTML(CGroup.msgs.listBrowseTip()));
         table.setWidget(2, 0, _groupListContainer);
 
         loadPopularTags();
-        loadCharacterList();
-    }
-
-    protected void loadCharacterList ()
-    {
-        _characterListContainer.clear();
-        CGroup.groupsvc.getCharacters(CGroup.creds, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                List characters = (List)result;
-                Collections.sort(characters);
-                boolean firstCharacter = true;
-                Iterator charIter = characters.iterator();
-                while (charIter.hasNext()) {
-                    if (firstCharacter) {
-                        firstCharacter = false;
-                    } else {
-                        _characterListContainer.add(new InlineLabel(" | "));
-                    }
-                    final String character = (String)charIter.next();
-                    InlineLabel characterLabel = new InlineLabel(character);
-                    characterLabel.addStyleName("CharacterLabel");
-                    characterLabel.addClickListener(new ClickListener() {
-                        public void onClick (Widget sender) {
-                            loadGroups(character);
-                        }
-                    });
-                    _characterListContainer.add(characterLabel);
-                }
-            }
-            public void onFailure (Throwable caught) {
-                CGroup.log("getCharacters failed", caught);
-                addError(CGroup.serverError(caught));
-            }
-        });
+        loadGroupsList();
     }
 
     protected void loadPopularTags ()
@@ -152,25 +112,21 @@ public class GroupList extends VerticalPanel
         _popularTagsContainer.add(moreLink);
     }
 
-    protected void loadGroups (final String startingCharacter)
+    protected void loadGroupsList ()
     {
-        List groups = (List)_groupLists.get(startingCharacter);
-        if (groups == null) {
-            CGroup.groupsvc.getGroups(CGroup.creds, startingCharacter, new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    List groups = (List)result;
-                    Collections.sort(groups);
-                    _groupLists.put(startingCharacter, groups);
-                    displayGroups(groups);
+        CGroup.groupsvc.getGroupsList(CGroup.creds, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _groupListContainer.clear();
+                Iterator groupIter = ((List)result).iterator();
+                while (groupIter.hasNext()) {
+                    _groupListContainer.add(new GroupWidget((Group)groupIter.next()));
                 }
-                public void onFailure (Throwable caught) {
-                    CGroup.log("loadGroups(" + startingCharacter + ") failed", caught);
-                    addError(CGroup.serverError(caught));
-                }
-            });
-        } else {
-            displayGroups(groups);
-        }
+            }
+            public void onFailure (Throwable caught) {
+                CGroup.log("getGroupsList failed", caught);
+                addError(CGroup.serverError(caught));
+            }
+        });
     }
 
     protected void displayGroups (List groups)
@@ -239,7 +195,6 @@ public class GroupList extends VerticalPanel
     }
 
     protected VerticalPanel _errorContainer;
-    protected FlowPanel _characterListContainer;
     protected FlowPanel _popularTagsContainer;
     protected VerticalPanel _groupListContainer;
 

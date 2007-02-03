@@ -64,6 +64,7 @@ public class GroupRecord extends PersistentRecord
     public static final String HOME_SCENE_ID = "homeSceneId";
     public static final String CREATION_DATE = "creationDate";
     public static final String POLICY = "policy";
+    public static final String MEMBER_COUNT = "memberCount";
 
     /** The unique id of this group. */
     @Id

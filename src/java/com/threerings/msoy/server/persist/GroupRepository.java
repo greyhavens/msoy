@@ -26,8 +26,11 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
+import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.IntListUtil;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -50,14 +53,16 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
-     * Fetches all groups whose name starts with the given character.
+     * Returns a list of all groups, sorted by size, then by creation time.
      */
-    public Collection<GroupRecord> findGroups (String startingCharacter)
+    public Collection<GroupRecord> getGroupsList ()
         throws PersistenceException
     {
-        return findAll(GroupRecord.class,
-            new Where(new Equals(new LiteralExp("substring(name,1,1)"), startingCharacter)));
+        return findAll(GroupRecord.class, new OrderBy(new SQLExpression[] { new ColumnExp(null, 
+            GroupRecord.MEMBER_COUNT), new ColumnExp(null, GroupRecord.CREATION_DATE) }, 
+            new OrderBy.Order[] { OrderBy.Order.DESC, OrderBy.Order.ASC }));
     }
+
 
     /**
      * Searches all groups for the search string against the indexed blurb, charter and name 
@@ -250,44 +255,6 @@ public class GroupRepository extends DepotRepository
     {
         return findAll(GroupMembershipRecord.class,
                        new Where(GroupMembershipRecord.MEMBER_ID, memberId));
-    }
-
-    /**
-     * Fetches a list of the characters that start group names.  This method returns a 
-     * List&lt;String&gt; instead of List&lt;Character&gt; because in GWT, java.lang.Character
-     * is not Comparable.
-     */
-    public List<String> getCharacters () 
-        throws PersistenceException
-    {
-        // force the creation of a GroupRecord table if necessary
-        _ctx.getMarshaller(GroupRecord.class);
-    
-        return _ctx.invoke(new CollectionQuery<List<String>>(_groupNamePrefixKey) {
-            public List<String> invoke (Connection conn)
-                throws SQLException
-            {
-                String query = "select substring(name,1,1) as letter from GroupRecord " +
-                    "where policy=" + Group.POLICY_PUBLIC + " group by letter";
-                ArrayList<String> characters = new ArrayList<String>();
-                Statement stmt = conn.createStatement();
-                try {
-                    ResultSet rs = stmt.executeQuery(query);
-                    while (rs.next()) {
-                        characters.add(rs.getString(1));
-                    }
-                    return characters;
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-
-            // from Query
-            public List<String> transformCacheHit (CacheKey key, List<String> value) {
-                // no need to clone this result
-                return value;
-            }
-        });
     }
 
     protected void updateMemberCount (int groupId) 
