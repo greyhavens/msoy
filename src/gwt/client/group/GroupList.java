@@ -54,12 +54,9 @@ public class GroupList extends VerticalPanel
         DOM.setStyleAttribute(table.getElement(), "width", "100%");
         add(table);
 
-        VerticalPanel leftPanel = new VerticalPanel();
         _popularTagsContainer = new FlowPanel();
         _popularTagsContainer.setStyleName("PopularTags");
-        leftPanel.add(_popularTagsContainer);
-        table.setWidget(0, 0, leftPanel);
-        table.getFlexCellFormatter().setRowSpan(0, 0, 3);
+        table.setWidget(0, 0, _popularTagsContainer);
         table.getFlexCellFormatter().setStyleName(0, 0, "LeftColumn");
 
         final TextBox searchInput = new TextBox();
@@ -88,7 +85,8 @@ public class GroupList extends VerticalPanel
 
         _groupListContainer = new VerticalPanel();
         _groupListContainer.setStyleName("Groups");
-        table.setWidget(2, 0, _groupListContainer);
+        table.setWidget(1, 0, _groupListContainer);
+        table.getFlexCellFormatter().setColSpan(1, 0, 2);
 
         loadPopularTags();
         loadGroupsList();
