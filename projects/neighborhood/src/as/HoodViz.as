@@ -39,6 +39,7 @@ public class HoodViz extends Sprite
         _group = new Building(_esl.getClass("group_tile"), _esl.getClass("populate_group"), soy);
         this.stage.addChild(_group);
 
+        _groupLogo = _esl.getClass("group_logo");
         _vacant = _esl.getClass("vacant_tile");
         _roadNS = _esl.getClass("road_ns_tile");
         _roadEW = _esl.getClass("road_ew_tile");
@@ -159,23 +160,6 @@ public class HoodViz extends Sprite
     }
 
 
-    // funkily skews, scales, and translates the loaded logo into the billboard
-    public function logoLoaded(event: Event) :void
-    {
-        var content: DisplayObject = event.target.content;
-        // scale depending on which dimension is constrained
-        var scale :Number = Math.min(50 / content.width, 45/content.height);
-        // center vertically
-        var zOff :Number = (45 - scale*content.height)/2;
-        // center horizontally (the 175 is the scale imposed by skewX() et al)
-        var xOff :Number = (50 - scale*content.width)/2/175;
-        // map the ground coordinates to skewed display coordinates
-        var p: Point = skew(0.058 + xOff, 0.94);
-        // then simply apply the matrix, with -0.38 being the skew constant. note that
-        // the zOffset is added raw; it's not a skewed coordinate
-        content.transform.matrix = new Matrix(scale, -scale*0.38, 0, scale, p.x, p.y + zOff);
-    }
-
     protected function addBit (bitType :Object, x :Number, y :Number, update:Boolean,
                                neighbor: Neighbor) :void
     {
@@ -196,14 +180,32 @@ public class HoodViz extends Sprite
         if (neighbor is NeighborGroup) {
             var logo :String = (neighbor as NeighborGroup).groupLogo;
             if (logo != null) {
-                // dynamically load the group's logo
+                // if there is a logo, we dynamically load it
                 var loader :Loader = new Loader();
-                // we want to know when the logo is loaded so we can do our magic
-                loader.contentLoaderInfo.addEventListener(Event.COMPLETE, logoLoaded);
-                // and we'll swallow IO errors rather than burden the user with them
-                loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, logoError);
-                loader.load(new URLRequest("/media/" + logo));
-                bit.addChild(loader);
+                // first, find the designated logo-holding area in the tile
+                var logoHolder :MovieClip = null;
+                for (var i :int = 0; i < bit.numChildren; i ++) {
+                    var o :Object = bit.getChildAt(i);
+                    if (o is DisplayObject && (o as DisplayObject).name == "tent_logo") {
+                        logoHolder = o as MovieClip;
+                        break;
+                    }
+                }
+                // if we did find a logoHolder, load the logo into it
+                if (logoHolder != null) {
+                    logoHolder.addChild(loader);
+                    // set the scale to zero so that a large image doesn't resize the holder
+                    loader.scaleX = loader.scaleY = 0;
+                    // by default the image loaders in the center; shift it up and left
+                    loader.x = -logoHolder.width/2;
+                    loader.y = -logoHolder.height/2;
+
+                    // we want to know when the logo is loaded so we can do resize magic
+                    loader.contentLoaderInfo.addEventListener(Event.COMPLETE, logoLoaded);
+                    // and we'll swallow IO errors rather than burden the user with them
+                    loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, logoError);
+                    loader.load(new URLRequest("/media/" + logo));
+                }
             }
         }
 
@@ -226,6 +228,24 @@ public class HoodViz extends Sprite
         }
     }
 
+    // scales the loaded logo to the dimensions of the logo holder
+    protected function logoLoaded(event: Event) :void
+    {
+        // get references to the loaded image, the image loader, and the logo holding clip
+        var content: DisplayObject = event.target.content;
+        var loader :DisplayObjectContainer = content.parent;
+        var holder :DisplayObjectContainer = loader.parent;
+        // now scale the image depending on which dimension is constrained
+        var scale :Number = Math.min(holder.width / content.width, holder.height/content.height);
+        // and center in either the x or y direction as needed
+        content.x = (holder.width - scale*content.width)/2;
+        content.y = (holder.height - scale*content.height)/2;
+        // reset the loader's scale (it was set to zero during loading)
+        loader.scaleX = loader.scaleY = 1;
+        // and finally apply the image scale
+        content.scaleX = content.scaleY = scale;
+    }
+
     // the magic numbers that describe the drawn tiles' geometry
     protected function skew(x :Number, y :Number) :Point
     {
@@ -233,7 +253,7 @@ public class HoodViz extends Sprite
         return new Point(f*x*174 + f*y*81, -f*x*69 + f*y*155);
     }
 
-    public function clickHandler (event :MouseEvent) :void
+    protected function clickHandler (event :MouseEvent) :void
     {
         var neighbor :Neighbor = (event.currentTarget as ToolTipSprite).neighbor;
         var url :String = "/world/#";
@@ -267,7 +287,7 @@ public class HoodViz extends Sprite
         // do nothing else
     }
 
-    public function rollOverHandler (event :MouseEvent) :void
+    protected function rollOverHandler (event :MouseEvent) :void
     {
 
         var neighbor :Neighbor = (event.target as ToolTipSprite).neighbor;
@@ -309,7 +329,7 @@ public class HoodViz extends Sprite
         this.addChild(_tip);
     }
 
-    public function rollOutHandler (event :MouseEvent) :void
+    protected function rollOutHandler (event :MouseEvent) :void
     {
         if (_tip is Sprite) {
             this.removeChild(_tip);
@@ -325,6 +345,7 @@ public class HoodViz extends Sprite
     protected var _friend :Building;
     protected var _group :Building;
 
+    protected var _groupLogo :Class;
     protected var _vacant :Class;
     protected var _roadNS :Class;
     protected var _roadEW :Class;

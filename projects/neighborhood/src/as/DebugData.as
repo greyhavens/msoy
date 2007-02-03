@@ -1,6 +1,13 @@
 package {
     public class DebugData
     {
-        public var neighborhood :String = "{\"groups\":[{\"members\":2,\"pop\":1,\"name\":\"Party People\",\"id\":3}],\"friends\":[{\"created\":1158908400000,\"lastSess\":1158908400000,\"sMin\":0,\"isOnline\":true,\"pop\":1,\"sNum\":0,\"name\":\"ray\",\"id\":2},{\"created\":1160118000000,\"lastSess\":1160118000000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Cephalopod\",\"id\":11},{\"created\":1159513200000,\"lastSess\":1159513200000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Cleaver\",\"id\":4},{\"created\":1159513200000,\"lastSess\":1159513200000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Zell\",\"id\":5},{\"created\":1160118000000,\"lastSess\":1160118000000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"mjohnson\",\"id\":12},{\"created\":1161154800000,\"lastSess\":1161154800000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Brittney\",\"id\":15},{\"created\":1160118000000,\"lastSess\":1160118000000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"joshua\",\"id\":9},{\"created\":1159858800000,\"lastSess\":1159858800000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Cherub\",\"id\":7},{\"created\":1165305600000,\"lastSess\":1165305600000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Zefyr\",\"id\":20},{\"created\":1160118000000,\"lastSess\":1160118000000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Arcturus\",\"id\":8}],\"member\":{\"isOnline\":false,\"pop\":0,\"name\":\"Mike Dog\",\"id\":1}}";
+        public var neighborhood :String = "{\"groups\":[],\"group\":{\"members\":2,\"pop\":0,\"name\":\"Party People\",\"logo\":\".png\",\"id\":3},\"friends\":[{\"created\":1158908400000,\"lastSess\":1158908400000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Mike Dog\",\"id\":1}," +
+"{\"created\":1159513200000,\"lastSess\":1159513200000,\"sMin\":0,\"isOnline\":true,\"pop\":0,\"sNum\":0,\"name\":\"Zell\",\"id\":5}," +
+"{\"created\":1158908400000,\"lastSess\":1158908400000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Mike Dog\",\"id\":1}," +
+"{\"created\":1159513200000,\"lastSess\":1159513200000,\"sMin\":0,\"isOnline\":true,\"pop\":0,\"sNum\":0,\"name\":\"Zell\",\"id\":5}," +
+"{\"created\":1158908400000,\"lastSess\":1158908400000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Mike Dog\",\"id\":1}," +
+"{\"created\":1159513200000,\"lastSess\":1159513200000,\"sMin\":0,\"isOnline\":true,\"pop\":0,\"sNum\":0,\"name\":\"Zell\",\"id\":5}," +
+"{\"created\":1158908400000,\"lastSess\":1158908400000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Mike Dog\",\"id\":1}," +
+"{\"created\":1159513200000,\"lastSess\":1159513200000,\"sMin\":0,\"isOnline\":true,\"pop\":0,\"sNum\":0,\"name\":\"Zell\",\"id\":5}]}";
     }
 }
