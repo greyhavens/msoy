@@ -96,40 +96,6 @@ public class GroupManager
     }
 
     /**
-     * Fetches the members of a given group, as {@link GroupMembership} records. This method
-     * does not distinguish between a nonexistent group and a group without members;
-     * both situations yield empty collections.
-     */
-    public void getGroupDetail (final int groupId, ResultListener<GroupDetail> listener)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<GroupDetail>(listener) {
-            public GroupDetail invokePersistResult () throws PersistenceException {
-                // load the group record
-                GroupRecord gRec = _groupRepo.loadGroup(groupId);
-                // load the creator's member record
-                MemberRecord mRec = _memberRepo.loadMember(gRec.creatorId);
-                // set up the detail
-                GroupDetail detail = new GroupDetail();
-                detail.creator = mRec.getName();
-                detail.group = gRec.toGroupObject();
-                detail.extras = gRec.toExtrasObject();
-                ArrayList<GroupMembership> members = new ArrayList<GroupMembership>();
-                detail.members = members;
-                for (GroupMembershipRecord gmRec : _groupRepo.getMembers(groupId)) {
-                    mRec = _memberRepo.loadMember(gmRec.memberId);
-                    GroupMembership membership = new GroupMembership();
-                    // membership.group left null intentionally 
-                    membership.member = mRec.getName();
-                    membership.rank = gmRec.rank;
-                    membership.rankAssignedDate = gmRec.rankAssigned.getTime();
-                    members.add(membership);
-                }
-                return detail;
-            }
-        });
-    }
-
-    /**
      * Fetches the groups a given person is a member of, as {@link GroupMembership} records.
      * This method does not distinguish between a nonexistent person, and a person who is
      * a member of no groups; both situations yield empty collections.
@@ -222,21 +188,6 @@ public class GroupManager
             public Byte invokePersistResult() throws PersistenceException {
                 GroupMembershipRecord gmr = _groupRepo.getMembership(groupId, memberId);
                 return gmr != null ? gmr.rank : null;
-            }
-        });
-    }
-
-    /**
-     * Sets the rank of a group member. Throws an exception if there is no
-     * such person, no such group, or the person is not a member of the group.
-     */
-    public void setRank (final int groupId, final int memberId, final byte newRank,
-                         ResultListener<Void> listener)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
-            public Void invokePersistResult() throws PersistenceException {
-                _groupRepo.setRank(groupId, memberId, newRank);
-                return null;
             }
         });
     }

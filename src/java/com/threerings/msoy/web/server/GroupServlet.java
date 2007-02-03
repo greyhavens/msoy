@@ -24,6 +24,8 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.server.persist.GroupRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.GroupMembershipRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -50,16 +52,40 @@ public class GroupServlet extends MsoyServiceServlet
         return waiter.waitForResult();
     }
 
-    // from interface GroupService
+    /**
+     * Fetches the members of a given group, as {@link GroupMembership} records. This method
+     * does not distinguish between a nonexistent group and a group without members;
+     * both situations yield empty collections.
+     */
     public GroupDetail getGroupDetail (WebCreds creds, final int groupId)
         throws ServiceException
     {
         // TODO: validate creds
         final ServletWaiter<GroupDetail> waiter =
             new ServletWaiter<GroupDetail>("getGroupDetail[" + groupId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.groupMan.getGroupDetail(groupId, waiter);
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<GroupDetail>(waiter) {
+            public GroupDetail invokePersistResult () throws PersistenceException {
+                // load the group record
+                GroupRecord gRec = MsoyServer.groupRepo.loadGroup(groupId);
+                // load the creator's member record
+                MemberRecord mRec = MsoyServer.memberRepo.loadMember(gRec.creatorId);
+                // set up the detail
+                GroupDetail detail = new GroupDetail();
+                detail.creator = mRec.getName();
+                detail.group = gRec.toGroupObject();
+                detail.extras = gRec.toExtrasObject();
+                ArrayList<GroupMembership> members = new ArrayList<GroupMembership>();
+                detail.members = members;
+                for (GroupMembershipRecord gmRec : MsoyServer.groupRepo.getMembers(groupId)) {
+                    mRec = MsoyServer.memberRepo.loadMember(gmRec.memberId);
+                    GroupMembership membership = new GroupMembership();
+                    // membership.group left null intentionally 
+                    membership.member = mRec.getName();
+                    membership.rank = gmRec.rank;
+                    membership.rankAssignedDate = gmRec.rankAssigned.getTime();
+                    members.add(membership);
+                }
+                return detail;
             }
         });
         return waiter.waitForResult();
@@ -200,9 +226,10 @@ public class GroupServlet extends MsoyServiceServlet
         // TODO: validate creds
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(
             "updateMemberRank[" + groupId + ", " + memberId + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.groupMan.setRank(groupId, memberId, newRank, waiter);
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
+            public Void invokePersistResult() throws PersistenceException {
+                MsoyServer.groupRepo.setRank(groupId, memberId, newRank);
+                return null;
             }
         });
         waiter.waitForResult();
