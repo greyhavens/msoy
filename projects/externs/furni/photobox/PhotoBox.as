@@ -31,6 +31,7 @@ import com.adobe.webapis.flickr.PhotoSize;
 import com.adobe.webapis.flickr.PhotoUrl;
 import com.adobe.webapis.flickr.events.FlickrResultEvent;
 
+import com.threerings.msoy.export.ControlEvent;
 import com.threerings.msoy.export.FurniControl;
 
 [SWF(width="500", height="550")]
@@ -40,7 +41,7 @@ public class PhotoBox extends Sprite
     {
         // configure our conrols
         _furni = new FurniControl(this);
-        _furni.eventTriggered = handleMsoyEvent;
+        _furni.addEventListener(ControlEvent.EVENT_TRIGGERED, handleTrigger);
 
         // this is my (Ray Greenwell)'s personal Flickr key!!
         _flickr = new FlickrService("7aa4cc43b7fd51f0f118b0022b7ab13e")
@@ -209,7 +210,7 @@ public class PhotoBox extends Sprite
      * Handle a "trigger" event from other instances of this photobox
      * running on other clients.
      */
-    protected function handleMsoyEvent (event :String, arg :Object) :void
+    protected function handleTrigger (event :ControlEvent) :void
     {
         // ok, the problem is that if someone enters a room their
         // photobox is controlId=0, all the other boxes have a higher id.
@@ -221,8 +222,8 @@ public class PhotoBox extends Sprite
         // also: sometimes when you start two at the same time, they both
         // stop: WHY?
 
-        if (event == "show") {
-            var args :Array  = (arg as Array);
+        if (event.name == "show") {
+            var args :Array  = (event.value as Array);
             var newId :int = int(args[0]);
             var url :String = String(args[1]);
             var tags :String = String(args[2]);
