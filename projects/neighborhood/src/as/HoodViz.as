@@ -183,14 +183,7 @@ public class HoodViz extends Sprite
                 // if there is a logo, we dynamically load it
                 var loader :Loader = new Loader();
                 // first, find the designated logo-holding area in the tile
-                var logoHolder :MovieClip = null;
-                for (var i :int = 0; i < bit.numChildren; i ++) {
-                    var o :Object = bit.getChildAt(i);
-                    if (o is DisplayObject && (o as DisplayObject).name == "tent_logo") {
-                        logoHolder = o as MovieClip;
-                        break;
-                    }
-                }
+                var logoHolder :MovieClip = bit.getChildByName("tent_logo") as MovieClip;
                 // if we did find a logoHolder, load the logo into it
                 if (logoHolder != null) {
                     logoHolder.addChild(loader);
