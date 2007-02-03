@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import java.util.logging.Level;
 
@@ -84,9 +85,13 @@ public class GroupServlet extends MsoyServiceServlet
     {
         final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("searchGroups[" +
             searchString + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.groupMan.searchGroups(searchString, waiter);
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Group>>(waiter) {
+            public List<Group> invokePersistResult () throws PersistenceException { 
+                List<Group> groups = new ArrayList<Group>();
+                for (GroupRecord gRec : MsoyServer.groupRepo.searchGroups(searchString)) {
+                    groups.add(gRec.toGroupObject());
+                }
+                return groups;
             }
         });
         return waiter.waitForResult();
@@ -139,11 +144,20 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>("updateGroup[" + group + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.groupMan.updateGroup(group, extras, waiter);
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(waiter) {
+            public Void invokePersistResult () throws PersistenceException {
+                GroupRecord gRec = MsoyServer.groupRepo.loadGroup(group.groupId);
+                if (gRec == null) {
+                    throw new PersistenceException("Group not found! [id=" + group.groupId + 
+                        "]");
+                }
+                Map<String, Object> updates = gRec.findUpdates(group, extras);
+                if (updates.size() > 0) {
+                    MsoyServer.groupRepo.updateGroup(group.groupId, updates);
+                }
+                return null;
             }
-        });
+        });        
         waiter.waitForResult();
     }
 

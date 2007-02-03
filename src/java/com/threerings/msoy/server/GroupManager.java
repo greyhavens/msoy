@@ -40,22 +40,6 @@ public class GroupManager
     }
 
     /**
-     * Searches all group records and sends them back in web object format.
-     */
-    public void searchGroups (final String searchString, ResultListener<List<Group>> listener)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Group>>(listener) {
-            public List<Group> invokePersistResult () throws PersistenceException {
-                List<Group> groups = new ArrayList<Group>();
-                for (GroupRecord gRec : _groupRepo.searchGroups(searchString)) {
-                    groups.add(gRec.toGroupObject());
-                }
-                return groups;
-            }
-        });
-    }
-
-    /**
      * Creates a new group record in the database and return a {@link Group} for
      * it. This method assigns the group a new, unique id.
      * 
@@ -108,30 +92,6 @@ public class GroupManager
             }
 
             protected int _groupId;
-        });
-    }
-
-    /**
-     * Updates a group record in the database with new data. Only non-null/non-zero parameters
-     * are used for the update, and data is not read back from the database. This is a low-level
-     * method without privilige checks; it's up to the callers to secure it.
-     */
-    public void updateGroup (final Group groupDef, final GroupExtras extrasDef, 
-        ResultListener<Void> listener) 
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>(listener) {
-            public Void invokePersistResult () throws PersistenceException {
-                GroupRecord gRec = MsoyServer.groupRepo.loadGroup(groupDef.groupId);
-                if (gRec == null) {
-                    throw new PersistenceException("Group not found! [id=" + groupDef.groupId + 
-                        "]");
-                }
-                Map<String, Object> updates = gRec.findUpdates(groupDef, extrasDef);
-                if (updates.size() > 0) {
-                    MsoyServer.groupRepo.updateGroup(groupDef.groupId, updates);
-                }
-                return null;
-            }
         });
     }
 
