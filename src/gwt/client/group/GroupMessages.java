@@ -24,6 +24,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editInfoBG();
 
   /**
+   * Translated "No groups found!".
+   * 
+   * @return translated "No groups found!"
+   * @gwt.key listNoGroups
+   */
+  String listNoGroups();
+
+  /**
    * Translated "Upload some photos to your inventory to choose an image.".
    * 
    * @return translated "Upload some photos to your inventory to choose an image."

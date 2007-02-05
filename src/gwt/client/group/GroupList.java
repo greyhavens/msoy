@@ -26,6 +26,8 @@ import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.Hyperlink;
 import com.threerings.gwt.ui.InlineLabel;
+import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Group;
@@ -38,6 +40,12 @@ import client.util.MediaUtil;
  */
 public class GroupList extends VerticalPanel
 {
+    /** The number of columns to show in the PagedGrid */
+    public static final int GRID_COLUMNS = 2;
+
+    /** The number of rows to show in the PagedGrid. */
+    public static final int GRID_ROWS = 4;
+
     public GroupList ()
     {
         super();
@@ -83,8 +91,16 @@ public class GroupList extends VerticalPanel
         // fathom, the height of this cell is defaulting to way too large.
         DOM.setStyleAttribute(table.getFlexCellFormatter().getElement(0, 1), "height", "10px");
 
-        _groupListContainer = new VerticalPanel();
+        _groupListContainer = new PagedGrid(GRID_ROWS, GRID_COLUMNS) {
+            protected Widget createWidget (Object item) {
+                return new GroupWidget((Group)item);
+            }
+            protected String getEmptyMessage () {
+                return CGroup.msgs.listNoGroups();
+            }
+        };
         _groupListContainer.setStyleName("Groups");
+        _groupListContainer.setWidth("100%");
         table.setWidget(1, 0, _groupListContainer);
         table.getFlexCellFormatter().setColSpan(1, 0, 2);
 
@@ -114,11 +130,7 @@ public class GroupList extends VerticalPanel
     {
         CGroup.groupsvc.getGroupsList(CGroup.creds, new AsyncCallback() {
             public void onSuccess (Object result) {
-                _groupListContainer.clear();
-                Iterator groupIter = ((List)result).iterator();
-                while (groupIter.hasNext()) {
-                    _groupListContainer.add(new GroupWidget((Group)groupIter.next()));
-                }
+                _groupListContainer.setModel(new SimpleDataModel((List)result));
             }
             public void onFailure (Throwable caught) {
                 CGroup.log("getGroupsList failed", caught);
@@ -194,7 +206,7 @@ public class GroupList extends VerticalPanel
 
     protected VerticalPanel _errorContainer;
     protected FlowPanel _popularTagsContainer;
-    protected VerticalPanel _groupListContainer;
+    protected PagedGrid _groupListContainer;
 
     protected HashMap _groupLists;
 }
