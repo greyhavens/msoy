@@ -139,20 +139,11 @@ public class GroupList extends VerticalPanel
         });
     }
 
-    protected void displayGroups (List groups)
-    {
-        _groupListContainer.clear();
-        Iterator groupIter = groups.iterator();
-        while (groupIter.hasNext()) {
-            _groupListContainer.add(new GroupWidget((Group)groupIter.next()));
-        }
-    }
-
     protected void performSearch (final String searchString)
     {
         CGroup.groupsvc.searchGroups(CGroup.creds, searchString, new AsyncCallback() {
             public void onSuccess (Object result) {
-                displayGroups((List)result);
+                _groupListContainer.setModel(new SimpleDataModel((List)result));
             }
             public void onFailure (Throwable caught) {
                 CGroup.log("searchGroups(" + searchString + ") failed", caught);
