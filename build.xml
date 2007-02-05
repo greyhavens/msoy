@@ -223,14 +223,19 @@
       <!-- until the GWT compiler does the right thing echo errors/warnings correctly -->
       <if><contains string="${redirector.out}" substring="[ERROR]"/><then>
         <echo level="error">${redirector.out}</echo>
+        <!-- be really, really sure that the build fails if we get an error logs -->
+        <property name="has.errors" value="true"/>
       </then><elseif><contains string="${redirector.out}" substring="[WARNING]"/><then>
         <echo level="warning">${redirector.out}</echo>
       </then></elseif><else>
         <echo level="info">${redirector.out}</echo>
       </else></if>
 
-      <!-- fail the build if the GWT compiler returned 1 -->
-      <fail><condition><equals arg1="${gwt.result}" arg2="1"/></condition></fail>
+      <!-- fail the build if the GWT compiler returned 1 or errors were detected -->
+      <fail><condition><or>
+        <equals arg1="${gwt.result}" arg2="1"/>
+        <isset property="has.errors"/>
+      </or></condition></fail>
     </sequential></for>
     <touch file="${gclient.buildstamp}"/>
   </target> 
