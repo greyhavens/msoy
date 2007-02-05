@@ -23,11 +23,28 @@ import com.threerings.util.EmbeddedSwfLoader;
 public class HoodViz extends Sprite
 {
     protected var _esl :EmbeddedSwfLoader;
+    protected var _vizLoader :URLLoader;
     public function HoodViz ()
+    {
+        var data :Object;
+        if (false) {
+            data = new DebugData();
+        } else {
+            data = this.root.loaderInfo.parameters;
+        }
+        _hood = Neighborhood.fromParameters(data);
+
+        _vizLoader = new URLLoader();
+        _vizLoader.addEventListener(Event.COMPLETE, vizDone);
+        _vizLoader.dataFormat = URLLoaderDataFormat.BINARY;
+        _vizLoader.load(new URLRequest(data.skinURL));
+    }
+    
+    protected function vizDone (event :Event) :void
     {
         _esl = new EmbeddedSwfLoader();
         _esl.addEventListener(Event.COMPLETE, eclDone);
-        _esl.load(new _viz());
+        _esl.load((event.target as URLLoader).data);
     }
     
     protected function eclDone(event :Event) :void
@@ -47,14 +64,6 @@ public class HoodViz extends Sprite
         _roadHouse = _esl.getClass("road_house_tile");
         _roadHouseEndW = _esl.getClass("road_end_w_tile");
         _roadHouseEndE = _esl.getClass("road_end_e_tile");
-
-        var data :Object;
-        if (false) {
-            data = new DebugData();
-        } else {
-            data = this.root.loaderInfo.parameters;
-        }
-        _hood = Neighborhood.fromParameters(data);
 
         _canvas = new Sprite();
         this.addChild(_canvas);
@@ -346,8 +355,5 @@ public class HoodViz extends Sprite
     protected var _roadHouse :Class;
     protected var _roadHouseEndW :Class;
     protected var _roadHouseEndE :Class;
-
-    [Embed(source="viz.swf", mimeType="application/octet-stream")]
-    protected const _viz:Class;
 }
 }

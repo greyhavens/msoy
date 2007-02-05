@@ -9,5 +9,6 @@ package {
 "{\"created\":1159513200000,\"lastSess\":1159513200000,\"sMin\":0,\"isOnline\":true,\"pop\":0,\"sNum\":0,\"name\":\"Zell\",\"id\":5}," +
 "{\"created\":1158908400000,\"lastSess\":1158908400000,\"sMin\":0,\"isOnline\":false,\"pop\":0,\"sNum\":0,\"name\":\"Mike Dog\",\"id\":1}," +
 "{\"created\":1159513200000,\"lastSess\":1159513200000,\"sMin\":0,\"isOnline\":true,\"pop\":0,\"sNum\":0,\"name\":\"Zell\",\"id\":5}]}";
+        public var skinURL :String = "file:///Users/zell/viz.swf";
     }
 }
