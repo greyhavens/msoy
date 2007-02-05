@@ -12,6 +12,8 @@ import com.threerings.gwt.ui.WidgetUtil;
  */
 public class FlashClients
 {
+    public static final String HOOD_SKIN_URL = "/media/static/hood_pastoral.swf";
+
     public static HTML createWorldClient (String flashVars)
     {
         return WidgetUtil.createFlashContainer(
@@ -33,10 +35,11 @@ public class FlashClients
             "gameLobby=" + gameId);
     }
 
-    public static HTML createNeighborhood (String hoodData)
+    public static HTML createNeighborhood (String hoodData, String width, String height)
     {
         return WidgetUtil.createFlashContainer(
-            "hood","/media/static/HoodViz.swf", "100%", "550", "neighborhood=" + hoodData);
+            "hood","/media/static/HoodViz.swf", width, height,
+            "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hoodData);
     }
 
     public static HTML createPopularPlaces (String hotspotData)

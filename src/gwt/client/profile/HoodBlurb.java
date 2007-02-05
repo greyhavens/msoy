@@ -3,10 +3,11 @@
 
 package client.profile;
 
+import client.util.FlashClients;
+
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.threerings.gwt.ui.WidgetUtil;
 
 /**
  * Displays a neighborhood visualization.
@@ -23,8 +24,7 @@ public class HoodBlurb extends Blurb
     protected void didInit (Object blurbData)
     {
         setHeader("Neighborhood");
-        _content.setWidget(WidgetUtil.createFlashContainer(
-            "hood","/media/static/HoodViz.swf", 480, 360, "neighborhood=" + (String) blurbData));
+        _content.setWidget(FlashClients.createNeighborhood((String) blurbData, "480", "360"));
     }
 
     // @Override // from Blurb
