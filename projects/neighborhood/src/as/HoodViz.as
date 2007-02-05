@@ -22,8 +22,6 @@ import com.threerings.util.EmbeddedSwfLoader;
 [SWF(width="640", height="480")]
 public class HoodViz extends Sprite
 {
-    protected var _esl :EmbeddedSwfLoader;
-    protected var _vizLoader :URLLoader;
     public function HoodViz ()
     {
         var data :Object;
@@ -42,28 +40,29 @@ public class HoodViz extends Sprite
     
     protected function vizDone (event :Event) :void
     {
-        _esl = new EmbeddedSwfLoader();
-        _esl.addEventListener(Event.COMPLETE, eclDone);
-        _esl.load((event.target as URLLoader).data);
+        _vizSplitter = new EmbeddedSwfLoader();
+        _vizSplitter.addEventListener(Event.COMPLETE, eclDone);
+        _vizSplitter.load((event.target as URLLoader).data);
     }
     
     protected function eclDone(event :Event) :void
     {
-        var soy :Class = _esl.getClass("soy_master");
+        var soy :Class = _vizSplitter.getClass("soy_master");
 
-        _friend = new Building(_esl.getClass("house_tile"), _esl.getClass("populate_house"), soy);
+        _friend = new Building(_vizSplitter.getClass("house_tile"), _vizSplitter.getClass("populate_house"), soy);
         this.stage.addChild(_friend);
-        _group = new Building(_esl.getClass("group_tile"), _esl.getClass("populate_group"), soy);
+        _group = new Building(_vizSplitter.getClass("group_tile"), _vizSplitter.getClass("populate_group"), soy);
         this.stage.addChild(_group);
 
-        _groupLogo = _esl.getClass("group_logo");
-        _vacant = _esl.getClass("vacant_tile");
-        _roadNS = _esl.getClass("road_ns_tile");
-        _roadEW = _esl.getClass("road_ew_tile");
-        _road4Way = _esl.getClass("road_intersection_tile");
-        _roadHouse = _esl.getClass("road_house_tile");
-        _roadHouseEndW = _esl.getClass("road_end_w_tile");
-        _roadHouseEndE = _esl.getClass("road_end_e_tile");
+        _vacant = _vizSplitter.getClass("vacant_tile");
+        _roadHouse = _vizSplitter.getClass("road_house_tile");
+        _roadNS = _vizSplitter.getClass("road_ns_tile");
+        _roadEW = _vizSplitter.getClass("road_ew_tile");
+        _roadNSE = _vizSplitter.getClass("road_nse_tile");
+        _roadNSW = _vizSplitter.getClass("road_nsw_tile");
+        _road4Way = _vizSplitter.getClass("road_nsew_tile");
+        _roadHouseEndW = _vizSplitter.getClass("road_end_w_tile");
+        _roadHouseEndE = _vizSplitter.getClass("road_end_e_tile");
 
         _canvas = new Sprite();
         this.addChild(_canvas);
@@ -126,17 +125,11 @@ public class HoodViz extends Sprite
         }
 
         for (y = -radius; y <= radius; y ++) {
-            if ((y % 2) == 0 || (drawables[y-1][-1] == null && drawables[y-1][1] == null)) {
-                addBit(_roadNS, 0, y, false, null);
-            } else {
-                addBit(_road4Way, 0, y, false, null);
-            }
             for (x = radius; x >= -radius; x --) {
-                if (x == 0) {
-                    continue;
-                }
                 if ((y % 2) == 0) {
-                    if (drawables[y][x] is NeighborMember) {
+                    if (x == 0) {
+                        addBit(_roadNS, 0, y, false, null);
+                    } else if (drawables[y][x] is NeighborMember) {
                         addBit(_friend, x, y, true, drawables[y][x]);
                     } else if (drawables[y][x] is NeighborGroup) {
                         addBit(_group, x, y, true, drawables[y][x]);
@@ -144,7 +137,19 @@ public class HoodViz extends Sprite
                         addBit(_vacant, x, y, false, null);
                     }
                 } else {
-                    if (drawables[y-1][x] == null) {
+                    if (x == 0) {
+                        if (drawables[y-1][-1] == null) {
+                            if (drawables[y-1][1] == null) {
+                                addBit(_roadNS, 0, y, false, null);
+                            } else {
+                                addBit(_roadNSE, 0, y, false, null);
+                            }
+                        } else if (drawables[y-1][1] == null) {
+                            addBit(_roadNSW, 0, y, false, null);
+                        } else {
+                            addBit(_road4Way, 0, y, false, null);
+                        }
+                    } else if (drawables[y-1][x] == null) {
 //                        this bit has no purpose until we interject empty plots
 //                        addBit(_roadEW, x, y, false, null);
                         addBit(_vacant, x, y, false, null);
@@ -192,7 +197,7 @@ public class HoodViz extends Sprite
                 // if there is a logo, we dynamically load it
                 var loader :Loader = new Loader();
                 // first, find the designated logo-holding area in the tile
-                var logoHolder :MovieClip = bit.getChildByName("tent_logo") as MovieClip;
+                var logoHolder :MovieClip = bit.getChildByName("logo_placer") as MovieClip;
                 // if we did find a logoHolder, load the logo into it
                 if (logoHolder != null) {
                     logoHolder.addChild(loader);
@@ -339,6 +344,9 @@ public class HoodViz extends Sprite
         }
     }
 
+    protected var _vizSplitter :EmbeddedSwfLoader;
+    protected var _vizLoader :URLLoader;
+
     protected var _tip :Sprite;
     protected var _hood :Neighborhood;
     protected var _canvas :Sprite;
@@ -347,11 +355,12 @@ public class HoodViz extends Sprite
     protected var _friend :Building;
     protected var _group :Building;
 
-    protected var _groupLogo :Class;
     protected var _vacant :Class;
     protected var _roadNS :Class;
     protected var _roadEW :Class;
     protected var _road4Way :Class;
+    protected var _roadNSE :Class;
+    protected var _roadNSW :Class;
     protected var _roadHouse :Class;
     protected var _roadHouseEndW :Class;
     protected var _roadHouseEndE :Class;
