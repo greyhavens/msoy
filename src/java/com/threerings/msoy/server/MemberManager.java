@@ -9,8 +9,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import java.util.logging.Level;
 
@@ -22,6 +25,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
+import com.samskivert.util.IntTuple;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
@@ -29,7 +33,6 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.whirled.server.SceneManager;
 
 import com.threerings.crowd.server.PlaceManager;
 
@@ -44,7 +47,6 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.MemberName;
-import com.threerings.msoy.web.data.NeighborEntity;
 import com.threerings.msoy.web.data.NeighborMember;
 import com.threerings.msoy.web.data.NeighborGroup;
 import com.threerings.msoy.web.data.Neighborhood;
@@ -495,58 +497,44 @@ public class MemberManager
      */
     public void serializePopularPlaces (int n, ResultListener<String> listener)
     {
+        updatePPCache();
+
         try {
-            // see if cache is empty or outdated
-            if (System.currentTimeMillis() - _popularPlaceStamp > POPULAR_PLACES_CACHE_LIFE ||
-                _popularPlaceResult == null) {
-                JSONArray result = new JSONArray();
-                for (PopularPlace place : getPopularPlaces(n)) {
-                    JSONObject obj = new JSONObject();
-                    obj.put("name", place.name);
-                    obj.put("pop", place.population);
-                    if (place instanceof PopularGamePlace) {
-                        obj.put("gameId", ((PopularGamePlace) place).gameId);
+            JSONArray result = new JSONArray();
+            for (PopularPlace place : _topPlaces) {
+                JSONObject obj = new JSONObject();
+                obj.put("name", place.name);
+                obj.put("pop", place.population);
+                if (place instanceof PopularGamePlace) {
+                    obj.put("gameId", ((PopularGamePlace) place).gameId);
+                } else {
+                    obj.put("sceneId", ((PopularScenePlace) place).sceneId);
+                    if (place instanceof PopularMemberPlace) {
+                        obj.put("memberId", ((PopularMemberPlace) place).memberId);
                     } else {
-                        obj.put("sceneId", ((PopularScenePlace) place).sceneId);
+                        obj.put("groupId", ((PopularGroupPlace) place).groupId);
                     }
-                    result.put(obj);
                 }
-                _popularPlaceResult = result.toString();
-                _popularPlaceStamp = System.currentTimeMillis();
+                result.put(obj);
+                if (--n <= 0) {
+                    break;
+                }
             }
-            listener.requestCompleted(URLEncoder.encode(_popularPlaceResult, "UTF-8"));
+            listener.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
         } catch (Exception e) {
             listener.requestFailed(e);
         }
     }
 
     /**
-     * Find the n most popular rooms and games in the world at the moment.
+     * Returns a summary of the scenes belonging to the given owner.
      */
-    protected List<PopularPlace> getPopularPlaces (int n)
+    public PopularPlace getPopularPlace(int ownerType, int ownerId)
     {
-        List<PopularPlace> result = new ArrayList<PopularPlace>();
-        Iterator<?> i = MsoyServer.plreg.enumeratePlaceManagers();
-        while (i.hasNext()) {
-            PlaceManager plMgr = (PlaceManager) i.next();
-            int count = plMgr.getPlaceObject().occupantInfo.size();
-            if (plMgr instanceof RoomManager) { 
-                MsoyScene scene = (MsoyScene) ((RoomManager) plMgr).getScene();
-                result.add(new PopularScenePlace(scene.getName(), count, scene.getId()));
-            } else if (plMgr instanceof LobbyManager) {
-                LobbyConfig config = (LobbyConfig) plMgr.getConfig();
-                LobbyManager lMgr = (LobbyManager) plMgr;
-                result.add(new PopularScenePlace(config.game.name, count, lMgr.getGameId()));
-            }
-        }
-        Collections.sort(result, new Comparator<PopularPlace>() {
-            public int compare (PopularPlace o1, PopularPlace o2) {
-                return o1.population < o2.population ? -1 : o1.population == o2.population ? 0 : 1;
-            }
-        });
-        return result.subList(0, n < result.size() ? n : result.size());
+        updatePPCache();
+        return _scenesByOwner.get(new IntTuple(ownerType, ownerId));
     }
-    
+
     /**
      * Constructs and returns the serialization of a {@link Neighborhood} record
      * for a given member or group.
@@ -573,7 +561,6 @@ public class MemberManager
             getMemberNeighborhood(id, newListener);
         }
     }
-    
 
     /**
      * Constructs and returns a {@link Neighborhood} record for a given member.
@@ -621,12 +608,8 @@ public class MemberManager
 
             // after we finish, have main thread go through
             public void handleSuccess () {
-                // set online status for friends
-                for (NeighborMember friend : _result.neighborMembers) {
-                    friend.isOnline = MsoyServer.lookupMember(friend.member.getMemberId()) != null;
-                }
-                // and figure out population
-                populateNeighborhood(_result);
+                // set online status and figure out populations
+                finalizeNeighborhood(_result);
                 _listener.requestCompleted(_result);
             }
         });
@@ -669,37 +652,106 @@ public class MemberManager
             
             // after we finish, have main thread go through
             public void handleSuccess () {
-                // set online status for friends
-                for (NeighborMember friend : _result.neighborMembers) {
-                    friend.isOnline = MsoyServer.lookupMember(friend.member.getMemberId()) != null;
-                }
-                // and figure out population
-                populateNeighborhood(_result);
+                // set online status and figure out populations
+                finalizeNeighborhood(_result);
                 _listener.requestCompleted(_result);
             }
         });
     }
 
+
+    // iterate over all the lobbies and the scenes in the world at the moment, find out the
+    // n most populated ones and sort all scenes by owner. cache the values.
+    // TODO: this is currently O(N log N) in the number of rooms; if that is unrealistic
+    // in the long run, we can easily make it O(N) by just bubbling into the top 20 (whatever)
+    // rooms on the fly, as we enumerate the scene managers.
+    protected void updatePPCache ()
+    {
+        if (System.currentTimeMillis() - _popularPlaceStamp <= POPULAR_PLACES_CACHE_LIFE) {
+            return;
+        }
+        _scenesByOwner = new HashMap<IntTuple, PopularPlace>();
+        _topPlaces = new LinkedList<PopularPlace>();
+        Iterator<?> i = MsoyServer.plreg.enumeratePlaceManagers();
+        while (i.hasNext()) {
+            PlaceManager plMgr = (PlaceManager) i.next();
+            int count = plMgr.getPlaceObject().occupantInfo.size();
+            if (plMgr instanceof RoomManager) {
+                MsoyScene scene = (MsoyScene) ((RoomManager) plMgr).getScene();
+                MsoySceneModel model = (MsoySceneModel) scene.getSceneModel();
+                IntTuple owner = new IntTuple(model.ownerType, model.ownerId);
+                PopularScenePlace place = (PopularScenePlace) _scenesByOwner.get(owner);
+                if (place == null) {
+                    if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+                        place = new PopularGroupPlace();
+                        ((PopularGroupPlace) place).groupId = model.ownerId;
+                    } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
+                        place = new PopularMemberPlace();
+                        ((PopularMemberPlace) place).memberId = model.ownerId;
+                    } else {
+                        throw new IllegalArgumentException("unknown owner type: " + model.ownerType);
+                    }
+                    // make sure we immediately acquire a sceneId
+                    place.scenePop = -1;
+                    // and update the main data structures
+                    _scenesByOwner.put(owner, place);
+                    _topPlaces.add(place);
+                }
+                if (count > place.scenePop) {
+                    place.name = scene.getName();
+                    place.sceneId = scene.getId();
+                    place.scenePop = count;
+                }
+                place.population += count;
+            } else if (plMgr instanceof LobbyManager) {
+                PopularGamePlace place = new PopularGamePlace();
+                place.name = ((LobbyConfig) plMgr.getConfig()).game.name;
+                place.gameId = ((LobbyManager) plMgr).getGameId();
+                place.population = count;
+                _topPlaces.add(place);
+            }
+        }
+        Collections.sort(_topPlaces, new Comparator<PopularPlace>() {
+            public int compare (PopularPlace o1, PopularPlace o2) {
+                return o1.population < o2.population ? -1 : o1.population == o2.population ? 0 : 1;
+            }
+        });
+        _popularPlaceStamp = System.currentTimeMillis();
+    }
+
     // Figure out the population of the various rooms associated with a neighborhood;
     // a group's and a member's home scenes. This must be called on the dobj thread.
-    protected void populateNeighborhood (Neighborhood hood)
+    protected void finalizeNeighborhood (Neighborhood hood)
     {
-        populateNeighborEntity(hood.member);
-        populateNeighborEntity(hood.group);
+        updatePPCache();
+        if (hood.member != null) {
+            finalizeEntity(hood.member);
+        }
+        if (hood.group != null) {
+            finalizeEntity(hood.group);
+        }
         for (NeighborGroup group : hood.neighborGroups) {
-            populateNeighborEntity(group);
+            finalizeEntity(group);
         }
         for (NeighborMember friend : hood.neighborMembers) {
-            populateNeighborEntity(friend);
+            finalizeEntity(friend);
         }
     }
 
-    protected void populateNeighborEntity (NeighborEntity entity)
+    // set the population of a neighbour group
+    protected void finalizeEntity(NeighborGroup group)
     {
-        if (entity != null) {
-            SceneManager homeMgr = MsoyServer.screg.getSceneManager(entity.homeSceneId);
-            entity.poulation = homeMgr != null ? homeMgr.getPlaceObject().occupantInfo.size() : 0;
-        }
+        PopularPlace place = getPopularPlace(MsoySceneModel.OWNER_TYPE_GROUP, group.groupId);
+        group.population = place != null ? place.population : 0;
+    }
+
+    // set the population of a neighbour friend and figure out if it's online
+    protected void finalizeEntity(NeighborMember friend)
+    {
+        int memberId = friend.member.getMemberId();
+        PopularPlace place = getPopularPlace(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
+        friend.population = place != null ? place.population : 0;
+        friend.isOnline = MsoyServer.lookupMember(memberId) != null;
     }
 
     // convert a {@link NeighborFriendRecord} to a {@link NeighborMember}.
@@ -747,7 +799,7 @@ public class MemberManager
         obj.put("name", member.member.toString());
         obj.put("id", member.member.getMemberId());
         obj.put("isOnline", member.isOnline);
-        obj.put("pop", member.poulation);
+        obj.put("pop", member.population);
         // if this is just a member stub, skip the complicated bits
         if (member.created != null) {
             obj.put("created", member.created.getTime());
@@ -765,18 +817,20 @@ public class MemberManager
         obj.put("name", group.groupName);
         obj.put("id", group.groupId);
         obj.put("members", group.members);
-        obj.put("pop", group.poulation);
+        obj.put("pop", group.population);
         if (group.logo != null) {
             obj.put("logo", group.logo.toString());
         }
         return obj;
     }
 
-    /** The cached value of a Popular Place serialization query. */
-    protected String _popularPlaceResult;
-    /** The time when the cached value was last calculated. */
+    /** A mapping of ownerType/ownerId tuples to sets of scene ID's. Cached. */
+    protected Map<IntTuple, PopularPlace> _scenesByOwner;
+    /** A list of every place (lobby or scene) in the world, sorted by population. */
+    protected List<PopularPlace> _topPlaces;
+    /** The time when the cached values were last calculated. */
     protected long _popularPlaceStamp;
-    
+
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
 

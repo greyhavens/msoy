@@ -16,6 +16,6 @@ public class NeighborEntity
     public int homeSceneId;
 
     /** How many people are currently logged into this entity's home scene. */
-    public int poulation;
+    public int population;
     
 }
