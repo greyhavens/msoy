@@ -5,6 +5,8 @@ import flash.text.*;
 import flash.geom.*;
 import flash.events.*;
 import flash.net.*;
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
 import flash.ui.*;
 import flash.utils.*;
 import flash.external.ExternalInterface;
@@ -17,7 +19,6 @@ import com.threerings.msoy.hood.Neighborhood;
 import com.threerings.msoy.hood.NeighborGroup;
 import com.threerings.msoy.hood.NeighborMember;
 import com.adobe.serialization.json.JSONDecoder;
-import com.threerings.util.EmbeddedSwfLoader;
 
 [SWF(width="640", height="480")]
 public class HoodViz extends Sprite
@@ -32,37 +33,36 @@ public class HoodViz extends Sprite
         }
         _hood = Neighborhood.fromParameters(data);
 
-        _vizLoader = new URLLoader();
-        _vizLoader.addEventListener(Event.COMPLETE, vizDone);
-        _vizLoader.dataFormat = URLLoaderDataFormat.BINARY;
-        _vizLoader.load(new URLRequest(data.skinURL));
+        _loader = new Loader();
+        _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, eclDone);
+        var context :LoaderContext = new LoaderContext();
+        context.applicationDomain = ApplicationDomain.currentDomain;
+        _loader.load(new URLRequest(data.skinURL), context);
     }
-    
-    protected function vizDone (event :Event) :void
+
+    protected function getClass(name :String) :Class
     {
-        _vizSplitter = new EmbeddedSwfLoader();
-        _vizSplitter.addEventListener(Event.COMPLETE, eclDone);
-        _vizSplitter.load((event.target as URLLoader).data);
+        return getDefinitionByName(name) as Class;
     }
-    
+
     protected function eclDone(event :Event) :void
     {
-        var soy :Class = _vizSplitter.getClass("soy_master");
-
-        _friend = new Building(_vizSplitter.getClass("house_tile"), _vizSplitter.getClass("populate_house"), soy);
+        _friend = new Building(getClass("house_tile"), getClass("populate_house"), soy);
         this.stage.addChild(_friend);
-        _group = new Building(_vizSplitter.getClass("group_tile"), _vizSplitter.getClass("populate_group"), soy);
+        _group = new Building(getClass("group_tile"), getClass("populate_group"), soy);
         this.stage.addChild(_group);
 
-        _vacant = _vizSplitter.getClass("vacant_tile");
-        _roadHouse = _vizSplitter.getClass("road_house_tile");
-        _roadNS = _vizSplitter.getClass("road_ns_tile");
-        _roadEW = _vizSplitter.getClass("road_ew_tile");
-        _roadNSE = _vizSplitter.getClass("road_nse_tile");
-        _roadNSW = _vizSplitter.getClass("road_nsw_tile");
-        _road4Way = _vizSplitter.getClass("road_nsew_tile");
-        _roadHouseEndW = _vizSplitter.getClass("road_end_w_tile");
-        _roadHouseEndE = _vizSplitter.getClass("road_end_e_tile");
+        var soy :Class = getClass("soy_master");
+
+        _vacant = getClass("vacant_tile");
+        _roadHouse = getClass("road_house_tile");
+        _roadNS = getClass("road_ns_tile");
+        _roadEW = getClass("road_ew_tile");
+        _roadNSE = getClass("road_nse_tile");
+        _roadNSW = getClass("road_nsw_tile");
+        _road4Way = getClass("road_nsew_tile");
+        _roadHouseEndW = getClass("road_end_w_tile");
+        _roadHouseEndE = getClass("road_end_e_tile");
 
         _canvas = new Sprite();
         this.addChild(_canvas);
@@ -344,8 +344,7 @@ public class HoodViz extends Sprite
         }
     }
 
-    protected var _vizSplitter :EmbeddedSwfLoader;
-    protected var _vizLoader :URLLoader;
+    protected var _loader :Loader;
 
     protected var _tip :Sprite;
     protected var _hood :Neighborhood;
