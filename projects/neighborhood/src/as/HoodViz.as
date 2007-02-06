@@ -11,13 +11,13 @@ import flash.ui.*;
 import flash.utils.*;
 import flash.external.ExternalInterface;
 
-import mx.core.SoundAsset;
-
 import com.threerings.msoy.hood.Building;
 import com.threerings.msoy.hood.Neighbor;
 import com.threerings.msoy.hood.Neighborhood;
 import com.threerings.msoy.hood.NeighborGroup;
 import com.threerings.msoy.hood.NeighborMember;
+import com.threerings.util.NetUtil;
+
 import com.adobe.serialization.json.JSONDecoder;
 
 [SWF(width="640", height="480")]
@@ -164,8 +164,8 @@ public class HoodViz extends Sprite
             }
         }
 
-        var xScale :Number = 640 / (_bound.right - _bound.left);
-        var yScale :Number = 480 / (_bound.bottom - _bound.top);
+        var xScale :Number = 640 / Math.max(160, (_bound.right - _bound.left));
+        var yScale :Number = 480 / Math.max(120, (_bound.bottom - _bound.top));
         _canvas.x = -_bound.left * xScale;
         _canvas.y = -_bound.top * yScale;
         var scale :Number = Math.min(xScale, yScale);
@@ -275,7 +275,7 @@ public class HoodViz extends Sprite
             // clicking on a group takes us to that group's home scene
                 url += "g" + group.groupId;
         }
-        navigateToURL(new URLRequest(url), "_self");
+        NetUtil.navigateToURL(url);
     }
 
     protected function logoError (event :IOErrorEvent) :void
