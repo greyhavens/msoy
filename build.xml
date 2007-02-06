@@ -171,25 +171,9 @@
     <antcall target="gmsg"><param name="which" value="world.World"/></antcall>
   </target>
 
-  <property name="gclient.buildstamp" value="${deploy.dir}/tmp/gclient.buildstamp"/>
-  <target name="checkgclient">
-    <uptodate property="gclient_is_up_to_date" targetfile="${gclient.buildstamp}">
-      <srcfiles dir="src/gwt/public"/>
-      <srcfiles dir="src/gwt/client"/>
-      <srcfiles dir="pages/css"/>
-      <!-- <srcfiles dir="src/gwt/org/gwtwidgets/client"/> -->
-      <srcfiles dir="src/gwt/com/threerings/presents/dobj"/>
-      <srcfiles dir="src/java/com/threerings/io"/>
-      <srcfiles dir="src/java/com/threerings/msoy/web/client"/>
-      <srcfiles dir="src/java/com/threerings/msoy/web/data"/>
-      <srcfiles dir="src/java/com/threerings/msoy/item/web"/>
-    </uptodate>
-  </target>
-
   <!-- builds our GWT web client -->
   <property name="pages" value="admin,catalog,game,group,inventory,mail,profile,swiftly,world"/>
   <target name="gclient" depends="prepare">
-    <delete file="${gclient.buildstamp}"/>
     <for list="${pages}" param="page"><sequential>
       <echo>Compiling @{page} module...</echo>
       <delete dir="pages/@{page}"/>
@@ -237,7 +221,6 @@
         <isset property="has.errors"/>
       </or></condition></fail>
     </sequential></for>
-    <touch file="${gclient.buildstamp}"/>
   </target> 
 
   <!-- prepares to build our Flash client -->
