@@ -31,9 +31,6 @@
   <target name="compile" depends="lib">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-compiler.optimize"/>
-      <arg value="-compiler.library-path"/>
-      <arg value="${flex.path}/frameworks/libs"/>
-      <arg value="${root.path}/dist"/>
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=src/as"/>
