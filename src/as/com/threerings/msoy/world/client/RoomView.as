@@ -34,6 +34,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
+import com.threerings.crowd.chat.client.ChatDisplay;
+
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.whirled.spot.data.Location;
@@ -70,7 +72,7 @@ import com.threerings.msoy.world.data.SceneAttrsUpdate;
  */
 public class RoomView extends AbstractRoomView
     implements ContextMenuProvider, SetListener, MessageListener,
-               ChatInfoProvider, LoadingWatcher
+               ChatDisplay, ChatInfoProvider, LoadingWatcher
 {
     /** The chat overlay. */
     public var chatOverlay :ComicOverlay;
@@ -241,14 +243,35 @@ public class RoomView extends AbstractRoomView
         updateAllFurni();
     }
 
+    /**
+     * A convenience function to get our personal avatar.
+     */
     public function getMyAvatar () :AvatarSprite
     {
-        var oid :int = _ctx.getClient().getClientOid();
-        var avatar :AvatarSprite = (_actors.get(oid) as AvatarSprite);
-        if (avatar == null) {
-            avatar = (_pendingRemovals.get(oid) as AvatarSprite);
+        return (getActor(_ctx.getClient().getClientOid()) as AvatarSprite);
+    }
+
+    /**
+     * A convenience function to get the specified actor sprite, even if
+     * it's on the way out the door.
+     */
+    public function getActor (bodyOid :int) :ActorSprite
+    {
+        var actor :ActorSprite = (_actors.get(bodyOid) as ActorSprite);
+        if (actor == null) {
+            actor = (_pendingRemovals.get(bodyOid) as ActorSprite);
         }
-        return avatar;
+        return actor;
+    }
+
+    /**
+     * A convenience function to get the specified actor sprite, even if
+     * it's on the way out the door.
+     */
+    public function getActorByName (name :Name) :ActorSprite
+    {
+        var occInfo :OccupantInfo = _roomObj.getOccupantInfo(name);
+        return (occInfo == null) ? null : getActor(occInfo.bodyOid);
     }
 
     /**
@@ -328,14 +351,10 @@ public class RoomView extends AbstractRoomView
     // from ChatInfoProvider
     public function getSpeaker (speaker :Name) :Rectangle
     {
-        var occInfo :OccupantInfo = _roomObj.getOccupantInfo(speaker);
-        if (occInfo != null) {
-            var actor :ActorSprite =
-                (_actors.get(occInfo.bodyOid) as ActorSprite);
-            if (actor != null) {
-                // return the global screen coords
-                return actor.getStageRect();
-            }
+        var actor :ActorSprite = getActorByName(speaker);
+        if (actor != null) {
+            // return the global screen coords
+            return actor.getStageRect();
         }
         return null;
     }
@@ -349,8 +368,7 @@ public class RoomView extends AbstractRoomView
         // iterate over occupants
         var myOid :int = _ctx.getClient().getClientOid();
         for (var ii :int = _roomObj.occupants.size() - 1; ii >= 0; ii--) {
-            var actor :ActorSprite =
-                (_actors.get(_roomObj.occupants.get(ii)) as ActorSprite);
+            var actor :ActorSprite = getActor(_roomObj.occupants.get(ii));
             if (actor == null) {
                 continue;
             }
@@ -363,6 +381,28 @@ public class RoomView extends AbstractRoomView
                 low.push(actor.getStageRect());
             }
         }
+    }
+
+    // from ChatDisplay
+    public function clear () :void
+    {
+        // nada
+    }
+
+    // from ChatDisplay
+    public function displayMessage (
+        msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
+    {
+        if (msg is UserMessage) {
+            var umsg :UserMessage = (msg as UserMessage);
+            var avatar :AvatarSprite =
+                (getActorByName(umsg.getSpeakerDisplayName()) as AvatarSprite);
+            if (avatar != null) {
+                avatar.performAvatarSpoke();
+            }
+        }
+
+        return false; // we never display the messages ourselves
     }
 
     // from interface PlaceView
@@ -379,6 +419,8 @@ public class RoomView extends AbstractRoomView
         chatOverlay.setTarget(_ctx.getTopPanel().getPlaceContainer());
 
         addAllOccupants();
+
+        _ctx.getChatDirector().addChatDisplay(this);
 
         // and animate ourselves entering the room (everyone already in the (room will also have
         // seen it)
@@ -399,6 +441,8 @@ public class RoomView extends AbstractRoomView
         _roomObj.removeListener(this);
 
         chatOverlay.setTarget(null);
+
+        _ctx.getChatDirector().removeChatDisplay(this);
 
         shutdownMusic();
         removeAllOccupants();
@@ -710,7 +754,7 @@ public class RoomView extends AbstractRoomView
      */
     protected function performAvatarAction (bodyOid :int, action :String) :void
     {
-        var avatar :AvatarSprite = (_actors.get(bodyOid) as AvatarSprite);
+        var avatar :AvatarSprite = (getActor(bodyOid) as AvatarSprite);
         if (avatar != null) {
             avatar.performAvatarAction(action);
         }
@@ -770,3 +814,27 @@ public class RoomView extends AbstractRoomView
     protected static const LOADING_SPINNER :Class;
 }
 }
+
+//
+//import com.threerings.
+//
+//
+//class AvatarVentriloquist
+//    implements ChatDisplay
+//{
+//    public function AvatarVentriloquist (roomView :RoomView)
+//    {
+//        _view
+//    }
+//
+//    // from ChatDisplay
+//    public function clear () :void
+//    {
+//        // nada
+//    }
+//
+//    public function displayMessage (
+//        msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
+//    {
+//    }
+//}
