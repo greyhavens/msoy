@@ -39,9 +39,9 @@ public class ItemSearchSortPanel extends HorizontalPanel
         setStyleName("itemSearchPanel");
         _listener = listener;
 
-        TextBox searchBox = new TextBox();
-        searchBox.setStyleName("itemSearchBox");
-        searchBox.addChangeListener(new ChangeListener() {
+        _searchBox = new TextBox();
+        _searchBox.setStyleName("itemSearchBox");
+        _searchBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 TextBox box = (TextBox) widget;
                 search = box.getText();
@@ -52,8 +52,8 @@ public class ItemSearchSortPanel extends HorizontalPanel
                 _listener.search(ItemSearchSortPanel.this);
             }
         };
-        searchBox.addKeyboardListener(new EnterClickAdapter(clickListener));
-        add(searchBox);
+        _searchBox.addKeyboardListener(new EnterClickAdapter(clickListener));
+        add(_searchBox);
 
         Button searchButton = new Button(CItem.imsgs.searchSearch());
         searchButton.addClickListener(clickListener);
@@ -78,6 +78,16 @@ public class ItemSearchSortPanel extends HorizontalPanel
         add(sortBox);
     }
 
+    /**
+     * Clear the search box.
+     */
+    public void clearSearchBox ()
+    {
+        _searchBox.setText("");
+        search = "";
+    }
+    
+    protected TextBox _searchBox;
     protected Listener _listener;
 
 }

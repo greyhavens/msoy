@@ -45,6 +45,7 @@ public class FlashClients
     public static HTML createPopularPlaces (String hotspotData)
     {
         return WidgetUtil.createFlashContainer(
-            "hotspots","/media/static/HotSpots.swf", "100%", "550", "hotspots=" + hotspotData);
+            "hotspots","/media/static/HoodViz.swf", "100%", "550",
+            "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
     }
 }

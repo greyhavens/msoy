@@ -32,6 +32,14 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String detailBy(String arg0);
 
   /**
+   * Translated "Current tag:".
+   * 
+   * @return translated "Current tag:"
+   * @gwt.key currentTag
+   */
+  String currentTag();
+
+  /**
    * Translated "<no name>".
    * 
    * @return translated "<no name>"
@@ -48,12 +56,12 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String searchSortBy();
 
   /**
-   * Translated "Common tags: {0}".
+   * Translated "Common tags:".
    * 
-   * @return translated "Common tags: {0}"
+   * @return translated "Common tags:"
    * @gwt.key cloudCommonTags
    */
-  String cloudCommonTags(String arg0);
+  String cloudCommonTags();
 
   /**
    * Translated "No tags in use.".

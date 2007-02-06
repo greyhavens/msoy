@@ -9,6 +9,7 @@ import java.util.Map;
 import client.item.ItemSearchSortPanel;
 import client.item.ItemTypePanel;
 import client.item.TagCloud;
+import client.item.TagCloud.TagCloudListener;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -34,10 +35,11 @@ public class CatalogPanel extends VerticalPanel
         VerticalPanel uiBits = new VerticalPanel();
         _typeTabs = new ItemTypePanel(this);
         uiBits.add(_typeTabs);
-        uiBits.add(new ItemSearchSortPanel(this,
+        _searchSortPanel = new ItemSearchSortPanel(this,
             new String[] { CCatalog.msgs.sortByRating(), CCatalog.msgs.sortByListDate() },
             new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE },
-            0));
+            0);
+        uiBits.add(_searchSortPanel);
         _sortBy = CatalogListing.SORT_BY_RATING;
 
         topRow.add(uiBits);
@@ -70,6 +72,8 @@ public class CatalogPanel extends VerticalPanel
     public void search (ItemSearchSortPanel panel)
     {
         _search = panel.search;
+        _tag = null;
+        getTagCloud(false).setCurrentTag(null);
         getItemPanel(true);
     }
 
@@ -85,25 +89,40 @@ public class CatalogPanel extends VerticalPanel
         Byte tabKey = new Byte(_tabIndex);
         ItemPanel panel = ignoreCache ? null : (ItemPanel) _itemPanes.get(tabKey);
         if (panel == null) {
-            _itemPanes.put(tabKey, panel = new ItemPanel(_tabIndex, _sortBy, _search));
+            _itemPanes.put(tabKey, panel = new ItemPanel(_tabIndex, _sortBy, _search, _tag));
         }
         _itemPaneContainer.setWidget(panel);
     }
 
-    protected void getTagCloud (boolean ignoreCache)
+    protected TagCloud getTagCloud (boolean ignoreCache)
     {
         Byte tabKey = new Byte(_tabIndex);
         TagCloud cloud = ignoreCache ? null : (TagCloud) _tagClouds.get(tabKey);
         if (cloud == null) {
-            _tagClouds.put(tabKey, cloud = new TagCloud(_tabIndex));
+            final TagCloud newCloud = new TagCloud(_tabIndex);
+            TagCloudListener tagListener = new TagCloudListener() {
+                public void tagClicked (String tag) {
+                    _search = "";
+                    _searchSortPanel.clearSearchBox();
+                    _tag = tag;
+                    newCloud.setCurrentTag(tag);
+                    getItemPanel(true);
+                }
+            };
+            newCloud.setListener(tagListener);
+            _tagClouds.put(tabKey, newCloud);
+            cloud = newCloud;
         }
         _tagCloudContainer.setWidget(cloud);
+        return cloud;
     }
 
     protected byte _sortBy;
     protected String _search;
+    protected String _tag;
     protected byte _tabIndex;
     protected ItemTypePanel _typeTabs;
+    protected ItemSearchSortPanel _searchSortPanel;
     protected Map _itemPanes = new HashMap();
     protected Map _tagClouds = new HashMap();
     protected SimplePanel _itemPaneContainer;
