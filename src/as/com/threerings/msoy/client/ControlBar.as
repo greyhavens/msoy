@@ -99,7 +99,6 @@ public class ControlBar extends Canvas
 
             // set up buttons
             var petsBtn :CommandButton = new CommandButton();
-            petsBtn.styleName = BUTTON_STYLE;
             petsBtn.setCommand(MsoyController.SHOW_PETS);
 
             petsBtn.x = 546;
@@ -110,7 +109,6 @@ public class ControlBar extends Canvas
             addChild(petsBtn);
 
             var friendsBtn :CommandButton = new CommandButton();
-            friendsBtn.styleName = BUTTON_STYLE;
             friendsBtn.setCommand(MsoyController.SHOW_FRIENDS);
             friendsBtn.toggle = true;
 
@@ -124,7 +122,6 @@ public class ControlBar extends Canvas
 
             // a second friends button, for now
             friendsBtn = new CommandButton();
-            friendsBtn.styleName = BUTTON_STYLE;
             friendsBtn.setCommand(MsoyController.POP_FRIENDS_MENU, friendsBtn);
 
             friendsBtn.x = 585 + 19;
@@ -135,7 +132,6 @@ public class ControlBar extends Canvas
             addChild(friendsBtn);
 
             var scenesBtn :CommandButton = new CommandButton();
-            scenesBtn.styleName = BUTTON_STYLE;
             scenesBtn.setCommand(MsoyController.POP_ROOMS_MENU, scenesBtn);
 
             scenesBtn.x = 624
@@ -147,7 +143,6 @@ public class ControlBar extends Canvas
 
             // settings, prefs, whatever we want to call them
             var prefsBtn :CommandButton = new CommandButton();
-            prefsBtn.styleName = BUTTON_STYLE;
             prefsBtn.setCommand(MsoyController.POP_PREFS_MENU, prefsBtn);
             prefsBtn.x = 753;
             prefsBtn.y = 0;
@@ -173,8 +168,5 @@ public class ControlBar extends Canvas
 
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
-
-    /** The style class used by buttons appearing on this bar. */
-    protected static const BUTTON_STYLE :String = "controlBarButtons";
 }
 }

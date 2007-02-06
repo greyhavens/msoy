@@ -1,13 +1,3 @@
-.chatBubble {
-    color: #000000;
-    font-size: 12;
-    font-family: "Arial";
-    top: 7;
-    left: 7;
-    bottom: 7;
-    right: 7;
-}
-
 .chatInput {
     themeColor: #FF00A0;
 }
@@ -18,18 +8,6 @@
     fontWeight: "bold";
     fillAlphas: 1, 1;
     fillColors: #E6EEEE, #FFFFFF;
-}
-
-.TODOchatTargetButton
-{
-    upSkin: ClassReference("mx.core.SpriteAsset");
-    downSkin: ClassReference("mx.core.SpriteAsset");
-    overSkin: ClassReference("mx.core.SpriteAsset");
-    disabledSkin: ClassReference("mx.core.SpriteAsset");
-    selectedUpSkin: ClassReference("mx.core.SpriteAsset");
-    selectedDownSkin: ClassReference("mx.core.SpriteAsset");
-    selectedOverSkin: ClassReference("mx.core.SpriteAsset");
-    selectedDisabledSkin: ClassReference("mx.core.SpriteAsset");
 }
 
 Application {
