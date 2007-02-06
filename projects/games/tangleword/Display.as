@@ -106,15 +106,6 @@ public class Display extends Sprite
     */
     private function highlightLetter (location : Point) : void
     {
-        if (location != null)
-        {
-            Assert.Fail ("Highlighting letter: " + location.toString());
-        }
-        else
-        {
-            Assert.Fail ("Highlight RESET!");
-        }
-        
         var l : Letter = null;
         
         if (location != null &&

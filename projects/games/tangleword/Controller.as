@@ -23,15 +23,16 @@ public class Controller
     }
 
 
-    /** Randomizes the game board */
-    public function randomizeGameBoard () : void
+
+    /** Takes a new letter from the UI, and checks it against game logic. */
+    public function selectLetter (position : Point, name : String) : void
     {
-        // Retrieve a bag of random letters
-        var s : Array = DictionaryService.getLetterSet (LocaleSettings.EN_US,
-                                                          Properties.LETTER_COUNT);
-        Assert.True (s.length == Properties.LETTER_COUNT,
-                     "DictionaryService returned an invalid letter set.");
         
+    }
+
+    /** Randomizes the game board, based on a flat array of letters. */
+    public function setGameBoard (s : Array) : void
+    {
         // Copy them over to the data set
         for (var x : int = 0; x < Properties.LETTERS; x++)
         {
@@ -40,12 +41,6 @@ public class Controller
                 _model.updateBoardLetter (new Point (x, y), s [x * Properties.LETTERS + y]);
             }
         }
-    }
-
-    /** Takes a new letter from the UI, and checks it against game logic. */
-    public function selectLetter (position : Point, name : String) : void
-    {
-        
     }
 
     

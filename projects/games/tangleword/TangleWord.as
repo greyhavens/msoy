@@ -21,7 +21,7 @@ import com.threerings.ezgame.StateChangedListener;
 
 [SWF(width="500", height="500")]
 public class TangleWord extends Sprite
-    implements PropertyChangedListener, StateChangedListener
+    implements PropertyChangedListener, StateChangedListener, MessageReceivedListener
 {
 
     // Constructor creates the board, and registers itself for events
@@ -41,9 +41,6 @@ public class TangleWord extends Sprite
         _controller.setModel (_model);       // ... as in, right here :)
         addChild (_display);
 
-        // for testing only - TODO: move out to synchronized section
-        _controller.randomizeGameBoard ();
-        
         // TODO: DEBUG
         _gameCtrl.localChat (_coordinator.amITheHost () ?
                              "I AM THE HOST! :)" :
@@ -63,6 +60,11 @@ public class TangleWord extends Sprite
         {
         case StateChangedEvent.GAME_STARTED:
             _gameCtrl.localChat ("Starting up!");
+            if (_coordinator.amITheHost ())
+            {
+                distributeNewLetters ();
+            }
+
             break;
 
         case StateChangedEvent.GAME_ENDED:
@@ -75,13 +77,51 @@ public class TangleWord extends Sprite
     /** From PropertyChangedListener: deal with distributed game data changes */
     public function propertyChanged (event : PropertyChangedEvent) : void
     {
-        /* TODO */
+        // What kind of a message did we get?
         Assert.Fail ("PropertyChanged");
+
+        switch (event.name)
+        {
+        case SHARED_LETTER_SET:
+            Assert.True (event.newValue is Array, "Received invalid Shared Letter Set!");
+            var s : Array = event.newValue as Array;
+            if (s != null)
+            {
+                _controller.setGameBoard (s);
+            }
+
+            break;
+
+        default:
+            Assert.Fail ("Unknown property changed: " + event.name);
+        }
+        
+    }
+
+    /** From MessageReceivedListener: deal with out-of-band messages */
+    public function messageReceived (event : MessageReceivedEvent) : void
+    {
+        /* TODO */
+        Assert.Fail ("MessageReceived");
     }
 
 
     // PRIVATE FUNCTIONS
 
+    /** Calls the dictionary service to retrieve a new bag of letters,
+        and distributes them among all peers.
+    */
+    private function distributeNewLetters () : void
+    {
+        // Get a set of letters
+        var s : Array = DictionaryService.getLetterSet (LocaleSettings.EN_US,
+                                                        Properties.LETTER_COUNT);
+        Assert.True (s.length == Properties.LETTER_COUNT,
+                     "DictionaryService returned an invalid letter set.");
+
+        // Now pass it around via the distributed object
+        _gameCtrl.set (SHARED_LETTER_SET, s);
+    }
     
 
 
@@ -101,6 +141,12 @@ public class TangleWord extends Sprite
 
     /** Data validation */
     private var _controller : Controller;
+
+
+    // PRIVATE CONSTANTS
+
+    /** Key name: shared letter set */
+    private static const SHARED_LETTER_SET : String = "Shared Letter Set";
 }
     
     
