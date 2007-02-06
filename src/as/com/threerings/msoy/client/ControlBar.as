@@ -106,6 +106,7 @@ public class ControlBar extends Canvas
             petsBtn.y = 0;
             petsBtn.width = 38;
             petsBtn.height = HEIGHT;
+            petsBtn.alpha = .5;
             addChild(petsBtn);
 
             var friendsBtn :CommandButton = new CommandButton();
@@ -118,6 +119,7 @@ public class ControlBar extends Canvas
             friendsBtn.y = 0;
             friendsBtn.width = 19;
             friendsBtn.height = HEIGHT;
+            friendsBtn.alpha = .5;
             addChild(friendsBtn);
 
             // a second friends button, for now
@@ -129,6 +131,7 @@ public class ControlBar extends Canvas
             friendsBtn.y = 0;
             friendsBtn.width = 19;
             friendsBtn.height = HEIGHT;
+            friendsBtn.alpha = .5;
             addChild(friendsBtn);
 
             var scenesBtn :CommandButton = new CommandButton();
@@ -139,6 +142,7 @@ public class ControlBar extends Canvas
             scenesBtn.y = 0;
             scenesBtn.width = 38;
             scenesBtn.height = HEIGHT;
+            scenesBtn.alpha = .5;
             addChild(scenesBtn);
 
             // settings, prefs, whatever we want to call them
@@ -149,6 +153,7 @@ public class ControlBar extends Canvas
             prefsBtn.y = 0;
             prefsBtn.width = 47;
             prefsBtn.height = HEIGHT;
+            prefsBtn.alpha = .5;
             addChild(prefsBtn);
 
         } else {
