@@ -43,6 +43,13 @@ public class Model
         _display.setText (position, text);
     }
 
+    /** Updates the scoreboard. Unfortunately it's a little heavy-handed,
+        replacing the entire board data structure. This needs revisiting. :) */
+    public function updateScoreboard (scores : Object) : void
+    {
+        _scoreboard.internalScoreObject = scores;
+    }
+
 
 
     // PRIVATE METHODS
@@ -71,8 +78,8 @@ public class Model
         // Second, the currently assembled word
         resetWord ();
 
-        // Third, list of players, which is just an associative array on an object
-        _players = new Object ();
+        // Third, make a new scoreboard
+        _scoreboard = new Scoreboard ();
     }
 
 
@@ -94,7 +101,7 @@ public class Model
     private var _display : Display;
 
     /** List of players and their scores */
-    private var _players : Object;
+    private var _scoreboard : Scoreboard;
 
         
 }

@@ -62,7 +62,8 @@ public class TangleWord extends Sprite
             _gameCtrl.localChat ("Starting up!");
             if (_coordinator.amITheHost ())
             {
-                distributeNewLetters ();
+                initializeScoreboard ();
+                initializeLetters ();
             }
 
             break;
@@ -78,11 +79,12 @@ public class TangleWord extends Sprite
     public function propertyChanged (event : PropertyChangedEvent) : void
     {
         // What kind of a message did we get?
-        Assert.Fail ("PropertyChanged");
-
         switch (event.name)
         {
         case SHARED_LETTER_SET:
+
+            // We recieved a notification of a new shared letter set -
+            // let's update the board
             Assert.True (event.newValue is Array, "Received invalid Shared Letter Set!");
             var s : Array = event.newValue as Array;
             if (s != null)
@@ -91,6 +93,19 @@ public class TangleWord extends Sprite
             }
 
             break;
+
+        case SHARED_SCOREBOARD:
+
+            // The scoreboard changed - let's change the pointer to remember
+            // the new one instead.
+            if (event.newValue != null)
+            {
+                _gameCtrl.localChat ("Got new score values...");
+                _model.updateScoreboard (event.newValue);
+            }
+
+            break;
+            
 
         default:
             Assert.Fail ("Unknown property changed: " + event.name);
@@ -111,7 +126,7 @@ public class TangleWord extends Sprite
     /** Calls the dictionary service to retrieve a new bag of letters,
         and distributes them among all peers.
     */
-    private function distributeNewLetters () : void
+    private function initializeLetters () : void
     {
         // Get a set of letters
         var s : Array = DictionaryService.getLetterSet (LocaleSettings.EN_US,
@@ -122,6 +137,22 @@ public class TangleWord extends Sprite
         // Now pass it around via the distributed object
         _gameCtrl.set (SHARED_LETTER_SET, s);
     }
+
+    /** Creates a new distributed scoreboard */
+    private function initializeScoreboard () : void
+    {
+        // Create a new instance, and fill in the names
+        var board : Scoreboard = new Scoreboard ();
+        var names : Array = _gameCtrl.getPlayerNames ();
+        for (var name : String in names)
+        {
+            board.addPlayer (name);
+        }
+
+        // Finally, share it!
+        _gameCtrl.set (SHARED_SCOREBOARD, board.internalScoreObject);
+    }
+        
     
 
 
@@ -147,6 +178,9 @@ public class TangleWord extends Sprite
 
     /** Key name: shared letter set */
     private static const SHARED_LETTER_SET : String = "Shared Letter Set";
+
+    /** Key name: shared scoreboard */
+    private static const SHARED_SCOREBOARD : String = "Shared Scoreboard";
 }
     
     
