@@ -1,7 +1,9 @@
 //
 // $Id$
 
-package client.item;
+package client.util;
+
+import client.shell.CShell;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,10 +36,28 @@ import com.threerings.msoy.item.web.TagHistory;
  */
 public class TagDetailPanel extends FlexTable
 {
-    public TagDetailPanel (Item item)
+    /** Interface to the interaction between this panel and the service handling tagging/flagging
+     * in the background */
+    public interface TagService 
+    {
+        public void tag (String tag, AsyncCallback callback);
+        public void untag (String tag, AsyncCallback callback);
+        public void getRecentTags (AsyncCallback callback);
+        public void getTags (AsyncCallback callback);
+        public boolean supportFlags ();
+        /** 
+         * In this case, the implementor is responsible for editing the flags on the local
+         * object that is being flagged, and is therefore responsible for providing the callback.
+         * 
+         * @param flag the flag to send to the server and set on the local object on success
+         * @param statusLabel A label to set with an error message on failure
+         */
+        public void setFlags (byte flag, Label statusLabel);
+
+    public TagDetailPanel (TagService service)
     {
         setStyleName("tagDetailPanel");
-        _item = item;
+        _service = service;
 
         setWidget(0, 0, _tags = new Label("Loading..."));
 
@@ -63,8 +83,7 @@ public class TagDetailPanel extends FlexTable
                     _status.setText("Invalid tag: use letters, numbers, and underscore.");
                     return;
                 }
-                CItem.itemsvc.tagItem(
-                    CItem.creds, _item.getIdent(), tagName, true, new AsyncCallback() {
+                _service.tag(tagName, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         refreshTags();
                     }
@@ -84,8 +103,7 @@ public class TagDetailPanel extends FlexTable
             public void onChange (Widget sender) {
                 ListBox box = (ListBox) sender;
                 String value = box.getValue(box.getSelectedIndex());
-                CItem.itemsvc.tagItem(
-                    CItem.creds, _item.getIdent(), value, true, new AsyncCallback() {
+                _service.tag(value, new AsyncCallback() {
                     public void onSuccess (Object result) {
                         refreshTags();
                     }
@@ -98,26 +116,29 @@ public class TagDetailPanel extends FlexTable
         });
         setWidget(1, 3, _quickTags);
 
-        final PopupPanel menuPanel = new PopupPanel(true);
-        MenuBar menu = new MenuBar(true);
-        menu.addItem(getMenuItem("Mature", Item.FLAG_FLAGGED_MATURE, menuPanel));
-        menu.addItem(getMenuItem("Copyright Violation", Item.FLAG_FLAGGED_COPYRIGHT, menuPanel));
-        menuPanel.add(menu);
-        final InlineLabel flagLabel = new InlineLabel("Flag");
-        flagLabel.addStyleName("LabelLink");
-        // use a MouseListener instead of ClickListener so we can get at the mouse (x,y)
-        flagLabel.addMouseListener(new MouseListener() {
-            public void onMouseDown (Widget sender, int x, int y) { 
-                menuPanel.setPopupPosition(flagLabel.getAbsoluteLeft() + x, 
-                        flagLabel.getAbsoluteTop() + y);
-                menuPanel.show();
-            }
-            public void onMouseLeave (Widget sender) { }
-            public void onMouseUp (Widget sender, int x, int y) { }
-            public void onMouseEnter (Widget sender) { }
-            public void onMouseMove (Widget sender, int x, int y) { }
-        });
-        setWidget(1, 4, flagLabel);
+        if (_service.supportFlags()) {
+            final PopupPanel menuPanel = new PopupPanel(true);
+            MenuBar menu = new MenuBar(true);
+            menu.addItem(getMenuItem("Mature", Item.FLAG_FLAGGED_MATURE, menuPanel));
+            menu.addItem(getMenuItem("Copyright Violation", Item.FLAG_FLAGGED_COPYRIGHT, 
+                menuPanel));
+            menuPanel.add(menu);
+            final InlineLabel flagLabel = new InlineLabel("Flag");
+            flagLabel.addStyleName("LabelLink");
+            // use a MouseListener instead of ClickListener so we can get at the mouse (x,y)
+            flagLabel.addMouseListener(new MouseListener() {
+                public void onMouseDown (Widget sender, int x, int y) { 
+                    menuPanel.setPopupPosition(flagLabel.getAbsoluteLeft() + x, 
+                            flagLabel.getAbsoluteTop() + y);
+                    menuPanel.show();
+                }
+                public void onMouseLeave (Widget sender) { }
+                public void onMouseUp (Widget sender, int x, int y) { }
+                public void onMouseEnter (Widget sender) { }
+                public void onMouseMove (Widget sender, int x, int y) { }
+            });
+            setWidget(1, 4, flagLabel);
+        }
 
         setWidget(2, 0, _status = new Label(""));
 
@@ -152,21 +173,13 @@ public class TagDetailPanel extends FlexTable
 
     protected void updateItemFlags (final byte flag)
     {
-        CItem.itemsvc.setFlags(CItem.creds, _item.getIdent(), flag, flag, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                _item.flags |= flag;
-            }
-            public void onFailure (Throwable caught) {
-                CItem.log("Failed to update item flags [item=" + _item.getIdent() +
-                          ", flag=" + flag + "]", caught);
-                _status.setText("Internal error setting flag: " + caught.getMessage());
-            }
-        });
-
+        _service.setFlags(flag, _status);
     }
     
     protected void toggleTagHistory ()
     {
+        // TODO: if this is used again, it will need to be abstracted like everything else in this
+        // class
 //         if (_tagHistory != null) {
 //             if (_content.getWidgetDirection(_tagHistory) == null) {
 //                 _content.add(_tagHistory, DockPanel.EAST);
@@ -224,14 +237,14 @@ public class TagDetailPanel extends FlexTable
 
     protected void refreshTags ()
     {
-        if (CItem.creds != null) {
-            CItem.itemsvc.getRecentTags(CItem.creds, new AsyncCallback() {
+        if (CShell.creds != null) {
+            _service.getRecentTags(new AsyncCallback() {
                 public void onSuccess (Object result) {
                     _quickTags.clear();
                     Iterator i = ((Collection) result).iterator();
                     while (i.hasNext()) {
                         TagHistory history = (TagHistory) i.next();
-                        if (history.member.getMemberId() == CItem.getMemberId()) {
+                        if (history.member.getMemberId() == CShell.getMemberId()) {
                             if (history.tag != null) {
                                 _quickTags.addItem(history.tag);
                             }
@@ -246,7 +259,7 @@ public class TagDetailPanel extends FlexTable
             });
         }
 
-        CItem.itemsvc.getTags(CItem.creds, _item.getIdent(), new AsyncCallback() {
+        _service.getTags(new AsyncCallback() {
             public void onSuccess (Object result) {
                 boolean first = true;
                 Iterator i = ((Collection) result).iterator();
@@ -267,7 +280,7 @@ public class TagDetailPanel extends FlexTable
         });
     }
 
-    protected Item _item;
+    protected TagService _service;
 
     protected Label _tags, _status;
     protected ListBox _quickTags;

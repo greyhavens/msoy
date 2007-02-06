@@ -48,7 +48,40 @@ public class BaseItemDetailPopup extends BorderedDialog
         createInterface(_details, _controls);
 
         // add our tag business at the bottom
-        _footer.add(new TagDetailPanel(item));
+        _footer.add(new TagDetailPanel(new TagDetailPanel.TagService () {
+            public void tag (String tag, AsyncCallback callback) {
+                CItem.itemsvc.tagItem(CItem.creds, _item.getIdent(), tag, true, callback);
+            } 
+            public void untag (String tag, AsyncCallback callback) {
+                CItem.itemsvc.tagItem(CItem.creds, _item.getIdent(), tag, false, callback);
+            }
+            public void getRecentTags (AsyncCallback callback) {
+                CItem.itemsvc.getRecentTags(CItem.creds, callback);
+            }
+            public void getTags (AsyncCallback callback) {
+                CItem.itemsvc.getTags(CItem.creds, _item.getIdent(), callback);
+            }
+            public boolean supportFlags () {
+                return true;
+            }
+            public void setFlags (byte flag, Label statusLabel) {
+                CItem.itemsvc.setFlags(CItem.creds, _item.getIdent(), flag, flag, 
+                    new AsyncCallback () {
+                        public void onSuccess (Object result) {
+                            _item.flags |= flag;
+                        }
+                        public void onFailure (Throwable caught) {
+                            CShell.log("Failed to update item flags [item=" + _item.getIdent() +
+                                ", flag=" + flag + "]", caught);
+                            if (statusLabel != null) {
+                                statusLabel.setText("Internal error setting flag: " + 
+                                    caught.getMessage());
+                            }
+                        }
+                    }
+                );
+            }
+        }));
 
         // load up the item details
         CItem.itemsvc.loadItemDetail(CItem.creds, _item.getIdent(), new AsyncCallback() {
