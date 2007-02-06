@@ -500,26 +500,31 @@ public class MemberManager
         updatePPCache();
 
         try {
-            JSONArray result = new JSONArray();
+            JSONArray friends = new JSONArray();
+            JSONArray groups = new JSONArray();
             for (PopularPlace place : _topPlaces) {
+                if (place instanceof PopularGamePlace) {
+                    // TODO: soon
+                    continue;
+                }
                 JSONObject obj = new JSONObject();
                 obj.put("name", place.name);
                 obj.put("pop", place.population);
-                if (place instanceof PopularGamePlace) {
-                    obj.put("gameId", ((PopularGamePlace) place).gameId);
+                obj.put("sceneId", ((PopularScenePlace) place).sceneId);
+                if (place instanceof PopularMemberPlace) {
+                    obj.put("id", ((PopularMemberPlace) place).memberId);
+                    friends.put(obj);
                 } else {
-                    obj.put("sceneId", ((PopularScenePlace) place).sceneId);
-                    if (place instanceof PopularMemberPlace) {
-                        obj.put("memberId", ((PopularMemberPlace) place).memberId);
-                    } else {
-                        obj.put("groupId", ((PopularGroupPlace) place).groupId);
-                    }
+                    obj.put("id", ((PopularGroupPlace) place).groupId);
+                    groups.put(obj);
                 }
-                result.put(obj);
                 if (--n <= 0) {
                     break;
                 }
             }
+            JSONObject result = new JSONObject();
+            result.put("friends", friends);
+            result.put("groups", groups);
             listener.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
         } catch (Exception e) {
             listener.requestFailed(e);
@@ -791,7 +796,7 @@ public class MemberManager
         obj.put("groups", jArr);
         return obj;
     }
-    
+
     protected JSONObject toJSON (NeighborMember member)
         throws JSONException
     {
