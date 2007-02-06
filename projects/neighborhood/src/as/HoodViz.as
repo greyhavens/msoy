@@ -47,12 +47,12 @@ public class HoodViz extends Sprite
 
     protected function eclDone(event :Event) :void
     {
+        var soy :Class = getClass("soy_master");
+
         _friend = new Building(getClass("house_tile"), getClass("populate_house"), soy);
         this.stage.addChild(_friend);
         _group = new Building(getClass("group_tile"), getClass("populate_group"), soy);
         this.stage.addChild(_group);
-
-        var soy :Class = getClass("soy_master");
 
         _vacant = getClass("vacant_tile");
         _roadHouse = getClass("road_house_tile");
