@@ -25,9 +25,36 @@ public class Controller
 
 
     /** Takes a new letter from the UI, and checks it against game logic. */
-    public function selectLetter (position : Point, name : String) : void
+    public function tryAddLetter (position : Point) : void
     {
-        
+        // Position of the letter on top of the stack 
+        var lastLetterPosition : Point = _model.getLastLetterPosition ();
+
+        // Did the player click on the first letter? If so, just add it.
+        var noPreviousLetterFound : Boolean = (lastLetterPosition == null);
+        if (noPreviousLetterFound)
+        {
+            _model.selectLetterAtPosition (position);
+            return;
+        }
+
+        // Did the player click on the last letter they added? If so, remove it.
+        if (position.equals (lastLetterPosition))
+        {
+            _model.removeLastSelectedLetter ();
+            return;
+        }
+
+        // Did the player click on an empty letter next to the last selected one?
+        var isValidNeighbor : Boolean = (areNeighbors (position, lastLetterPosition) &&
+                                   ! _model.isLetterSelectedAtPosition (position));
+        if (isValidNeighbor)
+        {
+            _model.selectLetterAtPosition (position);
+            return;
+        }
+
+        // Don't do anything
     }
 
     /** Randomizes the game board, based on a flat array of letters. */
@@ -43,6 +70,18 @@ public class Controller
         }
     }
 
+
+    // PRIVATE METHODS
+
+    /** Determines whether the given /position/ is a neighbor of specified /original/
+        position (defined as being one square away from each other). */
+    private function areNeighbors (position : Point, origin : Point) : Boolean
+    {
+        return (! position.equals (origin) &&
+                Math.abs (position.x - origin.x) <= 1 &&
+                Math.abs (position.y - origin.y) <= 1);
+    }
+    
     
     // PRIVATE VARIABLES
 

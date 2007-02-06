@@ -24,9 +24,16 @@ public class Properties
     public static const BOARD : Rectangle = new Rectangle (50, 50, 250, 250);
 
     /**
-       Dimensions of a text box that displays currently selected word.
+       Position of a text box that displays currently selected word.
     */
-    public static const WORDBOX : Rectangle = new Rectangle (350, 250, 100, 50);
+    public static const WORDFIELD : Rectangle = new Rectangle (50, 310, 190, 28);
+
+    /**
+       Position of the OK button
+    */
+    public static const OKBUTTON : Rectangle = new Rectangle (250, 310, 50, 28);
+
+    
     
     
     /** Each letter is a simple square - but we want to know how big to draw them.

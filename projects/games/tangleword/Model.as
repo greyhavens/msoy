@@ -35,12 +35,58 @@ public class Model
         initializeStorage ();
     }
 
+
+    // LETTER ACCESSORS
+    
+    /** If this board letter is already selected as part of the word, returns true.  */
+    public function isLetterSelectedAtPosition (position : Point) : Boolean
+    {
+        var pointMatches : Function =
+            function (item : Point, index : int, array : Array) : Boolean
+            {
+                return (item.equals (position));
+            };
+
+        return _word.some (pointMatches);
+    }
+
+    /** Returns coordinates of the most recently added word, or null. */
+    public function getLastLetterPosition () : Point
+    {
+        if (_word.length > 0)
+        {
+            return _word[_word.length - 1] as Point;
+        }
+
+        return null;
+    }
+
+    /** Adds a new letter to the word (by adding a pair of coordinates) */
+    public function selectLetterAtPosition (position : Point) : void
+    {
+        _word.push (position);
+        _display.updateLetterSelection (_word);
+    }
+
+    /** Removes last selected letter from the word (if applicable) */
+    public function removeLastSelectedLetter () : void
+    {
+        if (_word.length > 0)
+        {
+            _word.pop ();
+            _display.updateLetterSelection (_word);
+        }
+    }
+
+    
+                
+
     /** Updates a single letter at specified /position/ to display a new /text/.  */
     public function updateBoardLetter (position : Point, text : String) : void
     {
         Assert.NotNull (_board, "Board needs to be initialized first.");
         _board[position.x][position.y] = text;
-        _display.setText (position, text);
+        _display.setLetter (position, text);
     }
 
     /** Updates the scoreboard. Unfortunately it's a little heavy-handed,
@@ -94,7 +140,7 @@ public class Model
     /** Game board data */
     private var _board : Array;
 
-    /** Current word data (as array of letters) */
+    /** Current word data (as array of board coordinates) */
     private var _word : Array;
     
     /** Game board view */

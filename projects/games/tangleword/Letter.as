@@ -83,6 +83,17 @@ public class Letter extends Sprite
         }
     }
 
+    /** Sets the letter's selection value */
+    public function setSelection (value : Boolean) : void
+    {
+        var filters : Array = new Array ();
+        if (value)
+        {
+            filters.push (_selectedFilter);
+        }
+        _label.filters = filters;
+    }
+
 
     // PRIVATE HELPER FUNCTIONS
 
@@ -103,6 +114,7 @@ public class Letter extends Sprite
     private function makeFilters () : void
     {
         _cursorFilter = Resources.makeCursorFilter ();
+        _selectedFilter = Resources.makeSelectedFilter ();
     }
         
     
@@ -128,7 +140,7 @@ public class Letter extends Sprite
     private var _cursorFilter : GlowFilter;
 
     /** Letter filter */
-    private var _letterFilter : GlowFilter;
+    private var _selectedFilter : GlowFilter;
 
 }
 

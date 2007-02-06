@@ -2,11 +2,15 @@ package
 {
 
 import flash.display.Sprite;    
+import flash.display.SimpleButton;
 import flash.display.Graphics;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.text.TextField;
+import flash.text.TextFormat;
 import mx.core.BitmapAsset;
+
 
 
 /** The Display class represents the game visualization, including UI
@@ -31,22 +35,64 @@ public class Display extends Sprite
         // Initialize empty letters
         initializeLetters ();
 
+        // Initialize UI elements for selection
+        initializeUI ();
+
         // Register for events
         addEventListener (MouseEvent.CLICK, clickHandler);
         addEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
-        // addEventListener (Event.ENTER_FRAME, frameHandler);
-        
     }
 
     /** Called from the model, this accessor modifies the display /text/
         for one letter at specified board /position/. */
-    public function setText (position : Point, text : String) : void
+    public function setLetter (position : Point, text : String) : void
     {
         Assert.True (isValidBoardPosition (position),
                      "Bad position received in Display:setText");
         _letters[position.x][position.y].setText (text);
     }
 
+    /** Retrieves the text label from one letter at specified board /position/. */
+    public function getLetter (position : Point) : String
+    {
+        Assert.True (isValidBoardPosition (position),
+                     "Bad position received in Display:getText");
+        return _letters[position.x][position.y].getText ();
+    }
+
+    /** Called from the model, this accessor takes an array of /points/,
+        marks letters at those positions as selected, and all others as deselected,
+        and updates the text box. */
+    public function updateLetterSelection (points : Array) : void
+    {
+        Assert.NotNull (points, "Invalid points array!");
+
+        // First, deselect everything
+        for (var x : int = 0; x < _letters.length; x++)
+        {
+            for (var y : int = 0; y < _letters[x].length; y++)
+            {
+                _letters[x][y].setSelection (false);
+            }
+        }
+
+        // Now select just the word - and, at the same time,
+        // assemble the word string.
+        var word : String = "";
+        for each (var p : Point in points)
+        {
+            var l : Letter = _letters[p.x][p.y];
+            l.setSelection (true);
+            word += l.getText();
+        }
+
+        // Finally, update the word
+        _wordfield.text = word;
+
+
+    }
+
+        
     
 
 
@@ -58,7 +104,7 @@ public class Display extends Sprite
         var i : Point = screenToBoard (p);
         if (i != null)
         {
-            
+            _controller.tryAddLetter (i);
         }
     }
         
@@ -66,12 +112,9 @@ public class Display extends Sprite
     {
         var p : Point = new Point (event.stageX, event.stageY);
         var i : Point = screenToBoard (p);
-        highlightLetter (i);
+        setCursor (i);
     }
 
-    private function tickHandler (event : Event) : void
-    {
-    }
 
 
 
@@ -99,37 +142,59 @@ public class Display extends Sprite
         }
     }
 
+    /** Initializes word display, countdown timer, etc. */
+    private function initializeUI () : void
+    {
+        var button : OKButton = new OKButton ();
+        button.x = Properties.OKBUTTON.x;
+        button.y = Properties.OKBUTTON.y;
+        addChild (button);
+
+        var format : TextFormat = Resources.makeFormatForUI ();
+        _wordfield = new TextField ();
+        _wordfield.selectable = false;
+        _wordfield.defaultTextFormat = format;
+        _wordfield.borderColor = uint(format.color != null ? format.color : 0x00000000);
+        _wordfield.border = true;
+        _wordfield.x = Properties.WORDFIELD.x;
+        _wordfield.y = Properties.WORDFIELD.y;
+        _wordfield.width = Properties.WORDFIELD.width;
+        _wordfield.height = Properties.WORDFIELD.height;
+        addChild (_wordfield);
+    }
+    
+
     /**
-       Highlights the letter at specified board /location/, and removes the highlight
+       Set cursor over a letter at specified board /location/, and removes the cursor
        from the previous letter. If the location point is null, it just removes
-       the highlight from the previous letter.
+       the cursor from the previous letter.
     */
-    private function highlightLetter (location : Point) : void
+    private function setCursor (location : Point) : void
     {
         var l : Letter = null;
         
         if (location != null &&
-            _lastHighlight != null &&
-            location.equals (_lastHighlight))
+            _lastCursor != null &&
+            location.equals (_lastCursor))
         {
-            // Highlight hasn't changed; ignore.
+            // Cursor hasn't changed; ignore.
             return;
         }
 
-        // Remove old highlight, if any
-        if (_lastHighlight != null)
+        // Remove old cursor, if any
+        if (_lastCursor != null)
         {
-            l = _letters[_lastHighlight.x][_lastHighlight.y];
+            l = _letters[_lastCursor.x][_lastCursor.y];
             l.isCursorEnabled = false;
-            _lastHighlight = null;
+            _lastCursor = null;
         }
 
-        // Set the new highlight
+        // Set the new cursor
         if (location != null)
         {
             l = _letters[location.x][location.y];
             l.isCursorEnabled = true;
-            _lastHighlight = location;
+            _lastCursor = location;
         }
     }        
 
@@ -190,10 +255,76 @@ public class Display extends Sprite
     /** Storage for each letter object */
     private var _letters : Array;
 
-    /** Board position of the currently highlighted letter */
-    private var _lastHighlight : Point;
+    /** Board position of the currently cursored letter */
+    private var _lastCursor : Point;
+
+    /** Text box containing the currently guessed word */
+    private var _wordfield : TextField;
     
 }
 
+} // package
+
+
+
+
+// HELPER CLASSES LOCAL TO THIS MODULE
+
+import flash.display.Sprite;
+import flash.events.MouseEvent;
+import flash.filters.GlowFilter;
+import flash.text.TextField;
+import flash.text.TextFormat;
+import flash.text.TextFieldAutoSize;
+import mx.core.BitmapAsset;
+
+
+class OKButton extends Sprite
+{
+    // Constructor, sets up the button
+    public function OKButton ()
+    {
+        this.buttonMode = true;
+
+        _outFilters = new Array (); 
+        _overFilters = new Array ();
+        _overFilters.push (Resources.makeButtonOverFilter ());
+        
+        _bg = Resources.makeButtonBackground ();
+        addChild (_bg);
+
+        addEventListener (MouseEvent.MOUSE_OVER, mouseOverHandler);
+        addEventListener (MouseEvent.MOUSE_OUT, mouseOutHandler);
+
+        var t : TextField = new TextField ();
+        t.autoSize = TextFieldAutoSize.CENTER;
+        t.selectable = false;
+        t.defaultTextFormat = Resources.makeFormatForUI ();
+        t.text = "OK";
+        t.x = (Properties.OKBUTTON.width  - t.width) / 2;
+        t.y = (Properties.OKBUTTON.height - t.height) / 2;
+        addChild (t);
+    }
+
+    private function mouseOverHandler (event : MouseEvent) : void
+    {
+        _bg.filters = _overFilters;
+    }
+
+    private function mouseOutHandler (event : MouseEvent) : void
+    {
+        _bg.filters = _outFilters;
+    }
+
+    private var _overFilters : Array;
+    private var _outFilters : Array;
+    private var _bg : BitmapAsset;
+    
 }
+
+
+
+        
+                        
+
 

@@ -32,6 +32,14 @@ public class Resources
         return new _defaultSquare ();
     }
 
+    /** Returns a new instance of the default button background bitmap resource */
+    public static function makeButtonBackground () : BitmapAsset
+    {
+        return new _defaultButton ();
+    }
+
+
+    
     // FORMATS
 
     /** Returns a new instance of text style used for individual letters */
@@ -53,7 +61,7 @@ public class Resources
         format.font = "Verdana";
         format.color = uint(0x777788);
         format.size = 18;
-
+        format.bold = true;
         return format;
     }
 
@@ -68,6 +76,26 @@ public class Resources
         return filter;
     }
 
+    /** Returns a new instance of a filter suitable for a selected letter */
+    public static function makeSelectedFilter () : GlowFilter
+    {
+        var filter : GlowFilter = new GlowFilter ();
+        filter.color = uint(0xffffdd);
+        filter.inner = false;
+        filter.blurX = filter.blurY = 16;
+        return filter;
+    }
+
+    /** Returns a new instance of a filter for rolled-over button */
+    public static function makeButtonOverFilter () : GlowFilter
+    {
+        var filter : GlowFilter = new GlowFilter ();
+        filter.color = uint(0x8888cc);
+        filter.inner = true;
+        filter.blurX = filter.blurY = 8;
+        return filter;
+    }
+
 
     
     // RESOURCE DEFINITIONS
@@ -78,6 +106,8 @@ public class Resources
     [Embed(source="rsrc/square.png")]
     private static const _defaultSquare : Class;
 
+    [Embed(source="rsrc/button.png")]
+    private static const _defaultButton : Class;
 }
 
 
