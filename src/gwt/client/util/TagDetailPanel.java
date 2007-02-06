@@ -53,6 +53,7 @@ public class TagDetailPanel extends FlexTable
          * @param statusLabel A label to set with an error message on failure
          */
         public void setFlags (byte flag, Label statusLabel);
+    }
 
     public TagDetailPanel (TagService service)
     {

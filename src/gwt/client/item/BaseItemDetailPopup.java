@@ -21,6 +21,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 import client.shell.MsoyEntryPoint;
 import client.util.BorderedDialog;
 import client.util.MediaUtil;
+import client.util.TagDetailPanel;
 
 /**
  * Defines the base item detail popup from which we derive an inventory and catalog item detail.
@@ -64,14 +65,14 @@ public class BaseItemDetailPopup extends BorderedDialog
             public boolean supportFlags () {
                 return true;
             }
-            public void setFlags (byte flag, Label statusLabel) {
+            public void setFlags (final byte flag, final Label statusLabel) {
                 CItem.itemsvc.setFlags(CItem.creds, _item.getIdent(), flag, flag, 
                     new AsyncCallback () {
                         public void onSuccess (Object result) {
                             _item.flags |= flag;
                         }
                         public void onFailure (Throwable caught) {
-                            CShell.log("Failed to update item flags [item=" + _item.getIdent() +
+                            CItem.log("Failed to update item flags [item=" + _item.getIdent() +
                                 ", flag=" + flag + "]", caught);
                             if (statusLabel != null) {
                                 statusLabel.setText("Internal error setting flag: " + 
