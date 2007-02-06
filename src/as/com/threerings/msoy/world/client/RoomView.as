@@ -814,27 +814,3 @@ public class RoomView extends AbstractRoomView
     protected static const LOADING_SPINNER :Class;
 }
 }
-
-//
-//import com.threerings.
-//
-//
-//class AvatarVentriloquist
-//    implements ChatDisplay
-//{
-//    public function AvatarVentriloquist (roomView :RoomView)
-//    {
-//        _view
-//    }
-//
-//    // from ChatDisplay
-//    public function clear () :void
-//    {
-//        // nada
-//    }
-//
-//    public function displayMessage (
-//        msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
-//    {
-//    }
-//}
