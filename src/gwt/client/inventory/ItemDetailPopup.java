@@ -3,7 +3,6 @@
 
 package client.inventory;
 
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
@@ -11,9 +10,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.WidgetUtil;
-
-import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
@@ -22,7 +18,6 @@ import com.threerings.msoy.item.web.Photo;
 
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPopup;
-import client.shell.MsoyEntryPoint;
 import client.util.ClickCallback;
 
 /**
@@ -34,21 +29,6 @@ public class ItemDetailPopup extends BaseItemDetailPopup
     {
         super(item);
         _parent = parent;
-    }
-
-    // @Override // BaseItemDetailPopup
-    protected Widget createPreview (Item item)
-    {
-        // TODO: maybe ItemUtil should handle this
-        if (item instanceof Avatar) {
-            MediaDesc avatarMedia = ((Avatar)_item).avatarMedia;
-            String path = MsoyEntryPoint.toMediaPath(avatarMedia.getMediaPath());
-            return WidgetUtil.createFlashContainer(
-                "avatarViewer", "/clients/avatarviewer.swf", 300, 500,
-                "avatar=" + URL.encodeComponent(path));
-        } else {
-            return super.createPreview(item);
-        }
     }
 
     // @Override // BaseItemDetailPopup
