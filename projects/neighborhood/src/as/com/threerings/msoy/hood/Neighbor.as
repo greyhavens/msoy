@@ -7,5 +7,16 @@ public class Neighbor
 {
     /** The number of members occupying this neighbor place. */
     public var population :int;
+    /** The scene id, if any, that represents this place. */
+    public var sceneId :int;
+
+    /**
+     * Populates an existing neighbor subclass with data common to this superclass.
+     */
+    public static function fromJSON(neighbor: Neighbor, JSON: Object) :void
+    {
+        neighbor.population = JSON.pop;
+        neighbor.sceneId = JSON.sceneId;
+    }
 }
 }

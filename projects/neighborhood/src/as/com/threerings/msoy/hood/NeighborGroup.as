@@ -22,11 +22,11 @@ public class NeighborGroup extends Neighbor
      */
     public static function fromJSON(JSON: Object) :NeighborGroup
     {
-        var group:NeighborGroup = new NeighborGroup();
+        var group: NeighborGroup = new NeighborGroup();
         if (JSON.name == null || JSON.id == null) {
             throw new Error("Missing name/id in JSON");
         }
-        group.population = JSON.pop;
+        Neighbor.fromJSON(group, JSON);
         group.groupName = JSON.name;
         group.groupId = JSON.id;
         group.groupLogo = JSON.logo;

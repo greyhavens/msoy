@@ -264,26 +264,16 @@ public class HoodViz extends Sprite
     {
         var neighbor :Neighbor = (event.currentTarget as ToolTipSprite).neighbor;
         var url :String = "/world/#";
-        if (neighbor is NeighborMember) {
+        if (neighbor.sceneId > 0) {
+            url += "s" + neighbor.sceneId;
+        } else if (neighbor is NeighborMember) {
             var friend :NeighborMember = neighbor as NeighborMember;
-            if (_hood.centralMember != null &&
-                _hood.centralMember.memberId == friend.memberId) {
-                // clicking on the centre member takes us to their profile page
-                url += "m" + friend.memberId;
-            } else {
-                // clicking on another member just goes to -their- neighborhood
-                url += "nm" + friend.memberId;
-            }
+            // clicking on a member takes us to their home scene
+            url += "m" + friend.memberId;
         } else {
             var group :NeighborGroup = neighbor as NeighborGroup;
-            if (_hood.centralGroup != null &&
-                _hood.centralGroup.groupId == group.groupId) {
-                // clicking on the centre group takes us to their profile page
+            // clicking on a group takes us to that group's home scene
                 url += "g" + group.groupId;
-            } else {
-                // clicking on another group just goes to -their- neighborhood
-                url += "ng" + group.groupId;
-            }
         }
         navigateToURL(new URLRequest(url), "_self");
     }

@@ -28,11 +28,11 @@ public class NeighborMember extends Neighbor
      */
     public static function fromJSON(JSON: Object) :NeighborMember
     {
-        var member:NeighborMember = new NeighborMember();
+        var member :NeighborMember = new NeighborMember();
         if (JSON.name == null || JSON.id == null) {
             throw new Error("Missing name/id in JSON");
         }
-        member.population = JSON.pop;
+        Neighbor.fromJSON(member, JSON);
         member.memberName = JSON.name;
         member.memberId = JSON.id;
         member.isOnline = JSON.isOnline;
