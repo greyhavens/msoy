@@ -1,13 +1,16 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.web;
+package com.threerings.msoy.web.data;
 
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.io.Streamable;
+
 import com.threerings.msoy.web.data.MemberName;
+
+import com.threerings.msoy.item.web.ItemIdent;
 
 /**
  * Keeps a history of tagging events for a given item or group.

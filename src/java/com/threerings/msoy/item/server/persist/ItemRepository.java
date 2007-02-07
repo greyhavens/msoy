@@ -47,7 +47,8 @@ import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.TagHistory;
+
+import com.threerings.msoy.web.data.TagHistory;
 
 /**
  * Manages a repository of digital items of a particular type.

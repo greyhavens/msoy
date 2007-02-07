@@ -30,6 +30,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
+import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.ServletWaiter;
@@ -39,7 +40,6 @@ import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.TagHistory;
 
 import com.threerings.msoy.item.data.ItemCodes;
 

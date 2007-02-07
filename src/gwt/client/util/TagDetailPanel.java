@@ -30,7 +30,8 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.TagHistory;
+
+import com.threerings.msoy.web.data.TagHistory;
 
 /**
  * Displays tagging information for a particular item.

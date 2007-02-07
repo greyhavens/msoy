@@ -24,7 +24,7 @@ import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.item.web.TagHistory;
+import com.threerings.msoy.web.data.TagHistory;
 
 /**
  * Manages the persistent side of tagging of things in the MetaSOY system (right now items and

@@ -27,12 +27,12 @@ import com.threerings.msoy.item.server.persist.RatingRecord;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemDetail;
 import com.threerings.msoy.item.web.ItemIdent;
-import com.threerings.msoy.item.web.TagHistory;
 
 import com.threerings.msoy.web.client.ItemService;
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.TagHistory;
 
 /**
  * Provides the server implementation of {@link ItemService}.
