@@ -67,9 +67,9 @@ public class MsoyClient extends Client
 {
     private static const log :Log = Log.getLog(MsoyClient);
 
-    public function MsoyClient ()
+    public function MsoyClient (stage :Stage)
     {
-        super(createStartupCreds());
+        super(createStartupCreds(), stage);
 
         // set up a context menu that blocks funnybiz on the stage
         var menu :ContextMenu = new ContextMenu();
