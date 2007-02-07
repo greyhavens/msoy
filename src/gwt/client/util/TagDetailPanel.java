@@ -60,9 +60,9 @@ public class TagDetailPanel extends FlexTable
         setStyleName("tagDetailPanel");
         _service = service;
 
-        setWidget(0, 0, _tags = new Label("Loading..."));
+        setWidget(0, 0, _tags = new Label(CShell.cmsgs.tagLoading()));
 
-        setWidget(1, 0, new Label("Add tag:"));
+        setWidget(1, 0, new Label(CShell.cmsgs.tagAddTag()));
         TextBox newTagBox = new TextBox();
         newTagBox.setMaxLength(20);
         newTagBox.setVisibleLength(12);
@@ -73,7 +73,7 @@ public class TagDetailPanel extends FlexTable
                     return;
                 }
                 if (tagName.length() > 24) {
-                    _status.setText("Invalid tag: can't be more than 24 characters.");
+                    _status.setText(CShell.cmsgs.errTagTooLong());
                     return;
                 }
                 for (int ii = 0; ii < tagName.length(); ii ++) {
@@ -81,7 +81,7 @@ public class TagDetailPanel extends FlexTable
                     if (Character.isLetter(c) || Character.isDigit(c) || c == '_') {
                         continue;
                     }
-                    _status.setText("Invalid tag: use letters, numbers, and underscore.");
+                    _status.setText(CShell.cmsgs.errTagInvalidCharacters());
                     return;
                 }
                 _service.tag(tagName, new AsyncCallback() {
@@ -90,7 +90,7 @@ public class TagDetailPanel extends FlexTable
                     }
                     public void onFailure (Throwable caught) {
                         GWT.log("tagItem failed", caught);
-                        _status.setText("Internal error adding tag: " + caught.getMessage());
+                        _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
                     }
                 });
                 ((TextBox) sender).setText(null);
@@ -98,7 +98,7 @@ public class TagDetailPanel extends FlexTable
         }));
         setWidget(1, 1, newTagBox);
 
-        setWidget(1, 2, new Label("Quick add:"));
+        setWidget(1, 2, new Label(CShell.cmsgs.tagQuickAdd()));
         _quickTags = new ListBox();
         _quickTags.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
@@ -110,7 +110,7 @@ public class TagDetailPanel extends FlexTable
                     }
                     public void onFailure (Throwable caught) {
                         GWT.log("tagItem failed", caught);
-                        _status.setText("Internal error adding tag: " + caught.getMessage());
+                        _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
                     }
                 });
             }
@@ -120,11 +120,12 @@ public class TagDetailPanel extends FlexTable
         if (_service.supportFlags()) {
             final PopupPanel menuPanel = new PopupPanel(true);
             MenuBar menu = new MenuBar(true);
-            menu.addItem(getMenuItem("Mature", Item.FLAG_FLAGGED_MATURE, menuPanel));
-            menu.addItem(getMenuItem("Copyright Violation", Item.FLAG_FLAGGED_COPYRIGHT, 
+            menu.addItem(getMenuItem(CShell.cmsgs.tagMatureFlag(), Item.FLAG_FLAGGED_MATURE, 
+                menuPanel));
+            menu.addItem(getMenuItem(CShell.cmsgs.tagCopyrightFlag(), Item.FLAG_FLAGGED_COPYRIGHT, 
                 menuPanel));
             menuPanel.add(menu);
-            final InlineLabel flagLabel = new InlineLabel("Flag");
+            final InlineLabel flagLabel = new InlineLabel(CShell.cmsgs.tagFlag());
             flagLabel.addStyleName("LabelLink");
             // use a MouseListener instead of ClickListener so we can get at the mouse (x,y)
             flagLabel.addMouseListener(new MouseListener() {
@@ -154,13 +155,12 @@ public class TagDetailPanel extends FlexTable
     {
         // TODO: raw HTML is a bit yuck; maybe add more structure to PromptPopup 
         final String text =
-            "<b>Flag item as " + menuLabel + "?</b><br>\n" +
-            "<hr>\n" +
-            "Blah blah blah blah.\n";
+            "<b>" + CShell.cmsgs.tagFlagPrompt(menuLabel) + "</b><br>\n";
 
         MenuItem mature = new MenuItem(menuLabel, new Command() {
             public void execute() {
-                (new PromptPopup(text, "Flag", "Cancel") {
+                (new PromptPopup(text, CShell.cmsgs.tagFlagFlagButton(), 
+                    CShell.cmsgs.tagFlagCancelButton()) {
                     public void onAffirmative () {
                         parent.hide();
                         updateItemFlags(flag);
@@ -255,7 +255,7 @@ public class TagDetailPanel extends FlexTable
                 }
                 public void onFailure (Throwable caught) {
                     GWT.log("getTagHistory failed", caught);
-                    _status.setText("Internal error fetching tag history: " + caught.getMessage());
+                    _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
                 }
             });
         }
@@ -276,7 +276,7 @@ public class TagDetailPanel extends FlexTable
                 _tags.setText(builder.toString());
             }
             public void onFailure (Throwable caught) {
-                _tags.setText("Internal error fetching item tags: " + caught.getMessage());
+                _tags.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
             }
         });
     }
