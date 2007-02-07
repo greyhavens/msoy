@@ -115,6 +115,11 @@ public class Display extends Sprite
         setCursor (i);
     }
 
+    private function okButtonClickHandler (event : MouseEvent) : void
+    {
+        _controller.tryScoreWord (_wordfield.text);
+    }
+
 
 
 
@@ -145,7 +150,7 @@ public class Display extends Sprite
     /** Initializes word display, countdown timer, etc. */
     private function initializeUI () : void
     {
-        var button : OKButton = new OKButton ();
+        var button : OKButton = new OKButton (okButtonClickHandler);
         button.x = Properties.OKBUTTON.x;
         button.y = Properties.OKBUTTON.y;
         addChild (button);
@@ -281,8 +286,9 @@ import mx.core.BitmapAsset;
 
 class OKButton extends Sprite
 {
-    // Constructor, sets up the button
-    public function OKButton ()
+    // Constructor, sets up the button. Takes a MOUSE_CLICK handler function
+    // to be called when the player clicks on the button.
+    public function OKButton (mouseClickHandler : Function)
     {
         this.buttonMode = true;
 
@@ -295,6 +301,7 @@ class OKButton extends Sprite
 
         addEventListener (MouseEvent.MOUSE_OVER, mouseOverHandler);
         addEventListener (MouseEvent.MOUSE_OUT, mouseOutHandler);
+        addEventListener (MouseEvent.CLICK, mouseClickHandler);
 
         var t : TextField = new TextField ();
         t.autoSize = TextFieldAutoSize.CENTER;

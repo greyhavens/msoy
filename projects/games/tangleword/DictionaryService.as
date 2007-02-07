@@ -31,7 +31,7 @@ package
         */
         public static function checkWord (locale : LocaleSettings, word : String) : Boolean
         {
-            return (Math.random() > 0.5); // testing only
+            return true; // testing only
         }
         
 

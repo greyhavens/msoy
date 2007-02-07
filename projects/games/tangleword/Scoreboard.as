@@ -48,12 +48,33 @@ package
             return data;                
         }
 
+        /** Tries to retrieve the player who scored the specified word. If the word
+            hasn't been scored yet, returns null. */
+        public function getWordOwner (word : String) : String
+        {
+            var players : Array = getPlayers ();
+            for each (var player : String in players)
+            {
+                var owner : String = null;
+                var words : Array = new Array ();
+                var scores : Array = new Array ();
+                getWordsAndScores (player, words, scores);
+
+                for each (var w : String in words)
+                {
+                    if (w == word) return player;
+                }
+            }
+
+            return null;
+        }                
 
         /** Adds a /word/ with the specified /score/ to the player's scoreboard. */
         public function addWord (player : String, word : String, score : Number) : void
         {
             var scoreboard : Object = getScoreboard (player);
             scoreboard[word] = score;
+            Assert.Fail ("Added score: " + player + ", " + word + ", " + score);
         }
 
         /** Populates the specified /words/ and /scores/ arrays with all of the

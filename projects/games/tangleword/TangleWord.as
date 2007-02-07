@@ -20,9 +20,16 @@ import com.threerings.ezgame.StateChangedListener;
 */
 
 [SWF(width="500", height="500")]
-public class TangleWord extends Sprite
-    implements PropertyChangedListener, StateChangedListener, MessageReceivedListener
+public class TangleWord extends Sprite implements StateChangedListener
 {
+
+    // PUBLIC CONSTANTS
+
+    /** Default language/culture settings */
+    public static const LOCALE : LocaleSettings = LocaleSettings.EN_US;
+
+
+    // PUBLIC METHODS
 
     // Constructor creates the board, and registers itself for events
     // and other startup information.
@@ -75,49 +82,10 @@ public class TangleWord extends Sprite
         }
     }
 
-    /** From PropertyChangedListener: deal with distributed game data changes */
-    public function propertyChanged (event : PropertyChangedEvent) : void
-    {
-        // What kind of a message did we get?
-        switch (event.name)
-        {
-        case SHARED_LETTER_SET:
-
-            // We recieved a notification of a new shared letter set -
-            // let's update the board
-            Assert.True (event.newValue is Array, "Received invalid Shared Letter Set!");
-            var s : Array = event.newValue as Array;
-            if (s != null)
-            {
-                _controller.setGameBoard (s);
-            }
-
-            break;
-
-        case SHARED_SCOREBOARD:
-
-            // The scoreboard changed - let's change the pointer to remember
-            // the new one instead.
-            if (event.newValue != null)
-            {
-                _gameCtrl.localChat ("Got new score values...");
-                _model.updateScoreboard (event.newValue);
-            }
-
-            break;
-            
-
-        default:
-            Assert.Fail ("Unknown property changed: " + event.name);
-        }
-        
-    }
 
     /** From MessageReceivedListener: deal with out-of-band messages */
     public function messageReceived (event : MessageReceivedEvent) : void
     {
-        /* TODO */
-        Assert.Fail ("MessageReceived");
     }
 
 
@@ -128,14 +96,7 @@ public class TangleWord extends Sprite
     */
     private function initializeLetters () : void
     {
-        // Get a set of letters
-        var s : Array = DictionaryService.getLetterSet (LocaleSettings.EN_US,
-                                                        Properties.LETTER_COUNT);
-        Assert.True (s.length == Properties.LETTER_COUNT,
-                     "DictionaryService returned an invalid letter set.");
-
-        // Now pass it around via the distributed object
-        _gameCtrl.set (SHARED_LETTER_SET, s);
+        _controller.initializeLetterSet ();
     }
 
     /** Creates a new distributed scoreboard */
@@ -181,6 +142,8 @@ public class TangleWord extends Sprite
 
     /** Key name: shared scoreboard */
     private static const SHARED_SCOREBOARD : String = "Shared Scoreboard";
+
+    
 }
     
     

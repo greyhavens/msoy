@@ -9,6 +9,10 @@ import flash.geom.Point;
     
 public class Controller 
 {
+    // OUBLIC CONSTANTS
+    public static const MIN_WORD_LENGTH : int = 3;
+
+    
     // PUBLIC METHODS
     
     public function Controller (model : Model) : void
@@ -23,6 +27,18 @@ public class Controller
     }
 
 
+    /** Initializes a new letter set. */
+    public function initializeLetterSet () : void
+    {
+        // Get a set of letters
+        var s : Array = DictionaryService.getLetterSet (TangleWord.LOCALE,
+                                                        Properties.LETTER_COUNT);
+        
+        Assert.True (s.length == Properties.LETTER_COUNT,
+                     "DictionaryService returned an invalid letter set.");
+
+        _model.sendNewLetterSet (s);
+    }
 
     /** Takes a new letter from the UI, and checks it against game logic. */
     public function tryAddLetter (position : Point) : void
@@ -57,18 +73,29 @@ public class Controller
         // Don't do anything
     }
 
-    /** Randomizes the game board, based on a flat array of letters. */
-    public function setGameBoard (s : Array) : void
+
+    /** Signals that the currently selected word is a candidate for scoring.
+        It will be matched against the dictionary, and added to the model. */
+    public function tryScoreWord (word : String) : void
     {
-        // Copy them over to the data set
-        for (var x : int = 0; x < Properties.LETTERS; x++)
-        {
-            for (var y : int = 0; y < Properties.LETTERS; y++)
-            {
-                _model.updateBoardLetter (new Point (x, y), s [x * Properties.LETTERS + y]);
-            }
-        }
+        // First, check to make sure it's of the correct length (in characters)
+        if (word.length < MIN_WORD_LENGTH) return;
+
+        // Check if it's already been claimed
+        // TODO
+        
+        // Now check if it's an actual word
+        if (!DictionaryService.checkWord (TangleWord.LOCALE, word)) return;
+
+        // Find the word score
+        // TODO
+        var score : Number = 10;
+        
+        // Finally, process the new word
+        _model.addScore (word, score);
     }
+            
+
 
 
     // PRIVATE METHODS
