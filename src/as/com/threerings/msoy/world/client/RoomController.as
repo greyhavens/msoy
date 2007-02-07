@@ -2,6 +2,7 @@ package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
+import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
@@ -155,7 +156,7 @@ public class RoomController extends SceneController
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-        _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+        _roomView.addEventListener(MouseEvent.MOUSE_OVER, mouseEntered);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
     }
@@ -165,12 +166,12 @@ public class RoomController extends SceneController
     {
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-        _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+        _roomView.removeEventListener(MouseEvent.MOUSE_OVER, mouseEntered);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
         _roomView.removeChild(_walkTarget);
-        setHoverSprite(null, null);
+        setHoverSprite(null);
 
         _scene = null;
         _roomObj = null;
@@ -188,7 +189,7 @@ public class RoomController extends SceneController
         // turn editing off
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-        _roomView.addEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+        _roomView.addEventListener(MouseEvent.MOUSE_OVER, mouseEntered);
 
         // possibly save the edits
         if (edits != null) {
@@ -337,7 +338,8 @@ public class RoomController extends SceneController
         // set up editing
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-        _roomView.removeEventListener(MouseEvent.MOUSE_MOVE, mouseMoved);
+        _roomView.removeEventListener(MouseEvent.MOUSE_OVER, mouseEntered);
+        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _walkTarget.visible = false;
 
         _editor = new EditorController(_mctx, this, _roomView, _scene, items);
@@ -346,28 +348,44 @@ public class RoomController extends SceneController
     protected function mouseLeft (event :MouseEvent) :void
     {
         _walkTarget.visible = false;
-        setHoverSprite(null, event);
+        setHoverSprite(null);
         _roomView.chatOverlay.setClickableGlyphs(false);
+
+        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
     }
 
-    protected function mouseMoved (event :MouseEvent) :void
+    protected function mouseEntered (event :MouseEvent) :void
     {
-        var sx :Number = event.stageX;
-        var sy :Number = event.stageY;
-        var hitter :MsoySprite = getHitSprite(sx, sy);
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
+    }
 
+    /**
+     * Handle ENTER_FRAME and see if the mouse is now over anything.
+     * Normally the flash player will dispatch mouseOver/mouseLeft
+     * for an object even if the mouse isn't moving: the sprite could move.
+     * Since we're hacking in our own mouseOver handling, we emulate that.
+     * Gah.
+     */
+    protected function checkMouse (event :Event) :void
+    {
+        var sx :Number = _roomView.stage.mouseX;
+        var sy :Number = _roomView.stage.mouseY;
+        var showWalkTarget :Boolean = false;
+
+        var hitter :MsoySprite = getHitSprite(sx, sy);
         if (hitter == null) {
             var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
             if (cloc.click == ClickLocation.FLOOR) {
-                var p :Point = _roomView.globalToLocal(new Point(sx, sy));
-                _walkTarget.x = p.x;
-                _walkTarget.y = p.y;
+                //var p :Point = _roomView.globalToLocal(new Point(sx, sy));
+                _walkTarget.x = _roomView.mouseX;
+                _walkTarget.y = _roomView.mouseY;
+                showWalkTarget = true;
             }
         }
 
-        _walkTarget.visible = (hitter == null);
+        _walkTarget.visible = showWalkTarget;
 
-        setHoverSprite(hitter, event);
+        setHoverSprite(hitter, sx, sy);
     }
 
     /**
@@ -391,10 +409,9 @@ public class RoomController extends SceneController
 
     /**
      * Set the sprite that the mouse is hovering over.
-     * @param event the associated mouse event, which may be used to
-     *        place a tooltip.
      */
-    protected function setHoverSprite (sprite :MsoySprite, event :MouseEvent) :void
+    protected function setHoverSprite (
+        sprite :MsoySprite, stageX :Number = 0, stageY :Number = 0) :void
     {
         if (_hoverSprite != sprite) {
             if (_hoverSprite != null) {
@@ -412,7 +429,7 @@ public class RoomController extends SceneController
                 var tipText :String = sprite.getToolTipText();
                 if (tipText != null) {
                     _hoverTip = ToolTipManager.createToolTip(tipText,
-                        event.stageX, event.stageY);
+                        stageX, stageY);
                     (_hoverTip as UIComponent).setStyle("color", sprite.getHoverColor());
                 }
             }
