@@ -308,7 +308,9 @@ public class RoomController extends SceneController
         }
 
         if (_editor == null && _scene.canEdit(_mctx.getClientObject())) {
-            menuItems.push(createMenuItem(EDIT_SCENE, null, true));
+            // TODO: I used to put a separator before this menu item,
+            // but it caused it to break in linux. STRANGE!
+            menuItems.push(createMenuItem(EDIT_SCENE, null, false /*true*/));
         }
 
         menuItems.push(MenuUtil.createControllerMenuItem(
