@@ -18,8 +18,10 @@ public class PreLoader extends Sprite
         _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, handleComplete);
         _loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleError);
 
+        // register our listener weakly, so that we can be garbage collected
+        // if that's the only reference back to us
         _loader.contentLoaderInfo.sharedEvents.addEventListener("controlConnect",
-            this.root.loaderInfo.sharedEvents.dispatchEvent);
+            this.root.loaderInfo.sharedEvents.dispatchEvent, false, 0, true);
 
         trace("Url: " + this.root.loaderInfo.url);
         trace("Url: " + this.loaderInfo.url);
