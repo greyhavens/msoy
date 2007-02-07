@@ -98,22 +98,18 @@ public class HoodViz extends Sprite
         var nextFriend :int = 0;
         var nextGroup :int = 0;
 
-        // use a zig-zag algorithm (there's probably a name for it) to sprinkle houses and groups
-        var selectionCount :Number = _hood.friends.length / 2;
-        for each (var tile :Object in distances) {
-            if (selectionCount > _hood.friends.length) {
-                if (nextGroup < _hood.groups.length) {
-                    drawables[tile.y][tile.x] = _hood.groups[nextGroup ++];
-                }
-                selectionCount -= _hood.friends.length;        
+
+        // pick tiles randomly from weighted intervals - generalizes to N tile types
+        // and can use seeded pseudorandomization if we want deterministic behaviour
+        var groupsLeft :int = _hood.groups.length;
+        var friendsLeft :int = _hood.friends.length;
+        var totalLeft :int = groupsLeft + friendsLeft;
+        while (totalLeft > 0) {
+            var tile :Object = distances[--totalLeft];
+            if (Math.random() < groupsLeft / totalLeft) {
+                drawables[tile.y][tile.x] = _hood.groups[--groupsLeft];
             } else {
-                if (nextFriend < _hood.friends.length) {
-                    drawables[tile.y][tile.x] = _hood.friends[nextFriend ++];
-                }
-                selectionCount += _hood.groups.length;
-            }
-            if (nextGroup == _hood.groups.length && nextFriend == _hood.friends.length) {
-                break;
+                drawables[tile.y][tile.x] = _hood.friends[--friendsLeft];
             }
         }
 
