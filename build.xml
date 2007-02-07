@@ -216,10 +216,12 @@
       </else></if>
 
       <!-- fail the build if the GWT compiler returned 1 or errors were detected -->
-      <fail><condition><or>
-        <equals arg1="${gwt.result}" arg2="1"/>
-        <isset property="has.errors"/>
-      </or></condition></fail>
+      <fail message="The GWT build failed. See output for details.">
+        <condition><or>
+          <equals arg1="${gwt.result}" arg2="1"/>
+          <isset property="has.errors"/>
+        </or></condition>
+      </fail>
     </sequential></for>
   </target> 
 
