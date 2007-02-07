@@ -13,8 +13,7 @@ import flash.utils.getTimer; // function import
 import com.threerings.msoy.export.AvatarControl;
 import com.threerings.msoy.export.ControlEvent;
 
-//[SWF(width="161", height="150")]
-[SWF(width="222", height="363")]
+[SWF(width="161", height="150")]
 public class ImageFlipper extends Sprite
 {
     public function ImageFlipper ()
