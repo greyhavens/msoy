@@ -66,4 +66,20 @@ public interface GroupServiceAsync
      */
     public void updateMemberRank (WebCreds creds, int groupId, int memberId, byte newRank,
         AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GroupService.tagGroup}
+     */
+    public void tagGroup (WebCreds creds, int groupId, String tag, boolean set,
+        AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GroupService.getRecentTags}
+     */
+    public void getRecentTags (WebCreds creds, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GroupService.getTags}
+     */
+    public void getTags (WebCreds creds, int groupId, AsyncCallback callback);
 }

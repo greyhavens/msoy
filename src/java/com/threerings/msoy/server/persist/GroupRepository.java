@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.samskivert.io.PersistenceException;
+
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.CacheKey;
@@ -23,6 +24,7 @@ import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Where;
@@ -31,7 +33,9 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+
 import com.samskivert.util.IntListUtil;
+
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.web.data.Group;
@@ -41,6 +45,16 @@ import com.threerings.msoy.web.data.Group;
  */
 public class GroupRepository extends DepotRepository
 {
+    @Entity(name="GroupTagRecord")
+    public static class GroupTagRecord extends TagRecord
+    {
+    }
+
+    @Entity(name="GroupTagHistoryRecord")
+    public static class GroupTagHistoryRecord extends TagHistoryRecord
+    {
+    }
+
     public GroupRepository (ConnectionProvider conprov)
     {
         super(conprov);
@@ -50,6 +64,19 @@ public class GroupRepository extends DepotRepository
                 _ctx.cacheInvalidate(_groupNamePrefixKey);
             }
         });
+        _tagRepo = new TagRepository(_ctx) {
+            protected TagRecord createTagRecord () {
+                return new GroupTagRecord();
+            }
+            protected TagHistoryRecord createTagHistoryRecord () {
+                return new GroupTagHistoryRecord();
+            }
+        };
+    }
+
+    public TagRepository getTagRepository () 
+    {
+        return _tagRepo;
     }
 
     /**
@@ -265,6 +292,9 @@ public class GroupRepository extends DepotRepository
     }
 
     protected CacheKey _groupNamePrefixKey = new SimpleCacheKey(GROUP_NAME_PREFIX);
+
+    /** Used to manage our group tags. */
+    protected TagRepository _tagRepo;
 
     protected static final String GROUP_NAME_PREFIX = "GroupNamePrefix";
 }

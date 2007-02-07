@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
@@ -780,7 +779,7 @@ public class ItemManager
         // sanitize the tag name
         final String tagName = rawTagName.trim().toLowerCase();
 
-        if (!validTag.matcher(tagName).matches()) {
+        if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
             listener.requestFailed(
                 new IllegalArgumentException("Invalid tag [tag=" + tagName + "]"));
             return;
@@ -1128,10 +1127,6 @@ public class ItemManager
 
     /** Contains a reference to our pet repository. See {@link #_gameRepository} for complaint. */
     protected PetRepository _petRepo;
-
-    /** A regexp pattern to validate tags. */
-    protected static final Pattern validTag =
-        Pattern.compile("[a-z](_?[a-z0-9]){2,18}");
 
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos =

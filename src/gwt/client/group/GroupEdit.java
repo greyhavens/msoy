@@ -190,6 +190,26 @@ public class GroupEdit extends BorderedDialog
         VerticalPanel descriptionPanel = new VerticalPanel();
         descriptionPanel.setSpacing(10);
         descriptionPanel.setStyleName("CurrentPanel");
+
+        descriptionPanel.add(new TagDetailPanel(new TagDetailPanel.TagService() {
+            public void tag (String tag, AsyncCallback callback) {
+                CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, true, callback);
+            }
+            public void untag (String tag, AsyncCallback callback) {
+                CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, false, callback);
+            }
+            public void getRecentTags (AsyncCallback callback) {
+                CGroup.groupsvc.getRecentTags(CGroup.creds, callback);
+            }
+            public void getTags (AsyncCallback callback) {
+                CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, callback);
+            }
+            public void supportFlag () {
+                return false;
+            }
+            public void setFlags (final byte flag, final Label statusLabel) { }
+        }));
+
         CellPanel blurbEdit = createTextEntryField(CGroup.msgs.editBlurb(), 80, 43, _group.blurb,
             new ChangeListener() {
                 public void onChange (Widget sender) {
@@ -218,7 +238,7 @@ public class GroupEdit extends BorderedDialog
         charterPanel.add(charterText);
         descriptionPanel.add(charterPanel);
 
-        // containerPanel is only here so that infoPanel doesn't take up 100% width
+        // containerPanel is only here so that descriptionPanel doesn't take up 100% width
         containerPanel.add(descriptionPanel);
 
         return containerPanel;
@@ -279,16 +299,6 @@ public class GroupEdit extends BorderedDialog
         }
         capsPanel.add(radiosFieldset);
         capsPanel.setCellVerticalAlignment(radiosFieldset, VerticalPanel.ALIGN_MIDDLE);
-
-        /*final CheckBox tileBackgrounds = new CheckBox(CGroup.msgs.editTileBackgrounds());
-        tileBackgrounds.setChecked(_extras.tileBackgrounds);
-        tileBackgrounds.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                _extras.tileBackgrounds = tileBackgrounds.isChecked();
-            }
-        });
-        capsPanel.add(tileBackgrounds);
-        capsPanel.setCellVerticalAlignment(tileBackgrounds, VerticalPanel.ALIGN_MIDDLE);*/
 
         int types[] = { IMAGE_INFO_BACKGROUND, IMAGE_DETAIL_BACKGROUND,
             IMAGE_PEOPLE_BACKGROUND, IMAGE_PEOPLE_UPPER_CAP, IMAGE_PEOPLE_LOWER_CAP };

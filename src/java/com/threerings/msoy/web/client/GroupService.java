@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.client;
 
 import java.util.List;
+import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.web.data.Group;
@@ -75,5 +76,23 @@ public interface GroupService extends RemoteService
      * Update the rank of a group member.
      */
     public void updateMemberRank (WebCreds creds, int groupId, int memberId, byte newRank)
+        throws ServiceException;
+
+    /**
+     * Update a tag on a group.
+     */
+    public void tagGroup (WebCreds creds, int groupId, String tag, boolean set) 
+        throws ServiceException;
+
+    /** 
+     * Gets the tags recently used by the user.
+     */
+    public Collection getRecentTags (WebCreds creds)
+        throws ServiceException;
+
+    /**
+     * Gets the tags on the indicated Group.
+     */
+    public Collection getTags (WebCreds creds, int groupId)
         throws ServiceException;
 }

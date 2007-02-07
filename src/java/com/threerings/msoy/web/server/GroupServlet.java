@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Collection;
 
 import java.util.logging.Level;
 
@@ -26,6 +27,7 @@ import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -233,6 +235,40 @@ public class GroupServlet extends MsoyServiceServlet
             }
         });
         waiter.waitForResult();
+    }
+
+    // from interface GroupService
+    public void tagGroup (WebCreds creds, final int groupId, final String tag, final boolean set)
+        throws ServiceException
+    {
+        /*final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
+            "tagGroup[" + groupId + ", " + tag + ", " + set + "]");
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<TagHistory>(waiter) {
+            public TagHistory invokePersistResult() throws PersistenceException {
+                final String tagName = tag.trim().toLowerCase();
+
+                if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
+                    waiter.requestFailed(
+                        new IllegalArgumentException("Invalid tag [tag=" + tagName + "]"));
+                    return null;
+                }
+
+                
+            }
+        });
+        waiter.waitForResult();*/
+    }
+
+    // from interface GroupService
+    public Collection getRecentTags (WebCreds creds) throws ServiceException
+    {
+        return new ArrayList();
+    }
+
+    // from interface GroupService
+    public Collection getTags (WebCreds creds, final int groupId) throws ServiceException
+    {
+        return new ArrayList();
     }
 
     protected static boolean isValidName (String name) 
