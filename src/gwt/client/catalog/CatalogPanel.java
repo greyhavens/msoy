@@ -31,7 +31,7 @@ public class CatalogPanel extends VerticalPanel
         HorizontalPanel topRow = new HorizontalPanel();
         _tagCloudContainer = new SimplePanel();
         topRow.add(_tagCloudContainer);
-        
+
         VerticalPanel uiBits = new VerticalPanel();
         _typeTabs = new ItemTypePanel(this);
         uiBits.add(_typeTabs);

@@ -27,6 +27,7 @@ public class TagCloud extends DockPanel
          */
         void tagClicked(String tag);
     }
+    
     public TagCloud (byte type)
     {
         this(type, null);
@@ -38,17 +39,6 @@ public class TagCloud extends DockPanel
         _listener = listener;
         _tagFlow = new FlowPanel();
         add(_tagFlow, DockPanel.CENTER);
-        FlowPanel currentLine = new FlowPanel();
-        currentLine.add(new InlineLabel(CItem.imsgs.currentTag()));
-        _tagCurrent = new Label();
-        _tagCurrent.setStyleName("tagSize3");
-        _tagCurrent.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                _listener.tagClicked(null);
-            }
-        });
-        currentLine.add(_tagCurrent);
-        add(currentLine, DockPanel.SOUTH);
         setStyleName("tagContents");
         CItem.catalogsvc.getPopularTags(_type, 20, new TagCallback());
     }
@@ -57,18 +47,45 @@ public class TagCloud extends DockPanel
     {
         _listener = listener;
     }
-
+    
     public void setCurrentTag (String tag)
     {
-        _tagCurrent.setText(tag == null ? "" : tag);
+        if (tag == null) {
+            setTagLine(null);
+            return;
+        }
+        FlowPanel tagLine = new FlowPanel();
+        tagLine.add(new InlineLabel(CItem.imsgs.currentTag(), true, false, true));
+        Label tagLabel = new InlineLabel(tag);
+        tagLine.add(tagLabel);
+        Label clearLabel = new InlineLabel(CItem.imsgs.clearCurrentTag(), false, true, false);
+        clearLabel.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                _listener.tagClicked(null);
+            }
+        });
+        tagLine.add(clearLabel);
+        setTagLine(tagLine);
     }
     
+    protected void setTagLine (Widget line)
+    {
+        if (_bottomLine != null) {
+            remove(_bottomLine);
+        }
+        _bottomLine = line;
+        if (line != null) {
+            add(line, DockPanel.SOUTH);
+        }
+    }
+    
+
     protected class TagCallback implements AsyncCallback
     {
         public void onSuccess (Object result) {
             HashMap _tagMap = (HashMap) result;
             if (_tagMap.size() == 0) {
-                _tagCurrent.setText(CItem.imsgs.msgNoTags());
+                setTagLine(new Label(CItem.imsgs.msgNoTags()));
                 return;
             }
 
@@ -112,12 +129,12 @@ public class TagCloud extends DockPanel
         public void onFailure (Throwable caught) {
             CItem.log("getPopularTags failed", caught);
             _tagFlow.clear();
-            _tagCurrent.setText(CItem.serverError(caught));
+            setTagLine(new Label(CItem.serverError(caught)));
         }
     }
 
     protected byte _type;
+    protected Widget _bottomLine;
     protected FlowPanel _tagFlow;
-    protected Label _tagCurrent;
     protected TagCloudListener _listener;
 }

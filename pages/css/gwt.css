@@ -283,6 +283,22 @@ body {
    display: inline;
 }   
 
+.inlineL {
+   display: inline;
+   margin-left: 5px;
+}   
+
+.inlineR {
+   display: inline;
+   margin-right: 5px;
+}   
+
+.inlineLR {
+   display: inline;
+   margin-left: 5px;
+   margin-right: 5px;
+}   
+
 .actionLabel {
   text-decoration: underline;
   cursor: pointer;

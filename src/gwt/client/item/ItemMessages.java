@@ -32,6 +32,14 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String detailBy(String arg0);
 
   /**
+   * Translated "(clear)".
+   * 
+   * @return translated "(clear)"
+   * @gwt.key clearCurrentTag
+   */
+  String clearCurrentTag();
+
+  /**
    * Translated "Current tag:".
    * 
    * @return translated "Current tag:"
