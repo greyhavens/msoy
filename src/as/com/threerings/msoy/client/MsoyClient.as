@@ -229,12 +229,18 @@ public class MsoyClient extends Client
             MsoyController.TOGGLE_FULLSCREEN, null, false,
             _ctx.getMsoyController().supportsFullScreen()));
 
+        try {
+        // TODO: this doesn't seem to find or get triggered by
+        // perspectivized furniture. It should.
+//        trace("Inacc: " + _stage.areInaccessibleObjectsUnderPoint(
+//            new Point(_stage.mouseX, _stage.mouseY)));
         var allObjects :Array = _stage.getObjectsUnderPoint(
             new Point(_stage.mouseX, _stage.mouseY));
 
         var seenObjects :Array = [];
         for each (var disp :DisplayObject in allObjects) {
             do {
+//                trace("Checking " + disp);
                 seenObjects.push(disp);
                 if (disp is ContextMenuProvider) {
                     (disp as ContextMenuProvider).populateContextMenu(custom);
@@ -242,6 +248,9 @@ public class MsoyClient extends Client
                 disp = disp.parent;
 
             } while (disp != null && (seenObjects.indexOf(disp) == -1));
+        }
+        } catch (e :Error) {
+            Log.getLog(this).logStackTrace(e);
         }
 
         // then, the menu will pop up
