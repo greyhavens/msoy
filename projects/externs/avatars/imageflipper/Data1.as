@@ -14,6 +14,8 @@ import flash.system.LoaderContext;
 public class Data
 {
     public var content :Object = {
+        bounce :20,
+        bounceFreq: 400
         // to figure out:
         // swf: one instance
         // images: one instance? (or class?)

@@ -2,7 +2,7 @@
 
 
 <!-- build configuration -->
-<project name="ImageFlipper" default="compile" basedir=".">
+<project name="ImageFlipper" default="all" basedir=".">
 
   <!-- define some basic project parameters -->
   <property name="app.name"         value="ImageFlipper"/>
@@ -10,11 +10,11 @@
   <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
 
   <target name="useData1">
-    <copy file="Data1.as" tofile="Data.as"/>
+    <copy file="Data1.as" tofile="Data.as" overwrite="true"/>
   </target>
 
   <target name="useData2">
-    <copy file="Data2.as" tofile="Data.as"/>
+    <copy file="Data2.as" tofile="Data.as" overwrite="true"/>
   </target>
 
   <!-- builds our Flash game -->
@@ -53,7 +53,13 @@
   </target>
 
   <target name="dist" depends="compile">
-    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/3477172fe915dbf57158dc392da2fa955bfb8b66.swf"/>
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/6c015e7cf97af6418ca304acd0128d27ad4913f5.swf"/>
   </target>
+
+  <target name="dist2" depends="preloader">
+    <copy file="PreLoader.swf" tofile="/export/msoy/pages/media/515a24b7cc90db25bf629560c57aebd8725ce242.swf"/>
+  </target>
+
+  <target name="distall" depends="dist, dist2"/>
 
 </project>
