@@ -17,6 +17,7 @@ import com.threerings.msoy.hood.Neighborhood;
 import com.threerings.msoy.hood.NeighborGroup;
 import com.threerings.msoy.hood.NeighborMember;
 import com.threerings.util.NetUtil;
+import com.threerings.util.Random;
 
 import com.adobe.serialization.json.JSONDecoder;
 
@@ -32,6 +33,14 @@ public class HoodViz extends Sprite
             data = this.root.loaderInfo.parameters;
         }
         _hood = Neighborhood.fromParameters(data);
+
+        var seed :int = 0;
+        if (_hood.centralMember != null) {
+            seed = _hood.centralMember.memberId;
+        } else if (_hood.centralGroup != null) {
+            seed = _hood.centralGroup.groupId;
+        }
+        _random = new Random(seed);
 
         _loader = new Loader();
         _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, eclDone);
@@ -100,13 +109,12 @@ public class HoodViz extends Sprite
 
 
         // pick tiles randomly from weighted intervals - generalizes to N tile types
-        // and can use seeded pseudorandomization if we want deterministic behaviour
         var groupsLeft :int = _hood.groups.length;
         var friendsLeft :int = _hood.friends.length;
         var totalLeft :int = groupsLeft + friendsLeft;
         while (totalLeft > 0) {
             var tile :Object = distances[--totalLeft];
-            if (Math.random() < groupsLeft / totalLeft) {
+            if (_random.nextNumber() < groupsLeft / totalLeft) {
                 drawables[tile.y][tile.x] = _hood.groups[--groupsLeft];
             } else {
                 drawables[tile.y][tile.x] = _hood.friends[--friendsLeft];
@@ -176,14 +184,14 @@ public class HoodViz extends Sprite
         var bit :MovieClip;
         if (bitType is Class) {
             bit = new bitType();
-            bit.gotoAndStop((int) (Math.random() * bit.totalFrames));
+            bit.gotoAndStop(_random.nextInt(bit.totalFrames));
         } else {
             var building :Building = (bitType as Building);
             // let's illustrate the population of a place by the square root of its
             // actual population in soy figures, lest we utterly overwhelm the map;
             // thus 1 pop -> 1 soy, 25 pop -> 5 soys, 100 pop -> 10 soys.
             bit = building.getPopulatedTile(
-                Math.random() * building.variationCount,
+                _random.nextInt(building.variationCount),
                 Math.round(Math.sqrt(neighbor.population)));
         }
 
@@ -329,6 +337,8 @@ public class HoodViz extends Sprite
             _tip = null;
         }
     }
+
+    protected var _random :Random;
 
     protected var _loader :Loader;
 
