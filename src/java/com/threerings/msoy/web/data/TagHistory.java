@@ -20,9 +20,6 @@ public class TagHistory
     public static final byte ACTION_REMOVED = 2;
     public static final byte ACTION_COPIED = 3;
 
-    /** Id of the target of this tag, as used by the TagRepository */
-    public int targetId;
-
     /** The tag that was added or deleted, or null for COPIED. */
     public String tag;
     
