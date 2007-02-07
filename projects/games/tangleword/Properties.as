@@ -33,6 +33,10 @@ public class Properties
     */
     public static const OKBUTTON : Rectangle = new Rectangle (250, 310, 50, 28);
 
+    /**
+       Position of the log text field
+    */
+    public static const LOGFIELD : Rectangle = new Rectangle (320, 50, 200, 288);
     
     
     

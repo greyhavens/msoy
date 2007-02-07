@@ -81,9 +81,6 @@ public class Controller
         // First, check to make sure it's of the correct length (in characters)
         if (word.length < MIN_WORD_LENGTH) return;
 
-        // Check if it's already been claimed
-        // TODO
-        
         // Now check if it's an actual word
         if (!DictionaryService.checkWord (TangleWord.LOCALE, word)) return;
 
@@ -91,7 +88,9 @@ public class Controller
         // TODO
         var score : Number = 10;
         
-        // Finally, process the new word
+        // Finally, process the new word. Notice that we don't check if it's already
+        // been claimed - the model will take care of that, because there's a network
+        // round-trip involved, and therefore potential of contention.
         _model.addScore (word, score);
     }
             

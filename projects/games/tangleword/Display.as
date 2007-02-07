@@ -88,9 +88,22 @@ public class Display extends Sprite
 
         // Finally, update the word
         _wordfield.text = word;
-
-
     }
+
+    /** Updates the log with a success message */
+    public function logSuccess (player : String, word : String, score : Number) : void
+    {
+        var message : String = player + ": " + word + ", " + score + " pts.";
+        _logger.Log (message);
+    }
+
+    /** Updates the log with a failure message */
+    public function logFailure (player : String, word : String) : void
+    {
+        var message : String = player + ": " + word + " already claimed.";
+        _logger.Log (message);
+    }
+    
 
         
     
@@ -159,13 +172,21 @@ public class Display extends Sprite
         _wordfield = new TextField ();
         _wordfield.selectable = false;
         _wordfield.defaultTextFormat = format;
-        _wordfield.borderColor = uint(format.color != null ? format.color : 0x00000000);
+        _wordfield.borderColor = Resources.defaultBorderColor;
         _wordfield.border = true;
         _wordfield.x = Properties.WORDFIELD.x;
         _wordfield.y = Properties.WORDFIELD.y;
         _wordfield.width = Properties.WORDFIELD.width;
         _wordfield.height = Properties.WORDFIELD.height;
         addChild (_wordfield);
+
+        _logger = new Logger ();
+        _logger.x = Properties.LOGFIELD.x;
+        _logger.y = Properties.LOGFIELD.y;
+        _logger.width = Properties.LOGFIELD.width;
+        _logger.height = Properties.LOGFIELD.height;
+        addChild (_logger);
+        
     }
     
 
@@ -265,6 +286,9 @@ public class Display extends Sprite
 
     /** Text box containing the currently guessed word */
     private var _wordfield : TextField;
+
+    /** Logger text box */
+    private var _logger : Logger;
     
 }
 

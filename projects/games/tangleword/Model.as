@@ -31,6 +31,7 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         _display = display;
         _gameCtrl = gameCtrl;
         _gameCtrl.registerListener (this);
+        _playerName = _gameCtrl.getPlayerNames()[_gameCtrl.getMyIndex()];
 
         // Initialize game data storage
         initializeStorage ();
@@ -100,9 +101,8 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         the new word to their lists. */
     public function addScore (word : String, score : Number) : void
     {
-        var playerName : String = _gameCtrl.getPlayerNames()[_gameCtrl.getMyIndex()];
         var obj : Object = new Object ();
-        UpdateObject.write (obj, UpdateObject.PLAYER, playerName);
+        UpdateObject.write (obj, UpdateObject.PLAYER, _playerName);
         UpdateObject.write (obj, UpdateObject.WORD,   word);
         UpdateObject.write (obj, UpdateObject.SCORE,  score);
 
@@ -226,11 +226,14 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         if (_scoreboard.getWordOwner (word) == null)
         {
             _scoreboard.addWord (player, word, score);
-            // maybe do something else here
+            _display.logSuccess (player, word, score);
         }
         else
         {
-            Assert.Fail ("Tried to score a word that was already scored: " + word);
+            if (_playerName == player)
+            {
+                _display.logFailure (player, word);
+            }
         }
     }      
     
@@ -257,6 +260,9 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
 
     /** Main game control structure */
     private var _gameCtrl : EZGameControl;
+
+    /** Cache the player's name */
+    private var _playerName : String;
 
     /** Game board data */
     private var _board : Array;

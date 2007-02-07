@@ -65,6 +65,22 @@ public class Resources
         return format;
     }
 
+    /** Returns a new instance of a text style for the logging window */
+    public static function makeFormatForLogger () : TextFormat
+    {
+        var format : TextFormat = new TextFormat ();
+        format.font = "Verdana";
+        format.color = uint(0x777788);
+        format.size = 12;
+        format.bold = false;
+        return format;
+    }
+
+    /** Returns a default border color */
+    public static const defaultBorderColor : uint = uint (0xaaaacc);
+
+    
+
     // FILTERS
 
     /** Returns a new instance of a filter suitable for a cursor */
