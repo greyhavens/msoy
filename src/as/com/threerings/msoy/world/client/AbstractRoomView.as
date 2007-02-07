@@ -65,6 +65,7 @@ public class AbstractRoomView extends Sprite
         scaleY = scale;
 
         relayout();
+        updateDrawnRoom();
     }
 
     /**
@@ -601,11 +602,21 @@ public class AbstractRoomView extends Sprite
 
     protected function updateDrawnRoom () :void
     {
-        if (_bkgGraphics != null) {
-            removeChild(_bkgGraphics);
-            _bkgGraphics = null;
-        }
+        var g :Graphics = this.graphics;
+        g.clear();
 
+        // fill all our screen area with transparent pixels, so that
+        // mousing anywhere in our bounds includes us in the
+        // event dispatch. This is primarily necessary to get the
+        // ContextMenu working properly.
+        if (!isNaN(_actualWidth) && !isNaN(_actualHeight)) {
+            var w :Number = _actualWidth / scaleX;
+            var h :Number = _actualHeight / scaleY;
+            g.beginFill(0, 0);
+            g.drawRect(0, 0, w, h);
+            g.endFill();
+        }
+ 
         // TODO: this will move to metrics init method
         var minScale :Number = computeMinScale();
         var horizon :Number = 1 - _scene.getHorizon();
@@ -622,12 +633,6 @@ public class AbstractRoomView extends Sprite
         if (!drawEdges) {
             return; // nothing to draw
         }
-
-        _bkgGraphics = new Sprite();
-        addChildAt(_bkgGraphics, 0);
-
-        var g :Graphics = _bkgGraphics.graphics;
-        g.clear();
 
         var floorWidth :Number = (sceneWidth * minScale);
         var floorInset :Number = (sceneWidth - floorWidth) / 2;
@@ -710,9 +715,6 @@ public class AbstractRoomView extends Sprite
 
     /** Our background sprite, if any. */
     protected var _bkg :FurniSprite;
-
-    /** A hand-drawn background to look like a room. */
-    protected var _bkgGraphics :Sprite;
 
     /** A map of id -> Furni. */
     protected var _furni :HashMap = new HashMap();
