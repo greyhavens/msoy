@@ -376,9 +376,10 @@ public class RoomController extends SceneController
         if (hitter == null) {
             var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
             if (cloc.click == ClickLocation.FLOOR) {
-                //var p :Point = _roomView.globalToLocal(new Point(sx, sy));
                 _walkTarget.x = _roomView.mouseX;
                 _walkTarget.y = _roomView.mouseY;
+                _walkTarget.scaleX = 1 / _roomView.scaleX;
+                _walkTarget.scaleY = 1 / _roomView.scaleY;
                 showWalkTarget = true;
             }
         }
