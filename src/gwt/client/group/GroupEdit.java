@@ -43,6 +43,7 @@ import client.shell.MsoyEntryPoint;
 import client.util.BorderedDialog;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
+import client.util.TagDetailPanel;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
@@ -204,7 +205,7 @@ public class GroupEdit extends BorderedDialog
             public void getTags (AsyncCallback callback) {
                 CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, callback);
             }
-            public void supportFlag () {
+            public boolean supportFlags () {
                 return false;
             }
             public void setFlags (final byte flag, final Label statusLabel) { }

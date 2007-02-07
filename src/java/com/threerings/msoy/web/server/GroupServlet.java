@@ -23,11 +23,15 @@ import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -238,37 +242,86 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void tagGroup (WebCreds creds, final int groupId, final String tag, final boolean set)
-        throws ServiceException
+    public TagHistory tagGroup (WebCreds creds, final int groupId, final String tag, 
+        final boolean set) throws ServiceException
     {
-        /*final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
+        final String tagName = tag.trim().toLowerCase();
+        if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
+            throw new ServiceException("Invalid tag [tag=" + tagName + "]");
+        }
+        final int memberId = creds.getMemberId();
+
+        final ServletWaiter<TagHistory> waiter = new ServletWaiter<TagHistory>(
             "tagGroup[" + groupId + ", " + tag + ", " + set + "]");
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<TagHistory>(waiter) {
             public TagHistory invokePersistResult() throws PersistenceException {
-                final String tagName = tag.trim().toLowerCase();
-
-                if (!TagNameRecord.VALID_TAG.matcher(tagName).matches()) {
-                    waiter.requestFailed(
-                        new IllegalArgumentException("Invalid tag [tag=" + tagName + "]"));
-                    return null;
-                }
-
+                long now = System.currentTimeMillis();
                 
+                TagRepository tagRepo = MsoyServer.groupRepo.getTagRepository();
+                TagNameRecord tag = tagRepo.getTag(tagName);
+
+                TagHistoryRecord historyRecord = set ?
+                    tagRepo.tag(groupId, tag.tagId, memberId, now) :
+                    tagRepo.untag(groupId, tag.tagId, memberId, now);
+                if (historyRecord != null) {
+                    MemberRecord mrec = MsoyServer.memberRepo.loadMember(memberId);
+                    TagHistory history = new TagHistory();
+                    history.member = mrec.getName();
+                    history.tag = tag.tag;
+                    history.action = historyRecord.action;
+                    history.time = new Date(historyRecord.time.getTime());
+                    return history;
+                }
+                return null;
             }
         });
-        waiter.waitForResult();*/
+        return waiter.waitForResult();
     }
 
     // from interface GroupService
-    public Collection getRecentTags (WebCreds creds) throws ServiceException
+    public Collection<TagHistory> getRecentTags (WebCreds creds) throws ServiceException
     {
-        return new ArrayList();
+        final int memberId = creds.getMemberId();
+        final TagRepository tagRepo = MsoyServer.groupRepo.getTagRepository();
+        final ServletWaiter<Collection<TagHistory>> waiter = 
+            new ServletWaiter<Collection<TagHistory>>("getRecentTags[]");
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<TagHistory>>(waiter) {
+            public Collection<TagHistory> invokePersistResult () throws PersistenceException {
+                MemberRecord memRec = MsoyServer.memberRepo.loadMember(memberId);
+                MemberName memName = memRec.getName();
+                ArrayList<TagHistory> list = new ArrayList<TagHistory>();
+                for (TagHistoryRecord record : tagRepo.getTagHistoryByMember(memberId)) {
+                    TagNameRecord tag = record.tagId == -1 ? null :
+                       tagRepo.getTag(record.tagId);
+                    TagHistory history = new TagHistory();
+                    history.member = memName;
+                    history.tag = tag == null ? null : tag.tag;
+                    history.action = record.action;
+                    history.time = new Date(record.time.getTime());
+                    list.add(history); 
+                }
+                return list;
+            }
+        });
+        return waiter.waitForResult();
     }
 
     // from interface GroupService
-    public Collection getTags (WebCreds creds, final int groupId) throws ServiceException
+    public Collection<String> getTags (WebCreds creds, final int groupId) throws ServiceException
     {
-        return new ArrayList();
+        final ServletWaiter<Collection<String>> waiter = new ServletWaiter<Collection<String>>(
+            "getTags[groupId=" + groupId + "]");
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Collection<String>>(waiter) {
+            public Collection<String> invokePersistResult () throws PersistenceException {
+                ArrayList<String> result = new ArrayList<String>();
+                for (TagNameRecord tagName : MsoyServer.groupRepo.getTagRepository().
+                        getTags(groupId)) {
+                    result.add(tagName.tag);
+                }
+                return result;
+            }
+        });
+        return waiter.waitForResult();
     }
 
     protected static boolean isValidName (String name) 

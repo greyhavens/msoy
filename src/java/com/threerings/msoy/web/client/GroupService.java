@@ -12,6 +12,7 @@ import com.threerings.msoy.web.data.GroupExtras;
 import com.threerings.msoy.web.data.GroupDetail;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.TagHistory;
 
 /**
  * Defines group services available to the GWT/AJAX web client.
@@ -81,7 +82,7 @@ public interface GroupService extends RemoteService
     /**
      * Update a tag on a group.
      */
-    public void tagGroup (WebCreds creds, int groupId, String tag, boolean set) 
+    public TagHistory tagGroup (WebCreds creds, int groupId, String tag, boolean set) 
         throws ServiceException;
 
     /** 
