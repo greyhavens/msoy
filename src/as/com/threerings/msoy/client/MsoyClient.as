@@ -7,6 +7,8 @@ import flash.external.ExternalInterface;
 
 import flash.events.ContextMenuEvent;
 
+import flash.geom.Point;
+
 import flash.system.Security;
 
 import flash.ui.ContextMenu;
@@ -218,7 +220,6 @@ public class MsoyClient extends Client
      */
     protected function contextMenuWillPopUp (event :ContextMenuEvent) :void
     {
-        var disp :DisplayObject = event.mouseTarget;
         var menu :ContextMenu = (event.target as ContextMenu);
         var custom :Array = menu.customItems;
         custom.length = 0;
@@ -228,13 +229,20 @@ public class MsoyClient extends Client
             MsoyController.TOGGLE_FULLSCREEN, null, false,
             _ctx.getMsoyController().supportsFullScreen()));
 
-        do {
-            if (disp is ContextMenuProvider) {
-                (disp as ContextMenuProvider).populateContextMenu(custom);
-            }
+        var allObjects :Array = _stage.getObjectsUnderPoint(
+            new Point(_stage.mouseX, _stage.mouseY));
 
-            disp = disp.parent;
-        } while (disp != null);
+        var seenObjects :Array = [];
+        for each (var disp :DisplayObject in allObjects) {
+            do {
+                seenObjects.push(disp);
+                if (disp is ContextMenuProvider) {
+                    (disp as ContextMenuProvider).populateContextMenu(custom);
+                }
+                disp = disp.parent;
+
+            } while (disp != null && (seenObjects.indexOf(disp) == -1));
+        }
 
         // then, the menu will pop up
     }

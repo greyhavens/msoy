@@ -302,6 +302,11 @@ public class FurniSprite extends MsoySprite
         }
     }
 
+    override public function toString () :String
+    {
+        return "FurniSprite[" + _furni.itemType + ":" + _furni.itemId + "]";
+    }
+
     override protected function updateMediaPosition () :void
     {
         if (_media is Perspectivizer) {

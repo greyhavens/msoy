@@ -13,7 +13,10 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.msoy.client.ContextMenuProvider;
+
 public class Perspectivizer extends Bitmap
+    implements ContextMenuProvider
 {
     public function Perspectivizer (
         source :DisplayObject, perspInfo :PerspInfo = null,
@@ -36,6 +39,15 @@ public class Perspectivizer extends Bitmap
     public function getHotSpot () :Point
     {
         return (_info != null) ? _info.hotSpot : new Point(0, 0);
+    }
+
+    // from ContextMenuProvider
+    public function populateContextMenu (menuItems :Array) :void
+    {
+        // we need to pass-through to our source, if applicable
+        if (_source is ContextMenuProvider) {
+            (_source as ContextMenuProvider).populateContextMenu(menuItems);
+        }
     }
 
     public function updatePerspInfo (

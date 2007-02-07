@@ -111,5 +111,10 @@ public class AvatarSprite extends ActorSprite
         // let's just post a command to our controller
         CommandEvent.dispatch(this, RoomController.AVATAR_CLICKED, this);
     }
+
+    override public function toString () :String
+    {
+        return "AvatarSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
+    }
 }
 }

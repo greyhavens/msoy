@@ -187,6 +187,11 @@ public class ActorSprite extends MsoySprite
         appearanceChanged();
     }
 
+    override public function toString () :String
+    {
+        return "ActorSprite[" + _occInfo.username + " (oid=" + _occInfo.bodyOid + ")]";
+    }
+
     override protected function updateLoadingProgress (
             soFar :Number, total :Number) :void
     {
