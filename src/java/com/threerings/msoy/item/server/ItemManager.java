@@ -684,7 +684,7 @@ public class ItemManager
 
                     TagNameRecord tag = repo.getTagRepository().getTag(record.tagId);
                     TagHistory history = new TagHistory();
-                    history.item = new ItemIdent(ident.type, ident.itemId);
+                    history.targetId = ident.itemId;
                     history.member = memRec.getName();
                     history.tag = tag.tag;
                     history.action = record.action;
@@ -716,7 +716,7 @@ public class ItemManager
                         TagNameRecord tag = record.tagId == -1 ? null :
                             repo.getTagRepository().getTag(record.tagId);
                         TagHistory history = new TagHistory();
-                        history.item = new ItemIdent(type, record.targetId);
+                        history.targetId = record.targetId;
                         history.member = memName;
                         history.tag = tag == null ? null : tag.tag;
                         history.action = record.action;
@@ -814,7 +814,7 @@ public class ItemManager
                     MemberRecord mrec = MsoyServer.memberRepo.loadMember(taggerId);
                     // and create the return value
                     TagHistory history = new TagHistory();
-                    history.item = new ItemIdent(ident.type, originalId);
+                    history.targetId = originalId;
                     history.member = mrec.getName();
                     history.tag = tag.tag;
                     history.action = historyRecord.action;
