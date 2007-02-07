@@ -24,6 +24,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String menuStuff();
 
   /**
+   * Translated "Remove Tag".
+   * 
+   * @return translated "Remove Tag"
+   * @gwt.key tagRemove
+   */
+  String tagRemove();
+
+  /**
    * Translated "Logon".
    * 
    * @return translated "Logon"
@@ -78,6 +86,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key tagMatureFlag
    */
   String tagMatureFlag();
+
+  /**
+   * Translated "Are you sure you would like to remove the tag {0}?".
+   * 
+   * @return translated "Are you sure you would like to remove the tag {0}?"
+   * @gwt.key tagRemoveConfirm
+   */
+  String tagRemoveConfirm(String arg0);
 
   /**
    * Translated "People".

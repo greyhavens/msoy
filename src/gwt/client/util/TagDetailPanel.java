@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MouseListener;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -60,7 +61,9 @@ public class TagDetailPanel extends FlexTable
         setStyleName("tagDetailPanel");
         _service = service;
 
-        setWidget(0, 0, _tags = new Label(CShell.cmsgs.tagLoading()));
+        _tags = new FlowPanel();
+        _tags.add(new Label(CShell.cmsgs.tagLoading()));
+        setWidget(0, 0, _tags);
 
         setWidget(1, 0, new Label(CShell.cmsgs.tagAddTag()));
         TextBox newTagBox = new TextBox();
@@ -262,28 +265,66 @@ public class TagDetailPanel extends FlexTable
 
         _service.getTags(new AsyncCallback() {
             public void onSuccess (Object result) {
+                _tags.clear();
                 boolean first = true;
                 Iterator i = ((Collection) result).iterator();
-                StringBuffer builder = new StringBuffer();
                 while (i.hasNext()) {
-                    String tag = (String) i.next();
+                    final String tag = (String) i.next();
                     if (!first) {
-                        builder.append(" . ");
+                        _tags.add(new InlineLabel(" . "));
                     }
                     first = false;
-                    builder.append(tag);
+                    final PopupPanel removePanel = new PopupPanel(true);
+                    MenuBar menu = new MenuBar(true);
+                    menu.addItem(new MenuItem(CShell.cmsgs.tagRemove(), new Command() {
+                        public void execute() {
+                            (new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag)) {
+                                public void onAffirmative () {
+                                    removePanel.hide();
+                                    _service.untag(tag, new AsyncCallback () {
+                                        public void onSuccess (Object result) {
+                                            refreshTags();
+                                        }
+                                        public void onFailure (Throwable caught) {
+                                            GWT.log("tagItem failed", caught);
+                                            _status.setText(CShell.cmsgs.errTagInternalError(
+                                                caught.getMessage()));
+                                        }
+                                    });
+                                }
+                                public void onNegative () { 
+                                    removePanel.hide();
+                                }
+                            }).prompt();
+                        }
+                    }));
+                    removePanel.add(menu);
+                    final InlineLabel tagLabel = new InlineLabel(tag);
+                    tagLabel.addMouseListener(new MouseListener() {
+                        public void onMouseDown (Widget sender, int x, int y) {
+                            removePanel.setPopupPosition(tagLabel.getAbsoluteLeft() + x,
+                                tagLabel.getAbsoluteTop() + y);
+                            removePanel.show();
+                        }
+                        public void onMouseLeave (Widget sender) { }
+                        public void onMouseUp (Widget sender, int x, int y) { }
+                        public void onMouseEnter (Widget sender) { }
+                        public void onMouseMove (Widget sender, int x, int y) { }
+                    });
+                    _tags.add(tagLabel);
                 }
-                _tags.setText(builder.toString());
             }
             public void onFailure (Throwable caught) {
-                _tags.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
+                _tags.clear();
+                _tags.add(new Label(CShell.cmsgs.errTagInternalError(caught.getMessage())));
             }
         });
     }
 
     protected TagService _service;
 
-    protected Label _tags, _status;
+    protected Label _status;
+    protected FlowPanel _tags;
     protected ListBox _quickTags;
     protected FlexTable _tagHistory;
 }
