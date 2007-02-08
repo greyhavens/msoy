@@ -11,27 +11,26 @@ import flash.utils.ByteArray;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
-public class Data
+public class RemixAssets
 {
-    public var content :Object = {
-        bounce :20,
-        bounceFreq: 400
-        // to figure out:
-        // swf: one instance
-        // images: one instance? (or class?)
-        // audio: one instance? (or class?)
-    };
+    public static const bounce :int = 40;
 
-    public function Data ()
+    public static const bounceFreq :int = 200;
+
+    [Embed(source="ray.jpg")]
+    public static const image :Class;
+
+    // Everything below this line is concerned with loading SWF assets
+
+    public function RemixAssets ()
     {
-        content["image"] = image__image;
    //     loadAsset("used_for_swfs");
     }
 
     protected function loadAsset (name :String) :void
     {
         getAsset(name, function (o :Object) :void {
-            content[name] = o;
+            this[name] = o;
         });
     }
 
@@ -48,7 +47,5 @@ public class Data
             });
     }
 
-    [Embed(source="cock.jpg")]
-    private var image__image :Class;
 }
 }

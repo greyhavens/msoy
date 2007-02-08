@@ -9,16 +9,16 @@
   <property name="root.path"        value="../../../.."/>
   <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
 
-  <target name="useData1">
-    <copy file="Data1.as" tofile="Data.as" overwrite="true"/>
+  <target name="useAssets1">
+    <copy file="RemixAssets1.as" tofile="RemixAssets.as" overwrite="true"/>
   </target>
 
-  <target name="useData2">
-    <copy file="Data2.as" tofile="Data.as" overwrite="true"/>
+  <target name="useAssets2">
+    <copy file="RemixAssets2.as" tofile="RemixAssets.as" overwrite="true"/>
   </target>
 
   <!-- builds our Flash game -->
-  <target name="compile" depends="useData1">
+  <target name="compile" depends="useAssets1">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
@@ -28,13 +28,13 @@
     </java>
   </target>
 
-  <target name="preloader" depends="useData2">
+  <target name="preloader" depends="useAssets2">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
       <arg value="-compiler.source-path=."/>
       <arg value="-includes"/>
-      <arg value="Data"/>
+      <arg value="RemixAssets"/>
 
       <arg value="-link-report"/>
       <arg value="/tmp/link-report.txt"/>

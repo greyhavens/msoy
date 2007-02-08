@@ -18,12 +18,10 @@ public class ImageFlipper extends Sprite
 {
     public function ImageFlipper ()
     {
-        var o :Object = new Data().content;
+        _bounceAmplitude = RemixAssets.bounce;
+        _bounceFreq = RemixAssets.bounceFreq;
 
-        _bounceAmplitude = Number(o["bounce"]);
-        _bounceFreq = Number(o["bounceFreq"]);
-
-        var imgClass :Class = (o["image"] as Class);
+        var imgClass :Class = RemixAssets.image;
         _image = (new imgClass() as DisplayObject);
         addChild(_image);
 
