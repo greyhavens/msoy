@@ -96,4 +96,13 @@ public interface GroupService extends RemoteService
      */
     public Collection getTags (WebCreds creds, int groupId)
         throws ServiceException;
+
+    /**
+     * Gets the popular tags for groups.  The TagRepository method getPopularTags is not actually
+     * using its row parameter... if that changes in the future, this should be changed to make
+     * the rows returned configurable in the client.  Also, for some crazy reason, TagRepository is
+     * not sorting its results, so we're doing it on the client
+     */
+    public List getPopularTags (WebCreds creds, int rows)
+        throws ServiceException;
 }

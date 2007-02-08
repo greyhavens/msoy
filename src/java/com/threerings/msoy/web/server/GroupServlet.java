@@ -32,6 +32,7 @@ import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagRepository;
+import com.threerings.msoy.server.persist.TagPopularityRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -317,6 +318,24 @@ public class GroupServlet extends MsoyServiceServlet
                 for (TagNameRecord tagName : MsoyServer.groupRepo.getTagRepository().
                         getTags(groupId)) {
                     result.add(tagName.tag);
+                }
+                return result;
+            }
+        });
+        return waiter.waitForResult();
+    }
+
+    // from interface GroupService
+    public List<String> getPopularTags (WebCreds creds, final int rows) throws ServiceException
+    {
+        final ServletWaiter<List<String>> waiter = new ServletWaiter<List<String>>(
+            "getPopularTags[]");
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<String>>(waiter) {
+            public List<String> invokePersistResult () throws PersistenceException {
+                ArrayList<String> result = new ArrayList<String>();
+                for (TagPopularityRecord popRec : MsoyServer.groupRepo.getTagRepository().
+                        getPopularTags(rows)) {
+                    result.add(popRec.tag);
                 }
                 return result;
             }

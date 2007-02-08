@@ -408,6 +408,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String editCreateTitle();
 
   /**
+   * Translated "No popular tags found!".
+   * 
+   * @return translated "No popular tags found!"
+   * @gwt.key listNoPopularTags
+   */
+  String listNoPopularTags();
+
+  /**
    * Translated "Area you sure you wish to leave {0}?".
    * 
    * @return translated "Area you sure you wish to leave {0}?"

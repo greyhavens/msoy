@@ -114,16 +114,27 @@ public class GroupList extends VerticalPanel
         InlineLabel popularTagsLabel = new InlineLabel(CGroup.msgs.listPopularTags() + " ");
         popularTagsLabel.addStyleName("PopularTagsLabel");
         _popularTagsContainer.add(popularTagsLabel);
-        // TODO: this is dummy data until tags get figured out
-        String dummytags[] = { "Muppet", "cute", "scary", "Halloween", "fuzzy", "furry",
-            "legs", "horns", "haunted", "spaghetti", "flying" };
-        for (int i = 0; i < dummytags.length; i++) {
-            _popularTagsContainer.add(new Anchor("", dummytags[i]));
-            _popularTagsContainer.add(new InlineLabel(", "));
-        }
-        Anchor moreLink = new Anchor("", CGroup.msgs.listMore());
-        DOM.setAttribute(moreLink.getElement(), "id", "moreLink");
-        _popularTagsContainer.add(moreLink);
+
+        CGroup.groupsvc.getPopularTags(CGroup.creds, 10, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                Iterator iter = ((List)result).iterator();
+                if (!iter.hasNext()) {
+                    _popularTagsContainer.add(new InlineLabel(CGroup.msgs.listNoPopularTags()));
+                } else {
+                    while (iter.hasNext()) {
+                        _popularTagsContainer.add(new Anchor("", ((String)iter.next())));
+                        _popularTagsContainer.add(new InlineLabel(", "));
+                    }
+                    Anchor moreLink = new Anchor("", CGroup.msgs.listMore());
+                    DOM.setAttribute(moreLink.getElement(), "id", "moreLink");
+                    _popularTagsContainer.add(moreLink);
+                }
+            }
+            public void onFailure (Throwable caught) {
+                CGroup.log("getPopularTags failed", caught);
+                addError(CGroup.serverError(caught));
+            }
+        });
     }
 
     protected void loadGroupsList ()

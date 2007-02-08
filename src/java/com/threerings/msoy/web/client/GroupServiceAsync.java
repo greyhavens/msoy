@@ -82,4 +82,9 @@ public interface GroupServiceAsync
      * The asynchronous version of {@link GroupService.getTags}
      */
     public void getTags (WebCreds creds, int groupId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link GroupService.getPopularTags}
+     */
+    public void getPopularTags (WebCreds creds, int rows, AsyncCallback callback);
 }
