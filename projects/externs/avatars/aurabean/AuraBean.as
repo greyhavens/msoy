@@ -35,8 +35,6 @@ public class AuraBean extends Sprite
             var bmp :Bitmap = new Bitmap(_bit);
             bmp.scaleX = 10;
             bmp.scaleY = 300;
-            //bmp.x = 200;
-            //bmp.y = 200;
             bmp.rotation = ii;
             _aura.addChild(bmp);
         }
@@ -53,7 +51,7 @@ public class AuraBean extends Sprite
         if (_in) {
             _inCounter++;
 
-            var val :uint = Math.min(255, _inCounter);
+            var val :uint = Math.min(255, Math.max(0, _inCounter));
             _bit.setPixel32(0, 0, (val << 24));
         }
     }
@@ -61,7 +59,7 @@ public class AuraBean extends Sprite
     protected function handleMouseIn (evt :MouseEvent) :void
     {
         _in = true;
-        _inCounter = 0;
+        _inCounter = -20;
     }
 
     protected function handleMouseOut (event :MouseEvent) :void
