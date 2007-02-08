@@ -22,13 +22,7 @@ import com.threerings.ezgame.StateChangedListener;
 [SWF(width="500", height="500")]
 public class TangleWord extends Sprite implements StateChangedListener
 {
-
-    // PUBLIC CONSTANTS
-
-    /** Default language/culture settings */
-    public static const LOCALE : LocaleSettings = LocaleSettings.EN_US;
-
-
+    
     // PUBLIC METHODS
 
     // Constructor creates the board, and registers itself for events
@@ -41,9 +35,9 @@ public class TangleWord extends Sprite implements StateChangedListener
         _coordinator = new HostCoordinator (_gameCtrl);
         _rounds = new RoundProvider (_gameCtrl, _coordinator);
 
-        _rounds.setTimeout (RoundProvider.SYSTEM_STARTED_STATE, 1);
-        _rounds.setTimeout (RoundProvider.ROUND_STARTED_STATE, 3);
-        _rounds.setTimeout (RoundProvider.ROUND_ENDED_STATE, 1);
+        _rounds.setTimeout (RoundProvider.SYSTEM_STARTED_STATE, 0);
+        _rounds.setTimeout (RoundProvider.ROUND_STARTED_STATE, Properties.ROUND_LENGTH);
+        _rounds.setTimeout (RoundProvider.ROUND_ENDED_STATE, Properties.PAUSE_LENGTH);
         
 
         // Create MVC elements
@@ -54,9 +48,9 @@ public class TangleWord extends Sprite implements StateChangedListener
         addChild (_display);
 
         // TODO: DEBUG
-        _gameCtrl.localChat (_coordinator.amITheHost () ?
-                             "I AM THE HOST! :)" :
-                             "I'm not the host. :(");
+        // _gameCtrl.localChat (_coordinator.amITheHost () ?
+        //                     "I AM THE HOST! :)" :
+        //                     "I'm not the host. :(");
         
     }
 
@@ -86,11 +80,6 @@ public class TangleWord extends Sprite implements StateChangedListener
         }
     }
 
-
-    /** From MessageReceivedListener: deal with out-of-band messages */
-    public function messageReceived (event : MessageReceivedEvent) : void
-    {
-    }
 
 
     // PRIVATE FUNCTIONS

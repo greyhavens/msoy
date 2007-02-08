@@ -86,7 +86,7 @@ public class Controller
         if (word.length < MIN_WORD_LENGTH) return;
 
         // Now check if it's an actual word
-        if (!DictionaryService.checkWord (TangleWord.LOCALE, word)) return;
+        if (!DictionaryService.checkWord (Properties.LOCALE, word)) return;
 
         // Find the word score
         var score : Number = word.length;
@@ -131,7 +131,7 @@ public class Controller
     private function initializeLetterSet () : void
     {
         // Get a set of letters
-        var s : Array = DictionaryService.getLetterSet (TangleWord.LOCALE,
+        var s : Array = DictionaryService.getLetterSet (Properties.LOCALE,
                                                         Properties.LETTER_COUNT);
         
         Assert.True (s.length == Properties.LETTER_COUNT,

@@ -4,7 +4,7 @@ package
 import mx.core.BitmapAsset;
 import flash.filters.GlowFilter;    
 import flash.text.TextFormat;
-
+import flash.text.TextFormatAlign;
 
 
 /** 
@@ -87,8 +87,20 @@ public class Resources
         return format;
     }
 
+    /** Returns a new instance of a text style for the countdown timer */
+    public static function makeFormatForCountdown () : TextFormat
+    {
+        var format : TextFormat = new TextFormat ();
+        format.font = "Verdana";
+        format.color = uint(0xaa6666);
+        format.size = 18;
+        format.bold = true;
+        format.align = TextFormatAlign.CENTER;
+        return format;
+    }
+
     /** Returns a default border color */
-    public static const defaultBorderColor : uint = uint (0xccccee);
+    public static const defaultBorderColor : uint = uint (0xddddff);
 
     
 

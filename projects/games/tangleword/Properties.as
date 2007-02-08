@@ -10,6 +10,17 @@ import flash.geom.Rectangle;
 */
 public class Properties
 {
+
+    /** Default language/culture settings */
+    public static const LOCALE : LocaleSettings = LocaleSettings.EN_US;
+
+    /** Default round length, in seconds */
+    public static const ROUND_LENGTH : Number = 10;
+
+    /** Default pause length */
+    public static const PAUSE_LENGTH : Number = 5;
+
+
     /**
        Game display is composed of the letter board, and various
        status windows TBD. This display size is the bounding box
@@ -34,14 +45,20 @@ public class Properties
     public static const OKBUTTON : Rectangle = new Rectangle (250, 312, 50, 28);
 
     /**
-       Position of the log text field
-    */
-    public static const LOGFIELD : Rectangle = new Rectangle (320, 170, 200, 160);
-
-    /**
        Position of the score box
     */
-    public static const SCOREFIELD : Rectangle = new Rectangle (320, 50, 200, 100);
+    public static const SCOREFIELD : Rectangle = new Rectangle (350, 50, 180, 100);
+    
+    /**
+       Position of the log text field
+    */
+    public static const LOGFIELD : Rectangle = new Rectangle (350, 160, 180, 140);
+
+    /**
+       Position of the timer
+    */
+    public static const TIMER : Rectangle = new Rectangle (350, 312, 180, 28);
+
     
     
     /** Each letter is a simple square - but we want to know how big to draw them.

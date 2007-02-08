@@ -145,12 +145,14 @@ public class Display extends Sprite
     /** Called when the round starts - enables display. */
     private function roundStartedHandler (newState : String) : void
     {
+        _timer.start (Properties.ROUND_LENGTH);
         setEnableState (true);
     }
 
     /** Called when the round ends - disables display. */
     private function roundEndedHandler (newState : String) : void
     {
+        _timer.start (Properties.PAUSE_LENGTH);
         setEnableState (false);
     }
 
@@ -209,7 +211,14 @@ public class Display extends Sprite
 
         _scorefield = new ScoreField ();
         addChild (_scorefield);
-        
+
+        _timer = new CountdownTimer ();
+        _timer.x = Properties.TIMER.x;
+        _timer.y = Properties.TIMER.y;
+        _timer.width = Properties.TIMER.width;
+        _timer.height = Properties.TIMER.height;
+        addChild (_timer);
+
     }
 
     /** Enables or disables a number of UI elements */
@@ -337,6 +346,9 @@ public class Display extends Sprite
 
     /** Score display box */
     private var _scorefield : ScoreField;
+
+    /** Timer display */
+    private var _timer : CountdownTimer;
     
 }
 
