@@ -31,29 +31,6 @@ public class Building extends Sprite
         }
     }
 
-    public function newHouse (frame :int) :MovieClip
-    {
-        var clip :MovieClip =  (new _houseClass()) as MovieClip;
-        clip.gotoAndStop(frame);
-        return clip;
-    }
-
-    public function findRandomPopulatePoint (populate :MovieClip) :Point
-    {
-        var x :Number, y :Number;
-        var cnt :int = 10000;
-        do {
-            x = -populate.width + Math.random() * populate.width * 2;
-            y = -populate.height + Math.random() * populate.height * 2;
-            var p :Point = new Point(x, y);
-            p = populate.localToGlobal(p);
-            if (populate.hitTestPoint(p.x, p.y, true)) {
-                return p;
-            }
-        } while (--cnt > 0);
-        throw new Error("Couldn't find a spot to place a soy in 1,000 iterations!");
-    }
-
     public function getPopulatedTile (frame :int, population :int) :MovieClip
     {
         var house :MovieClip = newHouse(frame);
@@ -73,6 +50,29 @@ public class Building extends Sprite
         }
         this.removeChild(populate);
         return house;
+    }
+
+    protected function newHouse (frame :int) :MovieClip
+    {
+        var clip :MovieClip =  (new _houseClass()) as MovieClip;
+        clip.gotoAndStop(frame);
+        return clip;
+    }
+
+    protected function findRandomPopulatePoint (populate :MovieClip) :Point
+    {
+        var x :Number, y :Number;
+        var cnt :int = 10000;
+        do {
+            x = -populate.width + Math.random() * populate.width * 2;
+            y = -populate.height + Math.random() * populate.height * 2;
+            var p :Point = new Point(x, y);
+            p = populate.localToGlobal(p);
+            if (populate.hitTestPoint(p.x, p.y, true)) {
+                return p;
+            }
+        } while (--cnt > 0);
+        throw new Error("Couldn't find a spot to place a soy in 1,000 iterations!");
     }
 
     protected var _houseClass :Class;

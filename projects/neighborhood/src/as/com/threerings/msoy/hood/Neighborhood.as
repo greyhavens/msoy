@@ -17,6 +17,8 @@ public class Neighborhood
     public var friends:Array;
     /** The member's groups, as {@link NeighborGroup} objects. */
     public var groups:Array;
+    /** The member's games, as {@link NeighborGame} objects. */
+    public var games:Array;
 
     /**
      * Instantiate and populate a {@link Neighborhood} from JSON configuration
@@ -40,16 +42,22 @@ public class Neighborhood
         if (JSON.group != null) {
             hood.centralGroup = NeighborGroup.fromJSON(JSON.group);
         }
+        hood.friends = new Array();
         if (JSON.friends != null) {
-            hood.friends = new Array();
             for (i = 0; i < JSON.friends.length; i ++) {
                 hood.friends[i] = NeighborMember.fromJSON(JSON.friends[i]);
             }
         }
+        hood.groups = new Array();
         if (JSON.groups != null) {
-            hood.groups = new Array();
             for (i = 0; i < JSON.groups.length; i ++) {
                 hood.groups[i] = NeighborGroup.fromJSON(JSON.groups[i]);
+            }
+        }
+        hood.games = new Array();
+        if (JSON.games != null) {
+            for (i = 0; i < JSON.games.length; i ++) {
+                hood.games[i] = NeighborGame.fromJSON(JSON.games[i]);
             }
         }
         return hood;

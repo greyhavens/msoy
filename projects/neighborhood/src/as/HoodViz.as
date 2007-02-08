@@ -11,13 +11,10 @@ import flash.ui.*;
 import flash.utils.*;
 import flash.external.ExternalInterface;
 
-import com.threerings.msoy.hood.Building;
-import com.threerings.msoy.hood.Neighbor;
-import com.threerings.msoy.hood.Neighborhood;
-import com.threerings.msoy.hood.NeighborGroup;
-import com.threerings.msoy.hood.NeighborMember;
+import com.threerings.msoy.hood.*;
 import com.threerings.util.NetUtil;
 import com.threerings.util.Random;
+import com.threerings.util.StringUtil;
 
 import com.adobe.serialization.json.JSONDecoder;
 
@@ -62,6 +59,8 @@ public class HoodViz extends Sprite
         this.stage.addChild(_friend);
         _group = new Building(getClass("group_tile"), getClass("populate_group"), soy);
         this.stage.addChild(_group);
+        _game = new Building(getClass("game_tile"), getClass("populate_game"), soy);
+        this.stage.addChild(_game);
 
         _vacant = getClass("vacant_tile");
         _roadHouse = getClass("road_house_tile");
@@ -78,7 +77,9 @@ public class HoodViz extends Sprite
 
         // compute a very rough bounding rectangle for the visible houses
         var radius :int =
-            3 + Math.ceil(Math.sqrt(Math.max(_hood.groups.length, _hood.friends.length)));
+            3 + Math.ceil(Math.sqrt(_hood.groups.length +
+                                    _hood.friends.length +
+                                    _hood.games.length));
 
         var drawables :Array = new Array();
         var distances :Array = new Array();
@@ -107,17 +108,23 @@ public class HoodViz extends Sprite
         var nextFriend :int = 0;
         var nextGroup :int = 0;
 
-
         // pick tiles randomly from weighted intervals - generalizes to N tile types
-        var groupsLeft :int = _hood.groups.length;
         var friendsLeft :int = _hood.friends.length;
-        var totalLeft :int = groupsLeft + friendsLeft;
+        var groupsLeft :int = _hood.groups.length;
+        var gamesLeft :int = _hood.games.length;
+        var totalLeft :int = friendsLeft + groupsLeft + gamesLeft;
         while (totalLeft > 0) {
+            // pick a spot within [0, totalLeft)
+            var rnd :Number = totalLeft * _random.nextNumber();
+            // grab the tile to place
             var tile :Object = distances[--totalLeft];
-            if (_random.nextNumber() < groupsLeft / totalLeft) {
+            // and figure out which tile type's interval the spot's in
+            if (rnd < groupsLeft) {
                 drawables[tile.y][tile.x] = _hood.groups[--groupsLeft];
-            } else {
+            } else if (rnd - groupsLeft < friendsLeft) {
                 drawables[tile.y][tile.x] = _hood.friends[--friendsLeft];
+            } else {
+                drawables[tile.y][tile.x] = _hood.games[--gamesLeft];
             }
         }
 
@@ -137,6 +144,8 @@ public class HoodViz extends Sprite
                         addBit(_friend, x, y, true, drawables[y][x]);
                     } else if (drawables[y][x] is NeighborGroup) {
                         addBit(_group, x, y, true, drawables[y][x]);
+                    } else if (drawables[y][x] is NeighborGame) {
+                        addBit(_game, x, y, true, drawables[y][x]);
                     } else {
                         addBit(_vacant, x, y, false, null);
                     }
@@ -168,6 +177,9 @@ public class HoodViz extends Sprite
             }
         }
 
+        _canvas.graphics.beginFill(0xCBFE98);
+        _canvas.graphics.drawRect(-_canvas.width, -_canvas.height,
+                                  _canvas.width*2, _canvas.height*2);
         var xScale :Number = 640 / Math.max(160, (_bound.right - _bound.left));
         var yScale :Number = 480 / Math.max(120, (_bound.bottom - _bound.top));
         _canvas.x = -_bound.left * xScale;
@@ -184,24 +196,25 @@ public class HoodViz extends Sprite
         var bit :MovieClip;
         if (bitType is Class) {
             bit = new bitType();
-            bit.gotoAndStop(_random.nextInt(bit.totalFrames));
+            bit.gotoAndStop(1+_random.nextInt(bit.totalFrames));
         } else {
             var building :Building = (bitType as Building);
             // let's illustrate the population of a place by the square root of its
             // actual population in soy figures, lest we utterly overwhelm the map;
             // thus 1 pop -> 1 soy, 25 pop -> 5 soys, 100 pop -> 10 soys.
             bit = building.getPopulatedTile(
-                _random.nextInt(building.variationCount),
+                1+_random.nextInt(building.variationCount),
                 Math.round(Math.sqrt(neighbor.population)));
         }
 
-        if (neighbor is NeighborGroup) {
-            var logo :String = (neighbor as NeighborGroup).groupLogo;
+        if (neighbor is LogoHolder) {
+            var logo :String = (neighbor as LogoHolder).getLogoHash();
             if (logo != null) {
                 // if there is a logo, we dynamically load it
                 var loader :Loader = new Loader();
                 // first, find the designated logo-holding area in the tile
                 var logoHolder :MovieClip = bit.getChildByName("logo_placer") as MovieClip;
+
                 // if we did find a logoHolder, load the logo into it
                 if (logoHolder != null) {
                     logoHolder.addChild(loader);
@@ -269,15 +282,19 @@ public class HoodViz extends Sprite
         var neighbor :Neighbor = (event.currentTarget as ToolTipSprite).neighbor;
         var url :String = "/world/#";
         if (neighbor.sceneId > 0) {
-            url += "s" + neighbor.sceneId;
+            url = "/world/#s" + neighbor.sceneId;
         } else if (neighbor is NeighborMember) {
             var friend :NeighborMember = neighbor as NeighborMember;
             // clicking on a member takes us to their home scene
-            url += "m" + friend.memberId;
-        } else {
+            url = "/world/#m" + friend.memberId;
+        } else if (neighbor is NeighborGroup) {
             var group :NeighborGroup = neighbor as NeighborGroup;
             // clicking on a group takes us to that group's home scene
-                url += "g" + group.groupId;
+            url = "/world/#g" + group.groupId;
+        } else {
+            var game :NeighborGame = neighbor as NeighborGame;
+            // clicking on a game takes us to that game's lobby
+            url = "/game/#" + game.gameId;
         }
         NetUtil.navigateToURL(url);
     }
@@ -302,9 +319,12 @@ public class HoodViz extends Sprite
             if (friend.lastSession != null) {
                 text += "\n" + "Last on: " + friend.lastSession.toLocaleDateString();
             }
-        } else {
+        } else if (neighbor is NeighborGroup) {
             var group :NeighborGroup = neighbor as NeighborGroup;
             text = group.groupName + "\n" + "Members: " + group.members;
+        } else {
+            var game :NeighborGame = neighbor as NeighborGame;
+            text = game.gameName + "\n" + "Players: " + game.population;
         }
 
         _tip = new Sprite();
@@ -349,6 +369,7 @@ public class HoodViz extends Sprite
 
     protected var _friend :Building;
     protected var _group :Building;
+    protected var _game :Building;
 
     protected var _vacant :Class;
     protected var _roadNS :Class;

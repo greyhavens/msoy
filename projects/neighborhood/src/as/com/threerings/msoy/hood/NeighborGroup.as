@@ -7,6 +7,7 @@ import com.adobe.serialization.json.*;
  * count. We should probably also include its invitation policy.
  */
 public class NeighborGroup extends Neighbor
+    implements LogoHolder
 {
     /** The group's name. */
     public var groupName :String;
@@ -32,6 +33,12 @@ public class NeighborGroup extends Neighbor
         group.groupLogo = JSON.logo;
         group.members = JSON.members;
         return group;
+    }
+
+    // from LogoHolder
+    public function getLogoHash () :String
+    {
+        return groupLogo;
     }
 }
 }
