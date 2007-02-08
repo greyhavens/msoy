@@ -22,8 +22,10 @@ import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
+import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
 
 import com.threerings.msoy.web.data.TagHistory;
 
@@ -99,6 +101,7 @@ public abstract class TagRepository extends DepotRepository
                        new FieldOverride(TagPopularityRecord.TAG_ID, TagNameRecord.TAG_ID_C),
                        new FieldOverride(TagPopularityRecord.TAG, TagNameRecord.TAG_C),
                        new FieldOverride(TagPopularityRecord.COUNT, "count(*)"),
+                       OrderBy.descending(new LiteralExp("count(*)")),
                        new GroupBy(TagNameRecord.TAG_ID_C));
     }
 
