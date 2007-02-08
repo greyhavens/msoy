@@ -35,16 +35,21 @@ public class TangleWord extends Sprite implements StateChangedListener
     // and other startup information.
     public function TangleWord () : void
     {
-        // Initialize game controller
+        // Initialize game data
         _gameCtrl = new EZGameControl (this);
         _gameCtrl.registerListener (this);
-
         _coordinator = new HostCoordinator (_gameCtrl);
+        _rounds = new RoundProvider (_gameCtrl, _coordinator);
+
+        _rounds.setTimeout (RoundProvider.SYSTEM_STARTED_STATE, 1);
+        _rounds.setTimeout (RoundProvider.ROUND_STARTED_STATE, 3);
+        _rounds.setTimeout (RoundProvider.ROUND_ENDED_STATE, 1);
+        
 
         // Create MVC elements
-        _controller = new Controller (null); // we'll set it later...
-        _display = new Display (_controller);
-        _model = new Model (_gameCtrl, _coordinator, _display);
+        _controller = new Controller (null, _rounds); // we'll set it later...
+        _display = new Display (_controller, _rounds);
+        _model = new Model (_gameCtrl, _coordinator, _rounds, _display);
         _controller.setModel (_model);       // ... as in, right here :)
         addChild (_display);
 
@@ -70,7 +75,6 @@ public class TangleWord extends Sprite implements StateChangedListener
             if (_coordinator.amITheHost ())
             {
                 initializeScoreboard ();
-                initializeLetters ();
             }
 
             break;
@@ -90,14 +94,6 @@ public class TangleWord extends Sprite implements StateChangedListener
 
 
     // PRIVATE FUNCTIONS
-
-    /** Calls the dictionary service to retrieve a new bag of letters,
-        and distributes them among all peers.
-    */
-    private function initializeLetters () : void
-    {
-        _controller.initializeLetterSet ();
-    }
 
     /** Creates a new distributed scoreboard */
     private function initializeScoreboard () : void
@@ -125,6 +121,9 @@ public class TangleWord extends Sprite implements StateChangedListener
     /** Helps us determine who is the authoritative host */
     private var _coordinator : HostCoordinator;
 
+    /** Coordinates round info */
+    private var _rounds : RoundProvider;
+    
     /** Data interface */
     private var _model : Model;
 

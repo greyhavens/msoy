@@ -15,7 +15,7 @@ public class Properties
        status windows TBD. This display size is the bounding box
        of all these elements.
     */
-    public static const DISPLAY : Rectangle = new Rectangle (0, 0, 500, 500);
+    public static const DISPLAY : Rectangle = new Rectangle (0, 0, 600, 500);
 
     /**
        The board contains a collection of letters arranged in a square.
@@ -26,18 +26,22 @@ public class Properties
     /**
        Position of a text box that displays currently selected word.
     */
-    public static const WORDFIELD : Rectangle = new Rectangle (50, 310, 190, 28);
+    public static const WORDFIELD : Rectangle = new Rectangle (50, 312, 190, 28);
 
     /**
        Position of the OK button
     */
-    public static const OKBUTTON : Rectangle = new Rectangle (250, 310, 50, 28);
+    public static const OKBUTTON : Rectangle = new Rectangle (250, 312, 50, 28);
 
     /**
        Position of the log text field
     */
-    public static const LOGFIELD : Rectangle = new Rectangle (320, 50, 200, 288);
-    
+    public static const LOGFIELD : Rectangle = new Rectangle (320, 170, 200, 160);
+
+    /**
+       Position of the score box
+    */
+    public static const SCOREFIELD : Rectangle = new Rectangle (320, 50, 200, 100);
     
     
     /** Each letter is a simple square - but we want to know how big to draw them.

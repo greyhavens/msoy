@@ -15,10 +15,12 @@ public class Controller
     
     // PUBLIC METHODS
     
-    public function Controller (model : Model) : void
+    public function Controller (model : Model, rounds : RoundProvider) : void
     {
         _model = model;
-
+        _rounds = rounds;
+        _rounds.addEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
+        _rounds.addEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
     }
 
     public function setModel (model : Model) : void
@@ -26,51 +28,53 @@ public class Controller
         _model = model;
     }
 
-
-    /** Initializes a new letter set. */
-    public function initializeLetterSet () : void
+    /** Returns true if the controller should accept player inputs, false otherwise */
+    public function get enabled () : Boolean
     {
-        // Get a set of letters
-        var s : Array = DictionaryService.getLetterSet (TangleWord.LOCALE,
-                                                        Properties.LETTER_COUNT);
-        
-        Assert.True (s.length == Properties.LETTER_COUNT,
-                     "DictionaryService returned an invalid letter set.");
-
-        _model.sendNewLetterSet (s);
+        return _enabled;
     }
 
+    /** Sets the value specifying whether the controller should accept player inputs */
+    public function set enabled (value : Boolean) : void
+    {
+        _enabled = value;
+    }
+    
     /** Takes a new letter from the UI, and checks it against game logic. */
     public function tryAddLetter (position : Point) : void
     {
-        // Position of the letter on top of the stack 
-        var lastLetterPosition : Point = _model.getLastLetterPosition ();
-
-        // Did the player click on the first letter? If so, just add it.
-        var noPreviousLetterFound : Boolean = (lastLetterPosition == null);
-        if (noPreviousLetterFound)
+        if (enabled)
         {
-            _model.selectLetterAtPosition (position);
-            return;
+            // Position of the letter on top of the stack 
+            var lastLetterPosition : Point = _model.getLastLetterPosition ();
+            
+            // Did the player click on the first letter? If so, just add it.
+            var noPreviousLetterFound : Boolean = (lastLetterPosition == null);
+            if (noPreviousLetterFound)
+            {
+                _model.selectLetterAtPosition (position);
+                return;
+            }
+            
+            // Did the player click on the last letter they added? If so, remove it.
+            if (position.equals (lastLetterPosition))
+            {
+                _model.removeLastSelectedLetter ();
+                return;
+            }
+            
+            // Did the player click on an empty letter next to the last selected one?
+            // If so, add it.
+            var isValidNeighbor : Boolean = (areNeighbors (position, lastLetterPosition) &&
+                                             ! _model.isLetterSelectedAtPosition (position));
+            if (isValidNeighbor)
+            {
+                _model.selectLetterAtPosition (position);
+                return;
+            }
+            
+            // Player clicked on an invalid position - don't do anything
         }
-
-        // Did the player click on the last letter they added? If so, remove it.
-        if (position.equals (lastLetterPosition))
-        {
-            _model.removeLastSelectedLetter ();
-            return;
-        }
-
-        // Did the player click on an empty letter next to the last selected one?
-        var isValidNeighbor : Boolean = (areNeighbors (position, lastLetterPosition) &&
-                                   ! _model.isLetterSelectedAtPosition (position));
-        if (isValidNeighbor)
-        {
-            _model.selectLetterAtPosition (position);
-            return;
-        }
-
-        // Don't do anything
     }
 
 
@@ -85,8 +89,7 @@ public class Controller
         if (!DictionaryService.checkWord (TangleWord.LOCALE, word)) return;
 
         // Find the word score
-        // TODO
-        var score : Number = 10;
+        var score : Number = word.length;
         
         // Finally, process the new word. Notice that we don't check if it's already
         // been claimed - the model will take care of that, because there's a network
@@ -94,6 +97,22 @@ public class Controller
         _model.addScore (word, score);
     }
             
+
+
+    // PRIVATE EVENT HANDLERS
+
+    /** Called when the round starts - enables user input, randomizes data. */
+    private function roundStartedHandler (newState : String) : void
+    {
+        initializeLetterSet ();
+        enabled = true;
+    }
+
+    /** Called when the round ends - disables user input. */
+    private function roundEndedHandler (newState : String) : void
+    {
+        enabled = false;
+    }
 
 
 
@@ -108,12 +127,31 @@ public class Controller
                 Math.abs (position.y - origin.y) <= 1);
     }
     
+    /** Initializes a new letter set. */
+    private function initializeLetterSet () : void
+    {
+        // Get a set of letters
+        var s : Array = DictionaryService.getLetterSet (TangleWord.LOCALE,
+                                                        Properties.LETTER_COUNT);
+        
+        Assert.True (s.length == Properties.LETTER_COUNT,
+                     "DictionaryService returned an invalid letter set.");
+
+        _model.sendNewLetterSet (s);
+    }
+
+
     
     // PRIVATE VARIABLES
 
     /** Game data interface */
     private var _model : Model;
 
+    /** Round provider */
+    private var _rounds : RoundProvider;
+
+    /** Does the controller accept user input? */
+    private var _enabled : Boolean;
 }
 
 }

@@ -74,7 +74,6 @@ package
         {
             var scoreboard : Object = getScoreboard (player);
             scoreboard[word] = score;
-            Assert.Fail ("Added score: " + player + ", " + word + ", " + score);
         }
 
         /** Populates the specified /words/ and /scores/ arrays with all of the

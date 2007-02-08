@@ -83,6 +83,19 @@ public class Letter extends Sprite
         }
     }
 
+    /** Is this letter displaying in an enabled state? */
+    public function get isLetterEnabled () : Boolean
+    {
+        return _letterEnabled;
+    }
+
+    /** Sets whether the letter should be displayed in an enabled state */
+    public function set isLetterEnabled (newValue : Boolean) : void
+    {
+        _letterEnabled = _background.visible = newValue;
+    }
+    
+
     /** Sets the letter's selection value */
     public function setSelection (value : Boolean) : void
     {
@@ -130,8 +143,11 @@ public class Letter extends Sprite
     /** Pointer back to the board */
     private var _display : Display;
 
+    /** Is this letter displaying in an enabled or disabled state? */
+    private var _letterEnabled : Boolean = true;
+    
     /** Is this letter being overlayed with a cursor? */
-    private var _cursorEnabled : Boolean;
+    private var _cursorEnabled : Boolean = false;
 
 
     // STORAGE

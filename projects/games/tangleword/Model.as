@@ -24,14 +24,19 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
     
     public function Model (gameCtrl : EZGameControl,
                            coordinator : HostCoordinator,
+                           rounds : RoundProvider,
                            display : Display) : void
     {
         // Squirrel the pointers away
-        _coord = coordinator;
-        _display = display;
         _gameCtrl = gameCtrl;
-        _gameCtrl.registerListener (this);
+        _coord = coordinator;
+        _rounds = rounds;
+        _display = display;
         _playerName = _gameCtrl.getPlayerNames()[_gameCtrl.getMyIndex()];
+
+        // Register for updates
+        _gameCtrl.registerListener (this);
+        _rounds.addEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
 
         // Initialize game data storage
         initializeStorage ();
@@ -102,9 +107,9 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
     public function addScore (word : String, score : Number) : void
     {
         var obj : Object = new Object ();
-        UpdateObject.write (obj, UpdateObject.PLAYER, _playerName);
-        UpdateObject.write (obj, UpdateObject.WORD,   word);
-        UpdateObject.write (obj, UpdateObject.SCORE,  score);
+        obj.player = _playerName;
+        obj.word = word;
+        obj.score = score;
 
         _gameCtrl.sendMessage (ADD_SCORE_MSG, obj);
     }
@@ -130,15 +135,15 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         switch (event.name)
         {
         case ADD_SCORE_MSG:
-            var player : String = UpdateObject.read (event.value, UpdateObject.PLAYER) as String;
-            var word : String = UpdateObject.read (event.value, UpdateObject.WORD) as String;
-            var score : Number = UpdateObject.read (event.value, UpdateObject.SCORE) as Number;
-
+            
             // store the score
-            addWordToScoreboard (player, word, score);
+            addWordToScoreboard (event.value.player,
+                                 event.value.word,
+                                 event.value.score);
 
             // reset selection
             removeAllSelectedLetters ();
+            updateScoreDisplay ();
             
             break;
 
@@ -174,6 +179,13 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         
     }
 
+    /** Called when the round ends - cleans up data. */
+    public function roundEndedHandler (newState : String) : void
+    {
+        removeAllSelectedLetters ();
+    }
+
+    
 
     //
     //
@@ -245,6 +257,14 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         _display.setLetter (position, text);
     }
 
+    /** Updates the total scores displayed on the board */
+    private function updateScoreDisplay () : void
+    {
+        _display.updateScores (_scoreboard);
+    }
+
+
+    
 
     // PRIVATE CONSTANTS
 
@@ -261,6 +281,9 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
     /** Main game control structure */
     private var _gameCtrl : EZGameControl;
 
+    /** Round provider */
+    private var _rounds : RoundProvider;
+    
     /** Cache the player's name */
     private var _playerName : String;
 
@@ -276,7 +299,6 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
     /** List of players and their scores */
     private var _scoreboard : Scoreboard;
 
-        
 }
 
 
@@ -284,21 +306,3 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
 
 
 
-// HELPER FUNCTIONS FOR MODEL UPDATE EVENTS
-
-class UpdateObject
-{
-    public static function read (obj : Object, property : String) : Object
-    {
-        return obj [property];
-    }
-
-    public static function write (obj : Object, property : String, value : Object) : void
-    {
-        obj [property] = value;
-    }
-
-    public static const PLAYER : String = "Player";
-    public static const WORD : String   = "Word";
-    public static const SCORE : String  = "Score";
-}

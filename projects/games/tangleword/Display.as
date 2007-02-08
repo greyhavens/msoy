@@ -22,11 +22,16 @@ public class Display extends Sprite
     // PUBLIC FUNCTIONS
 
     /** Initializes the board and everything on it */
-    public function Display (controller : Controller) : void
+    public function Display (controller : Controller, rounds : RoundProvider) : void
     {
         // Copy parameters
         _controller = controller;
+        _rounds = rounds;
 
+        // Register for round updates
+        _rounds.addEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
+        _rounds.addEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
+        
         // Initialize the background bitmap
         _background = Resources.makeGameBackground ();
         Assert.NotNull (_background, "Background bitmap failed to initialize!"); 
@@ -104,7 +109,11 @@ public class Display extends Sprite
         _logger.Log (message);
     }
     
-
+    // Sets scores based on the scoreboard.
+    public function updateScores (board : Scoreboard) : void
+    {
+        _scorefield.updateScores (board);
+    }
         
     
 
@@ -133,6 +142,17 @@ public class Display extends Sprite
         _controller.tryScoreWord (_wordfield.text);
     }
 
+    /** Called when the round starts - enables display. */
+    private function roundStartedHandler (newState : String) : void
+    {
+        setEnableState (true);
+    }
+
+    /** Called when the round ends - disables display. */
+    private function roundEndedHandler (newState : String) : void
+    {
+        setEnableState (false);
+    }
 
 
 
@@ -163,10 +183,10 @@ public class Display extends Sprite
     /** Initializes word display, countdown timer, etc. */
     private function initializeUI () : void
     {
-        var button : OKButton = new OKButton (okButtonClickHandler);
-        button.x = Properties.OKBUTTON.x;
-        button.y = Properties.OKBUTTON.y;
-        addChild (button);
+        _okbutton = new OKButton (okButtonClickHandler);
+        _okbutton.x = Properties.OKBUTTON.x;
+        _okbutton.y = Properties.OKBUTTON.y;
+        addChild (_okbutton);
 
         var format : TextFormat = Resources.makeFormatForUI ();
         _wordfield = new TextField ();
@@ -186,7 +206,26 @@ public class Display extends Sprite
         _logger.width = Properties.LOGFIELD.width;
         _logger.height = Properties.LOGFIELD.height;
         addChild (_logger);
+
+        _scorefield = new ScoreField ();
+        addChild (_scorefield);
         
+    }
+
+    /** Enables or disables a number of UI elements */
+    private function setEnableState (value : Boolean) : void
+    {
+        // Set each letter
+        for (var x : int = 0; x < _letters.length; x++)
+        {
+            for (var y : int = 0; y < _letters[x].length; y++)
+            {
+                _letters[x][y].isLetterEnabled = value;
+            }
+        }
+        
+        // Set other UI elements
+        _wordfield.visible = _okbutton.visible = value;
     }
     
 
@@ -275,6 +314,9 @@ public class Display extends Sprite
     /** Game logic */
     private var _controller : Controller;
 
+    /** Round info provider */
+    private var _rounds : RoundProvider;
+    
     /** Overall game background */
     private var _background : BitmapAsset;
 
@@ -287,8 +329,14 @@ public class Display extends Sprite
     /** Text box containing the currently guessed word */
     private var _wordfield : TextField;
 
+    /** The OK button, of course */
+    private var _okbutton : OKButton;
+
     /** Logger text box */
     private var _logger : Logger;
+
+    /** Score display box */
+    private var _scorefield : ScoreField;
     
 }
 
@@ -353,7 +401,38 @@ class OKButton extends Sprite
     
 }
 
+class ScoreField extends TextField
+{
+    // Constructor, sets up the field.
+    public function ScoreField ()
+    {
+        this.selectable = false;
+        this.defaultTextFormat = Resources.makeFormatForScore ();
+        this.multiline = true;
+        this.border = true;
+        this.borderColor = Resources.defaultBorderColor;
+        this.width = Properties.SCOREFIELD.width;
+        this.height = Properties.SCOREFIELD.height;
+        this.x = Properties.SCOREFIELD.x;
+        this.y = Properties.SCOREFIELD.y;
+    }
 
+    // Sets scores. Expects an array of objects with the following
+    // properties:
+    //   object.name : String - contains player name
+    //   object.score : Number - contains player score
+    public function updateScores (board : Scoreboard) : void
+    {
+        this.text = "";
+        var players : Array = board.getPlayers ();
+        for each (var player : String in players)
+        {
+            var score : Number = board.getTotalScore (player);
+            var line : String = player + ": " + score + " pts.\n";
+            appendText (line);
+        }
+    }
+}
 
         
                         
