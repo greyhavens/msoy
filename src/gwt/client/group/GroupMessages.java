@@ -32,6 +32,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String listNoGroups();
 
   /**
+   * Translated "Members:".
+   * 
+   * @return translated "Members:"
+   * @gwt.key viewMembers
+   */
+  String viewMembers();
+
+  /**
    * Translated "Upload some photos to your inventory to choose an image.".
    * 
    * @return translated "Upload some photos to your inventory to choose an image."
@@ -54,6 +62,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key viewLeave
    */
   String viewLeave();
+
+  /**
+   * Translated "Managers:".
+   * 
+   * @return translated "Managers:"
+   * @gwt.key viewManagers
+   */
+  String viewManagers();
 
   /**
    * Translated "Area you sure you wish to demote {0}?".
@@ -366,6 +382,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key viewPromotePrompt
    */
   String viewPromotePrompt(String arg0);
+
+  /**
+   * Translated "Tags:".
+   * 
+   * @return translated "Tags:"
+   * @gwt.key viewTags
+   */
+  String viewTags();
 
   /**
    * Translated "Exclusive".

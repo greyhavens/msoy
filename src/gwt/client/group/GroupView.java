@@ -232,8 +232,8 @@ public class GroupView extends VerticalPanel
 
         FlexTable people = new FlexTable();
         people.setStyleName("PeoplePanel");
-        people.setText(0, 0, "Managers:");
-        people.setText(1, 0, "Members:");
+        people.setText(0, 0, CGroup.msgs.viewManagers());
+        people.setText(1, 0, CGroup.msgs.viewMembers());
         FlowPanel managers = new FlowPanel();
         FlowPanel members = new FlowPanel();
         Iterator i = _detail.members.iterator();
