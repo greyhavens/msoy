@@ -41,7 +41,7 @@ public class StyledTabPanel extends TabPanel
         if (asHTML) {
             tab.setWidget(0, 1, new HTML(tabText));
         } else {
-            tab.setWidget(0, 1, new InlineLabel(tabText));
+            tab.setWidget(0, 1, new InlineLabel(tabText, false, false, false));
         }
         super.add(w, tab.toString(), true);
     }
