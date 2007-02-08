@@ -3,6 +3,7 @@
 
 package client.group;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTML;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
@@ -232,8 +234,10 @@ public class GroupView extends VerticalPanel
 
         FlexTable people = new FlexTable();
         people.setStyleName("PeoplePanel");
+        people.setWidth("100%");
         people.setText(0, 0, CGroup.msgs.viewManagers());
         people.setText(1, 0, CGroup.msgs.viewMembers());
+        people.setText(3, 0, CGroup.msgs.viewTags());
         FlowPanel managers = new FlowPanel();
         FlowPanel members = new FlowPanel();
         Iterator i = _detail.members.iterator();
@@ -325,13 +329,41 @@ public class GroupView extends VerticalPanel
                 }
             }
         }
+        final FlowPanel tags = new FlowPanel();
+        CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, new AsyncCallback () {
+            public void onSuccess (Object result) {
+                boolean first = true;
+                Iterator i = ((Collection) result).iterator();
+                while (i.hasNext()) {
+                    if (!first) {
+                        tags.add(new InlineLabel(" . "));
+                    }
+                    first = false;
+                    tags.add(new InlineLabel((String)i.next()));
+                }
+            } 
+            public void onFailure (Throwable caught) {
+                CGroup.log("Failed to fetch tags");
+                addError(CGroup.serverError(caught));
+            }
+        });
+        people.setWidget(3, 1, tags);
+        people.setWidget(2, 0, new Widget() {
+            {
+                Element hr = DOM.createElement("hr");
+                DOM.setStyleAttribute(hr, "color", "black");
+                DOM.setStyleAttribute(hr, "backgroundColor", "black");
+                setElement(hr);
+            }
+        });
+        people.getFlexCellFormatter().setColSpan(2, 0, 2);
+        DOM.setAttribute(people.getFlexCellFormatter().getElement(0, 1), "width", "100%");
         _table.getFlexCellFormatter().setColSpan(1, 0, 2);
         _table.getMyFlexCellFormatter().fillWidth(2, 0);
     }
 
     /**
-     * performs a simple scan of the list of GroupMembership objects to find and return the 
-     * first GroupMembership that refers to the requested memberId.
+     * performs a simple scan of the list of GroupMembership objects to find and return the * first GroupMembership that refers to the requested memberId.
      */
     static protected GroupMembership findMember (List members, int memberId) 
     {
