@@ -345,6 +345,21 @@
     <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients"/>
   </target>
 
+  <!-- builds our RemixAnalyzer -->
+  <target name="remixer">
+    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="etc/msoy-config.xml"/>
+      <arg value="-compiler.optimize"/>
+      <arg value="-compiler.source-path=src/as/"/>
+      <arg value="-output"/>
+      <arg value="${deploy.dir}/RemixAnalyzer.swf"/>
+      <arg value="-file-specs"/>
+      <arg value="src/as/com/threerings/msoy/item/remix/tools/RemixAnalyzer.as"/>
+    </exec>
+    <!--<copy file="${deploy.dir}/RemixAnalyzer.swf" todir="bin"/>-->
+  </target>
+
   <!-- builds, runs Proguard on and signs a Java client -->
   <target name="proguard">
     <!-- figure out where the Java rt.jar file lives -->
