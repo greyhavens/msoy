@@ -21,6 +21,7 @@ import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Join;
+import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -93,6 +94,7 @@ public abstract class TagRepository extends DepotRepository
     {
         return findAll(TagPopularityRecord.class,
                        new FromOverride(_tagClass),
+                       new Limit(0, rows),
                        new Join(new ColumnExp(_tagClass, TagRecord.TAG_ID), TagNameRecord.TAG_ID_C),
                        new FieldOverride(TagPopularityRecord.TAG_ID, TagNameRecord.TAG_ID_C),
                        new FieldOverride(TagPopularityRecord.TAG, TagNameRecord.TAG_C),
