@@ -3,12 +3,18 @@ package
 
 import flash.display.Sprite;    
 import flash.display.SimpleButton;
+import flash.display.DisplayObject;
 import flash.display.Graphics;
+
 import flash.events.Event;
 import flash.events.MouseEvent;
+
 import flash.geom.Point;
+import flash.geom.Rectangle;
+
 import flash.text.TextField;
 import flash.text.TextFormat;
+
 import mx.core.BitmapAsset;
 
 
@@ -152,7 +158,7 @@ public class Display extends Sprite
     /** Called when the round ends - disables display. */
     private function roundEndedHandler (newState : String) : void
     {
-        _timer.start (Properties.PAUSE_LENGTH);
+        _timer.clear ();
         setEnableState (false);
     }
 
@@ -186,8 +192,7 @@ public class Display extends Sprite
     private function initializeUI () : void
     {
         _okbutton = new OKButton (okButtonClickHandler);
-        _okbutton.x = Properties.OKBUTTON.x;
-        _okbutton.y = Properties.OKBUTTON.y;
+        doLayout (_okbutton, Properties.OKBUTTON);
         addChild (_okbutton);
 
         var format : TextFormat = Resources.makeFormatForUI ();
@@ -196,29 +201,31 @@ public class Display extends Sprite
         _wordfield.defaultTextFormat = format;
         _wordfield.borderColor = Resources.defaultBorderColor;
         _wordfield.border = true;
-        _wordfield.x = Properties.WORDFIELD.x;
-        _wordfield.y = Properties.WORDFIELD.y;
-        _wordfield.width = Properties.WORDFIELD.width;
-        _wordfield.height = Properties.WORDFIELD.height;
+        doLayout (_wordfield, Properties.WORDFIELD);
         addChild (_wordfield);
 
         _logger = new Logger ();
-        _logger.x = Properties.LOGFIELD.x;
-        _logger.y = Properties.LOGFIELD.y;
-        _logger.width = Properties.LOGFIELD.width;
-        _logger.height = Properties.LOGFIELD.height;
+        doLayout (_logger, Properties.LOGFIELD);
         addChild (_logger);
 
         _scorefield = new ScoreField ();
+        doLayout (_scorefield, Properties.SCOREFIELD);
         addChild (_scorefield);
 
         _timer = new CountdownTimer ();
-        _timer.x = Properties.TIMER.x;
-        _timer.y = Properties.TIMER.y;
-        _timer.width = Properties.TIMER.width;
-        _timer.height = Properties.TIMER.height;
+        doLayout (_timer, Properties.TIMER);
         addChild (_timer);
 
+    }
+
+    /** Helper function that copies x, y, width and height properties
+        on an object from a given rectangle. */
+    private function doLayout (o : DisplayObject, rect : Rectangle) : void
+    {
+        o.x = rect.x;
+        o.y = rect.y;
+        o.width = rect.width;
+        o.height = rect.height;
     }
 
     /** Enables or disables a number of UI elements */
@@ -234,7 +241,7 @@ public class Display extends Sprite
         }
         
         // Set other UI elements
-        _wordfield.visible = _okbutton.visible = value;
+        _wordfield.visible = _okbutton.visible = _timer.visible = value;
     }
     
 
@@ -423,10 +430,6 @@ class ScoreField extends TextField
         this.multiline = true;
         this.border = true;
         this.borderColor = Resources.defaultBorderColor;
-        this.width = Properties.SCOREFIELD.width;
-        this.height = Properties.SCOREFIELD.height;
-        this.x = Properties.SCOREFIELD.x;
-        this.y = Properties.SCOREFIELD.y;
     }
 
     // Sets scores. Expects an array of objects with the following
