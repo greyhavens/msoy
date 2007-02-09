@@ -124,7 +124,8 @@ public class GroupView extends VerticalPanel
         links.setStyleName("Links");
         links.setSpacing(8);
         links.add(new Anchor("/world/index.html#g" +  _group.groupId, CGroup.msgs.viewHall()));
-        links.add(new Anchor("", CGroup.msgs.viewForum()));
+        // this should be added back in later... probably as "Wiki", intead of "Forum"
+        //links.add(new Anchor("", CGroup.msgs.viewForum()));
         if (_extras.homepageUrl != null) {
             links.add(new Anchor(_extras.homepageUrl, CGroup.msgs.viewHomepage()));
         }
