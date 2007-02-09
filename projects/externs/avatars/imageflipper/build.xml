@@ -17,6 +17,10 @@
     <copy file="RemixAssets2.as" tofile="RemixAssets.as" overwrite="true"/>
   </target>
 
+  <target name="useAssets3">
+    <copy file="RemixAssets3.as" tofile="RemixAssets.as" overwrite="true"/>
+  </target>
+
   <!-- builds our Flash game -->
   <target name="compile" depends="useAssets1">
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
@@ -40,6 +44,22 @@
       <arg value="/tmp/link-report.txt"/>
       <arg value="-file-specs"/>
       <arg value="PreLoader.as"/>
+    </java>
+  </target>
+
+  <!-- this may be used to strip original assets out of the logic SWF. -->
+  <target name="rework" depends="useAssets3">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-includes"/>
+      <arg value="RemixAssets"/>
+
+      <arg value="-link-report"/>
+      <arg value="/tmp/link-report.txt"/>
+      <arg value="-file-specs"/>
+      <arg value="ReWorker.as"/>
     </java>
   </target>
 
