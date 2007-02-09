@@ -3,13 +3,15 @@
 
 package client.util;
 
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Label;
 
 /**
  * A class that will prompt the user, and will call one of two abstract functions, depending
@@ -26,7 +28,7 @@ public abstract class PromptPopup extends BorderedPopup
     }
 
     /**
-     * @param prompt The string to prompt the user with.  This string can contain HTML.
+     * @param prompt The string to prompt the user with.  This string cannot contain HTML.
      * @param affirmative The text to use on the "true" button.
      * @param negative The text to use on the "false" button.
      */
@@ -45,7 +47,10 @@ public abstract class PromptPopup extends BorderedPopup
     {
         VerticalPanel content = new VerticalPanel();
         content.setStyleName("promptPopup");
-        content.add(new HTML("<span class='prompt'>" + _prompt + "</span>"));
+
+        Label headerLabel = new Label(_prompt);
+        headerLabel.setStyleName("Header");
+        content.add(headerLabel);
         content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
         final Button yesButton = new Button(_affirmative);
