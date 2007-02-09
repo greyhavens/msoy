@@ -109,6 +109,7 @@ public class GroupList extends VerticalPanel
         table.setWidget(1, 0, _groupListContainer);
         table.getFlexCellFormatter().setColSpan(1, 0, 2);
 
+        _currentTagContainer = new FlowPanel();
         loadPopularTags();
         loadGroupsList(tag);
     }
@@ -135,6 +136,7 @@ public class GroupList extends VerticalPanel
                             _popularTagsContainer.add(new InlineLabel(", "));
                         }
                     }
+                    _popularTagsContainer.add(_currentTagContainer);
                 }
             }
             public void onFailure (Throwable caught) {
@@ -144,11 +146,23 @@ public class GroupList extends VerticalPanel
         });
     }
 
-    protected void loadGroupsList (String tag)
+    protected void loadGroupsList (final String tag)
     {
         AsyncCallback groupsListCallback = new AsyncCallback() {
             public void onSuccess (Object result) {
                 _groupListContainer.setModel(new SimpleDataModel((List)result));
+                _currentTagContainer.clear();
+                if (tag != null) {
+                    InlineLabel tagLabel = new InlineLabel(CGroup.msgs.listCurrentTag() + " " + 
+                        tag + " ");
+                    DOM.setStyleAttribute(tagLabel.getElement(), "fontWeight", "bold");
+                    _currentTagContainer.add(tagLabel);
+                    _currentTagContainer.add(new InlineLabel("("));
+                    Hyperlink clearLink = new Hyperlink(CGroup.msgs.listTagClear(), "list");
+                    DOM.setStyleAttribute(clearLink.getElement(), "display", "inline");
+                    _currentTagContainer.add(clearLink);
+                    _currentTagContainer.add(new InlineLabel(")"));
+                }
             }
             public void onFailure (Throwable caught) {
                 CGroup.log("getGroupsList failed", caught);
@@ -221,6 +235,7 @@ public class GroupList extends VerticalPanel
 
     protected VerticalPanel _errorContainer;
     protected FlowPanel _popularTagsContainer;
+    protected FlowPanel _currentTagContainer;
     protected PagedGrid _groupListContainer;
 
     protected HashMap _groupLists;

@@ -333,17 +333,15 @@ public class GroupView extends VerticalPanel
         final FlowPanel tags = new FlowPanel();
         CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, new AsyncCallback () {
             public void onSuccess (Object result) {
-                boolean first = true;
                 Iterator i = ((Collection) result).iterator();
                 while (i.hasNext()) {
-                    if (!first) {
-                        tags.add(new InlineLabel(" . "));
-                    }
-                    first = false;
                     String tag = (String)i.next();
                     Hyperlink tagLink = new Hyperlink(tag, "tag=" + tag);
                     DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
                     tags.add(tagLink);
+                    if (i.hasNext()) {
+                        tags.add(new InlineLabel(", "));
+                    }
                 }
             } 
             public void onFailure (Throwable caught) {
@@ -367,7 +365,8 @@ public class GroupView extends VerticalPanel
     }
 
     /**
-     * performs a simple scan of the list of GroupMembership objects to find and return the * first GroupMembership that refers to the requested memberId.
+     * performs a simple scan of the list of GroupMembership objects to find and return the 
+     * first GroupMembership that refers to the requested memberId.
      */
     static protected GroupMembership findMember (List members, int memberId) 
     {

@@ -128,6 +128,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String viewViewProfile();
 
   /**
+   * Translated "Current Tag: ".
+   * 
+   * @return translated "Current Tag: "
+   * @gwt.key listCurrentTag
+   */
+  String listCurrentTag();
+
+  /**
    * Translated "Remove".
    * 
    * @return translated "Remove"
@@ -318,6 +326,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key listPopularTags
    */
   String listPopularTags();
+
+  /**
+   * Translated "clear".
+   * 
+   * @return translated "clear"
+   * @gwt.key listTagClear
+   */
+  String listTagClear();
 
   /**
    * Translated "Design".
