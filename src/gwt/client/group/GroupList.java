@@ -123,11 +123,10 @@ public class GroupList extends VerticalPanel
                 } else {
                     while (iter.hasNext()) {
                         _popularTagsContainer.add(new Anchor("", ((String)iter.next())));
-                        _popularTagsContainer.add(new InlineLabel(", "));
+                        if (iter.hasNext()) {
+                            _popularTagsContainer.add(new InlineLabel(", "));
+                        }
                     }
-                    Anchor moreLink = new Anchor("", CGroup.msgs.listMore());
-                    DOM.setAttribute(moreLink.getElement(), "id", "moreLink");
-                    _popularTagsContainer.add(moreLink);
                 }
             }
             public void onFailure (Throwable caught) {

@@ -168,14 +168,6 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String viewForum();
 
   /**
-   * Translated "more...".
-   * 
-   * @return translated "more..."
-   * @gwt.key listMore
-   */
-  String listMore();
-
-  /**
    * Translated "Detail Background".
    * 
    * @return translated "Detail Background"
