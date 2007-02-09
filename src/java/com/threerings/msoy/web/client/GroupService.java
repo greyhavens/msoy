@@ -23,10 +23,17 @@ public interface GroupService extends RemoteService
      * Get the list of all groups.
      */
     public List getGroupsList (WebCreds creds) throws ServiceException;
+
     /**
      * performs a search against the name, blurb and charter fields.
      */
     public List searchGroups (WebCreds creds, String searchString)
+        throws ServiceException;
+
+    /**
+     * return all groups that are tagged with the given tag.
+     */
+    public List searchForTag (WebCreds creds, String tag)
         throws ServiceException;
     
     /**

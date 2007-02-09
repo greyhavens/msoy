@@ -131,6 +131,24 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
+    public List<Group> searchForTag (WebCreds creds, final String tag)
+        throws ServiceException
+    {
+        final ServletWaiter<List<Group>> waiter = new ServletWaiter<List<Group>>("searchForTag[" +
+            tag + "]");
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<Group>>(waiter) {
+            public List<Group> invokePersistResult () throws PersistenceException {
+                List<Group> groups = new ArrayList<Group>();
+                for (GroupRecord gRec : MsoyServer.groupRepo.searchForTag(tag)) {
+                    groups.add(gRec.toGroupObject());
+                }
+                return groups;
+            }
+        });
+        return waiter.waitForResult();
+    }
+
+    // from interface GroupService
     public List<GroupMembership> getMembershipGroups (WebCreds creds, final int memberId,
                                                       final boolean canInvite)
         throws ServiceException

@@ -122,7 +122,25 @@ public class GroupList extends VerticalPanel
                     _popularTagsContainer.add(new InlineLabel(CGroup.msgs.listNoPopularTags()));
                 } else {
                     while (iter.hasNext()) {
-                        _popularTagsContainer.add(new Anchor("", ((String)iter.next())));
+                        final String tag = (String)iter.next();
+                        InlineLabel tagLink = new InlineLabel(tag);
+                        tagLink.addClickListener(new ClickListener() {
+                            public void onClick (Widget sent) {
+                                CGroup.groupsvc.searchForTag(CGroup.creds, tag, 
+                                    new AsyncCallback() {
+                                        public void onSuccess (Object result) {
+                                            _groupListContainer.setModel(new SimpleDataModel(
+                                                (List)result));
+                                        }
+                                        public void onFailure (Throwable caught) {
+                                            CGroup.log("searchForTag failed", caught);
+                                            addError(CGroup.serverError(caught));
+                                        }
+                                    }
+                                );
+                            }
+                        });
+                        _popularTagsContainer.add(tagLink);
                         if (iter.hasNext()) {
                             _popularTagsContainer.add(new InlineLabel(", "));
                         }
