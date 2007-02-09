@@ -208,6 +208,12 @@ ButtonBar {
   fillAlphas: 0.6, 0.4;
 }
 
+.controlAvatarButton {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar_over.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar_down.png");
+}
+
 VScrollBar {
   cornerRadius: 4;
   borderColor: #cccccc;

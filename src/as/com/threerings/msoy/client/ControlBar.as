@@ -148,7 +148,8 @@ public class ControlBar extends Canvas
             prefsBtn.y = 0;
             prefsBtn.width = 47;
             prefsBtn.height = HEIGHT;
-            prefsBtn.alpha = .5;
+            //prefsBtn.alpha = .5;
+            prefsBtn.styleName = "controlAvatarButton";
             addChild(prefsBtn);
 
         } else {
