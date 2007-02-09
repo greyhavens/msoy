@@ -104,6 +104,18 @@ public class GroupRepository extends DepotRepository
             "charter")));
     }
 
+    public Collection<GroupRecord> searchForTag (String tag)
+        throws PersistenceException
+    {
+        ArrayList<Integer> groupIds = new ArrayList<Integer>();
+        for (GroupTagRecord tagRec : findAll(GroupTagRecord.class,
+            new Where(GroupTagRecord.TAG_ID, _tagRepo.getTag(tag).tagId))) {
+            groupIds.add(tagRec.targetId);
+        }
+        return findAll(GroupRecord.class, new Where(new In(GroupRecord.class, 
+            GroupRecord.GROUP_ID, groupIds)));
+    }
+
     /**
      * Fetches a single group, by id. Returns null if there's no such group.
      */
