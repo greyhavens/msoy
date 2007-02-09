@@ -30,14 +30,12 @@ public class index extends MsgsEntryPoint
     {
         // "list" is used as a token to get to the GroupList, because you can't give GWT an
         // empty token string for either a Hyperlink or History.newItem()
-        if (token.length() > 0 && !token.equals("list")) {
-            try {
-                setContent(new GroupView(Integer.parseInt(token)));
-            } catch (Exception e) {
-                // TODO: display error
-            }
-        } else {
+        if (token.length() == 0 || token.equals("list")) {
             setContent(new GroupList());
+        } else if (token.startsWith("tag=")) {
+            setContent(new GroupList(token.substring(4)));
+        } else {
+            setContent(new GroupView(Integer.parseInt(token)));
         }
     }
 

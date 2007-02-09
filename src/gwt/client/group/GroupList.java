@@ -46,7 +46,12 @@ public class GroupList extends VerticalPanel
     /** The number of rows to show in the PagedGrid. */
     public static final int GRID_ROWS = 4;
 
-    public GroupList ()
+    public GroupList () 
+    {
+        this(null);
+    }
+
+    public GroupList (String tag)
     {
         super();
         setStyleName("groupList");
@@ -105,7 +110,7 @@ public class GroupList extends VerticalPanel
         table.getFlexCellFormatter().setColSpan(1, 0, 2);
 
         loadPopularTags();
-        loadGroupsList();
+        loadGroupsList(tag);
     }
 
     protected void loadPopularTags ()
@@ -123,23 +128,8 @@ public class GroupList extends VerticalPanel
                 } else {
                     while (iter.hasNext()) {
                         final String tag = (String)iter.next();
-                        InlineLabel tagLink = new InlineLabel(tag);
-                        tagLink.addClickListener(new ClickListener() {
-                            public void onClick (Widget sent) {
-                                CGroup.groupsvc.searchForTag(CGroup.creds, tag, 
-                                    new AsyncCallback() {
-                                        public void onSuccess (Object result) {
-                                            _groupListContainer.setModel(new SimpleDataModel(
-                                                (List)result));
-                                        }
-                                        public void onFailure (Throwable caught) {
-                                            CGroup.log("searchForTag failed", caught);
-                                            addError(CGroup.serverError(caught));
-                                        }
-                                    }
-                                );
-                            }
-                        });
+                        Hyperlink tagLink = new Hyperlink(tag, "tag=" + tag);
+                        DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
                         _popularTagsContainer.add(tagLink);
                         if (iter.hasNext()) {
                             _popularTagsContainer.add(new InlineLabel(", "));
@@ -154,9 +144,9 @@ public class GroupList extends VerticalPanel
         });
     }
 
-    protected void loadGroupsList ()
+    protected void loadGroupsList (String tag)
     {
-        CGroup.groupsvc.getGroupsList(CGroup.creds, new AsyncCallback() {
+        AsyncCallback groupsListCallback = new AsyncCallback() {
             public void onSuccess (Object result) {
                 _groupListContainer.setModel(new SimpleDataModel((List)result));
             }
@@ -164,7 +154,13 @@ public class GroupList extends VerticalPanel
                 CGroup.log("getGroupsList failed", caught);
                 addError(CGroup.serverError(caught));
             }
-        });
+        };
+        
+        if (tag != null) {
+            CGroup.groupsvc.searchForTag(CGroup.creds, tag, groupsListCallback);
+        } else {
+            CGroup.groupsvc.getGroupsList(CGroup.creds, groupsListCallback);
+        }
     }
 
     protected void performSearch (final String searchString)

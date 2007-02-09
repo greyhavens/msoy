@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Hyperlink;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
@@ -340,7 +340,10 @@ public class GroupView extends VerticalPanel
                         tags.add(new InlineLabel(" . "));
                     }
                     first = false;
-                    tags.add(new InlineLabel((String)i.next()));
+                    String tag = (String)i.next();
+                    Hyperlink tagLink = new Hyperlink(tag, "tag=" + tag);
+                    DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
+                    tags.add(tagLink);
                 }
             } 
             public void onFailure (Throwable caught) {
