@@ -157,13 +157,10 @@ public class TagDetailPanel extends FlexTable
     protected MenuItem getMenuItem (final String menuLabel, final byte flag,
                                     final PopupPanel parent)
     {
-        // TODO: raw HTML is a bit yuck; maybe add more structure to PromptPopup 
-        final String text =
-            "<b>" + CShell.cmsgs.tagFlagPrompt(menuLabel) + "</b><br>\n";
-
         MenuItem mature = new MenuItem(menuLabel, new Command() {
             public void execute() {
-                (new PromptPopup(text, CShell.cmsgs.tagFlagFlagButton(), 
+                (new PromptPopup(CShell.cmsgs.tagFlagPrompt(menuLabel), CShell.cmsgs.
+                    tagFlagFlagButton(), 
                     CShell.cmsgs.tagFlagCancelButton()) {
                     public void onAffirmative () {
                         parent.hide();
