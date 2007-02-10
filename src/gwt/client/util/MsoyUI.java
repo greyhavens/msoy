@@ -34,24 +34,23 @@ public class MsoyUI
      * be styled as specified with an additional style that configures the mouse pointer and adds
      * underline to the text.
      */
-    public static Label createActionLabel (String text, String styleName, ClickListener listener)
+    public static Label createActionLabel (String text, String style, ClickListener listener)
     {
-        Label label = new Label(text);
-        if (styleName != null) {
-            label.setStyleName(styleName);
-        }
+        Label label = createCustomActionLabel(text, style, listener);
         label.addStyleName("actionLabel");
-        label.addClickListener(listener);
         return label;
     }
 
     /**
      * Creates a label that triggers an action using the supplied text and listener. The label will
-     * not be specially styled.
+     * only be styled with the specified style.
      */
-    public static Label createPlainActionLabel (String text, ClickListener listener)
+    public static Label createCustomActionLabel (String text, String style, ClickListener listener)
     {
         Label label = new Label(text);
+        if (style != null) {
+            label.setStyleName(style);
+        }
         label.addClickListener(listener);
         return label;
     }

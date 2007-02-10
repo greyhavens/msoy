@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.WebCreds;
@@ -37,18 +38,24 @@ public class NaviPanel extends FlexTable
     {
         // replace our logon menu item with the "me" menu item
         int menuidx = 0;
-        setMenu(menuidx++, CShell.cmsgs.menuMe(), new ClickListener() {
+        setMenu(menuidx++, "Me", CShell.cmsgs.menuMe(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/profile/index.html", "Profile");
                 addLink(menu, "/inventory/index.html", "Inventory");
                 addLink(menu, "/mail/index.html", "Mail");
+                menu.addItem("Logoff", true, new Command() {
+                    public void execute () {
+                        _logon.logoff();
+                        _popped.hide();
+                    }
+                });
                 // TODO: account
                 // TODO: logout
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, CShell.cmsgs.menuPlaces(), new ClickListener() {
+        setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/world/index.html#m" + creds.getMemberId(), "My Home");
@@ -58,14 +65,14 @@ public class NaviPanel extends FlexTable
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, CShell.cmsgs.menuPeople(), new ClickListener() {
+        setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/group/index.html", "Groups");
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, CShell.cmsgs.menuStuff(), new ClickListener() {
+        setMenu(menuidx++, "Stuff", CShell.cmsgs.menuStuff(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/inventory/index.html", "Inventory");
@@ -74,7 +81,7 @@ public class NaviPanel extends FlexTable
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, CShell.cmsgs.menuGames(), new ClickListener() {
+        setMenu(menuidx++, "Games", CShell.cmsgs.menuGames(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/inventory/index.html#4", "My Games");
@@ -91,33 +98,33 @@ public class NaviPanel extends FlexTable
     public void didLogoff ()
     {
         int menuidx = 0;
-        setMenu(menuidx++, CShell.cmsgs.menuLogon(), new ClickListener() {
+        setMenu(menuidx++, "Me", CShell.cmsgs.menuLogon(), new ClickListener() {
             public void onClick (Widget sender) {
-                _logon.showLogonPopup();
+                _logon.showLogonPopup(sender.getAbsoluteLeft(), getMenuY(sender));
             }
         });
-        setMenu(menuidx++, CShell.cmsgs.menuPlaces(), new ClickListener() {
+        setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/world/index.html#p", "Popular Spots");
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, CShell.cmsgs.menuPeople(), new ClickListener() {
+        setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/group/index.html", "Groups");
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, CShell.cmsgs.menuStuff(), new ClickListener() {
+        setMenu(menuidx++, "Stuff", CShell.cmsgs.menuStuff(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/catalog/index.html", "Catalog");
                 popupMenu(sender, menu);
             }
         });
-        setMenu(menuidx++, CShell.cmsgs.menuGames(), new ClickListener() {
+        setMenu(menuidx++, "Games", CShell.cmsgs.menuGames(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/catalog/index.html#4", "Browse");
@@ -127,35 +134,45 @@ public class NaviPanel extends FlexTable
         });
     }
 
-    protected void setMenu (int menuidx, String text, ClickListener listener)
+    protected void setMenu (int menuidx, String ident, String text, ClickListener listener)
     {
-        setMenu(menuidx, MsoyUI.createPlainActionLabel(text, listener));
-    }
-
-    protected void setMenu (int menuidx, Label label)
-    {
-        int column = menuidx*3;
-        getFlexCellFormatter().setStyleName(0, column++, "Left");
-        getFlexCellFormatter().setStyleName(0, column, "Link");
-        setWidget(0, column++, label);
-        getFlexCellFormatter().setStyleName(0, column++, "Right");
+        VerticalPanel box = new VerticalPanel();
+        box.add(MsoyUI.createCustomActionLabel("", "Button", listener));
+        box.add(MsoyUI.createCustomActionLabel(text, "Link", listener));
+        setWidget(0, menuidx, box);
+        getFlexCellFormatter().setStyleName(0, menuidx, ident);
     }
 
     protected void addLink (MenuBar menu, String href, String text)
     {
-        menu.addItem("<a href=\"" + href + "\">" + text + "</a>", true, (Command)null);
+        menu.addItem("<a href=\"" + href + "\">" + text + "</a>", true, new Command() {
+            public void execute () {
+                _popped.hide();
+            }
+        });
     }
 
     protected void popupMenu (Widget from, MenuBar menu)
     {
-        PopupPanel popup = new PopupPanel(true);
-        popup.add(menu);
-        popup.setPopupPosition(from.getAbsoluteLeft() - 6,
-                               from.getAbsoluteTop() + from.getOffsetHeight() + 3);
-        popup.show();
+        _popped = new PopupPanel(true);
+        _popped.add(menu);
+        _popped.setPopupPosition(from.getAbsoluteLeft(), getMenuY(from));
+        _popped.show();
+    }
+
+    protected int getMenuY (Widget from)
+    {
+        int height = from.getAbsoluteTop() + from.getOffsetHeight();
+        if (((Label)from).getText().equals("")) { // doris the hackasaurus!
+            height += 15;
+        }
+        return height;
     }
 
     protected LogonPanel _logon;
 
     protected Label _loglbl, _melbl;
+
+    /** The currently popped up menu, for easy closing. */
+    protected PopupPanel _popped;
 }

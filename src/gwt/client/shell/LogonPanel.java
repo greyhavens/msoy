@@ -68,9 +68,18 @@ public class LogonPanel extends FlexTable
      */
     public void showLogonPopup ()
     {
+        showLogonPopup(-1, -1);
+    }
+
+    /**
+     * Requests that we display our logon popup at the specified position.
+     */
+    public void showLogonPopup (int px, int py)
+    {
         LogonPopup popup = new LogonPopup();
         popup.show();
-        popup.setPopupPosition(Window.getClientWidth() - popup.getOffsetWidth(), HEADER_HEIGHT);
+        popup.setPopupPosition(px == -1 ? (Window.getClientWidth() - popup.getOffsetWidth()) : px,
+                               py == -1 ? HEADER_HEIGHT : py);
     }
 
     /**
@@ -211,5 +220,5 @@ public class LogonPanel extends FlexTable
     protected Button _action;
 
     /** The height of the header UI in pixels. */
-    protected static final int HEADER_HEIGHT = 43;
+    protected static final int HEADER_HEIGHT = 50;
 }

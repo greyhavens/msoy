@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -64,8 +65,11 @@ public abstract class MsoyEntryPoint
         // initialize our services and translations
         initContext();
 
+        // TODO: new image every day!
+//         RootPanel.get("logo").add(new Image("/images/header/msoy_logo.png"));
+
         // create our standard logon panel
-        RootPanel.get("logon").add(_logon = new LogonPanel(this));
+        RootPanel.get("status").add(_logon = new LogonPanel(this));
 
         // create our standard navigation panel
         RootPanel.get("navigation").add(_navi = new NaviPanel(getPageId(), _logon));
