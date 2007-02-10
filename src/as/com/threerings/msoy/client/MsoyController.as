@@ -63,6 +63,9 @@ public class MsoyController extends Controller
     /** Command to display the pets popup. */
     public static const SHOW_PETS :String = "ShowPets";
 
+    /** Command to go to a particular place (by Oid). */
+    public static const GO_LOCATION :String = "GoLocation";
+
     /** Command to go to a particular scene. */
     public static const GO_SCENE :String = "GoScene";
 
@@ -352,6 +355,14 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Handle the GO_LOCATION command to go to a placeobject.
+     */
+    public function handleGoLocation (placeOid :int) :void
+    {
+        _ctx.getLocationDirector().moveTo(placeOid);
+    }
+
+    /**
      * Called to move to the lobby specified.
      */
     protected function moveToGameLobby (gameId :int) :void
@@ -509,7 +520,7 @@ public class MsoyController extends Controller
             moveToGameLobby(int(params["gameLobby"]));
 
         } else if (null != params["location"]) {
-            _ctx.getLocationDirector().moveTo(int(params["location"]));
+            handleGoLocation(int(params["location"]));
 
         } else if (null != params["noplace"]) {
             // go to no place- we just want to chat with our friends
