@@ -38,15 +38,19 @@
   color: gray;
 }
 
+.gwt-Image {
+  margin: 0px;
+  padding: 0px;
+}
+
 /** Form element styles. */
 .gwt-Button {
   border-top: none;
   border-bottom: none;
   border-left: 1px double #000000;
   border-right: 1px double  #000000;
-  background-image: url(/images/header/button_middle.png);
+  background-image: url(/images/ui/button_middle.png);
   background-repeat: repeat-x;
-  font-family: Arial, Verdana, Helvetica, sans-serif;
   font-size: 12px;
   height: 20px;
   vertical-align: top;
@@ -59,61 +63,70 @@ body {
   font-family: Arial, Verdana, Helvetica, sans-serif;
 }
 
+.msoyHeader {
+  color: #EAEFF1;
+}
+
 .msoyHeader .Left {
-  background-image: url(/images/header/header_left.png);
-  background-repeat: no-repeat;
-  width: 641px;
-  height: 43px;
-  vertical-align: bottom;
+  background: url(/images/header/header_logo.png) no-repeat;
+  width: 124px;
+  height: 50px;
+}
+
+.msoyHeader .Navi {
+  width: 195px;
+  height: 50px;
+}
+
+.msoyHeader .Shim {
+  background: url(/images/header/header_shim.png) no-repeat;
+  width: 156px;
+  height: 50px;
 }
 
 .msoyHeader .Right {
-  background-image: url(/images/header/header_right.png);
-  background-repeat: repeat;
+  background: url(/images/header/header_right.png) repeat-x;
+  height: 50px;
 }
 
 .naviPanel {
-  padding-left: 90px;
-  background-repeat: repeat;
 }
 
-.naviPanel .Left {
-  background-image: url(/images/header/tab_left.png);
-  width: 4px;
-  height: 20px;
-}
-
-.naviPanel .Link {
-  background-image: url(/images/header/tab_middle.png);
-  background-repeat: repeat;
-  padding-left: 2px;
-  padding-right: 2px;
-
-  font-family: Arial, Verdana, Helvetica, sans-serif;
-  font-size: 12px;
-  color: white;
+.naviPanel .Button {
+  width: 39px;
+  height: 35px;
 
   cursor: pointer;
   cursor: hand;
 }
 
-.naviPanel .Link a {
-  font-family: Arial, Verdana, Helvetica, sans-serif;
-  font-size: 12px;
-  text-decoration: none;
-  color: white;
+.naviPanel .Link {
+  font-size: 10px;
+  text-align: center;
+  height: 15px;
+
+  cursor: pointer;
+  cursor: hand;
 }
 
-.naviPanel .Right {
-  background-image: url(/images/header/tab_right.png);
-  width: 4px;
-  height: 20px;
+.naviPanel .Me {
+  background: url(/images/header/navi/me.png);
 }
 
-.naviPanel .SelLeft {
-  background-image: url(/images/header/seltab_left.png);
-  width: 4px;
-  height: 20px;
+.naviPanel .Places {
+  background: url(/images/header/navi/places.png);
+}
+
+.naviPanel .People {
+  background: url(/images/header/navi/people.png);
+}
+
+.naviPanel .Stuff {
+  background: url(/images/header/navi/stuff.png);
+}
+
+.naviPanel .Games {
+  background: url(/images/header/navi/games.png);
 }
 
 .naviPanel .SelLink {
@@ -124,7 +137,6 @@ body {
 
   font-family: Arial, Verdana, Helvetica, sans-serif;
   font-size: 12px;
-  color: black;
 
   cursor: pointer;
   cursor: hand;
@@ -134,13 +146,6 @@ body {
   font-family: Arial, Verdana, Helvetica, sans-serif;
   font-size: 12px;
   text-decoration: none;
-  color: black;
-}
-
-.naviPanel .SelRight {
-  background-image: url(/images/header/seltab_right.png);
-  width: 4px;
-  height: 20px;
 }
 
 .logonPanel {

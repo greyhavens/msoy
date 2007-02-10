@@ -11,17 +11,17 @@
 .blurbBox .HeaderLeft {
    width: 33px;
    height: 27px;
-   background: url(/images/ui/profile/box_left.png);
+   background: url(/images/profile/box_left.png);
 }
 
 .blurbBox .HeaderRight {
    width: 31px;
    height: 27px;
-   background: url(/images/ui/profile/box_right.png);
+   background: url(/images/profile/box_right.png);
 }
 
 .blurbBox .Header {
-   background: url(/images/ui/profile/box_tile.png);
+   background: url(/images/profile/box_tile.png);
    color: #EAF4F8;
    text-align: center;
    font-size: 16px;
