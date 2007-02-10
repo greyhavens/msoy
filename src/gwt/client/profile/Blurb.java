@@ -5,7 +5,8 @@ package client.profile;
 
 import client.profile.HoodBlurb;
 
-import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 
@@ -15,7 +16,7 @@ import com.threerings.msoy.web.data.BlurbData;
  * Contains a chunk of content that a user would want to display on their
  * personal page.
  */
-public abstract class Blurb extends DockPanel
+public abstract class Blurb extends FlexTable
 {
     /**
      * Creates the appropriate UI for the specified type of blurb.
@@ -53,10 +54,16 @@ public abstract class Blurb extends DockPanel
 
     protected Blurb ()
     {
+        setCellPadding(0);
+        setCellSpacing(0);
         setStyleName("blurbBox");
-        add(_header = new Label("Header"), NORTH);
-        _header.setStyleName("Header");
-        add(createContent(), CENTER);
+        getFlexCellFormatter().setStyleName(0, 0, "HeaderLeft");
+        setWidget(0, 1, _header = new Label("Header"));
+        getFlexCellFormatter().setStyleName(0, 1, "Header");
+        getFlexCellFormatter().setStyleName(0, 2, "HeaderRight");
+        setWidget(1, 0, createContent());
+        getFlexCellFormatter().setColSpan(1, 0, 3);
+        getFlexCellFormatter().setStyleName(1, 0, "Content");
     }
 
     /**
