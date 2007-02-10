@@ -29,6 +29,7 @@ public class RemixAnalyzer extends Sprite
         if (url == null) {
             output("Error: No 'swf' parameter specified.");
             exit();
+            return;
         }
 
         // set up
@@ -56,7 +57,7 @@ public class RemixAnalyzer extends Sprite
         try {
             var o :Object = new c();
             // describe the properties of the asset class
-            output(String(describeType(o)));
+            output(String(describeType(c)));
 
             // output a few choice bits of info about the "logic" class.
             var d :DisplayObject = _loader.content;
