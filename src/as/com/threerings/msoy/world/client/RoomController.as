@@ -167,6 +167,7 @@ public class RoomController extends SceneController
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
         _roomView.removeEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
         _roomView.removeEventListener(MouseEvent.MOUSE_OVER, mouseEntered);
+        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
 
@@ -582,8 +583,11 @@ public class RoomController extends SceneController
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;
 
+    [Embed(source="../../../../../../../rsrc/media/walkable.swf")]
+    protected static const WALKTARGET :Class;
+
     /** The "cursor" used to display that a location is walkable. */
-    protected var _walkTarget :DisplayObject = new TargetCursor();
+    protected var _walkTarget :DisplayObject = (new WALKTARGET() as DisplayObject);
 
     /** Are we editing the current scene? */
     protected var _editor :EditorController;
