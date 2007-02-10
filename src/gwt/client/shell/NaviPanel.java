@@ -31,7 +31,7 @@ public class NaviPanel extends FlexTable
     }
 
     /**
-     * Called when the player logs on (or navigates to a page and is already logged on.
+     * Called when the player logs on (or navigates to a page and is already logged on).
      */
     public void didLogon (final WebCreds creds)
     {
@@ -86,7 +86,7 @@ public class NaviPanel extends FlexTable
     }
 
     /**
-     * Called when the player logs off.
+     * Called when the player logs off (or navigates to a page and is currently logged off).
      */
     public void didLogoff ()
     {
