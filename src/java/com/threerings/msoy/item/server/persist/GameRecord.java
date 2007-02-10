@@ -20,7 +20,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="GAME")
 public class GameRecord extends ItemRecord
 {
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 4;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 5;
 
     public static final String NAME = "name";
     public static final String MIN_PLAYERS = "minPlayers";

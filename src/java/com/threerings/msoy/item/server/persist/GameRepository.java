@@ -6,6 +6,7 @@ package com.threerings.msoy.item.server.persist;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.EntityMigration;
 
 import com.threerings.toybox.server.ToyBoxManager;
 import com.threerings.toybox.server.persist.Game;
@@ -40,6 +41,8 @@ public class GameRepository extends ItemRepository<
     public GameRepository (ConnectionProvider provider)
     {
         super(provider);
+
+        _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(5, "desiredPlayers"));
     }
 
     // from ToyBoxManager.GameRepository
