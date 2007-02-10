@@ -65,6 +65,7 @@ body {
 
 .msoyHeader {
   color: #EAEFF1;
+  background: url(/images/header/header_tile.png);
 }
 
 .msoyHeader .Left {
@@ -85,7 +86,7 @@ body {
 }
 
 .msoyHeader .Right {
-  background: url(/images/header/header_right.png) repeat-x;
+  background: url(/images/header/header_right.png) no-repeat;
   height: 50px;
 }
 
