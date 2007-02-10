@@ -3,12 +3,17 @@
 
 package client.editem;
 
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Game;
@@ -26,7 +31,8 @@ public class GameEditor extends ItemEditor
         _game = (Game)item;
         _minPlayers.setText("" + _game.minPlayers);
         _maxPlayers.setText("" + _game.maxPlayers);
-        _desiredPlayers.setText("" + _game.desiredPlayers);
+        _party.setText("" + _game.partyGameType);
+        _watchable.setChecked(!_game.unwatchable);
         _gamedef.setText(_game.config);
         _tableUploader.setMedia(_game.getTableMedia());
     }
@@ -81,15 +87,32 @@ public class GameEditor extends ItemEditor
             }
         }));
 
-        bits.setText(row, 0, CEditem.emsgs.gameDesiredPlayers());
-        bits.setWidget(row++, 1, bind(_desiredPlayers = new TextBox(), new Binder() {
+        // TODO, seriously
+        bits.setText(row, 0, CEditem.emsgs.gamePartyGame());
+        bits.setWidget(row++, 1, bind(_party = new TextBox(), new Binder() {
             public void textUpdated (String text) {
-                _game.desiredPlayers = asShort(text);
+                _game.partyGameType = (byte) asShort(text);
             }
         }));
 
+        bits.setText(row, 0, CEditem.emsgs.gameWatchable());
+        _watchable = new CheckBox();
+        _watchable.addClickListener(new ClickListener() {
+            public void onClick (Widget widget) {
+                if (_game != null) {
+                    DeferredCommand.add(new Command() {
+                        public void execute () {
+                            _game.unwatchable = !_watchable.isChecked();
+                            updateSubmittable();
+                        }
+                    });
+                }
+            }
+        });
+        bits.setWidget(row++, 1, _watchable);
+
         bits.setText(row++, 0, CEditem.emsgs.gameDefinition());
-        bits.setWidget(row, 0, bind(_gamedef = new TextArea(), new Binder() {
+        bits.setWidget(row++, 0, bind(_gamedef = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _game.config = text;
             }
@@ -123,7 +146,9 @@ public class GameEditor extends ItemEditor
 
     protected Game _game;
 
-    protected TextBox _minPlayers, _maxPlayers, _desiredPlayers;
+    protected TextBox _minPlayers, _maxPlayers;
+    protected TextBox _party;
+    protected CheckBox _watchable;
     protected TextArea _gamedef;
 
     protected MediaUploader _tableUploader;

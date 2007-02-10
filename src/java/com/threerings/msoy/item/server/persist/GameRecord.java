@@ -20,14 +20,18 @@ import com.threerings.msoy.item.web.MediaDesc;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="GAME")
 public class GameRecord extends ItemRecord
 {
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 2;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 4;
 
     public static final String NAME = "name";
     public static final String MIN_PLAYERS = "minPlayers";
     public static final String MAX_PLAYERS = "maxPlayers";
-    public static final String DESIRED_PLAYERS = "desiredPlayers";
+    public static final String PARTY_GAME_TYPE = "partyGameType";
+    public static final String UNWATCHABLE = "unwatchable";
     public static final String GAME_MEDIA_HASH = "gameMediaHash";
     public static final String GAME_MIME_TYPE = "gameMimeType";
+
+    /** The party game type. */
+    public byte partyGameType;
 
     /** The minimum number of players. */
     public short minPlayers;
@@ -35,8 +39,8 @@ public class GameRecord extends ItemRecord
     /** The maximum number of players. */
     public short maxPlayers;
 
-    /** The desired number of players. */
-    public short desiredPlayers;
+    /** If a non-party game, it may be unwatchable. */
+    public boolean unwatchable;
 
     /** The XML game configuration. */
     @Column(columnDefinition="config TEXT NOT NULL")
@@ -57,9 +61,10 @@ public class GameRecord extends ItemRecord
     {
         super(game);
 
+        partyGameType = game.partyGameType;
         minPlayers = game.minPlayers;
         maxPlayers = game.maxPlayers;
-        desiredPlayers = game.desiredPlayers;
+        unwatchable = game.unwatchable;
         config = game.config;
         if (game.gameMedia != null) {
             gameMediaHash = game.gameMedia.hash;
@@ -77,9 +82,10 @@ public class GameRecord extends ItemRecord
     protected Item createItem ()
     {
         Game object = new Game();
+        object.partyGameType = partyGameType;
         object.minPlayers = minPlayers;
         object.maxPlayers = maxPlayers;
-        object.desiredPlayers = desiredPlayers;
+        object.unwatchable = unwatchable;
         object.config = config;
         object.gameMedia = gameMediaHash == null ? null :
             new MediaDesc(gameMediaHash, gameMimeType);

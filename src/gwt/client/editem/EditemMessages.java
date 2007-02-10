@@ -264,12 +264,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String petMainTitle();
 
   /**
-   * Translated "Desired players".
+   * Translated "Party game".
    * 
-   * @return translated "Desired players"
-   * @gwt.key gameDesiredPlayers
+   * @return translated "Party game"
+   * @gwt.key gamePartyGame
    */
-  String gameDesiredPlayers();
+  String gamePartyGame();
+
+  /**
+   * Translated "Watchable?".
+   * 
+   * @return translated "Watchable?"
+   * @gwt.key gameWatchable
+   */
+  String gameWatchable();
 
   /**
    * Translated "Enter a Description to be shown if you list your Item in the Catalog (optional)".

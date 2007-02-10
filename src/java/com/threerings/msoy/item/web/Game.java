@@ -11,14 +11,17 @@ public class Game extends Item
     /** Identifies our lobby background table media. */
     public static final String TABLE_MEDIA = "table";
 
+    /** The type of party game, or NOT_PARTY_GAME. */
+    public byte partyGameType;
+
     /** The minimum number of players. */
     public short minPlayers;
 
     /** The maximum number of players. */
     public short maxPlayers;
 
-    /** The desired number of players. */
-    public short desiredPlayers;
+    /** Is this game unwatchable? Applicable only for non-party games. */
+    public boolean unwatchable;
 
     /** The XML game configuration. */
     public String config;
@@ -66,8 +69,7 @@ public class Game extends Item
         if (!super.isConsistent() || !nonBlank(name)) {
             return false;
         }
-        if (minPlayers < 1 || minPlayers > maxPlayers ||
-            desiredPlayers < minPlayers || desiredPlayers > maxPlayers) {
+        if (minPlayers < 1 || minPlayers > maxPlayers) {
             return false;
         }
         return (gameMedia != null);

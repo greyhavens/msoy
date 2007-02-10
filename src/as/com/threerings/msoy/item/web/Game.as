@@ -13,14 +13,17 @@ public class Game extends Item
     /** Identifies our lobby table background media. */
     public static const TABLE_MEDIA :String = "table";
 
+    /** The type of party game, or NOT_PARTY_GAME. */
+    public var partyGameType :int;
+
     /** The minimum number of players. */
     public var minPlayers :int;
 
     /** The maximum number of players. */
     public var maxPlayers :int;
 
-    /** The desired number of players. */
-    public var desiredPlayers :int;
+    /** Is this game unwatchable? Applicable only for non-party games. */
+    public var unwatchable :Boolean;
 
     /** XML game configuration. */
     public var config :String;
@@ -59,9 +62,10 @@ public class Game extends Item
     {
         super.writeObject(out);
 
+        out.writeByte(partyGameType);
         out.writeShort(minPlayers);
         out.writeShort(maxPlayers);
-        out.writeShort(desiredPlayers);
+        out.writeBoolean(unwatchable);
         out.writeField(config);
         out.writeObject(gameMedia);
         out.writeObject(tableMedia);
@@ -71,9 +75,10 @@ public class Game extends Item
     {
         super.readObject(ins);
 
+        partyGameType = ins.readByte();
         minPlayers = ins.readShort();
         maxPlayers = ins.readShort();
-        desiredPlayers = ins.readShort();
+        unwatchable = ins.readBoolean();
         config = (ins.readField(String) as String);
         gameMedia = (ins.readObject() as MediaDesc);
         tableMedia = (ins.readObject() as MediaDesc);
