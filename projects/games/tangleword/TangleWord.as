@@ -51,7 +51,10 @@ public class TangleWord extends Sprite implements StateChangedListener
         // _gameCtrl.localChat (_coordinator.amITheHost () ?
         //                     "I AM THE HOST! :)" :
         //                     "I'm not the host. :(");
-        
+
+        if (_gameCtrl.isInPlay()) {
+            checkStartup();
+        }
     }
 
 
@@ -65,12 +68,7 @@ public class TangleWord extends Sprite implements StateChangedListener
         switch (event.type)
         {
         case StateChangedEvent.GAME_STARTED:
-            _gameCtrl.localChat ("Starting up!");
-            if (_coordinator.amITheHost ())
-            {
-                initializeScoreboard ();
-            }
-
+            checkStartup();
             break;
 
         case StateChangedEvent.GAME_ENDED:
@@ -80,7 +78,16 @@ public class TangleWord extends Sprite implements StateChangedListener
         }
     }
 
-
+    /**
+     * Check to see if we should be starting the game.
+     */
+    protected function checkStartup () :void
+    {
+        _gameCtrl.localChat("Starting up!");
+        if (_coordinator.amITheHost()) {
+            initializeScoreboard();
+        }
+    }
 
     // PRIVATE FUNCTIONS
 
