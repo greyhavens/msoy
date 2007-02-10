@@ -3,14 +3,16 @@
 
 package client.util;
 
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Displays a bordered popup with an area for a title, an area for contents and an area for
@@ -56,6 +58,7 @@ public abstract class BorderedDialog extends BorderedPopup
         headerBackground.getCellFormatter().setHorizontalAlignment(0, 1, 
             HorizontalPanel.ALIGN_CENTER);
         headerBackground.getCellFormatter().setStyleName(0, 2, "HeaderRight");
+
         Grid headerTitle = new Grid(1, 3);
         headerTitle.setStyleName("HeaderTitle");
         headerTitle.setCellSpacing(0);
@@ -78,6 +81,7 @@ public abstract class BorderedDialog extends BorderedPopup
         }
         _main.add(_contents = createContents());
         _contents.setWidth("100%");
+
         Grid footerBackground = new Grid(1, 2);
         footerBackground.setCellSpacing(0);
         footerBackground.setCellPadding(0);
@@ -93,11 +97,50 @@ public abstract class BorderedDialog extends BorderedPopup
         _main.add(footerBackground);
     }
 
+    protected Label createTitleLabel (String text, String style)
+    {
+        Label label = new Label(text);
+        label.setStyleName(style);
+        label.addMouseListener(_dragListener);
+        return label;
+    }
+
     /**
      * Creates the Widget that will contain the contents of this dialog. Do not populate that
      * widget here, just created it.
      */
     protected abstract Widget createContents ();
+
+    /** Handles dragging of this popup window. */
+    protected MouseListener _dragListener = new MouseListener() {
+        public void onMouseEnter (Widget sender) {
+        }
+        public void onMouseLeave (Widget sender) {
+        }
+
+        public void onMouseDown (Widget sender, int x, int y) {
+            _dragging = true;
+            DOM.setCapture(sender.getElement());
+            _dragStartX = x;
+            _dragStartY = y;
+        }
+
+        public void onMouseMove (Widget sender, int x, int y) {
+            if (_dragging) {
+                int absX = x + getAbsoluteLeft();
+                int absY = y + getAbsoluteTop();
+                setPopupPosition(absX - _dragStartX, absY - _dragStartY);
+            }
+        }
+
+        public void onMouseUp (Widget sender, int x, int y) {
+            _dragging = false;
+            DOM.releaseCapture(sender.getElement());
+        }
+
+        protected boolean _dragging;
+        protected int _dragStartX, _dragStartY;
+    };
 
     protected VerticalPanel _main;
     protected HorizontalPanel _header;

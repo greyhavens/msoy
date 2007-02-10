@@ -72,9 +72,8 @@ public class GroupEdit extends BorderedDialog
         _extras = extras;
         _listener = listener;
 
-        String title = _group.groupId == 0 ?
-            CGroup.msgs.editCreateTitle() : _group.name;
-        _header.add(MsoyUI.createLabel(title, "GroupTitle"));
+        String title = _group.groupId == 0 ? CGroup.msgs.editCreateTitle() : _group.name;
+        _header.add(createTitleLabel(title, "GroupTitle"));
         VerticalPanel contents = (VerticalPanel)_contents;
 
         _errorContainer = new HorizontalPanel();
