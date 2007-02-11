@@ -102,9 +102,8 @@ public class ProjectRoomManager extends PlaceManager
         _roomObj.addPathElement(new DocumentElement("File 6", node.elementId, "Bob!"));
 
         // wire up our invocation service
-        _roomObj.setService(
-            (ProjectRoomMarshaller)MsoyServer.invmgr.registerDispatcher(
-                new ProjectRoomDispatcher(this), false));
+        _roomObj.setService((ProjectRoomMarshaller)
+                            MsoyServer.invmgr.registerDispatcher(new ProjectRoomDispatcher(this)));
     }
 
     @Override // from PlaceManager

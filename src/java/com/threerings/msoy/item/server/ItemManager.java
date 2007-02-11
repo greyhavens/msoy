@@ -25,6 +25,7 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -97,7 +98,7 @@ public class ItemManager
         _repos.put(Item.PHOTO, repo);
 
         // register our invocation service
-        MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), true);
+        MsoyServer.invmgr.registerDispatcher(new ItemDispatcher(this), MsoyCodes.WORLD_GROUP);
     }
 
     /**

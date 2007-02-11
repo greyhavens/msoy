@@ -17,6 +17,7 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.web.Game;
@@ -48,7 +49,7 @@ public class WorldGameRegistry
      */
     public void init (InvocationManager invmgr)
     {
-        invmgr.registerDispatcher(new WorldGameDispatcher(this), true);
+        invmgr.registerDispatcher(new WorldGameDispatcher(this), MsoyCodes.WORLD_GROUP);
     }
 
     // from WorldGameProvider

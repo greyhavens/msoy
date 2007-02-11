@@ -17,6 +17,7 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.server.persist.PetRecord;
@@ -44,7 +45,7 @@ public class PetManager
     public void init (InvocationManager invmgr)
     {
         // register our pet invocation services
-        invmgr.registerDispatcher(new PetDispatcher(this), true);
+        invmgr.registerDispatcher(new PetDispatcher(this), MsoyCodes.WORLD_GROUP);
     }
 
     /**

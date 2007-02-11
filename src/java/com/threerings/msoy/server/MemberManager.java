@@ -38,6 +38,7 @@ import com.threerings.crowd.server.PlaceManager;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.game.data.LobbyConfig;
 import com.threerings.msoy.game.server.LobbyManager;
@@ -47,11 +48,11 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.MemberName;
-import com.threerings.msoy.web.data.NeighborMember;
 import com.threerings.msoy.web.data.NeighborGroup;
+import com.threerings.msoy.web.data.NeighborMember;
 import com.threerings.msoy.web.data.Neighborhood;
-import com.threerings.msoy.web.data.PopularPlace;
 import com.threerings.msoy.web.data.PopularPlace.*;
+import com.threerings.msoy.web.data.PopularPlace;
 import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.server.ServletWaiter;
 
@@ -88,7 +89,7 @@ public class MemberManager
         _memberRepo = memberRepo;
         _profileRepo = profileRepo;
         _groupRepo = groupRepo;
-        MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), true);
+        MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.WORLD_GROUP);
     }
 
     /**

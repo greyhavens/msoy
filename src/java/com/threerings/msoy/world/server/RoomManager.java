@@ -240,8 +240,8 @@ public class RoomManager extends SpotSceneManager
         super.didStartup();
 
         _roomObj = (RoomObject) _plobj;
-        _roomObj.setRoomService((RoomMarshaller) MsoyServer.invmgr.registerDispatcher(
-                                    new RoomDispatcher(this), false));
+        _roomObj.setRoomService((RoomMarshaller)
+                                MsoyServer.invmgr.registerDispatcher(new RoomDispatcher(this)));
 
         // determine which (if any) items in this room have a memories and load them up
         ArrayIntSet furniIds = new ArrayIntSet();

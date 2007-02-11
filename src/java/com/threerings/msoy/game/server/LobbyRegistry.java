@@ -16,6 +16,7 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.item.web.Game;
@@ -42,7 +43,7 @@ public class LobbyRegistry
      */
     public void init (InvocationManager invmgr)
     {
-        invmgr.registerDispatcher(new LobbyDispatcher(this), true);
+        invmgr.registerDispatcher(new LobbyDispatcher(this), MsoyCodes.GAME_GROUP);
     }
 
     // from LobbyProvider

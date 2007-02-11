@@ -10,6 +10,9 @@ import com.threerings.presents.data.InvocationCodes;
  */
 public interface SwiftlyCodes extends InvocationCodes
 {
+    /** Defines our invocation service group. */
+    public static final String SWIFTLY_GROUP = "msoy.swiftly";
+
     /** The identifier for our translation message bundle. */
     public static final String SWIFTLY_MSGS = "swiftly";
 }

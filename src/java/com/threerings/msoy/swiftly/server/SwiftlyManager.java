@@ -44,7 +44,7 @@ public class SwiftlyManager
         _srepo = srepo;
 
         // register ourselves as handling the Swiftly invocation service
-        invmgr.registerDispatcher(new SwiftlyDispatcher(this), true);
+        invmgr.registerDispatcher(new SwiftlyDispatcher(this), SwiftlyCodes.SWIFTLY_GROUP);
 
         // create our executor
         executor = new SerialExecutor(MsoyServer.omgr);
