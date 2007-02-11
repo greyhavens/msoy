@@ -4,34 +4,17 @@
 # Proguard configuration file for the Swiftly editor client
 
 -injars ../dist/lib/commons-io.jar(!META-INF/*)
+-injars ../dist/lib/samskivert.jar(!META-INF/*,!**/velocity/**,!**/xml/**)
 -injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/narya-distrib.jar(!META-INF/*,!**/tools/**,!**/server/**)
+-injars ../dist/lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/vilya-whirled.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../dist/lib/vilya-micasa.jar(**/micasa/client/ChatPanel*,**/micasa/client/OccupantList*)
--injars ../dist/lib/vilya-parlor.jar(!META-INF/*,**/data/**,**/client/*Service*.class)
--injars ../dist/lib/samskivert.jar(!META-INF/*,!**/velocity/**,!**/xml/**)
 -injars ../dist/lib/threerings.jar(!META-INF/*,**/threerings/util/**)
--injars ../dist/lib/toybox.jar(**/data/ToyBoxMarshaller*.class,**/client/ToyBoxService*.class)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(
-  !META-INF/*,
-  !**/tools/**,
-  !**/server/**,
-  !**/world/**,
-  !**/item/web/**,
-  !**/item/server/**,
-  !**/game/server/**,
-  !**/game/client/Game*,
-  !**/game/data/MsoyGame*,
-  !**/msoy/web/**,
-  !**/xml/**,
-  !com/threerings/io/**)
--injars ../dist/msoy-code.jar(
-  **/msoy/web/data/**,
-  **/msoy/item/web/**,
-  **/msoy/world/data/PetMarshaller*,
-  **/msoy/world/client/PetService*
-)
+    rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
+    **/msoy/web/data/**,**/msoy/world/data/WorldMemberInfo.class,**/msoy/item/web/**,
+    **/msoy/swiftly/data/**,**/msoy/swiftly/client/**,**/msoy/swiftly/util/**)
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate

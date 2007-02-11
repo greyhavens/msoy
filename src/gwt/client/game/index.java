@@ -77,8 +77,6 @@ public class index extends MsoyEntryPoint
 
     protected void displayGamePage (int gameId)
     {
-        // TODO: pass credentials to game if appropriate
-
         // load up the information needed to launch the game
         CGame.gamesvc.loadLaunchConfig(CGame.creds, gameId, new AsyncCallback() {
             public void onSuccess (Object result) {

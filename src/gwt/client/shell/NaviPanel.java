@@ -44,6 +44,9 @@ public class NaviPanel extends FlexTable
                 addLink(menu, "/profile/index.html", "Profile");
                 addLink(menu, "/inventory/index.html", "Inventory");
                 addLink(menu, "/mail/index.html", "Mail");
+                if (CShell.creds.isSupport) {
+                    addLink(menu, "/admin/index.html", "Admin");
+                }
                 menu.addItem("Logoff", true, new Command() {
                     public void execute () {
                         _logon.logoff();

@@ -1,7 +1,7 @@
 #
 # $Id$
 #
-# Proguard configuration file for the Java game client
+# Proguard configuration file for the Admin Dashboard client
 
 -injars ../dist/lib/commons-io.jar(!META-INF/*)
 -injars ../dist/lib/samskivert.jar(!META-INF/*,!**/velocity/**,!**/xml/**)
@@ -9,19 +9,16 @@
 -injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/narya-distrib.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../dist/lib/nenya-media.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../dist/lib/vilya-parlor.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/vilya-whirled.jar(!META-INF/*,!**/tools/**,!**/server/**)
--injars ../dist/lib/toybox.jar(!META-INF/*,!**/tools/**,!**/server/**,!**/xml/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(
     rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/web/data/**,**/msoy/world/data/WorldMemberInfo.class,**/msoy/item/web/**,
-    **/msoy/game/data/**,**/msoy/game/client/**)
+    **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**)
 
 -dontskipnonpubliclibraryclasses
 -dontobfuscate
--outjars ../dist/game-client.jar
+-outjars ../dist/admin-client.jar
 
 # we need whatever we keep of samskivert to be around in its entirety so
 # that if a game uses the same classfile, the whole thing is there

@@ -388,18 +388,11 @@
     </then></if>
   </target>
 
-  <!-- builds our Java game client -->
-  <target name="jclient" depends="dist">
-    <antcall target="proguard">
-      <param name="ident" value="game"/>
-    </antcall>
-  </target>
-
-  <!-- builds our Swiftly applet -->
-  <target name="swiftlyclient" depends="dist">
-    <antcall target="proguard">
-      <param name="ident" value="swiftly"/>
-    </antcall>
+  <!-- builds our Java clients -->
+  <target name="jclients" depends="dist">
+    <antcall target="proguard"><param name="ident" value="game"/></antcall>
+    <antcall target="proguard"><param name="ident" value="admin"/></antcall>
+    <antcall target="proguard"><param name="ident" value="swiftly"/></antcall>
   </target>
 
   <!-- generates additional methods for distributed object classes -->
@@ -553,7 +546,7 @@
           depends="asclient,avatarviewer"/>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
-  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclient,swiftlyclient">
+  <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients">
     <antcall target="gclient">
       <param name="full" value="true"/>
     </antcall>
