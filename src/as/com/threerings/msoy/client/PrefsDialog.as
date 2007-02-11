@@ -212,6 +212,13 @@ public class PrefsDialog extends FloatingPanel
             _avatars.setSelectedItem(_defaultAvatar);
 
         } else {
+            // What we want:
+            //    _avatars.setSelectedItem(memberObj.avatar);
+            // But actionscript will only compare by reference, and the
+            // avatar sent down in the inventory will be a different instance
+            // of the same data as the one in the userobject.
+            // So: find the right one.... (This is the easiest way to
+            // set the selected item in a Tree)
             var avatarId :int = memberObj.avatar.itemId;
             for each (var av :Avatar in memberObj.getItems(Item.AVATAR)) {
                 if (av.itemId == avatarId) {
