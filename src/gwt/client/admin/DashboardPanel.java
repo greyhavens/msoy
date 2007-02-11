@@ -24,6 +24,7 @@ public class DashboardPanel extends VerticalPanel
         add(WidgetUtil.createApplet(
                 "admin", "/clients/admin-client.jar",
                 "com.threerings.msoy.admin.client.AdminApplet", 800, 400,
+                // TODO: something annoyingly more complicated
                 new String[] { "server", "localhost", // config.server,
                                "port", "4010", // "" + config.port,
                                "authtoken", CAdmin.creds.token }));
