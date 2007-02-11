@@ -18,6 +18,7 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.web.data.MemberName;
 
@@ -36,7 +37,7 @@ public class GameDirector extends BasicDirector
     implements InvitationHandler, InvitationResponseObserver, AttributeChangeListener, Subscriber
 {
     public static const log :Log = Log.getLog(GameDirector);
-    
+
     public function GameDirector (ctx :MsoyContext)
     {
         super(ctx);
@@ -108,7 +109,7 @@ public class GameDirector extends BasicDirector
             updateInWorldGame();
         }
     }
-    
+
     // from interface Subscriber
     public function objectAvailable (obj :DObject) :void
     {
@@ -125,7 +126,7 @@ public class GameDirector extends BasicDirector
         _worldGameCtrl.init(_mctx, _worldGameObj.config);
         _worldGameCtrl.willEnterPlace(_worldGameObj);
     }
-    
+
     // from interface Subscriber
     public function requestFailed (oid :int, cause :ObjectAccessError) :void
     {
@@ -133,14 +134,14 @@ public class GameDirector extends BasicDirector
             ", cause=" + cause + "].");
         _worldGameOid = 0;
     }
-    
+
     override protected function clientObjectUpdated (client :Client) :void
     {
         // listen for changes to the in-world game oid
         updateInWorldGame();
         client.getClientObject().addListener(this);
     }
-    
+
     /**
      * Called to create, remove, or change the in-world game.
      */
@@ -163,7 +164,7 @@ public class GameDirector extends BasicDirector
             _mctx.getDObjectManager().subscribeToObject(_worldGameOid, this);
         }
     }
-    
+
     /**
      * A convenience method to display feedback using the game bundle.
      */
@@ -172,18 +173,24 @@ public class GameDirector extends BasicDirector
         _mctx.displayFeedback(GameCodes.GAME_BUNDLE, msg);
     }
 
+    // from BasicDirector
+    override protected function registerServices (client :Client) :void
+    {
+        client.addServiceGroup(MsoyCodes.GAME_GROUP);
+    }
+
     /** A casted ref to the msoy context. */
     protected var _mctx :MsoyContext;
 
     /** The invitation we're currently processing. */
     protected var _invitation :Invitation;
-    
+
     /** The oid of the world game object to which we are subscribed or are subscribing to. */
     protected var _worldGameOid :int;
-    
+
     /** The current world game object. */
     protected var _worldGameObj :WorldGameObject;
-    
+
     /** The controller for the current world game. */
     protected var _worldGameCtrl :WorldGameController;
 }

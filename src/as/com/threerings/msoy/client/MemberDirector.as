@@ -16,6 +16,7 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.web.data.MemberName;
 
@@ -156,6 +157,13 @@ public class MemberDirector extends BasicDirector
         client.getClientObject().addListener(this);
     }
 
+    // from BasicDirector
+    override protected function registerServices (client :Client) :void
+    {
+        client.addServiceGroup(MsoyCodes.WORLD_GROUP);
+    }
+
+    // from BasicDirector
     override protected function fetchServices (client :Client) :void
     {
         super.fetchServices(client);

@@ -448,6 +448,12 @@ public class MsoyController extends Controller
     }
 
     // from ClientObserver
+    public function clientWillLogon (event :ClientEvent) :void
+    {
+        // nada
+    }
+
+    // from ClientObserver
     public function clientDidLogon (event :ClientEvent) :void
     {
         var memberObj :MemberObject = _ctx.getClientObject();
