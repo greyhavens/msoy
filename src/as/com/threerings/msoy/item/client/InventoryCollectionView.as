@@ -105,6 +105,17 @@ public class InventoryCollectionView extends ArrayCollection
     }
 
     /**
+     * Add an item that will be shown alongside the user's inventory.
+     */
+    public function addFakeItem (item :Item) :void
+    {
+        _fakeItems.push(item);
+        if (isActive()) {
+            regenerateAllShown();
+        }
+    }
+
+    /**
      * Called by an InventoryPicker when a particular item type has been
      * opened.
      */
@@ -256,13 +267,22 @@ public class InventoryCollectionView extends ArrayCollection
         }
 
         var rawList :Array = _memberObj.getItems(type);
+        var item :Item;
 
         showList.disableAutoUpdate();
         try {
             showList.removeAll();
 
-            for each (var item :Item in rawList) {
+            // add all the inventory items
+            for each (item in rawList) {
                 if (_showUsed || !item.isUsed()) {
+                    showList.addItem(item);
+                }
+            }
+
+            // add any "fake" items of the right type
+            for each (item in _fakeItems) {
+                if (item.getType() == type) {
                     showList.addItem(item);
                 }
             }
@@ -302,5 +322,8 @@ public class InventoryCollectionView extends ArrayCollection
     /** Contains an ArrayCollection for each category, containing the
      * Currently shown items for that category. */
     protected var _showItems :Array = [];
+
+    /** Any non-inventory items added alongside the "real" ones. */
+    protected var _fakeItems :Array = [];
 }
 }

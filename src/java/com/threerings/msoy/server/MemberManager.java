@@ -352,6 +352,13 @@ public class MemberManager
         final MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
 
+        if (avatarItemId == 0) {
+            // a request to return to the default avatar
+            finishSetAvatar(user, null, listener);
+            return;
+        }
+
+        // otherwise, make sure it exists and we own it
         MsoyServer.itemMan.getItem(
             new ItemIdent(Item.AVATAR, avatarItemId), new ResultListener<Item>() {
             public void requestCompleted (Item item) {
@@ -456,6 +463,8 @@ public class MemberManager
 
     /**
      * Finish configuring the user's avatar.
+     *
+     * @param avatar may be null to revert to the default member avatar.
      */
     protected void finishSetAvatar (
         final MemberObject user, final Avatar avatar,
@@ -465,7 +474,8 @@ public class MemberManager
             public void invokePersist ()
                 throws PersistenceException
             {
-                _memberRepo.configureAvatarId(user.getMemberId(), avatar.itemId);
+                _memberRepo.configureAvatarId(user.getMemberId(),
+                    (avatar == null) ? 0 : avatar.itemId);
             }
 
             public void handleSuccess ()

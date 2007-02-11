@@ -48,7 +48,17 @@ public class PrefsDialog extends FloatingPanel
     public function PrefsDialog (ctx :MsoyContext)
     {
         super(ctx, Msgs.GENERAL.get("t.prefs"));
+
+        _defaultAvatar = new Avatar();
+        // we DO want to submit a switch to avatarId 0 when default is selected
+        //_defaultAvatar.itemId = 0; // not needed, reference. :)
+        _defaultAvatar.name = Msgs.GENERAL.get("m.default_avatar");
+        _defaultAvatar.avatarMedia = _defaultAvatar.thumbMedia =
+            Avatar.getDefaultMemberAvatarMedia();
+
         _avatars = new InventoryPicker(_ctx, Item.AVATAR, true);
+        _avatars.addFakeItem(_defaultAvatar);
+
         open(true);
     }
 
@@ -198,15 +208,16 @@ public class PrefsDialog extends FloatingPanel
     protected function selectCurrentAvatar () :void
     {
         var memberObj :MemberObject = _ctx.getClientObject();
-        var memberAv :Avatar = memberObj.avatar;
-        if (memberAv == null) {
-            return;
-        }
+        if (memberObj.avatar == null) {
+            _avatars.setSelectedItem(_defaultAvatar);
 
-        for each (var av :Avatar in memberObj.getItems(Item.AVATAR)) {
-            if (av.itemId == memberAv.itemId) {
-                _avatars.setSelectedItem(av);
-                break;
+        } else {
+            var avatarId :int = memberObj.avatar.itemId;
+            for each (var av :Avatar in memberObj.getItems(Item.AVATAR)) {
+                if (av.itemId == avatarId) {
+                    _avatars.setSelectedItem(av);
+                    break;
+                }
             }
         }
     }
@@ -219,6 +230,9 @@ public class PrefsDialog extends FloatingPanel
 
     /** The list of our avatars. */
     protected var _avatars :InventoryPicker;
+
+    /** The default avatar, so as to be pickable by the user. */
+    protected var _defaultAvatar :Avatar;
 
     /** The member object of our player, while we're listening for avatars to be loaded. */
     protected var _memberObj :MemberObject;

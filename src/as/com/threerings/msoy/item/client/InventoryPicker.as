@@ -77,6 +77,14 @@ public class InventoryPicker extends VBox
     }
 
     /**
+     * Adds a special item to be shown alongside the user's inventory items.
+     */
+    public function addFakeItem (fake :Item) :void
+    {
+        _collection.addFakeItem(fake);
+    }
+
+    /**
      * Get access directly to the tree widget, for customizing behavior.
      */
     public function get tree () :Tree

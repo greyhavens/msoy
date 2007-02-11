@@ -14,6 +14,14 @@ public class Avatar extends Item
     /** The avatar media. */
     public var avatarMedia :MediaDesc;
 
+    /**
+     * Returns a {@link MediaDesc} configured to display the default non-guest avatar.
+     */
+    public static function getDefaultMemberAvatarMedia () :MediaDesc
+    {
+        return new StaticMediaDesc(MediaDesc.APPLICATION_SHOCKWAVE_FLASH, AVATAR, "member");
+    }
+
     // from Item
     override public function getType () :int
     {
