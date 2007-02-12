@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
@@ -76,6 +77,7 @@ public class TagDetailPanel extends FlexTable
         setWidget(0, 0, _tags);
 
         setWidget(1, 0, new Label(CShell.cmsgs.tagAddTag()));
+        getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_MIDDLE);
         TextBox newTagBox = new TextBox();
         newTagBox.setMaxLength(20);
         newTagBox.setVisibleLength(12);
@@ -111,7 +113,9 @@ public class TagDetailPanel extends FlexTable
         }));
         setWidget(1, 1, newTagBox);
 
-        setWidget(1, 2, new Label(CShell.cmsgs.tagQuickAdd()));
+        _quickTagLabel = new Label(CShell.cmsgs.tagQuickAdd());
+        setWidget(1, 2, _quickTagLabel);
+        getFlexCellFormatter().setVerticalAlignment(1, 2, HasVerticalAlignment.ALIGN_MIDDLE);
         _quickTags = new ListBox();
         _quickTags.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
@@ -309,6 +313,7 @@ public class TagDetailPanel extends FlexTable
                     _service.getRecentTags(new AsyncCallback() {
                         public void onSuccess (Object result) {
                             _quickTags.clear();
+                            _quickTags.addItem("Select one...");
                             Iterator i = ((Collection) result).iterator();
                             while (i.hasNext()) {
                                 TagHistory history = (TagHistory) i.next();
@@ -319,7 +324,9 @@ public class TagDetailPanel extends FlexTable
                                     addedTags.add(tag);
                                 }
                             }
-                            _quickTags.setVisible(_quickTags.getItemCount() > 0);
+                            boolean visible = _quickTags.getItemCount() > 1;
+                            _quickTags.setVisible(visible);
+                            _quickTagLabel.setVisible(visible);
                         }
                         public void onFailure (Throwable caught) {
                             GWT.log("getTagHistory failed", caught);
@@ -340,5 +347,6 @@ public class TagDetailPanel extends FlexTable
     protected Label _status;
     protected FlowPanel _tags;
     protected ListBox _quickTags;
+    protected Label _quickTagLabel;
     protected FlexTable _tagHistory;
 }
