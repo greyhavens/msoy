@@ -111,7 +111,7 @@ public class TableRenderer extends VBox
                 _seatsBox.addChild(seat);
 
             } else {
-                seat = (getChildAt(ii) as SeatRenderer);
+                seat = (_seatsBox.getChildAt(ii) as SeatRenderer);
             }
             seat.update(ctx, table, ii, panel.isSeated());
         }
@@ -142,7 +142,7 @@ public class TableRenderer extends VBox
         }
 
         // maybe add a button for entering the game
-        if (table.gameOid != 0) {
+        if (table.gameOid != -1) {
             var key :String = null;
             switch (table.getPartyGameType()) {
             default:
