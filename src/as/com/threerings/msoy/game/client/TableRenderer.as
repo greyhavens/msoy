@@ -108,7 +108,7 @@ public class TableRenderer extends VBox
             var seat :SeatRenderer;
             if (_seatsBox.numChildren <= ii) {
                 seat = new SeatRenderer();
-                addChild(seat);
+                _seatsBox.addChild(seat);
 
             } else {
                 seat = (getChildAt(ii) as SeatRenderer);
