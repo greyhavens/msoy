@@ -152,6 +152,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errFurniNotFlash();
 
   /**
+   * Translated "Party game".
+   * 
+   * @return translated "Party game"
+   * @gwt.key gamePartyGame
+   */
+  String gamePartyGame();
+
+  /**
    * Translated "Maximum players".
    * 
    * @return translated "Maximum players"
@@ -256,28 +264,20 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String msgItemCreated();
 
   /**
-   * Translated "Pet as seen in the World".
-   * 
-   * @return translated "Pet as seen in the World"
-   * @gwt.key petMainTitle
-   */
-  String petMainTitle();
-
-  /**
-   * Translated "Party game".
-   * 
-   * @return translated "Party game"
-   * @gwt.key gamePartyGame
-   */
-  String gamePartyGame();
-
-  /**
    * Translated "Watchable?".
    * 
    * @return translated "Watchable?"
    * @gwt.key gameWatchable
    */
   String gameWatchable();
+
+  /**
+   * Translated "Pet as seen in the World".
+   * 
+   * @return translated "Pet as seen in the World"
+   * @gwt.key petMainTitle
+   */
+  String petMainTitle();
 
   /**
    * Translated "Enter a Description to be shown if you list your Item in the Catalog (optional)".

@@ -24,6 +24,14 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String menuStuff();
 
   /**
+   * Translated "Select one...".
+   * 
+   * @return translated "Select one..."
+   * @gwt.key tagSelectOne
+   */
+  String tagSelectOne();
+
+  /**
    * Translated "Remove Tag".
    * 
    * @return translated "Remove Tag"

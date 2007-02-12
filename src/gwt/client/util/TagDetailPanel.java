@@ -313,7 +313,7 @@ public class TagDetailPanel extends FlexTable
                     _service.getRecentTags(new AsyncCallback() {
                         public void onSuccess (Object result) {
                             _quickTags.clear();
-                            _quickTags.addItem("Select one...");
+                            _quickTags.addItem(CShell.cmsgs.tagSelectOne());
                             Iterator i = ((Collection) result).iterator();
                             while (i.hasNext()) {
                                 TagHistory history = (TagHistory) i.next();
