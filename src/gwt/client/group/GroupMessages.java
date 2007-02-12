@@ -224,6 +224,14 @@ public interface GroupMessages extends com.google.gwt.i18n.client.Messages {
   String errPhotoLoadFailed(String arg0);
 
   /**
+   * Translated "See other groups".
+   * 
+   * @return translated "See other groups"
+   * @gwt.key viewTagLink
+   */
+  String viewTagLink();
+
+  /**
    * Translated "Fit to Images".
    * 
    * @return translated "Fit to Images"

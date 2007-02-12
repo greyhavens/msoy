@@ -3,6 +3,8 @@
 
 package client.item;
 
+import java.util.List;
+
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -82,6 +84,7 @@ public class BaseItemDetailPopup extends BorderedDialog
                     }
                 );
             }
+            public List getMenuItems (String tag) { return null; }
         }));
 
         // load up the item details

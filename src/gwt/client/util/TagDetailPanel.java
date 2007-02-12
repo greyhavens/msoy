@@ -7,6 +7,7 @@ import client.shell.CShell;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import client.util.PromptPopup;
 
@@ -55,6 +56,13 @@ public class TagDetailPanel extends FlexTable
          * @param statusLabel A label to set with an error message on failure
          */
         public void setFlags (byte flag, Label statusLabel);
+        /**
+         * If additional entries are required on the Menu that pops up when a tag is clicked, 
+         * this method can return a List of MenuItems for that purpose.
+         *
+         * @return List of MenuItems, or null if this feature is not desired.
+         */
+        public List getMenuItems(String tag);
     }
 
     public TagDetailPanel (TagService service)
@@ -264,14 +272,9 @@ public class TagDetailPanel extends FlexTable
         _service.getTags(new AsyncCallback() {
             public void onSuccess (Object result) {
                 _tags.clear();
-                boolean first = true;
-                Iterator i = ((Collection) result).iterator();
-                while (i.hasNext()) {
-                    final String tag = (String) i.next();
-                    if (!first) {
-                        _tags.add(new InlineLabel(" . "));
-                    }
-                    first = false;
+                Iterator resultIter = ((Collection) result).iterator();
+                while (resultIter.hasNext()) {
+                    final String tag = (String) resultIter.next();
                     final PopupPanel removePanel = new PopupPanel(true);
                     MenuBar menu = new MenuBar(true);
                     menu.addItem(new MenuItem(CShell.cmsgs.tagRemove(), new Command() {
@@ -296,6 +299,11 @@ public class TagDetailPanel extends FlexTable
                             }).prompt();
                         }
                     }));
+                    List menuItems = _service.getMenuItems(tag);
+                    if (menuItems != null) {
+                        Iterator menuIter = menuItems.iterator();
+                        while (menuIter.hasNext()) menu.addItem((MenuItem)menuIter.next());
+                    }
                     removePanel.add(menu);
                     final InlineLabel tagLabel = new InlineLabel(tag);
                     tagLabel.addMouseListener(new MouseListener() {
@@ -310,6 +318,9 @@ public class TagDetailPanel extends FlexTable
                         public void onMouseMove (Widget sender, int x, int y) { }
                     });
                     _tags.add(tagLabel);
+                    if (resultIter.hasNext()) {
+                        _tags.add(new InlineLabel(", "));
+                    }
                 }
             }
             public void onFailure (Throwable caught) {
