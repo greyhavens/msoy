@@ -43,7 +43,6 @@ import client.shell.MsoyEntryPoint;
 import client.util.BorderedDialog;
 import client.util.MediaUtil;
 import client.util.MsoyUI;
-import client.util.TagDetailPanel;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
@@ -190,25 +189,6 @@ public class GroupEdit extends BorderedDialog
         VerticalPanel descriptionPanel = new VerticalPanel();
         descriptionPanel.setSpacing(10);
         descriptionPanel.setStyleName("CurrentPanel");
-
-        descriptionPanel.add(new TagDetailPanel(new TagDetailPanel.TagService() {
-            public void tag (String tag, AsyncCallback callback) {
-                CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, true, callback);
-            }
-            public void untag (String tag, AsyncCallback callback) {
-                CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, false, callback);
-            }
-            public void getRecentTags (AsyncCallback callback) {
-                CGroup.groupsvc.getRecentTags(CGroup.creds, callback);
-            }
-            public void getTags (AsyncCallback callback) {
-                CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, callback);
-            }
-            public boolean supportFlags () {
-                return false;
-            }
-            public void setFlags (final byte flag, final Label statusLabel) { }
-        }));
 
         CellPanel blurbEdit = createTextEntryField(CGroup.msgs.editBlurb(), 80, 43, _group.blurb,
             new ChangeListener() {

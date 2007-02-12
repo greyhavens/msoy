@@ -12,6 +12,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.MouseListener;
@@ -43,6 +44,7 @@ import client.shell.MsoyEntryPoint;
 import client.util.MediaUtil;
 import client.util.PromptPopup;
 import client.util.PrettyTextPanel;
+import client.util.TagDetailPanel;
 
 import client.group.GroupEdit.GroupSubmissionListener;
 
@@ -330,25 +332,45 @@ public class GroupView extends VerticalPanel
                 }
             }
         }
-        final FlowPanel tags = new FlowPanel();
-        CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, new AsyncCallback () {
-            public void onSuccess (Object result) {
-                Iterator i = ((Collection) result).iterator();
-                while (i.hasNext()) {
-                    String tag = (String)i.next();
-                    Hyperlink tagLink = new Hyperlink(tag, "tag=" + tag);
-                    DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
-                    tags.add(tagLink);
-                    if (i.hasNext()) {
-                        tags.add(new InlineLabel(", "));
-                    }
+        final Panel tags = !amManager ? (Panel)new FlowPanel() : (Panel)new TagDetailPanel(
+            new TagDetailPanel.TagService() {
+                public void tag (String tag, AsyncCallback callback) {
+                    CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, true, callback);
                 }
-            } 
-            public void onFailure (Throwable caught) {
-                CGroup.log("Failed to fetch tags");
-                addError(CGroup.serverError(caught));
-            }
-        });
+                public void untag (String tag, AsyncCallback callback) {
+                    CGroup.groupsvc.tagGroup(CGroup.creds, _group.groupId, tag, false, callback);
+                }
+                public void getRecentTags (AsyncCallback callback) {
+                    CGroup.groupsvc.getRecentTags(CGroup.creds, callback);
+                }
+                public void getTags (AsyncCallback callback) {
+                    CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, callback);
+                }
+                public boolean supportFlags () {
+                    return false;
+                }
+                public void setFlags (final byte flag, final Label statusLabel) { }
+            });
+        if (!amManager) {
+            CGroup.groupsvc.getTags(CGroup.creds, _group.groupId, new AsyncCallback () {
+                public void onSuccess (Object result) {
+                    Iterator i = ((Collection) result).iterator();
+                    while (i.hasNext()) {
+                        String tag = (String)i.next();
+                        Hyperlink tagLink = new Hyperlink(tag, "tag=" + tag);
+                        DOM.setStyleAttribute(tagLink.getElement(), "display", "inline");
+                        tags.add(tagLink);
+                        if (i.hasNext()) {
+                            tags.add(new InlineLabel(", "));
+                        }
+                    }
+                } 
+                public void onFailure (Throwable caught) {
+                    CGroup.log("Failed to fetch tags");
+                    addError(CGroup.serverError(caught));
+                }
+            });
+        }
         people.setWidget(3, 1, tags);
         people.setWidget(2, 0, new Widget() {
             {
