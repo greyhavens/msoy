@@ -11,7 +11,7 @@ import flash.geom.Rectangle;
 
 import flash.events.Event;
 
-public class Ground extends Sprite
+public class Ground extends Sprite implements DrivingSurface
 {
     /** The length and width of the track image tiles (they are square) */
     public static const IMAGE_SIZE :int = 1024;
@@ -30,6 +30,11 @@ public class Ground extends Sprite
         addChild(_scenery);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
+    }
+
+    public function getDisplayObject () :DisplayObject 
+    {
+        return (this as DisplayObject);
     }
 
     /**

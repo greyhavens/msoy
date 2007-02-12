@@ -11,7 +11,7 @@ import flash.ui.Keyboard;
 
 import com.threerings.ezgame.EZGameControl;
 
-[SWF(width="400", height="400")]
+[SWF(width="711", height="400")]
 public class UnderworldDrift extends Sprite
 {
     /** width of the masked display */
@@ -44,12 +44,12 @@ public class UnderworldDrift extends Sprite
 
         var camera :Camera = new Camera();
 
-        _ground = new Ground(camera);
-        _ground.y = SKY_HEIGHT;
-        addChild(_ground);
+        _surface = (new Ground(camera) as DrivingSurface);
+        var surfaceDisplay :DisplayObject = _surface.getDisplayObject();
+        surfaceDisplay.y = SKY_HEIGHT;
+        addChild(surfaceDisplay);
 
-        // create ground and position.
-        _kart = new Kart(camera, _ground);
+        _kart = new Kart(camera, _surface);
         _kart.x = KART_LOCATION.x;
         _kart.y = KART_LOCATION.y + SKY_HEIGHT;
         addChild(_kart);
@@ -120,8 +120,8 @@ public class UnderworldDrift extends Sprite
     /** the game control. */
     protected var _gameCtrl :EZGameControl;
 
-    /** The ground. */
-    protected var _ground :Ground;
+    /** The driving surface. */
+    protected var _surface :DrivingSurface;
 
     /** The kart. */
     protected var _kart :Kart;
