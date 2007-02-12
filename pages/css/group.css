@@ -60,6 +60,10 @@
     margin-bottom: 9px;
 }
 
+.groupView .PeoplePanel hr {
+    margin: 3px 0px 0px 0px;
+}
+
 /* GroupList specific formattting */
 .groupList {
     font-size: 11px;

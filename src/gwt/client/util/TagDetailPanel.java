@@ -317,6 +317,7 @@ public class TagDetailPanel extends FlexTable
                         public void onMouseEnter (Widget sender) { }
                         public void onMouseMove (Widget sender, int x, int y) { }
                     });
+                    tagLabel.addStyleName("LabelLink");
                     _tags.add(tagLabel);
                     if (resultIter.hasNext()) {
                         _tags.add(new InlineLabel(", "));

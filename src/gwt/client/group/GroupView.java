@@ -242,6 +242,7 @@ public class GroupView extends VerticalPanel
         people.setText(0, 0, CGroup.msgs.viewManagers());
         people.setText(1, 0, CGroup.msgs.viewMembers());
         people.setText(3, 0, CGroup.msgs.viewTags());
+        people.getFlexCellFormatter().setVerticalAlignment(3, 0, VerticalPanel.ALIGN_MIDDLE);
         FlowPanel managers = new FlowPanel();
         FlowPanel members = new FlowPanel();
         Iterator i = _detail.members.iterator();
