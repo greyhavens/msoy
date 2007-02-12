@@ -8,6 +8,7 @@ import client.shell.CShell;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 
 import client.util.PromptPopup;
 
@@ -247,30 +248,9 @@ public class TagDetailPanel extends FlexTable
 
     protected void refreshTags ()
     {
-        if (CShell.creds != null) {
-            _service.getRecentTags(new AsyncCallback() {
-                public void onSuccess (Object result) {
-                    _quickTags.clear();
-                    Iterator i = ((Collection) result).iterator();
-                    while (i.hasNext()) {
-                        TagHistory history = (TagHistory) i.next();
-                        if (history.member.getMemberId() == CShell.getMemberId()) {
-                            if (history.tag != null) {
-                                _quickTags.addItem(history.tag);
-                            }
-                        }
-                    }
-                    _quickTags.setVisible(_quickTags.getItemCount() > 0);
-                }
-                public void onFailure (Throwable caught) {
-                    GWT.log("getTagHistory failed", caught);
-                    _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
-                }
-            });
-        }
-
         _service.getTags(new AsyncCallback() {
             public void onSuccess (Object result) {
+                final ArrayList addedTags = new ArrayList();
                 _tags.clear();
                 Iterator resultIter = ((Collection) result).iterator();
                 while (resultIter.hasNext()) {
@@ -322,6 +302,30 @@ public class TagDetailPanel extends FlexTable
                     if (resultIter.hasNext()) {
                         _tags.add(new InlineLabel(", "));
                     }
+                    addedTags.add(tag);
+                }
+
+                if (CShell.creds != null) {
+                    _service.getRecentTags(new AsyncCallback() {
+                        public void onSuccess (Object result) {
+                            _quickTags.clear();
+                            Iterator i = ((Collection) result).iterator();
+                            while (i.hasNext()) {
+                                TagHistory history = (TagHistory) i.next();
+                                String tag = history.tag;
+                                if (tag != null && !addedTags.contains(tag) && 
+                                    history.member.getMemberId() == CShell.getMemberId()) {
+                                    _quickTags.addItem(tag);
+                                    addedTags.add(tag);
+                                }
+                            }
+                            _quickTags.setVisible(_quickTags.getItemCount() > 0);
+                        }
+                        public void onFailure (Throwable caught) {
+                            GWT.log("getTagHistory failed", caught);
+                            _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
+                        }
+                    });
                 }
             }
             public void onFailure (Throwable caught) {
