@@ -113,7 +113,8 @@ public class GroupView extends VerticalPanel
         _table.setStyleName("groupView");
         _table.setCellSpacing(0);
         _table.setCellPadding(0);
-        if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE) {
+        if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE && 
+            _extras.detailBackgroundWidth > 0) {
             _table.setWidth((160 + _extras.detailBackgroundWidth) + "px");
         }
         boolean amManager = _me != null && _me.rank == GroupMembership.RANK_MANAGER;
@@ -209,7 +210,9 @@ public class GroupView extends VerticalPanel
         }
         if (_extras.backgroundControl == GroupExtras.BACKGROUND_FIT_TO_IMAGE) {
             final Element div = DOM.createElement("div");
-            DOM.setStyleAttribute(div, "width", _extras.detailBackgroundWidth + "px");
+            if (_extras.detailBackgroundWidth > 0) {
+                DOM.setStyleAttribute(div, "width", _extras.detailBackgroundWidth + "px");
+            }
             DOM.setStyleAttribute(div, "height", (_extras.detailAreaHeight > 270 ? 
                 _extras.detailAreaHeight : 270) + "px");
             // when not tiling, we need a sensible default for people that are in a foot-shooting 
@@ -298,9 +301,11 @@ public class GroupView extends VerticalPanel
             peoplePlusCaps.setSpacing(0);
             peoplePlusCaps.setWidth("100%");
             final Element upperCap = DOM.createElement("div");
-            DOM.setStyleAttribute(upperCap, "backgroundImage", "url(" + MsoyEntryPoint.toMediaPath(
-                _extras.peopleUpperCap.getMediaPath()) + ")");
-            DOM.setStyleAttribute(upperCap, "height", _extras.peopleUpperCapHeight + "px");
+            if (_extras.peopleUpperCap != null) {
+                DOM.setStyleAttribute(upperCap, "backgroundImage", "url(" + 
+                    MsoyEntryPoint.toMediaPath(_extras.peopleUpperCap.getMediaPath()) + ")");
+                DOM.setStyleAttribute(upperCap, "height", _extras.peopleUpperCapHeight + "px");
+            }
             peoplePlusCaps.add(new Widget () {
                 {
                     setElement(upperCap);
@@ -314,9 +319,11 @@ public class GroupView extends VerticalPanel
                     ")");
             }
             final Element lowerCap = DOM.createElement("div");
-            DOM.setStyleAttribute(lowerCap, "backgroundImage", "url(" + MsoyEntryPoint.toMediaPath(
-                _extras.peopleLowerCap.getMediaPath()) + ")");
-            DOM.setStyleAttribute(lowerCap, "height", _extras.peopleLowerCapHeight + "px");
+            if (_extras.peopleLowerCap != null) {
+                DOM.setStyleAttribute(lowerCap, "backgroundImage", "url(" + 
+                    MsoyEntryPoint.toMediaPath(_extras.peopleLowerCap.getMediaPath()) + ")");
+                DOM.setStyleAttribute(lowerCap, "height", _extras.peopleLowerCapHeight + "px");
+            }
             peoplePlusCaps.add(new Widget () {
                 {
                     setElement(lowerCap);
