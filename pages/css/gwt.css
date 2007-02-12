@@ -283,6 +283,13 @@ body {
   top: 5px;
 }
 
+.borderedDialog .Controls {
+  color: white;
+}
+
+.borderedDialog .Controls a {
+  color: white;
+}
 
 /** General UI styles. */
 .inline {
