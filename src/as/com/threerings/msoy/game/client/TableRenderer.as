@@ -15,7 +15,7 @@ import com.threerings.util.Name;
 
 import com.threerings.flex.CommandButton;
 
-import com.threerings.parlor.game.data.PartyGameCodes;
+import com.threerings.parlor.game.data.GameConfig;
 
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
@@ -49,6 +49,7 @@ public class TableRenderer extends VBox
         _background.mouseEnabled = false;
         _background.mouseChildren = false;
         // TODO: goddammit, this should be behind!
+        _background.alpha = .5; // TODO
         rawChildren.addChildAt(_background, 0);
         _background.addEventListener(
             MediaContainer.SIZE_KNOWN, handleBkgSizeKnown, false, 0, true);
@@ -132,9 +133,10 @@ public class TableRenderer extends VBox
         var btn :CommandButton;
 
         // if we are the creator, add a button for starting the game now
-        if (!table.isPartyGame() &&
-                (table.tconfig.minimumPlayerCount < table.tconfig.desiredPlayerCount) &&
-                ctx.getClientObject().getVisibleName().equals(table.occupants[0])) {
+        if (table.occupants != null && table.occupants.length > 0 &&
+                ctx.getClientObject().getVisibleName().equals(table.occupants[0]) &&
+                table.mayBeStarted()) {
+
             btn = new CommandButton(LobbyController.START_TABLE, table.tableId);
             btn.label = ctx.xlate("game", "b.start_now");
             btn.enabled = table.mayBeStarted();
@@ -144,18 +146,18 @@ public class TableRenderer extends VBox
         // maybe add a button for entering the game
         if (table.gameOid != -1) {
             var key :String = null;
-            switch (table.getPartyGameType()) {
+            switch (table.config.getGameType()) {
             default:
                 if (!panel.controller.game.unwatchable) {
                     key = "b.watch";
                 }
                 break;
 
-            case PartyGameCodes.SEATED_PARTY_GAME:
+            case GameConfig.SEATED_CONTINUOUS:
                 key = "b.enter";
                 break;
 
-            case PartyGameCodes.FREE_FOR_ALL_PARTY_GAME:
+            case GameConfig.PARTY:
                 key = "b.join";
                 break;
             }
