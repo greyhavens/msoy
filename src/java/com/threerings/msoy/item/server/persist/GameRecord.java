@@ -20,18 +20,18 @@ import com.threerings.msoy.item.web.MediaDesc;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="GAME")
 public class GameRecord extends ItemRecord
 {
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 5;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 6;
 
     public static final String NAME = "name";
+    public static final String GAME_TYPE = "gameType";
     public static final String MIN_PLAYERS = "minPlayers";
     public static final String MAX_PLAYERS = "maxPlayers";
-    public static final String PARTY_GAME_TYPE = "partyGameType";
     public static final String UNWATCHABLE = "unwatchable";
     public static final String GAME_MEDIA_HASH = "gameMediaHash";
     public static final String GAME_MIME_TYPE = "gameMimeType";
 
-    /** The party game type. */
-    public byte partyGameType;
+    /** The game type. */
+    public byte gameType;
 
     /** The minimum number of players. */
     public short minPlayers;
@@ -61,7 +61,7 @@ public class GameRecord extends ItemRecord
     {
         super(game);
 
-        partyGameType = game.partyGameType;
+        gameType = game.gameType;
         minPlayers = game.minPlayers;
         maxPlayers = game.maxPlayers;
         unwatchable = game.unwatchable;
@@ -82,7 +82,7 @@ public class GameRecord extends ItemRecord
     protected Item createItem ()
     {
         Game object = new Game();
-        object.partyGameType = partyGameType;
+        object.gameType = gameType;
         object.minPlayers = minPlayers;
         object.maxPlayers = maxPlayers;
         object.unwatchable = unwatchable;

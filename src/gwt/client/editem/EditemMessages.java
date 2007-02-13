@@ -152,12 +152,12 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errFurniNotFlash();
 
   /**
-   * Translated "Party game".
+   * Translated "Game type".
    * 
-   * @return translated "Party game"
-   * @gwt.key gamePartyGame
+   * @return translated "Game type"
+   * @gwt.key gameGameType
    */
-  String gamePartyGame();
+  String gameGameType();
 
   /**
    * Translated "Maximum players".

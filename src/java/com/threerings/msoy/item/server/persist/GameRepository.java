@@ -42,7 +42,13 @@ public class GameRepository extends ItemRepository<
     {
         super(provider);
 
-        _ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(5, "desiredPlayers"));
+        // TODO: remove RETARDED version compounding and just use
+        // human-readable numbers! (If I look at the db, I see table
+        // version 2054... and need to decode that...)
+        _ctx.registerMigration(GameRecord.class,
+            new EntityMigration.Drop((8 * 0x100) + 6, "desiredPlayers"));
+        _ctx.registerMigration(GameRecord.class,
+            new EntityMigration.Rename((8 * 0x100) + 6, "partyGameType", "gameType"));
     }
 
     // from ToyBoxManager.GameRepository

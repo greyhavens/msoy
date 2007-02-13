@@ -8,7 +8,6 @@ import com.threerings.parlor.client.TableConfigurator;
 import com.threerings.parlor.client.DefaultFlexTableConfigurator;
 
 import com.threerings.parlor.game.data.GameConfig;
-import com.threerings.parlor.game.data.PartyGameCodes;
 
 import com.threerings.parlor.game.client.GameConfigurator;
 import com.threerings.parlor.game.client.FlexGameConfigurator;
@@ -68,7 +67,7 @@ public class TableCreationPanel extends FloatingPanel
         var gconf :FlexGameConfigurator = new FlexGameConfigurator();
         _gconfigger = gconf;
         _gconfigger.init(_ctx);
-        if (_game.partyGameType == PartyGameCodes.FREE_FOR_ALL_PARTY_GAME) {
+        if (_game.gameType == GameConfig.PARTY) {
             _tconfigger = new DefaultFlexTableConfigurator(-1, -1, -1, true);
 
         } else {
@@ -80,7 +79,7 @@ public class TableCreationPanel extends FloatingPanel
         var config :FlashGameConfig = new FlashGameConfig();
         config.configData = _game.gameMedia.getMediaPath();
         config.persistentGameId = _game.getPrototypeId();
-        config.partyGameType = _game.partyGameType;
+        config.gameType = _game.gameType;
         gconf.setGameConfig(config);
 
         addChild(gconf.getContainer());

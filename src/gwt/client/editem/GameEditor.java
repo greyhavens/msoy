@@ -31,7 +31,7 @@ public class GameEditor extends ItemEditor
         _game = (Game)item;
         _minPlayers.setText("" + _game.minPlayers);
         _maxPlayers.setText("" + _game.maxPlayers);
-        _party.setText("" + _game.partyGameType);
+        _gameType.setText("" + _game.gameType);
         _watchable.setChecked(!_game.unwatchable);
         _gamedef.setText(_game.config);
         _tableUploader.setMedia(_game.getTableMedia());
@@ -88,10 +88,10 @@ public class GameEditor extends ItemEditor
         }));
 
         // TODO, seriously
-        bits.setText(row, 0, CEditem.emsgs.gamePartyGame());
-        bits.setWidget(row++, 1, bind(_party = new TextBox(), new Binder() {
+        bits.setText(row, 0, CEditem.emsgs.gameGameType());
+        bits.setWidget(row++, 1, bind(_gameType = new TextBox(), new Binder() {
             public void textUpdated (String text) {
-                _game.partyGameType = (byte) asShort(text);
+                _game.gameType = (byte) asShort(text);
             }
         }));
 
@@ -147,7 +147,7 @@ public class GameEditor extends ItemEditor
     protected Game _game;
 
     protected TextBox _minPlayers, _maxPlayers;
-    protected TextBox _party;
+    protected TextBox _gameType;
     protected CheckBox _watchable;
     protected TextArea _gamedef;
 

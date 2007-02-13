@@ -11,8 +11,8 @@ public class Game extends Item
     /** Identifies our lobby background table media. */
     public static final String TABLE_MEDIA = "table";
 
-    /** The type of party game, or NOT_PARTY_GAME. */
-    public byte partyGameType;
+    /** The type of game, @see GameConfig. */
+    public byte gameType;
 
     /** The minimum number of players. */
     public short minPlayers;
@@ -20,7 +20,7 @@ public class Game extends Item
     /** The maximum number of players. */
     public short maxPlayers;
 
-    /** Is this game unwatchable? Applicable only for non-party games. */
+    /** Is this game unwatchable? Applicable only for non-continuous games. */
     public boolean unwatchable;
 
     /** The XML game configuration. */
