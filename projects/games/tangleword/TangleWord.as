@@ -41,7 +41,7 @@ public class TangleWord extends Sprite implements StateChangedListener
         
 
         // Create MVC elements
-        _controller = new Controller (null, _rounds); // we'll set it later...
+        _controller = new Controller (_gameCtrl, null, _rounds); // we'll set the model later...
         _display = new Display (_controller, _rounds);
         _model = new Model (_gameCtrl, _coordinator, _rounds, _display);
         _controller.setModel (_model);       // ... as in, right here :)

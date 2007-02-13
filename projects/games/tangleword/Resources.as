@@ -46,7 +46,7 @@ public class Resources
     public static function makeFormatForBoardLetters () : TextFormat
     {
         var format : TextFormat = new TextFormat();
-        format.font = "Verdana";
+        format.font = "Helvetica";
         format.color = uint(0x888899);
         format.size = 42;
         format.bold = true;
@@ -58,7 +58,7 @@ public class Resources
     public static function makeFormatForUI () : TextFormat
     {
         var format : TextFormat = new TextFormat();
-        format.font = "Verdana";
+        format.font = "Helvetica";
         format.color = uint(0x777788);
         format.size = 18;
         format.bold = true;
@@ -69,7 +69,7 @@ public class Resources
     public static function makeFormatForLogger () : TextFormat
     {
         var format : TextFormat = new TextFormat ();
-        format.font = "Verdana";
+        format.font = "Helvetica";
         format.color = uint(0x777788);
         format.size = 12;
         format.bold = false;
@@ -80,7 +80,7 @@ public class Resources
     public static function makeFormatForScore () : TextFormat
     {
         var format : TextFormat = new TextFormat ();
-        format.font = "Verdana";
+        format.font = "Helvetica";
         format.color = uint(0x777788);
         format.size = 12;
         format.bold = true;
@@ -91,7 +91,7 @@ public class Resources
     public static function makeFormatForCountdown () : TextFormat
     {
         var format : TextFormat = new TextFormat ();
-        format.font = "Verdana";
+        format.font = "Helvetica";
         format.color = uint(0xaa6666);
         format.size = 18;
         format.bold = true;
@@ -100,7 +100,7 @@ public class Resources
     }
 
     /** Returns a default border color */
-    public static const defaultBorderColor : uint = uint (0xddddff);
+    public static const defaultBorderColor : uint = uint (0xffffff);
 
     
 

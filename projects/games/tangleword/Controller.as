@@ -2,6 +2,8 @@ package
 {
 
 
+import com.threerings.ezgame.EZGameControl;
+//import com.threerings.ezgame.util.LocaleSettings;
 import flash.geom.Point;
 
 
@@ -15,8 +17,10 @@ public class Controller
     
     // PUBLIC METHODS
     
-    public function Controller (model : Model, rounds : RoundProvider) : void
+    public function Controller (gameCtrl : EZGameControl, model : Model,
+                                rounds : RoundProvider) : void
     {
+        _gameCtrl = gameCtrl;
         _model = model;
         _rounds = rounds;
         _rounds.addEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
@@ -82,19 +86,22 @@ public class Controller
         It will be matched against the dictionary, and added to the model. */
     public function tryScoreWord (word : String) : void
     {
+        // This code processes a successful word
+        var success : Function = function (word : String, result : Boolean) : void
+        {
+            // Finally, process the new word. Notice that we don't check if it's already
+            // been claimed - the model will take care of that, because there's a network
+            // round-trip involved, and therefore potential of contention.
+            var score : Number = word.length;
+            _model.addScore (word, score);
+        }
+        
         // First, check to make sure it's of the correct length (in characters)
         if (word.length < MIN_WORD_LENGTH) return;
 
-        // Now check if it's an actual word
-        if (!DictionaryService.checkWord (Properties.LOCALE, word)) return;
+        // Now check if it's an actual word.
+        _gameCtrl.checkDictionaryWord (Properties.LOCALE.Locale, word, success);
 
-        // Find the word score
-        var score : Number = word.length;
-        
-        // Finally, process the new word. Notice that we don't check if it's already
-        // been claimed - the model will take care of that, because there's a network
-        // round-trip involved, and therefore potential of contention.
-        _model.addScore (word, score);
     }
             
 
@@ -130,20 +137,23 @@ public class Controller
     /** Initializes a new letter set. */
     private function initializeLetterSet () : void
     {
-        // Get a set of letters
-        var s : Array = DictionaryService.getLetterSet (Properties.LOCALE,
-                                                        Properties.LETTER_COUNT);
+        var success : Function = function (a : Array) : void
+        {
+            _model.sendNewLetterSet (a);
+        }
+        _gameCtrl.getDictionaryLetterSet (Properties.LOCALE.Locale,
+                                          Properties.LETTER_COUNT,
+                                          success);
         
-        Assert.True (s.length == Properties.LETTER_COUNT,
-                     "DictionaryService returned an invalid letter set.");
-
-        _model.sendNewLetterSet (s);
     }
 
 
     
     // PRIVATE VARIABLES
 
+    /** Game helper */
+    private var _gameCtrl : EZGameControl;
+    
     /** Game data interface */
     private var _model : Model;
 

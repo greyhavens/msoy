@@ -150,6 +150,8 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         default:
             // Ignore any other messages; they're not for us.
 
+            Assert.Fail (event.toString());
+
         }
 
     }
