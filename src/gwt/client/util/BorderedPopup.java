@@ -6,7 +6,6 @@ package client.util;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -26,17 +25,7 @@ public class BorderedPopup extends PopupPanel
         super(autoHide);
         setStyleName("borderedPopup");
 
-        super.setWidget(_outer = new FlexTable());
-        DOM.setAttribute(_outer.getElement(), "cellSpacing", "0");
-        DOM.setAttribute(_outer.getElement(), "cellPadding", "0");
-        _outer.getFlexCellFormatter().setStyleName(0, 0, "UpperLeft");
-        _outer.getFlexCellFormatter().setStyleName(0, 1, "Upper");
-        _outer.getFlexCellFormatter().setStyleName(0, 2, "UpperRight");
-        _outer.getFlexCellFormatter().setStyleName(1, 0, "Left");
-        _outer.getFlexCellFormatter().setStyleName(1, 2, "Right");
-        _outer.getFlexCellFormatter().setStyleName(2, 0, "LowerLeft");
-        _outer.getFlexCellFormatter().setStyleName(2, 1, "Lower");
-        _outer.getFlexCellFormatter().setStyleName(2, 2, "LowerRight");
+        super.setWidget(_widget = new BorderedWidget());
 
         // listen for our own closes and export that in a handy calldown method
         addPopupListener(new PopupListener() {
@@ -49,7 +38,7 @@ public class BorderedPopup extends PopupPanel
     // @Override // from SimplePanel
     public void setWidget (Widget contents)
     {
-        _outer.setWidget(1, 1, contents);
+        _widget.setWidget(contents);
     }
 
     // @Override // from PopupPanel
@@ -81,5 +70,5 @@ public class BorderedPopup extends PopupPanel
     {
     }
 
-    protected FlexTable _outer;
+    protected BorderedWidget _widget;
 }

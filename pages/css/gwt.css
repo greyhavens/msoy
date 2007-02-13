@@ -175,38 +175,30 @@ body {
    background: #FFFFFF;
 }
 
-.borderedPopup .UpperLeft {
+.borderedWidget .BorderRD {
    background-image: url(/images/ui/popup/top_left.png);
    width: 4px;
    height: 4px;
 }
-.borderedPopup .Upper {
+.borderedWidget .BorderLR {
    background-image: url(/images/ui/popup/horiz.png);
    height: 4px;
 }
-.borderedPopup .UpperRight {
+.borderedWidget .BorderLD {
    background-image: url(/images/ui/popup/top_right.png);
    width: 4px;
    height: 4px;
 }
-.borderedPopup .Left {
+.borderedWidget .BorderUD {
    background-image: url(/images/ui/popup/vert.png);
    width: 4px;
 }
-.borderedPopup .Right {
-   background-image: url(/images/ui/popup/vert.png);
-   width: 4px;
-}
-.borderedPopup .LowerLeft {
+.borderedWidget .BorderRU {
    background-image: url(/images/ui/popup/bottom_left.png);
    width: 4px;
    height: 4px;
 }
-.borderedPopup .Lower {
-   background-image: url(/images/ui/popup/horiz.png);
-   height: 4px;
-}
-.borderedPopup .LowerRight {
+.borderedWidget .BorderLU {
    background-image: url(/images/ui/popup/bottom_right.png);
    width: 4px;
    height: 4px;
