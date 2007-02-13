@@ -18,7 +18,8 @@ import com.threerings.msoy.item.web.Item;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="PET")
 public class PetRecord extends ItemRecord
 {
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;
+    public static final int SCHEMA_VERSION = 1 +
+        BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     public PetRecord ()
     {

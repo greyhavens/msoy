@@ -19,7 +19,8 @@ import com.threerings.msoy.item.web.MediaDesc;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="DOCUMENT")
 public class DocumentRecord extends ItemRecord
 {
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;
+    public static final int SCHEMA_VERSION = 1 +
+        BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     public static final String DOC_MEDIA_HASH = "docMediaHash";
     public static final String DOC_MIME_TYPE = "docMimeType";

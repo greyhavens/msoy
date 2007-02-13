@@ -19,7 +19,8 @@ import com.threerings.msoy.item.web.MediaDesc;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="AUDIO")
 public class AudioRecord extends ItemRecord
 {
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;
+    public static final int SCHEMA_VERSION = 1 +
+        BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     public static final String AUDIO_MEDIA_HASH = "audioMediaHash";
     public static final String AUDIO_MIME_TYPE = "audioMimeType";

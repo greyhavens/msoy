@@ -34,6 +34,7 @@ import com.threerings.msoy.item.web.Photo;
 public abstract class ItemRecord extends PersistentRecord implements Streamable
 {
     public static final int BASE_SCHEMA_VERSION = 8;
+    public static final int BASE_MULTIPLIER = 1000;
 
     public static final String ITEM_ID = "itemId";
     public static final String PARENT_ID = "parentId";

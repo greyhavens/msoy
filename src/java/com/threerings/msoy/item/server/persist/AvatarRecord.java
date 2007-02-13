@@ -19,7 +19,8 @@ import com.threerings.msoy.item.web.MediaDesc;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="AVATAR")
 public class AvatarRecord extends ItemRecord
 {
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION*0x100 + 1;
+    public static final int SCHEMA_VERSION = 1 +
+        BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     public static final String AVATAR_MEDIA_HASH = "avatarMediaHash";
     public static final String AVATAR_MIME_TYPE = "avatarMimeType";

@@ -42,9 +42,7 @@ public class GameRepository extends ItemRepository<
     {
         super(provider);
 
-        // TODO: remove RETARDED version compounding and just use
-        // human-readable numbers! (If I look at the db, I see table
-        // version 2054... and need to decode that...)
+        // these are old-funky version numbers
         _ctx.registerMigration(GameRecord.class,
             new EntityMigration.Drop((8 * 0x100) + 6, "desiredPlayers"));
         _ctx.registerMigration(GameRecord.class,
