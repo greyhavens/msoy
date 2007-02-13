@@ -28,16 +28,6 @@ public class BorderedWidget extends FlexTable
         this(BORDER_CLOSED, BORDER_CLOSED, BORDER_CLOSED, BORDER_CLOSED);
     }
     
-    protected String toCSS (byte mask)
-    {
-        String out = "Border";
-        if ((mask & LEFT) != 0) out += "L";
-        if ((mask & RIGHT) != 0) out += "R";
-        if ((mask & UP) != 0) out += "U";
-        if ((mask & DOWN) != 0) out += "D";
-        return out;
-    }
-    
     public BorderedWidget (BorderState left, BorderState right,
                            BorderState up, BorderState down)
     {
@@ -126,9 +116,20 @@ public class BorderedWidget extends FlexTable
         setWidget(1, 1, contents);
     }
 
+    protected String toCSS (byte mask)
+    {
+        String out = "Border";
+        if ((mask & LEFT) != 0) out += "L";
+        if ((mask & RIGHT) != 0) out += "R";
+        if ((mask & UP) != 0) out += "U";
+        if ((mask & DOWN) != 0) out += "D";
+        return out;
+    }
+
     protected static class BorderState
     {
     }
+
     protected static byte LEFT = 1;
     protected static byte RIGHT = 2;
     protected static byte UP = 4;
