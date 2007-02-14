@@ -72,7 +72,6 @@ public class BubbleGlyph extends ChatGlyph
     {
         // TODO: if we keep, 7 is magic number from ComicOverlay.
         alpha = .5 + (.5 * ((7 - ageLevel) / 7));
-        trace("ageLevel: " + ageLevel  + ", alpha: " + alpha)
 //        // re-draw the bubble with the new age level
 //        // TODO: ?
 //        overlay.drawBubbleShape(
