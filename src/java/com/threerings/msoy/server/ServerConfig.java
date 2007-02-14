@@ -27,6 +27,9 @@ public class ServerConfig
     /** The ports on which we are listening for client connections. */
     public static int[] serverPorts;
 
+    /** The local directory where dictionary files are stored. */
+    public static File dictionaryDir;
+    
     /** The local directory into which uploaded media is stored. */
     public static File mediaDir;
 
@@ -72,6 +75,7 @@ public class ServerConfig
         // fill in our standard properties
         serverName = config.getValue("server_name", "msoy");
         serverRoot = new File(config.getValue("server_root", "/tmp"));
+        dictionaryDir = new File(config.getValue("dictionary_dir", "/tmp"));
         mediaDir = new File(config.getValue("media_dir", "/tmp"));
         mediaS3Enable = config.getValue("media_s3enable", false);
         mediaS3Bucket = config.getValue("media_s3bucket", "msoy");

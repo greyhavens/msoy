@@ -259,7 +259,7 @@ public class MsoyServer extends WhirledServer
             }
         });
         toyMan.init(omgr, invoker, invmgr, plreg, itemMan.getGameRepository());
-        dictionary.init();
+        dictionary.init(ServerConfig.dictionaryDir);
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();
