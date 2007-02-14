@@ -73,11 +73,7 @@ public class NOAAWeatherService // extends URLLoaderBase
     public function getWeather (stationCode :String, hollaback_XML :Function) :void
     {
         var station :XML = _directory..station.(station_id == stationCode)[0];
-//        trace("Station url: " + station.xml_url);
-        var stationURL :String = String(station.xml_url);
-        stationURL = stationURL.replace("http://weather.gov", "http://www.nws.noaa.gov");
-        trace("URL: " + stationURL);
-        getDataFromURL(stationURL, function (data :Object) :void {
+        getDataFromURL(station.xml_url, function (data :Object) :void {
             hollaback_XML(XML(data));
         });
     }
@@ -95,7 +91,26 @@ public class NOAAWeatherService // extends URLLoaderBase
             callback(loader.data);
         };
         loader.addEventListener(Event.COMPLETE, fn);
-        loader.load(new URLRequest(url));
+        loader.load(new URLRequest(massageURL(url)));
+    }
+
+    /**
+     * Massage the specified url so that it
+     */
+    protected function massageURL (url :String) :String
+    {
+        // Presently, the urls returned in the directory all begin
+        // with "weather.gov", however, making a HTTP/1.1 request to that
+        // server will return a 301, permanantly moved, to
+        // "www.weather.gov". So: the crossdomain.xml that is loaded applies
+        // to that site, and not to "weather.gov". The flash player at that
+        // point will not even try to load the data at weather.gov, since
+        // it's already tried to load the crossdomain.xml for that site,
+        // but at the same time it has no permissions there.
+        //
+        // So: change any urls. This is super fragile!
+        return url.replace(new RegExp("^http\:\/\/weather\.gov", "i"),
+            "http://www.weather.gov");
     }
 
     protected var _directory :XML;
