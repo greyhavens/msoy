@@ -74,7 +74,10 @@ public class NOAAWeatherService // extends URLLoaderBase
     {
         var station :XML = _directory..station.(station_id == stationCode)[0];
 //        trace("Station url: " + station.xml_url);
-        getDataFromURL(station.xml_url, function (data :Object) :void {
+        var stationURL :String = String(station.xml_url);
+        stationURL = stationURL.replace("http://weather.gov", "http://www.nws.noaa.gov");
+        trace("URL: " + stationURL);
+        getDataFromURL(stationURL, function (data :Object) :void {
             hollaback_XML(XML(data));
         });
     }
