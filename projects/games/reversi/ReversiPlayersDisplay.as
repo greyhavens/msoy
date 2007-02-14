@@ -14,10 +14,10 @@ public class ReversiPlayersDisplay extends PlayersDisplay
     }
 
     override protected function createPlayerIcon (
-        idx :int, name :String) :DisplayObject
+        id :int, name :String) :DisplayObject
     {
         var icon :Shape = new Shape();
-        icon.graphics.beginFill(uint(Piece.COLORS[idx]));
+        icon.graphics.beginFill(uint(Piece.COLORS[_gameCtrl.getPlayerPosition(id)]));
         icon.graphics.drawCircle(5, 5, 5);
         icon.graphics.endFill();
 

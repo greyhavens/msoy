@@ -69,7 +69,7 @@ public class Reversi extends Sprite
     public function pieceClicked (pieceIndex :int) :void
     {
         // enact the play
-        var myIdx :int = _gameCtrl.getMyIndex();
+        var myIdx :int = _gameCtrl.getPlayerPosition(_gameCtrl.getMyId());
         _board.playPiece(pieceIndex, myIdx);
         _gameCtrl.endTurn();
 
@@ -94,7 +94,8 @@ public class Reversi extends Sprite
     {
         readBoard();
 
-        var turnHolder :int = _gameCtrl.getTurnHolderIndex();
+        var turnHolderId :int = _gameCtrl.getTurnHolder();
+        var turnHolder :int = _gameCtrl.getPlayerPosition(turnHolderId);
         var myTurn :Boolean = _gameCtrl.isMyTurn();
 
         var moves :Array = _board.getMoves(turnHolder);
@@ -107,18 +108,25 @@ public class Reversi extends Sprite
             // we cannot move, so we'll pass back to the other player
             if (_board.getMoves(1 - turnHolder).length == 0) {
                 // ah, but they can't move either, so the game is over
-                var winner :int = _board.getWinner();
-                _gameCtrl.endGame(winner);
-                if (winner == -1) {
+                var winnerIndex :int = _board.getWinner();
+                var winnerId :int = 0;
+                for each (var playerId :int in _gameCtrl.getPlayers()) {
+                    if (_gameCtrl.getPlayerPosition(playerId) == winnerIndex) {
+                        winnerId = playerId;
+                        break;
+                    }
+                }
+                _gameCtrl.endGame(winnerId);
+                if (winnerId == 0) {
                     _gameCtrl.sendChat("The game was a tie!");
                 } else {
                     _gameCtrl.sendChat(
-                        _gameCtrl.getPlayerNames()[winner] + " has won!");
+                        _gameCtrl.getOccupantName(winnerId) + " has won!");
                 }
 
             } else {
                 _gameCtrl.sendChat(
-                    _gameCtrl.getPlayerNames()[turnHolder] +
+                    _gameCtrl.getOccupantName(turnHolderId) +
                     " cannot play and so loses a turn.");
                 _gameCtrl.endTurn();
             }
