@@ -47,20 +47,19 @@ public class Gotcha extends Sprite
     
     protected function updateItProperty () :void
     {
-        var myIdx :int = _gameCtrl.getMyIndex();
-        if (myIdx != int(_gameCtrl.get(IT_INDEX))) {
+        var myId :int = _gameCtrl.getMyId();
+        if (myId != int(_gameCtrl.get(IT_ID))) {
             return; // only "it" tags others
         }
-        var ownId :int = _gameCtrl.getMyOccupantId(),
-            ownLoc :Array = _gameCtrl.getOccupantLocation(ownId);
-        var occIds :Array = _gameCtrl.getPlayerOccupantIds();
-        for (var ii :int = 0; ii < occIds.length; ii++) {
-            if (ii == myIdx) {
+        var ownLoc :Array = _gameCtrl.getOccupantLocation(myId);
+        var occIds :Array = _gameCtrl.getPlayers();
+        for each (var otherId :int in occIds) {
+            if (otherId == myId) {
                 continue;
             }
-            var occLoc :Array = _gameCtrl.getOccupantLocation(occIds[ii]);
+            var occLoc :Array = _gameCtrl.getOccupantLocation(otherId);
             if (occLoc != null && getDistance(ownLoc, occLoc) <= TAG_DISTANCE) {
-                _gameCtrl.set(IT_INDEX, ii); // you're it!
+                _gameCtrl.set(IT_ID, otherId); // you're it!
                 return;
             }
         }
@@ -68,15 +67,15 @@ public class Gotcha extends Sprite
     
     protected function propChanged (event :PropertyChangedEvent) :void
     {
-        if (event.name == IT_INDEX) {
+        if (event.name == IT_ID) {
             updateItLabel();
         }
     }
     
     protected function updateItLabel () :void
     {
-        var itIndex :int = int(_gameCtrl.get(IT_INDEX));
-        _itLabel.text = _gameCtrl.getPlayerNames()[itIndex] + " is it.";
+        var itId :int = int(_gameCtrl.get(IT_ID));
+        _itLabel.text = _gameCtrl.getOccupantName(itId) + " is it.";
     }
     
     /**
@@ -96,7 +95,7 @@ public class Gotcha extends Sprite
     protected var _itLabel :TextField;
     
     /** The property used to track the name of the player who's "it." */
-    protected static const IT_INDEX :String = "itIndex";
+    protected static const IT_ID :String = "itId";
     
     /** The distance at which we can tag other players. */
     protected static const TAG_DISTANCE :Number = 0.1;
