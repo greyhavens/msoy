@@ -6,13 +6,13 @@ package client.util;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
 
 /**
- * Displays a popup with a nice, configurable border around it. Widgets that are tiled adjacent
+ * Displays a widget with a nice, configurable border around it. Widgets that are tiled adjacent
  * to one another need to explicitly match their heights/widths for things to look good.
  * 
  */
-
 public class BorderedWidget extends FlexTable
 {
     /** A fully closed and cornered border. */
@@ -88,16 +88,12 @@ public class BorderedWidget extends FlexTable
         }
         if (right == BORDER_CLOSED) {
             ne |= DOWN | LEFT; e |= UP | DOWN; se |= UP | LEFT;
-        } else if (right == BORDER_TILED) {
-            // do nothing
         } else {
-            ne |= RIGHT; se |= RIGHT;
+            ne |= LEFT | RIGHT; se |= LEFT | RIGHT;
         }
         if (down == BORDER_CLOSED) {
             sw |= RIGHT | UP; s |= LEFT | RIGHT; se |= LEFT | UP; 
-        } else if (down == BORDER_TILED) {
-            // do nothing
-        } else if (down == BORDER_OPEN) {
+        } else {
             sw |= UP | DOWN; se |= UP | DOWN;
         }
 
@@ -114,6 +110,12 @@ public class BorderedWidget extends FlexTable
     public void setWidget (Widget contents)
     {
         setWidget(1, 1, contents);
+    }
+
+    public void setVerticalAlignment (VerticalAlignmentConstant alignment)
+    {
+        getCellFormatter().setVerticalAlignment(1, 1, alignment);
+        
     }
 
     protected String toCSS (byte mask)
