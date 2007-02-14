@@ -38,6 +38,11 @@ webapp_dir = /export/threerings/webapps
 media_dir = /export/msoy/pages/media
 
 #
+# Defines the directory with language-specific dictionary files
+
+dictionary_dir = /export/msoy/pages/dictionary
+
+#
 # S3-backed media storage configuration.
 
 # media_s3enable = true
