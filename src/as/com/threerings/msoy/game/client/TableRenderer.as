@@ -135,7 +135,7 @@ public class TableRenderer extends VBox
         // if we are the creator, add a button for starting the game now
         if (table.occupants != null && table.occupants.length > 0 &&
                 ctx.getClientObject().getVisibleName().equals(table.occupants[0]) &&
-                table.mayBeStarted()) {
+                (table.tconfig.desiredPlayerCount > table.tconfig.minimumPlayerCount)) {
 
             btn = new CommandButton(LobbyController.START_TABLE, table.tableId);
             btn.label = ctx.xlate("game", "b.start_now");
