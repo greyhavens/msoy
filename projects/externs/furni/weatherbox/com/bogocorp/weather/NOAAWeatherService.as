@@ -6,8 +6,6 @@ import flash.events.EventDispatcher;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 
-import flash.system.Security;
-
 import flash.utils.Dictionary;
 
 import com.adobe.webapis.URLLoaderBase;
@@ -75,8 +73,7 @@ public class NOAAWeatherService // extends URLLoaderBase
     public function getWeather (stationCode :String, hollaback_XML :Function) :void
     {
         var station :XML = _directory..station.(station_id == stationCode)[0];
-        trace("Station url: " + station.xml_url);
-        Security.loadPolicyFile("http://weather.gov/crossdomain.xml");
+//        trace("Station url: " + station.xml_url);
         getDataFromURL(station.xml_url, function (data :Object) :void {
             hollaback_XML(XML(data));
         });
