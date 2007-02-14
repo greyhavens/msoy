@@ -12,6 +12,9 @@ import flash.text.TextFormat;
 */
 public class Logger extends TextField
 {
+    /** Max number of lines displayed in the log window */
+    public static const MAX_LINES : uint = 8;
+    
     // Constructor, sets everything up
     public function Logger ()
     {
@@ -27,15 +30,36 @@ public class Logger extends TextField
     /** Adds a line of text to the bottom of the logger */
     public function Log (message : String) : void
     {
-        appendText (message);
-        appendText ("\n"); 
+        _lines.push (message);
+        if (_lines.length > MAX_LINES)
+        {
+            _lines.shift ();
+        }
+        redraw ();
     }
 
     /** Clears the log */
     public function Clear () : void
     {
-        text = "";
+        _lines = new Array ();
+        redraw ();
     }
+
+    /** Redraws the text */
+    private function redraw () : void
+    {
+        this.text = "";
+        for each (var s: String in _lines)
+        {
+            appendText (s);
+            appendText ("\n");
+        }
+    }
+
+
+    // PRIVATE VARIABLES
+    private var _lines : Array = new Array ();
+    
 
 }
 
