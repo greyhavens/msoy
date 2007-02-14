@@ -83,30 +83,6 @@ public class WorldGameControl extends EZGameControl
     }
 
     /**
-     * Returns an array containing identifiers for each player in the game.
-     */
-    public function getPlayerOccupantIds () :Array /* of int */
-    {
-        return (callEZCode("getPlayerOccupantIds_v1") as Array);
-    }
-    
-    /**
-     * Returns the player's own occupant identifier.
-     */
-    public function getMyOccupantId () :int
-    {
-        return int(callEZCode("getMyOccupantId_v1"));
-    }
-    
-    /**
-     * Returns an array containing identifiers for each occupant of the current room.
-     */
-    public function getRoomOccupantIds () :Array /* of int */
-    {
-        return (callEZCode("getRoomOccupantIds_v1") as Array);
-    }
-    
-    /**
      * Returns the specified occupant's current location in the scene.
      *
      * @return an array containing [ x, y, z ]. x, y, and z are Numbers between 0 and 1 or null if
@@ -115,14 +91,6 @@ public class WorldGameControl extends EZGameControl
     public function getOccupantLocation (occupantId :int) :Array
     {
         return (callEZCode("getOccupantLocation_v1", occupantId) as Array);
-    }
-    
-    /**
-     * Returns the name of the specified occupant.
-     */
-    public function getOccupantName (occupantId :int) :String
-    {
-        return (callEZCode("getOccupantName_v1", occupantId) as String);
     }
     
     // from EZGameControl

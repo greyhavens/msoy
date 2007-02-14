@@ -130,10 +130,6 @@ public class WorldGameControlBackend extends GameControlBackend
         
         o["lookupMemory_v1"] = lookupMemory_v1;
         o["updateMemory_v1"] = updateMemory_v1;
-        o["getPlayerOccupantIds_v1"] = getPlayerOccupantIds_v1;
-        o["getMyOccupantId_v1"] = getMyOccupantId_v1;
-        o["getRoomOccupantIds_v1"] = getRoomOccupantIds_v1;
-        o["getOccupantName_v1"] = getOccupantName_v1;
         o["getOccupantLocation_v1"] = getOccupantLocation_v1;
     }
     
@@ -153,21 +149,17 @@ public class WorldGameControlBackend extends GameControlBackend
         return true;
     }
     
-    protected function getPlayerOccupantIds_v1 () :Array
+    override public function getOccupants_v1 () :Array
+    {
+        return (_roomObj == null ? null : getOccupantIds(_roomObj));
+    }
+
+    override public function getPlayers_v1 () :Array
     {
         return getOccupantIds(_worldGameObj);
     }
     
-    protected function getMyOccupantId_v1 () :int
-    {
-        return _mctx.getClientObject().getOid();
-    }
-    
-    protected function getRoomOccupantIds_v1 () :Array
-    {
-        return (_roomObj == null ? null : getOccupantIds(_roomObj));
-    }
-    
+    // helper function for getOccupants_v1 and getPlayers_v1
     protected function getOccupantIds (plobj :PlaceObject) :Array
     {
         var occs :Array = new Array();
@@ -190,7 +182,7 @@ public class WorldGameControlBackend extends GameControlBackend
         return null;
     }
 
-    protected function getOccupantName_v1 (occupantId :int) :String
+    override public function getOccupantName_v1 (occupantId :int) :String
     {
         if (_roomObj != null) {
             var info :OccupantInfo = (_roomObj.occupantInfo.get(occupantId) as OccupantInfo);
