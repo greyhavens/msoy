@@ -109,9 +109,16 @@ public class Display extends Sprite
     }
 
     /** Updates the log with a failure message */
-    public function logFailure (player : String, word : String) : void
+    public function logAlreadyClaimed (player : String, word : String) : void
     {
         var message : String = player + ": " + word + " already claimed.";
+        _logger.Log (message);
+    }
+
+    /** Updates the log with an invalid word message */
+    public function logInvalidWord (player : String, word : String) : void
+    {
+        var message : String = player + ": " + word + " is not valid.";
         _logger.Log (message);
     }
     

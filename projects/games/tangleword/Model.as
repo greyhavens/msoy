@@ -104,12 +104,13 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
 
     /** Sends out a message to everyone, informing them about adding
         the new word to their lists. */
-    public function addScore (word : String, score : Number) : void
+    public function addScore (word : String, score : Number, isvalid : Boolean) : void
     {
         var obj : Object = new Object ();
         obj.player = _playerName;
         obj.word = word;
         obj.score = score;
+        obj.isvalid = isvalid;
 
         _gameCtrl.sendMessage (ADD_SCORE_MSG, obj);
     }
@@ -139,7 +140,8 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
             // store the score
             addWordToScoreboard (event.value.player,
                                  event.value.word,
-                                 event.value.score);
+                                 event.value.score,
+                                 event.value.isvalid);
 
             // reset selection
             removeAllSelectedLetters ();
@@ -234,21 +236,32 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         }
     }
 
-    /** Checks if the word is not in the scoreboard already, and if it isn't, adds it. */
-    private function addWordToScoreboard (player : String, word : String, score : Number) : void
+    /**
+       Checks if the word is not in the scoreboard already, and if it isn't, adds it.
+       If the word is not valid, prints out a message.
+     */
+    private function addWordToScoreboard (
+        player : String, word : String, score : Number, isvalid : Boolean) : void
     {
+        if (! isvalid)
+        {
+            _display.logInvalidWord (player, word);
+            return;
+        }
+        
         if (_scoreboard.getWordOwner (word) == null)
         {
             _scoreboard.addWord (player, word, score);
             _display.logSuccess (player, word, score);
+            return;
         }
-        else
+        
+        if (_playerName == player)
         {
-            if (_playerName == player)
-            {
-                _display.logFailure (player, word);
-            }
+            _display.logAlreadyClaimed (player, word);
+            return;
         }
+    
     }      
     
     /** Updates a single letter at specified /position/ to display a new /text/.  */

@@ -87,20 +87,20 @@ public class Controller
     public function tryScoreWord (word : String) : void
     {
         // This code processes a successful word
-        var success : Function = function (word : String, result : Boolean) : void
+        var success : Function = function (word : String, isvalid : Boolean) : void
         {
             // Finally, process the new word. Notice that we don't check if it's already
             // been claimed - the model will take care of that, because there's a network
             // round-trip involved, and therefore potential of contention.
             var score : Number = word.length;
-            _model.addScore (word, score);
+            _model.addScore (word, score, isvalid);
         }
         
         // First, check to make sure it's of the correct length (in characters)
         if (word.length < MIN_WORD_LENGTH) return;
 
         // Now check if it's an actual word.
-        _gameCtrl.checkDictionaryWord (Properties.LOCALE.Locale, word, success);
+        _gameCtrl.checkDictionaryWord (Properties.LOCALE, word, success);
 
     }
             
@@ -141,7 +141,7 @@ public class Controller
         {
             _model.sendNewLetterSet (a);
         }
-        _gameCtrl.getDictionaryLetterSet (Properties.LOCALE.Locale,
+        _gameCtrl.getDictionaryLetterSet (Properties.LOCALE,
                                           Properties.LETTER_COUNT,
                                           success);
         

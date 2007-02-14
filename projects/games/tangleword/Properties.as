@@ -12,10 +12,10 @@ public class Properties
 {
 
     /** Default language/culture settings */
-    public static const LOCALE : LocaleSettings = LocaleSettings.EN_US;
+    public static const LOCALE : String = "en-us";
 
     /** Default round length, in seconds */
-    public static const ROUND_LENGTH : Number = 10;
+    public static const ROUND_LENGTH : Number = 30;
 
     /** Default pause length */
     public static const PAUSE_LENGTH : Number = 5;
