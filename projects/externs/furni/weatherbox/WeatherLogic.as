@@ -7,19 +7,20 @@ import mx.controls.ComboBox;
 
 import com.bogocorp.weather.NOAAWeatherService;
 
+/**
+ * Application logic for WeatherBox.
+ */
 public class WeatherLogic
 {
-    public function init (states :ComboBox, stations :ComboBox, panel :HBox) :void
+    /**
+     * Init- called by the UI after it is ready to go.
+     */
+    public function init (box :WeatherBox) :void
     {
-        _states = states;
-        _stations = stations;
-        _panel = panel;
+        _box = box;
 
-        // in the station list, display the name of the object
-        _stations.labelField = "name";
-
-        _states.addEventListener(Event.CHANGE, handleStatePicked);
-        _stations.addEventListener(Event.CHANGE, handleStationPicked);
+        _box.stateBox.addEventListener(Event.CHANGE, handleStatePicked);
+        _box.stationBox.addEventListener(Event.CHANGE, handleStationPicked);
 
         _svc = new NOAAWeatherService();
         _svc.getDirectory(directoryReceived);
@@ -27,31 +28,35 @@ public class WeatherLogic
 
     protected function directoryReceived () :void
     {
-        _states.dataProvider = _svc.getStates();
+        _box.stateBox.dataProvider = _svc.getStates();
     }
 
     protected function handleStatePicked (event :Event) :void
     {
-        var state :String = String(_states.selectedItem);
-        _stations.dataProvider = _svc.getStations(state);
+        var state :String = String(_box.stateBox.selectedItem);
+        _box.stationBox.dataProvider = _svc.getStations(state);
     }
 
     protected function handleStationPicked (event :Event) :void
     {
-        var station :Object = _stations.selectedItem;
+        var station :Object = _box.stationBox.selectedItem;
         _svc.getWeather(station.station, gotWeatherData);
     }
 
     protected function gotWeatherData (data :XML) :void
     {
-        trace("weather: " + data);
+        _box.iconArea.source = String(data.icon_url_base) + data.icon_url_name;
+        _box.weatherLabel.text = data.weather;
+        _box.locationLabel.text = data.location;
+        _box.tempLabel.text = data.temperature_string;
+        _box.windLabel.text = "Wind: " + data.wind_string;
+        _box.timestampLabel.text = data.observation_time;
+
+        //trace("weather: " + data);
     }
 
     protected var _svc :NOAAWeatherService;
 
-    protected var _states :ComboBox;
-    protected var _stations :ComboBox;
-    protected var _panel :HBox;
+    protected var _box :WeatherBox;
 }
-
 }

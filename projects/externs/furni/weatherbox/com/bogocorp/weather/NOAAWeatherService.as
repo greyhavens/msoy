@@ -58,12 +58,12 @@ public class NOAAWeatherService // extends URLLoaderBase
         for each (var station :XML in _directory..station.(state == stateCode)) {
             // create an object describing a few key bits of the station
             stations.push({ station: String(station.station_id),
-                            name :String(station.station_name),
+                            label :String(station.station_name),
                             latitude: String(station.latitude),
                             longitude: String(station.longitude)
                           });
         }
-        stations.sortOn("name", Array.CASEINSENSITIVE);
+        stations.sortOn("label", Array.CASEINSENSITIVE);
         return stations;
     }
 
