@@ -155,8 +155,7 @@ public class RoomController extends SceneController
         _roomView.addChild(_walkTarget);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-        _roomView.addEventListener(MouseEvent.MOUSE_OVER, mouseEntered);
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
     }
@@ -165,8 +164,6 @@ public class RoomController extends SceneController
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.removeEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-        _roomView.removeEventListener(MouseEvent.MOUSE_OVER, mouseEntered);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
@@ -189,8 +186,7 @@ public class RoomController extends SceneController
 
         // turn editing off
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-        _roomView.addEventListener(MouseEvent.MOUSE_OVER, mouseEntered);
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
 
         // possibly save the edits
         if (edits != null) {
@@ -338,26 +334,10 @@ public class RoomController extends SceneController
     {
         // set up editing
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.removeEventListener(MouseEvent.MOUSE_OUT, mouseLeft);
-        _roomView.removeEventListener(MouseEvent.MOUSE_OVER, mouseEntered);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _walkTarget.visible = false;
 
         _editor = new EditorController(_mctx, this, _roomView, _scene, items);
-    }
-
-    protected function mouseLeft (event :MouseEvent) :void
-    {
-        _walkTarget.visible = false;
-        setHoverSprite(null);
-        _roomView.chatOverlay.setClickableGlyphs(false);
-
-        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
-    }
-
-    protected function mouseEntered (event :MouseEvent) :void
-    {
-        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
     }
 
     /**
