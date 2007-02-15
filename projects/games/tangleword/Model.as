@@ -32,10 +32,11 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         _coord = coordinator;
         _rounds = rounds;
         _display = display;
-        _playerName = _gameCtrl.getPlayerNames()[_gameCtrl.getMyIndex()];
+        _playerName = _gameCtrl.getOccupantName(_gameCtrl.getMyId());
 
         // Register for updates
         _gameCtrl.registerListener (this);
+        _rounds.addEventListener (RoundProvider.ROUND_STARTED_STATE, roundStartedHandler);
         _rounds.addEventListener (RoundProvider.ROUND_ENDED_STATE, roundEndedHandler);
 
         // Initialize game data storage
@@ -133,26 +134,36 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         game data updates. */
     public function messageReceived (event : MessageReceivedEvent) : void
     {
+        // _gameCtrl.localChat (_coord.amITheHost () ?
+        //                    "Model: I AM THE HOST! :)" :
+        //                    "Model: I'm not the host. :(");
+
         switch (event.name)
         {
         case ADD_SCORE_MSG:
             
-            // store the score
+            // Store the score in a local data structure
             addWordToScoreboard (event.value.player,
                                  event.value.word,
                                  event.value.score,
                                  event.value.isvalid);
 
-            // reset selection
+            // Reset selection
             removeAllSelectedLetters ();
             updateScoreDisplay ();
             
             break;
 
+        case SCOREBOARD_UPDATE_MSG:
+
+            // Take the scoreboard we've received, and use it instead of
+            // our previous one.
+            Assert.Fail ("Clobbering existing scoreboard...");
+            _scoreboard.internalScoreObject = event.value;
+            updateScoreDisplay ();
+            
         default:
             // Ignore any other messages; they're not for us.
-
-            Assert.Fail (event.toString());
 
         }
 
@@ -181,6 +192,17 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
             Assert.Fail ("Unknown property changed: " + event.name);
         }
         
+    }
+
+    /** Called at the beginning of a round - push my scoreboard
+        on everyone. */
+    public function roundStartedHandler (newState : String) : void
+    {
+        if (_coord.amITheHost ())
+        {
+            // Share the scoreboard
+            _gameCtrl.sendMessage (SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject);
+        }
     }
 
     /** Called when the round ends - cleans up data. */
@@ -286,6 +308,7 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
     /** Message types */
     private static const ADD_SCORE_MSG : String = "Score Update";
     private static const LETTER_SET_MSG : String = "Letter Set Update";
+    private static const SCOREBOARD_UPDATE_MSG : String = "Scoreboard Update";
 
     
     // PRIVATE VARIABLES

@@ -34,11 +34,10 @@ public class TangleWord extends Sprite implements StateChangedListener
         _gameCtrl.registerListener (this);
         _coordinator = new HostCoordinator (_gameCtrl);
         _rounds = new RoundProvider (_gameCtrl, _coordinator);
-
-        _rounds.setTimeout (RoundProvider.SYSTEM_STARTED_STATE, 0);
+        
+        _rounds.setTimeout (RoundProvider.SYSTEM_STARTED_STATE, 0); 
         _rounds.setTimeout (RoundProvider.ROUND_STARTED_STATE, Properties.ROUND_LENGTH);
         _rounds.setTimeout (RoundProvider.ROUND_ENDED_STATE, Properties.PAUSE_LENGTH);
-        
 
         // Create MVC elements
         _controller = new Controller (_gameCtrl, null, _rounds); // we'll set the model later...
@@ -48,9 +47,9 @@ public class TangleWord extends Sprite implements StateChangedListener
         addChild (_display);
 
         // TODO: DEBUG
-        // _gameCtrl.localChat (_coordinator.amITheHost () ?
-        //                     "I AM THE HOST! :)" :
-        //                     "I'm not the host. :(");
+        //_gameCtrl.localChat (_coordinator.amITheHost () ?
+        //                    "I AM THE HOST! :)" :
+        //                    "I'm not the host. :(");
 
         if (_gameCtrl.isInPlay()) {
             checkStartup();
@@ -68,11 +67,11 @@ public class TangleWord extends Sprite implements StateChangedListener
         switch (event.type)
         {
         case StateChangedEvent.GAME_STARTED:
-            checkStartup();
+            checkStartup ();
             break;
 
         case StateChangedEvent.GAME_ENDED:
-            _gameCtrl.localChat ("Done!");
+            checkEnd ();
             break;
 
         }
@@ -81,11 +80,34 @@ public class TangleWord extends Sprite implements StateChangedListener
     /**
      * Check to see if we should be starting the game.
      */
-    protected function checkStartup () :void
+    protected function checkStartup () : void
     {
         _gameCtrl.localChat("Starting up!");
-        if (_coordinator.amITheHost()) {
-            initializeScoreboard();
+
+        // If I joined an existing game, display time remaining till next round
+        if (! isNaN (_rounds.getCurrentStateTimeout ()))
+        {
+            var timeout : Number = _rounds.getCurrentStateTimeout ();
+            var timenow : Number = (new Date()).time;
+            var delta : Number = (timeout - timenow) / 1000;
+            _display.forceTimerStart (delta);
+            _display.logPleaseWait ();
+        }
+
+        // However, if I somehow became the host, just initialize everything anew.
+        if (_coordinator.amITheHost ()) {
+            initializeScoreboard ();
+        }
+    }
+
+    /**
+     * Process end of game.
+     */
+    protected function checkEnd () : void
+    {
+        _gameCtrl.localChat ("Done!");
+        if (_coordinator.amITheHost ()) {
+            Assert.Fail ("I was the host - but no more.");
         }
     }
 
@@ -96,10 +118,10 @@ public class TangleWord extends Sprite implements StateChangedListener
     {
         // Create a new instance, and fill in the names
         var board : Scoreboard = new Scoreboard ();
-        var names : Array = _gameCtrl.getPlayerNames ();
-        for (var name : String in names)
+        var occupants : Array = _gameCtrl.getOccupants ();
+        for each (var id : int in occupants)
         {
-            board.addPlayer (name);
+            board.addPlayer (_gameCtrl.getOccupantName (id));
         }
 
         // Finally, share it!

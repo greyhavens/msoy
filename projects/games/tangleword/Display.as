@@ -122,10 +122,23 @@ public class Display extends Sprite
         _logger.Log (message);
     }
     
+    // Adds a "please wait" message
+    public function logPleaseWait () : void
+    {
+        _logger.Log ("Please wait for\n the next round.");
+    }
+
     // Sets scores based on the scoreboard.
     public function updateScores (board : Scoreboard) : void
     {
         _scorefield.updateScores (board);
+    }
+
+    // Forces the timer display to start with the given time.
+    // Will not enable the timer if it's disabled.
+    public function forceTimerStart (seconds : Number) : void
+    {
+        _timer.start (seconds);
     }
         
     
@@ -173,7 +186,6 @@ public class Display extends Sprite
 
     // PRIVATE HELPER FUNCTIONS
 
-    
     /** Initializes storage, and creates letters at specified positions on the board */
     private function initializeLetters () : void
     {

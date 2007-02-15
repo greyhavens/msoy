@@ -2,9 +2,8 @@ package
 {
 
 import com.threerings.ezgame.EZGameControl;
-import com.threerings.ezgame.MessageReceivedEvent;
-import com.threerings.ezgame.MessageReceivedListener;
-
+import com.threerings.ezgame.PropertyChangedEvent;
+import com.threerings.ezgame.PropertyChangedListener;
 import flash.utils.Timer;
 import flash.events.TimerEvent;
 
@@ -29,7 +28,7 @@ import flash.events.TimerEvent;
    However, only the authoritative host will succeed in changing the state.     
 */
 
-public class RoundProvider implements MessageReceivedListener
+public class RoundProvider implements PropertyChangedListener
 {
     /** These constants describe system states. */
     public static const SYSTEM_STOPPED_STATE : String = "System Stopped";
@@ -52,10 +51,10 @@ public class RoundProvider implements MessageReceivedListener
     */
     public function RoundProvider (
         gameCtrl : EZGameControl,
-        hostCoord : HostCoordinator)
+        coord : HostCoordinator)
     {
         // Store the pointers
-        _hostCoord = hostCoord;
+        _coord = coord;
         _gameCtrl = gameCtrl;
         _gameCtrl.registerListener (this);
 
@@ -88,9 +87,9 @@ public class RoundProvider implements MessageReceivedListener
         
     
     /**
-       Sets the current state to the specified value.
-       Returns true if the client was an authoritative host and succeeded
-       in setting the state; false otherwise.
+       Sets the current state to the specified value, along with the
+       appropriate timeout. Returns true if the client was an authoritative
+       host and succeeded in setting the state; false otherwise.
 
        Parameters:
          newState - constant string, one of RoundProvider.*_STATE.
@@ -101,15 +100,12 @@ public class RoundProvider implements MessageReceivedListener
         Assert.True (checkStateName (newState), "Trying to set invalid state: " + newState);
         if (checkStateName (newState))
         {
-            // Only the host can do this...
-            if (_hostCoord.amITheHost ())
+            // Only the host will actually succeed doing this...
+            if (_coord.amITheHost ())
             {
-                // The host now sends out the message that a new state was set,
-                // and every client RoundProvider will get this message and
-                // update is current state accordingly. 
-                _gameCtrl.sendMessage (ROUND_PROVIDER_SET_STATE_MESSAGE,
-                                       newState);
-
+                var newStateTimeout : Number = (new Date()).time + _timeouts[newState];
+                _gameCtrl.set (ROUND_PROVIDER_CURRENT_STATE_PROPERTY, newState);
+                _gameCtrl.set (ROUND_PROVIDER_CURRENT_STATE_TIMEOUT, newStateTimeout);
                 return true;
             }
         }
@@ -120,7 +116,20 @@ public class RoundProvider implements MessageReceivedListener
     /** Retrieves current state */
     public function getCurrentState () : String
     {
-        return _currentState;
+        return (_gameCtrl.get (ROUND_PROVIDER_CURRENT_STATE_PROPERTY) as String);
+    }
+
+    /** Retrieves the desired end-time for the current state, in the same format
+        as returned from Date.time (i.e. milliseconds since the beginnning of
+        the Unix epoch). If the current state does not have a defined timeout,
+        it will return a NaN.
+
+        Note: this timeout value may be a few hundred milliseconds off from what
+        is used to trigger events, and should be used for UI/display purposes only. 
+    */
+    public function getCurrentStateTimeout () : Number
+    {
+        return (_gameCtrl.get (ROUND_PROVIDER_CURRENT_STATE_TIMEOUT) as Number);
     }
 
     /** Adds the specified function to the list of state change callbacks;
@@ -159,23 +168,23 @@ public class RoundProvider implements MessageReceivedListener
     // EVENT HANDLERS
 
     /**
-       From MessageReceivedListener: checks for messages from the
-       authoritative host, signaling state change.
+       From PropertySetListener: when the authoritative host changed
+       the current state, this event should be propagated to any of our
+       listeners.
     */
-    public function messageReceived (event : MessageReceivedEvent) : void
+    public function propertyChanged (event : PropertyChangedEvent) : void
     {
-        if (event.name == ROUND_PROVIDER_SET_STATE_MESSAGE)
+        switch (event.name)
         {
+        case ROUND_PROVIDER_CURRENT_STATE_PROPERTY:
+        
             // Pull out state name
-            var state : String = event.value as String;
+            var state : String = event.newValue as String;
             var valid : Boolean = checkStateName (state);
             Assert.True (valid, "Received a set state message, but the state is invalid!");
 
             if (valid)
             {
-                // First, set the state locally
-                _currentState = state;
-
                 // Remember the time when we entered this state
                 var now : Date = new Date();
                 _timestamps[state] = now.time;
@@ -189,12 +198,20 @@ public class RoundProvider implements MessageReceivedListener
                     fn.call (null, state);
                 }
             }
+            break;
+
+        case ROUND_PROVIDER_CURRENT_STATE_TIMEOUT:
+        
+            // _gameCtrl.localChat ("Current state timeout: " + event.newValue);
+            break;
+
+
         }
     }          
 
     /**
-       Processes ticks from the timer. These arrive every second, and we use them
-       to determine whether to time out of the current state.
+       Processes ticks from the timer. These arrive every few hundred ms,
+       and we use them to determine whether to time out of the current state.
 
        Please note: all clients receive timer events, but only the
        authoritative host will be able to actually change the state.
@@ -202,19 +219,20 @@ public class RoundProvider implements MessageReceivedListener
     public function timerHandler (event : TimerEvent) : void
     {
         // Do we even have a timeout defined for this state?
-        if (_timeouts[_currentState] != undefined)
+        var currentState : String = getCurrentState ();
+        if (_timeouts[currentState] != undefined)
         {
             // Okay, let's get the last timestamp
-            var timeout : Number = _timeouts[_currentState] as Number;
-            var timestamp : Number = _timestamps[_currentState] as Number;
+            var timeout : Number = _timeouts[currentState] as Number;
+            var timestamp : Number = _timestamps[currentState] as Number;
             
             var now : Date = new Date();
             var deltams : Number = (now.time - timestamp);
 
             if (deltams >= timeout)
             {
-                // We're done here; let's transition to a new state
-                var nextState : String = _nextState [_currentState];
+                // We're done here; try to transition to a new state
+                var nextState : String = _nextState [currentState];
                 setCurrentState (nextState);
             }
         }
@@ -246,13 +264,33 @@ public class RoundProvider implements MessageReceivedListener
         return (STATE_LIST.indexOf (stateName) > -1);
     }
 
+    /**
+       For authoritative hosts only:
+       Sets the shared variable to represent timeout for the current state,
+       in milliseconds since the beginning of the Unix epoch
+    */
+    private function setCurrentStateTimeout (value : Number) : Boolean
+    {
+        // Only the host will actually succeed doing this...
+        if (_coord.amITheHost ())
+        {
+            _gameCtrl.set (ROUND_PROVIDER_CURRENT_STATE_TIMEOUT, value);
+            return true;
+        }
+        
+        return false;
+    }
+
 
     // PRIVATE CONSTANTS
 
-    /** This is the message sent from the authoritative host to everyone else,
-        to signal state transition. */
-    private static const ROUND_PROVIDER_SET_STATE_MESSAGE : String =
-        "ROUND_PROVIDER_SET_STATE_MESSAGE";
+    /** Variable that holds current state */
+    private static const ROUND_PROVIDER_CURRENT_STATE_PROPERTY : String =
+        "ROUND_PROVIDER_CURRENT_STATE_PROPERTY";
+
+    /** Variable that holds the current state timeout */
+    private static const ROUND_PROVIDER_CURRENT_STATE_TIMEOUT : String =
+        "ROUND_PROVIDER_CURRENT_STATE_TIMEOUT";
        
     
     
@@ -262,10 +300,7 @@ public class RoundProvider implements MessageReceivedListener
     private var _gameCtrl : EZGameControl;
 
     /** Local host coordinator storage */
-    private var _hostCoord : HostCoordinator;
-
-    /** Current state */
-    private var _currentState : String;
+    private var _coord : HostCoordinator;
 
     /** Timeout timer. If this variable is null, it means no timer
         was initialized; otherwise it's set to the instance that will
