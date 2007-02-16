@@ -4,7 +4,7 @@
   <!-- set some properties -->
   <target name="init">
     <property name="projectName" value="jswiff" />
-    <property name="version" value="8.0-beta-2" />
+    <property name="version" value="8.0-beta-2-threerings" />
     <property name="sourceDir" value="src" />
     <property name="classDir" value="classes" />
     <property name="libDir" value="lib" />
