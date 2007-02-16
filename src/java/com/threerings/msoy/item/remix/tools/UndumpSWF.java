@@ -147,7 +147,7 @@ public class UndumpSWF
     protected Tag createGIForPNG (int id, File f)
         throws IOException
     {
-        // TODO: write indexed images (Lossless1)
+        // TODO: write indexed images and images without alpha (Lossless1)
         // (The following code converts all images to RGBA)
         BufferedImage img = ImageIO.read(new FileInputStream(f));
         RGBA[] rawData = ImageUtilities.getRGBAArray(img);

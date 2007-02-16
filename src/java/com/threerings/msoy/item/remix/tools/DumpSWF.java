@@ -14,10 +14,13 @@ import com.jswiff.SWFReader;
 import com.jswiff.io.OutputBitStream;
 import com.jswiff.listeners.SWFDocumentReader;
 import com.jswiff.listeners.SWFListener;
+import com.jswiff.swfrecords.Pix15;
+import com.jswiff.swfrecords.Pix24;
 import com.jswiff.swfrecords.Rect;
 import com.jswiff.swfrecords.RGBA;
 import com.jswiff.swfrecords.AlphaBitmapData;
 import com.jswiff.swfrecords.BitmapData;
+import com.jswiff.swfrecords.BitmapPixelData;
 import com.jswiff.swfrecords.ZlibBitmapData;
 import com.jswiff.swfrecords.tags.DefinitionTag;
 import com.jswiff.swfrecords.tags.DefineBitsJPEG2;
@@ -108,6 +111,7 @@ public class DumpSWF
     {
         BufferedImage img;
         if (data instanceof AlphaBitmapData) {
+            // TODO: output 8 bit colormapped as well (with alpha)
             img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             RGBA[] rawData = ((AlphaBitmapData) data).getBitmapPixelData();
             int index = 0;
@@ -122,7 +126,35 @@ public class DumpSWF
             }
 
         } else if (data instanceof BitmapData) {
-            throw new UnsupportedOperationException("non RGBA pngs not yet supported.");
+            BitmapPixelData[] rawData = ((BitmapData) data).getBitmapPixelData();
+            if (rawData[0] instanceof Pix15) {
+                img = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_555_RGB);
+                int index = 0;
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        Pix15 pixel = (Pix15) rawData[index++];
+                        int pix = (pixel.getRed() << 10) | (pixel.getGreen() << 5) |
+                            (pixel.getBlue());
+                        img.setRGB(x, y, pix);
+                    }
+                }
+
+            } else if (rawData[0] instanceof Pix24) {
+                img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                int index = 0;
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        Pix24 pixel = (Pix24) rawData[index++];
+                        int pix = (pixel.getRed() << 16) | (pixel.getGreen() << 8) |
+                            (pixel.getBlue());
+                        img.setRGB(x, y, pix);
+                    }
+                }
+
+            } else {
+                throw new IllegalArgumentException(
+                    "Unknown pixel format: " + rawData[0].getClass());
+            }
 
         } else {
             throw new IllegalArgumentException("Unknown png data format: " + data.getClass());
