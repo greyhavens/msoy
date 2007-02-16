@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.client {
 
 import com.threerings.util.MessageBundle;
@@ -42,7 +45,7 @@ public class Msgs
     /**
      * Initialize the bundles.
      */
-    public static function init (ctx :MsoyContext) :void
+    public static function init (ctx :BaseContext) :void
     {
         if (_general) {
             return;

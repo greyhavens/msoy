@@ -191,7 +191,7 @@ public class PrefsDialog extends FloatingPanel
         }
         var newAvatar :Avatar = (_avatars.getSelectedItem() as Avatar);
         if (newAvatar != null && !newAvatar.equals(memberObj.avatar)) {
-            _ctx.getMemberDirector().setAvatar(newAvatar.itemId);
+            _ctx.getWorldDirector().setAvatar(newAvatar.itemId);
         }
 
         super.buttonClicked(buttonId);

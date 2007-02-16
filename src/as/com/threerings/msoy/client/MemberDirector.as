@@ -22,33 +22,15 @@ import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 
-import com.threerings.msoy.world.data.MsoySceneModel;
-
 public class MemberDirector extends BasicDirector
     implements SetListener
 {
     public const log :Log = Log.getLog(MemberDirector);
 
-    public function MemberDirector (ctx :MsoyContext)
+    public function MemberDirector (ctx :BaseContext)
     {
         super(ctx);
-        _mctx = ctx;
-    }
-
-    /**
-     * Request to move to the specified member's home.
-     */
-    public function goToMemberHome (memberId :int) :void
-    {
-        goToHome(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
-    }
-
-    /**
-     * Request to move to the specified group's home.
-     */
-    public function goToGroupHome (groupId :int) :void
-    {
-        goToHome(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
+        _bctx = ctx;
     }
 
     /**
@@ -56,8 +38,7 @@ public class MemberDirector extends BasicDirector
      */
     public function alterFriend (friendId :int, makeFriend :Boolean) :void
     {
-        _msvc.alterFriend(_mctx.getClient(), friendId, makeFriend,
-            new ReportingListener(_mctx));
+        _msvc.alterFriend(_bctx.getClient(), friendId, makeFriend, new ReportingListener(_bctx));
     }
 
     /**
@@ -65,26 +46,7 @@ public class MemberDirector extends BasicDirector
      */
     public function setDisplayName (newName :String) :void
     {
-        _msvc.setDisplayName(_mctx.getClient(), newName,
-            new ReportingListener(_mctx));
-    }
-
-    /**
-     * Request a change to our avatar.
-     */
-    public function setAvatar (avatarId :int) :void
-    {
-        _msvc.setAvatar(_mctx.getClient(), avatarId,
-            new ReportingListener(_mctx));
-    }
-
-    /**
-     * Request to purchase a new room.
-     */
-    public function purchaseRoom () :void
-    {
-        _msvc.purchaseRoom(_mctx.getClient(),
-            new ReportingListener(_mctx, null, null, "m.room_created"));
+        _msvc.setDisplayName(_bctx.getClient(), newName, new ReportingListener(_bctx));
     }
 
     // from interface SetListener
@@ -118,7 +80,7 @@ public class MemberDirector extends BasicDirector
                 }
             }
             if (msgKey != null) {
-                _mctx.displayInfo("general",
+                _bctx.displayInfo("general",
                     MessageBundle.tcompose(msgKey, entry.name));
             }
         }
@@ -137,16 +99,14 @@ public class MemberDirector extends BasicDirector
                 break;
 
             case FriendEntry.PENDING_THEIR_APPROVAL:
-                // TODO: we don't want this to be reported when
-                // WE initiate the removal
+                // TODO: we don't want this to be reported when WE initiate the removal
                 msgKey = "m.friend_denied";
                 break;
 
             default:
                 return; // do nothing in every other case
             }
-            _mctx.displayInfo("general",
-                MessageBundle.tcompose(msgKey, oldEntry.name));
+            _bctx.displayInfo("general", MessageBundle.tcompose(msgKey, oldEntry.name));
         }
     }
 
@@ -160,6 +120,7 @@ public class MemberDirector extends BasicDirector
     // from BasicDirector
     override protected function registerServices (client :Client) :void
     {
+        // TODO: nix when we don't need world stuff
         client.addServiceGroup(MsoyCodes.WORLD_GROUP);
     }
 
@@ -172,30 +133,15 @@ public class MemberDirector extends BasicDirector
     }
 
     /**
-     * Request to go to the home of the specified entity.
-     */
-    protected function goToHome (ownerType :int, ownerId :int) :void
-    {
-        _msvc.getHomeId(_mctx.getClient(), ownerType, ownerId, new ResultWrapper(
-            function (cause :String) :void {
-                log.warning("Unable to go to home: " + cause);
-            }, 
-            function (sceneId :int) :void {
-                _mctx.getSceneDirector().moveTo(sceneId);
-            }));
-    }
-
-    /**
-     * Query the user as to whether they want to make this user their
-     * friend.
+     * Query the user as to whether they want to make this user their friend.
      */
     protected function approveFriend (asker :MemberName) :void
     {
-        new FriendApprovalPanel(_mctx, asker);
+        // TODO: DHTML-ify
+//         new FriendApprovalPanel(_bctx, asker);
     }
 
-    protected var _mctx :MsoyContext;
-
+    protected var _bctx :BaseContext;
     protected var _msvc :MemberService;
 }
 }

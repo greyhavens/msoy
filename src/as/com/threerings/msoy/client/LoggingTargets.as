@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.client {
 
 import flash.external.ExternalInterface;
@@ -10,7 +13,7 @@ import com.threerings.msoy.data.MemberObject;
 // TODO: stop listening at the end?
 public class LoggingTargets
 {
-    public static function configureLogging (ctx :MsoyContext) :void
+    public static function configureLogging (ctx :BaseContext) :void
     {
         var userObj :MemberObject = ctx.getClientObject();
 
@@ -52,12 +55,12 @@ use namespace mx_internal;
 
 import com.threerings.util.MessageBundle;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.BaseContext;
 
 // TODO: stop listening at the end?
 class ChatTarget extends LineFormattedTarget
 {
-    public function ChatTarget (ctx :MsoyContext)
+    public function ChatTarget (ctx :BaseContext)
     {
         _ctx = ctx;
         super();
@@ -72,7 +75,7 @@ class ChatTarget extends LineFormattedTarget
         _ctx.displayInfo(null, MessageBundle.taint(msg));
     }
 
-    protected var _ctx :MsoyContext;
+    protected var _ctx :BaseContext;
 }
 
 /**

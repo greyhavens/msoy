@@ -330,7 +330,7 @@ public class MsoyController extends Controller
      */
     public function handleGoMemberHome (memberId :int) :void
     {
-        _ctx.getMemberDirector().goToMemberHome(memberId);
+        _ctx.getWorldDirector().goToMemberHome(memberId);
     }
 
     /**
@@ -338,7 +338,7 @@ public class MsoyController extends Controller
      */
     public function handleGoGroupHome (groupId :int) :void
     {
-        _ctx.getMemberDirector().goToGroupHome(groupId);
+        _ctx.getWorldDirector().goToGroupHome(groupId);
     }
 
     /**
@@ -426,7 +426,7 @@ public class MsoyController extends Controller
      */
     public function handlePurchaseRoom () :void
     {
-        _ctx.getMemberDirector().purchaseRoom();
+        _ctx.getWorldDirector().purchaseRoom();
     }
 
     /**
