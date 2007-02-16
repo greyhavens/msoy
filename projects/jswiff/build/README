@@ -1,0 +1,19 @@
+JSwiff Build Instructions
+-------------------------
+
+Install Ant (from http://ant.apache.org) and make sure its bin folder is in
+your path.
+In the "build" folder (the folder containing the file you are reading), enter
+"ant". A .jar file will be built within seconds.
+
+build.xml also contains other Ant targets:
+- compile: compiles the source (to multiple .class files)
+- javadoc: generates Javadoc documentation
+- tgz: creates a .tar.gz archive
+- zip: creates a .zip archive
+- clean: cleans everything up
+To invoke an Ant target, type "ant targetname", e.g. "ant zip".
+
+Alternatively, you can use your favorite Java IDE with Ant integration.
+If you use Eclipse, you can easily import the whole JSwiff distribution
+into a Java project (the .classpath file is included for this purpose).

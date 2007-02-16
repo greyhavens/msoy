@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jswiff" default="jar" basedir="..">
+
+  <!-- set some properties -->
+  <target name="init">
+    <property name="projectName" value="jswiff" />
+    <property name="version" value="8.0-beta-2" />
+    <property name="sourceDir" value="src" />
+    <property name="classDir" value="classes" />
+    <property name="libDir" value="lib" />
+    <property name="jarFile" value="${projectName}-${version}.jar" />
+    <property name="javadocDir" value="api" />
+    <property name="archiveFile" value="${projectName}-${version}" />
+    <property name="zipFile" value="${archiveFile}.zip" />
+    <property name="tarFile" value="${archiveFile}.tar" />
+    <property name="tgzFile" value="${archiveFile}.tar.gz" />
+  </target>
+
+  <!-- compile the source files -->
+  <target name="compile" depends="init">
+    <delete dir="${classDir}" includeEmptyDirs="true" />
+    <mkdir dir="${classDir}" />
+    <javac debug="true" srcdir="${sourceDir}" destdir="${classDir}" excludes="com/jswiff/tests/**">
+      <classpath>
+        <pathelement path="${libDir}/dom4j-1.6.1.jar" />
+      </classpath>
+    </javac>
+    <copy todir="${classDir}/com/jswiff/investigator/resources">
+      <fileset dir="${sourceDir}/com/jswiff/investigator/resources" />
+    </copy>
+  </target>
+
+  <!-- create a JAR file -->
+  <target name="jar" depends="compile">
+    <jar destfile="${jarFile}" basedir="${classDir}" manifest="build/MANIFEST.MF" />
+    <delete dir="${classDir}" includeEmptyDirs="true" />
+  </target>
+
+  <!-- create javadoc -->
+  <target name="javadoc" depends="init">
+    <delete dir="${javadocDir}" includeEmptyDirs="true" />
+    <javadoc destdir="${javadocDir}" access="public" breakiterator="true" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="false" version="false" nodeprecatedlist="true" nodeprecated="true" packagenames="com.jswiff.*" excludepackagenames="com.jswiff.tests.*,com.jswiff.investigator.*" sourcepath="${sourceDir}" stylesheetfile="build/javadoc.css" doctitle="JSwiff API Reference" additionalparam="-bottom &quot;&lt;div id='bottom'&gt;&amp;copy; 2005 Ralf Terdic. All rights reserved.&lt;br&gt;&lt;a href='http://www.jswiff.com'&gt;www.jswiff.com&lt;/a&gt;&lt;/div&gt;&quot;&#10;" windowtitle="JSwiff API Reference">
+      <classpath>
+        <pathelement path="${libDir}/dom4j-1.6.1.jar" />
+      </classpath>
+    </javadoc>
+  </target>
+
+  <!-- create a zip distribution file -->
+  <target name="zip" depends="jar,javadoc">
+    <zip destfile="${zipFile}" basedir="." excludes="bin/**,.project,*.zip,*.tar,*.tar.gz" />
+  </target>
+
+  <!-- create a tar.gz distribution file -->
+  <target name="tgz" depends="jar,javadoc">
+    <tar destfile="${tarFile}" basedir="." excludes="bin/**,.project,*.zip,*.tar,*.tar.gz" />
+    <gzip zipfile="${tgzFile}" src="${tarFile}" />
+    <delete file="${tarFile}" />
+  </target>
+
+  <!-- clean up everything -->
+  <target name="clean" depends="init">
+    <delete dir="${classDir}" includeEmptyDirs="true" />
+    <delete dir="${javadocDir}" includeEmptyDirs="true" />
+    <delete file="${jarFile}" />
+    <delete file="${tarFile}" />
+    <delete file="${zipFile}" />
+    <delete file="${tgzFile}" />
+  </target>
+
+</project>
