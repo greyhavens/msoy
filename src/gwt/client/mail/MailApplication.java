@@ -669,7 +669,7 @@ public class MailApplication extends DockPanel
             // e.g. 25/10/06
             return date.getDay() + "/" + date.getMonth() + "/" + date.getYear();
         }
-        int hourDiff = (int) (nowTime - date.getTime()) / (3600 * 1000);
+        long hourDiff = (nowTime - date.getTime()) / (3600 * 1000);
         if (hourDiff > 6*24) {
             // e.g. Oct 25
             return date.toString().substring(4, 10);
