@@ -3,6 +3,7 @@
 
 package client.mail;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -337,13 +338,42 @@ public class MailApplication extends DockPanel
             }
         });
     }
-    
+
     // construct the list of folders, including unread count
     protected void refreshFolderPanel ()
     {
         VerticalPanel folderList = new VerticalPanel();
         folderList.setVerticalAlignment(HasAlignment.ALIGN_TOP);
+
+        List folders = new ArrayList();
+        MailFolder inbox = null, sent = null, trash = null;
+
         Iterator i = _folders.iterator();
+        while (i.hasNext()) {
+            MailFolder folder = (MailFolder) i.next();
+
+            if (folder.folderId == MailFolder.INBOX_FOLDER_ID) {
+                inbox = folder;
+            } else if (folder.folderId == MailFolder.SENT_FOLDER_ID) {
+                sent = folder;
+            } else if (folder.folderId == MailFolder.TRASH_FOLDER_ID) {
+                trash = folder;
+            } else {
+                folders.add(folder);
+            }
+        }
+        // inbox and sent go at the head of the list
+        if (sent != null) {
+            folders.add(0, sent);
+        }
+        if (inbox != null) {
+            folders.add(0, inbox);
+        }
+        // trash goes at the end
+        if (trash != null) {
+            folders.add(trash);
+        }
+        i = folders.iterator();
         while (i.hasNext()) {
             MailFolder folder = (MailFolder) i.next();
             String name = folder.name;
@@ -351,9 +381,12 @@ public class MailApplication extends DockPanel
                 name += " (" + folder.unreadCount + ")";
             }
             Hyperlink link = new Hyperlink(name, "f" + folder.folderId);
-            link.setStyleName("mailFolderEntry");
+            link.setStyleName("Folder");
             if (folder.unreadCount > 0) {
-                link.addStyleName("unread");
+                link.addStyleName("Folder-unread");
+            }
+            if (folder.folderId == MailFolder.TRASH_FOLDER_ID) {
+                link.addStyleName("Folder-trash");
             }
             folderList.add(link);
         }

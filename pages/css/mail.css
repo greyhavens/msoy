@@ -44,13 +44,20 @@
     height: 100%;
 }
 
-.Folders A:link {
+ .Folder-unread {
+    font-weight: bold;
+}
+
+ .Folder-trash {
+    margin-top: 1em;
+}
+
+.Folder A:link {
+}
+.Folder A:visited {
     color: #000000;
 }
-.Folders A:visited {
-    color: #000000;
-}
-.Folders A:active {
+.Folder A:active {
     color: #000000;
 }
 
