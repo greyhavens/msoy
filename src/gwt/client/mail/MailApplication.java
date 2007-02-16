@@ -38,7 +38,6 @@ import client.msgs.MailComposition;
 import client.msgs.MailPayloadDisplay;
 import client.msgs.MailUpdateListener;
 import client.util.BorderedWidget;
-import client.util.HeaderValueTable;
 
 /**
  * A mail reading application, with a sidebar listing available folders, the upper
@@ -369,23 +368,26 @@ public class MailApplication extends DockPanel
             return;
         }
         // build the actual headers
-        FlexTable table = new FlexTable();
-        table.setStyleName("mailHeaders");
-        table.setWidth("100%");
-        int row = 0;
-
-        CellFormatter cellFormatter = table.getCellFormatter();
-        RowFormatter rowFormatter = table.getRowFormatter();
+        VerticalPanel headerRows = new VerticalPanel();
+        headerRows.setStyleName("Rows");
 
         // now build row after row of data
         int lastMsg = Math.min(_headers.size(), _currentOffset + HEADER_ROWS);
         for (int msg = _currentOffset; msg < lastMsg; msg ++) {
             MailHeaders headers = (MailHeaders) _headers.get(msg);
-            int col = 0;
+
+            FlowPanel row = new FlowPanel();
+            row.setStyleName("Row");
+            if (headers.unread) {
+                row.addStyleName("Row-unread");
+            }
+            if (_currentMessage == headers.messageId) {
+                row.addStyleName("Row-selected");
+            }
 
             // first, a checkbox with a listener that maintains a set of checked messages
             MailCheckBox cBox = new MailCheckBox(headers);
-
+            cBox.setStyleName("CheckBox");
             cBox.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     if (sender instanceof MailCheckBox) {
@@ -400,38 +402,30 @@ public class MailApplication extends DockPanel
                     }
                 }
             });
-            table.setWidget(row, col, cBox);
+            row.add(cBox);
             _checkboxes.add(cBox);
-            cellFormatter.setStyleName(row, col, "mailRowCheckbox");
-            col ++;
 
             // next, the subject line, the only variable-width element in the row
             Widget link = new Hyperlink(headers.subject, "f" + _currentFolder + "." +
                 _currentOffset + "." + headers.messageId);
-            table.setWidget(row, col, link);
-            cellFormatter.setStyleName(row, col, "mailRowSubject");
-            col ++;
+            link.setStyleName("Subject");
+            row.add(link);
 
-            // next, the name of the sender
-            table.setText(row, col, headers.sender.toString());
-            cellFormatter.setStyleName(row, col, "mailRowSender");
-            col ++;
+            // the date the message was sent, in fancy shorthand form
+            Label date = new Label(formatDate(headers.sent));
+            date.setStyleName("Date");
+            row.add(date);
+            
+            // the name of the sender
+            Label sender = new Label(headers.sender.toString());
+            sender.setStyleName("Sender");
+            row.add(sender);
 
-            // and finally the date the message was sent, in fancy shorthand form
-            table.setText(row, col, formatDate(headers.sent));
-            cellFormatter.setStyleName(row, col, "mailRowDate");
-            col ++;
-
-            // show the row in bold if the message is unread
-            // TODO: hrm, looks like this bit don't work yet.
-            rowFormatter.setStyleName(row, "mailRow");
-            if (headers.unread) {
-                rowFormatter.addStyleName(row, "unread");
-            }
-            row ++;
+            // the date the message was sent, in fancy shorthand form            
+            headerRows.add(row);
         }
         // when the UI is fully constructed, switch it in
-        _headerContainer.setWidget(table);
+        _headerContainer.setWidget(headerRows);
 
         boolean nextButton = _currentOffset + HEADER_ROWS < _headers.size();
         boolean prevButton = _currentOffset > 0;

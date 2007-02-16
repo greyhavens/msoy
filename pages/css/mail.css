@@ -99,6 +99,58 @@
     margin-right: 6px;
 }
 
+.HeaderPanel .Rows {
+    width: 100%;
+}
+
+.HeaderPanel .Rows A:link {
+    text-decoration: none;
+    color: #000000;
+}
+
+.HeaderPanel .Rows A:visited {
+    text-decoration: none;
+    color: #000000;
+}
+
+.HeaderPanel .Rows A:active {
+    text-decoration: none;
+    color: #000000;
+}
+
+.HeaderPanel .Row {
+    padding: 3px;
+    height: 1em;
+}
+
+.HeaderPanel .Row-unread {
+    font-weight: bold;
+}
+
+.HeaderPanel .Row-selected {
+    background: #99CCFF;
+}
+
+.HeaderPanel .Row .CheckBox {
+    width: 20px;
+    float: left;
+}
+
+.HeaderPanel .Row .Subject {
+    float: left;
+    margin-left: 5px;
+}
+
+.HeaderPanel .Row .Sender {
+    width: 18em;
+    float: right;
+}
+
+.HeaderPanel .Row .Date {
+    width: 8em;
+    float: right;
+}
+
 .MessagePanel {
     width: 100%;
 }
@@ -160,47 +212,6 @@
 .Message .Body {
     margin-top: 4px;
     margin-left: 20px;
-}
-
-.mailRow {
-    height: 1em;
-    padding: 3px;
-    color: #000000;
-}
-
-.mailRow A:link {
-    text-decoration: none;
-    color: #000000;
-}
-
-.mailRow A:visited {
-    text-decoration: none;
-    color: #000000;
-}
-
-.mailRow A:active {
-    text-decoration: none;
-    color: #000000;
-}
-
-.mailRow-unread {
-    padding: 3px;
-    font-weight: bold;
-}
-
-.mailRowCheckbox {
-    width: 20px;
-}
-
-.mailRowSubject {
-}
-
-.mailRowSender {
-    width: 18em;
-}
-
-.mailRowDate {
-    width: 8em;
 }
 
 .mailComposition {
