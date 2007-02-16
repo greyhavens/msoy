@@ -9,15 +9,21 @@ import java.io.IOException;
 
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
 import com.jswiff.SWFDocument;
 import com.jswiff.SWFReader;
 import com.jswiff.SWFWriter;
 import com.jswiff.listeners.SWFDocumentReader;
 import com.jswiff.listeners.SWFListener;
+import com.jswiff.swfrecords.AlphaBitmapData;
 import com.jswiff.swfrecords.Rect;
+import com.jswiff.swfrecords.RGBA;
 import com.jswiff.swfrecords.tags.DefinitionTag;
 import com.jswiff.swfrecords.tags.DefineBitsJPEG2;
 import com.jswiff.swfrecords.tags.DefineBitsJPEG3;
+import com.jswiff.swfrecords.tags.DefineBitsLossless;
+import com.jswiff.swfrecords.tags.DefineBitsLossless2;
 import com.jswiff.swfrecords.tags.Tag;
 import com.jswiff.swfrecords.tags.TagConstants;
 import com.jswiff.util.ImageUtilities;
@@ -113,14 +119,28 @@ public class UndumpSWF
     protected Tag createReplacement (int id, File inputDir)
         throws IOException
     {
-        // for now, just look for jpegs
+        // look for a jpeg
         File f = new File(inputDir, String.valueOf(id) + ".jpg");
-        if (!f.exists()) {
-            return null;
+        if (f.exists()) {
+            byte[] imageData = readRawImageData(f);
+            return new DefineBitsJPEG2(id, imageData);
         }
 
-        byte[] imageData = readRawImageData(f);
-        return new DefineBitsJPEG2(id, imageData);
+        // look for a png
+        f = new File(inputDir, String.valueOf(id) + ".png");
+        if (f.exists()) {
+            // TODO: write indexed PNGs (in addition to RGBA pngs)
+            // (The following code converts all pngs to RGBA)
+            BufferedImage img = ImageIO.read(new FileInputStream(f));
+            RGBA[] rawData = ImageUtilities.getRGBAArray(img);
+            AlphaBitmapData bitmapData = new AlphaBitmapData(rawData);
+            return new DefineBitsLossless2(id,
+                DefineBitsLossless2.FORMAT_32_BIT_RGBA,
+                img.getWidth(), img.getHeight(), bitmapData);
+        }
+
+        // nothing found
+        return null;
     }
 
     protected byte[] readRawImageData (File f)

@@ -7,14 +7,23 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
 import com.jswiff.SWFDocument;
 import com.jswiff.SWFReader;
+import com.jswiff.io.OutputBitStream;
 import com.jswiff.listeners.SWFDocumentReader;
 import com.jswiff.listeners.SWFListener;
 import com.jswiff.swfrecords.Rect;
+import com.jswiff.swfrecords.RGBA;
+import com.jswiff.swfrecords.AlphaBitmapData;
+import com.jswiff.swfrecords.BitmapData;
+import com.jswiff.swfrecords.ZlibBitmapData;
 import com.jswiff.swfrecords.tags.DefinitionTag;
 import com.jswiff.swfrecords.tags.DefineBitsJPEG2;
 import com.jswiff.swfrecords.tags.DefineBitsJPEG3;
+import com.jswiff.swfrecords.tags.DefineBitsLossless;
+import com.jswiff.swfrecords.tags.DefineBitsLossless2;
 import com.jswiff.swfrecords.tags.Tag;
 import com.jswiff.swfrecords.tags.TagConstants;
 import com.jswiff.util.ImageUtilities;
@@ -57,7 +66,8 @@ public class DumpSWF
         dumpImages(doc, outputDir);
 
         Rect size = doc.getFrameSize();
-        return "" + (size.getXMax() / 20) + " " + (size.getYMax() / 20);
+        return "" + (size.getXMax() / SWFConstants.TWIPS_PER_PIXEL) + " " +
+            (size.getYMax() / SWFConstants.TWIPS_PER_PIXEL);
     }
 
     protected void dumpImages (SWFDocument doc, File outputDir)
@@ -68,7 +78,6 @@ public class DumpSWF
                 DefinitionTag tag = (DefinitionTag) tagObj;
                 int id = tag.getCharacterId();
 
-                // TODO: more than Jpgs
                 switch (tag.getCode()) {
                 case TagConstants.DEFINE_BITS_JPEG_2:
                     saveJPEG(((DefineBitsJPEG2) tag).getJpegData(), outputDir, id);
@@ -77,15 +86,57 @@ public class DumpSWF
                 case TagConstants.DEFINE_BITS_JPEG_3:
                     saveJPEG(((DefineBitsJPEG3) tag).getJpegData(), outputDir, id);
                     break;
+
+                case TagConstants.DEFINE_BITS_LOSSLESS:
+                    DefineBitsLossless png = (DefineBitsLossless) tag;
+                    savePNG(png.getZlibBitmapData(), png.getWidth(), png.getHeight(),
+                        outputDir, id);
+                    break;
+
+                case TagConstants.DEFINE_BITS_LOSSLESS_2:
+                    DefineBitsLossless2 png2 = (DefineBitsLossless2) tag;
+                    savePNG(png2.getZlibBitmapData(), png2.getWidth(), png2.getHeight(),
+                        outputDir, id);
+                    break;
                 }
             }
         }
     }
 
+    protected void savePNG (ZlibBitmapData data, int width, int height, File outputDir, int id)
+        throws IOException
+    {
+        BufferedImage img;
+        if (data instanceof AlphaBitmapData) {
+            img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            RGBA[] rawData = ((AlphaBitmapData) data).getBitmapPixelData();
+            int index = 0;
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    RGBA pixel = rawData[index++];
+                    int pix = (pixel.getAlpha() << 24) |
+                        (pixel.getRed() << 16) | (pixel.getGreen() << 8) |
+                        (pixel.getBlue());
+                    img.setRGB(x, y, pix);
+                }
+            }
+
+        } else if (data instanceof BitmapData) {
+            throw new UnsupportedOperationException("non RGBA pngs not yet supported.");
+
+        } else {
+            throw new IllegalArgumentException("Unknown png data format: " + data.getClass());
+        }
+
+        File outFile = new File(outputDir, "" + id + ".png");
+
+        ImageIO.write(img, "png", outFile);
+    }
+
     protected void saveJPEG (byte[] data, File outputDir, int id)
         throws IOException
     {
-        data = truncateHeader(data);
+        data = truncateJPEGHeader(data);
 
         File outFile = new File(outputDir, "" + id + ".jpg");
 
@@ -108,22 +159,17 @@ public class DumpSWF
         }
     }
 
-    protected byte[] truncateHeader (byte[] data)
+    protected byte[] truncateJPEGHeader (byte[] data)
     {
+        byte[] HEADER = SWFConstants.JPEG_HEADER;
         // most, but not all JPEG tags contain this header
-        if ((data.length < 4) || (data[0] != HEADER[0]) ||
+        if ((data.length < HEADER.length) || (data[0] != HEADER[0]) ||
                 (data[1] != HEADER[1]) || (data[2] != HEADER[2]) ||
                 (data[3] != HEADER[3])) {
             return data;
         }
-        byte[] truncatedData = new byte[data.length - 4];
-        System.arraycopy(data, 4, truncatedData, 0, truncatedData.length);
+        byte[] truncatedData = new byte[data.length - HEADER.length];
+        System.arraycopy(data, HEADER.length, truncatedData, 0, truncatedData.length);
         return truncatedData;
     }
-
-    /** Magic blunders. */
-    protected static final byte[] HEADER = new byte[] {
-        (byte) 0xff, (byte) 0xd9, (byte) 0xff, (byte) 0xd8
-    };
-
 }
