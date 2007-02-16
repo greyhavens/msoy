@@ -58,6 +58,7 @@
     <file name="${extlib.dir}/velocity-1.5-dev.jar"/>
     <file name="${extlib.dir}/ehcache-1.2.jar"/>
     <file name="lib/json.jar"/>
+    <file name="lib/jswiff-8.0-beta-2-threerings.jar"/>
   </filelist>
 
   <!-- declare our classpath -->
@@ -485,9 +486,6 @@
 
   <!-- build the java class files -->
   <target name="compile" depends="prepare">
-    <copy todir="${deploy.dir}/lib">
-      <fileset dir="projects/jswiff" includes="*.jar"/>
-    </copy>
     <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
            debug="on" optimize="off" deprecation="on">
       <classpath refid="classpath"/>
