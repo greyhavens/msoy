@@ -84,13 +84,26 @@ public class FileAttributes extends Tag {
     return hasMetadata;
   }
 
+  public void setHasUnknownSwf9Flag (boolean hasSwf9Flag)
+  {
+      _hasUnknownSwf9Flag = hasSwf9Flag;
+  }
+
+  public boolean hasUnknownSwf9Flag ()
+  {
+      return _hasUnknownSwf9Flag;
+  }
+
   protected void writeData(OutputBitStream outStream) throws IOException {
     int flags = 0;
     if (allowNetworkAccess) {
-      flags |= 0x01;
+      flags |= NETWORK_FLAG;
     }
     if (hasMetadata) {
-      flags |= 0x10;
+      flags |= METADATA_FLAG;
+    }
+    if (_hasUnknownSwf9Flag) {
+        flags |= UNKNOWN_SWF9_FLAG;
     }
     outStream.writeSI32(flags);
   }
@@ -98,7 +111,14 @@ public class FileAttributes extends Tag {
   void setData(byte[] data) throws IOException {
     InputBitStream inStream = new InputBitStream(data);
     int flags               = inStream.readSI32();
-    allowNetworkAccess      = ((flags & 0x01) != 0);
-    hasMetadata             = ((flags & 0x10) != 0);
+    allowNetworkAccess      = ((flags & NETWORK_FLAG) != 0);
+    hasMetadata             = ((flags & METADATA_FLAG) != 0);
+    _hasUnknownSwf9Flag     = ((flags & UNKNOWN_SWF9_FLAG) != 0);
   }
+
+    protected boolean _hasUnknownSwf9Flag;
+
+    protected static final int NETWORK_FLAG = 1 << 0;
+    protected static final int METADATA_FLAG = 1 << 4;
+    protected static final int UNKNOWN_SWF9_FLAG = 1 << 3;
 }

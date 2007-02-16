@@ -115,10 +115,13 @@ public class SWFWriter {
       FileAttributes fileAttributes = new FileAttributes();
       fileAttributes.setAllowNetworkAccess(
         document.getAccessMode() == SWFDocument.ACCESS_MODE_NETWORK);
-      TagWriter.writeTag(tagStream, fileAttributes, document.getVersion());
+      fileAttributes.setHasUnknownSwf9Flag(document.hasUnknownSwf9Flag());
       String metadata = document.getMetadata();
       if (metadata != null) {
         fileAttributes.setHasMetadata(true);
+      }
+      TagWriter.writeTag(tagStream, fileAttributes, document.getVersion());
+      if (metadata != null) {
         TagWriter.writeTag(
           tagStream, new Metadata(metadata), document.getVersion());
       }

@@ -40,13 +40,13 @@ import java.util.List;
  */
 public class SWFDocument implements Serializable {
   /** The version of the JSwiff library */
-  public static final String JSWIFF_VERSION       = "8.0-beta-2";
+  public static final String JSWIFF_VERSION       = "8.0-beta-2-threerings";
   /**
    * The default value for the compression flag. By default, compression is on
    */
   public static final boolean DEFAULT_COMPRESSION = true;
   /** The default SWF version (8) */
-  public static final short DEFAULT_SWF_VERSION   = 8;
+  public static final short DEFAULT_SWF_VERSION   = 9;
   /**
    * The default frame size (based on the authoring tool from Macromedia: 11000
    * x 8000 twips)
@@ -58,7 +58,7 @@ public class SWFDocument implements Serializable {
    */
   public static final short DEFAULT_FRAME_RATE    = 12;
   /** The latest supported SWF version (8) */
-  public static final short MAX_SWF_VERSION       = 8;
+  public static final short MAX_SWF_VERSION       = 9;
   /** Grants the SWF local file access */
   public static final byte ACCESS_MODE_LOCAL      = 0;
   /** Grants the SWF network access (local access is denied) */
@@ -97,6 +97,16 @@ public class SWFDocument implements Serializable {
    */
   public byte getAccessMode() {
     return accessMode;
+  }
+
+  public void setHasUnknownSwf9Flag (boolean hasSwf9Flag)
+  {
+      _hasUnknownSwf9Flag = hasSwf9Flag;
+  }
+
+  public boolean hasUnknownSwf9Flag ()
+  {
+      return _hasUnknownSwf9Flag;
   }
 
   /**
@@ -319,4 +329,6 @@ public class SWFDocument implements Serializable {
   public Tag removeTag(int index) {
     return (Tag) tags.remove(index);
   }
+
+  protected boolean _hasUnknownSwf9Flag;
 }

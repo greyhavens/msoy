@@ -100,6 +100,7 @@ public class SWFDocumentReader extends SWFListener {
     if (attributes.isAllowNetworkAccess()) {
       document.setAccessMode(SWFDocument.ACCESS_MODE_NETWORK);
     }
+    document.setHasUnknownSwf9Flag(attributes.hasUnknownSwf9Flag());
   }
 
   private void setMetadata(Metadata metadata) {
