@@ -69,7 +69,7 @@ public class MailApplication extends DockPanel
         // construct the side bar
         VerticalPanel sideBar = new VerticalPanel();
         sideBar.setVerticalAlignment(HasAlignment.ALIGN_TOP);
-        sideBar.setStyleName("Sidebar");
+        sideBar.setStyleName("FolderPanel");
         sideBar.setSpacing(0);
 
         // construct the side bar header
