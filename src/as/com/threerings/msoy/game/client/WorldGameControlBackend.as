@@ -23,7 +23,7 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.ezgame.client.GameControlBackend;
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
@@ -38,7 +38,7 @@ public class WorldGameControlBackend extends GameControlBackend
     implements LocationObserver, OccupantObserver
 {
     public function WorldGameControlBackend (
-        ctx :MsoyContext, worldGameObj :WorldGameObject)
+        ctx :WorldContext, worldGameObj :WorldGameObject)
     {
         super(ctx, worldGameObj);
         _mctx = ctx;
@@ -198,7 +198,7 @@ public class WorldGameControlBackend extends GameControlBackend
         callUserCode("memoryChanged_v1", entry.key, EZObjectMarshaller.decode(entry.value));
     }
     
-    protected var _mctx :MsoyContext;
+    protected var _mctx :WorldContext;
     protected var _worldGameObj :WorldGameObject;
     protected var _gameIdent :ItemIdent;
     protected var _roomObj :RoomObject;

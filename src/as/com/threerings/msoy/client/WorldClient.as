@@ -68,11 +68,9 @@ import com.threerings.msoy.swiftly.data.SwiftlyMarshaller;
 /**
  * Handles the main services for the world and game clients.
  */
-public class MsoyClient extends BaseClient
+public class WorldClient extends BaseClient
 {
-    private static const log :Log = Log.getLog(MsoyClient);
-
-    public function MsoyClient (stage :Stage)
+    public function WorldClient (stage :Stage)
     {
         super(stage);
 
@@ -117,7 +115,7 @@ public class MsoyClient extends BaseClient
     // from BaseClient
     override protected function createContext () :BaseContext
     {
-        return new MsoyContext(this);
+        return new WorldContext(this);
     }
 
     /**
@@ -131,7 +129,7 @@ public class MsoyClient extends BaseClient
 
         custom.push(MenuUtil.createControllerMenuItem(
             Msgs.GENERAL.get("b.toggle_fullscreen"), MsoyController.TOGGLE_FULLSCREEN, null, false,
-            (_ctx as MsoyContext).getMsoyController().supportsFullScreen()));
+            (_ctx as WorldContext).getMsoyController().supportsFullScreen()));
 
         try {
         // TODO: this doesn't seem to find or get triggered by

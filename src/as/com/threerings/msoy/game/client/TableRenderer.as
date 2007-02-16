@@ -17,7 +17,7 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 
 import com.threerings.msoy.item.web.MediaDesc;
@@ -27,7 +27,7 @@ import com.threerings.msoy.game.data.MsoyTable;
 public class TableRenderer extends VBox
 {
     /** The context, initialized by our ClassFactory. */
-    public var ctx :MsoyContext;
+    public var ctx :WorldContext;
 
     /** The panel we're rendering to. */
     public var panel :LobbyPanel;
@@ -189,7 +189,7 @@ import com.threerings.util.Name;
 
 import com.threerings.flex.CommandButton;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.item.web.MediaDesc;
@@ -200,7 +200,7 @@ import com.threerings.msoy.game.data.MsoyTable;
 
 class SeatRenderer extends VBox
 {
-    public function update (ctx :MsoyContext, table :MsoyTable, index :int, weAreSeated :Boolean) :void
+    public function update (ctx :WorldContext, table :MsoyTable, index :int, weAreSeated :Boolean) :void
     {
         var occupant :Name = (table.occupants[index] as Name);
         var comp :UIComponent = (numChildren > 0)

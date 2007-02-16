@@ -20,7 +20,7 @@ import com.threerings.msoy.web.data.MemberName;
 public class FriendsList extends MsoyList
     implements SetListener
 {
-    public function FriendsList (ctx :MsoyContext)
+    public function FriendsList (ctx :WorldContext)
     {
         super(ctx);
         includeInLayout = false;

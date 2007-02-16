@@ -17,7 +17,7 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.data.MemberObject;
 
@@ -35,7 +35,7 @@ public class InventoryCollectionView extends ArrayCollection
      * Construct a new InventoryCollectionView.
      */
     public function InventoryCollectionView (
-        ctx :MsoyContext, soleType :int = Item.NOT_A_TYPE,
+        ctx :WorldContext, soleType :int = Item.NOT_A_TYPE,
         showUsed :Boolean = false)
     {
         _ctx = ctx;
@@ -308,7 +308,7 @@ public class InventoryCollectionView extends ArrayCollection
     }
 
     /** The context, holy giver of life. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     /** The member object we're using as the source for our inventory. */
     protected var _memberObj :MemberObject;

@@ -45,7 +45,7 @@ import com.threerings.msoy.item.web.Avatar;
 public class PrefsDialog extends FloatingPanel
     implements AttributeChangeListener
 {
-    public function PrefsDialog (ctx :MsoyContext)
+    public function PrefsDialog (ctx :WorldContext)
     {
         super(ctx, Msgs.GENERAL.get("t.prefs"));
 

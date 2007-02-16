@@ -15,7 +15,7 @@ import com.threerings.util.CommandEvent;
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.MsoyUI;
 
@@ -26,7 +26,7 @@ import com.threerings.msoy.world.client.MsoySprite;
  */
 public class SpritePanel extends Grid
 {
-    public function init (ctx :MsoyContext, ctrl :EditorController) :void
+    public function init (ctx :WorldContext, ctrl :EditorController) :void
     {
         _ctx = ctx;
         _ctrl = ctrl;
@@ -104,7 +104,7 @@ public class SpritePanel extends Grid
             this, EditorController.SPRITE_PROPS_UPDATED, _sprite);
     }
 
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     protected var _ctrl :EditorController;
 

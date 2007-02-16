@@ -30,7 +30,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.whirled.spot.data.Location;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -49,7 +49,7 @@ public class AbstractRoomView extends Sprite
     public static const LEFT_WALL :int = 3;
     public static const RIGHT_WALL :int = 4;
 
-    public function AbstractRoomView (ctx :MsoyContext)
+    public function AbstractRoomView (ctx :WorldContext)
     {
         _ctx = ctx;
     }
@@ -716,7 +716,7 @@ public class AbstractRoomView extends Sprite
     }
 
     /** The msoy context. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     /** The model of the current scene. */
     protected var _scene :MsoyScene;

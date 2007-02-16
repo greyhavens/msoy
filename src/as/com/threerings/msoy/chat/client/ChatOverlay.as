@@ -44,7 +44,7 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.Prefs;
 
 public class ChatOverlay
@@ -52,7 +52,7 @@ public class ChatOverlay
 {
     public var log :Log = Log.getLog(this);
 
-    public function ChatOverlay (ctx :MsoyContext)
+    public function ChatOverlay (ctx :WorldContext)
     {
         _ctx = ctx;
 
@@ -1095,7 +1095,7 @@ public class ChatOverlay
     }
 
     /** The light of our life. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     /** The overlay we place on top of our target that contains
      * all the chat glyphs. */

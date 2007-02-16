@@ -69,7 +69,7 @@ import com.threerings.msoy.swiftly.data.SwiftlyMarshaller;
  */
 public /*abstract*/ class BaseClient extends Client
 {
-    private static const log :Log = Log.getLog(MsoyClient);
+    public static const log :Log = Log.getLog(BaseClient);
 
     public function BaseClient (stage :Stage)
     {

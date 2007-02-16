@@ -49,7 +49,7 @@ import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.client.ContextMenuProvider;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.ActorInfo;
 
@@ -80,7 +80,7 @@ public class RoomView extends AbstractRoomView
     /**
      * Create a roomview.
      */
-    public function RoomView (ctx :MsoyContext, ctrl :RoomController)
+    public function RoomView (ctx :WorldContext, ctrl :RoomController)
     {
         super(ctx);
         _ctrl = ctrl;

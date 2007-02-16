@@ -24,7 +24,7 @@ import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.data.SceneBookmarkEntry;
 

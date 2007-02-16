@@ -26,7 +26,7 @@ import mx.events.TreeEvent;
 import com.threerings.util.CommandEvent
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.web.Item;
 
@@ -59,7 +59,7 @@ public class InventoryPicker extends VBox
         return null;
     }
 
-    public function InventoryPicker (ctx :MsoyContext, soleType :int = Item.NOT_A_TYPE,
+    public function InventoryPicker (ctx :WorldContext, soleType :int = Item.NOT_A_TYPE,
                                      showUsed :Boolean = false)
     {
         _collection = new InventoryCollectionView(ctx, soleType, showUsed);

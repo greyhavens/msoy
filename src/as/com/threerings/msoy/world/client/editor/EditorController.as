@@ -27,7 +27,7 @@ import com.threerings.io.TypedArray;
 
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.client.InventoryPicker;
 import com.threerings.msoy.item.web.Audio;
@@ -67,7 +67,7 @@ public class EditorController extends Controller
     /** Our editor log. */
     public const log :Log = Log.getLog(this);
 
-    public function EditorController (ctx :MsoyContext, roomCtrl :RoomController,
+    public function EditorController (ctx :WorldContext, roomCtrl :RoomController,
                                       roomView :RoomView, scene :MsoyScene, items :Array)
     {
         _ctx = ctx;
@@ -858,7 +858,7 @@ try {
         return thisId;
     }
 
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
     protected var _scene :MsoyScene;
     protected var _panel :EditorPanel;
     protected var _roomCtrl :RoomController;

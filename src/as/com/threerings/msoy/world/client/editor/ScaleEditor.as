@@ -15,11 +15,11 @@ import com.threerings.util.CommandEvent;
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.MsoyUI;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.world.client.MsoySprite;
 
@@ -28,7 +28,7 @@ import com.threerings.msoy.world.client.MsoySprite;
  */
 public class ScaleEditor extends Grid
 {
-    public function ScaleEditor (ctx :MsoyContext)
+    public function ScaleEditor (ctx :WorldContext)
     {
         _ctx = ctx;
     }
@@ -148,7 +148,7 @@ public class ScaleEditor extends Grid
         _y.value = 1;
     }
 
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     protected var _sprite :MsoySprite;
 

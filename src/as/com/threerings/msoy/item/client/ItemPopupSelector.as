@@ -1,7 +1,7 @@
 package com.threerings.msoy.item.client {
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -14,7 +14,7 @@ public class ItemPopupSelector extends FloatingPanel
      * item, or null.
      */
     public function ItemPopupSelector (
-        ctx :MsoyContext, callback :Function, inv :InventoryPicker = null)
+        ctx :WorldContext, callback :Function, inv :InventoryPicker = null)
     {
         super(ctx, Msgs.ITEM.get("t.select_item"));
         _callback = callback;

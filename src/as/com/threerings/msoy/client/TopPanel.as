@@ -35,7 +35,7 @@ public class TopPanel extends Canvas
     /**
      * Construct the top panel.
      */
-    public function TopPanel (ctx :MsoyContext)
+    public function TopPanel (ctx :WorldContext)
     {
         _ctx = ctx;
         percentWidth = 100;
@@ -258,7 +258,7 @@ public class TopPanel extends Canvas
     }
         
     /** The giver of life. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     /** The current place view. */
     protected var _placeView :PlaceView;

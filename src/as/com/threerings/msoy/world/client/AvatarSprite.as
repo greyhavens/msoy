@@ -12,7 +12,7 @@ import com.threerings.crowd.chat.data.ChatMessage;
 
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.ActorInfo;
 

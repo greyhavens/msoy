@@ -19,7 +19,7 @@ import com.threerings.util.MenuUtil;
 
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 
 import com.threerings.msoy.item.web.Item;

@@ -108,7 +108,7 @@ public class MsoyController extends Controller
     /**
      * Create the msoy controller.
      */
-    public function MsoyController (ctx :MsoyContext, topPanel :TopPanel)
+    public function MsoyController (ctx :WorldContext, topPanel :TopPanel)
     {
         _ctx = ctx;
         _ctx.getClient().addClientObserver(this);
@@ -595,7 +595,7 @@ public class MsoyController extends Controller
     }
 
     /** Provides access to client-side directors and services. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     /** The topmost panel in the msoy client. */
     protected var _topPanel :TopPanel;

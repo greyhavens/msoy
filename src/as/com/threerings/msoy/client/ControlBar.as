@@ -36,7 +36,7 @@ public class ControlBar extends Canvas
     public static const HEIGHT :int = 59;
     public static const WIDTH :int = 800;
 
-    public function ControlBar (ctx :MsoyContext)
+    public function ControlBar (ctx :WorldContext)
     {
         _ctx = ctx;
 
@@ -165,7 +165,7 @@ public class ControlBar extends Canvas
     }
 
     /** Our clientside context. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;

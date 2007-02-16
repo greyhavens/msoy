@@ -9,7 +9,7 @@ import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.data.MsoySceneModel;
@@ -21,7 +21,7 @@ public class WorldDirector extends BasicDirector
 {
     public const log :Log = Log.getLog(WorldDirector);
 
-    public function WorldDirector (ctx :MsoyContext)
+    public function WorldDirector (ctx :WorldContext)
     {
         super(ctx);
         _mctx = ctx;
@@ -89,7 +89,7 @@ public class WorldDirector extends BasicDirector
         _msvc = (client.requireService(MemberService) as MemberService);
     }
 
-    protected var _mctx :MsoyContext;
+    protected var _mctx :WorldContext;
     protected var _msvc :MemberService;
 }
 }

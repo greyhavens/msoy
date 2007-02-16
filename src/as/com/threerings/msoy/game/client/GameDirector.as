@@ -16,7 +16,7 @@ import com.threerings.parlor.client.InvitationResponseObserver;
 
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -38,7 +38,7 @@ public class GameDirector extends BasicDirector
 {
     public static const log :Log = Log.getLog(GameDirector);
 
-    public function GameDirector (ctx :MsoyContext)
+    public function GameDirector (ctx :WorldContext)
     {
         super(ctx);
         _mctx = ctx;
@@ -180,7 +180,7 @@ public class GameDirector extends BasicDirector
     }
 
     /** A casted ref to the msoy context. */
-    protected var _mctx :MsoyContext;
+    protected var _mctx :WorldContext;
 
     /** The invitation we're currently processing. */
     protected var _invitation :Invitation;

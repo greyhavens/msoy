@@ -30,7 +30,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberInfo;
@@ -43,7 +43,7 @@ import com.threerings.msoy.web.data.MemberName;
  */
 public class ChatControl extends HBox
 {
-    public function ChatControl (ctx :MsoyContext)
+    public function ChatControl (ctx :WorldContext)
     {
         _ctx = ctx;
 
@@ -358,7 +358,7 @@ public class ChatControl extends HBox
     }
 
     /** Our client-side context. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     /** Our location observer. */
     protected var _locObs :LocationAdapter;

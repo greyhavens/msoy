@@ -7,7 +7,7 @@ import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationAdapter;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.data.MemberObject;
 
@@ -15,7 +15,7 @@ import com.threerings.msoy.item.web.Item;
 
 public class ItemDirector extends BasicDirector
 {
-    public function ItemDirector (ctx :MsoyContext)
+    public function ItemDirector (ctx :WorldContext)
     {
         super(ctx);
         _mctx = ctx;
@@ -66,7 +66,7 @@ public class ItemDirector extends BasicDirector
     }
 
     /** Our context, casted. */
-    protected var _mctx :MsoyContext;
+    protected var _mctx :WorldContext;
 
     /** An associative hash containing the item types that are currently
      * being loaded. */

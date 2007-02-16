@@ -305,7 +305,7 @@
       <arg value="-output"/>
       <arg value="${deploy.dir}/world-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="src/as/Msoy.mxml"/>
+      <arg value="src/as/World.mxml"/>
     </exec>
     <copy file="${deploy.dir}/world-client.swf" todir="pages/clients"/>
   </target>
@@ -325,7 +325,7 @@
       <arg value="-output"/>
       <arg value="${deploy.dir}/world-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="src/as/Msoy.mxml"/>
+      <arg value="src/as/World.mxml"/>
     </exec>
     <copy file="${deploy.dir}/world-client.swf" todir="pages/clients"/>
   </target>
@@ -563,7 +563,7 @@
 
   <!-- cleans out the compiled ActionScript code and caches -->
   <target name="asclean">
-    <delete><fileset dir="src/as" includes="Msoy_*.cache"/></delete>
+    <delete><fileset dir="src/as" includes="*.cache"/></delete>
     <delete file="src/as/com/threerings/msoy/client/DeploymentConfig.as"/>
   </target>
 

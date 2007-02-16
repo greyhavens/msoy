@@ -16,7 +16,7 @@ import com.threerings.parlor.data.TableConfig;
 
 import com.threerings.parlor.game.data.GameConfig;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.web.Game;
 
@@ -45,7 +45,7 @@ public class LobbyController extends PlaceController
 
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
-        _mctx = (ctx as MsoyContext);
+        _mctx = (ctx as WorldContext);
         game = (config as LobbyConfig).game;
         super.init(ctx, config);
     }
@@ -112,7 +112,7 @@ public class LobbyController extends PlaceController
     }
     
     /** The provider of free cheese. */
-    protected var _mctx :MsoyContext;
+    protected var _mctx :WorldContext;
 
     /** The panel we're controlling. */
     protected var _panel :LobbyPanel;

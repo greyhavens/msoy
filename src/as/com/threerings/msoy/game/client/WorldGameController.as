@@ -16,7 +16,7 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.ezgame.client.EZGameController;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 
 public class WorldGameController extends EZGameController
@@ -24,7 +24,7 @@ public class WorldGameController extends EZGameController
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
         super.init(ctx, config);
-        _mctx = (ctx as MsoyContext);
+        _mctx = (ctx as WorldContext);
     }
     
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
@@ -52,7 +52,7 @@ public class WorldGameController extends EZGameController
         _mctx.getTopPanel().clearBottomPanel(_vcont);
     }
     
-    protected var _mctx :MsoyContext;
+    protected var _mctx :WorldContext;
     protected var _vcont :HBox;
 }
 }
@@ -60,7 +60,7 @@ public class WorldGameController extends EZGameController
 import com.threerings.crowd.util.CrowdContext;
 import com.threerings.ezgame.client.EZGamePanel;
 import com.threerings.ezgame.client.GameControlBackend;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.game.client.WorldGameControlBackend;
 import com.threerings.msoy.game.client.WorldGameController;
 import com.threerings.msoy.game.data.WorldGameObject;
@@ -74,6 +74,6 @@ class WorldGamePanel extends EZGamePanel
     
     override protected function createBackend () :GameControlBackend
     {
-        return new WorldGameControlBackend(_ctx as MsoyContext, _ezObj as WorldGameObject);
+        return new WorldGameControlBackend(_ctx as WorldContext, _ezObj as WorldGameObject);
     }
 }

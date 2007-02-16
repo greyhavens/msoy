@@ -13,7 +13,7 @@ import com.threerings.parlor.game.client.GameConfigurator;
 import com.threerings.parlor.game.client.FlexGameConfigurator;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -24,7 +24,7 @@ import com.threerings.msoy.game.data.FlashGameConfig;
 public class TableCreationPanel extends FloatingPanel
 {
     public function TableCreationPanel (
-        ctx :MsoyContext, game :Game, panel :LobbyPanel)
+        ctx :WorldContext, game :Game, panel :LobbyPanel)
     {
         super(ctx, Msgs.GAME.get("t.create", game.name));
         _game = game;

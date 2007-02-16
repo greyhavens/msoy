@@ -8,7 +8,7 @@ import mx.controls.Button;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.MessageBundle;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.web.data.MemberName;
 
@@ -19,7 +19,7 @@ public class FriendApprovalPanel extends FloatingPanel
 {
     public static const DENY_BUTTON :int = -1;
 
-    public function FriendApprovalPanel (ctx :MsoyContext, asker :MemberName)
+    public function FriendApprovalPanel (ctx :WorldContext, asker :MemberName)
     {
         super(ctx, Msgs.GENERAL.get("t.approve_friend"));
         _asker = asker;

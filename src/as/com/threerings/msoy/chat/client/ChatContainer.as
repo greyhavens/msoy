@@ -4,14 +4,14 @@ import flash.display.DisplayObjectContainer;
 
 import mx.core.Container;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 /**
  * A very simple container that merely hosts the chat overlay.
  */
 public class ChatContainer extends Container
 {
-    public function ChatContainer (ctx :MsoyContext)
+    public function ChatContainer (ctx :WorldContext)
     {
         _overlay = new ChatOverlay(ctx);
         _overlay.setClickableGlyphs(true);

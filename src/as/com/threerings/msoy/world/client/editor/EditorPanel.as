@@ -25,7 +25,7 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyUI;
@@ -58,7 +58,7 @@ public class EditorPanel extends VBox
     public var addButton :CommandButton;
 
     public function EditorPanel (
-        ctx :MsoyContext, ctrl :EditorController, roomView :RoomView,
+        ctx :WorldContext, ctrl :EditorController, roomView :RoomView,
         editableScene :MsoyScene, items :Array)
     {
         _ctx = ctx;
@@ -410,7 +410,7 @@ public class EditorPanel extends VBox
         return null;
     }
 
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     protected var _ctrl :EditorController;
 

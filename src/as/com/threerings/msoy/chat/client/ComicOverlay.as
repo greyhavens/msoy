@@ -15,7 +15,7 @@ import com.threerings.util.ColorUtil;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
@@ -29,7 +29,7 @@ public class ComicOverlay extends ChatOverlay
     /**
      * Construct a comic chat overlay.
      */
-    public function ComicOverlay (ctx :MsoyContext)
+    public function ComicOverlay (ctx :WorldContext)
     {
         super(ctx);
     }

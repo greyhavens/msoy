@@ -25,7 +25,7 @@ import com.threerings.parlor.client.TableObserver;
 import com.threerings.parlor.data.Table;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.chat.client.ChatContainer;
 
@@ -51,7 +51,7 @@ public class LobbyPanel extends VBox
     /**
      * Create a new LobbyPanel.
      */
-    public function LobbyPanel (ctx :MsoyContext, ctrl :LobbyController)
+    public function LobbyPanel (ctx :WorldContext, ctrl :LobbyController)
     {
         _ctx = ctx;
         controller = ctrl;
@@ -157,7 +157,7 @@ public class LobbyPanel extends VBox
     }
 
     /** Buy one get one free. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     /** Are we seated? */
     protected var _isSeated :Boolean;

@@ -36,7 +36,7 @@ import com.threerings.ezgame.util.EZObjectMarshaller;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
@@ -129,7 +129,7 @@ public class RoomController extends SceneController
     {
         super.init(ctx, config);
 
-        _mctx = (ctx as MsoyContext);
+        _mctx = (ctx as WorldContext);
 
         // initialize the instanceId for all sprites
         MsoySprite.instanceId = _mctx.getClientObject().getOid();
@@ -138,7 +138,7 @@ public class RoomController extends SceneController
     // documentation inherited
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        _roomView = new RoomView(ctx as MsoyContext, this);
+        _roomView = new RoomView(ctx as WorldContext, this);
         return _roomView;
     }
 
@@ -552,7 +552,7 @@ public class RoomController extends SceneController
     }
 
     /** The life-force of the client. */
-    protected var _mctx :MsoyContext;
+    protected var _mctx :WorldContext;
 
     /** The room view that we're controlling. */
     protected var _roomView :RoomView;

@@ -16,7 +16,7 @@ import com.threerings.flex.ChatDisplayBox;
 public class NoPlaceView extends HBox
     implements PlaceView
 {
-    public function NoPlaceView (ctx :MsoyContext)
+    public function NoPlaceView (ctx :WorldContext)
     {
         _ctx = ctx;
     }
@@ -44,6 +44,6 @@ public class NoPlaceView extends HBox
     }
 
     /** The giver of life, the saver of worlds. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 }
 }

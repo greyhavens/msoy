@@ -25,13 +25,13 @@ import com.threerings.flex.CommandButton;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MemberObject;
 
 public class LogonPanel extends HBox
 {
-    public function LogonPanel (ctx :MsoyContext)
+    public function LogonPanel (ctx :WorldContext)
     {
         _ctx = ctx;
         _clientObs = new ClientAdapter(
@@ -141,7 +141,7 @@ public class LogonPanel extends HBox
     }
 
     /** The giver of life. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     protected var _email :TextInput;
     protected var _password :TextInput;

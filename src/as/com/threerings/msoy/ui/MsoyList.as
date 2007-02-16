@@ -6,11 +6,11 @@ import mx.controls.List;
 
 import mx.events.ListEvent;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 public class MsoyList extends List
 {
-    public function MsoyList (ctx :MsoyContext)
+    public function MsoyList (ctx :WorldContext)
     {
         super();
         _ctx = ctx;
@@ -60,6 +60,6 @@ public class MsoyList extends List
     }
 
     /** The giver of life. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 }
 }

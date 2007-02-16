@@ -18,7 +18,7 @@ import com.threerings.util.CommandEvent;
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 public class FloatingPanel extends TitleWindow
 {
@@ -35,7 +35,7 @@ public class FloatingPanel extends TitleWindow
     /**
      * Create a Floating Panel.
      */
-    public function FloatingPanel (ctx :MsoyContext, title :String)
+    public function FloatingPanel (ctx :WorldContext, title :String)
     {
         _ctx = ctx;
         this.title = title;
@@ -196,7 +196,7 @@ public class FloatingPanel extends TitleWindow
     }
 
     /** Provides client services. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     /** An associative hash mapping buttonId to Button. */
     protected var _buttons :Object = new Object();

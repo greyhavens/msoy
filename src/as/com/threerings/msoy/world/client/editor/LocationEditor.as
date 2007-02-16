@@ -11,13 +11,13 @@ import mx.core.ScrollPolicy;
 
 import com.threerings.util.CommandEvent;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.world.client.MsoySprite;
 
 public class LocationEditor extends Canvas
 {
-    public function LocationEditor (ctx :MsoyContext)
+    public function LocationEditor (ctx :WorldContext)
     {
         _ctx = ctx;
 
@@ -107,7 +107,7 @@ public class LocationEditor extends Canvas
     }
 
     /** The giver of life. */
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     /** The sprite we're editing. */
     protected var _sprite :MsoySprite;

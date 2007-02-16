@@ -10,7 +10,7 @@ import com.threerings.msoy.data.SceneBookmarkEntry;
 
 public class SceneBookmarkList extends MsoyList
 {
-    public function SceneBookmarkList (ctx :MsoyContext)
+    public function SceneBookmarkList (ctx :WorldContext)
     {
         super(ctx);
         includeInLayout = false;

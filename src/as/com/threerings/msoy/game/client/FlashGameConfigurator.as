@@ -6,7 +6,7 @@ import mx.controls.Label;
 import com.threerings.parlor.game.client.FlexGameConfigurator;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.item.web.MediaDesc;
 
 import com.threerings.msoy.game.data.FlashGameConfig;
@@ -15,7 +15,7 @@ public class FlashGameConfigurator extends FlexGameConfigurator
 {
     override protected function createConfigInterface () :void
     {
-        var ctx :MsoyContext = (_ctx as MsoyContext);
+        var ctx :WorldContext = (_ctx as WorldContext);
 
         // TODO: This will get and populate game types?
         _game = new ComboBox();

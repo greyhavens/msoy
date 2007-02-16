@@ -9,7 +9,7 @@ import mx.containers.VBox;
 import mx.controls.Button;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.item.client.ItemPopupSelector;
 import com.threerings.msoy.item.client.ItemRenderer;
@@ -22,7 +22,7 @@ public class SingleItemSelector extends VBox
     public var selectionChanged :Function;
 
     public function SingleItemSelector (
-        ctx :MsoyContext, soleType :int = Item.NOT_A_TYPE)
+        ctx :WorldContext, soleType :int = Item.NOT_A_TYPE)
     {
         super();
 
@@ -79,7 +79,7 @@ public class SingleItemSelector extends VBox
         }
     }
 
-    protected var _ctx :MsoyContext;
+    protected var _ctx :WorldContext;
 
     protected var _itemHolder :ItemRenderer;
 

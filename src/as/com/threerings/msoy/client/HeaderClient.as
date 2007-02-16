@@ -10,7 +10,7 @@ import flash.display.Stage;
  */
 public class HeaderClient extends BaseClient
 {
-    private static const log :Log = Log.getLog(HeaderClient);
+    public static const log :Log = Log.getLog(HeaderClient);
 
     public function HeaderClient (stage :Stage)
     {

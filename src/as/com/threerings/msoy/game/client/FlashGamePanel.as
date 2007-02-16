@@ -7,14 +7,14 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.ezgame.client.EZGamePanel;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 
 
 public class FlashGamePanel extends EZGamePanel
 {
-    public function FlashGamePanel (ctx :MsoyContext, ctrl :FlashGameController)
+    public function FlashGamePanel (ctx :WorldContext, ctrl :FlashGameController)
     {
         super(ctx, ctrl);
 

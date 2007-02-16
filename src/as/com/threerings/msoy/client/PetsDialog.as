@@ -19,14 +19,14 @@ import com.threerings.msoy.world.client.RoomView;
 
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 /**
  * Displays a list of the player's pets and allows them to be "called" into the current room.
  */
 public class PetsDialog extends FloatingPanel
 {
-    public function PetsDialog (ctx :MsoyContext)
+    public function PetsDialog (ctx :WorldContext)
     {
         super(ctx, Msgs.GENERAL.get("t.pets"));
 

@@ -32,10 +32,10 @@ import com.threerings.msoy.world.client.WorldDirector;
  * Defines services for the main virtual world and game clients. TODO: make WorldContext and
  * GameContext?
  */
-public class MsoyContext extends BaseContext
+public class WorldContext extends BaseContext
     implements WhirledContext, ParlorContext
 {
-    public function MsoyContext (client :Client)
+    public function WorldContext (client :Client)
     {
         super(client);
 

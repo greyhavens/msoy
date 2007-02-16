@@ -3,11 +3,11 @@
     layout="absolute" styleName="plain"
     verticalScrollPolicy="off" horizontalScrollPolicy="off"
     width="100%" height="100%"
-    applicationComplete="new MsoyClient(stage);">
+    applicationComplete="new WorldClient(stage);">
 <mx:Style source="msoy.css"/>
 <mx:Script>
     <![CDATA[
-        import com.threerings.msoy.client.MsoyClient;
+        import com.threerings.msoy.client.WorldClient;
     ]]>
 </mx:Script>
 </mx:Application>

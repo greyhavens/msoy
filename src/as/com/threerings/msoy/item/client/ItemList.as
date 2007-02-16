@@ -7,7 +7,7 @@ import mx.collections.Sort;
 
 import com.threerings.presents.client.ResultWrapper;
 
-import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.WorldContext;
 
 import com.threerings.msoy.ui.MsoyList;
 
@@ -19,7 +19,7 @@ import com.threerings.msoy.item.web.Item;
 public class ItemList extends MsoyList
 {
     public function ItemList (
-        ctx :MsoyContext, rendererClass :Class = null)
+        ctx :WorldContext, rendererClass :Class = null)
     {
         super(ctx);
 
