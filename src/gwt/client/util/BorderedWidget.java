@@ -36,6 +36,44 @@ public class BorderedWidget extends FlexTable
         DOM.setAttribute(getElement(), "cellSpacing", "0");
         DOM.setAttribute(getElement(), "cellPadding", "0");
 
+        setBorderStates(left, right, up, down);
+    }
+    
+    public void setBorderStates (BorderState left, BorderState right,
+                                 BorderState up, BorderState down)
+    {
+        _left = left;
+        _right = right;
+        _up = up;
+        _down = down;
+
+        layout();
+    }
+    
+    public void setLeftBorderState (BorderState state)
+    {
+        _left = state;
+        layout();
+    }
+
+    public void setRightBorderState (BorderState state)
+    {
+        _right = state;
+        layout();
+    }
+    public void setUpperBorderState (BorderState state)
+    {
+        _up = state;
+        layout();
+    }
+    public void setLowerBorderState (BorderState state)
+    {
+        _down = state;
+        layout();
+    }
+
+    protected void layout ()
+    {
         FlexCellFormatter formatter = getFlexCellFormatter();
 
         byte nw = 0, w = 0, sw = 0;
@@ -72,26 +110,26 @@ public class BorderedWidget extends FlexTable
          * i.e. every permutation except the trivial P0, P1, P2, P4 and P8.
          */
 
-        if (left == BORDER_CLOSED) {
+        if (_left == BORDER_CLOSED) {
             nw |= DOWN | RIGHT; w |= UP | DOWN; sw |= UP | RIGHT;
-        } else if (left == BORDER_TILED) {
+        } else if (_left == BORDER_TILED) {
             nw |= LEFT | RIGHT | DOWN; w |= UP | DOWN; sw |= LEFT | RIGHT | UP;
         } else {
             nw |= LEFT; sw |= LEFT;
         }
-        if (up == BORDER_CLOSED) {
+        if (_up == BORDER_CLOSED) {
             nw |= RIGHT | DOWN; n |= LEFT | RIGHT; ne |= LEFT | DOWN;
-        } else if (up == BORDER_TILED) {
+        } else if (_up == BORDER_TILED) {
             nw |= UP | DOWN | RIGHT; n |= LEFT | RIGHT; ne |= UP | DOWN | LEFT;
         } else {
             nw |= UP | DOWN; ne |= UP | DOWN;
         }
-        if (right == BORDER_CLOSED) {
+        if (_right == BORDER_CLOSED) {
             ne |= DOWN | LEFT; e |= UP | DOWN; se |= UP | LEFT;
         } else {
             ne |= LEFT | RIGHT; se |= LEFT | RIGHT;
         }
-        if (down == BORDER_CLOSED) {
+        if (_down == BORDER_CLOSED) {
             sw |= RIGHT | UP; s |= LEFT | RIGHT; se |= LEFT | UP; 
         } else {
             sw |= UP | DOWN; se |= UP | DOWN;
@@ -131,6 +169,8 @@ public class BorderedWidget extends FlexTable
     protected static class BorderState
     {
     }
+    
+    protected BorderState _left, _right, _up, _down;
 
     protected static byte LEFT = 1;
     protected static byte RIGHT = 2;
