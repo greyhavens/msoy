@@ -14,10 +14,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
-import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -58,191 +55,9 @@ public class MailApplication extends DockPanel
     public MailApplication ()
     {
         super();
-        setStyleName("App");
-        setSpacing(0);
-
-        // construct the folder/header bit
-        HorizontalPanel mainContent = new HorizontalPanel();
-        mainContent.setStyleName("Top");
-
-        // construct the side bar
-        VerticalPanel sideBar = new VerticalPanel();
-        sideBar.setVerticalAlignment(HasAlignment.ALIGN_TOP);
-        sideBar.setStyleName("FolderPanel");
-        sideBar.setSpacing(0);
-
-        // construct the side bar header
-        HorizontalPanel sidebarHeader = new HorizontalPanel();
-        sidebarHeader.setStyleName("Header");
-        sidebarHeader.setSpacing(5);
-        Label icon = new Label();
-        icon.setStyleName("Left");
-        sidebarHeader.add(icon);
-        Label mail = new Label(CMail.msgs.appMail());
-        mail.setStyleName("Right");
-        sidebarHeader.add(mail);
-        sideBar.add(sidebarHeader);
-
-        // and add a list of folders
-        _folderContainer = new SimplePanel();
-        _folderContainer.setStyleName("Folders");
-        sideBar.add(_folderContainer);
-        sideBar.setCellHeight(_folderContainer, "100%");
-
-        BorderedWidget sidebarHolder =
-            new BorderedWidget(BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_TILED,
-                               BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_CLOSED);
-        sidebarHolder.setVerticalAlignment(HasAlignment.ALIGN_TOP);
-        sidebarHolder.getCellFormatter().setHeight(1, 1, "100%");
-        sidebarHolder.setHeight("100%");
-        sidebarHolder.setWidget(sideBar);
-        mainContent.add(sidebarHolder);
-        mainContent.setCellHeight(sidebarHolder, "100%");
-
-        Button button;
-
-        // the top right side is a list of message headers
-        VerticalPanel headerPanel = new VerticalPanel();
-        headerPanel.setStyleName("HeaderPanel");
-        // construct the header panel's controls
-        FlowPanel headerBar = new FlowPanel();
-        headerBar.setStyleName("Bar");
-
-        HorizontalPanel headerControls = new HorizontalPanel();
-        headerControls.setStyleName("Controls");
-        button = new Button(CMail.msgs.appBtnSearch());
-        headerControls.add(button);
-
-        button = new Button(CMail.msgs.appBtnToggle());
-        button.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                Iterator i = _checkboxes.iterator();
-                while (i.hasNext()) {
-                    MailCheckBox box = (MailCheckBox) i.next();
-                    if (box.isChecked()) {
-                        box.setChecked(false);
-                        _checkedMessages.remove(box.headers);
-                    } else {
-                        box.setChecked(true);
-                        _checkedMessages.add(box.headers);
-                    }
-                }
-                _massDelete.setEnabled(_checkedMessages.size() > 0);
-            }
-        });
-        headerControls.add(button);
-
-        _massDelete = new Button(CMail.msgs.appBtnDeleteSel());
-        _massDelete.setEnabled(false);
-        _massDelete.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                deleteMessages(_checkedMessages.toArray());
-                _massDelete.setEnabled(false);
-            }
-        });
-        headerControls.add(_massDelete);
-        
-        headerBar.add(headerControls);
-
-        _headerPager = new HorizontalPanel();
-        _headerPager.setStyleName("Pager");
-        _headerPager.setVisible(false);
-        _pagerPages = new FlowPanel();
-        _headerPager.add(_pagerPages);
-        _pagerPrevious = new Button(CMail.msgs.appBtnPrevious());
-        _pagerPrevious.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                _currentOffset -= HEADER_ROWS;
-                refreshHeaderPanel();
-                updateHistory();
-            }
-        });
-        _headerPager.add(_pagerPrevious);
-
-        _pagerNext = new Button(CMail.msgs.appBtnNext());
-        _pagerNext.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                _currentOffset += HEADER_ROWS;
-                refreshHeaderPanel();
-                updateHistory();
-            }
-        });
-        _headerPager.add(_pagerNext);;
-        headerBar.add(_headerPager);
-
-        headerPanel.add(headerBar);
-        
-        // construct the header panel's actual header container
-        _headerContainer = new SimplePanel();
-        headerPanel.add(_headerContainer);
-        headerPanel.setCellHeight(_headerContainer, "100%");
-        headerPanel.setCellWidth(_headerContainer, "100%");
-        BorderedWidget headerHolder =
-            new BorderedWidget(BorderedWidget.BORDER_TILED, BorderedWidget.BORDER_CLOSED,
-                               BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_CLOSED);
-        headerHolder.setWidth("100%");
-        headerHolder.setHeight("100%");
-        headerHolder.setWidget(headerPanel);
-        mainContent.add(headerHolder);
-        mainContent.setCellWidth(headerHolder, "100%");
-        mainContent.setCellHeight(headerHolder, "100%");
-
-        add(mainContent, DockPanel.NORTH);
-
-        // the bottom right side shows an individual message
-        _messageContainer = new VerticalPanel();
-        _messageContainer.setStyleName("MessagePanel");
-        FlowPanel messageBar = new FlowPanel();
-        messageBar.setStyleName("Bar");
-        Label star = new Label();
-        star.setStyleName("Star");
-        messageBar.add(star);
-
-        HorizontalPanel messageControls = new HorizontalPanel();
-        messageControls.setStyleName("Controls");
-
-        // reply functionality, which kicks off the composer
-        Button replyButton = new Button(CMail.msgs.appBtnReply());
-        replyButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                String subject = _message.headers.subject;
-                if (subject.length() < 3 || !subject.substring(0, 3).equalsIgnoreCase("re:")) {
-                    subject = "re: " + subject;
-                }
-                MailComposition composition =
-                    new MailComposition(_message.headers.sender, subject, null, "");
-                composition.addPopupListener(MailApplication.this);
-                composition.show();
-            }
-        });
-        messageControls.add(replyButton);
-
-        // a button to delete a single message
-        final Button deleteButton = new Button(CMail.msgs.appBtnDelete());
-        deleteButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                deleteButton.setEnabled(false);
-                deleteMessages(new MailHeaders[] { _message.headers });
-            }
-        });
-        messageControls.add(deleteButton);
-        messageBar.add(messageControls);
-        _messageContainer.add(messageBar);
-        _messageHolder = new SimplePanel();
-        _messageContainer.add(_messageHolder);
-        _messageContainer.setCellWidth(_messageHolder, "100%");
-
-        add(_messageContainer, DockPanel.CENTER);
-        setCellWidth(_messageContainer, "100%");
-
-        // and below it all, we display any errors
-        _errorContainer = new VerticalPanel();
-        _errorContainer.setStyleName("groupDetailErrors");
-        add(_errorContainer, DockPanel.SOUTH);
-        
-        loadFolders();
+        buildUI();
     }
-
+    
     /**
      * When a composition popup closes, we need to refresh the folder/header displays.
      */ 
@@ -297,6 +112,217 @@ public class MailApplication extends DockPanel
             _headerContainer.clear();
         }
     }
+
+    // the UI is a horizontal top row and underneath it, the message display
+    protected void buildUI ()
+    {
+        setStyleName("App");
+        setSpacing(0);
+
+        add(buildTopContent(), DockPanel.NORTH);
+        Widget messagePanel = buildMessagePanel();
+        add(messagePanel, DockPanel.CENTER);
+        setCellWidth(messagePanel, "100%");
+
+        // and below it all, we display any errors
+        _errorContainer = new VerticalPanel();
+        _errorContainer.setStyleName("groupDetailErrors");
+        add(_errorContainer, DockPanel.SOUTH);
+        
+        loadFolders();
+    }
+
+    // the top row has a folder sidebar to the left and message headers to the right
+    protected Widget buildTopContent ()
+    {
+        HorizontalPanel topContent = new HorizontalPanel();
+        topContent.setStyleName("Top");
+
+        Widget sidebarHolder = buildFolderPanel();
+        topContent.add(sidebarHolder);
+        topContent.setCellHeight(sidebarHolder, "100%");
+
+        BorderedWidget headerHolder = buildHeaderPanel();
+        topContent.add(headerHolder);
+        topContent.setCellWidth(headerHolder, "100%");
+        topContent.setCellHeight(headerHolder, "100%");
+
+        return topContent;
+    }
+
+    // the folderpanel side bar is just a pretty top bar and a list of folders
+    // TODO: display folders in sane human order
+    protected BorderedWidget buildFolderPanel ()
+    {
+        // construct the side bar
+        VerticalPanel sideBar = new VerticalPanel();
+        sideBar.setVerticalAlignment(HasAlignment.ALIGN_TOP);
+        sideBar.setStyleName("FolderPanel");
+        sideBar.setSpacing(0);
+
+        // construct the side bar header
+        HorizontalPanel sidebarHeader = new HorizontalPanel();
+        sidebarHeader.setStyleName("Header");
+        sidebarHeader.setSpacing(5);
+        Label icon = new Label();
+        icon.setStyleName("Left");
+        sidebarHeader.add(icon);
+        Label mail = new Label(CMail.msgs.appMail());
+        mail.setStyleName("Right");
+        sidebarHeader.add(mail);
+        sideBar.add(sidebarHeader);
+
+        // and add a list of folders
+        _folderContainer = new SimplePanel();
+        _folderContainer.setStyleName("Folders");
+        sideBar.add(_folderContainer);
+        sideBar.setCellHeight(_folderContainer, "100%");
+
+        BorderedWidget sidebarHolder =
+            new BorderedWidget(BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_TILED,
+                               BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_CLOSED);
+        sidebarHolder.setVerticalAlignment(HasAlignment.ALIGN_TOP);
+        sidebarHolder.getCellFormatter().setHeight(1, 1, "100%");
+        sidebarHolder.setHeight("100%");
+        sidebarHolder.setWidget(sideBar);
+        return sidebarHolder;
+    }
+
+    // the top right side is a list of message headers
+    protected BorderedWidget buildHeaderPanel ()
+    {
+        VerticalPanel headerPanel = new VerticalPanel();
+        headerPanel.setStyleName("HeaderPanel");
+        // construct the header panel's controls
+        FlowPanel headerBar = new FlowPanel();
+        headerBar.setStyleName("Bar");
+
+        HorizontalPanel headerControls = new HorizontalPanel();
+        headerControls.setStyleName("Controls");
+        Button searchButton = new Button(CMail.msgs.appBtnSearch());
+        headerControls.add(searchButton);
+
+        Button toggleButton = new Button(CMail.msgs.appBtnToggle());
+        toggleButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                Iterator i = _checkboxes.iterator();
+                while (i.hasNext()) {
+                    MailCheckBox box = (MailCheckBox) i.next();
+                    if (box.isChecked()) {
+                        box.setChecked(false);
+                        _checkedMessages.remove(box.headers);
+                    } else {
+                        box.setChecked(true);
+                        _checkedMessages.add(box.headers);
+                    }
+                }
+                _massDelete.setEnabled(_checkedMessages.size() > 0);
+            }
+        });
+        headerControls.add(toggleButton);
+
+        _massDelete = new Button(CMail.msgs.appBtnDeleteSel());
+        _massDelete.setEnabled(false);
+        _massDelete.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                deleteMessages(_checkedMessages.toArray());
+                _massDelete.setEnabled(false);
+            }
+        });
+        headerControls.add(_massDelete);
+        
+        headerBar.add(headerControls);
+
+        _headerPager = new HorizontalPanel();
+        _headerPager.setStyleName("Pager");
+        _headerPager.setVisible(false);
+        _pagerPages = new FlowPanel();
+        _headerPager.add(_pagerPages);
+        _pagerPrevious = new Button(CMail.msgs.appBtnPrevious());
+        _pagerPrevious.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                _currentOffset -= HEADER_ROWS;
+                refreshHeaderPanel();
+                updateHistory();
+            }
+        });
+        _headerPager.add(_pagerPrevious);
+
+        _pagerNext = new Button(CMail.msgs.appBtnNext());
+        _pagerNext.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                _currentOffset += HEADER_ROWS;
+                refreshHeaderPanel();
+                updateHistory();
+            }
+        });
+        _headerPager.add(_pagerNext);;
+        headerBar.add(_headerPager);
+
+        headerPanel.add(headerBar);
+        
+        // construct the header panel's actual header container
+        _headerContainer = new SimplePanel();
+        headerPanel.add(_headerContainer);
+        headerPanel.setCellHeight(_headerContainer, "100%");
+        headerPanel.setCellWidth(_headerContainer, "100%");
+        BorderedWidget headerHolder =
+            new BorderedWidget(BorderedWidget.BORDER_TILED, BorderedWidget.BORDER_CLOSED,
+                               BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_CLOSED);
+        headerHolder.setWidth("100%");
+        headerHolder.setHeight("100%");
+        headerHolder.setWidget(headerPanel);
+        return headerHolder;
+    }
+
+    // the main message is displayed at the bottom, with a pretty control bar at the top
+    protected Widget buildMessagePanel ()
+    {
+        // the bottom right side shows an individual message
+        _messageContainer = new VerticalPanel();
+        _messageContainer.setStyleName("MessagePanel");
+        FlowPanel messageBar = new FlowPanel();
+        messageBar.setStyleName("Bar");
+        Label star = new Label();
+        star.setStyleName("Star");
+        messageBar.add(star);
+
+        HorizontalPanel messageControls = new HorizontalPanel();
+        messageControls.setStyleName("Controls");
+
+        // reply functionality, which kicks off the composer
+        Button replyButton = new Button(CMail.msgs.appBtnReply());
+        replyButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                String subject = _message.headers.subject;
+                if (subject.length() < 3 || !subject.substring(0, 3).equalsIgnoreCase("re:")) {
+                    subject = "re: " + subject;
+                }
+                MailComposition composition =
+                    new MailComposition(_message.headers.sender, subject, null, "");
+                composition.addPopupListener(MailApplication.this);
+                composition.show();
+            }
+        });
+        messageControls.add(replyButton);
+
+        // a button to delete a single message
+        final Button deleteButton = new Button(CMail.msgs.appBtnDelete());
+        deleteButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                deleteButton.setEnabled(false);
+                deleteMessages(new MailHeaders[] { _message.headers });
+            }
+        });
+        messageControls.add(deleteButton);
+        messageBar.add(messageControls);
+        _messageContainer.add(messageBar);
+        _messageHolder = new SimplePanel();
+        _messageContainer.add(_messageHolder);
+        _messageContainer.setCellWidth(_messageHolder, "100%");
+        return _messageContainer;
+    }
+
 
     // fetch the folder list from the backend and trigger a display
     protected void loadFolders ()
