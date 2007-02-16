@@ -6,6 +6,7 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
+import flash.geom.Rectangle;
 import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 import flash.utils.ByteArray;
@@ -353,15 +354,17 @@ public class RoomController extends SceneController
         var sy :Number = _roomView.stage.mouseY;
         var showWalkTarget :Boolean = false;
 
-        var hitter :MsoySprite = getHitSprite(sx, sy);
-        if (hitter == null) {
-            var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
-            if (cloc.click == ClickLocation.FLOOR) {
-                _walkTarget.x = _roomView.mouseX - _walkTarget.width/2;
-                _walkTarget.y = _roomView.mouseY - _walkTarget.height/2;
-                _walkTarget.scaleX = 1 / _roomView.scaleX;
-                _walkTarget.scaleY = 1 / _roomView.scaleY;
-                showWalkTarget = true;
+        if (_roomView.getGlobalBounds().contains(sx, sy)) {
+            var hitter :MsoySprite = getHitSprite(sx, sy);
+            if (hitter == null) {
+                var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
+                if (cloc.click == ClickLocation.FLOOR) {
+                    _walkTarget.x = _roomView.mouseX - _walkTarget.width/2;
+                    _walkTarget.y = _roomView.mouseY - _walkTarget.height/2;
+                    _walkTarget.scaleX = 1 / _roomView.scaleX;
+                    _walkTarget.scaleY = 1 / _roomView.scaleY;
+                    showWalkTarget = true;
+                }
             }
         }
 
