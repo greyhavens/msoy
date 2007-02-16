@@ -105,6 +105,8 @@ public class UndumpSWF
                 switch (tag.getCode()) {
                 case TagConstants.DEFINE_BITS_JPEG_2:
                 case TagConstants.DEFINE_BITS_JPEG_3:
+                case TagConstants.DEFINE_BITS_LOSSLESS:
+                case TagConstants.DEFINE_BITS_LOSSLESS_2:
                     Tag newTag = createReplacement(id, inputDir);
                     if (newTag != null) {
                         // replace it in the list... should be kosher
@@ -129,20 +131,35 @@ public class UndumpSWF
         // look for a png
         f = new File(inputDir, String.valueOf(id) + ".png");
         if (f.exists()) {
-            // TODO: write indexed PNGs (in addition to RGBA pngs)
-            // (The following code converts all pngs to RGBA)
-            BufferedImage img = ImageIO.read(new FileInputStream(f));
-            RGBA[] rawData = ImageUtilities.getRGBAArray(img);
-            AlphaBitmapData bitmapData = new AlphaBitmapData(rawData);
-            return new DefineBitsLossless2(id,
-                DefineBitsLossless2.FORMAT_32_BIT_RGBA,
-                img.getWidth(), img.getHeight(), bitmapData);
+            return createGIForPNG(id, f);
+        }
+
+        // look for a gif
+        f = new File(inputDir, String.valueOf(id) + ".gif");
+        if (f.exists()) {
+            return createGIForPNG(id, f);
         }
 
         // nothing found
         return null;
     }
 
+    protected Tag createGIForPNG (int id, File f)
+        throws IOException
+    {
+        // TODO: write indexed images (Lossless1)
+        // (The following code converts all images to RGBA)
+        BufferedImage img = ImageIO.read(new FileInputStream(f));
+        RGBA[] rawData = ImageUtilities.getRGBAArray(img);
+        AlphaBitmapData bitmapData = new AlphaBitmapData(rawData);
+        return new DefineBitsLossless2(id,
+            DefineBitsLossless2.FORMAT_32_BIT_RGBA,
+            img.getWidth(), img.getHeight(), bitmapData);
+    }
+
+    /**
+     * Read a file into a byte[].
+     */
     protected byte[] readRawImageData (File f)
         throws IOException
     {
