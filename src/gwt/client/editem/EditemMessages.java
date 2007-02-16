@@ -152,14 +152,6 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String errFurniNotFlash();
 
   /**
-   * Translated "Game type".
-   * 
-   * @return translated "Game type"
-   * @gwt.key gameGameType
-   */
-  String gameGameType();
-
-  /**
    * Translated "Maximum players".
    * 
    * @return translated "Maximum players"
@@ -286,6 +278,14 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key editorDescripTitle
    */
   String editorDescripTitle();
+
+  /**
+   * Translated "Game type (TODO: 0 = normal, 1 = seated_continuous, 2 = party)".
+   * 
+   * @return translated "Game type (TODO: 0 = normal, 1 = seated_continuous, 2 = party)"
+   * @gwt.key gameGameType
+   */
+  String gameGameType();
 
   /**
    * Translated "Configuration".
