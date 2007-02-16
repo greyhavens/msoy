@@ -12,45 +12,46 @@
 
 .App .Top {
     height: 12em;
+    width: 100%;
 }
 
-.Sidebar {
+.FolderPanel {
     height: 100%;
     width: 10ex;
     padding: 0;
 }
 
-.Sidebar .Header {
-  background-image: url(/images/mail/box_tile.png);
-  height: 27px;
-  width: 100%;
+.FolderPanel .Header {
+    background-image: url(/images/mail/box_tile.png);
+    height: 27px;
+    width: 100%;
 }
 
-.Sidebar .Header .Left {
-  background-image: url(/images/mail/button_mail.png);
-  width: 20px;
-  height: 15px;
+.FolderPanel .Header .Left {
+    background-image: url(/images/mail/button_mail.png);
+    width: 20px;
+    height: 15px;
 }
 
-.Sidebar .Header .Right {
-  color: #CFDCE1;
-  width: 100%;
+.FolderPanel .Header .Right {
+    color: #CFDCE1;
+    width: 100%;
 }
 
-.Sidebar .Folders {
-  color: #000000;
-  padding: 10px;
-  height: 100%;
+.Folders {
+    color: #000000;
+    padding: 10px;
+    height: 100%;
 }
 
-.Sidebar .Folders A:link {
-  color: #000000;
+.Folders A:link {
+    color: #000000;
 }
-.Sidebar .Folders A:visited {
-  color: #000000;
+.Folders A:visited {
+    color: #000000;
 }
-.Sidebar .Folders A:active {
-  color: #000000;
+.Folders A:active {
+    color: #000000;
 }
 
 .HeaderPanel {
@@ -60,88 +61,105 @@
 }
 
 .HeaderPanel .Bar {
-  background-image: url(/images/mail/box_tile.png);
-  height: 27px;
-  width: 100%;
+    background-image: url(/images/mail/box_tile.png);
+    height: 27px;
+    width: 100%;
 }
 
 .HeaderPanel .Bar .Controls {
-  float: left;
-  height: 21px;
-  margin-top: 3px;
+    float: left;
+    height: 21px;
+    margin-top: 3px;
 }
 
 .HeaderPanel .Bar .Controls .gwt-Button {
-  margin-left: 5px;
+    margin-left: 5px;
 }
 
 .HeaderPanel .Bar .Pager {
-  float: right;
-  height: 21px;
-  margin-top: 3px;
+    float: right;
+    height: 21px;
+    margin-top: 3px;
 }
 
 .HeaderPanel .Bar .Pager .gwt-Button {
-  margin-right: 5px;
+    margin-right: 5px;
 }
 
 .HeaderPanel .Bar .Pager .CurrentPage {
-  color: #FFFFFF;
-  display: inline;
-  margin-right: 6px;
+    color: #FFFFFF;
+    display: inline;
+    margin-right: 6px;
 }
 
 .HeaderPanel .Bar .Pager .AnotherPage {
-  color: #FFFFFF;
-  text-decoration: underline;
-  display: inline;
-  margin-right: 6px;
+    color: #FFFFFF;
+    text-decoration: underline;
+    display: inline;
+    margin-right: 6px;
 }
 
-
-.mailFolderName {
-}
-
-.mailFolderName-unread {
-    font-weight: bold;
-}
-
-.mailHeaders {
-    background: #FFFFFF;
+.MessagePanel {
     width: 100%;
 }
 
-.mailHeaderHeader {
-    width: 14ex;
+.MessagePanel .Bar {
+    background-image: url(/images/mail/box_tile.png);
+    height: 27px;
+    width: 100%;
 }
 
-.mailHeaderPager {
+.MessagePanel .Bar .Star {
+    background-image: url(/images/mail/box_left.png);
+    height: 27px;
+    width: 33px;
+    float: left;
+}
+
+.MessagePanel .Bar .Controls {
     float: right;
+    height: 21px;
+    margin-top: 3px;
 }
 
-.mailMessage {
+.MessagePanel .Bar .gwt-Button {
+    margin-right: 5px;
+}
+
+.MessagePanel .Message {
+    width: 100%;
+}
+
+.Message .Header {
+    background: #99CCFF;
+    height: 2em;
+    width: 100%;
+}
+
+.Message .Header .Subject {
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.Message .Header .Sender {
+    margin-top: 5px;
+    width: 18em;
+}
+
+.Message .Header .Date {
+    margin-top: 5px;
+    width: 8em;
+}
+
+.Message .Payload {
     background: #FFFFFF;
     width: 100%;
     padding: 5px;
 }
 
-.mailMessageHeaders {
-    width: 100%;
-    padding: 5px;
-}
-
-.mailMessageButtons {
-    padding: 5px;
-}
-
-.mailPayload {
-    background: #FFFFFF;
-    width: 100%;
-    padding: 5px;
-}
-
-.mailMessagePanel {
-    padding: 5px;
+.Message .Body {
+    margin-top: 4px;
+    margin-left: 20px;
 }
 
 .mailRow {

@@ -65,14 +65,12 @@ public class MailApplication extends DockPanel
         // construct the folder/header bit
         HorizontalPanel mainContent = new HorizontalPanel();
         mainContent.setStyleName("Top");
-        mainContent.setWidth("100%");
 
         // construct the side bar
         VerticalPanel sideBar = new VerticalPanel();
         sideBar.setVerticalAlignment(HasAlignment.ALIGN_TOP);
         sideBar.setStyleName("Sidebar");
         sideBar.setSpacing(0);
-        sideBar.setHeight("100%");
 
         // construct the side bar header
         HorizontalPanel sidebarHeader = new HorizontalPanel();
@@ -193,7 +191,48 @@ public class MailApplication extends DockPanel
         add(mainContent, DockPanel.NORTH);
 
         // the bottom right side shows an individual message
-        _messageContainer = new SimplePanel();
+        _messageContainer = new VerticalPanel();
+        _messageContainer.setStyleName("MessagePanel");
+        FlowPanel messageBar = new FlowPanel();
+        messageBar.setStyleName("Bar");
+        Label star = new Label();
+        star.setStyleName("Star");
+        messageBar.add(star);
+
+        HorizontalPanel messageControls = new HorizontalPanel();
+        messageControls.setStyleName("Controls");
+
+        // reply functionality, which kicks off the composer
+        Button replyButton = new Button(CMail.msgs.appBtnReply());
+        replyButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                String subject = _message.headers.subject;
+                if (subject.length() < 3 || !subject.substring(0, 3).equalsIgnoreCase("re:")) {
+                    subject = "re: " + subject;
+                }
+                MailComposition composition =
+                    new MailComposition(_message.headers.sender, subject, null, "");
+                composition.addPopupListener(MailApplication.this);
+                composition.show();
+            }
+        });
+        messageControls.add(replyButton);
+
+        // a button to delete a single message
+        final Button deleteButton = new Button(CMail.msgs.appBtnDelete());
+        deleteButton.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                deleteButton.setEnabled(false);
+                deleteMessages(new MailHeaders[] { _message.headers });
+            }
+        });
+        messageControls.add(deleteButton);
+        messageBar.add(messageControls);
+        _messageContainer.add(messageBar);
+        _messageHolder = new SimplePanel();
+        _messageContainer.add(_messageHolder);
+        _messageContainer.setCellWidth(_messageHolder, "100%");
+
         add(_messageContainer, DockPanel.CENTER);
         setCellWidth(_messageContainer, "100%");
 
@@ -238,7 +277,7 @@ public class MailApplication extends DockPanel
         if (messageId >= 0) {
             loadMessage();
         } else {
-            _messageContainer.clear();
+            _messageContainer.setVisible(false);
         }
     }
 
@@ -249,7 +288,7 @@ public class MailApplication extends DockPanel
     {
         // always clear the current message display on a refresh
         _currentMessage = -1;
-        _messageContainer.clear();
+        _messageContainer.setVisible(false);
         // always fetch the folders
         loadFolders();
         if (_currentFolder >= 0) {
@@ -459,47 +498,23 @@ public class MailApplication extends DockPanel
     protected void refreshMessagePanel ()
     {
         VerticalPanel messagePanel = new VerticalPanel();
-        messagePanel.setStyleName("mailMessage");
+        messagePanel.setStyleName("Message");
 
-        // first some headers
-        HeaderValueTable headers = new HeaderValueTable();
-        headers.setStyleName("mailMessageHeaders");
-        headers.addRow("From", _message.headers.sender.toString());
-        headers.addRow("Date", _message.headers.sent.toString().substring(0, 21));
-        headers.addRow("Subject", _message.headers.subject);
+        // first the header line
+        HorizontalPanel headers = new HorizontalPanel();
+        headers.setStyleName("Header");
+        Label subject = new Label(CMail.msgs.appHdrSubject() + ": " + _message.headers.subject);
+        // TODO: Figure out wrapping for long subject lines
+        subject.setStyleName("Subject");
+        headers.add(subject); 
+        Label sender = new Label(CMail.msgs.appHdrFrom() + ": " + _message.headers.sender);
+        sender.setStyleName("Sender");
+        headers.add(sender);
+        Label date = new Label(formatDate(_message.headers.sent));
+        date.setStyleName("Date");
+        headers.add(date);
         messagePanel.add(headers);
         messagePanel.setCellWidth(headers, "100%");
-
-        // then a couple of control buttons
-        HorizontalPanel buttonBox = new HorizontalPanel();
-        buttonBox.setStyleName("mailMessageButtons");
-
-        // reply functionality, which kicks off the composer
-        Button replyButton = new Button("Reply");
-        replyButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                String subject = _message.headers.subject;
-                if (subject.length() < 3 || !subject.substring(0, 3).equalsIgnoreCase("re:")) {
-                    subject = "re: " + subject;
-                }
-                MailComposition composition =
-                    new MailComposition(_message.headers.sender, subject, null, "");
-                composition.addPopupListener(MailApplication.this);
-                composition.show();
-            }
-        });
-        buttonBox.add(replyButton);
-
-        // a button to delete a single message
-        final Button deleteButton = new Button("Delete");
-        deleteButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                deleteButton.setEnabled(false);
-                deleteMessages(new MailHeaders[] { _message.headers });
-            }
-        });
-        buttonBox.add(deleteButton);
-        messagePanel.add(buttonBox);
 
         // if there is a payload, display it!
         if (_message.payload != null) {
@@ -508,7 +523,7 @@ public class MailApplication extends DockPanel
             if (widget != null) {
                 HorizontalPanel panel = new HorizontalPanel();
                 panel.setWidth("100%");
-                panel.setStyleName("mailPayload");
+                panel.setStyleName("Payload");
                 panel.add(widget);
                 messagePanel.add(panel);
             }
@@ -517,13 +532,14 @@ public class MailApplication extends DockPanel
         // finally show the message text, if any, propped up with generated HTML
         if (_message.bodyText != null) {
             SimplePanel messageBody = new SimplePanel();
-            messageBody.setStyleName("mailMessageBody");
+            messageBody.setStyleName("Body");
             messageBody.setWidget(textToHTML(_message.bodyText));
             messagePanel.add(messageBody);
         }
 
         // switch in the fully built UI
-        _messageContainer.setWidget(messagePanel);
+        _messageContainer.setVisible(true);
+        _messageHolder.setWidget(messagePanel);
     }
 
     // since collection-to-array type checking is a lost cause anyway, just accept Object[] here
@@ -681,7 +697,8 @@ public class MailApplication extends DockPanel
     
     protected SimplePanel _folderContainer;
     protected SimplePanel _headerContainer;
-    protected SimplePanel _messageContainer;
+    protected VerticalPanel _messageContainer;
+    protected SimplePanel _messageHolder;
     protected VerticalPanel _errorContainer;
 
     protected HorizontalPanel _headerPager;
