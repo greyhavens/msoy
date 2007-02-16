@@ -201,6 +201,7 @@ public class MailApplication extends DockPanel
         HorizontalPanel headerControls = new HorizontalPanel();
         headerControls.setStyleName("Controls");
         Button searchButton = new Button(CMail.msgs.appBtnSearch());
+        searchButton.setEnabled(false);
         headerControls.add(searchButton);
 
         Button toggleButton = new Button(CMail.msgs.appBtnToggle());
@@ -306,6 +307,16 @@ public class MailApplication extends DockPanel
             }
         });
         messageControls.add(replyButton);
+
+        // a button to reply to all recipients of a message, currently disabled
+        Button replyAllButton = new Button(CMail.msgs.appBtnReplyAll());
+        replyAllButton.setEnabled(false);
+        messageControls.add(replyAllButton);
+
+        // a button to forward a message, currently disabled
+        Button forwardButton = new Button(CMail.msgs.appBtnForward());
+        forwardButton.setEnabled(false);
+        messageControls.add(forwardButton);
 
         // a button to delete a single message
         final Button deleteButton = new Button(CMail.msgs.appBtnDelete());
