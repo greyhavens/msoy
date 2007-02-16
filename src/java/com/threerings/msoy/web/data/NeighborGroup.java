@@ -6,15 +6,13 @@ package com.threerings.msoy.web.data;
 import com.threerings.msoy.item.web.MediaDesc;
 
 /**
- * Represents data for a {@link Group} in a neighborhood query result.
+ * Represents data for a {@link Group} in a neighborhood query result. Only 'group' is
+ * required by the visualization engine.
  */
 public class NeighborGroup extends NeighborEntity
 {
-    /** The ID of the group. */
-    public int groupId;
-
-    /** The name of the group. */
-    public String groupName;
+    /** The group's id/name. */
+    public GroupName group;
 
     /** The number of members in this group. */
     public int members;

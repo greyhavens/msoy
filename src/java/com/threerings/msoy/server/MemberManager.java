@@ -47,6 +47,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.NeighborGroup;
 import com.threerings.msoy.web.data.NeighborMember;
@@ -505,6 +506,8 @@ public class MemberManager
     /**
      * Return a JSON-serialized version of the Popular Places. This value is cached
      * for {@link POPULAR_PLACES_CACHE_LIFE} milliseconds.
+     * TODO: The popular places code and the neighbourhood code are starting to share
+     * increasing amounts of code, and some refactoring is due sometime soon.
      */
     public void serializePopularPlaces (int n, ResultListener<String> listener)
     {
@@ -513,21 +516,23 @@ public class MemberManager
         try {
             JSONArray friends = new JSONArray();
             JSONArray groups = new JSONArray();
+            JSONArray games = new JSONArray();
             for (PopularPlace place : _topPlaces) {
-                if (place instanceof PopularGamePlace) {
-                    // TODO: soon
-                    continue;
-                }
                 JSONObject obj = new JSONObject();
                 obj.put("name", place.name);
                 obj.put("pop", place.population);
-                obj.put("sceneId", ((PopularScenePlace) place).sceneId);
-                if (place instanceof PopularMemberPlace) {
-                    obj.put("id", ((PopularMemberPlace) place).memberId);
-                    friends.put(obj);
+                if (place instanceof PopularGamePlace) {
+                    obj.put("id", ((PopularGamePlace) place).gameId);
+                    games.put(obj);
                 } else {
-                    obj.put("id", ((PopularGroupPlace) place).groupId);
-                    groups.put(obj);
+                    obj.put("sceneId", ((PopularScenePlace) place).sceneId);
+                    if (place instanceof PopularMemberPlace) {
+                        obj.put("id", ((PopularMemberPlace) place).memberId);
+                        friends.put(obj);
+                    } else {
+                        obj.put("id", ((PopularGroupPlace) place).groupId);
+                        groups.put(obj);
+                    }
                 }
                 if (--n <= 0) {
                     break;
@@ -536,6 +541,7 @@ public class MemberManager
             JSONObject result = new JSONObject();
             result.put("friends", friends);
             result.put("groups", groups);
+            result.put("games", groups);
             listener.requestCompleted(URLEncoder.encode(result.toString(), "UTF-8"));
         } catch (Exception e) {
             listener.requestFailed(e);
@@ -588,9 +594,7 @@ public class MemberManager
                 Neighborhood hood = new Neighborhood();
                 // first load the center member data
                 MemberRecord mRec = _memberRepo.loadMember(memberId);
-                hood.member = new NeighborMember();
-                hood.member.member = mRec.getName();
-                hood.member.homeSceneId = mRec.homeSceneId;
+                hood.member = makeNeighborMember(mRec);
 
                 // then all the data for the groups
                 Collection<GroupMembershipRecord> gmRecs = _groupRepo.getMemberships(memberId);
@@ -601,18 +605,10 @@ public class MemberManager
                 }
                 List<NeighborGroup> nGroups = new ArrayList<NeighborGroup>();
                 for (GroupRecord gRec : _groupRepo.loadGroups(groupIds)) {
-                    NeighborGroup nGroup = new NeighborGroup();
-                    nGroup.groupId = gRec.groupId;
-                    nGroup.groupName = gRec.name;
-                    nGroup.homeSceneId = gRec.homeSceneId;
-                    if (gRec.logoMediaHash != null) { 
-                        nGroup.logo = new MediaDesc(gRec.logoMediaHash, gRec.logoMimeType);
-                    }
-                    nGroup.members = _groupRepo.countMembers(gRec.groupId);
-                    nGroups.add(nGroup);
+                    nGroups.add(makeNeighborGroup(gRec));
                 }
                 hood.neighborGroups = nGroups.toArray(new NeighborGroup[0]);
-    
+
                 // finally the friends
                 List<NeighborMember> members = new ArrayList<NeighborMember>();
                 for (NeighborFriendRecord fRec : _memberRepo.getNeighborhoodFriends(memberId)) {
@@ -640,11 +636,7 @@ public class MemberManager
             public Neighborhood invokePersistResult() throws PersistenceException {
                 Neighborhood hood = new Neighborhood();
                 // first load the center group data
-                GroupRecord gRec = _groupRepo.loadGroup(groupId);
-                hood.group = new NeighborGroup();
-                hood.group.groupId = groupId;
-                hood.group.groupName = gRec.name;
-                hood.group.logo = new MediaDesc(gRec.logoMediaHash, gRec.logoMimeType);
+                hood.group = makeNeighborGroup(_groupRepo.loadGroup(groupId));
                 hood.group.members = _groupRepo.countMembers(groupId);
 
                 // we have no other groups
@@ -757,7 +749,7 @@ public class MemberManager
     // set the population of a neighbour group
     protected void finalizeEntity(NeighborGroup group)
     {
-        PopularPlace place = getPopularPlace(MsoySceneModel.OWNER_TYPE_GROUP, group.groupId);
+        PopularPlace place = getPopularPlace(MsoySceneModel.OWNER_TYPE_GROUP, group.group.groupId);
         group.population = place != null ? place.population : 0;
     }
 
@@ -768,6 +760,18 @@ public class MemberManager
         PopularPlace place = getPopularPlace(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
         friend.population = place != null ? place.population : 0;
         friend.isOnline = MsoyServer.lookupMember(memberId) != null;
+    }
+
+    protected NeighborGroup makeNeighborGroup (GroupRecord gRec) throws PersistenceException
+    {
+        NeighborGroup nGroup = new NeighborGroup();
+        nGroup.group = new GroupName(gRec.name, gRec.groupId);
+        nGroup.homeSceneId = gRec.homeSceneId;
+        if (gRec.logoMediaHash != null) { 
+            nGroup.logo = new MediaDesc(gRec.logoMediaHash, gRec.logoMimeType);
+        }
+        nGroup.members = _groupRepo.countMembers(gRec.groupId);
+        return nGroup;
     }
 
     // convert a {@link NeighborFriendRecord} to a {@link NeighborMember}.
@@ -781,6 +785,20 @@ public class MemberManager
         nFriend.lastSession = fRec.lastSession;
         nFriend.sessionMinutes = fRec.sessionMinutes;
         nFriend.sessions = fRec.sessions;
+        return nFriend;
+    }
+
+    // convert a {@link MemberRecord} to a {@link NeighborMember}.
+    protected NeighborMember makeNeighborMember (MemberRecord mRec)
+    {
+        NeighborMember nFriend = new NeighborMember();
+        nFriend.member = new MemberName(mRec.name, mRec.memberId);
+        nFriend.created = new Date(mRec.created.getTime());
+        nFriend.flow = mRec.flow;
+        nFriend.homeSceneId = mRec.homeSceneId;
+        nFriend.lastSession = mRec.lastSession;
+        nFriend.sessionMinutes = mRec.sessionMinutes;
+        nFriend.sessions = mRec.sessions;
         return nFriend;
     }
 
@@ -816,13 +834,10 @@ public class MemberManager
         obj.put("id", member.member.getMemberId());
         obj.put("isOnline", member.isOnline);
         obj.put("pop", member.population);
-        // if this is just a member stub, skip the complicated bits
-        if (member.created != null) {
-            obj.put("created", member.created.getTime());
-            obj.put("sNum", member.sessions);
-            obj.put("sMin", member.sessionMinutes);
-            obj.put("lastSess", member.lastSession.getTime());
-        }
+        obj.put("created", member.created.getTime());
+        obj.put("sNum", member.sessions);
+        obj.put("sMin", member.sessionMinutes);
+        obj.put("lastSess", member.lastSession.getTime());
         return obj;
     }
 
@@ -830,8 +845,8 @@ public class MemberManager
         throws JSONException
     {
         JSONObject obj = new JSONObject();
-        obj.put("name", group.groupName);
-        obj.put("id", group.groupId);
+        obj.put("name", group.group.groupName);
+        obj.put("id", group.group.groupId);
         obj.put("members", group.members);
         obj.put("pop", group.population);
         if (group.logo != null) {

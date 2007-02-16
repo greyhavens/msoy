@@ -6,7 +6,8 @@ package com.threerings.msoy.web.data;
 import java.util.Date;
 
 /**
- * Represents data for a single member in a neighborhood query result.
+ * Represents data for a single member in a neighborhood query result. Only 'member' is
+ * required by the visualization engine.
  */
 public class NeighborMember extends NeighborEntity
 {
