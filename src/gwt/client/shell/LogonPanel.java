@@ -102,8 +102,12 @@ public class LogonPanel extends FlexTable
             // validate our session before considering ourselves logged on
             CShell.usersvc.validateSession(token, 1, new AsyncCallback() {
                 public void onSuccess (Object result) {
-                    _creds = (WebCreds)result;
-                    didLogon(_creds);
+                    if (result == null) {
+                        logoff();
+                    } else {
+                        _creds = (WebCreds)result;
+                        didLogon(_creds);
+                    }
                 }
                 public void onFailure (Throwable t) {
                     logoff();
