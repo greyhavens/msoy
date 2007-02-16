@@ -4,6 +4,9 @@
 package client.shell;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -93,6 +96,7 @@ public class NaviPanel extends FlexTable
                 popupMenu(sender, menu);
             }
         });
+        setWidget(0, menuidx++, _menuFrame = new MenuFrame());
     }
 
     /**
@@ -135,6 +139,7 @@ public class NaviPanel extends FlexTable
                 popupMenu(sender, menu);
             }
         });
+        setWidget(0, menuidx++, _menuFrame = new MenuFrame());
     }
 
     protected void setMenu (int menuidx, String ident, String text, ClickListener listener)
@@ -157,10 +162,28 @@ public class NaviPanel extends FlexTable
 
     protected void popupMenu (Widget from, MenuBar menu)
     {
-        _popped = new PopupPanel(true);
+        _popped = new PopupPanel(true) {
+            public void hide () {
+                super.hide();
+                _menuFrame.hide();
+            }
+            // PopupPanel doesn't call hide() when it autoHides - it calls a private method, so I
+            // can't override it
+            public boolean onEventPreview(Event event) {
+                if (DOM.eventGetType(event) == Event.ONCLICK &&
+                    // these are the circumstances under which PopupPanel will autoHide
+                    !DOM.isOrHasChild(getElement(), DOM.eventGetTarget(event))) {
+                    _menuFrame.hide();
+                }
+                return super.onEventPreview(event);
+            }
+        };
         _popped.add(menu);
         _popped.setPopupPosition(from.getAbsoluteLeft(), getMenuY(from));
         _popped.show();
+        DOM.setStyleAttribute(_popped.getElement(), "zIndex", "2000");
+        _menuFrame.showAt(_popped.getAbsoluteLeft(), _popped.getAbsoluteTop(), 
+                          _popped.getOffsetWidth(), _popped.getOffsetHeight());
     }
 
     protected int getMenuY (Widget from)
@@ -172,10 +195,47 @@ public class NaviPanel extends FlexTable
         return height;
     }
 
+    /**
+     * This is a hack to let the menu pop up over Flash on Firefox on Linux properly.
+     */
+    protected class MenuFrame extends Widget 
+    {
+        public MenuFrame ()
+        {
+            super();
+            _iframe = DOM.createElement("iframe");
+            DOM.setStyleAttribute(_iframe, "display", "none");
+            DOM.setStyleAttribute(_iframe, "position", "absolute");
+            // the z-index of the PopupPanel is set to 2000
+            DOM.setStyleAttribute(_iframe, "zIndex", "1999");
+            DOM.setStyleAttribute(_iframe, "border", "none");
+            setElement(_iframe);
+        }
+
+        public void hide () 
+        {
+            DOM.setStyleAttribute(_iframe, "display", "none");
+        }
+
+        public void showAt (int x, int y, int width, int height)
+        {
+            DOM.setStyleAttribute(_iframe, "left", x + "px");
+            DOM.setStyleAttribute(_iframe, "top", y + "px");
+            DOM.setStyleAttribute(_iframe, "width", width + "px");
+            DOM.setStyleAttribute(_iframe, "height", height + "px");
+            DOM.setStyleAttribute(_iframe, "display", "block");
+        }
+
+        protected Element _iframe;
+    }
+
     protected LogonPanel _logon;
 
     protected Label _loglbl, _melbl;
 
     /** The currently popped up menu, for easy closing. */
     protected PopupPanel _popped;
+
+    /** The iframe used in the hack to make these menus work over Flash in Linux. */
+    protected MenuFrame _menuFrame;
 }
