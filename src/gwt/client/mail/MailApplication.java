@@ -14,11 +14,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
+import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
@@ -28,8 +30,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.InlineLabel;
-
 import com.threerings.msoy.web.data.MailFolder;
 import com.threerings.msoy.web.data.MailHeaders;
 import com.threerings.msoy.web.data.MailMessage;
@@ -37,6 +37,7 @@ import com.threerings.msoy.web.data.MailMessage;
 import client.msgs.MailComposition;
 import client.msgs.MailPayloadDisplay;
 import client.msgs.MailUpdateListener;
+import client.util.BorderedWidget;
 import client.util.HeaderValueTable;
 
 /**
@@ -48,7 +49,9 @@ public class MailApplication extends DockPanel
     implements PopupListener, MailUpdateListener
 {
     /** The number of messages we display on-screen at a time. */
-    public static final int HEADER_ROWS = 10;
+    public static final int HEADER_ROWS = 4;
+    /** The number of page numbers to display in the pager before we shortcut with ... */
+    private static final int PAGES_TO_SHOW = 2;
     
     /**
      * Initialize ths application and build the UI framework.
@@ -56,50 +59,144 @@ public class MailApplication extends DockPanel
     public MailApplication ()
     {
         super();
-        setStyleName("mailApp");
-        setSpacing(5);
-        
+        setStyleName("App");
+        setSpacing(0);
+
+        // construct the folder/header bit
+        HorizontalPanel mainContent = new HorizontalPanel();
+        mainContent.setStyleName("Top");
+        mainContent.setWidth("100%");
+
         // construct the side bar
         VerticalPanel sideBar = new VerticalPanel();
-        sideBar.setStyleName("mailFolders");
-        sideBar.setSpacing(5);
+        sideBar.setVerticalAlignment(HasAlignment.ALIGN_TOP);
+        sideBar.setStyleName("Sidebar");
+        sideBar.setSpacing(0);
+        sideBar.setHeight("100%");
 
-        // with a button to compose a new mail
-        Button composeButton = new Button(CMail.msgs.appCompose());
-        composeButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                // TODO: The hard-coded memberId is for testing only :)
-                MailComposition composition = new MailComposition(2, "", null, "");
-                composition.addPopupListener(MailApplication.this);
-                composition.show();
-            }
-        });
-        sideBar.add(composeButton);
+        // construct the side bar header
+        HorizontalPanel sidebarHeader = new HorizontalPanel();
+        sidebarHeader.setStyleName("Header");
+        sidebarHeader.setSpacing(5);
+        Label icon = new Label();
+        icon.setStyleName("Left");
+        sidebarHeader.add(icon);
+        Label mail = new Label(CMail.msgs.appMail());
+        mail.setStyleName("Right");
+        sidebarHeader.add(mail);
+        sideBar.add(sidebarHeader);
 
-        // and a button to refresh the folder contents
-        Button refreshButton = new Button("Refresh");
-        refreshButton.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                refresh();
-            }
-        });
-        sideBar.add(refreshButton);
-
-        // and finally a list of folders
+        // and add a list of folders
         _folderContainer = new SimplePanel();
+        _folderContainer.setStyleName("Folders");
         sideBar.add(_folderContainer);
-        add(sideBar, DockPanel.WEST);
+        sideBar.setCellHeight(_folderContainer, "100%");
+
+        BorderedWidget sidebarHolder =
+            new BorderedWidget(BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_TILED,
+                               BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_CLOSED);
+        sidebarHolder.setVerticalAlignment(HasAlignment.ALIGN_TOP);
+        sidebarHolder.getCellFormatter().setHeight(1, 1, "100%");
+        sidebarHolder.setHeight("100%");
+        sidebarHolder.setWidget(sideBar);
+        mainContent.add(sidebarHolder);
+        mainContent.setCellHeight(sidebarHolder, "100%");
+
+        Button button;
 
         // the top right side is a list of message headers
+        VerticalPanel headerPanel = new VerticalPanel();
+        headerPanel.setStyleName("HeaderPanel");
+        // construct the header panel's controls
+        FlowPanel headerBar = new FlowPanel();
+        headerBar.setStyleName("Bar");
+
+        HorizontalPanel headerControls = new HorizontalPanel();
+        headerControls.setStyleName("Controls");
+        button = new Button(CMail.msgs.appBtnSearch());
+        headerControls.add(button);
+
+        button = new Button(CMail.msgs.appBtnToggle());
+        button.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                Iterator i = _checkboxes.iterator();
+                while (i.hasNext()) {
+                    MailCheckBox box = (MailCheckBox) i.next();
+                    if (box.isChecked()) {
+                        box.setChecked(false);
+                        _checkedMessages.remove(box.headers);
+                    } else {
+                        box.setChecked(true);
+                        _checkedMessages.add(box.headers);
+                    }
+                }
+                _massDelete.setEnabled(_checkedMessages.size() > 0);
+            }
+        });
+        headerControls.add(button);
+
+        _massDelete = new Button(CMail.msgs.appBtnDeleteSel());
+        _massDelete.setEnabled(false);
+        _massDelete.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                deleteMessages(_checkedMessages.toArray());
+                _massDelete.setEnabled(false);
+            }
+        });
+        headerControls.add(_massDelete);
+        
+        headerBar.add(headerControls);
+
+        _headerPager = new HorizontalPanel();
+        _headerPager.setStyleName("Pager");
+        _headerPager.setVisible(false);
+        _pagerPages = new FlowPanel();
+        _headerPager.add(_pagerPages);
+        _pagerPrevious = new Button(CMail.msgs.appBtnPrevious());
+        _pagerPrevious.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                _currentOffset -= HEADER_ROWS;
+                refreshHeaderPanel();
+                updateHistory();
+            }
+        });
+        _headerPager.add(_pagerPrevious);
+
+        _pagerNext = new Button(CMail.msgs.appBtnNext());
+        _pagerNext.addClickListener(new ClickListener() {
+            public void onClick (Widget sender) {
+                _currentOffset += HEADER_ROWS;
+                refreshHeaderPanel();
+                updateHistory();
+            }
+        });
+        _headerPager.add(_pagerNext);;
+        headerBar.add(_headerPager);
+
+        headerPanel.add(headerBar);
+        
+        // construct the header panel's actual header container
         _headerContainer = new SimplePanel();
-        add(_headerContainer, DockPanel.NORTH);
-        setCellWidth(_headerContainer, "100%");
+        headerPanel.add(_headerContainer);
+        headerPanel.setCellHeight(_headerContainer, "100%");
+        headerPanel.setCellWidth(_headerContainer, "100%");
+        BorderedWidget headerHolder =
+            new BorderedWidget(BorderedWidget.BORDER_TILED, BorderedWidget.BORDER_CLOSED,
+                               BorderedWidget.BORDER_CLOSED, BorderedWidget.BORDER_CLOSED);
+        headerHolder.setWidth("100%");
+        headerHolder.setHeight("100%");
+        headerHolder.setWidget(headerPanel);
+        mainContent.add(headerHolder);
+        mainContent.setCellWidth(headerHolder, "100%");
+        mainContent.setCellHeight(headerHolder, "100%");
+
+        add(mainContent, DockPanel.NORTH);
 
         // the bottom right side shows an individual message
         _messageContainer = new SimplePanel();
         add(_messageContainer, DockPanel.CENTER);
         setCellWidth(_messageContainer, "100%");
-        
+
         // and below it all, we display any errors
         _errorContainer = new VerticalPanel();
         _errorContainer.setStyleName("groupDetailErrors");
@@ -181,6 +278,7 @@ public class MailApplication extends DockPanel
     protected void refreshFolderPanel ()
     {
         VerticalPanel folderList = new VerticalPanel();
+        folderList.setVerticalAlignment(HasAlignment.ALIGN_TOP);
         Iterator i = _folders.iterator();
         while (i.hasNext()) {
             MailFolder folder = (MailFolder) i.next();
@@ -217,128 +315,120 @@ public class MailApplication extends DockPanel
         });
     }
     
+
     // construct the list of message headers
     protected void refreshHeaderPanel ()
     {
-        // the panel has two parts; the actual list, and a control box
-        VerticalPanel headerPanel = new VerticalPanel();
-        headerPanel.setWidth("100%");
+        // initialize our collection of currently checked messages
+        _checkedMessages.clear();
+        // and keep track of the currently displayed checkboxes too
+        _checkboxes.clear();
 
-        if (_headers.size() > 0) {
-            // build the actual headers
-            FlexTable table = new FlexTable();
-            table.setStyleName("mailHeaders");
-            table.setWidth("100%");
-            int row = 0;
+        if (_headers.size() == 0) {
+            _headerContainer.setWidget(new HTML("&nbsp;"));
+            _headerPager.setVisible(false);
+            return;
+        }
+        // build the actual headers
+        FlexTable table = new FlexTable();
+        table.setStyleName("mailHeaders");
+        table.setWidth("100%");
+        int row = 0;
 
-            CellFormatter cellFormatter = table.getCellFormatter();
-            RowFormatter rowFormatter = table.getRowFormatter();
+        CellFormatter cellFormatter = table.getCellFormatter();
+        RowFormatter rowFormatter = table.getRowFormatter();
 
-            // initialize our collection of currently checked messages
-            _checkedMessages = new HashSet();
+        // now build row after row of data
+        int lastMsg = Math.min(_headers.size(), _currentOffset + HEADER_ROWS);
+        for (int msg = _currentOffset; msg < lastMsg; msg ++) {
+            MailHeaders headers = (MailHeaders) _headers.get(msg);
+            int col = 0;
 
-            // now build row after row of data
-            int lastMsg = Math.min(_headers.size(), _currentOffset + HEADER_ROWS);
-            for (int msg = _currentOffset; msg < lastMsg; msg ++) {
-                final MailHeaders headers = (MailHeaders) _headers.get(msg);
-                int col = 0;
+            // first, a checkbox with a listener that maintains a set of checked messages
+            MailCheckBox cBox = new MailCheckBox(headers);
 
-                // first, a checkbox with a listener that maintains a set of checked messages
-                CheckBox cBox = new CheckBox();
-                cBox.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        if (sender instanceof CheckBox) {
-                            if (((CheckBox) sender).isChecked()) {
-                                _checkedMessages.add(headers);
-                                _massDelete.setEnabled(true);
-                            } else {
-                                _checkedMessages.remove(headers);
-                                _massDelete.setEnabled(_checkedMessages.size() > 0);
-                            }
+            cBox.addClickListener(new ClickListener() {
+                public void onClick (Widget sender) {
+                    if (sender instanceof MailCheckBox) {
+                        MailCheckBox box = (MailCheckBox) sender;
+                        if (box.isChecked()) {
+                            _checkedMessages.add(box.headers);
+                            _massDelete.setEnabled(true);
+                        } else {
+                            _checkedMessages.remove(box.headers);
+                            _massDelete.setEnabled(_checkedMessages.size() > 0);
                         }
                     }
-                });
-                table.setWidget(row, col, cBox);
-                cellFormatter.setStyleName(row, col, "mailRowCheckbox");
-                col ++;
-
-                // next, the subject line, the only variable-width element in the row
-                Widget link = new Hyperlink(headers.subject, "f" + _currentFolder + "." +
-                                            _currentOffset + "." + headers.messageId);
-                table.setWidget(row, col, link);
-                cellFormatter.setStyleName(row, col, "mailRowSubject");
-                col ++;
-
-                // next, the name of the sender
-                table.setText(row, col, headers.sender.toString());
-                cellFormatter.setStyleName(row, col, "mailRowSender");
-                col ++;
-                
-                // and finally the date the message was sent, in fancy shorthand form
-                table.setText(row, col, formatDate(headers.sent));
-                cellFormatter.setStyleName(row, col, "mailRowDate");
-                col ++;
-                
-                // show the row in bold if the message is unread
-                // TODO: hrm, looks like this bit don't work yet.
-                rowFormatter.setStyleName(row, "mailRow");
-                if (headers.unread) {
-                    rowFormatter.addStyleName(row, "unread");
-                }
-                row ++;
-            }
-            headerPanel.add(table);
-
-            // build the header controls
-            HorizontalPanel controlBox = new HorizontalPanel();
-            controlBox.setWidth("100%");
-            controlBox.setSpacing(5);
-            
-            // first, a bulk delete button
-            _massDelete = new Button("Delete Checked Messages");
-            _massDelete.setEnabled(false);
-            _massDelete.addClickListener(new ClickListener() {
-                public void onClick (Widget sender) {
-                    deleteMessages(_checkedMessages.toArray());
-                    _massDelete.setEnabled(false);
                 }
             });
-            controlBox.add(_massDelete);
-            
-            // then, a pager control for moving between your many lovely messages
-            HorizontalPanel pager = new HorizontalPanel();
-            pager.setSpacing(3);
-            pager.setStyleName("mailHeaderPager");
-            if (_currentOffset > 0) {
-                Label left = new InlineLabel ("<<");
-                left.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        _currentOffset = Math.max(0, _currentOffset - HEADER_ROWS);
-                        refreshHeaderPanel();
-                        updateHistory();
-                    }
-                });
-                pager.add(left);
+            table.setWidget(row, col, cBox);
+            _checkboxes.add(cBox);
+            cellFormatter.setStyleName(row, col, "mailRowCheckbox");
+            col ++;
+
+            // next, the subject line, the only variable-width element in the row
+            Widget link = new Hyperlink(headers.subject, "f" + _currentFolder + "." +
+                _currentOffset + "." + headers.messageId);
+            table.setWidget(row, col, link);
+            cellFormatter.setStyleName(row, col, "mailRowSubject");
+            col ++;
+
+            // next, the name of the sender
+            table.setText(row, col, headers.sender.toString());
+            cellFormatter.setStyleName(row, col, "mailRowSender");
+            col ++;
+
+            // and finally the date the message was sent, in fancy shorthand form
+            table.setText(row, col, formatDate(headers.sent));
+            cellFormatter.setStyleName(row, col, "mailRowDate");
+            col ++;
+
+            // show the row in bold if the message is unread
+            // TODO: hrm, looks like this bit don't work yet.
+            rowFormatter.setStyleName(row, "mailRow");
+            if (headers.unread) {
+                rowFormatter.addStyleName(row, "unread");
             }
-            Label text = new InlineLabel(
-                (_currentOffset + 1) + "-" + lastMsg + " of " + _headers.size());
-            pager.add(text);
-            if (_currentOffset + HEADER_ROWS < _headers.size()) {
-                Label right = new InlineLabel (">>");
-                right.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        _currentOffset += HEADER_ROWS;
-                        refreshHeaderPanel();
-                        updateHistory();
-                    }
-                });
-                pager.add(right);
-            }
-            controlBox.add(pager);
-            headerPanel.add(controlBox);
+            row ++;
         }
         // when the UI is fully constructed, switch it in
-        _headerContainer.setWidget(headerPanel);
+        _headerContainer.setWidget(table);
+
+        boolean nextButton = _currentOffset + HEADER_ROWS < _headers.size();
+        boolean prevButton = _currentOffset > 0;
+        _pagerNext.setEnabled(nextButton);
+        _pagerPrevious.setEnabled(prevButton);
+        _pagerPages.clear();
+        if (nextButton || prevButton) {
+            _headerPager.setVisible(true);
+            int pages = (_headers.size()+HEADER_ROWS-1) / HEADER_ROWS;
+            for (int i = 0; i < pages; i ++ ) {
+                Label page;
+                if (i == PAGES_TO_SHOW && pages > 2*PAGES_TO_SHOW) {
+                    // skip ahead
+                    page = new Label("...");
+                    page.setStyleName("CurrentPage");
+                    i = pages - PAGES_TO_SHOW - 1;
+                } else if (i * HEADER_ROWS == _currentOffset) {
+                    page = new Label(String.valueOf(i+1));
+                    page.setStyleName("CurrentPage");
+                } else {
+                    final int offset = i * HEADER_ROWS;
+                    page = new Label(String.valueOf(i+1));
+                    page.setStyleName("AnotherPage");
+                    page.addClickListener(new ClickListener() {
+                        public void onClick (Widget sender) {
+                            _currentOffset = offset;
+                            refreshHeaderPanel();
+                            updateHistory();
+                        }
+                    });
+                }
+                _pagerPages.add(page);
+            }
+        } else {
+            _headerPager.setVisible(false);
+        }
     }
 
     // fetch the entirity (body, specifically) of a given message from the backend
@@ -567,11 +657,22 @@ public class MailApplication extends DockPanel
         _errorContainer.clear();
     }
 
+    protected static class MailCheckBox extends CheckBox
+    {
+        public MailHeaders headers;
+
+        public MailCheckBox (MailHeaders headers)
+        {
+            this.headers = headers;
+        }
+    }
+
     protected List _folders;
     protected List _headers;
     protected MailMessage _message;
     protected MailPayloadDisplay _payloadDisplay;
-    protected Set _checkedMessages;
+    protected Set _checkedMessages = new HashSet();
+    protected Set _checkboxes = new HashSet();
     protected int _currentFolder;
     protected int _currentOffset;
     protected int _currentMessage;
@@ -582,4 +683,9 @@ public class MailApplication extends DockPanel
     protected SimplePanel _headerContainer;
     protected SimplePanel _messageContainer;
     protected VerticalPanel _errorContainer;
+
+    protected HorizontalPanel _headerPager;
+    protected FlowPanel _pagerPages;
+    protected Button _pagerPrevious;
+    protected Button _pagerNext;
 }

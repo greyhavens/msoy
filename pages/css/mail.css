@@ -4,16 +4,100 @@
  * CSS styles for the Mail interfaces.
  */
 
-.mailApp {
-    background: #99CCFF;
+.App {
+    background: #FFFFFF;
     width: 100%;
+    height: 100%;
 }
 
-.mailFolders {
-    background: #6699CC;
-    width: 10ex;
-    padding: 5px;
+.App .Top {
+    height: 12em;
 }
+
+.Sidebar {
+    height: 100%;
+    width: 10ex;
+    padding: 0;
+}
+
+.Sidebar .Header {
+  background-image: url(/images/mail/box_tile.png);
+  height: 27px;
+  width: 100%;
+}
+
+.Sidebar .Header .Left {
+  background-image: url(/images/mail/button_mail.png);
+  width: 20px;
+  height: 15px;
+}
+
+.Sidebar .Header .Right {
+  color: #CFDCE1;
+  width: 100%;
+}
+
+.Sidebar .Folders {
+  color: #000000;
+  padding: 10px;
+  height: 100%;
+}
+
+.Sidebar .Folders A:link {
+  color: #000000;
+}
+.Sidebar .Folders A:visited {
+  color: #000000;
+}
+.Sidebar .Folders A:active {
+  color: #000000;
+}
+
+.HeaderPanel {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+}
+
+.HeaderPanel .Bar {
+  background-image: url(/images/mail/box_tile.png);
+  height: 27px;
+  width: 100%;
+}
+
+.HeaderPanel .Bar .Controls {
+  float: left;
+  height: 21px;
+  margin-top: 3px;
+}
+
+.HeaderPanel .Bar .Controls .gwt-Button {
+  margin-left: 5px;
+}
+
+.HeaderPanel .Bar .Pager {
+  float: right;
+  height: 21px;
+  margin-top: 3px;
+}
+
+.HeaderPanel .Bar .Pager .gwt-Button {
+  margin-right: 5px;
+}
+
+.HeaderPanel .Bar .Pager .CurrentPage {
+  color: #FFFFFF;
+  display: inline;
+  margin-right: 6px;
+}
+
+.HeaderPanel .Bar .Pager .AnotherPage {
+  color: #FFFFFF;
+  text-decoration: underline;
+  display: inline;
+  margin-right: 6px;
+}
+
 
 .mailFolderName {
 }
@@ -23,7 +107,7 @@
 }
 
 .mailHeaders {
-    background: #6699CC;
+    background: #FFFFFF;
     width: 100%;
 }
 
@@ -36,7 +120,7 @@
 }
 
 .mailMessage {
-    background: #6699CC;
+    background: #FFFFFF;
     width: 100%;
     padding: 5px;
 }
@@ -51,7 +135,7 @@
 }
 
 .mailPayload {
-    background: #CC99CC;
+    background: #FFFFFF;
     width: 100%;
     padding: 5px;
 }
@@ -61,7 +145,24 @@
 }
 
 .mailRow {
+    height: 1em;
     padding: 3px;
+    color: #000000;
+}
+
+.mailRow A:link {
+    text-decoration: none;
+    color: #000000;
+}
+
+.mailRow A:visited {
+    text-decoration: none;
+    color: #000000;
+}
+
+.mailRow A:active {
+    text-decoration: none;
+    color: #000000;
 }
 
 .mailRow-unread {
@@ -77,11 +178,11 @@
 }
 
 .mailRowSender {
-    width: 18ex;
+    width: 18em;
 }
 
 .mailRowDate {
-    width: 12ex;
+    width: 8em;
 }
 
 .mailComposition {
