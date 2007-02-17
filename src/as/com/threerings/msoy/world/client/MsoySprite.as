@@ -617,7 +617,9 @@ public class MsoySprite extends MediaContainer
 
         _hotSpot.x = x;
         _hotSpot.y = y;
-        locationUpdated();
+        if (!_editing) {
+            locationUpdated();
+        }
     }
 
     /**
