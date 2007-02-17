@@ -196,8 +196,7 @@
           <pathelement location="src/java"/>
           <pathelement location="src/gwt"/>
         </classpath>
-        <!--<arg value="-style"/>-->
-        <!--<arg value="PRETTY"/>-->
+        <!--<arg value="-style"/><arg value="PRETTY"/>-->
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
         <arg value="@{page}"/>
@@ -295,6 +294,10 @@
 
   <!-- just rebuilds the Flash client, assumes nothing has changed -->
   <target name="asquick">
+    <!-- sanity check to avoid confusion if someone tries to call this directly -->
+    <fail message="type property must be specified: ant -Dtype=world ...">
+      <condition><not><isset property="type"/></not></condition>
+    </fail>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -303,11 +306,11 @@
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-incremental=true"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/world-client.swf"/>
+      <arg value="${deploy.dir}/${type}-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="src/as/World.mxml"/>
+      <arg value="src/as/${type}.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/world-client.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds our Flash client -->
@@ -315,6 +318,10 @@
 
   <!-- builds our Flash debug client -->
   <target name="asdebug" depends="asprepare,aslib,exportlib">
+    <!-- sanity check to avoid confusion if someone tries to call this directly -->
+    <fail message="type property must be specified: ant -Dtype=world ...">
+      <condition><not><isset property="type"/></not></condition>
+    </fail>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -323,11 +330,11 @@
       <arg value="-compiler.source-path=src/as/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
-      <arg value="${deploy.dir}/world-client.swf"/>
+      <arg value="${deploy.dir}/${type}-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="src/as/World.mxml"/>
+      <arg value="src/as/${type}.mxml"/>
     </exec>
-    <copy file="${deploy.dir}/world-client.swf" todir="pages/clients"/>
+    <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients"/>
   </target>
 
   <!-- builds our avatar viewer thingy -->
@@ -543,8 +550,10 @@
   </target>
 
   <!-- builds top-level flash applications. -->
-  <target name="flashapps"
-          depends="asclient,avatarviewer"/>
+  <target name="flashapps" depends="avatarviewer">
+    <antcall target="asclient"><param name="type" value="world"/></antcall>
+    <antcall target="asclient"><param name="type" value="header"/></antcall>
+  </target>
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
   <target name="distall" depends="prepare,distprojects,dist,flashapps,jclients">
