@@ -253,8 +253,6 @@
 
   <!-- builds our Flash library -->
   <target name="aslib" unless="aslib_is_up_to_date" depends="checkaslib">
-    <!-- TODO: temp: delete the old name of this library. -->
-    <delete file="${deploy.dir}/naryavilya.swc"/>
     <java jar="projects/tools/extern/flex_sdk/lib/compc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
