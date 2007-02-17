@@ -18,10 +18,8 @@ import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.ForUpdate;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
+import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
-import com.samskivert.jdbc.depot.expression.ValueExp;
-import com.samskivert.jdbc.depot.operator.Conditionals.*;
-import com.samskivert.jdbc.depot.operator.Logic.*;
 
 /**
  * Manages the persistent store of mail and mailboxes.
@@ -95,7 +93,8 @@ public class MailRepository extends DepotRepository
      {
          return findAll(MailMessageRecord.class,
                         new Where(MailMessageRecord.OWNER_ID_C, memberId,
-                                MailMessageRecord.FOLDER_ID_C, folderId));
+                                  MailMessageRecord.FOLDER_ID_C, folderId),
+                        OrderBy.descending(MailMessageRecord.SENT_C));
      }
 
      /**
