@@ -15,6 +15,7 @@ public class HeaderClient extends BaseClient
     public function HeaderClient (stage :Stage)
     {
         super(stage);
+        logon();
     }
 
     // from BaseClient

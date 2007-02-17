@@ -54,6 +54,9 @@ public class WorldClient extends BaseClient
         menu.hideBuiltInItems();
         Application.application.contextMenu = menu;
         menu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
+
+        // now logon
+        logon();
     }
 
     // from BaseClient
@@ -149,10 +152,9 @@ public class WorldClient extends BaseClient
         }
 
         log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");
-        Prefs.setSessionToken(token);
         var co :MemberObject = _wctx.getClientObject();
         if (co == null || co.getMemberId() != memberId) {
-            _wctx.getMsoyController().handleLogon(createStartupCreds(false, false));
+            _wctx.getMsoyController().handleLogon(createStartupCreds(token));
         }
     }
 

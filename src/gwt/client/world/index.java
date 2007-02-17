@@ -170,6 +170,9 @@ public class index extends MsoyEntryPoint
 
     protected void world (String flashVar)
     {
+        if (CWorld.creds != null) {
+            flashVar = "token=" + CWorld.creds.token + "&" + flashVar;
+        }
         setContent(_client = FlashClients.createWorldClient(flashVar));
     }
 
