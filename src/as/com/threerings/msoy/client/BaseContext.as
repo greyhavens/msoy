@@ -181,8 +181,6 @@ public /*abstract*/ class BaseContext
 
     protected var _chatDir :ChatDirector;
 
-    protected var _mediaDir :MediaDirector;
-
     protected var _memberDir :MemberDirector;
 }
 }
