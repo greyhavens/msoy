@@ -5,8 +5,7 @@ package com.threerings.msoy.client {
 
 import flash.external.ExternalInterface;
 
-import mx.logging.Log;
-import mx.logging.ILoggingTarget;
+import com.threerings.util.LogTarget;
 
 import com.threerings.msoy.data.MemberObject;
 
@@ -22,7 +21,7 @@ public class LoggingTargets
             if (_bugTarget == null && ExternalInterface.available) {
                 ExternalInterface.call("console.debug", "Msoy console logging enabled");
                 _bugTarget = new FireBugTarget();
-                mx.logging.Log.addTarget(_bugTarget);
+                Log.addTarget(_bugTarget);
             }
         } catch (err :Error) {
             // oh well!
@@ -31,46 +30,37 @@ public class LoggingTargets
         if ((null != ctx.getStage().loaderInfo.parameters["test"]) || Prefs.getLogToChat()) {
             if (_chatTarget == null) {
                 _chatTarget = new ChatTarget(ctx);
-                mx.logging.Log.addTarget(_chatTarget);
+                Log.addTarget(_chatTarget);
             }
         } else if (_chatTarget != null) {
-            mx.logging.Log.removeTarget(_chatTarget);
+            Log.removeTarget(_chatTarget);
             _chatTarget = null;
         }
     }
 
-    protected static var _bugTarget :ILoggingTarget;
-    protected static var _chatTarget :ILoggingTarget;
+    protected static var _bugTarget :LogTarget;
+    protected static var _chatTarget :LogTarget;
 }
 }
 
 import flash.external.ExternalInterface;
 
-import mx.logging.LogEventLevel;
-import mx.logging.targets.LineFormattedTarget;
-
-import mx.core.mx_internal;
-
-use namespace mx_internal;
-
+import com.threerings.util.LogTarget;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.client.BaseContext;
 
 // TODO: stop listening at the end?
-class ChatTarget extends LineFormattedTarget
+class ChatTarget
+    implements LogTarget
 {
     public function ChatTarget (ctx :BaseContext)
     {
         _ctx = ctx;
-        super();
-
-        includeCategory = includeTime = includeLevel = true;
-        filters = ["*"];
-        level = LogEventLevel.DEBUG;
     }
 
-    override mx_internal function internalLog (msg :String) :void
+    // from LogTarget
+    public function log (msg :String) :void
     {
         _ctx.displayInfo(null, MessageBundle.taint(msg));
     }
@@ -81,18 +71,11 @@ class ChatTarget extends LineFormattedTarget
 /**
  * A logging target that goes to firebug's console.
  */
-class FireBugTarget extends LineFormattedTarget
+class FireBugTarget
+    implements LogTarget
 {
-    public function FireBugTarget ()
-    {
-        super();
-
-        includeCategory = includeTime = includeLevel = true;
-        filters = ["*"];
-        level = LogEventLevel.DEBUG;
-    }
-
-    override mx_internal function internalLog (msg :String) :void
+    // from LogTarget
+    public function log (msg :String) :void
     {
 /*
         // TEMP: needed because of bug in ExternalInterface
