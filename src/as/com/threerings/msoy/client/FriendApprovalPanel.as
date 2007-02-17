@@ -59,7 +59,7 @@ public class FriendApprovalPanel extends FloatingPanel
             super.buttonClicked(buttonId);
             break;
         }
-        CommandEvent.dispatch(_ctx.getRootPanel(),
+        CommandEvent.dispatch(_ctx.getStage(),
             MsoyController.ALTER_FRIEND, [ _asker.getMemberId(), approve ]);
     }
 

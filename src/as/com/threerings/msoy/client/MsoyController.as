@@ -113,7 +113,7 @@ public class MsoyController extends Controller
         _ctx = ctx;
         _ctx.getClient().addClientObserver(this);
         _topPanel = topPanel;
-        setControlledPanel(ctx.getRootPanel());
+        setControlledPanel(ctx.getStage());
     }
 
     /**
@@ -282,7 +282,7 @@ public class MsoyController extends Controller
     public function supportsFullScreen () :Boolean
     {
         // TODO: this too could be cleaned up. See note in handleToggleFullscreen
-        var o :Object = _ctx.getRootPanel().stage;
+        var o :Object = _ctx.getStage();
         try {
             return (undefined !== o.displayState);
         } catch (e :Error) {
@@ -297,7 +297,7 @@ public class MsoyController extends Controller
     {
         // TODO: once things are more up to date, we can use the real
         // class and StageDisplayState for the constants
-        var o :Object = _ctx.getRootPanel().stage;
+        var o :Object = _ctx.getStage();
         o.displayState = (o.displayState == "normal") ? "fullScreen" : "normal";
     }
 

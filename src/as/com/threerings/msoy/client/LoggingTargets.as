@@ -28,7 +28,7 @@ public class LoggingTargets
             // oh well!
         }
 
-        if ((null != ctx.getRootPanel().loaderInfo.parameters["test"]) || Prefs.getLogToChat()) {
+        if ((null != ctx.getStage().loaderInfo.parameters["test"]) || Prefs.getLogToChat()) {
             if (_chatTarget == null) {
                 _chatTarget = new ChatTarget(ctx);
                 mx.logging.Log.addTarget(_chatTarget);

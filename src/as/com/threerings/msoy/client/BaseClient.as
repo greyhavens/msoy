@@ -8,7 +8,6 @@ import flash.display.Stage;
 
 import flash.external.ExternalInterface;
 
-import mx.core.Application;
 import mx.resources.ResourceBundle;
 
 import com.threerings.util.ResultAdapter;
@@ -43,7 +42,7 @@ public /*abstract*/ class BaseClient extends Client
 
     public function BaseClient (stage :Stage)
     {
-        super(createStartupCreds(), stage);
+        super(createStartupCreds(stage), stage);
 
         _ctx = createContext();
         LoggingTargets.configureLogging(_ctx);
@@ -142,11 +141,11 @@ public /*abstract*/ class BaseClient extends Client
     /**
      * Create the credentials that will be used to log us on
      */
-    protected static function createStartupCreds (token :String = null) :MsoyCredentials
+    protected static function createStartupCreds (stage :Stage, token :String = null) :MsoyCredentials
     {
         var creds :MsoyCredentials = new MsoyCredentials(null, null);
         creds.ident = Prefs.getMachineIdent();
-        var params :Object = Application.application.loaderInfo.parameters;
+        var params :Object = stage.loaderInfo.parameters;
         if (null == params["guest"]) {
             creds.sessionToken = (token == null) ? params["token"] : token;
         }

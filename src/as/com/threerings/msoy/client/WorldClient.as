@@ -154,7 +154,7 @@ public class WorldClient extends BaseClient
         log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");
         var co :MemberObject = _wctx.getClientObject();
         if (co == null || co.getMemberId() != memberId) {
-            _wctx.getMsoyController().handleLogon(createStartupCreds(token));
+            _wctx.getMsoyController().handleLogon(createStartupCreds(_wctx.getStage(), token));
         }
     }
 

@@ -51,9 +51,9 @@ public /*abstract*/ class BaseContext
         _memberDir = new MemberDirector(this);
     }
 
-    public function getRootPanel () :DisplayObjectContainer
+    public function getStage () :Stage
     {
-        return Application(Application.application);
+        return _client.getStage();
     }
 
     /**
