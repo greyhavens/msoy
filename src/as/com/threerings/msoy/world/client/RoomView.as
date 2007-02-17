@@ -651,7 +651,12 @@ public class RoomView extends AbstractRoomView
             Log.getLog(this).warning("No actor for updated occupant? [info=" + occInfo + "].");
             return;
         }
-        actor.setActorInfo(occInfo);
+        var changeOk :Boolean = actor.setActorInfo(occInfo);
+        if (!changeOk) {
+            // the change was incompatible, create a new sprite
+            removeSprite(actor);
+            addBody(occInfo.bodyOid);
+        }
     }
 
     /**
@@ -712,8 +717,12 @@ public class RoomView extends AbstractRoomView
         super.removeSprite(sprite);
 
         if (sprite is ActorSprite) {
+            // TODO: ack! This is getting triggered even when we remove
+            // actors for other reasons than them leaving...
             var actor :ActorSprite = (sprite as ActorSprite);
             portalTraversed(actor.loc, false);
+            // remove the sprite from the entities table
+            _entities.remove(actor.getActorInfo().getItemIdent());
         }
         if (sprite == _centerSprite) {
             _centerSprite = null;

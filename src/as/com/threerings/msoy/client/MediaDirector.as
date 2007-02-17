@@ -35,8 +35,14 @@ public class MediaDirector extends BasicDirector
     {
         var isOurs :Boolean = (occInfo.bodyOid == _ctx.getClient().getClientOid());
         if (isOurs && _ourAvatar != null) {
-            _ourAvatar.setActorInfo(occInfo);
-            return _ourAvatar;
+            if (_ourAvatar.setActorInfo(occInfo)) {
+                return _ourAvatar;
+
+            } else {
+                // the media is incompatible, flush it
+                _ourAvatar.shutdown();
+                _ourAvatar = null;
+            }
         }
 
         var sprite :ActorSprite;
