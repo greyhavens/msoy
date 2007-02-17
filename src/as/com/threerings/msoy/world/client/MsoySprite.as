@@ -161,17 +161,7 @@ public class MsoySprite extends MediaContainer
      */
     public function getMediaHotSpot () :Point
     {
-        // TODO: figure out where we're going to store hotspot info
-        var p :Point = null; // TODO _desc.hotSpot;
-        if (p == null) {
-            // if there's no hotspot, it defaults to along the bottom
-            p = new Point(_w/2, _h);
-
-        } else {
-            // return a clone of the hotspot in the descriptor
-            p = p.clone();
-        }
-        return p;
+        return _hotSpot;
     }
 
     /**
@@ -181,9 +171,9 @@ public class MsoySprite extends MediaContainer
     public function getLayoutHotSpot () :Point
     {
         var p :Point = getMediaHotSpot();
-        p.x = Math.abs(p.x * getMediaScaleX() * _locScale);
-        p.y = Math.abs(p.y * getMediaScaleY() * _locScale);
-        return p;
+        return new Point(
+            Math.abs(p.x * getMediaScaleX() * _locScale),
+            Math.abs(p.y * getMediaScaleY() * _locScale));
     }
 
     /**
@@ -498,6 +488,12 @@ public class MsoySprite extends MediaContainer
     {
         super.contentDimensionsUpdated();
 
+        // update the hotspot
+        _hotSpot.x = _w / 2;
+        _hotSpot.y = _h;
+        // we'll want to call locationUpdated() now, but it's done for us
+        // as a result of calling updateMediaPosition(), below.
+
         // even if we don't have strange (negative) scaling, we should do this
         // because it ends up calling locationUpdated().
         updateMediaPosition();
@@ -548,6 +544,7 @@ public class MsoySprite extends MediaContainer
         o["lookupMemory_v1"] = lookupMemory_v1;
         o["updateMemory_v1"] = updateMemory_v1;
         o["getInstanceId_v1"] = getInstanceId_v1;
+        o["setHotSpot_v1"] = setHotSpot_v1;
     }
 
     /**
@@ -610,6 +607,20 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
+     * Called by {@link MsoyControl} to update the sprite's hotspot.
+     */
+    protected function setHotSpot_v1 (x :Number, y :Number) :void
+    {
+        if (isNaN(x) || isNaN(y)) {
+            return;
+        }
+
+        _hotSpot.x = x;
+        _hotSpot.y = y;
+        locationUpdated();
+    }
+
+    /**
      * Call an exposed function in usercode.
      */
     protected function callUserCode (name :String, ... args) :*
@@ -635,6 +646,9 @@ public class MsoySprite extends MediaContainer
     /** Identifies the item we are visualizing. All furniture will have an ident, but only our
      * avatar sprite will know its ident (and only we can update our avatar's memory, etc.).  */
     protected var _ident :ItemIdent;
+
+    /** The media hotspot, which should be used to position it. */
+    protected var _hotSpot :Point = new Point(0, 0);
 
     /** The 'location' scale of the media: the scaling that is the result of
      * emulating perspective while we move around the room. */

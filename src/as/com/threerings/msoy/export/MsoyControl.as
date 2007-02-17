@@ -158,6 +158,18 @@ public class MsoyControl extends EventDispatcher
     }
 
     /**
+     * Set the layout "hotspot" for your item, specified as pixels relative
+     * to (0, 0) the top-left coordinate.
+     *
+     * If unset, the default hotspot will be based off of the SWF dimensions,
+     * with x = width / 2, y = height.
+     */
+    public function setHotSpot (x :Number, y :Number) :void
+    {
+        callMsoyCode("setHotSpot_v1", x, y);
+    } 
+
+    /**
      * Populate any properties that we provide back to metasoy.
      */
     protected function populateProperties (o :Object) :void
