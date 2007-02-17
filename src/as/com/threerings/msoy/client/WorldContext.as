@@ -29,8 +29,7 @@ import com.threerings.msoy.item.client.ItemDirector;
 import com.threerings.msoy.world.client.WorldDirector;
 
 /**
- * Defines services for the main virtual world and game clients. TODO: make WorldContext and
- * GameContext?
+ * Defines services for the main virtual world and game clients. TODO: make GameContext?
  */
 public class WorldContext extends BaseContext
     implements WhirledContext, ParlorContext
@@ -137,19 +136,14 @@ public class WorldContext extends BaseContext
     }
 
     protected var _topPanel :TopPanel;
-
     protected var _controller :MsoyController;
 
     protected var _sceneDir :SceneDirector;
-
     protected var _spotDir :SpotSceneDirector;
-
     protected var _parlorDir :ParlorDirector;
-
     protected var _gameDir :GameDirector;
-
+    protected var _mediaDir :MediaDirector;
     protected var _worldDir :WorldDirector;
-
     protected var _itemDir :ItemDirector;
 
     protected var _sceneRepo :SharedObjectSceneRepository;

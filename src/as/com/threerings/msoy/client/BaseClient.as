@@ -8,16 +8,9 @@ import flash.display.Stage;
 
 import flash.external.ExternalInterface;
 
-import flash.geom.Point;
-
-import flash.system.Security;
-
 import mx.core.Application;
-
 import mx.resources.ResourceBundle;
 
-import com.threerings.util.MenuUtil;
-import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
 
@@ -29,18 +22,10 @@ import com.threerings.presents.dobj.DObjectManager;
 
 import com.threerings.presents.net.BootstrapData;
 
-// imported so that they'll be compiled into the .swf
 import com.threerings.presents.data.TimeBaseMarshaller;
 import com.threerings.crowd.data.BodyMarshaller;
 import com.threerings.crowd.data.LocationMarshaller;
 import com.threerings.crowd.chat.data.ChatMarshaller;
-
-import com.threerings.whirled.data.SceneMarshaller;
-import com.threerings.whirled.spot.data.SpotMarshaller;
-import com.threerings.whirled.spot.data.SpotSceneObject;
-
-import com.threerings.parlor.data.ParlorMarshaller;
-import com.threerings.toybox.data.ToyBoxMarshaller;
 
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberMarshaller;
@@ -48,21 +33,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
-
-import com.threerings.msoy.item.data.ItemMarshaller;
-import com.threerings.msoy.item.web.Document;
-import com.threerings.msoy.item.web.Furniture;
-import com.threerings.msoy.item.web.Game;
-import com.threerings.msoy.item.web.Photo;
-
-import com.threerings.msoy.world.data.PetMarshaller;
-import com.threerings.msoy.world.data.RoomConfig;
-
-import com.threerings.msoy.game.data.LobbyMarshaller;
-import com.threerings.msoy.game.data.WorldGameMarshaller;
-import com.threerings.msoy.game.client.LobbyController;
-
-import com.threerings.msoy.swiftly.data.SwiftlyMarshaller;
 
 /**
  * A client shared by both our virtual world and header incarnations.
@@ -78,7 +48,13 @@ public /*abstract*/ class BaseClient extends Client
         _ctx = createContext();
         LoggingTargets.configureLogging(_ctx);
 
-        if (!configureExternalFunctions()) {
+        // wire up our JavaScript bridge functions
+        try {
+            if (ExternalInterface.available) {
+                configureExternalFunctions();
+            }
+        } catch (err :Error) {
+            // nada: ExternalInterface isn't there. Oh well!
             log.info("Unable to configure external functions.");
         }
 
@@ -149,60 +125,11 @@ public /*abstract*/ class BaseClient extends Client
     }
 
     /**
-     * Configure our external functions that we expose to javascript.
-     *
-     * @return true if successfully configured.
+     * Configure any external functions that we wish to expose to JavaScript.
      */
-    protected function configureExternalFunctions () :Boolean
+    protected function configureExternalFunctions () :void
     {
-        try {
-            if (!ExternalInterface.available) {
-                return false;
-            }
-
-//             ExternalInterface.addCallback("clientLogon", externalClientLogon);
-//             ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
-
-        } catch (err :Error) {
-            // nada: ExternalInterface isn't there. Oh well!
-            return false;
-        }
-
-        return true;
     }
-
-//     /**
-//      * Exposed to javascript so that it may notify us to logon.
-//      */
-//     protected function externalClientLogon (memberId :int, sessionToken :String) :void
-//     {
-//         if (sessionToken == null) {
-//             return;
-//         }
-
-//         log.info("Logging on via external request [id=" + memberId +
-//                  ", token=" + sessionToken + "].");
-//         Prefs.setSessionToken(sessionToken);
-//         var co :MemberObject = _ctx.getClientObject();
-//         if (co == null || co.getMemberId() != memberId) {
-//             _ctx.getMsoyController().handleLogon(createStartupCreds(false, false));
-//         }
-//     }
-
-//     /**
-//      * Exposed to javascript so that it may notify us to logoff.
-//      */
-//     protected function externalClientLogoff (backAsGuest :Boolean = true) :void
-//     {
-//         log.info("Logging off via external request [backAsGuest=" + backAsGuest + "].");
-
-//         if (backAsGuest) {
-//             // have the controller handle it it will logoff, then back as a guest
-//             _ctx.getMsoyController().handleLogon(null);
-//         } else {
-//             logoff(false);
-//         }
-//     }
 
     /**
      * Creates the context we'll use with this client.

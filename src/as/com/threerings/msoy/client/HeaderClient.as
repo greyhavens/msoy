@@ -16,5 +16,11 @@ public class HeaderClient extends BaseClient
     {
         super(stage);
     }
+
+    // from BaseClient
+    override protected function configureExternalFunctions () :void
+    {
+        // TODO: wire-'em-uppus
+    }
 }
 }

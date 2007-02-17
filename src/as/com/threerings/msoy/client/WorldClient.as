@@ -1,40 +1,22 @@
+//
+// $Id$
+
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
-
-import flash.external.ExternalInterface;
-
 import flash.events.ContextMenuEvent;
-
+import flash.external.ExternalInterface;
 import flash.geom.Point;
-
-import flash.system.Security;
-
 import flash.ui.ContextMenu;
 
 import mx.core.Application;
-
 import mx.resources.ResourceBundle;
 
 import com.threerings.util.MenuUtil;
 import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
-
-import com.threerings.presents.client.Client;
-import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.data.ClientObject;
-
-import com.threerings.presents.dobj.DObjectManager;
-
-import com.threerings.presents.net.BootstrapData;
-
-// imported so that they'll be compiled into the .swf
-import com.threerings.presents.data.TimeBaseMarshaller;
-import com.threerings.crowd.data.BodyMarshaller;
-import com.threerings.crowd.data.LocationMarshaller;
-import com.threerings.crowd.chat.data.ChatMarshaller;
 
 import com.threerings.whirled.data.SceneMarshaller;
 import com.threerings.whirled.spot.data.SpotMarshaller;
@@ -43,12 +25,7 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.parlor.data.ParlorMarshaller;
 import com.threerings.toybox.data.ToyBoxMarshaller;
 
-import com.threerings.msoy.data.MemberInfo;
-import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyAuthResponseData;
-import com.threerings.msoy.data.MsoyBootstrapData;
-import com.threerings.msoy.data.MsoyCredentials;
 
 import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.web.Document;
@@ -62,8 +39,6 @@ import com.threerings.msoy.world.data.RoomConfig;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 import com.threerings.msoy.game.client.LobbyController;
-
-import com.threerings.msoy.swiftly.data.SwiftlyMarshaller;
 
 /**
  * Handles the main services for the world and game clients.
@@ -100,7 +75,6 @@ public class WorldClient extends BaseClient
         c = WorldGameMarshaller;
         c = LobbyController;
         c = ToyBoxMarshaller;
-        c = SwiftlyMarshaller;
         c = PetMarshaller;
 
         // these cause bundles to be compiled in.
@@ -115,7 +89,14 @@ public class WorldClient extends BaseClient
     // from BaseClient
     override protected function createContext () :BaseContext
     {
-        return new WorldContext(this);
+        return (_wctx = new WorldContext(this));
+    }
+
+    // from BaseClient
+    override protected function configureExternalFunctions () :void
+    {
+        ExternalInterface.addCallback("clientLogon", externalClientLogon);
+        ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
     }
 
     /**
@@ -128,34 +109,68 @@ public class WorldClient extends BaseClient
         custom.length = 0;
 
         custom.push(MenuUtil.createControllerMenuItem(
-            Msgs.GENERAL.get("b.toggle_fullscreen"), MsoyController.TOGGLE_FULLSCREEN, null, false,
-            (_ctx as WorldContext).getMsoyController().supportsFullScreen()));
+                        Msgs.GENERAL.get("b.toggle_fullscreen"),
+                        MsoyController.TOGGLE_FULLSCREEN, null, false,
+                        _wctx.getMsoyController().supportsFullScreen()));
 
         try {
-        // TODO: this doesn't seem to find or get triggered by
-        // perspectivized furniture. It should.
+            // TODO: this doesn't seem to find or get triggered by
+            // perspectivized furniture. It should.
 //        trace("Inacc: " + _stage.areInaccessibleObjectsUnderPoint(
 //            new Point(_stage.mouseX, _stage.mouseY)));
-        var allObjects :Array = _stage.getObjectsUnderPoint(
-            new Point(_stage.mouseX, _stage.mouseY));
-
-        var seenObjects :Array = [];
-        for each (var disp :DisplayObject in allObjects) {
-            do {
+            var allObjects :Array =
+                _stage.getObjectsUnderPoint(new Point(_stage.mouseX, _stage.mouseY));
+            var seenObjects :Array = [];
+            for each (var disp :DisplayObject in allObjects) {
+                do {
 //                trace("Checking " + disp);
-                seenObjects.push(disp);
-                if (disp is ContextMenuProvider) {
-                    (disp as ContextMenuProvider).populateContextMenu(custom);
-                }
-                disp = disp.parent;
+                    seenObjects.push(disp);
+                    if (disp is ContextMenuProvider) {
+                        (disp as ContextMenuProvider).populateContextMenu(custom);
+                    }
+                    disp = disp.parent;
 
-            } while (disp != null && (seenObjects.indexOf(disp) == -1));
-        }
+                } while (disp != null && (seenObjects.indexOf(disp) == -1));
+            }
         } catch (e :Error) {
             Log.getLog(this).logStackTrace(e);
         }
 
         // then, the menu will pop up
     }
+
+    /**
+     * Exposed to javascript so that it may notify us to logon.
+     */
+    protected function externalClientLogon (memberId :int, token :String) :void
+    {
+        if (token == null) {
+            return;
+        }
+
+        log.info("Logging on via external request [id=" + memberId + ", token=" + token + "].");
+        Prefs.setSessionToken(token);
+        var co :MemberObject = _wctx.getClientObject();
+        if (co == null || co.getMemberId() != memberId) {
+            _wctx.getMsoyController().handleLogon(createStartupCreds(false, false));
+        }
+    }
+
+    /**
+     * Exposed to javascript so that it may notify us to logoff.
+     */
+    protected function externalClientLogoff (backAsGuest :Boolean = true) :void
+    {
+        log.info("Logging off via external request [backAsGuest=" + backAsGuest + "].");
+
+        if (backAsGuest) {
+            // have the controller handle it it will logoff, then back as a guest
+            _wctx.getMsoyController().handleLogon(null);
+        } else {
+            logoff(false);
+        }
+    }
+
+    protected var _wctx :WorldContext;
 }
 }
