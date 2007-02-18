@@ -73,7 +73,7 @@ public class MailApplication extends DockPanel
     public void messageChanged (int ownerId, int folderId, int messageId)
     {
         if (folderId == _currentFolder && messageId == _currentMessage) {
-            loadMessage();
+            loadMessage(true);
         }
     }
 
@@ -88,10 +88,11 @@ public class MailApplication extends DockPanel
         _currentOffset = headerOffset;
         _currentMessage = messageId;
         updateHistory();
-        loadHeaders();
         if (messageId >= 0) {
-            loadMessage();
+            // loadMessage will call loadFolders() and loadHeaders()
+            loadMessage(true);
         } else {
+            loadHeaders();
             _messageContainer.setVisible(false);
         }
     }
@@ -535,7 +536,7 @@ public class MailApplication extends DockPanel
     }
 
     // fetch the entirity (body, specifically) of a given message from the backend
-    protected void loadMessage ()
+    protected void loadMessage (final boolean cascadeUpdate)
     {
         if (_currentFolder < 0) {
             addError("Internal error: asked to load a message, but no folder selected.");
@@ -550,6 +551,13 @@ public class MailApplication extends DockPanel
                 _payloadDisplay = _message.payload != null ?
                     MailPayloadDisplay.getDisplay(_message) : null;
                 refreshMessagePanel();
+                // unread status may have changed: update dependent folders
+                if (cascadeUpdate) {
+                    if (_currentFolder > 0) {
+                        loadHeaders();
+                    }
+                    loadFolders();
+                }
             }
             public void onFailure (Throwable caught) {
                 addError("Failed to fetch mail message from database: " + caught.getMessage());
