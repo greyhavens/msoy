@@ -19,19 +19,6 @@ public class SwiftlyPanel extends VerticalPanel
     {
         setStyleName("swiftlyPanel");
 
-        // TODO: make this return server hostname and port
-        CSwiftly.swiftlysvc.getRpcURL(new AsyncCallback() {
-            public void onSuccess (Object result) {
-                SwiftlyPanel.this.loadApplet((String)result);
-            }
-            public void onFailure (Throwable cause) {
-                CSwiftly.serverError(cause);
-            }
-        });
-    }
-
-    public void loadApplet (String rpcURL)
-    {
         String authtoken = (CSwiftly.creds == null) ? "" : CSwiftly.creds.token;
         add(new Label("Sunrise, sunset, swiftly flow the days"));
 
@@ -41,8 +28,7 @@ public class SwiftlyPanel extends VerticalPanel
             new String[] {  "authtoken", authtoken,
                             "projectId", "1",
                             "server", "localhost", // TODO: unhack!
-                            "port", "4010",
-                            "rpcURL", rpcURL });
+                            "port", "4010" });
         display.setHeight("100%");
         add(display);
         setCellHeight(display, "94%");
