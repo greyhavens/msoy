@@ -42,10 +42,6 @@ public class MsoyHttpServer extends HttpServer
             handler.addServlet(name, "/msoy/" + name, SERVLETS[ii+1]);
             handler.addServlet(name, "/" + name, SERVLETS[ii+1]);
         }
-        
-        // wire up our single XML-RPC servlet, with XML-RPC extensions enabled
-        ServletHolder holder = handler.addServlet(SwiftlyEditorServlet.SVC_PATH, "/" + SwiftlyEditorServlet.SVC_PATH, SwiftlyEditorServlet.class.getName());
-        holder.setInitParameter("enabledForExtensions", "true");
 
         context.addHandler(handler);
 
