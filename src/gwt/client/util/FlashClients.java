@@ -3,16 +3,13 @@
 
 package client.util;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.ui.HTML;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.web.data.FriendInfo;
+import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
-
-import client.shell.CShell;
 
 /**
  * Utility methods for generating flash clients.
@@ -56,17 +53,18 @@ public class FlashClients
     /**
      * Calls into the Flash client and gets the list of our friends.
      */
-    public static FriendInfo[] getFriends ()
+    public static FriendEntry[] getFriends ()
     {
         JavaScriptObject result = getFriendsNative();
         int length = (result == null ? 0 : getLength(result)/3);
-        FriendInfo[] friends = new FriendInfo[length];
+        FriendEntry[] friends = new FriendEntry[length];
         for (int ii = 0; ii < friends.length; ii++) {
-            friends[ii] = new FriendInfo();
+            friends[ii] = new FriendEntry();
             friends[ii].name = new MemberName(getStringElement(result, 3*ii),
                                               getIntElement(result, 3*ii+1));
             friends[ii].online = getBooleanElement(result, 3*ii+2);
-            // status is always 0: full-fledged friend
+            // status is always full-fledged friend
+            friends[ii].status = FriendEntry.FRIEND;
         }
         return friends;
     }

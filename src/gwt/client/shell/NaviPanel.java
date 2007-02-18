@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.FriendInfo;
+import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.util.FlashClients;
@@ -68,7 +68,7 @@ public class NaviPanel extends FlexTable
                 MenuBar menu = new MenuBar(true);
                 menu.setAutoOpen(true);
                 addLink(menu, "/world/index.html#m" + creds.getMemberId(), "My Home");
-                FriendInfo[] friends = FlashClients.getFriends();
+                FriendEntry[] friends = FlashClients.getFriends();
                 if (friends.length > 0) {
                     MenuBar fmenu = new MenuBar();
                     for (int ii = 0; ii < friends.length; ii++) {
@@ -88,7 +88,7 @@ public class NaviPanel extends FlexTable
                 MenuBar menu = new MenuBar(true);
                 menu.setAutoOpen(true);
                 addLink(menu, "/group/index.html", "Groups");
-                FriendInfo[] friends = FlashClients.getFriends();
+                FriendEntry[] friends = FlashClients.getFriends();
                 if (friends.length > 0) {
                     MenuBar fmenu = new MenuBar();
                     for (int ii = 0; ii < friends.length; ii++) {
