@@ -138,11 +138,11 @@ public abstract class FriendInvite
                 String subject, body;
                 if (accepted) {
                     subject = "Your friend invitation was accepted!";
-                    body = "Your invitation to " + invitee + "was accepted! " +
+                    body = "Your invitation to " + invitee + " was accepted! " +
                         "They are now a friend of yours.";
                 } else {
                     subject = "Your friends invitation has been declined.";
-                    body = "Your invitation to " + invitee + "was declined. Alas!";
+                    body = "Your invitation to " + invitee + " was declined. Alas!";
                 }
                 CMsgs.mailsvc.deliverMessage(CMsgs.creds, inviter.getMemberId(), subject, body,
                                              null, new AsyncCallback() {
