@@ -79,11 +79,17 @@ public class index extends MsoyEntryPoint
 
     protected void updateInterface (String historyToken)
     {
+        // if we have no creds, just display a message saying login
         if (CSwiftly.creds == null) {
-            // if we have no creds, just display a message saying login
             setContent(new Label(CSwiftly.msgs.indexLogon()));
+        } 
+
+        if (historyToken.length() == 0) {
+            // display the project create/list panel
+            setContent(new ProjectSelectionPanel());
         } else {
-            setContent(new SwiftlyPanel());
+            // else assume we have been passed a projectId and pass that to the applet
+            setContent(new SwiftlyPanel(Integer.parseInt(historyToken)));
         }
     }
 }

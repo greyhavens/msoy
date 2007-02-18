@@ -11,11 +11,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 /**
- * Displays the client interface for a particular game.
+ * Displays the client interface for a particular swiftly project.
  */
 public class SwiftlyPanel extends VerticalPanel
 {
-    public SwiftlyPanel ()
+    public SwiftlyPanel (int projectId)
     {
         setStyleName("swiftlyPanel");
 
@@ -26,7 +26,7 @@ public class SwiftlyPanel extends VerticalPanel
             "swiftly", "/clients/swiftly-client.jar",
             "com.threerings.msoy.swiftly.client.SwiftlyApplet", "100%", "100%",
             new String[] {  "authtoken", authtoken,
-                            "projectId", "1",
+                            "projectId", String.valueOf(projectId),
                             "server", "localhost", // TODO: unhack!
                             "port", "4010" });
         display.setHeight("100%");
