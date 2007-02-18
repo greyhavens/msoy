@@ -3,13 +3,14 @@
 
 package com.threerings.msoy.web.data;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.presents.dobj.DSet;
 
 /**
  * Represents a friend connection.
  */
 public class FriendEntry
-    implements Comparable, DSet.Entry
+    implements Comparable, DSet.Entry, IsSerializable
 {
     /** The display name of the friend. */
     public MemberName name;
