@@ -26,12 +26,14 @@ import com.threerings.crowd.data.BodyMarshaller;
 import com.threerings.crowd.data.LocationMarshaller;
 import com.threerings.crowd.chat.data.ChatMarshaller;
 
+import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
+import com.threerings.msoy.data.SceneBookmarkEntry;
 
 /**
  * A client shared by both our virtual world and header incarnations.
@@ -74,6 +76,7 @@ public /*abstract*/ class BaseClient extends Client
         c = MemberInfo;
         c = MsoyAuthResponseData;
         c = MemberMarshaller;
+        c = SceneBookmarkEntry;
 
         // these cause bundles to be compiled in.
         [ResourceBundle("global")]
@@ -114,8 +117,8 @@ public /*abstract*/ class BaseClient extends Client
         LoggingTargets.configureLogging(_ctx);
 
         // possibly ensure our local storage capacity
-        var user :MemberObject = (clobj as MemberObject);
-        if (!user.isGuest()) {
+        _user = (clobj as MemberObject);
+        if (!_user.isGuest()) {
             Prefs.config.ensureCapacity(
                 102400, new ResultAdapter(null, function (cause :Error) :void {
                 log.warning("User denied request to increase local storage capacity.");
@@ -128,6 +131,28 @@ public /*abstract*/ class BaseClient extends Client
      */
     protected function configureExternalFunctions () :void
     {
+        ExternalInterface.addCallback("getFriends", externalGetFriends);
+    }
+
+    /**
+     * Provides this player's friends list to the GWT client.
+     */
+    protected function externalGetFriends () :Array
+    {
+        if (_user == null) {
+            return new Array();
+        }
+
+        // we have to convert everything to an array of primitives, so we convert to an array of
+        // String, Number, Boolean (repeat) (an array of arrays doesn't work; yay!)
+        var friends :Array = _user.getSortedEstablishedFriends();
+        var fdata :Array = new Array();
+        friends.forEach(function (entry :FriendEntry, index :int, array :Array) :void {
+            fdata.push(entry.name.toString());
+            fdata.push(entry.name.getMemberId());
+            fdata.push(entry.online);
+        });
+        return fdata;
     }
 
     /**
@@ -141,7 +166,8 @@ public /*abstract*/ class BaseClient extends Client
     /**
      * Create the credentials that will be used to log us on
      */
-    protected static function createStartupCreds (stage :Stage, token :String = null) :MsoyCredentials
+    protected static function createStartupCreds (stage :Stage, token :String = null)
+        :MsoyCredentials
     {
         var creds :MsoyCredentials = new MsoyCredentials(null, null);
         creds.ident = Prefs.getMachineIdent();
@@ -153,5 +179,6 @@ public /*abstract*/ class BaseClient extends Client
     }
 
     protected var _ctx :BaseContext;
+    protected var _user :MemberObject;
 }
 }

@@ -98,6 +98,7 @@ public class WorldClient extends BaseClient
     // from BaseClient
     override protected function configureExternalFunctions () :void
     {
+        super.configureExternalFunctions();
         ExternalInterface.addCallback("clientLogon", externalClientLogon);
         ExternalInterface.addCallback("clientLogoff", externalClientLogoff);
     }

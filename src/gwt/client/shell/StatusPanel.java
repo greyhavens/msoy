@@ -20,30 +20,20 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.util.FlashClients;
+
 /**
- * Displays an interface for logging on, or a user's current credentials.
+ * Displays basic player status (name, flow count) and handles logging on and logging off.
  */
-public class LogonPanel extends FlexTable
+public class StatusPanel extends FlexTable
 {
-    public LogonPanel (MsoyEntryPoint app)
+    public StatusPanel (MsoyEntryPoint app)
     {
-        setStyleName("logonPanel");
+        setStyleName("statusPanel");
         setCellPadding(0);
         setCellSpacing(0);
 
         _app = app;
-
-        // create our interface elements
-        setWidget(0, 0, _top = new Label(""));
-        _top.setStyleName("Top");
-        setWidget(0, 1, _action = new Button("", new ClickListener() {
-            public void onClick (Widget sender) {
-                actionClicked();
-            }
-        }));
-        getFlexCellFormatter().setRowSpan(0, 1, 2);
-        setWidget(1, 0, _main = new Label(""));
-        _main.setStyleName("Main");
     }
 
     /**
@@ -91,9 +81,8 @@ public class LogonPanel extends FlexTable
         clearCookie("creds");
         _app.didLogoff();
 
-        _top.setText("Logon or");
-        _main.setText("Join!");
-        _action.setText("Go");
+        reset();
+        setText(0, 0, "New to MetaSOY? Create an account!");
     }
 
     protected void validateSession (String token)
@@ -123,11 +112,33 @@ public class LogonPanel extends FlexTable
     {
         _creds = creds;
         setCookie("creds", _creds.token);
-        _app.didLogon(_creds);
+        boolean needHeaderClient = _app.didLogon(_creds);
 
-        _top.setText("Welcome");
-        _main.setText(_creds.name.toString());
-        _action.setText("Logoff");
+        reset();
+        int idx = 0;
+
+        // create the header Flash client if we don't have a real client on the page
+        if (needHeaderClient) {
+            setWidget(0, idx++, FlashClients.createHeaderClient(_creds.token));
+        }
+
+        setText(0, idx++, _creds.name + ":");
+        getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
+        setText(0, idx++, "47"); // gold
+        getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
+        setText(0, idx++, "12895"); // flow
+        getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
+        setText(0, idx++, "638"); // whuffy
+    }
+
+    protected void reset ()
+    {
+        if (getRowCount() > 0) {
+            for (int col = 0; col < getCellCount(0); col++) {
+                clearCell(0, col);
+                getFlexCellFormatter().setWidth(0, col, "0px");
+            }
+        }
     }
 
     protected void actionClicked ()
@@ -217,11 +228,7 @@ public class LogonPanel extends FlexTable
     }
 
     protected MsoyEntryPoint _app;
-
     protected WebCreds _creds;
-
-    protected Label _top, _main;
-    protected Button _action;
 
     /** The height of the header UI in pixels. */
     protected static final int HEADER_HEIGHT = 50;

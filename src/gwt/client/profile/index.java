@@ -65,10 +65,9 @@ public class index extends MsgsEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected void didLogon (WebCreds creds)
+    protected boolean didLogon (WebCreds creds)
     {
-        super.didLogon(creds);
-
+        boolean header = super.didLogon(creds);
         if (_memberId == -1) {
             String initToken = History.getToken();
             if (initToken.length() > 0) {
@@ -77,6 +76,7 @@ public class index extends MsgsEntryPoint
                 displayMemberPage(creds.getMemberId());
             }
         }
+        return header;
     }
 
     // @Override // from MsoyEntryPoint

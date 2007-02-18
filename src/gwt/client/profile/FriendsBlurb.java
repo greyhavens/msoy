@@ -34,25 +34,26 @@ public class FriendsBlurb extends Blurb
         setHeader("Friends");
 
         ArrayList friends = (ArrayList)blurbData;
+        boolean canInvite = (CProfile.getMemberId() != _memberId);
         if (friends.size() == 0) {
             setStatus(CProfile.getMemberId() == _memberId ?
-                          "You have no friends. Boo hoo." :
-                          "This person is not a member of any groups.");
+                      "You have no friends. Boo hoo." : "This person has no friends. How sad.");
 
         } else {
             for (int ii = 0, ll = friends.size(); ii < ll; ii++) {
                 FriendInfo friend = (FriendInfo)friends.get(ii);
-                Hyperlink link = new Hyperlink(friend.name,
-                    String.valueOf(friend.memberId));
+                canInvite = canInvite && !(friend.name.getMemberId() == CProfile.getMemberId());
+                Hyperlink link = new Hyperlink(
+                    friend.name.toString(), String.valueOf(friend.name.getMemberId()));
                 _content.setWidget(ii, 0, link);
             }
         }
-        if (CProfile.getMemberId() != _memberId) {
+
+        if (canInvite) {
             Button inviteButton = new Button("Invite To Be Your Friend");
             inviteButton.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
-                    new MailComposition(_memberId, "Be my Friend",
-                                        new FriendInvite.Composer(),
+                    new MailComposition(_memberId, "Be my Friend", new FriendInvite.Composer(),
                                         "Let's be buddies!").show();
                 }
             });

@@ -90,7 +90,7 @@ public class MemberManager
         _memberRepo = memberRepo;
         _profileRepo = profileRepo;
         _groupRepo = groupRepo;
-        MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.WORLD_GROUP);
+        MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.BASE_GROUP);
     }
 
     /**

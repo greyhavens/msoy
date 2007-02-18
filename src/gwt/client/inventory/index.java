@@ -59,10 +59,11 @@ public class index extends EditemEntryPoint
     }
 
     // @Override from MsoyEntryPoint
-    protected void didLogon (WebCreds creds)
+    protected boolean didLogon (WebCreds creds)
     {
-        super.didLogon(creds);
+        boolean header = super.didLogon(creds);
         updateInterface(History.getToken());
+        return header;
     }
 
     // @Override from MsoyEntryPoint

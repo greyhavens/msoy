@@ -20,12 +20,11 @@ public class FriendsResolver extends BlurbResolver
     @Override // from BlurbResolver
     protected void resolve ()
     {
-        MsoyServer.memberMan.loadFriends(
-            _memberId, new ResultListener<List<FriendEntry>>() {
+        MsoyServer.memberMan.loadFriends(_memberId, new ResultListener<List<FriendEntry>>() {
             public void requestCompleted (List<FriendEntry> friends) {
                 ArrayList<FriendInfo> info = new ArrayList<FriendInfo>();
                 for (FriendEntry entry : friends) {
-                    info.add(entry.toInfo());
+                    info.add(new FriendInfo(entry.name, entry.online, entry.status));
                 }
                 resolutionCompleted(info);
             }

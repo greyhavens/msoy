@@ -59,23 +59,20 @@ public abstract class MsoyEntryPoint
     // from interface EntryPoint
     public void onModuleLoad ()
     {
-        // First, set up the callback that flash can call when it logs in
-        configureLogonCallback(this);
+        // set up the callbackd that our flash clients can call
+        configureCallbacks(this);
 
         // initialize our services and translations
         initContext();
 
-        // TODO: new image every day!
-//         RootPanel.get("logo").add(new Image("/images/header/msoy_logo.png"));
-
-        // create our standard logon panel
-        RootPanel.get("status").add(_logon = new LogonPanel(this));
+        // create our status/logon panel
+        RootPanel.get("status").add(_status = new StatusPanel(this));
 
         // create our standard navigation panel
-        RootPanel.get("navigation").add(_navi = new NaviPanel(getPageId(), _logon));
+        RootPanel.get("navigation").add(_navi = new NaviPanel(getPageId(), _status));
 
-        // initialize the logon panel
-        _logon.init();
+        // initialize the status panel
+        _status.init();
 
         // initialize the rest of the application
         onPageLoad();
@@ -131,11 +128,15 @@ public abstract class MsoyEntryPoint
      * Called when we the player logs on (or when our session is validated). This always happens
      * after {@link #onPageLoad} as we don't know that our session is valid until we've heard back
      * from the server.
+     *
+     * @return true if we need a headless header Flash client, false if the page is providing a
+     * Flash client for us.
      */
-    protected void didLogon (WebCreds creds)
+    protected boolean didLogon (WebCreds creds)
     {
         CShell.creds = creds;
         _navi.didLogon(creds);
+        return true;
     }
 
     /**
@@ -143,7 +144,7 @@ public abstract class MsoyEntryPoint
      */
     protected void didLogonFromFlash (String displayName, int memberId, String token)
     {
-        _logon.validateSession(token);
+        _status.validateSession(token);
     }
 
     /**
@@ -156,17 +157,17 @@ public abstract class MsoyEntryPoint
     }
 
     /**
-     * Configure a top-level function (called flashDidLogon) that can be called by flash to route
-     * logon information to didLogonFromFlash, above.
+     * Configures top-level functions that can be called by Flash when it wants to tell us about
+     * things.
      */
-    protected static native void configureLogonCallback (MsoyEntryPoint mep) /*-{
+    protected static native void configureCallbacks (MsoyEntryPoint mep) /*-{
        $wnd.flashDidLogon = function (displayName, memberId, token) {
            mep.@client.shell.MsoyEntryPoint::didLogonFromFlash(Ljava/lang/String;ILjava/lang/String;)(displayName, memberId, token);
        };
     }-*/;
 
     protected NaviPanel _navi;
-    protected LogonPanel _logon;
+    protected StatusPanel _status;
 
     protected HTML _chat;
 }

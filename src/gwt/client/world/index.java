@@ -37,6 +37,13 @@ public class index extends MsoyEntryPoint
         updateInterface(token);
     }
 
+    // @Override // from MsoyEntryPoint
+    protected boolean needsHeaderClient ()
+    {
+        String token = History.getToken();
+        return (token.startsWith("ng") || token.startsWith("nm") || token.startsWith("p") ||
+                CWorld.creds == null);
+    }
 
     // @Override // from MsoyEntryPoint
     protected void onPageLoad ()
@@ -54,11 +61,11 @@ public class index extends MsoyEntryPoint
     }
 
     // @Override // from MsoyEntryPoint
-    protected void didLogon (WebCreds creds)
+    protected boolean didLogon (WebCreds creds)
     {
         super.didLogon(creds);
         clientLogon(creds.getMemberId(), creds.token);
-        updateInterface(History.getToken());
+        return updateInterface(History.getToken());
     }
 
     // @Override // from MsoyEntryPoint
@@ -69,53 +76,62 @@ public class index extends MsoyEntryPoint
         updateInterface(History.getToken());
     }
 
-    protected void updateInterface (String token)
+    protected boolean updateInterface (String token)
     {
         RootPanel.get("content").clear();
-        _entryCounter ++;
+        _entryCounter++;
 
         // don't show the flash client in the GWT shell
         if (!GWT.isScript()) {
-            return;
+            return false;
         }
 
         try {
             if (token.startsWith("s")) {
                 // go to a specific scene
                 world("sceneId=" + id(token, 1));
+                return false;
 
             } else if (token.startsWith("g")) {
                 // go to a specific group's scene group
                 world("groupHome=" + id(token, 1));
+                return false;
 
             } else if (token.startsWith("m")) {
                 // go to a specific member's home
                 world("memberHome=" + id(token, 1));
+                return false;
 
             } else if (token.startsWith("ng")) {
                 // go to the neighborhood around the specified group
                 displayNeighborhood(_entryCounter, id(token, 2), true);
+                return true;
 
             } else if (token.startsWith("nm")) {
                 // go to the neighborhood around the specified member
                 displayNeighborhood(_entryCounter, id(token, 2), false);
+                return true;
 
             } else if (token.startsWith("p")) {
                 // display popular places by request
                 displayHotSpots(_entryCounter);
+                return true;
 
             } else if (CWorld.creds != null) {
                 // we're logged in, go to our home
                 world(null);
+                return false;
 
             } else {
                 // we're not logged in, show popular places
                 displayHotSpots(_entryCounter);
+                return true;
             }
 
         } catch (NumberFormatException e) {
             // if all else fails, display popular places
             displayHotSpots(_entryCounter);
+            return true;
         }
     }
 

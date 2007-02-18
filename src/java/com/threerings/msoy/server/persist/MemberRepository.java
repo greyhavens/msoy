@@ -61,8 +61,10 @@ public class MemberRepository extends DepotRepository
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
             public void entryModified (CacheKey key, FriendRecord friend) {
                 // member modified: invalidate the dependent FriendsCache entries
-                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviterId);
-                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviteeId);
+                if (friend != null) {
+                    _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviterId);
+                    _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviteeId);
+                }
             }
         });
     }

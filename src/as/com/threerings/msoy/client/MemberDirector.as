@@ -120,8 +120,7 @@ public class MemberDirector extends BasicDirector
     // from BasicDirector
     override protected function registerServices (client :Client) :void
     {
-        // TODO: nix when we don't need world stuff
-        client.addServiceGroup(MsoyCodes.WORLD_GROUP);
+        client.addServiceGroup(MsoyCodes.BASE_GROUP);
     }
 
     // from BasicDirector

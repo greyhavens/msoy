@@ -16,8 +16,10 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.data.FriendInfo;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.util.FlashClients;
 import client.util.MsoyUI;
 
 /**
@@ -25,13 +27,13 @@ import client.util.MsoyUI;
  */
 public class NaviPanel extends FlexTable
 {
-    public NaviPanel (String page, LogonPanel logon)
+    public NaviPanel (String page, StatusPanel status)
     {
         setStyleName("naviPanel");
         setCellPadding(0);
         setCellSpacing(0);
 
-        _logon = logon;
+        _status = status;
     }
 
     /**
@@ -50,14 +52,13 @@ public class NaviPanel extends FlexTable
                 if (CShell.creds.isSupport) {
                     addLink(menu, "/admin/index.html", "Admin");
                 }
+                // TODO: account
                 menu.addItem("Logoff", true, new Command() {
                     public void execute () {
-                        _logon.logoff();
+                        _status.logoff();
                         _popped.hide();
                     }
                 });
-                // TODO: account
-                // TODO: logout
                 popupMenu(sender, menu);
             }
         });
@@ -75,6 +76,15 @@ public class NaviPanel extends FlexTable
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
                 addLink(menu, "/group/index.html", "Groups");
+                FriendInfo[] friends = FlashClients.getFriends();
+                if (friends.length > 0) {
+                    MenuBar fmenu = new MenuBar();
+                    for (int ii = 0; ii < friends.length; ii++) {
+                        addLink(fmenu, "/profile/index.html#" + friends[ii].name.getMemberId(),
+                                (friends[ii].online ? "* " : "") + friends[ii].name);
+                    }
+                    menu.addItem("Friends", fmenu);
+                } // TODO: add "invite" link if no friends?
                 popupMenu(sender, menu);
             }
         });
@@ -107,7 +117,7 @@ public class NaviPanel extends FlexTable
         int menuidx = 0;
         setMenu(menuidx++, "Me", CShell.cmsgs.menuLogon(), new ClickListener() {
             public void onClick (Widget sender) {
-                _logon.showLogonPopup(sender.getAbsoluteLeft(), getMenuY(sender));
+                _status.showLogonPopup(sender.getAbsoluteLeft(), getMenuY(sender));
             }
         });
         setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new ClickListener() {
@@ -229,7 +239,7 @@ public class NaviPanel extends FlexTable
         protected Element _iframe;
     }
 
-    protected LogonPanel _logon;
+    protected StatusPanel _status;
 
     protected Label _loglbl, _melbl;
 

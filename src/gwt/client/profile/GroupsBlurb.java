@@ -39,7 +39,9 @@ public class GroupsBlurb extends Blurb
 
         List blurbGroups = (List)blurbData;
         if (blurbGroups.size() == 0) {
-            setStatus("You're not a member of any groups. Boo hoo.");
+            setStatus(CProfile.getMemberId() == _memberId ?
+                      "You're not a member of any groups. Boo hoo." :
+                      "This person is not a member of any groups.");
 
         } else {
             for (int ii = 0, ll = blurbGroups.size(); ii < ll; ii++) {
