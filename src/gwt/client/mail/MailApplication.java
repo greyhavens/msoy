@@ -84,6 +84,7 @@ public class MailApplication extends DockPanel
      */
     public void show (int folderId, int headerOffset, int messageId)
     {
+        clearErrors();
         _currentFolder = folderId;
         _currentOffset = headerOffset;
         _currentMessage = messageId;
@@ -102,6 +103,7 @@ public class MailApplication extends DockPanel
      */
     public void refresh ()
     {
+        clearErrors();
         // always clear the current message display on a refresh
         _currentMessage = -1;
         _messageContainer.setVisible(false);
