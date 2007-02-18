@@ -36,7 +36,6 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManager;
 
-import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.SceneBookmarkEntry;
@@ -47,6 +46,7 @@ import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.NeighborGroup;

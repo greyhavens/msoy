@@ -4,6 +4,7 @@
 package com.threerings.msoy.web.server;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 import com.threerings.msoy.server.MsoyServer;
 

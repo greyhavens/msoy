@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.web.data.FriendInfo;
+import com.threerings.msoy.web.data.FriendEntry;
 
 import client.msgs.MailComposition;
 import client.msgs.FriendInvite;
@@ -41,8 +41,8 @@ public class FriendsBlurb extends Blurb
 
         } else {
             for (int ii = 0, ll = friends.size(); ii < ll; ii++) {
-                FriendInfo friend = (FriendInfo)friends.get(ii);
-                canInvite = canInvite && !(friend.name.getMemberId() == CProfile.getMemberId());
+                FriendEntry friend = (FriendEntry)friends.get(ii);
+                canInvite = canInvite && !(friend.getMemberId() == CProfile.getMemberId());
                 Hyperlink link = new Hyperlink(
                     friend.name.toString(), String.valueOf(friend.name.getMemberId()));
                 _content.setWidget(ii, 0, link);

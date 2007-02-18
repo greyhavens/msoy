@@ -26,6 +26,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.WorldMemberInfo;
 
+import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.GroupName;
 
@@ -636,10 +637,10 @@ public class MemberObject extends BodyObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setFriends (DSet<com.threerings.msoy.data.FriendEntry> value)
+    public void setFriends (DSet<com.threerings.msoy.web.data.FriendEntry> value)
     {
         requestAttributeChange(FRIENDS, value, this.friends);
-        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.data.FriendEntry> clone =
+        @SuppressWarnings("unchecked") DSet<com.threerings.msoy.web.data.FriendEntry> clone =
             (value == null) ? null : value.typedClone();
         this.friends = clone;
     }

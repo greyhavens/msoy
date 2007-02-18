@@ -12,11 +12,11 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.server.CrowdClientResolver;
 
-import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.SceneBookmarkEntry;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.item.web.Avatar;

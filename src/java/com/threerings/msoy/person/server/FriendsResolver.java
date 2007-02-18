@@ -8,9 +8,8 @@ import java.util.List;
 
 import com.samskivert.util.ResultListener;
 
-import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.server.MsoyServer;
-import com.threerings.msoy.web.data.FriendInfo;
+import com.threerings.msoy.web.data.FriendEntry;
 
 /**
  * Resolves a person's friend information.
@@ -22,9 +21,9 @@ public class FriendsResolver extends BlurbResolver
     {
         MsoyServer.memberMan.loadFriends(_memberId, new ResultListener<List<FriendEntry>>() {
             public void requestCompleted (List<FriendEntry> friends) {
-                ArrayList<FriendInfo> info = new ArrayList<FriendInfo>();
+                ArrayList<FriendEntry> info = new ArrayList<FriendEntry>();
                 for (FriendEntry entry : friends) {
-                    info.add(new FriendInfo(entry.name, entry.online, entry.status));
+                    info.add(entry);
                 }
                 resolutionCompleted(info);
             }
