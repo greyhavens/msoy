@@ -60,7 +60,7 @@ public class AbstractRoomView extends Sprite
     {
         _actualWidth = unscaledWidth;
         _actualHeight = unscaledHeight;
-        var scale :Number = (unscaledHeight / TARGET_HEIGHT);
+        var scale :Number = (unscaledHeight / RoomMetrics.TARGET_HEIGHT);
         scaleX = scale;
         scaleY = scale;
 
@@ -136,40 +136,29 @@ public class AbstractRoomView extends Sprite
         var x :Number = p.x;
         var y :Number = p.y;
 
-        // TODO NOW
-        // TODO: much of this could be pre-computed, perhaps we store it in
-        // a SceneMetrics class
-        var sceneWidth :int = _scene.getWidth();
-        var minScale :Number = computeMinScale();
-        var backWallHeight :Number = TARGET_HEIGHT * minScale;
-
-        var horizon :Number = 1 - _scene.getHorizon();
-        var horizonY :Number = TARGET_HEIGHT * horizon;
-        var backWallTop :Number = horizonY - (backWallHeight * horizon);
-        var backWallBottom :Number = backWallTop + backWallHeight;
         var floorWidth :Number, floorInset :Number;
         var xx :Number, yy :Number, zz :Number;
         var scale :Number;
         var clickWall :int;
 
         // do some partitioning depending on where the y lies
-        if (y < backWallTop) {
+        if (y < _metrics.backWallTop) {
             clickWall = ClickLocation.CEILING;
-            scale = minScale + (backWallTop - y) / backWallTop * (MAX_SCALE - minScale);
+            scale = _metrics.minScale + (_metrics.backWallTop - y) / _metrics.backWallTop * (MAX_SCALE - _metrics.minScale);
 
-        } else if (y < backWallBottom) {
+        } else if (y < _metrics.backWallBottom) {
             clickWall = ClickLocation.BACK_WALL;
-            scale = minScale;
+            scale = _metrics.minScale;
 
         } else {
             clickWall = ClickLocation.FLOOR;
-            scale = minScale + (y - backWallBottom) / (TARGET_HEIGHT - backWallBottom) *
-                (MAX_SCALE - minScale);
+            scale = _metrics.minScale + (y - _metrics.backWallBottom) / (_metrics.sceneHeight - _metrics.backWallBottom) *
+                (MAX_SCALE - _metrics.minScale);
         }
 
         // see how wide the floor is at that scale
-        floorWidth = (sceneWidth * scale);
-        floorInset = (sceneWidth - floorWidth) / 2;
+        floorWidth = (_metrics.sceneWidth * scale);
+        floorInset = (_metrics.sceneWidth - floorWidth) / 2;
 
         if (x < floorInset || x - floorInset > floorWidth) {
             if (x < floorInset) {
@@ -182,18 +171,18 @@ public class AbstractRoomView extends Sprite
             }
 
             // recalculate floorWidth at the minimum scale
-            if (scale != minScale) {
-                floorWidth = (sceneWidth * minScale);
-                floorInset = (sceneWidth - floorWidth) / 2;
+            if (scale != _metrics.minScale) {
+                floorWidth = (_metrics.sceneWidth * _metrics.minScale);
+                floorInset = (_metrics.sceneWidth - floorWidth) / 2;
             }
 
             switch (clickWall) {
             case ClickLocation.LEFT_WALL:
-                scale = minScale + (x / floorInset) * (MAX_SCALE - minScale);
+                scale = _metrics.minScale + (x / floorInset) * (MAX_SCALE - _metrics.minScale);
                 break;
 
             case ClickLocation.RIGHT_WALL:
-                scale = minScale + ((sceneWidth - x) / floorInset) * (MAX_SCALE - minScale);
+                scale = _metrics.minScale + ((_metrics.sceneWidth - x) / floorInset) * (MAX_SCALE - _metrics.minScale);
                 break;
 
             default:
@@ -201,10 +190,10 @@ public class AbstractRoomView extends Sprite
             }
 
             // TODO: factor in horizon here
-            var wallHeight :Number = (TARGET_HEIGHT * scale);
-            var wallInset :Number = (TARGET_HEIGHT - wallHeight) / 2;
+            var wallHeight :Number = (_metrics.sceneHeight * scale);
+            var wallInset :Number = (_metrics.sceneHeight - wallHeight) / 2;
             yy = MAX_COORD * (1 - ((y - wallInset) / wallHeight));
-            zz = MAX_COORD * ((scale - minScale) / (MAX_SCALE - minScale));
+            zz = MAX_COORD * ((scale - _metrics.minScale) / (MAX_SCALE - _metrics.minScale));
 
         } else {
             // normal case: the x coordinate is within the floor width
@@ -215,12 +204,12 @@ public class AbstractRoomView extends Sprite
             case ClickLocation.CEILING:
             case ClickLocation.FLOOR:
                 yy = (clickWall == ClickLocation.CEILING) ? MAX_COORD : 0;
-                zz = MAX_COORD * (1 - ((scale - minScale) / (MAX_SCALE - minScale)));
+                zz = MAX_COORD * (1 - ((scale - _metrics.minScale) / _metrics.scaleRange));
                 break;
 
             case ClickLocation.BACK_WALL:
                 // y is simply how high they clicked on the wall
-                yy = (backWallBottom - y) / backWallHeight;
+                yy = (_metrics.backWallBottom - y) / _metrics.backWallHeight;
                 zz = 1;
                 break;
 
@@ -232,19 +221,13 @@ public class AbstractRoomView extends Sprite
         return new ClickLocation(clickWall, new MsoyLocation(xx, yy, zz, 0));
     }
 
-    protected function setBackWallBottom (bwb :Number) :void
-    {
-        // nada, overridden, will go away with a TODO, above
-    }
-
     /**
      * Get the y distance represented by the specified number of pixels for the given z coordinate.
      */
     public function getYDistance (z :Number, pixels :int) :Number
     {
-        var minScale :Number = computeMinScale();
-        var scale :Number = minScale + ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - minScale);
-        var sheight :Number = (TARGET_HEIGHT * scale);
+        var scale :Number = _metrics.minScale + ((MAX_COORD - z) / MAX_COORD) * (MAX_SCALE - _metrics.minScale);
+        var sheight :Number = _metrics.sceneHeight * scale;
         return (pixels / sheight);
     }
 
@@ -327,7 +310,7 @@ public class AbstractRoomView extends Sprite
         // of the hotspot
 
         // the scale of the object is determined by the z coordinate
-        var distH :Number = FOCAL + (_scene.getDepth() * loc.z);
+        var distH :Number = RoomMetrics.FOCAL + (_scene.getDepth() * loc.z);
         var dist0 :Number = (hotSpot.x * mediaScaleX);
         var distN :Number = (contentWidth - hotSpot.x) * mediaScaleX;
         if (loc.x < .5) {
@@ -336,11 +319,11 @@ public class AbstractRoomView extends Sprite
             distN *= -1;
         }
 
-        var scale0 :Number = FOCAL / (distH + dist0);
-        var scaleH :Number = FOCAL / distH;
-        var scaleN :Number = FOCAL / (distH + distN);
+        var scale0 :Number = RoomMetrics.FOCAL / (distH + dist0);
+        var scaleH :Number = RoomMetrics.FOCAL / distH;
+        var scaleN :Number = RoomMetrics.FOCAL / (distH + distN);
 
-        var logicalY :Number = loc.y + ((contentHeight * mediaScaleY) / TARGET_HEIGHT);
+        var logicalY :Number = loc.y + ((contentHeight * mediaScaleY) / _metrics.sceneHeight);
 
         var p0 :Point = projectedLocation(scale0, loc.x, logicalY);
         var pH :Point = projectedLocation(scaleH, loc.x, loc.y);
@@ -365,12 +348,27 @@ public class AbstractRoomView extends Sprite
         // save our scene object
         _roomObj = (plobj as RoomObject);
 
-        // get the specifics on the current scene from the scene director
-        _scene = (_ctx.getSceneDirector().getScene() as MsoyScene);
-
-        configureScrollRect();
-        updateDrawnRoom();
+        rereadScene();
         updateAllFurni();
+    }
+
+    /**
+     * (Re)set our scene to the one the scene director knows about.
+     */
+    public function rereadScene () :void
+    {
+        setScene(_ctx.getSceneDirector().getScene() as MsoyScene);
+    }
+
+    /**
+     * Set the scene to be displayed.
+     */
+    public function setScene (scene :MsoyScene) :void
+    {
+        _scene = scene;
+        _metrics.update(scene);
+        updateDrawnRoom();
+        relayout();
     }
 
     public function updateAllFurni () :void
@@ -434,12 +432,6 @@ public class AbstractRoomView extends Sprite
         }
     }
 
-    protected function computeMinScale () :Number
-    {
-        var sceneDepth :int = _scene.getDepth();
-        return (sceneDepth == 0) ? 0 : (FOCAL / (FOCAL + sceneDepth));
-    }
-
     protected function scrollRectUpdated () :void
     {
         if (_bkg != null && _scene.getSceneType() == MsoySceneModel.FIXED_IMAGE) {
@@ -454,8 +446,7 @@ public class AbstractRoomView extends Sprite
     protected function positionAndScale (sprite :MsoySprite, loc :MsoyLocation) :void
     {
         // the scale of the object is determined by the z coordinate
-        var minScale :Number = computeMinScale();
-        var scale :Number = minScale + ((MAX_COORD - loc.z) / MAX_COORD) * (MAX_SCALE - minScale);
+        var scale :Number = _metrics.minScale + ((MAX_COORD - loc.z) / MAX_COORD) * _metrics.scaleRange;
         sprite.setLocationScale(scale);
 
         var p :Point = projectedLocation(scale, loc.x, loc.y);
@@ -476,18 +467,12 @@ public class AbstractRoomView extends Sprite
      */
     protected function projectedLocation (scale :Number, x :Number, y :Number) :Point
     {
-        var sceneWidth :Number = _scene.getWidth();
-
         // x position depends on logical x and the scale
-        var floorWidth :Number = (sceneWidth * scale);
-        var floorInset :Number = (sceneWidth - floorWidth) / 2;
-
-        // y position depends on logical y and the scale (z)
-        var horizon :Number = 1 - _scene.getHorizon();
-        var horizonY :Number = TARGET_HEIGHT * horizon;
+        var floorWidth :Number = (_metrics.sceneWidth * scale);
+        var floorInset :Number = (_metrics.sceneWidth - floorWidth) / 2;
 
         return new Point(floorInset + (x * floorWidth),
-                         horizonY + ((TARGET_HEIGHT - horizonY) - (y * TARGET_HEIGHT)) * scale);
+            _metrics.horizonY + (_metrics.subHorizonHeight - (y * _metrics.sceneHeight)) * scale);
     }
 
     /**
@@ -628,40 +613,29 @@ public class AbstractRoomView extends Sprite
             g.endFill();
         }
  
-        // TODO: this will move to metrics init method
-        var minScale :Number = computeMinScale();
-        var horizon :Number = 1 - _scene.getHorizon();
-        var sceneWidth :int = _scene.getWidth();
-        var backWallHeight :Number = TARGET_HEIGHT * minScale;
-
-        var horizonY :Number = TARGET_HEIGHT * horizon;
-        var backWallTop :Number = horizonY - (backWallHeight * horizon);
-        var backWallBottom :Number = backWallTop + backWallHeight;
-        setBackWallBottom(backWallBottom);
-
         var drawWalls :Boolean = (_scene.getSceneType() == MsoySceneModel.DRAWN_ROOM);
         var drawEdges :Boolean = drawWalls || _editing;
         if (!drawEdges) {
             return; // nothing to draw
         }
 
-        var floorWidth :Number = (sceneWidth * minScale);
-        var floorInset :Number = (sceneWidth - floorWidth) / 2;
+        var floorWidth :Number = (_metrics.sceneWidth * _metrics.minScale);
+        var floorInset :Number = (_metrics.sceneWidth - floorWidth) / 2;
 
         // rename a few things for ease of use below...
         var x1 :Number = floorInset;
-        var x2 :Number = sceneWidth - floorInset;
-        var y1 :Number = backWallTop;
-        var y2 :Number = backWallBottom;
+        var x2 :Number = _metrics.sceneWidth - floorInset;
+        var y1 :Number = _metrics.backWallTop;
+        var y2 :Number = _metrics.backWallBottom;
 
         if (drawWalls) {
             // fill in the floor
             g.beginFill(0x333333);
-            g.moveTo(0, TARGET_HEIGHT);
+            g.moveTo(0, _metrics.sceneHeight);
             g.lineTo(x1, y2);
             g.lineTo(x2, y2);
-            g.lineTo(sceneWidth, TARGET_HEIGHT);
-            g.lineTo(0, TARGET_HEIGHT);
+            g.lineTo(_metrics.sceneWidth, _metrics.sceneHeight);
+            g.lineTo(0, _metrics.sceneHeight);
             g.endFill();
 
             // fill in the three walls
@@ -669,11 +643,11 @@ public class AbstractRoomView extends Sprite
             g.moveTo(0, 0);
             g.lineTo(x1, y1);
             g.lineTo(x2, y1);
-            g.lineTo(sceneWidth, 0);
-            g.lineTo(sceneWidth, TARGET_HEIGHT);
+            g.lineTo(_metrics.sceneWidth, 0);
+            g.lineTo(_metrics.sceneWidth, _metrics.sceneHeight);
             g.lineTo(x2, y2);
             g.lineTo(x1, y2);
-            g.lineTo(0, TARGET_HEIGHT);
+            g.lineTo(0, _metrics.sceneHeight);
             g.lineTo(0, 0);
             g.endFill();
 
@@ -682,13 +656,13 @@ public class AbstractRoomView extends Sprite
             g.moveTo(0, 0);
             g.lineTo(x1, y1);
             g.lineTo(x2, y1);
-            g.lineTo(sceneWidth, 0);
+            g.lineTo(_metrics.sceneWidth, 0);
             g.lineTo(0, 0);
             g.endFill();
 
         } else {
             g.beginFill(0xFFFFFF);
-            g.drawRect(0, 0, sceneWidth, TARGET_HEIGHT);
+            g.drawRect(0, 0, _metrics.sceneWidth, _metrics.sceneHeight);
             g.endFill();
         }
 
@@ -699,15 +673,15 @@ public class AbstractRoomView extends Sprite
             g.lineTo(x1, y1);
             g.lineTo(x2, y1);
 
-            g.moveTo(sceneWidth, 0);
+            g.moveTo(_metrics.sceneWidth, 0);
             g.lineTo(x2, y1);
             g.lineTo(x2, y2);
 
-            g.moveTo(sceneWidth, TARGET_HEIGHT);
+            g.moveTo(_metrics.sceneWidth, _metrics.sceneHeight);
             g.lineTo(x2, y2);
             g.lineTo(x1, y2);
 
-            g.moveTo(0, TARGET_HEIGHT);
+            g.moveTo(0, _metrics.sceneHeight);
             g.lineTo(x1, y2);
             g.lineTo(x1, y1);
 
@@ -720,6 +694,9 @@ public class AbstractRoomView extends Sprite
 
     /** The model of the current scene. */
     protected var _scene :MsoyScene;
+
+    /** The RoomMetrics for doing our layout. */
+    protected var _metrics :RoomMetrics = new RoomMetrics();
 
     /** The transitory properties of the current scene. */
     protected var _roomObj :RoomObject;
@@ -742,18 +719,7 @@ public class AbstractRoomView extends Sprite
     /** The actual screen height of this component. */
     protected var _actualHeight :Number;
 
-    /** The focal length of our perspective rendering. */
-    // This value (488) was chosen so that the standard depth (400) causes layout nearly identical
-    // to the original perspective math.  So, it's purely historical, but we could choose a new
-    // focal length and even a new standard scene depth.
-    // TODO
-    private static const FOCAL :Number = 488;
-
     private static const MAX_SCALE :Number = 1;
     private static const MAX_COORD :Number = 1;
-    private static const PHI :Number = (1 + Math.sqrt(5)) / 2;
-
-    private static const TARGET_WIDTH :Number = 800;
-    protected static const TARGET_HEIGHT :Number = TARGET_WIDTH / PHI;
 }
 }

@@ -100,6 +100,15 @@ public class RoomView extends AbstractRoomView
         return _ctrl;
     }
 
+    override public function setScene (scene :MsoyScene) :void
+    {
+        super.setScene(scene);
+
+        // set the top of the history to the back wall/floor corner
+        chatOverlay.setSubtitlePercentage(
+            (_metrics.sceneHeight - _metrics.backWallBottom) / _metrics.sceneHeight);
+    }
+
     // from LoadingWatcher
     public function setLoading (loading :Boolean) :void
     {
@@ -138,26 +147,6 @@ public class RoomView extends AbstractRoomView
             _roomObj.addListener(this)
             addAllOccupants();
         }
-    }
-
-    /**
-     * Re-set our scene to the one that the scene director knows about.
-     */
-    public function rereadScene () :void
-    {
-        setScene(_ctx.getSceneDirector().getScene() as MsoyScene);
-    }
-
-    /**
-     * Called to re-set the scene to the one specified.
-     * Only the scene properties are updated, furni and portal
-     * changes are not typically noted.
-     */
-    public function setScene (scene :MsoyScene) :void
-    {
-        _scene = scene;
-        updateDrawnRoom();
-        relayout();
     }
 
     /**
@@ -527,11 +516,6 @@ public class RoomView extends AbstractRoomView
     override protected function shouldLoadAll () :Boolean
     {
         return _loadAllMedia;
-    }
-
-    override protected function setBackWallBottom (bwb :Number) :void
-    {
-        chatOverlay.setSubtitlePercentage((TARGET_HEIGHT - bwb) / TARGET_HEIGHT);
     }
 
     protected function scrollView () :void
