@@ -46,6 +46,7 @@ public class NaviPanel extends FlexTable
         setMenu(menuidx++, "Me", CShell.cmsgs.menuMe(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
+                menu.setAutoOpen(true);
                 addLink(menu, "/profile/index.html", "Profile");
                 addLink(menu, "/inventory/index.html", "Inventory");
                 addLink(menu, "/mail/index.html", "Mail");
@@ -65,7 +66,17 @@ public class NaviPanel extends FlexTable
         setMenu(menuidx++, "Places", CShell.cmsgs.menuPlaces(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
+                menu.setAutoOpen(true);
                 addLink(menu, "/world/index.html#m" + creds.getMemberId(), "My Home");
+                FriendInfo[] friends = FlashClients.getFriends();
+                if (friends.length > 0) {
+                    MenuBar fmenu = new MenuBar();
+                    for (int ii = 0; ii < friends.length; ii++) {
+                        addLink(fmenu, "/world/index.html#m" + friends[ii].name.getMemberId(),
+                                (friends[ii].online ? "* " : "") + friends[ii].name + "'s Home");
+                    }
+                    menu.addItem("Friends' Homes", fmenu);
+                }
                 addLink(menu, "/world/index.html#nm" + creds.getMemberId(), "My Neighborhood");
                 addLink(menu, "/world/index.html#p", "Popular Spots");
                 // TODO: bank/alchemist
@@ -92,6 +103,7 @@ public class NaviPanel extends FlexTable
         setMenu(menuidx++, "Stuff", CShell.cmsgs.menuStuff(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
+                menu.setAutoOpen(true);
                 addLink(menu, "/inventory/index.html", "Inventory");
                 addLink(menu, "/catalog/index.html", "Catalog");
                 // TODO: bank/alchemist
@@ -101,6 +113,7 @@ public class NaviPanel extends FlexTable
         setMenu(menuidx++, "Games", CShell.cmsgs.menuGames(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
+                menu.setAutoOpen(true);
                 addLink(menu, "/inventory/index.html#4", "My Games");
                 addLink(menu, "/catalog/index.html#4", "Browse");
                 // TODO: popular games
