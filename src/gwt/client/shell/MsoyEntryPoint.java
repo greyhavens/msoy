@@ -114,13 +114,6 @@ public abstract class MsoyEntryPoint
     protected void setContent (Widget content)
     {
         RootPanel.get("content").clear();
-        String id = getPageId();
-//         if ((id != "world") && (id != "game")) {
-//             if (_chat == null) {
-//                 _chat = FlashClients.createChatClient();
-//             }
-//             RootPanel.get("content").add(_chat);
-//         }
         RootPanel.get("content").add(content);
     }
 
@@ -163,6 +156,13 @@ public abstract class MsoyEntryPoint
     protected static native void configureCallbacks (MsoyEntryPoint mep) /*-{
        $wnd.flashDidLogon = function (displayName, memberId, token) {
            mep.@client.shell.MsoyEntryPoint::didLogonFromFlash(Ljava/lang/String;ILjava/lang/String;)(displayName, memberId, token);
+       };
+       $wnd.onunload = function (event) {
+           var client = $doc.getElementById("asclient");
+           if (client) {
+               client.onUnload();
+           }
+           return true;
        };
     }-*/;
 

@@ -131,7 +131,17 @@ public /*abstract*/ class BaseClient extends Client
      */
     protected function configureExternalFunctions () :void
     {
+        ExternalInterface.addCallback("onUnload", externalOnUnload);
         ExternalInterface.addCallback("getFriends", externalGetFriends);
+    }
+
+    /**
+     * Exposed to JavaScript so that it may notify us when we're leaving the page.
+     */
+    protected function externalOnUnload () :void
+    {
+        log.info("Client unloaded. Logging off.");
+        logoff(false);
     }
 
     /**

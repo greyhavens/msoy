@@ -66,7 +66,7 @@ public class MsoyClient extends WhirledClient
         super.sessionConnectionClosed();
 
         // if we're a guest, end our session now, there's no way to reconnect
-        if (_memobj == null || _memobj.isGuest()) {
+        if (_memobj != null && _memobj.isGuest()) {
             safeEndSession();
         }
     }
