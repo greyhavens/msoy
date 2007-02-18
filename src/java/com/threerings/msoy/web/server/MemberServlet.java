@@ -6,6 +6,7 @@ package com.threerings.msoy.web.server;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
+import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.server.MsoyServer;
 
 import com.threerings.msoy.web.client.MemberService;

@@ -3,14 +3,18 @@
 
 package client.msgs;
 
+import client.util.ClickCallback;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.DockPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
+import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.FriendInviteObject;
 import com.threerings.msoy.web.data.MailMessage;
 import com.threerings.msoy.web.data.MailPayload;
@@ -48,21 +52,12 @@ public abstract class FriendInvite
         /**
          * A miniature version of the widget displayed by the mail reader.
          */
-        protected class InvitationWidget extends HorizontalPanel
+        protected class InvitationWidget extends FlowPanel
         {
             protected InvitationWidget ()
             {
                 super();
-                setSpacing(3);
-                add(new InlineLabel("You can "));
-                Button ayeButton = new Button("ACCEPT");
-                ayeButton.setEnabled(false);
-                add(ayeButton);
-                add(new InlineLabel(" this invitation, or "));
-                Button nayButton = new Button("DECLINE");
-                nayButton.setEnabled(false);
-                add(nayButton);
-                add(new InlineLabel("it."));
+                add(new InlineLabel("You are inviting the recipient of this message to be your friend."));
             }
         }
     }
@@ -77,58 +72,92 @@ public abstract class FriendInvite
         // @Override
         public Widget widgetForRecipient (MailUpdateListener listener)
         {
-            return new InvitationWidget(true);
+            return new InvitationWidget(false);
         }
 
         // @Override
         public Widget widgetForOthers ()
         {
-            return new InvitationWidget(false);
+            return new InvitationWidget(true);
         }
 
-        protected class InvitationWidget extends HorizontalPanel
+        protected class InvitationWidget extends DockPanel
         {
-            protected InvitationWidget (boolean active)
+            protected InvitationWidget (boolean thirdPerson)
             {
                 super();
-                setSpacing(3);
-                add(new InlineLabel("You can "));
-                Button ayeButton = new Button("ACCEPT");
-                ayeButton.setEnabled(active);
-                ayeButton.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        respondToInvite(true);
-                    }
-                });
-                add(ayeButton);
-                add(new InlineLabel(" this invitation, or "));
-                Button nayButton = new Button("DECLINE");
-                nayButton.setEnabled(active);
-                nayButton.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        respondToInvite(false);
-                    }
-                });
-                add(nayButton);
-                add(new InlineLabel("it."));
+                _thirdPerson = thirdPerson;
+                setStyleName("InvitationWidget");
+
+                _status = new Label();
+                add(_status, DockPanel.SOUTH);
+                _content = new FlowPanel();
+                add(_content, DockPanel.CENTER);
+                
+                refreshUI();
             }
 
-            protected void respondToInvite(final boolean accepted)
+            protected void refreshUI ()
             {
-                AsyncCallback callback = new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        mailResponse(accepted);
+                CMsgs.membersvc.getFriendStatus(
+                    CMsgs.creds, _message.headers.sender.getMemberId(), new AsyncCallback() {
+                       public void onSuccess (Object result) {
+                           buildUI(((Byte) result).byteValue());
+                       }
+                       public void onFailure (Throwable caught) {
+                           _status.setText(CMsgs.serverError(caught));
+                       }
+                    });
+            }
+            
+            protected void buildUI (byte friendStatus)
+            {
+                _content.clear();
+                if (friendStatus == FriendEntry.FRIEND) {
+                    _content.add(new InlineLabel("This invitation has been accepted."));
+                    return;
+                }
+                if (friendStatus == FriendEntry.NONE ||
+                    friendStatus == FriendEntry.PENDING_THEIR_APPROVAL) {
+                    _content.add(new InlineLabel("This invitation has been rejected."));
+                    return;
+                }
+                if (_thirdPerson) {
+                    _content.add(new InlineLabel("This invitation is still pending."));
+                    return;
+                }
+
+                _content.add(new InlineLabel("You can "));
+                Button ayeButton = new Button("ACCEPT");
+                new ClickCallback(ayeButton, _status) {
+                    public boolean callService () {
+                        CMsgs.membersvc.acceptFriend(
+                            CMsgs.creds, _message.headers.sender.getMemberId(), this);
+                        return true;
                     }
-                    public void onFailure (Throwable caught) {
-                        // TODO: error handling ...
+                    public boolean gotResult (Object result) {
+                        mailResponse(true);
+                        refreshUI();
+                        return false;
                     }
                 };
-                int senderId = _message.headers.sender.getMemberId();
-                if (accepted) {
-                    CMsgs.membersvc.acceptFriend(CMsgs.creds, senderId, callback);
-                } else {
-                    CMsgs.membersvc.declineFriend(CMsgs.creds, senderId, callback);
-                }
+                _content.add(ayeButton);
+                _content.add(new InlineLabel(" this invitation, or "));
+                Button nayButton = new Button("DECLINE");
+                new ClickCallback(nayButton, _status) {
+                    public boolean callService () {
+                        CMsgs.membersvc.declineFriend(
+                            CMsgs.creds, _message.headers.sender.getMemberId(), this);
+                        return true;
+                    }
+                    public boolean gotResult (Object result) {
+                        mailResponse(false);
+                        refreshUI();
+                        return false;
+                    }
+                };
+                _content.add(nayButton);
+                _content.add(new InlineLabel(" it."));
             }
 
             protected void mailResponse (boolean accepted)
@@ -154,6 +183,10 @@ public abstract class FriendInvite
                     }
                 });
             }
+
+            protected boolean _thirdPerson;
+            protected Label _status;
+            protected FlowPanel _content;
         }
     }
 }
