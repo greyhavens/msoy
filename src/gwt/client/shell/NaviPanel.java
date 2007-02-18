@@ -75,6 +75,7 @@ public class NaviPanel extends FlexTable
         setMenu(menuidx++, "People", CShell.cmsgs.menuPeople(), new ClickListener() {
             public void onClick (Widget sender) {
                 MenuBar menu = new MenuBar(true);
+                menu.setAutoOpen(true);
                 addLink(menu, "/group/index.html", "Groups");
                 FriendInfo[] friends = FlashClients.getFriends();
                 if (friends.length > 0) {
