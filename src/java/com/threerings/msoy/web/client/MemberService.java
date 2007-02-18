@@ -29,6 +29,12 @@ public interface MemberService extends RemoteService
         throws ServiceException;
 
     /**
+     * Figure out whether or not a given member is your friend.
+     */
+    public byte getFriendStatus (WebCreds creds, int memberId)
+        throws ServiceException;
+
+    /**
      * Look up a member by id and return the id of their home scene.
      */
     public Integer getMemberHomeId (WebCreds creds, int memberId)

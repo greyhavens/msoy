@@ -42,6 +42,18 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from MemberService
+    public byte getFriendStatus (WebCreds creds, final int memberId)
+        throws ServiceException
+    {
+        try {
+            return MsoyServer.memberRepo.getFriendStatus(creds.getMemberId(), memberId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "isFriend failed [memberId=" + memberId + "].", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    // from MemberService
     public Integer getMemberHomeId (WebCreds creds, final int memberId)
         throws ServiceException
     {

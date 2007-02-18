@@ -22,6 +22,11 @@ public interface MemberServiceAsync
     public void isOnline (int memberId, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link MemberService#getFriendStatus}.
+     */
+    public void getFriendStatus (WebCreds creds, int memberId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link MemberService#getMemberHomeId}.
      */
     public void getMemberHomeId (WebCreds creds, int memberId, AsyncCallback callback);

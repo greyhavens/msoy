@@ -379,6 +379,41 @@ public class MemberRepository extends DepotRepository
             new FieldOverride(NeighborFriendRecord.SESSIONS, MemberRecord.SESSIONS_C));
     }
 
+    @Entity
+    @Computed
+    protected static class FriendCount extends PersistentRecord
+    {
+        public static final String COUNT = "count";
+        @Computed
+        public int count;
+    }
+    
+    /**
+     * Determine what the friendship status is between one member and another.
+     */
+    public byte getFriendStatus (int firstId, int secondId)
+        throws PersistenceException
+    {
+        Collection<FriendRecord> friends = findAll(
+            FriendRecord.class,
+            new Where(new And(new Or(new And(new Equals(FriendRecord.INVITER_ID, firstId),
+                                             new Equals(FriendRecord.INVITEE_ID, secondId)),
+                                     new And(new Equals(FriendRecord.INVITER_ID, secondId),
+                                             new Equals(FriendRecord.INVITEE_ID, firstId))))));
+        if (friends.size() == 0) {
+            return FriendEntry.NONE;
+        }
+        if (friends.size() > 1) {
+            log.warning("Friendship status query returned " + friends.size() + " records.");
+        }
+        FriendRecord record = friends.iterator().next();
+        if (record.status) {
+            return FriendEntry.FRIEND;
+        }
+        return record.inviterId == firstId ?
+            FriendEntry.PENDING_THEIR_APPROVAL : FriendEntry.PENDING_MY_APPROVAL;
+    }
+
     /**
      * Get the FriendEntry record for all friends (pending, too) of the specified memberId. The
      * online status of each friend will be false.
