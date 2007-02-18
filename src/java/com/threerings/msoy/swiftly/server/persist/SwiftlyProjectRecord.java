@@ -7,6 +7,8 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.web.data.SwiftlyProject;
+
 /**
  * Contains the configuration of a particular member's person page.
  */
@@ -25,7 +27,6 @@ public class SwiftlyProjectRecord extends PersistentRecord
     public static final ColumnExp OWNER_ID_C =
         new ColumnExp(SwiftlyProjectRecord.class, OWNER_ID);
 
-
     /** The id of the project. */
     @Id
     @GeneratedValue
@@ -36,4 +37,16 @@ public class SwiftlyProjectRecord extends PersistentRecord
 
     /** The project name. */
     public String projectName;
+
+    /** 
+     * Converts this persistent record to a runtime record.
+     */
+    public SwiftlyProject toSwiftlyProject ()
+    {
+        SwiftlyProject sp = new SwiftlyProject();
+        sp.projectId = projectId;
+        sp.ownerId = ownerId;
+        sp.projectName = projectName;
+        return sp;
+    }
 }
