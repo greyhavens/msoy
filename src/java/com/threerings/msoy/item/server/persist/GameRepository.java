@@ -41,12 +41,6 @@ public class GameRepository extends ItemRepository<
     public GameRepository (ConnectionProvider provider)
     {
         super(provider);
-
-        // these are old-funky version numbers
-        _ctx.registerMigration(GameRecord.class,
-            new EntityMigration.Drop((8 * 0x100) + 6, "desiredPlayers"));
-        _ctx.registerMigration(GameRecord.class,
-            new EntityMigration.Rename((8 * 0x100) + 6, "partyGameType", "gameType"));
     }
 
     // from ToyBoxManager.GameRepository
