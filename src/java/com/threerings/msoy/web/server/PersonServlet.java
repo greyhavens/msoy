@@ -103,7 +103,7 @@ public class PersonServlet extends MsoyServiceServlet
         case BlurbData.HOOD: return resolveHoodData(memrec);
         default:
             log.log(Level.WARNING, "Requested to resolve unknown blurb type " + bdata + ".");
-            return MsoyCodes.INTERNAL_ERROR;
+            return new BlurbData.ResolutionFailure(MsoyCodes.INTERNAL_ERROR);
         }
     }
 
