@@ -282,7 +282,7 @@ public class MsoyServer extends WhirledServer
         // start up an interval that checks to see if our code has changed and auto-restarts the
         // server as soon as possible when it has
         if (ServerConfig.config.getValue("auto_restart", false)) {
-            _codeModified = new File(ServerConfig.serverRoot, "dist/bang-code.jar").lastModified();
+            _codeModified = new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
             new Interval(omgr) {
                 public void expired () {
                     checkAutoRestart();
