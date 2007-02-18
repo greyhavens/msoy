@@ -17,5 +17,5 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#getProjects}.
      */
-    public ArrayList getProjects (WebCreds creds, AsyncCallback callback);
+    public void getProjects (WebCreds creds, AsyncCallback callback);
 }
