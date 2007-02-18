@@ -94,61 +94,17 @@ public class MemberManager
     }
 
     /**
-     * Loads the specified member's friends list. 
+     * Loads the specified member's friends list.
      *
-     * Note: all the friends will be marked as offline. If you
-     * desire to know their online status, that should be filled in
-     * elsewhere.
+     * Note: all the friends will be marked as offline. If you desire to know their online status,
+     * that should be filled in elsewhere.
      */
-    public void loadFriends (
-        final int memberId, ResultListener<List<FriendEntry>> listener)
+    public void loadFriends (final int memberId, ResultListener<List<FriendEntry>> listener)
     {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<List<FriendEntry>>(listener) {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<List<FriendEntry>>(listener) {
             public List<FriendEntry> invokePersistResult ()
                 throws PersistenceException {
                 return _memberRepo.getFriends(memberId);
-            }
-        });
-    }
-
-    /**
-     * Loads the specified member's profile.
-     */
-    public void loadProfile (
-        final int memberId, ResultListener<Profile> listener)
-    {
-        MsoyServer.invoker.postUnit(
-            new RepositoryListenerUnit<Profile>(listener) {
-            public Profile invokePersistResult () throws PersistenceException {
-                // load up their member info
-                MemberRecord member = _memberRepo.loadMember(memberId);
-                if (member == null) {
-                    return null;
-                }
-
-                Profile profile = new Profile();
-                profile.memberId = memberId;
-                profile.displayName = member.name;
-                // profile.lastLogon = ;
-
-                // fake bits!
-                profile.photo = new Photo();
-                profile.photo.photoMedia = new MediaDesc(
-                    StringUtil.unhexlate("816cd5aebc2d9d228bf66cff193b81eba1a6ac85"),
-                    MediaDesc.IMAGE_JPEG);
-                profile.headline = "Arr! Mateys, this here be me profile!";
-                profile.homePageURL = "http://www.puzzlepirates.com/";
-                profile.isMale = true;
-                profile.location = "San Francisco, CA";
-                profile.age = 36;
-
-//                 ProfileRecord prec = _profileRepo.loadProfile(memberId);
-//                 if (prec != null) {
-//                     profile.
-
-                // load other bits!
-                return profile;
             }
         });
     }
@@ -472,31 +428,25 @@ public class MemberManager
         final InvocationService.InvocationListener listener)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
-            public void invokePersist ()
-                throws PersistenceException
-            {
+            public void invokePersist () throws PersistenceException {
                 _memberRepo.configureAvatarId(user.getMemberId(),
                     (avatar == null) ? 0 : avatar.itemId);
             }
 
-            public void handleSuccess ()
-            {
-                MsoyServer.itemMan.updateItemUsage(user.getMemberId(),
-                    user.avatar, avatar, new ResultListener<Object>() {
-                        public void requestCompleted (Object result) {}
-                        public void requestFailed (Exception cause) {
-                            log.warning("Unable to update usage from an avatar change.");
-                        }
-                    });
+            public void handleSuccess () {
+                MsoyServer.itemMan.updateItemUsage(
+                    user.getMemberId(), user.avatar, avatar, new ResultListener.NOOP<Object>() {
+                    public void requestFailed (Exception cause) {
+                        log.warning("Unable to update usage from an avatar change.");
+                    }
+                });
                 user.setAvatar(avatar);
                 updateOccupantInfo(user);
             }
 
-            public void handleFailure (Exception pe)
-            {
-                log.warning("Unable to set avatar " +
-                    "[user=" + user.which() + ", avatar='" + avatar + "', " +
-                    "error=" + pe + "].");
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to set avatar [user=" + user.which() +
+                            ", avatar='" + avatar + "', " + "error=" + pe + "].");
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
         });
@@ -697,7 +647,8 @@ public class MemberManager
                         place = new PopularMemberPlace();
                         ((PopularMemberPlace) place).memberId = model.ownerId;
                     } else {
-                        throw new IllegalArgumentException("unknown owner type: " + model.ownerType);
+                        throw new IllegalArgumentException(
+                            "unknown owner type: " + model.ownerType);
                     }
                     // make sure we immediately acquire a sceneId
                     place.scenePop = -1;
@@ -747,14 +698,14 @@ public class MemberManager
     }
 
     // set the population of a neighbour group
-    protected void finalizeEntity(NeighborGroup group)
+    protected void finalizeEntity (NeighborGroup group)
     {
         PopularPlace place = getPopularPlace(MsoySceneModel.OWNER_TYPE_GROUP, group.group.groupId);
         group.population = place != null ? place.population : 0;
     }
 
     // set the population of a neighbour friend and figure out if it's online
-    protected void finalizeEntity(NeighborMember friend)
+    protected void finalizeEntity (NeighborMember friend)
     {
         int memberId = friend.member.getMemberId();
         PopularPlace place = getPopularPlace(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);

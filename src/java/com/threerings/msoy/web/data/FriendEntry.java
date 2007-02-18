@@ -5,7 +5,6 @@ package com.threerings.msoy.web.data;
 
 import com.threerings.presents.dobj.DSet;
 
-
 /**
  * Represents a friend connection.
  */

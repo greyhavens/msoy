@@ -18,8 +18,8 @@ public class ProfileRepository extends DepotRepository
     }
 
     /**
-     * Loads the profile record for the specified member. Returns null if no
-     * record has been created for that member.
+     * Loads the profile record for the specified member. Returns null if no record has been
+     * created for that member.
      */
     public ProfileRecord loadProfile (int memberId)
         throws PersistenceException
@@ -28,8 +28,8 @@ public class ProfileRepository extends DepotRepository
     }
 
     /**
-     * Stores the supplied profile record in the database, overwriting an
-     * previously stored profile data.
+     * Stores the supplied profile record in the database, overwriting an previously stored profile
+     * data.
      */
     public void storeProfile (ProfileRecord record)
         throws PersistenceException

@@ -50,7 +50,6 @@ import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.person.server.MailManager;
-import com.threerings.msoy.person.server.PersonPageManager;
 import com.threerings.msoy.person.server.persist.PersonPageRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
@@ -99,11 +98,11 @@ public class MsoyServer extends WhirledServer
     /** Maintains "smart" digital item memories. */
     public static MemoryRepository memoryRepo;
 
+    /** Maintains profile page layout data. */
+    public static PersonPageRepository ppageRepo;
+
     /** The Msoy item manager. */
     public static ItemManager itemMan = new ItemManager();
-
-    /** The Msoy person page manager. */
-    public static PersonPageManager ppageMan = new PersonPageManager();
 
     /** Provides spot-related services. */
     public static SpotProvider spotProv;
@@ -234,7 +233,7 @@ public class MsoyServer extends WhirledServer
         omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
         // create our various repositories
-        PersonPageRepository ppageRepo = new PersonPageRepository();
+        ppageRepo = new PersonPageRepository();
         memberRepo = new MemberRepository(conProv);
         ProfileRepository profileRepo = new ProfileRepository(conProv);
         groupRepo = new GroupRepository(conProv);
@@ -250,7 +249,6 @@ public class MsoyServer extends WhirledServer
         groupMan.init(groupRepo, memberRepo);
         mailMan.init(conProv, memberRepo);
         itemMan.init(conProv);
-        ppageMan.init(ppageRepo);
         swiftlyMan.init(invmgr, swiftlyRepo);
         petMan.init(invmgr);
         lobbyReg.init(invmgr);
