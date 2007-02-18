@@ -6,12 +6,14 @@ package com.threerings.msoy.server;
 import java.io.File;
 import java.security.Security;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.logging.Level;
 
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.util.AuditLogger;
+import com.samskivert.util.Interval;
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
 
@@ -46,23 +48,25 @@ import com.threerings.whirled.util.SceneFactory;
 import com.threerings.toybox.server.ToyBoxManager;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.web.data.MemberName;
+
+import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.person.server.MailManager;
-import com.threerings.msoy.person.server.persist.PersonPageRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
-import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.server.PetManager;
-import com.threerings.msoy.world.server.persist.MemoryRepository;
 
+import com.threerings.msoy.person.server.persist.PersonPageRepository;
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.persist.ProfileRepository;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
+import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -73,6 +77,9 @@ public class MsoyServer extends WhirledServer
 {
     /** The connection provider used to access our JDBC databases. */
     public static ConnectionProvider conProv;
+
+    /** Our runtime admin manager. */
+    public static MsoyAdminManager adminMan = new MsoyAdminManager();
 
     /** Our runtime member manager. */
     public static MemberManager memberMan = new MemberManager();
@@ -189,6 +196,9 @@ public class MsoyServer extends WhirledServer
     public static void registerMember (MemberObject member)
     {
         _online.put(member.memberName, member);
+
+        // update our members online count in the status object
+        adminMan.statObj.setMembersOnline(clmgr.getClientCount());
     }
 
     /**
@@ -198,19 +208,21 @@ public class MsoyServer extends WhirledServer
     public static void clearMember (MemberObject member)
     {
         _online.remove(member.memberName);
+
+        // update our members online count in the status object
+        adminMan.statObj.setMembersOnline(clmgr.getClientCount());
     }
 
     @Override
     public void init ()
         throws Exception
     {
-        // before doing anything else, let's ensure that we don't cache DNS
-        // queries forever -- this breaks Amazon S3, specifically.
+        // before doing anything else, let's ensure that we don't cache DNS queries forever -- this
+        // breaks Amazon S3, specifically.
         Security.setProperty("networkaddress.cache.ttl" , "30");
 
-        // create our connection provider before calling super.init() because
-        // our superclass will attempt to create our authenticator and we'll
-        // need the connection provider ready at that time
+        // create our connection provider before calling super.init() because our superclass will
+        // attempt to create our authenticator and we need the connection provider ready by then
         conProv = new StaticConnectionProvider(ServerConfig.getJDBCConfig());
 
         // create our transition manager prior to doing anything else
@@ -223,7 +235,6 @@ public class MsoyServer extends WhirledServer
             public PresentsClient createClient (AuthRequest areq) {
                 return new MsoyClient();
             }
-
             public ClientResolver createClientResolver (Name username) {
                 return new MsoyClientResolver();
             }
@@ -245,6 +256,7 @@ public class MsoyServer extends WhirledServer
         invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
         parlorMan.init(invmgr, plreg);
         sceneRepo = (MsoySceneRepository) _screp;
+        adminMan.init(this);
         memberMan.init(memberRepo, profileRepo, groupRepo);
         groupMan.init(groupRepo, memberRepo);
         mailMan.init(conProv, memberRepo);
@@ -266,6 +278,17 @@ public class MsoyServer extends WhirledServer
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();
         httpServer.init();
+
+        // start up an interval that checks to see if our code has changed and auto-restarts the
+        // server as soon as possible when it has
+        if (ServerConfig.config.getValue("auto_restart", false)) {
+            _codeModified = new File(ServerConfig.serverRoot, "dist/bang-code.jar").lastModified();
+            new Interval(omgr) {
+                public void expired () {
+                    checkAutoRestart();
+                }
+            }.schedule(AUTO_RESTART_CHECK_INTERVAL, true);
+        }
 
         log.info("Msoy server initialized.");
     }
@@ -349,6 +372,22 @@ public class MsoyServer extends WhirledServer
         };
     }
 
+    protected void checkAutoRestart ()
+    {
+        long lastModified = new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
+        if (lastModified > _codeModified) {
+            int players = 0;
+            for (Iterator<ClientObject> iter = clmgr.enumerateClientObjects(); iter.hasNext(); ) {
+                if (iter.next() instanceof MemberObject) {
+                    players++;
+                }
+            }
+            if (players == 0) {
+                adminMan.scheduleReboot(0, "codeUpdateAutoRestart");
+            }
+        }
+    }
+
     public static void main (String[] args)
     {
         // set up the proper logging services
@@ -372,8 +411,14 @@ public class MsoyServer extends WhirledServer
     protected static HashMap<MemberName,MemberObject> _online =
         new HashMap<MemberName,MemberObject>();
 
+    /** Used to auto-restart the development server when its code is updated. */
+    protected long _codeModified;
+
     protected static File _logdir = new File(ServerConfig.serverRoot, "log");
     protected static AuditLogger _glog = createAuditLog("server");
     protected static AuditLogger _ilog = createAuditLog("item");
     protected static AuditLogger _stlog = createAuditLog("state");
+
+    /** Check for modified code every 30 seconds. */
+    protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;
 }

@@ -43,6 +43,11 @@ media_dir = /export/msoy/pages/media
 dictionary_dir = /export/msoy/pages/dictionary
 
 #
+# Auto-restart server if code changes (used on dev server)
+
+# auto_restart = false
+
+#
 # S3-backed media storage configuration.
 
 # media_s3enable = true
