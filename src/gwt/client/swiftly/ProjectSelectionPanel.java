@@ -89,7 +89,7 @@ public class ProjectSelectionPanel extends VerticalPanel
 
     protected void createProject (final String projectName)
     {
-        SwiftlyProject project = new SwiftlyProject();
+        final SwiftlyProject project = new SwiftlyProject();
         project.projectName = projectName;
         CSwiftly.swiftlysvc.createProject(CSwiftly.creds, project, new AsyncCallback() {
             public void onSuccess (Object result) {
@@ -98,7 +98,7 @@ public class ProjectSelectionPanel extends VerticalPanel
                 // TODO: print project created and refresh project list
             }
             public void onFailure (Throwable caught) {
-                CGroup.log("createProject(" + project + ") failed", caught);
+                CSwiftly.log("createProject(" + project + ") failed", caught);
                 // TODO: addError(CSwiftly.serverError(caught));
             }
         });
