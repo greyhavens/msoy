@@ -10,14 +10,14 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
-import com.threerings.msoy.web.data.PersonLayout;
+import com.threerings.msoy.web.data.ProfileLayout;
 import com.threerings.msoy.web.data.WebCreds;
 
 import client.msgs.MsgsEntryPoint;
 import client.shell.MsoyEntryPoint;
 
 /**
- * Displays a person's "portal" page with their profile information, friends,
+ * Displays a profile's "portal" page with their profile information, friends,
  * and whatever else they want showing on their page.
  */
 public class index extends MsgsEntryPoint
@@ -97,17 +97,17 @@ public class index extends MsgsEntryPoint
 
     protected void displayMemberPage (int memberId)
     {
-        // issue a request for this member's person page data
-        CProfile.personsvc.loadBlurbs(_memberId = memberId, new AsyncCallback() {
+        // issue a request for this member's profile page data
+        CProfile.profilesvc.loadProfile(_memberId = memberId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 ArrayList data = (ArrayList)result;
-                PersonLayout layout = (PersonLayout)data.remove(0);
+                ProfileLayout layout = (ProfileLayout)data.remove(0);
                 switch (layout.layout) {
                 default:
-                case PersonLayout.ONE_COLUMN_LAYOUT:
+                case ProfileLayout.ONE_COLUMN_LAYOUT:
                     setContent(new OneColumnLayout(_memberId, layout, data));
                     break;
-                case PersonLayout.TWO_COLUMN_LAYOUT:
+                case ProfileLayout.TWO_COLUMN_LAYOUT:
                     setContent(new TwoColumnLayout(_memberId, layout, data));
                     break;
                 }

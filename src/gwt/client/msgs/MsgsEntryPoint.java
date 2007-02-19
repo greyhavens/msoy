@@ -10,8 +10,6 @@ import com.threerings.msoy.web.client.GroupService;
 import com.threerings.msoy.web.client.GroupServiceAsync;
 import com.threerings.msoy.web.client.MailService;
 import com.threerings.msoy.web.client.MailServiceAsync;
-import com.threerings.msoy.web.client.PersonService;
-import com.threerings.msoy.web.client.PersonServiceAsync;
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.client.ProfileServiceAsync;
 
@@ -30,8 +28,6 @@ public abstract class MsgsEntryPoint extends MsoyEntryPoint
         // wire up our remote services
         CMsgs.profilesvc = (ProfileServiceAsync)GWT.create(ProfileService.class);
         ((ServiceDefTarget)CMsgs.profilesvc).setServiceEntryPoint("/profilesvc");
-        CMsgs.personsvc = (PersonServiceAsync)GWT.create(PersonService.class);
-        ((ServiceDefTarget)CMsgs.personsvc).setServiceEntryPoint("/personsvc");
         CMsgs.mailsvc = (MailServiceAsync)GWT.create(MailService.class);
         ((ServiceDefTarget)CMsgs.mailsvc).setServiceEntryPoint("/mailsvc");
         CMsgs.groupsvc = (GroupServiceAsync)GWT.create(GroupService.class);

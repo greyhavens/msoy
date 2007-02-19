@@ -9,13 +9,13 @@ import java.util.List;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
 /**
- * Contains the configuration of a particular member's person page.
+ * Contains the configuration of a particular member's profile page.
  */
 @Entity
-public class PersonPageRecord
+public class ProfilePageRecord
     implements Serializable
 {
-    /** The id of the member whose person page this describes. */
+    /** The id of the member whose profile page this describes. */
     @Id
     public int memberId;
 

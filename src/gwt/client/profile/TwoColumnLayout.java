@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.threerings.msoy.web.data.BlurbData;
-import com.threerings.msoy.web.data.PersonLayout;
+import com.threerings.msoy.web.data.ProfileLayout;
 
 /**
- * Lays out a person page in two columns.
+ * Lays out a profile page in two columns.
  */
 public class TwoColumnLayout extends FlexTable
 {
-    public TwoColumnLayout (int memberId, PersonLayout layout, ArrayList blurbs)
+    public TwoColumnLayout (int memberId, ProfileLayout layout, ArrayList blurbs)
     {
         setCellPadding(5);
         for (int ii = 0; ii < layout.blurbs.size(); ii++) {

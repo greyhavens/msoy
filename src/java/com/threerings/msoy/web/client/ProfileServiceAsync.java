@@ -17,4 +17,9 @@ public interface ProfileServiceAsync
      * The asynchronous version of {@link ProfileService#updateProfile}.
      */
     public void updateProfile (WebCreds creds, Profile profile, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link ProfileService#loadProfile}.
+     */
+    public void loadProfile (int memberId, AsyncCallback callback);
 }

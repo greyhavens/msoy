@@ -76,7 +76,6 @@ public class MsoyHttpServer extends HttpServer
         "itemsvc", ItemServlet.class.getName(),
         "catalogsvc", CatalogServlet.class.getName(),
         "profilesvc", ProfileServlet.class.getName(),
-        "personsvc", PersonServlet.class.getName(),
         "membersvc", MemberServlet.class.getName(),
         "groupsvc", GroupServlet.class.getName(),
         "mailsvc", MailServlet.class.getName(),

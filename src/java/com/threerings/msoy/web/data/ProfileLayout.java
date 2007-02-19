@@ -8,15 +8,14 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Defines the layout of a person page (which blurbs are on the page and in
- * which order).
+ * Defines the layout of a profile page (which blurbs are on the page and in which order).
  */
-public class PersonLayout implements IsSerializable
+public class ProfileLayout implements IsSerializable
 {
-    /** One of the available person page layout formats. */
+    /** One of the available profile page layout formats. */
     public static final int ONE_COLUMN_LAYOUT = 0;
 
-    /** One of the available person page layout formats. */
+    /** One of the available profile page layout formats. */
     public static final int TWO_COLUMN_LAYOUT = 1;
 
     /** The layout format of this page. */

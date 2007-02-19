@@ -55,15 +55,14 @@ import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.person.server.MailManager;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.server.PetManager;
 
-import com.threerings.msoy.person.server.persist.PersonPageRepository;
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
-import com.threerings.msoy.server.persist.ProfileRepository;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
@@ -93,6 +92,9 @@ public class MsoyServer extends WhirledServer
     /** Contains information on our members. */
     public static MemberRepository memberRepo;
 
+    /** Contains information on our member profiles. */
+    public static ProfileRepository profileRepo;
+
     /** Contains information on our groups. */
     public static GroupRepository groupRepo;
 
@@ -104,9 +106,6 @@ public class MsoyServer extends WhirledServer
 
     /** Maintains "smart" digital item memories. */
     public static MemoryRepository memoryRepo;
-
-    /** Maintains profile page layout data. */
-    public static PersonPageRepository ppageRepo;
 
     /** The Msoy item manager. */
     public static ItemManager itemMan = new ItemManager();
@@ -244,9 +243,8 @@ public class MsoyServer extends WhirledServer
         omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
         // create our various repositories
-        ppageRepo = new PersonPageRepository();
         memberRepo = new MemberRepository(conProv);
-        ProfileRepository profileRepo = new ProfileRepository(conProv);
+        profileRepo = new ProfileRepository(conProv);
         groupRepo = new GroupRepository(conProv);
         swiftlyRepo = new SwiftlyProjectRepository(conProv);
         memoryRepo = new MemoryRepository(conProv);
@@ -257,7 +255,7 @@ public class MsoyServer extends WhirledServer
         parlorMan.init(invmgr, plreg);
         sceneRepo = (MsoySceneRepository) _screp;
         adminMan.init(this);
-        memberMan.init(memberRepo, profileRepo, groupRepo);
+        memberMan.init(memberRepo, groupRepo);
         groupMan.init(groupRepo, memberRepo);
         mailMan.init(conProv, memberRepo);
         itemMan.init(conProv);

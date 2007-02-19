@@ -172,6 +172,14 @@ public class MemberRecord extends PersistentRecord
         return new MemberName(name, memberId);
     }
 
+    /**
+     * Returns a brief string containing our account name, member id and display name.
+     */
+    public String who ()
+    {
+        return accountName + " (" + memberId + ", " + name + ")";
+    }
+
     /** Generates a string representation of this instance. */
     public String toString ()
     {

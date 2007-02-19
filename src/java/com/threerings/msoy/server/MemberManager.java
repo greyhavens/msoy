@@ -54,7 +54,6 @@ import com.threerings.msoy.web.data.NeighborMember;
 import com.threerings.msoy.web.data.Neighborhood;
 import com.threerings.msoy.web.data.PopularPlace.*;
 import com.threerings.msoy.web.data.PopularPlace;
-import com.threerings.msoy.web.data.Profile;
 import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.world.data.MsoyScene;
@@ -68,7 +67,6 @@ import com.threerings.msoy.server.persist.MemberNameRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.NeighborFriendRecord;
-import com.threerings.msoy.server.persist.ProfileRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -84,11 +82,9 @@ public class MemberManager
     /**
      * Prepares our member manager for operation.
      */
-    public void init (MemberRepository memberRepo, ProfileRepository profileRepo,
-                      GroupRepository groupRepo)
+    public void init (MemberRepository memberRepo, GroupRepository groupRepo)
     {
         _memberRepo = memberRepo;
-        _profileRepo = profileRepo;
         _groupRepo = groupRepo;
         MsoyServer.invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.BASE_GROUP);
     }
@@ -815,9 +811,6 @@ public class MemberManager
 
     /** Provides access to persistent member data. */
     protected MemberRepository _memberRepo;
-
-    /** Provides access to persistent profile data. */
-    protected ProfileRepository _profileRepo;
     
     /** Provides access to persistent group data. */
     protected GroupRepository _groupRepo;

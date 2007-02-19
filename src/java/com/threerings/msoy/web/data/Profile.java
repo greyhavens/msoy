@@ -27,8 +27,8 @@ public class Profile implements IsSerializable
     /** A member provided homepage URL. */
     public String homePageURL;
 
-    /** The time at which the member last logged on. 0L means online now, -1L
-     * means they have never logged on. */
+    /** The time at which the member last logged on. 0L means online now, -1L means they have never
+     * logged on. */
     public long lastLogon;
 
     /** The member's professed gender. A/S/L's S. */

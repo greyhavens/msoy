@@ -9,14 +9,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.web.data.BlurbData;
-import com.threerings.msoy.web.data.PersonLayout;
+import com.threerings.msoy.web.data.ProfileLayout;
 
 /**
- * Lays out a person page in one column.
+ * Lays out a profile page in one column.
  */
 public class OneColumnLayout extends VerticalPanel
 {
-    public OneColumnLayout (int memberId, PersonLayout layout, ArrayList blurbs)
+    public OneColumnLayout (int memberId, ProfileLayout layout, ArrayList blurbs)
     {
         for (int ii = 0; ii < layout.blurbs.size(); ii++) {
             BlurbData bdata = (BlurbData)layout.blurbs.get(ii);

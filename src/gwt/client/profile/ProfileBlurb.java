@@ -93,8 +93,8 @@ public class ProfileBlurb extends Blurb
         }
 
         _ename.setText(_profile.displayName);
-        _eheadline.setText(_profile.headline);
-        _ehomepage.setText(_profile.homePageURL);
+        _eheadline.setText(_profile.headline == null ? "" : _profile.headline);
+        _ehomepage.setText(_profile.homePageURL == null ? "" : _profile.homePageURL);
         _content.setWidget(0, 1, _ename);
         _content.setWidget(1, 1, _eheadline);
         _content.setWidget(2, 1, _ehomepage);
@@ -103,13 +103,16 @@ public class ProfileBlurb extends Blurb
     protected void displayProfile ()
     {
         if (_profile.photo != null) {
-            _photo.setUrl(
-                MsoyEntryPoint.toMediaPath(_profile.photo.getThumbnailPath()));
+            _photo.setUrl(MsoyEntryPoint.toMediaPath(_profile.photo.getThumbnailPath()));
         }
         _name.setText(_profile.displayName);
         _headline.setText(_profile.headline);
-        _homepage.setHTML("<a href=\"" + _profile.homePageURL + "\">" +
-            _profile.homePageURL + "</a>");
+        if (_profile.homePageURL == null) {
+            _homepage.setHTML("");
+        } else {
+            _homepage.setHTML(
+                "<a href=\"" + _profile.homePageURL + "\">" + _profile.homePageURL + "</a>");
+        }
 
         _content.setWidget(0, 1, _name);
         _content.setWidget(1, 1, _headline);
@@ -134,7 +137,6 @@ public class ProfileBlurb extends Blurb
 
         CProfile.profilesvc.updateProfile(CProfile.creds, _profile, new AsyncCallback() {
             public void onSuccess (Object result) {
-                GWT.log("Yay!", null);
                 displayProfile();
             }
             public void onFailure (Throwable cause) {
