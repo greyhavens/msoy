@@ -19,6 +19,7 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.threerings.whirled.spot.data.ClusteredBodyObject;
 
+import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.GroupMembership;
 import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.MemberName;

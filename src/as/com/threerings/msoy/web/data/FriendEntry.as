@@ -1,4 +1,4 @@
-package com.threerings.msoy.data {
+package com.threerings.msoy.web.data {
 
 import com.threerings.util.Comparable;
 import com.threerings.util.Hashable;
@@ -23,6 +23,7 @@ public class FriendEntry
     public var status :int;
 
     /** Status constants. */
+    public static const NONE :int = -1;
     public static const FRIEND :int = 0;
     public static const PENDING_MY_APPROVAL :int = 1;
     public static const PENDING_THEIR_APPROVAL :int = 2;

@@ -14,10 +14,10 @@ import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.chat.client.ReportingListener;

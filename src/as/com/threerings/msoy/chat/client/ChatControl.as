@@ -32,10 +32,10 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 
-import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberObject;
 
+import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
 
 /**

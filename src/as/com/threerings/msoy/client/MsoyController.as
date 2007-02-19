@@ -27,10 +27,11 @@ import com.threerings.presents.client.ResultWrapper;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
-import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
+
+import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.chat.client.ChatControl;

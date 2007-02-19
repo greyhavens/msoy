@@ -26,7 +26,6 @@ import com.threerings.crowd.data.BodyMarshaller;
 import com.threerings.crowd.data.LocationMarshaller;
 import com.threerings.crowd.chat.data.ChatMarshaller;
 
-import com.threerings.msoy.data.FriendEntry;
 import com.threerings.msoy.data.MemberInfo;
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MemberObject;
@@ -34,6 +33,8 @@ import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.SceneBookmarkEntry;
+
+import com.threerings.msoy.web.data.FriendEntry;
 
 /**
  * A client shared by both our virtual world and header incarnations.
