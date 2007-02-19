@@ -47,17 +47,17 @@ public class Properties
     /**
        Position of the score box
     */
-    public static const SCOREFIELD : Rectangle = new Rectangle (350, 50, 180, 100);
+    public static const SCOREFIELD : Rectangle = new Rectangle (360, 50, 180, 100);
     
     /**
        Position of the log text field
     */
-    public static const LOGFIELD : Rectangle = new Rectangle (350, 160, 180, 140);
+    public static const LOGFIELD : Rectangle = new Rectangle (360, 160, 180, 140);
 
     /**
        Position of the timer
     */
-    public static const TIMER : Rectangle = new Rectangle (350, 312, 180, 28);
+    public static const TIMER : Rectangle = new Rectangle (360, 312, 180, 28);
 
     
     

@@ -46,10 +46,9 @@ public class Resources
     public static function makeFormatForBoardLetters () : TextFormat
     {
         var format : TextFormat = new TextFormat();
-        format.font = "Helvetica";
-        format.color = uint(0x888899);
+        format.font = "Verdana";
+        format.color = uint(0x77aabb);
         format.size = 42;
-        format.bold = true;
 
         return format;
     }
@@ -58,8 +57,8 @@ public class Resources
     public static function makeFormatForUI () : TextFormat
     {
         var format : TextFormat = new TextFormat();
-        format.font = "Helvetica";
-        format.color = uint(0x777788);
+        format.font = "Verdana";
+        format.color = uint(0x77aabb);
         format.size = 18;
         format.bold = true;
         return format;
@@ -69,8 +68,8 @@ public class Resources
     public static function makeFormatForLogger () : TextFormat
     {
         var format : TextFormat = new TextFormat ();
-        format.font = "Helvetica";
-        format.color = uint(0x777788);
+        format.font = "Verdana";
+        format.color = uint(0x77aabb);
         format.size = 12;
         format.bold = false;
         return format;
@@ -80,8 +79,8 @@ public class Resources
     public static function makeFormatForScore () : TextFormat
     {
         var format : TextFormat = new TextFormat ();
-        format.font = "Helvetica";
-        format.color = uint(0x777788);
+        format.font = "Verdana";
+        format.color = uint(0x77aabb);
         format.size = 12;
         format.bold = true;
         return format;
@@ -91,7 +90,7 @@ public class Resources
     public static function makeFormatForCountdown () : TextFormat
     {
         var format : TextFormat = new TextFormat ();
-        format.font = "Helvetica";
+        format.font = "Verdana";
         format.color = uint(0xaa6666);
         format.size = 18;
         format.bold = true;
@@ -100,7 +99,7 @@ public class Resources
     }
 
     /** Returns a default border color */
-    public static const defaultBorderColor : uint = uint (0xffffff);
+    public static const defaultBorderColor : uint = uint (0xeeeeff);
 
     
 
@@ -110,7 +109,7 @@ public class Resources
     public static function makeCursorFilter () : GlowFilter
     {
         var filter : GlowFilter = new GlowFilter ();
-        filter.color = uint(0x8888cc);
+        filter.color = uint(0xeeeeff);
         filter.inner = true;
         return filter;
     }
@@ -119,9 +118,9 @@ public class Resources
     public static function makeSelectedFilter () : GlowFilter
     {
         var filter : GlowFilter = new GlowFilter ();
-        filter.color = uint(0xffffdd);
-        filter.inner = false;
-        filter.blurX = filter.blurY = 16;
+        filter.color = uint(0x446677);
+        filter.inner = true;
+        filter.blurX = filter.blurY = 32;
         return filter;
     }
 
@@ -129,7 +128,7 @@ public class Resources
     public static function makeButtonOverFilter () : GlowFilter
     {
         var filter : GlowFilter = new GlowFilter ();
-        filter.color = uint(0x8888cc);
+        filter.color = uint(0xeeeeff);
         filter.inner = true;
         filter.blurX = filter.blurY = 8;
         return filter;
