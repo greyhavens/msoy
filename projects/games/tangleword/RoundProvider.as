@@ -101,7 +101,7 @@ public class RoundProvider implements PropertyChangedListener
         if (checkStateName (newState))
         {
             // Only the host will actually succeed doing this...
-            if (_coord.amITheHost ())
+            if (_coord.status == HostCoordinator.STATUS_HOST)
             {
                 var newStateTimeout : Number = (new Date()).time + _timeouts[newState];
                 _gameCtrl.set (ROUND_PROVIDER_CURRENT_STATE_PROPERTY, newState);
@@ -272,7 +272,7 @@ public class RoundProvider implements PropertyChangedListener
     private function setCurrentStateTimeout (value : Number) : Boolean
     {
         // Only the host will actually succeed doing this...
-        if (_coord.amITheHost ())
+        if (_coord.status == HostCoordinator.STATUS_HOST)
         {
             _gameCtrl.set (ROUND_PROVIDER_CURRENT_STATE_TIMEOUT, value);
             return true;

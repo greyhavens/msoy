@@ -1,6 +1,8 @@
 package
 {
 
+import flash.events.EventDispatcher;    
+    
 import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.OccupantChangedEvent;
 import com.threerings.ezgame.OccupantChangedListener;
@@ -12,37 +14,67 @@ import com.threerings.ezgame.PropertyChangedEvent;
    client should consider itself the authority in dealing with game state
    (for example, when dealing out cards, or setting up the game board).
 
-   The constructor takes two arguments: an EZ game controller, and
-   a function that will be called once host coordination is established.
-   This function can be used to start up the game.
+   Current hosting state can be retrieved from the /status/ property.
+   Please note that hosting authority can be transferred between clients
+   at any moment, so all clients should be prepared to suddenly take
+   over host responsibilities.
+   
+   Additionally, the client can register itself for notifications
+   about changes to the /status/ property - see HostEvent.
    
    Usage example:
 
-   private var _coord : HostCoordinator =
-     new HostCoordinator (_gameCtrl, beginGame);
+   <pre>
+   _coord = new HostCoordinator (_gameCtrl);
+   _coord.addEventListener (HostEvent.CLAIMED, firstHostHandler);
+   _coord.addEventListener (HostEvent.CHANGED, hostChangeHandler);
 
    ...
 
-   function beginGame ()
+   function firstHostHandler (event : HostEvent)
    {
-   if (_coord.amITheHost ())
+     if (_coord.status == HostCoordinator.STATUS_HOST)
      {
-       dealCards ();
+       // I'm the first host in the game - I should set up the initial board, etc.
+     }
+   }
+   
+   function hostChangeHandler (event : HostEvent)
+   {
+     if (_coord.status == HostCoordinator.STATUS_HOST)
+     {
+       // I just became the host - do whatever is needed.
      } 
    }
+   </pre>  
        
 */
-
 public class HostCoordinator
+    extends EventDispatcher
     implements OccupantChangedListener, PropertyChangedListener
 {
+    // CONSTANTS
+
+    /** Status constant, means that the current status is unknown, either because
+        the data had not yet arrived from the server, or because nobody claims
+        to be host for this game. */
+    public static const STATUS_UNKNOWN : String = "STATUS_UNKNOWN";
+
+    /** Status constant, means that this client is the current host. */
+    public static const STATUS_HOST : String = "STATUS_HOST";
+
+    /** Status constant, means that some other client is the current host. */
+    public static const STATUS_NOT_HOST : String = "STATUS_NOT_HOST";
+    
+
+
+    // PUBLIC INTERFACE
+    
     /**
        Constructor, expects an initialized instance of EZGameControl.
          
        If the optional showDebug flag is set, it will display host info
        as chat messages (only useful for debugging).
-
-       Make sure to call join() when ready to start the game.
      */
     public function HostCoordinator (control : EZGameControl, showDebug : Boolean = false)
     {
@@ -53,97 +85,82 @@ public class HostCoordinator
 
         _showDebug = showDebug;
 
-        _hostKnown = false;
+        // Try set host role if it's not already claimed (i.e. null)
+        debugLog ("Trying to claim host role.");
+        debugLog ("Current status: " + status);
+        tryReplaceHost (null);
     }
 
     /**
-       This function initiates host coordination, which may result
-       in the current client becoming the authoritative game host,
-       or just another player. :)
+       Retrieves current host coordination status, as one of the STATUS_*
+       constants.
 
-       It takes an optional callback function of type:
-         function () : void { }
-
-       The callback function will be called once host coordination was
-       established, whether or not this client became the host.
-    */
-    public function join (callback : Function = null) : void
+       Note: do not save the value of this property. Hosting status
+       can change at any moment: when the current host quits the game,
+       any client can suddenly become the new host. 
+l    */
+    public function get status () : String
     {
-        _startFn = callback;
-        if (hostExists ()) {
-            dealWithHostObservation ();
-        } else {
-            tryClaimHostRole ();
-        }
+        var hostId : Number = getHostId ();
+        if (hostId == _control.getMyId ()) { return STATUS_HOST; }
+        if (hostId > 0) { return STATUS_NOT_HOST; }
+        return STATUS_UNKNOWN; 
     }
 
-
-    /**
-       Main query function: returns true if the current client
-       is the authoritative host for the game, false otherwise.
-           
-       Note: do not save the results of calling this function.
-       The value can change: any player could become the authoritative
-       host at any moment in the game, since other players may
-       leave and join the game at will. This is especially true when
-       the authoritative host drops out of the game; in this case
-       one of the other players will suddenly become authoritative.
-    */
-    public function amITheHost () : Boolean
-    {
-        debugHostStatus ();
-        return (getHostId () == _control.getMyId ());
-    }
-
+    
 
 
     // EVENT HANDLERS
 
-    /** Keep track of people coming in */
+    /** From OccupantChangedListener: keep track of people coming in */
     public function occupantEntered (event : OccupantChangedEvent) : void
     {
         debugHostStatus ();
     }
 
-    /** Keep track of people leaving */
+    /** From OccupantChangedListener: keep track of people leaving */
     public function occupantLeft (event : OccupantChangedEvent) : void
     {
         // If the occupant who just left was the host, every client will
-        // get a shot at trying to clear their role.
-        if (_showDebug) {
-            _control.localChat ("My ID: " + _control.getMyId ());
-            _control.localChat ("Occupant left: " + event.occupantId);
-            _control.localChat ("Current host: " + getHostId());
-        }
-        if (getHostId () == event.occupantId)
+        // get a shot at trying to claim their role.
+        debugLog ("My ID: " + _control.getMyId ());
+        debugLog ("Occupant left: " + event.occupantId);
+        debugLog ("Current host: " + getHostId());
+
+        if (getHostId () == event.occupantId) // Elvis has left the building
         {
-            if (_showDebug) { _control.localChat ("Removing the old host..."); }
+            debugLog ("Removing the old host..."); 
             // Clear the old host value, and put myself in their place.
             // Only the first client will succeed in doing this.
-            _control.testAndSet (HOST_NAME, _control.getMyId(), event.occupantId);
-            debugHostStatus ();
+            tryReplaceHost (event.occupantId);
         }
     }
     
-    /** Keep track of changing host values */
+    /** From PropertyChangedListener: keep track of changing host values */
     public function propertyChanged (event : PropertyChangedEvent) : void
     {
-        if (event.name == HOST_NAME && ! _hostKnown)
+        if (event.name == HOST_NAME)
         {
-            dealWithHostObservation ();
+            debugLog ("Host variable changed to: " + event.newValue);
+            
+            // if the host was not known before, dispatch the claimed event
+            if (event.oldValue == null &&
+                event.newValue != null)
+            {
+                var claimed : HostEvent = new HostEvent (HostEvent.CLAIMED, _control);
+                this.dispatchEvent (claimed);
+            }
+            
+            // always dispatch the changed event
+            var changed : HostEvent = new HostEvent (HostEvent.CHANGED, _control);
+            this.dispatchEvent (changed);
         }
     }    
     
 
     // PRIVATE FUNCTIONS
 
-    /** Does the host exist? (Note: may be inaccurate due to roundtrip delay) */
-    private function hostExists () : Boolean
-    {
-        return (_control.get (HOST_NAME) != null);
-    }
-    
-    /** Get the current host ID (will be -1 if there is no authoritative host) */
+    /** Get the current host ID (will be 0 if there is no authoritative host) */
     private function getHostId () : Number
     {
         var hostvalue : Object = _control.get (HOST_NAME);
@@ -151,50 +168,31 @@ public class HostCoordinator
         {
             return hostvalue as Number;
         }
-        return -1;
+        return 0;
     }
 
-    /** If the host role is unclaimed, claim it! */
-    private function tryClaimHostRole () : void
+    /** Helper function: tries to set the host variable to the client's id,
+        if the current value is equal to /hostId/. If the value of null for
+        hostId has the meaning of "set me as host only if the role has not
+        been claimed yet". */
+    private function tryReplaceHost (hostId : Object) : void
     {
-        if (_showDebug) {
-            _control.localChat ("Trying to claim host role.");
-            _control.localChat ("Does host exist? " + hostExists());
-        }
-            
-        if (! hostExists())
-        {
-            // Only set host role if it's not already claimed (i.e. null)
-            _control.testAndSet (HOST_NAME, _control.getMyId (), null);
-        }
+        _control.testAndSet (HOST_NAME, _control.getMyId (), hostId);
+        debugHostStatus ();
     }
 
-    /** When we get a mess */
-    private function dealWithHostObservation () : void
+    /** Debug only */
+    private function debugLog (message : String) : void
     {
-        // The first time we notice a host, remember it, and
-        // call the listener function, if applicable
-        if (hostExists ())
-        {
-            if (_showDebug) { _control.localChat ("First host observation!"); }
-            _hostKnown = true;
-            if (_startFn != null)
-            {
-                _startFn();
-            }
-        }
+        if (_showDebug) { _control.localChat (message); }
     }
-    
 
     /** Debug only */
     private function debugHostStatus () : void
     {
-        if (_showDebug)
-        {
-            _control.localChat (
-                (getHostId() == _control.getMyId() ? "I am" : "I'm not") +
-                " the host (id " + getHostId() + ", mine is " + _control.getMyId() + ")");
-        }
+        debugLog (
+            (status == STATUS_HOST ? "I am" : "I'm not") +
+            " the host (id " + getHostId() + ", mine is " + _control.getMyId() + ")");
     }
 
 
@@ -209,11 +207,6 @@ public class HostCoordinator
     /** Debug flag */
     private var _showDebug : Boolean;
 
-    /** Have we seen at least one host message? */
-    private var _hostKnown : Boolean;
-    
-    /** Startup function, to be called once the host was decided */
-    private var _startFn : Function;
 }
 
 }

@@ -30,7 +30,8 @@ public class TangleWord extends Sprite
         // Initialize game data
         _gameCtrl = new EZGameControl (this);
         _gameCtrl.registerListener (this);
-        _coordinator = new HostCoordinator (_gameCtrl);
+        _coordinator = new HostCoordinator (_gameCtrl, true);
+        _coordinator.addEventListener (HostEvent.CLAIMED, hostClaimedHandler);
         _rounds = new RoundProvider (_gameCtrl, _coordinator);
         
         // Create MVC elements
@@ -40,35 +41,47 @@ public class TangleWord extends Sprite
         _controller.setModel (_model);                           // ... as in, right here :)
         addChild (_display);
 
-        // Join hosted game
-        _coordinator.join (startup);
-
+        maybeStartGame ();
     }
 
 
     /**
      * Once the host was found, start the game!
      */
-    private function startup () : void
+    private function hostClaimedHandler (event : HostEvent) : void
     {
-        _rounds.setTimeout (RoundProvider.SYSTEM_STARTED_STATE, 0); 
-        _rounds.setTimeout (RoundProvider.ROUND_STARTED_STATE, Properties.ROUND_LENGTH);
-        _rounds.setTimeout (RoundProvider.ROUND_ENDED_STATE, Properties.PAUSE_LENGTH);
+        maybeStartGame ();
+    }
 
-        // If I joined an existing game, display time remaining till next round
-        if (! isNaN (_rounds.getCurrentStateTimeout ()))
+    /**
+       Sets up the game information. This needs to happen after all of the
+       MVC objects have been initialized, and only once the host state
+       has been determined.
+    */
+    private function maybeStartGame () : void
+    {
+        if (_rounds != null && _coordinator != null &&
+            _coordinator.status != HostCoordinator.STATUS_UNKNOWN)
         {
-            var timeout : Number = _rounds.getCurrentStateTimeout ();
-            var timenow : Number = (new Date()).time;
-            var delta : Number = (timeout - timenow) / 1000;
-            _display.forceTimerStart (delta);
-            _display.logPleaseWait ();
-        }
-
-        // However, if I somehow became the host, just initialize everything anew.
-        if (_coordinator.amITheHost ()) {
-            _rounds.setCurrentState (RoundProvider.SYSTEM_STARTED_STATE);
-            initializeScoreboard ();
+            _rounds.setTimeout (RoundProvider.SYSTEM_STARTED_STATE, 0); 
+            _rounds.setTimeout (RoundProvider.ROUND_STARTED_STATE, Properties.ROUND_LENGTH);
+            _rounds.setTimeout (RoundProvider.ROUND_ENDED_STATE, Properties.PAUSE_LENGTH);
+            
+            // If I joined an existing game, display time remaining till next round
+            if (! isNaN (_rounds.getCurrentStateTimeout ()))
+            {
+                var timeout : Number = _rounds.getCurrentStateTimeout ();
+                var timenow : Number = (new Date()).time;
+                var delta : Number = (timeout - timenow) / 1000;
+                _display.forceTimerStart (delta);
+                _display.logPleaseWait ();
+            }
+            
+            // However, if I somehow became the host, just initialize everything anew.
+            if (_coordinator.status == HostCoordinator.STATUS_HOST) {
+                _rounds.setCurrentState (RoundProvider.SYSTEM_STARTED_STATE);
+                initializeScoreboard ();
+            }
         }
     }
 

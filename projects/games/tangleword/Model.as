@@ -199,7 +199,7 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         on everyone. */
     public function roundStartedHandler (newState : String) : void
     {
-        if (_coord.amITheHost ())
+        if (_coord.status == HostCoordinator.STATUS_HOST)
         {
             // Share the scoreboard
             _gameCtrl.sendMessage (SCOREBOARD_UPDATE_MSG, _scoreboard.internalScoreObject);
