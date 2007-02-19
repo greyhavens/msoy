@@ -9,6 +9,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -123,12 +125,21 @@ public class StatusPanel extends FlexTable
         }
 
         setText(0, idx++, _creds.name + ":");
+
         getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-        setText(0, idx++, "47"); // gold
+        getFlexCellFormatter().setStyleName(0, idx, "Icon");
+        setWidget(0, idx++, new Image("/images/header/symbol_gold.png"));
+        setText(0, idx++, "47"); // TODO: gold
+
         getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-        setText(0, idx++, "12895"); // flow
+        getFlexCellFormatter().setStyleName(0, idx, "Icon");
+        setWidget(0, idx++, new Image("/images/header/symbol_flow.png"));
+        setText(0, idx++, "12895"); // TODO: flow
+
         getFlexCellFormatter().setWidth(0, idx++, "25px"); // gap!
-        setText(0, idx++, "638"); // whuffy
+        getFlexCellFormatter().setStyleName(0, idx, "Icon");
+        setWidget(0, idx++, new Image("/images/header/symbol_level.png"));
+        setText(0, idx++, "638"); // TODO: level
     }
 
     protected void reset ()

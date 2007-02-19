@@ -68,7 +68,7 @@ body {
   background: url(/images/header/header_tile.png);
 }
 
-.msoyHeader .Left {
+.msoyHeader .Logo {
   background: url(/images/header/header_logo.png) no-repeat;
   width: 124px;
   height: 50px;
@@ -85,8 +85,15 @@ body {
   height: 50px;
 }
 
+.msoyHeader .Left {
+  background: url(/images/header/header_left.png) no-repeat;
+  width: 156px;
+  height: 50px;
+  vertical-align: bottom;
+}
+
 .msoyHeader .Right {
-  background: url(/images/header/header_right.png) no-repeat;
+  background: url(/images/header/header_right.png) no-repeat right;
   height: 50px;
   vertical-align: bottom;
 }
@@ -151,12 +158,16 @@ body {
 }
 
 .statusPanel {
-  padding-right: 10px;
+  padding-right: 40px;
   padding-bottom: 2px;
   color: #AAB5B9;
   font-family: Helvetica, sans-serif;
   font-size: 11px;
   font-weight: bold;
+}
+
+.statusPanel .Icon {
+  padding-top: 2px;
 }
 
 .logonPopup {
