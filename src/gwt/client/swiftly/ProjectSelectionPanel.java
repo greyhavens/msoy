@@ -41,7 +41,7 @@ public class ProjectSelectionPanel extends VerticalPanel
             public void onSuccess (Object result) {
                 Iterator iter = ((ArrayList)result).iterator();
                 if (!iter.hasNext()) {
-                    // TODO _projectsContainer.add(new InlineLabel(CSwiftly.msgs.listNoProjects()));
+                    _projectsContainer.add(new InlineLabel(CSwiftly.msgs.noProjects()));
                 } else {
                     _projectsContainer.add(new Label("Please select one of your projects:"));
                     while (iter.hasNext()) {
