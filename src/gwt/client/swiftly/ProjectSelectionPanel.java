@@ -8,12 +8,16 @@ import java.util.Iterator;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.Hyperlink;
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -27,6 +31,8 @@ public class ProjectSelectionPanel extends VerticalPanel
 {
     public ProjectSelectionPanel ()
     {
+        super();
+        setWidth("100%");
         setStyleName("projectSelectionPanel");
 
         FlexTable table = new FlexTable();
@@ -43,7 +49,7 @@ public class ProjectSelectionPanel extends VerticalPanel
                 if (!iter.hasNext()) {
                     _projectsContainer.add(new InlineLabel(CSwiftly.msgs.noProjects()));
                 } else {
-                    _projectsContainer.add(new Label("Please select one of your projects:"));
+                    _projectsContainer.add(new Label(CSwiftly.msgs.selectProject()));
                     while (iter.hasNext()) {
                         final SwiftlyProject project = (SwiftlyProject)iter.next();
                         Hyperlink projectLink = new Hyperlink(
@@ -62,9 +68,39 @@ public class ProjectSelectionPanel extends VerticalPanel
             }
         });
 
-        add(new Label("Create a project from a template:"));
-        // TODO project creation drop down for templates etc.
+        FlexTable createProject = new FlexTable();
+        createProject.setStyleName("createProject");
+        // TODO templates drop down
+        final TextBox projectText = new TextBox();
+        projectText.setMaxLength(50);
+        projectText.setVisibleLength(25);
+        ClickListener doCreate = new ClickListener() {
+            public void onClick (Widget sender) {
+                createProject(projectText.getText());
+            }
+        };
+        projectText.addKeyboardListener(new EnterClickAdapter(doCreate));
+        createProject.setWidget(0, 0, projectText);
+        createProject.setWidget(0, 1, new Button(CSwiftly.msgs.createProject(), doCreate));
+        table.setWidget(1, 0, createProject);
     }
 
     protected FlowPanel _projectsContainer;
+
+    protected void createProject (final String projectName)
+    {
+        SwiftlyProject project = new SwiftlyProject();
+        project.projectName = projectName;
+        CSwiftly.swiftlysvc.createProject(CSwiftly.creds, project, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                // _groupListContainer.setModel(new SimpleDataModel((List)result));
+                CSwiftly.log("Project created");
+                // TODO: print project created and refresh project list
+            }
+            public void onFailure (Throwable caught) {
+                CGroup.log("createProject(" + project + ") failed", caught);
+                // TODO: addError(CSwiftly.serverError(caught));
+            }
+        });
+    }
 }

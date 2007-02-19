@@ -22,4 +22,20 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key noProjects
    */
   String noProjects();
+
+  /**
+   * Translated "Create Project.".
+   * 
+   * @return translated "Create Project."
+   * @gwt.key createProject
+   */
+  String createProject();
+
+  /**
+   * Translated "Select a project.".
+   * 
+   * @return translated "Select a project."
+   * @gwt.key selectProject
+   */
+  String selectProject();
 }

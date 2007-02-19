@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
 
 import com.threerings.presents.data.ClientObject;
@@ -17,6 +19,7 @@ import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.web.data.SwiftlyProject;
 
 import com.threerings.msoy.swiftly.client.SwiftlyService;
 import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
@@ -85,6 +88,29 @@ public class SwiftlyManager
         // clear the manager from our mapping
         ProjectRoomConfig config = (ProjectRoomConfig)mgr.getConfig();
         _managers.remove(config.projectId);
+    }
+
+    /**
+     * Creates a new swiftly project record in the database and return a {@link SwiftlyProject} for
+     * it. This method assigns the project a new, unique id.
+     * 
+     */
+    public void createProject (final SwiftlyProject project,
+                               ResultListener<SwiftlyProject> listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<SwiftlyProject>(listener) {
+            public SwiftlyProject invokePersistResult () throws PersistenceException {
+                SwiftlyProjectRecord pRec = new SwiftlyProjectRecord();
+                pRec.projectName = project.projectName;
+                pRec.ownerId = project.ownerId;
+                // TODO: pRec.creationDate = new Timestamp(project.creationDate.getTime());
+
+                // create the project
+                _srepo.createProject(pRec);
+    
+                return pRec.toSwiftlyProject();
+            }
+        });
     }
 
     /** Handles persistent stuff. */

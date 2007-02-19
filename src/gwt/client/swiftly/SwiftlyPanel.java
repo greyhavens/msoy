@@ -17,6 +17,7 @@ public class SwiftlyPanel extends VerticalPanel
 {
     public SwiftlyPanel (int projectId)
     {
+        super();
         setStyleName("swiftlyPanel");
 
         String authtoken = (CSwiftly.creds == null) ? "" : CSwiftly.creds.token;

@@ -41,4 +41,27 @@ public class SwiftlyServlet extends MsoyServiceServlet
         });
         return waiter.waitForResult();
     }
+
+    // from SwiftlyService
+    public SwiftlyProject createProject (WebCreds creds, final SwiftlyProject project)
+        throws ServiceException
+    {
+        // TODO: validate creds
+        /*
+        if(!isValidName(project.name)) {
+            throw new ServiceException("m.invalid_project_name");
+        }
+        */
+
+        final ServletWaiter<SwiftlyProject> waiter =
+            new ServletWaiter<SwiftlyProject>("createProject[" + project + "]");
+        // TODO: project.creationDate = new Date(System.currentTimeMillis());
+        project.ownerId = creds.getMemberId();
+        MsoyServer.omgr.postRunnable(new Runnable() {
+            public void run () {
+                MsoyServer.swiftlyMan.createProject(project, waiter);
+            }
+        });
+        return waiter.waitForResult();
+    }
 }

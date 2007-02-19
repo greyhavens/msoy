@@ -89,7 +89,11 @@ public class index extends MsoyEntryPoint
             setContent(new ProjectSelectionPanel());
         } else {
             // else assume we have been passed a projectId and pass that to the applet
-            setContent(new SwiftlyPanel(Integer.parseInt(historyToken)));
+            try {
+                setContent(new SwiftlyPanel(Integer.parseInt(historyToken)));
+            } catch (Exception e) {
+                // TODO: display an error
+            }
         }
     }
 }
