@@ -50,33 +50,6 @@ public class SwiftlyManager
         executor = new SerialExecutor(MsoyServer.omgr);
     }
 
-    /**
-     * Retrieve a list of projects to which a user has commit privileges.
-     */
-    public ArrayList<SwiftlyProjectRecord> findProjects (MemberRecord mrec)
-    {
-        try {
-            return _srepo.findProjects(mrec.memberId);
-        } catch (PersistenceException e) {
-            // TODO: Error handling
-        }
-
-        return null;
-    }
-
-    /**
-     * Create a new project.
-     */
-    public void createProject (MemberRecord mrec, String projectName)
-        throws PersistenceException
-    {
-        // TODO: Maximum number of projects?
-        SwiftlyProjectRecord record = new SwiftlyProjectRecord();
-        record.projectName = projectName;
-        record.ownerId = mrec.memberId;
-        _srepo.createProject(record);
-    }
-
     // from interface SwiftlyProvider
     public void enterProject (ClientObject caller, int projectId,
                               SwiftlyService.ResultListener listener)
