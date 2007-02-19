@@ -5,9 +5,11 @@ package com.threerings.msoy.game.client {
 
 import mx.collections.ArrayCollection;
 
+import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.ButtonBar;
 
+import mx.core.Container;
 import mx.core.ClassFactory;
 
 import com.threerings.util.ArrayUtil;
@@ -130,12 +132,50 @@ public class LobbyPanel extends VBox
     override protected function createChildren () :void
     {
         super.createChildren();
+        styleName = "lobbyPanel";
+
+        var gameBox :HBox = new HBox();
+        gameBox.percentWidth = 100;
+        gameBox.percentHeight = 100;
+        gameBox.styleName = "gameBox";
+        addChild(gameBox);
+
+        var infoBox :VBox = new VBox();
+        infoBox.width = 160;
+        infoBox.percentHeight = 100;
+        infoBox.styleName = "infoBox";
+        gameBox.addChild(infoBox);
+        var logo :Container = new Container();
+        logo.width = 160;
+        logo.height = 110;
+        logo.styleName = "lobbyLogo";
+        infoBox.addChild(logo);
+        var infoTop :Container = new Container();
+        infoTop.width = 160;
+        infoTop.height = 33;
+        infoTop.styleName = "lobbyInfoTop";
+        infoBox.addChild(infoTop);
+        var infoTile :Container = new Container();
+        infoTile.width = 160;
+        infoTile.percentHeight = 100;
+        infoTile.styleName = "lobbyInfoTile";
+        infoBox.addChild(infoTile);
+        var infoBottom :Container = new Container();
+        infoBottom.width = 160;
+        infoBottom.height = 58;
+        infoBottom.styleName = "lobbyInfoBottom";
+        infoBox.addChild(infoBottom);
+
+        var tablesBox :VBox = new VBox();
+        tablesBox.percentWidth = 100;
+        tablesBox.percentHeight = 100;
+        gameBox.addChild(tablesBox);
 
         var list :MsoyList = new MsoyList(_ctx);
         list.variableRowHeight = true;
         list.percentHeight = 100;
         list.percentWidth = 100;
-        addChild(list);
+        tablesBox.addChild(list);
 
         var factory :ClassFactory = new ClassFactory(TableRenderer);
         factory.properties = { ctx: _ctx, panel: this };
@@ -147,12 +187,12 @@ public class LobbyPanel extends VBox
 
         var butbar :ButtonBar = new ButtonBar();
         butbar.addChild(createBtn);
-        addChild(butbar);
+        tablesBox.addChild(butbar);
 
         // and a chat box
         var chatbox :ChatContainer = new ChatContainer(_ctx);
         chatbox.percentWidth = 100;
-        chatbox.percentHeight = 100;
+        chatbox.height = 100;
         addChild(chatbox);
     }
 
