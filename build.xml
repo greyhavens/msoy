@@ -205,7 +205,7 @@
       <if><contains string="${redirector.out}" substring="[ERROR]"/><then>
         <echo level="error">${redirector.out}</echo>
         <!-- be really, really sure that the build fails if we get an error logs -->
-        <property name="has.errors" value="true"/>
+        <var name="has.errors" value="true"/>
       </then><elseif><contains string="${redirector.out}" substring="[WARNING]"/><then>
         <echo level="warning">${redirector.out}</echo>
       </then></elseif><else>
@@ -219,6 +219,8 @@
           <isset property="has.errors"/>
         </or></condition>
       </fail>
+    <var name="gwt.result" unset="true"/>
+    <var name="redirector.out" unset="true"/>
     </sequential></for>
   </target> 
 
