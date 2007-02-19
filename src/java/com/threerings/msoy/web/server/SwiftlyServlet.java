@@ -7,6 +7,7 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.data.ServiceException;
@@ -27,13 +28,14 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public ArrayList getProjects (WebCreds creds)
         throws ServiceException
     {
-        final ServletWaiter<ArrayList<SwiftlyProject>> waiter =
-            new ServletWaiter<ArrayList<SwiftlyProject>>("getProjects[]");
-        final int memberId = creds.getMemberId();
+        final MemberRecord memrec = requireAuthedUser(creds);
+        final ServletWaiter<ArrayList<SwiftlyProject>> waiter;
+
+        waiter = new ServletWaiter<ArrayList<SwiftlyProject>>("getProjects[]");
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<SwiftlyProject>>(waiter) {
             public ArrayList<SwiftlyProject> invokePersistResult () throws PersistenceException {
                 ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
-                for (SwiftlyProjectRecord pRec : MsoyServer.swiftlyRepo.findProjects(memberId)) {
+                for (SwiftlyProjectRecord pRec : MsoyServer.swiftlyRepo.findProjects(memrec.memberId)) {
                     projects.add(pRec.toSwiftlyProject());
                 }
                 return projects;
@@ -46,17 +48,18 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public SwiftlyProject createProject (WebCreds creds, final SwiftlyProject project)
         throws ServiceException
     {
-        // TODO: validate creds
+        MemberRecord memrec = requireAuthedUser(creds);
+        final ServletWaiter<SwiftlyProject> waiter;
+
         /*
         if(!isValidName(project.name)) {
             throw new ServiceException("m.invalid_project_name");
         }
         */
 
-        final ServletWaiter<SwiftlyProject> waiter =
-            new ServletWaiter<SwiftlyProject>("createProject[" + project + "]");
         // TODO: project.creationDate = new Date(System.currentTimeMillis());
         project.ownerId = creds.getMemberId();
+        waiter = new ServletWaiter<SwiftlyProject>("createProject[" + project + "]");
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.swiftlyMan.createProject(project, waiter);
