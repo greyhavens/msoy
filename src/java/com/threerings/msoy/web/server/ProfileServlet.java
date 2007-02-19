@@ -17,8 +17,9 @@ import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
@@ -138,11 +139,8 @@ public class ProfileServlet extends MsoyServiceServlet
         profile.displayName = memrec.name;
         profile.lastLogon = (memrec.lastSession != null) ? memrec.lastSession.getTime() : 0L;
 
-        // fake bits!
-        profile.photo = new Photo();
-        profile.photo.photoMedia = new MediaDesc(
-            StringUtil.unhexlate("816cd5aebc2d9d228bf66cff193b81eba1a6ac85"),
-            MediaDesc.IMAGE_JPEG);
+        // TODO: allow photo customizing
+        profile.photo = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo");
 
         return profile;
     }

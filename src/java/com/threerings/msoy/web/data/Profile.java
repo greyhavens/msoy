@@ -5,7 +5,7 @@ package com.threerings.msoy.web.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.item.web.Photo;
+import com.threerings.msoy.item.web.MediaDesc;
 
 /**
  * Contains all member profile data for display on the profile page.
@@ -19,7 +19,7 @@ public class Profile implements IsSerializable
     public String displayName;
 
     /** The the member's selected profile picture. */
-    public Photo photo;
+    public MediaDesc photo;
 
     /** A member provided profile headline. */
     public String headline;

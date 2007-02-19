@@ -103,7 +103,7 @@ public class ProfileBlurb extends Blurb
     protected void displayProfile ()
     {
         if (_profile.photo != null) {
-            _photo.setUrl(MsoyEntryPoint.toMediaPath(_profile.photo.getThumbnailPath()));
+            _photo.setUrl(MsoyEntryPoint.toMediaPath(_profile.photo.getMediaPath()));
         }
         _name.setText(_profile.displayName);
         _headline.setText(_profile.headline);
