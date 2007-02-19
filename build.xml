@@ -395,10 +395,13 @@
   </target>
 
   <!-- builds our Java clients -->
+  <property name="jclients" value="admin,game,swiftly"/>
   <target name="jclients" depends="dist">
-    <antcall target="proguard"><param name="ident" value="game"/></antcall>
-    <antcall target="proguard"><param name="ident" value="admin"/></antcall>
-    <antcall target="proguard"><param name="ident" value="swiftly"/></antcall>
+    <for list="${jclients}" param="ident">
+      <sequential>
+        <antcall target="proguard"><param name="ident" value="@{ident}"/></antcall>
+      </sequential>
+    </for>
   </target>
 
   <!-- generates additional methods for distributed object classes -->
