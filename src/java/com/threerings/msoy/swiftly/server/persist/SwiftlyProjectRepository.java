@@ -5,6 +5,8 @@ package com.threerings.msoy.swiftly.server.persist;
 
 
 import com.samskivert.io.PersistenceException;
+
+import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.DepotRepository;
@@ -51,10 +53,23 @@ public class SwiftlyProjectRepository extends DepotRepository
      * Stores the supplied project record in the database, overwriting previously
      * stored project data.
      */
-    public SwiftlyProjectRecord createProject (SwiftlyProjectRecord record)
+    public SwiftlyProjectRecord createProject (int memberId, String projectName)
         throws PersistenceException
     {
-        insert(record);
+        SwiftlyProjectRecord record = new SwiftlyProjectRecord();
+        record.projectName = projectName;
+        record.ownerId = memberId;
+        // TODO: record.creationDate = new Timestamp(project.creationDate.getTime());
+
+        try {
+            insert(record);
+        } catch (DuplicateKeyException dke) {
+            // TODO: Throw an exception here? If someone is expecting this to *create* a repository, returning
+            // an existing one isn't likely to be what they expect.
+
+            // ownerId,projectName already exists, return it
+            return load(SwiftlyProjectRecord.class, SwiftlyProjectRecord.OWNER_ID, record.ownerId, SwiftlyProjectRecord.PROJECT_NAME, record.projectName);
+        }
         return record;
     }
 }

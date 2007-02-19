@@ -64,7 +64,6 @@ import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -259,7 +258,7 @@ public class MsoyServer extends WhirledServer
         groupMan.init(groupRepo, memberRepo);
         mailMan.init(conProv, memberRepo);
         itemMan.init(conProv);
-        swiftlyMan.init(invmgr, swiftlyRepo);
+        swiftlyMan.init(invmgr);
         petMan.init(invmgr);
         lobbyReg.init(invmgr);
         worldGameReg.init(invmgr);

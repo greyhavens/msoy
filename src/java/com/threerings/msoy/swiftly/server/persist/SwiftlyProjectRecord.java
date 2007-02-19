@@ -17,7 +17,7 @@ import com.threerings.msoy.web.data.SwiftlyProject;
        {@UniqueConstraint(columnNames={"ownerId", "projectName"})})
 public class SwiftlyProjectRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
     
     public static final String PROJECT_ID = "projectId";
     public static final ColumnExp PROJECT_ID_C =
@@ -26,6 +26,10 @@ public class SwiftlyProjectRecord extends PersistentRecord
     public static final String OWNER_ID = "ownerId";
     public static final ColumnExp OWNER_ID_C =
         new ColumnExp(SwiftlyProjectRecord.class, OWNER_ID);
+
+    public static final String PROJECT_NAME = "projectName";
+    public static final ColumnExp PROJECT_NAME_C =
+        new ColumnExp(SwiftlyProjectRecord.class, PROJECT_NAME);
 
     /** The id of the project. */
     @Id

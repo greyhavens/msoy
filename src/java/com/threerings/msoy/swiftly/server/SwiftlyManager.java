@@ -42,10 +42,8 @@ public class SwiftlyManager
     /**
      * Configures us with our repository.
      */
-    public void init (InvocationManager invmgr, SwiftlyProjectRepository srepo)
+    public void init (InvocationManager invmgr)
     {
-        _srepo = srepo;
-
         // register ourselves as handling the Swiftly invocation service
         invmgr.registerDispatcher(new SwiftlyDispatcher(this), SwiftlyCodes.SWIFTLY_GROUP);
 
@@ -89,32 +87,6 @@ public class SwiftlyManager
         ProjectRoomConfig config = (ProjectRoomConfig)mgr.getConfig();
         _managers.remove(config.projectId);
     }
-
-    /**
-     * Creates a new swiftly project record in the database and return a {@link SwiftlyProject} for
-     * it. This method assigns the project a new, unique id.
-     * 
-     */
-    public void createProject (final SwiftlyProject project,
-                               ResultListener<SwiftlyProject> listener)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<SwiftlyProject>(listener) {
-            public SwiftlyProject invokePersistResult () throws PersistenceException {
-                SwiftlyProjectRecord pRec = new SwiftlyProjectRecord();
-                pRec.projectName = project.projectName;
-                pRec.ownerId = project.ownerId;
-                // TODO: pRec.creationDate = new Timestamp(project.creationDate.getTime());
-
-                // create the project
-                _srepo.createProject(pRec);
-    
-                return pRec.toSwiftlyProject();
-            }
-        });
-    }
-
-    /** Handles persistent stuff. */
-    protected SwiftlyProjectRepository _srepo;
 
     /** Maintains a mapping of resolved projects. */
     protected HashMap<Integer,ProjectRoomManager> _managers =

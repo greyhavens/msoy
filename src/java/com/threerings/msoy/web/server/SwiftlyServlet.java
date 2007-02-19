@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.web.server;
 
+import java.util.logging.Level;
+import static com.threerings.msoy.Log.log;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
@@ -28,43 +31,39 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public ArrayList getProjects (WebCreds creds)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser(creds);
-        final ServletWaiter<ArrayList<SwiftlyProject>> waiter;
+        MemberRecord memrec = requireAuthedUser(creds);
+        ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
 
-        waiter = new ServletWaiter<ArrayList<SwiftlyProject>>("getProjects[]");
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<ArrayList<SwiftlyProject>>(waiter) {
-            public ArrayList<SwiftlyProject> invokePersistResult () throws PersistenceException {
-                ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
-                for (SwiftlyProjectRecord pRec : MsoyServer.swiftlyRepo.findProjects(memrec.memberId)) {
-                    projects.add(pRec.toSwiftlyProject());
-                }
-                return projects;
+        try {
+            for (SwiftlyProjectRecord pRec : MsoyServer.swiftlyRepo.findProjects(memrec.memberId)) {
+                projects.add(pRec.toSwiftlyProject());
             }
-        });
-        return waiter.waitForResult();
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Getting user's projects failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        return projects;
     }
 
     // from SwiftlyService
-    public SwiftlyProject createProject (WebCreds creds, final SwiftlyProject project)
+    public SwiftlyProject createProject (WebCreds creds, String projectName)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
-        final ServletWaiter<SwiftlyProject> waiter;
 
+        // TODO Argument Validation
         /*
         if(!isValidName(project.name)) {
             throw new ServiceException("m.invalid_project_name");
         }
         */
 
-        // TODO: project.creationDate = new Date(System.currentTimeMillis());
-        project.ownerId = creds.getMemberId();
-        waiter = new ServletWaiter<SwiftlyProject>("createProject[" + project + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.swiftlyMan.createProject(project, waiter);
-            }
-        });
-        return waiter.waitForResult();
+        try {
+            return MsoyServer.swiftlyRepo.createProject(memrec.memberId, projectName).toSwiftlyProject();
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Creating new project failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 }
