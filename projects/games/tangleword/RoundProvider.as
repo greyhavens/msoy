@@ -2,6 +2,7 @@ package
 {
 
 import com.threerings.ezgame.EZGameControl;
+import com.threerings.ezgame.HostCoordinator;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
 import flash.utils.Timer;

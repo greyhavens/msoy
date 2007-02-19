@@ -5,6 +5,8 @@ import flash.display.Sprite;
 import flash.display.Shape;
 
 import com.threerings.ezgame.EZGameControl;
+import com.threerings.ezgame.HostCoordinator;
+import com.threerings.ezgame.HostEvent;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
@@ -30,7 +32,7 @@ public class TangleWord extends Sprite
         // Initialize game data
         _gameCtrl = new EZGameControl (this);
         _gameCtrl.registerListener (this);
-        _coordinator = new HostCoordinator (_gameCtrl, true);
+        _coordinator = new HostCoordinator (_gameCtrl);
         _coordinator.addEventListener (HostEvent.CLAIMED, hostClaimedHandler);
         _rounds = new RoundProvider (_gameCtrl, _coordinator);
         

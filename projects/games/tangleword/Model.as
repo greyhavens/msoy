@@ -3,6 +3,7 @@ package
 
 
 import com.threerings.ezgame.EZGameControl;
+import com.threerings.ezgame.HostCoordinator;
 import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
