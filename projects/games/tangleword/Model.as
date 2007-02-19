@@ -189,7 +189,8 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
             break;
 
         default:
-            Assert.Fail ("Unknown property changed: " + event.name);
+            // Assert.Fail ("Unknown property changed: " + event.name + ", from: " +
+            //             event.oldValue + " to " + event.newValue);
         }
         
     }

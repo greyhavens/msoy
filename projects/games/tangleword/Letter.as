@@ -44,7 +44,7 @@ public class Letter extends Sprite
         Assert.True (_background != null && _label != null,
                      "I expected background and text to be initialized by now.");
                     
-        _label.text = str;
+        _label.text = str.toUpperCase();
 
         var topMargin : Number = (Properties.LETTER_SIZE - _label.height) / 2;
         _label.y = topMargin;

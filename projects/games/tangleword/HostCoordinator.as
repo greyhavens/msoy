@@ -4,20 +4,26 @@ package
 import com.threerings.ezgame.EZGameControl;
 import com.threerings.ezgame.OccupantChangedEvent;
 import com.threerings.ezgame.OccupantChangedListener;
+import com.threerings.ezgame.PropertyChangedListener;
+import com.threerings.ezgame.PropertyChangedEvent;
 
 /**
    HostCoordinator provides methods for determining whether the current
    client should consider itself the authority in dealing with game state
    (for example, when dealing out cards, or setting up the game board).
 
-   Current implementation is very simple: the oldest client in the game
-   is automatically authoritative. However, since clients can enter and leave,
-   any client can potentially become the host at any time.
-
+   The constructor takes two arguments: an EZ game controller, and
+   a function that will be called once host coordination is established.
+   This function can be used to start up the game.
+   
    Usage example:
-   private var _coord : HostCoordinator = new HostCoordinator (_gameCtrl);
+
+   private var _coord : HostCoordinator =
+     new HostCoordinator (_gameCtrl, beginGame);
+
    ...
-   function xxx ()
+
+   function beginGame ()
    {
    if (_coord.amITheHost ())
      {
@@ -27,15 +33,18 @@ import com.threerings.ezgame.OccupantChangedListener;
        
 */
 
-public class HostCoordinator implements OccupantChangedListener
+public class HostCoordinator
+    implements OccupantChangedListener, PropertyChangedListener
 {
     /**
        Constructor, expects an initialized instance of EZGameControl.
+         
        If the optional showDebug flag is set, it will display host info
        as chat messages (only useful for debugging).
+
+       Make sure to call join() when ready to start the game.
      */
-    public function HostCoordinator (
-        control : EZGameControl, showDebug : Boolean = false)
+    public function HostCoordinator (control : EZGameControl, showDebug : Boolean = false)
     {
         Assert.NotNull (control, "HostCoordinator initialized with a null control!");
             
@@ -44,8 +53,30 @@ public class HostCoordinator implements OccupantChangedListener
 
         _showDebug = showDebug;
 
-        tryClaimHostRole ();
+        _hostKnown = false;
     }
+
+    /**
+       This function initiates host coordination, which may result
+       in the current client becoming the authoritative game host,
+       or just another player. :)
+
+       It takes an optional callback function of type:
+         function () : void { }
+
+       The callback function will be called once host coordination was
+       established, whether or not this client became the host.
+    */
+    public function join (callback : Function = null) : void
+    {
+        _startFn = callback;
+        if (hostExists ()) {
+            dealWithHostObservation ();
+        } else {
+            tryClaimHostRole ();
+        }
+    }
+
 
     /**
        Main query function: returns true if the current client
@@ -60,6 +91,7 @@ public class HostCoordinator implements OccupantChangedListener
     */
     public function amITheHost () : Boolean
     {
+        debugHostStatus ();
         return (getHostId () == _control.getMyId ());
     }
 
@@ -76,18 +108,31 @@ public class HostCoordinator implements OccupantChangedListener
     /** Keep track of people leaving */
     public function occupantLeft (event : OccupantChangedEvent) : void
     {
-        // If the occupant who just left was the host, everyone should try
-        // and clear their role. This means that everyone will clear
-        // and reclaim the role - so only the last one will actually succeed.
-        // It's a little redundant, but fine. :)
+        // If the occupant who just left was the host, every client will
+        // get a shot at trying to clear their role.
+        if (_showDebug) {
+            _control.localChat ("My ID: " + _control.getMyId ());
+            _control.localChat ("Occupant left: " + event.occupantId);
+            _control.localChat ("Current host: " + getHostId());
+        }
         if (getHostId () == event.occupantId)
         {
             if (_showDebug) { _control.localChat ("Removing the old host..."); }
-            _control.set (HOST_NAME, null);
+            // Clear the old host value, and put myself in their place.
+            // Only the first client will succeed in doing this.
+            _control.testAndSet (HOST_NAME, _control.getMyId(), event.occupantId);
+            debugHostStatus ();
         }
-        tryClaimHostRole ();
     }
     
+    /** Keep track of changing host values */
+    public function propertyChanged (event : PropertyChangedEvent) : void
+    {
+        if (event.name == HOST_NAME && ! _hostKnown)
+        {
+            dealWithHostObservation ();
+        }
+    }    
     
 
     // PRIVATE FUNCTIONS
@@ -112,22 +157,43 @@ public class HostCoordinator implements OccupantChangedListener
     /** If the host role is unclaimed, claim it! */
     private function tryClaimHostRole () : void
     {
+        if (_showDebug) {
+            _control.localChat ("Trying to claim host role.");
+            _control.localChat ("Does host exist? " + hostExists());
+        }
+            
         if (! hostExists())
         {
-            // Only set host role if it's not already claimed (hence: testAndSet)
-            _control.testAndSet (HOST_NAME, _control.getMyId ());
+            // Only set host role if it's not already claimed (i.e. null)
+            _control.testAndSet (HOST_NAME, _control.getMyId (), null);
         }
-        debugHostStatus ();
     }
+
+    /** When we get a mess */
+    private function dealWithHostObservation () : void
+    {
+        // The first time we notice a host, remember it, and
+        // call the listener function, if applicable
+        if (hostExists ())
+        {
+            if (_showDebug) { _control.localChat ("First host observation!"); }
+            _hostKnown = true;
+            if (_startFn != null)
+            {
+                _startFn();
+            }
+        }
+    }
+    
 
     /** Debug only */
     private function debugHostStatus () : void
     {
         if (_showDebug)
         {
-            _control.localChat (getHostId() == _control.getMyId() ?
-                                "I am the host." :
-                                "I'm not the host.");
+            _control.localChat (
+                (getHostId() == _control.getMyId() ? "I am" : "I'm not") +
+                " the host (id " + getHostId() + ", mine is " + _control.getMyId() + ")");
         }
     }
 
@@ -142,6 +208,12 @@ public class HostCoordinator implements OccupantChangedListener
 
     /** Debug flag */
     private var _showDebug : Boolean;
+
+    /** Have we seen at least one host message? */
+    private var _hostKnown : Boolean;
+    
+    /** Startup function, to be called once the host was decided */
+    private var _startFn : Function;
 }
 
 }

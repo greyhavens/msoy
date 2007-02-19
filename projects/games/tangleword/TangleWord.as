@@ -9,8 +9,6 @@ import com.threerings.ezgame.MessageReceivedEvent;
 import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.PropertyChangedListener;
-import com.threerings.ezgame.StateChangedEvent;
-import com.threerings.ezgame.StateChangedListener;
 
 
 
@@ -20,7 +18,7 @@ import com.threerings.ezgame.StateChangedListener;
 */
 
 [SWF(width="500", height="500")]
-public class TangleWord extends Sprite implements StateChangedListener
+public class TangleWord extends Sprite 
 {
     
     // PUBLIC METHODS
@@ -35,54 +33,27 @@ public class TangleWord extends Sprite implements StateChangedListener
         _coordinator = new HostCoordinator (_gameCtrl);
         _rounds = new RoundProvider (_gameCtrl, _coordinator);
         
-        _rounds.setTimeout (RoundProvider.SYSTEM_STARTED_STATE, 0); 
-        _rounds.setTimeout (RoundProvider.ROUND_STARTED_STATE, Properties.ROUND_LENGTH);
-        _rounds.setTimeout (RoundProvider.ROUND_ENDED_STATE, Properties.PAUSE_LENGTH);
-
         // Create MVC elements
         _controller = new Controller (_gameCtrl, null, _rounds); // we'll set the model later...
         _display = new Display (_controller, _rounds);
         _model = new Model (_gameCtrl, _coordinator, _rounds, _display);
-        _controller.setModel (_model);       // ... as in, right here :)
+        _controller.setModel (_model);                           // ... as in, right here :)
         addChild (_display);
 
-        // TODO: DEBUG
-        //_gameCtrl.localChat (_coordinator.amITheHost () ?
-        //                    "I AM THE HOST! :)" :
-        //                    "I'm not the host. :(");
+        // Join hosted game
+        _coordinator.join (startup);
 
-        if (_gameCtrl.isInPlay()) {
-            checkStartup();
-        }
     }
 
-
-    //
-    //
-    // EVENT HANDLERS
-
-    /** From StateChangedListener: deal with the game starting and ending. */
-    public function stateChanged (event : StateChangedEvent) : void
-    {
-        switch (event.type)
-        {
-        case StateChangedEvent.GAME_STARTED:
-            checkStartup ();
-            break;
-
-        case StateChangedEvent.GAME_ENDED:
-            checkEnd ();
-            break;
-
-        }
-    }
 
     /**
-     * Check to see if we should be starting the game.
+     * Once the host was found, start the game!
      */
-    protected function checkStartup () : void
+    private function startup () : void
     {
-        _gameCtrl.localChat("Starting up!");
+        _rounds.setTimeout (RoundProvider.SYSTEM_STARTED_STATE, 0); 
+        _rounds.setTimeout (RoundProvider.ROUND_STARTED_STATE, Properties.ROUND_LENGTH);
+        _rounds.setTimeout (RoundProvider.ROUND_ENDED_STATE, Properties.PAUSE_LENGTH);
 
         // If I joined an existing game, display time remaining till next round
         if (! isNaN (_rounds.getCurrentStateTimeout ()))
@@ -96,20 +67,11 @@ public class TangleWord extends Sprite implements StateChangedListener
 
         // However, if I somehow became the host, just initialize everything anew.
         if (_coordinator.amITheHost ()) {
+            _rounds.setCurrentState (RoundProvider.SYSTEM_STARTED_STATE);
             initializeScoreboard ();
         }
     }
 
-    /**
-     * Process end of game.
-     */
-    protected function checkEnd () : void
-    {
-        _gameCtrl.localChat ("Done!");
-        if (_coordinator.amITheHost ()) {
-            Assert.Fail ("I was the host - but no more.");
-        }
-    }
 
     // PRIVATE FUNCTIONS
 

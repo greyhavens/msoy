@@ -60,7 +60,7 @@ public class RoundProvider implements PropertyChangedListener
 
         // Initialize
         initializeTables ();
-        setCurrentState (SYSTEM_STARTED_STATE);
+        setCurrentState (SYSTEM_STOPPED_STATE);
     }
 
     /**
