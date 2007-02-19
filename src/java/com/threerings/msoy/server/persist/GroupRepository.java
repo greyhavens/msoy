@@ -49,15 +49,6 @@ public class GroupRepository extends DepotRepository
     public GroupRepository (ConnectionProvider conprov)
     {
         super(conprov);
-        _ctx.addCacheListener(GroupRecord.class, new CacheListener<GroupRecord>() {
-            public void entryInvalidated (CacheKey key, GroupRecord entry) {
-                // invalidate group names on any group record modifications
-                _ctx.cacheInvalidate(_groupNamePrefixKey);
-            }
-            public void entryCached (CacheKey key, GroupRecord newEntry, GroupRecord oldEntry) {
-                // nothing to do here
-            }
-        });
         _tagRepo = new TagRepository(_ctx) {
             protected TagRecord createTagRecord () {
                 return new GroupTagRecord();
@@ -297,10 +288,6 @@ public class GroupRepository extends DepotRepository
             "(select count(*) from GroupMembershipRecord where groupId=" + groupId + ")");
     }
 
-    protected CacheKey _groupNamePrefixKey = new SimpleCacheKey(GROUP_NAME_PREFIX);
-
     /** Used to manage our group tags. */
     protected TagRepository _tagRepo;
-
-    protected static final String GROUP_NAME_PREFIX = "GroupNamePrefix";
 }
