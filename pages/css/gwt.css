@@ -262,12 +262,12 @@ body {
 }
 
 .borderedDialog .FooterControl {
-  background-image: url(/images/ui/popup/footer_tile.png);
+  background: black url(/images/ui/popup/footer_tile.png) repeat-x bottom;
   height: 50px;
 }
 
 .borderedDialog .FooterImage {
-  background-image: url(/images/ui/popup/footer_left.png);
+  background: black url(/images/ui/popup/footer_left.png) no-repeat bottom left;
   height: 50px;
   width: 200px;
 }
