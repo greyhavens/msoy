@@ -50,9 +50,12 @@ public class GroupRepository extends DepotRepository
     {
         super(conprov);
         _ctx.addCacheListener(GroupRecord.class, new CacheListener<GroupRecord>() {
-            public void entryModified (CacheKey key, GroupRecord entry) {
+            public void entryInvalidated (CacheKey key, GroupRecord entry) {
                 // invalidate group names on any group record modifications
                 _ctx.cacheInvalidate(_groupNamePrefixKey);
+            }
+            public void entryCached (CacheKey key, GroupRecord newEntry, GroupRecord oldEntry) {
+                // nothing to do here
             }
         });
         _tagRepo = new TagRepository(_ctx) {

@@ -62,13 +62,12 @@ public class MemberRepository extends DepotRepository
 
         // add a cache invalidator that listens to single FriendRecord updates
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
-            public void entryModified (CacheKey key, FriendRecord friend) {
-                // TODO: this check vanishes in the upcoming refactor
-                // member modified: invalidate the dependent FriendsCache entries
-                if (friend != null) {
-                    _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviterId);
-                    _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviteeId);
-                }
+            public void entryInvalidated (CacheKey key, FriendRecord friend) {
+                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviterId);
+                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviteeId);
+            }
+            public void entryCached (CacheKey key, FriendRecord newEntry, FriendRecord oldEntry) {
+                // nothing to do here
             }
         });
     }
