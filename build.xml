@@ -10,6 +10,7 @@
   <!-- things you probably don't want to change -->
   <property name="src.dir"       value="src/java"/>
   <property name="gsrc.dir"      value="src/gwt"/>
+  <property name="asrc.dir"      value="src/as"/>
   <property name="deploy.dir"    value="dist"/>
   <property name="javadoc.dir"   value="${deploy.dir}/docs"/>
   <property name="savedoc.dir"   value="docs"/>
@@ -21,8 +22,8 @@
   <fileset dir="." id="check.paths">
     <include name="projects/s3lib/java/src/java/**/*.java"/> 
     <include name="projects/toybox/src/java/**/*.java"/> 
-    <include name="src/java/**/*.java"/> 
-    <include name="src/gwt/**/*.java"/> 
+    <include name="${src.dir}/**/*.java"/> 
+    <include name="${gsrc.dir}/**/*.java"/> 
   </fileset>
 
   <!-- declare the properties files. -->
@@ -107,8 +108,8 @@
       <fileset dir="${deploy.dir}/lib" includes="**/*.jar"/>
       <fileset dir="lib/gwt" includes="*.jar"/>
       <pathelement location="${deploy.dir}/classes"/>
-      <pathelement location="src/java"/>
-      <pathelement location="src/gwt"/>
+      <pathelement location="${src.dir}"/>
+      <pathelement location="${gsrc.dir}"/>
     </path>
     <available property="gwt.present" classname="com.google.gwt.dev.GWTShell"
                classpathref="gwt.classpath"/>
@@ -144,11 +145,11 @@
     <java fork="true" classname="com.google.gwt.i18n.tools.I18NSync">
       <classpath>
         <fileset dir="${extlib.dir}" includes="gwt*.jar"/>
-        <pathelement location="src/gwt"/>
+        <pathelement location="${gsrc.dir}"/>
       </classpath>
       <arg value="-createMessages"/>
       <arg value="-out"/>
-      <arg value="src/gwt"/>
+      <arg value="${gsrc.dir}"/>
       <arg value="client.${which}Messages"/>
     </java>
   </target>
@@ -178,11 +179,12 @@
       <delete dir="pages/@{page}"/>
       <mkdir dir="pages/@{page}"/>
       <if><isset property="full"/><then>
-         <copy file="src/gwt/@{page}.gwt.xml.in" tofile="src/gwt/@{page}.gwt.xml" overwrite="true"/>
+         <copy file="${gsrc.dir}/@{page}.gwt.xml.in"
+               tofile="${gsrc.dir}/@{page}.gwt.xml" overwrite="true"/>
       </then><else>
          <echo>Doing Gecko-only compile...</echo>
          <exec executable="bin/quickify" failonerror="true">
-           <arg value="src/gwt/@{page}.gwt.xml"/>
+           <arg value="${gsrc.dir}/@{page}.gwt.xml"/>
          </exec>
       </else></if>
       <java fork="true" maxmemory="128M" failonerror="false" resultproperty="gwt.result"
@@ -191,8 +193,8 @@
           <pathelement location="${deploy.dir}/classes"/>
           <fileset dir="${extlib.dir}" includes="gwt*.jar"/>
           <fileset dir="${deploy.dir}/lib" includes="*.jar"/>
-          <pathelement location="src/java"/>
-          <pathelement location="src/gwt"/>
+          <pathelement location="${src.dir}"/>
+          <pathelement location="${gsrc.dir}"/>
         </classpath>
         <!--<arg value="-style"/><arg value="PRETTY"/>-->
         <arg value="-out"/>
@@ -232,8 +234,8 @@
     <tstamp>
       <format property="build_time" pattern="yyyy-MM-dd HH:mm:ss"/>
     </tstamp>
-    <copy file="src/as/com/threerings/msoy/client/DeploymentConfig.as.tmpl"
-          tofile="src/as/com/threerings/msoy/client/DeploymentConfig.as"
+    <copy file="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as.tmpl"
+          tofile="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as"
           overwrite="true">
       <filterset>
         <filter token="build_time" value="${build_time}"/>
@@ -276,7 +278,7 @@
 
   <target name="checkexportlib">
     <uptodate property="exportlib_is_up_to_date" targetfile="${deploy.dir}/msoy-export.swc">
-      <srcfiles dir="src/as/com/threerings/msoy/export" includes="**/*.as"/>
+      <srcfiles dir="${asrc.dir}/com/threerings/msoy/export" includes="**/*.as"/>
     </uptodate>
   </target>
 
@@ -286,7 +288,7 @@
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
-      <arg value="-include-sources=src/as/com/threerings/msoy/export/"/>
+      <arg value="-include-sources=${asrc.dir}/com/threerings/msoy/export/"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/msoy-export.swc"/>
     </java>
@@ -302,13 +304,13 @@
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
-      <arg value="-compiler.source-path=src/as/"/>
+      <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-incremental=true"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/${type}-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="src/as/${type}.mxml"/>
+      <arg value="${asrc.dir}/${type}.mxml"/>
     </exec>
     <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients"/>
   </target>
@@ -327,12 +329,12 @@
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.debug"/>
       <arg value="-compiler.verbose-stacktraces=true"/>
-      <arg value="-compiler.source-path=src/as/"/>
+      <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/${type}-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="src/as/${type}.mxml"/>
+      <arg value="${asrc.dir}/${type}.mxml"/>
     </exec>
     <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients"/>
   </target>
@@ -343,12 +345,12 @@
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
-      <arg value="-compiler.source-path=src/as/"/>
+      <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/avatarviewer.swf"/>
       <arg value="-file-specs"/>
-      <arg value="src/as/AvatarViewer.mxml"/>
+      <arg value="${asrc.dir}/AvatarViewer.mxml"/>
     </exec>
     <copy file="${deploy.dir}/avatarviewer.swf" todir="pages/clients"/>
   </target>
@@ -359,11 +361,11 @@
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
-      <arg value="-compiler.source-path=src/as/"/>
+      <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/RemixAnalyzer.swf"/>
       <arg value="-file-specs"/>
-      <arg value="src/as/com/threerings/msoy/item/remix/tools/RemixAnalyzer.as"/>
+      <arg value="${asrc.dir}/com/threerings/msoy/item/remix/tools/RemixAnalyzer.as"/>
     </exec>
     <!--<copy file="${deploy.dir}/RemixAnalyzer.swf" todir="bin"/>-->
   </target>
@@ -453,7 +455,7 @@
       <exclude name="**/web/**"/>
     </javac>
     <!-- now generate the associated files -->
-    <service header="lib/SOURCE_HEADER" asroot="src/as"
+    <service header="lib/SOURCE_HEADER" asroot="${asrc.dir}"
              classpathref="classpath">
       <fileset dir="${src.dir}" includes="**/*Service.java" excludes="**/web/**"/>
     </service>
@@ -484,7 +486,7 @@
     <taskdef name="genscript" classpathref="classpath"
              classname="com.threerings.presents.tools.GenActionScriptTask"/>
     <!-- now generate the associated files -->
-    <genscript header="lib/SOURCE_HEADER" asroot="src/as">
+    <genscript header="lib/SOURCE_HEADER" asroot="${asrc.dir}">
       <fileset dir="${src.dir}" includes="**/data/*.java"/>
     </genscript>
   </target>
@@ -535,7 +537,7 @@
       <link href="http://java.sun.com/j2se/1.5/docs/api/"/>
       <link href="http://samskivert.com/code/samskivert/samskivert/docs/api"/>
       <fileset dir="${src.dir}" includes="**/*.java"/>
-      <fileset dir="src/gwt" includes="client/**/*.java"/>
+      <fileset dir="${gsrc.dir}" includes="client/**/*.java"/>
     </javadoc>
   </target>
 
@@ -591,8 +593,8 @@
 
   <!-- cleans out the compiled ActionScript code and caches -->
   <target name="asclean">
-    <delete><fileset dir="src/as" includes="*.cache"/></delete>
-    <delete file="src/as/com/threerings/msoy/client/DeploymentConfig.as"/>
+    <delete><fileset dir="${asrc.dir}" includes="*.cache"/></delete>
+    <delete file="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as"/>
   </target>
 
   <!-- cleans out the compiled GWT bits and caches -->
@@ -601,7 +603,7 @@
     <for list="${pages}" param="page">
       <sequential>
         <delete dir="pages/@{page}"/>
-        <delete file="src/gwt/@{page}.gwt.xml"/>
+        <delete file="${gsrc.dir}/@{page}.gwt.xml"/>
       </sequential>
     </for>
   </target>
