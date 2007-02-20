@@ -87,11 +87,11 @@ public class Ground extends Sprite implements DrivingSurface
             _stripData.draw(_track, thisTransform, null, null, clipping);
             // update off road flag
             var y :int = HEIGHT - totalHeight;
-            if (y <= UnderworldDrift.KART_LOCATION.y &&
-                y + stripHeight > UnderworldDrift.KART_LOCATION.y) {
+            if (y <= UnderwhirledDrift.KART_LOCATION.y &&
+                y + stripHeight > UnderwhirledDrift.KART_LOCATION.y) {
                 thisTransform.invert();
                 _drivingOnRoad = _track.isOnRoad(thisTransform.transformPoint(
-                    UnderworldDrift.KART_LOCATION));
+                    UnderwhirledDrift.KART_LOCATION));
             }
         }
         _scenery.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
@@ -114,10 +114,10 @@ public class Ground extends Sprite implements DrivingSurface
     protected var _drivingOnRoad :Boolean = true;
 
     /** height of the ground in display pixels */
-    protected static const HEIGHT :int = 3 * UnderworldDrift.DISPLAY_HEIGHT / 4;
+    protected static const HEIGHT :int = 3 * UnderwhirledDrift.DISPLAY_HEIGHT / 4;
 
     /** width of the ground in display pixels */
-    protected static const WIDTH :int = UnderworldDrift.DISPLAY_WIDTH;
+    protected static const WIDTH :int = UnderwhirledDrift.DISPLAY_WIDTH;
 
     /** The height of the largest strip, at the bottom of the image. */
     protected static const BEGINNING_STRIP_HEIGHT :int = 3;

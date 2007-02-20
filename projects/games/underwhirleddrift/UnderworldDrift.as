@@ -12,7 +12,7 @@ import flash.ui.Keyboard;
 import com.threerings.ezgame.EZGameControl;
 
 [SWF(width="711", height="400")]
-public class UnderworldDrift extends Sprite
+public class UnderwhirledDrift extends Sprite
 {
     /** width of the masked display */
     public static const DISPLAY_WIDTH :int = 711;
@@ -26,7 +26,7 @@ public class UnderworldDrift extends Sprite
     /** Kart location, relative to the ground coordinates */
     public static const KART_LOCATION :Point = new Point (355, 200);
 
-    public function UnderworldDrift ()
+    public function UnderwhirledDrift ()
     {
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0xFFFFFF);

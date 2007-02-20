@@ -38,7 +38,7 @@ public class Scenery extends Sprite
                 var totalHeight :Number = scaleFactor * cameraHeight;
                 thisTransform.identity();
                 thisTransform.scale(scaleFactor, scaleFactor);
-                thisTransform.translate(UnderworldDrift.DISPLAY_WIDTH / 2, distance + totalHeight);
+                thisTransform.translate(UnderwhirledDrift.DISPLAY_WIDTH / 2, distance + totalHeight);
                 _items[ii].transformedOrigin = thisTransform.transformPoint(
                     _items[ii].transformedOrigin);
                 // position item

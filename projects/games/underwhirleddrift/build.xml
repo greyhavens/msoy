@@ -2,7 +2,7 @@
 <project name="reversi" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name"         value="UnderworldDrift"/>
+  <property name="app.name"         value="UnderwhirledDrift"/>
   <property name="root.path"        value="../../.."/>
   <property name="flex.path"        value="${root.path}/projects/tools/extern/flex_sdk"/>
 
