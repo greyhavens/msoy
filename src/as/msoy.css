@@ -285,7 +285,7 @@ ToolTip
   backgroundColor: #000000;
 }
 
-.lobbyPanel, .infoBox, .gameBox {
+.lobbyPanel, .descriptionBox, .gameBox {
   horizontalGap: 0;
   verticalGap: 0;
 }

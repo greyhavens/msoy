@@ -10,6 +10,7 @@ import mx.collections.ArrayCollection;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.ButtonBar;
+import mx.controls.Label;
 
 import mx.core.Container;
 import mx.core.ClassFactory;
@@ -146,14 +147,32 @@ public class LobbyPanel extends VBox
 
         // the hard-coded URL bits here are temporary, and will be changed to the default supplied
         // by the Game object, when these fields have been added
-        var infoBox :VBox = new VBox();
+        var descriptionBox :VBox = new VBox();
+        descriptionBox.width = 160;
+        descriptionBox.percentHeight = 100;
+        descriptionBox.styleName = "descriptionBox";
+        gameBox.addChild(descriptionBox);
+        descriptionBox.addChild(new MediaWrapper(new MediaContainer(
+            "/media/static/game/logo.png")));
+        descriptionBox.addChild(new MediaWrapper(new MediaContainer(
+            "/media/static/game/info_top.png")));
+        var infoBox :HBox = new HBox();
         infoBox.width = 160;
         infoBox.percentHeight = 100;
-        infoBox.styleName = "infoBox";
-        gameBox.addChild(infoBox);
-        infoBox.addChild(new MediaWrapper(new MediaContainer("/media/static/game/logo.png")));
-        infoBox.addChild(new MediaWrapper(new MediaContainer("/media/static/game/info_top.png")));
-        infoBox.addChild(new MediaWrapper(new MediaContainer(
+        descriptionBox.addChild(infoBox);
+        var borderImage :MediaWrapper = new MediaWrapper(new MediaContainer(
+            "/media/static/game/info_tile.png"));
+        borderImage.percentHeight = 100;
+        infoBox.addChild(borderImage);
+        var infoLabel :Label = new Label();
+        infoLabel.percentWidth = 100;
+        infoLabel.percentHeight = 100;
+        infoBox.addChild(infoLabel);
+        borderImage = new MediaWrapper(new MediaContainer(
+            "/media/static/game/info_tile.png"));
+        borderImage.percentHeight = 100;
+        infoBox.addChild(borderImage);
+        descriptionBox.addChild(new MediaWrapper(new MediaContainer(
             "/media/static/game/info_bottom.png")));
 
         var tablesBox :VBox = new VBox();
