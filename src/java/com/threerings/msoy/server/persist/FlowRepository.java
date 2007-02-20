@@ -23,17 +23,17 @@ import static com.threerings.msoy.Log.log;
 public class FlowRepository extends DepotRepository
 {
     // TODO: most likely make these enums
-    public static final int ACTION_CREATED_PROFILE              = 0x01;
-    public static final int ACTION_UPDATED_PROFILE              = 0x02;
+    public static final int ACTION_CREATED_PROFILE              = 1;
+    public static final int ACTION_UPDATED_PROFILE              = 2;
     
-    public static final int ACTION_SENT_FRIEND_INVITE           = 0x11;
-    public static final int ACTION_ACCEPTED_FRIEND_INVITE       = 0x12;
+    public static final int ACTION_SENT_FRIEND_INVITE           = 10;
+    public static final int ACTION_ACCEPTED_FRIEND_INVITE       = 11;
     
-    public static final int ACTION_PLAYED_GAME                  = 0x21;
+    public static final int ACTION_PLAYED_GAME                  = 20;
 
-    public static final int ACTION_CREATED_ITEM                 = 0x31;
-    public static final int ACTION_BOUGHT_ITEM                  = 0x32;
-    public static final int ACTION_LISTED_ITEM                  = 0x33;
+    public static final int ACTION_CREATED_ITEM                 = 30;
+    public static final int ACTION_BOUGHT_ITEM                  = 31;
+    public static final int ACTION_LISTED_ITEM                  = 32;
 
     /**
      * Creates a flow repository for.
