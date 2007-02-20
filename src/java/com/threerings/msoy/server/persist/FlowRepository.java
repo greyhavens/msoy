@@ -8,12 +8,14 @@ import java.util.Collection;
 
 import com.samskivert.io.PersistenceException;
 
+import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.samskivert.util.IntIntMap;
+import com.samskivert.util.IntMap;
 
 import static com.threerings.msoy.Log.log;
 
@@ -78,14 +80,40 @@ public class FlowRepository extends DepotRepository
                                Timestamp lastAssessment, Timestamp now)
         throws PersistenceException
     {
-        Collection<MemberActionLogRecord> records = findAll(
-            MemberActionLogRecord.class,
-            new Where(new And(
-                new Equals(MemberActionLogRecord.MEMBER_ID, memberId),
-                new GreaterThan(MemberActionLogRecord.ACTION_TIME_C, lastAssessment),
-                new LessThanEquals(MemberActionLogRecord.ACTION_TIME_C, now))));
+        // create the condition that specifices which log records we're interested in
+        Where condition = new Where(new And(
+            new Equals(MemberActionLogRecord.MEMBER_ID, memberId),
+            new GreaterThan(MemberActionLogRecord.ACTION_TIME_C, lastAssessment),
+            new LessThanEquals(MemberActionLogRecord.ACTION_TIME_C, now)));
+
+        // load all actions logged since our last assessment
+        Collection<MemberActionLogRecord> records =
+            findAll(MemberActionLogRecord.class, condition);
 
         if (records.size() > 0) {
+            // count how many of each action there were
+            IntIntMap actionTotals = new IntIntMap();
+            for (MemberActionLogRecord record : records) {
+                actionTotals.increment(record.actionId, 1);
+            }
+            // then iterate over the actions
+            int[] keys = actionTotals.getKeys();
+            int[] counts = actionTotals.getValues();
+            for (int i = 0; i < keys.length; i ++) {
+                // and update each summary table
+                updateLiteral(
+                    MemberActionSummaryRecord.class,
+                    MemberActionSummaryRecord.MEMBER_ID, memberId,
+                    MemberActionSummaryRecord.ACTION_ID, keys[i],
+                    new String[] {
+                        MemberActionSummaryRecord.COUNT,
+                        MemberActionSummaryRecord.COUNT + " + " + counts[i],
+                    });
+            }
+            // if all went well, clear the log tables -- no cache invalidation needed because
+            // these records do not define a primary key at all
+            deleteAll(MemberActionLogRecord.class, condition, null);
+
             // bump humanity by about 0.1 if we did anything at all in the past 24+ hours
             currentHumanity = Math.min(currentHumanity + 30, 255);
         }

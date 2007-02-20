@@ -27,7 +27,8 @@ public class MemberActionSummaryRecord extends PersistentRecord
     /** The id of the member who's performed the action. */
     @Id
     public int memberId;
-    
+
+    @Id
     /** The action performed. */
     public int actionId;
     
