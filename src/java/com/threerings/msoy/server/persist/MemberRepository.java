@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,10 +57,15 @@ public class MemberRepository extends DepotRepository
     /** The cache identifier for the friends-of-a-member collection query. */
     public static final String FRIENDS_CACHE_ID = "FriendsCache";
 
+    /** The minimum number of seconds between two humanity reassessments for a member. */
+    public static final int HUMANITY_ASSESSMENT_TIMEOUT = 24 * 3600;
+    
     public MemberRepository (ConnectionProvider conprov)
     {
         super(conprov);
 
+        _flowRepo = new FlowRepository(_ctx);
+        
         // add a cache invalidator that listens to single FriendRecord updates
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
             public void entryInvalidated (CacheKey key, FriendRecord friend) {
@@ -72,6 +78,11 @@ public class MemberRepository extends DepotRepository
         });
     }
 
+    public FlowRepository getFlowRepository ()
+    {
+        return _flowRepo;
+    }
+    
     /**
      * Loads up the member record associated with the specified account.  Returns null if no
      * matching record could be found. The record will be fetched from the cache if possible and
@@ -213,6 +224,8 @@ public class MemberRepository extends DepotRepository
         if (member.created == null) {
             member.created = new Date(System.currentTimeMillis());
             member.lastSession = member.created;
+            member.lastHumanityAssessment = new Timestamp(member.created.getTime());
+            member.humanity = 100;
         }
         insert(member);
     }
@@ -242,34 +255,6 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         delete(member);
-    }
-
-    /**
-     * Deducts the specified amount of flow from the specified member's account.
-     */
-    public void spendFlow (int memberId, int amount)
-        throws PersistenceException
-    {
-        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, "spend");
-    }
-
-    /**
-     * Adds the specified amount of flow to the specified member's account.
-     */
-    public void grantFlow (int memberId, int amount)
-        throws PersistenceException
-    {
-        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, "grant");
-    }
-
-    /**
-     * <em>Do not use this method!</em> It exists only because we must work with the coin system
-     * which tracks members by username rather than id.
-     */
-    public void grantFlow (String accountName, int amount)
-        throws PersistenceException
-    {
-        updateFlow(MemberRecord.ACCOUNT_NAME, accountName, amount, "grant");
     }
 
     /**
@@ -313,15 +298,24 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Note that a member's session has ended: increment their sessions, add in the number of
-     * minutes spent online, and set their last session time to now.
+     * minutes spent online, and set their last session time to now. We also test to see if it
+     * is time to reassess this member's humanity.
      */
     public void noteSessionEnded (int memberId, int minutes)
         throws PersistenceException
     {
-        updateLiteral(MemberRecord.class, memberId,
-            MemberRecord.SESSIONS, "sessions + 1",
-            MemberRecord.SESSION_MINUTES, "sessionMinutes + " + minutes,
-            MemberRecord.LAST_SESSION, "NOW()");
+        long now = System.currentTimeMillis();
+        MemberRecord record = loadMember(memberId);
+        if (((now - record.lastHumanityAssessment.getTime())/1000) > HUMANITY_ASSESSMENT_TIMEOUT) {
+            Timestamp nowStamp = new Timestamp(now);
+            record.humanity = _flowRepo.assessHumanity(
+                memberId, record.humanity, record.lastHumanityAssessment, nowStamp);
+            record.lastHumanityAssessment = new Timestamp(now);
+        }
+        record.sessions ++;
+        record.sessionMinutes += minutes;
+        record.lastSession = new Date(now);
+        update(record);
     }
 
     /**
@@ -577,28 +571,6 @@ public class MemberRepository extends DepotRepository
                                    new Equals(FriendRecord.INVITEE_ID, memberId))),
                   invalidator);
     }
-
-    /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
-    protected void updateFlow (String index, Comparable key, int amount, String type)
-        throws PersistenceException
-    {
-        if (amount <= 0) {
-            throw new PersistenceException(
-                "Illegal flow " + type + " [index=" + index + ", amount=" + amount + "]");
-        }
-
-        String op = type.equals("grant") ? "+" : "-";
-        // TODO: Cache Invalidation
-        int mods = updateLiteral(MemberRecord.class, new Where(index, key), null,
-                                 MemberRecord.FLOW, MemberRecord.FLOW + op + amount);
-        if (mods == 0) {
-            throw new PersistenceException(
-                "Flow " + type + " modified zero rows " +
-                "[where=" + index + "=" + key + ", amount=" + amount + "]");
-        } else if (mods > 1) {
-            log.warning("Flow " + type + " modified multiple rows " +
-                        "[where=" + index + "=" + key + ", amount=" + amount +
-                        ", mods=" + mods + "].");
-        }
-    }
+    
+    protected FlowRepository _flowRepo;
 }
