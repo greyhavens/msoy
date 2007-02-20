@@ -33,5 +33,5 @@ public class GameAbuseRecord extends PersistentRecord
     public int accumMinutesSinceLastAssessment;
 
     /** The current abuse factor, from 0 to 255. */
-    public int amount;
+    public int abuseFactor;
 }
