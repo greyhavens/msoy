@@ -32,7 +32,7 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.server.PlaceRegistry;
 
-import com.threerings.ezgame.server.DictionaryService;
+import com.threerings.ezgame.server.DictionaryManager;
 import com.threerings.ezgame.server.GameCookieManager;
 
 import com.threerings.parlor.server.ParlorManager;
@@ -137,7 +137,7 @@ public class MsoyServer extends WhirledServer
     public static PetManager petMan = new PetManager();
 
     /** Handles word lookup services */
-    public static DictionaryService dictionary; 
+    public static DictionaryManager dictionary; 
 
     /**
      * Creates an audit log with the specified name (which should not include
@@ -270,7 +270,7 @@ public class MsoyServer extends WhirledServer
             }
         });
         toyMan.init(omgr, invoker, invmgr, plreg, itemMan.getGameRepository());
-        dictionary.init(ServerConfig.dictionaryDir);
+        dictionary.init(new File(ServerConfig.serverRoot, "data/dictionary"));
 
         // create and start up our HTTP server
         httpServer = new MsoyHttpServer();

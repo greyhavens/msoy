@@ -75,7 +75,6 @@ public class ServerConfig
         // fill in our standard properties
         serverName = config.getValue("server_name", "msoy");
         serverRoot = new File(config.getValue("server_root", "/tmp"));
-        dictionaryDir = new File(config.getValue("dictionary_dir", "/tmp"));
         mediaDir = new File(config.getValue("media_dir", "/tmp"));
         mediaS3Enable = config.getValue("media_s3enable", false);
         mediaS3Bucket = config.getValue("media_s3bucket", "msoy");
