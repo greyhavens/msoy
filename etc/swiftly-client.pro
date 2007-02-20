@@ -4,7 +4,9 @@
 # Proguard configuration file for the Swiftly editor client
 
 -injars ../dist/lib/commons-io.jar(!META-INF/*)
--injars ../dist/lib/samskivert.jar(!META-INF/*,!**/velocity/**,!**/xml/**)
+-injars ../dist/lib/samskivert.jar(
+    com/samskivert/Log.class,**/io/**,**/net/**,**/swing/**,**/text/**,**/util/**,
+    **/servlet/user/Password.class,**/servlet/user/User.class,**/servlet/user/UserUtil.class)
 -injars ../dist/lib/narya-base.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/narya-distrib.jar(!META-INF/*,!**/tools/**,!**/server/**)
 -injars ../dist/lib/nenya-rsrc.jar(!META-INF/*,!**/tools/**,!**/server/**)
