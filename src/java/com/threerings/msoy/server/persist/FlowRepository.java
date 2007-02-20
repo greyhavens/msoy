@@ -20,6 +20,7 @@ import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
@@ -132,9 +133,14 @@ public class FlowRepository extends DepotRepository
         throws PersistenceException
     {
         // load all actions logged since our last assessment
-        Collection<GameFlowGrantLogRecord> records =
-            findAll(GameFlowGrantLogRecord.class,
-                    new Where(GameFlowGrantLogRecord.GAME_ID, gameId));
+        Collection<GameFlowSummaryRecord> records =
+            findAll(GameFlowSummaryRecord.class,
+                    new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
+                    new FromOverride(GameFlowGrantLogRecord.class),
+                    new FieldOverride(GameFlowSummaryRecord.GAME_ID,
+                                      GameFlowGrantLogRecord.GAME_ID_C),
+                    new FieldOverride(GameFlowSummaryRecord.AMOUNT,
+                                      new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)));
 
         if (records.size() > 0) {
             deleteAll(MemberActionLogRecord.class,
@@ -184,6 +190,20 @@ public class FlowRepository extends DepotRepository
 
         /** The number of times this action was performed (by the implicit member). */
         public int count;
+    }
+
+    @Computed
+    @Entity
+    protected static class GameFlowSummaryRecord extends PersistentRecord
+    {
+        public static final String GAME_ID = "gameId";
+        public static final String AMOUNT = "amount";
+
+        /** The id of the game that did the flow granting. */
+        public int gameId;
+
+        /** The amount of flow this game granted. */
+        public int amount;
     }
 
 
