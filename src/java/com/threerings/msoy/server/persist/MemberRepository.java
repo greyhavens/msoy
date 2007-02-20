@@ -308,8 +308,7 @@ public class MemberRepository extends DepotRepository
         MemberRecord record = loadMember(memberId);
         if (((now - record.lastHumanityAssessment.getTime())/1000) > HUMANITY_ASSESSMENT_TIMEOUT) {
             Timestamp nowStamp = new Timestamp(now);
-            record.humanity = _flowRepo.assessHumanity(
-                memberId, record.humanity, record.lastHumanityAssessment, nowStamp);
+            record.humanity = _flowRepo.assessHumanity(memberId, record.humanity, nowStamp);
             record.lastHumanityAssessment = new Timestamp(now);
         }
         record.sessions ++;

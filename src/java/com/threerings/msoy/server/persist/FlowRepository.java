@@ -7,12 +7,20 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.concurrent.CountDownLatch;
 
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Computed;
+import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.clause.FieldOverride;
+import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.util.IntIntMap;
@@ -76,40 +84,37 @@ public class FlowRepository extends DepotRepository
     /**
      * Assess this member's humanity based on actions taken between the last assessment and now.
      */
-    public int assessHumanity (int memberId, int currentHumanity,
-                               Timestamp lastAssessment, Timestamp now)
+    public int assessHumanity (int memberId, int currentHumanity, Timestamp now)
         throws PersistenceException
     {
         // create the condition that specifices which log records we're interested in
         Where condition = new Where(new And(
             new Equals(MemberActionLogRecord.MEMBER_ID, memberId),
-            new GreaterThan(MemberActionLogRecord.ACTION_TIME_C, lastAssessment),
             new LessThanEquals(MemberActionLogRecord.ACTION_TIME_C, now)));
 
-        // load all actions logged since our last assessment
-        Collection<MemberActionLogRecord> records =
-            findAll(MemberActionLogRecord.class, condition);
+        Collection<MemberActionCountRecord> records = findAll(
+            MemberActionCountRecord.class,
+            new FromOverride(MemberActionLogRecord.class),
+            condition,
+            new FieldOverride(MemberActionCountRecord.ACTION_ID,
+                              MemberActionLogRecord.ACTION_ID_C),
+            new FieldOverride(MemberActionCountRecord.COUNT, new LiteralExp("COUNT(*)")),
+            new GroupBy(MemberActionLogRecord.ACTION_ID_C));
 
         if (records.size() > 0) {
-            // count how many of each action there were
-            IntIntMap actionTotals = new IntIntMap();
-            for (MemberActionLogRecord record : records) {
-                actionTotals.increment(record.actionId, 1);
-            }
-            // then iterate over the actions
-            int[] keys = actionTotals.getKeys();
-            int[] counts = actionTotals.getValues();
-            for (int i = 0; i < keys.length; i ++) {
+            // for each action, update the summary records with action counts
+            for (MemberActionCountRecord record : records) {
                 // and update each summary table
                 updateLiteral(
                     MemberActionSummaryRecord.class,
                     MemberActionSummaryRecord.MEMBER_ID, memberId,
-                    MemberActionSummaryRecord.ACTION_ID, keys[i],
+                    MemberActionSummaryRecord.ACTION_ID, record.actionId,
                     new String[] {
                         MemberActionSummaryRecord.COUNT,
-                        MemberActionSummaryRecord.COUNT + " + " + counts[i],
+                        MemberActionSummaryRecord.COUNT + " + " + record.count
                     });
             }
+
             // if all went well, clear the log tables -- no cache invalidation needed because
             // these records do not define a primary key at all
             deleteAll(MemberActionLogRecord.class, condition, null);
@@ -120,8 +125,25 @@ public class FlowRepository extends DepotRepository
         return currentHumanity;
     }
 
+    /**
+     * Assess a game's anti-abuse factor based on flow grants.
+     */
+    public int assessAntiAbuse (int gameId, int currentFactor)
+        throws PersistenceException
+    {
+        // load all actions logged since our last assessment
+        Collection<GameFlowGrantLogRecord> records =
+            findAll(GameFlowGrantLogRecord.class,
+                    new Where(GameFlowGrantLogRecord.GAME_ID, gameId));
 
-    
+        if (records.size() > 0) {
+            deleteAll(MemberActionLogRecord.class,
+                      new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
+                      null);
+        }
+        return currentFactor;
+    }
+
     /**
      * Deducts the specified amount of flow from the specified member's account.
      */
@@ -149,6 +171,21 @@ public class FlowRepository extends DepotRepository
     {
         updateFlow(MemberRecord.ACCOUNT_NAME, accountName, amount, "grant");
     }
+
+    @Computed
+    @Entity
+    protected static class MemberActionCountRecord extends PersistentRecord
+    {
+        public static final String ACTION_ID = "actionId";
+        public static final String COUNT = "count";
+
+        /** The id of the action this entry counts. */
+        public int actionId;
+
+        /** The number of times this action was performed (by the implicit member). */
+        public int count;
+    }
+
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
     protected void updateFlow (String index, Comparable key, int amount, String type)
