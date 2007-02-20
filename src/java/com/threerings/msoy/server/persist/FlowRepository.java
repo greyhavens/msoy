@@ -3,19 +3,19 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 
 import com.samskivert.io.PersistenceException;
 
-import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.util.IntIntMap;
-import com.samskivert.util.IntMap;
 
 import static com.threerings.msoy.Log.log;
 
@@ -172,6 +172,41 @@ public class FlowRepository extends DepotRepository
                         "[where=" + index + "=" + key + ", amount=" + amount +
                         ", mods=" + mods + "].");
         }
+        Date date = new Date(System.currentTimeMillis());
+        
+        boolean again = false;
+        do {
+            mods = updateLiteral(
+                DailyFlowSummary.class,
+                new Where(DailyFlowSummary.GRANT_TYPE, type, DailyFlowSummary.GRANT_DATE, date),
+                null,
+                DailyFlowSummary.GRANTED, DailyFlowSummary.GRANTED + op + amount);
+            if (mods == 0) {
+                // if this is the second time we tried that update, flip out.
+                if (again) {
+                    throw new PersistenceException(
+                        "Flow summary update modified zero rows after insertion " +
+                        "[where=" + index + "=" + key + ", amount=" + amount + "]");
+                }
+                DailyFlowSummary summary = new DailyFlowSummary();
+                summary.grantDate = date;
+                summary.grantType = type;
+                summary.granted = amount;
+                try {
+                    insert(summary);
+                } catch (PersistenceException p) {
+                    if (p.getCause() instanceof SQLException &&
+                        p.getCause().getMessage() != null &&
+                        p.getCause().getMessage().indexOf("Duplicate entry") != -1) {
+                        // another server got precisely the same insertion into place before us
+                        // so loop back and do the update
+                        again = true;
+                    } else {
+                        throw p;
+                    }
+                }
+            }
+        } while (again);
     }
 
 }
