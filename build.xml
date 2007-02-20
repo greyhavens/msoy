@@ -637,6 +637,10 @@
       <param name="copy.dest"  value="${pkg.base}/${tools.dir}/bin"/>
     </antcall>
     <antcall target="prepare-server-rcscript"/>
+    <mkdir dir="${pkg.base}/data"/>
+    <copy todir="${pkg.base}/data">
+      <fileset dir="data" includes="**"/>
+    </copy>
   </target>
 
 </project>
