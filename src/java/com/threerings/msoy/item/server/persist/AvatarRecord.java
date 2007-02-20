@@ -6,6 +6,7 @@ package com.threerings.msoy.item.server.persist;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.Avatar;
@@ -19,11 +20,24 @@ import com.threerings.msoy.item.web.MediaDesc;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="AVATAR")
 public class AvatarRecord extends ItemRecord
 {
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #avatarMediaHash} field. */
+    public static final String AVATAR_MEDIA_HASH = "avatarMediaHash";
+
+    /** The qualified column identifier for the {@link #avatarMediaHash} field. */
+    public static final ColumnExp AVATAR_MEDIA_HASH_C =
+        new ColumnExp(AvatarRecord.class, AVATAR_MEDIA_HASH);
+
+    /** The column identifier for the {@link #avatarMimeType} field. */
+    public static final String AVATAR_MIME_TYPE = "avatarMimeType";
+
+    /** The qualified column identifier for the {@link #avatarMimeType} field. */
+    public static final ColumnExp AVATAR_MIME_TYPE_C =
+        new ColumnExp(AvatarRecord.class, AVATAR_MIME_TYPE);
+    // AUTO-GENERATED: FIELDS END
+
     public static final int SCHEMA_VERSION = 1 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
-
-    public static final String AVATAR_MEDIA_HASH = "avatarMediaHash";
-    public static final String AVATAR_MIME_TYPE = "avatarMimeType";
 
     /** A hash code identifying the avatar media. */
     public byte[] avatarMediaHash;

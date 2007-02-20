@@ -13,16 +13,30 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 @Entity
 public class MemberActionSummaryRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 1;
-    
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
+
+    /** The qualified column identifier for the {@link #memberId} field. */
     public static final ColumnExp MEMBER_ID_C =
         new ColumnExp(MemberActionSummaryRecord.class, MEMBER_ID);
+
+    /** The column identifier for the {@link #actionId} field. */
     public static final String ACTION_ID = "actionId";
+
+    /** The qualified column identifier for the {@link #actionId} field. */
     public static final ColumnExp ACTION_ID_C =
         new ColumnExp(MemberActionSummaryRecord.class, ACTION_ID);
+
+    /** The column identifier for the {@link #count} field. */
     public static final String COUNT = "count";
-    public static final ColumnExp COUNT_C = new ColumnExp(MemberActionSummaryRecord.class, COUNT);
+
+    /** The qualified column identifier for the {@link #count} field. */
+    public static final ColumnExp COUNT_C =
+        new ColumnExp(MemberActionSummaryRecord.class, COUNT);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 1;
 
     /** The id of the member who's performed the action. */
     @Id

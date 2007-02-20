@@ -4,6 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
 import java.sql.Date;
@@ -15,13 +16,32 @@ import java.sql.Date;
 @Entity
 public class SessionRecord extends PersistentRecord
 {
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #token} field. */
+    public static final String TOKEN = "token";
+
+    /** The qualified column identifier for the {@link #token} field. */
+    public static final ColumnExp TOKEN_C =
+        new ColumnExp(SessionRecord.class, TOKEN);
+
+    /** The column identifier for the {@link #memberId} field. */
+    public static final String MEMBER_ID = "memberId";
+
+    /** The qualified column identifier for the {@link #memberId} field. */
+    public static final ColumnExp MEMBER_ID_C =
+        new ColumnExp(SessionRecord.class, MEMBER_ID);
+
+    /** The column identifier for the {@link #expires} field. */
+    public static final String EXPIRES = "expires";
+
+    /** The qualified column identifier for the {@link #expires} field. */
+    public static final ColumnExp EXPIRES_C =
+        new ColumnExp(SessionRecord.class, EXPIRES);
+    // AUTO-GENERATED: FIELDS END
+
     /** Increment this value if you modify the definition of this persistent
      * object in a way that will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 1;
-
-    public static final String TOKEN = "token";
-    public static final String MEMBER_ID = "memberId";
-    public static final String EXPIRES = "expires";
 
     /** The unique session identifier. */
     @Id

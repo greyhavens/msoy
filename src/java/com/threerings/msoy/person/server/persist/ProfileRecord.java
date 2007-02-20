@@ -10,20 +10,97 @@ import com.samskivert.util.StringUtil;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.item.web.MediaDesc;
 import com.threerings.msoy.web.data.Profile;
 
 /**
- * Contains a single row from the PROFILES table.
+ * Contains a member's profile data.
  */
 public class ProfileRecord extends PersistentRecord
 {
-    /** Increment this value if you modify the definition of this persistent
-     * object in a way that will result in a change to its SQL counterpart. */
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #memberId} field. */
+    public static final String MEMBER_ID = "memberId";
+
+    /** The qualified column identifier for the {@link #memberId} field. */
+    public static final ColumnExp MEMBER_ID_C =
+        new ColumnExp(ProfileRecord.class, MEMBER_ID);
+
+    /** The column identifier for the {@link #photoHash} field. */
+    public static final String PHOTO_HASH = "photoHash";
+
+    /** The qualified column identifier for the {@link #photoHash} field. */
+    public static final ColumnExp PHOTO_HASH_C =
+        new ColumnExp(ProfileRecord.class, PHOTO_HASH);
+
+    /** The column identifier for the {@link #photoMimeType} field. */
+    public static final String PHOTO_MIME_TYPE = "photoMimeType";
+
+    /** The qualified column identifier for the {@link #photoMimeType} field. */
+    public static final ColumnExp PHOTO_MIME_TYPE_C =
+        new ColumnExp(ProfileRecord.class, PHOTO_MIME_TYPE);
+
+    /** The column identifier for the {@link #photoConstraint} field. */
+    public static final String PHOTO_CONSTRAINT = "photoConstraint";
+
+    /** The qualified column identifier for the {@link #photoConstraint} field. */
+    public static final ColumnExp PHOTO_CONSTRAINT_C =
+        new ColumnExp(ProfileRecord.class, PHOTO_CONSTRAINT);
+
+    /** The column identifier for the {@link #homePageURL} field. */
+    public static final String HOME_PAGE_URL = "homePageURL";
+
+    /** The qualified column identifier for the {@link #homePageURL} field. */
+    public static final ColumnExp HOME_PAGE_URL_C =
+        new ColumnExp(ProfileRecord.class, HOME_PAGE_URL);
+
+    /** The column identifier for the {@link #headline} field. */
+    public static final String HEADLINE = "headline";
+
+    /** The qualified column identifier for the {@link #headline} field. */
+    public static final ColumnExp HEADLINE_C =
+        new ColumnExp(ProfileRecord.class, HEADLINE);
+
+    /** The column identifier for the {@link #isMale} field. */
+    public static final String IS_MALE = "isMale";
+
+    /** The qualified column identifier for the {@link #isMale} field. */
+    public static final ColumnExp IS_MALE_C =
+        new ColumnExp(ProfileRecord.class, IS_MALE);
+
+    /** The column identifier for the {@link #birthday} field. */
+    public static final String BIRTHDAY = "birthday";
+
+    /** The qualified column identifier for the {@link #birthday} field. */
+    public static final ColumnExp BIRTHDAY_C =
+        new ColumnExp(ProfileRecord.class, BIRTHDAY);
+
+    /** The column identifier for the {@link #location} field. */
+    public static final String LOCATION = "location";
+
+    /** The qualified column identifier for the {@link #location} field. */
+    public static final ColumnExp LOCATION_C =
+        new ColumnExp(ProfileRecord.class, LOCATION);
+    // AUTO-GENERATED: FIELDS END
+
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 1;
 
     /** The unique id of the memory with whom this profile is associated. */
     @Id public int memberId;
+
+    /** The hash code of the user's profile photo. */
+    @Column(nullable=true)
+    public byte[] photoHash;
+
+    /** The MIME type of photo image. */
+    public byte photoMimeType;
+
+    /** The constraint for the photo image. */
+    public byte photoConstraint;
 
     /** The member's home page URL (maxlen: 255). */
     public String homePageURL;
@@ -54,8 +131,12 @@ public class ProfileRecord extends PersistentRecord
         homePageURL = StringUtil.deNull(profile.homePageURL);
         headline = StringUtil.deNull(profile.headline);
         isMale = profile.isMale;
-        // birthday = profile.birthday; // TODO
         location = StringUtil.deNull(profile.location);
+        if (profile.photo != null) {
+            photoHash = profile.photo.hash;
+            photoMimeType = profile.photo.mimeType;
+            photoConstraint = profile.photo.constraint;
+        }
     }
 
     /**
@@ -67,8 +148,11 @@ public class ProfileRecord extends PersistentRecord
         profile.homePageURL = homePageURL;
         profile.headline = headline;
         profile.isMale = isMale;
-        // profile.birthday = birthday;
+        // profile.age = toAge(birthday);
         profile.location = location;
+        if (photoHash != null) {
+            profile.photo = new MediaDesc(photoHash, photoMimeType, photoConstraint);
+        }
         return profile;
     }
 }

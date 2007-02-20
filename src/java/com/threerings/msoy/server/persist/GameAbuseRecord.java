@@ -13,18 +13,30 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 @Entity
 public class GameAbuseRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 1;
-
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #gameId} field. */
     public static final String GAME_ID = "gameId";
+
+    /** The qualified column identifier for the {@link #gameId} field. */
     public static final ColumnExp GAME_ID_C =
         new ColumnExp(GameAbuseRecord.class, GAME_ID);
-    public static final String ACCUM_MINUTES_SINCE_LAST_ASSESSMENT =
-        "accumMinutesSinceLastAssessment";
+
+    /** The column identifier for the {@link #accumMinutesSinceLastAssessment} field. */
+    public static final String ACCUM_MINUTES_SINCE_LAST_ASSESSMENT = "accumMinutesSinceLastAssessment";
+
+    /** The qualified column identifier for the {@link #accumMinutesSinceLastAssessment} field. */
     public static final ColumnExp ACCUM_MINUTES_SINCE_LAST_ASSESSMENT_C =
         new ColumnExp(GameAbuseRecord.class, ACCUM_MINUTES_SINCE_LAST_ASSESSMENT);
+
+    /** The column identifier for the {@link #abuseFactor} field. */
     public static final String ABUSE_FACTOR = "abuseFactor";
+
+    /** The qualified column identifier for the {@link #abuseFactor} field. */
     public static final ColumnExp ABUSE_FACTOR_C =
         new ColumnExp(GameAbuseRecord.class, ABUSE_FACTOR);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 1;
 
     /** The id of the game we're tracking. */
     public int gameId;

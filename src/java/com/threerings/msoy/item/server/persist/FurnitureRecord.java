@@ -6,6 +6,7 @@ package com.threerings.msoy.item.server.persist;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.web.Furniture;
 import com.threerings.msoy.item.web.Item;
@@ -19,11 +20,17 @@ import com.threerings.msoy.item.web.Item;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="FURNITURE")
 public class FurnitureRecord extends ItemRecord
 {
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #action} field. */
+    public static final String ACTION = "action";
+
+    /** The qualified column identifier for the {@link #action} field. */
+    public static final ColumnExp ACTION_C =
+        new ColumnExp(FurnitureRecord.class, ACTION);
+    // AUTO-GENERATED: FIELDS END
+
     public static final int SCHEMA_VERSION = 1 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
-
-    public static final String ACTION = "action";
-    public static final String DESCRIPTION = "description";
 
     /** An action associated with this furniture which is dispatched to the
      * virtual world client when the furniture is clicked on (max length 255

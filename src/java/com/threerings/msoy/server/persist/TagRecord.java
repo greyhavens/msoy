@@ -4,6 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 
@@ -16,10 +17,23 @@ import com.threerings.io.Streamable;
 public abstract class TagRecord extends PersistentRecord
     implements Streamable
 {
-    public static final int SCHEMA_VERSION = 2;
-
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #tagId} field. */
     public static final String TAG_ID = "tagId";
+
+    /** The qualified column identifier for the {@link #tagId} field. */
+    public static final ColumnExp TAG_ID_C =
+        new ColumnExp(TagRecord.class, TAG_ID);
+
+    /** The column identifier for the {@link #targetId} field. */
     public static final String TARGET_ID = "targetId";
+
+    /** The qualified column identifier for the {@link #targetId} field. */
+    public static final ColumnExp TARGET_ID_C =
+        new ColumnExp(TagRecord.class, TARGET_ID);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 2;
 
     /** The ID of the tag. */
     @Id

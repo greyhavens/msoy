@@ -4,6 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -17,9 +18,28 @@ import com.threerings.io.Streamable;
 public class TagPopularityRecord extends PersistentRecord
     implements Streamable
 {
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #tagId} field. */
     public static final String TAG_ID = "tagId";
+
+    /** The qualified column identifier for the {@link #tagId} field. */
+    public static final ColumnExp TAG_ID_C =
+        new ColumnExp(TagPopularityRecord.class, TAG_ID);
+
+    /** The column identifier for the {@link #tag} field. */
     public static final String TAG = "tag";
+
+    /** The qualified column identifier for the {@link #tag} field. */
+    public static final ColumnExp TAG_C =
+        new ColumnExp(TagPopularityRecord.class, TAG);
+
+    /** The column identifier for the {@link #count} field. */
     public static final String COUNT = "count";
+
+    /** The qualified column identifier for the {@link #count} field. */
+    public static final ColumnExp COUNT_C =
+        new ColumnExp(TagPopularityRecord.class, COUNT);
+    // AUTO-GENERATED: FIELDS END
 
     /** The ID of this tag. */
     public int tagId;

@@ -15,14 +15,30 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
        {@UniqueConstraint(columnNames={FriendRecord.INVITER_ID, FriendRecord.INVITEE_ID })})
 public class FriendRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 1;
-    
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #inviterId} field. */
     public static final String INVITER_ID = "inviterId";
-    public static final ColumnExp INVITER_ID_C = new ColumnExp(FriendRecord.class, INVITER_ID);
+
+    /** The qualified column identifier for the {@link #inviterId} field. */
+    public static final ColumnExp INVITER_ID_C =
+        new ColumnExp(FriendRecord.class, INVITER_ID);
+
+    /** The column identifier for the {@link #inviteeId} field. */
     public static final String INVITEE_ID = "inviteeId";
-    public static final ColumnExp INVITEE_ID_C = new ColumnExp(FriendRecord.class, INVITEE_ID);
+
+    /** The qualified column identifier for the {@link #inviteeId} field. */
+    public static final ColumnExp INVITEE_ID_C =
+        new ColumnExp(FriendRecord.class, INVITEE_ID);
+
+    /** The column identifier for the {@link #status} field. */
     public static final String STATUS = "status";
-    public static final ColumnExp STATUS_C = new ColumnExp(FriendRecord.class, STATUS);
+
+    /** The qualified column identifier for the {@link #status} field. */
+    public static final ColumnExp STATUS_C =
+        new ColumnExp(FriendRecord.class, STATUS);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 1;
 
     /** The member id of the inviter. */
     @Id

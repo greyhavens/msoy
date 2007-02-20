@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Index;
@@ -30,41 +31,226 @@ import com.threerings.msoy.web.data.GroupExtras;
            columns={GroupRecord.NAME, GroupRecord.BLURB, GroupRecord.CHARTER })})
 public class GroupRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 13;
-
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #groupId} field. */
     public static final String GROUP_ID = "groupId";
+
+    /** The qualified column identifier for the {@link #groupId} field. */
+    public static final ColumnExp GROUP_ID_C =
+        new ColumnExp(GroupRecord.class, GROUP_ID);
+
+    /** The column identifier for the {@link #name} field. */
     public static final String NAME = "name";
+
+    /** The qualified column identifier for the {@link #name} field. */
+    public static final ColumnExp NAME_C =
+        new ColumnExp(GroupRecord.class, NAME);
+
+    /** The column identifier for the {@link #homepageUrl} field. */
     public static final String HOMEPAGE_URL = "homepageUrl";
+
+    /** The qualified column identifier for the {@link #homepageUrl} field. */
+    public static final ColumnExp HOMEPAGE_URL_C =
+        new ColumnExp(GroupRecord.class, HOMEPAGE_URL);
+
+    /** The column identifier for the {@link #blurb} field. */
     public static final String BLURB = "blurb";
+
+    /** The qualified column identifier for the {@link #blurb} field. */
+    public static final ColumnExp BLURB_C =
+        new ColumnExp(GroupRecord.class, BLURB);
+
+    /** The column identifier for the {@link #charter} field. */
     public static final String CHARTER = "charter";
-    public static final String LOGO_MIME_TYPE = "logoMimeType";
+
+    /** The qualified column identifier for the {@link #charter} field. */
+    public static final ColumnExp CHARTER_C =
+        new ColumnExp(GroupRecord.class, CHARTER);
+
+    /** The column identifier for the {@link #logoMediaHash} field. */
     public static final String LOGO_MEDIA_HASH = "logoMediaHash";
+
+    /** The qualified column identifier for the {@link #logoMediaHash} field. */
+    public static final ColumnExp LOGO_MEDIA_HASH_C =
+        new ColumnExp(GroupRecord.class, LOGO_MEDIA_HASH);
+
+    /** The column identifier for the {@link #logoMimeType} field. */
+    public static final String LOGO_MIME_TYPE = "logoMimeType";
+
+    /** The qualified column identifier for the {@link #logoMimeType} field. */
+    public static final ColumnExp LOGO_MIME_TYPE_C =
+        new ColumnExp(GroupRecord.class, LOGO_MIME_TYPE);
+
+    /** The column identifier for the {@link #logoMediaConstraint} field. */
     public static final String LOGO_MEDIA_CONSTRAINT = "logoMediaConstraint";
+
+    /** The qualified column identifier for the {@link #logoMediaConstraint} field. */
+    public static final ColumnExp LOGO_MEDIA_CONSTRAINT_C =
+        new ColumnExp(GroupRecord.class, LOGO_MEDIA_CONSTRAINT);
+
+    /** The column identifier for the {@link #backgroundControl} field. */
     public static final String BACKGROUND_CONTROL = "backgroundControl";
+
+    /** The qualified column identifier for the {@link #backgroundControl} field. */
+    public static final ColumnExp BACKGROUND_CONTROL_C =
+        new ColumnExp(GroupRecord.class, BACKGROUND_CONTROL);
+
+    /** The column identifier for the {@link #infoBackgroundMimeType} field. */
     public static final String INFO_BACKGROUND_MIME_TYPE = "infoBackgroundMimeType";
+
+    /** The qualified column identifier for the {@link #infoBackgroundMimeType} field. */
+    public static final ColumnExp INFO_BACKGROUND_MIME_TYPE_C =
+        new ColumnExp(GroupRecord.class, INFO_BACKGROUND_MIME_TYPE);
+
+    /** The column identifier for the {@link #infoBackgroundHash} field. */
     public static final String INFO_BACKGROUND_HASH = "infoBackgroundHash";
+
+    /** The qualified column identifier for the {@link #infoBackgroundHash} field. */
+    public static final ColumnExp INFO_BACKGROUND_HASH_C =
+        new ColumnExp(GroupRecord.class, INFO_BACKGROUND_HASH);
+
+    /** The column identifier for the {@link #infoBackgroundThumbConstraint} field. */
     public static final String INFO_BACKGROUND_THUMB_CONSTRAINT = "infoBackgroundThumbConstraint";
+
+    /** The qualified column identifier for the {@link #infoBackgroundThumbConstraint} field. */
+    public static final ColumnExp INFO_BACKGROUND_THUMB_CONSTRAINT_C =
+        new ColumnExp(GroupRecord.class, INFO_BACKGROUND_THUMB_CONSTRAINT);
+
+    /** The column identifier for the {@link #detailBackgroundMimeType} field. */
     public static final String DETAIL_BACKGROUND_MIME_TYPE = "detailBackgroundMimeType";
+
+    /** The qualified column identifier for the {@link #detailBackgroundMimeType} field. */
+    public static final ColumnExp DETAIL_BACKGROUND_MIME_TYPE_C =
+        new ColumnExp(GroupRecord.class, DETAIL_BACKGROUND_MIME_TYPE);
+
+    /** The column identifier for the {@link #detailBackgroundHash} field. */
     public static final String DETAIL_BACKGROUND_HASH = "detailBackgroundHash";
-    public static final String DETAIL_BACKGROUND_THUMB_CONSTRAINT = 
-        "detailBackgroundThumbConstraint";
+
+    /** The qualified column identifier for the {@link #detailBackgroundHash} field. */
+    public static final ColumnExp DETAIL_BACKGROUND_HASH_C =
+        new ColumnExp(GroupRecord.class, DETAIL_BACKGROUND_HASH);
+
+    /** The column identifier for the {@link #detailBackgroundThumbConstraint} field. */
+    public static final String DETAIL_BACKGROUND_THUMB_CONSTRAINT = "detailBackgroundThumbConstraint";
+
+    /** The qualified column identifier for the {@link #detailBackgroundThumbConstraint} field. */
+    public static final ColumnExp DETAIL_BACKGROUND_THUMB_CONSTRAINT_C =
+        new ColumnExp(GroupRecord.class, DETAIL_BACKGROUND_THUMB_CONSTRAINT);
+
+    /** The column identifier for the {@link #detailBackgroundWidth} field. */
     public static final String DETAIL_BACKGROUND_WIDTH = "detailBackgroundWidth";
+
+    /** The qualified column identifier for the {@link #detailBackgroundWidth} field. */
+    public static final ColumnExp DETAIL_BACKGROUND_WIDTH_C =
+        new ColumnExp(GroupRecord.class, DETAIL_BACKGROUND_WIDTH);
+
+    /** The column identifier for the {@link #detailAreaHeight} field. */
     public static final String DETAIL_AREA_HEIGHT = "detailAreaHeight";
+
+    /** The qualified column identifier for the {@link #detailAreaHeight} field. */
+    public static final ColumnExp DETAIL_AREA_HEIGHT_C =
+        new ColumnExp(GroupRecord.class, DETAIL_AREA_HEIGHT);
+
+    /** The column identifier for the {@link #peopleBackgroundMimeType} field. */
     public static final String PEOPLE_BACKGROUND_MIME_TYPE = "peopleBackgroundMimeType";
+
+    /** The qualified column identifier for the {@link #peopleBackgroundMimeType} field. */
+    public static final ColumnExp PEOPLE_BACKGROUND_MIME_TYPE_C =
+        new ColumnExp(GroupRecord.class, PEOPLE_BACKGROUND_MIME_TYPE);
+
+    /** The column identifier for the {@link #peopleBackgroundHash} field. */
     public static final String PEOPLE_BACKGROUND_HASH = "peopleBackgroundHash";
-    public static final String PEOPLE_BACKGROUND_THUMB_CONSTRAINT = 
-        "peopleBackgroundThumbConstraint";
+
+    /** The qualified column identifier for the {@link #peopleBackgroundHash} field. */
+    public static final ColumnExp PEOPLE_BACKGROUND_HASH_C =
+        new ColumnExp(GroupRecord.class, PEOPLE_BACKGROUND_HASH);
+
+    /** The column identifier for the {@link #peopleBackgroundThumbConstraint} field. */
+    public static final String PEOPLE_BACKGROUND_THUMB_CONSTRAINT = "peopleBackgroundThumbConstraint";
+
+    /** The qualified column identifier for the {@link #peopleBackgroundThumbConstraint} field. */
+    public static final ColumnExp PEOPLE_BACKGROUND_THUMB_CONSTRAINT_C =
+        new ColumnExp(GroupRecord.class, PEOPLE_BACKGROUND_THUMB_CONSTRAINT);
+
+    /** The column identifier for the {@link #peopleUpperCapMimeType} field. */
     public static final String PEOPLE_UPPER_CAP_MIME_TYPE = "peopleUpperCapMimeType";
+
+    /** The qualified column identifier for the {@link #peopleUpperCapMimeType} field. */
+    public static final ColumnExp PEOPLE_UPPER_CAP_MIME_TYPE_C =
+        new ColumnExp(GroupRecord.class, PEOPLE_UPPER_CAP_MIME_TYPE);
+
+    /** The column identifier for the {@link #peopleUpperCapHash} field. */
     public static final String PEOPLE_UPPER_CAP_HASH = "peopleUpperCapHash";
+
+    /** The qualified column identifier for the {@link #peopleUpperCapHash} field. */
+    public static final ColumnExp PEOPLE_UPPER_CAP_HASH_C =
+        new ColumnExp(GroupRecord.class, PEOPLE_UPPER_CAP_HASH);
+
+    /** The column identifier for the {@link #peopleUpperCapHeight} field. */
     public static final String PEOPLE_UPPER_CAP_HEIGHT = "peopleUpperCapHeight";
+
+    /** The qualified column identifier for the {@link #peopleUpperCapHeight} field. */
+    public static final ColumnExp PEOPLE_UPPER_CAP_HEIGHT_C =
+        new ColumnExp(GroupRecord.class, PEOPLE_UPPER_CAP_HEIGHT);
+
+    /** The column identifier for the {@link #peopleLowerCapMimeType} field. */
     public static final String PEOPLE_LOWER_CAP_MIME_TYPE = "peopleLowerCapMimeType";
+
+    /** The qualified column identifier for the {@link #peopleLowerCapMimeType} field. */
+    public static final ColumnExp PEOPLE_LOWER_CAP_MIME_TYPE_C =
+        new ColumnExp(GroupRecord.class, PEOPLE_LOWER_CAP_MIME_TYPE);
+
+    /** The column identifier for the {@link #peopleLowerCapHash} field. */
     public static final String PEOPLE_LOWER_CAP_HASH = "peopleLowerCapHash";
+
+    /** The qualified column identifier for the {@link #peopleLowerCapHash} field. */
+    public static final ColumnExp PEOPLE_LOWER_CAP_HASH_C =
+        new ColumnExp(GroupRecord.class, PEOPLE_LOWER_CAP_HASH);
+
+    /** The column identifier for the {@link #peopleLowerCapHeight} field. */
     public static final String PEOPLE_LOWER_CAP_HEIGHT = "peopleLowerCapHeight";
+
+    /** The qualified column identifier for the {@link #peopleLowerCapHeight} field. */
+    public static final ColumnExp PEOPLE_LOWER_CAP_HEIGHT_C =
+        new ColumnExp(GroupRecord.class, PEOPLE_LOWER_CAP_HEIGHT);
+
+    /** The column identifier for the {@link #creatorId} field. */
     public static final String CREATOR_ID = "creatorId";
+
+    /** The qualified column identifier for the {@link #creatorId} field. */
+    public static final ColumnExp CREATOR_ID_C =
+        new ColumnExp(GroupRecord.class, CREATOR_ID);
+
+    /** The column identifier for the {@link #homeSceneId} field. */
     public static final String HOME_SCENE_ID = "homeSceneId";
+
+    /** The qualified column identifier for the {@link #homeSceneId} field. */
+    public static final ColumnExp HOME_SCENE_ID_C =
+        new ColumnExp(GroupRecord.class, HOME_SCENE_ID);
+
+    /** The column identifier for the {@link #creationDate} field. */
     public static final String CREATION_DATE = "creationDate";
+
+    /** The qualified column identifier for the {@link #creationDate} field. */
+    public static final ColumnExp CREATION_DATE_C =
+        new ColumnExp(GroupRecord.class, CREATION_DATE);
+
+    /** The column identifier for the {@link #policy} field. */
     public static final String POLICY = "policy";
+
+    /** The qualified column identifier for the {@link #policy} field. */
+    public static final ColumnExp POLICY_C =
+        new ColumnExp(GroupRecord.class, POLICY);
+
+    /** The column identifier for the {@link #memberCount} field. */
     public static final String MEMBER_COUNT = "memberCount";
+
+    /** The qualified column identifier for the {@link #memberCount} field. */
+    public static final ColumnExp MEMBER_COUNT_C =
+        new ColumnExp(GroupRecord.class, MEMBER_COUNT);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 13;
 
     /** The unique id of this group. */
     @Id

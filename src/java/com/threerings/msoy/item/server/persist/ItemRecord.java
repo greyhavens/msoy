@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -33,23 +34,122 @@ import com.threerings.msoy.item.web.Photo;
 @Entity(indices={ @Index(name="locationIndex", columns={"location"} )})
 public abstract class ItemRecord extends PersistentRecord implements Streamable
 {
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #itemId} field. */
+    public static final String ITEM_ID = "itemId";
+
+    /** The qualified column identifier for the {@link #itemId} field. */
+    public static final ColumnExp ITEM_ID_C =
+        new ColumnExp(ItemRecord.class, ITEM_ID);
+
+    /** The column identifier for the {@link #parentId} field. */
+    public static final String PARENT_ID = "parentId";
+
+    /** The qualified column identifier for the {@link #parentId} field. */
+    public static final ColumnExp PARENT_ID_C =
+        new ColumnExp(ItemRecord.class, PARENT_ID);
+
+    /** The column identifier for the {@link #flags} field. */
+    public static final String FLAGS = "flags";
+
+    /** The qualified column identifier for the {@link #flags} field. */
+    public static final ColumnExp FLAGS_C =
+        new ColumnExp(ItemRecord.class, FLAGS);
+
+    /** The column identifier for the {@link #creatorId} field. */
+    public static final String CREATOR_ID = "creatorId";
+
+    /** The qualified column identifier for the {@link #creatorId} field. */
+    public static final ColumnExp CREATOR_ID_C =
+        new ColumnExp(ItemRecord.class, CREATOR_ID);
+
+    /** The column identifier for the {@link #ownerId} field. */
+    public static final String OWNER_ID = "ownerId";
+
+    /** The qualified column identifier for the {@link #ownerId} field. */
+    public static final ColumnExp OWNER_ID_C =
+        new ColumnExp(ItemRecord.class, OWNER_ID);
+
+    /** The column identifier for the {@link #rating} field. */
+    public static final String RATING = "rating";
+
+    /** The qualified column identifier for the {@link #rating} field. */
+    public static final ColumnExp RATING_C =
+        new ColumnExp(ItemRecord.class, RATING);
+
+    /** The column identifier for the {@link #used} field. */
+    public static final String USED = "used";
+
+    /** The qualified column identifier for the {@link #used} field. */
+    public static final ColumnExp USED_C =
+        new ColumnExp(ItemRecord.class, USED);
+
+    /** The column identifier for the {@link #location} field. */
+    public static final String LOCATION = "location";
+
+    /** The qualified column identifier for the {@link #location} field. */
+    public static final ColumnExp LOCATION_C =
+        new ColumnExp(ItemRecord.class, LOCATION);
+
+    /** The column identifier for the {@link #name} field. */
+    public static final String NAME = "name";
+
+    /** The qualified column identifier for the {@link #name} field. */
+    public static final ColumnExp NAME_C =
+        new ColumnExp(ItemRecord.class, NAME);
+
+    /** The column identifier for the {@link #description} field. */
+    public static final String DESCRIPTION = "description";
+
+    /** The qualified column identifier for the {@link #description} field. */
+    public static final ColumnExp DESCRIPTION_C =
+        new ColumnExp(ItemRecord.class, DESCRIPTION);
+
+    /** The column identifier for the {@link #thumbMediaHash} field. */
+    public static final String THUMB_MEDIA_HASH = "thumbMediaHash";
+
+    /** The qualified column identifier for the {@link #thumbMediaHash} field. */
+    public static final ColumnExp THUMB_MEDIA_HASH_C =
+        new ColumnExp(ItemRecord.class, THUMB_MEDIA_HASH);
+
+    /** The column identifier for the {@link #thumbMimeType} field. */
+    public static final String THUMB_MIME_TYPE = "thumbMimeType";
+
+    /** The qualified column identifier for the {@link #thumbMimeType} field. */
+    public static final ColumnExp THUMB_MIME_TYPE_C =
+        new ColumnExp(ItemRecord.class, THUMB_MIME_TYPE);
+
+    /** The column identifier for the {@link #thumbConstraint} field. */
+    public static final String THUMB_CONSTRAINT = "thumbConstraint";
+
+    /** The qualified column identifier for the {@link #thumbConstraint} field. */
+    public static final ColumnExp THUMB_CONSTRAINT_C =
+        new ColumnExp(ItemRecord.class, THUMB_CONSTRAINT);
+
+    /** The column identifier for the {@link #furniMediaHash} field. */
+    public static final String FURNI_MEDIA_HASH = "furniMediaHash";
+
+    /** The qualified column identifier for the {@link #furniMediaHash} field. */
+    public static final ColumnExp FURNI_MEDIA_HASH_C =
+        new ColumnExp(ItemRecord.class, FURNI_MEDIA_HASH);
+
+    /** The column identifier for the {@link #furniMimeType} field. */
+    public static final String FURNI_MIME_TYPE = "furniMimeType";
+
+    /** The qualified column identifier for the {@link #furniMimeType} field. */
+    public static final ColumnExp FURNI_MIME_TYPE_C =
+        new ColumnExp(ItemRecord.class, FURNI_MIME_TYPE);
+
+    /** The column identifier for the {@link #furniConstraint} field. */
+    public static final String FURNI_CONSTRAINT = "furniConstraint";
+
+    /** The qualified column identifier for the {@link #furniConstraint} field. */
+    public static final ColumnExp FURNI_CONSTRAINT_C =
+        new ColumnExp(ItemRecord.class, FURNI_CONSTRAINT);
+    // AUTO-GENERATED: FIELDS END
+
     public static final int BASE_SCHEMA_VERSION = 8;
     public static final int BASE_MULTIPLIER = 1000;
-
-    public static final String ITEM_ID = "itemId";
-    public static final String PARENT_ID = "parentId";
-    public static final String FLAGS = "flags";
-    public static final String CREATOR_ID = "creatorId";
-    public static final String OWNER_ID = "ownerId";
-    public static final String RATING = "rating";
-    public static final String USED = "used";
-    public static final String LOCATION = "location";
-    public static final String NAME = "name";
-    public static final String DESCRIPTION = "description";
-    public static final String THUMB_MEDIA_HASH = "thumbMediaHash";
-    public static final String THUMB_MIME_TYPE = "thumbMimeType";
-    public static final String FURNI_MEDIA_HASH = "furniMediaHash";
-    public static final String FURNI_MIME_TYPE = "furniMimeType";
 
     public static ItemRecord newRecord (Item item) {
         if (item instanceof Document) {

@@ -6,6 +6,7 @@ package com.threerings.msoy.item.server.persist;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.web.Audio;
 import com.threerings.msoy.item.web.Item;
@@ -19,11 +20,24 @@ import com.threerings.msoy.item.web.MediaDesc;
 @TableGenerator(name="itemId", allocationSize=1, pkColumnValue="AUDIO")
 public class AudioRecord extends ItemRecord
 {
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #audioMediaHash} field. */
+    public static final String AUDIO_MEDIA_HASH = "audioMediaHash";
+
+    /** The qualified column identifier for the {@link #audioMediaHash} field. */
+    public static final ColumnExp AUDIO_MEDIA_HASH_C =
+        new ColumnExp(AudioRecord.class, AUDIO_MEDIA_HASH);
+
+    /** The column identifier for the {@link #audioMimeType} field. */
+    public static final String AUDIO_MIME_TYPE = "audioMimeType";
+
+    /** The qualified column identifier for the {@link #audioMimeType} field. */
+    public static final ColumnExp AUDIO_MIME_TYPE_C =
+        new ColumnExp(AudioRecord.class, AUDIO_MIME_TYPE);
+    // AUTO-GENERATED: FIELDS END
+
     public static final int SCHEMA_VERSION = 1 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
-
-    public static final String AUDIO_MEDIA_HASH = "audioMediaHash";
-    public static final String AUDIO_MIME_TYPE = "audioMimeType";
 
     /** A hash code identifying the audio media. */
     public byte[] audioMediaHash;

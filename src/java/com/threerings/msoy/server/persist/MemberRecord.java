@@ -21,53 +21,102 @@ import com.threerings.msoy.web.data.WebCreds;
 @Entity
 public class MemberRecord extends PersistentRecord
 {
-    /** Increment this value if you modify the definition of this persistent
-     * object in a way that will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
-
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
+
+    /** The qualified column identifier for the {@link #memberId} field. */
     public static final ColumnExp MEMBER_ID_C =
         new ColumnExp(MemberRecord.class, MEMBER_ID);
 
+    /** The column identifier for the {@link #accountName} field. */
     public static final String ACCOUNT_NAME = "accountName";
+
+    /** The qualified column identifier for the {@link #accountName} field. */
     public static final ColumnExp ACCOUNT_NAME_C =
         new ColumnExp(MemberRecord.class, ACCOUNT_NAME);
 
+    /** The column identifier for the {@link #name} field. */
     public static final String NAME = "name";
+
+    /** The qualified column identifier for the {@link #name} field. */
     public static final ColumnExp NAME_C =
         new ColumnExp(MemberRecord.class, NAME);
 
+    /** The column identifier for the {@link #flow} field. */
     public static final String FLOW = "flow";
+
+    /** The qualified column identifier for the {@link #flow} field. */
     public static final ColumnExp FLOW_C =
         new ColumnExp(MemberRecord.class, FLOW);
 
+    /** The column identifier for the {@link #homeSceneId} field. */
     public static final String HOME_SCENE_ID = "homeSceneId";
+
+    /** The qualified column identifier for the {@link #homeSceneId} field. */
     public static final ColumnExp HOME_SCENE_ID_C =
         new ColumnExp(MemberRecord.class, HOME_SCENE_ID);
 
+    /** The column identifier for the {@link #avatarId} field. */
     public static final String AVATAR_ID = "avatarId";
+
+    /** The qualified column identifier for the {@link #avatarId} field. */
     public static final ColumnExp AVATAR_ID_C =
         new ColumnExp(MemberRecord.class, AVATAR_ID);
 
+    /** The column identifier for the {@link #created} field. */
     public static final String CREATED = "created";
+
+    /** The qualified column identifier for the {@link #created} field. */
     public static final ColumnExp CREATED_C =
         new ColumnExp(MemberRecord.class, CREATED);
 
+    /** The column identifier for the {@link #sessions} field. */
     public static final String SESSIONS = "sessions";
+
+    /** The qualified column identifier for the {@link #sessions} field. */
     public static final ColumnExp SESSIONS_C =
         new ColumnExp(MemberRecord.class, SESSIONS);
 
+    /** The column identifier for the {@link #sessionMinutes} field. */
     public static final String SESSION_MINUTES = "sessionMinutes";
+
+    /** The qualified column identifier for the {@link #sessionMinutes} field. */
     public static final ColumnExp SESSION_MINUTES_C =
         new ColumnExp(MemberRecord.class, SESSION_MINUTES);
 
+    /** The column identifier for the {@link #lastSession} field. */
     public static final String LAST_SESSION = "lastSession";
+
+    /** The qualified column identifier for the {@link #lastSession} field. */
     public static final ColumnExp LAST_SESSION_C =
         new ColumnExp(MemberRecord.class, LAST_SESSION);
-    
+
+    /** The column identifier for the {@link #humanity} field. */
+    public static final String HUMANITY = "humanity";
+
+    /** The qualified column identifier for the {@link #humanity} field. */
+    public static final ColumnExp HUMANITY_C =
+        new ColumnExp(MemberRecord.class, HUMANITY);
+
+    /** The column identifier for the {@link #lastHumanityAssessment} field. */
     public static final String LAST_HUMANITY_ASSESSMENT = "lastHumanityAssessment";
+
+    /** The qualified column identifier for the {@link #lastHumanityAssessment} field. */
     public static final ColumnExp LAST_HUMANITY_ASSESSMENT_C =
         new ColumnExp(MemberRecord.class, LAST_HUMANITY_ASSESSMENT);
+
+    /** The column identifier for the {@link #flags} field. */
+    public static final String FLAGS = "flags";
+
+    /** The qualified column identifier for the {@link #flags} field. */
+    public static final ColumnExp FLAGS_C =
+        new ColumnExp(MemberRecord.class, FLAGS);
+    // AUTO-GENERATED: FIELDS END
+
+    /** Increment this value if you modify the definition of this persistent
+     * object in a way that will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 3;
 
     /** A flag denoting this user as having support privileges. */
     public static final int SUPPORT_FLAG = 0x1 << 0;

@@ -11,6 +11,7 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.Transient;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.io.Streamable;
 import com.threerings.msoy.item.web.CatalogListing;
@@ -24,10 +25,30 @@ import com.threerings.msoy.web.data.MemberName;
 public abstract class CatalogRecord<T extends ItemRecord> extends PersistentRecord
     implements Streamable
 {
-    public static final int SCHEMA_VERSION = 1;
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #item} field. */
+    public static final String ITEM = "item";
 
+    /** The qualified column identifier for the {@link #item} field. */
+    public static final ColumnExp ITEM_C =
+        new ColumnExp(CatalogRecord.class, ITEM);
+
+    /** The column identifier for the {@link #itemId} field. */
     public static final String ITEM_ID = "itemId";
+
+    /** The qualified column identifier for the {@link #itemId} field. */
+    public static final ColumnExp ITEM_ID_C =
+        new ColumnExp(CatalogRecord.class, ITEM_ID);
+
+    /** The column identifier for the {@link #listedDate} field. */
     public static final String LISTED_DATE = "listedDate";
+
+    /** The qualified column identifier for the {@link #listedDate} field. */
+    public static final ColumnExp LISTED_DATE_C =
+        new ColumnExp(CatalogRecord.class, LISTED_DATE);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 1;
 
     /** A reference to the listed item. This value is not persisted. */
     @Transient

@@ -23,12 +23,23 @@ import com.threerings.io.Streamable;
 public class TagNameRecord extends PersistentRecord
     implements Streamable
 {
-    public static final int SCHEMA_VERSION = 1;
-
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #tagId} field. */
     public static final String TAG_ID = "tagId";
-    public static final ColumnExp TAG_ID_C = new ColumnExp(TagNameRecord.class, TAG_ID);
+
+    /** The qualified column identifier for the {@link #tagId} field. */
+    public static final ColumnExp TAG_ID_C =
+        new ColumnExp(TagNameRecord.class, TAG_ID);
+
+    /** The column identifier for the {@link #tag} field. */
     public static final String TAG = "tag";
-    public static final ColumnExp TAG_C = new ColumnExp(TagNameRecord.class, TAG);
+
+    /** The qualified column identifier for the {@link #tag} field. */
+    public static final ColumnExp TAG_C =
+        new ColumnExp(TagNameRecord.class, TAG);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 1;
 
     /** A regexp pattern to validate tags */
     public static final Pattern VALID_TAG = Pattern.compile("[a-z](_?[a-z0-9]){2,18}");

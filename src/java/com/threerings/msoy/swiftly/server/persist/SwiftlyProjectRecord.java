@@ -17,19 +17,30 @@ import com.threerings.msoy.web.data.SwiftlyProject;
        {@UniqueConstraint(columnNames={"ownerId", "projectName"})})
 public class SwiftlyProjectRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 2;
-    
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #projectId} field. */
     public static final String PROJECT_ID = "projectId";
+
+    /** The qualified column identifier for the {@link #projectId} field. */
     public static final ColumnExp PROJECT_ID_C =
         new ColumnExp(SwiftlyProjectRecord.class, PROJECT_ID);
 
+    /** The column identifier for the {@link #ownerId} field. */
     public static final String OWNER_ID = "ownerId";
+
+    /** The qualified column identifier for the {@link #ownerId} field. */
     public static final ColumnExp OWNER_ID_C =
         new ColumnExp(SwiftlyProjectRecord.class, OWNER_ID);
 
+    /** The column identifier for the {@link #projectName} field. */
     public static final String PROJECT_NAME = "projectName";
+
+    /** The qualified column identifier for the {@link #projectName} field. */
     public static final ColumnExp PROJECT_NAME_C =
         new ColumnExp(SwiftlyProjectRecord.class, PROJECT_NAME);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of the project. */
     @Id

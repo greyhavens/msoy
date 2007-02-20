@@ -15,19 +15,37 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 @Entity
 public class MemberActionLogRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 1;
-    
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
+
+    /** The qualified column identifier for the {@link #memberId} field. */
     public static final ColumnExp MEMBER_ID_C =
         new ColumnExp(MemberActionLogRecord.class, MEMBER_ID);
+
+    /** The column identifier for the {@link #actionId} field. */
     public static final String ACTION_ID = "actionId";
+
+    /** The qualified column identifier for the {@link #actionId} field. */
     public static final ColumnExp ACTION_ID_C =
         new ColumnExp(MemberActionLogRecord.class, ACTION_ID);
+
+    /** The column identifier for the {@link #actionTime} field. */
     public static final String ACTION_TIME = "actionTime";
+
+    /** The qualified column identifier for the {@link #actionTime} field. */
     public static final ColumnExp ACTION_TIME_C =
         new ColumnExp(MemberActionLogRecord.class, ACTION_TIME);
+
+    /** The column identifier for the {@link #data} field. */
     public static final String DATA = "data";
-    public static final ColumnExp DATA_C = new ColumnExp(MemberActionLogRecord.class, DATA);
+
+    /** The qualified column identifier for the {@link #data} field. */
+    public static final ColumnExp DATA_C =
+        new ColumnExp(MemberActionLogRecord.class, DATA);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 1;
 
     /** The id of the member who performed the action. */
     public int memberId;

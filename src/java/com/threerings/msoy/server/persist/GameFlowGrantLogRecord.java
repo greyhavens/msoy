@@ -13,16 +13,30 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 @Entity
 public class GameFlowGrantLogRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 1;
-    
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #gameId} field. */
     public static final String GAME_ID = "gameId";
+
+    /** The qualified column identifier for the {@link #gameId} field. */
     public static final ColumnExp GAME_ID_C =
         new ColumnExp(GameFlowGrantLogRecord.class, GAME_ID);
+
+    /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
+
+    /** The qualified column identifier for the {@link #memberId} field. */
     public static final ColumnExp MEMBER_ID_C =
         new ColumnExp(GameFlowGrantLogRecord.class, MEMBER_ID);
+
+    /** The column identifier for the {@link #amount} field. */
     public static final String AMOUNT = "amount";
-    public static final ColumnExp AMOUNT_C = new ColumnExp(GameFlowGrantLogRecord.class, AMOUNT);
+
+    /** The qualified column identifier for the {@link #amount} field. */
+    public static final ColumnExp AMOUNT_C =
+        new ColumnExp(GameFlowGrantLogRecord.class, AMOUNT);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 1;
 
     /** The id of the game for which we're logging flow. */
     public int gameId;

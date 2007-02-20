@@ -28,41 +28,86 @@ import com.samskivert.util.StringUtil;
 @Table
 public class MailMessageRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 3;
-
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #messageId} field. */
     public static final String MESSAGE_ID = "messageId";
+
+    /** The qualified column identifier for the {@link #messageId} field. */
     public static final ColumnExp MESSAGE_ID_C =
         new ColumnExp(MailMessageRecord.class, MESSAGE_ID);
+
+    /** The column identifier for the {@link #folderId} field. */
     public static final String FOLDER_ID = "folderId";
+
+    /** The qualified column identifier for the {@link #folderId} field. */
     public static final ColumnExp FOLDER_ID_C =
         new ColumnExp(MailMessageRecord.class, FOLDER_ID);
+
+    /** The column identifier for the {@link #ownerId} field. */
     public static final String OWNER_ID = "ownerId";
+
+    /** The qualified column identifier for the {@link #ownerId} field. */
     public static final ColumnExp OWNER_ID_C =
         new ColumnExp(MailMessageRecord.class, OWNER_ID);
+
+    /** The column identifier for the {@link #senderId} field. */
     public static final String SENDER_ID = "senderId";
+
+    /** The qualified column identifier for the {@link #senderId} field. */
     public static final ColumnExp SENDER_ID_C =
-        new ColumnExp(MailMessageRecord.class, "senderId");
+        new ColumnExp(MailMessageRecord.class, SENDER_ID);
+
+    /** The column identifier for the {@link #recipientId} field. */
     public static final String RECIPIENT_ID = "recipientId";
+
+    /** The qualified column identifier for the {@link #recipientId} field. */
     public static final ColumnExp RECIPIENT_ID_C =
         new ColumnExp(MailMessageRecord.class, RECIPIENT_ID);
+
+    /** The column identifier for the {@link #subject} field. */
     public static final String SUBJECT = "subject";
+
+    /** The qualified column identifier for the {@link #subject} field. */
     public static final ColumnExp SUBJECT_C =
         new ColumnExp(MailMessageRecord.class, SUBJECT);
+
+    /** The column identifier for the {@link #sent} field. */
     public static final String SENT = "sent";
+
+    /** The qualified column identifier for the {@link #sent} field. */
     public static final ColumnExp SENT_C =
         new ColumnExp(MailMessageRecord.class, SENT);
+
+    /** The column identifier for the {@link #unread} field. */
     public static final String UNREAD = "unread";
+
+    /** The qualified column identifier for the {@link #unread} field. */
     public static final ColumnExp UNREAD_C =
         new ColumnExp(MailMessageRecord.class, UNREAD);
+
+    /** The column identifier for the {@link #bodyText} field. */
     public static final String BODY_TEXT = "bodyText";
+
+    /** The qualified column identifier for the {@link #bodyText} field. */
     public static final ColumnExp BODY_TEXT_C =
         new ColumnExp(MailMessageRecord.class, BODY_TEXT);
+
+    /** The column identifier for the {@link #payloadType} field. */
     public static final String PAYLOAD_TYPE = "payloadType";
+
+    /** The qualified column identifier for the {@link #payloadType} field. */
     public static final ColumnExp PAYLOAD_TYPE_C =
         new ColumnExp(MailMessageRecord.class, PAYLOAD_TYPE);
+
+    /** The column identifier for the {@link #payloadState} field. */
     public static final String PAYLOAD_STATE = "payloadState";
+
+    /** The qualified column identifier for the {@link #payloadState} field. */
     public static final ColumnExp PAYLOAD_STATE_C =
         new ColumnExp(MailMessageRecord.class, PAYLOAD_STATE);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 3;
 
     /** The id of this message, unique within its current folder. */
     @Id

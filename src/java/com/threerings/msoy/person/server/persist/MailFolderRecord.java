@@ -20,20 +20,37 @@ import com.samskivert.util.StringUtil;
     @UniqueConstraint(columnNames={MailFolderRecord.OWNER_ID, MailFolderRecord.NAME })})
 public class MailFolderRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 1;
-
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #folderId} field. */
     public static final String FOLDER_ID = "folderId";
+
+    /** The qualified column identifier for the {@link #folderId} field. */
     public static final ColumnExp FOLDER_ID_C =
         new ColumnExp(MailFolderRecord.class, FOLDER_ID);
+
+    /** The column identifier for the {@link #ownerId} field. */
     public static final String OWNER_ID = "ownerId";
+
+    /** The qualified column identifier for the {@link #ownerId} field. */
     public static final ColumnExp OWNER_ID_C =
         new ColumnExp(MailFolderRecord.class, OWNER_ID);
+
+    /** The column identifier for the {@link #name} field. */
     public static final String NAME = "name";
+
+    /** The qualified column identifier for the {@link #name} field. */
     public static final ColumnExp NAME_C =
         new ColumnExp(MailFolderRecord.class, NAME);
+
+    /** The column identifier for the {@link #nextMessageId} field. */
     public static final String NEXT_MESSAGE_ID = "nextMessageId";
+
+    /** The qualified column identifier for the {@link #nextMessageId} field. */
     public static final ColumnExp NEXT_MESSAGE_ID_C =
         new ColumnExp(MailFolderRecord.class, NEXT_MESSAGE_ID);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 1;
 
     /** The id of this folder, unique relative to this member. */
     @Id

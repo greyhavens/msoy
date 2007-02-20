@@ -6,6 +6,7 @@ package com.threerings.msoy.server.persist;
 import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Table;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
@@ -24,11 +25,37 @@ import com.threerings.msoy.web.data.GroupName;
     GroupMembershipRecord.MEMBER_ID, GroupMembershipRecord.GROUP_ID }))
 public class GroupMembershipRecord extends PersistentRecord
 {
-    public static final int SCHEMA_VERSION = 2;
-
+    // AUTO-GENERATED: FIELDS START
+    /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
+
+    /** The qualified column identifier for the {@link #memberId} field. */
+    public static final ColumnExp MEMBER_ID_C =
+        new ColumnExp(GroupMembershipRecord.class, MEMBER_ID);
+
+    /** The column identifier for the {@link #groupId} field. */
     public static final String GROUP_ID = "groupId";
+
+    /** The qualified column identifier for the {@link #groupId} field. */
+    public static final ColumnExp GROUP_ID_C =
+        new ColumnExp(GroupMembershipRecord.class, GROUP_ID);
+
+    /** The column identifier for the {@link #rank} field. */
     public static final String RANK = "rank";
+
+    /** The qualified column identifier for the {@link #rank} field. */
+    public static final ColumnExp RANK_C =
+        new ColumnExp(GroupMembershipRecord.class, RANK);
+
+    /** The column identifier for the {@link #rankAssigned} field. */
+    public static final String RANK_ASSIGNED = "rankAssigned";
+
+    /** The qualified column identifier for the {@link #rankAssigned} field. */
+    public static final ColumnExp RANK_ASSIGNED_C =
+        new ColumnExp(GroupMembershipRecord.class, RANK_ASSIGNED);
+    // AUTO-GENERATED: FIELDS END
+
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of the member in the group membership. */
     public int memberId;
