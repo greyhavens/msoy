@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import flash.display.DisplayObject;
+
 import mx.collections.ArrayCollection;
 
 import mx.containers.HBox;
@@ -13,6 +15,7 @@ import mx.core.Container;
 import mx.core.ClassFactory;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.MediaContainer;
 
 import com.threerings.crowd.client.PlaceView;
 
@@ -32,6 +35,7 @@ import com.threerings.msoy.client.WorldContext;
 import com.threerings.msoy.chat.client.ChatContainer;
 
 import com.threerings.msoy.ui.MsoyList;
+import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.game.data.LobbyObject;
 
@@ -140,31 +144,17 @@ public class LobbyPanel extends VBox
         gameBox.styleName = "gameBox";
         addChild(gameBox);
 
+        // the hard-coded URL bits here are temporary, and will be changed to the default supplied
+        // by the Game object, when these fields have been added
         var infoBox :VBox = new VBox();
         infoBox.width = 160;
         infoBox.percentHeight = 100;
         infoBox.styleName = "infoBox";
         gameBox.addChild(infoBox);
-        var logo :Container = new Container();
-        logo.width = 160;
-        logo.height = 110;
-        logo.styleName = "lobbyLogo";
-        infoBox.addChild(logo);
-        var infoTop :Container = new Container();
-        infoTop.width = 160;
-        infoTop.height = 33;
-        infoTop.styleName = "lobbyInfoTop";
-        infoBox.addChild(infoTop);
-        var infoTile :Container = new Container();
-        infoTile.width = 160;
-        infoTile.percentHeight = 100;
-        infoTile.styleName = "lobbyInfoTile";
-        infoBox.addChild(infoTile);
-        var infoBottom :Container = new Container();
-        infoBottom.width = 160;
-        infoBottom.height = 58;
-        infoBottom.styleName = "lobbyInfoBottom";
-        infoBox.addChild(infoBottom);
+        infoBox.addChild(new MediaWrapper(new MediaContainer("/media/static/game/logo.png")));
+        infoBox.addChild(new MediaWrapper(new MediaContainer("/media/static/game/info_top.png")));
+        infoBox.addChild(new MediaWrapper(new MediaContainer(
+            "/media/static/game/info_bottom.png")));
 
         var tablesBox :VBox = new VBox();
         tablesBox.percentWidth = 100;

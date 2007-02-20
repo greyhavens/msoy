@@ -289,21 +289,3 @@ ToolTip
   horizontalGap: 0;
   verticalGap: 0;
 }
-
-.lobbyLogo {
-  backgroundImage: Embed(source="../../rsrc/media/skins/gamelobby/logo.png");
-}
-
-.lobbyInfoTop {
-  backgroundImage: Embed(source="../../rsrc/media/skins/gamelobby/info_top.png");
-}
-
-.lobbyInfoTile {
-  backgroundImage: Embed(source="../../rsrc/media/skins/gamelobby/info_tile.png",
-          scaleGridTop="1", scaleGridBottom="2",
-          scaleGridLeft="1", scaleGridRight="159");
-}
-
-.lobbyInfoBottom {
-  backgroundImage: Embed(source="../../rsrc/media/skins/gamelobby/info_bottom.png");
-}
