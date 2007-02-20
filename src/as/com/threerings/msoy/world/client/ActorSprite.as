@@ -61,33 +61,21 @@ public class ActorSprite extends MsoySprite
 
     /**
      * Updates this actor's occupant info.
-     *
-     * @return true if the update was made, false if the media changed
-     * and it's just not safe to re-assign.
      */
-    public function setActorInfo (occInfo :ActorInfo) :Boolean
+    public function setActorInfo (occInfo :ActorInfo) :void
     {
         var winfo :WorldOccupantInfo = (occInfo as WorldOccupantInfo);
-        if (_desc == null) {
-            setup(winfo.getMedia(), winfo.getItemIdent());
-
-        } else if (!winfo.getMedia().equals(_desc)) {
-            // here's why it's not safe to just load new media:
-            // the old media could have tendrils connecting back to us,
-            // and may still be running and still controlling this sprite!
-            // This could also be fixed by creating an adapter object that
-            // handles all the calls from usercode, and then disconnecting
-            // that adapter object when we change media...
-            return false;
-        }
         _occInfo = occInfo;
+        var newMedia :MediaDesc = winfo.getMedia();
+        if (!newMedia.equals(_desc)) {
+            setup(newMedia, winfo.getItemIdent());
+        }
 
         _label.textColor = getStatusColor(_occInfo.status);
         _label.text = _occInfo.username.toString();
         _label.y = -1 * _label.textHeight;
         _label.width = _label.textWidth;
         recheckLabel();
-        return true;
     }
 
     /**

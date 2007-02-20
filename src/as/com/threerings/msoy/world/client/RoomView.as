@@ -635,12 +635,7 @@ public class RoomView extends AbstractRoomView
             Log.getLog(this).warning("No actor for updated occupant? [info=" + occInfo + "].");
             return;
         }
-        var changeOk :Boolean = actor.setActorInfo(occInfo);
-        if (!changeOk) {
-            // the change was incompatible, create a new sprite
-            removeSprite(actor);
-            addBody(occInfo.bodyOid);
-        }
+        actor.setActorInfo(occInfo);
     }
 
     /**
