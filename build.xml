@@ -9,6 +9,7 @@
 
   <!-- things you probably don't want to change -->
   <property name="src.dir"       value="src/java"/>
+  <property name="gsrc.dir"      value="src/gwt"/>
   <property name="deploy.dir"    value="dist"/>
   <property name="javadoc.dir"   value="${deploy.dir}/docs"/>
   <property name="savedoc.dir"   value="docs"/>
@@ -405,20 +406,36 @@
     </for>
   </target>
 
+  <!-- generates fields for persistent record classes -->
+  <target name="genrecord" depends="prepare">
+    <taskdef name="grecord" classname="com.samskivert.jdbc.depot.tools.GenRecordTask"
+             classpathref="classpath"/>
+    <!-- make sure the record class files are all compiled -->
+    <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
+           debug="on" optimize="${build.optimize}" deprecation="on">
+      <classpath refid="classpath"/>
+      <include name="**/*Record.java"/>
+    </javac>
+    <!-- now update the source files -->
+    <grecord classpathref="classpath">
+      <fileset dir="${src.dir}" includes="**/*Record.java"/>
+    </grecord>
+  </target>
+
   <!-- generates additional methods for distributed object classes -->
   <target name="gendobj" depends="prepare">
     <taskdef name="dobj"
              classname="com.threerings.presents.tools.GenDObjectTask"
              classpathref="classpath"/>
     <!-- make sure the dobject class files are all compiled -->
-    <javac srcdir="src/java" destdir="${deploy.dir}/classes"
+    <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
            debug="on" optimize="${build.optimize}" deprecation="on">
       <classpath refid="classpath"/>
       <include name="**/*Object.java"/>
     </javac>
     <!-- now generate the associated files -->
     <dobj classpathref="classpath">
-      <fileset dir="src/java" includes="**/*Object.java"/>
+      <fileset dir="${src.dir}" includes="**/*Object.java"/>
     </dobj>
   </target>
 
@@ -429,7 +446,7 @@
              classname="com.threerings.presents.tools.GenServiceTask"
              classpathref="classpath"/>
     <!-- make sure the service class files are all compiled -->
-    <javac srcdir="src/java" destdir="${deploy.dir}/classes"
+    <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
            debug="on" optimize="${build.optimize}" deprecation="on">
       <classpath refid="classpath"/>
       <include name="**/*Service.java"/>
@@ -438,7 +455,7 @@
     <!-- now generate the associated files -->
     <service header="lib/SOURCE_HEADER" asroot="src/as"
              classpathref="classpath">
-      <fileset dir="src/java" includes="**/*Service.java" excludes="**/web/**"/>
+      <fileset dir="${src.dir}" includes="**/*Service.java" excludes="**/web/**"/>
     </service>
   </target>
 
@@ -449,7 +466,7 @@
              classname="com.threerings.presents.tools.GenReceiverTask"
              classpathref="classpath"/>
     <!-- make sure the receiver class files are all compiled -->
-    <javac srcdir="src/java" destdir="${deploy.dir}/classes"
+    <javac srcdir="${src.dir}" destdir="${deploy.dir}/classes"
            debug="on" optimize="${build.optimize}" deprecation="on">
       <classpath refid="classpath"/>
       <include name="**/*Receiver.java"/>
@@ -457,7 +474,7 @@
     </javac>
     <!-- now generate the associated files -->
     <receiver header="lib/SOURCE_HEADER" classpathref="classpath">
-      <fileset dir="src/java" includes="**/*Receiver.java"
+      <fileset dir="${src.dir}" includes="**/*Receiver.java"
         excludes="**/InvocationReceiver.java"/>
     </receiver>
   </target>
@@ -468,7 +485,7 @@
              classname="com.threerings.presents.tools.GenActionScriptTask"/>
     <!-- now generate the associated files -->
     <genscript header="lib/SOURCE_HEADER" asroot="src/as">
-      <fileset dir="src/java" includes="**/data/*.java"/>
+      <fileset dir="${src.dir}" includes="**/data/*.java"/>
     </genscript>
   </target>
 
@@ -517,7 +534,7 @@
       <classpath refid="classpath"/>
       <link href="http://java.sun.com/j2se/1.5/docs/api/"/>
       <link href="http://samskivert.com/code/samskivert/samskivert/docs/api"/>
-      <fileset dir="src/java" includes="**/*.java"/>
+      <fileset dir="${src.dir}" includes="**/*.java"/>
       <fileset dir="src/gwt" includes="client/**/*.java"/>
     </javadoc>
   </target>
