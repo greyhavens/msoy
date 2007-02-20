@@ -37,6 +37,7 @@ import com.threerings.msoy.chat.client.ChatContainer;
 
 import com.threerings.msoy.ui.MsoyList;
 import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.StretchingMediaContainer;
 
 import com.threerings.msoy.game.data.LobbyObject;
 
@@ -160,7 +161,7 @@ public class LobbyPanel extends VBox
         infoBox.width = 160;
         infoBox.percentHeight = 100;
         descriptionBox.addChild(infoBox);
-        var borderImage :MediaWrapper = new MediaWrapper(new MediaContainer(
+        var borderImage :MediaWrapper = new MediaWrapper(new StretchingMediaContainer(
             "/media/static/game/info_tile.png"));
         borderImage.percentHeight = 100;
         infoBox.addChild(borderImage);
@@ -168,7 +169,7 @@ public class LobbyPanel extends VBox
         infoLabel.percentWidth = 100;
         infoLabel.percentHeight = 100;
         infoBox.addChild(infoLabel);
-        borderImage = new MediaWrapper(new MediaContainer(
+        borderImage = new MediaWrapper(new StretchingMediaContainer(
             "/media/static/game/info_tile.png"));
         borderImage.percentHeight = 100;
         infoBox.addChild(borderImage);
