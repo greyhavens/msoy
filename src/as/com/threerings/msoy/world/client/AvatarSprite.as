@@ -54,6 +54,11 @@ public class AvatarSprite extends ActorSprite
 //        return (_occInfo as WorldMemberInfo).chatPopStyle;
 //    }
 
+    override protected function createBackend () :EntityBackend
+    {
+        return new AvatarBackend();
+    }
+
     /**
      * Get a list of the names of special actions that this avatar supports.
      */

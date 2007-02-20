@@ -67,9 +67,6 @@ import com.threerings.msoy.world.data.RoomObject;
  */
 public class MsoySprite extends MediaContainer
 {
-    /** The 'instance id', which is our ClientObject's oid. */
-    public static var instanceId :int;
-
     /** The current logical coordinate of this media. */
     public const loc :MsoyLocation = new MsoyLocation();
 
@@ -350,10 +347,10 @@ public class MsoySprite extends MediaContainer
 //                MediaDesc.hashToString(_desc.hash), vid.playheadTime);
 //        }
 
-        // clean up
-        if (_media is Loader) {
-            Loader(_media).contentLoaderInfo.sharedEvents.removeEventListener(
-                "controlConnect", handleUserCodeQuery);
+        // clean up our backend
+        if (_backend != null) {
+            _backend.shutdown();
+            _backend = null;
         }
 
         super.shutdown(completely);
@@ -384,9 +381,9 @@ public class MsoySprite extends MediaContainer
 //        }
         super.setupSwfOrImage(url);
 
-        // then, grab a reference to the shared event dispatcher
-        Loader(_media).contentLoaderInfo.sharedEvents.addEventListener(
-            "controlConnect", handleUserCodeQuery);
+        _backend = createBackend();
+        _backend.init(Loader(_media));
+        _backend.setSprite(this);
     }
 
     protected function configureMouseProperties () :void
@@ -505,54 +502,21 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Handle a query from our usercode content.
+     * Create the 'back end' that will be used to proxy communication
+     * with any usercode we're hosting.
      */
-    protected function handleUserCodeQuery (evt :Object) :void
+    protected function createBackend () :EntityBackend
     {
-        // copy down the user functions
-        setUserProperties(evt.userProps);
-        // pass back ours
-        var hostProps :Object = new Object();
-        populateControlProperties(hostProps);
-        evt.hostProps = hostProps;
-    }
-
-    protected function setUserProperties (o :Object) :void
-    {
-//        // prototype for backwards compatability:
-//        var oldFunc :Function = (o["avatarChanged_v1"] as Function);
-//        if (oldFunc != null) {
-//            // make a new function that adapts to the old one
-//            o["avatarChanged_v2"] =
-//                function (moving :Boolean, orient :Number, newParam :String)
-//                :void {
-//                    oldFunc(moving, orient);
-//                };
-//        }
-
-        // then, simply save the properties
-        _props = o;
+        return new EntityBackend();
     }
 
     /**
-     * Populate the properties we pass back to user-code.
+     * Request control of this entity.
+     * Called by our backend in response to a request from usercode.
+     * If this succeeds, a <code>gotControl</code> notification will be
+     * dispatched when we hear back from the server.
      */
-    protected function populateControlProperties (o :Object) :void
-    {
-        o["requestControl_v1"] = requestControl_v1;
-        o["triggerEvent_v1"] = triggerEvent_v1;
-        o["lookupMemory_v1"] = lookupMemory_v1;
-        o["updateMemory_v1"] = updateMemory_v1;
-        o["getInstanceId_v1"] = getInstanceId_v1;
-        o["setHotSpot_v1"] = setHotSpot_v1;
-    }
-
-    /**
-     * Explicitly requests control for this entity by this client. If this succeeds, a
-     * <code>gotControl_v1</code> notification will be dispatched when we hear back from the
-     * server.
-     */
-    protected function requestControl_v1 () :void
+    internal function requestControl () :void
     {
         if (_ident != null && parent is RoomView) {
             (parent as RoomView).getRoomController().requestControl(_ident);
@@ -560,9 +524,10 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Called by {@link MsoyControl} to trigger an event on this sprite in all clients.
+     * Trigger an event on this sprite in all clients.
+     * Called by our backend in response to a request from usercode.
      */
-    protected function triggerEvent_v1 (event :String, arg :Object = null) :void
+    internal function triggerEvent (event :String, arg :Object = null) :void
     {
         if (_ident != null && parent is RoomView) {
             (parent as RoomView).getRoomController().triggerEvent(_ident, event, arg);
@@ -570,18 +535,22 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Called by {@link MsoyControl} to retrieve the instanceId for this item.
+     * Retrieve the instanceId for this item.
+     * Called by our backend in response to a request from usercode.
      */
-    protected function getInstanceId_v1 () :int
+    internal function getInstanceId () :int
     {
-        return instanceId;
+        if (parent is RoomView) {
+            return (parent as RoomView).getRoomController().getEntityInstanceId();
+        }
+        return 0; // not connected, not an instance
     }
 
     /**
-     * Called by {@link MsoyControl} to locate the value bound to a particular key in the item's
-     * memory.
+     * Locate the value bound to a particular key in the item's memory.
+     * Called by our backend in response to a request from usercode.
      */
-    protected function lookupMemory_v1 (key :String) :Object
+    internal function lookupMemory (key :String) :Object
     {
         if (_ident != null && parent is RoomView) {
             var mkey :MemoryEntry = new MemoryEntry(_ident, key, null),
@@ -595,9 +564,10 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Called by {@link MsoyControl} to update a memory datum.
+     * Update a memory datum.
+     * Called by our backend in response to a request from usercode.
      */
-    protected function updateMemory_v1 (key :String, value: Object) :Boolean
+    internal function updateMemory (key :String, value: Object) :Boolean
     {
         if (_ident != null && parent is RoomView) {
             return (parent as RoomView).getRoomController().updateMemory(_ident, key, value);
@@ -607,9 +577,10 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Called by {@link MsoyControl} to update the sprite's hotspot.
+     * Update the sprite's hotspot.
+     * Called by our backend in response to a request from usercode.
      */
-    protected function setHotSpot_v1 (x :Number, y :Number) :void
+    internal function setHotSpot (x :Number, y :Number) :void
     {
         if (isNaN(x) || isNaN(y)) {
             return;
@@ -623,21 +594,13 @@ public class MsoySprite extends MediaContainer
     }
 
     /**
-     * Call an exposed function in usercode.
+     * Convenience method to call usercode safely.
      */
     protected function callUserCode (name :String, ... args) :*
     {
-        if (_props != null) {
-            try {
-                var func :Function = (_props[name] as Function);
-                if (func != null) {
-                    return func.apply(null, args);
-                }
-
-            } catch (err :Error) {
-                log.warning("Error in user-code: " + err);
-                log.logStackTrace(err);
-            }
+        if (_backend != null) {
+            args.unshift(name);
+            return _backend.callUserCode.apply(_backend, args);
         }
         return undefined;
     }
@@ -659,7 +622,7 @@ public class MsoySprite extends MediaContainer
     /** Are we being edited? */
     protected var _editing :Boolean;
 
-    /** Properties populated by *Control usercode. */
-    protected var _props :Object;
+    /** Our control backend, communicates with usercode. */
+    protected var _backend :EntityBackend;
 }
 }

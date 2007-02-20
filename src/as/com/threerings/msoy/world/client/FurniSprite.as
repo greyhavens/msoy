@@ -149,6 +149,11 @@ public class FurniSprite extends MsoySprite
         callUserCode("action_v1", entering ? "bodyEntered" : "bodyLeft");
     }
 
+    override protected function createBackend () :EntityBackend
+    {
+        return new FurniBackend();
+    }
+
     protected function checkPerspective () :void 
     {
         if (_media == null) {
@@ -349,13 +354,6 @@ public class FurniSprite extends MsoySprite
     protected function checkBackground () :void
     {
         alpha = (_editing && isBackground()) ? .65 : 1;
-    }
-
-    override protected function populateControlProperties (o :Object) :void
-    {
-        super.populateControlProperties(o);
-
-        // TODO: anything?
     }
 
     override protected function startedLoading () :void

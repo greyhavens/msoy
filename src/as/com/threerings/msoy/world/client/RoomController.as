@@ -67,6 +67,17 @@ public class RoomController extends SceneController
     public static const TEMP_CLEAR_SCENE_CACHE :String = "clrScenes";
 
     /**
+     * Get the instanceId of all the entity instances in the room.
+     * This is used so that two instances of a pet can negotiate which
+     * client will control it, for example.
+     */
+    public function getEntityInstanceId () :int
+    {
+        // every sprite uses our own OID as the instanceid.
+        return _mctx.getClientObject().getOid();
+    }
+
+    /**
      * Requests that this client be given control of the specified item.
      */
     public function requestControl (ident :ItemIdent) :void
@@ -130,9 +141,6 @@ public class RoomController extends SceneController
         super.init(ctx, config);
 
         _mctx = (ctx as WorldContext);
-
-        // initialize the instanceId for all sprites
-        MsoySprite.instanceId = _mctx.getClientObject().getOid();
     }
 
     // documentation inherited

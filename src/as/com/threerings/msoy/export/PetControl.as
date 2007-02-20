@@ -25,5 +25,10 @@ public class PetControl extends ActorControl
 
         // TODO
     }
+
+    override protected function isAbstract () :Boolean
+    {
+        return false;
+    }
 }
 }

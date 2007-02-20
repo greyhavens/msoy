@@ -223,14 +223,6 @@ public class ActorSprite extends MsoySprite
         }
     }
 
-    override protected function populateControlProperties (o :Object) :void
-    {
-        super.populateControlProperties(o);
-
-        o["setLocation_v1"] = setLocation_v1;
-        o["setOrientation_v1"] = setOrientation_v1;
-    }
-
     /**
      * Called to make sure the label's horizontal position is correct.
      */
@@ -254,10 +246,16 @@ public class ActorSprite extends MsoySprite
         }
     }
 
+    override protected function createBackend () :EntityBackend
+    {
+        return new ActorBackend();
+    }
+
     /**
-     * Called by user code when it wants to change the actor's scene location.
+     * Update the actor's scene location.
+     * Called by our backend in response to a request from usercode.
      */
-    protected function setLocation_v1 (x :Number, y :Number, z: Number, orient :Number) :void
+    internal function setLocationFromUser (x :Number, y :Number, z: Number, orient :Number) :void
     {
         if (_ident != null && parent is RoomView) {
             (parent as RoomView).getRoomController().requestMove(
@@ -266,9 +264,10 @@ public class ActorSprite extends MsoySprite
     }
 
     /**
-     * Called by user code when it wants to change the actor's scene orientation.
+     * Update the actor's orientation.
+     * Called by user code when it wants to change the actor's scene location.
      */
-    protected function setOrientation_v1 (orient :Number) :void
+    internal function setOrientationFromUser (orient :Number) :void
     {
         // TODO
     }

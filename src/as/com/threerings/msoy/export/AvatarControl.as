@@ -84,6 +84,11 @@ public class AvatarControl extends ActorControl
         dispatch(ControlEvent.ACTION_TRIGGERED, name);
     }
 
+    override protected function isAbstract () :Boolean
+    {
+        return false;
+    }
+
     /** An array of all action names. */
     protected var _actions :Array = [];
 }

@@ -10,7 +10,7 @@ import flash.events.TextEvent;
  * This file should be included by furniture, so that it can communicate
  * with the metasoy world.
  */
-public class FurniControl extends MsoyControl
+public class FurniControl extends EntityControl
 {
     /**
      * Create a furni interface. The display object is your piece
@@ -19,6 +19,11 @@ public class FurniControl extends MsoyControl
     public function FurniControl (disp :DisplayObject)
     {
         super(disp);
+    }
+
+    override protected function isAbstract () :Boolean
+    {
+        return false;
     }
 }
 }
