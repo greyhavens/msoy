@@ -22,7 +22,9 @@ public class Level extends Sprite
         var backgroundSprite :Sprite = new BACKGROUNDS[level]();
         var backgroundBitmap :BitmapData = new BitmapData(backgroundSprite.width, 
             backgroundSprite.height);
-        backgroundBitmap.draw(backgroundSprite);
+        var backgroundTrans :Matrix = new Matrix();
+        backgroundTrans.translate(backgroundSprite.width / 2, backgroundSprite.height / 2);
+        backgroundBitmap.draw(backgroundSprite, backgroundTrans);
         for (var ii :int = 0; ii < 6; ii++) {
             backgroundImage = new Shape();
             backgroundImage.graphics.beginBitmapFill(backgroundBitmap);

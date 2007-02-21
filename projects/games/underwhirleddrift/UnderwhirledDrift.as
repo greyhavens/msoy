@@ -21,10 +21,10 @@ public class UnderwhirledDrift extends Sprite
     public static const DISPLAY_HEIGHT :int = 400;
 
     /** height of the sky */
-    public static const SKY_HEIGHT :int = 100;
+    public static const SKY_HEIGHT :int = DISPLAY_HEIGHT * 0.4;
 
     /** Kart location, relative to the ground coordinates */
-    public static const KART_LOCATION :Point = new Point (355, 200);
+    public static const KART_LOCATION :Point = new Point (355, 150);
 
     public function UnderwhirledDrift ()
     {

@@ -27,7 +27,7 @@ public class Ground extends Sprite
         addChild(new Bitmap(_stripData));
         _level = new Level(0);
         _scenery = new Scenery();
-        addChild(_scenery);
+        //addChild(_scenery);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
