@@ -187,8 +187,6 @@ public class LobbyPanel extends VBox
         tabsBox.percentWidth = 100;
         tabsBox.height = 27;
         tablesBox.addChild(tabsBox);
-        [Embed(source='../../../../../../../pages/media/static/game/box_tile.png')]
-        var backgroundImage :Class;
         tabsBox.setStyle("backgroundImage", "/media/static/game/box_tile.png");
         tabsBox.setStyle("backgroundSize", "100%");
         var padding :HBox = new HBox();
