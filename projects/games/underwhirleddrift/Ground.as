@@ -11,7 +11,7 @@ import flash.geom.Rectangle;
 
 import flash.events.Event;
 
-public class Ground extends Sprite implements DrivingSurface
+public class Ground extends Sprite
 {
     /** The length and width of the track image tiles (they are square) */
     public static const IMAGE_SIZE :int = 1024;
@@ -25,16 +25,11 @@ public class Ground extends Sprite implements DrivingSurface
 
         _stripData = new BitmapData(WIDTH, HEIGHT, true, 0);
         addChild(new Bitmap(_stripData));
-        _track = new Track();
+        _level = new Level(0);
         _scenery = new Scenery();
         addChild(_scenery);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
-    }
-
-    public function getDisplayObject () :DisplayObject 
-    {
-        return (this as DisplayObject);
     }
 
     /**
@@ -51,12 +46,12 @@ public class Ground extends Sprite implements DrivingSurface
     protected function enterFrame (event :Event) :void
     {
         // shift along with the track
-        if (_camera.position.y < -HALF_IMAGE_SIZE) {
-            var xShift :int = _track.moveTrackForward();
+        /*if (_camera.position.y < -HALF_IMAGE_SIZE) {
+            var xShift :int = _level.moveTrackForward();
             _scenery.moveSceneryForward(xShift);
             _camera.position.x += xShift;
             _camera.position.y += IMAGE_SIZE;
-        }
+        }*/
 
         var translateRotate :Matrix = new Matrix();
         translateRotate.translate(0 - _camera.position.x, 0 - _camera.position.y);
@@ -83,14 +78,14 @@ public class Ground extends Sprite implements DrivingSurface
             // draw the track using the calculated transform and a clipping rect
             var clipping :Rectangle = new Rectangle(0, HEIGHT - totalHeight, WIDTH, 
                 stripHeight);
-            //_strips[strip].draw(_track, thisTransform, null, null, clipping);
-            _stripData.draw(_track, thisTransform, null, null, clipping);
+            //_strips[strip].draw(_level, thisTransform, null, null, clipping);
+            _stripData.draw(_level, thisTransform, null, null, clipping);
             // update off road flag
             var y :int = HEIGHT - totalHeight;
             if (y <= UnderwhirledDrift.KART_LOCATION.y &&
                 y + stripHeight > UnderwhirledDrift.KART_LOCATION.y) {
                 thisTransform.invert();
-                _drivingOnRoad = _track.isOnRoad(thisTransform.transformPoint(
+                _drivingOnRoad = _level.isOnRoad(thisTransform.transformPoint(
                     UnderwhirledDrift.KART_LOCATION));
             }
         }
@@ -99,7 +94,7 @@ public class Ground extends Sprite implements DrivingSurface
     }
 
     /** track instance */
-    protected var _track :Track;
+    protected var _level :Level;
 
     /** scenery instance */
     protected var _scenery :Scenery;

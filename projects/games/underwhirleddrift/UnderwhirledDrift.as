@@ -44,21 +44,18 @@ public class UnderwhirledDrift extends Sprite
 
         var camera :Camera = new Camera();
 
-        _surface = (new Ground(camera) as DrivingSurface);
-        var surfaceDisplay :DisplayObject = _surface.getDisplayObject();
-        surfaceDisplay.y = SKY_HEIGHT;
-        addChild(surfaceDisplay);
+        _ground = new Ground(camera);
+        _ground.y = SKY_HEIGHT;
+        addChild(_ground);
 
-        _kart = new Kart(camera, _surface);
+        _kart = new Kart(camera, _ground);
         _kart.x = KART_LOCATION.x;
         _kart.y = KART_LOCATION.y + SKY_HEIGHT;
         addChild(_kart);
 
         _gameCtrl = new EZGameControl(this);
-        if (_gameCtrl.getMyIndex() != -1) {
-            _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
-            _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyUpEvent);
-        }
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyUpEvent);
     }
 
     /** 
@@ -121,7 +118,7 @@ public class UnderwhirledDrift extends Sprite
     protected var _gameCtrl :EZGameControl;
 
     /** The driving surface. */
-    protected var _surface :DrivingSurface;
+    protected var _ground :Ground;
 
     /** The kart. */
     protected var _kart :Kart;
