@@ -108,6 +108,10 @@ public class Kart extends Sprite
             minSpeed *= TERRAIN_SPEED_FACTOR;
             maxSpeed *= TERRAIN_SPEED_FACTOR;
         }
+        // TODO: this will clearly need more intelligent processing
+        if (_ground.drivingIntoWall()) {
+            _currentSpeed = 0;
+        }
         var rotation :Matrix;
         if (_movement & MOVEMENT_FORWARD) {
             if (_currentSpeed >= 0) {

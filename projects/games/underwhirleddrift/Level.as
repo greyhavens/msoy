@@ -38,21 +38,32 @@ public class Level extends Sprite
 
         addChild(new rough() as DisplayObject);
         addChild(_track = (new track() as DisplayObject));
-        addChild(new wall() as DisplayObject);
+        addChild(_wall = (new wall() as DisplayObject));
     }
 
     public function isOnRoad (loc :Point) :Boolean
     {
-        if (_track == null) {
+        return isNotTransparent(loc, _track);
+    }
+
+    public function isOnWall (loc :Point) :Boolean
+    {
+        return isNotTransparent(loc, _wall);
+    }
+
+    protected function isNotTransparent (loc :Point, img :DisplayObject) :Boolean 
+    {
+        if (img == null) {
             return false;
         }
         var imgData :BitmapData = new BitmapData(1, 1, true, 0);
         var trans :Matrix = new Matrix();
         trans.translate(-loc.x, -loc.y);
-        imgData.draw(_track, trans);
+        imgData.draw(img, trans);
         return (imgData.getPixel32(0, 0) & 0xFF000000) != 0;
     }
 
     protected var _track :DisplayObject;
+    protected var _wall :DisplayObject;
 }
 }

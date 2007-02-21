@@ -33,6 +33,14 @@ public class Ground extends Sprite
     }
 
     /**
+     * Returns true if the kart is currently up against a wall.
+     */
+    public function drivingIntoWall () :Boolean
+    {
+        return _drivingIntoWall;
+    }
+
+    /**
      * Handles Event.ENTER_FRAME.
      */
     protected function enterFrame (event :Event) :void
@@ -64,13 +72,16 @@ public class Ground extends Sprite
                 stripHeight);
             //_strips[strip].draw(_level, thisTransform, null, null, clipping);
             _stripData.draw(_level, thisTransform, null, null, clipping);
-            // update off road flag
+            // update status flags
             var y :int = HEIGHT - totalHeight;
             if (y <= UnderwhirledDrift.KART_LOCATION.y &&
                 y + stripHeight > UnderwhirledDrift.KART_LOCATION.y) {
                 thisTransform.invert();
-                _drivingOnRoad = _level.isOnRoad(thisTransform.transformPoint(
-                    UnderwhirledDrift.KART_LOCATION));
+                var transformedLoc :Point = thisTransform.transformPoint(
+                    UnderwhirledDrift.KART_LOCATION);
+                _drivingOnRoad = _level.isOnRoad(transformedLoc);
+                _drivingIntoWall = _level.isOnWall(transformedLoc);
+                    
             }
         }
         //_scenery.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
@@ -88,6 +99,9 @@ public class Ground extends Sprite
 
     /** flag to indicate that we're driving on the road */
     protected var _drivingOnRoad :Boolean = true;
+
+    /** flag to indicate that we're up against a wall */
+    protected var _drivingIntoWall :Boolean = false;
 
     /** height of the ground in display pixels */
     protected static const HEIGHT :int = 3 * UnderwhirledDrift.DISPLAY_HEIGHT / 4;
