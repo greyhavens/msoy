@@ -54,6 +54,12 @@ public class MsoySceneModel extends SceneModel
     /** The pixel width of the room. */
     public var width :int;
 
+    /** The pixel height of the room. */
+    // Probably all these attributes: type/depth/width/height/horizon will be
+    // moving to the new Wallpaper object, and we'll specify the wallpaper
+    // in here as a special variable, a subclass of FurniData, maybe.
+    public var height :int = 800 / ((1 + Math.sqrt(5)) / 2);
+
     /** A value between 0 - 1, for the height of the horizon in the room. */
     public var horizon :Number;
 

@@ -72,6 +72,11 @@ public class MsoyScene extends SceneImpl
         return _msoyModel.width;
     }
 
+    public function getHeight () :int
+    {
+        return _msoyModel.height;
+    }
+
     /**
      * Get the height of the horizon, expressed as a floating
      * point number between 0 and 1. (1 == horizon at top of screen)

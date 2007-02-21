@@ -60,9 +60,6 @@ public class AbstractRoomView extends Sprite
     {
         _actualWidth = unscaledWidth;
         _actualHeight = unscaledHeight;
-        var scale :Number = (unscaledHeight / RoomMetrics.TARGET_HEIGHT);
-        scaleX = scale;
-        scaleY = scale;
 
         relayout();
         updateDrawnRoom();
@@ -269,7 +266,8 @@ public class AbstractRoomView extends Sprite
             return new Rectangle(0, 0, _actualWidth, _actualHeight);
         }
 
-        var r :Rectangle = new Rectangle(0, 0, _scene.getWidth() * scaleX, _actualHeight);
+        var r :Rectangle = new Rectangle(0, 0, _scene.getWidth() * scaleX, 
+            _scene.getHeight() * scaleY);
         if (_editing) {
             r.inflate(_actualWidth * 2 / 3, 0);
         }
@@ -397,6 +395,10 @@ public class AbstractRoomView extends Sprite
      */
     protected function relayout () :void
     {
+        var scale :Number = (_actualHeight / _metrics.sceneHeight);
+        scaleX = scale;
+        scaleY = scale;
+
         configureScrollRect();
 
         var sprite :MsoySprite;

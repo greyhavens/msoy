@@ -9,7 +9,7 @@ public class RoomMetrics
 {
     public var sceneWidth :int
 
-    public var sceneHeight :int = TARGET_HEIGHT;
+    public var sceneHeight :int;
 
     public var sceneDepth :int;
 
@@ -42,12 +42,15 @@ public class RoomMetrics
     {
         this.sceneDepth = scene.getDepth();
         this.sceneWidth = scene.getWidth();
+        // sceneHeight is hacked, since it's not really in the model yet
+        // (Nor may it ever be, as it may be in the wallpaper item)
+        this.sceneHeight = (scene.getSceneModel() as Object).height;
         var horizon :Number = 1 - scene.getHorizon();
 
         // I'm using 'this' to make clear which assignments are for public props
         this.minScale = (sceneDepth == 0) ? 0 : (FOCAL / (FOCAL + sceneDepth));
         this.scaleRange = maxScale - minScale;
-        this.backWallHeight = TARGET_HEIGHT * minScale;
+        this.backWallHeight = sceneHeight * minScale;
 
         this.horizonY = sceneHeight * horizon;
         this.backWallTop = horizonY - (backWallHeight * horizon);
@@ -62,10 +65,5 @@ public class RoomMetrics
     // focal length and even a new standard scene depth.
     // TODO
     public static const FOCAL :Number = 488;
-
-    private static const PHI :Number = (1 + Math.sqrt(5)) / 2;
-
-    private static const TARGET_WIDTH :Number = 800;
-    public static const TARGET_HEIGHT :Number = TARGET_WIDTH / PHI;
 }
 }

@@ -262,6 +262,9 @@ public class EditorPanel extends VBox
             MsoyUI.createLabel(Msgs.EDITING.get("l.scene_depth")),
             _depth = new TextInput());
         GridUtil.addRow(grid,
+            MsoyUI.createLabel(Msgs.EDITING.get("l.scene_height")),
+            _height = new TextInput());
+        GridUtil.addRow(grid,
             MsoyUI.createLabel(Msgs.EDITING.get("l.horizon")),
             _horizon = new HSlider());
         _horizon.minimum = 0;
@@ -297,6 +300,7 @@ public class EditorPanel extends VBox
         _name.text = _sceneModel.name;
         _width.text = String(_sceneModel.width);
         _depth.text = String(_sceneModel.depth);
+        _height.text = String(_sceneModel.height);
         _horizon.value = _sceneModel.horizon;
 
         var bgImage :FurniData = SceneUtils.getBackgroundImage(_sceneModel);
@@ -336,6 +340,14 @@ public class EditorPanel extends VBox
                 _ctrl.sceneModelUpdated();
             }
         }, _depth, "text");
+
+        BindingUtils.bindSetter(function (o :Object) :void {
+            var val :Number = Number(o);
+            if (!isNaN(val)) {
+                _sceneModel.height = int(val);
+                _ctrl.sceneModelUpdated();
+            }
+        }, _height, "text");
 
         BindingUtils.bindSetter(function (o :Object) :void {
             var val :Number = Number(o);
@@ -433,6 +445,7 @@ public class EditorPanel extends VBox
     protected var _name :TextInput;
     protected var _width :TextInput;
     protected var _depth :TextInput;
+    protected var _height :TextInput;
     protected var _horizon :HSlider;
 
     protected var _backgroundImage :SingleItemSelector;
