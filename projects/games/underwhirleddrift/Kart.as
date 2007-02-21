@@ -82,7 +82,7 @@ public class Kart extends Sprite
             _camera.angle -= _currentAngle;
         }
         // update turn animation
-        var frame :int = Math.ceil((Math.abs(_currentAngle) / MAX_TURN_ANGLE) * 
+        /*var frame :int = Math.ceil((Math.abs(_currentAngle) / MAX_TURN_ANGLE) * 
             FRAMES_PER_TURN) - 1;
         if (_currentAngle > 0) {
             frame += RIGHT_TURN_FRAME_OFFSET;
@@ -93,7 +93,8 @@ public class Kart extends Sprite
         }
         if (_kart.currentFrame != frame) {
             _kart.gotoAndStop(frame);
-        }
+        }*/
+        _kart.gotoAndStop(_currentAngle);
 
         // alter camera location
         var gasAccel :Number = ACCELERATION_GAS;
@@ -204,7 +205,8 @@ public class Kart extends Sprite
     protected var _jumpFrameCount :int = 0;
 
     /** Bowser Kart */
-    [Embed(source='rsrc/bowser.swf#kart')]
+    //[Embed(source='rsrc/bowser.swf#kart')]
+    [Embed(source='rsrc/mediumkart.swf#kart')]
     protected static const BOWSER :Class;
 
     /** The number of movie clip frames used for one of the turn directions */
