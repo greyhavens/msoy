@@ -185,11 +185,21 @@ public class LobbyPanel extends VBox
         var tabsBox :HBox = new HBox();
         tabsBox.styleName = "tabsBox";
         tabsBox.percentWidth = 100;
-        tabsBox.height = 25;
+        tabsBox.height = 27;
         tablesBox.addChild(tabsBox);
+        [Embed(source='../../../../../../../pages/media/static/game/box_tile.png')]
+        var backgroundImage :Class;
+        tabsBox.setStyle("backgroundImage", "/media/static/game/box_tile.png");
+        tabsBox.setStyle("backgroundSize", "100%");
+        var padding :HBox = new HBox();
+        padding.percentWidth = 100;
+        padding.percentHeight = 100;
+        tabsBox.addChild(padding);
         var inviteBtn :CommandButton = new CommandButton();
+        inviteBtn.height = 22;
         inviteBtn.label = Msgs.GAME.get("b.invite_to_game");
         createBtn = new CommandButton(LobbyController.CREATE_TABLE);
+        createBtn.height = 22;
         createBtn.label = Msgs.GAME.get("b.create");
         var butbar :ButtonBar = new ButtonBar();
         butbar.addChild(inviteBtn);
