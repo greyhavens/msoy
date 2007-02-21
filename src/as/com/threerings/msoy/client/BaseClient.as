@@ -10,6 +10,9 @@ import flash.external.ExternalInterface;
 
 import mx.resources.ResourceBundle;
 
+import com.adobe.crypto.MD5;
+
+import com.threerings.util.Name;
 import com.threerings.util.ResultAdapter;
 import com.threerings.util.StringUtil;
 
@@ -180,9 +183,16 @@ public /*abstract*/ class BaseClient extends Client
     protected static function createStartupCreds (stage :Stage, token :String = null)
         :MsoyCredentials
     {
-        var creds :MsoyCredentials = new MsoyCredentials(null, null);
-        creds.ident = Prefs.getMachineIdent();
         var params :Object = stage.loaderInfo.parameters;
+        var creds :MsoyCredentials;
+        if (DeploymentConfig.devClient && (params["pass"] != null) && (params["user"] != null)) {
+            creds = new MsoyCredentials(new Name(String(params["user"])),
+                MD5.hash(String(params["pass"])));
+
+        } else {
+            creds = new MsoyCredentials(null, null);
+        }
+        creds.ident = Prefs.getMachineIdent();
         if (null == params["guest"]) {
             creds.sessionToken = (token == null) ? params["token"] : token;
         }
