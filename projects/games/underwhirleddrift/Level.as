@@ -12,14 +12,26 @@ import flash.geom.Rectangle;
 
 import flash.utils.describeType;
 
+import flash.events.Event;
+
+import com.threerings.util.EmbeddedSwfLoader;
+
 public class Level extends Sprite
 {
     public var log :Log = Log.getLog(UnderwhirledDrift);
 
     public function Level (level :int)
     {
+        var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
+        loader.addEventListener(Event.COMPLETE, handleSwfLoaded);
+        loader.load(new LEVELS[level]);
+    }
+
+    public function handleSwfLoaded (evt :Event) :void
+    {
+        var loader :EmbeddedSwfLoader = (evt.currentTarget as EmbeddedSwfLoader);
         var backgroundImage :Shape;
-        var backgroundSprite :Sprite = new BACKGROUNDS[level]();
+        var backgroundSprite :Sprite = (new (loader.getSymbol("background") as Class)() as Sprite);
         var backgroundBitmap :BitmapData = new BitmapData(backgroundSprite.width, 
             backgroundSprite.height);
         var backgroundTrans :Matrix = new Matrix();
@@ -40,19 +52,26 @@ public class Level extends Sprite
             addChild(backgroundImage);
         }
 
-        addChild(new ROUGHS[level]());
-        addChild(_track = new TRACKS[level]());
-        addChild(new WALLS[level]());
+        addChild(new (loader.getSymbol("rough") as Class)() as DisplayObject);
+        addChild(_track = (new (loader.getSymbol("track") as Class)() as DisplayObject));
+        addChild(new (loader.getSymbol("wall") as Class)() as DisplayObject);
     }
 
     public function isOnRoad (loc :Point) :Boolean
     {
+        if (_track == null) {
+            return false;
+        }
         var imgData :BitmapData = new BitmapData(1, 1, true, 0);
         var trans :Matrix = new Matrix();
         trans.translate(-loc.x, -loc.y);
         imgData.draw(_track, trans);
         return (imgData.getPixel32(0, 0) & 0xFF000000) != 0;
     }
+
+    [Embed(source='rsrc/level_1.swf', mimeType='application/octet-stream')]
+    protected static const LEVEL_1 :Class;
+    protected static const LEVELS :Array = [ LEVEL_1 ];
 
     /** Embedded tracks */
     [Embed(source='rsrc/level_1.swf#track')]
