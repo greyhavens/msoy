@@ -25,20 +25,17 @@ public class Level extends Sprite
         var backgroundTrans :Matrix = new Matrix();
         backgroundTrans.translate(backgroundSprite.width / 2, backgroundSprite.height / 2);
         backgroundBitmap.draw(backgroundSprite, backgroundTrans);
-        for (var ii :int = 0; ii < 6; ii++) {
+        for (var ii :int = 0; ii < 4; ii++) {
             backgroundImage = new Shape();
             backgroundImage.graphics.beginBitmapFill(backgroundBitmap);
-            backgroundImage.graphics.drawRect(0, 0, Ground.IMAGE_SIZE * 2, Ground.IMAGE_SIZE * 2);
+            // TODO: have background tiling react to the size of the level map properly
+            backgroundImage.graphics.drawRect(0, 0, 1536, 1536);
             backgroundImage.graphics.endFill();
-            if (ii < 3) {
-                backgroundImage.x = -Ground.IMAGE_SIZE * 2;
+            if (ii < 2) {
+                backgroundImage.x = -1536;
             }
-            if ((ii % 3) == 0) {
-                backgroundImage.y = -Ground.IMAGE_SIZE * 3.5;
-            } else if ((ii % 3) == 1) {
-                backgroundImage.y = -Ground.IMAGE_SIZE * 1.5;
-            } else {
-                backgroundImage.y = Ground.IMAGE_SIZE * 0.5;
+            if ((ii % 2) == 0) {
+                backgroundImage.y = -1536;
             }
             addChild(backgroundImage);
         }
