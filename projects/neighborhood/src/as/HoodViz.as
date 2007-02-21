@@ -15,10 +15,10 @@ import com.threerings.msoy.hood.*;
 import com.threerings.util.NetUtil;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
+import com.threerings.util.DateUtil;
 
 import com.adobe.serialization.json.JSONDecoder;
 
-[SWF(width="640", height="480")]
 public class HoodViz extends Sprite
 {
     public function HoodViz ()
@@ -55,12 +55,17 @@ public class HoodViz extends Sprite
     {
         var soy :Class = getClass("soy_master");
 
-        _friend = new Building(getClass("house_tile"), getClass("populate_house"), soy);
-        this.stage.addChild(_friend);
+        _house = new Building(getClass("house_tile"), getClass("populate_house"), soy);
+        stage.addChild(_house);
+        _plaqueHouse = getClass("plaque_house");
+
         _group = new Building(getClass("group_tile"), getClass("populate_group"), soy);
-        this.stage.addChild(_group);
+        stage.addChild(_group);
+        _plaqueGroup = getClass("plaque_group");
+
         _game = new Building(getClass("game_tile"), getClass("populate_game"), soy);
-        this.stage.addChild(_game);
+        stage.addChild(_game);
+        _plaqueGame = getClass("plaque_game");
 
         _vacant = getClass("vacant_tile");
         _roadHouse = getClass("road_house_tile");
@@ -72,13 +77,15 @@ public class HoodViz extends Sprite
         _roadHouseEndW = getClass("road_end_w_tile");
         _roadHouseEndE = getClass("road_end_e_tile");
 
+        _rule = getClass("rule");
+
         _canvas = new Sprite();
         this.addChild(_canvas);
 
         // compute a very rough bounding rectangle for the visible houses
         var radius :int =
             3 + Math.ceil(Math.sqrt(_hood.groups.length +
-                                    _hood.friends.length +
+                                    _hood.houses.length +
                                     _hood.games.length));
 
         var drawables :Array = new Array();
@@ -104,15 +111,12 @@ public class HoodViz extends Sprite
         // sort the metric according to distance
         distances.sortOn([ "dist", "x", "y" ], Array.NUMERIC);
 
-        // then go through houses in order of radial distance and register friends and groups
-        var nextFriend :int = 0;
-        var nextGroup :int = 0;
-
+        // then go through buildings in order of radial distance and register houses and groups
         // pick tiles randomly from weighted intervals - generalizes to N tile types
-        var friendsLeft :int = _hood.friends.length;
+        var housesLeft :int = _hood.houses.length;
         var groupsLeft :int = _hood.groups.length;
         var gamesLeft :int = _hood.games.length;
-        var totalLeft :int = friendsLeft + groupsLeft + gamesLeft;
+        var totalLeft :int = housesLeft + groupsLeft + gamesLeft;
         while (totalLeft > 0) {
             // pick a spot within [0, totalLeft)
             var rnd :Number = totalLeft * _random.nextNumber();
@@ -121,8 +125,8 @@ public class HoodViz extends Sprite
             // and figure out which tile type's interval the spot's in
             if (rnd < groupsLeft) {
                 drawables[tile.y][tile.x] = _hood.groups[--groupsLeft];
-            } else if (rnd - groupsLeft < friendsLeft) {
-                drawables[tile.y][tile.x] = _hood.friends[--friendsLeft];
+            } else if (rnd - groupsLeft < housesLeft) {
+                drawables[tile.y][tile.x] = _hood.houses[--housesLeft];
             } else {
                 drawables[tile.y][tile.x] = _hood.games[--gamesLeft];
             }
@@ -141,7 +145,7 @@ public class HoodViz extends Sprite
                     if (x == 0) {
                         addBit(_roadNS, 0, y, false, null);
                     } else if (drawables[y][x] is NeighborMember) {
-                        addBit(_friend, x, y, true, drawables[y][x]);
+                        addBit(_house, x, y, true, drawables[y][x]);
                     } else if (drawables[y][x] is NeighborGroup) {
                         addBit(_group, x, y, true, drawables[y][x]);
                     } else if (drawables[y][x] is NeighborGame) {
@@ -176,17 +180,18 @@ public class HoodViz extends Sprite
                 }
             }
         }
-
         _canvas.graphics.beginFill(0xCBFE98);
         _canvas.graphics.drawRect(-_canvas.width, -_canvas.height,
                                   _canvas.width*2, _canvas.height*2);
-        var xScale :Number = 640 / Math.max(160, (_bound.right - _bound.left));
-        var yScale :Number = 480 / Math.max(120, (_bound.bottom - _bound.top));
-        _canvas.x = -_bound.left * xScale;
-        _canvas.y = -_bound.top * yScale;
+        _canvas.graphics.endFill();
+
+        var xScale :Number = stage.stageWidth / (160 + _bound.right - _bound.left);
+        var yScale :Number = stage.stageHeight / (120 + _bound.bottom - _bound.top);
         var scale :Number = Math.min(xScale, yScale);
-        _canvas.scaleX = scale * 0.9;
-        _canvas.scaleY = scale * 0.9;
+        _canvas.x = (80 -_bound.left) * scale;
+        _canvas.y = (60 -_bound.top) * scale;
+        _canvas.scaleX = scale;
+        _canvas.scaleY = scale;
     }
 
 
@@ -247,8 +252,7 @@ public class HoodViz extends Sprite
         _canvas.addChild(bitHolder);
 
         if (update) {
-            _bound = _bound.union(bitHolder.getBounds(_canvas));
-            trace("new bound: " + _bound);
+            _bound = _bound.union(bitHolder.getBounds(stage));
         }
     }
 
@@ -284,9 +288,9 @@ public class HoodViz extends Sprite
         if (neighbor.sceneId > 0) {
             url = "/world/#s" + neighbor.sceneId;
         } else if (neighbor is NeighborMember) {
-            var friend :NeighborMember = neighbor as NeighborMember;
+            var house :NeighborMember = neighbor as NeighborMember;
             // clicking on a member takes us to their home scene
-            url = "/world/#m" + friend.memberId;
+            url = "/world/#m" + house.memberId;
         } else if (neighbor is NeighborGroup) {
             var group :NeighborGroup = neighbor as NeighborGroup;
             // clicking on a group takes us to that group's home scene
@@ -307,53 +311,74 @@ public class HoodViz extends Sprite
 
     protected function rollOverHandler (event :MouseEvent) :void
     {
-
-        var neighbor :Neighbor = (event.target as ToolTipSprite).neighbor;
-        var text :String;
+        var tile :ToolTipSprite = (event.target as ToolTipSprite);
+        var neighbor :Neighbor = tile.neighbor;
+        var above :String, below :String;
         if (neighbor is NeighborMember) {
-            var friend :NeighborMember = neighbor as NeighborMember;
-            text = friend.memberName + " (" + (friend.isOnline ? "online": "offline") + ")";
-            if (friend.created != null) {
-                text += "\n\n" + "Created: " + friend.created.toLocaleDateString();
+            var house :NeighborMember = neighbor as NeighborMember;
+            above = house.memberName;
+            if (house.isOnline) {
+                below = "Online";
+            } else if (house.lastSession != null) {
+
+                below = "Last on: " + DateUtil.getConversationalDateString(house.lastSession);
             }
-            if (friend.lastSession != null) {
-                text += "\n" + "Last on: " + friend.lastSession.toLocaleDateString();
-            }
+            _tip = new _plaqueHouse();
         } else if (neighbor is NeighborGroup) {
             var group :NeighborGroup = neighbor as NeighborGroup;
-            text = group.groupName + "\n" + "Members: " + group.members;
+            // TODO: Logo
+            above = group.groupName;
+            below = "Members: " + group.members;
+            _tip = new _plaqueGroup();
         } else {
             var game :NeighborGame = neighbor as NeighborGame;
-            text = game.gameName + "\n" + "Players: " + game.population;
+            // TODO: thumbnail?
+            above = game.gameName;
+            // below = "Players: " + game.population;
+            _tip = new _plaqueGame();
         }
 
-        _tip = new Sprite();
-        with (_tip.graphics) {
-            clear();
-            beginFill(0xFFFFFF);
-            drawRoundRect(0, 0, 180, 80, 10, 10);
-            endFill();
-            lineStyle(2, 0x000000);
-            drawRoundRect(0, 0, 180, 80, 10, 10);
-        }
-        _tip.x = event.stageX - 20;
-        _tip.y = event.stageY - 20 - _tip.height;
+        tile.addChild(_tip);
+
+        var right :Number = tile.localToGlobal(_tip.getBounds(stage).bottomRight).x;
+        var left :Number = tile.localToGlobal(_tip.getBounds(stage).topLeft).x;
+        _tip.scaleX = _tip.scaleY = 160 * _canvas.scaleX / (right - left);
+
+//        throw new Error("gbr: " + tile.localToGlobal(_tip.getBounds(stage).bottomRight) +
+//                        ", gtl: " + tile.localToGlobal(_tip.getBounds(stage).topLeft) +
+//                        "_tip.scaleX = " + _tip.scaleX);
+
+//        var p :Point = tile.globalToLocal(_canvas.localToGlobal(new Point(tile.x, tile.y)));
+//        var p :Point = tile.globalToLocal(new Point(event.stageX, event.stageY));
+
+//        _tip.x = p.x;
+//        _tip.y = p.y;
 
         var tipText :TextField = new TextField();
-        tipText.text = text;
+        tipText.text = above;
         tipText.autoSize = TextFieldAutoSize.CENTER;
-        tipText.wordWrap = false;
+        tipText.y = -75;
+        tipText.x = -tipText.width/2;
         _tip.addChild(tipText);
-        tipText.y = (_tip.height - tipText.height)/2;
-        tipText.x = (_tip.width - tipText.width)/2;
 
-        this.addChild(_tip);
+        if (below != null) {
+            var rule :Sprite = new _rule();
+            rule.y = -50;
+            _tip.addChild(rule);
+
+            tipText = new TextField();
+            tipText.text = below;
+            tipText.autoSize = TextFieldAutoSize.CENTER;
+            tipText.y = -35;
+            tipText.x = -tipText.width/2;
+            _tip.addChild(tipText);
+        }
     }
 
     protected function rollOutHandler (event :MouseEvent) :void
     {
         if (_tip is Sprite) {
-            this.removeChild(_tip);
+            _tip.parent.removeChild(_tip);
             _tip = null;
         }
     }
@@ -367,9 +392,15 @@ public class HoodViz extends Sprite
     protected var _canvas :Sprite;
     protected var _bound :Rectangle = new Rectangle();
 
-    protected var _friend :Building;
+    protected var _house :Building;
     protected var _group :Building;
     protected var _game :Building;
+
+    protected var _plaqueHouse :Class;
+    protected var _plaqueGroup :Class;
+    protected var _plaqueGame :Class;
+
+    protected var _rule :Class;
 
     protected var _vacant :Class;
     protected var _roadNS :Class;

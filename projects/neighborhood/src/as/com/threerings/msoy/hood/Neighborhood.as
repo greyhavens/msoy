@@ -6,15 +6,15 @@ import com.adobe.serialization.json.*;
 
 /**
  * Represents the neighborhood around a central member: that member's name and id,
- * and arrays of their friends and groups.
+ * and arrays of their houses, groups and games.
  */
 public class Neighborhood
 {
     public var centralMember :NeighborMember;
     public var centralGroup :NeighborGroup;
 
-    /** The member's friends, as {@link NeighborMember} objects. */
-    public var friends:Array;
+    /** The member's houses, as {@link NeighborMember} objects. */
+    public var houses:Array;
     /** The member's groups, as {@link NeighborGroup} objects. */
     public var groups:Array;
     /** The member's games, as {@link NeighborGame} objects. */
@@ -42,10 +42,10 @@ public class Neighborhood
         if (JSON.group != null) {
             hood.centralGroup = NeighborGroup.fromJSON(JSON.group);
         }
-        hood.friends = new Array();
+        hood.houses = new Array();
         if (JSON.friends != null) {
             for (i = 0; i < JSON.friends.length; i ++) {
-                hood.friends[i] = NeighborMember.fromJSON(JSON.friends[i]);
+                hood.houses[i] = NeighborMember.fromJSON(JSON.friends[i]);
             }
         }
         hood.groups = new Array();
