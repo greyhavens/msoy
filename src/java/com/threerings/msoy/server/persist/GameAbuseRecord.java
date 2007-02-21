@@ -39,6 +39,7 @@ public class GameAbuseRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 1;
 
     /** The id of the game we're tracking. */
+    @Id
     public int gameId;
 
     /** The accumulated number of player minutes since we last assessed the abuse factor. */

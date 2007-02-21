@@ -129,9 +129,16 @@ public class FlowRepository extends DepotRepository
     /**
      * Assess a game's anti-abuse factor based on flow grants.
      */
-    public int assessAntiAbuse (int gameId, int currentFactor)
+    public void assessAntiAbuse (int gameId)
         throws PersistenceException
     {
+        GameAbuseRecord gameRecord = load(GameAbuseRecord.class, gameId);
+        if (gameRecord == null) {
+            gameRecord = new GameAbuseRecord();
+            gameRecord.gameId = gameId;
+            gameRecord.abuseFactor = 100;
+            gameRecord.accumMinutesSinceLastAssessment = 0;
+        }
         // load all actions logged since our last assessment
         Collection<GameFlowSummaryRecord> records =
             findAll(GameFlowSummaryRecord.class,
@@ -146,8 +153,11 @@ public class FlowRepository extends DepotRepository
             deleteAll(MemberActionLogRecord.class,
                       new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
                       null);
+            gameRecord.accumMinutesSinceLastAssessment = 0;
+            // substitute actual algorithm at some point
+            gameRecord.abuseFactor = 123;
+            store(gameRecord);
         }
-        return currentFactor;
     }
 
     /**
