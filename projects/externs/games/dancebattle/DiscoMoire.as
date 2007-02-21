@@ -60,8 +60,8 @@ public class DiscoMoire extends Sprite
             s.graphics.moveTo(w2, h2);
             var radians :Number = degrees * Math.PI / 180;
 
-            var x :Number = w2 + Math.sin(radians) * w2;
-            var y :Number = h2 + Math.cos(radians) * h2;
+            var x :Number = w2 + Math.sin(radians) * radius;
+            var y :Number = h2 + Math.cos(radians) * radius;
 
             s.graphics.lineTo(x, y);
         }
