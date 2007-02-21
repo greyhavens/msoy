@@ -344,10 +344,6 @@ public class HoodViz extends Sprite
         var left :Number = tile.localToGlobal(_tip.getBounds(stage).topLeft).x;
         _tip.scaleX = _tip.scaleY = 160 * _canvas.scaleX / (right - left);
 
-//        throw new Error("gbr: " + tile.localToGlobal(_tip.getBounds(stage).bottomRight) +
-//                        ", gtl: " + tile.localToGlobal(_tip.getBounds(stage).topLeft) +
-//                        "_tip.scaleX = " + _tip.scaleX);
-
 //        var p :Point = tile.globalToLocal(_canvas.localToGlobal(new Point(tile.x, tile.y)));
 //        var p :Point = tile.globalToLocal(new Point(event.stageX, event.stageY));
 
