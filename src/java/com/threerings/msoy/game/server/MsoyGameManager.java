@@ -34,7 +34,8 @@ public class MsoyGameManager extends EZGameManager
     {
         validateUser(caller);
 
-        listener.requestProcessed(availableFlow(getPresentPlayerIndex(playerId), now()));
+        int pIdx = getPresentPlayerIndex(playerId);
+        listener.requestProcessed(flowCap(pIdx, now()) - _flowAwarded[pIdx]);
     }
 
     @Override
@@ -78,7 +79,7 @@ public class MsoyGameManager extends EZGameManager
     }
 
     // calculate the flow grant cap for this player at the given 'now' time
-    protected int availableFlow (int pidx, int now)
+    protected int flowCap (int pidx, int now)
     {
         int secondsPlayed = now - _gameStartTime; 
         return (_flowRateBudget[pidx] * secondsPlayed) / 60; 
@@ -87,7 +88,7 @@ public class MsoyGameManager extends EZGameManager
     // possibly cap and then actually grant the flow the game awarded to this player
     protected void grantAwardedFlow (int pidx, int now)
     {
-        int flow = Math.min(_flowAwarded[pidx], availableFlow(pidx, now));
+        int flow = Math.min(_flowAwarded[pidx], flowCap(pidx, now));
         // MsoyServer.memberMan.grantFlow(getPlayerName(pidx), flow, GrantType.GAME, blah blah);
     }
 
