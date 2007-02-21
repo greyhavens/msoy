@@ -11,7 +11,7 @@ public class Camera
     public function Camera ()
     {
         angle = 0;
-        position = new Point(0, Ground.HALF_IMAGE_SIZE);
+        position = new Point(0, 512);
         height = 20;
         distance = 300;
     }

@@ -13,12 +13,6 @@ import flash.events.Event;
 
 public class Ground extends Sprite
 {
-    /** The length and width of the track image tiles (they are square) */
-    public static const IMAGE_SIZE :int = 1024;
-
-    /** half the image size - used in a few calculations */
-    public static const HALF_IMAGE_SIZE :int = IMAGE_SIZE / 2;
-
     public function Ground (camera :Camera)
     {
         _camera = camera;
@@ -26,8 +20,6 @@ public class Ground extends Sprite
         _stripData = new BitmapData(WIDTH, HEIGHT, true, 0);
         addChild(new Bitmap(_stripData));
         _level = new Level(0);
-        _scenery = new Scenery();
-        //addChild(_scenery);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
@@ -45,14 +37,6 @@ public class Ground extends Sprite
      */
     protected function enterFrame (event :Event) :void
     {
-        // shift along with the track
-        /*if (_camera.position.y < -HALF_IMAGE_SIZE) {
-            var xShift :int = _level.moveTrackForward();
-            _scenery.moveSceneryForward(xShift);
-            _camera.position.x += xShift;
-            _camera.position.y += IMAGE_SIZE;
-        }*/
-
         var translateRotate :Matrix = new Matrix();
         translateRotate.translate(0 - _camera.position.x, 0 - _camera.position.y);
         translateRotate.rotate(0 - _camera.angle);
@@ -89,15 +73,12 @@ public class Ground extends Sprite
                     UnderwhirledDrift.KART_LOCATION));
             }
         }
-        _scenery.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
-            _camera.height);
+        //_scenery.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
+            //_camera.height);
     }
 
     /** track instance */
     protected var _level :Level;
-
-    /** scenery instance */
-    protected var _scenery :Scenery;
 
     /** bitmap to draw strips on */
     protected var _stripData :BitmapData;
