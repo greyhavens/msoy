@@ -42,9 +42,7 @@ public class RoomMetrics
     {
         this.sceneDepth = scene.getDepth();
         this.sceneWidth = scene.getWidth();
-        // sceneHeight is hacked, since it's not really in the model yet
-        // (Nor may it ever be, as it may be in the wallpaper item)
-        this.sceneHeight = (scene.getSceneModel() as Object).height;
+        this.sceneHeight = scene.getHeight();
         var horizon :Number = 1 - scene.getHorizon();
 
         // I'm using 'this' to make clear which assignments are for public props
