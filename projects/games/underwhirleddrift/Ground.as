@@ -19,7 +19,7 @@ public class Ground extends Sprite
 
         _stripData = new BitmapData(WIDTH, HEIGHT, true, 0);
         addChild(new Bitmap(_stripData));
-        _level = new Level(0);
+        _level = LevelFactory.createLevel(0);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
