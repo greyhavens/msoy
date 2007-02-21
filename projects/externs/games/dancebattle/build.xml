@@ -14,9 +14,22 @@
     <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
       <arg value="-load-config"/>
       <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-optimize"/>
       <arg value="-compiler.source-path=."/>
       <arg value="-file-specs"/>
       <arg value="${app.name}.as"/>
+    </java>
+  </target>
+
+  <!-- builds our Flash game -->
+  <target name="disco">
+    <java jar="${flex.path}/lib/mxmlc.jar" fork="true" failonerror="true">
+      <arg value="-load-config"/>
+      <arg value="${root.path}/etc/msoy-config.xml"/>
+      <arg value="-optimize"/>
+      <arg value="-compiler.source-path=."/>
+      <arg value="-file-specs"/>
+      <arg value="DiscoMoire.as"/>
     </java>
   </target>
 
@@ -28,7 +41,7 @@
   </target>
 
   <target name="dist" depends="compile">
-    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/TODO.swf"/>
+    <copy file="${app.name}.swf" tofile="/export/msoy/pages/media/Chiyogami.swf"/>
   </target>
 
 </project>
