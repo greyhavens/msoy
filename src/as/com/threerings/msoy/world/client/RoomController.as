@@ -423,7 +423,9 @@ public class RoomController extends SceneController
                 if (tipText != null) {
                     _hoverTip = ToolTipManager.createToolTip(tipText,
                         stageX, stageY);
-                    (_hoverTip as UIComponent).setStyle("color", sprite.getHoverColor());
+                    var tipComp :UIComponent = UIComponent(_hoverTip);
+                    tipComp.styleName = "roomToolTip";
+                    tipComp.setStyle("color", sprite.getHoverColor());
                 }
             }
         }

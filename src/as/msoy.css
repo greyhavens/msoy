@@ -279,9 +279,11 @@ ListBase
   selectionColor: #ff0099;
 }
 
-ToolTip
-{
+.roomToolTip {
+/** Crap, the fontSize=12 seems to fuck-up the background of the tooltip.
+    Something to debug later.
   fontSize: 12;
+  */
   backgroundColor: #000000;
 }
 
