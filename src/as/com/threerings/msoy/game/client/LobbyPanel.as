@@ -177,9 +177,24 @@ public class LobbyPanel extends VBox
             "/media/static/game/info_bottom.png")));
 
         var tablesBox :VBox = new VBox();
+        tablesBox.styleName = "tablesBox";
         tablesBox.percentWidth = 100;
         tablesBox.percentHeight = 100;
         gameBox.addChild(tablesBox);
+
+        var tabsBox :HBox = new HBox();
+        tabsBox.styleName = "tabsBox";
+        tabsBox.percentWidth = 100;
+        tabsBox.height = 25;
+        tablesBox.addChild(tabsBox);
+        var inviteBtn :CommandButton = new CommandButton();
+        inviteBtn.label = Msgs.GAME.get("b.invite_to_game");
+        createBtn = new CommandButton(LobbyController.CREATE_TABLE);
+        createBtn.label = Msgs.GAME.get("b.create");
+        var butbar :ButtonBar = new ButtonBar();
+        butbar.addChild(inviteBtn);
+        butbar.addChild(createBtn);
+        tabsBox.addChild(butbar);
 
         var list :MsoyList = new MsoyList(_ctx);
         list.variableRowHeight = true;
@@ -191,13 +206,6 @@ public class LobbyPanel extends VBox
         factory.properties = { ctx: _ctx, panel: this };
         list.itemRenderer = factory;
         list.dataProvider = _tables;
-
-        createBtn = new CommandButton(LobbyController.CREATE_TABLE);
-        createBtn.label = Msgs.GAME.get("b.create");
-
-        var butbar :ButtonBar = new ButtonBar();
-        butbar.addChild(createBtn);
-        tablesBox.addChild(butbar);
 
         // and a chat box
         var chatbox :ChatContainer = new ChatContainer(_ctx);

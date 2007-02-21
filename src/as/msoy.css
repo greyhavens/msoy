@@ -287,7 +287,7 @@ ListBase
   backgroundColor: #000000;
 }
 
-.lobbyPanel, .descriptionBox, .gameBox {
+.lobbyPanel, .descriptionBox, .gameBox, .tablesBox, .tabsBox {
   horizontalGap: 0;
   verticalGap: 0;
 }
