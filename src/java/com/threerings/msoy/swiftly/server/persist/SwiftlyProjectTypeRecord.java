@@ -10,7 +10,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.web.data.SwiftlyProjectType;
 
 /**
- * Contains the definition of a swiftly project template.
+ * Contains the definition of a swiftly project type.
  */
 @Entity
 @Table(uniqueConstraints =
@@ -35,7 +35,7 @@ public class SwiftlyProjectTypeRecord extends PersistentRecord
 
     public static final int SCHEMA_VERSION = 1;
 
-    /** The id of the project template. */
+    /** The id of the project type. */
     @Id
     @GeneratedValue
     public int typeId;

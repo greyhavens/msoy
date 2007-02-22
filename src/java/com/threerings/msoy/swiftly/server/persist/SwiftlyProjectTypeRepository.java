@@ -14,7 +14,7 @@ import com.samskivert.jdbc.depot.DepotRepository;
 import java.util.ArrayList;
 
 /**
- * Manages the persistent information associated with a member's project templates.
+ * Manages the persistent information associated with a member's project types.
  */
 public class SwiftlyProjectTypeRepository extends DepotRepository
 {

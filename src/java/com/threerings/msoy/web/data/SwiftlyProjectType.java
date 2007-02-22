@@ -6,7 +6,7 @@ package com.threerings.msoy.web.data;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * Contains information on a Swiftly Project Template
+ * Contains information on a Swiftly project type,
  */
 public class SwiftlyProjectType
     implements IsSerializable
