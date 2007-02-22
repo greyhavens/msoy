@@ -71,6 +71,8 @@ public class HoodViz extends Sprite
         stage.addChild(_game);
         _plaqueGame = getClass("plaque_game");
 
+//        _font = getClass("font");
+
         _vacant = getClass("vacant_tile");
         _roadHouse = getClass("road_house_tile");
         _roadNS = getClass("road_ns_tile");
@@ -319,7 +321,6 @@ public class HoodViz extends Sprite
             if (house.isOnline) {
                 below = "Online";
             } else if (house.lastSession != null) {
-
                 below = "Last on: " + DateUtil.getConversationalDateString(house.lastSession);
             }
             _tip = new _plaqueHouse();
@@ -339,9 +340,24 @@ public class HoodViz extends Sprite
 
         tile.addChild(_tip);
 
-        var right :Number = tile.localToGlobal(_tip.getBounds(stage).bottomRight).x;
-        var left :Number = tile.localToGlobal(_tip.getBounds(stage).topLeft).x;
-        _tip.scaleX = _tip.scaleY = 160 * _canvas.scaleX / (right - left);
+        var bounds :Rectangle = _tip.getBounds(stage);
+        var bottomRight :Point = tile.localToGlobal(bounds.bottomRight);
+        var topLeft :Point = tile.localToGlobal(bounds.topLeft);
+
+        _tip.scaleX = _tip.scaleY = 160 * _canvas.scaleX / (bottomRight.x - topLeft.x);
+
+        bounds = _tip.getBounds(stage);
+
+        if (bounds.left < 0) {
+            _tip.x -= bounds.left * _tip.scaleX;
+        } else if (bounds.x > SWF_WIDTH) {
+            _tip.x -= (bounds.right - SWF_WIDTH) * _tip.scaleX;
+        }
+        if (bounds.top < 0) {
+            _tip.y -= bounds.top * _tip.scaleY;
+        } else if (bounds.bottom > SWF_HEIGHT) {
+            _tip.y -= (bounds.bottom - SWF_HEIGHT) * _tip.scaleY;
+        }
 
 //        var p :Point = tile.globalToLocal(_canvas.localToGlobal(new Point(tile.x, tile.y)));
 //        var p :Point = tile.globalToLocal(new Point(event.stageX, event.stageY));
@@ -395,6 +411,7 @@ public class HoodViz extends Sprite
     protected var _plaqueGroup :Class;
     protected var _plaqueGame :Class;
 
+    protected var _font :Class;
     protected var _rule :Class;
 
     protected var _vacant :Class;
