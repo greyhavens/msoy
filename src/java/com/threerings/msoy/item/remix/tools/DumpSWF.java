@@ -66,14 +66,14 @@ public class DumpSWF
         reader.read();
 
         SWFDocument doc = docReader.getDocument();
-        dumpImages(doc, outputDir);
+        dumpMedia(doc, outputDir);
 
         Rect size = doc.getFrameSize();
         return "" + (size.getXMax() / SWFConstants.TWIPS_PER_PIXEL) + " " +
             (size.getYMax() / SWFConstants.TWIPS_PER_PIXEL);
     }
 
-    protected void dumpImages (SWFDocument doc, File outputDir)
+    protected void dumpMedia (SWFDocument doc, File outputDir)
         throws IOException
     {
         for (Object tagObj : doc.getTags()) {
@@ -100,6 +100,10 @@ public class DumpSWF
                     DefineBitsLossless2 png2 = (DefineBitsLossless2) tag;
                     savePNG(png2.getZlibBitmapData(), png2.getWidth(), png2.getHeight(),
                         outputDir, id);
+                    break;
+
+                case TagConstants.SOUND_STREAM_HEAD_2:
+                    // mp3 not yet supported
                     break;
                 }
             }
