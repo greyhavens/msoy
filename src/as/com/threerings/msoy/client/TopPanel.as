@@ -54,11 +54,12 @@ public class TopPanel extends Canvas
         _placeBox.rawChildren.addChild(_placeMask);
 
         // set up the control bar
-        controlBar = new ControlBar(ctx);
-        controlBar.includeInLayout = false;
-        controlBar.setStyle("bottom", 0);
-        controlBar.setStyle("left", 0);
-        addChild(controlBar);
+        _controlBar = new ControlBar(ctx);
+        _controlBar.includeInLayout = false;
+        _controlBar.setStyle("bottom", 0);
+        _controlBar.setStyle("left", 0);
+        _controlBar.setStyle("right", 0);
+        addChild(_controlBar);
 
         if (DeploymentConfig.devClient) {
             // set up the build stamp label
@@ -201,21 +202,21 @@ public class TopPanel extends Canvas
             bottomPanelHeight :int = getBottomPanelHeight();
             
         _placeBox.setStyle("top", 0);
-        _placeBox.setStyle("bottom", bottomPanelHeight + ControlBar.HEIGHT);
+        _placeBox.setStyle("bottom", bottomPanelHeight + _controlBar.height);
         _placeBox.setStyle("left", sidePanelWidth);
         _placeBox.setStyle("right", 0);
-        
+
         if (_sidePanel != null) {
             _sidePanel.setStyle("top", 0);
-            _sidePanel.setStyle("bottom", bottomPanelHeight + ControlBar.HEIGHT);
+            _sidePanel.setStyle("bottom", bottomPanelHeight + _controlBar.height);
             _sidePanel.setStyle("left", 0);
             _sidePanel.width = SIDE_PANEL_WIDTH;
         }
         
         if (_bottomPanel != null) {    
-            _bottomPanel.setStyle("bottom", ControlBar.HEIGHT);
+            _bottomPanel.setStyle("bottom", _controlBar.height);
             _bottomPanel.setStyle("left", 0);
-            _bottomPanel.width = ControlBar.WIDTH;
+            _bottomPanel.width = _controlBar.width;
             _bottomPanel.height = BOTTOM_PANEL_HEIGHT;
         }
             
@@ -225,7 +226,7 @@ public class TopPanel extends Canvas
     protected function updatePlaceViewSize () :void
     {
         var w :int = stage.stageWidth - getSidePanelWidth();
-        var h :int = stage.stageHeight - ControlBar.HEIGHT
+        var h :int = stage.stageHeight - _controlBar.height
             - getBottomPanelHeight();
 
         _placeMask.graphics.clear();
@@ -275,6 +276,9 @@ public class TopPanel extends Canvas
 
     /** The current bottom panel component. */
     protected var _bottomPanel :UIComponent;
+
+    /** Control bar at the bottom of the window. */
+    protected var _controlBar :ControlBar;
     
     /** The list of our friends. */
     protected var _friendsList :FriendsList;

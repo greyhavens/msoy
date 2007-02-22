@@ -1,5 +1,6 @@
 package com.threerings.msoy.client {
 
+import flash.display.DisplayObject;
 import flash.events.MouseEvent;
 
 import flash.media.SoundMixer;
@@ -10,9 +11,11 @@ import mx.binding.utils.BindingUtils;
 import mx.core.ScrollPolicy;
 
 import mx.containers.Canvas;
+import mx.containers.HBox;
 
 import mx.controls.Button;
 import mx.controls.HSlider;
+import mx.controls.Spacer;
 
 import mx.events.FlexEvent;
 
@@ -27,18 +30,24 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.chat.client.ChatControl;
 
+
+
+
+[Style(name="backgroundSkin", type="Class", inherit="no")]
+
 /**
  * The control bar: the main menu and global UI element across all scenes.
  */
-public class ControlBar extends Canvas
+public class ControlBar extends HBox
 {
     /** The height of the control bar. This is fixed. */
-    public static const HEIGHT :int = 59;
-    public static const WIDTH :int = 800;
+    private static const HEIGHT :int = 24;
+    private static const WIDTH :int = 800;
 
     public function ControlBar (ctx :WorldContext)
     {
         _ctx = ctx;
+        styleName = "controlBar";
 
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
@@ -46,6 +55,7 @@ public class ControlBar extends Canvas
         height = HEIGHT;
         width = WIDTH;
 
+        // TODO: move volume controller to a separate pop-up (robert)
         var volume :HSlider = new HSlider();
         volume.tickInterval = .1;
         volume.liveDragging = true;
@@ -53,7 +63,7 @@ public class ControlBar extends Canvas
         volume.maximum = 1;
         volume.x = 311;
         volume.y = 41;
-        volume.width = 190;
+        volume.width = 50;
         SoundMixer.soundTransform = new SoundTransform(Prefs.getSoundVolume());
         volume.value = SoundMixer.soundTransform.volume;
         BindingUtils.bindSetter(function (val :Number) :void {
@@ -88,75 +98,56 @@ public class ControlBar extends Canvas
         }
 
         if (isMember) {
-            [Embed(source="../../../../../../rsrc/media/uibar.png")]
-            var cls :Class;
-            setStyle("backgroundImage", cls);
 
-            var chatControl :ChatControl = new ChatControl(_ctx);
-            chatControl.x = 10;
-            chatControl.y = 10;
+            var cls :Class = getStyle("backgroundSkin");
+            setStyle("backgroundImage", cls);
+            
+            var chatControl :ChatControl = new ChatControl(_ctx, this);
             addChild(chatControl);
 
-            // set up buttons
-            var petsBtn :CommandButton = new CommandButton();
-            petsBtn.setCommand(MsoyController.SHOW_PETS);
+            var sp :Spacer = new Spacer();
+            sp.width = 20;
+            addChild (sp);
+            
+            var chatBtn :CommandButton = new CommandButton();
+            chatBtn.setCommand(MsoyController.POP_FRIENDS_MENU, chatBtn);
+            chatBtn.styleName = "controlBarButtonChat";
+            addChild(chatBtn);
 
-            petsBtn.x = 546;
-            petsBtn.y = 0;
-            petsBtn.width = 38;
-            petsBtn.height = HEIGHT;
-            petsBtn.alpha = .5;
-            addChild(petsBtn);
-
-            var friendsBtn :CommandButton = new CommandButton();
-            friendsBtn.setCommand(MsoyController.SHOW_FRIENDS);
-            friendsBtn.toggle = true;
-
-            // TODO: dynamic layout?
-            friendsBtn.x = 585;
-            friendsBtn.y = 0;
-            friendsBtn.width = 19;
-            friendsBtn.height = HEIGHT;
-            friendsBtn.alpha = .5;
-            addChild(friendsBtn);
-
-            // a second friends button, for now
-            friendsBtn = new CommandButton();
-            friendsBtn.setCommand(MsoyController.POP_FRIENDS_MENU, friendsBtn);
-
-            friendsBtn.x = 585 + 19;
-            friendsBtn.y = 0;
-            friendsBtn.width = 19;
-            friendsBtn.height = HEIGHT;
-            friendsBtn.alpha = .5;
-            addChild(friendsBtn);
-
-            var scenesBtn :CommandButton = new CommandButton();
-            scenesBtn.setCommand(MsoyController.POP_ROOMS_MENU, scenesBtn);
-
-            scenesBtn.x = 624
-            scenesBtn.y = 0;
-            scenesBtn.width = 38;
-            scenesBtn.height = HEIGHT;
-            scenesBtn.alpha = .5;
-            addChild(scenesBtn);
-
-            // settings, prefs, whatever we want to call them
+            var volBtn :CommandButton = new CommandButton();
+            volBtn.setCommand(MsoyController.POP_PREFS_MENU, volBtn); // TODO
+            volBtn.styleName = "controlBarButtonVolume";
+            addChild(volBtn);
+            
             var prefsBtn :CommandButton = new CommandButton();
             prefsBtn.setCommand(MsoyController.POP_PREFS_MENU, prefsBtn);
-            prefsBtn.x = 753;
-            prefsBtn.y = 0;
-            prefsBtn.width = 47;
-            prefsBtn.height = HEIGHT;
-            //prefsBtn.alpha = .5;
-            prefsBtn.styleName = "controlAvatarButton";
+            prefsBtn.styleName = "controlBarButtonAvatar";
             addChild(prefsBtn);
 
+            var editBtn :CommandButton = new CommandButton();
+            editBtn.setCommand(MsoyController.POP_ROOMS_MENU, editBtn);
+            editBtn.styleName = "controlBarButtonEdit";
+            addChild(editBtn);
+
+            var footerLeft :SkinnableImage = new SkinnableImage();
+            footerLeft.styleName = "controlBarFooterLeft";
+            addChild (footerLeft);
+            
+            var spacer :Spacer = new Spacer();
+            spacer.percentWidth = 100;
+            addChild(spacer);
+            
+            var footerRight :SkinnableImage = new SkinnableImage();
+            footerRight.styleName = "controlBarFooterRight";
+            addChild (footerRight);
+
+            // TODO: other options to consider:
+            // MsoyController.SHOW_PETS
+            // MsoyController.SHOW_FRIENDS
+            
         } else {
             setStyle("backgroundImage", null);
-            var logonPanel :LogonPanel = new LogonPanel(_ctx);
-            logonPanel.x = 10;
-            logonPanel.y = 10;
+            var logonPanel :LogonPanel = new LogonPanel(_ctx, this);
             addChild(logonPanel);
         }
 
@@ -170,4 +161,49 @@ public class ControlBar extends Canvas
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
 }
+}
+
+
+import flash.display.DisplayObject;
+import mx.controls.Image;
+import mx.core.IFlexDisplayObject;
+
+/** Internal: helper function that extends ms.control.Image functionality
+    with automatic image loading from the style sheet (e.g. via an
+    external style sheet file). */
+[Style(name="backgroundSkin", type="Class", inherit="no")]
+internal class SkinnableImage extends Image
+{
+    public function SkinnableImage ()
+    {
+    }
+
+    override public function styleChanged(styleProp:String):void
+    {
+        super.styleChanged(styleProp);
+
+        var cls : Class = Class(getStyle("backgroundSkin"));
+        if (cls != null) {
+            updateSkin (cls);
+        }
+    }
+
+    protected function updateSkin (skinclass : Class) : void
+    {
+        if (_skin != null) {
+            removeChild (_skin);
+        }
+        
+        _skin = DisplayObject (IFlexDisplayObject (new skinclass()));
+        this.width = _skin.width;
+        this.height = _skin.height;
+        _skin.x = 0;
+        _skin.y = 0;
+        addChild (_skin);
+    }
+
+    protected var _skin : DisplayObject;
+
+    
+
 }

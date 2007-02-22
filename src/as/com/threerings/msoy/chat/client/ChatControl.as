@@ -29,6 +29,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 
+import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.WorldContext;
 
@@ -43,9 +44,11 @@ import com.threerings.msoy.web.data.MemberName;
  */
 public class ChatControl extends HBox
 {
-    public function ChatControl (ctx :WorldContext)
+    public function ChatControl (ctx :WorldContext, bar :ControlBar)
     {
         _ctx = ctx;
+
+        height = bar.height - 4;
 
         _locObs = new LocationAdapter(null, locationDidChange);
 
@@ -54,12 +57,16 @@ public class ChatControl extends HBox
         _targetBtn.minWidth = 130;
         _targetBtn.maxWidth = 130;
         _targetBtn.addEventListener(MouseEvent.CLICK, handleTargetClicked);
+        _targetBtn.height = height;
         addChild(_targetBtn);
 
         addChild(_txt = new TextInput());
         _txt.styleName = "chatInput";
+        _txt.height = height;
+        
         var but :Button = new Button();
         but.label = Msgs.GENERAL.get("b.send");
+        but.height = height;
         addChild(but);
 
         _txt.addEventListener(KeyboardEvent.KEY_UP, keyEvent, false, 0, true);

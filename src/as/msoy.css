@@ -204,14 +204,47 @@ ButtonBar {
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
 }
 
+.controlBar { 
+  horizontalGap: 0;
+  verticalGap: 0;
+  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
+  backgroundSize: "100%";
+}
+
 .controlBarButtons {
   fillAlphas: 0.6, 0.4;
 }
 
-.controlAvatarButton {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar_over.png");
+.controlBarButtonAvatar {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar_down.png");
+}
+
+.controlBarButtonChat {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_chat.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_chat_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_chat_down.png");
+}
+
+.controlBarButtonEdit {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_down.png");
+}
+
+.controlBarButtonVolume {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_down.png");
+}
+
+.controlBarFooterLeft {
+  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_left.png");
+}
+
+.controlBarFooterRight {
+  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_right.png");
 }
 
 VScrollBar {

@@ -31,9 +31,10 @@ import com.threerings.msoy.data.MemberObject;
 
 public class LogonPanel extends HBox
 {
-    public function LogonPanel (ctx :WorldContext)
+    public function LogonPanel (ctx :WorldContext, controlBar :ControlBar)
     {
         _ctx = ctx;
+        _controlBar = controlBar;
         _clientObs = new ClientAdapter(
             recheckGuest, recheckGuest, recheckGuest, recheckGuest,
             recheckGuest, recheckGuest, recheckGuest);
@@ -43,29 +44,37 @@ public class LogonPanel extends HBox
     {
         super.createChildren();
 
+        var h :int = _controlBar.height - 4;
+        
         var label :UITextField = new UITextField();
         label.text = Msgs.GENERAL.get("l.email");
+        label.height = h;
         addChild(label);
 
         _email = new TextInput();
         _email.text = Prefs.getUsername();
+        _email.height = h;
         addChild(_email);
 
         label = new UITextField();
         label.text = Msgs.GENERAL.get("l.password");
+        label.height = h;
         addChild(label);
 
         _password = new TextInput();
         _password.displayAsPassword = true;
+        _password.height = h;
         addChild(_password);
 
         _logonBtn = new Button();
         _logonBtn.label = Msgs.GENERAL.get("b.logon");
         _logonBtn.enabled = false;
+        _logonBtn.height = h;
         addChild(_logonBtn);
 
         _guestBtn = new CommandButton(MsoyController.LOGON);
         _guestBtn.label = Msgs.GENERAL.get("b.logon_guest");
+        _guestBtn.height = h;
         addChild(_guestBtn);
 
         _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);
@@ -142,6 +151,9 @@ public class LogonPanel extends HBox
 
     /** The giver of life. */
     protected var _ctx :WorldContext;
+
+    /** Parent container. */
+    protected var _controlBar :ControlBar;
 
     protected var _email :TextInput;
     protected var _password :TextInput;
