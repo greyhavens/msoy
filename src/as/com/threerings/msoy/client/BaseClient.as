@@ -8,7 +8,7 @@ import flash.display.Stage;
 
 import flash.external.ExternalInterface;
 
-//import mx.resources.ResourceBundle;
+import mx.resources.ResourceBundle;
 
 import com.adobe.crypto.MD5;
 
@@ -81,7 +81,9 @@ public /*abstract*/ class BaseClient extends Client
         c = MsoyAuthResponseData;
         c = MemberMarshaller;
         c = SceneBookmarkEntry;
-        c = global_properties;
+
+        [ResourceBundle("global")]
+        var rb :ResourceBundle;
     }
 
     // from Client

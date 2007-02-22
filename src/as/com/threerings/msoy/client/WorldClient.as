@@ -81,11 +81,12 @@ public class WorldClient extends BaseClient
         c = PetMarshaller;
 
         // these cause bundles to be compiled in.
-        c = general_properties;
-        c = game_properties;
-        c = editing_properties;
-        c = item_properties;
-        c = prefs_properties;
+        [ResourceBundle("general")]
+        [ResourceBundle("game")]
+        [ResourceBundle("editing")]
+        [ResourceBundle("item")]
+        [ResourceBundle("prefs")]
+        var rb :ResourceBundle;
     }
 
     // from BaseClient
