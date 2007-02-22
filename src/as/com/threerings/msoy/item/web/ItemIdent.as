@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.item.web {
 
-import com.threerings.util.Equalable;
+import com.threerings.util.Hashable;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
@@ -13,7 +13,7 @@ import com.threerings.io.Streamable;
  * A fully qualified item identifier (type and integer id).
  */
 public class ItemIdent
-    implements Equalable, Streamable
+    implements Hashable, Streamable
 {
     /** The item type identifier. */
     public var type :int;
