@@ -324,3 +324,10 @@ ListBase
   horizontalGap: 0;
   verticalGap: 0;
 }
+
+.lobbyLink {
+  fontSize: 15;
+  verticalAlign: middle;
+  color: #b4cbd7;
+  textDecoration: underline;
+}

@@ -186,13 +186,14 @@ public class LobbyPanel extends VBox
         tablesBox.addChild(tabsBox);
         tabsBox.setStyle("backgroundImage", "/media/static/game/box_tile.png");
         tabsBox.setStyle("backgroundSize", "100%");
+        tabsBox.setStyle("verticalAlign", "middle");
         var padding :HBox = new HBox();
         padding.percentWidth = 100;
         padding.percentHeight = 100;
         tabsBox.addChild(padding);
         var about :Label = new Label();
         about.text = Msgs.GAME.get("b.about");
-        about.setStyle("color", 0xb4cbd7);
+        about.styleName = "lobbyLink";
         // TODO use the correct URL here and on the buy button
         about.addEventListener(MouseEvent.CLICK, function () :void {
             _ctx.getMsoyController().showExternalURL("http://google.com");
@@ -200,7 +201,7 @@ public class LobbyPanel extends VBox
         tabsBox.addChild(about);
         var buy :Label = new Label();
         buy.text = Msgs.GAME.get("b.buy");
-        buy.setStyle("color", 0xb4cbd7);
+        buy.styleName = "lobbyLink";
         buy.addEventListener(MouseEvent.CLICK, function () :void {
             _ctx.getMsoyController().showExternalURL("http://google.com");
         });
