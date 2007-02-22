@@ -4,8 +4,6 @@ import flash.geom.Point;
 
 import flash.utils.ByteArray;
 
-import mx.utils.URLUtil;
-
 import com.threerings.util.Hashable;
 import com.threerings.util.Util;
 import com.threerings.util.StringUtil;
@@ -208,10 +206,10 @@ public class MediaDesc
      */
     public function getMediaPath () :String
     {
-        return URLUtil.getFullURL(DeploymentConfig.mediaURL,
+        return DeploymentConfig.mediaURL +
             //"http://bogocorp.com/~ray/tempsoy/"
-            "/media/"
-            + hashToString(hash) + mimeTypeToSuffix(mimeType));
+            "media/"
+            + hashToString(hash) + mimeTypeToSuffix(mimeType);
     }
 
     /**

@@ -1,7 +1,5 @@
 package com.threerings.msoy.item.web {
 
-import mx.utils.URLUtil;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
@@ -23,9 +21,9 @@ public class StaticMediaDesc extends MediaDesc
     // from MediaDesc
     override public function getMediaPath () :String
     {
-        return URLUtil.getFullURL(DeploymentConfig.mediaURL,
-            "/media/static/" + Item.getTypeName(_itemType) + "/" + _mediaType +
-            mimeTypeToSuffix(mimeType));
+        return DeploymentConfig.mediaURL +
+            "media/static/" + Item.getTypeName(_itemType) + "/" + _mediaType +
+            mimeTypeToSuffix(mimeType);
     }
 
     // documentation inherited from interface Streamable
