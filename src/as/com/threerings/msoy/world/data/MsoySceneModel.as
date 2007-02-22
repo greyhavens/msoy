@@ -2,7 +2,7 @@ package com.threerings.msoy.world.data {
 
 import com.threerings.util.ArrayIterator;
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.Hashtable;
+import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Short;
 
@@ -181,7 +181,7 @@ public class MsoySceneModel extends SceneModel
             return;
         }
 
-        _portalInfo = new Hashtable();
+        _portalInfo = new HashMap();
         for each (var furni :FurniData in furnis) {
             if (furni.actionType != FurniData.ACTION_PORTAL) {
                 continue;
@@ -253,6 +253,6 @@ public class MsoySceneModel extends SceneModel
     }
 
     /** Cached portal info. Not streamed. */
-    protected var _portalInfo :Hashtable;
+    protected var _portalInfo :HashMap;
 }
 }
