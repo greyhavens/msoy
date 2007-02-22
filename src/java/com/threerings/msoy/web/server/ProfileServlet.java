@@ -42,20 +42,27 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser(creds);
 
+        // TODO: whatever filtering and profanity checking that we want
+
         // firstly stuff their profile data into the database
         try {
             MsoyServer.profileRepo.storeProfile(new ProfileRecord(memrec.memberId, profile));
-
             if (memrec.name == null || !memrec.name.equals(profile.displayName)) {
                 MsoyServer.memberRepo.configureDisplayName(memrec.memberId, profile.displayName);
+
+                // let the member manager know about the display name change
+                final MemberName name = new MemberName(profile.displayName, memrec.memberId);
+                MsoyServer.omgr.postRunnable(new Runnable() {
+                    public void run () {
+                        MsoyServer.memberMan.displayNameChanged(name);
+                    }
+                });
             }
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update member's profile " +
                     "[who=" + memrec.who() + "].", pe);
         }
-
-        // TODO: let the member manager know about any displayName changes
     }
 
     // from interface ProfileService

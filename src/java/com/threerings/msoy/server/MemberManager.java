@@ -149,6 +149,19 @@ public class MemberManager
     }
 
     /**
+     * Called when a member updates their display name. If they are online, we update their {@link
+     * MemberObject} and all related occupant info records.
+     */
+    public void displayNameChanged (MemberName name)
+    {
+        MemberObject user = MsoyServer.lookupMember(name.getMemberId());
+        if (user != null) {
+            user.setMemberName(name);
+            updateOccupantInfo(user);
+        }
+    }
+
+    /**
      * Export alterFriend() functionality according to the web servlet way of doing things. 
      */
     public void alterFriend (int userId, int friendId, boolean add,
@@ -156,111 +169,6 @@ public class MemberManager
     {
         MemberObject user = MsoyServer.lookupMember(userId);
         alterFriend(user, userId, friendId, add, listener);
-    }
-    
-    // from interface MemberProvider
-    public void alterFriend (ClientObject caller, int friendId, boolean add,
-                             final InvocationService.InvocationListener lner)
-        throws InvocationException
-    {
-        MemberObject user = (MemberObject) caller;
-        ensureNotGuest(user);
-        ResultListener<Void> rl = new ResultListener<Void>() {
-            public void requestCompleted (Void result) {
-                // that's cool
-            }
-            public void requestFailed (Exception cause) {
-                lner.requestFailed(cause.getMessage());
-            }
-        };
-        alterFriend(user, user.getMemberId(), friendId, add, rl);
-    }
-
-    // generic alterFriend() functionality for the two public methods above. please note that
-    // user can be null here (i.e. offline).
-    protected void alterFriend (final MemberObject user, final int userId, final int friendId,
-                                final boolean add, ResultListener<Void> lner)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("alterFriend", lner) {
-            public Void invokePersistResult () throws PersistenceException {
-                if (add) {
-                    _entry = _memberRepo.inviteOrApproveFriend(userId, friendId);
-                    if (user != null) {
-                        _userName = user.memberName;
-                    } else {
-                        _userName = _memberRepo.loadMember(userId).getName();
-                    }
-                } else {
-                    _memberRepo.removeFriends(userId, friendId);
-                }
-                return null;
-            }
-
-            public void handleSuccess () {
-                FriendEntry oldEntry = user != null ? user.friends.get(friendId) : null;
-                MemberName friendName = (oldEntry != null) ?
-                    oldEntry.name : (_entry != null ? _entry.name : null);
-                MemberObject friendObj = (friendName != null) ?
-                    MsoyServer.lookupMember(friendName) : null;
-
-                // update ourselves and the friend
-                if (!add || _entry == null) {
-                    // remove the friend
-                    if (oldEntry != null) {
-                        if (user != null) {
-                            user.removeFromFriends(friendId);
-                        }
-                        if (friendObj != null) {
-                            friendObj.removeFromFriends(userId);
-                        }
-                    }
-
-                } else {
-                    // add or update the friend/status
-                    _entry.online = (friendObj != null);
-                    byte oppStatus = getOppositeFriendStatus(_entry.status);
-                    if (oldEntry == null) {
-                        if (user != null) {
-                            user.addToFriends(_entry);
-                        }
-                        if (friendObj != null) {
-                            FriendEntry opp = new FriendEntry(_userName, user != null, oppStatus);
-                            friendObj.addToFriends(opp);
-                        }
-
-                    } else {
-                        if (user != null) {
-                            user.updateFriends(_entry);
-                        }
-                        if (friendObj != null) {
-                            FriendEntry opp = friendObj.friends.get(userId);
-                            opp.status = oppStatus;
-                            friendObj.updateFriends(opp);
-                        }
-                    }
-                }
-                _listener.requestCompleted(null);
-            }
-
-            protected FriendEntry _entry;
-            protected MemberName _userName;
-        });
-    }
-
-    // from interface MemberProvider
-    public void getHomeId (ClientObject caller, byte ownerType, int ownerId,
-                          final InvocationService.ResultListener listener)
-        throws InvocationException
-    {
-        ResultListener<Integer> rl = new ResultListener<Integer>() {
-            public void requestCompleted (Integer result) {
-                listener.requestProcessed(result);
-            }
-            public void requestFailed (Exception cause) {
-                listener.requestFailed(cause.getMessage());
-            }
-        };
-        getHomeId(ownerType, ownerId, rl);
     }
 
     /**
@@ -295,158 +203,6 @@ public class MemberManager
                 }
             }
         });
-    }
-
-    // from interface MemberProvider
-    public void setAvatar (
-        ClientObject caller, int avatarItemId, final InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        final MemberObject user = (MemberObject) caller;
-        ensureNotGuest(user);
-
-        if (avatarItemId == 0) {
-            // a request to return to the default avatar
-            finishSetAvatar(user, null, listener);
-            return;
-        }
-
-        // otherwise, make sure it exists and we own it
-        MsoyServer.itemMan.getItem(
-            new ItemIdent(Item.AVATAR, avatarItemId), new ResultListener<Item>() {
-            public void requestCompleted (Item item) {
-                Avatar avatar = (Avatar) item;
-                // ensure that they own it!
-                if (user.getMemberId() != avatar.ownerId) {
-                    requestFailed(new Exception("An avatar that the user " +
-                        "does not own was specified!"));
-                } else {
-                    finishSetAvatar(user, avatar, listener);
-                }
-            }
-            public void requestFailed (Exception cause) {
-                log.log(Level.WARNING, "Unable to retrieve user's avatar.", cause);
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-            }
-        });
-    }
-
-    // from interface MemberProvider
-    public void setDisplayName (ClientObject caller, final String name,
-                                final InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        final MemberObject user = (MemberObject) caller;
-        ensureNotGuest(user);
-
-        // TODO: verify entered string
-
-        MsoyServer.invoker.postUnit(new RepositoryUnit("setDisplayName") {
-            public void invokePersist () throws PersistenceException {
-                _memberRepo.configureDisplayName(user.getMemberId(), name);
-            }
-            public void handleSuccess () {
-                user.setMemberName(new MemberName(name, user.getMemberId()));
-                updateOccupantInfo(user);
-            }
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to set display name [user=" + user.which() +
-                            ", name='" + name + "', error=" + pe + "].");
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-            }
-        });
-    }
-
-    // from interface MemberProvider
-    public void purchaseRoom (ClientObject caller, final InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        final MemberObject user = (MemberObject) caller;
-        ensureNotGuest(user);
-        final int memberId = user.getMemberId();
-        final String roomName = user.memberName + "'s new room";
-
-        // TODO: charge some flow
-
-        MsoyServer.invoker.postUnit(new RepositoryUnit("purchaseRoom") {
-            public void invokePersist () throws PersistenceException {
-                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
-                    memberId, roomName);
-            }
-            public void handleSuccess () {
-                user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
-                listener.requestProcessed();
-            }
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to create a new room [user=" + user.which() +
-                            ", error=" + pe + "].");
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-            }
-            protected int _newRoomId;
-        });
-    }
-
-    /**
-     * Convenience method to ensure that the specified caller is not a guest.
-     */
-    protected void ensureNotGuest (MemberObject caller)
-        throws InvocationException
-    {
-        if (caller.isGuest()) {
-            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
-        }
-    }
-
-    /**
-     * Return the status of a friendship as viewed from the other side.
-     */
-    protected byte getOppositeFriendStatus (byte status)
-    {
-        switch (status) {
-        case FriendEntry.PENDING_MY_APPROVAL:
-            return FriendEntry.PENDING_THEIR_APPROVAL;
-
-        case FriendEntry.PENDING_THEIR_APPROVAL:
-            return FriendEntry.PENDING_MY_APPROVAL;
-
-        default:
-            return FriendEntry.FRIEND;
-        }
-    }
-
-    /**
-     * Finish configuring the user's avatar.
-     *
-     * @param avatar may be null to revert to the default member avatar.
-     */
-    protected void finishSetAvatar (
-        final MemberObject user, final Avatar avatar,
-        final InvocationService.InvocationListener listener)
-    {
-        MsoyServer.invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
-            public void invokePersist () throws PersistenceException {
-                _memberRepo.configureAvatarId(user.getMemberId(),
-                    (avatar == null) ? 0 : avatar.itemId);
-            }
-
-            public void handleSuccess () {
-                MsoyServer.itemMan.updateItemUsage(
-                    user.getMemberId(), user.avatar, avatar, new ResultListener.NOOP<Object>() {
-                    public void requestFailed (Exception cause) {
-                        log.warning("Unable to update usage from an avatar change.");
-                    }
-                });
-                user.setAvatar(avatar);
-                updateOccupantInfo(user);
-            }
-
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to set avatar [user=" + user.which() +
-                            ", avatar='" + avatar + "', " + "error=" + pe + "].");
-                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
-            }
-        });
-
     }
     
     /**
@@ -613,12 +369,137 @@ public class MemberManager
         });
     }
 
+    
+    // from interface MemberProvider
+    public void alterFriend (ClientObject caller, int friendId, boolean add,
+                             final InvocationService.InvocationListener lner)
+        throws InvocationException
+    {
+        MemberObject user = (MemberObject) caller;
+        ensureNotGuest(user);
+        ResultListener<Void> rl = new ResultListener<Void>() {
+            public void requestCompleted (Void result) {
+                // that's cool
+            }
+            public void requestFailed (Exception cause) {
+                lner.requestFailed(cause.getMessage());
+            }
+        };
+        alterFriend(user, user.getMemberId(), friendId, add, rl);
+    }
 
-    // iterate over all the lobbies and the scenes in the world at the moment, find out the
-    // n most populated ones and sort all scenes by owner. cache the values.
-    // TODO: this is currently O(N log N) in the number of rooms; if that is unrealistic
-    // in the long run, we can easily make it O(N) by just bubbling into the top 20 (whatever)
-    // rooms on the fly, as we enumerate the scene managers.
+    // from interface MemberProvider
+    public void getHomeId (ClientObject caller, byte ownerType, int ownerId,
+                          final InvocationService.ResultListener listener)
+        throws InvocationException
+    {
+        ResultListener<Integer> rl = new ResultListener<Integer>() {
+            public void requestCompleted (Integer result) {
+                listener.requestProcessed(result);
+            }
+            public void requestFailed (Exception cause) {
+                listener.requestFailed(cause.getMessage());
+            }
+        };
+        getHomeId(ownerType, ownerId, rl);
+    }
+
+    // from interface MemberProvider
+    public void setAvatar (
+        ClientObject caller, int avatarItemId, final InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        final MemberObject user = (MemberObject) caller;
+        ensureNotGuest(user);
+
+        if (avatarItemId == 0) {
+            // a request to return to the default avatar
+            finishSetAvatar(user, null, listener);
+            return;
+        }
+
+        // otherwise, make sure it exists and we own it
+        MsoyServer.itemMan.getItem(
+            new ItemIdent(Item.AVATAR, avatarItemId), new ResultListener<Item>() {
+            public void requestCompleted (Item item) {
+                Avatar avatar = (Avatar) item;
+                // ensure that they own it!
+                if (user.getMemberId() != avatar.ownerId) {
+                    requestFailed(new Exception("An avatar that the user " +
+                        "does not own was specified!"));
+                } else {
+                    finishSetAvatar(user, avatar, listener);
+                }
+            }
+            public void requestFailed (Exception cause) {
+                log.log(Level.WARNING, "Unable to retrieve user's avatar.", cause);
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
+    }
+
+    // from interface MemberProvider
+    public void setDisplayName (ClientObject caller, final String name,
+                                final InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        final MemberObject user = (MemberObject) caller;
+        ensureNotGuest(user);
+
+        // TODO: verify entered string
+
+        MsoyServer.invoker.postUnit(new RepositoryUnit("setDisplayName") {
+            public void invokePersist () throws PersistenceException {
+                _memberRepo.configureDisplayName(user.getMemberId(), name);
+            }
+            public void handleSuccess () {
+                user.setMemberName(new MemberName(name, user.getMemberId()));
+                updateOccupantInfo(user);
+            }
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to set display name [user=" + user.which() +
+                            ", name='" + name + "', error=" + pe + "].");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
+    }
+
+    // from interface MemberProvider
+    public void purchaseRoom (ClientObject caller, final InvocationService.ConfirmListener listener)
+        throws InvocationException
+    {
+        final MemberObject user = (MemberObject) caller;
+        ensureNotGuest(user);
+        final int memberId = user.getMemberId();
+        final String roomName = user.memberName + "'s new room";
+
+        // TODO: charge some flow
+
+        MsoyServer.invoker.postUnit(new RepositoryUnit("purchaseRoom") {
+            public void invokePersist () throws PersistenceException {
+                _newRoomId = MsoyServer.sceneRepo.createBlankRoom(MsoySceneModel.OWNER_TYPE_MEMBER,
+                    memberId, roomName);
+            }
+            public void handleSuccess () {
+                user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
+                listener.requestProcessed();
+            }
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to create a new room [user=" + user.which() +
+                            ", error=" + pe + "].");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+            protected int _newRoomId;
+        });
+    }
+
+    /**
+     * Iterates over all the lobbies and the scenes in the world at the moment, find out the n most
+     * populated ones and sort all scenes by owner. cache the values.  TODO: this is currently O(N
+     * log N) in the number of rooms; if that is unrealistic in the long run, we can easily make it
+     * O(N) by just bubbling into the top 20 (whatever) rooms on the fly, as we enumerate the scene
+     * managers.
+     */
     protected void updatePPCache ()
     {
         if (System.currentTimeMillis() - _popularPlaceStamp <= POPULAR_PLACES_CACHE_LIFE) {
@@ -672,6 +553,142 @@ public class MemberManager
             }
         });
         _popularPlaceStamp = System.currentTimeMillis();
+    }
+
+    /**
+     * Generic alterFriend() functionality for the two public methods above. Please note that user
+     * can be null here (i.e. offline).
+     */
+    protected void alterFriend (final MemberObject user, final int userId, final int friendId,
+                                final boolean add, ResultListener<Void> lner)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Void>("alterFriend", lner) {
+            public Void invokePersistResult () throws PersistenceException {
+                if (add) {
+                    _entry = _memberRepo.inviteOrApproveFriend(userId, friendId);
+                    if (user != null) {
+                        _userName = user.memberName;
+                    } else {
+                        _userName = _memberRepo.loadMember(userId).getName();
+                    }
+                } else {
+                    _memberRepo.removeFriends(userId, friendId);
+                }
+                return null;
+            }
+
+            public void handleSuccess () {
+                FriendEntry oldEntry = user != null ? user.friends.get(friendId) : null;
+                MemberName friendName = (oldEntry != null) ?
+                    oldEntry.name : (_entry != null ? _entry.name : null);
+                MemberObject friendObj = (friendName != null) ?
+                    MsoyServer.lookupMember(friendName) : null;
+
+                // update ourselves and the friend
+                if (!add || _entry == null) {
+                    // remove the friend
+                    if (oldEntry != null) {
+                        if (user != null) {
+                            user.removeFromFriends(friendId);
+                        }
+                        if (friendObj != null) {
+                            friendObj.removeFromFriends(userId);
+                        }
+                    }
+
+                } else {
+                    // add or update the friend/status
+                    _entry.online = (friendObj != null);
+                    byte oppStatus = getOppositeFriendStatus(_entry.status);
+                    if (oldEntry == null) {
+                        if (user != null) {
+                            user.addToFriends(_entry);
+                        }
+                        if (friendObj != null) {
+                            FriendEntry opp = new FriendEntry(_userName, user != null, oppStatus);
+                            friendObj.addToFriends(opp);
+                        }
+
+                    } else {
+                        if (user != null) {
+                            user.updateFriends(_entry);
+                        }
+                        if (friendObj != null) {
+                            FriendEntry opp = friendObj.friends.get(userId);
+                            opp.status = oppStatus;
+                            friendObj.updateFriends(opp);
+                        }
+                    }
+                }
+                _listener.requestCompleted(null);
+            }
+
+            protected FriendEntry _entry;
+            protected MemberName _userName;
+        });
+    }
+
+    /**
+     * Convenience method to ensure that the specified caller is not a guest.
+     */
+    protected void ensureNotGuest (MemberObject caller)
+        throws InvocationException
+    {
+        if (caller.isGuest()) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+    }
+
+    /**
+     * Return the status of a friendship as viewed from the other side.
+     */
+    protected byte getOppositeFriendStatus (byte status)
+    {
+        switch (status) {
+        case FriendEntry.PENDING_MY_APPROVAL:
+            return FriendEntry.PENDING_THEIR_APPROVAL;
+
+        case FriendEntry.PENDING_THEIR_APPROVAL:
+            return FriendEntry.PENDING_MY_APPROVAL;
+
+        default:
+            return FriendEntry.FRIEND;
+        }
+    }
+
+    /**
+     * Finish configuring the user's avatar.
+     *
+     * @param avatar may be null to revert to the default member avatar.
+     */
+    protected void finishSetAvatar (
+        final MemberObject user, final Avatar avatar,
+        final InvocationService.InvocationListener listener)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
+            public void invokePersist () throws PersistenceException {
+                _memberRepo.configureAvatarId(user.getMemberId(),
+                    (avatar == null) ? 0 : avatar.itemId);
+            }
+
+            public void handleSuccess () {
+                MsoyServer.itemMan.updateItemUsage(
+                    user.getMemberId(), user.avatar, avatar, new ResultListener.NOOP<Object>() {
+                    public void requestFailed (Exception cause) {
+                        log.warning("Unable to update usage from an avatar change.");
+                    }
+                });
+                user.setAvatar(avatar);
+                updateOccupantInfo(user);
+            }
+
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to set avatar [user=" + user.which() +
+                            ", avatar='" + avatar + "', " + "error=" + pe + "].");
+                listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
+            }
+        });
+
     }
 
     // Figure out the population of the various rooms associated with a neighborhood;
