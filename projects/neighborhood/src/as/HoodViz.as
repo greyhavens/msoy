@@ -19,8 +19,12 @@ import com.threerings.util.DateUtil;
 
 import com.adobe.serialization.json.JSONDecoder;
 
+[SWF(width="640", height="480", backgroundColor=0xCBFE98)]
 public class HoodViz extends Sprite
 {
+    public static const SWF_WIDTH :uint = 640;
+    public static const SWF_HEIGHT :uint = 480;
+
     public function HoodViz ()
     {
         var data :Object;
@@ -180,18 +184,14 @@ public class HoodViz extends Sprite
                 }
             }
         }
-        _canvas.graphics.beginFill(0xCBFE98);
-        _canvas.graphics.drawRect(-_canvas.width, -_canvas.height,
-                                  _canvas.width*2, _canvas.height*2);
-        _canvas.graphics.endFill();
 
-        var xScale :Number = stage.stageWidth / (160 + _bound.right - _bound.left);
-        var yScale :Number = stage.stageHeight / (120 + _bound.bottom - _bound.top);
-        var scale :Number = Math.min(xScale, yScale);
-        _canvas.x = (80 -_bound.left) * scale;
-        _canvas.y = (60 -_bound.top) * scale;
-        _canvas.scaleX = scale;
-        _canvas.scaleY = scale;
+        // figure a canvas scale that'll safely display all that was actually drawn
+        var scale :Number = Math.min(SWF_WIDTH / (160 + _bound.width),
+                                     SWF_HEIGHT / (120 + _bound.height));
+        // and center the canvas in the SWF, tweaked by any imbalance in drawn tiles
+        _canvas.x = SWF_WIDTH/2 - (_bound.left + _bound.right)/2;
+        _canvas.y = SWF_HEIGHT/2 - (_bound.top + _bound.bottom)/2;
+        _canvas.scaleX = _canvas.scaleY = scale;
     }
 
 
