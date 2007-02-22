@@ -3,6 +3,8 @@
 
 package client.profile;
 
+import java.util.Date;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -13,11 +15,17 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
+import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.Profile;
 
 import client.shell.MsoyEntryPoint;
+import client.util.ImageChooserPopup;
 
 /**
  * Displays a person's basic profile information.
@@ -85,6 +93,21 @@ public class ProfileBlurb extends Blurb
         _editing = true;
 
         if (_ename == null) {
+            final AsyncCallback callback = new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    updatePhoto(((Photo)result).getThumbnailMedia());
+                }
+                public void onFailure (Throwable cause) {
+                    CProfile.log("Failed to load images for profile photo pick.", cause);
+                    // TODO: report error to user
+                }
+            };
+            _ephoto = new Button("Select...");
+            _ephoto.addClickListener(new ClickListener() {
+                public void onClick (Widget source) {
+                    ImageChooserPopup.displayImageChooser(callback);
+                }
+            });
             _ename = new TextBox();
             _eheadline = new TextBox();
             _eheadline.setVisibleLength(50);
@@ -95,6 +118,11 @@ public class ProfileBlurb extends Blurb
         _ename.setText(_profile.displayName);
         _eheadline.setText(_profile.headline == null ? "" : _profile.headline);
         _ehomepage.setText(_profile.homePageURL == null ? "" : _profile.homePageURL);
+
+        VerticalPanel ppanel = new VerticalPanel();
+        ppanel.add(_photo);
+        ppanel.add(_ephoto);
+        _content.setWidget(0, 0, ppanel);
         _content.setWidget(0, 1, _ename);
         _content.setWidget(1, 1, _eheadline);
         _content.setWidget(2, 1, _ehomepage);
@@ -102,11 +130,12 @@ public class ProfileBlurb extends Blurb
 
     protected void displayProfile ()
     {
-        if (_profile.photo != null) {
-            _photo.setUrl(MsoyEntryPoint.toMediaPath(_profile.photo.getMediaPath()));
-        }
+        updatePhoto(_profile.photo);
+
         _name.setText(_profile.displayName);
         _headline.setText(_profile.headline);
+        _laston.setText(_profile.lastLogon > 0L ? _lfmt.format(new Date(_profile.lastLogon)) : "");
+
         if (_profile.homePageURL == null) {
             _homepage.setHTML("");
         } else {
@@ -114,6 +143,7 @@ public class ProfileBlurb extends Blurb
                 "<a href=\"" + _profile.homePageURL + "\">" + _profile.homePageURL + "</a>");
         }
 
+        _content.setWidget(0, 0, _photo);
         _content.setWidget(0, 1, _name);
         _content.setWidget(1, 1, _headline);
         _content.setWidget(2, 1, _homepage);
@@ -121,6 +151,14 @@ public class ProfileBlurb extends Blurb
         // display the edit button if this is our profile
         if (_profile.memberId == CProfile.getMemberId()) {
             _content.setWidget(3, 2, _edit);
+        }
+    }
+
+    protected void updatePhoto (MediaDesc photo)
+    {
+        if (photo != null) {
+            _profile.photo = photo;
+            _photo.setUrl(MsoyEntryPoint.toMediaPath(photo.getMediaPath()));
         }
     }
 
@@ -155,5 +193,8 @@ public class ProfileBlurb extends Blurb
     protected HTML _blog, _gallery, _hood;
 
     protected Button _edit;
+    protected Button _ephoto;
     protected TextBox _ename, _eheadline, _ehomepage;
+
+    protected static SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
 }

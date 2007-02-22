@@ -17,9 +17,6 @@ import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.item.web.Item;
-import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.StaticMediaDesc;
 
 import com.threerings.msoy.web.client.ProfileService;
 import com.threerings.msoy.web.data.BlurbData;
@@ -48,7 +45,10 @@ public class ProfileServlet extends MsoyServiceServlet
         // firstly stuff their profile data into the database
         try {
             MsoyServer.profileRepo.storeProfile(new ProfileRecord(memrec.memberId, profile));
-            MsoyServer.memberRepo.configureDisplayName(memrec.memberId, profile.displayName);
+
+            if (memrec.name == null || !memrec.name.equals(profile.displayName)) {
+                MsoyServer.memberRepo.configureDisplayName(memrec.memberId, profile.displayName);
+            }
 
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Failed to update member's profile " +
@@ -138,9 +138,6 @@ public class ProfileServlet extends MsoyServiceServlet
         profile.memberId = memrec.memberId;
         profile.displayName = memrec.name;
         profile.lastLogon = (memrec.lastSession != null) ? memrec.lastSession.getTime() : 0L;
-
-        // TODO: allow photo customizing
-        profile.photo = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo");
 
         return profile;
     }

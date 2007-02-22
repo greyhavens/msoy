@@ -12,7 +12,9 @@ import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.MediaDesc;
+import com.threerings.msoy.item.web.StaticMediaDesc;
 import com.threerings.msoy.web.data.Profile;
 
 /**
@@ -87,7 +89,7 @@ public class ProfileRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The unique id of the memory with whom this profile is associated. */
     @Id public int memberId;
@@ -152,6 +154,8 @@ public class ProfileRecord extends PersistentRecord
         profile.location = location;
         if (photoHash != null) {
             profile.photo = new MediaDesc(photoHash, photoMimeType, photoConstraint);
+        } else {
+            profile.photo = new StaticMediaDesc(MediaDesc.IMAGE_PNG, Item.PHOTO, "profile_photo");
         }
         return profile;
     }

@@ -372,17 +372,18 @@ public class MsoyServer extends WhirledServer
     protected void checkAutoRestart ()
     {
         long lastModified = new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
-        if (lastModified > _codeModified) {
-            int players = 0;
-            for (Iterator<ClientObject> iter = clmgr.enumerateClientObjects(); iter.hasNext(); ) {
-                if (iter.next() instanceof MemberObject) {
-                    players++;
-                }
-            }
-            if (players == 0) {
-                adminMan.scheduleReboot(0, "codeUpdateAutoRestart");
+        if (lastModified < _codeModified || adminMan.statObj.serverRebootTime != 0L) {
+            return;
+        }
+
+        // if someone is online, give 'em two minutes, otherwise reboot immediately
+        int players = 0;
+        for (Iterator<ClientObject> iter = clmgr.enumerateClientObjects(); iter.hasNext(); ) {
+            if (iter.next() instanceof MemberObject) {
+                players++;
             }
         }
+        adminMan.scheduleReboot((players == 0) ? 0 : 2, "codeUpdateAutoRestart");
     }
 
     public static void main (String[] args)

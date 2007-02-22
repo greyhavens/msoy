@@ -1,0 +1,86 @@
+//
+// $Id$
+
+package client.util;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.msoy.item.web.Item;
+import com.threerings.msoy.item.web.Photo;
+
+import client.shell.CShell;
+import client.shell.MsoyEntryPoint;
+
+/**
+ * Allows a member to select an image from their inventory. In the future, will support fancy
+ * things like immediately uploading an image for use instead of getting one from their inventory,
+ * and possibly doing a Google images or Flickr search.
+ */
+public class ImageChooserPopup extends PopupPanel
+    implements ClickListener
+{
+    public static void displayImageChooser (final AsyncCallback callback)
+    {
+        CShell.membersvc.loadInventory(CShell.creds, Item.PHOTO, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                new ImageChooserPopup((ArrayList)result, callback).show();
+            }
+            public void onFailure (Throwable caught) {
+                callback.onFailure(caught);
+            }
+        });
+    }
+
+    /**
+     * Creates an image chooser popup with the supplied list of Photo items and a callback to be
+     * informed when one is selected.
+     */
+    public ImageChooserPopup (ArrayList images, AsyncCallback callback)
+    {
+        super(true);
+        _callback = callback;
+
+        HorizontalPanel itemPanel = new HorizontalPanel();
+        ScrollPanel chooser = new ScrollPanel(itemPanel);
+        setStyleName("imageChooser");
+        setWidget(chooser);
+
+        // iterate over all our photos and fill the popup panel
+        for (Iterator iter = images.iterator(); iter.hasNext(); ) {
+            Image image = new PhotoThumbnailImage(((Photo) iter.next()));
+            image.addClickListener(this);
+            itemPanel.add(image);
+        }
+    }
+
+    // from interface ClickListener
+    public void onClick (Widget sender)
+    {
+        _callback.onSuccess(((PhotoThumbnailImage)sender).photo);
+        hide();
+    }
+
+    /**
+     * A tiny helper class that carries a Photo in a Widget.
+     */
+    protected static class PhotoThumbnailImage extends Image
+    {
+        public Photo photo;
+
+        protected PhotoThumbnailImage (Photo photo) {
+            super(MsoyEntryPoint.toMediaPath(photo.getThumbnailPath()));
+            this.photo = photo;
+        }
+    }
+
+    protected AsyncCallback _callback;
+}
