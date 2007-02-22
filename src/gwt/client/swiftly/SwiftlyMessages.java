@@ -24,6 +24,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String noProjects();
 
   /**
+   * Translated "No project types found.".
+   * 
+   * @return translated "No project types found."
+   * @gwt.key noProjects
+   */
+  String noTypes();
+
+  /**
    * Translated "Create Project.".
    * 
    * @return translated "Create Project."
@@ -38,4 +46,12 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key selectProject
    */
   String selectProject();
+
+  /**
+   * Translated "What sort of project is this?".
+   * 
+   * @return translated "What sort of project is this?"
+   * @gwt.key selectType
+   */
+  String selectType();
 }

@@ -13,7 +13,6 @@ import com.samskivert.jdbc.depot.DepotRepository;
 
 import java.util.ArrayList;
 
-
 /**
  * Manages the persistent information associated with a member's projects.
  */
@@ -53,7 +52,7 @@ public class SwiftlyProjectRepository extends DepotRepository
      * Stores the supplied project record in the database, overwriting previously
      * stored project data.
      */
-    public SwiftlyProjectRecord createProject (int memberId, String projectName)
+    public SwiftlyProjectRecord createProject (int memberId, String projectName, int templateId)
         throws PersistenceException
     {
         SwiftlyProjectRecord record = new SwiftlyProjectRecord();

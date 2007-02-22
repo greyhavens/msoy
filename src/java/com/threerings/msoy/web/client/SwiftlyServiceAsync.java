@@ -22,9 +22,15 @@ public interface SwiftlyServiceAsync
     public void getProjects (WebCreds creds, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link SwiftlyService#getProjectTypes}.
+     */
+    public void getProjectTypes (WebCreds creds, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link SwiftlyService#createProject}.
      */
-    public void createProject (WebCreds creds, String projectName, AsyncCallback callback);
+    public void createProject (
+        WebCreds creds, String projectName, int projectType, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#loadSwiftlyConfig}.

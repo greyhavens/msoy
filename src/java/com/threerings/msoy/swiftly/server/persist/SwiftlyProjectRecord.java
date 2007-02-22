@@ -10,7 +10,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.web.data.SwiftlyProject;
 
 /**
- * Contains the configuration of a particular member's person page.
+ * Contains the definition of a swiftly project.
  */
 @Entity
 @Table(uniqueConstraints =

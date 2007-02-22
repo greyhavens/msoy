@@ -17,9 +17,11 @@ import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SwiftlyConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.web.data.SwiftlyProjectType;
 import com.threerings.msoy.web.data.WebCreds;
 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord; 
+import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectTypeRecord; 
 
 import java.util.ArrayList;
 
@@ -37,7 +39,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
         ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
 
         try {
-            for (SwiftlyProjectRecord pRec : MsoyServer.swiftlyRepo.findProjects(memrec.memberId)) {
+            for (SwiftlyProjectRecord pRec :
+                MsoyServer.swiftlyRepo.findProjects(memrec.memberId)) {
                 projects.add(pRec.toSwiftlyProject());
             }
         } catch (PersistenceException pe) {
@@ -49,7 +52,27 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from SwiftlyService
-    public SwiftlyProject createProject (WebCreds creds, String projectName)
+    public ArrayList getProjectTypes (WebCreds creds)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(creds);
+        ArrayList<SwiftlyProjectType> types = new ArrayList<SwiftlyProjectType>();
+
+        try {
+            for (SwiftlyProjectTypeRecord tRec :
+                MsoyServer.swiftlyTypeRepo.getProjectTypes(memrec.memberId)) {
+                types.add(tRec.toSwiftlyProjectType());
+            }
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Getting user's project types failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        return types;
+    }
+
+    // from SwiftlyService
+    public SwiftlyProject createProject (WebCreds creds, String projectName, int projectType)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
@@ -62,7 +85,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
         */
 
         try {
-            return MsoyServer.swiftlyRepo.createProject(memrec.memberId, projectName).toSwiftlyProject();
+            return MsoyServer.swiftlyRepo.createProject(
+                memrec.memberId, projectName, projectType).toSwiftlyProject();
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Creating new project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
