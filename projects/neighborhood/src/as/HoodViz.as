@@ -44,7 +44,7 @@ public class HoodViz extends Sprite
         _random = new Random(seed);
 
         _loader = new Loader();
-        _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, eclDone);
+        _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, loaderDone);
         var context :LoaderContext = new LoaderContext();
         context.applicationDomain = ApplicationDomain.currentDomain;
         _loader.load(new URLRequest(data.skinURL), context);
@@ -55,7 +55,7 @@ public class HoodViz extends Sprite
         return getDefinitionByName(name) as Class;
     }
 
-    protected function eclDone(event :Event) :void
+    protected function loaderDone(event :Event) :void
     {
         var soy :Class = getClass("soy_master");
 
@@ -277,8 +277,7 @@ public class HoodViz extends Sprite
     // the magic numbers that describe the drawn tiles' geometry
     protected function skew(x :Number, y :Number) :Point
     {
-        var f :Number = 0.88;
-        return new Point(f*x*174 + f*y*81, -f*x*69 + f*y*155);
+        return new Point(x*153 + y*71, -x*61 + y*136);
     }
 
     protected function clickHandler (event :MouseEvent) :void
