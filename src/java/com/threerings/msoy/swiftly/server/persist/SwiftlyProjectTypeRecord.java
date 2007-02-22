@@ -13,8 +13,7 @@ import com.threerings.msoy.web.data.SwiftlyProjectType;
  * Contains the definition of a swiftly project type.
  */
 @Entity
-@Table(uniqueConstraints =
-       {@UniqueConstraint(columnNames={"typeName"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"typeName"})})
 public class SwiftlyProjectTypeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
