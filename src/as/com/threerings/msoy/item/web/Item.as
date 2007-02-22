@@ -3,10 +3,9 @@
 
 package com.threerings.msoy.item.web {
 
-import mx.core.Application;
-
 import com.threerings.util.Hashable;
 import com.threerings.util.HashMap;
+import com.threerings.util.MethodQueue;
 import com.threerings.util.StringUtil;
 
 import com.threerings.io.ObjectInputStream;
@@ -113,7 +112,7 @@ public /*abstract*/ class Item
      */
     public static function getTypeForClass (iclass :Class) :int
     {
-        return (_reverseMapping.get(iclass) as int);
+        throw new Error("Not implemented on the client");
     }
 
     /**
@@ -307,16 +306,13 @@ public /*abstract*/ class Item
     {
         if (_mapping == null) {
             _mapping = new HashMap();
-            _reverseMapping = new HashMap();
         }
 
         _mapping.put(itype, iclass);
-        _reverseMapping.put(iclass, itype);
         return itype;
     }
 
     private static var _mapping :HashMap;
-    private static var _reverseMapping :HashMap;
 
     /**
      * Behold the twisted backbends to get this to work.
@@ -344,7 +340,7 @@ public /*abstract*/ class Item
     }
     private static function staticInit () :void
     {
-        Application.application.callLater(registerAll);
+        MethodQueue.callLater(registerAll);
     }
     staticInit();
 }
