@@ -292,6 +292,19 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Convenience method for opening an external window and showing
+     * the specified url. This is done when we want to show the user something
+     * without unloading the msoy world.
+     */
+    public function showExternalURL (url :String) :void
+    {
+        if (!NetUtil.navigateToURL(url, false)) {
+            _ctx.displayFeedback(null,
+                MessageBundle.tcompose("e.no_navigate", url));
+        }
+    }
+
+    /**
      * Handle the TOGGLE_FULLSCREEN command.
      */
     public function handleToggleFullscreen () :void
@@ -547,19 +560,6 @@ public class MsoyController extends Controller
         // see if we should join a world game
         if (null != params["worldGame"]) {
             handleJoinWorldGame(int(params["worldGame"]));
-        }
-    }
-
-    /**
-     * Convenience method for opening an external window and showing
-     * the specified url. This is done when we want to show the user something
-     * without unloading the msoy world.
-     */
-    protected function showExternalURL (url :String) :void
-    {
-        if (!NetUtil.navigateToURL(url, false)) {
-            _ctx.displayFeedback(null,
-                MessageBundle.tcompose("e.no_navigate", url));
         }
     }
 

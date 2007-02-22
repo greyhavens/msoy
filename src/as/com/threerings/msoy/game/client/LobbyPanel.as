@@ -5,12 +5,16 @@ package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
 
+import flash.events.MouseEvent;
+import flash.events.TextEvent;
+
 import mx.collections.ArrayCollection;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.ButtonBar;
 import mx.controls.Label;
+import mx.controls.Alert;
 
 import mx.core.Container;
 import mx.core.ClassFactory;
@@ -186,6 +190,21 @@ public class LobbyPanel extends VBox
         padding.percentWidth = 100;
         padding.percentHeight = 100;
         tabsBox.addChild(padding);
+        var about :Label = new Label();
+        about.text = Msgs.GAME.get("b.about");
+        about.setStyle("color", 0xb4cbd7);
+        // TODO use the correct URL here and on the buy button
+        about.addEventListener(MouseEvent.CLICK, function () :void {
+            _ctx.getMsoyController().showExternalURL("http://google.com");
+        });
+        tabsBox.addChild(about);
+        var buy :Label = new Label();
+        buy.text = Msgs.GAME.get("b.buy");
+        buy.setStyle("color", 0xb4cbd7);
+        buy.addEventListener(MouseEvent.CLICK, function () :void {
+            _ctx.getMsoyController().showExternalURL("http://google.com");
+        });
+        tabsBox.addChild(buy);
         var inviteBtn :CommandButton = new CommandButton();
         inviteBtn.height = 22;
         inviteBtn.label = Msgs.GAME.get("b.invite_to_game");
