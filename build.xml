@@ -300,9 +300,16 @@
     <fail message="type property must be specified: ant -Dtype=world ...">
       <condition><not><isset property="type"/></not></condition>
     </fail>
+    <if><equals arg1="${type}" arg2="header"/><then>
+      <property name="extension" value="as"/>
+    </then><else>
+      <property name="extension" value="mxml"/>
+    </else></if>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
+      <arg value="-link-report"/>
+      <arg value="/tmp/link-report.txt"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
       <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
@@ -310,7 +317,7 @@
       <arg value="-output"/>
       <arg value="${deploy.dir}/${type}-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/${type}.mxml"/>
+      <arg value="${asrc.dir}/${type}.${extension}"/>
     </exec>
     <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients"/>
   </target>
@@ -324,6 +331,11 @@
     <fail message="type property must be specified: ant -Dtype=world ...">
       <condition><not><isset property="type"/></not></condition>
     </fail>
+    <if><equals arg1="${type}" arg2="header"/><then>
+      <property name="extension" value="as"/>
+    </then><else>
+      <property name="extension" value="mxml"/>
+    </else></if>
     <exec executable="${basedir}/bin/mxmlc" failonerror="true">
       <arg value="-load-config"/>
       <arg value="etc/msoy-config.xml"/>
@@ -334,7 +346,7 @@
       <arg value="-output"/>
       <arg value="${deploy.dir}/${type}-client.swf"/>
       <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/${type}.mxml"/>
+      <arg value="${asrc.dir}/${type}.${extension}"/>
     </exec>
     <copy file="${deploy.dir}/${type}-client.swf" todir="pages/clients"/>
   </target>

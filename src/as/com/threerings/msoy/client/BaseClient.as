@@ -8,7 +8,7 @@ import flash.display.Stage;
 
 import flash.external.ExternalInterface;
 
-import mx.resources.ResourceBundle;
+//import mx.resources.ResourceBundle;
 
 import com.adobe.crypto.MD5;
 
@@ -83,8 +83,8 @@ public /*abstract*/ class BaseClient extends Client
         c = SceneBookmarkEntry;
 
         // these cause bundles to be compiled in.
-        [ResourceBundle("global")]
-        var rb :ResourceBundle; // this needs to be here for the above lines
+//        [ResourceBundle("global")]
+//        var rb :ResourceBundle; // this needs to be here for the above lines
     }
 
     // from Client

@@ -7,10 +7,6 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 
-import mx.core.Application;
-
-import mx.managers.ISystemManager;
-
 import com.threerings.util.MessageBundle;
 import com.threerings.util.MessageManager;
 
@@ -37,7 +33,7 @@ public /*abstract*/ class BaseContext
         _client = client;
 
         // initialize the message manager
-        _msgMgr = new MessageManager((Application.application.root as ISystemManager));
+        _msgMgr = new MessageManager();
         // and our convenience holder
         Msgs.init(this);
 
