@@ -10,10 +10,12 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.threerings.msoy.server.MsoyServer;
+import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.SwiftlyConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -65,5 +67,19 @@ public class SwiftlyServlet extends MsoyServiceServlet
             log.log(Level.WARNING, "Creating new project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
+    }
+
+    // from interface SwiftlyService
+    public SwiftlyConfig loadSwiftlyConfig (WebCreds creds)
+        throws ServiceException
+    {
+        // TODO: validate this user's creds
+
+        // create an applet config record
+        SwiftlyConfig config = new SwiftlyConfig();
+
+        config.server = ServerConfig.serverHost;
+        config.port = ServerConfig.serverPorts[0];
+        return config;
     }
 }

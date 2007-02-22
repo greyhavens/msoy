@@ -10,12 +10,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.data.SwiftlyConfig;
+
 /**
  * Displays the client interface for a particular swiftly project.
  */
 public class SwiftlyPanel extends VerticalPanel
 {
-    public SwiftlyPanel (int projectId)
+    public SwiftlyPanel (SwiftlyConfig config, int projectId)
     {
         super();
         setStyleName("swiftlyPanel");
@@ -25,13 +27,15 @@ public class SwiftlyPanel extends VerticalPanel
 
         Widget display = WidgetUtil.createApplet(
             "swiftly", "/clients/swiftly-client.jar",
-            "com.threerings.msoy.swiftly.client.SwiftlyApplet", "100%", "100%",
+            "com.threerings.msoy.swiftly.client.SwiftlyApplet", "800", "600",
             new String[] {  "authtoken", authtoken,
                             "projectId", String.valueOf(projectId),
-                            "server", "localhost", // TODO: unhack!
-                            "port", "4010" });
-        display.setHeight("100%");
+                            "server", config.server,
+                            "port", String.valueOf(config.port) });
+        // TODO: possible hacks to get the applet to stay the size of the browser window
+        // 100% 100% should work but isn't for the createApplet width/height
+        // display.setHeight("100%");
         add(display);
-        setCellHeight(display, "94%");
+        // setCellHeight(display, "94%");
     }
 }
