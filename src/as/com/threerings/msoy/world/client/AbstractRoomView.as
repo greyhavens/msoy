@@ -70,9 +70,9 @@ public class AbstractRoomView extends Sprite
      */
     public function getGlobalBounds () :Rectangle
     {
-        var r :Rectangle = new Rectangle();
-        r.topLeft = localToGlobal(new Point(0, 0));
-        r.bottomRight = localToGlobal(new Point(_actualWidth, _actualHeight));
+        var r :Rectangle = getScrollBounds();
+        r.topLeft = localToGlobal(r.topLeft);
+        r.bottomRight = localToGlobal(r.bottomRight);
         return r;
     }
 
@@ -259,6 +259,7 @@ public class AbstractRoomView extends Sprite
 
     /**
      * Get the full boundaries of our scrolling area.
+     * The Rectangle returned may be destructively modified.
      */
     public function getScrollBounds () :Rectangle
     {
