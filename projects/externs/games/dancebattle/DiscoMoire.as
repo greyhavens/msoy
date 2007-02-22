@@ -1,6 +1,8 @@
 package {
 
+import flash.display.Bitmap;
 import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -24,7 +26,7 @@ public class DiscoMoire extends Sprite
         _increments.push(3 * Math.PI/180);
 
         // add all the bursts
-        for each (var burst :Sprite in _bursts) {
+        for each (var burst :DisplayObject in _bursts) {
             addChild(burst);
         }
 
@@ -41,13 +43,13 @@ public class DiscoMoire extends Sprite
             }
             _radians[ii] = radians;
 
-            var sprite :Sprite = Sprite(_bursts[ii]);
-            sprite.x = -JIGGLE + Math.sin(radians) * JIGGLE;
-            sprite.y = -JIGGLE + Math.cos(radians) * JIGGLE;
+            var burst :DisplayObject = DisplayObject(_bursts[ii]);
+            burst.x = -JIGGLE + Math.sin(radians) * JIGGLE;
+            burst.y = -JIGGLE + Math.cos(radians) * JIGGLE;
         }
     }
 
-    protected function makeBurst (w :Number, h :Number, degreeIncrement :Number) :Sprite
+    protected function makeBurst (w :Number, h :Number, degreeIncrement :Number) :DisplayObject
     {
         var s :Sprite = new Sprite();
         s.graphics.lineStyle(1);
@@ -78,13 +80,7 @@ public class DiscoMoire extends Sprite
             }
         }
 
-        // and draw the inverse bitmap back into the sprite graphics
-        s.graphics.clear();
-        s.graphics.beginBitmapFill(bmp);
-        s.graphics.drawRect(0, 0, w, h);
-        s.graphics.endFill();
-
-        return s;
+        return new Bitmap(bmp);
     }
 
     protected var _bursts :Array = [];
