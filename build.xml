@@ -244,6 +244,11 @@
         <filter token="http_port" value="${http_port}"/>
       </filterset>
     </copy>
+    <taskdef name="genbundles" classpathref="classpath"
+             classname="com.threerings.presents.tools.GenActionScriptBundlesTask"/>
+    <genbundles asroot="src/as">
+      <fileset dir="rsrc/en_US/i18n" includes="**/*.properties"/>
+    </genbundles>
   </target>
 
   <target name="checkaslib">
@@ -312,7 +317,7 @@
       <arg value="/tmp/link-report.txt"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
+<!--      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>-->
       <arg value="-incremental=true"/>
       <arg value="-output"/>
       <arg value="${deploy.dir}/${type}-client.swf"/>
@@ -342,7 +347,7 @@
       <arg value="-compiler.debug"/>
       <arg value="-compiler.verbose-stacktraces=true"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
+<!--      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>-->
       <arg value="-output"/>
       <arg value="${deploy.dir}/${type}-client.swf"/>
       <arg value="-file-specs"/>
@@ -358,7 +363,7 @@
       <arg value="etc/msoy-config.xml"/>
       <arg value="-compiler.optimize"/>
       <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
+<!--      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>-->
       <arg value="-output"/>
       <arg value="${deploy.dir}/avatarviewer.swf"/>
       <arg value="-file-specs"/>

@@ -81,10 +81,7 @@ public /*abstract*/ class BaseClient extends Client
         c = MsoyAuthResponseData;
         c = MemberMarshaller;
         c = SceneBookmarkEntry;
-
-        // these cause bundles to be compiled in.
-//        [ResourceBundle("global")]
-//        var rb :ResourceBundle; // this needs to be here for the above lines
+        c = global_properties;
     }
 
     // from Client
