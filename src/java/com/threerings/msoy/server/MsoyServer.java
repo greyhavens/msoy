@@ -28,6 +28,10 @@ import com.threerings.presents.server.ClientResolver;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 
+import com.threerings.admin.server.AdminProvider;
+import com.threerings.admin.server.ConfigRegistry;
+import com.threerings.admin.server.DatabaseConfigRegistry;
+
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.server.PlaceRegistry;
@@ -51,6 +55,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.web.data.MemberName;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.server.LobbyRegistry;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
@@ -76,6 +81,9 @@ public class MsoyServer extends WhirledServer
 {
     /** The connection provider used to access our JDBC databases. */
     public static ConnectionProvider conProv;
+
+    /** Maintains a registry of runtime configuration information. */
+    public static ConfigRegistry confReg;
 
     /** Our runtime admin manager. */
     public static MsoyAdminManager adminMan = new MsoyAdminManager();
@@ -253,46 +261,23 @@ public class MsoyServer extends WhirledServer
         swiftlyTypeRepo = new SwiftlyProjectTypeRepository(conProv);
         memoryRepo = new MemoryRepository(conProv);
 
-        // intialize various services
-        spotProv = new SpotProvider(omgr, plreg, screg);
-        invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
-        parlorMan.init(invmgr, plreg);
-        sceneRepo = (MsoySceneRepository) _screp;
-        adminMan.init(this);
-        memberMan.init(memberRepo, groupRepo);
-        groupMan.init(groupRepo, memberRepo);
-        mailMan.init(conProv, memberRepo);
-        itemMan.init(conProv);
-        swiftlyMan.init(invmgr);
-        petMan.init(invmgr);
-        lobbyReg.init(invmgr);
-        worldGameReg.init(invmgr);
-        GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {
-            public int getUserId (ClientObject cliObj)
-            {
-                // will return 0 for guests..
-                return ((MemberObject) cliObj).getMemberId();
+        // create and set up our configuration registry and admin service
+        confReg = new DatabaseConfigRegistry(conProv, invoker);
+        AdminProvider.init(invmgr, confReg);
+
+        // now initialize our runtime configuration, postponing the remaining server initialization
+        // until our configuration objects are available
+        RuntimeConfig.init(omgr);
+        omgr.postRunnable(new Runnable () {
+            public void run () {
+                try {
+                    finishInit();
+                } catch (Exception e) {
+                    log.log(Level.WARNING, "Server initialization failed.", e);
+                    System.exit(-1);
+                }
             }
         });
-        toyMan.init(omgr, invoker, invmgr, plreg, itemMan.getGameRepository());
-        dictionary.init(new File(ServerConfig.serverRoot, "data/dictionary"));
-
-        // create and start up our HTTP server
-        httpServer = new MsoyHttpServer();
-        httpServer.init();
-
-        // start up an interval that checks to see if our code has changed and auto-restarts the
-        // server as soon as possible when it has
-        if (ServerConfig.config.getValue("auto_restart", false)) {
-            _codeModified = new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
-            new Interval(omgr) {
-                public void expired () {
-                    checkAutoRestart();
-                }
-            }.schedule(AUTO_RESTART_CHECK_INTERVAL, true);
-        }
-
-        log.info("Msoy server initialized.");
     }
 
     @Override
@@ -341,8 +326,7 @@ public class MsoyServer extends WhirledServer
     }
 
     @Override
-    protected PlaceRegistry createPlaceRegistry (
-        InvocationManager invmgr, RootDObjectManager omgr)
+    protected PlaceRegistry createPlaceRegistry (InvocationManager invmgr, RootDObjectManager omgr)
     {
         return new PlaceRegistry(invmgr, omgr) {
             public ClassLoader getClassLoader (PlaceConfig config) {
@@ -372,6 +356,53 @@ public class MsoyServer extends WhirledServer
                 return _online.get(visibleName);
             }
         };
+    }
+
+    /**
+     * Called once our runtime configuration information is loaded and ready.
+     */
+    protected void finishInit ()
+        throws Exception
+    {
+        // intialize various services
+        spotProv = new SpotProvider(omgr, plreg, screg);
+        invmgr.registerDispatcher(new SpotDispatcher(spotProv), SpotCodes.WHIRLED_GROUP);
+        parlorMan.init(invmgr, plreg);
+        sceneRepo = (MsoySceneRepository) _screp;
+        adminMan.init(this);
+        memberMan.init(memberRepo, groupRepo);
+        groupMan.init(groupRepo, memberRepo);
+        mailMan.init(conProv, memberRepo);
+        itemMan.init(conProv);
+        swiftlyMan.init(invmgr);
+        petMan.init(invmgr);
+        lobbyReg.init(invmgr);
+        worldGameReg.init(invmgr);
+        GameCookieManager.init(conProv, new GameCookieManager.UserIdentifier() {
+            public int getUserId (ClientObject cliObj) {
+                // will return 0 for guests..
+                return ((MemberObject) cliObj).getMemberId();
+            }
+        });
+        toyMan.init(omgr, invoker, invmgr, plreg, itemMan.getGameRepository());
+        dictionary.init(new File(ServerConfig.serverRoot, "data/dictionary"));
+
+        // create and start up our HTTP server
+        httpServer = new MsoyHttpServer();
+        httpServer.init();
+
+        // start up an interval that checks to see if our code has changed and auto-restarts the
+        // server as soon as possible when it has
+        if (ServerConfig.config.getValue("auto_restart", false)) {
+            _codeModified = new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
+            new Interval(omgr) {
+                public void expired () {
+                    checkAutoRestart();
+                }
+            }.schedule(AUTO_RESTART_CHECK_INTERVAL, true);
+        }
+
+        log.info("Msoy server initialized.");
     }
 
     protected void checkAutoRestart ()
