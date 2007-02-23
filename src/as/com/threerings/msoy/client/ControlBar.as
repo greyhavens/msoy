@@ -3,18 +3,11 @@ package com.threerings.msoy.client {
 import flash.display.DisplayObject;
 import flash.events.MouseEvent;
 
-import flash.media.SoundMixer;
-import flash.media.SoundTransform;
-
-import mx.binding.utils.BindingUtils;
-
 import mx.core.ScrollPolicy;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
-
 import mx.controls.Button;
-import mx.controls.HSlider;
 import mx.controls.Spacer;
 
 import mx.events.FlexEvent;
@@ -55,23 +48,6 @@ public class ControlBar extends HBox
         height = HEIGHT;
         width = WIDTH;
 
-        // TODO: move volume controller to a separate pop-up (robert)
-        var volume :HSlider = new HSlider();
-        volume.tickInterval = .1;
-        volume.liveDragging = true;
-        volume.minimum = 0;
-        volume.maximum = 1;
-        volume.x = 311;
-        volume.y = 41;
-        volume.width = 50;
-        SoundMixer.soundTransform = new SoundTransform(Prefs.getSoundVolume());
-        volume.value = SoundMixer.soundTransform.volume;
-        BindingUtils.bindSetter(function (val :Number) :void {
-            SoundMixer.soundTransform = new SoundTransform(val);
-            Prefs.setSoundVolume(val);
-        }, volume, "value");
-        addChild(volume);
-
         var fn :Function = function (event :ClientEvent) :void {
             checkControls();
         };
@@ -86,28 +62,25 @@ public class ControlBar extends HBox
      */
     protected function checkControls () :void
     {
+        var cls :Class = getStyle("backgroundSkin");
+        setStyle("backgroundImage", cls);
+            
         var user :MemberObject = _ctx.getClientObject();
         var isMember :Boolean = (user != null) && !user.isGuest();
         if (numChildren > 1 && (isMember == _isMember)) {
             return;
         }
 
-        // remove all children (except the volume slider)
-        while (numChildren > 1) {
-            removeChildAt(1);
-        }
-
+        removeAllChildren();
+        
         if (isMember) {
 
-            var cls :Class = getStyle("backgroundSkin");
-            setStyle("backgroundImage", cls);
-            
-            var chatControl :ChatControl = new ChatControl(_ctx, this);
+            var chatControl :ChatControl = new ChatControl(_ctx, this.height - 4);
             addChild(chatControl);
 
             var sp :Spacer = new Spacer();
             sp.width = 20;
-            addChild (sp);
+            addChild(sp);
             
             var chatBtn :CommandButton = new CommandButton();
             chatBtn.setCommand(MsoyController.POP_FRIENDS_MENU, chatBtn);
@@ -115,7 +88,7 @@ public class ControlBar extends HBox
             addChild(chatBtn);
 
             var volBtn :CommandButton = new CommandButton();
-            volBtn.setCommand(MsoyController.POP_PREFS_MENU, volBtn); // TODO
+            volBtn.setCommand(MsoyController.POP_VOLUME, volBtn);
             volBtn.styleName = "controlBarButtonVolume";
             addChild(volBtn);
             
@@ -129,28 +102,37 @@ public class ControlBar extends HBox
             editBtn.styleName = "controlBarButtonEdit";
             addChild(editBtn);
 
-            var footerLeft :SkinnableImage = new SkinnableImage();
-            footerLeft.styleName = "controlBarFooterLeft";
-            addChild (footerLeft);
-            
-            var spacer :Spacer = new Spacer();
-            spacer.percentWidth = 100;
-            addChild(spacer);
-            
-            var footerRight :SkinnableImage = new SkinnableImage();
-            footerRight.styleName = "controlBarFooterRight";
-            addChild (footerRight);
-
             // TODO: other options to consider:
             // MsoyController.SHOW_PETS
             // MsoyController.SHOW_FRIENDS
             
         } else {
-            setStyle("backgroundImage", null);
-            var logonPanel :LogonPanel = new LogonPanel(_ctx, this);
+            var logonPanel :LogonPanel = new LogonPanel(_ctx, this.height - 4);
             addChild(logonPanel);
+
+            sp = new Spacer();
+            sp.width = 20;
+            addChild(sp);
+
+            volBtn = new CommandButton();
+            volBtn.setCommand(MsoyController.POP_VOLUME, volBtn);
+            volBtn.styleName = "controlBarButtonVolume";
+            addChild(volBtn);
         }
 
+        // some elements that are common to guest and logged in users
+        var footerLeft :SkinnableImage = new SkinnableImage();
+        footerLeft.styleName = "controlBarFooterLeft";
+        addChild (footerLeft);
+        
+        var spacer :Spacer = new Spacer();
+        spacer.percentWidth = 100;
+        addChild(spacer);
+        
+        var footerRight :SkinnableImage = new SkinnableImage();
+        footerRight.styleName = "controlBarFooterRight";
+        addChild(footerRight);
+        
         // and remember how things are set for now
         _isMember = isMember;
     }
@@ -203,7 +185,7 @@ internal class SkinnableImage extends Image
     }
 
     protected var _skin : DisplayObject;
-
-    
-
 }
+
+
+

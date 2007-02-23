@@ -211,6 +211,10 @@ ButtonBar {
   backgroundSize: "100%";
 }
 
+.controlBarText { 
+  color: #dddddd;
+}
+
 .controlBarButtons {
   fillAlphas: 0.6, 0.4;
 }
@@ -245,6 +249,13 @@ ButtonBar {
 
 .controlBarFooterRight {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_right.png");
+}
+
+.volumeControl {
+  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_background.png",
+          scaleGridTop="1", scaleGridBottom="23",
+          scaleGridLeft="1", scaleGridRight="31");
+  backgroundSize: "100%";
 }
 
 VScrollBar {

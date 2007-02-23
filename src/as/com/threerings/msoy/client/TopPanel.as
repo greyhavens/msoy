@@ -60,7 +60,10 @@ public class TopPanel extends Canvas
         _controlBar.setStyle("left", 0);
         _controlBar.setStyle("right", 0);
         addChild(_controlBar);
-
+        
+        /* Commenting out the build version timestamp - there's no room for it
+           on the control bar...
+           
         if (DeploymentConfig.devClient) {
             // set up the build stamp label
             _buildStamp = new Label();
@@ -74,7 +77,8 @@ public class TopPanel extends Canvas
             _buildStamp.setStyle("fontWeight", "bold");
             _buildStamp.setStyle("bottom", -1);
             addChild(_buildStamp);
-        }
+            }
+        */
 
         // clear out the application and install ourselves as the only child
         var app :Application = Application(Application.application);

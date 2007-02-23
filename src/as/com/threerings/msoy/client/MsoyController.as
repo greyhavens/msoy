@@ -53,13 +53,16 @@ public class MsoyController extends Controller
     public static const SHOW_FRIENDS :String = "ShowFriends";
 
     /** Command to display the recent scenes list. */
-    public static const POP_ROOMS_MENU :String = "PopRoomsMenu"
+    public static const POP_ROOMS_MENU :String = "PopRoomsMenu";
 
     /** Command to display the prefs. */
-    public static const POP_PREFS_MENU :String = "PopPrefsMenu"
+    public static const POP_PREFS_MENU :String = "PopPrefsMenu";
 
     /** Command to display the friends menu. */
     public static const POP_FRIENDS_MENU :String = "PopFriendsMenu";
+
+    /** Command to display a volume slider. */
+    public static const POP_VOLUME :String = "PopVolume";
 
     /** Command to display the pets popup. */
     public static const SHOW_PETS :String = "ShowPets";
@@ -275,6 +278,15 @@ public class MsoyController extends Controller
         }
 
         CommandMenu.createMenu(menuData).popUp(trigger, true);
+    }
+
+    /**
+     * Handle the POP_VOLUME command.
+     */
+    public function handlePopVolume (trigger :Button) :void
+    {
+        var popup : VolumePopup = new VolumePopup (trigger);
+        popup.show();
     }
 
     /**

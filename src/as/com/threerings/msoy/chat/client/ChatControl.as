@@ -44,11 +44,11 @@ import com.threerings.msoy.web.data.MemberName;
  */
 public class ChatControl extends HBox
 {
-    public function ChatControl (ctx :WorldContext, bar :ControlBar)
+    public function ChatControl (ctx :WorldContext, height :int)
     {
         _ctx = ctx;
 
-        height = bar.height - 4;
+        this.height = height;
 
         _locObs = new LocationAdapter(null, locationDidChange);
 
