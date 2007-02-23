@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -45,30 +46,32 @@ public class ProjectSelectionPanel extends VerticalPanel
         add(_errorContainer);
 
         FlexTable table = new FlexTable();
-        DOM.setStyleAttribute(table.getElement(), "width", "100%");
         add(table);
 
-        _projectsContainer = new FlowPanel();
+        _projectsContainer = new VerticalPanel();
         _projectsContainer.setStyleName("projectsContainer");
-        table.setWidget(0, 0, _projectsContainer);
+        ScrollPanel chooser = new ScrollPanel(_projectsContainer);
+        // TODO this needs to have dimensions set to actually have any use but these should be
+        // relative etc.
+        chooser.setSize("300px", "150px");
+        _projectHeader = new HorizontalPanel();
+        table.setWidget(0, 0, _projectHeader);
+        table.setWidget(1, 0, chooser);
 
         // get the list of projects for this user
         CSwiftly.swiftlysvc.getProjects(CSwiftly.creds, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((ArrayList)result).iterator();
                 if (!iter.hasNext()) {
-                    _projectsContainer.add(new InlineLabel(CSwiftly.msgs.noProjects()));
+                    _projectHeader.add(new Label(CSwiftly.msgs.noProjects()));
                 } else {
-                    _projectsContainer.add(new Label(CSwiftly.msgs.selectProject()));
+                    _projectHeader.add(new Label(CSwiftly.msgs.selectProject()));
                     while (iter.hasNext()) {
                         final SwiftlyProject project = (SwiftlyProject)iter.next();
                         Hyperlink projectLink = new Hyperlink(
                             project.projectName, String.valueOf(project.projectId));
                         DOM.setStyleAttribute(projectLink.getElement(), "display", "inline");
                         _projectsContainer.add(projectLink);
-                        if (iter.hasNext()) {
-                            _projectsContainer.add(new InlineLabel(", "));
-                        }
                     }
                 }
             }
@@ -109,8 +112,6 @@ public class ProjectSelectionPanel extends VerticalPanel
             }
         });
 
-        FlexTable createProject = new FlexTable();
-        createProject.setStyleName("createProject");
         final TextBox projectText = new TextBox();
         projectText.setMaxLength(50);
         projectText.setVisibleLength(25);
@@ -120,15 +121,15 @@ public class ProjectSelectionPanel extends VerticalPanel
             }
         };
         projectText.addKeyboardListener(new EnterClickAdapter(doCreate));
-        createProject.setWidget(0, 0, projectText);
-        createProject.setWidget(0, 1, new Button(CSwiftly.msgs.createProject(), doCreate));
-        createProject.setWidget(1, 0, _typesContainer);
-        createProject.setWidget(1, 1, new InlineLabel(CSwiftly.msgs.selectType()));
-        table.setWidget(1, 0, createProject);
+        table.setWidget(2, 0, projectText);
+        table.setWidget(2, 1, new Button(CSwiftly.msgs.createProject(), doCreate));
+        table.setWidget(3, 0, _typesContainer);
+        table.setWidget(3, 1, new InlineLabel(CSwiftly.msgs.selectType()));
     }
 
-    protected FlowPanel _projectsContainer;
+    protected VerticalPanel _projectsContainer;
     protected ListBox _typesContainer;
+    protected HorizontalPanel _projectHeader;
     protected HorizontalPanel _errorContainer;
     protected int _selectedType;
 
