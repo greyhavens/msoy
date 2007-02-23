@@ -207,6 +207,7 @@ ButtonBar {
 .controlBar { 
   horizontalGap: 0;
   verticalGap: 0;
+  borderStyle: "none";
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
   backgroundSize: "100%";
 }
