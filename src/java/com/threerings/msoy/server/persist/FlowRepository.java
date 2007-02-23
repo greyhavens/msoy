@@ -23,6 +23,7 @@ import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.threerings.msoy.data.ActionType;
 
 import static com.threerings.msoy.Log.log;
 
@@ -31,19 +32,6 @@ import static com.threerings.msoy.Log.log;
  */
 public class FlowRepository extends DepotRepository
 {
-    // TODO: most likely make these enums
-    public static final int ACTION_CREATED_PROFILE              = 1;
-    public static final int ACTION_UPDATED_PROFILE              = 2;
-    
-    public static final int ACTION_SENT_FRIEND_INVITE           = 10;
-    public static final int ACTION_ACCEPTED_FRIEND_INVITE       = 11;
-    
-    public static final int ACTION_PLAYED_GAME                  = 20;
-
-    public static final int ACTION_CREATED_ITEM                 = 30;
-    public static final int ACTION_BOUGHT_ITEM                  = 31;
-    public static final int ACTION_LISTED_ITEM                  = 32;
-
     /**
      * Creates a flow repository for.
      */
