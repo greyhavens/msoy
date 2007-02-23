@@ -3,6 +3,8 @@ package {
 import flash.display.Sprite;
 import flash.display.DisplayObject;
 
+import mx.core.MovieClipAsset;
+
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -13,6 +15,11 @@ public class Scenery extends Sprite
     {
         for (var ii :int = 0; ii < objects.length; ii++) {
             var item :Object = {origin: objects[ii].point, sprite :new objects[ii].cls()};
+            // TODO: temp until I have a new objects swf from Nick
+            var mca :MovieClipAsset = item.sprite as MovieClipAsset;
+            if (mca != null) {
+                mca.gotoAndStop(1);
+            }
             item.startWidth = item.sprite.width * 0.1;
             item.startHeight = item.sprite.height * 0.1;
             // get that new sprite off the display, thank you
