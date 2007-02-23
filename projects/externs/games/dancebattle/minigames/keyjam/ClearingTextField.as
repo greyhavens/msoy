@@ -1,4 +1,4 @@
-package {
+package minigames.keyjam {
 
 import flash.events.TimerEvent;
 
