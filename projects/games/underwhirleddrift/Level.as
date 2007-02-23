@@ -48,6 +48,8 @@ public class Level extends Sprite
         addChild(new objects() as DisplayObject);
 
         _ground.setKartLocation(config.getStartingPoint(0));
+        _ground.setObstacles(new Scenery(config.getObstacles()));
+        _ground.setBonuses(new Scenery(config.getBonuses()));
     }
 
     public function isOnRoad (loc :Point) :Boolean
