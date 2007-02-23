@@ -36,6 +36,12 @@ public interface SwiftlyService extends RemoteService
         throws ServiceException;
 
     /**
+     * Loads the SwiftlyProject using the supplied projectId
+     */
+    public SwiftlyProject loadProject (WebCreds creds, int projectId)
+        throws ServiceException;
+
+    /**
      * Loads the configuration needed to load the Swiftly applet.
      */
     public SwiftlyConfig loadSwiftlyConfig (WebCreds creds)

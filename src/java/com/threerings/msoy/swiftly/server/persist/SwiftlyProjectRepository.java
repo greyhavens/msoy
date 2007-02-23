@@ -42,9 +42,10 @@ public class SwiftlyProjectRepository extends DepotRepository
      * Loads the project record for the specified project. Returns null if no
      * record has been created for that project.
      */
-    public SwiftlyProjectRecord loadProject (int projectId)
+    public SwiftlyProjectRecord loadProject (int memberId, int projectId)
         throws PersistenceException
     {
+        // TODO: verify permissions on the returned project using memberId
         return load(SwiftlyProjectRecord.class, projectId);
     }
 
@@ -63,11 +64,12 @@ public class SwiftlyProjectRepository extends DepotRepository
         try {
             insert(record);
         } catch (DuplicateKeyException dke) {
-            // TODO: Throw an exception here? If someone is expecting this to *create* a repository, returning
-            // an existing one isn't likely to be what they expect.
+            // TODO: Throw an exception here? If someone is expecting this to *create* a
+            // repository, returning an existing one isn't likely to be what they expect.
 
             // ownerId,projectName already exists, return it
-            return load(SwiftlyProjectRecord.class, SwiftlyProjectRecord.OWNER_ID, record.ownerId, SwiftlyProjectRecord.PROJECT_NAME, record.projectName);
+            return load(SwiftlyProjectRecord.class, SwiftlyProjectRecord.OWNER_ID,
+                record.ownerId, SwiftlyProjectRecord.PROJECT_NAME, record.projectName);
         }
         return record;
     }

@@ -4,6 +4,8 @@
 package client.swiftly;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -11,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.SwiftlyConfig;
+import com.threerings.msoy.web.data.SwiftlyProject;
 
 /**
  * Displays the client interface for a particular swiftly project.
@@ -20,10 +23,24 @@ public class SwiftlyPanel extends VerticalPanel
     public SwiftlyPanel (SwiftlyConfig config, int projectId)
     {
         super();
-        setStyleName("swiftlyPanel");
+        _projectTitle = new HorizontalPanel();
+        add(_projectTitle);
+
+        // load up the swiftly project record
+        CSwiftly.swiftlysvc.loadProject(CSwiftly.creds, projectId, new AsyncCallback() {
+            public void onSuccess (Object result) {
+                _project = (SwiftlyProject)result;
+                _projectTitle.add(new Label(CSwiftly.msgs.swiftlyEditing()));
+                _projectTitle.add(new Hyperlink(_project.projectName,
+                    String.valueOf(_project.projectId)));
+            }
+            public void onFailure (Throwable cause) {
+                CSwiftly.serverError(cause);
+            }
+        });
 
         String authtoken = (CSwiftly.creds == null) ? "" : CSwiftly.creds.token;
-        add(new Label("Sunrise, sunset, swiftly flow the days"));
+        setStyleName("swiftlyPanel");
 
         Widget display = WidgetUtil.createApplet(
             "swiftly", "/clients/swiftly-client.jar",
@@ -38,4 +55,7 @@ public class SwiftlyPanel extends VerticalPanel
         add(display);
         // setCellHeight(display, "94%");
     }
+
+    protected SwiftlyProject _project;
+    protected HorizontalPanel _projectTitle;
 }

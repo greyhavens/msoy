@@ -93,6 +93,21 @@ public class SwiftlyServlet extends MsoyServiceServlet
         }
     }
 
+    // from SwiftlyService
+    public SwiftlyProject loadProject (WebCreds creds, int projectId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(creds);
+
+        try {
+            return MsoyServer.swiftlyRepo.loadProject(
+                memrec.memberId, projectId).toSwiftlyProject();
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Loading project failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
     // from interface SwiftlyService
     public SwiftlyConfig loadSwiftlyConfig (WebCreds creds)
         throws ServiceException

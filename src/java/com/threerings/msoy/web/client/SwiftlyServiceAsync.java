@@ -33,6 +33,11 @@ public interface SwiftlyServiceAsync
         WebCreds creds, String projectName, int projectType, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link SwiftlyService#loadProject}.
+     */
+    public void loadProject (WebCreds creds, int projectId, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link SwiftlyService#loadSwiftlyConfig}.
      */
     public void loadSwiftlyConfig (WebCreds creds, AsyncCallback callback);

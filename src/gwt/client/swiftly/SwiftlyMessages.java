@@ -54,4 +54,12 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key selectType
    */
   String selectType();
+
+  /**
+   * Translated "You are Swiftly editing:".
+   * 
+   * @return translated "You are Swiftly editing:"
+   * @gwt.key swiftlyEditing
+   */
+  String swiftlyEditing();
 }
