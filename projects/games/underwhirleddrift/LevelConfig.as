@@ -56,20 +56,16 @@ public class LevelConfig
         }
         
         // sort the starting points based on distance from the starting line
-        var angle :Number = Math.atan2(Math.abs(_startingLine.start.y - _startingLine.stop.y),
-            Math.abs(_startingLine.start.x - _startingLine.stop.x));
         trans.identity();
         trans.translate(-_startingLine.start.x, -_startingLine.start.y);
-        trans.rotate(-angle);
+        trans.rotate(-Math.atan2(Math.abs(_startingLine.start.y - _startingLine.stop.y),
+            Math.abs(_startingLine.start.x - _startingLine.stop.x)));
         var translatedY :Number = trans.transformPoint(_startingLine.stop).y;
         _startingPoints.sort(function (obj1 :Object, obj2 :Object) :int {
-            var pnt1 :Point = obj1 as Point;
-            var pnt2 :Point = obj2 as Point;
-            var dist1 :Number = Math.abs(translatedY - trans.transformPoint(pnt1).y);
-            var dist2 :Number = Math.abs(translatedY - trans.transformPoint(pnt2).y);
+            var dist1 :Number = Math.abs(translatedY - trans.transformPoint(obj1 as Point).y);
+            var dist2 :Number = Math.abs(translatedY - trans.transformPoint(obj2 as Point).y);
             return dist1 < dist2 ? -1 : (dist2 < dist1 ? 1 : 0);
         });
-        log.debug(_startingPoints);
     }
 
     public function getStartingLine () :Line
