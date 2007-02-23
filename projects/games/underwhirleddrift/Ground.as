@@ -55,17 +55,12 @@ public class Ground extends Sprite
     }
 
     /**
-     * Set Obstacles.  this and setBonuses() might work better as a initFinished() to be called
+     * Set Scenery.  this and setKartLocation() might work better as a initFinished() to be called
      * from Level.
      */
-    public function setObstacles (obstacles :Scenery) :void
+    public function setScenery (scenery :Scenery) :void
     {
-        addChild(_obstacles = obstacles);
-    }
-
-    public function setBonuses (bonuses :Scenery) :void
-    {
-        addChild(_bonuses = bonuses);
+        addChild(_scenery = scenery);
     }
 
     /**
@@ -112,12 +107,8 @@ public class Ground extends Sprite
             }
         }
         // TODO: clean this up
-        if (_obstacles != null) {
-            _obstacles.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
-                _camera.height);
-        }
-        if (_bonuses != null) {
-            _bonuses.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
+        if (_scenery != null) {
+            _scenery.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
                 _camera.height);
         }
     }
@@ -138,10 +129,7 @@ public class Ground extends Sprite
     protected var _drivingIntoWall :Boolean = false;
 
     /** Obstacles */
-    protected var _obstacles :Scenery;
-
-    /** Bonuses */
-    protected var _bonuses :Scenery;
+    protected var _scenery :Scenery;
 
     /** height of the ground in display pixels */
     protected static const HEIGHT :int = 3 * UnderwhirledDrift.DISPLAY_HEIGHT / 4;
