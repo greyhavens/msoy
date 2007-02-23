@@ -32,10 +32,12 @@ public class Scenery extends Sprite
     /**
      * Called when the objects should be re-scaled for display in a new frame.
      */
-    public function updateItems (translateRotate :Matrix, distance :Number, minScale :Number,
+    public function updateItems (translateRotate :Matrix, distance :Number,
         cameraHeight :Number) :void
     {
+        
         var thisTransform :Matrix = new Matrix();
+        var minScale :Number = 1 / cameraHeight;
         var maxDistance :Number = distance / minScale;
         var viewRect :Rectangle = new Rectangle(-maxDistance / 2, -maxDistance, maxDistance, 
             maxDistance);
@@ -72,11 +74,6 @@ public class Scenery extends Sprite
         }
     }
     
-    protected function sortOnOriginY (obj1 :Object, obj2 :Object) :int
-    {
-        return obj1.origin.y < obj2.origin.y ? -1 : (obj2.origin.y < obj1.origin.y ? 1 : 0);
-    }
-
     protected function sortOnTransformedY (obj1 :Object, obj2 :Object) :int
     {
         return obj1.transformedOrigin.y < obj2.transformedOrigin.y ? -1 : 

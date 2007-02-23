@@ -13,6 +13,13 @@ import flash.events.Event;
 
 public class Ground extends Sprite
 {
+    /** height of the ground in display pixels */
+    public static const HEIGHT :int = UnderwhirledDrift.DISPLAY_HEIGHT - 
+        UnderwhirledDrift.SKY_HEIGHT;
+
+    /** width of the ground in display pixels */
+    public static const WIDTH :int = UnderwhirledDrift.DISPLAY_WIDTH;
+    
     public function Ground (camera :Camera)
     {
         _camera = camera;
@@ -50,7 +57,8 @@ public class Ground extends Sprite
     {
         var trans :Matrix = new Matrix();
         // TODO: Figure out what's up with the magic number 32
-        trans.translate(location.x - _camera.position.x, location.y - _camera.position.y + 32);
+        trans.translate(location.x - _camera.position.x, location.y - _camera.position.y + 
+            UnderwhirledDrift.KART_OFFSET);
         _camera.position = trans.transformPoint(_camera.position);
     }
 
@@ -69,8 +77,8 @@ public class Ground extends Sprite
     protected function enterFrame (event :Event) :void
     {
         var translateRotate :Matrix = new Matrix();
-        translateRotate.translate(0 - _camera.position.x, 0 - _camera.position.y);
-        translateRotate.rotate(0 - _camera.angle);
+        translateRotate.translate(-_camera.position.x, -_camera.position.y);
+        translateRotate.rotate(-_camera.angle);
         var thisTransform :Matrix = new Matrix();
         var stripHeight :Number = BEGINNING_STRIP_HEIGHT;
         var totalHeight :Number = 0;
@@ -89,7 +97,8 @@ public class Ground extends Sprite
             var scaleFactor :Number = (HEIGHT - totalHeight) / _camera.height;
             thisTransform.scale(scaleFactor,scaleFactor);
             // move transformed space to view space
-            thisTransform.translate(WIDTH / 2,  _camera.distance + 300 - totalHeight + stripHeight);
+            thisTransform.translate(WIDTH / 2,  _camera.distance + HEIGHT - totalHeight + 
+                stripHeight);
             // draw the track using the calculated transform and a clipping rect
             var clipping :Rectangle = new Rectangle(0, HEIGHT - totalHeight, WIDTH, 
                 stripHeight);
@@ -106,10 +115,8 @@ public class Ground extends Sprite
                 _drivingIntoWall = _level.isOnWall(transformedLoc);
             }
         }
-        // TODO: clean this up
         if (_scenery != null) {
-            _scenery.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
-                _camera.height);
+            _scenery.updateItems(translateRotate, _camera.distance, _camera.height);
         }
     }
 
@@ -130,12 +137,6 @@ public class Ground extends Sprite
 
     /** Obstacles */
     protected var _scenery :Scenery;
-
-    /** height of the ground in display pixels */
-    protected static const HEIGHT :int = 3 * UnderwhirledDrift.DISPLAY_HEIGHT / 4;
-
-    /** width of the ground in display pixels */
-    protected static const WIDTH :int = UnderwhirledDrift.DISPLAY_WIDTH;
 
     /** The height of the largest strip, at the bottom of the image. */
     protected static const BEGINNING_STRIP_HEIGHT :int = 3;

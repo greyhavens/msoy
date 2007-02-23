@@ -26,6 +26,9 @@ public class UnderwhirledDrift extends Sprite
     /** Kart location, relative to the ground coordinates */
     public static const KART_LOCATION :Point = new Point (355, 200);
 
+    /** Kart offset from its effective location */
+    public static const KART_OFFSET :int = 32;
+
     public function UnderwhirledDrift ()
     {
         var masker :Shape = new Shape();
@@ -38,25 +41,27 @@ public class UnderwhirledDrift extends Sprite
         // "sky"
         var colorBackground :Shape = new Shape();
         colorBackground.graphics.beginFill(0x8888FF);
-        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, SKY_HEIGHT + 5);
+        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, SKY_HEIGHT + 10);
         colorBackground.graphics.endFill();
         addChild(colorBackground);
 
         var camera :Camera = new Camera();
 
-        _ground = new Ground(camera);
-        _ground.y = SKY_HEIGHT;
-        addChild(_ground);
+        var ground :Ground = new Ground(camera);
+        ground.y = SKY_HEIGHT;
+        addChild(ground);
 
-        _kart = new Kart(camera, _ground);
+        _kart = new Kart(camera, ground);
         _kart.x = KART_LOCATION.x;
         // tack on a few pixels to account for the front of the kart
-        _kart.y = KART_LOCATION.y + SKY_HEIGHT + 30;
+        _kart.y = KART_LOCATION.y + SKY_HEIGHT + KART_OFFSET;
         addChild(_kart);
 
         _gameCtrl = new EZGameControl(this);
         _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
         _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyUpEvent);
+        _gameCtrl.localChat("My display name is " + _gameCtrl.getOccupantName(_gameCtrl.getMyId()) +
+            "!");
     }
 
     /** 
@@ -117,9 +122,6 @@ public class UnderwhirledDrift extends Sprite
 
     /** the game control. */
     protected var _gameCtrl :EZGameControl;
-
-    /** The driving surface. */
-    protected var _ground :Ground;
 
     /** The kart. */
     protected var _kart :Kart;
