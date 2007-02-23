@@ -215,6 +215,10 @@ body {
   width: 100%;
 }
 
+.borderedDialog {
+  background: url(/images/ui/popup/footer_tile.png) repeat-x bottom;
+}
+
 .borderedDialog .HeaderBackground {
   width: 100%;
   margin: 0px;
@@ -261,15 +265,9 @@ body {
   white-space: nowrap;
 }
 
-.borderedDialog .FooterControl {
-  background: black url(/images/ui/popup/footer_tile.png) repeat-x bottom;
+.borderedDialog .Footer {
+  background: url(/images/ui/popup/footer_left.png) no-repeat bottom left;
   height: 50px;
-}
-
-.borderedDialog .FooterImage {
-  background: black url(/images/ui/popup/footer_left.png) no-repeat bottom left;
-  height: 50px;
-  width: 200px;
 }
 
 .borderedDialog .CloseBox {
