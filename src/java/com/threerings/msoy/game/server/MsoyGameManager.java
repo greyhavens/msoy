@@ -104,6 +104,9 @@ public class MsoyGameManager extends EZGameManager
         }
         _flowAwarded.clear();
 
+        if (_playerMinutes == 0) {
+            return;
+        }
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
                 try {

@@ -141,28 +141,26 @@ public class FlowRepository extends DepotRepository
             gameRecord.accumMinutesSinceLastAssessment = 0;
         } else {
             gameRecord.accumMinutesSinceLastAssessment += playerMinutes;
-            if (gameRecord.accumMinutesSinceLastAssessment < 1000) {
-                // not time yet
-                return;
-            }
         }
-        // load all actions logged since our last assessment
-        Collection<GameFlowSummaryRecord> records =
-            findAll(GameFlowSummaryRecord.class,
+        if (gameRecord.accumMinutesSinceLastAssessment >= 1000) {
+            // load all actions logged since our last assessment
+            Collection<GameFlowSummaryRecord> records =
+                findAll(GameFlowSummaryRecord.class,
                     new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
                     new FromOverride(GameFlowGrantLogRecord.class),
                     new FieldOverride(GameFlowSummaryRecord.GAME_ID,
-                                      GameFlowGrantLogRecord.GAME_ID_C),
-                    new FieldOverride(GameFlowSummaryRecord.AMOUNT,
-                                      new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)));
+                        GameFlowGrantLogRecord.GAME_ID_C),
+                        new FieldOverride(GameFlowSummaryRecord.AMOUNT,
+                            new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)));
 
-        if (records.size() > 0) {
-            deleteAll(MemberActionLogRecord.class,
-                      new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
-                      null);
-            gameRecord.accumMinutesSinceLastAssessment = 0;
+            if (records.size() > 0) {
+                deleteAll(MemberActionLogRecord.class,
+                          new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
+                          null);
+            }
             // substitute actual algorithm at some point
             gameRecord.abuseFactor = 123;
+            gameRecord.accumMinutesSinceLastAssessment = 0;
         }
         store(gameRecord);
     }
