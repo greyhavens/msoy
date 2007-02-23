@@ -13,9 +13,9 @@ public class LevelFactory
     /**
      * create a Level that is returned, and later initialized.
      */
-    public static function createLevel (level :int) :Level
+    public static function createLevel (level :int, ground :Ground) :Level
     {
-        var instance :Level = new Level();
+        var instance :Level = new Level(ground);
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         // use an anonymous function in order to bind this level instance to it.
         loader.addEventListener(Event.COMPLETE, function (evt :Event) :void {

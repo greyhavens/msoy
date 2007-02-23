@@ -50,7 +50,8 @@ public class UnderwhirledDrift extends Sprite
 
         _kart = new Kart(camera, _ground);
         _kart.x = KART_LOCATION.x;
-        _kart.y = KART_LOCATION.y + SKY_HEIGHT;
+        // tack on a few pixels to account for the front of the kart
+        _kart.y = KART_LOCATION.y + SKY_HEIGHT + 30;
         addChild(_kart);
 
         _gameCtrl = new EZGameControl(this);

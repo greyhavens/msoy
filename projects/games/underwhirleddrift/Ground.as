@@ -19,7 +19,7 @@ public class Ground extends Sprite
 
         _stripData = new BitmapData(WIDTH, HEIGHT, true, 0);
         addChild(new Bitmap(_stripData));
-        _level = LevelFactory.createLevel(0);
+        _level = LevelFactory.createLevel(0, this);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
@@ -38,6 +38,19 @@ public class Ground extends Sprite
     public function drivingIntoWall () :Boolean
     {
         return _drivingIntoWall;
+    }
+
+    /**
+     * Set the kart location.  This is used by Level at the beginning of the game to correctly
+     * position the kart on a starting location.
+     *
+     * TODO: This will need to set camera angle as well
+     */
+    public function setKartLocation (location :Point) :void
+    {
+        var trans :Matrix = new Matrix();
+        trans.translate(location.x, -location.y);
+        _camera.position = trans.transformPoint(_camera.position);
     }
 
     /**

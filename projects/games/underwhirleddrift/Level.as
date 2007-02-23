@@ -12,6 +12,11 @@ import flash.geom.Rectangle;
 
 public class Level extends Sprite
 {
+    public function Level (ground :Ground)
+    {
+        _ground = ground;
+    }
+
     public function initialize (background :Class, rough :Class, track :Class, wall :Class,
         config :LevelConfig) :void
     {
@@ -40,6 +45,8 @@ public class Level extends Sprite
         addChild(new rough() as DisplayObject);
         addChild(_track = (new track() as DisplayObject));
         addChild(_wall = (new wall() as DisplayObject));
+
+        _ground.setKartLocation(config.getStartingPoint(0));
     }
 
     public function isOnRoad (loc :Point) :Boolean
@@ -66,5 +73,6 @@ public class Level extends Sprite
 
     protected var _track :DisplayObject;
     protected var _wall :DisplayObject;
+    protected var _ground :Ground;
 }
 }
