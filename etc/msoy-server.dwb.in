@@ -14,4 +14,15 @@
     PostInstall     @SCRIPTPATH@/msoy-server-postinst
     # PreUninstall    path/to/preuninstall/script
     PostUninstall   @SCRIPTPATH@/msoy-server-postrm
+
+    # runtime directory permissions
+    <Permissions>
+        Path        @PREFIX@/log
+        Path        @PREFIX@/logs
+        Path        @PREFIX@/run
+        Path        @PREFIX@/tmp
+        User        @APPUSER@
+        Group       @APPUSER@
+        Recursive   yes
+    </Permissions>
 </Package>

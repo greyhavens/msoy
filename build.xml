@@ -651,6 +651,11 @@
     <copy todir="${pkg.base}/data">
       <fileset dir="data" includes="**"/>
     </copy>
+    <!-- create some runtime directories -->
+    <copy file="log/README" todir="${pkg.base}/log"/>
+    <mkdir dir="${pkg.base}/logs"/>
+    <mkdir dir="${pkg.base}/run"/>
+    <mkdir dir="${pkg.base}/tmp"/>
   </target>
 
 </project>
