@@ -7,7 +7,6 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.concurrent.CountDownLatch;
 
 import com.samskivert.io.PersistenceException;
 
@@ -24,7 +23,6 @@ import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
-import com.samskivert.util.IntIntMap;
 
 import static com.threerings.msoy.Log.log;
 
@@ -133,15 +131,9 @@ public class FlowRepository extends DepotRepository
     public void maybeAssessAntiAbuseFactor (int gameId, int playerMinutes)
         throws PersistenceException
     {
-        GameAbuseRecord gameRecord = load(GameAbuseRecord.class, gameId);
-        if (gameRecord == null) {
-            gameRecord = new GameAbuseRecord();
-            gameRecord.gameId = gameId;
-            gameRecord.abuseFactor = 100;
-            gameRecord.accumMinutesSinceLastAssessment = 0;
-        } else {
-            gameRecord.accumMinutesSinceLastAssessment += playerMinutes;
-        }
+        GameAbuseRecord gameRecord = getAbuseRecord(gameId, false);
+        gameRecord.accumMinutesSinceLastAssessment += playerMinutes;
+
         if (gameRecord.accumMinutesSinceLastAssessment >= 1000) {
             // load all actions logged since our last assessment
             Collection<GameFlowSummaryRecord> records =
@@ -164,6 +156,13 @@ public class FlowRepository extends DepotRepository
         }
         store(gameRecord);
     }
+
+    public int getAntiAbuseFactor (int gameId)
+        throws PersistenceException
+    {
+        return getAbuseRecord(gameId, true).abuseFactor;
+    }
+
 
     /**
      * Deducts the specified amount of flow from the specified member's account.
@@ -284,4 +283,20 @@ public class FlowRepository extends DepotRepository
         } while (again);
     }
 
+    // read a game abuse record or create one if needed, possibly also inserting it into the db
+    protected GameAbuseRecord getAbuseRecord (int gameId, boolean insertOnCreation)
+        throws PersistenceException
+    {
+        GameAbuseRecord gameRecord = load(GameAbuseRecord.class, gameId);
+        if (gameRecord == null) {
+            gameRecord = new GameAbuseRecord();
+            gameRecord.gameId = gameId;
+            gameRecord.abuseFactor = 100;
+            gameRecord.accumMinutesSinceLastAssessment = 0;
+            if (insertOnCreation) {
+                insert(gameRecord);
+            }
+        }
+        return gameRecord;
+    }
 }
