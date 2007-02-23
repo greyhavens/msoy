@@ -56,8 +56,6 @@ public class MsoyClient extends WhirledClient
         }
 
         MsoyServer.registerMember(_memobj);
-
-        _memobj.setAccessController(CrowdObjectAccess.USER);
     }
 
     @Override // from PresentsClient
