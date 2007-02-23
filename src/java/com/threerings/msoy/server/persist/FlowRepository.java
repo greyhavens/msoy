@@ -149,9 +149,9 @@ public class FlowRepository extends DepotRepository
                     new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
                     new FromOverride(GameFlowGrantLogRecord.class),
                     new FieldOverride(GameFlowSummaryRecord.GAME_ID,
-                        GameFlowGrantLogRecord.GAME_ID_C),
-                        new FieldOverride(GameFlowSummaryRecord.AMOUNT,
-                            new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)));
+                                      GameFlowGrantLogRecord.GAME_ID_C),
+                    new FieldOverride(GameFlowSummaryRecord.AMOUNT,
+                                      new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)));
 
             if (records.size() > 0) {
                 deleteAll(MemberActionLogRecord.class,
@@ -171,7 +171,7 @@ public class FlowRepository extends DepotRepository
     public void spendFlow (int memberId, int amount)
         throws PersistenceException
     {
-        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, "spend");
+        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, false, "");
     }
 
     /**
@@ -180,7 +180,7 @@ public class FlowRepository extends DepotRepository
     public void grantFlow (int memberId, int amount)
         throws PersistenceException
     {
-        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, "grant");
+        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, false, "");
     }
 
     /**
@@ -190,7 +190,7 @@ public class FlowRepository extends DepotRepository
     public void grantFlow (String accountName, int amount)
         throws PersistenceException
     {
-        updateFlow(MemberRecord.ACCOUNT_NAME, accountName, amount, "grant");
+        updateFlow(MemberRecord.ACCOUNT_NAME, accountName, amount, false, "");
     }
 
     @Computed
@@ -223,24 +223,25 @@ public class FlowRepository extends DepotRepository
 
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
-    protected void updateFlow (String index, Comparable key, int amount, String type)
+    protected void updateFlow (String index, Comparable key, int amount, boolean grant, String type)
         throws PersistenceException
     {
+        String typeDesc = (grant ? "grant" : " spend") + "/" + type;
         if (amount <= 0) {
             throw new PersistenceException(
-                "Illegal flow " + type + " [index=" + index + ", amount=" + amount + "]");
+                "Illegal flow " + typeDesc + " [index=" + index + ", amount=" + amount + "]");
         }
 
-        String op = type.equals("grant") ? "+" : "-";
+        String op = grant ? "+" : "-";
         // TODO: Cache Invalidation
         int mods = updateLiteral(MemberRecord.class, new Where(index, key), null,
                                  MemberRecord.FLOW, MemberRecord.FLOW + op + amount);
         if (mods == 0) {
             throw new PersistenceException(
-                "Flow " + type + " modified zero rows " +
+                "Flow " + typeDesc + " modified zero rows " +
                 "[where=" + index + "=" + key + ", amount=" + amount + "]");
         } else if (mods > 1) {
-            log.warning("Flow " + type + " modified multiple rows " +
+            log.warning("Flow " + typeDesc + " modified multiple rows " +
                         "[where=" + index + "=" + key + ", amount=" + amount +
                         ", mods=" + mods + "].");
         }
@@ -249,10 +250,11 @@ public class FlowRepository extends DepotRepository
         boolean again = false;
         do {
             mods = updateLiteral(
-                DailyFlowSummary.class,
-                new Where(DailyFlowSummary.GRANT_TYPE, type, DailyFlowSummary.GRANT_DATE, date),
+                grant ? DailyFlowGrantedRecord.class : DailyFlowSpentRecord.class,
+                new Where(DailyFlowGrantedRecord.TYPE, type,
+                          DailyFlowGrantedRecord.DATE, date),
                 null,
-                DailyFlowSummary.GRANTED, DailyFlowSummary.GRANTED + op + amount);
+                DailyFlowGrantedRecord.AMOUNT, DailyFlowGrantedRecord.AMOUNT + op + amount);
             if (mods == 0) {
                 // if this is the second time we tried that update, flip out.
                 if (again) {
@@ -260,10 +262,11 @@ public class FlowRepository extends DepotRepository
                         "Flow summary update modified zero rows after insertion " +
                         "[where=" + index + "=" + key + ", amount=" + amount + "]");
                 }
-                DailyFlowSummary summary = new DailyFlowSummary();
-                summary.grantDate = date;
-                summary.grantType = type;
-                summary.granted = amount;
+                DailyFlowRecord summary =
+                    grant ? new DailyFlowGrantedRecord() : new DailyFlowSpentRecord();
+                summary.date = date;
+                summary.type = type;
+                summary.amount = amount;
                 try {
                     insert(summary);
                 } catch (PersistenceException p) {

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +28,6 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.IntTuple;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -45,7 +45,6 @@ import com.threerings.msoy.item.web.Avatar;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.item.web.MediaDesc;
-import com.threerings.msoy.item.web.Photo;
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.GroupName;
 import com.threerings.msoy.web.data.MemberName;
@@ -60,6 +59,8 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.RoomManager;
 
+import com.threerings.msoy.server.persist.DailyFlowGrantedRecord;
+import com.threerings.msoy.server.persist.DailyFlowSpentRecord;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
@@ -78,6 +79,9 @@ public class MemberManager
 {
     /** Cache popular place computations for five seconds while we're debugging. */
     public static final long POPULAR_PLACES_CACHE_LIFE = 5*1000;
+
+    /** The log for flow grants. */
+    public static Logger flowLog = Logger.getLogger("com.threerings.msoy.flow");
 
     /**
      * Prepares our member manager for operation.
@@ -490,6 +494,51 @@ public class MemberManager
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
             }
             protected int _newRoomId;
+        });
+    }
+    
+    /**
+     * Grant a member some flow, categorized and optionally metatagged. The member's
+     * {@link MemberRecord} is updated, as is the {@link DailyFlowGrantedRecord}. Finally,
+     * a line is written to the flow grant log.
+     */
+    public void grantFlow (final MemberName member, final int grantType, final int amount,
+                           final String details)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
+            public void invokePersist () throws PersistenceException {
+                _memberRepo.getFlowRepository().grantFlow(member.getMemberId(), amount);
+            }
+            public void handleSuccess () {
+                flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " " +
+                             grantType + " " + amount + " " + details);
+            }
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to grant flow [member=" + member + "grantType=" +
+                            grantType + ", amount=" + amount + ", details=" + details + "]");
+            }
+        });
+    }
+
+    /**
+     * Debit a member some flow, categorized and optionally metatagged. The member's
+     * {@link MemberRecord} is updated, as is the {@link DailyFlowSpentRecord}.
+     */
+    public void spendFlow (final MemberName member, final int grantType, final int amount,
+                           final String details)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
+            public void invokePersist () throws PersistenceException {
+                _memberRepo.getFlowRepository().spendFlow(member.getMemberId(), amount);
+            }
+            public void handleSuccess () {
+                flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " " +
+                             grantType + " " + amount + " " + details);
+            }
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to grant flow [member=" + member + "grantType=" +
+                            grantType + ", amount=" + amount + ", details=" + details + "]");
+            }
         });
     }
 
