@@ -35,7 +35,6 @@ public class Scenery extends Sprite
     public function updateItems (translateRotate :Matrix, distance :Number,
         cameraHeight :Number) :void
     {
-        
         var thisTransform :Matrix = new Matrix();
         var minScale :Number = 1 / cameraHeight;
         var maxDistance :Number = distance / minScale;

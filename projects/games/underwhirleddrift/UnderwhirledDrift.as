@@ -9,6 +9,9 @@ import flash.events.KeyboardEvent;
 
 import flash.ui.Keyboard;
 
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+
 import com.threerings.ezgame.EZGameControl;
 
 [SWF(width="711", height="400")]
@@ -60,8 +63,18 @@ public class UnderwhirledDrift extends Sprite
         _gameCtrl = new EZGameControl(this);
         _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
         _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyUpEvent);
-        _gameCtrl.localChat("My display name is " + _gameCtrl.getOccupantName(_gameCtrl.getMyId()) +
-            "!");
+
+        // names obove characters is good, but they should fade out after the race starts
+        /*
+        var nameText :TextField = new TextField();
+        nameText.text = _gameCtrl.getOccupantName(_gameCtrl.getMyId());
+        nameText.selectable = false;
+        nameText.autoSize = TextFieldAutoSize.CENTER;
+        nameText.scaleX = nameText.scaleY = 2.5;
+        _gameCtrl.localChat("width: " + nameText.width);
+        nameText.x = _kart.x - nameText.width / 2;
+        nameText.y = _kart.y - _kart.height - 5;
+        addChild(nameText);*/
     }
 
     /** 
