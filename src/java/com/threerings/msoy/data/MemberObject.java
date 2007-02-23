@@ -159,6 +159,14 @@ public class MemberObject extends BodyObject
         }
         return Avatar.getDefaultThumbnailMediaFor(Item.AVATAR);
     }
+    
+    /**
+     * Return our assessment of how likely this member is to be human, in [0, 1).
+     */
+    public double getHumanity ()
+    {
+        return (double) humanity / 256;
+    }
 
     // documentation inherited from superinterface ScenedBodyObject
     public int getSceneId ()
