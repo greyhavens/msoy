@@ -8,8 +8,7 @@ import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.Subscriber;
-
-import com.threerings.crowd.server.CrowdObjectAccess;
+import com.threerings.presents.server.PresentsObjectAccess;
 
 /**
  * Contains standard access controllers for msoy.
@@ -17,7 +16,7 @@ import com.threerings.crowd.server.CrowdObjectAccess;
 public class MsoyObjectAccess
 {
     /** The default access controller. */
-    public static AccessController DEFAULT = CrowdObjectAccess.DEFAULT;
+    public static AccessController DEFAULT = PresentsObjectAccess.DEFAULT;
 
     /** The user access controller. */
     public static AccessController USER = DEFAULT;
