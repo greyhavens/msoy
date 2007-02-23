@@ -3,6 +3,7 @@ package {
 import flash.events.Event;
 
 import com.threerings.util.EmbeddedSwfLoader;
+import com.threerings.util.HashMap;
 
 /**
  * Factory class to encapsulate all the available levels as embedded swfs.  
@@ -37,13 +38,16 @@ public class LevelFactory
     protected static const COLUMN :Class;
     [Embed(source='rsrc/objects.swf#dora_box')]
     protected static const DORA_BOX :Class;
-    protected static const OBJECT_MAPPING :Object = {
-        finishLineColor: 0xff0000,
-        startingPointColor: 0xffffff,
-        obstacles: [ 
-            { color: 0x00ffff, cls: COLUMN } ],
-        bonuses: [
-            { color: 0xffff00, cls: DORA_BOX } ]
-    };
+    // initialize the mapping of colors to objects
+    protected static var OBJECT_MAPPING :HashMap;
+    private static function staticInit () :void
+    {
+        OBJECT_MAPPING = new HashMap();
+        OBJECT_MAPPING.put(0xFF0000, { cls: null, type: LevelConfig.OBJECT_STARTING_LINE_POINT });
+        OBJECT_MAPPING.put(0xFFFFFF, { cls: null, type: LevelConfig.OBJECT_STARTING_POSITION });
+        OBJECT_MAPPING.put(0x00FFFF, { cls: COLUMN, type: LevelConfig.OBJECT_OBSTACLE });
+        OBJECT_MAPPING.put(0x00FF00, { cls: DORA_BOX, type: LevelConfig.OBJECT_BONUS });
+    }
+    staticInit();
 }
 }
