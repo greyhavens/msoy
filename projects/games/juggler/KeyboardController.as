@@ -27,20 +27,20 @@ public class KeyboardController {
     {
         if (_eventSource != null) 
         {
-            source.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
-            source.removeEventListener(KeyboardEvent.KEY_UP, keyUp);  
+            _eventSource.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+            _eventSource.removeEventListener(KeyboardEvent.KEY_UP, keyUp);  
         }
         
-        if (source !== null)
+        _eventSource = source;    
+        
+        if (_eventSource !== null)
         {
-            source.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
-            source.addEventListener(KeyboardEvent.KEY_UP, keyUp);  
+            _eventSource.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+            _eventSource.addEventListener(KeyboardEvent.KEY_UP, keyUp);  
         }  
         
         // release all the keys
         _down.length = 0;
-        
-        _eventSource = source;    
     }
 
     protected function get down() :Array
