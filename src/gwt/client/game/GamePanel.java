@@ -20,8 +20,6 @@ public class GamePanel extends VerticalPanel
 {
     public GamePanel (LaunchConfig config)
     {
-        add(new Label(config.name));
-        
         String authtoken = (CGame.creds == null) ? "" : CGame.creds.token;
         Widget display = null;
         switch (config.type) {
@@ -30,15 +28,14 @@ public class GamePanel extends VerticalPanel
             display = FlashClients.createWorldClient("worldGame=" + config.gameId);
             break;
         }
-        
+
         case LaunchConfig.FLASH_LOBBIED: {
-            display = FlashClients.createLobbyClient(config.gameId);
+            display = FlashClients.createLobbyClient(config.gameId, authtoken);
             break;
         }
 
         case LaunchConfig.FLASH_SOLO: {
-            display = WidgetUtil.createFlashContainer(
-                "game", config.gameMediaPath, 800, 600, null);
+            display = WidgetUtil.createFlashContainer("game", config.gameMediaPath, 800, 600, null);
             break;
         }
 

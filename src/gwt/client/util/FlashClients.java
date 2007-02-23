@@ -30,10 +30,11 @@ public class FlashClients
             "asclient", "/clients/header-client.swf", "5", "5", "token=" + token);
     }
 
-    public static HTML createLobbyClient (int gameId)
+    public static HTML createLobbyClient (int gameId, String token)
     {
         return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/world-client.swf", "800", "600", "gameLobby=" + gameId);
+            "asclient", "/clients/world-client.swf", 800, 600,
+            "gameLobby=" + gameId + "&token=" + token);
     }
 
     public static HTML createNeighborhood (String hoodData, String width, String height)

@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.threerings.msoy.web.client.GameService;
 import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.data.LaunchConfig;
+import com.threerings.msoy.web.data.WebCreds;
 
 import client.shell.MsoyEntryPoint;
 
@@ -62,17 +63,25 @@ public class index extends MsoyEntryPoint
         CGame.msgs = (GameMessages)GWT.create(GameMessages.class);
     }
 
-    // @Override // from MsoyEntryPoint
+    // @Override from MsoyEntryPoint
     protected void onPageLoad ()
     {
         History.addHistoryListener(this);
+    }
 
-        String initToken = History.getToken();
-        if (initToken.length() > 0) {
-            onHistoryChanged(initToken);
-        } else {
-            // TODO: display a list of this player's games
-        }
+    // @Override from MsoyEntryPoint
+    protected boolean didLogon (WebCreds creds)
+    {
+        boolean header = super.didLogon(creds);
+        onHistoryChanged(History.getToken());
+        return header;
+    }
+
+    // @Override from MsoyEntryPoint
+    protected void didLogoff ()
+    {
+        super.didLogoff();
+        onHistoryChanged(History.getToken());
     }
 
     protected void displayGamePage (int gameId)
