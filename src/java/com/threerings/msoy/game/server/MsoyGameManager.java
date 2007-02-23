@@ -91,6 +91,12 @@ public class MsoyGameManager extends EZGameManager
     @Override
     protected void gameDidEnd ()
     {
+        super.gameDidEnd();
+
+        if (_antiAbuseFactor == -1) {
+            // either things are very broken or the game just started, either way, safe to ignore
+            return;
+        }
         for (IntMap.IntEntry<PlayerFlow> entry : _players.intEntrySet()) {
             grantAwardedFlow(entry.getIntKey(), entry.getValue());
         }
@@ -130,9 +136,10 @@ public class MsoyGameManager extends EZGameManager
             PlayerFlow flowRecord = _players.get(oid);
             if (flowRecord == null) {
                 log.warning("No flow record found [where=" + where() + ", oid=" + oid + "]");
-            } else {
+            } else if (_antiAbuseFactor != -1) {
                 grantAwardedFlow(oid, flowRecord);
             }
+            _players.remove(oid);
             _msoyGameObj.removeFromFlowRates(oid);
         }
     }
@@ -148,7 +155,7 @@ public class MsoyGameManager extends EZGameManager
         if (_players.containsKey(oid)) {
             log.warning("Flow record already present [where=" + where() + ", oid=" + oid + "]");
         }
-        int rate = (int) (member.getHumanity() * FLOW_PER_MINUTE_PER_PLAYER);
+        int rate = (int) (_antiAbuseFactor * member.getHumanity() * FLOW_PER_MINUTE_PER_PLAYER);
         _players.put(oid, new PlayerFlow(rate));
         _msoyGameObj.addToFlowRates(new FlowRate(oid, rate));
     }
@@ -186,7 +193,7 @@ public class MsoyGameManager extends EZGameManager
     
     protected MsoyGameObject _msoyGameObj;
     protected int _startStamp;
-    protected int _antiAbuseFactor;
+    protected double _antiAbuseFactor;
     protected int _playerMinutes;
     protected IntMap<PlayerFlow> _players = new HashIntMap<PlayerFlow>();
 }

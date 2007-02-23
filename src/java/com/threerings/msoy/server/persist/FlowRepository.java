@@ -157,10 +157,13 @@ public class FlowRepository extends DepotRepository
         store(gameRecord);
     }
 
-    public int getAntiAbuseFactor (int gameId)
+    /**
+     * Return the current anti-abuse factor associated with the given gameId, in [0, 1).
+     */
+    public double getAntiAbuseFactor (int gameId)
         throws PersistenceException
     {
-        return getAbuseRecord(gameId, true).abuseFactor;
+        return (double) getAbuseRecord(gameId, true).abuseFactor / 0x100;
     }
 
 
