@@ -408,7 +408,7 @@ public class MsoyServer extends WhirledServer
     protected void checkAutoRestart ()
     {
         long lastModified = new File(ServerConfig.serverRoot, "dist/msoy-code.jar").lastModified();
-        if (lastModified < _codeModified || adminMan.statObj.serverRebootTime != 0L) {
+        if (lastModified <= _codeModified || adminMan.statObj.serverRebootTime != 0L) {
             return;
         }
 
