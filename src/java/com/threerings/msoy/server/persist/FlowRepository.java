@@ -127,9 +127,10 @@ public class FlowRepository extends DepotRepository
     }
 
     /**
-     * Assess a game's anti-abuse factor based on flow grants.
+     * Assess a game's anti-abuse factor based on flow grants, if it's been
+     * more than 1000 player-minutes since last.
      */
-    public void assessAntiAbuse (int gameId)
+    public void maybeAssessAntiAbuseFactor (int gameId, int playerMinutes)
         throws PersistenceException
     {
         GameAbuseRecord gameRecord = load(GameAbuseRecord.class, gameId);
@@ -138,6 +139,12 @@ public class FlowRepository extends DepotRepository
             gameRecord.gameId = gameId;
             gameRecord.abuseFactor = 100;
             gameRecord.accumMinutesSinceLastAssessment = 0;
+        } else {
+            gameRecord.accumMinutesSinceLastAssessment += playerMinutes;
+            if (gameRecord.accumMinutesSinceLastAssessment < 1000) {
+                // not time yet
+                return;
+            }
         }
         // load all actions logged since our last assessment
         Collection<GameFlowSummaryRecord> records =
@@ -156,8 +163,8 @@ public class FlowRepository extends DepotRepository
             gameRecord.accumMinutesSinceLastAssessment = 0;
             // substitute actual algorithm at some point
             gameRecord.abuseFactor = 123;
-            store(gameRecord);
         }
+        store(gameRecord);
     }
 
     /**

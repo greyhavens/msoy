@@ -3,11 +3,15 @@
 
 package com.threerings.msoy.game.server;
 
+import java.util.logging.Level;
+
+import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.Invoker;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.ezgame.server.EZGameManager;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.web.data.MemberName;
@@ -102,12 +106,12 @@ public class MsoyGameManager extends EZGameManager
 
         MsoyServer.invoker.postUnit(new Invoker.Unit() {
             public boolean invoke () {
-//                try {
-//                    int gameId = ((MsoyGameConfig) _config).persistentGameId;
-//                    MsoyServer.memberRepo.noteGameEnded(gameId, _playerMinutes);
-//                } catch (PersistenceException pe) {
-//                    log.log(Level.WARNING, "Failed to note end of game [where=" + where() + "]", pe);
-//                }
+                try {
+                    int gameId = ((MsoyGameConfig) _config).persistentGameId;
+                    MsoyServer.memberRepo.noteGameEnded(gameId, _playerMinutes);
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to note end of game [where=" + where() + "]", pe);
+                }
                 return false;
             }
         });
