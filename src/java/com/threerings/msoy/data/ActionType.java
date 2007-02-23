@@ -1,5 +1,8 @@
 package com.threerings.msoy.data;
 
+import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
+
 /**
  * Represent an action taken by a user; used in logs for humanity assessment and
  * conversion analysis purposes.
@@ -23,23 +26,7 @@ public enum ActionType
      */
     public static ActionType getActionByNumber (int num)
     {
-        switch(num) {
-        case 1:
-            return CreatedProfile;
-        case 2:
-            return UpdatedProfile;
-        case 10:
-            return AcceptedFriendInvite;
-        case 20:
-            return PlayedGame;
-        case 30:
-            return CreatedItem;
-        case 31:
-            return BoughtItem;
-        case 32:
-            return ListedItem;
-        }
-        return null;
+        return _reverse.get(num);
     }
 
     /**
@@ -53,6 +40,14 @@ public enum ActionType
     ActionType (int num)
     {
         _num = num;
+    }
+
+    protected static IntMap<ActionType> _reverse;
+    static {
+        _reverse = new HashIntMap<ActionType>();
+        for (ActionType type : ActionType.values()) {
+            _reverse.put(type.getNumber(), type);
+        }
     }
 
     protected int _num;
