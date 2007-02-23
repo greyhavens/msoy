@@ -23,7 +23,11 @@ public class LevelFactory
                 loader.getClass("track"), loader.getClass("wall"), new LevelConfig(
                 loader.getClass("objects"), OBJECT_MAPPING), loader.getClass("objects"));
         });
-        loader.load(new LevelFactory["LEVEL_" + level]());
+        try {
+            loader.load(new LevelFactory["LEVEL_" + level]());
+        } catch (re :ReferenceError) {
+            return null;
+        }
         return instance;
     }
 
