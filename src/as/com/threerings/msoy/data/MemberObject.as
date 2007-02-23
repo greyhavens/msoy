@@ -45,7 +45,10 @@ public class MemberObject extends BodyObject
 
     /** The field name of the <code>inWorldGame</code> field. */
     public static const IN_WORLD_GAME :String = "inWorldGame";
-    
+
+    /** The field name of the <code>humanity</code> field. */
+    public static const HUMANITY :String = "humanity";
+
     /** The field name of the <code>recentScenes</code> field. */
     public static const RECENT_SCENES :String = "recentScenes";
 
@@ -88,6 +91,9 @@ public class MemberObject extends BodyObject
 
     /** The object ID of the in-world game that the user is in, if any. */
     public var inWorldGame :int;
+    
+    /** Our current assessment of how likely to be human this member is, in [0, 255]. */
+    public var humanity :int;
     
     /** The recent scenes we've been through. */
     public var recentScenes :DSet;
@@ -345,18 +351,7 @@ public class MemberObject extends BodyObject
 //
 //    override public function writeObject (out :ObjectOutputStream) :void
 //    {
-//        super.writeObject(out);
-//
-//        out.writeObject(memberName);
-//        out.writeInt(sceneId);
-//        out.writeInt(clusterOid);
-//        out.writeObject(recentScenes);
-//        out.writeObject(tokens);
-//        out.writeInt(homeSceneId);
-//        out.writeObject(avatar);
-//        out.writeShort(chatStyle);
-//        out.writeShort(chatPopStyle);
-//        out.writeObject(friends);
+//        throw new Error();
 //    }
 
     override public function readObject (ins :ObjectInputStream) :void
@@ -367,6 +362,7 @@ public class MemberObject extends BodyObject
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
         inWorldGame = ins.readInt();
+        humanity = ins.readInt();
         recentScenes = (ins.readObject() as DSet);
         ownedScenes = (ins.readObject() as DSet);
         inventory = (ins.readObject() as DSet);
