@@ -6,6 +6,7 @@ package com.threerings.msoy.game.server;
 import com.samskivert.util.IntIntMap;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.ezgame.server.EZGameManager;
+import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
