@@ -40,17 +40,15 @@ while (1) {
 
     # report and deal with the server's exit code
     if ($rcode != 0) {
-        print $LOG "$fnow MetaSOY server failed (return code: $rcode) " .
-            "after $duration seconds.\n";
+        print $LOG "$fnow MetaSOY server failed (return code: $rcode) after $duration seconds.\n";
     } else {
-	print $LOG "$fnow MetaSOY server exited healthily " .
-            "after $duration seconds.\n";
+	print $LOG "$fnow MetaSOY server exited healthily after $duration seconds.\n";
     }
 
     # don't spiral out of control
     if ($duration < 60) {
         print $LOG "$fnow MetaSOY server exited too quickly. Shutting down.\n";
-        warn "$fnow MetaSOY server exited too quickly. Shutting down.\n";
-        exit(-1);
+        print $LOG "$fnow MetaSOY server exited too quickly. Taking a breather.\n";
+        sleep(60-$duration);
     }
 }
