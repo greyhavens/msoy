@@ -23,14 +23,13 @@ public class LevelFactory
                 loader.getClass("track"), loader.getClass("wall"), new LevelConfig(
                 loader.getClass("objects"), OBJECT_MAPPING), loader.getClass("objects"));
         });
-        loader.load(new LEVELS[level]);
+        loader.load(new LevelFactory["LEVEL_" + level]());
         return instance;
     }
 
     /** the list of level swfs.  This will probably get pretty long */
-    [Embed(source='rsrc/level_1.swf', mimeType='application/octet-stream')]
-    protected static const LEVEL_1 :Class;
-    protected static const LEVELS :Array = [ LEVEL_1 ];
+    [Embed(source='rsrc/level_0.swf', mimeType='application/octet-stream')]
+    protected static const LEVEL_0 :Class;
 
     /** the objects - this is done statically for now - may or may not switch to using the loader
      * in the future */
