@@ -13,6 +13,6 @@ public class MsoyGameConfig extends EZGameConfig
     @Override // documentation inherited
     public String getManagerClassName ()
     {
-        return "com.threerings.msoy.game.server.MsoyEZGameManager";
+        return "com.threerings.msoy.game.server.MsoyGameManager";
     }
 }

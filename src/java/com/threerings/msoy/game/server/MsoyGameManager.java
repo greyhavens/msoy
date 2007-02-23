@@ -4,9 +4,11 @@
 package com.threerings.msoy.game.server;
 
 import com.samskivert.util.IntIntMap;
+import com.samskivert.util.Invoker;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.ezgame.server.EZGameManager;
 import com.threerings.msoy.game.data.MsoyGameObject;
+import com.threerings.msoy.server.MsoyServer;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.server.InvocationException;
@@ -56,8 +58,8 @@ public class MsoyGameManager extends EZGameManager
         super.bodyEntered(bodyOid);
         if (_gameStartTime > 0) {
             // let any occupant potentially earn flow
-            _msoyGameObj.addToFlowRates(new FlowRate(bodyOid, 123));
-            _lastFlowUpdate.put(bodyOid, now());
+            _msoyGameObj.addToFlowRates(new FlowRate(bodyOid, FLOW_PER_MINUTE_PER_PLAYER));
+            _flowBeganStamp.put(bodyOid, now());
         }
     }
 
@@ -78,16 +80,15 @@ public class MsoyGameManager extends EZGameManager
         
         _gameStartTime = (int) (System.currentTimeMillis() / 1000);
 
-        _lastFlowUpdate = new IntIntMap();
+        _flowBeganStamp = new IntIntMap();
         _flowAwarded = new IntIntMap();
-        _flowAvailable = new IntIntMap();
 
         _msoyGameObj.flowRates = new DSet<FlowRate>();
 
         for (int i = 0; i < _plobj.occupants.size(); i ++) {
             int oid = _plobj.occupants.get(i);
             _msoyGameObj.addToFlowRates(new FlowRate(oid, 123));
-            _lastFlowUpdate.put(oid, now());
+            _flowBeganStamp.put(oid, now());
         }
     }
 
@@ -99,25 +100,41 @@ public class MsoyGameManager extends EZGameManager
             grantAwardedFlow(oidArr[i]);
         }
         _flowAwarded.clear();
-        _flowAvailable.clear();
+
+        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+//                try {
+//                    int gameId = ((MsoyGameConfig) _config).persistentGameId;
+//                    MsoyServer.memberRepo.noteGameEnded(gameId, _playerMinutes);
+//                } catch (PersistenceException pe) {
+//                    log.log(Level.WARNING, "Failed to note end of game [where=" + where() + "]", pe);
+//                }
+                return false;
+            }
+        });
     }
 
     // possibly cap and then actually grant the flow the game awarded to this player
     protected void grantAwardedFlow (int bodyOid)
     {
-        int then = _lastFlowUpdate.get(bodyOid);
-        if (then > 0) {
-            FlowRate rate = _msoyGameObj.flowRates.get(bodyOid);
-            if (rate == null) {
-                log.warning("No flow rate found [bodyOid=" + bodyOid + "]");
-                return;
-            }
-            int now = now();
-            _flowAvailable.increment(bodyOid, (rate.flowRate * (now - then)) / 60);
-            _lastFlowUpdate.put(bodyOid, now);
+        int awarded = _flowAwarded.get(bodyOid);
+        if (awarded == 0) {
+            return;
         }
-        int flow = Math.min(_flowAwarded.get(bodyOid), _flowAvailable.get(bodyOid));
-        // MsoyServer.memberMan.grantFlow(getPlayerName(pidx), flow, GrantType.GAME, blah blah);
+        int then = _flowBeganStamp.get(bodyOid);
+        if (then == 0) {
+            // flow awarded to body who was never here, ignore silently
+            return;
+        }
+        FlowRate rate = _msoyGameObj.flowRates.get(bodyOid);
+        if (rate == null) {
+            log.warning("No flow rate found [bodyOid=" + bodyOid + "]");
+            return;
+        }
+        int now = now();
+        int available = (rate.flowRate * (now - then)) / 60;
+        awarded = Math.min(awarded, available);
+        // MsoyServer.memberMan.grantFlow(bodyOid, awarded, GrantType.GAME, blah blah);
     }
 
     protected int now ()
@@ -127,7 +144,7 @@ public class MsoyGameManager extends EZGameManager
 
     protected MsoyGameObject _msoyGameObj;
     protected int _gameStartTime;
+    protected int _playerMinutes;
     protected IntIntMap _flowAwarded;
-    protected IntIntMap _flowAvailable;
-    protected IntIntMap _lastFlowUpdate;
+    protected IntIntMap _flowBeganStamp;
 }
