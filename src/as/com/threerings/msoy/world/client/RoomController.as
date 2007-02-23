@@ -164,7 +164,8 @@ public class RoomController extends SceneController
         _roomView.addChild(_walkTarget);
 
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
+        _roomView.addEventListener(MouseEvent.ROLL_OUT, mouseLeft);
+        _roomView.addEventListener(MouseEvent.ROLL_OVER, mouseEntered);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.addEventListener(KeyboardEvent.KEY_UP, keyEvent);
     }
@@ -173,6 +174,8 @@ public class RoomController extends SceneController
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.removeEventListener(MouseEvent.ROLL_OUT, mouseLeft);
+        _roomView.removeEventListener(MouseEvent.ROLL_OVER, mouseEntered);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
         _roomView.stage.removeEventListener(KeyboardEvent.KEY_UP, keyEvent);
@@ -195,7 +198,8 @@ public class RoomController extends SceneController
 
         // turn editing off
         _roomView.addEventListener(MouseEvent.CLICK, mouseClicked);
-        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
+        _roomView.addEventListener(MouseEvent.ROLL_OUT, mouseLeft);
+        _roomView.addEventListener(MouseEvent.ROLL_OVER, mouseEntered);
 
         // possibly save the edits
         if (edits != null) {
@@ -343,10 +347,31 @@ public class RoomController extends SceneController
     {
         // set up editing
         _roomView.removeEventListener(MouseEvent.CLICK, mouseClicked);
+        _roomView.removeEventListener(MouseEvent.ROLL_OUT, mouseLeft);
+        _roomView.removeEventListener(MouseEvent.ROLL_OVER, mouseEntered);
         _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
         _walkTarget.visible = false;
 
         _editor = new EditorController(_mctx, this, _roomView, _scene, items);
+    }
+
+    /**
+     * The mouse has left the roomview, stop checking hovers.
+     */
+    protected function mouseLeft (event :MouseEvent) :void
+    {
+        _walkTarget.visible = false;
+        setHoverSprite(null);
+
+        _roomView.removeEventListener(Event.ENTER_FRAME, checkMouse);
+    }
+
+    /**
+     * The mouse has entered the roomview, start checking hovers.
+     */
+    protected function mouseEntered (event :MouseEvent) :void
+    {
+        _roomView.addEventListener(Event.ENTER_FRAME, checkMouse);
     }
 
     /**
@@ -362,17 +387,15 @@ public class RoomController extends SceneController
         var sy :Number = _roomView.stage.mouseY;
         var showWalkTarget :Boolean = false;
 
-        if (_roomView.getGlobalBounds().contains(sx, sy)) {
-            var hitter :MsoySprite = getHitSprite(sx, sy);
-            if (hitter == null) {
-                var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
-                if (cloc.click == ClickLocation.FLOOR) {
-                    _walkTarget.x = _roomView.mouseX - _walkTarget.width/2;
-                    _walkTarget.y = _roomView.mouseY - _walkTarget.height/2;
-                    _walkTarget.scaleX = 1 / _roomView.scaleX;
-                    _walkTarget.scaleY = 1 / _roomView.scaleY;
-                    showWalkTarget = true;
-                }
+        var hitter :MsoySprite = getHitSprite(sx, sy);
+        if (hitter == null) {
+            var cloc :ClickLocation = _roomView.pointToLocation(sx, sy);
+            if (cloc.click == ClickLocation.FLOOR) {
+                _walkTarget.x = _roomView.mouseX - _walkTarget.width/2;
+                _walkTarget.y = _roomView.mouseY - _walkTarget.height/2;
+                _walkTarget.scaleX = 1 / _roomView.scaleX;
+                _walkTarget.scaleY = 1 / _roomView.scaleY;
+                showWalkTarget = true;
             }
         }
 
