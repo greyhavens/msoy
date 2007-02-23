@@ -19,9 +19,9 @@ public class LevelFactory
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         // use an anonymous function in order to bind this level instance to it.
         loader.addEventListener(Event.COMPLETE, function (evt :Event) :void {
-            new LevelConfig(loader.getClass("objects"), OBJECT_MAPPING);
             instance.initialize(loader.getClass("background"), loader.getClass("rough"), 
-                loader.getClass("track"), loader.getClass("wall")); 
+                loader.getClass("track"), loader.getClass("wall"), new LevelConfig(
+                loader.getClass("objects"), OBJECT_MAPPING));
         });
         loader.load(new LEVELS[level]);
         return instance;

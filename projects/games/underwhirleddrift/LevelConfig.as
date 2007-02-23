@@ -18,6 +18,9 @@ public class LevelConfig
 
     public function LevelConfig (objectsLayer :Class, map :HashMap) 
     {
+        _startingPoints = new Array();
+        _obstacles = new Array();
+        _bonuses = new Array();
         var layerImg :DisplayObject = new objectsLayer() as DisplayObject;
         var layerBitmap :BitmapData = new BitmapData(layerImg.width, layerImg.height, true, 0);
         var trans :Matrix = new Matrix();
@@ -27,28 +30,46 @@ public class LevelConfig
         for (var h :int = 0; h < layerImg.height; h++) {
             for (var w :int = 0; w < layerImg.width; w++) {
                 if ((layerBitmap.getPixel32(w, h) & 0xFF000000) != 0) {
-                    var logmsg :String = "found ";
                     var obj :Object = map.get(layerBitmap.getPixel(w, h));
+                    var point :Point = new Point(w - layerImg.width / 2, h - layerImg.height / 2);
                     switch (obj.type) {
                     case OBJECT_STARTING_LINE_POINT:
-                        logmsg += "starting line point";
+                        if (_startingLine == null) {
+                            _startingLine = new Line(point, null);
+                        } else {
+                            _startingLine.stop = point;
+                        }
                         break;
                     case OBJECT_STARTING_POSITION:
-                        logmsg += "starting position";
+                        _startingPoints.push(point);
                         break;
                     case OBJECT_OBSTACLE:
-                        logmsg += "obstacle";
+                        _obstacles.push({cls: obj.cls, point: point});
                         break;
                     case OBJECT_BONUS:
-                        logmsg += "bonus";
+                        _bonuses.push({cls: obj.cls, point: point});
                         break;
                     // ignore unknown colors
                     }
-                    logmsg += " @ (" + w + ", " + h + ")";
-                    log.debug(logmsg);
                 }
             }
         }
+        
+        // sort the starting points based on distance from the starting line
+        var angle :Number = Math.atan2(Math.abs(_startingLine.start.y - _startingLine.stop.y),
+            Math.abs(_startingLine.start.x - _startingLine.stop.x));
+        trans.identity();
+        trans.translate(-_startingLine.start.x, -_startingLine.start.y);
+        trans.rotate(-angle);
+        var translatedY :Number = trans.transformPoint(_startingLine.stop).y;
+        _startingPoints.sort(function (obj1 :Object, obj2 :Object) :int {
+            var pnt1 :Point = obj1 as Point;
+            var pnt2 :Point = obj2 as Point;
+            var dist1 :Number = Math.abs(translatedY - trans.transformPoint(pnt1).y);
+            var dist2 :Number = Math.abs(translatedY - trans.transformPoint(pnt2).y);
+            return dist1 < dist2 ? -1 : (dist2 < dist1 ? 1 : 0);
+        });
+        log.debug(_startingPoints);
     }
 
     public function getStartingLine () :Line

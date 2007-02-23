@@ -12,7 +12,8 @@ import flash.geom.Rectangle;
 
 public class Level extends Sprite
 {
-    public function initialize (background :Class, rough :Class, track :Class, wall :Class) :void
+    public function initialize (background :Class, rough :Class, track :Class, wall :Class,
+        config :LevelConfig) :void
     {
         var backgroundImage :Shape;
         var backgroundSprite :Sprite = (new background() as Sprite);
