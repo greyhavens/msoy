@@ -72,12 +72,13 @@ public class TagDetailPanel extends FlexTable
         setStyleName("tagDetailPanel");
         _service = service;
 
+        int col = 0;
         _tags = new FlowPanel();
         _tags.add(new Label(CShell.cmsgs.tagLoading()));
-        setWidget(0, 0, _tags);
+        setWidget(0, col, _tags);
+        getFlexCellFormatter().setStyleName(0, col++, "Tags");
 
-        int col = 0;
-        setWidget(1, col++, new Label(CShell.cmsgs.tagAddTag()));
+        setWidget(0, col++, new Label(CShell.cmsgs.tagAddTag()));
         getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_MIDDLE);
         TextBox newTagBox = new TextBox();
         newTagBox.setMaxLength(20);
@@ -112,10 +113,10 @@ public class TagDetailPanel extends FlexTable
                 ((TextBox) sender).setText(null);
             }
         }));
-        setWidget(1, col++, newTagBox);
+        setWidget(0, col++, newTagBox);
 
 //         _quickTagLabel = new Label(CShell.cmsgs.tagQuickAdd());
-//         setWidget(1, col++, _quickTagLabel);
+//         setWidget(0, col++, _quickTagLabel);
 //         getFlexCellFormatter().setVerticalAlignment(1, 2, HasVerticalAlignment.ALIGN_MIDDLE);
 //         _quickTags = new ListBox();
 //         _quickTags.addChangeListener(new ChangeListener() {
@@ -133,7 +134,7 @@ public class TagDetailPanel extends FlexTable
 //                 });
 //             }
 //         });
-//         setWidget(1, col++, _quickTags);
+//         setWidget(0, col++, _quickTags);
 
         if (_service.supportFlags()) {
             final PopupPanel menuPanel = new PopupPanel(true);
@@ -157,13 +158,11 @@ public class TagDetailPanel extends FlexTable
                 public void onMouseEnter (Widget sender) { }
                 public void onMouseMove (Widget sender, int x, int y) { }
             });
-            setWidget(1, col++, flagLabel);
+            setWidget(0, col++, flagLabel);
         }
 
-        setWidget(2, 0, _status = new Label(""));
-
-        getFlexCellFormatter().setColSpan(0, 0, getCellCount(1));
-        getFlexCellFormatter().setColSpan(2, 0, getCellCount(1));
+        setWidget(1, 0, _status = new Label(""));
+        getFlexCellFormatter().setColSpan(1, 0, getCellCount(0));
 
         refreshTags();
     }

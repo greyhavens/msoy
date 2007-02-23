@@ -82,7 +82,8 @@ public abstract class BorderedDialog extends BorderedPopup
         _main.add(_contents = createContents());
         _contents.setWidth("100%");
 
-        _main.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
+        _main.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
+        _main.setVerticalAlignment(VerticalPanel.ALIGN_BOTTOM);
         _main.add(_footer = new HorizontalPanel());
         // there's no way to do this through normal channels
         DOM.setAttribute(DOM.getParent(_footer.getElement()), "className", "Footer");

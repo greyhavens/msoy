@@ -171,6 +171,10 @@
   font-size: 12px;
 }
 
+.tagDetailPanel .Tags {
+  padding-right: 10px;
+}
+
 .tagDetailPanel .LabelLink {
     cursor: pointer;
     text-decoration: underline;
