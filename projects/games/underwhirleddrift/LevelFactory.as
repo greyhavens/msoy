@@ -18,11 +18,9 @@ public class LevelFactory
         var loader :EmbeddedSwfLoader = new EmbeddedSwfLoader();
         // use an anonymous function in order to bind this level instance to it.
         loader.addEventListener(Event.COMPLETE, function (evt :Event) :void {
-            var background :Class = loader.getSymbol("background") as Class;
-            var rough :Class = loader.getSymbol("rough") as Class;
-            var track :Class = loader.getSymbol("track") as Class;
-            var wall :Class = loader.getSymbol("wall") as Class;
-            instance.initialize(background, rough, track, wall);
+            new LevelConfig(loader.getClass("objects"), OBJECT_MAPPING);
+            instance.initialize(loader.getClass("background"), loader.getClass("rough"), 
+                loader.getClass("track"), loader.getClass("wall")); 
         });
         loader.load(new LEVELS[level]);
         return instance;
@@ -32,5 +30,20 @@ public class LevelFactory
     [Embed(source='rsrc/level_1.swf', mimeType='application/octet-stream')]
     protected static const LEVEL_1 :Class;
     protected static const LEVELS :Array = [ LEVEL_1 ];
+
+    /** the objects - this is done statically for now - may or may not switch to using the loader
+     * in the future */
+    [Embed(source='rsrc/objects.swf#column')]
+    protected static const COLUMN :Class;
+    [Embed(source='rsrc/objects.swf#dora_box')]
+    protected static const DORA_BOX :Class;
+    protected static const OBJECT_MAPPING :Object = {
+        finishLineColor: 0xff0000,
+        startingPointColor: 0xffffff,
+        obstacles: [ 
+            { color: 0x00ffff, cls: COLUMN } ],
+        bonuses: [
+            { color: 0xffff00, cls: DORA_BOX } ]
+    };
 }
 }

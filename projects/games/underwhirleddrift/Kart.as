@@ -17,8 +17,6 @@ public class Kart extends Sprite
         _camera = camera;
         _ground = ground;
         _kart = new KART();
-        var log :Log = Log.getLog(UnderwhirledDrift);
-        log.debug("frames: " + _kart.totalFrames);
         _kart.gotoAndStop(180);
         addChild(_kart);
 
@@ -210,7 +208,7 @@ public class Kart extends Sprite
     protected static const KART :Class;
 
     /** turning constants */
-    protected static const TURN_VIEW_ANGLE :int = 20; // in degrees
+    protected static const TURN_VIEW_ANGLE :int = 15; // in degrees
     protected static const DRIFT_VIEW_ANGLE :int = 45; // in degrees
 
     /** constants to control kart motion properties */
