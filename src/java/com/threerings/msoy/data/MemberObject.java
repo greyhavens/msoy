@@ -165,7 +165,7 @@ public class MemberObject extends BodyObject
      */
     public double getHumanity ()
     {
-        return (double) humanity / 256;
+        return (double) humanity / 0x100;
     }
 
     // documentation inherited from superinterface ScenedBodyObject
