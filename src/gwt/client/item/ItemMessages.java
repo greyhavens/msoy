@@ -24,14 +24,6 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String noDescrip();
 
   /**
-   * Translated "by {0}".
-   * 
-   * @return translated "by {0}"
-   * @gwt.key detailBy
-   */
-  String detailBy(String arg0);
-
-  /**
    * Translated "(clear)".
    * 
    * @return translated "(clear)"
@@ -70,6 +62,14 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key cloudCommonTags
    */
   String cloudCommonTags();
+
+  /**
+   * Translated "by&nbsp;".
+   * 
+   * @return translated "by&nbsp;"
+   * @gwt.key creatorBy
+   */
+  String creatorBy();
 
   /**
    * Translated "No tags in use.".

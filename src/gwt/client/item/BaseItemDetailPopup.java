@@ -38,11 +38,8 @@ public class BaseItemDetailPopup extends BorderedDialog
         // create our user interface
         _header.add(_name = new Label(item.name));
         _name.setStyleName("itemDetailName");
-        _header.add(_creator = new Label(""));
-        _creator.setStyleName("itemDetailCreator");
         // this is a goddamned hack, but GWT doesn't support valign=baseline, dooh!
         DOM.setStyleAttribute(DOM.getParent(_name.getElement()), "verticalAlign", "baseline");
-        DOM.setStyleAttribute(DOM.getParent(_creator.getElement()), "verticalAlign", "baseline");
 
         // configure our item preview
         ((FlexTable)_contents).setWidget(0, 0, createPreview(item));
@@ -138,12 +135,13 @@ public class BaseItemDetailPopup extends BorderedDialog
 
     protected void createInterface (VerticalPanel details, VerticalPanel controls)
     {
+        details.add(_creator = new CreatorLabel());
         details.add(_description = new Label(ItemUtil.getDescription(_item)));
     }
 
     protected void gotDetail (ItemDetail detail)
     {
-        _creator.setText(CItem.imsgs.detailBy(detail.creator.toString()));
+        _creator.setMember(detail.creator);
         if (_item.isRatable()) {
             _details.add(new ItemRating(detail.item, detail.memberRating));
         }
@@ -153,5 +151,6 @@ public class BaseItemDetailPopup extends BorderedDialog
     protected ItemDetail _detail;
 
     protected VerticalPanel _details, _controls;
-    protected Label _name, _creator, _description;
+    protected Label _name, _description;
+    protected CreatorLabel _creator;
 }

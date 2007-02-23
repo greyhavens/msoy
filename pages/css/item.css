@@ -138,12 +138,10 @@
 }
 
 .itemDetailCreator {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .itemDetailContent {
-  background-image: url(/images/item/detail_content_bg.png);
-  background-position: bottom left;
   padding: 10px;
 }
 
@@ -162,7 +160,7 @@
 
 .itemDetailDetails td {
   padding: 5px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .itemDetailControls td {
