@@ -36,8 +36,7 @@ public class BaseItemDetailPopup extends BorderedDialog
         _item = item;
 
         // create our user interface
-        _header.add(_name = new Label(item.name));
-        _name.setStyleName("itemDetailName");
+        _header.add(_name = createTitleLabel(item.name, "itemDetailName"));
         // this is a goddamned hack, but GWT doesn't support valign=baseline, dooh!
         DOM.setStyleAttribute(DOM.getParent(_name.getElement()), "verticalAlign", "baseline");
 
