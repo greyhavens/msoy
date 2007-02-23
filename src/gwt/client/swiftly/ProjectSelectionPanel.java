@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -39,6 +40,9 @@ public class ProjectSelectionPanel extends VerticalPanel
         super();
         setWidth("100%");
         setStyleName("projectSelectionPanel");
+
+        _errorContainer = new HorizontalPanel();
+        add(_errorContainer);
 
         FlexTable table = new FlexTable();
         DOM.setStyleAttribute(table.getElement(), "width", "100%");
@@ -70,7 +74,7 @@ public class ProjectSelectionPanel extends VerticalPanel
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("getProjects failed", caught);
-                // TODO addError(CSwiftly.serverError(caught));
+                addError(CSwiftly.serverError(caught));
             }
         });
 
@@ -101,7 +105,7 @@ public class ProjectSelectionPanel extends VerticalPanel
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("getProjectTypes failed", caught);
-                // TODO addError(CSwiftly.serverError(caught));
+                addError(CSwiftly.serverError(caught));
             }
         });
 
@@ -125,6 +129,7 @@ public class ProjectSelectionPanel extends VerticalPanel
 
     protected FlowPanel _projectsContainer;
     protected ListBox _typesContainer;
+    protected HorizontalPanel _errorContainer;
     protected int _selectedType;
 
     protected void createProject (final String projectName)
@@ -139,8 +144,19 @@ public class ProjectSelectionPanel extends VerticalPanel
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("createProject(" + projectName + ") failed", caught);
-                // TODO: addError(CSwiftly.serverError(caught));
+                addError(CSwiftly.serverError(caught));
             }
         });
     }
+
+    protected void addError (String error)
+    {
+        _errorContainer.add(new Label(error));
+    }
+
+    protected void clearErrors ()
+    {
+        _errorContainer.clear();
+    }
+
 }
