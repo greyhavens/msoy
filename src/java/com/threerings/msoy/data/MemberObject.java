@@ -49,6 +49,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>inWorldGame</code> field. */
     public static final String IN_WORLD_GAME = "inWorldGame";
 
+    /** The field name of the <code>flow</code> field. */
+    public static final String FLOW = "flow";
+
     /** The field name of the <code>humanity</code> field. */
     public static final String HUMANITY = "humanity";
 
@@ -95,6 +98,9 @@ public class MemberObject extends BodyObject
     /** The object ID of the in-world game that the user is in, if any. */
     public int inWorldGame;
     
+    /** How much lovely flow we've got jangling around on our person. */
+    public int flow;
+
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public int humanity;
 
@@ -385,6 +391,22 @@ public class MemberObject extends BodyObject
         requestAttributeChange(
             IN_WORLD_GAME, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.inWorldGame = value;
+    }
+
+    /**
+     * Requests that the <code>flow</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setFlow (int value)
+    {
+        int ovalue = this.flow;
+        requestAttributeChange(
+            FLOW, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.flow = value;
     }
 
     /**

@@ -23,7 +23,6 @@ import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
-import com.threerings.msoy.data.ActionType;
 
 import static com.threerings.msoy.Log.log;
 
@@ -32,6 +31,9 @@ import static com.threerings.msoy.Log.log;
  */
 public class FlowRepository extends DepotRepository
 {
+    // TODO: Runtime configuration value.
+    public static final float FLOW_EXPIRATION_PER_HOUR = 0.99f;
+    
     /**
      * Creates a flow repository for.
      */
@@ -181,6 +183,24 @@ public class FlowRepository extends DepotRepository
         throws PersistenceException
     {
         updateFlow(MemberRecord.ACCOUNT_NAME, accountName, amount, false, "");
+    }
+
+    /**
+     * Expire a member's flow given that dT minute passed since last we did so.
+     * The caller should take care to reflect this change in the corresponding
+     * {@link MemberObject} when appropriate.
+     * 
+     * @return the amount of flow that was expired on the backend
+     */
+    public int expireFlow (MemberRecord record, int dT)
+        throws PersistenceException
+    {
+        int toExpire = (int) (record.flow * Math.pow(FLOW_EXPIRATION_PER_HOUR, (float) dT / 60));
+        if (toExpire > 0) {
+            record.flow -= toExpire;
+            update(record);
+        }
+        return toExpire;
     }
 
     @Computed

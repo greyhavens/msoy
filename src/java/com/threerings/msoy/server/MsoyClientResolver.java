@@ -66,14 +66,19 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         // load up their member information using on their authentication
         // (account) name
-        MemberRecord member =
-            MsoyServer.memberRepo.loadMember(_username.toString());
+        MemberRecord member = MsoyServer.memberRepo.loadMember(_username.toString());
         _avatarId = member.avatarId;
 
         // configure their member name which is a combination of their display
         // name and their member id
         userObj.setMemberName(new MemberName(member.name, member.memberId));
         userObj.setHomeSceneId(member.homeSceneId);
+        
+        // calculate flow evaporation since last logon
+        int dT = (int) ((System.currentTimeMillis() - member.lastSession.getTime()) / 60000);
+        int expiredFlow = MsoyServer.memberRepo.getFlowRepository().expireFlow(member, dT);
+        userObj.setFlow(userObj.flow - expiredFlow);
+
         userObj.setHumanity(member.humanity);
         userObj.setOwnedScenes(new DSet<SceneBookmarkEntry>(
             MsoyServer.sceneRepo.getOwnedScenes(

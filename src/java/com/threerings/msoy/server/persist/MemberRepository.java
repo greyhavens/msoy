@@ -311,6 +311,8 @@ public class MemberRepository extends DepotRepository
             record.humanity = _flowRepo.assessHumanity(memberId, record.humanity, nowStamp);
             record.lastHumanityAssessment = new Timestamp(now);
         }
+        // expire flow without updating MemberObject, since we're dropping session anyway
+        _flowRepo.expireFlow(record, minutes);
         record.sessions ++;
         record.sessionMinutes += minutes;
         record.lastSession = new Date(now);

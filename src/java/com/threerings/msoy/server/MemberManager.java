@@ -512,6 +512,12 @@ public class MemberManager
             public void handleSuccess () {
                 flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " " +
                              grantType + " " + amount + " " + details);
+                // if the member is logged on, update their object
+                // TODO: distributed considerations
+                MemberObject mObj = MsoyServer.lookupMember(member);
+                if (mObj != null) {
+                    mObj.setFlow(mObj.flow + amount);
+                }
             }
             public void handleFailure (Exception pe) {
                 log.warning("Unable to grant flow [member=" + member + "grantType=" +
@@ -534,6 +540,12 @@ public class MemberManager
             public void handleSuccess () {
                 flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " " +
                              grantType + " " + amount + " " + details);
+                // if the member is logged on, update their object
+                // TODO: distributed considerations
+                MemberObject mObj = MsoyServer.lookupMember(member);
+                if (mObj != null) {
+                    mObj.setFlow(mObj.flow - amount);
+                }
             }
             public void handleFailure (Exception pe) {
                 log.warning("Unable to grant flow [member=" + member + "grantType=" +
