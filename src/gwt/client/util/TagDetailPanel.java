@@ -76,7 +76,8 @@ public class TagDetailPanel extends FlexTable
         _tags.add(new Label(CShell.cmsgs.tagLoading()));
         setWidget(0, 0, _tags);
 
-        setWidget(1, 0, new Label(CShell.cmsgs.tagAddTag()));
+        int col = 0;
+        setWidget(1, col++, new Label(CShell.cmsgs.tagAddTag()));
         getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_MIDDLE);
         TextBox newTagBox = new TextBox();
         newTagBox.setMaxLength(20);
@@ -111,28 +112,28 @@ public class TagDetailPanel extends FlexTable
                 ((TextBox) sender).setText(null);
             }
         }));
-        setWidget(1, 1, newTagBox);
+        setWidget(1, col++, newTagBox);
 
-        _quickTagLabel = new Label(CShell.cmsgs.tagQuickAdd());
-        setWidget(1, 2, _quickTagLabel);
-        getFlexCellFormatter().setVerticalAlignment(1, 2, HasVerticalAlignment.ALIGN_MIDDLE);
-        _quickTags = new ListBox();
-        _quickTags.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                ListBox box = (ListBox) sender;
-                String value = box.getValue(box.getSelectedIndex());
-                _service.tag(value, new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        refreshTags();
-                    }
-                    public void onFailure (Throwable caught) {
-                        GWT.log("tagItem failed", caught);
-                        _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
-                    }
-                });
-            }
-        });
-        setWidget(1, 3, _quickTags);
+//         _quickTagLabel = new Label(CShell.cmsgs.tagQuickAdd());
+//         setWidget(1, col++, _quickTagLabel);
+//         getFlexCellFormatter().setVerticalAlignment(1, 2, HasVerticalAlignment.ALIGN_MIDDLE);
+//         _quickTags = new ListBox();
+//         _quickTags.addChangeListener(new ChangeListener() {
+//             public void onChange (Widget sender) {
+//                 ListBox box = (ListBox) sender;
+//                 String value = box.getValue(box.getSelectedIndex());
+//                 _service.tag(value, new AsyncCallback() {
+//                     public void onSuccess (Object result) {
+//                         refreshTags();
+//                     }
+//                     public void onFailure (Throwable caught) {
+//                         GWT.log("tagItem failed", caught);
+//                         _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
+//                     }
+//                 });
+//             }
+//         });
+//         setWidget(1, col++, _quickTags);
 
         if (_service.supportFlags()) {
             final PopupPanel menuPanel = new PopupPanel(true);
@@ -156,7 +157,7 @@ public class TagDetailPanel extends FlexTable
                 public void onMouseEnter (Widget sender) { }
                 public void onMouseMove (Widget sender, int x, int y) { }
             });
-            setWidget(1, 4, flagLabel);
+            setWidget(1, col++, flagLabel);
         }
 
         setWidget(2, 0, _status = new Label(""));
@@ -309,31 +310,31 @@ public class TagDetailPanel extends FlexTable
                     addedTags.add(tag);
                 }
 
-                if (CShell.creds != null) {
-                    _service.getRecentTags(new AsyncCallback() {
-                        public void onSuccess (Object result) {
-                            _quickTags.clear();
-                            _quickTags.addItem(CShell.cmsgs.tagSelectOne());
-                            Iterator i = ((Collection) result).iterator();
-                            while (i.hasNext()) {
-                                TagHistory history = (TagHistory) i.next();
-                                String tag = history.tag;
-                                if (tag != null && !addedTags.contains(tag) && 
-                                    history.member.getMemberId() == CShell.getMemberId()) {
-                                    _quickTags.addItem(tag);
-                                    addedTags.add(tag);
-                                }
-                            }
-                            boolean visible = _quickTags.getItemCount() > 1;
-                            _quickTags.setVisible(visible);
-                            _quickTagLabel.setVisible(visible);
-                        }
-                        public void onFailure (Throwable caught) {
-                            GWT.log("getTagHistory failed", caught);
-                            _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
-                        }
-                    });
-                }
+//                 if (CShell.creds != null) {
+//                     _service.getRecentTags(new AsyncCallback() {
+//                         public void onSuccess (Object result) {
+//                             _quickTags.clear();
+//                             _quickTags.addItem(CShell.cmsgs.tagSelectOne());
+//                             Iterator i = ((Collection) result).iterator();
+//                             while (i.hasNext()) {
+//                                 TagHistory history = (TagHistory) i.next();
+//                                 String tag = history.tag;
+//                                 if (tag != null && !addedTags.contains(tag) && 
+//                                     history.member.getMemberId() == CShell.getMemberId()) {
+//                                     _quickTags.addItem(tag);
+//                                     addedTags.add(tag);
+//                                 }
+//                             }
+//                             boolean visible = _quickTags.getItemCount() > 1;
+//                             _quickTags.setVisible(visible);
+//                             _quickTagLabel.setVisible(visible);
+//                         }
+//                         public void onFailure (Throwable caught) {
+//                             GWT.log("getTagHistory failed", caught);
+//                             _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
+//                         }
+//                     });
+//                 }
             }
             public void onFailure (Throwable caught) {
                 _tags.clear();
