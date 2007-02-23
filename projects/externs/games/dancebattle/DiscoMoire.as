@@ -8,10 +8,10 @@ import flash.display.Sprite;
 
 import flash.events.Event;
 
-[SWF(width="400", height="400")]
+[SWF(width="500", height="500")]
 public class DiscoMoire extends Sprite
 {
-    public function DiscoMoire (width :Number = 400, height :Number = 400)
+    public function DiscoMoire (width :Number = 500, height :Number = 500)
     {
         var w :Number = width + JIGGLE*2;
         var h :Number = height + JIGGLE*2;

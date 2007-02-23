@@ -12,6 +12,9 @@ import flash.events.TimerEvent;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 
+import flash.system.ApplicationDomain;
+import flash.system.LoaderContext;
+
 import flash.utils.getTimer; // function import
 import flash.utils.ByteArray;
 import flash.utils.Timer;
@@ -23,7 +26,7 @@ import com.threerings.util.FPSDisplay;
 import minigames.keyjam.KeyJam;
 
 
-[SWF(width="400", height="700")]
+[SWF(width="500", height="700")]
 public class Chiyogami extends Sprite
 {
     public function Chiyogami ()
@@ -31,7 +34,7 @@ public class Chiyogami extends Sprite
         addEventListener(Event.ADDED_TO_STAGE, checkSetup);
         addEventListener(Event.REMOVED_FROM_STAGE, shutdown);
 
-        addChild(new Background(400, 700));
+        addChild(new Background(500, 500));
 
         var o :Object = new ControlBackend();
 
@@ -41,22 +44,17 @@ public class Chiyogami extends Sprite
 
         _loader = new Loader();
         _bossController.init(_loader);
-        _loader.addEventListener(Event.COMPLETE, bossLoaded);
-        _loader.loadBytes(ByteArray(new BOSS()));
+        _loader.contentLoaderInfo.addEventListener(Event.COMPLETE, bossLoaded);
+
+        var context :LoaderContext = new LoaderContext();
+        context.applicationDomain = ApplicationDomain.currentDomain;
+        var bytes :ByteArray = ByteArray(new BOSS());
+        _loader.loadBytes(bytes, context);
     }
 
     protected function bossLoaded (evnt :Event) :void
     {
-        trace("Boss is loaded");
         _media = _loader.content;
-
-        _bossUpdateTimer = new Timer(4000, 1);
-        _bossUpdateTimer.addEventListener(TimerEvent.TIMER,
-            function (o :Object) :void 
-            {
-                _bossController.setWalking(true);
-            });
-        _bossUpdateTimer.start();
 
         checkSetup();
     }
@@ -67,11 +65,28 @@ public class Chiyogami extends Sprite
     protected function checkSetup (evt :Object = null) :void
     {
         if (stage == null || _media == null) {
-            trace("checkSetup: " + stage + "  " + _media);
             return; // not yet
         }
 
         _sound = Sound(new MUSIC());
+
+        _media.x = (500 - _media.width) / 2;
+        _media.y = (500 - _media.height) / 2;
+        addChild(_media);
+
+        var minigame :KeyJam = new KeyJam();
+        minigame.y = 500;
+        addChild(minigame);
+
+        _bossUpdateTimer = new Timer(4000, 1);
+        _bossUpdateTimer.addEventListener(TimerEvent.TIMER, kickOffBattle);
+        _bossUpdateTimer.start();
+    }
+
+    protected function kickOffBattle (evt :Object = null) :void
+    {
+        _bossController.setWalking(true);
+
         _channel = _sound.play(0, int.MAX_VALUE);
 
         // make sure we're kosh
@@ -82,17 +97,9 @@ public class Chiyogami extends Sprite
             addChild(tf);
         }
 
-        _media.x = (400 - _media.width) / 2;
-        _media.y = (400 - _media.height) / 2;
-        addChild(_media);
-
         _timeBase = getTimer();
         _phase = 0;
         addEventListener(Event.ENTER_FRAME, handleFrame);
-
-        var minigame :KeyJam = new KeyJam();
-        minigame.y = 500;
-        addChild(minigame);
     }
 
     /**
@@ -121,6 +128,9 @@ public class Chiyogami extends Sprite
             curDur -= _millisPerBeat;
             _timeBase += _millisPerBeat;
             _phase = (_phase + 1) % 4;
+            if (_phase == 0) {
+                _bossController.toggleFacing();
+            }
         }
 
         /** Scale the time duration into radians */
@@ -200,7 +210,7 @@ public class Chiyogami extends Sprite
     protected var _phase :int;
 
     [Embed(source="bboy.swf", mimeType="application/octet-stream")]
-    protected var BOSS :Class;
+    protected static var BOSS :Class;
 
     //[Embed(source="kawaii_sword.swf")]
 //    protected var AVATAR_2 :Class = AVATAR_1;
