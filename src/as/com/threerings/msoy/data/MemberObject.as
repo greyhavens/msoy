@@ -49,6 +49,9 @@ public class MemberObject extends BodyObject
     /** The field name of the <code>humanity</code> field. */
     public static const HUMANITY :String = "humanity";
 
+    /** The field name of the <code>flow</code> field. */
+    public static const FLOW :String = "flow";
+
     /** The field name of the <code>recentScenes</code> field. */
     public static const RECENT_SCENES :String = "recentScenes";
 
@@ -94,6 +97,9 @@ public class MemberObject extends BodyObject
     
     /** Our current assessment of how likely to be human this member is, in [0, 255]. */
     public var humanity :int;
+    
+    /** How much lovely flow we've got jangling around on our person. */
+    public var flow :int;
     
     /** The recent scenes we've been through. */
     public var recentScenes :DSet;
@@ -363,6 +369,7 @@ public class MemberObject extends BodyObject
         clusterOid = ins.readInt();
         inWorldGame = ins.readInt();
         humanity = ins.readInt();
+        flow = ins.readInt();
         recentScenes = (ins.readObject() as DSet);
         ownedScenes = (ins.readObject() as DSet);
         inventory = (ins.readObject() as DSet);
