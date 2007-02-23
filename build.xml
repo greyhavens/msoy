@@ -397,15 +397,24 @@
       <libraryjar name="${rtClasses}"/>
     </proguard>
 
-    <!-- optionally sign the resulting jar file -->
-    <if><isset property="cert_dir"/><then>
-      <property file="${cert_dir}/certificate.properties"/>
-      <signjar lazy="true" keystore="${sign.keystore}" storepass="${sign.storepass}"
-               alias="${sign.alias}">
-        <fileset dir="${deploy.dir}" includes="${ident}-client.jar"/>
-      </signjar>
-      <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients"/>
-    </then></if>
+    <!-- Sign the resulting jar file -->
+    <if><isset property="cert_dir"/>
+      <then>
+        <property file="${cert_dir}/certificate.properties"/>
+      </then>
+      <else>
+        <!-- No official keystore, use the development keystore -->
+        <echo message="Signing with self-signed development certificate (cert_dir is not set, using development keystore)"/>
+        <property name="sign.keystore" value="lib/dev-keystore.dat"/>
+        <property name="sign.storepass" value="secret"/>
+        <property name="sign.alias" value="threerings-dev"/>
+      </else>
+    </if>
+    <signjar lazy="true" keystore="${sign.keystore}" storepass="${sign.storepass}"
+             alias="${sign.alias}">
+      <fileset dir="${deploy.dir}" includes="${ident}-client.jar"/>
+    </signjar>
+    <copy file="${deploy.dir}/${ident}-client.jar" todir="pages/clients"/>
   </target>
 
   <!-- builds our Java clients -->
