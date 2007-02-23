@@ -11,9 +11,9 @@ public class Camera
     public function Camera ()
     {
         angle = 0;
-        position = new Point(0, 512);
-        height = 20;
+        position = new Point(0, 0);
         distance = 300;
+        height = 20;
     }
 }
 }

@@ -49,7 +49,8 @@ public class Ground extends Sprite
     public function setKartLocation (location :Point) :void
     {
         var trans :Matrix = new Matrix();
-        trans.translate(location.x, -location.y);
+        // TODO: Figure out what's up with the magic number 32
+        trans.translate(location.x - _camera.position.x, location.y - _camera.position.y + 32);
         _camera.position = trans.transformPoint(_camera.position);
     }
 
@@ -94,7 +95,6 @@ public class Ground extends Sprite
                     UnderwhirledDrift.KART_LOCATION);
                 _drivingOnRoad = _level.isOnRoad(transformedLoc);
                 _drivingIntoWall = _level.isOnWall(transformedLoc);
-                    
             }
         }
         //_scenery.updateItems(translateRotate, _camera.distance, 1 / _camera.height,
