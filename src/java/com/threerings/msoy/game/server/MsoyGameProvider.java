@@ -20,10 +20,4 @@ public interface MsoyGameProvider extends InvocationProvider
      */
     public void awardFlow (ClientObject caller, int arg1, int arg2, InvocationService.InvocationListener arg3)
         throws InvocationException;
-
-    /**
-     * Handles a {@link MsoyGameService#getAvailableFlow} request.
-     */
-    public void getAvailableFlow (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
-        throws InvocationException;
 }

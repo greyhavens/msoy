@@ -31,17 +31,4 @@ public class MsoyGameMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), Integer.valueOf(arg3), listener4
         });
     }
-
-    /** The method id used to dispatch {@link #getAvailableFlow} requests. */
-    public static final int GET_AVAILABLE_FLOW = 2;
-
-    // from interface MsoyGameService
-    public void getAvailableFlow (Client arg1, int arg2, InvocationService.ResultListener arg3)
-    {
-        InvocationMarshaller.ResultMarshaller listener3 = new InvocationMarshaller.ResultMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, GET_AVAILABLE_FLOW, new Object[] {
-            Integer.valueOf(arg2), listener3
-        });
-    }
 }

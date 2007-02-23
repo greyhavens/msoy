@@ -45,13 +45,6 @@ public class MsoyGameDispatcher extends InvocationDispatcher
             );
             return;
 
-        case MsoyGameMarshaller.GET_AVAILABLE_FLOW:
-            ((MsoyGameProvider)provider).getAvailableFlow(
-                source,
-                ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
-            );
-            return;
-
         default:
             super.dispatchRequest(source, methodId, args);
             return;
