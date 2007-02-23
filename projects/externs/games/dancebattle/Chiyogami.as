@@ -31,7 +31,7 @@ public class Chiyogami extends Sprite
         addEventListener(Event.ADDED_TO_STAGE, checkSetup);
         addEventListener(Event.REMOVED_FROM_STAGE, shutdown);
 
-        addChild(new Background());
+        addChild(new Background(400, 700));
 
         var o :Object = new ControlBackend();
 

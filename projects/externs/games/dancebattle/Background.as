@@ -1,6 +1,7 @@
 package {
 
 import flash.display.DisplayObject;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -14,7 +15,7 @@ import com.threerings.util.EmbeddedSwfLoader;
 /** The background excitement. */
 public class Background extends Sprite
 {
-    public function Background ()
+    public function Background (w :int, h :int)
     {
         // construct an array of the registered backgrounds
         for (var ii :int = 0; true; ii++) {
@@ -24,6 +25,25 @@ public class Background extends Sprite
                 break;
             }
         }
+
+        // set up a mask
+        var mask :Shape = new Shape();
+        with (mask.graphics) {
+            beginFill(0xFFFFFF);
+            drawRect(0, 0, w, h);
+            endFill();
+        }
+        this.mask = mask;
+        addChild(mask); // flash is so goddamned retarded. You need
+        // to add the mask to the display list so that it participates in
+        // any transforms, but then there's magic to make it not draw
+        // because it's a mask. How about we don't add it to the display
+        // list and flash does less magic by just also applying the transform
+        // to an object's mask at the same time it applies it to the object?
+        // Hmmmm.. it may be that you can re-use a mask on many objects,
+        // and so this just follows their standard pattern of "make things
+        // more complicated for coders by optimizing every last little bit
+        // and making the common cases harder".
 
         // kick things off
         chooseNewBackground();

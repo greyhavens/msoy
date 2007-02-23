@@ -3,6 +3,7 @@ package {
 import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.DisplayObject;
+import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -29,6 +30,15 @@ public class DiscoMoire extends Sprite
         for each (var burst :DisplayObject in _bursts) {
             addChild(burst);
         }
+
+        var mask :Shape = new Shape();
+        with (mask.graphics) {
+            beginFill(0xFFFFFF);
+            drawRect(0, 0, width, height);
+            endFill();
+        }
+        this.mask = mask;
+        addChild(mask); // Fuck you very much, flash.
 
         addEventListener(Event.ENTER_FRAME, handleEnterFrame);
     }
