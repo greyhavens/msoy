@@ -21,7 +21,7 @@ public class LevelFactory
         loader.addEventListener(Event.COMPLETE, function (evt :Event) :void {
             instance.initialize(loader.getClass("background"), loader.getClass("rough"), 
                 loader.getClass("track"), loader.getClass("wall"), new LevelConfig(
-                loader.getClass("objects"), OBJECT_MAPPING));
+                loader.getClass("objects"), OBJECT_MAPPING), loader.getClass("objects"));
         });
         loader.load(new LEVELS[level]);
         return instance;

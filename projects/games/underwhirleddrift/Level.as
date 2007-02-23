@@ -18,7 +18,7 @@ public class Level extends Sprite
     }
 
     public function initialize (background :Class, rough :Class, track :Class, wall :Class,
-        config :LevelConfig) :void
+        config :LevelConfig, /** this is temporary! */ objects :Class) :void
     {
         var backgroundImage :Shape;
         var backgroundSprite :Sprite = (new background() as Sprite);
@@ -45,6 +45,7 @@ public class Level extends Sprite
         addChild(new rough() as DisplayObject);
         addChild(_track = (new track() as DisplayObject));
         addChild(_wall = (new wall() as DisplayObject));
+        addChild(new objects() as DisplayObject);
 
         _ground.setKartLocation(config.getStartingPoint(0));
     }
