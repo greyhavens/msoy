@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.swiftly.server.persist;
 
+import java.sql.Timestamp;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 import com.samskivert.io.PersistenceException;
 
@@ -10,8 +14,6 @@ import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.DepotRepository;
-
-import java.util.ArrayList;
 
 /**
  * Manages the persistent information associated with a member's projects.
@@ -53,13 +55,14 @@ public class SwiftlyProjectRepository extends DepotRepository
      * Stores the supplied project record in the database, overwriting previously
      * stored project data.
      */
-    public SwiftlyProjectRecord createProject (int memberId, String projectName, int type)
+    public SwiftlyProjectRecord createProject (int memberId, String projectName, int projectTypeId)
         throws PersistenceException
     {
         SwiftlyProjectRecord record = new SwiftlyProjectRecord();
         record.projectName = projectName;
         record.ownerId = memberId;
-        // TODO: record.creationDate = new Timestamp(project.creationDate.getTime());
+        record.projectTypeId = projectTypeId;
+        record.creationDate = new Timestamp(System.currentTimeMillis());
 
         try {
             insert(record);

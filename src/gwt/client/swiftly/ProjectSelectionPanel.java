@@ -104,6 +104,8 @@ public class ProjectSelectionPanel extends VerticalPanel
                         final SwiftlyProjectType pType = (SwiftlyProjectType)iter.next();
                         _typesContainer.addItem(pType.typeName, String.valueOf(pType.typeId));
                     }
+                    _typesContainer.setSelectedIndex(0);
+                    _selectedType = Integer.parseInt(_typesContainer.getValue(0));
                 }
             }
             public void onFailure (Throwable caught) {

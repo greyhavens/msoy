@@ -17,6 +17,10 @@ public class SwiftlyProject
     /** The id of the project owner. */
     public int ownerId;
 
+    /** The project type id. */
+    public int projectTypeId;
+
     /** The project name. */
     public String projectName;
+
 }
