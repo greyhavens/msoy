@@ -325,7 +325,7 @@ public class MsoySprite extends MediaContainer
                     (Loader(_media).content is Bitmap)) {
                 var b :Bitmap = Bitmap(Loader(_media).content);
                 var p :Point = b.globalToLocal(new Point(x, y));
-                return b.bitmapData.hitTest(new Point(0, 0), 0xFF, p);
+                return b.bitmapData.hitTest(new Point(0, 0), 0, p);
             }
         } catch (err :Error) {
             // nada
