@@ -48,9 +48,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String selectProject();
 
   /**
-   * Translated "What sort of project is this?".
+   * Translated "What type of project is this?".
    * 
-   * @return translated "What sort of project is this?"
+   * @return translated "What type of project is this?"
    * @gwt.key selectType
    */
   String selectType();

@@ -55,7 +55,7 @@ public class SwiftlyApplet extends JApplet
         _occdtr = new OccupantDirector(_ctx);
         _chatdtr = new ChatDirector(_ctx, _msgmgr, "chat");
 
-        // Load the authentication token and configure the XML-RPC connection
+        // Get the supplied projectId
         _projectId = Integer.parseInt(getParameter("projectId"));
 
         // configure our server and port
@@ -91,7 +91,6 @@ public class SwiftlyApplet extends JApplet
                     createGUI();
                 }
             });
-
         } catch (Exception e) {
             System.err.println("createGUI didn't successfully complete.");
             Exception ee = (Exception) e.getCause();

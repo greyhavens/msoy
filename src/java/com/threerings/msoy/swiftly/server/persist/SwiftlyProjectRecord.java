@@ -66,7 +66,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
     public int ownerId;
 
     /** The project type id. */
-    public int projectTypeId;
+    public int projectTypeId; /*TODO: this should have a foreign key constraint */
 
     /** The time this project was created. */
     public Timestamp creationDate;
