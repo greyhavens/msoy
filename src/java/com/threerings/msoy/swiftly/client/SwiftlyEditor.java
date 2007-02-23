@@ -46,15 +46,12 @@ public class SwiftlyEditor extends PlacePanel
         // setup the components
         _editorTabs = new TabbedEditor(_ctx, this);
         _editorTabs.setMinimumSize(new Dimension(400, 400));
-        _editorTabs.setPreferredSize(new Dimension(800, 800));
 
         _consoleTabs = new TabbedConsole(_ctx, this);
         _consoleTabs.setMinimumSize(new Dimension(0, 0));
-        _consoleTabs.setPreferredSize(new Dimension(0, 100));
 
         _projectPanel = new ProjectPanel(_ctx, this);
         _projectPanel.setMinimumSize(new Dimension(0, 0));
-        _projectPanel.setPreferredSize(new Dimension(100, 0));
 
         _toolbar = new EditorToolBar(ctrl, _ctx, this);
 
@@ -73,8 +70,9 @@ public class SwiftlyEditor extends PlacePanel
         add(_horizSplitPane);
 
         // TODO this is an ideal way to layout the splits, but is not working. revisit
-        _vertSplitPane.setDividerLocation(0.8);
-        _horizSplitPane.setDividerLocation(0.8);
+        // _vertSplitPane.setDividerLocation(0.8);
+        // _horizSplitPane.setDividerLocation(0.8);
+        _horizSplitPane.setDividerLocation(600);
 
         consoleMessage(_ctx.xlate(SwiftlyCodes.SWIFTLY_MSGS, "m.welcome"));
     }
