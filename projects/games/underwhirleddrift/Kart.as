@@ -205,7 +205,7 @@ public class Kart extends Sprite
 
     /** Kart swf */
     [Embed(source='rsrc/mediumkart.swf#kart')]
-    protected static const KART :Class;
+    public static const KART :Class;
 
     /** turning constants */
     protected static const TURN_VIEW_ANGLE :int = 15; // in degrees
