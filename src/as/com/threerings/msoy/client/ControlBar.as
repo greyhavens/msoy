@@ -54,6 +54,8 @@ public class ControlBar extends HBox
         _ctx.getClient().addClientObserver(
             new ClientAdapter(fn, fn, null, null, null, null, fn));
 
+        _controller = new ControlBarController (ctx, this);
+        
         checkControls();
     }
 
@@ -88,7 +90,7 @@ public class ControlBar extends HBox
             addChild(chatBtn);
 
             var volBtn :CommandButton = new CommandButton();
-            volBtn.setCommand(MsoyController.POP_VOLUME, volBtn);
+            volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
             volBtn.styleName = "controlBarButtonVolume";
             addChild(volBtn);
             
@@ -115,7 +117,7 @@ public class ControlBar extends HBox
             addChild(sp);
 
             volBtn = new CommandButton();
-            volBtn.setCommand(MsoyController.POP_VOLUME, volBtn);
+            volBtn.setCommand(ControlBarController.POP_VOLUME, volBtn);
             volBtn.styleName = "controlBarButtonVolume";
             addChild(volBtn);
         }
@@ -124,7 +126,25 @@ public class ControlBar extends HBox
         var footerLeft :SkinnableImage = new SkinnableImage();
         footerLeft.styleName = "controlBarFooterLeft";
         addChild (footerLeft);
-        
+
+        var goback :CommandButton = new CommandButton();
+        goback.setCommand(ControlBarController.MOVE_BACK, goback);
+        goback.styleName = "controlBarButtonGoBack";
+        addChild (goback);
+
+        /** commented out for now - this requires more work (robert)
+        var loc :SkinnableTextField = new SkinnableTextField();
+        loc.styleName = "controlBarLocationText";
+        loc.height = this.height;
+        loc.width = 100;
+        addChild(loc);
+        */
+
+        var forward :CommandButton = new CommandButton();
+        //forward.setCommand(ControlBarController.MOVE_FORWARD, forward); // TODO
+        forward.styleName = "controlBarButtonGoForward";
+        addChild (forward);
+
         var spacer :Spacer = new Spacer();
         spacer.percentWidth = 100;
         addChild(spacer);
@@ -140,6 +160,9 @@ public class ControlBar extends HBox
     /** Our clientside context. */
     protected var _ctx :WorldContext;
 
+    /** Controller for this object. */
+    protected var _controller :ControlBarController;
+
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
 }
@@ -147,8 +170,10 @@ public class ControlBar extends HBox
 
 
 import flash.display.DisplayObject;
+import mx.containers.Canvas;
 import mx.controls.Image;
 import mx.core.IFlexDisplayObject;
+import mx.core.UITextField;
 
 /** Internal: helper function that extends ms.control.Image functionality
     with automatic image loading from the style sheet (e.g. via an
@@ -160,7 +185,7 @@ internal class SkinnableImage extends Image
     {
     }
 
-    override public function styleChanged(styleProp:String):void
+    override public function styleChanged (styleProp:String) :void
     {
         super.styleChanged(styleProp);
 
@@ -187,5 +212,52 @@ internal class SkinnableImage extends Image
     protected var _skin : DisplayObject;
 }
 
+/** Internal: helper function that extends ms.core.UITextField
+    with automatic background loading from the style sheet (e.g. via an
+    external style sheet file). */
+[Style(name="backgroundSkin", type="Class", inherit="no")]
+internal class SkinnableTextField extends Canvas
+{
+    public var textfield :UITextField;
+    
+    public function SkinnableTextField ()
+    {
+        textfield = new UITextField ();
+        textfield.styleName = styleName;
+        textfield.x = 0;
+        textfield.y = 1;
+        textfield.height = height - 2;
+        textfield.width = width;
+        addChild(textfield);
+    }
+
+    public function set text (message :String) :void
+    {
+        textfield.text = message;
+    }
+
+    public function get text () :String
+    {
+        return textfield.text;
+    }
+        
+    
+    override public function styleChanged (styleProp:String) :void
+    {
+        super.styleChanged(styleProp);
+        textfield.styleName = this.styleName;
+        
+        var cls :Class = getStyle("backgroundSkin");
+        setStyle("backgroundImage", cls);
+    }
+
+    override protected function layoutChrome (
+        unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        super.layoutChrome (unscaledWidth, unscaledHeight);
+        textfield.width = this.width;
+        textfield.height = this.height;
+    }
+}
 
 

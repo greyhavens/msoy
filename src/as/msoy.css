@@ -244,6 +244,25 @@ ButtonBar {
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_down.png");
 }
 
+.controlBarButtonGoBack {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back_down.png");
+}
+
+.controlBarButtonGoForward {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/location_forward.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/location_forward_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/location_forward_down.png");
+}
+
+.controlBarLocationText {
+  color: #dddddd;
+  backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/location_tile.png");
+  backgroundSize: "100%";
+  borderStyle: "none";
+}
+
 .controlBarFooterLeft {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/footer_left.png");
 }

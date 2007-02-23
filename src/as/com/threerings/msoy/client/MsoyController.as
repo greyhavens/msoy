@@ -61,9 +61,6 @@ public class MsoyController extends Controller
     /** Command to display the friends menu. */
     public static const POP_FRIENDS_MENU :String = "PopFriendsMenu";
 
-    /** Command to display a volume slider. */
-    public static const POP_VOLUME :String = "PopVolume";
-
     /** Command to display the pets popup. */
     public static const SHOW_PETS :String = "ShowPets";
 
@@ -279,16 +276,7 @@ public class MsoyController extends Controller
 
         CommandMenu.createMenu(menuData).popUp(trigger, true);
     }
-
-    /**
-     * Handle the POP_VOLUME command.
-     */
-    public function handlePopVolume (trigger :Button) :void
-    {
-        var popup : VolumePopup = new VolumePopup (trigger);
-        popup.show();
-    }
-
+    
     /**
      * @return true if this player appears to support full-screen mode.
      */
