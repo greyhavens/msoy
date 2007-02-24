@@ -163,14 +163,16 @@ public class ProjectPanel extends JPanel
         // the parent element is the directory or project the selected element is in, or if
         // a project or directory is selected, that is the parent element
         PathElement parentElement = getSelectedPathElement();
-        int parentId = (parentElement.getType() == PathElement.Type.FILE) ?
-            parentElement.getParentId() : parentElement.elementId;
+
+        if (parentElement.getType() == PathElement.Type.FILE) {
+            parentElement = parentElement.getParent();
+        }
 
         PathElement element = null;
         if (type == PathElement.Type.DIRECTORY) {
-            element = PathElement.createDirectory(name, parentId);
+            element = PathElement.createDirectory(name, parentElement);
         } else if (type == PathElement.Type.FILE) {
-            element = new DocumentElement(name, parentId, "");
+            element = new DocumentElement(name, parentElement, "");
         } else {
             // other types not implemented
         }
@@ -193,7 +195,7 @@ public class ProjectPanel extends JPanel
             _editor.closeCurrentTab();
         } else if (element.getType() == PathElement.Type.DIRECTORY) {
             // TODO oh god we have to remove all the tabs associated with this directory
-            // soo.. every tab that has a common getParentId() ?
+            // soo.. every tab that has a common parent id() ?
         } else if (element.getType() == PathElement.Type.ROOT){
             // TODO you're trying to remove the project itself? Does Homey play that?
             return;

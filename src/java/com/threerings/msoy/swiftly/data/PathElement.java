@@ -5,6 +5,10 @@ package com.threerings.msoy.swiftly.data;
 
 import java.net.URL;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.threerings.presents.dobj.DSet;
 
 /**
@@ -24,26 +28,34 @@ public class PathElement
      */
     public static PathElement createRoot (String name)
     {
-        return new PathElement(Type.ROOT, name, -1);
+        return new PathElement(Type.ROOT, name, null);
     }
 
     /**
      * Creates a directory element.
      */
-    public static PathElement createDirectory (String name, int parentId)
+    public static PathElement createDirectory (String name, PathElement parent)
     {
-        return new PathElement(Type.DIRECTORY, name, parentId);
+        return new PathElement(Type.DIRECTORY, name, parent);
+    }
+
+    /**
+     * Creates a file element.
+     */
+    public static PathElement createFile (String name, PathElement parent)
+    {
+        return new PathElement(Type.FILE, name, parent);
     }
 
     public PathElement ()
     {
     }
 
-    public PathElement (Type type, String name, int parentId)
+    public PathElement (Type type, String name, PathElement parent)
     {
         _type = type;
         setName(name);
-        setParentId(parentId);
+        setParent(parent);
     }
 
     public Type getType ()
@@ -56,9 +68,31 @@ public class PathElement
         return _name;
     }
 
-    public int getParentId ()
+    public PathElement getParent ()
     {
-        return _parentId;
+        return _parent;
+    }
+
+    public String getAbsolutePath ()
+    {
+        PathElement node;
+        StringBuffer output = new StringBuffer();
+        List<PathElement> pathList = new ArrayList<PathElement>();
+        
+        // This is a relatively expensive implementation, but then, it always is
+
+        // We build up a list of parent elements, reverse the list, append them all
+        // together and return the result.
+        for (node = this; node != null; node = node.getParent()) {
+            pathList.add(node);
+        }
+        Collections.reverse(pathList);
+
+        for (PathElement element : pathList) {
+            output.append("/" + element.getName());   
+        }
+
+        return output.toString();
     }
 
     /**
@@ -74,12 +108,12 @@ public class PathElement
         _name = name;
     }
 
-    public void setParentId (int parentId)
+    public void setParent (PathElement parent)
     {
-        _parentId = parentId;
+        _parent = parent;
     }
 
-    // from interface Dset.Key
+    // from interface Dset.Entry
     public Comparable getKey ()
     {
         return elementId;
@@ -89,16 +123,12 @@ public class PathElement
     public boolean equals (Object other)
     {
         if (other instanceof PathElement) {
-            return elementId == ((PathElement)other).elementId;
+            // This isn't necessarily the best way to determine equality, but it will be correct within
+            // a given tree of path elements.
+            return getAbsolutePath().equals(((PathElement)other).getAbsolutePath());
         } else {
             return false;
         }
-    }
-
-    @Override // from Object
-    public int hashCode ()
-    {
-        return elementId;
     }
 
     @Override // from Object
@@ -109,5 +139,5 @@ public class PathElement
 
     protected Type _type;
     protected String _name;
-    protected int _parentId = -1;
+    protected PathElement _parent = null;
 }

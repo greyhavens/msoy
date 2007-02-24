@@ -12,9 +12,9 @@ public class DocumentElement extends PathElement
     {
     }
 
-    public DocumentElement (String name, int parentId, String text)
+    public DocumentElement (String name, PathElement parent, String text)
     {
-        super(Type.FILE, name, parentId);
+        super(Type.FILE, name, parent);
         _text = text;
     }
 

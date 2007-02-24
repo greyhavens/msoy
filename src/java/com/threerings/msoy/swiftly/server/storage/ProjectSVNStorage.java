@@ -4,6 +4,8 @@
 package com.threerings.msoy.swiftly.server.storage;
 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
+import com.threerings.msoy.swiftly.data.PathElement;
+
 
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;

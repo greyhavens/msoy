@@ -47,7 +47,7 @@ public class ProjectTreeModel extends DefaultTreeModel
             final PathElement element = (PathElement)event.getEntry();
             updateNodes(new NodeOp() {
                 public boolean isMatch (PathElementTreeNode node) {
-                    return node.getElement().elementId == element.getParentId();
+                    return node.getElement().elementId == element.getParent().elementId;
                 }
                 public void update (PathElementTreeNode node) {
                     insertNodeInto(new PathElementTreeNode(element), node, node.getChildCount());
@@ -101,7 +101,7 @@ public class ProjectTreeModel extends DefaultTreeModel
     protected void addChildren (PathElementTreeNode node, PathElement parent)
     {
         for (PathElement element : _roomObj.elements) {
-            if (element.getParentId() == parent.elementId) {
+            if (element.getParent() != null && element.getParent().elementId == parent.elementId) {
                 PathElementTreeNode child = new PathElementTreeNode(element);
                 node.add(child);
                 if (element.getType() == PathElement.Type.DIRECTORY) {

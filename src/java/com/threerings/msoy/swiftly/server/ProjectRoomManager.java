@@ -92,14 +92,14 @@ public class ProjectRoomManager extends PlaceManager
         // TODO: load up the project information and populate the room object
         PathElement node;
         _roomObj.addPathElement(node = PathElement.createRoot("Fake Project"));
-        _roomObj.addPathElement(node = PathElement.createDirectory("Directory 1", node.elementId));
-        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 1", node.elementId));
-        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 2", node.elementId));
-        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 3", node.elementId));
-        _roomObj.addPathElement(node = PathElement.createDirectory("Directory 2", node.elementId));
-        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 4", node.elementId));
-        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 5", node.elementId));
-        _roomObj.addPathElement(new DocumentElement("File 6", node.elementId, "Bob!"));
+        _roomObj.addPathElement(node = PathElement.createDirectory("Directory 1", node));
+        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 1", node));
+        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 2", node));
+        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 3", node));
+        _roomObj.addPathElement(node = PathElement.createDirectory("Directory 2", node));
+        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 4", node));
+        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 5", node));
+        _roomObj.addPathElement(new DocumentElement("File 6", node, "Bob!"));
 
         // wire up our invocation service
         _roomObj.setService((ProjectRoomMarshaller)
