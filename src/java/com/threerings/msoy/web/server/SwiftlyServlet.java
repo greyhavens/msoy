@@ -86,8 +86,11 @@ public class SwiftlyServlet extends MsoyServiceServlet
         */
 
         try {
-            return MsoyServer.swiftlyRepo.createProject(
+            SwiftlyProject project = MsoyServer.swiftlyRepo.createProject(
                 memrec.memberId, projectName, projectType).toSwiftlyProject();
+            // the creator is the first member of the collaborators
+            MsoyServer.swiftlyRepo.joinCollaborators(project.projectId, memrec.memberId); 
+            return project;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Creating new project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -113,7 +116,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     public SwiftlyConfig loadSwiftlyConfig (WebCreds creds)
         throws ServiceException
     {
-        // TODO: validate this user's creds
+        MemberRecord memrec = requireAuthedUser(creds);
 
         // create an applet config record
         SwiftlyConfig config = new SwiftlyConfig();
