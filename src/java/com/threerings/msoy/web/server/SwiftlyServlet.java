@@ -60,7 +60,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         try {
             for (SwiftlyProjectTypeRecord tRec :
-                MsoyServer.swiftlyTypeRepo.getProjectTypes(memrec.memberId)) {
+                MsoyServer.swiftlyRepo.getProjectTypes(memrec.memberId)) {
                 types.add(tRec.toSwiftlyProjectType());
             }
         } catch (PersistenceException pe) {

@@ -76,4 +76,19 @@ public class SwiftlyProjectRepository extends DepotRepository
         }
         return record;
     }
+
+    /**
+     * Gets all the project types available.
+     */
+    public ArrayList<SwiftlyProjectTypeRecord> getProjectTypes (int memberId)
+        throws PersistenceException
+    {
+        // TODO: Use privileges, instead of just ownership.
+        ArrayList<SwiftlyProjectTypeRecord> types = new ArrayList<SwiftlyProjectTypeRecord>();
+        for (SwiftlyProjectTypeRecord record : findAll(SwiftlyProjectTypeRecord.class)) {
+            types.add(record);                  
+        }
+
+        return types;
+    }
 }
