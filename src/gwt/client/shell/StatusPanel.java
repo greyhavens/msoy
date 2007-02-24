@@ -120,10 +120,9 @@ public class StatusPanel extends FlexTable
         int idx = 0;
 
         // create the header Flash client if we don't have a real client on the page
-	/* XXX BROKEN 
         if (needHeaderClient) {
             setWidget(0, idx++, FlashClients.createHeaderClient(_creds.token));
-        } */
+        }
 
         setText(0, idx++, _creds.name + ":");
 
