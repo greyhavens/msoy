@@ -9,18 +9,23 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
+
+import com.threerings.presents.client.InvocationService.InvocationListener;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.server.InvocationException;
+
 import com.threerings.crowd.data.PlaceObject;
+
 import com.threerings.ezgame.data.EZGameConfig;
 import com.threerings.ezgame.server.EZGameManager;
+
+import com.threerings.msoy.data.ActionType;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.web.data.MemberName;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.client.InvocationService.InvocationListener;
 
 import static com.threerings.msoy.Log.log;
 
@@ -168,7 +173,8 @@ public class MsoyGameManager extends EZGameManager
         int awarded = Math.min(record.awarded, (record.rate * secondsPlayed) / 60);
 
         MsoyServer.memberMan.grantFlow(
-            (MemberName) getOccupantInfo(oid).username, 0, awarded,
+            (MemberName) getOccupantInfo(oid).username, awarded,
+            ActionType.PlayedGame,
             ((EZGameConfig) getConfig()).persistentGameId + " " + secondsPlayed); 
     }
 
