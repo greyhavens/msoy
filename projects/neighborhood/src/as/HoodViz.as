@@ -332,18 +332,16 @@ public class HoodViz extends Sprite
                 rule = new _rule();
                 rule.y = -50;
                 _tip.addChild(rule);
-                _tip.addChild(getTextField(str, -35));
+                _tip.addChild(getTextField(str, -40));
             }
 
         } else if (neighbor is NeighborGroup) {
             var group :NeighborGroup = neighbor as NeighborGroup;
 
             _tip = new _plaqueGroup();
-            _tip.addChild(getTextField(group.groupName, -60));
 
-/*
             if (group.getLogoHash() != null) {
-                _tip.height += 100;
+                _tip.addChild(getTextField(group.groupName, -80));
 
                 // if there is a logo, we dynamically load it
                 var loader :Loader = new Loader();
@@ -356,18 +354,19 @@ public class HoodViz extends Sprite
                 loader.load(new URLRequest("/media/" + group.getLogoHash()));
 
                 rule = new _rule();
-                rule.y = -55;
+                rule.y = -65;
                 _tip.addChild(rule);
 
                 _tip.addChild(loader);
-                loader.y = -40;
+                loader.y = -60;
+            } else {
+                _tip.addChild(getTextField(group.groupName, -60));
             }
-*/
         } else {
             var game :NeighborGame = neighbor as NeighborGame;
 
             _tip = new _plaqueGame();
-            _tip.addChild(getTextField(group.groupName, -75));
+            _tip.addChild(getTextField(group.groupName, -60));
 
             // TODO: thumbnail?
         }
@@ -410,7 +409,7 @@ public class HoodViz extends Sprite
         var content: DisplayObject = event.target.content;
         var loader :DisplayObjectContainer = content.parent;
         // now scale the image depending on which dimension is constrained
-        var scale :Number = Math.min(80/content.width, 60/content.height);
+        var scale :Number = Math.min(70/content.width, 40/content.height);
 
         // and center in either the x or y direction as needed
 //        content.x = (holder.width - scale*content.width)/2;
