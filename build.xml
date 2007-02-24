@@ -48,11 +48,17 @@
     <file name="${extlib.dir}/gwt-user.jar"/>
     <file name="${extlib.dir}/gwt-widgets-0.1.1.jar"/>
     <file name="${extlib.dir}/jetty/lib/org.mortbay.jetty.jar"/>
-    <file name="${extlib.dir}/junit-3.7.jar"/>
+    <file name="${extlib.dir}/junit-4.2.jar"/>
     <file name="${extlib.dir}/mail.jar"/>
     <file name="${extlib.dir}/mysql-connector-java-3.1.12-bin.jar"/>
     <file name="${extlib.dir}/proguard.jar"/>
     <file name="${extlib.dir}/servlet-2.3.jar"/>
+    <file name="${extlib.dir}/ganymed.jar"/>
+    <file name="${extlib.dir}/svnClientAdapter.jar"/>
+    <file name="${extlib.dir}/svnjavahl.jar"/>
+    <file name="${extlib.dir}/svnkit.jar"/>
+    <file name="${extlib.dir}/svnkit-javahl.jar"/>
+    <file name="${extlib.dir}/svnkit-cli.jar"/>
     <file name="${extlib.dir}/ws-commons-util-1.0.1.jar"/>
     <file name="${extlib.dir}/velocity-1.5-dev.jar"/>
     <file name="${extlib.dir}/ehcache-1.2.jar"/>
@@ -526,7 +532,9 @@
       <classpath refid="classpath"/>
       <formatter type="brief" usefile="false"/>
       <batchtest>
-        <fileset dir="${src.dir}" includes="**/*UnitTest.java"/>
+        <fileset dir="${src.dir}">
+          <include name="**/*UnitTest.java"/>
+        </fileset>
       </batchtest>
     </unit>
   </target>

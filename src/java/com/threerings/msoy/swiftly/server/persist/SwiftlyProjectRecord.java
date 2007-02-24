@@ -53,6 +53,13 @@ public class SwiftlyProjectRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #projectName} field. */
     public static final ColumnExp PROJECT_NAME_C =
         new ColumnExp(SwiftlyProjectRecord.class, PROJECT_NAME);
+
+    /** The column identifier for the {@link #projectSubversionURL} field. */
+    public static final String PROJECT_SUBVERSION_URL = "projectSubversionURL";
+
+    /** The qualified column identifier for the {@link #projectSubversionURL} field. */
+    public static final ColumnExp PROJECT_SUBVERSION_URL_C =
+        new ColumnExp(SwiftlyProjectRecord.class, PROJECT_SUBVERSION_URL);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 3;
@@ -73,6 +80,9 @@ public class SwiftlyProjectRecord extends PersistentRecord
 
     /** The project name. */
     public String projectName;
+
+    /** The project subversion URL. */
+    public String projectSubversionURL;
 
     /** 
      * Converts this persistent record to a runtime record.
