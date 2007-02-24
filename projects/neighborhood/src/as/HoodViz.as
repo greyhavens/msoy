@@ -12,10 +12,11 @@ import flash.utils.*;
 import flash.external.ExternalInterface;
 
 import com.threerings.msoy.hood.*;
+import com.threerings.util.DateUtil;
+import com.threerings.util.DisplayUtil;
 import com.threerings.util.NetUtil;
 import com.threerings.util.Random;
 import com.threerings.util.StringUtil;
-import com.threerings.util.DateUtil;
 
 import com.adobe.serialization.json.JSONDecoder;
 
@@ -312,85 +313,127 @@ public class HoodViz extends Sprite
 
     protected function rollOverHandler (event :MouseEvent) :void
     {
-        var tile :ToolTipSprite = (event.target as ToolTipSprite);
-        var neighbor :Neighbor = tile.neighbor;
-        var above :String, below :String;
+        _tipTile = event.target as ToolTipSprite;
+        var neighbor :Neighbor = _tipTile.neighbor;
+        var rule :Sprite;
         if (neighbor is NeighborMember) {
             var house :NeighborMember = neighbor as NeighborMember;
-            above = house.memberName;
-            if (house.isOnline) {
-                below = "Online";
-            } else if (house.lastSession != null) {
-                below = "Last on: " + DateUtil.getConversationalDateString(house.lastSession);
-            }
+
             _tip = new _plaqueHouse();
+            _tip.addChild(getTextField(house.memberName, -75));
+
+            var str :String;
+            if (house.isOnline) {
+                str = "Online";
+            } else if (house.lastSession != null) {
+                str = "Last on: " + DateUtil.getConversationalDateString(house.lastSession);
+            }
+            if (str != null) {
+                rule = new _rule();
+                rule.y = -50;
+                _tip.addChild(rule);
+                _tip.addChild(getTextField(str, -35));
+            }
+
         } else if (neighbor is NeighborGroup) {
             var group :NeighborGroup = neighbor as NeighborGroup;
-            // TODO: Logo
-            above = group.groupName;
-            below = "Members: " + group.members;
+
             _tip = new _plaqueGroup();
+            _tip.addChild(getTextField(group.groupName, -60));
+
+/*
+            if (group.getLogoHash() != null) {
+                _tip.height += 100;
+
+                // if there is a logo, we dynamically load it
+                var loader :Loader = new Loader();
+
+                // we want to know when the logo is loaded so we can do resize magic
+                loader.contentLoaderInfo.addEventListener(Event.COMPLETE, popupLogoLoaded);
+                // and we'll swallow IO errors rather than burden the user with them
+                loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, logoError);
+
+                loader.load(new URLRequest("/media/" + group.getLogoHash()));
+
+                rule = new _rule();
+                rule.y = -55;
+                _tip.addChild(rule);
+
+                _tip.addChild(loader);
+                loader.y = -40;
+            }
+*/
         } else {
             var game :NeighborGame = neighbor as NeighborGame;
-            // TODO: thumbnail?
-            above = game.gameName;
-            // below = "Players: " + game.population;
+
             _tip = new _plaqueGame();
+            _tip.addChild(getTextField(group.groupName, -75));
+
+            // TODO: thumbnail?
         }
+        _tip.addEventListener(MouseEvent.ROLL_OUT, popupRollOutHandler);
+        _tip.mouseChildren = false;
 
-        tile.addChild(_tip);
+        this.addChild(_tip);
+        _tip.x = event.stageX - 20;
+        _tip.y = event.stageY - 20;
 
-        var bounds :Rectangle = _tip.getBounds(stage);
-        var bottomRight :Point = tile.localToGlobal(bounds.bottomRight);
-        var topLeft :Point = tile.localToGlobal(bounds.topLeft);
+        var tipBounds :Rectangle = _tip.getBounds(this);
 
-        _tip.scaleX = _tip.scaleY = 160 * _canvas.scaleX / (bottomRight.x - topLeft.x);
-
-        bounds = _tip.getBounds(stage);
-
-        if (bounds.left < 0) {
-            _tip.x -= bounds.left * _tip.scaleX;
-        } else if (bounds.x > SWF_WIDTH) {
-            _tip.x -= (bounds.right - SWF_WIDTH) * _tip.scaleX;
+        if (tipBounds.left < 0) {
+            _tip.x -= tipBounds.left;
+        } else if (tipBounds.x > SWF_WIDTH) {
+            _tip.x -= (tipBounds.right - SWF_WIDTH);
         }
-        if (bounds.top < 0) {
-            _tip.y -= bounds.top * _tip.scaleY;
-        } else if (bounds.bottom > SWF_HEIGHT) {
-            _tip.y -= (bounds.bottom - SWF_HEIGHT) * _tip.scaleY;
+        if (tipBounds.top < 0) {
+            _tip.y -= tipBounds.top;
+        } else if (tipBounds.bottom > SWF_HEIGHT) {
+            _tip.y -= (tipBounds.bottom - SWF_HEIGHT);
         }
+    }
 
-//        var p :Point = tile.globalToLocal(_canvas.localToGlobal(new Point(tile.x, tile.y)));
-//        var p :Point = tile.globalToLocal(new Point(event.stageX, event.stageY));
-
-//        _tip.x = p.x;
-//        _tip.y = p.y;
-
+    protected function getTextField (text :String, y : Number) :TextField
+    {
         var tipText :TextField = new TextField();
-        tipText.text = above;
+        tipText.text = text;
         tipText.autoSize = TextFieldAutoSize.CENTER;
-        tipText.y = -75;
+        tipText.y = y;
         tipText.x = -tipText.width/2;
-        _tip.addChild(tipText);
+        return tipText;
+    }
 
-        if (below != null) {
-            var rule :Sprite = new _rule();
-            rule.y = -50;
-            _tip.addChild(rule);
 
-            tipText = new TextField();
-            tipText.text = below;
-            tipText.autoSize = TextFieldAutoSize.CENTER;
-            tipText.y = -35;
-            tipText.x = -tipText.width/2;
-            _tip.addChild(tipText);
-        }
+    // scales the loaded logo to the dimensions of the popup bottom
+    protected function popupLogoLoaded(event: Event) :void
+    {
+        // get references to the loaded image, the image loader, and the logo holding clip
+        var content: DisplayObject = event.target.content;
+        var loader :DisplayObjectContainer = content.parent;
+        // now scale the image depending on which dimension is constrained
+        var scale :Number = Math.min(80/content.width, 60/content.height);
+
+        // and center in either the x or y direction as needed
+//        content.x = (holder.width - scale*content.width)/2;
+//        content.y = (holder.height - scale*content.height)/2;
+        // and finally apply the image scale
+        content.scaleX = content.scaleY = scale;
+        loader.x = -content.width / 2;
     }
 
     protected function rollOutHandler (event :MouseEvent) :void
     {
-        if (_tip is Sprite) {
+        if (_tip is Sprite && event.relatedObject != _tip) {
             _tip.parent.removeChild(_tip);
-            _tip = null;
+            _tip = _tipTile = null;
+
+        }
+    }
+
+    protected function popupRollOutHandler (event :MouseEvent) :void
+    {
+        if (_tip != null && event.relatedObject != _tipTile) {
+            _tip.parent.removeChild(_tip);
+            _tip = _tipTile = null;
         }
     }
 
@@ -399,6 +442,8 @@ public class HoodViz extends Sprite
     protected var _loader :Loader;
 
     protected var _tip :Sprite;
+    protected var _tipTile :ToolTipSprite;
+
     protected var _hood :Neighborhood;
     protected var _canvas :Sprite;
     protected var _bound :Rectangle = new Rectangle();
