@@ -3,7 +3,7 @@
 
 package client.swiftly;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
 
 import com.google.gwt.user.client.DOM;
@@ -61,7 +61,7 @@ public class ProjectSelectionPanel extends VerticalPanel
         // get the list of projects for this user
         CSwiftly.swiftlysvc.getProjects(CSwiftly.creds, new AsyncCallback() {
             public void onSuccess (Object result) {
-                Iterator iter = ((ArrayList)result).iterator();
+                Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
                     _projectHeader.add(new Label(CSwiftly.msgs.noProjects()));
                 } else {
@@ -96,7 +96,7 @@ public class ProjectSelectionPanel extends VerticalPanel
         // get the list of project types for this user
         CSwiftly.swiftlysvc.getProjectTypes(CSwiftly.creds, new AsyncCallback() {
             public void onSuccess (Object result) {
-                Iterator iter = ((ArrayList)result).iterator();
+                Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
                     _projectsContainer.add(new InlineLabel(CSwiftly.msgs.noTypes()));
                 } else {

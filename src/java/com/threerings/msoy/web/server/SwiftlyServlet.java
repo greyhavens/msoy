@@ -24,6 +24,7 @@ import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectTypeRecord; 
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Provides the server implementation of {@link SwiftlyService}.
@@ -32,7 +33,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     implements SwiftlyService
 {
     // from SwiftlyService
-    public ArrayList getProjects (WebCreds creds)
+    public List getProjects (WebCreds creds)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
@@ -52,7 +53,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from SwiftlyService
-    public ArrayList getProjectTypes (WebCreds creds)
+    public List getProjectTypes (WebCreds creds)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);

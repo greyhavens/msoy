@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.samskivert.io.PersistenceException;
 
@@ -25,7 +26,7 @@ public class SwiftlyRepository extends DepotRepository
         super(conprov);
     }
 
-    public ArrayList<SwiftlyProjectRecord> findProjects (int memberId)
+    public List<SwiftlyProjectRecord> findProjects (int memberId)
         throws PersistenceException
     {
         // TODO: Use privileges, instead of just ownership.
@@ -80,7 +81,7 @@ public class SwiftlyRepository extends DepotRepository
     /**
      * Gets all the project types available.
      */
-    public ArrayList<SwiftlyProjectTypeRecord> getProjectTypes (int memberId)
+    public List<SwiftlyProjectTypeRecord> getProjectTypes (int memberId)
         throws PersistenceException
     {
         // TODO: Use privileges, instead of just ownership.
