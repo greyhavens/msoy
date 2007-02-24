@@ -60,9 +60,16 @@ public class SwiftlyProjectRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #projectSubversionURL} field. */
     public static final ColumnExp PROJECT_SUBVERSION_URL_C =
         new ColumnExp(SwiftlyProjectRecord.class, PROJECT_SUBVERSION_URL);
+
+    /** The column identifier for the {@link #remixable} field. */
+    public static final String REMIXABLE = "remixable";
+
+    /** The qualified column identifier for the {@link #remixable} field. */
+    public static final ColumnExp REMIXABLE_C =
+        new ColumnExp(SwiftlyProjectRecord.class, REMIXABLE);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** The id of the project. */
     @Id
@@ -83,6 +90,9 @@ public class SwiftlyProjectRecord extends PersistentRecord
 
     /** The project subversion URL. */
     public String projectSubversionURL;
+
+    /** Whether this project is remixable. */
+    public boolean remixable;
 
     /** 
      * Converts this persistent record to a runtime record.
