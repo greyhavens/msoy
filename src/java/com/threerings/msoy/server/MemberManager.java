@@ -28,6 +28,7 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.IntTuple;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -36,6 +37,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManager;
 
+import com.threerings.msoy.data.ActionType;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.SceneBookmarkEntry;
@@ -498,20 +500,21 @@ public class MemberManager
     }
     
     /**
-     * Grant a member some flow, categorized and optionally metatagged. The member's
-     * {@link MemberRecord} is updated, as is the {@link DailyFlowGrantedRecord}. Finally,
-     * a line is written to the flow grant log.
+     * Grant a member some flow, categorized and optionally metatagged with an action
+     * type and a detail String. The member's {@link MemberRecord} is updated, as is the
+     * {@link DailyFlowGrantedRecord}. Finally, a line is written to the flow grant log.
      */
-    public void grantFlow (final MemberName member, final int grantType, final int amount,
-                           final String details)
+    public void grantFlow (final MemberName member, final int amount,
+                           final ActionType grantAction, final String details)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
                 _memberRepo.getFlowRepository().grantFlow(member.getMemberId(), amount);
             }
             public void handleSuccess () {
-                flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " " +
-                             grantType + " " + amount + " " + details);
+                flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " G " +
+                             amount + " " + (grantAction != null ? grantAction : "null") +
+                             (details != null ? " " + details : ""));
                 // if the member is logged on, update their object
                 // TODO: distributed considerations
                 MemberObject mObj = MsoyServer.lookupMember(member);
@@ -520,26 +523,28 @@ public class MemberManager
                 }
             }
             public void handleFailure (Exception pe) {
-                log.warning("Unable to grant flow [member=" + member + "grantType=" +
-                            grantType + ", amount=" + amount + ", details=" + details + "]");
+                log.warning("Unable to grant flow [member=" + member + ", grantAction=" +
+                            grantAction + ", amount=" + amount + ", details=" + details + "]");
             }
         });
     }
 
     /**
-     * Debit a member some flow, categorized and optionally metatagged. The member's
-     * {@link MemberRecord} is updated, as is the {@link DailyFlowSpentRecord}.
+     * Debit a member some flow, categorized and optionally metatagged with an action
+     * type and a detail String. The member's {@link MemberRecord} is updated, as is the
+     * {@link DailyFlowSpentRecord}. Finally, a line is written to the flow grant log.
      */
-    public void spendFlow (final MemberName member, final int grantType, final int amount,
-                           final String details)
+    public void spendFlow (final MemberName member, final int amount,
+                           final ActionType spendAction, final String details)
     {
-        MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
+        MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
                 _memberRepo.getFlowRepository().spendFlow(member.getMemberId(), amount);
             }
             public void handleSuccess () {
-                flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " " +
-                             grantType + " " + amount + " " + details);
+                flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " S " +
+                             amount + " " + (spendAction != null ? spendAction : "null") +
+                             (details != null ? " " + details : ""));
                 // if the member is logged on, update their object
                 // TODO: distributed considerations
                 MemberObject mObj = MsoyServer.lookupMember(member);
@@ -548,12 +553,34 @@ public class MemberManager
                 }
             }
             public void handleFailure (Exception pe) {
-                log.warning("Unable to grant flow [member=" + member + "grantType=" +
-                            grantType + ", amount=" + amount + ", details=" + details + "]");
+                log.warning("Unable to spend flow [member=" + member + ", spendAction=" +
+                            spendAction + ", amount=" + amount + ", details=" + details + "]");
             }
         });
     }
 
+    /**
+     * Register and log an action taken by a specific user for humanity assessment
+     * and conversion analysis purposes.  
+     */
+    public void logUserAction (final MemberName member, final ActionType action,
+                               final String details)
+    {
+        MsoyServer.invoker.postUnit(new RepositoryUnit("takeAction") {
+            public void invokePersist () throws PersistenceException {
+                _memberRepo.getFlowRepository().logMemberAction(
+                    member.getMemberId(), action.getNumber(), details);
+            }
+            public void handleSuccess () {
+                // yay
+            }
+            public void handleFailure (Exception pe) {
+                log.warning("Unable to note user action[member=" + member + ", action=" +
+                            action + ", details=" + details + "]");
+            }
+        });
+    }
+    
     /**
      * Iterates over all the lobbies and the scenes in the world at the moment, find out the n most
      * populated ones and sort all scenes by owner. cache the values.  TODO: this is currently O(N

@@ -55,20 +55,6 @@ public class FlowRepository extends DepotRepository
         record.data = data;
         insert(record);
     }
-    
-    /**
-     * Updates the action summary count for the given member and action.
-     */
-    public void updateMemberActionSummary (int memberId, int actionId, int count)
-        throws PersistenceException
-    {
-        updateLiteral(
-            MemberActionSummaryRecord.class,
-            MemberActionSummaryRecord.MEMBER_ID, memberId,
-            MemberActionSummaryRecord.ACTION_ID, actionId,
-            new String[] { MemberActionSummaryRecord.COUNT,
-                           MemberActionSummaryRecord.COUNT + "+" + count });
-    }
 
     /**
      * Assess this member's humanity based on actions taken between the last assessment and now.
@@ -163,7 +149,7 @@ public class FlowRepository extends DepotRepository
     public void spendFlow (int memberId, int amount)
         throws PersistenceException
     {
-        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, false, "");
+        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, false);
     }
 
     /**
@@ -172,17 +158,17 @@ public class FlowRepository extends DepotRepository
     public void grantFlow (int memberId, int amount)
         throws PersistenceException
     {
-        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, false, "");
+        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, false);
     }
 
     /**
      * <em>Do not use this method!</em> It exists only because we must work with the coin system
      * which tracks members by username rather than id.
      */
-    public void grantFlow (String accountName, int amount)
+    public void grantFlow (String accountName, int actionId, int amount)
         throws PersistenceException
     {
-        updateFlow(MemberRecord.ACCOUNT_NAME, accountName, amount, false, "");
+        updateFlow(MemberRecord.ACCOUNT_NAME, accountName, amount, false);
     }
 
     /**
@@ -233,13 +219,13 @@ public class FlowRepository extends DepotRepository
 
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
-    protected void updateFlow (String index, Comparable key, int amount, boolean grant, String type)
+    protected void updateFlow (String index, Comparable key, int amount, boolean grant)
         throws PersistenceException
     {
-        String typeDesc = (grant ? "grant" : " spend") + "/" + type;
+        String type = (grant ? "grant" : " spend");
         if (amount <= 0) {
             throw new PersistenceException(
-                "Illegal flow " + typeDesc + " [index=" + index + ", amount=" + amount + "]");
+                "Illegal flow " + type + " [index=" + index + ", amount=" + amount + "]");
         }
 
         String op = grant ? "+" : "-";
@@ -248,10 +234,10 @@ public class FlowRepository extends DepotRepository
                                  MemberRecord.FLOW, MemberRecord.FLOW + op + amount);
         if (mods == 0) {
             throw new PersistenceException(
-                "Flow " + typeDesc + " modified zero rows " +
+                "Flow " + type + " modified zero rows " +
                 "[where=" + index + "=" + key + ", amount=" + amount + "]");
         } else if (mods > 1) {
-            log.warning("Flow " + typeDesc + " modified multiple rows " +
+            log.warning("Flow " + type + " modified multiple rows " +
                         "[where=" + index + "=" + key + ", amount=" + amount +
                         ", mods=" + mods + "].");
         }
@@ -261,8 +247,7 @@ public class FlowRepository extends DepotRepository
         do {
             mods = updateLiteral(
                 grant ? DailyFlowGrantedRecord.class : DailyFlowSpentRecord.class,
-                new Where(DailyFlowGrantedRecord.TYPE, type,
-                          DailyFlowGrantedRecord.DATE, date),
+                new Where(DailyFlowGrantedRecord.TYPE, type, DailyFlowGrantedRecord.DATE, date),
                 null,
                 DailyFlowGrantedRecord.AMOUNT, DailyFlowGrantedRecord.AMOUNT + op + amount);
             if (mods == 0) {
