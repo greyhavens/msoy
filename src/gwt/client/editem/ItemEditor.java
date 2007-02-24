@@ -8,6 +8,7 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -22,7 +23,6 @@ import com.threerings.msoy.item.web.MediaDesc;
 
 import client.util.BorderedDialog;
 import client.util.MsoyUI;
-import client.util.RowPanel;
 
 /**
  * The base class for an interface for creating and editing digital items.
@@ -88,33 +88,25 @@ public abstract class ItemEditor extends BorderedDialog
         _header.add(_etitle = MsoyUI.createLabel("title", "Title"));
 
         VerticalPanel contents = (VerticalPanel)_contents;
-        contents.setSpacing(10);
         TabPanel mediaTabs = createTabs();
 
         // create a name entry field
-        contents.add(
-            createRow(CEditem.emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
+        HorizontalPanel row = new HorizontalPanel();
+        row.setSpacing(10);
+        row.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        row.add(new Label(CEditem.emsgs.editorName()));
+        row.add(bind(_name = new TextBox(), new Binder() {
             public void textUpdated (String text) {
                 _item.name = text;
             }
-        })));
+        }));
+        contents.add(row);
 
+        // create the rest of the interface
         createInterface(contents, mediaTabs);
 
         // start with main selected
         mediaTabs.selectTab(0);
-
-//         // the main tab will contain the base metadata and primary media uploader
-//         VerticalPanel main = new VerticalPanel();
-//         main.setStyleName("Tab");
-//         createMainInterface(main);
-//         tabs.add(main, "Main");
-
-//         // the extra tab will contain the furni and thumbnail media and description
-//         VerticalPanel extra = new VerticalPanel();
-//         extra.setStyleName("Tab");
-//         createExtraInterface(extra);
-//         tabs.add(extra, "Extra");
 
         _footer.add(_esubmit = new Button("submit"));
         _esubmit.setEnabled(false);
@@ -186,7 +178,6 @@ public abstract class ItemEditor extends BorderedDialog
      */
     public abstract Item createBlankItem ();
 
-
     // @Override // from Widget
     protected void onLoad ()
     {
@@ -197,9 +188,7 @@ public abstract class ItemEditor extends BorderedDialog
     // @Override // from BorderedDialog
     protected Widget createContents ()
     {
-        VerticalPanel contents = new VerticalPanel();
-        contents.setStyleName("itemEditor");
-        return contents;
+        return new VerticalPanel();
     }
 
     /**
@@ -272,14 +261,6 @@ public abstract class ItemEditor extends BorderedDialog
      */
     protected void createExtraInterface (VerticalPanel extra)
     {
-    }
-
-    protected RowPanel createRow (String label, Widget widget)
-    {
-        RowPanel row = new RowPanel();
-        row.add(new Label(label));
-        row.add(widget);
-        return row;
     }
 
     /**
