@@ -48,7 +48,7 @@
     <file name="${extlib.dir}/gwt-user.jar"/>
     <file name="${extlib.dir}/gwt-widgets-0.1.1.jar"/>
     <file name="${extlib.dir}/jetty/lib/org.mortbay.jetty.jar"/>
-    <file name="${extlib.dir}/junit-4.2.jar"/>
+    <file name="${extlib.dir}/junit-3.7.jar"/>
     <file name="${extlib.dir}/mail.jar"/>
     <file name="${extlib.dir}/mysql-connector-java-3.1.12-bin.jar"/>
     <file name="${extlib.dir}/proguard.jar"/>

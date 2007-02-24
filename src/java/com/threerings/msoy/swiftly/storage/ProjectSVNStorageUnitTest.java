@@ -11,14 +11,17 @@ import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import java.io.File;
 import java.net.URI;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import junit.framework.TestCase;
 
-public class ProjectSVNStorageUnitTest
+public class ProjectSVNStorageUnitTest extends TestCase
 {
+    public ProjectSVNStorageUnitTest (String name)
+    {
+        super(name);
+    }
+
     /** Set up the test case anew. */
-    @Before public void setUp ()
+    public void setUp ()
         throws Exception
     {
         File svnDir;
@@ -58,13 +61,13 @@ public class ProjectSVNStorageUnitTest
     }
 
     /** Clean up afterwards. */
-    @After public void tearDown ()
+    public void tearDown ()
     {
         deleteDir(_tempDir);
     }
 
     /** Try opening of a project. */
-    @Test public void testOpenProject ()
+    public void testOpenProject ()
         throws Exception
     {
         ProjectStorage project = new ProjectSVNStorage(_projectRecord);
