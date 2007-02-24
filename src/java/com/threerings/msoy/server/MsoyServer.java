@@ -68,7 +68,7 @@ import com.threerings.msoy.world.server.PetManager;
 import com.threerings.msoy.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoySceneRepository;
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRepository;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
@@ -106,7 +106,7 @@ public class MsoyServer extends WhirledServer
     public static GroupRepository groupRepo;
 
     /** Contains information on our swiftly projects. */
-    public static SwiftlyProjectRepository swiftlyRepo;
+    public static SwiftlyRepository swiftlyRepo;
 
     /** The Msoy scene repository. */
     public static MsoySceneRepository sceneRepo;
@@ -253,7 +253,7 @@ public class MsoyServer extends WhirledServer
         memberRepo = new MemberRepository(conProv);
         profileRepo = new ProfileRepository(conProv);
         groupRepo = new GroupRepository(conProv);
-        swiftlyRepo = new SwiftlyProjectRepository(conProv);
+        swiftlyRepo = new SwiftlyRepository(conProv);
         memoryRepo = new MemoryRepository(conProv);
 
         // create and set up our configuration registry and admin service

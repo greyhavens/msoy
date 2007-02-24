@@ -18,9 +18,9 @@ import com.samskivert.jdbc.depot.DepotRepository;
 /**
  * Manages the persistent information associated with a member's projects.
  */
-public class SwiftlyProjectRepository extends DepotRepository
+public class SwiftlyRepository extends DepotRepository
 {
-    public SwiftlyProjectRepository (ConnectionProvider conprov)
+    public SwiftlyRepository (ConnectionProvider conprov)
     {
         super(conprov);
     }
