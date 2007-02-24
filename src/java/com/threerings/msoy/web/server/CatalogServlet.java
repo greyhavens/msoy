@@ -25,6 +25,7 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
+import com.threerings.msoy.data.ActionType;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -101,6 +102,11 @@ public class CatalogServlet extends MsoyServiceServlet
         MsoyServer.omgr.postRunnable(new Runnable() {
             public void run () {
                 MsoyServer.itemMan.purchaseItem(mrec.memberId, ident, waiter);
+//                // TODO: Figure out where flow constant comes from, actually test code, etc.
+//                MsoyServer.memberMan.grantFlow(
+//                    mrec.getName(), 3, ActionType.BoughtItem, ident.toString());
+//                MsoyServer.memberMan.logUserAction(
+//                    mrec.getName(), ActionType.BoughtItem, ident.toString());
             }
         });
         return waiter.waitForResult();
