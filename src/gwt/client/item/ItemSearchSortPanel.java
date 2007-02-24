@@ -40,7 +40,7 @@ public class ItemSearchSortPanel extends HorizontalPanel
         _listener = listener;
 
         _searchBox = new TextBox();
-        _searchBox.setStyleName("itemSearchBox");
+        _searchBox.addStyleName("itemSearchBox");
         _searchBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 TextBox box = (TextBox) widget;
@@ -63,7 +63,7 @@ public class ItemSearchSortPanel extends HorizontalPanel
         add(sortLabel);
 
         ListBox sortBox = new ListBox();
-        sortBox.setStyleName("itemSortBox");
+        sortBox.addStyleName("itemSortBox");
         for (int ii = 0; ii < sortNames.length; ii ++) {
             sortBox.addItem(sortNames[ii], String.valueOf(sortValues[ii]));
         }
