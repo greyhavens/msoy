@@ -39,6 +39,8 @@ public class ActionScriptStyledDocument extends DefaultStyledDocument
     {
         StyleConstants.setBold(_keyword, true);
         StyleConstants.setForeground(_keyword, Color.blue);
+        StyleConstants.setBold(_types, true);
+        StyleConstants.setForeground(_types, Color.orange);
         _separators = "0123456789() \n\t\r";
     }
 
@@ -55,7 +57,7 @@ public class ActionScriptStyledDocument extends DefaultStyledDocument
         }
 
         // clear any attributes 
-        setCharacterAttributes(0, line.length(), _normal, true);
+        setCharacterAttributes(offset, line.length(), _normal, true);
 
         StringTokenizer tokens = new StringTokenizer(line, _separators, true);
         String currentToken;
@@ -65,14 +67,17 @@ public class ActionScriptStyledDocument extends DefaultStyledDocument
         {
             currentToken = tokens.nextToken();
             position = line.indexOf(currentToken);
-            if ("highlight".equals(currentToken.trim()))
-            {
-                setCharacterAttributes(position, currentToken.length(), _keyword, true);
+            if (_tokens.reserved.contains(currentToken.trim())) {
+                setCharacterAttributes(position + offset, currentToken.length(), _keyword, true);
+            } else if (_tokens.types.contains(currentToken.trim())) {
+                setCharacterAttributes(position + offset, currentToken.length(), _types, true);
             }
         }
     } 
 
     protected SimpleAttributeSet _normal = new SimpleAttributeSet();
     protected SimpleAttributeSet _keyword = new SimpleAttributeSet();
+    protected SimpleAttributeSet _types = new SimpleAttributeSet();
+    protected ActionScriptTokens _tokens = new ActionScriptTokens();
     protected String _separators;
 }
