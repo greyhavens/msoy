@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.storage;
+package com.threerings.msoy.swiftly.server.storage;
 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 

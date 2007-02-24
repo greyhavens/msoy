@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.swiftly.storage;
+package com.threerings.msoy.swiftly.server.storage;
 
 /**
  * Thrown when a swiftly storage error occurs. Supplied messages are not
