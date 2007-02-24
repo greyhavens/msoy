@@ -8,6 +8,7 @@ import flash.display.Graphics;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.KeyboardEvent;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -52,6 +53,7 @@ public class Display extends Sprite
         // Register for events
         addEventListener (MouseEvent.CLICK, clickHandler);
         addEventListener (MouseEvent.MOUSE_MOVE, mouseHandler);
+        addEventListener (KeyboardEvent.KEY_UP, typingHandler);
     }
 
     /** Called from the model, this accessor modifies the display /text/
@@ -122,26 +124,26 @@ public class Display extends Sprite
         _logger.Log (message);
     }
     
-    // Adds a "please wait" message
+    /** Adds a "please wait" message */
     public function logPleaseWait () : void
     {
         _logger.Log ("Please wait for\n the next round.");
     }
 
-    // Sets scores based on the scoreboard.
+    /** Sets scores based on the scoreboard. */
     public function updateScores (board : Scoreboard) : void
     {
         _scorefield.updateScores (board);
     }
 
-    // Forces the timer display to start with the given time.
-    // Will not enable the timer if it's disabled.
+    /** Forces the timer display to start with the given time.
+        Will not enable the timer if it's disabled. */
     public function forceTimerStart (seconds : Number) : void
     {
         _timer.start (seconds);
     }
-        
-    
+
+ 
 
 
     // PRIVATE EVENT HANDLERS
@@ -182,6 +184,36 @@ public class Display extends Sprite
         setEnableState (false);
     }
 
+    /** Called when the user types a letter inside the word field. */
+    public function typingHandler (event : KeyboardEvent) : void
+    {
+        switch (event.keyCode)
+        {
+        case 13:
+            // If it's an ENTER, try scoring.
+            if (_wordfield.text != "")
+            {
+                _controller.tryScoreWord (_wordfield.text);
+            }
+            break;
+
+        case 8:
+            // If it's a BACKSPACE, delete the last char
+            if (_wordfield.text != "")
+            {
+                _controller.processKeystroke (event);
+                _wordfield.text = _wordfield.text.substr (0, _wordfield.text.length - 1);
+            }
+            break;
+            
+        default:
+            // It's just a regular keystroke. Let the controller know,
+            // and then append to our word field.
+            _controller.processKeystroke (event);
+            _wordfield.appendText (String.fromCharCode(event.charCode).toUpperCase());
+        }
+    }
+            
 
 
     // PRIVATE HELPER FUNCTIONS
@@ -216,7 +248,6 @@ public class Display extends Sprite
 
         var format : TextFormat = Resources.makeFormatForUI ();
         _wordfield = new TextField ();
-        _wordfield.selectable = false;
         _wordfield.defaultTextFormat = format;
         _wordfield.borderColor = Resources.defaultBorderColor;
         _wordfield.border = true;
@@ -234,7 +265,6 @@ public class Display extends Sprite
         _timer = new CountdownTimer ();
         doLayout (_timer, Properties.TIMER);
         addChild (_timer);
-
     }
 
     /** Helper function that copies x, y, width and height properties
@@ -341,9 +371,9 @@ public class Display extends Sprite
         return (p.x >= 0 && p.x < Properties.LETTERS &&
                 p.y >= 0 && p.y < Properties.LETTERS);
     }
-        
-    
 
+
+    
     // PRIVATE VARIABLES
 
     /** Game logic */

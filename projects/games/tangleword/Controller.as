@@ -3,7 +3,8 @@ package
 
 
 import com.threerings.ezgame.EZGameControl;
-//import com.threerings.ezgame.util.LocaleSettings;
+
+import flash.events.KeyboardEvent;
 import flash.geom.Point;
 
 
@@ -52,10 +53,12 @@ public class Controller
             // Position of the letter on top of the stack 
             var lastLetterPosition : Point = _model.getLastLetterPosition ();
             
-            // Did the player click on the first letter? If so, just add it.
+            // Did the player click on the first letter? If so, clear out
+            // the current word field, and add it.
             var noPreviousLetterFound : Boolean = (lastLetterPosition == null);
             if (noPreviousLetterFound)
             {
+                _model.removeAllSelectedLetters (); 
                 _model.selectLetterAtPosition (position);
                 return;
             }
@@ -86,7 +89,7 @@ public class Controller
         It will be matched against the dictionary, and added to the model. */
     public function tryScoreWord (word : String) : void
     {
-        // This code processes a successful word
+        // This code processes a word that exists in the dictionary
         var success : Function = function (word : String, isvalid : Boolean) : void
         {
             // Finally, process the new word. Notice that we don't check if it's already
@@ -99,14 +102,31 @@ public class Controller
         // First, check to make sure it's of the correct length (in characters)
         if (word.length < MIN_WORD_LENGTH) return;
 
+        // Check if it exists on the board
+        if (! _model.wordExistsOnBoard (word.toLowerCase())) return;
+
         // Now check if it's an actual word.
         _gameCtrl.checkDictionaryWord (Properties.LOCALE, word, success);
 
     }
             
+    /**
+       Called when the user types a letter inside the word field.
+    */
+    public function processKeystroke (event : KeyboardEvent) : void
+    {
+        // The user typed in some character. Typing is incompatible
+        // with mouse selection, so if there's already anything selected
+        // by clicking, clear it all, and start afresh.
+        if (_model.getLastLetterPosition () != null)
+        {
+            _model.removeAllSelectedLetters ();
+        }
+    }
+    
 
 
-    // PRIVATE EVENT HANDLERS
+    // EVENT HANDLERS
 
     /** Called when the round starts - enables user input, randomizes data. */
     private function roundStartedHandler (newState : String) : void

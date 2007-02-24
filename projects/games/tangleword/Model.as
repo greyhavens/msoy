@@ -95,9 +95,62 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         _word = new Array ();
         _display.updateLetterSelection (_word);
     }
-    
 
+    /** Checks if the word exists on the board, by doing an exhaustive
+        search of all possible combinations. */
+    public function wordExistsOnBoard (word : String) : Boolean
+    {
+        // TODO
+        // return true;
 
+        if (word.length == 0) return false;
+        
+        for (var x : int = 0; x < Properties.LETTERS; x++) {
+            for (var y : int = 0; y < Properties.LETTERS; y++) {
+                if (wordExists (word, 0, x, y, new Array ()))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function wordExists (
+        word : String, start : Number, x : Number, y : Number, visited : Array) : Boolean
+    {
+        // recursion finished successfully.
+        if (start >= word.length) return true;
+
+        // if the letter doesn't match, fail.
+        var l : String = _board[x][y];
+        if (start + l.length > word.length || word.indexOf (l, start) != start) 
+            return false;
+
+        // if we've seen it before, fail.
+        for each (var p : Point in visited) {
+            if (p.x == x && p.y == y) return false;
+        }
+        
+        // finally, check all neighbors
+        visited.push (new Point (x, y));
+        for (var dx : int = -1; dx <= 1; dx++) {
+            for (var dy : int = -1; dy <= 1; dy++) {
+                var xx : int = x + dx;
+                var yy : int = y + dy;
+                if (xx >= 0 && xx < Properties.LETTERS &&
+                    yy >= 0 && yy < Properties.LETTERS)
+                {
+                    if (wordExists (word, start + l.length, xx, yy, visited))
+                        return true;
+                }
+            }
+        }
+        visited.pop();
+        
+        return false;
+    }
+            
+        
 
 
     //
