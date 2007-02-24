@@ -17,7 +17,6 @@ public class Kart extends Sprite
         _camera = camera;
         _ground = ground;
         _kart = new KART();
-        _kart.gotoAndStop(180);
         addChild(_kart);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);

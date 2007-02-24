@@ -20,6 +20,7 @@ public class Level extends Sprite
     public function initialize (background :Class, rough :Class, track :Class, wall :Class,
         config :LevelConfig, /** this is temporary! */ objects :Class) :void
     {
+        _config = config;
         var backgroundImage :Shape;
         var backgroundSprite :Sprite = (new background() as Sprite);
         var backgroundBitmap :BitmapData = new BitmapData(backgroundSprite.width, 
@@ -47,7 +48,11 @@ public class Level extends Sprite
         addChild(_wall = (new wall() as DisplayObject));
         addChild(new objects() as DisplayObject);
 
-        _ground.setKartLocation(config.getStartingPoint(0));
+        // because we're waiting both to hear from the host and from the loader, it is not known
+        // whether the starting position or the config will be inialized first
+        if (_startingPosition != -1) {
+            _ground.setKartLocation(_config.getStartingPoint(_startingPosition));
+        }
         _ground.setScenery(new Scenery(config.getObstacles().concat(config.getBonuses())));
     }
 
@@ -59,6 +64,14 @@ public class Level extends Sprite
     public function isOnWall (loc :Point) :Boolean
     {
         return isNotTransparent(loc, _wall);
+    }
+
+    public function setStartingPosition (position :int) :void
+    {
+        _startingPosition = position;
+        if (_config != null) {
+            _ground.setKartLocation(_config.getStartingPoint(_startingPosition));
+        }
     }
 
     protected function isNotTransparent (loc :Point, img :DisplayObject) :Boolean 
@@ -76,5 +89,7 @@ public class Level extends Sprite
     protected var _track :DisplayObject;
     protected var _wall :DisplayObject;
     protected var _ground :Ground;
+    protected var _config :LevelConfig;
+    protected var _startingPosition :int = -1;
 }
 }

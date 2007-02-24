@@ -13,9 +13,18 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 import com.threerings.ezgame.EZGameControl;
+import com.threerings.ezgame.HostCoordinator;
+import com.threerings.ezgame.HostEvent;
+import com.threerings.ezgame.PropertyChangedListener;
+import com.threerings.ezgame.PropertyChangedEvent;
+import com.threerings.ezgame.StateChangedListener;
+import com.threerings.ezgame.StateChangedEvent;
+
+import com.threerings.util.ArrayUtil;
 
 [SWF(width="711", height="400")]
 public class UnderwhirledDrift extends Sprite
+    implements PropertyChangedListener, StateChangedListener
 {
     /** width of the masked display */
     public static const DISPLAY_WIDTH :int = 711;
@@ -54,6 +63,9 @@ public class UnderwhirledDrift extends Sprite
         ground.y = SKY_HEIGHT;
         addChild(ground);
 
+        _level = LevelFactory.createLevel(0, ground);
+        ground.setLevel(_level);
+
         _kart = new Kart(camera, ground);
         _kart.x = KART_LOCATION.x;
         // tack on a few pixels to account for the front of the kart
@@ -61,80 +73,118 @@ public class UnderwhirledDrift extends Sprite
         addChild(_kart);
 
         _gameCtrl = new EZGameControl(this);
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownEvent);
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyUpEvent);
+        _gameCtrl.registerListener(this);
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownEventHandler);
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyUpEventHandler);
 
-        // names obove characters is good, but they should fade out after the race starts
+        _coord = new HostCoordinator(_gameCtrl);
+        _coord.addEventListener(HostEvent.CLAIMED, hostEventHandler);
+        _coord.addEventListener(HostEvent.CHANGED, hostEventHandler);
+
+        // names obove characters is good, but they should fade out after the race 
+        // starts
         /*
         var nameText :TextField = new TextField();
         nameText.text = _gameCtrl.getOccupantName(_gameCtrl.getMyId());
         nameText.selectable = false;
         nameText.autoSize = TextFieldAutoSize.CENTER;
         nameText.scaleX = nameText.scaleY = 2.5;
-        _gameCtrl.localChat("width: " + nameText.width);
         nameText.x = _kart.x - nameText.width / 2;
         nameText.y = _kart.y - _kart.height - 5;
         addChild(nameText);*/
     }
 
+    // from StateChangedListener
+    public function stateChanged (event :StateChangedEvent) :void
+    {
+    }
+
+    // from PropertyChangedListener
+    public function propertyChanged (event :PropertyChangedEvent) :void
+    {
+        var name :String = event.name;
+        if (name == "playerPositions") {
+            var playerPositions :Array = event.newValue as Array;
+            for (var ii: int = 0; ii < playerPositions.length; ii++) {
+                if (playerPositions[ii].id == _gameCtrl.getMyId()) {
+                    _level.setStartingPosition(playerPositions[ii].position);
+                    break;
+                }
+            }
+        }
+    }
+
+    protected function hostEventHandler (event :HostEvent)  :void
+    {
+        if (_coord.status == HostCoordinator.STATUS_HOST) {
+            if (event.type == HostEvent.CLAIMED) {
+                // assign everyone a starting position.
+                var playerIds :Array = _gameCtrl.seating.getPlayerIds();
+                ArrayUtil.shuffle(playerIds);
+                for (var ii :int = 0; ii < playerIds.length; ii++) {
+                    playerIds[ii] = { id: playerIds[ii], position: ii }
+                }
+                _gameCtrl.set("playerPositions", playerIds);
+            } else if (event.type == HostEvent.CHANGED) {
+                // Do nothing for now
+            }
+        }
+    }
+
     /** 
      * Handles KEY_DOWN. 
      */
-    protected function keyDownEvent(event :KeyboardEvent) :void
+    protected function keyDownEventHandler (event :KeyboardEvent) :void
     {
         switch (event.keyCode) {
         case Keyboard.UP:
             _kart.moveForward(true);
             break;
-
         case Keyboard.DOWN:
             _kart.moveBackward(true);
             break;
-
         case Keyboard.LEFT:
             _kart.turnLeft(true);
             break;
-
         case Keyboard.RIGHT:
             _kart.turnRight(true);
             break;
-
         case Keyboard.SPACE:
             _kart.jump();
             break;
-
         default:
             // do nothing
         }
     }
 
-    protected function keyUpEvent(event :KeyboardEvent) :void
+    protected function keyUpEventHandler (event :KeyboardEvent) :void
     {
         switch (event.keyCode) {
         case Keyboard.UP:
             _kart.moveForward(false);
             break;
-
         case Keyboard.DOWN:
             _kart.moveBackward(false);
             break;
-
         case Keyboard.LEFT:
             _kart.turnLeft(false);
             break;
-
         case Keyboard.RIGHT:
             _kart.turnRight(false);
             break;
-
         default:
             // do nothing
         }
     }
 
-
     /** the game control. */
     protected var _gameCtrl :EZGameControl;
+
+    /** The host coordinator */
+    protected var _coord :HostCoordinator;
+
+    /** The level object */
+    protected var _level :Level;
 
     /** The kart. */
     protected var _kart :Kart;

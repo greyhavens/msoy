@@ -26,8 +26,16 @@ public class Ground extends Sprite
 
         _stripData = new BitmapData(WIDTH, HEIGHT, true, 0);
         addChild(new Bitmap(_stripData));
-        _level = LevelFactory.createLevel(0, this);
+    }
 
+    /**
+     * set the level object used by this object.
+     */
+    public function setLevel (level :Level) :void
+    {
+        _level = level;
+
+        // don't start attempting to render frames until we have a valid level object
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
@@ -102,7 +110,6 @@ public class Ground extends Sprite
             // draw the track using the calculated transform and a clipping rect
             var clipping :Rectangle = new Rectangle(0, HEIGHT - totalHeight, WIDTH, 
                 stripHeight);
-            //_strips[strip].draw(_level, thisTransform, null, null, clipping);
             _stripData.draw(_level, thisTransform, null, null, clipping);
             // update status flags
             var y :int = HEIGHT - totalHeight;
