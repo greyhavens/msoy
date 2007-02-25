@@ -28,14 +28,17 @@ public class SwiftlyRepository extends DepotRepository
         super(conprov);
     }
 
-    public List<SwiftlyProjectRecord> findProjects (int memberId)
+    /**
+     * Find all the projects which have the remixable flag set.
+     */
+     // TODO: this should take a limit parameter
+    public List<SwiftlyProjectRecord> findRemixableProjects ()
         throws PersistenceException
     {
-        // TODO: Use privileges, instead of just ownership.
         ArrayList<SwiftlyProjectRecord> projects = new ArrayList<SwiftlyProjectRecord>();
         for (SwiftlyProjectRecord record : findAll(
                 SwiftlyProjectRecord.class,
-                new Where(SwiftlyProjectRecord.OWNER_ID_C, memberId))) {
+                new Where(SwiftlyProjectRecord.REMIXABLE_C, true))) {
                 
             projects.add(record);                  
         }
@@ -47,10 +50,9 @@ public class SwiftlyRepository extends DepotRepository
      * Loads the project record for the specified project. Returns null if no
      * record has been created for that project.
      */
-    public SwiftlyProjectRecord loadProject (int memberId, int projectId)
+    public SwiftlyProjectRecord loadProject (int projectId)
         throws PersistenceException
     {
-        // TODO: verify permissions on the returned project using memberId
         return load(SwiftlyProjectRecord.class, projectId);
     }
 
@@ -119,7 +121,7 @@ public class SwiftlyRepository extends DepotRepository
     }
 
     /**
-     * Adds a member to the list of collaborators for a group.
+     * Adds a member to the list of collaborators for a project.
      */
     public SwiftlyCollaboratorsRecord joinCollaborators (int projectId, int memberId)
         throws PersistenceException
@@ -131,9 +133,8 @@ public class SwiftlyRepository extends DepotRepository
         return record;
     }
 
-
     /**
-     * Remove a given person as a collaborator on a given project. This method returns
+     * Remove a given member as a collaborator on a given project. This method returns
      * false if there was no membership to cancel.
      */
     // TODO do we need to work on rows or is it safe to just remove one record?

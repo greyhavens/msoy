@@ -58,8 +58,8 @@ public class ProjectSelectionPanel extends VerticalPanel
         table.setWidget(0, 0, _projectHeader);
         table.setWidget(1, 0, chooser);
 
-        // get the list of projects for this user
-        CSwiftly.swiftlysvc.getProjects(CSwiftly.creds, new AsyncCallback() {
+        // get the list of projects that are remixable
+        CSwiftly.swiftlysvc.getMembersProjects(CSwiftly.creds, new AsyncCallback() {
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
@@ -76,7 +76,7 @@ public class ProjectSelectionPanel extends VerticalPanel
                 }
             }
             public void onFailure (Throwable caught) {
-                CSwiftly.log("getProjects failed", caught);
+                CSwiftly.log("getMembersProjects failed", caught);
                 addError(CSwiftly.serverError(caught));
             }
         });

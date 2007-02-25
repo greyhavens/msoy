@@ -20,6 +20,7 @@ import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.SwiftlyProjectType;
 import com.threerings.msoy.web.data.WebCreds;
 
+import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord; 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord; 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectTypeRecord; 
 
@@ -33,7 +34,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     implements SwiftlyService
 {
     // from SwiftlyService
-    public List getProjects (WebCreds creds)
+    public List getRemixableProjects (WebCreds creds)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
@@ -41,8 +42,28 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         try {
             for (SwiftlyProjectRecord pRec :
-                MsoyServer.swiftlyRepo.findProjects(memrec.memberId)) {
+                MsoyServer.swiftlyRepo.findRemixableProjects()) {
                 projects.add(pRec.toSwiftlyProject());
+            }
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Getting user's projects failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        return projects;
+    }
+
+    // from SwiftlyService
+    public List getMembersProjects (WebCreds creds)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(creds);
+        ArrayList<SwiftlyProject> projects = new ArrayList<SwiftlyProject>();
+
+        try {
+            for (SwiftlyCollaboratorsRecord cRec :
+                MsoyServer.swiftlyRepo.getMemberships(memrec.memberId)) {
+                projects.add(MsoyServer.swiftlyRepo.loadProject(cRec.projectId).toSwiftlyProject());
             }
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Getting user's projects failed.", pe);
@@ -104,8 +125,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser(creds);
 
         try {
-            return MsoyServer.swiftlyRepo.loadProject(
-                memrec.memberId, projectId).toSwiftlyProject();
+            // TODO: verify the user has permissions on this project
+            return MsoyServer.swiftlyRepo.loadProject(projectId).toSwiftlyProject();
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Loading project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);

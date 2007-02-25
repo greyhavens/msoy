@@ -15,9 +15,14 @@ import com.threerings.msoy.web.data.WebCreds;
 public interface SwiftlyServiceAsync
 {
     /**
-     * The asynchronous version of {@link SwiftlyService#getProjects}.
+     * The asynchronous version of {@link SwiftlyService#getRemixableProjects}.
      */
-    public void getProjects (WebCreds creds, AsyncCallback callback);
+    public void getRemixableProjects (WebCreds creds, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link SwiftlyService#getMembersProjects}.
+     */
+    public void getMembersProjects (WebCreds creds, AsyncCallback callback);
 
     /**
      * The asynchronous version of {@link SwiftlyService#getProjectTypes}.

@@ -18,9 +18,15 @@ import com.threerings.msoy.web.data.WebCreds;
 public interface SwiftlyService extends RemoteService
 {
     /**
-     * Returns the list of SwiftlyProjects for the member in the supplied WebCreds
+     * Returns the list of SwiftlyProjects that are remixable
      */
-    public List getProjects (WebCreds creds)
+    public List getRemixableProjects (WebCreds creds)
+        throws ServiceException;
+
+    /**
+     * Returns the list of SwiftlyProjects that the supplied member is a collaborator on
+     */
+    public List getMembersProjects (WebCreds creds)
         throws ServiceException;
 
     /**
