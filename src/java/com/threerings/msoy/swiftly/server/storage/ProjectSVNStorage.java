@@ -100,7 +100,6 @@ public class ProjectSVNStorage
      * Initialize project storage for a given project record. Any .svn directories in the given
      * template directory will be silently ignored.
      */
-    @SuppressWarnings("unchecked")
     public static ProjectSVNStorage initializeStorage (SwiftlyProjectRecord record, File templateDir)
         throws ProjectStorageException
     {
@@ -232,11 +231,9 @@ public class ProjectSVNStorage
     /** 
      * Recursively retrieves the entire subversion directory structure.
      */
-    @SuppressWarnings("unchecked")
     private List<PathElement> recurseTree (SVNRepository svnRepo, PathElement parent, List<PathElement> result)
         throws SVNException, ProjectStorageException
     {
-        Collection<SVNDirEntry> entries;
         String path;
 
         if (result == null) {
@@ -249,7 +246,8 @@ public class ProjectSVNStorage
             path = parent.getAbsolutePath();
         }
 
-        entries = (Collection<SVNDirEntry>) svnRepo.getDir(path, -1, null, (Collection)null);
+        @SuppressWarnings("unchecked")
+        Collection<SVNDirEntry> entries = (Collection<SVNDirEntry>) svnRepo.getDir(path, -1, null, (Collection)null);
         for (SVNDirEntry entry : entries) {
             PathElement node;
             SVNNodeKind kind;
