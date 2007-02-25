@@ -54,6 +54,7 @@ public class ProjectSVNStorage
         throws ProjectStorageException
     {
         // TODO: Project Template Here.
+        return null;
     }
 
     /** 
