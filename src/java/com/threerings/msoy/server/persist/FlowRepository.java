@@ -246,10 +246,10 @@ public class FlowRepository extends DepotRepository
         boolean again = false;
         do {
             mods = updateLiteral(
-                grant ? DailyFlowGrantedRecord.class : DailyFlowSpentRecord.class,
-                new Where(DailyFlowGrantedRecord.TYPE, type, DailyFlowGrantedRecord.DATE, date),
+                DailyFlowRecord.class,
+                new Where(DailyFlowRecord.TYPE, type, DailyFlowRecord.DATE, date),
                 null,
-                DailyFlowGrantedRecord.AMOUNT, DailyFlowGrantedRecord.AMOUNT + op + amount);
+                DailyFlowRecord.AMOUNT, DailyFlowRecord.AMOUNT + op + amount);
             if (mods == 0) {
                 // if this is the second time we tried that update, flip out.
                 if (again) {
@@ -257,8 +257,7 @@ public class FlowRepository extends DepotRepository
                         "Flow summary update modified zero rows after insertion " +
                         "[where=" + index + "=" + key + ", amount=" + amount + "]");
                 }
-                DailyFlowRecord summary =
-                    grant ? new DailyFlowGrantedRecord() : new DailyFlowSpentRecord();
+                DailyFlowRecord summary = new DailyFlowRecord();
                 summary.date = date;
                 summary.type = type;
                 summary.amount = amount;

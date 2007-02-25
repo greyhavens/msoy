@@ -13,7 +13,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
  * Summarizes the amount of each type of flow spent on any given day.
  */
 @Entity
-public abstract class DailyFlowRecord extends PersistentRecord
+public class DailyFlowRecord extends PersistentRecord
 {
     public static final int SCHEMA_VERSION = 1;
     

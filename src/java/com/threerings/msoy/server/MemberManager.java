@@ -61,8 +61,6 @@ import com.threerings.msoy.world.data.MsoyScene;
 import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.server.RoomManager;
 
-import com.threerings.msoy.server.persist.DailyFlowGrantedRecord;
-import com.threerings.msoy.server.persist.DailyFlowSpentRecord;
 import com.threerings.msoy.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.server.persist.GroupRecord;
 import com.threerings.msoy.server.persist.GroupRepository;
