@@ -133,7 +133,7 @@ public class ProjectSelectionPanel extends VerticalPanel
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
-                    _remixableHeader.add(new Label(CSwiftly.msgs.noProjects()));
+                    _remixableHeader.add(new Label(CSwiftly.msgs.noRemixableProjects()));
                 } else {
                     _remixableHeader.add(new Label(CSwiftly.msgs.remixableProjects()));
                     while (iter.hasNext()) {
@@ -159,7 +159,7 @@ public class ProjectSelectionPanel extends VerticalPanel
             public void onSuccess (Object result) {
                 Iterator iter = ((List)result).iterator();
                 if (!iter.hasNext()) {
-                    _membersHeader.add(new Label(CSwiftly.msgs.noProjects()));
+                    _membersHeader.add(new Label(CSwiftly.msgs.noMembersProjects()));
                 } else {
                     _membersHeader.add(new Label(CSwiftly.msgs.membersProjects()));
                     while (iter.hasNext()) {

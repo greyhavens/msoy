@@ -24,18 +24,26 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String invalidProjectId(String arg0);
 
   /**
-   * Translated "No projects found.".
+   * Translated "You have not created any projects.".
    * 
-   * @return translated "No projects found."
-   * @gwt.key noProjects
+   * @return translated "You have not created any projects."
+   * @gwt.key noMembersProjects
    */
-  String noProjects();
+  String noMembersProjects();
+
+  /**
+   * Translated "No remixable projects found.".
+   * 
+   * @return translated "No remixable projects found."
+   * @gwt.key noRemixableProjects
+   */
+  String noRemixableProjects();
 
   /**
    * Translated "No project types found.".
    * 
    * @return translated "No project types found."
-   * @gwt.key noProjects
+   * @gwt.key noTypes
    */
   String noTypes();
 
