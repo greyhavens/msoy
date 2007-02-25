@@ -60,7 +60,8 @@ public class SwiftlyRepository extends DepotRepository
      * Stores the supplied project record in the database, overwriting previously
      * stored project data.
      */
-    public SwiftlyProjectRecord createProject (int memberId, String projectName, int projectTypeId)
+    public SwiftlyProjectRecord createProject (int memberId, String projectName, int projectTypeId,
+                                               boolean remixable)
         throws PersistenceException
     {
         SwiftlyProjectRecord record = new SwiftlyProjectRecord();
@@ -69,7 +70,7 @@ public class SwiftlyRepository extends DepotRepository
         record.projectTypeId = projectTypeId;
         // TODO:
         record.projectSubversionURL = "dummy value";
-        // record.remixable = ?
+        record.remixable = remixable;
         record.creationDate = new Timestamp(System.currentTimeMillis());
 
         try {

@@ -48,12 +48,44 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String createProject();
 
   /**
-   * Translated "Select a project.".
+   * Translated "Start a project!"
    * 
-   * @return translated "Select a project."
-   * @gwt.key selectProject
+   * @return translated "Start a project!"
+   * @gwt.key startProject
    */
-  String selectProject();
+  String startProject();
+
+  /**
+   * Translated "Project name"
+   * 
+   * @return translated "Project name"
+   * @gwt.key projectName
+   */
+  String projectName();
+
+  /**
+   * Translated "Remixable?"
+   * 
+   * @return translated "Remixable?"
+   * @gwt.key remixable
+   */
+  String remixable();
+
+  /**
+   * Translated "Your projects:".
+   * 
+   * @return translated "Your projects:"
+   * @gwt.key membersProjects
+   */
+  String membersProjects();
+
+  /**
+   * Translated "Remixable projects:".
+   * 
+   * @return translated "Remixable projects:"
+   * @gwt.key remixableProjects
+   */
+  String remixableProjects();
 
   /**
    * Translated "What type of project is this?".

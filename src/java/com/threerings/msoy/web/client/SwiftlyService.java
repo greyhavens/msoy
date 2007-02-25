@@ -38,7 +38,8 @@ public interface SwiftlyService extends RemoteService
     /**
      * Creates a new SwiftlyProject for the member in the supplied WebCreds
      */
-    public SwiftlyProject createProject (WebCreds creds, String projectName, int projectType)
+    public SwiftlyProject createProject (WebCreds creds, String projectName, int projectType,
+                                         boolean remixable)
         throws ServiceException;
 
     /**

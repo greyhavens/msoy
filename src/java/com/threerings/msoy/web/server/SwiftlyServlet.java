@@ -94,7 +94,8 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from SwiftlyService
-    public SwiftlyProject createProject (WebCreds creds, String projectName, int projectType)
+    public SwiftlyProject createProject (WebCreds creds, String projectName, int projectType,
+                                         boolean remixable)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
@@ -108,7 +109,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         try {
             SwiftlyProject project = MsoyServer.swiftlyRepo.createProject(
-                memrec.memberId, projectName, projectType).toSwiftlyProject();
+                memrec.memberId, projectName, projectType, remixable).toSwiftlyProject();
             // the creator is the first member of the collaborators
             MsoyServer.swiftlyRepo.joinCollaborators(project.projectId, memrec.memberId); 
             return project;
@@ -126,6 +127,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         try {
             // TODO: verify the user has permissions on this project
+            // TODO: loadProject can return null if a project is not found for check for that
             return MsoyServer.swiftlyRepo.loadProject(projectId).toSwiftlyProject();
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Loading project failed.", pe);
