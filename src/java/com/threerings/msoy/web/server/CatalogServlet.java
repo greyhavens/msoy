@@ -25,7 +25,7 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
-import com.threerings.msoy.data.ActionType;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;

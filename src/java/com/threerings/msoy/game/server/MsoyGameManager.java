@@ -20,7 +20,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.ezgame.data.EZGameConfig;
 import com.threerings.ezgame.server.EZGameManager;
 
-import com.threerings.msoy.data.ActionType;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameObject;
@@ -174,7 +174,7 @@ public class MsoyGameManager extends EZGameManager
 
         MsoyServer.memberMan.grantFlow(
             (MemberName) getOccupantInfo(oid).username, awarded,
-            ActionType.PlayedGame,
+            UserAction.PLAYED_GAME,
             ((EZGameConfig) getConfig()).persistentGameId + " " + secondsPlayed); 
     }
 

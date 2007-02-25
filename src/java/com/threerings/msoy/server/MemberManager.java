@@ -28,7 +28,6 @@ import com.samskivert.jdbc.RepositoryListenerUnit;
 
 import com.samskivert.util.IntTuple;
 import com.samskivert.util.ResultListener;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -37,7 +36,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.server.PlaceManager;
 
-import com.threerings.msoy.data.ActionType;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.SceneBookmarkEntry;
@@ -503,7 +502,7 @@ public class MemberManager
      * {@link DailyFlowGrantedRecord}. Finally, a line is written to the flow grant log.
      */
     public void grantFlow (final MemberName member, final int amount,
-                           final ActionType grantAction, final String details)
+                           final UserAction grantAction, final String details)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
@@ -533,7 +532,7 @@ public class MemberManager
      * {@link DailyFlowSpentRecord}. Finally, a line is written to the flow grant log.
      */
     public void spendFlow (final MemberName member, final int amount,
-                           final ActionType spendAction, final String details)
+                           final UserAction spendAction, final String details)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
@@ -561,7 +560,7 @@ public class MemberManager
      * Register and log an action taken by a specific user for humanity assessment
      * and conversion analysis purposes.  
      */
-    public void logUserAction (final MemberName member, final ActionType action,
+    public void logUserAction (final MemberName member, final UserAction action,
                                final String details)
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("takeAction") {
