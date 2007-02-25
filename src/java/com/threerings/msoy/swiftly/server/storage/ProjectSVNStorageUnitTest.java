@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.swiftly.server.storage;
 
+import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
 
 import org.tmatesoft.svn.core.SVNURL;
@@ -45,7 +46,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         _projectRecord.projectSubversionURL = svnURL.toString();
 
         // Initialize the storage
-        ProjectSVNStorage.initializeStorage(_projectRecord);
+        ProjectSVNStorage.initializeStorage(_projectRecord, TEMPLATE_DIR.getCanonicalFile());
     }
 
     /** Recursively delete a directory. */
@@ -73,10 +74,10 @@ public class ProjectSVNStorageUnitTest extends TestCase
 
 
     /** Try opening of a project. */
-    public void testOpenProject ()
+    public void testOpenStorage ()
         throws Exception
     {
-        ProjectStorage project = new ProjectSVNStorage(_projectRecord);
+        ProjectStorage storage = new ProjectSVNStorage(_projectRecord);
     }
 
 
@@ -84,14 +85,29 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testGetProjectTree ()
         throws Exception
     {
-        ProjectStorage project = new ProjectSVNStorage(_projectRecord);
-        List projectTree = project.getProjectTree();
+        ProjectStorage storage = new ProjectSVNStorage(_projectRecord);
+        List<PathElement> projectTree = storage.getProjectTree();
         assertTrue("The returned PathElement list is empty", projectTree.size() != 0);
+
+        // Simple sanity check of one of the paths, to ensure that it matches the template
+        boolean foundFile = false;
+        for (PathElement node : projectTree) {
+            if (node.getName().equals("test.jpg")) {
+                foundFile = true;
+                assertEquals(node.getParent().getName(), "media");
+            }
+        }
+        assertTrue("The returned pathElement list does not contain the expected test.jpg file",
+            foundFile == true);
     }
+
 
     /** Temporary test directory. */
     protected File _tempDir;
 
     /** Mocked up project record. */
     protected SwiftlyProjectRecord _projectRecord;
+
+    /** Static, brittle path to the test template. Sorry. */
+    static final File TEMPLATE_DIR = new File("data/swiftly/templates/unittest");
 }

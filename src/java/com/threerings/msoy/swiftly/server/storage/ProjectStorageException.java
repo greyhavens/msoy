@@ -18,7 +18,8 @@ public class ProjectStorageException extends Exception
     {
         super(message, cause);
     }
-    
+
+    /** Internal storage-backend  error. */
     public static class InternalError extends ProjectStorageException {
         public InternalError (String message)
         {
@@ -26,6 +27,20 @@ public class ProjectStorageException extends Exception
         }
 
         public InternalError (String message, Throwable cause)
+        {
+            super(message, cause);
+        }
+    }
+
+    /** API client requested something that would lead to a consistency failure. 
+     * This will almost always be due to programmer error.
+     */
+    public static class ConsistencyError extends ProjectStorageException {
+        public ConsistencyError (String message) {
+            this(message, null);
+        }
+
+        public ConsistencyError (String message, Throwable cause)
         {
             super(message, cause);
         }
