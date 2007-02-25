@@ -16,7 +16,7 @@
 -injars ../dist/lib/threerings.jar(!META-INF/*,**/threerings/util/**)
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/**)
 -injars ../dist/msoy-code.jar(
-    rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
+    !**/*UnitTest.class,rsrc/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
     **/msoy/web/data/**,**/msoy/world/data/WorldMemberInfo.class,**/msoy/item/web/**,
     **/msoy/swiftly/data/**,**/msoy/swiftly/client/**,**/msoy/swiftly/util/**)
 
