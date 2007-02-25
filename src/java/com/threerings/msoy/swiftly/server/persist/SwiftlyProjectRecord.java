@@ -67,9 +67,16 @@ public class SwiftlyProjectRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #remixable} field. */
     public static final ColumnExp REMIXABLE_C =
         new ColumnExp(SwiftlyProjectRecord.class, REMIXABLE);
+
+    /** The column identifier for the {@link #deleted} field. */
+    public static final String DELETED = "deleted";
+
+    /** The qualified column identifier for the {@link #deleted} field. */
+    public static final ColumnExp DELETED_C =
+        new ColumnExp(SwiftlyProjectRecord.class, DELETED);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     /** The id of the project. */
     @Id
@@ -93,6 +100,9 @@ public class SwiftlyProjectRecord extends PersistentRecord
 
     /** Whether this project is remixable. */
     public boolean remixable;
+
+    /** Whether this project has been marked as deleted my the owner. */
+    public boolean deleted;
 
     /** 
      * Converts this persistent record to a runtime record.
