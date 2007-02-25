@@ -31,6 +31,9 @@ import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 
+import org.tmatesoft.svn.core.wc.ISVNRepositoryPool;
+import org.tmatesoft.svn.core.wc.DefaultSVNRepositoryPool;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -102,13 +105,15 @@ public class ProjectSVNStorage
         throws ProjectStorageException
     {
         ProjectSVNStorage storage = new ProjectSVNStorage(record);
+        SVNRepository svnRepo;
         ISVNEditor editor;
         SVNCommitInfo commitInfo;
         long latestRevision;
 
         // If the revision is not 0, this is not a new project. Exit immediately.
         try {
-            latestRevision = storage._repo.getLatestRevision();
+            svnRepo = storage.getSVNRepository();
+            latestRevision = svnRepo.getLatestRevision();
             if (latestRevision != 0) {
                 throw new ProjectStorageException.ConsistencyError("Invalid request to initialize a " +
                     "previously initialized storage repository");
@@ -121,7 +126,7 @@ public class ProjectSVNStorage
 
         // New project, set up our commit editor
         try {
-            editor = storage._repo.getCommitEditor("Swiftly Project Initialization", null);
+            editor = svnRepo.getCommitEditor("Swiftly Project Initialization", null);
         } catch (SVNException e) {
             throw new ProjectStorageException.InternalError("Failure initializing commit editor: "
                 + e, e);
@@ -183,10 +188,9 @@ public class ProjectSVNStorage
     {
         // Initialize subversion magic
         try {
-            SVNURL url = SVNURL.parseURIEncoded(record.projectSubversionURL);
-            _repo = SVNRepositoryFactory.create(url);
-            // TODO -- Remote authentication
-            // _svnRepo.setAuthenticationManager(auth manager implementation here);
+            _svnURL = SVNURL.parseURIEncoded(record.projectSubversionURL);
+            // TODO -- Remote authentication manager
+            _svnPool = new DefaultSVNRepositoryPool(null, null);
         } catch (SVNException svne) {
             throw new ProjectStorageException.InternalError("Could not parse subversion URL: " + svne, svne);
         }
@@ -194,16 +198,18 @@ public class ProjectSVNStorage
 
 
     // from interface ProjectStorage
+    // Recurse over the entirity of the subversion repository, building a list
+    // of project path elements.
+    // TODO: Extend the Swiftly client to support readdir()-style functionality instead of this sillyness.
     public List<PathElement> getProjectTree ()
         throws ProjectStorageException
     {
-        // Recurse over the entirity of the subversion repository, building a list
-        // of project path elements.
-        // TODO: Extend the Swiftly client to support readdir()-style functionality instead of this sillyness.
+        SVNRepository svnRepo;
 
         // Stat the project root.
         try {
-            SVNNodeKind nodeKind = _repo.checkPath("", -1);
+            svnRepo = getSVNRepository();
+            SVNNodeKind nodeKind = svnRepo.checkPath("", -1);
 
             // Are we starting at a directory?
             if (nodeKind != SVNNodeKind.DIR) {
@@ -214,7 +220,7 @@ public class ProjectSVNStorage
         }
 
         try {
-            return recurseTree(null, null);
+            return recurseTree(svnRepo, null, null);
         } catch (SVNException svne) {
             throw new ProjectStorageException.InternalError("A subversion failure occured while" +
                 " recursing over the directory tree: " + svne, svne);
@@ -227,7 +233,7 @@ public class ProjectSVNStorage
      * Recursively retrieves the entire subversion directory structure.
      */
     @SuppressWarnings("unchecked")
-    private List<PathElement> recurseTree (PathElement parent, List<PathElement> result)
+    private List<PathElement> recurseTree (SVNRepository svnRepo, PathElement parent, List<PathElement> result)
         throws SVNException, ProjectStorageException
     {
         Collection<SVNDirEntry> entries;
@@ -243,7 +249,7 @@ public class ProjectSVNStorage
             path = parent.getAbsolutePath();
         }
 
-        entries = (Collection<SVNDirEntry>) _repo.getDir(path, -1, null, (Collection)null);
+        entries = (Collection<SVNDirEntry>) svnRepo.getDir(path, -1, null, (Collection)null);
         for (SVNDirEntry entry : entries) {
             PathElement node;
             SVNNodeKind kind;
@@ -252,7 +258,7 @@ public class ProjectSVNStorage
             if (kind == SVNNodeKind.DIR) {
                 node = PathElement.createDirectory(entry.getName(), parent);
                 // Recurse
-                recurseTree(node, result);
+                recurseTree(svnRepo, node, result);
             } else if (kind == SVNNodeKind.FILE) {
                 node = PathElement.createFile(entry.getName(), parent);
             } else {
@@ -265,8 +271,23 @@ public class ProjectSVNStorage
         return result;
     }
 
-    /** Reference to the project's subversion repository.
-     * The repository can not be accessed re-entrantly -- that is, many operations (such as an edit),
-     * once initialized, lock all access to the repository instance. */
-    private SVNRepository _repo;
+    /**
+     * Return a re-usable svn repository instance from the pool.
+     */
+    private SVNRepository getSVNRepository()
+        throws SVNException
+    {
+        return _svnPool.createRepository(_svnURL, true);
+    }
+
+    /** Reference to the project storage subversion URL. */
+    private SVNURL _svnURL;
+
+    /** 
+      * Reference to the project storage's subversion repository pool.
+      * Repositories are not re-entrant or thread-safe -- transactional
+      * operations (such as an edit), lock all access to the repository instance. The pool
+      * provides one repository instance per thread, and as such, one should be careful to
+      * open and close all transactions within the same method call. */
+    private ISVNRepositoryPool _svnPool;
 }
