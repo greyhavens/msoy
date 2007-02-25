@@ -110,7 +110,7 @@ public class ProjectSVNStorage
         try {
             latestRevision = storage._repo.getLatestRevision();
             if (latestRevision != 0) {
-                throw new ProjectStorageException.ConsistencyError("Failing request to initialize a " +
+                throw new ProjectStorageException.ConsistencyError("Invalid request to initialize a " +
                     "previously initialized storage repository");
             }
         } catch (SVNException e) {
@@ -118,33 +118,60 @@ public class ProjectSVNStorage
                 "revision: " + e, e);
         }
 
-        // Set up our commit editor
+
+        // New project, set up our commit editor
         try {
             editor = storage._repo.getCommitEditor("Swiftly Project Initialization", null);
-            editor.openRoot(-1);           
         } catch (SVNException e) {
             throw new ProjectStorageException.InternalError("Failure initializing commit editor: "
                 + e, e);
         }
 
+        // 
         try {
-            // Haul in the template.
+            // Open the repository root
+            editor.openRoot(-1);           
+
+            // Add the template directory to the commit
             svnAddDirectory(editor, "", templateDir);
 
-            // Close the root directory
+            // Close the repository root
             editor.closeDir();
 
-            // Commit the edit
-            editor.closeEdit();
+            // Commit the whole lot
+            commitInfo = editor.closeEdit();
+    
         } catch (SVNException e) {
+            try {
+                // We have to abort the open edit. It can also raise an SVNException!
+                editor.abortEdit();                
+            } catch (SVNException eabort) {
+                throw new ProjectStorageException.InternalError("Failure aborting subversion commit: "
+                    + eabort, eabort);                
+            }
+            
+            // Report failure
             throw new ProjectStorageException.InternalError("Failure committing project template: "
                 + e, e);
-        } catch (FileNotFoundException e) {
-            throw new ProjectStorageException.ConsistencyError("Could not find template: "
-                + e, e);
+
+        } catch (FileNotFoundException fnfe) {
+            // Either someone handed us a bad template directory, or someone removed things from it
+            // while we were running
+            throw new ProjectStorageException.ConsistencyError("Could not load template: "
+                + fnfe, fnfe);
         }
 
-        return null;
+        // Validate the commit
+        if (commitInfo == null) {
+            throw new ProjectStorageException.InternalError("Subversion commit failed, null commit info returned");            
+        }
+
+        if (commitInfo.getNewRevision() != latestRevision + 1) {
+            throw new ProjectStorageException.InternalError("Subversion commit failed: " + commitInfo.getErrorMessage());
+        }
+
+        // Everything worked, return the now-initialized storage instance
+        return storage;
     }
 
 
@@ -160,8 +187,8 @@ public class ProjectSVNStorage
             _repo = SVNRepositoryFactory.create(url);
             // TODO -- Remote authentication
             // _svnRepo.setAuthenticationManager(auth manager implementation here);
-        } catch (SVNException e) {
-            throw new ProjectStorageException.InternalError("Could not parse subversion URL");
+        } catch (SVNException svne) {
+            throw new ProjectStorageException.InternalError("Could not parse subversion URL: " + svne, svne);
         }
     }
 
@@ -182,15 +209,15 @@ public class ProjectSVNStorage
             if (nodeKind != SVNNodeKind.DIR) {
                 throw new ProjectStorageException.InternalError("The subversion root path is not a directory");
             }
-        } catch (SVNException e) {
-            throw new ProjectStorageException.InternalError("Unable to stat() the project root path: " + e, e);
+        } catch (SVNException svne) {
+            throw new ProjectStorageException.InternalError("Unable to stat() the project root path: " + svne, svne);
         }
 
         try {
             return recurseTree(null, null);
-        } catch (SVNException e) {
+        } catch (SVNException svne) {
             throw new ProjectStorageException.InternalError("A subversion failure occured while" +
-                " recursing over the directory tree: " + e, e);
+                " recursing over the directory tree: " + svne, svne);
         }
 
     }
