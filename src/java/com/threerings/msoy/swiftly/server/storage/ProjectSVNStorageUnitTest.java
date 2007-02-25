@@ -10,6 +10,7 @@ import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 
 import java.io.File;
 import java.net.URI;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -27,21 +28,24 @@ public class ProjectSVNStorageUnitTest extends TestCase
         File svnDir;
         SVNURL svnURL;
         
-        /** Create a temporary directory. */
+        // Create a temporary directory.
         _tempDir = File.createTempFile("svnstorage", "test");
         _tempDir.delete();
         if (_tempDir.mkdir() != true) {
             throw new Exception("Temporary directory '" + _tempDir + "' already exists!");
         }
 
-        /** Create a subversion URL and test repository. */
+        // Create a subversion URL and test repository.
         svnDir = new File(_tempDir, "svn-repo");
         svnURL = SVNURL.fromFile(svnDir);
         SVNRepositoryFactory.createLocalRepository(svnDir, true, false);
 
-        /** Mock up a project record. */
+        // Mock up a project record.
         _projectRecord = new SwiftlyProjectRecord();
         _projectRecord.projectSubversionURL = svnURL.toString();
+
+        // Initialize the storage
+        ProjectSVNStorage.initializeStorage(_projectRecord);
     }
 
     /** Recursively delete a directory. */
@@ -66,11 +70,23 @@ public class ProjectSVNStorageUnitTest extends TestCase
         deleteDir(_tempDir);
     }
 
+
+
     /** Try opening of a project. */
     public void testOpenProject ()
         throws Exception
     {
         ProjectStorage project = new ProjectSVNStorage(_projectRecord);
+    }
+
+
+    /** Try listing a project. */
+    public void testGetProjectTree ()
+        throws Exception
+    {
+        ProjectStorage project = new ProjectSVNStorage(_projectRecord);
+        List projectTree = project.getProjectTree();
+        assertTrue("The returned PathElement list is empty", projectTree.size() != 0);
     }
 
     /** Temporary test directory. */
