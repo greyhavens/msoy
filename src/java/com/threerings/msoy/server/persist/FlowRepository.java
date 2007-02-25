@@ -23,6 +23,7 @@ import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+import com.threerings.msoy.admin.server.RuntimeConfig;
 
 import static com.threerings.msoy.Log.log;
 
@@ -31,9 +32,6 @@ import static com.threerings.msoy.Log.log;
  */
 public class FlowRepository extends DepotRepository
 {
-    // TODO: Runtime configuration value.
-    public static final float FLOW_EXPIRATION_PER_HOUR = 0.99f;
-    
     /**
      * Creates a flow repository for.
      */
@@ -102,7 +100,7 @@ public class FlowRepository extends DepotRepository
 
     /**
      * Assess a game's anti-abuse factor based on flow grants, if it's been
-     * more than 1000 player-minutes since last.
+     * more than RuntimeConfig.server.antiAbuseReassessment player-minutes since last.
      */
     public void maybeAssessAntiAbuseFactor (int gameId, int playerMinutes)
         throws PersistenceException
@@ -110,7 +108,8 @@ public class FlowRepository extends DepotRepository
         GameAbuseRecord gameRecord = getAbuseRecord(gameId, false);
         gameRecord.accumMinutesSinceLastAssessment += playerMinutes;
 
-        if (gameRecord.accumMinutesSinceLastAssessment >= 1000) {
+        if (gameRecord.accumMinutesSinceLastAssessment >= 
+                RuntimeConfig.server.abuseFactorReassessment) {
             // load all actions logged since our last assessment
             Collection<GameFlowSummaryRecord> records =
                 findAll(GameFlowSummaryRecord.class,
@@ -181,7 +180,8 @@ public class FlowRepository extends DepotRepository
     public int expireFlow (MemberRecord record, int dT)
         throws PersistenceException
     {
-        int toExpire = (int) (record.flow * Math.pow(FLOW_EXPIRATION_PER_HOUR, (float) dT / 60));
+        float dailyExpiration = RuntimeConfig.server.dailyFlowEvaporation;
+        int toExpire = (int) (record.flow * Math.pow(dailyExpiration, (float) dT / (24 * 60)));
         if (toExpire > 0) {
             record.flow -= toExpire;
             update(record);

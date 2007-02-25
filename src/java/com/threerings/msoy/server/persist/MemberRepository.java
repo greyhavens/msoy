@@ -44,6 +44,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
 
@@ -57,9 +58,6 @@ public class MemberRepository extends DepotRepository
     /** The cache identifier for the friends-of-a-member collection query. */
     public static final String FRIENDS_CACHE_ID = "FriendsCache";
 
-    /** The minimum number of seconds between two humanity reassessments for a member. */
-    public static final int HUMANITY_ASSESSMENT_TIMEOUT = 24 * 3600;
-    
     public MemberRepository (ConnectionProvider conprov)
     {
         super(conprov);
@@ -306,7 +304,8 @@ public class MemberRepository extends DepotRepository
     {
         long now = System.currentTimeMillis();
         MemberRecord record = loadMember(memberId);
-        if (((now - record.lastHumanityAssessment.getTime())/1000) > HUMANITY_ASSESSMENT_TIMEOUT) {
+        if (((now - record.lastHumanityAssessment.getTime())/1000) >
+             RuntimeConfig.server.humanityReassessment) {
             Timestamp nowStamp = new Timestamp(now);
             record.humanity = _flowRepo.assessHumanity(memberId, record.humanity, nowStamp);
             record.lastHumanityAssessment = new Timestamp(now);
