@@ -545,7 +545,6 @@
            debug="on" optimize="off" deprecation="on">
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint:unchecked"/>
-      <exclude name="**/*UnitTest.java"/>
     </javac>
     <!-- copy native libraries into dist/lib -->
     <copy todir="${deploy.dir}/lib">
