@@ -91,21 +91,21 @@ public class index extends MsoyEntryPoint
             // display the project create/list panel
             setContent(new ProjectSelectionPanel());
         } else {
-            // else assume we have been passed a projectId and pass that to the applet
-            try {
-                // load up the information needed to launch the applet
-                CSwiftly.swiftlysvc.loadSwiftlyConfig(CSwiftly.creds, new AsyncCallback() {
-                    public void onSuccess (Object result) {
+            // load up the information needed to launch the applet
+            CSwiftly.swiftlysvc.loadSwiftlyConfig(CSwiftly.creds, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    try {
                         setContent(new SwiftlyPanel((SwiftlyConfig)result,
                             Integer.parseInt(historyToken)));
+                    } catch (NumberFormatException e) {
+                        // display an error message if the supplied projectId did not parse
+                        setContent(new Label(CSwiftly.msgs.invalidProjectId(historyToken))); 
                     }
-                    public void onFailure (Throwable cause) {
-                        CSwiftly.serverError(cause);
-                    }
-                });
-            } catch (Exception e) {
-                // TODO: display an error that we could not parse the projectId
-            }
+                }
+                public void onFailure (Throwable cause) {
+                    CSwiftly.serverError(cause);
+                }
+            });
         }
     }
 }

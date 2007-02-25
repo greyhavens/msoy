@@ -16,6 +16,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String indexLogon();
 
   /**
+   * Translated "Not a valid projectId: {0}".
+   * 
+   * @return translated "Not a valid projectId: {0}."
+   * @gwt.key invalidProjectId
+   */
+  String invalidProjectId(String arg0);
+
+  /**
    * Translated "No projects found.".
    * 
    * @return translated "No projects found."
