@@ -30,6 +30,13 @@ public class SwiftlyProjectTypeRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #typeName} field. */
     public static final ColumnExp TYPE_NAME_C =
         new ColumnExp(SwiftlyProjectTypeRecord.class, TYPE_NAME);
+
+    /** The column identifier for the {@link #displayName} field. */
+    public static final String DISPLAY_NAME = "displayName";
+
+    /** The qualified column identifier for the {@link #displayName} field. */
+    public static final ColumnExp DISPLAY_NAME_C =
+        new ColumnExp(SwiftlyProjectTypeRecord.class, DISPLAY_NAME);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 1;
@@ -41,6 +48,9 @@ public class SwiftlyProjectTypeRecord extends PersistentRecord
     
     /** The project type name. */
     public String typeName;
+
+    /** The project display name. Localized key? */
+    public String displayName;
 
     /** 
      * Converts this persistent record to a runtime record.

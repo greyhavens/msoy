@@ -16,4 +16,7 @@ public class SwiftlyProjectType
 
     /** The project type name. */
     public String typeName;
+
+    /** The project type's display name. */
+    public String displayName;
 }
