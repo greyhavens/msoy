@@ -33,8 +33,8 @@ public class SwiftlyCollaboratorsRecord extends PersistentRecord
     public static final int SCHEMA_VERSION = 1;
 
     /** The memberId of the project member. */
-    public int memberId;
+    public int memberId; /*TODO: this should have a foreign key constraint */
 
     /** The SwiftlyProject this memberId is a member of. */
-    public int projectId;
+    public int projectId; /*TODO: this should have a foreign key constraint */
 }

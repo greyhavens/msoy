@@ -101,7 +101,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
     /** Whether this project is remixable. */
     public boolean remixable;
 
-    /** Whether this project has been marked as deleted my the owner. */
+    /** Whether this project has been marked as deleted by the owner. */
     public boolean deleted;
 
     /** 
