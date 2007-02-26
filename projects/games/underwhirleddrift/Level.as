@@ -81,7 +81,7 @@ public class Level extends Sprite
     /**
      * Adds an opponent's kart to the fray. 
      */
-    public function addOpponentKart (position :int) :void
+    public function addOpponentKart (position :int) :KartObstacle
     {
         var kart :KartObstacle = new KartObstacle(_config.getStartingPoint(position));
         if (_scenery != null) {
@@ -89,6 +89,7 @@ public class Level extends Sprite
         } else {
             _kartsToAdd.push(kart);
         }
+        return kart;
     }
 
     protected function isNotTransparent (loc :Point, img :DisplayObject) :Boolean 

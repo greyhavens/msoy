@@ -9,6 +9,7 @@ public class KartSprite extends Sprite
     public function KartSprite(kartCls :Class)
     {
         _kart = new kartCls();
+        _kart.gotoAndStop(1);
     }
 
     /** Kart swf */

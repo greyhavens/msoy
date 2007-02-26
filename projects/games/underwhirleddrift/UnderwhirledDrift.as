@@ -23,6 +23,7 @@ import com.threerings.ezgame.MessageReceivedListener;
 import com.threerings.ezgame.MessageReceivedEvent;
 
 import com.threerings.util.ArrayUtil;
+import com.threerings.util.HashMap;
 
 [SWF(width="711", height="400")]
 public class UnderwhirledDrift extends Sprite
@@ -110,6 +111,8 @@ public class UnderwhirledDrift extends Sprite
                     playerIds[ii] = { id: playerIds[ii], position: ii }
                 }
                 _gameCtrl.set("playerPositions", playerIds);
+                
+                _gameCtrl.startTicker("tick", SEND_THROTTLE);
             }
         }
     }
@@ -124,7 +127,8 @@ public class UnderwhirledDrift extends Sprite
                 if (playerPositions[ii].id == _gameCtrl.getMyId()) {
                     _level.setStartingPosition(playerPositions[ii].position);
                 } else {
-                    _level.addOpponentKart(playerPositions[ii].position);
+                    _opponentKarts.put(playerPositions[ii].id, 
+                        _level.addOpponentKart(playerPositions[ii].position));
                 }
             }
         }
@@ -149,6 +153,19 @@ public class UnderwhirledDrift extends Sprite
                 default:
                     // do nothing
                 }
+            }
+        } else if (event.name == "tick") {
+            if (_raceStarted) {
+                var obj :Object = _kart.getUpdate();
+                obj.playerId = _gameCtrl.getMyId();
+                _gameCtrl.sendMessage("positionUpdate", obj);
+            }
+        } else if (event.name == "raceStarted") {
+            _raceStarted = true;
+        } else if (event.name == "positionUpdate") {
+            var playerId :int = event.value.playerId;
+            if (playerId != _gameCtrl.getMyId()) {
+                (_opponentKarts.get(playerId) as KartObstacle).setPosition(event.value);
             }
         }
     }
@@ -197,10 +214,16 @@ public class UnderwhirledDrift extends Sprite
                 _kart.jump();
             }
             break;
+        case Keyboard.ENTER:
+            // TODO this will be controlled by a timer that starts everybody at the same time
+            _gameCtrl.sendMessage("raceStarted", true);
+            break;
         default:
             // do nothing
         }
     }
+
+    protected static const SEND_THROTTLE :int = 120;
 
     /** the game control. */
     protected var _gameCtrl :EZGameControl;
@@ -213,5 +236,11 @@ public class UnderwhirledDrift extends Sprite
 
     /** The kart. */
     protected var _kart :Kart;
+    
+    /** A hashmap of the opponent's karts. */
+    protected var _opponentKarts :HashMap = new HashMap();
+
+    /** A flag to indicate that the race has started, so its safe to send position update */
+    protected var _raceStarted :Boolean = false;
 }
 }

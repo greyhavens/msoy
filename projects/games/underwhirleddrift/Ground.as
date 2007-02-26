@@ -64,7 +64,6 @@ public class Ground extends Sprite
     public function setKartLocation (location :Point) :void
     {
         var trans :Matrix = new Matrix();
-        // TODO: Figure out what's up with the magic number 32
         trans.translate(location.x - _camera.position.x, location.y - _camera.position.y + 
             UnderwhirledDrift.KART_OFFSET);
         _camera.position = trans.transformPoint(_camera.position);
@@ -77,6 +76,14 @@ public class Ground extends Sprite
     public function setScenery (scenery :Scenery) :void
     {
         addChild(_scenery = scenery);
+    }
+
+    /**
+     * Get the current kart location.
+     */
+    public function getKartLocation () :Point
+    {
+        return _kartLocation;
     }
 
     /**
@@ -116,10 +123,10 @@ public class Ground extends Sprite
             if (y <= UnderwhirledDrift.KART_LOCATION.y &&
                 y + stripHeight > UnderwhirledDrift.KART_LOCATION.y) {
                 thisTransform.invert();
-                var transformedLoc :Point = thisTransform.transformPoint(
+                _kartLocation = thisTransform.transformPoint(
                     UnderwhirledDrift.KART_LOCATION);
-                _drivingOnRoad = _level.isOnRoad(transformedLoc);
-                _drivingIntoWall = _level.isOnWall(transformedLoc);
+                _drivingOnRoad = _level.isOnRoad(_kartLocation);
+                _drivingIntoWall = _level.isOnWall(_kartLocation);
             }
         }
         if (_scenery != null) {
@@ -144,6 +151,9 @@ public class Ground extends Sprite
 
     /** Obstacles */
     protected var _scenery :Scenery;
+
+    /** The current location of the kart */
+    protected var _kartLocation :Point = new Point();
 
     /** The height of the largest strip, at the bottom of the image. */
     protected static const BEGINNING_STRIP_HEIGHT :int = 3;

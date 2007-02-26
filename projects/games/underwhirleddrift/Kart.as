@@ -10,9 +10,11 @@ import flash.utils.describeType;
 
 import mx.core.MovieClipAsset;
 
+import com.threerings.ezgame.EZGameControl;
+
 public class Kart extends KartSprite
 {
-    public function Kart (camera :Camera, ground :Ground)
+    public function Kart (camera :Camera, ground :Ground) 
     {
         // this is our only available kart for now
         super(KART_MEDIUM);
@@ -21,6 +23,21 @@ public class Kart extends KartSprite
         addChild(_kart);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
+    }
+
+    /**
+     * If there has been a change in our position since the last update, send it
+     */
+    public function getUpdate () :Object
+    {
+        // TODO actually check new position against old position.  Also, create a typed object
+        // for position updates
+        var loc :Point = _ground.getKartLocation();
+        return {
+            posX: loc.x,
+            posY: loc.y,
+            angle: _camera.angle
+        };
     }
 
     public function moveForward (moving :Boolean) :void 
@@ -60,10 +77,6 @@ public class Kart extends KartSprite
 
     public function enterFrame (event :Event) :void
     {
-        // TODO: base these speeds on something fairer than enterFrame.  Using this method,
-        // the person with the fastest computer (higher framerate) gets to drive more quickly.
-        // rotate camera
-
         // alter camera angle
         if (_movement & (MOVEMENT_RIGHT | MOVEMENT_LEFT)) {
             if (_movement & MOVEMENT_RIGHT) {

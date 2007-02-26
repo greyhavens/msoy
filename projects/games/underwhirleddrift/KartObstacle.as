@@ -16,7 +16,7 @@ public class KartObstacle extends KartSprite
     {
         // medium kart is all we have for now
         super(KART_MEDIUM);
-        _startingPosition = startingPosition;
+        _currentPosition = startingPosition;
     }
 
     /**
@@ -25,7 +25,7 @@ public class KartObstacle extends KartSprite
     public function get origin () :Point 
     {
         // TODO update this with the real location of the opponent's kart
-        return _startingPosition;
+        return _currentPosition;
     }
 
     /**
@@ -35,7 +35,15 @@ public class KartObstacle extends KartSprite
     {
         return _kart;   
     }
+
+    /**
+     * Set the position, angle, etc of this kart based on a network update.
+     */
+    public function setPosition (obj :Object) :void
+    {
+        _currentPosition = new Point(obj.posX, obj.posY);
+    }
     
-    protected var _startingPosition :Point;
+    protected var _currentPosition :Point;
 }
 }
