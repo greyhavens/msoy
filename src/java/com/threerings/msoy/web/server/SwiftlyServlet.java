@@ -77,26 +77,6 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from SwiftlyService
-    public List getProjectTypes (WebCreds creds)
-        throws ServiceException
-    {
-        MemberRecord memrec = requireAuthedUser(creds);
-        ArrayList<SwiftlyProjectType> types = new ArrayList<SwiftlyProjectType>();
-
-        try {
-            for (SwiftlyProjectTypeRecord tRec :
-                MsoyServer.swiftlyRepo.getProjectTypes(memrec.memberId)) {
-                types.add(tRec.toSwiftlyProjectType());
-            }
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Getting user's project types failed.", pe);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
-        }
-
-        return types;
-    }
-
-    // from SwiftlyService
     public SwiftlyProject createProject (WebCreds creds, String projectName, int projectType,
                                          boolean remixable)
         throws ServiceException
@@ -235,6 +215,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser(creds);
         // TODO: verify the user has permissions on this project
+        // TODO: we do not want to add someone twice.. 
         try {
             MsoyServer.swiftlyRepo.joinCollaborators(projectId, memberId);
         } catch (PersistenceException pe) {

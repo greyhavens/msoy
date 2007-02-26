@@ -33,30 +33,8 @@ public class SwiftlyRepository extends DepotRepository
     public SwiftlyRepository (ConnectionProvider conprov)
     {
         super(conprov);
-        
-        // XXX Initial project types -- Temporary until we sort out what behavior
-        // a project actually inherits from its type, and how to organize project
-        // types
-        _ctx.registerMigration(SwiftlyProjectTypeRecord.class, new EntityMigration(3) {
-            public int invoke (Connection conn) throws SQLException {
-                Statement stmt;
-                int retVal = 0;
-
-                // The illustrious "game"
-                stmt = conn.createStatement();
-                try {
-                    // XXX _tableName is null here, and I have no idea why.
-                    retVal = stmt.executeUpdate("INSERT INTO SwiftlyProjectTypeRecord" +
-                        " (typeName, displayName) VALUES ('game', 'Whirled Game');");
-                } finally {
-                    stmt.close();
-                }
-
-                return retVal;
-            }
-        });
     }
-
+        
     /**
      * Find all the projects which have the remixable flag set.
      */
@@ -89,14 +67,14 @@ public class SwiftlyRepository extends DepotRepository
      * Stores the supplied project record in the database, overwriting previously
      * stored project data.
      */
-    public SwiftlyProjectRecord createProject (int memberId, String projectName, int projectTypeId,
+    public SwiftlyProjectRecord createProject (int memberId, String projectName, int projectType,
                                                boolean remixable)
         throws PersistenceException
     {
         SwiftlyProjectRecord record = new SwiftlyProjectRecord();
         record.projectName = projectName;
         record.ownerId = memberId;
-        record.projectTypeId = projectTypeId;
+        record.projectType = projectType;
         // TODO:
         record.projectSubversionURL = "dummy value";
         record.remixable = remixable;
@@ -126,21 +104,6 @@ public class SwiftlyRepository extends DepotRepository
             throw new PersistenceException(
                 "Couldn't find swiftly project for update [id=" + projectId + "]");
         }
-    }
-
-    /**
-     * Gets all the project types available.
-     */
-    public List<SwiftlyProjectTypeRecord> getProjectTypes (int memberId)
-        throws PersistenceException
-    {
-        // TODO: Use privileges, instead of just ownership.
-        ArrayList<SwiftlyProjectTypeRecord> types = new ArrayList<SwiftlyProjectTypeRecord>();
-        for (SwiftlyProjectTypeRecord record : findAll(SwiftlyProjectTypeRecord.class)) {
-            types.add(record);                  
-        }
-
-        return types;
     }
 
     /**

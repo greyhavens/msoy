@@ -11,14 +11,17 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class SwiftlyProject
     implements IsSerializable
 {
+    /** The valid project types. */
+    public static String[] PROJECT_TYPES = {"GAME", "AVATAR"};
+
     /** The id of the project. */
     public int projectId;
     
     /** The id of the project owner. */
     public int ownerId;
 
-    /** The project type id. */
-    public int projectTypeId;
+    /** The project type. */
+    public int projectType;
 
     /** The project name. */
     public String projectName;

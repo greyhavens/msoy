@@ -36,12 +36,12 @@ public class SwiftlyProjectRecord extends PersistentRecord
     public static final ColumnExp OWNER_ID_C =
         new ColumnExp(SwiftlyProjectRecord.class, OWNER_ID);
 
-    /** The column identifier for the {@link #projectTypeId} field. */
-    public static final String PROJECT_TYPE_ID = "projectTypeId";
+    /** The column identifier for the {@link #projectType} field. */
+    public static final String PROJECT_TYPE = "projectType";
 
-    /** The qualified column identifier for the {@link #projectTypeId} field. */
-    public static final ColumnExp PROJECT_TYPE_ID_C =
-        new ColumnExp(SwiftlyProjectRecord.class, PROJECT_TYPE_ID);
+    /** The qualified column identifier for the {@link #projectType} field. */
+    public static final ColumnExp PROJECT_TYPE_C =
+        new ColumnExp(SwiftlyProjectRecord.class, PROJECT_TYPE);
 
     /** The column identifier for the {@link #creationDate} field. */
     public static final String CREATION_DATE = "creationDate";
@@ -79,7 +79,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
         new ColumnExp(SwiftlyProjectRecord.class, DELETED);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 6;
+    public static final int SCHEMA_VERSION = 7;
 
     /** The id of the project. */
     @Id
@@ -89,8 +89,8 @@ public class SwiftlyProjectRecord extends PersistentRecord
     /** The id of the project owner. */
     public int ownerId;
 
-    /** The project type id. */
-    public int projectTypeId; /*TODO: this should have a foreign key constraint */
+    /** The project type. */
+    public int projectType;
 
     /** The time this project was created. */
     public Timestamp creationDate;
@@ -134,7 +134,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
         SwiftlyProject sp = new SwiftlyProject();
         sp.projectId = projectId;
         sp.ownerId = ownerId;
-        sp.projectTypeId = projectTypeId;
+        sp.projectType = projectType;
         sp.projectName = projectName;
         sp.remixable = remixable;
         return sp;

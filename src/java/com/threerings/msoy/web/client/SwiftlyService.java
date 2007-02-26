@@ -30,12 +30,6 @@ public interface SwiftlyService extends RemoteService
         throws ServiceException;
 
     /**
-     * Returns the list of project types for the member in the supplied WebCreds
-     */
-    public List getProjectTypes (WebCreds creds)
-        throws ServiceException;
-
-    /**
      * Creates a new SwiftlyProject for the member in the supplied WebCreds
      */
     public SwiftlyProject createProject (WebCreds creds, String projectName, int projectType,

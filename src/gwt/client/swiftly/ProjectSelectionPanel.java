@@ -29,7 +29,6 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
-import com.threerings.msoy.web.data.SwiftlyProjectType;
 
 /**
  * Displays the client interface for selecting or creating a swiftly project.
@@ -69,6 +68,11 @@ public class ProjectSelectionPanel extends VerticalPanel
                 _selectedType = Integer.parseInt(_projectTypes.getValue(tx));
             }
         });
+        /* TODO: gwt does not accept this syntax, fix
+        for (project : SwiftlyProject.PROJECT_TYPES) {
+            _projectTypes.addItem(project, project);
+        }
+        */
 
         // input fields to create a new project
         final TextBox projectName = new TextBox();
@@ -108,7 +112,6 @@ public class ProjectSelectionPanel extends VerticalPanel
         // populate the data from the backend
         loadRemixableProjects();
         loadMembersProjects();
-        loadProjectTypes();
     }
 
     protected void createProject (final String projectName)
@@ -174,30 +177,6 @@ public class ProjectSelectionPanel extends VerticalPanel
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("getMembersProjects failed", caught);
-                addError(CSwiftly.serverError(caught));
-            }
-        });
-    }
-
-    // get the list of project types for this user
-    protected void loadProjectTypes ()
-    {
-        CSwiftly.swiftlysvc.getProjectTypes(CSwiftly.creds, new AsyncCallback() {
-            public void onSuccess (Object result) {
-                Iterator iter = ((List)result).iterator();
-                if (!iter.hasNext()) {
-                    _membersProjects.add(new Label(CSwiftly.msgs.noTypes()));
-                } else {
-                    while (iter.hasNext()) {
-                        final SwiftlyProjectType pType = (SwiftlyProjectType)iter.next();
-                        _projectTypes.addItem(pType.displayName, String.valueOf(pType.typeId));
-                    }
-                    _projectTypes.setSelectedIndex(0);
-                    _selectedType = Integer.parseInt(_projectTypes.getValue(0));
-                }
-            }
-            public void onFailure (Throwable caught) {
-                CSwiftly.log("getProjectTypes failed", caught);
                 addError(CSwiftly.serverError(caught));
             }
         });
