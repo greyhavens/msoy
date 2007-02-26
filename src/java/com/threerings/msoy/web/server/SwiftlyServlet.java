@@ -19,12 +19,10 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SwiftlyConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
-import com.threerings.msoy.web.data.SwiftlyProjectType;
 import com.threerings.msoy.web.data.WebCreds;
 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord; 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord; 
-import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectTypeRecord; 
 
 import java.util.ArrayList;
 import java.util.List;
