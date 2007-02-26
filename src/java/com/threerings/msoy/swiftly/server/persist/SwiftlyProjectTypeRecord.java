@@ -39,7 +39,7 @@ public class SwiftlyProjectTypeRecord extends PersistentRecord
         new ColumnExp(SwiftlyProjectTypeRecord.class, DISPLAY_NAME);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The id of the project type. */
     @Id
