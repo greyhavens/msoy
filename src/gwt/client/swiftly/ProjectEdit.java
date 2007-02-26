@@ -55,6 +55,9 @@ public class ProjectEdit extends BorderedDialog
         VerticalPanel contents = (VerticalPanel)_contents;
         _header.add(createTitleLabel(_project.projectName, "ProjectName"));
 
+        _errorContainer = new HorizontalPanel();
+        contents.add(_errorContainer);
+
         TextBox projectName = new TextBox();
         projectName.setText(_project.projectName);
         projectName.addChangeListener(new ChangeListener() {
@@ -133,9 +136,9 @@ public class ProjectEdit extends BorderedDialog
             public void onSuccess (Object result) {
                 closeDialog();
             }
-            public void onFailure (Throwable cause) {
-                CSwiftly.serverError(cause);
-                // TODO: addError(CSwiftly.serverError(caught));
+            public void onFailure (Throwable caught) {
+                CSwiftly.serverError(caught);
+                addError(CSwiftly.serverError(caught));
             }
         });
     }
@@ -188,7 +191,7 @@ public class ProjectEdit extends BorderedDialog
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("getProjectCollaborators failed", caught);
-                // TODO: addError(CSwiftly.serverError(caught));
+                addError(CSwiftly.serverError(caught));
             }
         });
     }
@@ -264,7 +267,7 @@ public class ProjectEdit extends BorderedDialog
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Listing friends failed memberId=[" + memberId + "]", caught);
-                // TODO: addError(CSwiftly.serverError(caught));
+                addError(CSwiftly.serverError(caught));
             }
         });
     }
@@ -279,13 +282,12 @@ public class ProjectEdit extends BorderedDialog
         CSwiftly.swiftlysvc.leaveCollaborators(CSwiftly.creds, _project.projectId, memberId,
             new AsyncCallback() {
             public void onSuccess (Object result) {
-                // TODO: remove the item from the _collaborators list instead?
                 loadCollaborators();
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to remove collaborator [projectId=" + _project.projectId +
                            ", memberId=" + memberId + "]", caught);
-                // TODO: addError(CSwiftly.serverError(caught));
+                addError(CSwiftly.serverError(caught));
             }
         });
     }
@@ -300,15 +302,24 @@ public class ProjectEdit extends BorderedDialog
         CSwiftly.swiftlysvc.joinCollaborators(CSwiftly.creds, _project.projectId, memberId,
             new AsyncCallback() {
             public void onSuccess (Object result) {
-                // TODO: add the item from the _collaborators list instead?
                 loadCollaborators();
             }
             public void onFailure (Throwable caught) {
                 CSwiftly.log("Failed to add collaborator [projectId=" + _project.projectId +
                            ", memberId=" + memberId + "]", caught);
-                // TODO: addError(CSwiftly.serverError(caught));
+                addError(CSwiftly.serverError(caught));
             }
         });
+    }
+
+    protected void addError (String error)
+    {
+        _errorContainer.add(new Label(error));
+    }
+
+    protected void clearErrors ()
+    {
+        _errorContainer.clear();
     }
 
     protected SwiftlyProject _project;
@@ -316,6 +327,7 @@ public class ProjectEdit extends BorderedDialog
     protected boolean _amOwner;
     protected CheckBox _remixable;
     protected HorizontalPanel _collaborators;
+    protected HorizontalPanel _errorContainer;
     protected MenuBar _collabMenu;
     protected PopupPanel _collabMenuPanel;
     protected HashSet _collaboratorsSet;
