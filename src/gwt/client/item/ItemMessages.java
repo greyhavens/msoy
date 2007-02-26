@@ -64,9 +64,9 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String cloudCommonTags();
 
   /**
-   * Translated "by&nbsp;".
+   * Translated "by".
    * 
-   * @return translated "by&nbsp;"
+   * @return translated "by"
    * @gwt.key creatorBy
    */
   String creatorBy();

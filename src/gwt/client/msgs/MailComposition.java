@@ -45,7 +45,8 @@ public class MailComposition extends BorderedDialog
     public MailComposition (int recipientId, String subject, MailPayloadComposer factory,
                             String bodyText)
     {
-        this(new MemberName("Member #" + recipientId, recipientId), subject, factory, bodyText);
+        this(new MemberName(CMsgs.mmsgs.memberId(String.valueOf(recipientId)), recipientId),
+             subject, factory, bodyText);
         CMsgs.membersvc.getName(recipientId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 if (result != null) {
@@ -70,18 +71,18 @@ public class MailComposition extends BorderedDialog
     // generate the composer UI, prepopulated wih the given subject line and body text
     protected void buildUI (String subject, String bodyText)
     {
-        _header.add(createTitleLabel("Compose Mail", "ComposerTitle"));
+        _header.add(createTitleLabel(CMsgs.mmsgs.popupHeader(), "ComposerTitle"));
 
         // set up the recipient/subject header grid
         Grid grid = new Grid(2, 2);
         grid.setStyleName("Headers");
 
-        grid.setText(0, 0, "To: ");
+        grid.setText(0, 0, CMsgs.mmsgs.hdrTo());
         grid.getCellFormatter().setStyleName(0, 0, "Label");
         grid.setWidget(0, 1, _recipientBox = new Label(_recipient.toString()));
         grid.getCellFormatter().setStyleName(0, 1, "Value");
 
-        grid.setText(1, 0, "Subject: ");
+        grid.setText(1, 0, CMsgs.mmsgs.hdrSubject());
         grid.getCellFormatter().setStyleName(1, 0, "Label");
         _subjectBox = new TextBox();
         _subjectBox.addStyleName("SubjectBox");
@@ -118,7 +119,7 @@ public class MailComposition extends BorderedDialog
         buttonBox.addStyleName("Controls");
 
         // with a send button
-        Button replyButton = new Button("Send");
+        Button replyButton = new Button(CMsgs.mmsgs.btnSend());
         replyButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 deliverMail();
@@ -127,7 +128,7 @@ public class MailComposition extends BorderedDialog
         buttonBox.add(replyButton);
 
         // and a discard button
-        Button discardButton = new Button("Discard");
+        Button discardButton = new Button(CMsgs.mmsgs.btnDiscard());
         discardButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 // TODO: confirmation dialog?
