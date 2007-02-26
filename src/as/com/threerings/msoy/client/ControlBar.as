@@ -140,11 +140,6 @@ public class ControlBar extends HBox
         addChild(loc);
         */
 
-        var forward :CommandButton = new CommandButton();
-        //forward.setCommand(ControlBarController.MOVE_FORWARD, forward); // TODO
-        forward.styleName = "controlBarButtonGoForward";
-        addChild (forward);
-
         var spacer :Spacer = new Spacer();
         spacer.percentWidth = 100;
         addChild(spacer);
