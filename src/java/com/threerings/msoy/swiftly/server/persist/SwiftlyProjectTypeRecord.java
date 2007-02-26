@@ -60,6 +60,7 @@ public class SwiftlyProjectTypeRecord extends PersistentRecord
         SwiftlyProjectType spt = new SwiftlyProjectType();
         spt.typeId = typeId;
         spt.typeName = typeName;
+        spt.displayName = displayName;
         return spt;
     }
 }

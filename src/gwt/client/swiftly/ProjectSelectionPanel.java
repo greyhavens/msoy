@@ -190,7 +190,7 @@ public class ProjectSelectionPanel extends VerticalPanel
                 } else {
                     while (iter.hasNext()) {
                         final SwiftlyProjectType pType = (SwiftlyProjectType)iter.next();
-                        _projectTypes.addItem(pType.typeName, String.valueOf(pType.typeId));
+                        _projectTypes.addItem(pType.displayName, String.valueOf(pType.typeId));
                     }
                     _projectTypes.setSelectedIndex(0);
                     _selectedType = Integer.parseInt(_projectTypes.getValue(0));
