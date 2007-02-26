@@ -11,7 +11,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
  * Contains a mapping of member to swiftly project.
  */
 @Entity
-// @Table(uniqueConstraints = {@UniqueConstraint(columnNames={"typeName"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"memberId", "projectId"})})
 public class SwiftlyCollaboratorsRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -30,7 +30,7 @@ public class SwiftlyCollaboratorsRecord extends PersistentRecord
         new ColumnExp(SwiftlyCollaboratorsRecord.class, PROJECT_ID);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** The memberId of the project member. */
     public int memberId; /*TODO: this should have a foreign key constraint */
