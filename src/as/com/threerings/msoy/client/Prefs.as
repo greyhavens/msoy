@@ -4,7 +4,18 @@ import com.threerings.util.Config;
 
 public class Prefs
 {
+    /** The underlying config object used to store our prefs. A listener
+     * may be installed on this object to hear about changes to preferences. */
     public static const config :Config = new Config("rsrc/config/msoy");
+
+    public static const USERNAME :String = "username";
+    public static const SESSION_TOKEN :String = "sessionTok";
+    public static const MACHINE_IDENT :String = "machIdent";
+    public static const VOLUME :String = "volume";
+    public static const CHAT_DECAY :String = "chatDecay";
+    public static const CHAT_FILTER :String = "chatFilter";
+    public static const CHAT_HISTORY :String = "chatHistory";
+    public static const LOG_TO_CHAT :String = "logToChat";
 
     public static function getUsername () :String
     {
@@ -94,6 +105,19 @@ public class Prefs
         config.setValue(CHAT_FILTER, lvl);
     }
 
+    /**
+     * Returns whether chat history is on or off.
+     */
+    public static function getShowingChatHistory () :Boolean
+    {
+        return (config.getValue(CHAT_HISTORY, true) as Boolean);
+    }
+
+    public static function setShowingChatHistory (showing :Boolean) :void
+    {
+        config.setValue(CHAT_HISTORY, showing);
+    }
+
     public static function getLogToChat () :Boolean
     {
         return (config.getValue(LOG_TO_CHAT, false) as Boolean);
@@ -103,15 +127,6 @@ public class Prefs
     {
         config.setValue(LOG_TO_CHAT, logToChat);
     }
-
-    /** Key constants. */
-    private static const USERNAME :String = "username";
-    private static const SESSION_TOKEN :String = "sessionTok";
-    private static const MACHINE_IDENT :String = "machIdent";
-    private static const VOLUME :String = "volume";
-    private static const CHAT_DECAY :String = "chatDecay";
-    private static const CHAT_FILTER :String = "chatFilter";
-    private static const LOG_TO_CHAT :String = "logToChat";
 
     /**
      * Internal function to create a media position key.
