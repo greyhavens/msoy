@@ -46,7 +46,7 @@ public class Board
 
         // if we're a player, put our submarine last, so that it
         // shows up always on top of other submarines
-        var myIndex :int = gameCtrl.seating.getPlayerPosition(gameCtrl.getMyId());
+        var myIndex :int = gameCtrl.seating.getMyPosition();
         if (myIndex != -1) {
             sub = (_subs[myIndex] as Submarine);
             _seaDisplay.setChildIndex(sub, _seaDisplay.numChildren - 1);
@@ -219,14 +219,14 @@ public class Board
     protected function gameDidStart (event :StateChangedEvent) :void
     {
         // player 0 starts the ticker
-        if (_gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId()) == 0) {
+        if (_gameCtrl.seating.getMyPosition() == 0) {
             _gameCtrl.startTicker("tick", 100);
         }
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
-        var mydex :int = _gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId());
+        var mydex :int = _gameCtrl.seating.getMyPosition();
         if (mydex >= 0) {
             _gameCtrl.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
         }

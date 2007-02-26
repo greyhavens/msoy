@@ -46,7 +46,7 @@ public class SubAttack extends Sprite
 
         _gameCtrl = new EZGameControl(this);
         _board = new Board(_gameCtrl, _seaDisplay);
-        _myIndex = _gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId());
+        _myIndex = _gameCtrl.seating.getMyPosition();
 
         if (_myIndex != -1) {
             _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEvent);
