@@ -43,6 +43,8 @@ public class UnderwhirledDrift extends Sprite
     /** Kart offset from its effective location */
     public static const KART_OFFSET :int = 32;
 
+    public static const KEY_EVENT :String = "keyEvent";
+
     public function UnderwhirledDrift ()
     {
         var masker :Shape = new Shape();
@@ -76,8 +78,8 @@ public class UnderwhirledDrift extends Sprite
 
         _gameCtrl = new EZGameControl(this);
         _gameCtrl.registerListener(this);
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyDownEventHandler);
-        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyUpEventHandler);
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEventHandler);
+        _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
 
         _coord = new HostCoordinator(_gameCtrl);
         _coord.addEventListener(HostEvent.CLAIMED, hostEventHandler);
@@ -100,7 +102,6 @@ public class UnderwhirledDrift extends Sprite
     public function stateChanged (event :StateChangedEvent) :void
     {
         if (event.type == StateChangedEvent.GAME_STARTED) {
-            _gameCtrl.localChat("Game Started");
             if (_coord.status == HostCoordinator.STATUS_HOST) {
                 // assign everyone a starting position.
                 var playerIds :Array = _gameCtrl.seating.getPlayerIds();
@@ -132,24 +133,18 @@ public class UnderwhirledDrift extends Sprite
     public function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == "keyDown" || event.name == "keyUp") {
-            if (event.value.id == _gameCtrl.getMyId()) {
+            if (event.value.id != _gameCtrl.getMyId()) {
+                // TODO
                 switch (event.value.code) {
                 case Keyboard.UP:
-                    _kart.moveForward(event.name == "keyDown");
                     break;
                 case Keyboard.DOWN:
-                    _kart.moveBackward(event.name == "keyDown");
                     break;
                 case Keyboard.LEFT:
-                    _kart.turnLeft(event.name == "keyDown");
                     break;
                 case Keyboard.RIGHT:
-                    _kart.turnRight(event.name == "keyDown");
                     break;
                 case Keyboard.SPACE:
-                    if (event.name == "keyDown") {
-                        _kart.jump();
-                    }
                 default:
                     // do nothing
                 }
@@ -159,10 +154,9 @@ public class UnderwhirledDrift extends Sprite
 
     protected function hostEventHandler (event :HostEvent)  :void
     {
-        _gameCtrl.localChat("HostEvent triggered");
         if (_coord.status == HostCoordinator.STATUS_HOST) {
             if (event.type == HostEvent.CLAIMED) {
-                _gameCtrl.localChat("I've been assigned host");
+                // Do nothing for now... hostEventHandler may not be necessry for UD
             } else if (event.type == HostEvent.CHANGED) {
                 // Do nothing for now
             }
@@ -172,64 +166,36 @@ public class UnderwhirledDrift extends Sprite
     /** 
      * Handles KEY_DOWN. 
      */
-    protected function keyDownEventHandler (event :KeyboardEvent) :void
+    protected function keyEventHandler (event :KeyboardEvent) :void
     {
-        /*switch (event.keyCode) {
-        case Keyboard.UP:
-            _kart.moveForward(true);
-            break;
-        case Keyboard.DOWN:
-            _kart.moveBackward(true);
-            break;
-        case Keyboard.LEFT:
-            _kart.turnLeft(true);
-            break;
-        case Keyboard.RIGHT:
-            _kart.turnRight(true);
-            break;
-        case Keyboard.SPACE:
-            _kart.jump();
-            break;
-        default:
-            // do nothing
-        }*/
         switch (event.keyCode) {
         case Keyboard.UP:
+            //_gameCtrl.sendMessage(KEY_EVENT,
+                //{keyType: event.type, id: _gameCtrl.getMyId(), code: event.keyCode});
+            _kart.moveForward(event.type == KeyboardEvent.KEY_DOWN);
+            break;
         case Keyboard.DOWN:
+            //_gameCtrl.sendMessage(KEY_EVENT,
+                //{keyType: event.type, id: _gameCtrl.getMyId(), code: event.keyCode});
+            _kart.moveBackward(event.type == KeyboardEvent.KEY_DOWN);
+            break;
         case Keyboard.LEFT:
+            //_gameCtrl.sendMessage(KEY_EVENT,
+                //{keyType: event.type, id: _gameCtrl.getMyId(), code: event.keyCode});
+            _kart.turnLeft(event.type == KeyboardEvent.KEY_DOWN);
+            break;
         case Keyboard.RIGHT:
+            //_gameCtrl.sendMessage(KEY_EVENT,
+                //{keyType: event.type, id: _gameCtrl.getMyId(), code: event.keyCode});
+            _kart.turnRight(event.type == KeyboardEvent.KEY_DOWN);
+            break;
         case Keyboard.SPACE:
-            _gameCtrl.sendMessage("keyDown", {id: _gameCtrl.getMyId(), code: event.keyCode});
-        default:
-            // do nothing
-        }
-    }
-
-    protected function keyUpEventHandler (event :KeyboardEvent) :void
-    {
-        /*switch (event.keyCode) {
-        case Keyboard.UP:
-            _kart.moveForward(false);
+            if (event.type == KeyboardEvent.KEY_DOWN) {
+                //_gameCtrl.sendMessage(KEY_EVENT,
+                  //  {keyType: event.type, id: _gameCtrl.getMyId(), code: event.keyCode});
+                _kart.jump();
+            }
             break;
-        case Keyboard.DOWN:
-            _kart.moveBackward(false);
-            break;
-        case Keyboard.LEFT:
-            _kart.turnLeft(false);
-            break;
-        case Keyboard.RIGHT:
-            _kart.turnRight(false);
-            break;
-        default:
-            // do nothing
-        }*/
-        switch (event.keyCode) {
-        case Keyboard.UP:
-        case Keyboard.DOWN:
-        case Keyboard.LEFT:
-        case Keyboard.RIGHT:
-        case Keyboard.SPACE:
-            _gameCtrl.sendMessage("keyUp", {id: _gameCtrl.getMyId(), code: event.keyCode});
         default:
             // do nothing
         }

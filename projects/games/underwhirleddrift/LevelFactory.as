@@ -39,6 +39,8 @@ public class LevelFactory
      * in the future */
     [Embed(source='rsrc/objects.swf#column')]
     protected static const COLUMN :Class;
+    [Embed(source='rsrc/objects.swf#column')]
+    protected static const TREE :Class;
     [Embed(source='rsrc/objects.swf#dora_box')]
     protected static const DORA_BOX :Class;
     // initialize the mapping of colors to objects
@@ -49,7 +51,9 @@ public class LevelFactory
         OBJECT_MAPPING.put(0xFF0000, { cls: null, type: LevelConfig.OBJECT_STARTING_LINE_POINT });
         OBJECT_MAPPING.put(0xFFFFFF, { cls: null, type: LevelConfig.OBJECT_STARTING_POSITION });
         OBJECT_MAPPING.put(0x00FFFF, { cls: COLUMN, type: LevelConfig.OBJECT_OBSTACLE });
-        OBJECT_MAPPING.put(0x00FF00, { cls: DORA_BOX, type: LevelConfig.OBJECT_BONUS });
+        OBJECT_MAPPING.put(0xFFFF00, { cls: DORA_BOX, type: LevelConfig.OBJECT_BONUS });
+        OBJECT_MAPPING.put(0x00FF00, { cls: TREE, type: LevelConfig.OBJECT_OBSTACLE });
+        
     }
     staticInit();
 }

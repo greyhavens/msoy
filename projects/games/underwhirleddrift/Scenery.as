@@ -18,7 +18,7 @@ public class Scenery extends Sprite
             // TODO: temp until I have a new objects swf from Nick
             var mca :MovieClipAsset = item.sprite as MovieClipAsset;
             if (mca != null) {
-                mca.gotoAndStop(1);
+                mca.gotoAndStop(2);
             }
             item.startWidth = item.sprite.width * 0.1;
             item.startHeight = item.sprite.height * 0.1;
