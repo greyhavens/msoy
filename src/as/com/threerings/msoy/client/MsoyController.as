@@ -4,9 +4,12 @@
 package com.threerings.msoy.client {
 
 import flash.events.IEventDispatcher;
+import flash.events.KeyboardEvent;
 import flash.events.TextEvent;
 
 import flash.system.Capabilities;
+
+import flash.ui.Keyboard;
 
 import mx.controls.Button;
 
@@ -580,10 +583,12 @@ public class MsoyController extends Controller
         // for LINK events and handle them all here.
         if (_controlledPanel != null) {
             _controlledPanel.removeEventListener(TextEvent.LINK, handleLink);
+            _controlledPanel.removeEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
         }
         super.setControlledPanel(panel);
         if (_controlledPanel != null) {
             _controlledPanel.addEventListener(TextEvent.LINK, handleLink);
+            _controlledPanel.addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
         }
     }
 
@@ -593,6 +598,19 @@ public class MsoyController extends Controller
     protected function handleLink (evt :TextEvent) :void
     {
         showExternalURL(evt.text);
+    }
+
+    /**
+     * Handle global key events.
+     */
+    protected function handleKeyDown (event :KeyboardEvent) :void
+    {
+        switch (event.keyCode) {
+        // TODO: not F7
+        case Keyboard.F7:
+            Prefs.setShowingChatHistory(!Prefs.getShowingChatHistory());
+            break;
+        }
     }
 
     /** Provides access to client-side directors and services. */

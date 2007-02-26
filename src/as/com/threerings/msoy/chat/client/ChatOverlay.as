@@ -31,6 +31,7 @@ import mx.controls.VScrollBar;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ColorUtil;
+import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StringUtil;
 
@@ -81,6 +82,17 @@ public class ChatOverlay
             _history = new HistoryList();
             _ctx.getChatDirector().addChatDisplay(_history);
         }
+
+        // listen for preferences changes, update history mode
+        Prefs.config.addEventListener(ConfigValueSetEvent.TYPE,
+            handlePrefsUpdated, false, 0, true);
+    }
+
+    protected function handlePrefsUpdated (event :ConfigValueSetEvent) :void
+    {
+        if ((_target != null) && (event.name == Prefs.CHAT_HISTORY)) {
+            setHistoryEnabled(Boolean(event.value));
+        }
     }
 
     /**
@@ -122,7 +134,7 @@ public class ChatOverlay
 
             _ctx.getChatDirector().addChatDisplay(this);
 
-            setHistoryEnabled(true);
+            setHistoryEnabled(Prefs.getShowingChatHistory());
 
             layout();
         }

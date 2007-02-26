@@ -517,11 +517,6 @@ public class RoomController extends SceneController
                 case Keyboard.F1:
                     handleAction(EDIT_SCENE, null);
                     break;
-
-                case Keyboard.F7:
-                    _roomView.chatOverlay.setHistoryEnabled(
-                        !_roomView.chatOverlay.isHistoryMode());
-                    break;
                 }
             }
 
