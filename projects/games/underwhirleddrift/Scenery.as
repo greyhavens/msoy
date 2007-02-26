@@ -27,6 +27,7 @@ public class Scenery extends Sprite
     {
         var thisTransform :Matrix = new Matrix();
         var minScale :Number = 1 / cameraHeight;
+        var maxScale :Number = Ground.HEIGHT / cameraHeight;
         var maxDistance :Number = distance / minScale;
         var viewRect :Rectangle = new Rectangle(-maxDistance / 2, -maxDistance, maxDistance, 
             maxDistance);
@@ -49,6 +50,11 @@ public class Scenery extends Sprite
                 // position item
                 _items[ii].sprite.x = _items[ii].transformedOrigin.x;
                 _items[ii].sprite.y = _items[ii].transformedOrigin.y;
+                // if this is a kart, offset its y position accordingly
+                if (_items[ii] is KartObstacle) {
+                    _items[ii].sprite.y += UnderwhirledDrift.KART_OFFSET * 
+                        (scaleFactor / maxScale);
+                }
                 // scale item
                 _items[ii].sprite.width = _items[ii].startWidth * scaleFactor;
                 _items[ii].sprite.height = _items[ii].startHeight * scaleFactor;
