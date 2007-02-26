@@ -6,6 +6,8 @@ package client.msgs;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -16,12 +18,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.MemberName;
 
-import client.util.HeaderValueTable;
+import client.util.BorderedDialog;
 
 /**
  * A mail composition popup.
  */
-public class MailComposition extends PopupPanel
+public class MailComposition extends BorderedDialog
 {
     /**
      * Initializes a new composer when we already have the full name.
@@ -39,7 +41,7 @@ public class MailComposition extends PopupPanel
     /**
      * Initializes a new composer with a recipient id; we do a backend request to look
      * up the recipient's current name, and inject the name into the right UI element.
-     */ 
+     */
     public MailComposition (int recipientId, String subject, MailPayloadComposer factory,
                             String bodyText)
     {
@@ -55,29 +57,65 @@ public class MailComposition extends PopupPanel
                 // let's ignore this error, it's just a display thing
             }
         });
-        buildUI(subject, bodyText);
+    }
+
+    // @Override
+    protected Widget createContents ()
+    {
+        _panel = new VerticalPanel();
+        _panel.addStyleName("MailComposer");
+        return _panel;
     }
 
     // generate the composer UI, prepopulated wih the given subject line and body text
     protected void buildUI (String subject, String bodyText)
     {
-        setStyleName("mailComposition");
-        VerticalPanel panel = new VerticalPanel();
-        panel.setSpacing(5);
+        _header.add(createTitleLabel("Compose Mail", "ComposerTitle"));
 
-        // build the headers
-        HeaderValueTable headers = new HeaderValueTable();
-        headers.setStyleName("mailCompositionHeaders");
-        _recipientBox = new Label(_recipient.toString());
-        headers.addRow("To", _recipientBox);
+        // set up the recipient/subject header grid
+        Grid grid = new Grid(2, 2);
+        grid.setStyleName("Headers");
+
+        grid.setText(0, 0, "To: ");
+        grid.getCellFormatter().setStyleName(0, 0, "Label");
+        grid.setWidget(0, 1, _recipientBox = new Label(_recipient.toString()));
+        grid.getCellFormatter().setStyleName(0, 1, "Value");
+
+        grid.setText(1, 0, "Subject: ");
+        grid.getCellFormatter().setStyleName(1, 0, "Label");
         _subjectBox = new TextBox();
+        _subjectBox.addStyleName("SubjectBox");
         _subjectBox.setText(subject);
-        headers.addRow("Subject", _subjectBox);
-        panel.add(headers);
-        
+        grid.setWidget(1, 1, _subjectBox);
+        grid.getCellFormatter().setStyleName(1, 1, "Value");
+        _panel.add(grid);
+
+        if (_bodyObjectComposer != null) {
+            Widget widget = _bodyObjectComposer.widgetForComposition();
+            if (widget != null) {
+                widget.addStyleName("Payload");
+                _panel.add(widget);
+            }
+        }
+
+        // then the textarea where we enter the body of the text
+        // TODO: give us focus if this is a reply (otherwise the subject line)
+        _messageBox = new TextArea();
+        _messageBox.setCharacterWidth(60);
+        _messageBox.setVisibleLines(20);
+        _messageBox.addStyleName("Body");
+        _messageBox.setText(bodyText);
+        _panel.add(_messageBox);
+
+        FlowPanel messageBar = new FlowPanel();
+        messageBar.setStyleName("Bar");
+        Label star = new Label();
+        star.setStyleName("Star");
+        messageBar.add(star);
+
         // then a button box
         HorizontalPanel buttonBox = new HorizontalPanel();
-        buttonBox.setStyleName("mailCompositionButtons");
+        buttonBox.addStyleName("Controls");
 
         // with a send button
         Button replyButton = new Button("Send");
@@ -92,36 +130,13 @@ public class MailComposition extends PopupPanel
         Button discardButton = new Button("Discard");
         discardButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
-                // TODO: cheesy confirmation dialogue?
+                // TODO: confirmation dialog?
                 hide();
             }
         });
         buttonBox.add(discardButton);
-        panel.add(buttonBox);
-
-        if (_bodyObjectComposer != null) {
-            Widget widget = _bodyObjectComposer.widgetForComposition();
-            if (widget != null) {
-                panel.add(widget);
-            }
-        }
-
-        // then the textarea where we enter the body of the text
-        // TODO: give us focus if this is a reply (otherwise the subject line)
-        // TODO: style this better, right now it looks a bit like a hungry void
-        _messageBox = new TextArea();
-        _messageBox.setCharacterWidth(60);
-        _messageBox.setVisibleLines(20);
-        _messageBox.setStyleName("mailCompositionBody");
-        _messageBox.setText(bodyText);
-        panel.add(_messageBox);
-
-        // add the usual error container where we let the user know if something went wrong
-        _errorContainer = new VerticalPanel();
-        _errorContainer.setStyleName("groupDetailErrors");
-        panel.add(_errorContainer);
-
-        setWidget(panel);
+        messageBar.add(buttonBox);
+        _panel.add(messageBar);
     }
     
     // send the message off to the backend for delivery
@@ -157,9 +172,9 @@ public class MailComposition extends PopupPanel
 
     protected int _senderId;
     protected MemberName _recipient;
+    protected VerticalPanel _panel;
     protected MailPayloadComposer _bodyObjectComposer;
     protected TextBox _subjectBox;
     protected Label _recipientBox;
     protected TextArea _messageBox;
-    protected VerticalPanel _errorContainer;
 }

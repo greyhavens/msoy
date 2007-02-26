@@ -224,29 +224,3 @@
     margin-top: 4px;
     margin-left: 20px;
 }
-
-.mailComposition {
-    background: #99CCFF;
-    border: 1px solid black;
-}
-
-.mailCompositionHeaders {
-    background: #6699CC;
-    padding: 5px;
-    width: 100%;
-}
-
-.mailCompositionHeaderHeader {
-    width: 14ex;
-}
-
-.mailCompositionButtons {
-    background: #6699CC;
-    padding: 5px;
-    width: 100%;
-}
-
-.mailCompositionBody {
-    background: #6699CC;
-    padding: 10px;
-}
