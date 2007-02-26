@@ -13,9 +13,12 @@ public class Board
         _gameCtrl = gameCtrl;
         _seaDisplay = seaDisplay;
 
-        var playerCount :int = _gameCtrl.getPlayerCount();
+        var playerIds :Array = _gameCtrl.seating.getPlayerIds();
+        var playerCount :int = playerIds.length;
         _width = int(DIMENSIONS[playerCount][0]);
         _height = int(DIMENSIONS[playerCount][1]);
+
+        _maxDeaths = playerCount * 5;
 
         _seaDisplay.setupSea(_width, _height);
 
@@ -25,14 +28,15 @@ public class Board
         }
 
         // create a submarine for each player
-        var names :Array = gameCtrl.getPlayerNames();
         var sub :Submarine;
-        for (ii = 0; ii < names.length; ii++) {
+        for (ii = 0; ii < playerIds.length; ii++) {
+            var playerId :int = (playerIds[ii] as int);
             var xx :int = getStartingX(ii);
             var yy :int = getStartingY(ii);
 
-            sub = new Submarine(ii, String(names[ii]), xx, yy, this);
-            _gameCtrl.getUserCookie(ii, sub.gotPlayerCookie);
+            sub = new Submarine(
+                ii, _gameCtrl.getOccupantName(playerId), xx, yy, this);
+            _gameCtrl.getUserCookie(playerId, sub.gotPlayerCookie);
             _seaDisplay.addChild(sub);
             _subs[ii] = sub;
 
@@ -42,7 +46,7 @@ public class Board
 
         // if we're a player, put our submarine last, so that it
         // shows up always on top of other submarines
-        var myIndex :int = gameCtrl.getMyIndex();
+        var myIndex :int = gameCtrl.seating.getPlayerPosition(gameCtrl.getMyId());
         if (myIndex != -1) {
             sub = (_subs[myIndex] as Submarine);
             _seaDisplay.setChildIndex(sub, _seaDisplay.numChildren - 1);
@@ -215,14 +219,14 @@ public class Board
     protected function gameDidStart (event :StateChangedEvent) :void
     {
         // player 0 starts the ticker
-        if (_gameCtrl.getMyIndex() == 0) {
+        if (_gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId()) == 0) {
             _gameCtrl.startTicker("tick", 100);
         }
     }
 
     protected function gameDidEnd (event :StateChangedEvent) :void
     {
-        var mydex :int = _gameCtrl.getMyIndex();
+        var mydex :int = _gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId());
         if (mydex >= 0) {
             _gameCtrl.setUserCookie(Submarine(_subs[mydex]).getNewCookie());
         }
@@ -297,8 +301,7 @@ public class Board
         }
 
         // maybe end the game and declare them winners
-        if (hiScore >= 5 ||
-                _totalDeaths >= (_gameCtrl.getPlayerCount() * 5)) {
+        if (hiScore >= 5 || _totalDeaths >= _maxDeaths) {
             _gameCtrl.endGame.apply(null, winners);
         }
     }
@@ -429,6 +432,9 @@ public class Board
     protected var _seaDisplay :SeaDisplay;
 
     protected var _totalDeaths :int = 0;
+
+    /** The maximum number of deaths before we end the game. */
+    protected var _maxDeaths :int;
 
     /** The width of the board. */
     protected var _width :int;
