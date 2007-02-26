@@ -19,12 +19,14 @@ import com.threerings.ezgame.PropertyChangedListener;
 import com.threerings.ezgame.PropertyChangedEvent;
 import com.threerings.ezgame.StateChangedListener;
 import com.threerings.ezgame.StateChangedEvent;
+import com.threerings.ezgame.MessageReceivedListener;
+import com.threerings.ezgame.MessageReceivedEvent;
 
 import com.threerings.util.ArrayUtil;
 
 [SWF(width="711", height="400")]
 public class UnderwhirledDrift extends Sprite
-    implements PropertyChangedListener, StateChangedListener
+    implements PropertyChangedListener, StateChangedListener, MessageReceivedListener
 {
     /** width of the masked display */
     public static const DISPLAY_WIDTH :int = 711;
@@ -97,6 +99,18 @@ public class UnderwhirledDrift extends Sprite
     // from StateChangedListener
     public function stateChanged (event :StateChangedEvent) :void
     {
+        if (event.type == StateChangedEvent.GAME_STARTED) {
+            _gameCtrl.localChat("Game Started");
+            if (_coord.status == HostCoordinator.STATUS_HOST) {
+                // assign everyone a starting position.
+                var playerIds :Array = _gameCtrl.seating.getPlayerIds();
+                ArrayUtil.shuffle(playerIds);
+                for (var ii :int = 0; ii < playerIds.length; ii++) {
+                    playerIds[ii] = { id: playerIds[ii], position: ii }
+                }
+                _gameCtrl.set("playerPositions", playerIds);
+            }
+        }
     }
 
     // from PropertyChangedListener
@@ -114,17 +128,41 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
+    // from MessageReceivedListener
+    public function messageReceived (event :MessageReceivedEvent) :void
+    {
+        if (event.name == "keyDown" || event.name == "keyUp") {
+            if (event.value.id == _gameCtrl.getMyId()) {
+                switch (event.value.code) {
+                case Keyboard.UP:
+                    _kart.moveForward(event.name == "keyDown");
+                    break;
+                case Keyboard.DOWN:
+                    _kart.moveBackward(event.name == "keyDown");
+                    break;
+                case Keyboard.LEFT:
+                    _kart.turnLeft(event.name == "keyDown");
+                    break;
+                case Keyboard.RIGHT:
+                    _kart.turnRight(event.name == "keyDown");
+                    break;
+                case Keyboard.SPACE:
+                    if (event.name == "keyDown") {
+                        _kart.jump();
+                    }
+                default:
+                    // do nothing
+                }
+            }
+        }
+    }
+
     protected function hostEventHandler (event :HostEvent)  :void
     {
+        _gameCtrl.localChat("HostEvent triggered");
         if (_coord.status == HostCoordinator.STATUS_HOST) {
             if (event.type == HostEvent.CLAIMED) {
-                // assign everyone a starting position.
-                var playerIds :Array = _gameCtrl.seating.getPlayerIds();
-                ArrayUtil.shuffle(playerIds);
-                for (var ii :int = 0; ii < playerIds.length; ii++) {
-                    playerIds[ii] = { id: playerIds[ii], position: ii }
-                }
-                _gameCtrl.set("playerPositions", playerIds);
+                _gameCtrl.localChat("I've been assigned host");
             } else if (event.type == HostEvent.CHANGED) {
                 // Do nothing for now
             }
@@ -136,7 +174,7 @@ public class UnderwhirledDrift extends Sprite
      */
     protected function keyDownEventHandler (event :KeyboardEvent) :void
     {
-        switch (event.keyCode) {
+        /*switch (event.keyCode) {
         case Keyboard.UP:
             _kart.moveForward(true);
             break;
@@ -154,12 +192,22 @@ public class UnderwhirledDrift extends Sprite
             break;
         default:
             // do nothing
+        }*/
+        switch (event.keyCode) {
+        case Keyboard.UP:
+        case Keyboard.DOWN:
+        case Keyboard.LEFT:
+        case Keyboard.RIGHT:
+        case Keyboard.SPACE:
+            _gameCtrl.sendMessage("keyDown", {id: _gameCtrl.getMyId(), code: event.keyCode});
+        default:
+            // do nothing
         }
     }
 
     protected function keyUpEventHandler (event :KeyboardEvent) :void
     {
-        switch (event.keyCode) {
+        /*switch (event.keyCode) {
         case Keyboard.UP:
             _kart.moveForward(false);
             break;
@@ -172,6 +220,16 @@ public class UnderwhirledDrift extends Sprite
         case Keyboard.RIGHT:
             _kart.turnRight(false);
             break;
+        default:
+            // do nothing
+        }*/
+        switch (event.keyCode) {
+        case Keyboard.UP:
+        case Keyboard.DOWN:
+        case Keyboard.LEFT:
+        case Keyboard.RIGHT:
+        case Keyboard.SPACE:
+            _gameCtrl.sendMessage("keyUp", {id: _gameCtrl.getMyId(), code: event.keyCode});
         default:
             // do nothing
         }
