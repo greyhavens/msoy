@@ -21,6 +21,7 @@ import com.threerings.whirled.spot.data.SceneLocation;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.ezgame.client.GameControlBackend;
+import com.threerings.ezgame.client.EZGameController;
 import com.threerings.ezgame.util.EZObjectMarshaller;
 
 import com.threerings.msoy.client.WorldContext;
@@ -38,9 +39,9 @@ public class WorldGameControlBackend extends GameControlBackend
     implements LocationObserver, OccupantObserver
 {
     public function WorldGameControlBackend (
-        ctx :WorldContext, worldGameObj :WorldGameObject)
+        ctx :WorldContext, worldGameObj :WorldGameObject, ctrl :EZGameController)
     {
-        super(ctx, worldGameObj);
+        super(ctx, worldGameObj, ctrl);
         _mctx = ctx;
         _worldGameObj = worldGameObj;
         // the gameIdent matches the prototype of the game

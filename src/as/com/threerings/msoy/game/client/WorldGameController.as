@@ -74,6 +74,6 @@ class WorldGamePanel extends EZGamePanel
     
     override protected function createBackend () :GameControlBackend
     {
-        return new WorldGameControlBackend(_ctx as WorldContext, _ezObj as WorldGameObject);
+        return new WorldGameControlBackend(_ctx as WorldContext, _ezObj as WorldGameObject, _ctrl);
     }
 }
