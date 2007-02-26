@@ -220,12 +220,17 @@ class SeatRenderer extends VBox
                 btn = new CommandButton();
                 addChildAt(btn, 0);
             }
-            if (occupant == null) {
+            if (table.inPlay()) {
+                btn.visible = false;
+
+            } else if (occupant == null) {
+                btn.visible = true;
                 btn.setCommand(LobbyController.SIT, [ table.tableId , index ]);
                 btn.label = ctx.xlate("game", "b.sit");
                 btn.enabled = !weAreSeated;
 
             } else {
+                btn.visible = true;
                 btn.setCommand(LobbyController.LEAVE, table.tableId);
                 btn.label = ctx.xlate("game", "b.leave");
                 btn.enabled = true;
