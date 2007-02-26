@@ -232,7 +232,13 @@ public class ProjectEdit extends BorderedDialog
                 Iterator iter = ((List)result).iterator();
                 // TODO: this should filter friends who are already collaborators
                 if (!iter.hasNext()) {
-                    // TODO: _membersProjects.add(new Label(CSwiftly.msgs.noTypes()));
+                    MenuItem noFriends = new MenuItem(CSwiftly.msgs.noFriends(), new Command() {
+                        public void execute() {
+                            // noop
+                            parent.hide();
+                        }
+                    });
+                    menu.addItem(noFriends);
                 } else {
                     while (iter.hasNext()) {
                         final FriendEntry friend = (FriendEntry)iter.next();
