@@ -69,7 +69,7 @@ public class Reversi extends Sprite
     public function pieceClicked (pieceIndex :int) :void
     {
         // enact the play
-        var myIdx :int = _gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId());
+        var myIdx :int = _gameCtrl.seating.getMyPosition();
         _board.playPiece(pieceIndex, myIdx);
         _gameCtrl.endTurn();
 
