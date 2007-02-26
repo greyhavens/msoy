@@ -244,11 +244,7 @@ public class MailManager
             welcome.subject = "Welcome to MetaSOY!";
             welcome.sent = new Timestamp(System.currentTimeMillis());
             welcome.unread = true;
-            welcome.bodyText =
-                "Welcome to the MetaSOY mail system! This test message exists primarly so that " +
-                "there's something in our inboxes to click on. You are encouraged to go 'Ooh' " +
-                "and perhaps 'Aah' now.\n\n" +
-                "In the very short term, its purpose is to help me write this mail reader.\n\n";
+            welcome.bodyText = "Welcome to the MetaSOY mail system!\n";
             _mailRepo.fileMessage(welcome);
         }
     }
