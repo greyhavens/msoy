@@ -13,7 +13,6 @@ import com.threerings.msoy.web.data.SwiftlyProjectType;
  * Contains the definition of a swiftly project type.
  */
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"typeName"})})
 public class SwiftlyProjectTypeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -47,6 +46,7 @@ public class SwiftlyProjectTypeRecord extends PersistentRecord
     public int typeId;
     
     /** The project type name. */
+    @Column(unique=true)
     public String typeName;
 
     /** The project display name. Localized key? */
