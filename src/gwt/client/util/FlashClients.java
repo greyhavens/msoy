@@ -21,7 +21,7 @@ public class FlashClients
     public static HTML createWorldClient (String flashVars)
     {
         return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/world-client.swf", "90%", "550", flashVars);
+            "asclient", "/clients/world-client.swf", FS_WIDTH, FS_HEIGHT, flashVars);
     }
 
     public static HTML createHeaderClient (String token)
@@ -33,8 +33,13 @@ public class FlashClients
     public static HTML createLobbyClient (int gameId, String token)
     {
         return WidgetUtil.createFlashContainer(
-            "asclient", "/clients/world-client.swf", 800, 600,
+            "asclient", "/clients/world-client.swf", FS_WIDTH, FS_HEIGHT,
             "gameLobby=" + gameId + "&token=" + token);
+    }
+
+    public static HTML createNeighborhood (String hoodData, String width, String height)
+    {
+        return createNeighborhood(hoodData, FS_WIDTH, FS_HEIGHT);
     }
 
     public static HTML createNeighborhood (String hoodData, String width, String height)
@@ -47,7 +52,7 @@ public class FlashClients
     public static HTML createPopularPlaces (String hotspotData)
     {
         return WidgetUtil.createFlashContainer(
-            "hotspots","/media/static/HoodViz.swf", "100%", "550",
+            "hotspots","/media/static/HoodViz.swf", FS_WIDTH, FS_HEIGHT,
             "skinURL= " + HOOD_SKIN_URL + "&neighborhood=" + hotspotData);
     }
 
@@ -105,4 +110,7 @@ public class FlashClients
     protected static native boolean getBooleanElement (JavaScriptObject array, int index) /*-{
         return array[index];
     }-*/;
+
+    protected static final String FS_WIDTH = "100%";
+    protected static final String FS_HEIGHT = "530";
 }
