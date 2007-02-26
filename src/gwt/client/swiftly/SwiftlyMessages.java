@@ -160,9 +160,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String addCollaborators();
 
   /**
-   * Translated "You have no friends to add as collaborators.".
+   * Translated "You have no more friends to add as collaborators.".
    * 
-   * @return translated "You have no friends to add as collaborators."
+   * @return translated "You have no more friends to add as collaborators."
    * @gwt.key noFriends
    */
   String noFriends();
