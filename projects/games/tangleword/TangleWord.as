@@ -19,7 +19,7 @@ import com.threerings.ezgame.PropertyChangedListener;
    maintaining distributed data representation, and responding to events.
 */
 
-[SWF(width="500", height="500")]
+[SWF(width="600", height="400")]
 public class TangleWord extends Sprite 
 {
     

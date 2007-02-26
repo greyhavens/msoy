@@ -261,6 +261,7 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
     public function roundEndedHandler (newState : String) : void
     {
         removeAllSelectedLetters ();
+        _scoreboard.resetWordClaims ();
     }
 
     
@@ -323,7 +324,7 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
             return;
         }
         
-        if (_scoreboard.getWordOwner (word) == null)
+        if (! _scoreboard.isWordClaimed (word))
         {
             _scoreboard.addWord (player, word, score);
             _display.logSuccess (player, word, score);

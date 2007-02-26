@@ -491,7 +491,7 @@ class ScoreField extends TextField
         var players : Array = board.getPlayers ();
         for each (var player : String in players)
         {
-            var score : Number = board.getTotalScore (player);
+            var score : Number = board.getScore (player);
             var line : String = player + ": " + score + " pts.\n";
             appendText (line);
         }

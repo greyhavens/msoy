@@ -2,133 +2,83 @@ package
 {
 
     /**
-       This class is a wrapper around a simple TangleWord score storage object:
-       the object contains nested associative lists (mapping players to score lists,
-       which map words to score values), and this class provides accessors for
-       navigating these lists.
-    */
+     * This class is a wrapper around a simple TangleWord score storage object:
+     * contains an associative list of players and their total scores,
+     * and a simple array of words that have already been claimed this round.
+     */
     public class Scoreboard
     {
         /** Constructor */
         public function Scoreboard ()
         {
-            _scores = new Object ();
+            _data = new Object ();
+            _data.scores = new Object ();  // maps player name => total score
+            _data.claimed = new Object (); // maps word => player name
         }
 
         /** Defines a player with the given /name/, with zero score. */
         public function addPlayer (name : String) : void
         {
-            getScoreboard (name);  // this will auto-initialize the player's score
-        }
-
-        /** Retrieves the player's current total score */
-        public function getTotalScore (name : String) : Number
-        {
-            var total : Number = 0;
-            var score : Object = getScoreboard (name);
-            for (var word : String in score)
-            {
-                if (score[word] is Number)
-                {
-                    total += (score[word] as Number);
-                }
-            }
-
-            return total;            
+            getScore (name);  // this will auto-initialize the player's score
         }
 
         /** Retrieves the list of players, as an array of strings. */
         public function getPlayers () : Array
         {
             var data : Array = new Array ();
-            for (var key : String in _scores)
+            for (var key : String in _data.scores)
             {
                 data.push (key);
             }
             return data;                
         }
-
-        /** Tries to retrieve the player who scored the specified word. If the word
-            hasn't been scored yet, returns null. */
-        public function getWordOwner (word : String) : String
+        
+        /** Retrieves player's score, potentially zero. If the /players/
+         *  object doesn't have the player's score, it's initialized on first access. */
+        public function getScore (player : String) : Number
         {
-            var players : Array = getPlayers ();
-            for each (var player : String in players)
-            {
-                var owner : String = null;
-                var words : Array = new Array ();
-                var scores : Array = new Array ();
-                getWordsAndScores (player, words, scores);
-
-                for each (var w : String in words)
-                {
-                    if (w == word) return player;
-                }
+            if (! _data.scores.hasOwnProperty (player)) {
+                _data.scores[player] = 0;
             }
-
-            return null;
-        }                
-
-        /** Adds a /word/ with the specified /score/ to the player's scoreboard. */
+            return _data.scores[player];
+        }
+        
+        /** Marks the /word/ as claimed, and adds the /score/ to the player's total. */
         public function addWord (player : String, word : String, score : Number) : void
         {
-            var scoreboard : Object = getScoreboard (player);
-            scoreboard[word] = score;
+            _data.claimed[word] = player;
+            _data.scores[player] = getScore (player) + score;
         }
 
-        /** Populates the specified /words/ and /scores/ arrays with all of the
-            words and word scores achieved by the player.
-
-            NOTE: This function modifes the arrays /words/ and /scores/ passed in
-            as function parameters.
-        */
-        public function getWordsAndScores (player : String, words : Array, scores : Array) : void
+        /** If this word was already claimed, returns true; otherwise false. */
+        public function isWordClaimed (word : String) : Boolean
         {
-            var scoreboard : Object = getScoreboard (player);
-            for (var word : String in scoreboard)
-            {
-                words.push (word);
-                scores.push (scoreboard[word]);
-            }
+            return _data.claimed.hasOwnProperty (word);
         }
 
+        /** Resets all word claims (but not player scores). */
+        public function resetWordClaims () : void
+        {
+            _data.claimed = new Object ();
+        }
 
         /** For serialization use only: returns a copy to the data storage object */
         public function get internalScoreObject () : Object
         {
-            return _scores;
+            return _data;
         }
 
         /** For serialization use only: sets a pointer to the data storage object */
-        public function set internalScoreObject (scores : Object) : void
+        public function set internalScoreObject (data : Object) : void
         {
-            _scores = scores;
+            _data = data;
         }
         
 
-
-        // PRIVATE METHODS
-
-        /**
-           Retrieves player's scoreboard object, potentially empty.
-           The scoreboard object is an associative array mapping from
-           words to numeric scores.
-        */
-        private function getScoreboard (player : String) : Object
-        {
-            if (! _scores.hasOwnProperty (player))
-            {
-                _scores[player] = new Object ();
-            }
-
-            return _scores[player];
-        }        
-
-
-        // PRIVATE VARIABLES
+        // IMPLEMENTATION DETAILS
 
         /** Storage object that keeps a copy of player scores */
-        private var _scores : Object;
+        private var _data : Object;
         
     }
 
