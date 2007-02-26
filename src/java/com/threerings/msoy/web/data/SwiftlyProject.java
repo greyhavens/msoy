@@ -23,4 +23,6 @@ public class SwiftlyProject
     /** The project name. */
     public String projectName;
 
+    /** Whether the project is remixable. */
+    public boolean remixable;
 }

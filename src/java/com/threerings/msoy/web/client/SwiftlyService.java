@@ -43,6 +43,12 @@ public interface SwiftlyService extends RemoteService
         throws ServiceException;
 
     /**
+     * Updates a project in the database if any changes have occurred.
+     */
+    public void updateProject (WebCreds creds, SwiftlyProject project)
+        throws ServiceException;
+
+    /**
      * Loads the SwiftlyProject using the supplied projectId
      */
     public SwiftlyProject loadProject (WebCreds creds, int projectId)

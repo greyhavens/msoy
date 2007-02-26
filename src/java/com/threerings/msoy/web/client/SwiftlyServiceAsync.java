@@ -36,6 +36,11 @@ public interface SwiftlyServiceAsync
                                boolean remixable, AsyncCallback callback);
 
     /**
+     * The asynchronous version of {@link SwiftlyService#updateProject}.
+     */
+    public void updateProject (WebCreds creds, SwiftlyProject project, AsyncCallback callback);
+
+    /**
      * The asynchronous version of {@link SwiftlyService#loadProject}.
      */
     public void loadProject (WebCreds creds, int projectId, AsyncCallback callback);

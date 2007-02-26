@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -112,6 +113,19 @@ public class SwiftlyRepository extends DepotRepository
                 record.ownerId, SwiftlyProjectRecord.PROJECT_NAME, record.projectName);
         }
         return record;
+    }
+
+    /**
+     * Updates the specified project record with supplied field/value mapping.
+     */
+    public void updateProject (int projectId, Map<String, Object> updates)
+        throws PersistenceException
+    {
+        int rows = updatePartial(SwiftlyProjectRecord.class, projectId, updates);
+        if (rows == 0) {
+            throw new PersistenceException(
+                "Couldn't find swiftly project for update [id=" + projectId + "]");
+        }
     }
 
     /**

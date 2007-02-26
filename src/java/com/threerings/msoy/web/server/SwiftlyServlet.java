@@ -26,6 +26,7 @@ import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectTypeRecord;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides the server implementation of {@link SwiftlyService}.
@@ -115,6 +116,36 @@ public class SwiftlyServlet extends MsoyServiceServlet
             return project;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Creating new project failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    // from SwiftlyService
+    public void updateProject (WebCreds creds, SwiftlyProject project)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(creds);
+
+        // TODO Argument Validation
+        /*
+        if(!isValidName(project.name)) {
+            throw new ServiceException("m.invalid_project_name");
+        }
+        */
+        // TODO: verify the user is the owner?
+
+        try {
+            SwiftlyProjectRecord pRec = MsoyServer.swiftlyRepo.loadProject(project.projectId);
+            if (pRec == null) {
+                throw new PersistenceException("Swiftly project not found! [id=" +
+                    project.projectId + "]");
+            }
+            Map<String, Object> updates = pRec.findUpdates(project);
+            if (updates.size() > 0) {
+                MsoyServer.swiftlyRepo.updateProject(project.projectId, updates);
+            }
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Updating project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }

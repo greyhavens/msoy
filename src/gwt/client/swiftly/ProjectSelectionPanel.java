@@ -74,6 +74,7 @@ public class ProjectSelectionPanel extends VerticalPanel
         final TextBox projectName = new TextBox();
         projectName.setMaxLength(50);
         projectName.setVisibleLength(25);
+        // TODO: do we want to force people to click the create button?
         ClickListener doCreate = new ClickListener() {
             public void onClick (Widget sender) {
                 createProject(projectName.getText());

@@ -110,4 +110,28 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key swiftlyEditing
    */
   String swiftlyEditing();
+
+  /**
+   * Translated "Edit Project".
+   * 
+   * @return translated "Edit Project"
+   * @gwt.key editProject
+   */
+  String editProject();
+
+  /**
+   * Translated "Submit".
+   * 
+   * @return translated "Submit"
+   * @gwt.key submit
+   */
+  String submit();
+
+  /**
+   * Translated "Cancel".
+   * 
+   * @return translated "Cancel"
+   * @gwt.key cancel
+   */
+  String cancel();
 }

@@ -4,10 +4,13 @@
 package com.threerings.msoy.swiftly.server.persist;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
 
@@ -104,6 +107,25 @@ public class SwiftlyProjectRecord extends PersistentRecord
     /** Whether this project has been marked as deleted by the owner. */
     public boolean deleted;
 
+    /**
+     * Checks over the object definitions and will return a map of field, value pairs that contains
+     * all of the entries that are not null, and are different from what's in this object
+     * currently.
+     */
+
+    public Map<String, Object> findUpdates (SwiftlyProject project)
+        throws PersistenceException
+    {
+        HashMap<String, Object> updates = new HashMap<String, Object>();
+        if (project.projectName != null && !project.projectName.equals(projectName)) {
+            updates.put(PROJECT_NAME, project.projectName);
+        }
+        if (project.remixable != remixable) {
+            updates.put(REMIXABLE, project.remixable);
+        } 
+        return updates;
+    }
+
     /** 
      * Converts this persistent record to a runtime record.
      */
@@ -114,6 +136,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
         sp.ownerId = ownerId;
         sp.projectTypeId = projectTypeId;
         sp.projectName = projectName;
+        sp.remixable = remixable;
         return sp;
     }
 }
