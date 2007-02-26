@@ -37,7 +37,7 @@ public class FlashClients
             "gameLobby=" + gameId + "&token=" + token);
     }
 
-    public static HTML createNeighborhood (String hoodData, String width, String height)
+    public static HTML createNeighborhood (String hoodData)
     {
         return createNeighborhood(hoodData, FS_WIDTH, FS_HEIGHT);
     }
