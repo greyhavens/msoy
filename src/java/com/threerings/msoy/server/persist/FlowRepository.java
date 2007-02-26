@@ -105,6 +105,10 @@ public class FlowRepository extends DepotRepository
     public void maybeAssessAntiAbuseFactor (int gameId, int playerMinutes)
         throws PersistenceException
     {
+        if (RuntimeConfig.server.abuseFactorReassessment == 0) {
+            // game abuse factor has been disabled, just return
+            return;
+        }
         GameAbuseRecord gameRecord = getAbuseRecord(gameId, false);
         gameRecord.accumMinutesSinceLastAssessment += playerMinutes;
 
@@ -120,14 +124,15 @@ public class FlowRepository extends DepotRepository
                     new FieldOverride(GameFlowSummaryRecord.AMOUNT,
                                       new FunctionExp("sum", GameFlowGrantLogRecord.AMOUNT_C)));
 
-            if (records.size() > 0) {
-                deleteAll(MemberActionLogRecord.class,
-                          new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
-                          null);
-            }
-            // substitute actual algorithm at some point
+            // write an algorithm that actually does something with 'records' here
             gameRecord.abuseFactor = 123;
             gameRecord.accumMinutesSinceLastAssessment = 0;
+            
+            // then delete the records
+            deleteAll(MemberActionLogRecord.class,
+                      new Where(GameFlowGrantLogRecord.GAME_ID, gameId),
+                      null);
+
         }
         store(gameRecord);
     }

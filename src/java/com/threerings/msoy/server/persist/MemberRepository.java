@@ -304,8 +304,10 @@ public class MemberRepository extends DepotRepository
     {
         long now = System.currentTimeMillis();
         MemberRecord record = loadMember(memberId);
-        if (((now - record.lastHumanityAssessment.getTime())/1000) >
-             RuntimeConfig.server.humanityReassessment) {
+
+        if (RuntimeConfig.server.humanityReassessment > 0 &&
+            RuntimeConfig.server.humanityReassessment <
+            ((now - record.lastHumanityAssessment.getTime())/1000)) {
             Timestamp nowStamp = new Timestamp(now);
             record.humanity = _flowRepo.assessHumanity(memberId, record.humanity, nowStamp);
             record.lastHumanityAssessment = new Timestamp(now);
