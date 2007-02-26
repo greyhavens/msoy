@@ -10,13 +10,14 @@ import flash.utils.describeType;
 
 import mx.core.MovieClipAsset;
 
-public class Kart extends Sprite
+public class Kart extends KartSprite
 {
     public function Kart (camera :Camera, ground :Ground)
     {
+        // this is our only available kart for now
+        super(KART_MEDIUM);
         _camera = camera;
         _ground = ground;
-        _kart = new KART();
         addChild(_kart);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
@@ -190,9 +191,6 @@ public class Kart extends Sprite
     /** reference to the ground object */
     protected var _ground :Ground;
 
-    /** Embedded cart movie clip */
-    protected var _kart :MovieClipAsset;
-
     /** Kart's current speed */
     protected var _currentSpeed :Number = 0;
 
@@ -201,10 +199,6 @@ public class Kart extends Sprite
 
     /** Frames left before the jump is over */
     protected var _jumpFrameCount :int = 0;
-
-    /** Kart swf */
-    [Embed(source='rsrc/mediumkart.swf#kart')]
-    protected static const KART :Class;
 
     /** turning constants */
     protected static const TURN_VIEW_ANGLE :int = 15; // in degrees

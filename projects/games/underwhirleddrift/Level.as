@@ -53,7 +53,11 @@ public class Level extends Sprite
         if (_startingPosition != -1) {
             _ground.setKartLocation(_config.getStartingPoint(_startingPosition));
         }
-        _ground.setScenery(new Scenery(config.getObstacles().concat(config.getBonuses())));
+        _ground.setScenery(_scenery = new Scenery(config.getObstacles().concat(
+            config.getBonuses())));
+        for (ii = 0; ii < _kartsToAdd.length; ii++) {
+            _scenery.addKart(_kartsToAdd[ii] as KartObstacle);
+        }
     }
 
     public function isOnRoad (loc :Point) :Boolean
@@ -74,6 +78,19 @@ public class Level extends Sprite
         }
     }
 
+    /**
+     * Adds an opponent's kart to the fray. 
+     */
+    public function addOpponentKart (position :int) :void
+    {
+        var kart :KartObstacle = new KartObstacle(_config.getStartingPoint(position));
+        if (_scenery != null) {
+            _scenery.addKart(kart);
+        } else {
+            _kartsToAdd.push(kart);
+        }
+    }
+
     protected function isNotTransparent (loc :Point, img :DisplayObject) :Boolean 
     {
         if (img == null) {
@@ -91,5 +108,9 @@ public class Level extends Sprite
     protected var _ground :Ground;
     protected var _config :LevelConfig;
     protected var _startingPosition :int = -1;
+    protected var _scenery :Scenery;
+
+    /** Opponent karts to add, once the scenery is available */
+    protected var _kartsToAdd :Array = new Array();
 }
 }

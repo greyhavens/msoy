@@ -123,7 +123,8 @@ public class UnderwhirledDrift extends Sprite
             for (var ii: int = 0; ii < playerPositions.length; ii++) {
                 if (playerPositions[ii].id == _gameCtrl.getMyId()) {
                     _level.setStartingPosition(playerPositions[ii].position);
-                    break;
+                } else {
+                    _level.addOpponentKart(playerPositions[ii].position);
                 }
             }
         }

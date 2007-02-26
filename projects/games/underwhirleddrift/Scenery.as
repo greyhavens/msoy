@@ -15,17 +15,7 @@ public class Scenery extends Sprite
     {
         for (var ii :int = 0; ii < objects.length; ii++) {
             var item :Object = {origin: objects[ii].point, sprite :new objects[ii].cls()};
-            // TODO: temp until I have a new objects swf from Nick
-            var mca :MovieClipAsset = item.sprite as MovieClipAsset;
-            if (mca != null) {
-                mca.gotoAndStop(2);
-            }
-            item.startWidth = item.sprite.width * 0.1;
-            item.startHeight = item.sprite.height * 0.1;
-            // get that new sprite off the display, thank you
-            item.sprite.x = item.sprite.y = -100000;
-            addChild(item.sprite);
-            _items.push(item);
+            initializeObject(item);
         }
     }
 
@@ -71,6 +61,26 @@ public class Scenery extends Sprite
                 _items[ii].sprite.height = _items[ii].startHeight;
             }
         }
+    }
+
+    public function addKart (kart :KartObstacle) :void
+    {
+        initializeObject(kart);
+    }
+
+    protected function initializeObject (obj :Object) :void
+    {
+        // TODO: temp until I have a new objects swf from Nick
+        var mca :MovieClipAsset = obj.sprite as MovieClipAsset;
+        if (mca != null) {
+            mca.gotoAndStop(2);
+        }
+        obj.startWidth = obj.sprite.width * 0.1;
+        obj.startHeight = obj.sprite.height * 0.1;
+        // get that new sprite off the display, thank you
+        obj.sprite.x = obj.sprite.y = -100000;
+        addChild(obj.sprite);
+        _items.push(obj);
     }
     
     protected function sortOnTransformedY (obj1 :Object, obj2 :Object) :int
