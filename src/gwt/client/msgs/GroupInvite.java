@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -59,12 +60,12 @@ public abstract class GroupInvite
             public CompositionWidget ()
             {
                 super();
-                setWidth("100%");
-                add(new InlineLabel(CMsgs.mmsgs.groupClick()));
+                FlowPanel panel = new FlowPanel();
+                panel.add(new InlineLabel(CMsgs.mmsgs.groupClick(), false, false, true));
                 Button joinButton = new Button(CMsgs.mmsgs.groupJoin());
                 joinButton.setEnabled(false);
-                add(joinButton);
-                add(new InlineLabel(CMsgs.mmsgs.groupThe()));
+                panel.add(joinButton);
+                panel.add(new InlineLabel(CMsgs.mmsgs.groupThe(), false, true, true));
                 _groupBox = new ListBox();
                 for (int ii = 0; ii < _groups.size(); ii ++) {
                     _groupBox.addItem(((GroupMembership) _groups.get(ii)).group.groupName);
@@ -79,7 +80,8 @@ public abstract class GroupInvite
                         Window.alert("groupId now = " + _selectedGroupId);
                     }
                 });
-                add(_groupBox);
+                panel.add(_groupBox);
+                add(panel);
             }
             protected ListBox _groupBox;
         }
@@ -115,16 +117,18 @@ public abstract class GroupInvite
             public DisplayWidget (boolean enabled)
             {
                 super();
-                add(new InlineLabel("Click to "));
-                Button joinButton = new Button("join");
+                FlowPanel panel = new FlowPanel();
+                panel.add(new InlineLabel(CMsgs.mmsgs.groupClick(), false, false, true));
+                Button joinButton = new Button(CMsgs.mmsgs.groupJoin());
                 joinButton.setEnabled(enabled);
                 joinButton.addClickListener(new ClickListener() {
                     public void onClick (Widget sender) {
                         joinGroup();
                     }
                 });
-                add(joinButton);
-                add(new InlineLabel(" the group #" + _inviteObject.groupId + "."));
+                panel.add(joinButton);
+                panel.add(new InlineLabel(CMsgs.mmsgs.groupThe(), false, true, false));
+                add(panel);
             }
 
             protected void joinGroup ()
