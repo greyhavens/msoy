@@ -10,11 +10,17 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.SQLException;
+
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.ConnectionProvider;
+
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.clause.Where;
 
@@ -26,6 +32,28 @@ public class SwiftlyRepository extends DepotRepository
     public SwiftlyRepository (ConnectionProvider conprov)
     {
         super(conprov);
+        
+        // XXX Initial project types -- Temporary until we sort out what behavior
+        // a project actually inherits from its type, and how to organize project
+        // types
+        _ctx.registerMigration(SwiftlyProjectTypeRecord.class, new EntityMigration(3) {
+            public int invoke (Connection conn) throws SQLException {
+                Statement stmt;
+                int retVal = 0;
+
+                // The illustrious "game"
+                stmt = conn.createStatement();
+                try {
+                    // XXX _tableName is null here, and I have no idea why.
+                    retVal = stmt.executeUpdate("INSERT INTO SwiftlyProjectTypeRecord" +
+                        " (typeName, displayName) VALUES ('game', 'Whirled Game');");
+                } finally {
+                    stmt.close();
+                }
+
+                return retVal;
+            }
+        });
     }
 
     /**
