@@ -2,6 +2,7 @@ package
 {
 
 import flash.display.Sprite;    
+import flash.display.Stage;
 import flash.display.SimpleButton;
 import flash.display.DisplayObject;
 import flash.display.Graphics;
@@ -17,7 +18,6 @@ import flash.text.TextField;
 import flash.text.TextFormat;
 
 import mx.core.BitmapAsset;
-
 
 
 /** The Display class represents the game visualization, including UI
@@ -142,7 +142,6 @@ public class Display extends Sprite
     {
         _timer.start (seconds);
     }
-
  
 
 
@@ -167,7 +166,7 @@ public class Display extends Sprite
 
     private function okButtonClickHandler (event : MouseEvent) : void
     {
-        _controller.tryScoreWord (_wordfield.text);
+        _controller.tryScoreWord (_wordfield.text, false);
     }
 
     /** Called when the round starts - enables display. */
@@ -175,6 +174,7 @@ public class Display extends Sprite
     {
         _timer.start (Properties.ROUND_LENGTH);
         setEnableState (true);
+        _wordfield.stage.focus = _wordfield; // set focus on input box
     }
 
     /** Called when the round ends - disables display. */
@@ -193,7 +193,7 @@ public class Display extends Sprite
             // If it's an ENTER, try scoring.
             if (_wordfield.text != "")
             {
-                _controller.tryScoreWord (_wordfield.text);
+                _controller.tryScoreWord (_wordfield.text, true);
             }
             break;
 

@@ -18,8 +18,8 @@ public class Controller
     
     // PUBLIC METHODS
     
-    public function Controller (gameCtrl : EZGameControl, model : Model,
-                                rounds : RoundProvider) : void
+    public function Controller (
+        gameCtrl : EZGameControl, model : Model, rounds : RoundProvider) : void
     {
         _gameCtrl = gameCtrl;
         _model = model;
@@ -87,11 +87,17 @@ public class Controller
 
     /** Signals that the currently selected word is a candidate for scoring.
         It will be matched against the dictionary, and added to the model. */
-    public function tryScoreWord (word : String) : void
+    public function tryScoreWord (word : String, typed : Boolean) : void
     {
-        // This code processes a word that exists in the dictionary
+        // This is the callback that gets called after the word is successfully
+        // checked against the dictionary
         var success : Function = function (word : String, isvalid : Boolean) : void
         {
+            // If this word was typed in, check if it exists on the board
+            if (typed) {
+                isvalid = isvalid && _model.wordExistsOnBoard (word.toLowerCase());
+            }
+            
             // Finally, process the new word. Notice that we don't check if it's already
             // been claimed - the model will take care of that, because there's a network
             // round-trip involved, and therefore potential of contention.
@@ -101,9 +107,6 @@ public class Controller
         
         // First, check to make sure it's of the correct length (in characters)
         if (word.length < MIN_WORD_LENGTH) return;
-
-        // Check if it exists on the board
-        if (! _model.wordExistsOnBoard (word.toLowerCase())) return;
 
         // Now check if it's an actual word.
         _gameCtrl.checkDictionaryWord (Properties.LOCALE, word, success);

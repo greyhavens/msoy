@@ -23,10 +23,9 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
 
     // PUBLIC METHODS
     
-    public function Model (gameCtrl : EZGameControl,
-                           coordinator : HostCoordinator,
-                           rounds : RoundProvider,
-                           display : Display) : void
+    public function Model (
+        gameCtrl : EZGameControl, coordinator : HostCoordinator,
+        rounds : RoundProvider, display : Display) : void
     {
         // Squirrel the pointers away
         _gameCtrl = gameCtrl;
@@ -197,10 +196,8 @@ public class Model implements MessageReceivedListener, PropertyChangedListener
         case ADD_SCORE_MSG:
             
             // Store the score in a local data structure
-            addWordToScoreboard (event.value.player,
-                                 event.value.word,
-                                 event.value.score,
-                                 event.value.isvalid);
+            addWordToScoreboard (
+                event.value.player, event.value.word, event.value.score, event.value.isvalid);
 
             // Reset selection
             removeAllSelectedLetters ();
