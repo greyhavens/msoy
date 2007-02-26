@@ -184,6 +184,7 @@ public class SwiftlyRepository extends DepotRepository
     public boolean leaveCollaborators (int projectId, int memberId)
         throws PersistenceException
     {
+        // TODO: Don't allow the owner to remove themselves
         Key<SwiftlyCollaboratorsRecord> key = new Key<SwiftlyCollaboratorsRecord>(
                 SwiftlyCollaboratorsRecord.class,
                 SwiftlyCollaboratorsRecord.PROJECT_ID, projectId,

@@ -49,4 +49,26 @@ public interface SwiftlyServiceAsync
      * The asynchronous version of {@link SwiftlyService#loadSwiftlyConfig}.
      */
     public void loadSwiftlyConfig (WebCreds creds, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link SwiftlyService#getProjectCollaborators}.
+     */
+    public void getProjectCollaborators (WebCreds creds, int projectId, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link SwiftlyService#getFriends}.
+     */
+    public void getFriends (WebCreds creds, AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link SwiftlyService#leaveCollaborators}.
+     */
+    public void leaveCollaborators (WebCreds creds, int projectId, int memberId,
+                                         AsyncCallback callback);
+
+    /**
+     * The asynchronous version of {@link SwiftlyService#joinCollaborators}.
+     */
+    public void joinCollaborators (WebCreds creds, int projectId, int memberId,
+                                    AsyncCallback callback);
 }

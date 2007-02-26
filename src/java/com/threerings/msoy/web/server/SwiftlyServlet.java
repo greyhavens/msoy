@@ -14,6 +14,8 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.client.SwiftlyService;
+import com.threerings.msoy.web.data.FriendEntry;
+import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SwiftlyConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
@@ -178,5 +180,66 @@ public class SwiftlyServlet extends MsoyServiceServlet
         config.server = ServerConfig.serverHost;
         config.port = ServerConfig.serverPorts[0];
         return config;
+    }
+
+    // from SwiftlyService
+    public List getProjectCollaborators (WebCreds creds, int projectId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(creds);
+        ArrayList<MemberName> members = new ArrayList<MemberName>();
+
+        try {
+            for (SwiftlyCollaboratorsRecord cRec :
+                MsoyServer.swiftlyRepo.getCollaborators(projectId)) {
+                members.add(MsoyServer.memberRepo.loadMember(cRec.memberId).getName());
+            }
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Getting project's collaborators failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
+        return members;
+    }
+
+    // from SwiftlyService
+    public List<FriendEntry> getFriends (WebCreds creds)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(creds);
+        try {
+            return MsoyServer.memberRepo.getFriends(memrec.memberId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Getting member's friends failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    // from SwiftlyService
+    public void leaveCollaborators (WebCreds creds, int projectId, int memberId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(creds);
+        // TODO: verify the user has permissions on this project
+        try {
+            MsoyServer.swiftlyRepo.leaveCollaborators(projectId, memberId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Removing project's collaborators failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    // from SwiftlyService
+    public void joinCollaborators (WebCreds creds, int projectId, int memberId)
+        throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser(creds);
+        // TODO: verify the user has permissions on this project
+        try {
+            MsoyServer.swiftlyRepo.joinCollaborators(projectId, memberId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Joining project's collaborators failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
     }
 }

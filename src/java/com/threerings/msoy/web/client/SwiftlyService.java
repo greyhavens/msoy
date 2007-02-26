@@ -59,4 +59,28 @@ public interface SwiftlyService extends RemoteService
      */
     public SwiftlyConfig loadSwiftlyConfig (WebCreds creds)
         throws ServiceException;
+
+    /**
+     * Loads the collaborators for the given project.
+     */
+    public List getProjectCollaborators (WebCreds creds, int projectId)
+        throws ServiceException;
+
+    /**
+     * Loads the friends for a given member.
+     */
+    public List getFriends (WebCreds creds)
+        throws ServiceException;
+
+    /**
+     * Removes a collaborator from a project
+     */
+    public void leaveCollaborators (WebCreds creds, int projectId, int memberId)
+        throws ServiceException;
+
+    /**
+     * Adds a collaborator from a project
+     */
+    public void joinCollaborators (WebCreds creds, int projectId, int memberId)
+        throws ServiceException;
 }

@@ -48,6 +48,22 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String noTypes();
 
   /**
+   * Translated "No collaborators found.".
+   * 
+   * @return translated "No collaborators found."
+   * @gwt.key noCollaborators
+   */
+  String noCollaborators();
+
+  /**
+   * Translated "Collaborators:".
+   * 
+   * @return translated "Collaborators:"
+   * @gwt.key collaborators
+   */
+  String collaborators();
+
+  /**
    * Translated "Create Project.".
    * 
    * @return translated "Create Project."
@@ -134,4 +150,36 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key cancel
    */
   String cancel();
+
+  /**
+   * Translated "Add Collaborators".
+   * 
+   * @return translated "Add Collaborators"
+   * @gwt.key addCollaborators
+   */
+  String addCollaborators();
+
+  /**
+   * Translated "View profile".
+   * 
+   * @return translated "View profile"
+   * @gwt.key viewProfile
+   */
+  String viewProfile();
+
+  /**
+   * Translated "Remove".
+   * 
+   * @return translated "Remove"
+   * @gwt.key viewRemove
+   */
+  String viewRemove();
+
+  /**
+   * Translated "Are you sure you wish to remove {0} from {1}?".
+   * 
+   * @return translated "Are you sure you wish to remove {0} from {1}?"
+   * @gwt.key viewRemovePrompt
+   */
+  String viewRemovePrompt(String arg0,  String arg1);
 }
