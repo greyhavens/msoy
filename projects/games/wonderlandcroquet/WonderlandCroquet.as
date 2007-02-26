@@ -129,7 +129,7 @@ public class WonderlandCroquet extends Sprite
                     }
 
                     _gameCtrl.set("balls", [_map.startPoint.x, _map.startPoint.y], 
-                                  _gameCtrl.getMyIndex());
+                                  _gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId()));
                 }
 
                 _haveMoved = false;
@@ -162,7 +162,7 @@ public class WonderlandCroquet extends Sprite
                 APEngine.addParticle(_balls[index]);
                 _ballLayer.addChild(_balls[index].ball);
 
-                if (index == _gameCtrl.getMyIndex()) {
+                if (index == _gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId())) {
                     _myBall = _balls[index];
                     _myBall.gameCtrl = _gameCtrl;
                 }
