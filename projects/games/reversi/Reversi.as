@@ -69,7 +69,7 @@ public class Reversi extends Sprite
     public function pieceClicked (pieceIndex :int) :void
     {
         // enact the play
-        var myIdx :int = _gameCtrl.getPlayerPosition(_gameCtrl.getMyId());
+        var myIdx :int = _gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId());
         _board.playPiece(pieceIndex, myIdx);
         _gameCtrl.endTurn();
 
@@ -84,7 +84,7 @@ public class Reversi extends Sprite
         for (var ii :int = 0; ii < _pieces.length; ii++) {
             var piece :Piece = (_pieces[ii] as Piece);
             piece.setDisplay(_board.getPiece(ii));
-            if (_gameCtrl.data["lastMove"] === ii) {
+            if (_gameCtrl.get("lastMove") === ii) {
                 piece.showLast(true);
             }
         }
@@ -95,7 +95,7 @@ public class Reversi extends Sprite
         readBoard();
 
         var turnHolderId :int = _gameCtrl.getTurnHolder();
-        var turnHolder :int = _gameCtrl.getPlayerPosition(turnHolderId);
+        var turnHolder :int = _gameCtrl.seating.getPlayerPosition(turnHolderId);
         var myTurn :Boolean = _gameCtrl.isMyTurn();
 
         var moves :Array = _board.getMoves(turnHolder);
@@ -110,8 +110,8 @@ public class Reversi extends Sprite
                 // ah, but they can't move either, so the game is over
                 var winnerIndex :int = _board.getWinner();
                 var winnerId :int = 0;
-                for each (var playerId :int in _gameCtrl.getPlayers()) {
-                    if (_gameCtrl.getPlayerPosition(playerId) == winnerIndex) {
+                for each (var playerId :int in _gameCtrl.seating.getPlayerIds()) {
+                    if (_gameCtrl.seating.getPlayerPosition(playerId) == winnerIndex) {
                         winnerId = playerId;
                         break;
                     }

@@ -133,7 +133,7 @@ public class Board
     {
         var whiteCount :int = 0;
         var blackCount :int = 0;
-        for each (var piece :int in _gameCtrl.data["board"]) {
+        for each (var piece :int in _gameCtrl.get("board")) {
             if (piece == WHITE_IDX) {
                 whiteCount++;
 

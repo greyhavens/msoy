@@ -17,7 +17,7 @@ public class ReversiPlayersDisplay extends PlayersDisplay
         id :int, name :String) :DisplayObject
     {
         var icon :Shape = new Shape();
-        icon.graphics.beginFill(uint(Piece.COLORS[_gameCtrl.getPlayerPosition(id)]));
+        icon.graphics.beginFill(uint(Piece.COLORS[_gameCtrl.seating.getPlayerPosition(id)]));
         icon.graphics.drawCircle(5, 5, 5);
         icon.graphics.endFill();
 
