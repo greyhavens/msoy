@@ -510,7 +510,8 @@ public class MemberManager
             public void invokePersist () throws PersistenceException {
                 _memberRepo.getFlowRepository().grantFlow(member.getMemberId(), amount);
                 if (mObj != null) {
-                    _flow = _memberRepo.loadMember(member.getMemberId()).flow;
+                    _flow = _memberRepo.getFlowRepository().loadMemberFlow(
+                        member.getMemberId()).flow;
                 }
             }
             public void handleSuccess () {
@@ -544,14 +545,14 @@ public class MemberManager
             public void invokePersist () throws PersistenceException {
                 _memberRepo.getFlowRepository().spendFlow(member.getMemberId(), amount);
                 if (mObj != null) {
-                    _flow = _memberRepo.loadMember(member.getMemberId()).flow;
+                    _flow = _memberRepo.getFlowRepository().loadMemberFlow(
+                        member.getMemberId()).flow;
                 }
             }
             public void handleSuccess () {
                 flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " S " +
                              amount + " " + (spendAction != null ? spendAction : "null") +
                              (details != null ? " " + details : ""));
-                // if the member is logged on, update their object
                 // TODO: distributed considerations
                 if (mObj != null) {
                     mObj.setFlow(_flow);

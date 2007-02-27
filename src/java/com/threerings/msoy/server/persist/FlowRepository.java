@@ -10,10 +10,12 @@ import java.util.Collection;
 
 import com.samskivert.io.PersistenceException;
 
+import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
@@ -39,7 +41,33 @@ public class FlowRepository extends DepotRepository
     public FlowRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // add a cache invalidator that listens to MemberRecord updates
+        _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
+            public void entryInvalidated (CacheKey key, MemberRecord member) {
+                _ctx.cacheInvalidate(new Key<MemberFlowRecord>(
+                        MemberFlowRecord.class, MemberFlowRecord.MEMBER_ID, member.memberId));
+            }
+            public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
+                // TODO: To be fancy, construct & cache our own MemberFlowRecord here
+            }
+        });
     }
+
+    /**
+     * Fetch the computed {@link MemberFlowRecord} for the given member. This effectively
+     * executes 'select flow from MemberRecord where memberId=?'.
+     * 
+     * TODO: This should probably not be cached at all.
+     */
+    public MemberFlowRecord loadMemberFlow (int memberId)
+        throws PersistenceException
+    {
+        return load(MemberFlowRecord.class, memberId,
+                    new FieldOverride(MemberFlowRecord.MEMBER_ID, MemberRecord.MEMBER_ID_C),
+                    new FieldOverride(MemberFlowRecord.FLOW, MemberRecord.FLOW_C));
+    }
+
 
     /**
      * Logs an action for a member with optional action-specific data, which may be null.
@@ -193,34 +221,6 @@ public class FlowRepository extends DepotRepository
             update(record);
         }
         return toExpire;
-    }
-
-    @Computed
-    @Entity
-    protected static class MemberActionCountRecord extends PersistentRecord
-    {
-        public static final String ACTION_ID = "actionId";
-        public static final String COUNT = "count";
-
-        /** The id of the action this entry counts. */
-        public int actionId;
-
-        /** The number of times this action was performed (by the implicit member). */
-        public int count;
-    }
-
-    @Computed
-    @Entity
-    protected static class GameFlowSummaryRecord extends PersistentRecord
-    {
-        public static final String GAME_ID = "gameId";
-        public static final String AMOUNT = "amount";
-
-        /** The id of the game that did the flow granting. */
-        public int gameId;
-
-        /** The amount of flow this game granted. */
-        public int amount;
     }
 
 
