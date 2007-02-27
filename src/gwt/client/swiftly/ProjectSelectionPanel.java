@@ -29,6 +29,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.SwiftlyProject;
+import com.threerings.msoy.item.web.Item;
 
 /**
  * Displays the client interface for selecting or creating a swiftly project.
@@ -56,24 +57,21 @@ public class ProjectSelectionPanel extends VerticalPanel
         membersContainer.add(_membersHeader);
         membersContainer.add(_membersProjects);
 
+        // a drop down to select the project type
         FlexTable createContainer = new FlexTable();
         _projectTypes = new ListBox();
         _projectTypes.setStyleName("projectTypes");
         _projectTypes.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
-                int tx = _projectTypes.getSelectedIndex();
-                if (tx == -1) {
-                    return;
-                }
-                _selectedProjectType = Byte.parseByte(_projectTypes.getValue(tx));
+                updateSelectedProjectType();
             }
         });
-
-        // XXX: Provide some human readable name for the typeId
         for (int i = 0; i < SwiftlyProject.PROJECT_TYPES.length; i++) {
             byte type = SwiftlyProject.PROJECT_TYPES[i];
-            _projectTypes.addItem(Byte.toString(type), Byte.toString(type));
+            // TODO: unhack when there is a common way to lookup Item names in i18n land
+            _projectTypes.addItem(Item.getTypeName(type), String.valueOf(type));
         }
+        updateSelectedProjectType();
 
         // input fields to create a new project
         final TextBox projectName = new TextBox();
@@ -117,8 +115,8 @@ public class ProjectSelectionPanel extends VerticalPanel
 
     protected void createProject (final String projectName)
     {
-        CSwiftly.swiftlysvc.createProject(CSwiftly.creds, projectName, _selectedProjectType,
-                                          _remixable.isChecked(), new AsyncCallback() {
+        CSwiftly.swiftlysvc.createProject(CSwiftly.creds, projectName, _selectedProjectType, 
+            _remixable.isChecked(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 CSwiftly.log("Project created: " + projectName);
                 SwiftlyProject newProject = (SwiftlyProject)result;
@@ -181,6 +179,15 @@ public class ProjectSelectionPanel extends VerticalPanel
                 addError(CSwiftly.serverError(caught));
             }
         });
+    }
+
+    protected void updateSelectedProjectType ()
+    {
+        int tx = _projectTypes.getSelectedIndex();
+        if (tx == -1) {
+            return;
+        }
+        _selectedProjectType = Byte.parseByte(_projectTypes.getValue(tx));
     }
 
     protected void addError (String error)

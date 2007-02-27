@@ -14,7 +14,7 @@ public class SwiftlyProject
     implements IsSerializable
 {
     /** The valid project types. */
-    public static byte[] PROJECT_TYPES = { Item.GAME };
+    public static byte[] PROJECT_TYPES = { Item.GAME, Item.AVATAR };
 
     /** The id of the project. */
     public int projectId;
