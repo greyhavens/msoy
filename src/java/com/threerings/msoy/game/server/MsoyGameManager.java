@@ -85,7 +85,8 @@ public class MsoyGameManager extends EZGameManager
                         MsoyServer.memberRepo.getFlowRepository().getAntiAbuseFactor(
                             ((MsoyGameConfig) _config).persistentGameId);
                 } catch (PersistenceException pe) {
-                    log.log(Level.WARNING, "Failed to note end of game [where=" + where() + "]", pe);
+                    log.log(Level.WARNING, "Failed to fetch game's anti-abuse factor [where=" +
+                            where() + "]", pe);
                 }
                 return false;
             }
