@@ -105,6 +105,7 @@ public abstract class MsoyEntryPoint
 
         // load up our translation dictionaries
         CShell.cmsgs = (ShellMessages)GWT.create(ShellMessages.class);
+        CShell.dmsgs = (DynamicMessages)GWT.create(DynamicMessages.class);
         CShell.smsgs = (ServerMessages)GWT.create(ServerMessages.class);
     }
 

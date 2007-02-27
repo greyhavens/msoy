@@ -73,18 +73,18 @@ public class ItemTypePanel extends FlexTable
         clear();
         _column = 0;
         _rightBit = null;
-        addTab(Item.AVATAR, "Avatars");
-        addTab(Item.FURNITURE, "Furniture");
-        addTab(Item.PET, "Pets");
-        addTab(Item.GAME, "Games");
-        addTab(Item.PHOTO, "Pictures");
-        addTab(Item.AUDIO, "Music");
-        addTab(Item.DOCUMENT, "Stories");
+        addTab(Item.AVATAR);
+        addTab(Item.FURNITURE);
+        addTab(Item.PET);
+        addTab(Item.GAME);
+        addTab(Item.PHOTO);
+        addTab(Item.AUDIO);
+        addTab(Item.DOCUMENT);
         getFlexCellFormatter().setStyleName(0, _column++, _rightBit);
         setVisible(true);
     }
 
-    protected void addTab (final byte itemType, String name)
+    protected void addTab (byte itemType)
     {
         String prefix = "";
         if (itemType == _selectedType) {
@@ -98,6 +98,7 @@ public class ItemTypePanel extends FlexTable
                 getFlexCellFormatter().setStyleName(0, _column++, _rightBit);
             }
         }
+        String name = CItem.dmsgs.getString("pItemType" + itemType);
         Hyperlink button = new Hyperlink(name, ""+itemType);
         button.setStyleName("Button");
         getFlexCellFormatter().setStyleName(0, _column, prefix + "Tab");

@@ -32,6 +32,9 @@ public class CShell
     /** Messages shared by all client interfaces. */
     public static ShellMessages cmsgs;
 
+    /** Messages that must be looked up dynamically. */
+    public static DynamicMessages dmsgs;
+
     /** Contains translations for server-supplied messages. */
     public static ServerMessages smsgs;
 

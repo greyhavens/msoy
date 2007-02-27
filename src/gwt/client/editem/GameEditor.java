@@ -9,6 +9,7 @@ import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -31,7 +32,7 @@ public class GameEditor extends ItemEditor
         _game = (Game)item;
         _minPlayers.setText("" + _game.minPlayers);
         _maxPlayers.setText("" + _game.maxPlayers);
-        _gameType.setText("" + _game.gameType);
+        _gameType.setSelectedIndex(_game.gameType);
         _watchable.setChecked(!_game.unwatchable);
         _gamedef.setText(_game.config);
         _tableUploader.setMedia(_game.getTableMedia());
@@ -87,13 +88,15 @@ public class GameEditor extends ItemEditor
             }
         }));
 
-        // TODO, seriously
         bits.setText(row, 0, CEditem.emsgs.gameGameType());
-        bits.setWidget(row++, 1, bind(_gameType = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
-                _game.gameType = (byte) asShort(text);
+        bits.setWidget(row++, 1, bind(_gameType = new ListBox(), new Binder() {
+            public void valueChanged () {
+                _game.gameType = (byte) _gameType.getSelectedIndex();
             }
         }));
+        for (int ii = 0; ii < Game.GAME_TYPES; ii++) {
+            _gameType.addItem(CEditem.dmsgs.getString("gameType" + ii));
+        }
 
         bits.setText(row, 0, CEditem.emsgs.gameWatchable());
         _watchable = new CheckBox();
@@ -112,7 +115,7 @@ public class GameEditor extends ItemEditor
         bits.setWidget(row++, 1, _watchable);
 
         bits.setText(row++, 0, CEditem.emsgs.gameDefinition());
-        bits.setWidget(row++, 0, bind(_gamedef = new TextArea(), new Binder() {
+        bits.setWidget(row, 0, bind(_gamedef = new TextArea(), new Binder() {
             public void textUpdated (String text) {
                 _game.config = text;
             }
@@ -147,7 +150,7 @@ public class GameEditor extends ItemEditor
     protected Game _game;
 
     protected TextBox _minPlayers, _maxPlayers;
-    protected TextBox _gameType;
+    protected ListBox _gameType;
     protected CheckBox _watchable;
     protected TextArea _gamedef;
 

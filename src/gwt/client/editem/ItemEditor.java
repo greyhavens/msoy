@@ -7,10 +7,12 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -29,9 +31,12 @@ import client.util.MsoyUI;
  */
 public abstract class ItemEditor extends BorderedDialog
 {
-    public static interface Binder
+    public static class Binder
     {
-        public void textUpdated (String newText);
+        public void textUpdated (String newText) {
+        }
+        public void valueChanged () {
+        }
     }
 
     public static interface MediaUpdater
@@ -422,21 +427,34 @@ public abstract class ItemEditor extends BorderedDialog
      *
      * TODO: If you paste text into the field, this doesn't detect it.
      */
-    protected TextBoxBase bind (final TextBoxBase textbox, final Binder binder)
+    protected Widget bind (Widget widget, final Binder binder)
     {
-        textbox.addKeyboardListener(new KeyboardListenerAdapter() {
-            public void onKeyPress (Widget sender, char keyCode, int mods) {
-                if (_item != null) {
-                    DeferredCommand.add(new Command() {
-                        public void execute () {
-                            binder.textUpdated(textbox.getText());
-                            updateSubmittable();
-                        }
-                    });
+        if (widget instanceof TextBoxBase) {
+            final TextBoxBase textbox = (TextBoxBase)widget;
+            textbox.addKeyboardListener(new KeyboardListenerAdapter() {
+                public void onKeyPress (Widget sender, char keyCode, int mods) {
+                    if (_item != null) {
+                        DeferredCommand.add(new Command() {
+                            public void execute () {
+                                binder.textUpdated(textbox.getText());
+                                updateSubmittable();
+                            }
+                        });
+                    }
                 }
-            }
-        });
-        return textbox;
+            });
+
+        } else if (widget instanceof ListBox) {
+            ((ListBox)widget).addChangeListener(new ChangeListener() {
+                public void onChange (Widget sender) {
+                    if (_item != null) {
+                        binder.valueChanged();
+                        updateSubmittable();
+                    }
+                }
+            });
+        }
+        return widget;
     }
 
     /**

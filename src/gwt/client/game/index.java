@@ -61,6 +61,7 @@ public class index extends MsoyEntryPoint
 
         // load up our translation dictionaries
         CGame.msgs = (GameMessages)GWT.create(GameMessages.class);
+        CGame.dmsgs = (GameDynMessages)GWT.create(GameDynMessages.class);
     }
 
     // @Override from MsoyEntryPoint
