@@ -23,6 +23,7 @@ import com.threerings.msoy.web.data.SwiftlyConfig;
 import com.threerings.msoy.web.data.SwiftlyProject;
 import com.threerings.msoy.web.data.WebCreds;
 
+import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord; 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord; 
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
@@ -153,7 +154,10 @@ public class SwiftlyServlet extends MsoyServiceServlet
             throw new ServiceException("m.invalid_project_name");
         }
         */
-        // TODO: verify the user is the owner?
+        // verify the user is the owner
+        if (!isOwner(project.projectId, memrec.memberId)) {
+            throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
+        }
 
         try {
             SwiftlyProjectRecord pRec = MsoyServer.swiftlyRepo.loadProject(project.projectId);
@@ -178,9 +182,15 @@ public class SwiftlyServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser(creds);
 
         try {
-            // TODO: verify the user has permissions on this project
-            // TODO: loadProject can return null if a project is not found for check for that
-            return MsoyServer.swiftlyRepo.loadProject(projectId).toSwiftlyProject();
+            SwiftlyProjectRecord pRec = MsoyServer.swiftlyRepo.loadProject(projectId);
+            if (pRec == null) {
+                throw new ServiceException(SwiftlyCodes.E_NO_SUCH_PROJECT);
+            }
+            // verify the user has permissions on this project
+            if (!isCollaborator(pRec.projectId, memrec.memberId)) {
+                throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
+            }
+            return pRec.toSwiftlyProject();
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Loading project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
@@ -239,7 +249,10 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
-        // TODO: verify the user has permissions on this project
+        // verify the user is the owner
+        if (!isOwner(projectId, memrec.memberId)) {
+            throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
+        }
         try {
             MsoyServer.swiftlyRepo.leaveCollaborators(projectId, memberId);
         } catch (PersistenceException pe) {
@@ -253,12 +266,40 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
-        // TODO: verify the user has permissions on this project
-        // TODO: we do not want to add someone twice.. 
+        // verify the user is the owner
+        if (!isOwner(projectId, memrec.memberId)) {
+            throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
+        }
+        // if the user is already a collaborator, do nothing
+        if (isCollaborator(projectId, memberId)) {
+            return;
+        }
         try {
             MsoyServer.swiftlyRepo.joinCollaborators(projectId, memberId);
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Joining project's collaborators failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    protected boolean isCollaborator (int projectId, int memberId)
+        throws ServiceException
+    {
+        try {
+            return (MsoyServer.swiftlyRepo.getMembership(projectId, memberId) != null);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Checking project membership failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+    }
+
+    protected boolean isOwner (int projectId, int memberId)
+        throws ServiceException
+    {
+        try {
+            return MsoyServer.swiftlyRepo.isOwner(projectId, memberId);
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Checking project ownership failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
     }

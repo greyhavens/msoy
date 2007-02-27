@@ -15,4 +15,7 @@ public interface SwiftlyCodes extends InvocationCodes
 
     /** The identifier for our translation message bundle. */
     public static final String SWIFTLY_MSGS = "swiftly";
+
+    /** An error code returned by the Swiftly services. */
+    public static final String E_NO_SUCH_PROJECT = "m.no_such_project";
 }

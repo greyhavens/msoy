@@ -28,48 +28,27 @@ public class SwiftlyPanel extends VerticalPanel
     public SwiftlyPanel (SwiftlyConfig config, int projectId)
     {
         super();
+        setStyleName("swiftlyPanel");
+        _authtoken = (CSwiftly.creds == null) ? "" : CSwiftly.creds.token;
+        _config = config;
 
-        HorizontalPanel projectTitle = new HorizontalPanel();
-        projectTitle.add(new Label(CSwiftly.msgs.swiftlyEditing()));
-        projectTitle.add(_projectLink);
+        _errorContainer = new HorizontalPanel();
+        add(_errorContainer);
 
         // load up the swiftly project record
         CSwiftly.swiftlysvc.loadProject(CSwiftly.creds, projectId, new AsyncCallback() {
             public void onSuccess (Object result) {
                 _project = (SwiftlyProject)result;
                 updateProjectLink();
+                loadApplet();
             }
             public void onFailure (Throwable cause) {
-                CSwiftly.serverError(cause);
+                 _errorContainer.add(new Label(CSwiftly.serverError(cause)));
             }
         });
 
-        HorizontalPanel header = new HorizontalPanel();
-        header.add(projectTitle);
-        header.add(new Button(CSwiftly.msgs.editProject(), new ClickListener() {
-            public void onClick (Widget sender) {
-                // TODO: unhack
-                _applet.setVisible(false);
-                new ProjectEdit(_project, SwiftlyPanel.this).show();
-            }
-        }));
-        add(header);
-
-        String authtoken = (CSwiftly.creds == null) ? "" : CSwiftly.creds.token;
-        setStyleName("swiftlyPanel");
-
-        _applet = WidgetUtil.createApplet(
-            "swiftly", "/clients/swiftly-client.jar",
-            "com.threerings.msoy.swiftly.client.SwiftlyApplet", "100%", "600",
-            new String[] {  "authtoken", authtoken,
-                            "projectId", String.valueOf(projectId),
-                            "server", config.server,
-                            "port", String.valueOf(config.port) });
-        // TODO: possible hacks to get the applet to stay the size of the browser window
-        // 100% 100% should work but isn't for the createApplet width/height
-        // setCellHeight(_applet, "94%");
-        // _applet.setWidth("100%");
-        add(_applet);
+        _header = new HorizontalPanel();
+        add(_header);
     }
 
     public void projectSubmitted (SwiftlyProject project)
@@ -79,6 +58,36 @@ public class SwiftlyPanel extends VerticalPanel
         _applet.setVisible(true);
     }
 
+    protected void loadApplet ()
+    {
+        // Add a header for the applet
+        HorizontalPanel projectTitle = new HorizontalPanel();
+        projectTitle.add(new Label(CSwiftly.msgs.swiftlyEditing()));
+        projectTitle.add(_projectLink);
+        _header.add(projectTitle);
+        _header.add(new Button(CSwiftly.msgs.editProject(), new ClickListener() {
+            public void onClick (Widget sender) {
+                // TODO: unhack
+                _applet.setVisible(false);
+                new ProjectEdit(_project, SwiftlyPanel.this).show();
+            }
+        }));
+
+        // Add the applet
+        _applet = WidgetUtil.createApplet(
+            "swiftly", "/clients/swiftly-client.jar",
+            "com.threerings.msoy.swiftly.client.SwiftlyApplet", "100%", "600",
+            new String[] {  "authtoken", _authtoken,
+                            "projectId", String.valueOf(_project.projectId),
+                            "server", _config.server,
+                            "port", String.valueOf(_config.port) });
+        // TODO: possible hacks to get the applet to stay the size of the browser window
+        // 100% 100% should work but isn't for the createApplet width/height
+        // setCellHeight(_applet, "94%");
+        // _applet.setWidth("100%");
+        add(_applet);
+    }
+
     protected void updateProjectLink ()
     {
         _projectLink.setTargetHistoryToken(String.valueOf(_project.projectId));
@@ -86,6 +95,10 @@ public class SwiftlyPanel extends VerticalPanel
     }
 
     protected SwiftlyProject _project;
+    protected SwiftlyConfig _config;
+    protected String _authtoken;
+    protected HorizontalPanel _errorContainer;
+    protected HorizontalPanel _header;
     protected Hyperlink _projectLink = new Hyperlink();
     protected Widget _applet;
 }

@@ -16,4 +16,5 @@ public interface ServerMessages extends ConstantsWithLookup
     public String invalid_password ();
     public String session_expired ();
     public String invalid_email ();
+    public String no_such_project ();
 }

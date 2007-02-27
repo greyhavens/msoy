@@ -116,6 +116,20 @@ public class SwiftlyRepository extends DepotRepository
     }
 
     /**
+     * Returns true if the memberId is the owner, false otherwise. 
+     * 
+     */
+    public boolean isOwner (int projectId, int memberId)
+        throws PersistenceException
+    {
+        SwiftlyProjectRecord project = loadProject(projectId);
+        if (project == null) {
+            return false;
+        }
+        return (project.ownerId == memberId);
+    }
+
+    /**
      * Fetches the collaborators for a given project.
      */
     public Collection<SwiftlyCollaboratorsRecord> getCollaborators (int projectId)
@@ -133,6 +147,18 @@ public class SwiftlyRepository extends DepotRepository
     {
         return findAll(SwiftlyCollaboratorsRecord.class,
                        new Where(SwiftlyCollaboratorsRecord.MEMBER_ID, memberId));
+    }
+
+    /**
+     * Fetches the membership details for a given project and member, or null.
+     * 
+     */
+    public SwiftlyCollaboratorsRecord getMembership(int projectId, int memberId)
+        throws PersistenceException
+    {
+        return load(SwiftlyCollaboratorsRecord.class,
+                    SwiftlyCollaboratorsRecord.PROJECT_ID, projectId,
+                    SwiftlyCollaboratorsRecord.MEMBER_ID, memberId);
     }
 
     /**
