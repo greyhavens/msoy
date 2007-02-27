@@ -121,24 +121,33 @@ public class WonderlandCroquet extends Sprite
     {
         if (event.type == StateChangedEvent.TURN_CHANGED) {
             if (_gameCtrl.isMyTurn()) {
+                _gameCtrl.localChat("My turn!");
+                var coord :Array = [];
+
                 if(_myBall == null) {
                     // It's the first time I've gone, so add my ball at the start
-                    if (_gameCtrl.get("balls") == null) {
-                        // And apparently I'm the first up, so I need to nudge this quickly
-                        _gameCtrl.set("balls", []);
-                    }
 
-                    _gameCtrl.set("balls", [_map.startPoint.x, _map.startPoint.y], 
-                                  _gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId()));
+                    _gameCtrl.localChat("Adding my ball: " + _myIdx);
+                    coord = [_map.startPoint.x, _map.startPoint.y]; 
+                    _gameCtrl.set("balls", coord, _myIdx);
+                } else {
+                    coord = [_balls[_myIdx].px, _balls[_myIdx].py];
                 }
 
                 _haveMoved = false;
-
+                panTo(coord[0], coord[1]);
             }
         } else if (event.type == StateChangedEvent.GAME_STARTED) {
             _gameCtrl.localChat("Wonderland Croquet!");
 
             _balls = [];
+            _myIdx = _gameCtrl.seating.getMyPosition();
+            if (_myIdx == 0) {
+                // FIXME: I'm not quite happy with this, but if I just set it, it doesn't appear
+                // to have taken effect by the time it's my turn and I need to actually add a
+                // ball
+                _gameCtrl.setImmediate("balls", _balls);
+            }
 
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
             _gameCtrl.localChat("Off with your head!");
@@ -146,23 +155,37 @@ public class WonderlandCroquet extends Sprite
         }
     }
 
+    /**
+     * Pans the view to the specified coordinate.
+     */
+    protected function panTo (x :Number, y: Number) :void
+    {
+        _gameCtrl.localChat("Pan to " + x + ", " + y);
+
+        // FIXME: Animate the pan to here, don't just snap
+        _spr.x = - (x - this.stage.stageWidth/2);
+        _spr.y = - (y - this.stage.stageHeight/2);
+    }
+
     // from PropertyChangedListener
     public function propertyChanged (event :PropertyChangedEvent) :void
     {
         var name :String = event.name;
         var index :int;
+        _gameCtrl.localChat("prop change: " + name);
         if (name == "balls") {
             index = event.index;
+            _gameCtrl.localChat("ball change: " + index);
             if (index != -1 && _balls[index] == null) {
 
-                trace("Inserting ball at " + index);
+                _gameCtrl.localChat("Inserting ball at " + index);
                 _balls[index] = new BallParticle(event.newValue[0], event.newValue[1],
                     Ball.RADIUS, index, false);
                     
                 APEngine.addParticle(_balls[index]);
                 _ballLayer.addChild(_balls[index].ball);
 
-                if (index == _gameCtrl.seating.getPlayerPosition(_gameCtrl.getMyId())) {
+                if (index == _myIdx) {
                     _myBall = _balls[index];
                     _myBall.gameCtrl = _gameCtrl;
                 }
@@ -198,6 +221,8 @@ public class WonderlandCroquet extends Sprite
     protected var _balls :Array;
 
     protected var _myBall :BallParticle;
+
+    protected var _myIdx :int;
 
     /** Our game control object. */
     protected var _gameCtrl :EZGameControl;
