@@ -77,14 +77,14 @@ public class ProjectSelectionPanel extends VerticalPanel
         final TextBox projectName = new TextBox();
         projectName.setMaxLength(50);
         projectName.setVisibleLength(25);
-        // TODO: do we want to force people to click the create button?
+        _remixable = new CheckBox(CSwiftly.msgs.remixable());
+
+        // a click listener for the create project button
         ClickListener doCreate = new ClickListener() {
             public void onClick (Widget sender) {
                 createProject(projectName.getText());
             }
         };
-        projectName.addKeyboardListener(new EnterClickAdapter(doCreate));
-        _remixable = new CheckBox(CSwiftly.msgs.remixable());
 
         createContainer.setWidget(0, 0, new InlineLabel(CSwiftly.msgs.startProject()));
         createContainer.setWidget(1, 0, new InlineLabel(CSwiftly.msgs.projectName()));
