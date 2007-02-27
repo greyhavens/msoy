@@ -190,7 +190,7 @@ public class ProjectSVNStorage
         try {
             _svnURL = SVNURL.parseURIEncoded(record.projectSubversionURL);
             // TODO -- Remote authentication manager
-            _svnPool = new DefaultSVNRepositoryPool(null, null);
+            _svnPool = new DefaultSVNRepositoryPool(null, null, true, DefaultSVNRepositoryPool.INSTANCE_POOL);
         } catch (SVNException svne) {
             throw new ProjectStorageException.InternalError("Could not parse subversion URL: " + svne, svne);
         }
