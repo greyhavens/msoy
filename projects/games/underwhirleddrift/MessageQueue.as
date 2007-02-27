@@ -18,7 +18,6 @@ public class MessageQueue
             _sendTimes.push(getTimer());
         } else if (getTimer() - _sendTimes[0] > SEND_THROTTLE_TIME) {
             _gameCtrl.sendMessage(messageName, value);
-            _sendTimes.shift();
             _sendTimes.push(getTimer());
         } else {
             // do nothing here for now - since position information is sent with all messages,
@@ -27,9 +26,11 @@ public class MessageQueue
         }
     }
 
-    protected static const SEND_THROTTLE_TIME :int = 9800; // in ms, with a buffer
+    protected static const SEND_THROTTLE_TIME :int = 8000; // in ms, with a buffer
 
     protected var _gameCtrl :EZGameControl;
     protected var _sendTimes :Array = new Array();
+
+    protected var _log :Log = Log.getLog(this);
 }
 }

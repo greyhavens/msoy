@@ -242,7 +242,7 @@ public class UnderwhirledDrift extends Sprite
             case Keyboard.SPACE:
                 var obj :Object = _kart.getUpdate();
                 obj.playerId = _gameCtrl.getMyId();
-                _gameCtrl.sendMessage("positionUpdate", obj);
+                _messageQueue.sendMessage("positionUpdate", obj);
                 break;
             default:
                 // do nothing
