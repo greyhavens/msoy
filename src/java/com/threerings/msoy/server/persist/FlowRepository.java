@@ -65,6 +65,7 @@ public class FlowRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MemberFlowRecord.class, memberId,
+                    new FromOverride(MemberRecord.class),
                     new FieldOverride(MemberFlowRecord.MEMBER_ID, MemberRecord.MEMBER_ID_C),
                     new FieldOverride(MemberFlowRecord.FLOW, MemberRecord.FLOW_C));
     }
