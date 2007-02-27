@@ -70,4 +70,12 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key listingBuy
    */
   String listingBuy();
+
+  /**
+   * Translated "Catalog".
+   * 
+   * @return translated "Catalog"
+   * @gwt.key catalogTitle
+   */
+  String catalogTitle();
 }

@@ -8,52 +8,12 @@ package client.swiftly;
 public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "Log in to view your Swiftly projects.".
+   * Translated "You are Swiftly editing:".
    * 
-   * @return translated "Log in to view your Swiftly projects."
-   * @gwt.key indexLogon
+   * @return translated "You are Swiftly editing:"
+   * @gwt.key swiftlyEditing
    */
-  String indexLogon();
-
-  /**
-   * Translated "Not a valid projectId: {0}".
-   * 
-   * @return translated "Not a valid projectId: {0}."
-   * @gwt.key invalidProjectId
-   */
-  String invalidProjectId(String arg0);
-
-  /**
-   * Translated "You have not created any projects.".
-   * 
-   * @return translated "You have not created any projects."
-   * @gwt.key noMembersProjects
-   */
-  String noMembersProjects();
-
-  /**
-   * Translated "No remixable projects found.".
-   * 
-   * @return translated "No remixable projects found."
-   * @gwt.key noRemixableProjects
-   */
-  String noRemixableProjects();
-
-  /**
-   * Translated "No project types found.".
-   * 
-   * @return translated "No project types found."
-   * @gwt.key noTypes
-   */
-  String noTypes();
-
-  /**
-   * Translated "No collaborators found.".
-   * 
-   * @return translated "No collaborators found."
-   * @gwt.key noCollaborators
-   */
-  String noCollaborators();
+  String swiftlyEditing();
 
   /**
    * Translated "Collaborators:".
@@ -64,31 +24,7 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String collaborators();
 
   /**
-   * Translated "Create Project.".
-   * 
-   * @return translated "Create Project."
-   * @gwt.key createProject
-   */
-  String createProject();
-
-  /**
-   * Translated "Start a project!"
-   * 
-   * @return translated "Start a project!"
-   * @gwt.key startProject
-   */
-  String startProject();
-
-  /**
-   * Translated "Project name"
-   * 
-   * @return translated "Project name"
-   * @gwt.key projectName
-   */
-  String projectName();
-
-  /**
-   * Translated "Remixable?"
+   * Translated "Remixable?".
    * 
    * @return translated "Remixable?"
    * @gwt.key remixable
@@ -104,6 +40,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String membersProjects();
 
   /**
+   * Translated "You have not created any projects.".
+   * 
+   * @return translated "You have not created any projects."
+   * @gwt.key noMembersProjects
+   */
+  String noMembersProjects();
+
+  /**
    * Translated "Remixable projects:".
    * 
    * @return translated "Remixable projects:"
@@ -112,20 +56,28 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String remixableProjects();
 
   /**
-   * Translated "What type of project is this?".
+   * Translated "Create Project".
    * 
-   * @return translated "What type of project is this?"
-   * @gwt.key selectType
+   * @return translated "Create Project"
+   * @gwt.key createProject
    */
-  String selectType();
+  String createProject();
 
   /**
-   * Translated "You are Swiftly editing:".
+   * Translated "Start a project!".
    * 
-   * @return translated "You are Swiftly editing:"
-   * @gwt.key swiftlyEditing
+   * @return translated "Start a project!"
+   * @gwt.key startProject
    */
-  String swiftlyEditing();
+  String startProject();
+
+  /**
+   * Translated "No project types found.".
+   * 
+   * @return translated "No project types found."
+   * @gwt.key noTypes
+   */
+  String noTypes();
 
   /**
    * Translated "Edit Project".
@@ -136,20 +88,12 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String editProject();
 
   /**
-   * Translated "Submit".
+   * Translated "You have no more friends to add as collaborators.".
    * 
-   * @return translated "Submit"
-   * @gwt.key submit
+   * @return translated "You have no more friends to add as collaborators."
+   * @gwt.key noFriends
    */
-  String submit();
-
-  /**
-   * Translated "Cancel".
-   * 
-   * @return translated "Cancel"
-   * @gwt.key cancel
-   */
-  String cancel();
+  String noFriends();
 
   /**
    * Translated "Add Collaborators".
@@ -160,12 +104,28 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String addCollaborators();
 
   /**
-   * Translated "You have no more friends to add as collaborators.".
+   * Translated "Not a valid projectId: {0}".
    * 
-   * @return translated "You have no more friends to add as collaborators."
-   * @gwt.key noFriends
+   * @return translated "Not a valid projectId: {0}"
+   * @gwt.key invalidProjectId
    */
-  String noFriends();
+  String invalidProjectId(String arg0);
+
+  /**
+   * Translated "Submit".
+   * 
+   * @return translated "Submit"
+   * @gwt.key submit
+   */
+  String submit();
+
+  /**
+   * Translated "No collaborators found.".
+   * 
+   * @return translated "No collaborators found."
+   * @gwt.key noCollaborators
+   */
+  String noCollaborators();
 
   /**
    * Translated "View profile".
@@ -190,4 +150,44 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key viewRemovePrompt
    */
   String viewRemovePrompt(String arg0,  String arg1);
+
+  /**
+   * Translated "What type of project is this?".
+   * 
+   * @return translated "What type of project is this?"
+   * @gwt.key selectType
+   */
+  String selectType();
+
+  /**
+   * Translated "Log in to view your Swiftly projects.".
+   * 
+   * @return translated "Log in to view your Swiftly projects."
+   * @gwt.key indexLogon
+   */
+  String indexLogon();
+
+  /**
+   * Translated "Project name".
+   * 
+   * @return translated "Project name"
+   * @gwt.key projectName
+   */
+  String projectName();
+
+  /**
+   * Translated "Cancel".
+   * 
+   * @return translated "Cancel"
+   * @gwt.key cancel
+   */
+  String cancel();
+
+  /**
+   * Translated "No remixable projects found.".
+   * 
+   * @return translated "No remixable projects found."
+   * @gwt.key noRemixableProjects
+   */
+  String noRemixableProjects();
 }

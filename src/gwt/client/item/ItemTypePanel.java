@@ -81,7 +81,6 @@ public class ItemTypePanel extends FlexTable
         addTab(Item.AUDIO, "Music");
         addTab(Item.DOCUMENT, "Stories");
         getFlexCellFormatter().setStyleName(0, _column++, _rightBit);
-        getFlexCellFormatter().setStyleName(0, _column++, "Line");
         setVisible(true);
     }
 
@@ -108,10 +107,13 @@ public class ItemTypePanel extends FlexTable
 
     /** A list of objects that want to know about our tab events. */
     protected List _listeners = new ArrayList();
+
     /** The previous tab's right-hand bit, deferred so selected tabs can eat them. */
     protected String _rightBit;
+
     /** An index into the table we're using for layout. */
     protected int _column;
+
     /** The item type corresponding to the currently selected tab. */
     protected byte _selectedType;
 }

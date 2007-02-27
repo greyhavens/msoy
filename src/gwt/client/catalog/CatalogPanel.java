@@ -11,41 +11,47 @@ import client.item.ItemTypePanel;
 import client.item.TagCloud;
 import client.item.TagCloud.TagCloudListener;
 
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.msoy.item.web.CatalogListing;
 
 /**
  * Displays a tabbed panel containing the catalog.
  */
-public class CatalogPanel extends VerticalPanel
+public class CatalogPanel extends FlexTable
     implements TabListener, ItemSearchSortPanel.Listener
 {
     public CatalogPanel ()
     {
-        setStyleName("catalog");
+        setStyleName("catalogPanel");
+        setCellPadding(0);
+        setCellSpacing(0);
+        setWidth("100%");
 
-        HorizontalPanel topRow = new HorizontalPanel();
-        _tagCloudContainer = new SimplePanel();
-        topRow.add(_tagCloudContainer);
+        setWidget(0, 0, new Label(CCatalog.msgs.catalogTitle()));
+        getFlexCellFormatter().setStyleName(0, 0, "Title");
 
-        VerticalPanel uiBits = new VerticalPanel();
-        _typeTabs = new ItemTypePanel(this);
-        uiBits.add(_typeTabs);
-        _searchSortPanel = new ItemSearchSortPanel(this,
-            new String[] { CCatalog.msgs.sortByRating(), CCatalog.msgs.sortByListDate() },
-            new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE },
-            0);
-        uiBits.add(_searchSortPanel);
+        setWidget(0, 1, _typeTabs = new ItemTypePanel(this));
+        getFlexCellFormatter().setStyleName(0, 1, "Tabs");
+
+        HorizontalPanel search = new HorizontalPanel();
+        search.add(_tagCloudContainer = new SimplePanel());
+        search.add(_searchSortPanel = new ItemSearchSortPanel(
+                       this,
+                       new String[] { CCatalog.msgs.sortByRating(), CCatalog.msgs.sortByListDate() },
+                       new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE },
+                       0));
         _sortBy = CatalogListing.SORT_BY_RATING;
 
-        topRow.add(uiBits);
-        add(topRow);
+        setWidget(1, 0, search);
+        getFlexCellFormatter().setColSpan(1, 0, 2);
 
-        add(_itemPaneContainer = new SimplePanel());
+        setWidget(2, 0, _itemPaneContainer = new SimplePanel());
+        getFlexCellFormatter().setColSpan(2, 0, 2);
     }
 
     public void selectType (byte itemType)

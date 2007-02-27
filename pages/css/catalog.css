@@ -4,6 +4,19 @@
  * CSS styles for the Catalog interfaces.
  */
 
+.catalogPanel .Title {
+  background: #222222;
+  font-size: 14px;
+  font-weight: bold;
+  width: 118px;
+  color: white;
+  text-align: center;
+}
+
+.catalogPanel .Tabs {
+  background: #222222;
+}
+
 .catalogContents {
    padding: 10px;
    width: 800px;

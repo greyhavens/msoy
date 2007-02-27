@@ -53,20 +53,16 @@
    display: inline;
 }
 
-.itemTypePanel {
-  padding-top: 6px;
-  padding-left: 20px;
-  background-repeat: repeat;
-}
-
 .itemTypePanel .Left {
-  background-image: url(/images/ui/sub_tab_dark_left.png);
+  background-image: url(/images/ui/tabs/tab_left.png);
   width: 3px;
-  height: 21px;
+  height: 20px;
 }
 
 .itemTypePanel .Tab {
-  padding: 0px;
+  background-image: url(/images/ui/tabs/tab_tile.png);
+  background-repeat: repeat-x;
+  height: 20px;
 }
 
 .itemTypePanel a {
@@ -77,38 +73,26 @@
   padding-right: 5px;
 }
 
-.itemTypePanel .Tab .Button {
-  background-image: url(/images/ui/sub_tab_dark_middle.png);
-  background-repeat: repeat-x;
-  border: 0px;
-  height: 21px;
-}
-
 .itemTypePanel .Tab .Button a {
-  color: #606060;
+  color: #CFDCE1;
 }
 
 .itemTypePanel .Right {
-  background-image: url(/images/ui/sub_tab_dark_right.png);
+  background-image: url(/images/ui/tabs/tab_right.png);
   width: 3px;
-  height: 21px;
+  height: 20px;
 }
 
 .itemTypePanel .SelLeft {
-  background-image: url(/images/ui/sub_tab_left.png);
+  background-image: url(/images/ui/tabs/tab_selected_left.png);
   width: 3px;
-  height: 21px;
+  height: 20px;
 }
 
 .itemTypePanel .SelTab {
-  padding: 0px;
-}
-
-.itemTypePanel .SelTab .Button {
-  background-image: url(/images/ui/sub_tab_middle.png);
-  background-repeat: repeat-x;
-  border: 0px;
-  height: 21px;
+  border-top: 1px solid black;
+  background: white;
+  height: 20px;
 }
 
 .itemTypePanel .SelTab .Button a {
@@ -116,16 +100,9 @@
 }
 
 .itemTypePanel .SelRight {
-  background-image: url(/images/ui/sub_tab_right.png);
+  background-image: url(/images/ui/tabs/tab_selected_right.png);
   width: 3px;
-  height: 21px;
-}
-
-.itemTypePanel .Line {
-  background-image: url(/images/ui/sub_tab_line.png);
-  background-repeat: repeat-x;
-  width: 137px;
-  height: 1px;
+  height: 20px;
 }
 
 .itemDetailPanel { 
