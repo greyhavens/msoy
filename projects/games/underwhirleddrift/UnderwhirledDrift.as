@@ -135,6 +135,7 @@ public class UnderwhirledDrift extends Sprite
                 }
             }
             if (playerPositions.length != 1) {
+                _gameCtrl.localChat("playerPositions Update");
                 updateRaceStarted();
             }
         }
@@ -158,14 +159,20 @@ public class UnderwhirledDrift extends Sprite
             }
         } else if (event.name == "kartChosen") {
             playerId = event.value.playerId;
-            var kartType :String = event.value.kartType;
-            var position :Object = _opponentKarts.get(playerId);
-            if (position != null) {
-                _opponentKarts.put(playerId, _level.addOpponentKart(position as int,  kartType));
-            } else {
-                _opponentKarts.put(playerId, kartType);
+            if (playerId != _gameCtrl.getMyId()) {
+                var kartType :String = event.value.kartType;
+                var position :Object = _opponentKarts.get(playerId);
+                if (position != null) {
+                    _opponentKarts.put(playerId, _level.addOpponentKart(position as int,  
+                        kartType));
+                } else {
+                    _opponentKarts.put(playerId, kartType);
+                }
+                _gameCtrl.localChat("kartChosen");
+                if (_kart != null) {
+                    updateRaceStarted();
+                }
             }
-            updateRaceStarted();
         }
     }
 
@@ -178,19 +185,26 @@ public class UnderwhirledDrift extends Sprite
         addChild(_kart);
         _gameCtrl.sendMessage("kartChosen", {playerId: _gameCtrl.getMyId(), 
             kartType: _kart.kartType});
+        updateRaceStarted();
     }
 
+    /**
+     * TODO: The conditions under which this method is called are too complicated.  This needs 
+     * to be rethought.
+     */
     protected function updateRaceStarted () :void
     {
         if (_gameCtrl.seating.getPlayerIds().length == 1) {
             _raceStarted = true;
         } else if (_coord.status == HostCoordinator.STATUS_HOST) { 
+            _gameCtrl.localChat("I'm host");
             var keys :Array = _opponentKarts.keys();
             for (var ii :int = 0; ii < keys.length; ii++) {
                 if (!(_opponentKarts.get(keys[ii]) is KartObstacle)) {
                     break;
                 }
             }
+            _gameCtrl.localChat("ii: " + ii + ", length: " + keys.length);
             if (ii == keys.length) {
                 _gameCtrl.sendMessage("raceStarted", true);
             }
