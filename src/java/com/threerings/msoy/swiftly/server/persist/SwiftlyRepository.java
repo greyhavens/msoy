@@ -75,7 +75,6 @@ public class SwiftlyRepository extends DepotRepository
         record.projectName = projectName;
         record.ownerId = memberId;
         record.projectType = projectType;
-        // TODO:
         record.svnStorageId = 0;
         record.remixable = remixable;
         record.creationDate = new Timestamp(System.currentTimeMillis());
@@ -178,11 +177,9 @@ public class SwiftlyRepository extends DepotRepository
      * Remove a given member as a collaborator on a given project. This method returns
      * false if there was no membership to cancel.
      */
-    // TODO do we need to work on rows or is it safe to just remove one record?
     public boolean leaveCollaborators (int projectId, int memberId)
         throws PersistenceException
     {
-        // TODO: Don't allow the owner to remove themselves
         Key<SwiftlyCollaboratorsRecord> key = new Key<SwiftlyCollaboratorsRecord>(
                 SwiftlyCollaboratorsRecord.class,
                 SwiftlyCollaboratorsRecord.PROJECT_ID, projectId,

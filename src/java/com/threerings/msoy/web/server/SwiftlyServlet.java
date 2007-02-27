@@ -253,6 +253,10 @@ public class SwiftlyServlet extends MsoyServiceServlet
         if (!isOwner(projectId, memrec.memberId)) {
             throw new ServiceException(SwiftlyCodes.ACCESS_DENIED);
         }
+        // Don't let the owner remove themselves.
+        if (isOwner(projectId, memberId)) {
+            return;
+        }
         try {
             MsoyServer.swiftlyRepo.leaveCollaborators(projectId, memberId);
         } catch (PersistenceException pe) {
