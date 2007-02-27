@@ -135,16 +135,11 @@ public class TagDetailPanel extends FlexTable
         new PromptPopup(CShell.cmsgs.tagFlagPrompt(menuLabel), CShell.cmsgs.tagFlagFlagButton(),
                         CShell.cmsgs.tagFlagCancelButton()) {
             public void onAffirmative () {
-                updateItemFlags(flag);
+                _service.setFlags(flag, _status);
             }
             public void onNegative () {
             }
         }.prompt();
-    }
-
-    protected void updateItemFlags (final byte flag)
-    {
-        _service.setFlags(flag, _status);
     }
     
     protected void toggleTagHistory ()

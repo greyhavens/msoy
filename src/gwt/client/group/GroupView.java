@@ -42,8 +42,9 @@ import com.threerings.msoy.web.data.MemberName;
 
 import client.shell.MsoyEntryPoint;
 import client.util.MediaUtil;
-import client.util.PromptPopup;
+import client.util.PopupMenu;
 import client.util.PrettyTextPanel;
+import client.util.PromptPopup;
 import client.util.TagDetailPanel;
 
 import client.group.GroupEdit.GroupSubmissionListener;
