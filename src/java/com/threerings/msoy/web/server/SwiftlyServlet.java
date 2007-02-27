@@ -26,6 +26,7 @@ import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord; 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord; 
+import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
 
@@ -90,54 +91,67 @@ public class SwiftlyServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser(creds);
         SwiftlyProjectRecord pRec;
-        String subversionURL;
-        File templatePath;
+        SwiftlySVNStorageRecord storeRec;
 
         // TODO Argument Validation
         /*
         if(!isValidName(project.name)) {
             throw new ServiceException("m.invalid_project_name");
         }
+        
+        if(!isValidProjectType(projectType)) {
+            throw new ServiceException("m.invalid_project_type")
+        }
         */
-            
-        // Load the template from the standard path
-        templatePath = new File(ServerConfig.serverRoot + "/data/swiftly/templates/"
-            + Item.getTypeName(projectType));
-
-        // XXX We need to sort out how to properly create remote repositories.
-        // Until then, we create them locally, all evil-like.
-        // File svnDir = new File(ServerConfig.serverRoot + "/data/swiftly/projects/" +
-        //    Integer.toString(memrec.memberId) + "-" + projectName);
-        // subversionURL = "file://" + svnDir.toString();
-        // try {
-        //    SVNRepositoryFactory.createLocalRepository(svnDir, true, false);
-        // } catch (Exception e) {
-        //    log.log(Level.WARNING, "Initializing subversion repository failed.", e);
-        //    throw new ServiceException(ServiceException.INTERNAL_ERROR);
-        // }
 
 
+        // Initialize the project storage.
         try {
-            // Create the project record.
-            pRec = MsoyServer.swiftlyRepo.createProject(
-                memrec.memberId, projectName, projectType, remixable);
+            // XXX We need to sort out how to properly create remote repositories.
+            // Until then, we create them in a hard-wired local directory.
+            String svnRoot = ServerConfig.serverRoot + "/data/swiftly/projects/";
+            storeRec = MsoyServer.swiftlyRepo.createSVNStorage(ProjectSVNStorage.PROTOCOL_FILE,
+                null, 0, svnRoot);
 
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Creating new project storage record failed.", pe);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+        
+        // Create the project record.
+        try {
+            pRec = MsoyServer.swiftlyRepo.createProject(
+                memrec.memberId, projectName, projectType, storeRec.storageId, remixable);
+                
             // Set the creator as the first collaborator.
-            MsoyServer.swiftlyRepo.joinCollaborators(pRec.projectId, memrec.memberId); 
-            
-            // Initialize the project storage.
-            try {
-                ProjectSVNStorage.initializeStorage(pRec, null, templatePath);
-            } catch (ProjectStorageException pse) {
-                log.log(Level.WARNING, "Initializing swiftly project storage failed.", pse);
-                MsoyServer.swiftlyRepo.deleteProject(pRec);
-                throw new ServiceException(ServiceException.INTERNAL_ERROR);
-            }
-            
+            MsoyServer.swiftlyRepo.joinCollaborators(pRec.projectId, memrec.memberId);
+
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Creating new project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
+        
+
+        // If the repository initialization fails, we do our best to roll back
+        // any database modifications. Hopefully that works.
+        // Oh, what I'd give for transactions!
+
+        // Initialize the SVN storage
+        try {
+            // Load the template from the standard path
+            File templatePath = new File(ServerConfig.serverRoot + "/data/swiftly/templates/"
+                + Item.getTypeName(projectType));
+
+            ProjectSVNStorage.initializeStorage(pRec, storeRec, templatePath);
+        } catch (ProjectStorageException pse) {
+            log.log(Level.WARNING, "Initializing swiftly project storage failed.", pse);
+            try {
+                MsoyServer.swiftlyRepo.deleteProject(pRec);                
+            } catch (PersistenceException pe) {
+                log.log(Level.WARNING, "Deleting the partially-initialized swiftly project failed.", pe);                
+            }
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }            
 
         return pRec.toSwiftlyProject();
     }

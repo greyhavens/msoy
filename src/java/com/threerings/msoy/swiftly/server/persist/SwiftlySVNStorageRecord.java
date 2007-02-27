@@ -22,7 +22,7 @@ import com.threerings.msoy.web.data.SwiftlyProject;
  * Contains the definition of a swiftly svn-based project storage.
  */
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"svnProtocol", "host", "port", "baseDir"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames={"protocol", "host", "port", "baseDir"})})
 public class SwiftlySVNStorageRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
@@ -33,12 +33,12 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
     public static final ColumnExp STORAGE_ID_C =
         new ColumnExp(SwiftlySVNStorageRecord.class, STORAGE_ID);
 
-    /** The column identifier for the {@link #svnProtocol} field. */
-    public static final String SVN_PROTOCOL = "svnProtocol";
+    /** The column identifier for the {@link #protocol} field. */
+    public static final String PROTOCOL = "protocol";
 
-    /** The qualified column identifier for the {@link #svnProtocol} field. */
-    public static final ColumnExp SVN_PROTOCOL_C =
-        new ColumnExp(SwiftlySVNStorageRecord.class, SVN_PROTOCOL);
+    /** The qualified column identifier for the {@link #protocol} field. */
+    public static final ColumnExp PROTOCOL_C =
+        new ColumnExp(SwiftlySVNStorageRecord.class, PROTOCOL);
 
     /** The column identifier for the {@link #host} field. */
     public static final String HOST = "host";
@@ -70,7 +70,7 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
     public int storageId;
 
     /** The SVN protocol (svn+ssh, svn, https, etc). */
-    public String svnProtocol;
+    public String protocol;
 
     /** The storage host (FQDN). */
     @Column(nullable=true)
@@ -86,20 +86,20 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
     public URI toURI ()
         throws URISyntaxException
     {        
-        if (svnProtocol == ProjectSVNStorage.PROTOCOL_FILE) {
+        if (protocol == ProjectSVNStorage.PROTOCOL_FILE) {
             // Confusingly (buggily?) one must set an empty authority in order for URI
             // to properly append '//' to the file: scheme. If one calls getAuthority
             // on the resultant URI, it will still return null.
-            return new URI(svnProtocol, "", baseDir, null, null);
+            return new URI(protocol, "", baseDir, null, null);
 
         } else {
 
             // Someone in Sun-land decided that NULL (no value) is the same thing as 0 (a value).
             // Fortunately 0 is not a valid port for any protocol we care about.
             if (port != 0) {
-                return new URI(svnProtocol, null, host, port, baseDir, null, null);
+                return new URI(protocol, null, host, port, baseDir, null, null);
             } else {
-                return new URI(svnProtocol, host, baseDir, null);             
+                return new URI(protocol, host, baseDir, null);             
             }
         }
     }

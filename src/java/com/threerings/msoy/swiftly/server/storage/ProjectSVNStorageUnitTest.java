@@ -44,7 +44,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
         _projectRecord.ownerId = 0;
         
         _storageRecord = new SwiftlySVNStorageRecord();
-        _storageRecord.svnProtocol = ProjectSVNStorage.PROTOCOL_FILE;
+        _storageRecord.protocol = ProjectSVNStorage.PROTOCOL_FILE;
         _storageRecord.baseDir = _tempDir.getAbsolutePath();
 
         // Initialize the storage

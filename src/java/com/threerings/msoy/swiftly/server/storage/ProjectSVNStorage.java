@@ -91,7 +91,7 @@ public class ProjectSVNStorage
         long latestRevision;
 
         // If this is a local repository, we'll attempt to create it now
-        if (storageRecord.svnProtocol == PROTOCOL_FILE) {
+        if (storageRecord.protocol == PROTOCOL_FILE) {
             File repoDir = new File(storageRecord.baseDir, Integer.toString(projectRecord.projectId));
             try {
                 SVNRepositoryFactory.createLocalRepository(repoDir, true, false);                

@@ -22,7 +22,7 @@ public class SwiftlySVNStorageRecordUnitTest extends TestCase
     {
         // Mock up a file:// record
         SwiftlySVNStorageRecord record = new SwiftlySVNStorageRecord();
-        record.svnProtocol = ProjectSVNStorage.PROTOCOL_FILE;
+        record.protocol = ProjectSVNStorage.PROTOCOL_FILE;
         record.baseDir = "/var/lib/ectoplasm/ghostbusters";
         assertEquals("file://" + record.baseDir, record.toURI().toString());
     }
@@ -35,7 +35,7 @@ public class SwiftlySVNStorageRecordUnitTest extends TestCase
     {
         // Mock up a svn:// record
         SwiftlySVNStorageRecord record = new SwiftlySVNStorageRecord();
-        record.svnProtocol = ProjectSVNStorage.PROTOCOL_SVN;
+        record.protocol = ProjectSVNStorage.PROTOCOL_SVN;
         record.host = "ghostbusters.com";
         record.baseDir = "/repos/ectoplasm/ghostbusters";
         assertEquals("svn://" + record.host + record.baseDir, record.toURI().toString());
@@ -49,7 +49,7 @@ public class SwiftlySVNStorageRecordUnitTest extends TestCase
     {
         // Mock up a svn:// record
         SwiftlySVNStorageRecord record = new SwiftlySVNStorageRecord();
-        record.svnProtocol = ProjectSVNStorage.PROTOCOL_HTTPS;
+        record.protocol = ProjectSVNStorage.PROTOCOL_HTTPS;
         record.host = "ghostbusters.com";
         record.port = 555;
         record.baseDir = "/repos/ectoplasm/ghostbusters";

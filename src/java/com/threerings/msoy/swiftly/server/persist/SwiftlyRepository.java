@@ -68,14 +68,15 @@ public class SwiftlyRepository extends DepotRepository
      * stored project data.
      */
     public SwiftlyProjectRecord createProject (int memberId, String projectName, byte projectType,
-        boolean remixable)
+        int storageId, boolean remixable)
         throws PersistenceException
     {
         SwiftlyProjectRecord record = new SwiftlyProjectRecord();
         record.projectName = projectName;
         record.ownerId = memberId;
         record.projectType = projectType;
-        record.svnStorageId = 0;
+        record.storageId = storageId;
+        // TODO:
         record.remixable = remixable;
         record.creationDate = new Timestamp(System.currentTimeMillis());
 
@@ -127,6 +128,52 @@ public class SwiftlyRepository extends DepotRepository
         }
         return (project.ownerId == memberId);
     }
+
+    /**
+     * Load the Swiftly SVN Storage record for the given project
+     */
+    public SwiftlySVNStorageRecord loadStorageRecordForProject (int projectId)
+        throws PersistenceException
+    {
+        SwiftlyProjectRecord project = loadProject(projectId);
+        return load (SwiftlySVNStorageRecord.class, project.storageId);
+    }
+
+
+    /**
+     * Creates and loads a SwiftlySVNStorageRecord. If the record already exists, the existing
+     * record will be returned and the database will not be modified.
+     */
+    public SwiftlySVNStorageRecord createSVNStorage (String protocol, String host, int port, String baseDir)
+        throws PersistenceException
+    {
+        SwiftlySVNStorageRecord record = new SwiftlySVNStorageRecord();
+        record.protocol = protocol;
+        record.host = host;
+        record.port = port;
+        record.baseDir = baseDir;
+
+        try {
+            insert(record);
+        } catch (DuplicateKeyException dke) {
+            // Already exists, return it
+            Collection<SwiftlySVNStorageRecord> result;
+            
+            result = findAll(SwiftlySVNStorageRecord.class,
+                new Where(SwiftlySVNStorageRecord.PROTOCOL, protocol),
+                new Where(SwiftlySVNStorageRecord.HOST, host),
+                new Where(SwiftlySVNStorageRecord.PORT, port),
+                new Where(SwiftlySVNStorageRecord.BASE_DIR, baseDir));
+
+            // There can only be one!
+            assert(result.size() == 0);
+            for (SwiftlySVNStorageRecord curRecord : result) {
+                return curRecord;
+            }
+        }
+        return record;
+    }
+
 
     /**
      * Fetches the collaborators for a given project.

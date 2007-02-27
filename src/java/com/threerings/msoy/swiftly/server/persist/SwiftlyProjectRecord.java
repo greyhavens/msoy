@@ -57,12 +57,12 @@ public class SwiftlyProjectRecord extends PersistentRecord
     public static final ColumnExp PROJECT_NAME_C =
         new ColumnExp(SwiftlyProjectRecord.class, PROJECT_NAME);
 
-    /** The column identifier for the {@link #svnStorageId} field. */
-    public static final String SVN_STORAGE_ID = "svnStorageId";
+    /** The column identifier for the {@link #storageId} field. */
+    public static final String STORAGE_ID = "storageId";
 
-    /** The qualified column identifier for the {@link #svnStorageId} field. */
-    public static final ColumnExp SVN_STORAGE_ID_C =
-        new ColumnExp(SwiftlyProjectRecord.class, SVN_STORAGE_ID);
+    /** The qualified column identifier for the {@link #storageId} field. */
+    public static final ColumnExp STORAGE_ID_C =
+        new ColumnExp(SwiftlyProjectRecord.class, STORAGE_ID);
 
     /** The column identifier for the {@link #remixable} field. */
     public static final String REMIXABLE = "remixable";
@@ -79,7 +79,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
         new ColumnExp(SwiftlyProjectRecord.class, DELETED);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 10;
+    public static final int SCHEMA_VERSION = 11;
 
     /** The id of the project. */
     @Id
@@ -99,7 +99,7 @@ public class SwiftlyProjectRecord extends PersistentRecord
     public String projectName;
 
     /** The id of the project subversion storage. */
-    public int svnStorageId;
+    public int storageId;
 
     /** Whether this project is remixable. */
     public boolean remixable;
