@@ -23,11 +23,11 @@ public class MessageQueue
         } else {
             // do nothing here for now - since position information is sent with all messages,
             // the next message thats allowed will get everybody else up to date
-            Log.getLog(this).debug("cannot send message! over throttle!");
+            _log.debug("cannot send message! over throttle!");
         }
     }
 
-    protected static const SEND_THROTTLE_TIME :int = 8000; // in ms, with a buffer
+    protected static const SEND_THROTTLE_TIME :int = 10200; // in ms, with a buffer
 
     protected var _gameCtrl :EZGameControl;
     protected var _sendTimes :Array = new Array();
