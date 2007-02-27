@@ -4,6 +4,9 @@ package
 import flash.display.Sprite;
 
 import flash.geom.Point;
+import flash.geom.Matrix;
+
+import flash.events.Event;
 
 public class KartObstacle extends KartSprite
 {
@@ -17,6 +20,8 @@ public class KartObstacle extends KartSprite
         // medium kart is all we have for now
         super(kartType);
         _currentPosition = startingPosition;
+
+        addEventListener(Event.ENTER_FRAME, enterFrame);
     }
 
     /**
@@ -40,6 +45,7 @@ public class KartObstacle extends KartSprite
     {
         _currentPosition = new Point(obj.posX, obj.posY);
         _currentAngle = obj.angle;
+        _currentSpeed = obj.speed;
     }
 
     /**
@@ -60,8 +66,17 @@ public class KartObstacle extends KartSprite
         }
         _kart.gotoAndStop(Math.ceil(angleFrom));
     }
+
+    public function enterFrame (event :Event) :void
+    {
+        var rotation :Matrix = new Matrix();
+        rotation.rotate(_currentAngle);
+        _currentPosition = _currentPosition.add(rotation.transformPoint(new Point(0, 
+            -_currentSpeed)));
+    }
     
     protected var _currentPosition :Point;
     protected var _currentAngle :Number;
+    protected var _currentSpeed :Number;
 }
 }
