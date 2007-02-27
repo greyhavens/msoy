@@ -43,6 +43,18 @@ public class ProjectSVNStorage
     implements ProjectStorage
 {
 
+    /** Standard SVN Protocol String. */
+    public static final String PROTOCOL_SVN = "svn";
+
+    /** SVN over SSH Protocol String. */
+    public static final String PROTOCOL_SSH = "svn+ssh";
+    
+    /** File-local SVN Protocol String. */
+    public static final String PROTOCOL_FILE = "file";
+
+    /** SVN over HTTPS WebDAV Protocol String. */
+    public static final String PROTOCOL_HTTPS = "https";
+
     /*
      * Static initialization of the SVNKit library
      */
@@ -57,43 +69,6 @@ public class ProjectSVNStorage
 
         // file:///
         FSRepositoryFactory.setup();
-    }
-
-
-    /**
-     * Recursively add a given directory to a repository edit instance.
-     */
-    private static void svnAddDirectory (ISVNEditor editor, String parentPath, File sourceDir)
-        throws SVNException, FileNotFoundException
-    {
-        for (File file : sourceDir.listFiles()) {
-            String fileName = file.getName();
-            String subPath = parentPath + "/" + fileName;
-            File targetFile = new File(sourceDir, fileName);
-
-            if (file.isDirectory()) {
-
-                // Skip .svn directories.
-                if (fileName.equals(".svn")) {
-                    continue;
-                }
-
-                // Add the directory
-                editor.addDir(subPath, null, -1);
-
-                // Recurse
-                svnAddDirectory(editor, subPath, targetFile);
-                editor.closeDir();
-            } else if (file.isFile()) {
-                SVNDeltaGenerator deltaGenerator = new SVNDeltaGenerator();
-                String checksum;
-
-                editor.addFile(subPath, null, -1);
-                editor.applyTextDelta(subPath, null);
-                checksum = deltaGenerator.sendDelta(subPath, new FileInputStream(targetFile), editor, true);
-                editor.closeFile(subPath, checksum);
-            }
-        }
     }
 
     /**
@@ -268,6 +243,43 @@ public class ProjectSVNStorage
         }
 
         return result;
+    }
+
+
+    /**
+     * Recursively add a given local directory to a repository edit instance.
+     */
+    private static void svnAddDirectory (ISVNEditor editor, String parentPath, File sourceDir)
+        throws SVNException, FileNotFoundException
+    {
+        for (File file : sourceDir.listFiles()) {
+            String fileName = file.getName();
+            String subPath = parentPath + "/" + fileName;
+            File targetFile = new File(sourceDir, fileName);
+
+            if (file.isDirectory()) {
+
+                // Skip .svn directories.
+                if (fileName.equals(".svn")) {
+                    continue;
+                }
+
+                // Add the directory
+                editor.addDir(subPath, null, -1);
+
+                // Recurse
+                svnAddDirectory(editor, subPath, targetFile);
+                editor.closeDir();
+            } else if (file.isFile()) {
+                SVNDeltaGenerator deltaGenerator = new SVNDeltaGenerator();
+                String checksum;
+
+                editor.addFile(subPath, null, -1);
+                editor.applyTextDelta(subPath, null);
+                checksum = deltaGenerator.sendDelta(subPath, new FileInputStream(targetFile), editor, true);
+                editor.closeFile(subPath, checksum);
+            }
+        }
     }
 
     /**
