@@ -74,6 +74,18 @@ public class MemberRepository extends DepotRepository
                 // nothing to do here
             }
         });
+
+        // add a cache invalidator that listens to MemberRecord updates
+        _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
+            public void entryInvalidated (CacheKey key, MemberRecord member) {
+                _ctx.cacheInvalidate(new Key<MemberNameRecord>(
+                        MemberNameRecord.class, MemberNameRecord.MEMBER_ID, member.memberId));
+            }
+            public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
+                // TODO: To be fancy, construct & cache our own MemberFlowRecord here
+            }
+        });
+
     }
 
     public FlowRepository getFlowRepository ()
