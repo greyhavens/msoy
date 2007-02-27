@@ -78,6 +78,8 @@ public class UnderwhirledDrift extends Sprite
         _gameCtrl.addEventListener(KeyboardEvent.KEY_DOWN, keyEventHandler);
         _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
 
+        _messageQueue = new MessageQueue(_gameCtrl);
+
         _coord = new HostCoordinator(_gameCtrl);
 
         var chooser :KartChooser = new KartChooser(this, gameSprite, camera, ground);
@@ -108,8 +110,6 @@ public class UnderwhirledDrift extends Sprite
                     playerIds[ii] = { id: playerIds[ii], position: ii };
                 }
                 _gameCtrl.set("playerPositions", playerIds);
-                
-                _gameCtrl.startTicker("tick", SEND_THROTTLE);
             }
         }
     }
@@ -143,13 +143,13 @@ public class UnderwhirledDrift extends Sprite
     // from MessageReceivedListener
     public function messageReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == "tick") {
+        /*if (event.name == "tick") {
             if (_raceStarted && _kart != null) {
                 var obj :Object = _kart.getUpdate();
                 obj.playerId = _gameCtrl.getMyId();
                 _gameCtrl.sendMessage("positionUpdate", obj);
-            }
-        } else if (event.name == "raceStarted") {
+            }*/
+        if (event.name == "raceStarted") {
             _raceStarted = true;
         } else if (event.name == "positionUpdate") {
             var playerId :int = event.value.playerId;
@@ -181,7 +181,7 @@ public class UnderwhirledDrift extends Sprite
         // tack on a few pixels to account for the front of the kart
         _kart.y = KART_LOCATION.y + SKY_HEIGHT + KART_OFFSET;
         addChild(_kart);
-        _gameCtrl.sendMessage("kartChosen", {playerId: _gameCtrl.getMyId(), 
+        _messageQueue.sendMessage("kartChosen", {playerId: _gameCtrl.getMyId(),
             kartType: _kart.kartType});
         updateRaceStarted();
     }
@@ -202,7 +202,7 @@ public class UnderwhirledDrift extends Sprite
                 }
             }
             if (ii == keys.length) {
-                _gameCtrl.sendMessage("raceStarted", true);
+                _messageQueue.sendMessage("raceStarted", true);
             }
         }
     }
@@ -234,10 +234,21 @@ public class UnderwhirledDrift extends Sprite
             default:
             // do nothing
             }
+            switch(event.keyCode) {
+            case Keyboard.UP:
+            case Keyboard.DOWN:
+            case Keyboard.LEFT:
+            case Keyboard.RIGHT:
+            case Keyboard.SPACE:
+                var obj :Object = _kart.getUpdate();
+                obj.playerId = _gameCtrl.getMyId();
+                _gameCtrl.sendMessage("positionUpdate", obj);
+                break;
+            default:
+                // do nothing
+            }
         }
     }
-
-    protected static const SEND_THROTTLE :int = 120;
 
     /** the game control. */
     protected var _gameCtrl :EZGameControl;
@@ -256,5 +267,7 @@ public class UnderwhirledDrift extends Sprite
 
     /** A flag to indicate that the race has started, so its safe to send position update */
     protected var _raceStarted :Boolean = false;
+
+    protected var _messageQueue :MessageQueue;
 }
 }
