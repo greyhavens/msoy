@@ -70,7 +70,7 @@ public class index extends MsoyEntryPoint
     {
         boolean header = super.didLogon(creds);
         updateInterface(History.getToken());
-        return header;
+        return false; // disable swiftly header client for now
     }
 
     // @Override from MsoyEntryPoint
