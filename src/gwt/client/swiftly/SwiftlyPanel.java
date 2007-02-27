@@ -60,16 +60,16 @@ public class SwiftlyPanel extends VerticalPanel
 
         _applet = WidgetUtil.createApplet(
             "swiftly", "/clients/swiftly-client.jar",
-            "com.threerings.msoy.swiftly.client.SwiftlyApplet", "800", "600",
+            "com.threerings.msoy.swiftly.client.SwiftlyApplet", "100%", "600",
             new String[] {  "authtoken", authtoken,
                             "projectId", String.valueOf(projectId),
                             "server", config.server,
                             "port", String.valueOf(config.port) });
         // TODO: possible hacks to get the applet to stay the size of the browser window
         // 100% 100% should work but isn't for the createApplet width/height
-        // _applet.setHeight("100%");
-        add(_applet);
         // setCellHeight(_applet, "94%");
+        // _applet.setWidth("100%");
+        add(_applet);
     }
 
     public void projectSubmitted (SwiftlyProject project)
