@@ -9,6 +9,9 @@ import flash.events.MouseEvent;
 
 import flash.filters.BlurFilter;
 
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+
 public class KartChooser 
 {
     public function KartChooser (udInst :UnderwhirledDrift, blurObj :DisplayObject, 
@@ -30,6 +33,13 @@ public class KartChooser
         _udInst.addChild(_chooserSprite);
 
 
+        var selectText :TextField = new TextField();
+        selectText.text = "Select Your Kart";
+        selectText.selectable = false;
+        selectText.autoSize = TextFieldAutoSize.CENTER;
+        selectText.scaleX = selectText.scaleY = 4;
+        selectText.x = (WIDTH - selectText.width) / 2;
+        _chooserSprite.addChild(selectText);
         var kartM :KartSprite = new KartSprite(KartSprite.KART_MEDIUM, 160);
         kartM.x = kartM.width / 2;
         kartM.y = HEIGHT; 
