@@ -105,29 +105,28 @@ public class SwiftlyServlet extends MsoyServiceServlet
 
         // XXX We need to sort out how to properly create remote repositories.
         // Until then, we create them locally, all evil-like.
-        File svnDir = new File(ServerConfig.serverRoot + "/data/swiftly/projects/" +
-            Integer.toString(memrec.memberId) + "-" + projectName);
-        subversionURL = "file://" + svnDir.toString();
-        try {
-            SVNRepositoryFactory.createLocalRepository(svnDir, true, false);
-        } catch (Exception e) {
-            log.log(Level.WARNING, "Initializing subversion repository failed.", e);
-            throw new ServiceException(ServiceException.INTERNAL_ERROR);
-        }
+        // File svnDir = new File(ServerConfig.serverRoot + "/data/swiftly/projects/" +
+        //    Integer.toString(memrec.memberId) + "-" + projectName);
+        // subversionURL = "file://" + svnDir.toString();
+        // try {
+        //    SVNRepositoryFactory.createLocalRepository(svnDir, true, false);
+        // } catch (Exception e) {
+        //    log.log(Level.WARNING, "Initializing subversion repository failed.", e);
+        //    throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        // }
 
 
         try {
             // Create the project record.
             pRec = MsoyServer.swiftlyRepo.createProject(
-                memrec.memberId, projectName, projectType, subversionURL,
-                remixable);
+                memrec.memberId, projectName, projectType, remixable);
 
             // Set the creator as the first collaborator.
             MsoyServer.swiftlyRepo.joinCollaborators(pRec.projectId, memrec.memberId); 
             
             // Initialize the project storage.
             try {
-                ProjectSVNStorage.initializeStorage(pRec, templatePath);
+                ProjectSVNStorage.initializeStorage(pRec, null, templatePath);
             } catch (ProjectStorageException pse) {
                 log.log(Level.WARNING, "Initializing swiftly project storage failed.", pse);
                 MsoyServer.swiftlyRepo.deleteProject(pRec);

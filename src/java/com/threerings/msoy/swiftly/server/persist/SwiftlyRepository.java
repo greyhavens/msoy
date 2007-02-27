@@ -68,7 +68,7 @@ public class SwiftlyRepository extends DepotRepository
      * stored project data.
      */
     public SwiftlyProjectRecord createProject (int memberId, String projectName, byte projectType,
-                                               String projectSubversionURL, boolean remixable)
+        boolean remixable)
         throws PersistenceException
     {
         SwiftlyProjectRecord record = new SwiftlyProjectRecord();
@@ -76,7 +76,7 @@ public class SwiftlyRepository extends DepotRepository
         record.ownerId = memberId;
         record.projectType = projectType;
         // TODO:
-        record.projectSubversionURL = projectSubversionURL;
+        record.svnStorageId = 0;
         record.remixable = remixable;
         record.creationDate = new Timestamp(System.currentTimeMillis());
 

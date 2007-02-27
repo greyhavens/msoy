@@ -5,9 +5,12 @@ package com.threerings.msoy.swiftly.server.storage;
 
 import com.threerings.msoy.swiftly.data.PathElement;
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
+
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.net.URI;
@@ -27,7 +30,6 @@ public class ProjectSVNStorageUnitTest extends TestCase
         throws Exception
     {
         File svnDir;
-        SVNURL svnURL;
         
         // Create a temporary directory.
         _tempDir = File.createTempFile("svnstorage", "test");
@@ -36,58 +38,48 @@ public class ProjectSVNStorageUnitTest extends TestCase
             throw new Exception("Temporary directory '" + _tempDir + "' already exists!");
         }
 
-        // Create a subversion URL and test repository.
-        svnDir = new File(_tempDir, "svn-repo");
-        svnURL = SVNURL.fromFile(svnDir);
-        SVNRepositoryFactory.createLocalRepository(svnDir, true, false);
-
         // Mock up a project record.
         _projectRecord = new SwiftlyProjectRecord();
         _projectRecord.projectName = "project-name";
         _projectRecord.ownerId = 0;
-        _projectRecord.projectSubversionURL = svnURL.toString();
+        
+        _storageRecord = new SwiftlySVNStorageRecord();
+        _storageRecord.svnProtocol = ProjectSVNStorage.PROTOCOL_FILE;
+        _storageRecord.baseDir = _tempDir.getAbsolutePath();
 
         // Initialize the storage
-        ProjectSVNStorage.initializeStorage(_projectRecord, TEMPLATE_DIR.getCanonicalFile());
+        ProjectSVNStorage.initializeStorage(_projectRecord, _storageRecord, TEMPLATE_DIR.getCanonicalFile());
     }
 
-    /** Recursively delete a directory. */
-    public static boolean deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-    
-        // The directory is now empty so delete it
-        return dir.delete();
-    }
 
     /** Clean up afterwards. */
     public void tearDown ()
+        throws Exception
     {
-        deleteDir(_tempDir);
+        FileUtils.deleteDirectory(_tempDir);
     }
-
-
 
     /** Try opening of a project. */
     public void testOpenStorage ()
         throws Exception
     {
-        ProjectStorage storage = new ProjectSVNStorage(_projectRecord);
+        ProjectStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
     }
 
+
+    public void testGetProjectSVNURL ()
+        throws Exception
+    {
+        ProjectSVNStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
+        assertEquals("file://" + _tempDir + "/" + _projectRecord.projectId,
+            storage.getSVNURL().toString());
+    }
 
     /** Try listing a project. */
     public void testGetProjectTree ()
         throws Exception
     {
-        ProjectStorage storage = new ProjectSVNStorage(_projectRecord);
+        ProjectStorage storage = new ProjectSVNStorage(_projectRecord, _storageRecord);
         List<PathElement> projectTree = storage.getProjectTree();
         assertTrue("The returned PathElement list is empty", projectTree.size() != 0);
 
@@ -109,6 +101,9 @@ public class ProjectSVNStorageUnitTest extends TestCase
 
     /** Mocked up project record. */
     protected SwiftlyProjectRecord _projectRecord;
+    
+    /** Mocked up storage record. */
+    protected SwiftlySVNStorageRecord _storageRecord;
 
     /** Static, brittle path to the test template. Sorry. */
     static final File TEMPLATE_DIR = new File("data/swiftly/templates/unittest");

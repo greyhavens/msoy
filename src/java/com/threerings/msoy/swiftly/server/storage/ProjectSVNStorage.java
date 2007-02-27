@@ -4,11 +4,15 @@
 package com.threerings.msoy.swiftly.server.storage;
 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
 import com.threerings.msoy.swiftly.data.PathElement;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -76,14 +80,29 @@ public class ProjectSVNStorage
      * template directory will be silently ignored.
      * TODO: Destroy the repository directory on failure.
      */
-    public static ProjectSVNStorage initializeStorage (SwiftlyProjectRecord record, File templateDir)
+    public static ProjectSVNStorage initializeStorage (SwiftlyProjectRecord projectRecord,
+        SwiftlySVNStorageRecord storageRecord, File templateDir)
         throws ProjectStorageException
     {
-        ProjectSVNStorage storage = new ProjectSVNStorage(record);
+        ProjectSVNStorage storage;
         SVNRepository svnRepo;
         ISVNEditor editor;
         SVNCommitInfo commitInfo;
         long latestRevision;
+
+        // If this is a local repository, we'll attempt to create it now
+        if (storageRecord.svnProtocol == PROTOCOL_FILE) {
+            File repoDir = new File(storageRecord.baseDir, Integer.toString(projectRecord.projectId));
+            try {
+                SVNRepositoryFactory.createLocalRepository(repoDir, true, false);                
+            } catch (SVNException e) {
+                throw new ProjectStorageException.InternalError("Failure creating local project " +
+                    "repository: " + e, e);                
+            }
+        }
+
+        // Connect to the repository
+        storage = new ProjectSVNStorage(projectRecord, storageRecord);
 
         // If the revision is not 0, this is not a new project. Exit immediately.
         try {
@@ -158,16 +177,22 @@ public class ProjectSVNStorage
     /** 
      * Construct a new storage instance for the given project record.
      */
-    public ProjectSVNStorage (SwiftlyProjectRecord record)
+    public ProjectSVNStorage (SwiftlyProjectRecord projectRecord, SwiftlySVNStorageRecord storageRecord)
         throws ProjectStorageException
     {
+        _projectRecord = projectRecord;
+        _storageRecord = storageRecord;
+
         // Initialize subversion magic
         try {
-            _svnURL = SVNURL.parseURIEncoded(record.projectSubversionURL);
+            _svnURL = getSVNURL();
             // TODO -- Remote authentication manager
             _svnPool = new DefaultSVNRepositoryPool(null, null, true, DefaultSVNRepositoryPool.INSTANCE_POOL);
         } catch (SVNException svne) {
             throw new ProjectStorageException.InternalError("Could not parse subversion URL: " + svne, svne);
+        } catch (URISyntaxException urie) {
+            throw new ProjectStorageException.InternalError(
+                "Invalid URL provided by SwiftlySVNStorageRecord: " + urie, urie);            
         }
     }
 
@@ -201,6 +226,18 @@ public class ProjectSVNStorage
                 " recursing over the directory tree: " + svne, svne);
         }
 
+    }
+
+    /**
+     * Given a URI and a project Id, return the project's subversion URL.
+     * This is composed of the base server URL + the project ID.
+     */
+    protected SVNURL getSVNURL ()
+        throws SVNException, URISyntaxException
+    {
+        URI baseURI = _storageRecord.toURI();            
+        SVNURL url = SVNURL.parseURIDecoded(baseURI.toString());
+        return url.appendPath(Integer.toString(_projectRecord.projectId), false);
     }
 
 
@@ -290,6 +327,12 @@ public class ProjectSVNStorage
     {
         return _svnPool.createRepository(_svnURL, true);
     }
+
+    /** Reference to the project record. */
+    protected SwiftlyProjectRecord _projectRecord;
+
+    /** Reference to the project storage record. */
+    protected SwiftlySVNStorageRecord _storageRecord;
 
     /** Reference to the project storage subversion URL. */
     private SVNURL _svnURL;
