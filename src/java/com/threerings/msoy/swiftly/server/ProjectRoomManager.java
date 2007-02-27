@@ -23,6 +23,11 @@ import com.threerings.msoy.swiftly.data.ProjectRoomConfig;
 import com.threerings.msoy.swiftly.data.ProjectRoomMarshaller;
 import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyCodes;
+import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord;
+import com.threerings.msoy.swiftly.server.persist.SwiftlySVNStorageRecord;
+import com.threerings.msoy.swiftly.server.storage.ProjectStorage;
+import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
+import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
 
 /**
  * Manages a Swiftly project room.
@@ -80,7 +85,7 @@ public class ProjectRoomManager extends PlaceManager
     {
         return new ProjectRoomObject();
     }
-
+    
     @Override // from PlaceManager
     protected void didStartup ()
     {
@@ -89,17 +94,30 @@ public class ProjectRoomManager extends PlaceManager
         // get a casted reference to our room object
         _roomObj = (ProjectRoomObject)_plobj;
 
-        // TODO: load up the project information and populate the room object
-        PathElement node;
-        _roomObj.addPathElement(node = PathElement.createRoot("Fake Project"));
-        _roomObj.addPathElement(node = PathElement.createDirectory("Directory 1", node));
-        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 1", node));
-        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 2", node));
-        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 3", node));
-        _roomObj.addPathElement(node = PathElement.createDirectory("Directory 2", node));
-        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 4", node));
-        _roomObj.addPathElement(new PathElement(PathElement.Type.FILE, "File 5", node));
-        _roomObj.addPathElement(new DocumentElement("File 6", node, "Bob!"));
+        // Initialize a reference to the project storage
+        // XXX XXX XXX XXX
+        // This is certainly the wrong thread, not to mention method, in which to run these operations,
+        // and I haven't the foggiest idea as to how to deal with errors. In fact, this is a HUGE HACK
+        // and I promise that I'll find the right place for it very soon. In the meantime I just want
+        // to see a subversion repository loaded into a swiftly context.
+        try {
+            SwiftlyProjectRecord projectRecord =
+                MsoyServer.swiftlyRepo.loadProject(((ProjectRoomConfig)_config).projectId);
+            SwiftlySVNStorageRecord storageRecord =
+                MsoyServer.swiftlyRepo.loadStorageRecordForProject(((ProjectRoomConfig)_config).projectId);
+            ProjectStorage storage = new ProjectSVNStorage(projectRecord, storageRecord);
+
+            // Load up the project information and populate the room object
+            for (PathElement element : storage.getProjectTree()) {
+                System.out.println("Adding element: " + element);
+                _roomObj.addPathElement(element);
+            }
+        } catch (Exception e) {
+            // TODO: FIXME
+            // HUGE HUGE HUGE HACK!
+            System.out.println("This chick is toast! " + e);
+            e.printStackTrace();
+        }
 
         // wire up our invocation service
         _roomObj.setService((ProjectRoomMarshaller)

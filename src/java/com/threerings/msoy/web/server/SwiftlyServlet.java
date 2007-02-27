@@ -109,7 +109,7 @@ public class SwiftlyServlet extends MsoyServiceServlet
         try {
             // XXX We need to sort out how to properly create remote repositories.
             // Until then, we create them in a hard-wired local directory.
-            String svnRoot = ServerConfig.serverRoot + "/data/swiftly/projects/";
+            String svnRoot = ServerConfig.serverRoot + "/data/swiftly/projects";
             storeRec = MsoyServer.swiftlyRepo.createSVNStorage(ProjectSVNStorage.PROTOCOL_FILE,
                 null, 0, svnRoot);
 
