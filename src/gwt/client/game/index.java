@@ -14,7 +14,6 @@ import com.threerings.msoy.web.client.GameServiceAsync;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
-import client.shell.DynamicMessages;
 import client.shell.MsoyEntryPoint;
 
 /**
@@ -62,7 +61,6 @@ public class index extends MsoyEntryPoint
 
         // load up our translation dictionaries
         CGame.msgs = (GameMessages)GWT.create(GameMessages.class);
-        CGame.dmsgs = (DynamicMessages)GWT.create(DynamicMessages.class);
     }
 
     // @Override from MsoyEntryPoint
