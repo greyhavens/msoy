@@ -280,9 +280,9 @@ public interface EditemMessages extends com.google.gwt.i18n.client.Messages {
   String editorDescripTitle();
 
   /**
-   * Translated "Game type (TODO: 0 = normal, 1 = seated_continuous, 2 = party)".
+   * Translated "Game Type".
    * 
-   * @return translated "Game type (TODO: 0 = normal, 1 = seated_continuous, 2 = party)"
+   * @return translated "Game Type"
    * @gwt.key gameGameType
    */
   String gameGameType();
