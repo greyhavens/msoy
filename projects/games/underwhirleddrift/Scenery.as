@@ -22,13 +22,12 @@ public class Scenery extends Sprite
     /**
      * Called when the objects should be re-scaled for display in a new frame.
      */
-    public function updateItems (translateRotate :Matrix, distance :Number,
-        cameraHeight :Number, cameraPosition :Point) :void
+    public function updateItems (translateRotate :Matrix, camera :Camera) :void
     {
         var thisTransform :Matrix = new Matrix();
-        var minScale :Number = 1 / cameraHeight;
-        var maxScale :Number = Ground.HEIGHT / cameraHeight;
-        var maxDistance :Number = distance / minScale;
+        var minScale :Number = 1 / camera.height;
+        var maxScale :Number = Ground.HEIGHT / camera.height;
+        var maxDistance :Number = camera.distance / minScale;
         var viewRect :Rectangle = new Rectangle(-maxDistance / 2, -maxDistance, maxDistance, 
             maxDistance);
         for (var ii :int = 0; ii < _items.length; ii++) {
@@ -39,11 +38,11 @@ public class Scenery extends Sprite
         for (ii = 0; ii < _items.length; ii++) {
             if (viewRect.containsPoint(_items[ii].transformedOrigin)) {
                 // scale and translate origin to the display area
-                var scaleFactor :Number = distance / (-_items[ii].transformedOrigin.y);
-                var totalHeight :Number = scaleFactor * cameraHeight;
+                var scaleFactor :Number = camera.distance / (-_items[ii].transformedOrigin.y);
+                var totalHeight :Number = scaleFactor * camera.height;
                 thisTransform.identity();
                 thisTransform.scale(scaleFactor, scaleFactor);
-                thisTransform.translate(UnderwhirledDrift.DISPLAY_WIDTH / 2, distance + 
+                thisTransform.translate(UnderwhirledDrift.DISPLAY_WIDTH / 2, camera.distance + 
                     totalHeight);
                 _items[ii].transformedOrigin = thisTransform.transformPoint(
                     _items[ii].transformedOrigin);
@@ -58,7 +57,7 @@ public class Scenery extends Sprite
                     var kart :KartObstacle = _items[ii] as KartObstacle;
                     kart.sprite.y += UnderwhirledDrift.KART_OFFSET * 
                         (scaleFactor / maxScale);
-                    kart.updateAngleFrom(cameraPosition);
+                    kart.updateAngleFrom(camera.position);
                 }
                 // set correct index
                 setChildIndex(_items[ii].sprite, ii);
