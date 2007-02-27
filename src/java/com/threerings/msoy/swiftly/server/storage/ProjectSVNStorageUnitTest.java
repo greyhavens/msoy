@@ -43,6 +43,8 @@ public class ProjectSVNStorageUnitTest extends TestCase
 
         // Mock up a project record.
         _projectRecord = new SwiftlyProjectRecord();
+        _projectRecord.projectName = "project-name";
+        _projectRecord.ownerId = 0;
         _projectRecord.projectSubversionURL = svnURL.toString();
 
         // Initialize the storage

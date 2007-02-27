@@ -99,6 +99,7 @@ public class ProjectSVNStorage
     /**
      * Initialize project storage for a given project record. Any .svn directories in the given
      * template directory will be silently ignored.
+     * TODO: Destroy the repository directory on failure.
      */
     public static ProjectSVNStorage initializeStorage (SwiftlyProjectRecord record, File templateDir)
         throws ProjectStorageException

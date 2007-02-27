@@ -68,7 +68,7 @@ public class SwiftlyRepository extends DepotRepository
      * stored project data.
      */
     public SwiftlyProjectRecord createProject (int memberId, String projectName, byte projectType,
-                                               boolean remixable)
+                                               String projectSubversionURL, boolean remixable)
         throws PersistenceException
     {
         SwiftlyProjectRecord record = new SwiftlyProjectRecord();
@@ -76,7 +76,7 @@ public class SwiftlyRepository extends DepotRepository
         record.ownerId = memberId;
         record.projectType = projectType;
         // TODO:
-        record.projectSubversionURL = "dummy value";
+        record.projectSubversionURL = projectSubversionURL;
         record.remixable = remixable;
         record.creationDate = new Timestamp(System.currentTimeMillis());
 
@@ -104,6 +104,15 @@ public class SwiftlyRepository extends DepotRepository
             throw new PersistenceException(
                 "Couldn't find swiftly project for update [id=" + projectId + "]");
         }
+    }
+
+    /*
+     * Deletes the specified project record.
+     */
+    public void deleteProject (SwiftlyProjectRecord record)
+        throws PersistenceException
+    {
+        delete(record);
     }
 
     /**

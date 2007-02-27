@@ -13,6 +13,8 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.item.web.Item;
+
 import com.threerings.msoy.web.client.SwiftlyService;
 import com.threerings.msoy.web.data.FriendEntry;
 import com.threerings.msoy.web.data.MemberName;
@@ -23,6 +25,12 @@ import com.threerings.msoy.web.data.WebCreds;
 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyCollaboratorsRecord; 
 import com.threerings.msoy.swiftly.server.persist.SwiftlyProjectRecord; 
+import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
+import com.threerings.msoy.swiftly.server.storage.ProjectSVNStorage;
+
+import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
+
+import java.io.File;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +88,9 @@ public class SwiftlyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
-        SwiftlyProject project;
+        SwiftlyProjectRecord pRec;
+        String subversionURL;
+        File templatePath;
 
         // TODO Argument Validation
         /*
@@ -88,18 +98,48 @@ public class SwiftlyServlet extends MsoyServiceServlet
             throw new ServiceException("m.invalid_project_name");
         }
         */
+            
+        // Load the template from the standard path
+        templatePath = new File(ServerConfig.serverRoot + "/data/swiftly/templates/"
+            + Item.getTypeName(projectType));
+
+        // XXX We need to sort out how to properly create remote repositories.
+        // Until then, we create them locally, all evil-like.
+        File svnDir = new File(ServerConfig.serverRoot + "/data/swiftly/projects/" +
+            Integer.toString(memrec.memberId) + "-" + projectName);
+        subversionURL = "file://" + svnDir.toString();
+        try {
+            SVNRepositoryFactory.createLocalRepository(svnDir, true, false);
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Initializing subversion repository failed.", e);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR);
+        }
+
 
         try {
-            project = MsoyServer.swiftlyRepo.createProject(
-                memrec.memberId, projectName, projectType, remixable).toSwiftlyProject();
-            // the creator is the first member of the collaborators
-            MsoyServer.swiftlyRepo.joinCollaborators(project.projectId, memrec.memberId); 
+            // Create the project record.
+            pRec = MsoyServer.swiftlyRepo.createProject(
+                memrec.memberId, projectName, projectType, subversionURL,
+                remixable);
+
+            // Set the creator as the first collaborator.
+            MsoyServer.swiftlyRepo.joinCollaborators(pRec.projectId, memrec.memberId); 
+            
+            // Initialize the project storage.
+            try {
+                ProjectSVNStorage.initializeStorage(pRec, templatePath);
+            } catch (ProjectStorageException pse) {
+                log.log(Level.WARNING, "Initializing swiftly project storage failed.", pse);
+                MsoyServer.swiftlyRepo.deleteProject(pRec);
+                throw new ServiceException(ServiceException.INTERNAL_ERROR);
+            }
+            
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Creating new project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
 
-        return project;
+        return pRec.toSwiftlyProject();
     }
 
     // from SwiftlyService
