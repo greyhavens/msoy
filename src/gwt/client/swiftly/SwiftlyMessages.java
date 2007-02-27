@@ -152,9 +152,9 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String viewRemovePrompt(String arg0,  String arg1);
 
   /**
-   * Translated "What type of project is this?".
+   * Translated "Project type".
    * 
-   * @return translated "What type of project is this?"
+   * @return translated "Project type"
    * @gwt.key selectType
    */
   String selectType();
