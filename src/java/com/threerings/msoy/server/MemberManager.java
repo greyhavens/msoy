@@ -504,25 +504,29 @@ public class MemberManager
     public void grantFlow (final MemberName member, final int amount,
                            final UserAction grantAction, final String details)
     {
+        // if the member is logged on, make sure we can update their flow
+        final MemberObject mObj = MsoyServer.lookupMember(member);
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
                 _memberRepo.getFlowRepository().grantFlow(member.getMemberId(), amount);
+                if (mObj != null) {
+                    _flow = _memberRepo.loadMember(member.getMemberId()).flow;
+                }
             }
             public void handleSuccess () {
                 flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " G " +
                              amount + " " + (grantAction != null ? grantAction : "null") +
                              (details != null ? " " + details : ""));
-                // if the member is logged on, update their object
                 // TODO: distributed considerations
-                MemberObject mObj = MsoyServer.lookupMember(member);
                 if (mObj != null) {
-                    mObj.setFlow(mObj.flow + amount);
+                    mObj.setFlow(_flow);
                 }
             }
             public void handleFailure (Exception pe) {
                 log.warning("Unable to grant flow [member=" + member + ", grantAction=" +
                             grantAction + ", amount=" + amount + ", details=" + details + "]");
             }
+            public int _flow;
         });
     }
 
