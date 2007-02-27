@@ -48,6 +48,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
                 return false; // don't reenable purchase
             }
         };
+        _purchase.setEnabled(CCatalog.getMemberId() > 0);
 
         controls.add(_status);
     }
@@ -76,7 +77,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
                     }
                 }
             };
-            _controls.insert(delist, 0);
+            _controls.insert(delist, _controls.getWidgetCount()-1);
         }
     }
 

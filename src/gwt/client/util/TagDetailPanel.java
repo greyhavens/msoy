@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MouseListener;
+import com.google.gwt.user.client.ui.MouseListenerAdapter;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -41,8 +41,10 @@ import com.threerings.msoy.web.data.TagHistory;
  */
 public class TagDetailPanel extends FlexTable
 {
-    /** Interface to the interaction between this panel and the service handling tagging/flagging
-     * in the background */
+    /**
+     * Interface to the interaction between this panel and the service handling tagging/flagging in
+     * the background.
+     */
     public interface TagService 
     {
         public void tag (String tag, AsyncCallback callback);
@@ -50,17 +52,19 @@ public class TagDetailPanel extends FlexTable
         public void getRecentTags (AsyncCallback callback);
         public void getTags (AsyncCallback callback);
         public boolean supportFlags ();
+
         /** 
-         * In this case, the implementor is responsible for editing the flags on the local
-         * object that is being flagged, and is therefore responsible for providing the callback.
+         * In this case, the implementor is responsible for editing the flags on the local object
+         * that is being flagged, and is therefore responsible for providing the callback.
          * 
          * @param flag the flag to send to the server and set on the local object on success
          * @param statusLabel A label to set with an error message on failure
          */
         public void setFlags (byte flag, Label statusLabel);
+
         /**
-         * If additional entries are required on the Menu that pops up when a tag is clicked, 
-         * this method can return a List of MenuItems for that purpose.
+         * If additional entries are required on the Menu that pops up when a tag is clicked, this
+         * method can return a List of MenuItems for that purpose.
          *
          * @return List of MenuItems, or null if this feature is not desired.
          */
@@ -78,87 +82,44 @@ public class TagDetailPanel extends FlexTable
         setWidget(0, col, _tags);
         getFlexCellFormatter().setStyleName(0, col++, "Tags");
 
-        setWidget(0, col++, new Label(CShell.cmsgs.tagAddTag()));
-        getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_MIDDLE);
-        TextBox newTagBox = new TextBox();
-        newTagBox.setMaxLength(20);
-        newTagBox.setVisibleLength(12);
-        newTagBox.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
-            public void onClick (Widget sender) {
-                String tagName = ((TextBox) sender).getText().trim().toLowerCase();
-                if (tagName.length() == 0) {
-                    return;
-                }
-                if (tagName.length() > 24) {
-                    _status.setText(CShell.cmsgs.errTagTooLong());
-                    return;
-                }
-                for (int ii = 0; ii < tagName.length(); ii ++) {
-                    char c = tagName.charAt(ii);
-                    if (Character.isLetter(c) || Character.isDigit(c) || c == '_') {
-                        continue;
+        if (CShell.getMemberId() > 0) {
+            setWidget(0, col++, new Label(CShell.cmsgs.tagAddTag()));
+            getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_MIDDLE);
+            setWidget(0, col++, new NewTagBox());
+
+//             _quickTagLabel = new Label(CShell.cmsgs.tagQuickAdd());
+//             setWidget(0, col++, _quickTagLabel);
+//             getFlexCellFormatter().setVerticalAlignment(1, 2, HasVerticalAlignment.ALIGN_MIDDLE);
+//             _quickTags = new ListBox();
+//             _quickTags.addChangeListener(new ChangeListener() {
+//                 public void onChange (Widget sender) {
+//                     ListBox box = (ListBox) sender;
+//                     String value = box.getValue(box.getSelectedIndex());
+//                     _service.tag(value, new AsyncCallback() {
+//                         public void onSuccess (Object result) {
+//                             refreshTags();
+//                         }
+//                         public void onFailure (Throwable caught) {
+//                             GWT.log("tagItem failed", caught);
+//                             _status.setText(CShell.serverError(caught));
+//                         }
+//                     });
+//                 }
+//             });
+//             setWidget(0, col++, _quickTags);
+
+            if (_service.supportFlags()) {
+                InlineLabel flagLabel = new InlineLabel(CShell.cmsgs.tagFlag());
+                PopupMenu menu = new PopupMenu(flagLabel) {
+                    protected void addMenuItems (MenuBar menu) {
+                        menu.addItem(getMenuItem(CShell.cmsgs.tagMatureFlag(),
+                                                 Item.FLAG_FLAGGED_MATURE, this));
+                        menu.addItem(getMenuItem(CShell.cmsgs.tagCopyrightFlag(),
+                                                 Item.FLAG_FLAGGED_COPYRIGHT, this));
                     }
-                    _status.setText(CShell.cmsgs.errTagInvalidCharacters());
-                    return;
-                }
-                _service.tag(tagName, new AsyncCallback() {
-                    public void onSuccess (Object result) {
-                        refreshTags();
-                    }
-                    public void onFailure (Throwable caught) {
-                        GWT.log("tagItem failed", caught);
-                        _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
-                    }
-                });
-                ((TextBox) sender).setText(null);
+                };
+                setWidget(0, col++, flagLabel);
             }
-        }));
-        setWidget(0, col++, newTagBox);
-
-//         _quickTagLabel = new Label(CShell.cmsgs.tagQuickAdd());
-//         setWidget(0, col++, _quickTagLabel);
-//         getFlexCellFormatter().setVerticalAlignment(1, 2, HasVerticalAlignment.ALIGN_MIDDLE);
-//         _quickTags = new ListBox();
-//         _quickTags.addChangeListener(new ChangeListener() {
-//             public void onChange (Widget sender) {
-//                 ListBox box = (ListBox) sender;
-//                 String value = box.getValue(box.getSelectedIndex());
-//                 _service.tag(value, new AsyncCallback() {
-//                     public void onSuccess (Object result) {
-//                         refreshTags();
-//                     }
-//                     public void onFailure (Throwable caught) {
-//                         GWT.log("tagItem failed", caught);
-//                         _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
-//                     }
-//                 });
-//             }
-//         });
-//         setWidget(0, col++, _quickTags);
-
-        if (_service.supportFlags()) {
-            final PopupPanel menuPanel = new PopupPanel(true);
-            MenuBar menu = new MenuBar(true);
-            menu.addItem(getMenuItem(CShell.cmsgs.tagMatureFlag(), Item.FLAG_FLAGGED_MATURE, 
-                menuPanel));
-            menu.addItem(getMenuItem(CShell.cmsgs.tagCopyrightFlag(), Item.FLAG_FLAGGED_COPYRIGHT, 
-                menuPanel));
-            menuPanel.add(menu);
-            final InlineLabel flagLabel = new InlineLabel(CShell.cmsgs.tagFlag());
-            flagLabel.addStyleName("LabelLink");
-            // use a MouseListener instead of ClickListener so we can get at the mouse (x,y)
-            flagLabel.addMouseListener(new MouseListener() {
-                public void onMouseDown (Widget sender, int x, int y) { 
-                    menuPanel.setPopupPosition(flagLabel.getAbsoluteLeft() + x, 
-                            flagLabel.getAbsoluteTop() + y);
-                    menuPanel.show();
-                }
-                public void onMouseLeave (Widget sender) { }
-                public void onMouseUp (Widget sender, int x, int y) { }
-                public void onMouseEnter (Widget sender) { }
-                public void onMouseMove (Widget sender, int x, int y) { }
-            });
-            setWidget(0, col++, flagLabel);
         }
 
         setWidget(1, 0, _status = new Label(""));
@@ -254,92 +215,149 @@ public class TagDetailPanel extends FlexTable
     {
         _service.getTags(new AsyncCallback() {
             public void onSuccess (Object result) {
-                final ArrayList addedTags = new ArrayList();
-                _tags.clear();
-                Iterator resultIter = ((Collection) result).iterator();
-                while (resultIter.hasNext()) {
-                    final String tag = (String) resultIter.next();
-                    final PopupPanel removePanel = new PopupPanel(true);
-                    MenuBar menu = new MenuBar(true);
-                    menu.addItem(new MenuItem(CShell.cmsgs.tagRemove(), new Command() {
-                        public void execute() {
-                            (new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag)) {
-                                public void onAffirmative () {
-                                    removePanel.hide();
-                                    _service.untag(tag, new AsyncCallback () {
-                                        public void onSuccess (Object result) {
-                                            refreshTags();
-                                        }
-                                        public void onFailure (Throwable caught) {
-                                            GWT.log("tagItem failed", caught);
-                                            _status.setText(CShell.cmsgs.errTagInternalError(
-                                                caught.getMessage()));
-                                        }
-                                    });
-                                }
-                                public void onNegative () { 
-                                    removePanel.hide();
-                                }
-                            }).prompt();
-                        }
-                    }));
-                    List menuItems = _service.getMenuItems(tag);
-                    if (menuItems != null) {
-                        Iterator menuIter = menuItems.iterator();
-                        while (menuIter.hasNext()) menu.addItem((MenuItem)menuIter.next());
-                    }
-                    removePanel.add(menu);
-                    final InlineLabel tagLabel = new InlineLabel(tag);
-                    tagLabel.addMouseListener(new MouseListener() {
-                        public void onMouseDown (Widget sender, int x, int y) {
-                            removePanel.setPopupPosition(tagLabel.getAbsoluteLeft() + x,
-                                tagLabel.getAbsoluteTop() + y);
-                            removePanel.show();
-                        }
-                        public void onMouseLeave (Widget sender) { }
-                        public void onMouseUp (Widget sender, int x, int y) { }
-                        public void onMouseEnter (Widget sender) { }
-                        public void onMouseMove (Widget sender, int x, int y) { }
-                    });
-                    tagLabel.addStyleName("LabelLink");
-                    _tags.add(tagLabel);
-                    if (resultIter.hasNext()) {
-                        _tags.add(new InlineLabel(", "));
-                    }
-                    addedTags.add(tag);
-                }
-
-//                 if (CShell.creds != null) {
-//                     _service.getRecentTags(new AsyncCallback() {
-//                         public void onSuccess (Object result) {
-//                             _quickTags.clear();
-//                             _quickTags.addItem(CShell.cmsgs.tagSelectOne());
-//                             Iterator i = ((Collection) result).iterator();
-//                             while (i.hasNext()) {
-//                                 TagHistory history = (TagHistory) i.next();
-//                                 String tag = history.tag;
-//                                 if (tag != null && !addedTags.contains(tag) && 
-//                                     history.member.getMemberId() == CShell.getMemberId()) {
-//                                     _quickTags.addItem(tag);
-//                                     addedTags.add(tag);
-//                                 }
-//                             }
-//                             boolean visible = _quickTags.getItemCount() > 1;
-//                             _quickTags.setVisible(visible);
-//                             _quickTagLabel.setVisible(visible);
-//                         }
-//                         public void onFailure (Throwable caught) {
-//                             GWT.log("getTagHistory failed", caught);
-//                             _status.setText(CShell.cmsgs.errTagInternalError(caught.getMessage()));
-//                         }
-//                     });
-//                 }
+                gotTags((Collection)result);
             }
             public void onFailure (Throwable caught) {
                 _tags.clear();
-                _tags.add(new Label(CShell.cmsgs.errTagInternalError(caught.getMessage())));
+                _tags.add(new Label(CShell.serverError(caught)));
             }
         });
+    }
+
+    protected void gotTags (Collection tags)
+    {
+        _tags.clear();
+        final ArrayList addedTags = new ArrayList();
+        for (Iterator iter = tags.iterator(); iter.hasNext() ; ) {
+            final String tag = (String) iter.next();
+            InlineLabel tagLabel = new InlineLabel(tag);
+            if (CShell.getMemberId() > 0) {
+                final Command remove = new Command() {
+                    public void execute () {
+                        new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag)) {
+                            public void onAffirmative () {
+                                hide();
+                                _service.untag(tag, new AsyncCallback() {
+                                    public void onSuccess (Object result) {
+                                        refreshTags();
+                                    }
+                                    public void onFailure (Throwable caught) {
+                                        GWT.log("tagItem failed", caught);
+                                        _status.setText(CShell.serverError(caught));
+                                    }
+                                });
+                            }
+                            public void onNegative () { 
+                                hide();
+                            }
+                        }.prompt();
+                    }
+                };
+                new PopupMenu(tagLabel) {
+                    protected void addMenuItems (MenuBar menu) {
+                        menu.addItem(new MenuItem(CShell.cmsgs.tagRemove(), remove));
+                        List menuItems = _service.getMenuItems(tag);
+                        if (menuItems != null) {
+                            Iterator menuIter = menuItems.iterator();
+                            while (menuIter.hasNext()) {
+                                menu.addItem((MenuItem)menuIter.next());
+                            }
+                        }
+                    }
+                };
+            }
+            _tags.add(tagLabel);
+            addedTags.add(tag);
+            if (iter.hasNext()) {
+                _tags.add(new InlineLabel(", "));
+            }
+        }
+
+//         if (CShell.creds != null) {
+//             _service.getRecentTags(new AsyncCallback() {
+//                 public void onSuccess (Object result) {
+//                     _quickTags.clear();
+//                     _quickTags.addItem(CShell.cmsgs.tagSelectOne());
+//                     Iterator i = ((Collection) result).iterator();
+//                     while (i.hasNext()) {
+//                         TagHistory history = (TagHistory) i.next();
+//                         String tag = history.tag;
+//                         if (tag != null && !addedTags.contains(tag) && 
+//                             history.member.getMemberId() == CShell.getMemberId()) {
+//                             _quickTags.addItem(tag);
+//                             addedTags.add(tag);
+//                         }
+//                     }
+//                     boolean visible = _quickTags.getItemCount() > 1;
+//                     _quickTags.setVisible(visible);
+//                     _quickTagLabel.setVisible(visible);
+//                 }
+//                 public void onFailure (Throwable caught) {
+//                     GWT.log("getTagHistory failed", caught);
+//                     _status.setText(CShell.serverError(caught));
+//                 }
+//             });
+//         }
+    }
+
+    protected abstract class PopupMenu extends PopupPanel
+    {
+        public PopupMenu (InlineLabel label) {
+            super(true);
+            MenuBar menu = new MenuBar(true);
+            addMenuItems(menu);
+            add(menu);
+
+            label.addStyleName("LabelLink");
+            label.addMouseListener(new MouseListenerAdapter() {
+                public void onMouseDown (Widget sender, int x, int y) { 
+                    setPopupPosition(sender.getAbsoluteLeft() + x, 
+                                     sender.getAbsoluteTop() + y);
+                    show();
+                }
+            });
+        }
+
+        protected abstract void addMenuItems (MenuBar menu);
+    }
+
+    protected class NewTagBox extends TextBox
+        implements ClickListener
+    {
+        public NewTagBox () {
+            setMaxLength(20);
+            setVisibleLength(12);
+            addKeyboardListener(new EnterClickAdapter(this));
+        }
+
+        public void onClick (Widget sender) {
+            String tagName = getText().trim().toLowerCase();
+            if (tagName.length() == 0) {
+                return;
+            }
+            if (tagName.length() > 24) {
+                _status.setText(CShell.cmsgs.errTagTooLong());
+                return;
+            }
+            for (int ii = 0; ii < tagName.length(); ii ++) {
+                char c = tagName.charAt(ii);
+                if (Character.isLetter(c) || Character.isDigit(c) || c == '_') {
+                    continue;
+                }
+                _status.setText(CShell.cmsgs.errTagInvalidCharacters());
+                return;
+            }
+            _service.tag(tagName, new AsyncCallback() {
+                public void onSuccess (Object result) {
+                    refreshTags();
+                }
+                public void onFailure (Throwable caught) {
+                    GWT.log("tagItem failed", caught);
+                    _status.setText(CShell.serverError(caught));
+                }
+            });
+            setText(null);
+        }
     }
 
     protected TagService _service;

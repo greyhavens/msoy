@@ -64,14 +64,6 @@ public interface ShellMessages extends com.google.gwt.i18n.client.Messages {
   String tagAddTag();
 
   /**
-   * Translated "Internal Error adding tag: {0}".
-   * 
-   * @return translated "Internal Error adding tag: {0}"
-   * @gwt.key errTagInternalError
-   */
-  String errTagInternalError(String arg0);
-
-  /**
    * Translated "Games".
    * 
    * @return translated "Games"
