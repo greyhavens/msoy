@@ -40,11 +40,10 @@ public class CatalogPanel extends FlexTable
 
         HorizontalPanel search = new HorizontalPanel();
         search.add(_tagCloudContainer = new SimplePanel());
-        search.add(_searchSortPanel = new ItemSearchSortPanel(
-                       this,
-                       new String[] { CCatalog.msgs.sortByRating(), CCatalog.msgs.sortByListDate() },
-                       new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE },
-                       0));
+        _searchSortPanel = new ItemSearchSortPanel(
+            this, new String[] { CCatalog.msgs.sortByRating(), CCatalog.msgs.sortByListDate() },
+            new byte[] { CatalogListing.SORT_BY_RATING, CatalogListing.SORT_BY_LIST_DATE }, 0);
+        search.add(_searchSortPanel);
         _sortBy = CatalogListing.SORT_BY_RATING;
 
         setWidget(1, 0, search);
