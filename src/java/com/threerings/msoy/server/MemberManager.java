@@ -501,21 +501,20 @@ public class MemberManager
      * type and a detail String. The member's {@link MemberRecord} is updated, as is the
      * {@link DailyFlowGrantedRecord}. Finally, a line is written to the flow grant log.
      */
-    public void grantFlow (final MemberName member, final int amount,
+    public void grantFlow (final int memberId, final int amount,
                            final UserAction grantAction, final String details)
     {
         // if the member is logged on, make sure we can update their flow
-        final MemberObject mObj = MsoyServer.lookupMember(member);
+        final MemberObject mObj = MsoyServer.lookupMember(memberId);
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().grantFlow(member.getMemberId(), amount);
+                _memberRepo.getFlowRepository().grantFlow(memberId, amount);
                 if (mObj != null) {
-                    _flow = _memberRepo.getFlowRepository().loadMemberFlow(
-                        member.getMemberId()).flow;
+                    _flow = _memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
                 }
             }
             public void handleSuccess () {
-                flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " G " +
+                flowLog.info(System.currentTimeMillis() + " " + memberId + " G " +
                              amount + " " + (grantAction != null ? grantAction : "null") +
                              (details != null ? " " + details : ""));
                 // TODO: distributed considerations
@@ -524,7 +523,7 @@ public class MemberManager
                 }
             }
             public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Unable to grant flow [member=" + member +
+                log.log(Level.WARNING, "Unable to grant flow [memberId=" + memberId +
                         ", grantAction=" + grantAction + ", amount=" + amount + ", details=" +
                         details + "]", pe);
             }
@@ -537,21 +536,20 @@ public class MemberManager
      * type and a detail String. The member's {@link MemberRecord} is updated, as is the
      * {@link DailyFlowSpentRecord}. Finally, a line is written to the flow grant log.
      */
-    public void spendFlow (final MemberName member, final int amount,
+    public void spendFlow (final int memberId, final int amount,
                            final UserAction spendAction, final String details)
     {
         // if the member is logged on, make sure we can update their flow
-        final MemberObject mObj = MsoyServer.lookupMember(member);
+        final MemberObject mObj = MsoyServer.lookupMember(memberId);
         MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().spendFlow(member.getMemberId(), amount);
+                _memberRepo.getFlowRepository().spendFlow(memberId, amount);
                 if (mObj != null) {
-                    _flow = _memberRepo.getFlowRepository().loadMemberFlow(
-                        member.getMemberId()).flow;
+                    _flow = _memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
                 }
             }
             public void handleSuccess () {
-                flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " S " +
+                flowLog.info(System.currentTimeMillis() + " " + memberId + " S " +
                              amount + " " + (spendAction != null ? spendAction : "null") +
                              (details != null ? " " + details : ""));
                 // TODO: distributed considerations
@@ -560,7 +558,7 @@ public class MemberManager
                 }
             }
             public void handleFailure (Exception pe) {
-                log.log(Level.WARNING, "Unable to spend flow [member=" + member +
+                log.log(Level.WARNING, "Unable to spend flow [memberId=" + memberId +
                         ", grantAction=" + spendAction + ", amount=" + amount + ", details=" +
                         details + "]", pe);
             }

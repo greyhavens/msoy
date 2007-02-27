@@ -190,8 +190,8 @@ public class MsoyGameManager extends EZGameManager
         int awarded = Math.min(record.awarded, (record.rate * secondsPlayed) / 60);
 
         MsoyServer.memberMan.grantFlow(
-            (MemberName) getOccupantInfo(oid).username, awarded,
-            UserAction.PLAYED_GAME,
+            ((MemberName) getOccupantInfo(oid).username).getMemberId(),
+            awarded, UserAction.PLAYED_GAME,
             ((EZGameConfig) getConfig()).persistentGameId + " " + secondsPlayed); 
     }
 
