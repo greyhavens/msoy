@@ -7,6 +7,10 @@ import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.TimerEvent;
 
+import flash.filters.BitmapFilter;
+import flash.filters.BlurFilter;
+import flash.filters.GlowFilter;
+
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 
@@ -25,6 +29,10 @@ public class Background extends Sprite
                 break;
             }
         }
+
+        // put some filter effects in there as well
+        _lastIndex = _backgrounds.length; // don't let blur get picked first
+        _backgrounds.push(new BlurFilter(0, 0, 1));
 
         // set up a mask
         var mask :Shape = new Shape();
@@ -60,14 +68,47 @@ public class Background extends Sprite
             } while (index == _lastIndex);
         }
 
-        var clazz :Class = Class(_backgrounds[index]);
-        trace("clazz: " + clazz);
-        var bytes :ByteArray = ByteArray(new clazz());
+        var thing :Object = _backgrounds[index];
+        if (thing is Class) {
+            // start a new SWF in the background
+            var clazz :Class = Class(thing);
+            trace("clazz: " + clazz);
+            var bytes :ByteArray = ByteArray(new clazz());
 
-        _loader = new EmbeddedSwfLoader();
-        _loader.addEventListener(Event.COMPLETE, newBackgroundReady);
-        _loader.load(bytes);
+            _loader = new EmbeddedSwfLoader();
+            _loader.addEventListener(Event.COMPLETE, newBackgroundReady);
+            _loader.load(bytes);
+
+        } else if (thing is BlurFilter) {
+            trace("Setting up blur filter");
+            var blur :BlurFilter = (thing as BlurFilter);
+            _curFilter = blur;
+
+            // overwrite any filters with the new one
+            filters = [ blur ];
+            _timer.reset();
+            _timer.delay = 200;
+            _timer.repeatCount = 0;
+            _timer.addEventListener(TimerEvent.TIMER, blurUp);
+            _timer.start();
+        }
+
         _lastIndex = index;
+    }
+
+    protected function blurUp (evt :TimerEvent) :void
+    {
+        var blur :BlurFilter = (_curFilter as BlurFilter);
+        blur.blurX = Math.random() * 32;
+        blur.blurY = Math.random() * 32;
+        // that's enough right??
+
+        if (_timer.currentCount == 25) {
+            this.filters = null;
+            _timer.removeEventListener(TimerEvent.TIMER, blurUp);
+            _timer.reset();
+            chooseNewBackground();
+        }
     }
 
     protected function newBackgroundReady (evt :Event) :void
@@ -141,6 +182,8 @@ public class Background extends Sprite
     protected var _newBackground :DisplayObject;
 
     protected var _background :DisplayObject;
+
+    protected var _curFilter :BitmapFilter;
 
     protected var _timer :Timer = new Timer(200);
 
