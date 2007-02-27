@@ -5,6 +5,7 @@ package client.catalog;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -42,6 +43,7 @@ public class ItemContainer extends VerticalPanel
         add(mview);
 
         FlexTable bits = new FlexTable();
+        bits.setWidth("100%");
         FlexCellFormatter formatter = bits.getFlexCellFormatter();
         
         Label descrip = new Label(ItemUtil.getName(listing.item, true));

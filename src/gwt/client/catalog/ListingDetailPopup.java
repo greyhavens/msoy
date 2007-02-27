@@ -52,7 +52,8 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         ItemUtil.addItemSpecificControls(_item, controls);
 
         details.add(_price = new FlexTable());
-        
+ 
+        // TODO: enable/disable purchase button depending on member's gold/flow wealth?
         controls.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
         new ClickCallback(_purchase, _status) {
             public boolean callService () {
