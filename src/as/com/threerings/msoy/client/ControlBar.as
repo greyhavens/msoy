@@ -1,6 +1,7 @@
 package com.threerings.msoy.client {
 
 import flash.display.DisplayObject;
+import flash.display.DisplayObjectContainer;
 import flash.events.MouseEvent;
 
 import mx.core.ScrollPolicy;
@@ -58,6 +59,14 @@ public class ControlBar extends HBox
         
         checkControls();
     }
+
+    // from HBox
+    override public function parentChanged (p :DisplayObjectContainer) :void
+    {
+        super.parentChanged(p);
+        _controller.registerForSessionObservations (p != null);
+    }
+
 
     /**
      * Check to see which controls the client should see.
@@ -127,10 +136,10 @@ public class ControlBar extends HBox
         footerLeft.styleName = "controlBarFooterLeft";
         addChild (footerLeft);
 
-        var goback :CommandButton = new CommandButton();
-        goback.setCommand(ControlBarController.MOVE_BACK, goback);
-        goback.styleName = "controlBarButtonGoBack";
-        addChild (goback);
+        _goback = new CommandButton();
+        _goback.setCommand(ControlBarController.MOVE_BACK, _goback);
+        _goback.styleName = "controlBarButtonGoBack";
+        addChild (_goback);
 
         /** commented out for now - this requires more work (robert)
         var loc :SkinnableTextField = new SkinnableTextField();
@@ -152,6 +161,16 @@ public class ControlBar extends HBox
         _isMember = isMember;
     }
 
+    /** Receives notifications whether movement back to the previous scene is possible,
+        and adjusts the back-button appropriately. */
+    public function set backMovementPossible (value :Boolean) :void
+    {
+        _goback.enabled = value;
+    }
+
+        
+    // IMPLEMENTATION DETAILS
+
     /** Our clientside context. */
     protected var _ctx :WorldContext;
 
@@ -160,6 +179,9 @@ public class ControlBar extends HBox
 
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
+
+    /** The back-movement button. */
+    protected var _goback :CommandButton;
 }
 }
 

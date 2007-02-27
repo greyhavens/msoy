@@ -248,12 +248,7 @@ ButtonBar {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/location_back_down.png");
-}
-
-.controlBarButtonGoForward {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/location_forward.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/location_forward_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/location_forward_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/location_bookend.png");
 }
 
 .controlBarLocationText {
