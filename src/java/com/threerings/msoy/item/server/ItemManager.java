@@ -524,11 +524,17 @@ public class ItemManager
 
         // and perform the purchase
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
-            public Item invokePersistResult () throws PersistenceException {
+            public Item invokePersistResult () throws Exception {
                 CatalogRecord<ItemRecord> listing = repo.loadListing(ident.itemId);
                 ItemRecord item = listing.item;
                 _flowCost = listing.flowCost;
                 _goldCost = listing.goldCost;
+
+                int flow = MsoyServer.memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
+                if (flow < _flowCost) {
+                    // only happens if client is buggy, hacked or lagged, or if the moon is blue
+                    throw new InvocationException(ItemCodes.INSUFFICIENT_FLOW);
+                }
 
                 // create the clone row in the database!
                 int cloneId = repo.insertClone(item.itemId, memberId);

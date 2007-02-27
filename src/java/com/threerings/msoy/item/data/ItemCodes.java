@@ -15,4 +15,11 @@ public interface ItemCodes extends InvocationCodes
 
     /** An error code returned by the item services. */
     public static final String E_ITEM_IN_USE = "e.item_in_use";
+    
+    /** An error code for any operation that needs to debit a member's flow. */
+    public static final String INSUFFICIENT_FLOW = "m.insufficient_flow";
+
+    /** An error code for any operation that needs to debit a member's gold. */
+    public static final String INSUFFICIENT_GOLD = "m.insufficient_gold";
+
 }
