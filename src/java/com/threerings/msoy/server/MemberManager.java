@@ -524,8 +524,9 @@ public class MemberManager
                 }
             }
             public void handleFailure (Exception pe) {
-                log.warning("Unable to grant flow [member=" + member + ", grantAction=" +
-                            grantAction + ", amount=" + amount + ", details=" + details + "]");
+                log.log(Level.WARNING, "Unable to grant flow [member=" + member +
+                        ", grantAction=" + grantAction + ", amount=" + amount + ", details=" +
+                        details + "]", pe);
             }
             public int _flow;
         });
@@ -559,8 +560,9 @@ public class MemberManager
                 }
             }
             public void handleFailure (Exception pe) {
-                log.warning("Unable to spend flow [member=" + member + ", spendAction=" +
-                            spendAction + ", amount=" + amount + ", details=" + details + "]");
+                log.log(Level.WARNING, "Unable to spend flow [member=" + member +
+                        ", grantAction=" + spendAction + ", amount=" + amount + ", details=" +
+                        details + "]", pe);
             }
             public int _flow;
         });
