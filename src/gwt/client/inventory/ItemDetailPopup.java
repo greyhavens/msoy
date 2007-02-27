@@ -18,6 +18,7 @@ import com.threerings.msoy.item.web.Photo;
 
 import client.editem.ItemEditor;
 import client.item.BaseItemDetailPopup;
+import client.item.ItemUtil;
 import client.util.ClickCallback;
 
 /**
@@ -36,22 +37,7 @@ public class ItemDetailPopup extends BaseItemDetailPopup
     {
         super.createInterface(details, controls);
 
-        if (_item instanceof Furniture) {
-            // TODO: "Action", ((Furniture)_item).action
-
-        } else if (_item instanceof Game) {
-            // TODO: ((Game)_item).name,
-            // TODO: "# Players (Desired)", String.valueOf(((Game)_item).desiredPlayers));
-            // TODO: "# Players (Minimum)", String.valueOf(((Game)_item).minPlayers),
-            // TODO: "# Players (Maximum)", String.valueOf(((Game)_item).maxPlayers));
-
-            int gameId = _item.getPrototypeId();
-            controls.add(new HTML("<a href=\"/game/index.html#" + gameId + "\">" +
-                                  CInventory.msgs.detailPlay() + "</a>"));
-
-        } else if (_item instanceof Photo) {
-            // TODO: "Caption", ((Photo)_item).caption);
-        }
+        ItemUtil.addItemSpecificControls(_item, controls);
 
         // we'll need this now so that we can pass it to our click callbacks
         _status = new Label("");

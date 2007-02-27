@@ -8,12 +8,12 @@ package client.inventory;
 public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
-   * Translated "List in Catalog...".
+   * Translated "Remix...".
    * 
-   * @return translated "List in Catalog..."
-   * @gwt.key detailList
+   * @return translated "Remix..."
+   * @gwt.key detailRemix
    */
-  String detailList();
+  String detailRemix();
 
   /**
    * Translated "Please configure the name of this item. Click Edit above to do so.".
@@ -24,20 +24,20 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String errItemMissingName();
 
   /**
+   * Translated "List in Catalog...".
+   * 
+   * @return translated "List in Catalog..."
+   * @gwt.key detailList
+   */
+  String detailList();
+
+  /**
    * Translated "Please configure a description for this item. Click Edit above to do so.".
    * 
    * @return translated "Please configure a description for this item. Click Edit above to do so."
    * @gwt.key errItemMissingDescrip
    */
   String errItemMissingDescrip();
-
-  /**
-   * Translated "Item deleted.".
-   * 
-   * @return translated "Item deleted."
-   * @gwt.key msgItemDeleted
-   */
-  String msgItemDeleted();
 
   /**
    * Translated "Delete".
@@ -48,12 +48,12 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
   String detailDelete();
 
   /**
-   * Translated "Create new...".
+   * Translated "Item deleted.".
    * 
-   * @return translated "Create new..."
-   * @gwt.key panelCreateNew
+   * @return translated "Item deleted."
+   * @gwt.key msgItemDeleted
    */
-  String panelCreateNew();
+  String msgItemDeleted();
 
   /**
    * Translated "Item remixed.".
@@ -62,6 +62,22 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key msgItemRemixed
    */
   String msgItemRemixed();
+
+  /**
+   * Translated "Create new...".
+   * 
+   * @return translated "Create new..."
+   * @gwt.key panelCreateNew
+   */
+  String panelCreateNew();
+
+  /**
+   * Translated "Inventory".
+   * 
+   * @return translated "Inventory"
+   * @gwt.key inventoryTitle
+   */
+  String inventoryTitle();
 
   /**
    * Translated "You have no {0} items.".
@@ -86,28 +102,4 @@ public interface InventoryMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key detailEdit
    */
   String detailEdit();
-
-  /**
-   * Translated "Play!".
-   * 
-   * @return translated "Play!"
-   * @gwt.key detailPlay
-   */
-  String detailPlay();
-
-  /**
-   * Translated "Remix...".
-   * 
-   * @return translated "Remix..."
-   * @gwt.key detailRemix
-   */
-  String detailRemix();
-
-  /**
-   * Translated "Inventory".
-   * 
-   * @return translated "Inventory"
-   * @gwt.key inventoryTitle
-   */
-  String inventoryTitle();
 }

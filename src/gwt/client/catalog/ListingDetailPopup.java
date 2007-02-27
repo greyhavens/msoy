@@ -10,6 +10,7 @@ import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.ItemDetail;
 
 import client.item.BaseItemDetailPopup;
+import client.item.ItemUtil;
 import client.util.ClickCallback;
 
 /**
@@ -31,6 +32,8 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
         // we need to create this here so we can pass it to our click callback
         _status = new Label("");
+
+        ItemUtil.addItemSpecificControls(_item, controls);
 
         // TODO: add cost
 

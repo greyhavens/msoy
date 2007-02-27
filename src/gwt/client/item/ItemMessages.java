@@ -16,6 +16,14 @@ public interface ItemMessages extends com.google.gwt.i18n.client.Messages {
   String searchSearch();
 
   /**
+   * Translated "Play!".
+   * 
+   * @return translated "Play!"
+   * @gwt.key detailPlay
+   */
+  String detailPlay();
+
+  /**
    * Translated "No description provided for this item.".
    * 
    * @return translated "No description provided for this item."

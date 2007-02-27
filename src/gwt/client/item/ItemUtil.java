@@ -3,6 +3,10 @@
 
 package client.item;
 
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Panel;
+
+import com.threerings.msoy.item.web.Game;
 import com.threerings.msoy.item.web.Item;
 
 /**
@@ -39,5 +43,17 @@ public class ItemUtil
     public static String getDescription (Item item)
     {
         return (item.description.trim().length() == 0) ? CItem.imsgs.noDescrip() : item.description;
+    }
+
+    /**
+     * Adds item specific controls to be shown in the item detail popup in a member's inventory or
+     * in the catalog.
+     */
+    public static void addItemSpecificControls (Item item, Panel panel)
+    {
+        if (item instanceof Game) {
+            panel.add(new HTML("<a href=\"/game/index.html#" + item.getPrototypeId() + "\">" +
+                               CItem.imsgs.detailPlay() + "</a>"));
+        }
     }
 }
