@@ -124,8 +124,14 @@ public class UnderwhirledDrift extends Sprite
                 if (playerPositions[ii].id == _gameCtrl.getMyId()) {
                     _level.setStartingPosition(playerPositions[ii].position);
                 } else {
-                    _opponentKarts.put(playerPositions[ii].id, 
-                        _level.addOpponentKart(playerPositions[ii].position));
+                    var playerId :int = playerPositions[ii].id;
+                    var position :int = playerPositions[ii].position;
+                    var kartType :String = _opponentKarts.get(playerId);
+                    if (kartType != null) {
+                        _opponentKarts.put(playerId, _level.addOpponentKart(position, kartType));
+                    } else {
+                        _opponentKarts.put(playerId, position);
+                    }
                 }
             }
         }
@@ -147,6 +153,15 @@ public class UnderwhirledDrift extends Sprite
             if (playerId != _gameCtrl.getMyId()) {
                 (_opponentKarts.get(playerId) as KartObstacle).setPosition(event.value);
             }
+        } else if (event.name == "kartChosen") {
+            playerId = event.value.playerId;
+            var kartType :String = event.value.kartType;
+            var position :Object = _opponentKarts.get(playerId);
+            if (position != null) {
+                _opponentKarts.put(playerId, _level.addOpponentKart(position as int,  kartType));
+            } else {
+                _opponentKarts.put(playerId, kartType);
+            }
         }
     }
 
@@ -157,6 +172,8 @@ public class UnderwhirledDrift extends Sprite
         // tack on a few pixels to account for the front of the kart
         _kart.y = KART_LOCATION.y + SKY_HEIGHT + KART_OFFSET;
         addChild(_kart);
+        _gameCtrl.sendMessage("kartChosen", {playerId: _gameCtrl.getMyId(), 
+            kartType: _kart.kartType});
     }
 
     /** 

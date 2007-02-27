@@ -12,10 +12,10 @@ public class KartObstacle extends KartSprite
     public var startHeight :Number;
     public var transformedOrigin: Point; 
 
-    public function KartObstacle (startingPosition :Point) 
+    public function KartObstacle (startingPosition :Point, kartType :String) 
     {
         // medium kart is all we have for now
-        super(KART_MEDIUM);
+        super(kartType);
         _currentPosition = startingPosition;
     }
 
