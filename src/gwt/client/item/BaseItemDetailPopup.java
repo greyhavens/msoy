@@ -23,6 +23,7 @@ import com.threerings.msoy.item.web.MediaDesc;
 import client.shell.MsoyEntryPoint;
 import client.util.BorderedDialog;
 import client.util.MediaUtil;
+import client.util.PopupMenu;
 import client.util.TagDetailPanel;
 
 /**
@@ -78,7 +79,7 @@ public class BaseItemDetailPopup extends BorderedDialog
                     }
                 });
             }
-            public List getMenuItems (String tag) { return null; }
+            public void addMenuItems (String tag, PopupMenu menu) { }
         }));
 
         // load up the item details

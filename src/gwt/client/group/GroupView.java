@@ -6,7 +6,6 @@ package client.group;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -359,20 +358,12 @@ public class GroupView extends VerticalPanel
                     return false;
                 }
                 public void setFlags (final byte flag, final Label statusLabel) { }
-                public List getMenuItems (final String tag) {
-                    final MenuItem gotoItem = new MenuItem(CGroup.msgs.viewTagLink(), 
-                        (Command)null);
-                    gotoItem.setCommand(new Command () {
-                            public void execute () {
-                                Widget.setVisible(gotoItem.getParentMenu().getParent().
-                                    getElement(), false);
-                                History.newItem("tag=" + tag);
-                            }
+                public void addMenuItems (final String tag, PopupMenu menu) {
+                    menu.addMenuItem(CGroup.msgs.viewTagLink(), new Command() {
+                        public void execute () {
+                            History.newItem("tag=" + tag);
                         }
-                    );
-                    ArrayList menuItems = new ArrayList();
-                    menuItems.add(gotoItem);
-                    return menuItems;
+                    });
                 }
             });
         if (!amManager) {

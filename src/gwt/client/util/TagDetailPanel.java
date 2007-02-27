@@ -7,10 +7,7 @@ import client.shell.CShell;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
-
-import client.util.PromptPopup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -33,7 +30,6 @@ import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.item.web.Item;
-
 import com.threerings.msoy.web.data.TagHistory;
 
 /**
@@ -64,11 +60,9 @@ public class TagDetailPanel extends FlexTable
 
         /**
          * If additional entries are required on the Menu that pops up when a tag is clicked, this
-         * method can return a List of MenuItems for that purpose.
-         *
-         * @return List of MenuItems, or null if this feature is not desired.
+         * method can add menu items for that purpose.
          */
-        public List getMenuItems(String tag);
+        public void addMenuItems (String tag, PopupMenu menu);
     }
 
     public TagDetailPanel (TagService service)
@@ -111,11 +105,19 @@ public class TagDetailPanel extends FlexTable
             if (_service.supportFlags()) {
                 InlineLabel flagLabel = new InlineLabel(CShell.cmsgs.tagFlag());
                 PopupMenu menu = new PopupMenu(flagLabel) {
-                    protected void addMenuItems (MenuBar menu) {
-                        menu.addItem(getMenuItem(CShell.cmsgs.tagMatureFlag(),
-                                                 Item.FLAG_FLAGGED_MATURE, this));
-                        menu.addItem(getMenuItem(CShell.cmsgs.tagCopyrightFlag(),
-                                                 Item.FLAG_FLAGGED_COPYRIGHT, this));
+                    protected void addMenuItems () {
+                        addMenuItem(CShell.cmsgs.tagMatureFlag(), new Command() {
+                            public void execute () {
+                                maybeUpdateFlag(CShell.cmsgs.tagMatureFlag(),
+                                                Item.FLAG_FLAGGED_MATURE);
+                            }
+                        });
+                        addMenuItem(CShell.cmsgs.tagCopyrightFlag(), new Command() {
+                            public void execute () {
+                                maybeUpdateFlag(CShell.cmsgs.tagCopyrightFlag(),
+                                                Item.FLAG_FLAGGED_COPYRIGHT);
+                            }
+                        });
                     }
                 };
                 setWidget(0, col++, flagLabel);
@@ -128,23 +130,16 @@ public class TagDetailPanel extends FlexTable
         refreshTags();
     }
 
-    protected MenuItem getMenuItem (final String menuLabel, final byte flag,
-                                    final PopupPanel parent)
+    protected void maybeUpdateFlag (String menuLabel, final byte flag)
     {
-        MenuItem mature = new MenuItem(menuLabel, new Command() {
-            public void execute() {
-                (new PromptPopup(CShell.cmsgs.tagFlagPrompt(menuLabel), CShell.cmsgs.
-                    tagFlagFlagButton(), 
-                    CShell.cmsgs.tagFlagCancelButton()) {
-                    public void onAffirmative () {
-                        parent.hide();
-                        updateItemFlags(flag);
-                    }
-                    public void onNegative () { }
-                }).prompt();
+        new PromptPopup(CShell.cmsgs.tagFlagPrompt(menuLabel), CShell.cmsgs.tagFlagFlagButton(),
+                        CShell.cmsgs.tagFlagCancelButton()) {
+            public void onAffirmative () {
+                updateItemFlags(flag);
             }
-        });
-        return mature;
+            public void onNegative () {
+            }
+        }.prompt();
     }
 
     protected void updateItemFlags (final byte flag)
@@ -236,7 +231,6 @@ public class TagDetailPanel extends FlexTable
                     public void execute () {
                         new PromptPopup(CShell.cmsgs.tagRemoveConfirm(tag)) {
                             public void onAffirmative () {
-                                hide();
                                 _service.untag(tag, new AsyncCallback() {
                                     public void onSuccess (Object result) {
                                         refreshTags();
@@ -248,21 +242,14 @@ public class TagDetailPanel extends FlexTable
                                 });
                             }
                             public void onNegative () { 
-                                hide();
                             }
                         }.prompt();
                     }
                 };
                 new PopupMenu(tagLabel) {
-                    protected void addMenuItems (MenuBar menu) {
-                        menu.addItem(new MenuItem(CShell.cmsgs.tagRemove(), remove));
-                        List menuItems = _service.getMenuItems(tag);
-                        if (menuItems != null) {
-                            Iterator menuIter = menuItems.iterator();
-                            while (menuIter.hasNext()) {
-                                menu.addItem((MenuItem)menuIter.next());
-                            }
-                        }
+                    protected void addMenuItems () {
+                        addMenuItem(CShell.cmsgs.tagRemove(), remove);
+                        _service.addMenuItems(tag, this);
                     }
                 };
             }
@@ -298,27 +285,6 @@ public class TagDetailPanel extends FlexTable
 //                 }
 //             });
 //         }
-    }
-
-    protected abstract class PopupMenu extends PopupPanel
-    {
-        public PopupMenu (InlineLabel label) {
-            super(true);
-            MenuBar menu = new MenuBar(true);
-            addMenuItems(menu);
-            add(menu);
-
-            label.addStyleName("LabelLink");
-            label.addMouseListener(new MouseListenerAdapter() {
-                public void onMouseDown (Widget sender, int x, int y) { 
-                    setPopupPosition(sender.getAbsoluteLeft() + x, 
-                                     sender.getAbsoluteTop() + y);
-                    show();
-                }
-            });
-        }
-
-        protected abstract void addMenuItems (MenuBar menu);
     }
 
     protected class NewTagBox extends TextBox
