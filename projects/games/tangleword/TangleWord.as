@@ -33,7 +33,7 @@ public class TangleWord extends Sprite
         _gameCtrl = new EZGameControl (this);
         _gameCtrl.registerListener (this);
         _coordinator = new HostCoordinator (_gameCtrl);
-        _coordinator.addEventListener (HostEvent.CLAIMED, hostClaimedHandler);
+        _coordinator.addEventListener (HostEvent.CHANGED, hostChangedHandler);
         _rounds = new RoundProvider (_gameCtrl, _coordinator);
         
         // Create MVC elements
@@ -43,22 +43,25 @@ public class TangleWord extends Sprite
         _controller.setModel (_model);                           // ... as in, right here :)
         addChild (_display);
 
+        // Try initializing the game state
         maybeStartGame ();
     }
-
 
     /**
      * Once the host was found, start the game!
      */
-    private function hostClaimedHandler (event : HostEvent) : void
+    private function hostChangedHandler (event : HostEvent) : void
     {
-        maybeStartGame ();
+        // Try initializing the game state (if I'm the first host)
+        if (event.previousHost == 0 && event.newHost == _gameCtrl.getMyId()) {
+            maybeStartGame ();
+        }
     }
 
     /**
        Sets up the game information. This needs to happen after all of the
        MVC objects have been initialized, and only once the host state
-       has been determined.
+       has been determined. 
     */
     private function maybeStartGame () : void
     {

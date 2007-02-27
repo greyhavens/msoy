@@ -287,11 +287,11 @@ public class RoundProvider implements PropertyChangedListener
 
     /** Variable that holds current state */
     private static const ROUND_PROVIDER_CURRENT_STATE_PROPERTY : String =
-        "ROUND_PROVIDER_CURRENT_STATE_PROPERTY";
+        "_round_current_state";
 
     /** Variable that holds the current state timeout */
     private static const ROUND_PROVIDER_CURRENT_STATE_TIMEOUT : String =
-        "ROUND_PROVIDER_CURRENT_STATE_TIMEOUT";
+        "_round_current_timeout";
        
     
     

@@ -130,6 +130,12 @@ public class Display extends Sprite
         _logger.Log ("Please wait for\n the next round.");
     }
 
+    /** Adds a "round started" message */
+    public function logRoundStarted () : void
+    {
+        _logger.Log ("New round!");
+    }
+
     /** Sets scores based on the scoreboard. */
     public function updateScores (board : Scoreboard) : void
     {
@@ -172,6 +178,7 @@ public class Display extends Sprite
     /** Called when the round starts - enables display. */
     private function roundStartedHandler (newState : String) : void
     {
+        logRoundStarted ();
         _timer.start (Properties.ROUND_LENGTH);
         setEnableState (true);
         _wordfield.stage.focus = _wordfield; // set focus on input box
