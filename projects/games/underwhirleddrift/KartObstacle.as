@@ -50,7 +50,7 @@ public class KartObstacle extends KartSprite
     {
         var angleFrom :Number = Math.atan2(_currentPosition.y - cameraLocation.y,
             _currentPosition.x - cameraLocation.x) * 180 / Math.PI;
-        angleFrom += _currentAngle * 180 / Math.PI;
+        angleFrom -= _currentAngle * 180 / Math.PI;
         angleFrom += 90;
         while (angleFrom < 0) {
             angleFrom += 360;
