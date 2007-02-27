@@ -14,10 +14,7 @@ import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
-import com.samskivert.jdbc.depot.annotation.Computed;
-import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.GroupBy;
@@ -26,8 +23,8 @@ import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.server.MsoyServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -177,25 +174,6 @@ public class FlowRepository extends DepotRepository
         return (double) getAbuseRecord(gameId, true).abuseFactor / 0x100;
     }
 
-
-    /**
-     * Deducts the specified amount of flow from the specified member's account.
-     */
-    public void spendFlow (int memberId, int amount)
-        throws PersistenceException
-    {
-        updateFlow(memberId, amount, false);
-    }
-
-    /**
-     * Adds the specified amount of flow to the specified member's account.
-     */
-    public void grantFlow (int memberId, int amount)
-        throws PersistenceException
-    {
-        updateFlow(memberId, amount, false);
-    }
-
     /**
      * <em>Do not use this method!</em> It exists only because we must work with the coin system
      * which tracks members by username rather than id.
@@ -233,7 +211,7 @@ public class FlowRepository extends DepotRepository
 
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
-    protected void updateFlow (int memberId, int amount, boolean grant)
+    public void updateFlow (int memberId, int amount, boolean grant)
         throws PersistenceException
     {
         String type = (grant ? "grant" : " spend");

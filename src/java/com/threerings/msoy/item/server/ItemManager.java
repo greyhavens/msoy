@@ -26,6 +26,7 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -46,6 +47,7 @@ import com.threerings.msoy.item.data.ItemCodes;
 
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -523,15 +525,14 @@ public class ItemManager
         // and perform the purchase
         MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
             public Item invokePersistResult () throws PersistenceException {
-                // load the item being purchased
-                ItemRecord item = repo.loadOriginalItem(ident.itemId);
-                // sanity check it
-                if (item.ownerId != 0) {
-                    throw new PersistenceException(
-                        "Can only clone listed items [id=" + ident + "]");
-                }
+                CatalogRecord<ItemRecord> listing = repo.loadListing(ident.itemId);
+                ItemRecord item = listing.item;
+                _flowCost = listing.flowCost;
+                _goldCost = listing.goldCost;
+
                 // create the clone row in the database!
                 int cloneId = repo.insertClone(item.itemId, memberId);
+
                 // then dress the loaded item up as a clone
                 item.ownerId = memberId;
                 item.parentId = item.itemId;
@@ -541,8 +542,15 @@ public class ItemManager
 
             public void handleSuccess () {
                 super.handleSuccess();
+                if (_flowCost > 0) {
+                    MsoyServer.memberMan.spendFlow(
+                        memberId, _flowCost, UserAction.BOUGHT_ITEM,
+                        ident.type + " " + ident.itemId + " " + _flowCost + " " + _goldCost);
+                }
                 updateUserCache(_result);
             }
+
+            protected int _flowCost, _goldCost;
         });
     }
 

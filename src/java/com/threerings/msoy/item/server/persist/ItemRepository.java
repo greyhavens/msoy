@@ -327,6 +327,19 @@ public abstract class ItemRepository<
     }
 
     /**
+     * Load a single catalog listing.
+     * 
+     * TODO: This needs to be a join, just like {@link #loadCatalog}.
+     */
+    public CAT loadListing (int itemId)
+        throws PersistenceException
+    {
+        CAT record = load(getCatalogClass(), itemId);
+        record.item = load(getItemClass(), itemId);
+        return record;
+    }
+
+    /**
      * Inserts the supplied item into the database. {@link Item#itemId} will be filled in as a
      * result of this call.
      */

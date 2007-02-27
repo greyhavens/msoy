@@ -508,7 +508,7 @@ public class MemberManager
         final MemberObject mObj = MsoyServer.lookupMember(memberId);
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().grantFlow(memberId, amount);
+                _memberRepo.getFlowRepository().updateFlow(memberId, amount, false);
                 if (mObj != null) {
                     _flow = _memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
                 }
@@ -543,7 +543,7 @@ public class MemberManager
         final MemberObject mObj = MsoyServer.lookupMember(memberId);
         MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().spendFlow(memberId, amount);
+                _memberRepo.getFlowRepository().updateFlow(memberId, amount, false);
                 if (mObj != null) {
                     _flow = _memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
                 }
