@@ -101,9 +101,9 @@ public class UnderwhirledDrift extends Sprite
     public function stateChanged (event :StateChangedEvent) :void
     {
         if (event.type == StateChangedEvent.GAME_STARTED) {
-            if (_coord.status == HostCoordinator.STATUS_HOST) {
+            var playerIds :Array = _gameCtrl.seating.getPlayerIds();
+            if (_coord.status == HostCoordinator.STATUS_HOST || playerIds.length == 1) {
                 // assign everyone a starting position.
-                var playerIds :Array = _gameCtrl.seating.getPlayerIds();
                 ArrayUtil.shuffle(playerIds);
                 for (var ii :int = 0; ii < playerIds.length; ii++) {
                     playerIds[ii] = { id: playerIds[ii], position: ii };
