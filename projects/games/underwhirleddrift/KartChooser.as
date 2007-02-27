@@ -47,6 +47,8 @@ public class KartChooser
         _udInst.removeChild(_chooserSprite);
         _udInst.setKart(new Kart((event.currentTarget as KartSprite).kartType, _camera, _ground));
         setBlur(false);
+        // prevent NPE on further click event handlers
+        event.stopImmediatePropagation();
     }
 
     protected function setBlur (doBlur :Boolean) :void
