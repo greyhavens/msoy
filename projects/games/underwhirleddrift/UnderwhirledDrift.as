@@ -135,7 +135,6 @@ public class UnderwhirledDrift extends Sprite
                 }
             }
             if (playerPositions.length != 1) {
-                _gameCtrl.localChat("playerPositions Update");
                 updateRaceStarted();
             }
         }
@@ -168,7 +167,6 @@ public class UnderwhirledDrift extends Sprite
                 } else {
                     _opponentKarts.put(playerId, kartType);
                 }
-                _gameCtrl.localChat("kartChosen");
                 if (_kart != null) {
                     updateRaceStarted();
                 }
@@ -197,14 +195,12 @@ public class UnderwhirledDrift extends Sprite
         if (_gameCtrl.seating.getPlayerIds().length == 1) {
             _raceStarted = true;
         } else if (_coord.status == HostCoordinator.STATUS_HOST) { 
-            _gameCtrl.localChat("I'm host");
             var keys :Array = _opponentKarts.keys();
             for (var ii :int = 0; ii < keys.length; ii++) {
                 if (!(_opponentKarts.get(keys[ii]) is KartObstacle)) {
                     break;
                 }
             }
-            _gameCtrl.localChat("ii: " + ii + ", length: " + keys.length);
             if (ii == keys.length) {
                 _gameCtrl.sendMessage("raceStarted", true);
             }
