@@ -4,8 +4,12 @@
 package client.catalog;
 
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.ItemDetail;
 
@@ -23,6 +27,18 @@ public class ListingDetailPopup extends BaseItemDetailPopup
         super(listing.item);
         _listing = listing;
         _panel = panel;
+
+        FlexCellFormatter formatter = _price.getFlexCellFormatter();
+
+        formatter.setWidth(0, 0, "25px"); // gap!
+        formatter.setStyleName(0, 0, "Icon");
+        _price.setWidget(0, 0, new Image("/images/header/symbol_gold.png"));
+        _price.setText(0, 1, String.valueOf(_listing.goldCost));
+
+        formatter.setWidth(0, 2, "25px"); // gap!
+        formatter.setStyleName(0, 2, "Icon");
+        _price.setWidget(0, 2, new Image("/images/header/symbol_flow.png"));
+        _price.setText(0, 3, String.valueOf(_listing.flowCost));
     }
 
     // @Override // BaseItemDetailPopup
@@ -35,8 +51,8 @@ public class ListingDetailPopup extends BaseItemDetailPopup
 
         ItemUtil.addItemSpecificControls(_item, controls);
 
-        // TODO: add cost
-
+        details.add(_price = new FlexTable());
+        
         controls.add(_purchase = new Button(CCatalog.msgs.listingBuy()));
         new ClickCallback(_purchase, _status) {
             public boolean callService () {
@@ -84,6 +100,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
     protected CatalogListing _listing;
     protected ItemPanel _panel;
 
+    protected FlexTable _price;
     protected Button _purchase;
     protected Label _status;
 }

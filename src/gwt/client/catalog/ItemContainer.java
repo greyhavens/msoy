@@ -4,10 +4,12 @@
 package client.catalog;
 
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.MediaDesc;
@@ -39,13 +41,30 @@ public class ItemContainer extends VerticalPanel
         }
         add(mview);
 
+        FlexTable bits = new FlexTable();
+        FlexCellFormatter formatter = bits.getFlexCellFormatter();
+        
         Label descrip = new Label(ItemUtil.getName(listing.item, true));
         descrip.setStyleName("itemDescrip");
         descrip.addClickListener(clicker);
-        add(descrip);
+        formatter.setWidth(0, 0, "100%");
+        bits.setWidget(0, 0, descrip);
 
         Label creator = new Label(CCatalog.msgs.itemBy(listing.creator.toString()));
         creator.setStyleName("itemCreator");
-        add(creator);
+        formatter.setWidth(1, 0, "100%");
+        bits.setWidget(1, 0, creator);
+
+        formatter.setWidth(0, 1, "25px"); // gap!
+        formatter.setStyleName(0, 1, "Icon");
+        bits.setWidget(0, 1, new Image("/images/header/symbol_gold.png"));
+        bits.setText(0, 2, String.valueOf(listing.goldCost));
+
+        formatter.setWidth(1, 1, "25px"); // gap!
+        formatter.setStyleName(1, 1, "Icon");
+        bits.setWidget(1, 1, new Image("/images/header/symbol_flow.png"));
+        bits.setText(1, 2, String.valueOf(listing.flowCost));
+        
+        add(bits);
     }
 }

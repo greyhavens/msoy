@@ -46,9 +46,30 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     /** The qualified column identifier for the {@link #listedDate} field. */
     public static final ColumnExp LISTED_DATE_C =
         new ColumnExp(CatalogRecord.class, LISTED_DATE);
+
+    /** The column identifier for the {@link #flowCost} field. */
+    public static final String FLOW_COST = "flowCost";
+
+    /** The qualified column identifier for the {@link #flowCost} field. */
+    public static final ColumnExp FLOW_COST_C =
+        new ColumnExp(CatalogRecord.class, FLOW_COST);
+
+    /** The column identifier for the {@link #goldCost} field. */
+    public static final String GOLD_COST = "goldCost";
+
+    /** The qualified column identifier for the {@link #goldCost} field. */
+    public static final ColumnExp GOLD_COST_C =
+        new ColumnExp(CatalogRecord.class, GOLD_COST);
+
+    /** The column identifier for the {@link #rarity} field. */
+    public static final String RARITY = "rarity";
+
+    /** The qualified column identifier for the {@link #rarity} field. */
+    public static final ColumnExp RARITY_C =
+        new ColumnExp(CatalogRecord.class, RARITY);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** A reference to the listed item. This value is not persisted. */
     @Transient
@@ -58,9 +79,18 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
     @Id
     public int itemId;
 
-    /** The in time this item was listed in the catalog. */
+    /** The time this item was listed in the catalog. */
     public Timestamp listedDate;
 
+    /** The amount of flow it costs to purchase a clone of this item. */
+    public int flowCost;
+    
+    /** The amount of gold it costs to purchase a clone of this item. */
+    public int goldCost;
+
+    /** The rarity of this item; {@see Item#rarity}. */
+    public int rarity;
+    
     public CatalogRecord ()
     {
         super();
@@ -81,7 +111,9 @@ public abstract class CatalogRecord<T extends ItemRecord> extends PersistentReco
         listing.listedDate = new Date(listedDate.getTime());
         // the name part of the MemberName is filled in by ItemManager
         listing.creator = new MemberName(null, item.creatorId);
-        listing.price = 0; // TODO
+        listing.flowCost = flowCost;
+        listing.goldCost = goldCost;
+        listing.rarity = rarity;
         return listing;
     }
 }

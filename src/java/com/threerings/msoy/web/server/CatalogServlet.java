@@ -104,9 +104,9 @@ public class CatalogServlet extends MsoyServiceServlet
                 MsoyServer.itemMan.purchaseItem(mrec.memberId, ident, waiter);
 //                // TODO: Figure out where flow constant comes from, actually test code, etc.
 //                MsoyServer.memberMan.grantFlow(
-//                    mrec.getName(), 3, ActionType.BoughtItem, ident.toString());
+//                    mrec.getName(), 3, UserAction.BOUGHT_ITEM, ident.toString());
 //                MsoyServer.memberMan.logUserAction(
-//                    mrec.getName(), ActionType.BoughtItem, ident.toString());
+//                    mrec.getName(), UserAction.BOUGHT_ITEM, ident.toString());
             }
         });
         return waiter.waitForResult();
@@ -141,10 +141,14 @@ public class CatalogServlet extends MsoyServiceServlet
 
                 // reset any important bits
                 listItem.clearForListing();
+
                 // then insert it as the immutable copy we list
                 repo.insertOriginalItem(listItem);
+
                 // and finally create & insert the catalog record
-                return repo.insertListing(listItem, System.currentTimeMillis()).toListing();
+                long now = System.currentTimeMillis();
+                int rarity = CatalogListing.RARITY_COMMON;
+                return repo.insertListing(listItem, 0, 0, rarity, now).toListing();
 
             } else {
                 // TODO: validate ownership

@@ -16,10 +16,8 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.IntListUtil;
 
 import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheEvictionFilter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -27,7 +25,6 @@ import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
-import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
@@ -47,8 +44,6 @@ import com.threerings.msoy.server.persist.TagRepository;
 
 import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
-
-import com.threerings.msoy.web.data.TagHistory;
 
 /**
  * Manages a repository of digital items of a particular type.
@@ -360,7 +355,8 @@ public abstract class ItemRepository<
      *
      * TODO: this method modifies the input value, totally unintuitive!
      */
-    public CatalogRecord insertListing (ItemRecord listItem, long listingTime)
+    public CatalogRecord insertListing (
+        ItemRecord listItem, int flowCost, int goldCost, int rarity, long listingTime)
         throws PersistenceException
     {
         if (listItem.ownerId != 0) {
@@ -376,6 +372,9 @@ public abstract class ItemRepository<
         }
         record.item = listItem;
         record.itemId = listItem.itemId;
+        record.flowCost = flowCost;
+        record.goldCost = goldCost;
+        record.rarity = rarity;
         record.listedDate = new Timestamp(listingTime);
         // and insert it - done!
         insert(record);

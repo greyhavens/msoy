@@ -17,12 +17,28 @@ import com.threerings.msoy.web.data.MemberName;
 public class CatalogListing
     implements Streamable, IsSerializable
 {
+    /** A constant for requesting catalog search results to be returned in a certain order. */
     public static final byte SORT_BY_NOTHING = 0;
+    /** A constant for requesting catalog search results to be returned in a certain order. */
     public static final byte SORT_BY_RATING = 1;
+    /** A constant for requesting catalog search results to be returned in a certain order. */
     public static final byte SORT_BY_LIST_DATE = 2;
+    /** A constant for requesting catalog search results to be returned in a certain order. */
     public static final byte SORT_BY_SATISFACTION = 3;
+    /** A constant for requesting catalog search results to be returned in a certain order. */
     public static final byte SORT_BY_PRICE = 4;
     
+    /** A constant that encodes the rarity of a listed item. */
+    public static final int RARITY_PLENTIFUL = 1;
+    /** A constant that encodes the rarity of a listed item. */
+    public static final int RARITY_COMMON = 2;
+    /** A constant that encodes the rarity of a listed item. */
+    public static final int RARITY_NORMAL = 3;
+    /** A constant that encodes the rarity of a listed item. */
+    public static final int RARITY_UNCOMMON = 4;
+    /** A constant that encodes the rarity of a listed item. */
+    public static final int RARITY_RARE = 5;
+
     /** The item being listed. */
     public Item item;
 
@@ -32,6 +48,12 @@ public class CatalogListing
     /** The creator of the item. */
     public MemberName creator;
 
-    /** The current price of the item. */
-    public int price;
+    /** The amount of flow it costs to purchase this item, if it's listed, else zero. */
+    public int flowCost;
+    
+    /** The amount of gold it costs to purchase this item, if it's listed, else zero. */
+    public int goldCost;
+
+    /** The rarity of this item, if it's listed, else zero. */
+    public int rarity;
 }
