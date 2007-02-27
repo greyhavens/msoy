@@ -11,6 +11,7 @@ import java.util.Collection;
 import com.samskivert.io.PersistenceException;
 
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
@@ -234,8 +235,17 @@ public class FlowRepository extends DepotRepository
         }
 
         String op = grant ? "+" : "-";
-        // TODO: Cache Invalidation
-        int mods = updateLiteral(MemberRecord.class, new Where(index, key), null,
+
+        Where where;
+        if (MemberRecord.MEMBER_ID.equals(index)) {
+            Key whereKey = new Key<MemberRecord>(MemberRecord.class, MemberRecord.MEMBER_ID, key);
+            _ctx.cacheInvalidate(whereKey);
+            where = whereKey;
+        } else {
+            // TODO: Brute force cache invalidation? Urgh.
+            where = new Where(index, key);
+        }
+        int mods = updateLiteral(MemberRecord.class, where, null,
                                  MemberRecord.FLOW, MemberRecord.FLOW + op + amount);
         if (mods == 0) {
             throw new PersistenceException(
