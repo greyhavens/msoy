@@ -10,28 +10,30 @@ import flash.utils.Timer;
 
 public class TimingBar extends Sprite
 {
-    public function TimingBar (width :int, height :int, pixelsPerMs :Number)
+    public function TimingBar (width :int, height :int, msPerBeat :Number)
     {
         _width = width;
-        _pixelsPerMs = pixelsPerMs;
+        _pixelsPerMs = _width / msPerBeat;
 
         // draw the bar
         with (graphics) {
             // the background
-            beginFill(0xFFFFFF);
+            beginFill(0);
             drawRect(0, 0, width, height);
             endFill();
 
             // the border
-            lineStyle(2);
+            lineStyle(2, 0xFFFFFF);
             drawRect(0, 0, width, height);
 
             // the red zones!
             lineStyle(0, 0, 0);
-            for (var ww :int = 5; ww >= 1; ww--) {
+
+            var target :Number = width * TARGET_AREA;
+            for (var ww :int = 8; ww >= 1; ww--) {
                 beginFill((0xFF / ww) << 16); // redness
                 var extent :Number = ww * 3;
-                drawRect(width/2 - extent, 0, extent * 2, height);
+                drawRect(target - extent/2, 0, extent, height);
                 endFill();
             }
         }
@@ -46,33 +48,36 @@ public class TimingBar extends Sprite
         addChild(_needle);
         
         // set up a starting needle position
-        _needle.x = Math.random() * width;
-        trace("Picked starting position: " + _needle.x);
-        _direction = 1;
-        _lastStamp = getTimer();
+        _needle.x = 0;
+        _origStamp = getTimer();
 
         addEventListener(Event.ENTER_FRAME, repositionNeedle);
     }
 
     /**
-     * Stop the needle, and return the nearness to the center,
-     * expressed as a value from 0 - 1.
+     * Check the needle's closeness to the target area.
+     * Calling this method has the side-effect of creating a visual
+     * representation of where the needle stopped.
+     * The closeness is returned as a value from 0 - 1.
      */
-    public function stopNeedle () :Number
+    public function checkNeedle () :Number
     {
-        removeEventListener(Event.ENTER_FRAME, repositionNeedle);
         repositionNeedle(); // one last update
-        return 1 - (Math.abs(_width/2 - _needle.x) / (_width/2));
-    }
 
-    /**
-     * Fade out after we're no longer important.
-     */
-    public function fadeOut () :void
-    {
-        _fadeTimer = new Timer(200);
-        _fadeTimer.addEventListener(TimerEvent.TIMER, handleFadeTick);
-        _fadeTimer.start();
+        if (_oldNeedle != null) {
+            removeChild(_oldNeedle);
+        }
+        _oldNeedle = new Sprite();
+        with (_oldNeedle.graphics) {
+            lineStyle(5, 0x0000FF);
+            moveTo(0, 0);
+            lineTo(0, height);
+        }
+        _oldNeedle.x = _needle.x;
+        addChild(_oldNeedle);
+
+        var target :Number = _width * TARGET_AREA;
+        return 1 - (Math.abs(target - _needle.x) / target);
     }
 
     /**
@@ -82,38 +87,10 @@ public class TimingBar extends Sprite
     protected function repositionNeedle (event :Object = null) :void
     {
         var curStamp :Number = getTimer();
-        var elapsed :Number = curStamp - _lastStamp;
+        // always compare to the original for max accuracy
+        var elapsed :Number = curStamp - _origStamp;
 
-        var pixelsToMove :Number = _pixelsPerMs * elapsed;
-        trace("pixelsToMove: " + pixelsToMove);
-        var newX :Number = _needle.x + (_direction * pixelsToMove);
-        while (newX < 0 || newX > _width) {
-            _direction *= -1;
-            // fold it over
-            if (newX < 0) {
-                newX = 0 - newX;
-            } else {
-                newX = (_width * 2) - newX;
-            }
-        }
-        trace("Repositioning to " + newX);
-        _needle.x = newX;
-
-        // finally,
-        _lastStamp = curStamp;
-    }
-
-    protected function handleFadeTick (event :TimerEvent) :void
-    {
-        this.alpha = Math.max(0, this.alpha - (1/25));
-        if (parent == null || alpha == 0) {
-            _fadeTimer.stop();
-            if (parent != null) {
-                parent.removeChild(this);
-            }
-        }
-
-        event.updateAfterEvent(); // flash blows
+        _needle.x = (_pixelsPerMs * elapsed) % _width;
     }
 
     protected var _width :Number;
@@ -122,11 +99,10 @@ public class TimingBar extends Sprite
 
     protected var _needle :Sprite;
 
-    protected var _lastStamp :Number;
+    protected var _oldNeedle :Sprite;
 
-    protected var _direction :int;
+    protected var _origStamp :Number;
 
-    /** A timer to fade this out. */
-    protected var _fadeTimer :Timer;
+    protected static const TARGET_AREA :Number = .85;
 }
 }

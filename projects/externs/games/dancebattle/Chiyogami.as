@@ -26,7 +26,7 @@ import com.threerings.util.FPSDisplay;
 import minigames.keyjam.KeyJam;
 
 
-[SWF(width="500", height="700")]
+[SWF(width="500", height="700", frameRate="120")]
 public class Chiyogami extends Sprite
 {
     public function Chiyogami ()
@@ -74,7 +74,7 @@ public class Chiyogami extends Sprite
         _media.y = (500 - _media.height) / 2;
         addChild(_media);
 
-        var minigame :KeyJam = new KeyJam();
+        var minigame :KeyJam = new KeyJam(_millisPerBeat);
         minigame.y = 500;
         addChild(minigame);
 
@@ -196,9 +196,9 @@ public class Chiyogami extends Sprite
 
     protected var _bossController :BossController = new BossController();
 
-    //protected static const BPM :Number = 115.4; // for fetts-vette
+    protected static const BPM :Number = 115.4; // for fetts-vette
     //protected static const BPM :Number = 73.0; // for BollWeevil
-    protected static const BPM :Number = 140.2; // for tarzan
+    //protected static const BPM :Number = 140.2; // for tarzan
 
     protected var _millisPerBeat :Number = 60 * 1000 / BPM;
 
@@ -216,9 +216,9 @@ public class Chiyogami extends Sprite
 //    protected var AVATAR_2 :Class = AVATAR_1;
 
     //[Embed(source="meg lee chin - heavy scene.mp3")]
-    //[Embed(source="5-fetts_vette.mp3")]
     //[Embed(source="BollWeevil.mp3")]
-    [Embed(source="tarzan.mp3")]
+    //[Embed(source="tarzan.mp3")]
+    [Embed(source="5-fetts_vette.mp3")]
     protected var MUSIC :Class;
 
     protected static const DANCE_AMPLITUDE :int = 50;

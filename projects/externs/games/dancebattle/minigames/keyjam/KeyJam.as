@@ -8,10 +8,10 @@ import flash.text.TextField;
 
 import flash.ui.Keyboard;
 
-[SWF(width="400", height="200")]
+[SWF(width="500", height="200")]
 public class KeyJam extends Sprite
 {
-    public function KeyJam ()
+    public function KeyJam (millisPerBeat :Number = 1000)
     {
         // Question: why does Sprite claim to generate key events when
         // I have never seen it capable of doing so? Flash blows.
@@ -29,6 +29,10 @@ public class KeyJam extends Sprite
         _label.height = _label.textHeight + 4; // flash blows: really
         _label.y = 200 - _label.height;
         addChild(_label);
+
+        _timingBar = new TimingBar(500, 20, millisPerBeat);
+        _timingBar.y = 100;
+        addChild(_timingBar);
 
         addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
 
@@ -61,7 +65,6 @@ public class KeyJam extends Sprite
     protected function handleKeyDown (event :KeyboardEvent) :void
     {
         var code :int = event.keyCode;
-        trace("Keycode pressed: " + code);
         if (_seqIndex < _keySprites.length) {
             // see if the key pressed is the correct next one in the sequence
             var keySprite :KeySprite = (_keySprites[_seqIndex] as KeySprite);
@@ -69,9 +72,6 @@ public class KeyJam extends Sprite
                 // yay
                 keySprite.setHit(true);
                 _seqIndex++;
-                if (_seqIndex == _keySprites.length) {
-                    startTimingBar();
-                }
 
             } else {
                 // uh-ok, they booched it!
@@ -101,12 +101,6 @@ public class KeyJam extends Sprite
             keySprite.setHit(false);
         }
 
-        // if the timing bar was up, they lose it
-        if (_timingBar != null) {
-            removeChild(_timingBar);
-            _timingBar = null;
-        }
-
         _booches++;
         _label.setText("Oh, ye booched it!", 5);
     }
@@ -123,20 +117,13 @@ public class KeyJam extends Sprite
         return seq;
     }
 
-    protected function startTimingBar () :void
-    {
-        _timingBar = new TimingBar(400, 20, (_level + 1) / 10);
-        _timingBar.y = 100;
-        addChild(_timingBar);
-    }
-
     /**
      * The user hit the space bar after duping the sequence, let's
      * see how they did.
      */
     protected function finishLevel () :void
     {
-        var result :Number = _timingBar.stopNeedle();
+        var result :Number = _timingBar.checkNeedle();
         trace("Result: " + result);
 
         var feedback :String;
@@ -167,8 +154,6 @@ public class KeyJam extends Sprite
 
         // issue feedback, fade out the timer
         _label.setText(feedback, 5);
-        _timingBar.fadeOut();
-        _timingBar = null; // it's still our child, but forget about it
 
         // TODO: Scoring
 
@@ -192,7 +177,7 @@ public class KeyJam extends Sprite
     /** A label where we give encouragement and ridicule to yon user. */
     protected var _label :ClearingTextField;
 
-    /** The current timing bar, if any. */
+    /** The timing bar. */
     protected var _timingBar :TimingBar;
 
     protected static const PAD :int = 10;
