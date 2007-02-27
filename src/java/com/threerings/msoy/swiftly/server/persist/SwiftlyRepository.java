@@ -76,7 +76,6 @@ public class SwiftlyRepository extends DepotRepository
         record.ownerId = memberId;
         record.projectType = projectType;
         record.storageId = storageId;
-        // TODO:
         record.remixable = remixable;
         record.creationDate = new Timestamp(System.currentTimeMillis());
 
