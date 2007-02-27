@@ -68,7 +68,7 @@ public class ProjectSelectionPanel extends VerticalPanel
         });
         for (int i = 0; i < SwiftlyProject.PROJECT_TYPES.length; i++) {
             byte type = SwiftlyProject.PROJECT_TYPES[i];
-            _projectTypes.addItem(CSwiftly.dmsgs.getString("pItemType" + type),
+            _projectTypes.addItem(CSwiftly.dmsgs.getString("itemType" + type),
                 String.valueOf(type));
         }
         updateSelectedProjectType();
