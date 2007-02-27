@@ -538,9 +538,14 @@ public class MemberManager
     public void spendFlow (final MemberName member, final int amount,
                            final UserAction spendAction, final String details)
     {
+        // if the member is logged on, make sure we can update their flow
+        final MemberObject mObj = MsoyServer.lookupMember(member);
         MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
                 _memberRepo.getFlowRepository().spendFlow(member.getMemberId(), amount);
+                if (mObj != null) {
+                    _flow = _memberRepo.loadMember(member.getMemberId()).flow;
+                }
             }
             public void handleSuccess () {
                 flowLog.info(System.currentTimeMillis() + " " + member.getMemberId() + " S " +
@@ -548,15 +553,15 @@ public class MemberManager
                              (details != null ? " " + details : ""));
                 // if the member is logged on, update their object
                 // TODO: distributed considerations
-                MemberObject mObj = MsoyServer.lookupMember(member);
                 if (mObj != null) {
-                    mObj.setFlow(mObj.flow - amount);
+                    mObj.setFlow(_flow);
                 }
             }
             public void handleFailure (Exception pe) {
                 log.warning("Unable to spend flow [member=" + member + ", spendAction=" +
                             spendAction + ", amount=" + amount + ", details=" + details + "]");
             }
+            public int _flow;
         });
     }
 
