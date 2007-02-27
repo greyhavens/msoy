@@ -51,6 +51,7 @@ public class ProjectEdit extends BorderedDialog
         _project = project;
         _listener = listener;
         _amOwner = (CSwiftly.creds.getMemberId() == project.ownerId);
+        setStyleName("projectEdit");
 
         VerticalPanel contents = (VerticalPanel)_contents;
         _header.add(createTitleLabel(_project.projectName, "ProjectName"));
@@ -84,10 +85,12 @@ public class ProjectEdit extends BorderedDialog
         // Add collaborators button if project owner
         if (_amOwner) {
             _collabMenuPanel = new PopupPanel(true);
+            _collabMenuPanel.setStyleName("projectEdit");
             // MenuBar(true) creates a vertical menu
             _collabMenu = new MenuBar(true);
             _collabMenuPanel.add(_collabMenu);
             final Label addCollabs = new Label(CSwiftly.msgs.addCollaborators());
+            addCollabs.addStyleName("LabelLink");
             addCollabs.addMouseListener(new MouseListener() {
                 public void onMouseDown (Widget sender, int x, int y) {
                     updateCollabMenu();
@@ -125,7 +128,6 @@ public class ProjectEdit extends BorderedDialog
     public Widget createContents ()
     {
         VerticalPanel contents = new VerticalPanel();
-        contents.setStyleName("projectEdit");
         return contents;
     }
 
@@ -170,6 +172,7 @@ public class ProjectEdit extends BorderedDialog
                         MenuBar menu = getOwnerMenuBar(name, collabMenuPanel);
                         collabMenuPanel.add(menu);
                         final InlineLabel collaborator = new InlineLabel(name.toString());
+                        collaborator.addStyleName("LabelLink");
                         // use a MouseListener instead of ClickListener to get at the mouse (x,y)
                         collaborator.addMouseListener(new MouseListener() {
                             public void onMouseDown (Widget sender, int x, int y) {
@@ -246,7 +249,17 @@ public class ProjectEdit extends BorderedDialog
                     if (_collaboratorsSet.contains(friend.name.toString())) {
                         continue;
                     }
-                    foundFriend = true;
+                    // add a menu title element as the first element
+                    if (!foundFriend) {
+                        MenuItem title = new MenuItem(CSwiftly.msgs.friends(), new Command() {
+                            public void execute() {
+                                // noop
+                            }
+                        });
+                        title.addStyleName("MenuTitle");
+                        _collabMenu.addItem(title);
+                        foundFriend = true;
+                    }
                     MenuItem member = new MenuItem(friend.name.toString(), new Command() {
                         public void execute() {
                             addCollaborator(friend.name.getMemberId());

@@ -96,6 +96,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String noFriends();
 
   /**
+   * Translated "Your friends:".
+   * 
+   * @return translated "Your friends:"
+   * @gwt.key friends
+   */
+  String friends();
+
+  /**
    * Translated "Add Collaborators".
    * 
    * @return translated "Add Collaborators"
