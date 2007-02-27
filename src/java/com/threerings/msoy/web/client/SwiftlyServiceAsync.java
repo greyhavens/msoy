@@ -27,7 +27,7 @@ public interface SwiftlyServiceAsync
     /**
      * The asynchronous version of {@link SwiftlyService#createProject}.
      */
-    public void createProject (WebCreds creds, String projectName, int projectType,
+    public void createProject (WebCreds creds, String projectName, byte projectType,
                                boolean remixable, AsyncCallback callback);
 
     /**

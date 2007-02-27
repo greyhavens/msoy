@@ -75,11 +75,12 @@ public class SwiftlyServlet extends MsoyServiceServlet
     }
 
     // from SwiftlyService
-    public SwiftlyProject createProject (WebCreds creds, String projectName, int projectType,
+    public SwiftlyProject createProject (WebCreds creds, String projectName, byte projectType,
                                          boolean remixable)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser(creds);
+        SwiftlyProject project;
 
         // TODO Argument Validation
         /*
@@ -89,15 +90,16 @@ public class SwiftlyServlet extends MsoyServiceServlet
         */
 
         try {
-            SwiftlyProject project = MsoyServer.swiftlyRepo.createProject(
+            project = MsoyServer.swiftlyRepo.createProject(
                 memrec.memberId, projectName, projectType, remixable).toSwiftlyProject();
             // the creator is the first member of the collaborators
             MsoyServer.swiftlyRepo.joinCollaborators(project.projectId, memrec.memberId); 
-            return project;
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Creating new project failed.", pe);
             throw new ServiceException(ServiceException.INTERNAL_ERROR);
         }
+
+        return project;
     }
 
     // from SwiftlyService

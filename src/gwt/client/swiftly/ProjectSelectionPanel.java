@@ -65,14 +65,15 @@ public class ProjectSelectionPanel extends VerticalPanel
                 if (tx == -1) {
                     return;
                 }
-                _selectedType = Integer.parseInt(_projectTypes.getValue(tx));
+                _selectedProjectType = Byte.parseByte(_projectTypes.getValue(tx));
             }
         });
-        /* TODO: gwt does not accept this syntax, fix
-        for (project : SwiftlyProject.PROJECT_TYPES) {
-            _projectTypes.addItem(project, project);
+
+        // XXX: Provide some human readable name for the typeId
+        for (int i = 0; i < SwiftlyProject.PROJECT_TYPES.length; i++) {
+            byte type = SwiftlyProject.PROJECT_TYPES[i];
+            _projectTypes.addItem(Byte.toString(type), Byte.toString(type));
         }
-        */
 
         // input fields to create a new project
         final TextBox projectName = new TextBox();
@@ -116,7 +117,7 @@ public class ProjectSelectionPanel extends VerticalPanel
 
     protected void createProject (final String projectName)
     {
-        CSwiftly.swiftlysvc.createProject(CSwiftly.creds, projectName, _selectedType,
+        CSwiftly.swiftlysvc.createProject(CSwiftly.creds, projectName, _selectedProjectType,
                                           _remixable.isChecked(), new AsyncCallback() {
             public void onSuccess (Object result) {
                 CSwiftly.log("Project created: " + projectName);
@@ -199,7 +200,7 @@ public class ProjectSelectionPanel extends VerticalPanel
     protected HorizontalPanel _membersHeader;
     protected HorizontalPanel _remixableHeader;
     protected HorizontalPanel _errorContainer;
-    protected int _selectedType;
+    protected byte _selectedProjectType;
 
 
 }

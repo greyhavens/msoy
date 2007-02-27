@@ -67,7 +67,7 @@ public class SwiftlyRepository extends DepotRepository
      * Stores the supplied project record in the database, overwriting previously
      * stored project data.
      */
-    public SwiftlyProjectRecord createProject (int memberId, String projectName, int projectType,
+    public SwiftlyProjectRecord createProject (int memberId, String projectName, byte projectType,
                                                boolean remixable)
         throws PersistenceException
     {
