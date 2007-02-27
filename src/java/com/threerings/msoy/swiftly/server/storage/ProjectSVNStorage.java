@@ -220,7 +220,8 @@ public class ProjectSVNStorage
         }
 
         try {
-            return recurseTree(svnRepo, null, null);
+            PathElement root = PathElement.createRoot(_projectRecord.projectName);
+            return recurseTree(svnRepo, root, null);
         } catch (SVNException svne) {
             throw new ProjectStorageException.InternalError("A subversion failure occured while" +
                 " recursing over the directory tree: " + svne, svne);
@@ -253,11 +254,7 @@ public class ProjectSVNStorage
             result = new ArrayList<PathElement>();
         }
 
-        if (parent == null) {
-            path = "";
-        } else {
-            path = parent.getAbsolutePath();
-        }
+        path = parent.getAbsolutePath();
 
         @SuppressWarnings("unchecked")
         Collection<SVNDirEntry> entries = (Collection<SVNDirEntry>) svnRepo.getDir(path, -1, null, (Collection)null);

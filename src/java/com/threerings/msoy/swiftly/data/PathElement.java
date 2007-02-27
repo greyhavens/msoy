@@ -82,8 +82,13 @@ public class PathElement
         // This is a relatively expensive implementation, but then, it always is
 
         // We build up a list of parent elements, reverse the list, append them all
-        // together and return the result.
+        // together and return the result. We skip the root node, since it doesn't actually
+        // represent the path.
         for (node = this; node != null; node = node.getParent()) {
+            if (node.getType() == Type.ROOT) {
+                continue;
+            }
+
             pathList.add(node);
         }
         Collections.reverse(pathList);

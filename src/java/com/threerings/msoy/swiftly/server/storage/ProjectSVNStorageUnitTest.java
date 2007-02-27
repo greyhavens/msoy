@@ -88,7 +88,9 @@ public class ProjectSVNStorageUnitTest extends TestCase
         for (PathElement node : projectTree) {
             if (node.getName().equals("test.jpg")) {
                 foundFile = true;
-                assertEquals(node.getParent().getName(), "media");
+                PathElement parent = node.getParent();
+                assertEquals("media", parent.getName());
+                assertEquals(PathElement.Type.ROOT, parent.getParent().getType());
             }
         }
         assertTrue("The returned pathElement list does not contain the expected test.jpg file",
