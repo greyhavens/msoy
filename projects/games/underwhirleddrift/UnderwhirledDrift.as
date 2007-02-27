@@ -151,6 +151,9 @@ public class UnderwhirledDrift extends Sprite
             }*/
         if (event.name == "raceStarted") {
             _raceStarted = true;
+            var obj :Object = _kart.getUpdate();
+            obj.playerId = _gameCtrl.getMyId();
+            _messageQueue.sendMessage("positionUpdate", obj);
         } else if (event.name == "positionUpdate") {
             var playerId :int = event.value.playerId;
             if (playerId != _gameCtrl.getMyId()) {
