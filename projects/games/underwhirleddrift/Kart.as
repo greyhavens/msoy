@@ -106,64 +106,27 @@ public class Kart extends KartSprite
         }
 
         // alter camera location
-        var gasAccel :Number = ACCELERATION_GAS;
-        var coastAccel :Number = ACCELERATION_COAST;
-        var brakeAccel :Number = ACCELERATION_BRAKE;
-        var minSpeed :Number = SPEED_MIN;
-        var maxSpeed :Number = SPEED_MAX;
+        var speedConfig :Object = {
+            gasAccel: ACCELERATION_GAS,
+            coastAccel: ACCELERATION_COAST,
+            brakeAccel: ACCELERATION_BRAKE,
+            minSpeed: SPEED_MIN,
+            maxSpeed: SPEED_MAX
+        };
         if (!_ground.drivingOnRoad()) {
-            gasAccel *= TERRAIN_SPEED_FACTOR;
-            coastAccel /= TERRAIN_SPEED_FACTOR;
-            brakeAccel /= TERRAIN_SPEED_FACTOR;
-            minSpeed *= TERRAIN_SPEED_FACTOR;
-            maxSpeed *= TERRAIN_SPEED_FACTOR;
+            speedConfig.gasAccel *= TERRAIN_SPEED_FACTOR;
+            speedConfig.coastAccel /= TERRAIN_SPEED_FACTOR;
+            speedConfig.brakeAccel /= TERRAIN_SPEED_FACTOR;
+            speedConfig.minSpeed *= TERRAIN_SPEED_FACTOR;
+            speedConfig.maxSpeed *= TERRAIN_SPEED_FACTOR;
         }
         // TODO: this will clearly need more intelligent processing
         //if (_ground.drivingIntoWall()) {
             //_currentSpeed = 0;
         //}
-        var rotation :Matrix;
-        if (_movement & MOVEMENT_FORWARD) {
-            if (_currentSpeed >= 0) {
-                _currentSpeed = Math.min(maxSpeed, _currentSpeed + gasAccel);
-            } else { 
-                _currentSpeed += brakeAccel;
-            }
-        } else if (_movement & MOVEMENT_BACKWARD) {
-            if (_currentSpeed <= 0 && !_braking) {
-                _currentSpeed = Math.max(minSpeed, _currentSpeed - gasAccel);
-            } else {
-                _currentSpeed = Math.max(0, _currentSpeed - gasAccel);
-            }
-        } else {
-            if ((_currentSpeed > coastAccel && _currentSpeed > 0) || 
-                (_currentSpeed < coastAccel && _currentSpeed < 0)) {
-                if (_currentSpeed > 0) {
-                    _currentSpeed -= coastAccel;
-                } else {
-                    _currentSpeed += coastAccel;
-                }
-            } else {
-                _currentSpeed = 0;
-            }
-        }
-        rotation = new Matrix();
-        rotation.rotate(_camera.angle);
-        if ((_movement & MOVEMENT_DRIFT) && _jumpFrameCount == 0) { 
-            var driftSpeed :Number = _currentSpeed * DRIFT_Y_SPEED_FACTOR;
-            if (_movement & MOVEMENT_RIGHT) {
-                driftSpeed *= -1;
-            }
-            _camera.position = _camera.position.add(rotation.transformPoint(new Point(
-                driftSpeed, 0)));
-            driftSpeed = _currentSpeed * DRIFT_X_SPEED_FACTOR;
-            _camera.position = _camera.position.add(rotation.transformPoint(new Point(
-                0, -driftSpeed)));
-        } else {
-            _camera.position = _camera.position.add(rotation.transformPoint(new Point(0, 
-                -_currentSpeed)));
-        }
-
+        //_currentAngle = _camera.angle;
+        _camera.position = calculateNewPosition(speedConfig, _movement, _camera.position, 
+            _camera.angle);
         // deal with a jump
         if (_jumpFrameCount > 0) {
             _jumpFrameCount--;
@@ -189,54 +152,20 @@ public class Kart extends KartSprite
         }
     }
 
-    /** Bit flags to indicate which movement keys are pressed */
-    protected var _movement :int = 0;
-    
-    /** a user must lift their finger and re-apply in order to go backwards after braking */
-    protected var _braking :Boolean = false;
-
+   
     /** reference to the camera object */
     protected var _camera :Camera;
 
     /** reference to the ground object */
     protected var _ground :Ground;
 
-    /** Kart's current speed */
-    protected var _currentSpeed :Number = 0;
-
-    /** Kart's current turn angle */
-    protected var _currentAngle :Number = 0;
-
-    /** Frames left before the jump is over */
-    protected var _jumpFrameCount :int = 0;
-
     /** turning constants */
     protected static const TURN_VIEW_ANGLE :int = 15; // in degrees
     protected static const DRIFT_VIEW_ANGLE :int = 45; // in degrees
 
-    /** constants to control kart motion properties */
-    protected static const SPEED_MAX :int = 15; // 25;
-    protected static const SPEED_MIN :int = -5;
-    protected static const ACCELERATION_GAS :Number = 0.3; //0.5;
-    protected static const ACCELERATION_BRAKE :Number = 2;
-    protected static const ACCELERATION_COAST :Number = 0.2; //0.5;
-    protected static const MAX_TURN_ANGLE :Number = 0.0524; // 3 degrees
-    protected static const TURN_ACCELERATION :Number = 0.015;
-
-    /** flags for the _movement bit flag variable */
-    protected static const MOVEMENT_FORWARD :int = 0x01;
-    protected static const MOVEMENT_BACKWARD :int = 0x02;
-    protected static const MOVEMENT_LEFT :int = 0x04;
-    protected static const MOVEMENT_RIGHT :int = 0x08;
-    protected static const MOVEMENT_DRIFT :int = 0x10;
-
     /** values to control jumping */
     protected static const JUMP_DURATION :int = 3;
     protected static const JUMP_HEIGHT :int = 15;
-
-    /** values to control drifting */
-    protected static const DRIFT_X_SPEED_FACTOR :Number = 0.2;
-    protected static const DRIFT_Y_SPEED_FACTOR :Number = 0.5;
 
     /** Factor to cut speed by when driving off-road */
     protected static const TERRAIN_SPEED_FACTOR :Number = 0.2;

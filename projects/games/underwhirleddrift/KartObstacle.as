@@ -76,7 +76,5 @@ public class KartObstacle extends KartSprite
     }
     
     protected var _currentPosition :Point;
-    protected var _currentAngle :Number;
-    protected var _currentSpeed :Number;
 }
 }
