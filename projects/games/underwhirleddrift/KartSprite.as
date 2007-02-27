@@ -10,9 +10,14 @@ public class KartSprite extends Sprite
     {
         _kart = new kartCls();
         _kart.gotoAndStop(1);
+        addChild(_kart);
     }
 
-    /** Kart swf */
+    /** light kart swf */
+    [Embed(source='rsrc/lightkart.swf#kart')]
+    protected static const KART_LIGHT :Class;
+
+    /** medium kart swf */
     [Embed(source='rsrc/mediumkart.swf#kart')]
     protected static const KART_MEDIUM :Class;
 

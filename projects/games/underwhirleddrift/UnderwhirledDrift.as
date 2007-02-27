@@ -83,8 +83,6 @@ public class UnderwhirledDrift extends Sprite
         _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
 
         _coord = new HostCoordinator(_gameCtrl);
-        _coord.addEventListener(HostEvent.CLAIMED, hostEventHandler);
-        _coord.addEventListener(HostEvent.CHANGED, hostEventHandler);
 
         // names obove characters is good, but they should fade out after the race 
         // starts
@@ -108,7 +106,7 @@ public class UnderwhirledDrift extends Sprite
                 var playerIds :Array = _gameCtrl.seating.getPlayerIds();
                 ArrayUtil.shuffle(playerIds);
                 for (var ii :int = 0; ii < playerIds.length; ii++) {
-                    playerIds[ii] = { id: playerIds[ii], position: ii }
+                    playerIds[ii] = { id: playerIds[ii], position: ii };
                 }
                 _gameCtrl.set("playerPositions", playerIds);
                 
@@ -166,17 +164,6 @@ public class UnderwhirledDrift extends Sprite
             var playerId :int = event.value.playerId;
             if (playerId != _gameCtrl.getMyId()) {
                 (_opponentKarts.get(playerId) as KartObstacle).setPosition(event.value);
-            }
-        }
-    }
-
-    protected function hostEventHandler (event :HostEvent)  :void
-    {
-        if (_coord.status == HostCoordinator.STATUS_HOST) {
-            if (event.type == HostEvent.CLAIMED) {
-                // Do nothing for now... hostEventHandler may not be necessry for UD
-            } else if (event.type == HostEvent.CHANGED) {
-                // Do nothing for now
             }
         }
     }

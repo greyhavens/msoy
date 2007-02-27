@@ -130,7 +130,7 @@ public class Ground extends Sprite
             }
         }
         if (_scenery != null) {
-            _scenery.updateItems(translateRotate, _camera.distance, _camera.height);
+            _scenery.updateItems(translateRotate, _camera.distance, _camera.height, _camera.position);
         }
     }
 

@@ -28,12 +28,9 @@ public class KartObstacle extends KartSprite
         return _currentPosition;
     }
 
-    /**
-     * the sprite field is also read-only
-     */
     public function get sprite () :Sprite
     {
-        return _kart;   
+        return this;
     }
 
     /**
@@ -42,8 +39,29 @@ public class KartObstacle extends KartSprite
     public function setPosition (obj :Object) :void
     {
         _currentPosition = new Point(obj.posX, obj.posY);
+        _currentAngle = obj.angle;
+    }
+
+    /**
+     * Update the viewed angle of this kart sprite, as seen from the camera, and with regard
+     * to the opponent's view angle.
+     */
+    public function updateAngleFrom (cameraLocation :Point) :void
+    {
+        var angleFrom :Number = Math.atan2(_currentPosition.y - cameraLocation.y,
+            _currentPosition.x - cameraLocation.x) * 180 / Math.PI;
+        angleFrom += _currentAngle * 180 / Math.PI;
+        angleFrom += 90;
+        while (angleFrom < 0) {
+            angleFrom += 360;
+        }
+        while (angleFrom >= 360) {
+            angleFrom -= 360;
+        }
+        _kart.gotoAndStop(Math.ceil(angleFrom));
     }
     
     protected var _currentPosition :Point;
+    protected var _currentAngle :Number;
 }
 }

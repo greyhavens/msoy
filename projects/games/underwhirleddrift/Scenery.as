@@ -23,7 +23,7 @@ public class Scenery extends Sprite
      * Called when the objects should be re-scaled for display in a new frame.
      */
     public function updateItems (translateRotate :Matrix, distance :Number,
-        cameraHeight :Number) :void
+        cameraHeight :Number, cameraPosition :Point) :void
     {
         var thisTransform :Matrix = new Matrix();
         var minScale :Number = 1 / cameraHeight;
@@ -50,14 +50,16 @@ public class Scenery extends Sprite
                 // position item
                 _items[ii].sprite.x = _items[ii].transformedOrigin.x;
                 _items[ii].sprite.y = _items[ii].transformedOrigin.y;
-                // if this is a kart, offset its y position accordingly
-                if (_items[ii] is KartObstacle) {
-                    _items[ii].sprite.y += UnderwhirledDrift.KART_OFFSET * 
-                        (scaleFactor / maxScale);
-                }
                 // scale item
                 _items[ii].sprite.width = _items[ii].startWidth * scaleFactor;
                 _items[ii].sprite.height = _items[ii].startHeight * scaleFactor;
+                // some special handling for karts
+                if (_items[ii] is KartObstacle) {
+                    var kart :KartObstacle = _items[ii] as KartObstacle;
+                    kart.sprite.y += UnderwhirledDrift.KART_OFFSET * 
+                        (scaleFactor / maxScale);
+                    kart.updateAngleFrom(cameraPosition);
+                }
                 // set correct index
                 setChildIndex(_items[ii].sprite, ii);
             } else {

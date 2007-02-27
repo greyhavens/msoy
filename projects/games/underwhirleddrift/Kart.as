@@ -10,8 +10,6 @@ import flash.utils.describeType;
 
 import mx.core.MovieClipAsset;
 
-import com.threerings.ezgame.EZGameControl;
-
 public class Kart extends KartSprite
 {
     public function Kart (camera :Camera, ground :Ground) 
@@ -20,7 +18,6 @@ public class Kart extends KartSprite
         super(KART_MEDIUM);
         _camera = camera;
         _ground = ground;
-        addChild(_kart);
 
         addEventListener(Event.ENTER_FRAME, enterFrame);
     }
