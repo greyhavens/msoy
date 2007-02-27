@@ -48,34 +48,30 @@ public class UnderwhirledDrift extends Sprite
 
     public function UnderwhirledDrift ()
     {
+        var gameSprite :Sprite = new Sprite();
         var masker :Shape = new Shape();
         masker.graphics.beginFill(0xFFFFFF);
         masker.graphics.drawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
         masker.graphics.endFill();
-        this.mask = masker;
-        addChild(masker);
+        gameSprite.mask = masker;
+        gameSprite.addChild(masker);
+        addChild(gameSprite);
 
         // "sky"
         var colorBackground :Shape = new Shape();
         colorBackground.graphics.beginFill(0x8888FF);
-        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, SKY_HEIGHT + 10);
+        colorBackground.graphics.drawRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);//SKY_HEIGHT + 10);
         colorBackground.graphics.endFill();
-        addChild(colorBackground);
+        gameSprite.addChild(colorBackground);
 
         var camera :Camera = new Camera();
 
         var ground :Ground = new Ground(camera);
         ground.y = SKY_HEIGHT;
-        addChild(ground);
+        gameSprite.addChild(ground);
 
         _level = LevelFactory.createLevel(0, ground);
         ground.setLevel(_level);
-
-        _kart = new Kart(camera, ground);
-        _kart.x = KART_LOCATION.x;
-        // tack on a few pixels to account for the front of the kart
-        _kart.y = KART_LOCATION.y + SKY_HEIGHT + KART_OFFSET;
-        addChild(_kart);
 
         _gameCtrl = new EZGameControl(this);
         _gameCtrl.registerListener(this);
@@ -83,6 +79,9 @@ public class UnderwhirledDrift extends Sprite
         _gameCtrl.addEventListener(KeyboardEvent.KEY_UP, keyEventHandler);
 
         _coord = new HostCoordinator(_gameCtrl);
+
+        var chooser :KartChooser = new KartChooser(this, gameSprite, camera, ground);
+        chooser.chooseKart();
 
         // names above characters is good, but they should fade out after the race 
         // starts
@@ -151,35 +150,46 @@ public class UnderwhirledDrift extends Sprite
         }
     }
 
+    public function setKart (kart :Kart) :void
+    {
+        _kart = kart;
+        _kart.x = KART_LOCATION.x;
+        // tack on a few pixels to account for the front of the kart
+        _kart.y = KART_LOCATION.y + SKY_HEIGHT + KART_OFFSET;
+        addChild(_kart);
+    }
+
     /** 
      * Handles KEY_DOWN. 
      */
     protected function keyEventHandler (event :KeyboardEvent) :void
     {
-        switch (event.keyCode) {
-        case Keyboard.UP:
-            _kart.moveForward(event.type == KeyboardEvent.KEY_DOWN);
-            break;
-        case Keyboard.DOWN:
-            _kart.moveBackward(event.type == KeyboardEvent.KEY_DOWN);
-            break;
-        case Keyboard.LEFT:
-            _kart.turnLeft(event.type == KeyboardEvent.KEY_DOWN);
-            break;
-        case Keyboard.RIGHT:
-            _kart.turnRight(event.type == KeyboardEvent.KEY_DOWN);
-            break;
-        case Keyboard.SPACE:
-            if (event.type == KeyboardEvent.KEY_DOWN) {
-                _kart.jump();
-            }
-            break;
-        case Keyboard.ENTER:
-            // TODO this will be controlled by a timer that starts everybody at the same time
-            _gameCtrl.sendMessage("raceStarted", true);
-            break;
-        default:
+        if (_kart != null) {
+            switch (event.keyCode) {
+            case Keyboard.UP:
+                _kart.moveForward(event.type == KeyboardEvent.KEY_DOWN);
+                break;
+            case Keyboard.DOWN:
+                _kart.moveBackward(event.type == KeyboardEvent.KEY_DOWN);
+                break;
+            case Keyboard.LEFT:
+                _kart.turnLeft(event.type == KeyboardEvent.KEY_DOWN);
+                break;
+            case Keyboard.RIGHT:
+                _kart.turnRight(event.type == KeyboardEvent.KEY_DOWN);
+                break;
+            case Keyboard.SPACE:
+                if (event.type == KeyboardEvent.KEY_DOWN) {
+                    _kart.jump();
+                    }
+                break;
+            case Keyboard.ENTER:
+                // TODO this will be controlled by a timer that starts everybody at the same time
+                _gameCtrl.sendMessage("raceStarted", true);
+                break;
+            default:
             // do nothing
+            }
         }
     }
 

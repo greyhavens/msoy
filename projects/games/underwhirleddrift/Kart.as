@@ -12,10 +12,9 @@ import mx.core.MovieClipAsset;
 
 public class Kart extends KartSprite
 {
-    public function Kart (camera :Camera, ground :Ground) 
+    public function Kart (kartType :String, camera :Camera, ground :Ground) 
     {
-        // this is our only available kart for now
-        super(KART_MEDIUM);
+        super(kartType);
         _camera = camera;
         _ground = ground;
 
