@@ -45,6 +45,7 @@ public class KartObstacle extends KartSprite
         _currentPosition = new Point(obj.posX, obj.posY);
         _currentAngle = obj.angle;
         _currentSpeed = obj.speed;
+        _movement = obj.movement;
     }
 
     /**

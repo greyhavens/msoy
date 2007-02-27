@@ -33,7 +33,8 @@ public class Kart extends KartSprite
             posX: loc.x,
             posY: loc.y,
             angle: _camera.angle,
-            speed: _currentSpeed
+            speed: _currentSpeed,
+            movement: _movement
         };
     }
 
