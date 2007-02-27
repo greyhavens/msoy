@@ -82,7 +82,6 @@ public class MemberRepository extends DepotRepository
                         MemberNameRecord.class, MemberNameRecord.MEMBER_ID, member.memberId));
             }
             public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
-                // TODO: To be fancy, construct & cache our own MemberFlowRecord here
             }
         });
 
