@@ -34,8 +34,8 @@ public class KartSprite extends Sprite
     /**
      * This is really only used by the subclasses, but its needed by both.
      */
-    protected function calculateNewPosition (speedConfig :Object, movement :int, 
-        position :Point, cameraAngle :Number) :Point
+    protected function calculateNewPosition (speedConfig :Object, position :Point, 
+        cameraAngle :Number) :Point
     {
         var rotation :Matrix;
         if (_movement & MOVEMENT_FORWARD) {
@@ -120,7 +120,6 @@ public class KartSprite extends Sprite
     protected var _braking :Boolean = false;
 
     protected var _currentSpeed :Number = 0;
-    protected var _currentAngle :Number = 0;
 
     /** Bit flags to indicate which movement keys are pressed */
     protected var _movement :int = 0;

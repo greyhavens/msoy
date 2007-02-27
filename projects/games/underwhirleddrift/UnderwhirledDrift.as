@@ -134,7 +134,9 @@ public class UnderwhirledDrift extends Sprite
                     }
                 }
             }
-            updateRaceStarted();
+            if (playerPositions.length != 1) {
+                updateRaceStarted();
+            }
         }
     }
 

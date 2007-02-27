@@ -29,7 +29,6 @@ public class KartObstacle extends KartSprite
      */
     public function get origin () :Point 
     {
-        // TODO update this with the real location of the opponent's kart
         return _currentPosition;
     }
 
@@ -71,10 +70,15 @@ public class KartObstacle extends KartSprite
     {
         var rotation :Matrix = new Matrix();
         rotation.rotate(_currentAngle);
-        _currentPosition = _currentPosition.add(rotation.transformPoint(new Point(0, 
-            -_currentSpeed)));
+        //_currentPosition = _currentPosition.add(rotation.transformPoint(new Point(0, 
+            //-_currentSpeed)));
+        // use all defaults in speedConfig for now
+        _currentPosition = calculateNewPosition({gasAccel: ACCELERATION_GAS, brakeAccel:
+            ACCELERATION_BRAKE, coastAccel: ACCELERATION_COAST, maxSpeed: SPEED_MAX,
+            minSpeed: SPEED_MIN}, _currentPosition, _currentAngle);
     }
     
     protected var _currentPosition :Point;
+    protected var _currentAngle :Number;
 }
 }

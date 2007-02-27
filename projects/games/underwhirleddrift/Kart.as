@@ -77,28 +77,28 @@ public class Kart extends KartSprite
         // alter camera angle
         if (_movement & (MOVEMENT_RIGHT | MOVEMENT_LEFT)) {
             if (_movement & MOVEMENT_RIGHT) {
-                _currentAngle = Math.min(MAX_TURN_ANGLE, _currentAngle + TURN_ACCELERATION);
+                _current3PAngle = Math.min(MAX_TURN_ANGLE, _current3PAngle + TURN_ACCELERATION);
             } else {
-                _currentAngle = Math.max(-MAX_TURN_ANGLE, _currentAngle - TURN_ACCELERATION);
+                _current3PAngle = Math.max(-MAX_TURN_ANGLE, _current3PAngle - TURN_ACCELERATION);
             }
         } else {
-            if (_currentAngle > 0) {
-                _currentAngle = Math.max (0, _currentAngle - TURN_ACCELERATION);
-            } else if (_currentAngle < 0) {
-                _currentAngle = Math.min (0, _currentAngle + TURN_ACCELERATION);
+            if (_current3PAngle > 0) {
+                _current3PAngle = Math.max (0, _current3PAngle - TURN_ACCELERATION);
+            } else if (_current3PAngle < 0) {
+                _current3PAngle = Math.min (0, _current3PAngle + TURN_ACCELERATION);
             }
         }
         if (_currentSpeed > 0) {
-            _camera.angle += _currentAngle;
+            _camera.angle += _current3PAngle;
         } else if (_currentSpeed < 0) {
-            _camera.angle -= _currentAngle;
+            _camera.angle -= _current3PAngle;
         }
         // update turn animation
         var max_view_angle :int = _movement & MOVEMENT_DRIFT ? DRIFT_VIEW_ANGLE : TURN_VIEW_ANGLE;
-        var frame :int = Math.ceil((Math.abs(_currentAngle) / MAX_TURN_ANGLE) * max_view_angle);
-        if (_currentAngle > 0) {
+        var frame :int = Math.ceil((Math.abs(_current3PAngle) / MAX_TURN_ANGLE) * max_view_angle);
+        if (_current3PAngle > 0) {
             frame = 360 - frame;
-        } else if (_currentAngle == 0) {
+        } else if (_current3PAngle == 0) {
             frame = 1;
         }
         if (_kart.currentFrame != frame) {
@@ -124,8 +124,7 @@ public class Kart extends KartSprite
         //if (_ground.drivingIntoWall()) {
             //_currentSpeed = 0;
         //}
-        //_currentAngle = _camera.angle;
-        _camera.position = calculateNewPosition(speedConfig, _movement, _camera.position, 
+        _camera.position = calculateNewPosition(speedConfig, _camera.position, 
             _camera.angle);
         // deal with a jump
         if (_jumpFrameCount > 0) {
@@ -158,6 +157,9 @@ public class Kart extends KartSprite
 
     /** reference to the ground object */
     protected var _ground :Ground;
+
+    /** The current angle viewed on the kart by a player in the 3rd person, i.e. the one driving */
+    protected var _current3PAngle :Number = 0;
 
     /** turning constants */
     protected static const TURN_VIEW_ANGLE :int = 15; // in degrees
