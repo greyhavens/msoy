@@ -27,6 +27,7 @@ import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.server.MsoyServer;
 
 import static com.threerings.msoy.Log.log;
 
@@ -182,7 +183,7 @@ public class FlowRepository extends DepotRepository
     public void spendFlow (int memberId, int amount)
         throws PersistenceException
     {
-        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, false);
+        updateFlow(memberId, amount, false);
     }
 
     /**
@@ -191,7 +192,7 @@ public class FlowRepository extends DepotRepository
     public void grantFlow (int memberId, int amount)
         throws PersistenceException
     {
-        updateFlow(MemberRecord.MEMBER_ID, memberId, amount, false);
+        updateFlow(memberId, amount, false);
     }
 
     /**
@@ -201,7 +202,13 @@ public class FlowRepository extends DepotRepository
     public void grantFlow (String accountName, int actionId, int amount)
         throws PersistenceException
     {
-        updateFlow(MemberRecord.ACCOUNT_NAME, accountName, amount, false);
+        MemberRecord record =
+            load(MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME, accountName));
+        if (record == null) {
+            throw new PersistenceException(
+                "Unknown member [accountName=" + accountName + ", actionId=" + actionId + "]");
+        }
+        updateFlow(record.memberId, amount, false);
     }
 
     /**
@@ -225,36 +232,29 @@ public class FlowRepository extends DepotRepository
 
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
-    protected void updateFlow (String index, Comparable key, int amount, boolean grant)
+    protected void updateFlow (int memberId, int amount, boolean grant)
         throws PersistenceException
     {
         String type = (grant ? "grant" : " spend");
         if (amount <= 0) {
             throw new PersistenceException(
-                "Illegal flow " + type + " [index=" + index + ", amount=" + amount + "]");
+                "Illegal flow " + type + " [memberId=" + memberId + ", amount=" + amount + "]");
         }
 
         String op = grant ? "+" : "-";
 
-        Where where;
-        if (MemberRecord.MEMBER_ID.equals(index)) {
-            Key whereKey = new Key<MemberRecord>(MemberRecord.class, MemberRecord.MEMBER_ID, key);
-            _ctx.cacheInvalidate(whereKey);
-            where = whereKey;
-        } else {
-            // TODO: Brute force cache invalidation? Urgh.
-            where = new Where(index, key);
-        }
-        int mods = updateLiteral(MemberRecord.class, where, null,
+        Key key = new Key<MemberRecord>(MemberRecord.class, MemberRecord.MEMBER_ID, memberId);
+        _ctx.cacheInvalidate(key);
+
+        int mods = updateLiteral(MemberRecord.class, key, null,
                                  MemberRecord.FLOW, MemberRecord.FLOW + op + amount);
         if (mods == 0) {
             throw new PersistenceException(
                 "Flow " + type + " modified zero rows " +
-                "[where=" + index + "=" + key + ", amount=" + amount + "]");
+                "[memberId" + memberId + ", amount=" + amount + "]");
         } else if (mods > 1) {
-            log.warning("Flow " + type + " modified multiple rows " +
-                        "[where=" + index + "=" + key + ", amount=" + amount +
-                        ", mods=" + mods + "].");
+            log.warning("Flow " + type + " modified multiple rows " + "[memberId=" + memberId +
+                        ", amount=" + amount +                 ", mods=" + mods + "].");
         }
         Date date = new Date(System.currentTimeMillis());
         
@@ -270,7 +270,7 @@ public class FlowRepository extends DepotRepository
                 if (again) {
                     throw new PersistenceException(
                         "Flow summary update modified zero rows after insertion " +
-                        "[where=" + index + "=" + key + ", amount=" + amount + "]");
+                        "[memberId=" + memberId + ", amount=" + amount + "]");
                 }
                 DailyFlowRecord summary = new DailyFlowRecord();
                 summary.date = date;
