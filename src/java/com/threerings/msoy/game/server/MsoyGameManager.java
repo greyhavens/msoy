@@ -87,6 +87,9 @@ public class MsoyGameManager extends EZGameManager
                 } catch (PersistenceException pe) {
                     log.log(Level.WARNING, "Failed to fetch game's anti-abuse factor [where=" +
                             where() + "]", pe);
+                    // if for some reason our anti-abuse mechanism is on the blink, let's eat
+                    // humble pie and treat them all like upstanding citizens
+                    _antiAbuseFactor = 1.0f;
                 }
                 return false;
             }
