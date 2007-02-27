@@ -84,7 +84,7 @@ public class Ball extends Sprite
 
         angle += rotation * Math.PI/180;
         
-        particle.gameCtrl.set("lastHit", 
+        particle.wc.gameCtrl.set("lastHit", 
             [playerIdx, Math.cos(angle) * strength, Math.sin(angle) * strength]);
     }
 
@@ -93,7 +93,7 @@ public class Ball extends Sprite
      */
     protected function mouseClick (event :MouseEvent) :void
     {
-        if (particle.gameCtrl == null || !particle.gameCtrl.isMyTurn() ||
+        if (particle.wc.gameCtrl == null || !particle.wc.gameCtrl.isMyTurn() ||
             particle.velocity.magnitude() != 0) {
             // Not ours/not our turn/moving
             return;

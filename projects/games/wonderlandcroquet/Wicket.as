@@ -2,6 +2,7 @@ package {
 
 import flash.display.Sprite;
 import flash.events.Event;
+import flash.geom.Point;
 import mx.utils.ObjectUtil;
 import mx.core.MovieClipAsset;
 import org.cove.ape.AbstractParticle;
@@ -34,7 +35,7 @@ public class Wicket extends Sprite
         particles.push(new RectangleParticle(0.1, 60, 113, 10, rad, true));
         particles.push(new CircleParticle(0.6, -72.7, 26, true));
 
-        // And now rotate/translate its potition
+        // And now rotate/translate its position
         for each (var particle :AbstractParticle in particles) {
             var p :Vector = particle.position;
             p = new Vector(
@@ -44,7 +45,23 @@ public class Wicket extends Sprite
             p.plusEquals(new Vector(x, y));
             particle.position = p;
         }
+        
+        // FIXME: This is a dirty dirty hack, and looks bad.
         alpha = 0.7;
+    }
+
+    /**
+     * Returns a two element array with the end points of a line segment representing the
+     * center of this wicket.
+     */
+    public function getCenterLine () :Array
+    {
+        var rad :Number = _animation.rotation * Math.PI/180;
+        var a :Point = new Point(_animation.x + Math.sin(rad)*48.5, 
+                                 _animation.y + Math.cos(rad)*-48.5);
+        var b :Point = new Point(_animation.x + Math.sin(rad)*-60,
+                                 _animation.y + Math.cos(rad)*60);
+        return [a, b];
     }
 
     protected function endAnimation (event :Event) :void

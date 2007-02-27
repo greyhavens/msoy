@@ -16,9 +16,8 @@ public class BallParticle extends CircleParticle
     /** The sprite representing this ball. */
     public var ball :Ball;
 
-    /** Our game controller, or null if this ball doesn't belong to the local player. */
-    public var gameCtrl :EZGameControl;
-
+    /** Our top level WonderlandCroquet object. */
+    public var wc :WonderlandCroquet;
 
     public function BallParticle (x:Number, y:Number, radius:Number, color:int,
         fixed:Boolean, mass:Number = 1, elasticity:Number = 0.3, friction:Number = 0)
@@ -32,8 +31,7 @@ public class BallParticle extends CircleParticle
     }
 
     /**
-     * Updates our sprite to match our position. Returns true if we move, false
-     * if we don't.
+     * Updates our sprite to match our position. Returns true if we move, false if we don't.
      */
     public function tick() :Boolean
     {
@@ -41,6 +39,28 @@ public class BallParticle extends CircleParticle
             // If I'm in the same place, chances are my angle hasn't changed either, so I shouldn't
             // bother doing anything
             return false;
+        }
+
+        var turnHolderIdx :int = wc.gameCtrl.seating.getPlayerPosition(wc.gameCtrl.getTurnHolder());
+
+        if (wc.gameCtrl.isMyTurn() && ball.playerIdx == wc.myIdx) {
+            // Since I can't trust a stupid hit test to work if our ball is off the screen, let's
+            // see if our line intersects the center line of the wicket we're aiming for.
+            var wicket :Wicket = wc.map.wickets[wc.gameCtrl.get("wickets", turnHolderIdx)];
+            var points :Array = wicket.getCenterLine();
+            var scored :Boolean = passedWicket(new Point(ball.x, ball.y), new Point(px, py), 
+                points[0], points[1]);
+
+            if (scored) {
+                //wc.gameCtrl.localChat("Holy score, batman!");
+                /*
+                wc.gameCtrl.localChat("Holy score, batman! (" +
+                    new Point(ball.x, ball.y) + "->" + new Point(px, py) + ", " +
+                    points[0] + "->" + points[1]);
+                */
+
+                wc.passedWicket();
+            }
         }
 
         // Just move our sprite to the new location
@@ -66,8 +86,10 @@ public class BallParticle extends CircleParticle
 
         ball.rotation = angle;
 
-        // TODO: tell the ball about our velocity so the animation can switch 
-        // to an appropriate speed
+        // TODO: tell the ball about our velocity so the animation can switch to an appropriate 
+        // speed. Suprisingly enough, it doesn't look terrible with the animation at a constant
+        // speed regardless of the ball's motion, so we might be able to indefinitely avoid fixing
+        // this.
         return true;
     }
 
@@ -88,6 +110,36 @@ public class BallParticle extends CircleParticle
     {
         addMasslessForce(new Vector(x, y));
     }
+
+    /**
+     * Looks to see if the line segments described by p1 -> p2, p3 -> p4 intersect.
+     */
+    protected function passedWicket (p1 :Point, p2 :Point, p3 :Point, p4 :Point) :Boolean
+    {
+        var denom :Number = (p4.y - p3.y)*(p2.x - p1.x) - (p4.x - p3.x)*(p2.y - p1.y);
+        var anum :Number = (p4.x - p3.x)*(p1.y - p3.y) - (p4.y - p3.y)*(p1.x - p3.x);
+        var bnum :Number = (p2.x - p1.x)*(p1.y - p3.y) - (p2.y - p1.y)*(p1.x - p3.x);
+        
+        if (denom == 0) {
+            // Lines are parallel
+            if (anum == bnum == 0) {
+                // coincident
+                return true;
+            }
+            
+            return false;
+        }
+
+        var ua :Number = anum/denom;
+        var ub :Number = bnum/denom;
+
+        if ((ua < 1 && ua > 0) && (ub < 1 && ub > 0)) {
+            return true;
+        }
+
+        return false;
+    }
+
 }
 
 }

@@ -23,10 +23,19 @@ import org.cove.ape.*;
 public class WonderlandCroquet extends Sprite
     implements PropertyChangedListener, StateChangedListener
 {
+    /** Our game control object. */
+    public var gameCtrl :EZGameControl;
+
+    /** Our map. */
+    public var map :WonderlandMap;
+
+    /** The player index for the local player. */
+    public var myIdx :int;
+
     public function WonderlandCroquet ()
     {
-        _gameCtrl = new EZGameControl(this);
-        _gameCtrl.registerListener(this);
+        gameCtrl = new EZGameControl(this);
+        gameCtrl.registerListener(this);
 
         _spr = new Sprite();
         _ballLayer = new Sprite();
@@ -36,22 +45,22 @@ public class WonderlandCroquet extends Sprite
 
         // TODO: support better map loading, choice at table time,
         // or maybe just pick one randomly
-        //_map = new MapBasic();
-        _map = new MapFancy();
-        _spr.addChild(_map.background);
-        _map.background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
-        _map.background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
+        //map = new MapBasic();
+        map = new MapFancy();
+        _spr.addChild(map.background);
+        map.background.addEventListener(MouseEvent.MOUSE_DOWN, mouseDown);
+        map.background.addEventListener(MouseEvent.MOUSE_UP, mouseUp);
 
         _spr.addChild(_ballLayer);
 
         APEngine.init(1/3);
         APEngine.defaultContainer = this;
 
-        for each (var particle :AbstractParticle in _map.particles) {
+        for each (var particle :AbstractParticle in map.particles) {
             APEngine.addParticle(particle);
         }
 
-        _spr.addChild(_map.foreground);
+        _spr.addChild(map.foreground);
 
         _scroller = new WonderlandScroller(_spr);
         addChild(_scroller);
@@ -59,14 +68,19 @@ public class WonderlandCroquet extends Sprite
         _scroller.y = _scroller.height / 2 + 5;
     }
 
+    protected function stageResize (event :Event) :void
+    {
+        gameCtrl.localChat("Resized: " + stage.stageWidth + "x" + stage.stageHeight);
+    }
+
     protected function mouseDown (event :MouseEvent) :void
     {
-       _spr.startDrag();
+        _spr.startDrag();
     }
 
     protected function mouseUp (event :MouseEvent) :void
     {
-       _spr.stopDrag();
+        _spr.stopDrag();
     }
 
     /**
@@ -79,8 +93,8 @@ public class WonderlandCroquet extends Sprite
             var angle :Number = Math.random() * 2 * Math.PI;
 
             var ball: BallParticle = new BallParticle(
-                _map.startPoint.x + (Math.cos(angle) * r),
-                _map.startPoint.y + (Math.sin(angle) * r),
+                map.startPoint.x + (Math.cos(angle) * r),
+                map.startPoint.y + (Math.sin(angle) * r),
                 Ball.RADIUS, ii, false);
 
             APEngine.addParticle(ball);
@@ -97,7 +111,7 @@ public class WonderlandCroquet extends Sprite
 
         for each (particle in particles) {
             if (particle is BallParticle) {
-                _map.applyModifierForce(BallParticle(particle));
+                map.applyModifierForce(BallParticle(particle));
             }
         }
 
@@ -111,8 +125,13 @@ public class WonderlandCroquet extends Sprite
             }
         }
 
-        if (_haveMoved && doneMoving && _gameCtrl.isMyTurn()) {
-            _gameCtrl.endTurn();
+        if (_haveMoved && doneMoving && gameCtrl.isMyTurn()) {
+            if (_moveAgain) {
+                gameCtrl.localChat("Go again!");
+                startTurn();
+            } else {
+                gameCtrl.endTurn();
+            }
         }
     }
 
@@ -120,51 +139,27 @@ public class WonderlandCroquet extends Sprite
     public function stateChanged (event :StateChangedEvent) :void
     {
         if (event.type == StateChangedEvent.TURN_CHANGED) {
-            if (_gameCtrl.isMyTurn()) {
-                _gameCtrl.localChat("My turn!");
-                var coord :Array = [];
-
-                if(_myBall == null) {
-                    // It's the first time I've gone, so add my ball at the start
-
-                    _gameCtrl.localChat("Adding my ball: " + _myIdx);
-                    coord = [_map.startPoint.x, _map.startPoint.y]; 
-                    _gameCtrl.set("balls", coord, _myIdx);
-                } else {
-                    coord = [_balls[_myIdx].px, _balls[_myIdx].py];
-                }
-
-                _haveMoved = false;
-                panTo(coord[0], coord[1]);
+            if (gameCtrl.isMyTurn()) {
+                startTurn();
             }
         } else if (event.type == StateChangedEvent.GAME_STARTED) {
-            _gameCtrl.localChat("Wonderland Croquet!");
+            gameCtrl.localChat("Wonderland Croquet!");
 
             _balls = [];
-            _myIdx = _gameCtrl.seating.getMyPosition();
-            if (_myIdx == 0) {
+            _wickets = [];
+            myIdx = gameCtrl.seating.getMyPosition();
+            if (myIdx == 0) {
                 // FIXME: I'm not quite happy with this, but if I just set it, it doesn't appear
                 // to have taken effect by the time it's my turn and I need to actually add a
                 // ball
-                _gameCtrl.setImmediate("balls", _balls);
+                gameCtrl.setImmediate("balls", _balls);
+                gameCtrl.setImmediate("wickets", _wickets);
             }
 
         } else if (event.type == StateChangedEvent.GAME_ENDED) {
-            _gameCtrl.localChat("Off with your head!");
+            gameCtrl.localChat("Off with your head!");
 
         }
-    }
-
-    /**
-     * Pans the view to the specified coordinate.
-     */
-    protected function panTo (x :Number, y: Number) :void
-    {
-        _gameCtrl.localChat("Pan to " + x + ", " + y);
-
-        // FIXME: Animate the pan to here, don't just snap
-        _spr.x = - (x - this.stage.stageWidth/2);
-        _spr.y = - (y - this.stage.stageHeight/2);
     }
 
     // from PropertyChangedListener
@@ -172,41 +167,100 @@ public class WonderlandCroquet extends Sprite
     {
         var name :String = event.name;
         var index :int;
-        _gameCtrl.localChat("prop change: " + name);
         if (name == "balls") {
             index = event.index;
-            _gameCtrl.localChat("ball change: " + index);
+            gameCtrl.localChat("ball change: " + index);
             if (index != -1 && _balls[index] == null) {
-
-                _gameCtrl.localChat("Inserting ball at " + index);
+                gameCtrl.localChat("Inserting ball at " + index);
                 _balls[index] = new BallParticle(event.newValue[0], event.newValue[1],
                     Ball.RADIUS, index, false);
+                _balls[index].wc = this;
                     
                 APEngine.addParticle(_balls[index]);
                 _ballLayer.addChild(_balls[index].ball);
 
-                if (index == _myIdx) {
+                if (index == myIdx) {
                     _myBall = _balls[index];
-                    _myBall.gameCtrl = _gameCtrl;
                 }
 
             }
+
         } else if (name == "lastHit") {
+            gameCtrl.localChat("lastHit change: " + event.newValue);
             index = event.newValue[0];
             var x :Number = event.newValue[1];
             var y :Number = event.newValue[2];
 
             BallParticle(_balls[index]).addHitForce(x, y);
 
-            if (_gameCtrl.isMyTurn()) {
+            if (gameCtrl.isMyTurn()) {
                 _haveMoved = true;
             }
+
+        } else if (name == "wickets") {
+            index = event.index;
+            var wicket :int = event.newValue as int;
+
+            gameCtrl.localChat("wicket target change: " + index + " -> " + wicket);
+            _wickets[index] = wicket;
+
+        } else {
+            gameCtrl.localChat("unhandled prop change: " + name);
         }
     }
 
-    protected var _haveMoved :Boolean;
+    /**
+     * Notice that we passed a wicket.
+     */
+    public function passedWicket () :void
+    {
+        _moveAgain = true;
+        _wickets[myIdx]++;
+        gameCtrl.set("wickets", _wickets[myIdx], myIdx);
+    }
 
-    protected var _map :WonderlandMap;
+    /**
+     * Pans the view to the specified coordinate.
+     */
+    protected function panTo (x :Number, y: Number) :void
+    {
+        // FIXME: Animate the pan to here, don't just snap
+        _spr.x = - (x - this.stage.stageWidth/2);
+        _spr.y = - (y - this.stage.stageHeight/2);
+    }
+
+    /** 
+     * Sets things up and starts our own turn.
+     */
+    protected function startTurn () :void
+    {
+        gameCtrl.localChat("My turn!");
+        var coord :Array = [];
+        _moveAgain = false;
+
+        if(_myBall == null) {
+
+            // FIXME: this isn't at all an appropriate place to hang this
+            stage.addEventListener(flash.events.Event.RESIZE, stageResize);
+
+            // It's the first time I've gone, so add my ball at the start
+
+            gameCtrl.localChat("Adding my ball: " + myIdx);
+            coord = [map.startPoint.x, map.startPoint.y]; 
+            gameCtrl.set("balls", coord, myIdx);
+
+            // and target the first wicket
+            gameCtrl.set("wickets", 0, myIdx);
+        } else {
+            coord = [_balls[myIdx].px, _balls[myIdx].py];
+        }
+
+        _haveMoved = false;
+        panTo(coord[0], coord[1]);
+    }
+
+
+    protected var _haveMoved :Boolean;
 
     protected var _scroller :WonderlandScroller;
 
@@ -222,9 +276,7 @@ public class WonderlandCroquet extends Sprite
 
     protected var _myBall :BallParticle;
 
-    protected var _myIdx :int;
+    protected var _moveAgain :Boolean;
 
-    /** Our game control object. */
-    protected var _gameCtrl :EZGameControl;
 }
 }
