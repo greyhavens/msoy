@@ -85,11 +85,15 @@ public class GroupList extends VerticalPanel
         searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
         search.setWidget(0, 0, searchInput);
         search.setWidget(0, 1, new Button(CGroup.msgs.listSearch(), doSearch));
-        search.setWidget(0, 3, new Button(CGroup.msgs.listNewGroup(), new ClickListener() {
-            public void onClick (Widget sender) {
-                new GroupEdit().show();
-            }
-        }));
+        if (CGroup.getMemberId() > 0) {
+            search.setWidget(0, 3, new Button(CGroup.msgs.listNewGroup(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    new GroupEdit().show();
+                }
+            }));
+        } else {
+            search.setWidget(0, 3, new Label(""));
+        }
         DOM.setStyleAttribute(search.getFlexCellFormatter().getElement(0, 2), "width", "100%");
         table.setWidget(0, 1, search);
         // This is a nasty place to set a static height in pixels, but for some reason I cannot

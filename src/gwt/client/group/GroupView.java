@@ -159,7 +159,7 @@ public class GroupView extends VerticalPanel
             }));
         }
         if (_me == null) {
-            if (_group.policy == Group.POLICY_PUBLIC) {
+            if (_group.policy == Group.POLICY_PUBLIC && CGroup.getMemberId() > 0) {
                 infoPanel.add(new Button(CGroup.msgs.viewJoin(), new ClickListener() {
                     public void onClick (Widget sender) {
                         (new PromptPopup(CGroup.msgs.viewJoinPrompt(_group.name)) {
