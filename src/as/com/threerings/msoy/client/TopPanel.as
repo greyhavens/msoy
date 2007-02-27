@@ -73,7 +73,7 @@ public class TopPanel extends Canvas
             _buildStamp.setStyle("fontSize", 12);
             _buildStamp.setStyle("fontWeight", "bold");
             _buildStamp.setStyle("top", 0);
-            _buildStamp.setStyle("right", 0);
+            _buildStamp.setStyle("left", 0);
             addChild(_buildStamp);
         }
 
