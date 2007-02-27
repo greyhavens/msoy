@@ -134,6 +134,7 @@ public class UnderwhirledDrift extends Sprite
                     }
                 }
             }
+            updateRaceStarted();
         }
     }
 
@@ -141,7 +142,7 @@ public class UnderwhirledDrift extends Sprite
     public function messageReceived (event :MessageReceivedEvent) :void
     {
         if (event.name == "tick") {
-            if (_raceStarted) {
+            if (_raceStarted && _kart != null) {
                 var obj :Object = _kart.getUpdate();
                 obj.playerId = _gameCtrl.getMyId();
                 _gameCtrl.sendMessage("positionUpdate", obj);
@@ -162,6 +163,7 @@ public class UnderwhirledDrift extends Sprite
             } else {
                 _opponentKarts.put(playerId, kartType);
             }
+            updateRaceStarted();
         }
     }
 
@@ -176,12 +178,29 @@ public class UnderwhirledDrift extends Sprite
             kartType: _kart.kartType});
     }
 
+    protected function updateRaceStarted () :void
+    {
+        if (_gameCtrl.seating.getPlayerIds().length == 1) {
+            _raceStarted = true;
+        } else if (_coord.status == HostCoordinator.STATUS_HOST) { 
+            var keys :Array = _opponentKarts.keys();
+            for (var ii :int = 0; ii < keys.length; ii++) {
+                if (!(_opponentKarts.get(keys[ii]) is KartObstacle)) {
+                    break;
+                }
+            }
+            if (ii == keys.length) {
+                _gameCtrl.sendMessage("raceStarted", true);
+            }
+        }
+    }
+
     /** 
      * Handles KEY_DOWN. 
      */
     protected function keyEventHandler (event :KeyboardEvent) :void
     {
-        if (_kart != null) {
+        if (_kart != null && _raceStarted) {
             switch (event.keyCode) {
             case Keyboard.UP:
                 _kart.moveForward(event.type == KeyboardEvent.KEY_DOWN);
@@ -199,10 +218,6 @@ public class UnderwhirledDrift extends Sprite
                 if (event.type == KeyboardEvent.KEY_DOWN) {
                     _kart.jump();
                     }
-                break;
-            case Keyboard.ENTER:
-                // TODO this will be controlled by a timer that starts everybody at the same time
-                _gameCtrl.sendMessage("raceStarted", true);
                 break;
             default:
             // do nothing
