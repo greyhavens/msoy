@@ -335,7 +335,9 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         CAT record = load(getCatalogClass(), itemId);
-        record.item = load(getItemClass(), itemId);
+        if (record != null) {
+            record.item = load(getItemClass(), itemId);
+        }
         return record;
     }
 
