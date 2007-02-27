@@ -20,6 +20,7 @@ public class GamePanel extends VerticalPanel
 {
     public GamePanel (LaunchConfig config)
     {
+        setWidth("100%");
         String authtoken = (CGame.creds == null) ? "" : CGame.creds.token;
         Widget display = null;
         switch (config.type) {
