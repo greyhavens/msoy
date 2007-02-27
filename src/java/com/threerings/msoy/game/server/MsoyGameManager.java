@@ -20,6 +20,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.ezgame.data.EZGameConfig;
 import com.threerings.ezgame.server.EZGameManager;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -35,17 +36,28 @@ import static com.threerings.msoy.Log.log;
 public class MsoyGameManager extends EZGameManager
     implements MsoyGameProvider
 {
-    public static final int FLOW_PER_MINUTE_PER_PLAYER = 100;
-
     // from MsoyGameProvider
     public void awardFlow (ClientObject caller, int playerId, int amount,
                            InvocationListener listener)
         throws InvocationException
     {
-        // simply add up what the game tells us; the final payout is limited by the cap
-        PlayerFlow flowRecord = _players.get(playerId);
-        if (flowRecord != null) {
-            flowRecord.awarded += amount;
+        PlayerFlow record = _players.get(playerId);
+        if (record != null) {
+            // the final amount of flow this game attempts to pay out is accumulated in-memory
+            // and not capped until the game ends or the player leaves
+            record.awarded += amount;
+
+            MemberObject mObj = (MemberObject) getPlayerByOid(playerId);
+            if (mObj != null) {
+                // for immediate flow payouts that don't have to be precise, we try to make our
+                // estimate more precise (nobody likes to see their flow actually drop at the
+                // end of a game) by taking the cap into account
+                int flowBudget = (record.rate * (now() - record.beganStamp)) / 60;
+                int cappedAmount = Math.min(amount, flowBudget);
+                if (cappedAmount > 0) {
+                    mObj.setFlow(mObj.flow + cappedAmount);
+                }
+            }
         }
     }
 
@@ -164,7 +176,8 @@ public class MsoyGameManager extends EZGameManager
         if (_players.containsKey(oid)) {
             log.warning("Flow record already present [where=" + where() + ", oid=" + oid + "]");
         }
-        int rate = (int) (_antiAbuseFactor * member.getHumanity() * FLOW_PER_MINUTE_PER_PLAYER);
+        int rate = (int) ((_antiAbuseFactor * member.getHumanity() * 
+                           RuntimeConfig.server.hourlyGameFlowRate) / 60);
         _players.put(oid, new PlayerFlow(rate));
         _msoyGameObj.addToFlowRates(new FlowRate(oid, rate));
     }
