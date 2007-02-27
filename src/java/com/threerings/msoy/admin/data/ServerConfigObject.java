@@ -17,6 +17,9 @@ public class ServerConfigObject extends ConfigObject
     /** The field name of the <code>dailyFlowEvaporation</code> field. */
     public static final String DAILY_FLOW_EVAPORATION = "dailyFlowEvaporation";
 
+    /** The field name of the <code>hourlyGameFlowRate</code> field. */
+    public static final String HOURLY_GAME_FLOW_RATE = "hourlyGameFlowRate";
+
     /** The field name of the <code>abuseFactorReassessment</code> field. */
     public static final String ABUSE_FACTOR_REASSESSMENT = "abuseFactorReassessment";
 
@@ -29,6 +32,9 @@ public class ServerConfigObject extends ConfigObject
 
     /** The fraction of a user's flow that evaporates over a 24-hour period. */
     public float dailyFlowEvaporation = 0.20f;
+    
+    /** The amount of flow per hour that a game can award a player. */
+    public int hourlyGameFlowRate = 6000;
 
     /** The number of player minutes between reassessments of a game's anti-abuse factor. */
     public int abuseFactorReassessment = 1000;
@@ -67,6 +73,22 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             DAILY_FLOW_EVAPORATION, Float.valueOf(value), Float.valueOf(ovalue));
         this.dailyFlowEvaporation = value;
+    }
+
+    /**
+     * Requests that the <code>hourlyGameFlowRate</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setHourlyGameFlowRate (int value)
+    {
+        int ovalue = this.hourlyGameFlowRate;
+        requestAttributeChange(
+            HOURLY_GAME_FLOW_RATE, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.hourlyGameFlowRate = value;
     }
 
     /**
