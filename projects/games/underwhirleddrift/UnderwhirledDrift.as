@@ -84,7 +84,7 @@ public class UnderwhirledDrift extends Sprite
 
         _coord = new HostCoordinator(_gameCtrl);
 
-        // names obove characters is good, but they should fade out after the race 
+        // names above characters is good, but they should fade out after the race 
         // starts
         /*
         var nameText :TextField = new TextField();
@@ -135,24 +135,7 @@ public class UnderwhirledDrift extends Sprite
     // from MessageReceivedListener
     public function messageReceived (event :MessageReceivedEvent) :void
     {
-        if (event.name == "keyDown" || event.name == "keyUp") {
-            if (event.value.id != _gameCtrl.getMyId()) {
-                // TODO
-                switch (event.value.code) {
-                case Keyboard.UP:
-                    break;
-                case Keyboard.DOWN:
-                    break;
-                case Keyboard.LEFT:
-                    break;
-                case Keyboard.RIGHT:
-                    break;
-                case Keyboard.SPACE:
-                default:
-                    // do nothing
-                }
-            }
-        } else if (event.name == "tick") {
+        if (event.name == "tick") {
             if (_raceStarted) {
                 var obj :Object = _kart.getUpdate();
                 obj.playerId = _gameCtrl.getMyId();
@@ -175,29 +158,19 @@ public class UnderwhirledDrift extends Sprite
     {
         switch (event.keyCode) {
         case Keyboard.UP:
-            //_gameCtrl.sendMessage(KEY_EVENT,
-                //{keyType: event.type, id: _gameCtrl.getMyId(), code: event.keyCode});
             _kart.moveForward(event.type == KeyboardEvent.KEY_DOWN);
             break;
         case Keyboard.DOWN:
-            //_gameCtrl.sendMessage(KEY_EVENT,
-                //{keyType: event.type, id: _gameCtrl.getMyId(), code: event.keyCode});
             _kart.moveBackward(event.type == KeyboardEvent.KEY_DOWN);
             break;
         case Keyboard.LEFT:
-            //_gameCtrl.sendMessage(KEY_EVENT,
-                //{keyType: event.type, id: _gameCtrl.getMyId(), code: event.keyCode});
             _kart.turnLeft(event.type == KeyboardEvent.KEY_DOWN);
             break;
         case Keyboard.RIGHT:
-            //_gameCtrl.sendMessage(KEY_EVENT,
-                //{keyType: event.type, id: _gameCtrl.getMyId(), code: event.keyCode});
             _kart.turnRight(event.type == KeyboardEvent.KEY_DOWN);
             break;
         case Keyboard.SPACE:
             if (event.type == KeyboardEvent.KEY_DOWN) {
-                //_gameCtrl.sendMessage(KEY_EVENT,
-                  //  {keyType: event.type, id: _gameCtrl.getMyId(), code: event.keyCode});
                 _kart.jump();
             }
             break;
