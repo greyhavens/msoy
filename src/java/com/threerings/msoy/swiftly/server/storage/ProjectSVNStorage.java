@@ -248,16 +248,12 @@ public class ProjectSVNStorage
     private List<PathElement> recurseTree (SVNRepository svnRepo, PathElement parent, List<PathElement> result)
         throws SVNException, ProjectStorageException
     {
-        String path;
-
         if (result == null) {
             result = new ArrayList<PathElement>();
         }
 
-        path = parent.getAbsolutePath();
-
         @SuppressWarnings("unchecked")
-        Collection<SVNDirEntry> entries = (Collection<SVNDirEntry>) svnRepo.getDir(path, -1, null, (Collection)null);
+        Collection<SVNDirEntry> entries = (Collection<SVNDirEntry>) svnRepo.getDir(parent.getAbsolutePath(), -1, null, (Collection)null);
         for (SVNDirEntry entry : entries) {
             PathElement node;
             SVNNodeKind kind;
