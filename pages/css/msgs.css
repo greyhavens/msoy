@@ -4,6 +4,7 @@
  * CSS styles for the common Msgs components.
  */
 
+
 .MailComposer .Headers {
     padding-top: 3px;
     background: #99CCFF;
@@ -20,6 +21,7 @@
 }
 
 .MailComposer .Headers .SubjectBox {
+    background: white;
     width: 98%;
 }
 
@@ -30,6 +32,12 @@
     width: 100%;
     padding: 8px;
     padding-left: 20px;
+}
+
+.MailComposer .Body {
+    background: white;
+    border: none;
+    padding: 5px;
 }
 
 .MailComposer .Bar {
