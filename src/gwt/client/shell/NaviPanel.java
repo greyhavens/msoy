@@ -70,7 +70,7 @@ public class NaviPanel extends FlexTable
                 addLink(menu, "/world/index.html#m" + creds.getMemberId(), "My Home");
                 FriendEntry[] friends = FlashClients.getFriends();
                 if (friends.length > 0) {
-                    MenuBar fmenu = new MenuBar();
+                    MenuBar fmenu = new MenuBar(true);
                     for (int ii = 0; ii < friends.length; ii++) {
                         addLink(fmenu, "/world/index.html#m" + friends[ii].name.getMemberId(),
                                 (friends[ii].online ? "* " : "") + friends[ii].name + "'s Home");
@@ -90,7 +90,7 @@ public class NaviPanel extends FlexTable
                 addLink(menu, "/group/index.html", "Groups");
                 FriendEntry[] friends = FlashClients.getFriends();
                 if (friends.length > 0) {
-                    MenuBar fmenu = new MenuBar();
+                    MenuBar fmenu = new MenuBar(true);
                     for (int ii = 0; ii < friends.length; ii++) {
                         addLink(fmenu, "/profile/index.html#" + friends[ii].name.getMemberId(),
                                 (friends[ii].online ? "* " : "") + friends[ii].name);
