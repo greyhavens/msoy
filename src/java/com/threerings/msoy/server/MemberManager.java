@@ -508,7 +508,7 @@ public class MemberManager
         final MemberObject mObj = MsoyServer.lookupMember(memberId);
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().updateFlow(memberId, amount, false);
+                _memberRepo.getFlowRepository().updateFlow(memberId, amount, true);
                 if (mObj != null) {
                     _flow = _memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
                 }
