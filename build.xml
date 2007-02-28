@@ -187,6 +187,7 @@
       <filterset>
         <filter token="build_time" value="${build_time}"/>
         <filter token="media_url" value="${media_url}"/>
+        <filter token="static_media_url" value="${static_media_url}"/>
       </filterset>
     </copy>
   </target>
@@ -261,8 +262,8 @@
         <filter token="build_time" value="${build_time}"/>
         <filter token="server_host" value="${server_host}"/>
         <filter token="server_ports" value="${server_ports}"/>
-        <filter token="http_port" value="${http_port}"/>
         <filter token="media_url" value="${media_url}"/>
+        <filter token="static_media_url" value="${static_media_url}"/>
       </filterset>
     </copy>
   </target>

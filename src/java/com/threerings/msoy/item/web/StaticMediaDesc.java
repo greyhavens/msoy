@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.web;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
+
 /**
  * Provides a "faked" media descriptor for static media (default thumbnails and
  * furni representations).
@@ -44,8 +46,8 @@ public class StaticMediaDesc extends MediaDesc
     // @Override // from MediaDesc
     public String getMediaPath ()
     {
-        return "/media/static/" + Item.getTypeName(_itemType) + "/" + _mediaType +
-            mimeTypeToSuffix(mimeType);
+        return DeploymentConfig.staticMediaURL +
+            Item.getTypeName(_itemType) + "/" + _mediaType + mimeTypeToSuffix(mimeType);
     }
 
     protected byte _itemType;

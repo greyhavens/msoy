@@ -106,7 +106,7 @@ public class MediaDesc implements Streamable, IsSerializable
      */
     public static String getMediaPath (byte[] mediaHash, byte mimeType)
     {
-        return DeploymentConfig.mediaURL + "/" + hashToString(mediaHash) +
+        return DeploymentConfig.mediaURL + hashToString(mediaHash) +
             mimeTypeToSuffix(mimeType);
     }
 

@@ -37,6 +37,7 @@ webapp_dir = /export/threerings/webapps
 
 media_dir = /export/msoy/pages/media
 media_url = http://localhost:8080/media
+static_media_url = http://localhost:8080/media/static
 
 #
 # Auto-restart server if code changes (used on dev server)
