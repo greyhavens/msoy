@@ -205,7 +205,9 @@ public class StatusPanel extends FlexTable
             super(true);
 
             FlexTable contents = new FlexTable();
+            contents.setStyleName("logonPopup");
             setWidget(contents);
+            contents.getFlexCellFormatter().setStyleName(0, 0, "rightLabel");
             contents.setText(0, 0, CShell.cmsgs.logonEmail());
             contents.setWidget(0, 1, _email = new TextBox());
             _email.setText(CookieUtil.get("who"));
@@ -215,6 +217,7 @@ public class StatusPanel extends FlexTable
                 }
             }));
 
+            contents.getFlexCellFormatter().setStyleName(1, 0, "rightLabel");
             contents.setText(1, 0, CShell.cmsgs.logonPassword());
             contents.setWidget(1, 1, _password = new PasswordTextBox());
             contents.getFlexCellFormatter().setWidth(1, 1, "100%");

@@ -201,12 +201,12 @@ body {
   padding-right: 3px;
 }
 
-.createAccount .Intro {
-  width: 400px;
+.logonPopup {
+  padding: 10px;
 }
 
-.createAccount .Label {
-  text-align: right;
+.createAccount .Intro {
+  width: 400px;
 }
 
 .createAccount .Tip {
@@ -355,6 +355,10 @@ body {
   text-decoration: underline;
   cursor: pointer;
   cursor: hand;
+}
+
+.rightLabel {
+  text-align: right;
 }
 
 .rowPanelCell {

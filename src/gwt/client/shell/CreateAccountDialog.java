@@ -43,7 +43,7 @@ public class CreateAccountDialog extends BorderedDialog
         contents.getFlexCellFormatter().setStyleName(row, 0, "Intro");
         contents.setText(row++, 0, CShell.cmsgs.createIntro());
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Label");
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createEmail());
         contents.setWidget(row++, 1, _email = new TextBox());
         _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
@@ -56,7 +56,7 @@ public class CreateAccountDialog extends BorderedDialog
         contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
         contents.setText(row++, 0, CShell.cmsgs.createEmailTip());
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Label");
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createPassword());
         contents.setWidget(row++, 1, _password = new PasswordTextBox());
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
@@ -66,7 +66,7 @@ public class CreateAccountDialog extends BorderedDialog
         }));
         _password.addKeyboardListener(_validator);
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Label");
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createConfirm());
         contents.setWidget(row++, 1, _confirm = new PasswordTextBox());
         _confirm.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
@@ -79,7 +79,7 @@ public class CreateAccountDialog extends BorderedDialog
         contents.getFlexCellFormatter().setStyleName(row, 0, "Tip");
         contents.setText(row++, 0, CShell.cmsgs.createPasswordTip());
 
-        contents.getFlexCellFormatter().setStyleName(row, 0, "Label");
+        contents.getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
         contents.setText(row, 0, CShell.cmsgs.createDisplayName());
         contents.setWidget(row++, 1, _name = new TextBox());
         _name.addKeyboardListener(_validator);
