@@ -164,8 +164,7 @@ public class LobbyPanel extends VBox
         logo.styleName = "lobbyLogoBox";
         logo.width = 160;
         logo.height = 120;
-        logo.addChild(new MediaWrapper(new MediaContainer(controller.game.getThumbnailMedia().
-            getMediaPath())));
+        logo.addChild(new MediaWrapper(new MediaContainer(controller.game.getThumbnailPath())));
         logo.setStyle("backgroundImage", "/media/static/game/logo_background.png");
         descriptionBox.addChild(logo);
         descriptionBox.addChild(new MediaWrapper(new MediaContainer(
