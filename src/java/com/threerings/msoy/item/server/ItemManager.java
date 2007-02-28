@@ -510,57 +510,6 @@ public class ItemManager
     }
 
     /**
-     * Purchases a given item for a given member from the catalog by creating a new clone row in
-     * the appropriate database table.
-     */
-    public void purchaseItem (final int memberId, final ItemIdent ident,
-                              ResultListener<Item> listener)
-    {
-        // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, listener);
-        if (repo == null) {
-            return;
-        }
-
-        // and perform the purchase
-        MsoyServer.invoker.postUnit(new RepositoryListenerUnit<Item>(listener) {
-            public Item invokePersistResult () throws Exception {
-                CatalogRecord<ItemRecord> listing = repo.loadListing(ident.itemId);
-                ItemRecord item = listing.item;
-                _flowCost = listing.flowCost;
-                _goldCost = listing.goldCost;
-
-                int flow = MsoyServer.memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
-                if (flow < _flowCost) {
-                    // only happens if client is buggy, hacked or lagged, or if the moon is blue
-                    throw new InvocationException(ItemCodes.INSUFFICIENT_FLOW);
-                }
-
-                // create the clone row in the database!
-                int cloneId = repo.insertClone(item.itemId, memberId);
-
-                // then dress the loaded item up as a clone
-                item.ownerId = memberId;
-                item.parentId = item.itemId;
-                item.itemId = cloneId;
-                return item.toItem();
-            }
-
-            public void handleSuccess () {
-                super.handleSuccess();
-                if (_flowCost > 0) {
-                    MsoyServer.memberMan.spendFlow(
-                        memberId, _flowCost, UserAction.BOUGHT_ITEM,
-                        ident.type + " " + ident.itemId + " " + _flowCost + " " + _goldCost);
-                }
-                updateUserCache(_result);
-            }
-
-            protected int _flowCost, _goldCost;
-        });
-    }
-
-    /**
      * Remix a clone, turning it back into a full-featured original.
      */
     public void remixItem (final ItemIdent ident, ResultListener<Item> listener)

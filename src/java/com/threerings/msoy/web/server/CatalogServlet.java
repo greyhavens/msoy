@@ -34,6 +34,7 @@ import com.threerings.msoy.item.web.CatalogListing;
 import com.threerings.msoy.item.web.Item;
 import com.threerings.msoy.item.web.ItemIdent;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
+import com.threerings.presents.server.InvocationException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -97,14 +98,45 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser(creds);
-        final ServletWaiter<Item> waiter = new ServletWaiter<Item>(
-            "purchaseItem[" + mrec.memberId + ", " + ident + "]");
-        MsoyServer.omgr.postRunnable(new Runnable() {
-            public void run () {
-                MsoyServer.itemMan.purchaseItem(mrec.memberId, ident, waiter);
+        
+        // locate the appropriate repository
+        ItemRepository<ItemRecord, ?, ?, ?> repo =
+            MsoyServer.itemMan.getRepository(ident.type);
+
+        try {
+            final CatalogRecord<ItemRecord> listing = repo.loadListing(ident.itemId);
+            if (mrec.flow < listing.flowCost) {
+                // only happens if client is buggy, hacked or lagged, or in a blue moon
+                throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
             }
-        });
-        return waiter.waitForResult();
+
+            // create the clone row in the database!
+            int cloneId = repo.insertClone(ident.itemId, mrec.memberId);
+
+            // then dress the loaded item up as a clone
+            listing.item.ownerId = mrec.memberId;
+            listing.item.parentId = listing.item.itemId;
+            listing.item.itemId = cloneId;
+
+            MsoyServer.omgr.postRunnable(new Runnable() {
+                public void run () {
+                    if (listing.flowCost > 0) {
+                        MsoyServer.memberMan.spendFlow(
+                            mrec.memberId, listing.flowCost, UserAction.BOUGHT_ITEM,
+                            ident.type + " " + ident.itemId + " " + listing.flowCost +
+                            " " + listing.goldCost);
+                    }
+                    MsoyServer.memberMan.logUserAction(
+                        mrec.getName(), UserAction.BOUGHT_ITEM,
+                        ident.type + " " + ident.itemId + " " + listing.flowCost +
+                        " " + listing.goldCost);
+                }
+            });
+            return listing.item.toItem();
+        } catch (PersistenceException pe) {
+            log.log(Level.WARNING, "Purchase failed [item=" + ident + "].", pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
     }
 
     // from interface CatalogService
