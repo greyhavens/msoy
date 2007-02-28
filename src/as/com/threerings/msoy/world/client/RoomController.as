@@ -190,6 +190,14 @@ public class RoomController extends SceneController
     }
 
     /**
+     * Returns true if this scene is currently being edited.
+     */
+    public function get isCurrentlyEditing () :Boolean
+    {
+        return (_editor != null);
+    }
+
+    /**
      * Exit editing mode.
      */
     public function endEditing (edits :TypedArray) :void
@@ -225,7 +233,7 @@ public class RoomController extends SceneController
      */
     public function handleEditScene () :void
     {
-        if (_editor != null) {
+        if (isCurrentlyEditing) {
             return; // handled: we're editing
         }
         _roomObj.roomService.editRoom(_mctx.getClient(), new ResultWrapper(
@@ -322,7 +330,7 @@ public class RoomController extends SceneController
             return;
         }
 
-        if (_editor == null && _scene.canEdit(_mctx.getClientObject())) {
+        if (!isCurrentlyEditing && _scene.canEdit(_mctx.getClientObject())) {
             // TODO: I used to put a separator before this menu item,
             // but it caused it to break in linux. STRANGE!
             menuItems.push(createMenuItem(EDIT_SCENE, null, false /*true*/));

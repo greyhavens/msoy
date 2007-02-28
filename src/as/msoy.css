@@ -236,6 +236,7 @@ ButtonBar {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_disabled.png");
 }
 
 .controlBarButtonVolume {

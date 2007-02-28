@@ -105,19 +105,15 @@ public class ControlBar extends HBox
             addChild(volBtn);
             
             var prefsBtn :CommandButton = new CommandButton();
-            prefsBtn.setCommand(MsoyController.POP_PREFS_MENU, prefsBtn);
+            prefsBtn.setCommand(MsoyController.EDIT_PREFS);
             prefsBtn.styleName = "controlBarButtonAvatar";
             addChild(prefsBtn);
 
-            var editBtn :CommandButton = new CommandButton();
-            editBtn.setCommand(ControlBarController.EDIT_SCENE);
-            editBtn.styleName = "controlBarButtonEdit";
-            addChild(editBtn);
+            _editBtn = new CommandButton();
+            _editBtn.setCommand(ControlBarController.EDIT_SCENE);
+            _editBtn.styleName = "controlBarButtonEdit";
+            addChild(_editBtn);
 
-            // TODO: other options to consider:
-            // MsoyController.SHOW_PETS
-            // MsoyController.SHOW_FRIENDS
-            
         } else {
             var logonPanel :LogonPanel = new LogonPanel(_ctx, this.height - 4);
             addChild(logonPanel);
@@ -167,10 +163,18 @@ public class ControlBar extends HBox
     }
 
     /** Receives notifications whether movement back to the previous scene is possible,
-        and adjusts the back-button appropriately. */
+     *  and adjusts the back-button appropriately. */
     public function set backMovementPossible (value :Boolean) :void
     {
         _goback.enabled = value;
+    }
+
+    /** Receives notification whether scene editing is possible for this scene. */
+    public function set sceneEditPossible (value :Boolean) :void
+    {
+        if (_editBtn != null) {
+            _editBtn.enabled = value;
+        }
     }
 
     /** Sets location label. */
@@ -178,21 +182,24 @@ public class ControlBar extends HBox
     {
         _loc.text = value;
     }
-
-        
+    
+    
     // IMPLEMENTATION DETAILS
-
+    
     /** Our clientside context. */
     protected var _ctx :WorldContext;
-
+    
     /** Controller for this object. */
     protected var _controller :ControlBarController;
-
+    
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
-
+    
     /** The back-movement button. */
     protected var _goback :CommandButton;
+
+    /** Button for editing the current scene. */
+    protected var _editBtn :CommandButton;
 
     /** Current location label. */
     protected var _loc :SkinnableCanvasWithText;

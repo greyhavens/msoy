@@ -102,10 +102,8 @@ public class ControlBarController extends Controller
      */
     public function handleEditScene () :void
     {
-        var room :RoomView = _topPanel.getPlaceView() as RoomView;
-        var scene :MsoyScene = _ctx.getSceneDirector().getScene() as MsoyScene;
-        
-        if (room != null && scene != null && scene.canEdit(_ctx.getClientObject())) {
+        if (canEditScene()) {
+            var room :RoomView = _topPanel.getPlaceView() as RoomView;
             room.getRoomController().handleEditScene();
         }
     }   
@@ -119,13 +117,17 @@ public class ControlBarController extends Controller
         // is this a valid scene?
         var scene :Scene = _ctx.getSceneDirector().getScene();
         if (scene != null) {
-            // Display location name
+            // Display location name, modify buttons
             _controlBar.locationLabel = (scene != null) ? scene.getName() : "";
+            _controlBar.sceneEditPossible = canEditScene();
             // Update the stack. Also, if this is not the first scene, enable the back button.
             if (_backstack != null) {
                 _backstack.push(scene.getId());
                 _controlBar.backMovementPossible = (_backstack.length > 1);
             }
+        } else {
+            // invalid scene - don't even try to edit it! :)
+            _controlBar.sceneEditPossible = false;
         }
     }
 
@@ -134,6 +136,13 @@ public class ControlBarController extends Controller
     public function logonChanged (event :ClientEvent) :void
     {
         _backstack = new Array();
+    }
+
+    /** Can this scene be edited? */
+    protected function canEditScene () :Boolean
+    {
+        var scene :MsoyScene = _ctx.getSceneDirector().getScene() as MsoyScene;
+        return (scene != null && scene.canEdit(_ctx.getClientObject()));
     }
 
     /** World information. */
