@@ -94,16 +94,16 @@ public class MemberObject extends BodyObject
 
     /** The object ID of the in-world game that the user is in, if any. */
     public var inWorldGame :int;
-    
-    /** Our current assessment of how likely to be human this member is, in [0, 255]. */
-    public var humanity :int;
-    
+
     /** How much lovely flow we've got jangling around on our person. */
     public var flow :int;
-    
+
+    /** Our current assessment of how likely to be human this member is, in [0, 255]. */
+    public var humanity :int;
+
     /** The recent scenes we've been through. */
     public var recentScenes :DSet;
-    
+
     /** The scenes we own. */
     public var ownedScenes :DSet;
 
@@ -368,8 +368,8 @@ public class MemberObject extends BodyObject
         sceneId = ins.readInt();
         clusterOid = ins.readInt();
         inWorldGame = ins.readInt();
-        humanity = ins.readInt();
         flow = ins.readInt();
+        humanity = ins.readInt();
         recentScenes = (ins.readObject() as DSet);
         ownedScenes = (ins.readObject() as DSet);
         inventory = (ins.readObject() as DSet);
