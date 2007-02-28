@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# $Id$
+#
+# A script for invoking mysql
+
+ROOT=`dirname $0`
+ROOT=`cd $ROOT/..; pwd`
+
+CONFIG=$ROOT/server.conf
+if [ -f $CONFIG ]; then
+    . $CONFIG
+else
+    echo "No $CONFIG could be found."
+    exit 255
+fi
+
+if [ "$DBPORT" = "" ]; then
+    DBPORT=3306
+fi
+
+mysql -u $DBUSER -p$DBPASSWD -h $DBSERVER -P $DBPORT "$@"
