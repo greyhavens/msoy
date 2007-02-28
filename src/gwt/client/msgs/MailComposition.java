@@ -80,13 +80,11 @@ public class MailComposition extends BorderedDialog
 
         grid.setText(0, 0, CMsgs.mmsgs.hdrTo());
         formatter.setStyleName(0, 0, "Label");
-        formatter.setWidth(0, 0, "6em");
         grid.setWidget(0, 1, _recipientBox = new Label(_recipient.toString()));
         formatter.setStyleName(0, 1, "Value");
 
         grid.setText(1, 0, CMsgs.mmsgs.hdrSubject());
         formatter.setStyleName(1, 0, "Label");
-        formatter.setWidth(1, 0, "6em");
         _subjectBox = new TextBox();
         _subjectBox.addStyleName("SubjectBox");
         _subjectBox.setText(subject);

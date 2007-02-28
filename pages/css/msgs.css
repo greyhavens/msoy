@@ -17,6 +17,7 @@
 
 .MailComposer .Label {
     text-align: right;
+    width: 7em;
 }
 
 .MailComposer .Value {
