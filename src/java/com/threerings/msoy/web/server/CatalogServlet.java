@@ -25,6 +25,7 @@ import com.threerings.msoy.web.data.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 
+import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
@@ -104,6 +105,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         try {
             final CatalogRecord<ItemRecord> listing = repo.loadListing(ident.itemId);
+
             if (mrec.flow < listing.flowCost) {
                 // only happens if client is buggy, hacked or lagged, or in a blue moon
                 throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
@@ -117,20 +119,22 @@ public class CatalogServlet extends MsoyServiceServlet
             listing.item.parentId = listing.item.itemId;
             listing.item.itemId = cloneId;
 
-            MsoyServer.omgr.postRunnable(new Runnable() {
-                public void run () {
-                    if (listing.flowCost > 0) {
-                        MsoyServer.memberMan.spendFlow(
-                            mrec.memberId, listing.flowCost, UserAction.BOUGHT_ITEM,
-                            ident.type + " " + ident.itemId + " " + listing.flowCost +
-                            " " + listing.goldCost);
+            if (listing.flowCost > 0) {
+                MsoyServer.memberRepo.getFlowRepository().updateFlow(
+                    mrec.memberId, listing.flowCost, UserAction.BOUGHT_ITEM + " " + ident.type +
+                    " " + ident.itemId, false);
+                MsoyServer.omgr.postRunnable(new Runnable() {
+                    public void run () {
+                        MemberObject mObj = MsoyServer.lookupMember(mrec.memberId);
+                        if (mObj != null) {
+                            mObj.setFlow(mObj.flow - listing.flowCost);
+                        }
                     }
-                    MsoyServer.memberMan.logUserAction(
-                        mrec.getName(), UserAction.BOUGHT_ITEM,
-                        ident.type + " " + ident.itemId + " " + listing.flowCost +
-                        " " + listing.goldCost);
-                }
-            });
+                });
+            }
+            MsoyServer.memberRepo.getFlowRepository().logUserAction(
+                mrec.memberId, UserAction.BOUGHT_ITEM, ident.type + " " + ident.itemId + " " +
+                listing.flowCost + " " + listing.goldCost);
             return listing.item.toItem();
         } catch (PersistenceException pe) {
             log.log(Level.WARNING, "Purchase failed [item=" + ident + "].", pe);
