@@ -19,9 +19,9 @@ import flash.utils.getTimer; // function import
 import flash.utils.ByteArray;
 import flash.utils.Timer;
 
-import com.threerings.util.MediaContainer;
 import com.threerings.util.EmbeddedSwfLoader;
-import com.threerings.util.FPSDisplay;
+
+import com.threerings.flash.FPSDisplay;
 
 import minigames.keyjam.KeyJam;
 
