@@ -22,7 +22,7 @@ import client.util.MediaUtil;
  */
 public class ItemContainer extends FlexTable
 {
-    public ItemContainer (final CatalogListing listing, final ItemPanel panel)
+    public ItemContainer (final CatalogListing listing, final CatalogPanel panel)
     {
         setCellPadding(0);
         setCellSpacing(0);

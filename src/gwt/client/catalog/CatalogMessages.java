@@ -8,6 +8,14 @@ package client.catalog;
 public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   
   /**
+   * Translated "There are no {0} items listed.".
+   * 
+   * @return translated "There are no {0} items listed."
+   * @gwt.key catalogNoList
+   */
+  String catalogNoList(String arg0);
+
+  /**
    * Translated "Delist Item".
    * 
    * @return translated "Delist Item"
@@ -48,6 +56,14 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
   String msgListingBought();
 
   /**
+   * Translated "No {0} items match the query: {1}".
+   * 
+   * @return translated "No {0} items match the query: {1}"
+   * @gwt.key catalogNoMatch
+   */
+  String catalogNoMatch(String arg0,  String arg1);
+
+  /**
    * Translated "Unable to find catalog listing to delist.".
    * 
    * @return translated "Unable to find catalog listing to delist."
@@ -62,6 +78,14 @@ public interface CatalogMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key sortByListDate
    */
   String sortByListDate();
+
+  /**
+   * Translated "No {0} items match the tag: {1}".
+   * 
+   * @return translated "No {0} items match the tag: {1}"
+   * @gwt.key catalogNoTag
+   */
+  String catalogNoTag(String arg0,  String arg1);
 
   /**
    * Translated "Buy!".

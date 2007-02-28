@@ -72,6 +72,14 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
   String startProject();
 
   /**
+   * Translated "Your friends:".
+   * 
+   * @return translated "Your friends:"
+   * @gwt.key friends
+   */
+  String friends();
+
+  /**
    * Translated "No project types found.".
    * 
    * @return translated "No project types found."
@@ -94,14 +102,6 @@ public interface SwiftlyMessages extends com.google.gwt.i18n.client.Messages {
    * @gwt.key noFriends
    */
   String noFriends();
-
-  /**
-   * Translated "Your friends:".
-   * 
-   * @return translated "Your friends:"
-   * @gwt.key friends
-   */
-  String friends();
 
   /**
    * Translated "Add Collaborators".

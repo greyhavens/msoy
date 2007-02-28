@@ -22,7 +22,7 @@ import client.util.ClickCallback;
  */
 public class ListingDetailPopup extends BaseItemDetailPopup
 {
-    public ListingDetailPopup (CatalogListing listing, ItemPanel panel)
+    public ListingDetailPopup (CatalogListing listing, CatalogPanel panel)
     {
         super(listing.item);
         _listing = listing;
@@ -99,7 +99,7 @@ public class ListingDetailPopup extends BaseItemDetailPopup
     }
 
     protected CatalogListing _listing;
-    protected ItemPanel _panel;
+    protected CatalogPanel _panel;
 
     protected FlexTable _price;
     protected Button _purchase;

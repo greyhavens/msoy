@@ -19,16 +19,25 @@
 
 .catalogContents {
    padding: 10px;
-   width: 800px;
 }
 
-.itemDescrip {
+.itemContainer {
+  text-align: center;
+}
+
+.itemContainer .Preview {
+  width: 160px;
+  height: 120px;
+  vertical-align: middle;
+}
+
+.itemContainer .Name {
   text-decoration: underline;
   cursor: pointer;
   cursor: hand;
   font-size: 14px;
 }
 
-.itemCreator {
+.itemContainer .Creator {
   font-size: 12px;
 }

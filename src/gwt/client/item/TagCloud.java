@@ -11,8 +11,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.InlineLabel;
 
 /**
@@ -104,7 +106,7 @@ public class TagCloud extends DockPanel
             Arrays.sort(_sortedTags);
 
             _tagFlow.clear();
-            _tagFlow.add(new InlineLabel(CItem.imsgs.cloudCommonTags()));
+            _tagFlow.add(new InlineLabel(CItem.imsgs.cloudCommonTags(), false, false, true));
 
             for (int ii = 0; ii < _sortedTags.length; ii ++) {
                 if (ii > 0) {
@@ -129,7 +131,7 @@ public class TagCloud extends DockPanel
         public void onFailure (Throwable caught) {
             CItem.log("getPopularTags failed", caught);
             _tagFlow.clear();
-            setTagLine(new Label(CItem.serverError(caught)));
+            setTagLine(new InlineLabel(CItem.serverError(caught)));
         }
     }
 

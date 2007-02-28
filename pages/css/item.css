@@ -6,8 +6,6 @@
 
 .tagContents {
    padding: 5px;
-   margin: 5px;
-   width: 250px;
    font-size: 9pt;
    text-align: right;
    font-weight: bold;
@@ -158,11 +156,6 @@
     color: white;
 }
 
-.itemSearchPanel {
-  padding-left: 20px;
-  padding-top: 4px;
-}
-
 .itemSearchBox {
   width: 160px;
   margin-right: 5px;
@@ -171,7 +164,7 @@
 .itemSortLabel {
   font-family: Arial, Verdana, Helvetica, sans-serif;
   font-size: 14px;
-  padding-left: 20px;
+  padding-left: 15px;
   padding-top: 2px;
   padding-right: 5px;
   width: 50px;
