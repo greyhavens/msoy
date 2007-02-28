@@ -4,7 +4,9 @@
 package com.threerings.msoy.swiftly.server;
 
 import java.io.IOException;
+import java.util.List;
 
+import com.samskivert.util.Invoker;
 import com.samskivert.util.SerialExecutor;
 import com.threerings.util.MessageBundle;
 
@@ -43,17 +45,28 @@ public class ProjectRoomManager extends PlaceManager
     {
         _storage = storage;
 
-        // TODO: Push to Invoker thread.
-        // Initialize a reference to the project storage
-        try {
-            // Load up the project information and populate the room object
-            for (PathElement element : _storage.getProjectTree()) {
-                _roomObj.addPathElement(element);
+        // Load the project tree from the storage provider
+        MsoyServer.swiftlyInvoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    // Okay, so it's not really a tree, but hey ...
+                    // Load the file list from the provided storage instance.
+                    _projectTree = _storage.getProjectTree();
+                    return true;
+                } catch (ProjectStorageException pse) {
+                    // TODO: Handle this how?
+                    return false;
+                }
             }
-        } catch (Exception e) {
-            // TODO: FIXME
-            e.printStackTrace();
-        }
+            
+            public void handleResult () {
+                for (PathElement element : _projectTree) {
+                    _roomObj.addPathElement(element);
+                }
+            }
+
+            protected List<PathElement> _projectTree;
+        });
     }
 
     // from interface ProjectRoomProvider

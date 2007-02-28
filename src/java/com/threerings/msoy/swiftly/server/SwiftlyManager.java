@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.SerialExecutor;
 
@@ -56,39 +57,21 @@ public class SwiftlyManager
     }
 
     // from interface SwiftlyProvider
-    public void enterProject (ClientObject caller, int projectId,
+    public void enterProject (ClientObject caller, final int projectId,
                               SwiftlyService.ResultListener listener)
         throws InvocationException
     {
-        ProjectRoomManager mgr = _managers.get(projectId);
-        ProjectStorage storage;
-        if (mgr != null) {
-            listener.requestProcessed(mgr.getPlaceObject().getOid());
+        ProjectRoomManager curmgr = _managers.get(projectId);
+        final ProjectRoomManager mgr;
+        if (curmgr != null) {
+            listener.requestProcessed(curmgr.getPlaceObject().getOid());
             return;
         }
-
-        // Load the project storage
-        try {
-            SwiftlyProjectRecord projectRecord = MsoyServer.swiftlyRepo.loadProject(projectId);
-            SwiftlySVNStorageRecord storageRecord =
-                MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
-            storage = new ProjectSVNStorage(projectRecord, storageRecord);    
-        } catch (ProjectStorageException pse) {
-            log.log(Level.WARNING, "Failed to open swiftly project storage [projectId=" +
-                projectId + "].", pse);
-            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
-        } catch (PersistenceException pe) {
-            log.log(Level.WARNING, "Failed to find project storage record [projectId=" +
-                projectId + "].", pe);
-            throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
-        }
-
 
         ProjectRoomConfig config = new ProjectRoomConfig();
         try {
             config.projectId = projectId;
             mgr = (ProjectRoomManager)MsoyServer.plreg.createPlace(config);
-            mgr.init(storage);
             _managers.put(projectId, mgr);
 
             log.info("Created project room [project=" + projectId +
@@ -99,6 +82,36 @@ public class SwiftlyManager
             log.log(Level.WARNING, "Failed to create project room [config=" + config + "].", e);
             throw new InvocationException(SwiftlyCodes.INTERNAL_ERROR);
         }
+
+        // Load the project storage on the invoker thread, initialize the ProjectRoomManager
+        MsoyServer.invoker.postUnit(new Invoker.Unit() {
+            public boolean invoke () {
+                try {
+                    SwiftlyProjectRecord projectRecord = MsoyServer.swiftlyRepo.loadProject(projectId);
+                    SwiftlySVNStorageRecord storageRecord =
+                        MsoyServer.swiftlyRepo.loadStorageRecordForProject(projectId);
+                    _storage = new ProjectSVNStorage(projectRecord, storageRecord);    
+                    return true;
+
+                } catch (ProjectStorageException pse) {
+                    log.log(Level.WARNING, "Failed to open swiftly project storage [projectId=" +
+                        projectId + "].", pse);
+                    return false;
+
+                } catch (PersistenceException pe) {
+                    log.log(Level.WARNING, "Failed to find project storage record [projectId=" +
+                        projectId + "].", pe);
+                    return false;
+                }
+            }
+            
+            public void handleResult () {
+                mgr.init(_storage);
+            }
+            
+            protected ProjectStorage _storage;
+        });
+
     }
 
     /**

@@ -14,6 +14,7 @@ import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.util.AuditLogger;
 import com.samskivert.util.Interval;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.LoggingLogProvider;
 import com.samskivert.util.OneLineLogFormatter;
 
@@ -147,6 +148,9 @@ public class MsoyServer extends WhirledServer
     /** Handles word lookup services */
     public static DictionaryManager dictionary; 
 
+    /** All blocking Swiftly subversion actions must occur on this thread. */
+    public static Invoker swiftlyInvoker;
+
     /**
      * Creates an audit log with the specified name (which should not include
      * the <code>.log</code> suffix) in our server log directory.
@@ -259,6 +263,11 @@ public class MsoyServer extends WhirledServer
         // create and set up our configuration registry and admin service
         confReg = new DatabaseConfigRegistry(conProv, invoker);
         AdminProvider.init(invmgr, confReg);
+
+        // initialize the swiftly invoker
+        swiftlyInvoker = new Invoker("swiftly_invoker", omgr);
+        swiftlyInvoker.setDaemon(true);
+        swiftlyInvoker.start();
 
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available
