@@ -48,7 +48,7 @@ public class ControlBarController extends Controller
         _controlBar = controlBar;
         _backstack = new Array ();
         
-        setControlledPanel(ctx.getStage());
+        setControlledPanel(controlBar);
         _location = new LocationAdapter(null, this.locationChanged, null);
         _logon = new ClientAdapter(null, this.logonChanged, null, this.logonChanged);
     }
@@ -112,7 +112,7 @@ public class ControlBarController extends Controller
 
     /** When location changes, and it's to the scene that we thought
         we should be entering, set the label appropriately. */
-    public function locationChanged (place :PlaceObject) :void
+    protected function locationChanged (place :PlaceObject) :void
     {
         // is this a valid scene?
         var scene :Scene = _ctx.getSceneDirector().getScene();
@@ -133,7 +133,7 @@ public class ControlBarController extends Controller
 
     /** When the logon changes (the client logs on or off), we reset
         their scene history. */
-    public function logonChanged (event :ClientEvent) :void
+    protected function logonChanged (event :ClientEvent) :void
     {
         _backstack = new Array();
     }
