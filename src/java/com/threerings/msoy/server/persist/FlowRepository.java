@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import com.samskivert.io.PersistenceException;
 
@@ -25,6 +26,7 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.UserAction;
 
 import static com.threerings.msoy.Log.log;
 
@@ -33,6 +35,9 @@ import static com.threerings.msoy.Log.log;
  */
 public class FlowRepository extends DepotRepository
 {
+    /** The log for flow grants. */
+    public static Logger flowLog = Logger.getLogger("com.threerings.msoy.flow");
+
     /**
      * Creates a flow repository for.
      */
@@ -80,12 +85,12 @@ public class FlowRepository extends DepotRepository
     /**
      * Logs an action for a member with optional action-specific data, which may be null.
      */
-    public void logMemberAction (int memberId, int actionId, String data)
+    public void logUserAction (int memberId, UserAction action, String data)
         throws PersistenceException
     {
         MemberActionLogRecord record = new MemberActionLogRecord();
         record.memberId = memberId;
-        record.actionId = actionId;
+        record.actionId = action.getNumber();
         record.actionTime = new Timestamp(System.currentTimeMillis());
         record.data = data;
         insert(record);
@@ -177,7 +182,7 @@ public class FlowRepository extends DepotRepository
      * <em>Do not use this method!</em> It exists only because we must work with the coin system
      * which tracks members by username rather than id.
      */
-    public void grantFlow (String accountName, int actionId, int amount)
+    public void grantFlow (String accountName, int actionId, String details, int amount)
         throws PersistenceException
     {
         MemberRecord record =
@@ -186,7 +191,7 @@ public class FlowRepository extends DepotRepository
             throw new PersistenceException(
                 "Unknown member [accountName=" + accountName + ", actionId=" + actionId + "]");
         }
-        updateFlow(record.memberId, amount, false);
+        updateFlow(record.memberId, amount, details, false);
     }
 
     /**
@@ -210,7 +215,7 @@ public class FlowRepository extends DepotRepository
 
 
     /** Helper function for {@link #spendFlow} and {@link #grantFlow}. */
-    public void updateFlow (int memberId, int amount, boolean grant)
+    public void updateFlow (int memberId, int amount, String details, boolean grant)
         throws PersistenceException
     {
         String type = (grant ? "grant" : " spend");
@@ -269,6 +274,11 @@ public class FlowRepository extends DepotRepository
                 }
             }
         } while (again);
+
+        flowLog.info(
+            System.currentTimeMillis() + " " + memberId + (grant ? " G " : " S ") +
+            amount + " " + (details != null ? " " + details : ""));
+
     }
 
     // read a game abuse record or create one if needed, possibly also inserting it into the db

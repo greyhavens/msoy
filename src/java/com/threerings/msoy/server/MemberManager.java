@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,9 +77,6 @@ public class MemberManager
 {
     /** Cache popular place computations for five seconds while we're debugging. */
     public static final long POPULAR_PLACES_CACHE_LIFE = 5*1000;
-
-    /** The log for flow grants. */
-    public static Logger flowLog = Logger.getLogger("com.threerings.msoy.flow");
 
     /**
      * Prepares our member manager for operation.
@@ -508,15 +504,13 @@ public class MemberManager
         final MemberObject mObj = MsoyServer.lookupMember(memberId);
         MsoyServer.invoker.postUnit(new RepositoryUnit("grantFlow") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().updateFlow(memberId, amount, true);
+                _memberRepo.getFlowRepository().updateFlow(
+                    memberId, amount, grantAction.toString() + " " + details, true);
                 if (mObj != null) {
                     _flow = _memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
                 }
             }
             public void handleSuccess () {
-                flowLog.info(System.currentTimeMillis() + " " + memberId + " G " +
-                             amount + " " + (grantAction != null ? grantAction : "null") +
-                             (details != null ? " " + details : ""));
                 // TODO: distributed considerations
                 if (mObj != null) {
                     mObj.setFlow(_flow);
@@ -527,7 +521,7 @@ public class MemberManager
                         ", grantAction=" + grantAction + ", amount=" + amount + ", details=" +
                         details + "]", pe);
             }
-            public int _flow;
+            protected int _flow;
         });
     }
 
@@ -543,15 +537,13 @@ public class MemberManager
         final MemberObject mObj = MsoyServer.lookupMember(memberId);
         MsoyServer.invoker.postUnit(new RepositoryUnit("spendFlow") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().updateFlow(memberId, amount, false);
+                _memberRepo.getFlowRepository().updateFlow(
+                    memberId, amount, spendAction.toString() + " " + details, false);
                 if (mObj != null) {
                     _flow = _memberRepo.getFlowRepository().loadMemberFlow(memberId).flow;
                 }
             }
             public void handleSuccess () {
-                flowLog.info(System.currentTimeMillis() + " " + memberId + " S " +
-                             amount + " " + (spendAction != null ? spendAction : "null") +
-                             (details != null ? " " + details : ""));
                 // TODO: distributed considerations
                 if (mObj != null) {
                     mObj.setFlow(_flow);
@@ -562,7 +554,7 @@ public class MemberManager
                         ", grantAction=" + spendAction + ", amount=" + amount + ", details=" +
                         details + "]", pe);
             }
-            public int _flow;
+            protected int _flow;
         });
     }
 
@@ -575,8 +567,8 @@ public class MemberManager
     {
         MsoyServer.invoker.postUnit(new RepositoryUnit("takeAction") {
             public void invokePersist () throws PersistenceException {
-                _memberRepo.getFlowRepository().logMemberAction(
-                    member.getMemberId(), action.getNumber(), details);
+                _memberRepo.getFlowRepository().logUserAction(
+                    member.getMemberId(), action, details);
             }
             public void handleSuccess () {
                 // yay
