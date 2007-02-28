@@ -39,7 +39,7 @@ public class VolumePopup extends Canvas
         // styleName = "volumeControl";
 
         // Initialize the window
-        var r : Rectangle = trigger.getBounds (trigger.stage);
+        var r : Rectangle = trigger.getBounds(trigger.stage);
         width = 50;
         height = 100;
         x = trigger.x - 15;
@@ -62,7 +62,7 @@ public class VolumePopup extends Canvas
             function (val :Number) :void
             {
                 SoundMixer.soundTransform = new SoundTransform (val);
-                Prefs.setSoundVolume (val);
+                Prefs.setSoundVolume(val);
             },
             _slider, "value");
 
@@ -108,7 +108,7 @@ public class VolumePopup extends Canvas
     public static function destroyCurrentInstance () : void
     {
         if (_currentInstance != null) {
-            _currentInstance.destroy ();
+            _currentInstance.destroy();
         }
     }
 

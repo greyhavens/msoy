@@ -73,7 +73,7 @@ public class ControlBarController extends Controller
     public function handlePopVolume (trigger :Button) :void
     {
         if (VolumePopup.popupExists()) {
-            VolumePopup.destroyCurrentInstance ();
+            VolumePopup.destroyCurrentInstance();
         } else {
             var popup :VolumePopup = new VolumePopup (trigger);
             popup.show();
@@ -105,7 +105,7 @@ public class ControlBarController extends Controller
         var room :RoomView = _topPanel.getPlaceView() as RoomView;
         var scene :MsoyScene = _ctx.getSceneDirector().getScene() as MsoyScene;
         
-        if (room != null && scene != null && scene.canEdit (_ctx.getClientObject())) {
+        if (room != null && scene != null && scene.canEdit(_ctx.getClientObject())) {
             room.getRoomController().handleEditScene();
         }
     }   
