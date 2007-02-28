@@ -117,17 +117,21 @@ public class ControlBarController extends Controller
         // is this a valid scene?
         var scene :Scene = _ctx.getSceneDirector().getScene();
         if (scene != null) {
-            // Display location name, modify buttons
-            _controlBar.locationLabel = (scene != null) ? scene.getName() : "";
-            _controlBar.sceneEditPossible = canEditScene();
             // Update the stack. Also, if this is not the first scene, enable the back button.
+            var backEnabled :Boolean = false;
             if (_backstack != null) {
                 _backstack.push(scene.getId());
-                _controlBar.backMovementPossible = (_backstack.length > 1);
+                backEnabled = (_backstack.length > 1);
             }
+            // Display location name, modify buttons
+            _controlBar.updateNavigationWidgets(
+                ((scene != null) ? scene.getName() : ""), backEnabled);
+            _controlBar.sceneEditPossible = canEditScene();
+            
         } else {
-            // invalid scene - don't even try to edit it! :)
+            // Invalid scene - don't even try to edit it! :)
             _controlBar.sceneEditPossible = false;
+            _controlBar.updateNavigationWidgets("", false);
         }
     }
 

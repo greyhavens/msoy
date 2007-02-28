@@ -162,13 +162,17 @@ public class ControlBar extends HBox
         _isMember = isMember;
     }
 
-    /** Receives notifications whether movement back to the previous scene is possible,
-     *  and adjusts the back-button appropriately. */
-    public function set backMovementPossible (value :Boolean) :void
+    /** Changes the visibility and parameters of the navigation widgets.
+     *  @param visible controls visibility of both the name and the back button
+     *  @param name specifies the location name to be displayed on the control bar
+     *  @param backEnabled specifies whether the back button should be enabled
+     */
+    public function updateNavigationWidgets (name :String, backEnabled :Boolean) :void
     {
-        _goback.enabled = value;
+        _loc.text = name;
+        _goback.enabled = backEnabled;
     }
-
+    
     /** Receives notification whether scene editing is possible for this scene. */
     public function set sceneEditPossible (value :Boolean) :void
     {
@@ -177,15 +181,6 @@ public class ControlBar extends HBox
         }
     }
 
-    /** Sets location label. */
-    public function set locationLabel (value :String) :void
-    {
-        _loc.text = value;
-    }
-    
-    
-    // IMPLEMENTATION DETAILS
-    
     /** Our clientside context. */
     protected var _ctx :WorldContext;
     
