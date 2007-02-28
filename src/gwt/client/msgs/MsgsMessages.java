@@ -48,6 +48,14 @@ public interface MsgsMessages extends com.google.gwt.i18n.client.Messages {
   String groupThe();
 
   /**
+   * Translated "Invite to Group:".
+   * 
+   * @return translated "Invite to Group:"
+   * @gwt.key groupInvite
+   */
+  String groupInvite();
+
+  /**
    * Translated "To:".
    * 
    * @return translated "To:"

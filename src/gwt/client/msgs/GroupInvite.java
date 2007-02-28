@@ -10,9 +10,12 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.HTMLTable.CellFormatter;
 
 import com.threerings.gwt.ui.InlineLabel;
 
@@ -60,12 +63,12 @@ public abstract class GroupInvite
             public CompositionWidget ()
             {
                 super();
-                FlowPanel panel = new FlowPanel();
-                panel.add(new InlineLabel(CMsgs.mmsgs.groupClick(), false, false, true));
-                Button joinButton = new Button(CMsgs.mmsgs.groupJoin());
-                joinButton.setEnabled(false);
-                panel.add(joinButton);
-                panel.add(new InlineLabel(CMsgs.mmsgs.groupThe(), false, true, true));
+                
+                // set up the recipient/subject header grid
+                Grid grid = new Grid(1, 2);
+                CellFormatter formatter = grid.getCellFormatter();
+                grid.setStyleName("Headers");
+
                 _groupBox = new ListBox();
                 for (int ii = 0; ii < _groups.size(); ii ++) {
                     _groupBox.addItem(((GroupMembership) _groups.get(ii)).group.groupName);
@@ -80,8 +83,12 @@ public abstract class GroupInvite
                         Window.alert("groupId now = " + _selectedGroupId);
                     }
                 });
-                panel.add(_groupBox);
-                add(panel);
+                grid.setText(0, 0, CMsgs.mmsgs.groupInvite());
+                formatter.setStyleName(0, 0, "Label");
+                grid.setWidget(0, 1, _groupBox);
+                formatter.setStyleName(0, 1, "Value");
+
+                add(grid);
             }
             protected ListBox _groupBox;
         }
