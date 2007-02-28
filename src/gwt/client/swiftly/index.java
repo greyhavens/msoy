@@ -85,6 +85,7 @@ public class index extends MsoyEntryPoint
         // if we have no creds, just display a message saying login
         if (CSwiftly.creds == null) {
             setContent(new Label(CSwiftly.msgs.indexLogon()));
+            return;
         } 
 
         if (historyToken.length() == 0) {
