@@ -8,6 +8,7 @@ import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import com.samskivert.util.StringUtil;
 
@@ -104,7 +105,7 @@ public class NeighborFriendRecord extends PersistentRecord
     public int sessionMinutes;
 
     /** The time at which the player ended their last session. */
-    public Date lastSession;
+    public Timestamp lastSession;
 
     /** Generates a string representation of this instance. */
     @Override
