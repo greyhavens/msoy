@@ -310,6 +310,10 @@ HScrollBar {
   trackColors: #d8bd8f, #e3cfab;
 }
 
+Menu {
+  openDuration: 0;
+}
+
 MenuBar {
   cornerRadius: 4;
   backgroundAlpha: 1;
