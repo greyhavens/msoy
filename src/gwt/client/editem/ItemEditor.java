@@ -80,7 +80,6 @@ public abstract class ItemEditor extends BorderedDialog
         return editor;
     }
 
-
     public ItemEditor ()
     {
         super(false);
@@ -90,7 +89,7 @@ public abstract class ItemEditor extends BorderedDialog
         // JavaScript object
         _singleton = this;
 
-        _header.add(_etitle = MsoyUI.createLabel("title", "Title"));
+        _header.add(_etitle = createTitleLabel("title", "Title"));
 
         VerticalPanel contents = (VerticalPanel)_contents;
         TabPanel mediaTabs = createTabs();

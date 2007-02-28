@@ -7,7 +7,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
@@ -21,12 +20,13 @@ import client.util.MediaUtil;
 /**
  * Displays a catalog listing.
  */
-public class ItemContainer extends VerticalPanel
+public class ItemContainer extends FlexTable
 {
     public ItemContainer (final CatalogListing listing, final ItemPanel panel)
     {
-        setHorizontalAlignment(ALIGN_CENTER);
-        setVerticalAlignment(ALIGN_MIDDLE);
+        setCellPadding(0);
+        setCellSpacing(0);
+        setStyleName("itemContainer");
 
         ClickListener clicker = new ClickListener() {
             public void onClick (Widget sender) {
@@ -34,39 +34,37 @@ public class ItemContainer extends VerticalPanel
             }
         };
 
-        Widget mview = MediaUtil.createMediaView(
+        Widget preview = MediaUtil.createMediaView(
             listing.item.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE);
-        if (mview instanceof Image) {
-            ((Image)mview).addClickListener(clicker);
-            mview.addStyleName("actionLabel");
+        if (preview instanceof Image) {
+            ((Image)preview).addClickListener(clicker);
+            preview.addStyleName("actionLabel");
         }
-        add(mview);
+        setWidget(0, 0, preview);
+        getFlexCellFormatter().setStyleName(0, 0, "Preview");
 
         FlexTable bits = new FlexTable();
-        bits.setWidth("100%");
-        FlexCellFormatter formatter = bits.getFlexCellFormatter();
-        
-        Label descrip = new Label(ItemUtil.getName(listing.item, true));
-        descrip.setStyleName("itemDescrip");
-        descrip.addClickListener(clicker);
-        formatter.setWidth(0, 0, "100%");
-        bits.setWidget(0, 0, descrip);
+        bits.setCellPadding(0);
+        bits.setCellSpacing(0);
+        Label name = new Label(ItemUtil.getName(listing.item, true));
+        name.setStyleName("Name");
+        name.addClickListener(clicker);
+        bits.setWidget(0, 0, name);
 
-        Label creator = new Label(CCatalog.msgs.itemBy(listing.creator.toString()));
-        creator.setStyleName("itemCreator");
-        formatter.setWidth(1, 0, "100%");
-        bits.setWidget(1, 0, creator);
-
-        formatter.setWidth(0, 1, "25px"); // gap!
-        formatter.setStyleName(0, 1, "Icon");
         bits.setWidget(0, 1, new Image("/images/header/symbol_gold.png"));
+        bits.getFlexCellFormatter().setWidth(0, 1, "15px");
+        bits.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
         bits.setText(0, 2, String.valueOf(listing.goldCost));
 
-        formatter.setWidth(1, 1, "25px"); // gap!
-        formatter.setStyleName(1, 1, "Icon");
+        Label creator = new Label(CCatalog.msgs.itemBy(listing.creator.toString()));
+        creator.setStyleName("Creator");
+        bits.setWidget(1, 0, creator);
+
         bits.setWidget(1, 1, new Image("/images/header/symbol_flow.png"));
+        bits.getFlexCellFormatter().setWidth(1, 1, "15px");
+        bits.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
         bits.setText(1, 2, String.valueOf(listing.flowCost));
-        
-        add(bits);
+        setWidget(1, 0, bits);
+        getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
     }
 }

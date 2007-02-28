@@ -54,7 +54,6 @@ public class ItemPanel extends VerticalPanel
             }
         });
         _contents.setStyleName("inventoryContents");
-        _contents.setCellAlignment(ALIGN_CENTER, ALIGN_BOTTOM);
 
         // this will allow us to create new items
         add(_create = new Button(CInventory.msgs.panelCreateNew()));
