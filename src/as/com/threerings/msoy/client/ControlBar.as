@@ -150,9 +150,9 @@ public class ControlBar extends HBox
         _loc.width = 200;
         addChild(_loc);
 
-        var bookend :SkinnableImage = new SkinnableImage();
-        bookend.styleName = "controlBarBookend";
-        addChild(bookend);
+        _bookend = new SkinnableImage();
+        _bookend.styleName = "controlBarBookend";
+        addChild(_bookend);
         
         var footerRight :SkinnableImage = new SkinnableImage();
         footerRight.styleName = "controlBarFooterRight";
@@ -167,10 +167,18 @@ public class ControlBar extends HBox
      *  @param name specifies the location name to be displayed on the control bar
      *  @param backEnabled specifies whether the back button should be enabled
      */
-    public function updateNavigationWidgets (name :String, backEnabled :Boolean) :void
+    public function updateNavigationWidgets (
+        visible :Boolean, name :String, backEnabled :Boolean) :void
     {
-        _loc.text = name;
+        const maxLen :int = 25;
+        _loc.includeInLayout = _goback.includeInLayout = _bookend.includeInLayout = 
+            _loc.visible = _goback.visible = _bookend.visible = visible;
         _goback.enabled = backEnabled;
+        if (name != null) {
+            _loc.text = name.length < maxLen ? name : (name.substr(0, maxLen) + "...");
+        } else {
+            _loc.text = "";
+        }
     }
     
     /** Receives notification whether scene editing is possible for this scene. */
@@ -198,6 +206,9 @@ public class ControlBar extends HBox
 
     /** Current location label. */
     protected var _loc :SkinnableCanvasWithText;
+
+    /** Bookend image at the other end of name label. */
+    protected var _bookend :SkinnableImage;
 }
 }
 

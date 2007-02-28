@@ -125,13 +125,13 @@ public class ControlBarController extends Controller
             }
             // Display location name, modify buttons
             _controlBar.updateNavigationWidgets(
-                ((scene != null) ? scene.getName() : ""), backEnabled);
+                true, ((scene != null) ? scene.getName() : ""), backEnabled);
             _controlBar.sceneEditPossible = canEditScene();
             
         } else {
             // Invalid scene - don't even try to edit it! :)
             _controlBar.sceneEditPossible = false;
-            _controlBar.updateNavigationWidgets("", false);
+            _controlBar.updateNavigationWidgets(false, "", false);
         }
     }
 
