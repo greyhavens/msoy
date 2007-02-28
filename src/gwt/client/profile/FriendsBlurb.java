@@ -34,7 +34,7 @@ public class FriendsBlurb extends Blurb
         setHeader("Friends");
 
         ArrayList friends = (ArrayList)blurbData;
-        boolean canInvite = (CProfile.getMemberId() != _memberId);
+        boolean canInvite = (CProfile.getMemberId() > 0 && CProfile.getMemberId() != _memberId);
         if (friends.size() == 0) {
             setStatus(CProfile.getMemberId() == _memberId ?
                       "You have no friends. Boo hoo." : "This person has no friends. How sad.");
