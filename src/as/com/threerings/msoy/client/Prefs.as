@@ -47,15 +47,15 @@ public class Prefs
         config.setValue(MACHINE_IDENT, ident);
     }
 
-    public static function getMediaPosition (id :String) :Number
-    {
-        return (config.getValue(mediaKey(id), 0) as Number);
-    }
-
-    public static function setMediaPosition (id :String, position :Number) :void
-    {
-        config.setValue(mediaKey(id), position);
-    }
+//    public static function getMediaPosition (id :String) :Number
+//    {
+//        return (config.getValue(mediaKey(id), 0) as Number);
+//    }
+//
+//    public static function setMediaPosition (id :String, position :Number) :void
+//    {
+//        config.setValue(mediaKey(id), position);
+//    }
 
     public static function getSoundVolume () :Number
     {
@@ -128,13 +128,13 @@ public class Prefs
         config.setValue(LOG_TO_CHAT, logToChat);
     }
 
-    /**
-     * Internal function to create a media position key.
-     */
-    private static function mediaKey (id :String) :String
-    {
-        return "mediaPos_" + id;
-    }
+//    /**
+//     * Internal function to create a media position key.
+//     */
+//    private static function mediaKey (id :String) :String
+//    {
+//        return "mediaPos_" + id;
+//    }
 
     /**
      * A static initializer.
